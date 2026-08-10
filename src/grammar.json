@@ -1784,11 +1784,8 @@
                         "name": "internal_keyword"
                       },
                       {
-                        "type": "TOKEN",
-                        "content": {
-                          "type": "PATTERN",
-                          "value": "(?i)public"
-                        }
+                        "type": "SYMBOL",
+                        "name": "public_keyword"
                       },
                       {
                         "type": "SYMBOL",
@@ -6249,18 +6246,12 @@
                   "name": "interface_keyword"
                 },
                 {
-                  "type": "TOKEN",
-                  "content": {
-                    "type": "PATTERN",
-                    "value": "(?i)testpage"
-                  }
+                  "type": "SYMBOL",
+                  "name": "testpage_keyword"
                 },
                 {
-                  "type": "TOKEN",
-                  "content": {
-                    "type": "PATTERN",
-                    "value": "(?i)testrequestpage"
-                  }
+                  "type": "SYMBOL",
+                  "name": "testrequestpage_keyword"
                 },
                 {
                   "type": "SYMBOL",
@@ -7691,60 +7682,36 @@
             "type": "CHOICE",
             "members": [
               {
-                "type": "TOKEN",
-                "content": {
-                  "type": "PATTERN",
-                  "value": "(?i)content"
-                }
+                "type": "SYMBOL",
+                "name": "content_keyword"
               },
               {
-                "type": "TOKEN",
-                "content": {
-                  "type": "PATTERN",
-                  "value": "(?i)factboxes"
-                }
+                "type": "SYMBOL",
+                "name": "factboxes_keyword"
               },
               {
-                "type": "TOKEN",
-                "content": {
-                  "type": "PATTERN",
-                  "value": "(?i)processing"
-                }
+                "type": "SYMBOL",
+                "name": "processing_keyword"
               },
               {
-                "type": "TOKEN",
-                "content": {
-                  "type": "PATTERN",
-                  "value": "(?i)rolecenter"
-                }
+                "type": "SYMBOL",
+                "name": "rolecenter_keyword"
               },
               {
-                "type": "TOKEN",
-                "content": {
-                  "type": "PATTERN",
-                  "value": "(?i)prompting"
-                }
+                "type": "SYMBOL",
+                "name": "prompting_keyword"
               },
               {
-                "type": "TOKEN",
-                "content": {
-                  "type": "PATTERN",
-                  "value": "(?i)prompt"
-                }
+                "type": "SYMBOL",
+                "name": "prompt_keyword"
               },
               {
-                "type": "TOKEN",
-                "content": {
-                  "type": "PATTERN",
-                  "value": "(?i)promptoptions"
-                }
+                "type": "SYMBOL",
+                "name": "promptoptions_keyword"
               },
               {
-                "type": "TOKEN",
-                "content": {
-                  "type": "PATTERN",
-                  "value": "(?i)systemactions"
-                }
+                "type": "SYMBOL",
+                "name": "systemactions_keyword"
               },
               {
                 "type": "SYMBOL",
@@ -9317,74 +9284,44 @@
             "type": "CHOICE",
             "members": [
               {
-                "type": "TOKEN",
-                "content": {
-                  "type": "PATTERN",
-                  "value": "(?i)processing"
-                }
+                "type": "SYMBOL",
+                "name": "processing_keyword"
               },
               {
-                "type": "TOKEN",
-                "content": {
-                  "type": "PATTERN",
-                  "value": "(?i)reporting"
-                }
+                "type": "SYMBOL",
+                "name": "reporting_keyword"
               },
               {
-                "type": "TOKEN",
-                "content": {
-                  "type": "PATTERN",
-                  "value": "(?i)navigation"
-                }
+                "type": "SYMBOL",
+                "name": "navigation_keyword"
               },
               {
-                "type": "TOKEN",
-                "content": {
-                  "type": "PATTERN",
-                  "value": "(?i)creation"
-                }
+                "type": "SYMBOL",
+                "name": "creation_keyword"
               },
               {
-                "type": "TOKEN",
-                "content": {
-                  "type": "PATTERN",
-                  "value": "(?i)promoted"
-                }
+                "type": "SYMBOL",
+                "name": "promoted_keyword"
               },
               {
-                "type": "TOKEN",
-                "content": {
-                  "type": "PATTERN",
-                  "value": "(?i)systemactions"
-                }
+                "type": "SYMBOL",
+                "name": "systemactions_keyword"
               },
               {
-                "type": "TOKEN",
-                "content": {
-                  "type": "PATTERN",
-                  "value": "(?i)sections"
-                }
+                "type": "SYMBOL",
+                "name": "sections_keyword"
               },
               {
-                "type": "TOKEN",
-                "content": {
-                  "type": "PATTERN",
-                  "value": "(?i)embedding"
-                }
+                "type": "SYMBOL",
+                "name": "embedding_keyword"
               },
               {
-                "type": "TOKEN",
-                "content": {
-                  "type": "PATTERN",
-                  "value": "(?i)promptguide"
-                }
+                "type": "SYMBOL",
+                "name": "promptguide_keyword"
               },
               {
-                "type": "TOKEN",
-                "content": {
-                  "type": "PATTERN",
-                  "value": "(?i)prompting"
-                }
+                "type": "SYMBOL",
+                "name": "prompting_keyword"
               },
               {
                 "type": "SYMBOL",
@@ -11736,25 +11673,16 @@
             "type": "CHOICE",
             "members": [
               {
-                "type": "TOKEN",
-                "content": {
-                  "type": "PATTERN",
-                  "value": "(?i)tableelement"
-                }
+                "type": "SYMBOL",
+                "name": "tableelement_keyword"
               },
               {
-                "type": "TOKEN",
-                "content": {
-                  "type": "PATTERN",
-                  "value": "(?i)fieldelement"
-                }
+                "type": "SYMBOL",
+                "name": "fieldelement_keyword"
               },
               {
-                "type": "TOKEN",
-                "content": {
-                  "type": "PATTERN",
-                  "value": "(?i)textelement"
-                }
+                "type": "SYMBOL",
+                "name": "textelement_keyword"
               }
             ]
           }
@@ -11927,18 +11855,12 @@
             "type": "CHOICE",
             "members": [
               {
-                "type": "TOKEN",
-                "content": {
-                  "type": "PATTERN",
-                  "value": "(?i)fieldattribute"
-                }
+                "type": "SYMBOL",
+                "name": "fieldattribute_keyword"
               },
               {
-                "type": "TOKEN",
-                "content": {
-                  "type": "PATTERN",
-                  "value": "(?i)textattribute"
-                }
+                "type": "SYMBOL",
+                "name": "textattribute_keyword"
               }
             ]
           }
@@ -20020,6 +19942,282 @@
       },
       "named": false,
       "value": "view"
+    },
+    "testpage_keyword": {
+      "type": "ALIAS",
+      "content": {
+        "type": "TOKEN",
+        "content": {
+          "type": "PATTERN",
+          "value": "(?i)testpage"
+        }
+      },
+      "named": false,
+      "value": "testpage"
+    },
+    "testrequestpage_keyword": {
+      "type": "ALIAS",
+      "content": {
+        "type": "TOKEN",
+        "content": {
+          "type": "PATTERN",
+          "value": "(?i)testrequestpage"
+        }
+      },
+      "named": false,
+      "value": "testrequestpage"
+    },
+    "content_keyword": {
+      "type": "ALIAS",
+      "content": {
+        "type": "TOKEN",
+        "content": {
+          "type": "PATTERN",
+          "value": "(?i)content"
+        }
+      },
+      "named": false,
+      "value": "content"
+    },
+    "factboxes_keyword": {
+      "type": "ALIAS",
+      "content": {
+        "type": "TOKEN",
+        "content": {
+          "type": "PATTERN",
+          "value": "(?i)factboxes"
+        }
+      },
+      "named": false,
+      "value": "factboxes"
+    },
+    "processing_keyword": {
+      "type": "ALIAS",
+      "content": {
+        "type": "TOKEN",
+        "content": {
+          "type": "PATTERN",
+          "value": "(?i)processing"
+        }
+      },
+      "named": false,
+      "value": "processing"
+    },
+    "rolecenter_keyword": {
+      "type": "ALIAS",
+      "content": {
+        "type": "TOKEN",
+        "content": {
+          "type": "PATTERN",
+          "value": "(?i)rolecenter"
+        }
+      },
+      "named": false,
+      "value": "rolecenter"
+    },
+    "prompting_keyword": {
+      "type": "ALIAS",
+      "content": {
+        "type": "TOKEN",
+        "content": {
+          "type": "PATTERN",
+          "value": "(?i)prompting"
+        }
+      },
+      "named": false,
+      "value": "prompting"
+    },
+    "prompt_keyword": {
+      "type": "ALIAS",
+      "content": {
+        "type": "TOKEN",
+        "content": {
+          "type": "PATTERN",
+          "value": "(?i)prompt"
+        }
+      },
+      "named": false,
+      "value": "prompt"
+    },
+    "promptoptions_keyword": {
+      "type": "ALIAS",
+      "content": {
+        "type": "TOKEN",
+        "content": {
+          "type": "PATTERN",
+          "value": "(?i)promptoptions"
+        }
+      },
+      "named": false,
+      "value": "promptoptions"
+    },
+    "systemactions_keyword": {
+      "type": "ALIAS",
+      "content": {
+        "type": "TOKEN",
+        "content": {
+          "type": "PATTERN",
+          "value": "(?i)systemactions"
+        }
+      },
+      "named": false,
+      "value": "systemactions"
+    },
+    "reporting_keyword": {
+      "type": "ALIAS",
+      "content": {
+        "type": "TOKEN",
+        "content": {
+          "type": "PATTERN",
+          "value": "(?i)reporting"
+        }
+      },
+      "named": false,
+      "value": "reporting"
+    },
+    "navigation_keyword": {
+      "type": "ALIAS",
+      "content": {
+        "type": "TOKEN",
+        "content": {
+          "type": "PATTERN",
+          "value": "(?i)navigation"
+        }
+      },
+      "named": false,
+      "value": "navigation"
+    },
+    "creation_keyword": {
+      "type": "ALIAS",
+      "content": {
+        "type": "TOKEN",
+        "content": {
+          "type": "PATTERN",
+          "value": "(?i)creation"
+        }
+      },
+      "named": false,
+      "value": "creation"
+    },
+    "promoted_keyword": {
+      "type": "ALIAS",
+      "content": {
+        "type": "TOKEN",
+        "content": {
+          "type": "PATTERN",
+          "value": "(?i)promoted"
+        }
+      },
+      "named": false,
+      "value": "promoted"
+    },
+    "sections_keyword": {
+      "type": "ALIAS",
+      "content": {
+        "type": "TOKEN",
+        "content": {
+          "type": "PATTERN",
+          "value": "(?i)sections"
+        }
+      },
+      "named": false,
+      "value": "sections"
+    },
+    "embedding_keyword": {
+      "type": "ALIAS",
+      "content": {
+        "type": "TOKEN",
+        "content": {
+          "type": "PATTERN",
+          "value": "(?i)embedding"
+        }
+      },
+      "named": false,
+      "value": "embedding"
+    },
+    "promptguide_keyword": {
+      "type": "ALIAS",
+      "content": {
+        "type": "TOKEN",
+        "content": {
+          "type": "PATTERN",
+          "value": "(?i)promptguide"
+        }
+      },
+      "named": false,
+      "value": "promptguide"
+    },
+    "tableelement_keyword": {
+      "type": "ALIAS",
+      "content": {
+        "type": "TOKEN",
+        "content": {
+          "type": "PATTERN",
+          "value": "(?i)tableelement"
+        }
+      },
+      "named": false,
+      "value": "tableelement"
+    },
+    "fieldelement_keyword": {
+      "type": "ALIAS",
+      "content": {
+        "type": "TOKEN",
+        "content": {
+          "type": "PATTERN",
+          "value": "(?i)fieldelement"
+        }
+      },
+      "named": false,
+      "value": "fieldelement"
+    },
+    "textelement_keyword": {
+      "type": "ALIAS",
+      "content": {
+        "type": "TOKEN",
+        "content": {
+          "type": "PATTERN",
+          "value": "(?i)textelement"
+        }
+      },
+      "named": false,
+      "value": "textelement"
+    },
+    "fieldattribute_keyword": {
+      "type": "ALIAS",
+      "content": {
+        "type": "TOKEN",
+        "content": {
+          "type": "PATTERN",
+          "value": "(?i)fieldattribute"
+        }
+      },
+      "named": false,
+      "value": "fieldattribute"
+    },
+    "textattribute_keyword": {
+      "type": "ALIAS",
+      "content": {
+        "type": "TOKEN",
+        "content": {
+          "type": "PATTERN",
+          "value": "(?i)textattribute"
+        }
+      },
+      "named": false,
+      "value": "textattribute"
+    },
+    "public_keyword": {
+      "type": "ALIAS",
+      "content": {
+        "type": "TOKEN",
+        "content": {
+          "type": "PATTERN",
+          "value": "(?i)public"
+        }
+      },
+      "named": false,
+      "value": "public"
     },
     "_identifier_or_quoted": {
       "type": "CHOICE",

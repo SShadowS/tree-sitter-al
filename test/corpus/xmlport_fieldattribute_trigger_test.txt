@@ -39,13 +39,16 @@ xmlport 149031 "AIT Test Suite Import/Export"
         (schema_keyword)
         body: (schema_body
           (xmlport_element
+            element_type: (textelement_keyword)
             name: (identifier)
             body: (xmlport_body
               (xmlport_element
+                element_type: (tableelement_keyword)
                 name: (identifier)
                 source: (quoted_identifier)
                 body: (xmlport_body
                   (xmlport_attribute
+                    attribute_type: (fieldattribute_keyword)
                     name: (identifier)
                     source: (member_expression
                       object: (identifier)
@@ -126,13 +129,16 @@ xmlport 50000 "Test XMLPort"
         (schema_keyword)
         body: (schema_body
           (xmlport_element
+            element_type: (textelement_keyword)
             name: (identifier)
             body: (xmlport_body
               (xmlport_element
+                element_type: (tableelement_keyword)
                 name: (identifier)
                 source: (identifier)
                 body: (xmlport_body
                   (xmlport_attribute
+                    attribute_type: (fieldattribute_keyword)
                     name: (identifier)
                     source: (member_expression
                       object: (identifier)

@@ -47,9 +47,11 @@ xmlport 50100 "Test XMLPort"
         (schema_keyword)
         body: (schema_body
           (xmlport_element
+            element_type: (textelement_keyword)
             name: (identifier)
             body: (xmlport_body
               (xmlport_element
+                element_type: (textelement_keyword)
                 name: (identifier))))))
       (attribute_item
         attribute: (attribute_content
@@ -143,6 +145,7 @@ xmlport 50101 "Test XMLPort Multiple Events"
         (schema_keyword)
         body: (schema_body
           (xmlport_element
+            element_type: (textelement_keyword)
             name: (identifier))))
       (attribute_item
         attribute: (attribute_content
@@ -265,6 +268,7 @@ xmlport 50102 "Mixed Content XMLPort"
         (schema_keyword)
         body: (schema_body
           (xmlport_element
+            element_type: (textelement_keyword)
             name: (identifier)
             body: (xmlport_body
               (trigger_declaration

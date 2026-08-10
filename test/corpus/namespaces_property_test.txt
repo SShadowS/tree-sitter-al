@@ -46,6 +46,7 @@ xmlport 50000 "Test XMLPort"
         (schema_keyword)
         body: (schema_body
           (xmlport_element
+            element_type: (textelement_keyword)
             name: (identifier)))))))
 
 ==================
@@ -81,4 +82,5 @@ xmlport 50001 "Simple XMLPort"
         (schema_keyword)
         body: (schema_body
           (xmlport_element
+            element_type: (textelement_keyword)
             name: (identifier)))))))

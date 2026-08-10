@@ -1,0 +1,206 @@
+================================================================================
+(a) object_reference_type.object_type is populated for every alternative
+--
+Eight of the ten alternatives already routed through a named keyword rule; only
+`testpage` and `testrequestpage` were bare kw(), so `Page X` carried the field
+and `TestPage X` did not -- a 2-of-10 inconsistency inside one choice(). The
+field is what a consumer reads to learn WHICH object type this is, so on those
+two branches it read None. 16,140 + 1,300 sites in BC.History.
+================================================================================
+codeunit 50100 C
+{
+    var
+        a: Page "Cust Card";
+        b: TestPage "Cust Card";
+        c: TestRequestPage "Cust Card";
+        d: Codeunit "Some Codeunit";
+}
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (var_section
+        (var_keyword)
+        body: (var_body
+          (variable_declaration
+            name: (identifier)
+            type: (type_specification
+              (object_reference_type
+                object_type: (page_keyword)
+                reference: (quoted_identifier))))
+          (variable_declaration
+            name: (identifier)
+            type: (type_specification
+              (object_reference_type
+                object_type: (testpage_keyword)
+                reference: (quoted_identifier))))
+          (variable_declaration
+            name: (identifier)
+            type: (type_specification
+              (object_reference_type
+                object_type: (testrequestpage_keyword)
+                reference: (quoted_identifier))))
+          (variable_declaration
+            name: (identifier)
+            type: (type_specification
+              (object_reference_type
+                object_type: (codeunit_keyword)
+                reference: (quoted_identifier)))))))))
+
+================================================================================
+(b) area_section.type and action_area_section.type -- declared but absent
+--
+The misleading manifestation. Every keyword branch was a bare kw(), but both
+lists end with `$.identifier` as future-proofing, and that fallback kept the
+field alive in node-types.json with type ['identifier'] alone. A consumer
+reading the schema was told `type` exists, then got None for every real page,
+because no real page takes the fallback branch. Worse than a plain omission,
+and invisible to a static grammar-vs-node-types scan -- only the dynamic half
+of the query-coverage harness catches it. The fallback is deliberate and stays.
+================================================================================
+page 50100 P
+{
+    layout
+    {
+        area(content) { }
+        area(factboxes) { }
+    }
+    actions
+    {
+        area(processing) { }
+        area(promoted) { }
+        area(navigation) { }
+    }
+}
+--------------------------------------------------------------------------------
+
+(source_file
+  (page_declaration
+    (page_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (layout_section
+        (layout_keyword)
+        body: (layout_body
+          (area_section
+            (area_keyword)
+            type: (content_keyword))
+          (area_section
+            (area_keyword)
+            type: (factboxes_keyword))))
+      (actions_section
+        (actions_keyword)
+        body: (action_body
+          (action_area_section
+            (area_keyword)
+            type: (processing_keyword))
+          (action_area_section
+            (area_keyword)
+            type: (promoted_keyword))
+          (action_area_section
+            (area_keyword)
+            type: (navigation_keyword)))))))
+
+================================================================================
+(c) xmlport element_type and attribute_type -- the field vanished entirely
+--
+No `$.identifier` fallback on these two, so with every alternative a bare kw()
+the field never appeared in node-types.json at all: xmlport_element and
+xmlport_attribute exposed only ['body', 'name', 'source'].
+================================================================================
+xmlport 50100 X
+{
+    schema
+    {
+        textelement(Root)
+        {
+            tableelement(Cust; Customer)
+            {
+                fieldelement(No; Cust."No.") { }
+                fieldattribute(A; Cust."No.") { }
+                textattribute(B) { }
+            }
+        }
+    }
+}
+--------------------------------------------------------------------------------
+
+(source_file
+  (xmlport_declaration
+    (xmlport_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (schema_section
+        (schema_keyword)
+        body: (schema_body
+          (xmlport_element
+            element_type: (textelement_keyword)
+            name: (identifier)
+            body: (xmlport_body
+              (xmlport_element
+                element_type: (tableelement_keyword)
+                name: (identifier)
+                source: (identifier)
+                body: (xmlport_body
+                  (xmlport_element
+                    element_type: (fieldelement_keyword)
+                    name: (identifier)
+                    source: (member_expression
+                      object: (identifier)
+                      member: (quoted_identifier)))
+                  (xmlport_attribute
+                    attribute_type: (fieldattribute_keyword)
+                    name: (identifier)
+                    source: (member_expression
+                      object: (identifier)
+                      member: (quoted_identifier)))
+                  (xmlport_attribute
+                    attribute_type: (textattribute_keyword)
+                    name: (identifier)))))))))))
+
+================================================================================
+interface_declaration.access_value -- a sixth site the brief did not list
+--
+Same 2-of-N shape as object_reference_type: `$.internal_keyword` carried the
+field, the sibling `kw('public')` did not. Found by scanning grammar.js for
+every field() containing a bare kw() rather than trusting the site list.
+NOTE: alc 18.0.37.11445 REJECTS this header form with AL0104 ("'{' expected")
+-- interface access is written as a body property. The branch is therefore
+reachable only on input the compiler refuses, which makes it the lowest-value
+of the six; it is fixed for consistency, because leaving one instance of a
+defect class you are sweeping is how the class survives.
+================================================================================
+interface IPub Access = Public
+{
+    procedure P()
+}
+interface IInt Access = Internal
+{
+    procedure Q()
+}
+--------------------------------------------------------------------------------
+
+(source_file
+  (interface_declaration
+    (interface_keyword)
+    object_name: (identifier)
+    access_value: (public_keyword)
+    body: (interface_body
+      (interface_procedure
+        (procedure_keyword)
+        name: (identifier))))
+  (interface_declaration
+    (interface_keyword)
+    object_name: (identifier)
+    access_value: (internal_keyword)
+    body: (interface_body
+      (interface_procedure
+        (procedure_keyword)
+        name: (identifier)))))
+

@@ -279,6 +279,44 @@ public API — a change to node structure or field names is a **major** bump.
 
 ### Fixed
 
+- **Six fields that wrapped a bare `kw()` were silently empty; they now carry a
+  named keyword node.** `field('x', kw('word'))` declares a field over an
+  anonymous *pattern* token, and tree-sitter renders those as hidden `aux_sym_*`
+  symbols — the bytes are consumed and the field disappears. (An anonymous
+  *string* token such as `";"` is visible; a pattern one is not.) Routing each
+  alternative through a named `alias(kw('word'), 'word')` rule, the same shape as
+  the 82 existing `*_keyword` rules, is what makes the field reachable.
+  **29,770 node instances gained across 5,212 of 15,358 BC.History files, and
+  none lost.** Three distinct manifestations:
+  - **Field present but `None` on some branches.** `object_reference_type.object_type`
+    already routed eight of its ten alternatives through named rules; only
+    `testpage` and `testrequestpage` were bare, so `Page X` carried the field and
+    `TestPage X` did not. 17,440 sites. `interface_declaration.access_value` had
+    the same 2-of-3 shape (`internal_keyword` worked, `kw('public')` did not).
+  - **Field DECLARED but absent on every real instance — the misleading case.**
+    `area_section.type` and `action_area_section.type` end their alternative lists
+    with `$.identifier` as future-proofing. That fallback kept the field alive in
+    `node-types.json` with type `['identifier']` alone, so a consumer reading the
+    schema was told the field exists and then got `None` for `area(content)` and
+    every other real page, because no real page takes the fallback branch. The
+    schema was *wrong*, not merely incomplete. Both now declare all their keyword
+    types; the `$.identifier` fallbacks are deliberate and stay.
+  - **Field absent entirely.** `xmlport_element.element_type` and
+    `xmlport_attribute.attribute_type` have no fallback, so with every alternative
+    bare the field never appeared in `node-types.json` at all — both types exposed
+    only `['body', 'name', 'source']`.
+  - 23 new `*_keyword` rules (82 → 105). `processing`, `prompting` and
+    `systemactions` each appear in two of the sites and share one rule.
+    Deliberately **not** `kwCases()`: that rule governs narrowing a keyword *from*
+    an explicit spelling whitelist, whereas these alternatives were already bare
+    `kw()` and already case-insensitive, so the alias changes visibility only and
+    cannot claim a spelling that was not already being claimed.
+  - **312 corpus fixtures across 149 files had been written against the trees
+    where the keyword was invisible** and were updated. The update is provably
+    inert beyond this change: 445 lines added, **0 removed**, and every added line
+    is a `*_keyword` node.
+  - Cost: `STATE_COUNT` 14,036 → 14,059 (+0.2%).
+
 - **A `begin`/`end` pair separated from its block by a `#if` boundary is no longer
   lost.** Three shapes, all silent — zero ERROR nodes, stable tree hash, corpus
   green, `parse-al-parallel.sh` reporting 100%. In each, `begin` fell back to a
@@ -371,7 +409,8 @@ public API — a change to node structure or field names is a **major** bump.
   split `end;` and its `#else` had been dropping the token the same way a comment
   once did. `is_extra_space()` now enumerates all seven single-character extras
   explicitly (` `, `	`, `
-`, ``, ``, ``, U+FEFF): the first version of
+`, `
+`, ``, ``, U+FEFF): the first version of
   that comment claimed to cover "the single-character members" while listing six
   of the seven, and an adjective is not a specification. The bound is exactly
   those seven — U+0085, U+00A0, U+1680, U+2000, U+2028, U+2029, U+202F, U+205F

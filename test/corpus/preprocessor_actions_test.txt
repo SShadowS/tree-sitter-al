@@ -118,6 +118,7 @@ page 50001 MyPage
               condition: (identifier))
             (action_area_section
               (area_keyword)
+              type: (processing_keyword)
               body: (action_body
                 (action_declaration
                   name: (identifier)
@@ -128,6 +129,7 @@ page 50001 MyPage
             (preproc_else)
             (action_area_section
               (area_keyword)
+              type: (processing_keyword)
               body: (action_body
                 (action_declaration
                   name: (identifier)
@@ -187,6 +189,7 @@ pageextension 50002 ComplexActions extends "Item List"
         body: (action_body
           (action_area_section
             (area_keyword)
+            type: (navigation_keyword)
             body: (action_body
               (preproc_conditional_actions
                 (preproc_if
@@ -266,6 +269,7 @@ page 50003 MixedCase
                 (identifier)))
             (action_area_section
               (area_keyword)
+              type: (creation_keyword)
               body: (action_body
                 (action_declaration
                   name: (identifier)

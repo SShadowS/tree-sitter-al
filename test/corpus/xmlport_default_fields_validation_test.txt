@@ -46,18 +46,22 @@ xmlport 50000 "Test XMLPort"
         (schema_keyword)
         body: (schema_body
           (xmlport_element
+            element_type: (textelement_keyword)
             name: (identifier)
             body: (xmlport_body
               (xmlport_element
+                element_type: (tableelement_keyword)
                 name: (identifier)
                 source: (identifier)
                 body: (xmlport_body
                   (xmlport_element
+                    element_type: (fieldelement_keyword)
                     name: (identifier)
                     source: (member_expression
                       object: (identifier)
                       member: (quoted_identifier)))
                   (xmlport_element
+                    element_type: (fieldelement_keyword)
                     name: (identifier)
                     source: (member_expression
                       object: (identifier)
@@ -92,6 +96,7 @@ xmlport 50001 "Test XMLPort True"
         (schema_keyword)
         body: (schema_body
           (xmlport_element
+            element_type: (textelement_keyword)
             name: (identifier)))))))
 
 ================================================================================
@@ -159,9 +164,11 @@ xmlport 149000 "BCPT Log Entries"
         (schema_keyword)
         body: (schema_body
           (xmlport_element
+            element_type: (textelement_keyword)
             name: (identifier)
             body: (xmlport_body
               (xmlport_element
+                element_type: (tableelement_keyword)
                 name: (identifier)
                 source: (quoted_identifier)
                 body: (xmlport_body
@@ -172,11 +179,13 @@ xmlport 149000 "BCPT Log Entries"
                       (quoted_identifier)
                       (quoted_identifier)))
                   (xmlport_element
+                    element_type: (fieldelement_keyword)
                     name: (identifier)
                     source: (member_expression
                       object: (identifier)
                       member: (quoted_identifier)))
                   (xmlport_element
+                    element_type: (fieldelement_keyword)
                     name: (identifier)
                     source: (member_expression
                       object: (identifier)

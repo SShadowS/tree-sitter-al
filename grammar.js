@@ -461,7 +461,7 @@ module.exports = grammar({
         '=',
         field('access_value', choice(
           $.internal_keyword,
-          kw('public'),
+          $.public_keyword,
           $.identifier
         ))
       )),
@@ -1379,8 +1379,8 @@ module.exports = grammar({
         $.xmlport_keyword,
         $.enum_keyword,
         $.interface_keyword,
-        kw('testpage'),
-        kw('testrequestpage'),
+        $.testpage_keyword,
+        $.testrequestpage_keyword,
         $.controladdin_keyword,
       )),
       $._namespaced_ref_reference
@@ -1617,14 +1617,14 @@ module.exports = grammar({
       $.area_keyword,
       '(',
       field('type', choice(
-        kw('content'),
-        kw('factboxes'),
-        kw('processing'),
-        kw('rolecenter'),
-        kw('prompting'),
-        kw('prompt'),
-        kw('promptoptions'),
-        kw('systemactions'),
+        $.content_keyword,
+        $.factboxes_keyword,
+        $.processing_keyword,
+        $.rolecenter_keyword,
+        $.prompting_keyword,
+        $.prompt_keyword,
+        $.promptoptions_keyword,
+        $.systemactions_keyword,
         $.identifier,  // Fallback for future area types
       )),
       ')',
@@ -1975,16 +1975,16 @@ module.exports = grammar({
       $.area_keyword,
       '(',
       field('type', choice(
-        kw('processing'),
-        kw('reporting'),
-        kw('navigation'),
-        kw('creation'),
-        kw('promoted'),
-        kw('systemactions'),
-        kw('sections'),
-        kw('embedding'),
-        kw('promptguide'),
-        kw('prompting'),
+        $.processing_keyword,
+        $.reporting_keyword,
+        $.navigation_keyword,
+        $.creation_keyword,
+        $.promoted_keyword,
+        $.systemactions_keyword,
+        $.sections_keyword,
+        $.embedding_keyword,
+        $.promptguide_keyword,
+        $.prompting_keyword,
         $.identifier,  // Fallback
       )),
       ')',
@@ -2439,9 +2439,9 @@ module.exports = grammar({
     // tableelement/fieldelement/textelement(Name; Source) { ... }
     xmlport_element: $ => seq(
       field('element_type', choice(
-        kw('tableelement'),
-        kw('fieldelement'),
-        kw('textelement'),
+        $.tableelement_keyword,
+        $.fieldelement_keyword,
+        $.textelement_keyword,
       )),
       '(',
       field('name', $._identifier_or_quoted),
@@ -2474,8 +2474,8 @@ module.exports = grammar({
     // fieldattribute/textattribute(Name; Source) { ... }
     xmlport_attribute: $ => seq(
       field('attribute_type', choice(
-        kw('fieldattribute'),
-        kw('textattribute'),
+        $.fieldattribute_keyword,
+        $.textattribute_keyword,
       )),
       '(',
       field('name', $._identifier_or_quoted),
@@ -4236,6 +4236,45 @@ module.exports = grammar({
     analysisviews_keyword: $ => alias(kw('analysisviews'), 'analysisviews'),
     analysisview_keyword: $ => alias(kw('analysisview'), 'analysisview'),
     view_keyword: $ => alias(kw('view'), 'view'),
+
+    // Section/element-type keywords, added in 4.0.0. Each of these sat inside a
+    // field() as a bare kw(), which is a token(PATTERN) and therefore an
+    // invisible aux_sym_* — the bytes were consumed and the FIELD silently
+    // vanished. Routing them through a named rule (the same alias(kw(),'') shape
+    // as the 82 rules above) is what makes object_type / type / element_type /
+    // attribute_type / access_value reachable at all.
+    //
+    // These are NOT kwCases() candidates even though several are CamelCase. That
+    // rule governs narrowing a keyword FROM an explicit spelling whitelist; these
+    // alternatives were already bare kw() and already case-insensitive, so the
+    // alias changes visibility only, never what is matched. It cannot steal an
+    // identifier that was not already being stolen.
+    //
+    // processing, prompting and systemactions each appear in two of the sites
+    // below and share ONE rule here.
+    testpage_keyword: $ => alias(kw('testpage'), 'testpage'),
+    testrequestpage_keyword: $ => alias(kw('testrequestpage'), 'testrequestpage'),
+    content_keyword: $ => alias(kw('content'), 'content'),
+    factboxes_keyword: $ => alias(kw('factboxes'), 'factboxes'),
+    processing_keyword: $ => alias(kw('processing'), 'processing'),
+    rolecenter_keyword: $ => alias(kw('rolecenter'), 'rolecenter'),
+    prompting_keyword: $ => alias(kw('prompting'), 'prompting'),
+    prompt_keyword: $ => alias(kw('prompt'), 'prompt'),
+    promptoptions_keyword: $ => alias(kw('promptoptions'), 'promptoptions'),
+    systemactions_keyword: $ => alias(kw('systemactions'), 'systemactions'),
+    reporting_keyword: $ => alias(kw('reporting'), 'reporting'),
+    navigation_keyword: $ => alias(kw('navigation'), 'navigation'),
+    creation_keyword: $ => alias(kw('creation'), 'creation'),
+    promoted_keyword: $ => alias(kw('promoted'), 'promoted'),
+    sections_keyword: $ => alias(kw('sections'), 'sections'),
+    embedding_keyword: $ => alias(kw('embedding'), 'embedding'),
+    promptguide_keyword: $ => alias(kw('promptguide'), 'promptguide'),
+    tableelement_keyword: $ => alias(kw('tableelement'), 'tableelement'),
+    fieldelement_keyword: $ => alias(kw('fieldelement'), 'fieldelement'),
+    textelement_keyword: $ => alias(kw('textelement'), 'textelement'),
+    fieldattribute_keyword: $ => alias(kw('fieldattribute'), 'fieldattribute'),
+    textattribute_keyword: $ => alias(kw('textattribute'), 'textattribute'),
+    public_keyword: $ => alias(kw('public'), 'public'),
 
     // =====================================================================
     // Shared rules

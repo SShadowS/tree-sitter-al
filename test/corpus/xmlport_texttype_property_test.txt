@@ -29,9 +29,11 @@ xmlport 1501 "Test XMLPort"
         (schema_keyword)
         (schema_body
           (xmlport_element
+            (textelement_keyword)
             (identifier)
             (xmlport_body
               (xmlport_attribute
+                (textattribute_keyword)
                 (identifier)
                 (declaration_body
                   (property
@@ -71,9 +73,11 @@ xmlport 50100 "Simple XMLPort"
         (schema_keyword)
         (schema_body
           (xmlport_element
+            (textelement_keyword)
             (identifier)
             (xmlport_body
               (xmlport_attribute
+                (textattribute_keyword)
                 (identifier)
                 (declaration_body
                   (property
@@ -116,13 +120,16 @@ xmlport 50101 "Complex XMLPort"
         (schema_keyword)
         (schema_body
           (xmlport_element
+            (textelement_keyword)
             (identifier)
             (xmlport_body
               (xmlport_element
+                (tableelement_keyword)
                 (identifier)
                 (identifier)
                 (xmlport_body
                   (xmlport_attribute
+                    (textattribute_keyword)
                     (identifier)
                     (declaration_body
                       (property

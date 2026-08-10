@@ -50,18 +50,22 @@ xmlport 50100 "Export Item Data"
         (schema_keyword)
         body: (schema_body
           (xmlport_element
+            element_type: (textelement_keyword)
             name: (identifier)
             body: (xmlport_body
               (xmlport_element
+                element_type: (tableelement_keyword)
                 name: (identifier)
                 source: (identifier)
                 body: (xmlport_body
                   (xmlport_element
+                    element_type: (fieldelement_keyword)
                     name: (identifier)
                     source: (member_expression
                       object: (identifier)
                       member: (quoted_identifier)))
                   (xmlport_element
+                    element_type: (fieldelement_keyword)
                     name: (identifier)
                     source: (member_expression
                       object: (identifier)
@@ -72,6 +76,7 @@ xmlport 50100 "Export Item Data"
                       condition: (preproc_not_expression
                         (identifier)))
                     (xmlport_element
+                      element_type: (fieldelement_keyword)
                       name: (identifier)
                       source: (member_expression
                         object: (identifier)
@@ -79,6 +84,7 @@ xmlport 50100 "Export Item Data"
                     (preproc_endif
                       (preproc_close)))
                   (xmlport_element
+                    element_type: (fieldelement_keyword)
                     name: (identifier)
                     source: (member_expression
                       object: (identifier)
@@ -139,6 +145,7 @@ xmlport 50101 "Import Data"
         (schema_keyword)
         body: (schema_body
           (xmlport_element
+            element_type: (textelement_keyword)
             name: (identifier)
             body: (xmlport_body
               (preproc_conditional_xmlport
@@ -146,30 +153,36 @@ xmlport 50101 "Import Data"
                   (preproc_open)
                   condition: (identifier))
                 (xmlport_element
+                  element_type: (tableelement_keyword)
                   name: (identifier)
                   source: (identifier)
                   body: (xmlport_body
                     (xmlport_element
+                      element_type: (fieldelement_keyword)
                       name: (identifier)
                       source: (member_expression
                         object: (identifier)
                         member: (quoted_identifier)))
                     (xmlport_element
+                      element_type: (fieldelement_keyword)
                       name: (identifier)
                       source: (member_expression
                         object: (identifier)
                         member: (identifier)))))
                 (preproc_else)
                 (xmlport_element
+                  element_type: (tableelement_keyword)
                   name: (identifier)
                   source: (identifier)
                   body: (xmlport_body
                     (xmlport_element
+                      element_type: (fieldelement_keyword)
                       name: (identifier)
                       source: (member_expression
                         object: (identifier)
                         member: (quoted_identifier)))
                     (xmlport_element
+                      element_type: (fieldelement_keyword)
                       name: (identifier)
                       source: (member_expression
                         object: (identifier)
@@ -177,6 +190,7 @@ xmlport 50101 "Import Data"
                 (preproc_endif
                   (preproc_close)))
               (xmlport_element
+                element_type: (tableelement_keyword)
                 name: (identifier)
                 source: (identifier)
                 body: (xmlport_body
@@ -186,6 +200,7 @@ xmlport 50101 "Import Data"
                       condition: (preproc_not_expression
                         (identifier)))
                     (xmlport_element
+                      element_type: (fieldelement_keyword)
                       name: (identifier)
                       source: (member_expression
                         object: (identifier)
@@ -205,6 +220,7 @@ xmlport 50101 "Import Data"
                     (preproc_endif
                       (preproc_close)))
                   (xmlport_element
+                    element_type: (fieldelement_keyword)
                     name: (identifier)
                     source: (member_expression
                       object: (identifier)
@@ -253,9 +269,11 @@ xmlport 50102 "Complex Export"
         (schema_keyword)
         body: (schema_body
           (xmlport_element
+            element_type: (textelement_keyword)
             name: (identifier)
             body: (xmlport_body
               (xmlport_element
+                element_type: (tableelement_keyword)
                 name: (identifier)
                 source: (quoted_identifier)
                 body: (xmlport_body
@@ -265,6 +283,7 @@ xmlport 50102 "Complex Export"
                       condition: (preproc_not_expression
                         (identifier)))
                     (xmlport_element
+                      element_type: (fieldelement_keyword)
                       name: (identifier)
                       source: (member_expression
                         object: (identifier)
@@ -286,6 +305,7 @@ xmlport 50102 "Complex Export"
                     (preproc_endif
                       (preproc_close)))
                   (xmlport_element
+                    element_type: (fieldelement_keyword)
                     name: (identifier)
                     source: (member_expression
                       object: (identifier)

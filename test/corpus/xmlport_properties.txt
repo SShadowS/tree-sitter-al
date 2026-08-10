@@ -82,6 +82,7 @@ xmlport 50000 "Test XMLPort"
         (schema_keyword)
         body: (schema_body
           (xmlport_element
+            element_type: (textelement_keyword)
             name: (identifier)
             body: (xmlport_body
               (property
@@ -97,6 +98,7 @@ xmlport 50000 "Test XMLPort"
                 name: (property_name)
                 value: (string_literal))
               (xmlport_element
+                element_type: (tableelement_keyword)
                 name: (identifier)
                 source: (identifier)
                 body: (xmlport_body

@@ -37,9 +37,11 @@ xmlport 50000 "Test Import"
         (schema_keyword)
         body: (schema_body
           (xmlport_element
+            element_type: (textelement_keyword)
             name: (identifier)
             body: (xmlport_body
               (xmlport_element
+                element_type: (tableelement_keyword)
                 name: (identifier)
                 source: (quoted_identifier)
                 body: (xmlport_body
@@ -118,9 +120,11 @@ xmlport 50001 "Customer Import"
         (schema_keyword)
         body: (schema_body
           (xmlport_element
+            element_type: (textelement_keyword)
             name: (identifier)
             body: (xmlport_body
               (xmlport_element
+                element_type: (tableelement_keyword)
                 name: (identifier)
                 source: (identifier)
                 body: (xmlport_body
@@ -141,6 +145,7 @@ xmlport 50001 "Customer Import"
                           arguments: (argument_list)))
                       (end_keyword)))
                   (xmlport_attribute
+                    attribute_type: (fieldattribute_keyword)
                     name: (identifier)
                     source: (member_expression
                       object: (identifier)

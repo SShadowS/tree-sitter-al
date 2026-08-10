@@ -232,6 +232,7 @@ page 50001 "Test Page"
         body: (layout_body
           (area_section
             (area_keyword)
+            type: (content_keyword)
             body: (layout_body
               (group_section
                 (group_keyword)
@@ -345,13 +346,16 @@ xmlport 50003 "Test XMLPort"
         (schema_keyword)
         body: (schema_body
           (xmlport_element
+            element_type: (textelement_keyword)
             name: (identifier)
             body: (xmlport_body
               (xmlport_element
+                element_type: (tableelement_keyword)
                 name: (identifier)
                 source: (identifier)
                 body: (xmlport_body
                   (xmlport_element
+                    element_type: (fieldelement_keyword)
                     name: (identifier)
                     source: (quoted_identifier)))))))))))
 

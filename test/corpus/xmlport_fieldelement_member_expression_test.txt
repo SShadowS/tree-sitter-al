@@ -43,23 +43,29 @@ xmlport 50100 "SEPA Test"
         (schema_keyword)
         body: (schema_body
           (xmlport_element
+            element_type: (textelement_keyword)
             name: (identifier)
             body: (xmlport_body
               (xmlport_element
+                element_type: (textelement_keyword)
                 name: (identifier)
                 body: (xmlport_body
                   (xmlport_element
+                    element_type: (textelement_keyword)
                     name: (identifier)
                     body: (xmlport_body
                       (xmlport_element
+                        element_type: (fieldelement_keyword)
                         name: (identifier)
                         source: (member_expression
                           object: (identifier)
                           member: (identifier)))
                       (xmlport_element
+                        element_type: (textelement_keyword)
                         name: (identifier)
                         body: (xmlport_body
                           (xmlport_element
+                            element_type: (fieldelement_keyword)
                             name: (identifier)
                             source: (member_expression
                               object: (identifier)
@@ -122,24 +128,30 @@ xmlport 1227 "SEPA CT-pain.001.001.03"
         (schema_keyword)
         body: (schema_body
           (xmlport_element
+            element_type: (tableelement_keyword)
             name: (quoted_identifier)
             source: (quoted_identifier)
             body: (xmlport_body
               (xmlport_element
+                element_type: (textelement_keyword)
                 name: (identifier)
                 body: (xmlport_body
                   (xmlport_element
+                    element_type: (textelement_keyword)
                     name: (identifier)
                     body: (xmlport_body
                       (xmlport_element
+                        element_type: (fieldelement_keyword)
                         name: (identifier)
                         source: (member_expression
                           object: (quoted_identifier)
                           member: (quoted_identifier)))
                       (xmlport_element
+                        element_type: (textelement_keyword)
                         name: (identifier)
                         body: (xmlport_body
                           (xmlport_element
+                            element_type: (fieldelement_keyword)
                             name: (identifier)
                             source: (member_expression
                               object: (identifier)

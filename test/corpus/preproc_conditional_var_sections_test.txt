@@ -141,6 +141,7 @@ page 123 "Test Page"
         body: (layout_body
           (area_section
             (area_keyword)
+            type: (content_keyword)
             body: (layout_body
               (page_field
                 name: (quoted_identifier)
@@ -323,4 +324,5 @@ xmlport 50001 "Test XMLPort"
         (schema_keyword)
         body: (schema_body
           (xmlport_element
+            element_type: (textelement_keyword)
             name: (identifier)))))))

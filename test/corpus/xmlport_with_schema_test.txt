@@ -44,9 +44,11 @@ xmlport 12 "IC Outbox Imp/Exp"
         (schema_keyword)
         body: (schema_body
           (xmlport_element
+            element_type: (textelement_keyword)
             name: (identifier)
             body: (xmlport_body
               (xmlport_element
+                element_type: (tableelement_keyword)
                 name: (identifier)
                 source: (quoted_identifier)
                 body: (xmlport_body

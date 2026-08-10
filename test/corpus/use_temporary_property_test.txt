@@ -119,6 +119,7 @@ xmlport 50100 "Test XMLPort"
         (schema_keyword)
         body: (schema_body
           (xmlport_element
+            element_type: (tableelement_keyword)
             name: (quoted_identifier)
             source: (quoted_identifier)
             body: (xmlport_body
@@ -129,6 +130,7 @@ xmlport 50100 "Test XMLPort"
                 name: (property_name)
                 value: (boolean))
               (xmlport_element
+                element_type: (fieldelement_keyword)
                 name: (identifier)
                 source: (member_expression
                   object: (quoted_identifier)

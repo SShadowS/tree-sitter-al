@@ -48,10 +48,12 @@ xmlport 1405 "Import Export Workflow"
         (schema_keyword)
         body: (schema_body
           (xmlport_element
+            element_type: (tableelement_keyword)
             name: (identifier)
             source: (identifier)
             body: (xmlport_body
               (xmlport_element
+                element_type: (tableelement_keyword)
                 name: (quoted_identifier)
                 source: (quoted_identifier)
                 body: (xmlport_body
@@ -68,11 +70,13 @@ xmlport 1405 "Import Export Workflow"
                     name: (property_name)
                     value: (identifier))
                   (xmlport_attribute
+                    attribute_type: (fieldattribute_keyword)
                     name: (identifier)
                     source: (member_expression
                       object: (quoted_identifier)
                       member: (identifier)))
                   (xmlport_element
+                    element_type: (tableelement_keyword)
                     name: (quoted_identifier)
                     source: (quoted_identifier)
                     body: (xmlport_body
@@ -92,11 +96,13 @@ xmlport 1405 "Import Export Workflow"
                         name: (property_name)
                         value: (identifier))
                       (xmlport_attribute
+                        attribute_type: (fieldattribute_keyword)
                         name: (identifier)
                         source: (member_expression
                           object: (quoted_identifier)
                           member: (identifier)))
                       (xmlport_attribute
+                        attribute_type: (fieldattribute_keyword)
                         name: (identifier)
                         source: (member_expression
                           object: (quoted_identifier)
@@ -135,10 +141,12 @@ xmlport 50000 "Test LinkTable Cases"
         (schema_keyword)
         body: (schema_body
           (xmlport_element
+            element_type: (tableelement_keyword)
             name: (identifier)
             source: (identifier)
             body: (xmlport_body
               (xmlport_element
+                element_type: (tableelement_keyword)
                 name: (quoted_identifier)
                 source: (quoted_identifier)
                 body: (xmlport_body

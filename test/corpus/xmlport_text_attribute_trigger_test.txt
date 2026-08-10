@@ -45,6 +45,7 @@ xmlport 1 "Consolidation Import/Export"
         (schema_keyword)
         body: (schema_body
           (xmlport_element
+            element_type: (textelement_keyword)
             name: (identifier)
             body: (xmlport_body
               (property
@@ -54,6 +55,7 @@ xmlport 1 "Consolidation Import/Export"
                 name: (property_name)
                 value: (identifier))
               (xmlport_attribute
+                attribute_type: (textattribute_keyword)
                 name: (identifier)
                 body: (declaration_body
                   (trigger_declaration
@@ -64,6 +66,7 @@ xmlport 1 "Consolidation Import/Export"
                       (comment)
                       (end_keyword)))))
               (xmlport_attribute
+                attribute_type: (textattribute_keyword)
                 name: (identifier)))))))))
 
 ================================================================================
@@ -106,9 +109,11 @@ xmlport 50100 "Test XMLPort"
         (schema_keyword)
         body: (schema_body
           (xmlport_element
+            element_type: (textelement_keyword)
             name: (identifier)
             body: (xmlport_body
               (xmlport_attribute
+                attribute_type: (textattribute_keyword)
                 name: (identifier)
                 body: (declaration_body
                   (property

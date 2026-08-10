@@ -18,7 +18,47 @@
         "required": true,
         "types": [
           {
+            "type": "creation_keyword",
+            "named": true
+          },
+          {
+            "type": "embedding_keyword",
+            "named": true
+          },
+          {
             "type": "identifier",
+            "named": true
+          },
+          {
+            "type": "navigation_keyword",
+            "named": true
+          },
+          {
+            "type": "processing_keyword",
+            "named": true
+          },
+          {
+            "type": "promoted_keyword",
+            "named": true
+          },
+          {
+            "type": "promptguide_keyword",
+            "named": true
+          },
+          {
+            "type": "prompting_keyword",
+            "named": true
+          },
+          {
+            "type": "reporting_keyword",
+            "named": true
+          },
+          {
+            "type": "sections_keyword",
+            "named": true
+          },
+          {
+            "type": "systemactions_keyword",
             "named": true
           }
         ]
@@ -1451,7 +1491,39 @@
         "required": true,
         "types": [
           {
+            "type": "content_keyword",
+            "named": true
+          },
+          {
+            "type": "factboxes_keyword",
+            "named": true
+          },
+          {
             "type": "identifier",
+            "named": true
+          },
+          {
+            "type": "processing_keyword",
+            "named": true
+          },
+          {
+            "type": "prompt_keyword",
+            "named": true
+          },
+          {
+            "type": "prompting_keyword",
+            "named": true
+          },
+          {
+            "type": "promptoptions_keyword",
+            "named": true
+          },
+          {
+            "type": "rolecenter_keyword",
+            "named": true
+          },
+          {
+            "type": "systemactions_keyword",
             "named": true
           }
         ]
@@ -3715,6 +3787,11 @@
     "fields": {}
   },
   {
+    "type": "content_keyword",
+    "named": true,
+    "fields": {}
+  },
+  {
     "type": "continue_keyword",
     "named": true,
     "fields": {}
@@ -3899,6 +3976,11 @@
   },
   {
     "type": "controladdin_keyword",
+    "named": true,
+    "fields": {}
+  },
+  {
+    "type": "creation_keyword",
     "named": true,
     "fields": {}
   },
@@ -4551,6 +4633,11 @@
     }
   },
   {
+    "type": "embedding_keyword",
+    "named": true,
+    "fields": {}
+  },
+  {
     "type": "empty_statement",
     "named": true,
     "fields": {}
@@ -4974,6 +5061,11 @@
     "fields": {}
   },
   {
+    "type": "factboxes_keyword",
+    "named": true,
+    "fields": {}
+  },
+  {
     "type": "field_declaration",
     "named": true,
     "fields": {
@@ -5051,6 +5143,16 @@
         }
       ]
     }
+  },
+  {
+    "type": "fieldattribute_keyword",
+    "named": true,
+    "fields": {}
+  },
+  {
+    "type": "fieldelement_keyword",
+    "named": true,
+    "fields": {}
   },
   {
     "type": "fieldgroup_declaration",
@@ -7435,6 +7537,10 @@
           {
             "type": "internal_keyword",
             "named": true
+          },
+          {
+            "type": "public_keyword",
+            "named": true
           }
         ]
       },
@@ -9678,6 +9784,11 @@
     }
   },
   {
+    "type": "navigation_keyword",
+    "named": true,
+    "fields": {}
+  },
+  {
     "type": "object_reference_type",
     "named": true,
     "fields": {
@@ -9711,6 +9822,14 @@
           },
           {
             "type": "report_keyword",
+            "named": true
+          },
+          {
+            "type": "testpage_keyword",
+            "named": true
+          },
+          {
+            "type": "testrequestpage_keyword",
             "named": true
           },
           {
@@ -19444,6 +19563,11 @@
     }
   },
   {
+    "type": "processing_keyword",
+    "named": true,
+    "fields": {}
+  },
+  {
     "type": "profile_declaration",
     "named": true,
     "fields": {
@@ -19548,6 +19672,31 @@
   },
   {
     "type": "profileextension_keyword",
+    "named": true,
+    "fields": {}
+  },
+  {
+    "type": "promoted_keyword",
+    "named": true,
+    "fields": {}
+  },
+  {
+    "type": "prompt_keyword",
+    "named": true,
+    "fields": {}
+  },
+  {
+    "type": "promptguide_keyword",
+    "named": true,
+    "fields": {}
+  },
+  {
+    "type": "prompting_keyword",
+    "named": true,
+    "fields": {}
+  },
+  {
+    "type": "promptoptions_keyword",
     "named": true,
     "fields": {}
   },
@@ -19754,6 +19903,11 @@
   },
   {
     "type": "protected_keyword",
+    "named": true,
+    "fields": {}
+  },
+  {
+    "type": "public_keyword",
     "named": true,
     "fields": {}
   },
@@ -21231,6 +21385,11 @@
     "fields": {}
   },
   {
+    "type": "reporting_keyword",
+    "named": true,
+    "fields": {}
+  },
+  {
     "type": "requestpage_keyword",
     "named": true,
     "fields": {}
@@ -21260,6 +21419,11 @@
         }
       ]
     }
+  },
+  {
+    "type": "rolecenter_keyword",
+    "named": true,
+    "fields": {}
   },
   {
     "type": "schema_body",
@@ -21306,6 +21470,11 @@
         }
       ]
     }
+  },
+  {
+    "type": "sections_keyword",
+    "named": true,
+    "fields": {}
   },
   {
     "type": "separator_action",
@@ -22167,6 +22336,11 @@
     }
   },
   {
+    "type": "systemactions_keyword",
+    "named": true,
+    "fields": {}
+  },
+  {
     "type": "systempart_keyword",
     "named": true,
     "fields": {}
@@ -22408,6 +22582,11 @@
         }
       ]
     }
+  },
+  {
+    "type": "tableelement_keyword",
+    "named": true,
+    "fields": {}
   },
   {
     "type": "tableextension_declaration",
@@ -22872,6 +23051,16 @@
     }
   },
   {
+    "type": "testpage_keyword",
+    "named": true,
+    "fields": {}
+  },
+  {
+    "type": "testrequestpage_keyword",
+    "named": true,
+    "fields": {}
+  },
+  {
     "type": "text_type",
     "named": true,
     "fields": {
@@ -22886,6 +23075,16 @@
         ]
       }
     }
+  },
+  {
+    "type": "textattribute_keyword",
+    "named": true,
+    "fields": {}
+  },
+  {
+    "type": "textelement_keyword",
+    "named": true,
+    "fields": {}
   },
   {
     "type": "then_keyword",
@@ -24520,6 +24719,20 @@
     "type": "xmlport_attribute",
     "named": true,
     "fields": {
+      "attribute_type": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "fieldattribute_keyword",
+            "named": true
+          },
+          {
+            "type": "textattribute_keyword",
+            "named": true
+          }
+        ]
+      },
       "body": {
         "multiple": false,
         "required": false,
@@ -24863,6 +25076,24 @@
           }
         ]
       },
+      "element_type": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "fieldelement_keyword",
+            "named": true
+          },
+          {
+            "type": "tableelement_keyword",
+            "named": true
+          },
+          {
+            "type": "textelement_keyword",
+            "named": true
+          }
+        ]
+      },
       "name": {
         "multiple": false,
         "required": true,
@@ -25160,11 +25391,19 @@
     "extra": true
   },
   {
+    "type": "content",
+    "named": false
+  },
+  {
     "type": "continue",
     "named": false
   },
   {
     "type": "controladdin",
+    "named": false
+  },
+  {
+    "type": "creation",
     "named": false
   },
   {
@@ -25224,6 +25463,10 @@
     "named": false
   },
   {
+    "type": "embedding",
+    "named": false
+  },
+  {
     "type": "end_keyword",
     "named": true
   },
@@ -25249,6 +25492,18 @@
   },
   {
     "type": "extends",
+    "named": false
+  },
+  {
+    "type": "factboxes",
+    "named": false
+  },
+  {
+    "type": "fieldattribute",
+    "named": false
+  },
+  {
+    "type": "fieldelement",
     "named": false
   },
   {
@@ -25345,6 +25600,10 @@
     "named": false
   },
   {
+    "type": "navigation",
+    "named": false
+  },
+  {
     "type": "not",
     "named": false
   },
@@ -25434,6 +25693,10 @@
     "named": false
   },
   {
+    "type": "processing",
+    "named": false
+  },
+  {
     "type": "profile",
     "named": false
   },
@@ -25442,11 +25705,35 @@
     "named": false
   },
   {
+    "type": "promoted",
+    "named": false
+  },
+  {
+    "type": "prompt",
+    "named": false
+  },
+  {
+    "type": "promptguide",
+    "named": false
+  },
+  {
+    "type": "prompting",
+    "named": false
+  },
+  {
+    "type": "promptoptions",
+    "named": false
+  },
+  {
     "type": "property_name",
     "named": true
   },
   {
     "type": "protected",
+    "named": false
+  },
+  {
+    "type": "public",
     "named": false
   },
   {
@@ -25478,7 +25765,15 @@
     "named": false
   },
   {
+    "type": "reporting",
+    "named": false
+  },
+  {
     "type": "requestpage",
+    "named": false
+  },
+  {
+    "type": "rolecenter",
     "named": false
   },
   {
@@ -25486,8 +25781,16 @@
     "named": false
   },
   {
+    "type": "sections",
+    "named": false
+  },
+  {
     "type": "string_literal",
     "named": true
+  },
+  {
+    "type": "systemactions",
+    "named": false
   },
   {
     "type": "systempart",
@@ -25498,11 +25801,31 @@
     "named": false
   },
   {
+    "type": "tableelement",
+    "named": false
+  },
+  {
     "type": "tableextension",
     "named": false
   },
   {
     "type": "temporary",
+    "named": false
+  },
+  {
+    "type": "testpage",
+    "named": false
+  },
+  {
+    "type": "testrequestpage",
+    "named": false
+  },
+  {
+    "type": "textattribute",
+    "named": false
+  },
+  {
+    "type": "textelement",
     "named": false
   },
   {

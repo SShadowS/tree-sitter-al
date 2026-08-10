@@ -35,13 +35,16 @@ xmlport 50200 "Test FieldValidate"
         (schema_keyword)
         body: (schema_body
           (xmlport_element
+            element_type: (textelement_keyword)
             name: (identifier)
             body: (xmlport_body
               (xmlport_element
+                element_type: (tableelement_keyword)
                 name: (identifier)
                 source: (identifier)
                 body: (xmlport_body
                   (xmlport_element
+                    element_type: (fieldelement_keyword)
                     name: (identifier)
                     source: (member_expression
                       object: (identifier)
@@ -51,6 +54,7 @@ xmlport 50200 "Test FieldValidate"
                         name: (property_name)
                         value: (identifier))))
                   (xmlport_element
+                    element_type: (fieldelement_keyword)
                     name: (identifier)
                     source: (member_expression
                       object: (identifier)
