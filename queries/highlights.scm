@@ -86,6 +86,11 @@
   (permissionsetextension_keyword)
   (entitlement_keyword)
   (pagecustomization_keyword)
+  ; TestPage / TestRequestPage sit in the same object_reference_type choice as
+  ; the object types above (`TestPage "Customer Card"`), so they belong here and
+  ; not with the section kinds.
+  (testpage_keyword)
+  (testrequestpage_keyword)
 ] @keyword.type
 
 ; =============================================================================
@@ -174,6 +179,33 @@
   (movelast_keyword)
   (moveafter_keyword)
   (movebefore_keyword)
+  ; Section, area and element kinds. These gained rules in 4.0.0 — which is what
+  ; made `area(Content)` and `textelement(Foo)` produce a node at all — but were
+  ; never added here, so the nodes existed and no shipped query reached them.
+  ; They are the whole remaining uncaptured-keyword population.
+  (content_keyword)
+  (factboxes_keyword)
+  (processing_keyword)
+  (rolecenter_keyword)
+  (navigation_keyword)
+  (creation_keyword)
+  (reporting_keyword)
+  (promoted_keyword)
+  (sections_keyword)
+  (embedding_keyword)
+  (systemactions_keyword)
+  (prompting_keyword)
+  (prompt_keyword)
+  (promptoptions_keyword)
+  (promptguide_keyword)
+  (analysisviews_keyword)
+  (analysisview_keyword)
+  ; XMLPort element and attribute kinds
+  (tableelement_keyword)
+  (textelement_keyword)
+  (fieldelement_keyword)
+  (textattribute_keyword)
+  (fieldattribute_keyword)
 ] @keyword.structure
 
 ; =============================================================================
@@ -184,6 +216,7 @@
   (internal_keyword)
   (protected_keyword)
   (temporary_keyword)
+  (public_keyword)
 ] @keyword.modifier
 
 ; Procedure modifier (access modifiers on procedures)
@@ -218,6 +251,38 @@
   "-"
   "*"
   "/"
+] @operator
+
+; Comparison and binding operators, as bare tokens.
+;
+; Bare rather than via the parent node, because that is what this file already
+; does for "+" "-" "*" "/" above — those are children of additive_expression and
+; multiplicative_expression and are captured directly. `(comparison_operator)
+; @operator` below is the odd one out: it captures the WRAPPER, and a wrapper
+; capture does not capture the anonymous token inside it. The two spans are
+; identical, so `a <> b` was already coloured — but a consumer writing
+; `"<>" @operator`, the obvious pattern, matched nothing.
+;
+; `=` is the one with real coverage to gain, and it is an operator in every AL
+; position, never structural punctuation the way ";" and "," are: it binds a
+; property to its value (`Caption = 'X'`), a filter field to its expression
+; (`where("No." = field("No."))`), a permission to its level (`tabledata X = R`),
+; a label to its text, and an interface to its implementation. Measured over
+; 3,000 corpus files, 107,958 of these sat in `property` alone and none of them
+; were reachable — only link_value's `=` had a pattern.
+;
+; "&&" and "||" are the preprocessor forms of and/or. They occur in no
+; BC.History file, but the word forms `and`/`or` are captured and leaving their
+; symbolic twins out would be an inconsistency waiting to surprise someone.
+[
+  "="
+  "<>"
+  ">"
+  "<"
+  ">="
+  "<="
+  "&&"
+  "||"
 ] @operator
 
 ; Comparison operators (named node wrapping =, <>, <, >, <=, >=)
@@ -804,9 +869,9 @@
     (quoted_identifier)
   ] @property)
 
-; The '=' joining target and source
-(link_value
-  "=" @operator)
+; (The '=' joining a link_value's target and source is covered by the general
+; "=" pattern in the operator block above, which subsumes the link_value-only
+; pattern that used to live here.)
 
 ; Dotted source `DataItem."Field"` — the dataitem name. The field itself is
 ; covered by the source-field rule below, which anchors to the last child.
