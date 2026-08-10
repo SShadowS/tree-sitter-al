@@ -265,6 +265,27 @@ else
     fi
 fi
 
+# Step 5d: Query-coverage regression gate
+#
+# Proves the CST is lossless over the source and that values stay reachable
+# through queries -- a token that was lexed and then dropped shows up here as
+# a gap-detector finding, not as a test failure or a parse error. Skipped,
+# not failed, when the baseline is absent: a fresh clone without BC.History
+# (the corpus the manifest was set-cover'd from) must still validate cleanly.
+# See tools/query_coverage/README.md.
+print_header "Step 5d: Query-Coverage Harness"
+if [ -f tools/query_coverage/baseline.json ]; then
+    if python -m tools.query_coverage.qc run; then
+        print_success "query-coverage: no regressions"
+    else
+        qc_status=$?
+        print_error "query-coverage failed (exit $qc_status) — see tools/query_coverage/reports/summary.md"
+        VALIDATION_FAILED=1
+    fi
+else
+    echo "Skipping: no baseline yet (run 'python -m tools.query_coverage.qc accept' to create one)"
+fi
+
 # Step 6: Run parsing test on AL files (optional, can be slow)
 print_header "Step 6: AL File Parsing Test (Optional)"
 if [ -f "parse-al-parallel.sh" ] && [ "$1" = "--full" ]; then

@@ -29,6 +29,11 @@ Run full parse before committing: `./parse-al-parallel.sh ./BC.History/ .`
 ./tools/tree-harness.sh snapshot ./BC.History .snapshots/bc   # baseline (~20s)
 ./tools/tree-harness.sh verify   ./BC.History .snapshots/bc   # verify (~11s, ~25s with a large delta)
 
+# Query-coverage harness — proves the CST is lossless and values are queryable
+python -m tools.query_coverage.qc run          # regression gate, exits 1 on a new cluster
+python -m tools.query_coverage.qc run --all    # full picture
+python -m tools.query_coverage.qc accept       # freeze the current state as the baseline
+
 # Standard development cycle
 tree-sitter generate         # Generate parser from grammar.js
 tree-sitter generate --report-states-for-rule -  # Rank rules by parser-state cost
