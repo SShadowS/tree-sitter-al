@@ -88,9 +88,25 @@ FIELD_INVARIANTS = [
     # broke the single-node body invariant the textobject queries rely on
     # (issue #19). Fixed in grammar.js's case_else_branch rule by wrapping
     # the repeat in $.statement_block, matching repeat_statement's shape.
+    #
+    # The type set narrowed from {code_block, statement_block} to
+    # {statement_block} when `code_block` became a statement (bare `begin … end;`
+    # support). `case_else_branch` used to carry its own `code_block` arm beside
+    # the `statement_block` one, so `else begin … end;` gave `body: code_block`
+    # while `else A; B;` gave `body: statement_block` -- ONE field, TWO shapes a
+    # consumer had to handle. Once `code_block` is reachable through
+    # `_statement_inner`, `statement_block` subsumes that arm and it is dead: it
+    # cannot be selected by static prec OR prec.dynamic, because it is
+    # unreachable rather than losing a tie. Verified by corpus edge census --
+    # 251 `case_else_branch.body -> code_block` edges became
+    # `-> statement_block`, and 910 of 912 edge kinds were untouched.
+    #
+    # This is the invariant TIGHTENING, not weakening: `multiple` is still False
+    # (which is what issue #19 actually depends on) and the field now has ONE
+    # type where it had two.
     inv('case_else_branch', 'body', False, set(), 'FIXED',
         'single-node body invariant for textobject queries (issue #19)',
-        types={'code_block', 'statement_block'}),
+        types={'statement_block'}),
 
     # -- Task 17: dotted references -----------------------------------------
     # All seven below fielded the shared hidden rule `_namespaced_or_simple_ref`

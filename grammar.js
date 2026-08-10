@@ -3412,10 +3412,6 @@ module.exports = grammar({
     // narrow rule keeps the fork inside preprocessor branches.
     _preproc_branch_statement: $ => choice(
       $._statement,
-      // The block's terminator is external now — see the note on code_block.
-      // prec.right settles the shift/reduce that optional trailing ';' creates,
-      // exactly as `_statement`'s own prec.right does for its terminator.
-      prec.right(seq($.code_block, optional(';'))),
     ),
 
     // Preprocessor conditionals in actions context
@@ -3532,6 +3528,7 @@ module.exports = grammar({
     // `_statement` so that body/branch positions can field the statement
     // WITHOUT the field spilling onto the ';' — see fieldedStatement().
     _statement_inner: $ => choice(
+          $.code_block,
           $.assignment_statement,
           $.asserterror_statement,
           $.if_statement,
@@ -3695,10 +3692,7 @@ module.exports = grammar({
       $.then_keyword,
       choice(
         seq(
-          choice(
-            field('then_branch', $.code_block),
-            field('then_branch', $._statement_inner),
-          ),
+          field('then_branch', $._statement_inner),
           optional(prec.dynamic(30, seq($.else_keyword, $._else_branch))),
         ),
         field('then_branch', $.call_statement),
@@ -3737,33 +3731,22 @@ module.exports = grammar({
     // terminator restructure made them the same rule: no then-branch form
     // carries a ';' any more, so there is nothing left for the two variants to
     // differ on.
-    _then_branch: $ => choice(
-      field('then_branch', $.code_block),
-      fieldedStatement($, 'then_branch'),
-    ),
+    _then_branch: $ => fieldedStatement($, 'then_branch'),
 
     // Shared else-branch body: code_block, nested if (else-if chain), or single statement
     _else_branch: $ => choice(
-      field('else_branch', $.code_block),
       prec(1, field('else_branch', $.if_statement)),
       fieldedStatement($, 'else_branch'),
     ),
 
     // else-branch without the else-if chain (preproc split if-else shared tail)
-    _else_branch_simple: $ => choice(
-      field('else_branch', $.code_block),
-      fieldedStatement($, 'else_branch'),
-    ),
+    _else_branch_simple: $ => fieldedStatement($, 'else_branch'),
 
     // Loop / with body: a code_block or a single statement
-    _body_branch: $ => choice(
-      field('body', $.code_block),
-      fieldedStatement($, 'body'),
-    ),
+    _body_branch: $ => fieldedStatement($, 'body'),
 
     // Case-branch body: also admits a dangling-else-free nested if
     _case_body_branch: $ => choice(
-      field('body', $.code_block),
       field('body', alias($._if_statement_no_else, $.if_statement)),
       fieldedStatement($, 'body'),
     ),
@@ -3925,10 +3908,7 @@ module.exports = grammar({
       // `_statement`, each of which already takes its own. Folding them back
       // into one `choice` under a shared trailing `optional(';')` would make
       // `else A;` ambiguous between the two owners of that ';'.
-      optional(choice(
-        seq(field('body', $.code_block), optional(';')),
-        field('body', $.statement_block),
-      ))
+      optional(field('body', $.statement_block))
     )),
 
     // --- For loop ---
