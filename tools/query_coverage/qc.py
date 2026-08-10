@@ -14,7 +14,7 @@ from pathlib import Path
 
 from . import anchors as anchor_table
 from . import baseline, corpus, inventory, loader, model
-from .detectors import PER_FILE, fields, shipped_queries
+from .detectors import PER_FILE, RUN_LEVEL, edges, fields, shipped_queries
 
 # Detector 6 audits the SHIPPED editor queries. They were written for
 # highlighting, not exhaustive extraction, so a gap in them is a note, not a
@@ -200,6 +200,11 @@ def cmd_run(args) -> int:
     # loop further down) without paying for every other detector too.
     tally_inline = args.full_corpus or not args.full_query_scan
 
+    # Run-level accumulators (detector 8 today). Built here for the same reason
+    # the tallies are: they must see every tree in the streaming pass below, and
+    # their finding is a property of the whole run, not of one file.
+    run_level = [(name, factory(), report) for name, factory, report in RUN_LEVEL]
+
     # One streaming pass: every consumer of a tree runs here, inside the
     # file's own iteration, so no tree outlives it. The previous shape
     # accumulated all 15,358 (tree, source) tuples in a `parsed` list to feed
@@ -213,6 +218,8 @@ def cmd_run(args) -> int:
         for _name, detect in PER_FILE:
             findings.extend(detect(tree, source, rel))
         findings.extend(fields.detect_dynamic(tree, source, rel, node_types))
+        for _name, accumulator, _report in run_level:
+            accumulator.add(tree, source, rel)
         if tally_inline:
             for tally in tallies:
                 tally.add(tree)
@@ -236,6 +243,9 @@ def cmd_run(args) -> int:
     corpus_findings = corpus.detect(node_types, seen_types)
     findings.extend(corpus_findings)
     never = sorted(f.detail["type"] for f in corpus_findings)
+
+    for _name, accumulator, report in run_level:
+        findings.extend(report(accumulator, node_types))
 
     if args.full_corpus:
         print(f"query scan: {len(scope_paths)} files (full corpus, via --full-corpus)")
@@ -300,6 +310,28 @@ def cmd_run(args) -> int:
     )
     reports = repo_root / REPORTS
     model.write_jsonl(reports / "findings.jsonl", provenance, findings)
+
+    # The full {edge kind: instance count} map. NOT part of the gate -- gating on
+    # per-kind counts would need one finding per instance, which is millions.
+    # This is the tool half of detector 8: take it before and after a refactor
+    # and diff the two, which is how the terminator restructure was proved to
+    # have moved exactly 25 edges and nothing else.
+    for name, accumulator, _report in run_level:
+        if name != "edges":
+            continue
+        payload = dict(accumulator.as_report())
+        payload["scope"] = scope
+        payload["files"] = len(scope_paths)
+        reports.mkdir(parents=True, exist_ok=True)
+        (reports / "edge-census.json").write_text(
+            json.dumps(payload, indent=1, sort_keys=True) + "\n",
+            encoding="utf-8",
+            newline="\n",
+        )
+        print(
+            f"edge census: {payload['edge_kinds']} kinds, {payload['edge_total']} "
+            f"fielded edges -> reports/edge-census.json"
+        )
 
     # `never` was computed above from THIS run's own scope, not read back
     # from `select`'s gitignored reports/never-observed.json -- a fresh clone

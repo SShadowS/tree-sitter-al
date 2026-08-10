@@ -113,6 +113,11 @@ is the only way to raise a count or admit a new cluster. This means a clean
   `inventory.inert_checks`). Both are derived, so neither can go stale
   against the code.
 - `reports/never-observed.json` — named node types the corpus never produced.
+- `reports/edge-census.json` — the full `{(parent, field, child): instance count}`
+  map from detector 8, plus the scope and file count it was taken at. Not part
+  of the gate; it is the artifact you diff before and after a refactor to prove
+  edge-for-edge that only what you intended moved. Both sides must be taken at
+  the same scope — a manifest census and a corpus census are not comparable.
 
 ## Detectors
 
@@ -132,6 +137,24 @@ is the only way to raise a count or admit a new cluster. This means a clean
    cannot see this: it works from byte coverage, and a type going unproduced says nothing
    about which bytes are covered. See "Known limitations" for two cases that look like
    this trigger but produce zero corpus findings.
+8. **edges** — the `(parent, field, child)` edge census. Every other detector asks a
+   question about nodes; this one asks which node is attached to which parent through
+   which field. Two categories: `edge-kind` (one finding per distinct edge kind observed
+   — a NEW kind is a node attached somewhere it never was) and `field-never-populated`
+   (a declared `(parent, field)` that nothing in scope populated, while the parent type
+   itself was produced — the disappearance half, needed because `baseline.diff` treats a
+   vanished cluster as `fixed` and exits 0).
+
+   Why it exists: a wrong-parent attachment can preserve every node's type and every
+   byte's span, and detectors 1, 2, 5 and 7 are all structurally blind to that. The three
+   precedence fixes on this branch are the proof — they rewrote 636 trees across
+   BC.History, and the census recorded **13,339,003 fielded edges on both sides with
+   `node_types: 0 changed`**. Every node type kept its exact count while 48 edge kinds
+   moved.
+
+   Cardinality is a fingerprint set, never per instance: 920 kinds over 13.3M edges at
+   corpus scope, 642 at manifest scope. Per-instance would emit millions of findings.
+   Cost measured on a full-corpus run: **423s before, 445s after (+22s, +5.2%)**.
 
 ## Self-tests
 
@@ -159,23 +182,113 @@ whenever the two disagree.
 
 ## Known limitations
 
-Not caught by any detector: precedence and associativity misparses inside
-expressions (`a + b * c` grouped wrongly covers every byte correctly), and
-scanner over-consumption where a string or comment token swallows adjacent
-code. Wrong-parent attachment is caught only when the misparse also changes
-a node's type along the way — detector 4 catches the `case`/dangling-`else`
-mis-association this way, because that misparse degrades a keyword into a
-plain `identifier`. Attachment errors that preserve every node's type and
-every byte's span are not caught by anything here; closing those needs
-structural assertions against expected trees, which is what `test/corpus/`
-provides.
+**Still not caught by any detector: scanner over-consumption**, where a string
+or comment token swallows adjacent code.
+
+**Precedence and associativity misparses are still not caught here either**, and
+that is worth stating precisely rather than crossing off. Three real ones were
+found on this branch (`a171c19`, `d4e8433`, `168c5ec`) — `..` binding tighter
+than `+`, unary binding looser than `*`, and the comparison operators binding
+tighter than `and`/`or`/`xor` when AL is the exact inverse. **Every gate in this
+repo reported success the whole time**, including this harness: byte coverage
+was complete, the error count was 0/15,358, and no node type changed. They were
+found by differential probes against `alc`, not by anything here, and nothing
+here would find the next one. What detector 8 *does* give is the ability to see
+the blast radius once you suspect one — see below.
+
+**Wrong-parent attachment is now partly covered, by detector 8.** It was
+previously caught only when the misparse also changed a node's type along the
+way (detector 4 catches the `case`/dangling-`else` mis-association that way,
+because that misparse degrades a keyword into a plain `identifier`). Detector 8
+adds two specific signals that need no type change and no byte movement:
+
+- a node attached through an edge kind that has **never** existed before
+  (`edge-kind`, a NEW cluster), and
+- a declared field that **stops being populated anywhere** in scope
+  (`field-never-populated`, also a NEW cluster).
+
+**The gate only sees 70% of the field graph, and that limit is bigger than the
+detector's own.** The gating scope is the 59-file manifest, which produces 642
+of the corpus's 920 edge kinds — **278 kinds are invisible to `qc run`**. The
+manifest is chosen by set-cover over node *types*, so it guarantees every type
+appears at least once and guarantees nothing at all about attachment variety.
+
+Measured consequence, stated plainly: **none of the three precedence defects
+fixed on this branch would have tripped the manifest-scope gate.** All five edge
+kinds their fixes created —
+
+```
+range_expression|left|unary_expression
+range_expression|left|additive_expression
+range_expression|right|additive_expression
+multiplicative_expression|left|unary_expression
+comparison_expression|left|logical_expression
+```
+
+— are absent from the manifest. `-a * b` and `a = b and c` simply do not occur
+in those 59 files. Detector 8 saw all three clearly at **corpus** scope, which
+is a reporting pass and never gates. So the honest claim is: detector 8 makes
+attachment regressions *visible and diffable*, and gates them only where the
+manifest happens to exercise the edge kind.
+
+Closing that would mean teaching `qc select` to set-cover over edge kinds rather
+than node types. That is a real change with a real cost — a different manifest,
+a different `manifest_hash`, and a full re-`accept` of every detector's counts —
+so it is written down here rather than done quietly mid-release.
+
+What detector 8 does **not** catch at any scope: an edge moving between two kinds
+that both already exist elsewhere, where the source field also stays populated by
+other nodes. Nothing about the kind set or the field set changes, so neither
+category fires. Catching that requires per-kind *counts* in the gate, which
+cannot be expressed as cluster counts without one finding per instance —
+millions of them.
+`reports/edge-census.json` exists for exactly that case: it carries the full
+`{kind: count}` map, so a refactor can be proved edge-for-edge by taking it
+before and after and diffing, without turning every intentional tree change into
+a build failure. That is how the three precedence fixes were bounded to exactly
+4, 629 and 3 sites, and how the terminator restructure was proved to have moved
+exactly 25 edges.
+
+Structural assertions against expected trees — `test/corpus/` — remain the only
+thing that pins a specific tree shape.
 
 Detector 3's dynamic half is narrower than "every field": it flags a
-`required: true` field returning `None` on a real instance, which is 245 of
-the 396 field declarations in `src/node-types.json`. An *optional* field
-whose content is a `choice()` mixing visible and hidden alternatives passes
-the static check (its name is present in `node-types.json`) and is never
-examined by the dynamic one — that is the majority of the grammar's fields.
+`required: true` field returning `None` on a real instance, which is 245 of the
+396 field declarations in `src/node-types.json`. The other **151 (38%) are
+optional** and its dynamic half never examines them — an optional field whose
+content is a `choice()` mixing visible and hidden alternatives passes the static
+check (its name is present in `node-types.json`) and is never looked at again.
+(This paragraph used to say those 151 were "the majority of the grammar's
+fields". They are a substantial minority: 151 of 396.)
+
+**Detector 8's `field-never-populated` covers that gap from the other side**, and
+it covers all 396 rather than only the optional ones. `None` on an optional field
+is legal for any single instance — that is what optional means — so the naive
+per-instance check would be all false positives. The corpus-wide question is not
+naive: a field that is **never once populated** while its parent type IS produced
+is either dead grammar or a hidden-token bug, and it is one finding per field
+rather than one per node. Measured over all 15,358 files, **37 of the 396
+declared fields are never populated, and 33 of those belong to node types that
+never appear at all** (already detector 7's finding, so detector 8 suppresses
+them). **Four remain, all of them optional:**
+
+| field | declared children |
+|---|---|
+| `fieldgroup_declaration.body` | `declaration_body` |
+| `interface_declaration.access_value` | `identifier`, `internal_keyword`, `public_keyword` |
+| `preproc_split_declaration.base_object` | `identifier`, `quoted_identifier` |
+| `preproc_split_if_statement.else_branch` | 54 statement/expression types |
+
+These are **reported, not fixed** — each is a grammar change to be sequenced
+deliberately. Note this is exactly the shape of release defects 4 and 5
+(`area_section.type`, `action_area_section.type`), where a rare `$.identifier`
+fallback kept a field declared while every real instance read `None`. Those two
+were caught only because they are `required: true`; the same defect on any of
+these four would have been invisible.
+
+At manifest scope the same check reports 13 rather than 4, because a 59-file
+sample legitimately fails to exercise some constructs. The 4 is the corpus-scope
+number and is the one to act on; run `qc run --all --full-corpus` to reproduce it.
 
 A named node type that stops being produced by anything in the corpus while
 staying declared in `src/node-types.json` is caught by the **corpus**
