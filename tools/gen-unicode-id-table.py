@@ -328,14 +328,28 @@ def build_header() -> str:
     if not tables:
         sys.exit(f"gen-unicode-id-table: no TSCharacterRange tables found in {PARSER_C}")
 
-    letters = unicode_category_set("L")
-    numbers = unicode_category_set("N")
+    # These MUST mirror grammar.js's identifier rule exactly. They are the only
+    # hand-maintained statement of what the classes are supposed to be -- the
+    # compiled tables can only say what they currently ARE -- so a grammar.js
+    # change without a matching change here fails loudly rather than silently
+    # emitting the wrong table. That is the drift 586478a was created to stop.
+    letters = unicode_category_set("L")        # Lu Ll Lt Lm Lo
+    numbers = unicode_category_set("N")        # Nd Nl No -- No kept deliberately
+    letter_numbers = unicode_category_set("Nl")
+    marks_nonspacing = unicode_category_set("Mn")
+    marks_spacing = unicode_category_set("Mc")
+    connectors = unicode_category_set("Pc")    # includes '_' itself
+    formats = unicode_category_set("Cf")
     underscore = {ord("_")}
 
+    start_target = letters | letter_numbers | underscore
+    cont_target = (letters | numbers | marks_nonspacing | marks_spacing
+                   | connectors | formats | underscore)
+
     start_name, start_ranges, start_how = find_table(
-        r"[\p{L}_]", letters | underscore, tables)
+        r"[\p{L}\p{Nl}_]", start_target, tables)
     cont_name, cont_ranges, cont_how = find_table(
-        r"[\p{L}\p{N}_]", letters | numbers | underscore, tables)
+        r"[\p{L}\p{N}\p{Mn}\p{Mc}\p{Pc}\p{Cf}_]", cont_target, tables)
 
     # Cross-check that the two tables really are start/continue of one class and
     # not two unrelated tables that each happened to pass: continue must contain
@@ -346,11 +360,18 @@ def build_header() -> str:
     if not cont_set >= start_set:
         sys.exit(f"gen-unicode-id-table: {cont_name} does not contain {start_name}; "
                  f"missing {sample(start_set - cont_set)}")
+    # Everything `continue` adds over `start` must be a number, a mark, a
+    # connector, or a format character -- i.e. one of the categories the rule
+    # actually names. ("C" also covers Cn, codepoints unassigned in this
+    # Python but assigned in tree-sitter's newer Unicode.) A LETTER appearing
+    # only in the continue table would mean one of the two tables is the wrong
+    # one, which is what this catches.
+    allowed_extra = ("N", "Mn", "Mc", "Pc", "Cf", "C")
     stray = {cp for cp in cont_set - start_set
-             if not unicodedata.category(chr(cp)).startswith(("N", "C"))}
+             if not unicodedata.category(chr(cp)).startswith(allowed_extra)}
     if stray:
-        sys.exit(f"gen-unicode-id-table: {cont_name} adds non-numbers over "
-                 f"{start_name}: {sample(stray)}")
+        sys.exit(f"gen-unicode-id-table: {cont_name} adds categories over "
+                 f"{start_name} that the identifier rule does not name: {sample(stray)}")
 
     return HEADER_TEMPLATE.format(
         start_name=start_name,

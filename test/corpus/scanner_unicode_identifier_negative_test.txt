@@ -36,3 +36,33 @@ table 50100 T
       (integer))
     body: (declaration_body
       (empty_statement))))
+
+================================================================================
+DELIBERATE NEGATIVE. Cf is a legal identifier CONTINUER but an illegal STARTER,
+and the same holds for Mn -- which is why the two classes are separate tables.
+U+0301 COMBINING ACUTE continues an identifier happily (pinned as case 1 of
+identifier_unicode_classes_test.txt) and must still be rejected at the start.
+alc agrees: `O<U+0301>k` compiles, `<U+0301>Ok` is AL0183 "Unexpected character"
+(verified at 18.0.37.11445, discriminating controls). This pins the asymmetry --
+widening the continue class must not widen the start class with it, which is the
+single most likely way to get this wrong in one edit.
+================================================================================
+
+table 50100 T
+{
+    ́Ok = 5;
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (table_declaration
+    (table_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    (ERROR
+      (UNEXPECTED 769)
+      (identifier)
+      (integer))
+    body: (declaration_body
+      (empty_statement))))

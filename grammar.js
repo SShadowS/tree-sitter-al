@@ -4485,7 +4485,31 @@ module.exports = grammar({
     )),
 
     // Identifiers — Unicode-aware
-    identifier: $ => token(/[\p{L}_][\p{L}\p{N}_]*/u),
+    // AL's identifier rule is C#'s. Measured against alc 18.0.37.11445 with a
+    // discriminating control on every probe:
+    //
+    //   start     Lu Ll Lt Lm Lo Nl _          (Mn, Cf, Nd, No all REJECTED)
+    //   continue  start + Mn Mc Nd Pc Cf
+    //
+    // `\p{L}` covers Lu Ll Lt Lm Lo, so the start class adds only `\p{Nl}`
+    // (U+2160 ROMAN NUMERAL ONE is a legal identifier start to alc), and the
+    // continue class adds the four alc accepts and `\p{L}\p{N}` missed:
+    // Mn (combining marks), Mc (spacing marks), Pc (connectors) and Cf (ZWNJ
+    // and friends). Before this, `Oa<U+0301>k: Integer;` -- valid AL that alc
+    // compiles -- shredded into an identifier plus an ERROR node.
+    //
+    // DELIBERATELY still broader than alc in two ways, per "parse structure,
+    // don't validate": `\p{N}` keeps `No` (alc rejects `O<U+00B2>k`, AL0107),
+    // and nothing here is capped to the BMP (alc rejects astral codepoints,
+    // AL0183). Both are the parser accepting more than the compiler, which is
+    // the safe direction and is recorded rather than closed.
+    //
+    // src/unicode_id.h MUST be regenerated whenever this line changes -- the
+    // scanner reads those tables to decide where PROPERTY_NAME and
+    // VAR_ATTRIBUTE_OPEN end, and a stale table makes the scanner disagree with
+    // this regex. That drift is exactly what 586478a fixed.
+    // `python tools/gen-unicode-id-table.py --check` fails loudly if it drifts.
+    identifier: $ => token(/[\p{L}\p{Nl}_][\p{L}\p{N}\p{Mn}\p{Mc}\p{Pc}\p{Cf}_]*/u),
 
     quoted_identifier: $ => token(prec(10, seq(
       '"',
