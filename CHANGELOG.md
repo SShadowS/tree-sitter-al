@@ -366,9 +366,17 @@ public API — a change to node structure or field names is a **major** bump.
   which only the scanner's own `#` dispatch can produce, so `#endifX` is still
   (correctly) not an `#endif`. An over-long directive word is no longer rejected
   outright either: `#regionAAAAAAAAAAAAAA` is a region to the parser. The BOM is
-  now stepped over too — `grammar.js` declares it an extra, so the parser skips
-  one anywhere, and a BOM between a split `end;` and its `#else` had been
-  dropping the token the same way a comment once did.
+  now stepped over too, and so is the vertical tab — `grammar.js` declares both
+  as extras, so the parser skips either anywhere, and a BOM or a `` between a
+  split `end;` and its `#else` had been dropping the token the same way a comment
+  once did. `is_extra_space()` now enumerates all seven single-character extras
+  explicitly (` `, `	`, `
+`, ``, ``, ``, U+FEFF): the first version of
+  that comment claimed to cover "the single-character members" while listing six
+  of the seven, and an adjective is not a specification. The bound is exactly
+  those seven — U+0085, U+00A0, U+1680, U+2000, U+2028, U+2029, U+202F, U+205F
+  and U+3000 are rejected by the *parser* as well, since tree-sitter's `\s` is
+  not Unicode-aware here, so they are a different failure and out of scope.
   - **This aligns the scanner with the grammar, and the grammar is over-permissive
     relative to the compiler.** alc 18.0.37.11445 rejects `#regionX`, `#pragmaX`,
     `#elseX` and `#elifX` with `AL0621`; `#region Foo` compiles clean. The root

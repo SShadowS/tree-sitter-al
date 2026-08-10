@@ -722,3 +722,86 @@ codeunit 1 T
                   (preproc_endif
                     (preproc_close))))))
           (end_keyword))))))
+
+================================================================================
+A vertical tab between a split end and its #else
+--
+tree-sitter's `/\s/` in the `extras` array matches SIX characters -- space, \t,
+\n, \r, \f and \v -- and is_extra_space() listed only five. `\v` (U+000B) is the
+one the parser steps over and the scanner's lookahead did not, so
+PREPROC_SPLIT_END was dropped and the `end;` degraded, exactly as the BOM case
+above did. The bound is these six plus the BOM: U+0085, U+00A0, U+1680, U+2000,
+U+2028, U+2029, U+202F, U+205F and U+3000 are rejected by the PARSER too, so
+they are not extras and are correctly out of scope.
+================================================================================
+codeunit 1 T
+{
+    procedure X()
+    var
+        x: Integer;
+    begin
+        if x = 1 then begin
+            x := 9;
+#if not CLEAN22
+        end;
+
+#else
+        x := 2;
+        end else begin x := 3; end;
+#endif
+    end;
+}
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    (integer)
+    (identifier)
+    (declaration_body
+      (procedure
+        (procedure_keyword)
+        (identifier)
+        (var_section
+          (var_keyword)
+          (var_body
+            (variable_declaration
+              (identifier)
+              (type_specification
+                (basic_type)))))
+        (code_block
+          (begin_keyword)
+          (statement_block
+            (if_statement
+              (if_keyword)
+              (comparison_expression
+                (identifier)
+                (comparison_operator)
+                (integer))
+              (then_keyword)
+              (code_block
+                (begin_keyword)
+                (statement_block
+                  (assignment_statement
+                    (identifier)
+                    (integer)))
+                (preproc_split_code_block_end
+                  (preproc_if
+                    (preproc_open)
+                    (preproc_not_expression
+                      (identifier)))
+                  (preproc_split_end)
+                  (preproc_else)
+                  (assignment_statement
+                    (identifier)
+                    (integer))
+                  (end_keyword)
+                  (else_keyword)
+                  (begin_keyword)
+                  (assignment_statement
+                    (identifier)
+                    (integer))
+                  (end_keyword)
+                  (preproc_endif
+                    (preproc_close))))))
+          (end_keyword))))))

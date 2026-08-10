@@ -40,13 +40,16 @@ typedef struct {
 // any width reintroduces the same class at its own boundary, and the
 // `state->depth > 0` guards would read a negative depth as "not nested" exactly
 // as the wrapped uint8_t did.
+//
 // _Static_assert where it exists, because it prints the MESSAGE: MSVC reports
 // the negative-array fallback as a bare "C2118: negative subscript" naming
 // neither the constant nor the reason, which is a check that fires without
-// saying what broke.
+// saying what broke. MSVC accepts _Static_assert in C mode only from VS2019
+// 16.8 (_MSC_VER 1928); anything older takes the fallback.
 #define SCANNER_DEPTH_IS_UNSIGNED ((ScannerDepth)-1 > (ScannerDepth)0)
 #define SCANNER_DEPTH_OK (sizeof(ScannerDepth) >= 4 && SCANNER_DEPTH_IS_UNSIGNED)
-#if defined(_MSC_VER) || (defined(__STDC_VERSION__) && __STDC_VERSION__ >= 201112L)
+#if (defined(_MSC_VER) && _MSC_VER >= 1928) || \
+    (defined(__STDC_VERSION__) && __STDC_VERSION__ >= 201112L)
 _Static_assert(SCANNER_DEPTH_OK,
   "ScannerDepth must be an unsigned type of at least 32 bits: a narrower or "
   "signed depth counter wraps, and every state->depth > 0 guard then reads "
@@ -118,21 +121,34 @@ static char keyword_byte(int32_t c) {
   return (char)0x01;
 }
 
-// Everything grammar.js's `extras` array skips that is a single character:
-// `/\s/` plus the BOM. Comments and the five directive extras are not
-// characters and are handled by skip_whitespace_and_comments and
-// TRANSPARENT_DIRECTIVES respectively.
+// Every single-character member of grammar.js's `extras` array, enumerated so a
+// reader can check the list against `extras` by eye. There are exactly SEVEN:
 //
-// The BOM belongs here because `/﻿/` is an extra (grammar.js:137), so the
-// parser steps over one anywhere, not just at the start of a file. A lookahead
-// that stops on it disagrees with the parser about where the next token is: a
-// BOM between a split `end;` and its `#else` dropped PREPROC_SPLIT_END and left
-// a MISSING end_keyword, while the byte-identical file without it emitted
-// preproc_split_end. Keep this in sync with the single-character members of
-// `extras`, the same way TRANSPARENT_DIRECTIVES tracks the directive members.
+//     ' '   \t   \n   \r   \f   \v      -- the six that `/\s/` matches
+//     U+FEFF                            -- the BOM, its own extras entry
+//
+// An adjective is not a specification: this comment previously said "the
+// single-character members" and the list under it was missing `\v`, which read
+// as complete and was not. Count the entries against `extras` rather than
+// trusting the sentence.
+//
+// Comments and the five directive extras are not single characters and are
+// handled by skip_whitespace_and_comments and TRANSPARENT_DIRECTIVES.
+//
+// Anything the PARSER skips as an extra and a scanner lookahead does not is a
+// disagreement about where the next token starts, and it is silent. Both
+// omissions had the same signature — a `\v` or a BOM between a split `end;` and
+// its `#else` dropped PREPROC_SPLIT_END, while the byte-identical file without
+// it emitted preproc_split_end.
+//
+// The bound is exactly these seven: U+0085, U+00A0, U+1680, U+2000, U+2028,
+// U+2029, U+202F, U+205F and U+3000 are all rejected by the PARSER too, because
+// tree-sitter's `\s` is not Unicode-aware here. Those produce a different
+// failure signature (the parser errors on the character as well) and are
+// correctly out of scope.
 static bool is_extra_space(int32_t c) {
-  return c == ' ' || c == '\t' || c == '\r' || c == '\n' || c == '\f' ||
-         c == 0xFEFF;
+  return c == ' ' || c == '\t' || c == '\n' || c == '\r' || c == '\f' ||
+         c == '\v' || c == 0xFEFF;
 }
 
 // Skip whitespace and newlines (advance without marking)
@@ -674,14 +690,17 @@ bool tree_sitter_al_external_scanner_scan(
         lexer->result_symbol = BEGIN_KEYWORD;
         return true;
       }
-      // Skips the PROPERTY_NAME test below. Safe ONLY because
-      // ts_external_scanner_states never offers property_name together with
-      // begin_keyword-or-preproc_split_begin *while the word is `begin`* — a
-      // property literally named `begin` reaches the property test through
-      // states 20/22, where begin_keyword is valid and this arm returns first,
-      // and that is deliberate: `begin` is the keyword there. Re-check the
-      // table if a new state pairs property_name with preproc_split_begin;
-      // today no row outside the all-nine recovery row does.
+      // Unreachable today, and the reason is worth stating exactly, because the
+      // obvious claim — "property_name is never co-valid with begin_keyword" —
+      // is FALSE: rows 20 and 22 offer both, which is the whole basis of the
+      // `b1 = 1;` defect fixed in 4.0.0.
+      //
+      // Reaching this line requires !BEGIN_KEYWORD && PREPROC_SPLIT_BEGIN. In
+      // ts_external_scanner_states, preproc_split_begin appears in rows 1, 9 and
+      // 16 only, and rows 9 and 16 BOTH also carry begin_keyword — so the arm
+      // above returns first, and row 1 is the all-nine recovery row the guard at
+      // the top of scan() already rejects. Re-check that if a new row carries
+      // preproc_split_begin without begin_keyword.
       return false;
     }
 
