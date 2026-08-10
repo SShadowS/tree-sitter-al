@@ -5,9 +5,172 @@ Format loosely follows [Keep a Changelog](https://keepachangelog.com/); the proj
 uses [Semantic Versioning](https://semver.org/) where the parse-tree shape is the
 public API — a change to node structure or field names is a **major** bump.
 
-## [Unreleased]
+## [4.0.0] — 2026-08-10
+
+**This is a breaking release.** The parse tree is this project's public API, and this
+release moves it.
+
+Most of what follows is one story told nine times. A token was lexed and then thrown
+away, or a field was declared over something that could not hold it — and every gate
+this project had said the parser was fine. `tree-sitter parse` prints named nodes only,
+so a hidden token that disappears changes no tree hash. A wrong tree with no `ERROR`
+node is invisible to an error count. A corpus fixture regenerated with `tree-sitter
+test -u` pins whatever the parser currently does, defect included; five shipped
+fixtures were found asserting a defect as the expected answer. So this release also
+ships the gates that can see those, and fixes the one that could not count.
+
+### What breaks
+
+Ordered by how much of the corpus moves. Counts are node-instance set differences
+(node type + exact byte range) over all 15,358 BC.History files.
+
+| Change | Blast radius |
+|---|---|
+| **The statement terminator left `code_block` and the branch rules.** A `begin … end;` now ends at its `end`, and the `;` re-parents to whatever encloses the construct. | Re-spans **74,268** `if_statement` nodes and every `begin … end;` in the corpus. No node type, field or count changes: `if_statement` stays 129,950, `code_block` 277,131, `case_branch` 22,047, and `src/node-types.json` is byte-identical. |
+| **A dangling `else` in a case branch now binds to the inner `if`**, not to the `case`. | 133 files. The only change in this release that alters what a program *means*. |
+| **A single-entry `DataItemLink` / `RunPageLink` / `SubPageLink` / `ColumnFilter` now parses as `link_value`**, not as a `property_expression`. | 880 files, 1,677 property sites. |
+| **`case … else` bodies are one `statement_block`** instead of a flat, individually-fielded run of statements. | 757 files, +1,316 `statement_block`. |
+| **`begin` and `end` inside a `#if` block are now nodes.** They were in no node at all. | 742 files, +6,239 `begin_keyword`, +6,476 `end_keyword`; nothing removed. |
+| **Eleven keyword nodes added for fields and markers that were silently empty** — six dropped fields, the four `where()` markers, and the assignment operator. | +29,770 across 5,212 files, +29,017 across 2,651, +243,044 across 8,559. Nothing removed in any of the three. |
+| **Every keyword node now has exactly one anonymous child, typed as the canonical lowercase spelling.** | Named trees byte-identical. `node-types.json` gains 50 anonymous types and loses 57. |
+| **48 anonymous node types removed** by making the Tier-1 keywords and word operators genuinely case-insensitive. Every lowercase name is kept. | Named trees byte-identical. **A query naming `"IF"`, `"Then"`, `"AND"` or any other non-lowercase spelling now fails to compile** with `Invalid node type` and must drop it. |
+| **Fourteen body/branch fields hold one node instead of a statement plus its `;`**, and seven dotted-reference fields no longer hand you the `.` separators. | Field labels only; no tree moves. |
+| **`exit (x + y) * 2;` now produces an `ERROR`** where it previously produced a silent wrong tree. | Matches `alc`, which rejects the form. |
+
+Each of these has a full entry below with its mechanism and its measurement.
+
+### Why it was worth it
+
+**Nine defects, eight of them found by a gate built during this release.** None was
+visible to anything the project had before: the files parsed with zero `ERROR` nodes,
+the tree hashes were stable, and the corpus tests passed.
+`docs/query-coverage-findings.md` is the triage list the new harness produced; all
+eight are fixed here, plus a ninth (the directive word boundaries) found by review.
+Two of them — the dangling `else` and the `where()` markers — were semantic misreads,
+not cosmetic omissions: the tree said the program did something it did not do.
+
+**And the count that made every other count suspect.** `parse-al-parallel.sh` derived
+"Parsed OK" as the total minus the files that *reported* an error, so a file that was
+never opened was indistinguishable from a file that parsed cleanly. Demonstrated by
+breaking `cygpath` — the exact failure the script's own header had warned about for
+years, which makes `tree-sitter` abort a chunk at the first unreadable path — where it
+reported `Parsed OK: 36, Errors: 4, Success rate: 90.0%` with **zero of 40 files
+opened**. Every "15,358/15,358, 0 errors" claim this project has ever made rested on
+that subtraction until this release. Counts now come from
+`tree-sitter parse -q --json-summary`, one record per file actually parsed, reconciled
+per chunk, then globally, then against `parsed.txt`.
+
+### Added
+
+- **`tools/query_coverage/` — the query-coverage harness.** Proves the CST is lossless
+  over the source and that values stay reachable through queries, which is the class of
+  defect the three pre-existing gates were structurally unable to see. Seven detectors:
+  byte gaps (source bytes covered by no leaf), an ERROR/MISSING census, declared fields
+  absent from their own node type (static) plus required fields returning `None` on a
+  real instance (dynamic), hard-reserved words appearing as plain identifiers, lexical
+  anchor counts against node counts via an independent mini-lexer, an audit of the
+  shipped `.scm` queries (informational, excluded from the exit code), and named node
+  types that stop being produced anywhere in scope. Findings are clustered and
+  fingerprinted, the baseline **ratchets downward** on every run so a cluster fixed to
+  zero cannot silently regress to below its accepted count, and `accept` is the only way
+  to raise a count or admit a new cluster. Wired into `validate-grammar.sh` as Step 5d
+  against a committed 59-file manifest chosen by greedy set-cover over node-type
+  vocabulary (357 of the grammar's 391 named types; the other 34 appear in no corpus
+  file and are listed in `reports/never-observed.json`). Design:
+  `docs/superpowers/specs/2026-08-09-query-coverage-harness-design.md`; usage:
+  `tools/query_coverage/README.md`.
+  - **The gating run is the 59-file manifest one.** `run --full-corpus` sets an empty
+    diff by construction and `--all` forces exit 0, so both are reporting passes, not
+    gates. Commit trailers in this release that cite `qc: full-corpus exit 0` are
+    reporting that the sweep completed, not that a gate passed.
+  - **Runtime: ~31 minutes → 407s (6.8 min)** for a full-corpus sweep of all 15,358
+    files, 4.6x, with findings byte-identical (4,152 lines, same sha256 at manifest
+    scope, `summary.md` identical). Parsing was never the cost — it is 26s of the
+    original 31 minutes. The cost was compiling `highlights.scm` once per file
+    (32.9 ms × 15,358 = ~8.4 min), rebuilding an operator-token set once per *anonymous
+    node* (~6 min), lexing and walking five times per file instead of once (~3.1 min),
+    and holding all 15,358 `(tree, source)` pairs resident at once (~2.8 GB). Threads
+    measured at 0.89x — slower than serial — so no concurrency was added.
+
+- **`tools/gate_selftest.py` — mutation testing for the validation gates.** 23 cases
+  plus 2 controls that must pass: each copies the repo to scratch, injects a defect,
+  runs the real gate end to end, and requires it to exit non-zero **and** to name the
+  thing that was injected, so a gate that fails for the wrong reason does not pass. It
+  is itself a gate, so it aborts rather than reporting when it cannot find a gate, when
+  a mutation matches nothing, or when it would run zero cases; `--prove-guards` trips
+  each of those on purpose and fails if the harness stays quiet. `--sweep` requires
+  every construct in the three gate scripts that lets a gate decline to fail — a
+  `|| true`, a discarded stderr, a warning where an error belongs — to be listed with a
+  reason in `tools/gate-guards.tsv` (20 today), so the inventory cannot rot into a
+  rubber stamp. It caught three faults in its own author's work before it caught
+  anything else.
+
+- **`tools/ts-lock.sh` — a build lock for the shared compiled parser.** `tree-sitter`
+  caches the compiled library by grammar *name*, not by path, so every checkout,
+  worktree and scratch copy of this repo shares one `al.dll`. Two agents running
+  `tree-sitter test` in different worktrees silently overwrite each other's parser
+  mid-run; neither errors, and both print plausible numbers. In one day that produced a
+  phantom test failure in a clean tree, a corrupted headline count in a review, and a
+  stale build that made a PASS look real. Wrap anything whose numbers you intend to
+  quote. Also added: `tools/session-cleanup.sh` and `tools/tree_blob.py`.
 
 ### Changed
+
+- **The statement terminator now lives outside `code_block`, `if_statement` and the
+  branch rules.** `code_block` owned an `optional(';')` after its `end` under a
+  `prec.right` that made it greedy, so it consumed the terminator before anything
+  downstream of a then-branch could test for one. That is why the dangling-`else` fix
+  below could not be made to hold: its guard —
+  `choice(seq(else_keyword, _else_branch), optional(';'))` — never fired, because the
+  `;` was already gone. Three targeted workarounds were tried and every one had worse
+  collateral than the bug, because each was fighting the greedy `optional(';')` instead
+  of removing it.
+  Terminators are now external everywhere: `code_block` ends at `end_keyword`,
+  `if_statement` carries no trailing `optional(';')`, `fieldedStatement()` no longer
+  appends one, and neither does `preproc_split_else_begin_over_endif`. The `;` is taken
+  by whatever encloses the construct — `_statement` in statement position, `case_branch`
+  and the `preproc_split_case_*` rules in a case branch, `_routine_regular_body`,
+  `preproc_split_procedure_preamble`, `_preproc_branch_statement` and `case_else_branch`
+  for a block. The four rules that newly expose an optional trailing `;` take
+  `prec.right` for the shift/reduce that creates. `empty_statement` moves from
+  `_statement_inner` to `_statement` and `fieldedStatement`, because an empty statement
+  *is* a terminator and leaving it in `_statement_inner` would have let every
+  `_statement_inner` position keep swallowing a `;`.
+  **This re-spans trees at scale and is the reason this release is a major bump.**
+  Every `code_block`, and every `if_statement` or loop statement that ended in `;`, now
+  ends one byte earlier: **74,268 `if_statement` nodes** plus every `begin … end;` in
+  the corpus. What does *not* change is as important: `if_statement` (129,950),
+  `code_block` (277,131) and `case_branch` (22,047) counts are identical, ERROR and
+  MISSING stay at 0, and `src/node-types.json` is byte-identical — no node type and no
+  field changed. `case_else_branch` moves 1,445 → 1,470 and `empty_statement`
+  2,354 → 2,358 (four stray `;` in BC.History that were absorbed as an anonymous
+  terminator token and are now their own node), both of which are the dangling-`else`
+  repair below rather than the restructure itself.
+  A consumer that read a body or branch field and expected the `;` to be inside the
+  construct's byte range must adjust; one that reads the field's single named child is
+  unaffected.
+  - **The dangling-`else` tie is now resolved directionally.** `prec.dynamic(20)` on the
+    whole `if_statement` gave the with-else and without-else productions the same score,
+    so the winner was decided by tree-sitter's structural tiebreak on symbol id — not a
+    decision about AL, and it flipped to the wrong parse the moment this restructure
+    renumbered the symbols. The else arm now carries `prec.dynamic(30)`: prefer the
+    parse that *binds* the else. That is only safe because the `;` cases no longer
+    depend on precedence at all — `case 1: if C then A; else B; end;` has no with-else
+    parse under any precedence now. `_then_branch_no_semi` and its declared conflict are
+    deleted; with no then-branch form carrying a `;`, it and `_then_branch` had become
+    the same rule.
+  - **A self-terminating then-branch terminates the `if`, so no `else` may follow.** Two
+    then-branch forms still own a `;` and so still left the else arm available:
+    `empty_statement` (`if C then ; else …`) and `call_statement`, which owns its `;`
+    internally (`if C then Foo; else …`). Neither can simply be dropped from the
+    then-branch — removing `empty_statement` makes `if C then ;` unparseable, and
+    removing `call_statement` degrades the node to a bare `identifier`, which reads as
+    recovery debris rather than a call — so they became separate `if_statement` arms
+    with no `else` after them. This took the dangling-`else` census from 1 to **0**,
+    against 25 before the restructure, and moved exactly one corpus file
+    (`Manufacturing/Document/CopyProductionOrderDocument.Report.al:79`). BC.History
+    contains zero parenless call statements, so no census site witnesses the
+    `call_statement` half; it is the same defect without a corpus example.
 
 - **Every statement body and branch field now holds exactly one node instead of
   the statement plus its `;`.** `_statement` is a hidden rule that expands to
@@ -279,6 +442,65 @@ public API — a change to node structure or field names is a **major** bump.
 
 ### Fixed
 
+- **`parse-al-parallel.sh` counted files it had never opened as successes.** "Parsed
+  OK" was `comm -23 all_files errors` — the total minus the files that *reported* an
+  error. A file that was never parsed emits no error line, so it was indistinguishable
+  from one that parsed cleanly. "Processed" was worse: `parsed + errors` where
+  `parsed = all - errors` is algebraically `|all|`, so it always equalled "Total files"
+  while looking like a reconciliation. **Every `15,358/15,358, 0 errors` figure this
+  project has published rested on that subtraction**, including the ones in this
+  changelog's earlier releases.
+  - Demonstrated on a 40-file corpus with `CHUNK_SIZE=10`, by breaking `cygpath` — the
+    exact MSYS path failure this script's own header has warned about for years, which
+    makes `tree-sitter` abort a chunk at the first unreadable path and discard the rest.
+    Before: `Parsed OK: 36, Errors: 4, Success rate: 90.0%`, exit 0 — **not one of those
+    36 files was ever opened.** After: all four chunks named, exit 1.
+  - Counts now come from `tree-sitter parse -q --json-summary`, one record per file
+    actually parsed, with `successful` covering MISSING-only files as well as ERROR
+    ones. The `\tParse:` text scrape is kept only to supply the failing paths and is
+    cross-checked against the JSON count. Four fatal assertions: per chunk, records ==
+    files listed and ok + bad == records; every chunk reported at all, so a worker that
+    never ran is caught; globally, ok + bad == files enumerated; and `parsed.txt`'s row
+    count == the parser's success count.
+  - **A gate fixture that had silently stopped injecting anything.** The tree-based
+    offsetting-loss fixture splits on `(source_file` markers, and `-q --json-summary`
+    emits no trees — so against the new counter it passed the stream through unchanged.
+    A fixture that injects nothing is a tautology. Replaced with
+    `tools/gate-fixtures/json-offsetting-loss/`, which drops records from one chunk and
+    duplicates them in another so the *global* total still reconciles; the per-chunk
+    assertions catch it and `tree-sitter` exits 0 throughout.
+  - Also fixed: a corpus of zero files printed a warning and exited 0. It now fails, and
+    says so specifically when the root is a symlink given without a trailing slash —
+    `find BC.History` yields 0 files where `find BC.History/` yields 15,358, so one
+    dropped character silently turned the whole gate into a no-op. New `PARSE_OUT_DIR`
+    redirects `parsed.txt`/`errors.txt` for read-only corpora; the default is unchanged.
+
+- **`validate-grammar.sh` could not report its own failures, and its corpus step had
+  never parsed a file.** Under `set -e`, a bare `OUT=$(cmd)` assignment takes the exit
+  status of the command substitution, so the script aborted *at the assignment* the
+  moment a tool failed — the next line that reads `$?` never ran, the step's tailored
+  error message never printed, and every later step was skipped. One failure hid all the
+  others. Five steps had that shape. The correct idiom
+  (`OUT=$(cmd 2>&1) && STATUS=0 || STATUS=$?`) is now stated once at the top of the file
+  and used everywhere.
+  Step 6 was worse, with five independent defects each of which alone made it unable to
+  fail: it invoked `./parse-al-parallel.sh` with **no arguments**, which that script
+  treats as a help request (so the step ran against usage text, never against AL); it
+  captured `$( … | tail -5 )`, whose status is always `tail`'s 0; its
+  `grep -q "Success rate:"` had no `else`, so an absent string skipped the check in
+  silence; a shortfall called `print_warning`, which does not set `VALIDATION_FAILED`;
+  and the threshold was 90% on a project that holds 100%, so 1,382 broken files would
+  have gone green. Renaming `test/corpus` away used to print "All tests passed" and
+  "0 test files" in the same run. A **missing tracked helper** now fails instead of
+  warning at all five sites — the historical incident is three helpers left untracked,
+  which turned three gates into green no-ops on a fresh clone. Genuine environment gaps
+  (no C compiler, no vendored runtime, no `BC.History`) stay warnings.
+
+- **`tools/tree-harness.sh` hashed `tree-sitter`'s own diagnostic bytes into the tree.**
+  Fixed so a snapshot records the tree and nothing else. Separately, the harness is
+  2–7x faster and can no longer report a clean run it did not earn — see its own entry
+  further down.
+
 - **Five directive regexes accepted words the compiler rejects.** `pragma`,
   `region`, `endregion`, `define` and `undef` matched their keyword with no
   trailing word boundary, so `#regionX` lexed as a whole `preproc_region`. alc
@@ -425,8 +647,15 @@ public API — a change to node structure or field names is a **major** bump.
   - **Field present but `None` on some branches.** `object_reference_type.object_type`
     already routed eight of its ten alternatives through named rules; only
     `testpage` and `testrequestpage` were bare, so `Page X` carried the field and
-    `TestPage X` did not. 17,440 sites. `interface_declaration.access_value` had
-    the same 2-of-3 shape (`internal_keyword` worked, `kw('public')` did not).
+    `TestPage X` did not. `interface_declaration.access_value` had the same 2-of-3
+    shape (`internal_keyword` worked, `kw('public')` did not).
+    (`docs/query-coverage-findings.md` puts this site at "17,440 occurrences". That
+    figure is a 500-file extrapolation and it counted `object_reference_type`
+    occurrences rather than the `testpage`/`testrequestpage` split, so it is not a
+    count of this defect. The verified figure for the change is the corpus-wide
+    node-instance total below. Sample-extrapolated counts in that document run high —
+    its `:=` figure implies ~705,000 corpus-wide against a true 243,044 — so census
+    before quoting any of them.)
   - **Field DECLARED but absent on every real instance — the misleading case.**
     `area_section.type` and `action_area_section.type` end their alternative lists
     with `$.identifier` as future-proofing. That fallback kept the field alive in
@@ -947,6 +1176,22 @@ public API — a change to node structure or field names is a **major** bump.
   the rule accepts any `basic_type` — parse structure, don't validate; the
   "must" is a linter's job. Confirmed via `tools/tree-harness.sh verify`: all
   15,358 BC.History parse trees byte-identical before and after.
+
+### Validation
+
+| Gate | Result |
+|---|---|
+| `tree-sitter test` | 1,562 tests, 0 failed |
+| `parse-al-parallel.sh ./BC.History/` | 15,358 / 15,358 files parsed, 0 errors — and for the first time that is a count of files read, reconciled per chunk, not a subtraction |
+| `validate-grammar.sh` | exit 0 |
+| `qc run` (59-file manifest, the gating scope) | no regressions |
+| `qc run --full-corpus --all` | 15,358 files, 407s — a reporting sweep, not a gate |
+| `tools/gate_selftest.py` | 23 cases + 2 controls, 0 failed |
+| `tools/tree-harness.sh verify` | every tree-moving change enumerated by node-instance set difference and stated in its own entry above |
+
+Parser metrics at this release: `STATE_COUNT` 13,927, `SYMBOL_COUNT` 889,
+`src/parser.c` 32,304,937 bytes, `grammar.js` 4,552 lines, 110 named keyword node
+types (108 grammar rules + 2 external scanner tokens), 9 scanner tokens, 6 query files.
 
 ## [3.3.1] — 2026-08-09
 

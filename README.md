@@ -12,27 +12,41 @@ Validated against **15,358 production AL files** from the Business Central codeb
 
 | Metric | Value |
 |--------|-------|
-| **Success rate** | **100%** (15,358 / 15,358 files) |
-| Tests | 1,514 |
-| parser.c size | ~26 MB |
-| grammar.js | ~4,121 lines |
-| Named keywords | 83 (81 grammar rules + 2 external; queryable via highlights/tags) |
+| **Success rate** | **100%** (15,358 / 15,358 files, 0 errors) |
+| Tests | 1,562 |
+| parser.c size | ~32.3 MB |
+| grammar.js | 4,552 lines |
+| Named keywords | 110 (108 grammar rules + 2 external; queryable via highlights/tags) |
 | Scanner tokens | 9 (stateful, depth-tracking) |
 | Query files | 6 (highlights, locals, tags, indents, folds, textobjects) |
 
-## What's new in 3.0.0
+Since 4.0.0 the success rate is a count of files actually read, reconciled per chunk —
+it used to be the total minus the files that reported an error, which counted a file
+that was never opened as a pass. See the 4.0.0 notes.
 
-**Breaking parse-tree change for editor textobjects and code navigation.** Every
-scoped construct now exposes its content as a single node via a `body` field
-(e.g. `(page_declaration body: (declaration_body …))`,
-`(code_block (begin_keyword) body: (statement_block …) (end_keyword))`), instead of a
-flat list of direct children. This powers Helix / nvim-treesitter textobjects
-(`@class.inside`, `@function.inside`, `@parameter`) via the new
-[`queries/textobjects.scm`](queries/textobjects.scm), plus a `parameters` field on
-procedures/triggers/events.
+## What's new in 4.0.0
 
-Tree-walkers and structural queries must descend through the `body` field — see
-[CHANGELOG.md](CHANGELOG.md) for the full migration guide.
+**This is a breaking release — the parse tree moves.** The headline change is that the
+statement terminator left `code_block` and the branch rules: a `begin … end;` now ends
+at its `end`, and the `;` re-parents to whatever encloses the construct. That re-spans
+74,268 `if_statement` nodes and every `begin … end;` in the corpus, without changing a
+single node type, field or count. A consumer that expected the `;` inside a body or
+branch's byte range must adjust.
+
+Alongside it: a dangling `else` in a case branch now binds to the inner `if` (it bound
+to the `case`, which meant the tree said the program did something it did not do); `begin`
+and `end` inside a `#if` block are nodes instead of being dropped from the tree entirely;
+the assignment operator and the `where()` markers are nodes, so `i := 1` no longer parses
+identically to `i += 2` and `where(X = const(N))` no longer parses identically to
+`where(X = field(N))`; and queries naming a non-lowercase keyword spelling (`"IF"`,
+`"Then"`, `"AND"`) must drop it.
+
+Eight of the nine defects fixed here were found by a new gate built during the release,
+[`tools/query_coverage/`](tools/query_coverage/README.md) — none was visible to anything
+the project had before, because the files parsed with zero `ERROR` nodes and the tree
+hashes were stable.
+
+See [CHANGELOG.md](CHANGELOG.md) for the full list, each with its measured blast radius.
 
 ## Installation
 
@@ -98,14 +112,14 @@ The grammar was rewritten from scratch in March 2026, achieving a **major reduct
 
 | Metric | V1 | V2 (current) |
 |--------|-----|-----|
-| parser.c | 106 MB (can't push to GitHub) | **~26 MB** |
+| parser.c | 106 MB (can't push to GitHub) | **~32.3 MB** |
 | Errors | 14 | **0** |
 | Success rate | 99.91% | **100%** |
-| Symbols | 2,249 | **~846** |
-| States | 29,126 | **~12,545** |
-| grammar.js | 8,500 lines | **~4,121 lines** |
-| Tests | 1,225 | **1,514** |
-| Keywords | invisible in queries | **83 named nodes** |
+| Symbols | 2,249 | **889** |
+| States | 29,126 | **13,927** |
+| grammar.js | 8,500 lines | **4,552 lines** |
+| Tests | 1,225 | **1,562** |
+| Keywords | invisible in queries | **110 named nodes** |
 | Query files | 3 (partial) | **6 (comprehensive)** |
 
 ### Key design decisions
@@ -113,7 +127,7 @@ The grammar was rewritten from scratch in March 2026, achieving a **major reduct
 - **Stateful external scanner** — 9 scanner tokens handle property disambiguation, depth tracking (`#if`/`#endif` nesting), named `begin`/`end` keywords at every depth, and split-construct detection via lookahead.
 - **Parse structure, don't validate** — Accept any `Name = Value ;` as a property. Semantic validation belongs in linters/LSP servers, not the parser.
 - **Generic preprocessor** — One `preproc_conditional` rule + 20 dedicated rules for genuinely complex split constructs (begin/end, var/begin, brace-close across `#if`/`#else` branches).
-- **83 named keyword nodes** — All keywords including `begin`/`end` are named nodes, enabling proper syntax highlighting and code navigation queries. Every grammar keyword rule has a uniform shape: one anonymous child typed as the canonical lowercase spelling, whatever the source casing.
+- **110 named keyword nodes** (108 grammar rules + 2 external scanner tokens) — All keywords including `begin`/`end` are named nodes, enabling proper syntax highlighting and code navigation queries. Every grammar keyword rule has a uniform shape: one anonymous child typed as the canonical lowercase spelling, whatever the source casing. Read a keyword's text from the node itself, never by descending into a child.
 
 See [docs/v2-blog-post-notes.md](docs/v2-blog-post-notes.md) for the full rewrite narrative.
 
@@ -138,11 +152,18 @@ tree-sitter test        # Run test suite
 ./validate-grammar.sh --full # Full: includes production AL file parsing
 ```
 
-For grammar refactors, the parse-tree diff harness proves a change is zero-behavior-change by re-parsing every production file and asserting byte-identical trees:
+For grammar refactors, the parse-tree diff harness proves a change is zero-behavior-change by re-parsing every production file and asserting byte-identical trees. Take a **fresh** baseline before you change anything and name it for the change — verifying against a snapshot you did not just take reports a delta that has nothing to do with your edit:
 
 ```bash
-./tools/tree-harness.sh snapshot ./BC.History .snapshots/bc   # baseline
-./tools/tree-harness.sh verify   ./BC.History .snapshots/bc   # verify after a change
+./tools/tree-harness.sh snapshot ./BC.History .snapshots/baseline-<change>   # ~16s
+./tools/tree-harness.sh verify   ./BC.History .snapshots/baseline-<change>   # ~11s
+```
+
+The query-coverage harness proves the tree is lossless over the source and that values stay reachable through queries — the class of defect an error count cannot see, because a token that is lexed and then dropped changes no tree hash:
+
+```bash
+python -m tools.query_coverage.qc run     # regression gate, exits 1 on a new cluster
+python -m tools.query_coverage.qc run --all   # full picture, always exits 0
 ```
 
 ### Parsing AL files
@@ -159,8 +180,10 @@ tree-sitter parse path/to/file.al -q    # Quiet (errors only)
 |------|---------|
 | `grammar.js` | Main grammar definition |
 | `src/scanner.c` | External scanner (9 tokens: property, depth tracking, named begin/end, split detection) |
-| `test/corpus/` | Test suite (1,514 tests) |
+| `test/corpus/` | Test suite (1,562 tests) |
 | `queries/` | Syntax highlighting, code navigation, folding, indentation, textobjects |
+| `tools/query_coverage/` | Query-coverage harness — proves the CST is lossless and values are queryable |
+| `tools/gate_selftest.py` | Mutation testing for the validation gates |
 
 ## Contributing
 
