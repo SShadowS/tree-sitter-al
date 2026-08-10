@@ -26,8 +26,12 @@ Run full parse before committing: `./parse-al-parallel.sh ./BC.History/ .`
 ./validate-grammar.sh --full # Full: includes production AL file parsing
 
 # Zero-behavior-change gate for grammar refactors (byte-identical parse trees)
-./tools/tree-harness.sh snapshot ./BC.History .snapshots/bc   # baseline (~20s)
-./tools/tree-harness.sh verify   ./BC.History .snapshots/bc   # verify (~11s, ~25s with a large delta)
+# Take a FRESH baseline before you change anything, and name it for the change.
+# Never verify against a snapshot you did not just take: a stale one reports a
+# huge delta that has nothing to do with your edit. `.snapshots/bc` was left
+# behind for two months and 15,349 of its 15,358 rows had drifted.
+./tools/tree-harness.sh snapshot ./BC.History .snapshots/baseline-<change>  # ~16s
+./tools/tree-harness.sh verify   ./BC.History .snapshots/baseline-<change>  # ~11s, ~22s with a large delta
 
 # Query-coverage harness — proves the CST is lossless and values are queryable
 python -m tools.query_coverage.qc run          # regression gate, exits 1 on a new cluster
@@ -64,7 +68,8 @@ python parse_bug_finder.py file.al debug.log   # Analyze parsing bugs
 - **Generic property rule** — ONE `property` rule handles all simple properties (vs V1's 291 individual rules)
 - **Generic preprocessor** — ONE `preproc_conditional` rule + ~12 dedicated split-construct rules (vs V1's 63)
 - **Named keyword nodes** — 83 keywords exposed as named nodes for query matching (81 grammar rules + the external `begin_keyword`/`end_keyword`), all with a uniform shape: one anonymous child typed as the canonical lowercase spelling
-- **Stateful scanner** — 1-byte depth counter tracks `#if`/`#endif` nesting; `begin`/`end` are named at every depth, and the depth counter decides only whether a `PREPROC_SPLIT_*` token gets first refusal
+- **Stateful scanner** — a `uint32_t` depth counter tracks `#if`/`#endif` nesting (it was a `uint8_t` until 4.0.0 and wrapped at 256); `begin`/`end` are named at every depth, and the depth counter decides only whether a `PREPROC_SPLIT_*` token gets first refusal
+- **Single-read identifier dispatch** — all six identifier-initial scanner tokens are decided in one scan over one read of the word. `read_keyword_ci` leaves a matched prefix consumed on failure, so sequential per-token reads start mid-identifier
 
 **Scanner Tokens:**
 

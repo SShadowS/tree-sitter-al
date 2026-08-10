@@ -4,7 +4,9 @@ The external scanner (`src/scanner.c`) handles patterns that can't be expressed 
 
 ## Scanner State
 
-The scanner maintains a 1-byte `ScannerState` with a `depth` counter (uint8_t) tracking `#if`/`#endif` nesting. Serialized as 1 byte via lifecycle functions.
+The scanner maintains a `ScannerState` holding a `depth` counter tracking `#if`/`#endif` nesting. `depth` is a **`uint32_t`, serialized as 4 bytes**.
+
+**It was a `uint8_t` until 4.0.0, and that wrapped.** At exactly 256 simultaneously-open `#if` blocks the counter returned to 0, the scanner believed it was at top level, and the split-construct tokens stopped being offered — measured as a `call_statement` plus 258 ERROR/MISSING nodes at 255 enclosing blocks, while 254 and 256 were clean. Real AL comes nowhere near this (BC.History's deepest nesting across 15,358 files is **3**), but the failure was silent-ish and cost nothing to remove. A `_Static_assert` on `sizeof(depth) >= 4` fails the build if anyone narrows it again.
 
 ## Scanner Tokens
 
@@ -19,31 +21,37 @@ The scanner maintains a 1-byte `ScannerState` with a `depth` counter (uint8_t) t
 | `PREPROC_SPLIT_BEGIN` | `begin` at depth > 0, immediately before `#endif` — split detection | none |
 | `PREPROC_SPLIT_END` | `end` at depth > 0, followed by `;` then `#elif`/`#else`/`#endif` — split detection | none |
 
-**Scan function order:** error recovery guard → PREPROC_OPEN/CLOSE → 'begin' dispatch (PREPROC_SPLIT_BEGIN | BEGIN_KEYWORD) → 'end' dispatch (PREPROC_SPLIT_END | END_KEYWORD) → VAR_ATTRIBUTE_OPEN → CONTINUE_AS_IDENTIFIER → PROPERTY_NAME
+**Scan function order:** error recovery guard → PREPROC_OPEN/CLOSE → VAR_ATTRIBUTE_OPEN → identifier dispatch (`BEGIN_KEYWORD` | `PREPROC_SPLIT_BEGIN` | `END_KEYWORD` | `PREPROC_SPLIT_END` | `PROPERTY_NAME` | `CONTINUE_AS_IDENTIFIER`)
 
-## Single-Scan Dispatch (begin/end)
+`VAR_ATTRIBUTE_OPEN` runs **before** the identifier tokens, not after — it did not until 4.0.0, and the old order is why a leading `b` was absorbed into a following `[`, producing a two-column `[` token whose text was `b[`.
 
-`BEGIN_KEYWORD` and `PREPROC_SPLIT_BEGIN` compete for the same text, so they **must** be decided inside one scan. A scan that returns false discards every advance it made and the scanner is not re-entered at the same position — so a split block that reads `begin`, fails its lookahead and declines destroys `BEGIN_KEYWORD`'s only chance to fire.
+## Single-Read Identifier Dispatch
+
+**Every identifier-initial token is decided in ONE scan over ONE read of the identifier.** Six tokens compete for the same text — `BEGIN_KEYWORD`, `END_KEYWORD`, their two `PREPROC_SPLIT_*` competitors, `PROPERTY_NAME` and `CONTINUE_AS_IDENTIFIER` — and they cannot be sequential blocks that each do their own read.
+
+Two independent reasons, both of which produced live bugs:
+
+- A scan that returns false **discards every advance and is not re-entered at the same position**, so a block that reads text, fails and declines destroys every later block's only chance to fire.
+- `read_keyword_ci` stops at the first mismatching character **with the matched prefix already consumed**, and there is no backtracking inside a scan, so the next branch starts *mid-identifier*.
+
+The second is how `b1 = 5;` lost its property: the `begin` attempt ate the `b`, then `PROPERTY_NAME`'s `is_identifier_start` check saw `1` and declined — while `x1 = 5;` in the same position parsed as a property. Parse states 20 and 22 offer `property_name` and `begin_keyword` together, so the two are genuinely co-valid. **Do not assert that two symbols are never co-valid without reading `ts_external_scanner_states` in `src/parser.c`** — that table is the exhaustive universe of `valid_symbols` combinations, it is cheap to read, and reasoning about it instead has been wrong every time.
+
+The shape:
 
 ```c
-if (valid_symbols[BEGIN_KEYWORD] || valid_symbols[PREPROC_SPLIT_BEGIN]) {
-  skip_whitespace(lexer);
-  if (read_keyword_ci(lexer, "begin")) {
-    lexer->mark_end(lexer);              // pin the token to 'begin'
-    if (state->depth > 0 && valid_symbols[PREPROC_SPLIT_BEGIN] &&
-        peek_directive_ci_skip_extras(lexer, DIRECTIVE_ENDIF)) { ... SPLIT ... }
-    if (valid_symbols[BEGIN_KEYWORD]) { ... BEGIN_KEYWORD ... }
-    return false;
-  }
-  if (state->depth > 0 && valid_symbols[PREPROC_SPLIT_BEGIN]) return false;
-}
+enum IdentifierWord word = read_identifier_word(lexer);  // ONE read, into a buffer
+lexer->mark_end(lexer);                                  // pin the token to the word
+// then classify: the split tokens get first refusal at depth > 0,
+// BEGIN_KEYWORD / END_KEYWORD are the fallback at EVERY depth.
 ```
 
-The split token gets first refusal at depth > 0; the named keyword is the fallback at every depth. A failed lookahead is not a failed scan — `begin` is still a `begin`. `mark_end` before the lookahead is what makes the fallback safe, since the lookahead advances well past the keyword.
+`read_identifier_word` returns `WORD_NOT_IDENTIFIER` when the lookahead cannot start an identifier and `WORD_OTHER` when the word is longer than the longest keyword tested (`continue`, 8 chars). `mark_end` before any lookahead is what makes the fallback safe, since the lookaheads advance well past the word.
 
-The `end` dispatch is the same shape with `DIRECTIVE_ELSE_ENDIF` and the `;` check.
+A failed lookahead is not a failed scan — `begin` is still a `begin`.
 
-Before 4.0.0 these were separate blocks and `BEGIN_KEYWORD`/`END_KEYWORD` were guarded by `state->depth == 0`, so a complete `begin … end` inside any `#if` block fell through to an anonymous `kw('begin')` — a `token(PATTERN)`, which tree-sitter renders as a hidden `aux_sym_*` symbol. The keyword was lexed and then dropped from the tree entirely.
+Before 4.0.0 `BEGIN_KEYWORD`/`END_KEYWORD` were additionally guarded by `state->depth == 0`, so a complete `begin … end` inside any `#if` block fell through to an anonymous `kw('begin')` — a `token(PATTERN)`, which tree-sitter renders as a hidden `aux_sym_*` symbol. The keyword was lexed and then dropped from the tree entirely.
+
+**Two different `#` conventions, do not mix them.** `peek_directive_ci_skip_extras` takes BARE directive words and consumes the `#` itself; the `PREPROC_OPEN`/`PREPROC_CLOSE` dispatch advances past `#` manually before reading its word.
 
 ## Transparent Extras
 
