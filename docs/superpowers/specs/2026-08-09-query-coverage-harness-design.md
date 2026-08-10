@@ -288,10 +288,17 @@ Report-only initially. The first `accept` freezes today's holes into `baseline.j
 
 ## Known limitations
 
-Stated plainly rather than discovered later. None of the six detectors catches:
+Stated plainly rather than discovered later. Updated post-implementation (final whole-branch review, finding F3): a seventh detector, **corpus**, was added to close the node-type-disappearance gap this section originally missed entirely, and two of the three original bullets below needed correction once the other six detectors were actually built and measured against the real grammar.
 
-- **Wrong-parent attachment with correct spans.** A property landing under the wrong field when preprocessor branches interleave produces no gap, no error, and correct byte coverage.
+Not caught by anything in the harness:
+
 - **Precedence and associativity misparses inside expressions.** `a + b * c` grouped wrongly covers every byte correctly.
 - **Scanner over-consumption**, where a string or comment token swallows adjacent code — unless detector 5's lexer is genuinely independent, which is why that constraint is called out above.
+- **Wrong-parent attachment that also preserves every node's type.** A property landing under the wrong field when preprocessor branches interleave produces no gap, no error, and correct byte coverage. This is narrower than it first looks: detector 4 (reserved-keyword-as-identifier) *does* catch the `case`/dangling-`else` mis-association found while building this harness, because that misparse degrades a keyword into a plain `identifier` — a type change, not just a wrong parent. The limitation is real only for attachment errors where every node keeps its original type.
 
 Closing these needs structural assertions against expected trees, which is what `test/corpus/` already provides. The harness complements those tests; it does not replace them.
+
+Two things the original six-detector plan did not anticipate, both surfaced by the final review:
+
+- **A named node type can disappear from the corpus's actual output while every byte stays covered** — e.g. a keyword rule losing its `alias()` and reverting to a bare `kw()` pattern still lexes and covers its bytes (as a hidden token would), but the node type every `(x_keyword)` query matches on stops being emitted anywhere. Detector 1 is byte-coverage-based and cannot see this. `corpus.never_observed` (§ Corpus selection) already computed the right set from day one; it just was not turned into a gating Finding until this correction. It is scoped to what the manifest actually exercises — 357 of 391 named types — so it says nothing new about the other 34, which are dead grammar or genuinely uncovered constructs either way.
+- **Detector 3's dynamic half is narrower than "every field."** It flags a field marked `required: true` in `node-types.json` that returns `None` on a real instance — 241 of the 392 field declarations. An *optional* field whose content is a `choice()` mixing visible and hidden alternatives passes the static check (the name is present) and is never inspected dynamically. That is the majority of the grammar's fields, not an edge case.

@@ -132,3 +132,31 @@ def test_never_observed_lists_unseen_named_types():
     ]
 
     assert corpus.never_observed(node_types, {"seen_node"}) == ["unseen_node"]
+
+
+def test_detect_emits_one_finding_per_never_observed_type_fingerprinted_for_clustering():
+    """F3: a type dropping out of the corpus (a keyword rule inlined to a bare
+    string literal, say) must become a real Finding -- fingerprinted so it
+    clusters and diffs like every other detector's output -- not just a line
+    in a gitignored report nobody diffs against a baseline.
+    """
+    node_types = [
+        {"type": "seen_node", "named": True},
+        {"type": "unseen_node", "named": True},
+        {"type": ";", "named": False},
+    ]
+
+    findings = corpus.detect(node_types, {"seen_node"})
+
+    assert len(findings) == 1
+    finding = findings[0]
+    assert finding.detector == "corpus"
+    assert finding.fingerprint == ("never-observed", "unseen_node")
+    assert finding.key() == "corpus|never-observed|unseen_node"
+    assert finding.detail == {"type": "unseen_node"}
+
+
+def test_detect_is_empty_when_nothing_named_is_unseen():
+    node_types = [{"type": "seen_node", "named": True}]
+
+    assert corpus.detect(node_types, {"seen_node"}) == []

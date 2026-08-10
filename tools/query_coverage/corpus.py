@@ -15,7 +15,10 @@ import hashlib
 from dataclasses import dataclass
 from pathlib import Path
 
+from .model import Finding
+
 MANIFEST_HEADER = "# object_types\tpath\tsha256\tbytes\treason"
+DETECTOR = "corpus"
 
 
 @dataclass(frozen=True)
@@ -157,3 +160,34 @@ def never_observed(node_types: list[dict], seen: set[str]) -> list[str]:
         for entry in node_types
         if entry.get("named") and entry["type"] not in seen
     )
+
+
+def detect(node_types: list[dict], seen: set[str]) -> list[Finding]:
+    """A named type moving observed -> unobserved is a grammar-visible defect
+    with byte coverage intact -- e.g. a keyword rule inlined from
+    `alias(kw('word'), 'word')` to a bare string literal keeps every byte
+    covered (the string token is still a visible leaf) while the node type
+    that queries match on (`(x_keyword)`) stops being emitted anywhere.
+    `never_observed` already computes the right set; this is what turns it
+    into a Finding, so it clusters, baselines and gates like every other
+    detector instead of living only in a gitignored report nobody diffs.
+
+    No source location exists for a type that was never produced, so this is
+    the same "detail carries the specifics, the located fields stay at zero"
+    shape as fields._skip_finding.
+    """
+    return [
+        Finding(
+            detector=DETECTOR,
+            category="never-observed",
+            fingerprint=("never-observed", name),
+            path="src/node-types.json",
+            byte_offset=0,
+            line=0,
+            column=0,
+            enclosing=name,
+            snippet=f"named node type {name!r} was not produced by any file in scope",
+            detail={"type": name},
+        )
+        for name in never_observed(node_types, seen)
+    ]

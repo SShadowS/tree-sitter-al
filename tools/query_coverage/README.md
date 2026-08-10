@@ -76,6 +76,12 @@ is the only way to raise a count or admit a new cluster. This means a clean
    — excluded from the exit code (see `INFORMATIONAL_DETECTORS` in `qc.py`) because it
    was written for editor highlighting, not exhaustive extraction, so a gap in it is a
    note, not a regression.
+7. **corpus** — named node types in `src/node-types.json` that nothing in this run's
+   scope produced. Catches a node type vanishing from the grammar's actual output while
+   byte coverage stays intact — e.g. a keyword rule losing its `alias()` and reverting to
+   a bare `kw()` pattern still covers every byte (the token is still lexed), but every
+   `(x_keyword)` query goes dark. Detector 1 cannot see this: the bytes it checks are
+   still covered. See "Known limitations" for this detector's own scope caveat.
 
 ## Self-tests
 
@@ -91,11 +97,31 @@ If any is missing, the detector is broken — not the grammar.
 
 ## Known limitations
 
-Not caught by any detector: wrong-parent attachment with correct spans,
-precedence and associativity misparses inside expressions, and scanner
-over-consumption where a string or comment token swallows code. Closing those
-needs structural assertions against expected trees, which is what
-`test/corpus/` provides.
+Not caught by any detector: precedence and associativity misparses inside
+expressions (`a + b * c` grouped wrongly covers every byte correctly), and
+scanner over-consumption where a string or comment token swallows adjacent
+code. Wrong-parent attachment is caught only when the misparse also changes
+a node's type along the way — detector 4 catches the `case`/dangling-`else`
+mis-association this way, because that misparse degrades a keyword into a
+plain `identifier`. Attachment errors that preserve every node's type and
+every byte's span are not caught by anything here; closing those needs
+structural assertions against expected trees, which is what `test/corpus/`
+provides.
+
+Detector 3's dynamic half is narrower than "every field": it flags a
+`required: true` field returning `None` on a real instance, which is 241 of
+the 392 field declarations in `src/node-types.json`. An *optional* field
+whose content is a `choice()` mixing visible and hidden alternatives passes
+the static check (its name is present in `node-types.json`) and is never
+examined by the dynamic one — that is the majority of the grammar's fields.
+
+A named node type disappearing from the corpus with byte coverage intact —
+the class above, and the general form of the historical `begin`/`end`
+dropped-inside-`#if` bug — is caught, by the **corpus** detector. It works
+only for types this run's scope actually exercises: the manifest covers 357
+of 391 named types, and the other 34 are already never-observed (dead
+grammar or genuinely uncovered constructs) and stay that way regardless of
+what changes — see `reports/never-observed.json`.
 
 The `field(` anchor is deliberately excluded from detector 5 — see
 "Coverage deliberately not checked" in `reports/summary.md` for the live list

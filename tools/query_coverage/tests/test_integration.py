@@ -62,3 +62,36 @@ def test_a_seeded_regression_makes_run_exit_one(tmp_path: Path):
 
     assert result.returncode == baseline.EXIT_REGRESSION
     assert victim in result.stdout
+
+
+def test_a_seeded_never_observed_regression_makes_run_exit_one(tmp_path: Path):
+    """F3-specific non-vacuity proof: a named node type moving observed ->
+    unobserved (e.g. a keyword rule losing its `alias()`, dropping the node
+    type every `(x_keyword)` query matches on, while every byte stays
+    covered) must fail the gate through the SAME mechanism as any other
+    detector's regression -- not just appear in a gitignored report nobody
+    diffs. Removing a `corpus|never-observed|*` cluster from a copy of the
+    real baseline simulates exactly that: the type is unobserved either way,
+    but the accepted baseline no longer expects it, so it reads as newly
+    unobserved.
+    """
+    real = baseline.load(loader.REPO_ROOT / "tools" / "query_coverage" / "baseline.json")
+    assert real is not None and real.counts, "run `qc accept` before this test"
+
+    dropped = dict(real.counts)
+    victim = next((k for k in sorted(dropped) if k.startswith("corpus|never-observed|")), None)
+    assert victim is not None, "baseline has no corpus|never-observed|* cluster to seed against"
+    del dropped[victim]
+
+    seeded = tmp_path / "seeded-baseline.json"
+    baseline.save(seeded, baseline.Baseline(manifest_hash=real.manifest_hash, counts=dropped))
+
+    result = subprocess.run(
+        [sys.executable, "-m", "tools.query_coverage.qc", "run", "--baseline", str(seeded)],
+        cwd=loader.REPO_ROOT,
+        capture_output=True,
+        text=True,
+    )
+
+    assert result.returncode == baseline.EXIT_REGRESSION
+    assert victim in result.stdout

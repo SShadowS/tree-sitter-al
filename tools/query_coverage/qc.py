@@ -179,13 +179,25 @@ def cmd_run(args) -> int:
         print(f"scope: {scope} -- {len(scope_paths)} files")
 
     parsed = []
+    seen_types: set[str] = set()
     for rel in scope_paths:
         source = (repo_root / rel).read_bytes()
         tree = parser.parse(source)
         parsed.append((tree, source))
+        seen_types |= _named_types(tree.root_node)
         for _name, detect in PER_FILE:
             findings.extend(detect(tree, source, rel))
         findings.extend(fields.detect_dynamic(tree, source, rel, node_types))
+
+    # A named type that stops being produced by anything in scope is
+    # grammar-visible with byte coverage intact -- e.g. a keyword rule
+    # inlined to a bare string literal keeps every byte covered but the node
+    # type every `(x_keyword)` query matches on vanishes. Emitting these as
+    # real Findings (not just an echoed report) is what makes that class of
+    # defect gate like every other one; see corpus.detect's docstring.
+    corpus_findings = corpus.detect(node_types, seen_types)
+    findings.extend(corpus_findings)
+    never = sorted(f.detail["type"] for f in corpus_findings)
 
     # Dead-pattern scope. The spec calls for the FULL corpus: a manifest-only
     # tally false-flags patterns for rare constructs that set-cover happened to
@@ -274,8 +286,10 @@ def cmd_run(args) -> int:
     reports = repo_root / REPORTS
     model.write_jsonl(reports / "findings.jsonl", provenance, findings)
 
-    never_path = reports / "never-observed.json"
-    never = json.loads(never_path.read_text(encoding="utf-8")) if never_path.is_file() else []
+    # `never` was computed above from THIS run's own scope, not read back
+    # from `select`'s gitignored reports/never-observed.json -- a fresh clone
+    # that never ran `select` still gets this section, and it can never drift
+    # from what this run actually observed.
     write_summary(reports / "summary.md", clusters, diff, never)
 
     if diff.ratcheted and not args.all:
