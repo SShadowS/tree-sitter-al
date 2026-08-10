@@ -117,6 +117,21 @@ trap 'rm -rf "$temp_dir"' EXIT
 # in the chunk is then silently counted OK by default — yielding a meaningless
 # "success" number. Convert to native Windows paths when cygpath is present so
 # tree-sitter actually opens the files. No-op on Linux/macOS (no cygpath).
+#
+# That is no longer merely a warning: with the path conversion broken, a 40-file
+# corpus produced "Parsed OK: 36, Errors: 4, Success rate: 90.0%" while ZERO
+# files had been opened. One error line per aborted chunk, nine phantom
+# successes behind each. The per-chunk reconciliation in step 5b is what stops
+# that now.
+#
+# KEEP THE TRAILING SLASH WHEN ROOT_DIR IS A SYMLINK OR NTFS JUNCTION. `find`
+# does not descend into one named as a bare starting point:
+#   find BC.History  -name '*.al'  ->        0 files
+#   find BC.History/ -name '*.al'  ->   15,358 files
+# Measured. tools/tree-harness.sh:104 has the same hazard and the same guard;
+# Python `rglob` does not, so `qc` sees the files either way -- which is how two
+# gates can disagree about the same corpus. The zero-file `die` below is what
+# keeps a dropped slash from reading as a clean run.
 all_files="$temp_dir/all_files.txt"
 find "$ROOT_DIR" -name "*.al" -type f | sort > "$temp_dir/all_files_native.txt"
 if command -v cygpath >/dev/null 2>&1; then

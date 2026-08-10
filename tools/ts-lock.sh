@@ -108,6 +108,13 @@ trap ts_lock_release EXIT INT TERM
 
 [ "$waited" -gt 0 ] && echo "ts-lock: acquired after ${waited}s" >&2
 
+# Let the wrapped command know it is protected. Nothing can detect this from
+# outside -- the lock directory existing says someone holds it, not that WE do
+# -- so a tool that wants to refuse to run unlocked needs this from us.
+# tools/gate_selftest.py checks it, because it spawns more parser invocations
+# than anything else in the repo.
+export TS_LOCK_ACTIVE="$TS_LOCK_TOKEN"
+
 # The whole point: whoever last held the lock may have left a library built from
 # a different tree. Force a rebuild from THIS checkout before running.
 touch src/scanner.c src/parser.c 2>/dev/null || true

@@ -101,10 +101,20 @@ build_trees() {
     local WORK="$1"
     mkdir -p "$WORK/chunks" "$WORK/raw" "$WORK/idx" "$WORK/rc" "$WORK/err"
 
+    # KEEP THE TRAILING SLASH WHEN ROOT IS A SYMLINK OR NTFS JUNCTION.
+    # `find` does not descend into one named as a bare starting point, so
+    #   find BC.History  -name '*.al'  ->        0 files
+    #   find BC.History/ -name '*.al'  ->   15,358 files
+    # Measured in a worktree where BC.History is a junction. The `die` below is
+    # what stops that from becoming a silent pass; parse-al-parallel.sh printed
+    # a warning and exited 0 in the same situation until it was given the same
+    # guard. Python `rglob` is unaffected, so `qc` sees the files either way --
+    # which is exactly how the two gates can disagree about the same corpus.
     find "$ROOT" -name '*.al' -type f | LC_ALL=C sort > "$WORK/master.txt"
     local count
     count=$(wc -l < "$WORK/master.txt")
-    [ "$count" -gt 0 ] || die "no *.al files under '$ROOT'"
+    [ "$count" -gt 0 ] \
+        || die "no *.al files under '$ROOT'$([ -L "${ROOT%/}" ] && echo " -- it is a symlink/junction; retry as '${ROOT%/}/'")"
     echo "tree-harness: $count files, $NUM_THREADS threads, chunk $CHUNK_SIZE" >&2
 
     # Build the parser once, serially, before fanning out. tree-sitter locks its

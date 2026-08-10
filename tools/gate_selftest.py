@@ -238,6 +238,16 @@ class Case:
     path_prepend: str | None = None  # a gate-fixture dir to shadow `tree-sitter`
     must_contain: Sequence[str] = ()
     must_not_contain: Sequence[str] = ()
+    # Assertions on a file the gate WROTE, keyed by path relative to the scratch
+    # tree. A count is a weak expectation: "193 files changed, all the right node
+    # types, counts consistent with a clean win" once described a wrong tree, and
+    # a case asserting only that N moved would have passed it. Where a gate names
+    # what it found, assert the NAME.
+    must_contain_in: dict = field(default_factory=dict)
+    # What this gate CANNOT see of the defect class, where that is knowable. A
+    # detector that catches 5% of instances and reports nothing on the rest looks
+    # identical to a complete one in a green run; this is where that gets said.
+    blind_spot: str = ""
     expect_exit: str = "nonzero"     # "nonzero" | "zero"
     slow: bool = True                # runs the full validate-grammar.sh
     needs: Sequence[str] = ()        # environment prerequisites, see PREREQS
@@ -298,6 +308,10 @@ CASES: list[Case] = [
             "Found unexpected ERROR/MISSING nodes",
             "zz_selftest_smuggled_error.txt",
         ],
+        blind_spot="greps EXPECTED TREES for ERROR/MISSING text. It cannot see a "
+                   "fixture that ought to error and does not, nor one whose "
+                   "expected tree is simply wrong -- Tasks 7 and 8 shipped exactly "
+                   "that, and both passed identically on the broken grammar",
     ),
     Case(
         id="step4-orphan-tool-fails",
@@ -328,6 +342,10 @@ CASES: list[Case] = [
         )],
         must_contain=["orphaned rule", "zz_selftest_orphan_rule"],
         must_not_contain=["No orphaned rules"],
+        blind_spot="counts references by regex over grammar.js and test/, so a rule "
+                   "reached only through a computed or aliased name reads as unused; "
+                   "and the 24 'missing definitions' the tool also reports are not "
+                   "wired into the gate at all",
     ),
     Case(
         id="step4-missing-helper",
@@ -422,6 +440,12 @@ CASES: list[Case] = [
         env={"PARSE_OUT_DIR": "."},
         must_contain=["Errors       : 1"],
         must_not_contain=["Success rate : 100.0%"],
+        # The count alone is a weak assertion -- 1 error is 1 error whichever
+        # file it came from. errors.txt has to name the file that is actually
+        # broken, which is what a caller acts on.
+        must_contain_in={"errors.txt": ["zz_selftest_broken.al"]},
+        blind_spot="sees only what tree-sitter flags as ERROR/MISSING; AL that "
+                   "parses cleanly but means the wrong thing is invisible here",
         slow=False,
     ),
     Case(
@@ -478,6 +502,10 @@ CASES: list[Case] = [
         mutations=[append("selftest-corpus/Status.Enum.al", "\n// selftest edit\n")],
         must_contain=["MISMATCH", "1 file(s) changed", "Status.Enum.al"],
         must_not_contain=["VERIFIED"],
+        blind_spot="compares node types and positions, NOT token text. An edit that "
+                   "changes only a token's spelling leaves a byte-identical tree and "
+                   "is invisible -- the first version of this case asserted a "
+                   "MISMATCH that correctly never came",
         slow=False,
     ),
     Case(
@@ -505,6 +533,41 @@ CASES: list[Case] = [
         expect_exit="zero",
         must_contain=["VERIFIED"],
         must_not_contain=["MISMATCH"],
+        slow=False,
+    ),
+    # ---- tools/ts-lock.sh ----------------------------------------------------
+    # Mutual exclusion was violated once by the RELEASE path, not the acquire
+    # path: an exiting zombie deleted a lock belonging to a different, running
+    # holder. Fixed in a739586; these two rows are its only automated coverage.
+    # The subject here is the lock and the "gate" is the detector, so both
+    # directions are pinned -- otherwise a detector that always says PASS would
+    # look exactly like a correct one.
+    Case(
+        id="tslock-release-guard-detects",
+        gate="./tools/gate-fixtures/ts-lock-release-guard.sh",
+        why="ts-lock reverted to releasing unconditionally, so an exiting holder "
+            "deletes a lock that now belongs to someone else",
+        mutations=[sub(
+            "tools/ts-lock.sh",
+            r"trap ts_lock_release EXIT INT TERM",
+            'trap \'rm -rf "$LOCK_DIR"\' EXIT INT TERM',
+            count=1,
+        )],
+        must_contain=["FAIL", "deleted a lock owned by someone else"],
+        must_not_contain=["PASS"],
+        slow=False,
+    ),
+    Case(
+        id="tslock-release-guard-passes",
+        gate="./tools/gate-fixtures/ts-lock-release-guard.sh",
+        why="the control: with the ownership token in place the exiting holder "
+            "must leave the new owner's lock alone",
+        expect_exit="zero",
+        must_contain=["PASS", "left the new owner's lock intact"],
+        must_not_contain=["FAIL"],
+        blind_spot="exercises one holder and one takeover. It does not cover the "
+                   "stale-breaker path, nor a holder killed without running its "
+                   "trap at all",
         slow=False,
     ),
 ]
@@ -586,6 +649,42 @@ def _find_bash() -> str:
 BASH = _find_bash()
 
 
+def check_lock() -> None:
+    """This harness is the repo's biggest source of parser invocations.
+
+    Every case runs a gate that shells out to `tree-sitter`, and tree-sitter
+    caches its compiled library by grammar NAME -- one `al.dll` shared by every
+    worktree on the machine. Running unlocked while another stream is building
+    corrupts both directions, and neither side errors; it just produces wrong
+    answers. Wrapping the visible command is not enough either, as one stream
+    found by generating fixtures with an unlocked `tree-sitter parse` nested
+    inside a Python subprocess.
+
+    Refuse only when the conflict is real -- someone else is holding the lock
+    right now. With no lock at all (CI, a single-user machine) warn and carry
+    on, because there is nothing to race.
+    """
+    if os.environ.get("TS_LOCK_ACTIVE"):
+        return
+    lock_dir = Path(os.environ.get("TS_LOCK_DIR")
+                    or (os.environ.get("TMPDIR", "/tmp") + "/tree-sitter-al.buildlock"))
+    if lock_dir.exists():
+        owner = "unknown"
+        try:
+            owner = (lock_dir / "owner").read_text(encoding="utf-8").strip() or owner
+        except OSError:
+            pass
+        raise SelfTestError(
+            f"another holder has the shared parser lock ({owner}) and this run is "
+            f"not inside it. Every case would race their build of al.dll, in both "
+            f"directions, silently. Re-run as:  ./tools/ts-lock.sh python "
+            f"tools/gate_selftest.py"
+        )
+    print("gate-selftest: NOTE - not running under ./tools/ts-lock.sh, and nothing "
+          "else holds the lock. Safe only if no other checkout is building the "
+          "parser right now.", flush=True)
+
+
 def preflight() -> None:
     """Refuse to run at all if the shell cannot reach the tools the gates need.
 
@@ -600,6 +699,44 @@ def preflight() -> None:
             f"every case would fail for that reason and none of them would be "
             f"testing anything. Set GATE_SELFTEST_BASH to a shell that can."
         )
+
+
+def _run_tree(cmd, *, cwd, env, timeout):
+    """Run a gate, and on timeout kill its WHOLE PROCESS TREE.
+
+    `subprocess.run(timeout=...)` kills only the direct child. Every gate here
+    is a bash script that spawns tree-sitter, python and xargs workers, so a
+    timeout would leave those running -- and they would go on parsing inside a
+    scratch tree this harness has already deleted and recreated for the next
+    case, against a mutation that no longer applies. Surviving children are a
+    false-result generator, and it would be this harness generating them.
+
+    Same shape as the incident where a stopped background task left ts-lock
+    shells alive in their wait loops.
+    """
+    proc = subprocess.Popen(cmd, cwd=cwd, env=env,
+                            stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
+    try:
+        out, _ = proc.communicate(timeout=timeout)
+    except subprocess.TimeoutExpired:
+        _kill_tree(proc)
+        proc.communicate()
+        raise
+    return subprocess.CompletedProcess(cmd, proc.returncode, out, None)
+
+
+def _kill_tree(proc) -> None:
+    if os.name == "nt":
+        # /T is the whole point: without it taskkill kills one process and
+        # orphans the rest, which is exactly the failure being avoided.
+        subprocess.run(["taskkill", "/F", "/T", "/PID", str(proc.pid)],
+                       stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+        return
+    import signal
+    try:
+        os.killpg(os.getpgid(proc.pid), signal.SIGKILL)
+    except OSError:
+        proc.kill()
 
 
 def _posix_path(path: Path) -> str:
@@ -699,12 +836,9 @@ def run_case(case: Case, workdir: Path, timeout: int) -> tuple[bool, str, str]:
 
     cmd = [BASH, case.gate, *case.args]
     try:
-        proc = subprocess.run(
-            cmd, cwd=workdir, env=env, timeout=timeout,
-            stdout=subprocess.PIPE, stderr=subprocess.STDOUT,
-        )
+        proc = _run_tree(cmd, cwd=workdir, env=env, timeout=timeout)
     except subprocess.TimeoutExpired:
-        return False, f"timed out after {timeout}s", ""
+        return False, f"timed out after {timeout}s (process tree killed)", ""
 
     out = ANSI.sub("", proc.stdout.decode("utf-8", errors="replace"))
 
@@ -719,6 +853,15 @@ def run_case(case: Case, workdir: Path, timeout: int) -> tuple[bool, str, str]:
     for needle in case.must_not_contain:
         if needle in out:
             problems.append(f"output still said {needle!r}")
+    for relpath, needles in case.must_contain_in.items():
+        target = workdir / relpath
+        if not target.exists():
+            problems.append(f"expected the gate to write {relpath}, which does not exist")
+            continue
+        body = target.read_text(encoding="utf-8", errors="replace")
+        for needle in needles:
+            if needle not in body:
+                problems.append(f"{relpath} never named {needle!r}")
 
     if problems:
         return False, "; ".join(problems), out
@@ -880,7 +1023,10 @@ def prove_guards(scratch: Path) -> int:
 
 
 def main() -> int:
-    ap = argparse.ArgumentParser(description=__doc__.splitlines()[0])
+    # `(__doc__ or "")`: python -OO strips docstrings, and indexing [0] of an
+    # empty split would take the harness down before it ran a single case.
+    ap = argparse.ArgumentParser(
+        description=((__doc__ or "gate self-test").splitlines() or ["gate self-test"])[0])
     ap.add_argument("-k", dest="pattern", help="only cases whose id contains this")
     ap.add_argument("--quick", action="store_true",
                     help="skip cases that run the full validate-grammar.sh")
@@ -898,10 +1044,14 @@ def main() -> int:
     args = ap.parse_args()
 
     if args.list:
+        blind = 0
         for case in CASES:
             tag = "slow" if case.slow else "fast"
             print(f"{case.id:32s} [{tag}] {case.gate:24s} {case.why}")
-        print(f"\n{len(CASES)} cases")
+            if case.blind_spot:
+                blind += 1
+                print(f"{'':32s}   BLIND SPOT: {case.blind_spot}")
+        print(f"\n{len(CASES)} cases, {blind} with a recorded blind spot")
         return 0
 
     if args.write_inventory:
@@ -936,6 +1086,7 @@ def main() -> int:
             print("gate-selftest: all guards fired")
             return 0
 
+        check_lock()
         preflight()
         cases = select(args.pattern, args.quick)
         if not cases:

@@ -156,6 +156,18 @@ DELIBERATE_ERROR_FIXTURES=(
     # the tree. It lives in its own file rather than joining the clean scanner
     # fixtures so that those stay subject to this step.
     "scanner_var_attribute_token_span_test.txt"
+    # A directive keyword with no word boundary — `#regionX`, `#pragmaX` — is not
+    # a directive at all, and the ERROR is the assertion.
+    #
+    # ADDED AHEAD OF THE FIXTURE. This file does not exist on this branch; it is
+    # Stream A's, and `.claude/commands/release.md` (theirs) already lists all
+    # six names for the equivalent pre-flight grep. That doc says the two gates
+    # "must exempt exactly the same set — change both or neither", and neither
+    # stream can edit the other's file, so the sets would have diverged the
+    # moment the branches met: their new fixture would have failed this step.
+    # An allow-list entry for an absent file is inert, so carrying it early is
+    # free and closes the gap in the only direction available.
+    "directive_word_boundary_test.txt"
 )
 
 is_deliberate_error_fixture() {
@@ -425,8 +437,18 @@ elif [ ! -f "parse-al-parallel.sh" ]; then
 elif [ ! -d "$AL_PARSE_CORPUS" ]; then
     print_warning "AL corpus not present ($AL_PARSE_CORPUS) — skipping; set AL_PARSE_CORPUS to point at one"
 else
+    # parse-al-parallel.sh writes parsed.txt/errors.txt into its CORPUS
+    # directory by default, which is what `.claude/rules/debugging.md` and
+    # /iterate expect of a direct invocation. It is the wrong place for this
+    # step: in a worktree, BC.History is an NTFS junction into the main
+    # checkout, so --full would drop two files into someone else's repo while
+    # they are working in it. Send them somewhere disposable instead; the lists
+    # are reproducible by running the script directly.
+    AL_PARSE_OUT=$(mktemp -d)
     echo "Parsing $AL_PARSE_CORPUS ..."
-    PARSE_OUTPUT=$(./parse-al-parallel.sh "$AL_PARSE_CORPUS" . 2>&1) && PARSE_EXIT_CODE=0 || PARSE_EXIT_CODE=$?
+    PARSE_OUTPUT=$(PARSE_OUT_DIR="$AL_PARSE_OUT" ./parse-al-parallel.sh "$AL_PARSE_CORPUS" . 2>&1) \
+        && PARSE_EXIT_CODE=0 || PARSE_EXIT_CODE=$?
+    rm -rf "$AL_PARSE_OUT"
     echo "$PARSE_OUTPUT" | tail -12
 
     PARSE_TOTAL=$(echo "$PARSE_OUTPUT" | sed -n 's/^Total files *: *\([0-9][0-9]*\).*/\1/p' | tail -1)
