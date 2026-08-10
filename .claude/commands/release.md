@@ -33,15 +33,17 @@ Before starting, verify:
    disagreed on what counts as a hit. Found by writing a fixture titled with
    the bare word.
 
-   Those four files are deliberate negatives — their ERROR nodes *are* the
+   Those five files are deliberate negatives — their ERROR nodes *are* the
    assertion. They pin that a misplaced `TableData X = R` fragment under
    OptionMembers surfaces rather than being silently absorbed, that `#` +
    newline + `pragma`/`if`/`elif`/`region` does not lex as a directive
-   (whitespace tolerance after `#` is horizontal-only), and that `# ifx` is not
-   `#if`. Any hit OUTSIDE those four is a real problem.
+   (whitespace tolerance after `#` is horizontal-only), that `# ifx` is not
+   `#if`, and that a stray identifier before a var attribute gets its own node
+   instead of being absorbed into the `[` token. Any hit OUTSIDE those five is
+   a real problem.
 
-   Unscoped, this check had 8 hits across those 4 files and so had never passed
-   at any release, v3.3.0 included. The same exemption list lives in
+   Unscoped, this check had 8 hits across the original 4 files and so had never
+   passed at any release, v3.3.0 included. The same exemption list lives in
    `validate-grammar.sh` Step 3 (`DELIBERATE_ERROR_FIXTURES`), which matches on
    exact basename. **The two gates must exempt exactly the same set** — change
    both or neither, and keep the matching anchored so they cannot drift.
