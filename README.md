@@ -159,7 +159,7 @@ For grammar refactors, the parse-tree diff harness proves a change is zero-behav
 ./tools/tree-harness.sh verify   ./BC.History .snapshots/baseline-<change>   # ~11s
 ```
 
-The query-coverage harness proves the tree is lossless over the source and that values stay reachable through queries — the class of defect an error count cannot see, because a token that is lexed and then dropped changes no tree hash:
+The query-coverage harness measures whether the tree is lossless over the source and whether values stay reachable through queries — the class of defect an error count cannot see, because a token that is lexed and then dropped changes no tree hash. It currently reports 3,895 byte gaps in 112 clusters, dominated by bare inline keywords (`record`, `field`, `code`); 4.0.0 fixed the ones that also took a declared field down with them, not the rest:
 
 ```bash
 python -m tools.query_coverage.qc run     # regression gate, exits 1 on a new cluster
@@ -182,7 +182,7 @@ tree-sitter parse path/to/file.al -q    # Quiet (errors only)
 | `src/scanner.c` | External scanner (9 tokens: property, depth tracking, named begin/end, split detection) |
 | `test/corpus/` | Test suite (1,562 tests) |
 | `queries/` | Syntax highlighting, code navigation, folding, indentation, textobjects |
-| `tools/query_coverage/` | Query-coverage harness — proves the CST is lossless and values are queryable |
+| `tools/query_coverage/` | Query-coverage harness — measures CST losslessness and query reach |
 | `tools/gate_selftest.py` | Mutation testing for the validation gates |
 
 ## Contributing

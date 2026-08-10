@@ -39,6 +39,28 @@ Ordered by how much of the corpus moves. Counts are node-instance set difference
 
 Each of these has a full entry below with its mechanism and its measurement.
 
+### What this release did not fix
+
+**The CST is still not lossless over the source.** The harness reports **3,895 byte-gap
+findings in 112 clusters** — source bytes that are consumed by the lexer and land in no
+node at all, so they cannot be read from the tree or matched by any query. The largest
+are `record` (2,220), `field` (473) and `code` (372), with roughly thirty other keywords
+behind them.
+
+This release fixed one half of that population: every keyword sitting inside a
+`field()`, where the dropped token also took a declared field down with it. The other
+half — a bare inline `kw('word')` that no `field()` wraps — is untouched. Both are the
+same mechanism (tree-sitter renders an anonymous *pattern* token as a hidden `aux_sym_*`
+symbol, unlike an anonymous *string* token such as `";"`), and the fix shape is the same
+`alias(kw('word'), 'word')` used throughout this release. What differs is the cost of
+leaving it: a dropped field silently breaks a consumer that reads the schema, while a
+dropped bare keyword costs highlighting and query reach for text the consumer can still
+recover from source ranges.
+
+If you need those bytes today, slice the source between the surrounding nodes'
+`end_byte` and `start_byte`. The count is published rather than the impression: run
+`python -m tools.query_coverage.qc run --all` for the current cluster list.
+
 ### Why it was worth it
 
 **Nine defects, eight of them found by a gate built during this release.** None was
@@ -62,9 +84,11 @@ per chunk, then globally, then against `parsed.txt`.
 
 ### Added
 
-- **`tools/query_coverage/` — the query-coverage harness.** Proves the CST is lossless
-  over the source and that values stay reachable through queries, which is the class of
-  defect the three pre-existing gates were structurally unable to see. Seven detectors:
+- **`tools/query_coverage/` — the query-coverage harness.** *Measures* whether the CST
+  is lossless over the source and whether values stay reachable through queries, which
+  is the class of defect the three pre-existing gates were structurally unable to see.
+  **The CST is not lossless, and this release does not make it so** — see "What this
+  release did not fix" below for the number. Seven detectors:
   byte gaps (source bytes covered by no leaf), an ERROR/MISSING census, declared fields
   absent from their own node type (static) plus required fields returning `None` on a
   real instance (dynamic), hard-reserved words appearing as plain identifiers, lexical
