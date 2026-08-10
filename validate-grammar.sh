@@ -170,6 +170,12 @@ DELIBERATE_ERROR_FIXTURES=(
     # would have failed this step. An allow-list entry for an absent file is
     # inert, so carrying it early is free.
     "directive_word_boundary_test.txt"
+    # Range positions alc rejects with AL0104 -- a SYNTAX error, not a type error,
+    # so `1 + (1 .. 4)` has no reading in AL at all and the ERROR is the assertion.
+    # Every case in it parsed CLEANLY before a171c19, which removed
+    # `range_expression` from `_expression`. These are the probes that decided
+    # that fix should be structural rather than a new precedence number.
+    "range_not_an_expression_negative_test.txt"
 )
 
 is_deliberate_error_fixture() {

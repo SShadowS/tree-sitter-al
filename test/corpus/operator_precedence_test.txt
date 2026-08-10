@@ -1,0 +1,623 @@
+; Operator precedence and associativity, pinned as SHAPE.
+;
+; Every grouping below was established from the AL compiler (alc 18.0.37.11445,
+; against real BC 28.0 symbol packages), not from documentation or recall. AL is
+; Pascal-derived and its ladder is, tightest to loosest:
+;
+;     postfix  .  []  ()
+;     unary    not  -  +
+;              *  /  div  mod          left
+;              +  -                    left
+;              in  is  as              left
+;              and                     left
+;              or  xor                 left
+;              =  <>  <  >  <=  >=     left
+;              ..     (list element / case pattern only)
+;              ? :                     right
+;
+; Three of these relations were wrong in the grammar and were fixed in a171c19,
+; d4e8433 and 168c5ec. All three misparses were SILENT: every byte covered, no
+; ERROR node, no node type changed, and BC.History parsed 0 errors on both sides
+; of every fix. An error-count gate cannot see any of them, which is why these
+; cases assert structure.
+
+================================================================================
+Unary minus binds tighter than multiplication
+`unary_expression` was prec.right(7) and `multiplicative_expression` is
+prec.left(7) -- the SAME level -- so the right-associative unary won every
+tie and this parsed as `-(A * B)`. 629 sites in 193 BC.History files.
+--
+alc 18.0.37.11445, with `b` declared Boolean so the operand type names the
+grouping:
+  i := -b * 2;    AL0173 Operator '-' cannot be applied to an operand of
+                         type 'Boolean'          => (-b) * 2
+  i := -(b * 2);  AL0175 Operator '*' ... 'Boolean' and 'Integer'  (control)
+The two controls report different operators, so the probe discriminates.
+================================================================================
+codeunit 50100 Prec
+{
+    procedure P()
+    var
+        A: Integer;
+        B: Integer;
+        R: Integer;
+    begin
+        R := -A * B;
+    end;
+}
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (procedure
+        (procedure_keyword)
+        name: (identifier)
+        (var_section
+          (var_keyword)
+          body: (var_body
+            (variable_declaration
+              name: (identifier)
+              type: (type_specification
+                (basic_type)))
+            (variable_declaration
+              name: (identifier)
+              type: (type_specification
+                (basic_type)))
+            (variable_declaration
+              name: (identifier)
+              type: (type_specification
+                (basic_type)))))
+        body: (code_block
+          (begin_keyword)
+          body: (statement_block
+            (assignment_statement
+              left: (identifier)
+              operator: (assignment_operator)
+              right: (multiplicative_expression
+                left: (unary_expression
+                  operand: (identifier))
+                right: (identifier))))
+          (end_keyword))))))
+
+================================================================================
+Unary minus inside a multiplication chain stays left associative
+The nested case behind the 3055 -> 3057 edge-census delta: with the unary
+one level deeper, the outer node's `left` is a `multiplicative_expression`
+rather than the unary itself. Pins associativity as well as precedence --
+a right-associative multiplicative level would nest the other way.
+================================================================================
+codeunit 50100 Prec
+{
+    procedure P()
+    var
+        A: Integer;
+        B: Integer;
+        C: Integer;
+        R: Integer;
+    begin
+        R := -A * B * C;
+    end;
+}
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (procedure
+        (procedure_keyword)
+        name: (identifier)
+        (var_section
+          (var_keyword)
+          body: (var_body
+            (variable_declaration
+              name: (identifier)
+              type: (type_specification
+                (basic_type)))
+            (variable_declaration
+              name: (identifier)
+              type: (type_specification
+                (basic_type)))
+            (variable_declaration
+              name: (identifier)
+              type: (type_specification
+                (basic_type)))
+            (variable_declaration
+              name: (identifier)
+              type: (type_specification
+                (basic_type)))))
+        body: (code_block
+          (begin_keyword)
+          body: (statement_block
+            (assignment_statement
+              left: (identifier)
+              operator: (assignment_operator)
+              right: (multiplicative_expression
+                left: (multiplicative_expression
+                  left: (unary_expression
+                    operand: (identifier))
+                  right: (identifier))
+                right: (identifier))))
+          (end_keyword))))))
+
+================================================================================
+Postfix binds tighter than unary minus which binds tighter than multiplication
+All three levels of the ladder in one tree. Measured, not assumed:
+  i := -arr[1];      AL0173 Operator '-' ... 'Boolean'
+with `arr: array[10] of Boolean`. The operand type is the ELEMENT type, so
+the minus applies to the subscript RESULT; had unary bound tighter the
+operand would have been the array. Same result for `-BoolFn()`.
+================================================================================
+codeunit 50100 Prec
+{
+    procedure P()
+    var
+        Arr: array[10] of Integer;
+        B: Integer;
+        R: Integer;
+    begin
+        R := -Arr[1] * B;
+    end;
+}
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (procedure
+        (procedure_keyword)
+        name: (identifier)
+        (var_section
+          (var_keyword)
+          body: (var_body
+            (variable_declaration
+              name: (identifier)
+              type: (type_specification
+                (array_type
+                  sizes: (integer)
+                  element_type: (type_specification
+                    (basic_type)))))
+            (variable_declaration
+              name: (identifier)
+              type: (type_specification
+                (basic_type)))
+            (variable_declaration
+              name: (identifier)
+              type: (type_specification
+                (basic_type)))))
+        body: (code_block
+          (begin_keyword)
+          body: (statement_block
+            (assignment_statement
+              left: (identifier)
+              operator: (assignment_operator)
+              right: (multiplicative_expression
+                left: (unary_expression
+                  operand: (subscript_expression
+                    object: (identifier)
+                    index: (integer)))
+                right: (identifier))))
+          (end_keyword))))))
+
+================================================================================
+Logical AND binds tighter than comparison
+THE CRITICAL ONE. AL is Pascal-derived: `and`/`or`/`xor` bind TIGHTER than
+the comparison operators, which is why BC code writes `if (a = b) and
+(c = d) then` with parentheses that look redundant and are load-bearing.
+`comparison_expression` was prec.left(4), above `and` (3) -- the inverse.
+--
+alc cannot be asked this with accept/reject, because `and` requires Boolean
+operands under EVERY grouping. The discriminator is the operand-type
+message, which names the operator AND the order of the types:
+  b := 1 = 1 and 2 = 2;     AL0175 Operator 'and' ... 'Integer' and 'Integer'
+  b := (1 = 1) and (2 = 2); ACCEPT                                  (control)
+'Integer' and 'Integer' is producible only by `1 and 2`, so alc read
+`1 = (1 and 2) = 2` -- the shape below.
+--
+The two readings are not equivalent: with A, B, C all Boolean and all false,
+`A = B and C` is TRUE under the compiler and was FALSE here.
+--
+The SHAPE is the assertion, not the error count. This construct produced
+no error node, and full byte coverage, both before and after the fix, and
+the corpus parsed 0 errors on both sides.
+================================================================================
+codeunit 50100 Prec
+{
+    procedure P()
+    var
+        A: Integer;
+        B: Integer;
+        Flag: Boolean;
+    begin
+        Flag := A = B and B = A;
+    end;
+}
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (procedure
+        (procedure_keyword)
+        name: (identifier)
+        (var_section
+          (var_keyword)
+          body: (var_body
+            (variable_declaration
+              name: (identifier)
+              type: (type_specification
+                (basic_type)))
+            (variable_declaration
+              name: (identifier)
+              type: (type_specification
+                (basic_type)))
+            (variable_declaration
+              name: (identifier)
+              type: (type_specification
+                (basic_type)))))
+        body: (code_block
+          (begin_keyword)
+          body: (statement_block
+            (assignment_statement
+              left: (identifier)
+              operator: (assignment_operator)
+              right: (comparison_expression
+                left: (comparison_expression
+                  left: (identifier)
+                  operator: (comparison_operator)
+                  right: (logical_expression
+                    left: (identifier)
+                    right: (identifier)))
+                operator: (comparison_operator)
+                right: (identifier))))
+          (end_keyword))))))
+
+================================================================================
+Logical OR sits one level below AND and both below comparison
+`A = B or B and A` is `A = (B or (B and A))`. The nesting direction is the
+assertion: `or` and `and` at one left-associative level would instead give
+`(B or B) and A`, nesting the other way.
+--
+Six alc probes pin the three against each other; the relative order was
+already correct and is unchanged by the fix:
+  b := true or 1 and true;  AL0175 'and' 'Integer' and 'Boolean' => or(_, and)
+  b := true and 1 or true;  AL0175 'and' 'Boolean' and 'Integer' => or(and, _)
+  b := true or 1 xor true;  AL0175 'or'  'Boolean' and 'Integer' => same level
+================================================================================
+codeunit 50100 Prec
+{
+    procedure P()
+    var
+        A: Integer;
+        B: Integer;
+        Flag: Boolean;
+    begin
+        Flag := A = B or B and A;
+    end;
+}
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (procedure
+        (procedure_keyword)
+        name: (identifier)
+        (var_section
+          (var_keyword)
+          body: (var_body
+            (variable_declaration
+              name: (identifier)
+              type: (type_specification
+                (basic_type)))
+            (variable_declaration
+              name: (identifier)
+              type: (type_specification
+                (basic_type)))
+            (variable_declaration
+              name: (identifier)
+              type: (type_specification
+                (basic_type)))))
+        body: (code_block
+          (begin_keyword)
+          body: (statement_block
+            (assignment_statement
+              left: (identifier)
+              operator: (assignment_operator)
+              right: (comparison_expression
+                left: (identifier)
+                operator: (comparison_operator)
+                right: (logical_expression
+                  left: (identifier)
+                  right: (logical_expression
+                    left: (identifier)
+                    right: (identifier))))))
+          (end_keyword))))))
+
+================================================================================
+A case pattern range takes the whole additive expression as one pattern
+From Inventory/Counting/Journal/PhysInvtCountManagement.Codeunit.al:327.
+`range_expression` was prec.left(8), binding tighter than additive (6), and
+this parsed as `(0D .. NextCountingStartDate) - 1` -- a range minus one. The
+next label in the real file is `NextCountingStartDate .. NextCountingEndDate`,
+so the intent is not in doubt.
+--
+COUNT THE `pattern:` CHILDREN. There must be exactly ONE. The second half of
+this defect was that dropping the precedence alone left `- 1` stranded, and
+because `_case_pattern_item`'s comma is OPTIONAL the parser accepted it as a
+SECOND pattern -- a different wrong tree, also with a clean error count. A
+fixture that only checked the range node would have passed while that was
+live.
+================================================================================
+codeunit 50100 Prec
+{
+    procedure P()
+    var
+        LastCountDate: Date;
+        NextCountingStartDate: Date;
+    begin
+        case LastCountDate of
+            0D .. NextCountingStartDate - 1:
+                ;
+        end;
+    end;
+}
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (procedure
+        (procedure_keyword)
+        name: (identifier)
+        (var_section
+          (var_keyword)
+          body: (var_body
+            (variable_declaration
+              name: (identifier)
+              type: (type_specification
+                (basic_type)))
+            (variable_declaration
+              name: (identifier)
+              type: (type_specification
+                (basic_type)))))
+        body: (code_block
+          (begin_keyword)
+          body: (statement_block
+            (case_statement
+              (case_keyword)
+              expression: (identifier)
+              (of_keyword)
+              body: (case_body
+                (case_branch
+                  pattern: (range_expression
+                    left: (date_literal)
+                    right: (additive_expression
+                      left: (identifier)
+                      right: (integer)))
+                  body: (empty_statement)))
+              (end_keyword)))
+          (end_keyword))))))
+
+================================================================================
+A list literal range takes a unary operand
+From Finance/Analysis/MatrixManagement.Codeunit.al:250 and :348, where the
+line above reads `Steps := RecRef.Next(-MaximumSetLength);`. This parsed as
+`-(MaximumSetLength .. 0)`: a unary minus applied to a range.
+--
+`range_expression` is no longer part of `_expression` at all, so a
+`unary_expression` operand CANNOT be a range and this has exactly one
+derivation. That is a stronger guarantee than a precedence number, which
+would leave both trees reachable.
+================================================================================
+codeunit 50100 Prec
+{
+    procedure P()
+    var
+        Steps: Integer;
+        MaximumSetLength: Integer;
+        Flag: Boolean;
+    begin
+        Flag := Steps in [-MaximumSetLength .. 0];
+    end;
+}
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (procedure
+        (procedure_keyword)
+        name: (identifier)
+        (var_section
+          (var_keyword)
+          body: (var_body
+            (variable_declaration
+              name: (identifier)
+              type: (type_specification
+                (basic_type)))
+            (variable_declaration
+              name: (identifier)
+              type: (type_specification
+                (basic_type)))
+            (variable_declaration
+              name: (identifier)
+              type: (type_specification
+                (basic_type)))))
+        body: (code_block
+          (begin_keyword)
+          body: (statement_block
+            (assignment_statement
+              left: (identifier)
+              operator: (assignment_operator)
+              right: (in_expression
+                left: (identifier)
+                operator: (in_keyword)
+                right: (list_literal
+                  (range_expression
+                    left: (unary_expression
+                      operand: (identifier))
+                    right: (integer))))))
+          (end_keyword))))))
+
+================================================================================
+Range binds looser than comparison on both sides
+Measured after the fix, closing one of the three relations the original
+audit left open. alc models `..` as an operator here and names it:
+  b := 1 in [1 .. 2 = 2];  AL0175 Operator '..' 'Integer' and 'Boolean'
+  b := 1 in [1 = 1 .. 2];  AL0175 Operator '..' 'Boolean' and 'Integer'
+Both directions agree that the comparison is the operand, not the other way
+round.
+================================================================================
+codeunit 50100 Prec
+{
+    procedure P()
+    var
+        A: Integer;
+        B: Integer;
+        Flag: Boolean;
+    begin
+        Flag := A in [A .. B = B];
+    end;
+}
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (procedure
+        (procedure_keyword)
+        name: (identifier)
+        (var_section
+          (var_keyword)
+          body: (var_body
+            (variable_declaration
+              name: (identifier)
+              type: (type_specification
+                (basic_type)))
+            (variable_declaration
+              name: (identifier)
+              type: (type_specification
+                (basic_type)))
+            (variable_declaration
+              name: (identifier)
+              type: (type_specification
+                (basic_type)))))
+        body: (code_block
+          (begin_keyword)
+          body: (statement_block
+            (assignment_statement
+              left: (identifier)
+              operator: (assignment_operator)
+              right: (in_expression
+                left: (identifier)
+                operator: (in_keyword)
+                right: (list_literal
+                  (range_expression
+                    left: (identifier)
+                    right: (comparison_expression
+                      left: (identifier)
+                      operator: (comparison_operator)
+                      right: (identifier)))))))
+          (end_keyword))))))
+
+================================================================================
+as and is chain left and bind tighter than and
+The other two relations the audit left open, both measured after the fix.
+  b := 1 and x as IProbeB;            AL0175 'and' 'Integer' and
+                                             'Interface IProbeB'
+The `and`'s right operand carries the type produced BY the cast, not the
+declared type of `x` (`Interface IProbeA`), so the `as` bound first.
+  b := x as IProbeB is IProbeB;       ACCEPT  => (x as IProbeB) is IProbeB
+  b := (x as IProbeB) is IProbeB;     ACCEPT                       (control)
+  b := true = x as IProbeB is IProbeB; ACCEPT  => both tighter than '='
+================================================================================
+interface IProbeA
+{
+}
+
+interface IProbeB
+{
+}
+
+codeunit 50100 Prec
+{
+    procedure P(X: Interface IProbeA)
+    var
+        Flag: Boolean;
+    begin
+        Flag := Flag and X as IProbeB is IProbeB;
+    end;
+}
+--------------------------------------------------------------------------------
+
+(source_file
+  (interface_declaration
+    (interface_keyword)
+    object_name: (identifier))
+  (interface_declaration
+    (interface_keyword)
+    object_name: (identifier))
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (procedure
+        (procedure_keyword)
+        name: (identifier)
+        parameters: (parameter_list
+          (parameter
+            name: (identifier)
+            type: (type_specification
+              (object_reference_type
+                object_type: (interface_keyword)
+                reference: (identifier)))))
+        (var_section
+          (var_keyword)
+          body: (var_body
+            (variable_declaration
+              name: (identifier)
+              type: (type_specification
+                (basic_type)))))
+        body: (code_block
+          (begin_keyword)
+          body: (statement_block
+            (assignment_statement
+              left: (identifier)
+              operator: (assignment_operator)
+              right: (logical_expression
+                left: (identifier)
+                right: (is_expression
+                  left: (as_expression
+                    left: (identifier)
+                    right: (type_specification
+                      (identifier)))
+                  right: (type_specification
+                    (identifier))))))
+          (end_keyword))))))
+

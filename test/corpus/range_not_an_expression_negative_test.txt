@@ -1,0 +1,188 @@
+; Range positions the AL compiler REJECTS, pinned as deliberate ERRORs.
+;
+; Every case here is a form alc refuses with AL0104 (a syntax error), and every
+; one of them PARSED CLEANLY before a171c19. The ERROR node is the assertion.
+;
+; This file is listed in DELIBERATE_ERROR_FIXTURES in validate-grammar.sh and in
+; the equivalent pre-flight grep in .claude/commands/release.md. Those two lists
+; must exempt exactly the same set -- change both or neither.
+
+================================================================================
+A parenthesised range is not an operand of plus
+alc 18.0.37.11445: `b := 1 in [1 + (1 .. 4)];` is
+  AL0104: Syntax error, ')' expected
+A SYNTAX error, not a type error -- so this form has no reading at all in
+AL, and the ERROR below is the correct answer rather than a limitation.
+--
+This is the probe that decided the shape of a171c19. Had it been a type
+error, `..` would have been an expression operator whose precedence merely
+sat in the wrong place, and the fix would have been a new precedence number.
+It is not, so `range_expression` was removed from `_expression` outright.
+--
+The parser ACCEPTED this before a171c19.
+================================================================================
+codeunit 50100 Prec
+{
+    procedure P()
+    var
+        Flag: Boolean;
+    begin
+        Flag := 1 in [1 + (1 .. 4)];
+    end;
+}
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (procedure
+        (procedure_keyword)
+        name: (identifier)
+        (var_section
+          (var_keyword)
+          body: (var_body
+            (variable_declaration
+              name: (identifier)
+              type: (type_specification
+                (basic_type)))))
+        body: (code_block
+          (begin_keyword)
+          body: (statement_block
+            (assignment_statement
+              left: (identifier)
+              operator: (assignment_operator)
+              right: (in_expression
+                left: (integer)
+                operator: (in_keyword)
+                right: (list_literal
+                  (additive_expression
+                    left: (integer)
+                    right: (parenthesized_expression
+                      (ERROR
+                        (integer))
+                      (integer)))))))
+          (end_keyword))))))
+
+================================================================================
+A parenthesised range is not a case pattern operand
+alc: `case i of 1 + (1 .. 4):` is AL0104: Syntax error, ')' expected.
+Same rule as N1, in the other position that admits a bare range.
+--
+The parser ACCEPTED this before a171c19.
+================================================================================
+codeunit 50100 Prec
+{
+    procedure P()
+    var
+        I: Integer;
+    begin
+        case I of
+            1 + (1 .. 4):
+                ;
+        end;
+    end;
+}
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (procedure
+        (procedure_keyword)
+        name: (identifier)
+        (var_section
+          (var_keyword)
+          body: (var_body
+            (variable_declaration
+              name: (identifier)
+              type: (type_specification
+                (basic_type)))))
+        body: (code_block
+          (begin_keyword)
+          body: (statement_block
+            (case_statement
+              (case_keyword)
+              expression: (identifier)
+              (of_keyword)
+              body: (case_body
+                (case_branch
+                  pattern: (additive_expression
+                    left: (integer)
+                    right: (parenthesized_expression
+                      (ERROR
+                        (integer))
+                      (integer)))
+                  body: (empty_statement)))
+              (end_keyword)))
+          (end_keyword))))))
+
+================================================================================
+A bare range is not an expression
+A range is admissible in exactly TWO positions in AL, and this is not one
+of them. Probed against alc, every other position anyone could think of is
+a SYNTAX error, not a type error:
+--
+  i := 1 .. 5;          AL0104 Syntax error, 'end' expected
+  Q(1 .. 5);            AL0104 Syntax error, ',' expected
+  b := 1 in 1 .. 5;     AL0104 Syntax error, '[' expected
+  i := (1 .. 5);        AL0104 Syntax error, ')' expected
+  if 1 .. 5 then;       AL0104 Syntax error, 'then' expected
+  b := arr[1 .. 5];     AL0104 Syntax error, ',' expected
+  exit(1 .. 5);         AL0104 Syntax error, ')' expected
+  b := 1 in [1 .. 5];   ACCEPT                                    (control)
+  case i of 1 .. 5:     ACCEPT                                    (control)
+--
+That is what turns the corpus observation -- of 141 `range_expression` nodes
+in BC.History, 103 under `list_literal` and 34 under `case_branch` -- into a
+statement about the LANGUAGE. A corpus census can only show where ranges
+ARE, never where they could legitimately be; a position the grammar wrongly
+rejected would produce an ERROR and no `range_expression`, so it would be
+invisible to that count. These probes close that gap.
+--
+`filter(...)` is not an exception: it has its own `filter_value` rule and
+never produced a `range_expression`, so `filter(18 .. 23)` is unaffected.
+================================================================================
+codeunit 50100 Prec
+{
+    procedure P()
+    var
+        I: Integer;
+    begin
+        I := 1 .. 5;
+    end;
+}
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (procedure
+        (procedure_keyword)
+        name: (identifier)
+        (var_section
+          (var_keyword)
+          body: (var_body
+            (variable_declaration
+              name: (identifier)
+              type: (type_specification
+                (basic_type)))))
+        body: (code_block
+          (begin_keyword)
+          body: (statement_block
+            (assignment_statement
+              left: (identifier)
+              operator: (assignment_operator)
+              right: (integer))
+            (ERROR)
+            (integer))
+          (end_keyword))))))
+

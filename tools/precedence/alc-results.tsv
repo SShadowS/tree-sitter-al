@@ -1,0 +1,196 @@
+A1_mul_over_add	ACCEPT	
+A1_range_bare_assign	REJECT	AL0104: Syntax error, 'end' expected
+A1c_paren_mulfirst	ACCEPT	
+A1d_paren_addfirst	REJECT	AL0370: Division by constant zero.
+A2_mul_over_sub	REJECT	AL0370: Division by constant zero.
+A2_range_call_arg	REJECT	AL0104: Syntax error, ',' expected
+A2c_paren_mulfirst	REJECT	AL0370: Division by constant zero.
+A2d_paren_subfirst	ACCEPT	
+A3_div_over_sub_acc	ACCEPT	
+A3_range_in_nobracket	REJECT	AL0104: Syntax error, '[' expected
+A4_div_over_sub_rej	ACCEPT	
+A4_range_paren	REJECT	AL0104: Syntax error, ')' expected
+A5_mod_over_sub	ACCEPT	
+A5_range_if_cond	REJECT	AL0104: Syntax error, 'then' expected
+A6_mod_over_add	ACCEPT	
+A6_range_subscript	REJECT	AL0104: Syntax error, ',' expected
+A7_range_exit	REJECT	AL0104: Syntax error, ')' expected
+A7_slash_over_sub_acc	ACCEPT	
+A8_range_ctl_list	ACCEPT	
+A8_slash_over_sub_rej	REJECT	AL0370: Division by constant zero.
+A9_range_ctl_case	ACCEPT	
+AS1_sanity	ACCEPT	
+AS2_as_vs_and	REJECT	AL0175: Operator 'and' cannot be applied to operands of type 'Integer' and 'Interface IProbeB'
+AS3_as_vs_is	ACCEPT	
+AS4_as_vs_eq	ACCEPT	
+AS5_as_ctl_paren	ACCEPT	
+AS6_is_vs_or	REJECT	AL0175: Operator 'or' cannot be applied to operands of type 'Integer' and 'Boolean'
+B1_neg_subscript	REJECT	AL0173: Operator '-' cannot be applied to an operand of type 'Boolean'
+B1_sub_left_assoc	REJECT	AL0370: Division by constant zero.
+B1c_paren_right	ACCEPT	
+B1d_paren_left	REJECT	AL0370: Division by constant zero.
+B2_div_left_assoc	ACCEPT	
+B2_neg_call	REJECT	AL0173: Operator '-' cannot be applied to an operand of type 'Boolean'
+B2c_paren_right	ACCEPT	
+B3_neg_member_ctl	REJECT	AL0173: Operator '-' cannot be applied to an operand of type 'Boolean'
+B3_slash_left_assoc	REJECT	AL0371: The operation overflows at compile time.
+B3c_paren_right	ACCEPT	
+B4_add_left_assoc	REJECT	AL0371: The operation overflows at compile time.
+B4_range_vs_eq	REJECT	AL0175: Operator '..' cannot be applied to operands of type 'Integer' and 'Boolean'
+B4c_paren_right	ACCEPT	
+B5_range_vs_eq_left	REJECT	AL0175: Operator '..' cannot be applied to operands of type 'Boolean' and 'Integer'
+B5_star_div_left	ACCEPT	
+B6_slash_div_left	ACCEPT	
+B7_and_left_assoc	REJECT	AL0175: Operator 'and' cannot be applied to operands of type 'Boolean' and 'Integer'
+B8_or_left_assoc	REJECT	AL0175: Operator 'or' cannot be applied to operands of type 'Boolean' and 'Integer'
+B9_cmp_left_assoc	ACCEPT	
+C1_add_over_eq	ACCEPT	
+C1_not_vs_subscript	REJECT	AL0173: Operator 'not' cannot be applied to an operand of type 'Integer'
+C2_mul_over_eq	ACCEPT	
+C2_not_vs_subscript_ok	ACCEPT	
+C3_eq_over_add_rhs	ACCEPT	
+C3_ternary_vs_in	ACCEPT	
+C4_concat_over_eq	ACCEPT	
+C4_ternary_vs_is_ctl	ACCEPT	
+C5_lt_over_add	ACCEPT	
+D10_canon_or	REJECT	AL0175: Operator 'or' cannot be applied to operands of type 'Integer' and 'Integer'
+D11_canon_xor	REJECT	AL0175: Operator 'xor' cannot be applied to operands of type 'Integer' and 'Integer'
+D12_ge_and	REJECT	AL0175: Operator 'and' cannot be applied to operands of type 'Integer' and 'Boolean'
+D1_eq_and_rhs	REJECT	AL0175: Operator 'and' cannot be applied to operands of type 'Integer' and 'Boolean'
+D2_and_eq_lhs	REJECT	AL0175: Operator 'and' cannot be applied to operands of type 'Boolean' and 'Integer'
+D3_eq_or_rhs	REJECT	AL0175: Operator 'or' cannot be applied to operands of type 'Integer' and 'Boolean'
+D4_or_eq_lhs	REJECT	AL0175: Operator 'or' cannot be applied to operands of type 'Boolean' and 'Integer'
+D5_eq_xor_rhs	REJECT	AL0175: Operator 'xor' cannot be applied to operands of type 'Integer' and 'Boolean'
+D6_ne_and	REJECT	AL0175: Operator 'and' cannot be applied to operands of type 'Integer' and 'Boolean'
+D7_full_chain	REJECT	AL0175: Operator 'and' cannot be applied to operands of type 'Integer' and 'Integer'
+D8_canon_and	REJECT	AL0175: Operator 'and' cannot be applied to operands of type 'Integer' and 'Integer'
+D8c_canon_paren	ACCEPT	
+D9_canon_lt	REJECT	AL0175: Operator 'and' cannot be applied to operands of type 'Integer' and 'Integer'
+E1_or_and_rhs	REJECT	AL0175: Operator 'and' cannot be applied to operands of type 'Integer' and 'Boolean'
+E2_and_or_rhs	REJECT	AL0175: Operator 'and' cannot be applied to operands of type 'Boolean' and 'Integer'
+E3_xor_and_rhs	REJECT	AL0175: Operator 'and' cannot be applied to operands of type 'Integer' and 'Boolean'
+E4_and_xor_rhs	REJECT	AL0175: Operator 'and' cannot be applied to operands of type 'Boolean' and 'Integer'
+E5_or_xor_rhs	REJECT	AL0175: Operator 'or' cannot be applied to operands of type 'Boolean' and 'Integer'
+E6_xor_or_rhs	REJECT	AL0175: Operator 'xor' cannot be applied to operands of type 'Boolean' and 'Integer'
+F1_not_vs_eq	REJECT	AL0173: Operator 'not' cannot be applied to an operand of type 'Integer'
+F2_not_vs_and	REJECT	AL0173: Operator 'not' cannot be applied to an operand of type 'Integer'
+F3_not_and_control	ACCEPT	
+F4_not_vs_in	REJECT	AL0173: Operator 'not' cannot be applied to an operand of type 'Integer'
+G1_neg_vs_add	REJECT	AL0370: Division by constant zero.
+G1c_paren_tight	REJECT	AL0370: Division by constant zero.
+G1d_paren_loose	ACCEPT	
+G2_neg_vs_mul	REJECT	AL0370: Division by constant zero.
+G3_neg_vs_mul_ovf	REJECT	AL0371: The operation overflows at compile time.
+H1_add_vs_in	ACCEPT	
+H2_and_vs_in	ACCEPT	
+H3_in_vs_eq	ACCEPT	
+H4_in_and	ACCEPT	
+H5_or_vs_in	ACCEPT	
+H6_is_vs_and	REJECT	AL0111: Semicolon expected.
+H7_is_basic	REJECT	AL0111: Semicolon expected.
+I1_range_vs_add	ACCEPT	
+I2_range_overlap	ACCEPT	
+IS1_bare	REJECT	AL0185: Interface 'ProbeImpl' is missing
+IS2_quoted	REJECT	AL0111: Semicolon expected.
+IS3_if_form	REJECT	AL0185: Interface 'ProbeImpl' is missing
+IS4_two_ifaces	ACCEPT	
+IS5_and_prec	REJECT	AL0175: Operator 'and' cannot be applied to operands of type 'Integer' and 'Boolean'
+IS6_eq_prec	ACCEPT	
+L1_ternary_vs_add	ACCEPT	
+L2_ternary_vs_eq	ACCEPT	
+L3_ternary_type	REJECT	AL0122: Cannot implicitly convert type 'Boolean' to 'Integer'.
+M0a_ctl_mul_paren	REJECT	AL0175: Operator '*' cannot be applied to operands of type 'Boolean' and 'Integer'
+M0b_ctl_add_paren	REJECT	AL0175: Operator '+' cannot be applied to operands of type 'Integer' and 'Boolean'
+M0c_fold_thru_div	ACCEPT	
+M0d_fold_thru_mod	REJECT	AL0370: Division by constant zero.
+M0e_fold_thru_mul	REJECT	AL0370: Division by constant zero.
+N1_mul_vs_add	REJECT	AL0175: Operator '*' cannot be applied to operands of type 'Boolean' and 'Integer'
+N2_mul_vs_add_lhs	REJECT	AL0175: Operator '*' cannot be applied to operands of type 'Integer' and 'Boolean'
+N3_mul_vs_sub	REJECT	AL0175: Operator '*' cannot be applied to operands of type 'Boolean' and 'Integer'
+N4_div_vs_add	REJECT	AL0175: Operator 'div' cannot be applied to operands of type 'Boolean' and 'Integer'
+N5_div_vs_sub	REJECT	AL0175: Operator 'div' cannot be applied to operands of type 'Boolean' and 'Integer'
+N6_mod_vs_add	REJECT	AL0175: Operator 'mod' cannot be applied to operands of type 'Boolean' and 'Integer'
+N7_mod_vs_sub	REJECT	AL0175: Operator 'mod' cannot be applied to operands of type 'Boolean' and 'Integer'
+N8_slash_vs_add	REJECT	AL0175: Operator '/' cannot be applied to operands of type 'Boolean' and 'Integer'
+N9_slash_vs_sub	REJECT	AL0175: Operator '/' cannot be applied to operands of type 'Boolean' and 'Integer'
+O10_slash_div_assoc	REJECT	AL0175: Operator '/' cannot be applied to operands of type 'Integer' and 'Boolean'
+O11_div_mod_assoc	REJECT	AL0175: Operator 'div' cannot be applied to operands of type 'Integer' and 'Boolean'
+O12_mod_mul_assoc	REJECT	AL0175: Operator 'mod' cannot be applied to operands of type 'Integer' and 'Boolean'
+O1_sub_assoc	REJECT	AL0175: Operator '-' cannot be applied to operands of type 'Integer' and 'Boolean'
+O2_add_assoc	REJECT	AL0175: Operator '+' cannot be applied to operands of type 'Integer' and 'Boolean'
+O3_addsub_assoc	REJECT	AL0175: Operator '+' cannot be applied to operands of type 'Integer' and 'Boolean'
+O4_subadd_assoc	REJECT	AL0175: Operator '-' cannot be applied to operands of type 'Integer' and 'Boolean'
+O5_mul_assoc	REJECT	AL0175: Operator '*' cannot be applied to operands of type 'Integer' and 'Boolean'
+O6_slash_assoc	REJECT	AL0175: Operator '/' cannot be applied to operands of type 'Integer' and 'Boolean'
+O7_div_assoc	REJECT	AL0175: Operator 'div' cannot be applied to operands of type 'Integer' and 'Boolean'
+O8_mod_assoc	REJECT	AL0175: Operator 'mod' cannot be applied to operands of type 'Integer' and 'Boolean'
+O9_mul_div_assoc	REJECT	AL0175: Operator '*' cannot be applied to operands of type 'Integer' and 'Boolean'
+P1_neg_vs_mul	REJECT	AL0173: Operator '-' cannot be applied to an operand of type 'Boolean'
+P2_neg_vs_add	REJECT	AL0173: Operator '-' cannot be applied to an operand of type 'Boolean'
+P3_neg_vs_div	REJECT	AL0173: Operator '-' cannot be applied to an operand of type 'Boolean'
+P4_neg_ctl_paren	REJECT	AL0175: Operator '*' cannot be applied to operands of type 'Boolean' and 'Integer'
+P5_neg_ctl_tight	REJECT	AL0173: Operator '-' cannot be applied to an operand of type 'Boolean'
+P6_neg_vs_cmp	ACCEPT	
+P7_neg_mul_plain	ACCEPT	
+P9_neg_vs_mod	REJECT	AL0173: Operator '-' cannot be applied to an operand of type 'Boolean'
+Q1_not_vs_mul	REJECT	AL0173: Operator 'not' cannot be applied to an operand of type 'Integer'
+Q2_not_vs_add	REJECT	AL0173: Operator 'not' cannot be applied to an operand of type 'Integer'
+Q3_not_ctl_paren	REJECT	AL0175: Operator '*' cannot be applied to operands of type 'Integer' and 'Boolean'
+R10_range_vs_sub	ACCEPT	
+R11_range_case_ctl	REJECT	AL0104: Syntax error, ')' expected
+R1_in_vs_eq	ACCEPT	
+R2_in_vs_and	REJECT	AL0175: Operator 'and' cannot be applied to operands of type 'Integer' and 'Boolean'
+R3_in_vs_add	ACCEPT	
+R4_in_vs_or	REJECT	AL0175: Operator 'or' cannot be applied to operands of type 'Integer' and 'Boolean'
+R5_in_rhs_range	ACCEPT	
+R6_in_not	ACCEPT	
+R7_range_ctl_paren	ACCEPT	
+R8_range_ctl_tight	REJECT	AL0104: Syntax error, ')' expected
+R9_range_vs_mul	ACCEPT	
+S10_tern_paren_else	REJECT	AL0122: Cannot implicitly convert type 'Boolean' to 'Integer'.
+S1_ternary_alone	ACCEPT	
+S2_ternary_text	ACCEPT	
+S3_ternary_vs_add	REJECT	AL0175: Operator '+' cannot be applied to operands of type 'Integer' and 'Boolean'
+S4_ternary_vs_eq_l	REJECT	AL0122: Cannot implicitly convert type 'Boolean' to 'Integer'.
+S5_ternary_vs_and	ACCEPT	
+S6_tern_vs_eq_bool	REJECT	AL0122: Cannot implicitly convert type 'Boolean' to 'Integer'.
+S7_tern_vs_and	ACCEPT	
+S8_tern_vs_eq_cond	ACCEPT	
+S9_tern_paren_then	ACCEPT	
+T1_concat_assoc	REJECT	AL0175: Operator '+' cannot be applied to operands of type 'Char' and 'Boolean'
+T2_concat_vs_eq	ACCEPT	
+U1_cmp_assoc	ACCEPT	
+U2_cmp_lt_assoc	ACCEPT	
+U3_cmp_mixed	REJECT	AL0175: Operator '=' cannot be applied to operands of type 'Boolean' and 'Integer'
+ctl_nonzero	ACCEPT	
+ctl_ovf	REJECT	AL0371: The operation overflows at compile time.
+ctl_zero_computed	REJECT	AL0370: Division by constant zero.
+ctl_zero_direct	REJECT	AL0370: Division by constant zero.
+instE_and_int	REJECT	AL0175: Operator 'and' cannot be applied to operands of type 'Integer' and 'Integer'
+instE_case_bool_expr	ACCEPT	
+instE_dupcase_bool	REJECT	AL0402: Expression True cannot be specified more than once in a 'case' statement.
+instE_dupcase_int	REJECT	AL0402: Expression 1 cannot be specified more than once in a 'case' statement.
+instE_not_int	REJECT	AL0173: Operator 'not' cannot be applied to an operand of type 'Integer'
+instE_ternary	ACCEPT	
+instF_case_dup_orexpr	ACCEPT	
+instF_case_dup_paren	ACCEPT	
+instF_ternary_fold_one	ACCEPT	
+instF_ternary_fold_zero	ACCEPT	
+inst_arr_expr_dim	REJECT	AL0104: Syntax error, ',' expected
+inst_arr_inbounds	ACCEPT	
+inst_arr_oob_const	ACCEPT	
+inst_caret_pow	REJECT	AL0183: Unexpected character '^'.
+inst_computed_zero	REJECT	AL0370: Division by constant zero.
+inst_dec_overflow	REJECT	AL0371: The operation overflows at compile time.
+inst_dec_to_int	ACCEPT	
+inst_div_decimal_lhs	ACCEPT	
+inst_divzero_div	REJECT	AL0370: Division by constant zero.
+inst_divzero_slash	REJECT	AL0370: Division by constant zero.
+inst_in_op	ACCEPT	
+inst_int_overflow	REJECT	AL0371: The operation overflows at compile time.
+inst_not_and	ACCEPT	
+inst_slash_then_div	ACCEPT	
+inst_str_concat	ACCEPT	
+inst_text_too_long	ACCEPT	
+sanity_invalid	REJECT	AL0122: Cannot implicitly convert type 'Boolean' to 'Integer'.
+sanity_valid	ACCEPT	

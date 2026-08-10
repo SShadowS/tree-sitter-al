@@ -144,3 +144,13 @@ BC.History/
 !tools/query_coverage/**/*.py
 tools/query_coverage/**/__pycache__/
 tools/query_coverage/reports/
+
+# tools/precedence/ is the operator-precedence probe rig — the acceptance
+# instrument for every relation in the expression ladder, not scratch. Its
+# cases/*.al ARE the probes, so they must survive the blanket *.al rule the same
+# way query_coverage's .py files survive the blanket *.py rule. Without these
+# two lines the rig commits as a README and a .tsv describing 196 files that are
+# not there, which is worse than not committing it at all.
+!tools/precedence/**/*.py
+!tools/precedence/cases/*.al
+tools/precedence/**/__pycache__/
