@@ -12,9 +12,9 @@ Before starting, verify:
 3. No **unexpected** ERROR/MISSING nodes in any test — this must print nothing:
 
    ```bash
-   grep -rn "(ERROR\b\|MISSING\b" test/corpus/ --include="*.txt" \
+   grep -rn "(ERROR\b\|(MISSING\b" test/corpus/ --include="*.txt" \
      | grep -v "ERROR(" \
-     | grep -vE "(^|/)(option_members_tabledata_keyword_test|pragma_whitespace_tolerance_test|preproc_if_elif_whitespace_tolerance_test|preproc_region_whitespace_audit_test)\.txt:"
+     | grep -vE "(^|/)(option_members_tabledata_keyword_test|pragma_whitespace_tolerance_test|preproc_if_elif_whitespace_tolerance_test|preproc_region_whitespace_audit_test|scanner_var_attribute_token_span_test)\.txt:"
    ```
 
    The `(^|/)…\.txt:` anchoring is load-bearing. `grep -rn` emits
@@ -23,6 +23,15 @@ Before starting, verify:
    fixture whose content happens to mention one of these names. Anchored, the
    name must be the file's own basename, which is exactly the comparison
    `validate-grammar.sh` makes.
+
+   **Both alternatives need the opening paren.** This search previously read
+   `MISSING\b` without it, while `ERROR` required `(ERROR\b`. Expected trees
+   write these as `(MISSING xyz)` and `(ERROR)`, so the bare form matched the
+   word anywhere on a line — a fixture *title* or a prose comment containing
+   "MISSING" failed the release. `validate-grammar.sh` Step 3 anchors its
+   equivalent search to line starts and was never affected, so the two gates
+   disagreed on what counts as a hit. Found by writing a fixture titled with
+   the bare word.
 
    Those four files are deliberate negatives — their ERROR nodes *are* the
    assertion. They pin that a misplaced `TableData X = R` fragment under
