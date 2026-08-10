@@ -279,6 +279,54 @@ public API — a change to node structure or field names is a **major** bump.
 
 ### Fixed
 
+- **A `begin`/`end` pair separated from its block by a `#if` boundary is no longer
+  lost.** Three shapes, all silent — zero ERROR nodes, stable tree hash, corpus
+  green, `parse-al-parallel.sh` reporting 100%. In each, `begin` fell back to a
+  bare `identifier`, `end;` reparsed as a `call_statement` (a call to a function
+  named `end`), and **no `code_block` was produced at all**, so the bracketed
+  statements became siblings of the `begin` instead of its children. Any consumer
+  reading control flow got a different program.
+  - **A complete block inside one branch** — `#if C … #else begin A(); end; #endif`.
+    Nothing is split here, which is the clearest proof the cause was a grammar gap
+    rather than split detection: `preproc_conditional_statement`'s branches were
+    `repeat($._statement)`, and `code_block` is not a `_statement`, so a branch
+    could not hold the block that the enclosing `case_else_branch` accepts
+    directly. Branch content is now `_preproc_branch_statement`, a statement or a
+    complete `code_block`.
+  - **A block bracketing a whole conditional** — `#if C begin A(); #endif B();
+    #if C end; #endif`. New rule `preproc_split_code_block_over_endif`, the
+    sibling of `preproc_fragmented_else_tail` for when a statement follows the
+    `begin`, so `PREPROC_SPLIT_BEGIN`'s lookahead declines and a plain
+    `begin_keyword` arrives instead.
+  - **`end else begin` inside a conditional with the else block's `end;` outside
+    it** — `if C then begin A(); #if D end else begin B(); #endif end;`. New rule
+    `preproc_split_else_begin_over_endif` in `code_block`'s ending choice;
+    `preproc_split_code_block_end` declines because its `_preproc_end_branch`
+    requires the else block to close inside the same conditional.
+  - **Trees move, at exactly three files** of BC.History's 15,358 — the three real
+    sites, one per shape. Enumerated by node-instance set difference (type + byte
+    range): 13 instances removed, 12 added, every one an intended repair. Seven
+    stray `identifier` nodes become `begin_keyword`/`else_keyword`/`end_keyword`,
+    two misapplied `preproc_conditional_statement` wrappers and two `call_statement`
+    misreads are replaced by the correct block or split node. No other file changes.
+  - **Two shipped corpus fixtures asserted the broken tree** and were updated:
+    "Case statement with preprocessor conditional in else branch" and "Nested case
+    with multiple preprocessor conditions" both pinned `(identifier)` plus a loose
+    `(call_statement)` where a `code_block` belongs. Error-count assertions are
+    worthless for this class; the new fixtures pin node structure.
+  - `code_block` was deliberately **not** added to `_statement_inner`, which would
+    have been the more general statement of the same truth — alc 18.0.37.11445 does
+    accept a bare `begin … end;` compound statement anywhere (verified). That makes
+    every `while … do begin`, `if … then begin` and `for … do begin` ambiguous
+    between "loop/branch body" and "standalone block", forcing a dangling-block
+    conflict on each host and a GLR fork on every `begin` in the corpus. A bare
+    compound statement outside a preprocessor branch therefore still produces an
+    ERROR; that is a separate, pre-existing gap, recorded rather than fixed here.
+  - Cost: `STATE_COUNT` 12,604 → 14,036 (+11.4%), `src/parser.c` 27.5 MB → 32.7 MB.
+  - `call_statement` now occurs **nowhere** in BC.History. Both of its former
+    instances were this defect; the rule itself stays valid for parenless calls
+    (`Initialize;`) and is exercised by the corpus.
+
 - **A partially matched keyword no longer eats the identifier behind it.** The
   scanner tried `begin`, then `end`, then `continue`, then `property_name`, each
   with its own read. `read_keyword_ci` stops on the first mismatching character

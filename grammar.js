@@ -172,6 +172,16 @@ module.exports = grammar({
     [$.preproc_conditional_layout, $.preproc_conditional_layout_mixed],
     [$.preproc_conditional, $.preproc_conditional_actions],
     [$._expression, $._identifier_or_quoted],
+    [$._preproc_split_then_begin_open, $.preproc_split_if_then_begin_else_shared, $.preproc_split_if_begin_else, $._preproc_branch_statement],
+    // Inside a preprocessor branch a statement can be read as belonging to the
+    // conditional or to an enclosing statement_block. The two were previously
+    // indistinguishable because both used `repeat($._statement)` and tree-sitter
+    // shared one generated repeat symbol; giving the conditional its own branch
+    // content (which also admits a code_block) separates them and exposes the
+    // ambiguity that was always there. GLR resolves it by which parse completes.
+    [$._preproc_branch_statement, $._preproc_split_then_begin_open,
+     $.preproc_split_if_then_begin_else_shared, $.preproc_split_if_begin_else,
+     $._preproc_end_branch],
     [$._body_element, $.preproc_conditional_var],
     [$.filter_value, $._literal_value],
     [$.filter_value, $._expression],
@@ -2749,7 +2759,34 @@ module.exports = grammar({
         // Split ending: 'end' is inside #if, with different structure in #else
         // Scanner's PREPROC_SPLIT_END only fires when end;#else or end;#endif
         $.preproc_split_code_block_end,
+        $.preproc_split_else_begin_over_endif,
       ),
+    )),
+
+    // A code_block closed by an `end` inside a conditional, which then opens an
+    // `else begin` whose own `end;` sits OUTSIDE the `#endif`:
+    //
+    //     if C then begin  A();  #if COND  end else begin  B();  #endif  end;
+    //
+    // Sibling of preproc_split_code_block_end, whose `_preproc_end_branch`
+    // requires the else-block's `end` to close inside the same conditional.
+    // Here it closes after `#endif`, so that rule declines.
+    //
+    // Silent before this existed: `end`, `else` and `begin` each fell out as a
+    // bare `identifier` inside preproc_conditional_statement, the else branch's
+    // statements were flattened next to them, and the whole if/else read as a
+    // single then-branch. Zero ERROR nodes. Real site: BaseApp
+    // Integration/D365Sales/CRMSetupDefaults.Codeunit.al:76-84.
+    preproc_split_else_begin_over_endif: $ => prec.right(25, seq(
+      $.preproc_if,
+      $.end_keyword,
+      $.else_keyword,
+      $.begin_keyword,
+      repeat($._statement),
+      $.preproc_endif,
+      repeat($._statement),
+      $.end_keyword,
+      optional(';'),
     )),
 
     // Content-only statement run (no begin/end) so a statement container can
@@ -3274,6 +3311,30 @@ module.exports = grammar({
       seq(repeat($._statement), $.end_keyword, $._else_begin_block),
     ),
 
+    // A code_block whose `begin` opens inside one conditional and whose `end;`
+    // closes inside a LATER one, with shared code in between:
+    //
+    //     #if COND        begin  A();   #endif   B();   #if COND  end;  #endif
+    //
+    // Sibling of preproc_fragmented_else_tail, which is the same shape when the
+    // `begin` sits immediately before its `#endif` and so arrives as
+    // PREPROC_SPLIT_BEGIN. Here a statement follows the `begin`, the split
+    // lookahead declines, and the scanner emits a plain begin_keyword — which is
+    // why this needs its own rule rather than reusing that one.
+    //
+    // Before this existed the whole construct fell apart silently: `begin` became
+    // an `identifier`, `end;` a `call_statement`, and the bracketed statements
+    // became siblings of the `begin` instead of its children, with zero ERROR
+    // nodes. Real site: BaseApp Warehouse/Structure/WhseIntegrationManagement.
+    preproc_split_code_block_over_endif: $ => prec(25, seq(
+      $.preproc_if,
+      $.begin_keyword,
+      repeat($._statement),
+      $.preproc_endif,
+      repeat($._statement),
+      $._preproc_end_guard,
+    )),
+
     // Fragmented else tail: begin #endif stmts #if end; #endif
     // Used after else_keyword when the else branch's begin/end is split across preprocessor blocks
     preproc_fragmented_else_tail: $ => prec(25, seq(
@@ -3286,17 +3347,39 @@ module.exports = grammar({
     // Preprocessor conditionals in statements context
     preproc_conditional_statement: $ => prec.right(seq(
       $.preproc_if,
-      repeat($._statement),
+      repeat($._preproc_branch_statement),
       repeat(seq(
         $.preproc_elif,
-        repeat($._statement),
+        repeat($._preproc_branch_statement),
       )),
       optional(seq(
         $.preproc_else,
-        repeat($._statement),
+        repeat($._preproc_branch_statement),
       )),
       $.preproc_endif,
     )),
+
+    // A preproc conditional fills a `_statement` slot, but the position that slot
+    // sits in may accept more than a statement: case_else_branch takes a
+    // `code_block` directly, and alc accepts a bare `begin … end;` compound
+    // statement anywhere a statement is allowed (verified against alc
+    // 18.0.37.11445). Wrapping such a block in `#if` must not take the option
+    // away. Without this, `else #if X … #else begin A(); end; #endif` lost the
+    // block entirely — `begin` fell back to `identifier`, `end;` reparsed as a
+    // `call_statement`, no `code_block` was produced, and the statements became
+    // siblings of the `begin` instead of its children. Zero ERROR nodes, so no
+    // gate saw it.
+    //
+    // `code_block` is deliberately NOT added to `_statement_inner`, which would
+    // be the more general statement of the same truth: that makes every
+    // `while … do begin`, `if … then begin` and `for … do begin` ambiguous
+    // between "loop/branch body" and "standalone block", forcing a dangling-block
+    // conflict on each host and a GLR fork on every `begin` in the corpus. The
+    // narrow rule keeps the fork inside preprocessor branches.
+    _preproc_branch_statement: $ => choice(
+      $._statement,
+      $.code_block,
+    ),
 
     // Preprocessor conditionals in actions context
     preproc_conditional_actions: $ => seq(
@@ -3427,6 +3510,7 @@ module.exports = grammar({
           $.preproc_split_if_then_begin_else_shared,
           $.preproc_guarded_statement,
           $.preproc_split_call_statement,
+          $.preproc_split_code_block_over_endif,
     ),
 
     // Parenless no-arg call statement (`Initialize;`). Requires the `;` terminator —

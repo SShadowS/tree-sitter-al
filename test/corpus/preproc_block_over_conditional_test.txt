@@ -1,0 +1,316 @@
+================================================================================
+Shape A: begin opens in one #if, shared code follows, end; closes in a later #if
+--
+The pair brackets an entire #if/#endif plus the shared code after it. No
+preproc_split_* rule covered it, so `begin` fell back to `identifier`, `end;`
+reparsed as a `call_statement`, and the bracketed statements became siblings of
+the `begin` instead of its children -- with ZERO ERROR nodes, which is why every
+existing gate passed. Real site: BaseApp Warehouse/Structure/
+WhseIntegrationManagement.Codeunit.al:110-118. Assert the node structure, never
+the error count: the whole defect class is error-free.
+================================================================================
+codeunit 1 T
+{
+    procedure P()
+    var
+        i: Integer;
+    begin
+        case i of
+            1:
+                Foo();
+            else
+#if not CLEAN24
+                begin
+                A();
+#endif
+                B();
+#if not CLEAN24
+            end;
+#endif
+        end;
+    end;
+}
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    (integer)
+    (identifier)
+    (declaration_body
+      (procedure
+        (procedure_keyword)
+        (identifier)
+        (var_section
+          (var_keyword)
+          (var_body
+            (variable_declaration
+              (identifier)
+              (type_specification
+                (basic_type)))))
+        (code_block
+          (begin_keyword)
+          (statement_block
+            (case_statement
+              (case_keyword)
+              (identifier)
+              (of_keyword)
+              (case_body
+                (case_branch
+                  (integer)
+                  (call_expression
+                    (identifier)
+                    (argument_list))))
+              (case_else_branch
+                (else_keyword)
+                (statement_block
+                  (preproc_split_code_block_over_endif
+                    (preproc_if
+                      (preproc_open)
+                      (preproc_not_expression
+                        (identifier)))
+                    (begin_keyword)
+                    (call_expression
+                      (identifier)
+                      (argument_list))
+                    (preproc_endif
+                      (preproc_close))
+                    (call_expression
+                      (identifier)
+                      (argument_list))
+                    (preproc_if
+                      (preproc_open)
+                      (preproc_not_expression
+                        (identifier)))
+                    (end_keyword)
+                    (preproc_endif
+                      (preproc_close)))))
+              (end_keyword)))
+          (end_keyword))))))
+
+================================================================================
+Shape B: a complete begin ... end; wrapped inside one #else branch
+--
+Nothing is split here at all -- the block sits wholly inside one branch -- and it
+still misparsed, which is the cleanest proof that the cause is a grammar gap
+rather than a split-detection problem. preproc_conditional_statement's branches
+were repeat($._statement), and `code_block` is not a `_statement`, so the branch
+could not hold the block that the enclosing case_else_branch would have accepted
+directly. Real site: BaseApp Manufacturing/Finance/Dimension/
+MfgDimensionManagement.Codeunit.al:32-40.
+================================================================================
+codeunit 1 T
+{
+    procedure P()
+    var
+        i: Integer;
+    begin
+        case i of
+            1:
+                Foo();
+            else
+#if CLEAN26
+                C();
+#else
+                begin
+                A();
+                B();
+            end;
+#endif
+        end;
+    end;
+}
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    (integer)
+    (identifier)
+    (declaration_body
+      (procedure
+        (procedure_keyword)
+        (identifier)
+        (var_section
+          (var_keyword)
+          (var_body
+            (variable_declaration
+              (identifier)
+              (type_specification
+                (basic_type)))))
+        (code_block
+          (begin_keyword)
+          (statement_block
+            (case_statement
+              (case_keyword)
+              (identifier)
+              (of_keyword)
+              (case_body
+                (case_branch
+                  (integer)
+                  (call_expression
+                    (identifier)
+                    (argument_list))))
+              (case_else_branch
+                (else_keyword)
+                (statement_block
+                  (preproc_conditional_statement
+                    (preproc_if
+                      (preproc_open)
+                      (identifier))
+                    (call_expression
+                      (identifier)
+                      (argument_list))
+                    (preproc_else)
+                    (code_block
+                      (begin_keyword)
+                      (statement_block
+                        (call_expression
+                          (identifier)
+                          (argument_list))
+                        (call_expression
+                          (identifier)
+                          (argument_list)))
+                      (end_keyword))
+                    (preproc_endif
+                      (preproc_close)))))
+              (end_keyword)))
+          (end_keyword))))))
+
+================================================================================
+Shape C: end else begin inside a #if, with the else block's end; outside it
+--
+The third site, and a third shape. preproc_split_code_block_end's
+_preproc_end_branch requires the else-block's `end` to close inside the same
+conditional; here it closes after the #endif, so that rule declines. `end`,
+`else` and `begin` each fell out as a bare `identifier` and the whole if/else
+read as a single then-branch. Real site: BaseApp Integration/D365Sales/
+CRMSetupDefaults.Codeunit.al:76-84.
+================================================================================
+codeunit 1 T
+{
+    procedure P()
+    var
+        b: Boolean;
+    begin
+        if b then begin
+            A();
+#if not CLEAN25
+        end else begin
+            B();
+#endif
+        end;
+        C();
+    end;
+}
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    (integer)
+    (identifier)
+    (declaration_body
+      (procedure
+        (procedure_keyword)
+        (identifier)
+        (var_section
+          (var_keyword)
+          (var_body
+            (variable_declaration
+              (identifier)
+              (type_specification
+                (basic_type)))))
+        (code_block
+          (begin_keyword)
+          (statement_block
+            (if_statement
+              (if_keyword)
+              (identifier)
+              (then_keyword)
+              (code_block
+                (begin_keyword)
+                (statement_block
+                  (call_expression
+                    (identifier)
+                    (argument_list)))
+                (preproc_split_else_begin_over_endif
+                  (preproc_if
+                    (preproc_open)
+                    (preproc_not_expression
+                      (identifier)))
+                  (end_keyword)
+                  (else_keyword)
+                  (begin_keyword)
+                  (call_expression
+                    (identifier)
+                    (argument_list))
+                  (preproc_endif
+                    (preproc_close))
+                  (end_keyword))))
+            (call_expression
+              (identifier)
+              (argument_list)))
+          (end_keyword))))))
+
+================================================================================
+A complete block inside a #if branch, outside any case statement
+--
+Same gap as shape B with no case_else_branch involved, showing the fix is not
+case-specific. alc 18.0.37.11445 accepts a bare `begin ... end;` compound
+statement (verified), so this is valid AL.
+================================================================================
+codeunit 1 T
+{
+    procedure P()
+    var
+        i: Integer;
+    begin
+#if CLEAN26
+        C();
+#else
+        begin
+            A();
+        end;
+#endif
+    end;
+}
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    (integer)
+    (identifier)
+    (declaration_body
+      (procedure
+        (procedure_keyword)
+        (identifier)
+        (var_section
+          (var_keyword)
+          (var_body
+            (variable_declaration
+              (identifier)
+              (type_specification
+                (basic_type)))))
+        (code_block
+          (begin_keyword)
+          (statement_block
+            (preproc_conditional_statement
+              (preproc_if
+                (preproc_open)
+                (identifier))
+              (call_expression
+                (identifier)
+                (argument_list))
+              (preproc_else)
+              (code_block
+                (begin_keyword)
+                (statement_block
+                  (call_expression
+                    (identifier)
+                    (argument_list)))
+                (end_keyword))
+              (preproc_endif
+                (preproc_close))))
+          (end_keyword))))))
