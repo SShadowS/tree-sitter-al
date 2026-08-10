@@ -64,6 +64,13 @@ python parse_bug_finder.py file.al debug.log   # Analyze parsing bugs
    point of your test, generate the expectation from `tree-sitter parse` output instead, and
    prove the fixture can fail by renaming a field to `bogus:`.
 
+**A third trap, in the corpus format itself: a blank line inside a `====` test header
+makes tree-sitter drop that test silently.** No warning, no error — the case simply is
+not run, and the total moves by less than you added. It was caught only by adding a
+5-case fixture and noticing the suite count had not changed. After adding fixtures,
+check the total moved by exactly the number of cases you wrote; a header block must be
+contiguous.
+
 **Common Test Options:**
 - `-i "pattern"` - Include tests matching pattern
 - `-e "pattern"` - Exclude tests matching pattern
@@ -312,6 +319,7 @@ Exit `0` + `test.app` written = compiler accepts. Exit `1` with no `test.app` = 
 **Three traps that make a working probe look like a rejection.** All three exit `1` with an empty error log, which is indistinguishable from a real compile error:
 - **No `application` or `dependencies` key.** Those pull in Base/System Application symbol packages that are not present locally; without the symbols the project fails to load and emits *no diagnostics at all* — for valid and invalid code alike, so the probe silently loses all discriminating power. `runtime` must be one the installed `al` supports (`15.0` works; `12.0` does not).
 - **Relative paths.** `/project:.` exits `1` with an empty error log — pass absolute paths for both `/project:` and `/out:`.
+- **`/packagecachepath:` cuts both ways.** Pointed at an EMPTY directory it fails with `AL1022` — omit it and the compiler finds its default cache. But when you have real symbol packages (a 28.0 cache, say), it is REQUIRED: without it alc emits `AL1021`. Check which situation you are in rather than copying either form.
 - **One case file at a time.** `al compile` compiles *every* `.al` in the project directory, so a leftover probe file fails the run you are reading.
 
 Sanity-check the probe before trusting a rejection: compile a form you know is valid and confirm exit `0` + `test.app`. If that fails too, the project is broken, not the syntax. Example: confirmed `Codeunit::<integer>` is valid AL (old-school soft cross-extension reference) when both LLMs claimed otherwise.
