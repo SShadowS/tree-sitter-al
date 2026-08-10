@@ -1,0 +1,39 @@
+# gate-guards.tsv -- every construct in a gate script that lets it decline to fail.
+#
+# Checked by:  python tools/gate_selftest.py --sweep
+#
+# A gate is only as good as its narrowest escape hatch. `|| true`, a discarded
+# stderr, and a warning where an error belongs are all ways for a check to
+# report success without having checked. Some are correct -- grep exits 1 on no
+# match, and an advisory step is allowed to be advisory -- but each one has to
+# be a decision somebody made on purpose rather than a habit.
+#
+# So: every matching line in validate-grammar.sh, parse-al-parallel.sh and
+# tools/tree-harness.sh must appear here with a reason. Add a guard without a
+# row and the sweep fails; delete a guard and leave its row and the sweep fails
+# too, so this file cannot drift into a rubber stamp.
+#
+# Three tab-separated fields: file, the guard line (whitespace-collapsed), and
+# why it is allowed to degrade. Regenerate the keys with:
+#   python tools/gate_selftest.py --write-inventory
+#
+parse-al-parallel.sh	bad=$(grep -c '"successful": false' "$temp_dir/json_$name.txt" || true)	Same: 0 failures is the normal case. Cross-checked the same way, and again against the scraped error paths.
+parse-al-parallel.sh	ok=$(grep -c '"successful": true' "$temp_dir/json_$name.txt" || true)	Same: 0 successes in a chunk is a legitimate count. Cross-checked by records == expected and ok+bad == records.
+parse-al-parallel.sh	records=$(grep -c '"file":' "$temp_dir/json_$name.txt" || true)	grep -c exits 1 when the count is 0, which is a normal result here and not a failure. The value is reconciled against the chunk file count immediately after, so a wrong count cannot survive.
+tools/tree-harness.sh	die "snapshot '$SNAPDIR' declares $(grep -m1 '^format=' "$SNAPDIR/FORMAT" || echo 'no format') but holds a format-$SNAP_KIND archive — snapshot is inconsistent"	Inside a die() message. The fallback only shapes the wording of a failure that has already been decided.
+tools/tree-harness.sh	echo "tree-harness: tree-sitter status: $(cat "$WORK/rc/$base" || echo '<none recorded>')"	Diagnostic interpolation inside a branch that is already reporting a desynced chunk. It cannot affect the verdict.
+tools/tree-harness.sh	head -n 5 "$WORK/err/$base" 2>&1 | sed 's/^/tree-harness: /' || true	Diagnostic dump of the chunk's stderr inside an already-failing branch; the die() follows unconditionally. Added when stderr stopped being merged into the hashed tree stream.
+tools/tree-harness.sh	head -n 5 "$WORK/raw/$base" 2>&1 | sed 's/^/tree-harness: /' || true	Diagnostic dump inside an already-failing branch; the die() follows unconditionally.
+tools/tree-harness.sh	if ! ( cd "$WORK/cmp" && diff $diff_flags old new || true ) \	diff exits 1 whenever it finds a difference, which is the expected case here. The verdict comes from the awk rewriter, which aborts on any unrecognised line and requires emitted == changed.
+tools/tree-harness.sh	tree-sitter parse -q --paths "$WORK/warmup.txt" >/dev/null 2>&1 || true	Deliberately best-effort: one warm parse to close a cold-cache window before fanning out. Its failure changes nothing, because every chunk is parsed and counted afterwards.
+tools/tree-harness.sh	|| echo "tree-harness: COULD NOT PRESERVE $1 — evidence incomplete" >&2	Evidence preservation inside an already-failing branch. It says the evidence is incomplete rather than failing silently, and the die() still follows.
+validate-grammar.sh	CASE_SENSITIVE=$(grep -n "'\(table\|page\|field\|procedure\|trigger\|var\|begin\|end\|if\|then\|else\)'" grammar.js | grep -v "kw(" | grep -v "field(" | head -5 || true)	Step 7 is advisory by design. grep exits 1 on no match, which is the PASSING case, so || true is required for the check to run at all.
+validate-grammar.sh	FIELDWALK_TS_DIR=$(ls -d .cache/tree-sitter-*/lib 2>/dev/null | head -1)	The vendored runtime is fetched on demand by bindings/c/build.sh and is legitimately absent in some environments. Absence produces an explicit, visible skip; a runtime that IS present and fails to compile fails the step.
+validate-grammar.sh	TODO_COUNT=$(grep -c "TODO" grammar.js || true)	Step 7 is advisory by design. grep -c exits 1 when there are no TODOs, which is the passing case.
+validate-grammar.sh	echo "$TEST_OUTPUT" | grep -E "failures:|failed parses:" || true	Inside the already-failing Step 2 branch; it only formats the failure report. VALIDATION_FAILED is set regardless.
+validate-grammar.sh	print_warning "AL corpus not present ($AL_PARSE_CORPUS) — skipping; set AL_PARSE_CORPUS to point at one"	BC.History is gitignored and absent from a fresh clone. --full on a machine without a corpus must not fail; the skip is loud and names the variable that overrides it. A corpus that IS present and parses badly fails the step.
+validate-grammar.sh	print_warning "Found $TODO_COUNT TODO comments in grammar.js"	Step 7 is advisory: TODOs are a code-review signal, not a correctness gate.
+validate-grammar.sh	print_warning "Found potentially case-sensitive keywords (should use kw()):"	Step 7 is advisory: the heuristic has known false positives (it matches externals-array comments), so failing on it would be a false-positive machine.
+validate-grammar.sh	print_warning "No C compiler found - skipping fieldwalk compile check"	A genuine environment gap: CI images may have no cc. The skip is visible in the output; only a real compile failure fails the step.
+validate-grammar.sh	print_warning "No vendored tree-sitter runtime in .cache/ - skipping fieldwalk compile check (run bindings/c/build.sh once to fetch it)"	The same genuine environment gap as the C compiler, and the message says how to fetch it.
+validate-grammar.sh	print_warning "query-coverage: corpus not present (BC.History missing) — skipping, see tools/query_coverage/README.md"	Gated on BC.History actually being absent, so exit 2 for any other reason (drifted corpus, stale baseline) still fails. Deliberate, and documented at the step.

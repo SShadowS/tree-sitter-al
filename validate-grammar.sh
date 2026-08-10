@@ -242,7 +242,14 @@ if [ -f "tools/find_unused_definitions.py" ]; then
         VALIDATION_FAILED=1
     fi
 else
-    print_warning "Orphan detection script not found (tools/find_unused_definitions.py)"
+    # All five helper scripts are TRACKED in git. Their absence means a broken
+    # checkout, not an environment without them -- and that is not hypothetical:
+    # three of them were once untracked and a fresh clone degraded these steps to
+    # exactly this warning, so the gates looked green while checking nothing. A
+    # missing helper therefore FAILS. Genuine environment gaps (no C compiler, no
+    # vendored runtime, no BC.History) stay warnings; a missing tracked file does not.
+    print_error "Orphan detection script not found (tools/find_unused_definitions.py) -- it is tracked in git, so this checkout is broken"
+    VALIDATION_FAILED=1
 fi
 
 # Step 5: Check for duplicate rule keys in grammar.js's rules object
@@ -271,7 +278,8 @@ if [ -f "tools/analyze_duplicates.py" ]; then
         VALIDATION_FAILED=1
     fi
 else
-    print_warning "Duplicate detection script not found (tools/analyze_duplicates.py)"
+    print_error "Duplicate detection script not found (tools/analyze_duplicates.py) -- it is tracked in git, so this checkout is broken"
+    VALIDATION_FAILED=1
 fi
 
 # Step 5b: Check field-shape invariants in node-types.json
@@ -287,7 +295,8 @@ if [ -f "tools/check-field-types.py" ]; then
         VALIDATION_FAILED=1
     fi
 else
-    print_warning "Field-shape check script not found (tools/check-field-types.py)"
+    print_error "Field-shape check script not found (tools/check-field-types.py) -- it is tracked in git, so this checkout is broken"
+    VALIDATION_FAILED=1
 fi
 
 # Step 5c: Compile-check tools/fieldwalk.c
@@ -306,7 +315,8 @@ FIELDWALK_CC="${CC:-cc}"
 command -v "$FIELDWALK_CC" >/dev/null 2>&1 || FIELDWALK_CC=gcc
 
 if [ ! -f "tools/fieldwalk.c" ]; then
-    print_warning "fieldwalk not found (tools/fieldwalk.c)"
+    print_error "fieldwalk not found (tools/fieldwalk.c) -- it is tracked in git, so this checkout is broken"
+    VALIDATION_FAILED=1
 elif ! command -v "$FIELDWALK_CC" >/dev/null 2>&1; then
     print_warning "No C compiler found - skipping fieldwalk compile check"
 elif [ -z "$FIELDWALK_TS_DIR" ]; then
@@ -510,7 +520,8 @@ if [ -f "tools/check_grammar_health.py" ]; then
         VALIDATION_FAILED=1
     fi
 else
-    print_warning "Health check script not found (tools/check_grammar_health.py)"
+    print_error "Health check script not found (tools/check_grammar_health.py) -- it is tracked in git, so this checkout is broken"
+    VALIDATION_FAILED=1
 fi
 
 # Final summary

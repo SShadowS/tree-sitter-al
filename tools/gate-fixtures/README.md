@@ -79,6 +79,17 @@ Both chunks are named, and `tree-sitter exit=0` is printed beside each — the
 point being that no amount of return-value checking finds this, and neither
 does the global total, which still comes to 40.
 
+### `al-corpus/` — a small AL corpus that is not BC.History
+
+Six hand-written AL files (table, page, codeunit, enum, interface, and one with
+a `#if`) so the gate self-test can exercise `parse-al-parallel.sh` and
+`validate-grammar.sh --full` **in CI**, where `BC.History` is gitignored and
+absent. `tools/gate_selftest.py` copies them into a scratch corpus and, for the
+negative cases, adds a deliberately unparseable file alongside.
+
+Not a grammar-coverage corpus and not a substitute for BC.History: its job is
+to be a *countable* set of files, so a gate that miscounts can be caught.
+
 ### `chunk-parse-failure/` — a chunk that produces nothing
 
 One chunk's `tree-sitter` invocation fails outright and emits no trees: the
