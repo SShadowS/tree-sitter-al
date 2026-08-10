@@ -49,25 +49,30 @@ function namespacedRefFielded($, name) {
   );
 }
 
-// A statement in body/branch position, with the field kept off the terminator.
+// A statement in body/branch position, holding exactly one node.
 //
 // `_statement` is hidden and expands to `<statement> optional(';')`, so
 // `field(name, $._statement)` labels the ';' too: a consumer calling
 // children_by_field_name('body') on `while c do x := 1;` received
 // [assignment_statement, ';'] -- two nodes for one body, and `multiple: true`.
-// Fielding the inner statement and leaving the ';' outside the field keeps
-// every node and every range identical while the field holds exactly one node.
 //
-// `call_statement` is listed separately because it owns its ';' internally, so
-// fielding it whole is already correct.
-// The prec.right mirrors `_statement`'s own, which these sites used to inherit
-// by referencing it; without it the `optional(';')` decision loses the
-// associativity that disambiguates it from a preproc guard block's terminator.
+// Since the terminator restructure this helper no longer carries an
+// `optional(';')` of its own. Terminators are EXTERNAL to every branch rule and
+// to `code_block`: the ';' belongs to the enclosing statement wrapper
+// (`_statement`) or, for a case branch, to `case_branch` itself. That is what
+// makes `if C then A; else B;` structurally impossible to read as one
+// if_statement -- see the note on if_statement.
+//
+// `call_statement` is listed separately because it owns its ';' internally, and
+// `empty_statement` IS a ';'. Both are still reachable in branch position
+// (`while C do ;`, `case 1: Foo;`), but neither is reachable from
+// `_statement_inner` any more, so the then-branch of an if can bar them.
 function fieldedStatement($, name) {
-  return prec.right(choice(
+  return choice(
     field(name, $.call_statement),
-    seq(field(name, $._statement_inner), optional(';')),
-  ));
+    field(name, $.empty_statement),
+    field(name, $._statement_inner),
+  );
 }
 
 // Object declaration helper — with object ID
@@ -239,11 +244,6 @@ module.exports = grammar({
     // terminator: `#if C  stmt; if X then  #endif  shared;`
     [$._preproc_guard_block, $._statement_inner],
     [$.if_statement, $._if_statement_no_else],  // dangling-else in case branches
-    // if_statement takes _then_branch_no_semi while the preproc_split_if_* rules
-    // still take _then_branch, and the two are indistinguishable until the token
-    // after the then-branch. LR cannot see that far, so GLR explores both and the
-    // lookahead settles it. Required: generation fails without it.
-    [$._then_branch, $._then_branch_no_semi],
     // statement_block vs preproc_split_code_block_end after the statement run
     [$.statement_block],
     // var_body run terminates at the following begin (no closing delimiter)
@@ -2597,13 +2597,18 @@ module.exports = grammar({
     // (issue #19). Unlike brace constructs, begin/end stay inside code_block
     // (Rust `block` model) since code_block is also reused as a nested
     // statement block.
-    _routine_regular_body: $ => seq(
+    // prec.right resolves the shift/reduce on the trailing `optional(';')`,
+    // which `code_block` used to own and therefore never exposed here.
+    _routine_regular_body: $ => prec.right(seq(
       optional(choice(
         $.var_section,
         $.preproc_conditional_var_block,
       )),
       field('body', $.code_block),
-    ),
+      // The body's terminator. `code_block` no longer carries it — see the note
+      // there. Kept outside field('body') so the field stays a single node.
+      optional(';'),
+    )),
 
     // Preprocessor split procedure body: var+begin+preamble in #if, begin in #else
     // #if / [var] begin [preamble] [if-guard then] / #else / begin / #endif / shared_stmts end;
@@ -2675,13 +2680,15 @@ module.exports = grammar({
 
     // Preprocessor-split procedure preamble: header+var variants in #if/#else, shared body after #endif
     // Example: procedure signature AND var section differ across branches, shared begin...end follows
-    preproc_split_procedure_preamble: $ => prec(25, seq(
+    // prec.right for the trailing `optional(';')` the code_block stopped owning.
+    preproc_split_procedure_preamble: $ => prec.right(25, seq(
       $.preproc_if,
       $._procedure_preamble,
       repeat(seq($.preproc_elif, $._procedure_preamble)),
       optional(seq($.preproc_else, $._procedure_preamble)),
       $.preproc_endif,
       $.code_block,
+      optional(';'),
     )),
 
     // Procedure header without body (used in preproc split procedures)
@@ -2756,11 +2763,26 @@ module.exports = grammar({
     // a scanner/literal split for the same text is what GLR forks on, and the
     // anonymous kw() form is a token(PATTERN), which tree-sitter renders as a
     // HIDDEN auxiliary symbol, so the keyword would vanish from the tree.
+    // The block does NOT own the ';' that follows its `end`. It used to, and
+    // that single `optional(';')` was the root cause of the ae90aea regression:
+    // being under prec.right it was GREEDY, so in `if C then begin … end; else X;`
+    // the block consumed the terminator before any rule downstream of the
+    // then-branch could test for one. The else arm therefore stayed available,
+    // and the else bound to the if instead of to the enclosing case — 23 sites,
+    // zero ERROR nodes. Three targeted workarounds were tried and all three had
+    // worse collateral than the bug.
+    //
+    // The terminator is now EXTERNAL at every use site: `_routine_regular_body`,
+    // `preproc_split_procedure_preamble`, `_preproc_branch_statement` and
+    // `case_else_branch` each take their own `optional(';')`, and in statement
+    // and branch position it belongs to `_statement` / `case_branch`. Do not put
+    // it back here — a terminator that is inside the block is invisible to
+    // everything that needs to see it.
     code_block: $ => prec.right(seq(
       $.begin_keyword,
       optional(field('body', $.statement_block)),
       choice(
-        seq($.end_keyword, optional(';')),
+        $.end_keyword,
         // Split ending: 'end' is inside #if, with different structure in #else
         // Scanner's PREPROC_SPLIT_END only fires when end;#else or end;#endif
         $.preproc_split_code_block_end,
@@ -2791,7 +2813,6 @@ module.exports = grammar({
       $.preproc_endif,
       repeat($._statement),
       $.end_keyword,
-      optional(';'),
     )),
 
     // Content-only statement run (no begin/end) so a statement container can
@@ -3383,7 +3404,10 @@ module.exports = grammar({
     // narrow rule keeps the fork inside preprocessor branches.
     _preproc_branch_statement: $ => choice(
       $._statement,
-      $.code_block,
+      // The block's terminator is external now — see the note on code_block.
+      // prec.right settles the shift/reduce that optional trailing ';' creates,
+      // exactly as `_statement`'s own prec.right does for its terminator.
+      prec.right(seq($.code_block, optional(';'))),
     ),
 
     // Preprocessor conditionals in actions context
@@ -3476,6 +3500,14 @@ module.exports = grammar({
     // =====================================================================
 
     _statement: $ => prec.right(choice(
+      // A bare `;`. Moved here out of `_statement_inner` by the terminator
+      // restructure: an empty statement IS a terminator, so leaving it inside
+      // `_statement_inner` made every `_statement_inner` position — including
+      // the then-branch of an `if` — able to swallow a ';' after the
+      // restructure had taken the ';' out of everything else. `if C then ;`
+      // must TERMINATE the if (alc AL0110), so the then-branch reaches
+      // `empty_statement` only through the arm that bars a following `else`.
+      $.empty_statement,
       // A parenless no-arg call (`Initialize;`) — a bare identifier in statement
       // position that OWNS its terminating `;`. Owning the `;` is what makes a real
       // parenless call structurally distinct from tree-sitter ERROR-recovery debris
@@ -3505,7 +3537,6 @@ module.exports = grammar({
           $.foreach_statement,
           $.with_statement,
           $._expression_statement,
-          $.empty_statement,
           $.preproc_conditional_statement,
           $.preproc_split_if_statement,
           $.preproc_split_if_else_statement,
@@ -3563,19 +3594,29 @@ module.exports = grammar({
 
     // --- If/Then/Else ---
 
-    // The two arms differ ONLY in whether the then-branch may carry a trailing
-    // ';', and that is the whole dangling-else fix. alc is unambiguous here
-    // (verified against 18.0.37.11445):
+    // alc is unambiguous here (verified against 18.0.37.11445):
     //
     //   if C then A else B;      accepted -- else binds to the nearest if
     //   if C then A; else B;     REJECTED, AL0110 "Orphaned ELSE statement"
     //
-    // So a ';' TERMINATES the if: an else after one cannot belong to it. Making
-    // that structural is what lets the two case-branch shapes coexist without a
-    // precedence guess. `case 1: if C then A; else B; end;` has only the
-    // no-else reading (the ';' bars the else arm), so the else is the case's;
-    // `case 1: if C then A else B; else C; end;` has no ';', so the else arm is
-    // available and the dynamic precedence below picks it.
+    // So a ';' TERMINATES the if: an else after one cannot belong to it. That is
+    // now enforced by CONSTRUCTION rather than by a guard. The if owns no ';' of
+    // its own and no then-branch form reachable here can hold one, so in
+    // `if C then A; else B;` the ';' can only be taken by the enclosing
+    // statement wrapper — which requires reducing this if_statement first, at
+    // which point the else is out of reach. `case 1: if C then A; else B; end;`
+    // therefore has only the no-else reading and the else is the CASE's, while
+    // `case 1: if C then A else B; else C; end;` has no ';' and the else binds
+    // here.
+    //
+    // ae90aea tried to express the same thing as a guard —
+    // `choice(seq(else_keyword, _else_branch), optional(';'))` — which only bars
+    // the else while the ';' is still UNCONSUMED at this point. `code_block`,
+    // a nested `if_statement` and `empty_statement` all ate it first, so the
+    // guard never fired and the else took the case's, at 23 sites with zero
+    // ERROR nodes. Externalising the terminator is what makes the test possible
+    // at all; a guard here cannot substitute for it.
+    //
     // Dangling else. The ONE-seq shape with optional(else) plus prec.right is
     // load-bearing and must not be split into two alternatives: that is what
     // makes the else shift into the INNERMOST unmatched if. Splitting it into
@@ -3585,38 +3626,38 @@ module.exports = grammar({
     // an OUTER if — verified against a real BC file
     // (Assembly/Document/AssemblyAvailabilityMgt.Codeunit.al:144-149).
     //
-    // What changed in 4.0.0 is only the then-branch: it no longer swallows a
-    // trailing ';'. alc settles the rule (verified, 18.0.37.11445):
+    // The remaining ambiguity is against case_else_branch, and it is genuine:
+    // for `case 1: if C then A else B; else D; end;` BOTH parses complete, so
+    // static precedence cannot reach it (prec.right(30) on the else arm had no
+    // effect at all). Only dynamic precedence can, and it has to be DIRECTIONAL.
     //
-    //   if C then A else B;    accepted
-    //   if C then A; else B;   REJECTED, AL0110 "Orphaned ELSE statement"
+    // prec.dynamic(20) on the whole rule — the ae90aea shape — gives the
+    // with-else and without-else productions the SAME score, so the tie fell
+    // through to tree-sitter's structural tiebreak in ts_subtree_compare, which
+    // ranks by symbol id. That is not a decision about AL; it is an artifact of
+    // symbol numbering, and it silently flipped to the wrong parse when this
+    // restructure renumbered the symbols. The wrong parse is the defect-1 shape:
+    // the if loses its else, case_else_branch swallows it, and the real
+    // case-else lexes as a bare `identifier` (`kw()` builds a regex token, so
+    // keyword extraction never applies and `else` matches the identifier
+    // pattern in statement position).
     //
-    // So a ';' TERMINATES the if. Leaving it to the enclosing statement wrapper
-    // makes that structural: `case 1: if C then A; else B; end;` can only read
-    // the else as the CASE's, while `case 1: if C then A else B; else C; end;`
-    // has no ';' and the else binds to the if. Before this the then-branch ate
-    // the ';', both readings completed, and prec.dynamic picked the wrong one —
-    // the if lost its else, case_else_branch swallowed B, and the real case-else
-    // became a bare identifier, with zero ERROR nodes.
+    // The 30 on the else arm makes the preference explicit: BIND THE ELSE. Two
+    // parses that differ only in whether an else attached to an if resolve
+    // toward attachment, which is what alc does.
     //
-    // prec.dynamic(20) breaks the remaining tie against case_else_branch, which
-    // is a genuine GLR ambiguity (both parses complete) and therefore not
-    // resolvable by static precedence — prec.right(30) on the else arm had no
-    // effect at all.
+    // This is safe only because the ';' cases no longer depend on precedence at
+    // all. `case 1: if C then A; else B; end;` cannot reach the else arm under
+    // ANY precedence now — the if owns no ';', so that parse does not exist.
+    // Pinned by "A ';' before the else gives it to the CASE" in
+    // test/corpus/dangling_else_case_branch_test.txt, which passes with the
+    // dynamic precedences removed entirely.
     if_statement: $ => prec.right(prec.dynamic(20, seq(
       $.if_keyword,
       field('condition', $._expression),
       $.then_keyword,
-      $._then_branch_no_semi,
-      // Either an else, or the terminating ';' — never both. This is the whole
-      // fix, and keeping the ';' HERE rather than letting the enclosing wrapper
-      // take it is deliberate: moving it out re-spans every if_statement in the
-      // corpus (74,268 of them), which is a contract change far beyond a
-      // dangling-else fix.
-      choice(
-        seq($.else_keyword, $._else_branch),
-        optional(';'),
-      )
+      $._then_branch,
+      optional(prec.dynamic(30, seq($.else_keyword, $._else_branch))),
     ))),
 
     // If statement without else clause — used as case branch body so that
@@ -3640,24 +3681,19 @@ module.exports = grammar({
       $._then_branch,
     )),
 
-    // Shared then-branch body: a complete code_block or single statement
+    // Shared then-branch body: a complete code_block or single statement.
     // Each of these carries its own field() internally rather than being
     // fielded at the call site, so the ';' that `_statement` owns stays out of
     // the field. See fieldedStatement().
+    //
+    // There used to be a second, near-identical `_then_branch_no_semi` for
+    // if_statement's use, with a declared conflict between the pair. The
+    // terminator restructure made them the same rule: no then-branch form
+    // carries a ';' any more, so there is nothing left for the two variants to
+    // differ on.
     _then_branch: $ => choice(
       field('then_branch', $.code_block),
       fieldedStatement($, 'then_branch'),
-    ),
-
-    // _then_branch minus the trailing ';'. The ';' now belongs to the enclosing
-    // statement wrapper, which is what terminates the whole if_statement — see
-    // the note on if_statement. call_statement stays because it OWNS its ';'
-    // (`if C then Foo;`) and dropping it here would turn that node into a bare
-    // identifier.
-    _then_branch_no_semi: $ => choice(
-      field('then_branch', $.code_block),
-      field('then_branch', $.call_statement),
-      field('then_branch', $._statement_inner),
     ),
 
     // Shared else-branch body: code_block, nested if (else-if chain), or single statement
@@ -3713,11 +3749,18 @@ module.exports = grammar({
       $.preproc_endif,
     ),
 
+    // A case branch is its own terminator scope: nothing encloses it that would
+    // take the ';' (the case's own ';' comes after `end`), so it takes the one
+    // that `fieldedStatement`/`code_block` stopped carrying. This is also what
+    // hands the else to the case in `case 1: if C then A; else B; end;` — the
+    // branch consumes that ';', which is only reachable once the inner
+    // if_statement has reduced without its else.
     case_branch: $ => choice(
       seq(
         $._case_pattern,
         ':',
-        $._case_body_branch
+        $._case_body_branch,
+        optional(';'),
       ),
       // Preprocessor-split case branch: #if wraps extra patterns before the main pattern
       // #if COND  pattern1,  #endif  pattern2: body;
@@ -3740,7 +3783,8 @@ module.exports = grammar({
       // Pattern(s) after the preprocessor block, ending with ':'
       $._case_pattern,
       ':',
-      $._case_body_branch
+      $._case_body_branch,
+      optional(';'),
     )),
 
     // Extended case split: #if adds complete branches + provides header for next shared branch
@@ -3765,6 +3809,7 @@ module.exports = grammar({
       $.preproc_endif,
       // Shared body for the split branch
       $._case_body_branch,
+      optional(';'),
     )),
 
     // Case pattern list: supports preprocessor conditionals interleaved with patterns.
@@ -3828,10 +3873,16 @@ module.exports = grammar({
       // optional() preserves `else` with zero statements before `end` (see
       // "Empty case else branch" in test/corpus/case_statement.txt) — neither
       // code_block nor statement_block (repeat1) can match an empty body.
-      optional(field('body', choice(
-        $.code_block,
-        $.statement_block,
-      )))
+      // The two arms are separate because only the code_block one needs a
+      // terminator of its own: `code_block` stopped owning the ';' after its
+      // `end` (see the note there), while `statement_block` is a run of
+      // `_statement`, each of which already takes its own. Folding them back
+      // into one `choice` under a shared trailing `optional(';')` would make
+      // `else A;` ambiguous between the two owners of that ';'.
+      optional(choice(
+        seq(field('body', $.code_block), optional(';')),
+        field('body', $.statement_block),
+      ))
     )),
 
     // --- For loop ---

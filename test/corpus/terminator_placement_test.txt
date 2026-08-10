@@ -1,0 +1,238 @@
+================================================================================
+A ';' after `end` gives the else to the CASE, not to the if
+--
+The ae90aea regression, and 21 of its 25 corpus sites. `code_block` used to own
+the ';' after its `end`, under a prec.right that made it GREEDY: it consumed the
+terminator before anything downstream of the then-branch could test for one, so
+the if's else arm stayed available and the else bound to the if instead of to
+the case. Zero ERROR nodes -- the program simply meant something else.
+The fix is structural, not a guard: no then-branch form owns a ';' any more, so
+the ';' here can only be taken by `case_branch`, which requires the if to have
+already reduced WITHOUT its else. The with-else reading does not exist.
+--
+The assertion is that the if_statement has NO `else_branch:` field and that the
+`case_else_branch` is real. NOTE: a blank line inside this `--` block makes
+tree-sitter drop the whole test SILENTLY -- it is not reported, it simply never
+runs. Keep these blocks free of blank lines.
+================================================================================
+codeunit 50100 P
+{
+    procedure P()
+    var
+        X: Integer;
+        Y: Integer;
+    begin
+        case X of
+            1:
+                if X = 0 then begin
+                    Y := 1;
+                end;
+            else
+                Y := 2;
+        end;
+    end;
+}
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (procedure
+        (procedure_keyword)
+        name: (identifier)
+        (var_section
+          (var_keyword)
+          body: (var_body
+            (variable_declaration
+              name: (identifier)
+              type: (type_specification
+                (basic_type)))
+            (variable_declaration
+              name: (identifier)
+              type: (type_specification
+                (basic_type)))))
+        body: (code_block
+          (begin_keyword)
+          body: (statement_block
+            (case_statement
+              (case_keyword)
+              expression: (identifier)
+              (of_keyword)
+              body: (case_body
+                (case_branch
+                  pattern: (integer)
+                  body: (if_statement
+                    (if_keyword)
+                    condition: (comparison_expression
+                      left: (identifier)
+                      operator: (comparison_operator)
+                      right: (integer))
+                    (then_keyword)
+                    then_branch: (code_block
+                      (begin_keyword)
+                      body: (statement_block
+                        (assignment_statement
+                          left: (identifier)
+                          operator: (assignment_operator)
+                          right: (integer)))
+                      (end_keyword)))))
+              (case_else_branch
+                (else_keyword)
+                body: (statement_block
+                  (assignment_statement
+                    left: (identifier)
+                    operator: (assignment_operator)
+                    right: (integer))))
+              (end_keyword)))
+          (end_keyword))))))
+
+================================================================================
+A ';' after a NESTED if gives the else to the CASE
+--
+The second swallowing form, 3 of the 25 sites. A nested if_statement used to
+carry its own `optional(';')`, so it ate the terminator exactly as code_block
+did and the OUTER if's else arm survived.
+--
+Both ifs must end without an else, and the case must get one.
+================================================================================
+codeunit 50100 P
+{
+    procedure P()
+    var
+        X: Integer;
+        Y: Integer;
+    begin
+        case X of
+            1:
+                if X = 0 then
+                    if X = 1 then
+                        Y := 1;
+            else
+                Y := 2;
+        end;
+    end;
+}
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (procedure
+        (procedure_keyword)
+        name: (identifier)
+        (var_section
+          (var_keyword)
+          body: (var_body
+            (variable_declaration
+              name: (identifier)
+              type: (type_specification
+                (basic_type)))
+            (variable_declaration
+              name: (identifier)
+              type: (type_specification
+                (basic_type)))))
+        body: (code_block
+          (begin_keyword)
+          body: (statement_block
+            (case_statement
+              (case_keyword)
+              expression: (identifier)
+              (of_keyword)
+              body: (case_body
+                (case_branch
+                  pattern: (integer)
+                  body: (if_statement
+                    (if_keyword)
+                    condition: (comparison_expression
+                      left: (identifier)
+                      operator: (comparison_operator)
+                      right: (integer))
+                    (then_keyword)
+                    then_branch: (if_statement
+                      (if_keyword)
+                      condition: (comparison_expression
+                        left: (identifier)
+                        operator: (comparison_operator)
+                        right: (integer))
+                      (then_keyword)
+                      then_branch: (assignment_statement
+                        left: (identifier)
+                        operator: (assignment_operator)
+                        right: (integer))))))
+              (case_else_branch
+                (else_keyword)
+                body: (statement_block
+                  (assignment_statement
+                    left: (identifier)
+                    operator: (assignment_operator)
+                    right: (integer))))
+              (end_keyword)))
+          (end_keyword))))))
+
+================================================================================
+A stray ';' in statement position is an empty_statement
+--
+Visible consequence of externalising the terminator, and the only one of the
+restructure's node-count changes that is not a repaired dangling else (4 sites
+in BC.History). The if_statement no longer owns a trailing ';', so it takes the
+one after `Foo()` and the lone ';' on the next line becomes a statement in its
+own right instead of being absorbed as some other node's optional terminator.
+Nothing is lost either way: an absorbed ';' was still an anonymous token in the
+tree.
+--
+The assertion is the `(empty_statement)` between the two calls.
+================================================================================
+codeunit 50100 P
+{
+    procedure P()
+    var
+        X: Integer;
+    begin
+        if X = 0 then
+            Foo();
+        ;
+        Bar();
+    end;
+}
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (procedure
+        (procedure_keyword)
+        name: (identifier)
+        (var_section
+          (var_keyword)
+          body: (var_body
+            (variable_declaration
+              name: (identifier)
+              type: (type_specification
+                (basic_type)))))
+        body: (code_block
+          (begin_keyword)
+          body: (statement_block
+            (if_statement
+              (if_keyword)
+              condition: (comparison_expression
+                left: (identifier)
+                operator: (comparison_operator)
+                right: (integer))
+              (then_keyword)
+              then_branch: (call_expression
+                function: (identifier)
+                arguments: (argument_list)))
+            (empty_statement)
+            (call_expression
+              function: (identifier)
+              arguments: (argument_list)))
+          (end_keyword))))))
