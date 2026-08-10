@@ -163,14 +163,18 @@ def never_observed(node_types: list[dict], seen: set[str]) -> list[str]:
 
 
 def detect(node_types: list[dict], seen: set[str]) -> list[Finding]:
-    """A named type moving observed -> unobserved is a grammar-visible defect
-    with byte coverage intact -- e.g. a keyword rule inlined from
-    `alias(kw('word'), 'word')` to a bare string literal keeps every byte
-    covered (the string token is still a visible leaf) while the node type
-    that queries match on (`(x_keyword)`) stops being emitted anywhere.
-    `never_observed` already computes the right set; this is what turns it
-    into a Finding, so it clusters, baselines and gates like every other
+    """A named type still declared in node-types.json but produced by nothing
+    in scope is a grammar-visible defect with byte coverage intact: the type
+    stays a possible parse output, but nothing this run parsed ever emitted
+    it. `never_observed` already computes the right set; this is what turns
+    it into a Finding, so it clusters, baselines and gates like every other
     detector instead of living only in a gitignored report nobody diffs.
+
+    This does NOT catch a rule inlined to a bare string literal -- the type
+    then leaves node_types too, so this function never iterates it -- nor a
+    keyword rule reverting from `alias(kw('word'), 'word')` to a bare
+    `kw('word')`, which still yields a childless `(x_keyword)` leaf and so
+    stays observed. See tools/query_coverage/README.md's "Known limitations".
 
     No source location exists for a type that was never produced, so this is
     the same "detail carries the specifics, the located fields stay at zero"

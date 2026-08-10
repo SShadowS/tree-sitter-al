@@ -189,12 +189,11 @@ def cmd_run(args) -> int:
             findings.extend(detect(tree, source, rel))
         findings.extend(fields.detect_dynamic(tree, source, rel, node_types))
 
-    # A named type that stops being produced by anything in scope is
-    # grammar-visible with byte coverage intact -- e.g. a keyword rule
-    # inlined to a bare string literal keeps every byte covered but the node
-    # type every `(x_keyword)` query matches on vanishes. Emitting these as
-    # real Findings (not just an echoed report) is what makes that class of
-    # defect gate like every other one; see corpus.detect's docstring.
+    # A named type still declared in node-types.json that stops being
+    # produced by anything in scope is grammar-visible with byte coverage
+    # intact. Emitting these as real Findings (not just an echoed report) is
+    # what makes that class of defect gate like every other one; see
+    # corpus.detect's docstring for what this does and does not catch.
     corpus_findings = corpus.detect(node_types, seen_types)
     findings.extend(corpus_findings)
     never = sorted(f.detail["type"] for f in corpus_findings)

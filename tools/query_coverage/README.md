@@ -76,12 +76,12 @@ is the only way to raise a count or admit a new cluster. This means a clean
    — excluded from the exit code (see `INFORMATIONAL_DETECTORS` in `qc.py`) because it
    was written for editor highlighting, not exhaustive extraction, so a gap in it is a
    note, not a regression.
-7. **corpus** — named node types in `src/node-types.json` that nothing in this run's
-   scope produced. Catches a node type vanishing from the grammar's actual output while
-   byte coverage stays intact — e.g. a keyword rule losing its `alias()` and reverting to
-   a bare `kw()` pattern still covers every byte (the token is still lexed), but every
-   `(x_keyword)` query goes dark. Detector 1 cannot see this: the bytes it checks are
-   still covered. See "Known limitations" for this detector's own scope caveat.
+7. **corpus** — named node types still declared in `src/node-types.json` that no file in
+   this run's scope produced. Catches a type the grammar still declares but that stops
+   being emitted anywhere in the corpus, with byte coverage staying intact. Detector 1
+   cannot see this: it works from byte coverage, and a type going unproduced says nothing
+   about which bytes are covered. See "Known limitations" for two cases that look like
+   this trigger but produce zero corpus findings.
 
 ## Self-tests
 
@@ -115,13 +115,32 @@ whose content is a `choice()` mixing visible and hidden alternatives passes
 the static check (its name is present in `node-types.json`) and is never
 examined by the dynamic one — that is the majority of the grammar's fields.
 
-A named node type disappearing from the corpus with byte coverage intact —
-the class above, and the general form of the historical `begin`/`end`
-dropped-inside-`#if` bug — is caught, by the **corpus** detector. It works
-only for types this run's scope actually exercises: the manifest covers 357
-of 391 named types, and the other 34 are already never-observed (dead
-grammar or genuinely uncovered constructs) and stay that way regardless of
-what changes — see `reports/never-observed.json`.
+A named node type that stops being produced by anything in the corpus while
+staying declared in `src/node-types.json` is caught by the **corpus**
+detector. It works only for types this run's scope actually exercises: the
+manifest covers 357 of 391 named types, and the other 34 are already
+never-observed (dead grammar or genuinely uncovered constructs) and stay
+that way regardless of what changes — see `reports/never-observed.json`.
+
+Two things that look like this trigger but are not caught by it:
+
+- **A keyword rule losing its `alias()` and reverting to a bare `kw()`
+  pattern.** Per the keyword-shape table in `CLAUDE.md`, a bare `kw('word')`
+  inside a named rule still yields a childless leaf — `(x_keyword)` is still
+  produced and still matches; only `(x_keyword "word")` patterns go dark.
+  This produces zero corpus findings.
+- **A rule inlined to a bare string literal.** The type then leaves
+  `node-types.json` too, so `never_observed` no longer iterates it and no
+  finding is possible. This is caught only incidentally, and only for a type
+  a shipped `.scm` names by hand (e.g. `queries/highlights.scm` has
+  `(begin_keyword)`): `tree_sitter.Query` raises `QueryError: Invalid node
+  type` for an unknown type, so `qc run` dies on an uncaught traceback
+  rather than reporting a finding. A type absent from every `.scm` is not
+  caught at all.
+
+The historical `begin`/`end` dropped-inside-`#if` bug is not an instance of
+either case above: `begin_keyword` was still emitted at depth 0, so it was
+never in the never-observed set. That bug is detector 1's byte-gap catch.
 
 The `field(` anchor is deliberately excluded from detector 5 — see
 "Coverage deliberately not checked" in `reports/summary.md` for the live list
