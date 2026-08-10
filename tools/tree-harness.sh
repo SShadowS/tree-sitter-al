@@ -15,8 +15,15 @@
 #                               for every file whose parse tree changed.
 #
 # Usage:
-#   ./tools/tree-harness.sh snapshot ./BC.History .snapshots/bc
-#   ./tools/tree-harness.sh verify   ./BC.History .snapshots/bc
+#   ./tools/tree-harness.sh snapshot ./BC.History .snapshots/baseline-<change>
+#   ./tools/tree-harness.sh verify   ./BC.History .snapshots/baseline-<change>
+#
+# Name the snapshot for the change you are about to make, and take it FRESH.
+# Never verify against a snapshot you did not just take: a stale one reports a
+# large delta unrelated to your edit, which reads as "I broke everything". The
+# long-lived `.snapshots/bc` this file used to name sat for two months until
+# 15,349 of its 15,358 rows had drifted, and it cost a verification before it
+# was deleted. Snapshots are ~154 MB each; delete yours when the change lands.
 #
 # Notes:
 #   * Run `tree-sitter generate` yourself before invoking — the harness parses
