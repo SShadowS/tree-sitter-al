@@ -1,0 +1,476 @@
+================================================================================
+A property whose name starts with a prefix of `begin` is still a property
+--
+Parse states 20 and 22 offer property_name and begin_keyword at the same
+position (an object body just after a procedure header). The scanner used to
+try `begin` with its own read, which stops on the first mismatching character
+with the matching prefix ALREADY CONSUMED; PROPERTY_NAME then started in the
+middle of the identifier, saw a digit where it required an identifier START,
+and declined. `b1 = 1;` became an ERROR while `x7 = 7;` in the identical
+position parsed as a property. `beginx` always worked, because 'x' is a legal
+identifier start — which is what made the shape look arbitrary.
+================================================================================
+interface "I"
+{
+    procedure P1() R: Integer
+    b1 = 1;
+
+    procedure P2() R: Integer
+    be2 = 2;
+
+    procedure P3() R: Integer
+    beg3 = 3;
+
+    procedure P4() R: Integer
+    begi4 = 4;
+
+    procedure P5() R: Integer
+    begin5 = 5;
+
+    procedure P6() R: Integer
+    beginx = 6;
+
+    procedure P7() R: Integer
+    x7 = 7;
+}
+--------------------------------------------------------------------------------
+
+(source_file
+  (interface_declaration
+    (interface_keyword)
+    (quoted_identifier)
+    (interface_body
+      (interface_procedure
+        (procedure_keyword)
+        (identifier)
+        (interface_procedure_suffix
+          (identifier)
+          (type_specification
+            (basic_type))))
+      (property
+        (property_name)
+        (integer))
+      (interface_procedure
+        (procedure_keyword)
+        (identifier)
+        (interface_procedure_suffix
+          (identifier)
+          (type_specification
+            (basic_type))))
+      (property
+        (property_name)
+        (integer))
+      (interface_procedure
+        (procedure_keyword)
+        (identifier)
+        (interface_procedure_suffix
+          (identifier)
+          (type_specification
+            (basic_type))))
+      (property
+        (property_name)
+        (integer))
+      (interface_procedure
+        (procedure_keyword)
+        (identifier)
+        (interface_procedure_suffix
+          (identifier)
+          (type_specification
+            (basic_type))))
+      (property
+        (property_name)
+        (integer))
+      (interface_procedure
+        (procedure_keyword)
+        (identifier)
+        (interface_procedure_suffix
+          (identifier)
+          (type_specification
+            (basic_type))))
+      (property
+        (property_name)
+        (integer))
+      (interface_procedure
+        (procedure_keyword)
+        (identifier)
+        (interface_procedure_suffix
+          (identifier)
+          (type_specification
+            (basic_type))))
+      (property
+        (property_name)
+        (integer))
+      (interface_procedure
+        (procedure_keyword)
+        (identifier)
+        (interface_procedure_suffix
+          (identifier)
+          (type_specification
+            (basic_type))))
+      (property
+        (property_name)
+        (integer)))))
+
+================================================================================
+#regionX between a split end and its #else
+--
+grammar.js matches preproc_region with `(?i)#[ \t]*region[^\n\r]*` — no
+trailing word boundary — so `#regionX Foo` IS a region extra to the parser.
+The scanner's lookahead classified directive words whole-word only, declined,
+and PREPROC_SPLIT_END was never emitted: the `end;` degraded to a
+call_statement and the #else branch shredded into loose identifiers.
+================================================================================
+codeunit 1 T
+{
+    procedure X()
+    var
+        x: Integer;
+    begin
+        if x = 1 then begin
+            x := 9;
+#if not CLEAN22
+        end;
+#regionX Foo
+#else
+        x := 2;
+        end else begin x := 3; end;
+#endif
+    end;
+}
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    (integer)
+    (identifier)
+    (declaration_body
+      (procedure
+        (procedure_keyword)
+        (identifier)
+        (var_section
+          (var_keyword)
+          (var_body
+            (variable_declaration
+              (identifier)
+              (type_specification
+                (basic_type)))))
+        (code_block
+          (begin_keyword)
+          (statement_block
+            (if_statement
+              (if_keyword)
+              (comparison_expression
+                (identifier)
+                (comparison_operator)
+                (integer))
+              (then_keyword)
+              (code_block
+                (begin_keyword)
+                (statement_block
+                  (assignment_statement
+                    (identifier)
+                    (integer)))
+                (preproc_split_code_block_end
+                  (preproc_if
+                    (preproc_open)
+                    (preproc_not_expression
+                      (identifier)))
+                  (preproc_split_end)
+                  (preproc_region)
+                  (preproc_else)
+                  (assignment_statement
+                    (identifier)
+                    (integer))
+                  (end_keyword)
+                  (else_keyword)
+                  (begin_keyword)
+                  (assignment_statement
+                    (identifier)
+                    (integer))
+                  (end_keyword)
+                  (preproc_endif
+                    (preproc_close))))))
+          (end_keyword))))))
+
+================================================================================
+#pragmaX between a split end and its #else
+--
+Same divergence as #regionX, on the pragma regex.
+================================================================================
+codeunit 1 T
+{
+    procedure X()
+    var
+        x: Integer;
+    begin
+        if x = 1 then begin
+            x := 9;
+#if not CLEAN22
+        end;
+#pragmaX warning disable AL0432
+#else
+        x := 2;
+        end else begin x := 3; end;
+#endif
+    end;
+}
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    (integer)
+    (identifier)
+    (declaration_body
+      (procedure
+        (procedure_keyword)
+        (identifier)
+        (var_section
+          (var_keyword)
+          (var_body
+            (variable_declaration
+              (identifier)
+              (type_specification
+                (basic_type)))))
+        (code_block
+          (begin_keyword)
+          (statement_block
+            (if_statement
+              (if_keyword)
+              (comparison_expression
+                (identifier)
+                (comparison_operator)
+                (integer))
+              (then_keyword)
+              (code_block
+                (begin_keyword)
+                (statement_block
+                  (assignment_statement
+                    (identifier)
+                    (integer)))
+                (preproc_split_code_block_end
+                  (preproc_if
+                    (preproc_open)
+                    (preproc_not_expression
+                      (identifier)))
+                  (preproc_split_end)
+                  (pragma)
+                  (preproc_else)
+                  (assignment_statement
+                    (identifier)
+                    (integer))
+                  (end_keyword)
+                  (else_keyword)
+                  (begin_keyword)
+                  (assignment_statement
+                    (identifier)
+                    (integer))
+                  (end_keyword)
+                  (preproc_endif
+                    (preproc_close))))))
+          (end_keyword))))))
+
+================================================================================
+#elseX continues a split end
+--
+`preproc_else` is `(?i)#[ \t]*else` with nothing after it, so the parser reads
+`#else` and then `X` as ordinary content. A whole-word scanner test rejected
+the whole line and dropped PREPROC_SPLIT_END. Target words follow the mode of
+the rule that produces them: prefix for #else/#elif, whole word for #endif,
+which only the scanner's own read_keyword_ci can produce.
+================================================================================
+codeunit 1 T
+{
+    procedure X()
+    var
+        x: Integer;
+    begin
+        if x = 1 then begin
+            x := 9;
+#if not CLEAN22
+        end;
+#elseX
+        x := 2;
+        end else begin x := 3; end;
+#endif
+    end;
+}
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    (integer)
+    (identifier)
+    (declaration_body
+      (procedure
+        (procedure_keyword)
+        (identifier)
+        (var_section
+          (var_keyword)
+          (var_body
+            (variable_declaration
+              (identifier)
+              (type_specification
+                (basic_type)))))
+        (code_block
+          (begin_keyword)
+          (statement_block
+            (if_statement
+              (if_keyword)
+              (comparison_expression
+                (identifier)
+                (comparison_operator)
+                (integer))
+              (then_keyword)
+              (code_block
+                (begin_keyword)
+                (statement_block
+                  (assignment_statement
+                    (identifier)
+                    (integer)))
+                (preproc_split_code_block_end
+                  (preproc_if
+                    (preproc_open)
+                    (preproc_not_expression
+                      (identifier)))
+                  (preproc_split_end)
+                  (preproc_else)
+                  (identifier)
+                  (assignment_statement
+                    (identifier)
+                    (integer))
+                  (end_keyword)
+                  (else_keyword)
+                  (begin_keyword)
+                  (assignment_statement
+                    (identifier)
+                    (integer))
+                  (end_keyword)
+                  (preproc_endif
+                    (preproc_close))))))
+          (end_keyword))))))
+
+================================================================================
+#elifX continues a split end
+================================================================================
+codeunit 1 T
+{
+    procedure X()
+    var
+        x: Integer;
+    begin
+        if x = 1 then begin
+            x := 9;
+#if not CLEAN22
+        end;
+#elifX OTHER
+        x := 2;
+        end else begin x := 3; end;
+#endif
+    end;
+}
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    (integer)
+    (identifier)
+    (declaration_body
+      (procedure
+        (procedure_keyword)
+        (identifier)
+        (var_section
+          (var_keyword)
+          (var_body
+            (variable_declaration
+              (identifier)
+              (type_specification
+                (basic_type)))))
+        (code_block
+          (begin_keyword)
+          (statement_block
+            (if_statement
+              (if_keyword)
+              (comparison_expression
+                (identifier)
+                (comparison_operator)
+                (integer))
+              (then_keyword)
+              (code_block
+                (begin_keyword)
+                (statement_block
+                  (assignment_statement
+                    (identifier)
+                    (integer)))
+                (preproc_split_code_block_end
+                  (preproc_if
+                    (preproc_open)
+                    (preproc_not_expression
+                      (identifier)))
+                  (preproc_split_end)
+                  (preproc_elif
+                    (identifier))
+                  (identifier)
+                  (assignment_statement
+                    (identifier)
+                    (integer))
+                  (end_keyword)
+                  (else_keyword)
+                  (begin_keyword)
+                  (assignment_statement
+                    (identifier)
+                    (integer))
+                  (end_keyword)
+                  (preproc_endif
+                    (preproc_close))))))
+          (end_keyword))))))
+
+================================================================================
+A supplementary-plane identifier must not be lexed as `begin`
+--
+The leading codepoint is U+20062, a CJK Extension B ideograph and therefore an
+ordinary identifier start under grammar.js's [\p{L}_][\p{L}\p{N}_]* rule. Its
+low 16 bits are 0x62 = 'b'. wint_t is 16 bits on Windows, so towlower()
+truncated the codepoint and the scanner matched it as the 'b' of `begin`: the
+variable declaration was swallowed into a begin_keyword. The same file parsed
+correctly on Linux, where wint_t is 32 bits — the parser disagreed with itself
+across platforms. keyword_byte() folds every non-ASCII codepoint to a byte no
+keyword contains, so this test pins the same tree on both.
+================================================================================
+codeunit 1 T
+{
+    procedure X()
+    var
+        𠁢egin: Integer;
+    begin
+        𠁢egin := 5;
+    end;
+}
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    (integer)
+    (identifier)
+    (declaration_body
+      (procedure
+        (procedure_keyword)
+        (identifier)
+        (var_section
+          (var_keyword)
+          (var_body
+            (variable_declaration
+              (identifier)
+              (type_specification
+                (basic_type)))))
+        (code_block
+          (begin_keyword)
+          (statement_block
+            (assignment_statement
+              (identifier)
+              (integer)))
+          (end_keyword))))))

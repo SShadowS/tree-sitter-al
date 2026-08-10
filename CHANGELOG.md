@@ -279,6 +279,71 @@ public API — a change to node structure or field names is a **major** bump.
 
 ### Fixed
 
+- **A partially matched keyword no longer eats the identifier behind it.** The
+  scanner tried `begin`, then `end`, then `continue`, then `property_name`, each
+  with its own read. `read_keyword_ci` stops on the first mismatching character
+  with the matching prefix **already consumed**, and a scan cannot give
+  characters back, so the next branch started in the middle of an identifier.
+  Two consequences:
+  - `b1 = 1;` was an ERROR where `x7 = 7;` in the identical position was a
+    property. Parse states 20 and 22 — an object body just after a procedure
+    header, of which an interface procedure with a return type is the common
+    shape — offer `property_name` and `begin_keyword` together; the failed
+    `begin` match ate the `b`, and `PROPERTY_NAME`'s identifier-*start* check
+    then saw the `1` and declined. Every strict prefix of `begin` was affected
+    (`b1`, `be2`, `beg3`, `begi4`, `begin5`) while `beginx` worked, because `x`
+    is a legal identifier start — which is what made the shape look arbitrary.
+  - a leading `b` was absorbed into a following `VAR_ATTRIBUTE_OPEN`, producing
+    a two-column `[` token whose text was `b[`, with the identifier byte in no
+    node at all.
+
+  The four identifier-initial tokens now share **one** read
+  (`read_identifier_word`) — the rule `peek_directive_ci_skip_extras` already
+  applied to directive words — and `VAR_ATTRIBUTE_OPEN`, the only `[`-initial
+  token, is dispatched ahead of them. This also retires the documented
+  constraint that no parse state may offer `PREPROC_SPLIT_BEGIN` and
+  `END_KEYWORD` at the same position: one read makes it moot.
+
+- **The scanner and the grammar now agree on what counts as a directive.**
+  `pragma`, `preproc_region`, `preproc_endregion`, `preproc_define` and
+  `preproc_undef` are `(?i)#[ \t]*NAME[^\n\r]*` regexes, and `preproc_else` and
+  `preproc_elif` are `(?i)#[ \t]*else`/`elif`. None carries a trailing word
+  boundary, so the parser accepts `#regionX Foo`, `#pragmaX …`, `#elseX` and
+  `#elifX`. The scanner's split-construct lookahead classified directive words
+  whole-word only, declined, and `PREPROC_SPLIT_END` was never emitted: with any
+  of those four between an `end;` and its continuation, the `end;` degraded to
+  `(call_statement (identifier))` and the branch shredded into loose
+  identifiers. Each directive now carries the match mode of the rule that
+  produces it — prefix for the regex-matched ones, whole word for `#endif`,
+  which only the scanner's own `read_keyword_ci` can produce, so `#endifX` is
+  still (correctly) not an `#endif`. An over-long directive word is no longer
+  rejected outright either: `#regionAAAAAAAAAAAAAA` is a region to the parser.
+
+- **A supplementary-plane identifier is no longer lexed as `begin` on Windows.**
+  `lexer->lookahead` is `int32_t` and `wint_t` is 16 bits under MSVC, so every
+  `towlower(lexer->lookahead)` truncated a codepoint above U+FFFF to its low 16
+  bits (MSVC warned C4244 on all five call sites). U+20062 — a CJK Extension B
+  ideograph, and an ordinary identifier start under the grammar's
+  `[\p{L}_][\p{L}\p{N}_]*` — has low bits `0x62`, so `<U+20062>egin: Integer;`
+  matched `begin` and the variable declaration was swallowed into a
+  `begin_keyword`. The same file parsed correctly on Linux, where `wint_t` is
+  32 bits: the parser disagreed with itself across platforms. Keyword and
+  directive comparison now goes through `keyword_byte()`, which lowercases
+  ASCII and folds every other codepoint to a byte no keyword contains.
+
+- **The `#if` depth counter no longer wraps at 256.** It was a `uint8_t`, so the
+  256th simultaneously-open `#if` reset it to 0 and every `state->depth > 0`
+  guard read genuine nesting as "not nested": a split construct whose own `#if`
+  was the 256th lost its `PREPROC_SPLIT_*` token. Measured exactly — with 255
+  enclosing `#if` blocks the split `end;` degraded to a `call_statement`; at 254
+  and at 256 it did not. The deepest nesting across BC.History's 15,358 files is
+  3, so no real AL came close. It is now a `uint32_t` (serialized as 4 bytes),
+  which no file that fits in memory can reach, with a compile-time assertion so
+  a revert fails the build rather than one deeply nested file.
+
+  These four are scanner-only. **No parse tree changes**: all 15,358 BC.History
+  trees are byte-identical to the pre-change snapshot.
+
 - **`#elif` after a preprocessor-split `end;` no longer degrades the block.**
   `#if COND / end; / #elif COND / … / #endif` produced a wrong tree: the `end;`
   became `(call_statement (identifier))` and the following branch shredded into

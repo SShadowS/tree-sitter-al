@@ -1,4 +1,5 @@
 #include "tree_sitter/parser.h"
+#include <stdint.h>
 #include <stdlib.h>
 #include <string.h>
 #include <wctype.h>
@@ -16,8 +17,23 @@ enum TokenType {
 };
 
 typedef struct {
-  uint8_t depth;  // current #if/#endif nesting depth (max 255)
+  // Current #if/#endif nesting depth. uint32_t, not uint8_t: a uint8_t wrapped
+  // to 0 at 256 simultaneously-open #if directives, and every `state->depth > 0`
+  // guard below then read that genuine nesting as "not nested", so a split
+  // construct whose own #if was the 256th open one lost its PREPROC_SPLIT_*
+  // token. Verified: with 255 enclosing #if blocks the split `end;` degraded to
+  // a call_statement, at 254 and at 256 it did not. The balanced-file accident
+  // that the underflow guard restores 0 afterwards did not make the misparse
+  // any less real. 2^32 open directives cannot be reached by a file that fits
+  // in memory, so the wrap is now gone rather than moved.
+  uint32_t depth;
 } ScannerState;
+
+// A reverted `depth` fails the BUILD rather than one deeply nested file, since
+// the smallest input that shows the wrap needs 256 open #if directives and its
+// expected parse tree is ~485 KB — far too large to keep as a corpus fixture.
+typedef char scanner_depth_must_not_wrap[
+  (sizeof(((ScannerState *)0)->depth) >= 4) ? 1 : -1];
 
 void *tree_sitter_al_external_scanner_create() {
   ScannerState *state = calloc(1, sizeof(ScannerState));
@@ -30,15 +46,18 @@ void tree_sitter_al_external_scanner_destroy(void *payload) {
 
 unsigned tree_sitter_al_external_scanner_serialize(void *payload, char *buffer) {
   ScannerState *state = (ScannerState *)payload;
-  buffer[0] = (char)state->depth;
-  return 1;
+  memcpy(buffer, &state->depth, sizeof(state->depth));
+  return (unsigned)sizeof(state->depth);
 }
 
 void tree_sitter_al_external_scanner_deserialize(
   void *payload, const char *buffer, unsigned length
 ) {
   ScannerState *state = (ScannerState *)payload;
-  state->depth = (length > 0) ? (uint8_t)buffer[0] : 0;
+  state->depth = 0;
+  if (length >= sizeof(state->depth)) {
+    memcpy(&state->depth, buffer, sizeof(state->depth));
+  }
 }
 
 static bool is_identifier_start(int32_t c) {
@@ -47,6 +66,26 @@ static bool is_identifier_start(int32_t c) {
 
 static bool is_identifier_char(int32_t c) {
   return iswalnum(c) || c == '_';
+}
+
+// Fold one codepoint to a single byte for comparison against the ASCII-only
+// keyword and directive spellings below.
+//
+// NEVER use towlower() for this. wint_t is 16 bits on Windows (MSVC warns
+// C4244 on every such call), so towlower() silently truncates a
+// supplementary-plane codepoint to its low 16 bits: U+10042 became 'B' and
+// then 'b', and `\U00010042egin: Integer;` — a perfectly ordinary identifier
+// under grammar.js's `[\p{L}_][\p{L}\p{N}_]*` — was lexed as a begin_keyword
+// and swallowed the declaration. The same input parsed correctly on Linux,
+// where wint_t is 32 bits, so the parser disagreed with itself across
+// platforms.
+//
+// Non-ASCII folds to 0x01, a byte no keyword or directive contains, so no
+// codepoint outside ASCII can ever be mistaken for an ASCII letter.
+static char keyword_byte(int32_t c) {
+  if (c >= 'A' && c <= 'Z') return (char)(c + ('a' - 'A'));
+  if (c >= 0 && c < 128) return (char)c;
+  return (char)0x01;
 }
 
 // Skip whitespace and newlines (advance without marking)
@@ -61,14 +100,64 @@ static void skip_whitespace(TSLexer *lexer) {
 // Read a keyword case-insensitively. Returns true if matched and lookahead is
 // not an identifier character after the keyword (i.e., whole word matched).
 // Advances the lexer past the keyword on success.
+//
+// A FAILED match still leaves the matching prefix consumed, and a scan cannot
+// give characters back. Only PREPROC_OPEN/PREPROC_CLOSE may use this, because
+// they are the last thing tried after '#' and nothing runs behind them. Every
+// identifier-initial token goes through read_identifier_word instead — see the
+// comment there for the misparse this rule exists to prevent.
 static bool read_keyword_ci(TSLexer *lexer, const char *keyword) {
   for (int i = 0; keyword[i] != '\0'; i++) {
-    if (towlower(lexer->lookahead) != keyword[i]) return false;
+    if (keyword_byte(lexer->lookahead) != keyword[i]) return false;
     lexer->advance(lexer, false);
   }
   // Ensure it's a whole-word match (not followed by identifier chars)
   if (is_identifier_char(lexer->lookahead)) return false;
   return true;
+}
+
+// Which scanner keyword an identifier turned out to be.
+enum IdentifierWord {
+  WORD_NOT_IDENTIFIER = 0,  // lookahead is not an identifier start; nothing consumed
+  WORD_OTHER,               // an identifier, none of the three keywords
+  WORD_BEGIN,
+  WORD_END,
+  WORD_CONTINUE,
+};
+
+// Consume ONE complete identifier and classify it.
+//
+// begin, end, continue and property_name are all identifier-initial, so they
+// must share a single read. Matching them one after another does not work:
+// read_keyword_ci stops on the first mismatching character with the matching
+// prefix already consumed, and tree-sitter has no backtracking inside a scan,
+// so the next branch starts in the MIDDLE of an identifier. That is how
+// `b1 = 5;` lost its property — read_keyword_ci("begin") ate the 'b', and
+// PROPERTY_NAME's is_identifier_start check then saw the '1' and declined,
+// while `x1 = 5;` in the same position (parse states 20 and 22 offer
+// property_name and begin_keyword together) parsed as a property. It is also
+// how a leading `b` was absorbed into a following VAR_ATTRIBUTE_OPEN, giving a
+// two-column `[` token whose text was `b[`.
+//
+// Same rule peek_directive_ci_skip_extras already states for directive words:
+// read the word ONCE, then compare it against every candidate.
+static enum IdentifierWord read_identifier_word(TSLexer *lexer) {
+  if (!is_identifier_start(lexer->lookahead)) return WORD_NOT_IDENTIFIER;
+
+  char buf[9];  // longest keyword tested is "continue" (8) plus the NUL
+  size_t len = 0;
+  while (is_identifier_char(lexer->lookahead)) {
+    if (len < sizeof(buf) - 1) buf[len] = keyword_byte(lexer->lookahead);
+    len++;
+    lexer->advance(lexer, false);
+  }
+  if (len > sizeof(buf) - 1) return WORD_OTHER;  // too long to be any keyword
+  buf[len] = '\0';
+
+  if (len == 5 && strcmp(buf, "begin") == 0) return WORD_BEGIN;
+  if (len == 3 && strcmp(buf, "end") == 0) return WORD_END;
+  if (len == 8 && strcmp(buf, "continue") == 0) return WORD_CONTINUE;
+  return WORD_OTHER;
 }
 
 // Consume a comment beginning at the current '/'. The '/' is consumed either
@@ -128,16 +217,44 @@ static bool skip_whitespace_and_comments(TSLexer *lexer) {
   }
 }
 
+// A directive name plus HOW grammar.js matches it. The two modes are not
+// interchangeable, and getting one wrong makes the scanner disagree with the
+// parser about what a directive even is:
+//
+//   whole_word = true   The grammar reaches this directive ONLY through the
+//                       scanner's own read_keyword_ci, which requires a word
+//                       boundary. `#endif` is the only one: `#endifX` is not a
+//                       preproc_close for the parser either, so the lookahead
+//                       must not treat it as one.
+//
+//   whole_word = false  The grammar matches it with a regex carrying no
+//                       trailing boundary. `#[ \t]*region[^\n\r]*` accepts
+//                       `#regionX foo` as a preproc_region extra, and
+//                       `#[ \t]*else` matches the first five bytes of
+//                       `#elseX`. A whole-word scanner test rejected all of
+//                       these while the parser accepted them, and the split
+//                       token then declined: `#regionX` sitting between an
+//                       `end;` and its `#else` degraded the `end;` to a
+//                       call_statement and shredded the #else branch into loose
+//                       identifiers. Prefix matching is what keeps the two in
+//                       agreement.
+typedef struct {
+  const char *name;
+  bool whole_word;
+} DirectiveMatch;
+
 // Directives that grammar.js declares as `extras`. Comments are extras too, but
 // they are handled by skip_whitespace_and_comments rather than listed here.
 // Everything transparent to the parse tree must be stepped over by a lookahead
-// scanning for a structural directive. Keep in sync with the `extras` array.
-static const char *const TRANSPARENT_DIRECTIVES[] = {
-  "pragma", "endregion", "region", "define", "undef", NULL,
+// scanning for a structural directive. Keep in sync with the `extras` array —
+// including the match mode, which mirrors each one's regex.
+static const DirectiveMatch TRANSPARENT_DIRECTIVES[] = {
+  { "pragma", false }, { "endregion", false }, { "region", false },
+  { "define", false }, { "undef", false }, { NULL, false },
 };
 
 // Target sets for peek_directive_ci_skip_extras. Bare words, no '#'.
-static const char *const DIRECTIVE_ENDIF[] = { "endif", NULL };
+static const DirectiveMatch DIRECTIVE_ENDIF[] = { { "endif", true }, { NULL, false } };
 // PREPROC_SPLIT_END's continuation set. "elif" belongs here for the same reason
 // "else" does: `#if … end; #elif …` is a branch alternative, and alc accepts it
 // (verified — both the #elif and #else forms compile). Omitting it made the
@@ -145,7 +262,19 @@ static const char *const DIRECTIVE_ENDIF[] = { "endif", NULL };
 // Adding a target here is free: every target is tested against ONE buffered
 // read of the directive word (see peek_directive_ci_skip_extras), so a third
 // entry cannot resurrect the consume-the-prefix trap described there.
-static const char *const DIRECTIVE_BRANCH_OR_ENDIF[] = { "elif", "else", "endif", NULL };
+static const DirectiveMatch DIRECTIVE_BRANCH_OR_ENDIF[] = {
+  { "elif", false }, { "else", false }, { "endif", true }, { NULL, false },
+};
+
+// Test one buffered directive word against one candidate. `truncated` says the
+// word was longer than the buffer; every candidate is at most 9 bytes, so a
+// prefix test is still decisive, but a whole-word test can only fail.
+static bool directive_matches(const DirectiveMatch *d, const char *word, bool truncated) {
+  size_t n = strlen(d->name);
+  if (strncmp(word, d->name, n) != 0) return false;
+  if (!d->whole_word) return true;
+  return !truncated && word[n] == '\0';
+}
 
 // Skip whitespace, comments and transparent-directive lines, then test whether
 // what follows is a '#' directive named by one of `targets`.
@@ -160,7 +289,7 @@ static const char *const DIRECTIVE_BRANCH_OR_ENDIF[] = { "elif", "else", "endif"
 // earlier `read_keyword_ci(lexer, "else") || read_keyword_ci(lexer, "endif")`
 // in PREPROC_SPLIT_END made the "endif" arm permanently unreachable exactly
 // this way.
-static bool peek_directive_ci_skip_extras(TSLexer *lexer, const char *const *targets) {
+static bool peek_directive_ci_skip_extras(TSLexer *lexer, const DirectiveMatch *targets) {
   while (true) {
     if (!skip_whitespace_and_comments(lexer)) return false;
     if (lexer->lookahead != '#') return false;
@@ -172,24 +301,30 @@ static bool peek_directive_ci_skip_extras(TSLexer *lexer, const char *const *tar
       lexer->advance(lexer, false);
     }
 
-    // Read the directive word. Longest AL directive is "endregion" (9).
+    // Read the directive word ONCE. Longest AL directive is "endregion" (9), so
+    // 15 stored bytes always decide a prefix test; an over-long word is kept
+    // rather than rejected, because `#regionAAAAAAAAAAAAAA` is still a
+    // preproc_region to the parser.
     char word[16];
     size_t len = 0;
     while (is_identifier_char(lexer->lookahead)) {
-      if (len < sizeof(word) - 1) word[len] = (char)towlower(lexer->lookahead);
+      if (len < sizeof(word) - 1) word[len] = keyword_byte(lexer->lookahead);
       len++;
       lexer->advance(lexer, false);
     }
-    if (len >= sizeof(word)) return false;  // too long to be any directive
-    word[len] = '\0';
+    bool truncated = len > sizeof(word) - 1;
+    word[truncated ? sizeof(word) - 1 : len] = '\0';
 
-    for (int i = 0; targets[i] != NULL; i++) {
-      if (strcmp(word, targets[i]) == 0) return true;
+    for (int i = 0; targets[i].name != NULL; i++) {
+      if (directive_matches(&targets[i], word, truncated)) return true;
     }
 
     bool transparent = false;
-    for (int i = 0; TRANSPARENT_DIRECTIVES[i] != NULL; i++) {
-      if (strcmp(word, TRANSPARENT_DIRECTIVES[i]) == 0) { transparent = true; break; }
+    for (int i = 0; TRANSPARENT_DIRECTIVES[i].name != NULL; i++) {
+      if (directive_matches(&TRANSPARENT_DIRECTIVES[i], word, truncated)) {
+        transparent = true;
+        break;
+      }
     }
     if (!transparent) return false;
 
@@ -265,98 +400,17 @@ bool tree_sitter_al_external_scanner_scan(
     }
   }
 
-  // 'begin' dispatch — BEGIN_KEYWORD and PREPROC_SPLIT_BEGIN in ONE scan.
-  //
-  // These cannot be two sequential blocks. A scan that returns false discards
-  // every advance it made and the scanner is NOT re-entered at the same
-  // position, so a PREPROC_SPLIT_BEGIN block that reads 'begin', fails its
-  // lookahead and declines destroys BEGIN_KEYWORD's only chance to fire. Read
-  // the keyword once, fix the token end with mark_end, then let the lookahead
-  // choose the symbol.
-  //
-  // The split token gets first refusal at depth > 0; BEGIN_KEYWORD is the
-  // fallback at EVERY depth. It used to be guarded by `state->depth == 0`,
-  // which left a complete begin…end inside #if claimed by no visible node at
-  // all: the grammar's anonymous kw('begin') is token(PATTERN), and tree-sitter
-  // renders anonymous PATTERN tokens as hidden auxiliary symbols (unlike
-  // anonymous STRING tokens such as ";", which are visible). The keyword was
-  // lexed and then vanished from the tree.
-  //
-  // '#' handling: peek_directive_ci_skip_extras takes BARE directive words and
-  // consumes the '#' itself. PREPROC_OPEN/CLOSE manually advance past '#'
-  // before calling read_keyword_ci("if"/"endif"). These are DIFFERENT
-  // conventions — do not mix.
-  //
-  // Comments, #pragma, #region, #define and friends are all extras, hence all
-  // transparent here (see skip_whitespace_and_comments/TRANSPARENT_DIRECTIVES).
-  if (valid_symbols[BEGIN_KEYWORD] || valid_symbols[PREPROC_SPLIT_BEGIN]) {
-    skip_whitespace(lexer);
-    if (read_keyword_ci(lexer, "begin")) {
-      lexer->mark_end(lexer);  // token covers only 'begin'
-      if (state->depth > 0 && valid_symbols[PREPROC_SPLIT_BEGIN] &&
-          peek_directive_ci_skip_extras(lexer, DIRECTIVE_ENDIF)) {
-        lexer->result_symbol = PREPROC_SPLIT_BEGIN;
-        return true;
-      }
-      if (valid_symbols[BEGIN_KEYWORD]) {
-        lexer->result_symbol = BEGIN_KEYWORD;
-        return true;
-      }
-      return false;
-    }
-    // Not 'begin'. When the split token is live this scan is committed to the
-    // begin decision and declines outright (pre-existing behaviour); otherwise
-    // fall through so the 'end' dispatch and the identifier tokens still run.
-    //
-    // CONSTRAINT this early return depends on: no parse state may offer
-    // PREPROC_SPLIT_BEGIN and END_KEYWORD at the same position. If one did,
-    // this line would swallow a legitimate 'end'. It holds today because all
-    // three $.preproc_split_begin sites in grammar.js are immediately followed
-    // by $.preproc_endif, so #endif is the only continuation the parser will
-    // accept there. Before 4.0.0 the constraint was free — END_KEYWORD was
-    // dead at depth > 0, so this guard could not shadow it. It is no longer
-    // free. Re-check it if you add a fourth $.preproc_split_begin site, and
-    // narrow the guard to the 'begin'-only case if the new site admits 'end'.
-    if (state->depth > 0 && valid_symbols[PREPROC_SPLIT_BEGIN]) return false;
-  }
-
-  // 'end' dispatch — END_KEYWORD and PREPROC_SPLIT_END in ONE scan, for the
-  // same reason as 'begin' above. PREPROC_SPLIT_END wants 'end' followed by
-  // ';' then a branch continuation — #elif, #else or #endif.
-  if (valid_symbols[END_KEYWORD] || valid_symbols[PREPROC_SPLIT_END]) {
-    skip_whitespace(lexer);
-    if (read_keyword_ci(lexer, "end")) {
-      lexer->mark_end(lexer);  // token covers only 'end'
-      if (state->depth > 0 && valid_symbols[PREPROC_SPLIT_END]) {
-        // Comments and transparent directive lines may sit at either gap and
-        // must not stop the lookahead — before this skipped nothing, a single
-        // trailing `// note` after the `end;` silently dropped the token and
-        // the run reparsed as a call_statement with NO error nodes.
-        //
-        // A failed lookahead (including the bare-'/' decline) is not a failed
-        // scan: 'end' is still an 'end', so fall through to END_KEYWORD rather
-        // than returning false. mark_end already pinned the token to 'end'.
-        if (skip_whitespace_and_comments(lexer) && lexer->lookahead == ';') {
-          lexer->advance(lexer, false);
-          if (peek_directive_ci_skip_extras(lexer, DIRECTIVE_BRANCH_OR_ENDIF)) {
-            lexer->result_symbol = PREPROC_SPLIT_END;
-            return true;
-          }
-        }
-      }
-      if (valid_symbols[END_KEYWORD]) {
-        lexer->result_symbol = END_KEYWORD;
-        return true;
-      }
-      return false;
-    }
-    if (state->depth > 0 && valid_symbols[PREPROC_SPLIT_END]) return false;
-  }
-
   // VAR_ATTRIBUTE_OPEN: match '[' when the attribute is followed by a variable
   // declaration pattern (identifier ':' or quoted_identifier ':' or another '[').
   // This prevents var_section from greedily consuming procedure-level attributes.
   // The scanner scans past the entire [...] attribute, then checks what follows.
+  //
+  // This runs BEFORE the identifier dispatch, and must stay there. It is the
+  // only '['-initial token, so no identifier can precede it in a well-formed
+  // token — but when it ran second, a failed `begin` match had already eaten a
+  // leading 'b' and the '[' token silently grew to cover `b[`, losing the
+  // identifier byte from the tree entirely. Ordering a '['-initial token ahead
+  // of the identifier-initial ones costs nothing and removes that whole class.
   if (valid_symbols[VAR_ATTRIBUTE_OPEN]) {
     skip_whitespace(lexer);
     if (lexer->lookahead == '[') {
@@ -501,51 +555,104 @@ bool tree_sitter_al_external_scanner_scan(
     }
   }
 
-  // CONTINUE_AS_IDENTIFIER: match 'continue' followed by ':='
-  if (valid_symbols[CONTINUE_AS_IDENTIFIER]) {
-    // Skip leading whitespace
-    while (lexer->lookahead == ' ' || lexer->lookahead == '\t' ||
-           lexer->lookahead == '\r' || lexer->lookahead == '\n' ||
-           lexer->lookahead == '\f') {
-      lexer->advance(lexer, true);
-    }
+  // Identifier-initial dispatch — BEGIN_KEYWORD, END_KEYWORD, their two
+  // PREPROC_SPLIT_* competitors, CONTINUE_AS_IDENTIFIER and PROPERTY_NAME in
+  // ONE scan over ONE read of the identifier.
+  //
+  // These cannot be sequential blocks each doing its own read. A scan that
+  // returns false discards every advance it made and the scanner is NOT
+  // re-entered at the same position, so a block that reads text, fails and
+  // declines destroys the later blocks' only chance to fire; and a block that
+  // reads a partial match and falls through leaves the later blocks starting
+  // mid-identifier. Read the word once (read_identifier_word), fix the token
+  // end with mark_end, then let the classification and the lookaheads choose
+  // the symbol.
+  //
+  // The split tokens get first refusal at depth > 0; BEGIN_KEYWORD and
+  // END_KEYWORD are the fallback at EVERY depth. BEGIN_KEYWORD used to be
+  // guarded by `state->depth == 0`, which left a complete begin…end inside #if
+  // claimed by no visible node at all: the grammar's anonymous kw('begin') is
+  // token(PATTERN), and tree-sitter renders anonymous PATTERN tokens as hidden
+  // auxiliary symbols (unlike anonymous STRING tokens such as ";", which are
+  // visible). The keyword was lexed and then vanished from the tree.
+  //
+  // '#' handling: peek_directive_ci_skip_extras takes BARE directive words and
+  // consumes the '#' itself. PREPROC_OPEN/CLOSE manually advance past '#'
+  // before calling read_keyword_ci("if"/"endif"). These are DIFFERENT
+  // conventions — do not mix.
+  //
+  // Comments, #pragma, #region, #define and friends are all extras, hence all
+  // transparent here (see skip_whitespace_and_comments/TRANSPARENT_DIRECTIVES).
+  if (valid_symbols[BEGIN_KEYWORD] || valid_symbols[PREPROC_SPLIT_BEGIN] ||
+      valid_symbols[END_KEYWORD] || valid_symbols[PREPROC_SPLIT_END] ||
+      valid_symbols[CONTINUE_AS_IDENTIFIER] || valid_symbols[PROPERTY_NAME]) {
+    skip_whitespace(lexer);
+    enum IdentifierWord word = read_identifier_word(lexer);
+    if (word == WORD_NOT_IDENTIFIER) return false;  // nothing consumed
+    lexer->mark_end(lexer);  // token covers exactly the identifier just read
 
-    // Check for 'continue' (case-insensitive, exactly 8 chars)
-    const char *keyword = "continue";
-    int pos = 0;
-    bool match = true;
-
-    if (!is_identifier_start(lexer->lookahead)) {
-      // Not an identifier — can't be continue_as_identifier or property_name
+    if (word == WORD_BEGIN &&
+        (valid_symbols[BEGIN_KEYWORD] || valid_symbols[PREPROC_SPLIT_BEGIN])) {
+      // A failed lookahead is not a failed scan — `begin` is still a `begin`.
+      // mark_end above is what makes that fallback safe, since the lookahead
+      // advances well past the keyword.
+      if (state->depth > 0 && valid_symbols[PREPROC_SPLIT_BEGIN] &&
+          peek_directive_ci_skip_extras(lexer, DIRECTIVE_ENDIF)) {
+        lexer->result_symbol = PREPROC_SPLIT_BEGIN;
+        return true;
+      }
+      if (valid_symbols[BEGIN_KEYWORD]) {
+        lexer->result_symbol = BEGIN_KEYWORD;
+        return true;
+      }
       return false;
     }
 
-    // Try to match 'continue'
-    while (is_identifier_char(lexer->lookahead)) {
-      if (pos < 8) {
-        if (towlower(lexer->lookahead) != keyword[pos]) {
-          match = false;
+    if (word == WORD_END &&
+        (valid_symbols[END_KEYWORD] || valid_symbols[PREPROC_SPLIT_END])) {
+      // PREPROC_SPLIT_END wants 'end' followed by ';' then a branch
+      // continuation — #elif, #else or #endif. Comments and transparent
+      // directive lines may sit at either gap and must not stop the lookahead:
+      // before this skipped nothing, a single trailing `// note` after the
+      // `end;` silently dropped the token and the run reparsed as a
+      // call_statement with NO error nodes.
+      if (state->depth > 0 && valid_symbols[PREPROC_SPLIT_END] &&
+          skip_whitespace_and_comments(lexer) && lexer->lookahead == ';') {
+        lexer->advance(lexer, false);
+        if (peek_directive_ci_skip_extras(lexer, DIRECTIVE_BRANCH_OR_ENDIF)) {
+          lexer->result_symbol = PREPROC_SPLIT_END;
+          return true;
         }
-        pos++;
-      } else {
-        match = false;
-        pos++;
       }
-      lexer->advance(lexer, false);
+      if (valid_symbols[END_KEYWORD]) {
+        lexer->result_symbol = END_KEYWORD;
+        return true;
+      }
+      return false;
     }
 
-    // Check if exactly 'continue' (8 chars)
-    if (match && pos == 8) {
-      lexer->mark_end(lexer);
-
-      // Skip whitespace
-      while (lexer->lookahead == ' ' || lexer->lookahead == '\t' ||
-             lexer->lookahead == '\r' || lexer->lookahead == '\n' ||
-             lexer->lookahead == '\f') {
-        lexer->advance(lexer, false);
+    // PROPERTY_NAME is tested before CONTINUE_AS_IDENTIFIER on purpose: the
+    // continue test consumes the ':' of ':=' and would leave a bare '=' for the
+    // property test to misread, whereas testing for '=' first consumes nothing
+    // the continue test needs. (No parse state offers both — see the
+    // ts_external_scanner_states table — but the order should not depend on
+    // that holding.)
+    if (valid_symbols[PROPERTY_NAME]) {
+      // Skip whitespace and comments. '\n' belongs here just as much as '\r' —
+      // the leading skip above already accepts it, and alc accepts a property
+      // whose '=' sits on the next line (verified). Omitting it made
+      // `Caption\n    = 'Test';` an ERROR that the compiler compiles fine.
+      // A bare '/' is not a comment and is not '=', so declining on it loses
+      // nothing.
+      if (!skip_whitespace_and_comments(lexer)) return false;
+      if (lexer->lookahead == '=') {
+        lexer->result_symbol = PROPERTY_NAME;
+        return true;
       }
+    }
 
-      // Check for ':='
+    if (word == WORD_CONTINUE && valid_symbols[CONTINUE_AS_IDENTIFIER]) {
+      skip_whitespace_nomark(lexer);
       if (lexer->lookahead == ':') {
         lexer->advance(lexer, false);
         if (lexer->lookahead == '=') {
@@ -553,53 +660,6 @@ bool tree_sitter_al_external_scanner_scan(
           return true;
         }
       }
-    }
-
-    // Did not match continue_as_identifier. We can't fall through to
-    // PROPERTY_NAME because characters are already consumed and the external
-    // scanner is NOT re-entered for the same position after a false return —
-    // tree-sitter discards the advances and runs the internal lexer instead.
-    // This is only safe because the grammar never makes CONTINUE_AS_IDENTIFIER
-    // and PROPERTY_NAME valid in the same state (properties live in object and
-    // section bodies, `continue :=` in statement bodies).
-    return false;
-  }
-
-  // PROPERTY_NAME: match identifier followed by = (not :=)
-  if (valid_symbols[PROPERTY_NAME]) {
-    // Skip leading whitespace (extras are not skipped before external scanner)
-    while (lexer->lookahead == ' ' || lexer->lookahead == '\t' ||
-           lexer->lookahead == '\r' || lexer->lookahead == '\n' ||
-           lexer->lookahead == '\f') {
-      lexer->advance(lexer, true);  // true = skip (whitespace)
-    }
-
-    // Must start with identifier character
-    if (!is_identifier_start(lexer->lookahead)) return false;
-
-    // Mark start
-    lexer->mark_end(lexer);
-
-    // Consume identifier
-    while (is_identifier_char(lexer->lookahead)) {
-      lexer->advance(lexer, false);
-    }
-
-    // Mark end of identifier (before whitespace/equals)
-    lexer->mark_end(lexer);
-
-    // Skip whitespace and comments. '\n' belongs here just as much as '\r' —
-    // the leading skip above already accepts it, and alc accepts a property
-    // whose '=' sits on the next line (verified). Omitting it made
-    // `Caption\n    = 'Test';` an ERROR that the compiler compiles fine.
-    // A bare '/' is not a comment and is not '=', so declining on it loses
-    // nothing.
-    if (!skip_whitespace_and_comments(lexer)) return false;
-
-    // Check for = but not :=
-    if (lexer->lookahead == '=') {
-      lexer->result_symbol = PROPERTY_NAME;
-      return true;
     }
 
     return false;
