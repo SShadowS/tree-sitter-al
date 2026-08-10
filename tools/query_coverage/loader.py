@@ -49,12 +49,37 @@ def write_stamp(repo_root: Path, stamp: str) -> None:
 
 
 def ensure_library(repo_root: Path, force: bool = False) -> Path:
-    """Build al.dll only when the grammar sources changed. Returns its path."""
+    """Build al.dll only when the grammar sources changed. Returns its path.
+
+    `tree-sitter build` does NOT regenerate src/parser.c from grammar.js --
+    verified directly (isolated scratch grammar, tree-sitter 0.26.12: edited
+    grammar.js, ran `build`, and the compiled grammar.json still reflected the
+    old rule). Skipping `generate` here would recompile the stale parser.c,
+    then write_stamp still records the NEW grammar.js hash below, so every
+    later run believes the parser is current when it never was -- exactly the
+    silent-staleness EXIT_STALE_PARSER exists to catch. `generate` is
+    idempotent and is the project's own documented cycle (see CLAUDE.md's
+    "Standard development cycle"), so running it unconditionally whenever the
+    stamp differs costs nothing when the sources didn't actually change the
+    generated output.
+    """
     lib_path = repo_root / LIB_NAME
     current = compute_stamp(repo_root)
 
     if not force and lib_path.is_file() and read_stamp(repo_root) == current:
         return lib_path
+
+    generate_result = subprocess.run(
+        ["tree-sitter", "generate"],
+        cwd=repo_root,
+        capture_output=True,
+        text=True,
+    )
+    if generate_result.returncode != 0:
+        raise StaleParserError(
+            f"tree-sitter generate failed (exit {generate_result.returncode}):\n"
+            f"{generate_result.stderr}"
+        )
 
     result = subprocess.run(
         ["tree-sitter", "build", "--output", str(lib_path), str(repo_root)],
