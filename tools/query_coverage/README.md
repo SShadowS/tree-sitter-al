@@ -117,15 +117,64 @@ If any is missing, the detector is broken — not the grammar.
 ## Known limitations
 
 Not caught by any detector: precedence and associativity misparses inside
-expressions (`a + b * c` grouped wrongly covers every byte correctly), and
-scanner over-consumption where a string or comment token swallows adjacent
-code. Wrong-parent attachment is caught only when the misparse also changes
+expressions (`a + b * c` grouped wrongly covers every byte correctly).
+Wrong-parent attachment is caught only when the misparse also changes
 a node's type along the way — detector 4 catches the `case`/dangling-`else`
 mis-association this way, because that misparse degrades a keyword into a
 plain `identifier`. Attachment errors that preserve every node's type and
 every byte's span are not caught by anything here; closing those needs
 structural assertions against expected trees, which is what `test/corpus/`
-provides.
+provides, plus the corpus edge census in `tools/edge-census.c`, which
+compares every `(parent, field, child)` edge and is the general instrument
+for that class.
+
+### "Scanner over-consumption" was listed here and is NOT a defect
+
+This section used to name a third class: "scanner over-consumption where a
+string or comment token swallows adjacent code". That entry was wrong twice
+over, and it is recorded here rather than deleted because the wording sent at
+least one reader looking in the wrong file.
+
+**It is not the scanner.** All four tokens are `token()` rules in `grammar.js`;
+`src/scanner.c` never sees them.
+
+**It is not over-consumption.** Measured against `alc` 18.0.37.11445, with
+positive and negative controls discriminating on every run:
+
+- `comment` (`// …`) is newline-bounded; `string_literal` is `[^'\n]`, so it
+  cannot leave its line; `multiline_comment` is the standard non-greedy form
+  and stops at the first `*/`. **A well-formed file cannot be mis-tokenised
+  by any of them** — 13 well-formed shapes were checked (apostrophes in `//`
+  comments, `//` and `/*` inside strings, quotes inside block comments, `''`
+  escaping in both string kinds, empty strings, multiline verbatims, two
+  verbatims on one line), all accepted by alc and all parsed correctly here
+  with zero errors.
+- `verbatim_string` (`@'…'`) deliberately spans newlines, and **alc accepts
+  multiline verbatim strings** (verified in isolation, exit 0, no
+  diagnostics). So an unterminated `@'` running to the next apostrophe many
+  lines later is not a bug: it is indistinguishable from a legitimately long
+  one, exactly as in Python's `"""`, C#'s `@"…"` and Rust's `r"…"`.
+- **alc tokenises it the same way we do.** Put syntactically impossible
+  garbage inside the region we swallow and alc says *nothing* about it —
+  while the identical file with the `@` deleted, where that garbage really is
+  code, produces seven diagnostics pointing at it. alc consumed it as string
+  content too. alc's own error then lands at the same offset our token ends.
+
+**Do not "fix" this with a heuristic bound** — stopping the token at a `;`, a
+blank line, or a line that "looks like code" would truncate the legitimate
+multiline verbatims that 167 BC.History files contain (269 occurrences),
+trading a non-defect on malformed input for a real defect on well-formed
+input.
+
+**What IS different, and it is not a lexing question.** On malformed input
+whose leftover happens to re-pair — an unterminated `@'` with an apostrophe in
+any later `//` comment, which is ordinary AL prose — alc rejects the file
+(`AL0104`) while we report **zero ERROR nodes**. Our token boundaries are
+alc's; the divergence is that our grammar accepts a bare identifier and a bare
+string literal as statements via `_expression_statement`, so the leftover
+parses cleanly. That is the deliberate "parse structure, don't validate"
+choice, not a scanner problem. Pinned by
+`test/corpus/verbatim_string_unterminated_test.txt`.
 
 Detector 3's dynamic half is narrower than "every field": it flags a
 `required: true` field returning `None` on a real instance, which is 241 of
