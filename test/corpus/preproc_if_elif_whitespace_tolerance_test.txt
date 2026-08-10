@@ -523,3 +523,44 @@ codeunit 50000 "If Test"
       (identifier)
       (ERROR
         (identifier)))))
+
+================================================================================
+CONTROL for the two cases above: `#xendif` was ALWAYS an honest error, because
+'x' matches no prefix of `if` and so consumed nothing before the `endif`
+attempt ran. It is the input that isolates the mechanism — the two negatives
+above differ from this one only in that their first character(s) matched a
+prefix of `if`.
+================================================================================
+
+codeunit 50000 "If Test"
+{
+    procedure Test()
+    begin
+#if CLEAN24
+        Foo();
+#xendif
+    end;
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (quoted_identifier)
+    (ERROR
+      (procedure_keyword)
+      name: (identifier)
+      (begin_keyword)
+      (preproc_if
+        (preproc_open)
+        condition: (identifier))
+      (call_expression
+        function: (identifier)
+        arguments: (argument_list))
+      (ERROR
+        (UNEXPECTED 'x'))
+      (identifier)
+      (ERROR
+        (identifier)))))

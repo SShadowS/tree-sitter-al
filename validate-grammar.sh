@@ -110,6 +110,12 @@ DELIBERATE_ERROR_FIXTURES=(
     "preproc_if_elif_whitespace_tolerance_test.txt"
     # Same horizontal-only rule for `#region`/`#endregion`.
     "preproc_region_whitespace_audit_test.txt"
+    # A stray identifier before a var attribute must surface as its own node
+    # rather than being absorbed into the '[' token. The input is not valid AL,
+    # so the error is correct; what is asserted is that no byte disappears from
+    # the tree. It lives in its own file rather than joining the clean scanner
+    # fixtures so that those stay subject to this step.
+    "scanner_var_attribute_token_span_test.txt"
 )
 
 is_deliberate_error_fixture() {

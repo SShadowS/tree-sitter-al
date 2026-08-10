@@ -315,9 +315,25 @@ public API — a change to node structure or field names is a **major** bump.
   `(call_statement (identifier))` and the branch shredded into loose
   identifiers. Each directive now carries the match mode of the rule that
   produces it — prefix for the regex-matched ones, whole word for `#endif`,
-  which only the scanner's own `read_keyword_ci` can produce, so `#endifX` is
-  still (correctly) not an `#endif`. An over-long directive word is no longer
-  rejected outright either: `#regionAAAAAAAAAAAAAA` is a region to the parser.
+  which only the scanner's own `#` dispatch can produce, so `#endifX` is still
+  (correctly) not an `#endif`. An over-long directive word is no longer rejected
+  outright either: `#regionAAAAAAAAAAAAAA` is a region to the parser. The BOM is
+  now stepped over too — `grammar.js` declares it an extra, so the parser skips
+  one anywhere, and a BOM between a split `end;` and its `#else` had been
+  dropping the token the same way a comment once did.
+  - **This aligns the scanner with the grammar, and the grammar is over-permissive
+    relative to the compiler.** alc 18.0.37.11445 rejects `#regionX`, `#pragmaX`,
+    `#elseX` and `#elifX` with `AL0621`; `#region Foo` compiles clean. The root
+    cause is the missing trailing word boundary in the seven regexes at
+    `grammar.js:3025,3030,3355,3357,3359,3382,3384`, and `DirectiveMatch`'s
+    `whole_word` flag exists only to model that defect faithfully. Aligning the
+    scanner was the right local call — it was the only tree-neutral option, and
+    changing the grammar's token boundaries was out of this change's scope — but
+    it means four of the fixtures pin trees for input the compiler rejects.
+    **Tightening those regexes to require a word boundary is an open follow-up**;
+    doing it would retire `whole_word` entirely and make prefix-vs-whole-word a
+    non-question. This entry is not a claim that the directive surface is
+    correct, only that the two halves of the parser no longer disagree about it.
 
 - **`#iendif` is no longer silently accepted as `#endif`.** The `#` dispatch tried
   `if` and then, on failure, `endif`, with two separate matches that walk the
@@ -364,8 +380,8 @@ public API — a change to node structure or field names is a **major** bump.
   which no file that fits in memory can reach, with a compile-time assertion so
   a revert fails the build rather than one deeply nested file.
 
-  These four are scanner-only. **No parse tree changes**: all 15,358 BC.History
-  trees are byte-identical to the pre-change snapshot.
+  These are scanner-only. **No parse tree changes**: all 15,358 BC.History trees
+  are byte-identical to the pre-change snapshot.
 
 - **`#elif` after a preprocessor-split `end;` no longer degrades the block.**
   `#if COND / end; / #elif COND / … / #endif` produced a wrong tree: the `end;`

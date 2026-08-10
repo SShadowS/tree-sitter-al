@@ -16,6 +16,9 @@ enum TokenType {
   VAR_ATTRIBUTE_OPEN = 8,
 };
 
+// Named so the static assertion below can test its width AND its signedness.
+typedef uint32_t ScannerDepth;
+
 typedef struct {
   // Current #if/#endif nesting depth. uint32_t, not uint8_t: a uint8_t wrapped
   // to 0 at 256 simultaneously-open #if directives, and every `state->depth > 0`
@@ -26,14 +29,31 @@ typedef struct {
   // that the underflow guard restores 0 afterwards did not make the misparse
   // any less real. 2^32 open directives cannot be reached by a file that fits
   // in memory, so the wrap is now gone rather than moved.
-  uint32_t depth;
+  ScannerDepth depth;
 } ScannerState;
 
 // A reverted `depth` fails the BUILD rather than one deeply nested file, since
 // the smallest input that shows the wrap needs 256 open #if directives and its
 // expected parse tree is ~485 KB — far too large to keep as a corpus fixture.
-typedef char scanner_depth_must_not_wrap[
-  (sizeof(((ScannerState *)0)->depth) >= 4) ? 1 : -1];
+//
+// Both halves are load-bearing. Width alone is not enough: a SIGNED counter of
+// any width reintroduces the same class at its own boundary, and the
+// `state->depth > 0` guards would read a negative depth as "not nested" exactly
+// as the wrapped uint8_t did.
+// _Static_assert where it exists, because it prints the MESSAGE: MSVC reports
+// the negative-array fallback as a bare "C2118: negative subscript" naming
+// neither the constant nor the reason, which is a check that fires without
+// saying what broke.
+#define SCANNER_DEPTH_IS_UNSIGNED ((ScannerDepth)-1 > (ScannerDepth)0)
+#define SCANNER_DEPTH_OK (sizeof(ScannerDepth) >= 4 && SCANNER_DEPTH_IS_UNSIGNED)
+#if defined(_MSC_VER) || (defined(__STDC_VERSION__) && __STDC_VERSION__ >= 201112L)
+_Static_assert(SCANNER_DEPTH_OK,
+  "ScannerDepth must be an unsigned type of at least 32 bits: a narrower or "
+  "signed depth counter wraps, and every state->depth > 0 guard then reads "
+  "genuine #if nesting as not nested");
+#else
+typedef char scanner_depth_must_not_wrap[SCANNER_DEPTH_OK ? 1 : -1];
+#endif
 
 void *tree_sitter_al_external_scanner_create() {
   ScannerState *state = calloc(1, sizeof(ScannerState));
@@ -44,6 +64,16 @@ void tree_sitter_al_external_scanner_destroy(void *payload) {
   free(payload);
 }
 
+// Serialize and deserialize BOTH derive their width from sizeof(ScannerDepth),
+// and must keep doing so. Hard-coding a literal in one of them is the failure
+// this pairing exists to prevent: a 1-byte serialize against a 4-byte
+// deserialize guard fails the `length >=` test on every restore and silently
+// resets depth to 0, which reads as "not nested" at every #if. That one is not
+// caught by the static assertion above — no compile-time check can see a
+// literal — but it is caught loudly by the corpus: tree-sitter serializes the
+// external state after every external token, so a width mismatch breaks depth
+// tracking immediately and every preproc_split_* fixture fails. Verified by
+// temporarily returning 1 here.
 unsigned tree_sitter_al_external_scanner_serialize(void *payload, char *buffer) {
   ScannerState *state = (ScannerState *)payload;
   memcpy(buffer, &state->depth, sizeof(state->depth));
@@ -88,20 +118,42 @@ static char keyword_byte(int32_t c) {
   return (char)0x01;
 }
 
+// Everything grammar.js's `extras` array skips that is a single character:
+// `/\s/` plus the BOM. Comments and the five directive extras are not
+// characters and are handled by skip_whitespace_and_comments and
+// TRANSPARENT_DIRECTIVES respectively.
+//
+// The BOM belongs here because `/﻿/` is an extra (grammar.js:137), so the
+// parser steps over one anywhere, not just at the start of a file. A lookahead
+// that stops on it disagrees with the parser about where the next token is: a
+// BOM between a split `end;` and its `#else` dropped PREPROC_SPLIT_END and left
+// a MISSING end_keyword, while the byte-identical file without it emitted
+// preproc_split_end. Keep this in sync with the single-character members of
+// `extras`, the same way TRANSPARENT_DIRECTIVES tracks the directive members.
+static bool is_extra_space(int32_t c) {
+  return c == ' ' || c == '\t' || c == '\r' || c == '\n' || c == '\f' ||
+         c == 0xFEFF;
+}
+
 // Skip whitespace and newlines (advance without marking)
 static void skip_whitespace(TSLexer *lexer) {
-  while (lexer->lookahead == ' ' || lexer->lookahead == '\t' ||
-         lexer->lookahead == '\r' || lexer->lookahead == '\n' ||
-         lexer->lookahead == '\f') {
+  while (is_extra_space(lexer->lookahead)) {
     lexer->advance(lexer, true);
   }
 }
 
-// Consume a complete word into `buf` and report its length. The word is folded
-// through keyword_byte, so comparing it against an ASCII spelling is a
-// whole-word, case-insensitive test with no truncation. Returns false when the
-// word did not fit, in which case it is longer than any candidate and no
-// comparison is meaningful (the characters are consumed either way).
+// Consume a complete word into `buf` (capacity `cap`, which must be at least 2)
+// and report its length. The word is folded through keyword_byte, so comparing
+// it against an ASCII spelling is a whole-word, case-insensitive test with no
+// truncation. The characters are consumed either way.
+//
+// Returns false when the word did not fit. That return value governs WHOLE-WORD
+// tests only — an over-long word cannot equal any candidate, so such a test must
+// treat it as a miss. **A PREFIX test stays valid and must still run**: `buf` is
+// always NUL-terminated, every candidate is shorter than every buffer here, and
+// `#regionAAAAAAAAAAAAAAAAAAAA` is a preproc_region to the parser exactly like
+// `#regionX` is. peek_directive_ci_skip_extras depends on that, and rejecting
+// over-long words outright was one of the two defects fixed in item 3.
 //
 // NOTHING in this scanner matches a candidate keyword against the live lexer
 // any more, and nothing should. A match that walks the lexer stops on the first
@@ -203,9 +255,7 @@ static bool skip_comment(TSLexer *lexer) {
 // width at the later position. Every skip that runs after the token text must
 // use this, never skip_whitespace.
 static void skip_whitespace_nomark(TSLexer *lexer) {
-  while (lexer->lookahead == ' ' || lexer->lookahead == '\t' ||
-         lexer->lookahead == '\r' || lexer->lookahead == '\n' ||
-         lexer->lookahead == '\f') {
+  while (is_extra_space(lexer->lookahead)) {
     lexer->advance(lexer, false);
   }
 }
@@ -624,6 +674,14 @@ bool tree_sitter_al_external_scanner_scan(
         lexer->result_symbol = BEGIN_KEYWORD;
         return true;
       }
+      // Skips the PROPERTY_NAME test below. Safe ONLY because
+      // ts_external_scanner_states never offers property_name together with
+      // begin_keyword-or-preproc_split_begin *while the word is `begin`* — a
+      // property literally named `begin` reaches the property test through
+      // states 20/22, where begin_keyword is valid and this arm returns first,
+      // and that is deliberate: `begin` is the keyword there. Re-check the
+      // table if a new state pairs property_name with preproc_split_begin;
+      // today no row outside the all-nine recovery row does.
       return false;
     }
 
@@ -647,6 +705,15 @@ bool tree_sitter_al_external_scanner_scan(
         lexer->result_symbol = END_KEYWORD;
         return true;
       }
+      // Skips the PROPERTY_NAME test below, and unlike the `begin` arm this one
+      // has NO safety margin from the keyword itself. It is safe only because
+      // ts_external_scanner_states pairs property_name with neither end_keyword
+      // nor preproc_split_end in any row outside the all-nine recovery row, so
+      // reaching here means property_name was not wanted anyway. That is a real
+      // dependency on the generated table — a property named `end` in a state
+      // that also wanted END_KEYWORD would be dropped. Re-check after any change
+      // that adds an external or moves a rule between object and statement
+      // bodies.
       return false;
     }
 
@@ -654,8 +721,8 @@ bool tree_sitter_al_external_scanner_scan(
     // continue test consumes the ':' of ':=' and would leave a bare '=' for the
     // property test to misread, whereas testing for '=' first consumes nothing
     // the continue test needs. (No parse state offers both — see the
-    // ts_external_scanner_states table — but the order should not depend on
-    // that holding.)
+    // ts_external_scanner_states table — but unlike the two arms above, this
+    // ORDER does not depend on that holding.)
     if (valid_symbols[PROPERTY_NAME]) {
       // Skip whitespace and comments. '\n' belongs here just as much as '\r' —
       // the leading skip above already accepts it, and alc accepts a property

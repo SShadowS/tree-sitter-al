@@ -474,3 +474,251 @@ codeunit 1 T
               (identifier)
               (integer)))
           (end_keyword))))))
+
+================================================================================
+A BOM between a split end and its #else
+--
+grammar.js:137 declares the BOM as an `extra`, so the parser steps over one
+ANYWHERE, not only at the start of a file. The scanner's skip helpers did not,
+so the PREPROC_SPLIT_END lookahead stopped on it and declined: the `end;`
+degraded to a call_statement and left an unmatched `end` behind it, while
+the byte-identical file without the BOM emitted preproc_split_end. Same class
+as the comment and #pragma cases above — an `extra` the lookahead could not
+step over. is_extra_space() now covers every single-character member of
+`extras`, the way TRANSPARENT_DIRECTIVES covers the directive members.
+================================================================================
+codeunit 1 T
+{
+    procedure X()
+    var
+        x: Integer;
+    begin
+        if x = 1 then begin
+            x := 9;
+#if not CLEAN22
+        end;
+﻿
+#else
+        x := 2;
+        end else begin x := 3; end;
+#endif
+    end;
+}
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    (integer)
+    (identifier)
+    (declaration_body
+      (procedure
+        (procedure_keyword)
+        (identifier)
+        (var_section
+          (var_keyword)
+          (var_body
+            (variable_declaration
+              (identifier)
+              (type_specification
+                (basic_type)))))
+        (code_block
+          (begin_keyword)
+          (statement_block
+            (if_statement
+              (if_keyword)
+              (comparison_expression
+                (identifier)
+                (comparison_operator)
+                (integer))
+              (then_keyword)
+              (code_block
+                (begin_keyword)
+                (statement_block
+                  (assignment_statement
+                    (identifier)
+                    (integer)))
+                (preproc_split_code_block_end
+                  (preproc_if
+                    (preproc_open)
+                    (preproc_not_expression
+                      (identifier)))
+                  (preproc_split_end)
+                  (preproc_else)
+                  (assignment_statement
+                    (identifier)
+                    (integer))
+                  (end_keyword)
+                  (else_keyword)
+                  (begin_keyword)
+                  (assignment_statement
+                    (identifier)
+                    (integer))
+                  (end_keyword)
+                  (preproc_endif
+                    (preproc_close))))))
+          (end_keyword))))))
+
+================================================================================
+An over-long directive word between a split end and its #else
+--
+The directive-word buffer holds 15 characters. Over-long words used to be
+rejected outright, which declined the split; `#regionAAAAAAAAAAAAAAAAAAAA` is
+a preproc_region to the parser exactly as `#regionX` is. This is the ONLY case
+that exercises read_word_ci's truncated path, so it is what stops someone
+deleting that path on the strength of the "no comparison is meaningful"
+half-sentence that used to head the function.
+================================================================================
+codeunit 1 T
+{
+    procedure X()
+    var
+        x: Integer;
+    begin
+        if x = 1 then begin
+            x := 9;
+#if not CLEAN22
+        end;
+#regionAAAAAAAAAAAAAAAAAAAA
+#else
+        x := 2;
+        end else begin x := 3; end;
+#endif
+    end;
+}
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    (integer)
+    (identifier)
+    (declaration_body
+      (procedure
+        (procedure_keyword)
+        (identifier)
+        (var_section
+          (var_keyword)
+          (var_body
+            (variable_declaration
+              (identifier)
+              (type_specification
+                (basic_type)))))
+        (code_block
+          (begin_keyword)
+          (statement_block
+            (if_statement
+              (if_keyword)
+              (comparison_expression
+                (identifier)
+                (comparison_operator)
+                (integer))
+              (then_keyword)
+              (code_block
+                (begin_keyword)
+                (statement_block
+                  (assignment_statement
+                    (identifier)
+                    (integer)))
+                (preproc_split_code_block_end
+                  (preproc_if
+                    (preproc_open)
+                    (preproc_not_expression
+                      (identifier)))
+                  (preproc_split_end)
+                  (preproc_region)
+                  (preproc_else)
+                  (assignment_statement
+                    (identifier)
+                    (integer))
+                  (end_keyword)
+                  (else_keyword)
+                  (begin_keyword)
+                  (assignment_statement
+                    (identifier)
+                    (integer))
+                  (end_keyword)
+                  (preproc_endif
+                    (preproc_close))))))
+          (end_keyword))))))
+
+================================================================================
+#endregionZ between a split end and its #else
+--
+Prefix matching must not stop at the first transparent directive that happens
+to share a prefix. "endregion" is tested from character 0, so `#endregionZ` is
+transparent and `#endif` — the one whole-word target — is still not claimed by
+it.
+================================================================================
+codeunit 1 T
+{
+    procedure X()
+    var
+        x: Integer;
+    begin
+        if x = 1 then begin
+            x := 9;
+#if not CLEAN22
+        end;
+#endregionZ
+#else
+        x := 2;
+        end else begin x := 3; end;
+#endif
+    end;
+}
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    (integer)
+    (identifier)
+    (declaration_body
+      (procedure
+        (procedure_keyword)
+        (identifier)
+        (var_section
+          (var_keyword)
+          (var_body
+            (variable_declaration
+              (identifier)
+              (type_specification
+                (basic_type)))))
+        (code_block
+          (begin_keyword)
+          (statement_block
+            (if_statement
+              (if_keyword)
+              (comparison_expression
+                (identifier)
+                (comparison_operator)
+                (integer))
+              (then_keyword)
+              (code_block
+                (begin_keyword)
+                (statement_block
+                  (assignment_statement
+                    (identifier)
+                    (integer)))
+                (preproc_split_code_block_end
+                  (preproc_if
+                    (preproc_open)
+                    (preproc_not_expression
+                      (identifier)))
+                  (preproc_split_end)
+                  (preproc_endregion)
+                  (preproc_else)
+                  (assignment_statement
+                    (identifier)
+                    (integer))
+                  (end_keyword)
+                  (else_keyword)
+                  (begin_keyword)
+                  (assignment_statement
+                    (identifier)
+                    (integer))
+                  (end_keyword)
+                  (preproc_endif
+                    (preproc_close))))))
+          (end_keyword))))))

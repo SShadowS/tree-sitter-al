@@ -1,0 +1,48 @@
+================================================================================
+DELIBERATE NEGATIVE. A stray identifier before a var attribute must surface as
+its own node, not be absorbed into the '[' token. The scanner used to try
+`begin` with its own walking match before reaching VAR_ATTRIBUTE_OPEN; on
+`b[NonDebuggable]` the failed attempt ate the 'b' and the '[' token silently
+grew to cover `b[` — two columns for a one-character token, with the 'b' byte
+appearing in NO node at all. The input is not valid AL and an error is the
+right answer; what is asserted here is that every byte still lands in the
+tree. This is the lossless-CST property, and it is the one thing a positionless
+corpus tree CAN show about a token span: pre-fix there was no node for `b`.
+The companion invariant — that VAR_ATTRIBUTE_OPEN is dispatched before the
+identifier tokens at all — is pinned by 16 var-attribute fixtures elsewhere in
+the corpus, which fail if the two blocks are swapped back.
+================================================================================
+
+codeunit 1 T
+{
+    procedure X()
+    var
+        b[NonDebuggable] y: Integer;
+    begin
+    end;
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (procedure
+        (procedure_keyword)
+        name: (identifier)
+        (var_section
+          (var_keyword)
+          (ERROR
+            (identifier)
+            (identifier))
+          body: (var_body
+            (variable_declaration
+              name: (identifier)
+              type: (type_specification
+                (basic_type)))))
+        body: (code_block
+          (begin_keyword)
+          (end_keyword))))))
