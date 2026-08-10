@@ -51,8 +51,8 @@ A named rule whose whole body is a single token collapses *into* that token, so 
 
 | body | child | count |
 |---|---|---|
-| `alias(kw('word'), 'word')` → STRING | one anonymous `"word"` child | 94 |
-| `kwCases('word', …)` → STRING, every spelling aliased to `'word'` | one anonymous `"word"` child | 14 |
+| `alias(kw('word'), 'word')` → STRING | one anonymous `"word"` child | 95 |
+| `kwCases('word', …)` → STRING, every spelling aliased to `'word'` | one anonymous `"word"` child | 13 |
 | external scanner token | none — cannot take a child | 2 |
 
 The child's type is the canonical lowercase spelling whatever the source used: `XmlPort` gives `(xmlport_keyword "xmlport")`, while the node's own text stays `XmlPort`.

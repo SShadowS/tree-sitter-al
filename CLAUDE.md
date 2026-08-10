@@ -153,8 +153,8 @@ Until 4.0.0 the depth > 0 case handed off to an anonymous `kw('begin')`, which m
 
 | body | child | count |
 |---|---|---|
-| `alias(kw('word'), 'word')` → STRING | one anonymous child typed `"word"` | 94 |
-| `kwCases('word', …)` → STRING, each spelling aliased to `'word'` | one anonymous child typed `"word"` | 14 |
+| `alias(kw('word'), 'word')` → STRING | one anonymous child typed `"word"` | 95 |
+| `kwCases('word', …)` → STRING, each spelling aliased to `'word'` | one anonymous child typed `"word"` | 13 |
 | external scanner token (`begin_keyword`, `end_keyword`) | none — cannot take a child | 2 |
 
 The child's type is always the canonical lowercase spelling regardless of how the source spelled the keyword: `XmlPort` yields `(xmlport_keyword "xmlport")`, and the node's own text is still `XmlPort`.
