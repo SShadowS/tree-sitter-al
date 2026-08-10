@@ -72,8 +72,9 @@ def test_keyword_coverage_flags_an_uncaptured_keyword(al_language, al_parser, no
     sparse.write_text("(codeunit_keyword) @keyword\n", encoding="utf-8", newline="\n")
     source = b"table 1 T { }"
 
+    context = shipped_queries.keyword_coverage_context(al_language, sparse, node_types)
     findings = shipped_queries.detect_keyword_coverage(
-        al_language, sparse, node_types, al_parser.parse(source), source, "t.al"
+        context, al_parser.parse(source), source, "t.al"
     )
 
     assert any(f.detail.get("node_type") == "table_keyword" for f in findings)

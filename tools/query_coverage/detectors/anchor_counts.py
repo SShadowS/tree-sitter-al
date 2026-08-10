@@ -31,9 +31,22 @@ def detect(tree, source: bytes, path: str) -> list[Finding]:
     text = source.decode("utf-8", errors="replace")
     findings: list[Finding] = []
 
+    # One lex and one walk per FILE, shared across every anchor. Calling
+    # count_lexical/count_nodes per anchor redid both from scratch each time —
+    # five pure-Python lexes and five full walks per file, measured at ~3.1
+    # minutes corpus-wide with ~4/5 of it this redundancy. Both helpers stay
+    # exported for callers holding a single anchor (tests use them directly).
+    spans = lexer.scan(text)
+    type_counts: dict[str, int] = {}
+    for node in _tree.walk(tree.root_node):
+        type_counts[node.type] = type_counts.get(node.type, 0) + 1
+
     for anchor in anchor_table.ANCHORS:
-        lexical = count_lexical(text, anchor)
-        nodes = count_nodes(tree, anchor)
+        pattern = re.compile(anchor.pattern, re.IGNORECASE)
+        lexical = sum(1 for m in pattern.finditer(text) if lexer.is_code(spans, m.start()))
+        # set() mirrors count_nodes' `wanted = set(...)`: a node type listed
+        # twice in one anchor must not count twice.
+        nodes = sum(type_counts.get(t, 0) for t in set(anchor.node_types))
         if lexical == nodes:
             continue
 

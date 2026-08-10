@@ -76,23 +76,52 @@ def pattern_texts(query, source: bytes) -> list[str]:
     return texts
 
 
-def tally(language, query_path: Path, trees_and_sources) -> list[PatternUsage]:
-    import tree_sitter
+class QueryTally:
+    """One shipped query file: compiled once, fed trees one at a time.
 
-    source = query_path.read_bytes()
-    query = tree_sitter.Query(language, source.decode("utf-8"))
-    texts = pattern_texts(query, source)
-    counts = [0] * query.pattern_count
+    The batch shape ("hand tally() every tree at the end of the run") was what
+    forced qc.cmd_run to keep all 15,358 parsed trees alive simultaneously
+    (~2.8 GB RSS, measured). Streaming inverts that: cmd_run constructs one
+    QueryTally per .scm up front, calls add() inside its per-file loop, and
+    reads usages() after — no tree outlives its own loop iteration. The
+    per-pattern counts are plain sums, so feeding trees one at a time is
+    arithmetically identical to the old single pass over an accumulated list.
+    """
 
-    for tree, _src in trees_and_sources:
-        cursor = tree_sitter.QueryCursor(query)
+    def __init__(self, language, query_path: Path):
+        import tree_sitter
+
+        source = query_path.read_bytes()
+        self.query = tree_sitter.Query(language, source.decode("utf-8"))
+        self._file_name = query_path.name
+        self._texts = pattern_texts(self.query, source)
+        self._counts = [0] * self.query.pattern_count
+
+    def add(self, tree) -> None:
+        import tree_sitter
+
+        cursor = tree_sitter.QueryCursor(self.query)
         for index, _captures in cursor.matches(tree.root_node):
-            counts[index] += 1
+            self._counts[index] += 1
 
-    return [
-        PatternUsage(query_file=query_path.name, index=i, text=texts[i], matches=counts[i])
-        for i in range(query.pattern_count)
-    ]
+    def usages(self) -> list[PatternUsage]:
+        return [
+            PatternUsage(
+                query_file=self._file_name,
+                index=i,
+                text=self._texts[i],
+                matches=self._counts[i],
+            )
+            for i in range(self.query.pattern_count)
+        ]
+
+
+def tally(language, query_path: Path, trees_and_sources) -> list[PatternUsage]:
+    """Batch wrapper over QueryTally for callers that already hold every tree."""
+    accumulator = QueryTally(language, query_path)
+    for tree, _src in trees_and_sources:
+        accumulator.add(tree)
+    return accumulator.usages()
 
 
 def detect_dead(usages: list[PatternUsage]) -> list[Finding]:
@@ -118,13 +147,42 @@ def detect_dead(usages: list[PatternUsage]) -> list[Finding]:
     return findings
 
 
+@dataclass(frozen=True)
+class KeywordCoverageContext:
+    """Run-level state for detect_keyword_coverage.
+
+    Both members are pure functions of run-level inputs, so recomputing them
+    per file was pure waste — and measured waste, not estimated: compiling
+    highlights.scm costs 32.9 ms, which times 15,358 files was ~8.4 minutes
+    of a ~31-minute full-corpus run, and `set(operator_tokens(node_types))`
+    was rebuilt not merely per file but per anonymous NODE inside the walk
+    (~6 more minutes corpus-wide). One context per run replaces both.
+
+    `query` is a tree_sitter.Query; typed loosely because this module imports
+    tree_sitter lazily inside functions, never at module level.
+    """
+
+    query: object
+    operators: frozenset
+
+
+def keyword_coverage_context(
+    language, highlights_path: Path, node_types: list[dict]
+) -> KeywordCoverageContext:
+    import tree_sitter
+
+    return KeywordCoverageContext(
+        query=tree_sitter.Query(language, highlights_path.read_text(encoding="utf-8")),
+        operators=frozenset(operator_tokens(node_types)),
+    )
+
+
 def detect_keyword_coverage(
-    language, highlights_path: Path, node_types: list[dict], tree, source: bytes, path: str
+    context: KeywordCoverageContext, tree, source: bytes, path: str
 ) -> list[Finding]:
     import tree_sitter
 
-    query = tree_sitter.Query(language, highlights_path.read_text(encoding="utf-8"))
-    cursor = tree_sitter.QueryCursor(query)
+    cursor = tree_sitter.QueryCursor(context.query)
 
     captured: set[int] = set()
     for _index, captures in cursor.matches(tree.root_node):
@@ -137,7 +195,7 @@ def detect_keyword_coverage(
 
     for node in _tree.walk(tree.root_node):
         is_keyword = node.is_named and node.type.endswith("_keyword")
-        is_operator = not node.is_named and node.type in set(operator_tokens(node_types))
+        is_operator = not node.is_named and node.type in context.operators
         if not (is_keyword or is_operator):
             continue
         if node.id in captured or node.type in seen:
