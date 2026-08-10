@@ -16,7 +16,7 @@
 // *looks* field-less there whether or not it carries the field. Reading that
 // blind spot as evidence has produced wrong conclusions here before.
 //
-// THREE DESIGN NOTES, each a reason it works rather than a detail
+// FOUR DESIGN NOTES, each a reason it works rather than a detail
 // --------------------------------------------------------------
 //  1. Cursor, not `parse -c` — see above.
 //  2. Anonymous children are recorded as the literal `(anon)`, never their
@@ -27,6 +27,14 @@
 //     would emit a SMALLER, entirely plausible census — a green reading from a
 //     broken instrument, which is the exact failure mode this tool exists to
 //     catch. A detector for that class must not be capable of it.
+//  4. **Every count prints through `%llu` with an explicit cast, never `%zu`.**
+//     Same principle as 3, and it shipped broken for two minutes: MinGW binds
+//     printf to msvcrt, whose format parser does not know `z`, so the edge-kind
+//     total printed as literal garbage on an ordinary Windows toolchain. A
+//     wrong headline number out of the one instrument whose whole job is to be
+//     trusted about numbers. Build with `-Wall`; gcc catches it as -Wformat.
+//     (Corroboration that this is real and not theoretical: tree-sitter's own
+//     vendored `alloc.c` trips the same warning under MinGW.)
 //
 // COSTS NO LOCK — THIS IS THE PROPERTY THAT MAKES IT USABLE
 // ---------------------------------------------------------
@@ -38,8 +46,10 @@
 //
 // BUILD (from repo root):
 //   TS=.cache/tree-sitter-0.25.10/lib
-//   gcc -O2 -o census tools/edge-census.c src/parser.c src/scanner.c \
-//       $TS/src/lib.c -I$TS/include -I$TS/src -Isrc
+//   gcc -O2 -o census tools/edge-census.c src/parser.c src/scanner.c
+//         $TS/src/lib.c -I$TS/include -I$TS/src -Isrc
+//   (one command; no trailing backslashes here because a '\' at the end of a
+//    '//' line continues the COMMENT and trips -Wcomment)
 //
 // RUN:
 //   find ./BC.History/ -name '*.al' -type f | sort > corpus.txt
@@ -170,9 +180,15 @@ int main(int argc, char **argv) {
   qsort(out, k, sizeof(Slot), cmp);
   for (size_t i = 0; i < k; i++) printf("%llu\t%s\n", (unsigned long long)out[i].n, out[i].key);
 
+  // Every count goes through %llu with an explicit cast. NOT %zu: MinGW binds
+  // printf to msvcrt, whose format parser does not know 'z', so the edge-kind
+  // count would print as literal garbage on a perfectly ordinary Windows
+  // toolchain -- a wrong headline number from a tool whose whole job is to be
+  // trusted about numbers. gcc catches it as -Wformat, so build with -Wall.
   fprintf(stderr, "census: %llu files (%llu unreadable), %llu nodes, "
-                  "%llu fielded edges, %zu edge kinds\n",
+                  "%llu fielded edges, %llu edge kinds\n",
           (unsigned long long)files, (unsigned long long)failed,
-          (unsigned long long)nodes_total, (unsigned long long)edges_total, k);
+          (unsigned long long)nodes_total, (unsigned long long)edges_total,
+          (unsigned long long)k);
   return 0;
 }
