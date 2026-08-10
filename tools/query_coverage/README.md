@@ -104,6 +104,11 @@ and reasons, sourced from `EXCLUDED_ANCHORS` in `anchors.py`.
 ## Validation gate
 
 `validate-grammar.sh` runs `qc run` whenever `tools/query_coverage/baseline.json`
-exists, and fails validation on a regression. A fresh clone without a baseline
-skips the step cleanly rather than failing — see the harness step's own
-comment for why.
+exists — which is every clone, since the baseline is a tracked, committed
+file. The corpus it runs against (`BC.History`) is not committed, so the step
+reads `qc run`'s exit code rather than treating any failure the same way:
+exit 0 passes, exit 2 ("corpus broken" — `BC.History` missing or drifted)
+prints a warning and skips, and anything else (a real regression) fails
+validation. A fresh clone without `BC.History` validates cleanly; a clone
+with a drifted or partial corpus is warned, not silently passed and not
+hard-failed.

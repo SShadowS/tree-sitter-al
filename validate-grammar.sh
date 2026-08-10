@@ -269,16 +269,29 @@ fi
 #
 # Proves the CST is lossless over the source and that values stay reachable
 # through queries -- a token that was lexed and then dropped shows up here as
-# a gap-detector finding, not as a test failure or a parse error. Skipped,
-# not failed, when the baseline is absent: a fresh clone without BC.History
-# (the corpus the manifest was set-cover'd from) must still validate cleanly.
-# See tools/query_coverage/README.md.
+# a gap-detector finding, not as a test failure or a parse error.
+#
+# `baseline.json` is a tracked, committed file, so checking only for its
+# existence is not a corpus check -- it is true on every clone. The real
+# precondition is BC.History (the corpus the manifest was set-cover'd from),
+# which is gitignored and absent on a fresh clone. `qc run` already tells the
+# two situations apart: exit 2 means "corpus broken" (missing or drifted),
+# exit 1 means "regression found". Skip-with-warning on 2, fail only on 1 (or
+# anything else) -- a fresh clone without BC.History must still validate
+# cleanly. See tools/query_coverage/README.md.
 print_header "Step 5d: Query-Coverage Harness"
 if [ -f tools/query_coverage/baseline.json ]; then
     if python -m tools.query_coverage.qc run; then
-        print_success "query-coverage: no regressions"
+        qc_status=0
     else
         qc_status=$?
+    fi
+
+    if [ "$qc_status" -eq 0 ]; then
+        print_success "query-coverage: no regressions"
+    elif [ "$qc_status" -eq 2 ]; then
+        print_warning "query-coverage: corpus missing or drifted (BC.History not present or out of sync) — skipping, see tools/query_coverage/README.md"
+    else
         print_error "query-coverage failed (exit $qc_status) — see tools/query_coverage/reports/summary.md"
         VALIDATION_FAILED=1
     fi
