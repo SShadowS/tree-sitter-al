@@ -178,16 +178,52 @@ def cmd_run(args) -> int:
         scope_paths = [entry.path for entry in entries]
         print(f"scope: {scope} -- {len(scope_paths)} files")
 
-    parsed = []
+    # Run-level state, hoisted out of the per-file loop. Both were measured
+    # costs, not stylistic ones: detect_keyword_coverage used to recompile the
+    # highlights query per file (32.9 ms x 15,358 files = ~8.4 min of a ~31
+    # minute full-corpus run) and rebuild its operator set per anonymous node
+    # (~6 more minutes). One QueryTally per shipped .scm likewise compiles
+    # each query exactly once for the whole run.
+    highlights = repo_root / "queries" / "highlights.scm"
+    keyword_context = shipped_queries.keyword_coverage_context(
+        language, highlights, node_types
+    )
+    tallies = [
+        shipped_queries.QueryTally(language, query_file)
+        for query_file in sorted((repo_root / "queries").glob("*.scm"))
+    ]
+    # Dead-pattern scope. The spec calls for the FULL corpus: a manifest-only
+    # tally false-flags patterns for rare constructs that set-cover happened to
+    # satisfy from a single file. Under --full-corpus the per-file loop below
+    # already visits every file, so the tallies feed inline; --full-query-scan
+    # is the narrower knob that sweeps every file for dead patterns (in its own
+    # loop further down) without paying for every other detector too.
+    tally_inline = args.full_corpus or not args.full_query_scan
+
+    # One streaming pass: every consumer of a tree runs here, inside the
+    # file's own iteration, so no tree outlives it. The previous shape
+    # accumulated all 15,358 (tree, source) tuples in a `parsed` list to feed
+    # two later passes -- ~2.8 GB resident at once, measured -- and the second
+    # of those passes re-ran the very query this loop's tally already ran.
     seen_types: set[str] = set()
     for rel in scope_paths:
         source = (repo_root / rel).read_bytes()
         tree = parser.parse(source)
-        parsed.append((tree, source))
         seen_types |= _named_types(tree.root_node)
         for _name, detect in PER_FILE:
             findings.extend(detect(tree, source, rel))
         findings.extend(fields.detect_dynamic(tree, source, rel, node_types))
+        if tally_inline:
+            for tally in tallies:
+                tally.add(tree)
+        # Keyword coverage runs over EVERY file in scope, not just the first.
+        # A keyword absent from one file says nothing; the invariant is "no
+        # *_keyword node type anywhere in the corpus goes uncaptured".
+        # detect_keyword_coverage already dedupes by node type internally, so
+        # the union stays small.
+        findings.extend(
+            shipped_queries.detect_keyword_coverage(keyword_context, tree, source, rel)
+        )
 
     # A named type still declared in node-types.json that stops being
     # produced by anything in scope is grammar-visible with byte coverage
@@ -198,46 +234,23 @@ def cmd_run(args) -> int:
     findings.extend(corpus_findings)
     never = sorted(f.detail["type"] for f in corpus_findings)
 
-    # Dead-pattern scope. The spec calls for the FULL corpus: a manifest-only
-    # tally false-flags patterns for rare constructs that set-cover happened to
-    # satisfy from a single file. --full-corpus already parsed every file
-    # above, so `parsed` IS the full corpus and no second pass is needed;
-    # --full-query-scan is the narrower knob for scanning every file for dead
-    # patterns without paying for every other detector too.
     if args.full_corpus:
-        scan_targets = parsed
-        print(f"query scan: {len(scan_targets)} files (full corpus, via --full-corpus)")
+        print(f"query scan: {len(scope_paths)} files (full corpus, via --full-corpus)")
     elif args.full_query_scan:
-        scan_targets = []
-        for path in sorted((repo_root / FULL_CORPUS_ROOT).rglob("*.al")):
-            source = path.read_bytes()
-            scan_targets.append((parser.parse(source), source))
-        print(f"query scan: {len(scan_targets)} files (full corpus, via --full-query-scan)")
+        scan_paths = sorted((repo_root / FULL_CORPUS_ROOT).rglob("*.al"))
+        for path in scan_paths:
+            tree = parser.parse(path.read_bytes())
+            for tally in tallies:
+                tally.add(tree)
+        print(f"query scan: {len(scan_paths)} files (full corpus, via --full-query-scan)")
     else:
-        scan_targets = parsed
         print(
-            f"query scan: {len(scan_targets)} files "
+            f"query scan: {len(scope_paths)} files "
             "(manifest subset; use --full-query-scan or --full-corpus for all)"
         )
 
-    highlights = repo_root / "queries" / "highlights.scm"
-    for query_file in sorted((repo_root / "queries").glob("*.scm")):
-        findings.extend(
-            shipped_queries.detect_dead(
-                shipped_queries.tally(language, query_file, scan_targets)
-            )
-        )
-    # Keyword coverage runs over EVERY file in scope, not just the first. A
-    # keyword absent from one file says nothing; the invariant is "no
-    # *_keyword node type anywhere in the corpus goes uncaptured".
-    # detect_keyword_coverage already dedupes by node type internally, so the
-    # union stays small.
-    for (tree, source), rel in zip(parsed, scope_paths):
-        findings.extend(
-            shipped_queries.detect_keyword_coverage(
-                language, highlights, node_types, tree, source, rel
-            )
-        )
+    for tally in tallies:
+        findings.extend(shipped_queries.detect_dead(tally.usages()))
 
     clusters = model.cluster(findings)
 
