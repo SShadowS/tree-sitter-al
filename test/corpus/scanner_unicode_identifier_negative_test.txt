@@ -1,0 +1,38 @@
+================================================================================
+DELIBERATE NEGATIVE. A format character is NOT an identifier character, and the
+scanner must not invent one. U+E0041 is category Cf -- a TAG character, not a
+letter. grammar.js's regex rejects it and alc rejects it (AL0183, verified at
+18.0.37.11445). But iswalpha() TRUNCATED it to 'A' on Windows and returned true,
+so the scanner manufactured an identifier the grammar itself does not accept and
+emitted PROPERTY_NAME across it. tree-sitter never re-lexes an external token, so
+this file used to yield a clean `(property ...)` with NO ERROR node anywhere -- a
+wrong tree that every error-count gate in this repo reported as a pass. That is
+why this direction gets a fixture of its own: the false-ACCEPT is the half that
+counting errors cannot catch.
+.
+An error is the correct answer here, so this file is exempt from
+validate-grammar.sh's ERROR/MISSING census and lives apart from
+scanner_unicode_identifier_classification_test.txt, which stays subject to it.
+What is asserted is that U+E0041 lands in its own node -- 917569 is exactly
+0xE0041 -- and `Prop` is a separate identifier: the scanner declined and the
+generated lexer decided, which is the point of the change.
+================================================================================
+
+table 50100 T
+{
+    󠁁Prop = 5;
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (table_declaration
+    (table_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    (ERROR
+      (UNEXPECTED 917569)
+      (identifier)
+      (integer))
+    body: (declaration_body
+      (empty_statement))))

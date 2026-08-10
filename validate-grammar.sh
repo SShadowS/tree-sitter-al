@@ -170,6 +170,16 @@ DELIBERATE_ERROR_FIXTURES=(
     # would have failed this step. An allow-list entry for an absent file is
     # inert, so carrying it early is free.
     "directive_word_boundary_test.txt"
+    # U+E0041, a Cf TAG character, is not an identifier character: grammar.js's
+    # `[\p{L}_][\p{L}\p{N}_]*` rejects it and so does alc (AL0183). The ERROR is
+    # the assertion, and this one matters more than most — until 4.0.0 the
+    # scanner's iswalpha() truncated the codepoint to 'A' on Windows, emitted
+    # PROPERTY_NAME across it, and produced a clean `(property ...)` with NO
+    # error node. Every error-count gate in this repo passed on a wrong tree, so
+    # the only thing that can catch a regression here is a fixture pinning the
+    # ERROR itself. Split from scanner_unicode_identifier_classification_test.txt
+    # (its four positive cases) precisely so those stay subject to this step.
+    "scanner_unicode_identifier_negative_test.txt"
 )
 
 is_deliberate_error_fixture() {
