@@ -33,41 +33,48 @@ Ordered by how much of the corpus moves. Counts are node-instance set difference
 | **`begin` and `end` inside a `#if` block are now nodes.** They were in no node at all. | 742 files, +6,239 `begin_keyword`, +6,476 `end_keyword`; nothing removed. |
 | **Eleven keyword nodes added for fields and markers that were silently empty** — six dropped fields, the four `where()` markers, and the assignment operator. | +29,770 across 5,212 files, +29,017 across 2,651, +243,044 across 8,559. Nothing removed in any of the three. |
 | **Every keyword node now has exactly one anonymous child, typed as the canonical lowercase spelling.** | Named trees byte-identical. `node-types.json` gains 50 anonymous types and loses 57. |
+| **40 more keywords and the filter operators became nodes**, closing the last byte gaps. 39 new keyword rules, `_tabledata_keyword` promoted from hidden to visible, one new `filter_operator`. | The largest change in the release: **+1,261,432** node instances, 520 → 593 types. **0 types lost instances and 0 disappeared** — measured as a node-instance census over all 15,358 files, before and after. `record_keyword` alone is +309,988. |
 | **48 anonymous node types removed** by making the Tier-1 keywords and word operators genuinely case-insensitive. Every lowercase name is kept. | Named trees byte-identical. **A query naming `"IF"`, `"Then"`, `"AND"` or any other non-lowercase spelling now fails to compile** with `Invalid node type` and must drop it. |
 | **Fourteen body/branch fields hold one node instead of a statement plus its `;`**, and seven dotted-reference fields no longer hand you the `.` separators. | Field labels only; no tree moves. |
 | **`exit (x + y) * 2;` now produces an `ERROR`** where it previously produced a silent wrong tree. | Matches `alc`, which rejects the form. |
 
 Each of these has a full entry below with its mechanism and its measurement.
 
-### What this release did not fix
+### The CST is lossless
 
-**The CST is still not lossless over the source.** Over the full 15,358-file corpus the
-harness reports **574,694 byte-gap findings in 164 clusters** — source bytes that are
-consumed by the lexer and land in no node at all, so they cannot be read from the tree or
-matched by any query. The largest are `record` (305,922), `field` (83,885) and `code`
-(78,575), with roughly thirty other keywords behind them.
+**Every byte of an AL file is now covered by some node.** Over the full 15,358-file
+corpus the harness reports **0 byte-gap findings in 0 clusters**, from **574,694 in 164**
+where this release started. A byte gap is source text the lexer consumes and then drops
+into no node at all, so it can be neither read from the tree nor matched by any query.
 
-*A note on which number you will see.* `tools/query_coverage/baseline.json` records
-**3,895 findings in 112 clusters**, and that is not a different measurement of the same
-thing — it is the **59-file manifest** scope that the regression gate runs against, not
-the corpus. The manifest is chosen by set-cover to hit every node type at least once, so
-it is far denser in constructs per file than real code and its absolute counts do not
-scale. Quote the corpus figure when describing the parser and the manifest figure when
-describing the gate; the two differ by roughly 147x and neither is wrong.
+The mechanism was one thing throughout: tree-sitter renders an anonymous *pattern* token
+as a hidden `aux_sym_*` symbol, unlike an anonymous *string* token such as `";"`. A bare
+inline `kw('word')` is a `token(PATTERN)`, so its bytes were lexed and thrown away. The
+fix is the same `alias(kw('word'), 'word')` shape used by the keyword rules that predate
+this release, applied at every remaining site.
 
-This release fixed one half of that population: every keyword sitting inside a
-`field()`, where the dropped token also took a declared field down with it. The other
-half — a bare inline `kw('word')` that no `field()` wraps — is untouched. Both are the
-same mechanism (tree-sitter renders an anonymous *pattern* token as a hidden `aux_sym_*`
-symbol, unlike an anonymous *string* token such as `";"`), and the fix shape is the same
-`alias(kw('word'), 'word')` used throughout this release. What differs is the cost of
-leaving it: a dropped field silently breaks a consumer that reads the schema, while a
-dropped bare keyword costs highlighting and query reach for text the consumer can still
-recover from source ranges.
+Two populations, closed in that order. First, the keywords sitting inside a `field()`,
+where the dropped token also took a declared field down with it — a silent break for any
+consumer reading the schema. Then the bare inline ones that no `field()` wrapped, which
+is where the volume was: `record` alone was 305,922 occurrences, `field` 83,885, `code`
+78,575, `tabledata` 23,481, with about thirty other keywords and the filter operators
+behind them.
 
-If you need those bytes today, slice the source between the surrounding nodes'
-`end_byte` and `start_byte`. The count is published rather than the impression: run
-`python -m tools.query_coverage.qc run --all` for the current cluster list.
+`basic_type` and its ~50 bare `kw()`s were audited and deliberately left alone. They are
+already lossless: a named rule whose body is a `choice()` of hidden tokens has no visible
+child, so the `basic_type` node is itself the leaf carrying the text. `boolean`,
+`keyword_identifier` and `keyword_as_identifier` hold by the same argument. The seven
+type rules that *did* gain keyword rules could not use it — each has real children, so
+the enclosing node is not a leaf and the keyword's bytes fall between leaves.
+
+*A note on which number you will see.* `tools/query_coverage/baseline.json` runs the
+**59-file manifest** scope that the regression gate uses, not the corpus, and before this
+work it recorded 3,895 findings in 112 clusters against the corpus's 574,694 in 164. That
+was never a different measurement of the same thing: the manifest is chosen by set-cover
+to hit every node type at least once, so it is far denser in constructs per file than
+real code and its absolute counts do not scale. Both now read zero, but the distinction
+still applies to every other detector — quote the corpus figure when describing the
+parser and the manifest figure when describing the gate.
 
 ### Why it was worth it
 
@@ -95,8 +102,9 @@ per chunk, then globally, then against `parsed.txt`.
 - **`tools/query_coverage/` — the query-coverage harness.** *Measures* whether the CST
   is lossless over the source and whether values stay reachable through queries, which
   is the class of defect the three pre-existing gates were structurally unable to see.
-  **The CST is not lossless, and this release does not make it so** — see "What this
-  release did not fix" below for the number. Seven detectors:
+  It found the CST was **not** lossless — 574,694 dropped bytes across the corpus — and
+  the release then closed every one of them; see "The CST is lossless" above. Seven
+  detectors:
   byte gaps (source bytes covered by no leaf), an ERROR/MISSING census, declared fields
   absent from their own node type (static) plus required fields returning `None` on a
   real instance (dynamic), hard-reserved words appearing as plain identifiers, lexical

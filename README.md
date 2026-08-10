@@ -13,10 +13,10 @@ Validated against **15,358 production AL files** from the Business Central codeb
 | Metric | Value |
 |--------|-------|
 | **Success rate** | **100%** (15,358 / 15,358 files, 0 errors) |
-| Tests | 1,562 |
-| parser.c size | ~32.3 MB |
-| grammar.js | 4,552 lines |
-| Named keywords | 110 (108 grammar rules + 2 external; queryable via highlights/tags) |
+| Tests | 1,565 |
+| parser.c size | ~32.5 MB |
+| grammar.js | 4,682 lines |
+| Named keywords | 150 (148 grammar rules + 2 external; queryable via highlights/tags) |
 | Scanner tokens | 9 (stateful, depth-tracking) |
 | Query files | 6 (highlights, locals, tags, indents, folds, textobjects) |
 
@@ -115,11 +115,11 @@ The grammar was rewritten from scratch in March 2026, achieving a **major reduct
 | parser.c | 106 MB (can't push to GitHub) | **~32.3 MB** |
 | Errors | 14 | **0** |
 | Success rate | 99.91% | **100%** |
-| Symbols | 2,249 | **889** |
-| States | 29,126 | **13,927** |
-| grammar.js | 8,500 lines | **4,552 lines** |
-| Tests | 1,225 | **1,562** |
-| Keywords | invisible in queries | **110 named nodes** |
+| Symbols | 2,249 | **927** |
+| States | 29,126 | **14,006** |
+| grammar.js | 8,500 lines | **4,682 lines** |
+| Tests | 1,225 | **1,565** |
+| Keywords | invisible in queries | **150 named nodes** |
 | Query files | 3 (partial) | **6 (comprehensive)** |
 
 ### Key design decisions
@@ -127,7 +127,7 @@ The grammar was rewritten from scratch in March 2026, achieving a **major reduct
 - **Stateful external scanner** — 9 scanner tokens handle property disambiguation, depth tracking (`#if`/`#endif` nesting), named `begin`/`end` keywords at every depth, and split-construct detection via lookahead.
 - **Parse structure, don't validate** — Accept any `Name = Value ;` as a property. Semantic validation belongs in linters/LSP servers, not the parser.
 - **Generic preprocessor** — One `preproc_conditional` rule + 20 dedicated rules for genuinely complex split constructs (begin/end, var/begin, brace-close across `#if`/`#else` branches).
-- **110 named keyword nodes** (108 grammar rules + 2 external scanner tokens) — All keywords including `begin`/`end` are named nodes, enabling proper syntax highlighting and code navigation queries. Every grammar keyword rule has a uniform shape: one anonymous child typed as the canonical lowercase spelling, whatever the source casing. Read a keyword's text from the node itself, never by descending into a child.
+- **150 named keyword nodes** (148 grammar rules + 2 external scanner tokens) — All keywords including `begin`/`end` are named nodes, enabling proper syntax highlighting and code navigation queries. Every grammar keyword rule has a uniform shape: one anonymous child typed as the canonical lowercase spelling, whatever the source casing. Read a keyword's text from the node itself, never by descending into a child.
 
 See [docs/v2-blog-post-notes.md](docs/v2-blog-post-notes.md) for the full rewrite narrative.
 
@@ -159,7 +159,7 @@ For grammar refactors, the parse-tree diff harness proves a change is zero-behav
 ./tools/tree-harness.sh verify   ./BC.History .snapshots/baseline-<change>   # ~11s
 ```
 
-The query-coverage harness measures whether the tree is lossless over the source and whether values stay reachable through queries — the class of defect an error count cannot see, because a token that is lexed and then dropped changes no tree hash. It currently reports 574,694 byte gaps in 164 clusters over the full 15,358-file corpus, dominated by bare inline keywords (`record`, `field`, `code`) — the 3,895 in `baseline.json` is the 59-file manifest scope the gate runs against, not the corpus; 4.0.0 fixed the ones that also took a declared field down with them, not the rest:
+The query-coverage harness measures whether the tree is lossless over the source and whether values stay reachable through queries — the class of defect an error count cannot see, because a token that is lexed and then dropped changes no tree hash. It reports **0 byte gaps in 0 clusters** over the full 15,358-file corpus, down from 574,694 in 164 during 4.0.0 — every keyword that was lexed and dropped now has a node. `baseline.json` is the 59-file manifest scope the gate runs against, not the corpus; both read zero, but the distinction still applies to the other detectors:
 
 ```bash
 python -m tools.query_coverage.qc run     # regression gate, exits 1 on a new cluster
@@ -180,7 +180,7 @@ tree-sitter parse path/to/file.al -q    # Quiet (errors only)
 |------|---------|
 | `grammar.js` | Main grammar definition |
 | `src/scanner.c` | External scanner (9 tokens: property, depth tracking, named begin/end, split detection) |
-| `test/corpus/` | Test suite (1,562 tests) |
+| `test/corpus/` | Test suite (1,565 tests) |
 | `queries/` | Syntax highlighting, code navigation, folding, indentation, textobjects |
 | `tools/query_coverage/` | Query-coverage harness — measures CST losslessness and query reach |
 | `tools/gate_selftest.py` | Mutation testing for the validation gates |
