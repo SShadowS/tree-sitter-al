@@ -77,7 +77,7 @@ python parse_bug_finder.py file.al debug.log   # Analyze parsing bugs
 | `BEGIN_KEYWORD` | `begin` at any depth — named node for queries |
 | `END_KEYWORD` | `end` at any depth — named node for queries |
 | `PREPROC_SPLIT_BEGIN` | `begin` at depth > 0, immediately before `#endif` — split detection |
-| `PREPROC_SPLIT_END` | `end` at depth > 0, followed by `;` then `#else`/`#endif` — split detection |
+| `PREPROC_SPLIT_END` | `end` at depth > 0, followed by `;` then `#elif`/`#else`/`#endif` — split detection |
 
 ## Property Handling
 
@@ -265,16 +265,23 @@ When uncertain whether the AL compiler accepts a construct (esp. niche or undocu
 mkdir -p /tmp/al-probe && cd /tmp/al-probe
 cat > app.json <<'EOF'
 {"id":"11111111-2222-3333-4444-555555555555","name":"Probe","publisher":"Test",
- "version":"1.0.0.0","platform":"1.0.0.0","application":"1.0.0.0",
- "idRanges":[{"from":50000,"to":99999}],"runtime":"12.0","target":"OnPrem"}
+ "version":"1.0.0.0","platform":"1.0.0.0",
+ "idRanges":[{"from":50000,"to":99999}],"runtime":"15.0","target":"OnPrem"}
 EOF
 cat > Test.al <<'EOF'
 codeunit 50100 Probe { trigger OnRun() begin Codeunit.Run(Codeunit::80); end; }
 EOF
-al compile /project:. /out:test.app; echo "EXIT=$?"
+al compile /project:"$PWD" /out:"$PWD/test.app"; echo "EXIT=$?"
 ```
 
-Exit `0` + `test.app` written = compiler accepts. Exit `1` with no `test.app` = rejected (errors may be silent — re-run capturing stderr or trim the file to isolate). Example: confirmed `Codeunit::<integer>` is valid AL (old-school soft cross-extension reference) when both LLMs claimed otherwise.
+Exit `0` + `test.app` written = compiler accepts. Exit `1` with no `test.app` = rejected (errors may be silent — re-run capturing stderr or trim the file to isolate).
+
+**Three traps that make a working probe look like a rejection.** All three exit `1` with an empty error log, which is indistinguishable from a real compile error:
+- **No `application` or `dependencies` key.** Those pull in Base/System Application symbol packages that are not present locally; without the symbols the project fails to load and emits *no diagnostics at all* — for valid and invalid code alike, so the probe silently loses all discriminating power. `runtime` must be one the installed `al` supports (`15.0` works; `12.0` does not).
+- **Relative paths.** `/project:.` exits `1` with an empty error log — pass absolute paths for both `/project:` and `/out:`.
+- **One case file at a time.** `al compile` compiles *every* `.al` in the project directory, so a leftover probe file fails the run you are reading.
+
+Sanity-check the probe before trusting a rejection: compile a form you know is valid and confirm exit `0` + `test.app`. If that fails too, the project is broken, not the syntax. Example: confirmed `Codeunit::<integer>` is valid AL (old-school soft cross-extension reference) when both LLMs claimed otherwise.
 
 ## Documentation Resources
 

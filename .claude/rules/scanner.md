@@ -17,7 +17,7 @@ The scanner maintains a 1-byte `ScannerState` with a `depth` counter (uint8_t) t
 | `BEGIN_KEYWORD` | `begin` at any depth — named node for queries | none |
 | `END_KEYWORD` | `end` at any depth — named node for queries | none |
 | `PREPROC_SPLIT_BEGIN` | `begin` at depth > 0, immediately before `#endif` — split detection | none |
-| `PREPROC_SPLIT_END` | `end` at depth > 0, followed by `;` then `#else`/`#endif` — split detection | none |
+| `PREPROC_SPLIT_END` | `end` at depth > 0, followed by `;` then `#elif`/`#else`/`#endif` — split detection | none |
 
 **Scan function order:** error recovery guard → PREPROC_OPEN/CLOSE → 'begin' dispatch (PREPROC_SPLIT_BEGIN | BEGIN_KEYWORD) → 'end' dispatch (PREPROC_SPLIT_END | END_KEYWORD) → VAR_ATTRIBUTE_OPEN → CONTINUE_AS_IDENTIFIER → PROPERTY_NAME
 
