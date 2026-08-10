@@ -4058,7 +4058,6 @@ module.exports = grammar({
 
     _expression: $ => choice(
       // Binary operators
-      $.range_expression,
       $.multiplicative_expression,
       $.additive_expression,
       $.comparison_expression,
@@ -4105,13 +4104,51 @@ module.exports = grammar({
       kw('action'),
     )),
 
-    // --- Binary expressions ---
-
-    range_expression: $ => prec.left(8, seq(
+    // --- Range ---
+    //
+    // `..` is NOT an expression operator in AL, and this rule is deliberately
+    // absent from `_expression`. Compiler-measured: a parenthesised range as an
+    // operand of `+` is `AL0104: Syntax error, ')' expected` — a SYNTAX error,
+    // not a type error, so `1 + (1 .. 4)` has no reading at all. Ranges occur
+    // only as a whole list-literal element (`x in [1 .. 5]`) or a whole case
+    // pattern (`1 .. 5:`), which is exactly what the corpus shows: of the 141
+    // `range_expression` nodes in BC.History, 103 sit under `list_literal` and
+    // 34 under `case_branch`.
+    //
+    // It USED to be `prec.left(8)` inside `_expression`, i.e. binding tighter
+    // than both `multiplicative_expression` (7) and `additive_expression` (6),
+    // which is the exact inverse of the compiler. That produced four
+    // meaning-changing misparses in BC.History, all silent — every byte covered,
+    // no ERROR node, no node type changed:
+    //
+    //   0D .. NextCountingStartDate - 1   parsed as (0D .. NextCountingStartDate) - 1
+    //   Round(Qty / 2, 1) + 1 .. Qty      parsed as Round(...) + (1 .. Qty)
+    //   [-MaximumSetLength .. 0]          parsed as -(MaximumSetLength .. 0)   (x2)
+    //
+    // Keeping it out of `_expression` rather than lowering its precedence number
+    // makes those trees UNREPRESENTABLE instead of merely disfavoured: with no
+    // range in `_expression`, a `unary_expression` operand cannot be a range at
+    // all, so the last two have only one derivation. A precedence number would
+    // leave both trees reachable and rely on the number staying correct.
+    //
+    // The precedence still matters, for a DIFFERENT decision than the one it
+    // used to make. Removing the rule from `_expression` fixes the `left`
+    // operand and the unary case, but not the `right` one: at `0D ..
+    // NextCountingStartDate - 1` the parser reaches `-` holding a complete
+    // `right`, and must choose between reducing `range_expression` and shifting
+    // into `additive_expression`. At 8 the reduce won, and because
+    // `_case_pattern_item`'s comma is optional the leftover `- 1` was silently
+    // accepted as a SECOND case pattern — a different wrong tree, still with no
+    // ERROR node. It must be BELOW every operator that can appear inside an
+    // operand (additive 6, comparison 4, logical 2/3), so 0: a range's operands
+    // extend as far as they can, which is what makes `..` outermost.
+    range_expression: $ => prec.left(0, seq(
       field('left', $._expression),
       '..',
       field('right', $._expression)
     )),
+
+    // --- Binary expressions ---
 
     multiplicative_expression: $ => prec.left(7, seq(
       field('left', $._expression),
@@ -4230,10 +4267,18 @@ module.exports = grammar({
 
     // --- List literal ---
 
+    // A list literal is the one expression context where a range is legal, so it
+    // takes `_list_element` rather than `_expression_list`. `argument_list` keeps
+    // `_expression_list` — `f(1 .. 5)` is not AL.
     list_literal: $ => seq(
       '[',
-      optional($._expression_list),
+      optional(seq($._list_element, repeat(seq(',', $._list_element)))),
       ']'
+    ),
+
+    _list_element: $ => choice(
+      $.range_expression,
+      $._expression,
     ),
 
     // --- Qualified enum value ---
