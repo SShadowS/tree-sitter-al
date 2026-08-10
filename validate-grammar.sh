@@ -279,6 +279,13 @@ fi
 # exit 1 means "regression found". Skip-with-warning on 2, fail only on 1 (or
 # anything else) -- a fresh clone without BC.History must still validate
 # cleanly. See tools/query_coverage/README.md.
+#
+# Exit 2 is overloaded: `qc run` also returns it for a baseline accepted
+# under a different manifest (stale `select` without a follow-up `accept`)
+# and for `--full-corpus` without `--all`. Neither of those means "no corpus
+# to check", so the skip-with-warning is gated on BC.History actually being
+# absent -- when the directory exists, exit 2 fails validation the same as
+# any other failure, whether the cause is a drifted file or a stale baseline.
 print_header "Step 5d: Query-Coverage Harness"
 if [ -f tools/query_coverage/baseline.json ]; then
     if python -m tools.query_coverage.qc run; then
@@ -289,8 +296,8 @@ if [ -f tools/query_coverage/baseline.json ]; then
 
     if [ "$qc_status" -eq 0 ]; then
         print_success "query-coverage: no regressions"
-    elif [ "$qc_status" -eq 2 ]; then
-        print_warning "query-coverage: corpus missing or drifted (BC.History not present or out of sync) — skipping, see tools/query_coverage/README.md"
+    elif [ "$qc_status" -eq 2 ] && [ ! -d BC.History ]; then
+        print_warning "query-coverage: corpus not present (BC.History missing) — skipping, see tools/query_coverage/README.md"
     else
         print_error "query-coverage failed (exit $qc_status) — see tools/query_coverage/reports/summary.md"
         VALIDATION_FAILED=1

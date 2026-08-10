@@ -132,9 +132,14 @@ and reasons, sourced from `EXCLUDED_ANCHORS` in `anchors.py`.
 `validate-grammar.sh` runs `qc run` whenever `tools/query_coverage/baseline.json`
 exists — which is every clone, since the baseline is a tracked, committed
 file. The corpus it runs against (`BC.History`) is not committed, so the step
-reads `qc run`'s exit code rather than treating any failure the same way:
-exit 0 passes, exit 2 ("corpus broken" — `BC.History` missing or drifted)
-prints a warning and skips, and anything else (a real regression) fails
-validation. A fresh clone without `BC.History` validates cleanly; a clone
-with a drifted or partial corpus is warned, not silently passed and not
-hard-failed.
+reads `qc run`'s exit code rather than treating any failure the same way.
+Exit 2 covers four distinct causes (see "Exit codes" above and `qc.py`): a
+missing or drifted corpus file, a manifest that can't be found, `--full-corpus`
+without `--all`, and a baseline accepted under a different manifest (stale
+`select` without a follow-up `accept`). Only the first is "nothing to check
+here", so the step warns and skips on exit 2 only when `BC.History` is
+entirely absent — with the directory present, exit 2 fails validation the
+same as exit 1, because it means something is genuinely wrong rather than
+uncloned. A fresh clone without `BC.History` validates cleanly; a clone with
+a drifted corpus, a partial corpus, or a stale baseline is not silently
+passed.
