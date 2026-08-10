@@ -63,6 +63,29 @@ def test_fingerprint_is_normalized_text_plus_enclosing_type(al_parser):
     assert len(findings[0].fingerprint) == 2
 
 
+def test_fingerprint_keys_on_the_node_containing_the_gap_not_the_next_token(al_parser):
+    """F5: the fingerprint's second component must be the construct the gap
+    sits inside (here "assignment_statement"), not the type of whichever
+    token happens to follow it. Before the fix, `i := 1` and `i := 'x'` keyed
+    on "integer" and "string_literal" respectively -- two clusters for one
+    grammar defect, and a routine RHS-node-type change (adding a literal kind
+    is common in this grammar) would silently drop one cluster and open a new
+    one, reading as a false regression for a defect that never changed.
+    """
+    integer_rhs = b"codeunit 1 T { procedure P() begin i := 1; end; }"
+    string_rhs = b"codeunit 1 T { procedure P() begin i := 'x'; end; }"
+
+    integer_findings = gaps.detect(al_parser.parse(integer_rhs), integer_rhs, "t.al")
+    string_findings = gaps.detect(al_parser.parse(string_rhs), string_rhs, "t.al")
+
+    assert [f.fingerprint for f in integer_findings if f.detail["gap_text"] == ":="] == [
+        (":=", "assignment_statement")
+    ]
+    assert [f.fingerprint for f in string_findings if f.detail["gap_text"] == ":="] == [
+        (":=", "assignment_statement")
+    ]
+
+
 def test_semicolon_counts_as_coverage(al_parser):
     """Anonymous string tokens are visible leaves; walking named children breaks this."""
     source = b"codeunit 1 T { var i: Integer; }"

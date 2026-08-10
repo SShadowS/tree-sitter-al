@@ -81,7 +81,7 @@ def _emit_segment(findings, source, path, start, end, node) -> None:
     offset = start + raw.index(stripped[0]) if stripped else start
     line = source[:offset].count(b"\n") + 1
     column = offset - (source.rfind(b"\n", 0, offset) + 1) + 1
-    enclosing = _tree.enclosing_named(node)
+    enclosing = _tree.enclosing_named_covering(node, start)
 
     findings.append(
         Finding(

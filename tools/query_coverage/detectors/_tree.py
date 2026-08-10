@@ -84,6 +84,28 @@ def enclosing_named(node, skip_error: bool = False) -> str:
     return "source_file"
 
 
+def enclosing_named_covering(node, start: int) -> str:
+    """Nearest named ancestor (self included) whose span starts at or before
+    `start`. Falls back to source_file.
+
+    For a gap detector, `node` is the leaf immediately AFTER the gap (or the
+    root, for a trailing gap) -- it does not itself contain the gap's bytes,
+    only touch their far edge. `enclosing_named(node)` returns as soon as
+    `node` itself is named, which for e.g. an `integer` literal following a
+    dropped `:=` returns "integer": the type of the token next to the gap,
+    not the construct the gap sits inside. Every ancestor of `node` ends at
+    or after `node` does, so once an ancestor's own start_byte <= start is
+    true, that ancestor's span covers [start, node.end_byte) too -- the whole
+    gap, not just its trailing edge.
+    """
+    current = node
+    while current is not None:
+        if current.is_named and current.start_byte <= start:
+            return current.type
+        current = current.parent
+    return "source_file"
+
+
 def error_ranges(node) -> list[tuple[int, int]]:
     """Byte ranges of ERROR subtrees. Does not descend into an ERROR.
 

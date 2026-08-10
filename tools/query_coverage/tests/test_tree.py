@@ -68,6 +68,31 @@ def test_enclosing_named_returns_self_when_named(al_parser):
     assert _tree.enclosing_named(root) == "source_file"
 
 
+def test_enclosing_named_covering_returns_the_containing_construct_not_the_next_leaf(al_parser):
+    """This is detector 1's F5 fingerprint bug, pinned directly:
+    enclosing_named(leaf), called on the leaf immediately AFTER a gap, returns
+    that leaf's own type the moment it is itself named -- here "integer", the
+    literal that happens to sit next to the dropped ':='. That is the type of
+    a neighbouring token, not of the construct the gap sits inside.
+    enclosing_named_covering climbs past it to the nearest ancestor whose span
+    actually starts at or before the gap, which is what the gap detector
+    needs for its fingerprint (spec:154 -- "enclosing named node type").
+    """
+    source = b"codeunit 1 T { procedure P() var i: Integer; begin i := 1; end; }"
+    tree = al_parser.parse(source)
+    assignment = next(
+        node for node in _tree.walk(tree.root_node) if node.type == "assignment_statement"
+    )
+    integer_leaf = assignment.child_by_field_name("right")
+    identifier_leaf = assignment.child_by_field_name("left")
+    assert integer_leaf.type == "integer"
+    assert identifier_leaf.type == "identifier"
+    gap_start = identifier_leaf.end_byte  # end of 'i', start of the dropped ' := '
+
+    assert _tree.enclosing_named(integer_leaf) == "integer"
+    assert _tree.enclosing_named_covering(integer_leaf, gap_start) == "assignment_statement"
+
+
 def test_error_ranges_covers_the_error_and_does_not_descend(al_parser):
     source = b"codeunit 1 T { @@@ }"
     tree = al_parser.parse(source)
