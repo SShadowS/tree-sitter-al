@@ -16,9 +16,27 @@ DETECTOR = "gaps"
 BOM = "\uFEFF"
 
 
-def _is_ignorable(text: str) -> bool:
+def _is_ignorable_char(ch: str) -> bool:
     """Whitespace per the grammar's extras array: /\\s/ and /\\uFEFF/."""
-    return all(ch.isspace() or ch == BOM for ch in text)
+    return ch.isspace() or ch == BOM
+
+
+def _lead_length(text: str) -> int:
+    """Characters of leading ignorable text.
+
+    Deliberately not `len(text) - len(text.lstrip())`: str.strip() does not
+    strip U+FEFF, so the two disagree exactly where _is_ignorable_char says the
+    character carries no meaning. That disagreement would put a BOM into the
+    reported gap text and into the cluster fingerprint.
+
+    A whole segment that is ignorable makes this return len(text), which is how
+    _emit_segment drops it — no separate all-ignorable predicate, which would
+    be a second scan with a second chance to disagree with this one.
+    """
+    index = 0
+    while index < len(text) and _is_ignorable_char(text[index]):
+        index += 1
+    return index
 
 
 def _split_by_errors(start: int, end: int, errors):
@@ -74,11 +92,27 @@ def _emit(findings, source, path, start, end, node, errors) -> None:
 
 def _emit_segment(findings, source, path, start, end, node) -> None:
     raw = source[start:end].decode("utf-8", errors="replace")
-    if _is_ignorable(raw):
+
+    lead = _lead_length(raw)
+    tail = len(raw)
+    while tail > lead and _is_ignorable_char(raw[tail - 1]):
+        tail -= 1
+    stripped = raw[lead:tail]
+    if not stripped:
         return
 
-    stripped = raw.strip()
-    offset = start + raw.index(stripped[0]) if stripped else start
+    # `start` is a BYTE offset, so the ignorable prefix must be measured in
+    # BYTES too. The previous form added `raw.index(stripped[0])` -- a
+    # CHARACTER index -- which is short by one byte per multi-byte character
+    # in that prefix, and then reports a line/column that points into the
+    # middle of a character. Same class as the bug 376b8f0 fixed in
+    # pattern_texts(); there the offsets came from tree-sitter, here from a
+    # str method, and both desync against a byte offset the same way.
+    #
+    # Re-encoding is exact: every character in the prefix is whitespace or a
+    # BOM, and decode(errors="replace") can only have produced U+FFFD, which
+    # is neither -- so no replacement character is ever inside the slice.
+    offset = start + len(raw[:lead].encode("utf-8"))
     line = source[:offset].count(b"\n") + 1
     column = offset - (source.rfind(b"\n", 0, offset) + 1) + 1
     enclosing = _tree.enclosing_named_covering(node, start)

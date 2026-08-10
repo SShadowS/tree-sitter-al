@@ -157,7 +157,7 @@ def cmd_run(args) -> int:
 
     findings: list[model.Finding] = []
     findings.extend(fields.detect_static(grammar, node_types))
-    findings.extend(inventory.meta_check(language, node_types))
+    findings.extend(inventory.meta_check(node_types))
 
     # Scope: the manifest (default) or every .al file under the corpus root
     # (--full-corpus). Print which one ran, every time -- a report that
@@ -219,8 +219,11 @@ def cmd_run(args) -> int:
         # Keyword coverage runs over EVERY file in scope, not just the first.
         # A keyword absent from one file says nothing; the invariant is "no
         # *_keyword node type anywhere in the corpus goes uncaptured".
-        # detect_keyword_coverage already dedupes by node type internally, so
-        # the union stays small.
+        # Its dedupe is keyed on `keyword_context`, which is built once above
+        # and therefore dedupes across the whole RUN -- one finding per
+        # uncaptured node type, not one per file. It used to hold that set
+        # locally per call, which is per FILE: a single uncaptured type then
+        # emitted up to 15,358 identical findings at full-corpus scope.
         findings.extend(
             shipped_queries.detect_keyword_coverage(keyword_context, tree, source, rel)
         )
@@ -302,7 +305,9 @@ def cmd_run(args) -> int:
     # from `select`'s gitignored reports/never-observed.json -- a fresh clone
     # that never ran `select` still gets this section, and it can never drift
     # from what this run actually observed.
-    write_summary(reports / "summary.md", clusters, diff, never)
+    write_summary(
+        reports / "summary.md", clusters, diff, never, inventory.inert_checks(node_types)
+    )
 
     if diff.ratcheted and not args.all:
         for key, was, now in diff.ratcheted:
@@ -327,7 +332,43 @@ def cmd_accept(args) -> int:
         return baseline.EXIT_CORPUS_BROKEN
 
     lines = findings_path.read_text(encoding="utf-8").splitlines()
-    header = json.loads(lines[0])
+    # Every refusal below names the file and says how to regenerate it. An
+    # empty findings.jsonl is a real state -- an interrupted `run`, a killed
+    # process mid-write, a file truncated by a concurrent second invocation
+    # (see the README's concurrency warning) -- and `json.loads(lines[0])` on
+    # one raised a bare IndexError with no filename in it. A tool whose
+    # failure mode is a traceback teaches its users to distrust the traceback.
+    if not lines:
+        print(
+            f"refusing to accept: {findings_path} is empty -- it has no provenance "
+            "header, so its scope and manifest hash are unknown. Run `qc run --all` "
+            "to regenerate it, then accept again.",
+            file=sys.stderr,
+        )
+        return baseline.EXIT_CORPUS_BROKEN
+
+    try:
+        header = json.loads(lines[0])
+    except json.JSONDecodeError as exc:
+        print(
+            f"refusing to accept: the first line of {findings_path} is not valid JSON "
+            f"({exc}); it must be the provenance header. Run `qc run --all` to "
+            "regenerate it, then accept again.",
+            file=sys.stderr,
+        )
+        return baseline.EXIT_CORPUS_BROKEN
+
+    # isinstance as well as the key: a bare `5` or `[]` is valid JSON, would
+    # survive the decode above, and would then fail on .get() two blocks down
+    # -- the same undiagnosable traceback one line later.
+    if not isinstance(header, dict) or "manifest_hash" not in header:
+        print(
+            f"refusing to accept: the first line of {findings_path} carries no "
+            "'manifest_hash', so it is not a provenance header. Run `qc run --all` "
+            "to regenerate it, then accept again.",
+            file=sys.stderr,
+        )
+        return baseline.EXIT_CORPUS_BROKEN
 
     # A baseline is only meaningful against the manifest: full-corpus counts
     # are ~260x larger (15,358 files vs. 59) for reasons that have nothing to
@@ -357,8 +398,26 @@ def cmd_accept(args) -> int:
         return baseline.EXIT_CORPUS_BROKEN
 
     counts: dict[str, int] = {}
-    for line in lines[1:]:
-        record = json.loads(line)
+    for number, line in enumerate(lines[1:], start=2):
+        # Same reasoning as the header guards: a `run` killed mid-write leaves
+        # a truncated last line, and this loop's job is to be told that rather
+        # than to raise from inside a stdlib call. Refuse the whole file --
+        # accepting the readable prefix would bake a baseline that is missing
+        # however many findings the truncation ate, and every later run would
+        # then read those as regressions.
+        try:
+            record = json.loads(line)
+            detector = record["detector"]
+            key = record["cluster"]
+        except (json.JSONDecodeError, KeyError, TypeError) as exc:
+            print(
+                f"refusing to accept: {findings_path} line {number} is not a finding "
+                f"record ({exc}). Run `qc run --all` to regenerate it, then accept "
+                "again.",
+                file=sys.stderr,
+            )
+            return baseline.EXIT_CORPUS_BROKEN
+
         # Mirror cmd_run's gating_clusters filter. INFORMATIONAL_DETECTORS
         # findings are excluded from the diff there, so baselining them here
         # would desync the two: the accepted count would sit above zero
@@ -366,9 +425,8 @@ def cmd_accept(args) -> int:
         # before diffing), so every future run would see it as freshly
         # "fixed" and ratchet it back to zero -- spurious churn on every
         # single run, not just the first one after accept.
-        if record["detector"] in INFORMATIONAL_DETECTORS:
+        if detector in INFORMATIONAL_DETECTORS:
             continue
-        key = record["cluster"]
         counts[key] = counts.get(key, 0) + 1
 
     baseline.save(
@@ -379,7 +437,9 @@ def cmd_accept(args) -> int:
     return baseline.EXIT_OK
 
 
-def write_summary(path: Path, clusters, diff, never_seen: list[str]) -> None:
+def write_summary(
+    path: Path, clusters, diff, never_seen: list[str], inert_checks: list[tuple[str, str]]
+) -> None:
     path.parent.mkdir(parents=True, exist_ok=True)
     lines = ["# Query-coverage summary", ""]
 
@@ -420,6 +480,14 @@ def write_summary(path: Path, clusters, diff, never_seen: list[str]) -> None:
             f"- `{name}` — {reason}"
             for name, reason in sorted(anchor_table.EXCLUDED_ANCHORS.items())
         ] + [""]
+
+    # Same promise, for checks that RUN but cannot currently produce a finding.
+    # An excluded anchor at least looks excluded in the source; a check that
+    # loops over 30 types and skips all 30 looks like a check that passed.
+    # Silence there is how a detector rots into decoration unnoticed.
+    if inert_checks:
+        lines += ["## Checks that are vacuous by construction", ""]
+        lines += [f"- `{name}` — {reason}" for name, reason in sorted(inert_checks)] + [""]
 
     with open(path, "w", encoding="utf-8", newline="\n") as handle:
         handle.write("\n".join(lines))

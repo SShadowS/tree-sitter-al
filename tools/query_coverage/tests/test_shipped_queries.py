@@ -80,6 +80,38 @@ def test_keyword_coverage_flags_an_uncaptured_keyword(al_language, al_parser, no
     assert any(f.detail.get("node_type") == "table_keyword" for f in findings)
 
 
+def test_keyword_coverage_dedupes_across_the_whole_run(
+    al_language, al_parser, node_types, tmp_path: Path
+):
+    """One uncaptured node type is ONE finding for the run, not one per file.
+
+    The dedupe set used to be local to each call, i.e. per file: at
+    full-corpus scope a single uncaptured type emitted up to 15,358 identical
+    findings. It now lives on the context, which qc.cmd_run builds once per
+    run. The second half proves the assertion is not vacuous -- a fresh
+    context reports the same type again, so the first half is measuring the
+    shared set and not some unrelated suppression.
+    """
+    sparse = tmp_path / "sparse.scm"
+    sparse.write_text("(codeunit_keyword) @keyword\n", encoding="utf-8", newline="\n")
+    first = b"table 1 T { }"
+    second = b"table 2 U { }"
+
+    shared = shipped_queries.keyword_coverage_context(al_language, sparse, node_types)
+    one = shipped_queries.detect_keyword_coverage(shared, al_parser.parse(first), first, "a.al")
+    two = shipped_queries.detect_keyword_coverage(shared, al_parser.parse(second), second, "b.al")
+
+    assert [f.detail["node_type"] for f in one].count("table_keyword") == 1
+    assert [f.detail["node_type"] for f in two].count("table_keyword") == 0
+
+    separate = shipped_queries.keyword_coverage_context(al_language, sparse, node_types)
+    again = shipped_queries.detect_keyword_coverage(
+        separate, al_parser.parse(second), second, "b.al"
+    )
+
+    assert [f.detail["node_type"] for f in again].count("table_keyword") == 1
+
+
 def test_pattern_texts_handles_non_ascii_before_pattern(al_language, al_parser, tmp_path: Path):
     """start_byte_for_pattern/end_byte_for_pattern are BYTE offsets.
 

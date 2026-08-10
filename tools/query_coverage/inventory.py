@@ -2,12 +2,28 @@
 
 from __future__ import annotations
 
+import re
 from pathlib import Path
 
 from .model import Finding
 
 DETECTOR = "inventory"
 SCM_PATH = Path(__file__).with_name("inventory.scm")
+
+# A whole-line .scm comment. Stripped before any "does the .scm mention X?"
+# test, so a value type named only in a comment cannot pass for coverage.
+_COMMENT_LINE = re.compile(r"^\s*;.*$", re.MULTILINE)
+
+# The generic property pattern, which is what makes meta_check vacuous. The
+# `value: (_)` wildcard is the load-bearing part and is matched explicitly: it
+# is what guarantees a NEW property value type is extracted with no edit here.
+# A looser test (`"(property name: (property_name)" in scm`) would keep
+# reporting full coverage after someone narrowed the wildcard to, say,
+# `value: (property_expression)` -- at which point the check would be both
+# vacuous AND wrong, and nothing would say so.
+_GENERIC_PROPERTY = re.compile(
+    r"\(property\s+name:\s*\(property_name\)(?:\s*@[\w.]+)?\s+value:\s*\(_\)"
+)
 
 # Nested inside field/key/control/action declarations to pull properties that
 # live below the top-level (property ...) match (e.g. a page field's Caption).
@@ -246,9 +262,66 @@ def property_value_types(node_types: list[dict]) -> list[str]:
     return []
 
 
-def meta_check(
-    language, node_types: list[dict], generic_covers_all: bool | None = None
-) -> list[Finding]:
+def _read_scm() -> str:
+    return SCM_PATH.read_text(encoding="utf-8")
+
+
+def generic_property_pattern_covers_all(scm: str | None = None) -> bool:
+    """True while inventory.scm extracts EVERY property value type generically."""
+    text = _COMMENT_LINE.sub("", _read_scm() if scm is None else scm)
+    return _GENERIC_PROPERTY.search(text) is not None
+
+
+def scm_mentions(scm: str, value_type: str) -> bool:
+    """Does the .scm carry a pattern for this node type?
+
+    Comments are stripped first: a type named only in a `;` comment is
+    documentation, not extraction, and the raw substring test this replaces
+    counted it as coverage.
+
+    `\\b` is the second half: a bare `f"({value_type}" in scm` test is satisfied
+    by any LONGER pattern name starting with the same characters, so a
+    `(caption_value_list …)` pattern would silently stand in for the distinct
+    type `caption_value`. No such collision exists in this .scm today — it is
+    cheap to make impossible rather than to re-audit whenever a pattern is
+    added.
+    """
+    return re.search(rf"\({re.escape(value_type)}\b", _COMMENT_LINE.sub("", scm)) is not None
+
+
+def inert_checks(node_types: list[dict]) -> list[tuple[str, str]]:
+    """Checks that cannot emit a finding as currently configured, and why.
+
+    meta_check is vacuous by construction while inventory.scm carries the
+    generic `value: (_)` wildcard: every declared property value type is
+    covered, so the loop skips all of them and no finding is reachable. That
+    is the CORRECT state — the wildcard is what makes a new value type extract
+    itself with no edit here — but a check nobody knows is inert is
+    indistinguishable from a check that is broken, and this project has
+    already shipped eight defects that every gate reported clean.
+
+    So it is reported rather than merely true: qc.write_summary prints this
+    list under "Checks that are vacuous by construction", the same way it
+    prints anchors.EXCLUDED_ANCHORS. Derived, not written down — narrow the
+    wildcard and this list empties itself while meta_check starts gating,
+    with no second edit needed to keep the two consistent.
+    """
+    if not generic_property_pattern_covers_all():
+        return []
+    skipped = property_value_types(node_types)
+    return [
+        (
+            "inventory.meta_check",
+            f"vacuous by construction: inventory.scm's generic "
+            f"`(property name: (property_name) … value: (_))` pattern matches every "
+            f"property value type, so all {len(skipped)} types declared for "
+            f"`property.value` in src/node-types.json are covered and no finding is "
+            f"reachable. This check becomes live again if that wildcard is narrowed.",
+        )
+    ]
+
+
+def meta_check(node_types: list[dict], generic_covers_all: bool | None = None) -> list[Finding]:
     """Fail when a property value type has no inventory pattern.
 
     Complex properties follow no naming convention — only two rules match
@@ -258,17 +331,23 @@ def meta_check(
     generic_covers_all=None derives coverage from the .scm. Pass False to force
     per-value-type checking; without that the check cannot be tested
     non-vacuously while the generic (property ...) pattern matches everything.
+    See inert_checks() — while it returns non-empty, THIS function returns []
+    for every input, and the summary says so out loud.
+
+    Takes no `language`: it compiles nothing and parses nothing, it reads the
+    .scm as text. The parameter was there and unused, which reads as if the
+    check runs the query against the grammar. It does not.
     """
-    scm = SCM_PATH.read_text(encoding="utf-8")
+    scm = _read_scm()
     findings: list[Finding] = []
 
     if generic_covers_all is None:
-        covered_generically = "(property name: (property_name)" in scm
+        covered_generically = generic_property_pattern_covers_all(scm)
     else:
         covered_generically = generic_covers_all
 
     for value_type in property_value_types(node_types):
-        if covered_generically or f"({value_type}" in scm:
+        if covered_generically or scm_mentions(scm, value_type):
             continue
         findings.append(
             Finding(

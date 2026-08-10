@@ -232,6 +232,63 @@ def test_dropped_token_survives_3_token_error_region(al_parser):
     _assert_only_the_dropped_is(gaps.detect(tree, source, "t.al"))
 
 
+def test_offset_measures_leading_whitespace_in_bytes_not_characters(al_parser):
+    """The reported offset must advance past the gap's leading whitespace by
+    BYTES. `start` is a byte offset, so adding a character index to it -- which
+    `start + raw.index(stripped[0])` did -- is short by one byte per multi-byte
+    character in that whitespace, and the reported line/column then points into
+    the middle of a character. Same class as the byte-vs-character bug 376b8f0
+    fixed in pattern_texts().
+
+    Driven through _emit rather than detect() on purpose. tree-sitter's `/\\s/`
+    extra is ASCII-only, so the AL grammar lexes a literal NBSP as an ERROR
+    leaf, which covers those bytes and then gets subtracted -- no real parse
+    produces a segment whose leading whitespace is non-ASCII today. The
+    arithmetic is wrong regardless of whether this grammar can reach it, and
+    the extras array is one edit away from making it reachable. The tree is
+    real so `enclosing` resolves against genuine nodes.
+    """
+    source = "codeunit 1 T { procedure P() var r:\u00a0Record Customer; begin end; }".encode(
+        "utf-8"
+    )
+    tree = al_parser.parse(source)
+    start = source.index(b":") + 1
+    end = source.index(b"Customer")
+    assert source[start:end].decode("utf-8") == "\u00a0Record "
+
+    findings = []
+    gaps._emit(findings, source, "t.al", start, end, tree.root_node, [])
+
+    assert len(findings) == 1
+    assert findings[0].detail["gap_text"] == "Record"
+    # NBSP is two bytes but one character: pre-fix this was one byte short.
+    assert findings[0].byte_offset == source.index(b"Record")
+    assert findings[0].line == 1
+    assert findings[0].column == source.index(b"Record") + 1
+
+
+def test_bom_between_leaves_is_not_part_of_the_gap_text(al_parser):
+    """U+FEFF is an extra (grammar.js:137), so it is not part of a dropped
+    token and must not reach the gap text or the cluster fingerprint.
+
+    The detector already treated a BOM-only segment as ignorable, but
+    str.strip() does not strip U+FEFF -- so the old `raw.strip()` produced the
+    gap text "\\ufeffRecord", fingerprinted under a key no other site could
+    ever share.
+    """
+    source = "codeunit 1 T { procedure P() var r: \uFEFFRecord Customer; begin end; }".encode(
+        "utf-8"
+    )
+    tree = al_parser.parse(source)
+    assert not tree.root_node.has_error  # the BOM really is an extra here
+
+    findings = gaps.detect(tree, source, "t.al")
+
+    assert texts(findings) == ["Record"]
+    assert findings[0].byte_offset == source.index(b"Record")
+    assert findings[0].fingerprint == ("record", "variable_declaration")
+
+
 def test_snippet_flattens_embedded_newlines(al_parser):
     """_snippet must escape a real newline to the literal 2-character
     sequence backslash-n for display; a no-op .replace("\\n", "\\n") defeats

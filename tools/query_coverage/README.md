@@ -24,16 +24,25 @@ up from one file. Every run prints which scope it used.
 
 `select` re-derives the manifest from scratch via set-cover over `BC.History`
 (~52s); `run` over the resulting 59-file manifest takes ~11.5s. The manifest
-covers 357 of the grammar's 391 named node types — the other 34 appear in no
-corpus file and are listed in `reports/never-observed.json`.
+covers **377 of the grammar's 421** named node types — the other 44 appear in
+no corpus file, are listed in `reports/never-observed.json`, and are carried in
+`baseline.json` as `corpus|never-observed|*` clusters. (This read 357/391/34
+until 4.0.0. Named `*_keyword` types went 84 → 111 over the defect fixes, which
+is most of the growth; 10 of the 44 never-observed entries are keyword types for
+constructs no BC.History file writes — `testpage_keyword`, `public_keyword`,
+`upperlimit_keyword` and 7 others.)
 
 `run --full-corpus` (combined with `--all`) sweeps every file under
-`BC.History` through every detector, not just the dead-pattern tally — a
-30m52s run producing 925,562 findings in 204 clusters the last time it ran.
-Its counts are not comparable to the manifest baseline (59 files vs.
-15,358), so `run` refuses `--full-corpus` without `--all`, and `accept`
-refuses a `--full-corpus` report outright — a full sweep can only inform,
-never contaminate the baseline.
+`BC.History` through every detector, not just the dead-pattern tally. It cost
+30m52s until `81ab477`; it was measured at **407 s** after that commit, and the
+most recent one reported 233 clusters over all 15,358 files. Its counts are not
+comparable to the manifest baseline (59 files vs. 15,358), so `run` refuses
+`--full-corpus` without `--all`, and `accept` refuses a `--full-corpus` report
+outright — a full sweep can only inform, never contaminate the baseline.
+
+It is also a **reporting** pass, not a gate: `cmd_run` sets an empty `Diff()`
+on that branch, so exit 0 from `--full-corpus` means "it ran", not "no
+regressions". The gating run is the 59-file manifest one.
 
 ## Not concurrency-safe
 
@@ -61,7 +70,14 @@ running the corpus gate at all.
 | 0 | No new cluster, no cluster above its ratcheted count |
 | 1 | Regression: new cluster, or count above the ratchet |
 | 2 | Corpus broken: a manifest file is missing or its sha256 drifted |
-| 3 | Stale parser: the build stamp does not match grammar.js + src/scanner.c |
+| 3 | Stale parser: the build stamp does not match `loader.STAMPED_FILES` |
+
+The stamp covers `grammar.js` and `src/scanner.c` (what the library is built
+from) **and** `src/parser.c`, `src/grammar.json`, `src/node-types.json` (what
+it is generated into). The last two are read directly by detectors 3 and 7, so
+a stale generated artifact would otherwise change findings while the freshness
+check passed. `ensure_library` runs `tree-sitter generate` before building and
+stamps the post-generate state, so the stamp always describes what is on disk.
 
 `run --all` always exits 0 regardless of findings — it is the reporting mode,
 not the gate.
@@ -80,7 +96,13 @@ is the only way to raise a count or admit a new cluster. This means a clean
 
 - `reports/findings.jsonl` — provenance header, then one finding per line,
   stably sorted. This is the LLM-facing artifact.
-- `reports/summary.md` — clusters with counts and up to three examples each.
+- `reports/summary.md` — clusters with counts and up to three examples each,
+  then two sections that exist so the harness cannot check nothing quietly:
+  "Coverage deliberately not checked" (the excluded anchors, from
+  `anchors.EXCLUDED_ANCHORS`) and "Checks that are vacuous by construction"
+  (checks that run but cannot currently emit a finding, from
+  `inventory.inert_checks`). Both are derived, so neither can go stale
+  against the code.
 - `reports/never-observed.json` — named node types the corpus never produced.
 
 ## Detectors
@@ -104,15 +126,27 @@ is the only way to raise a count or admit a new cluster. This means a clean
 
 ## Self-tests
 
-A first `run --all` must report:
+A `run --all` must report:
 
-- gap clusters for `:=`, `record`, `field`, `tabledata`
-- dropped `operator` fields on `assignment_statement`, `assignment_expression`,
-  `is_expression`, `as_expression`
-- dropped-field findings on `xmlport_attribute` (`attribute_type`) and
-  `xmlport_element` (`element_type`)
+- gap clusters for `record`, `field`, `code`, `tabledata` — all still bare
+  `kw()` tokens, so their bytes still belong to no leaf
+- dropped `operator` fields on `is_expression` and `as_expression`
 
 If any is missing, the detector is broken — not the grammar.
+
+**This list shrank in 4.0.0, and the removals are the point.** The original
+version also required a `:=` gap cluster, dropped `operator` fields on
+`assignment_statement`/`assignment_expression`, and dropped-field findings on
+`xmlport_attribute`/`xmlport_element`. Those were the defects the harness was
+built to find; `37771f1` and `8c23096` fixed them, so requiring them now would
+report a correct grammar as a broken detector. `is_expression` and
+`as_expression` stay on the list because they are *deliberately* untouched —
+their node types already encode the operator, so nothing is recoverable that
+is not already there. `docs/query-coverage-findings.md` is the full record.
+
+The living version of this list is `tools/query_coverage/baseline.json`, which
+is the accepted state and is diffed on every run. Prefer it over this prose
+whenever the two disagree.
 
 ## Known limitations
 
@@ -128,8 +162,8 @@ structural assertions against expected trees, which is what `test/corpus/`
 provides.
 
 Detector 3's dynamic half is narrower than "every field": it flags a
-`required: true` field returning `None` on a real instance, which is 241 of
-the 392 field declarations in `src/node-types.json`. An *optional* field
+`required: true` field returning `None` on a real instance, which is 245 of
+the 396 field declarations in `src/node-types.json`. An *optional* field
 whose content is a `choice()` mixing visible and hidden alternatives passes
 the static check (its name is present in `node-types.json`) and is never
 examined by the dynamic one — that is the majority of the grammar's fields.
@@ -137,7 +171,7 @@ examined by the dynamic one — that is the majority of the grammar's fields.
 A named node type that stops being produced by anything in the corpus while
 staying declared in `src/node-types.json` is caught by the **corpus**
 detector. It works only for types this run's scope actually exercises: the
-manifest covers 357 of 391 named types, and the other 34 are already
+manifest covers 377 of 421 named types, and the other 44 are already
 never-observed (dead grammar or genuinely uncovered constructs) and stay
 that way regardless of what changes — see `reports/never-observed.json`.
 
