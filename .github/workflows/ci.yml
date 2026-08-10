@@ -12,6 +12,11 @@ on:
       - bindings/**
       - tools/**
       - binding.gyp
+      # The gate scripts themselves. Without these, editing validate-grammar.sh
+      # or parse-al-parallel.sh -- the two things the gate self-test exists to
+      # check -- would not trigger the job that checks them.
+      - validate-grammar.sh
+      - parse-al-parallel.sh
       - .github/workflows/ci.yml
   pull_request:
     paths:
@@ -22,6 +27,11 @@ on:
       - bindings/**
       - tools/**
       - binding.gyp
+      # The gate scripts themselves. Without these, editing validate-grammar.sh
+      # or parse-al-parallel.sh -- the two things the gate self-test exists to
+      # check -- would not trigger the job that checks them.
+      - validate-grammar.sh
+      - parse-al-parallel.sh
       - .github/workflows/ci.yml
 
 concurrency:
@@ -89,6 +99,53 @@ jobs:
 
       - name: Run harness unit tests
         run: python -m pytest tools/query_coverage/tests -q
+
+  gate-selftest:
+    # Mutation testing for the VALIDATION GATES, not for the grammar.
+    #
+    # Every other job here checks that the parser is right. This one checks that
+    # the things which check the parser can still say "no": it breaks something
+    # on purpose, runs the real gate end to end, and requires the gate to exit
+    # non-zero AND to name what was broken. A gate that fails for the wrong
+    # reason does not pass. See tools/gate_selftest.py for why this exists.
+    #
+    # It runs here rather than only inside validate-grammar.sh on purpose: a
+    # self-test that fires only when someone remembers to run the validator
+    # inherits the problem it is meant to solve.
+    #
+    # Note on coverage: the step5c-fieldwalk case SKIPS on a runner, because it
+    # needs the vendored tree-sitter runtime that bindings/c/build.sh fetches on
+    # demand and CI does not have. Skips are counted and printed separately from
+    # passes; they are never folded into the pass count.
+    name: Gate self-test
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v6
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.13'
+
+      - name: Set up tree-sitter
+        uses: tree-sitter/setup-action/cli@v2
+
+      # validate-grammar.sh Step 5d imports the query-coverage harness. Without
+      # its dependencies the step fails for an unrelated reason and every case
+      # that expects a clean run would fail with it.
+      - name: Install query-coverage dependencies
+        run: pip install -r tools/query_coverage/requirements.txt
+
+      - name: Check every degradation guard is justified
+        run: python tools/gate_selftest.py --sweep
+
+      - name: Prove the harness's own guards fire
+        run: python tools/gate_selftest.py --prove-guards
+
+      - name: Run the gate self-test
+        run: python tools/gate_selftest.py
 
   query:
     name: Validate queries

@@ -46,6 +46,14 @@ This has already happened once: a full-corpus run was backgrounded and `validate
 started while it was in flight. Both outputs were discarded and the gates re-run serially.
 If you are unsure whether a result was taken cleanly, it was not — re-run it.
 
+`python tools/gate_selftest.py` is a third caller to keep out of the way: most of
+its cases run `validate-grammar.sh` end to end, so each one reaches Step 5d. It
+runs its cases **serially**, and each runs inside its own scratch copy of the
+repo, so `reports/` and `baseline.json` resolve to that copy and the real ones
+are never touched — but do not start it alongside a `qc` run of your own. In CI
+and in scratch there is no `BC.History`, so Step 5d exits 2 and warns rather than
+running the corpus gate at all.
+
 ## Exit codes
 
 | Code | Meaning |

@@ -99,12 +99,22 @@ fi
 #   $WORK/manifest.tsv    "<path>\t<sha256-of-tree>" sorted by path
 build_trees() {
     local WORK="$1"
-    mkdir -p "$WORK/chunks" "$WORK/raw" "$WORK/idx" "$WORK/rc"
+    mkdir -p "$WORK/chunks" "$WORK/raw" "$WORK/idx" "$WORK/rc" "$WORK/err"
 
+    # KEEP THE TRAILING SLASH WHEN ROOT IS A SYMLINK OR NTFS JUNCTION.
+    # `find` does not descend into one named as a bare starting point, so
+    #   find BC.History  -name '*.al'  ->        0 files
+    #   find BC.History/ -name '*.al'  ->   15,358 files
+    # Measured in a worktree where BC.History is a junction. The `die` below is
+    # what stops that from becoming a silent pass; parse-al-parallel.sh printed
+    # a warning and exited 0 in the same situation until it was given the same
+    # guard. Python `rglob` is unaffected, so `qc` sees the files either way --
+    # which is exactly how the two gates can disagree about the same corpus.
     find "$ROOT" -name '*.al' -type f | LC_ALL=C sort > "$WORK/master.txt"
     local count
     count=$(wc -l < "$WORK/master.txt")
-    [ "$count" -gt 0 ] || die "no *.al files under '$ROOT'"
+    [ "$count" -gt 0 ] \
+        || die "no *.al files under '$ROOT'$([ -L "${ROOT%/}" ] && echo " -- it is a symlink/junction; retry as '${ROOT%/}/'")"
     echo "tree-harness: $count files, $NUM_THREADS threads, chunk $CHUNK_SIZE" >&2
 
     # Build the parser once, serially, before fanning out. tree-sitter locks its
@@ -122,11 +132,31 @@ build_trees() {
     # tree-sitter is NORMAL here (it reports failure when any file has an ERROR
     # node), so the status is recorded for diagnostics rather than acted on; the
     # per-chunk tree count below is what actually decides whether a chunk is good.
+    #
+    # STDERR MUST NOT JOIN THE TREES. `$WORK/raw/$base` is the hashed byte
+    # stream: tree_blob.py splits it on `(source_file` and a tree runs to the
+    # byte before the next one, so anything else written to that stream lands
+    # INSIDE some tree's byte range and is both hashed and extracted. This used
+    # to be `2>&1`.
+    #
+    # It is not a theoretical tidiness point. tree-sitter's per-file diagnostic
+    # for a failing parse carries a TIMING:
+    #
+    #     …Foo.al   Parse:  0.15 ms   675 bytes/ms   (ERROR [4, 8] - [4, 11])
+    #
+    # so a tree that swallowed one hashed differently on every run, and the
+    # harness reported a MISMATCH for files nobody had touched. Dormant on a
+    # corpus with 0 errors — which is why BC.History never showed it — and
+    # false-dirty rather than false-clean, but it makes any ERROR-containing
+    # fixture flap, and a fixture whose hash changes run to run is not a
+    # fixture.
+    #
+    # Diagnostics are kept, in $WORK/err, and reported beside a short chunk.
     process_chunk() {
         local chunk="$1"
         local base rc=0
         base=${chunk##*/}
-        tree-sitter parse --paths "$chunk" > "$WORK/raw/$base" 2>&1 || rc=$?
+        tree-sitter parse --paths "$chunk" > "$WORK/raw/$base" 2> "$WORK/err/$base" || rc=$?
         if ! "$PYTHON" "$TREE_BLOB" index "$WORK/raw/$base" > "$WORK/idx/$base"; then
             echo "index-failed(parse rc=$rc)" > "$WORK/rc/$base"
         else
@@ -186,11 +216,14 @@ build_trees() {
         }
         preserve "$WORK/chunks/$base" "$keep/filelist.txt"
         preserve "$WORK/raw/$base"    "$keep/raw-output.txt"
+        preserve "$WORK/err/$base"    "$keep/stderr.txt"
         preserve "$WORK/rc/$base"     "$keep/tree-sitter-status.txt"
         {
             echo "tree-harness: chunk $base produced $got trees for $expected files"
             echo "tree-harness:   tree-sitter status: $(cat "$WORK/rc/$base" || echo '<none recorded>')"
-            echo "tree-harness:   file list, raw output and status preserved in $keep"
+            echo "tree-harness:   file list, raw output, stderr and status preserved in $keep"
+            echo "tree-harness:   stderr:"
+            head -n 5 "$WORK/err/$base" 2>&1 | sed 's/^/tree-harness:     /' || true
             echo "tree-harness:   first lines of raw output:"
             head -n 5 "$WORK/raw/$base" 2>&1 | sed 's/^/tree-harness:     /' || true
         } >&2

@@ -45,6 +45,12 @@ dist/
 /developer
 /.vscode
 *.al
+# ...except the gate self-test's own corpus. `*.al` above exists to keep test
+# corpora (BC.History, DC) out of the repo, but tools/gate_selftest.py needs a
+# handful of committed AL files to run in CI, where BC.History does not exist.
+# Without this negation they are silently untracked, a fresh clone has no
+# corpus, and every case that parses AL dies as a harness fault.
+!tools/gate-fixtures/al-corpus/*.al
 *.ps1
 *.log
 log.html

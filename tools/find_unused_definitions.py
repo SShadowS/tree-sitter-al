@@ -413,11 +413,23 @@ def main():
     if not args.json:
         json_report = analyzer.generate_report(format='json', threshold=args.threshold)
         json_path = grammar_path.parent / 'grammar_analysis.json'
+        # This is a WRITE INTO THE REPO by a tool everyone assumes is read-only:
+        # validate-grammar.sh Step 4 runs it on every validation, and the file
+        # only escapes notice because .gitignore hides it.
+        #
+        # It used to be wrapped in `except Exception: pass`. Nothing here can
+        # affect the analysis -- the report is generated and printed above, and
+        # only the write is guarded -- but a bare swallow in a gate's toolchain
+        # is not acceptable regardless, and a disk that has stopped accepting
+        # writes is worth one line of output. Narrowed to what a write can
+        # actually raise, and it says so instead of vanishing.
         try:
             json_path.write_text(json_report, encoding='utf-8')
             print(f"\nDetailed JSON report saved to {json_path}")
-        except Exception:
-            pass  # Silent fail for JSON backup
+        except OSError as exc:
+            print(f"\nWARNING: could not write {json_path}: {exc}", file=sys.stderr)
+            print("(the analysis above is unaffected; only the JSON copy failed)",
+                  file=sys.stderr)
 
 
 if __name__ == '__main__':
