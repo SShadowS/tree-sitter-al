@@ -228,6 +228,15 @@ def cmd_run(args) -> int:
 
     baseline_path = repo_root / args.baseline
     manifest_digest = corpus.manifest_hash(entries)
+    # Loaded unconditionally, not just inside the `else` below: apply_ratchet
+    # near the bottom of this function needs `base` whenever diff.ratcheted is
+    # non-empty. That never happens on the full-corpus branch today (an empty
+    # baseline.Diff() always has an empty .ratcheted), but that is an
+    # invariant a reader has to trace through two branches to see, and a type
+    # checker can't see it at all -- it flags `base` as possibly unbound.
+    # Loading it here is cheap (one small JSON read) and makes the binding
+    # unconditional instead of relying on that invariant staying true.
+    base = baseline.load(baseline_path) or baseline.Baseline(manifest_hash=manifest_digest)
 
     # A full-corpus sweep is a pure reporting pass: its counts are never
     # diffed against the manifest baseline (see the refusal above, which
@@ -235,7 +244,6 @@ def cmd_run(args) -> int:
     if args.full_corpus:
         diff = baseline.Diff()
     else:
-        base = baseline.load(baseline_path) or baseline.Baseline(manifest_hash=manifest_digest)
         if base.manifest_hash != manifest_digest and not args.all:
             print(
                 "baseline was accepted under a different manifest; run `accept` after `select`",

@@ -81,5 +81,6 @@ def test_accept_excludes_informational_detector_clusters(tmp_path: Path):
 
     assert code == baseline.EXIT_OK
     saved = baseline.load(baseline_path)
+    assert saved is not None
     assert saved.counts.get("gaps|x|y") == 1
     assert "shipped_queries|uncaptured|=" not in saved.counts
