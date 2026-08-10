@@ -20,9 +20,30 @@
 // --------------------------------------------------------------
 //  1. Cursor, not `parse -c` — see above.
 //  2. Anonymous children are recorded as the literal `(anon)`, never their
-//     text. That keeps the edge-kind vocabulary BOUNDED (~912 kinds on
-//     BC.History); recording the text would explode it into one kind per
-//     distinct token and drown the signal.
+//     text. That keeps the edge-kind vocabulary BOUNDED (912 kinds on
+//     BC.History); recording the text would grow it by one kind per distinct
+//     token per field.
+//
+//     THIS IS WHY THIS TOOL AND detectors/edges.py REPORT DIFFERENT KIND
+//     COUNTS ON THE SAME INPUT, and neither is wrong. edges.py keys anonymous
+//     children by `child.type`, i.e. the token text, deliberately -- it wants
+//     `(additive_expression, operator, "+")` and `…"-"` to be separate kinds,
+//     because telling `+` from `-` in an operator field is its whole job.
+//     Reconciled exactly on 2de0825 over BC.History, both at 13,339,003
+//     fielded edges and 35,601,750 nodes:
+//
+//       907 named-child kinds -- IDENTICAL in both
+//       +  5  this tool: one `(anon)` bucket per (parent, field)   = 912
+//       + 13  edges.py:  one kind per distinct token               = 920
+//
+//     The +8 is four operator fields splitting:
+//       additive_expression.operator        +1   '+' '-'
+//       logical_expression.operator         +2   'and' 'or' 'xor'
+//       multiplicative_expression.operator  +3   '*' '/' 'div' 'mod'
+//       unary_expression.operator           +2   '+' '-' 'not'
+//
+//     Do NOT "reconcile" them by changing either rule. Quote 912 for this
+//     tool and 920 for edges.py, and never mix the two in one comparison.
 //  3. **The hash table hard-exits if it fills.** It must. Silent truncation
 //     would emit a SMALLER, entirely plausible census — a green reading from a
 //     broken instrument, which is the exact failure mode this tool exists to
