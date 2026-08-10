@@ -37,6 +37,7 @@ pageextension 5890 ServiceLedgerEntries extends "Service Ledger Entries"
             target: (identifier)
             body: (action_body
               (action_declaration
+                (action_keyword)
                 name: (identifier)
                 body: (declaration_body
                   (property
@@ -106,6 +107,7 @@ page 50100 "Test Page"
             type: (processing_keyword)
             body: (action_body
               (action_declaration
+                (action_keyword)
                 name: (identifier)
                 body: (declaration_body
                   (property
@@ -117,6 +119,7 @@ page 50100 "Test Page"
                       (query_keyword)
                       (integer)))))
               (action_declaration
+                (action_keyword)
                 name: (identifier)
                 body: (declaration_body
                   (property
@@ -128,6 +131,7 @@ page 50100 "Test Page"
                       (query_keyword)
                       (identifier)))))
               (action_declaration
+                (action_keyword)
                 name: (identifier)
                 body: (declaration_body
                   (property
@@ -203,6 +207,7 @@ codeunit 50100 "RunObject Examples"
               name: (identifier)
               type: (type_specification
                 (record_type
+                  (record_keyword)
                   reference: (quoted_identifier))))))
         body: (code_block
           (begin_keyword)

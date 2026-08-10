@@ -47,7 +47,8 @@ codeunit 50000 "Test Codeunit"
               (variable_declaration
                 name: (identifier)
                 type: (type_specification
-                  (text_type)))))
+                  (text_type
+                    (text_keyword))))))
           (preproc_endif
             (preproc_close)))
         body: (code_block

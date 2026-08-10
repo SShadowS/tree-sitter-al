@@ -20,6 +20,7 @@ interface "Test Interface"
         (interface_procedure_suffix
           return_type: (type_specification
             (code_type
+              (code_keyword)
               length: (integer))))))))
 
 ================================================================================
@@ -71,13 +72,15 @@ interface "Reminder Action"
         (interface_procedure_suffix
           return_type: (type_specification
             (code_type
+              (code_keyword)
               length: (integer)))))
       (interface_procedure
         (procedure_keyword)
         name: (identifier)
         (interface_procedure_suffix
           return_type: (type_specification
-            (text_type))))
+            (text_type
+              (text_keyword)))))
       (interface_procedure
         (procedure_keyword)
         name: (identifier)
@@ -86,11 +89,13 @@ interface "Reminder Action"
             name: (identifier)
             type: (type_specification
               (code_type
+                (code_keyword)
                 length: (integer))))
           (parameter
             name: (identifier)
             type: (type_specification
               (code_type
+                (code_keyword)
                 length: (integer)))))
         (interface_procedure_suffix
           return_type: (type_specification
@@ -101,6 +106,7 @@ interface "Reminder Action"
         (interface_procedure_suffix
           return_type: (type_specification
             (text_type
+              (text_keyword)
               length: (integer)))))
       (interface_procedure
         (procedure_keyword)
@@ -108,6 +114,7 @@ interface "Reminder Action"
         (interface_procedure_suffix
           return_type: (type_specification
             (code_type
+              (code_keyword)
               length: (integer))))))))
 
 ================================================================================
@@ -135,6 +142,7 @@ interface "Complex Interface"
           return_value: (identifier)
           return_type: (type_specification
             (code_type
+              (code_keyword)
               length: (integer)))))
       (interface_procedure
         (procedure_keyword)
@@ -143,6 +151,7 @@ interface "Complex Interface"
           return_value: (identifier)
           return_type: (type_specification
             (text_type
+              (text_keyword)
               length: (integer)))))
       (interface_procedure
         (procedure_keyword)
@@ -183,6 +192,7 @@ interface "Type Examples"
         (interface_procedure_suffix
           return_type: (type_specification
             (code_type
+              (code_keyword)
               length: (integer)))))
       (interface_procedure
         (procedure_keyword)
@@ -190,6 +200,7 @@ interface "Type Examples"
         (interface_procedure_suffix
           return_type: (type_specification
             (text_type
+              (text_keyword)
               length: (integer)))))
       (interface_procedure
         (procedure_keyword)
@@ -202,7 +213,8 @@ interface "Type Examples"
         name: (identifier)
         (interface_procedure_suffix
           return_type: (type_specification
-            (option_type))))
+            (option_type
+              (option_keyword)))))
       (interface_procedure
         (procedure_keyword)
         name: (identifier)
@@ -287,13 +299,15 @@ interface "Reminder Action"
         (interface_procedure_suffix
           return_type: (type_specification
             (code_type
+              (code_keyword)
               length: (integer)))))
       (interface_procedure
         (procedure_keyword)
         name: (identifier)
         (interface_procedure_suffix
           return_type: (type_specification
-            (text_type))))
+            (text_type
+              (text_keyword)))))
       (interface_procedure
         (procedure_keyword)
         name: (identifier)
@@ -302,11 +316,13 @@ interface "Reminder Action"
             name: (identifier)
             type: (type_specification
               (code_type
+                (code_keyword)
                 length: (integer))))
           (parameter
             name: (identifier)
             type: (type_specification
               (code_type
+                (code_keyword)
                 length: (integer)))))
         (interface_procedure_suffix
           return_type: (type_specification

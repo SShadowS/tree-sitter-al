@@ -68,10 +68,12 @@ table 50100 "My Test Table"
         (fields_keyword)
         (fields_body
           (field_declaration
+            (field_keyword)
             (integer)
             (quoted_identifier)
             (type_specification
               (code_type
+                (code_keyword)
                 (integer)))
             (declaration_body
               (property
@@ -81,16 +83,19 @@ table 50100 "My Test Table"
                 (property_name)
                 (identifier))))
           (field_declaration
+            (field_keyword)
             (integer)
             (identifier)
             (type_specification
               (text_type
+                (text_keyword)
                 (integer)))
             (declaration_body
               (property
                 (property_name)
                 (string_literal))))
           (field_declaration
+            (field_keyword)
             (integer)
             (identifier)
             (type_specification
@@ -141,7 +146,8 @@ table 50100 "My Test Table"
           (parameter
             (identifier)
             (type_specification
-              (text_type))))
+              (text_type
+                (text_keyword)))))
         (type_specification
           (basic_type))
         (code_block

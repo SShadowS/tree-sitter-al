@@ -35,6 +35,7 @@ page 50000 TestPage
             name: (identifier)
             type: (type_specification
               (option_type
+                (option_keyword)
                 (option_member_list
                   (option_member
                     (identifier))
@@ -46,6 +47,7 @@ page 50000 TestPage
             name: (identifier)
             type: (type_specification
               (text_type
+                (text_keyword)
                 length: (integer))))
           (variable_declaration
             name: (identifier)
@@ -89,16 +91,19 @@ codeunit 50000 TestVariableNames
           (variable_declaration
             name: (identifier)
             type: (type_specification
-              (text_type)))
+              (text_type
+                (text_keyword))))
           (variable_declaration
             name: (identifier)
             type: (type_specification
               (code_type
+                (code_keyword)
                 length: (integer))))
           (variable_declaration
             name: (identifier)
             type: (type_specification
               (option_type
+                (option_keyword)
                 (option_member_list
                   (option_member
                     (identifier))
@@ -108,6 +113,7 @@ codeunit 50000 TestVariableNames
             name: (identifier)
             type: (type_specification
               (text_type
+                (text_keyword)
                 length: (integer))))
           (variable_declaration
             name: (identifier)
@@ -159,6 +165,7 @@ table 50000 TestTable
         (fields_keyword)
         body: (fields_body
           (field_declaration
+            (field_keyword)
             id: (integer)
             name: (identifier)
             type: (type_specification
@@ -169,7 +176,8 @@ table 50000 TestTable
           (variable_declaration
             name: (identifier)
             type: (type_specification
-              (text_type)))
+              (text_type
+                (text_keyword))))
           (variable_declaration
             name: (identifier)
             type: (type_specification
@@ -178,6 +186,7 @@ table 50000 TestTable
             name: (identifier)
             type: (type_specification
               (code_type
+                (code_keyword)
                 length: (integer))))
           (variable_declaration
             name: (identifier)

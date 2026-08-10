@@ -5234,11 +5234,8 @@
       "type": "SEQ",
       "members": [
         {
-          "type": "TOKEN",
-          "content": {
-            "type": "PATTERN",
-            "value": "(?i)field"
-          }
+          "type": "SYMBOL",
+          "name": "field_keyword"
         },
         {
           "type": "STRING",
@@ -5994,11 +5991,8 @@
             "type": "SEQ",
             "members": [
               {
-                "type": "TOKEN",
-                "content": {
-                  "type": "PATTERN",
-                  "value": "(?i)text"
-                }
+                "type": "SYMBOL",
+                "name": "text_keyword"
               },
               {
                 "type": "STRING",
@@ -6023,11 +6017,8 @@
           "type": "PREC",
           "value": 10,
           "content": {
-            "type": "TOKEN",
-            "content": {
-              "type": "PATTERN",
-              "value": "(?i)text"
-            }
+            "type": "SYMBOL",
+            "name": "text_keyword"
           }
         }
       ]
@@ -6042,11 +6033,8 @@
             "type": "SEQ",
             "members": [
               {
-                "type": "TOKEN",
-                "content": {
-                  "type": "PATTERN",
-                  "value": "(?i)code"
-                }
+                "type": "SYMBOL",
+                "name": "code_keyword"
               },
               {
                 "type": "STRING",
@@ -6071,11 +6059,8 @@
           "type": "PREC",
           "value": 10,
           "content": {
-            "type": "TOKEN",
-            "content": {
-              "type": "PATTERN",
-              "value": "(?i)code"
-            }
+            "type": "SYMBOL",
+            "name": "code_keyword"
           }
         }
       ]
@@ -6087,11 +6072,8 @@
         "type": "SEQ",
         "members": [
           {
-            "type": "TOKEN",
-            "content": {
-              "type": "PATTERN",
-              "value": "(?i)option"
-            }
+            "type": "SYMBOL",
+            "name": "option_keyword"
           },
           {
             "type": "CHOICE",
@@ -6118,11 +6100,8 @@
             "type": "PREC",
             "value": 1,
             "content": {
-              "type": "TOKEN",
-              "content": {
-                "type": "PATTERN",
-                "value": "(?i)record"
-              }
+              "type": "SYMBOL",
+              "name": "record_keyword"
             }
           },
           {
@@ -6431,11 +6410,8 @@
           "type": "PREC",
           "value": 1,
           "content": {
-            "type": "TOKEN",
-            "content": {
-              "type": "PATTERN",
-              "value": "(?i)array"
-            }
+            "type": "SYMBOL",
+            "name": "array_keyword"
           }
         },
         {
@@ -6475,11 +6451,8 @@
           "value": "]"
         },
         {
-          "type": "TOKEN",
-          "content": {
-            "type": "PATTERN",
-            "value": "(?i)of"
-          }
+          "type": "SYMBOL",
+          "name": "of_keyword"
         },
         {
           "type": "FIELD",
@@ -6495,18 +6468,12 @@
       "type": "SEQ",
       "members": [
         {
-          "type": "TOKEN",
-          "content": {
-            "type": "PATTERN",
-            "value": "(?i)list"
-          }
+          "type": "SYMBOL",
+          "name": "list_keyword"
         },
         {
-          "type": "TOKEN",
-          "content": {
-            "type": "PATTERN",
-            "value": "(?i)of"
-          }
+          "type": "SYMBOL",
+          "name": "of_keyword"
         },
         {
           "type": "STRING",
@@ -6530,18 +6497,12 @@
       "type": "SEQ",
       "members": [
         {
-          "type": "TOKEN",
-          "content": {
-            "type": "PATTERN",
-            "value": "(?i)dictionary"
-          }
+          "type": "SYMBOL",
+          "name": "dictionary_keyword"
         },
         {
-          "type": "TOKEN",
-          "content": {
-            "type": "PATTERN",
-            "value": "(?i)of"
-          }
+          "type": "SYMBOL",
+          "name": "of_keyword"
         },
         {
           "type": "STRING",
@@ -8052,11 +8013,8 @@
       "type": "SEQ",
       "members": [
         {
-          "type": "TOKEN",
-          "content": {
-            "type": "PATTERN",
-            "value": "(?i)field"
-          }
+          "type": "SYMBOL",
+          "name": "field_keyword"
         },
         {
           "type": "STRING",
@@ -8506,11 +8464,8 @@
       "type": "SEQ",
       "members": [
         {
-          "type": "TOKEN",
-          "content": {
-            "type": "PATTERN",
-            "value": "(?i)field"
-          }
+          "type": "SYMBOL",
+          "name": "field_keyword"
         },
         {
           "type": "STRING",
@@ -8546,11 +8501,8 @@
       "type": "SEQ",
       "members": [
         {
-          "type": "TOKEN",
-          "content": {
-            "type": "PATTERN",
-            "value": "(?i)field"
-          }
+          "type": "SYMBOL",
+          "name": "field_keyword"
         },
         {
           "type": "STRING",
@@ -9398,11 +9350,8 @@
       "type": "SEQ",
       "members": [
         {
-          "type": "TOKEN",
-          "content": {
-            "type": "PATTERN",
-            "value": "(?i)action"
-          }
+          "type": "SYMBOL",
+          "name": "action_keyword"
         },
         {
           "type": "STRING",
@@ -9450,11 +9399,8 @@
       "type": "SEQ",
       "members": [
         {
-          "type": "TOKEN",
-          "content": {
-            "type": "PATTERN",
-            "value": "(?i)separator"
-          }
+          "type": "SYMBOL",
+          "name": "separator_keyword"
         },
         {
           "type": "CHOICE",
@@ -9515,11 +9461,8 @@
       "type": "SEQ",
       "members": [
         {
-          "type": "TOKEN",
-          "content": {
-            "type": "PATTERN",
-            "value": "(?i)actionref"
-          }
+          "type": "SYMBOL",
+          "name": "actionref_keyword"
         },
         {
           "type": "STRING",
@@ -9579,11 +9522,8 @@
       "type": "SEQ",
       "members": [
         {
-          "type": "TOKEN",
-          "content": {
-            "type": "PATTERN",
-            "value": "(?i)systemaction"
-          }
+          "type": "SYMBOL",
+          "name": "systemaction_keyword"
         },
         {
           "type": "STRING",
@@ -9631,11 +9571,8 @@
       "type": "SEQ",
       "members": [
         {
-          "type": "TOKEN",
-          "content": {
-            "type": "PATTERN",
-            "value": "(?i)fileuploadaction"
-          }
+          "type": "SYMBOL",
+          "name": "fileuploadaction_keyword"
         },
         {
           "type": "STRING",
@@ -9683,11 +9620,8 @@
       "type": "SEQ",
       "members": [
         {
-          "type": "TOKEN",
-          "content": {
-            "type": "PATTERN",
-            "value": "(?i)customaction"
-          }
+          "type": "SYMBOL",
+          "name": "customaction_keyword"
         },
         {
           "type": "STRING",
@@ -20302,6 +20236,162 @@
       },
       "named": false,
       "value": "public"
+    },
+    "record_keyword": {
+      "type": "ALIAS",
+      "content": {
+        "type": "TOKEN",
+        "content": {
+          "type": "PATTERN",
+          "value": "(?i)record"
+        }
+      },
+      "named": false,
+      "value": "record"
+    },
+    "code_keyword": {
+      "type": "ALIAS",
+      "content": {
+        "type": "TOKEN",
+        "content": {
+          "type": "PATTERN",
+          "value": "(?i)code"
+        }
+      },
+      "named": false,
+      "value": "code"
+    },
+    "text_keyword": {
+      "type": "ALIAS",
+      "content": {
+        "type": "TOKEN",
+        "content": {
+          "type": "PATTERN",
+          "value": "(?i)text"
+        }
+      },
+      "named": false,
+      "value": "text"
+    },
+    "option_keyword": {
+      "type": "ALIAS",
+      "content": {
+        "type": "TOKEN",
+        "content": {
+          "type": "PATTERN",
+          "value": "(?i)option"
+        }
+      },
+      "named": false,
+      "value": "option"
+    },
+    "array_keyword": {
+      "type": "ALIAS",
+      "content": {
+        "type": "TOKEN",
+        "content": {
+          "type": "PATTERN",
+          "value": "(?i)array"
+        }
+      },
+      "named": false,
+      "value": "array"
+    },
+    "list_keyword": {
+      "type": "ALIAS",
+      "content": {
+        "type": "TOKEN",
+        "content": {
+          "type": "PATTERN",
+          "value": "(?i)list"
+        }
+      },
+      "named": false,
+      "value": "list"
+    },
+    "dictionary_keyword": {
+      "type": "ALIAS",
+      "content": {
+        "type": "TOKEN",
+        "content": {
+          "type": "PATTERN",
+          "value": "(?i)dictionary"
+        }
+      },
+      "named": false,
+      "value": "dictionary"
+    },
+    "action_keyword": {
+      "type": "ALIAS",
+      "content": {
+        "type": "TOKEN",
+        "content": {
+          "type": "PATTERN",
+          "value": "(?i)action"
+        }
+      },
+      "named": false,
+      "value": "action"
+    },
+    "actionref_keyword": {
+      "type": "ALIAS",
+      "content": {
+        "type": "TOKEN",
+        "content": {
+          "type": "PATTERN",
+          "value": "(?i)actionref"
+        }
+      },
+      "named": false,
+      "value": "actionref"
+    },
+    "systemaction_keyword": {
+      "type": "ALIAS",
+      "content": {
+        "type": "TOKEN",
+        "content": {
+          "type": "PATTERN",
+          "value": "(?i)systemaction"
+        }
+      },
+      "named": false,
+      "value": "systemaction"
+    },
+    "fileuploadaction_keyword": {
+      "type": "ALIAS",
+      "content": {
+        "type": "TOKEN",
+        "content": {
+          "type": "PATTERN",
+          "value": "(?i)fileuploadaction"
+        }
+      },
+      "named": false,
+      "value": "fileuploadaction"
+    },
+    "customaction_keyword": {
+      "type": "ALIAS",
+      "content": {
+        "type": "TOKEN",
+        "content": {
+          "type": "PATTERN",
+          "value": "(?i)customaction"
+        }
+      },
+      "named": false,
+      "value": "customaction"
+    },
+    "separator_keyword": {
+      "type": "ALIAS",
+      "content": {
+        "type": "TOKEN",
+        "content": {
+          "type": "PATTERN",
+          "value": "(?i)separator"
+        }
+      },
+      "named": false,
+      "value": "separator"
     },
     "_identifier_or_quoted": {
       "type": "CHOICE",

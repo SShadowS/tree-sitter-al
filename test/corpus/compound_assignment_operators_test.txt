@@ -48,7 +48,8 @@ codeunit 123 "Test Compound Assignment"
             (variable_declaration
               name: (identifier)
               type: (type_specification
-                (text_type)))))
+                (text_type
+                  (text_keyword))))))
         body: (code_block
           (begin_keyword)
           body: (statement_block

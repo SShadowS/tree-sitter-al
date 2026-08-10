@@ -87,10 +87,12 @@ tableextension 50001 "Mixed Extension" extends "Base Table"
         (fields_keyword)
         body: (fields_body
           (field_declaration
+            (field_keyword)
             id: (integer)
             name: (quoted_identifier)
             type: (type_specification
               (text_type
+                (text_keyword)
                 length: (integer)))
             body: (declaration_body
               (property

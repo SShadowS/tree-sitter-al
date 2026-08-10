@@ -182,6 +182,16 @@
           }
         ]
       }
+    },
+    "children": {
+      "multiple": false,
+      "required": true,
+      "types": [
+        {
+          "type": "action_keyword",
+          "named": true
+        }
+      ]
     }
   },
   {
@@ -396,6 +406,11 @@
     }
   },
   {
+    "type": "action_keyword",
+    "named": true,
+    "fields": {}
+  },
+  {
     "type": "actionref_declaration",
     "named": true,
     "fields": {
@@ -437,7 +452,22 @@
           }
         ]
       }
+    },
+    "children": {
+      "multiple": false,
+      "required": true,
+      "types": [
+        {
+          "type": "actionref_keyword",
+          "named": true
+        }
+      ]
     }
+  },
+  {
+    "type": "actionref_keyword",
+    "named": true,
+    "fields": {}
   },
   {
     "type": "actions_keyword",
@@ -1680,6 +1710,11 @@
     }
   },
   {
+    "type": "array_keyword",
+    "named": true,
+    "fields": {}
+  },
+  {
     "type": "array_type",
     "named": true,
     "fields": {
@@ -1703,6 +1738,20 @@
           }
         ]
       }
+    },
+    "children": {
+      "multiple": true,
+      "required": true,
+      "types": [
+        {
+          "type": "array_keyword",
+          "named": true
+        },
+        {
+          "type": "of_keyword",
+          "named": true
+        }
+      ]
     }
   },
   {
@@ -3454,6 +3503,11 @@
     }
   },
   {
+    "type": "code_keyword",
+    "named": true,
+    "fields": {}
+  },
+  {
     "type": "code_type",
     "named": true,
     "fields": {
@@ -3467,6 +3521,16 @@
           }
         ]
       }
+    },
+    "children": {
+      "multiple": false,
+      "required": true,
+      "types": [
+        {
+          "type": "code_keyword",
+          "named": true
+        }
+      ]
     }
   },
   {
@@ -4082,7 +4146,22 @@
           }
         ]
       }
+    },
+    "children": {
+      "multiple": false,
+      "required": true,
+      "types": [
+        {
+          "type": "customaction_keyword",
+          "named": true
+        }
+      ]
     }
+  },
+  {
+    "type": "customaction_keyword",
+    "named": true,
+    "fields": {}
   },
   {
     "type": "customizes_keyword",
@@ -4471,6 +4550,11 @@
     }
   },
   {
+    "type": "dictionary_keyword",
+    "named": true,
+    "fields": {}
+  },
+  {
     "type": "dictionary_type",
     "named": true,
     "fields": {
@@ -4494,6 +4578,20 @@
           }
         ]
       }
+    },
+    "children": {
+      "multiple": true,
+      "required": true,
+      "types": [
+        {
+          "type": "dictionary_keyword",
+          "named": true
+        },
+        {
+          "type": "of_keyword",
+          "named": true
+        }
+      ]
     }
   },
   {
@@ -5141,8 +5239,12 @@
     },
     "children": {
       "multiple": true,
-      "required": false,
+      "required": true,
       "types": [
+        {
+          "type": "field_keyword",
+          "named": true
+        },
         {
           "type": "preproc_pragma_only",
           "named": true
@@ -5387,7 +5489,22 @@
           }
         ]
       }
+    },
+    "children": {
+      "multiple": false,
+      "required": true,
+      "types": [
+        {
+          "type": "fileuploadaction_keyword",
+          "named": true
+        }
+      ]
     }
+  },
+  {
+    "type": "fileuploadaction_keyword",
+    "named": true,
+    "fields": {}
   },
   {
     "type": "filter_keyword",
@@ -8621,6 +8738,11 @@
     }
   },
   {
+    "type": "list_keyword",
+    "named": true,
+    "fields": {}
+  },
+  {
     "type": "list_literal",
     "named": true,
     "fields": {},
@@ -8765,6 +8887,20 @@
           }
         ]
       }
+    },
+    "children": {
+      "multiple": true,
+      "required": true,
+      "types": [
+        {
+          "type": "list_keyword",
+          "named": true
+        },
+        {
+          "type": "of_keyword",
+          "named": true
+        }
+      ]
     }
   },
   {
@@ -9958,6 +10094,11 @@
     "fields": {}
   },
   {
+    "type": "option_keyword",
+    "named": true,
+    "fields": {}
+  },
+  {
     "type": "option_member",
     "named": true,
     "fields": {},
@@ -10028,9 +10169,13 @@
     "named": true,
     "fields": {},
     "children": {
-      "multiple": false,
-      "required": false,
+      "multiple": true,
+      "required": true,
       "types": [
+        {
+          "type": "option_keyword",
+          "named": true
+        },
         {
           "type": "option_member_list",
           "named": true
@@ -10276,6 +10421,16 @@
           }
         ]
       }
+    },
+    "children": {
+      "multiple": false,
+      "required": true,
+      "types": [
+        {
+          "type": "field_keyword",
+          "named": true
+        }
+      ]
     }
   },
   {
@@ -16212,6 +16367,10 @@
       "required": true,
       "types": [
         {
+          "type": "field_keyword",
+          "named": true
+        },
+        {
           "type": "preproc_elif",
           "named": true
         },
@@ -19454,6 +19613,10 @@
       "required": true,
       "types": [
         {
+          "type": "field_keyword",
+          "named": true
+        },
+        {
           "type": "preproc_elif",
           "named": true
         },
@@ -20618,6 +20781,11 @@
     }
   },
   {
+    "type": "record_keyword",
+    "named": true,
+    "fields": {}
+  },
+  {
     "type": "record_type",
     "named": true,
     "fields": {
@@ -20641,9 +20809,13 @@
       }
     },
     "children": {
-      "multiple": false,
-      "required": false,
+      "multiple": true,
+      "required": true,
       "types": [
+        {
+          "type": "record_keyword",
+          "named": true
+        },
         {
           "type": "temporary_keyword",
           "named": true
@@ -21546,7 +21718,22 @@
           }
         ]
       }
+    },
+    "children": {
+      "multiple": false,
+      "required": true,
+      "types": [
+        {
+          "type": "separator_keyword",
+          "named": true
+        }
+      ]
     }
+  },
+  {
+    "type": "separator_keyword",
+    "named": true,
+    "fields": {}
   },
   {
     "type": "signed_integer_list",
@@ -22375,7 +22562,22 @@
           }
         ]
       }
+    },
+    "children": {
+      "multiple": false,
+      "required": true,
+      "types": [
+        {
+          "type": "systemaction_keyword",
+          "named": true
+        }
+      ]
     }
+  },
+  {
+    "type": "systemaction_keyword",
+    "named": true,
+    "fields": {}
   },
   {
     "type": "systemactions_keyword",
@@ -23103,6 +23305,11 @@
     "fields": {}
   },
   {
+    "type": "text_keyword",
+    "named": true,
+    "fields": {}
+  },
+  {
     "type": "text_type",
     "named": true,
     "fields": {
@@ -23116,6 +23323,16 @@
           }
         ]
       }
+    },
+    "children": {
+      "multiple": false,
+      "required": true,
+      "types": [
+        {
+          "type": "text_keyword",
+          "named": true
+        }
+      ]
     }
   },
   {
@@ -25402,6 +25619,14 @@
     "named": false
   },
   {
+    "type": "action",
+    "named": false
+  },
+  {
+    "type": "actionref",
+    "named": false
+  },
+  {
     "type": "actions",
     "named": false
   },
@@ -25426,6 +25651,10 @@
     "named": false
   },
   {
+    "type": "array",
+    "named": false
+  },
+  {
     "type": "asserterror",
     "named": false
   },
@@ -25447,6 +25676,10 @@
   },
   {
     "type": "case",
+    "named": false
+  },
+  {
+    "type": "code",
     "named": false
   },
   {
@@ -25487,6 +25720,10 @@
     "named": false
   },
   {
+    "type": "customaction",
+    "named": false
+  },
+  {
     "type": "customizes",
     "named": false
   },
@@ -25509,6 +25746,10 @@
   {
     "type": "decimal",
     "named": true
+  },
+  {
+    "type": "dictionary",
+    "named": false
   },
   {
     "type": "div",
@@ -25599,6 +25840,10 @@
     "named": false
   },
   {
+    "type": "fileuploadaction",
+    "named": false
+  },
+  {
     "type": "filter",
     "named": false
   },
@@ -25663,6 +25908,10 @@
     "named": false
   },
   {
+    "type": "list",
+    "named": false
+  },
+  {
     "type": "local",
     "named": false
   },
@@ -25689,6 +25938,10 @@
   },
   {
     "type": "of",
+    "named": false
+  },
+  {
+    "type": "option",
     "named": false
   },
   {
@@ -25825,6 +26078,10 @@
     "named": true
   },
   {
+    "type": "record",
+    "named": false
+  },
+  {
     "type": "rendering",
     "named": false
   },
@@ -25865,8 +26122,16 @@
     "named": false
   },
   {
+    "type": "separator",
+    "named": false
+  },
+  {
     "type": "string_literal",
     "named": true
+  },
+  {
+    "type": "systemaction",
+    "named": false
   },
   {
     "type": "systemactions",
@@ -25898,6 +26163,10 @@
   },
   {
     "type": "testrequestpage",
+    "named": false
+  },
+  {
+    "type": "text",
     "named": false
   },
   {

@@ -29,7 +29,8 @@ page 50100 "Item Turnover Lines"
           (parameter
             name: (identifier)
             type: (type_specification
-              (text_type))))
+              (text_type
+                (text_keyword)))))
         return_value: (identifier)
         return_type: (type_specification
           (basic_type))
@@ -171,10 +172,12 @@ table 50100 "Test Table"
         (fields_keyword)
         body: (fields_body
           (field_declaration
+            (field_keyword)
             id: (integer)
             name: (identifier)
             type: (type_specification
               (code_type
+                (code_keyword)
                 length: (integer)))
             body: (declaration_body
               (trigger_declaration
@@ -185,7 +188,8 @@ table 50100 "Test Table"
                     modifier: (var_keyword)
                     name: (identifier)
                     type: (type_specification
-                      (text_type))))
+                      (text_type
+                        (text_keyword)))))
                 return_value: (identifier)
                 return_type: (type_specification
                   (basic_type))
@@ -282,6 +286,7 @@ page 50103 "Test Page"
               name: (identifier)
               type: (type_specification
                 (record_type
+                  (record_keyword)
                   reference: (identifier))))))
         body: (code_block
           (begin_keyword)

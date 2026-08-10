@@ -38,15 +38,18 @@ codeunit 50100 "Built-in Functions Test"
             (variable_declaration
               (identifier)
               (type_specification
-                (text_type)))
+                (text_type
+                  (text_keyword))))
             (variable_declaration
               (identifier)
               (type_specification
-                (text_type)))
+                (text_type
+                  (text_keyword))))
             (variable_declaration
               (identifier)
               (type_specification
-                (text_type)))
+                (text_type
+                  (text_keyword))))
             (variable_declaration
               (identifier)
               (type_specification
@@ -54,7 +57,8 @@ codeunit 50100 "Built-in Functions Test"
             (variable_declaration
               (identifier)
               (type_specification
-                (text_type)))))
+                (text_type
+                  (text_keyword))))))
         (code_block
           (begin_keyword)
           (statement_block

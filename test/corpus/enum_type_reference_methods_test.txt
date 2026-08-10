@@ -80,8 +80,11 @@ codeunit 23456 NamesTestCodeunit
               name: (identifier)
               type: (type_specification
                 (list_type
+                  (list_keyword)
+                  (of_keyword)
                   element_type: (type_specification
-                    (text_type)))))))
+                    (text_type
+                      (text_keyword))))))))
         body: (code_block
           (begin_keyword)
           body: (statement_block
@@ -142,8 +145,11 @@ codeunit 34567 MultiEnumCodeunit
               name: (identifier)
               type: (type_specification
                 (list_type
+                  (list_keyword)
+                  (of_keyword)
                   element_type: (type_specification
-                    (text_type)))))))
+                    (text_type
+                      (text_keyword))))))))
         body: (code_block
           (begin_keyword)
           body: (statement_block

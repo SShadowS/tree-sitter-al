@@ -33,10 +33,12 @@ page 50000 MyPage {
         (fields_keyword)
         body: (fields_body
           (field_declaration
+            (field_keyword)
             id: (integer)
             name: (identifier)
             type: (type_specification
               (text_type
+                (text_keyword)
                 length: (integer)))
             body: (declaration_body
               (trigger_declaration
@@ -54,6 +56,7 @@ page 50000 MyPage {
                         name: (identifier)
                         type: (type_specification
                           (record_type
+                            (record_keyword)
                             reference: (quoted_identifier))))))
                   (begin_keyword)
                   body: (statement_block
@@ -74,6 +77,7 @@ page 50000 MyPage {
                         name: (identifier)
                         type: (type_specification
                           (record_type
+                            (record_keyword)
                             reference: (quoted_identifier))))))
                   (begin_keyword)
                   body: (statement_block
@@ -127,6 +131,7 @@ codeunit 50000 MyCodeunit {
             name: (identifier)
             type: (type_specification
               (code_type
+                (code_keyword)
                 length: (integer)))))
         (preproc_split_complete_body
           (preproc_if

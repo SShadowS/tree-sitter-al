@@ -166,6 +166,8 @@ codeunit 50202 TestForeachSingle
               name: (identifier)
               type: (type_specification
                 (list_type
+                  (list_keyword)
+                  (of_keyword)
                   element_type: (type_specification
                     (basic_type)))))
             (variable_declaration
@@ -235,6 +237,7 @@ codeunit 50203 TestWithSingle
               name: (identifier)
               type: (type_specification
                 (record_type
+                  (record_keyword)
                   reference: (identifier))))))
         body: (code_block
           (begin_keyword)

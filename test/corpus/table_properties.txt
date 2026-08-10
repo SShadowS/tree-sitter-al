@@ -77,10 +77,12 @@ table 50000 "Test Table"
         (fields_keyword)
         (fields_body
           (field_declaration
+            (field_keyword)
             (integer)
             (quoted_identifier)
             (type_specification
               (code_type
+                (code_keyword)
                 (integer)))
             (declaration_body
               (property
@@ -90,10 +92,12 @@ table 50000 "Test Table"
                 (property_name)
                 (boolean))))
           (field_declaration
+            (field_keyword)
             (integer)
             (identifier)
             (type_specification
               (text_type
+                (text_keyword)
                 (integer)))
             (declaration_body
               (property
@@ -194,10 +198,12 @@ table 50001 "Test Table Low Priority"
         (fields_keyword)
         (fields_body
           (field_declaration
+            (field_keyword)
             (integer)
             (quoted_identifier)
             (type_specification
               (code_type
+                (code_keyword)
                 (integer)))
             (declaration_body
               (property
@@ -257,10 +263,12 @@ table 50002 "Test Field Properties"
         (fields_keyword)
         body: (fields_body
           (field_declaration
+            (field_keyword)
             id: (integer)
             name: (quoted_identifier)
             type: (type_specification
               (code_type
+                (code_keyword)
                 length: (integer)))
             body: (declaration_body
               (property

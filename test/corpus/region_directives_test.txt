@@ -165,16 +165,20 @@ table 50100 "Test Table"
         (fields_keyword)
         body: (fields_body
           (field_declaration
+            (field_keyword)
             id: (integer)
             name: (identifier)
             type: (type_specification
               (code_type
+                (code_keyword)
                 length: (integer))))
           (field_declaration
+            (field_keyword)
             id: (integer)
             name: (identifier)
             type: (type_specification
               (text_type
+                (text_keyword)
                 length: (integer)))))))
     (preproc_endregion)))
 
@@ -233,7 +237,8 @@ codeunit 50103 "Complex Region"
             (variable_declaration
               name: (identifier)
               type: (type_specification
-                (text_type)))))
+                (text_type
+                  (text_keyword))))))
         body: (code_block
           (begin_keyword)
           body: (statement_block

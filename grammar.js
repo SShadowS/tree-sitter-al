@@ -1213,7 +1213,7 @@ module.exports = grammar({
     ),
 
     field_declaration: $ => seq(
-      kw('field'),
+      $.field_keyword,
       '(',
       field('id', $.integer),
       ';',
@@ -1347,27 +1347,27 @@ module.exports = grammar({
 
     // Text[100] or plain Text
     text_type: $ => choice(
-      prec(11, seq(kw('text'), '[', field('length', $.integer), ']')),
-      prec(10, kw('text'))
+      prec(11, seq($.text_keyword, '[', field('length', $.integer), ']')),
+      prec(10, $.text_keyword)
     ),
 
     // Code[20] or plain Code
     code_type: $ => choice(
-      prec(11, seq(kw('code'), '[', field('length', $.integer), ']')),
-      prec(10, kw('code'))
+      prec(11, seq($.code_keyword, '[', field('length', $.integer), ']')),
+      prec(10, $.code_keyword)
     ),
 
     // Option with optional member list: Option OptionA, OptionB
     // Supports leading commas: Option ,,,,"Page","Query"
     option_type: $ => prec.right(1, seq(
-      kw('option'),
+      $.option_keyword,
       optional($.option_member_list)
     )),
 
     // Record "Customer" or Record Customer or Record 2000000041 [temporary]
     // Also: Record System.Reflection.Field temporary
     record_type: $ => prec.right(seq(
-      prec(1, kw('record')),
+      prec(1, $.record_keyword),
       $._namespaced_ref_reference,
       optional($.temporary_keyword)
     )),
@@ -1422,19 +1422,19 @@ module.exports = grammar({
     // so children_by_field_name('sizes') yields 10, ',', 20 — the same shape
     // that made the owned-IR lowerer panic on case patterns.
     array_type: $ => seq(
-      prec(1, kw('array')),
+      prec(1, $.array_keyword),
       '[',
       field('sizes', $.integer),
       repeat(seq(',', field('sizes', $.integer))),
       ']',
-      kw('of'),
+      $.of_keyword,
       field('element_type', $.type_specification)
     ),
 
     // List of [Integer]
     list_type: $ => seq(
-      kw('list'),
-      kw('of'),
+      $.list_keyword,
+      $.of_keyword,
       '[',
       field('element_type', $.type_specification),
       ']'
@@ -1442,8 +1442,8 @@ module.exports = grammar({
 
     // Dictionary of [Text, Integer]
     dictionary_type: $ => seq(
-      kw('dictionary'),
-      kw('of'),
+      $.dictionary_keyword,
+      $.of_keyword,
       '[',
       field('key_type', $.type_specification),
       ',',
@@ -1731,7 +1731,7 @@ module.exports = grammar({
     // Page field: field(Name; SourceExpr) { }
     // Different from table field — no ID, no type, uses source expression
     page_field: $ => seq(
-      kw('field'),
+      $.field_keyword,
       '(',
       field('name', $._identifier_or_quoted),
       ';',
@@ -1808,7 +1808,7 @@ module.exports = grammar({
 
     // Page field header: field(Name; SourceExpression) — used in preproc_split_field
     _field_header: $ => seq(
-      kw('field'),
+      $.field_keyword,
       '(',
       field('name', $._identifier_or_quoted),
       ';',
@@ -1818,7 +1818,7 @@ module.exports = grammar({
 
     // Table field header: field(id; name; type) — used in preproc_split_table_field
     _table_field_header: $ => seq(
-      kw('field'),
+      $.field_keyword,
       '(',
       field('id', $.integer),
       ';',
@@ -2023,7 +2023,7 @@ module.exports = grammar({
 
     // action(MyAction) { ... }
     action_declaration: $ => seq(
-      kw('action'),
+      $.action_keyword,
       '(',
       field('name', $._identifier_or_quoted),
       ')',
@@ -2034,7 +2034,7 @@ module.exports = grammar({
 
     // separator { } or separator(Name) { Caption = ''; IsHeader = true; }
     separator_action: $ => seq(
-      kw('separator'),
+      $.separator_keyword,
       optional(seq('(', field('name', $._identifier_or_quoted), ')')),
       '{',
       optional(field('body', $.declaration_body)),
@@ -2043,7 +2043,7 @@ module.exports = grammar({
 
     // actionref(RefName; ActionName) { }
     actionref_declaration: $ => seq(
-      kw('actionref'),
+      $.actionref_keyword,
       '(',
       field('promoted_name', $._identifier_or_quoted),
       ';',
@@ -2056,7 +2056,7 @@ module.exports = grammar({
 
     // systemaction(Name) { }
     systemaction_declaration: $ => seq(
-      kw('systemaction'),
+      $.systemaction_keyword,
       '(',
       field('name', $._identifier_or_quoted),
       ')',
@@ -2067,7 +2067,7 @@ module.exports = grammar({
 
     // fileuploadaction(Name) { }
     fileuploadaction_declaration: $ => seq(
-      kw('fileuploadaction'),
+      $.fileuploadaction_keyword,
       '(',
       field('name', $._identifier_or_quoted),
       ')',
@@ -2078,7 +2078,7 @@ module.exports = grammar({
 
     // customaction(Name) { }
     customaction_declaration: $ => seq(
-      kw('customaction'),
+      $.customaction_keyword,
       '(',
       field('name', $._identifier_or_quoted),
       ')',
@@ -4419,10 +4419,14 @@ module.exports = grammar({
     // the value of field N in the current record, and upperlimit(N) is a range
     // bound. Three different database queries, one tree.
     //
-    // field_keyword is used ONLY by the where/link markers. The field DECLARATION
-    // keyword (field_declaration, page_field, _field_header, _table_field_header)
-    // and keyword_as_identifier keep their bare kw('field') — a different
-    // construct that must not move.
+    // field_keyword covers BOTH the where/link marker and the field DECLARATION
+    // keyword (field_declaration, page_field, _field_header, _table_field_header).
+    // It was marker-only until the losslessness pass: the declaration sites were
+    // bare kw('field') and dropped 83,885 keyword occurrences across BC.History.
+    // One rule for one word — the constructs are told apart by the parent node,
+    // never by the keyword's own type. keyword_as_identifier keeps its bare
+    // kw('field'): that alternative is a choice arm with no visible sibling, so
+    // the aliased-to-identifier node is itself the leaf covering those bytes.
     //
     // where_keyword keeps kw()'s second argument: it promotes parse precedence to
     // LEXICAL precedence, and dropping it can make other rules unreachable.
@@ -4478,6 +4482,44 @@ module.exports = grammar({
     fieldattribute_keyword: $ => alias(kw('fieldattribute'), 'fieldattribute'),
     textattribute_keyword: $ => alias(kw('textattribute'), 'textattribute'),
     public_keyword: $ => alias(kw('public'), 'public'),
+
+    // --- Tier 4: keywords named for losslessness ---
+    //
+    // Every rule below existed only as a bare kw() at its call site until the
+    // 4.0.0 losslessness pass. A bare kw() is a token(PATTERN), which tree-sitter
+    // renders as a hidden aux_sym_* symbol: the bytes were lexed and then landed
+    // in no node at all. Measured over BC.History's 15,358 files, the sites these
+    // rules replace accounted for 574,694 dropped keyword occurrences — `Record`
+    // alone was 305,922, i.e. every variable and parameter of record type in
+    // Business Central had an unhighlightable, unqueryable type keyword.
+    //
+    // Same shape as every rule above: alias(kw(w), w), one anonymous child typed
+    // as the canonical lowercase spelling. NOT kwCases() — that whitelist governs
+    // the 13 object-declaration keywords, where narrowing FROM an explicit
+    // spelling list is the point. These were already bare kw() and already
+    // case-insensitive, so the alias changes visibility only and cannot steal an
+    // identifier that was not already being taken.
+    //
+    // Type-position keywords. basic_type deliberately does NOT move: it is a
+    // choice() of bare kw()s with no visible sibling, so the basic_type node is
+    // itself the leaf carrying the text. These six cannot use that pattern —
+    // each has real children (a length, an element type, a reference), so the
+    // enclosing node is not a leaf and the keyword needs a node of its own.
+    record_keyword: $ => alias(kw('record'), 'record'),
+    code_keyword: $ => alias(kw('code'), 'code'),
+    text_keyword: $ => alias(kw('text'), 'text'),
+    option_keyword: $ => alias(kw('option'), 'option'),
+    array_keyword: $ => alias(kw('array'), 'array'),
+    list_keyword: $ => alias(kw('list'), 'list'),
+    dictionary_keyword: $ => alias(kw('dictionary'), 'dictionary'),
+
+    // Action-family declaration keywords.
+    action_keyword: $ => alias(kw('action'), 'action'),
+    actionref_keyword: $ => alias(kw('actionref'), 'actionref'),
+    systemaction_keyword: $ => alias(kw('systemaction'), 'systemaction'),
+    fileuploadaction_keyword: $ => alias(kw('fileuploadaction'), 'fileuploadaction'),
+    customaction_keyword: $ => alias(kw('customaction'), 'customaction'),
+    separator_keyword: $ => alias(kw('separator'), 'separator'),
 
     // =====================================================================
     // Shared rules

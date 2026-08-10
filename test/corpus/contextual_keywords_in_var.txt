@@ -24,7 +24,8 @@ page 50100 "Test Page"
           (variable_declaration
             name: (identifier)
             type: (type_specification
-              (text_type)))
+              (text_type
+                (text_keyword))))
           (variable_declaration
             name: (identifier)
             type: (basic_type)
@@ -63,16 +64,19 @@ codeunit 50100 "Test Codeunit"
           (variable_declaration
             name: (identifier)
             type: (type_specification
-              (text_type)))
+              (text_type
+                (text_keyword))))
           (variable_declaration
             name: (identifier)
             type: (type_specification
               (text_type
+                (text_keyword)
                 length: (integer))))
           (variable_declaration
             name: (identifier)
             type: (type_specification
               (option_type
+                (option_keyword)
                 (option_member_list
                   (option_member
                     (identifier))

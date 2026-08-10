@@ -21,7 +21,8 @@ interface "Test Interface"
         name: (identifier)
         (interface_procedure_suffix
           return_type: (type_specification
-            (text_type))))
+            (text_type
+              (text_keyword)))))
       (interface_procedure
         (procedure_keyword)
         name: (identifier)
@@ -31,6 +32,7 @@ interface "Test Interface"
             name: (identifier)
             type: (type_specification
               (record_type
+                (record_keyword)
                 reference: (identifier)))))
         (interface_procedure_suffix
           return_type: (type_specification

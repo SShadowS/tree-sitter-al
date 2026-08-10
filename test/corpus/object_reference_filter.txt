@@ -37,6 +37,7 @@ table 50000 "Test Table"
         (fields_keyword)
         body: (fields_body
           (field_declaration
+            (field_keyword)
             id: (integer)
             name: (identifier)
             type: (type_specification
@@ -59,31 +60,7 @@ table 50000 "Test Table"
                             keyword: (object_type_keyword)
                             table_name: (quoted_identifier))))))))))
           (field_declaration
-            id: (integer)
-            name: (identifier)
-            type: (type_specification
-              (basic_type))
-            body: (declaration_body
-              (property
-                name: (property_name)
-                value: (aggregate_formula
-                  function: (aggregate_function)
-                  target: (calc_field_reference
-                    (quoted_identifier))
-                  (where_clause
-                    (where_keyword)
-                    (where_conditions
-                      (where_condition
-                        field: (quoted_identifier)
-                        (filter_keyword)
-                        value: (filter_value
-                          (database_reference
-                            keyword: (object_type_keyword)
-                            table_name: (quoted_identifier))
-                          (database_reference
-                            keyword: (object_type_keyword)
-                            table_name: (quoted_identifier))))))))))
-          (field_declaration
+            (field_keyword)
             id: (integer)
             name: (identifier)
             type: (type_specification
@@ -109,6 +86,33 @@ table 50000 "Test Table"
                             keyword: (object_type_keyword)
                             table_name: (quoted_identifier))))))))))
           (field_declaration
+            (field_keyword)
+            id: (integer)
+            name: (identifier)
+            type: (type_specification
+              (basic_type))
+            body: (declaration_body
+              (property
+                name: (property_name)
+                value: (aggregate_formula
+                  function: (aggregate_function)
+                  target: (calc_field_reference
+                    (quoted_identifier))
+                  (where_clause
+                    (where_keyword)
+                    (where_conditions
+                      (where_condition
+                        field: (quoted_identifier)
+                        (filter_keyword)
+                        value: (filter_value
+                          (database_reference
+                            keyword: (object_type_keyword)
+                            table_name: (quoted_identifier))
+                          (database_reference
+                            keyword: (object_type_keyword)
+                            table_name: (quoted_identifier))))))))))
+          (field_declaration
+            (field_keyword)
             id: (integer)
             name: (identifier)
             type: (type_specification

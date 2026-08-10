@@ -238,7 +238,8 @@ codeunit 50003 "Range Context Test"
             (variable_declaration
               name: (identifier)
               type: (type_specification
-                (text_type)))))
+                (text_type
+                  (text_keyword))))))
         body: (code_block
           (begin_keyword)
           body: (statement_block
@@ -281,6 +282,7 @@ codeunit 50004 "Field Access Test"
               name: (identifier)
               type: (type_specification
                 (record_type
+                  (record_keyword)
                   reference: (identifier))))
             (variable_declaration
               name: (identifier)

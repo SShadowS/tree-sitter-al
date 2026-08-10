@@ -52,11 +52,13 @@ report 50100 "Test Report"
                         name: (identifier)
                         type: (type_specification
                           (record_type
+                            (record_keyword)
                             reference: (quoted_identifier))))
                       (variable_declaration
                         name: (identifier)
                         type: (type_specification
                           (record_type
+                            (record_keyword)
                             reference: (identifier)
                             (temporary_keyword))))))
                   (preproc_endif
@@ -108,10 +110,12 @@ table 50100 "Test Table"
         (fields_keyword)
         body: (fields_body
           (field_declaration
+            (field_keyword)
             id: (integer)
             name: (quoted_identifier)
             type: (type_specification
               (code_type
+                (code_keyword)
                 length: (integer)))
             body: (declaration_body
               (trigger_declaration
@@ -128,6 +132,7 @@ table 50100 "Test Table"
                         name: (identifier)
                         type: (type_specification
                           (record_type
+                            (record_keyword)
                             reference: (identifier))))))
                   (preproc_else)
                   (var_section
@@ -137,11 +142,13 @@ table 50100 "Test Table"
                         name: (identifier)
                         type: (type_specification
                           (record_type
+                            (record_keyword)
                             reference: (quoted_identifier))))
                       (variable_declaration
                         name: (identifier)
                         type: (type_specification
                           (record_type
+                            (record_keyword)
                             reference: (identifier)
                             (temporary_keyword))))))
                   (preproc_endif
@@ -199,6 +206,7 @@ page 50100 "Test Page"
                 name: (identifier)
                 type: (type_specification
                   (record_type
+                    (record_keyword)
                     reference: (quoted_identifier))))
               (preproc_conditional_var
                 (preproc_if
@@ -208,6 +216,7 @@ page 50100 "Test Page"
                   name: (identifier)
                   type: (type_specification
                     (record_type
+                      (record_keyword)
                       reference: (quoted_identifier))))
                 (preproc_endif
                   (preproc_close)))))
@@ -219,6 +228,7 @@ page 50100 "Test Page"
                 name: (identifier)
                 type: (type_specification
                   (record_type
+                    (record_keyword)
                     reference: (quoted_identifier))))))
           (preproc_endif
             (preproc_close)))

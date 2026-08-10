@@ -37,10 +37,12 @@ table 123 "Test Table"
         (fields_keyword)
         body: (fields_body
           (field_declaration
+            (field_keyword)
             id: (integer)
             name: (quoted_identifier)
             type: (type_specification
-              (option_type))
+              (option_type
+                (option_keyword)))
             body: (declaration_body
               (property
                 name: (property_name)
@@ -54,10 +56,12 @@ table 123 "Test Table"
                   (option_member
                     (quoted_identifier))))))
           (field_declaration
+            (field_keyword)
             id: (integer)
             name: (quoted_identifier)
             type: (type_specification
               (code_type
+                (code_keyword)
                 length: (integer)))
             body: (declaration_body
               (property
@@ -146,10 +150,12 @@ table 124 "Simple Test"
         (fields_keyword)
         body: (fields_body
           (field_declaration
+            (field_keyword)
             id: (integer)
             name: (quoted_identifier)
             type: (type_specification
               (code_type
+                (code_keyword)
                 length: (integer)))
             body: (declaration_body
               (preproc_conditional
@@ -208,10 +214,12 @@ table 125 "Complex Test"
         (fields_keyword)
         body: (fields_body
           (field_declaration
+            (field_keyword)
             id: (integer)
             name: (quoted_identifier)
             type: (type_specification
               (code_type
+                (code_keyword)
                 length: (integer)))
             body: (declaration_body
               (property

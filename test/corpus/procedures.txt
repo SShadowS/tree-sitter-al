@@ -54,7 +54,8 @@ codeunit 50100 Test
           (parameter
             (identifier)
             (type_specification
-              (text_type))))
+              (text_type
+                (text_keyword)))))
         (code_block
           (begin_keyword)
           (end_keyword))))))
@@ -87,6 +88,7 @@ codeunit 50100 Test
             (identifier)
             (type_specification
               (record_type
+                (record_keyword)
                 (quoted_identifier)))))
         (code_block
           (begin_keyword)
@@ -304,12 +306,14 @@ codeunit 50100 Test
             (identifier)
             (type_specification
               (text_type
+                (text_keyword)
                 (integer))))
           (parameter
             (var_keyword)
             (identifier)
             (type_specification
               (record_type
+                (record_keyword)
                 (quoted_identifier)))))
         (type_specification
           (basic_type))
@@ -320,6 +324,7 @@ codeunit 50100 Test
               (identifier)
               (type_specification
                 (record_type
+                  (record_keyword)
                   (quoted_identifier))))))
         (code_block
           (begin_keyword)
@@ -413,6 +418,7 @@ codeunit 50100 Test
             (identifier)
             (type_specification
               (record_type
+                (record_keyword)
                 (quoted_identifier))))
           (variable_declaration
             (identifier)
@@ -422,8 +428,11 @@ codeunit 50100 Test
             (identifier)
             (type_specification
               (list_type
+                (list_keyword)
+                (of_keyword)
                 (type_specification
-                  (text_type))))))))))
+                  (text_type
+                    (text_keyword)))))))))))
 
 ========================================================================
 Attribute before procedure
@@ -631,12 +640,14 @@ codeunit 50100 Test
             (identifier)
             (type_specification
               (record_type
+                (record_keyword)
                 (quoted_identifier))))
           (parameter
             (var_keyword)
             (identifier)
             (type_specification
               (record_type
+                (record_keyword)
                 (quoted_identifier)))))
         (code_block
           (begin_keyword)

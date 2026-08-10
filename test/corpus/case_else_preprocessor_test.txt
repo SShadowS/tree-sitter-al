@@ -49,6 +49,7 @@ codeunit 50000 "Test Case Else"
             name: (identifier)
             type: (type_specification
               (code_type
+                (code_keyword)
                 length: (integer)))))
         (var_section
           (var_keyword)
@@ -57,6 +58,7 @@ codeunit 50000 "Test Case Else"
               name: (identifier)
               type: (type_specification
                 (record_type
+                  (record_keyword)
                   reference: (quoted_identifier))))
             (preproc_conditional_var
               (preproc_if
@@ -67,6 +69,7 @@ codeunit 50000 "Test Case Else"
                 name: (identifier)
                 type: (type_specification
                   (record_type
+                    (record_keyword)
                     reference: (quoted_identifier))))
               (preproc_endif
                 (preproc_close)))))

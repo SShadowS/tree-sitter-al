@@ -32,15 +32,20 @@ codeunit 50100 "Test Foreach"
             (variable_declaration
               name: (quoted_identifier)
               type: (type_specification
-                (text_type)))
+                (text_type
+                  (text_keyword))))
             (variable_declaration
               name: (identifier)
               type: (type_specification
                 (dictionary_type
+                  (dictionary_keyword)
+                  (of_keyword)
                   key_type: (type_specification
-                    (text_type))
+                    (text_type
+                      (text_keyword)))
                   value_type: (type_specification
-                    (text_type)))))))
+                    (text_type
+                      (text_keyword))))))))
         body: (code_block
           (begin_keyword)
           body: (statement_block
@@ -97,6 +102,7 @@ codeunit 50101 "Test Foreach Standard"
               name: (identifier)
               type: (type_specification
                 (record_type
+                  (record_keyword)
                   reference: (identifier))))))
         body: (code_block
           (begin_keyword)
@@ -153,33 +159,44 @@ codeunit 50102 "Dictionary Operations"
             name: (identifier)
             type: (type_specification
               (dictionary_type
+                (dictionary_keyword)
+                (of_keyword)
                 key_type: (type_specification
-                  (text_type))
+                  (text_type
+                    (text_keyword)))
                 value_type: (type_specification
-                  (text_type)))))
+                  (text_type
+                    (text_keyword))))))
           (parameter
             name: (identifier)
             type: (type_specification
               (dictionary_type
+                (dictionary_keyword)
+                (of_keyword)
                 key_type: (type_specification
-                  (text_type))
+                  (text_type
+                    (text_keyword)))
                 value_type: (type_specification
-                  (text_type))))))
+                  (text_type
+                    (text_keyword)))))))
         (var_section
           (var_keyword)
           body: (var_body
             (variable_declaration
               name: (quoted_identifier)
               type: (type_specification
-                (text_type)))
+                (text_type
+                  (text_keyword))))
             (variable_declaration
               name: (identifier)
               type: (type_specification
-                (text_type)))
+                (text_type
+                  (text_keyword))))
             (variable_declaration
               name: (identifier)
               type: (type_specification
-                (text_type)))))
+                (text_type
+                  (text_keyword))))))
         body: (code_block
           (begin_keyword)
           body: (statement_block

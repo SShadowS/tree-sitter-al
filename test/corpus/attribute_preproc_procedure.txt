@@ -36,6 +36,7 @@ table 50000 "Test"
             name: (identifier)
             type: (type_specification
               (record_type
+                (record_keyword)
                 reference: (quoted_identifier))))
           (variable_declaration
             name: (identifier)
@@ -62,10 +63,12 @@ table 50000 "Test"
                 name: (identifier)
                 type: (type_specification
                   (text_type
+                    (text_keyword)
                     length: (integer)))))
             return_value: (identifier)
             return_type: (type_specification
-              (text_type))
+              (text_type
+                (text_keyword)))
             (preproc_else)
             (procedure_keyword)
             name: (identifier)
@@ -74,10 +77,12 @@ table 50000 "Test"
                 name: (identifier)
                 type: (type_specification
                   (text_type
+                    (text_keyword)
                     length: (integer)))))
             return_value: (identifier)
             return_type: (type_specification
-              (text_type))
+              (text_type
+                (text_keyword)))
             (preproc_endif
               (preproc_close))
             (var_section
@@ -86,7 +91,8 @@ table 50000 "Test"
                 (variable_declaration
                   name: (identifier)
                   type: (type_specification
-                    (text_type)))))
+                    (text_type
+                      (text_keyword))))))
             body: (code_block
               (begin_keyword)
               body: (statement_block
@@ -133,6 +139,7 @@ table 50000 "Test Table"
         (fields_keyword)
         body: (fields_body
           (field_declaration
+            (field_keyword)
             id: (integer)
             name: (quoted_identifier)
             type: (type_specification
@@ -214,6 +221,7 @@ table 50000 "Test"
             name: (identifier)
             type: (type_specification
               (record_type
+                (record_keyword)
                 reference: (quoted_identifier))))))
       (attribute_item
         attribute: (attribute_content
@@ -234,6 +242,7 @@ table 50000 "Test"
             name: (identifier)
             type: (type_specification
               (record_type
+                (record_keyword)
                 reference: (quoted_identifier))))
           (parameter
             modifier: (var_keyword)
@@ -249,6 +258,7 @@ table 50000 "Test"
             name: (identifier)
             type: (type_specification
               (record_type
+                (record_keyword)
                 reference: (quoted_identifier)))))
         (preproc_endif
           (preproc_close))

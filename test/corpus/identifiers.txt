@@ -24,6 +24,7 @@ table 50100 MyTable
         (fields_keyword)
         (fields_body
           (field_declaration
+            (field_keyword)
             (integer)
             (identifier)
             (type_specification
@@ -61,19 +62,24 @@ table 50105 "Field Test Table"
         (fields_keyword)
         (fields_body
           (field_declaration
+            (field_keyword)
             (integer)
             (quoted_identifier)
             (type_specification
               (basic_type)))
           (field_declaration
+            (field_keyword)
             (integer)
             (identifier)
             (type_specification
               (text_type
+                (text_keyword)
                 (integer))))
           (field_declaration
+            (field_keyword)
             (integer)
             (quoted_identifier)
             (type_specification
               (code_type
+                (code_keyword)
                 (integer)))))))))

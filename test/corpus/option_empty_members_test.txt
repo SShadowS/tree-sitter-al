@@ -23,6 +23,7 @@ codeunit 50100 "Test Option Empty Members"
             name: (identifier)
             type: (type_specification
               (option_type
+                (option_keyword)
                 (option_member_list
                   (option_member
                     (identifier))
@@ -62,10 +63,12 @@ table 50100 "Test All Empty"
         (fields_keyword)
         body: (fields_body
           (field_declaration
+            (field_keyword)
             id: (integer)
             name: (identifier)
             type: (type_specification
-              (option_type))
+              (option_type
+                (option_keyword)))
             body: (declaration_body
               (property
                 name: (property_name)
@@ -97,6 +100,7 @@ page 50100 "Test Mixed Options"
             name: (identifier)
             type: (type_specification
               (option_type
+                (option_keyword)
                 (option_member_list
                   (option_member
                     (identifier))
@@ -108,6 +112,7 @@ page 50100 "Test Mixed Options"
             name: (identifier)
             type: (type_specification
               (option_type
+                (option_keyword)
                 (option_member_list
                   (option_member
                     (string_literal))
@@ -143,10 +148,12 @@ table 50100 "Test Option Property"
         (fields_keyword)
         body: (fields_body
           (field_declaration
+            (field_keyword)
             id: (integer)
             name: (identifier)
             type: (type_specification
-              (option_type))
+              (option_type
+                (option_keyword)))
             body: (declaration_body
               (property
                 name: (property_name)

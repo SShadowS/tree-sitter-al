@@ -30,9 +30,11 @@ codeunit 123 TestBackslash
           (parameter
             name: (identifier)
             type: (type_specification
-              (text_type))))
+              (text_type
+                (text_keyword)))))
         return_type: (type_specification
-          (text_type))
+          (text_type
+            (text_keyword)))
         body: (code_block
           (begin_keyword)
           body: (statement_block
@@ -52,9 +54,11 @@ codeunit 123 TestBackslash
           (parameter
             name: (identifier)
             type: (type_specification
-              (text_type))))
+              (text_type
+                (text_keyword)))))
         return_type: (type_specification
-          (text_type))
+          (text_type
+            (text_keyword)))
         body: (code_block
           (begin_keyword)
           body: (statement_block
@@ -167,9 +171,11 @@ codeunit 789 TestComplexStrings
           (parameter
             name: (identifier)
             type: (type_specification
-              (text_type))))
+              (text_type
+                (text_keyword)))))
         return_type: (type_specification
-          (text_type))
+          (text_type
+            (text_keyword)))
         body: (code_block
           (begin_keyword)
           body: (statement_block
@@ -240,7 +246,8 @@ codeunit 999 TestMixed
         (procedure_keyword)
         name: (identifier)
         return_type: (type_specification
-          (text_type))
+          (text_type
+            (text_keyword)))
         body: (code_block
           (begin_keyword)
           body: (statement_block

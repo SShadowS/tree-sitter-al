@@ -27,11 +27,13 @@ page 50100 "Camera Test"
           (parameter
             name: (identifier)
             type: (type_specification
-              (text_type)))
+              (text_type
+                (text_keyword))))
           (parameter
             name: (identifier)
             type: (type_specification
-              (text_type))))
+              (text_type
+                (text_keyword)))))
         body: (code_block
           (begin_keyword)
           body: (statement_block
@@ -111,7 +113,8 @@ page 50200 "Provider Events"
           (parameter
             name: (identifier)
             type: (type_specification
-              (text_type)))
+              (text_type
+                (text_keyword))))
           (parameter
             name: (identifier)
             type: (type_specification
@@ -174,7 +177,8 @@ page 50300 "Mixed Triggers"
           (parameter
             name: (identifier)
             type: (type_specification
-              (text_type))))
+              (text_type
+                (text_keyword)))))
         body: (code_block
           (begin_keyword)
           body: (statement_block

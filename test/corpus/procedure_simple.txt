@@ -41,6 +41,7 @@ codeunit 50000 "AL Built-in Functions Test"
               name: (identifier)
               type: (type_specification
                 (record_type
+                  (record_keyword)
                   reference: (identifier))))))
         body: (code_block
           (begin_keyword)
@@ -84,4 +85,5 @@ codeunit 50000 "AL Built-in Functions Test"
           (variable_declaration
             name: (identifier)
             type: (type_specification
-              (text_type))))))))
+              (text_type
+                (text_keyword)))))))))

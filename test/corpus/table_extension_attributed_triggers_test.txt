@@ -37,10 +37,12 @@ tableextension 50003 "Attributed Triggers Extension" extends Item
         (fields_keyword)
         body: (fields_body
           (field_declaration
+            (field_keyword)
             id: (integer)
             name: (quoted_identifier)
             type: (type_specification
               (text_type
+                (text_keyword)
                 length: (integer)))
             body: (declaration_body
               (property
@@ -77,6 +79,7 @@ tableextension 50003 "Attributed Triggers Extension" extends Item
             name: (identifier)
             type: (type_specification
               (record_type
+                (record_keyword)
                 reference: (identifier)))))
         body: (code_block
           (begin_keyword)

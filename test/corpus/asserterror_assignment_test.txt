@@ -45,16 +45,19 @@ codeunit 50100 "Test Asserterror Assignment"
               name: (identifier)
               type: (type_specification
                 (code_type
+                  (code_keyword)
                   length: (integer))))
             (variable_declaration
               name: (identifier)
               type: (type_specification
                 (code_type
+                  (code_keyword)
                   length: (integer))))
             (variable_declaration
               name: (identifier)
               type: (type_specification
                 (code_type
+                  (code_keyword)
                   length: (integer))))))
         body: (code_block
           (begin_keyword)
@@ -103,14 +106,17 @@ codeunit 50100 "Test Asserterror Assignment"
             name: (identifier)
             type: (type_specification
               (code_type
+                (code_keyword)
                 length: (integer))))
           (parameter
             name: (identifier)
             type: (type_specification
               (code_type
+                (code_keyword)
                 length: (integer)))))
         return_type: (type_specification
           (code_type
+            (code_keyword)
             length: (integer)))
         body: (code_block
           (begin_keyword)
@@ -177,11 +183,13 @@ codeunit 50200 "Complex Asserterror Tests"
             (variable_declaration
               name: (identifier)
               type: (type_specification
-                (text_type)))
+                (text_type
+                  (text_keyword))))
             (variable_declaration
               name: (identifier)
               type: (type_specification
                 (record_type
+                  (record_keyword)
                   reference: (identifier))))))
         body: (code_block
           (begin_keyword)

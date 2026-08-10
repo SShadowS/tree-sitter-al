@@ -42,6 +42,7 @@ codeunit 1 T
             name: (identifier)
             type: (type_specification
               (code_type
+                (code_keyword)
                 length: (integer)))))
         (var_section
           (var_keyword)
@@ -50,6 +51,7 @@ codeunit 1 T
               name: (identifier)
               type: (type_specification
                 (record_type
+                  (record_keyword)
                   reference: (quoted_identifier))))))
         (preproc_else)
         (procedure_keyword)
@@ -63,6 +65,7 @@ codeunit 1 T
             name: (identifier)
             type: (type_specification
               (code_type
+                (code_keyword)
                 length: (integer)))))
         (var_section
           (var_keyword)
@@ -71,6 +74,7 @@ codeunit 1 T
               name: (identifier)
               type: (type_specification
                 (record_type
+                  (record_keyword)
                   reference: (quoted_identifier))))))
         (preproc_endif
           (preproc_close))
@@ -196,6 +200,7 @@ codeunit 1 T
               name: (identifier)
               type: (type_specification
                 (record_type
+                  (record_keyword)
                   reference: (quoted_identifier))))))
         (preproc_else)
         modifier: (procedure_modifier
@@ -214,6 +219,7 @@ codeunit 1 T
               name: (identifier)
               type: (type_specification
                 (record_type
+                  (record_keyword)
                   reference: (quoted_identifier))))))
         (preproc_endif
           (preproc_close))

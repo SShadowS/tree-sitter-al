@@ -28,7 +28,8 @@ page 50100 "Test Page"
           (variable_declaration
             (identifier)
             (type_specification
-              (text_type)))
+              (text_type
+                (text_keyword))))
           (var_attribute_item
             (var_attribute_open)
             (attribute_content
@@ -36,7 +37,8 @@ page 50100 "Test Page"
           (variable_declaration
             (identifier)
             (type_specification
-              (text_type)))))
+              (text_type
+                (text_keyword))))))
       (procedure
         (procedure_keyword)
         (identifier)
@@ -76,6 +78,7 @@ codeunit 50100 "Test DotNet"
             (identifier)
             (type_specification
               (record_type
+                (record_keyword)
                 (quoted_identifier)
                 (temporary_keyword))))
           (var_attribute_item
@@ -184,7 +187,8 @@ codeunit 50102 "Test Local Attr"
             (variable_declaration
               (identifier)
               (type_specification
-                (text_type)))
+                (text_type
+                  (text_keyword))))
             (var_attribute_item
               (var_attribute_open)
               (attribute_content
@@ -192,7 +196,8 @@ codeunit 50102 "Test Local Attr"
             (variable_declaration
               (identifier)
               (type_specification
-                (text_type)))))
+                (text_type
+                  (text_keyword))))))
         (code_block
           (begin_keyword)
           (end_keyword))))))

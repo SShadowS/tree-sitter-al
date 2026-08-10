@@ -33,6 +33,7 @@ interface "E-Document Integration"
             name: (identifier)
             type: (type_specification
               (record_type
+                (record_keyword)
                 reference: (quoted_identifier))))
           (parameter
             modifier: (var_keyword)
@@ -56,6 +57,7 @@ interface "E-Document Integration"
             name: (identifier)
             type: (type_specification
               (record_type
+                (record_keyword)
                 reference: (quoted_identifier))))
           (parameter
             modifier: (var_keyword)
@@ -128,6 +130,7 @@ interface IDocumentService
             name: (identifier)
             type: (type_specification
               (record_type
+                (record_keyword)
                 reference: (identifier)))))
         (interface_procedure_suffix))
       (attribute_item
@@ -195,6 +198,7 @@ interface IPaymentProvider
             name: (identifier)
             type: (type_specification
               (record_type
+                (record_keyword)
                 reference: (quoted_identifier)))))
         (interface_procedure_suffix))
       (attribute_item
@@ -216,6 +220,7 @@ interface IPaymentProvider
             name: (identifier)
             type: (type_specification
               (code_type
+                (code_keyword)
                 length: (integer)))))
         (interface_procedure_suffix
           return_type: (type_specification
@@ -232,6 +237,7 @@ interface IPaymentProvider
             name: (identifier)
             type: (type_specification
               (code_type
+                (code_keyword)
                 length: (integer))))
           (parameter
             modifier: (var_keyword)

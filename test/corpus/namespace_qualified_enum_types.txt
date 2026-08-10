@@ -25,6 +25,7 @@ table 123 TestTable
         (fields_keyword)
         body: (fields_body
           (field_declaration
+            (field_keyword)
             id: (integer)
             name: (identifier)
             type: (type_specification
@@ -71,6 +72,7 @@ table 124 MultiEnumTable
         (fields_keyword)
         body: (fields_body
           (field_declaration
+            (field_keyword)
             id: (integer)
             name: (identifier)
             type: (type_specification
@@ -81,6 +83,7 @@ table 124 MultiEnumTable
                 reference: (identifier)
                 reference: (quoted_identifier))))
           (field_declaration
+            (field_keyword)
             id: (integer)
             name: (identifier)
             type: (type_specification
@@ -91,6 +94,7 @@ table 124 MultiEnumTable
                 reference: (identifier)
                 reference: (quoted_identifier))))
           (field_declaration
+            (field_keyword)
             id: (integer)
             name: (identifier)
             type: (type_specification
@@ -127,6 +131,7 @@ table 125 UnquotedEnum
         (fields_keyword)
         body: (fields_body
           (field_declaration
+            (field_keyword)
             id: (integer)
             name: (identifier)
             type: (type_specification

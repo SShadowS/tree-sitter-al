@@ -72,6 +72,7 @@ pageextension 50001 "Test Extension" extends "Base Page"
             target: (identifier)
             body: (layout_body
               (page_field
+                (field_keyword)
                 name: (identifier)
                 source: (identifier)
                 body: (declaration_body
@@ -114,10 +115,12 @@ table 50002 "Test Table"
         (fields_keyword)
         body: (fields_body
           (field_declaration
+            (field_keyword)
             id: (integer)
             name: (quoted_identifier)
             type: (type_specification
               (code_type
+                (code_keyword)
                 length: (integer)))
             body: (declaration_body
               (property

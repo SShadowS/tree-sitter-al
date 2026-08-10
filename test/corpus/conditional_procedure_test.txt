@@ -43,7 +43,8 @@ codeunit 50000 "Conditional Test"
             (parameter
               name: (identifier)
               type: (type_specification
-                (option_type))))
+                (option_type
+                  (option_keyword)))))
           body: (code_block
             (begin_keyword)
             (end_keyword)))

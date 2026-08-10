@@ -54,6 +54,7 @@ table 5880 "Test Table"
                 name: (identifier)
                 type: (type_specification
                   (record_type
+                    (record_keyword)
                     reference: (quoted_identifier))))
               (preproc_endif
                 (preproc_close)))
@@ -61,6 +62,7 @@ table 5880 "Test Table"
               name: (identifier)
               type: (type_specification
                 (record_type
+                  (record_keyword)
                   reference: (quoted_identifier))))))
         body: (code_block
           (begin_keyword)

@@ -35,10 +35,13 @@ table 50020 "Test Table"
               name: (identifier)
               type: (type_specification
                 (array_type
+                  (array_keyword)
                   sizes: (integer)
                   sizes: (integer)
+                  (of_keyword)
                   element_type: (type_specification
-                    (text_type)))))
+                    (text_type
+                      (text_keyword))))))
             (variable_declaration
               name: (identifier)
               type: (type_specification
@@ -46,11 +49,13 @@ table 50020 "Test Table"
             (variable_declaration
               name: (identifier)
               type: (type_specification
-                (text_type)))
+                (text_type
+                  (text_keyword))))
             (variable_declaration
               name: (identifier)
               type: (type_specification
-                (text_type)))))
+                (text_type
+                  (text_keyword))))))
         body: (code_block
           (begin_keyword)
           body: (statement_block
@@ -111,8 +116,10 @@ table 50021 "Test Table"
               name: (identifier)
               type: (type_specification
                 (array_type
+                  (array_keyword)
                   sizes: (integer)
                   sizes: (integer)
+                  (of_keyword)
                   element_type: (type_specification
                     (basic_type)))))
             (variable_declaration
@@ -182,9 +189,11 @@ table 50022 "Test Table"
               name: (identifier)
               type: (type_specification
                 (array_type
+                  (array_keyword)
                   sizes: (integer)
                   sizes: (integer)
                   sizes: (integer)
+                  (of_keyword)
                   element_type: (type_specification
                     (basic_type)))))))
         body: (code_block
@@ -234,10 +243,13 @@ table 50023 "Test Table"
               name: (identifier)
               type: (type_specification
                 (array_type
+                  (array_keyword)
                   sizes: (integer)
                   sizes: (integer)
+                  (of_keyword)
                   element_type: (type_specification
-                    (text_type)))))
+                    (text_type
+                      (text_keyword))))))
             (variable_declaration
               name: (identifier)
               name: (identifier)

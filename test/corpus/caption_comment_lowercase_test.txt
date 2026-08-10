@@ -36,6 +36,7 @@ page 50000 "Test Page"
             type: (content_keyword)
             body: (layout_body
               (page_field
+                (field_keyword)
                 name: (identifier)
                 source: (identifier)
                 body: (declaration_body
@@ -55,6 +56,7 @@ page 50000 "Test Page"
             name: (identifier)
             type: (type_specification
               (text_type
+                (text_keyword)
                 length: (integer)))))))))
 
 ================================================================================
@@ -98,6 +100,7 @@ page 50001 "Another Page"
             type: (content_keyword)
             body: (layout_body
               (page_field
+                (field_keyword)
                 name: (identifier)
                 source: (identifier)
                 body: (declaration_body
@@ -108,6 +111,7 @@ page 50001 "Another Page"
                       (property_name)
                       (string_literal)))))
               (page_field
+                (field_keyword)
                 name: (identifier)
                 source: (identifier)
                 body: (declaration_body
@@ -124,4 +128,5 @@ page 50001 "Another Page"
             name: (identifier)
             name: (identifier)
             type: (type_specification
-              (text_type))))))))
+              (text_type
+                (text_keyword)))))))))

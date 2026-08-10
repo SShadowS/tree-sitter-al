@@ -25,10 +25,12 @@ table 123 TestTable
         (fields_keyword)
         body: (fields_body
           (field_declaration
+            (field_keyword)
             id: (integer)
             name: (quoted_identifier)
             type: (type_specification
-              (option_type))
+              (option_type
+                (option_keyword)))
             body: (declaration_body
               (property
                 name: (property_name)
@@ -77,10 +79,12 @@ table 456 StringOnlyTable
         (fields_keyword)
         body: (fields_body
           (field_declaration
+            (field_keyword)
             id: (integer)
             name: (quoted_identifier)
             type: (type_specification
-              (option_type))
+              (option_type
+                (option_keyword)))
             body: (declaration_body
               (property
                 name: (property_name)
@@ -121,10 +125,12 @@ table 789 IdentifierOnlyTable
         (fields_keyword)
         body: (fields_body
           (field_declaration
+            (field_keyword)
             id: (integer)
             name: (quoted_identifier)
             type: (type_specification
-              (option_type))
+              (option_type
+                (option_keyword)))
             body: (declaration_body
               (property
                 name: (property_name)
@@ -174,6 +180,7 @@ page 101 TestPage
             type: (content_keyword)
             body: (layout_body
               (page_field
+                (field_keyword)
                 name: (quoted_identifier)
                 source: (quoted_identifier)
                 body: (declaration_body
@@ -222,10 +229,12 @@ table 999 SingleValueTable
         (fields_keyword)
         body: (fields_body
           (field_declaration
+            (field_keyword)
             id: (integer)
             name: (quoted_identifier)
             type: (type_specification
-              (option_type))
+              (option_type
+                (option_keyword)))
             body: (declaration_body
               (property
                 name: (property_name)

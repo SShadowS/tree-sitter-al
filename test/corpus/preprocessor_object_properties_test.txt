@@ -153,10 +153,12 @@ table 50000 "Test Table"
         (fields_keyword)
         body: (fields_body
           (field_declaration
+            (field_keyword)
             id: (integer)
             name: (identifier)
             type: (type_specification
               (code_type
+                (code_keyword)
                 length: (integer)))
             body: (declaration_body
               (property
@@ -239,6 +241,7 @@ page 50001 "Test Page"
                 name: (identifier)
                 body: (layout_container_body
                   (page_field
+                    (field_keyword)
                     name: (identifier)
                     source: (identifier)
                     body: (declaration_body

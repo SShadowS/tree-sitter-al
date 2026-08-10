@@ -34,6 +34,7 @@ codeunit 50000 "WITH Test"
               name: (identifier)
               type: (type_specification
                 (record_type
+                  (record_keyword)
                   reference: (identifier))))))
         body: (code_block
           (begin_keyword)
@@ -89,6 +90,7 @@ codeunit 50001 "WITH Single Test"
               name: (identifier)
               type: (type_specification
                 (record_type
+                  (record_keyword)
                   reference: (identifier))))))
         body: (code_block
           (begin_keyword)
@@ -140,11 +142,13 @@ codeunit 50002 "Nested WITH Test"
               name: (identifier)
               type: (type_specification
                 (record_type
+                  (record_keyword)
                   reference: (quoted_identifier))))
             (variable_declaration
               name: (identifier)
               type: (type_specification
                 (record_type
+                  (record_keyword)
                   reference: (quoted_identifier))))))
         body: (code_block
           (begin_keyword)

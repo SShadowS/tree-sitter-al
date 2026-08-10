@@ -26,6 +26,7 @@ codeunit 50100 "Prepare Sales Line For Copying"
         name: (identifier)
         return_type: (type_specification
           (record_type
+            (record_keyword)
             reference: (quoted_identifier)
             (temporary_keyword)))
         body: (code_block
@@ -42,6 +43,7 @@ codeunit 50100 "Prepare Sales Line For Copying"
             name: (identifier)
             type: (type_specification
               (record_type
+                (record_keyword)
                 reference: (quoted_identifier)
                 (temporary_keyword)))))))))
 
@@ -73,6 +75,7 @@ codeunit 50200 "Temporary Record Handler"
         return_value: (identifier)
         return_type: (type_specification
           (record_type
+            (record_keyword)
             reference: (identifier)
             (temporary_keyword)))
         body: (code_block
@@ -130,10 +133,12 @@ codeunit 50300 "Temp Record Processor"
             name: (identifier)
             type: (type_specification
               (record_type
+                (record_keyword)
                 reference: (quoted_identifier)
                 (temporary_keyword)))))
         return_type: (type_specification
           (record_type
+            (record_keyword)
             reference: (quoted_identifier)
             (temporary_keyword)))
         (var_section
@@ -143,6 +148,7 @@ codeunit 50300 "Temp Record Processor"
               name: (identifier)
               type: (type_specification
                 (record_type
+                  (record_keyword)
                   reference: (quoted_identifier)
                   (temporary_keyword))))))
         body: (code_block
@@ -198,6 +204,7 @@ codeunit 50400 "Case Test"
         name: (identifier)
         return_type: (type_specification
           (record_type
+            (record_keyword)
             reference: (identifier)
             (temporary_keyword)))
         body: (code_block
@@ -208,6 +215,7 @@ codeunit 50400 "Case Test"
         name: (identifier)
         return_type: (type_specification
           (record_type
+            (record_keyword)
             reference: (identifier)
             (temporary_keyword)))
         body: (code_block
@@ -218,6 +226,7 @@ codeunit 50400 "Case Test"
         name: (identifier)
         return_type: (type_specification
           (record_type
+            (record_keyword)
             reference: (identifier)
             (temporary_keyword)))
         body: (code_block

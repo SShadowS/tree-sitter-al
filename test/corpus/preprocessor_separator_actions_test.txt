@@ -52,18 +52,21 @@ page 50100 "Test Page"
                   condition: (preproc_not_expression
                     (identifier)))
                 (action_declaration
+                  (action_keyword)
                   name: (identifier)
                   body: (declaration_body
                     (property
                       name: (property_name)
                       value: (string_literal))))
                 (separator_action
+                  (separator_keyword)
                   name: (identifier)
                   body: (declaration_body
                     (property
                       name: (property_name)
                       value: (string_literal))))
                 (action_declaration
+                  (action_keyword)
                   name: (identifier)
                   body: (declaration_body
                     (property
@@ -71,6 +74,7 @@ page 50100 "Test Page"
                       value: (string_literal))))
                 (preproc_else)
                 (action_declaration
+                  (action_keyword)
                   name: (identifier)
                   body: (declaration_body
                     (property
@@ -166,6 +170,7 @@ page 50101 "Sales Manager Role Center"
                   condition: (preproc_not_expression
                     (identifier)))
                 (action_declaration
+                  (action_keyword)
                   name: (quoted_identifier)
                   body: (declaration_body
                     (property
@@ -184,6 +189,7 @@ page 50101 "Sales Manager Role Center"
                       name: (property_name)
                       value: (string_literal))))
                 (separator_action
+                  (separator_keyword)
                   name: (identifier)
                   body: (declaration_body
                     (property
@@ -196,6 +202,7 @@ page 50101 "Sales Manager Role Center"
                       name: (property_name)
                       value: (string_literal))))
                 (action_declaration
+                  (action_keyword)
                   name: (quoted_identifier)
                   body: (declaration_body
                     (property
@@ -215,6 +222,7 @@ page 50101 "Sales Manager Role Center"
                       value: (string_literal))))
                 (preproc_else)
                 (action_declaration
+                  (action_keyword)
                   name: (quoted_identifier)
                   body: (declaration_body
                     (property
@@ -274,6 +282,7 @@ page 50102 "Test Page"
             type: (processing_keyword)
             body: (action_body
               (separator_action
+                (separator_keyword)
                 name: (identifier)
                 body: (declaration_body
                   (property
@@ -283,6 +292,7 @@ page 50102 "Test Page"
                     name: (property_name)
                     value: (boolean))))
               (separator_action
+                (separator_keyword)
                 name: (identifier)
                 body: (declaration_body
                   (property
@@ -337,6 +347,7 @@ page 50103 "Test Page"
                   (preproc_open)
                   condition: (identifier))
                 (action_declaration
+                  (action_keyword)
                   name: (identifier)
                   body: (declaration_body
                     (property
@@ -344,6 +355,7 @@ page 50103 "Test Page"
                       value: (string_literal))))
                 (preproc_else)
                 (separator_action
+                  (separator_keyword)
                   name: (identifier)
                   body: (declaration_body
                     (property

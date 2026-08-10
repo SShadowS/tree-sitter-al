@@ -36,9 +36,12 @@ codeunit 123 "Test Range Case"
               name: (identifier)
               type: (type_specification
                 (array_type
+                  (array_keyword)
                   sizes: (integer)
+                  (of_keyword)
                   element_type: (type_specification
                     (code_type
+                      (code_keyword)
                       length: (integer))))))
             (variable_declaration
               name: (identifier)

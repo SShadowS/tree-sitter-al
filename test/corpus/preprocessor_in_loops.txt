@@ -42,11 +42,13 @@ codeunit 50100 TestPreprocessor
               name: (identifier)
               type: (type_specification
                 (record_type
+                  (record_keyword)
                   reference: (quoted_identifier))))
             (variable_declaration
               name: (identifier)
               type: (type_specification
                 (record_type
+                  (record_keyword)
                   reference: (quoted_identifier))))
             (preproc_conditional_var
               (preproc_if
@@ -57,6 +59,7 @@ codeunit 50100 TestPreprocessor
                 name: (identifier)
                 type: (type_specification
                   (record_type
+                    (record_keyword)
                     reference: (quoted_identifier))))
               (preproc_endif
                 (preproc_close)))))
@@ -152,6 +155,7 @@ codeunit 50101 TestWhilePreprocessor
               name: (identifier)
               type: (type_specification
                 (record_type
+                  (record_keyword)
                   reference: (identifier))))))
         body: (code_block
           (begin_keyword)

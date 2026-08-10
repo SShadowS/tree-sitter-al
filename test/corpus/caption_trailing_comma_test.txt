@@ -47,10 +47,12 @@ table 50100 "Test Table"
         (fields_keyword)
         body: (fields_body
           (field_declaration
+            (field_keyword)
             id: (integer)
             name: (identifier)
             type: (type_specification
               (text_type
+                (text_keyword)
                 length: (integer)))
             body: (declaration_body
               (property
@@ -90,10 +92,12 @@ table 50101 "Test Options"
         (fields_keyword)
         body: (fields_body
           (field_declaration
+            (field_keyword)
             id: (integer)
             name: (identifier)
             type: (type_specification
-              (option_type))
+              (option_type
+                (option_keyword)))
             body: (declaration_body
               (property
                 name: (property_name)

@@ -55,6 +55,7 @@ page 17 "G/L Account Card" {
                     (preproc_endif
                       (preproc_close)))
                   (page_field
+                    (field_keyword)
                     name: (quoted_identifier)
                     source: (member_expression
                       object: (identifier)
@@ -120,6 +121,7 @@ page 18 "Test List" {
                     (preproc_endif
                       (preproc_close)))
                   (page_field
+                    (field_keyword)
                     name: (identifier)
                     source: (member_expression
                       object: (identifier)

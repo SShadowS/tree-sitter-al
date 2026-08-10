@@ -44,7 +44,8 @@ page 6085759 "CDC Document Files Factbox"
           (variable_declaration
             name: (identifier)
             type: (type_specification
-              (text_type)))
+              (text_type
+                (text_keyword))))
           (variable_declaration
             name: (identifier)
             type: (type_specification
@@ -53,6 +54,7 @@ page 6085759 "CDC Document Files Factbox"
             name: (identifier)
             type: (type_specification
               (option_type
+                (option_keyword)
                 (option_member_list
                   (option_member
                     (quoted_identifier))

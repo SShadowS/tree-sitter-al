@@ -37,10 +37,12 @@ table 50100 MyTable
             (preproc_endif
               (preproc_close)))
           (field_declaration
+            (field_keyword)
             id: (integer)
             name: (quoted_identifier)
             type: (type_specification
               (text_type
+                (text_keyword)
                 length: (integer)))
             (preproc_pragma_only
               (preproc_if

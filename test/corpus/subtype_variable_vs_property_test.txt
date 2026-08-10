@@ -33,6 +33,7 @@ page 123 "Test SubType Contexts"
             name: (identifier)
             type: (type_specification
               (option_type
+                (option_keyword)
                 (option_member_list
                   (option_member
                     (identifier))
@@ -49,4 +50,5 @@ page 123 "Test SubType Contexts"
           (variable_declaration
             name: (identifier)
             type: (type_specification
-              (text_type))))))))
+              (text_type
+                (text_keyword)))))))))

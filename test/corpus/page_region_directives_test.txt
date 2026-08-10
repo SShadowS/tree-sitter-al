@@ -72,6 +72,7 @@ page 50100 "Manufacturing Factbox"
             type: (content_keyword)
             body: (layout_body
               (page_field
+                (field_keyword)
                 name: (quoted_identifier)
                 source: (member_expression
                   object: (identifier)
@@ -84,6 +85,7 @@ page 50100 "Manufacturing Factbox"
                     name: (property_name)
                     value: (string_literal))))
               (page_field
+                (field_keyword)
                 name: (quoted_identifier)
                 source: (member_expression
                   object: (identifier)
@@ -99,6 +101,7 @@ page 50100 "Manufacturing Factbox"
             name: (identifier)
             type: (type_specification
               (record_type
+                (record_keyword)
                 reference: (identifier))))))
       (preproc_region)
       (procedure
@@ -141,6 +144,7 @@ page 50100 "Manufacturing Factbox"
         name: (identifier)
         return_type: (type_specification
           (code_type
+            (code_keyword)
             length: (integer)))
         body: (code_block
           (begin_keyword)

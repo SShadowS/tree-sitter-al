@@ -48,6 +48,7 @@ page 50100 "Text Viewer"
             type: (content_keyword)
             body: (layout_body
               (page_field
+                (field_keyword)
                 name: (identifier)
                 source: (identifier)
                 body: (declaration_body
@@ -63,11 +64,13 @@ page 50100 "Text Viewer"
           (variable_declaration
             name: (identifier)
             type: (type_specification
-              (text_type)))
+              (text_type
+                (text_keyword))))
           (variable_declaration
             name: (identifier)
             type: (type_specification
-              (text_type)))
+              (text_type
+                (text_keyword))))
           (variable_declaration
             name: (identifier)
             type: (type_specification
@@ -138,7 +141,8 @@ codeunit 50101 "ReadOnly Test"
             (variable_declaration
               name: (identifier)
               type: (type_specification
-                (text_type)))
+                (text_type
+                  (text_keyword))))
             (variable_declaration
               name: (identifier)
               type: (type_specification
@@ -280,7 +284,8 @@ page 50102 "Advanced Viewer"
                       (parameter
                         name: (identifier)
                         type: (type_specification
-                          (text_type))))
+                          (text_type
+                            (text_keyword)))))
                     (var_section
                       (var_keyword)
                       body: (var_body
@@ -316,7 +321,8 @@ page 50102 "Advanced Viewer"
           (variable_declaration
             name: (identifier)
             type: (type_specification
-              (text_type)))
+              (text_type
+                (text_keyword))))
           (variable_declaration
             name: (identifier)
             type: (type_specification
@@ -347,7 +353,8 @@ page 50102 "Advanced Viewer"
             type: (type_specification
               (basic_type))))
         return_type: (type_specification
-          (text_type))
+          (text_type
+            (text_keyword)))
         body: (code_block
           (begin_keyword)
           body: (statement_block
@@ -398,6 +405,7 @@ table 50103 "Permission Settings"
         (fields_keyword)
         body: (fields_body
           (field_declaration
+            (field_keyword)
             id: (integer)
             name: (quoted_identifier)
             type: (type_specification
@@ -493,6 +501,7 @@ page 50104 "Size Settings"
             type: (content_keyword)
             body: (layout_body
               (page_field
+                (field_keyword)
                 name: (identifier)
                 source: (identifier)
                 body: (declaration_body
@@ -503,6 +512,7 @@ page 50104 "Size Settings"
                     name: (property_name)
                     value: (string_literal))))
               (page_field
+                (field_keyword)
                 name: (identifier)
                 source: (quoted_identifier)
                 body: (declaration_body
@@ -526,7 +536,8 @@ page 50104 "Size Settings"
           (variable_declaration
             name: (identifier)
             type: (type_specification
-              (text_type)))
+              (text_type
+                (text_keyword))))
           (variable_declaration
             name: (identifier)
             type: (type_specification

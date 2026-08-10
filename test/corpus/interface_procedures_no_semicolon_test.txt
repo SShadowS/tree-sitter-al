@@ -52,7 +52,8 @@ interface DataUpgradeSAFT
         name: (identifier)
         (interface_procedure_suffix
           return_type: (type_specification
-            (text_type))))
+            (text_type
+              (text_keyword)))))
       (comment)
       (comment)
       (comment)
@@ -197,4 +198,5 @@ interface DataExport
         (interface_procedure_suffix
           return_value: (identifier)
           return_type: (type_specification
-            (text_type)))))))
+            (text_type
+              (text_keyword))))))))

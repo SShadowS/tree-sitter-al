@@ -52,6 +52,7 @@ interface "Price Calculation"
             name: (identifier)
             type: (type_specification
               (record_type
+                (record_keyword)
                 reference: (quoted_identifier))))
           (parameter
             name: (identifier)
@@ -70,6 +71,7 @@ interface "Price Calculation"
             name: (identifier)
             type: (type_specification
               (record_type
+                (record_keyword)
                 reference: (quoted_identifier))))
           (parameter
             name: (identifier)
@@ -133,7 +135,8 @@ interface "Simple Returns"
         name: (identifier)
         (interface_procedure_suffix
           return_type: (type_specification
-            (text_type))))
+            (text_type
+              (text_keyword)))))
       (interface_procedure
         (procedure_keyword)
         name: (identifier)
@@ -179,6 +182,7 @@ interface "No Returns"
             name: (identifier)
             type: (type_specification
               (record_type
+                (record_keyword)
                 reference: (quoted_identifier)))))
         (interface_procedure_suffix))
       (interface_procedure

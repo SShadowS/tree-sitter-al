@@ -36,6 +36,7 @@ table 50100 "Test Table"
         (fields_keyword)
         body: (fields_body
           (field_declaration
+            (field_keyword)
             id: (integer)
             name: (quoted_identifier)
             type: (type_specification
@@ -59,6 +60,7 @@ table 50100 "Test Table"
                         arguments: (argument_list
                           (quoted_identifier)))))))))
           (field_declaration
+            (field_keyword)
             id: (integer)
             name: (quoted_identifier)
             type: (type_specification
@@ -68,6 +70,7 @@ table 50100 "Test Table"
                 name: (property_name)
                 value: (integer))))
           (field_declaration
+            (field_keyword)
             id: (integer)
             name: (quoted_identifier)
             type: (type_specification

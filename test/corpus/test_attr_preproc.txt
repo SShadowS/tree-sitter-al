@@ -33,6 +33,7 @@ table 50000 "Test"
             name: (identifier)
             type: (type_specification
               (record_type
+                (record_keyword)
                 reference: (quoted_identifier))))))
       (attribute_item
         attribute: (attribute_content
@@ -53,6 +54,7 @@ table 50000 "Test"
             name: (identifier)
             type: (type_specification
               (record_type
+                (record_keyword)
                 reference: (quoted_identifier))))
           (parameter
             modifier: (var_keyword)
@@ -68,6 +70,7 @@ table 50000 "Test"
             name: (identifier)
             type: (type_specification
               (record_type
+                (record_keyword)
                 reference: (quoted_identifier)))))
         (preproc_endif
           (preproc_close))

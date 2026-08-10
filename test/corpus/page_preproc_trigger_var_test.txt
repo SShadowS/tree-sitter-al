@@ -131,6 +131,7 @@ page 30114 "Shpfy Order Attributes"
                 name: (identifier)
                 body: (layout_container_body
                   (page_field
+                    (field_keyword)
                     name: (quoted_identifier)
                     source: (member_expression
                       object: (identifier)
@@ -148,6 +149,7 @@ page 30114 "Shpfy Order Attributes"
                       condition: (preproc_not_expression
                         (identifier)))
                     (page_field
+                      (field_keyword)
                       name: (identifier)
                       source: (member_expression
                         object: (identifier)
@@ -176,11 +178,13 @@ page 30114 "Shpfy Order Attributes"
                 name: (identifier)
                 type: (type_specification
                   (record_type
+                    (record_keyword)
                     reference: (quoted_identifier))))
               (variable_declaration
                 name: (identifier)
                 type: (type_specification
                   (record_type
+                    (record_keyword)
                     reference: (quoted_identifier))))))
           body: (code_block
             (begin_keyword)
@@ -306,6 +310,7 @@ page 50001 "Complex Page"
             type: (content_keyword)
             body: (layout_body
               (page_field
+                (field_keyword)
                 name: (identifier)
                 source: (identifier)
                 body: (declaration_body
@@ -353,7 +358,8 @@ page 50001 "Complex Page"
             (variable_declaration
               name: (identifier)
               type: (type_specification
-                (text_type)))
+                (text_type
+                  (text_keyword))))
             (variable_declaration
               name: (identifier)
               type: (type_specification

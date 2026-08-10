@@ -57,6 +57,7 @@ page 50000 "Extension Management"
                         (identifier)))
                     (pragma)
                     (actionref_declaration
+                      (actionref_keyword)
                       promoted_name: (quoted_identifier)
                       action_name: (quoted_identifier)
                       (pragma)
@@ -76,6 +77,7 @@ page 50000 "Extension Management"
                     (preproc_endif
                       (preproc_close)))
                   (actionref_declaration
+                    (actionref_keyword)
                     promoted_name: (quoted_identifier)
                     action_name: (quoted_identifier)))))))))))
 
@@ -147,6 +149,7 @@ page 50001 "Test Page"
                           (preproc_open)
                           condition: (identifier))
                         (action_declaration
+                          (action_keyword)
                           name: (identifier)
                           body: (declaration_body
                             (property
@@ -154,6 +157,7 @@ page 50001 "Test Page"
                               value: (string_literal))))
                         (preproc_else)
                         (action_declaration
+                          (action_keyword)
                           name: (identifier)
                           body: (declaration_body
                             (property

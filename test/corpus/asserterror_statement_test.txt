@@ -64,6 +64,7 @@ codeunit 50101 "Test Asserterror Methods"
               name: (identifier)
               type: (type_specification
                 (record_type
+                  (record_keyword)
                   reference: (identifier))))))
         body: (code_block
           (begin_keyword)
@@ -112,6 +113,7 @@ codeunit 50102 "Test Asserterror Enum"
               name: (identifier)
               type: (type_specification
                 (record_type
+                  (record_keyword)
                   reference: (quoted_identifier))))
             (variable_declaration
               name: (identifier)

@@ -39,6 +39,7 @@ codeunit 50100 "Built-in Functions Test"
               (identifier)
               (type_specification
                 (record_type
+                  (record_keyword)
                   (identifier))))
             (variable_declaration
               (identifier)
@@ -48,16 +49,19 @@ codeunit 50100 "Built-in Functions Test"
               (identifier)
               (type_specification
                 (code_type
+                  (code_keyword)
                   (integer))))
             (variable_declaration
               (identifier)
               (type_specification
                 (code_type
+                  (code_keyword)
                   (integer))))
             (variable_declaration
               (identifier)
               (type_specification
-                (text_type)))))
+                (text_type
+                  (text_keyword))))))
         (code_block
           (begin_keyword)
           (statement_block

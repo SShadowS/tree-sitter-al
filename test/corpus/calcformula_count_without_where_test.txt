@@ -30,12 +30,15 @@ table 50100 "User Status"
         (fields_keyword)
         body: (fields_body
           (field_declaration
+            (field_keyword)
             id: (integer)
             name: (quoted_identifier)
             type: (type_specification
               (code_type
+                (code_keyword)
                 length: (integer))))
           (field_declaration
+            (field_keyword)
             id: (integer)
             name: (quoted_identifier)
             type: (type_specification
@@ -88,6 +91,7 @@ table 50200 "Statistics"
         (fields_keyword)
         body: (fields_body
           (field_declaration
+            (field_keyword)
             id: (integer)
             name: (quoted_identifier)
             type: (type_specification
@@ -110,6 +114,7 @@ table 50200 "Statistics"
                 name: (property_name)
                 value: (identifier))))
           (field_declaration
+            (field_keyword)
             id: (integer)
             name: (quoted_identifier)
             type: (type_specification
@@ -157,6 +162,7 @@ table 50300 "Count Test"
         (fields_keyword)
         body: (fields_body
           (field_declaration
+            (field_keyword)
             id: (integer)
             name: (quoted_identifier)
             type: (type_specification
@@ -170,6 +176,7 @@ table 50300 "Count Test"
                     arguments: (argument_list
                       (quoted_identifier)))))))
           (field_declaration
+            (field_keyword)
             id: (integer)
             name: (quoted_identifier)
             type: (type_specification

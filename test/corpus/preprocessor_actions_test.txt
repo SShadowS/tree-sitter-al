@@ -49,6 +49,7 @@ pageextension 50000 MyPageExt extends "Customer List"
               target: (identifier)
               body: (action_body
                 (actionref_declaration
+                  (actionref_keyword)
                   promoted_name: (identifier)
                   action_name: (identifier)
                   body: (declaration_body
@@ -64,6 +65,7 @@ pageextension 50000 MyPageExt extends "Customer List"
             target: (identifier)
             body: (action_body
               (action_declaration
+                (action_keyword)
                 name: (identifier)
                 body: (declaration_body
                   (property
@@ -121,6 +123,7 @@ page 50001 MyPage
               type: (processing_keyword)
               body: (action_body
                 (action_declaration
+                  (action_keyword)
                   name: (identifier)
                   body: (declaration_body
                     (property
@@ -132,6 +135,7 @@ page 50001 MyPage
               type: (processing_keyword)
               body: (action_body
                 (action_declaration
+                  (action_keyword)
                   name: (identifier)
                   body: (declaration_body
                     (property
@@ -204,6 +208,7 @@ pageextension 50002 ComplexActions extends "Item List"
                       name: (property_name)
                       value: (string_literal))
                     (action_declaration
+                      (action_keyword)
                       name: (identifier)
                       body: (declaration_body
                         (property
@@ -219,6 +224,7 @@ pageextension 50002 ComplexActions extends "Item List"
                     name: (property_name)
                     value: (string_literal))
                   (action_declaration
+                    (action_keyword)
                     name: (identifier)
                     body: (declaration_body
                       (property
@@ -272,6 +278,7 @@ page 50003 MixedCase
               type: (creation_keyword)
               body: (action_body
                 (action_declaration
+                  (action_keyword)
                   name: (identifier)
                   body: (declaration_body
                     (property

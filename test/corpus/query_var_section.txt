@@ -142,8 +142,11 @@ query 5506 "Email Related Record"
         name: (identifier)
         return_type: (type_specification
           (list_type
+            (list_keyword)
+            (of_keyword)
             element_type: (type_specification
-              (text_type))))
+              (text_type
+                (text_keyword)))))
         body: (code_block
           (begin_keyword)
           body: (statement_block
@@ -220,6 +223,7 @@ query 50101 "Query with Conditional Var"
               name: (identifier)
               type: (type_specification
                 (text_type
+                  (text_keyword)
                   length: (integer))))))
         (preproc_else)
         (var_section
@@ -229,6 +233,7 @@ query 50101 "Query with Conditional Var"
               name: (identifier)
               type: (type_specification
                 (code_type
+                  (code_keyword)
                   length: (integer))))))
         (preproc_endif
           (preproc_close)))
@@ -236,7 +241,8 @@ query 50101 "Query with Conditional Var"
         (procedure_keyword)
         name: (identifier)
         return_type: (type_specification
-          (text_type))
+          (text_type
+            (text_keyword)))
         body: (code_block
           (begin_keyword)
           body: (statement_block
@@ -316,7 +322,8 @@ query 50102 "Mixed Var Query"
           (variable_declaration
             name: (identifier)
             type: (type_specification
-              (text_type)))
+              (text_type
+                (text_keyword))))
           (variable_declaration
             name: (identifier)
             type: (type_specification
@@ -331,11 +338,13 @@ query 50102 "Mixed Var Query"
               name: (identifier)
               type: (type_specification
                 (record_type
+                  (record_keyword)
                   reference: (identifier))))
             (variable_declaration
               name: (identifier)
               type: (type_specification
                 (text_type
+                  (text_keyword)
                   length: (integer))))))
         body: (code_block
           (begin_keyword)

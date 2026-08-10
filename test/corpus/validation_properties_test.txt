@@ -27,10 +27,12 @@ table 50000 "Test Table"
         (fields_keyword)
         body: (fields_body
           (field_declaration
+            (field_keyword)
             id: (integer)
             name: (quoted_identifier)
             type: (type_specification
-              (option_type))
+              (option_type
+                (option_keyword)))
             body: (declaration_body
               (property
                 name: (property_name)
@@ -74,6 +76,7 @@ table 50001 "Test Table 2"
         (fields_keyword)
         body: (fields_body
           (field_declaration
+            (field_keyword)
             id: (integer)
             name: (identifier)
             type: (type_specification
@@ -117,20 +120,24 @@ table 50002 "Test Table 3"
         (fields_keyword)
         body: (fields_body
           (field_declaration
+            (field_keyword)
             id: (integer)
             name: (quoted_identifier)
             type: (type_specification
               (code_type
+                (code_keyword)
                 length: (integer)))
             body: (declaration_body
               (property
                 name: (property_name)
                 value: (boolean))))
           (field_declaration
+            (field_keyword)
             id: (integer)
             name: (quoted_identifier)
             type: (type_specification
               (text_type
+                (text_keyword)
                 length: (integer)))
             body: (declaration_body
               (property
@@ -168,6 +175,7 @@ table 50003 "Test Table 4"
         (fields_keyword)
         body: (fields_body
           (field_declaration
+            (field_keyword)
             id: (integer)
             name: (identifier)
             type: (type_specification

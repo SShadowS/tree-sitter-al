@@ -36,19 +36,23 @@ table 50100 TestTable
                 (attribute_argument_list
                   (string_literal)))))
           (field_declaration
+            (field_keyword)
             id: (integer)
             name: (quoted_identifier)
             type: (type_specification
               (code_type
+                (code_keyword)
                 length: (integer))))
           (attribute_item
             attribute: (attribute_content
               name: (identifier)))
           (field_declaration
+            (field_keyword)
             id: (integer)
             name: (identifier)
             type: (type_specification
               (text_type
+                (text_keyword)
                 length: (integer)))))))))
 
 ========================================================================
@@ -89,7 +93,8 @@ codeunit 50101 TestCodeunit
           (parameter
             name: (identifier)
             type: (type_specification
-              (text_type))))
+              (text_type
+                (text_keyword)))))
         body: (code_block
           (begin_keyword)
           (end_keyword))))))

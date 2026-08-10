@@ -31,6 +31,7 @@ table 15 "G/L Entry Posting Preview"
         (fields_keyword)
         body: (fields_body
           (field_declaration
+            (field_keyword)
             id: (integer)
             name: (quoted_identifier)
             type: (type_specification
@@ -43,6 +44,7 @@ table 15 "G/L Entry Posting Preview"
                 name: (property_name)
                 value: (boolean))))
           (field_declaration
+            (field_keyword)
             id: (integer)
             name: (quoted_identifier)
             type: (type_specification
@@ -102,6 +104,7 @@ page 50100 "Date Test Page"
             type: (content_keyword)
             body: (layout_body
               (page_field
+                (field_keyword)
                 name: (quoted_identifier)
                 source: (identifier)
                 body: (declaration_body
@@ -109,6 +112,7 @@ page 50100 "Date Test Page"
                     name: (property_name)
                     value: (boolean))))
               (page_field
+                (field_keyword)
                 name: (quoted_identifier)
                 source: (identifier)
                 body: (declaration_body
@@ -116,6 +120,7 @@ page 50100 "Date Test Page"
                     name: (property_name)
                     value: (boolean))))
               (page_field
+                (field_keyword)
                 name: (quoted_identifier)
                 source: (identifier)
                 body: (declaration_body
@@ -153,6 +158,7 @@ table 50200 "Custom Entry"
         (fields_keyword)
         body: (fields_body
           (field_declaration
+            (field_keyword)
             id: (integer)
             name: (quoted_identifier)
             type: (type_specification

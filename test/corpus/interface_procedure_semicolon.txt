@@ -22,6 +22,7 @@ interface "No. Series - Single"
             name: (identifier)
             type: (type_specification
               (record_type
+                (record_keyword)
                 reference: (quoted_identifier))))
           (parameter
             name: (identifier)
@@ -30,6 +31,7 @@ interface "No. Series - Single"
         (interface_procedure_suffix
           return_type: (type_specification
             (code_type
+              (code_keyword)
               length: (integer))))))))
 
 ================================================================================
@@ -57,6 +59,7 @@ interface "My Interface"
             name: (identifier)
             type: (type_specification
               (record_type
+                (record_keyword)
                 reference: (quoted_identifier))))
           (parameter
             name: (identifier)
@@ -69,6 +72,7 @@ interface "My Interface"
         (interface_procedure_suffix
           return_type: (type_specification
             (code_type
+              (code_keyword)
               length: (integer))))))))
 
 ================================================================================
@@ -118,6 +122,7 @@ interface "Process Interface"
             name: (identifier)
             type: (type_specification
               (record_type
+                (record_keyword)
                 reference: (quoted_identifier)))))
         (interface_procedure_suffix)))))
 
@@ -172,6 +177,7 @@ interface "No. Series - Single"
             name: (identifier)
             type: (type_specification
               (record_type
+                (record_keyword)
                 reference: (quoted_identifier))))
           (parameter
             name: (identifier)
@@ -180,6 +186,7 @@ interface "No. Series - Single"
         (interface_procedure_suffix
           return_type: (type_specification
             (code_type
+              (code_keyword)
               length: (integer)))))
       (comment)
       (comment)
@@ -193,6 +200,7 @@ interface "No. Series - Single"
             name: (identifier)
             type: (type_specification
               (record_type
+                (record_keyword)
                 reference: (quoted_identifier))))
           (parameter
             name: (identifier)
@@ -205,6 +213,7 @@ interface "No. Series - Single"
         (interface_procedure_suffix
           return_type: (type_specification
             (code_type
+              (code_keyword)
               length: (integer)))))
       (empty_statement)
       (comment)
@@ -218,10 +227,12 @@ interface "No. Series - Single"
             name: (identifier)
             type: (type_specification
               (record_type
+                (record_keyword)
                 reference: (quoted_identifier)))))
         (interface_procedure_suffix
           return_type: (type_specification
             (code_type
+              (code_keyword)
               length: (integer)))))
       (empty_statement)
       (comment)

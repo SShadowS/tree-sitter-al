@@ -33,7 +33,8 @@ codeunit 50100 T
           (parameter
             name: (identifier)
             type: (type_specification
-              (text_type))))
+              (text_type
+                (text_keyword)))))
         (var_section
           (var_keyword)
           body: (var_body
@@ -41,6 +42,7 @@ codeunit 50100 T
               name: (identifier)
               type: (type_specification
                 (record_type
+                  (record_keyword)
                   reference: (identifier))))))
         body: (code_block
           (begin_keyword)
@@ -153,7 +155,8 @@ codeunit 50100 T
           (parameter
             name: (identifier)
             type: (type_specification
-              (text_type))))
+              (text_type
+                (text_keyword)))))
         (var_section
           (var_keyword)
           body: (var_body
@@ -161,6 +164,7 @@ codeunit 50100 T
               name: (identifier)
               type: (type_specification
                 (record_type
+                  (record_keyword)
                   reference: (identifier))))))
         body: (code_block
           (begin_keyword)

@@ -36,6 +36,7 @@ pageextension 6085592 "CDC General Ledger Entries" extends "General Ledger Entri
             name: (identifier)
             type: (type_specification
               (record_type
+                (record_keyword)
                 reference: (quoted_identifier))))
           (parameter
             name: (identifier)
@@ -44,11 +45,13 @@ pageextension 6085592 "CDC General Ledger Entries" extends "General Ledger Entri
           (parameter
             name: (identifier)
             type: (type_specification
-              (option_type)))
+              (option_type
+                (option_keyword))))
           (parameter
             name: (identifier)
             type: (type_specification
               (code_type
+                (code_keyword)
                 length: (integer)))))
         body: (code_block
           (begin_keyword)
@@ -78,12 +81,14 @@ pageextension 6085592 "CDC General Ledger Entries" extends "General Ledger Entri
             name: (identifier)
             type: (type_specification
               (record_type
+                (record_keyword)
                 reference: (quoted_identifier))))
           (parameter
             modifier: (var_keyword)
             name: (identifier)
             type: (type_specification
               (record_type
+                (record_keyword)
                 reference: (quoted_identifier))))
           (parameter
             modifier: (var_keyword)

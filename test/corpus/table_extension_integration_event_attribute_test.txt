@@ -48,11 +48,13 @@ tableextension 50001 "Test Extension" extends "Test Table"
             name: (identifier)
             type: (type_specification
               (record_type
+                (record_keyword)
                 reference: (quoted_identifier))))
           (parameter
             name: (identifier)
             type: (type_specification
               (record_type
+                (record_keyword)
                 reference: (quoted_identifier)))))
         body: (code_block
           (begin_keyword)
@@ -75,11 +77,13 @@ tableextension 50001 "Test Extension" extends "Test Table"
             name: (identifier)
             type: (type_specification
               (record_type
+                (record_keyword)
                 reference: (quoted_identifier))))
           (parameter
             name: (identifier)
             type: (type_specification
               (record_type
+                (record_keyword)
                 reference: (identifier)))))
         body: (code_block
           (begin_keyword)

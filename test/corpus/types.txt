@@ -30,56 +30,67 @@ table 50100 T
         (fields_keyword)
         (fields_body
           (field_declaration
+            (field_keyword)
             (integer)
             (identifier)
             (type_specification
               (basic_type)))
           (field_declaration
+            (field_keyword)
             (integer)
             (identifier)
             (type_specification
               (basic_type)))
           (field_declaration
+            (field_keyword)
             (integer)
             (identifier)
             (type_specification
               (basic_type)))
           (field_declaration
+            (field_keyword)
             (integer)
             (identifier)
             (type_specification
               (basic_type)))
           (field_declaration
+            (field_keyword)
             (integer)
             (identifier)
             (type_specification
               (basic_type)))
           (field_declaration
+            (field_keyword)
             (integer)
             (identifier)
             (type_specification
               (basic_type)))
           (field_declaration
+            (field_keyword)
             (integer)
             (identifier)
             (type_specification
               (basic_type)))
           (field_declaration
+            (field_keyword)
             (integer)
             (identifier)
             (type_specification
               (basic_type)))
           (field_declaration
+            (field_keyword)
             (integer)
             (identifier)
             (type_specification
               (basic_type)))
           (field_declaration
+            (field_keyword)
             (integer)
             (identifier)
             (type_specification
               (basic_type)))
           (field_declaration
+            (field_keyword)
             (integer)
             (identifier)
             (type_specification
@@ -110,27 +121,35 @@ table 50100 T
         (fields_keyword)
         (fields_body
           (field_declaration
+            (field_keyword)
             (integer)
             (identifier)
             (type_specification
               (text_type
+                (text_keyword)
                 (integer))))
           (field_declaration
+            (field_keyword)
             (integer)
             (identifier)
             (type_specification
               (code_type
+                (code_keyword)
                 (integer))))
           (field_declaration
+            (field_keyword)
             (integer)
             (identifier)
             (type_specification
-              (text_type)))
+              (text_type
+                (text_keyword))))
           (field_declaration
+            (field_keyword)
             (integer)
             (identifier)
             (type_specification
-              (code_type))))))))
+              (code_type
+                (code_keyword)))))))))
 
 ========================================================================
 Record type
@@ -155,16 +174,20 @@ table 50100 T
         (fields_keyword)
         (fields_body
           (field_declaration
+            (field_keyword)
             (integer)
             (identifier)
             (type_specification
               (record_type
+                (record_keyword)
                 (identifier))))
           (field_declaration
+            (field_keyword)
             (integer)
             (identifier)
             (type_specification
               (record_type
+                (record_keyword)
                 (quoted_identifier)))))))))
 
 ========================================================================
@@ -191,6 +214,7 @@ table 50100 T
         (fields_keyword)
         (fields_body
           (field_declaration
+            (field_keyword)
             (integer)
             (identifier)
             (type_specification
@@ -198,6 +222,7 @@ table 50100 T
                 (codeunit_keyword)
                 (quoted_identifier))))
           (field_declaration
+            (field_keyword)
             (integer)
             (identifier)
             (type_specification
@@ -205,6 +230,7 @@ table 50100 T
                 (page_keyword)
                 (quoted_identifier))))
           (field_declaration
+            (field_keyword)
             (integer)
             (identifier)
             (type_specification
@@ -235,22 +261,29 @@ table 50100 T
         (fields_keyword)
         (fields_body
           (field_declaration
+            (field_keyword)
             (integer)
             (identifier)
             (type_specification
               (array_type
+                (array_keyword)
                 (integer)
+                (of_keyword)
                 (type_specification
                   (basic_type)))))
           (field_declaration
+            (field_keyword)
             (integer)
             (identifier)
             (type_specification
               (array_type
+                (array_keyword)
                 (integer)
                 (integer)
+                (of_keyword)
                 (type_specification
                   (text_type
+                    (text_keyword)
                     (integer)))))))))))
 
 ========================================================================
@@ -276,19 +309,26 @@ table 50100 T
         (fields_keyword)
         (fields_body
           (field_declaration
+            (field_keyword)
             (integer)
             (identifier)
             (type_specification
               (list_type
+                (list_keyword)
+                (of_keyword)
                 (type_specification
                   (basic_type)))))
           (field_declaration
+            (field_keyword)
             (integer)
             (identifier)
             (type_specification
               (dictionary_type
+                (dictionary_keyword)
+                (of_keyword)
                 (type_specification
-                  (text_type))
+                  (text_type
+                    (text_keyword)))
                 (type_specification
                   (basic_type))))))))))
 
@@ -315,15 +355,19 @@ table 50100 T
         (fields_keyword)
         (fields_body
           (field_declaration
-            (integer)
-            (identifier)
-            (type_specification
-              (option_type)))
-          (field_declaration
+            (field_keyword)
             (integer)
             (identifier)
             (type_specification
               (option_type
+                (option_keyword))))
+          (field_declaration
+            (field_keyword)
+            (integer)
+            (identifier)
+            (type_specification
+              (option_type
+                (option_keyword)
                 (option_member_list
                   (option_member
                     (identifier))
@@ -354,6 +398,7 @@ table 50100 T
         (fields_keyword)
         (fields_body
           (field_declaration
+            (field_keyword)
             (integer)
             (identifier)
             (type_specification

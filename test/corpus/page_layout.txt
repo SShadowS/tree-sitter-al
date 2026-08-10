@@ -35,11 +35,13 @@ page 50100 MyPage
                 (identifier)
                 (layout_container_body
                   (page_field
+                    (field_keyword)
                     (identifier)
                     (member_expression
                       (identifier)
                       (identifier)))
                   (page_field
+                    (field_keyword)
                     (quoted_identifier)
                     (member_expression
                       (identifier)
@@ -81,6 +83,7 @@ page 50100 P
                 (identifier)
                 (layout_container_body
                   (page_field
+                    (field_keyword)
                     (identifier)
                     (member_expression
                       (identifier)
@@ -118,6 +121,7 @@ page 50100 P
             (processing_keyword)
             (action_body
               (action_declaration
+                (action_keyword)
                 (identifier)
                 (declaration_body
                   (property
@@ -176,6 +180,7 @@ page 50100 P
                 (identifier)
                 (layout_container_body
                   (page_field
+                    (field_keyword)
                     (identifier)
                     (identifier))))))))
       (actions_section
@@ -186,6 +191,7 @@ page 50100 P
             (processing_keyword)
             (action_body
               (action_declaration
+                (action_keyword)
                 (identifier)
                 (declaration_body
                   (property
@@ -235,12 +241,14 @@ page 50100 P
                 (identifier)
                 (action_group_body
                   (action_declaration
+                    (action_keyword)
                     (identifier)
                     (declaration_body
                       (property
                         (property_name)
                         (string_literal))))
                   (action_declaration
+                    (action_keyword)
                     (identifier)
                     (declaration_body
                       (property
@@ -276,6 +284,7 @@ page 50100 P
             (content_keyword)
             (layout_body
               (page_field
+                (field_keyword)
                 (identifier)
                 (identifier)))))))))
 
@@ -348,6 +357,8 @@ page 50100 P
             (area_keyword)
             (processing_keyword)
             (action_body
-              (separator_action)
+              (separator_action
+                (separator_keyword))
               (action_declaration
+                (action_keyword)
                 (identifier)))))))))

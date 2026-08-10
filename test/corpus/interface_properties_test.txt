@@ -34,10 +34,12 @@ interface "Legacy Interface"
           (parameter
             name: (identifier)
             type: (type_specification
-              (text_type))))
+              (text_type
+                (text_keyword)))))
         (interface_procedure_suffix
           return_type: (type_specification
-            (text_type)))))))
+            (text_type
+              (text_keyword))))))))
 
 ================================================================================
 Interface with access and inherent permissions
@@ -104,7 +106,8 @@ interface "User Interface"
           (parameter
             name: (identifier)
             type: (type_specification
-              (text_type))))
+              (text_type
+                (text_keyword)))))
         (interface_procedure_suffix
           return_type: (type_specification
             (basic_type))))

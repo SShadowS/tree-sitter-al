@@ -147,7 +147,9 @@ codeunit 50100 ComplexTernary
               (identifier)
               (type_specification
                 (array_type
+                  (array_keyword)
                   (integer)
+                  (of_keyword)
                   (type_specification
                     (basic_type)))))
             (variable_declaration
@@ -158,6 +160,7 @@ codeunit 50100 ComplexTernary
               (identifier)
               (type_specification
                 (record_type
+                  (record_keyword)
                   (identifier))))))
         (code_block
           (begin_keyword)
@@ -250,7 +253,8 @@ codeunit 50100 TernaryInCalls
           (parameter
             (identifier)
             (type_specification
-              (text_type))))
+              (text_type
+                (text_keyword)))))
         (code_block
           (begin_keyword)
           (end_keyword))))))

@@ -22,7 +22,8 @@ page 50000 TestPage
           (variable_declaration
             (identifier)
             (type_specification
-              (text_type))))))))
+              (text_type
+                (text_keyword)))))))))
 
 ================================================================================
 filters (lowercase) as variable name
@@ -49,6 +50,7 @@ page 50001 TestPage
             (identifier)
             (type_specification
               (text_type
+                (text_keyword)
                 (integer)))))))))
 
 ================================================================================
@@ -76,6 +78,7 @@ page 50002 TestPage
             (identifier)
             (type_specification
               (record_type
+                (record_keyword)
                 (identifier)))))))))
 
 ================================================================================
@@ -127,6 +130,7 @@ page 50003 TestPage
                 (identifier)
                 (layout_container_body
                   (page_field
+                    (field_keyword)
                     (identifier)
                     (member_expression
                       (identifier)
@@ -136,6 +140,7 @@ page 50003 TestPage
                         (property_name)
                         (identifier))))
                   (page_field
+                    (field_keyword)
                     (identifier)
                     (identifier)
                     (declaration_body
@@ -151,7 +156,8 @@ page 50003 TestPage
           (variable_declaration
             (identifier)
             (type_specification
-              (text_type))))))))
+              (text_type
+                (text_keyword)))))))))
 
 ================================================================================
 Filters property in query dataitem
@@ -261,6 +267,7 @@ page 1518 "My Notifications"
                 (identifier)
                 (layout_container_body
                   (page_field
+                    (field_keyword)
                     (identifier)
                     (member_expression
                       (identifier)
@@ -302,6 +309,7 @@ page 1518 "My Notifications"
                                 (end_keyword))))
                           (end_keyword)))))
                   (page_field
+                    (field_keyword)
                     (identifier)
                     (identifier)
                     (declaration_body
@@ -364,4 +372,5 @@ page 1518 "My Notifications"
           (variable_declaration
             (identifier)
             (type_specification
-              (text_type))))))))
+              (text_type
+                (text_keyword)))))))))

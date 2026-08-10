@@ -25,7 +25,8 @@ page 123 "Context Sensitive Test"
           (variable_declaration
             name: (identifier)
             type: (type_specification
-              (text_type)))
+              (text_type
+                (text_keyword))))
           (variable_declaration
             name: (identifier)
             type: (type_specification
@@ -38,6 +39,7 @@ page 123 "Context Sensitive Test"
             name: (identifier)
             type: (type_specification
               (option_type
+                (option_keyword)
                 (option_member_list
                   (option_member
                     (identifier))
@@ -72,7 +74,8 @@ page 456 "High Precedence Test"
           (variable_declaration
             name: (identifier)
             type: (type_specification
-              (text_type)))
+              (text_type
+                (text_keyword))))
           (variable_declaration
             name: (identifier)
             type: (type_specification

@@ -123,10 +123,12 @@ table 50100 "Test Table"
           (fields_keyword)
           body: (fields_body
             (field_declaration
+              (field_keyword)
               id: (integer)
               name: (quoted_identifier)
               type: (type_specification
                 (code_type
+                  (code_keyword)
                   length: (integer))))))))
     (preproc_endif
       (preproc_close))))

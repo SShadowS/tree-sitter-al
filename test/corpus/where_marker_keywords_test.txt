@@ -45,10 +45,12 @@ table 50100 T
         (fields_keyword)
         body: (fields_body
           (field_declaration
+            (field_keyword)
             id: (integer)
             name: (identifier)
             type: (type_specification
               (code_type
+                (code_keyword)
                 length: (integer)))
             body: (declaration_body
               (property
@@ -66,10 +68,12 @@ table 50100 T
                             (field_keyword)
                             value: (identifier))))))))))
           (field_declaration
+            (field_keyword)
             id: (integer)
             name: (identifier)
             type: (type_specification
               (code_type
+                (code_keyword)
                 length: (integer)))
             body: (declaration_body
               (property
@@ -87,10 +91,12 @@ table 50100 T
                             (const_keyword)
                             value: (identifier))))))))))
           (field_declaration
+            (field_keyword)
             id: (integer)
             name: (identifier)
             type: (type_specification
               (code_type
+                (code_keyword)
                 length: (integer)))
             body: (declaration_body
               (property
@@ -108,10 +114,12 @@ table 50100 T
                             (upperlimit_keyword)
                             value: (identifier))))))))))
           (field_declaration
+            (field_keyword)
             id: (integer)
             name: (identifier)
             type: (type_specification
               (code_type
+                (code_keyword)
                 length: (integer)))
             body: (declaration_body
               (property
@@ -228,6 +236,7 @@ codeunit 50101 K
             type: (content_keyword)
             body: (layout_body
               (page_field
+                (field_keyword)
                 name: (identifier)
                 source: (member_expression
                   object: (identifier)
@@ -264,4 +273,3 @@ codeunit 50101 K
               operator: (assignment_operator)
               right: (integer)))
           (end_keyword))))))
-

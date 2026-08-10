@@ -45,6 +45,7 @@ table 50000 "Test Table"
                   (identifier)
                   (type_specification
                     (record_type
+                      (record_keyword)
                       (identifier))))))
             (preproc_endif
               (preproc_close)))))
@@ -102,11 +103,13 @@ table 50001 "Sales Price"
                   (identifier)
                   (type_specification
                     (record_type
+                      (record_keyword)
                       (identifier))))
                 (variable_declaration
                   (identifier)
                   (type_specification
                     (record_type
+                      (record_keyword)
                       (identifier))))))
             (preproc_endif
               (preproc_close)))))
@@ -118,6 +121,7 @@ table 50001 "Sales Price"
             (identifier)
             (type_specification
               (record_type
+                (record_keyword)
                 (identifier)))))))))
 
 ================================================================================
@@ -167,6 +171,7 @@ table 50002 "Test Table"
                   (identifier)
                   (type_specification
                     (record_type
+                      (record_keyword)
                       (identifier))))))
             (preproc_endif
               (preproc_close))))))))

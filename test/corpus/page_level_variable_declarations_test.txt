@@ -39,6 +39,7 @@ page 123 "Test Page"
             type: (content_keyword)
             body: (layout_body
               (page_field
+                (field_keyword)
                 name: (identifier)
                 source: (identifier)
                 body: (declaration_body
@@ -52,11 +53,13 @@ page 123 "Test Page"
             name: (identifier)
             type: (type_specification
               (text_type
+                (text_keyword)
                 length: (integer))))
           (variable_declaration
             name: (identifier)
             type: (type_specification
               (record_type
+                (record_keyword)
                 reference: (identifier))))
           (variable_declaration
             name: (identifier)
@@ -68,6 +71,7 @@ page 123 "Test Page"
             name: (identifier)
             type: (type_specification
               (text_type
+                (text_keyword)
                 length: (integer))))
           (variable_declaration
             name: (identifier)

@@ -26,7 +26,9 @@ codeunit 50100 "Array Types Test"
             (identifier)
             (type_specification
               (array_type
+                (array_keyword)
                 (integer)
+                (of_keyword)
                 (type_specification
                   (object_reference_type
                     (codeunit_keyword)
@@ -35,7 +37,9 @@ codeunit 50100 "Array Types Test"
             (identifier)
             (type_specification
               (array_type
+                (array_keyword)
                 (integer)
+                (of_keyword)
                 (type_specification
                   (object_reference_type
                     (query_keyword)
@@ -44,16 +48,21 @@ codeunit 50100 "Array Types Test"
             (identifier)
             (type_specification
               (array_type
+                (array_keyword)
                 (integer)
+                (of_keyword)
                 (type_specification
                   (record_type
+                    (record_keyword)
                     (identifier)
                     (temporary_keyword))))))
           (variable_declaration
             (identifier)
             (type_specification
               (array_type
+                (array_keyword)
                 (integer)
+                (of_keyword)
                 (type_specification
                   (dotnet_type
                     (dotnet_keyword)

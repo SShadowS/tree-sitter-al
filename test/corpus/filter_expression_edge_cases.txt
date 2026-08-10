@@ -25,10 +25,12 @@ table 50100 "IC Setup"
         (fields_keyword)
         (fields_body
           (field_declaration
+            (field_keyword)
             (integer)
             (quoted_identifier)
             (type_specification
               (code_type
+                (code_keyword)
                 (integer)))
             (declaration_body
               (property
@@ -76,6 +78,7 @@ table 50101 "Workflow Rule"
         (fields_keyword)
         (fields_body
           (field_declaration
+            (field_keyword)
             (integer)
             (quoted_identifier)
             (type_specification
@@ -124,10 +127,12 @@ table 50102 "Test Filter"
         (fields_keyword)
         (fields_body
           (field_declaration
+            (field_keyword)
             (integer)
             (quoted_identifier)
             (type_specification
-              (option_type))
+              (option_type
+                (option_keyword)))
             (declaration_body
               (property
                 (property_name)
@@ -171,6 +176,7 @@ table 50103 "Integration Setup"
         (fields_keyword)
         (fields_body
           (field_declaration
+            (field_keyword)
             (integer)
             (quoted_identifier)
             (type_specification
