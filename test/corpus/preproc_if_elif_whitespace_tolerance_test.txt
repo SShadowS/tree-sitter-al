@@ -441,3 +441,85 @@ elif CLEAN23
             (end_keyword)))
         (preproc_endif
           (preproc_close))))))
+
+================================================================================
+NEGATIVE: `#iendif` must NOT be recognized as `#endif`. The '#' dispatch used
+to try `if` and then `endif` with two separate walking matches; the failed
+`if` attempt consumed the 'i', the `endif` attempt then matched the REMAINING
+`endif` and returned true, and the result was a preproc_close spanning all
+seven bytes of `#iendif`, with the depth counter decremented, exit code 0 and
+no ERROR node. One buffered read of the directive word cannot do that.
+================================================================================
+
+codeunit 50000 "If Test"
+{
+    procedure Test()
+    begin
+#if CLEAN24
+        Foo();
+#iendif
+    end;
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (quoted_identifier)
+    (ERROR
+      (procedure_keyword)
+      name: (identifier)
+      (begin_keyword)
+      (preproc_if
+        (preproc_open)
+        condition: (identifier))
+      (call_expression
+        function: (identifier)
+        arguments: (argument_list))
+      (ERROR
+        (UNEXPECTED 'i'))
+      (identifier)
+      (ERROR
+        (identifier)))))
+
+================================================================================
+NEGATIVE: `#ifendif` must NOT be recognized as `#endif` either — same prefix
+burn, reached through `if`'s whole-word check rather than a character
+mismatch. `#xendif` was always an honest ERROR, because 'x' matches no prefix
+of `if` and so consumed nothing: that contrast is the whole mechanism.
+================================================================================
+
+codeunit 50000 "If Test"
+{
+    procedure Test()
+    begin
+#if CLEAN24
+        Foo();
+#ifendif
+    end;
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (quoted_identifier)
+    (ERROR
+      (procedure_keyword)
+      name: (identifier)
+      (begin_keyword)
+      (preproc_if
+        (preproc_open)
+        condition: (identifier))
+      (call_expression
+        function: (identifier)
+        arguments: (argument_list))
+      (ERROR
+        (UNEXPECTED 'i'))
+      (identifier)
+      (ERROR
+        (identifier)))))

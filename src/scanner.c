@@ -97,23 +97,34 @@ static void skip_whitespace(TSLexer *lexer) {
   }
 }
 
-// Read a keyword case-insensitively. Returns true if matched and lookahead is
-// not an identifier character after the keyword (i.e., whole word matched).
-// Advances the lexer past the keyword on success.
+// Consume a complete word into `buf` and report its length. The word is folded
+// through keyword_byte, so comparing it against an ASCII spelling is a
+// whole-word, case-insensitive test with no truncation. Returns false when the
+// word did not fit, in which case it is longer than any candidate and no
+// comparison is meaningful (the characters are consumed either way).
 //
-// A FAILED match still leaves the matching prefix consumed, and a scan cannot
-// give characters back. Only PREPROC_OPEN/PREPROC_CLOSE may use this, because
-// they are the last thing tried after '#' and nothing runs behind them. Every
-// identifier-initial token goes through read_identifier_word instead — see the
-// comment there for the misparse this rule exists to prevent.
-static bool read_keyword_ci(TSLexer *lexer, const char *keyword) {
-  for (int i = 0; keyword[i] != '\0'; i++) {
-    if (keyword_byte(lexer->lookahead) != keyword[i]) return false;
+// NOTHING in this scanner matches a candidate keyword against the live lexer
+// any more, and nothing should. A match that walks the lexer stops on the first
+// mismatching character with its prefix ALREADY CONSUMED, and a scan cannot give
+// characters back — so a second candidate tried afterwards is reading from the
+// wrong place. That defect has now been found three times in this file, in
+// three different shapes: `read_keyword_ci("else") || read_keyword_ci("endif")`
+// in PREPROC_SPLIT_END, the per-keyword begin/end/continue/property reads, and
+// the `if`-then-`endif` chain in the '#' dispatch. Read the word ONCE, then
+// compare.
+static bool read_word_ci(TSLexer *lexer, char *buf, size_t cap, size_t *out_len) {
+  size_t len = 0;
+  while (is_identifier_char(lexer->lookahead)) {
+    if (len < cap - 1) buf[len] = keyword_byte(lexer->lookahead);
+    len++;
     lexer->advance(lexer, false);
   }
-  // Ensure it's a whole-word match (not followed by identifier chars)
-  if (is_identifier_char(lexer->lookahead)) return false;
-  return true;
+  *out_len = len;
+  // Always NUL-terminated, so an over-long word is still usable for a PREFIX
+  // test (every candidate is shorter than any buffer here). Only a whole-word
+  // test has to check the return value.
+  buf[len > cap - 1 ? cap - 1 : len] = '\0';
+  return len <= cap - 1;
 }
 
 // Which scanner keyword an identifier turned out to be.
@@ -128,31 +139,24 @@ enum IdentifierWord {
 // Consume ONE complete identifier and classify it.
 //
 // begin, end, continue and property_name are all identifier-initial, so they
-// must share a single read. Matching them one after another does not work:
-// read_keyword_ci stops on the first mismatching character with the matching
-// prefix already consumed, and tree-sitter has no backtracking inside a scan,
-// so the next branch starts in the MIDDLE of an identifier. That is how
-// `b1 = 5;` lost its property — read_keyword_ci("begin") ate the 'b', and
-// PROPERTY_NAME's is_identifier_start check then saw the '1' and declined,
-// while `x1 = 5;` in the same position (parse states 20 and 22 offer
+// must share a single read (read_word_ci — see the rule stated there). Matching
+// them one after another does not work: a walking match stops on the first
+// mismatching character with its prefix already consumed, and tree-sitter has
+// no backtracking inside a scan, so the next branch starts in the MIDDLE of an
+// identifier. That is how `b1 = 5;` lost its property — the `begin` attempt ate
+// the 'b', and PROPERTY_NAME's is_identifier_start check then saw the '1' and
+// declined, while `x1 = 5;` in the same position (parse states 20 and 22 offer
 // property_name and begin_keyword together) parsed as a property. It is also
 // how a leading `b` was absorbed into a following VAR_ATTRIBUTE_OPEN, giving a
 // two-column `[` token whose text was `b[`.
-//
-// Same rule peek_directive_ci_skip_extras already states for directive words:
-// read the word ONCE, then compare it against every candidate.
 static enum IdentifierWord read_identifier_word(TSLexer *lexer) {
   if (!is_identifier_start(lexer->lookahead)) return WORD_NOT_IDENTIFIER;
 
   char buf[9];  // longest keyword tested is "continue" (8) plus the NUL
   size_t len = 0;
-  while (is_identifier_char(lexer->lookahead)) {
-    if (len < sizeof(buf) - 1) buf[len] = keyword_byte(lexer->lookahead);
-    len++;
-    lexer->advance(lexer, false);
+  if (!read_word_ci(lexer, buf, sizeof(buf), &len)) {
+    return WORD_OTHER;  // too long to be any keyword
   }
-  if (len > sizeof(buf) - 1) return WORD_OTHER;  // too long to be any keyword
-  buf[len] = '\0';
 
   if (len == 5 && strcmp(buf, "begin") == 0) return WORD_BEGIN;
   if (len == 3 && strcmp(buf, "end") == 0) return WORD_END;
@@ -222,8 +226,8 @@ static bool skip_whitespace_and_comments(TSLexer *lexer) {
 // parser about what a directive even is:
 //
 //   whole_word = true   The grammar reaches this directive ONLY through the
-//                       scanner's own read_keyword_ci, which requires a word
-//                       boundary. `#endif` is the only one: `#endifX` is not a
+//                       scanner's own '#' dispatch, which compares the whole
+//                       word. `#endif` is the only one: `#endifX` is not a
 //                       preproc_close for the parser either, so the lookahead
 //                       must not treat it as one.
 //
@@ -282,13 +286,13 @@ static bool directive_matches(const DirectiveMatch *d, const char *word, bool tr
 // Used when scanning ahead for split-construct patterns (PREPROC_SPLIT_BEGIN
 // looking for #endif, PREPROC_SPLIT_END looking for #else/#endif).
 //
-// EVERY target is tested against a SINGLE buffered read of the directive word.
-// Never match candidates one after another here: consuming '#' is irreversible
-// within one scan, and so is consuming the 'end' prefix shared by "endif" and
-// "endregion", so a failed first attempt silently destroys the later ones. An
-// earlier `read_keyword_ci(lexer, "else") || read_keyword_ci(lexer, "endif")`
-// in PREPROC_SPLIT_END made the "endif" arm permanently unreachable exactly
-// this way.
+// EVERY target is tested against a SINGLE buffered read of the directive word
+// (read_word_ci). Never match candidates one after another here: consuming '#'
+// is irreversible within one scan, and so is consuming the 'end' prefix shared
+// by "endif" and "endregion", so a failed first attempt silently destroys the
+// later ones. An earlier walking `read_keyword_ci("else") ||
+// read_keyword_ci("endif")` in PREPROC_SPLIT_END made the "endif" arm
+// permanently unreachable exactly this way.
 static bool peek_directive_ci_skip_extras(TSLexer *lexer, const DirectiveMatch *targets) {
   while (true) {
     if (!skip_whitespace_and_comments(lexer)) return false;
@@ -307,13 +311,7 @@ static bool peek_directive_ci_skip_extras(TSLexer *lexer, const DirectiveMatch *
     // preproc_region to the parser.
     char word[16];
     size_t len = 0;
-    while (is_identifier_char(lexer->lookahead)) {
-      if (len < sizeof(word) - 1) word[len] = keyword_byte(lexer->lookahead);
-      len++;
-      lexer->advance(lexer, false);
-    }
-    bool truncated = len > sizeof(word) - 1;
-    word[truncated ? sizeof(word) - 1 : len] = '\0';
+    bool truncated = !read_word_ci(lexer, word, sizeof(word), &len);
 
     for (int i = 0; targets[i].name != NULL; i++) {
       if (directive_matches(&targets[i], word, truncated)) return true;
@@ -373,18 +371,39 @@ bool tree_sitter_al_external_scanner_scan(
       while (lexer->lookahead == ' ' || lexer->lookahead == '\t') {
         lexer->advance(lexer, false);
       }
-      if (valid_symbols[PREPROC_OPEN] && read_keyword_ci(lexer, "if")) {
+      // Read the directive word ONCE and compare it against both candidates.
+      //
+      // This used to chain `read_keyword_ci("if")` and then, on failure,
+      // `read_keyword_ci("endif")`, defended by the argument that the two words
+      // differ at their first character so a failed "if" consumes nothing. That
+      // argument is about the two CANDIDATES and says nothing about the INPUT,
+      // which is not restricted to them:
+      //
+      //   `#elif`   — "if" declines at char 0, then "endif" matches the 'e' and
+      //               declines at 'l', leaving the 'e' consumed. Harmless only
+      //               because the next statement is `return false` and
+      //               tree-sitter discards a failed scan's advances.
+      //   `#iendif` — "if" matches the 'i', declines at 'e', and leaves the 'i'
+      //               consumed. "endif" then reads the REMAINING `endif` and
+      //               RETURNS TRUE: a preproc_close spanning all seven bytes of
+      //               `#iendif`, the depth counter decremented, exit code 0 and
+      //               no ERROR node, for a directive the grammar accepts
+      //               nowhere. `#ifendif` did the same via the "if" whole-word
+      //               check. `#xendif` errored correctly — the discriminator is
+      //               whether the input starts with a prefix of "if".
+      //
+      // One buffered read cannot do that: the word is compared whole, so a
+      // partial candidate match can neither leak into the next comparison nor
+      // return true. "endif" (5) is the longest candidate.
+      char word[8];
+      size_t len = 0;
+      if (!read_word_ci(lexer, word, sizeof(word), &len)) return false;
+      if (valid_symbols[PREPROC_OPEN] && len == 2 && strcmp(word, "if") == 0) {
         state->depth++;
         lexer->result_symbol = PREPROC_OPEN;
         return true;
       }
-      // Note: if "if" didn't match, we consumed '#' + optional whitespace +
-      // partial chars. read_keyword_ci only advances while chars match, so
-      // if it returned false on the first char, no further chars beyond the
-      // whitespace were consumed. For "#endif"/"# endif", after failing the
-      // "if" match (first char 'e' != 'i'), the lexer is right after the
-      // whitespace. We can still try "endif" from there.
-      if (valid_symbols[PREPROC_CLOSE] && read_keyword_ci(lexer, "endif")) {
+      if (valid_symbols[PREPROC_CLOSE] && len == 5 && strcmp(word, "endif") == 0) {
         if (state->depth > 0) state->depth--;
         lexer->result_symbol = PREPROC_CLOSE;
         return true;
@@ -577,9 +596,9 @@ bool tree_sitter_al_external_scanner_scan(
   // visible). The keyword was lexed and then vanished from the tree.
   //
   // '#' handling: peek_directive_ci_skip_extras takes BARE directive words and
-  // consumes the '#' itself. PREPROC_OPEN/CLOSE manually advance past '#'
-  // before calling read_keyword_ci("if"/"endif"). These are DIFFERENT
-  // conventions — do not mix.
+  // consumes the '#' itself. The PREPROC_OPEN/CLOSE dispatch advances past '#'
+  // manually before reading its word. These are DIFFERENT conventions — do not
+  // mix.
   //
   // Comments, #pragma, #region, #define and friends are all extras, hence all
   // transparent here (see skip_whitespace_and_comments/TRANSPARENT_DIRECTIVES).

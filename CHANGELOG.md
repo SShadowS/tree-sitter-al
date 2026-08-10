@@ -319,6 +319,29 @@ public API — a change to node structure or field names is a **major** bump.
   still (correctly) not an `#endif`. An over-long directive word is no longer
   rejected outright either: `#regionAAAAAAAAAAAAAA` is a region to the parser.
 
+- **`#iendif` is no longer silently accepted as `#endif`.** The `#` dispatch tried
+  `if` and then, on failure, `endif`, with two separate matches that walk the
+  lexer. The defence written into the comment — that the two words differ at
+  their first character, so a failed `if` consumes nothing — is a statement
+  about the two *candidates* and says nothing about the *input*. On `#iendif`
+  the `if` attempt matched the `i` before failing on `e`, leaving it consumed;
+  the `endif` attempt then read the remaining `endif` and **returned true**.
+  Result: a `preproc_close` node spanning all seven bytes of `#iendif`, the
+  `#if` depth counter decremented, `tree-sitter parse` exiting 0 with no ERROR
+  node — for a directive the grammar accepts nowhere. `#ifendif` did the same
+  through `if`'s whole-word check. `#xendif` was always an honest ERROR, because
+  `x` matches no prefix of `if` and so consumed nothing; that contrast is the
+  whole mechanism. The dispatch now reads the directive word once and compares
+  it whole, so a partial candidate match can neither leak into the next
+  comparison nor return true. `#elif` and `#else` also burned a character on the
+  failed `endif` attempt, but harmlessly — the next statement is `return false`,
+  and tree-sitter discards a failed scan's advances.
+  - With this, **no code in `src/scanner.c` matches a keyword against the live
+    lexer any more.** Every comparison — directive words, `begin`/`end`/
+    `continue`, the split lookaheads — goes through one buffered `read_word_ci`.
+    The walking matcher that made all three variants of this defect possible has
+    been deleted rather than documented.
+
 - **A supplementary-plane identifier is no longer lexed as `begin` on Windows.**
   `lexer->lookahead` is `int32_t` and `wint_t` is 16 bits under MSVC, so every
   `towlower(lexer->lookahead)` truncated a codepoint above U+FFFF to its low 16
