@@ -1,0 +1,81 @@
+#!/bin/bash
+#
+# FIXTURE, not a utility. A `tree-sitter` shim for callers that count files via
+# `--json-summary`: one chunk emits DELTA records FEWER, another emits DELTA
+# MORE, so the GLOBAL record total still reconciles with the file count. Takes
+# effect only when this directory is deliberately placed earlier on PATH.
+#
+# The real exit status is preserved, and on a clean corpus that status is 0
+# throughout — so a caller that checks return values sees nothing, and a caller
+# that checks only the corpus-wide total sees nothing either. Only a per-chunk
+# assertion moves.
+#
+# This is the JSON counterpart of ../offsetting-loss/, which splits its input on
+# `(source_file` markers. A `-q --json-summary` run emits no trees, so that
+# fixture passes the stream through untouched and injects NOTHING against
+# parse-al-parallel.sh. Use this one there; use that one for tree-harness.sh.
+#
+# Usage and expected results: ../README.md
+#
+# Knobs, all optional:
+#   FIXTURE_LOSE_CHUNK   chunk that loses records  (default chunk_0001)
+#   FIXTURE_GAIN_CHUNK   chunk that gains records  (default chunk_0002)
+#   FIXTURE_DELTA        how many                  (default 3)
+#   PYTHON               interpreter for trim_summaries.py
+
+set -uo pipefail
+
+SELF_DIR=$(cd "$(dirname "$0")" && pwd)
+LOSE="${FIXTURE_LOSE_CHUNK:-chunk_0001}"
+GAIN="${FIXTURE_GAIN_CHUNK:-chunk_0002}"
+DELTA="${FIXTURE_DELTA:-3}"
+
+# The real binary is the first `tree-sitter` on PATH that is not this shim.
+REAL=""
+IFS=':' read -ra _dirs <<< "$PATH"
+for _d in "${_dirs[@]}"; do
+    [ -n "$_d" ] || continue
+    [ "$(cd "$_d" 2>/dev/null && pwd)" = "$SELF_DIR" ] && continue
+    for _c in "$_d/tree-sitter" "$_d/tree-sitter.exe"; do
+        if [ -x "$_c" ] && [ ! -d "$_c" ]; then REAL="$_c"; break 2; fi
+    done
+done
+[ -n "$REAL" ] || { echo "fixture: no real tree-sitter found on PATH" >&2; exit 127; }
+
+if [ -z "${PYTHON:-}" ]; then
+    for _p in python3 python py; do
+        if command -v "$_p" >/dev/null 2>&1 \
+           && "$_p" -c 'import sys' >/dev/null 2>&1 </dev/null; then
+            PYTHON="$_p"; break
+        fi
+    done
+fi
+# Without an interpreter the targeted chunk would emit nothing and this fixture
+# would silently degrade into ../chunk-parse-failure — the gate would still
+# refuse, but for the wrong reason and with the wrong message.
+[ -n "${PYTHON:-}" ] \
+    || { echo "fixture: no working python interpreter found (set PYTHON=...)" >&2; exit 127; }
+
+chunk=""
+for a in "$@"; do
+    case "$a" in *chunk_[0-9][0-9][0-9][0-9]) chunk="$a" ;; esac
+done
+
+case "$chunk" in
+    *"$LOSE") sign="-" ;;
+    *"$GAIN") sign="+" ;;
+    *)        exec "$REAL" "$@" ;;
+esac
+
+# Preserve the real exit status: it is the whole point that it stays 0. A bare
+# pipeline would report the transformer's status instead.
+tmp=$(mktemp)
+trap 'rm -f "$tmp" "$tmp.out"' EXIT
+"$REAL" "$@" > "$tmp"; rc=$?
+if "$PYTHON" "$SELF_DIR/trim_summaries.py" "$sign$DELTA" < "$tmp" > "$tmp.out"; then
+    cat "$tmp.out"
+else
+    echo "fixture: trim_summaries.py failed — no fault was injected" >&2
+    exit 127
+fi
+exit $rc
