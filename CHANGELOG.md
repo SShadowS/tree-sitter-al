@@ -305,15 +305,17 @@ public API — a change to node structure or field names is a **major** bump.
   - Factoring the branch into one shared hidden rule made the parser **smaller**:
     `STATE_COUNT` 12709 → 12604 (-105), `parser.c` 27,593,402 → 27,490,081 bytes
     (-101 KB). No `conflicts` entry was needed. `node-types.json` changed by
-    exactly one line — `preproc_elif` added to `preproc_split_code_block_end`'s
-    children — with the anonymous layer untouched, and all 15,358 BC.History
-    parse trees stayed byte-identical.
+    exactly one entry, 4 lines — `preproc_elif` added to
+    `preproc_split_code_block_end`'s children — with the anonymous layer
+    untouched, and all 15,358 BC.History parse trees stayed byte-identical.
 
 - **Two `#else` split-code-block shapes were also degrading, and are fixed by the
-  same change.** These are on the path everyone believed was fully repaired in
-  3.3.1 — that release fixed one `#else` shape, and these two were never covered.
-  Both produced a wrong tree with a `MISSING end_keyword`, identical to the
-  `#elif` case above:
+  same change.** These sit on the path 3.3.1 was believed to have left sound.
+  That release hardened this path's *lookahead* — making it step over comments,
+  and reaching its previously-unreachable `#endif` arm — but it did not touch
+  which branch **arrangements** the rule accepts, and these two were never
+  accepted by it at all. Both produced a wrong tree with a `MISSING end_keyword`,
+  identical to the `#elif` case above:
   - **A bare `end;` in the *final* branch** — `#if COND / end; / #else / end; / #endif`.
   - **The tail in the *first* branch** — `#if COND / end else begin … end; / #else / end; / #endif`.
 
@@ -324,8 +326,8 @@ public API — a change to node structure or field names is a **major** bump.
   `preproc_split_code_block_end` branch-symmetric fixed `#elif` and both of
   these together. Found by measuring the `#else` analogue of every `#elif`
   variant before designing the fix, rather than assuming the `#else` path was
-  sound. All four `#elif` shapes and both `#else` shapes are pinned in
-  `test/corpus/preproc_split_code_block_end_elif_test.txt`.
+  sound. All five `#elif` shapes and both `#else` shapes are pinned in
+  `test/corpus/preproc_split_code_block_end_elif_test.txt` — 7 fixtures.
 
 - **`tools/tree-harness.sh` is 2-7x faster and can no longer report a clean run
   it did not earn.** Measured on BC.History (15,358 files, `NUM_THREADS=16`):
