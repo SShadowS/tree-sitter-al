@@ -66,6 +66,7 @@ def test_write_jsonl_emits_provenance_header_first(tmp_path: Path):
         build_stamp="abc",
         manifest_hash="def",
         tree_sitter_version="0.25.2",
+        scope="manifest",
         harness_version="1",
     )
 
@@ -76,12 +77,13 @@ def test_write_jsonl_emits_provenance_header_first(tmp_path: Path):
     assert header["record"] == "provenance"
     assert header["build_stamp"] == "abc"
     assert header["manifest_hash"] == "def"
+    assert header["scope"] == "manifest"
     assert json.loads(lines[1])["detector"] == "gaps"
 
 
 def test_write_jsonl_is_stably_sorted(tmp_path: Path):
     out = tmp_path / "findings.jsonl"
-    prov = model.Provenance("s", "m", "0.25.2", "1")
+    prov = model.Provenance("s", "m", "0.25.2", scope="manifest", harness_version="1")
     unsorted = [make_finding(offset=50), make_finding(offset=10)]
 
     model.write_jsonl(out, prov, unsorted)
@@ -96,7 +98,7 @@ def test_write_jsonl_is_stably_sorted(tmp_path: Path):
 def test_write_jsonl_is_order_independent_when_findings_differ_only_in_non_key_fields(tmp_path: Path):
     """Two findings with identical (detector, path, byte_offset, fingerprint)
     but different snippet/detail must produce byte-identical output regardless of input order."""
-    prov = model.Provenance("s", "m", "0.25.2", "1")
+    prov = model.Provenance("s", "m", "0.25.2", scope="manifest", harness_version="1")
 
     # Two findings identical on the key fields but different in snippet/detail
     a = model.Finding(

@@ -68,7 +68,7 @@ def test_accept_excludes_informational_detector_clusters(tmp_path: Path):
     reports_dir = tmp_path / "tools" / "query_coverage" / "reports"
     reports_dir.mkdir(parents=True)
     records = [
-        {"record": "provenance", "manifest_hash": "deadbeef"},
+        {"record": "provenance", "manifest_hash": "deadbeef", "scope": "manifest"},
         {"cluster": "gaps|x|y", "detector": "gaps"},
         {"cluster": "shipped_queries|uncaptured|=", "detector": "shipped_queries"},
     ]
@@ -84,3 +84,113 @@ def test_accept_excludes_informational_detector_clusters(tmp_path: Path):
     assert saved is not None
     assert saved.counts.get("gaps|x|y") == 1
     assert "shipped_queries|uncaptured|=" not in saved.counts
+
+
+def _write_findings(reports_dir: Path, header_extra: dict, records: list[dict]) -> None:
+    header = {"record": "provenance", "manifest_hash": "deadbeef", **header_extra}
+    lines = [header, *records]
+    (reports_dir / "findings.jsonl").write_text(
+        "\n".join(json.dumps(r) for r in lines) + "\n", encoding="utf-8"
+    )
+
+
+def test_accept_succeeds_on_manifest_scope_report(tmp_path: Path):
+    reports_dir = tmp_path / "tools" / "query_coverage" / "reports"
+    reports_dir.mkdir(parents=True)
+    _write_findings(
+        reports_dir,
+        {"scope": "manifest"},
+        [{"cluster": "gaps|x|y", "detector": "gaps"}],
+    )
+    baseline_path = tmp_path / "baseline.json"
+
+    code = qc.main(["accept", "--repo-root", str(tmp_path), "--baseline", str(baseline_path)])
+
+    assert code == baseline.EXIT_OK
+    saved = baseline.load(baseline_path)
+    assert saved is not None
+    assert saved.counts == {"gaps|x|y": 1}
+
+
+def test_accept_refuses_full_corpus_scope_report(tmp_path: Path):
+    """A full-corpus findings.jsonl must never be baselined under the
+    manifest's hash: its counts are ~260x larger for reasons that have
+    nothing to do with regressions (15,358 files vs. 59), and baselining
+    them would make the next manifest-scope `run` read the difference as a
+    flood of newly "fixed" clusters. Refusal must also leave baseline.json
+    completely untouched, not just fail loudly -- a partial or corrupted
+    write would be worse than doing nothing.
+    """
+    reports_dir = tmp_path / "tools" / "query_coverage" / "reports"
+    reports_dir.mkdir(parents=True)
+    _write_findings(
+        reports_dir,
+        {"scope": "full-corpus"},
+        [{"cluster": "gaps|x|y", "detector": "gaps"}],
+    )
+    baseline_path = tmp_path / "baseline.json"
+    original = '{\n  "manifest_hash": "untouched",\n  "counts": {}\n}\n'
+    baseline_path.write_text(original, encoding="utf-8", newline="\n")
+
+    code = qc.main(["accept", "--repo-root", str(tmp_path), "--baseline", str(baseline_path)])
+
+    assert code == baseline.EXIT_CORPUS_BROKEN
+    assert baseline_path.read_text(encoding="utf-8") == original
+
+
+def test_accept_refuses_report_missing_scope_key(tmp_path: Path):
+    """A findings.jsonl written before scope tracking existed has no 'scope'
+    key at all. Treating that as manifest by default would silently accept
+    exactly the contaminated-baseline scenario this whole check exists to
+    catch (an old full-corpus report has the same missing key), so a missing
+    scope is refused rather than assumed benign -- same exit code and the
+    same "leave baseline.json alone" guarantee as an explicit non-manifest
+    scope.
+    """
+    reports_dir = tmp_path / "tools" / "query_coverage" / "reports"
+    reports_dir.mkdir(parents=True)
+    _write_findings(reports_dir, {}, [{"cluster": "gaps|x|y", "detector": "gaps"}])
+    baseline_path = tmp_path / "baseline.json"
+    original = '{\n  "manifest_hash": "untouched",\n  "counts": {}\n}\n'
+    baseline_path.write_text(original, encoding="utf-8", newline="\n")
+
+    code = qc.main(["accept", "--repo-root", str(tmp_path), "--baseline", str(baseline_path)])
+
+    assert code == baseline.EXIT_CORPUS_BROKEN
+    assert baseline_path.read_text(encoding="utf-8") == original
+
+
+def test_accept_run_roundtrip_stays_silent_for_manifest_scope(tmp_path: Path):
+    """The accept -> run round trip must be silent: baselining a manifest
+    report's gating clusters, then re-observing the same clusters (with the
+    informational detector's cluster filtered out before diffing, exactly as
+    cmd_run does), must produce a completely empty Diff. This is the
+    mechanism-level proof behind the real end-to-end check (select -> run
+    --all -> accept -> run prints nothing new); it does not spin up the real
+    parser/corpus, since baseline.diff() is what actually decides silence.
+    """
+    reports_dir = tmp_path / "tools" / "query_coverage" / "reports"
+    reports_dir.mkdir(parents=True)
+    _write_findings(
+        reports_dir,
+        {"scope": "manifest"},
+        [
+            {"cluster": "gaps|x|y", "detector": "gaps"},
+            {"cluster": "shipped_queries|uncaptured|=", "detector": "shipped_queries"},
+        ],
+    )
+    baseline_path = tmp_path / "baseline.json"
+
+    code = qc.main(["accept", "--repo-root", str(tmp_path), "--baseline", str(baseline_path)])
+    assert code == baseline.EXIT_OK
+
+    saved = baseline.load(baseline_path)
+    assert saved is not None
+
+    # What the next `run` would re-observe: the same gating cluster, with the
+    # informational one already filtered out of `gating_clusters` before it
+    # ever reaches diff() -- mirroring qc.cmd_run exactly.
+    observed = [cl("gaps|x|y", 1)]
+    diff = baseline.diff(saved, observed)
+
+    assert diff == baseline.Diff()

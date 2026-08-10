@@ -32,6 +32,13 @@ REPORTS = Path("tools/query_coverage/reports")
 # root, so this stays consistent with both rather than adding a second knob.
 FULL_CORPUS_ROOT = "BC.History"
 
+# model.Provenance.scope values. A baseline is only meaningful against the
+# manifest (the 59-file regression gate): cmd_accept refuses anything else,
+# because the two scopes' finding counts are not comparable (see cmd_run's
+# own --full-corpus refusal, which exists for the identical reason).
+SCOPE_MANIFEST = "manifest"
+SCOPE_FULL_CORPUS = "full-corpus"
+
 
 def exit_for(diff: baseline.Diff, report_all: bool) -> int:
     return baseline.EXIT_OK if report_all else baseline.exit_code(diff)
@@ -85,7 +92,7 @@ def cmd_select(args) -> int:
     corpus.write_manifest(repo_root / args.manifest, entries)
 
     never = corpus.never_observed(_load_node_types(repo_root), seen)
-    REPORTS.mkdir(parents=True, exist_ok=True)
+    (repo_root / REPORTS).mkdir(parents=True, exist_ok=True)
     (repo_root / REPORTS / "never-observed.json").write_text(
         json.dumps(never, indent=2) + "\n", encoding="utf-8", newline="\n"
     )
@@ -155,15 +162,21 @@ def cmd_run(args) -> int:
     # Scope: the manifest (default) or every .al file under the corpus root
     # (--full-corpus). Print which one ran, every time -- a report that
     # doesn't say whether it saw 59 files or 15,358 cannot be interpreted.
+    # `scope` (not just the print statement) also travels into Provenance
+    # below, since that's what lets cmd_accept refuse a full-corpus report
+    # baselined under the manifest's hash -- printing alone doesn't stop that,
+    # it just describes it after the fact.
     if args.full_corpus:
+        scope = SCOPE_FULL_CORPUS
         corpus_root = repo_root / FULL_CORPUS_ROOT
         scope_paths = sorted(
             str(path.relative_to(repo_root).as_posix()) for path in corpus_root.rglob("*.al")
         )
-        print(f"scope: full corpus -- {len(scope_paths)} files under {FULL_CORPUS_ROOT}")
+        print(f"scope: {scope} -- {len(scope_paths)} files under {FULL_CORPUS_ROOT}")
     else:
+        scope = SCOPE_MANIFEST
         scope_paths = [entry.path for entry in entries]
-        print(f"scope: manifest -- {len(scope_paths)} files")
+        print(f"scope: {scope} -- {len(scope_paths)} files")
 
     parsed = []
     for rel in scope_paths:
@@ -256,6 +269,7 @@ def cmd_run(args) -> int:
         build_stamp=loader.compute_stamp(repo_root),
         manifest_hash=manifest_digest,
         tree_sitter_version=_tree_sitter_version(),
+        scope=scope,
     )
     reports = repo_root / REPORTS
     model.write_jsonl(reports / "findings.jsonl", provenance, findings)
@@ -288,6 +302,34 @@ def cmd_accept(args) -> int:
 
     lines = findings_path.read_text(encoding="utf-8").splitlines()
     header = json.loads(lines[0])
+
+    # A baseline is only meaningful against the manifest: full-corpus counts
+    # are ~260x larger (15,358 files vs. 59) for reasons that have nothing to
+    # do with regressions, so baselining one under the manifest's hash lets a
+    # later plain `run` -- which always diffs against the manifest scope --
+    # read every one of those extra findings as newly "fixed". A report from
+    # before this field existed has no "scope" key at all; treating that as
+    # manifest by default would have silently accepted the exact contaminated
+    # baseline this check exists to catch, so a missing key is refused right
+    # alongside an explicit non-manifest one rather than assumed benign.
+    scope = header.get("scope")
+    if scope is None:
+        print(
+            "refusing to accept: findings.jsonl has no 'scope' field (it predates "
+            "scope tracking) and cannot be trusted as manifest-scope. Run "
+            "`qc run --all` to regenerate it, then accept again.",
+            file=sys.stderr,
+        )
+        return baseline.EXIT_CORPUS_BROKEN
+    if scope != SCOPE_MANIFEST:
+        print(
+            f"refusing to accept a '{scope}' report; a baseline is only meaningful "
+            "against the manifest scope (--full-corpus counts are not comparable). "
+            "Run `qc run --all` (without --full-corpus) and accept that instead.",
+            file=sys.stderr,
+        )
+        return baseline.EXIT_CORPUS_BROKEN
+
     counts: dict[str, int] = {}
     for line in lines[1:]:
         record = json.loads(line)
@@ -369,15 +411,28 @@ def _tree_sitter_version() -> str:
 def _add_common_args(subparser: argparse.ArgumentParser) -> None:
     """--repo-root/--manifest/--baseline, shared by every subcommand.
 
-    These live on each SUBPARSER rather than the top-level parser. argparse's
-    SubParsersAction parses the subcommand's tail into a fresh namespace and
-    then copies every one of its dests onto the parent namespace -- including
-    ones the user never touched, at the subparser's own default. That silently
-    clobbers a same-named option already parsed from before the subcommand
-    token, so placing these on the parent only works for `qc --repo-root X
-    run`, never for `qc run --repo-root X`. The latter is the form every
-    caller (tests included) actually uses, so the parent-level definition is
-    the wrong one.
+    These live on each SUBPARSER rather than the top-level parser. Defined
+    only on the parent (as originally written), argparse accepts them BEFORE
+    the subcommand token (`qc --repo-root X run`) but rejects them after it
+    (`qc run --repo-root X`) outright: `unrecognized arguments: --repo-root
+    X`, exit 2. Every real caller -- including this module's own
+    test_run_exits_corpus_broken_when_manifest_drifted -- uses the second
+    form, so the parent-only definition doesn't work.
+
+    Defining them on BOTH the parent and every subparser (e.g. via
+    `parents=`) doesn't fix it either, just trades one failure for a quieter
+    one: SubParsersAction parses the subcommand's tail into a fresh
+    namespace and copies every one of its dests onto the parent namespace --
+    including ones the user never touched, at the subparser's own default --
+    which silently overwrites a same-named option already parsed before the
+    subcommand token. `qc --repo-root X run` would then parse but discard X.
+
+    Defining them ONLY on each subparser, as done here, avoids both: nothing
+    on the parent to silently win. The tradeoff is that these options are now
+    only accepted AFTER the subcommand (`qc run --repo-root X`), never
+    before (`qc --repo-root X run` goes back to being rejected) -- but that
+    is the form every real caller already uses, so it costs nothing in
+    practice.
     """
     subparser.add_argument("--repo-root", default=str(loader.REPO_ROOT))
     subparser.add_argument("--manifest", default=str(DEFAULT_MANIFEST))

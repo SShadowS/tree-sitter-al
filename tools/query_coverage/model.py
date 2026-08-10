@@ -58,6 +58,13 @@ class Provenance:
     build_stamp: str
     manifest_hash: str
     tree_sitter_version: str
+    # Which file scope produced this report: "manifest" or "full-corpus".
+    # Required, not defaulted -- a caller that forgets to pass it should get a
+    # TypeError, not a report silently mislabeled as manifest scope. `accept`
+    # relies on this to refuse baselining a full-corpus sweep under the
+    # manifest's hash (see qc.cmd_accept): the two scopes' finding counts are
+    # not comparable, and nothing else in this record distinguishes them.
+    scope: str
     harness_version: str = HARNESS_VERSION
 
     def to_dict(self) -> dict[str, Any]:
@@ -66,6 +73,7 @@ class Provenance:
             "build_stamp": self.build_stamp,
             "manifest_hash": self.manifest_hash,
             "tree_sitter_version": self.tree_sitter_version,
+            "scope": self.scope,
             "harness_version": self.harness_version,
         }
 
