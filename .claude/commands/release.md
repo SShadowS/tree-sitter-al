@@ -14,7 +14,7 @@ Before starting, verify:
    ```bash
    grep -rn "(ERROR\b\|(MISSING\b" test/corpus/ --include="*.txt" \
      | grep -v "ERROR(" \
-     | grep -vE "(^|/)(option_members_tabledata_keyword_test|pragma_whitespace_tolerance_test|preproc_if_elif_whitespace_tolerance_test|preproc_region_whitespace_audit_test|scanner_var_attribute_token_span_test)\.txt:"
+     | grep -vE "(^|/)(option_members_tabledata_keyword_test|pragma_whitespace_tolerance_test|preproc_if_elif_whitespace_tolerance_test|preproc_region_whitespace_audit_test|scanner_var_attribute_token_span_test|directive_word_boundary_test)\.txt:"
    ```
 
    The `(^|/)…\.txt:` anchoring is load-bearing. `grep -rn` emits
@@ -33,13 +33,14 @@ Before starting, verify:
    disagreed on what counts as a hit. Found by writing a fixture titled with
    the bare word.
 
-   Those five files are deliberate negatives — their ERROR nodes *are* the
+   Those six files are deliberate negatives — their ERROR nodes *are* the
    assertion. They pin that a misplaced `TableData X = R` fragment under
    OptionMembers surfaces rather than being silently absorbed, that `#` +
    newline + `pragma`/`if`/`elif`/`region` does not lex as a directive
    (whitespace tolerance after `#` is horizontal-only), that `# ifx` is not
-   `#if`, and that a stray identifier before a var attribute gets its own node
-   instead of being absorbed into the `[` token. Any hit OUTSIDE those five is
+   `#if`, that a stray identifier before a var attribute gets its own node
+   instead of being absorbed into the `[` token, and that a directive keyword
+   with no word boundary (`#regionX`, `#pragmaX`) is not a directive at all. Any hit OUTSIDE those six is
    a real problem.
 
    Unscoped, this check had 8 hits across the original 4 files and so had never
