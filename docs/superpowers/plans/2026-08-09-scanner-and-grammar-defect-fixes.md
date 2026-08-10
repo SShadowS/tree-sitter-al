@@ -14,6 +14,11 @@
 - **Commit generated files as a set.** `tree-sitter generate` writes `src/parser.c`, `src/grammar.json` and `src/node-types.json`; all three are tracked. Staging a subset makes `grammar.json` drift.
 - **Every commit message ends with the error-count trailer**, e.g. `[BC.History: 0 errors, 100% success]` — version-bump commits included. Task 1's Step 6 originally omitted it and was corrected; do not repeat that in Task 14.
 - **The CI fuzz job only runs when the pushed HEAD's own diff touches `src/scanner.c`.** `.github/workflows/ci.yml:53-56` gates on `git diff --quiet HEAD^ -- src/scanner.c`. A task that commits a scanner change and then a second commit on top ships with the fuzzer skipped. When a task changes `src/scanner.c`, push the scanner commit **alone** first, let CI fuzz it, then push the rest.
+- **NEVER rewrite history on this branch. A second Claude session is committing to `fix/3.4.0-grammar-defects` concurrently.** No `git commit --amend`, no `rebase`, no `reset --hard`, no force-push, no `git checkout --` over their paths. Their commits interleave with ours — `a9547d6`'s git parent is one of theirs — so an amend that was safe an hour ago can now rewrite history underneath work we do not own and cannot recover. Corrections go in as **new commits**, always. This overrides any earlier instruction in this plan that said to amend.
+  - Their files, hands off: `docs/superpowers/specs/2026-08-09-query-coverage-harness-design.md`, `docs/superpowers/plans/2026-08-09-query-coverage-harness.md`.
+  - Their commits so far: `ccbc9f7`, `919226a`, `cb347b0`, `a5b3fed`. All four verified present and ancestors of HEAD.
+  - Scope every review to **explicit SHAs, never a commit range** — a range sweeps in their work and puts unreviewed commits inside our review package.
+  - Git authorship cannot distinguish us: every commit in this repo is "Goose Assistant". Attribute by which files a commit touches, not by author.
 - **Never delete or disable a test file.** Fix the underlying issue.
 - **Parse structure, don't validate.** Do not add semantic validation. Over-permissiveness is only a defect when it produces a *wrong* tree.
 - **`al compile` is ground truth** for whether AL accepts a construct. It only works with ABSOLUTE paths — `al compile /project:. …` exits 1 with an empty error log. Working probe lives in the scratchpad; see "Compiler probe" below.
@@ -42,6 +47,14 @@ al compile "/project:$P" "/out:$P/out.app" "/packagecachepath:$P/.alpackages"
 ```
 
 Exit 0 plus `out.app` written means the compiler accepts it. Note the `app.json` above omits `"application"` — including it requires the Microsoft Application symbol package and fails with `AL1022`.
+
+### Current harness baseline
+
+**`.snapshots/baseline-task16`** — manifest `208ff0658b5fe590`, taken after Task 16 routed single-entry link properties through `link_value` (880 files changed). Earlier baselines left in place: `baseline-task12` (`f6583378f002124c`, post-Task-12), `baseline-task9` (`28c72f6a554a479f`, post-Task-9).
+
+Any task text below that names `.snapshots/baseline-3.3.1`, `.snapshots/baseline-3.4.0-wip` or `<current-baseline>` means whatever this line currently points at. Update it whenever a task legitimately moves production trees and you re-snapshot.
+
+**Harness cost, measured at `671e313`** so you know what you are committing to before running it: `snapshot` 46.7s; `verify` with no changes 26.0s; `verify` with a 757-file delta 3m 03s (it was 25m 52s before Task 13a). Run at `NUM_THREADS` between 6 and 16 — at 32 it desyncs and aborts with "tree count mismatch". Redirect output to a file; the harness emits everything at the end and a backgrounded pipeline loses it.
 
 ### The three validation gates
 
@@ -355,14 +368,40 @@ tree-sitter test --file-name "exit_statement_spacing_test.txt"
 
 Expected: PASS.
 
-If `tree-sitter generate` now reports a conflict between `exit_statement` and `parenthesized_expression` (a bare `exit` statement followed by a parenthesized expression statement is genuinely ambiguous without `token.immediate`), resolve it by raising the precedence on the optional group rather than by restoring `token.immediate`:
+`tree-sitter generate` WILL report a conflict here — removing `token.immediate` makes `exit` followed by `(` genuinely ambiguous between continuing `exit_statement`'s optional group and reducing a bare `exit_statement` before a new parenthesized-expression statement:
+
+```
+Possible interpretations:
+  1: ...(exit_statement exit_keyword • '(' ')') (precedence: 13)
+  2: ...(exit_statement exit_keyword • '(' _expression ')') (precedence: 13)
+  3: ...(exit_statement exit_keyword) • '(' … (precedence: 13)
+```
+
+**Raising the precedence on the nested `optional(...)` group does NOT work** — verified: `optional(prec(14, seq('(', …)))` produces the byte-identical conflict, still reporting precedence 13 on all three interpretations, because a `prec` buried inside an `optional` does not reach the conflicting item. Do not restore `token.immediate` either; that is the defect.
+
+Resolve it by attaching the precedence to top-level `choice` alternatives, so the two parses carry genuinely different precedences:
 
 ```javascript
-      optional(prec(14, seq(
+    // The '(' is a PLAIN literal, never token.immediate — alc accepts
+    // `exit (42);` and with token.immediate the spaced form parsed SILENTLY as
+    // a bare exit_statement plus a detached sibling parenthesized_expression,
+    // dropping the return value with no ERROR node.
+    //
+    // The two forms are separate choice alternatives with DIFFERENT precedences
+    // rather than one seq with an optional group. `exit` followed by `(` is
+    // genuinely ambiguous (continue the exit vs. reduce and start a
+    // parenthesized-expression statement); the parenthesised alternative must
+    // win. prec() nested inside optional() does not reach the conflicting item
+    // and leaves the conflict unresolved — attach it at the alternative.
+    exit_statement: $ => choice(
+      prec(14, seq(
+        $.exit_keyword,
         '(',
         optional(field('return_value', $._expression)),
         ')'
-      )))
+      )),
+      prec(13, $.exit_keyword)
+    ),
 ```
 
 - [ ] **Step 5: Run all three gates**
@@ -374,7 +413,16 @@ NUM_THREADS=16 ./tools/tree-harness.sh verify ./BC.History .snapshots/baseline-3
 grep -c '=== CHANGED:' /tmp/h.txt
 ```
 
-BC.History uses the unspaced `exit(x)` form throughout, so the harness should report VERIFIED. If any file changed, read the diff before proceeding — a spaced `exit` in production would have been silently losing its return value.
+**The harness reports exactly ONE changed file, and that is the fix working.** `BaseApp/Source/Base Application/Sales/Document/SalesLineReserve.Codeunit.al` — `VerifyPickedQtyReservToInventory` writes `exit` with its parenthesised condition on the NEXT line. Verified against the baseline tree archive:
+
+```
+OLD:  (exit_statement [705,8]-[705,12])              <- the word "exit" alone
+      (parenthesized_expression [706,12]-[708,145])  <- detached sibling
+NEW:  (exit_statement [705,8]-[708,145]
+        return_value: (logical_expression [706,13]-[708,144] ...))
+```
+
+Every release up to and including 3.3.1 dropped that function's entire three-line boolean return condition out of the `exit_statement`, with no ERROR node. Confirm the delta is that one file and that its diff has this shape, then re-snapshot. **If any OTHER file changed, stop and read it.**
 
 - [ ] **Step 6: Commit**
 
@@ -526,7 +574,9 @@ call_statement already accepted the form.
 
 ## Task 5: parenthesized preprocessor conditions
 
-`_preproc_expression` (`grammar.js:2869-2874`) has only bare identifiers as atoms, so `#if (FOO)` and `#if not (FOO and BAR)` emit `(MISSING identifier)` as the condition and push the `(…)` into the branch as an expression statement. alc accepts both.
+`_preproc_expression` (`grammar.js:2869-2874`) has only bare identifiers as atoms, so `#if (FOO)` and `#if not (FOO and BAR)` fail to parse their condition and push the `(…)` into the branch as an expression statement. alc accepts both.
+
+**Correction, established during implementation:** the pre-fix shape is ERROR nodes, not `(MISSING identifier)` — the `(` and `)` each become a detached ERROR and the condition falls back to the next identifier. The `MISSING` description came from the original grammar review and was wrong; three ERROR nodes is what the parser actually produces. This matters only for recognising the failing state, not for the fix.
 
 **Files:**
 - Modify: `grammar.js:2869-2874`
@@ -893,6 +943,22 @@ field, so children_by_field_name('sizes') returned 10, ',', 20.
 
 ---
 
+### ⚠ Correction that applies to Tasks 8 and 9 as well
+
+Task 7 was described as "`children_by_field_name('sizes')` returns `10`, `,`, `20`". **That is not what happens at runtime.** Verified by building the pre-fix grammar in a worktree and parsing with `tree-sitter parse -c` (CST mode, which shows field labels on anonymous nodes): the old grammar already emitted
+
+```
+sizes: integer `10`
+","                  <- no field label
+sizes: integer `20`
+```
+
+The anonymous token never carried the field. What was actually wrong was `node-types.json`'s **declared** type set, which listed `","` as a possible type for `sizes`. That still matters — `node-types.json` is what typed bindings (Rust/TypeScript) are generated from, so the declared type was a lie about the tree — but it is a narrower defect than "queries return commas", and the harness correctly reports 0 changed production trees.
+
+**Tasks 8 and 9 rest on the same evidence (a `node-types.json` type set) from the same review, so treat their severity as unproven until checked the same way.** Before claiming the defect, build the pre-fix grammar and run `tree-sitter parse -c` to see whether the anonymous `"."` / `";"` actually carries the field at runtime. Describe the fix by what it really changes. The fixes themselves remain correct either way — a declared type that cannot occur should not be declared.
+
+---
+
 ## Task 8: `link_value.value` swallows the dot
 
 `grammar.js:822-826` fields the whole `seq(id, '.', id)` for the `DataItem.Field` form, so the anonymous `"."` lands inside the `value` field. Same class as Task 7. The `member_trigger_name` comment at `grammar.js:2685-2699` already explains why this shape is wrong.
@@ -992,6 +1058,12 @@ git commit -m "fix(grammar): keep the dot out of link_value's value field
 ## Task 9: `case_else_branch.body` is a raw statement repeat
 
 `grammar.js:3506-3512` fields `repeat($._statement)` directly, so `body` is `multiple: true` and includes anonymous `";"`. This breaks the single-node `body` invariant established for the textobject queries (issue #19). `statement_block` exists for exactly this and `repeat_statement` already uses it.
+
+**Do Step 0 first, as Tasks 7 and 8 did** — parse a `case … else` with two statements using `tree-sitter parse -c` on the pre-fix grammar and record whether the anonymous `";"` actually carries the `body` label at runtime. In both previous tasks the answer was no, and the defect was only an over-broad declared type.
+
+**But expect this one to differ, and say so precisely.** Tasks 7 and 8 were `field(name, seq(x, SEP, x))` — one field wrapping a sequence. This is `field('body', repeat($._statement))`, and `_statement` *owns its own terminating `;`*, so the `;` is genuinely inside each statement rather than a separator the field accidentally spans. Whatever Step 0 shows, the structural complaint stands on its own: `body` is `multiple: true` where every other scoped construct exposes a single node, and that is what the textobject queries rely on. Wrapping in `statement_block` is a real tree change and the harness will report moved files — unlike Tasks 7 and 8, which moved none.
+
+Note also that fourteen other fields share this exact `;`-inside-`body` shape (`if_statement.then_branch`, `while_statement.body`, `for_statement.body`, and so on). This task fixes only `case_else_branch`, which is the one with a drop-in replacement. Do not widen it.
 
 **Files:**
 - Modify: `grammar.js:3506-3512`
@@ -1147,6 +1219,14 @@ tail -2 /tmp/h.txt
 ```
 
 Expected: VERIFIED, byte-identical. Deleting an unreachable rule and a shadowed duplicate must not move a single tree. **If any file changed, revert and investigate** — it means one of the three was not actually dead.
+
+- [ ] **Step 3b: Inherit Task 13's deferred acceptance — `./validate-grammar.sh` must now exit 0**
+
+Task 13 fixed the orphan detector (13d) but could not reach exit 0, because `validate-grammar.sh` Step 4 sets `VALIDATION_FAILED=1` on a non-zero orphan count and `chartpart_keyword` — a genuine orphan — was still present. Deleting it is *this* task's job, so the acceptance lands here.
+
+After the deletion, `./validate-grammar.sh` must exit **0**. The only thing that may differ from Task 13's recorded step-by-step results is Step 4 going from `UNUSED_COUNT=1` to `UNUSED_COUNT=0` and the overall exit going 1 → 0. Compare against `task-13-report.md`'s per-step evidence: **if anything else moved, something regressed between the two tasks** — investigate before committing.
+
+Also confirm the detector still classifies `break_keyword` as USED. It is referenced only as `break_statement: $ => prec(13, $.break_keyword)`, which is the exact shape 13d taught the scanner to see; a regression there would silently return the false positive.
 
 - [ ] **Step 4: Commit**
 
@@ -1617,7 +1697,60 @@ quoted-name fix partial.
 
 ---
 
-## Task 13: two tooling checks that can never pass
+## Task 13: fix the tooling — five defects
+
+**Pulled forward** from the end of the plan, on the release owner's instruction. Every one of these was found by *doing* the work, and three of them actively degrade the remaining tasks: the harness is unusable at the delta sizes Tasks 11 and 12 will produce, and `validate-grammar.sh` currently exits red for everyone regardless of what they change, which makes it worthless as a gate.
+
+Do these as **five separate commits**, one per defect, so each can be reverted independently. None touches `grammar.js`, `src/`, or any corpus fixture — if any of those shows up in `git status`, something has gone wrong.
+
+### 13a — `tools/tree-harness.sh` per-file reporting is O(n²)
+
+The `verify` subcommand's mismatch-reporting loop re-decompresses the whole `trees.tar.gz` and linearly scans `master.txt` **once per changed file** (`tools/tree-harness.sh:135-144`: `grep -nxF "$path" "$SNAPDIR/master.txt"` and `tar -xzO -f "$SNAPDIR/trees.tar.gz" "trees/$idxp"` inside the loop). Measured at ~70 changed files/minute. Fine for the 0-1 file deltas most tasks produce; unusable at Task 9's 757, and Task 12 will be larger.
+
+Fix: extract the archive **once** to a temp dir before the loop, and build a path→index map **once** (e.g. `awk 'NR==FNR{...}'` or a single `nl`/`join` pass) instead of grepping per file. Keep the output format byte-identical — the per-file `=== CHANGED:` header and the diff body are what every task's analysis greps for.
+
+Verify: re-run `verify` against a snapshot known to differ (take a snapshot, make a trivial grammar change, regenerate, verify) and confirm the output is identical to the old implementation's for the same input, and that a large delta completes in a reasonable time. State the before/after timing.
+
+### 13b — `validate-grammar.sh` Step 3 can never pass
+
+Step 3 greps `test/corpus/` for ERROR/MISSING and fails on 8 hits across 4 files: `option_members_tabledata_keyword_test`, `pragma_whitespace_tolerance_test`, `preproc_if_elif_whitespace_tolerance_test`, `preproc_region_whitespace_audit_test` (ERROR counts 1, 1, 4, 2). All four are **deliberate negative fixtures** — they assert that `#` + newline + keyword stays an ERROR, that `# ifx` is not `#if`, and that a dangling `, Foo` after a tabledata permission surfaces. Those ERROR nodes are the assertion. The check has never passed, including at every released version.
+
+Fix: allow-list those four files by name with a comment explaining what each asserts, so a hit anywhere else still fails the step. Do not delete or weaken the fixtures.
+
+### 13c — three of `validate-grammar.sh`'s dependencies are untracked
+
+`.gitignore:58` ignores `*.py` repo-wide, with exceptions only for `tools/keyword-sync/*.py` and `tools/check-field-types.py`. But the script calls four Python helpers and three are untracked:
+
+```bash
+for f in find_unused_definitions.py analyze_duplicates.py check_grammar_health.py; do
+  printf "%-32s %s\n" "$f" "$(git ls-files --error-unmatch "$f" >/dev/null 2>&1 && echo TRACKED || echo UNTRACKED)"
+done
+```
+
+On a fresh clone those steps silently degrade to "script not found" warnings, so orphan detection, duplicate detection and the health check do not run for anyone else. That is also why 13d's false positive survived — the script producing it cannot be reviewed by anyone who does not already have a copy.
+
+Fix: read each script first for machine-specific paths or anything that should not be committed, then move all three under `tools/` and add a single `.gitignore` exception for `tools/*.py`, updating the call sites. Confirm afterwards that `git ls-files tools/` lists all four helpers.
+
+### 13d — the orphan detector reports `break_keyword` falsely
+
+`validate-grammar.sh` reports `break_keyword` as unused. It is not: `break_statement: $ => prec(13, $.break_keyword)` at `grammar.js:3598`. The reference scan misses `$.name` used as the **sole argument to `prec()`**, i.e. a rule whose entire right-hand side is one reference.
+
+Fix: widen the reference pattern so a `$.name` anywhere on a rule's right-hand side counts. Verify against the known-good answer: after Task 10 removes `chartpart_keyword`, the correct orphan count is **zero**; before it, exactly one (`chartpart_keyword`). Both `break_keyword` and `chartpart_keyword` must be classified correctly, not just the count.
+
+### 13e — the release pre-flight check can never pass
+
+`.claude/commands/release.md` pre-flight #3 is the same grep as 13b and fails for the same four files. Fix it the same way, and cross-reference 13b so the two do not drift apart.
+
+- [ ] **Step 1: 13a — make the harness reporting loop linear**
+- [ ] **Step 2: 13b — allow-list the four deliberate-negative fixtures in `validate-grammar.sh`**
+- [ ] **Step 3: 13c — track the three untracked Python helpers**
+- [ ] **Step 4: 13d — fix the orphan detector's `prec()` blind spot**
+- [ ] **Step 5: 13e — fix the release pre-flight check**
+- [ ] **Step 6: confirm `./validate-grammar.sh` now exits 0 on a clean tree**
+
+That last step is the real acceptance test for 13b/13c/13d together: the script must go green, and it must go **red** again if you temporarily introduce a genuine ERROR node in a fixture outside the allow-list. Prove both directions.
+
+## Task 13 (original): two tooling checks that can never pass
 
 `validate-grammar.sh` reports `break_keyword` as an orphan although `break_statement` uses it at `grammar.js:3598`. And `.claude/commands/release.md` pre-flight check #3 greps for ERROR/MISSING in `test/corpus/` — 8 hits across 4 files, all deliberate negative fixtures that assert malformed input *stays* malformed. Neither check has passed at any release, including v3.3.0.
 
@@ -1652,6 +1785,20 @@ The scan misses `$.break_keyword` when it is the sole argument to `prec(…)` �
 
 Expected after Task 10: zero unused rules. Before Task 10: `chartpart_keyword` only.
 
+- [ ] **Step 3b: Track the scripts `validate-grammar.sh` depends on**
+
+`.gitignore` ignores `*.py` repo-wide, with exceptions only for `tools/keyword-sync/*.py` and (added in Task 7) `tools/check-field-types.py`. But `validate-grammar.sh` calls four Python scripts, and three of them are UNTRACKED:
+
+```bash
+for f in find_unused_definitions.py analyze_duplicates.py check_grammar_health.py; do
+  printf "%-32s %s\n" "$f" "$(git ls-files --error-unmatch "$f" >/dev/null 2>&1 && echo TRACKED || echo UNTRACKED)"
+done
+```
+
+On a fresh clone those three steps silently degrade to "script not found" warnings, so orphan detection, duplicate detection and the health check do not actually run for anyone else — including whoever inherits this repo. That is also why the `break_keyword` false positive in Step 1 went unnoticed: the script producing it cannot be reviewed by anyone who does not already have it.
+
+Add `.gitignore` exceptions for all three and commit them, or move them under `tools/` and add one exception for that directory. Read each one first — if any contains machine-specific paths or secrets, fix that before tracking it. Then confirm a fresh checkout runs all four steps.
+
 - [ ] **Step 4: Fix the release pre-flight check**
 
 In `.claude/commands/release.md`, replace check #3 with one that excludes the deliberate-negative fixtures and says why:
@@ -1684,7 +1831,245 @@ fixtures, which made the check unpassable at every release including v3.3.0."
 
 ---
 
-## Task 14: Release 3.4.0
+## Tasks 15–21: the deferred backlog
+
+Added on the release owner's instruction — **nothing ships until these are done**, so 4.0.0 absorbs the whole backlog rather than leaving a second major's worth of work behind. Each is independently revertible; do them in the order listed, since 15 and 16 move trees and the rest are easier to verify against a settled baseline.
+
+### Task 15 — unify keyword node shape across all 84 rules
+
+Ruled by the release owner. Today: **51** childless leaves (bare `kw()` → hidden `token(PATTERN)`), **18** with a visible anonymous child via `alias()`, **13** via explicit case `choice()`, **2** external (`begin_keyword`/`end_keyword`). A consumer cannot predict which shape a given keyword has, and `node-types.json` cannot tell them — it lists anonymous children only inside fields, and none of these are.
+
+Make it one shape. `alias(kw('word'), 'word')` is the form already proven on the 18 Tier-1 keywords in Task 11, and it is what restored `exit_keyword`'s `"exit"` child. The 2 external tokens cannot take a child and stay as they are — say so explicitly in the docs rather than leaving a reader to wonder.
+
+**Do not touch `asserterror_keyword` blindly.** Task 11's re-review established it had **no** anonymous type before that task, so aliasing it would *add* a novel node type rather than preserve one. Check each of the 51 the same way — `git show <pre-task-commit>:src/node-types.json` — before assuming alias is a no-op for it.
+
+This moves the anonymous layer of essentially every tree. The harness **cannot see it** (durable finding 3), so the acceptance is a `node-types.json` set-diff plus `tree-sitter parse -c` spot checks, not the harness. Expect the harness to report 0 changed and understand that this proves nothing here.
+
+Rewrite the shape table in `CLAUDE.md` and `.claude/rules/contextual-keywords.md` to state the single rule, and keep the advice to read a keyword's text from the node itself — it stays correct and survives future drift.
+
+### Task 16 — make `link_value` cover the single-entry `DataItemLink`
+
+Ruled by the release owner. `DataItemLink = "Customer No." = Cust."No.";` never instantiates `link_value`; it parses as `property_expression`/`comparison_expression` with a `member_expression` on the right. Only two-or-more comma-separated entries produce `link_value_list` → `link_value`. The Task 8 reviewer judged single-entry plausibly the majority shape, so a query against `link_value` misses most real usage.
+
+Route the single-entry form through `link_value_list`/`link_value` so one query finds every DataItemLink relationship. This **will** move production trees — enumerate the delta with a node-instance set-difference (identity = node type + exact byte range) as Task 12 did, and confirm the only change is single-entry sites gaining the `link_value_list`/`link_value` layer. Re-snapshot afterwards.
+
+Both CST fragments are in Task 8's report. Check `RunPageLink`, `SubPageLink` and `ColumnFilter` too — they are listed as complex properties alongside `DataItemLink` in `CLAUDE.md` and may share the rule or the defect.
+
+### Task 17 — audit all 24 mixed named/anonymous fields
+
+Ruled by the release owner: audit all, fix what is wrong, encode every verdict.
+
+```bash
+python3 -c "
+import json
+d=json.load(open('src/node-types.json'))
+for n in d:
+    for f,v in (n.get('fields') or {}).items():
+        a=[t['type'] for t in v['types'] if not t.get('named')]
+        if a and [t for t in v['types'] if t.get('named')]:
+            print(f\"{n['type']}.{f}: {a}\")
+"
+```
+
+Correct by design: `operator` on `additive_expression`, `logical_expression`, `unary_expression`, `multiplicative_expression` — the operator token *is* the value. Suspicious: 14 `body`/`then_branch`/`else_branch` fields carrying `";"` (downstream of `_statement` owning its terminator — decide whether that is deliberate, and say why either way), plus `dotnet_type.reference`, `object_reference_type.reference`, `record_type.reference`, `query_dataitem.table_name`, `report_dataitem.table_name`, `simple_table_relation.table`, `tabledata_permission.table_name` carrying `"."`/`"*"`, and `property.value` carrying `"-"`.
+
+**Every one of the 24 ends as a row in `tools/check-field-types.py`** — fixed ones asserting the corrected shape, deliberate ones asserting the current shape as intentional. A verdict that lives only in a report is a verdict that gets re-litigated. Prove at least one new row fails on a mutated `node-types.json`, per the standing rule that a check which cannot fail is worse than no check.
+
+### Task 18 — repurpose `analyze_duplicates.py`
+
+Ruled by the release owner. It inspects only `*_property` rules — 2 in V2 where V1 had 291 — so `validate-grammar.sh` Step 5 always passes without checking anything meaningful. Repurpose it to detect **duplicate rule definitions**: two entries with the same key in the grammar's rules object, where JavaScript silently keeps the last. Task 10 removed exactly such a duplicate (`empty_statement`, defined twice identically) and no tool caught it — a linter would not either, since it is a valid object literal.
+
+Verify it fires by reintroducing a duplicate temporarily, and confirm it distinguishes byte-identical duplicates (harmless but wrong) from differing ones (a live bug, since the loser is silently discarded).
+
+### Task 19 — harness performance and two latent traps
+
+Measured at `671e313`: `snapshot` 46.7s, clean `verify` 26.0s, `verify` with a 757-file delta 3m 03s. `parse-al-parallel.sh` walks the same 15,358 files in **8.5s**.
+
+1. **757 `diff` process spawns ≈ 2.5 min** — the dominant cost in the mismatch path. Batch the comparison into one process, or emit the changed-path list and let the caller diff on demand. Output must stay byte-identical: every task in this plan greps `=== CHANGED:` headers and reads the diff bodies, and two built whole-corpus censuses from them. Prove it with `cmp -s`, as Task 13a did.
+2. **`build_trees` at 26–47s** — materialises 15,358 tree files (an `awk` `close()` per tree), hashes them in a second pass, tars them in a third.
+3. **The 16-thread cap** — at 32 it desyncs with "tree count mismatch". The desync disappears when the parser build is warmed first, which is what `parse-al-parallel.sh` effectively does. One warm-up build in `build_trees` may unlock 32 threads.
+4. **M1**: an empty `-T` list makes GNU tar extract the entire archive. Unreachable today (the loop runs only on mismatch, so ≥1 file) but a live trap for any future caller.
+5. **M2**: a member missing from the archive aborts the whole extraction instead of degrading for that one file.
+
+### Task 20 — `validate-grammar.sh` Step 8 is a no-op, plus two small ones
+
+**Step 8 reports success without checking anything** when no baseline file is present, which is the current repo state. We made that script exit 0 for the first time in its history; one of its eight steps is green because it is not running. Either make it fail loudly when the baseline is absent, or have it create one on first run — but it must not report a pass for work it did not do. This is the same family as the untracked-helpers defect.
+
+Also: `.grammar_baseline.json` is neither tracked nor ignored (same class as `grammar_analysis.json`, fixed in 13f), and `tools/find_unused_definitions.py` has no trailing newline.
+
+### Task 21 — `#elif` silently degrades a preceding `end;`, and the Task 3 leftovers
+
+`#elif` after an `end;` degrades it the way `#else` did before Task 1 fixed that path — deferred as a minor then, but it is the same **silent** class as the three misparses this release fixes, and it is the last known one.
+
+Also close out Task 3's leftovers:
+- The bare `exit;` followed by a genuine parenthesized-expression statement is verified only by an ad-hoc probe. Pin it in `test/corpus/exit_statement_spacing_test.txt` — it is the case the `prec(14)` choice could regress silently.
+- `grammar.js`'s `exit_statement` comment implies the choice-split is the only working resolution; it is not, it is the one that works. Reword.
+- The changelog should note that `exit (x + y) * 2;` now produces an ERROR where it previously produced a silent wrong tree. alc rejects that form ("'end' expected"), so the error is correct and matches both the compiler and the already-erroring unspaced form.
+
+### Task 22 — re-check the five latent scanner items
+
+Recorded in "Deferred" below as having no constructible failing input. **Item 1 must be re-checked rather than re-read**: it concerned `BEGIN_KEYWORD`/`END_KEYWORD` falling through with characters already consumed, and Task 12 restructured exactly that code into a single-scan dispatch. Task 12's review already found the related constraint at `scanner.c:303-312` and documented it; confirm item 1 is now dead, live, or moot, and say which.
+
+Items 2–5 (the `CONTINUE_AS_IDENTIFIER` early return, whole-word directive classification vs the grammar's unbounded regexes, `towlower` truncation on Windows, the depth counter wrapping at 256) get a constructibility check each: either produce a failing input or record why none exists. Both outcomes are useful; a shrug is not.
+
+### Task 27 — `validate-grammar.sh` cannot reliably report its own failures
+
+Found during Task 20, which fixed the pattern for Step 8 only and correctly flagged the rest rather than widening its scope.
+
+**Two independent defects.**
+
+**1. `set -e` plus bare command substitution.** Line 6 sets `set -e`, and **five** steps assign with `VAR=$(cmd)` and then read `$?`:
+
+```
+ 56  TEST_OUTPUT=$(tree-sitter test 2>&1)                              Step 2
+159  ORPHAN_OUTPUT=$(python3 tools/find_unused_definitions.py 2>&1)    Step 4
+201  DUPLICATE_OUTPUT=$(python3 tools/analyze_duplicates.py 2>&1)      Step 5
+218  FIELD_TYPES_OUTPUT=$(python3 tools/check-field-types.py 2>&1)     Step 5b
+255  FIELDWALK_OUTPUT=$("$FIELDWALK_CC" …)                             Step 5c
+```
+
+**Corrected by Task 20's review:** Step 5c belongs in this list and was missed in the original report, while **Step 6 does not belong** — it never reads `$?`, it greps the captured text instead. Step 6's problem is defect 2 below, which is worse and entirely separate.
+
+Only Step 8 (line 319, fixed in Task 20) uses `cmd && VAR=0 || VAR=$?`. When any of the six fails, `set -e` aborts the script at that line: the step's own tailored error message never prints, and every later step is skipped, so one failure masks all subsequent ones. The script does exit non-zero, so this is not a false pass — but it is a gate that cannot tell you what went wrong, and it stops collecting evidence at the first problem. Task 20 hit exactly this: making `check_grammar_health.py --ci` return non-zero made Step 8's new error message unreachable until the idiom was fixed.
+
+**2. Step 6 cannot fail at all — four ways over.** This one *is* a false pass:
+
+- `PARSE_OUTPUT=$(./parse-al-parallel.sh 2>&1 | tail -5)` — a pipeline's exit status is `tail`'s, so it is always 0. A crashed or missing parse run is invisible.
+- `if echo "$PARSE_OUTPUT" | grep -q "Success rate:"` has **no `else`**. If that string is absent — crash, changed output format, truncated by `tail -5` — the entire check is skipped silently and the step passes.
+- A rate at or below the threshold calls `print_warning`, which does **not** set `VALIDATION_FAILED`. A detected 50% success rate still passes the gate.
+- The threshold is **90%** on a project that holds 100%. 1,382 broken files out of 15,358 would go green.
+
+It only runs under `--full`, which is why nobody noticed.
+
+**Fix both.** Use the safe idiom everywhere so each step reports its own failure and the script collects all of them rather than aborting at the first. For Step 6: capture the exit status of `parse-al-parallel.sh` itself rather than a pipeline tail; fail when the expected output is absent instead of skipping; make a below-threshold rate a failure rather than a warning; and set the threshold to something meaningful for a project at 100%, or compare against a recorded baseline rather than a magic constant.
+
+**Prove each step can fail.** Task 25's registry needs exactly these rows, and this task is where the idiom gets established. A step whose failure path has never been executed is not a step.
+
+### Task 26 — `Parse:` diagnostic lines land inside the hashed tree bytes
+
+Deferred out of Task 19 by its implementer, with reasoning I accepted. **Task 25 depends on this**, so do it first.
+
+`tools/tree-harness.sh:122` invokes `tree-sitter parse` with `2>&1`, so diagnostic output joins the parse output that gets split into per-file trees. A `Parse:` line therefore lands inside a tree's byte range, and is both hashed and extracted. Consequences:
+
+- Dormant on BC.History today: 0 errors means no `Parse:` lines, which is why every measurement in this plan is unaffected.
+- False-dirty only — it cannot make a run look clean when it is not, which is why it was correctly ranked Minor.
+- **But it makes an ERROR-injecting fixture flap**, and Task 25's registry needs exactly that fixture (`parse-al-parallel.sh` with a syntax-error file, and the ERROR-census row). A fixture whose hash changes run to run is not a fixture.
+
+The implementer's warning about the wrong fix is the important part: stripping the line from the hash but not from the extracted payload would make hash and diff disagree — a far worse failure than the one being fixed, and it would break the byte-identical property proved repeatedly in Task 19. **Trim the diagnostic from the tree's byte range for both the hash and the payload, or not at all.**
+
+Prove it the way Task 19 proved everything: `cmp -s` on a real delta before and after, plus a deliberately ERROR-containing corpus whose hash is now stable across runs. Task 19's implementer offered to take this and knows the code; that is the cheapest route.
+
+### Task 25 — gate self-test harness (mutation testing for the validation suite)
+
+Added on the release owner's instruction, and it is the most valuable task in this plan because it stops the rest of it recurring.
+
+**The recurring fault.** Five times this session a tool reported success for work it had not done, and each was found by a human reading code rather than by any gate:
+
+| Tool | How it silently passed |
+|---|---|
+| `tools/fieldwalk.c` | printed nothing on a miss — indistinguishable from "field has no members" |
+| `validate-grammar.sh` Step 8 | reports success when no baseline file exists — **still true today, Task 20** |
+| `tools/analyze_duplicates.py` | returned zero extracted rules as a pass |
+| `tools/tree-harness.sh` | `\|\| true` swallowed failed chunks; only the *global* total was checked, so offsetting losses passed |
+| `validate-grammar.sh` orphan/duplicate/health steps | three helper scripts were untracked, so a fresh clone degraded them to "script not found" warnings |
+
+Two more were tests rather than tools: corpus fixtures in Tasks 7 and 8 that passed identically on the broken grammar. The shape is always the same — **passing looks identical whether the check ran or not.**
+
+**Build `tools/gate-selftest.py`** (or `.sh`, match the repo): a registry of `(gate, injected defect, expected failure)` triples. For each, apply the defect to a scratch copy, run the gate, assert it exits non-zero **and** that its message names the injected problem, then restore. A gate that fails for the wrong reason is not passing this test.
+
+Minimum registry — extend it, do not shrink it:
+
+| Gate | Inject | Must |
+|---|---|---|
+| `validate-grammar.sh` Step 2 | break one corpus expectation | fail |
+| Step 3 ERROR census | an ERROR fixture **outside** the allow-list | fail, naming the file |
+| Step 4 orphans | an unreferenced rule | fail |
+| Step 5 duplicates | a duplicate rule key | fail *(already proven, Task 18)* |
+| Step 5b field types | mutate `node-types.json` | fail *(already proven, Task 17)* |
+| Step 5c fieldwalk | break `fieldwalk.c` so it will not compile | fail |
+| Step 8 health check | remove the baseline file | fail — **passes today; Task 20 fixes it, this proves the fix** |
+| `parse-al-parallel.sh` | one `.al` file with a syntax error | report ≥ 1 error |
+| `parse-al-parallel.sh` | **N files never parsed at all** | **must not report 100%** — it does today, see below |
+| `tree-harness.sh verify` | mutate exactly one tree in the snapshot | report exactly 1 changed |
+| `tree-harness.sh build_trees` | force one chunk to fail | fail loudly *(Task 19 adds the detection)* |
+
+**`parse-al-parallel.sh` has this defect today and it is the gate quoted most often in this plan.** Its "Parsed OK" is set subtraction, not a count of work done:
+
+```sh
+file_count=$(wc -l < "$all_files")                      # total = list length
+comm -23 "$all_files" "$errors_unsorted" > "$parsed_path"   # parsed = total MINUS files that errored
+parsed_final=$(wc -l < "$parsed_path")
+```
+
+A file never parsed emits no error line, so it is absent from the error list, so it counts as OK. Demonstrated with `tools/gate-fixtures/chunk-parse-failure/`: **100 of 280 files never parsed, and it still reports 280/280, 0 errors, 100%.** Every "15,358/15,358, 0 errors" in this plan therefore proves that no file *reported* an error — not that every file was read. Fix it to count files actually parsed, and keep the fixture as the regression test.
+
+**Plus a structural sweep, which is the half that generalises.** Every gate must report *how much it examined* — "442 rule keys", "552 test files", "15,358 files" — and that number must be asserted plausible, not merely printed. That is what would have caught the harness's global-total-only check and the untracked helpers. Also grep the gate scripts for `|| true`, `2>/dev/null`, and `if [ -f … ]` guards that degrade to a warning, and require each to be paired with an explicit check that the work happened.
+
+**Do not let this harness become the sixth instance.** It must fail loudly if it cannot apply a mutation, cannot find a gate, or runs zero triples. Prove that: give it a registry entry pointing at a nonexistent gate and show it errors rather than reporting all-pass.
+
+Wire it into CI, not just `validate-grammar.sh` — a self-test that only runs when someone remembers to run the validator inherits the problem it solves.
+
+### Task 24 — seven fields declared in `grammar.js` that do not exist
+
+Found during Task 17, partly by the implementer and partly by a follow-up scan. `grammar.js` writes `field('name', …)` in seven places where the field's only member is a **hidden** token or rule, so tree-sitter drops the field entirely rather than declaring it empty. A reader of `grammar.js` sees `field('operator', kw('is', 5))` and reasonably expects `operator` to be queryable. It is not — it appears in neither `node-types.json` nor the runtime tree.
+
+```
+as_expression.operator            field('operator', kw('is', 5))       -> hidden pattern token
+is_expression.operator            field('operator', kw('as', 5))       -> hidden pattern token
+assignment_statement.operator     field('operator', $._assignment_operator) -> hidden rule
+assignment_expression.operator    same
+procedure.modifier
+xmlport_attribute.attribute_type
+xmlport_element.element_type
+```
+
+Verified with `tools/fieldwalk.c`: `is_expression` reports the node with **no field members**, and `node-types.json` declares no `operator` on any of the four.
+
+**Note what does and does not catch this.** `tools/check-field-types.py` cannot — it asserts on *declared* fields, and these were never declared. A scan for fields with an empty declared type set finds **zero**, because the field is dropped rather than emptied. The detector is a cross-reference: every `field('x', …)` in `grammar.js` against the field set in `node-types.json`; anything in the former and absent from the latter is dropped. That scan is four lines of Python and belongs in `tools/check-field-types.py` as a standing check, since this class will recur every time someone fields a `kw()`.
+
+For each of the seven, decide: alias the token so the field has a visible member (the `kwCases`/`alias` pattern from Task 15), or delete the `field()` call because the field was never meaningful. Do not assume one answer fits all seven — `operator` on the four expression rules is plausibly worth keeping (consumers want to distinguish `is` from `as`), whereas the xmlport ones may be vestigial. Check each against what a consumer would query for.
+
+### Task 23 — capture/completeness gates → **SUPERSEDED, see the query-coverage harness plan**
+
+**This task's design is withdrawn in favour of `docs/superpowers/plans/2026-08-09-query-coverage-harness.md`**, on the release owner's decision. A second session designed the same gate independently and in far more depth: a 25 KB design spec (`docs/superpowers/specs/2026-08-09-query-coverage-harness-design.md`, already on a second review pass) and a 126 KB implementation plan of fifteen TDD tasks. Its problem statement reaches the same conclusion this plan reached — that all three existing gates are blind to a tree that fails to represent its source — and cites the same two bugs as evidence, plus a third found while designing it (the dropped-field class, now Task 24 here).
+
+Its six detectors subsume the three layers sketched below: lossless coverage, ERROR/MISSING census, dropped-field audit (static and dynamic), reserved-keyword-as-identifier, anchor counting, and a shipped-query audit — with a baseline that ratchets downward, an independent mini-lexer as a cross-check, and `validate-grammar.sh` integration.
+
+**Execute that plan, not this section.** What follows is kept only as the record of how the requirement was framed here, and because two details in it are worth carrying over: the leaf-coverage prototype result (24 of 25 sample files clean, the one hit a BOM column-arithmetic artifact — handle the BOM), and the caution that a detector with a high false-positive rate gets ignored, so a layer whose premise does not survive measurement should be dropped rather than shipped noisy.
+
+**Coordination risk to manage:** that session is committing to `fix/3.4.0-grammar-defects` concurrently. Its four commits so far (`ccbc9f7`, `919226a`, `cb347b0`, `a5b3fed`) are docs-only and have been accepted as-is. Before executing, check whether it has already started implementing — two agents building the same fifteen tasks on one branch would be worse than either building it alone.
+
+#### Original framing (superseded)
+
+Proposed by the release owner, and the most valuable item in this backlog. **Every defect found this session was the tree silently failing to cover or attach source text, and every existing gate is error-count based, so none of them could see it.** `parse-al-parallel.sh` counts ERROR nodes. `validate-grammar.sh` counts ERROR nodes. The tree harness compares named trees against a baseline that was itself produced by the buggy parser. A grammar can drop a keyword, collapse a token to zero width, or attach a return value to the wrong parent, and all three report success.
+
+Build the missing gate as three layers, in this order. Ship layer 1 even if 2 and 3 slip.
+
+**Layer 1 — leaf coverage (losslessness). Prototype confirmed working; build it properly.**
+
+Every non-whitespace byte of every source file must sit inside some **leaf** node. It must be *leaf* coverage, not node coverage: when `begin`/`end` vanished inside `#if`, the enclosing `code_block` still spanned them, so a range check against any node would have passed while a leaf check fails.
+
+Implement over the C API or `tree-sitter parse -c` (the only mode that shows anonymous nodes — plain `parse` prints named nodes only and is blind to exactly what this is testing). Handle the BOM: a `﻿` at file start offsets column arithmetic and produced the single false positive in the prototype. Run it over BC.History and DO.Support-Agents; the expected result is **zero uncovered bytes in 35,954 files**. Wire it into `validate-grammar.sh` and make it fail loudly.
+
+This catches: text in no node at all (Task 12's `begin`/`end`), zero-width token collapse (the `property_name` regression), and any future hidden-token drop. It does **not** catch text attached to the wrong parent.
+
+**Layer 2 — field-population census with a baseline.**
+
+For every node type, record the fraction of instances carrying each field declared in `node-types.json`, across the full corpus. Store it beside the tree snapshot. Fail when a field's population rate drops, and require an explicit baseline update to accept a drop — the same discipline `tools/check-field-types.py` uses for declared shapes, applied to actual population.
+
+This is the layer that answers "are all properties actually captured". A single site losing a field will not trip it (`exit_statement.return_value` went from *n* to *n−1*), but a systematic loss will, and unlike layer 3 it needs no hand-enumerated list of bad shapes.
+
+Take the first census as part of this task and **read it** — a field populated on a suspiciously small fraction of instances is a finding in itself, not just a baseline number.
+
+**Layer 3 — suspicious-shape detectors.**
+
+A small set of node shapes that are almost certainly misparses in AL, run as a corpus census. Candidates from this session: a standalone `parenthesized_expression` in statement position (what `exit (42)` produced), and a `quoted_identifier` immediately followed by a sibling `parenthesized_expression` (what `"My Proc"(42)` produced — currently **0** across all 15,358 trees, consistent with Task 4's fix).
+
+**The premise is unproven.** A grep-level census could not distinguish statement position from nested first-child, so the 322 standalone-`parenthesized_expression` hits mean nothing as measured. Do a tree-aware pass first and find out whether these shapes are rare enough to be detectors. If they are not, say so and drop the layer rather than shipping a noisy check — a detector with a high false-positive rate gets ignored, and an ignored gate is worse than none.
+
+---
+
+## Task 14: Release 4.0.0
 
 **Files:**
 - Modify: `CHANGELOG.md`, `package.json`, `Cargo.toml`, `tree-sitter.json`, `package-lock.json`, `Cargo.lock`, `tree-sitter-al.wasm`
@@ -1693,7 +2078,58 @@ fixtures, which made the check unpassable at every release including v3.3.0."
 - Consumes: Tasks 3–13.
 - Produces: published 3.4.0 on GitHub Releases, npm, PyPI, crates.io.
 
-**Version:** 3.4.0, not 3.3.2. Tasks 7, 8 and 12 change node structure and field shapes, and this repo's semver treats the parse tree as the public API — structure changes are at least a minor bump. (A strict reading makes Task 12 a major; it only *adds* nodes and removes none, so minor is defensible, but call it out in the changelog under a **Breaking for consumers** heading.)
+**Version: 4.0.0.** Ruled by the release owner, following the policy stated in `CHANGELOG.md` itself — "the parse-tree shape is the public API — a change to node structure or field names is a **major** bump." Task 9 changed node structure in 757 BC.History files (1,316 added `statement_block` nodes) and Task 12 adds named `begin_keyword`/`end_keyword` inside every `#if` block. Those are exactly the changes that policy names. Shipping them as a minor would contradict the rule in the same file that states it.
+
+Everywhere below that says 3.4.0, read 4.0.0. The `[Unreleased]` heading becomes `## [4.0.0] — <date>`.
+
+**The migration note is part of this task, not optional.** A major bump obliges a consumer-facing account of every tree change, at the top of the 4.0.0 entry, each with the before/after shape:
+
+- `case_else_branch.body` is now a single `statement_block` instead of a repeated statement list — a query taking the Nth child of `body` breaks; one matching `(case_else_branch)` does not.
+- `begin_keyword` / `end_keyword` now appear inside `#if` blocks where previously no node covered that text at all (Task 12).
+- `array_type.sizes` and `link_value.value` no longer *declare* an anonymous member — declared-type only, no tree moves, but typed bindings regenerate differently.
+- `exit_statement` now attaches a `return_value` where a spaced or multi-line `exit (…)` previously dropped it into a detached sibling (Task 3) — the one case where a consumer was getting a *wrong* answer before.
+
+Name the affected downstream work explicitly: the nvim-treesitter queries in flight and `U:\Git\sublime-al`.
+
+- [ ] **Step −1: BLOCKING — review the other session's commits as one block**
+
+A second Claude session executed its own fifteen-task query-coverage-harness plan on this same branch, in parallel, and its commits interleave with ours. **4.0.0 must not ship containing code this process never reviewed.** The release owner's ruling is to let them finish and review their work as a single unit before tagging.
+
+Identify their commits by the files they touch, not by author — every commit in this repo is "Goose Assistant":
+
+```bash
+git log --format="%h %s" --name-only <plan-start>..HEAD \
+  | grep -B1 -E 'tools/query_coverage/|query-coverage-harness'
+```
+
+Known at the time of writing: `ccbc9f7`, `919226a`, `cb347b0`, `a5b3fed`, `de78c9f` (docs), `e8c3f1a`, `2c0fd0e` (code — a `tools/query_coverage/` package, `tools/__init__.py`, a scoped `.gitignore` change). There will be more; their plan has fifteen tasks.
+
+Dispatch one reviewer over the whole set with the same standards used for our own tasks. Things to look at specifically, since nobody in this process has seen any of it: whether `tools/__init__.py` making `tools/` a package affects our own scripts there (`check-field-types.py`, `analyze_duplicates.py`, the `fieldwalk.c` build), whether the `.gitignore` change can unignore anything unintended, and whether their harness's own gates actually fail when they should — the standing rule in this plan is that a check nobody has watched fail is not yet a check.
+
+Confirmed working at the time of writing, so a regression is attributable: `check-field-types.py` 29/29, duplicate check 442 keys, `./validate-grammar.sh` exit 0.
+
+- [ ] **Step 0: Refresh every metric in `CLAUDE.md`, prose included**
+
+Three stale counts were found in that file during Tasks 11 and 12, each contradicting its own metrics table from a different part of the document. Two were fixed; **`CLAUDE.md:5` still says "1451 tests passing"** against the corrected 1,507, and it is the status line at the top — the first thing a reader sees.
+
+Do not fix that one line in isolation. Sweep the whole file against the repo:
+
+```bash
+grep -E '^#define (SYMBOL_COUNT|STATE_COUNT)' src/parser.c
+ls -l src/parser.c | awk '{printf "%.1f MB\n", $5/1048576}'
+wc -l grammar.js
+tree-sitter test 2>&1 | grep 'Total parses'
+git ls-files queries/ | wc -l
+```
+
+and reconcile every figure that appears in prose as well as in the table. The drift pattern here is that the table gets updated and the prose does not, so grep for bare numbers rather than trusting the table.
+
+**Two known items carried forward, both confirmed by Task 15's re-review:**
+
+1. **`CLAUDE.md` lines 60 and 173 say "~12 dedicated split-construct rules". The real count is 20** — Task 15 corrected README to 20 but `CLAUDE.md` was outside its file scope, so the repo currently contradicts itself on the same fact in the same release. Count them yourself before writing the number: 20 distinct `preproc_split_*` / `preproc_fragmented_*` rule definitions, excluding the hidden `_preproc_split_then_begin_open` helper.
+2. **README's "What's new in 3.0.0" section** is accurate about 3.0.0 and was deliberately left alone. Deciding whether 4.0.0 gets an equivalent section is this task's call, not a docs-sweep call.
+
+Also re-check the counts Task 15 corrected, since this task changes the parser again: `parser.c` size, `SYMBOL_COUNT`, `STATE_COUNT`, `grammar.js` line count, test count, named keywords (83 = 81 grammar + 2 external), and scanner tokens (9 — `var_attribute_open` at index [8] was uncounted in the docs for its entire existence until Task 15).
 
 - [ ] **Step 1: Confirm every gate one final time**
 
@@ -1746,6 +2182,26 @@ NUM_THREADS=16 ./tools/tree-harness.sh snapshot ./BC.History .snapshots/baseline
 The nvim-treesitter work in flight and the `sublime-al` package both depend on node shapes changed by Tasks 7, 8 and 12. Point them at the changelog's consumer note.
 
 ---
+
+## Found during execution — worth their own work later
+
+These surfaced while implementing and are recorded here because the SDD workspace (`.superpowers/`) is gitignored scratch and will be deleted; this file is tracked.
+
+1. **`link_value` only models the multi-entry `DataItemLink`.** A single entry — `DataItemLink = "Customer No." = Cust."No.";` — never instantiates `link_value` at all; it parses as `property_expression`/`comparison_expression` with a `member_expression` on the right. Only two-or-more comma-separated entries produce `link_value_list` → `link_value`. So a query written against `link_value` to find DataItemLink relationships silently misses every single-entry case, plausibly the more common shape. Both CST fragments are in Task 8's report. Decide whether `link_value` should cover the single-entry form, or whether the rule is misnamed for what it models.
+
+2. **24 fields in `node-types.json` mix named and anonymous types.** Not all are defects: `operator` on `additive_expression`, `logical_expression`, `unary_expression` and `multiplicative_expression` holds anonymous tokens by design, because the operator token *is* the value. The suspicious ones are separators leaking into multi-value fields — fourteen `body`/`then_branch`/`else_branch` fields carrying `";"` (all downstream of `_statement` owning its own terminator, which may be deliberate), plus `dotnet_type.reference`, `object_reference_type.reference`, `record_type.reference`, `query_dataitem.table_name`, `report_dataitem.table_name`, `simple_table_relation.table` and `tabledata_permission.table_name` carrying `"."`/`"*"`, and `property.value` carrying `"-"`. The original review found three of these. Sorting deliberate from accidental across all 24 is its own piece of work. `tools/check-field-types.py` is the place to encode the verdicts.
+
+3. **`tools/tree-harness.sh` is blind to anonymous-node changes.** It snapshots plain `tree-sitter parse` output (`tools/tree-harness.sh:72`), which prints **named nodes only**. So `VERIFIED — all 15,358 byte-identical` is a true and useful statement about the *named* tree, and it does rule out a token over-matching regression — but it cannot see a change to anonymous children. Task 11 deleted 66 anonymous node types from the public contract while the harness reported zero changed files, and the full CST of essentially every BC.History file containing an `if` had in fact changed. Any task that alters token shape rather than tree shape needs a `--cst`-based check or a `node-types.json` set-diff instead. Do not let "0 of 15,358" carry more weight than it can bear.
+
+4. **A named-node corpus fixture cannot detect the field-shape defect class at all.** The corpus format never shows field labels on anonymous nodes, so a fixture asserting `sizes: (integer)` twice passes identically on the broken and fixed grammar. Anything asserting about *fields* must assert against `node-types.json` — that is why `tools/check-field-types.py` exists. Any future field-shape work must prove its check fails on the unfixed state, or it has added a test that cannot fail.
+
+5. **SETTLED, AND THE ORIGINAL ENTRY WAS WRONG.** This previously said `array_type.sizes` and `link_value.value` were "materially overstated" defects — declared-type-only, with the anonymous token never carried at runtime. **Both were in fact reachable at runtime, and the fixes were more valuable than recorded.** Verified by building the pre-fix parsers at `9501c5c^` and `fcf4a11^` and walking them with `TSTreeCursor`: `array[10,20] of Integer` returned `sizes` = `[10, ',', 20]`, and a dotted `DataItemLink` returned `value` = `[Parent, '.', "No."]`. The comma and the dot both carried the field. Two false sentences had reached the public CHANGELOG and have been corrected in place, with a "Correction to two earlier entries" note recording what changed and why.
+
+   The rest of this entry explains how the wrong conclusion was reached. **Both halves of the original claim were false.** Task 17 demonstrated with a positive control that `tree-sitter parse -c` (and `--xml`) **cannot show fields on anonymous nodes at all**: `additive_expression.operator` is a declared field over an anonymous `'+'`/`'-'`, and `--cst` prints it with no field prefix. The absence of a field prefix therefore proves nothing, which is exactly the evidence those two verdicts rested on. `tree-sitter query` is also unreliable here — `(record_type reference: _ @r)` returns only the first identifier, disagreeing with the cursor.
+
+   **The only sound instrument is a `TSTreeCursor` walk reading `ts_tree_cursor_current_field_name` for every child including anonymous ones** — the mechanism `children_by_field_name` actually uses. Task 17 built one in C against the cached runtime and validated it with two positive controls. Task 17 is re-running the pre-fix commits (`4c56a37~1`, `fcf4a11~1`) with it; this entry and the corresponding CHANGELOG wording will be corrected from that result.
+
+6. **Method rule that follows from the above:** never conclude anything about field membership from `tree-sitter parse`, `parse -c`, `--xml` or `tree-sitter query`. Use a cursor walk. This is why `tools/check-field-types.py` asserts against `node-types.json` rather than against parse output.
 
 ## Deferred — not in this plan
 
