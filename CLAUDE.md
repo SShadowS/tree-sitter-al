@@ -281,6 +281,26 @@ python parse_bug_finder.py file.al debug.log
 | **Property syntax** | Complex property fails | Add dedicated complex property rule |
 | **Keyword as identifier** | Variable name conflicts | Add to `keyword_as_identifier` choice list |
 
+## Two rules about verification, learned the hard way in 4.0.0
+
+**A generated artifact can never fail a contract, because it is re-derived from the thing
+being tested.** `src/node-types.json` tells you what the grammar *currently does*.
+`tools/check-field-types.py` is hand-maintained, so it is the only thing that can tell you
+what the grammar is *supposed to do* — and it is what gates. Checking a field's shape in
+`node-types.json` and calling the invariant verified is necessary and not sufficient: a
+narrowing that `node-types.json` reports happily still fails Step 5b, which is the gate
+working. The same distinction applies to any generated file you are tempted to read as a
+check.
+
+**"I tried it and it forced N conflicts" measures one edit, not the grammar.** Record which
+edit was tried, or a half-finished attempt gets filed as an inherent limit and nobody
+revisits it. This happened: adding `code_block` to `_statement_inner` was recorded as
+forcing a conflict per host and a GLR fork on every `begin`. It does — until you also delete
+the seven host arms that already carried their own `field(X, $.code_block)` beside
+`fieldedStatement($, X)`, which were giving each host a second derivation of the same
+string. With those removed there are zero conflicts and the parser gets *smaller*. The
+limitation was an artifact of the attempt, and it sat unchallenged for a release.
+
 ## Parser Metrics
 
 **Note:** These metrics are approximate and may drift as the grammar evolves. Verify with `wc -c src/parser.c` and `grep -E 'SYMBOL_COUNT|STATE_COUNT' src/parser.c` if precision matters.
