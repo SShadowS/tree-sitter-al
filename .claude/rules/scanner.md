@@ -32,7 +32,7 @@ The scanner maintains a `ScannerState` holding a `depth` counter tracking `#if`/
 Two independent reasons, both of which produced live bugs:
 
 - A scan that returns false **discards every advance and is not re-entered at the same position**, so a block that reads text, fails and declines destroys every later block's only chance to fire.
-- `read_keyword_ci` stops at the first mismatching character **with the matched prefix already consumed**, and there is no backtracking inside a scan, so the next branch starts *mid-identifier*.
+- A walking matcher stops at the first mismatching character **with the matched prefix already consumed**, and there is no backtracking inside a scan, so the next branch starts *mid-identifier*.
 
 The second is how `b1 = 5;` lost its property: the `begin` attempt ate the `b`, then `PROPERTY_NAME`'s `is_identifier_start` check saw `1` and declined — while `x1 = 5;` in the same position parsed as a property. Parse states 20 and 22 offer `property_name` and `begin_keyword` together, so the two are genuinely co-valid. **Do not assert that two symbols are never co-valid without reading `ts_external_scanner_states` in `src/parser.c`** — that table is the exhaustive universe of `valid_symbols` combinations, it is cheap to read, and reasoning about it instead has been wrong every time.
 
@@ -61,7 +61,17 @@ Every lookahead must step over everything `grammar.js` declares as `extras` — 
 - `skip_whitespace_and_comments` — whitespace plus comments.
 - `peek_directive_ci_skip_extras(lexer, targets)` — skips whitespace, comments and transparent directive lines, then tests whether the next `#` directive is one of `targets` (bare words, no `#`). `TRANSPARENT_DIRECTIVES` = `pragma`, `region`, `endregion`, `define`, `undef`. **Keep it in sync with the `extras` array.**
 
-**Never match candidate keywords in sequence in a lookahead.** Consuming `#` is irreversible within one scan, and so is consuming a shared prefix. `read_keyword_ci(lexer,"else") || read_keyword_ci(lexer,"endif")` burns the `e` on the failed `else` attempt and makes the `endif` arm permanently unreachable — that bug was live in `PREPROC_SPLIT_END`. Read the directive word into a buffer ONCE, then compare against every target.
+**Nothing in this scanner matches a keyword against the live lexer. Do not reintroduce anything that does.** Every word — directive names, `begin`/`end`/`continue`, and both split lookaheads — is read ONCE into a buffer via `read_word_ci` and then compared whole.
+
+The walking matcher this replaced (`read_keyword_ci`, deleted in 4.0.0) produced **three separate live defects in this one file**, which is why the tool is gone rather than documented:
+
+- `read_keyword_ci("else") || read_keyword_ci("endif")` in `PREPROC_SPLIT_END` burned the `e` on the failed `else` and made the `endif` arm permanently unreachable.
+- A per-keyword `begin` attempt ate the `b` of `b1 = 5;`, so `PROPERTY_NAME` then saw `1` and declined — while `x1 = 5;` in the same position parsed fine.
+- **`#iendif` was accepted as `#endif`.** The `PREPROC_OPEN`/`PREPROC_CLOSE` dispatch chained `read_keyword_ci("if")` then `read_keyword_ci("endif")`; on `#iendif` the first matched the `i` before failing, the second read the *remaining* `endif` and returned **true**, yielding `(preproc_close)` over all seven bytes, decrementing `depth`, exit 0, no ERROR node.
+
+Note what did **not** save the `#elif`/`#else` case: the two words differing at character 0 is not the reason. `#elif` genuinely burns a character on the `endif` attempt. It was harmless only because every path out of that block was a `return`, so the burn had no successor — a guarantee that dies the instant a third arm is added, which is exactly how the `else`/`endif` bug entered.
+
+Consuming `#` is likewise irreversible within one scan.
 
 A lookahead that stops on an extra does not always produce an ERROR node. `PREPROC_SPLIT_END` failing on a trailing comment let the run reparse as a `call_statement` with a clean error count, invisible to `parse-al-parallel.sh` and `validate-grammar.sh`. Add a corpus fixture pinning the node, not just the error count.
 
