@@ -33,15 +33,21 @@ Before starting, verify:
    disagreed on what counts as a hit. Found by writing a fixture titled with
    the bare word.
 
-   Those six files are deliberate negatives — their ERROR nodes *are* the
+   Those seven files are deliberate negatives — their ERROR nodes *are* the
    assertion. They pin that a misplaced `TableData X = R` fragment under
    OptionMembers surfaces rather than being silently absorbed, that `#` +
    newline + `pragma`/`if`/`elif`/`region` does not lex as a directive
    (whitespace tolerance after `#` is horizontal-only), that `# ifx` is not
    `#if`, that a stray identifier before a var attribute gets its own node
    instead of being absorbed into the `[` token, and that a directive keyword
-   with no word boundary (`#regionX`, `#pragmaX`) is not a directive at all. Any hit OUTSIDE those six is
-   a real problem.
+   with no word boundary (`#regionX`, `#pragmaX`) is not a directive at all, and that a
+   codepoint the grammar's `[\p{L}\p{N}_]` excludes is not an identifier character. Any
+   hit OUTSIDE those seven is a real problem.
+
+   The seventh is currently carried AHEAD of its fixture: the file lands with the
+   identifier-classification branch, and an allow-list entry for an absent file is
+   inert. Adding it early is what stops the two gates disagreeing at the moment that
+   branch merges, since neither branch can edit the other's copy.
 
    Unscoped, this check had 8 hits across the original 4 files and so had never
    passed at any release, v3.3.0 included. The same exemption list lives in
