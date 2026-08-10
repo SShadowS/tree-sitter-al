@@ -37,6 +37,44 @@ HEAD = b"(source_file"
 KEEP = len(MARKER) - 1          # bytes retained so a split marker is never missed
 BUFSIZE = 1 << 20
 
+# tree-sitter writes its per-file diagnostic for a failing parse to STDOUT, in
+# among the trees:
+#
+#     …Foo.al        Parse:  0.46 ms      221 bytes/ms   (ERROR [4, 8] - [4, 11])
+#
+# It appears AFTER that file's tree and before the next `(source_file`, so it
+# falls inside the preceding tree's byte range and is both hashed and extracted.
+# The line carries a TIMING, so such a tree hashes differently on every run and
+# the harness reports a MISMATCH for a file nobody touched. Dormant on a corpus
+# with 0 errors -- which is why BC.History never showed it -- and false-dirty
+# rather than false-clean, but it makes any ERROR-containing fixture flap, and a
+# fixture whose hash changes run to run is not a fixture.
+#
+# THE FILTER MUST APPLY TO THE HASH AND THE PAYLOAD IDENTICALLY. Stripping the
+# line from one and not the other would make `verify`'s manifest comparison and
+# its printed diff disagree -- a worse failure than the one being fixed. That is
+# guaranteed structurally here rather than by discipline: the digest is computed
+# in emit(), from the same filtered bytes that are handed back as the payload,
+# so there is only one filtered representation of a tree and both callers get it.
+#
+# Redirecting stderr away from the blob (tree-harness.sh does) does NOT fix this
+# and never could: the diagnostic is on stdout, sharing the stream with the trees.
+DIAGNOSTIC = b"\tParse:"
+
+
+def strip_diagnostics(payload):
+    """Drop tree-sitter's per-file diagnostic lines from a tree's bytes.
+
+    A tree's own lines are s-expressions indented with spaces and never contain
+    a tab, so a tab followed by `Parse:` identifies the diagnostic and nothing
+    else. The membership test short-circuits: the overwhelming majority of trees
+    contain no diagnostic and are returned without being split.
+    """
+    if DIAGNOSTIC not in payload:
+        return payload
+    return b"".join(line for line in payload.splitlines(keepends=True)
+                    if DIAGNOSTIC not in line)
+
 
 def _die(msg):
     sys.stderr.write("tree_blob: %s\n" % msg)
@@ -87,10 +125,16 @@ def iter_trees(stream, want_hash=False, wanted=frozenset()):
     """Yield (n, offset, length, sha256hex-or-None, payload-or-None) per tree.
 
     n counts trees from 1. A tree's bytes are only collected when n is in
-    `wanted`, and only hashed when want_hash — walking a 1.3 GB corpus to pull
-    out 20 trees must not pay to hash and rebuild the other 15,338. Bytes before
-    the first `(source_file` line (a tree-sitter diagnostic, say) are discarded,
-    matching the awk splitter this replaced.
+    `wanted` or when want_hash — walking a 1.3 GB corpus to pull out 20 trees
+    must not pay to rebuild the other 15,338. Bytes before the first
+    `(source_file` line (a tree-sitter diagnostic, say) are discarded, matching
+    the awk splitter this replaced.
+
+    The returned offset and length describe the RAW blob, diagnostics included,
+    so they still locate the tree in the file on disk. The hash and the payload
+    describe the tree with diagnostics removed — see strip_diagnostics. Only the
+    hash column of the index is consumed by tree-harness.sh; the offsets are
+    informational.
     """
     buf = b""
     base = 0            # file offset of buf[0]
@@ -98,31 +142,30 @@ def iter_trees(stream, want_hash=False, wanted=frozenset()):
     n = 0
     keep = False
     pieces = None
-    digest = None
     at_stream_start = True
 
     def begin(offset):
-        nonlocal n, start, keep, pieces, digest
+        nonlocal n, start, keep, pieces
         n += 1
         start = offset
         keep = n in wanted
-        pieces = [] if keep else None
-        digest = hashlib.sha256() if want_hash else None
+        # Assembled whole rather than hashed incrementally, because the
+        # diagnostic filter is line-oriented and collect() is called on
+        # arbitrary buffer boundaries -- a diagnostic line can be split across
+        # two calls. One tree at a time; the largest is a few hundred KB.
+        pieces = [] if (keep or want_hash) else None
 
     def collect(src, a, b):
         # Slice only when someone will look at the bytes. Copying every tree of a
         # 1.3 GB corpus just to throw it away cost ~15s per pass.
-        if keep or digest is not None:
-            piece = src[a:b]
-            if keep:
-                pieces.append(piece)
-            if digest is not None:
-                digest.update(piece)
+        if pieces is not None:
+            pieces.append(src[a:b])
 
     def emit(end):
+        body = strip_diagnostics(b"".join(pieces)) if pieces is not None else None
         return (n, start, end - start,
-                digest.hexdigest() if digest is not None else None,
-                b"".join(pieces) if keep else None)
+                hashlib.sha256(body).hexdigest() if want_hash else None,
+                body if keep else None)
 
     while True:
         block = stream.read(BUFSIZE)
