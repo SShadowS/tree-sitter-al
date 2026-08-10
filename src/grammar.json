@@ -15584,23 +15584,23 @@
     },
     "pragma": {
       "type": "PATTERN",
-      "value": "(?i)#[ \\t]*pragma[^\\n\\r]*"
+      "value": "(?i)#[ \\t]*pragma([^\\n\\r0-9A-Za-z_][^\\n\\r]*)?"
     },
     "preproc_region": {
       "type": "PATTERN",
-      "value": "(?i)#[ \\t]*region[^\\n\\r]*"
+      "value": "(?i)#[ \\t]*region([^\\n\\r0-9A-Za-z_][^\\n\\r]*)?"
     },
     "preproc_endregion": {
       "type": "PATTERN",
-      "value": "(?i)#[ \\t]*endregion[^\\n\\r]*"
+      "value": "(?i)#[ \\t]*endregion([^\\n\\r0-9A-Za-z_][^\\n\\r]*)?"
     },
     "preproc_define": {
       "type": "PATTERN",
-      "value": "(?i)#[ \\t]*define[^\\n\\r]*"
+      "value": "(?i)#[ \\t]*define([^\\n\\r0-9A-Za-z_][^\\n\\r]*)?"
     },
     "preproc_undef": {
       "type": "PATTERN",
-      "value": "(?i)#[ \\t]*undef[^\\n\\r]*"
+      "value": "(?i)#[ \\t]*undef([^\\n\\r0-9A-Za-z_][^\\n\\r]*)?"
     },
     "_statement": {
       "type": "PREC_RIGHT",

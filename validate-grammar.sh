@@ -116,6 +116,12 @@ DELIBERATE_ERROR_FIXTURES=(
     # the tree. It lives in its own file rather than joining the clean scanner
     # fixtures so that those stay subject to this step.
     "scanner_var_attribute_token_span_test.txt"
+    # The four directive-boundary negatives. #regionX / #pragmaX / #endregionZ
+    # and an over-long directive word are rejected by alc (AL0621) and, since
+    # 4.0.0, by the grammar; the MISSING end_keyword IS the assertion. They
+    # previously lived in scanner_single_read_dispatch_test.txt asserting the
+    # opposite, back when the scanner was aligned to the over-permissive grammar.
+    "directive_word_boundary_test.txt"
 )
 
 is_deliberate_error_fixture() {

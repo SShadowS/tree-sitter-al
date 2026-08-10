@@ -3440,11 +3440,11 @@ module.exports = grammar({
     // NEXT line (confirmed pre-fix: `#\nregion Foo` parsed as a single
     // `preproc_region` spanning both lines). `[^\n\r]*` already bounds the
     // token to one line on the tail end; `[ \t]*` bounds it on the head end.
-    pragma: $ => new RustRegex('(?i)#[ \\t]*pragma[^\\n\\r]*'),
+    pragma: $ => new RustRegex('(?i)#[ \\t]*pragma([^\\n\\r0-9A-Za-z_][^\\n\\r]*)?'),
 
-    preproc_region: $ => new RustRegex('(?i)#[ \\t]*region[^\\n\\r]*'),
+    preproc_region: $ => new RustRegex('(?i)#[ \\t]*region([^\\n\\r0-9A-Za-z_][^\\n\\r]*)?'),
 
-    preproc_endregion: $ => new RustRegex('(?i)#[ \\t]*endregion[^\\n\\r]*'),
+    preproc_endregion: $ => new RustRegex('(?i)#[ \\t]*endregion([^\\n\\r0-9A-Za-z_][^\\n\\r]*)?'),
 
     // Symbol definition directives. Line-level like #pragma/#region: they take a
     // single symbol name, never open or close a conditional, and so must NOT
@@ -3467,9 +3467,9 @@ module.exports = grammar({
     // That also buys reachability for free: file-leading position, inside a
     // leading pragma-only #if block, and after leading comments/pragmas are all
     // the same rule with no new parser states and no GLR conflicts.
-    preproc_define: $ => new RustRegex('(?i)#[ \\t]*define[^\\n\\r]*'),
+    preproc_define: $ => new RustRegex('(?i)#[ \\t]*define([^\\n\\r0-9A-Za-z_][^\\n\\r]*)?'),
 
-    preproc_undef: $ => new RustRegex('(?i)#[ \\t]*undef[^\\n\\r]*'),
+    preproc_undef: $ => new RustRegex('(?i)#[ \\t]*undef([^\\n\\r0-9A-Za-z_][^\\n\\r]*)?'),
 
     // =====================================================================
     // Statements

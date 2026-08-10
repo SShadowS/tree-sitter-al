@@ -298,16 +298,19 @@ static bool skip_whitespace_and_comments(TSLexer *lexer) {
 //                       must not treat it as one.
 //
 //   whole_word = false  The grammar matches it with a regex carrying no
-//                       trailing boundary. `#[ \t]*region[^\n\r]*` accepts
-//                       `#regionX foo` as a preproc_region extra, and
-//                       `#[ \t]*else` matches the first five bytes of
-//                       `#elseX`. A whole-word scanner test rejected all of
-//                       these while the parser accepted them, and the split
-//                       token then declined: `#regionX` sitting between an
-//                       `end;` and its `#else` degraded the `end;` to a
-//                       call_statement and shredded the #else branch into loose
-//                       identifiers. Prefix matching is what keeps the two in
-//                       agreement.
+//                       trailing boundary, so an identifier that merely starts
+//                       with the directive name is still that directive to the
+//                       parser. Only #else and #elif are like this now.
+//
+// The five extras directives moved from prefix to whole word in 4.0.0, when
+// their regexes were tightened to reject #regionX (which alc rejects, AL0621).
+// #else and #elif could NOT be tightened the same way: tree-sitter's lexer
+// compiler rejects zero-width assertions outright — both \b and lookahead
+// fail with "Unexpected rule ExpandRegex(Assertion)" — and the five were only
+// fixable because their trailing [^\n\r]* could absorb a MANDATORY
+// non-word character, which #[ \t]*else has nowhere to put. So the grammar
+// still reads #elseX as #else plus an identifier, and this table still has to
+// mirror that. Keep every entry matching its rule, not a convention.
 typedef struct {
   const char *name;
   bool whole_word;
@@ -319,8 +322,8 @@ typedef struct {
 // scanning for a structural directive. Keep in sync with the `extras` array —
 // including the match mode, which mirrors each one's regex.
 static const DirectiveMatch TRANSPARENT_DIRECTIVES[] = {
-  { "pragma", false }, { "endregion", false }, { "region", false },
-  { "define", false }, { "undef", false }, { NULL, false },
+  { "pragma", true }, { "endregion", true }, { "region", true },
+  { "define", true }, { "undef", true }, { NULL, false },
 };
 
 // Target sets for peek_directive_ci_skip_extras. Bare words, no '#'.

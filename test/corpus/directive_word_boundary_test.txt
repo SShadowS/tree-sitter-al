@@ -1,0 +1,354 @@
+================================================================================
+NEGATIVE: #regionX is not a directive -- alc rejects it with AL0621
+Until 4.0.0 preproc_region matched the keyword with no trailing word boundary,
+so any identifier beginning "region" lexed as a whole region directive. This
+case previously asserted the OPPOSITE: that #regionX parsed cleanly between a
+split end; and its #else. That was the scanner being aligned to an
+over-permissive grammar in 3bcd3d1; the grammar has now moved instead.
+tree-sitter's lexer compiler rejects zero-width assertions, so neither a
+word-boundary escape nor lookahead is available; the boundary is expressed as a
+MANDATORY non-word character absorbed by the existing trailing wildcard. One
+consequence is visible below -- #region still matches as a seven-character
+prefix and the tail is left over, rather than the directive failing to match
+outright. The file is rejected either way, which is what alc does too.
+================================================================================
+codeunit 1 T
+{
+    procedure X()
+    var
+        x: Integer;
+    begin
+        if x = 1 then begin
+            x := 9;
+#if not CLEAN22
+        end;
+#regionX Foo
+#else
+        x := 2;
+        end else begin x := 3; end;
+#endif
+    end;
+}
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (procedure
+        (procedure_keyword)
+        name: (identifier)
+        (var_section
+          (var_keyword)
+          body: (var_body
+            (variable_declaration
+              name: (identifier)
+              type: (type_specification
+                (basic_type)))))
+        body: (code_block
+          (begin_keyword)
+          body: (statement_block
+            (if_statement
+              (if_keyword)
+              condition: (comparison_expression
+                left: (identifier)
+                operator: (comparison_operator)
+                right: (integer))
+              (then_keyword)
+              then_branch: (code_block
+                (begin_keyword)
+                body: (statement_block
+                  (assignment_statement
+                    left: (identifier)
+                    operator: (assignment_operator)
+                    right: (integer))
+                  (preproc_conditional_statement
+                    (preproc_if
+                      (preproc_open)
+                      condition: (preproc_not_expression
+                        (identifier)))
+                    (call_statement
+                      function: (identifier))
+                    (preproc_region)
+                    (identifier)
+                    (identifier)
+                    (preproc_else)
+                    (assignment_statement
+                      left: (identifier)
+                      operator: (assignment_operator)
+                      right: (integer))
+                    (identifier)
+                    (identifier)
+                    (code_block
+                      (begin_keyword)
+                      body: (statement_block
+                        (assignment_statement
+                          left: (identifier)
+                          operator: (assignment_operator)
+                          right: (integer)))
+                      (end_keyword))
+                    (preproc_endif
+                      (preproc_close))))
+                (end_keyword))))
+          (MISSING end_keyword))))))
+
+================================================================================
+NEGATIVE: #pragmaX is not a directive (AL0621)
+================================================================================
+codeunit 1 T
+{
+    procedure X()
+    var
+        x: Integer;
+    begin
+        if x = 1 then begin
+            x := 9;
+#if not CLEAN22
+        end;
+#pragmaX warning disable AL0432
+#else
+        x := 2;
+        end else begin x := 3; end;
+#endif
+    end;
+}
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (procedure
+        (procedure_keyword)
+        name: (identifier)
+        (var_section
+          (var_keyword)
+          body: (var_body
+            (variable_declaration
+              name: (identifier)
+              type: (type_specification
+                (basic_type)))))
+        body: (code_block
+          (begin_keyword)
+          body: (statement_block
+            (if_statement
+              (if_keyword)
+              condition: (comparison_expression
+                left: (identifier)
+                operator: (comparison_operator)
+                right: (integer))
+              (then_keyword)
+              then_branch: (code_block
+                (begin_keyword)
+                body: (statement_block
+                  (assignment_statement
+                    left: (identifier)
+                    operator: (assignment_operator)
+                    right: (integer))
+                  (preproc_conditional_statement
+                    (preproc_if
+                      (preproc_open)
+                      condition: (preproc_not_expression
+                        (identifier)))
+                    (call_statement
+                      function: (identifier))
+                    (pragma)
+                    (identifier)
+                    (identifier)
+                    (identifier)
+                    (identifier)
+                    (preproc_else)
+                    (assignment_statement
+                      left: (identifier)
+                      operator: (assignment_operator)
+                      right: (integer))
+                    (identifier)
+                    (identifier)
+                    (code_block
+                      (begin_keyword)
+                      body: (statement_block
+                        (assignment_statement
+                          left: (identifier)
+                          operator: (assignment_operator)
+                          right: (integer)))
+                      (end_keyword))
+                    (preproc_endif
+                      (preproc_close))))
+                (end_keyword))))
+          (MISSING end_keyword))))))
+
+================================================================================
+NEGATIVE: an over-long directive word is not a directive either
+#regionAAAA... is "region" followed by word characters, so the boundary rejects
+it exactly as #regionX is rejected. This case previously asserted that it parsed
+as a region.
+================================================================================
+codeunit 1 T
+{
+    procedure X()
+    var
+        x: Integer;
+    begin
+        if x = 1 then begin
+            x := 9;
+#if not CLEAN22
+        end;
+#regionAAAAAAAAAAAAAAAAAAAA
+#else
+        x := 2;
+        end else begin x := 3; end;
+#endif
+    end;
+}
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (procedure
+        (procedure_keyword)
+        name: (identifier)
+        (var_section
+          (var_keyword)
+          body: (var_body
+            (variable_declaration
+              name: (identifier)
+              type: (type_specification
+                (basic_type)))))
+        body: (code_block
+          (begin_keyword)
+          body: (statement_block
+            (if_statement
+              (if_keyword)
+              condition: (comparison_expression
+                left: (identifier)
+                operator: (comparison_operator)
+                right: (integer))
+              (then_keyword)
+              then_branch: (code_block
+                (begin_keyword)
+                body: (statement_block
+                  (assignment_statement
+                    left: (identifier)
+                    operator: (assignment_operator)
+                    right: (integer))
+                  (preproc_conditional_statement
+                    (preproc_if
+                      (preproc_open)
+                      condition: (preproc_not_expression
+                        (identifier)))
+                    (call_statement
+                      function: (identifier))
+                    (preproc_region)
+                    (identifier)
+                    (preproc_else)
+                    (assignment_statement
+                      left: (identifier)
+                      operator: (assignment_operator)
+                      right: (integer))
+                    (identifier)
+                    (identifier)
+                    (code_block
+                      (begin_keyword)
+                      body: (statement_block
+                        (assignment_statement
+                          left: (identifier)
+                          operator: (assignment_operator)
+                          right: (integer)))
+                      (end_keyword))
+                    (preproc_endif
+                      (preproc_close))))
+                (end_keyword))))
+          (MISSING end_keyword))))))
+
+================================================================================
+NEGATIVE: #endregionZ is not a directive (AL0621, AL0622)
+================================================================================
+codeunit 1 T
+{
+    procedure X()
+    var
+        x: Integer;
+    begin
+        if x = 1 then begin
+            x := 9;
+#if not CLEAN22
+        end;
+#endregionZ
+#else
+        x := 2;
+        end else begin x := 3; end;
+#endif
+    end;
+}
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (procedure
+        (procedure_keyword)
+        name: (identifier)
+        (var_section
+          (var_keyword)
+          body: (var_body
+            (variable_declaration
+              name: (identifier)
+              type: (type_specification
+                (basic_type)))))
+        body: (code_block
+          (begin_keyword)
+          body: (statement_block
+            (if_statement
+              (if_keyword)
+              condition: (comparison_expression
+                left: (identifier)
+                operator: (comparison_operator)
+                right: (integer))
+              (then_keyword)
+              then_branch: (code_block
+                (begin_keyword)
+                body: (statement_block
+                  (assignment_statement
+                    left: (identifier)
+                    operator: (assignment_operator)
+                    right: (integer))
+                  (preproc_conditional_statement
+                    (preproc_if
+                      (preproc_open)
+                      condition: (preproc_not_expression
+                        (identifier)))
+                    (call_statement
+                      function: (identifier))
+                    (preproc_endregion)
+                    (identifier)
+                    (preproc_else)
+                    (assignment_statement
+                      left: (identifier)
+                      operator: (assignment_operator)
+                      right: (integer))
+                    (identifier)
+                    (identifier)
+                    (code_block
+                      (begin_keyword)
+                      body: (statement_block
+                        (assignment_statement
+                          left: (identifier)
+                          operator: (assignment_operator)
+                          right: (integer)))
+                      (end_keyword))
+                    (preproc_endif
+                      (preproc_close))))
+                (end_keyword))))
+          (MISSING end_keyword))))))
+

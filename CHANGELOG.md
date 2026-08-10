@@ -279,6 +279,38 @@ public API — a change to node structure or field names is a **major** bump.
 
 ### Fixed
 
+- **Five directive regexes accepted words the compiler rejects.** `pragma`,
+  `region`, `endregion`, `define` and `undef` matched their keyword with no
+  trailing word boundary, so `#regionX` lexed as a whole `preproc_region`. alc
+  18.0.37.11445 rejects `#regionX`, `#pragmaX` and `#endregionX` with `AL0621`
+  while `#region Foo` and a bare `#region` compile clean. `3bcd3d1` had aligned
+  the *scanner* to this over-permissive grammar because that was the only
+  tree-neutral option at the time; this moves the grammar, which is the correct
+  end state, and flips the scanner's five `TRANSPARENT_DIRECTIVES` entries to
+  whole-word to match.
+  - **`` cannot be used, and neither can lookahead.** tree-sitter's lexer
+    compiler rejects zero-width assertions outright — both forms fail with
+    `Grammar error: Unexpected rule ExpandRegex(Assertion)`, and this is
+    tree-sitter's regex-to-automaton step rather than a `RustRegex` limitation:
+    a plain JavaScript regex with `` fails identically. The boundary is
+    therefore expressed as a **mandatory non-word character** absorbed by the
+    trailing wildcard the five already had.
+  - **`#else` and `#elif` could not be fixed and are unchanged.** They have no
+    trailing wildcard to absorb that character, and giving them one would make
+    the token swallow the rest of the line — moving every `#else` with a
+    trailing comment. So `#elseX` still lexes as `#else` plus an identifier, and
+    the scanner's two `whole_word = false` entries still correctly mirror that.
+    `DirectiveMatch.whole_word` is therefore **not** dead weight: it now carries
+    a real three-way distinction, and both halves are documented at the table.
+  - One consequence is honest rather than ideal: because the boundary is a
+    mandatory character rather than an assertion, `#regionX` still matches
+    `#region` as a seven-character prefix and leaves the tail loose, instead of
+    failing to match at all. The file is rejected either way.
+  - Four fixtures that asserted the old permissive behaviour are now negatives
+    in `test/corpus/directive_word_boundary_test.txt`, where the rejection is
+    the assertion. **No BC.History tree changed** — all 15,358 byte-identical,
+    confirming these forms appear nowhere in code that compiles.
+
 - **A dangling `else` in a case branch bound to the `case`, not to the inner
   `if`.** The only defect in this release that changes what the program *means*.
   For `case X of 1: if C then A else B; else C; end;` the `if` lost its `else`
