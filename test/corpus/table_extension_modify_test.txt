@@ -35,6 +35,7 @@ tableextension 50000 "Test Extension" extends "Base Table"
         (fields_keyword)
         body: (fields_body
           (modify_modification
+            (modify_keyword)
             target: (quoted_identifier)
             body: (declaration_body
               (trigger_declaration
@@ -45,6 +46,7 @@ tableextension 50000 "Test Extension" extends "Base Table"
                   (comment)
                   (end_keyword)))))
           (modify_modification
+            (modify_keyword)
             target: (quoted_identifier)
             body: (declaration_body
               (property
@@ -99,6 +101,7 @@ tableextension 50001 "Mixed Extension" extends "Base Table"
                 name: (property_name)
                 value: (string_literal))))
           (modify_modification
+            (modify_keyword)
             target: (quoted_identifier)
             body: (declaration_body
               (property

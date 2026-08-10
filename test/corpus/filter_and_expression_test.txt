@@ -47,7 +47,10 @@ table 50100 "Test Filter And"
                             field: (quoted_identifier)
                             (filter_keyword)
                             value: (filter_value
+                              (filter_operator)
                               (quoted_identifier)
+                              (filter_operator)
+                              (filter_operator)
                               (quoted_identifier))))))))))))))))
 
 ================================================================================
@@ -99,8 +102,13 @@ table 50101 "Test Multiple And"
                             field: (quoted_identifier)
                             (filter_keyword)
                             value: (filter_value
+                              (filter_operator)
                               (quoted_identifier)
+                              (filter_operator)
+                              (filter_operator)
                               (quoted_identifier)
+                              (filter_operator)
+                              (filter_operator)
                               (quoted_identifier))))))))))))))))
 
 ================================================================================
@@ -150,7 +158,10 @@ table 50102 "Test Mixed And"
                             field: (identifier)
                             (filter_keyword)
                             value: (filter_value
+                              (filter_operator)
                               (integer)
+                              (filter_operator)
+                              (filter_operator)
                               (integer))))))))))))))))
 
 ================================================================================
@@ -202,7 +213,10 @@ table 50103 "Test And Identifiers"
                             field: (identifier)
                             (filter_keyword)
                             value: (filter_value
+                              (filter_operator)
                               (identifier)
+                              (filter_operator)
+                              (filter_operator)
                               (identifier))))))))))))))))
 
 ================================================================================
@@ -254,4 +268,6 @@ table 50104 "Test Complex And"
                             value: (filter_value
                               (integer)
                               (integer)
+                              (filter_operator)
+                              (filter_operator)
                               (integer))))))))))))))))

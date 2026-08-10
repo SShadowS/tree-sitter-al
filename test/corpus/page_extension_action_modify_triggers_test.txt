@@ -42,6 +42,7 @@ pageextension 50000 "AL Test Tool Ext" extends "AL Test Tool"
         (actions_keyword)
         body: (action_body
           (modify_action_modification
+            (modify_keyword)
             target: (identifier)
             body: (declaration_body
               (trigger_declaration
@@ -67,6 +68,7 @@ pageextension 50000 "AL Test Tool Ext" extends "AL Test Tool"
                         (quoted_identifier))))
                   (end_keyword)))))
           (modify_action_modification
+            (modify_keyword)
             target: (identifier)
             body: (declaration_body
               (trigger_declaration
@@ -128,6 +130,7 @@ pageextension 50001 "Mixed Action Ext" extends "Base Page"
         (actions_keyword)
         body: (action_body
           (modify_action_modification
+            (modify_keyword)
             target: (identifier)
             body: (declaration_body
               (property

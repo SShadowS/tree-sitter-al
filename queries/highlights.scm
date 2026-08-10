@@ -136,6 +136,44 @@
   (schema_keyword)
   (views_keyword)
   (view_keyword)
+  ; Named in the losslessness pass. Every one of these was a bare kw() at its
+  ; call site, i.e. a token(PATTERN) that tree-sitter hides, so the bytes were
+  ; lexed and landed in no node: unhighlightable and unmatchable, no matter how
+  ; the pattern was written. `field` above and `field(1; "No."; Code[20])` here
+  ; are the same word, and only the first one could be captured.
+  (value_keyword)
+  (label_keyword)
+  (separator_keyword)
+  (assembly_keyword)
+  (type_keyword)
+  (tabledata_keyword)
+  (system_keyword)
+  (access_keyword)
+  (sorting_keyword)
+  (order_keyword)
+  (ascending_keyword)
+  (descending_keyword)
+  (lookup_keyword)
+  (comment_keyword)
+  (locked_keyword)
+  (maxlength_keyword)
+  ; Action-family declarations
+  (action_keyword)
+  (actionref_keyword)
+  (systemaction_keyword)
+  (customaction_keyword)
+  (fileuploadaction_keyword)
+  ; Extension modifications
+  (add_keyword)
+  (addfirst_keyword)
+  (addlast_keyword)
+  (addafter_keyword)
+  (addbefore_keyword)
+  (modify_keyword)
+  (movefirst_keyword)
+  (movelast_keyword)
+  (moveafter_keyword)
+  (movebefore_keyword)
 ] @keyword.structure
 
 ; =============================================================================
@@ -166,6 +204,13 @@
 ; no pattern here matched before.
 (assignment_operator) @operator
 ":=" @operator
+
+; AL filter operators inside a filter() / TableRelation filter value: <> | = > <
+; >= <= & @ * %, in any run. Same story as assignment_operator one release
+; earlier — an inline token(PATTERN) with no node, so `Type = const(Item) & "No."
+; <> ''` had two uncoloured operators and no pattern could reach them. 890
+; occurrences in BC.History, 354 of them the bare `|` alternation.
+(filter_operator) @operator
 
 ; Arithmetic operators
 [
@@ -200,6 +245,16 @@
   "not"
   "div"
   "mod"
+] @keyword.operator
+
+; `is` and `as` are named nodes rather than bare strings because they were the
+; declared `operator` field of is_expression/as_expression, and a hidden token
+; in a field() takes the field down with it — the field returned None and the
+; keyword was in no node. The preproc `or`/`and` are NOT listed separately: they
+; are aliased to the same anonymous "or"/"and" the block above already matches.
+[
+  (is_keyword)
+  (as_keyword)
 ] @keyword.operator
 
 ; =============================================================================
@@ -252,6 +307,22 @@
 (text_type) @type.builtin
 
 (code_type) @type.builtin
+
+; The type keywords themselves. The container patterns above and below span the
+; keyword's bytes, so this is not about colour — it is about reach. Until the
+; losslessness pass these keywords were in no node at all, so a consumer could
+; not capture `Record` on its own, ask where the type name starts, or tell
+; `List of [Integer]` from its element type by node. `record_keyword` alone
+; occurs 305,922 times in BC.History.
+[
+  (record_keyword)
+  (code_keyword)
+  (text_keyword)
+  (option_keyword)
+  (array_keyword)
+  (list_keyword)
+  (dictionary_keyword)
+] @type.builtin
 
 ; Record type references
 (record_type

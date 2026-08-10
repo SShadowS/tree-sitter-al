@@ -31,12 +31,14 @@ pagecustomization "Business Manager Evaluation RC" customizes "Business Manager 
         (layout_keyword)
         body: (layout_body
           (modify_modification
+            (modify_keyword)
             target: (identifier)
             body: (declaration_body
               (property
                 name: (property_name)
                 value: (boolean))))
           (modify_modification
+            (modify_keyword)
             target: (quoted_identifier)
             body: (declaration_body
               (property
@@ -80,12 +82,14 @@ pagecustomization "My Page Customization" customizes "Customer List"
         (actions_keyword)
         body: (action_body
           (modify_action_modification
+            (modify_keyword)
             target: (identifier)
             body: (declaration_body
               (property
                 name: (property_name)
                 value: (boolean))))
           (addafter_action_modification
+            (addafter_keyword)
             target: (identifier)
             body: (action_body
               (action_declaration
@@ -149,18 +153,21 @@ pagecustomization "Business Manager Evaluation RC" customizes "Business Manager 
         (layout_keyword)
         body: (layout_body
           (modify_modification
+            (modify_keyword)
             target: (identifier)
             body: (declaration_body
               (property
                 name: (property_name)
                 value: (boolean))))
           (modify_modification
+            (modify_keyword)
             target: (identifier)
             body: (declaration_body
               (property
                 name: (property_name)
                 value: (boolean))))
           (modify_modification
+            (modify_keyword)
             target: (quoted_identifier)
             body: (declaration_body
               (property
@@ -202,6 +209,7 @@ pagecustomization "Sales Order Processor Views" customizes "Sales Order List"
         (views_keyword)
         body: (views_body
           (addfirst_views_modification
+            (addfirst_keyword)
             body: (views_mod_body
               (view_definition
                 (view_keyword)
@@ -214,6 +222,7 @@ pagecustomization "Sales Order Processor Views" customizes "Sales Order List"
                     name: (property_name)
                     value: (order_by_list
                       (order_by_item
+                        (ascending_keyword)
                         (quoted_identifier))))
                   (property
                     name: (property_name)

@@ -58,11 +58,13 @@ query 500 "Item By Lot No Filter"
                     field: (quoted_identifier)
                     (filter_keyword)
                     value: (filter_value
+                      (filter_operator)
                       (string_literal)))
                   (link_value
                     field: (identifier)
                     (filter_keyword)
                     value: (filter_value
+                      (filter_operator)
                       (boolean)))))
               (query_filter
                 (filter_keyword)
@@ -88,6 +90,7 @@ query 500 "Item By Lot No Filter"
                         field: (identifier)
                         (filter_keyword)
                         value: (filter_value
+                          (filter_operator)
                           (integer)))))
                   (property
                     name: (property_name)
@@ -150,11 +153,13 @@ query 501 "Complex Filters"
                     field: (identifier)
                     (filter_keyword)
                     value: (filter_value
+                      (filter_operator)
                       (integer)))
                   (link_value
                     field: (identifier)
                     (filter_keyword)
                     value: (filter_value
+                      (filter_operator)
                       (boolean)))))
               (query_column
                 (column_keyword)
@@ -172,11 +177,13 @@ query 501 "Complex Filters"
                     field: (identifier)
                     (filter_keyword)
                     value: (filter_value
+                      (filter_operator)
                       (string_literal)))
                   (link_value
                     field: (quoted_identifier)
                     (filter_keyword)
                     value: (filter_value
+                      (filter_operator)
                       (integer)))))
               (query_column
                 (column_keyword)
@@ -194,11 +201,13 @@ query 501 "Complex Filters"
                     field: (identifier)
                     (filter_keyword)
                     value: (filter_value
+                      (filter_operator)
                       (identifier)))
                   (link_value
                     field: (identifier)
                     (filter_keyword)
                     value: (filter_value
+                      (filter_operator)
                       (integer)))))
               (query_column
                 (column_keyword)
@@ -248,6 +257,7 @@ query 502 "Simple Equals Filter"
                     field: (identifier)
                     (filter_keyword)
                     value: (filter_value
+                      (filter_operator)
                       (boolean)))))
               (query_column
                 (column_keyword)

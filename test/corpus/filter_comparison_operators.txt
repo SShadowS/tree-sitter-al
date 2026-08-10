@@ -36,11 +36,13 @@ table 50100 "Test Table"
                 (table_relation_value
                   (table_relation_expression
                     (if_table_relation
+                      (if_keyword)
                       (where_conditions
                         (where_condition
                           (identifier)
                           (filter_keyword)
                           (filter_value
+                            (filter_operator)
                             (integer))))
                       (simple_table_relation
                         (identifier)
@@ -84,11 +86,13 @@ table 50100 "Test Table"
                 (table_relation_value
                   (table_relation_expression
                     (if_table_relation
+                      (if_keyword)
                       (where_conditions
                         (where_condition
                           (identifier)
                           (filter_keyword)
                           (filter_value
+                            (filter_operator)
                             (integer))))
                       (simple_table_relation
                         (identifier)
@@ -132,11 +136,13 @@ table 50100 "Test Table"
                 (table_relation_value
                   (table_relation_expression
                     (if_table_relation
+                      (if_keyword)
                       (where_conditions
                         (where_condition
                           (identifier)
                           (filter_keyword)
                           (filter_value
+                            (filter_operator)
                             (integer))))
                       (simple_table_relation
                         (quoted_identifier)
@@ -180,11 +186,13 @@ table 50100 "Test Table"
                 (table_relation_value
                   (table_relation_expression
                     (if_table_relation
+                      (if_keyword)
                       (where_conditions
                         (where_condition
                           (identifier)
                           (filter_keyword)
                           (filter_value
+                            (filter_operator)
                             (integer))))
                       (simple_table_relation
                         (quoted_identifier)

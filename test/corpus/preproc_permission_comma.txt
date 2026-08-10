@@ -23,6 +23,7 @@ permissionset 1 "Test"
         name: (property_name)
         value: (tabledata_permission_list
           (tabledata_permission
+            (tabledata_keyword)
             table_name: (identifier)
             permission: (permission_type))
           (preproc_conditional_permissions
@@ -30,6 +31,7 @@ permissionset 1 "Test"
               (preproc_open)
               condition: (identifier))
             (tabledata_permission
+              (tabledata_keyword)
               table_name: (identifier)
               permission: (permission_type))
             (preproc_endif

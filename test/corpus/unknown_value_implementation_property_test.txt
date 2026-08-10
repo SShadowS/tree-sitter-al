@@ -53,6 +53,7 @@ enum 5580 "Digital Voucher Check Type" implements "Digital Voucher Check"
             operator: (comparison_operator)
             right: (quoted_identifier))))
       (enum_value_declaration
+        (value_keyword)
         value_id: (integer)
         value_name: (quoted_identifier)
         body: (declaration_body
@@ -128,6 +129,7 @@ enum 1445 "Symmetric Algorithm" implements "Symmetric Algorithm"
             operator: (comparison_operator)
             right: (quoted_identifier))))
       (enum_value_declaration
+        (value_keyword)
         value_id: (integer)
         value_name: (identifier)
         body: (declaration_body
@@ -142,6 +144,7 @@ enum 1445 "Symmetric Algorithm" implements "Symmetric Algorithm"
                 operator: (comparison_operator)
                 right: (quoted_identifier))))))
       (enum_value_declaration
+        (value_keyword)
         value_id: (integer)
         value_name: (identifier)
         body: (declaration_body
@@ -197,6 +200,7 @@ enum 101 TestEnum2 implements ITestInterface
             operator: (comparison_operator)
             right: (quoted_identifier))))
       (enum_value_declaration
+        (value_keyword)
         value_id: (integer)
         value_name: (identifier))))
   (enum_declaration
@@ -215,5 +219,6 @@ enum 101 TestEnum2 implements ITestInterface
             operator: (comparison_operator)
             right: (quoted_identifier))))
       (enum_value_declaration
+        (value_keyword)
         value_id: (integer)
         value_name: (identifier)))))

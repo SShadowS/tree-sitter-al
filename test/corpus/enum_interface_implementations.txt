@@ -32,6 +32,7 @@ enum 50200 SendTo implements IAddressProvider
         name: (property_name)
         value: (boolean))
       (enum_value_declaration
+        (value_keyword)
         value_id: (integer)
         value_name: (identifier)
         body: (declaration_body
@@ -43,6 +44,7 @@ enum 50200 SendTo implements IAddressProvider
                 operator: (comparison_operator)
                 right: (identifier))))))
       (enum_value_declaration
+        (value_keyword)
         value_id: (integer)
         value_name: (identifier)
         body: (declaration_body
@@ -83,6 +85,7 @@ enum 50201 "Communication Method" implements "IMessageProvider"
       interface: (quoted_identifier))
     body: (declaration_body
       (enum_value_declaration
+        (value_keyword)
         value_id: (integer)
         value_name: (identifier)
         body: (declaration_body
@@ -94,6 +97,7 @@ enum 50201 "Communication Method" implements "IMessageProvider"
                 operator: (comparison_operator)
                 right: (quoted_identifier))))))
       (enum_value_declaration
+        (value_keyword)
         value_id: (integer)
         value_name: (identifier)
         body: (declaration_body
@@ -134,6 +138,7 @@ enum 50202 PaymentMethod implements IPaymentProcessor
       interface: (identifier))
     body: (declaration_body
       (enum_value_declaration
+        (value_keyword)
         value_id: (integer)
         value_name: (identifier)
         body: (declaration_body
@@ -145,6 +150,7 @@ enum 50202 PaymentMethod implements IPaymentProcessor
                 operator: (comparison_operator)
                 right: (identifier))))))
       (enum_value_declaration
+        (value_keyword)
         value_id: (integer)
         value_name: (identifier)
         body: (declaration_body
@@ -192,6 +198,7 @@ enum 50203 DocumentType implements IDocumentHandler
         name: (property_name)
         value: (boolean))
       (enum_value_declaration
+        (value_keyword)
         value_id: (integer)
         value_name: (identifier)
         body: (declaration_body
@@ -206,6 +213,7 @@ enum 50203 DocumentType implements IDocumentHandler
                 operator: (comparison_operator)
                 right: (identifier))))))
       (enum_value_declaration
+        (value_keyword)
         value_id: (integer)
         value_name: (identifier)
         body: (declaration_body

@@ -26,6 +26,7 @@ tableextension 50100 "Customer Extension" extends Customer
         (fieldgroups_keyword)
         body: (fieldgroups_body
           (addlast_fieldgroup_modification
+            (addlast_keyword)
             target: (identifier)
             fields: (field_list
               (quoted_identifier))))))))
@@ -58,6 +59,7 @@ tableextension 50101 "Item Extension" extends Item
         (fieldgroups_keyword)
         body: (fieldgroups_body
           (addfirst_fieldgroup_modification
+            (addfirst_keyword)
             target: (identifier)
             fields: (field_list
               (quoted_identifier))))))))
@@ -94,11 +96,13 @@ tableextension 50104 "Mixed Fieldgroup Extension" extends "Base Table"
         (fieldgroups_keyword)
         body: (fieldgroups_body
           (addlast_fieldgroup_modification
+            (addlast_keyword)
             target: (identifier)
             fields: (field_list
               (quoted_identifier)
               (quoted_identifier)))
           (addfirst_fieldgroup_modification
+            (addfirst_keyword)
             target: (identifier)
             fields: (field_list
               (quoted_identifier))))))))

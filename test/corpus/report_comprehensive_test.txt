@@ -64,6 +64,7 @@ report 30 "Check Value Posting"
               (property
                 name: (property_name)
                 value: (sorting_value
+                  (sorting_keyword)
                   (identifier)
                   (where_clause
                     (where_keyword)
@@ -114,6 +115,7 @@ report 30 "Check Value Posting"
                   (property
                     name: (property_name)
                     value: (sorting_value
+                      (sorting_keyword)
                       (quoted_identifier)
                       (quoted_identifier)
                       (quoted_identifier)
@@ -124,6 +126,7 @@ report 30 "Check Value Posting"
                             field: (quoted_identifier)
                             (filter_keyword)
                             value: (filter_value
+                              (filter_operator)
                               (string_literal)))))))
                   (report_column
                     (column_keyword)

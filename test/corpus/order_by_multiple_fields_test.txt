@@ -32,6 +32,7 @@ query 50100 "Test Multiple Fields OrderBy"
         name: (property_name)
         value: (order_by_list
           (order_by_item
+            (ascending_keyword)
             (identifier)
             (identifier))))
       (elements_section
@@ -77,10 +78,12 @@ query 50101 "Mixed Fields OrderBy"
         name: (property_name)
         value: (order_by_list
           (order_by_item
+            (ascending_keyword)
             (identifier)
             (identifier)
             (identifier))
           (order_by_item
+            (descending_keyword)
             (identifier))))
       (elements_section
         (elements_keyword)
@@ -117,6 +120,7 @@ query 50102 "Quoted Fields OrderBy"
         name: (property_name)
         value: (order_by_list
           (order_by_item
+            (descending_keyword)
             (quoted_identifier)
             (quoted_identifier))))
       (elements_section

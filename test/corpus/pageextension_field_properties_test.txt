@@ -35,6 +35,7 @@ pageextension 60855778 "CDC Purchase Credit Memo" extends "Purchase Credit Memo"
         (layout_keyword)
         body: (layout_body
           (modify_modification
+            (modify_keyword)
             target: (identifier)
             body: (declaration_body
               (property
@@ -44,6 +45,7 @@ pageextension 60855778 "CDC Purchase Credit Memo" extends "Purchase Credit Memo"
                 name: (property_name)
                 value: (identifier))))
           (modify_modification
+            (modify_keyword)
             target: (identifier)
             body: (declaration_body
               (property

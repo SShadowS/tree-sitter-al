@@ -33,6 +33,7 @@ report 123 TestReport
               (property
                 name: (property_name)
                 value: (sorting_value
+                  (sorting_keyword)
                   (quoted_identifier)
                   (quoted_identifier)
                   (where_clause
@@ -43,6 +44,7 @@ report 123 TestReport
                         (filter_keyword)
                         value: (filter_value
                           (identifier)
+                          (filter_operator)
                           (quoted_identifier))))))))))))))
 
 ================================================================================
@@ -157,6 +159,7 @@ report 123 TestReport
               (property
                 name: (property_name)
                 value: (sorting_value
+                  (sorting_keyword)
                   (quoted_identifier)
                   (where_clause
                     (where_keyword)

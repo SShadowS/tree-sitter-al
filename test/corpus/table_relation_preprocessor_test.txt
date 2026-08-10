@@ -67,6 +67,7 @@ table 50100 "Test Table"
                 value: (table_relation_value
                   (table_relation_expression
                     (if_table_relation
+                      (if_keyword)
                       (where_conditions
                         (where_condition
                           field: (quoted_identifier)
@@ -74,8 +75,10 @@ table 50100 "Test Table"
                           value: (quoted_identifier)))
                       then_relation: (simple_table_relation
                         table: (quoted_identifier))
+                      (else_keyword)
                       else_relation: (table_relation_expression
                         (if_table_relation
+                          (if_keyword)
                           (where_conditions
                             (where_condition
                               field: (quoted_identifier)
@@ -83,6 +86,7 @@ table 50100 "Test Table"
                               value: (identifier)))
                           then_relation: (simple_table_relation
                             table: (identifier))
+                          (else_keyword)
                           else_relation: (table_relation_expression
                             (preproc_conditional_table_relation
                               (preproc_if
@@ -90,6 +94,7 @@ table 50100 "Test Table"
                                 condition: (identifier))
                               (table_relation_expression
                                 (if_table_relation
+                                  (if_keyword)
                                   (where_conditions
                                     (where_condition
                                       field: (quoted_identifier)
@@ -107,6 +112,7 @@ table 50100 "Test Table"
                               (preproc_else)
                               (table_relation_expression
                                 (if_table_relation
+                                  (if_keyword)
                                   (where_conditions
                                     (where_condition
                                       field: (quoted_identifier)

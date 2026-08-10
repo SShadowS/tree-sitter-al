@@ -41,6 +41,7 @@ pageextension 608558 "Test Extension" extends "Purchase Invoice"
         (actions_keyword)
         body: (action_body
           (addafter_action_modification
+            (addafter_keyword)
             target: (identifier)
             body: (action_body
               (action_declaration

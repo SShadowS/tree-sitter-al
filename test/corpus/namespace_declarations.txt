@@ -69,6 +69,7 @@ pageextension 50001 "Test Extension" extends "Base Page"
         (layout_keyword)
         body: (layout_body
           (addafter_modification
+            (addafter_keyword)
             target: (identifier)
             body: (layout_body
               (page_field
@@ -163,6 +164,7 @@ enum 50003 "Sample Enum"
         name: (property_name)
         value: (boolean))
       (enum_value_declaration
+        (value_keyword)
         value_id: (integer)
         value_name: (identifier)
         body: (declaration_body
@@ -248,5 +250,6 @@ permissionset 50005 "Sample Permissions"
         name: (property_name)
         value: (tabledata_permission_list
           (tabledata_permission
+            (tabledata_keyword)
             table_name: (quoted_identifier)
             permission: (permission_type)))))))

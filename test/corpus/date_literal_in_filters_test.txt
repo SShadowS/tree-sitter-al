@@ -44,6 +44,7 @@ table 50100 "Test Table"
                         field: (quoted_identifier)
                         (filter_keyword)
                         value: (filter_value
+                          (filter_operator)
                           (date_literal))))))))))))))
 
 ================================================================================
@@ -92,6 +93,7 @@ table 50101 "Date Filter Test"
                         field: (quoted_identifier)
                         (filter_keyword)
                         value: (filter_value
+                          (filter_operator)
                           (date_literal))))))))))))))
 
 ================================================================================
@@ -149,11 +151,13 @@ table 50102 "Complex Date Filters"
                         field: (quoted_identifier)
                         (filter_keyword)
                         value: (filter_value
+                          (filter_operator)
                           (date_literal)))
                       (where_condition
                         field: (quoted_identifier)
                         (filter_keyword)
                         value: (filter_value
+                          (filter_operator)
                           (integer)
                           (identifier))))))))))))))
 
@@ -206,14 +210,17 @@ table 50103 "Mixed Date Time Filters"
                         field: (quoted_identifier)
                         (filter_keyword)
                         value: (filter_value
+                          (filter_operator)
                           (date_literal)))
                       (where_condition
                         field: (quoted_identifier)
                         (filter_keyword)
                         value: (filter_value
+                          (filter_operator)
                           (time_literal)))
                       (where_condition
                         field: (quoted_identifier)
                         (filter_keyword)
                         value: (filter_value
+                          (filter_operator)
                           (datetime_literal))))))))))))))

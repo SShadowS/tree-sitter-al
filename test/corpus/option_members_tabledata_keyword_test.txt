@@ -130,9 +130,14 @@ table 50100 "Test Table"
                     (identifier)))))))))))
 
 ================================================================================
-Valid tabledata_permission regression control (AccessByPermission) — the tree
-shape here must stay byte-identical to the pre-fix shape: no visible keyword
-node, `table_name`/`permission` fields only
+Valid tabledata_permission regression control (AccessByPermission) — the
+option_member collision fix must not disturb this path. The keyword IS a node
+here: `_tabledata_keyword` was a hidden rule over a bare kw() until the
+losslessness pass, which dropped the bytes spelling `tabledata` in 23,481 places
+across BC.History while the sibling `table_keyword` kept its own. What this
+guards is that ONE rule still serves both sites — `tabledata_keyword` here, and
+the same rule aliased to `$.identifier` under `option_member` above, where the
+node stays an `identifier` and merely gains an anonymous "tabledata" child
 ================================================================================
 
 page 123 "Test Page"
@@ -170,6 +175,7 @@ page 123 "Test Page"
                 name: (property_name)
                 value: (tabledata_permission_list
                   (tabledata_permission
+                    (tabledata_keyword)
                     table_name: (identifier)
                     permission: (permission_type))))
               (property
@@ -220,6 +226,7 @@ table 50100 "Test Table"
                 name: (property_name)
                 value: (tabledata_permission_list
                   (tabledata_permission
+                    (tabledata_keyword)
                     table_name: (identifier)
                     permission: (permission_type)))
                 (ERROR

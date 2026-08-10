@@ -31,8 +31,11 @@ page 123 "Test Page"
               (property
                 name: (property_name)
                 value: (sorting_value
+                  (sorting_keyword)
                   (quoted_identifier)
-                  (quoted_identifier))))))))))
+                  (quoted_identifier)
+                  (order_keyword)
+                  (descending_keyword))))))))))
 
 ================================================================================
 RunPageView with SORTING only
@@ -67,6 +70,7 @@ page 124 "Test Page 2"
               (property
                 name: (property_name)
                 value: (sorting_value
+                  (sorting_keyword)
                   (quoted_identifier))))))))))
 
 ================================================================================
@@ -102,7 +106,10 @@ page 125 "Test Page 3"
               (property
                 name: (property_name)
                 value: (sorting_value
+                  (sorting_keyword)
                   (quoted_identifier)
+                  (order_keyword)
+                  (ascending_keyword)
                   (where_clause
                     (where_keyword)
                     (where_conditions

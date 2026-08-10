@@ -31,20 +31,26 @@ report 50000 "Test Report"
           (label_declaration
             name: (identifier)
             value: (string_literal)
+            (comment_keyword)
             comment: (string_literal))
           (label_declaration
             name: (identifier)
             value: (string_literal)
+            (locked_keyword)
             locked: (boolean))
           (label_declaration
             name: (identifier)
             value: (string_literal)
+            (maxlength_keyword)
             maxlength: (integer))
           (label_declaration
             name: (identifier)
             value: (string_literal)
+            (comment_keyword)
             comment: (string_literal)
+            (locked_keyword)
             locked: (boolean)
+            (maxlength_keyword)
             maxlength: (integer)))))))
 
 ==================
@@ -75,14 +81,19 @@ report 50001 "Mixed Case Report"
           (label_declaration
             name: (identifier)
             value: (string_literal)
+            (comment_keyword)
             comment: (string_literal))
           (label_declaration
             name: (identifier)
             value: (string_literal)
+            (locked_keyword)
             locked: (boolean)
+            (comment_keyword)
             comment: (string_literal))
           (label_declaration
             name: (identifier)
             value: (string_literal)
+            (maxlength_keyword)
             maxlength: (integer)
+            (locked_keyword)
             locked: (boolean)))))))

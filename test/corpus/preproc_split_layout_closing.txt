@@ -30,6 +30,7 @@ pageextension 50100 "My Extension" extends "My Page"
         (layout_keyword)
         body: (layout_body
           (addlast_modification
+            (addlast_keyword)
             target: (identifier)
             (preproc_split_brace_close_if_only
               (preproc_if
@@ -79,6 +80,7 @@ pageextension 50101 "My Extension2" extends "My Page"
         (layout_keyword)
         body: (layout_body
           (addfirst_modification
+            (addfirst_keyword)
             target: (identifier)
             (preproc_split_brace_close_if_only
               (preproc_if

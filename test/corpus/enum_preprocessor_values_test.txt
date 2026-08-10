@@ -45,6 +45,7 @@ enum 50100 "Payment Transaction Type"
         name: (property_name)
         value: (boolean))
       (enum_value_declaration
+        (value_keyword)
         value_id: (integer)
         value_name: (identifier)
         body: (declaration_body
@@ -52,6 +53,7 @@ enum 50100 "Payment Transaction Type"
             name: (property_name)
             value: (string_literal))))
       (enum_value_declaration
+        (value_keyword)
         value_id: (integer)
         value_name: (identifier)
         body: (declaration_body
@@ -64,6 +66,7 @@ enum 50100 "Payment Transaction Type"
           condition: (preproc_not_expression
             (identifier)))
         (enum_value_declaration
+          (value_keyword)
           value_id: (integer)
           value_name: (identifier)
           body: (declaration_body
@@ -82,6 +85,7 @@ enum 50100 "Payment Transaction Type"
         (preproc_endif
           (preproc_close)))
       (enum_value_declaration
+        (value_keyword)
         value_id: (integer)
         value_name: (identifier)
         body: (declaration_body
@@ -126,6 +130,7 @@ enum 50101 "Test Enum"
     object_name: (quoted_identifier)
     body: (declaration_body
       (enum_value_declaration
+        (value_keyword)
         value_id: (integer)
         value_name: (identifier)
         body: (declaration_body
@@ -137,6 +142,7 @@ enum 50101 "Test Enum"
           (preproc_open)
           condition: (identifier))
         (enum_value_declaration
+          (value_keyword)
           value_id: (integer)
           value_name: (identifier)
           body: (declaration_body
@@ -145,6 +151,7 @@ enum 50101 "Test Enum"
               value: (string_literal))))
         (preproc_else)
         (enum_value_declaration
+          (value_keyword)
           value_id: (integer)
           value_name: (identifier)
           body: (declaration_body
@@ -157,6 +164,7 @@ enum 50101 "Test Enum"
         (preproc_endif
           (preproc_close)))
       (enum_value_declaration
+        (value_keyword)
         value_id: (integer)
         value_name: (identifier)
         body: (declaration_body

@@ -36,6 +36,7 @@ query 50000 "Date Filter Test"
                     field: (quoted_identifier)
                     (filter_keyword)
                     value: (filter_value
+                      (filter_operator)
                       (date_literal))))))))))))
 
 ================================================================================
@@ -78,16 +79,19 @@ query 50001 "Date Filter Operators"
                     field: (quoted_identifier)
                     (filter_keyword)
                     value: (filter_value
+                      (filter_operator)
                       (date_literal)))
                   (link_value
                     field: (quoted_identifier)
                     (filter_keyword)
                     value: (filter_value
+                      (filter_operator)
                       (date_literal)))
                   (link_value
                     field: (quoted_identifier)
                     (filter_keyword)
                     value: (filter_value
+                      (filter_operator)
                       (date_literal))))))))))))
 
 ================================================================================
@@ -138,16 +142,19 @@ table 50002 "Mixed Date Time Filters"
                         field: (quoted_identifier)
                         (filter_keyword)
                         value: (filter_value
+                          (filter_operator)
                           (date_literal)))
                       (where_condition
                         field: (quoted_identifier)
                         (filter_keyword)
                         value: (filter_value
+                          (filter_operator)
                           (datetime_literal)))
                       (where_condition
                         field: (quoted_identifier)
                         (filter_keyword)
                         value: (filter_value
+                          (filter_operator)
                           (time_literal))))))))))))))
 
 ================================================================================
@@ -196,6 +203,9 @@ table 50003 "Date Pipe Filters"
                         field: (quoted_identifier)
                         (filter_keyword)
                         value: (filter_value
+                          (filter_operator)
                           (date_literal)
+                          (filter_operator)
                           (date_literal)
+                          (filter_operator)
                           (date_literal))))))))))))))

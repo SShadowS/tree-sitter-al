@@ -26,12 +26,15 @@ codeunit 50100 "Permission Test"
         name: (property_name)
         value: (tabledata_permission_list
           (tabledata_permission
+            (tabledata_keyword)
             table_name: (quoted_identifier)
             permission: (permission_type))
           (tabledata_permission
+            (tabledata_keyword)
             table_name: (quoted_identifier)
             permission: (permission_type))
           (tabledata_permission
+            (tabledata_keyword)
             table_name: (identifier)
             permission: (permission_type))))
       (trigger_declaration
@@ -125,9 +128,11 @@ page 50100 "Customer Card Extension"
         name: (property_name)
         value: (tabledata_permission_list
           (tabledata_permission
+            (tabledata_keyword)
             table_name: (quoted_identifier)
             permission: (permission_type))
           (tabledata_permission
+            (tabledata_keyword)
             table_name: (quoted_identifier)
             permission: (permission_type))))
       (property

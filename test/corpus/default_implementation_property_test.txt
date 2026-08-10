@@ -34,6 +34,7 @@ enum 204 "Alt. Cust. VAT Reg. Consist." implements "Alt. Cust. VAT Reg. Consist.
             operator: (comparison_operator)
             right: (quoted_identifier))))
       (enum_value_declaration
+        (value_keyword)
         value_id: (integer)
         value_name: (identifier)))))
 
@@ -81,6 +82,7 @@ enum 100 "Test Enum" implements "ITestInterface"
         name: (property_name)
         value: (boolean))
       (enum_value_declaration
+        (value_keyword)
         value_id: (integer)
         value_name: (identifier)))))
 
@@ -120,6 +122,7 @@ enum 150 "Simple Enum" implements SimpleInterface
             operator: (comparison_operator)
             right: (identifier))))
       (enum_value_declaration
+        (value_keyword)
         value_id: (integer)
         value_name: (identifier)))))
 
@@ -180,6 +183,7 @@ enum 200 "Complex Enum" implements "IComplexInterface"
         name: (property_name)
         value: (identifier))
       (enum_value_declaration
+        (value_keyword)
         value_id: (integer)
         value_name: (identifier)
         body: (declaration_body
@@ -187,6 +191,7 @@ enum 200 "Complex Enum" implements "IComplexInterface"
             name: (property_name)
             value: (string_literal))))
       (enum_value_declaration
+        (value_keyword)
         value_id: (integer)
         value_name: (identifier)
         body: (declaration_body

@@ -38,6 +38,7 @@ pageextension 123 "Test Extension" extends "Base Page"
               (preproc_open)
               condition: (identifier))
             (modify_modification
+              (modify_keyword)
               target: (quoted_identifier)
               body: (declaration_body
                 (property
@@ -45,6 +46,7 @@ pageextension 123 "Test Extension" extends "Base Page"
                   value: (boolean))))
             (preproc_else)
             (modify_modification
+              (modify_keyword)
               target: (quoted_identifier)
               body: (declaration_body
                 (property

@@ -190,6 +190,7 @@ interface IInt Access = Internal
   (interface_declaration
     (interface_keyword)
     object_name: (identifier)
+    (access_keyword)
     access_value: (public_keyword)
     body: (interface_body
       (interface_procedure
@@ -198,9 +199,9 @@ interface IInt Access = Internal
   (interface_declaration
     (interface_keyword)
     object_name: (identifier)
+    (access_keyword)
     access_value: (internal_keyword)
     body: (interface_body
       (interface_procedure
         (procedure_keyword)
         name: (identifier)))))
-

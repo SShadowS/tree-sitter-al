@@ -32,6 +32,7 @@ pageextension 50100 "Test Page Extension" extends "Customer Card"
         (layout_keyword)
         body: (layout_body
           (addafter_modification
+            (addafter_keyword)
             target: (identifier)
             body: (layout_body
               (part_section
@@ -318,6 +319,7 @@ pageextension 50100 "Test Extension" extends "Customer List"
         (actions_keyword)
         body: (action_body
           (modify_action_modification
+            (modify_keyword)
             target: (identifier)
             body: (declaration_body
               (property

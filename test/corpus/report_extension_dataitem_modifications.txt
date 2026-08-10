@@ -31,6 +31,7 @@ reportextension 123 "My Report Extension" extends "Standard Sales Quote"
         (dataset_keyword)
         body: (dataset_body
           (addfirst_dataset_modification
+            (addfirst_keyword)
             target: (identifier)
             body: (dataset_mod_body
               (report_dataitem
@@ -41,6 +42,7 @@ reportextension 123 "My Report Extension" extends "Standard Sales Quote"
                   (property
                     name: (property_name)
                     value: (sorting_value
+                      (sorting_keyword)
                       (identifier)
                       (where_clause
                         (where_keyword)
@@ -86,6 +88,7 @@ reportextension 124 "Another Extension" extends "Sales Invoice"
         (dataset_keyword)
         body: (dataset_body
           (addlast_dataset_modification
+            (addlast_keyword)
             target: (identifier)
             body: (dataset_mod_body
               (report_dataitem
@@ -130,6 +133,7 @@ reportextension 125 "Legacy Extension" extends "Customer List"
         (dataset_keyword)
         body: (dataset_body
           (addfirst_dataset_modification
+            (addfirst_keyword)
             body: (dataset_mod_body
               (report_dataitem
                 (dataitem_keyword)
@@ -191,6 +195,7 @@ reportextension 126 "Complex Extension" extends "Sales Report"
         (dataset_keyword)
         body: (dataset_body
           (modify_modification
+            (modify_keyword)
             target: (identifier)
             body: (declaration_body
               (trigger_declaration
@@ -205,6 +210,7 @@ reportextension 126 "Complex Extension" extends "Sales Report"
                         (string_literal))))
                   (end_keyword)))))
           (addfirst_dataset_modification
+            (addfirst_keyword)
             target: (identifier)
             body: (dataset_mod_body
               (report_dataitem
@@ -226,6 +232,7 @@ reportextension 126 "Complex Extension" extends "Sales Report"
                     name: (identifier)
                     source: (string_literal))))))
           (addlast_dataset_modification
+            (addlast_keyword)
             target: (identifier)
             body: (dataset_mod_body
               (report_dataitem

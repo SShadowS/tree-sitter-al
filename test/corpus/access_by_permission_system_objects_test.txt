@@ -30,6 +30,7 @@ page 50001 "System Permission Test"
         name: (property_name)
         value: (tabledata_permission_list
           (tabledata_permission
+            (system_keyword)
             table_name: (quoted_identifier)
             permission: (permission_type))))
       (actions_section
@@ -47,5 +48,6 @@ page 50001 "System Permission Test"
                     name: (property_name)
                     value: (tabledata_permission_list
                       (tabledata_permission
+                        (system_keyword)
                         table_name: (quoted_identifier)
                         permission: (permission_type)))))))))))))

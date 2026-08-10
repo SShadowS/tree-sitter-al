@@ -1,0 +1,436 @@
+================================================================================
+Layout modification keywords are nodes — addafter/addbefore/addfirst/addlast, modify, all four move*, and label. movefirst, movelast and movebefore occur in NO file of the 15,358-file corpus, so this fixture is their only regression guard
+================================================================================
+
+page 50100 P
+{
+    layout
+    {
+        addafter(Name) { field(F; Rec.X) { } }
+        addbefore(Name) { field(G; Rec.Y) { } }
+        addfirst(Content) { }
+        addlast(Content) { }
+        modify(Name) { Visible = false; }
+        movefirst(Content; "No.")
+        movelast(Content; "No.")
+        moveafter(Content; "No.")
+        movebefore(Content; "No.")
+        label(MyLabel)
+        {
+            Caption = 'x';
+        }
+    }
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (page_declaration
+    (page_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (layout_section
+        (layout_keyword)
+        body: (layout_body
+          (addafter_modification
+            (addafter_keyword)
+            target: (identifier)
+            body: (layout_body
+              (page_field
+                (field_keyword)
+                name: (identifier)
+                source: (member_expression
+                  object: (identifier)
+                  member: (identifier)))))
+          (addbefore_modification
+            (addbefore_keyword)
+            target: (identifier)
+            body: (layout_body
+              (page_field
+                (field_keyword)
+                name: (identifier)
+                source: (member_expression
+                  object: (identifier)
+                  member: (identifier)))))
+          (addfirst_modification
+            (addfirst_keyword)
+            target: (identifier))
+          (addlast_modification
+            (addlast_keyword)
+            target: (identifier))
+          (modify_modification
+            (modify_keyword)
+            target: (identifier)
+            body: (declaration_body
+              (property
+                name: (property_name)
+                value: (boolean))))
+          (movefirst_modification
+            (movefirst_keyword)
+            target: (identifier)
+            element: (quoted_identifier))
+          (movelast_modification
+            (movelast_keyword)
+            target: (identifier)
+            element: (quoted_identifier))
+          (moveafter_modification
+            (moveafter_keyword)
+            target: (identifier)
+            element: (quoted_identifier))
+          (movebefore_modification
+            (movebefore_keyword)
+            target: (identifier)
+            element: (quoted_identifier))
+          (label_section
+            (label_keyword)
+            name: (identifier)
+            body: (declaration_body
+              (property
+                name: (property_name)
+                value: (string_literal)))))))))
+
+================================================================================
+The interface header's Access clause is a node. Distinct from the ordinary `Access = Internal;` property, which is a property_name and was never dropped — this header form appears in no corpus file
+================================================================================
+
+interface "My Interface" extends "Base Interface" Access = Internal
+{
+    procedure P(): Integer;
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (interface_declaration
+    (interface_keyword)
+    object_name: (quoted_identifier)
+    (extends_keyword)
+    extends_interface: (quoted_identifier)
+    (access_keyword)
+    access_value: (internal_keyword)
+    body: (interface_body
+      (interface_procedure
+        (procedure_keyword)
+        name: (identifier)
+        (interface_procedure_suffix
+          return_type: (type_specification
+            (basic_type)))))))
+
+================================================================================
+Report label sub-field keywords are nodes — Comment, MaxLength and Locked, each of which had a declared field whose own marker keyword was in no node
+================================================================================
+
+report 50100 R
+{
+    labels
+    {
+        Lbl = 'text', Comment = 'c', MaxLength = 10;
+        Lbl2 = 'other', Locked = true;
+    }
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (report_declaration
+    (report_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (labels_section
+        (labels_keyword)
+        body: (labels_body
+          (label_declaration
+            name: (identifier)
+            value: (string_literal)
+            (comment_keyword)
+            comment: (string_literal)
+            (maxlength_keyword)
+            maxlength: (integer))
+          (label_declaration
+            name: (identifier)
+            value: (string_literal)
+            (locked_keyword)
+            locked: (boolean)))))))
+
+================================================================================
+`is` and `as` populate the declared operator field. Both were bare kw() inside field('operator', ...), so the field returned None AND the keyword bytes were in no node
+================================================================================
+
+codeunit 50100 C
+{
+    procedure P(V: Variant)
+    begin
+        if V is Integer then
+            exit;
+        if V as Integer then
+            exit;
+    end;
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (procedure
+        (procedure_keyword)
+        name: (identifier)
+        parameters: (parameter_list
+          (parameter
+            name: (identifier)
+            type: (type_specification
+              (basic_type))))
+        body: (code_block
+          (begin_keyword)
+          body: (statement_block
+            (if_statement
+              (if_keyword)
+              condition: (is_expression
+                left: (identifier)
+                operator: (is_keyword)
+                right: (type_specification
+                  (basic_type)))
+              (then_keyword)
+              then_branch: (exit_statement
+                (exit_keyword)))
+            (if_statement
+              (if_keyword)
+              condition: (as_expression
+                left: (identifier)
+                operator: (as_keyword)
+                right: (type_specification
+                  (basic_type)))
+              (then_keyword)
+              then_branch: (exit_statement
+                (exit_keyword))))
+          (end_keyword))))))
+
+================================================================================
+TableRelation if/else chain and filter operators are nodes. The `else if` head of a chain surfaced as ONE gap spanning both words; filter_operator covers `<>`, `|` and `@` runs that comparison_operator never saw
+================================================================================
+
+table 50100 T
+{
+    fields
+    {
+        field(1; F; Code[20])
+        {
+            TableRelation = if (Type = const(Item)) Item else if (Type = const(Resource)) Resource;
+        }
+        field(2; G; Decimal)
+        {
+            CalcFormula = sum("Item Ledger Entry".Quantity where("Entry Type" = filter(Sale | Purchase),
+                                                                 "Item No." = field("No."),
+                                                                 Open = filter(<> false),
+                                                                 Quantity = filter(> 0 & < 100)));
+        }
+        field(3; H; Code[20])
+        {
+            CalcFormula = lookup(Item."No." where("No." = field(F)));
+        }
+    }
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (table_declaration
+    (table_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (fields_section
+        (fields_keyword)
+        body: (fields_body
+          (field_declaration
+            (field_keyword)
+            id: (integer)
+            name: (identifier)
+            type: (type_specification
+              (code_type
+                (code_keyword)
+                length: (integer)))
+            body: (declaration_body
+              (property
+                name: (property_name)
+                value: (table_relation_value
+                  (table_relation_expression
+                    (if_table_relation
+                      (if_keyword)
+                      (where_conditions
+                        (where_condition
+                          field: (identifier)
+                          (const_keyword)
+                          value: (identifier)))
+                      then_relation: (simple_table_relation
+                        table: (identifier))
+                      (else_keyword)
+                      else_relation: (table_relation_expression
+                        (if_table_relation
+                          (if_keyword)
+                          (where_conditions
+                            (where_condition
+                              field: (identifier)
+                              (const_keyword)
+                              value: (identifier)))
+                          then_relation: (simple_table_relation
+                            table: (identifier))))))))))
+          (field_declaration
+            (field_keyword)
+            id: (integer)
+            name: (identifier)
+            type: (type_specification
+              (basic_type))
+            body: (declaration_body
+              (property
+                name: (property_name)
+                value: (aggregate_formula
+                  function: (aggregate_function)
+                  target: (calc_field_reference
+                    (quoted_identifier)
+                    (identifier))
+                  (where_clause
+                    (where_keyword)
+                    (where_conditions
+                      (where_condition
+                        field: (quoted_identifier)
+                        (filter_keyword)
+                        value: (filter_value
+                          (identifier)
+                          (filter_operator)
+                          (identifier)))
+                      (where_condition
+                        field: (quoted_identifier)
+                        (field_keyword)
+                        value: (quoted_identifier))
+                      (where_condition
+                        field: (identifier)
+                        (filter_keyword)
+                        value: (filter_value
+                          (filter_operator)
+                          (boolean)))
+                      (where_condition
+                        field: (identifier)
+                        (filter_keyword)
+                        value: (filter_value
+                          (filter_operator)
+                          (integer)
+                          (filter_operator)
+                          (filter_operator)
+                          (integer)))))))))
+          (field_declaration
+            (field_keyword)
+            id: (integer)
+            name: (identifier)
+            type: (type_specification
+              (code_type
+                (code_keyword)
+                length: (integer)))
+            body: (declaration_body
+              (property
+                name: (property_name)
+                value: (lookup_formula
+                  (lookup_keyword)
+                  target: (calc_field_reference
+                    (identifier)
+                    (quoted_identifier))
+                  (where_clause
+                    (where_keyword)
+                    (where_conditions
+                      (where_condition
+                        field: (quoted_identifier)
+                        (field_keyword)
+                        value: (identifier)))))))))))))
+
+================================================================================
+Type keywords are nodes at #if depth > 0 — Record, Code, array/of, List of, Dictionary of, Option — and the preproc word operators or/and are anonymous string nodes rather than hidden pattern tokens
+================================================================================
+
+#if not CLEAN25 or CLEAN24
+#if CLEAN23 and CLEAN22
+codeunit 50100 C
+{
+    var
+        Arr: array[5] of Record Customer;
+        Lst: List of [Code[20]];
+        Dic: Dictionary of [Text, Integer];
+        Opt: Option A,B;
+}
+#endif
+#endif
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (preproc_conditional_object
+    (preproc_if
+      (preproc_open)
+      condition: (preproc_not_expression
+        (preproc_or_expression
+          (identifier)
+          (identifier))))
+    (preproc_conditional_object
+      (preproc_if
+        (preproc_open)
+        condition: (preproc_and_expression
+          (identifier)
+          (identifier)))
+      (codeunit_declaration
+        (codeunit_keyword)
+        object_id: (integer)
+        object_name: (identifier)
+        body: (declaration_body
+          (var_section
+            (var_keyword)
+            body: (var_body
+              (variable_declaration
+                name: (identifier)
+                type: (type_specification
+                  (array_type
+                    (array_keyword)
+                    sizes: (integer)
+                    (of_keyword)
+                    element_type: (type_specification
+                      (record_type
+                        (record_keyword)
+                        reference: (identifier))))))
+              (variable_declaration
+                name: (identifier)
+                type: (type_specification
+                  (list_type
+                    (list_keyword)
+                    (of_keyword)
+                    element_type: (type_specification
+                      (code_type
+                        (code_keyword)
+                        length: (integer))))))
+              (variable_declaration
+                name: (identifier)
+                type: (type_specification
+                  (dictionary_type
+                    (dictionary_keyword)
+                    (of_keyword)
+                    key_type: (type_specification
+                      (text_type
+                        (text_keyword)))
+                    value_type: (type_specification
+                      (basic_type)))))
+              (variable_declaration
+                name: (identifier)
+                type: (type_specification
+                  (option_type
+                    (option_keyword)
+                    (option_member_list
+                      (option_member
+                        (identifier))
+                      (option_member
+                        (identifier))))))))))
+      (preproc_endif
+        (preproc_close)))
+    (preproc_endif
+      (preproc_close))))

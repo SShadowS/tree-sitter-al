@@ -238,6 +238,7 @@ table 50100 MyTable
       (property
         (property_name)
         (lookup_formula
+          (lookup_keyword)
           (calc_field_reference
             (quoted_identifier)
             (quoted_identifier))
@@ -346,6 +347,7 @@ table 50100 MyTable
         (table_relation_value
           (table_relation_expression
             (if_table_relation
+              (if_keyword)
               (where_conditions
                 (where_condition
                   (quoted_identifier)
@@ -353,6 +355,7 @@ table 50100 MyTable
                   (identifier)))
               (simple_table_relation
                 (identifier))
+              (else_keyword)
               (table_relation_expression
                 (simple_table_relation
                   (identifier))))))))))
@@ -376,9 +379,11 @@ codeunit 50100 MyCodeunit
         (property_name)
         (tabledata_permission_list
           (tabledata_permission
+            (tabledata_keyword)
             (identifier)
             (permission_type))
           (tabledata_permission
+            (tabledata_keyword)
             (quoted_identifier)
             (permission_type)))))))
 
@@ -401,6 +406,7 @@ query 50100 MyQuery
         (property_name)
         (order_by_list
           (order_by_item
+            (ascending_keyword)
             (quoted_identifier)
             (identifier)))))))
 

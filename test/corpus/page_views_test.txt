@@ -149,6 +149,7 @@ page 123 "Test List"
                 name: (property_name)
                 value: (order_by_list
                   (order_by_item
+                    (ascending_keyword)
                     (identifier))))))
           (view_definition
             (view_keyword)
@@ -166,6 +167,7 @@ page 123 "Test List"
                       field: (identifier)
                       (filter_keyword)
                       value: (filter_value
+                        (filter_operator)
                         (quoted_identifier))))))
               (property
                 name: (property_name)
@@ -238,6 +240,7 @@ pageextension 50001 "Customer List Ext" extends "Customer List"
                 name: (property_name)
                 value: (order_by_list
                   (order_by_item
+                    (descending_keyword)
                     (quoted_identifier)))))))))))
 
 ================================================================================

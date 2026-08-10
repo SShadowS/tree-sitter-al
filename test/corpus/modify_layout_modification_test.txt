@@ -41,12 +41,14 @@ pageextension 123 "Test Extension" extends "Test Page"
         (layout_keyword)
         body: (layout_body
           (modify_modification
+            (modify_keyword)
             target: (identifier)
             body: (declaration_body
               (property
                 name: (property_name)
                 value: (boolean))))
           (modify_modification
+            (modify_keyword)
             target: (quoted_identifier)
             body: (declaration_body
               (property
@@ -58,6 +60,7 @@ pageextension 123 "Test Extension" extends "Test Page"
                   (unary_expression
                     operand: (identifier))))))
           (addafter_modification
+            (addafter_keyword)
             target: (quoted_identifier)
             body: (layout_body
               (page_field

@@ -46,6 +46,7 @@ pageextension 50000 MyPageExt extends "Customer List"
               condition: (preproc_not_expression
                 (identifier)))
             (addbefore_action_modification
+              (addbefore_keyword)
               target: (identifier)
               body: (action_body
                 (actionref_declaration
@@ -62,6 +63,7 @@ pageextension 50000 MyPageExt extends "Customer List"
             (preproc_endif
               (preproc_close)))
           (addfirst_action_modification
+            (addfirst_keyword)
             target: (identifier)
             body: (action_body
               (action_declaration
@@ -291,6 +293,7 @@ page 50003 MixedCase
               (preproc_open)
               condition: (identifier))
             (modify_action_modification
+              (modify_keyword)
               target: (identifier)
               body: (declaration_body
                 (property

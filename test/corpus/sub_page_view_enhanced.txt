@@ -31,6 +31,7 @@ pageextension 123 TestExt extends TestPage
         (layout_keyword)
         body: (layout_body
           (addlast_modification
+            (addlast_keyword)
             target: (identifier)
             body: (layout_body
               (part_section
@@ -41,6 +42,7 @@ pageextension 123 TestExt extends TestPage
                   (property
                     name: (property_name)
                     value: (sorting_value
+                      (sorting_keyword)
                       (quoted_identifier)
                       (quoted_identifier)
                       (where_clause
@@ -88,6 +90,7 @@ pageextension 456 SimpleExt extends SimplePage
         (layout_keyword)
         body: (layout_body
           (addlast_modification
+            (addlast_keyword)
             target: (identifier)
             body: (layout_body
               (part_section
@@ -98,6 +101,7 @@ pageextension 456 SimpleExt extends SimplePage
                   (property
                     name: (property_name)
                     value: (sorting_value
+                      (sorting_keyword)
                       (quoted_identifier)
                       (quoted_identifier))))))))))))
 
@@ -133,6 +137,7 @@ pageextension 789 WhereExt extends WherePage
         (layout_keyword)
         body: (layout_body
           (addafter_modification
+            (addafter_keyword)
             target: (identifier)
             body: (layout_body
               (part_section
@@ -153,6 +158,7 @@ pageextension 789 WhereExt extends WherePage
                           field: (quoted_identifier)
                           (filter_keyword)
                           value: (filter_value
+                            (filter_operator)
                             (identifier)))))))))))))))
 
 ================================================================================
@@ -187,6 +193,7 @@ pageextension 101 StringExt extends StringPage
         (layout_keyword)
         body: (layout_body
           (addlast_modification
+            (addlast_keyword)
             target: (identifier)
             body: (layout_body
               (part_section
@@ -230,6 +237,7 @@ pageextension 202 IdentExt extends IdentPage
         (layout_keyword)
         body: (layout_body
           (addlast_modification
+            (addlast_keyword)
             target: (identifier)
             body: (layout_body
               (part_section

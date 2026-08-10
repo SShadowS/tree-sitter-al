@@ -470,7 +470,7 @@ module.exports = grammar({
         field('extends_interface', $._identifier_or_quoted)
       )),
       optional(seq(
-        kw('access'),
+        $.access_keyword,
         '=',
         field('access_value', choice(
           $.internal_keyword,
@@ -713,7 +713,7 @@ module.exports = grammar({
     ml_value_list: $ => prec.right(seq(
       $.ml_value_pair,
       repeat(seq(',', $.ml_value_pair)),
-      optional(seq(',', kw('locked'), '=', $.boolean))
+      optional(seq(',', $.locked_keyword, '=', $.boolean))
     )),
 
     ml_value_pair: $ => seq(
@@ -730,7 +730,7 @@ module.exports = grammar({
     ),
 
     lookup_formula: $ => seq(
-      kw('lookup'),
+      $.lookup_keyword,
       '(',
       field('target', $.calc_field_reference),
       optional($.where_clause),
@@ -834,21 +834,39 @@ module.exports = grammar({
       '..',  // Range operator
       seq('-', $.integer),     // Negative integer: -1, -100
       '-',   // Negation sign (standalone)
-      token(prec(-1, /[<>=|&@*%]+/)),  // Filter operators like <>, |, =, >, etc.
+      $.filter_operator,
     )),
+
+    // AL filter operators: <> | = > < >= <= & @ * %, in any run.
+    //
+    // Named, not an inline token(). As an inline token(PATTERN) it was an
+    // anonymous hidden symbol, so `Type = const(Item) & "No." <> ''` covered the
+    // bytes of `&` and `<>` with no node — 890 occurrences across BC.History,
+    // 354 of them the bare `|` alternation. The pattern is a run, so two
+    // adjacent operators separated only by whitespace surfaced as one gap
+    // ("& <>"), which is why the cluster list read like a set of compound
+    // operators that do not exist in AL.
+    //
+    // Same shape as assignment_operator and permission_type: a named rule whose
+    // whole body is one token collapses INTO that token, giving a visible
+    // childless leaf that covers its own bytes. This is deliberately NOT
+    // comparison_operator — that rule is a choice of string literals for
+    // *expression* comparison, already visible, and its members are single
+    // operators rather than the runs a filter allows.
+    filter_operator: $ => token(prec(-1, /[<>=|&@*%]+/)),
 
     // --- Sorting/SourceTableView value ---
     // sorting("Starting Date") order(ascending) where("Status" = const(Active))
     sorting_value: $ => prec(5, seq(
-      kw('sorting'),
+      $.sorting_keyword,
       '(',
       $._identifier_or_quoted,
       repeat(seq(',', $._identifier_or_quoted)),
       ')',
       optional(seq(
-        kw('order'),
+        $.order_keyword,
         '(',
-        choice(kw('ascending'), kw('descending')),
+        choice($.ascending_keyword, $.descending_keyword),
         ')',
       )),
       optional($.where_clause),
@@ -968,7 +986,7 @@ module.exports = grammar({
     // Fragment for 'else <table_relation_expression>' inside a preproc branch.
     // Used when the preceding if-chain ends before the #if and this branch continues it.
     else_table_relation_fragment: $ => prec.right(15, seq(
-      kw('else'),
+      $.else_keyword,
       field('else_relation', $.table_relation_expression),
     )),
 
@@ -979,13 +997,13 @@ module.exports = grammar({
     ),
 
     if_table_relation: $ => prec.right(15, seq(
-      kw('if'),
+      $.if_keyword,
       '(',
       $.where_conditions,
       ')',
       field('then_relation', $.simple_table_relation),
       optional(seq(
-        kw('else'),
+        $.else_keyword,
         field('else_relation', $.table_relation_expression)
       ))
     )),
@@ -1027,39 +1045,37 @@ module.exports = grammar({
       $.preproc_conditional_permissions,
     ),
 
-    // Hidden (underscore) rule, not a named node — a visible `tabledata_keyword`
-    // would change the tree shape of every valid `tabledata_permission` (the
-    // token is currently an anonymous inline literal with no node of its own).
-    // Referenced both here (unchanged shape) and via the `alias(..., $.identifier)`
-    // route in `option_member` below, so `OptionMembers = TableData,...` — where
-    // bare unquoted `TableData` case-insensitively collides with this exact
-    // keyword — can resolve as a plain identifier option member instead of
-    // erroring (previously: ERROR, first-position-only; see the
-    // `tabledata_permission`/`option_member` ambiguity this shares with
-    // `table_keyword`'s existing `keyword_as_identifier` precedent).
-    //
-    // KNOWN GAP (tracked, not fixed): because this stays a bare `kw()`, it is the
-    // one keyword token left outside the uniform `alias(kw(w), w)` shape, and its
-    // text lands in no node at all. In
+    // Visible since the losslessness pass. It was `_tabledata_keyword`, a hidden
+    // rule over a bare kw(), and was the largest single byte-gap cluster left
+    // after the type keywords: 23,481 occurrences across BC.History where
     //   Permissions = tabledata Customer = R, table Customer = X;
-    // the bytes spelling `tabledata` are covered by no node, while the sibling
-    // `table` does get `table_keyword -> "table"`. That is the same losslessness
-    // defect class as the `#if` begin/end bug fixed in 4.0.0. Closing it means
-    // deciding what `tabledata_permission` should look like and untangling the
-    // nested alias under `option_member`, which is a shape change in its own
-    // right — deliberately out of scope here rather than silently fine.
-    _tabledata_keyword: $ => kw('tabledata'),
+    // covered the bytes spelling `table` with `table_keyword -> "table"` and the
+    // bytes spelling `tabledata` with nothing at all.
+    //
+    // ONE rule, referenced from both sites, is what keeps that safe. It is also
+    // reached via the `alias(..., $.identifier)` route in `option_member` below,
+    // so `OptionMembers = TableData,...` — where bare unquoted `TableData`
+    // case-insensitively collides with this exact keyword — resolves as a plain
+    // identifier option member instead of erroring (previously: ERROR,
+    // first-position-only; the same `tabledata_permission`/`option_member`
+    // ambiguity that `table_keyword` settles via `keyword_as_identifier`).
+    // Splitting this into a visible rule here plus a second bare kw() there would
+    // reintroduce that collision: both spellings are the same terminal, so two
+    // rules over it put two competing reductions in one state. Aliasing the
+    // named rule to $.identifier keeps the option-member node an `identifier`,
+    // as before, and merely gives it the anonymous "tabledata" child.
+    tabledata_keyword: $ => alias(kw('tabledata'), 'tabledata'),
 
     tabledata_permission: $ => seq(
       choice(
-        $._tabledata_keyword,
+        $.tabledata_keyword,
         $.table_keyword,
         $.codeunit_keyword,
         $.page_keyword,
         $.report_keyword,
         $.query_keyword,
         $.xmlport_keyword,
-        kw('system'),
+        $.system_keyword,
       ),
       // '*' keeps the field: the wildcard IS the table name, so an anonymous
       // node in this field's type set is correct here (cf. operator fields).
@@ -1078,7 +1094,7 @@ module.exports = grammar({
     )),
 
     order_by_item: $ => seq(
-      choice(kw('ascending', 5), kw('descending', 5)),
+      choice($.ascending_keyword, $.descending_keyword),
       '(',
       $._identifier_or_quoted,
       repeat(seq(',', $._identifier_or_quoted)),
@@ -1170,7 +1186,7 @@ module.exports = grammar({
       seq('-', $.integer),   // Negative integer option members (ValuesAllowed = -1)
       $.keyword_identifier,  // System, Action, etc.
       alias($.keyword_as_identifier, $.identifier),  // Type, Field, etc.
-      alias($._tabledata_keyword, $.identifier),  // TableData (first-position collision fix)
+      alias($.tabledata_keyword, $.identifier),  // TableData (first-position collision fix)
       $.local_keyword,       // 'Local' as option member
       $.internal_keyword,    // 'Internal' as option member
       $.protected_keyword,   // 'Protected' as option member
@@ -1293,13 +1309,13 @@ module.exports = grammar({
     )),
 
     addlast_fieldgroup_modification: $ => seq(
-      kw('addlast'), '(', field('target', $._identifier_or_quoted), ';',
+      $.addlast_keyword, '(', field('target', $._identifier_or_quoted), ';',
       field('fields', $.field_list), ')',
       optional(seq('{', '}'))
     ),
 
     addfirst_fieldgroup_modification: $ => seq(
-      kw('addfirst'), '(', field('target', $._identifier_or_quoted), ';',
+      $.addfirst_keyword, '(', field('target', $._identifier_or_quoted), ';',
       field('fields', $.field_list), ')',
       optional(seq('{', '}'))
     ),
@@ -1452,6 +1468,25 @@ module.exports = grammar({
     ),
 
     // Common built-in types
+    //
+    // These ~50 bare kw()s are the largest remaining block of bare kw() in the
+    // grammar, and they were CONSIDERED and deliberately left alone by the
+    // losslessness pass. They are already lossless, for a reason worth knowing
+    // before "fixing" them: a named rule whose body is a choice() of hidden
+    // tokens has no visible child, so the `basic_type` node is ITSELF the
+    // childless leaf covering the bytes. `Integer` is `(basic_type)` with text
+    // `Integer` — nothing is dropped, and the byte-gap detector never flagged
+    // one of them across all 15,358 BC.History files.
+    //
+    // record_type, code_type, text_type, option_type, array_type, list_type and
+    // dictionary_type could NOT use this pattern, which is why they got keyword
+    // rules instead: each has real children (a length, an element type, a
+    // reference), so the enclosing node is not a leaf and the keyword's bytes
+    // fall between leaves. That is the whole distinction.
+    //
+    // Routing these 50 through keyword rules would move every type node in the
+    // corpus and buy nothing. `boolean`, `keyword_identifier` and
+    // `keyword_as_identifier` are lossless by the same argument.
     basic_type: $ => choice(
       // Numeric
       prec(1, kw('integer')),
@@ -1530,7 +1565,7 @@ module.exports = grammar({
 
     // value(0; "None") { Caption = 'None'; }
     enum_value_declaration: $ => seq(
-      kw('value'),
+      $.value_keyword,
       '(',
       field('value_id', $.integer),
       ';',
@@ -1571,9 +1606,9 @@ module.exports = grammar({
       repeat(seq(
         ',',
         choice(
-          seq(kw('comment'), '=', field('comment', $.string_literal)),
-          seq(kw('locked'), '=', field('locked', $.boolean)),
-          seq(kw('maxlength'), '=', field('maxlength', $.integer)),
+          seq($.comment_keyword, '=', field('comment', $.string_literal)),
+          seq($.locked_keyword, '=', field('locked', $.boolean)),
+          seq($.maxlength_keyword, '=', field('maxlength', $.integer)),
         )
       )),
       ';'
@@ -1830,7 +1865,7 @@ module.exports = grammar({
 
     // label(LabelName) { ... } — page label (not report label)
     label_section: $ => seq(
-      kw('label'),
+      $.label_keyword,
       '(',
       field('name', $._identifier_or_quoted),
       ')',
@@ -1845,7 +1880,7 @@ module.exports = grammar({
 
     // addfirst(AreaName) { field(...) { } }
     addfirst_modification: $ => seq(
-      kw('addfirst'),
+      $.addfirst_keyword,
       '(',
       field('target', $._identifier_or_quoted),
       ')',
@@ -1859,7 +1894,7 @@ module.exports = grammar({
     ),
 
     addlast_modification: $ => seq(
-      kw('addlast'),
+      $.addlast_keyword,
       '(',
       field('target', $._identifier_or_quoted),
       ')',
@@ -1873,7 +1908,7 @@ module.exports = grammar({
     ),
 
     addafter_modification: $ => seq(
-      kw('addafter'),
+      $.addafter_keyword,
       '(',
       field('target', $._identifier_or_quoted),
       ')',
@@ -1887,7 +1922,7 @@ module.exports = grammar({
     ),
 
     addbefore_modification: $ => seq(
-      kw('addbefore'),
+      $.addbefore_keyword,
       '(',
       field('target', $._identifier_or_quoted),
       ')',
@@ -1902,7 +1937,7 @@ module.exports = grammar({
 
     // modify("Name") { Visible = false; }
     modify_modification: $ => prec(2, seq(
-      kw('modify'),
+      $.modify_keyword,
       '(',
       field('target', $._identifier_or_quoted),
       ')',
@@ -1913,7 +1948,7 @@ module.exports = grammar({
 
     // movefirst(Content; "No.")
     movefirst_modification: $ => seq(
-      kw('movefirst'),
+      $.movefirst_keyword,
       '(',
       field('target', $._identifier_or_quoted),
       ';',
@@ -1922,7 +1957,7 @@ module.exports = grammar({
     ),
 
     movelast_modification: $ => seq(
-      kw('movelast'),
+      $.movelast_keyword,
       '(',
       field('target', $._identifier_or_quoted),
       ';',
@@ -1931,7 +1966,7 @@ module.exports = grammar({
     ),
 
     moveafter_modification: $ => seq(
-      kw('moveafter'),
+      $.moveafter_keyword,
       '(',
       field('target', $._identifier_or_quoted),
       ';',
@@ -1940,7 +1975,7 @@ module.exports = grammar({
     ),
 
     movebefore_modification: $ => seq(
-      kw('movebefore'),
+      $.movebefore_keyword,
       '(',
       field('target', $._identifier_or_quoted),
       ';',
@@ -2092,7 +2127,7 @@ module.exports = grammar({
     // =====================================================================
 
     addfirst_action_modification: $ => seq(
-      kw('addfirst'),
+      $.addfirst_keyword,
       '(',
       field('target', $._identifier_or_quoted),
       ')',
@@ -2102,7 +2137,7 @@ module.exports = grammar({
     ),
 
     addlast_action_modification: $ => seq(
-      kw('addlast'),
+      $.addlast_keyword,
       '(',
       field('target', $._identifier_or_quoted),
       ')',
@@ -2112,7 +2147,7 @@ module.exports = grammar({
     ),
 
     addafter_action_modification: $ => seq(
-      kw('addafter'),
+      $.addafter_keyword,
       '(',
       field('target', $._identifier_or_quoted),
       ')',
@@ -2122,7 +2157,7 @@ module.exports = grammar({
     ),
 
     addbefore_action_modification: $ => seq(
-      kw('addbefore'),
+      $.addbefore_keyword,
       '(',
       field('target', $._identifier_or_quoted),
       ')',
@@ -2132,7 +2167,7 @@ module.exports = grammar({
     ),
 
     modify_action_modification: $ => prec(2, seq(
-      kw('modify'),
+      $.modify_keyword,
       '(',
       field('target', $._identifier_or_quoted),
       ')',
@@ -2186,14 +2221,14 @@ module.exports = grammar({
 
     // Views extensions without target: addfirst { view(...) { } }
     addfirst_views_modification: $ => seq(
-      kw('addfirst'),
+      $.addfirst_keyword,
       '{',
       optional(field('body', $.views_mod_body)),
       '}'
     ),
 
     addlast_views_modification: $ => seq(
-      kw('addlast'),
+      $.addlast_keyword,
       '{',
       optional(field('body', $.views_mod_body)),
       '}'
@@ -2201,7 +2236,7 @@ module.exports = grammar({
 
     // Views extensions with target: addafter(ViewName) { view(...) { } }
     addafter_views_modification: $ => seq(
-      kw('addafter'),
+      $.addafter_keyword,
       '(', field('target', $._identifier_or_quoted), ')',
       '{',
       optional(field('body', $.views_mod_body)),
@@ -2209,7 +2244,7 @@ module.exports = grammar({
     ),
 
     addbefore_views_modification: $ => seq(
-      kw('addbefore'),
+      $.addbefore_keyword,
       '(', field('target', $._identifier_or_quoted), ')',
       '{',
       optional(field('body', $.views_mod_body)),
@@ -2303,24 +2338,24 @@ module.exports = grammar({
 
     // Extension dataset modifications
     add_dataset_modification: $ => seq(
-      kw('add'), '(', field('target', $._identifier_or_quoted), ')',
+      $.add_keyword, '(', field('target', $._identifier_or_quoted), ')',
       '{', optional(field('body', $.dataset_mod_body)), '}'
     ),
     addfirst_dataset_modification: $ => seq(
-      kw('addfirst'),
+      $.addfirst_keyword,
       optional(seq('(', field('target', $._identifier_or_quoted), ')')),
       '{', optional(field('body', $.dataset_mod_body)), '}'
     ),
     addlast_dataset_modification: $ => seq(
-      kw('addlast'), '(', field('target', $._identifier_or_quoted), ')',
+      $.addlast_keyword, '(', field('target', $._identifier_or_quoted), ')',
       '{', optional(field('body', $.dataset_mod_body)), '}'
     ),
     addafter_dataset_modification: $ => seq(
-      kw('addafter'), '(', field('target', $._identifier_or_quoted), ')',
+      $.addafter_keyword, '(', field('target', $._identifier_or_quoted), ')',
       '{', optional(field('body', $.dataset_mod_body)), '}'
     ),
     addbefore_dataset_modification: $ => seq(
-      kw('addbefore'), '(', field('target', $._identifier_or_quoted), ')',
+      $.addbefore_keyword, '(', field('target', $._identifier_or_quoted), ')',
       '{', optional(field('body', $.dataset_mod_body)), '}'
     ),
     dataset_mod_body: $ => repeat1(choice($.report_dataitem, $.report_column, $._body_element)),
@@ -2507,7 +2542,7 @@ module.exports = grammar({
     // =====================================================================
 
     assembly_declaration: $ => seq(
-      kw('assembly'),
+      $.assembly_keyword,
       '(',
       field('name', choice(
         $.string_literal,
@@ -2531,7 +2566,7 @@ module.exports = grammar({
     )),
 
     type_declaration: $ => seq(
-      kw('type'),
+      $.type_keyword,
       '(',
       field('dotnet_type', choice(
         $.string_literal,
@@ -3068,13 +3103,13 @@ module.exports = grammar({
 
     preproc_or_expression: $ => prec.left(1, seq(
       $._preproc_expression,
-      choice(kw('or'), '||'),
+      choice(alias(kw('or'), 'or'), '||'),
       $._preproc_expression,
     )),
 
     preproc_and_expression: $ => prec.left(2, seq(
       $._preproc_expression,
-      choice(kw('and'), '&&'),
+      choice(alias(kw('and'), 'and'), '&&'),
       $._preproc_expression,
     )),
 
@@ -4047,12 +4082,12 @@ module.exports = grammar({
     )),
     is_expression: $ => prec.left(5, seq(
       field('left', $._expression),
-      field('operator', kw('is', 5)),
+      field('operator', $.is_keyword),
       field('right', $.type_specification)
     )),
     as_expression: $ => prec.left(5, seq(
       field('left', $._expression),
-      field('operator', kw('as', 5)),
+      field('operator', $.as_keyword),
       field('right', $.type_specification)
     )),
 
@@ -4520,6 +4555,59 @@ module.exports = grammar({
     fileuploadaction_keyword: $ => alias(kw('fileuploadaction'), 'fileuploadaction'),
     customaction_keyword: $ => alias(kw('customaction'), 'customaction'),
     separator_keyword: $ => alias(kw('separator'), 'separator'),
+
+    // Extension modification keywords. One rule per word, shared by all of that
+    // word's call sites (addafter alone had four: layout, action, views and
+    // dataset). The construct is told apart by the parent node — never by the
+    // keyword's own type — which is the same rule the field_keyword split above
+    // follows.
+    add_keyword: $ => alias(kw('add'), 'add'),
+    addfirst_keyword: $ => alias(kw('addfirst'), 'addfirst'),
+    addlast_keyword: $ => alias(kw('addlast'), 'addlast'),
+    addafter_keyword: $ => alias(kw('addafter'), 'addafter'),
+    addbefore_keyword: $ => alias(kw('addbefore'), 'addbefore'),
+    modify_keyword: $ => alias(kw('modify'), 'modify'),
+    movefirst_keyword: $ => alias(kw('movefirst'), 'movefirst'),
+    movelast_keyword: $ => alias(kw('movelast'), 'movelast'),
+    moveafter_keyword: $ => alias(kw('moveafter'), 'moveafter'),
+    movebefore_keyword: $ => alias(kw('movebefore'), 'movebefore'),
+
+    // Property-value and declaration keywords.
+    //
+    // ascending_keyword/descending_keyword keep kw()'s second argument, which is
+    // LEXICAL precedence, not parse precedence. The two call sites disagreed
+    // before they shared a rule: sorting_value used a plain kw() and
+    // order_by_item used kw(w, 5) — two different terminals for one word. They
+    // are now one terminal at prec 5, the higher of the two. Raising is the safe
+    // direction: `ascending` and an identifier spelled `Ascending` are the same
+    // LENGTH, so wherever both are valid the tie is broken by precedence, and
+    // order_by_item's author set 5 deliberately to win it. Lowering
+    // order_by_item to 0 would have handed that tie back to declaration order.
+    sorting_keyword: $ => alias(kw('sorting'), 'sorting'),
+    order_keyword: $ => alias(kw('order'), 'order'),
+    ascending_keyword: $ => alias(kw('ascending', 5), 'ascending'),
+    descending_keyword: $ => alias(kw('descending', 5), 'descending'),
+    lookup_keyword: $ => alias(kw('lookup'), 'lookup'),
+    system_keyword: $ => alias(kw('system'), 'system'),
+    value_keyword: $ => alias(kw('value'), 'value'),
+    label_keyword: $ => alias(kw('label'), 'label'),
+    assembly_keyword: $ => alias(kw('assembly'), 'assembly'),
+    type_keyword: $ => alias(kw('type'), 'type'),
+    access_keyword: $ => alias(kw('access'), 'access'),
+    comment_keyword: $ => alias(kw('comment'), 'comment'),
+    locked_keyword: $ => alias(kw('locked'), 'locked'),
+    maxlength_keyword: $ => alias(kw('maxlength'), 'maxlength'),
+
+    // `is` / `as` operator keywords. Both keep kw()'s second argument — that is
+    // LEXICAL precedence and it is load-bearing here, exactly as the note on
+    // in_keyword above explains for the opposite case: `in` must NOT have it,
+    // because inside token() it outranks the `integer` token and stops `Integer`
+    // from ever matching past `In`. These two are already inside token() with
+    // prec 5 and were so before they had rules; the alias changes visibility
+    // only. They were the operator fields of is_expression/as_expression, so the
+    // dropped token took a declared `operator` field down with it.
+    is_keyword: $ => alias(kw('is', 5), 'is'),
+    as_keyword: $ => alias(kw('as', 5), 'as'),
 
     // =====================================================================
     // Shared rules

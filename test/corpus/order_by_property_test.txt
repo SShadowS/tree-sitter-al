@@ -30,8 +30,10 @@ query 50000 "Test Query"
         name: (property_name)
         value: (order_by_list
           (order_by_item
+            (ascending_keyword)
             (identifier))
           (order_by_item
+            (ascending_keyword)
             (identifier))))
       (elements_section
         (elements_keyword)
@@ -67,6 +69,7 @@ query 50001 "Simple Query"
         name: (property_name)
         value: (order_by_list
           (order_by_item
+            (descending_keyword)
             (identifier))))
       (elements_section
         (elements_keyword)
@@ -102,8 +105,10 @@ query 50002 "Mixed Case Query"
         name: (property_name)
         value: (order_by_list
           (order_by_item
+            (ascending_keyword)
             (identifier))
           (order_by_item
+            (descending_keyword)
             (identifier))))
       (elements_section
         (elements_keyword)

@@ -36,6 +36,7 @@ reportextension 8008 "Contract Sales Invoice" extends "Standard Sales - Invoice"
         (dataset_keyword)
         body: (dataset_body
           (add_dataset_modification
+            (add_keyword)
             target: (identifier)
             body: (dataset_mod_body
               (report_column
@@ -43,6 +44,7 @@ reportextension 8008 "Contract Sales Invoice" extends "Standard Sales - Invoice"
                 name: (identifier)
                 source: (quoted_identifier))))
           (modify_modification
+            (modify_keyword)
             target: (identifier)
             body: (declaration_body
               (trigger_declaration
@@ -187,6 +189,7 @@ reportextension 50100 "Extended Sales Report" extends "Sales Invoice"
         (dataset_keyword)
         body: (dataset_body
           (add_dataset_modification
+            (add_keyword)
             target: (identifier)
             body: (dataset_mod_body
               (report_column
@@ -198,6 +201,7 @@ reportextension 50100 "Extended Sales Report" extends "Sales Invoice"
                 name: (identifier)
                 source: (quoted_identifier))))
           (addafter_dataset_modification
+            (addafter_keyword)
             target: (identifier)
             body: (dataset_mod_body
               (report_dataitem
@@ -211,6 +215,7 @@ reportextension 50100 "Extended Sales Report" extends "Sales Invoice"
                   (property
                     name: (property_name)
                     value: (sorting_value
+                      (sorting_keyword)
                       (identifier)))
                   (report_column
                     (column_keyword)
@@ -225,6 +230,7 @@ reportextension 50100 "Extended Sales Report" extends "Sales Invoice"
                       object: (identifier)
                       member: (quoted_identifier)))))))
           (modify_modification
+            (modify_keyword)
             target: (identifier)
             body: (declaration_body
               (trigger_declaration

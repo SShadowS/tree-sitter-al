@@ -58,6 +58,7 @@ enum 6110 "E-Doc. Proc. Customizations" implements
             interface: (identifier)
             implementation: (quoted_identifier))))
       (enum_value_declaration
+        (value_keyword)
         value_id: (integer)
         value_name: (identifier)))))
 
@@ -95,6 +96,7 @@ enum 200 TestEnum implements "ITest1", ITest2
             interface: (identifier)
             implementation: (quoted_identifier))))
       (enum_value_declaration
+        (value_keyword)
         value_id: (integer)
         value_name: (identifier)))))
 
@@ -145,5 +147,6 @@ enum 300 "Case Test" implements Interface1, Interface2, Interface3
             operator: (comparison_operator)
             right: (identifier))))
       (enum_value_declaration
+        (value_keyword)
         value_id: (integer)
         value_name: (identifier)))))

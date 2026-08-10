@@ -24,6 +24,7 @@ pageextension 123 "Test Extension" extends "Test Page"
         (layout_keyword)
         body: (layout_body
           (movelast_modification
+            (movelast_keyword)
             target: (identifier)
             element: (identifier)))))))
 
@@ -53,6 +54,7 @@ pageextension 124 "Test Extension" extends "Test Page"
         (layout_keyword)
         body: (layout_body
           (movefirst_modification
+            (movefirst_keyword)
             target: (identifier)
             element: (quoted_identifier)))))))
 
@@ -82,6 +84,7 @@ pageextension 125 "Test Extension" extends "Test Page"
         (layout_keyword)
         body: (layout_body
           (moveafter_modification
+            (moveafter_keyword)
             target: (identifier)
             element: (identifier)))))))
 
@@ -111,5 +114,6 @@ pageextension 126 "Test Extension" extends "Test Page"
         (layout_keyword)
         body: (layout_body
           (movebefore_modification
+            (movebefore_keyword)
             target: (quoted_identifier)
             element: (quoted_identifier)))))))

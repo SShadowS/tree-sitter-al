@@ -453,6 +453,7 @@ enum 50005 "Test Enum"
         (preproc_endif
           (preproc_close)))
       (enum_value_declaration
+        (value_keyword)
         value_id: (integer)
         value_name: (quoted_identifier)
         body: (declaration_body
@@ -498,6 +499,7 @@ permissionset 50006 "Test Permission Set"
         name: (property_name)
         value: (tabledata_permission_list
           (tabledata_permission
+            (tabledata_keyword)
             table_name: (identifier)
             permission: (permission_type)))))))
 

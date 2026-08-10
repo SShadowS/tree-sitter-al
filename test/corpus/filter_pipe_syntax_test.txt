@@ -54,6 +54,7 @@ page 50100 "Test Page"
                         (filter_keyword)
                         value: (filter_value
                           (integer)
+                          (filter_operator)
                           (integer)))
                       (link_value
                         field: (quoted_identifier)
@@ -93,6 +94,7 @@ pageextension 50100 "Test Extension" extends "Customer List"
         (layout_keyword)
         body: (layout_body
           (addafter_modification
+            (addafter_keyword)
             target: (identifier)
             body: (layout_body
               (part_section
@@ -108,14 +110,18 @@ pageextension 50100 "Test Extension" extends "Customer List"
                         (filter_keyword)
                         value: (filter_value
                           (integer)
+                          (filter_operator)
                           (integer)
+                          (filter_operator)
                           (integer)
+                          (filter_operator)
                           (integer)))
                       (link_value
                         field: (quoted_identifier)
                         (filter_keyword)
                         value: (filter_value
                           (identifier)
+                          (filter_operator)
                           (identifier))))))))))))))
 
 ================================================================================
@@ -164,9 +170,11 @@ page 50100 "Test Page"
                         field: (quoted_identifier)
                         (filter_keyword)
                         value: (filter_value
+                          (filter_operator)
                           (string_literal)))
                       (link_value
                         field: (quoted_identifier)
                         (filter_keyword)
                         value: (filter_value
+                          (filter_operator)
                           (string_literal))))))))))))))

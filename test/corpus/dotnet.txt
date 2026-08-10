@@ -19,9 +19,11 @@ dotnet
     (dotnet_keyword)
     body: (dotnet_body
       (assembly_declaration
+        (assembly_keyword)
         name: (quoted_identifier)
         body: (assembly_body
           (type_declaration
+            (type_keyword)
             dotnet_type: (quoted_identifier)
             al_name: (quoted_identifier)))))))
 
@@ -43,4 +45,5 @@ dotnet
     (dotnet_keyword)
     body: (dotnet_body
       (assembly_declaration
+        (assembly_keyword)
         name: (dotnet_assembly_name)))))

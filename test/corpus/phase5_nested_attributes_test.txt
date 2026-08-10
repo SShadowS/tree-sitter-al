@@ -131,6 +131,7 @@ enum 50100 MyEnum
             (attribute_argument_list
               (string_literal)))))
       (enum_value_declaration
+        (value_keyword)
         value_id: (integer)
         value_name: (identifier))
       (attribute_item
@@ -140,6 +141,7 @@ enum 50100 MyEnum
             (attribute_argument_list
               (string_literal)))))
       (enum_value_declaration
+        (value_keyword)
         value_id: (integer)
         value_name: (identifier)))))
 
@@ -175,6 +177,7 @@ enum 50101 StatusEnum
         attribute: (attribute_content
           name: (identifier)))
       (enum_value_declaration
+        (value_keyword)
         value_id: (integer)
         value_name: (identifier))
       (attribute_item
@@ -184,6 +187,7 @@ enum 50101 StatusEnum
             (attribute_argument_list
               (string_literal)))))
       (enum_value_declaration
+        (value_keyword)
         value_id: (integer)
         value_name: (identifier)))))
 
@@ -227,6 +231,7 @@ tableextension 50100 MyTableExt extends Customer
                 (attribute_argument_list
                   (boolean)))))
           (modify_modification
+            (modify_keyword)
             target: (quoted_identifier))
           (attribute_item
             attribute: (attribute_content
@@ -235,4 +240,5 @@ tableextension 50100 MyTableExt extends Customer
                 (attribute_argument_list
                   (boolean)))))
           (modify_modification
+            (modify_keyword)
             target: (identifier)))))))

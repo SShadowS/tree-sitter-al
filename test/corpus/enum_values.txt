@@ -15,9 +15,11 @@ enum 50100 MyEnum
     (identifier)
     (declaration_body
       (enum_value_declaration
+        (value_keyword)
         (integer)
         (quoted_identifier))
       (enum_value_declaration
+        (value_keyword)
         (integer)
         (identifier)))))
 
@@ -44,6 +46,7 @@ enum 50100 Status
     (identifier)
     (declaration_body
       (enum_value_declaration
+        (value_keyword)
         (integer)
         (quoted_identifier)
         (declaration_body
@@ -51,6 +54,7 @@ enum 50100 Status
             (property_name)
             (string_literal))))
       (enum_value_declaration
+        (value_keyword)
         (integer)
         (identifier)
         (declaration_body
@@ -79,6 +83,7 @@ enumextension 50100 StatusExt extends Status
     (identifier)
     (declaration_body
       (enum_value_declaration
+        (value_keyword)
         (integer)
         (identifier)
         (declaration_body

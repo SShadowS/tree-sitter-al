@@ -44,9 +44,11 @@ permissionset 301 "No. Series - Read"
         name: (property_name)
         value: (tabledata_permission_list
           (tabledata_permission
+            (tabledata_keyword)
             table_name: (quoted_identifier)
             permission: (permission_type))
           (tabledata_permission
+            (tabledata_keyword)
             table_name: (quoted_identifier)
             permission: (permission_type))
           (preproc_conditional_permissions
@@ -56,18 +58,22 @@ permissionset 301 "No. Series - Read"
                 (identifier)))
             (pragma)
             (tabledata_permission
+              (tabledata_keyword)
               table_name: (quoted_identifier)
               permission: (permission_type))
             (tabledata_permission
+              (tabledata_keyword)
               table_name: (quoted_identifier)
               permission: (permission_type))
             (pragma)
             (preproc_endif
               (preproc_close)))
           (tabledata_permission
+            (tabledata_keyword)
             table_name: (quoted_identifier)
             permission: (permission_type))
           (tabledata_permission
+            (tabledata_keyword)
             table_name: (quoted_identifier)
             permission: (permission_type)))))))
 
@@ -105,20 +111,24 @@ permissionset 50200 "Test Permissions"
               (preproc_open)
               condition: (identifier))
             (tabledata_permission
+              (tabledata_keyword)
               table_name: (quoted_identifier)
               permission: (permission_type))
             (preproc_else)
             (pragma)
             (tabledata_permission
+              (tabledata_keyword)
               table_name: (quoted_identifier)
               permission: (permission_type))
             (tabledata_permission
+              (tabledata_keyword)
               table_name: (quoted_identifier)
               permission: (permission_type))
             (pragma)
             (preproc_endif
               (preproc_close)))
           (tabledata_permission
+            (tabledata_keyword)
             table_name: (quoted_identifier)
             permission: (permission_type)))))))
 
@@ -152,6 +162,7 @@ permissionset 50300 "Complex Permissions"
         name: (property_name)
         value: (tabledata_permission_list
           (tabledata_permission
+            (tabledata_keyword)
             table_name: (identifier)
             permission: (permission_type))
           (preproc_conditional_permissions
@@ -162,6 +173,7 @@ permissionset 50300 "Complex Permissions"
             (pragma)
             (pragma)
             (tabledata_permission
+              (tabledata_keyword)
               table_name: (quoted_identifier)
               permission: (permission_type))
             (pragma)
@@ -169,6 +181,7 @@ permissionset 50300 "Complex Permissions"
             (preproc_endif
               (preproc_close)))
           (tabledata_permission
+            (tabledata_keyword)
             table_name: (identifier)
             permission: (permission_type)))))))
 
@@ -209,19 +222,23 @@ permissionset 50400 "Pragma Heavy Permissions"
                 (identifier)))
             (pragma)
             (tabledata_permission
+              (tabledata_keyword)
               table_name: (quoted_identifier)
               permission: (permission_type))
             (pragma)
             (tabledata_permission
+              (tabledata_keyword)
               table_name: (quoted_identifier)
               permission: (permission_type))
             (pragma)
             (tabledata_permission
+              (tabledata_keyword)
               table_name: (quoted_identifier)
               permission: (permission_type))
             (pragma)
             (preproc_endif
               (preproc_close)))
           (tabledata_permission
+            (tabledata_keyword)
             table_name: (quoted_identifier)
             permission: (permission_type)))))))

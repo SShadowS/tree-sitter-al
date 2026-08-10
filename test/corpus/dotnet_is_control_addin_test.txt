@@ -89,9 +89,11 @@ dotnet
     (dotnet_keyword)
     body: (dotnet_body
       (assembly_declaration
+        (assembly_keyword)
         name: (quoted_identifier)
         body: (assembly_body
           (type_declaration
+            (type_keyword)
             dotnet_type: (quoted_identifier)
             al_name: (quoted_identifier)
             body: (declaration_body
@@ -99,6 +101,7 @@ dotnet
                 name: (property_name)
                 value: (boolean))))
           (type_declaration
+            (type_keyword)
             dotnet_type: (quoted_identifier)
             al_name: (quoted_identifier)
             body: (declaration_body
