@@ -2214,3 +2214,50 @@ Five latent scanner issues were found and deliberately not fixed: no failing inp
 5. The depth counter wraps at 256 nested `#if`. The underflow guard coincidentally restores 0 after the matching `#endif`s.
 
 One grammar item is also deferred, on purpose: `database_reference.table_name` (`grammar.js:3841`) also holds page, report, codeunit, query and xmlport names, so `Page::X` lands in a field called `table_name`. The name misleads anyone writing queries. Renaming it to `target_name` is the right fix but it is a **breaking field rename** — every downstream query using `table_name` stops matching silently, since tree-sitter queries do not error on an unknown field. That deserves its own major release with a migration note, not a slot in 3.4.0.
+
+## The `ae90aea` dangling-else regression — analysis carried forward
+
+Recorded here because `.superpowers/` is gitignored and will be deleted; the full write-up
+is at `.superpowers/sdd/2026-08-09-scanner-and-grammar-defect-fixes/regression-wip-report.md`
+while that directory survives. **Nothing is committed for this fix; the branch is clean and
+at 0 production errors.** Three attempts were made and all had worse collateral than the
+bug.
+
+**Root cause.** `code_block`'s `optional(';')` is greedy under `prec.right`, so it consumes
+the terminator before any downstream rule exists to inspect it. `ae90aea`'s guard —
+`choice(seq(else_keyword, _else_branch), optional(';'))` — can only fire when the `;` is
+still unconsumed, which for a block it never is; `prec.dynamic(20)` then lets the else arm
+take the case's else. **Four** then-branch forms swallow the `;`, not three: `code_block`, a
+nested `if_statement`, `empty_statement`, and `call_statement` (which owns its own).
+
+**Ruled out, with reasons — do not re-attempt these blind:**
+
+1. *Requiring an explicit `';'` on `_if_statement_no_else`.* Cannot work: the block has
+   already eaten it, so the requirement finds nothing and that parse dies. Verified: the
+   regression shape is unchanged. Works only for a simple-statement then-branch, which is
+   why it looks plausible until tested.
+2. *Removing `prec.dynamic(20)` and relying on a structural bar alone.* **Undoes defect 1** —
+   measured, the original misparse returns.
+3. *A `_code_block_no_semi` variant aliased to `code_block`, used only in the else arm.*
+   The closest attempt: fixes the regression, keeps all six dangling-else shapes correct,
+   corpus green — but **5 BC.History files fail** at `end; #else … #endif`, because giving
+   GLR a second route into `preproc_split_code_block_end` mis-drives the split. Dropping the
+   split enders from the variant is worse: 7 errors and 13 fixture failures.
+4. *Excluding `empty_statement` from the else arm* (needs a real `_statement_inner` subset;
+   a forwarding wrapper duplicates the rule and collides with the shared repeat symbol).
+   Costs two `preproc_split_if_then_begin_else_shared` fixtures, which regress to
+   `then_branch: (MISSING identifier)` — worse than the bug.
+
+**The `unnecessary conflicts: if_statement, _if_statement_no_else` warning is not a valid
+gate for this.** It is present at `60b434d` as well as `ae90aea`, so it does not
+discriminate the regression — and it *cleared* in exactly the variant that undid defect 1.
+On this grammar it tracks "the no-else variant contends at table level", which is precisely
+what defect 1's fix removed on purpose.
+
+**Where it lands.** Every workaround fights the same fact: `code_block` owns a `;` that no
+downstream rule can see. The fix for the class is the already-queued terminator relocation —
+move `optional(';')` out of `code_block` and the branch rules into the statement wrapper, so
+terminators are uniformly external. Cost measured during defect 1: ~74,268 `if_statement`
+nodes re-spanned plus every `begin … end;`. With that done, this regression is a two-line
+fix. Recommendation: promote that task and fix on top of it, or revert `ae90aea` if 23 wrong
+sites outweigh the ~156 it repaired.
