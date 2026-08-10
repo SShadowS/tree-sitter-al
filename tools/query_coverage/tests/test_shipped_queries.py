@@ -104,15 +104,33 @@ def test_pattern_texts_handles_non_ascii_before_pattern(al_language, al_parser, 
 
 
 def test_highlights_error_pattern_extracts_full_text(al_language, al_parser, highlights_path):
-    """Pattern 140 (the last one) is '(ERROR) @error' in full, not truncated.
+    """The LAST pattern in highlights.scm is '(ERROR) @error' in full, not truncated.
 
     Regression guard: highlights.scm has non-ASCII characters earlier in the
     file, which previously desynced byte offsets from character offsets for
-    every pattern after them — including this one.
+    every pattern after them — and the last pattern, being furthest from the
+    start, accumulates the largest desync.
+
+    The index is derived, not written down. It was 140 when this test was
+    written and is 141 today: 37771f1 added `(assignment_operator) @operator`,
+    taking the file from 141 patterns to 142 (measured by compiling each
+    revision -- 5a39bcf looks like it added four but put them inside an
+    existing alternation, so it added no pattern). A stale literal does not
+    fail loudly; it retargets the assertion at whatever unrelated pattern has
+    since taken that slot, which is how this test broke rather than caught
+    anything.
+
+    The two preconditions are asserted rather than assumed. Without a
+    multi-byte character positioned before the pattern, a str-slicing
+    implementation would pass here and the guard would be vacuous.
     """
+    raw = highlights_path.read_bytes()
+    first_non_ascii = next(i for i, byte in enumerate(raw) if byte > 0x7F)
+    assert first_non_ascii < raw.rindex(b"(ERROR) @error")
+
     source = b"codeunit 1 T { }"
 
     usages = shipped_queries.tally(al_language, highlights_path, [(al_parser.parse(source), source)])
-    by_index = {u.index: u for u in usages}
+    last = max(usages, key=lambda u: u.index)
 
-    assert by_index[140].text == "(error) @error"
+    assert last.text == "(error) @error"

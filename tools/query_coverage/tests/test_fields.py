@@ -17,16 +17,32 @@ def node_types():
     return json.loads((loader.REPO_ROOT / "src" / "node-types.json").read_text(encoding="utf-8"))
 
 
-def test_finds_the_four_known_dropped_operator_fields(grammar, node_types):
-    """Self-test. A set-level implementation returns zero here."""
+def test_finds_the_known_dropped_operator_fields(grammar, node_types):
+    """Self-test. A set-level implementation returns zero here.
+
+    Four operator fields were dropped when this detector was written.
+    37771f1 fixed two of them by making `_assignment_operator` a visible rule;
+    the is_expression/as_expression pair is still dropped and still carried in
+    tools/query_coverage/baseline.json as fields|is_expression|operator and
+    fields|as_expression|operator.
+
+    Both halves are asserted. The two that must still be found keep the
+    detector honest against a set-level rewrite; the two that must NOT be
+    found are the ratchet on 37771f1 -- a revert puts them back and turns this
+    test red.
+    """
     findings = fields.detect_static(grammar, node_types)
 
-    dropped = {(f.detail["rule"], f.detail["field"]) for f in findings}
+    dropped = {
+        (f.detail["rule"], f.detail["field"])
+        for f in findings
+        if f.category == "dropped-field"
+    }
 
-    assert ("assignment_statement", "operator") in dropped
-    assert ("assignment_expression", "operator") in dropped
     assert ("is_expression", "operator") in dropped
     assert ("as_expression", "operator") in dropped
+    assert ("assignment_statement", "operator") not in dropped
+    assert ("assignment_expression", "operator") not in dropped
 
 
 def test_does_not_flag_a_field_that_survives(grammar, node_types):
@@ -38,12 +54,26 @@ def test_does_not_flag_a_field_that_survives(grammar, node_types):
     assert ("assignment_statement", "right") not in dropped
 
 
-def test_set_level_check_would_miss_operator(node_types):
-    """Guards against the mis-implementation: 'operator' exists on other types."""
+def test_set_level_check_would_miss_operator(grammar, node_types):
+    """Guards against the mis-implementation: 'operator' exists on other types.
+
+    Asking "does the name 'operator' appear anywhere in node-types.json"
+    answers yes on eight types, so a set-level detector reports zero findings
+    and is dead on arrival. The example is is_expression/as_expression: both
+    declare field('operator', ...) in the grammar, neither owns it in
+    node-types.json. It used to be assignment_statement, which 37771f1 fixed
+    -- it now legitimately owns the field, so it can no longer play this role.
+
+    Declaring the field is asserted too, not assumed: a rule absent from the
+    left-hand list would make the right-hand list trivially true.
+    """
     owners = [n["type"] for n in node_types if "operator" in n.get("fields", {})]
+    declared = {rule for rule, field_name in fields.collect_declared_fields(grammar) if field_name == "operator"}
 
     assert len(owners) >= 6
-    assert "assignment_statement" not in owners
+    assert {"is_expression", "as_expression"} <= declared
+    assert "is_expression" not in owners
+    assert "as_expression" not in owners
 
 
 def test_hidden_rules_are_skipped_not_flagged(grammar, node_types):
@@ -170,12 +200,20 @@ def test_dynamic_flags_a_synthetic_required_field(al_parser):
 
     Asserting over the real node-types.json would pass vacuously on a healthy
     tree. Injecting an impossible requirement proves the detector fires.
+
+    The requirement has to stay impossible, which is why it is no longer
+    'operator': that was impossible on assignment_statement only until 37771f1
+    made the operator a real field, after which this test silently stopped
+    exercising the detector at all. 'condition' is a real field name in this
+    grammar -- if_statement and thirteen other types own one -- and an
+    assignment statement can never carry it, so the requirement cannot be
+    satisfied by any parse of any source.
     """
     impossible = [
         {
             "type": "assignment_statement",
             "named": True,
-            "fields": {"operator": {"multiple": False, "required": True, "types": []}},
+            "fields": {"condition": {"multiple": False, "required": True, "types": []}},
         }
     ]
     source = b"codeunit 1 T { procedure P() begin i := 1; end; }"
@@ -184,7 +222,7 @@ def test_dynamic_flags_a_synthetic_required_field(al_parser):
 
     assert len(findings) == 1
     assert findings[0].category == "required-field-missing"
-    assert findings[0].fingerprint == ("assignment_statement", "operator")
+    assert findings[0].fingerprint == ("assignment_statement", "condition")
 
 
 def test_dynamic_is_silent_when_the_required_field_is_present(al_parser):
