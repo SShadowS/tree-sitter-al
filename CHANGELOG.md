@@ -5,12 +5,12 @@ Format loosely follows [Keep a Changelog](https://keepachangelog.com/); the proj
 uses [Semantic Versioning](https://semver.org/) where the parse-tree shape is the
 public API — a change to node structure or field names is a **major** bump.
 
-## [4.0.0] — 2026-08-10
+## [4.0.0] — 2026-08-11
 
 **This is a breaking release.** The parse tree is this project's public API, and this
 release moves it.
 
-Most of what follows is one story told nine times. A token was lexed and then thrown
+Most of what follows is one story told twenty-odd times. A token was lexed and then thrown
 away, or a field was declared over something that could not hold it — and every gate
 this project had said the parser was fine. `tree-sitter parse` prints named nodes only,
 so a hidden token that disappears changes no tree hash. A wrong tree with no `ERROR`
@@ -19,10 +19,82 @@ test -u` pins whatever the parser currently does, defect included; five shipped
 fixtures were found asserting a defect as the expected answer. So this release also
 ships the gates that can see those, and fixes the one that could not count.
 
+### Landed after these notes were first drafted
+
+The sections below this one describe the first tranche. A second followed, and it
+is larger. Every item here also parsed with **zero `ERROR` nodes** beforehand.
+
+**Operator precedence was wrong in three places.** AL is Pascal-derived: `and`,
+`or` and `xor` bind *tighter* than comparison, the inverse of what the grammar
+declared. `b := 1 = 1 and 2 = 2` was grouped `(1=1) and (2=2)`; alc rejects the
+statement with `AL0175: Operator 'and' cannot be applied to operands of type
+'Integer' and 'Integer'`, a message only `1 and 2` can produce. Unary bound too
+tightly — `-a * b` parsed as `-(a * b)`, wrong at **629 sites in 193 files**. And
+`..` was an expression operator, which it is not; removing it from `_expression`
+deleted a declared GLR conflict, because a pattern list with optional commas could
+no longer be confused with a single expression. The three fixes moved **48 edge
+kinds** while leaving total edges, total kinds and every node-type count
+unchanged — invisible to a node census by construction. Measured against alc
+18.0.37.11445; the full ladder and its 196 probe cases are in
+`docs/al-operator-precedence.md` and `tools/precedence/`.
+
+**Preprocessor conditions were not line-scoped.** `#if FOO` followed by a line
+beginning ` and b` produced `condition: (preproc_and_expression FOO b)`. The
+source condition is `FOO` alone, so every consumer evaluating that directive
+computed the **wrong value**. Directives now terminate at end of line. This is
+corruption of meaning rather than of attachment, and it outranks every other item
+in this release.
+
+**Expressions continued across a `#if` boundary** now stay attached to their host
+in nine positions — assignment right-hand side, `exit()` value, call argument, if
+condition, property value, `for` end bound, subscript index, `while` condition and
+list elements — each pinned by a fixture carrying its alc verdict. One shape alc
+*rejects* (`1 #if X + #endif 2`, the operator alone inside the branch) is pinned as
+a deliberate negative so nobody "fixes" it.
+
+**Two node types shipped two shapes each.** `object_type_keyword` was childless for
+`DATABASE::` (22,988 nodes) and had a child for its five siblings;
+`keyword_identifier` likewise for seven bare `kw()` words. And `identifier` had
+**four** shapes: 2,151 of 4,524 `table_keyword` nodes — 47.5% — were not the
+keyword at all, which meant a variable named `Table` was captured as both
+`@variable.parameter` and `@keyword.type` in every editor shipping these queries.
+
+**An omitted list separator was absorbed as an extra element.**
+`where(A = const(1) B = const(2))` parsed cleanly as two conditions; alc says
+`AL0104: ')' expected`. Fifteen sites. Fixing it deleted three declared GLR
+conflicts, including one that existed only because a pattern list with optional
+commas could not be told from a single expression mid-parse.
+
+**`interface_declaration.access_value` was dead.** alc rejects both spellings and
+BC.History has 0 occurrences. Two shipped fixtures asserted the rejected form as
+correct, and one already carried a note recording that alc rejects it — kept
+anyway "for consistency". Removing it surfaced that `Access = Public;` degraded to
+a bare `identifier` while `Access = Internal;` produced
+`(option_member (internal_keyword))`, in the same fixture, side by side. 857 files
+changed by that one substitution.
+
+**The Swift and Go bindings never linked the external scanner.** Both carried the
+tree-sitter template's unedited placeholder comment, so they could not resolve the
+five `tree_sitter_al_external_scanner_*` symbols. `go build` on a library package
+compiles without linking, which is why the obvious check passed. Separately, CMake
+pinned `--abi=14` and regenerated `src/parser.c` **into the source tree**, silently
+downgrading a committed ABI-15 parser on every build.
+
+**Two corpus files had never run.** One was gitignored; the other,
+`built_in_functions_al.txt`, has a well-formed header, 110 lines of AL and no `---`
+divider, so tree-sitter discarded it without a word from the day it was added.
+That is a second silent-drop mechanism, distinct from the blank-line-in-header trap.
+
+**`validate-grammar.sh` Step 3 missed real ERROR nodes.** Its line-start anchor
+meant `(source (statement) (ERROR) (MISSING ";"))` was invisible while
+`release.md` caught it — the two gates disagreed on what counts as a hit.
+
 ### What breaks
 
 Ordered by how much of the corpus moves. Counts are node-instance set differences
-(node type + exact byte range) over all 15,358 BC.History files.
+(node type + exact byte range) over all 15,358 BC.History files. The release was
+later validated against a second, independent 20,643-file estate — 36,001 files
+total, 0 errors, 100% byte coverage in both.
 
 | Change | Blast radius |
 |---|---|
@@ -78,9 +150,10 @@ parser and the manifest figure when describing the gate.
 
 ### Why it was worth it
 
-**Nine defects, eight of them found by a gate built during this release.** None was
-visible to anything the project had before: the files parsed with zero `ERROR` nodes,
-the tree hashes were stable, and the corpus tests passed.
+**Nine defects in the first tranche, eight of them found by a gate built during this
+release — and roughly twice as many again in the second, listed at the top of these
+notes.** None was visible to anything the project had before: the files parsed with
+zero `ERROR` nodes, the tree hashes were stable, and the corpus tests passed.
 `docs/query-coverage-findings.md` is the triage list the new harness produced; all
 eight are fixed here, plus a ninth (the directive word boundaries) found by review.
 Two of them — the dangling `else` and the `where()` markers — were semantic misreads,
@@ -1242,6 +1315,30 @@ grammar.js rule table is a JS object literal, the duplicate keys were silently
 accepted with the last definition winning. `tree-sitter generate` succeeded and
 every test passed. The only thing that surfaced it was counting the rules and
 finding 155 definition lines against 152 unique names.
+
+### Parser metrics at 4.0.0
+
+Measured on the released tree, not carried from a branch. Three different test
+counts circulated during development and two were arithmetic from a stale table.
+
+| Metric | 3.3.1 | 4.0.0 |
+|---|---|---|
+| `STATE_COUNT` | 13,764 | **14,442** |
+| `SYMBOL_COUNT` | 933 | **954** |
+| `parser.c` | 30.1 MiB | **30.9 MiB** (32,445,756 bytes) |
+| `grammar.js` | 4,959 lines | **5,303 lines** |
+| Named node types | — | **467** |
+| Named keywords | 154 | **153** (151 rules + 2 external) |
+| Corpus tests | 1,594 | **1,615** |
+| qc baseline clusters | — | **710** |
+
+Validated against **36,001 files across two independent production codebases** —
+BC.History (15,358) and a second estate (20,643) — at 0 errors and 100% byte
+coverage in both. The second corpus was added at release time and found no parser
+defect; it did find a 16% false-alarm rate in the per-file validator, whose
+byte-coverage check counted a UTF-8 BOM as dropped bytes because `bytes.strip()`
+removes ASCII whitespace only. BC.History contains no BOMs, which is why that had
+looked clean.
 
 ## [3.3.1] — 2026-08-09
 
