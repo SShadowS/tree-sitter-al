@@ -1229,9 +1229,19 @@ per chunk, then globally, then against `parsed.txt`.
 | `tools/gate_selftest.py` | 23 cases + 2 controls, 0 failed |
 | `tools/tree-harness.sh verify` | every tree-moving change enumerated by node-instance set difference and stated in its own entry above |
 
-Parser metrics at this release: `STATE_COUNT` 13,927, `SYMBOL_COUNT` 889,
-`src/parser.c` 32,304,937 bytes, `grammar.js` 4,552 lines, 110 named keyword node
-types (108 grammar rules + 2 external scanner tokens), 9 scanner tokens, 6 query files.
+Parser metrics at this release: `STATE_COUNT` 13,764, `SYMBOL_COUNT` 933,
+`src/parser.c` 31,528,907 bytes, `grammar.js` 4,959 lines, 154 named keyword node
+types (152 grammar rules + 2 external scanner tokens), 9 scanner tokens, 6 query files.
+`src/node-types.json` declares 155 named `*_keyword` types — one more than 154,
+because `object_type_keyword` is built by `alias()` and has no rule of its own.
+
+**Re-derive every number in this paragraph after the final integration merge.**
+It has been wrong before in a way no gate could catch: two branches independently
+defined `record_keyword`, `system_keyword` and `action_keyword`, and because a
+grammar.js rule table is a JS object literal, the duplicate keys were silently
+accepted with the last definition winning. `tree-sitter generate` succeeded and
+every test passed. The only thing that surfaced it was counting the rules and
+finding 155 definition lines against 152 unique names.
 
 ## [3.3.1] — 2026-08-09
 

@@ -8,7 +8,7 @@
 | **Case-sensitivity** | Keywords not matching | Use `kw()` or explicit `choice()` with case variants |
 | **Preprocessor splits** | MISSING tokens in #if contexts | Add dedicated `preproc_split_*` rule |
 | **Complex property syntax** | Property value fails to parse | Add dedicated complex property rule |
-| **Keyword as identifier** | Variable name conflicts with keyword | Add to `keyword_as_identifier` choice list |
+| **Keyword as identifier** | Variable name conflicts with keyword | Add to `keyword_as_identifier` choice list — as a bare `kw('x')`, never `$.x_keyword` |
 | **Structural mismatch** | Different node structure in tests | Update tests with `-u` if parsing is correct (no ERRORs) |
 
 ## When to Update vs Fix

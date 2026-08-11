@@ -287,7 +287,7 @@ python parse_bug_finder.py file.al debug.log
 | **Case-sensitivity** | Keywords not matching | Use `kw()` or explicit `choice()` with case variants |
 | **Preprocessor splits** | MISSING tokens in #if contexts | Add dedicated `preproc_split_*` rule |
 | **Property syntax** | Complex property fails | Add dedicated complex property rule |
-| **Keyword as identifier** | Variable name conflicts | Add to `keyword_as_identifier` choice list |
+| **Keyword as identifier** | Variable name conflicts | Add to `keyword_as_identifier` choice list — as a bare `kw('x')`, never `$.x_keyword` |
 
 ## Two rules about verification, learned the hard way in 4.0.0
 
@@ -315,10 +315,10 @@ limitation was an artifact of the attempt, and it sat unchallenged for a release
 
 | Metric | Value |
 |--------|-------|
-| parser.c size | 30.4 MiB (31,906,779 bytes) |
+| parser.c size | 30.1 MiB (31,528,907 bytes) |
 | SYMBOL_COUNT | 933 |
-| STATE_COUNT | 13,843 |
-| grammar.js lines | ~4,933 |
+| STATE_COUNT | 13,764 |
+| grammar.js lines | ~4,959 |
 | Tests | 1,594 |
 | Production success | 100% (0 ERROR and 0 MISSING nodes over 15,358 files) |
 | Named keywords | 154 (152 rules + 2 external), uniform shape |
