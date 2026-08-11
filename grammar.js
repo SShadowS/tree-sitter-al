@@ -4372,6 +4372,50 @@ module.exports = grammar({
       field('right', $._expression)
     )),
 
+    // KNOWN DEFECT, not yet fixed: an expression continued across a #if
+    // boundary is torn into statements.
+    //
+    //     r := 1
+    //     #if CLEAN25
+    //         + 2
+    //     #endif
+    //         + 3;
+    //
+    // alc 18.0.37.11445 compiles this. We produce `assignment_statement` with
+    // `right: (integer)` -- just the 1 -- and then `+ 2` and `+ 3` as floating
+    // UNFIELDED children of the statement run. The program is `1 + 3` or
+    // `1 + 2 + 3`; the tree is neither. Zero ERROR nodes, every byte covered,
+    // every node type ordinary: what moved is the PARENT.
+    //
+    // Detected by tools/validate_al_file.py's `orphan-operator-expr` check.
+    // 0 occurrences across BC.History's 15,358 files and DC, so no fixture
+    // pins it by accident and no production parse is affected today.
+    //
+    // FOUR ATTEMPTS MEASURED, so the next person does not repeat them. Each is
+    // one edit; none of this says the grammar cannot express it.
+    //
+    //  1. `optional($.preproc_conditional_expression_tail)` between `left` and
+    //     `operator` in `additive_expression`
+    //       -> unresolved conflict `_single_pattern` vs `_expression` in
+    //          case-of position -- the SAME conflict 812ace7 deleted by making
+    //          the list separator mandatory. Reopening it is a regression.
+    //  2. `repeat(seq(tail, repeat(continuation)))` appended to
+    //     `assignment_statement`
+    //       -> shift/reduce on the outer repeat at `preproc_open`.
+    //  3. as 2, with `prec.right` on the outer repeat
+    //       -> conflict moves to the inner repeat.
+    //  4. as 3, with `prec.right` on BOTH repeats
+    //       -> GENERATES CLEANLY. +259 states (14,027 -> 14,286), +5 symbols.
+    //          The #if block lands correctly INSIDE the assignment as a child.
+    //          But the trailing `+ 3` after `#endif` still parses as a separate
+    //          statement, because `_statement` can begin with a unary
+    //          expression and that alternative wins. Half-fixed, so reverted.
+    //
+    // Attempt 4 is the promising one: it needs the post-`#endif` continuation
+    // to beat the statement alternative, which is a precedence question rather
+    // than a structural one. That is design work, not a patch to land at the
+    // end of a release.
+
     // 2, BELOW `and` (4) and `or`/`xor` (3). AL is Pascal-derived and the
     // logical operators bind TIGHTER than the comparisons — the exact inverse
     // of what this rule declared until now, and the reason every BC codebase
