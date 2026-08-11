@@ -3251,7 +3251,21 @@ module.exports = grammar({
     // 3.2.0).
     preproc_if: $ => seq(
       $.preproc_open,
-      field('condition', $._preproc_expression)
+      field('condition', $._preproc_expression),
+      // A directive is LINE-SCOPED. Without this terminator the condition ran
+      // on into the next line: `#if FOO` followed by ` and b` produced
+      // `condition: (preproc_and_expression FOO b)`. The source condition is
+      // FOO alone, so every consumer evaluating this directive computed the
+      // WRONG VALUE -- with zero ERROR nodes. Corruption of meaning, not of
+      // attachment, which is why this outranks every attachment fix.
+      //
+      // `token(/\r?\n/)` rather than the `'\n'` string tree-sitter-c uses: an
+      // anonymous PATTERN token is hidden, so the terminator lands in no tree
+      // and BC.History stays byte-identical. A `'\n'` string literal is a
+      // VISIBLE anonymous child and would change every directive-bearing file.
+      // Covers LF, CRLF (the `\r` is skipped as an extra), and EOF with no
+      // trailing newline.
+      token(/\r?\n/)
     ),
 
     // A preprocessor conditional whose only content is pragmas/comments (both
@@ -3309,7 +3323,9 @@ module.exports = grammar({
     // elif differs from if/endif" reasoning.
     preproc_elif: $ => seq(
       new RustRegex('(?i)#[ \\t]*elif'),
-      field('condition', $._preproc_expression)
+      field('condition', $._preproc_expression),
+      // Same line-scoping as preproc_if above.
+      token(/\r?\n/)
     ),
 
     preproc_else: $ => new RustRegex('(?i)#[ \\t]*else'),

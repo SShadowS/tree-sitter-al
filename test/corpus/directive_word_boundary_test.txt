@@ -352,3 +352,95 @@ codeunit 1 T
                 (end_keyword))))
           (MISSING end_keyword))))))
 
+================================================================================
+`#elifX` is not `#elif` -- a directive keyword needs a word boundary
+--
+DELIBERATE NEGATIVE: the ERROR is the assertion. This file is already exempt in
+validate-grammar.sh Step 3 and release.md pre-flight #3.
+.
+alc 18.0.37.11445 REJECTS `#elifX OTHER` with AL0621 "Preprocessor directive
+expected", and ACCEPTS `#elif OTHER` in the identical file. Same rule the
+existing cases here pin for `#regionX` and `#pragmaX`.
+.
+This case previously lived in scanner_single_read_dispatch_test.txt asserting
+the OPPOSITE -- that `#elifX` parses as a clean `#elif` with a condition. That
+made it the sixth shipped fixture blessing a defect. It surfaced only because
+bounding the directive condition to its line made the malformed directive fail
+to parse; the fixture had been green while asserting something alc refuses.
+================================================================================
+
+codeunit 1 T
+{
+    procedure X()
+    var
+        x: Integer;
+    begin
+        if x = 1 then begin
+            x := 9;
+#if not CLEAN22
+        end;
+#elifX OTHER
+        x := 2;
+        end else begin x := 3; end;
+#endif
+    end;
+
+--------------------------------------------------------------------------------
+
+(ERROR
+  (codeunit_keyword)
+  (integer)
+  (identifier)
+  (procedure_keyword)
+  name: (identifier)
+  (var_section
+    (var_keyword)
+    body: (var_body
+      (variable_declaration
+        name: (identifier)
+        type: (type_specification
+          (basic_type)))))
+  (begin_keyword)
+  (statement_block
+    (if_statement
+      (if_keyword)
+      condition: (comparison_expression
+        left: (identifier)
+        operator: (comparison_operator)
+        right: (integer))
+      (then_keyword)
+      then_branch: (code_block
+        (begin_keyword)
+        body: (statement_block
+          (assignment_statement
+            left: (identifier)
+            operator: (assignment_operator)
+            right: (integer))
+          (preproc_conditional_statement
+            (preproc_if
+              (preproc_open)
+              condition: (preproc_not_expression
+                (identifier)))
+            (call_statement
+              function: (identifier))
+            (preproc_elif
+              (ERROR
+                (identifier))
+              condition: (identifier))
+            (assignment_statement
+              left: (identifier)
+              operator: (assignment_operator)
+              right: (integer))
+            (identifier)
+            (identifier)
+            (code_block
+              (begin_keyword)
+              body: (statement_block
+                (assignment_statement
+                  left: (identifier)
+                  operator: (assignment_operator)
+                  right: (integer)))
+              (end_keyword))
+            (preproc_endif
+              (preproc_close))))
+        (end_keyword)))))
