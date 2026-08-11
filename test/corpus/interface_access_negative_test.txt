@@ -1,0 +1,74 @@
+================================================================================
+interface access in the HEADER is not AL: bare name
+--
+DELIBERATE NEGATIVE -- the ERROR node is the assertion, and this file is on the
+exemption list in both validate-grammar.sh Step 3 and release.md pre-flight #3.
+.
+Until 4.0.0 `interface_declaration` carried an optional `Access = X` clause
+between the object name and the '{'. It was not AL. alc 18.0.33 rejects it:
+    interface IPub Access = Public { procedure P(); }
+      -> AL0104: Syntax error, '{' expected
+      -> AL0104: Syntax error, '}' expected
+.
+The clause also declared field('access_value', ...), which detector 8 measured
+as populated ZERO times across BC.History's 15,358 files -- necessarily, since
+no input the compiler accepts can reach it. Accepting the form turned a compile
+error into a clean parse.
+.
+Pinned here: the offending run is an ERROR, it covers the whole `Access = Public`
+span so no byte vanishes, and recovery still yields a well-formed interface_body.
+For the form AL *does* accept, see field_over_bare_keyword_test.txt and
+interface_extends_test.txt.
+.
+NOTE the '.' filler lines above. A BLANK line inside a `====` header block makes
+tree-sitter drop the test silently -- no warning, and the suite total simply does
+not move. Both cases in this file were written with blank lines first and both
+vanished; the total stayed at 1574 instead of going to 1576, which is the only
+symptom there is.
+================================================================================
+interface IPub Access = Public
+{
+    procedure P();
+}
+--------------------------------------------------------------------------------
+
+(source_file
+  (interface_declaration
+    (interface_keyword)
+    object_name: (identifier)
+    (ERROR
+      (identifier))
+    body: (interface_body
+      (interface_procedure
+        (procedure_keyword)
+        name: (identifier)
+        (interface_procedure_suffix)))))
+
+================================================================================
+interface access in the HEADER is not AL: after an extends clause
+--
+Same rejection, different diagnostic -- alc reads `access` as a second entry in
+the extends list and asks for the comma:
+    interface IExt extends IBase access = Internal { procedure Q(); }
+      -> AL0104: Syntax error, ',' expected
+extends is the only thing that may follow the object name.
+================================================================================
+interface IExt extends IBase access = Internal
+{
+    procedure Q();
+}
+--------------------------------------------------------------------------------
+
+(source_file
+  (interface_declaration
+    (interface_keyword)
+    object_name: (identifier)
+    (extends_keyword)
+    extends_interface: (identifier)
+    (ERROR
+      (identifier))
+    body: (interface_body
+      (interface_procedure
+        (procedure_keyword)
+        name: (identifier)
+        (interface_procedure_suffix)))))

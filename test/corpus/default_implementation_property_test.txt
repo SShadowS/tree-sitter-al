@@ -178,7 +178,9 @@ enum 200 "Complex Enum" implements "IComplexInterface"
             right: (quoted_identifier))))
       (property
         name: (property_name)
-        value: (identifier))
+        value: (option_member_list
+          (option_member
+            (public_keyword))))
       (enum_value_declaration
         value_id: (integer)
         value_name: (identifier)

@@ -165,24 +165,33 @@ xmlport 50100 X
                     name: (identifier)))))))))))
 
 ================================================================================
-interface_declaration.access_value -- a sixth site the brief did not list
+interface access is a body property -- the sixth site was deleted, not fixed
 --
-Same 2-of-N shape as object_reference_type: `$.internal_keyword` carried the
-field, the sibling `kw('public')` did not. Found by scanning grammar.js for
-every field() containing a bare kw() rather than trusting the site list.
-NOTE: alc 18.0.37.11445 REJECTS this header form with AL0104 ("'{' expected")
--- interface access is written as a body property. The branch is therefore
-reachable only on input the compiler refuses, which makes it the lowest-value
-of the six; it is fixed for consistency, because leaving one instance of a
-defect class you are sweeping is how the class survives.
+This case used to pin `interface IPub Access = Public { }`, a HEADER form, and
+assert `access_value: (public_keyword)` on it. The note it carried already
+recorded that alc rejects that input; it was kept anyway "for consistency".
+That was the wrong call, and detector 8 caught it: over BC.History's 15,358
+files `interface_declaration.access_value` was populated ZERO times, because no
+valid AL can populate it. alc 18.0.33 on both spellings:
+    interface I Access = Internal { }           -> AL0104 "'{' expected"
+    interface I extends B access = Internal { } -> AL0104 "',' expected"
+The clause is gone from grammar.js as of this commit, so the header form is now
+an ERROR -- pinned in interface_access_negative_test.txt.
+What AL actually writes is a body property, which the generic `property` rule
+already handled all along. That is what this case pins now, for all four access
+levels, so the shape is asserted to be the SAME for each. `Public` reached
+`(identifier)` and the other three reached a keyword node until `public_keyword`
+was added to `option_member` in this same commit.
 ================================================================================
-interface IPub Access = Public
+interface IPub
 {
-    procedure P()
+    Access = Public;
+    procedure P();
 }
-interface IInt Access = Internal
+interface IInt
 {
-    procedure Q()
+    Access = Internal;
+    procedure Q();
 }
 --------------------------------------------------------------------------------
 
@@ -190,17 +199,27 @@ interface IInt Access = Internal
   (interface_declaration
     (interface_keyword)
     object_name: (identifier)
-    access_value: (public_keyword)
     body: (interface_body
+      (property
+        name: (property_name)
+        value: (option_member_list
+          (option_member
+            (public_keyword))))
       (interface_procedure
         (procedure_keyword)
-        name: (identifier))))
+        name: (identifier)
+        (interface_procedure_suffix))))
   (interface_declaration
     (interface_keyword)
     object_name: (identifier)
-    access_value: (internal_keyword)
     body: (interface_body
+      (property
+        name: (property_name)
+        value: (option_member_list
+          (option_member
+            (internal_keyword))))
       (interface_procedure
         (procedure_keyword)
-        name: (identifier)))))
+        name: (identifier)
+        (interface_procedure_suffix)))))
 

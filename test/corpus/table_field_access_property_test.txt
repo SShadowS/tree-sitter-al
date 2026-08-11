@@ -68,7 +68,9 @@ table 50100 "Test Table"
             body: (declaration_body
               (property
                 name: (property_name)
-                value: (identifier))
+                value: (option_member_list
+                  (option_member
+                    (public_keyword))))
               (property
                 name: (property_name)
                 value: (string_literal)))))))))
@@ -124,4 +126,6 @@ table 50101 "Another Test"
             body: (declaration_body
               (property
                 name: (property_name)
-                value: (identifier)))))))))
+                value: (option_member_list
+                  (option_member
+                    (public_keyword)))))))))))

@@ -1757,51 +1757,6 @@
           ]
         },
         {
-          "type": "CHOICE",
-          "members": [
-            {
-              "type": "SEQ",
-              "members": [
-                {
-                  "type": "TOKEN",
-                  "content": {
-                    "type": "PATTERN",
-                    "value": "(?i)access"
-                  }
-                },
-                {
-                  "type": "STRING",
-                  "value": "="
-                },
-                {
-                  "type": "FIELD",
-                  "name": "access_value",
-                  "content": {
-                    "type": "CHOICE",
-                    "members": [
-                      {
-                        "type": "SYMBOL",
-                        "name": "internal_keyword"
-                      },
-                      {
-                        "type": "SYMBOL",
-                        "name": "public_keyword"
-                      },
-                      {
-                        "type": "SYMBOL",
-                        "name": "identifier"
-                      }
-                    ]
-                  }
-                }
-              ]
-            },
-            {
-              "type": "BLANK"
-            }
-          ]
-        },
-        {
           "type": "STRING",
           "value": "{"
         },
@@ -5060,6 +5015,10 @@
         {
           "type": "SYMBOL",
           "name": "protected_keyword"
+        },
+        {
+          "type": "SYMBOL",
+          "name": "public_keyword"
         },
         {
           "type": "SYMBOL",

@@ -469,15 +469,17 @@ module.exports = grammar({
         $.extends_keyword,
         field('extends_interface', $._identifier_or_quoted)
       )),
-      optional(seq(
-        kw('access'),
-        '=',
-        field('access_value', choice(
-          $.internal_keyword,
-          $.public_keyword,
-          $.identifier
-        ))
-      )),
+      // NOTE: there is deliberately no `Access = X` clause here. AL writes
+      // interface access as a BODY PROPERTY (`interface I { Access = Internal; }`),
+      // which the generic `property` rule already handles. The header form was
+      // accepted here until 4.0.0 and carried a field('access_value', ...) that
+      // no valid AL could ever populate — 0 occurrences in BC.History's 15,358
+      // files, and alc 18.0.33 rejects both spellings outright:
+      //   interface I Access = Internal { }            -> AL0104 "'{' expected"
+      //   interface I extends B access = Internal { }  -> AL0104 "',' expected"
+      // Keeping it turned a compiler error into a clean parse and left a
+      // permanently-empty field in node-types.json. See
+      // test/corpus/interface_access_negative_test.txt, which pins the ERROR.
       '{',
       optional(field('body', $.interface_body)),
       '}'
@@ -1174,6 +1176,15 @@ module.exports = grammar({
       $.local_keyword,       // 'Local' as option member
       $.internal_keyword,    // 'Internal' as option member
       $.protected_keyword,   // 'Protected' as option member
+      // 'Public' as option member. AL's four access levels are Local, Internal,
+      // Protected and Public; the first three were named here and the fourth was
+      // not, so `Access = Public;` produced `value: (identifier)` while
+      // `Access = Internal;` produced `value: (option_member_list (option_member
+      // (internal_keyword)))` — the same property with two shapes depending on
+      // which level was written. This is also the only remaining reference to
+      // $.public_keyword now that interface_declaration's dead header clause is
+      // gone, so dropping it would orphan that rule.
+      $.public_keyword,      // 'Public' as option member
       $.boolean,             // true/false as option member
     ),
 

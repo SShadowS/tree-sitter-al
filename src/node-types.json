@@ -7464,24 +7464,6 @@
     "type": "interface_declaration",
     "named": true,
     "fields": {
-      "access_value": {
-        "multiple": false,
-        "required": false,
-        "types": [
-          {
-            "type": "identifier",
-            "named": true
-          },
-          {
-            "type": "internal_keyword",
-            "named": true
-          },
-          {
-            "type": "public_keyword",
-            "named": true
-          }
-        ]
-      },
       "body": {
         "multiple": false,
         "required": false,
@@ -9875,6 +9857,10 @@
         },
         {
           "type": "protected_keyword",
+          "named": true
+        },
+        {
+          "type": "public_keyword",
           "named": true
         },
         {
