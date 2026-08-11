@@ -64,6 +64,13 @@ python parse_bug_finder.py file.al debug.log   # Analyze parsing bugs
    point of your test, generate the expectation from `tree-sitter parse` output instead, and
    prove the fixture can fail by renaming a field to `bogus:`.
 
+**A third trap, in the corpus format itself: a blank line inside a `====` test header
+makes tree-sitter drop that test silently.** No warning, no error — the case simply is
+not run, and the total moves by less than you added. It was caught only by adding a
+5-case fixture and noticing the suite count had not changed. After adding fixtures,
+check the total moved by exactly the number of cases you wrote; a header block must be
+contiguous.
+
 **Common Test Options:**
 - `-i "pattern"` - Include tests matching pattern
 - `-e "pattern"` - Exclude tests matching pattern
@@ -74,9 +81,9 @@ python parse_bug_finder.py file.al debug.log   # Analyze parsing bugs
 ## Architecture
 
 **Core Files:**
-- `grammar.js` - Main grammar definition (~4,121 lines). Never edit `src/parser.c` (auto-generated)
+- `grammar.js` - Main grammar definition (~4,552 lines). Never edit `src/parser.c` (auto-generated)
 - `src/scanner.c` - External scanner for property disambiguation and preprocessor patterns
-- `test/corpus/` - Test suite with AL code and expected parse trees (1,514 tests)
+- `test/corpus/` - Test suite with AL code and expected parse trees (567 files, 1,562 cases)
 - `queries/` - 6 query files (highlights, locals, tags, indents, folds, textobjects)
 
 **Key Design Principles (V2 architecture):**
@@ -274,17 +281,37 @@ python parse_bug_finder.py file.al debug.log
 | **Property syntax** | Complex property fails | Add dedicated complex property rule |
 | **Keyword as identifier** | Variable name conflicts | Add to `keyword_as_identifier` choice list |
 
+## Two rules about verification, learned the hard way in 4.0.0
+
+**A generated artifact can never fail a contract, because it is re-derived from the thing
+being tested.** `src/node-types.json` tells you what the grammar *currently does*.
+`tools/check-field-types.py` is hand-maintained, so it is the only thing that can tell you
+what the grammar is *supposed to do* — and it is what gates. Checking a field's shape in
+`node-types.json` and calling the invariant verified is necessary and not sufficient: a
+narrowing that `node-types.json` reports happily still fails Step 5b, which is the gate
+working. The same distinction applies to any generated file you are tempted to read as a
+check.
+
+**"I tried it and it forced N conflicts" measures one edit, not the grammar.** Record which
+edit was tried, or a half-finished attempt gets filed as an inherent limit and nobody
+revisits it. This happened: adding `code_block` to `_statement_inner` was recorded as
+forcing a conflict per host and a GLR fork on every `begin`. It does — until you also delete
+the seven host arms that already carried their own `field(X, $.code_block)` beside
+`fieldedStatement($, X)`, which were giving each host a second derivation of the same
+string. With those removed there are zero conflicts and the parser gets *smaller*. The
+limitation was an artifact of the attempt, and it sat unchallenged for a release.
+
 ## Parser Metrics
 
 **Note:** These metrics are approximate and may drift as the grammar evolves. Verify with `wc -c src/parser.c` and `grep -E 'SYMBOL_COUNT|STATE_COUNT' src/parser.c` if precision matters.
 
 | Metric | Value |
 |--------|-------|
-| parser.c size | 26.0 MB |
-| SYMBOL_COUNT | ~846 |
-| STATE_COUNT | ~12,545 |
-| grammar.js lines | ~4,121 |
-| Tests | 1,514 |
+| parser.c size | 30.8 MB |
+| SYMBOL_COUNT | 889 |
+| STATE_COUNT | 13,927 |
+| grammar.js lines | ~4,552 |
+| Tests | 1,562 |
 | Production success | 100% (0 errors) |
 | Named keywords | 110 (108 rules + 2 external), uniform shape |
 | Query files | 6 (highlights, locals, tags, indents, folds, textobjects) |
@@ -312,6 +339,7 @@ Exit `0` + `test.app` written = compiler accepts. Exit `1` with no `test.app` = 
 **Three traps that make a working probe look like a rejection.** All three exit `1` with an empty error log, which is indistinguishable from a real compile error:
 - **No `application` or `dependencies` key.** Those pull in Base/System Application symbol packages that are not present locally; without the symbols the project fails to load and emits *no diagnostics at all* — for valid and invalid code alike, so the probe silently loses all discriminating power. `runtime` must be one the installed `al` supports (`15.0` works; `12.0` does not).
 - **Relative paths.** `/project:.` exits `1` with an empty error log — pass absolute paths for both `/project:` and `/out:`.
+- **`/packagecachepath:` cuts both ways.** Pointed at an EMPTY directory it fails with `AL1022` — omit it and the compiler finds its default cache. But when you have real symbol packages (a 28.0 cache, say), it is REQUIRED: without it alc emits `AL1021`. Check which situation you are in rather than copying either form.
 - **One case file at a time.** `al compile` compiles *every* `.al` in the project directory, so a leftover probe file fails the run you are reading.
 
 Sanity-check the probe before trusting a rejection: compile a form you know is valid and confirm exit `0` + `test.app`. If that fails too, the project is broken, not the syntax. Example: confirmed `Codeunit::<integer>` is valid AL (old-school soft cross-extension reference) when both LLMs claimed otherwise.

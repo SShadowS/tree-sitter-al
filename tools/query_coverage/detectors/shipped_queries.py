@@ -18,7 +18,7 @@ from __future__ import annotations
 
 import hashlib
 import re
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from pathlib import Path
 
 from ..model import Finding, normalize_text
@@ -160,10 +160,22 @@ class KeywordCoverageContext:
 
     `query` is a tree_sitter.Query; typed loosely because this module imports
     tree_sitter lazily inside functions, never at module level.
+
+    `reported` is deliberately mutable state living on a frozen dataclass:
+    frozen forbids rebinding the attribute, not mutating the set it names, and
+    the set is what has to be shared. See its own note below.
     """
 
     query: object
     operators: frozenset
+    # Node types already reported, for the WHOLE run. The invariant this
+    # detector enforces is "no *_keyword node type anywhere in the corpus goes
+    # uncaptured", which is a property of the run, not of a file -- so one
+    # uncaptured type is one finding, not one per file that contains it.
+    # Deduping per call instead put up to 15,358 identical findings (one per
+    # corpus file) into findings.jsonl for a single uncaptured type: same
+    # cluster, same fingerprint, ~260x the rows.
+    reported: set = field(default_factory=set)
 
 
 def keyword_coverage_context(
@@ -191,17 +203,16 @@ def detect_keyword_coverage(
                 captured.add(node.id)
 
     findings: list[Finding] = []
-    seen: set[str] = set()
 
     for node in _tree.walk(tree.root_node):
         is_keyword = node.is_named and node.type.endswith("_keyword")
         is_operator = not node.is_named and node.type in context.operators
         if not (is_keyword or is_operator):
             continue
-        if node.id in captured or node.type in seen:
+        if node.id in captured or node.type in context.reported:
             continue
 
-        seen.add(node.type)
+        context.reported.add(node.type)
         findings.append(
             Finding(
                 detector=DETECTOR,

@@ -13,7 +13,7 @@ def test_summary_lists_clusters_most_frequent_first(tmp_path: Path):
     clusters = [cl("gaps|a", 2), cl("gaps|b", 10)]
     diff = baseline.Diff()
 
-    qc.write_summary(out, clusters, diff, never_seen=[])
+    qc.write_summary(out, clusters, diff, never_seen=[], inert_checks=[])
 
     body = out.read_text(encoding="utf-8")
     assert body.index("gaps|b") < body.index("gaps|a")
@@ -23,7 +23,7 @@ def test_summary_reports_new_and_fixed(tmp_path: Path):
     out = tmp_path / "summary.md"
     diff = baseline.Diff(new=[cl("gaps|new", 1)], fixed=["gaps|old"])
 
-    qc.write_summary(out, [cl("gaps|new", 1)], diff, never_seen=[])
+    qc.write_summary(out, [cl("gaps|new", 1)], diff, never_seen=[], inert_checks=[])
 
     body = out.read_text(encoding="utf-8")
     assert "gaps|new" in body
@@ -33,9 +33,111 @@ def test_summary_reports_new_and_fixed(tmp_path: Path):
 def test_summary_reports_never_observed_types(tmp_path: Path):
     out = tmp_path / "summary.md"
 
-    qc.write_summary(out, [], baseline.Diff(), never_seen=["ghost_node"])
+    qc.write_summary(out, [], baseline.Diff(), never_seen=["ghost_node"], inert_checks=[])
 
     assert "ghost_node" in out.read_text(encoding="utf-8")
+
+
+def test_summary_reports_a_check_that_cannot_produce_a_finding(tmp_path: Path):
+    """A check that is vacuous by construction must say so in the report.
+
+    Mirrors the EXCLUDED_ANCHORS section: the harness's own output is the only
+    place a reader learns that a detector ran and could not have failed. The
+    real content comes from inventory.inert_checks(); this pins that
+    write_summary renders it.
+    """
+    out = tmp_path / "summary.md"
+
+    qc.write_summary(
+        out,
+        [],
+        baseline.Diff(),
+        never_seen=[],
+        inert_checks=[("inventory.meta_check", "vacuous by construction: the wildcard")],
+    )
+
+    body = out.read_text(encoding="utf-8")
+    assert "Checks that are vacuous by construction" in body
+    assert "inventory.meta_check" in body
+    assert "vacuous by construction: the wildcard" in body
+
+
+def test_summary_omits_the_vacuous_section_when_every_check_is_live(tmp_path: Path):
+    out = tmp_path / "summary.md"
+
+    qc.write_summary(out, [], baseline.Diff(), never_seen=[], inert_checks=[])
+
+    assert "vacuous by construction" not in out.read_text(encoding="utf-8")
+
+
+def test_accept_refuses_an_empty_findings_file(tmp_path: Path):
+    """An interrupted or concurrently-truncated `run` leaves findings.jsonl
+    empty. `json.loads(lines[0])` on that raised a bare IndexError with no
+    filename and no hint -- a diagnosable failure is the whole difference
+    between "the tool is broken" and "regenerate the report".
+    """
+    reports_dir = tmp_path / "tools" / "query_coverage" / "reports"
+    reports_dir.mkdir(parents=True)
+    (reports_dir / "findings.jsonl").write_text("", encoding="utf-8")
+    baseline_path = tmp_path / "baseline.json"
+
+    code = qc.main(["accept", "--repo-root", str(tmp_path), "--baseline", str(baseline_path)])
+
+    assert code == baseline.EXIT_CORPUS_BROKEN
+    assert not baseline_path.exists()
+
+
+def test_accept_refuses_a_findings_file_whose_header_is_not_json(tmp_path: Path):
+    reports_dir = tmp_path / "tools" / "query_coverage" / "reports"
+    reports_dir.mkdir(parents=True)
+    (reports_dir / "findings.jsonl").write_text("not json at all\n", encoding="utf-8")
+    baseline_path = tmp_path / "baseline.json"
+
+    code = qc.main(["accept", "--repo-root", str(tmp_path), "--baseline", str(baseline_path)])
+
+    assert code == baseline.EXIT_CORPUS_BROKEN
+    assert not baseline_path.exists()
+
+
+def test_accept_refuses_a_truncated_finding_record(tmp_path: Path):
+    """A `run` killed mid-write leaves a truncated last line. Refuse the whole
+    file: accepting the readable prefix bakes a baseline missing whatever the
+    truncation ate, and every later run reads those as regressions.
+    """
+    reports_dir = tmp_path / "tools" / "query_coverage" / "reports"
+    reports_dir.mkdir(parents=True)
+    header = {"record": "provenance", "manifest_hash": "deadbeef", "scope": "manifest"}
+    (reports_dir / "findings.jsonl").write_text(
+        json.dumps(header)
+        + "\n"
+        + json.dumps({"cluster": "gaps|x|y", "detector": "gaps"})
+        + '\n{"cluster": "gaps|z|w", "detec',
+        encoding="utf-8",
+    )
+    baseline_path = tmp_path / "baseline.json"
+
+    code = qc.main(["accept", "--repo-root", str(tmp_path), "--baseline", str(baseline_path)])
+
+    assert code == baseline.EXIT_CORPUS_BROKEN
+    assert not baseline_path.exists()
+
+
+def test_accept_refuses_a_header_without_a_manifest_hash(tmp_path: Path):
+    """A JSON first line is not automatically a provenance header. Without
+    manifest_hash the accept path would KeyError after passing every other
+    check, at the point it writes the baseline.
+    """
+    reports_dir = tmp_path / "tools" / "query_coverage" / "reports"
+    reports_dir.mkdir(parents=True)
+    (reports_dir / "findings.jsonl").write_text(
+        json.dumps({"record": "provenance", "scope": "manifest"}) + "\n", encoding="utf-8"
+    )
+    baseline_path = tmp_path / "baseline.json"
+
+    code = qc.main(["accept", "--repo-root", str(tmp_path), "--baseline", str(baseline_path)])
+
+    assert code == baseline.EXIT_CORPUS_BROKEN
+    assert not baseline_path.exists()
 
 
 def test_run_exits_corpus_broken_when_manifest_drifted(tmp_path: Path, monkeypatch):

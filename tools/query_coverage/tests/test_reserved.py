@@ -141,3 +141,18 @@ def test_whitelist_matches_the_grammar():
 
 def test_hard_reserved_and_whitelist_are_disjoint():
     assert not (reserved.HARD_RESERVED & reserved.CONTEXTUAL_WHITELIST)
+
+
+def test_reportable_is_hard_reserved_minus_the_whitelist(monkeypatch):
+    """The whitelist subtraction is live, not decorative.
+
+    Because the two sets are disjoint as shipped, `reportable()` returns
+    HARD_RESERVED unchanged today — so asserting only that would be vacuous.
+    The overlapping pair is what shows the subtraction actually removes
+    something, which is the case a future edit to HARD_RESERVED would create.
+    """
+    assert reserved.reportable() == reserved.HARD_RESERVED
+
+    monkeypatch.setattr(reserved, "HARD_RESERVED", frozenset({"begin", "field"}))
+
+    assert reserved.reportable() == frozenset({"begin"})

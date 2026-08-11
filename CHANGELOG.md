@@ -26,7 +26,7 @@ Ordered by how much of the corpus moves. Counts are node-instance set difference
 
 | Change | Blast radius |
 |---|---|
-| **The statement terminator left `code_block` and the branch rules.** A `begin … end;` now ends at its `end`, and the `;` re-parents to whatever encloses the construct. | Re-spans **74,268** `if_statement` nodes and every `begin … end;` in the corpus. No node type, field or count changes: `if_statement` stays 129,950, `code_block` 277,131, `case_branch` 22,047, and `src/node-types.json` is byte-identical. |
+| **The statement terminator left `code_block` and the branch rules.** A `begin … end;` now ends at its `end`, and the `;` re-parents to whatever encloses the construct. | Re-spans **402,192** nodes whose end shrinks by exactly one byte — 270,148 `code_block`, 126,120 `if_statement`, 4,149 `for_statement` and the rest — plus 33 distinct `;` re-parentings with identical spans. No node type, field or count changes: `if_statement` stays 129,950, `code_block` 277,131, `case_branch` 22,047, and `src/node-types.json` is byte-identical. |
 | **A dangling `else` in a case branch now binds to the inner `if`**, not to the `case`. | 133 files. The only change in this release that alters what a program *means*. |
 | **A single-entry `DataItemLink` / `RunPageLink` / `SubPageLink` / `ColumnFilter` now parses as `link_value`**, not as a `property_expression`. | 880 files, 1,677 property sites. |
 | **`case … else` bodies are one `statement_block`** instead of a flat, individually-fielded run of statements. | 757 files, +1,316 `statement_block`. |
@@ -178,7 +178,7 @@ per chunk, then globally, then against `parsed.txt`.
   `_statement_inner` position keep swallowing a `;`.
   **This re-spans trees at scale and is the reason this release is a major bump.**
   Every `code_block`, and every `if_statement` or loop statement that ended in `;`, now
-  ends one byte earlier: **74,268 `if_statement` nodes** plus every `begin … end;` in
+  ends one byte earlier: **402,192 nodes** — 126,120 of them `if_statement` — plus every `begin … end;` in
   the corpus. What does *not* change is as important: `if_statement` (129,950),
   `code_block` (277,131) and `case_branch` (22,047) counts are identical, ERROR and
   MISSING stay at 0, and `src/node-types.json` is byte-identical — no node type and no

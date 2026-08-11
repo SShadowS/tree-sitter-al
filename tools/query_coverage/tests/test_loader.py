@@ -7,23 +7,36 @@ import pytest
 from tools.query_coverage import loader
 
 
-def test_compute_stamp_is_sha256_of_grammar_and_scanner(tmp_path: Path):
-    (tmp_path / "src").mkdir()
-    (tmp_path / "grammar.js").write_bytes(b"grammar-contents")
-    (tmp_path / "src" / "scanner.c").write_bytes(b"scanner-contents")
+def _stampable(root: Path) -> None:
+    """Write every file compute_stamp hashes, each with its own contents."""
+    (root / "src").mkdir(exist_ok=True)
+    for relative in loader.STAMPED_FILES:
+        (root / relative).write_bytes(relative.name.encode("utf-8"))
 
-    expected = hashlib.sha256(b"grammar-contents" + b"scanner-contents").hexdigest()
+
+def test_compute_stamp_is_sha256_of_every_stamped_file_in_order(tmp_path: Path):
+    _stampable(tmp_path)
+
+    expected = hashlib.sha256(
+        b"".join(relative.name.encode("utf-8") for relative in loader.STAMPED_FILES)
+    ).hexdigest()
 
     assert loader.compute_stamp(tmp_path) == expected
 
 
-def test_compute_stamp_changes_when_scanner_changes(tmp_path: Path):
-    (tmp_path / "src").mkdir()
-    (tmp_path / "grammar.js").write_bytes(b"same")
-    (tmp_path / "src" / "scanner.c").write_bytes(b"before")
+@pytest.mark.parametrize("relative", loader.STAMPED_FILES, ids=lambda p: p.name)
+def test_compute_stamp_changes_when_any_stamped_file_changes(tmp_path: Path, relative: Path):
+    """Every one of them, not just the two hand-written sources.
+
+    src/node-types.json and src/grammar.json are read DIRECTLY by detectors 3
+    and 7. While the stamp covered only grammar.js and src/scanner.c, a stale
+    or hand-edited generated artifact passed the freshness check silently and
+    the run reported findings derived from it.
+    """
+    _stampable(tmp_path)
     first = loader.compute_stamp(tmp_path)
 
-    (tmp_path / "src" / "scanner.c").write_bytes(b"after")
+    (tmp_path / relative).write_bytes(b"changed")
 
     assert loader.compute_stamp(tmp_path) != first
 
@@ -48,9 +61,7 @@ def test_ensure_library_runs_generate_before_build_when_stamp_differs(
     real build -- a real `tree-sitter generate` + `build` here would make this
     test take minutes.
     """
-    (tmp_path / "src").mkdir()
-    (tmp_path / "grammar.js").write_bytes(b"grammar")
-    (tmp_path / "src" / "scanner.c").write_bytes(b"scanner")
+    _stampable(tmp_path)
 
     calls: list[list[str]] = []
 
@@ -79,9 +90,7 @@ def test_ensure_library_raises_and_leaves_stamp_unwritten_when_generate_fails(
     since building against sources `generate` just rejected would only
     compile something equally suspect.
     """
-    (tmp_path / "src").mkdir()
-    (tmp_path / "grammar.js").write_bytes(b"grammar")
-    (tmp_path / "src" / "scanner.c").write_bytes(b"scanner")
+    _stampable(tmp_path)
 
     def fake_run(cmd, **kwargs):
         assert cmd[:2] == ["tree-sitter", "generate"], "build must not run when generate failed"
@@ -93,3 +102,41 @@ def test_ensure_library_raises_and_leaves_stamp_unwritten_when_generate_fails(
         loader.ensure_library(tmp_path)
 
     assert loader.read_stamp(tmp_path) is None
+
+
+def test_ensure_library_stamps_the_post_generate_state(tmp_path: Path, monkeypatch):
+    """The stamp must record what `generate` LEFT on disk, not what preceded it.
+
+    The stamp covers the generated artifacts, so `generate` rewriting them is
+    the normal case, not the exception. Stamping the pre-generate hashes would
+    record a state that no longer exists, and the very next run would see a
+    mismatch and regenerate + rebuild — every single time, forever.
+    """
+    _stampable(tmp_path)
+    pre_generate = loader.compute_stamp(tmp_path)
+
+    def fake_run(cmd, **kwargs):
+        if cmd[:2] == ["tree-sitter", "generate"]:
+            # What a real `generate` does: rewrite the generated artifacts.
+            (tmp_path / "src" / "node-types.json").write_bytes(b"regenerated")
+        return subprocess.CompletedProcess(cmd, 0, stdout="", stderr="")
+
+    monkeypatch.setattr(loader.subprocess, "run", fake_run)
+
+    loader.ensure_library(tmp_path)
+
+    assert loader.read_stamp(tmp_path) != pre_generate
+    assert loader.read_stamp(tmp_path) == loader.compute_stamp(tmp_path)
+
+    # ...and a second call is therefore a no-op rather than another rebuild.
+    calls: list[list[str]] = []
+    monkeypatch.setattr(
+        loader.subprocess,
+        "run",
+        lambda cmd, **kw: calls.append(cmd) or subprocess.CompletedProcess(cmd, 0, "", ""),
+    )
+    (tmp_path / loader.LIB_NAME).write_bytes(b"library")
+
+    loader.ensure_library(tmp_path)
+
+    assert calls == []

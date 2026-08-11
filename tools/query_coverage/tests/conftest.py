@@ -24,3 +24,17 @@ def al_language():
 
     lib = loader.ensure_library(loader.REPO_ROOT)
     return loader.load_language(lib)
+
+
+@pytest.fixture(scope="session")
+def node_types():
+    """The SHIPPED src/node-types.json, for tests that must not run against a
+    hand-written stand-in — a detector reading the declared universe can go
+    vacuous against real data while every fake-input test still passes."""
+    import json
+
+    from tools.query_coverage import loader
+
+    return json.loads(
+        (loader.REPO_ROOT / "src" / "node-types.json").read_text(encoding="utf-8")
+    )

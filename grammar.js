@@ -4093,7 +4093,6 @@ module.exports = grammar({
 
     _expression: $ => choice(
       // Binary operators
-      $.range_expression,
       $.multiplicative_expression,
       $.additive_expression,
       $.comparison_expression,
@@ -4140,13 +4139,51 @@ module.exports = grammar({
       kw('action'),
     )),
 
-    // --- Binary expressions ---
-
-    range_expression: $ => prec.left(8, seq(
+    // --- Range ---
+    //
+    // `..` is NOT an expression operator in AL, and this rule is deliberately
+    // absent from `_expression`. Compiler-measured: a parenthesised range as an
+    // operand of `+` is `AL0104: Syntax error, ')' expected` — a SYNTAX error,
+    // not a type error, so `1 + (1 .. 4)` has no reading at all. Ranges occur
+    // only as a whole list-literal element (`x in [1 .. 5]`) or a whole case
+    // pattern (`1 .. 5:`), which is exactly what the corpus shows: of the 141
+    // `range_expression` nodes in BC.History, 103 sit under `list_literal` and
+    // 34 under `case_branch`.
+    //
+    // It USED to be `prec.left(8)` inside `_expression`, i.e. binding tighter
+    // than both `multiplicative_expression` (7) and `additive_expression` (6),
+    // which is the exact inverse of the compiler. That produced four
+    // meaning-changing misparses in BC.History, all silent — every byte covered,
+    // no ERROR node, no node type changed:
+    //
+    //   0D .. NextCountingStartDate - 1   parsed as (0D .. NextCountingStartDate) - 1
+    //   Round(Qty / 2, 1) + 1 .. Qty      parsed as Round(...) + (1 .. Qty)
+    //   [-MaximumSetLength .. 0]          parsed as -(MaximumSetLength .. 0)   (x2)
+    //
+    // Keeping it out of `_expression` rather than lowering its precedence number
+    // makes those trees UNREPRESENTABLE instead of merely disfavoured: with no
+    // range in `_expression`, a `unary_expression` operand cannot be a range at
+    // all, so the last two have only one derivation. A precedence number would
+    // leave both trees reachable and rely on the number staying correct.
+    //
+    // The precedence still matters, for a DIFFERENT decision than the one it
+    // used to make. Removing the rule from `_expression` fixes the `left`
+    // operand and the unary case, but not the `right` one: at `0D ..
+    // NextCountingStartDate - 1` the parser reaches `-` holding a complete
+    // `right`, and must choose between reducing `range_expression` and shifting
+    // into `additive_expression`. At 8 the reduce won, and because
+    // `_case_pattern_item`'s comma is optional the leftover `- 1` was silently
+    // accepted as a SECOND case pattern — a different wrong tree, still with no
+    // ERROR node. It must be BELOW every operator that can appear inside an
+    // operand (additive 6, comparison 4, logical 2/3), so 0: a range's operands
+    // extend as far as they can, which is what makes `..` outermost.
+    range_expression: $ => prec.left(0, seq(
       field('left', $._expression),
       '..',
       field('right', $._expression)
     )),
+
+    // --- Binary expressions ---
 
     multiplicative_expression: $ => prec.left(7, seq(
       field('left', $._expression),
@@ -4163,7 +4200,37 @@ module.exports = grammar({
       field('right', $._expression)
     )),
 
-    comparison_expression: $ => prec.left(4, seq(
+    // 2, BELOW `and` (4) and `or`/`xor` (3). AL is Pascal-derived and the
+    // logical operators bind TIGHTER than the comparisons — the exact inverse
+    // of what this rule declared until now, and the reason every BC codebase
+    // writes `if (a = b) and (c = d) then` with parentheses that look
+    // redundant and are not.
+    //
+    // Compiler-measured with alc 18.0.37.11445. Accept/reject cannot
+    // discriminate `and`/`or`/`xor` grouping — every operand must be Boolean
+    // under either reading — so this uses the operand-type message, which
+    // names the operator AND the order of the types:
+    //
+    //   b := 1 = 1 and 2 = 2;   AL0175 Operator 'and' … 'Integer' and 'Integer'
+    //   b := 1 < 2 and 3 < 4;   AL0175 Operator 'and' … 'Integer' and 'Integer'
+    //   b := 1 < 2 or 3 < 4;    AL0175 Operator 'or'  … 'Integer' and 'Integer'
+    //   b := 1 <> 2 xor 3 <> 4; AL0175 Operator 'xor' … 'Integer' and 'Integer'
+    //   b := (1 = 1) and (2 = 2);  ACCEPT                              (control)
+    //
+    // `'Integer' and 'Integer'` is producible only by `1 and 2`, i.e. alc read
+    // `1 = (1 and 2) = 2`, and the parenthesised control compiles — so the
+    // instrument discriminates. Both directions were probed:
+    //
+    //   b := 1 = 1 and true;    'and' 'Integer' and 'Boolean' => 1 = (1 and true)
+    //   b := true and 1 = 1;    'and' 'Boolean' and 'Integer' => (true and 1) = 1
+    //
+    // The two groupings are NOT equivalent. With A, B, C all Boolean and all
+    // false, `A = B and C` is TRUE under the compiler and was FALSE here.
+    //
+    // Only 3 BC.History sites write an unparenthesised comparison as an operand
+    // of a logical operator, and all three are the `… and X = true` idiom where
+    // the two readings happen to agree. That is luck, not safety.
+    comparison_expression: $ => prec.left(2, seq(
       field('left', $._expression),
       field('operator', $.comparison_operator),
       field('right', $._expression)
@@ -4178,21 +4245,26 @@ module.exports = grammar({
       '='
     ),
 
+    // Measured ladder: `and` binds tighter than `or`/`xor`, which are one level
+    // and left-associative, and all three bind tighter than the comparisons.
+    // Only the last part changed here — the relative order of the three was
+    // already right, confirmed by six alc probes (`true or 1 and true` reports
+    // 'and', `true or 1 xor true` reports 'or', and so on).
     logical_expression: $ => choice(
-      // AND (prec 3)
-      prec.left(3, seq(
+      // AND (prec 4) — above OR/XOR, below `in`/`is`/`as` (5)
+      prec.left(4, seq(
         field('left', $._expression),
         field('operator', alias(kw('and'), 'and')),
         field('right', $._expression)
       )),
-      // OR (prec 2)
-      prec.left(2, seq(
+      // OR (prec 3)
+      prec.left(3, seq(
         field('left', $._expression),
         field('operator', alias(kw('or'), 'or')),
         field('right', $._expression)
       )),
-      // XOR (prec 2)
-      prec.left(2, seq(
+      // XOR (prec 3) — same level as OR, so `a or b xor c` is `(a or b) xor c`
+      prec.left(3, seq(
         field('left', $._expression),
         field('operator', alias(kw('xor'), 'xor')),
         field('right', $._expression)
@@ -4211,7 +4283,35 @@ module.exports = grammar({
 
     // --- Unary expression ---
 
-    unary_expression: $ => prec.right(7, seq(
+    // 8, not 7. It was 7 — the SAME level as `multiplicative_expression` — and
+    // because this rule is prec.RIGHT while that one is prec.LEFT, the unary won
+    // every tie: `-2 * 3` parsed as `-(2 * 3)`, and `-Amount * "Bal. VAT %"` as
+    // `-(Amount * "Bal. VAT %")`. 629 sites in 193 BC.History files.
+    //
+    // Compiler-measured with alc: the operand-type message names which operator
+    // received the mismatched pair, which pins the grouping exactly.
+    //
+    //   i := -b * 2;      AL0173  Operator '-' cannot be applied to an operand
+    //                             of type 'Boolean'      => (-b) * 2
+    //   i := -b div 2;    AL0173  same                   => (-b) div 2
+    //   i := -b mod 2;    AL0173  same                   => (-b) mod 2
+    //   i := -(b * 2);    AL0175  Operator '*' ... 'Boolean' and 'Integer'   (control)
+    //   i := (-b) * 2;    AL0173  Operator '-' ... 'Boolean'                 (control)
+    //
+    // The two controls flip, so the instrument discriminates.
+    //
+    // 8 puts it strictly between `multiplicative_expression` (7) and
+    // `subscript_expression` (9), which is the measured AL ladder: postfix
+    // (`.` 11, `[]` 9, `()` 12) binds tighter than unary, unary tighter than
+    // `* / div mod`. `-x.y`, `-a[1]` and `-f(1)` therefore keep grouping the
+    // postfix first, as they already did.
+    //
+    // No AL value changes: over truncating integer division and decimal
+    // arithmetic `-(a op b) == (-a) op b` for `*`, `/`, `div` and `mod` alike.
+    // The TREE was wrong, not the arithmetic — which is precisely why nothing
+    // caught it. `not X * Y` is never valid AL under either grouping, so only
+    // the arithmetic unaries reach real code.
+    unary_expression: $ => prec.right(8, seq(
       field('operator', choice('+', '-', alias(kw('not'), 'not'))),
       field('operand', $._expression)
     )),
@@ -4265,10 +4365,18 @@ module.exports = grammar({
 
     // --- List literal ---
 
+    // A list literal is the one expression context where a range is legal, so it
+    // takes `_list_element` rather than `_expression_list`. `argument_list` keeps
+    // `_expression_list` — `f(1 .. 5)` is not AL.
     list_literal: $ => seq(
       '[',
-      optional($._expression_list),
+      optional(seq($._list_element, repeat(seq(',', $._list_element)))),
       ']'
+    ),
+
+    _list_element: $ => choice(
+      $.range_expression,
+      $._expression,
     ),
 
     // --- Qualified enum value ---
