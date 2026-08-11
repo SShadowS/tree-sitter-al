@@ -1,0 +1,57 @@
+================================================================================
+A verbatim string that runs past its line is NOT a scanner defect -- alc does
+the same thing. `@'...'` deliberately spans newlines and alc ACCEPTS multiline
+verbatim strings (verified in isolation at 18.0.37.11445, exit 0, no
+diagnostics), so an unterminated `@'` running to the next apostrophe is
+indistinguishable from a legitimately long one -- as in Python's triple quote,
+C#'s @"..." and Rust's r"...". alc tokenises this file the same way: put
+syntactically impossible garbage inside the swallowed region and alc says
+NOTHING about it, while the identical file with the `@` deleted produces seven
+diagnostics pointing straight at it.
+.
+This file is malformed AL -- alc rejects it with AL0104 at the closing quote of
+'a', which is exactly where our verbatim_string ends. We report NO error node,
+because the leftover `a` and `'; // trailing '` are both legal statements under
+`_expression_statement`. That gap is the deliberate parse-structure-don't-
+validate choice, not a lexing disagreement.
+.
+What is pinned here is the SHAPE, not an error count: the verbatim_string must
+end at the apostrophe before `a` (swallowing `s := ` from the next line), the
+`a` must survive as its own identifier, and the trailing `//` comment must be
+inside the string_literal rather than a comment node. An error-count assertion
+would pass at zero whatever the tree looked like -- which is how this class hid
+for a whole release. NEVER add a heuristic bound (stop at `;`, at a blank line,
+at a line that "looks like code") to make this file look tidier: it would
+truncate the legitimate multiline verbatims that 167 BC.History files contain.
+================================================================================
+
+codeunit 50100 T
+{
+    procedure P()
+    begin
+        s := @'oops;
+        s := 'a'; // trailing '
+    end;
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (procedure
+        (procedure_keyword)
+        name: (identifier)
+        body: (code_block
+          (begin_keyword)
+          body: (statement_block
+            (assignment_statement
+              left: (identifier)
+              operator: (assignment_operator)
+              right: (verbatim_string))
+            (identifier)
+            (string_literal))
+          (end_keyword))))))

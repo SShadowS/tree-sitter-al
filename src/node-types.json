@@ -3465,10 +3465,6 @@
         "required": false,
         "types": [
           {
-            "type": "code_block",
-            "named": true
-          },
-          {
             "type": "statement_block",
             "named": true
           }
@@ -4353,6 +4349,11 @@
     "fields": {}
   },
   {
+    "type": "database_keyword",
+    "named": true,
+    "fields": {}
+  },
+  {
     "type": "database_reference",
     "named": true,
     "fields": {
@@ -4735,6 +4736,11 @@
   },
   {
     "type": "descending_keyword",
+    "named": true,
+    "fields": {}
+  },
+  {
+    "type": "dialog_keyword",
     "named": true,
     "fields": {}
   },
@@ -5665,6 +5671,11 @@
         }
       ]
     }
+  },
+  {
+    "type": "file_keyword",
+    "named": true,
+    "fields": {}
   },
   {
     "type": "fileuploadaction_declaration",
@@ -8282,14 +8293,30 @@
     "fields": {},
     "children": {
       "multiple": false,
-      "required": false,
+      "required": true,
       "types": [
+        {
+          "type": "action_keyword",
+          "named": true
+        },
         {
           "type": "codeunit_keyword",
           "named": true
         },
         {
+          "type": "database_keyword",
+          "named": true
+        },
+        {
+          "type": "dialog_keyword",
+          "named": true
+        },
+        {
           "type": "enum_keyword",
+          "named": true
+        },
+        {
+          "type": "file_keyword",
           "named": true
         },
         {
@@ -8301,7 +8328,19 @@
           "named": true
         },
         {
+          "type": "record_keyword",
+          "named": true
+        },
+        {
           "type": "report_keyword",
+          "named": true
+        },
+        {
+          "type": "session_keyword",
+          "named": true
+        },
+        {
+          "type": "system_keyword",
           "named": true
         },
         {
@@ -13637,6 +13676,10 @@
           "named": true
         },
         {
+          "type": "code_block",
+          "named": true
+        },
+        {
           "type": "comparison_expression",
           "named": true
         },
@@ -15615,6 +15658,10 @@
           "named": true
         },
         {
+          "type": "code_block",
+          "named": true
+        },
+        {
           "type": "comparison_expression",
           "named": true
         },
@@ -15867,6 +15914,10 @@
         },
         {
           "type": "case_statement",
+          "named": true
+        },
+        {
+          "type": "code_block",
           "named": true
         },
         {
@@ -16296,6 +16347,10 @@
         },
         {
           "type": "case_statement",
+          "named": true
+        },
+        {
+          "type": "code_block",
           "named": true
         },
         {
@@ -16839,6 +16894,10 @@
           "named": true
         },
         {
+          "type": "code_block",
+          "named": true
+        },
+        {
           "type": "comparison_expression",
           "named": true
         },
@@ -17210,6 +17269,10 @@
         },
         {
           "type": "case_statement",
+          "named": true
+        },
+        {
+          "type": "code_block",
           "named": true
         },
         {
@@ -18803,6 +18866,10 @@
           "named": true
         },
         {
+          "type": "code_block",
+          "named": true
+        },
+        {
           "type": "comparison_expression",
           "named": true
         },
@@ -19178,6 +19245,10 @@
         },
         {
           "type": "case_statement",
+          "named": true
+        },
+        {
+          "type": "code_block",
           "named": true
         },
         {
@@ -21934,6 +22005,11 @@
     "fields": {}
   },
   {
+    "type": "session_keyword",
+    "named": true,
+    "fields": {}
+  },
+  {
     "type": "signed_integer_list",
     "named": true,
     "fields": {},
@@ -22192,6 +22268,10 @@
         },
         {
           "type": "case_statement",
+          "named": true
+        },
+        {
+          "type": "code_block",
           "named": true
         },
         {
@@ -25970,6 +26050,10 @@
     "named": false
   },
   {
+    "type": "database",
+    "named": false
+  },
+  {
     "type": "dataitem",
     "named": false
   },
@@ -25991,6 +26075,10 @@
   },
   {
     "type": "descending",
+    "named": false
+  },
+  {
+    "type": "dialog",
     "named": false
   },
   {
@@ -26083,6 +26171,10 @@
   },
   {
     "type": "fields",
+    "named": false
+  },
+  {
+    "type": "file",
     "named": false
   },
   {
@@ -26417,6 +26509,10 @@
   },
   {
     "type": "separator",
+    "named": false
+  },
+  {
+    "type": "session",
     "named": false
   },
   {

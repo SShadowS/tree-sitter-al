@@ -139,7 +139,8 @@ table 50000 TestTable
                 value: (aggregate_formula
                   function: (aggregate_function)
                   target: (calc_field_reference
-                    (keyword_identifier)
+                    (keyword_identifier
+                      (system_keyword))
                     (identifier)
                     (identifier))
                   (where_clause

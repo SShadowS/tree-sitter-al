@@ -1,0 +1,196 @@
+================================================================================
+AL's identifier rule is C#'s, and these five classes were missing from it.
+Measured against alc 18.0.37.11445 with a discriminating control on every probe:
+alc's start class is `Lu Ll Lt Lm Lo Nl _` and its continue class adds
+`Mn Mc Nd Pc Cf`. grammar.js had `[\p{L}_][\p{L}\p{N}_]*`, which omits Nl at
+start and omits Mn, Mc, Pc and Cf entirely -- so five kinds of VALID AL, which
+alc compiles, were shredded into an identifier plus an ERROR node.
+.
+Each case below uses the PROPERTY form on purpose. That is the scanner path:
+PROPERTY_NAME is decided in src/scanner.c from the generated range tables in
+src/unicode_id.h, BEFORE the grammar's own lexer sees the text. Changing the
+regex without regenerating those tables makes the two disagree, and the failure
+is exactly this -- the grammar lexes the whole identifier while the scanner
+stops at the mark and declines, so the property becomes an ERROR. Verified by
+doing precisely that: with grammar.js changed and unicode_id.h stale, case 1
+below produced `(ERROR (identifier) (integer))`. Regenerating fixed it.
+.
+`python tools/gen-unicode-id-table.py --check` is the standing guard.
+.
+1. Mn -- a combining mark continues an identifier (U+0301 COMBINING ACUTE)
+================================================================================
+
+table 50100 T
+{
+    Ók = 5;
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (table_declaration
+    (table_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (property
+        name: (property_name)
+        value: (integer)))))
+
+================================================================================
+2. Mc -- a spacing combining mark continues an identifier (U+0903 DEVANAGARI
+SIGN VISARGA)
+================================================================================
+
+table 50100 T
+{
+    Oःk = 5;
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (table_declaration
+    (table_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (property
+        name: (property_name)
+        value: (integer)))))
+
+================================================================================
+3. Pc -- a connector punctuation continues an identifier (U+203F UNDERTIE).
+`_` is itself Pc, so \p{Pc} subsumes the explicit underscore in the rule.
+================================================================================
+
+table 50100 T
+{
+    O‿k = 5;
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (table_declaration
+    (table_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (property
+        name: (property_name)
+        value: (integer)))))
+
+================================================================================
+4. Cf -- a format character continues an identifier (U+200C ZWNJ). Note this
+is the SAME category as the U+E0041 tag character that must NOT start one; Cf
+is a legal continuer and an illegal starter, which is why the two classes are
+separate tables rather than one.
+================================================================================
+
+table 50100 T
+{
+    O‌k = 5;
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (table_declaration
+    (table_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (property
+        name: (property_name)
+        value: (integer)))))
+
+================================================================================
+5. Nl -- a letter-number STARTS an identifier (U+2160 ROMAN NUMERAL ONE).
+The only addition to the start class; \p{L} does not include Nl.
+================================================================================
+
+table 50100 T
+{
+    ⅠOk = 5;
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (table_declaration
+    (table_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (property
+        name: (property_name)
+        value: (integer)))))
+
+================================================================================
+6. The same widening on the GRAMMAR path rather than the scanner path -- a
+variable declaration, where the generated lexer decides alone. Both paths must
+agree, which is the whole point of generating unicode_id.h from parser.c.
+================================================================================
+
+codeunit 50100 C
+{
+    var
+        Ók: Integer;
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (var_section
+        (var_keyword)
+        body: (var_body
+          (variable_declaration
+            name: (identifier)
+            type: (type_specification
+              (basic_type))))))))
+
+================================================================================
+U+FEFF is in \p{Cf} AND in the scanner's whitespace set -- and the two agree.
+This is the one codepoint where widening the continue class to \p{Cf} collides
+with existing behaviour: grammar.js lists /﻿/ in `extras` and
+src/scanner.c's is_extra_space() treats U+FEFF as whitespace, both deliberately,
+for the BOM. So the same character is simultaneously an identifier continuer and
+a skippable extra, and the two components could have split it.
+.
+They do not. tree-sitter's longest-match makes the identifier win, and the
+scanner's read_word_ci consumes U+FEFF through the SAME generated table, so
+PROPERTY_NAME spans the same bytes the grammar's lexer would. Verified in six
+positions -- BOM inside a property name, at the END of one, between the name and
+its `=`, inside a variable name, at the end of one, and after a var attribute --
+all with zero errors and consistent spans.
+.
+ALC AGREES that U+FEFF continues an identifier: `O<U+FEFF>k: Integer;` compiles
+(18.0.37.11445, discriminating controls), as do U+200B, U+200C, U+200D, U+00AD,
+U+2060 and U+061C. That is why \p{Cf} is NOT excluded here. Do not "simplify"
+this by removing U+FEFF from the class or from `extras` -- each is load-bearing
+for a different position, and the accompanying negative fixture pins the
+consequence.
+================================================================================
+
+table 50100 T
+{
+    O﻿k = 5;
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (table_declaration
+    (table_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (property
+        name: (property_name)
+        value: (integer)))))

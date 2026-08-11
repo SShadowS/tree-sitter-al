@@ -23,11 +23,24 @@ keyword_as_identifier: $ => prec(-10, choice(
 )),
 ```
 
-The `prec(-10)` makes this the last resort, so a real keyword use always wins. When adding new keywords that can also be identifiers, add them to this choice list — use `$.x_keyword` if a named rule already exists, otherwise `kw('x')`.
+The `prec(-10)` makes this the last resort, so a real keyword use always wins.
+
+**When adding to this list, use a bare `kw('x')` — do NOT reach for `$.x_keyword` even when one exists.** The rule reads the other way round from the obvious instinct, and the instinct is what produced the mixed list above. `keyword_as_identifier` is consumed as `alias($.keyword_as_identifier, $.identifier)`, so the node it produces claims to be a plain `identifier`, and a plain `identifier` is a **leaf**. A named alternative gives that "identifier" a named child, which no other `identifier` in the grammar has:
+
+```
+parameter name: identifier            <- `Type`,  bare kw('type')     — leaf, correct
+parameter name: identifier
+                  key_keyword         <- `Key`,   $.key_keyword       — named child
+                    "key"
+```
+
+Three spellings (`Key`, `Table`, `Dataset`) currently do this and the other seven do not. That is a live two-shape inconsistency on `identifier`, the most common node type in the grammar; it is **not** fixed, and it is tracked separately because its fix direction is the opposite of the two below — here the uniform shape is the *leaf*, so it means demoting three named alternatives to bare `kw()`, not promoting seven.
+
+Contrast `keyword_identifier` (no `as`), which is a distinct node type that exists precisely to say "a keyword stands here". There the named child is added information and all thirteen alternatives are named. **Which way a mixed choice should be made uniform depends on what the outer node claims to be**, so check that before converting either way.
 
 ## Named Keywords
 
-110 keywords are named nodes for query matching — 108 grammar rules plus the external `begin_keyword`/`end_keyword`. Always wrap `kw()` in an `alias()` to the canonical lowercase spelling:
+154 keywords are named nodes for query matching — 152 grammar rules plus the external `begin_keyword`/`end_keyword`. Always wrap `kw()` in an `alias()` to the canonical lowercase spelling:
 
 ```javascript
 procedure_keyword: $ => alias(kw('procedure'), 'procedure'),
@@ -53,22 +66,26 @@ A named rule whose whole body is a single token collapses *into* that token, so 
 
 | body | child | count |
 |---|---|---|
-| `alias(kw('word'), 'word')` → STRING | one anonymous `"word"` child | 95 |
+| `alias(kw('word'), 'word')` → STRING | one anonymous `"word"` child | 139 |
 | `kwCases('word', …)` → STRING, every spelling aliased to `'word'` | one anonymous `"word"` child | 13 |
 | external scanner token | none — cannot take a child | 2 |
 
 The child's type is the canonical lowercase spelling whatever the source used: `XmlPort` gives `(xmlport_keyword "xmlport")`, while the node's own text stays `XmlPort`.
 
-`node-types.json` **cannot** confirm this: it lists anonymous children only when they sit inside a field, and none of these do, so all 110 look childless there. **Read a keyword's text from the node itself, never by descending into a child** — that stays correct for the two external tokens as well, and it survives any future change to the anonymous layer.
+`node-types.json` **cannot** confirm this: it lists anonymous children only when they sit inside a field, and none of these do, so all 154 look childless there. **Read a keyword's text from the node itself, never by descending into a child** — that stays correct for the two external tokens, which really are childless, and it survives any future change to the anonymous layer.
 
-**`object_type_keyword` is the concrete reason that advice is not merely defensive.** `node-types.json` contains **111** named `*_keyword` types, not 110 — the extra one has no rule of its own. `database_reference` (`grammar.js:4163-4173`) does `field('keyword', alias(choice(kw('database'), $.page_keyword, $.report_keyword, $.codeunit_keyword, $.xmlport_keyword, $.query_keyword), $.object_type_keyword))`. The five named alternatives carry visible aliased STRING tokens; the bare `kw('database')` is a hidden pattern token. So the SAME node type has two shapes:
+**`object_type_keyword` was the counter-example to the contract until it was fixed.** `node-types.json` contains **155** named `*_keyword` types, not 154 — `object_type_keyword` has no rule of its own; `database_reference` builds it by aliasing a six-way `choice` (`grep -n "object_type_keyword" grammar.js`). Five alternatives were named `$.*_keyword` rules carrying visible aliased STRING tokens while the sixth was a bare `kw('database')`, a hidden pattern token, so one node type shipped two shapes:
 
 ```
 (object_type_keyword text='Page')      children=[("page", anonymous)]
 (object_type_keyword text='DATABASE')  children=[]                     <- childless
 ```
 
-The uniform-shape contract above is about keyword **rules** and still holds exactly. But a consumer enumerating `node-types.json` sees 111 types and would reasonably apply the contract to all of them. Reading the node's own text is correct for every one; descending into a child is not.
+**22,988 of 40,674 `object_type_keyword` nodes in BC.History were the childless kind.** Fixed by giving `database` a real `database_keyword` rule, like its five siblings; all 40,674 now carry exactly one anonymous child. Note the nested form `alias(alias(kw('database'), 'database'), $.object_type_keyword)` does **not** work — the aliases do not compose and the DATABASE case loses `object_type_keyword` altogether. A named rule is required.
+
+`keyword_identifier` had the identical defect one level up (six named alternatives against seven bare `kw()`), and is fixed the same way. Both are pinned by fixtures in `test/corpus/`. **Neither was a byte gap, so `qc` reported nothing for either** — the outer node covered the bytes, which is why both outlived the losslessness work. The instrument that shows this class is a tree-cursor walk, not a coverage harness.
+
+**Converting a bare `kw()` to `alias(kw(w), w)` cannot steal a spelling**, so the `kwCases()` warning above does not apply to it: `kw(w)` is `token(RustRegex('(?i)w'))` and `alias()` wraps that same token, leaving matching untouched. Measured over BC.History rather than argued — the `identifier` count was 5,908,480 before and after, and the `(parent, field, child)` edge census was byte-identical. `kwCases()` guards against *widening*; an alias widens nothing.
 
 `_tabledata_keyword` is not in these counts: it is a *hidden* (`_`-prefixed) token helper rather than a keyword node, and `option_member` re-aliases it to `$.identifier`.
 

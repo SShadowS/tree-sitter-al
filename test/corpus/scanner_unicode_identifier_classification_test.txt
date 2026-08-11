@@ -1,0 +1,132 @@
+================================================================================
+Astral-plane letter STARTING an identifier the scanner has to classify.
+U+20000 is category Lo -- an ordinary CJK ideograph, and a plain letter to
+grammar.js's `identifier: token(/[\p{L}_][\p{L}\p{N}_]*/u)`. The scanner decides
+where PROPERTY_NAME starts before the generated lexer sees the text, so it needs
+the same answer, and it used to ask iswalpha(). wint_t is 16 bits on Windows, so
+the codepoint was TRUNCATED to U+0000, is_identifier_start said no, PROPERTY_NAME
+declined, and this line came out as `(ERROR (identifier) (integer))` -- while the
+ASCII `YProp` on the next line, in the identical position, parsed as a property.
+wint_t is 32 bits on Linux, so the same bytes took a different path there: the
+parser disagreed with ITSELF across platforms. Verified on Windows 11 /
+mingw-w64 UCRT, sizeof(wint_t) == 2. The companion deliberate-negative lives in
+scanner_unicode_identifier_negative_test.txt; it is separate so that THIS file
+stays subject to validate-grammar.sh's ERROR/MISSING census.
+.
+Both properties below must be properties. The second is the control: if a future
+change breaks identifiers wholesale rather than just the astral ones, this
+fixture must not still pass.
+================================================================================
+
+table 50100 T
+{
+    𠀀Prop = 5;
+    YProp = 5;
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (table_declaration
+    (table_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (property
+        name: (property_name)
+        value: (integer))
+      (property
+        name: (property_name)
+        value: (integer)))))
+
+================================================================================
+Astral-plane letter CONTINUING an identifier.
+Same defect through is_identifier_char rather than is_identifier_start: the
+scanner's read_word_ci stopped at the truncated U+20000 mid-word, so the token it
+had already begun ended early. Pinned separately from the start case because the
+two predicates read two different generated tables.
+================================================================================
+
+table 50100 T
+{
+    P𠀀rop = 5;
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (table_declaration
+    (table_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (property
+        name: (property_name)
+        value: (integer)))))
+
+================================================================================
+Astral-plane identifier reached through VAR_ATTRIBUTE_OPEN, not PROPERTY_NAME.
+The var-attribute lookahead runs its own is_identifier_start/is_identifier_char
+loop over the declaration that follows `[NonDebuggable]`, so it broke
+independently of the property path and was fixed by the same table. Before the
+fix this produced a var_section with no body at all, the attribute demoted to a
+bare attribute_item outside it, and `(ERROR (identifier))` for the declaration.
+================================================================================
+
+codeunit 50100 C
+{
+    var
+        [NonDebuggable]
+        𠀀V: Integer;
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (var_section
+        (var_keyword)
+        body: (var_body
+          (var_attribute_item
+            (var_attribute_open)
+            attribute: (attribute_content
+              name: (identifier)))
+          (variable_declaration
+            name: (identifier)
+            type: (type_specification
+              (basic_type))))))))
+
+================================================================================
+A \p{N} character continues an identifier, because grammar.js says so. U+00B2
+SUPERSCRIPT TWO is category No. It is in `[\p{L}\p{N}_]*` and therefore in an
+identifier, and it parsed as a property before this change too -- it is pinned to
+fix the BOUNDARY, not to record a fix.
+.
+alc REJECTS this spelling (AL0107, verified at 18.0.37.11445), so grammar.js is
+deliberately broader than the compiler here, per "parse structure, don't
+validate". That gap is a grammar.js decision. If someone later narrows the
+SCANNER toward alc without narrowing the grammar, they reintroduce exactly the
+scanner-vs-grammar disagreement this change removed, and this fixture catches
+it.
+================================================================================
+
+table 50100 T
+{
+    P²rop = 5;
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (table_declaration
+    (table_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (property
+        name: (property_name)
+        value: (integer)))))

@@ -39,14 +39,16 @@ table 50000 "Test Table"
                 value: (string_literal))
               (property
                 name: (property_name)
-                value: (keyword_identifier))
+                value: (keyword_identifier
+                  (database_keyword)))
               (property
                 name: (property_name)
                 value: (option_member_list
                   (option_member
                     (quoted_identifier))
                   (option_member
-                    (keyword_identifier)))))))))))
+                    (keyword_identifier
+                      (database_keyword))))))))))))
 
 ==================
 Field with MinValue and MaxValue properties

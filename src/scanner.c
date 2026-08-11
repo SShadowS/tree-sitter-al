@@ -2,7 +2,14 @@
 #include <stdint.h>
 #include <stdlib.h>
 #include <string.h>
-#include <wctype.h>
+
+// The grammar's own identifier character classes, generated from the tables
+// tree-sitter compiled grammar.js's identifier regex into. See the note on
+// is_identifier_start below for why this is not <wctype.h>.
+//
+// <wctype.h> is deliberately NOT included: without it, a reintroduced
+// iswalpha/iswalnum/towlower fails to compile rather than silently truncating.
+#include "unicode_id.h"
 
 enum TokenType {
   PROPERTY_NAME = 0,
@@ -93,12 +100,63 @@ void tree_sitter_al_external_scanner_deserialize(
   }
 }
 
+// What may start and continue an identifier, per grammar.js's OWN rule:
+//
+//     identifier: $ => token(/[\p{L}_][\p{L}\p{N}_]*/u)
+//
+// The scanner decides where PROPERTY_NAME, VAR_ATTRIBUTE_OPEN and the
+// begin/end family start and end BEFORE the generated lexer sees the text, so
+// any disagreement with that regex is a disagreement about what an identifier
+// is — and the external token wins, because tree-sitter does not re-lex it.
+//
+// These were `iswalpha(c) || c == '_'` and `iswalnum(c) || c == '_'` until
+// 4.0.0, and that was wrong in BOTH directions.
+//
+// MEASURED on Windows 11, mingw-w64/UCRT, `sizeof(wint_t) == 2`. wint_t is 16
+// bits here, so an int32_t codepoint above U+FFFF is TRUNCATED before the test:
+//
+//     iswalpha(U+20000) == 0   truncates to U+0000 -- a plain CJK ideograph,
+//                              category Lo, REJECTED
+//     iswalpha(U+E0041) == 1   truncates to 'A'    -- a TAG character,
+//                              category Cf and not a letter at all, ACCEPTED
+//
+// and at parse level, in a table body:
+//
+//     <U+20000>Prop = 5;   (ERROR (identifier) (integer))    <- rejected
+//     YProp = 5;           (property ...)                    <- same position
+//     <U+E0041>Prop = 5;   (property ...) with NO ERROR node
+//
+// The false-ACCEPT is the dangerous half: the scanner manufactured an
+// identifier that grammar.js's own regex rejects, emitted PROPERTY_NAME across
+// it, and tree-sitter does not re-lex an external token, so nothing downstream
+// could notice. A clean error count did not mean a correct tree.
+//
+// The false-REJECT is the cross-platform half. wint_t is 32 bits on Linux, so
+// the same file does not truncate there and takes a different path through
+// iswalpha entirely -- the parser disagreeing with itself per platform on
+// identical input. (iswalpha is also LC_CTYPE-dependent by specification, and
+// nothing here calls setlocale. On this runtime that turned out NOT to matter:
+// "C", "" and "en_US.UTF-8" all answered identically for every codepoint
+// tested, so locale is a hazard the standard permits rather than one measured
+// here. The truncation is the part that was actually observed.)
+//
+// unicode_id.h is generated from the character-range tables `tree-sitter
+// generate` compiled that very regex into, so agreement is by construction
+// rather than by maintenance. tools/gen-unicode-id-table.py --check proves it
+// has not drifted.
+//
+// NOTE ON SCOPE: this makes the scanner agree with GRAMMAR.JS, which is the
+// stated specification -- not with alc, which is narrower still. alc 18.0
+// rejects U+20000 in an identifier (AL0183) and rejects U+00B2 in a
+// continuation position (AL0107), both of which grammar.js's regex accepts and
+// did before this change too. Narrowing that boundary is a grammar.js decision
+// about "parse structure, don't validate", and a separate one from this fix.
 static bool is_identifier_start(int32_t c) {
-  return iswalpha(c) || c == '_';
+  return al_is_identifier_start(c);
 }
 
 static bool is_identifier_char(int32_t c) {
-  return iswalnum(c) || c == '_';
+  return al_is_identifier_char(c);
 }
 
 // Fold one codepoint to a single byte for comparison against the ASCII-only

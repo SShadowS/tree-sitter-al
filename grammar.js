@@ -1075,6 +1075,17 @@ module.exports = grammar({
         $.report_keyword,
         $.query_keyword,
         $.xmlport_keyword,
+        // Must be the SAME `system_keyword` rule that `keyword_identifier` uses,
+        // not a bare kw(). Both rules are reachable from a property value, so
+        // with one side named and the other bare the parser has to decide which
+        // rule owns the token before it can see the `*`/name that disambiguates,
+        // and `tree-sitter generate` fails with an unresolved conflict between
+        // `tabledata_permission` and `system_keyword`. Routing both through the
+        // one rule removes the choice instead of forking on it.
+        //
+        // It also gives `system` a node here, which it did not have before —
+        // the same leaf gap `tabledata_keyword` carried until the losslessness
+        // pass closed it, one entry above.
         $.system_keyword,
       ),
       // '*' keeps the field: the wildcard IS the table name, so an anonymous
@@ -2560,6 +2571,20 @@ module.exports = grammar({
       $.empty_statement,
     )),
 
+    // THE THIRD COPY of an identifier-ish character class, and it deliberately
+    // does NOT track `identifier`. This names a .NET assembly / namespace, not
+    // an AL identifier, so it keeps the narrower `[\p{L}_][\p{L}\p{N}_]*` that
+    // `identifier` carried before Nl/Mn/Mc/Pc/Cf were added to match alc's AL
+    // rule. Widening it would be claiming something about .NET naming that has
+    // not been measured.
+    //
+    // It is called out because it is a silent-drift hazard by construction:
+    // `identifier` and src/scanner.c's tables are generated from one source and
+    // cannot diverge, but this literal is hand-written and shares neither. It is
+    // safe today only because nothing in src/scanner.c consults it -- the
+    // scanner mediates PROPERTY_NAME and VAR_ATTRIBUTE_OPEN, which are about
+    // `identifier`. If a scanner token ever needs this class, generate it too
+    // rather than copying the regex a fourth time.
     dotnet_assembly_name: $ => token(seq(
       /[\p{L}_][\p{L}\p{N}_]*/u,
       repeat(seq('.', /[\p{L}_][\p{L}\p{N}_]*/u))
@@ -3447,10 +3472,6 @@ module.exports = grammar({
     // narrow rule keeps the fork inside preprocessor branches.
     _preproc_branch_statement: $ => choice(
       $._statement,
-      // The block's terminator is external now — see the note on code_block.
-      // prec.right settles the shift/reduce that optional trailing ';' creates,
-      // exactly as `_statement`'s own prec.right does for its terminator.
-      prec.right(seq($.code_block, optional(';'))),
     ),
 
     // Preprocessor conditionals in actions context
@@ -3567,6 +3588,7 @@ module.exports = grammar({
     // `_statement` so that body/branch positions can field the statement
     // WITHOUT the field spilling onto the ';' — see fieldedStatement().
     _statement_inner: $ => choice(
+          $.code_block,
           $.assignment_statement,
           $.asserterror_statement,
           $.if_statement,
@@ -3730,10 +3752,7 @@ module.exports = grammar({
       $.then_keyword,
       choice(
         seq(
-          choice(
-            field('then_branch', $.code_block),
-            field('then_branch', $._statement_inner),
-          ),
+          field('then_branch', $._statement_inner),
           optional(prec.dynamic(30, seq($.else_keyword, $._else_branch))),
         ),
         field('then_branch', $.call_statement),
@@ -3772,33 +3791,22 @@ module.exports = grammar({
     // terminator restructure made them the same rule: no then-branch form
     // carries a ';' any more, so there is nothing left for the two variants to
     // differ on.
-    _then_branch: $ => choice(
-      field('then_branch', $.code_block),
-      fieldedStatement($, 'then_branch'),
-    ),
+    _then_branch: $ => fieldedStatement($, 'then_branch'),
 
     // Shared else-branch body: code_block, nested if (else-if chain), or single statement
     _else_branch: $ => choice(
-      field('else_branch', $.code_block),
       prec(1, field('else_branch', $.if_statement)),
       fieldedStatement($, 'else_branch'),
     ),
 
     // else-branch without the else-if chain (preproc split if-else shared tail)
-    _else_branch_simple: $ => choice(
-      field('else_branch', $.code_block),
-      fieldedStatement($, 'else_branch'),
-    ),
+    _else_branch_simple: $ => fieldedStatement($, 'else_branch'),
 
     // Loop / with body: a code_block or a single statement
-    _body_branch: $ => choice(
-      field('body', $.code_block),
-      fieldedStatement($, 'body'),
-    ),
+    _body_branch: $ => fieldedStatement($, 'body'),
 
     // Case-branch body: also admits a dangling-else-free nested if
     _case_body_branch: $ => choice(
-      field('body', $.code_block),
       field('body', alias($._if_statement_no_else, $.if_statement)),
       fieldedStatement($, 'body'),
     ),
@@ -3960,10 +3968,7 @@ module.exports = grammar({
       // `_statement`, each of which already takes its own. Folding them back
       // into one `choice` under a shared trailing `optional(';')` would make
       // `else A;` ambiguous between the two owners of that ';'.
-      optional(choice(
-        seq(field('body', $.code_block), optional(';')),
-        field('body', $.statement_block),
-      ))
+      optional(field('body', $.statement_block))
     )),
 
     // --- For loop ---
@@ -4123,20 +4128,44 @@ module.exports = grammar({
     ),
 
     // Keywords that can appear as identifiers in expressions (e.g., Codeunit.Run())
+    //
+    // All thirteen alternatives are named keyword rules, so `keyword_identifier`
+    // has ONE shape: exactly one named `*_keyword` child.
+    //
+    // Seven of them used to be bare `kw()`. A bare kw() is a token(PATTERN),
+    // which tree-sitter renders as a HIDDEN symbol, so `keyword_identifier` came
+    // out two different ways depending only on which word the source used:
+    //
+    //   Codeunit.Run()  ->  (keyword_identifier (codeunit_keyword))
+    //   Record.Get()    ->  (keyword_identifier)          <- childless leaf
+    //
+    // Not a byte gap — `keyword_identifier` itself covers the bytes either way,
+    // which is why the query-coverage harness reported nothing and this outlived
+    // the losslessness work. It was a SHAPE inconsistency: a consumer asking
+    // "which keyword is this?" by descending into the child got an answer for six
+    // spellings and nothing for the other seven.
+    //
+    // Aliasing does NOT change what the token matches. kw(w) is
+    // token(RustRegex('(?i)w')) and alias() wraps that same token, so these seven
+    // stayed exactly as case-insensitive as they already were and no spelling
+    // moved between `identifier` and `keyword_identifier`. That is the reason the
+    // kwCases() whitelist argument does not apply here: kwCases() exists to stop
+    // kw() from WIDENING a compound keyword over spellings AL uses as
+    // identifiers, and nothing here widens anything.
     keyword_identifier: $ => prec(-5, choice(
       $.codeunit_keyword,
       $.page_keyword,
       $.report_keyword,
       $.query_keyword,
       $.xmlport_keyword,
-      kw('record'),
+      $.record_keyword,
       $.enum_keyword,
-      kw('system'),
-      kw('session'),
-      kw('dialog'),
-      kw('database'),
-      kw('file'),
-      kw('action'),
+      $.system_keyword,
+      $.session_keyword,
+      $.dialog_keyword,
+      $.database_keyword,
+      $.file_keyword,
+      $.action_keyword,
     )),
 
     // --- Range ---
@@ -4399,10 +4428,49 @@ module.exports = grammar({
     // --- Database reference ---
     // DATABASE::"Customer"
 
+    // `database` is aliased to a visible STRING exactly like the five named
+    // alternatives beside it, so `object_type_keyword` has ONE shape.
+    //
+    // It used to be a bare `kw('database')`. That builds a token(PATTERN), which
+    // tree-sitter renders as a HIDDEN symbol, while the five `$.*_keyword` rules
+    // carry visible aliased STRING tokens -- so the same node type came out two
+    // different ways:
+    //
+    //   (object_type_keyword text='Page')      children=[("page", anonymous)]
+    //   (object_type_keyword text='DATABASE')  children=[]          <- childless
+    //
+    // Not a byte gap: the outer alias() covers the bytes, so the CST stayed
+    // lossless and the query-coverage harness reported nothing. It was a SHAPE
+    // inconsistency, and a consumer that descended into the child got nothing
+    // for every DATABASE:: in the corpus while its five siblings worked.
+    //
+    // Scale, at BC.History scope (15,358 .al files): 22,988 of 40,674
+    // `object_type_keyword` nodes were the childless kind. Quote the NODE count,
+    // not a grep: the 23,065 textual `database::` occurrences in those files
+    // resolve as 22,988 object_type_keyword + 75 comment + 2 string_literal
+    // (measured, not subtracted), and the last 77 never become one of these
+    // nodes at all.
+    //
+    // DO NOT "SIMPLIFY" THIS BY NESTING THE ALIASES. The obvious one-liner
+    //
+    //     alias(alias(kw('database'), 'database'), $.object_type_keyword)
+    //
+    // looks equivalent and is not: the two aliases do not compose. The inner one
+    // wins, the DATABASE case loses its `object_type_keyword` node ENTIRELY, and
+    // the `keyword` field then points straight at an anonymous token -- strictly
+    // worse than the childless node this replaced, because the node type
+    // disappears rather than merely varying. A named rule is what makes the outer
+    // alias see the same thing it sees for the other five. That was the first
+    // attempt here; test/corpus/object_type_keyword_uniform_shape_test.txt fails
+    // on exactly it, but a failing fixture tells you THAT the nested form is
+    // wrong, not why, which is what this paragraph is for.
+    //
+    // Reading a keyword's text from the node itself still works for both shapes
+    // and remains the advice; this just removes the need for it here.
     database_reference: $ => prec(300, seq(
       field('keyword', alias(
         choice(
-          kw('database'),
+          $.database_keyword,
           $.page_keyword,
           $.report_keyword,
           $.codeunit_keyword,
@@ -4495,6 +4563,39 @@ module.exports = grammar({
 
     table_keyword: $ => alias(kw('table'), 'table'),
     tableextension_keyword: $ => prec(10, kwCases('tableextension', 'tableextension', 'TABLEEXTENSION', 'Tableextension', 'TableExtension', 'tableExtension')),
+    // `database` in `DATABASE::"Customer"`. A real keyword rule rather than a
+    // bare kw(), so that database_reference's outer alias() to
+    // object_type_keyword sees the same thing it sees for the five siblings
+    // beside it and produces the SAME node shape. See database_reference.
+    database_keyword: $ => alias(kw('database'), 'database'),
+
+    // The other six words `keyword_identifier` accepts. Named rules for the same
+    // reason as database_keyword: so that rule has one shape instead of two.
+    //
+    // Only THREE are defined here. `record_keyword`, `action_keyword` and
+    // `system_keyword` live with their own construct groups further down,
+    // because the losslessness pass gave the basic_type, action_declaration and
+    // property sites named rules of their own — so those three words are now
+    // SHARED between both uses rather than defined twice.
+    //
+    // That sharing is not optional. A grammar.js rule table is a JS object
+    // literal, so a duplicate key is silently accepted and the LAST definition
+    // wins: `tree-sitter generate` succeeds, the parser is correct, and nothing
+    // reports it. Merging this branch with the losslessness branch produced
+    // exactly that — three words defined twice with identical bodies, caught
+    // only by re-deriving the keyword count and finding 155 rule lines against
+    // 152 unique names. `validate-grammar.sh`'s duplicate-key check is what
+    // gates it now; do not add a second definition of a keyword that already
+    // has one somewhere else in this file.
+    //
+    // The earlier claim here — that these are "deliberately NOT reused by the
+    // basic_type / record_type / action_declaration sites, which keep their own
+    // bare kw()" — was true on this branch alone and is void after the merge.
+    // Those sites are exactly what closed the `record`/`code`/`text` byte gaps.
+    session_keyword: $ => alias(kw('session'), 'session'),
+    dialog_keyword: $ => alias(kw('dialog'), 'dialog'),
+    file_keyword: $ => alias(kw('file'), 'file'),
+
     page_keyword: $ => alias(kw('page'), 'page'),
     pageextension_keyword: $ => prec(10, kwCases('pageextension', 'pageextension', 'PAGEEXTENSION', 'Pageextension', 'PageExtension', 'pageExtension')),
     codeunit_keyword: $ => prec(10, kwCases('codeunit', 'codeunit', 'CODEUNIT', 'Codeunit', 'CodeUnit', 'COdeunit', 'codeUnit')),
@@ -4743,7 +4844,49 @@ module.exports = grammar({
     )),
 
     // Identifiers — Unicode-aware
-    identifier: $ => token(/[\p{L}_][\p{L}\p{N}_]*/u),
+    // AL's identifier rule is C#'s. Measured against alc 18.0.37.11445 with a
+    // discriminating control on every probe:
+    //
+    //   start     Lu Ll Lt Lm Lo Nl _          (Mn, Cf, Nd, No all REJECTED)
+    //   continue  start + Mn Mc Nd Pc Cf
+    //
+    // `\p{L}` covers Lu Ll Lt Lm Lo, so the start class adds only `\p{Nl}`
+    // (U+2160 ROMAN NUMERAL ONE is a legal identifier start to alc), and the
+    // continue class adds the four alc accepts and `\p{L}\p{N}` missed:
+    // Mn (combining marks), Mc (spacing marks), Pc (connectors) and Cf (ZWNJ
+    // and friends). Before this, `Oa<U+0301>k: Integer;` -- valid AL that alc
+    // compiles -- shredded into an identifier plus an ERROR node.
+    //
+    // DELIBERATELY still broader than alc in two ways, per "parse structure,
+    // don't validate": `\p{N}` keeps `No` (alc rejects `O<U+00B2>k`, AL0107),
+    // and nothing here is capped to the BMP (alc rejects astral codepoints,
+    // AL0183). Both are the parser accepting more than the compiler, which is
+    // the safe direction and is recorded rather than closed.
+    //
+    // U+FEFF IS IN \p{Cf} AND IN `extras` AND IN the scanner's whitespace set,
+    // all three deliberately, and it is NOT excluded here. Do not "simplify"
+    // that by dropping U+FEFF from the class or from `extras`: each is
+    // load-bearing in a different position, and both are pinned by fixtures.
+    //   * alc ACCEPTS U+FEFF mid-identifier -- `O<U+FEFF>k: Integer;` compiles,
+    //     as do U+200B, U+200C, U+200D, U+00AD, U+2060, U+061C. So excluding it
+    //     would put us back to rejecting valid AL.
+    //   * The two components do NOT split it. tree-sitter's longest match makes
+    //     the identifier win, and src/scanner.c's read_word_ci consumes U+FEFF
+    //     through this same generated table, so PROPERTY_NAME spans exactly the
+    //     bytes the grammar's lexer would. Verified in six positions.
+    //   * Consequence, and it is CORRECT: `begin<U+FEFF>` is an identifier, not
+    //     a begin_keyword, so a BOM glued to a keyword breaks it. alc breaks the
+    //     same way (AL0104; `codeunit<U+FEFF>` is AL0198). Before this widening
+    //     we accepted those files with zero errors -- accepting what the
+    //     compiler rejects. A BOM at file start and a BOM BETWEEN statements
+    //     still parse cleanly, and alc accepts both.
+    //
+    // src/unicode_id.h MUST be regenerated whenever this line changes -- the
+    // scanner reads those tables to decide where PROPERTY_NAME and
+    // VAR_ATTRIBUTE_OPEN end, and a stale table makes the scanner disagree with
+    // this regex. That drift is exactly what 586478a fixed.
+    // `python tools/gen-unicode-id-table.py --check` fails loudly if it drifts.
+    identifier: $ => token(/[\p{L}\p{Nl}_][\p{L}\p{N}\p{Mn}\p{Mc}\p{Pc}\p{Cf}_]*/u),
 
     quoted_identifier: $ => token(prec(10, seq(
       '"',

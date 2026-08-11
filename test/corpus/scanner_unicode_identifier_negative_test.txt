@@ -1,0 +1,109 @@
+================================================================================
+DELIBERATE NEGATIVE. A format character is NOT an identifier character, and the
+scanner must not invent one. U+E0041 is category Cf -- a TAG character, not a
+letter. grammar.js's regex rejects it and alc rejects it (AL0183, verified at
+18.0.37.11445). But iswalpha() TRUNCATED it to 'A' on Windows and returned true,
+so the scanner manufactured an identifier the grammar itself does not accept and
+emitted PROPERTY_NAME across it. tree-sitter never re-lexes an external token, so
+this file used to yield a clean `(property ...)` with NO ERROR node anywhere -- a
+wrong tree that every error-count gate in this repo reported as a pass. That is
+why this direction gets a fixture of its own: the false-ACCEPT is the half that
+counting errors cannot catch.
+.
+An error is the correct answer here, so this file is exempt from
+validate-grammar.sh's ERROR/MISSING census and lives apart from
+scanner_unicode_identifier_classification_test.txt, which stays subject to it.
+What is asserted is that U+E0041 lands in its own node -- 917569 is exactly
+0xE0041 -- and `Prop` is a separate identifier: the scanner declined and the
+generated lexer decided, which is the point of the change.
+================================================================================
+
+table 50100 T
+{
+    󠁁Prop = 5;
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (table_declaration
+    (table_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    (ERROR
+      (UNEXPECTED 917569)
+      (identifier)
+      (integer))
+    body: (declaration_body
+      (empty_statement))))
+
+================================================================================
+DELIBERATE NEGATIVE. Cf is a legal identifier CONTINUER but an illegal STARTER,
+and the same holds for Mn -- which is why the two classes are separate tables.
+U+0301 COMBINING ACUTE continues an identifier happily (pinned as case 1 of
+identifier_unicode_classes_test.txt) and must still be rejected at the start.
+alc agrees: `O<U+0301>k` compiles, `<U+0301>Ok` is AL0183 "Unexpected character"
+(verified at 18.0.37.11445, discriminating controls). This pins the asymmetry --
+widening the continue class must not widen the start class with it, which is the
+single most likely way to get this wrong in one edit.
+================================================================================
+
+table 50100 T
+{
+    ́Ok = 5;
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (table_declaration
+    (table_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    (ERROR
+      (UNEXPECTED 769)
+      (identifier)
+      (integer))
+    body: (declaration_body
+      (empty_statement))))
+
+================================================================================
+DELIBERATE NEGATIVE. A BOM glued to the END of a keyword destroys the keyword,
+and that is CORRECT -- alc does the same. U+FEFF is \p{Cf}, so it continues an
+identifier, which means `begin<U+FEFF>` lexes as an identifier and not as
+begin_keyword. alc rejects this file too (AL0104 at 18.0.37.11445; the sibling
+`codeunit<U+FEFF> 50100` is AL0198), because alc's lexer makes the same call.
+.
+This BEHAVIOUR CHANGED and moved toward alc. Before \p{Cf} entered the continue
+class this file parsed with ZERO errors and a live begin_keyword -- we accepted
+a file the compiler rejects. Three shapes moved that way: a BOM after `codeunit`,
+a BOM glued to the following token, and this one. A BOM at file start and a BOM
+BETWEEN statements still parse cleanly, and alc accepts both of those, so the
+`extras` entry and is_extra_space()'s U+FEFF are still load-bearing.
+.
+What is pinned is the shape: `begin<U+FEFF>` must appear as an identifier inside
+the ERROR, NOT as a begin_keyword. An error-count assertion alone would not
+distinguish this from any other way of failing.
+================================================================================
+
+codeunit 50100 C
+{
+    procedure P()
+    begin﻿
+        Foo();
+    end;
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    (ERROR
+      (procedure_keyword)
+      name: (identifier)
+      (identifier)
+      (identifier)
+      (identifier))))
