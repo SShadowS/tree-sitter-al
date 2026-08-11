@@ -4,7 +4,7 @@ GOAL: A parser which parses AL code CORRECT, not just without errors. That is th
 
 This file provides guidance to Claude Code (claude.ai/code) when working with this tree-sitter parser for the AL (Application Language) programming language used in Microsoft Dynamics 365 Business Central.
 
-**Current Status**: 100% production file success rate (15,358/15,358 files), 1451 tests passing, 0 errors
+**Current Status**: 100% production file success rate (15,358/15,358 files), 1,580 tests passing, 0 errors
 
 ## Git Commit Guidelines
 
@@ -64,12 +64,27 @@ python parse_bug_finder.py file.al debug.log   # Analyze parsing bugs
    point of your test, generate the expectation from `tree-sitter parse` output instead, and
    prove the fixture can fail by renaming a field to `bogus:`.
 
-**A third trap, in the corpus format itself: a blank line inside a `====` test header
-makes tree-sitter drop that test silently.** No warning, no error — the case simply is
-not run, and the total moves by less than you added. It was caught only by adding a
-5-case fixture and noticing the suite count had not changed. After adding fixtures,
-check the total moved by exactly the number of cases you wrote; a header block must be
-contiguous.
+**Two more traps live in the corpus format itself, and both drop a case SILENTLY** — no
+warning, no error; the case is simply not run and the suite total moves by less than you
+added:
+
+3. **A blank line inside a `====` test header.** The name block must be contiguous. Caught
+   by adding a 5-case fixture and noticing the suite count had not changed.
+4. **No `---` divider after the header.** `test/corpus/built_in_functions_al.txt` had a
+   well-formed header and 110 lines of AL and had never run once since it was added;
+   `tree-sitter` parsed the header and discarded the case. Caught by diffing the cases the
+   files *declare* against the numbered list a run actually *prints*.
+
+After adding fixtures, check the total moved by exactly the number of cases you wrote.
+Counting `=` lines and halving does not detect either one — that reports the declared
+count, which is precisely the number that disagrees with reality.
+
+**A corpus file can also be invisible to git.** `.gitignore`'s `property_*.txt` was
+unanchored and swallowed `test/corpus/property_comment_parameters_extended_test.txt`;
+`git status` says nothing about ignored files, so the suite ran 3 extra cases for whoever
+had the file on disk and 3 fewer in every fresh worktree — which is how one branch measured
+1562 and two others measured 1559 at the same commit. The check is
+`git ls-files test/corpus | wc -l` against `find test/corpus -name '*.txt' | wc -l`.
 
 **Common Test Options:**
 - `-i "pattern"` - Include tests matching pattern
@@ -81,9 +96,9 @@ contiguous.
 ## Architecture
 
 **Core Files:**
-- `grammar.js` - Main grammar definition (~4,552 lines). Never edit `src/parser.c` (auto-generated)
+- `grammar.js` - Main grammar definition (~4,671 lines). Never edit `src/parser.c` (auto-generated)
 - `src/scanner.c` - External scanner for property disambiguation and preprocessor patterns
-- `test/corpus/` - Test suite with AL code and expected parse trees (567 files, 1,562 cases)
+- `test/corpus/` - Test suite with AL code and expected parse trees (570 files, 1,580 cases)
 - `queries/` - 6 query files (highlights, locals, tags, indents, folds, textobjects)
 
 **Key Design Principles (V2 architecture):**
@@ -303,18 +318,28 @@ limitation was an artifact of the attempt, and it sat unchallenged for a release
 
 ## Parser Metrics
 
-**Note:** These metrics are approximate and may drift as the grammar evolves. Verify with `wc -c src/parser.c` and `grep -E 'SYMBOL_COUNT|STATE_COUNT' src/parser.c` if precision matters.
+**Note:** These metrics drift constantly. Verify before quoting — `wc -c src/parser.c`,
+`grep -E 'SYMBOL_COUNT|STATE_COUNT' src/parser.c`, `wc -l grammar.js`, and the last line of
+`./tools/ts-lock.sh tree-sitter test`. **Do not take the test count from this table**: it was
+1,562 here while the suite really ran 1,559, and a session used the stale figure as the base of
+a "the delta is exactly what I added" check, which therefore could not fail.
 
-| Metric | Value |
-|--------|-------|
-| parser.c size | 30.8 MB |
-| SYMBOL_COUNT | 889 |
-| STATE_COUNT | 13,927 |
-| grammar.js lines | ~4,552 |
-| Tests | 1,562 |
-| Production success | 100% (0 errors) |
-| Named keywords | 110 (108 rules + 2 external), uniform shape |
-| Query files | 6 (highlights, locals, tags, indents, folds, textobjects) |
+| Metric | Value | as of |
+|--------|-------|-------|
+| parser.c size | 30.7 MiB | 4.0.0 |
+| SYMBOL_COUNT | 890 | 4.0.0 |
+| STATE_COUNT | 13,928 | 4.0.0 |
+| grammar.js lines | ~4,671 | 4.0.0 |
+| Tests | 1,580 | 4.0.0 |
+| Production success | 100% (0 errors) | 4.0.0 |
+| Named keywords | 110 (108 rules + 2 external), uniform shape | 4.0.0 |
+| Query files | 6 (highlights, locals, tags, indents, folds, textobjects) | 4.0.0 |
+
+**parser.c size is MiB, not decimal MB.** 32,218,385 bytes is 30.7 MiB *and* 32.2 MB; quoting
+the two against each other looks like a 5% regression and is not one.
+
+The two silent corpus-drop traps and the gitignore hazard that make the test count disagree
+between checkouts are documented under **Quick Reference**, with the `-u` traps.
 
 ## Validating AL Syntax Questions
 

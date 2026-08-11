@@ -114,13 +114,21 @@ settings.local.json
 *QUERIES*.md
 *RULES*.md
 *GUIDE*.md
-property_*.md
-property_*.txt
-all_properties.txt
-context_mapping.txt
-migration_strategy.md
-validation_report.md
-orphan_*.txt
+# Root-scoped ON PURPOSE. These are scratch dumps from the property-audit
+# tooling, which writes them to the repo root. Without the leading slash the
+# pattern matches at EVERY depth, and `property_*.txt` then silently swallowed
+# test/corpus/property_comment_parameters_extended_test.txt — three real cases
+# that ran for whoever had the file on disk and did not exist for anyone else.
+# `git status` stays clean for ignored files, so the only symptom was a test
+# total that disagreed between checkouts (1562 here vs 1559 in a fresh
+# worktree). Keep new entries anchored unless you genuinely mean every depth.
+/property_*.md
+/property_*.txt
+/all_properties.txt
+/context_mapping.txt
+/migration_strategy.md
+/validation_report.md
+/orphan_*.txt
 
 # Build artifacts
 *.pdb
