@@ -85,6 +85,13 @@ some check — to report it.
    side. Found by adversarial review; swept over 330,587 nodes with 0
    mismatches, necessarily.
 
+6. **query-reachability** *(completeness, for consumers)* — named node types
+   this file produces that **no shipped query in `queries/` matches**.
+   Losslessness puts a byte in a node; this asks whether anyone can address it.
+   Informational by default because `queries/` was written for editor
+   highlighting rather than exhaustive extraction — a gap here is a note, not a
+   regression.
+
 7. **orphan-operator-expr** *(completeness — structure, not bytes)* — an
    operator-headed expression standing as an **unfielded** statement. No
    byte-level or node-count check can see this: every byte is in a node, every
@@ -102,13 +109,6 @@ some check — to report it.
    yields `assignment_statement 'r := 1'` plus `+ 2` and `+ 3` as floating
    statements — the program is `1 + 3` or `1 + 2 + 3`, and the tree is neither.
    Zero false positives across 800 random BC.History files.
-
-6. **query-reachability** *(completeness, for consumers)* — named node types
-   this file produces that **no shipped query in `queries/` matches**.
-   Losslessness puts a byte in a node; this asks whether anyone can address it.
-   Informational by default because `queries/` was written for editor
-   highlighting rather than exhaustive extraction — a gap here is a note, not a
-   regression.
 
 ## Reading the output
 
