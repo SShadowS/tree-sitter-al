@@ -83,7 +83,8 @@ codeunit 50100 TestUnit
                               (identifier)))
                           operator: (comparison_operator)
                           right: (qualified_enum_value
-                            enum_type: (keyword_identifier)
+                            enum_type: (keyword_identifier
+                              (action_keyword))
                             value: (identifier)))
                         (then_keyword)
                         then_branch: (call_expression

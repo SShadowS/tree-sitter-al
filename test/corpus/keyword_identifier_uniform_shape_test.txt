@@ -1,0 +1,175 @@
+================================================================================
+All thirteen keyword_identifier spellings produce the SAME node shape
+`keyword_identifier` accepts thirteen words. Six were named `*_keyword` rules and
+seven were bare `kw()`. A bare kw() is a token(PATTERN), which tree-sitter renders
+as a HIDDEN symbol, so one node type had two shapes decided purely by which word
+the source used: `Codeunit.Run()` gave `(keyword_identifier (codeunit_keyword))`
+while `Record.Get()` gave a childless `(keyword_identifier)`. It was never a byte
+gap -- `keyword_identifier` covers the bytes either way -- which is why the
+query-coverage harness reported nothing and it outlived the losslessness work.
+.
+UNLIKE the object_type_keyword fixture beside it, this file really does pin the
+shape. The children here are NAMED nodes, and corpus expected trees show named
+children; that fixture's children are anonymous, which expected trees never show.
+So deleting any `(*_keyword)` line below fails this test, and that is the
+assertion. Verified failable by renaming one child to `(bogus_keyword)`.
+.
+The seven conversions are `alias(kw(w), w)`, which does NOT change what the token
+matches -- kw(w) is token(RustRegex('(?i)w')) and alias() wraps that same token.
+No spelling moved between `identifier` and `keyword_identifier`. The kwCases()
+whitelist argument does not apply: kwCases() exists to stop kw() from WIDENING a
+compound keyword over spellings AL uses as identifiers, and nothing here widens.
+================================================================================
+
+codeunit 50100 C
+{
+    procedure P()
+    begin
+        a := Codeunit.Run();
+        b := Page.Run();
+        c := Report.Run();
+        d := Query.Open();
+        e := XmlPort.Import();
+        f := Enum.Names();
+        g := Record.Get();
+        h := System.Now();
+        i := Session.Start();
+        j := Dialog.Open();
+        k := Database.Get();
+        l := File.Exists();
+        m := Action.Run();
+    end;
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (procedure
+        (procedure_keyword)
+        name: (identifier)
+        body: (code_block
+          (begin_keyword)
+          body: (statement_block
+            (assignment_statement
+              left: (identifier)
+              operator: (assignment_operator)
+              right: (call_expression
+                function: (member_expression
+                  object: (keyword_identifier
+                    (codeunit_keyword))
+                  member: (identifier))
+                arguments: (argument_list)))
+            (assignment_statement
+              left: (identifier)
+              operator: (assignment_operator)
+              right: (call_expression
+                function: (member_expression
+                  object: (keyword_identifier
+                    (page_keyword))
+                  member: (identifier))
+                arguments: (argument_list)))
+            (assignment_statement
+              left: (identifier)
+              operator: (assignment_operator)
+              right: (call_expression
+                function: (member_expression
+                  object: (keyword_identifier
+                    (report_keyword))
+                  member: (identifier))
+                arguments: (argument_list)))
+            (assignment_statement
+              left: (identifier)
+              operator: (assignment_operator)
+              right: (call_expression
+                function: (member_expression
+                  object: (keyword_identifier
+                    (query_keyword))
+                  member: (identifier))
+                arguments: (argument_list)))
+            (assignment_statement
+              left: (identifier)
+              operator: (assignment_operator)
+              right: (call_expression
+                function: (member_expression
+                  object: (keyword_identifier
+                    (xmlport_keyword))
+                  member: (identifier))
+                arguments: (argument_list)))
+            (assignment_statement
+              left: (identifier)
+              operator: (assignment_operator)
+              right: (call_expression
+                function: (member_expression
+                  object: (keyword_identifier
+                    (enum_keyword))
+                  member: (identifier))
+                arguments: (argument_list)))
+            (assignment_statement
+              left: (identifier)
+              operator: (assignment_operator)
+              right: (call_expression
+                function: (member_expression
+                  object: (keyword_identifier
+                    (record_keyword))
+                  member: (identifier))
+                arguments: (argument_list)))
+            (assignment_statement
+              left: (identifier)
+              operator: (assignment_operator)
+              right: (call_expression
+                function: (member_expression
+                  object: (keyword_identifier
+                    (system_keyword))
+                  member: (identifier))
+                arguments: (argument_list)))
+            (assignment_statement
+              left: (identifier)
+              operator: (assignment_operator)
+              right: (call_expression
+                function: (member_expression
+                  object: (keyword_identifier
+                    (session_keyword))
+                  member: (identifier))
+                arguments: (argument_list)))
+            (assignment_statement
+              left: (identifier)
+              operator: (assignment_operator)
+              right: (call_expression
+                function: (member_expression
+                  object: (keyword_identifier
+                    (dialog_keyword))
+                  member: (identifier))
+                arguments: (argument_list)))
+            (assignment_statement
+              left: (identifier)
+              operator: (assignment_operator)
+              right: (call_expression
+                function: (member_expression
+                  object: (keyword_identifier
+                    (database_keyword))
+                  member: (identifier))
+                arguments: (argument_list)))
+            (assignment_statement
+              left: (identifier)
+              operator: (assignment_operator)
+              right: (call_expression
+                function: (member_expression
+                  object: (keyword_identifier
+                    (file_keyword))
+                  member: (identifier))
+                arguments: (argument_list)))
+            (assignment_statement
+              left: (identifier)
+              operator: (assignment_operator)
+              right: (call_expression
+                function: (member_expression
+                  object: (keyword_identifier
+                    (action_keyword))
+                  member: (identifier))
+                arguments: (argument_list))))
+          (end_keyword))))))

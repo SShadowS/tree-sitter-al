@@ -396,6 +396,11 @@
     }
   },
   {
+    "type": "action_keyword",
+    "named": true,
+    "fields": {}
+  },
+  {
     "type": "actionref_declaration",
     "named": true,
     "fields": {
@@ -4086,6 +4091,11 @@
     "fields": {}
   },
   {
+    "type": "database_keyword",
+    "named": true,
+    "fields": {}
+  },
+  {
     "type": "database_reference",
     "named": true,
     "fields": {
@@ -4465,6 +4475,11 @@
         }
       ]
     }
+  },
+  {
+    "type": "dialog_keyword",
+    "named": true,
+    "fields": {}
   },
   {
     "type": "dictionary_type",
@@ -5354,6 +5369,11 @@
         }
       ]
     }
+  },
+  {
+    "type": "file_keyword",
+    "named": true,
+    "fields": {}
   },
   {
     "type": "fileuploadaction_declaration",
@@ -7965,14 +7985,30 @@
     "fields": {},
     "children": {
       "multiple": false,
-      "required": false,
+      "required": true,
       "types": [
+        {
+          "type": "action_keyword",
+          "named": true
+        },
         {
           "type": "codeunit_keyword",
           "named": true
         },
         {
+          "type": "database_keyword",
+          "named": true
+        },
+        {
+          "type": "dialog_keyword",
+          "named": true
+        },
+        {
           "type": "enum_keyword",
+          "named": true
+        },
+        {
+          "type": "file_keyword",
           "named": true
         },
         {
@@ -7984,7 +8020,19 @@
           "named": true
         },
         {
+          "type": "record_keyword",
+          "named": true
+        },
+        {
           "type": "report_keyword",
+          "named": true
+        },
+        {
+          "type": "session_keyword",
+          "named": true
+        },
+        {
+          "type": "system_keyword",
           "named": true
         },
         {
@@ -20646,6 +20694,11 @@
     }
   },
   {
+    "type": "record_keyword",
+    "named": true,
+    "fields": {}
+  },
+  {
     "type": "record_type",
     "named": true,
     "fields": {
@@ -21577,6 +21630,11 @@
     }
   },
   {
+    "type": "session_keyword",
+    "named": true,
+    "fields": {}
+  },
+  {
     "type": "signed_integer_list",
     "named": true,
     "fields": {},
@@ -22380,6 +22438,11 @@
     }
   },
   {
+    "type": "system_keyword",
+    "named": true,
+    "fields": {}
+  },
+  {
     "type": "systemaction_declaration",
     "named": true,
     "fields": {
@@ -22625,6 +22688,10 @@
         },
         {
           "type": "report_keyword",
+          "named": true
+        },
+        {
+          "type": "system_keyword",
           "named": true
         },
         {
@@ -25434,6 +25501,10 @@
     "named": false
   },
   {
+    "type": "action",
+    "named": false
+  },
+  {
     "type": "actions",
     "named": false
   },
@@ -25523,6 +25594,10 @@
     "named": false
   },
   {
+    "type": "database",
+    "named": false
+  },
+  {
     "type": "dataitem",
     "named": false
   },
@@ -25541,6 +25616,10 @@
   {
     "type": "decimal",
     "named": true
+  },
+  {
+    "type": "dialog",
+    "named": false
   },
   {
     "type": "div",
@@ -25628,6 +25707,10 @@
   },
   {
     "type": "fields",
+    "named": false
+  },
+  {
+    "type": "file",
     "named": false
   },
   {
@@ -25857,6 +25940,10 @@
     "named": true
   },
   {
+    "type": "record",
+    "named": false
+  },
+  {
     "type": "rendering",
     "named": false
   },
@@ -25897,8 +25984,16 @@
     "named": false
   },
   {
+    "type": "session",
+    "named": false
+  },
+  {
     "type": "string_literal",
     "named": true
+  },
+  {
+    "type": "system",
+    "named": false
   },
   {
     "type": "systemactions",

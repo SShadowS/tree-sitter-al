@@ -4433,11 +4433,8 @@
               "name": "xmlport_keyword"
             },
             {
-              "type": "TOKEN",
-              "content": {
-                "type": "PATTERN",
-                "value": "(?i)system"
-              }
+              "type": "SYMBOL",
+              "name": "system_keyword"
             }
           ]
         },
@@ -17361,57 +17358,36 @@
             "name": "xmlport_keyword"
           },
           {
-            "type": "TOKEN",
-            "content": {
-              "type": "PATTERN",
-              "value": "(?i)record"
-            }
+            "type": "SYMBOL",
+            "name": "record_keyword"
           },
           {
             "type": "SYMBOL",
             "name": "enum_keyword"
           },
           {
-            "type": "TOKEN",
-            "content": {
-              "type": "PATTERN",
-              "value": "(?i)system"
-            }
+            "type": "SYMBOL",
+            "name": "system_keyword"
           },
           {
-            "type": "TOKEN",
-            "content": {
-              "type": "PATTERN",
-              "value": "(?i)session"
-            }
+            "type": "SYMBOL",
+            "name": "session_keyword"
           },
           {
-            "type": "TOKEN",
-            "content": {
-              "type": "PATTERN",
-              "value": "(?i)dialog"
-            }
+            "type": "SYMBOL",
+            "name": "dialog_keyword"
           },
           {
-            "type": "TOKEN",
-            "content": {
-              "type": "PATTERN",
-              "value": "(?i)database"
-            }
+            "type": "SYMBOL",
+            "name": "database_keyword"
           },
           {
-            "type": "TOKEN",
-            "content": {
-              "type": "PATTERN",
-              "value": "(?i)file"
-            }
+            "type": "SYMBOL",
+            "name": "file_keyword"
           },
           {
-            "type": "TOKEN",
-            "content": {
-              "type": "PATTERN",
-              "value": "(?i)action"
-            }
+            "type": "SYMBOL",
+            "name": "action_keyword"
           }
         ]
       }
@@ -18123,11 +18099,8 @@
                 "type": "CHOICE",
                 "members": [
                   {
-                    "type": "TOKEN",
-                    "content": {
-                      "type": "PATTERN",
-                      "value": "(?i)database"
-                    }
+                    "type": "SYMBOL",
+                    "name": "database_keyword"
                   },
                   {
                     "type": "SYMBOL",
@@ -18646,6 +18619,90 @@
           }
         ]
       }
+    },
+    "database_keyword": {
+      "type": "ALIAS",
+      "content": {
+        "type": "TOKEN",
+        "content": {
+          "type": "PATTERN",
+          "value": "(?i)database"
+        }
+      },
+      "named": false,
+      "value": "database"
+    },
+    "record_keyword": {
+      "type": "ALIAS",
+      "content": {
+        "type": "TOKEN",
+        "content": {
+          "type": "PATTERN",
+          "value": "(?i)record"
+        }
+      },
+      "named": false,
+      "value": "record"
+    },
+    "system_keyword": {
+      "type": "ALIAS",
+      "content": {
+        "type": "TOKEN",
+        "content": {
+          "type": "PATTERN",
+          "value": "(?i)system"
+        }
+      },
+      "named": false,
+      "value": "system"
+    },
+    "session_keyword": {
+      "type": "ALIAS",
+      "content": {
+        "type": "TOKEN",
+        "content": {
+          "type": "PATTERN",
+          "value": "(?i)session"
+        }
+      },
+      "named": false,
+      "value": "session"
+    },
+    "dialog_keyword": {
+      "type": "ALIAS",
+      "content": {
+        "type": "TOKEN",
+        "content": {
+          "type": "PATTERN",
+          "value": "(?i)dialog"
+        }
+      },
+      "named": false,
+      "value": "dialog"
+    },
+    "file_keyword": {
+      "type": "ALIAS",
+      "content": {
+        "type": "TOKEN",
+        "content": {
+          "type": "PATTERN",
+          "value": "(?i)file"
+        }
+      },
+      "named": false,
+      "value": "file"
+    },
+    "action_keyword": {
+      "type": "ALIAS",
+      "content": {
+        "type": "TOKEN",
+        "content": {
+          "type": "PATTERN",
+          "value": "(?i)action"
+        }
+      },
+      "named": false,
+      "value": "action"
     },
     "page_keyword": {
       "type": "ALIAS",

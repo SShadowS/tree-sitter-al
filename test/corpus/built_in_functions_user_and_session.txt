@@ -77,7 +77,8 @@ codeunit 50100 "Built-in Functions Test"
                 (identifier)
                 (argument_list)))
             (assignment_statement
-              (keyword_identifier)
+              (keyword_identifier
+                (session_keyword))
               (assignment_operator)
               (call_expression
                 (identifier)

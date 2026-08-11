@@ -1,0 +1,86 @@
+================================================================================
+All six object_type_keyword spellings produce the SAME node, uniformly.
+`database_reference` aliases six alternatives to one `object_type_keyword`. Five
+are named keyword rules carrying visible aliased STRING tokens; `database` used
+to be a bare `kw('database')`, which is a token(PATTERN) and therefore HIDDEN.
+So one node type had two shapes -- `(object_type_keyword text='Page')` with an
+anonymous child, `(object_type_keyword text='DATABASE')` with none -- across
+22,988 nodes in BC.History. It was never a byte gap, because the outer alias()
+covered the bytes, which is why the query-coverage harness reported nothing.
+.
+WHAT THIS FILE CAN AND CANNOT ASSERT. Corpus expected trees do not show
+anonymous children at all, so the one-child shape is NOT pinned here and cannot
+be -- use tools/fieldwalk.c, which walks a TSTreeCursor and prints them. What
+IS pinned is that all six spellings produce an `object_type_keyword` node at
+all, and that is not a formality: the first attempt at this fix nested
+`alias(alias(kw('database'), 'database'), $.object_type_keyword)`, the two
+aliases did not compose, and the DATABASE case lost its `object_type_keyword`
+entirely -- the `keyword` field pointed straight at an anonymous token. This
+file fails on exactly that. The working form is a named `database_keyword` rule,
+so the outer alias sees the same thing it sees for the other five.
+================================================================================
+
+codeunit 50100 C
+{
+    procedure P()
+    begin
+        a := DATABASE::"Customer";
+        b := Page::"Customer Card";
+        c := Report::"Sales";
+        d := Codeunit::80;
+        e := XmlPort::"Export";
+        f := Query::"Top Customers";
+    end;
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (procedure
+        (procedure_keyword)
+        name: (identifier)
+        body: (code_block
+          (begin_keyword)
+          body: (statement_block
+            (assignment_statement
+              left: (identifier)
+              operator: (assignment_operator)
+              right: (database_reference
+                keyword: (object_type_keyword)
+                table_name: (quoted_identifier)))
+            (assignment_statement
+              left: (identifier)
+              operator: (assignment_operator)
+              right: (database_reference
+                keyword: (object_type_keyword)
+                table_name: (quoted_identifier)))
+            (assignment_statement
+              left: (identifier)
+              operator: (assignment_operator)
+              right: (database_reference
+                keyword: (object_type_keyword)
+                table_name: (quoted_identifier)))
+            (assignment_statement
+              left: (identifier)
+              operator: (assignment_operator)
+              right: (database_reference
+                keyword: (object_type_keyword)
+                table_name: (integer)))
+            (assignment_statement
+              left: (identifier)
+              operator: (assignment_operator)
+              right: (database_reference
+                keyword: (object_type_keyword)
+                table_name: (quoted_identifier)))
+            (assignment_statement
+              left: (identifier)
+              operator: (assignment_operator)
+              right: (database_reference
+                keyword: (object_type_keyword)
+                table_name: (quoted_identifier))))
+          (end_keyword))))))

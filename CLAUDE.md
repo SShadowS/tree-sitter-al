@@ -84,7 +84,7 @@ python parse_bug_finder.py file.al debug.log   # Analyze parsing bugs
 - **Scanner-based property disambiguation** — The `PROPERTY_NAME` scanner token distinguishes `identifier =` (property) from `identifier :` (variable) via 1-char lookahead
 - **Generic property rule** — ONE `property` rule handles all simple properties (vs V1's 291 individual rules)
 - **Generic preprocessor** — ONE `preproc_conditional` rule + ~12 dedicated split-construct rules (vs V1's 63)
-- **Named keyword nodes** — 110 keywords exposed as named nodes for query matching (108 grammar rules + the external `begin_keyword`/`end_keyword`), all with a uniform shape: one anonymous child typed as the canonical lowercase spelling
+- **Named keyword nodes** — 117 keywords exposed as named nodes for query matching (115 grammar rules + the external `begin_keyword`/`end_keyword`), all with a uniform shape: one anonymous child typed as the canonical lowercase spelling
 - **Stateful scanner** — a `uint32_t` depth counter tracks `#if`/`#endif` nesting (it was a `uint8_t` until 4.0.0 and wrapped at 256); `begin`/`end` are named at every depth, and the depth counter decides only whether a `PREPROC_SPLIT_*` token gets first refusal
 - **Single-read identifier dispatch** — all six identifier-initial scanner tokens are decided in one scan over one read of the word. Nothing matches a keyword against the live lexer: a walking matcher leaves its matched prefix consumed on failure, so sequential per-token reads start mid-identifier. That shape caused three separate defects and was deleted in 4.0.0
 
@@ -127,7 +127,7 @@ property: $ => seq(
 
 ## Keyword Architecture
 
-110 keywords are named nodes for query matching — 108 grammar rules plus the two external tokens `begin_keyword`/`end_keyword`. **Every grammar keyword rule has the same shape: exactly one anonymous child, typed as the canonical lowercase spelling.**
+117 keywords are named nodes for query matching — 115 grammar rules plus the two external tokens `begin_keyword`/`end_keyword`. **Every grammar keyword rule has the same shape: exactly one anonymous child, typed as the canonical lowercase spelling.**
 
 ```javascript
 table_keyword: $ => alias(kw('table'), 'table'),          // anonymous "table" child
@@ -153,22 +153,30 @@ Until 4.0.0 the depth > 0 case handed off to an anonymous `kw('begin')`, which m
 
 | body | child | count |
 |---|---|---|
-| `alias(kw('word'), 'word')` → STRING | one anonymous child typed `"word"` | 95 |
+| `alias(kw('word'), 'word')` → STRING | one anonymous child typed `"word"` | 102 |
 | `kwCases('word', …)` → STRING, each spelling aliased to `'word'` | one anonymous child typed `"word"` | 13 |
 | external scanner token (`begin_keyword`, `end_keyword`) | none — cannot take a child | 2 |
 
 The child's type is always the canonical lowercase spelling regardless of how the source spelled the keyword: `XmlPort` yields `(xmlport_keyword "xmlport")`, and the node's own text is still `XmlPort`.
 
-**`node-types.json` cannot confirm this for you.** It lists anonymous children only when they sit inside a field, and none of these do, so all 110 keyword nodes look childless there regardless of their real shape. **Read a keyword's text from the node itself, never by descending into a child** — that stays correct for the external tokens too, and it survives any future change to the anonymous layer.
+**`node-types.json` cannot confirm this for you.** It lists anonymous children only when they sit inside a field, and none of these do, so all 117 keyword nodes look childless there regardless of their real shape. **Read a keyword's text from the node itself, never by descending into a child** — that stays correct for the two external tokens, which really are childless, and it survives any future change to the anonymous layer.
 
-**`object_type_keyword` is the concrete reason that advice is not merely defensive.** `node-types.json` contains **111** named `*_keyword` types, not 110 — the extra one has no rule of its own. `database_reference` (`grammar.js:4163-4173`) does `field('keyword', alias(choice(kw('database'), $.page_keyword, $.report_keyword, $.codeunit_keyword, $.xmlport_keyword, $.query_keyword), $.object_type_keyword))`. The five named alternatives carry visible aliased STRING tokens; the bare `kw('database')` is a hidden pattern token. So the SAME node type has two shapes:
+**`object_type_keyword` used to be the counter-example to the contract. It is not any more — and the fix is worth knowing, because the mechanism recurs.** `node-types.json` contains **118** named `*_keyword` types, not 117: `object_type_keyword` has no rule of its own. `database_reference` builds it by aliasing a `choice` of six alternatives (`grep -n "object_type_keyword" grammar.js`). Five were named `$.*_keyword` rules carrying visible aliased STRING tokens while the sixth was a bare `kw('database')` — a hidden pattern token — so one node type shipped two shapes decided purely by which word the source used:
 
 ```
 (object_type_keyword text='Page')      children=[("page", anonymous)]
 (object_type_keyword text='DATABASE')  children=[]                     <- childless
 ```
 
-The uniform-shape contract above is about keyword **rules** and still holds exactly. But a consumer enumerating `node-types.json` sees 111 types and would reasonably apply the contract to all of them. Reading the node's own text is correct for every one; descending into a child is not.
+Measured over BC.History: **22,988 of 40,674 `object_type_keyword` nodes were the childless kind** — every `DATABASE::` in the corpus answering differently from its siblings. Fixed by giving `database` a real `database_keyword` rule like the other five. All 40,674 now have exactly one anonymous child.
+
+**The nested form does not work, and the fixture pins that.** `alias(alias(kw('database'), 'database'), $.object_type_keyword)` looks equivalent and is not: the two aliases do not compose, the DATABASE case loses its `object_type_keyword` node entirely, and the `keyword` field points straight at an anonymous token. `test/corpus/object_type_keyword_uniform_shape_test.txt` fails on exactly that.
+
+**Neither this nor the `keyword_identifier` defect below was a byte gap, and `qc` reported nothing for either.** The outer node covered the bytes in both cases, so the CST stayed lossless and both survived the losslessness work that drove gap clusters to zero. They were *shape* inconsistencies. Do not expect an existing gate to catch this class — the instrument that shows it is a tree-cursor walk (`tools/fieldwalk.c`), and the corpus-wide form is a census keyed by `(type, child count)`.
+
+**`keyword_identifier` had the same defect one level up, and is also fixed.** It accepts thirteen words; six were named `*_keyword` rules and seven were bare `kw()`, so `Codeunit.Run()` gave `(keyword_identifier (codeunit_keyword))` while `Record.Get()` gave a childless `(keyword_identifier)`. All thirteen are now named rules — see `test/corpus/keyword_identifier_uniform_shape_test.txt`, which unlike the `object_type_keyword` fixture really does pin the shape, because these children are *named* and corpus expected trees show named children.
+
+**Converting a bare `kw()` to `alias(kw(w), w)` cannot steal a spelling.** `kw(w)` is `token(RustRegex('(?i)w'))` and `alias()` wraps that same token, so matching is unchanged. Verified over BC.History rather than argued: the `identifier` node count was 5,908,480 before and after, and the full `(parent, field, child)` edge census was byte-identical (13,339,003 fielded edges, 911 kinds). The `kwCases()` whitelist argument does **not** apply to such a conversion — `kwCases()` exists to stop `kw()` from *widening* a compound keyword over spellings AL uses as identifiers, and an alias widens nothing.
 
 `_tabledata_keyword` is deliberately excluded: it is a *hidden* (`_`-prefixed) token helper, not a keyword node, and one of its two uses re-aliases it to `$.identifier`.
 
@@ -280,13 +288,13 @@ python parse_bug_finder.py file.al debug.log
 
 | Metric | Value |
 |--------|-------|
-| parser.c size | 26.0 MB |
-| SYMBOL_COUNT | ~846 |
-| STATE_COUNT | ~12,545 |
-| grammar.js lines | ~4,121 |
-| Tests | 1,514 |
-| Production success | 100% (0 errors) |
-| Named keywords | 110 (108 rules + 2 external), uniform shape |
+| parser.c size | 31.8 MB |
+| SYMBOL_COUNT | 896 |
+| STATE_COUNT | 13,747 |
+| grammar.js lines | ~4,664 |
+| Tests | 1,576 |
+| Production success | 100% (0 ERROR and 0 MISSING nodes over 15,358 files) |
+| Named keywords | 117 (115 rules + 2 external), uniform shape |
 | Query files | 6 (highlights, locals, tags, indents, folds, textobjects) |
 
 ## Validating AL Syntax Questions

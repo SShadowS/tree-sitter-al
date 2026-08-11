@@ -165,7 +165,8 @@ table 120 "Test Table"
     body: (declaration_body
       (property
         name: (property_name)
-        value: (keyword_identifier))))
+        value: (keyword_identifier
+          (system_keyword)))))
   (table_declaration
     (table_keyword)
     object_id: (integer)

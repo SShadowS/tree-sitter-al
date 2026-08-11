@@ -93,7 +93,8 @@ tableextension 50000 "Customer Extension" extends Customer
                       member: (identifier))
                     operator: (comparison_operator)
                     right: (qualified_enum_value
-                      enum_type: (keyword_identifier)
+                      enum_type: (keyword_identifier
+                        (action_keyword))
                       value: (identifier)))
                   (then_keyword)
                   then_branch: (assignment_statement

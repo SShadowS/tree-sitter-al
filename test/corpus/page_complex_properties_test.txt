@@ -149,10 +149,12 @@ page 30 "Item Card"
                             operator: (in_keyword)
                             right: (list_literal
                               (qualified_enum_value
-                                enum_type: (keyword_identifier)
+                                enum_type: (keyword_identifier
+                                  (action_keyword))
                                 value: (identifier))
                               (qualified_enum_value
-                                enum_type: (keyword_identifier)
+                                enum_type: (keyword_identifier
+                                  (action_keyword))
                                 value: (identifier))))
                           (then_keyword)
                           then_branch: (call_expression

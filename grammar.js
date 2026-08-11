@@ -1038,9 +1038,8 @@ module.exports = grammar({
     // `tabledata_permission`/`option_member` ambiguity this shares with
     // `table_keyword`'s existing `keyword_as_identifier` precedent).
     //
-    // KNOWN GAP (tracked, not fixed): because this stays a bare `kw()`, it is the
-    // one keyword token left outside the uniform `alias(kw(w), w)` shape, and its
-    // text lands in no node at all. In
+    // KNOWN GAP (tracked, not fixed): because this stays a bare `kw()`, its text
+    // lands in no node at all. In
     //   Permissions = tabledata Customer = R, table Customer = X;
     // the bytes spelling `tabledata` are covered by no node, while the sibling
     // `table` does get `table_keyword -> "table"`. That is the same losslessness
@@ -1048,6 +1047,17 @@ module.exports = grammar({
     // deciding what `tabledata_permission` should look like and untangling the
     // nested alias under `option_member`, which is a shape change in its own
     // right — deliberately out of scope here rather than silently fine.
+    //
+    // This comment used to claim `tabledata` was "the one keyword token left
+    // outside the uniform alias(kw(w), w) shape". It is not, and by a wide
+    // margin: qc's own baseline counts the same leaf gap 2,221 times for
+    // `record`, 499 for `field`, 390 for `code` and 194 for `action` in the
+    // 59-file manifest alone, against 59 for `tabledata` — 3,894 occurrences
+    // across all words. `tabledata` is the 6th largest, not the last one
+    // standing. What IS true is narrower: among rules *named* like keyword rules
+    // it is the only one still bare. Within this rule's own choice the claim was
+    // false too until `kw('system')` below became `$.system_keyword`, which
+    // closed the `gaps|system|property` cluster qc had been carrying.
     _tabledata_keyword: $ => kw('tabledata'),
 
     tabledata_permission: $ => seq(
@@ -1059,7 +1069,17 @@ module.exports = grammar({
         $.report_keyword,
         $.query_keyword,
         $.xmlport_keyword,
-        kw('system'),
+        // Must be the SAME `system_keyword` rule that `keyword_identifier` uses,
+        // not a bare kw(). Both rules are reachable from a property value, so
+        // with one side named and the other bare the parser has to decide which
+        // rule owns the token before it can see the `*`/name that disambiguates,
+        // and `tree-sitter generate` fails with an unresolved conflict between
+        // `tabledata_permission` and `system_keyword`. Routing both through the
+        // one rule removes the choice instead of forking on it.
+        //
+        // It also gives `system` a node here, which it did not have before —
+        // the same leaf gap `_tabledata_keyword` still has, one entry above.
+        $.system_keyword,
       ),
       // '*' keeps the field: the wildcard IS the table name, so an anonymous
       // node in this field's type set is correct here (cf. operator fields).
@@ -4083,20 +4103,44 @@ module.exports = grammar({
     ),
 
     // Keywords that can appear as identifiers in expressions (e.g., Codeunit.Run())
+    //
+    // All thirteen alternatives are named keyword rules, so `keyword_identifier`
+    // has ONE shape: exactly one named `*_keyword` child.
+    //
+    // Seven of them used to be bare `kw()`. A bare kw() is a token(PATTERN),
+    // which tree-sitter renders as a HIDDEN symbol, so `keyword_identifier` came
+    // out two different ways depending only on which word the source used:
+    //
+    //   Codeunit.Run()  ->  (keyword_identifier (codeunit_keyword))
+    //   Record.Get()    ->  (keyword_identifier)          <- childless leaf
+    //
+    // Not a byte gap — `keyword_identifier` itself covers the bytes either way,
+    // which is why the query-coverage harness reported nothing and this outlived
+    // the losslessness work. It was a SHAPE inconsistency: a consumer asking
+    // "which keyword is this?" by descending into the child got an answer for six
+    // spellings and nothing for the other seven.
+    //
+    // Aliasing does NOT change what the token matches. kw(w) is
+    // token(RustRegex('(?i)w')) and alias() wraps that same token, so these seven
+    // stayed exactly as case-insensitive as they already were and no spelling
+    // moved between `identifier` and `keyword_identifier`. That is the reason the
+    // kwCases() whitelist argument does not apply here: kwCases() exists to stop
+    // kw() from WIDENING a compound keyword over spellings AL uses as
+    // identifiers, and nothing here widens anything.
     keyword_identifier: $ => prec(-5, choice(
       $.codeunit_keyword,
       $.page_keyword,
       $.report_keyword,
       $.query_keyword,
       $.xmlport_keyword,
-      kw('record'),
+      $.record_keyword,
       $.enum_keyword,
-      kw('system'),
-      kw('session'),
-      kw('dialog'),
-      kw('database'),
-      kw('file'),
-      kw('action'),
+      $.system_keyword,
+      $.session_keyword,
+      $.dialog_keyword,
+      $.database_keyword,
+      $.file_keyword,
+      $.action_keyword,
     )),
 
     // --- Binary expressions ---
@@ -4250,10 +4294,29 @@ module.exports = grammar({
     // --- Database reference ---
     // DATABASE::"Customer"
 
+    // `database` is aliased to a visible STRING exactly like the five named
+    // alternatives beside it, so `object_type_keyword` has ONE shape.
+    //
+    // It used to be a bare `kw('database')`. That builds a token(PATTERN), which
+    // tree-sitter renders as a HIDDEN symbol, while the five `$.*_keyword` rules
+    // carry visible aliased STRING tokens -- so the same node type came out two
+    // different ways:
+    //
+    //   (object_type_keyword text='Page')      children=[("page", anonymous)]
+    //   (object_type_keyword text='DATABASE')  children=[]          <- childless
+    //
+    // Not a byte gap: the outer alias() covers the bytes, so the CST stayed
+    // lossless and the query-coverage harness reported nothing. It was a SHAPE
+    // inconsistency, over 22,276 `Database::` occurrences in 2,533 BC.History
+    // files, and a consumer that descended into the child got nothing for every
+    // one of them while its five siblings worked.
+    //
+    // Reading a keyword's text from the node itself still works for both shapes
+    // and remains the advice; this just removes the need for it here.
     database_reference: $ => prec(300, seq(
       field('keyword', alias(
         choice(
-          kw('database'),
+          $.database_keyword,
           $.page_keyword,
           $.report_keyword,
           $.codeunit_keyword,
@@ -4346,6 +4409,29 @@ module.exports = grammar({
 
     table_keyword: $ => alias(kw('table'), 'table'),
     tableextension_keyword: $ => prec(10, kwCases('tableextension', 'tableextension', 'TABLEEXTENSION', 'Tableextension', 'TableExtension', 'tableExtension')),
+    // `database` in `DATABASE::"Customer"`. A real keyword rule rather than a
+    // bare kw(), so that database_reference's outer alias() to
+    // object_type_keyword sees the same thing it sees for the five siblings
+    // beside it and produces the SAME node shape. See database_reference.
+    database_keyword: $ => alias(kw('database'), 'database'),
+
+    // The other six words `keyword_identifier` accepts. Named rules for the same
+    // reason as database_keyword: so that rule has one shape instead of two.
+    //
+    // These are deliberately NOT reused by the basic_type / record_type /
+    // action_declaration sites, which keep their own bare kw() — those are
+    // different constructs (a type name, a declaration header), and pointing them
+    // at a keyword rule would be a tree change to constructs that are not the
+    // subject here. Bare and named uses of one word already coexist by design:
+    // `field_keyword` is aliased for the where/link markers while
+    // `keyword_as_identifier` keeps a bare kw('field') a few lines below.
+    record_keyword: $ => alias(kw('record'), 'record'),
+    system_keyword: $ => alias(kw('system'), 'system'),
+    session_keyword: $ => alias(kw('session'), 'session'),
+    dialog_keyword: $ => alias(kw('dialog'), 'dialog'),
+    file_keyword: $ => alias(kw('file'), 'file'),
+    action_keyword: $ => alias(kw('action'), 'action'),
+
     page_keyword: $ => alias(kw('page'), 'page'),
     pageextension_keyword: $ => prec(10, kwCases('pageextension', 'pageextension', 'PAGEEXTENSION', 'Pageextension', 'PageExtension', 'pageExtension')),
     codeunit_keyword: $ => prec(10, kwCases('codeunit', 'codeunit', 'CODEUNIT', 'Codeunit', 'CodeUnit', 'COdeunit', 'codeUnit')),
