@@ -1245,6 +1245,28 @@ module.exports = grammar({
     // --- OptionMembers value list ---
     // Option1, Option2, "Option 3"
     // Also supports leading/trailing commas for blank entries: ,Sale,"Total Sale"
+    // ORDINALS COME FROM SEPARATOR POSITION, NOT FROM CHILD INDEX.
+    //
+    // An empty slot produces NO node, so `OptionMembers = Accepted,Posted,,"X",Y`
+    // yields four `option_member` children for five ordinals, and a consumer
+    // counting children reads "X" as ordinal 2 when it is ordinal 3. In AL an
+    // option's stored value IS its ordinal, so that is a wrong answer, not a
+    // cosmetic one. 48 of BC.History's 15,358 files contain an empty slot.
+    //
+    // This is not a defect and it is not fixable here: tree-sitter REJECTS a
+    // token that can match the empty string ("Error when generating parser",
+    // measured, not assumed), so a zero-width placeholder node cannot exist.
+    // tree-sitter-javascript has the identical behaviour for array holes
+    // `[1,,2]`.
+    //
+    // Nothing is lost. The commas are real anonymous tokens in the tree and are
+    // queryable — `(option_member_list "," @sep)` — so the ordinal of every
+    // member is recoverable from separator positions, and two ADJACENT commas
+    // are exactly an empty ordinal. A genuinely dropped member is a different
+    // and detectable thing: its bytes would belong to no leaf, which
+    // tools/validate_al_file.py's byte-roundtrip check reports.
+    //
+    // Shape pinned by test/corpus/option_empty_members_test.txt.
     option_member_list: $ => prec.right(choice(
       // Standard: Member, Member, ... (also supports empty slots: Member,,Member)
       // A #if/#endif may wrap comma-terminated members (BC gates legacy
