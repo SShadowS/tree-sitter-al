@@ -495,7 +495,9 @@ _OPERATOR_EXPRESSIONS = frozenset({
 })
 
 
-def check_orphan_operator_expressions(tree, src: bytes, *, _relax: bool = False) -> CheckResult:
+def check_orphan_operator_expressions(
+    tree, src: bytes, *, _relax: bool = False
+) -> CheckResult:
     """An operator-headed expression standing as an UNFIELDED statement.
 
     This is the shape a torn expression leaves behind, and no byte-level or
@@ -825,12 +827,32 @@ def self_test() -> int:
     end;
 }
 """
+    # This USED to fire: the grammar tore the expression into statements. The
+    # fix (preproc_conditional_expression_tail) means it must now stay silent,
+    # so this case flipped from a detection proof to a REGRESSION GUARD -- if
+    # the grammar ever tears it again, this goes red.
     report(
-        "expression torn across #if",
+        "expression across #if stays in its assignment",
         "orphan-operator-expr",
         check_orphan_operator_expressions(parser.parse(torn), torn),
-        want_fail=True,
+        want_fail=False,
     )
+    # NO detection case here, deliberately, and this needs saying rather than
+    # quietly omitting:
+    #
+    # This check DID fire, on exactly the input above, against the grammar
+    # before `preproc_conditional_expression_tail` existed -- that is what
+    # identified the defect. Now that the grammar is fixed, no input it accepts
+    # produces an operator-headed expression as a child of a statement
+    # container, so the loop body never executes and the check cannot be made
+    # to fire by any legitimate means.
+    #
+    # An `_inject` knob that forced `field_name = None` was written and then
+    # removed: it would have proven the reporting path while the detection had
+    # nothing to detect, which is the fake-proof shape this file exists to
+    # reject. The honest position is that the evidence is historical and
+    # recorded in the commit, and that the case above is now a tripwire for
+    # regression rather than a demonstration.
     report(
         "control: ordinary statements",
         "orphan-operator-expr",

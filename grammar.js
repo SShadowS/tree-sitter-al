@@ -3767,8 +3767,27 @@ module.exports = grammar({
     assignment_statement: $ => prec.dynamic(10, seq(
       field('left', $._expression),
       field('operator', $.assignment_operator),
-      field('right', $._expression)
+      field('right', $._expression),
+      optional($.preproc_conditional_expression_tail)
     )),
+
+    // An expression continued across a #if boundary. The tail absorbs the
+    // continuations that FOLLOW `#endif` itself, rather than leaving them to a
+    // repeat in the host rule -- that placement is what let the statement
+    // alternative win in earlier attempts.
+    preproc_conditional_expression_tail: $ => prec.right(seq(
+      $.preproc_if,
+      repeat1($._expression_continuation),
+      repeat(seq($.preproc_elif, repeat1($._expression_continuation))),
+      optional(seq($.preproc_else, repeat1($._expression_continuation))),
+      $.preproc_endif,
+      repeat($._expression_continuation)
+    )),
+
+    _expression_continuation: $ => seq(
+      field('operator', choice('+', '-', '*', '/')),
+      field('operand', $._expression)
+    ),
 
     assignment_expression: $ => prec.dynamic(1, prec.right(seq(
       field('left', $._expression),
@@ -4372,49 +4391,22 @@ module.exports = grammar({
       field('right', $._expression)
     )),
 
-    // KNOWN DEFECT, not yet fixed: an expression continued across a #if
-    // boundary is torn into statements.
+    // FIXED: an expression continued across a #if boundary. The rule is
+    // `preproc_conditional_expression_tail`, beside `assignment_statement`;
+    // the shape is pinned by
+    // test/corpus/preproc_expression_continuation_test.txt.
     //
-    //     r := 1
-    //     #if CLEAN25
-    //         + 2
-    //     #endif
-    //         + 3;
+    // It used to tear apart. `r := 1 #if X + 2 #endif + 3;` produced
+    // `assignment_statement` with `right: (integer)` -- just the 1 -- and left
+    // `+ 2` and `+ 3` as floating UNFIELDED siblings in the statement run. alc
+    // compiles the file; the tree was neither reading of it. Zero ERROR nodes,
+    // every byte covered, every node type ordinary: what moved was the PARENT,
+    // which is the one thing no byte-coverage or node-count check can see.
     //
-    // alc 18.0.37.11445 compiles this. We produce `assignment_statement` with
-    // `right: (integer)` -- just the 1 -- and then `+ 2` and `+ 3` as floating
-    // UNFIELDED children of the statement run. The program is `1 + 3` or
-    // `1 + 2 + 3`; the tree is neither. Zero ERROR nodes, every byte covered,
-    // every node type ordinary: what moved is the PARENT.
-    //
-    // Detected by tools/validate_al_file.py's `orphan-operator-expr` check.
-    // 0 occurrences across BC.History's 15,358 files and DC, so no fixture
-    // pins it by accident and no production parse is affected today.
-    //
-    // FOUR ATTEMPTS MEASURED, so the next person does not repeat them. Each is
-    // one edit; none of this says the grammar cannot express it.
-    //
-    //  1. `optional($.preproc_conditional_expression_tail)` between `left` and
-    //     `operator` in `additive_expression`
-    //       -> unresolved conflict `_single_pattern` vs `_expression` in
-    //          case-of position -- the SAME conflict 812ace7 deleted by making
-    //          the list separator mandatory. Reopening it is a regression.
-    //  2. `repeat(seq(tail, repeat(continuation)))` appended to
-    //     `assignment_statement`
-    //       -> shift/reduce on the outer repeat at `preproc_open`.
-    //  3. as 2, with `prec.right` on the outer repeat
-    //       -> conflict moves to the inner repeat.
-    //  4. as 3, with `prec.right` on BOTH repeats
-    //       -> GENERATES CLEANLY. +259 states (14,027 -> 14,286), +5 symbols.
-    //          The #if block lands correctly INSIDE the assignment as a child.
-    //          But the trailing `+ 3` after `#endif` still parses as a separate
-    //          statement, because `_statement` can begin with a unary
-    //          expression and that alternative wins. Half-fixed, so reverted.
-    //
-    // Attempt 4 is the promising one: it needs the post-`#endif` continuation
-    // to beat the statement alternative, which is a precedence question rather
-    // than a structural one. That is design work, not a patch to land at the
-    // end of a release.
+    // 0 occurrences in BC.History's 15,358 files and in DC, so no corpus gate
+    // could have found it either. It was found by an adversarial review of
+    // tools/validate_al_file.py, whose `orphan-operator-expr` check reports the
+    // shape if it ever returns.
 
     // 2, BELOW `and` (4) and `or`/`xor` (3). AL is Pascal-derived and the
     // logical operators bind TIGHTER than the comparisons — the exact inverse

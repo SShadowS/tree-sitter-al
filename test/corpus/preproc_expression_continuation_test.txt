@@ -1,0 +1,61 @@
+================================================================================
+An expression continued across a #if boundary stays inside its assignment
+--
+alc 18.0.37.11445 compiles this. Before the fix the parser produced
+`assignment_statement` with `right: (integer)` -- just the 1 -- and then
+`+ 2` and `+ 3` as floating UNFIELDED children of the statement run. The
+program is `1 + 3` or `1 + 2 + 3`; the tree was neither. Zero ERROR nodes,
+every byte covered, every node type ordinary: what moved was the PARENT,
+which is the one thing no byte-coverage or node-count check can see.
+.
+0 occurrences in BC.History and in DC, so no corpus gate would ever have
+caught it. Found by an adversarial review of tools/validate_al_file.py,
+whose `orphan-operator-expr` check now reports the shape if it returns.
+.
+The fix is that `preproc_conditional_expression_tail` absorbs the
+continuations that FOLLOW `#endif` itself. Leaving them to a repeat in the
+host rule loses them to the statement alternative -- measured, four times.
+================================================================================
+
+codeunit 50109 PreprocExpr
+{
+    procedure P() r: Integer
+    begin
+        r := 1
+#if CLEAN25
+            + 2
+#endif
+            + 3;
+    end;
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (procedure
+        (procedure_keyword)
+        name: (identifier)
+        return_value: (identifier)
+        return_type: (type_specification
+          (basic_type))
+        body: (code_block
+          (begin_keyword)
+          body: (statement_block
+            (assignment_statement
+              left: (identifier)
+              operator: (assignment_operator)
+              right: (integer)
+              (preproc_conditional_expression_tail
+                (preproc_if
+                  (preproc_open)
+                  condition: (identifier))
+                operand: (integer)
+                (preproc_endif
+                  (preproc_close))
+                operand: (integer))))
+          (end_keyword))))))
