@@ -4,7 +4,7 @@ GOAL: A parser which parses AL code CORRECT, not just without errors. That is th
 
 This file provides guidance to Claude Code (claude.ai/code) when working with this tree-sitter parser for the AL (Application Language) programming language used in Microsoft Dynamics 365 Business Central.
 
-**Current Status**: 100% production file success rate (15,358/15,358 files), 1,580 tests passing, 0 errors
+**Current Status**: 100% production file success rate (15,358/15,358 files), 1,583 tests passing, 0 errors
 
 ## Git Commit Guidelines
 
@@ -96,9 +96,9 @@ had the file on disk and 3 fewer in every fresh worktree — which is how one br
 ## Architecture
 
 **Core Files:**
-- `grammar.js` - Main grammar definition (~4,671 lines). Never edit `src/parser.c` (auto-generated)
+- `grammar.js` - Main grammar definition (~4,781 lines). Never edit `src/parser.c` (auto-generated)
 - `src/scanner.c` - External scanner for property disambiguation and preprocessor patterns
-- `test/corpus/` - Test suite with AL code and expected parse trees (570 files, 1,580 cases)
+- `test/corpus/` - Test suite with AL code and expected parse trees (573 files, 1,583 cases)
 - `queries/` - 6 query files (highlights, locals, tags, indents, folds, textobjects)
 
 **Key Design Principles (V2 architecture):**
@@ -327,10 +327,10 @@ a "the delta is exactly what I added" check, which therefore could not fail.
 | Metric | Value | as of |
 |--------|-------|-------|
 | parser.c size | 30.7 MiB | 4.0.0 |
-| SYMBOL_COUNT | 890 | 4.0.0 |
-| STATE_COUNT | 13,928 | 4.0.0 |
-| grammar.js lines | ~4,671 | 4.0.0 |
-| Tests | 1,580 | 4.0.0 |
+| SYMBOL_COUNT | 902 | 4.0.0 |
+| STATE_COUNT | 14,203 | 4.0.0 |
+| grammar.js lines | ~4,781 | 4.0.0 |
+| Tests | 1,583 | 4.0.0 |
 | Production success | 100% (0 errors) | 4.0.0 |
 | Named keywords | 110 (108 rules + 2 external), uniform shape | 4.0.0 |
 | Query files | 6 (highlights, locals, tags, indents, folds, textobjects) | 4.0.0 |
