@@ -335,9 +335,17 @@ CASES: list[Case] = [
         id="step4-unreferenced-rule",
         gate=VALIDATE,
         why="a rule defined in grammar.js that nothing references",
+        # Injected AFTER `source_file`, not before it. The FIRST entry in `rules`
+        # is tree-sitter's start symbol, so prepending made the orphan the start
+        # rule: every other rule became unreachable, the whole suite failed, and
+        # validate-grammar.sh never reached Step 4 to report the orphan at all.
+        # The case was then failing for a reason with nothing to do with orphan
+        # detection -- it was testing start-rule displacement. `generate` still
+        # succeeded, which is why it looked like a gate regression rather than a
+        # miscalibrated mutation.
         mutations=[sub(
-            "grammar.js", r"\n  rules: \{\n",
-            "\n  rules: {\n    zz_selftest_orphan_rule: $ => 'zzselftestorphan',\n",
+            "grammar.js", r"\n  rules: \{\n    source_file: ",
+            "\n  rules: {\n    zz_selftest_orphan_rule: $ => 'zzselftestorphan',\n    source_file: ",
             count=1,
         )],
         must_contain=["orphaned rule", "zz_selftest_orphan_rule"],
