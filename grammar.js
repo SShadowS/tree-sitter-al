@@ -1050,14 +1050,20 @@ module.exports = grammar({
     //
     // This comment used to claim `tabledata` was "the one keyword token left
     // outside the uniform alias(kw(w), w) shape". It is not, and by a wide
-    // margin: qc's own baseline counts the same leaf gap 2,221 times for
-    // `record`, 499 for `field`, 390 for `code` and 194 for `action` in the
-    // 59-file manifest alone, against 59 for `tabledata` — 3,894 occurrences
-    // across all words. `tabledata` is the 6th largest, not the last one
-    // standing. What IS true is narrower: among rules *named* like keyword rules
-    // it is the only one still bare. Within this rule's own choice the claim was
-    // false too until `kw('system')` below became `$.system_keyword`, which
-    // closed the `gaps|system|property` cluster qc had been carrying.
+    // margin: qc's baseline counts the same leaf gap 2,221 times for `record`,
+    // 499 for `field`, 390 for `code` and 194 for `action`, against 59 for
+    // `tabledata` — 3,894 across all words. `tabledata` is the 6th largest, not
+    // the last one standing.
+    //
+    // THOSE ARE MANIFEST-SCOPE FIGURES (the 59 set-cover files) AND DO NOT
+    // SCALE. That corpus is far denser per file than real AL; a published
+    // "3,895 byte gaps" at this scope was 574,694 at corpus scope, ~147x. Use
+    // them to RANK the words, never to size the corpus-wide work.
+    //
+    // What IS true is narrower: among rules *named* like keyword rules this is
+    // the only one still bare. Within this rule's own choice the claim was false
+    // too until `kw('system')` below became `$.system_keyword`, which closed the
+    // `gaps|system|property` cluster qc had been carrying.
     _tabledata_keyword: $ => kw('tabledata'),
 
     tabledata_permission: $ => seq(
@@ -4307,9 +4313,29 @@ module.exports = grammar({
     //
     // Not a byte gap: the outer alias() covers the bytes, so the CST stayed
     // lossless and the query-coverage harness reported nothing. It was a SHAPE
-    // inconsistency, over 22,276 `Database::` occurrences in 2,533 BC.History
-    // files, and a consumer that descended into the child got nothing for every
-    // one of them while its five siblings worked.
+    // inconsistency, and a consumer that descended into the child got nothing
+    // for every DATABASE:: in the corpus while its five siblings worked.
+    //
+    // Scale, at BC.History scope (15,358 .al files): 22,988 of 40,674
+    // `object_type_keyword` nodes were the childless kind. Quote the NODE count,
+    // not a grep: the 23,065 textual `database::` occurrences in those files
+    // resolve as 22,988 object_type_keyword + 75 comment + 2 string_literal
+    // (measured, not subtracted), and the last 77 never become one of these
+    // nodes at all.
+    //
+    // DO NOT "SIMPLIFY" THIS BY NESTING THE ALIASES. The obvious one-liner
+    //
+    //     alias(alias(kw('database'), 'database'), $.object_type_keyword)
+    //
+    // looks equivalent and is not: the two aliases do not compose. The inner one
+    // wins, the DATABASE case loses its `object_type_keyword` node ENTIRELY, and
+    // the `keyword` field then points straight at an anonymous token -- strictly
+    // worse than the childless node this replaced, because the node type
+    // disappears rather than merely varying. A named rule is what makes the outer
+    // alias see the same thing it sees for the other five. That was the first
+    // attempt here; test/corpus/object_type_keyword_uniform_shape_test.txt fails
+    // on exactly it, but a failing fixture tells you THAT the nested form is
+    // wrong, not why, which is what this paragraph is for.
     //
     // Reading a keyword's text from the node itself still works for both shapes
     // and remains the advice; this just removes the need for it here.
