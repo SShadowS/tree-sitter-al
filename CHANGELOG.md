@@ -1294,11 +1294,13 @@ per chunk, then globally, then against `parsed.txt`.
 
 | Gate | Result |
 |---|---|
-| `tree-sitter test` | 1,562 tests, 0 failed |
+| `tree-sitter test` | **1,615** tests, 0 failed |
 | `parse-al-parallel.sh ./BC.History/` | 15,358 / 15,358 files parsed, 0 errors — and for the first time that is a count of files read, reconciled per chunk, not a subtraction |
-| `validate-grammar.sh` | exit 0 |
+| `parse-al-parallel.sh` (second production estate) | **20,643 / 20,643**, 0 errors — an independent corpus added at release time |
+| `tools/validate_al_file.py` over both corpora | **0 byte-roundtrip failures, 0 silent tears** across all 36,001 files. This is the row that matters: an error count cannot see a token that was lexed and dropped, and every defect in this release had a clean one |
+| `validate-grammar.sh --full` | exit 0 |
 | `qc run` (59-file manifest, the gating scope) | no regressions |
-| `qc run --full-corpus --all` | 15,358 files, 407s — a reporting sweep, not a gate |
+| `pytest tools/query_coverage/tests` | 178 passed |
 | `tools/gate_selftest.py` | 23 cases + 2 controls, 0 failed |
 | `tools/tree-harness.sh verify` | every tree-moving change enumerated by node-instance set difference and stated in its own entry above |
 

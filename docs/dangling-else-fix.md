@@ -1,5 +1,24 @@
 # Dangling-Else Fix: IncomingDocument.Table.al
 
+> **RESOLVED in 4.0.0.** The file named below now parses with **0 ERROR/MISSING
+> nodes**, verified against the released grammar. The `else` in a `case true of`
+> binds to the inner `if`, which is what the program means.
+>
+> This document is kept as the record of the decision, not as open work. The
+> problem statement and the four options are deliberately preserved: which fix
+> was chosen and what was rejected is the thing nobody writes down and everybody
+> later wants. Read the tense below as historical.
+>
+> **Chosen:** the grammar option, not a scanner or precedence workaround — the
+> `case_branch` no longer offers an `else` arm that can steal the inner `if`'s.
+> Pinned by `test/corpus/` fixtures asserting the shape rather than the error
+> count, since the defect produced a *wrong tree*, and for 133 other files it
+> produced no error at all.
+>
+> The 43 cascading ERROR nodes cited below were this file's symptom. They were
+> the loud instance of a defect that was silent everywhere else, which is why
+> the fix is pinned by structure and not by an error count.
+
 ## Problem
 
 **File:** `BC.History/BaseApp/Source/Base Application/eServices/EDocument/IncomingDocument.Table.al`

@@ -1,7 +1,7 @@
 # Query-Coverage Harness — Design
 
 **Date:** 2026-08-09
-**Status:** Approved, not yet implemented
+**Status:** IMPLEMENTED and shipped in 4.0.0. The harness gates in `validate-grammar.sh` Step 5d and its own unit tests run in CI. A status marker is a present-tense claim whatever the document's date, so this one was wrong rather than merely old.
 **Scope:** Build the harness. No grammar or query corrections in this work.
 
 ## Problem
