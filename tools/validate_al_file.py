@@ -108,6 +108,20 @@ def check_parse_integrity(tree, src: bytes) -> CheckResult:
 # 2. Byte-exact round trip  (COMPLETENESS)
 # --------------------------------------------------------------------------
 
+# A UTF-8 BOM is legitimately an EXTRA -- `extras` carries it and the scanner's
+# `is_extra_space` covers U+FEFF -- so like all whitespace it belongs to no node.
+# `bytes.strip()` removes ASCII whitespace only, so without this every
+# BOM-prefixed file reads as three dropped bytes. That is 3,268 of DO.Support's
+# 20,643 files: a 16% false-alarm rate on a check whose whole value is being
+# believed. BC.History has no BOMs, which is why it never surfaced there.
+_EXTRA_BYTES = b"\xef\xbb\xbf"
+
+
+def _significant(chunk: bytes) -> bytes:
+    """The part of a gap that should have been in a node."""
+    return chunk.replace(_EXTRA_BYTES, b"").strip()
+
+
 def _leaves(root):
     stack, out = [root], []
     while stack:
@@ -157,13 +171,13 @@ def check_byte_roundtrip(tree, src: bytes, *, _drop_leaf: int | None = None) -> 
             )
             continue
         gap = src[cursor:leaf.start_byte]
-        if gap.strip():
+        if _significant(gap):
             r = src[:cursor].count(b"\n") + 1
             findings.append(
                 Finding(
                     "byte-roundtrip",
-                    f"{len(gap.strip())} non-whitespace byte(s) in no node: "
-                    f"{gap.strip()[:60]!r}",
+                    f"{len(_significant(gap))} non-whitespace byte(s) in no node: "
+                    f"{_significant(gap)[:60]!r}",
                     f"line {r}, byte {cursor}",
                 )
             )
@@ -171,12 +185,12 @@ def check_byte_roundtrip(tree, src: bytes, *, _drop_leaf: int | None = None) -> 
         rebuilt += src[leaf.start_byte:leaf.end_byte]
         cursor = max(cursor, leaf.end_byte)
     tail = src[cursor:]
-    if tail.strip():
+    if _significant(tail):
         findings.append(
             Finding(
                 "byte-roundtrip",
-                f"{len(tail.strip())} trailing non-whitespace byte(s) in no node: "
-                f"{tail.strip()[:60]!r}",
+                f"{len(_significant(tail))} trailing non-whitespace byte(s) in no node: "
+                f"{_significant(tail)[:60]!r}",
                 f"byte {cursor}",
             )
         )
