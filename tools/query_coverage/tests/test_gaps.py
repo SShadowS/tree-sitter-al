@@ -1,8 +1,91 @@
+"""Unit tests for detector 1.
+
+A NOTE ON WHY HALF OF THESE USE SYNTHETIC TREES.
+
+These tests were originally written against `:=`, which was a real dropped
+token. 37771f1 made it a node, so they were re-pointed at `Record`, `tabledata`
+and the `is` operator -- the defects still open at the time. The losslessness
+work closed those too, and the corpus now reports ZERO byte gaps across all
+15,358 files, so there is no longer any AL source that produces one.
+
+Re-pointing has therefore run out of defects, and that is the end of a pattern
+rather than an accident: a detector whose only proof of life is a live grammar
+defect has no way to prove it still works once the grammar is clean, which is
+exactly when you most need to trust it.
+
+So the tests that need a gap now BUILD one, with a synthetic tree over real
+bytes. That is stricter than the source-driven form it replaces -- error
+nesting and leaf layout are stated outright instead of being hoped for from the
+parser -- and it cannot be invalidated by a future grammar fix. What it no
+longer proves is that tree-sitter still produces these shapes from AL source;
+that was already only incidentally true, and `_straddles_an_error` below
+exists because the 2- and 3-token cases had silently stopped reproducing their
+own precondition once before.
+
+The real-parser tests that remain assert the invariant that now holds: named
+keywords and operators are nodes, and a clean object has no gaps at all.
+"""
+
 from tools.query_coverage.detectors import _tree, gaps
 
 
 def texts(findings):
     return sorted(f.detail["gap_text"] for f in findings)
+
+
+class FakeNode:
+    """The subset of tree_sitter.Node that detector 1 and _tree actually touch.
+
+    Deliberately minimal: if the detector starts using an attribute this does
+    not define, these tests fail with AttributeError rather than passing on a
+    stub that quietly returns None.
+    """
+
+    def __init__(self, type_, start, end, *children, named=True, error=False):
+        self.type = type_
+        self.start_byte = start
+        self.end_byte = end
+        self.children = list(children)
+        self.is_named = named
+        self.is_error = error
+        self.parent = None
+        for child in self.children:
+            child.parent = self
+
+    @property
+    def child_count(self):
+        return len(self.children)
+
+
+class FakeTree:
+    def __init__(self, root):
+        self.root_node = root
+
+
+def leaf(type_, start, end, named=False):
+    return FakeNode(type_, start, end, named=named)
+
+
+# A variable declaration whose type keyword is covered by no leaf: the exact
+# shape a bare kw() used to produce, built rather than parsed.
+#
+#   r: Record Customer;
+#   0  3    9 10     18      <- "Record" is [3,9) and belongs to no leaf
+GAP_SOURCE = b"r: Record Customer;"
+
+
+def gap_tree(source=GAP_SOURCE, name_type="identifier", name_span=(10, 18)):
+    """`r: <no leaf>Record</no leaf> <name>;` — the leaf after the gap is swappable."""
+    end = len(source)
+    return FakeTree(
+        FakeNode(
+            "variable_declaration", 0, end,
+            leaf("identifier", 0, 1, named=True),
+            leaf(":", 1, 2),
+            leaf(name_type, name_span[0], name_span[1], named=True),
+            leaf(";", end - 1, end),
+        )
+    )
 
 
 def _uncovered_chunks(tree, source):
@@ -40,21 +123,29 @@ def _straddles_an_error(tree, source):
     return False
 
 
-def test_hidden_type_keywords_are_gaps(al_parser):
-    """The worked example: a type keyword written as a bare kw() is lexed and
-    then belongs to no node, so its bytes are covered by no leaf.
+def test_type_keywords_are_no_longer_gaps(al_parser):
+    """Ratchet on the losslessness work, and the successor to this test's own
+    earlier form -- which asserted `Record` and `Code` WERE gaps, because at the
+    time they were bare kw() tokens belonging to no node.
 
-    This replaces the original ':=' example, which 37771f1 fixed (see
-    test_assignment_operators_are_no_longer_gaps). Two gaps, asserted as an
-    exact list rather than by membership, so a detector that over-reports
-    fails here too -- membership alone would pass on a detector that flagged
-    every token in the file.
+    Both halves are asserted, for the same reason
+    test_assignment_operators_are_no_longer_gaps asserts both: "no gap" alone
+    would also pass on a detector that had stopped reporting anything, so the
+    keywords are additionally required to be present as real nodes carrying
+    their own text. Reverting the keyword rules to bare kw() turns this red on
+    the second half even if the first half still passes.
     """
     source = b"codeunit 1 T { procedure P() var r: Record Customer; c: Code[20]; begin end; }"
+    tree = al_parser.parse(source)
 
-    findings = gaps.detect(al_parser.parse(source), source, "t.al")
+    assert gaps.detect(tree, source, "t.al") == []
 
-    assert texts(findings) == ["Code", "Record"]  # texts() sorts
+    keywords = {
+        node.type: node.text.decode("utf-8")
+        for node in _tree.walk(tree.root_node)
+        if node.type in {"record_keyword", "code_keyword"}
+    }
+    assert keywords == {"record_keyword": "Record", "code_keyword": "Code"}
 
 
 def test_assignment_operators_are_no_longer_gaps(al_parser):
@@ -83,13 +174,25 @@ def test_assignment_operators_are_no_longer_gaps(al_parser):
     assert operators == [":=", "+="]
 
 
-def test_tabledata_keyword_is_a_gap(al_parser):
-    """_tabledata_keyword is a bare kw() used un-aliased."""
+def test_tabledata_keyword_is_no_longer_a_gap(al_parser):
+    """Ratchet. `_tabledata_keyword` was a HIDDEN rule over a bare kw(), which
+    is why it survived the first round of keyword naming: a hidden rule
+    produces no node, so aliasing the token inside it changed nothing visible.
+    It is now `tabledata_keyword`, visible, and shared with `option_member`
+    (where it is aliased to $.identifier) so that one terminal keeps one rule.
+
+    Same two halves as above: no gap, AND the keyword is a real node.
+    """
     source = b"permissionset 1 P { Permissions = tabledata Foo = rimd; }"
+    tree = al_parser.parse(source)
 
-    findings = gaps.detect(al_parser.parse(source), source, "t.al")
+    assert gaps.detect(tree, source, "t.al") == []
 
-    assert "tabledata" in texts(findings)
+    assert [
+        node.text.decode("utf-8")
+        for node in _tree.walk(tree.root_node)
+        if node.type == "tabledata_keyword"
+    ] == ["tabledata"]
 
 
 def test_clean_object_with_no_hidden_tokens_has_no_gaps(al_parser):
@@ -122,24 +225,23 @@ def test_gaps_inside_error_ranges_are_excluded(al_parser):
         assert "!" not in finding.detail["gap_text"]
 
 
-def test_fingerprint_is_normalized_text_plus_enclosing_type(al_parser):
-    """The gap text is lowercased into the fingerprint.
+def test_fingerprint_is_normalized_text_plus_enclosing_type():
+    """The gap text is lowercased into the fingerprint but kept source-cased in
+    the detail.
 
-    The original ':=' example could not see that: it has no letters, so a
-    fingerprint that skipped normalize_text entirely passed. 'Record' is
-    source-cased, so this now fails against that mistake.
+    The original ':=' example could not see this: it has no letters, so a
+    fingerprint that skipped normalize_text entirely passed. The gap text here
+    is deliberately mixed-case for the same reason.
     """
-    source = b"codeunit 1 T { procedure P() var r: Record Customer; begin end; }"
+    findings = gaps.detect(gap_tree(), GAP_SOURCE, "t.al")
 
-    findings = gaps.detect(al_parser.parse(source), source, "t.al")
-
-    assert findings
+    assert len(findings) == 1
     assert findings[0].detail["gap_text"] == "Record"
     assert findings[0].fingerprint[0] == "record"
     assert len(findings[0].fingerprint) == 2
 
 
-def test_fingerprint_keys_on_the_node_containing_the_gap_not_the_next_token(al_parser):
+def test_fingerprint_keys_on_the_node_containing_the_gap_not_the_next_token():
     """F5: the fingerprint's second component must be the construct the gap
     sits inside (here "variable_declaration"), not the type of whichever token
     happens to follow it. Before the fix, the two sources below keyed on
@@ -149,23 +251,26 @@ def test_fingerprint_keys_on_the_node_containing_the_gap_not_the_next_token(al_p
     regression for a defect that never changed.
 
     The original pair was `i := 1` / `i := 'x'`, keying on "integer" and
-    "string_literal"; 37771f1 made ':=' a real node, so it is no longer a gap
-    and no longer discriminates. The `Record` gap does: its following leaf is
-    an `identifier` in one source and a `quoted_identifier` in the other,
-    which is the same two-clusters-for-one-defect shape.
+    "string_literal"; 37771f1 made ':=' a real node. The pair after that was
+    `Record Customer` / `Record "My Table"`, which the losslessness work then
+    closed. The discriminating property was never the specific construct -- it
+    is that the leaf FOLLOWING the gap differs while the gap's own container
+    does not -- so it is now stated directly instead of being borrowed from
+    whichever defect happened to be open.
     """
-    bare_name = b"codeunit 1 T { procedure P() var r: Record Customer; begin end; }"
-    quoted_name = b'codeunit 1 T { procedure P() var r: Record "My Table"; begin end; }'
+    bare = GAP_SOURCE
+    quoted = b'r: Record "My Table";'
 
-    bare_findings = gaps.detect(al_parser.parse(bare_name), bare_name, "t.al")
-    quoted_findings = gaps.detect(al_parser.parse(quoted_name), quoted_name, "t.al")
+    bare_findings = gaps.detect(gap_tree(), bare, "t.al")
+    quoted_findings = gaps.detect(
+        gap_tree(quoted, name_type="quoted_identifier", name_span=(10, 20)),
+        quoted, "t.al",
+    )
 
-    assert [f.fingerprint for f in bare_findings if f.detail["gap_text"] == "Record"] == [
-        ("record", "variable_declaration")
-    ]
-    assert [f.fingerprint for f in quoted_findings if f.detail["gap_text"] == "Record"] == [
-        ("record", "variable_declaration")
-    ]
+    assert [f.detail["gap_text"] for f in bare_findings] == ["Record"]
+    assert [f.detail["gap_text"] for f in quoted_findings] == ["Record"]
+    assert [f.fingerprint for f in bare_findings] == [("record", "variable_declaration")]
+    assert [f.fingerprint for f in quoted_findings] == [("record", "variable_declaration")]
 
 
 def test_semicolon_counts_as_coverage(al_parser):
