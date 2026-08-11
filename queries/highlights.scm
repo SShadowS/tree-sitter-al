@@ -240,6 +240,7 @@
 ; named in 4.0.0. The named pattern also covers `+=`, `-=`, `*=` and `/=`, which
 ; no pattern here matched before.
 (assignment_operator) @operator
+
 ":=" @operator
 
 ; AL filter operators inside a filter() / TableRelation filter value: <> | = > <
@@ -865,7 +866,6 @@
 ; filter() was: the other three were bare kw(), i.e. hidden pattern tokens that
 ; no query could reach, which is also why `where(X = field(N))` and
 ; `where(X = const(N))` produced identical trees.
-
 ; Target field, left of the '='
 (link_value
   field: [
@@ -876,7 +876,6 @@
 ; (The '=' joining a link_value's target and source is covered by the general
 ; "=" pattern in the operator block above, which subsumes the link_value-only
 ; pattern that used to live here.)
-
 ; Dotted source `DataItem."Field"` — the dataitem name. The field itself is
 ; covered by the source-field rule below, which anchors to the last child.
 (link_value
@@ -893,8 +892,7 @@
   value: [
     (identifier)
     (quoted_identifier)
-  ] @property
-  .)
+  ] @property .)
 
 ; =============================================================================
 ; Query and Report Elements
