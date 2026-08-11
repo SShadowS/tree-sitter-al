@@ -1,0 +1,54 @@
+================================================================================
+DELIBERATE NEGATIVE -- the OPERATOR itself on the far side of a #if boundary
+--
+The ERROR is the assertion. Exempt in validate-grammar.sh Step 3 and in
+release.md pre-flight #3.
+.
+`1 #if X + #endif 2` puts only the OPERATOR inside the branch. alc 18.0.37.11445
+REJECTS it: `AL0104: Syntax error, 'end' expected`. So our ERROR is CORRECT and
+must stay -- this is the boundary of the #if-continuation work, not a gap in it.
+.
+Recorded because it is the one shape in that sweep the compiler refuses, and the
+temptation on seeing an ERROR beside eight fixed siblings is to "fix" it too.
+Every other position measured -- assignment RHS, exit value, argument, if
+condition, property value, for bound, subscript, while condition, list elements,
+#elif/#else spans, multiple splits in one expression -- alc ACCEPTS, and all of
+them parse.
+================================================================================
+
+codeunit 50203 D { procedure P() var i: Integer; begin i := 1
+#if X
+ +
+#endif
+ 2; end; }
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    (ERROR
+      (procedure_keyword)
+      name: (identifier)
+      (var_section
+        (var_keyword)
+        body: (var_body
+          (variable_declaration
+            name: (identifier)
+            type: (type_specification
+              (basic_type)))))
+      (begin_keyword)
+      (assignment_statement
+        left: (identifier)
+        operator: (assignment_operator)
+        right: (integer))
+      (preproc_if
+        (preproc_open)
+        condition: (identifier))
+      (unary_expression
+        (ERROR
+          (UNEXPECTED 'i'))
+        operand: (integer))
+      (identifier))))

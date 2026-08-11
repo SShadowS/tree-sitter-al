@@ -1,0 +1,57 @@
+================================================================================
+A while condition continued across a #if boundary
+--
+alc 18.0.37.11445 ACCEPTS this; we produced ERROR nodes until this position was
+wired. Verified with a discriminating control -- note every probe log carries a
+non-fatal `AL1021: The package cache path has not been specified`, so judge by
+whether out.app was produced, never by that line.
+================================================================================
+
+codeunit 50205 F { procedure P() var i: Integer; begin while i < 1
+#if X
+ + 2
+#endif
+ do i := i + 1; end; }
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (procedure
+        (procedure_keyword)
+        name: (identifier)
+        (var_section
+          (var_keyword)
+          body: (var_body
+            (variable_declaration
+              name: (identifier)
+              type: (type_specification
+                (basic_type)))))
+        body: (code_block
+          (begin_keyword)
+          body: (statement_block
+            (while_statement
+              (while_keyword)
+              condition: (comparison_expression
+                left: (identifier)
+                operator: (comparison_operator)
+                right: (integer))
+              (preproc_conditional_expression_tail
+                (preproc_if
+                  (preproc_open)
+                  condition: (identifier))
+                operand: (integer)
+                (preproc_endif
+                  (preproc_close)))
+              (do_keyword)
+              body: (assignment_statement
+                left: (identifier)
+                operator: (assignment_operator)
+                right: (additive_expression
+                  left: (identifier)
+                  right: (integer)))))
+          (end_keyword))))))

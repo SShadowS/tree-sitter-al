@@ -14,7 +14,7 @@ Before starting, verify:
    ```bash
    grep -rn "(ERROR\b\|(MISSING\b" test/corpus/ --include="*.txt" \
      | grep -v "ERROR(" \
-     | grep -vE "(^|/)(option_members_tabledata_keyword_test|pragma_whitespace_tolerance_test|preproc_if_elif_whitespace_tolerance_test|preproc_region_whitespace_audit_test|scanner_var_attribute_token_span_test|directive_word_boundary_test|scanner_unicode_identifier_negative_test|range_not_an_expression_negative_test|interface_access_negative_test|missing_separator_negative_test)\.txt:"
+     | grep -vE "(^|/)(option_members_tabledata_keyword_test|pragma_whitespace_tolerance_test|preproc_if_elif_whitespace_tolerance_test|preproc_region_whitespace_audit_test|scanner_var_attribute_token_span_test|directive_word_boundary_test|scanner_unicode_identifier_negative_test|range_not_an_expression_negative_test|preproc_split_operator_negative_test|interface_access_negative_test|missing_separator_negative_test)\.txt:"
    ```
 
    The `(^|/)…\.txt:` anchoring is load-bearing. `grep -rn` emits

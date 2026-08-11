@@ -4173,6 +4173,7 @@ module.exports = grammar({
         $.downto_keyword,
       )),
       field('end', $._expression),
+      optional($.preproc_conditional_expression_tail),
       $.do_keyword,
       $._body_branch
     )),
@@ -4193,6 +4194,7 @@ module.exports = grammar({
     while_statement: $ => prec.right(seq(
       $.while_keyword,
       field('condition', $._expression),
+      optional($.preproc_conditional_expression_tail),
       $.do_keyword,
       $._body_branch
     )),
@@ -4653,6 +4655,7 @@ module.exports = grammar({
       field('object', $._expression),
       '[',
       field('index', $._expression),
+      optional($.preproc_conditional_expression_tail),
       repeat(seq(',', $._expression)),
       ']'
     )),
@@ -4670,8 +4673,25 @@ module.exports = grammar({
     // `_expression_list` — `f(1 .. 5)` is not AL.
     list_literal: $ => seq(
       '[',
-      optional(seq($._list_element, repeat(seq(',', $._list_element)))),
+      optional(seq(
+        $._list_element,
+        optional($.preproc_conditional_expression_tail),
+        repeat(seq(',', $._list_element)),
+        // A #if that supplies further ELEMENTS rather than continuing the last
+        // expression: `[1 #if X , 2 #endif ]`. Distinct from
+        // preproc_conditional_expression_tail, whose branches open with an
+        // OPERATOR; these open with a comma. alc accepts both.
+        optional($.preproc_conditional_list_elements)
+      )),
       ']'
+    ),
+
+    preproc_conditional_list_elements: $ => seq(
+      $.preproc_if,
+      repeat1(seq(',', $._list_element)),
+      repeat(seq($.preproc_elif, repeat1(seq(',', $._list_element)))),
+      optional(seq($.preproc_else, repeat1(seq(',', $._list_element)))),
+      $.preproc_endif
     ),
 
     _list_element: $ => choice(

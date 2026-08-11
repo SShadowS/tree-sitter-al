@@ -275,6 +275,10 @@ DELIBERATE_ERROR_FIXTURES=(
     # `range_expression` from `_expression`. These are the probes that decided
     # that fix should be structural rather than a new precedence number.
     "range_not_an_expression_negative_test.txt"
+    # `1 #if X + #endif 2` -- the OPERATOR alone inside the branch. alc rejects
+    # it (AL0104), so the ERROR is the assertion and the boundary of the
+    # #if-continuation work. Every other split position alc ACCEPTS and we parse.
+    "preproc_split_operator_negative_test.txt"
     # U+E0041, a Cf TAG character, is not an identifier character: grammar.js's
     # `[\p{L}_][\p{L}\p{N}_]*` rejects it and so does alc (AL0183). The ERROR is
     # the assertion, and this one matters more than most — until 4.0.0 the
