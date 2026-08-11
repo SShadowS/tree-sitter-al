@@ -2177,6 +2177,10 @@
       "members": [
         {
           "type": "SYMBOL",
+          "name": "_property_value_with_split"
+        },
+        {
+          "type": "SYMBOL",
           "name": "boolean"
         },
         {
@@ -2410,6 +2414,19 @@
           }
         ]
       }
+    },
+    "_property_value_with_split": {
+      "type": "SEQ",
+      "members": [
+        {
+          "type": "SYMBOL",
+          "name": "_expression"
+        },
+        {
+          "type": "SYMBOL",
+          "name": "preproc_conditional_expression_tail"
+        }
+      ]
     },
     "property_expression": {
       "type": "PREC",

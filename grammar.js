@@ -620,6 +620,17 @@ module.exports = grammar({
     )),
 
     _property_value: $ => choice(
+      // A value continued across a #if boundary:
+      //   MinValue = 1 #if X + 2 #endif ;
+      // alc accepts it. The tail here is REQUIRED, not optional -- that is the
+      // whole reason this is a separate alternative rather than a suffix on the
+      // others. An optional tail overlaps every simple value form and is a
+      // reduce/reduce at `;`, and attaching it to `property` itself made the
+      // tail BEAT preproc_conditional_option_members, turning a correct
+      // option_member_list into an ERROR (caught by two fixtures while
+      // BC.History stayed at 0 errors). Requiring the tail means this
+      // alternative simply does not exist unless a #if actually follows.
+      $._property_value_with_split,
       // Simple values
       $.boolean,
       $.integer,
@@ -683,6 +694,11 @@ module.exports = grammar({
     )),
 
     // Expressions that can appear as property values (member access, function calls, etc.)
+    _property_value_with_split: $ => seq(
+      $._expression,
+      $.preproc_conditional_expression_tail
+    ),
+
     property_expression: $ => prec(-2, choice(
       $.call_expression,
       $.member_expression,
@@ -4583,34 +4599,36 @@ module.exports = grammar({
 
     // An expression that may be continued across a #if boundary.
     //
-    // COVERAGE AND ITS ONE REMAINING GAP, both measured. alc 18.0.37.11445
-    // ACCEPTS the split in all five positions; we handle four:
+    // ALL FIVE POSITIONS alc accepts are handled, each pinned by a fixture:
     //
-    //   assignment RHS   r := 1 #if X + 2 #endif + 3;      HANDLED
-    //   exit value       exit(1 #if X + 2 #endif );        HANDLED
-    //   argument         Power(2 #if X + 1 #endif , 3)     HANDLED
-    //   if condition     if i = 1 #if X + 2 #endif then    HANDLED
-    //   property value   MinValue = 1 #if X + 2 #endif ;   still ERRORs
+    //   assignment RHS   r := 1 #if X + 2 #endif + 3;
+    //   exit value       exit(1 #if X + 2 #endif );
+    //   argument         Power(2 #if X + 1 #endif , 3)
+    //   if condition     if i = 1 #if X + 2 #endif then
+    //   property value   MinValue = 1 #if X + 2 #endif ;
     //
-    // THE MECHANISM THAT MADE FOUR OF THEM WORK: a plain `optional(...)` plus a
-    // DECLARED CONFLICT, never `prec.right`. prec.right commits to the tail the
-    // instant it sees `#if`, but the discriminator -- whether the branch opens
-    // with an OPERATOR (a continuation) or an identifier (a whole statement) --
-    // sits several tokens later, past the condition. Committing without
-    // backtracking cost 200 BC.History files on the argument position and 376
-    // on the condition. A declared conflict lets GLR explore both readings and
-    // keep the one that parses, which is how this grammar resolves every other
-    // preproc ambiguity.
+    // TWO MECHANISMS, and using the wrong one is what made the first attempts
+    // look like an inherent limit:
     //
-    // PROPERTY VALUE is left alone deliberately. The tail there beats
-    // `preproc_conditional_option_members`, turning a correct
-    // `value: (option_member_list … preproc_conditional_option_members …)` into
-    // an ERROR -- caught by two existing fixtures
-    // (IncludedPermissionSets, TableRelation-with-semicolon-inside-#if). The
-    // corpus stayed at 0 errors, so only the fixtures saw it: a reminder that
-    // an error count is not a correctness check. Closing this one needs the
-    // property-value preproc rules and the tail to be reconciled rather than
-    // raced, which is design work.
+    //   Statement/expression hosts take a PLAIN `optional(...)` plus a DECLARED
+    //   CONFLICT -- never prec.right. prec.right commits to the tail the moment
+    //   it sees `#if`, but whether the branch opens with an OPERATOR (a
+    //   continuation) or an identifier (a whole statement that merely follows)
+    //   is only decidable several tokens later, past the condition. Committing
+    //   without backtracking cost 200 BC.History files on arguments and 376 on
+    //   conditions. A declared conflict lets GLR explore both and keep what
+    //   parses, which is how every other preproc ambiguity here is resolved.
+    //
+    //   The property value takes a separate `_property_value` alternative whose
+    //   tail is REQUIRED, not optional. Optional overlaps every simple value
+    //   form and is a reduce/reduce at `;`; attached to `property` itself the
+    //   tail BEAT preproc_conditional_option_members and turned a correct
+    //   option_member_list into an ERROR. Requiring the tail means the
+    //   alternative does not exist unless a `#if` actually follows, so it
+    //   cannot race the rules that already read those directives.
+    //
+    // Both broken attempts left BC.History at 0 errors; only corpus fixtures
+    // caught them. An error count is not a correctness check.
     //
     // Deliberately NOT applied at `_expression` itself: the optional tail inside
     // `additive_expression` reopens the `_single_pattern` vs `_expression`

@@ -1,0 +1,52 @@
+================================================================================
+A property value continued across a #if boundary
+--
+alc 18.0.37.11445 ACCEPTS this.
+.
+The tail is a REQUIRED part of a separate `_property_value` alternative, not an
+optional suffix. That is load-bearing. An optional tail overlaps every simple
+value form (integer, decimal, ...) and is a reduce/reduce at `;`; attaching it
+to `property` itself made the tail BEAT preproc_conditional_option_members and
+turn a correct option_member_list into an ERROR. Requiring the tail means the
+alternative does not exist at all unless a #if actually follows, so it cannot
+race the rules that already read those directives.
+.
+BC.History stayed at 0 errors through BOTH broken attempts -- only
+option_members_included_permission_sets and the TableRelation-semicolon fixture
+ever saw them. An error count is not a correctness check.
+================================================================================
+
+table 50133 D { fields { field(1; F; Integer) { MinValue = 1
+#if X
+ + 2
+#endif
+ ; } } }
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (table_declaration
+    (table_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (fields_section
+        (fields_keyword)
+        body: (fields_body
+          (field_declaration
+            (field_keyword)
+            id: (integer)
+            name: (identifier)
+            type: (type_specification
+              (basic_type))
+            body: (declaration_body
+              (property
+                name: (property_name)
+                value: (integer)
+                value: (preproc_conditional_expression_tail
+                  (preproc_if
+                    (preproc_open)
+                    condition: (identifier))
+                  operand: (integer)
+                  (preproc_endif
+                    (preproc_close)))))))))))
