@@ -170,6 +170,12 @@ DELIBERATE_ERROR_FIXTURES=(
     # would have failed this step. An allow-list entry for an absent file is
     # inert, so carrying it early is free.
     "directive_word_boundary_test.txt"
+    # The interface `Access = X` HEADER form, removed from the grammar in 4.0.0.
+    # alc rejects it with AL0104 both bare ("'{' expected") and after an extends
+    # clause ("',' expected"), and the field it fed was populated 0 times across
+    # BC.History. The ERROR is the assertion; the accepted form is a body
+    # property and is pinned in interface_extends_test.txt.
+    "interface_access_negative_test.txt"
     # Range positions alc rejects with AL0104 -- a SYNTAX error, not a type error,
     # so `1 + (1 .. 4)` has no reading in AL at all and the ERROR is the assertion.
     # Every case in it parsed CLEANLY before a171c19, which removed
@@ -189,17 +195,35 @@ is_deliberate_error_fixture() {
     return 1
 }
 
-# Search for ERROR or MISSING in test corpus files
-# Look for ERROR or MISSING as parse tree nodes (not as AL code)
-# Pattern: (ERROR at start of line or after spaces, but not ERROR( which is AL function call
+# Search for ERROR or MISSING in test corpus files as parse tree NODES, never as
+# AL source text.
+#
+# BOTH alternatives require the opening paren, and the pattern is deliberately
+# NOT anchored to the line start. This is the same search `.claude/commands/
+# release.md` pre-flight #3 runs; the two gates must agree on what counts as a
+# hit, so keep them identical.
+#
+# The previous pattern was `^\s*\((ERROR|MISSING)|^\s*(ERROR|MISSING)[^(]` and
+# was wrong in both directions:
+#
+#   * The second alternative matched a BARE word at line start, so a prose line
+#     reading "ERROR node and full byte coverage are separate claims" failed the
+#     gate. Expected trees always write `(ERROR)` and `(MISSING xyz)`, so
+#     requiring the paren removes that false-positive class outright.
+#   * The line-start anchor missed a real nested node on a populated line:
+#     `(source (statement) (ERROR))` was invisible to this gate while
+#     release.md caught it. Dropping the anchor closes that false negative.
+#
+# `ERROR(` — the AL function call — still does not match, because the paren must
+# come BEFORE the word, and the comparison is case-sensitive.
+ERROR_NODE_PATTERN='\((ERROR|MISSING)\b'
 for test_file in test/corpus/*.txt; do
     if [ -f "$test_file" ]; then
         TEST_FILE_COUNT=$((TEST_FILE_COUNT + 1))
         if is_deliberate_error_fixture "$test_file"; then
             continue
         fi
-        # Check for (ERROR or (MISSING but not ERROR( which is AL function call
-        if grep -qE '^\s*\((ERROR|MISSING)|^\s*(ERROR|MISSING)[^(]' "$test_file"; then
+        if grep -qE "$ERROR_NODE_PATTERN" "$test_file"; then
             ERROR_MISSING_FILES+=("$test_file")
         fi
     fi
@@ -220,7 +244,7 @@ else
     for file in "${ERROR_MISSING_FILES[@]}"; do
         echo "  - $(basename "$file")"
         # Show the first occurrence of ERROR or MISSING in each file
-        grep -n -m 1 -E '^\s*\((ERROR|MISSING)|^\s*(ERROR|MISSING)[^(]' "$file" | sed 's/^/    /'
+        grep -n -m 1 -E "$ERROR_NODE_PATTERN" "$file" | sed 's/^/    /'
     done
     VALIDATION_FAILED=1
     echo -e "\n${YELLOW}These test files contain ERROR or MISSING nodes, indicating incomplete parsing.${NC}"

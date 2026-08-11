@@ -14,7 +14,7 @@ Before starting, verify:
    ```bash
    grep -rn "(ERROR\b\|(MISSING\b" test/corpus/ --include="*.txt" \
      | grep -v "ERROR(" \
-     | grep -vE "(^|/)(option_members_tabledata_keyword_test|pragma_whitespace_tolerance_test|preproc_if_elif_whitespace_tolerance_test|preproc_region_whitespace_audit_test|scanner_var_attribute_token_span_test|directive_word_boundary_test|scanner_unicode_identifier_negative_test|range_not_an_expression_negative_test)\.txt:"
+     | grep -vE "(^|/)(option_members_tabledata_keyword_test|pragma_whitespace_tolerance_test|preproc_if_elif_whitespace_tolerance_test|preproc_region_whitespace_audit_test|scanner_var_attribute_token_span_test|directive_word_boundary_test|scanner_unicode_identifier_negative_test|range_not_an_expression_negative_test|interface_access_negative_test)\.txt:"
    ```
 
    The `(^|/)…\.txt:` anchoring is load-bearing. `grep -rn` emits
@@ -33,21 +33,35 @@ Before starting, verify:
    disagreed on what counts as a hit. Found by writing a fixture titled with
    the bare word.
 
-   Those seven files are deliberate negatives — their ERROR nodes *are* the
-   assertion. They pin that a misplaced `TableData X = R` fragment under
-   OptionMembers surfaces rather than being silently absorbed, that `#` +
-   newline + `pragma`/`if`/`elif`/`region` does not lex as a directive
-   (whitespace tolerance after `#` is horizontal-only), that `# ifx` is not
-   `#if`, that a stray identifier before a var attribute gets its own node
-   instead of being absorbed into the `[` token, and that a directive keyword
-   with no word boundary (`#regionX`, `#pragmaX`) is not a directive at all, and that a
-   codepoint the grammar's `[\p{L}\p{N}_]` excludes is not an identifier character. Any
-   hit OUTSIDE those seven is a real problem.
+   Those nine files are deliberate negatives — their ERROR nodes *are* the
+   assertion. Any hit OUTSIDE them is a real problem. Each is named below rather
+   than counted by ordinal: the prose count has drifted from the list twice
+   (once at six-vs-seven, once at seven-vs-eight), because an ordinal has to be
+   re-derived every time somebody appends an entry, and a name does not.
 
-   The seventh is currently carried AHEAD of its fixture: the file lands with the
-   identifier-classification branch, and an allow-list entry for an absent file is
-   inert. Adding it early is what stops the two gates disagreeing at the moment that
-   branch merges, since neither branch can edit the other's copy.
+   - `option_members_tabledata_keyword_test` — a misplaced `TableData X = R`
+     fragment under OptionMembers surfaces rather than being silently absorbed.
+   - `pragma_whitespace_tolerance_test`, `preproc_if_elif_whitespace_tolerance_test`,
+     `preproc_region_whitespace_audit_test` — `#` + newline + `pragma`/`if`/`elif`/
+     `region` does not lex as a directive; tolerance after `#` is horizontal-only.
+     Also that `# ifx` is not `#if`.
+   - `scanner_var_attribute_token_span_test` — a stray identifier before a var
+     attribute gets its own node instead of being absorbed into the `[` token.
+   - `directive_word_boundary_test` — a directive keyword with no word boundary
+     (`#regionX`, `#pragmaX`) is not a directive at all.
+   - `scanner_unicode_identifier_negative_test` — a codepoint the grammar's
+     `[\p{L}\p{N}_]` excludes is not an identifier character.
+   - `range_not_an_expression_negative_test` — `..` is not an expression
+     operator, so `1 + (1 .. 4)` has no reading in AL.
+   - `interface_access_negative_test` — the interface `Access = X` HEADER form
+     is not AL (alc AL0104, both bare and after `extends`). Removed from the
+     grammar in 4.0.0; the accepted form is a body property.
+
+   `scanner_unicode_identifier_negative_test` is carried AHEAD of its fixture:
+   the file lands with the identifier-classification branch, and an allow-list
+   entry for an absent file is inert. Adding it early is what stops the two gates
+   disagreeing at the moment that branch merges, since neither branch can edit
+   the other's copy.
 
    Unscoped, this check had 8 hits across the original 4 files and so had never
    passed at any release, v3.3.0 included. The same exemption list lives in
