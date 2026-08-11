@@ -3794,6 +3794,34 @@ module.exports = grammar({
       ';'
     )),
 
+    // KNOWN: this accepts ANY expression as a statement, and that is what makes
+    // an unhosted `#if` continuation tear SILENTLY rather than loudly. A
+    // fragment like `+ 3` after a grammatically complete construct reparses as
+    // a statement, so the host keeps a truncated expression and the rest floats
+    // off as unfielded siblings -- zero ERROR nodes, every byte covered.
+    // `1 + 2;` and `+ 3;` are not statements in AL; alc rejects both.
+    //
+    // Narrowing it is the "fail-loud backstop": it attaches nothing, but it
+    // converts the whole class -- including positions nobody has enumerated --
+    // from silent to loud. Worth more than any individual host attachment.
+    //
+    // TWO ATTEMPTS, both measured, both reverted:
+    //   1. choice(call_expression, member_expression)
+    //        -> BC.History 35.7%. Too narrow: the preproc-split rules carry
+    //           bare identifiers and literals as branch content.
+    //   2. + identifier, quoted_identifier, string_literal, verbatim_string,
+    //      wrapped in prec(20) with a declared [assignment_statement] conflict
+    //        -> generates, but BC.History 33.3%.
+    //
+    // THE LEAD FOR WHOEVER PICKS THIS UP, found while reverting attempt 2:
+    // `_expression_statement` is listed in the `inline` array (see the top of
+    // this file), so it is MACRO-SUBSTITUTED at every use site. A `prec(20)` on
+    // it is therefore applied independently at each of the four consumers --
+    // including the preproc-split guard block at `repeat1(seq(prec(2,
+    // $._expression_statement), ';'))`, which already carries its own
+    // precedence. That interaction, not the allowlist, is the likely cause of
+    // both collapses. Removing it from `inline` first, so the precedence
+    // applies once, is the experiment neither attempt ran.
     _expression_statement: $ => $._expression,
 
     empty_statement: $ => ';',
