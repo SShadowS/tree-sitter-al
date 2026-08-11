@@ -359,9 +359,21 @@ The historical `begin`/`end` dropped-inside-`#if` bug is not an instance of
 either case above: `begin_keyword` was still emitted at depth 0, so it was
 never in the never-observed set. That bug is detector 1's byte-gap catch.
 
-The `field(` anchor is deliberately excluded from detector 5 — see
-"Coverage deliberately not checked" in `reports/summary.md` for the live list
-and reasons, sourced from `EXCLUDED_ANCHORS` in `anchors.py`.
+**No anchor is excluded from detector 5 as of 4.0.0.** `field(` was the last
+one, on the grounds that a `#if`-split field header collapses N spellings into
+one `preproc_split_field` and no node-type sum can express 1:N. That is still
+true of a sum and no longer matters: `field_keyword` is emitted once per
+lexical spelling, including once per branch, so the anchor counts the keyword
+alone and reconciles on **15,358 of 15,358 files (96,729 sites, exact)**. The
+old four-type sum now double-counts, mismatching on 6,371 files. See the note
+at the anchor's definition in `anchors.py`.
+
+`EXCLUDED_ANCHORS` is empty, not deleted — re-excluding an anchor still
+publishes its reason into the "Coverage deliberately not checked" section of
+`reports/summary.md` automatically. With the dict empty that section is
+omitted, which is why `test_no_anchor_is_currently_excluded` pins the empty
+state: an absent section must not be readable as "nothing was excluded" when
+it could equally mean the mechanism stopped running.
 
 ## Validation gate
 

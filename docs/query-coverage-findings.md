@@ -182,21 +182,33 @@ bottomed out at `where_condition`, whose children were `identifier X`, `=`, `(`,
 `identifier N`, `)`. The `field` keyword was a bare `kw()` and was dropped, as was `where`.
 There was no node for the reference itself.
 
-The **field declaration** keyword is deliberately untouched: `field` is also
+At the time, the **field declaration** keyword was deliberately left alone: `field` is also
 `field(1; A; Code[10])` and `field(Name; Source)` and appears in `keyword_as_identifier`, so
-`field_keyword` is used only by the where/link markers. Verified across all 15,358 files:
-every `field_keyword` node's parent is `where_condition` or `link_value`, and there are zero
+`field_keyword` was used only by the where/link markers — verified then across all 15,358
+files, every `field_keyword` node's parent being `where_condition` or `link_value` and zero
 inside `field_declaration` or `page_field`.
 
-This used to be why the harness's `field(` anchor is excluded from detector 5. **That reason
-is now obsolete** — `field_keyword` accounts for every where/link marker, and a census over
-all 15,358 files finds zero `field(` sites owned by no node (96,729 sites: `page_field`
-47,738, `field_declaration` 36,145, `field_keyword` 12,844, `preproc_split_field` 2). The
-anchor stays excluded for a different, smaller reason: a field header split across `#if`
-branches spells `field(` once per branch and yields a single `preproc_split_field` node, a
-1:N mapping no node-type sum can express. That affects 1 file of 15,358. See
-`EXCLUDED_ANCHORS` in `tools/query_coverage/anchors.py`, which is printed into every
-`summary.md`.
+**4.0.0 reversed that.** The losslessness work made `field_declaration` and `page_field`
+emit `field_keyword` too, so the sentence above now describes only history: re-censused on
+the merged 4.0.0 grammar, there are **96,729 lexical `field(` sites and 96,729
+`field_keyword` nodes**, exact, in **0 mismatching files**. `field_declaration` (36,145),
+`page_field` (47,738) and `preproc_split_field` (1) are all *additional* to that total
+rather than components of it, because each now contains a keyword of its own.
+
+That is what removed the harness's `field(` exclusion. Both of its reasons were true when
+written and were falsified by a later grammar fix rather than by an error:
+
+1. "a field reference inside a where() clause produces no node" — false as of `5a39bcf`.
+2. a field header split across `#if` branches spells `field(` once per branch but yields a
+   single `preproc_split_field`, a 1:N mapping no node-type **sum** can express — correct
+   about the sum, wrong about the conclusion. `field_keyword` is emitted once per *lexical*
+   spelling, including once per branch, so counting the keyword alone sidesteps the
+   collapsed node instead of trying to reconcile it.
+
+`field(` is therefore a live anchor in `ANCHORS` as of 4.0.0 with `node_types=("field_keyword",)`,
+and `EXCLUDED_ANCHORS` is now empty. The old four-type sum would **double-count** —
+it mismatches on 6,371 of 15,358 files. See the note at the anchor's definition in
+`tools/query_coverage/anchors.py`.
 
 ## The pattern
 

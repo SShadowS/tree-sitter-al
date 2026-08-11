@@ -34,27 +34,19 @@ def test_dot_prefixed_word_is_not_an_anchor(al_parser):
     assert [f for f in findings if f.detail["anchor"] == "procedure"] == []
 
 
-# The node types that would account for a lexical `field(`, if the excluded
-# anchor were ever reinstated. Not in anchors.ANCHORS — see EXCLUDED_ANCHORS.
+# The live `field(` anchor, taken from the table rather than reconstructed, so
+# these tests cannot pass against a definition the harness does not use. It was
+# EXCLUDED until 4.0.0; see the note at its definition in anchors.py for both
+# reasons and why each stopped being true.
 #
-# `field_keyword` ALONE, deliberately. The list used to be
-# ("field_declaration", "page_field", "field_keyword", "preproc_split_field"),
-# which was right while only the where()/link marker produced a
-# `field_keyword`. 4.0.0's losslessness work gives every `field(` site one, so
-# a declaration now yields BOTH a `field_declaration` and a nested
-# `field_keyword` and the sum double-counts — 5 nodes for 3 spellings in the
-# first fixture below, and 6,371 of 15,358 corpus files mismatch on the old
-# list. The keyword alone reconciles on 15,358 of 15,358 (measured 4.0.0).
-#
-# NOTE: that makes EXCLUDED_ANCHORS["field("] stale — its stated reason is the
-# 1:N `preproc_split_field` mapping, which the second test below now shows
-# reconciling. Reinstating the anchor is a gate change rather than a test fix,
-# so it is left for review; these tests record the measurement either way.
-_FIELD_ANCHOR = anchors.Anchor(
-    name="field(",
-    pattern=anchors._NO_DOT + r"field\s*\(",
-    node_types=("field_keyword",),
-)
+# Its node_types is `("field_keyword",)` alone. The old value summed
+# field_declaration + page_field + field_keyword + preproc_split_field, which
+# was right while only the where()/link marker produced a `field_keyword`. The
+# losslessness work gives every `field(` site one, so a declaration now yields
+# BOTH a field_declaration and a nested field_keyword and the sum double-counts
+# — 5 nodes for 3 spellings in the first fixture below, and 6,371 of 15,358
+# corpus files. The keyword alone is exact on 15,358 of 15,358.
+_FIELD_ANCHOR = next(a for a in anchors.ANCHORS if a.name == "field(")
 
 
 def test_field_anchor_reconciles_on_the_keyword_alone(al_parser):
@@ -67,10 +59,12 @@ def test_field_anchor_reconciles_on_the_keyword_alone(al_parser):
     silently reverting to true — a `field_keyword` that stopped being emitted
     fails here rather than quietly restoring the old excuse.
 
-    Written against a constructed Anchor because `field(` is NOT in
-    anchors.ANCHORS: asserting "no findings for field(" through detect() passes
-    whether or not the counts reconcile, since detect() only ever iterates
-    ANCHORS. That is how an earlier version of this test could not fail.
+    Counted directly rather than through detect(). `field(` is in ANCHORS as of
+    4.0.0, so "no findings for field(" would now be a legal way to write this
+    -- and a bad one: it was how an earlier version of this test could not
+    fail, back when detect() did not iterate this anchor at all and the
+    assertion was vacuous. Comparing the two counts fails for a stated reason
+    either way.
 
     The declaration count is asserted separately so the failure distinguishes
     the two directions: `nodes` too high means the node-type list started
@@ -79,6 +73,7 @@ def test_field_anchor_reconciles_on_the_keyword_alone(al_parser):
     source = (
         b"table 1 T { fields { field(1; N; Code[10]) { } "
         b"field(2; M; Code[10]) { TableRelation = Other.Code where(X = field(N)); } } }"
+        b"page 2 P { layout { area(content) { field(F; Rec.N) { } } } }"
     )
     tree = al_parser.parse(source)
     assert not tree.root_node.has_error
@@ -86,14 +81,21 @@ def test_field_anchor_reconciles_on_the_keyword_alone(al_parser):
     lexical = anchor_counts.count_lexical(source.decode("utf-8"), _FIELD_ANCHOR)
     nodes = anchor_counts.count_nodes(tree, _FIELD_ANCHOR)
 
-    assert lexical == 3
-    assert nodes == 3
-    # The declarations still exist as their own nodes; they are simply not
-    # counted, because each one already contributes its nested keyword.
-    assert (
-        anchor_counts.count_nodes(tree, anchors.Anchor("x", "x", ("field_declaration",)))
-        == 2
-    )
+    assert lexical == 4
+    assert nodes == 4
+    # All three shapes are really present, asserted rather than assumed. The
+    # page control was MISSING from this fixture while the docstring claimed
+    # it: the source was a lone `table`, so `page_field` went uncovered and
+    # aliasing its keyword away left this test green. Found by mutation, which
+    # is the only thing that would have found it.
+    for node_type, expected in (
+        ("field_declaration", 2),
+        ("page_field", 1),
+    ):
+        assert (
+            anchor_counts.count_nodes(tree, anchors.Anchor("x", "x", (node_type,)))
+            == expected
+        ), node_type
 
 
 def test_field_anchor_reconciles_across_a_preproc_split(al_parser):
@@ -107,8 +109,9 @@ def test_field_anchor_reconciles_across_a_preproc_split(al_parser):
 
     This is the successor to `test_field_anchor_cannot_reconcile_a_preproc_
     split_field`, which asserted `nodes == 1` against `lexical == 2` and was
-    the encoded form of EXCLUDED_ANCHORS' stated reason. See the note on
-    _FIELD_ANCHOR: the reason is now false and the exclusion is pending review.
+    the encoded form of the exclusion's stated reason. That reason is what this
+    test now falsifies, which is why `field(` is no longer excluded --
+    see the note at its definition in anchors.py.
     """
     source = (
         b"page 1 P { layout { area(content) {\n"
@@ -137,15 +140,48 @@ def test_field_anchor_reconciles_across_a_preproc_split(al_parser):
     assert nodes == 2
 
 
-def test_excluded_field_anchor_reason_names_the_current_cause(al_parser):
-    """EXCLUDED_ANCHORS text is printed verbatim into summary.md, so a stale
-    reason is published to every reader. The pre-5a39bcf reason ("a field
-    reference inside a where() clause produces no node") is now false.
-    """
-    reason = anchors.EXCLUDED_ANCHORS["field("]
+def test_field_anchor_is_checked_and_not_excluded():
+    """Successor to test_excluded_field_anchor_reason_names_the_current_cause,
+    which asserted that EXCLUDED_ANCHORS["field("] named its CURRENT cause.
 
-    assert "preproc_split_field" in reason
-    assert "produces no node" not in reason
+    That test was right and the config drifted out from under it: its reason
+    was the 1:N preproc_split_field mapping, which the test above now shows
+    reconciling, so the repo was publishing a false reason verbatim into
+    summary.md. The honest repair was to remove the exclusion, not to write a
+    better excuse for it -- so the assertion inverts rather than disappearing.
+
+    The failure mode it was written for is unchanged: config drifting away from
+    published prose. Excluding `field(` again, or quietly dropping it from
+    ANCHORS instead of excluding it (which would publish nothing at all), turns
+    this red.
+    """
+    assert "field(" not in anchors.EXCLUDED_ANCHORS
+    assert _FIELD_ANCHOR in anchors.ANCHORS
+    assert _FIELD_ANCHOR.node_types == ("field_keyword",)
+
+
+def test_every_exclusion_is_published_with_a_reason():
+    """EXCLUDED_ANCHORS text is printed verbatim into summary.md, so an entry
+    without a real reason publishes nothing useful to every reader.
+
+    Vacuous today -- the dict is empty as of 4.0.0 -- and deliberately kept:
+    it is the guard on the next entry anyone adds, and the empty case is
+    asserted separately below so "no exclusions" cannot be mistaken for "the
+    check stopped running".
+    """
+    for name, reason in anchors.EXCLUDED_ANCHORS.items():
+        assert reason.strip(), f"{name} is excluded with an empty reason"
+        assert len(reason) > 40, f"{name}'s reason is too short to be one"
+
+
+def test_no_anchor_is_currently_excluded():
+    """Pins the 4.0.0 state: every anchor in the table is actually checked.
+
+    Separate from the test above because the two fail for opposite reasons --
+    that one on a bad new exclusion, this one on any new exclusion at all. A
+    reader adding one should have to change this line deliberately.
+    """
+    assert anchors.EXCLUDED_ANCHORS == {}
 
 
 def test_mismatch_is_reported_with_both_counts(al_parser):

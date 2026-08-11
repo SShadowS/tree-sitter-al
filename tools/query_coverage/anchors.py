@@ -9,8 +9,10 @@ naive comparison mismatches on every page with a link property, and the
 tempting fix is to subtract fudge factors until it balances.
 
 Prefer 1:1 mappings against visible keyword nodes wherever one exists — those
-are exact and self-explaining. The multi-type sums are only for the anchors
-whose keyword is hidden.
+are exact and self-explaining. A multi-type sum is a last resort for an anchor
+whose keyword is hidden, and 4.0.0 removed the last one: every anchor below now
+maps to a single node type. `field(` is the worked example of why that rule is
+worth following rather than a style preference — see its entry.
 
 Validate each sum once at `accept` time, then treat any drift as a finding.
 """
@@ -36,27 +38,38 @@ ANCHORS: tuple[Anchor, ...] = (
     Anchor("key(", _NO_DOT + r"key\s*\(", ("key_declaration",)),
     Anchor("value(", _NO_DOT + r"value\s*\(", ("enum_value_declaration",)),
     Anchor("action(", _NO_DOT + r"action\s*\(", ("action_declaration",)),
+    # `field(` was EXCLUDED until 4.0.0, twice over, and the history matters
+    # because both reasons look like permanent properties of AL and neither is.
+    #
+    #   1. Originally: "a field reference inside a where() clause produces no
+    #      node". True when written; false as of 5a39bcf, which named the
+    #      where()/link marker `field_keyword`.
+    #   2. Then: a field header split across #if branches spells `field(` once
+    #      per branch but yields ONE preproc_split_field for all of them, so no
+    #      node-type SUM can express that 1:N mapping.
+    #
+    # Reason 2 was correct about the sum and wrong about the conclusion. The
+    # 1:N node still exists — but `field_keyword` is emitted once per LEXICAL
+    # spelling, including once per #if branch, so counting the keyword alone
+    # sidesteps the collapsed node entirely rather than trying to reconcile it.
+    #
+    # Censused over all 15,358 BC.History files on the merged 4.0.0 grammar:
+    # 96,729 lexical `field(` sites and 96,729 field_keyword nodes — exact, in
+    # 0 mismatching files. The old four-type sum now DOUBLE-counts, because
+    # every declaration carries a nested field_keyword of its own
+    # (field_declaration 36,145 + page_field 47,738 + preproc_split_field 1
+    # are all additional to the 96,729, not components of it); it mismatches on
+    # 6,371 files. Do not restore the sum, and do not re-exclude this anchor
+    # without first re-running that census — both prior reasons were true when
+    # written and were falsified by a later grammar fix, not by an error.
+    Anchor("field(", _NO_DOT + r"field\s*\(", ("field_keyword",)),
 )
 
-# `field(` is deliberately absent — see the note below. Report it, never
-# silently drop it: the no-silent-caps rule applies.
-#
-# The original reason ("a field reference inside a where() clause produces no
-# node") was true when this was written and is FALSE as of 5a39bcf, which named
-# the where()/link markers: `field_keyword` accounts for every one of them.
-# Censused on this branch over all 15,358 BC.History files: 96,729 lexical
-# `field(` sites, of which page_field 47,738 + field_declaration 36,145 +
-# field_keyword 12,844 + preproc_split_field 2, and ZERO owned by nothing. The
-# reason below is what the same census left behind, and it is a different
-# shape of problem: not a missing node, but one node standing for several
-# occurrences.
-EXCLUDED_ANCHORS: dict[str, str] = {
-    "field(": (
-        "a field header split across #if branches collapses one `field(` per "
-        "branch into a single preproc_split_field node, so the counts differ "
-        "by (branches - 1) and no node-type sum can express a 1:N mapping. "
-        "Every other `field(` in BC.History is accounted for exactly, by "
-        "field_declaration, page_field or field_keyword; corpus-wide this "
-        "affects 1 file of 15,358"
-    ),
-}
+# Intentionally empty since 4.0.0: every anchor above is checked. The mechanism
+# is kept, not removed — `qc.write_summary` still renders a "Coverage
+# deliberately not checked" section from this dict, so re-excluding an anchor
+# publishes the reason automatically. An exclusion belongs here ONLY with a
+# reason that is falsifiable by measurement; see the `field(` note above for
+# what happens to one that is merely plausible. Report it, never silently drop
+# it: the no-silent-caps rule applies.
+EXCLUDED_ANCHORS: dict[str, str] = {}
