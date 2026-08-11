@@ -108,12 +108,18 @@ FIXES.md
 #
 # git cannot re-include a path whose parent DIRECTORY is excluded, so this
 # excludes the entries inside `.claude/` rather than `.claude/` itself, then
-# re-includes the two tracked subtrees. `rules/` is re-included wholesale
-# because every file in it is tracked and a new one should be visible;
-# `commands/` is re-included by name because most of its contents are genuinely
-# local-only.
+# re-includes the tracked subtrees. `rules/` and `skills/` are re-included
+# wholesale because every file in them is project documentation and a new one
+# should be visible; `commands/` is re-included by name because most of its
+# contents are genuinely local-only.
+#
+# `skills/` was added after the rule above was written and inherited the
+# blanket ignore, so `git add` refused a new SKILL.md with "ignored by one of
+# your .gitignore files" — the same hazard the comment above describes, one
+# directory over, caught only because the add was explicit rather than `-A`.
 /.claude/*
 !/.claude/rules/
+!/.claude/skills/
 !/.claude/commands/
 /.claude/commands/*
 !/.claude/commands/grammar-help.md
