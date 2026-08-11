@@ -1,0 +1,81 @@
+================================================================================
+KNOWN-WRONG SHAPE -- a dangling operator at EOL still drags the next line in
+--
+READ THIS BEFORE `tree-sitter test -u` REWRITES IT. The tree below is WRONG and
+is pinned deliberately as a TRIPWIRE, not as correct behaviour. If a change
+makes this fixture fail, that is very likely the FIX landing -- regenerate it,
+and delete this header.
+.
+`#if FOO and` with the operand on the NEXT line. alc 18.0.37.11445 REJECTS it in
+BOTH configurations (symbol defined and undefined) with AL0629 "Preprocessor
+expression is not valid". We parse it CLEAN, with condition =
+(preproc_and_expression FOO BAR): the operand is absorbed across the newline.
+.
+This is the residual of the line-scoping fix. `token(/
+?
+/)` terminates the
+condition only when the condition is COMPLETE; with a dangling `and` the parser
+still needs an operand, so the terminator cannot fire and the newline is skipped
+as an extra. Closing it needs something an LR parser cannot express -- "the
+expression must complete by end of line" -- so it is scanner-EOL-token or
+line-bounded-condition-token work, not another grammar terminator.
+.
+Blast radius is bounded and stated: alc rejects such a file in EVERY config, so
+no legal AL reaches this shape. It is accept-invalid surplus. But the tree
+MISREPRESENTS the directive, which is the corruption class this project ranks
+above every attachment defect, so it is recorded rather than left implicit.
+.
+The sibling case is the proof the fix works: `#if FOO` newline ` and BAR` now
+yields condition = FOO alone, with `and BAR` as inactive-branch content. alc
+ACCEPTS that undefined and REJECTS it defined, which is only possible if `and
+BAR` is content rather than condition -- the compiler's own confirmation that
+directives are line-scoped.
+================================================================================
+
+codeunit 50500 X
+{
+    procedure P()
+    var
+        i: Integer;
+    begin
+#if FOO and
+BAR
+        i := 1;
+#endif
+    end;
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (procedure
+        (procedure_keyword)
+        name: (identifier)
+        (var_section
+          (var_keyword)
+          body: (var_body
+            (variable_declaration
+              name: (identifier)
+              type: (type_specification
+                (basic_type)))))
+        body: (code_block
+          (begin_keyword)
+          body: (statement_block
+            (preproc_conditional_statement
+              (preproc_if
+                (preproc_open)
+                condition: (preproc_and_expression
+                  (identifier)
+                  (identifier)))
+              (assignment_statement
+                left: (identifier)
+                operator: (assignment_operator)
+                right: (integer))
+              (preproc_endif
+                (preproc_close))))
+          (end_keyword))))))
