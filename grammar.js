@@ -4597,16 +4597,42 @@ module.exports = grammar({
     ),
 
     // Keywords that need to be usable as identifiers (variable names, parameter names, etc.)
+    //
+    // EVERY alternative is a bare kw(), deliberately, and adding a `$.x_keyword`
+    // here is a bug even when the rule exists. This rule is consumed ONLY as
+    // `alias($.keyword_as_identifier, $.identifier)`, so the node it produces
+    // CLAIMS to be an `identifier` — and an `identifier` is a childless leaf in
+    // all 5.9M other instances in BC.History. A named alternative gives that
+    // "identifier" a named child no other identifier has:
+    //
+    //   parameter name: identifier          <- `Type`, bare kw('type')   leaf
+    //   parameter name: identifier
+    //                     key_keyword       <- `Key`,  $.key_keyword     child
+    //
+    // `key`, `dataset` and `table` were named here and produced exactly that.
+    // Note the fix direction is the OPPOSITE of `keyword_identifier`'s (no `as`),
+    // which is a distinct node type meaning "a keyword stands here" and where the
+    // named child is added information. Which way a mixed choice unifies is
+    // decided by what the OUTER node claims to be, so check that first.
+    //
+    // It was not only a shape inconsistency; it mis-highlighted. Because the
+    // named nodes were real, `queries/highlights.scm`'s bare `(key_keyword)`,
+    // `(table_keyword)` and `(dataset_keyword)` patterns matched them, and a
+    // parameter named `Key` was captured BOTH as @variable.parameter and as
+    // @keyword.structure (`Table` as @keyword.type). The seven bare spellings
+    // never had this. Demoting the three fixes the highlight as well as the
+    // shape, and the patterns keep working at the real keyword sites because all
+    // three rules are still referenced elsewhere in the grammar.
     keyword_as_identifier: $ => prec(-10, choice(
       kw('field'),
-      $.key_keyword,
+      kw('key'),
       kw('value'),
       kw('separator'),
-      $.dataset_keyword,
+      kw('dataset'),
       kw('type'),
       kw('version'),
       kw('action'),
-      $.table_keyword,
+      kw('table'),
       kw('assembly'),
     )),
 

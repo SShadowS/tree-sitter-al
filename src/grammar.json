@@ -20277,8 +20277,11 @@
             }
           },
           {
-            "type": "SYMBOL",
-            "name": "key_keyword"
+            "type": "TOKEN",
+            "content": {
+              "type": "PATTERN",
+              "value": "(?i)key"
+            }
           },
           {
             "type": "TOKEN",
@@ -20295,8 +20298,11 @@
             }
           },
           {
-            "type": "SYMBOL",
-            "name": "dataset_keyword"
+            "type": "TOKEN",
+            "content": {
+              "type": "PATTERN",
+              "value": "(?i)dataset"
+            }
           },
           {
             "type": "TOKEN",
@@ -20320,8 +20326,11 @@
             }
           },
           {
-            "type": "SYMBOL",
-            "name": "table_keyword"
+            "type": "TOKEN",
+            "content": {
+              "type": "PATTERN",
+              "value": "(?i)table"
+            }
           },
           {
             "type": "TOKEN",

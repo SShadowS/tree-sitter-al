@@ -6,37 +6,44 @@ In V2, most property/variable disambiguation is handled by the `PROPERTY_NAME` s
 
 ## Keyword-as-Identifier
 
-Some AL keywords are used as identifiers in certain contexts. These are handled by the `keyword_as_identifier` rule, which mixes bare `kw()` tokens with references to existing keyword rules:
+### The rule that governs every mixed `choice()` of keywords
+
+> **A `choice()` must not mix `$.x_keyword` with bare `kw('x')` — that ships one node type with two shapes. Which way you unify is decided by WHAT THE OUTER NODE CLAIMS TO BE, not by a house style.**
+
+Both directions are correct somewhere, which is why "always name them" is the wrong instruction and was the one that caused this:
+
+| outer node | it claims to be | uniform shape | direction |
+|---|---|---|---|
+| `keyword_identifier`, `object_type_keyword` | "a keyword stands here" | one named/anonymous child | **promote** the bare ones |
+| `keyword_as_identifier` → `alias(…, $.identifier)` | a plain `identifier` | a **leaf** | **demote** the named ones |
+
+Check the alias at the *use* site before converting either way. All three sites were fixed in 4.0.0 and each one is a worked example.
+
+### Keyword-as-identifier specifically
+
+Some AL keywords are used as identifiers in certain contexts. `keyword_as_identifier` handles them, and **every alternative is a bare `kw()` — adding a `$.x_keyword` here is a bug even when the rule exists:**
 
 ```javascript
 keyword_as_identifier: $ => prec(-10, choice(
-  kw('field'),
-  $.key_keyword,
-  kw('value'),
-  kw('separator'),
-  $.dataset_keyword,
-  kw('type'),
-  kw('version'),
-  kw('action'),
-  $.table_keyword,
-  kw('assembly'),
+  kw('field'), kw('key'), kw('value'), kw('separator'), kw('dataset'),
+  kw('type'), kw('version'), kw('action'), kw('table'), kw('assembly'),
 )),
 ```
 
 The `prec(-10)` makes this the last resort, so a real keyword use always wins.
 
-**When adding to this list, use a bare `kw('x')` — do NOT reach for `$.x_keyword` even when one exists.** The rule reads the other way round from the obvious instinct, and the instinct is what produced the mixed list above. `keyword_as_identifier` is consumed as `alias($.keyword_as_identifier, $.identifier)`, so the node it produces claims to be a plain `identifier`, and a plain `identifier` is a **leaf**. A named alternative gives that "identifier" a named child, which no other `identifier` in the grammar has:
+It is consumed only as `alias($.keyword_as_identifier, $.identifier)`, so the node claims to be an `identifier` — and an `identifier` is a leaf everywhere else. `key`, `dataset` and `table` were named here and gave that "identifier" a child no other identifier has:
 
 ```
-parameter name: identifier            <- `Type`,  bare kw('type')     — leaf, correct
+parameter name: identifier            <- `Type`, bare kw('type')   leaf, correct
 parameter name: identifier
-                  key_keyword         <- `Key`,   $.key_keyword       — named child
+                  key_keyword         <- `Key`,  $.key_keyword     named child
                     "key"
 ```
 
-Three spellings (`Key`, `Table`, `Dataset`) currently do this and the other seven do not. That is a live two-shape inconsistency on `identifier`, the most common node type in the grammar; it is **not** fixed, and it is tracked separately because its fix direction is the opposite of the two below — here the uniform shape is the *leaf*, so it means demoting three named alternatives to bare `kw()`, not promoting seven.
+Measured over BC.History before the fix, `identifier` had **four** distinct shapes: 5,906,275 leaves, plus 2,151 with a `table_keyword` child, 42 with `key_keyword`, 12 with `dataset_keyword`. Afterwards, one shape — all 5,908,480 are leaves. **2,151 of 4,524 `table_keyword` nodes in the corpus, 47.5%, were not the `table` keyword at all.**
 
-Contrast `keyword_identifier` (no `as`), which is a distinct node type that exists precisely to say "a keyword stands here". There the named child is added information and all thirteen alternatives are named. **Which way a mixed choice should be made uniform depends on what the outer node claims to be**, so check that before converting either way.
+**It also mis-highlighted, which is the part a user would notice.** `queries/highlights.scm` matches bare `(table_keyword)`, `(key_keyword)` and `(dataset_keyword)` patterns with no parent context, so those nodes matched and a parameter named `Table` was captured as **both** `@variable.parameter` and `@keyword.type` — 2,151 times corpus-wide. Demoting the three fixes the highlight; the patterns keep working at real keyword sites because all three rules are still referenced elsewhere. Verify both directions when touching this: that the spurious capture is gone *and* that `table`/`keys`/`key`/`dataset` still capture at genuine keyword sites.
 
 ## Named Keywords
 

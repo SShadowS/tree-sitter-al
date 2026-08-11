@@ -280,7 +280,7 @@ python parse_bug_finder.py file.al debug.log
 | **Case-sensitivity** | Keywords not matching | Use `kw()` or explicit `choice()` with case variants |
 | **Preprocessor splits** | MISSING tokens in #if contexts | Add dedicated `preproc_split_*` rule |
 | **Property syntax** | Complex property fails | Add dedicated complex property rule |
-| **Keyword as identifier** | Variable name conflicts | Add to `keyword_as_identifier` choice list |
+| **Keyword as identifier** | Variable name conflicts | Add to `keyword_as_identifier` choice list — as a bare `kw('x')`, never `$.x_keyword` |
 
 ## Parser Metrics
 
