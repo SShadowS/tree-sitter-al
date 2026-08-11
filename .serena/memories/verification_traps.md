@@ -55,6 +55,44 @@ it is not a check.
 - Deriving a delta by subtraction from a remembered base propagates a stale base into a
   check that then cannot fail. Take the measurement.
 
+### One sentence, two provenances
+
+In the same statement the aggregate can come from the tool while the breakdown is
+hand-derived — and the breakdown is the part a reader quotes. `071fbd4` published
+`gaps=3895 clusters=112` exactly right, beside `record=2220 field=473 code=372`,
+none of which matched **any** revision of `baseline.json` in its entire history
+(all ten checked). The correct total lends its authority to the invented detail
+sitting next to it, which is why it survived a release. Check every number in a
+sentence against the tool, not the sentence's most checkable number.
+
+### A merge can create a defect that exists on neither branch
+
+Two branches independently added `record_keyword`, `system_keyword` and
+`action_keyword` in **different regions** of `grammar.js`. Git saw no conflict, and
+a rule table is a JS object literal where duplicate keys are silently accepted with
+the last winning. `tree-sitter generate` succeeded, the parser was correct, 1594
+tests passed, 0 corpus errors. Measured: 480/480 unique on one parent, 474/474 on
+the other, 518 defs vs 515 unique merged. No check on either branch could have
+found it at any point, because it did not exist until the merge. **Derive counts
+EARLY in a merge, not at the end.**
+
+### "Gate green" is not "commit green" when a tool writes the working tree
+
+`qc accept` writes `baseline.json`; the gates *read* the working tree. Staging the
+resolved baseline, then running `accept`, then committing without re-staging left
+every gate passing on something other than what was committed — `qc run` at that
+commit exits 1. Same shape as a docstring describing coverage the fixture does not
+have: the thing verified was not the thing shipped.
+
+### A second corpus finds what the first cannot
+
+`byte-roundtrip` was clean across BC.History's 15,358 files and looked
+trustworthy. On a second 20,643-file estate it flagged **3,268 files (16%)** for
+three dropped bytes — all false, all a UTF-8 BOM, because `bytes.strip()` removes
+ASCII whitespace only. BC.History contains no BOMs. A check validated against one
+corpus is validated against that corpus's habits, not against the language.
+
+
 ## Reasoning traps
 
 - **"I tried it and it forced N conflicts" measures one edit, not the grammar.** Record
