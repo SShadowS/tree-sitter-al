@@ -1,0 +1,59 @@
+================================================================================
+An if condition continued across a #if boundary
+--
+alc 18.0.37.11445 ACCEPTS this. We produced ERROR nodes until the tail rule
+reached this position.
+.
+The attachment is a plain `optional()` plus a DECLARED CONFLICT, never
+prec.right: prec.right commits to the tail the moment it sees `#if`, but
+whether the branch opens with an OPERATOR (a continuation) or an identifier
+(a whole statement) is only decidable several tokens later. Committing without
+backtracking cost 200 BC.History files here and 376 on the condition.
+================================================================================
+
+codeunit 50131 B { procedure P() var i: Integer; begin if i = 1
+#if X
+ + 2
+#endif
+ then i := 0; end; }
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (procedure
+        (procedure_keyword)
+        name: (identifier)
+        (var_section
+          (var_keyword)
+          body: (var_body
+            (variable_declaration
+              name: (identifier)
+              type: (type_specification
+                (basic_type)))))
+        body: (code_block
+          (begin_keyword)
+          body: (statement_block
+            (if_statement
+              (if_keyword)
+              condition: (comparison_expression
+                left: (identifier)
+                operator: (comparison_operator)
+                right: (integer))
+              (preproc_conditional_expression_tail
+                (preproc_if
+                  (preproc_open)
+                  condition: (identifier))
+                operand: (integer)
+                (preproc_endif
+                  (preproc_close)))
+              (then_keyword)
+              then_branch: (assignment_statement
+                left: (identifier)
+                operator: (assignment_operator)
+                right: (integer))))
+          (end_keyword))))))

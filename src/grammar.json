@@ -16028,6 +16028,18 @@
               }
             },
             {
+              "type": "CHOICE",
+              "members": [
+                {
+                  "type": "SYMBOL",
+                  "name": "preproc_conditional_expression_tail"
+                },
+                {
+                  "type": "BLANK"
+                }
+              ]
+            },
+            {
               "type": "SYMBOL",
               "name": "then_keyword"
             },
@@ -18126,7 +18138,7 @@
           "members": [
             {
               "type": "SYMBOL",
-              "name": "_expression_list"
+              "name": "_argument_expression_list"
             },
             {
               "type": "BLANK"
@@ -18136,6 +18148,52 @@
         {
           "type": "STRING",
           "value": ")"
+        }
+      ]
+    },
+    "_argument_expression_list": {
+      "type": "SEQ",
+      "members": [
+        {
+          "type": "SYMBOL",
+          "name": "_argument_expression"
+        },
+        {
+          "type": "REPEAT",
+          "content": {
+            "type": "SEQ",
+            "members": [
+              {
+                "type": "STRING",
+                "value": ","
+              },
+              {
+                "type": "SYMBOL",
+                "name": "_argument_expression"
+              }
+            ]
+          }
+        }
+      ]
+    },
+    "_argument_expression": {
+      "type": "SEQ",
+      "members": [
+        {
+          "type": "SYMBOL",
+          "name": "_expression"
+        },
+        {
+          "type": "CHOICE",
+          "members": [
+            {
+              "type": "SYMBOL",
+              "name": "preproc_conditional_expression_tail"
+            },
+            {
+              "type": "BLANK"
+            }
+          ]
         }
       ]
     },
@@ -21331,6 +21389,10 @@
     [
       "_expression",
       "_identifier_or_quoted"
+    ],
+    [
+      "_preproc_call_prefix",
+      "_argument_expression"
     ],
     [
       "_preproc_split_then_begin_open",

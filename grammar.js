@@ -177,6 +177,10 @@ module.exports = grammar({
     [$.preproc_conditional_layout, $.preproc_conditional_layout_mixed],
     [$.preproc_conditional, $.preproc_conditional_actions],
     [$._expression, $._identifier_or_quoted],
+    // A `#if` after an argument expression can open an expression CONTINUATION
+    // (`f(1 #if X + 2 #endif )`) or a statement-level conditional that merely
+    // follows. The discriminator is past the condition, so GLR must explore both.
+    [$._preproc_call_prefix, $._argument_expression],
     [$._preproc_split_then_begin_open, $.preproc_split_if_then_begin_else_shared, $.preproc_split_if_begin_else, $._preproc_branch_statement],
     // Inside a preprocessor branch a statement can be read as belonging to the
     // conditional or to an enclosing statement_block. The two were previously
@@ -3902,6 +3906,10 @@ module.exports = grammar({
     if_statement: $ => prec.right(prec.dynamic(20, seq(
       $.if_keyword,
       field('condition', $._expression),
+      // Same shape as the argument list: a plain optional plus a declared
+      // conflict, never prec.right. The competing reading here is
+      // `preproc_split_if_statement`, which parses `#if` inside an if HEADER.
+      optional($.preproc_conditional_expression_tail),
       $.then_keyword,
       choice(
         seq(
@@ -4548,39 +4556,61 @@ module.exports = grammar({
 
     argument_list: $ => seq(
       '(',
-      optional($._expression_list),
+      optional($._argument_expression_list),
       ')'
+    ),
+
+    // Arguments get their own list so the #if-continuation applies HERE only:
+    // `_expression_list` is shared with `preproc_split_call_statement`, which
+    // already reads the same directives.
+    //
+    // NO prec.right on the optional. prec.right commits to the tail the moment
+    // it sees `#if`, but the discriminator -- whether the branch opens with an
+    // OPERATOR (a continuation) or an identifier (a whole statement) -- is
+    // several tokens further on, past the condition. Committing without
+    // backtracking is what cost 200 BC.History files. A declared conflict lets
+    // GLR explore both readings and keep the one that parses, which is the
+    // mechanism this grammar already uses for every other preproc ambiguity.
+    _argument_expression_list: $ => seq(
+      $._argument_expression,
+      repeat(seq(',', $._argument_expression))
+    ),
+
+    _argument_expression: $ => seq(
+      $._expression,
+      optional($.preproc_conditional_expression_tail)
     ),
 
     // An expression that may be continued across a #if boundary.
     //
-    // COVERAGE IS PARTIAL AND THE BOUNDARY IS MEASURED, not assumed. alc
-    // 18.0.37.11445 ACCEPTS the split in all of these positions; we handle two:
+    // COVERAGE AND ITS ONE REMAINING GAP, both measured. alc 18.0.37.11445
+    // ACCEPTS the split in all five positions; we handle four:
     //
     //   assignment RHS   r := 1 #if X + 2 #endif + 3;      HANDLED
     //   exit value       exit(1 #if X + 2 #endif );        HANDLED
-    //   argument         Power(2 #if X + 1 #endif , 3)     still ERRORs
-    //   if condition     if i = 1 #if X + 2 #endif then    still ERRORs
+    //   argument         Power(2 #if X + 1 #endif , 3)     HANDLED
+    //   if condition     if i = 1 #if X + 2 #endif then    HANDLED
     //   property value   MinValue = 1 #if X + 2 #endif ;   still ERRORs
     //
-    // The three unhandled ones each collide with machinery that already reads
-    // the same directives, and each was tried and reverted with the corpus as
-    // the judge:
+    // THE MECHANISM THAT MADE FOUR OF THEM WORK: a plain `optional(...)` plus a
+    // DECLARED CONFLICT, never `prec.right`. prec.right commits to the tail the
+    // instant it sees `#if`, but the discriminator -- whether the branch opens
+    // with an OPERATOR (a continuation) or an identifier (a whole statement) --
+    // sits several tokens later, past the condition. Committing without
+    // backtracking cost 200 BC.History files on the argument position and 376
+    // on the condition. A declared conflict lets GLR explore both readings and
+    // keep the one that parses, which is how this grammar resolves every other
+    // preproc ambiguity.
     //
-    //   argument     -> `_expression_list` is shared with
-    //                   `preproc_split_call_statement`; scoping the tail to a
-    //                   dedicated `_argument_expression_list` did not help.
-    //                   200 BC.History files break either way. The pattern it
-    //                   fights is the common one -- a #if wrapping a whole
-    //                   CALL STATEMENT right after an assignment, which the
-    //                   tail's prec.right starts consuming as a continuation.
-    //   if condition -> collides with `preproc_split_if_statement` and friends,
-    //                   which already parse `#if` inside an if header. 376
-    //                   files break.
-    //   property     -> `_expression_or_split` overlaps the simple value forms
-    //                   (decimal, integer, ...); as a `_property_value`
-    //                   alternative it is a reduce/reduce at `;`, and attached
-    //                   to `property` it did not clear the 200 either.
+    // PROPERTY VALUE is left alone deliberately. The tail there beats
+    // `preproc_conditional_option_members`, turning a correct
+    // `value: (option_member_list … preproc_conditional_option_members …)` into
+    // an ERROR -- caught by two existing fixtures
+    // (IncludedPermissionSets, TableRelation-with-semicolon-inside-#if). The
+    // corpus stayed at 0 errors, so only the fixtures saw it: a reminder that
+    // an error count is not a correctness check. Closing this one needs the
+    // property-value preproc rules and the tail to be reconciled rather than
+    // raced, which is design work.
     //
     // Deliberately NOT applied at `_expression` itself: the optional tail inside
     // `additive_expression` reopens the `_single_pattern` vs `_expression`
