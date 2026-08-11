@@ -17,32 +17,120 @@ def node_types():
     return json.loads((loader.REPO_ROOT / "src" / "node-types.json").read_text(encoding="utf-8"))
 
 
-def test_finds_the_known_dropped_operator_fields(grammar, node_types):
-    """Self-test. A set-level implementation returns zero here.
+# --------------------------------------------------------------------------
+# A grammar/node-types pair exhibiting the defect, built rather than borrowed.
+#
+# Detector 3's static half is a pure function of two JSON documents, so its
+# positive control does not need a real grammar at all -- and must not use one.
+# It used to point at whichever operator field happened to be dropped at the
+# time: first `assignment_statement`, then, after 37771f1 fixed that, the
+# `is_expression`/`as_expression` pair. The losslessness work fixed those too,
+# and detect_static now reports ZERO dropped fields against the real grammar
+# (asserted below), so there is no third defect to re-point at.
+#
+# That is the end of the pattern, not bad luck: a detector whose only proof of
+# life is a live grammar defect goes dark exactly when the grammar is clean,
+# which is when you most need to trust it.
+# --------------------------------------------------------------------------
 
-    Four operator fields were dropped when this detector was written.
-    37771f1 fixed two of them by making `_assignment_operator` a visible rule;
-    the is_expression/as_expression pair is still dropped and still carried in
-    tools/query_coverage/baseline.json as fields|is_expression|operator and
-    fields|as_expression|operator.
 
-    Both halves are asserted. The two that must still be found keep the
-    detector honest against a set-level rewrite; the two that must NOT be
-    found are the ratchet on 37771f1 -- a revert puts them back and turns this
-    test red.
-    """
-    findings = fields.detect_static(grammar, node_types)
+def _seq(*members):
+    return {"type": "SEQ", "members": list(members)}
 
-    dropped = {
-        (f.detail["rule"], f.detail["field"])
-        for f in findings
-        if f.category == "dropped-field"
+
+def _field(name, content):
+    return {"type": "FIELD", "name": name, "content": content}
+
+
+def _sym(name):
+    return {"type": "SYMBOL", "name": name}
+
+
+def _spec():
+    return {"multiple": False, "required": True, "types": [{"type": "identifier", "named": True}]}
+
+
+# `dropping_expression` declares an `operator` field over a HIDDEN rule, so the
+# token is lexed and then belongs to no node -- the exact shape of the defect.
+# `keeping_expression` declares the SAME field name and really owns it, which
+# is what makes a set-level check answer "yes, `operator` exists somewhere" and
+# report nothing at all.
+SYNTHETIC_GRAMMAR = {
+    "rules": {
+        "dropping_expression": _seq(
+            _field("left", _sym("identifier")),
+            _field("operator", _sym("_hidden_operator")),
+            _field("right", _sym("identifier")),
+        ),
+        "keeping_expression": _seq(_field("operator", _sym("visible_operator"))),
+        "_hidden_operator": {
+            "type": "TOKEN",
+            "content": {
+                "type": "CHOICE",
+                "members": [
+                    {"type": "STRING", "value": ":="},
+                    {"type": "STRING", "value": "+="},
+                ],
+            },
+        },
+        "visible_operator": {"type": "STRING", "value": "+"},
+        "identifier": {"type": "PATTERN", "value": "[a-z]+"},
     }
+}
 
-    assert ("is_expression", "operator") in dropped
-    assert ("as_expression", "operator") in dropped
-    assert ("assignment_statement", "operator") not in dropped
-    assert ("assignment_expression", "operator") not in dropped
+SYNTHETIC_NODE_TYPES = [
+    # No "operator" key: that is the dropped field.
+    {"type": "dropping_expression", "named": True,
+     "fields": {"left": _spec(), "right": _spec()}},
+    {"type": "keeping_expression", "named": True, "fields": {"operator": _spec()}},
+    {"type": "visible_operator", "named": True, "fields": {}},
+    {"type": "identifier", "named": True, "fields": {}},
+]
+
+
+def test_finds_a_dropped_field_that_shares_its_name_with_a_surviving_one():
+    """The positive control. A set-level implementation returns zero here.
+
+    Asserted as an exact list, not by membership: membership alone would pass
+    on a detector that flagged every declared field, which is the
+    over-reporting direction of the same mistake.
+
+    `operator_collision` is asserted too. The hidden rule resolves to a CHOICE
+    of two spellings, so dropping the field really does lose information --
+    that flag is how a reader tells this apart from a field whose token has
+    only one spelling, where the node type already carries everything.
+    """
+    findings = fields.detect_static(SYNTHETIC_GRAMMAR, SYNTHETIC_NODE_TYPES)
+
+    dropped = [f for f in findings if f.category == "dropped-field"]
+
+    assert [(f.detail["rule"], f.detail["field"]) for f in dropped] == [
+        ("dropping_expression", "operator")
+    ]
+    assert dropped[0].detail["operator_collision"] is True
+    assert dropped[0].fingerprint == ("dropping_expression", "operator")
+
+
+def test_the_real_grammar_drops_no_fields_at_all(grammar, node_types):
+    """Ratchet on the losslessness work, and on 37771f1 before it.
+
+    Not "the four known ones are fixed" -- there is no dropped field anywhere
+    in the grammar any more, so the whole category is asserted empty. Any
+    reintroduction turns this red and names itself in the failure output,
+    which a list of four specific pairs could not do.
+
+    This is only safe to assert BECAUSE the test above proves the detector
+    still finds one when there is one. Neither half is worth much alone: this
+    one passes on a detector that reports nothing, and that one passes on a
+    grammar full of defects.
+    """
+    dropped = [
+        (f.detail["rule"], f.detail["field"])
+        for f in fields.detect_static(grammar, node_types)
+        if f.category == "dropped-field"
+    ]
+
+    assert dropped == []
 
 
 def test_does_not_flag_a_field_that_survives(grammar, node_types):
@@ -54,26 +142,46 @@ def test_does_not_flag_a_field_that_survives(grammar, node_types):
     assert ("assignment_statement", "right") not in dropped
 
 
-def test_set_level_check_would_miss_operator(grammar, node_types):
-    """Guards against the mis-implementation: 'operator' exists on other types.
+def _set_level_dropped_fields(grammar, node_types):
+    """The mis-implementation, written out so it can be RUN rather than described.
 
-    Asking "does the name 'operator' appear anywhere in node-types.json"
-    answers yes on eight types, so a set-level detector reports zero findings
-    and is dead on arrival. The example is is_expression/as_expression: both
-    declare field('operator', ...) in the grammar, neither owns it in
-    node-types.json. It used to be assignment_statement, which 37771f1 fixed
-    -- it now legitimately owns the field, so it can no longer play this role.
-
-    Declaring the field is asserted too, not assumed: a rule absent from the
-    left-hand list would make the right-hand list trivially true.
+    It asks "does this field NAME appear anywhere in node-types.json", which
+    answers yes as soon as any single type owns it, and so reports nothing.
+    Keeping it executable is the point: a comment asserting that a wrong
+    implementation would return zero cannot itself be checked, and this can.
     """
-    owners = [n["type"] for n in node_types if "operator" in n.get("fields", {})]
-    declared = {rule for rule, field_name in fields.collect_declared_fields(grammar) if field_name == "operator"}
+    present = {name for entry in node_types for name in entry.get("fields", {})}
+    return sorted(
+        {
+            rule
+            for rule, field_name in fields.collect_declared_fields(grammar)
+            if field_name not in present
+        }
+    )
 
-    assert len(owners) >= 6
-    assert {"is_expression", "as_expression"} <= declared
-    assert "is_expression" not in owners
-    assert "as_expression" not in owners
+
+def test_set_level_check_would_miss_the_dropped_field():
+    """The check is per-OWNING-TYPE, not per name. `keeping_expression` owns an
+    `operator` field, so the set-level version sees the name present and
+    reports zero, while `dropping_expression` is dropping one right beside it.
+
+    This used to be asserted against whichever real rules were dropping
+    `operator` at the time -- `assignment_statement`, then the
+    `is_expression`/`as_expression` pair. Each fix cost it its example, and
+    with the grammar now clean the two implementations agree on zero: the
+    comparison would be 0 == 0 and would pass on either one. The synthetic
+    pair keeps the two answers apart permanently.
+    """
+    per_owner = sorted(
+        {
+            f.detail["rule"]
+            for f in fields.detect_static(SYNTHETIC_GRAMMAR, SYNTHETIC_NODE_TYPES)
+            if f.category == "dropped-field"
+        }
+    )
+
+    assert _set_level_dropped_fields(SYNTHETIC_GRAMMAR, SYNTHETIC_NODE_TYPES) == []
+    assert per_owner == ["dropping_expression"]
 
 
 def test_hidden_rules_are_skipped_not_flagged(grammar, node_types):

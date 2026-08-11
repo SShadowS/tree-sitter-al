@@ -158,27 +158,69 @@ is the only way to raise a count or admit a new cluster. This means a clean
 
 ## Self-tests
 
-A `run --all` must report:
+**`run --all` reports no `gaps` cluster and no dropped field at all, and that
+is the correct result.** Measured on 4.0.0, each at its own scope — not
+inferred from the baseline's key list, which is a different statement and
+settles nothing:
 
-- gap clusters for `record`, `field`, `code`, `tabledata` — all still bare
-  `kw()` tokens, so their bytes still belong to no leaf
-- dropped `operator` fields on `is_expression` and `as_expression`
+- **manifest scope (59 files), the `run --all` default** — no `gaps` cluster.
+- **corpus scope (15,358 files)** — detector 1 returns **0 findings over 0
+  dropped bytes**. The manifest result does not imply this one; it was swept
+  separately.
+- **detector 3's static half** — **0** `dropped-field` findings. This one has
+  no file scope at all: it reads `src/grammar.json` and `src/node-types.json`,
+  so it covers every rule in the grammar regardless of what any corpus
+  exercises.
 
-If any is missing, the detector is broken — not the grammar.
+So this section can no longer be a list of findings you should see. It was one
+for three releases, and each release invalidated it:
 
-**This list shrank in 4.0.0, and the removals are the point.** The original
-version also required a `:=` gap cluster, dropped `operator` fields on
-`assignment_statement`/`assignment_expression`, and dropped-field findings on
-`xmlport_attribute`/`xmlport_element`. Those were the defects the harness was
-built to find; `37771f1` and `8c23096` fixed them, so requiring them now would
-report a correct grammar as a broken detector. `is_expression` and
-`as_expression` stay on the list because they are *deliberately* untouched —
-their node types already encode the operator, so nothing is recoverable that
-is not already there. `docs/query-coverage-findings.md` is the full record.
+| required by the list | closed by |
+|---|---|
+| `:=` gap; `operator` on `assignment_statement`/`assignment_expression` | `37771f1` |
+| `xmlport_attribute`/`xmlport_element` dropped fields | `8c23096` |
+| `record`, `field`, `code`, `tabledata` gaps; `operator` on `is_expression`/`as_expression` | the 4.0.0 losslessness work |
 
-The living version of this list is `tools/query_coverage/baseline.json`, which
-is the accepted state and is diffed on every run. Prefer it over this prose
-whenever the two disagree.
+Each time, the list was trimmed to whatever defect was still open. That is a
+loop with one exit, and 4.0.0 reached it: **there is no live finding left to
+point at.** The version of this section that preceded it had already made the
+argument against itself — it explained that requiring an already-fixed defect
+"would report a correct grammar as a broken detector", then kept
+`is_expression`/`as_expression` on the grounds that they were "deliberately
+untouched". They were named in 4.0.0 and both went 1 → 0, so that
+justification is void rather than merely stale. Do not re-point this list at
+the next open defect; there may not be one, and the exercise is what produced
+three wrong sections in a row.
+
+### What actually distinguishes a working detector from a silent one
+
+`python -m pytest tools/query_coverage/tests -q`
+
+The positive controls live there, built as synthetic input rather than
+borrowed from the grammar, so they hold whether or not any real AL construct
+still drops a token:
+
+| control | proves |
+|---|---|
+| `test_fields.py::test_finds_a_dropped_field_that_shares_its_name_with_a_surviving_one` | detector 3 still finds a dropped field, per owning type — a set-level rewrite returns zero here |
+| `test_fields.py::test_set_level_check_would_miss_the_dropped_field` | the mis-implementation, run rather than described, and required to disagree |
+| `test_gaps.py::test_dropped_token_survives_a_chunk_straddling_an_error_edge` | detector 1 still reports a gap, and `_split_by_errors` still beats blanket suppression |
+| `test_gaps.py::test_dropped_token_between_two_error_ranges_survives_both_subtractions` | the multi-interval subtraction path |
+
+The ratchets in the same files are the other half — `test_gaps.py::test_type_keywords_are_no_longer_gaps`, `::test_tabledata_keyword_is_no_longer_a_gap`,
+`test_fields.py::test_the_real_grammar_drops_no_fields_at_all`. Each asserts
+both that the defect is gone *and* that the construct is present as a real
+node, because "no finding" alone also passes on a detector that reports
+nothing. Neither half is worth much alone; a green suite means both hold.
+
+**`./validate-grammar.sh` does not run pytest.** Only CI's
+`query-coverage-selftest` job does (`.github/workflows/ci.yml`). A green
+`validate-grammar.sh` is therefore not evidence about any of the above — that
+gap is how the three superseded lists above all reached `main`.
+
+The living version of the accepted state is
+`tools/query_coverage/baseline.json`, which is diffed on every run. Prefer it
+over this prose whenever the two disagree.
 
 ## Known limitations
 

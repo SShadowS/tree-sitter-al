@@ -18,12 +18,20 @@ bytes. That is stricter than the source-driven form it replaces -- error
 nesting and leaf layout are stated outright instead of being hoped for from the
 parser -- and it cannot be invalidated by a future grammar fix. What it no
 longer proves is that tree-sitter still produces these shapes from AL source;
-that was already only incidentally true, and `_straddles_an_error` below
-exists because the 2- and 3-token cases had silently stopped reproducing their
-own precondition once before.
+that was already only incidentally true, and `_straddles_an_error` below exists
+because the straddle case had silently stopped reproducing its own precondition
+once before.
+
+Building the trees also widened the coverage rather than narrowing it. The
+three error cases used to be three sizes of the same trailing garbage run,
+which varies tree-sitter's recovery and not the detector; they are now the
+three distinct shapes `gaps._split_by_errors` can face -- no subtraction, one
+that trims a chunk's front, and two that trim opposite ends of one chunk. The
+third was unreachable by appending garbage and so had never been tested.
 
 The real-parser tests that remain assert the invariant that now holds: named
-keywords and operators are nodes, and a clean object has no gaps at all.
+keywords and operators are nodes, and neither a clean object nor a broken one
+has any gap at all.
 """
 
 from tools.query_coverage.detectors import _tree, gaps
@@ -74,18 +82,36 @@ def leaf(type_, start, end, named=False):
 GAP_SOURCE = b"r: Record Customer;"
 
 
-def gap_tree(source=GAP_SOURCE, name_type="identifier", name_span=(10, 18)):
-    """`r: <no leaf>Record</no leaf> <name>;` — the leaf after the gap is swappable."""
+def gap_tree(source=GAP_SOURCE, name=b"Customer", name_type="identifier"):
+    """A `variable_declaration` over `source` in which every byte is covered by
+    a leaf EXCEPT the span between the ':' and `name`. That span is the gap.
+
+    Layout: `<identifier> ':' <UNCOVERED> <name> ';'`. Spans are derived from
+    the source rather than passed in, so a caller places ignorable bytes inside
+    the gap (a BOM, an NBSP, a newline) just by writing them into `source`, and
+    no test carries hand-counted offsets that can rot out of step with it.
+    """
+    colon = source.index(b":")
+    name_start = source.index(name)
     end = len(source)
+    assert source.endswith(b";"), "the trailing ';' leaf is part of this shape"
+    assert colon + 1 < name_start, "there must be an uncovered span to detect"
     return FakeTree(
         FakeNode(
             "variable_declaration", 0, end,
-            leaf("identifier", 0, 1, named=True),
-            leaf(":", 1, 2),
-            leaf(name_type, name_span[0], name_span[1], named=True),
+            leaf("identifier", 0, colon, named=True),
+            leaf(":", colon, colon + 1),
+            leaf(name_type, name_start, name_start + len(name), named=True),
             leaf(";", end - 1, end),
         )
     )
+
+
+def error_node(start, end, *children):
+    """An ERROR node. Childless makes it a leaf; giving it children makes it a
+    node `_tree.leaves()` never yields, which is the shape the straddle cases
+    below depend on."""
+    return FakeNode("ERROR", start, end, *children, error=True)
 
 
 def _uncovered_chunks(tree, source):
@@ -215,14 +241,20 @@ def test_comments_are_not_gaps(al_parser):
 
 
 def test_gaps_inside_error_ranges_are_excluded(al_parser):
-    """Error-recovery artifacts belong to detector 2."""
+    """Error-recovery artifacts belong to detector 2.
+
+    The loop this replaces iterated the findings and asserted no '@' in each,
+    which passes vacuously now that the list is empty -- and would keep passing
+    on a detector broken to the point of reporting nothing at all. The empty
+    list is asserted directly, together with the precondition that there IS a
+    recorded error range here for the exclusion to act on.
+    """
     source = b"codeunit 1 T { @@@ !!! }"
     tree = al_parser.parse(source)
     assert tree.root_node.has_error
+    assert _tree.error_ranges(tree.root_node)
 
-    for finding in gaps.detect(tree, source, "t.al"):
-        assert "@" not in finding.detail["gap_text"]
-        assert "!" not in finding.detail["gap_text"]
+    assert gaps.detect(tree, source, "t.al") == []
 
 
 def test_fingerprint_is_normalized_text_plus_enclosing_type():
@@ -263,7 +295,7 @@ def test_fingerprint_keys_on_the_node_containing_the_gap_not_the_next_token():
 
     bare_findings = gaps.detect(gap_tree(), bare, "t.al")
     quoted_findings = gaps.detect(
-        gap_tree(quoted, name_type="quoted_identifier", name_span=(10, 20)),
+        gap_tree(quoted, name=b'"My Table"', name_type="quoted_identifier"),
         quoted, "t.al",
     )
 
@@ -282,57 +314,107 @@ def test_semicolon_counts_as_coverage(al_parser):
 
 
 def _assert_only_the_dropped_is(findings):
-    assert "is" in texts(findings)
-    for finding in findings:
-        assert "@" not in finding.detail["gap_text"]
-        assert "!" not in finding.detail["gap_text"]
+    """Exactly the dropped token, and none of the error text beside it.
 
-
-def test_dropped_token_survives_1_token_error_region(al_parser):
-    """A dropped 'is' immediately before a single-token ERROR must still be
-    reported -- it sits wholly outside the recorded error range.
-
-    The dropped token used to be ':='; 37771f1 made that a real node, so the
-    is_expression operator (still a gap, still in the qc baseline as
-    gaps|is|is_expression) stands in for it here and in the two cases below.
+    An exact list, not membership: `"is" in texts(findings)` would also pass on
+    a detector that reported every garbage token as well, which is the
+    over-reporting direction of the same bug.
     """
-    source = b"codeunit 1 T { procedure P() begin x := i is @@@ end; }"
-    tree = al_parser.parse(source)
-    assert tree.root_node.has_error
+    assert [f.detail["gap_text"] for f in findings] == ["is"]
+
+
+# The three error cases below were "1-, 2- and 3-token error region": three
+# sizes of the same garbage run, which is a property of tree-sitter's recovery
+# rather than of the detector. Built rather than parsed, the sizes stop being
+# the interesting axis and the three distinct subtraction shapes take over --
+# no subtraction, one that trims the front, and two that trim opposite ends.
+# The third shape was not covered at all before, because no arrangement of
+# trailing garbage happened to produce it.
+
+
+def test_dropped_token_beside_a_leaf_error_is_reported():
+    """The simple case: the ERROR is childless, so `_tree.leaves()` yields the
+    ERROR itself and the uncovered chunk stops exactly at its start. Nothing
+    for `_split_by_errors` to subtract; the dropped token is reported as-is.
+
+    Blanket overlap suppression would ALSO pass this, which is why it is the
+    baseline case and not the regression test -- that is the next one.
+
+        i is @@@
+        0 2  5      "is" is [1,5), the ERROR leaf is [5,8)
+    """
+    source = b"i is @@@"
+    tree = FakeTree(
+        FakeNode(
+            "source_file", 0, len(source),
+            leaf("identifier", 0, 1, named=True),
+            error_node(5, 8),
+        )
+    )
+    assert not _straddles_an_error(tree, source)
 
     _assert_only_the_dropped_is(gaps.detect(tree, source, "t.al"))
 
 
-def test_dropped_token_survives_2_token_error_region(al_parser):
-    """Regression for the reviewed bug: tree-sitter nests one ERROR inside
-    another here, so _tree.leaves() never yields the outer ERROR itself --
-    only its inner leaf. The uncovered chunk between the last clean leaf and
-    that inner leaf runs straight through the dropped 'is' and into the
-    error's own un-leafed lead-in, so the chunk overlaps the recorded error
-    range even though 'is' itself sits outside it. Blanket overlap
-    suppression discarded 'is' along with the error text; interval
-    subtraction (gaps._split_by_errors) must keep it.
+def test_dropped_token_survives_a_chunk_straddling_an_error_edge():
+    """Regression for the reviewed bug. tree-sitter nests one ERROR inside
+    another, so `_tree.leaves()` never yields the outer ERROR -- only its inner
+    leaf. The uncovered chunk then runs from the last clean leaf straight
+    through the dropped token and on into the outer error's own un-leafed
+    lead-in, so the chunk OVERLAPS the recorded error range even though the
+    dropped token sits outside it. Blanket overlap suppression discarded the
+    token along with the error text; `gaps._split_by_errors` must keep it.
 
-    The two garbage tokens are deliberately DIFFERENT ('@@@ !!!'). The
-    original source used ':= @@@ @@@' and the identical-token pair reproduced
-    the nesting then; after 37771f1 it no longer does -- '@@@ @@@' now yields
-    a first leaf flush with the error's start, which blanket suppression
-    would also survive. _straddles_an_error asserts the shape rather than
-    trusting it.
+        i is @@@ !!!
+        0 2  5   9      outer ERROR [5,12), its only leaf is the inner [9,12)
+
+    `_straddles_an_error` is the precondition AND the discriminator: it is true
+    only for a chunk that overlaps an error range while also extending outside
+    it, which is exactly the case blanket suppression gets wrong and
+    subtraction gets right. Without it this test could silently degrade into a
+    duplicate of the one above -- which is what happened to its parsed
+    ancestor when 37771f1 reshaped the leaf layout around the error.
     """
-    source = b"codeunit 1 T { procedure P() begin x := i is @@@ !!! end; }"
-    tree = al_parser.parse(source)
-    assert tree.root_node.has_error
+    source = b"i is @@@ !!!"
+    tree = FakeTree(
+        FakeNode(
+            "source_file", 0, len(source),
+            leaf("identifier", 0, 1, named=True),
+            error_node(5, 12, error_node(9, 12)),
+        )
+    )
     assert _straddles_an_error(tree, source)
 
     _assert_only_the_dropped_is(gaps.detect(tree, source, "t.al"))
 
 
-def test_dropped_token_survives_3_token_error_region(al_parser):
-    source = b"codeunit 1 T { procedure P() begin x := i is @@@ @@@ !!! end; }"
-    tree = al_parser.parse(source)
-    assert tree.root_node.has_error
-    assert _straddles_an_error(tree, source)
+def test_dropped_token_between_two_error_ranges_survives_both_subtractions():
+    """One chunk, two error ranges, and the token wedged between them: the
+    first subtraction trims the chunk's front, the second trims its back, and
+    only the dropped token is left. Neither case above reaches the branch of
+    `_split_by_errors` that folds a second interval into an already-trimmed
+    segment list.
+
+        @@@ is @@@ !!!
+        0   4  7   11
+        ERROR A [0,4) leafs only [0,3), so its tail " " is un-leafed
+        ERROR B [7,14) leafs only [11,14), so its lead-in "@@@ " is un-leafed
+        -> the single chunk is [3,11); subtracting A gives [4,11), then B
+           gives [4,7) == "is "
+    """
+    source = b"@@@ is @@@ !!!"
+    tree = FakeTree(
+        FakeNode(
+            "source_file", 0, len(source),
+            error_node(0, 4, error_node(0, 3)),
+            error_node(7, 14, error_node(11, 14)),
+        )
+    )
+    chunks = _uncovered_chunks(tree, source)
+    errors = _tree.error_ranges(tree.root_node)
+    assert chunks == [(3, 11)]
+    # Both ranges must bite, or this is just the previous test again.
+    assert sum(1 for lo, hi in errors if lo < chunks[0][1] and chunks[0][0] < hi) == 2
 
     _assert_only_the_dropped_is(gaps.detect(tree, source, "t.al"))
 
@@ -372,7 +454,7 @@ def test_offset_measures_leading_whitespace_in_bytes_not_characters(al_parser):
     assert findings[0].column == source.index(b"Record") + 1
 
 
-def test_bom_between_leaves_is_not_part_of_the_gap_text(al_parser):
+def test_bom_between_leaves_is_not_part_of_the_gap_text():
     """U+FEFF is an extra (grammar.js:137), so it is not part of a dropped
     token and must not reach the gap text or the cluster fingerprint.
 
@@ -380,29 +462,31 @@ def test_bom_between_leaves_is_not_part_of_the_gap_text(al_parser):
     str.strip() does not strip U+FEFF -- so the old `raw.strip()` produced the
     gap text "\\ufeffRecord", fingerprinted under a key no other site could
     ever share.
-    """
-    source = "codeunit 1 T { procedure P() var r: \uFEFFRecord Customer; begin end; }".encode(
-        "utf-8"
-    )
-    tree = al_parser.parse(source)
-    assert not tree.root_node.has_error  # the BOM really is an extra here
 
-    findings = gaps.detect(tree, source, "t.al")
+    Synthetic for the reason in the module docstring, and additionally because
+    the parsed form could only place the BOM where the parser happened to leave
+    a gap. Here it is placed hard against the dropped token deliberately, which
+    is the position that discriminates -- `_lead_length` must skip it, and
+    `byte_offset` must then land on the token and not on the BOM.
+    """
+    source = "r:\uFEFFRecord Customer;".encode("utf-8")
+
+    findings = gaps.detect(gap_tree(source), source, "t.al")
 
     assert texts(findings) == ["Record"]
     assert findings[0].byte_offset == source.index(b"Record")
     assert findings[0].fingerprint == ("record", "variable_declaration")
 
 
-def test_snippet_flattens_embedded_newlines(al_parser):
+def test_snippet_flattens_embedded_newlines():
     """_snippet must escape a real newline to the literal 2-character
     sequence backslash-n for display; a no-op .replace("\\n", "\\n") defeats
     this and is silently invisible in every other test."""
-    source = b"codeunit 1 T {\n  procedure P() var r: Record Customer;\n  begin end;\n}"
+    source = b"r:\n  Record Customer;"
 
-    findings = gaps.detect(al_parser.parse(source), source, "t.al")
+    findings = gaps.detect(gap_tree(source), source, "t.al")
 
-    assert findings
+    assert texts(findings) == ["Record"]
     snippet = findings[0].snippet
     assert "\n" not in snippet
     assert "\\n" in snippet
