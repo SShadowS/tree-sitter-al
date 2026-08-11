@@ -2,7 +2,7 @@
 A property value continued across a #if boundary
 --
 NOT alc-justified, and the claim that was here before was wrong.
-
+.
 The original note said alc ACCEPTS this. It does not: flat `MinValue = 1 + 2;`
 REJECTS with AL0104 (';' expected) -- property values are literal, not
 expressions. The earlier ACCEPT came from a broken probe method: alc DOES NOT
@@ -11,7 +11,7 @@ certifies only the active branch and says nothing about the fragment. Proven by
 a control -- `banana banana banana` inside `#if FOO` is ACCEPTED undefined and
 REJECTED defined. Any split-file probe must compile BOTH ways
 ("preprocessorSymbols" in app.json), and flat-inlined as well.
-
+.
 What this fixture pins is therefore surplus tolerance, not conformance: we parse
 a shape alc rejects. That is the deliberate parse-structure-don't-validate
 choice and is harmless, but it must not be cited as compiler-backed.
