@@ -140,6 +140,14 @@ settings.local.json
 *MISSING*.md
 *QUERIES*.md
 *RULES*.md
+
+# The scratch-name patterns above are keyword globs, so they also catch tracked
+# project docs whose names merely contain the word. `.serena/memories/` holds
+# hand-written project documentation, not scratch: re-include it wholesale.
+# Found when `git add .serena/memories/*.md` silently refused conventions.md
+# under `*CONVENTION*.md` -- the same blanket-glob hazard that had already hidden
+# `.claude/rules/`, `.claude/skills/` and a corpus fixture under `property_*.txt`.
+!.serena/memories/*.md
 *GUIDE*.md
 # Root-scoped ON PURPOSE. These are scratch dumps from the property-audit
 # tooling, which writes them to the repo root. Without the leading slash the
