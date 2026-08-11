@@ -97,7 +97,28 @@ queries/*
 FIXES.md
 
 # AI assistant files
-.claude/
+#
+# `.claude/` holds BOTH local-only state (mind.mv2, settings.local.json, the
+# per-machine commands) AND tracked project files: the release gate lives in
+# .claude/commands/release.md and the grammar rules in .claude/rules/. A blanket
+# `.claude/` ignore left those tracked subtrees invisible to `git status`, so a
+# NEW rule file or a new gate command would be silently uncommittable — the same
+# hazard that ate a corpus file via `property_*.txt`. Tracked files already in
+# the index are unaffected by an ignore rule, which is why nobody noticed.
+#
+# git cannot re-include a path whose parent DIRECTORY is excluded, so this
+# excludes the entries inside `.claude/` rather than `.claude/` itself, then
+# re-includes the two tracked subtrees. `rules/` is re-included wholesale
+# because every file in it is tracked and a new one should be visible;
+# `commands/` is re-included by name because most of its contents are genuinely
+# local-only.
+/.claude/*
+!/.claude/rules/
+!/.claude/commands/
+/.claude/commands/*
+!/.claude/commands/grammar-help.md
+!/.claude/commands/release.md
+!/.claude/commands/validate.md
 .clinerules/
 .goosehints
 CLAUDE.md
