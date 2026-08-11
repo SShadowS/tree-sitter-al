@@ -5,6 +5,44 @@ Format loosely follows [Keep a Changelog](https://keepachangelog.com/); the proj
 uses [Semantic Versioning](https://semver.org/) where the parse-tree shape is the
 public API — a change to node structure or field names is a **major** bump.
 
+## [Unreleased]
+
+Both entries below were reported by downstream consumers of the published 4.0.0,
+and both are the same shape: a configuration this project never builds itself, so
+no gate here could have failed.
+
+### Fixed
+
+- **`src/scanner.c` did not compile under MSVC's default flags.** The
+  `_Static_assert` that pins `ScannerDepth` to an unsigned 32-bit type was guarded
+  by `(defined(_MSC_VER) && _MSC_VER >= 1928) || (__STDC_VERSION__ >= 201112L)`.
+  The first arm is wrong: MSVC's C compiler rejects `_Static_assert` at *every*
+  version unless `/std:c11` or `/std:c17` is passed, and those are exactly the
+  modes in which it defines `__STDC_VERSION__`. So the `_MSC_VER` arm enabled the
+  assert precisely where it does not compile, and any consumer building the file
+  with default flags got `C2143: syntax error: missing ')' before '('`. Measured
+  on 19.44.35228. The guard is now `__STDC_VERSION__` alone; default-flags MSVC
+  takes the negative-array fallback, which compiles and still fails the build if
+  the counter is narrowed.
+
+  Every first-party build passes c11 already — `Makefile` (`-std=c11`),
+  `binding.gyp` (`/std:c11`), `setup.py` (both spellings),
+  `bindings/rust/build.rs` (`cc.std("c11")`), `bindings/go/binding.go` (cgo
+  `CFLAGS`) — which is why the whole CI matrix stayed green over a file that did
+  not build. New CI job `scanner-default-flags` compiles `src/scanner.c` on
+  `windows-latest` with no `/std` flag. It also narrows `ScannerDepth` to
+  `uint8_t` and requires the build to **fail** both ways, because "it compiles
+  clean" passes just as well with the guard deleted.
+
+- **14 section keywords are legal AL variable names and would not parse.**
+  `Filter: Codeunit "Some Thing";` failed, while `Filters`, `MyFilter`, `Assert`
+  and `Count` were fine. Sweeping all 151 named keyword rules as variable names
+  found 23 failures; alc 18.0.37.11445 accepts 14 of them, now added to
+  `keyword_as_identifier`: `filter`, `column`, `dataitem`, `elements`, `fields`,
+  `keys`, `labels`, `layout`, `modify`, `rendering`, `requestpage`, `schema`,
+  `views`, `analysisviews`. The other nine are rejected by alc too and stay
+  rejected here. Present in 2.5.1, so it predates 4.0.0.
+
 ## [4.0.0] — 2026-08-11
 
 **This is a breaking release.** The parse tree is this project's public API, and this

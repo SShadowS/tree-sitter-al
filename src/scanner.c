@@ -48,15 +48,32 @@ typedef struct {
 // `state->depth > 0` guards would read a negative depth as "not nested" exactly
 // as the wrapped uint8_t did.
 //
-// _Static_assert where it exists, because it prints the MESSAGE: MSVC reports
-// the negative-array fallback as a bare "C2118: negative subscript" naming
+// _Static_assert where the compiler has it, because it prints the MESSAGE: the
+// negative-array fallback reports a bare "C2118: negative subscript" naming
 // neither the constant nor the reason, which is a check that fires without
-// saying what broke. MSVC accepts _Static_assert in C mode only from VS2019
-// 16.8 (_MSC_VER 1928); anything older takes the fallback.
+// saying what broke.
+//
+// The guard is __STDC_VERSION__ ALONE, deliberately. _MSC_VER is not a proxy
+// for _Static_assert support, and a `_MSC_VER >= 1928` arm here was actively
+// wrong: MSVC's C compiler rejects _Static_assert under DEFAULT flags at every
+// version, 19.44/VS2022 included, and accepts it only under /std:c11 or
+// /std:c17 — which is exactly when it defines __STDC_VERSION__ >= 201112L. That
+// arm therefore enabled the assert precisely where it does not compile, and
+// every default-flags MSVC build of this file failed at this line. Measured on
+// 19.44.35228: default flags give "C2143: syntax error: missing ')' before '('"
+// and leave __STDC_VERSION__ undefined; -std:c11 and -std:c17 both compile
+// clean. Narrowing ScannerDepth still fails the build on both paths (C2338 with
+// the message under c11, C2118 via the fallback under default flags), which is
+// the point of keeping the fallback.
+//
+// No first-party build ever saw it: Makefile passes -std=c11, binding.gyp
+// passes /std:c11 on Windows, and bindings/rust/build.rs calls cc .std("c11").
+// It broke only third-party consumers that compile scanner.c themselves, which
+// is how it survived a release — reported by one such consumer, which had
+// worked around it locally with cc.std("c11").
 #define SCANNER_DEPTH_IS_UNSIGNED ((ScannerDepth)-1 > (ScannerDepth)0)
 #define SCANNER_DEPTH_OK (sizeof(ScannerDepth) >= 4 && SCANNER_DEPTH_IS_UNSIGNED)
-#if (defined(_MSC_VER) && _MSC_VER >= 1928) || \
-    (defined(__STDC_VERSION__) && __STDC_VERSION__ >= 201112L)
+#if defined(__STDC_VERSION__) && __STDC_VERSION__ >= 201112L
 _Static_assert(SCANNER_DEPTH_OK,
   "ScannerDepth must be an unsigned type of at least 32 bits: a narrower or "
   "signed depth counter wraps, and every state->depth > 0 guard then reads "
