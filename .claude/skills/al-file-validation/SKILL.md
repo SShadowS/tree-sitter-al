@@ -35,7 +35,7 @@ without either run erroring.
 Exit `0` all gating checks passed · `1` a gating check failed · `2` could not
 run. `--strict-reachability` promotes the reachability NOTE to a gating check.
 
-## The six checks
+## The seven checks
 
 Each is written so it CAN fail, and `--self-test` proves each one does by
 breaking something on purpose and requiring **the right check** — not merely
@@ -57,8 +57,15 @@ some check — to report it.
    two readings to agree: N lexical `field(` sites must yield N `field_keyword`
    nodes. Independence is the whole point — a count derived from the parser
    cannot detect the parser failing to emit a node, because it would be
-   counting the same absence twice. Shares `anchors.ANCHORS` with the
-   corpus-wide harness so the two cannot drift into disagreeing definitions.
+   counting the same absence twice.
+
+   Shares **both** the pattern table and the `lexer.is_code` filter with the
+   corpus-wide harness. Sharing only the patterns is not enough and had already
+   drifted: an unfiltered regex counts the word inside comments, so
+   `// This procedure updates the customer record` read as a second procedure
+   and false-FAILED **4.4% of 2,000 BC.History files** with the parser entirely
+   correct. A 1-in-23 false-alarm rate trains a reader to wave the check
+   through, which is worse than not having it.
 
 4. **required-fields** *(soundness)* — every field `node-types.json` declares
    `required` must be populated on every live instance. Release defects 4 and 5
@@ -66,10 +73,35 @@ some check — to report it.
    be required.
 
 5. **extraction-fidelity** *(soundness)* — runs a consumer-style query that
-   addresses values **by field name** (`field_declaration id:/name:/type:`,
-   `property name:/value:`, and so on) and checks each captured value against
-   its own source span. Capturing **nothing** is a failure, not a pass: an
-   empty result and a correct-but-empty file are indistinguishable.
+   addresses values **by field name** and requires, **per kind**, that the
+   number of captures equals the number of such nodes in the tree. A whole
+   capture kind dropping to zero while another still matches is what a
+   field-moving misparse looks like. Capturing nothing at all is also a
+   failure: an empty result and a correct-but-empty file are indistinguishable.
+
+   This replaced a comparison of `src[start:end]` against `node.text`, which is
+   a **tautology** — py-tree-sitter's `.text` *is* that slice, so it could
+   never fire, and its self-test "proved" otherwise by appending a byte to one
+   side. Found by adversarial review; swept over 330,587 nodes with 0
+   mismatches, necessarily.
+
+7. **orphan-operator-expr** *(completeness — structure, not bytes)* — an
+   operator-headed expression standing as an **unfielded** statement. No
+   byte-level or node-count check can see this: every byte is in a node, every
+   type is ordinary, the count is right, and what moved is the *parent*. The
+   live case, which `alc` compiles and which passed all six earlier checks:
+
+   ```al
+   r := 1
+   #if CLEAN25
+       + 2
+   #endif
+       + 3;
+   ```
+
+   yields `assignment_statement 'r := 1'` plus `+ 2` and `+ 3` as floating
+   statements — the program is `1 + 3` or `1 + 2 + 3`, and the tree is neither.
+   Zero false positives across 800 random BC.History files.
 
 6. **query-reachability** *(completeness, for consumers)* — named node types
    this file produces that **no shipped query in `queries/` matches**.
