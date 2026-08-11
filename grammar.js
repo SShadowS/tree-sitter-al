@@ -4214,7 +4214,14 @@ module.exports = grammar({
       prec(14, seq(
         $.exit_keyword,
         '(',
-        optional(field('return_value', $._expression)),
+        // The field goes on the expression ONLY. Wrapping the hidden
+        // `_expression_or_split` in the field gives BOTH its children the
+        // name, so `return_value` appeared twice on one node -- a field
+        // declared multiple:false with two children.
+        optional(seq(
+          field('return_value', $._expression),
+          optional($.preproc_conditional_expression_tail)
+        )),
         ')'
       )),
       prec(13, $.exit_keyword)
@@ -4545,6 +4552,43 @@ module.exports = grammar({
       ')'
     ),
 
+    // An expression that may be continued across a #if boundary.
+    //
+    // COVERAGE IS PARTIAL AND THE BOUNDARY IS MEASURED, not assumed. alc
+    // 18.0.37.11445 ACCEPTS the split in all of these positions; we handle two:
+    //
+    //   assignment RHS   r := 1 #if X + 2 #endif + 3;      HANDLED
+    //   exit value       exit(1 #if X + 2 #endif );        HANDLED
+    //   argument         Power(2 #if X + 1 #endif , 3)     still ERRORs
+    //   if condition     if i = 1 #if X + 2 #endif then    still ERRORs
+    //   property value   MinValue = 1 #if X + 2 #endif ;   still ERRORs
+    //
+    // The three unhandled ones each collide with machinery that already reads
+    // the same directives, and each was tried and reverted with the corpus as
+    // the judge:
+    //
+    //   argument     -> `_expression_list` is shared with
+    //                   `preproc_split_call_statement`; scoping the tail to a
+    //                   dedicated `_argument_expression_list` did not help.
+    //                   200 BC.History files break either way. The pattern it
+    //                   fights is the common one -- a #if wrapping a whole
+    //                   CALL STATEMENT right after an assignment, which the
+    //                   tail's prec.right starts consuming as a continuation.
+    //   if condition -> collides with `preproc_split_if_statement` and friends,
+    //                   which already parse `#if` inside an if header. 376
+    //                   files break.
+    //   property     -> `_expression_or_split` overlaps the simple value forms
+    //                   (decimal, integer, ...); as a `_property_value`
+    //                   alternative it is a reduce/reduce at `;`, and attached
+    //                   to `property` it did not clear the 200 either.
+    //
+    // Deliberately NOT applied at `_expression` itself: the optional tail inside
+    // `additive_expression` reopens the `_single_pattern` vs `_expression`
+    // conflict that 812ace7 removed. Per-host application avoids the
+    // case-pattern position, which is where that ambiguity lives.
+    // prec.right: at the delimiter that ends an expression (a `,`, a `)`, a
+    // `then`), the parser must prefer extending into a tail over reducing --
+    // otherwise the optional creates a reduce/reduce at every list separator.
     // Comma-separated expression list — a complete unit bounded by the caller's delimiter
     _expression_list: $ => seq(
       $._expression,

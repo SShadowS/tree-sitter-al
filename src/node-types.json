@@ -5384,11 +5384,15 @@
       }
     },
     "children": {
-      "multiple": false,
+      "multiple": true,
       "required": true,
       "types": [
         {
           "type": "exit_keyword",
+          "named": true
+        },
+        {
+          "type": "preproc_conditional_expression_tail",
           "named": true
         }
       ]

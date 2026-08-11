@@ -1,0 +1,46 @@
+================================================================================
+An exit() value continued across a #if boundary
+--
+alc 18.0.37.11445 ACCEPTS this (verified with a discriminating control; note
+that every probe log carries a non-fatal `AL1021: The package cache path has
+not been specified` -- judge by whether out.app was produced, not by that line).
+.
+The `return_value` field is on the EXPRESSION only. Wrapping the hidden
+`_expression_or_split` in the field gave BOTH its children the name, so
+`return_value` appeared twice on a field declared multiple:false.
+================================================================================
+
+codeunit 50132 C { procedure P() r: Integer begin exit(1
+#if X
+ + 2
+#endif
+ ); end; }
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (procedure
+        (procedure_keyword)
+        name: (identifier)
+        return_value: (identifier)
+        return_type: (type_specification
+          (basic_type))
+        body: (code_block
+          (begin_keyword)
+          body: (statement_block
+            (exit_statement
+              (exit_keyword)
+              return_value: (integer)
+              (preproc_conditional_expression_tail
+                (preproc_if
+                  (preproc_open)
+                  condition: (identifier))
+                operand: (integer)
+                (preproc_endif
+                  (preproc_close)))))
+          (end_keyword))))))
