@@ -5200,6 +5200,12 @@ module.exports = grammar({
     // never had this. Demoting the three fixes the highlight as well as the
     // shape, and the patterns keep working at the real keyword sites because all
     // three rules are still referenced elsewhere in the grammar.
+    // Every entry is a BARE kw(), never `$.x_keyword`. This rule is consumed as
+    // `alias($.keyword_as_identifier, $.identifier)`, so the node claims to be a
+    // plain `identifier` -- and an `identifier` is a leaf in all 5.9M other
+    // instances. A named alternative here grows a child nothing else has. See
+    // `.claude/rules/contextual-keywords.md`: which way a mixed choice unifies
+    // is decided by what the OUTER node claims to be.
     keyword_as_identifier: $ => prec(-10, choice(
       kw('field'),
       kw('key'),
@@ -5211,6 +5217,31 @@ module.exports = grammar({
       kw('action'),
       kw('table'),
       kw('assembly'),
+      // Reported by a downstream consumer: `Filter: Codeunit "X";` failed to
+      // parse. Sweeping all 151 named keyword rules as variable names found 23
+      // that failed, and alc 18.0.37.11445 ACCEPTS 14 of them (each probed
+      // individually, with a discriminating control). The reported word was one
+      // symptom of a class -- the same short-list shape this release kept
+      // finding.
+      //
+      // The other 9 alc genuinely REJECTS, and we must keep rejecting them:
+      //   Actions AL0104 · Event AL0107 · Fieldgroups AL0104 · Internal AL0104
+      //   Local AL0104 · Procedure AL0107 · Protected AL0104 · Trigger AL0162
+      //   Var AL0104
+      kw('filter'),
+      kw('column'),
+      kw('dataitem'),
+      kw('elements'),
+      kw('fields'),
+      kw('keys'),
+      kw('labels'),
+      kw('layout'),
+      kw('modify'),
+      kw('rendering'),
+      kw('requestpage'),
+      kw('schema'),
+      kw('views'),
+      kw('analysisviews'),
     )),
 
     // Identifiers — Unicode-aware

@@ -1,0 +1,56 @@
+================================================================================
+Section keywords are legal variable names
+--
+Reported by a downstream consumer: `Filter: Codeunit "X";` failed to parse,
+while Filters, MyFilter, Assert, Count, Key, Report, Page and Database were all
+fine. It was specific to the exact token.
+.
+Sweeping all 151 named keyword rules as variable names found 23 failures, and
+alc 18.0.37.11445 ACCEPTS 14 of them -- each probed individually with a
+discriminating control. The reported word was one symptom of a class, which is
+the short-list shape this release kept turning up.
+.
+The nine alc genuinely REJECTS stay rejected, pinned by
+keyword_as_identifier_negative_test.txt: Actions AL0104, Event AL0107,
+Fieldgroups AL0104, Internal AL0104, Local AL0104, Procedure AL0107,
+Protected AL0104, Trigger AL0162, Var AL0104.
+.
+Entries are BARE kw(), never $.x_keyword: this rule is aliased to
+$.identifier, so a named alternative would grow a child that no other
+identifier has.
+================================================================================
+
+codeunit 80228 "T"
+{
+    var
+        Filter: Codeunit "Some Thing";
+        Layout: Integer;
+        Keys: Text;
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (quoted_identifier)
+    body: (declaration_body
+      (var_section
+        (var_keyword)
+        body: (var_body
+          (variable_declaration
+            name: (identifier)
+            type: (type_specification
+              (object_reference_type
+                object_type: (codeunit_keyword)
+                reference: (quoted_identifier))))
+          (variable_declaration
+            name: (identifier)
+            type: (type_specification
+              (basic_type)))
+          (variable_declaration
+            name: (identifier)
+            type: (type_specification
+              (text_type
+                (text_keyword)))))))))
