@@ -7140,7 +7140,7 @@
     "fields": {},
     "children": {
       "multiple": true,
-      "required": true,
+      "required": false,
       "types": [
         {
           "type": "implementation_value",
@@ -8493,7 +8493,7 @@
     "fields": {},
     "children": {
       "multiple": true,
-      "required": true,
+      "required": false,
       "types": [
         {
           "type": "link_value",
@@ -11066,6 +11066,10 @@
       "required": true,
       "types": [
         {
+          "type": "preproc_conditional_case_patterns",
+          "named": true
+        },
+        {
           "type": "preproc_elif",
           "named": true
         },
@@ -11342,6 +11346,10 @@
       "types": [
         {
           "type": "implementation_value",
+          "named": true
+        },
+        {
+          "type": "preproc_conditional_impl_values",
           "named": true
         },
         {
@@ -11769,6 +11777,10 @@
       "types": [
         {
           "type": "link_value",
+          "named": true
+        },
+        {
+          "type": "preproc_conditional_link_values",
           "named": true
         },
         {
@@ -12756,6 +12768,10 @@
       "multiple": true,
       "required": true,
       "types": [
+        {
+          "type": "preproc_conditional_where",
+          "named": true
+        },
         {
           "type": "preproc_elif",
           "named": true
@@ -22334,7 +22350,7 @@
     "fields": {},
     "children": {
       "multiple": true,
-      "required": true,
+      "required": false,
       "types": [
         {
           "type": "preproc_conditional_permissions",
@@ -23717,7 +23733,7 @@
     "fields": {},
     "children": {
       "multiple": true,
-      "required": true,
+      "required": false,
       "types": [
         {
           "type": "preproc_conditional_where",

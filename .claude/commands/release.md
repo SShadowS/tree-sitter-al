@@ -14,7 +14,7 @@ Before starting, verify:
    ```bash
    grep -rn "(ERROR\b\|(MISSING\b" test/corpus/ --include="*.txt" \
      | grep -v "ERROR(" \
-     | grep -vE "(^|/)(option_members_tabledata_keyword_test|pragma_whitespace_tolerance_test|preproc_if_elif_whitespace_tolerance_test|preproc_region_whitespace_audit_test|scanner_var_attribute_token_span_test|directive_word_boundary_test|scanner_unicode_identifier_negative_test|range_not_an_expression_negative_test|interface_access_negative_test)\.txt:"
+     | grep -vE "(^|/)(option_members_tabledata_keyword_test|pragma_whitespace_tolerance_test|preproc_if_elif_whitespace_tolerance_test|preproc_region_whitespace_audit_test|scanner_var_attribute_token_span_test|directive_word_boundary_test|scanner_unicode_identifier_negative_test|range_not_an_expression_negative_test|interface_access_negative_test|missing_separator_negative_test)\.txt:"
    ```
 
    The `(^|/)…\.txt:` anchoring is load-bearing. `grep -rn` emits
@@ -33,7 +33,7 @@ Before starting, verify:
    disagreed on what counts as a hit. Found by writing a fixture titled with
    the bare word.
 
-   Those nine files are deliberate negatives — their ERROR nodes *are* the
+   Those ten files are deliberate negatives — their ERROR nodes *are* the
    assertion. Any hit OUTSIDE them is a real problem. Each is named below rather
    than counted by ordinal: the prose count has drifted from the list twice
    (once at six-vs-seven, once at seven-vs-eight), because an ordinal has to be
@@ -56,6 +56,10 @@ Before starting, verify:
    - `interface_access_negative_test` — the interface `Access = X` HEADER form
      is not AL (alc AL0104, both bare and after `extends`). Removed from the
      grammar in 4.0.0; the accepted form is a body property.
+   - `missing_separator_negative_test` — a comma-separated list with the comma
+     omitted (`where(A = const(1) B = const(2))`, two `tabledata` entries,
+     `case i of 1 2:`). alc rejects all three with AL0104; the grammar used to
+     absorb the second item silently as an extra element.
 
    `scanner_unicode_identifier_negative_test` is carried AHEAD of its fixture:
    the file lands with the identifier-classification branch, and an allow-list
