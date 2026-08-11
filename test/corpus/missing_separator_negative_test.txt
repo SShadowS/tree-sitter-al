@@ -1,0 +1,163 @@
+================================================================================
+missing comma in a where() clause is an error, not a second condition
+--
+DELIBERATE NEGATIVE -- the ERROR node is the assertion. Exempt in both
+validate-grammar.sh Step 3 and release.md pre-flight #3.
+.
+Every comma-separated list in this grammar used `repeat1(choice(seq(X,
+optional(',')), P))`, which lets two adjacent X stand with NO separator. The
+input below parsed CLEANLY as two where_conditions before this fix -- a wrong
+STRUCTURE with a clean error count, invisible to every gate the project had,
+and identical in kind to the `..` and precedence defects.
+.
+alc 18.0.33 rejects it:
+    where(A = const(1) B = const(2))  -> AL0104 "')' expected"
+    where(A = const(1), B = const(2)) -> exit 0
+.
+The invariant the old shape could not express, and the reason the `optional`
+was there at all: a list's LEADING and TRAILING comma are optional, and a comma
+may sit on the far side of a #if boundary from the item it separates -- but the
+separator BETWEEN two adjacent items in one branch is mandatory. Lists are now
+runs of comma-separated items, with preproc groups between runs; a group may
+still supply the comma its neighbour is missing.
+.
+All 15,358 BC.History trees are byte-identical across this change, so no real
+AL relied on the loose form.
+================================================================================
+table 50100 T
+{
+    fields
+    {
+        field(1; S; Decimal)
+        {
+            CalcFormula = Sum(B.V where(A = const(1) B = const(2)));
+        }
+    }
+}
+--------------------------------------------------------------------------------
+
+(source_file
+  (table_declaration
+    (table_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (fields_section
+        (fields_keyword)
+        body: (fields_body
+          (field_declaration
+            (field_keyword)
+            id: (integer)
+            name: (identifier)
+            type: (type_specification
+              (basic_type))
+            body: (declaration_body
+              (property
+                name: (property_name)
+                value: (aggregate_formula
+                  function: (aggregate_function)
+                  target: (calc_field_reference
+                    (identifier)
+                    (identifier))
+                  (where_clause
+                    (where_keyword)
+                    (ERROR
+                      (where_condition
+                        field: (identifier)
+                        (const_keyword)
+                        value: (integer)))
+                    (where_conditions
+                      (where_condition
+                        field: (identifier)
+                        (const_keyword)
+                        value: (integer)))))))))))))
+
+================================================================================
+missing comma between two tabledata permissions is an error
+--
+alc: `Permissions = tabledata T1 = R tabledata T2 = R;` -> AL0104 "',' expected".
+Parsed cleanly as two permissions before this fix.
+================================================================================
+permissionset 50100 P
+{
+    Permissions = tabledata T1 = R tabledata T2 = R;
+}
+--------------------------------------------------------------------------------
+
+(source_file
+  (permissionset_declaration
+    (permissionset_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (property
+        name: (property_name)
+        (ERROR
+          (tabledata_permission
+            (tabledata_keyword)
+            table_name: (identifier)
+            permission: (permission_type)))
+        value: (tabledata_permission_list
+          (tabledata_permission
+            (tabledata_keyword)
+            table_name: (identifier)
+            permission: (permission_type)))))))
+
+================================================================================
+missing comma between two case patterns is an error
+--
+This is the site where the defect was PROVEN to produce a silent wrong tree
+rather than mere over-acceptance. See the note on `range_expression`: at
+`0D .. NextCountingStartDate - 1` the parser reduced the range early, and
+because the comma here was optional the leftover `- 1` was accepted as a SECOND
+case pattern, with no ERROR node anywhere.
+.
+alc: `case i of 1 2:` -> AL0104 "':' expected" (plus AL0111).
+.
+Fixing this also made three declared GLR conflicts unnecessary, including
+`[$._single_pattern, $._expression]` -- that conflict existed only because a
+pattern list with optional commas could not be told from a single expression
+mid-parse.
+================================================================================
+codeunit 50100 C
+{
+    procedure P(i: Integer)
+    begin
+        case i of
+            1 2:
+                exit;
+        end;
+    end;
+}
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (procedure
+        (procedure_keyword)
+        name: (identifier)
+        parameters: (parameter_list
+          (parameter
+            name: (identifier)
+            type: (type_specification
+              (basic_type))))
+        body: (code_block
+          (begin_keyword)
+          body: (statement_block
+            (case_statement
+              (case_keyword)
+              expression: (identifier)
+              (of_keyword)
+              (ERROR
+                (integer))
+              body: (case_body
+                (case_branch
+                  pattern: (integer)
+                  body: (exit_statement
+                    (exit_keyword))))
+              (end_keyword)))
+          (end_keyword))))))

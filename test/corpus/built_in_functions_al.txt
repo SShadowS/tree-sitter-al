@@ -1,7 +1,14 @@
-===============
+================================================================================
 AL Built-in Functions Test
-===============
-
+--
+This case had a well-formed ==== header and 110 lines of AL, and NO `---` divider
+below the source. tree-sitter parses the header and then discards the case with no
+warning, so it had never run once since it was added. It was found by reimplementing
+tree-sitter's own corpus parser and diffing the declared cases against the numbered
+list an actual run prints -- the suite total was 1574 while the files declared 1575.
+The sibling trap is a blank line inside the header block; both are in CLAUDE.md.
+The expected tree below is generated from `tree-sitter parse`, not from `-u`.
+================================================================================
 codeunit 50100 "Test Built-in Functions"
 {
     procedure TestRecordMethods()
@@ -112,3 +119,375 @@ codeunit 50100 "Test Built-in Functions"
         JsonObject.Get('nested').AsObject().Get('value').AsValue();
     end;
 }
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (quoted_identifier)
+    body: (declaration_body
+      (procedure
+        (procedure_keyword)
+        name: (identifier)
+        (var_section
+          (var_keyword)
+          body: (var_body
+            (variable_declaration
+              name: (identifier)
+              type: (type_specification
+                (record_type
+                  (record_keyword)
+                  reference: (identifier))))
+            (variable_declaration
+              name: (identifier)
+              type: (type_specification
+                (record_type
+                  (record_keyword)
+                  reference: (quoted_identifier))))))
+        body: (code_block
+          (begin_keyword)
+          (comment)
+          body: (statement_block
+            (call_expression
+              function: (member_expression
+                object: (identifier)
+                member: (identifier))
+              arguments: (argument_list
+                (quoted_identifier)))
+            (call_expression
+              function: (member_expression
+                object: (identifier)
+                member: (identifier))
+              arguments: (argument_list
+                (quoted_identifier)
+                (quoted_identifier)))
+            (comment)
+            (call_expression
+              function: (member_expression
+                object: (identifier)
+                member: (identifier))
+              arguments: (argument_list
+                (quoted_identifier)
+                (string_literal)))
+            (call_expression
+              function: (member_expression
+                object: (identifier)
+                member: (identifier))
+              arguments: (argument_list
+                (quoted_identifier)
+                (integer)
+                (integer)))
+            (comment)
+            (if_statement
+              (if_keyword)
+              condition: (member_expression
+                object: (identifier)
+                member: (identifier))
+              (then_keyword)
+              then_branch: (call_expression
+                function: (member_expression
+                  object: (identifier)
+                  member: (identifier))
+                arguments: (argument_list
+                  (quoted_identifier)
+                  (string_literal)
+                  (integer))))
+            (comment)
+            (if_statement
+              (if_keyword)
+              condition: (member_expression
+                object: (identifier)
+                member: (identifier))
+              (then_keyword)
+              then_branch: (repeat_statement
+                (repeat_keyword)
+                (comment)
+                (until_keyword)
+                condition: (comparison_expression
+                  left: (member_expression
+                    object: (identifier)
+                    member: (identifier))
+                  operator: (comparison_operator)
+                  right: (integer))))
+            (comment)
+            (if_statement
+              (if_keyword)
+              condition: (member_expression
+                object: (identifier)
+                member: (identifier))
+              (then_keyword)
+              then_branch: (exit_statement
+                (exit_keyword)))
+            (comment)
+            (call_expression
+              function: (member_expression
+                object: (identifier)
+                member: (identifier))
+              arguments: (argument_list
+                (quoted_identifier)
+                (string_literal)
+                (date_literal)
+                (date_literal)))
+            (call_expression
+              function: (member_expression
+                object: (identifier)
+                member: (identifier))
+              arguments: (argument_list
+                (quoted_identifier)
+                (string_literal)))
+            (comment)
+            (member_expression
+              object: (identifier)
+              member: (identifier))
+            (comment)
+            (member_expression
+              object: (identifier)
+              member: (identifier)))
+          (end_keyword)))
+      (procedure
+        (procedure_keyword)
+        name: (identifier)
+        (var_section
+          (var_keyword)
+          body: (var_body
+            (variable_declaration
+              name: (identifier)
+              type: (type_specification
+                (record_type
+                  (record_keyword)
+                  reference: (identifier))))))
+        body: (code_block
+          (begin_keyword)
+          (comment)
+          body: (statement_block
+            (if_statement
+              (if_keyword)
+              condition: (call_expression
+                function: (identifier)
+                arguments: (argument_list
+                  (string_literal)))
+              (then_keyword)
+              then_branch: (exit_statement
+                (exit_keyword)))
+            (if_statement
+              (if_keyword)
+              condition: (call_expression
+                function: (identifier)
+                arguments: (argument_list
+                  (string_literal)
+                  (member_expression
+                    object: (identifier)
+                    member: (quoted_identifier))))
+              (then_keyword)
+              then_branch: (member_expression
+                object: (identifier)
+                member: (identifier))))
+          (end_keyword)))
+      (procedure
+        (procedure_keyword)
+        name: (identifier)
+        (var_section
+          (var_keyword)
+          body: (var_body
+            (variable_declaration
+              name: (identifier)
+              type: (type_specification
+                (object_reference_type
+                  object_type: (page_keyword)
+                  reference: (quoted_identifier))))
+            (variable_declaration
+              name: (identifier)
+              type: (type_specification
+                (record_type
+                  (record_keyword)
+                  reference: (identifier))))))
+        body: (code_block
+          (begin_keyword)
+          (comment)
+          body: (statement_block
+            (call_expression
+              function: (identifier)
+              arguments: (argument_list
+                (database_reference
+                  keyword: (object_type_keyword)
+                  table_name: (quoted_identifier))))
+            (call_expression
+              function: (identifier)
+              arguments: (argument_list
+                (database_reference
+                  keyword: (object_type_keyword)
+                  table_name: (quoted_identifier))
+                (identifier)))
+            (comment)
+            (call_expression
+              function: (member_expression
+                object: (identifier)
+                member: (identifier))
+              arguments: (argument_list
+                (identifier))))
+          (end_keyword)))
+      (procedure
+        (procedure_keyword)
+        name: (identifier)
+        (var_section
+          (var_keyword)
+          body: (var_body
+            (variable_declaration
+              name: (identifier)
+              type: (type_specification
+                (basic_type)))))
+        body: (code_block
+          (begin_keyword)
+          (comment)
+          body: (statement_block
+            (call_expression
+              function: (member_expression
+                object: (identifier)
+                member: (identifier))
+              arguments: (argument_list
+                (database_reference
+                  keyword: (object_type_keyword)
+                  table_name: (identifier))))
+            (call_expression
+              function: (member_expression
+                object: (identifier)
+                member: (identifier))
+              arguments: (argument_list
+                (database_reference
+                  keyword: (object_type_keyword)
+                  table_name: (quoted_identifier))))
+            (if_statement
+              (if_keyword)
+              condition: (member_expression
+                object: (identifier)
+                member: (identifier))
+              (then_keyword)
+              then_branch: (member_expression
+                object: (identifier)
+                member: (identifier))))
+          (end_keyword)))
+      (procedure
+        (procedure_keyword)
+        name: (identifier)
+        (var_section
+          (var_keyword)
+          body: (var_body
+            (variable_declaration
+              name: (identifier)
+              type: (type_specification
+                (record_type
+                  (record_keyword)
+                  reference: (quoted_identifier))))))
+        body: (code_block
+          (begin_keyword)
+          (comment)
+          body: (statement_block
+            (if_statement
+              (if_keyword)
+              condition: (comparison_expression
+                left: (member_expression
+                  object: (identifier)
+                  member: (identifier))
+                operator: (comparison_operator)
+                right: (qualified_enum_value
+                  enum_type: (member_expression
+                    object: (identifier)
+                    member: (identifier))
+                  value: (identifier)))
+              (then_keyword)
+              then_branch: (exit_statement
+                (exit_keyword)))
+            (case_statement
+              (case_keyword)
+              expression: (member_expression
+                object: (identifier)
+                member: (identifier))
+              (of_keyword)
+              body: (case_body
+                (case_branch
+                  pattern: (qualified_enum_value
+                    enum_type: (member_expression
+                      object: (identifier)
+                      member: (identifier))
+                    value: (identifier))
+                  body: (code_block
+                    (begin_keyword)
+                    (comment)
+                    (end_keyword)))
+                (case_branch
+                  pattern: (qualified_enum_value
+                    enum_type: (member_expression
+                      object: (identifier)
+                      member: (identifier))
+                    value: (identifier))
+                  body: (code_block
+                    (begin_keyword)
+                    (comment)
+                    (end_keyword))))
+              (end_keyword)))
+          (end_keyword)))
+      (procedure
+        (procedure_keyword)
+        name: (identifier)
+        (var_section
+          (var_keyword)
+          body: (var_body
+            (variable_declaration
+              name: (identifier)
+              type: (type_specification
+                (basic_type)))
+            (variable_declaration
+              name: (identifier)
+              type: (type_specification
+                (basic_type)))
+            (variable_declaration
+              name: (identifier)
+              type: (type_specification
+                (basic_type)))))
+        body: (code_block
+          (begin_keyword)
+          (comment)
+          body: (statement_block
+            (if_statement
+              (if_keyword)
+              condition: (comparison_expression
+                left: (call_expression
+                  function: (member_expression
+                    object: (call_expression
+                      function: (member_expression
+                        object: (call_expression
+                          function: (member_expression
+                            object: (identifier)
+                            member: (identifier))
+                          arguments: (argument_list
+                            (string_literal)))
+                        member: (identifier))
+                      arguments: (argument_list))
+                    member: (identifier))
+                  arguments: (argument_list))
+                operator: (comparison_operator)
+                right: (string_literal))
+              (then_keyword)
+              then_branch: (exit_statement
+                (exit_keyword)))
+            (call_expression
+              function: (member_expression
+                object: (call_expression
+                  function: (member_expression
+                    object: (call_expression
+                      function: (member_expression
+                        object: (call_expression
+                          function: (member_expression
+                            object: (identifier)
+                            member: (identifier))
+                          arguments: (argument_list
+                            (string_literal)))
+                        member: (identifier))
+                      arguments: (argument_list))
+                    member: (identifier))
+                  arguments: (argument_list
+                    (string_literal)))
+                member: (identifier))
+              arguments: (argument_list)))
+          (end_keyword))))))

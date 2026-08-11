@@ -91,33 +91,6 @@ page 50100 P
                 value: (string_literal)))))))))
 
 ================================================================================
-The interface header's Access clause is a node. Distinct from the ordinary `Access = Internal;` property, which is a property_name and was never dropped — this header form appears in no corpus file
-================================================================================
-
-interface "My Interface" extends "Base Interface" Access = Internal
-{
-    procedure P(): Integer;
-}
-
---------------------------------------------------------------------------------
-
-(source_file
-  (interface_declaration
-    (interface_keyword)
-    object_name: (quoted_identifier)
-    (extends_keyword)
-    extends_interface: (quoted_identifier)
-    (access_keyword)
-    access_value: (internal_keyword)
-    body: (interface_body
-      (interface_procedure
-        (procedure_keyword)
-        name: (identifier)
-        (interface_procedure_suffix
-          return_type: (type_specification
-            (basic_type)))))))
-
-================================================================================
 Report label sub-field keywords are nodes — Comment, MaxLength and Locked, each of which had a declared field whose own marker keyword was in no node
 ================================================================================
 

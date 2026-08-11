@@ -48,7 +48,9 @@ codeunit 124 "Single Interface Provider" implements ISingleInterface
     body: (declaration_body
       (property
         name: (property_name)
-        value: (identifier)))))
+        value: (option_member_list
+          (option_member
+            (public_keyword)))))))
 
 ================================================================================
 Codeunit with quoted interface names

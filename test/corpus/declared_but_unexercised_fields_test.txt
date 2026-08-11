@@ -1,0 +1,182 @@
+================================================================================
+fieldgroup_declaration.body -- a fieldgroup brace block with a property in it
+--
+Detector 8 censused every (parent, field, child) edge over BC.History's 15,358
+files and found 37 of 396 declared fields never once populated. 33 belonged to
+node types that never appear at all; four were live types with a dead field.
+This file pins the three of those four that turned out to be REACHABLE and
+VALID AL -- they were simply never exercised, by the corpus or by the suite, so
+nothing would have noticed if a refactor had broken them. The fourth,
+interface_declaration.access_value, was not valid AL and is gone; see
+interface_access_negative_test.txt.
+.
+alc 18.0.33 on the fieldgroup forms, which is the opposite of what you would
+guess from BC code:
+    fieldgroups { fieldgroup(DropDown; N) }              -> AL0104 '{' expected
+    fieldgroups { fieldgroup(DropDown; N) { } }          -> accepted
+    fieldgroups { fieldgroup(DropDown; N) { Caption = 'Drop'; } } -> accepted
+So the braces are REQUIRED and the body is optional. Every fieldgroup in
+BC.History writes the empty `{ }`, which is why `body` was never populated. A
+bogus property inside the braces is rejected with AL0124 ("cannot be used in
+this context") -- a SEMANTIC error, which is what proves the compiler parsed the
+body rather than merely tolerating it.
+================================================================================
+table 50100 T
+{
+    fields { field(1; N; Integer) { } }
+    fieldgroups
+    {
+        fieldgroup(DropDown; N)
+        {
+            Caption = 'Drop';
+        }
+    }
+}
+--------------------------------------------------------------------------------
+
+(source_file
+  (table_declaration
+    (table_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (fields_section
+        (fields_keyword)
+        body: (fields_body
+          (field_declaration
+            (field_keyword)
+            id: (integer)
+            name: (identifier)
+            type: (type_specification
+              (basic_type)))))
+      (fieldgroups_section
+        (fieldgroups_keyword)
+        body: (fieldgroups_body
+          (fieldgroup_declaration
+            (fieldgroup_keyword)
+            name: (identifier)
+            fields: (field_list
+              (identifier))
+            body: (declaration_body
+              (property
+                name: (property_name)
+                value: (string_literal)))))))))
+
+================================================================================
+preproc_split_declaration.base_object -- an extension object split across #if
+--
+The field is declared by the tableextension/pageextension/reportextension/
+enumextension/permissionsetextension arm of `_object_header`, which is hidden,
+so the field surfaces on preproc_split_declaration. BC.History contains split
+declarations, but never of an EXTENSION object, so base_object read None every
+time. alc accepts the construct (exit 0, app written) with the base table
+declared alongside.
+.
+Both branches carry their own base_object; the field is therefore multi-valued
+on this node, which is the shape a consumer has to handle.
+================================================================================
+#if CLEAN
+tableextension 50100 X extends Base
+#else
+tableextension 50100 X extends Other
+#endif
+{
+    fields { field(50100; N; Integer) { } }
+}
+--------------------------------------------------------------------------------
+
+(source_file
+  (preproc_split_declaration
+    (preproc_if
+      (preproc_open)
+      condition: (identifier))
+    (tableextension_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    (extends_keyword)
+    base_object: (identifier)
+    (preproc_else)
+    (tableextension_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    (extends_keyword)
+    base_object: (identifier)
+    (preproc_endif
+      (preproc_close))
+    body: (declaration_body
+      (fields_section
+        (fields_keyword)
+        body: (fields_body
+          (field_declaration
+            (field_keyword)
+            id: (integer)
+            name: (identifier)
+            type: (type_specification
+              (basic_type))))))))
+
+================================================================================
+preproc_split_if_statement.else_branch -- the shared tail carries an else
+--
+This is the one that looked worst on the census: a field declared to hold 54
+statement and expression types, populated by nothing. It is reachable. The
+if-header varies across the #if branches, the shared tail after #endif is
+`then_branch else else_branch`, and the else half had simply never been written
+in BC.History or in the suite -- every split-if in the corpus stops at the
+then-branch.
+.
+alc accepts it (exit 0): with CLEAN undefined the compiler takes the #else
+header and reads `if B then Foo() else Bar();`.
+.
+Note there is no ';' inside either branch. Terminators are external to every
+branch rule as of the 4.0.0 restructure, which is what makes
+`if C then A; else B;` structurally impossible to read as one if_statement.
+================================================================================
+codeunit 50100 C
+{
+    procedure P()
+    begin
+#if CLEAN
+        if A then
+#else
+        if B then
+#endif
+            Foo()
+        else
+            Bar();
+    end;
+}
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (procedure
+        (procedure_keyword)
+        name: (identifier)
+        body: (code_block
+          (begin_keyword)
+          body: (statement_block
+            (preproc_split_if_statement
+              (preproc_if
+                (preproc_open)
+                condition: (identifier))
+              (if_keyword)
+              condition: (identifier)
+              (then_keyword)
+              (preproc_else)
+              (if_keyword)
+              condition: (identifier)
+              (then_keyword)
+              (preproc_endif
+                (preproc_close))
+              then_branch: (call_expression
+                function: (identifier)
+                arguments: (argument_list))
+              (else_keyword)
+              else_branch: (call_expression
+                function: (identifier)
+                arguments: (argument_list))))
+          (end_keyword))))))

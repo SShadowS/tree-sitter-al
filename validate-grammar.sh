@@ -120,6 +120,94 @@ else
     VALIDATION_FAILED=1
 fi
 
+# Step 2b: Every declared corpus case must actually RUN, and every corpus file
+# must be visible to git.
+#
+# Both of these are silent. Nothing else in this script, in CI, or in
+# release.md compares the number of cases the corpus DECLARES with the number
+# tree-sitter RUNS, or the files on disk with the files in the index. Each has
+# already shipped a defect:
+#
+#   * test/corpus/built_in_functions_al.txt had a well-formed ==== header and
+#     110 lines of AL and NO `---` divider. tree-sitter parses the header and
+#     discards the case without a word. It had never run once since the day it
+#     was added. The only symptom was a raw header count sitting +1 above the
+#     suite total, at every revision.
+#   * test/corpus/property_comment_parameters_extended_test.txt was matched by
+#     an unanchored `property_*.txt` in .gitignore. Ignored files do not appear
+#     in `git status`, so the suite ran 3 extra cases for whoever had the file
+#     on disk and skipped them in every fresh worktree — which is how one
+#     branch measured 1562 while two others measured 1559 at the same commit.
+#
+# tools/count_corpus_cases.py is a SECOND implementation of tree-sitter's
+# header/divider parsing on purpose. A count derived from the code that does
+# the dropping cannot detect the dropping.
+print_header "Step 2b: Corpus Case and File Census"
+CASE_CENSUS=$(python tools/count_corpus_cases.py test/corpus 2>&1) && CENSUS_EXIT=0 || CENSUS_EXIT=$?
+
+if [ "$CENSUS_EXIT" -eq 2 ] || [ -z "$CASE_CENSUS" ]; then
+    print_error "Corpus census could not run — test/corpus missing or the counter failed"
+    echo "$CASE_CENSUS" | head -5
+    VALIDATION_FAILED=1
+else
+    DECLARED_CASES=$(echo "$CASE_CENSUS" | sed -n 's/^runnable_cases=\([0-9][0-9]*\)$/\1/p')
+    DROPPED_CASES=$(echo "$CASE_CENSUS" | sed -n 's/^dropped_cases=\([0-9][0-9]*\)$/\1/p')
+    SKIPPED_CASES=$(echo "$CASE_CENSUS" | sed -n 's/^skipped_cases=\([0-9][0-9]*\)$/\1/p')
+
+    if [ "$CENSUS_EXIT" -ne 0 ]; then
+        if [ "${DROPPED_CASES:-0}" -gt 0 ] || echo "$CASE_CENSUS" | grep -q '^DROPPED'; then
+            print_error "Corpus case(s) declared but unable to run:"
+            echo "$CASE_CENSUS" | grep '^DROPPED' | sed 's/^DROPPED\t/    /' | sed 's/\t/ — /g'
+            echo -e "${YELLOW}A case with no '---' divider, or a blank line inside its ==== header,${NC}"
+            echo -e "${YELLOW}is dropped silently. Fix the fixture; do not adjust this check.${NC}"
+        fi
+        if [ "${SKIPPED_CASES:-0}" -gt 0 ]; then
+            print_error "$SKIPPED_CASES corpus case(s) carry :skip — a disabled test:"
+            echo "$CASE_CENSUS" | grep '^SKIPPED' | sed 's/^SKIPPED\t/    /' | sed 's/\t/ — /g'
+            # This is NOT a counter bug. `:skip` is a real tree-sitter feature and
+            # the arithmetic below is correct without it. It fails here because
+            # CLAUDE.md's "no known limitations" rule forbids disabling a test
+            # instead of fixing what it caught. Delete the `:skip`, do not teach
+            # this step to tolerate it.
+            echo -e "${YELLOW}CLAUDE.md forbids disabling tests — fix the underlying issue instead.${NC}"
+        fi
+        VALIDATION_FAILED=1
+    # Only meaningful when Step 2 produced a total to compare against.
+    elif [ -n "$TOTAL_TESTS" ] && [ -n "$DECLARED_CASES" ] && [ "$TOTAL_TESTS" -ne "$DECLARED_CASES" ]; then
+        print_error "Corpus declares $DECLARED_CASES runnable case(s) but the suite ran $TOTAL_TESTS"
+        echo -e "${YELLOW}These must agree. A shortfall means cases are being dropped by a${NC}"
+        echo -e "${YELLOW}mechanism this counter does not model yet — find it, do not paper over it.${NC}"
+        VALIDATION_FAILED=1
+    else
+        print_success "Declared cases match cases run ($DECLARED_CASES)"
+    fi
+
+    # Files on disk vs files in the index. A single-digit gap is the whole bug.
+    #
+    # This needs a git work tree. tools/gate_selftest.py copies the files a gate
+    # reads into a bare temp directory WITHOUT .git, on purpose, so a case
+    # cannot reach the real repo — `git ls-files` there reports nothing and
+    # every file would look untracked. That must not fail the run, and it must
+    # not silently pass either: an unrunnable check reports as a WARNING so it
+    # can never be mistaken for a census that found nothing wrong.
+    CORPUS_ON_DISK=$(find test/corpus -name '*.txt' | wc -l | tr -d ' ')
+    if ! git rev-parse --is-inside-work-tree >/dev/null 2>&1; then
+        print_warning "Corpus file census SKIPPED — not a git work tree (expected under gate_selftest); $CORPUS_ON_DISK file(s) on disk"
+        CORPUS_TRACKED="$CORPUS_ON_DISK"
+    else
+        CORPUS_TRACKED=$(git ls-files test/corpus | grep -c '\.txt$' || true)
+    fi
+    if [ "$CORPUS_ON_DISK" -ne "$CORPUS_TRACKED" ]; then
+        print_error "test/corpus has $CORPUS_ON_DISK .txt file(s) on disk but $CORPUS_TRACKED tracked by git"
+        git ls-files --others --exclude-standard test/corpus/ | sed 's/^/    untracked: /'
+        git ls-files --others --ignored --exclude-standard test/corpus/ | sed 's/^/    IGNORED:   /'
+        echo -e "${YELLOW}An ignored corpus file runs for whoever has it and for nobody else.${NC}"
+        VALIDATION_FAILED=1
+    else
+        print_success "All $CORPUS_ON_DISK corpus file(s) on disk are tracked by git"
+    fi
+fi
+
 # Step 3: Check for ERROR and MISSING nodes in tests
 print_header "Step 3: Checking for ERROR/MISSING Nodes in Tests"
 echo "Scanning test files for ERROR or MISSING nodes..."
@@ -170,6 +258,17 @@ DELIBERATE_ERROR_FIXTURES=(
     # would have failed this step. An allow-list entry for an absent file is
     # inert, so carrying it early is free.
     "directive_word_boundary_test.txt"
+    # The interface `Access = X` HEADER form, removed from the grammar in 4.0.0.
+    # alc rejects it with AL0104 both bare ("'{' expected") and after an extends
+    # clause ("',' expected"), and the field it fed was populated 0 times across
+    # BC.History. The ERROR is the assertion; the accepted form is a body
+    # property and is pinned in interface_extends_test.txt.
+    "interface_access_negative_test.txt"
+    # The separator fix (4.0.0): every comma-separated list required a comma
+    # between adjacent items, where the old shape made it optional and absorbed
+    # the second item silently. alc rejects all three of these with AL0104; the
+    # ERROR is the assertion. BC.History is byte-identical across the change.
+    "missing_separator_negative_test.txt"
     # Range positions alc rejects with AL0104 -- a SYNTAX error, not a type error,
     # so `1 + (1 .. 4)` has no reading in AL at all and the ERROR is the assertion.
     # Every case in it parsed CLEANLY before a171c19, which removed
@@ -199,17 +298,35 @@ is_deliberate_error_fixture() {
     return 1
 }
 
-# Search for ERROR or MISSING in test corpus files
-# Look for ERROR or MISSING as parse tree nodes (not as AL code)
-# Pattern: (ERROR at start of line or after spaces, but not ERROR( which is AL function call
+# Search for ERROR or MISSING in test corpus files as parse tree NODES, never as
+# AL source text.
+#
+# BOTH alternatives require the opening paren, and the pattern is deliberately
+# NOT anchored to the line start. This is the same search `.claude/commands/
+# release.md` pre-flight #3 runs; the two gates must agree on what counts as a
+# hit, so keep them identical.
+#
+# The previous pattern was `^\s*\((ERROR|MISSING)|^\s*(ERROR|MISSING)[^(]` and
+# was wrong in both directions:
+#
+#   * The second alternative matched a BARE word at line start, so a prose line
+#     reading "ERROR node and full byte coverage are separate claims" failed the
+#     gate. Expected trees always write `(ERROR)` and `(MISSING xyz)`, so
+#     requiring the paren removes that false-positive class outright.
+#   * The line-start anchor missed a real nested node on a populated line:
+#     `(source (statement) (ERROR))` was invisible to this gate while
+#     release.md caught it. Dropping the anchor closes that false negative.
+#
+# `ERROR(` — the AL function call — still does not match, because the paren must
+# come BEFORE the word, and the comparison is case-sensitive.
+ERROR_NODE_PATTERN='\((ERROR|MISSING)\b'
 for test_file in test/corpus/*.txt; do
     if [ -f "$test_file" ]; then
         TEST_FILE_COUNT=$((TEST_FILE_COUNT + 1))
         if is_deliberate_error_fixture "$test_file"; then
             continue
         fi
-        # Check for (ERROR or (MISSING but not ERROR( which is AL function call
-        if grep -qE '^\s*\((ERROR|MISSING)|^\s*(ERROR|MISSING)[^(]' "$test_file"; then
+        if grep -qE "$ERROR_NODE_PATTERN" "$test_file"; then
             ERROR_MISSING_FILES+=("$test_file")
         fi
     fi
@@ -230,7 +347,7 @@ else
     for file in "${ERROR_MISSING_FILES[@]}"; do
         echo "  - $(basename "$file")"
         # Show the first occurrence of ERROR or MISSING in each file
-        grep -n -m 1 -E '^\s*\((ERROR|MISSING)|^\s*(ERROR|MISSING)[^(]' "$file" | sed 's/^/    /'
+        grep -n -m 1 -E "$ERROR_NODE_PATTERN" "$file" | sed 's/^/    /'
     done
     VALIDATION_FAILED=1
     echo -e "\n${YELLOW}These test files contain ERROR or MISSING nodes, indicating incomplete parsing.${NC}"

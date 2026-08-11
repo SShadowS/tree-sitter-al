@@ -79,7 +79,9 @@ permissionset 50001 "SINGLE-INCLUDE"
     body: (declaration_body
       (property
         name: (property_name)
-        value: (identifier))
+        value: (option_member_list
+          (option_member
+            (public_keyword))))
       (property
         name: (property_name)
         value: (boolean))

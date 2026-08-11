@@ -36,11 +36,18 @@ interface "Cost Adjustment With Params" extends "Inventory Adjustment"
         (interface_procedure_suffix)))))
 
 ================================================================================
-Interface extends with access modifier
+Interface extends, with the access modifier where AL actually puts it
+--
+`interface X extends Y access = Internal { }` was accepted here until 4.0.0.
+alc rejects it (AL0104, "',' expected" -- it reads `access` as a second
+interface in the extends list), and the field it populated was never once
+populated across BC.History. Access is a BODY property; extends is the only
+thing that follows the object name.
 ================================================================================
 
-interface "My Interface" extends MyBaseInterface access = Internal
+interface "My Interface" extends MyBaseInterface
 {
+    Access = Internal;
     procedure DoSomething();
 }
 
@@ -52,9 +59,12 @@ interface "My Interface" extends MyBaseInterface access = Internal
     object_name: (quoted_identifier)
     (extends_keyword)
     extends_interface: (identifier)
-    (access_keyword)
-    access_value: (internal_keyword)
     body: (interface_body
+      (property
+        name: (property_name)
+        value: (option_member_list
+          (option_member
+            (internal_keyword))))
       (interface_procedure
         (procedure_keyword)
         name: (identifier)

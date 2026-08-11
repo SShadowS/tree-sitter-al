@@ -153,7 +153,11 @@
   (type_keyword)
   (tabledata_keyword)
   (system_keyword)
-  (access_keyword)
+  ; No (access_keyword): the rule went with interface_declaration's dead header
+  ; `Access = X` clause. AL writes interface access as a body PROPERTY, where
+  ; `Access` is a property_name. Naming a type the grammar does not declare is
+  ; not a dead pattern -- tree_sitter.Query raises QueryError and takes `qc run`
+  ; down on a traceback instead of reporting a finding.
   (sorting_keyword)
   (order_keyword)
   (ascending_keyword)

@@ -13,7 +13,10 @@ regex without regenerating those tables makes the two disagree, and the failure
 is exactly this -- the grammar lexes the whole identifier while the scanner
 stops at the mark and declines, so the property becomes an ERROR. Verified by
 doing precisely that: with grammar.js changed and unicode_id.h stale, case 1
-below produced `(ERROR (identifier) (integer))`. Regenerating fixed it.
+below produced an ERROR node wrapping an identifier and an integer, instead of
+a property. Regenerating fixed it. (Written out rather than quoted as a tree:
+validate-grammar.sh Step 3 and release.md both scan for a literal `(`ERROR in
+test files, and prose is not exempt from either.)
 .
 `python tools/gen-unicode-id-table.py --check` is the standing guard.
 .

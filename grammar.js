@@ -222,10 +222,20 @@ module.exports = grammar({
     [$._body_element],
     [$.calc_field_reference, $._expression],
     [$.option_member, $._identifier_or_quoted],
-    [$._single_pattern, $._expression],
+    // `[$._single_pattern, $._expression]` used to live here and is GONE: the
+    // separator fix made it unnecessary. It existed because a case pattern list
+    // whose commas were optional could not be told apart from a single
+    // expression mid-parse. Requiring the separator removes the ambiguity
+    // outright, and tree-sitter now reports the declaration as unnecessary.
+    // Two `case_branch`/`preproc_split_case_branch` conflicts went the same way.
+    //
     [$.preproc_conditional_link_values, $.preproc_conditional_permissions, $.preproc_conditional_impl_values, $.preproc_conditional_table_relation],
+    // The same ambiguity the three lines below already declare at the
+    // CONDITIONAL level, now also reachable one level down: a bare `,` opening a
+    // #if branch is identical in a link, permission and implementation list, and
+    // the property name that would disambiguate is long past.
+    [$._link_value_branch, $._permission_branch, $._impl_value_branch],
     [$.preproc_conditional_permissions, $.preproc_conditional_table_relation],
-    [$.tabledata_permission_list],
     [$._namespaced_ref_table, $._literal_value],
     [$.preproc_conditional_link_values, $.preproc_conditional_permissions, $.preproc_conditional_impl_values],
     [$.preproc_conditional_link_values, $.preproc_conditional_impl_values],
@@ -236,8 +246,6 @@ module.exports = grammar({
     [$.procedure, $._procedure_header],
     [$.procedure, $._procedure_header, $.interface_procedure],
     [$.preproc_conditional_case, $.preproc_split_case_branch, $.preproc_conditional_case_patterns],
-    [$.case_branch, $.preproc_split_case_branch, $.preproc_conditional_case_patterns],
-    [$.case_branch, $.preproc_split_case_branch, $.preproc_conditional_case_patterns, $.preproc_split_case_extended],
     // Was [$._preproc_guard_block, $._statement]; splitting the terminator out
     // of `_statement` moved this reduction to `_statement_inner`, so the entry
     // is retargeted rather than added to. Guard-block terminator vs statement
@@ -469,15 +477,17 @@ module.exports = grammar({
         $.extends_keyword,
         field('extends_interface', $._identifier_or_quoted)
       )),
-      optional(seq(
-        $.access_keyword,
-        '=',
-        field('access_value', choice(
-          $.internal_keyword,
-          $.public_keyword,
-          $.identifier
-        ))
-      )),
+      // NOTE: there is deliberately no `Access = X` clause here. AL writes
+      // interface access as a BODY PROPERTY (`interface I { Access = Internal; }`),
+      // which the generic `property` rule already handles. The header form was
+      // accepted here until 4.0.0 and carried a field('access_value', ...) that
+      // no valid AL could ever populate — 0 occurrences in BC.History's 15,358
+      // files, and alc 18.0.33 rejects both spellings outright:
+      //   interface I Access = Internal { }            -> AL0104 "'{' expected"
+      //   interface I extends B access = Internal { }  -> AL0104 "',' expected"
+      // Keeping it turned a compiler error into a clean parse and left a
+      // permanently-empty field in node-types.json. See
+      // test/corpus/interface_access_negative_test.txt, which pins the ERROR.
       '{',
       optional(field('body', $.interface_body)),
       '}'
@@ -765,23 +775,69 @@ module.exports = grammar({
       ')'
     ),
 
-    where_conditions: $ => repeat1(choice(
-      seq($.where_condition, optional(',')),
-      $.preproc_conditional_where,
+    // SEPARATOR RULE, shared by every comma-separated list in this grammar.
+    //
+    // The old shape was `repeat1(choice(seq(X, optional(',')), P))`, which lets
+    // two adjacent X stand with NO separator between them: `where(A = const(1)
+    // B = const(2))` parsed cleanly as two conditions. alc rejects that with
+    // AL0104 ("')' expected"), so the parser was accepting a compile error and
+    // silently returning a DIFFERENT STRUCTURE rather than an error — the same
+    // defect class as the `..` and precedence fixes, and invisible to a gate
+    // that counts ERROR nodes.
+    //
+    // The invariant the old shape failed to express, and the reason the
+    // `optional` was there at all:
+    //
+    //   a list's LEADING and TRAILING comma are optional, and a comma may sit
+    //   on the far side of a #if boundary from the item it separates — but the
+    //   separator BETWEEN two adjacent items in the same branch is mandatory.
+    //
+    // So the comma is required after every item except the last, and a
+    // preproc group may still abut without one, because its own comma may live
+    // inside it.
+    // A list is a sequence of RUNS of plain items, separated by preproc groups.
+    // Inside a run the comma is mandatory; at a run's edges it is optional,
+    // because the separator may live on the far side of a #if boundary — real
+    // AL does exactly that:
+    //     Permissions = tabledata Foo = rimd,
+    //                   tabledata Bar = rimd      <- no comma here...
+    //     #if not CLEAN29
+    //                   ,                          <- ...it is in here
+    //                   tabledata Baz = Rim;
+    //     #endif
+    where_conditions: $ => $._where_seq,
+
+    // prec.right: after a run, `preproc_open` is a shift/reduce — extend the
+    // list or close it. A list extends as far as it can, same as every other
+    // list rule here.
+    _where_seq: $ => prec.right(choice(
+      $._where_run,
+      seq(
+        optional($._where_run),
+        repeat1(seq($.preproc_conditional_where, optional($._where_run))),
+      ),
+    )),
+
+    _where_run: $ => prec.right(seq(
+      $.where_condition,
+      repeat(seq(',', $.where_condition)),
+      optional(','),
     )),
 
     preproc_conditional_where: $ => seq(
       $.preproc_if,
-      repeat(seq($.where_condition, optional(','))),
-      repeat(seq(
-        $.preproc_elif,
-        repeat(seq($.where_condition, optional(','))),
-      )),
-      optional(seq(
-        $.preproc_else,
-        repeat(seq($.where_condition, optional(','))),
-      )),
+      optional($._where_branch),
+      repeat(seq($.preproc_elif, optional($._where_branch))),
+      optional(seq($.preproc_else, optional($._where_branch))),
       $.preproc_endif,
+    ),
+
+    // One #if/#elif/#else branch: items comma-separated, trailing comma
+    // optional because the next item may live past the #endif.
+    // A branch may open with the comma belonging to the item BEFORE the #if.
+    _where_branch: $ => choice(
+      seq(',', optional($._where_seq)),
+      $._where_seq,
     ),
 
     where_condition: $ => seq(
@@ -875,23 +931,37 @@ module.exports = grammar({
     // --- Link value list ---
     // "Field" = field(OtherField), "Field2" = const(Value)
     // Used by SubPageLink, SubPageView, DataItemLink, etc.
-    link_value_list: $ => prec.left(6, repeat1(choice(
-      seq($.link_value, optional(',')),
-      $.preproc_conditional_link_values,
-    ))),
+    // See the separator rule on `where_conditions`.
+    link_value_list: $ => prec.left(6, $._link_value_seq),
+
+    // prec.right: after a run, `preproc_open` is a shift/reduce — extend the
+    // list or close it. A list extends as far as it can, same as every other
+    // list rule here.
+    _link_value_seq: $ => prec.right(choice(
+      $._link_value_run,
+      seq(
+        optional($._link_value_run),
+        repeat1(seq($.preproc_conditional_link_values, optional($._link_value_run))),
+      ),
+    )),
+
+    _link_value_run: $ => prec.right(seq(
+      $.link_value,
+      repeat(seq(',', $.link_value)),
+      optional(','),
+    )),
 
     preproc_conditional_link_values: $ => seq(
       $.preproc_if,
-      repeat(seq($.link_value, optional(','))),
-      repeat(seq(
-        $.preproc_elif,
-        repeat(seq($.link_value, optional(','))),
-      )),
-      optional(seq(
-        $.preproc_else,
-        repeat(seq($.link_value, optional(','))),
-      )),
+      optional($._link_value_branch),
+      repeat(seq($.preproc_elif, optional($._link_value_branch))),
+      optional(seq($.preproc_else, optional($._link_value_branch))),
       $.preproc_endif,
+    ),
+
+    _link_value_branch: $ => choice(
+      seq(',', optional($._link_value_seq)),
+      $._link_value_seq,
     ),
 
     link_value: $ => seq(
@@ -1017,9 +1087,25 @@ module.exports = grammar({
     // tabledata Customer = R, tabledata "Sales Header" = RIMD
     // Permission list that allows preprocessor conditionals between items
     // Items separated by commas, with preproc blocks interleaved
-    tabledata_permission_list: $ => repeat1(choice(
-      seq($.tabledata_permission, optional(',')),
-      $.preproc_conditional_permissions,
+    // See the separator rule on `where_conditions`. alc on the omitted comma:
+    //   Permissions = tabledata T1 = R tabledata T2 = R;  -> AL0104 "',' expected"
+    tabledata_permission_list: $ => $._permission_seq,
+
+    // prec.right: after a run, `preproc_open` is a shift/reduce — extend the
+    // list or close it. A list extends as far as it can, same as every other
+    // list rule here.
+    _permission_seq: $ => prec.right(choice(
+      $._permission_run,
+      seq(
+        optional($._permission_run),
+        repeat1(seq($.preproc_conditional_permissions, optional($._permission_run))),
+      ),
+    )),
+
+    _permission_run: $ => prec.right(seq(
+      $.tabledata_permission,
+      repeat(seq(',', $.tabledata_permission)),
+      optional(','),
     )),
 
     // Preprocessor conditionals inside permission lists
@@ -1034,15 +1120,18 @@ module.exports = grammar({
     ),
 
     // One non-empty #if/#elif/#else branch of a permission list:
-    // [,] item*  — the leading comma or at least one item.
+    // [,] item [, item]* [, | ;]  — the leading comma or at least one item.
+    // The leading comma belongs to the item BEFORE the #if; the trailing ';' is
+    // the property's own terminator when it falls inside the branch, which is
+    // why it may only appear after the last entry and never between two.
+    // The trailing ';' is the PROPERTY's own terminator, which real AL puts
+    // inside the #if when the last entry is conditional. It belongs only here,
+    // never in `_permission_run`: at the top level a ';' after an entry is
+    // always the property terminator, and offering both readings is an
+    // unresolvable shift/reduce.
     _permission_branch: $ => choice(
-      seq(',', repeat($._permission_item)),
-      repeat1($._permission_item),
-    ),
-
-    _permission_item: $ => choice(
-      seq($.tabledata_permission, optional(choice(',', ';'))),
-      $.preproc_conditional_permissions,
+      seq(',', optional($._permission_seq), optional(';')),
+      seq($._permission_seq, optional(';')),
     ),
 
     // Visible since the losslessness pass. It was `_tabledata_keyword`, a hidden
@@ -1114,23 +1203,37 @@ module.exports = grammar({
 
     // --- Implementation value list ---
     // "My Interface" = "My Codeunit"
-    implementation_value_list: $ => prec.left(repeat1(choice(
-      seq($.implementation_value, optional(',')),
-      $.preproc_conditional_impl_values,
-    ))),
+    // See the separator rule on `where_conditions`.
+    implementation_value_list: $ => prec.left($._impl_value_seq),
+
+    // prec.right: after a run, `preproc_open` is a shift/reduce — extend the
+    // list or close it. A list extends as far as it can, same as every other
+    // list rule here.
+    _impl_value_seq: $ => prec.right(choice(
+      $._impl_value_run,
+      seq(
+        optional($._impl_value_run),
+        repeat1(seq($.preproc_conditional_impl_values, optional($._impl_value_run))),
+      ),
+    )),
+
+    _impl_value_run: $ => prec.right(seq(
+      $.implementation_value,
+      repeat(seq(',', $.implementation_value)),
+      optional(','),
+    )),
 
     preproc_conditional_impl_values: $ => seq(
       $.preproc_if,
-      repeat(seq($.implementation_value, optional(','))),
-      repeat(seq(
-        $.preproc_elif,
-        repeat(seq($.implementation_value, optional(','))),
-      )),
-      optional(seq(
-        $.preproc_else,
-        repeat(seq($.implementation_value, optional(','))),
-      )),
+      optional($._impl_value_branch),
+      repeat(seq($.preproc_elif, optional($._impl_value_branch))),
+      optional(seq($.preproc_else, optional($._impl_value_branch))),
       $.preproc_endif,
+    ),
+
+    _impl_value_branch: $ => choice(
+      seq(',', optional($._impl_value_seq)),
+      $._impl_value_seq,
     ),
 
     implementation_value: $ => seq(
@@ -1201,6 +1304,15 @@ module.exports = grammar({
       $.local_keyword,       // 'Local' as option member
       $.internal_keyword,    // 'Internal' as option member
       $.protected_keyword,   // 'Protected' as option member
+      // 'Public' as option member. AL's four access levels are Local, Internal,
+      // Protected and Public; the first three were named here and the fourth was
+      // not, so `Access = Public;` produced `value: (identifier)` while
+      // `Access = Internal;` produced `value: (option_member_list (option_member
+      // (internal_keyword)))` — the same property with two shapes depending on
+      // which level was written. This is also the only remaining reference to
+      // $.public_keyword now that interface_declaration's dead header clause is
+      // gone, so dropping it would orphan that rule.
+      $.public_keyword,      // 'Public' as option member
       $.boolean,             // true/false as option member
     ),
 
@@ -3859,15 +3971,9 @@ module.exports = grammar({
     // Case branch where some patterns are conditionally included via preprocessor
     preproc_split_case_branch: $ => prec(25, seq(
       $.preproc_if,
-      repeat($._case_pattern_item),
-      repeat(seq(
-        $.preproc_elif,
-        repeat($._case_pattern_item),
-      )),
-      optional(seq(
-        $.preproc_else,
-        repeat($._case_pattern_item),
-      )),
+      optional($._case_pattern_branch),
+      repeat(seq($.preproc_elif, optional($._case_pattern_branch))),
+      optional(seq($.preproc_else, optional($._case_pattern_branch))),
       $.preproc_endif,
       // Pattern(s) after the preprocessor block, ending with ':'
       $._case_pattern,
@@ -3901,31 +4007,46 @@ module.exports = grammar({
       optional(';'),
     )),
 
-    // Case pattern list: supports preprocessor conditionals interleaved with patterns.
-    _case_pattern: $ => repeat1(choice(
-      $._case_pattern_item,
-      $.preproc_conditional_case_patterns,
+    // Case pattern list: supports preprocessor conditionals interleaved with
+    // patterns. See the separator rule on `where_conditions`.
+    //
+    // This is the site where the missing separator was proven to produce a
+    // silent WRONG TREE rather than merely an over-acceptance: see the note on
+    // `range_expression` below. At `0D .. NextCountingStartDate - 1` the parser
+    // reduced the range early, and because the comma here was optional the
+    // leftover `- 1` was accepted as a SECOND case pattern, with no ERROR node.
+    // alc rejects `case i of 1 2:` with AL0104 ("':' expected").
+    //
+    // The `pattern` field lives on the value node — never on the `,`/`:`
+    // separators. An earlier shape wrapped the whole inlined list in
+    // `field('pattern', …)`, which distributed the field over the comma tokens
+    // too, so `children_by_field('pattern')` returned anonymous `,` nodes (the
+    // owned-IR lowerer panicked on `case 1, 2:`).
+    _case_pattern: $ => prec.right(choice(
+      $._case_pattern_run,
+      seq(
+        optional($._case_pattern_run),
+        repeat1(seq($.preproc_conditional_case_patterns, optional($._case_pattern_run))),
+      ),
     )),
 
-    // One case-pattern value (+ an optional trailing comma). The `pattern` field lives
-    // HERE, on the value node — never on the `,`/`:` separators. The previous shape
-    // wrapped the whole inlined `_case_pattern` list in `field('pattern', …)`, which
-    // distributed the field over the comma tokens too, so `children_by_field('pattern')`
-    // returned anonymous `,` nodes (the owned-IR lowerer panicked on `case 1, 2:`).
-    _case_pattern_item: $ => seq(field('pattern', $._single_pattern), optional(',')),
+    _case_pattern_branch: $ => choice(
+      seq(',', optional($._case_pattern)),
+      $._case_pattern,
+    ),
+
+    _case_pattern_run: $ => prec.right(seq(
+      field('pattern', $._single_pattern),
+      repeat(seq(',', field('pattern', $._single_pattern))),
+      optional(','),
+    )),
 
     // Preprocessor conditional wrapping case pattern entries mid-list
     preproc_conditional_case_patterns: $ => seq(
       $.preproc_if,
-      repeat($._case_pattern_item),
-      repeat(seq(
-        $.preproc_elif,
-        repeat($._case_pattern_item),
-      )),
-      optional(seq(
-        $.preproc_else,
-        repeat($._case_pattern_item),
-      )),
+      optional($._case_pattern_branch),
+      repeat(seq($.preproc_elif, optional($._case_pattern_branch))),
+      optional(seq($.preproc_else, optional($._case_pattern_branch))),
       $.preproc_endif,
     ),
 
@@ -4802,7 +4923,16 @@ module.exports = grammar({
     label_keyword: $ => alias(kw('label'), 'label'),
     assembly_keyword: $ => alias(kw('assembly'), 'assembly'),
     type_keyword: $ => alias(kw('type'), 'type'),
-    access_keyword: $ => alias(kw('access'), 'access'),
+    // NOTE: no `access_keyword` rule. Its ONLY use was interface_declaration's
+    // header `Access = X` clause, which a9cdb3c removed as dead (alc rejects it,
+    // 0 occurrences in 15,358 files). AL writes interface access as a body
+    // PROPERTY, where `Access` is a property_name, not a keyword node.
+    //
+    // This orphan existed on NEITHER parent branch: the precedence branch deleted
+    // the rule together with its use, the keyword branch kept both, and the merge
+    // took the deletion of the use and the retention of the rule. Same class as
+    // the duplicate rule keys -- a defect a merge creates out of two correct
+    // sides. `validate-grammar.sh`'s orphan check is what catches it.
     comment_keyword: $ => alias(kw('comment'), 'comment'),
     locked_keyword: $ => alias(kw('locked'), 'locked'),
     maxlength_keyword: $ => alias(kw('maxlength'), 'maxlength'),

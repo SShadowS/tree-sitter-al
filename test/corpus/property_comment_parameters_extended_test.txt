@@ -1,0 +1,236 @@
+================================================================================
+AboutTitle property with comment parameter variations
+================================================================================
+
+page 50000 "Test Page"
+{
+    AboutTitle = 'Product Information',comment = 'Translation guidance for About section';
+    AboutText = 'Details about the product',Comment = 'Help text for translators';
+    
+    layout
+    {
+        area(Content)
+        {
+            field(TestField; TestVar)
+            {
+                AboutTitle = 'Field Information',COMMENT = 'ALL CAPS comment style';
+                AboutText = 'Field description',comment = 'lowercase comment';
+            }
+        }
+    }
+    
+    var
+        TestVar: Text[50];
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (page_declaration
+    (page_keyword)
+    object_id: (integer)
+    object_name: (quoted_identifier)
+    body: (declaration_body
+      (property
+        name: (property_name)
+        value: (caption_value
+          (string_literal)
+          (property_name)
+          (string_literal)))
+      (property
+        name: (property_name)
+        value: (caption_value
+          (string_literal)
+          (property_name)
+          (string_literal)))
+      (layout_section
+        (layout_keyword)
+        body: (layout_body
+          (area_section
+            (area_keyword)
+            type: (content_keyword)
+            body: (layout_body
+              (page_field
+                (field_keyword)
+                name: (identifier)
+                source: (identifier)
+                body: (declaration_body
+                  (property
+                    name: (property_name)
+                    value: (caption_value
+                      (string_literal)
+                      (property_name)
+                      (string_literal)))
+                  (property
+                    name: (property_name)
+                    value: (caption_value
+                      (string_literal)
+                      (property_name)
+                      (string_literal)))))))))
+      (var_section
+        (var_keyword)
+        body: (var_body
+          (variable_declaration
+            name: (identifier)
+            type: (type_specification
+              (text_type
+                (text_keyword)
+                length: (integer)))))))))
+
+================================================================================
+InstructionalText property with comment parameters
+================================================================================
+
+page 50001 "Wizard Page"
+{
+    layout
+    {
+        area(Content)
+        {
+            group(Instructions)
+            {
+                InstructionalText = 'Follow these steps to complete setup',comment = 'Context for setup wizard';
+                
+                field(StepField; StepVar)
+                {
+                    InstructionalText = 'Enter the required value',Comment = 'Help for input field';
+                }
+            }
+        }
+    }
+    
+    var
+        StepVar: Integer;
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (page_declaration
+    (page_keyword)
+    object_id: (integer)
+    object_name: (quoted_identifier)
+    body: (declaration_body
+      (layout_section
+        (layout_keyword)
+        body: (layout_body
+          (area_section
+            (area_keyword)
+            type: (content_keyword)
+            body: (layout_body
+              (group_section
+                (group_keyword)
+                name: (identifier)
+                body: (layout_container_body
+                  (property
+                    name: (property_name)
+                    value: (caption_value
+                      (string_literal)
+                      (property_name)
+                      (string_literal)))
+                  (page_field
+                    (field_keyword)
+                    name: (identifier)
+                    source: (identifier)
+                    body: (declaration_body
+                      (property
+                        name: (property_name)
+                        value: (caption_value
+                          (string_literal)
+                          (property_name)
+                          (string_literal)))))))))))
+      (var_section
+        (var_keyword)
+        body: (var_body
+          (variable_declaration
+            name: (identifier)
+            type: (type_specification
+              (basic_type))))))))
+
+================================================================================
+ToolTip property with case-insensitive comment parameters
+================================================================================
+
+page 50002 "Field Tooltip Test"
+{
+    layout
+    {
+        area(Content)
+        {
+            field(Field1; Var1)
+            {
+                ToolTip = 'This field stores customer data',comment = 'lowercase comment';
+            }
+            field(Field2; Var2)
+            {
+                ToolTip = 'This field is required',Comment = 'uppercase Comment';
+            }
+            field(Field3; Var3)
+            {
+                ToolTip = 'Optional field',COMMENT = 'ALL CAPS COMMENT';
+            }
+        }
+    }
+    
+    var
+        Var1, Var2, Var3: Text;
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (page_declaration
+    (page_keyword)
+    object_id: (integer)
+    object_name: (quoted_identifier)
+    body: (declaration_body
+      (layout_section
+        (layout_keyword)
+        body: (layout_body
+          (area_section
+            (area_keyword)
+            type: (content_keyword)
+            body: (layout_body
+              (page_field
+                (field_keyword)
+                name: (identifier)
+                source: (identifier)
+                body: (declaration_body
+                  (property
+                    name: (property_name)
+                    value: (caption_value
+                      (string_literal)
+                      (property_name)
+                      (string_literal)))))
+              (page_field
+                (field_keyword)
+                name: (identifier)
+                source: (identifier)
+                body: (declaration_body
+                  (property
+                    name: (property_name)
+                    value: (caption_value
+                      (string_literal)
+                      (property_name)
+                      (string_literal)))))
+              (page_field
+                (field_keyword)
+                name: (identifier)
+                source: (identifier)
+                body: (declaration_body
+                  (property
+                    name: (property_name)
+                    value: (caption_value
+                      (string_literal)
+                      (property_name)
+                      (string_literal)))))))))
+      (var_section
+        (var_keyword)
+        body: (var_body
+          (variable_declaration
+            name: (identifier)
+            name: (identifier)
+            name: (identifier)
+            type: (type_specification
+              (text_type
+                (text_keyword)))))))))

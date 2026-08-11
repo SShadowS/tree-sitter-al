@@ -45,7 +45,17 @@ def test_a_seeded_regression_makes_run_exit_one(tmp_path: Path):
     assert real is not None and real.counts, "run `qc accept` before this test"
 
     dropped = dict(real.counts)
-    victim = sorted(dropped)[0]
+    # The victim MUST have a non-zero count. A cluster the grammar has since
+    # fixed sits in the baseline at 0 until the next `accept`, and dropping a
+    # zero-count cluster seeds nothing -- the detector no longer emits it, so
+    # no NEW cluster appears and `run` exits 0. This test then passes its own
+    # setup and asserts nothing, which is the exact failure it exists to catch.
+    #
+    # It happened: after 4.0.0 removed `access_keyword`, that ratcheted-to-0
+    # cluster sorted FIRST alphabetically and this test went vacuous by
+    # ordering alone.
+    victim = next((k for k in sorted(dropped) if dropped[k] > 0), None)
+    assert victim is not None, "baseline has no non-zero cluster to seed against"
     del dropped[victim]
 
     seeded = tmp_path / "seeded-baseline.json"
@@ -79,8 +89,14 @@ def test_a_seeded_never_observed_regression_makes_run_exit_one(tmp_path: Path):
     assert real is not None and real.counts, "run `qc accept` before this test"
 
     dropped = dict(real.counts)
-    victim = next((k for k in sorted(dropped) if k.startswith("corpus|never-observed|")), None)
-    assert victim is not None, "baseline has no corpus|never-observed|* cluster to seed against"
+    # Non-zero for the same reason as the test above: a ratcheted-to-0 cluster
+    # seeds nothing, and this test would then pass while asserting nothing.
+    victim = next(
+        (k for k in sorted(dropped)
+         if k.startswith("corpus|never-observed|") and dropped[k] > 0),
+        None,
+    )
+    assert victim is not None, "baseline has no non-zero corpus|never-observed|* cluster"
     del dropped[victim]
 
     seeded = tmp_path / "seeded-baseline.json"
