@@ -111,13 +111,41 @@ Both prior attempts left it inlined.
 
 ## 5. Gate self-test: 5 of 23 cases have never been green on a runner
 
-**Established:** observed in CI. Root cause not diagnosed.
+**Established:** output captured from run `31548406743`, job `93965657846`
+(`gh run view <id> --job <id> --log`). Final line: `gate-selftest: 17 passed,
+5 failed, 1 skipped, of 23 selected`. Root cause still not fixed, but the five are
+no longer anonymous and they fall into **two clusters, not five problems**:
 
-`tools/gate_selftest.py` reports 5 failures on GitHub runners that do not reproduce
-locally. Diagnosis is blocked on the job not capturing enough output to tell which
-half of each case fails — capture first, theorise second. The job has been red long
-enough that it was being read as background noise, which is the failure mode a gate
-must never have.
+**Cluster A — the whole step-6 AL-parsing path is dead on the runner (3 cases).**
+
+```
+FAIL  step6-broken-al-file        output never said 'AL parsing failed'; output never said 'error file(s)'
+FAIL  step6-clean-corpus-passes   exited 1; expected 0; output never said 'AL parsing:'; ...
+FAIL  pap-offsetting-loss         exited 0; expected non-zero; output still said 'Success rate'
+```
+
+`step6-clean-corpus-passes` is the harness's own **control** — it injects nothing and
+asserts a clean corpus PASSES. A failing control means the machinery does not run at
+all on the runner, so the other two are downstream of it and prove nothing on their
+own. Start here: the expected `AL parsing:` line is absent entirely, which points at
+`parse-al-parallel.sh` not executing rather than at the detection logic being wrong.
+
+**Cluster B — the ts-lock guard cases never acquire the lock (2 cases).**
+
+```
+| ts-lock-release-guard: FAIL - holder A never acquired the lock
+FAIL  tslock-release-guard-detects
+FAIL  tslock-release-guard-passes
+```
+
+Both failures share that one line, so this is one bug: holder A cannot take the lock
+in the runner's environment. Neither case says anything about the guard's real
+behaviour until that is fixed.
+
+The job had been red long enough on `main` to be read as background noise, which is
+the failure mode a gate must never have. **Do not "fix" these by relaxing the
+assertions** — two of the five are controls, and a control that passes vacuously is
+worse than a red job.
 
 ## 6. Adopt the split-matrix probe tooling under `tools/`
 
