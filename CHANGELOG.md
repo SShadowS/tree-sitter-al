@@ -5,11 +5,17 @@ Format loosely follows [Keep a Changelog](https://keepachangelog.com/); the proj
 uses [Semantic Versioning](https://semver.org/) where the parse-tree shape is the
 public API — a change to node structure or field names is a **major** bump.
 
-## [Unreleased]
+## [4.0.1] — 2026-08-12
 
-Both entries below were reported by downstream consumers of the published 4.0.0,
-and both are the same shape: a configuration this project never builds itself, so
-no gate here could have failed.
+Three defects, all found the same way: **by someone outside this repository using
+the published artifacts.** Each lived in a configuration the project never
+exercises itself — a C compiler invoked with default flags, a keyword used as a
+variable name, a wasm loaded instead of the native library — so every gate here
+stayed green over all three. The release therefore ships a gate per defect, not
+just the fixes.
+
+Validated over **36,852 production AL files** across two independent codebases
+(15,358 + 21,494), **0 errors**. 1,617 tests pass.
 
 ### Fixed
 
@@ -42,6 +48,29 @@ no gate here could have failed.
   `keys`, `labels`, `layout`, `modify`, `rendering`, `requestpage`, `schema`,
   `views`, `analysisviews`. The other nine are rejected by alc too and stay
   rejected here. Present in 2.5.1, so it predates 4.0.0.
+
+- **The shipped `tree-sitter-al.wasm` was a release behind.** It was last built
+  for v4.0.0; the keyword fix above landed after it. `build-wasm.yml`'s release
+  job does not build the wasm — it runs `cp tree-sitter-al.wasm artifacts/` — so
+  the file in git *is* the artifact, and npm ships it too (`files` includes
+  `*.wasm`). Verified by loading both in web-tree-sitter 0.26.12 rather than
+  inferred from dates: on `codeunit 80228 "T" { var Filter: Codeunit "Some
+  Thing"; }` the 4.0.0 wasm reports one ERROR and the rebuilt one is clean. So
+  the fix that 4.0.1 ships for that consumer would not have reached them in the
+  one runtime they use.
+
+  Nothing in the test suite, `validate-grammar.sh` or CI loads the wasm — it was
+  the only shipped artifact with no check at all. `tools/check-wasm-fresh.sh`
+  stamps `src/parser.c` + `src/scanner.c` and now runs as CI job `wasm-freshness`
+  and as Step 9 of `validate-grammar.sh`. PyPI and crates.io carry no wasm; both
+  build natively.
+
+### Changed
+
+- `docs/deferred-work.md` records the open items carried past 4.0.0, each tagged
+  with **how it was established**, so a measurement is never mistaken for a
+  recollection. Three notes that had existed on one disk only are now tracked
+  alongside it, two of them with explicit stale-baseline banners.
 
 ## [4.0.0] — 2026-08-11
 

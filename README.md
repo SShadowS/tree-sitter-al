@@ -8,16 +8,16 @@ A [tree-sitter](https://tree-sitter.github.io/tree-sitter/) parser for the AL pr
 
 ## Parser Status
 
-Validated against **36,001 production AL files** from two independent codebases —
-15,358 from Business Central and 20,643 from a separate production estate:
+Validated against **36,852 production AL files** from two independent codebases —
+15,358 from Business Central and 21,494 from a separate production estate:
 
 | Metric | Value |
 |--------|-------|
-| **Success rate** | **100%** (36,001 / 36,001 files, 0 errors) |
-| **Byte coverage** | **100%** — every source byte belongs to a node, both corpora |
-| Tests | 1,615 |
-| parser.c size | 30.9 MiB (32,445,756 bytes) |
-| grammar.js | 5,303 lines |
+| **Success rate** | **100%** (36,852 / 36,852 files, 0 errors) |
+| **Byte coverage** | **3 uncovered bytes in 36,852 files**, and they are a doubled UTF-8 BOM (see below) |
+| Tests | 1,617 |
+| parser.c size | 32.1 MiB (33,643,658 bytes) |
+| grammar.js | 5,334 lines |
 | Named node types | 467 |
 | Named keywords | 153 (151 grammar rules + 2 external; queryable via highlights/tags) |
 | Scanner tokens | 9 (stateful, depth-tracking) |
@@ -28,6 +28,17 @@ circulated during 4.0.0 development and two were arithmetic from a stale copy of
 this table — re-measure, never recall. `parser.c` is quoted in MiB with the byte
 count beside it because both conventions have been wrong here in opposite
 directions.
+
+**The byte-coverage row is stated as a count, not as "100%", because the honest
+answer is a count.** Walking every leaf of all 36,852 trees and marking the bytes
+it covers leaves exactly **3 non-whitespace bytes** unaccounted for, all in one
+file, and they are a **second UTF-8 BOM immediately following the first** at
+offset 3 — file preamble that was never AL source. BC.History is clean at 0. Two
+things that scan looked like and was not: 1,788 BC.History files reported 3 bytes
+each until the leading BOM was excluded (`tools/validate_al_file.py`'s
+`_significant()` excludes it for the same reason), and an `ERROR` node covers its
+bytes, so a deliberately broken file shows no gap at all — the instrument needed a
+control that ignores anonymous leaves before its zeros meant anything.
 
 **"0 errors" is the weakest claim on this page**, and 4.0.0 exists because the
 project learned that the hard way. Every defect fixed in this release parsed with
@@ -114,9 +125,9 @@ completeness and soundness separately for one file.
 shapes — after a grammatically complete construct, a second split in one
 expression, an `else` clause under a flag, and an `and`/comparison continuation —
 still parses to a wrong tree with no error. The class occurs in neither corpus
-(0 of 36,001 files). It is recorded at the rule in `grammar.js` with every
-measured attempt, and detected by `orphan-operator-expr` in the per-file
-validator.
+(0 of 36,852 files). It is recorded at the rule in `grammar.js` with every
+measured attempt, pinned by an explicitly-labelled tripwire fixture, and detected
+by `orphan-operator-expr` in the per-file validator.
 
 See [CHANGELOG.md](CHANGELOG.md) for the full list, each with its measured blast
 radius.

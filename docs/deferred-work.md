@@ -147,7 +147,37 @@ the failure mode a gate must never have. **Do not "fix" these by relaxing the
 assertions** — two of the five are controls, and a control that passes vacuously is
 worse than a red job.
 
-## 6. Adopt the split-matrix probe tooling under `tools/`
+## 6. Three uncovered bytes: a doubled UTF-8 BOM
+
+**Established:** measured at the 4.0.1 release with a leaf-walking gap scanner
+over both corpora — 36,852 files, exactly 3 non-whitespace bytes covered by no
+leaf, all in
+`DO.Support/BC/BaseApp/Test/Tests-VAT/ERMVATServCharge.Codeunit.al`. BC.History is
+clean at 0.
+
+The file opens with **two** UTF-8 BOMs, at offsets 0 and 3. The first is file
+preamble and correctly belongs to no node; the second is equally not AL source,
+but it is not at offset 0, so nothing excludes it and no node claims it. Strictly,
+the CST is not lossless over those 3 bytes.
+
+Deliberately not "fixed" by widening the scanner's BOM exclusion: that would hide
+it rather than decide it. The open question is what the tree *should* do with a
+second BOM — alc's verdict on the file has not been probed, and that verdict
+decides whether this is an extra to absorb or text to surface.
+
+Two traps that any re-measurement will hit, both of which produced a wrong answer
+first:
+
+- **Excluding the leading BOM is mandatory.** Without it, 1,788 BC.History files
+  report 3 bytes each (5,364 total) and the corpus looks broken.
+  `tools/validate_al_file.py`'s `_significant()` excludes it for the same reason.
+- **An `ERROR` node covers its own bytes**, so feeding the scanner deliberately
+  broken AL produces *no gap* and proves nothing. The control that works is a
+  build that ignores anonymous leaves: it must report gaps on a file the real
+  scanner calls clean (22 bytes on a 6-line codeunit, 213 on a real
+  PermissionSet).
+
+## 7. Adopt the split-matrix probe tooling under `tools/`
 
 **Established:** the method (see *The instrument*, above) exists and works; the
 tooling that automates it was written ad hoc during the release and never landed.
