@@ -392,6 +392,9 @@ Sanity-check the probe before trusting a rejection: compile a form you know is v
 - **tree-sitter** — Grammar development guide, API reference
 
 **Project docs:**
+- `docs/deferred-work.md` — **open items carried past 4.0.0**, each tagged with how it
+  was established. Read this before concluding something is unexplored; it also holds
+  the four-way `alc` probe rule that every `#if` question depends on
 - `docs/v2-blog-post-notes.md` — V2 rewrite narrative and data
 - `docs/superpowers/specs/` — Design specs for major changes
 - `docs/database-reference-numeric-id-fix.md` — `Codeunit::N` / `Page::N` numeric ID support
