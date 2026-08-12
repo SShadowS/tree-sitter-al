@@ -194,16 +194,29 @@ passes on both versions is not testing the fix.
 | Step | Command | Where | Depends On |
 |------|---------|-------|------------|
 | Version bump | Edit 3 files + 2 lockfiles | Local | - |
-| WASM rebuild | `tree-sitter build --wasm -o tree-sitter-al.wasm` then `tools/check-wasm-fresh.sh --update` | Local | any `src/parser.c` or `src/scanner.c` change |
+| Regenerate | `tree-sitter generate`, commit `src/parser.c` | Local | Version bump |
+| WASM rebuild | `tree-sitter build --wasm -o tree-sitter-al.wasm` then `tools/check-wasm-fresh.sh --update` | Local | Regenerate |
 | Push | `git push` | Local | WASM |
 | All 3 registries | `git push origin vX.Y.Z` | CI | Push |
 | GitHub Release | `gh workflow run "Build and release artifacts"` | CI | Push — **not triggered by the tag** |
 
-The WASM row does **not** depend on the version bump: no version string lives in
-`src/parser.c`, `src/grammar.json` or `src/node-types.json` (only `package.json`
-and `Cargo.toml` carry one), so a bump alone leaves the stamp valid. It depends
-on the generated sources changing — which is what `check-wasm-fresh` measures,
-and why the trigger is that rather than "every release".
+**A version bump DOES change `src/parser.c`, so every release needs a regenerate
+and a wasm rebuild.** The version is not a string — `grep '4\.0\.0' src/parser.c`
+finds nothing, which is exactly why this looks false:
+
+```c
+    .metadata = {
+      .major_version = 4,
+      .minor_version = 0,
+      .patch_version = 0,   // <- this is what moves
+    },
+```
+
+`tree-sitter generate` reads it from `tree-sitter.json`. During the 4.0.1 release
+this checklist briefly claimed the opposite, on the strength of that empty grep;
+`check-wasm-fresh` caught it one step later by reporting the stamp stale. Order
+matters: bump → generate → wasm → stamp. Rebuilding the wasm before regenerating
+produces a wasm for the previous patch version and a stamp that certifies it.
 
 ## Trusted publishing setup
 
