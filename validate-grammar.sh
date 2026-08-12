@@ -696,6 +696,26 @@ else
     VALIDATION_FAILED=1
 fi
 
+# Step 9: Is the committed wasm built from the committed sources?
+#
+# The release workflow ships tree-sitter-al.wasm verbatim (`cp` -- it never
+# builds it), so a stale file here is a stale parser for every web-tree-sitter
+# consumer. It went stale once already between v4.0.0 and the next grammar fix,
+# and no other gate could see it because nothing in this suite loads the wasm.
+print_header "Step 9: WASM Freshness"
+if [ -x "tools/check-wasm-fresh.sh" ]; then
+    if WASM_OUTPUT=$(./tools/check-wasm-fresh.sh 2>&1); then
+        print_success "Committed wasm matches src/parser.c and src/scanner.c"
+    else
+        print_error "Committed wasm is stale"
+        echo "$WASM_OUTPUT"
+        VALIDATION_FAILED=1
+    fi
+else
+    print_error "tools/check-wasm-fresh.sh not found or not executable -- it is tracked in git, so this checkout is broken"
+    VALIDATION_FAILED=1
+fi
+
 # Final summary
 print_header "Validation Summary"
 END_TIME=$(date +%s)

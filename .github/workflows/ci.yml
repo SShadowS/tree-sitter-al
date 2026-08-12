@@ -166,6 +166,22 @@ jobs:
       - name: Check queries
         run: ./ts_query_ls check -f queries/
 
+  wasm-freshness:
+    # build-wasm.yml's release job runs `cp tree-sitter-al.wasm artifacts/` -- it
+    # does NOT build the wasm, so whatever is committed is what every
+    # web-tree-sitter consumer gets. Nothing else in CI loads the wasm, so a
+    # stale one is invisible here: v4.0.0 shipped a fresh build, the next grammar
+    # fix landed, and the committed wasm kept parsing `Filter: Codeunit "X";`
+    # with an ERROR while the whole matrix stayed green.
+    name: Committed wasm matches committed sources
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v6
+
+      - name: Check wasm freshness
+        run: tools/check-wasm-fresh.sh
+
   scanner-default-flags:
     # Every first-party build of src/scanner.c passes -std=c11 (Makefile),
     # /std:c11 (binding.gyp) or cc.std("c11") (bindings/rust/build.rs), so no

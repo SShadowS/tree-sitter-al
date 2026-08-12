@@ -93,10 +93,26 @@ Commit all 5 files together: `chore: bump version to X.Y.Z`
 ## Step 2: Rebuild WASM
 
 ```bash
-tree-sitter build --wasm
+tree-sitter build --wasm -o tree-sitter-al.wasm
+tools/check-wasm-fresh.sh --update
 ```
 
-WASM size is proportional to parser.c size. Commit: `chore: rebuild tree-sitter-al.wasm for vX.Y.Z`
+Commit both files: `chore: rebuild tree-sitter-al.wasm for vX.Y.Z`. WASM size is
+proportional to parser.c size.
+
+**This is not a formality, and it is not only a release step.** The release
+workflow `cp`s the committed wasm — it never builds it — so the file in git *is*
+the artifact every web-tree-sitter consumer loads. Between v4.0.0 and the next
+grammar fix it went stale, and the shipped wasm parsed
+`codeunit 80228 "T" { var Filter: Codeunit "Some Thing"; }` with an ERROR that the
+repository's own parser did not have. Nothing in the test suite loads the wasm, so
+every gate stayed green.
+
+`tools/check-wasm-fresh.sh` now runs in CI (`wasm-freshness`) and as Step 9 of
+`validate-grammar.sh`, comparing a stamp of `src/parser.c` + `src/scanner.c`
+against the recorded one. **Never run `--update` to clear a red gate** — it records
+"the current wasm was built from the current sources", so updating without
+rebuilding turns the check into a rubber stamp.
 
 ## Step 3: Push
 
