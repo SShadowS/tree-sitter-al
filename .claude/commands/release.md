@@ -150,11 +150,19 @@ gh workflow run "Build and release artifacts" --ref main
 gh run watch <RUN_ID> --exit-status
 ```
 
+**This workflow is `workflow_dispatch` only.** Pushing the tag in Step 4 does NOT
+trigger it — the three registry publishes fire on `v*`, this one does not. Skip
+Step 5 and the GitHub release for `vX.Y.Z` has no assets at all, while npm still
+gets a wasm (its `files` list includes `*.wasm`).
+
 Attaches to release `vX.Y.Z`:
-- tree-sitter-al.wasm (copied from repo)
+- tree-sitter-al.wasm — **copied from the repo, never built here** (`cp tree-sitter-al.wasm artifacts/`). Whatever is committed is what ships; see Step 2.
 - tree-sitter-al.so (Linux, built in CI)
 - tree-sitter-al.dll (Windows, built in CI)
 - tree-sitter-al.dylib (macOS, built in CI)
+
+PyPI and crates.io carry no wasm at all — both build natively — so the wasm
+reaches consumers through exactly two channels: this release and npm.
 
 ## Step 6: Verify All Channels
 
@@ -167,15 +175,35 @@ cargo search tree-sitter-al
 
 PyPI and npm are behind a CDN and can take a few minutes to show the new version. Do not conclude a publish failed from a stale read.
 
+**Verify the published wasm is the one you built** — a version number matching
+proves nothing about the binary, and this is the artifact that shipped stale
+once:
+
+```bash
+gh release download vX.Y.Z -p tree-sitter-al.wasm -D /tmp/relcheck
+sha256sum /tmp/relcheck/tree-sitter-al.wasm tree-sitter-al.wasm   # must match
+```
+
+For a functional check — the one that actually caught the stale wasm — load it in
+web-tree-sitter and parse a construct the release fixed. `errors=0` on the new
+wasm and `errors=1` on the previous one is the discriminating pair; a check that
+passes on both versions is not testing the fix.
+
 ## Quick Reference
 
 | Step | Command | Where | Depends On |
 |------|---------|-------|------------|
 | Version bump | Edit 3 files + 2 lockfiles | Local | - |
-| WASM rebuild | `tree-sitter build --wasm` | Local | Version bump |
+| WASM rebuild | `tree-sitter build --wasm -o tree-sitter-al.wasm` then `tools/check-wasm-fresh.sh --update` | Local | any `src/parser.c` or `src/scanner.c` change |
 | Push | `git push` | Local | WASM |
 | All 3 registries | `git push origin vX.Y.Z` | CI | Push |
-| GitHub Release | `gh workflow run "Build and release artifacts"` | CI | Push |
+| GitHub Release | `gh workflow run "Build and release artifacts"` | CI | Push — **not triggered by the tag** |
+
+The WASM row does **not** depend on the version bump: no version string lives in
+`src/parser.c`, `src/grammar.json` or `src/node-types.json` (only `package.json`
+and `Cargo.toml` carry one), so a bump alone leaves the stamp valid. It depends
+on the generated sources changing — which is what `check-wasm-fresh` measures,
+and why the trigger is that rather than "every release".
 
 ## Trusted publishing setup
 
