@@ -36,14 +36,21 @@ for f in $INPUTS tree-sitter-al.wasm; do
   [ -f "$f" ] || { echo "check-wasm-fresh: missing $f" >&2; exit 2; }
 done
 
-# Hash of the concatenated per-file hashes, so a swap between the two files is
-# still a change. `cut` drops sha256sum's trailing filename, which would embed
-# the checkout path on some platforms.
-current=$(sha256sum $INPUTS | sha256sum | cut -d' ' -f1)
+# One "digest path" line per input, NOT a hash-of-the-hash-output.
+#
+# The composite form was tried first and was platform-dependent: MSYS/Git-for-
+# Windows sha256sum marks binary mode with `*` before the filename, GNU
+# coreutils on Linux prints a space, so re-hashing that text gave two different
+# answers for byte-identical inputs. The gate went red on its first CI run for
+# that reason alone, having verified nothing. The per-file DIGESTS were equal
+# the whole time -- only the surrounding text differed -- so compare those and
+# strip the marker.
+current=$(sha256sum $INPUTS | awk '{sub(/^\*/, "", $2); print $1, $2}')
 
 if [ "${1:-}" = "--update" ]; then
   printf '%s\n' "$current" > "$STAMP"
-  echo "check-wasm-fresh: stamped $STAMP with $current"
+  echo "check-wasm-fresh: stamped $STAMP with"
+  printf '  %s\n' "$current"
   echo "check-wasm-fresh: this records that the CURRENT wasm was built from the CURRENT $INPUTS."
   echo "check-wasm-fresh: only run it immediately after a real rebuild -- running it to clear a"
   echo "check-wasm-fresh: failure without rebuilding converts this gate into a rubber stamp."
@@ -61,8 +68,10 @@ if [ "$current" != "$recorded" ]; then
   cat >&2 <<EOF
 check-wasm-fresh: FAIL - tree-sitter-al.wasm is stale
 
-  recorded (when the wasm was last built): $recorded
-  current  ($INPUTS):                      $current
+  recorded (when the wasm was last built):
+$(printf '%s\n' "$recorded" | sed 's/^/    /')
+  current:
+$(printf '%s\n' "$current" | sed 's/^/    /')
 
 src/parser.c or src/scanner.c has changed since the wasm was built. The release
 workflow copies the committed wasm verbatim, so publishing now ships a parser
@@ -76,4 +85,5 @@ EOF
   exit 1
 fi
 
-echo "check-wasm-fresh: OK - wasm matches $INPUTS ($current)"
+echo "check-wasm-fresh: OK - wasm matches $INPUTS"
+printf '%s\n' "$current" | sed 's/^/  /'
