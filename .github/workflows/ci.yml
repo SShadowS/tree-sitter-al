@@ -182,6 +182,12 @@ jobs:
       - name: Check wasm freshness
         run: tools/check-wasm-fresh.sh
 
+      # Index modes are invisible on the Windows machines this repo is written
+      # on. A 100644 script exec'd by another script fails only here, on Linux
+      # -- which is what kept "Gate self-test" red from its first run.
+      - name: Check every tracked script is executable
+        run: bash tools/check-exec-bits.sh
+
   scanner-default-flags:
     # Every first-party build of src/scanner.c passes -std=c11 (Makefile),
     # /std:c11 (binding.gyp) or cc.std("c11") (bindings/rust/build.rs), so no

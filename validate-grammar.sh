@@ -716,6 +716,30 @@ else
     VALIDATION_FAILED=1
 fi
 
+# Step 10: Tracked scripts carry the executable bit
+#
+# Developed on Windows with core.fileMode=false, so a script's mode in the git
+# index is invisible here and only bites on Linux -- where CI runs. A 100644
+# script exec'd directly fails there with "Permission denied" (exit 126) and
+# works here; a 100644 shim on PATH is not found at all. It happened to
+# tools/check-wasm-fresh.sh (bed960a) and then to parse-al-parallel.sh,
+# tools/ts-lock.sh and two gate fixtures, which is why the gate self-test job
+# had never once passed in CI. tools/check-exec-bits.sh reads the INDEX, so it
+# answers the same on every platform. Invoked through `bash` deliberately: the
+# one file that must not be able to hide its own missing bit is this checker.
+print_header "Step 10: Executable Bits"
+if git rev-parse --is-inside-work-tree >/dev/null 2>&1; then
+    if EXEC_OUTPUT=$(bash tools/check-exec-bits.sh 2>&1); then
+        print_success "Every tracked script is 100755 in the index"
+    else
+        print_error "Tracked script(s) without the executable bit in the index"
+        echo "$EXEC_OUTPUT"
+        VALIDATION_FAILED=1
+    fi
+else
+    print_warning "Not a git checkout (a scratch copy) -- skipping the executable-bit check; it runs in the real repo and in CI"
+fi
+
 # Final summary
 print_header "Validation Summary"
 END_TIME=$(date +%s)

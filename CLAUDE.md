@@ -93,6 +93,16 @@ had the file on disk and 3 fewer in every fresh worktree — which is how one br
 1562 and two others measured 1559 at the same commit. The check is
 `git ls-files test/corpus | wc -l` against `find test/corpus -name '*.txt' | wc -l`.
 
+**Executable bits are invisible on this machine.** The repo is developed on Windows with
+`core.fileMode=false`, so a script's mode lives only in the git index: `ls -l` shows `rwx` for
+everything, `git status` says nothing, and the file runs fine here. On Linux a 100644 script
+exec'd by another script fails with `Permission denied` (exit 126), and a 100644 shim on PATH
+is not found. That kept the "Gate self-test" CI job red from its first run to 4.1.0 (five
+cases, one cause, four files), after the same class had already hit `check-wasm-fresh.sh`
+once. The only view is `git ls-files -s`; the fix is `git update-index --chmod=+x <file>`;
+`tools/check-exec-bits.sh` (validate-grammar.sh Step 10, and a CI step) gates every tracked
+`*.sh` and gate-fixture shim.
+
 **Common Test Options:**
 - `-i "pattern"` - Include tests matching pattern
 - `-e "pattern"` - Exclude tests matching pattern

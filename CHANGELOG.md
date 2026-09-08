@@ -5,6 +5,38 @@ Format loosely follows [Keep a Changelog](https://keepachangelog.com/); the proj
 uses [Semantic Versioning](https://semver.org/) where the parse-tree shape is the
 public API — a change to node structure or field names is a **major** bump.
 
+## [Unreleased]
+
+### Fixed
+
+- **The "Gate self-test" CI job passes for the first time since it was added.**
+  It had failed on every run since 2026-08-11, always the same five cases, and
+  the 4.0.1 release shipped over it. All five had one cause: four files were
+  committed as mode 100644 — `parse-al-parallel.sh`, `tools/ts-lock.sh`,
+  `tools/gate-fixtures/ts-lock-release-guard.sh` and
+  `tools/gate-fixtures/json-offsetting-loss/tree-sitter`. On Linux a 100644
+  script that another script execs directly fails with "Permission denied"
+  (exit 126), and a 100644 shim on PATH is not found at all, so the real
+  `tree-sitter` ran and the fixture injected nothing. `validate-grammar.sh`
+  Step 6 execs `./parse-al-parallel.sh` (both `step6-*` cases, and the
+  `step6-zero-file-corpus` case passed only because "AL parse run" also
+  appears in the wrong message); the ts-lock guard execs `../ts-lock.sh` (both
+  `tslock-*` cases, "holder A never acquired the lock"); PATH lookup skips the
+  shim (`pap-offsetting-loss`, exit 0 with 100%).
+
+  None of it reproduced on the machine the code is written on: this repository
+  is developed on Windows with `core.fileMode=false`, so index modes are
+  invisible in the working tree and to `git status`. `tools/check-wasm-fresh.sh`
+  had hit the same wall alone (bed960a, "failed at exit 126, having never run")
+  and was fixed alone. Reproduced in a fresh Linux clone, which honours index
+  modes, before and after the fix.
+
+  Every tracked `*.sh` and every gate-fixture shim is now 100755 in the index
+  (`git update-index --chmod=+x`; 14 files plus the new checker). New `tools/check-exec-bits.sh`
+  reads the index, so it answers identically on every platform; it runs as
+  `validate-grammar.sh` Step 10 and as its own CI step, and is invoked through
+  `bash` so the checker cannot hide its own missing bit.
+
 ## [4.1.0] — 2026-09-09
 
 One defect, reported against the published wasm by a consumer diffing this
