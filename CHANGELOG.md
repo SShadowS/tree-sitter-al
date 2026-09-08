@@ -5,7 +5,12 @@ Format loosely follows [Keep a Changelog](https://keepachangelog.com/); the proj
 uses [Semantic Versioning](https://semver.org/) where the parse-tree shape is the
 public API — a change to node structure or field names is a **major** bump.
 
-## [Unreleased]
+## [4.1.0] — 2026-09-09
+
+One defect, reported against the published wasm by a consumer diffing this
+parser's tree against the AL compiler's on the same corpus (issue #20).
+Validated over **15,358 production AL files** (BC.History), **0 errors**.
+1,619 tests pass.
 
 ### Fixed
 
@@ -72,8 +77,12 @@ public API — a change to node structure or field names is a **major** bump.
   every mapping site (`@type`; `@reference.implementation` /
   `@reference.class`), where before only the comma-separated form was reachable.
 
-  This changes the tree shape for every single-entry mapping and is a **major**
-  bump under this project's versioning.
+  This changes the tree shape for every single-entry mapping. It ships as a
+  **minor** release rather than the major the shape rule would suggest:
+  `node-types.json` declares no new node kind and no new field, and both
+  alternatives were already members of `property.value`'s declared type set —
+  what moves is which one a single-entry mapping reaches. A consumer that
+  handled the comma-separated form already handles this one.
 
 ## [4.0.1] — 2026-08-12
 
