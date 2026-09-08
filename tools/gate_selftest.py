@@ -71,6 +71,15 @@ COPY_FILES = [
     "package.json",
     "tree-sitter.json",
     ".grammar_baseline.json",
+    # Step 9 (WASM freshness, added in 4.0.1) verifies these two against
+    # src/parser.c and src/scanner.c. Without them the scratch copy fails Step 9
+    # with "missing tree-sitter-al.wasm", so the control case
+    # step6-clean-corpus-passes could never exit 0 -- and nobody saw it, because
+    # the job was already red for a different reason (exec bits, see
+    # tools/check-exec-bits.sh). A gate the self-test cannot run clean is a gate
+    # it cannot mutation-test either; step9-wasm-stale below needs these.
+    "tree-sitter-al.wasm",
+    "tree-sitter-al.wasm.inputs.sha256",
 ]
 COPY_DIRS = ["tools", "test", "queries", "src"]
 
@@ -406,6 +415,24 @@ CASES: list[Case] = [
         mutations=[remove(".grammar_baseline.json")],
         must_contain=["Grammar health baseline missing"],
         must_not_contain=["All validation checks passed"],
+    ),
+    # ---- Step 9: wasm freshness -----------------------------------------------
+    # The release workflow ships the committed wasm verbatim, so a source edit
+    # without a rebuild is a stale parser for every web-tree-sitter consumer.
+    # That happened between 4.0.0 and the next grammar fix with every other
+    # gate green. The mutation edits src/scanner.c rather than src/parser.c
+    # because Step 1 regenerates parser.c and would undo the edit; the stamp is
+    # left alone because the defect is "sources moved, wasm did not", and the
+    # stamp is the record of the wasm that exists.
+    Case(
+        id="step9-wasm-stale",
+        gate=VALIDATE,
+        why="src/scanner.c changed after the committed wasm was built; the shipped 4.0.0 wasm went stale this way with every gate green",
+        mutations=[append("src/scanner.c", "\n// gate-selftest: scanner edit without a wasm rebuild\n")],
+        must_contain=["Committed wasm is stale", "tree-sitter-al.wasm is stale"],
+        must_not_contain=["All validation checks passed"],
+        blind_spot="compares a stamp of the sources against the recorded one. A wasm "
+                   "rebuilt from the right sources by a broken toolchain stamps clean",
     ),
     Case(
         id="step6-broken-al-file",

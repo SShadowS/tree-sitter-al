@@ -37,6 +37,16 @@ public API — a change to node structure or field names is a **major** bump.
   `validate-grammar.sh` Step 10 and as its own CI step, and is invoked through
   `bash` so the checker cannot hide its own missing bit.
 
+  With the exec bits fixed, the control case `step6-clean-corpus-passes` still
+  could not exit 0, for a second reason hidden behind the first: Step 9 (WASM
+  freshness, added in 4.0.1 after the self-test was written) failed in the
+  scratch copy with `check-wasm-fresh: missing tree-sitter-al.wasm`, because
+  the scratch tree never carried the wasm or its stamp. Both are copied now,
+  and a new case `step9-wasm-stale` edits `src/scanner.c` without a rebuild and
+  requires Step 9 to say so — the gate that let the 4.0.0 wasm ship stale is now
+  mutation-tested like the others. 24 cases; 23 pass and 1 skips where no C
+  toolchain is present, on Linux in a fresh clone.
+
 ## [4.1.0] — 2026-09-09
 
 One defect, reported against the published wasm by a consumer diffing this

@@ -109,43 +109,42 @@ recorded in the rule's own comment in `grammar.js`, is that the rule sits in the
 `inline` array — removing it there changes what the conflict resolution can see.
 Both prior attempts left it inlined.
 
-## 5. Gate self-test: 5 of 23 cases have never been green on a runner
+## 5. Gate self-test: 5 of 23 cases had never been green on a runner — RESOLVED 2026-09-09
 
 **Established:** output captured from run `31548406743`, job `93965657846`
 (`gh run view <id> --job <id> --log`). Final line: `gate-selftest: 17 passed,
-5 failed, 1 skipped, of 23 selected`. Root cause still not fixed, but the five are
-no longer anonymous and they fall into **two clusters, not five problems**:
+5 failed, 1 skipped, of 23 selected`. The five fell into two clusters — the whole
+step-6 AL-parsing path dead on the runner (3 cases, including the harness's own
+control `step6-clean-corpus-passes`), and both ts-lock guard cases reporting
+`holder A never acquired the lock`.
 
-**Cluster A — the whole step-6 AL-parsing path is dead on the runner (3 cases).**
+**Resolved:** the two clusters were **one cause**, not two bugs. Four scripts were
+committed as mode 100644: `parse-al-parallel.sh`, `tools/ts-lock.sh`,
+`tools/gate-fixtures/ts-lock-release-guard.sh` and
+`tools/gate-fixtures/json-offsetting-loss/tree-sitter`. The harness runs each gate
+through `bash`, so the gates themselves did not need the bit — but
+`validate-grammar.sh` Step 6 execs `./parse-al-parallel.sh` directly (Linux:
+`Permission denied`, exit 126 → "no readable summary" → cluster A), the ts-lock guard
+execs `../ts-lock.sh` with stderr silenced (holder A never creates the lock → cluster
+B), and PATH lookup skips a 100644 shim (the real `tree-sitter` runs, nothing is
+injected, `pap-offsetting-loss` exits 0). None of it reproduces on Windows, where the
+repo is written: `core.fileMode=false`, so index modes are invisible to `ls`, to
+`git status` and to Git Bash, which runs a 644 script. The same class had already
+hit `tools/check-wasm-fresh.sh` once (bed960a) and was fixed for that one file.
 
-```
-FAIL  step6-broken-al-file        output never said 'AL parsing failed'; output never said 'error file(s)'
-FAIL  step6-clean-corpus-passes   exited 1; expected 0; output never said 'AL parsing:'; ...
-FAIL  pap-offsetting-loss         exited 0; expected non-zero; output still said 'Success rate'
-```
+Established by reproducing in a fresh Linux clone (WSL, tree-sitter 0.27.0), which
+checks out index modes: byte-identical failure messages to CI, then 21/23 passing
+after `git update-index --chmod=+x` on every tracked `*.sh` and shim. The control
+still exited 1 for a second reason hidden behind the first: Step 9 (WASM freshness,
+added in 4.0.1 after this harness) failed in the scratch copy with
+`missing tree-sitter-al.wasm`, because the scratch never carried the wasm or its
+stamp. Both are copied now, and Step 9 gained its own mutation case,
+`step9-wasm-stale`. Final: 23 passed, 1 skipped (no C toolchain), of 24.
 
-`step6-clean-corpus-passes` is the harness's own **control** — it injects nothing and
-asserts a clean corpus PASSES. A failing control means the machinery does not run at
-all on the runner, so the other two are downstream of it and prove nothing on their
-own. Start here: the expected `AL parsing:` line is absent entirely, which points at
-`parse-al-parallel.sh` not executing rather than at the detection logic being wrong.
-
-**Cluster B — the ts-lock guard cases never acquire the lock (2 cases).**
-
-```
-| ts-lock-release-guard: FAIL - holder A never acquired the lock
-FAIL  tslock-release-guard-detects
-FAIL  tslock-release-guard-passes
-```
-
-Both failures share that one line, so this is one bug: holder A cannot take the lock
-in the runner's environment. Neither case says anything about the guard's real
-behaviour until that is fixed.
-
-The job had been red long enough on `main` to be read as background noise, which is
-the failure mode a gate must never have. **Do not "fix" these by relaxing the
-assertions** — two of the five are controls, and a control that passes vacuously is
-worse than a red job.
+The assertions were not relaxed. The gate for the class is `tools/check-exec-bits.sh`
+(validate-grammar.sh Step 10, and its own CI step): it reads the git index, so it
+answers the same on every platform. Full write-up in the CHANGELOG entry for the
+release after 4.1.0.
 
 ## 6. Three uncovered bytes: a doubled UTF-8 BOM
 
