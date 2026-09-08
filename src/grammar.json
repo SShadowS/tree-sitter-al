@@ -2489,20 +2489,28 @@
       "type": "CHOICE",
       "members": [
         {
-          "type": "TOKEN",
-          "content": {
-            "type": "PATTERN",
-            "value": "(?i)true"
-          }
+          "type": "SYMBOL",
+          "name": "_true_token"
         },
         {
-          "type": "TOKEN",
-          "content": {
-            "type": "PATTERN",
-            "value": "(?i)false"
-          }
+          "type": "SYMBOL",
+          "name": "_false_token"
         }
       ]
+    },
+    "_true_token": {
+      "type": "TOKEN",
+      "content": {
+        "type": "PATTERN",
+        "value": "(?i)true"
+      }
+    },
+    "_false_token": {
+      "type": "TOKEN",
+      "content": {
+        "type": "PATTERN",
+        "value": "(?i)false"
+      }
     },
     "decimal": {
       "type": "TOKEN",
@@ -4899,29 +4907,59 @@
       ]
     },
     "implementation_value": {
-      "type": "SEQ",
-      "members": [
-        {
-          "type": "FIELD",
-          "name": "interface",
-          "content": {
-            "type": "SYMBOL",
-            "name": "_identifier_or_quoted"
+      "type": "PREC_DYNAMIC",
+      "value": 1,
+      "content": {
+        "type": "SEQ",
+        "members": [
+          {
+            "type": "FIELD",
+            "name": "interface",
+            "content": {
+              "type": "SYMBOL",
+              "name": "_implementation_name"
+            }
+          },
+          {
+            "type": "STRING",
+            "value": "="
+          },
+          {
+            "type": "FIELD",
+            "name": "implementation",
+            "content": {
+              "type": "SYMBOL",
+              "name": "_implementation_name"
+            }
           }
-        },
-        {
-          "type": "STRING",
-          "value": "="
-        },
-        {
-          "type": "FIELD",
-          "name": "implementation",
-          "content": {
+        ]
+      }
+    },
+    "_implementation_name": {
+      "type": "RESERVED",
+      "content": {
+        "type": "CHOICE",
+        "members": [
+          {
             "type": "SYMBOL",
-            "name": "_identifier_or_quoted"
+            "name": "identifier"
+          },
+          {
+            "type": "SYMBOL",
+            "name": "quoted_identifier"
+          },
+          {
+            "type": "ALIAS",
+            "content": {
+              "type": "SYMBOL",
+              "name": "keyword_as_identifier"
+            },
+            "named": true,
+            "value": "identifier"
           }
-        }
-      ]
+        ]
+      },
+      "context_name": "implementation_names"
     },
     "option_member_list": {
       "type": "PREC_RIGHT",
@@ -21670,6 +21708,15 @@
       "_identifier_or_quoted"
     ],
     [
+      "_expression",
+      "_identifier_or_quoted",
+      "_implementation_name"
+    ],
+    [
+      "_identifier_or_quoted",
+      "_implementation_name"
+    ],
+    [
       "_preproc_call_prefix",
       "_argument_expression"
     ],
@@ -21917,5 +21964,17 @@
     "_expression_statement"
   ],
   "supertypes": [],
-  "reserved": {}
+  "reserved": {
+    "global": [],
+    "implementation_names": [
+      {
+        "type": "SYMBOL",
+        "name": "_true_token"
+      },
+      {
+        "type": "SYMBOL",
+        "name": "_false_token"
+      }
+    ]
+  }
 }

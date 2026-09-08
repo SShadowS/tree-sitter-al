@@ -839,6 +839,23 @@
     (quoted_identifier)
   ] @type)
 
+; Implementation mappings -- Implementation, DefaultImplementation,
+; UnknownValueImplementation. Single-entry and comma-separated forms both parse
+; to implementation_value (issue #20), so these two rules cover every site.
+; Until then a one-entry mapping was a comparison_expression and its two names
+; took the generic identifier highlight.
+(implementation_value
+  interface: [
+    (identifier)
+    (quoted_identifier)
+  ] @type)
+
+(implementation_value
+  implementation: [
+    (identifier)
+    (quoted_identifier)
+  ] @type)
+
 ; =============================================================================
 ; Attributes
 ; =============================================================================

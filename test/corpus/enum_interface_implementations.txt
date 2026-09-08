@@ -38,11 +38,10 @@ enum 50200 SendTo implements IAddressProvider
         body: (declaration_body
           (property
             name: (property_name)
-            value: (property_expression
-              (comparison_expression
-                left: (identifier)
-                operator: (comparison_operator)
-                right: (identifier))))))
+            value: (implementation_value_list
+              (implementation_value
+                interface: (identifier)
+                implementation: (identifier))))))
       (enum_value_declaration
         (value_keyword)
         value_id: (integer)
@@ -50,11 +49,10 @@ enum 50200 SendTo implements IAddressProvider
         body: (declaration_body
           (property
             name: (property_name)
-            value: (property_expression
-              (comparison_expression
-                left: (identifier)
-                operator: (comparison_operator)
-                right: (identifier)))))))))
+            value: (implementation_value_list
+              (implementation_value
+                interface: (identifier)
+                implementation: (identifier)))))))))
 
 ================================================================================
 Enum with quoted identifier implementations
@@ -91,11 +89,10 @@ enum 50201 "Communication Method" implements "IMessageProvider"
         body: (declaration_body
           (property
             name: (property_name)
-            value: (property_expression
-              (comparison_expression
-                left: (quoted_identifier)
-                operator: (comparison_operator)
-                right: (quoted_identifier))))))
+            value: (implementation_value_list
+              (implementation_value
+                interface: (quoted_identifier)
+                implementation: (quoted_identifier))))))
       (enum_value_declaration
         (value_keyword)
         value_id: (integer)
@@ -103,11 +100,10 @@ enum 50201 "Communication Method" implements "IMessageProvider"
         body: (declaration_body
           (property
             name: (property_name)
-            value: (property_expression
-              (comparison_expression
-                left: (quoted_identifier)
-                operator: (comparison_operator)
-                right: (quoted_identifier)))))))))
+            value: (implementation_value_list
+              (implementation_value
+                interface: (quoted_identifier)
+                implementation: (quoted_identifier)))))))))
 
 ================================================================================
 Enum with mixed quoted and unquoted implementations
@@ -144,11 +140,10 @@ enum 50202 PaymentMethod implements IPaymentProcessor
         body: (declaration_body
           (property
             name: (property_name)
-            value: (property_expression
-              (comparison_expression
-                left: (quoted_identifier)
-                operator: (comparison_operator)
-                right: (identifier))))))
+            value: (implementation_value_list
+              (implementation_value
+                interface: (quoted_identifier)
+                implementation: (identifier))))))
       (enum_value_declaration
         (value_keyword)
         value_id: (integer)
@@ -156,11 +151,10 @@ enum 50202 PaymentMethod implements IPaymentProcessor
         body: (declaration_body
           (property
             name: (property_name)
-            value: (property_expression
-              (comparison_expression
-                left: (identifier)
-                operator: (comparison_operator)
-                right: (quoted_identifier)))))))))
+            value: (implementation_value_list
+              (implementation_value
+                interface: (identifier)
+                implementation: (quoted_identifier)))))))))
 
 ================================================================================
 Enum with multiple properties including implementation
@@ -207,11 +201,10 @@ enum 50203 DocumentType implements IDocumentHandler
             value: (string_literal))
           (property
             name: (property_name)
-            value: (property_expression
-              (comparison_expression
-                left: (identifier)
-                operator: (comparison_operator)
-                right: (identifier))))))
+            value: (implementation_value_list
+              (implementation_value
+                interface: (identifier)
+                implementation: (identifier))))))
       (enum_value_declaration
         (value_keyword)
         value_id: (integer)
@@ -219,11 +212,10 @@ enum 50203 DocumentType implements IDocumentHandler
         body: (declaration_body
           (property
             name: (property_name)
-            value: (property_expression
-              (comparison_expression
-                left: (identifier)
-                operator: (comparison_operator)
-                right: (identifier))))
+            value: (implementation_value_list
+              (implementation_value
+                interface: (identifier)
+                implementation: (identifier))))
           (property
             name: (property_name)
             value: (string_literal)))))))

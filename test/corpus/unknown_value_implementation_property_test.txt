@@ -40,18 +40,16 @@ enum 5580 "Digital Voucher Check Type" implements "Digital Voucher Check"
         value: (boolean))
       (property
         name: (property_name)
-        value: (property_expression
-          (comparison_expression
-            left: (quoted_identifier)
-            operator: (comparison_operator)
-            right: (quoted_identifier))))
+        value: (implementation_value_list
+          (implementation_value
+            interface: (quoted_identifier)
+            implementation: (quoted_identifier))))
       (property
         name: (property_name)
-        value: (property_expression
-          (comparison_expression
-            left: (quoted_identifier)
-            operator: (comparison_operator)
-            right: (quoted_identifier))))
+        value: (implementation_value_list
+          (implementation_value
+            interface: (quoted_identifier)
+            implementation: (quoted_identifier))))
       (enum_value_declaration
         (value_keyword)
         value_id: (integer)
@@ -62,11 +60,10 @@ enum 5580 "Digital Voucher Check Type" implements "Digital Voucher Check"
             value: (string_literal))
           (property
             name: (property_name)
-            value: (property_expression
-              (comparison_expression
-                left: (quoted_identifier)
-                operator: (comparison_operator)
-                right: (quoted_identifier)))))))))
+            value: (implementation_value_list
+              (implementation_value
+                interface: (quoted_identifier)
+                implementation: (quoted_identifier)))))))))
 
 ================================================================================
 Multiple enums with UnknownValueImplementation property
@@ -116,18 +113,16 @@ enum 1445 "Symmetric Algorithm" implements "Symmetric Algorithm"
         value: (boolean))
       (property
         name: (property_name)
-        value: (property_expression
-          (comparison_expression
-            left: (identifier)
-            operator: (comparison_operator)
-            right: (quoted_identifier))))
+        value: (implementation_value_list
+          (implementation_value
+            interface: (identifier)
+            implementation: (quoted_identifier))))
       (property
         name: (property_name)
-        value: (property_expression
-          (comparison_expression
-            left: (identifier)
-            operator: (comparison_operator)
-            right: (quoted_identifier))))
+        value: (implementation_value_list
+          (implementation_value
+            interface: (identifier)
+            implementation: (quoted_identifier))))
       (enum_value_declaration
         (value_keyword)
         value_id: (integer)
@@ -138,11 +133,10 @@ enum 1445 "Symmetric Algorithm" implements "Symmetric Algorithm"
             value: (string_literal))
           (property
             name: (property_name)
-            value: (property_expression
-              (comparison_expression
-                left: (identifier)
-                operator: (comparison_operator)
-                right: (quoted_identifier))))))
+            value: (implementation_value_list
+              (implementation_value
+                interface: (identifier)
+                implementation: (quoted_identifier))))))
       (enum_value_declaration
         (value_keyword)
         value_id: (integer)
@@ -153,11 +147,10 @@ enum 1445 "Symmetric Algorithm" implements "Symmetric Algorithm"
             value: (string_literal))
           (property
             name: (property_name)
-            value: (property_expression
-              (comparison_expression
-                left: (identifier)
-                operator: (comparison_operator)
-                right: (quoted_identifier)))))))))
+            value: (implementation_value_list
+              (implementation_value
+                interface: (identifier)
+                implementation: (quoted_identifier)))))))))
 
 ================================================================================
 UnknownValueImplementation with case variations
@@ -194,11 +187,10 @@ enum 101 TestEnum2 implements ITestInterface
     body: (declaration_body
       (property
         name: (property_name)
-        value: (property_expression
-          (comparison_expression
-            left: (identifier)
-            operator: (comparison_operator)
-            right: (quoted_identifier))))
+        value: (implementation_value_list
+          (implementation_value
+            interface: (identifier)
+            implementation: (quoted_identifier))))
       (enum_value_declaration
         (value_keyword)
         value_id: (integer)
@@ -213,11 +205,10 @@ enum 101 TestEnum2 implements ITestInterface
     body: (declaration_body
       (property
         name: (property_name)
-        value: (property_expression
-          (comparison_expression
-            left: (identifier)
-            operator: (comparison_operator)
-            right: (quoted_identifier))))
+        value: (implementation_value_list
+          (implementation_value
+            interface: (identifier)
+            implementation: (quoted_identifier))))
       (enum_value_declaration
         (value_keyword)
         value_id: (integer)

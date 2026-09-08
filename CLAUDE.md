@@ -75,6 +75,13 @@ added:
    `tree-sitter` parsed the header and discarded the case. Caught by diffing the cases the
    files *declare* against the numbered list a run actually *prints*.
 
+5. **`-u` rewrites files you did not name.** Seven runs of
+   `tree-sitter test -u --file-name X` also rewrote six *untargeted* fixtures: it stripped the
+   trailing blank line from four and the leading `;` documentation block from
+   `operator_precedence_test.txt` and `range_not_an_expression_negative_test.txt` (23 and 9
+   lines of compiler-verified rationale, gone with no failing case to point at them). Run
+   `git diff --stat test/corpus` after every `-u` and restore whatever you did not target.
+
 After adding fixtures, check the total moved by exactly the number of cases you wrote.
 Counting `=` lines and halving does not detect either one — that reports the declared
 count, which is precisely the number that disagrees with reality.
@@ -108,6 +115,7 @@ had the file on disk and 3 fewer in every fresh worktree — which is how one br
 - **Generic preprocessor** — ONE `preproc_conditional` rule + ~12 dedicated split-construct rules (vs V1's 63)
 - **Named keyword nodes** — 154 keywords exposed as named nodes for query matching (152 grammar rules + the external `begin_keyword`/`end_keyword`), all with a uniform shape: one anonymous child typed as the canonical lowercase spelling
 - **Stateful scanner** — a `uint32_t` depth counter tracks `#if`/`#endif` nesting (it was a `uint8_t` until 4.0.0 and wrapped at 256); `begin`/`end` are named at every depth, and the depth counter decides only whether a `PREPROC_SPLIT_*` token gets first refusal
+- **Reserved-word sets, one contextual set so far** — `reserved: { global: [], implementation_names: [...] }` (tree-sitter ≥ 0.25). `global` is empty on purpose; `implementation_names` reserves `true`/`false` inside `implementation_value`'s two names, which is what lets `prec.dynamic` favour the mapping reading of `A = B` without stealing `Visible = HideActions = false;`. Two rules the docs do not state, both measured while fixing issue #20: an entry must be a rule **symbol** (`$._true_token`), not a fresh `kw()`; and a parse state takes the largest set among items whose **next step is `identifier` itself**, so the set must sit on a rule that names `$.identifier` directly (`_implementation_name`) — wrapping a reference to `_identifier_or_quoted` reserves nothing
 - **Single-read identifier dispatch** — all six identifier-initial scanner tokens are decided in one scan over one read of the word. Nothing matches a keyword against the live lexer: a walking matcher leaves its matched prefix consumed on failure, so sequential per-token reads start mid-identifier. That shape caused three separate defects and was deleted in 4.0.0
 
 **Scanner Tokens:**

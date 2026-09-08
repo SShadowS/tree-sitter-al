@@ -75,11 +75,10 @@ enumextension 50101 "Document Type Ext" extends "Sales Document Type"
             value: (string_literal))
           (property
             name: (property_name)
-            value: (property_expression
-              (comparison_expression
-                left: (quoted_identifier)
-                operator: (comparison_operator)
-                right: (quoted_identifier)))))))))
+            value: (implementation_value_list
+              (implementation_value
+                interface: (quoted_identifier)
+                implementation: (quoted_identifier)))))))))
 
 ================================================================================
 Enum extension with multiple properties

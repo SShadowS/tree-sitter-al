@@ -141,11 +141,10 @@ enum 300 "Case Test" implements Interface1, Interface2, Interface3
             implementation: (identifier))))
       (property
         name: (property_name)
-        value: (property_expression
-          (comparison_expression
-            left: (identifier)
-            operator: (comparison_operator)
-            right: (identifier))))
+        value: (implementation_value_list
+          (implementation_value
+            interface: (identifier)
+            implementation: (identifier))))
       (enum_value_declaration
         (value_keyword)
         value_id: (integer)

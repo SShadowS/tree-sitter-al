@@ -108,7 +108,7 @@ query 50100 "Single Entry Dotted"
                             value: (integer)))))))))))))))
 
 ================================================================================
-Bare right-hand side stays an expression: Implementation is not a link
+Bare right-hand side is an implementation mapping, not a link
 ================================================================================
 
 codeunit 50100 "Bare Form Not A Link"
@@ -126,11 +126,10 @@ codeunit 50100 "Bare Form Not A Link"
     body: (declaration_body
       (property
         name: (property_name)
-        value: (property_expression
-          (comparison_expression
-            left: (quoted_identifier)
-            operator: (comparison_operator)
-            right: (quoted_identifier)))))))
+        value: (implementation_value_list
+          (implementation_value
+            interface: (quoted_identifier)
+            implementation: (quoted_identifier)))))))
 
 ================================================================================
 Bare right-hand side stays an expression: boolean property is not a link

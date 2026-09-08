@@ -1,0 +1,120 @@
+================================================================================
+Single-entry Implementation family reaches implementation_value (not property_expression)
+================================================================================
+
+enum 50000 "Probe Kind" implements "Probe IFace"
+{
+    DefaultImplementation = "Probe IFace" = "Probe Impl";
+    UnknownValueImplementation = "Probe IFace" = "Probe Unknown";
+
+    value(0; First)
+    {
+        Implementation = "Probe IFace" = "Probe Impl";
+    }
+    value(1; Second)
+    {
+        Implementation = ProbeIFace = ProbeImpl;
+    }
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (enum_declaration
+    (enum_keyword)
+    object_id: (integer)
+    object_name: (quoted_identifier)
+    (implements_clause
+      (implements_keyword)
+      interface: (quoted_identifier))
+    body: (declaration_body
+      (property
+        name: (property_name)
+        value: (implementation_value_list
+          (implementation_value
+            interface: (quoted_identifier)
+            implementation: (quoted_identifier))))
+      (property
+        name: (property_name)
+        value: (implementation_value_list
+          (implementation_value
+            interface: (quoted_identifier)
+            implementation: (quoted_identifier))))
+      (enum_value_declaration
+        (value_keyword)
+        value_id: (integer)
+        value_name: (identifier)
+        body: (declaration_body
+          (property
+            name: (property_name)
+            value: (implementation_value_list
+              (implementation_value
+                interface: (quoted_identifier)
+                implementation: (quoted_identifier))))))
+      (enum_value_declaration
+        (value_keyword)
+        value_id: (integer)
+        value_name: (identifier)
+        body: (declaration_body
+          (property
+            name: (property_name)
+            value: (implementation_value_list
+              (implementation_value
+                interface: (identifier)
+                implementation: (identifier)))))))))
+
+================================================================================
+Prop = Ident = false stays a comparison (implementation_value cannot claim a boolean)
+================================================================================
+
+page 50100 "Guard"
+{
+    layout
+    {
+        area(content)
+        {
+            field(F; Rec.F)
+            {
+                Visible = HideActions = false;
+                Editable = UseDueDateAsPostingDate = false;
+            }
+        }
+    }
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (page_declaration
+    (page_keyword)
+    object_id: (integer)
+    object_name: (quoted_identifier)
+    body: (declaration_body
+      (layout_section
+        (layout_keyword)
+        body: (layout_body
+          (area_section
+            (area_keyword)
+            type: (content_keyword)
+            body: (layout_body
+              (page_field
+                (field_keyword)
+                name: (identifier)
+                source: (member_expression
+                  object: (identifier)
+                  member: (identifier))
+                body: (declaration_body
+                  (property
+                    name: (property_name)
+                    value: (property_expression
+                      (comparison_expression
+                        left: (identifier)
+                        operator: (comparison_operator)
+                        right: (boolean))))
+                  (property
+                    name: (property_name)
+                    value: (property_expression
+                      (comparison_expression
+                        left: (identifier)
+                        operator: (comparison_operator)
+                        right: (boolean)))))))))))))

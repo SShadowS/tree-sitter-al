@@ -355,6 +355,21 @@
     (quoted_identifier)
   ] @name) @reference.implementation
 
+; Implementation mappings: `Implementation = "IFace" = "Impl"`. The left name
+; is the interface, the right name the implementing codeunit. Single-entry and
+; comma-separated forms both parse to implementation_value (issue #20).
+(implementation_value
+  interface: [
+    (identifier)
+    (quoted_identifier)
+  ] @name) @reference.implementation
+
+(implementation_value
+  implementation: [
+    (identifier)
+    (quoted_identifier)
+  ] @name) @reference.class
+
 ; =============================================================================
 ; Enum Value References
 ; =============================================================================

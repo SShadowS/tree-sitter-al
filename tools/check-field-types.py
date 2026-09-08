@@ -83,6 +83,21 @@ FIELD_INVARIANTS = [
             'time_literal',
         }),
 
+    # Implementation = "IFace" = "Impl" -- one entry is also a complete
+    # comparison, so property_expression parsed the single-entry form and
+    # implementation_value only ever modelled the comma-separated one (issue
+    # #20; 421 of 442 BC.History sites). Fixed in grammar.js by prec.dynamic on
+    # implementation_value plus the `implementation_names` reserved set, which
+    # keeps `Visible = HideActions = false;` a comparison. Both fields are one
+    # name each; the type set is pinned so a widening (a boolean, say) fails
+    # here rather than in a consumer.
+    inv('implementation_value', 'interface', False, set(), 'FIXED',
+        'single-entry mapping now reaches implementation_value (issue #20)',
+        types={'identifier', 'quoted_identifier'}),
+    inv('implementation_value', 'implementation', False, set(), 'FIXED',
+        'single-entry mapping now reaches implementation_value (issue #20)',
+        types={'identifier', 'quoted_identifier'}),
+
     # case ... else body: field('body', repeat($._statement)) fielded EACH
     # statement in the repeat individually, so 'body' was multiple:true and
     # broke the single-node body invariant the textobject queries rely on

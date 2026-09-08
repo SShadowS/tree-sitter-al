@@ -130,6 +130,25 @@ module.exports = grammar({
 
   word: $ => $.identifier,
 
+  // Reserved-word sets (tree-sitter >= 0.25). `global` is deliberately empty:
+  // AL keyword-vs-identifier disambiguation is contextual and handled by the
+  // grammar (see keyword_as_identifier) and the scanner. The contextual sets
+  // below are applied with reserved('name', rule) at exactly one site each.
+  reserved: {
+    global: $ => [],
+    // `true`/`false` inside an implementation mapping. A one-entry
+    // `Implementation = A = B` is also a complete comparison, and the two
+    // readings are settled by prec.dynamic in implementation_value's favour.
+    // Lexing is per GLR fork, and in the implementation fork `boolean` is not a
+    // valid token, so `Visible = HideActions = false;` lexed `false` as an
+    // identifier there and the mapping reading won -- 4 real BC.History sites.
+    // Reserving the two boolean spellings in that fork rejects the identifier,
+    // the fork dies, and the comparison reading is the only one left.
+    // Entries must be rule symbols (or a token already extracted elsewhere); a
+    // fresh kw() here fails generate with "Reserved word must be a token".
+    implementation_names: $ => [$._true_token, $._false_token],
+  },
+
   extras: $ => [
     /\s/,
     $.comment,
@@ -177,6 +196,11 @@ module.exports = grammar({
     [$.preproc_conditional_layout, $.preproc_conditional_layout_mixed],
     [$.preproc_conditional, $.preproc_conditional_actions],
     [$._expression, $._identifier_or_quoted],
+    // `Prop = identifier . = ...`: the identifier may open a comparison, a
+    // link_value (via _identifier_or_quoted) or an implementation_value (via
+    // its reserved-context twin). GLR carries all three to the `;`.
+    [$._expression, $._identifier_or_quoted, $._implementation_name],
+    [$._identifier_or_quoted, $._implementation_name],
     // A `#if` after an argument expression can open an expression CONTINUATION
     // (`f(1 #if X + 2 #endif )`) or a statement-level conditional that merely
     // follows. The discriminator is past the condition, so GLR must explore both.
@@ -714,7 +738,12 @@ module.exports = grammar({
       $.subscript_expression,
     )),
 
-    boolean: $ => choice(kw('true'), kw('false')),
+    // The two spellings are hidden token rules rather than inline kw() so that
+    // the `reserved` block at the top can name them. `boolean` is still a
+    // childless leaf: hidden terminals do not appear in the tree.
+    boolean: $ => choice($._true_token, $._false_token),
+    _true_token: $ => kw('true'),
+    _false_token: $ => kw('false'),
 
     decimal: $ => token(seq(/\d+/, '.', /\d+/)),
 
@@ -1256,11 +1285,42 @@ module.exports = grammar({
       $._impl_value_seq,
     ),
 
-    implementation_value: $ => seq(
-      field('interface', $._identifier_or_quoted),
+    // prec.dynamic: a one-entry list is still a complete `A = B` expression, so
+    // property_expression -> comparison_expression parses it too. The tie
+    // survives to a GLR ambiguity, where static prec does not apply, and the
+    // arbitrary symbol-id tiebreak handed every single-entry Implementation /
+    // DefaultImplementation / UnknownValueImplementation to property_expression
+    // (419 of 440 sites in BC.History -- the comma-separated form was never
+    // ambiguous). Same mechanism and same fix as `link_value`, which settled
+    // its structured forms this way in 4.0.0 and deliberately left the bare
+    // `A = B` shape alone because it belongs here.
+    //
+    // reserved(): dynamic precedence alone over-claimed. Lexing is per GLR
+    // fork, and `boolean` is not a valid token in this fork, so `false` in
+    // `Visible = HideActions = false;` lexed as an identifier here and the
+    // mapping reading won. With `true`/`false` reserved inside this rule the
+    // identifier is rejected, this fork dies, and only the comparison remains.
+    // A member access or any other non-identifier right-hand side never
+    // matched this rule to begin with. See the `reserved` block at the top.
+    implementation_value: $ => prec.dynamic(1, seq(
+      field('interface', $._implementation_name),
       '=',
-      field('implementation', $._identifier_or_quoted)
-    ),
+      field('implementation', $._implementation_name)
+    )),
+
+    // _identifier_or_quoted under the `implementation_names` reserved set.
+    // reserved() marks the steps of the rule it wraps, and the table builder
+    // gives a parse state the largest set among items whose NEXT STEP IS
+    // `identifier` ITSELF (build_parse_table.rs, `keyword_capture_token`). So
+    // the set has to live on the rule that names $.identifier directly:
+    // wrapping `reserved(..., $._identifier_or_quoted)` marks a non-terminal
+    // step, the closure item `_identifier_or_quoted: . identifier` still
+    // carries the global set, and nothing is reserved. Measured, not argued.
+    _implementation_name: $ => reserved('implementation_names', choice(
+      $.identifier,
+      $.quoted_identifier,
+      alias($.keyword_as_identifier, $.identifier),
+    )),
 
     // --- OptionMembers value list ---
     // Option1, Option2, "Option 3"

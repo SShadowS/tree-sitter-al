@@ -84,12 +84,29 @@ class GrammarAnalyzer:
         """Find all rule definitions in the grammar."""
         # Pattern for rule definitions: rule_name: $ => ...
         definition_pattern = r'^\s*([a-zA-Z_][a-zA-Z0-9_]*)\s*:\s*\$\s*=>'
-        
+
+        # The `reserved: { global: $ => [...], name: $ => [...] }` block declares
+        # reserved-word SETS, and each set line has exactly the shape of a rule
+        # definition. They are referenced only as the string argument of
+        # reserved('name', ...), never as $.name, so every set was reported as an
+        # orphan the first time one was added. Skip the block wholesale; the
+        # block's closing brace is the first `}` at the same indent as `reserved:`.
+        reserved_indent = None
+
         for line_num, line in enumerate(self.lines, 1):
             # Skip comments
             if line.strip().startswith('//'):
                 continue
-                
+
+            if reserved_indent is not None:
+                if re.match(r'^ {%d}\},?\s*$' % reserved_indent, line):
+                    reserved_indent = None
+                continue
+            reserved_open = re.match(r'^(\s*)reserved\s*:\s*\{\s*$', line)
+            if reserved_open:
+                reserved_indent = len(reserved_open.group(1))
+                continue
+
             match = re.match(definition_pattern, line)
             if match:
                 rule_name = match.group(1)

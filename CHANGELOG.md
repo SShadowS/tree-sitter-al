@@ -5,6 +5,76 @@ Format loosely follows [Keep a Changelog](https://keepachangelog.com/); the proj
 uses [Semantic Versioning](https://semver.org/) where the parse-tree shape is the
 public API — a change to node structure or field names is a **major** bump.
 
+## [Unreleased]
+
+### Fixed
+
+- **A single-entry `Implementation` / `DefaultImplementation` /
+  `UnknownValueImplementation` now parses as `implementation_value_list` →
+  `implementation_value`, the same as a comma-separated one. Until now it did
+  not reach `implementation_value` at all** (issue #20). This is the defect
+  4.0.0 fixed for the link properties, one rule over: one entry is still a
+  complete `A = B` expression, so `property_expression` →
+  `comparison_expression` parsed it too, the tie survived to a GLR ambiguity
+  where static precedence does not apply, and the arbitrary tiebreak handed
+  every single-entry site to `property_expression`. The comma-separated form
+  was never ambiguous, so `implementation_value` only ever modelled the
+  minority shape: **421 of 442 mapping sites in BC.History, in 98 files, were
+  the single-entry form** and came back as a comparison. The AL compiler's own
+  tree has no comparison there (`IdentifierEqualsIdentifier`), and a consumer
+  that enumerates expression nodes — a mutation tester negating comparisons, a
+  linter — saw one inside a declarative property.
+
+  Before, for `Implementation = "Probe IFace" = "Probe Impl";`:
+  ```
+  value: (property_expression
+    (comparison_expression
+      left: (quoted_identifier)
+      operator: (comparison_operator)
+      right: (quoted_identifier)))
+  ```
+  After — identical to what two entries have always produced:
+  ```
+  value: (implementation_value_list
+    (implementation_value
+      interface: (quoted_identifier)
+      implementation: (quoted_identifier)))
+  ```
+
+  Settled with `prec.dynamic(1)` on `implementation_value`, exactly as
+  `link_value` was. **That alone over-claimed, and the reason is worth
+  recording.** Lexing is per GLR fork, and in the mapping fork `boolean` is not
+  a valid token, so `false` in `Visible = HideActions = false;` lexed as an
+  `identifier` there and the mapping reading won — 4 real BC.History sites
+  would have become interface mappings. Fixed with the first use of
+  tree-sitter's reserved-word sets in this grammar: `true`/`false` are reserved
+  inside the mapping's two names, so that fork rejects the identifier and dies,
+  and the comparison is the only reading left. Two facts about `reserved` that
+  the documentation does not state, both measured here: an entry must be a rule
+  *symbol* (a fresh `kw()` in the set fails generate with "must be a token"),
+  and a parse state takes the largest set among items whose *next step is
+  `identifier` itself* — wrapping a reference to the hidden `_identifier_or_quoted`
+  marks a non-terminal step and reserves nothing. Hence `_implementation_name`,
+  a reserved-context twin of `_identifier_or_quoted`, and `_true_token` /
+  `_false_token` as named hidden tokens behind `boolean` (whose shape is
+  unchanged: hidden terminals do not appear in the tree).
+
+  Verified over BC.History with `tools/tree-harness.sh` against a baseline
+  taken immediately before the change: 98 files moved, and every one of the
+  421 moved hunks is `property_expression` → `implementation_value_list` with
+  the same two names; no other node kind changed anywhere in 15,358 files.
+  `Visible = HideActions = false;` and `Editable = X = false;` are pinned as
+  comparisons by fixture. 15 shipped fixture cases in 7 files had asserted the
+  comparison as correct and were rewritten — each hunk is the same shape move.
+  `tools/check-field-types.py` gains rows pinning both `implementation_value`
+  fields to `{identifier, quoted_identifier}`, and `queries/highlights.scm` /
+  `queries/tags.scm` now capture the interface and implementing codeunit at
+  every mapping site (`@type`; `@reference.implementation` /
+  `@reference.class`), where before only the comma-separated form was reachable.
+
+  This changes the tree shape for every single-entry mapping and is a **major**
+  bump under this project's versioning.
+
 ## [4.0.1] — 2026-08-12
 
 Three defects, all found the same way: **by someone outside this repository using
