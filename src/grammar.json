@@ -2231,6 +2231,24 @@
           "name": "decimal"
         },
         {
+          "type": "ALIAS",
+          "content": {
+            "type": "SYMBOL",
+            "name": "_negative_integer"
+          },
+          "named": true,
+          "value": "integer"
+        },
+        {
+          "type": "ALIAS",
+          "content": {
+            "type": "SYMBOL",
+            "name": "_negative_decimal"
+          },
+          "named": true,
+          "value": "decimal"
+        },
+        {
           "type": "SYMBOL",
           "name": "string_literal"
         },
@@ -2406,6 +2424,15 @@
           "name": "integer"
         },
         {
+          "type": "ALIAS",
+          "content": {
+            "type": "SYMBOL",
+            "name": "_negative_integer"
+          },
+          "named": true,
+          "value": "integer"
+        },
+        {
           "type": "SEQ",
           "members": [
             {
@@ -2419,6 +2446,46 @@
           ]
         }
       ]
+    },
+    "_negative_integer": {
+      "type": "TOKEN",
+      "content": {
+        "type": "SEQ",
+        "members": [
+          {
+            "type": "STRING",
+            "value": "-"
+          },
+          {
+            "type": "PATTERN",
+            "value": "\\d+"
+          }
+        ]
+      }
+    },
+    "_negative_decimal": {
+      "type": "TOKEN",
+      "content": {
+        "type": "SEQ",
+        "members": [
+          {
+            "type": "STRING",
+            "value": "-"
+          },
+          {
+            "type": "PATTERN",
+            "value": "\\d+"
+          },
+          {
+            "type": "STRING",
+            "value": "."
+          },
+          {
+            "type": "PATTERN",
+            "value": "\\d+"
+          }
+        ]
+      }
     },
     "object_reference_value": {
       "type": "PREC",
@@ -5303,6 +5370,15 @@
         {
           "type": "SYMBOL",
           "name": "integer"
+        },
+        {
+          "type": "ALIAS",
+          "content": {
+            "type": "SYMBOL",
+            "name": "_negative_integer"
+          },
+          "named": true,
+          "value": "integer"
         },
         {
           "type": "SEQ",

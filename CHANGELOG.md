@@ -5,6 +5,35 @@ Format loosely follows [Keep a Changelog](https://keepachangelog.com/); the proj
 uses [Semantic Versioning](https://semver.org/) where the parse-tree shape is the
 public API — a change to node structure or field names is a **major** bump.
 
+## [Unreleased]
+
+### Fixed
+
+- **A negative literal in a property is one signed literal, not a
+  `unary_expression`** (issue #23). `MinValue = -1500;` reached
+  `property_expression` → `unary_expression` → `operand: (integer)`; the AL
+  compiler models that slot as `Int32SignedLiteralValue` and uses a unary node
+  only in executable code. Two tokens, `-` followed by digits and `-` followed
+  by a decimal, are now accepted at property-value start and inside
+  `signed_integer_list` / `option_member`, aliased to `integer` / `decimal` so
+  the value is a plain leaf whose text carries the sign. They are valid nowhere
+  an expression is, so `X := 5 -3` in code still lexes `-` as the binary
+  operator; where both the literal and unary `-` are valid, longest match picks
+  the literal. `- 1` with whitespace keeps its old shape.
+
+  Beyond the issue's 57 `MinValue` sites: `OptionOrdinalValues = -1;` (7 sites)
+  had the same shape, because `signed_integer_list` needs two members and the
+  single one fell through to the expression — the #20 single-entry mechanism.
+  The list form `-1, 0, 1` and `ValuesAllowed = -1, 0, 1, "X"` used to carry the
+  sign as a loose anonymous `-` beside an `integer` reading `1`; the `integer`
+  now reads `-1`. tree-harness against a baseline taken immediately before the
+  change: 62 BC.History files, 64 property values move to `value: (integer)`,
+  144 list members widen by their sign, nothing else. One shipped fixture
+  (`values_allowed_with_integers.txt`) briefly lost its list when the new token
+  was not yet accepted by `option_member`, which is why it is; a new fixture
+  pins the property, list and option-member forms plus the executable-code
+  guards.
+
 ## [4.2.0] — 2026-09-09
 
 Two parser defects from the same compiler cross-check that produced #20 —

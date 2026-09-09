@@ -686,6 +686,18 @@ module.exports = grammar({
       $.boolean,
       $.integer,
       $.decimal,
+      // A negative literal in a declarative slot is ONE signed literal, which
+      // is how the AL compiler models it (Int32SignedLiteralValue); it uses a
+      // unary node only in executable code. Until issue #23 `MinValue = -1500;`
+      // reached property_expression -> unary_expression here (57 BC.History
+      // sites, plus 7 single-entry `OptionOrdinalValues = -1;`). These two
+      // tokens are valid only at a property-value start and inside
+      // signed_integer_list, never in an expression, so `X := 5 -3` in code is
+      // untouched; where both this and the bare '-' of unary_expression are
+      // valid, longest match picks the literal. Aliased so the value stays a
+      // plain integer/decimal leaf whose text carries the sign.
+      alias($._negative_integer, $.integer),
+      alias($._negative_decimal, $.decimal),
       $.string_literal,
       $.verbatim_string,
       $.identifier,
@@ -732,8 +744,12 @@ module.exports = grammar({
 
     _signed_integer: $ => choice(
       $.integer,
-      seq('-', $.integer),
+      alias($._negative_integer, $.integer),  // `-1` as one signed literal (issue #23)
+      seq('-', $.integer),                     // `- 1` with whitespace, as before
     ),
+
+    _negative_integer: $ => token(seq('-', /\d+/)),
+    _negative_decimal: $ => token(seq('-', /\d+/, '.', /\d+/)),
 
     // Object reference as property value: Codeunit "BOM-Explode BOM"
     // Also supports namespace: Page Microsoft.Sales."Sales Order"
@@ -1443,7 +1459,8 @@ module.exports = grammar({
       $.quoted_identifier,
       $.string_literal,
       $.integer,             // Numeric option members (ValuesAllowed = 0, None, Partial)
-      seq('-', $.integer),   // Negative integer option members (ValuesAllowed = -1)
+      alias($._negative_integer, $.integer),  // `-1` as one signed literal (issue #23)
+      seq('-', $.integer),   // `- 1` with whitespace, as before
       $.keyword_identifier,  // System, Action, etc.
       alias($.keyword_as_identifier, $.identifier),  // Type, Field, etc.
       alias($.tabledata_keyword, $.identifier),  // TableData (first-position collision fix)

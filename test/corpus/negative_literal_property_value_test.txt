@@ -1,0 +1,111 @@
+================================================================================
+A negative literal in a property is one signed literal; in code the minus stays a unary operator
+================================================================================
+
+table 50000 T
+{
+    fields
+    {
+        field(1; A; Integer)
+        {
+            MinValue = -1500;
+            MaxValue = 1500;
+            InitValue = -1.5;
+            OptionOrdinalValues = -1;
+        }
+        field(2; B; Option)
+        {
+            OptionOrdinalValues = -1, 0, 1;
+            Editable = -X;
+        }
+    }
+    procedure P()
+    var
+        X: Integer;
+    begin
+        X := -1500;
+        X := 5 - 3;
+        X := X -1;
+    end;
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (table_declaration
+    (table_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (fields_section
+        (fields_keyword)
+        body: (fields_body
+          (field_declaration
+            (field_keyword)
+            id: (integer)
+            name: (identifier)
+            type: (type_specification
+              (basic_type))
+            body: (declaration_body
+              (property
+                name: (property_name)
+                value: (integer))
+              (property
+                name: (property_name)
+                value: (integer))
+              (property
+                name: (property_name)
+                value: (decimal))
+              (property
+                name: (property_name)
+                value: (integer))))
+          (field_declaration
+            (field_keyword)
+            id: (integer)
+            name: (identifier)
+            type: (type_specification
+              (option_type
+                (option_keyword)))
+            body: (declaration_body
+              (property
+                name: (property_name)
+                value: (signed_integer_list
+                  (integer)
+                  (integer)
+                  (integer)))
+              (property
+                name: (property_name)
+                value: (property_expression
+                  (unary_expression
+                    operand: (identifier))))))))
+      (procedure
+        (procedure_keyword)
+        name: (identifier)
+        (var_section
+          (var_keyword)
+          body: (var_body
+            (variable_declaration
+              name: (identifier)
+              type: (type_specification
+                (basic_type)))))
+        body: (code_block
+          (begin_keyword)
+          body: (statement_block
+            (assignment_statement
+              left: (identifier)
+              operator: (assignment_operator)
+              right: (unary_expression
+                operand: (integer)))
+            (assignment_statement
+              left: (identifier)
+              operator: (assignment_operator)
+              right: (additive_expression
+                left: (integer)
+                right: (integer)))
+            (assignment_statement
+              left: (identifier)
+              operator: (assignment_operator)
+              right: (additive_expression
+                left: (identifier)
+                right: (integer))))
+          (end_keyword))))))
