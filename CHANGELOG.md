@@ -5,7 +5,14 @@ Format loosely follows [Keep a Changelog](https://keepachangelog.com/); the proj
 uses [Semantic Versioning](https://semver.org/) where the parse-tree shape is the
 public API — a change to node structure or field names is a **major** bump.
 
-## [Unreleased]
+## [4.2.0] — 2026-09-09
+
+Two parser defects from the same compiler cross-check that produced #20 —
+issues #21 and #22, both reported against the published 4.1.0 wasm — and the
+first green run of the "Gate self-test" CI job since it was added. Validated
+over **15,358 production AL files** (BC.History), **0 errors**. 1,623 tests
+pass; the gate self-test runs 24 cases, 23 pass and 1 skips where no C
+toolchain is present.
 
 ### Fixed
 
