@@ -1,0 +1,224 @@
+================================================================================
+CalcFormula sum/count/exist/min/max/average reach aggregate_formula, not call_expression
+================================================================================
+
+table 50000 "T"
+{
+    fields
+    {
+        field(1; N; Integer) { }
+        field(2; S; Integer)
+        {
+            CalcFormula = sum("T".N);
+        }
+        field(3; C; Integer)
+        {
+            CalcFormula = count("T");
+        }
+        field(4; E; Boolean)
+        {
+            CalcFormula = exist("T" where(N = const(1)));
+        }
+        field(5; Mn; Integer)
+        {
+            CalcFormula = min("T".N);
+        }
+        field(6; Mx; Integer)
+        {
+            CalcFormula = max("T".N);
+        }
+        field(7; A; Decimal)
+        {
+            CalcFormula = average("T".N);
+        }
+        field(8; Neg; Integer)
+        {
+            CalcFormula = - sum("T".N where(N = const(1)));
+        }
+        field(9; L; Integer)
+        {
+            calcformula = lookup("T".N);
+        }
+    }
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (table_declaration
+    (table_keyword)
+    object_id: (integer)
+    object_name: (quoted_identifier)
+    body: (declaration_body
+      (fields_section
+        (fields_keyword)
+        body: (fields_body
+          (field_declaration
+            (field_keyword)
+            id: (integer)
+            name: (identifier)
+            type: (type_specification
+              (basic_type)))
+          (field_declaration
+            (field_keyword)
+            id: (integer)
+            name: (identifier)
+            type: (type_specification
+              (basic_type))
+            body: (declaration_body
+              (property
+                name: (property_name)
+                value: (aggregate_formula
+                  function: (aggregate_function)
+                  target: (calc_field_reference
+                    (quoted_identifier)
+                    (identifier))))))
+          (field_declaration
+            (field_keyword)
+            id: (integer)
+            name: (identifier)
+            type: (type_specification
+              (basic_type))
+            body: (declaration_body
+              (property
+                name: (property_name)
+                value: (aggregate_formula
+                  function: (aggregate_function)
+                  target: (calc_field_reference
+                    (quoted_identifier))))))
+          (field_declaration
+            (field_keyword)
+            id: (integer)
+            name: (identifier)
+            type: (type_specification
+              (basic_type))
+            body: (declaration_body
+              (property
+                name: (property_name)
+                value: (aggregate_formula
+                  function: (aggregate_function)
+                  target: (calc_field_reference
+                    (quoted_identifier))
+                  (where_clause
+                    (where_keyword)
+                    (where_conditions
+                      (where_condition
+                        field: (identifier)
+                        (const_keyword)
+                        value: (integer))))))))
+          (field_declaration
+            (field_keyword)
+            id: (integer)
+            name: (identifier)
+            type: (type_specification
+              (basic_type))
+            body: (declaration_body
+              (property
+                name: (property_name)
+                value: (aggregate_formula
+                  function: (aggregate_function)
+                  target: (calc_field_reference
+                    (quoted_identifier)
+                    (identifier))))))
+          (field_declaration
+            (field_keyword)
+            id: (integer)
+            name: (identifier)
+            type: (type_specification
+              (basic_type))
+            body: (declaration_body
+              (property
+                name: (property_name)
+                value: (aggregate_formula
+                  function: (aggregate_function)
+                  target: (calc_field_reference
+                    (quoted_identifier)
+                    (identifier))))))
+          (field_declaration
+            (field_keyword)
+            id: (integer)
+            name: (identifier)
+            type: (type_specification
+              (basic_type))
+            body: (declaration_body
+              (property
+                name: (property_name)
+                value: (aggregate_formula
+                  function: (aggregate_function)
+                  target: (calc_field_reference
+                    (quoted_identifier)
+                    (identifier))))))
+          (field_declaration
+            (field_keyword)
+            id: (integer)
+            name: (identifier)
+            type: (type_specification
+              (basic_type))
+            body: (declaration_body
+              (property
+                name: (property_name)
+                value: (aggregate_formula
+                  function: (aggregate_function)
+                  target: (calc_field_reference
+                    (quoted_identifier)
+                    (identifier))
+                  (where_clause
+                    (where_keyword)
+                    (where_conditions
+                      (where_condition
+                        field: (identifier)
+                        (const_keyword)
+                        value: (integer))))))))
+          (field_declaration
+            (field_keyword)
+            id: (integer)
+            name: (identifier)
+            type: (type_specification
+              (basic_type))
+            body: (declaration_body
+              (property
+                name: (property_name)
+                value: (lookup_formula
+                  (lookup_keyword)
+                  target: (calc_field_reference
+                    (quoted_identifier)
+                    (identifier)))))))))))
+
+================================================================================
+Formula-shaped values of other properties stay what they are: a bare Sum, a real Caption(Rec) call
+================================================================================
+
+page 50002 P
+{
+    Method = Sum;
+    DataCaptionExpression = Caption(Rec);
+    CaptionClass = Format(Rec."No.");
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (page_declaration
+    (page_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (property
+        name: (property_name)
+        value: (identifier))
+      (property
+        name: (property_name)
+        value: (property_expression
+          (call_expression
+            function: (identifier)
+            arguments: (argument_list
+              (identifier)))))
+      (property
+        name: (property_name)
+        value: (property_expression
+          (call_expression
+            function: (identifier)
+            arguments: (argument_list
+              (member_expression
+                object: (identifier)
+                member: (quoted_identifier)))))))))

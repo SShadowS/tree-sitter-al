@@ -46,11 +46,10 @@ table 50100 "User Status"
             body: (declaration_body
               (property
                 name: (property_name)
-                value: (property_expression
-                  (call_expression
-                    function: (identifier)
-                    arguments: (argument_list
-                      (quoted_identifier)))))
+                value: (aggregate_formula
+                  function: (aggregate_function)
+                  target: (calc_field_reference
+                    (quoted_identifier))))
               (property
                 name: (property_name)
                 value: (string_literal))
@@ -122,11 +121,10 @@ table 50200 "Statistics"
             body: (declaration_body
               (property
                 name: (property_name)
-                value: (property_expression
-                  (call_expression
-                    function: (identifier)
-                    arguments: (argument_list
-                      (quoted_identifier)))))
+                value: (aggregate_formula
+                  function: (aggregate_function)
+                  target: (calc_field_reference
+                    (quoted_identifier))))
               (property
                 name: (property_name)
                 value: (identifier)))))))))
@@ -170,11 +168,10 @@ table 50300 "Count Test"
             body: (declaration_body
               (property
                 name: (property_name)
-                value: (property_expression
-                  (call_expression
-                    function: (identifier)
-                    arguments: (argument_list
-                      (quoted_identifier)))))))
+                value: (aggregate_formula
+                  function: (aggregate_function)
+                  target: (calc_field_reference
+                    (quoted_identifier))))))
           (field_declaration
             (field_keyword)
             id: (integer)

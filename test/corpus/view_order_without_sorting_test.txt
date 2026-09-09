@@ -1,0 +1,55 @@
+================================================================================
+A view value that starts with order() is a sorting_value; Order stays an identifier elsewhere
+================================================================================
+
+page 50003 V
+{
+    SourceTableView = order(descending);
+    SubPageView = ORDER(Ascending) where(Status = const(Open));
+    RunPageView = sorting("No.") order(descending);
+    Image = Order;
+    OptionMembers = Order, Invoice;
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (page_declaration
+    (page_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (property
+        name: (property_name)
+        value: (sorting_value
+          (order_keyword)
+          (descending_keyword)))
+      (property
+        name: (property_name)
+        value: (sorting_value
+          (order_keyword)
+          (ascending_keyword)
+          (where_clause
+            (where_keyword)
+            (where_conditions
+              (where_condition
+                field: (identifier)
+                (const_keyword)
+                value: (identifier))))))
+      (property
+        name: (property_name)
+        value: (sorting_value
+          (sorting_keyword)
+          (quoted_identifier)
+          (order_keyword)
+          (descending_keyword)))
+      (property
+        name: (property_name)
+        value: (identifier))
+      (property
+        name: (property_name)
+        value: (option_member_list
+          (option_member
+            (identifier))
+          (option_member
+            (identifier)))))))

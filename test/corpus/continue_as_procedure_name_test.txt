@@ -1,0 +1,103 @@
+================================================================================
+Continue followed by ( . [ :: := += is a name; bare continue; is the statement
+================================================================================
+
+codeunit 50000 P
+{
+    procedure Continue(X: Integer)
+    begin
+    end;
+
+    procedure Caller()
+    var
+        Continue: Record Customer;
+        E: Enum "Kind";
+    begin
+        Continue(1);
+        DoOther(2);
+        Continue.Name := 'x';
+        Continue[1] := 2;
+        E := Continue::First;
+        Continue := true;
+        Continue += 1;
+        continue;
+    end;
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (procedure
+        (procedure_keyword)
+        name: (identifier)
+        parameters: (parameter_list
+          (parameter
+            name: (identifier)
+            type: (type_specification
+              (basic_type))))
+        body: (code_block
+          (begin_keyword)
+          (end_keyword)))
+      (procedure
+        (procedure_keyword)
+        name: (identifier)
+        (var_section
+          (var_keyword)
+          body: (var_body
+            (variable_declaration
+              name: (identifier)
+              type: (type_specification
+                (record_type
+                  (record_keyword)
+                  reference: (identifier))))
+            (variable_declaration
+              name: (identifier)
+              type: (type_specification
+                (object_reference_type
+                  object_type: (enum_keyword)
+                  reference: (quoted_identifier))))))
+        body: (code_block
+          (begin_keyword)
+          body: (statement_block
+            (call_expression
+              function: (identifier)
+              arguments: (argument_list
+                (integer)))
+            (call_expression
+              function: (identifier)
+              arguments: (argument_list
+                (integer)))
+            (assignment_statement
+              left: (member_expression
+                object: (identifier)
+                member: (identifier))
+              operator: (assignment_operator)
+              right: (string_literal))
+            (assignment_statement
+              left: (subscript_expression
+                object: (identifier)
+                index: (integer))
+              operator: (assignment_operator)
+              right: (integer))
+            (assignment_statement
+              left: (identifier)
+              operator: (assignment_operator)
+              right: (qualified_enum_value
+                enum_type: (identifier)
+                value: (identifier)))
+            (assignment_statement
+              left: (identifier)
+              operator: (assignment_operator)
+              right: (boolean))
+            (assignment_statement
+              left: (identifier)
+              operator: (assignment_operator)
+              right: (integer))
+            (continue_statement
+              (continue_keyword)))
+          (end_keyword))))))

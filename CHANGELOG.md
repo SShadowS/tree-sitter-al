@@ -47,6 +47,55 @@ public API — a change to node structure or field names is a **major** bump.
   mutation-tested like the others. 24 cases; 23 pass and 1 skips where no C
   toolchain is present, on Linux in a fresh clone.
 
+- **`CalcFormula = sum(...)` / `count` / `exist` / `min` / `max` / `average`
+  without a `where()` now parse as `aggregate_formula`, and
+  `SourceTableView = order(descending)` as `sorting_value`, instead of
+  `property_expression` → `call_expression`** (issue #21). The tie is the #20
+  mechanism again: `sum("T".N)` is also a complete call, static prec is void in
+  a GLR ambiguity, and the tiebreak chose the call. The fix could not be
+  another `prec.dynamic`, because value shape does not decide this one:
+  `DataCaptionExpression = Caption(Rec);` and `CaptionClass = Format(Rec."No.")`
+  are real calls with exactly a formula's shape (20 BC.History sites), and
+  `Method = Sum;` is a bare identifier that any `sum` keyword token would have
+  stolen (139 sites). The property NAME is the only discriminator, so the
+  scanner now emits `CALC_FORMULA_PROPERTY_NAME` for that one word and
+  `property` has a second arm whose value is the formula grammar alone —
+  which is what the AL compiler does. `order(...)` gained an arm in
+  `sorting_value` with no `sorting()` part; `Image = Order;` and
+  `OptionMembers = Order, Invoice` keep their identifiers via
+  `keyword_as_identifier`.
+
+  **The measured defect is smaller than reported.** A `where()` is not a call
+  argument, so every aggregate WITH one was never ambiguous and already reached
+  `aggregate_formula` — verified on the pre-change parser. tree-harness against
+  a baseline taken immediately before the change: 16 files moved in BC.History,
+  22 no-`where` aggregate sites in 12 files, 3 `order(descending)` views, and
+  nothing else. Two shipped fixture files (6 cases) had pinned the call shape
+  and are rewritten; each hunk is the same move. `_calc_formula_expression`
+  leaves the generic `_property_value`, which also retires a declared
+  `[calc_field_reference, _expression]` conflict that `generate` reported as
+  unnecessary the moment it went.
+
+- **`Continue(X);` is a call to a procedure named `Continue`, not a
+  `continue_statement` followed by a stranded `parenthesized_expression`**
+  (issue #22). `continue` IS live AL — BC.History has 7 bare `continue;`
+  statements in Microsoft's shipping code — so the rule stays; the scanner's
+  `CONTINUE_AS_IDENTIFIER` lookahead, which only tested `:=`, now also accepts
+  `(` `.` `[` `::` and `+=` `-=` `*=` `/=`, none of which can follow a
+  continue statement. `call_expression` and `qualified_enum_value` take the
+  resulting name. `Continue.Field := 1;` was an outright ERROR before and is
+  an assignment now. One BC.History site moves
+  (`WorkflowWebhookManagement.Codeunit.al`), the 7 statements do not.
+
+  A side effect worth recording: that one misparsed site was the only
+  `continue_statement` in the query-coverage manifest, so fixing it made the
+  node type "never observed" there. The manifest was re-derived by set-cover
+  (`qc select`, 59 → 67 files) and now covers `continue_statement` through a
+  real `continue;`; the never-observed list shrank from 44 to 40 types. The
+  grammar-health baseline was refreshed for the new external token and its
+  regex detector taught to skip the `reserved:` block, the same false positive
+  `tools/find_unused_definitions.py` had.
+
 ## [4.1.0] — 2026-09-09
 
 One defect, reported against the published wasm by a consumer diffing this

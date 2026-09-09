@@ -13,21 +13,22 @@ The scanner maintains a `ScannerState` holding a `depth` counter tracking `#if`/
 | Token | Purpose | Depth Effect |
 |-------|---------|-------------|
 | `PROPERTY_NAME` | `identifier` followed by `=` (not `:=`) — property/variable disambiguation | none |
-| `CONTINUE_AS_IDENTIFIER` | `continue` followed by `:=` — used as variable name | none |
+| `CONTINUE_AS_IDENTIFIER` | `continue` followed by `:=` `(` `.` `[` `::` `+=` `-=` `*=` `/=` — used as a name, not the statement | none |
 | `PREPROC_OPEN` | `#if` — with string literal fallback in grammar | depth++ |
 | `PREPROC_CLOSE` | `#endif` — with string literal fallback in grammar | depth-- |
 | `BEGIN_KEYWORD` | `begin` at any depth — named node for queries | none |
 | `END_KEYWORD` | `end` at any depth — named node for queries | none |
 | `PREPROC_SPLIT_BEGIN` | `begin` at depth > 0, immediately before `#endif` — split detection | none |
 | `PREPROC_SPLIT_END` | `end` at depth > 0, followed by `;` then `#elif`/`#else`/`#endif` — split detection | none |
+| `CALC_FORMULA_PROPERTY_NAME` | `CalcFormula` followed by `=` — the one property keyed by name; falls back to `PROPERTY_NAME` where the grammar does not offer it | none |
 
-**Scan function order:** error recovery guard → PREPROC_OPEN/CLOSE → VAR_ATTRIBUTE_OPEN → identifier dispatch (`BEGIN_KEYWORD` | `PREPROC_SPLIT_BEGIN` | `END_KEYWORD` | `PREPROC_SPLIT_END` | `PROPERTY_NAME` | `CONTINUE_AS_IDENTIFIER`)
+**Scan function order:** error recovery guard → PREPROC_OPEN/CLOSE → VAR_ATTRIBUTE_OPEN → identifier dispatch (`BEGIN_KEYWORD` | `PREPROC_SPLIT_BEGIN` | `END_KEYWORD` | `PREPROC_SPLIT_END` | `PROPERTY_NAME` / `CALC_FORMULA_PROPERTY_NAME` | `CONTINUE_AS_IDENTIFIER`)
 
 `VAR_ATTRIBUTE_OPEN` runs **before** the identifier tokens, not after — it did not until 4.0.0, and the old order is why a leading `b` was absorbed into a following `[`, producing a two-column `[` token whose text was `b[`.
 
 ## Single-Read Identifier Dispatch
 
-**Every identifier-initial token is decided in ONE scan over ONE read of the identifier.** Six tokens compete for the same text — `BEGIN_KEYWORD`, `END_KEYWORD`, their two `PREPROC_SPLIT_*` competitors, `PROPERTY_NAME` and `CONTINUE_AS_IDENTIFIER` — and they cannot be sequential blocks that each do their own read.
+**Every identifier-initial token is decided in ONE scan over ONE read of the identifier.** Seven tokens compete for the same text — `BEGIN_KEYWORD`, `END_KEYWORD`, their two `PREPROC_SPLIT_*` competitors, `PROPERTY_NAME`, `CALC_FORMULA_PROPERTY_NAME` and `CONTINUE_AS_IDENTIFIER` — and they cannot be sequential blocks that each do their own read.
 
 Two independent reasons, both of which produced live bugs:
 
@@ -45,7 +46,7 @@ lexer->mark_end(lexer);                                  // pin the token to the
 // BEGIN_KEYWORD / END_KEYWORD are the fallback at EVERY depth.
 ```
 
-`read_identifier_word` returns `WORD_NOT_IDENTIFIER` when the lookahead cannot start an identifier and `WORD_OTHER` when the word is longer than the longest keyword tested (`continue`, 8 chars). `mark_end` before any lookahead is what makes the fallback safe, since the lookaheads advance well past the word.
+`read_identifier_word` returns `WORD_NOT_IDENTIFIER` when the lookahead cannot start an identifier and `WORD_OTHER` when the word is longer than the longest keyword tested (`calcformula`, 11 chars; it was `continue`, 8, until the CalcFormula token). `mark_end` before any lookahead is what makes the fallback safe, since the lookaheads advance well past the word.
 
 A failed lookahead is not a failed scan — `begin` is still a `begin`.
 

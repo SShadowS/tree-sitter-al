@@ -126,20 +126,21 @@ once. The only view is `git ls-files -s`; the fix is `git update-index --chmod=+
 - **Named keyword nodes** — 154 keywords exposed as named nodes for query matching (152 grammar rules + the external `begin_keyword`/`end_keyword`), all with a uniform shape: one anonymous child typed as the canonical lowercase spelling
 - **Stateful scanner** — a `uint32_t` depth counter tracks `#if`/`#endif` nesting (it was a `uint8_t` until 4.0.0 and wrapped at 256); `begin`/`end` are named at every depth, and the depth counter decides only whether a `PREPROC_SPLIT_*` token gets first refusal
 - **Reserved-word sets, one contextual set so far** — `reserved: { global: [], implementation_names: [...] }` (tree-sitter ≥ 0.25). `global` is empty on purpose; `implementation_names` reserves `true`/`false` inside `implementation_value`'s two names, which is what lets `prec.dynamic` favour the mapping reading of `A = B` without stealing `Visible = HideActions = false;`. Two rules the docs do not state, both measured while fixing issue #20: an entry must be a rule **symbol** (`$._true_token`), not a fresh `kw()`; and a parse state takes the largest set among items whose **next step is `identifier` itself**, so the set must sit on a rule that names `$.identifier` directly (`_implementation_name`) — wrapping a reference to `_identifier_or_quoted` reserves nothing
-- **Single-read identifier dispatch** — all six identifier-initial scanner tokens are decided in one scan over one read of the word. Nothing matches a keyword against the live lexer: a walking matcher leaves its matched prefix consumed on failure, so sequential per-token reads start mid-identifier. That shape caused three separate defects and was deleted in 4.0.0
+- **Single-read identifier dispatch** — all seven identifier-initial scanner tokens are decided in one scan over one read of the word. Nothing matches a keyword against the live lexer: a walking matcher leaves its matched prefix consumed on failure, so sequential per-token reads start mid-identifier. That shape caused three separate defects and was deleted in 4.0.0
 
 **Scanner Tokens:**
 
 | Token | Purpose |
 |-------|---------|
 | `PROPERTY_NAME` | `identifier` followed by `=` (not `:=`) — property/variable disambiguation |
-| `CONTINUE_AS_IDENTIFIER` | `continue` followed by `:=` — used as variable name |
+| `CONTINUE_AS_IDENTIFIER` | `continue` followed by `:=` `(` `.` `[` `::` or a compound assignment — used as a name, not the statement |
 | `PREPROC_OPEN` | `#if` — increments depth counter |
 | `PREPROC_CLOSE` | `#endif` — decrements depth counter |
 | `BEGIN_KEYWORD` | `begin` at any depth — named node for queries |
 | `END_KEYWORD` | `end` at any depth — named node for queries |
 | `PREPROC_SPLIT_BEGIN` | `begin` at depth > 0, immediately before `#endif` — split detection |
 | `PREPROC_SPLIT_END` | `end` at depth > 0, followed by `;` then `#elif`/`#else`/`#endif` — split detection |
+| `CALC_FORMULA_PROPERTY_NAME` | `CalcFormula` followed by `=` — the one property keyed by NAME; its value has its own grammar (see below) |
 
 ## Property Handling
 
@@ -164,6 +165,8 @@ property: $ => seq(
 - DecimalPlaces, OrderBy, Implementation
 
 **Adding new property support:** Most properties work automatically via the generic rule. Only add a dedicated rule if the property has syntax beyond `Name = Expression ;`.
+
+**One property is keyed by NAME, and the scanner does it: `CalcFormula`.** Its value (`sum/count/exist/min/max/average/lookup(Table.Field [where(...)])`) is also a syntactically complete call expression when there is no `where()`, and the property name is the only thing that separates `CalcFormula = Count(X)` from `DataCaptionExpression = Caption(Rec)` — real code has both shapes. So `PROPERTY_NAME`'s lookahead emits `CALC_FORMULA_PROPERTY_NAME` for that one word, and `property` has a second arm whose value is `_calc_formula_expression` only. Before the fix for issue #21, the GLR tiebreak gave 22 no-`where` aggregates in BC.History to `property_expression`. Do not generalise this: it exists because the compiler itself parses CalcFormula's value with a different grammar, and no value-shape rule could tell the two apart.
 
 ## Keyword Architecture
 

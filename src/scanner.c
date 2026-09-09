@@ -21,6 +21,7 @@ enum TokenType {
   PREPROC_SPLIT_BEGIN = 6,
   PREPROC_SPLIT_END = 7,
   VAR_ATTRIBUTE_OPEN = 8,
+  CALC_FORMULA_PROPERTY_NAME = 9,
 };
 
 // Named so the static assertion below can test its width AND its signedness.
@@ -277,6 +278,7 @@ enum IdentifierWord {
   WORD_BEGIN,
   WORD_END,
   WORD_CONTINUE,
+  WORD_CALCFORMULA,  // the one property name the scanner keys on (issue #21)
 };
 
 // Consume ONE complete identifier and classify it.
@@ -295,7 +297,7 @@ enum IdentifierWord {
 static enum IdentifierWord read_identifier_word(TSLexer *lexer) {
   if (!is_identifier_start(lexer->lookahead)) return WORD_NOT_IDENTIFIER;
 
-  char buf[9];  // longest keyword tested is "continue" (8) plus the NUL
+  char buf[12];  // longest keyword tested is "calcformula" (11) plus the NUL
   size_t len = 0;
   if (!read_word_ci(lexer, buf, sizeof(buf), &len)) {
     return WORD_OTHER;  // too long to be any keyword
@@ -304,6 +306,7 @@ static enum IdentifierWord read_identifier_word(TSLexer *lexer) {
   if (len == 5 && strcmp(buf, "begin") == 0) return WORD_BEGIN;
   if (len == 3 && strcmp(buf, "end") == 0) return WORD_END;
   if (len == 8 && strcmp(buf, "continue") == 0) return WORD_CONTINUE;
+  if (len == 11 && strcmp(buf, "calcformula") == 0) return WORD_CALCFORMULA;
   return WORD_OTHER;
 }
 
@@ -491,7 +494,8 @@ bool tree_sitter_al_external_scanner_scan(
       valid_symbols[BEGIN_KEYWORD] && valid_symbols[END_KEYWORD] &&
       valid_symbols[PREPROC_SPLIT_BEGIN] &&
       valid_symbols[PREPROC_SPLIT_END] &&
-      valid_symbols[VAR_ATTRIBUTE_OPEN]) {
+      valid_symbols[VAR_ATTRIBUTE_OPEN] &&
+      valid_symbols[CALC_FORMULA_PROPERTY_NAME]) {
     return false;
   }
 
@@ -748,7 +752,8 @@ bool tree_sitter_al_external_scanner_scan(
   // transparent here (see skip_whitespace_and_comments/TRANSPARENT_DIRECTIVES).
   if (valid_symbols[BEGIN_KEYWORD] || valid_symbols[PREPROC_SPLIT_BEGIN] ||
       valid_symbols[END_KEYWORD] || valid_symbols[PREPROC_SPLIT_END] ||
-      valid_symbols[CONTINUE_AS_IDENTIFIER] || valid_symbols[PROPERTY_NAME]) {
+      valid_symbols[CONTINUE_AS_IDENTIFIER] || valid_symbols[PROPERTY_NAME] ||
+      valid_symbols[CALC_FORMULA_PROPERTY_NAME]) {
     skip_whitespace(lexer);
     enum IdentifierWord word = read_identifier_word(lexer);
     if (word == WORD_NOT_IDENTIFIER) return false;  // nothing consumed
@@ -820,7 +825,7 @@ bool tree_sitter_al_external_scanner_scan(
     // the continue test needs. (No parse state offers both — see the
     // ts_external_scanner_states table — but unlike the two arms above, this
     // ORDER does not depend on that holding.)
-    if (valid_symbols[PROPERTY_NAME]) {
+    if (valid_symbols[PROPERTY_NAME] || valid_symbols[CALC_FORMULA_PROPERTY_NAME]) {
       // Skip whitespace and comments. '\n' belongs here just as much as '\r' —
       // the leading skip above already accepts it, and alc accepts a property
       // whose '=' sits on the next line (verified). Omitting it made
@@ -829,14 +834,54 @@ bool tree_sitter_al_external_scanner_scan(
       // nothing.
       if (!skip_whitespace_and_comments(lexer)) return false;
       if (lexer->lookahead == '=') {
-        lexer->result_symbol = PROPERTY_NAME;
+        // CalcFormula is the one property keyed by NAME: its value has a
+        // grammar of its own (sum/count/exist/min/max/average/lookup over a
+        // field reference), and `sum("T".N)` is also a complete call
+        // expression, so the generic property rule could only ever reach it
+        // by a GLR tiebreak -- which went the wrong way for every aggregate
+        // without a where(): 22 of BC.History's 2,553 CalcFormula sites, in
+        // 12 files (issue #21). Only the property NAME separates
+        // `CalcFormula = Count(X)` from `DataCaptionExpression = Caption(Rec)`,
+        // so the name is what this reads. Falls back to PROPERTY_NAME where
+        // the grammar does not offer the keyed token, so a state that only
+        // knows the generic property keeps working.
+        lexer->result_symbol =
+            (word == WORD_CALCFORMULA && valid_symbols[CALC_FORMULA_PROPERTY_NAME])
+                ? CALC_FORMULA_PROPERTY_NAME
+                : PROPERTY_NAME;
+        if (lexer->result_symbol == PROPERTY_NAME && !valid_symbols[PROPERTY_NAME]) {
+          return false;
+        }
         return true;
       }
     }
 
     if (word == WORD_CONTINUE && valid_symbols[CONTINUE_AS_IDENTIFIER]) {
+      // `continue` is a NAME, not the statement, when what follows is
+      // something no continue statement can be followed by: a call `(`, a
+      // member `.`, a subscript `[`, an enum qualifier `::`, or an assignment
+      // operator := += -= *= /=. Until 4.1.0 only `:=` was tested, so
+      // `Continue(X);` parsed as continue_statement plus a stranded
+      // parenthesized_expression with no ERROR, and `Continue.Field := 1;`
+      // was an ERROR (issue #22). A statement is followed by ; end else
+      // until or a directive, none of which appear here, so nothing that IS a
+      // continue statement is affected -- BC.History's 7 bare `continue;`
+      // included. Advancing past the first char of a two-char operator and
+      // finding no '=' returns false, which discards the advance and lets the
+      // grammar lex the keyword; that is the pre-existing `:` behaviour.
       skip_whitespace_nomark(lexer);
-      if (lexer->lookahead == ':') {
+      int32_t c = lexer->lookahead;
+      if (c == '(' || c == '.' || c == '[') {
+        lexer->result_symbol = CONTINUE_AS_IDENTIFIER;
+        return true;
+      }
+      if (c == ':') {
+        lexer->advance(lexer, false);
+        if (lexer->lookahead == '=' || lexer->lookahead == ':') {
+          lexer->result_symbol = CONTINUE_AS_IDENTIFIER;
+          return true;
+        }
+      } else if (c == '+' || c == '-' || c == '*' || c == '/') {
         lexer->advance(lexer, false);
         if (lexer->lookahead == '=') {
           lexer->result_symbol = CONTINUE_AS_IDENTIFIER;

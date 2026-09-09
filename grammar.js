@@ -163,7 +163,7 @@ module.exports = grammar({
 
   externals: $ => [
     $.property_name,            // [0] identifier followed by = (not :=)
-    $.continue_as_identifier,   // [1] 'continue' followed by ':=' (used as variable)
+    $.continue_as_identifier,   // [1] 'continue' followed by := ( . [ :: += -= *= /= (used as a name)
     $.preproc_open,             // [2] #if — depth++
     $.preproc_close,            // [3] #endif — depth--
     $.begin_keyword,            // [4] 'begin' — any depth, unless split claims it
@@ -171,6 +171,7 @@ module.exports = grammar({
     $.preproc_split_begin,      // [6] 'begin' at depth > 0, immediately before #endif
     $.preproc_split_end,        // [7] 'end' at depth > 0, followed by ; then #elif/#else/#endif
     $.var_attribute_open,       // [8] '[' when attribute is followed by variable declaration
+    $.calc_formula_property_name, // [9] `CalcFormula` followed by = -- the one name-keyed property
   ],
 
   conflicts: $ => [
@@ -248,7 +249,6 @@ module.exports = grammar({
     [$.preproc_conditional_xmlport, $.preproc_conditional],
     [$._body_element, $._procedure_header, $.preproc_conditional_var],
     [$._body_element],
-    [$.calc_field_reference, $._expression],
     [$.option_member, $._identifier_or_quoted],
     // `[$._single_pattern, $._expression]` used to live here and is GONE: the
     // separator fix made it unnecessary. It existed because a case pattern list
@@ -608,11 +608,38 @@ module.exports = grammar({
     // --- Generic property: Name = Value ; ---
     // The scanner's PROPERTY_NAME token disambiguates from variables (Name : Type)
     // All properties share this structure; complex value types are part of _property_value.
-    property: $ => seq(
-      field('name', $.property_name),   // Scanner token: identifier followed by =
-      '=',
-      optional(field('value', $._property_value)),
-      ';'
+    property: $ => choice(
+      seq(
+        field('name', $.property_name),   // Scanner token: identifier followed by =
+        '=',
+        optional(field('value', $._property_value)),
+        ';'
+      ),
+      // CalcFormula is the one property whose value has a grammar of its own
+      // rather than an expression: sum/count/exist/min/max/average/lookup over
+      // a field reference with an optional where(). The scanner emits
+      // calc_formula_property_name instead of property_name when the word
+      // before '=' is `CalcFormula` (any case), so this arm -- and only this
+      // arm -- parses the value. Before that, `sum("T".N)` was ALSO a complete
+      // call_expression, the tie went to GLR where static prec is void, and
+      // the arbitrary tiebreak handed it to property_expression (issue #21).
+      // Only the aggregates WITHOUT a where() were ambiguous -- a where clause
+      // is not a call argument, so the 1,348 with one were never in doubt --
+      // which is 22 of BC.History's 2,553 CalcFormula sites, in 12 files, all
+      // measured by tree-harness against a pre-change baseline. lookup never
+      // qualified, because lookup_keyword is not an identifier. Keying on the
+      // name is what the
+      // compiler does, and it is the only discriminator there is:
+      // `DataCaptionExpression = Caption(Rec);` and `CaptionClass = Format(Rec."No.")`
+      // are real calls with exactly the shape of a formula, so a dynamic-prec
+      // tiebreak in aggregate_formula's favour would have stolen them.
+      // The alias keeps the node shape: name is still a property_name.
+      seq(
+        field('name', alias($.calc_formula_property_name, $.property_name)),
+        '=',
+        field('value', $._calc_formula_expression),
+        ';'
+      ),
     ),
 
     // --- Permissions property: Name = tabledata_permission_list (no trailing ;) ---
@@ -666,7 +693,6 @@ module.exports = grammar({
       // Complex value types
       $.caption_value,              // 'Text', Locked = true, Comment = '...'
       $.ml_value_list,              // ENU='English', DEU='German'
-      $._calc_formula_expression,   // sum("Table".Field where(...))
       $.tabledata_permission_list,  // tabledata X = R, tabledata Y = RIMD
       $.order_by_list,              // ascending("No.", Name)
       $.implementation_value_list,  // "IFace" = "Impl", ...
@@ -676,6 +702,12 @@ module.exports = grammar({
       $.link_value_list,            // "Field" = field(Other), ...
       $.property_expression,        // Expressions used as property values
       $.keyword_identifier,         // Keywords used as simple property values (TestIsolation = Codeunit)
+      // `Image = Order;` (2 BC.History sites). order_keyword has actions at
+      // value start since the order-first sorting_value arm, so the lexer's
+      // keyword pass turns the identifier `Order` into that token; this hands
+      // it back as the identifier leaf it always was. Bare kw(), never
+      // $.order_keyword -- see .claude/rules/contextual-keywords.md.
+      alias(kw('order'), $.identifier),
       $.where_clause,               // SourceTableView/SubPageView = where(...)
       $.object_reference_value,     // RunObject = Codeunit "BOM-Explode BOM"
       $.decimal_range_value,        // DecimalPlaces = 0 : 5
@@ -962,20 +994,32 @@ module.exports = grammar({
 
     // --- Sorting/SourceTableView value ---
     // sorting("Starting Date") order(ascending) where("Status" = const(Active))
-    sorting_value: $ => prec(5, seq(
-      $.sorting_keyword,
-      '(',
-      $._identifier_or_quoted,
-      repeat(seq(',', $._identifier_or_quoted)),
-      ')',
-      optional(seq(
-        $.order_keyword,
+    sorting_value: $ => prec(5, choice(
+      seq(
+        $.sorting_keyword,
         '(',
-        choice($.ascending_keyword, $.descending_keyword),
+        $._identifier_or_quoted,
+        repeat(seq(',', $._identifier_or_quoted)),
         ')',
-      )),
-      optional($.where_clause),
+        optional($._order_clause),
+        optional($.where_clause),
+      ),
+      // `SourceTableView = order(descending);` -- a view with no sorting()
+      // part. Until this arm existed the value fell through to
+      // property_expression -> call_expression `order(descending)` (issue
+      // #21). Same node as the sorting form so a consumer reads one shape.
+      seq(
+        $._order_clause,
+        optional($.where_clause),
+      ),
     )),
+
+    _order_clause: $ => seq(
+      $.order_keyword,
+      '(',
+      choice($.ascending_keyword, $.descending_keyword),
+      ')',
+    ),
 
     // --- Link value list ---
     // "Field" = field(OtherField), "Field2" = const(Value)
@@ -4418,7 +4462,11 @@ module.exports = grammar({
       $.list_literal,
       // Keywords that can be used as identifiers in expressions
       $.keyword_identifier,
-      // 'continue' as identifier when followed by ':='
+      // `continue` as a name: the scanner emits this when the word is followed
+      // by := ( . [ :: += -= *= /= -- anything a continue STATEMENT cannot be
+      // followed by. `Continue(X);` used to parse as continue_statement plus a
+      // stranded parenthesized_expression with no ERROR (issue #22), and
+      // `Continue.Field := 1;` was an ERROR outright.
       alias($.continue_as_identifier, $.identifier),
       // Ternary expression: condition ? then_value : else_value
       $.ternary_expression,
@@ -4666,6 +4714,10 @@ module.exports = grammar({
     call_expression: $ => prec(12, seq(
       field('function', choice(
         $.identifier,
+        // `Continue(X)`: the scanner hands `continue` back as a name when `(`
+        // follows (issue #22); it is a different symbol from $.identifier, so
+        // it has to be listed here even though the tree shows an identifier.
+        alias($.continue_as_identifier, $.identifier),
         $.quoted_identifier,      // "My Proc"(42) — alc accepts; call_statement
                                   // already allowed this, call_expression did not
         $.member_expression,
@@ -4809,6 +4861,7 @@ module.exports = grammar({
     qualified_enum_value: $ => prec.left(50, seq(
       field('enum_type', choice(
         $.identifier,
+        alias($.continue_as_identifier, $.identifier),  // Continue::Value, see call_expression
         $.quoted_identifier,
         $.member_expression,
         $.subscript_expression,  // Allow X[1]::Value
@@ -5277,6 +5330,10 @@ module.exports = grammar({
       kw('action'),
       kw('table'),
       kw('assembly'),
+      // `OptionMembers = Order,Invoice`: order_keyword is live at value start
+      // since the order-first sorting_value arm, so a first member `Order`
+      // lexes as the keyword and needs this route back to identifier.
+      kw('order'),
       // Reported by a downstream consumer: `Filter: Codeunit "X";` failed to
       // parse. Sweeping all 151 named keyword rules as variable names found 23
       // that failed, and alc 18.0.37.11445 ACCEPTS 14 of them (each probed

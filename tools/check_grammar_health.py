@@ -30,11 +30,12 @@ BASELINE_FILE = Path(__file__).resolve().parent.parent / '.grammar_baseline.json
 
 # _find_unused_rules()/_find_missing_definitions() below use a regex over `$.name`
 # and `name: $ =>` text, not a real JS parser, so they have known blind spots.
-# The baseline currently carries 27 entries that are each one of exactly four
+# The baseline currently carries 28 entries that are each one of exactly four
 # false-positive shapes, not real debt — verified by reading every one against
-# grammar.js (2026-08-10 review, Task 20 fix round 1):
+# grammar.js (2026-08-10 review, Task 20 fix round 1; the 28th, the
+# CALC_FORMULA_PROPERTY_NAME external, added with issue #21):
 #
-#   1. External scanner tokens (9) — declared in `externals: $ => [...]` and
+#   1. External scanner tokens (10) — declared in `externals: $ => [...]` and
 #      never given a `name: $ =>` rule body, e.g. `property_name`
 #      (the PROPERTY_NAME scanner token). Reported as "missing" because the
 #      only definition-shaped pattern the regex looks for doesn't apply to
@@ -183,10 +184,24 @@ class GrammarHealthChecker:
             content = Path('grammar.js').read_text(encoding='utf-8')
             lines = content.split('\n')
 
-            # Find all rule definitions
+            # Find all rule definitions. The `reserved: { name: $ => [...] }`
+            # block declares reserved-word SETS whose lines have exactly the
+            # shape of a rule definition and are referenced only as the string
+            # argument of reserved('name', ...), so every set read as an unused
+            # rule the first time one was added -- same false positive, same
+            # fix as tools/find_unused_definitions.py.
             defined = set()
             definition_pattern = r'^\s*([a-zA-Z_][a-zA-Z0-9_]*)\s*:\s*\$\s*=>'
+            reserved_indent = None
             for line in lines:
+                if reserved_indent is not None:
+                    if re.match(r'^ {%d}\},?\s*$' % reserved_indent, line):
+                        reserved_indent = None
+                    continue
+                reserved_open = re.match(r'^(\s*)reserved\s*:\s*\{\s*$', line)
+                if reserved_open:
+                    reserved_indent = len(reserved_open.group(1))
+                    continue
                 match = re.match(definition_pattern, line)
                 if match:
                     defined.add(match.group(1))
