@@ -5,7 +5,12 @@ Format loosely follows [Keep a Changelog](https://keepachangelog.com/); the proj
 uses [Semantic Versioning](https://semver.org/) where the parse-tree shape is the
 public API — a change to node structure or field names is a **major** bump.
 
-## [Unreleased]
+## [4.3.0] — 2026-09-09
+
+One parser defect, the third from the compiler cross-check that produced #20
+and #21/#22 (issue #23, reported against the published 4.2.0 wasm). Validated
+over **15,358 production AL files** (BC.History), **0 errors**. 1,624 tests
+pass.
 
 ### Fixed
 
