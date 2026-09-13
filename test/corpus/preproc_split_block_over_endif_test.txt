@@ -1,0 +1,351 @@
+================================================================================
+A block opened inside a #if branch that also contributes statements
+--
+The headline shape of issue #25, and the one that broke 4 Base Application
+files. `if C then begin` sits inside the branch, the branch then contributes
+statements to that block, and the matching `end;` is outside the directive.
+.
+The rule that should have covered it, preproc_split_if_begin_asymmetric, goes
+through `_preproc_split_then_begin_open`, which required the scanner token
+PREPROC_SPLIT_BEGIN. The scanner emits that ONLY for a `begin` at depth > 0
+sitting IMMEDIATELY before `#endif` -- so the moment the branch adds a
+statement of its own the token becomes a plain begin_keyword and the whole
+construct lost its derivation. `_preproc_begin_body_to_endif` now carries
+both arms; they stay disjoint because the SCANNER, not precedence, decides
+which token arrives.
+.
+The failure was not local. With no derivation the entire enclosing file
+collapsed to a single ERROR node AT THE ROOT -- `tree-sitter parse` prints no
+`(source_file` line at all for such a file, which is also what desynchronises
+tools/tree-harness.sh on a corpus containing one.
+================================================================================
+
+codeunit 50000 T
+{
+    procedure P()
+    begin
+#if not CLEAN27
+        if true then begin
+            Message('a');
+#endif
+            Message('b');
+        end;
+    end;
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (procedure
+        (procedure_keyword)
+        name: (identifier)
+        body: (code_block
+          (begin_keyword)
+          body: (statement_block
+            (preproc_split_if_begin_asymmetric
+              (preproc_if
+                (preproc_open)
+                condition: (preproc_not_expression
+                  (identifier)))
+              (if_keyword)
+              condition: (boolean)
+              (then_keyword)
+              (begin_keyword)
+              (call_expression
+                function: (identifier)
+                arguments: (argument_list
+                  (string_literal)))
+              (preproc_endif
+                (preproc_close))
+              (call_expression
+                function: (identifier)
+                arguments: (argument_list
+                  (string_literal)))
+              (end_keyword)))
+          (end_keyword))))))
+
+================================================================================
+A bare begin alone in one #if, its end alone in a later #if
+--
+Same defect one level out: the `begin` here IS immediately before `#endif`, so
+it arrives as PREPROC_SPLIT_BEGIN and `preproc_split_code_block_over_endif`
+matched the opener -- but that rule reaches the closing `end` through
+`_preproc_end_guard`, and the shared statements in between come first.
+.
+Note where it lands: as the `else_branch` FIELD of the if_statement, not as a
+floating sibling. That is the property worth pinning. The corresponding real
+site is Check.Report.al:1170, where the same `else` + `#if begin #endif`
+opener appears.
+================================================================================
+
+codeunit 50000 T
+{
+    procedure P()
+    begin
+        if X then
+            Message('a')
+        else
+#if not CLEAN27
+        begin
+#endif
+            Message('b');
+            Message('c');
+#if not CLEAN27
+        end;
+#endif
+    end;
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (procedure
+        (procedure_keyword)
+        name: (identifier)
+        body: (code_block
+          (begin_keyword)
+          body: (statement_block
+            (if_statement
+              (if_keyword)
+              condition: (identifier)
+              (then_keyword)
+              then_branch: (call_expression
+                function: (identifier)
+                arguments: (argument_list
+                  (string_literal)))
+              (else_keyword)
+              else_branch: (preproc_split_code_block_over_endif
+                (preproc_if
+                  (preproc_open)
+                  condition: (preproc_not_expression
+                    (identifier)))
+                (begin_keyword)
+                (preproc_endif
+                  (preproc_close))
+                (call_expression
+                  function: (identifier)
+                  arguments: (argument_list
+                    (string_literal)))
+                (call_expression
+                  function: (identifier)
+                  arguments: (argument_list
+                    (string_literal)))
+                (preproc_if
+                  (preproc_open)
+                  condition: (preproc_not_expression
+                    (identifier)))
+                (end_keyword)
+                (preproc_endif
+                  (preproc_close)))))
+          (end_keyword))))))
+
+================================================================================
+Both #if and #else open a block, one shared end else begin follows
+--
+Real site: Microsoft_Base Application_28.1.49838.50268 ->
+src/Sales/FinanceCharge/FinanceChargeMemo.Report.al:806, the shape quoted in
+issue #25. Both branches run `if <rec>.FindFirst() then begin` against
+different record variables; the single `end else begin ... end;` after
+`#endif` closes whichever one survived preprocessing.
+.
+preproc_split_if_then_begin_else_shared existed for exactly this and still
+failed it, for TWO independent reasons, both fixed here:
+  1. its #else arm demanded PREPROC_SPLIT_BEGIN, so the #else branch could
+     open the block but contribute nothing to it -- and the real site
+     contributes a CalcFields call;
+  2. its tail accepted only a bare `end;`, never `end else begin ... end;`,
+     which is what the real site has. Its sibling preproc_split_if_then_begin
+     already accepted both.
+.
+Adding that tail needs the declared conflict on `_else_begin_block`: the block
+ends in `optional(';')` and here it is the LAST element of the rule, so a
+trailing `;` reads either as that optional or as a following empty_statement.
+A declared conflict, not prec.right -- see preproc_arg_continuation_test.txt.
+================================================================================
+
+codeunit 50000 T
+{
+    procedure P()
+    begin
+#if not CLEAN28
+        if A.FindFirst() then begin
+            A.CalcFields(X);
+#else
+        if B.FindFirst() then begin
+            B.CalcFields(X);
+#endif
+            Y := 1;
+        end else begin
+            Y := 2;
+        end;
+    end;
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (procedure
+        (procedure_keyword)
+        name: (identifier)
+        body: (code_block
+          (begin_keyword)
+          body: (statement_block
+            (preproc_split_if_then_begin_else_shared
+              (preproc_if
+                (preproc_open)
+                condition: (preproc_not_expression
+                  (identifier)))
+              (if_keyword)
+              condition: (call_expression
+                function: (member_expression
+                  object: (identifier)
+                  member: (identifier))
+                arguments: (argument_list))
+              (then_keyword)
+              (begin_keyword)
+              (call_expression
+                function: (member_expression
+                  object: (identifier)
+                  member: (identifier))
+                arguments: (argument_list
+                  (identifier)))
+              (preproc_else)
+              (if_keyword)
+              condition: (call_expression
+                function: (member_expression
+                  object: (identifier)
+                  member: (identifier))
+                arguments: (argument_list))
+              (then_keyword)
+              (begin_keyword)
+              (call_expression
+                function: (member_expression
+                  object: (identifier)
+                  member: (identifier))
+                arguments: (argument_list
+                  (identifier)))
+              (preproc_endif
+                (preproc_close))
+              (assignment_statement
+                left: (identifier)
+                operator: (assignment_operator)
+                right: (integer))
+              (end_keyword)
+              (else_keyword)
+              (begin_keyword)
+              (assignment_statement
+                left: (identifier)
+                operator: (assignment_operator)
+                right: (integer))
+              (end_keyword)))
+          (end_keyword))))))
+
+================================================================================
+A split block nested as the then-branch of an ordinary if
+--
+Real site: src/Sales/Posting/SalesPost.Codeunit.al:1057. The outer
+`if not IsHandled then` is unconditional; its entire then-branch is a block
+opened in one #if region and closed in a later one, with unconditional code
+between the two.
+.
+Fixed by the same `_preproc_begin_body_to_endif` change -- no rule of its own.
+What this case pins is the ATTACHMENT: preproc_split_if_then_begin appears as
+the `then_branch` field of the outer if_statement, and the trailing
+`Message('c')` stays OUTSIDE it as a sibling. Both halves matter; a tree that
+swallowed the trailing statement into the split construct would have the same
+node types, the same byte coverage and no ERROR node.
+================================================================================
+
+codeunit 50000 T
+{
+    procedure P()
+    begin
+        if not IsHandled then
+#if not CLEAN27
+            if Q <> 0 then begin
+                Message('a');
+#endif
+                if Q <> 0 then
+                    Message('b');
+#if not CLEAN27
+            end;
+#endif
+        Message('c');
+    end;
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (procedure
+        (procedure_keyword)
+        name: (identifier)
+        body: (code_block
+          (begin_keyword)
+          body: (statement_block
+            (if_statement
+              (if_keyword)
+              condition: (unary_expression
+                operand: (identifier))
+              (then_keyword)
+              then_branch: (preproc_split_if_then_begin
+                (preproc_if
+                  (preproc_open)
+                  condition: (preproc_not_expression
+                    (identifier)))
+                (if_keyword)
+                condition: (comparison_expression
+                  left: (identifier)
+                  operator: (comparison_operator)
+                  right: (integer))
+                (then_keyword)
+                (begin_keyword)
+                (call_expression
+                  function: (identifier)
+                  arguments: (argument_list
+                    (string_literal)))
+                (preproc_endif
+                  (preproc_close))
+                (if_statement
+                  (if_keyword)
+                  condition: (comparison_expression
+                    left: (identifier)
+                    operator: (comparison_operator)
+                    right: (integer))
+                  (then_keyword)
+                  then_branch: (call_expression
+                    function: (identifier)
+                    arguments: (argument_list
+                      (string_literal))))
+                (preproc_if
+                  (preproc_open)
+                  condition: (preproc_not_expression
+                    (identifier)))
+                (end_keyword)
+                (preproc_endif
+                  (preproc_close))))
+            (call_expression
+              function: (identifier)
+              arguments: (argument_list
+                (string_literal))))
+          (end_keyword))))))

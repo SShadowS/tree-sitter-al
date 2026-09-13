@@ -292,6 +292,17 @@ module.exports = grammar({
     [$.statement_block],
     // var_body run terminates at the following begin (no closing delimiter)
     [$.var_body],
+    // `_else_begin_block` ends in `optional(';')`, and in
+    // preproc_split_if_then_begin_else_shared it is the LAST element of the
+    // rule — so a trailing `;` can read either as that optional or as a
+    // following `empty_statement`. Its sibling preproc_split_if_then_begin has
+    // no such ambiguity because `preproc_endif` anchors the tail.
+    //
+    // A declared conflict rather than prec.right, per the note on
+    // test/corpus/preproc_arg_continuation_test.txt: prec.right commits before
+    // the deciding token is in sight, and doing that here would silently prefer
+    // one reading of every `end else begin … end;` in the corpus.
+    [$._else_begin_block],
   ],
 
   // Trivial pass-through wrappers — macro-substituted to drop a layer of indirection.
@@ -3552,7 +3563,7 @@ module.exports = grammar({
       $.preproc_endif,
     )),
 
-    // Complete split-if opening unit: #if [preamble] if EXPR then begin #endif
+    // Complete split-if opening unit: #if [preamble] if EXPR then begin [stmts] #endif
     // Ends at #endif — a complete preprocessor-delimited unit, not a mid-construct prefix.
     _preproc_split_then_begin_open: $ => seq(
       $.preproc_if,
@@ -3560,8 +3571,24 @@ module.exports = grammar({
       $.if_keyword,
       field('condition', $._expression),
       $.then_keyword,
-      $.preproc_split_begin,          // 'begin' at depth > 0, before #endif
-      $.preproc_endif,
+      $._preproc_begin_body_to_endif,
+    ),
+
+    // The opened `begin` and everything the branch contributes before `#endif`.
+    //
+    // The two arms are decided by the SCANNER, not by precedence, and are
+    // therefore disjoint by construction: `PREPROC_SPLIT_BEGIN` is emitted only
+    // for a `begin` at depth > 0 sitting IMMEDIATELY before `#endif`, so the
+    // moment a branch statement follows the `begin` the split lookahead declines
+    // and a plain `begin_keyword` arrives instead.
+    //
+    // Only the first arm existed until issue #25. A branch that opened a block
+    // AND contributed statements to it -- the commonest form in Base
+    // Application, e.g. SalesPost.Codeunit.al:1057 -- had no derivation at all,
+    // and the whole enclosing file collapsed to a single root ERROR node.
+    _preproc_begin_body_to_endif: $ => choice(
+      seq($.preproc_split_begin, $.preproc_endif),
+      seq($.begin_keyword, repeat1($._statement), $.preproc_endif),
     ),
 
     // Complete preprocessor-guarded end: #if end [;] #endif
@@ -3609,11 +3636,20 @@ module.exports = grammar({
       $.if_keyword,
       field('condition', $._expression),
       $.then_keyword,
-      $.preproc_split_begin,
-      $.preproc_endif,
+      // Was `$.preproc_split_begin, $.preproc_endif` — so the #else branch could
+      // open the block but contribute NOTHING to it. Real code contributes:
+      // FinanceChargeMemo.Report.al:806 has `CustLedgerEntry.CalcFields(...)`
+      // after the begin, which makes the scanner emit begin_keyword instead.
+      $._preproc_begin_body_to_endif,
       repeat($._statement),
       $.end_keyword,
-      optional(';'),
+      // Same tail as preproc_split_if_then_begin. `end else begin … end;` is
+      // the shape at the FinanceChargeMemo site; a bare `end;` was all this
+      // accepted before.
+      choice(
+        optional(';'),
+        $._else_begin_block,
+      ),
     )),
 
     // Split if-then-begin with #else alternative: #if branch has begin+extra stmts, #else has just if-then

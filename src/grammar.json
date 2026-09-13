@@ -14903,11 +14903,45 @@
         },
         {
           "type": "SYMBOL",
-          "name": "preproc_split_begin"
+          "name": "_preproc_begin_body_to_endif"
+        }
+      ]
+    },
+    "_preproc_begin_body_to_endif": {
+      "type": "CHOICE",
+      "members": [
+        {
+          "type": "SEQ",
+          "members": [
+            {
+              "type": "SYMBOL",
+              "name": "preproc_split_begin"
+            },
+            {
+              "type": "SYMBOL",
+              "name": "preproc_endif"
+            }
+          ]
         },
         {
-          "type": "SYMBOL",
-          "name": "preproc_endif"
+          "type": "SEQ",
+          "members": [
+            {
+              "type": "SYMBOL",
+              "name": "begin_keyword"
+            },
+            {
+              "type": "REPEAT1",
+              "content": {
+                "type": "SYMBOL",
+                "name": "_statement"
+              }
+            },
+            {
+              "type": "SYMBOL",
+              "name": "preproc_endif"
+            }
+          ]
         }
       ]
     },
@@ -15085,11 +15119,7 @@
           },
           {
             "type": "SYMBOL",
-            "name": "preproc_split_begin"
-          },
-          {
-            "type": "SYMBOL",
-            "name": "preproc_endif"
+            "name": "_preproc_begin_body_to_endif"
           },
           {
             "type": "REPEAT",
@@ -15106,11 +15136,20 @@
             "type": "CHOICE",
             "members": [
               {
-                "type": "STRING",
-                "value": ";"
+                "type": "CHOICE",
+                "members": [
+                  {
+                    "type": "STRING",
+                    "value": ";"
+                  },
+                  {
+                    "type": "BLANK"
+                  }
+                ]
               },
               {
-                "type": "BLANK"
+                "type": "SYMBOL",
+                "name": "_else_begin_block"
               }
             ]
           }
@@ -22324,6 +22363,9 @@
     ],
     [
       "var_body"
+    ],
+    [
+      "_else_begin_block"
     ]
   ],
   "precedences": [],
