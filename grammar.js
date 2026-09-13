@@ -3974,6 +3974,55 @@ module.exports = grammar({
       field('operand', $._expression)
     ),
 
+    // The MIRROR of preproc_conditional_expression_tail: there the directive
+    // stands where an OPERATOR would, here it stands where an OPERAND would,
+    // because the source left the operator dangling on the line before it:
+    //
+    //     IsChanged := (A <> B) or
+    //   #if not CLEAN27
+    //     (C <> D) or
+    //   #endif
+    //     (E <> F);
+    //
+    // The tail rule cannot reach this position -- it attaches after a COMPLETE
+    // operand -- so the parser sat mid-binary-expression waiting for a right
+    // operand, and `#if` starts nothing in operand position. The result was an
+    // ERROR on the `#if` token itself (issue #24).
+    //
+    // Each branch holds `<expression> <operator>`: whatever the branch
+    // contributes must itself end with a dangling operator, or deleting the
+    // branch would not leave a well-formed expression. That is ONE unit, never
+    // a repeat1 -- `(C) or (D) or` is `_expression` = `(C) or (D)` followed by
+    // the trailing `or`. A repeat1 here would be genuinely ambiguous with the
+    // greedy `_expression` and buys nothing, since any run of operand/operator
+    // pairs merges into a single larger expression by construction.
+    preproc_operand_prefix: $ => seq(
+      $.preproc_if,
+      $._dangling_operand,
+      repeat(seq($.preproc_elif, $._dangling_operand)),
+      optional(seq($.preproc_else, $._dangling_operand)),
+      $.preproc_endif
+    ),
+
+    _dangling_operand: $ => seq(
+      field('operand', $._expression),
+      field('operator', $._dangling_operator)
+    ),
+
+    // Every binary operator that can dangle before a directive. Deliberately
+    // wider than `_expression_continuation`'s four arithmetic operators: the
+    // one shape this exists for uses `or`, and restricting the set is what
+    // makes the neighbouring defect silent rather than loud.
+    _dangling_operator: $ => choice(
+      '+', '-', '*', '/',
+      alias(kw('div'), 'div'),
+      alias(kw('mod'), 'mod'),
+      alias(kw('and'), 'and'),
+      alias(kw('or'), 'or'),
+      alias(kw('xor'), 'xor'),
+      $.comparison_operator
+    ),
+
     assignment_expression: $ => prec.dynamic(1, prec.right(seq(
       field('left', $._expression),
       field('operator', $.assignment_operator),
@@ -4584,12 +4633,14 @@ module.exports = grammar({
       // and "mod" whatever the source casing. Without it a bare kw() token is
       // auto-named multiplicative_expression_token1.
       field('operator', choice('*', '/', alias(kw('div'), 'div'), alias(kw('mod'), 'mod'))),
+      optional($.preproc_operand_prefix),
       field('right', $._expression)
     )),
 
     additive_expression: $ => prec.left(6, seq(
       field('left', $._expression),
       field('operator', choice('+', '-')),
+      optional($.preproc_operand_prefix),
       field('right', $._expression)
     )),
 
@@ -4643,6 +4694,7 @@ module.exports = grammar({
     comparison_expression: $ => prec.left(2, seq(
       field('left', $._expression),
       field('operator', $.comparison_operator),
+      optional($.preproc_operand_prefix),
       field('right', $._expression)
     )),
 
@@ -4665,18 +4717,21 @@ module.exports = grammar({
       prec.left(4, seq(
         field('left', $._expression),
         field('operator', alias(kw('and'), 'and')),
+        optional($.preproc_operand_prefix),
         field('right', $._expression)
       )),
       // OR (prec 3)
       prec.left(3, seq(
         field('left', $._expression),
         field('operator', alias(kw('or'), 'or')),
+        optional($.preproc_operand_prefix),
         field('right', $._expression)
       )),
       // XOR (prec 3) — same level as OR, so `a or b xor c` is `(a or b) xor c`
       prec.left(3, seq(
         field('left', $._expression),
         field('operator', alias(kw('xor'), 'xor')),
+        optional($.preproc_operand_prefix),
         field('right', $._expression)
       )),
     ),

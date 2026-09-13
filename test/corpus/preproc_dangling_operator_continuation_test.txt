@@ -1,0 +1,199 @@
+================================================================================
+An expression whose operator dangles before #if keeps one binary expression
+--
+The MIRROR of preproc_expression_continuation_test.txt. There the directive
+stands where an OPERATOR would and `preproc_conditional_expression_tail`
+absorbs it. Here the source left the operator on the line BEFORE the
+directive, so the parser sits mid-binary-expression waiting for a right
+operand -- and `#if` starts nothing in operand position. The tail rule cannot
+reach this spot: it attaches only after a COMPLETE operand.
+.
+Result was an ERROR node spanning [123, 0] - [123, 3] -- the `#if` token
+itself -- in Microsoft_Base Application_28.1.49838.50268 ->
+src/Sales/History/PostedSalesShipmentUpdate.Page.al:123 (issue #24). That is
+the shape reproduced below, both blocks of it.
+.
+0 occurrences in BC.History's 15,358 files and in DC, so no existing corpus
+gate could have caught it -- it entered the visible set only when BC 28.1
+symbols were ingested.
+.
+Note the SECOND block: its branch holds `(D) or (E) or`, and the operand is
+one `logical_expression` over D and E with a single trailing `or`. That is
+why `preproc_operand_prefix` takes ONE `_dangling_operand` and never a
+repeat1 -- any run of operand/operator pairs merges into a larger expression
+by construction, so a repeat1 would only add ambiguity.
+================================================================================
+
+codeunit 50131 DanglingOr
+{
+    procedure P() IsChanged: Boolean
+    begin
+        IsChanged := (Rec.A <> xRec.A) or
+#if not CLEAN27
+          (Rec.B <> xRec.B) or
+#endif
+          (Rec.C <> xRec.C) or
+#if not CLEAN27
+          (Rec.D <> xRec.D) or
+          (Rec.E <> xRec.E) or
+#endif
+          (Rec.F <> xRec.F);
+    end;
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (procedure
+        (procedure_keyword)
+        name: (identifier)
+        return_value: (identifier)
+        return_type: (type_specification
+          (basic_type))
+        body: (code_block
+          (begin_keyword)
+          body: (statement_block
+            (assignment_statement
+              left: (identifier)
+              operator: (assignment_operator)
+              right: (logical_expression
+                left: (logical_expression
+                  left: (parenthesized_expression
+                    (comparison_expression
+                      left: (member_expression
+                        object: (identifier)
+                        member: (identifier))
+                      operator: (comparison_operator)
+                      right: (member_expression
+                        object: (identifier)
+                        member: (identifier))))
+                  (preproc_operand_prefix
+                    (preproc_if
+                      (preproc_open)
+                      condition: (preproc_not_expression
+                        (identifier)))
+                    operand: (parenthesized_expression
+                      (comparison_expression
+                        left: (member_expression
+                          object: (identifier)
+                          member: (identifier))
+                        operator: (comparison_operator)
+                        right: (member_expression
+                          object: (identifier)
+                          member: (identifier))))
+                    (preproc_endif
+                      (preproc_close)))
+                  right: (parenthesized_expression
+                    (comparison_expression
+                      left: (member_expression
+                        object: (identifier)
+                        member: (identifier))
+                      operator: (comparison_operator)
+                      right: (member_expression
+                        object: (identifier)
+                        member: (identifier)))))
+                (preproc_operand_prefix
+                  (preproc_if
+                    (preproc_open)
+                    condition: (preproc_not_expression
+                      (identifier)))
+                  operand: (logical_expression
+                    left: (parenthesized_expression
+                      (comparison_expression
+                        left: (member_expression
+                          object: (identifier)
+                          member: (identifier))
+                        operator: (comparison_operator)
+                        right: (member_expression
+                          object: (identifier)
+                          member: (identifier))))
+                    right: (parenthesized_expression
+                      (comparison_expression
+                        left: (member_expression
+                          object: (identifier)
+                          member: (identifier))
+                        operator: (comparison_operator)
+                        right: (member_expression
+                          object: (identifier)
+                          member: (identifier)))))
+                  (preproc_endif
+                    (preproc_close)))
+                right: (parenthesized_expression
+                  (comparison_expression
+                    left: (member_expression
+                      object: (identifier)
+                      member: (identifier))
+                    operator: (comparison_operator)
+                    right: (member_expression
+                      object: (identifier)
+                      member: (identifier)))))))
+          (end_keyword))))))
+
+================================================================================
+A dangling arithmetic operator before #if, with an #else branch
+--
+alc 18.0.37.11445 ACCEPTS both this and the `and` form -- probed directly
+against the BC 28.0 symbol packages, with a deliberately malformed control
+(`N := 1 + + * ;` -> AL0224) confirming the probe can still reject. So the
+construct is not specific to `or`; `preproc_operand_prefix` is wired into
+every binary rule (logical and/or/xor, comparison, additive, multiplicative)
+rather than only the one shape Microsoft happens to ship.
+.
+Both branches supply `<operand> <operator>`, which is what makes the
+construct well-formed whichever way the preprocessor resolves it: keeping the
+branch gives `1 + 2 + 3`, taking the #else gives `1 + 20 + 3`, and a branch
+that did not end with an operator would leave neither reading valid.
+================================================================================
+
+codeunit 50132 DanglingPlusElse
+{
+    procedure P() r: Integer
+    begin
+        r := 1 +
+#if CLEAN25
+            2 +
+#else
+            20 +
+#endif
+            3;
+    end;
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (procedure
+        (procedure_keyword)
+        name: (identifier)
+        return_value: (identifier)
+        return_type: (type_specification
+          (basic_type))
+        body: (code_block
+          (begin_keyword)
+          body: (statement_block
+            (assignment_statement
+              left: (identifier)
+              operator: (assignment_operator)
+              right: (additive_expression
+                left: (integer)
+                (preproc_operand_prefix
+                  (preproc_if
+                    (preproc_open)
+                    condition: (identifier))
+                  operand: (integer)
+                  (preproc_else)
+                  operand: (integer)
+                  (preproc_endif
+                    (preproc_close)))
+                right: (integer))))
+          (end_keyword))))))
