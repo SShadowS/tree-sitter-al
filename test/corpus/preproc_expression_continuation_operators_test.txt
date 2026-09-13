@@ -1,0 +1,78 @@
+================================================================================
+A #if branch opening with a logical operator continues the assignment
+--
+Issue #24 filed this input as its PASSING control case, against which the
+dangling-operator form was the bug. It never parsed correctly either -- it
+merely had no ERROR node:
+.
+    right: (parenthesized_expression (1 = 1))          <- assignment ends here
+    (call_expression function: (identifier "or")       <- `or` as a FUNCTION NAME
+      arguments: ((2 = 2)))
+    (call_expression function: (identifier "or") ...)
+.
+`_expression_continuation` admitted only `+ - * /`, so a branch opening with
+`or` had no continuation to match and the whole construct fell back to a
+statement-level preproc_conditional_statement. `or` is not a reserved word
+here, so it lexed as an identifier and the parenthesised operand became its
+argument list. The program is `(1=1) or (2=2) or (3=3)` or `(1=1) or (3=3)`;
+the tree was neither, with every byte covered and no ERROR node.
+.
+0 occurrences in BC.History, DC, and BC 28.1 Base Application, so no corpus
+gate would ever have caught it. The operator set is now shared with the
+dangling-operator direction as `_continuation_operator`.
+================================================================================
+
+codeunit 50000 T { procedure P() var B: Boolean; begin
+B := (1 = 1)
+#if X
+  or (2 = 2)
+#endif
+  or (3 = 3);
+end; }
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (procedure
+        (procedure_keyword)
+        name: (identifier)
+        (var_section
+          (var_keyword)
+          body: (var_body
+            (variable_declaration
+              name: (identifier)
+              type: (type_specification
+                (basic_type)))))
+        body: (code_block
+          (begin_keyword)
+          body: (statement_block
+            (assignment_statement
+              left: (identifier)
+              operator: (assignment_operator)
+              right: (parenthesized_expression
+                (comparison_expression
+                  left: (integer)
+                  operator: (comparison_operator)
+                  right: (integer)))
+              (preproc_conditional_expression_tail
+                (preproc_if
+                  (preproc_open)
+                  condition: (identifier))
+                operand: (parenthesized_expression
+                  (comparison_expression
+                    left: (integer)
+                    operator: (comparison_operator)
+                    right: (integer)))
+                (preproc_endif
+                  (preproc_close))
+                operand: (parenthesized_expression
+                  (comparison_expression
+                    left: (integer)
+                    operator: (comparison_operator)
+                    right: (integer))))))
+          (end_keyword))))))

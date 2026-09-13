@@ -16453,25 +16453,8 @@
           "type": "FIELD",
           "name": "operator",
           "content": {
-            "type": "CHOICE",
-            "members": [
-              {
-                "type": "STRING",
-                "value": "+"
-              },
-              {
-                "type": "STRING",
-                "value": "-"
-              },
-              {
-                "type": "STRING",
-                "value": "*"
-              },
-              {
-                "type": "STRING",
-                "value": "/"
-              }
-            ]
+            "type": "SYMBOL",
+            "name": "_continuation_operator"
           }
         },
         {
@@ -16554,12 +16537,12 @@
           "name": "operator",
           "content": {
             "type": "SYMBOL",
-            "name": "_dangling_operator"
+            "name": "_continuation_operator"
           }
         }
       ]
     },
-    "_dangling_operator": {
+    "_continuation_operator": {
       "type": "CHOICE",
       "members": [
         {

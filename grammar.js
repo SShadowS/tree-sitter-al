@@ -4101,8 +4101,23 @@ module.exports = grammar({
       repeat($._expression_continuation)
     )),
 
+    // The operator set is `_continuation_operator`, not the four arithmetic
+    // operators it used to be. With only `+ - * /`, a branch opening with any
+    // other operator had no continuation to match, and the construct SILENTLY
+    // fell back to a statement-level preproc_conditional_statement:
+    //
+    //     B := (1 = 1)
+    //   #if X
+    //     or (2 = 2)      ->  (call_expression function: (identifier "or")
+    //   #endif                  arguments: ((2 = 2)))
+    //     or (3 = 3);
+    //
+    // `or` became the NAME OF A FUNCTION and the assignment ended at `(1 = 1)`,
+    // with no ERROR node anywhere. Issue #24 filed this exact input as its
+    // passing control case, which is how a clean error count reads when the
+    // tree is wrong.
     _expression_continuation: $ => seq(
-      field('operator', choice('+', '-', '*', '/')),
+      field('operator', $._continuation_operator),
       field('operand', $._expression)
     ),
 
@@ -4138,14 +4153,13 @@ module.exports = grammar({
 
     _dangling_operand: $ => seq(
       field('operand', $._expression),
-      field('operator', $._dangling_operator)
+      field('operator', $._continuation_operator)
     ),
 
-    // Every binary operator that can dangle before a directive. Deliberately
-    // wider than `_expression_continuation`'s four arithmetic operators: the
-    // one shape this exists for uses `or`, and restricting the set is what
-    // makes the neighbouring defect silent rather than loud.
-    _dangling_operator: $ => choice(
+    // Every binary operator that can carry an expression across a directive,
+    // in either direction — dangling before the `#if` (_dangling_operand) or
+    // opening the branch (_expression_continuation).
+    _continuation_operator: $ => choice(
       '+', '-', '*', '/',
       alias(kw('div'), 'div'),
       alias(kw('mod'), 'mod'),
