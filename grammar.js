@@ -303,6 +303,28 @@ module.exports = grammar({
     // the deciding token is in sight, and doing that here would silently prefer
     // one reading of every `end else begin … end;` in the corpus.
     [$._else_begin_block],
+    // `_preproc_end_guard` now allows statements AFTER its `end [;]`, and
+    // `empty_statement` is itself just `';'` — so the semicolon terminating the
+    // end can equally start the statement run that follows it. GLR explores
+    // both; the reading that consumes the `;` as the terminator is the one that
+    // lets the rest of the branch reduce.
+    [$._preproc_end_guard, $.empty_statement],
+    // The split report-dataitem rules place a second `report_body` run after a
+    // first one (either side of a directive), and `report_body` is a repeat1
+    // with no closing delimiter of its own — so at each element boundary the
+    // parser cannot yet know whether the run continues or a new one begins.
+    // GLR decides it at the directive.
+    [$.report_body],
+    // Same shape as [$.report_body]: preproc_split_case_statement_end puts a
+    // dangling `pattern :` after `optional(case_body)`, and case_body is a
+    // repeat1 — so at a branch boundary the parser cannot yet tell whether the
+    // body continues or the final, split branch's header has started. The
+    // directive that follows is what decides it.
+    [$.case_body],
+    // In `pattern : #if <statement> …`, that first statement can be the split
+    // branch's BODY (_case_body_branch) or an ordinary statement of the run
+    // that follows the case. Nothing before the `end` distinguishes them.
+    [$._statement, $._case_body_branch],
   ],
 
   // Trivial pass-through wrappers — macro-substituted to drop a layer of indirection.
@@ -2572,7 +2594,7 @@ module.exports = grammar({
       '}'
     ),
     dataset_body: $ => repeat1(choice(
-      $.report_dataitem,
+      $._report_dataitem_variant,
       $.attribute_item,
       $.preproc_conditional_dataset,
       // Extension modifications for dataset
@@ -2587,28 +2609,92 @@ module.exports = grammar({
     // Preprocessor conditionals at dataset section level (around dataitems)
     preproc_conditional_dataset: $ => seq(
       $.preproc_if,
-      repeat(choice($.report_dataitem, $.attribute_item)),
-      repeat(seq($.preproc_elif, repeat(choice($.report_dataitem, $.attribute_item)))),
-      optional(seq($.preproc_else, repeat(choice($.report_dataitem, $.attribute_item)))),
+      repeat(choice($._report_dataitem_variant, $.attribute_item)),
+      repeat(seq($.preproc_elif, repeat(choice($._report_dataitem_variant, $.attribute_item)))),
+      optional(seq($.preproc_else, repeat(choice($._report_dataitem_variant, $.attribute_item)))),
       $.preproc_endif,
     ),
 
-    report_dataitem: $ => seq(
+    // Every report dataitem form, including the preprocessor-split structural
+    // variants below. Hidden, so ordinary report_dataitem trees are unchanged.
+    _report_dataitem_variant: $ => choice(
+      $.report_dataitem,
+      $.preproc_split_report_dataitem_header,
+      $.preproc_split_report_dataitem_open_over_endif,
+    ),
+
+    // `dataitem(Name; Table)` without its brace-delimited body. Hidden, so
+    // report_dataitem keeps its existing visible shape and fields.
+    _report_dataitem_header: $ => seq(
       $.dataitem_keyword,
       '(',
       field('name', $._identifier_or_quoted),
       ';',
       $._namespaced_ref_table_name,
       ')',
+    ),
+
+    report_dataitem: $ => seq(
+      $._report_dataitem_header,
       '{',
       optional(field('body', $.report_body)),
-      '}'
+      choice('}', $.preproc_split_report_brace_close)
     ),
+
+    // The dataitem HEADER differs between branches; the brace-delimited body
+    // after `#endif` is shared. Sibling of preproc_split_field and
+    // preproc_split_table_field. Real site: SalesShipment.Report.al:451.
+    preproc_split_report_dataitem_header: $ => prec(25, seq(
+      $.preproc_if,
+      $._report_dataitem_header,
+      repeat(seq($.preproc_elif, $._report_dataitem_header)),
+      optional(seq($.preproc_else, $._report_dataitem_header)),
+      $.preproc_endif,
+      '{',
+      optional(field('body', $.report_body)),
+      '}',
+    )),
+
+    // The dataitem header AND its opening brace are inside the branch; the
+    // closing brace is outside. Real site: SalesShipment.Report.al:536.
+    //
+    // Two separately-named body segments rather than one `body`: neither is
+    // the complete body in every configuration, and saying `body` twice would
+    // claim otherwise.
+    preproc_split_report_dataitem_open_over_endif: $ => prec(25, seq(
+      $.preproc_if,
+      $._report_dataitem_header,
+      '{',
+      optional(field('conditional_body', $.report_body)),
+      $.preproc_endif,
+      optional(field('shared_body', $.report_body)),
+      '}',
+    )),
+
+    // A dataitem whose own closing `}` sits INSIDE a conditional branch, with
+    // an #else branch that supplies further elements and no brace.
+    //
+    // Real site: SalesShipment.Report.al:580, closing dataitem `Total2`. The
+    // consequence is that the `trigger` after `#endif` belongs to the ENCLOSING
+    // dataitem in one configuration and to this one in the other — which is
+    // exactly why the brace, not the dataitem, is what varies. Modelling it the
+    // other way round (one node owning two physical closing braces) makes the
+    // rule consume the enclosing dataitem's brace and leaves the file one short.
+    //
+    // The report-body sibling of preproc_split_brace_close, which is layout-only
+    // (`repeat($._layout_element)`) and requires a brace in BOTH branches.
+    preproc_split_report_brace_close: $ => prec(25, seq(
+      $.preproc_if,
+      optional($.report_body),
+      '}',
+      optional(seq($.preproc_else, optional($.report_body))),
+      $.preproc_endif,
+    )),
     report_body: $ => repeat1($._report_body_element),
 
     _report_body_element: $ => choice(
       $.report_column,
-      $.report_dataitem,  // Nested dataitems
+      $._report_dataitem_variant,  // Nested dataitems
       $._body_element,
       $.preproc_conditional_report,
     ),
@@ -2655,7 +2741,7 @@ module.exports = grammar({
       $.addbefore_keyword, '(', field('target', $._identifier_or_quoted), ')',
       '{', optional(field('body', $.dataset_mod_body)), '}'
     ),
-    dataset_mod_body: $ => repeat1(choice($.report_dataitem, $.report_column, $._body_element)),
+    dataset_mod_body: $ => repeat1(choice($._report_dataitem_variant, $.report_column, $._body_element)),
 
     // requestpage { layout { ... } actions { ... } }
     requestpage_section: $ => seq(
@@ -3591,11 +3677,20 @@ module.exports = grammar({
       seq($.begin_keyword, repeat1($._statement), $.preproc_endif),
     ),
 
-    // Complete preprocessor-guarded end: #if end [;] #endif
+    // The conditional region that CLOSES a block opened in an earlier region.
+    //
+    // Was `#if end [;] #endif` and nothing else, which assumed the closing
+    // region contributes the `end` and nothing but the `end`. Real code puts it
+    // in the middle of a branch: Check.Report.al:1198 contributes a statement,
+    // then `end;`, then two more statements, and carries an `#else` branch
+    // supplying the alternative text for when the block was never opened.
     _preproc_end_guard: $ => seq(
       $.preproc_if,
+      repeat($._statement),
       $.end_keyword,
       optional(';'),
+      repeat($._statement),
+      optional(seq($.preproc_else, repeat($._statement))),
       $.preproc_endif,
     ),
 
@@ -3923,6 +4018,7 @@ module.exports = grammar({
           $.continue_statement,
           $.break_statement,
           $.case_statement,
+          $.preproc_split_case_statement_end,
           $.for_statement,
           $.repeat_statement,
           $.while_statement,
@@ -4254,6 +4350,64 @@ module.exports = grammar({
       $.preproc_conditional_case,
       $.preproc_split_case_extended,
     )),
+
+    // A `case` whose FINAL branch body, the case's own `end;`, and the
+    // statements that follow the case all live inside each conditional branch.
+    // Real site: Check.Report.al:844.
+    //
+    // A sibling of case_statement rather than a `choice()` on its trailing
+    // end_keyword, and that distinction is the whole point. The three ranges
+    // cross:
+    //
+    //     case ..............................  end
+    //     #if .................. #else ................. #endif
+    //                        following statements    following statements
+    //
+    // tree-sitter nodes are contiguous and properly nested, so no tree can show
+    // all three. Hanging the construct off case_statement would make the
+    // post-case statements DESCENDANTS of a node called case_statement, which
+    // is a false claim about the program; naming the node preproc_split_* does
+    // not repair the ancestry. Here the statements are instead the explicit
+    // `following` field of one conditional branch, which is true in every
+    // configuration.
+    //
+    // Deliberately narrow: the dangling `pattern :` is the discriminator, the
+    // branch body and `following` are required, and `#else` is required —
+    // without one, some configuration leaves the case unclosed. Widen only
+    // against a real site. A zero-`following` variant would additionally have
+    // to accept preproc_split_end, since the scanner gives that token first
+    // refusal when `end;` is followed directly by a directive.
+    preproc_split_case_statement_end: $ => prec(25, seq(
+      $.case_keyword,
+      field('expression', $._expression),
+      $.of_keyword,
+      optional(field('body', $.case_body)),
+      $._case_pattern,
+      ':',
+      $.preproc_if,
+      $.preproc_split_case_end_branch,
+      repeat(seq($.preproc_elif, $.preproc_split_case_end_branch)),
+      $.preproc_else,
+      $.preproc_split_case_end_branch,
+      $.preproc_endif,
+    )),
+
+    // One configured completion: the final branch's body, the case's own `end`,
+    // and the statements that branch contributes after the case.
+    // The `;` after `end` is REQUIRED, not optional. As an optional it was
+    // ambiguous with `empty_statement` (which is just `';'`), and GLR resolved
+    // it the untidy way: the case's own terminator became the first child of
+    // `following`, so every consumer reading that field saw a leading empty
+    // statement that is not in the program. A case's `end` always carries its
+    // `;` here, so requiring it removes the ambiguity rather than papering over
+    // it with a declared conflict.
+    preproc_split_case_end_branch: $ => seq(
+      $._case_body_branch,
+      optional(';'),
+      $.end_keyword,
+      ';',
+      field('following', $.statement_block),
+    ),
 
     // Preprocessor conditionals inside case statements
     preproc_conditional_case: $ => seq(

@@ -3280,6 +3280,10 @@
             "named": true
           },
           {
+            "type": "preproc_split_case_statement_end",
+            "named": true
+          },
+          {
             "type": "preproc_split_code_block_over_endif",
             "named": true
           },
@@ -4462,6 +4466,14 @@
           "named": true
         },
         {
+          "type": "preproc_split_report_dataitem_header",
+          "named": true
+        },
+        {
+          "type": "preproc_split_report_dataitem_open_over_endif",
+          "named": true
+        },
+        {
           "type": "report_dataitem",
           "named": true
         }
@@ -4551,6 +4563,14 @@
         },
         {
           "type": "preproc_split_procedure_preamble",
+          "named": true
+        },
+        {
+          "type": "preproc_split_report_dataitem_header",
+          "named": true
+        },
+        {
+          "type": "preproc_split_report_dataitem_open_over_endif",
           "named": true
         },
         {
@@ -6030,6 +6050,10 @@
             "named": true
           },
           {
+            "type": "preproc_split_case_statement_end",
+            "named": true
+          },
+          {
             "type": "preproc_split_code_block_over_endif",
             "named": true
           },
@@ -6554,6 +6578,10 @@
           },
           {
             "type": "preproc_split_call_statement",
+            "named": true
+          },
+          {
+            "type": "preproc_split_case_statement_end",
             "named": true
           },
           {
@@ -7161,6 +7189,10 @@
             "named": true
           },
           {
+            "type": "preproc_split_case_statement_end",
+            "named": true
+          },
+          {
             "type": "preproc_split_code_block_over_endif",
             "named": true
           },
@@ -7380,6 +7412,10 @@
           },
           {
             "type": "preproc_split_call_statement",
+            "named": true
+          },
+          {
+            "type": "preproc_split_case_statement_end",
             "named": true
           },
           {
@@ -11943,6 +11979,14 @@
           "named": true
         },
         {
+          "type": "preproc_split_report_dataitem_header",
+          "named": true
+        },
+        {
+          "type": "preproc_split_report_dataitem_open_over_endif",
+          "named": true
+        },
+        {
           "type": "report_dataitem",
           "named": true
         }
@@ -13276,6 +13320,14 @@
           "named": true
         },
         {
+          "type": "preproc_split_report_dataitem_header",
+          "named": true
+        },
+        {
+          "type": "preproc_split_report_dataitem_open_over_endif",
+          "named": true
+        },
+        {
           "type": "procedure",
           "named": true
         },
@@ -13484,6 +13536,10 @@
         },
         {
           "type": "preproc_split_call_statement",
+          "named": true
+        },
+        {
+          "type": "preproc_split_case_statement_end",
           "named": true
         },
         {
@@ -14140,6 +14196,10 @@
           "named": true
         },
         {
+          "type": "preproc_else",
+          "named": true
+        },
+        {
           "type": "preproc_endif",
           "named": true
         },
@@ -14157,6 +14217,10 @@
         },
         {
           "type": "preproc_split_call_statement",
+          "named": true
+        },
+        {
+          "type": "preproc_split_case_statement_end",
           "named": true
         },
         {
@@ -14506,6 +14570,10 @@
           },
           {
             "type": "preproc_split_call_statement",
+            "named": true
+          },
+          {
+            "type": "preproc_split_case_statement_end",
             "named": true
           },
           {
@@ -15594,6 +15662,10 @@
             "named": true
           },
           {
+            "type": "preproc_split_case_statement_end",
+            "named": true
+          },
+          {
             "type": "preproc_split_code_block_over_endif",
             "named": true
           },
@@ -15802,6 +15874,258 @@
     }
   },
   {
+    "type": "preproc_split_case_end_branch",
+    "named": true,
+    "fields": {
+      "body": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "additive_expression",
+            "named": true
+          },
+          {
+            "type": "as_expression",
+            "named": true
+          },
+          {
+            "type": "asserterror_statement",
+            "named": true
+          },
+          {
+            "type": "assignment_expression",
+            "named": true
+          },
+          {
+            "type": "assignment_statement",
+            "named": true
+          },
+          {
+            "type": "biginteger_literal",
+            "named": true
+          },
+          {
+            "type": "boolean",
+            "named": true
+          },
+          {
+            "type": "break_statement",
+            "named": true
+          },
+          {
+            "type": "call_expression",
+            "named": true
+          },
+          {
+            "type": "call_statement",
+            "named": true
+          },
+          {
+            "type": "case_statement",
+            "named": true
+          },
+          {
+            "type": "code_block",
+            "named": true
+          },
+          {
+            "type": "comparison_expression",
+            "named": true
+          },
+          {
+            "type": "continue_statement",
+            "named": true
+          },
+          {
+            "type": "database_reference",
+            "named": true
+          },
+          {
+            "type": "date_literal",
+            "named": true
+          },
+          {
+            "type": "datetime_literal",
+            "named": true
+          },
+          {
+            "type": "decimal",
+            "named": true
+          },
+          {
+            "type": "empty_statement",
+            "named": true
+          },
+          {
+            "type": "exit_statement",
+            "named": true
+          },
+          {
+            "type": "for_statement",
+            "named": true
+          },
+          {
+            "type": "foreach_statement",
+            "named": true
+          },
+          {
+            "type": "identifier",
+            "named": true
+          },
+          {
+            "type": "if_statement",
+            "named": true
+          },
+          {
+            "type": "in_expression",
+            "named": true
+          },
+          {
+            "type": "integer",
+            "named": true
+          },
+          {
+            "type": "is_expression",
+            "named": true
+          },
+          {
+            "type": "keyword_identifier",
+            "named": true
+          },
+          {
+            "type": "list_literal",
+            "named": true
+          },
+          {
+            "type": "logical_expression",
+            "named": true
+          },
+          {
+            "type": "member_expression",
+            "named": true
+          },
+          {
+            "type": "multiplicative_expression",
+            "named": true
+          },
+          {
+            "type": "parenthesized_expression",
+            "named": true
+          },
+          {
+            "type": "preproc_conditional_statement",
+            "named": true
+          },
+          {
+            "type": "preproc_guarded_statement",
+            "named": true
+          },
+          {
+            "type": "preproc_split_call_statement",
+            "named": true
+          },
+          {
+            "type": "preproc_split_case_statement_end",
+            "named": true
+          },
+          {
+            "type": "preproc_split_code_block_over_endif",
+            "named": true
+          },
+          {
+            "type": "preproc_split_if_begin_asymmetric",
+            "named": true
+          },
+          {
+            "type": "preproc_split_if_begin_else",
+            "named": true
+          },
+          {
+            "type": "preproc_split_if_else_statement",
+            "named": true
+          },
+          {
+            "type": "preproc_split_if_statement",
+            "named": true
+          },
+          {
+            "type": "preproc_split_if_then_begin",
+            "named": true
+          },
+          {
+            "type": "preproc_split_if_then_begin_else_shared",
+            "named": true
+          },
+          {
+            "type": "qualified_enum_value",
+            "named": true
+          },
+          {
+            "type": "quoted_identifier",
+            "named": true
+          },
+          {
+            "type": "repeat_statement",
+            "named": true
+          },
+          {
+            "type": "string_literal",
+            "named": true
+          },
+          {
+            "type": "subscript_expression",
+            "named": true
+          },
+          {
+            "type": "ternary_expression",
+            "named": true
+          },
+          {
+            "type": "time_literal",
+            "named": true
+          },
+          {
+            "type": "unary_expression",
+            "named": true
+          },
+          {
+            "type": "verbatim_string",
+            "named": true
+          },
+          {
+            "type": "while_statement",
+            "named": true
+          },
+          {
+            "type": "with_statement",
+            "named": true
+          }
+        ]
+      },
+      "following": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "statement_block",
+            "named": true
+          }
+        ]
+      }
+    },
+    "children": {
+      "multiple": false,
+      "required": true,
+      "types": [
+        {
+          "type": "end_keyword",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
     "type": "preproc_split_case_extended",
     "named": true,
     "fields": {
@@ -15951,6 +16275,10 @@
           },
           {
             "type": "preproc_split_call_statement",
+            "named": true
+          },
+          {
+            "type": "preproc_split_case_statement_end",
             "named": true
           },
           {
@@ -16166,6 +16494,288 @@
     }
   },
   {
+    "type": "preproc_split_case_statement_end",
+    "named": true,
+    "fields": {
+      "body": {
+        "multiple": false,
+        "required": false,
+        "types": [
+          {
+            "type": "case_body",
+            "named": true
+          }
+        ]
+      },
+      "expression": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "additive_expression",
+            "named": true
+          },
+          {
+            "type": "as_expression",
+            "named": true
+          },
+          {
+            "type": "assignment_expression",
+            "named": true
+          },
+          {
+            "type": "biginteger_literal",
+            "named": true
+          },
+          {
+            "type": "boolean",
+            "named": true
+          },
+          {
+            "type": "call_expression",
+            "named": true
+          },
+          {
+            "type": "comparison_expression",
+            "named": true
+          },
+          {
+            "type": "database_reference",
+            "named": true
+          },
+          {
+            "type": "date_literal",
+            "named": true
+          },
+          {
+            "type": "datetime_literal",
+            "named": true
+          },
+          {
+            "type": "decimal",
+            "named": true
+          },
+          {
+            "type": "identifier",
+            "named": true
+          },
+          {
+            "type": "in_expression",
+            "named": true
+          },
+          {
+            "type": "integer",
+            "named": true
+          },
+          {
+            "type": "is_expression",
+            "named": true
+          },
+          {
+            "type": "keyword_identifier",
+            "named": true
+          },
+          {
+            "type": "list_literal",
+            "named": true
+          },
+          {
+            "type": "logical_expression",
+            "named": true
+          },
+          {
+            "type": "member_expression",
+            "named": true
+          },
+          {
+            "type": "multiplicative_expression",
+            "named": true
+          },
+          {
+            "type": "parenthesized_expression",
+            "named": true
+          },
+          {
+            "type": "qualified_enum_value",
+            "named": true
+          },
+          {
+            "type": "quoted_identifier",
+            "named": true
+          },
+          {
+            "type": "string_literal",
+            "named": true
+          },
+          {
+            "type": "subscript_expression",
+            "named": true
+          },
+          {
+            "type": "ternary_expression",
+            "named": true
+          },
+          {
+            "type": "time_literal",
+            "named": true
+          },
+          {
+            "type": "unary_expression",
+            "named": true
+          },
+          {
+            "type": "verbatim_string",
+            "named": true
+          }
+        ]
+      },
+      "pattern": {
+        "multiple": true,
+        "required": false,
+        "types": [
+          {
+            "type": "additive_expression",
+            "named": true
+          },
+          {
+            "type": "biginteger_literal",
+            "named": true
+          },
+          {
+            "type": "boolean",
+            "named": true
+          },
+          {
+            "type": "call_expression",
+            "named": true
+          },
+          {
+            "type": "comparison_expression",
+            "named": true
+          },
+          {
+            "type": "database_reference",
+            "named": true
+          },
+          {
+            "type": "date_literal",
+            "named": true
+          },
+          {
+            "type": "datetime_literal",
+            "named": true
+          },
+          {
+            "type": "decimal",
+            "named": true
+          },
+          {
+            "type": "identifier",
+            "named": true
+          },
+          {
+            "type": "in_expression",
+            "named": true
+          },
+          {
+            "type": "integer",
+            "named": true
+          },
+          {
+            "type": "keyword_identifier",
+            "named": true
+          },
+          {
+            "type": "logical_expression",
+            "named": true
+          },
+          {
+            "type": "member_expression",
+            "named": true
+          },
+          {
+            "type": "multiplicative_expression",
+            "named": true
+          },
+          {
+            "type": "parenthesized_expression",
+            "named": true
+          },
+          {
+            "type": "qualified_enum_value",
+            "named": true
+          },
+          {
+            "type": "quoted_identifier",
+            "named": true
+          },
+          {
+            "type": "range_expression",
+            "named": true
+          },
+          {
+            "type": "string_literal",
+            "named": true
+          },
+          {
+            "type": "subscript_expression",
+            "named": true
+          },
+          {
+            "type": "time_literal",
+            "named": true
+          },
+          {
+            "type": "unary_expression",
+            "named": true
+          },
+          {
+            "type": "verbatim_string",
+            "named": true
+          }
+        ]
+      }
+    },
+    "children": {
+      "multiple": true,
+      "required": true,
+      "types": [
+        {
+          "type": "case_keyword",
+          "named": true
+        },
+        {
+          "type": "of_keyword",
+          "named": true
+        },
+        {
+          "type": "preproc_conditional_case_patterns",
+          "named": true
+        },
+        {
+          "type": "preproc_elif",
+          "named": true
+        },
+        {
+          "type": "preproc_else",
+          "named": true
+        },
+        {
+          "type": "preproc_endif",
+          "named": true
+        },
+        {
+          "type": "preproc_if",
+          "named": true
+        },
+        {
+          "type": "preproc_split_case_end_branch",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
     "type": "preproc_split_code_block_end",
     "named": true,
     "fields": {},
@@ -16343,6 +16953,10 @@
         },
         {
           "type": "preproc_split_call_statement",
+          "named": true
+        },
+        {
+          "type": "preproc_split_case_statement_end",
           "named": true
         },
         {
@@ -16577,6 +17191,10 @@
           "named": true
         },
         {
+          "type": "preproc_else",
+          "named": true
+        },
+        {
           "type": "preproc_endif",
           "named": true
         },
@@ -16590,6 +17208,10 @@
         },
         {
           "type": "preproc_split_call_statement",
+          "named": true
+        },
+        {
+          "type": "preproc_split_case_statement_end",
           "named": true
         },
         {
@@ -17027,6 +17649,10 @@
         },
         {
           "type": "preproc_split_call_statement",
+          "named": true
+        },
+        {
+          "type": "preproc_split_case_statement_end",
           "named": true
         },
         {
@@ -17582,6 +18208,10 @@
           "named": true
         },
         {
+          "type": "preproc_split_case_statement_end",
+          "named": true
+        },
+        {
           "type": "preproc_split_code_block_over_endif",
           "named": true
         },
@@ -17960,6 +18590,10 @@
           "named": true
         },
         {
+          "type": "preproc_split_case_statement_end",
+          "named": true
+        },
+        {
           "type": "preproc_split_code_block_over_endif",
           "named": true
         },
@@ -18313,6 +18947,10 @@
             "named": true
           },
           {
+            "type": "preproc_split_case_statement_end",
+            "named": true
+          },
+          {
             "type": "preproc_split_code_block_over_endif",
             "named": true
           },
@@ -18532,6 +19170,10 @@
           },
           {
             "type": "preproc_split_call_statement",
+            "named": true
+          },
+          {
+            "type": "preproc_split_case_statement_end",
             "named": true
           },
           {
@@ -18923,6 +19565,10 @@
             "named": true
           },
           {
+            "type": "preproc_split_case_statement_end",
+            "named": true
+          },
+          {
             "type": "preproc_split_code_block_over_endif",
             "named": true
           },
@@ -19142,6 +19788,10 @@
           },
           {
             "type": "preproc_split_call_statement",
+            "named": true
+          },
+          {
+            "type": "preproc_split_case_statement_end",
             "named": true
           },
           {
@@ -19558,6 +20208,10 @@
           "named": true
         },
         {
+          "type": "preproc_split_case_statement_end",
+          "named": true
+        },
+        {
           "type": "preproc_split_code_block_over_endif",
           "named": true
         },
@@ -19941,6 +20595,10 @@
         },
         {
           "type": "preproc_split_call_statement",
+          "named": true
+        },
+        {
+          "type": "preproc_split_case_statement_end",
           "named": true
         },
         {
@@ -20411,6 +21069,183 @@
         },
         {
           "type": "var_section",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
+    "type": "preproc_split_report_brace_close",
+    "named": true,
+    "fields": {},
+    "children": {
+      "multiple": true,
+      "required": true,
+      "types": [
+        {
+          "type": "preproc_else",
+          "named": true
+        },
+        {
+          "type": "preproc_endif",
+          "named": true
+        },
+        {
+          "type": "preproc_if",
+          "named": true
+        },
+        {
+          "type": "report_body",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
+    "type": "preproc_split_report_dataitem_header",
+    "named": true,
+    "fields": {
+      "body": {
+        "multiple": false,
+        "required": false,
+        "types": [
+          {
+            "type": "report_body",
+            "named": true
+          }
+        ]
+      },
+      "name": {
+        "multiple": true,
+        "required": true,
+        "types": [
+          {
+            "type": "identifier",
+            "named": true
+          },
+          {
+            "type": "quoted_identifier",
+            "named": true
+          }
+        ]
+      },
+      "table_name": {
+        "multiple": true,
+        "required": true,
+        "types": [
+          {
+            "type": "identifier",
+            "named": true
+          },
+          {
+            "type": "integer",
+            "named": true
+          },
+          {
+            "type": "quoted_identifier",
+            "named": true
+          }
+        ]
+      }
+    },
+    "children": {
+      "multiple": true,
+      "required": true,
+      "types": [
+        {
+          "type": "dataitem_keyword",
+          "named": true
+        },
+        {
+          "type": "preproc_elif",
+          "named": true
+        },
+        {
+          "type": "preproc_else",
+          "named": true
+        },
+        {
+          "type": "preproc_endif",
+          "named": true
+        },
+        {
+          "type": "preproc_if",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
+    "type": "preproc_split_report_dataitem_open_over_endif",
+    "named": true,
+    "fields": {
+      "conditional_body": {
+        "multiple": false,
+        "required": false,
+        "types": [
+          {
+            "type": "report_body",
+            "named": true
+          }
+        ]
+      },
+      "name": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "identifier",
+            "named": true
+          },
+          {
+            "type": "quoted_identifier",
+            "named": true
+          }
+        ]
+      },
+      "shared_body": {
+        "multiple": false,
+        "required": false,
+        "types": [
+          {
+            "type": "report_body",
+            "named": true
+          }
+        ]
+      },
+      "table_name": {
+        "multiple": true,
+        "required": true,
+        "types": [
+          {
+            "type": "identifier",
+            "named": true
+          },
+          {
+            "type": "integer",
+            "named": true
+          },
+          {
+            "type": "quoted_identifier",
+            "named": true
+          }
+        ]
+      }
+    },
+    "children": {
+      "multiple": true,
+      "required": true,
+      "types": [
+        {
+          "type": "dataitem_keyword",
+          "named": true
+        },
+        {
+          "type": "preproc_endif",
+          "named": true
+        },
+        {
+          "type": "preproc_if",
           "named": true
         }
       ]
@@ -22125,6 +22960,14 @@
           "named": true
         },
         {
+          "type": "preproc_split_report_dataitem_header",
+          "named": true
+        },
+        {
+          "type": "preproc_split_report_dataitem_open_over_endif",
+          "named": true
+        },
+        {
           "type": "procedure",
           "named": true
         },
@@ -22377,11 +23220,15 @@
       }
     },
     "children": {
-      "multiple": false,
+      "multiple": true,
       "required": true,
       "types": [
         {
           "type": "dataitem_keyword",
+          "named": true
+        },
+        {
+          "type": "preproc_split_report_brace_close",
           "named": true
         }
       ]
@@ -23016,6 +23863,10 @@
         },
         {
           "type": "preproc_split_call_statement",
+          "named": true
+        },
+        {
+          "type": "preproc_split_case_statement_end",
           "named": true
         },
         {
@@ -25361,6 +26212,10 @@
             "named": true
           },
           {
+            "type": "preproc_split_case_statement_end",
+            "named": true
+          },
+          {
             "type": "preproc_split_code_block_over_endif",
             "named": true
           },
@@ -25731,6 +26586,10 @@
           },
           {
             "type": "preproc_split_call_statement",
+            "named": true
+          },
+          {
+            "type": "preproc_split_case_statement_end",
             "named": true
           },
           {

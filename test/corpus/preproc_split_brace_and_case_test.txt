@@ -1,0 +1,571 @@
+================================================================================
+A block's end buried among statements in a later branch, with an #else
+--
+Real site: Check.Report.al:1170 and :1198, which are ONE construct -- an `else`
+whose block opens in the first region and closes in the second.
+.
+`_preproc_end_guard` used to be `#if end [;] #endif` and nothing else, which
+assumed the closing region contributes the `end` and nothing but the `end`. The
+real region contributes a statement, then `end;`, then two more statements, and
+carries an `#else` supplying the text for the configuration in which the block
+was never opened at all. Widening it needs the declared conflict
+[_preproc_end_guard, empty_statement]: the widened rule allows statements after
+`end [;]`, and `empty_statement` is itself just `';'`.
+.
+Isolating this took a mechanical sweep, not reading: resolving each #if region
+in turn and reparsing. Region-at-a-time isolation initially blamed BOTH regions
+separately, because resolving either one away breaks the pair.
+================================================================================
+
+codeunit 50000 T
+{
+    procedure P()
+    begin
+        if No < 1 then
+            AddTo(Text026)
+        else
+#if not CLEAN27
+        begin
+#endif
+            for E := 4 downto 1 do begin
+                AddTo(OnesText[E]);
+            end;
+#if not CLEAN27
+            AddTo('POUNDS');
+        end;
+
+        if No > 0 then
+            AddTo('P**')
+        else
+            AddTo('ONLY**');
+#else
+        AddTo(Text028);
+        AddTo(Format(No));
+#endif
+        if CurrencyCode <> '' then
+            AddTo(CurrencyCode);
+    end;
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (procedure
+        (procedure_keyword)
+        name: (identifier)
+        body: (code_block
+          (begin_keyword)
+          body: (statement_block
+            (if_statement
+              (if_keyword)
+              condition: (comparison_expression
+                left: (identifier)
+                operator: (comparison_operator)
+                right: (integer))
+              (then_keyword)
+              then_branch: (call_expression
+                function: (identifier)
+                arguments: (argument_list
+                  (identifier)))
+              (else_keyword)
+              else_branch: (preproc_split_code_block_over_endif
+                (preproc_if
+                  (preproc_open)
+                  condition: (preproc_not_expression
+                    (identifier)))
+                (begin_keyword)
+                (preproc_endif
+                  (preproc_close))
+                (for_statement
+                  (for_keyword)
+                  variable: (identifier)
+                  start: (integer)
+                  direction: (downto_keyword)
+                  end: (integer)
+                  (do_keyword)
+                  body: (code_block
+                    (begin_keyword)
+                    body: (statement_block
+                      (call_expression
+                        function: (identifier)
+                        arguments: (argument_list
+                          (subscript_expression
+                            object: (identifier)
+                            index: (identifier)))))
+                    (end_keyword)))
+                (preproc_if
+                  (preproc_open)
+                  condition: (preproc_not_expression
+                    (identifier)))
+                (call_expression
+                  function: (identifier)
+                  arguments: (argument_list
+                    (string_literal)))
+                (end_keyword)
+                (if_statement
+                  (if_keyword)
+                  condition: (comparison_expression
+                    left: (identifier)
+                    operator: (comparison_operator)
+                    right: (integer))
+                  (then_keyword)
+                  then_branch: (call_expression
+                    function: (identifier)
+                    arguments: (argument_list
+                      (string_literal)))
+                  (else_keyword)
+                  else_branch: (call_expression
+                    function: (identifier)
+                    arguments: (argument_list
+                      (string_literal))))
+                (preproc_else)
+                (call_expression
+                  function: (identifier)
+                  arguments: (argument_list
+                    (identifier)))
+                (call_expression
+                  function: (identifier)
+                  arguments: (argument_list
+                    (call_expression
+                      function: (identifier)
+                      arguments: (argument_list
+                        (identifier)))))
+                (preproc_endif
+                  (preproc_close))))
+            (if_statement
+              (if_keyword)
+              condition: (comparison_expression
+                left: (identifier)
+                operator: (comparison_operator)
+                right: (string_literal))
+              (then_keyword)
+              then_branch: (call_expression
+                function: (identifier)
+                arguments: (argument_list
+                  (identifier)))))
+          (end_keyword))))))
+
+================================================================================
+A report dataitem header that differs between branches, shared body
+--
+Real site: SalesShipment.Report.al:451. `dataitem(AsmLoop; "Integer")` in the
+#if branch, `dataitem(DisplayAsmInfo; "Integer")` in the #else, and the single
+brace-delimited body after `#endif` belongs to whichever survived.
+.
+Structural sibling of preproc_split_field and preproc_split_table_field. The
+header is factored into a hidden `_report_dataitem_header` so ordinary
+report_dataitem nodes keep their existing visible shape and fields -- confirmed
+by BC.History's 15,358 trees staying byte-identical.
+================================================================================
+
+report 50000 T
+{
+    dataset
+    {
+        dataitem(Outer; "Integer")
+        {
+#if not CLEAN28
+            dataitem(AsmLoop; "Integer")
+#else
+            dataitem(DisplayAsmInfo; "Integer")
+#endif
+            {
+                DataItemTableView = sorting(Number);
+            }
+        }
+    }
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (report_declaration
+    (report_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (dataset_section
+        (dataset_keyword)
+        body: (dataset_body
+          (report_dataitem
+            (dataitem_keyword)
+            name: (identifier)
+            table_name: (quoted_identifier)
+            body: (report_body
+              (preproc_split_report_dataitem_header
+                (preproc_if
+                  (preproc_open)
+                  condition: (preproc_not_expression
+                    (identifier)))
+                (dataitem_keyword)
+                name: (identifier)
+                table_name: (quoted_identifier)
+                (preproc_else)
+                (dataitem_keyword)
+                name: (identifier)
+                table_name: (quoted_identifier)
+                (preproc_endif
+                  (preproc_close))
+                body: (report_body
+                  (property
+                    name: (property_name)
+                    value: (sorting_value
+                      (sorting_keyword)
+                      (identifier))))))))))))
+
+================================================================================
+A report dataitem opened inside a branch and closed after #endif
+--
+Real site: SalesShipment.Report.al:536. The header AND its opening brace are
+inside the branch; the closing brace is outside, so the dataitem exists at all
+only in one configuration.
+.
+The two body runs are named `conditional_body` and `shared_body` rather than
+both being `body`. Neither is the complete body in every configuration, and
+calling both `body` would assert that they are interchangeable parts of one
+whole.
+================================================================================
+
+report 50000 T
+{
+    dataset
+    {
+        dataitem(Outer; "Integer")
+        {
+#if not CLEAN28
+            dataitem("Integer"; "Integer")
+            {
+                DataItemTableView = sorting(Number);
+#endif
+                dataitem(Total2; "Integer")
+                {
+                    DataItemTableView = sorting(Number);
+                }
+            }
+        }
+    }
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (report_declaration
+    (report_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (dataset_section
+        (dataset_keyword)
+        body: (dataset_body
+          (report_dataitem
+            (dataitem_keyword)
+            name: (identifier)
+            table_name: (quoted_identifier)
+            body: (report_body
+              (preproc_split_report_dataitem_open_over_endif
+                (preproc_if
+                  (preproc_open)
+                  condition: (preproc_not_expression
+                    (identifier)))
+                (dataitem_keyword)
+                name: (quoted_identifier)
+                table_name: (quoted_identifier)
+                conditional_body: (report_body
+                  (property
+                    name: (property_name)
+                    value: (sorting_value
+                      (sorting_keyword)
+                      (identifier))))
+                (preproc_endif
+                  (preproc_close))
+                shared_body: (report_body
+                  (report_dataitem
+                    (dataitem_keyword)
+                    name: (identifier)
+                    table_name: (quoted_identifier)
+                    body: (report_body
+                      (property
+                        name: (property_name)
+                        value: (sorting_value
+                          (sorting_keyword)
+                          (identifier))))))))))))))
+
+================================================================================
+A report dataitem whose closing brace is inside a branch
+--
+Real site: SalesShipment.Report.al:580, closing dataitem `Total2`. The
+consequence is visible two lines later: the `trigger` after `#endif` belongs to
+the ENCLOSING dataitem in one configuration and to this one in the other.
+.
+The first model of this was wrong and is worth recording. Reading it as "one
+dataitem owning two physical closing braces" -- a brace in the #if branch plus
+an alternative brace after #endif -- made the rule consume the ENCLOSING
+dataitem's brace, and the file ended one `}` short with a MISSING node at EOF.
+What varies is the BRACE, not the dataitem: report_dataitem's closing `}` is
+now `choice('}', $.preproc_split_report_brace_close)`.
+.
+The existing preproc_split_brace_close could not be reused. It is layout-only
+(`repeat($._layout_element)`, not report elements) and requires a closing brace
+in BOTH branches, which this shape does not have.
+.
+The nesting was established by walking brace depth mechanically; by eye the
+`}` looks like it closes the dataitem two levels out.
+================================================================================
+
+report 50000 T
+{
+    dataset
+    {
+        dataitem(Outer; "Integer")
+        {
+            dataitem(Inner; "Integer")
+            {
+                column(A; ALbl)
+                {
+                }
+#if not CLEAN28
+                column(B; BLbl)
+                {
+                }
+            }
+#else
+                column(C; CLbl)
+                {
+                }
+#endif
+            trigger OnPreDataItem()
+            begin
+                if not ShowIt then
+                    CurrReport.Break();
+            end;
+        }
+        dataitem(Next; "Integer")
+        {
+            DataItemTableView = sorting(Number);
+        }
+    }
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (report_declaration
+    (report_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (dataset_section
+        (dataset_keyword)
+        body: (dataset_body
+          (report_dataitem
+            (dataitem_keyword)
+            name: (identifier)
+            table_name: (quoted_identifier)
+            body: (report_body
+              (report_dataitem
+                (dataitem_keyword)
+                name: (identifier)
+                table_name: (quoted_identifier)
+                body: (report_body
+                  (report_column
+                    (column_keyword)
+                    name: (identifier)
+                    source: (identifier)))
+                (preproc_split_report_brace_close
+                  (preproc_if
+                    (preproc_open)
+                    condition: (preproc_not_expression
+                      (identifier)))
+                  (report_body
+                    (report_column
+                      (column_keyword)
+                      name: (identifier)
+                      source: (identifier)))
+                  (preproc_else)
+                  (report_body
+                    (report_column
+                      (column_keyword)
+                      name: (identifier)
+                      source: (identifier)))
+                  (preproc_endif
+                    (preproc_close))))
+              (trigger_declaration
+                (trigger_keyword)
+                name: (identifier)
+                body: (code_block
+                  (begin_keyword)
+                  body: (statement_block
+                    (if_statement
+                      (if_keyword)
+                      condition: (unary_expression
+                        operand: (identifier))
+                      (then_keyword)
+                      then_branch: (call_expression
+                        function: (member_expression
+                          object: (identifier)
+                          member: (identifier))
+                        arguments: (argument_list))))
+                  (end_keyword)))))
+          (report_dataitem
+            (dataitem_keyword)
+            name: (identifier)
+            table_name: (quoted_identifier)
+            body: (report_body
+              (property
+                name: (property_name)
+                value: (sorting_value
+                  (sorting_keyword)
+                  (identifier))))))))))
+
+================================================================================
+A case statement whose own end lives inside each branch
+--
+Real site: Check.Report.al:844. The final branch's PATTERN and ':' sit outside
+the directive; each branch then supplies that branch's BODY, the CASE's own
+`end;`, and the statements that follow the whole case.
+.
+`preproc_split_case_statement_end` is a SIBLING of case_statement in
+_statement_inner, not a `choice()` on case_statement's trailing end_keyword,
+and the difference is the entire point. Three ranges cross here:
+.
+    case .............................. end
+    #if ................. #else ................ #endif
+                      following stmts        following stmts
+.
+tree-sitter nodes are contiguous and properly nested, so no tree can show all
+three. Hanging this off case_statement would make the post-case statements
+DESCENDANTS of a node called case_statement -- a false claim about the program
+that naming the child `preproc_split_*` does not repair. They are instead the
+explicit `following` field of one conditional branch, which is true in every
+configuration.
+.
+The `;` after `end` is REQUIRED here, not optional. As an optional it was
+ambiguous with `empty_statement` and GLR took the untidy reading: the case's
+own terminator became the first child of `following`, so anything reading that
+field saw a leading empty statement that is not in the program.
+================================================================================
+
+codeunit 50000 T
+{
+    procedure P()
+    begin
+        case BalancingType of
+            BalancingType::Vendor:
+                begin
+                    Vendor.Get(BalancingNo);
+                end;
+            BalancingType::Employee:
+#if not CLEAN27
+                ApplyBalancingTypeOfEmployee();
+            end;
+
+            CheckToAddr[1] := PadStr(CheckToAddr[1], 10, '*');
+            CheckDateText := UpperCase(CheckDateText);
+#else
+                begin
+                    Employee.Get(BalancingNo);
+                end
+            end;
+
+            CheckDateText := Format("Posting Date", 0, 4);
+#endif
+    end;
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (procedure
+        (procedure_keyword)
+        name: (identifier)
+        body: (code_block
+          (begin_keyword)
+          body: (statement_block
+            (preproc_split_case_statement_end
+              (case_keyword)
+              expression: (identifier)
+              (of_keyword)
+              body: (case_body
+                (case_branch
+                  pattern: (qualified_enum_value
+                    enum_type: (identifier)
+                    value: (identifier))
+                  body: (code_block
+                    (begin_keyword)
+                    body: (statement_block
+                      (call_expression
+                        function: (member_expression
+                          object: (identifier)
+                          member: (identifier))
+                        arguments: (argument_list
+                          (identifier))))
+                    (end_keyword))))
+              pattern: (qualified_enum_value
+                enum_type: (identifier)
+                value: (identifier))
+              (preproc_if
+                (preproc_open)
+                condition: (preproc_not_expression
+                  (identifier)))
+              (preproc_split_case_end_branch
+                body: (call_expression
+                  function: (identifier)
+                  arguments: (argument_list))
+                (end_keyword)
+                following: (statement_block
+                  (assignment_statement
+                    left: (subscript_expression
+                      object: (identifier)
+                      index: (integer))
+                    operator: (assignment_operator)
+                    right: (call_expression
+                      function: (identifier)
+                      arguments: (argument_list
+                        (subscript_expression
+                          object: (identifier)
+                          index: (integer))
+                        (integer)
+                        (string_literal))))
+                  (assignment_statement
+                    left: (identifier)
+                    operator: (assignment_operator)
+                    right: (call_expression
+                      function: (identifier)
+                      arguments: (argument_list
+                        (identifier))))))
+              (preproc_else)
+              (preproc_split_case_end_branch
+                body: (code_block
+                  (begin_keyword)
+                  body: (statement_block
+                    (call_expression
+                      function: (member_expression
+                        object: (identifier)
+                        member: (identifier))
+                      arguments: (argument_list
+                        (identifier))))
+                  (end_keyword))
+                (end_keyword)
+                following: (statement_block
+                  (assignment_statement
+                    left: (identifier)
+                    operator: (assignment_operator)
+                    right: (call_expression
+                      function: (identifier)
+                      arguments: (argument_list
+                        (quoted_identifier)
+                        (integer)
+                        (integer))))))
+              (preproc_endif
+                (preproc_close))))
+          (end_keyword))))))

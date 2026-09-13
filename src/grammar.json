@@ -10666,7 +10666,7 @@
         "members": [
           {
             "type": "SYMBOL",
-            "name": "report_dataitem"
+            "name": "_report_dataitem_variant"
           },
           {
             "type": "SYMBOL",
@@ -10717,7 +10717,7 @@
             "members": [
               {
                 "type": "SYMBOL",
-                "name": "report_dataitem"
+                "name": "_report_dataitem_variant"
               },
               {
                 "type": "SYMBOL",
@@ -10742,7 +10742,7 @@
                   "members": [
                     {
                       "type": "SYMBOL",
-                      "name": "report_dataitem"
+                      "name": "_report_dataitem_variant"
                     },
                     {
                       "type": "SYMBOL",
@@ -10771,7 +10771,7 @@
                     "members": [
                       {
                         "type": "SYMBOL",
-                        "name": "report_dataitem"
+                        "name": "_report_dataitem_variant"
                       },
                       {
                         "type": "SYMBOL",
@@ -10793,7 +10793,24 @@
         }
       ]
     },
-    "report_dataitem": {
+    "_report_dataitem_variant": {
+      "type": "CHOICE",
+      "members": [
+        {
+          "type": "SYMBOL",
+          "name": "report_dataitem"
+        },
+        {
+          "type": "SYMBOL",
+          "name": "preproc_split_report_dataitem_header"
+        },
+        {
+          "type": "SYMBOL",
+          "name": "preproc_split_report_dataitem_open_over_endif"
+        }
+      ]
+    },
+    "_report_dataitem_header": {
       "type": "SEQ",
       "members": [
         {
@@ -10823,6 +10840,15 @@
         {
           "type": "STRING",
           "value": ")"
+        }
+      ]
+    },
+    "report_dataitem": {
+      "type": "SEQ",
+      "members": [
+        {
+          "type": "SYMBOL",
+          "name": "_report_dataitem_header"
         },
         {
           "type": "STRING",
@@ -10845,10 +10871,224 @@
           ]
         },
         {
-          "type": "STRING",
-          "value": "}"
+          "type": "CHOICE",
+          "members": [
+            {
+              "type": "STRING",
+              "value": "}"
+            },
+            {
+              "type": "SYMBOL",
+              "name": "preproc_split_report_brace_close"
+            }
+          ]
         }
       ]
+    },
+    "preproc_split_report_dataitem_header": {
+      "type": "PREC",
+      "value": 25,
+      "content": {
+        "type": "SEQ",
+        "members": [
+          {
+            "type": "SYMBOL",
+            "name": "preproc_if"
+          },
+          {
+            "type": "SYMBOL",
+            "name": "_report_dataitem_header"
+          },
+          {
+            "type": "REPEAT",
+            "content": {
+              "type": "SEQ",
+              "members": [
+                {
+                  "type": "SYMBOL",
+                  "name": "preproc_elif"
+                },
+                {
+                  "type": "SYMBOL",
+                  "name": "_report_dataitem_header"
+                }
+              ]
+            }
+          },
+          {
+            "type": "CHOICE",
+            "members": [
+              {
+                "type": "SEQ",
+                "members": [
+                  {
+                    "type": "SYMBOL",
+                    "name": "preproc_else"
+                  },
+                  {
+                    "type": "SYMBOL",
+                    "name": "_report_dataitem_header"
+                  }
+                ]
+              },
+              {
+                "type": "BLANK"
+              }
+            ]
+          },
+          {
+            "type": "SYMBOL",
+            "name": "preproc_endif"
+          },
+          {
+            "type": "STRING",
+            "value": "{"
+          },
+          {
+            "type": "CHOICE",
+            "members": [
+              {
+                "type": "FIELD",
+                "name": "body",
+                "content": {
+                  "type": "SYMBOL",
+                  "name": "report_body"
+                }
+              },
+              {
+                "type": "BLANK"
+              }
+            ]
+          },
+          {
+            "type": "STRING",
+            "value": "}"
+          }
+        ]
+      }
+    },
+    "preproc_split_report_dataitem_open_over_endif": {
+      "type": "PREC",
+      "value": 25,
+      "content": {
+        "type": "SEQ",
+        "members": [
+          {
+            "type": "SYMBOL",
+            "name": "preproc_if"
+          },
+          {
+            "type": "SYMBOL",
+            "name": "_report_dataitem_header"
+          },
+          {
+            "type": "STRING",
+            "value": "{"
+          },
+          {
+            "type": "CHOICE",
+            "members": [
+              {
+                "type": "FIELD",
+                "name": "conditional_body",
+                "content": {
+                  "type": "SYMBOL",
+                  "name": "report_body"
+                }
+              },
+              {
+                "type": "BLANK"
+              }
+            ]
+          },
+          {
+            "type": "SYMBOL",
+            "name": "preproc_endif"
+          },
+          {
+            "type": "CHOICE",
+            "members": [
+              {
+                "type": "FIELD",
+                "name": "shared_body",
+                "content": {
+                  "type": "SYMBOL",
+                  "name": "report_body"
+                }
+              },
+              {
+                "type": "BLANK"
+              }
+            ]
+          },
+          {
+            "type": "STRING",
+            "value": "}"
+          }
+        ]
+      }
+    },
+    "preproc_split_report_brace_close": {
+      "type": "PREC",
+      "value": 25,
+      "content": {
+        "type": "SEQ",
+        "members": [
+          {
+            "type": "SYMBOL",
+            "name": "preproc_if"
+          },
+          {
+            "type": "CHOICE",
+            "members": [
+              {
+                "type": "SYMBOL",
+                "name": "report_body"
+              },
+              {
+                "type": "BLANK"
+              }
+            ]
+          },
+          {
+            "type": "STRING",
+            "value": "}"
+          },
+          {
+            "type": "CHOICE",
+            "members": [
+              {
+                "type": "SEQ",
+                "members": [
+                  {
+                    "type": "SYMBOL",
+                    "name": "preproc_else"
+                  },
+                  {
+                    "type": "CHOICE",
+                    "members": [
+                      {
+                        "type": "SYMBOL",
+                        "name": "report_body"
+                      },
+                      {
+                        "type": "BLANK"
+                      }
+                    ]
+                  }
+                ]
+              },
+              {
+                "type": "BLANK"
+              }
+            ]
+          },
+          {
+            "type": "SYMBOL",
+            "name": "preproc_endif"
+          }
+        ]
+      }
     },
     "report_body": {
       "type": "REPEAT1",
@@ -10866,7 +11106,7 @@
         },
         {
           "type": "SYMBOL",
-          "name": "report_dataitem"
+          "name": "_report_dataitem_variant"
         },
         {
           "type": "SYMBOL",
@@ -11267,7 +11507,7 @@
         "members": [
           {
             "type": "SYMBOL",
-            "name": "report_dataitem"
+            "name": "_report_dataitem_variant"
           },
           {
             "type": "SYMBOL",
@@ -14953,6 +15193,13 @@
           "name": "preproc_if"
         },
         {
+          "type": "REPEAT",
+          "content": {
+            "type": "SYMBOL",
+            "name": "_statement"
+          }
+        },
+        {
           "type": "SYMBOL",
           "name": "end_keyword"
         },
@@ -14962,6 +15209,37 @@
             {
               "type": "STRING",
               "value": ";"
+            },
+            {
+              "type": "BLANK"
+            }
+          ]
+        },
+        {
+          "type": "REPEAT",
+          "content": {
+            "type": "SYMBOL",
+            "name": "_statement"
+          }
+        },
+        {
+          "type": "CHOICE",
+          "members": [
+            {
+              "type": "SEQ",
+              "members": [
+                {
+                  "type": "SYMBOL",
+                  "name": "preproc_else"
+                },
+                {
+                  "type": "REPEAT",
+                  "content": {
+                    "type": "SYMBOL",
+                    "name": "_statement"
+                  }
+                }
+              ]
             },
             {
               "type": "BLANK"
@@ -15943,6 +16221,10 @@
         },
         {
           "type": "SYMBOL",
+          "name": "preproc_split_case_statement_end"
+        },
+        {
+          "type": "SYMBOL",
           "name": "for_statement"
         },
         {
@@ -16812,6 +17094,128 @@
           }
         ]
       }
+    },
+    "preproc_split_case_statement_end": {
+      "type": "PREC",
+      "value": 25,
+      "content": {
+        "type": "SEQ",
+        "members": [
+          {
+            "type": "SYMBOL",
+            "name": "case_keyword"
+          },
+          {
+            "type": "FIELD",
+            "name": "expression",
+            "content": {
+              "type": "SYMBOL",
+              "name": "_expression"
+            }
+          },
+          {
+            "type": "SYMBOL",
+            "name": "of_keyword"
+          },
+          {
+            "type": "CHOICE",
+            "members": [
+              {
+                "type": "FIELD",
+                "name": "body",
+                "content": {
+                  "type": "SYMBOL",
+                  "name": "case_body"
+                }
+              },
+              {
+                "type": "BLANK"
+              }
+            ]
+          },
+          {
+            "type": "SYMBOL",
+            "name": "_case_pattern"
+          },
+          {
+            "type": "STRING",
+            "value": ":"
+          },
+          {
+            "type": "SYMBOL",
+            "name": "preproc_if"
+          },
+          {
+            "type": "SYMBOL",
+            "name": "preproc_split_case_end_branch"
+          },
+          {
+            "type": "REPEAT",
+            "content": {
+              "type": "SEQ",
+              "members": [
+                {
+                  "type": "SYMBOL",
+                  "name": "preproc_elif"
+                },
+                {
+                  "type": "SYMBOL",
+                  "name": "preproc_split_case_end_branch"
+                }
+              ]
+            }
+          },
+          {
+            "type": "SYMBOL",
+            "name": "preproc_else"
+          },
+          {
+            "type": "SYMBOL",
+            "name": "preproc_split_case_end_branch"
+          },
+          {
+            "type": "SYMBOL",
+            "name": "preproc_endif"
+          }
+        ]
+      }
+    },
+    "preproc_split_case_end_branch": {
+      "type": "SEQ",
+      "members": [
+        {
+          "type": "SYMBOL",
+          "name": "_case_body_branch"
+        },
+        {
+          "type": "CHOICE",
+          "members": [
+            {
+              "type": "STRING",
+              "value": ";"
+            },
+            {
+              "type": "BLANK"
+            }
+          ]
+        },
+        {
+          "type": "SYMBOL",
+          "name": "end_keyword"
+        },
+        {
+          "type": "STRING",
+          "value": ";"
+        },
+        {
+          "type": "FIELD",
+          "name": "following",
+          "content": {
+            "type": "SYMBOL",
+            "name": "statement_block"
+          }
+        }
+      ]
     },
     "preproc_conditional_case": {
       "type": "SEQ",
@@ -22366,6 +22770,20 @@
     ],
     [
       "_else_begin_block"
+    ],
+    [
+      "_preproc_end_guard",
+      "empty_statement"
+    ],
+    [
+      "report_body"
+    ],
+    [
+      "case_body"
+    ],
+    [
+      "_statement",
+      "_case_body_branch"
     ]
   ],
   "precedences": [],
