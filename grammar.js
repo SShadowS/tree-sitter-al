@@ -81,9 +81,7 @@ function _object_with_id(keyword_name) {
     $[keyword_name + '_keyword'],
     field('object_id', $.integer),
     field('object_name', $._identifier_or_quoted),
-    '{',
-    optional(field('body', $.declaration_body)),
-    '}'
+    $._declaration_body_block
   );
 }
 
@@ -92,9 +90,7 @@ function _object_without_id(keyword_name) {
   return $ => seq(
     $[keyword_name + '_keyword'],
     field('object_name', $._identifier_or_quoted),
-    '{',
-    optional(field('body', $.declaration_body)),
-    '}'
+    $._declaration_body_block
   );
 }
 
@@ -106,9 +102,7 @@ function _extension_with_id(keyword_name) {
     field('object_name', $._identifier_or_quoted),
     $.extends_keyword,
     field('base_object', $._identifier_or_quoted),
-    '{',
-    optional(field('body', $.declaration_body)),
-    '}'
+    $._declaration_body_block
   );
 }
 
@@ -119,9 +113,7 @@ function _extension_without_id(keyword_name) {
     field('object_name', $._identifier_or_quoted),
     $.extends_keyword,
     field('base_object', $._identifier_or_quoted),
-    '{',
-    optional(field('body', $.declaration_body)),
-    '}'
+    $._declaration_body_block
   );
 }
 
@@ -279,7 +271,14 @@ module.exports = grammar({
     // is retargeted rather than added to. Guard-block terminator vs statement
     // terminator: `#if C  stmt; if X then  #endif  shared;`
     [$._preproc_guard_block, $._statement_inner],
-    [$.if_statement, $._if_statement_no_else],  // dangling-else in case branches
+    // NOTE: `[$.if_statement, $._if_statement_no_else]` used to sit here, labelled
+    // "dangling-else in case branches". The generator reported it as an
+    // UNNECESSARY conflict on every run -- no LR conflict requires it any more,
+    // because the then-branch restructure moved that ambiguity onto the
+    // `[$.if_statement, $._then_branch]` entry below, which is still required
+    // (generation fails without it). The RULE `_if_statement_no_else` stays:
+    // `_case_body_branch` needs it so the case's `else` cannot bind to an
+    // inner if.
     // if_statement hangs its `else` off `_then_branch_open` directly, while
     // `_if_statement_no_else` and the preproc_split_if_* rules take the whole
     // `_then_branch`. After a then-branch that could be either, only the NEXT
@@ -428,9 +427,7 @@ module.exports = grammar({
         ),
       ))),
       $.preproc_endif,
-      '{',
-      optional(field('body', $.declaration_body)),
-      '}'
+      $._declaration_body_block
     )),
 
     // Object header without body (used in preproc split declarations)
@@ -457,9 +454,7 @@ module.exports = grammar({
       $.page_keyword,
       field('object_id', $.integer),
       field('object_name', $._identifier_or_quoted),
-      '{',
-      optional(field('body', $.declaration_body)),
-      '}'
+      $._declaration_body_block
     ),
     declaration_body: $ => repeat1($._body_element),
     report_declaration: _object_with_id('report'),
@@ -474,9 +469,7 @@ module.exports = grammar({
       field('object_id', $.integer),
       field('object_name', $._identifier_or_quoted),
       optional($.implements_clause),
-      '{',
-      optional(field('body', $.declaration_body)),
-      '}'
+      $._declaration_body_block
     ),
 
     enum_declaration: $ => seq(
@@ -484,9 +477,7 @@ module.exports = grammar({
       field('object_id', $.integer),
       field('object_name', $._identifier_or_quoted),
       optional($.implements_clause),
-      '{',
-      optional(field('body', $.declaration_body)),
-      '}'
+      $._declaration_body_block
     ),
 
     // --- With ID + extends ---
@@ -562,9 +553,7 @@ module.exports = grammar({
       field('object_name', $._identifier_or_quoted),
       $.customizes_keyword,
       field('target_page', $._identifier_or_quoted),
-      '{',
-      optional(field('body', $.declaration_body)),
-      '}'
+      $._declaration_body_block
     ),
 
     // --- Dotnet (no ID, no name) ---
@@ -1563,9 +1552,7 @@ module.exports = grammar({
       // Zero preproc → repeat matches nothing → tree is byte-identical.
       optional(seq(
         repeat($.preproc_pragma_only),
-        '{',
-        optional(field('body', $.declaration_body)),
-        '}'
+        $._declaration_body_block
       ))
     ),
 
@@ -1599,9 +1586,7 @@ module.exports = grammar({
       field('fields', $.field_list),
       ')',
       optional(seq(
-        '{',
-        optional(field('body', $.declaration_body)),
-        '}'
+        $._declaration_body_block
       ))
     ),
 
@@ -1655,9 +1640,7 @@ module.exports = grammar({
       field('fields', $.field_list),
       ')',
       optional(seq(
-        '{',
-        optional(field('body', $.declaration_body)),
-        '}'
+        $._declaration_body_block
       ))
     ),
 
@@ -1890,9 +1873,7 @@ module.exports = grammar({
       ';',
       field('value_name', choice($._identifier_or_quoted, $.string_literal)),
       ')',
-      '{',
-      optional(field('body', $.declaration_body)),
-      '}'
+      $._declaration_body_block
     ),
 
     // =====================================================================
@@ -2033,9 +2014,7 @@ module.exports = grammar({
       '(',
       field('name', $._identifier_or_quoted),
       ')',
-      '{',
-      optional(field('body', $.layout_container_body)),
-      '}'
+      $._layout_container_body_block
     ),
 
     // repeater(Lines) { ... }
@@ -2044,9 +2023,7 @@ module.exports = grammar({
       '(',
       field('name', $._identifier_or_quoted),
       ')',
-      '{',
-      optional(field('body', $.layout_container_body)),
-      '}'
+      $._layout_container_body_block
     ),
 
     // cuegroup(Cues) { ... }
@@ -2055,9 +2032,7 @@ module.exports = grammar({
       '(',
       field('name', $._identifier_or_quoted),
       ')',
-      '{',
-      optional(field('body', $.layout_container_body)),
-      '}'
+      $._layout_container_body_block
     ),
 
     // fixed(Fixed) { ... }
@@ -2066,9 +2041,7 @@ module.exports = grammar({
       '(',
       field('name', $._identifier_or_quoted),
       ')',
-      '{',
-      optional(field('body', $.layout_container_body)),
-      '}'
+      $._layout_container_body_block
     ),
 
     // grid(Grid) { ... }
@@ -2077,9 +2050,7 @@ module.exports = grammar({
       '(',
       field('name', $._identifier_or_quoted),
       ')',
-      '{',
-      optional(field('body', $.layout_container_body)),
-      '}'
+      $._layout_container_body_block
     ),
 
     // Page field: field(Name; SourceExpr) { }
@@ -2092,9 +2063,7 @@ module.exports = grammar({
       field('source', $._field_source),
       ')',
       optional(seq(
-        '{',
-        optional(field('body', $.declaration_body)),
-        '}'
+        $._declaration_body_block
       ))
     ),
 
@@ -2109,9 +2078,7 @@ module.exports = grammar({
       ';',
       field('source', $._identifier_or_quoted),
       ')',
-      '{',
-      optional(field('body', $.declaration_body)),
-      '}'
+      $._declaration_body_block
     ),
 
     // systempart(Links; "Record Link") { }
@@ -2122,9 +2089,7 @@ module.exports = grammar({
       ';',
       field('source', $._identifier_or_quoted),
       ')',
-      '{',
-      optional(field('body', $.declaration_body)),
-      '}'
+      $._declaration_body_block
     ),
 
     // usercontrol(ControlName; ControlAddinName) { }
@@ -2135,9 +2100,7 @@ module.exports = grammar({
       ';',
       field('source', $._identifier_or_quoted),
       ')',
-      '{',
-      optional(field('body', $.declaration_body)),
-      '}'
+      $._declaration_body_block
     ),
 
     // Preprocessor-split page field: #if field(...) #else field(...) #endif { props }
@@ -2188,9 +2151,7 @@ module.exports = grammar({
       '(',
       field('name', $._identifier_or_quoted),
       ')',
-      '{',
-      optional(field('body', $.declaration_body)),
-      '}'
+      $._declaration_body_block
     ),
 
     // =====================================================================
@@ -2206,10 +2167,10 @@ module.exports = grammar({
       '{',
       optional(field('body', $.layout_body)),
       choice(
-        '}',
-        $.preproc_split_brace_close,
-        $.preproc_split_brace_close_if_only,
-      )
+          '}',
+          $.preproc_split_brace_close,
+          $.preproc_split_brace_close_if_only,
+        )
     ),
 
     addlast_modification: $ => seq(
@@ -2220,10 +2181,10 @@ module.exports = grammar({
       '{',
       optional(field('body', $.layout_body)),
       choice(
-        '}',
-        $.preproc_split_brace_close,
-        $.preproc_split_brace_close_if_only,
-      )
+          '}',
+          $.preproc_split_brace_close,
+          $.preproc_split_brace_close_if_only,
+        )
     ),
 
     addafter_modification: $ => seq(
@@ -2234,10 +2195,10 @@ module.exports = grammar({
       '{',
       optional(field('body', $.layout_body)),
       choice(
-        '}',
-        $.preproc_split_brace_close,
-        $.preproc_split_brace_close_if_only,
-      )
+          '}',
+          $.preproc_split_brace_close,
+          $.preproc_split_brace_close_if_only,
+        )
     ),
 
     addbefore_modification: $ => seq(
@@ -2248,10 +2209,10 @@ module.exports = grammar({
       '{',
       optional(field('body', $.layout_body)),
       choice(
-        '}',
-        $.preproc_split_brace_close,
-        $.preproc_split_brace_close_if_only,
-      )
+          '}',
+          $.preproc_split_brace_close,
+          $.preproc_split_brace_close_if_only,
+        )
     ),
 
     // modify("Name") { Visible = false; }
@@ -2260,9 +2221,7 @@ module.exports = grammar({
       '(',
       field('target', $._identifier_or_quoted),
       ')',
-      '{',
-      optional(field('body', $.declaration_body)),
-      '}'
+      $._declaration_body_block
     )),
 
     // movefirst(Content; "No.")
@@ -2308,9 +2267,7 @@ module.exports = grammar({
 
     actions_section: $ => seq(
       $.actions_keyword,
-      '{',
-      optional(field('body', $.action_body)),
-      '}'
+      $._action_body_block
     ),
     action_body: $ => repeat1($._action_element),
 
@@ -2355,9 +2312,7 @@ module.exports = grammar({
         $.identifier,  // Fallback
       )),
       ')',
-      '{',
-      optional(field('body', $.action_body)),
-      '}'
+      $._action_body_block
     ),
 
     // group(ActionGroup) { ... }
@@ -2381,18 +2336,14 @@ module.exports = grammar({
       '(',
       field('name', $._identifier_or_quoted),
       ')',
-      '{',
-      optional(field('body', $.declaration_body)),
-      '}'
+      $._declaration_body_block
     ),
 
     // separator { } or separator(Name) { Caption = ''; IsHeader = true; }
     separator_action: $ => seq(
       $.separator_keyword,
       optional(seq('(', field('name', $._identifier_or_quoted), ')')),
-      '{',
-      optional(field('body', $.declaration_body)),
-      '}'
+      $._declaration_body_block
     ),
 
     // actionref(RefName; ActionName) { }
@@ -2403,9 +2354,7 @@ module.exports = grammar({
       ';',
       field('action_name', $._identifier_or_quoted),
       ')',
-      '{',
-      optional(field('body', $.declaration_body)),
-      '}'
+      $._declaration_body_block
     ),
 
     // systemaction(Name) { }
@@ -2414,9 +2363,7 @@ module.exports = grammar({
       '(',
       field('name', $._identifier_or_quoted),
       ')',
-      '{',
-      optional(field('body', $.declaration_body)),
-      '}'
+      $._declaration_body_block
     ),
 
     // fileuploadaction(Name) { }
@@ -2425,9 +2372,7 @@ module.exports = grammar({
       '(',
       field('name', $._identifier_or_quoted),
       ')',
-      '{',
-      optional(field('body', $.declaration_body)),
-      '}'
+      $._declaration_body_block
     ),
 
     // customaction(Name) { }
@@ -2436,9 +2381,7 @@ module.exports = grammar({
       '(',
       field('name', $._identifier_or_quoted),
       ')',
-      '{',
-      optional(field('body', $.declaration_body)),
-      '}'
+      $._declaration_body_block
     ),
 
     // =====================================================================
@@ -2450,9 +2393,7 @@ module.exports = grammar({
       '(',
       field('target', $._identifier_or_quoted),
       ')',
-      '{',
-      optional(field('body', $.action_body)),
-      '}'
+      $._action_body_block
     ),
 
     addlast_action_modification: $ => seq(
@@ -2460,9 +2401,7 @@ module.exports = grammar({
       '(',
       field('target', $._identifier_or_quoted),
       ')',
-      '{',
-      optional(field('body', $.action_body)),
-      '}'
+      $._action_body_block
     ),
 
     addafter_action_modification: $ => seq(
@@ -2470,9 +2409,7 @@ module.exports = grammar({
       '(',
       field('target', $._identifier_or_quoted),
       ')',
-      '{',
-      optional(field('body', $.action_body)),
-      '}'
+      $._action_body_block
     ),
 
     addbefore_action_modification: $ => seq(
@@ -2480,9 +2417,7 @@ module.exports = grammar({
       '(',
       field('target', $._identifier_or_quoted),
       ')',
-      '{',
-      optional(field('body', $.action_body)),
-      '}'
+      $._action_body_block
     ),
 
     modify_action_modification: $ => prec(2, seq(
@@ -2490,9 +2425,7 @@ module.exports = grammar({
       '(',
       field('target', $._identifier_or_quoted),
       ')',
-      '{',
-      optional(field('body', $.declaration_body)),
-      '}'
+      $._declaration_body_block
     )),
 
     // =====================================================================
@@ -2513,9 +2446,7 @@ module.exports = grammar({
       '(',
       field('name', $._identifier_or_quoted),
       ')',
-      '{',
-      optional(field('body', $.declaration_body)),
-      '}'
+      $._declaration_body_block
     ),
 
     views_section: $ => seq(
@@ -2542,15 +2473,15 @@ module.exports = grammar({
     addfirst_views_modification: $ => seq(
       $.addfirst_keyword,
       '{',
-      optional(field('body', $.views_mod_body)),
-      '}'
+        optional(field('body', $.views_mod_body)),
+        '}'
     ),
 
     addlast_views_modification: $ => seq(
       $.addlast_keyword,
       '{',
-      optional(field('body', $.views_mod_body)),
-      '}'
+        optional(field('body', $.views_mod_body)),
+        '}'
     ),
 
     // Views extensions with target: addafter(ViewName) { view(...) { } }
@@ -2558,16 +2489,16 @@ module.exports = grammar({
       $.addafter_keyword,
       '(', field('target', $._identifier_or_quoted), ')',
       '{',
-      optional(field('body', $.views_mod_body)),
-      '}'
+        optional(field('body', $.views_mod_body)),
+        '}'
     ),
 
     addbefore_views_modification: $ => seq(
       $.addbefore_keyword,
       '(', field('target', $._identifier_or_quoted), ')',
       '{',
-      optional(field('body', $.views_mod_body)),
-      '}'
+        optional(field('body', $.views_mod_body)),
+        '}'
     ),
 
     views_mod_body: $ => repeat1($.view_definition),
@@ -2577,9 +2508,7 @@ module.exports = grammar({
       '(',
       field('name', $._identifier_or_quoted),
       ')',
-      '{',
-      optional(field('body', $.declaration_body)),
-      '}'
+      $._declaration_body_block
     ),
 
     // =====================================================================
@@ -2714,9 +2643,7 @@ module.exports = grammar({
       ';',
       field('source', $._field_source),
       ')',
-      '{',
-      optional(field('body', $.declaration_body)),
-      '}'
+      $._declaration_body_block
     ),
 
     // Extension dataset modifications
@@ -2746,9 +2673,7 @@ module.exports = grammar({
     // requestpage { layout { ... } actions { ... } }
     requestpage_section: $ => seq(
       $.requestpage_keyword,
-      '{',
-      optional(field('body', $.declaration_body)),
-      '}'
+      $._declaration_body_block
     ),
 
     // rendering { layout(Name) { ... } }
@@ -2776,9 +2701,7 @@ module.exports = grammar({
       '(',
       field('name', $._identifier_or_quoted),
       ')',
-      '{',
-      optional(field('body', $.declaration_body)),
-      '}'
+      $._declaration_body_block
     ),
 
     // =====================================================================
@@ -2837,9 +2760,7 @@ module.exports = grammar({
         field('name', $._identifier_or_quoted)
       ),
       ')',
-      '{',
-      optional(field('body', $.declaration_body)),
-      '}'
+      $._declaration_body_block
     ),
 
     query_filter: $ => seq(
@@ -2849,9 +2770,7 @@ module.exports = grammar({
       ';',
       field('field_name', $._identifier_or_quoted),
       ')',
-      '{',
-      optional(field('body', $.declaration_body)),
-      '}'
+      $._declaration_body_block
     ),
 
     // =====================================================================
@@ -2915,9 +2834,7 @@ module.exports = grammar({
         field('source', $._field_source)
       )),
       ')',
-      '{',
-      optional(field('body', $.declaration_body)),
-      '}'
+      $._declaration_body_block
     ),
 
     // =====================================================================
@@ -2977,9 +2894,7 @@ module.exports = grammar({
         $.identifier
       )),
       ')',
-      '{',
-      optional(field('body', $.declaration_body)),
-      '}'
+      $._declaration_body_block
     ),
 
     // =====================================================================
@@ -4422,6 +4337,38 @@ module.exports = grammar({
       ';',
       field('following', $.statement_block),
     ),
+
+    // `{ [declaration_body] }` -- the brace-delimited body shared by 35 object,
+    // section and member declarations.
+    //
+    // EXPERIMENT: measured for state cost. A complete unit with a hard `}`
+    // terminator on both ends, which is the shape that has worked here; the
+    // `body` field is declared inside the hidden rule so it still surfaces on
+    // whichever visible rule encloses it.
+    _declaration_body_block: $ => seq(
+      '{',
+      optional(field('body', $.declaration_body)),
+      '}'
+    ),
+
+    // Brace-delimited body blocks, factored as complete units with a hard `}`
+    // terminator. Same shape as _declaration_body_block above, which measured
+    // -397 states on its own with node-types.json byte-identical.
+    // `{ [action_body] }` — the brace-delimited body shared by 6 rules.
+    _action_body_block: $ => seq(
+      '{',
+      optional(field('body', $.action_body)),
+      '}'
+    ),
+
+    // `{ [layout_container_body] }` — the brace-delimited body shared by 5 rules.
+    _layout_container_body_block: $ => seq(
+      '{',
+      optional(field('body', $.layout_container_body)),
+      '}'
+    ),
+
+
 
     // Preprocessor conditionals inside case statements
     preproc_conditional_case: $ => seq(
