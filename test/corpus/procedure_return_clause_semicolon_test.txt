@@ -1,0 +1,71 @@
+================================================================================
+A semicolon after the return clause, anonymous and named
+--
+Pins a deliberate NARROWING made for state count. The return clause used to
+carry its own `optional(';')` AND be followed by another one:
+.
+    optional(choice(seq(choice(RET_SPEC, NAMED_RET), optional(';')))),
+    optional(';'),
+.
+so `procedure A(): Integer;` had TWO derivations for its single `;`, and
+`procedure A(): Integer;;` was accepted outright. Collapsing to one optional
+removed both. Worth 176 states.
+.
+It is not a loss of functionality: alc 18.0.37.11445 REJECTS the double form
+with AL0519 "';' is not valid value in this context", probed against the BC
+28.0 symbol packages with all four valid shapes (`(): T;`, `(): T`, `();`,
+`() R: T;`) compiling in the same run to prove the probe discriminates. The
+parser was over-accepting.
+.
+Both surviving derivations put the `;` in the same place -- a direct anonymous
+child of `procedure` -- which is why all 15,358 BC.History trees and
+src/node-types.json stayed byte-identical across the change.
+================================================================================
+
+codeunit 50140 ReturnClauseSemicolon
+{
+    procedure A(): Integer;
+    begin
+        exit(1);
+    end;
+
+    procedure B() Result: Integer;
+    begin
+        Result := 2;
+    end;
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (procedure
+        (procedure_keyword)
+        name: (identifier)
+        return_type: (type_specification
+          (basic_type))
+        body: (code_block
+          (begin_keyword)
+          body: (statement_block
+            (exit_statement
+              (exit_keyword)
+              return_value: (integer)))
+          (end_keyword)))
+      (procedure
+        (procedure_keyword)
+        name: (identifier)
+        return_value: (identifier)
+        return_type: (type_specification
+          (basic_type))
+        body: (code_block
+          (begin_keyword)
+          body: (statement_block
+            (assignment_statement
+              left: (identifier)
+              operator: (assignment_operator)
+              right: (integer)))
+          (end_keyword))))))

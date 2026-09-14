@@ -2011,45 +2011,35 @@ module.exports = grammar({
     // group(General) { ... }
     group_section: $ => seq(
       $.group_keyword,
-      '(',
-      field('name', $._identifier_or_quoted),
-      ')',
+      $._paren_name,
       $._layout_container_body_block
     ),
 
     // repeater(Lines) { ... }
     repeater_section: $ => seq(
       $.repeater_keyword,
-      '(',
-      field('name', $._identifier_or_quoted),
-      ')',
+      $._paren_name,
       $._layout_container_body_block
     ),
 
     // cuegroup(Cues) { ... }
     cuegroup_section: $ => seq(
       $.cuegroup_keyword,
-      '(',
-      field('name', $._identifier_or_quoted),
-      ')',
+      $._paren_name,
       $._layout_container_body_block
     ),
 
     // fixed(Fixed) { ... }
     fixed_section: $ => seq(
       $.fixed_keyword,
-      '(',
-      field('name', $._identifier_or_quoted),
-      ')',
+      $._paren_name,
       $._layout_container_body_block
     ),
 
     // grid(Grid) { ... }
     grid_section: $ => seq(
       $.grid_keyword,
-      '(',
-      field('name', $._identifier_or_quoted),
-      ')',
+      $._paren_name,
       $._layout_container_body_block
     ),
 
@@ -2148,9 +2138,7 @@ module.exports = grammar({
     // label(LabelName) { ... } — page label (not report label)
     label_section: $ => seq(
       $.label_keyword,
-      '(',
-      field('name', $._identifier_or_quoted),
-      ')',
+      $._paren_name,
       $._declaration_body_block
     ),
 
@@ -2318,9 +2306,7 @@ module.exports = grammar({
     // group(ActionGroup) { ... }
     action_group_section: $ => seq(
       $.group_keyword,
-      '(',
-      field('name', $._identifier_or_quoted),
-      ')',
+      $._paren_name,
       '{',
       optional(field('body', $.action_group_body)),
       '}'
@@ -2333,9 +2319,7 @@ module.exports = grammar({
     // action(MyAction) { ... }
     action_declaration: $ => seq(
       $.action_keyword,
-      '(',
-      field('name', $._identifier_or_quoted),
-      ')',
+      $._paren_name,
       $._declaration_body_block
     ),
 
@@ -2360,27 +2344,21 @@ module.exports = grammar({
     // systemaction(Name) { }
     systemaction_declaration: $ => seq(
       $.systemaction_keyword,
-      '(',
-      field('name', $._identifier_or_quoted),
-      ')',
+      $._paren_name,
       $._declaration_body_block
     ),
 
     // fileuploadaction(Name) { }
     fileuploadaction_declaration: $ => seq(
       $.fileuploadaction_keyword,
-      '(',
-      field('name', $._identifier_or_quoted),
-      ')',
+      $._paren_name,
       $._declaration_body_block
     ),
 
     // customaction(Name) { }
     customaction_declaration: $ => seq(
       $.customaction_keyword,
-      '(',
-      field('name', $._identifier_or_quoted),
-      ')',
+      $._paren_name,
       $._declaration_body_block
     ),
 
@@ -2443,9 +2421,7 @@ module.exports = grammar({
 
     analysisview_declaration: $ => seq(
       $.analysisview_keyword,
-      '(',
-      field('name', $._identifier_or_quoted),
-      ')',
+      $._paren_name,
       $._declaration_body_block
     ),
 
@@ -2505,9 +2481,7 @@ module.exports = grammar({
 
     view_definition: $ => seq(
       $.view_keyword,
-      '(',
-      field('name', $._identifier_or_quoted),
-      ')',
+      $._paren_name,
       $._declaration_body_block
     ),
 
@@ -2698,9 +2672,7 @@ module.exports = grammar({
 
     rendering_layout: $ => seq(
       $.layout_keyword,
-      '(',
-      field('name', $._identifier_or_quoted),
-      ')',
+      $._paren_name,
       $._declaration_body_block
     ),
 
@@ -2919,14 +2891,17 @@ module.exports = grammar({
       optional(field('modifier', $.procedure_modifier)),
       $.procedure_keyword,
       $._procedure_name_and_params,
-      optional(choice(
-        seq(
-          choice(
-            $._procedure_return_specification,
-            $._procedure_named_return,
-          ),
-          optional(';')
-        )
+      // The return clause carried its own `optional(';')` AND was followed by
+      // another one, so `procedure P(): T;` had two derivations for the single
+      // `;`. Both put the token in the same place (a direct anonymous child of
+      // `procedure`), so collapsing to one is tree-identical -- verified over
+      // BC.History -- and removes the ambiguity. The redundant single-arm
+      // `choice()` wrapper went with it.
+      optional(seq(
+        choice(
+          $._procedure_return_specification,
+          $._procedure_named_return,
+        ),
       )),
       optional(';'),
       // Pragma-only #if/#endif between the procedure header and its body
@@ -4368,6 +4343,16 @@ module.exports = grammar({
       '}'
     ),
 
+
+
+    // `( <name> )` -- the parenthesised single-identifier header repeated
+    // across 14 page/report/action/layout declarations. Complete unit ending
+    // at a hard `)`.
+    _paren_name: $ => seq(
+      '(',
+      field('name', $._identifier_or_quoted),
+      ')'
+    ),
 
 
     // Preprocessor conditionals inside case statements
