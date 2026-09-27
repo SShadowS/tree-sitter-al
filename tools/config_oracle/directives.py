@@ -7,6 +7,7 @@ grammar bug hide itself (spec section 1).
 """
 from __future__ import annotations
 
+import itertools
 import re
 from dataclasses import dataclass, field
 
@@ -246,8 +247,9 @@ class _Lexer:
 
     NORMAL, BLOCK, VERBATIM = range(3)
 
-    def __init__(self, src: bytes, extras: list):
+    def __init__(self, src: bytes, extras: list, lenient: bool = False):
         self.src, self.extras, self.state, self.open_at = src, extras, self.NORMAL, 0
+        self.lenient = lenient
 
     def line(self, ls: int, le: int) -> None:
         s, i = self.src, ls
@@ -279,11 +281,14 @@ class _Lexer:
                     while c == b"'" and j >= 0 and s[j + 1:j + 2] == b"'":
                         j = s.find(c, j + 2, le)
                     if j < 0:
+                        if self.lenient:  # alc never lexes an inactive arm's text
+                            i = le         # so a lone quote there is not our error to raise
+                            continue
                         raise ResolveError("unterminated-active-string", i)
                     i = j + 1
                 elif c == b"#":
                     m = _HASH_WORD.match(s, i + 1, le)
-                    if m and m.group("word").lower() in _WORDS:
+                    if m and m.group("word").lower() in _WORDS and not self.lenient:
                         raise ResolveError("directive-after-code", i)
                     i += 1
                 else:
@@ -370,3 +375,66 @@ def resolve(source: bytes, env0: frozenset) -> Resolution:
     res.masked = bytes(masked)
     res.extras.sort(key=lambda e: e.start)
     return res
+
+
+@dataclass
+class Discovery:
+    directives: list
+    free_symbols: tuple
+    has_conditionals: bool
+
+
+def discover(source: bytes) -> Discovery:
+    """Find every conditional directive line by lexing ALL text as active.
+
+    Used for the symbol universe and for directive-mismatch (the tree parses
+    every arm, so it must be compared against every arm's directives).
+
+    Lenient: alc never lexes an inactive arm's text, so a construct that is
+    only illegal there (an unterminated quote, a mid-line directive word)
+    must not make discovery itself fail — `resolve()` still enforces those
+    rules strictly for whichever one configuration it evaluates.
+    """
+    directives, cond_syms, defined = [], set(), set()
+    lexer = _Lexer(source, [], lenient=True)
+    for ls, le, nxt in _lines(source):
+        dir_ = _parse_directive(source, ls, le, nxt) if lexer.state == _Lexer.NORMAL else None
+        if dir_ is None:
+            lexer.line(ls, le)
+            continue
+        if dir_.kind in ("if", "elif", "else", "endif"):
+            directives.append(dir_)
+            if dir_.cond is not None:
+                cond_syms |= dir_.cond.symbols
+        elif dir_.kind in ("define", "undef"):
+            defined.add(dir_.symbol)
+    if lexer.state != _Lexer.NORMAL:
+        raise ResolveError("lexing-crosses-directive", len(source))
+    free = tuple(sorted(cond_syms - defined))
+    return Discovery(directives, free, any(x.kind == "if" for x in directives))
+
+
+def configurations(disc: Discovery) -> list:
+    names = disc.free_symbols
+    return [frozenset(n for n, bit in zip(names, bits) if bit)
+            for bits in itertools.product((0, 1), repeat=len(names))]
+
+
+def config_id(env: frozenset, free: tuple) -> str:
+    if not free:
+        return "-"
+    return ",".join(f"{n}={1 if n in env else 0}" for n in free)
+
+
+def arm_coverage(source: bytes, disc: Discovery) -> list:
+    """Hashes of arm directives that no configuration ever selects.
+
+    An `#if` arm is counted as chosen only when `arm_choice` maps to it. A
+    group whose `#if` is false and which has no `#else` selects nothing, and
+    its `#if` arm is correctly unreached.
+    """
+    arms = {x.hash for x in disc.directives if x.kind in ("if", "elif", "else")}
+    chosen = set()
+    for env in configurations(disc):
+        chosen |= {h for h in resolve(source, env).arm_choice.values() if h is not None}
+    return sorted(arms - chosen)
