@@ -4610,12 +4610,21 @@ module.exports = grammar({
 
     // --- Asserterror ---
 
+    // The body is a STATEMENT (alc's AssertErrorStatementSyntax holds one), so
+    // `asserterror X := 1;` gives the same assignment_statement as `X := 1;`,
+    // and `asserterror if …` / `exit` / `case` attach instead of floating off
+    // as siblings (issue #28).
+    //
+    // `_statement_inner`, not fieldedStatement(): call_statement and
+    // empty_statement own their ';', and an asserterror in a then-branch
+    // reaches if_statement through `_statement_inner`, the arm that allows an
+    // else. A self-terminating body would let `if C then asserterror Foo; else`
+    // bind the else, which alc rejects (AL0110). So `asserterror Foo;` keeps a
+    // bare identifier body and `asserterror;` has no body, the ';' staying
+    // with the enclosing statement as it does everywhere else.
     asserterror_statement: $ => prec.right(14, seq(
       $.asserterror_keyword,
-      optional(field('body', choice(
-        $._expression,
-        $.code_block,
-      )))
+      optional(field('body', $._statement_inner)),
     )),
 
     // =====================================================================

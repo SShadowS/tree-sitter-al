@@ -1,0 +1,293 @@
+================================================================================
+asserterror body is a statement: assignment, if, exit, case, repeat, block, nested, empty (issue #28)
+================================================================================
+
+codeunit 50110 "Assert Body Probe"
+{
+    procedure Check()
+    var
+        Outcome: Integer;
+    begin
+        asserterror Outcome := 1;
+        asserterror Outcome += 1;
+        asserterror if Outcome = 2 then Error('two');
+        asserterror exit;
+        asserterror case Outcome of 1: Outcome := 2; end;
+        asserterror repeat Outcome += 1; until Outcome > 3;
+        asserterror begin Outcome := 1; end;
+        asserterror asserterror Error('x');
+        asserterror;
+    end;
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (quoted_identifier)
+    body: (declaration_body
+      (procedure
+        (procedure_keyword)
+        name: (identifier)
+        (var_section
+          (var_keyword)
+          body: (var_body
+            (variable_declaration
+              name: (identifier)
+              type: (type_specification
+                (basic_type)))))
+        body: (code_block
+          (begin_keyword)
+          body: (statement_block
+            (asserterror_statement
+              (asserterror_keyword)
+              body: (assignment_statement
+                left: (identifier)
+                operator: (assignment_operator)
+                right: (integer)))
+            (asserterror_statement
+              (asserterror_keyword)
+              body: (assignment_statement
+                left: (identifier)
+                operator: (assignment_operator)
+                right: (integer)))
+            (asserterror_statement
+              (asserterror_keyword)
+              body: (if_statement
+                (if_keyword)
+                condition: (comparison_expression
+                  left: (identifier)
+                  operator: (comparison_operator)
+                  right: (integer))
+                (then_keyword)
+                then_branch: (call_expression
+                  function: (identifier)
+                  arguments: (argument_list
+                    (string_literal)))))
+            (asserterror_statement
+              (asserterror_keyword)
+              body: (exit_statement
+                (exit_keyword)))
+            (asserterror_statement
+              (asserterror_keyword)
+              body: (case_statement
+                (case_keyword)
+                expression: (identifier)
+                (of_keyword)
+                body: (case_body
+                  (case_branch
+                    pattern: (integer)
+                    body: (assignment_statement
+                      left: (identifier)
+                      operator: (assignment_operator)
+                      right: (integer))))
+                (end_keyword)))
+            (asserterror_statement
+              (asserterror_keyword)
+              body: (repeat_statement
+                (repeat_keyword)
+                body: (statement_block
+                  (assignment_statement
+                    left: (identifier)
+                    operator: (assignment_operator)
+                    right: (integer)))
+                (until_keyword)
+                condition: (comparison_expression
+                  left: (identifier)
+                  operator: (comparison_operator)
+                  right: (integer))))
+            (asserterror_statement
+              (asserterror_keyword)
+              body: (code_block
+                (begin_keyword)
+                body: (statement_block
+                  (assignment_statement
+                    left: (identifier)
+                    operator: (assignment_operator)
+                    right: (integer)))
+                (end_keyword)))
+            (asserterror_statement
+              (asserterror_keyword)
+              body: (asserterror_statement
+                (asserterror_keyword)
+                body: (call_expression
+                  function: (identifier)
+                  arguments: (argument_list
+                    (string_literal)))))
+            (asserterror_statement
+              (asserterror_keyword)))
+          (end_keyword))))))
+
+================================================================================
+asserterror in a then-branch: else binds to the innermost unmatched if (issue #28)
+================================================================================
+
+codeunit 50112 "Assert Else Probe"
+{
+    procedure Check()
+    var
+        Outcome: Integer;
+    begin
+        if Outcome = 1 then asserterror Error('a') else Outcome := 2;
+        if Outcome = 1 then asserterror if Outcome = 2 then Outcome := 3 else Outcome := 4;
+    end;
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (quoted_identifier)
+    body: (declaration_body
+      (procedure
+        (procedure_keyword)
+        name: (identifier)
+        (var_section
+          (var_keyword)
+          body: (var_body
+            (variable_declaration
+              name: (identifier)
+              type: (type_specification
+                (basic_type)))))
+        body: (code_block
+          (begin_keyword)
+          body: (statement_block
+            (if_statement
+              (if_keyword)
+              condition: (comparison_expression
+                left: (identifier)
+                operator: (comparison_operator)
+                right: (integer))
+              (then_keyword)
+              then_branch: (asserterror_statement
+                (asserterror_keyword)
+                body: (call_expression
+                  function: (identifier)
+                  arguments: (argument_list
+                    (string_literal))))
+              (else_keyword)
+              else_branch: (assignment_statement
+                left: (identifier)
+                operator: (assignment_operator)
+                right: (integer)))
+            (if_statement
+              (if_keyword)
+              condition: (comparison_expression
+                left: (identifier)
+                operator: (comparison_operator)
+                right: (integer))
+              (then_keyword)
+              then_branch: (asserterror_statement
+                (asserterror_keyword)
+                body: (if_statement
+                  (if_keyword)
+                  condition: (comparison_expression
+                    left: (identifier)
+                    operator: (comparison_operator)
+                    right: (integer))
+                  (then_keyword)
+                  then_branch: (assignment_statement
+                    left: (identifier)
+                    operator: (assignment_operator)
+                    right: (integer))
+                  (else_keyword)
+                  else_branch: (assignment_statement
+                    left: (identifier)
+                    operator: (assignment_operator)
+                    right: (integer))))))
+          (end_keyword))))))
+
+================================================================================
+asserterror before a member call on an array element keeps the whole call (issue #26)
+================================================================================
+
+codeunit 50001 "Indexed Receiver Probe"
+{
+    procedure Run()
+    var
+        Buckets: array[3] of Record "Integer";
+    begin
+        asserterror Buckets[1].Delete(true);
+        asserterror Buckets[2].Validate(Number, Buckets[1].Number);
+        asserterror Buckets[3].Number := 5;
+        Buckets[3].Delete(true);
+    end;
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (quoted_identifier)
+    body: (declaration_body
+      (procedure
+        (procedure_keyword)
+        name: (identifier)
+        (var_section
+          (var_keyword)
+          body: (var_body
+            (variable_declaration
+              name: (identifier)
+              type: (type_specification
+                (array_type
+                  (array_keyword)
+                  sizes: (integer)
+                  (of_keyword)
+                  element_type: (type_specification
+                    (record_type
+                      (record_keyword)
+                      reference: (quoted_identifier))))))))
+        body: (code_block
+          (begin_keyword)
+          body: (statement_block
+            (asserterror_statement
+              (asserterror_keyword)
+              body: (call_expression
+                function: (member_expression
+                  object: (subscript_expression
+                    object: (identifier)
+                    index: (integer))
+                  member: (identifier))
+                arguments: (argument_list
+                  (boolean))))
+            (asserterror_statement
+              (asserterror_keyword)
+              body: (call_expression
+                function: (member_expression
+                  object: (subscript_expression
+                    object: (identifier)
+                    index: (integer))
+                  member: (identifier))
+                arguments: (argument_list
+                  (identifier)
+                  (member_expression
+                    object: (subscript_expression
+                      object: (identifier)
+                      index: (integer))
+                    member: (identifier)))))
+            (asserterror_statement
+              (asserterror_keyword)
+              body: (assignment_statement
+                left: (member_expression
+                  object: (subscript_expression
+                    object: (identifier)
+                    index: (integer))
+                  member: (identifier))
+                operator: (assignment_operator)
+                right: (integer)))
+            (call_expression
+              function: (member_expression
+                object: (subscript_expression
+                  object: (identifier)
+                  index: (integer))
+                member: (identifier))
+              arguments: (argument_list
+                (boolean))))
+          (end_keyword))))))
+
