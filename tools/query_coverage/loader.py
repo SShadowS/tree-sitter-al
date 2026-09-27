@@ -2,9 +2,11 @@
 
 from __future__ import annotations
 
+import contextlib
 import ctypes
 import hashlib
 import subprocess
+import time
 import warnings
 from pathlib import Path
 
@@ -36,6 +38,41 @@ STAMPED_FILES = (
 )
 
 
+def stamped_files(repo_root: Path) -> list[Path]:
+    """STAMPED_FILES plus every header under src/, sorted.
+
+    The C build includes src/unicode_id.h and src/tree_sitter/*.h; an edit to
+    any of them changes the compiled parser without touching a stamped file,
+    so the stamp must cover them too (spec section 4, "Runner").
+    """
+    headers = sorted(p.relative_to(repo_root) for p in (repo_root / "src").rglob("*.h"))
+    return list(STAMPED_FILES) + [h for h in headers if h not in STAMPED_FILES]
+
+
+@contextlib.contextmanager
+def build_lock(repo_root: Path, timeout: float = 600.0):
+    """Serialise ensure_library across processes (the oracle's worker pool).
+
+    A directory, because mkdir is atomic on NTFS and POSIX alike (the same
+    choice as tools/ts-lock.sh). Deliberately NOT ts-lock's directory: callers
+    are often already running inside ts-lock, and re-acquiring it would deadlock.
+    """
+    lock = repo_root / ".oracle-build.lock"
+    deadline = time.monotonic() + timeout
+    while True:
+        try:
+            lock.mkdir()
+            break
+        except FileExistsError:
+            if time.monotonic() > deadline:
+                raise TimeoutError(f"build lock held: {lock}")
+            time.sleep(0.1)
+    try:
+        yield
+    finally:
+        lock.rmdir()
+
+
 def compute_stamp(repo_root: Path) -> str:
     """sha256 over STAMPED_FILES, in order.
 
@@ -45,7 +82,7 @@ def compute_stamp(repo_root: Path) -> str:
     src/parser.c` would trip an mtime check on every single locked command.
     """
     digest = hashlib.sha256()
-    for relative in STAMPED_FILES:
+    for relative in stamped_files(repo_root):
         digest.update((repo_root / relative).read_bytes())
     return digest.hexdigest()
 
@@ -89,35 +126,40 @@ def ensure_library(repo_root: Path, force: bool = False) -> Path:
     if not force and lib_path.is_file() and read_stamp(repo_root) == before_generate:
         return lib_path
 
-    generate_result = subprocess.run(
-        ["tree-sitter", "generate"],
-        cwd=repo_root,
-        capture_output=True,
-        text=True,
-    )
-    if generate_result.returncode != 0:
-        raise StaleParserError(
-            f"tree-sitter generate failed (exit {generate_result.returncode}):\n"
-            f"{generate_result.stderr}"
-        )
+    with build_lock(repo_root):
+        # Another process may have finished the build while we waited.
+        if not force and lib_path.is_file() and read_stamp(repo_root) == compute_stamp(repo_root):
+            return lib_path
 
-    result = subprocess.run(
-        ["tree-sitter", "build", "--output", str(lib_path), str(repo_root)],
-        cwd=repo_root,
-        capture_output=True,
-        text=True,
-    )
-    if result.returncode != 0:
-        raise StaleParserError(
-            f"tree-sitter build failed (exit {result.returncode}):\n{result.stderr}"
+        generate_result = subprocess.run(
+            ["tree-sitter", "generate"],
+            cwd=repo_root,
+            capture_output=True,
+            text=True,
         )
+        if generate_result.returncode != 0:
+            raise StaleParserError(
+                f"tree-sitter generate failed (exit {generate_result.returncode}):\n"
+                f"{generate_result.stderr}"
+            )
 
-    # Recomputed AFTER `generate`, not reused from the pre-generate value: the
-    # stamp now covers the generated artifacts, and `generate` is what makes
-    # them current. Stamping the pre-generate hashes would record a state that
-    # no longer exists on disk, so the very next run would see a mismatch and
-    # regenerate + rebuild again, every time.
-    write_stamp(repo_root, compute_stamp(repo_root))
+        result = subprocess.run(
+            ["tree-sitter", "build", "--output", str(lib_path), str(repo_root)],
+            cwd=repo_root,
+            capture_output=True,
+            text=True,
+        )
+        if result.returncode != 0:
+            raise StaleParserError(
+                f"tree-sitter build failed (exit {result.returncode}):\n{result.stderr}"
+            )
+
+        # Recomputed AFTER `generate`, not reused from the pre-generate value: the
+        # stamp now covers the generated artifacts, and `generate` is what makes
+        # them current. Stamping the pre-generate hashes would record a state that
+        # no longer exists on disk, so the very next run would see a mismatch and
+        # regenerate + rebuild again, every time.
+        write_stamp(repo_root, compute_stamp(repo_root))
     return lib_path
 
 

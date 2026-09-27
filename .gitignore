@@ -67,8 +67,9 @@ DC/*
 !tools/keyword-sync/output/
 tools/keyword-sync/__pycache__/
 # And allow config_oracle tools
-!tools/config_oracle/*.py
-tools/config_oracle/__pycache__/
+!tools/config_oracle/**/*.py
+tools/config_oracle/**/__pycache__/
+tools/config_oracle/reports/
 # Everything directly under tools/ is a checked-in helper, not scratch. These are
 # wired into validate-grammar.sh (orphan, duplicate, health and field-shape
 # checks); if they are not tracked, a fresh clone silently skips those steps.
@@ -190,6 +191,10 @@ BC.History/
 !tools/query_coverage/**/*.py
 tools/query_coverage/**/__pycache__/
 tools/query_coverage/reports/
+
+# loader.build_lock's cross-process mkdir lock (repo-root-relative, not under
+# tools/) -- created and removed at runtime, never checked in.
+.oracle-build.lock/
 
 # tools/precedence/ is the operator-precedence probe rig — the acceptance
 # instrument for every relation in the expression ladder, not scratch. Its
