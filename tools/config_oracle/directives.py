@@ -55,9 +55,10 @@ class Condition:
     symbols: frozenset
 
 
-_TOKEN = re.compile(rb"[ \t]*(?:(?P<ident>[A-Za-z_][A-Za-z0-9_]*)|(?P<punct>[()])|(?P<comment>//.*)|(?P<block>/\*)|(?P<other>\S))")
+_TOKEN = re.compile(rb"[ \t]*(?:(?P<ident>[A-Za-z_][A-Za-z0-9_]*)|(?P<punct>[()])|(?P<comment>//.*)|(?P<block>/\*)|(?P<other>[^ \t]))")
 _KEYWORDS = {b"and", b"or", b"not"}
 _LITERALS = {b"true": True, b"false": False}
+_UNSUPPORTED_OPS = {b"xor"}
 
 
 def _tokens(buf: bytes, start: int, end: int):
@@ -66,7 +67,7 @@ def _tokens(buf: bytes, start: int, end: int):
     while pos < end:
         m = _TOKEN.match(buf, pos, end)
         if not m or m.end() == pos:
-            break
+            raise ResolveError("unsupported-condition-token", pos)
         if m.group("comment") is not None:
             break
         if m.group("block") is not None:
@@ -106,6 +107,8 @@ def parse_condition(buf: bytes, start: int, end: int) -> Condition:
             return inner
         if kind == "ident" and text.lower() in _KEYWORDS:
             raise ResolveError("unsupported-condition", s, "operator where an operand is required")
+        if kind == "ident" and text.lower() in _UNSUPPORTED_OPS:
+            raise ResolveError("unsupported-condition", s)
         if kind == "ident":
             pos += 1
             if text.lower() in _LITERALS:

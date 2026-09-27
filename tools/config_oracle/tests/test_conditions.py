@@ -60,3 +60,22 @@ def test_extent_excludes_whitespace_and_line_comment():
     c = parse_condition(line, 0, len(line))
     assert line[c.start:c.end] == b"not (A or B)"
     assert c.symbols == frozenset({"A", "B"})
+
+
+@pytest.mark.parametrize("ch", [b"\r", b"\n", b"\f", b"\v"])
+def test_control_bytes_fail_closed(ch):
+    with pytest.raises(ResolveError) as err:
+        parse_condition(b"A and B" + ch + b"GARBAGE", 0, len(b"A and B" + ch + b"GARBAGE"))
+    assert err.value.reason == "unsupported-condition-token"
+
+
+def test_xor_as_symbol_fails_closed():
+    with pytest.raises(ResolveError) as err:
+        cond("xor")
+    assert err.value.reason == "unsupported-condition"
+
+
+def test_xor_as_operand_fails_closed():
+    with pytest.raises(ResolveError) as err:
+        cond("A and xor")
+    assert err.value.reason == "unsupported-condition"
