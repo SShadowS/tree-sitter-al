@@ -5,6 +5,33 @@ Format loosely follows [Keep a Changelog](https://keepachangelog.com/); the proj
 uses [Semantic Versioning](https://semver.org/) where the parse-tree shape is the
 public API — a change to node structure or field names is a **major** bump.
 
+## [Unreleased]
+
+### Fixed
+
+- **A split procedure signature accepts every body form an ordinary signature
+  does.** `preproc_split_procedure` (the signature differs across `#if`/`#else`)
+  took only `[;] [var] begin … end` after its `#endif`. Followed by a split body
+  (`preproc_split_procedure_body` or `preproc_split_complete_body`) it produced
+  ERROR nodes; followed by a pragma-only `#if`, it parsed that block as an
+  empty `preproc_conditional_var_block` with no error. It now shares
+  `procedure`'s tail, so both accept the same text. `alc` accepts all three
+  shapes in all four configurations (flat and split, symbol defined and
+  undefined). No BC.History tree changes.
+
+  `node-types.json`: `preproc_split_procedure.body` is now `required: false`,
+  matching `procedure` and `trigger_declaration`, and the node may contain
+  `preproc_pragma_only`, `preproc_split_procedure_body` and
+  `preproc_split_complete_body`. Consumers that assumed `body` is always
+  present on this node must handle its absence, as they already must for
+  `procedure`.
+
+### Performance
+
+- STATE_COUNT 15,321 → 14,661 (−4.3%), `parser.c` 36.45 → 35.10 MB, by
+  factoring shared units out of the preprocessor split rules. Tree-identical
+  over all 15,358 BC.History files.
+
 ## [4.3.0] — 2026-09-09
 
 One parser defect, the third from the compiler cross-check that produced #20

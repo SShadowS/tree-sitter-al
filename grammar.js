@@ -273,14 +273,14 @@ module.exports = grammar({
     [$.preproc_conditional_link_values, $.preproc_conditional_impl_values],
     [$.preproc_conditional_controladdin, $.preproc_conditional],
     [$.procedure, $.interface_procedure_suffix],
-    // _procedure_regular_tail is the `[;] body` that procedure and
-    // preproc_split_procedure share; it inherits procedure's existing
-    // `procedure P();` vs interface_procedure ambiguity, so each procedure
-    // entry needs a _procedure_regular_tail counterpart. All generator-required.
+    // _procedure_tail (and its _procedure_regular_tail arm) is the text after a
+    // signature, shared by procedure and preproc_split_procedure. It inherits
+    // procedure's `procedure P();` vs interface_procedure ambiguity, hence
+    // these counterparts of the procedure entries. All generator-required.
     [$._procedure_regular_tail, $.interface_procedure_suffix],
-    [$.procedure, $._procedure_regular_tail, $._procedure_header, $.interface_procedure_suffix],
-    [$.procedure, $._procedure_regular_tail, $._procedure_header],
-    [$.procedure, $._procedure_regular_tail, $.interface_procedure_suffix],
+    [$._procedure_tail, $._procedure_regular_tail, $._procedure_header, $.interface_procedure_suffix],
+    [$._procedure_tail, $._procedure_regular_tail, $._procedure_header],
+    [$._procedure_tail, $._procedure_regular_tail, $.interface_procedure_suffix],
     [$._procedure_regular_tail, $._procedure_header, $.interface_procedure_suffix],
     [$._procedure_regular_tail, $._procedure_header],
     [$.procedure, $._procedure_header, $.interface_procedure_suffix],
@@ -2941,29 +2941,37 @@ module.exports = grammar({
           $._procedure_named_return,
         ),
       )),
-      choice(
-        $._procedure_regular_tail,
-        // Pragma-only #if/#endif between the procedure header and its body
-        // (BC wraps `#pragma warning restore ASxxxx` in `#if not CLEANxx`).
-        seq(
-          optional(';'),
-          repeat1($.preproc_pragma_only),
-          $._routine_regular_body,
-        ),
-        seq(
-          optional(';'),
-          repeat($.preproc_pragma_only),
-          choice(
-            $.preproc_split_procedure_body,
-            $.preproc_split_complete_body,
-          ),
-        ),
-      ),
+      $._procedure_tail,
     )),
 
-    // `[;] [var] begin … end [;]` after a signature -- shared by procedure and
-    // preproc_split_procedure, whose split signature is followed by the same
-    // text. Spelled separately, the body was parsed in two item contexts.
+    // Everything after a signature, in every form a body can take. Shared by
+    // procedure and preproc_split_procedure: the text after a split signature's
+    // `#endif` is exactly the text after an ordinary one, so both must accept
+    // the same set. Until this was shared, the split rule took only the first
+    // arm: a split signature followed by a split body was an ERROR, and one
+    // followed by a pragma-only `#if` parsed that block as an empty
+    // preproc_conditional_var_block. alc accepts all three in all four
+    // configurations.
+    _procedure_tail: $ => choice(
+      $._procedure_regular_tail,
+      // Pragma-only #if/#endif between the procedure header and its body
+      // (BC wraps `#pragma warning restore ASxxxx` in `#if not CLEANxx`).
+      seq(
+        optional(';'),
+        repeat1($.preproc_pragma_only),
+        $._routine_regular_body,
+      ),
+      seq(
+        optional(';'),
+        repeat($.preproc_pragma_only),
+        choice(
+          $.preproc_split_procedure_body,
+          $.preproc_split_complete_body,
+        ),
+      ),
+    ),
+
+    // `[;] [var] begin … end [;]` -- the common arm of _procedure_tail.
     // prec.right, like `procedure` itself, for the trailing `;`.
     _procedure_regular_tail: $ => prec.right(seq(
       optional(';'),
@@ -3059,7 +3067,7 @@ module.exports = grammar({
       repeat(seq($.preproc_elif, $._procedure_header)),
       optional(seq($.preproc_else, $._procedure_header)),
       $.preproc_endif,
-      $._procedure_regular_tail,
+      $._procedure_tail,
     )),
 
     // Procedure preamble: header + optional var section (used in preproc_split_procedure_preamble)

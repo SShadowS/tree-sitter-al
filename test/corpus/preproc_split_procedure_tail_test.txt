@@ -1,0 +1,242 @@
+; A split procedure signature is followed by exactly the text that follows an
+; ordinary one, so preproc_split_procedure shares procedure's _procedure_tail.
+; Before, it accepted only `[;] [var] begin ... end`: cases 1 and 2 were ERROR
+; trees, and case 3 parsed the pragma-only #if as an empty
+; preproc_conditional_var_block. alc accepts all three, four-way (flat and split,
+; FOO defined and undefined).
+
+========================================================================
+Split signature followed by a split procedure body
+========================================================================
+codeunit 50100 Probe
+{
+#if FOO
+    procedure Foo(a: Integer)
+#else
+    procedure Foo(a: Integer; b: Integer)
+#endif
+#if FOO
+    var
+        i: Integer;
+    begin
+        i := a;
+#else
+    begin
+#endif
+        Message('x');
+    end;
+}
+
+------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (preproc_split_procedure
+        (preproc_if
+          (preproc_open)
+          condition: (identifier))
+        (procedure_keyword)
+        name: (identifier)
+        parameters: (parameter_list
+          (parameter
+            name: (identifier)
+            type: (type_specification
+              (basic_type))))
+        (preproc_else)
+        (procedure_keyword)
+        name: (identifier)
+        parameters: (parameter_list
+          (parameter
+            name: (identifier)
+            type: (type_specification
+              (basic_type)))
+          (parameter
+            name: (identifier)
+            type: (type_specification
+              (basic_type))))
+        (preproc_endif
+          (preproc_close))
+        (preproc_split_procedure_body
+          (preproc_if
+            (preproc_open)
+            condition: (identifier))
+          (var_section
+            (var_keyword)
+            body: (var_body
+              (variable_declaration
+                name: (identifier)
+                type: (type_specification
+                  (basic_type)))))
+          (begin_keyword)
+          body: (statement_block
+            (assignment_statement
+              left: (identifier)
+              operator: (assignment_operator)
+              right: (identifier)))
+          (preproc_else)
+          (begin_keyword)
+          (preproc_endif
+            (preproc_close))
+          body: (statement_block
+            (call_expression
+              function: (identifier)
+              arguments: (argument_list
+                (string_literal))))
+          (end_keyword))))))
+
+========================================================================
+Split signature followed by a split complete body
+========================================================================
+codeunit 50100 Probe
+{
+#if FOO
+    procedure Foo(a: Integer)
+#else
+    procedure Foo(a: Integer; b: Integer)
+#endif
+#if FOO
+    var
+        i: Integer;
+    begin
+        i := a;
+    end;
+#else
+    begin
+        Message('x');
+    end;
+#endif
+}
+
+------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (preproc_split_procedure
+        (preproc_if
+          (preproc_open)
+          condition: (identifier))
+        (procedure_keyword)
+        name: (identifier)
+        parameters: (parameter_list
+          (parameter
+            name: (identifier)
+            type: (type_specification
+              (basic_type))))
+        (preproc_else)
+        (procedure_keyword)
+        name: (identifier)
+        parameters: (parameter_list
+          (parameter
+            name: (identifier)
+            type: (type_specification
+              (basic_type)))
+          (parameter
+            name: (identifier)
+            type: (type_specification
+              (basic_type))))
+        (preproc_endif
+          (preproc_close))
+        (preproc_split_complete_body
+          (preproc_if
+            (preproc_open)
+            condition: (identifier))
+          (var_section
+            (var_keyword)
+            body: (var_body
+              (variable_declaration
+                name: (identifier)
+                type: (type_specification
+                  (basic_type)))))
+          (begin_keyword)
+          body: (statement_block
+            (assignment_statement
+              left: (identifier)
+              operator: (assignment_operator)
+              right: (identifier)))
+          (end_keyword)
+          (preproc_else)
+          (begin_keyword)
+          body: (statement_block
+            (call_expression
+              function: (identifier)
+              arguments: (argument_list
+                (string_literal))))
+          (end_keyword)
+          (preproc_endif
+            (preproc_close)))))))
+
+========================================================================
+Split signature followed by a pragma-only conditional
+========================================================================
+codeunit 50100 Probe
+{
+#if FOO
+    procedure Foo(a: Integer)
+#else
+    procedure Foo(a: Integer; b: Integer)
+#endif
+#if FOO
+#pragma warning disable AA0005
+#endif
+    begin
+        Message('x');
+    end;
+}
+
+------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (preproc_split_procedure
+        (preproc_if
+          (preproc_open)
+          condition: (identifier))
+        (procedure_keyword)
+        name: (identifier)
+        parameters: (parameter_list
+          (parameter
+            name: (identifier)
+            type: (type_specification
+              (basic_type))))
+        (preproc_else)
+        (procedure_keyword)
+        name: (identifier)
+        parameters: (parameter_list
+          (parameter
+            name: (identifier)
+            type: (type_specification
+              (basic_type)))
+          (parameter
+            name: (identifier)
+            type: (type_specification
+              (basic_type))))
+        (preproc_endif
+          (preproc_close))
+        (preproc_pragma_only
+          (preproc_if
+            (preproc_open)
+            condition: (identifier))
+          (pragma)
+          (preproc_endif
+            (preproc_close)))
+        body: (code_block
+          (begin_keyword)
+          body: (statement_block
+            (call_expression
+              function: (identifier)
+              arguments: (argument_list
+                (string_literal))))
+          (end_keyword))))))
+

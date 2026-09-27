@@ -11435,81 +11435,85 @@
             ]
           },
           {
-            "type": "CHOICE",
-            "members": [
-              {
-                "type": "SYMBOL",
-                "name": "_procedure_regular_tail"
-              },
-              {
-                "type": "SEQ",
-                "members": [
-                  {
-                    "type": "CHOICE",
-                    "members": [
-                      {
-                        "type": "STRING",
-                        "value": ";"
-                      },
-                      {
-                        "type": "BLANK"
-                      }
-                    ]
-                  },
-                  {
-                    "type": "REPEAT1",
-                    "content": {
-                      "type": "SYMBOL",
-                      "name": "preproc_pragma_only"
-                    }
-                  },
-                  {
-                    "type": "SYMBOL",
-                    "name": "_routine_regular_body"
-                  }
-                ]
-              },
-              {
-                "type": "SEQ",
-                "members": [
-                  {
-                    "type": "CHOICE",
-                    "members": [
-                      {
-                        "type": "STRING",
-                        "value": ";"
-                      },
-                      {
-                        "type": "BLANK"
-                      }
-                    ]
-                  },
-                  {
-                    "type": "REPEAT",
-                    "content": {
-                      "type": "SYMBOL",
-                      "name": "preproc_pragma_only"
-                    }
-                  },
-                  {
-                    "type": "CHOICE",
-                    "members": [
-                      {
-                        "type": "SYMBOL",
-                        "name": "preproc_split_procedure_body"
-                      },
-                      {
-                        "type": "SYMBOL",
-                        "name": "preproc_split_complete_body"
-                      }
-                    ]
-                  }
-                ]
-              }
-            ]
+            "type": "SYMBOL",
+            "name": "_procedure_tail"
           }
         ]
       }
+    },
+    "_procedure_tail": {
+      "type": "CHOICE",
+      "members": [
+        {
+          "type": "SYMBOL",
+          "name": "_procedure_regular_tail"
+        },
+        {
+          "type": "SEQ",
+          "members": [
+            {
+              "type": "CHOICE",
+              "members": [
+                {
+                  "type": "STRING",
+                  "value": ";"
+                },
+                {
+                  "type": "BLANK"
+                }
+              ]
+            },
+            {
+              "type": "REPEAT1",
+              "content": {
+                "type": "SYMBOL",
+                "name": "preproc_pragma_only"
+              }
+            },
+            {
+              "type": "SYMBOL",
+              "name": "_routine_regular_body"
+            }
+          ]
+        },
+        {
+          "type": "SEQ",
+          "members": [
+            {
+              "type": "CHOICE",
+              "members": [
+                {
+                  "type": "STRING",
+                  "value": ";"
+                },
+                {
+                  "type": "BLANK"
+                }
+              ]
+            },
+            {
+              "type": "REPEAT",
+              "content": {
+                "type": "SYMBOL",
+                "name": "preproc_pragma_only"
+              }
+            },
+            {
+              "type": "CHOICE",
+              "members": [
+                {
+                  "type": "SYMBOL",
+                  "name": "preproc_split_procedure_body"
+                },
+                {
+                  "type": "SYMBOL",
+                  "name": "preproc_split_complete_body"
+                }
+              ]
+            }
+          ]
+        }
+      ]
     },
     "_procedure_regular_tail": {
       "type": "PREC_RIGHT",
@@ -11935,7 +11939,7 @@
           },
           {
             "type": "SYMBOL",
-            "name": "_procedure_regular_tail"
+            "name": "_procedure_tail"
           }
         ]
       }
@@ -21706,18 +21710,18 @@
       "interface_procedure_suffix"
     ],
     [
-      "procedure",
+      "_procedure_tail",
       "_procedure_regular_tail",
       "_procedure_header",
       "interface_procedure_suffix"
     ],
     [
-      "procedure",
+      "_procedure_tail",
       "_procedure_regular_tail",
       "_procedure_header"
     ],
     [
-      "procedure",
+      "_procedure_tail",
       "_procedure_regular_tail",
       "interface_procedure_suffix"
     ],
