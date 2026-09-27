@@ -1,7 +1,7 @@
 # Configuration-Consistency Oracle — Design
 
 **Date:** 2026-09-27
-**Status:** Design agreed section by section; the written spec is under review. Nothing below is implemented.
+**Status:** APPROVED 2026-09-27 (written spec reviewed by the user). Nothing below is implemented yet.
 **Scope:** Build the oracle and wire it into both gate tiers. Grammar defects it finds are fixed in their own commits, each with a fixture. Changing the grammar to make lowering easier is out of scope.
 
 The design was developed over two rounds with gpt-6-astra, an independent model that read the grammar, scanner, tools, CI workflow and `validate-grammar.sh`. The written spec was then reviewed independently by gpt-6-sol and gemini-3.8-flash. Corrections are marked with their source where they changed the design. One reviewer claim was checked and rejected: gemini counted 60 named `preproc*` types, but parsing `src/node-types.json` gives 74 top-level named types. Its `grep -c` counted references, not type definitions.
