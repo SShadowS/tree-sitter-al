@@ -1,0 +1,510 @@
+================================================================================
+Type = Type::Value as a property value is a comparison, not a link_value (issue #27)
+================================================================================
+
+page 50006 "Mode Card Probe"
+{
+    layout
+    {
+        area(Content)
+        {
+            field(Type; Rec.Type)
+            {
+                ApplicationArea = All;
+                Visible = Type = Type::Alpha;
+                Editable = Type <> Type::Beta;
+                Enabled = Kind = Kind::Alpha;
+            }
+        }
+    }
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (page_declaration
+    (page_keyword)
+    object_id: (integer)
+    object_name: (quoted_identifier)
+    body: (declaration_body
+      (layout_section
+        (layout_keyword)
+        body: (layout_body
+          (area_section
+            (area_keyword)
+            type: (content_keyword)
+            body: (layout_body
+              (page_field
+                (field_keyword)
+                name: (identifier)
+                source: (member_expression
+                  object: (identifier)
+                  member: (identifier))
+                body: (declaration_body
+                  (property
+                    name: (property_name)
+                    value: (identifier))
+                  (property
+                    name: (property_name)
+                    value: (property_expression
+                      (comparison_expression
+                        left: (identifier)
+                        operator: (comparison_operator)
+                        right: (qualified_enum_value
+                          enum_type: (identifier)
+                          value: (identifier)))))
+                  (property
+                    name: (property_name)
+                    value: (property_expression
+                      (comparison_expression
+                        left: (identifier)
+                        operator: (comparison_operator)
+                        right: (qualified_enum_value
+                          enum_type: (identifier)
+                          value: (identifier)))))
+                  (property
+                    name: (property_name)
+                    value: (property_expression
+                      (comparison_expression
+                        left: (identifier)
+                        operator: (comparison_operator)
+                        right: (qualified_enum_value
+                          enum_type: (identifier)
+                          value: (identifier))))))))))))))
+
+================================================================================
+Every keyword_as_identifier word leads a comparison at value start (issue #27)
+================================================================================
+
+page 50007 P
+{
+    layout
+    {
+        area(Content)
+        {
+            field(F; Rec.F)
+            {
+                Visible = Field = Field::Alpha;
+                Visible = Key = Key::Alpha;
+                Visible = Value = Value::Alpha;
+                Visible = Separator = Separator::Alpha;
+                Visible = Dataset = Dataset::Alpha;
+                Visible = Type = Type::Alpha;
+                Visible = Version = Version::Alpha;
+                Visible = Action = Action::Alpha;
+                Visible = Table = Table::Alpha;
+                Visible = Assembly = Assembly::Alpha;
+                Visible = Order = Order::Alpha;
+                Visible = Filter = Filter::Alpha;
+                Visible = Column = Column::Alpha;
+                Visible = Dataitem = Dataitem::Alpha;
+                Visible = Elements = Elements::Alpha;
+                Visible = Fields = Fields::Alpha;
+                Visible = Keys = Keys::Alpha;
+                Visible = Labels = Labels::Alpha;
+                Visible = Layout = Layout::Alpha;
+                Visible = Modify = Modify::Alpha;
+                Visible = Rendering = Rendering::Alpha;
+                Visible = Requestpage = Requestpage::Alpha;
+                Visible = Schema = Schema::Alpha;
+                Visible = Views = Views::Alpha;
+                Visible = Analysisviews = Analysisviews::Alpha;
+            }
+        }
+    }
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (page_declaration
+    (page_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (layout_section
+        (layout_keyword)
+        body: (layout_body
+          (area_section
+            (area_keyword)
+            type: (content_keyword)
+            body: (layout_body
+              (page_field
+                (field_keyword)
+                name: (identifier)
+                source: (member_expression
+                  object: (identifier)
+                  member: (identifier))
+                body: (declaration_body
+                  (property
+                    name: (property_name)
+                    value: (property_expression
+                      (comparison_expression
+                        left: (identifier)
+                        operator: (comparison_operator)
+                        right: (qualified_enum_value
+                          enum_type: (identifier)
+                          value: (identifier)))))
+                  (property
+                    name: (property_name)
+                    value: (property_expression
+                      (comparison_expression
+                        left: (identifier)
+                        operator: (comparison_operator)
+                        right: (qualified_enum_value
+                          enum_type: (identifier)
+                          value: (identifier)))))
+                  (property
+                    name: (property_name)
+                    value: (property_expression
+                      (comparison_expression
+                        left: (identifier)
+                        operator: (comparison_operator)
+                        right: (qualified_enum_value
+                          enum_type: (identifier)
+                          value: (identifier)))))
+                  (property
+                    name: (property_name)
+                    value: (property_expression
+                      (comparison_expression
+                        left: (identifier)
+                        operator: (comparison_operator)
+                        right: (qualified_enum_value
+                          enum_type: (identifier)
+                          value: (identifier)))))
+                  (property
+                    name: (property_name)
+                    value: (property_expression
+                      (comparison_expression
+                        left: (identifier)
+                        operator: (comparison_operator)
+                        right: (qualified_enum_value
+                          enum_type: (identifier)
+                          value: (identifier)))))
+                  (property
+                    name: (property_name)
+                    value: (property_expression
+                      (comparison_expression
+                        left: (identifier)
+                        operator: (comparison_operator)
+                        right: (qualified_enum_value
+                          enum_type: (identifier)
+                          value: (identifier)))))
+                  (property
+                    name: (property_name)
+                    value: (property_expression
+                      (comparison_expression
+                        left: (identifier)
+                        operator: (comparison_operator)
+                        right: (qualified_enum_value
+                          enum_type: (identifier)
+                          value: (identifier)))))
+                  (property
+                    name: (property_name)
+                    value: (property_expression
+                      (comparison_expression
+                        left: (keyword_identifier
+                          (action_keyword))
+                        operator: (comparison_operator)
+                        right: (qualified_enum_value
+                          enum_type: (keyword_identifier
+                            (action_keyword))
+                          value: (identifier)))))
+                  (property
+                    name: (property_name)
+                    value: (property_expression
+                      (comparison_expression
+                        left: (identifier)
+                        operator: (comparison_operator)
+                        right: (qualified_enum_value
+                          enum_type: (identifier)
+                          value: (identifier)))))
+                  (property
+                    name: (property_name)
+                    value: (property_expression
+                      (comparison_expression
+                        left: (identifier)
+                        operator: (comparison_operator)
+                        right: (qualified_enum_value
+                          enum_type: (identifier)
+                          value: (identifier)))))
+                  (property
+                    name: (property_name)
+                    value: (property_expression
+                      (comparison_expression
+                        left: (identifier)
+                        operator: (comparison_operator)
+                        right: (qualified_enum_value
+                          enum_type: (identifier)
+                          value: (identifier)))))
+                  (property
+                    name: (property_name)
+                    value: (property_expression
+                      (comparison_expression
+                        left: (identifier)
+                        operator: (comparison_operator)
+                        right: (qualified_enum_value
+                          enum_type: (identifier)
+                          value: (identifier)))))
+                  (property
+                    name: (property_name)
+                    value: (property_expression
+                      (comparison_expression
+                        left: (identifier)
+                        operator: (comparison_operator)
+                        right: (qualified_enum_value
+                          enum_type: (identifier)
+                          value: (identifier)))))
+                  (property
+                    name: (property_name)
+                    value: (property_expression
+                      (comparison_expression
+                        left: (identifier)
+                        operator: (comparison_operator)
+                        right: (qualified_enum_value
+                          enum_type: (identifier)
+                          value: (identifier)))))
+                  (property
+                    name: (property_name)
+                    value: (property_expression
+                      (comparison_expression
+                        left: (identifier)
+                        operator: (comparison_operator)
+                        right: (qualified_enum_value
+                          enum_type: (identifier)
+                          value: (identifier)))))
+                  (property
+                    name: (property_name)
+                    value: (property_expression
+                      (comparison_expression
+                        left: (identifier)
+                        operator: (comparison_operator)
+                        right: (qualified_enum_value
+                          enum_type: (identifier)
+                          value: (identifier)))))
+                  (property
+                    name: (property_name)
+                    value: (property_expression
+                      (comparison_expression
+                        left: (identifier)
+                        operator: (comparison_operator)
+                        right: (qualified_enum_value
+                          enum_type: (identifier)
+                          value: (identifier)))))
+                  (property
+                    name: (property_name)
+                    value: (property_expression
+                      (comparison_expression
+                        left: (identifier)
+                        operator: (comparison_operator)
+                        right: (qualified_enum_value
+                          enum_type: (identifier)
+                          value: (identifier)))))
+                  (property
+                    name: (property_name)
+                    value: (property_expression
+                      (comparison_expression
+                        left: (identifier)
+                        operator: (comparison_operator)
+                        right: (qualified_enum_value
+                          enum_type: (identifier)
+                          value: (identifier)))))
+                  (property
+                    name: (property_name)
+                    value: (property_expression
+                      (comparison_expression
+                        left: (identifier)
+                        operator: (comparison_operator)
+                        right: (qualified_enum_value
+                          enum_type: (identifier)
+                          value: (identifier)))))
+                  (property
+                    name: (property_name)
+                    value: (property_expression
+                      (comparison_expression
+                        left: (identifier)
+                        operator: (comparison_operator)
+                        right: (qualified_enum_value
+                          enum_type: (identifier)
+                          value: (identifier)))))
+                  (property
+                    name: (property_name)
+                    value: (property_expression
+                      (comparison_expression
+                        left: (identifier)
+                        operator: (comparison_operator)
+                        right: (qualified_enum_value
+                          enum_type: (identifier)
+                          value: (identifier)))))
+                  (property
+                    name: (property_name)
+                    value: (property_expression
+                      (comparison_expression
+                        left: (identifier)
+                        operator: (comparison_operator)
+                        right: (qualified_enum_value
+                          enum_type: (identifier)
+                          value: (identifier)))))
+                  (property
+                    name: (property_name)
+                    value: (property_expression
+                      (comparison_expression
+                        left: (identifier)
+                        operator: (comparison_operator)
+                        right: (qualified_enum_value
+                          enum_type: (identifier)
+                          value: (identifier)))))
+                  (property
+                    name: (property_name)
+                    value: (property_expression
+                      (comparison_expression
+                        left: (identifier)
+                        operator: (comparison_operator)
+                        right: (qualified_enum_value
+                          enum_type: (identifier)
+                          value: (identifier))))))))))))))
+
+================================================================================
+A bare contextual keyword value is an identifier, as any bare name is; order() stays a view (issue #27)
+================================================================================
+
+page 50008 P
+{
+    ApplicationArea = Assembly;
+    ExternalAccess = Modify;
+    Image = Filter;
+    Visible = Type;
+    Visible = Table;
+    Image = Order;
+    SourceTableView = order(descending);
+    OptionMembers = Order, Type;
+    RunPageLink = Type = field(Type), Table = const(Order);
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (page_declaration
+    (page_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (property
+        name: (property_name)
+        value: (identifier))
+      (property
+        name: (property_name)
+        value: (identifier))
+      (property
+        name: (property_name)
+        value: (identifier))
+      (property
+        name: (property_name)
+        value: (identifier))
+      (property
+        name: (property_name)
+        value: (identifier))
+      (property
+        name: (property_name)
+        value: (identifier))
+      (property
+        name: (property_name)
+        value: (sorting_value
+          (order_keyword)
+          (descending_keyword)))
+      (property
+        name: (property_name)
+        value: (option_member_list
+          (option_member
+            (identifier))
+          (option_member
+            (identifier))))
+      (property
+        name: (property_name)
+        value: (link_value_list
+          (link_value
+            field: (identifier)
+            (field_keyword)
+            value: (identifier))
+          (link_value
+            field: (identifier)
+            (const_keyword)
+            value: (identifier)))))))
+
+================================================================================
+Order and Table as names in code match plain names at every site that lists identifier (issue #27)
+================================================================================
+
+codeunit 50100 C
+{
+    [Foo(Order, Table)]
+    procedure P()
+    var
+        Order: Integer;
+    begin
+        for Order := 1 to Table do;
+        case X of
+            Order, Table:
+                Table(Order);
+        end;
+        X := Order::A;
+    end;
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (attribute_item
+        attribute: (attribute_content
+          name: (identifier)
+          arguments: (attribute_arguments
+            (attribute_argument_list
+              (identifier)
+              (identifier)))))
+      (procedure
+        (procedure_keyword)
+        name: (identifier)
+        (var_section
+          (var_keyword)
+          body: (var_body
+            (variable_declaration
+              name: (identifier)
+              type: (type_specification
+                (basic_type)))))
+        body: (code_block
+          (begin_keyword)
+          body: (statement_block
+            (for_statement
+              (for_keyword)
+              variable: (identifier)
+              start: (integer)
+              direction: (to_keyword)
+              end: (identifier)
+              (do_keyword)
+              body: (empty_statement))
+            (case_statement
+              (case_keyword)
+              expression: (identifier)
+              (of_keyword)
+              body: (case_body
+                (case_branch
+                  pattern: (identifier)
+                  pattern: (identifier)
+                  body: (call_expression
+                    function: (identifier)
+                    arguments: (argument_list
+                      (identifier)))))
+              (end_keyword))
+            (assignment_statement
+              left: (identifier)
+              operator: (assignment_operator)
+              right: (qualified_enum_value
+                enum_type: (identifier)
+                value: (identifier))))
+          (end_keyword))))))
+

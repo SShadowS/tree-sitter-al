@@ -43,7 +43,7 @@ function namespacedRefFielded($, name) {
   return choice(
     field(name, $.integer),
     prec.right(seq(
-      field(name, $._identifier_or_quoted),
+      field(name, $._plain_name),
       repeat(seq('.', field(name, $._identifier_or_quoted)))
     )),
   );
@@ -180,7 +180,6 @@ module.exports = grammar({
     // the body's leading preproc_conditional_var_block; GLR explores both.
     [$.preproc_pragma_only, $.preproc_conditional_var_block],
     [$._property_value, $.option_member],
-    [$._property_value, $.option_member, $._identifier_or_quoted],
     [$.caption_value, $.option_member],
     [$.assignment_statement, $.assignment_expression],
     [$.preproc_conditional, $.preproc_conditional_layout],
@@ -188,12 +187,6 @@ module.exports = grammar({
     [$.preproc_conditional, $.preproc_conditional_layout_mixed],
     [$.preproc_conditional_layout, $.preproc_conditional_layout_mixed],
     [$.preproc_conditional, $.preproc_conditional_actions],
-    [$._expression, $._identifier_or_quoted],
-    // `Prop = identifier . = ...`: the identifier may open a comparison, a
-    // link_value (via _identifier_or_quoted) or an implementation_value (via
-    // its reserved-context twin). GLR carries all three to the `;`.
-    [$._expression, $._identifier_or_quoted, $._implementation_name],
-    [$._identifier_or_quoted, $._implementation_name],
     // A `#if` after an argument expression can open an expression CONTINUATION
     // (`f(1 #if X + 2 #endif )`) or a statement-level conditional that merely
     // follows. The discriminator is past the condition, so GLR must explore both.
@@ -226,7 +219,6 @@ module.exports = grammar({
     // `Prop = table Foo.Bar` is object_reference_value (unfielded ref) until
     // the '=' that would make it a tabledata_permission (fielded ref) appears,
     // so both dotted-name forms stay live across the dots.
-    [$._namespaced_or_simple_ref, $._namespaced_ref_table_name],
     [$.addafter_modification, $.addafter_views_modification],
     [$.addbefore_modification, $.addbefore_views_modification],
     [$._report_body_element, $.preproc_conditional],
@@ -241,7 +233,27 @@ module.exports = grammar({
     [$.preproc_conditional_xmlport, $.preproc_conditional],
     [$._body_element, $._procedure_header, $.preproc_conditional_var],
     [$._body_element],
-    [$.option_member, $._identifier_or_quoted],
+    // At value start `Order` / `Table` are the keyword (`order(descending)`,
+    // `RunObject = Table X`) or a name (`Visible = Order = Order::X`) until
+    // the next token. sorting_value's order-first arm carries prec.dynamic
+    // for the one string both readings complete on.
+    [$.order_keyword, $._value_start_keyword_name],
+    [$.table_keyword, $._value_start_keyword_name],
+    // `Prop = identifier . = ...` at value start: the identifier may open a
+    // comparison, a link_value / where_condition / ml_value_pair (via
+    // _plain_name), an implementation_value (via _implementation_head) or an
+    // option list. GLR carries them all to the discriminating token. See
+    // _plain_name for why value-start heads do not use _identifier_or_quoted.
+    [$._expression, $._plain_name],
+    [$._plain_name, $._identifier_or_quoted],
+    [$._implementation_head, $._plain_name],
+    [$._implementation_head, $._expression, $._plain_name],
+    [$._property_value, $.option_member, $._plain_name],
+    // A link value may now start with the `table` token (`RunPageLink = Table
+    // = field(X)`), as a permission entry always could (`table X = RIMD`), so
+    // an empty `#if` block before it is either one until the `=` after it.
+    [$.preproc_conditional_link_values, $.preproc_conditional_permissions],
+    [$.preproc_conditional_link_values, $.preproc_conditional_table_relation, $.preproc_conditional_permissions],
     // `[$._single_pattern, $._expression]` used to live here and is GONE: the
     // separator fix made it unnecessary. It existed because a case pattern list
     // whose commas were optional could not be told apart from a single
@@ -736,12 +748,10 @@ module.exports = grammar({
       $.link_value_list,            // "Field" = field(Other), ...
       $.property_expression,        // Expressions used as property values
       $.keyword_identifier,         // Keywords used as simple property values (TestIsolation = Codeunit)
-      // `Image = Order;` (2 BC.History sites). order_keyword has actions at
-      // value start since the order-first sorting_value arm, so the lexer's
-      // keyword pass turns the identifier `Order` into that token; this hands
-      // it back as the identifier leaf it always was. Bare kw(), never
-      // $.order_keyword -- see .claude/rules/contextual-keywords.md.
-      alias(kw('order'), $.identifier),
+      // `Image = Order;` / `Visible = Table;`: a word whose keyword token is
+      // live at value start, handed back as the identifier leaf any other
+      // bare name gets. See _value_start_keyword_name.
+      alias($._value_start_keyword_name, $.identifier),
       $.where_clause,               // SourceTableView/SubPageView = where(...)
       $.object_reference_value,     // RunObject = Codeunit "BOM-Explode BOM"
       $.decimal_range_value,        // DecimalPlaces = 0 : 5
@@ -846,7 +856,7 @@ module.exports = grammar({
     )),
 
     ml_value_pair: $ => seq(
-      field('language', $._identifier_or_quoted),
+      field('language', $._plain_name),
       '=',
       field('value', $.string_literal)
     ),
@@ -960,7 +970,7 @@ module.exports = grammar({
     ),
 
     where_condition: $ => seq(
-      field('field', $._identifier_or_quoted),
+      field('field', $._plain_name),
       '=',
       choice(
         // field("No.") or field(upperlimit("Date Filter")) or field(filter(Totaling))
@@ -983,6 +993,7 @@ module.exports = grammar({
         // const(value) — also accepts keyword identifiers like Report, Page, Codeunit, Action
         seq($.const_keyword, '(', optional(field('value', choice(
           $.string_literal, $.identifier, $.quoted_identifier, $.integer, $.boolean,
+            alias($._value_start_keyword_name, $.identifier),
           $.database_reference, $.qualified_enum_value, $.keyword_identifier,
           $.datetime_literal, $.date_literal, $.time_literal,
         ))), ')'),
@@ -995,6 +1006,7 @@ module.exports = grammar({
     filter_value: $ => repeat1(choice(
       $.string_literal,
       $.identifier,
+      alias($._value_start_keyword_name, $.identifier),
       $.quoted_identifier,
       $.integer,
       $.decimal,
@@ -1046,10 +1058,15 @@ module.exports = grammar({
       // part. Until this arm existed the value fell through to
       // property_expression -> call_expression `order(descending)` (issue
       // #21). Same node as the sorting form so a consumer reads one shape.
-      seq(
+      //
+      // prec.dynamic because `order` is also a NAME at value start now
+      // (`Visible = Order = Order::X;`, issue #27), so `order(descending)` has
+      // a complete call_expression reading beside this one. A view value is
+      // never a call, so the view reading wins the tie.
+      prec.dynamic(1, seq(
         $._order_clause,
         optional($.where_clause),
-      ),
+      )),
     )),
 
     _order_clause: $ => seq(
@@ -1096,7 +1113,7 @@ module.exports = grammar({
     ),
 
     link_value: $ => seq(
-      field('field', $._identifier_or_quoted),
+      field('field', $._plain_name),
       '=',
       choice(
         // --- Structured link forms -------------------------------------------
@@ -1128,6 +1145,7 @@ module.exports = grammar({
           ),
           seq($.const_keyword, '(', optional(field('value', choice(
             $.string_literal, $.identifier, $.quoted_identifier, $.integer, $.boolean,
+            alias($._value_start_keyword_name, $.identifier),
             $.database_reference, $.qualified_enum_value, $.keyword_identifier,
             $.datetime_literal, $.date_literal, $.time_literal,
           ))), ')'),
@@ -1385,7 +1403,7 @@ module.exports = grammar({
     // A member access or any other non-identifier right-hand side never
     // matched this rule to begin with. See the `reserved` block at the top.
     implementation_value: $ => prec.dynamic(1, seq(
-      field('interface', $._implementation_name),
+      field('interface', $._implementation_head),
       '=',
       field('implementation', $._implementation_name)
     )),
@@ -1402,6 +1420,16 @@ module.exports = grammar({
       $.identifier,
       $.quoted_identifier,
       alias($.keyword_as_identifier, $.identifier),
+    )),
+
+    // implementation_value's interface is a value-start head, so it does not
+    // offer keyword_as_identifier (see _plain_name). The implementation side is
+    // not at value start and keeps _implementation_name. The reserved set must
+    // sit here too, on the rule that names $.identifier directly, or
+    // `Visible = HideActions = false;` becomes an implementation_value.
+    _implementation_head: $ => reserved('implementation_names', choice(
+      $.identifier,
+      $.quoted_identifier,
     )),
 
     // --- OptionMembers value list ---
@@ -1484,7 +1512,9 @@ module.exports = grammar({
       alias($._negative_integer, $.integer),  // `-1` as one signed literal (issue #23)
       seq('-', $.integer),   // `- 1` with whitespace, as before
       $.keyword_identifier,  // System, Action, etc.
-      alias($.keyword_as_identifier, $.identifier),  // Type, Field, etc.
+      // Not keyword_as_identifier: option_member heads a value (see
+      // _plain_name). Only the two words whose tokens are live there anyway.
+      alias($._value_start_keyword_name, $.identifier),
       alias($.tabledata_keyword, $.identifier),  // TableData (first-position collision fix)
       $.local_keyword,       // 'Local' as option member
       $.internal_keyword,    // 'Internal' as option member
@@ -3323,6 +3353,7 @@ module.exports = grammar({
       $.integer,
       $.string_literal,
       $.identifier,
+      alias($._value_start_keyword_name, $.identifier),  // see _value_start_keyword_name
       $.quoted_identifier,
       $.qualified_enum_value,
       $.database_reference,
@@ -3678,6 +3709,7 @@ module.exports = grammar({
     _preproc_call_prefix: $ => seq(
       choice(
         $.identifier,
+        alias($._value_start_keyword_name, $.identifier),  // see _value_start_keyword_name
         $.member_expression,
         $.qualified_enum_value,
         $.keyword_identifier,
@@ -4472,6 +4504,7 @@ module.exports = grammar({
       $.range_expression,
       $.call_expression,
       $.identifier,
+      alias($._value_start_keyword_name, $.identifier),  // see _value_start_keyword_name
       $.quoted_identifier,
       $.member_expression,
       $.unary_expression,
@@ -4513,6 +4546,7 @@ module.exports = grammar({
       $.for_keyword,
       field('variable', choice(
         $.identifier,
+        alias($._value_start_keyword_name, $.identifier),  // see _value_start_keyword_name
         $.quoted_identifier,
         $.member_expression,
       )),
@@ -4673,6 +4707,7 @@ module.exports = grammar({
       $.list_literal,
       // Keywords that can be used as identifiers in expressions
       $.keyword_identifier,
+      alias($._value_start_keyword_name, $.identifier),
       // `continue` as a name: the scanner emits this when the word is followed
       // by := ( . [ :: += -= *= /= -- anything a continue STATEMENT cannot be
       // followed by. `Continue(X);` used to parse as continue_statement plus a
@@ -4935,6 +4970,10 @@ module.exports = grammar({
         // follows (issue #22); it is a different symbol from $.identifier, so
         // it has to be listed here even though the tree shows an identifier.
         alias($.continue_as_identifier, $.identifier),
+        // `Table()`: the `table` / `order` tokens are live in expression
+        // states (see _value_start_keyword_name), so the word may arrive as
+        // one of them.
+        alias($._value_start_keyword_name, $.identifier),
         $.quoted_identifier,      // "My Proc"(42) — alc accepts; call_statement
                                   // already allowed this, call_expression did not
         $.member_expression,
@@ -5085,6 +5124,7 @@ module.exports = grammar({
         $.call_expression,       // Allow Func()::Value
         $.qualified_enum_value,  // Chained: Enum::"Type"::"Value"
         $.keyword_identifier,    // Allow Enum::, Record::, etc.
+        alias($._value_start_keyword_name, $.identifier),  // Order::X at value start
       )),
       '::',
       field('value', $._identifier_or_quoted)
@@ -5495,6 +5535,59 @@ module.exports = grammar({
     // =====================================================================
     // Shared rules
     // =====================================================================
+
+    // The name that STARTS a property value: link_value's field,
+    // where_condition's field, ml_value_pair's language and a table relation's
+    // first name segment. option_member and implementation_value's interface
+    // follow the same rule with their own choices.
+    //
+    // Unlike _identifier_or_quoted it does NOT offer keyword_as_identifier,
+    // and that absence is the whole point (issue #27). `word` is `identifier`,
+    // so wherever a kw() token is valid, keyword extraction hands the word to
+    // it rather than to `identifier`. These heads were what made kw('type')
+    // and 23 siblings valid at value start, so `Visible = Type = Type::Alpha;`
+    // lexed `Type` as the keyword token -- which the expression path cannot
+    // take, leaving only the link_value reading and an ERROR at `::`. With no
+    // head offering those tokens, the word lexes as a plain identifier and
+    // every reading gets it. The tree is unchanged where the head reading was
+    // right: alias(keyword_as_identifier, identifier) is an `identifier` leaf.
+    //
+    // Measured over BC.History: the value-start parse state lost all 24
+    // tokens; 812 bare values that were `table_relation_value` became
+    // `identifier` (`ApplicationArea = Assembly;` 705, `ExternalAccess =
+    // Modify;` 92, `Image = Filter;` 10, ...); nothing else changed.
+    //
+    // Widening _expression with all 24 instead was tried and reverted: it
+    // makes their tokens valid in every expression state, so every site
+    // listing `$.identifier` directly (`const(Table)`, `filter(Order)`,
+    // `Modify();`) stopped matching -- 420 BC.History files.
+    _plain_name: $ => choice(
+      $.identifier,
+      $.quoted_identifier,
+      alias($._value_start_keyword_name, $.identifier),
+    ),
+
+    // The two words that are REAL keywords at value start whatever the heads
+    // offer -- `table` through object_reference_value (`RunObject = Table X`),
+    // `order` through sorting_value's order-first arm -- so their tokens are
+    // valid there anyway and must be accepted as names wherever a name can
+    // stand at value start: the heads (`RunPageLink = Table = field(X)`,
+    // `OptionMembers = Order,Invoice`), a bare value (`Image = Order;`), and
+    // an expression (`Visible = Order = Order::Blanket;`).
+    //
+    // The expression case is what spreads it: `_expression` offers this, so
+    // both tokens are live in EVERY expression state, and each choice that
+    // lists `$.identifier` directly beside an expression alternative must
+    // offer it too or that word stops matching there. Those sites are
+    // qualified_enum_value, call_expression, for_statement,
+    // _single_pattern, _attribute_argument, _preproc_call_prefix, and the
+    // const()/filter() value lists. Found by scanning grammar.js for such
+    // choices; a code probe using `Order`/`Table` in 30 positions gives
+    // trees byte-identical to the same probe with plain names.
+    //
+    // Two words is affordable where 24 was not. Bare kw(), never
+    // $.x_keyword: see .claude/rules/contextual-keywords.md.
+    _value_start_keyword_name: $ => choice(kw('table'), kw('order')),
 
     _identifier_or_quoted: $ => choice(
       $.identifier,
