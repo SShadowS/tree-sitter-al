@@ -1,23 +1,26 @@
 # Configuration-Consistency Oracle — Design
 
 **Date:** 2026-09-27
-**Status:** DESIGN APPROVED, not implemented. Nothing below exists in the tree yet.
+**Status:** Design agreed section by section; the written spec is under review. Nothing below is implemented.
 **Scope:** Build the oracle and wire it into both gate tiers. Grammar defects it finds are fixed in their own commits, each with a fixture. Changing the grammar to make lowering easier is out of scope.
 
-The design was reviewed in two rounds against gpt-6-astra, an independent model that read the grammar, scanner, tools, CI workflow and `validate-grammar.sh`. Its corrections are included and marked where they changed the design.
+The design was developed over two rounds with gpt-6-astra, an independent model that read the grammar, scanner, tools, CI workflow and `validate-grammar.sh`. The written spec was then reviewed independently by gpt-6-sol and gemini-3.8-flash. Corrections are marked with their source where they changed the design. One reviewer claim was checked and rejected: gemini counted 60 named `preproc*` types, but parsing `src/node-types.json` gives 74 top-level named types. Its `grep -c` counted references, not type definitions.
 
 ## Problem
 
 This grammar parses **every** branch of `#if`/`#elif`/`#else`/`#endif` into one tree. The AL compiler (`alc`) does not: it evaluates the directives and never parses an inactive branch. Where a branch boundary cuts through a construct, the grammar enumerates the shape as a dedicated rule. Examples: a procedure signature that differs per branch over a shared body, or a block's `end` that lives inside a later `#if`. There are 74 named `preproc*` node types.
 
-An enumeration has one characteristic failure mode. A shape nobody listed parses as a **wrong tree with zero ERROR nodes**. No existing gate can see that:
+An enumeration has one characteristic failure mode. A shape nobody listed parses as a **wrong tree with zero ERROR nodes**. No existing gate compares the tree against what each configuration actually is:
 
 | Gate | Blind because |
 |---|---|
 | `parse-al-parallel.sh` | counts ERROR/MISSING only |
 | `tools/tree-harness.sh` | proves a tree did not *change*, not that it was ever right |
 | `tree-sitter test` | expected trees are written by the same person who wrote the rule |
-| `qc` (query coverage) | proves bytes reach nodes, not that nodes group the right bytes |
+| `qc` (query coverage) | proves bytes reach nodes and reports some field/edge anomalies, not that nodes group the right bytes per configuration |
+| `tools/validate_al_file.py` | has a targeted orphan-operator check for one former `#if` expression tear; nothing general |
+
+These instruments are not blind to every silent misparse (sol), but none performs a per-configuration comparison.
 
 The class is not hypothetical. Every item below shipped or was found with a clean error count:
 
@@ -66,7 +69,7 @@ The package is `tools/config_oracle/`, in Python with `py-tree-sitter`.
 | `fixtures.py` | Extract cases from `test/corpus` |
 | `runner.py`, `__main__.py` | Discovery, worker pool, accounting, reports, baseline, exit codes |
 
-**Isolation rule:** `lowering/` must never import `reference.py`. A unit test asserts this by inspecting imports. If lowering can see the single-configuration tree, a "matching helper" eventually starts repairing the tree under test with the answer, and the oracle turns into a second parser that agrees with itself. *(astra, round 2: "the most dangerous shortcut is a permissive normaliser that fixes the tested tree until both sides agree.")*
+**Isolation rule:** `lowering/` must never import `reference.py`, and must never invoke a parser. Unit tests assert both, by inspecting imports and by running the lowering with the parser entry points replaced by functions that raise. These tests are **necessary, not sufficient** *(sol)*: a handler could still rebuild the answer from the selected source bytes by hand. The real defences are the reviewable contract of each handler, the accounting check, and the adversarial replays in section 5, which exist precisely to show that a wrong tree is not repaired. If lowering can see the single-configuration tree, a "matching helper" eventually starts repairing the tree under test with the answer, and the oracle turns into a second parser that agrees with itself. *(astra, round 2: "the most dangerous shortcut is a permissive normaliser that fixes the tested tree until both sides agree.")*
 
 ## 1. Directive resolver (`directives.py`)
 
@@ -83,20 +86,38 @@ The package is `tools/config_oracle/`, in Python with `py-tree-sitter`.
   ```
 
   `#elif` is first-match. It is not an independent `#if`.
+- **Directive extents.** For every directive: the offset of its `#`, the extent of its keyword, the **extent of its condition**, and the end of its line. These are the independent facts that the tree's directive nodes are checked against (see `directive-mismatch` below). A start offset alone cannot catch a condition that swallows the next line, because the swallowing directive still starts at the right `#`. *(sol)*
 - **Symbol set** per file: symbols in conditions, plus `#define`/`#undef` names.
-- **Masked text** per configuration. Inactive text and consumed directive lines are replaced by spaces, and line endings are kept. Every active byte stays at its original offset, so there is no byte map and no token merging at splice points, and `//` comments stay on their own line. Active UTF-8 is untouched. Masked bytes are recorded as padding, not as surviving source.
+- **Masked text** per configuration. Every active byte stays at its original offset, so there is no byte map and no token merging at splice points. The rules, stated exactly *(gemini, sol)*:
+  - inactive text is replaced by ASCII space (`0x20`) byte for byte, except that every `
+` and `
+` is kept, so line structure and CRLF are unchanged;
+  - a consumed conditional directive line (`#if`, `#elif`, `#else`, `#endif`) is masked **in full**, from its first byte to the end of its line, **including any trailing comment**, so no comment changes position relative to the code;
+  - a leading UTF-8 BOM is kept verbatim; a BOM anywhere else is ordinary text (see `docs/deferred-work.md` on the doubled-BOM file);
+  - active UTF-8 is untouched;
+  - active `#define`/`#undef`/`#pragma`/`#region` lines are kept, because they are extras in both parses;
+  - masked bytes are recorded as padding, not as surviving source.
+
+  Whether a directive may share a line with code, and whether a trailing comment is allowed on a directive line, are settled by probes 4 and 5. If the compiler accepts either, the whole-line rule above is revised before the resolver is written, not patched afterwards.
 - **Trace** per configuration: which arm each group took, and why.
 - **Extra events:** each comment, pragma, region/endregion and define/undef, with its interval and presence predicate. This feeds the trivia check.
 
-**Lexing.** A small byte-level scanner with two modes. *Active* mode tracks strings and comments, so a `#if` inside a block comment is not a directive. *Disabled* mode is used inside inactive arms, and its treatment of quotes and comments is **set by the probes below**, not assumed from AL lexing. `tools/query_coverage/lexer.py` is not reused: it returns character offsets, has no disabled mode, and scans quotes across newlines. Its tested token rules may be borrowed.
+**Lexing.** A small byte-level scanner with two modes. *Active* mode tracks strings, quoted identifiers, **verbatim strings, which can span lines** (`grammar.js` `verbatim_string`) *(sol)*, and comments, so a `#if` inside a block comment or a verbatim string is not a directive. Each of these has its own newline behaviour, taken from the grammar and checked by probe. *Disabled* mode is used inside inactive arms, and its treatment of quotes and comments is **set by the probes below**, not assumed from AL lexing. `tools/query_coverage/lexer.py` is not reused: it returns character offsets, has no disabled mode, and scans quotes across newlines. Its tested token rules may be borrowed.
 
-**Configurations.** Every assignment of the file's symbols. BC.History's measured ceiling is 6 symbols (64 assignments), and 1,076 of 1,281 `#if` files have one symbol. `#define`/`#undef` apply in source order, starting from the assignment. The resolver also reports **arm coverage**: an arm that no assignment selects (for example `#if X` nested in `#if not X`) is listed. It is never counted as covered.
+**Configurations.** Every assignment of the file's **free** symbols: the symbols used in conditions that the file never `#define`s or `#undef`s. BC.History's measured ceiling is 6 symbols (64 assignments), and 1,076 of 1,281 `#if` files have one symbol.
+
+`#define`/`#undef` are evaluated **sequentially, per configuration**. The resolver walks the directives in source order with a symbol environment that starts from the assignment. A `#define` or `#undef` changes the environment **only if it is active**, meaning inside arms that were selected. Every later condition is evaluated against the environment at its own position, never against the initial assignment. A symbol that is both assigned and `#define`d has its assigned value only until the first active definition. *(gemini, sol)* Where `#define` may legally appear is `alc`'s positional rule (`docs/preproc-define-undef.md`) and a linter's concern. The resolver evaluates what the text says. The resolver also reports **arm coverage**: an arm that no assignment selects (for example `#if X` nested in `#if not X`) is listed. It is never counted as covered.
 
 **Fail closed.** Unbalanced directives, an operator outside the probed vocabulary, or a construct the probes have not settled gives `cannot-validate: <reason>` for that (file, configuration). It is never treated as false and never skipped.
 
+**Degenerate inputs are explicit, never vacuous** *(sol)*:
+- a file with no conditional directives is not an oracle input, and is counted as `no-directives` in the report;
+- a configuration whose masked text is empty or contains only extras is a real configuration, validated like any other: its expected structure is a `source_file` with no children;
+- an input set (fixtures, or one corpus) that yields **zero** validated (file, configuration) pairs fails the run as `incomplete`, so no tier can pass by checking nothing.
+
 ### Probes, done before the resolver is written
 
-Each probe follows the four-way rule in `docs/deferred-work.md` (flat and split, symbol defined and undefined). Each has a **discriminating control**: the wrong branch must produce a compile error, because two successful compiles of two different valid programs prove nothing. Each uses an isolated project and a fresh output path, so a stale `.app` cannot count as success.
+The four-way rule in `docs/deferred-work.md` (flat and split, symbol defined and undefined) is the **minimum** and suffices for single-symbol questions. It is not enough for questions about precedence, overlapping `#elif` or `#define` state. Those need every combination of the symbols involved, and a flat equivalent for each. *(sol)* Every probe has a **discriminating control**: the wrong reading must produce a compile error, for example by referencing a procedure that only the right branch declares, because two successful compiles of two different valid programs prove nothing. Each probe uses an isolated project and a fresh output path, so a stale `.app` cannot count as success.
 
 1. Are preprocessor symbols case-sensitive?
 2. Which operators are accepted (`and`/`or`/`not`, `&&`/`||`/`!`), with what precedence, and are parentheses allowed?
@@ -105,7 +126,8 @@ Each probe follows the four-way rule in `docs/deferred-work.md` (flat and split,
 5. May a directive line carry a trailing `//` or `/* */` comment?
 6. What does an unterminated `'` or `/*` inside an inactive arm do to the next directive?
 7. Does a `#if` inside a multi-line block comment count as a directive?
-8. Does a `#define` in one arm affect a later `#if`?
+8. Does a `#define` in one arm affect a later `#if`, and does a `#define` inside an **inactive** arm have any effect?
+9. Can a `#if` appear inside a multi-line verbatim string, and is it a directive there?
 
 Results go in `docs/preproc-directive-semantics.md`, a table in the style of `docs/preproc-define-undef.md`. The resolver's handwritten controls are derived from that table, **never** from the resolver's own output.
 
@@ -119,7 +141,10 @@ Fixed cases, each with a handwritten expected mask, offsets and trace:
 - repeated symbols;
 - `not`;
 - define/undef;
-- a directive inside a string or comment;
+- a directive inside a string, a verbatim string spanning lines, or a comment;
+- a `#define` inside an inactive arm, followed by a `#if` on that symbol;
+- a directive line with a trailing comment;
+- a directive's condition followed by a line that starts with an operator (the swallowed-line shape), with its handwritten condition extent;
 - CRLF, a BOM, and end of file without a newline;
 - a directive next to punctuation;
 - non-ASCII identifiers;
@@ -149,9 +174,11 @@ Because of masking, both sides are already in original-file coordinates.
 
 The only allowed normalisation is hand-listed and minimal. **A content-only container that is empty after lowering is removed.** Examples are `statement_block`, `declaration_body` and `var_body`, which the grammar wraps in `optional(field(...))`, so the single-configuration tree has no node where lowering would leave an empty shell. Each listed type cites its rule. Nothing else is normalised: no flattening, re-sorting or merging.
 
+Removing empty containers cannot hide a handler that wrongly empties one *(gemini)*. A container can only become empty if its content was dropped, and dropped active content fails the byte-coverage check below, regardless of whether a contract covers the type. Each removal is also recorded in the report with the accounting reason that emptied it (`inactive-arm` or `directive`), so a removal with any other cause is an error.
+
 ### Checks (`compare.py`), per (file, configuration)
 
-1. **Tokens.** The active non-trivia leaf intervals from the resolver's mask must equal the leaf intervals of the single-configuration tree, and also those of the lowered tree. This catches dropped or invented tokens independently of structure.
+1. **Byte coverage.** The resolver does not tokenise AL, so this check is stated over bytes, not tokens *(sol)*. Every **significant** active byte, meaning every active byte that is not whitespace and not the leading BOM, must be covered by **exactly one** leaf or extra in the single-configuration tree, and by exactly one leaf or extra in the lowered tree. No leaf or extra in either may cover a masked byte. This is the same discipline `tools/validate_al_file.py` applies to one tree, applied to both sides and cross-checked. It catches dropped or invented material independently of structure. The resulting leaf interval lists of the two sides must then be equal, which is the token-level statement the structural check builds on.
 2. **Structure.** An ordered tree comparison, with nodes **matched by provenance, not by text**. Identical `Foo();` statements in two arms are different nodes, and a comparison by set would turn "one missing, one duplicated" into a pass. Kinds of divergence: `missing`, `extra`, `kind`, `field`, `order`, `parent`, each reported with the deepest common ancestor and the first diverging path.
 3. **Trivia.** The ordered (kind, interval) extras must agree three ways: the resolver's active events, the single-configuration tree's extras, and the lowered tree's extras for that configuration. Which node an extra is attached to is not compared.
 
@@ -215,7 +242,7 @@ The named `preproc*` set is a census and not a complete detector of changes. New
 This logic is shared by all `branch-select` entries.
 
 - The node's `preproc_if`/`preproc_elif`/`preproc_else` children are matched **by byte offset** to the resolver's directive groups. The tree's `condition` fields are never evaluated.
-- A directive in the tree with no directive in the source, or the reverse, is an error: `directive-mismatch`. This is the independent check that catches defect 4.
+- Each directive node in the tree is matched to a source directive, and its **extent** must equal the resolver's: the `#` offset, the keyword extent, the condition node's extent against the resolver's condition extent, and the directive ending at the resolver's end of line. A tree directive with no source directive, a source directive with no tree directive, or any extent disagreement is an error: `directive-mismatch`. The extent comparison, not the start offset, is what catches defect 4. *(sol)*
 - The active arm's payload is returned with its field labels and anonymous tokens intact. It is never reduced to "the named children".
 
 Each entry declares an **insertion policy** and the parent slots it may appear in:
@@ -240,7 +267,9 @@ Assemblers are ordinary Python functions. Fragment dataclasses (`RoutineTail`, `
 
 Every contract that may rewrite a parent/field edge **names** the rewrite, for example `split-case-end`: *`following` statements become siblings of the reconstructed `case_statement`.* Any edge change not named by the running contract is an error.
 
-Expression continuation (`preproc_conditional_expression_tail`, `preproc_operand_prefix`) needs composition that respects precedence. The assembler composes the fragments the tree recorded. It **never reparses the selected source**, which would rebuild the right answer and hide a wrong grouping.
+Expression continuation (`preproc_conditional_expression_tail`, `preproc_operand_prefix`) needs composition that respects precedence. The assembler composes the fragments the tree recorded. The tree already labels them: `_expression_continuation` carries `operator` and `operand` fields. It **never reparses the selected source**.
+
+This was disputed in review. gemini proposed reparsing the active expression slice with tree-sitter, to avoid writing operator-precedence composition in Python. It is rejected because reparsing with the same grammar returns exactly the single-configuration answer, so the check would test the parser against itself and hide a wrong grouping in the multi-configuration tree. The cost gemini identified is real, and is met this way instead: composition uses a **hand-written precedence table** taken from the compiler-verified precedence (`test/corpus/operator_precedence_test.txt`, whose groupings were established with `alc`), **not** from the grammar's `prec()` values. That keeps the assembler independent of the thing it checks. The table has its own self-test: each fixture grouping from `operator_precedence_test.txt` is recomposed from a flat operand/operator list and must match. AL has a small number of precedence levels and no user-defined operators, so this is a bounded table, not an expression parser.
 
 ### Accounting
 
@@ -258,8 +287,10 @@ These run on the multi-configuration tree **before** lowering and before any emp
 
 Initial contracts:
 
-- `preproc_conditional_var_block` has a `var_section` in **at least one** arm. Not every arm: an optional conditional var section is legitimate.
-- `preproc_pragma_only` arms contain only pragma extras.
+Contracts are stated **per host slot and per configuration**, not as existence claims about a whole group *(sol)*:
+
+- `preproc_conditional_var_block`, **in the slot between a routine signature and its body**: for each arm that has no `var_section`, the arm must contain at least one other **structural** child, otherwise the group's reading as a var block is unsupported in that arm's configuration. A group whose every arm is empty of structure is a `preproc_pragma_only` by definition, and is a violation. A group with `var` in its `#if` arm and only a pragma in its `#else` arm is legitimate, and a named positive control.
+- `preproc_pragma_only` has **no structural children** in any arm. Its arms may be empty, or hold any extras (pragmas, comments, regions, defines), as the rule's own comment says. Comment-only and empty-arm cases are **named positive controls**, which the contract must pass. *(sol: "only pragma extras" would have flagged valid trees.)*
 - Each split node's arms contain the pieces its contract names. For example, every `preproc_split_procedure` arm holds a complete `_procedure_header`.
 - Tree directives and source directives correspond one-to-one.
 
@@ -338,6 +369,10 @@ A fixture that now passes is a regression guard, not proof that the oracle detec
 | 5 | pragma block as `preproc_conditional_var_block` (`04ff498`) | representation contract, and **not** structure |
 | 6 | `#elif` absent from `preproc_split_code_block_end` | structure |
 
+Replay 6 is **not** an example of the silent class. The grammar's own comment on `preproc_split_code_block_end` says the defect left a MISSING `end_keyword`, which kept the error gate honest. It stays in the table as a structural replay, but is not counted as evidence that the oracle finds what the error gates cannot. *(sol)*
+
+Every replay also requires that **no earlier `cannot-validate` masks it**: a replay whose pre-fix run stops at `reference-error` or `resolver-leak` has not shown the expected detection.
+
 The exact pre-fix commits are identified during planning. A defect whose pre-fix commit cannot be built, or that has no fixture, gets a hand-built bad tree instead, **labelled as such**: that exercises the comparator, not the whole instrument.
 
 ### Coverage of rare types
@@ -369,19 +404,24 @@ These do not replace deliberately built witnesses for the assemblers: wrapping w
 
 Each milestone has an exit condition that must be **demonstrated**, not claimed.
 
-1. **A narrow slice that already checks something.**
-   - Scope: the probes and `docs/preproc-directive-semantics.md`; the resolver and its self-test; `ir.py`, `reference.py` and `compare.py` with the comparator mutations; branch selection for `preproc_conditional` and `preproc_conditional_statement`; `directive-mismatch`; the var-block representation contract; runner accounting.
-   - *Exit:* replays 2, 4 and 5 caught with the expected kind. Replay 5 is caught by the representation check and **not** by structure, which proves which check found it. A clean control passes. Throughput is measured.
-2. **The hard shapes, built early.**
-   - Scope: split procedure with every tail form; `split-case-end`; a report-brace ownership case; expression continuation.
-   - *Exit:* each has its witness matrix and edge-rewrite contracts, and replays 1, 3 and 6 are caught. If the fragment design fails here, it is redesigned before the remaining handlers are written.
+Both reviewers found the first milestone too easy *(sol, gemini)*. It now has to prove the resolver on real files and prove one hard assembler before anything else is built on top.
+
+1. **The resolver on real files, and a slice that already checks something.**
+   - Scope: the probes and `docs/preproc-directive-semantics.md`; the resolver and its self-test; `ir.py`, `reference.py` and `compare.py` with the comparator mutations; branch selection for `preproc_conditional` and `preproc_conditional_statement`; `directive-mismatch` with extents; the var-block and pragma-only representation contracts with their positive controls; runner accounting.
+   - Plus **one hard assembler, `split-case-end`**, and **one scanner-sensitive shape**, a `PREPROC_SPLIT_END` followed by a trailing comment. Each has a clean positive control and a false-positive control. The scanner-sensitive shape has replay 3. `split-case-end` has no historical silent defect to replay, so its negative is a hand-built bad tree with `following` placed inside the `case_statement`, labelled as such, plus a grammar mutant that drops the `following` field.
+   - Plus the **resolver and single-configuration parse over every `#if` file in BC.History, DC and BC 28.1**. This needs no lowering. The exit is zero `cannot-validate: resolver-*` and zero `reference-error` over production flat AL, or each one investigated and classified. Resolver defects must surface here, not at milestone 5. *(gemini)*
+   - *Exit:* replays 2, 3, 4 and 5 caught with the expected kind, each without an earlier `cannot-validate`. Replay 5 is caught by the representation check and **not** by structure, which proves which check found it. The positive controls pass. **Elapsed time and peak memory** are measured and recorded. *(sol)*
+2. **The remaining hard shapes.**
+   - Scope: split procedure with every tail form; a report-brace ownership case; expression continuation with the precedence table and its self-test.
+   - *Exit:* each has its witness matrix and edge-rewrite contracts, and replays 1 and 6 are caught. If the fragment design fails here, it is redesigned before the remaining handlers are written.
 3. **Everything else, in order of frequency.**
    - *Exit:* every special type registered, with no "unsupported" entries; the witness matrix is complete; the deterministic transformations pass.
 4. **The quick gate becomes mandatory.**
    - Step 5e, CI and `gate_selftest` cases.
    - *Exit:* the fixture tier runs with zero discrepancies, zero `cannot-validate` and no baseline file; every gate-integration failure mode is tested.
-5. **The full gate.**
-   - All three corpora, Step 6b.
+5. **The full gate, staged.** *(sol)*
+   - First, a run over the three corpora with **no baseline and no gate**, recorded: completeness, false positives, time and memory. The exact-id baseline and Step 6b are built only after that run shows the model is tractable on production code. The `grammar.js` contract annotations come after that, not before.
+   - Then all three corpora, Step 6b.
    - *Exit:* every (file, configuration) is accounted for, and every discrepancy is investigated and classified. Grammar defects are fixed in their own commits with fixtures, and the baseline is empty. CLAUDE.md is updated only then.
 
 ## Definition of done
@@ -389,6 +429,17 @@ Each milestone has an exit condition that must be **demonstrated**, not claimed.
 - `validate-grammar.sh --full` passes the oracle over BC.History, DC and BC 28.1 W1, with an empty baseline.
 - The quick tier runs in CI.
 - CLAUDE.md documents the oracle as a configuration-consistency oracle and states its limit: both parses share one grammar.
+
+## Review points considered and rejected
+
+Recorded so they are not re-raised without new evidence:
+
+- *"There are 60 named `preproc*` types, not 74"* (gemini). Parsing `src/node-types.json` gives 74 top-level named types; the grep counted references.
+- *"`Foo`, a `#if X` line, then `= 1;` is a false positive"* (gemini). If the two parses disagree on that text, the grammar and the compiler's view differ. That is a finding the oracle should report, not noise to suppress.
+- *"Masking with long runs of spaces risks scanner lookahead limits"* (gemini). The scanner's whitespace and comment loops in `src/scanner.c` have no length bound. The deterministic transformations include a long inactive arm as a control anyway.
+- *"A statement redistribution after a split `end` is a false-positive trap"* (gemini). That redistribution is exactly what the `split-case-end` contract defines. A disagreement there is the check working.
+- *"Allow reparsing expression slices"* (gemini). Rejected in section 3; the precedence table replaces it.
+- *"Drop the import-isolation test as ceremony"* (sol, gemini). Kept, because it is cheap, but stated as necessary rather than sufficient.
 
 ## Out of scope
 
