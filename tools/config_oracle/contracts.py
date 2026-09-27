@@ -45,12 +45,15 @@ _STATEMENT_HOSTS = {
     "preproc_split_case_branch:body": "single-slot", "preproc_split_case_end_branch:body": "single-slot",
     "preproc_split_case_extended:body": "single-slot",
     "preproc_split_if_else_statement:else_branch": "single-slot",
-    # then_branch is set once per #if/#elif/#else head (_preproc_if_then_else_head,
-    # grammar.js:3583, used in the main #if arm at :3566 and repeated for every
-    # #elif/#else arm at :3573-3574) — node-types.json marks this field
-    # multiple: true, and a #if/#elif/#else split parses two sibling
-    # then_branch-fielded assignment_statement nodes with zero errors.
-    "preproc_split_if_else_statement:then_branch": "splice-repeat",
+    # then_branch is `fieldedStatement($, 'then_branch')` (grammar.js:70-76) inside
+    # _preproc_if_then_else_head (grammar.js:3583-3589) — one field, never a repeat,
+    # set once per #if/#elif/#else ARM of preproc_split_if_else_statement itself.
+    # node-types.json's multiple: true reflects the field recurring across those
+    # arms, not one arm producing more than one node — same shape as
+    # if_statement:then_branch. Reverted from splice-repeat (round-1 misreading:
+    # two sibling then_branch nodes were one-per-arm, not a genuine repeat of the
+    # field at one position). single-slot is correct.
+    "preproc_split_if_else_statement:then_branch": "single-slot",
     "preproc_split_if_statement:else_branch": "single-slot",
     "preproc_split_if_statement:then_branch": "single-slot",
     "preproc_fragmented_else_tail:<children>": "splice-repeat",
@@ -74,17 +77,16 @@ _BODY_HOSTS = {f"{p}:<children>": "splice-repeat" for p in (
 # repeat1-of-choice shape as declaration_body and friends, so splice-repeat.
 _BODY_HOSTS_WITH_VAR = dict(_BODY_HOSTS, **{"var_body:<children>": "splice-repeat"})
 
+# preproc_split_procedure_preamble is NOT an exception, despite round-1 briefly
+# treating it as one: _procedure_preamble (grammar.js:3074-3080) has
+# `optional(choice($.var_section, $.preproc_conditional_var_block))` — a single
+# optional, never a repeat of preproc_conditional_var_block itself. It is
+# inlined once per ARM of preproc_split_procedure_preamble's own #if/#elif/#else
+# structure (grammar.js:3085-3089), so two var-block nodes seen in one parse
+# were one per arm of the OUTER conditional, not a genuine repeat at one
+# position — same shape as the other three routine-tail hosts.
 _ROUTINE_TAIL_HOSTS = {f"{p}:<children>": "single-slot" for p in (
-    "preproc_split_procedure", "procedure", "trigger_declaration")}
-# preproc_split_procedure_preamble is the one exception: its own header repeats
-# per branch (_procedure_preamble is used once for #if, then again for every
-# #elif via `repeat(seq($.preproc_elif, $._procedure_preamble))`, and once more
-# for an optional #else — grammar.js:3085-3089), and each branch's header may
-# carry its own preproc_conditional_var_block. A #if/#elif pair each nesting a
-# var-guarding #if parses as two sibling preproc_conditional_var_block children
-# of one preproc_split_procedure_preamble, zero errors — genuinely repeat, not
-# single-slot, unlike the other three routine-tail hosts.
-_ROUTINE_TAIL_HOSTS["preproc_split_procedure_preamble:<children>"] = "splice-repeat"
+    "preproc_split_procedure", "preproc_split_procedure_preamble", "procedure", "trigger_declaration")}
 
 # --- directive plumbing: consumed by whichever owner contains it
 for t in ("preproc_if", "preproc_elif", "preproc_else", "preproc_endif", "preproc_open", "preproc_close",

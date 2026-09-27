@@ -59,27 +59,31 @@ def test_pragma_only_hosts_are_splice_repeat():
     assert hosts["source_file:<children>"] == "splice-repeat"
 
 
-def test_split_procedure_preamble_var_block_host_is_splice_repeat():
-    # preproc_split_procedure_preamble repeats its header per branch
-    # (grammar.js ~3085-3089, `repeat(seq($.preproc_elif, $._procedure_preamble))`),
-    # and each branch's header may carry its own preproc_conditional_var_block: a
-    # #if/#elif pair each nesting a var-guarding #if parses as two sibling
-    # preproc_conditional_var_block children, zero errors — unlike its three siblings
-    # (procedure, trigger_declaration, preproc_split_procedure), which only ever have one.
+def test_split_procedure_preamble_var_block_host_is_single_slot():
+    # _procedure_preamble (grammar.js:3074-3080) has
+    # `optional(choice($.var_section, $.preproc_conditional_var_block))` — a single
+    # optional, never a repeat of preproc_conditional_var_block itself. It is
+    # inlined once per ARM of preproc_split_procedure_preamble's own #if/#elif/#else
+    # structure (grammar.js:3085-3089), so two var-block nodes seen in one parse are
+    # one per arm of the OUTER conditional, not a genuine repeat at one position —
+    # same shape as its three siblings (procedure, trigger_declaration,
+    # preproc_split_procedure), all single-slot.
     hosts = contracts.REGISTRY["preproc_conditional_var_block"].hosts
-    assert hosts["preproc_split_procedure_preamble:<children>"] == "splice-repeat"
+    assert hosts["preproc_split_procedure_preamble:<children>"] == "single-slot"
     assert hosts["procedure:<children>"] == "single-slot"
     assert hosts["trigger_declaration:<children>"] == "single-slot"
     assert hosts["preproc_split_procedure:<children>"] == "single-slot"
 
 
-def test_split_if_else_then_branch_host_is_splice_repeat():
-    # then_branch is set once per #if/#elif/#else head (_preproc_if_then_else_head,
-    # grammar.js:3583), and node-types.json marks the field multiple: true. A
-    # #if/#elif split parses two sibling then_branch-fielded statements, zero errors.
+def test_split_if_else_then_branch_host_is_single_slot():
+    # then_branch is `fieldedStatement($, 'then_branch')` (grammar.js:70-76) inside
+    # _preproc_if_then_else_head (grammar.js:3583-3589) — one field, never a repeat,
+    # set once per #if/#elif/#else ARM of preproc_split_if_else_statement itself.
+    # node-types.json's multiple: true reflects the field recurring across arms, not
+    # one arm producing more than one node — same shape as if_statement:then_branch.
     for owner in ("preproc_conditional_statement", "preproc_split_case_statement_end"):
         hosts = contracts.REGISTRY[owner].hosts
-        assert hosts["preproc_split_if_else_statement:then_branch"] == "splice-repeat"
+        assert hosts["preproc_split_if_else_statement:then_branch"] == "single-slot"
         assert hosts["preproc_split_if_else_statement:else_branch"] == "single-slot"
 
 
