@@ -67,9 +67,14 @@ def test_hash_inside_active_comment_or_verbatim_string_is_not_a_directive(src):
     assert r.directives == [] and r.masked == src
 
 
-def test_directive_after_code_is_not_a_directive_and_fails_closed_only_if_unbalanced():
-    r = resolve(b"x; #if A\ny;\n", frozenset({"A"}))
-    assert r.directives == []
+def test_directive_after_code_fails_closed():
+    for src in (b"x; #if A\ny;\n#endif\n", b"#if A\ny; #endif\n"):
+        with pytest.raises(ResolveError) as err:
+            resolve(src, frozenset({"A"}))
+        assert err.value.reason == "directive-after-code"
+    # directive-looking text inside a string or a comment is still not a directive
+    assert resolve(b"x := '#if';\n", frozenset()).masked == b"x := '#if';\n"
+    assert resolve(b"// x #if A\n", frozenset()).masked == b"// x #if A\n"
 
 
 @pytest.mark.parametrize("src,reason", [
@@ -79,6 +84,15 @@ def test_directive_after_code_is_not_a_directive_and_fails_closed_only_if_unbala
     (b"#if A\n#endif /* c */\n", "block-comment-on-directive"),
     (b"#ifx A\n#endif\n", "unknown-directive"),
     (b"#if A\n#else\n#elif B\n#endif\n", "elif-after-else"),
+    (b"#if A\n#else\n#else\n#endif\n", "duplicate-else"),
+    (b"#define 1A\n", "malformed-define"),
+    (b"x;\n/* never closed\n", "unterminated-active-comment"),
+    (b"M(@'never closed\n", "unterminated-active-verbatim"),
+    (b"#else\n", "unbalanced-else"),
+    (b"#elif A\n", "unbalanced-elif"),
+    (b"#if\n#endif\n", "empty-condition"),
+    (b"x; '#never closed\n", "unterminated-active-string"),
+    (b"#if_A\n#endif\n", "unknown-directive"),
 ])
 def test_malformed_fails_closed(src, reason):
     with pytest.raises(ResolveError) as err:
@@ -107,4 +121,63 @@ def test_extras_exclude_masked_directive_lines_and_inactive_text():
 
 def test_leading_bom_is_kept():
     src = b"\xef\xbb\xbf#if A\nx;\n#endif\n"
-    assert resolve(src, frozenset()).masked.startswith(b"\xef\xbb\xbf")
+    r = resolve(src, frozenset())
+    assert r.masked == b"\xef\xbb\xbf" + b" " * 5 + b"\n" + b"  \n" + b" " * 6 + b"\n"
+
+
+def test_active_marks_only_kept_lines():
+    src = b"a;\n" + b"#if A\n" + b"b;\n" + b"#else\n" + b"c;\n" + b"#endif\n"
+    r = resolve(src, frozenset({"A"}))
+    expected = bytearray(len(src))
+    expected[0:3] = b"\x01\x01\x01"    # "a;\n" — kept, top level
+    expected[9:12] = b"\x01\x01\x01"   # "b;\n" — kept, if-arm taken
+    assert r.active == expected
+
+
+def test_nested_group_guarded_by_outer_inactive_even_when_inner_condition_true():
+    # A is false (outer not taken) but B is true: the "here and" guard on the inner
+    # #if must still keep it unreached, proving the guard isn't a no-op (unlike the
+    # original fixture, which left both symbols unset and so couldn't tell).
+    src = b"#if A\n#if B\nx;\n#endif\n#endif\n"
+    r = resolve(src, frozenset({"B"}))
+    assert r.masked.count(b"x;") == 0
+    assert r.arm_choice == {0: None}
+
+
+def test_nested_active_groups_arm_choice_for_both_levels():
+    src = b"#if A\n#if B\nx;\n#endif\n#endif\n"
+    r = resolve(src, frozenset({"A", "B"}))
+    outer, inner = r.directives[0], r.directives[1]
+    assert r.arm_choice == {outer.hash: outer.hash, inner.hash: inner.hash}
+
+
+def test_arm_choice_points_at_chosen_elif_and_else_directives():
+    src = b"#if X\na;\n#elif Y\nb;\n#else\nc;\n#endif\n"
+
+    r_elif = resolve(src, frozenset({"Y"}))
+    if_d, elif_d = r_elif.directives[0], r_elif.directives[1]
+    assert r_elif.arm_choice == {if_d.hash: elif_d.hash}
+
+    r_else = resolve(src, frozenset())
+    if_d2, else_d2 = r_else.directives[0], r_else.directives[2]
+    assert r_else.arm_choice == {if_d2.hash: else_d2.hash}
+
+
+def test_define_inside_nested_inactive_arm_has_no_effect():
+    src = b"#if A\n#if B\n#define C\n#endif\n#endif\n#if C\nx;\n#endif\n"
+    r = resolve(src, frozenset({"A"}))  # B unset: inner arm carrying #define C is inactive
+    assert r.masked.count(b"x;") == 0
+
+
+def test_define_inside_nested_active_arm_takes_effect():
+    src = b"#if A\n#if B\n#define C\n#endif\n#endif\n#if C\nx;\n#endif\n"
+    r = resolve(src, frozenset({"A", "B"}))
+    assert r.masked.count(b"x;") == 1
+
+
+def test_extras_include_define_undef_region_endregion_when_active():
+    src = b"#define A\n#undef A\n#region r\n#endregion\n"
+    r = resolve(src, frozenset())
+    assert [e.kind for e in r.extras] == [
+        "preproc_define", "preproc_undef", "preproc_region", "preproc_endregion",
+    ]

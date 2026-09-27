@@ -160,13 +160,14 @@ def evaluate(expr, env: frozenset) -> bool:
     raise TypeError(expr)
 
 
-_DIRECTIVE = re.compile(rb"[ \t]*#[ \t]*(?P<word>[A-Za-z]+)")
+_DIRECTIVE = re.compile(rb"[ \t]*#[ \t]*(?P<word>[A-Za-z_][A-Za-z0-9_]*)")
 _WORDS = {b"if", b"elif", b"else", b"endif", b"define", b"undef", b"pragma", b"region", b"endregion"}
 _EXTRA_KIND = {"pragma": "pragma", "region": "preproc_region", "endregion": "preproc_endregion",
                "define": "preproc_define", "undef": "preproc_undef"}
 _SYMBOL = re.compile(rb"[ \t]+(?P<sym>[A-Za-z_][A-Za-z0-9_]*)[ \t]*(?://.*)?$")
 _REST_EMPTY = re.compile(rb"[ \t]*(?://.*)?$")
 _BLOCK_ON_LINE = re.compile(rb"[ \t]*/\*")
+_HASH_WORD = re.compile(rb"[ \t]*(?P<word>[A-Za-z_][A-Za-z0-9_]*)")
 
 
 @dataclass(frozen=True)
@@ -277,7 +278,14 @@ class _Lexer:
                     j = s.find(c, i + 1, le)
                     while c == b"'" and j >= 0 and s[j + 1:j + 2] == b"'":
                         j = s.find(c, j + 2, le)
-                    i = le if j < 0 else j + 1
+                    if j < 0:
+                        raise ResolveError("unterminated-active-string", i)
+                    i = j + 1
+                elif c == b"#":
+                    m = _HASH_WORD.match(s, i + 1, le)
+                    if m and m.group("word").lower() in _WORDS:
+                        raise ResolveError("directive-after-code", i)
+                    i += 1
                 else:
                     i += 1
 
