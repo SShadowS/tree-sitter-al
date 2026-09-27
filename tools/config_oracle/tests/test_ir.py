@@ -77,6 +77,20 @@ def test_clean_sources_have_no_problems(al_parser):
     assert reference.extract(al_parser, clean_with_comment_in_body).problems == []
 
 
+def test_from_tree_is_depth_safe_on_a_long_expression_chain(al_parser):
+    # A real BC.History file can chain thousands of binary operators, which
+    # parses into a tree thousands of levels deep -- deep enough to blow
+    # Python's default recursion limit if `from_tree` recursed. 3,000 terms is
+    # comfortably past the ~1000-frame default limit.
+    terms = " + ".join(["1"] * 3000)
+    src = ("codeunit 1 T { trigger OnRun()\nbegin\n"
+           f"  X := {terms};\n"
+           "end;\n}\n").encode()
+    root, extras, problems = ir.from_tree(al_parser.parse(src))
+    assert problems == []
+    assert root is not None
+
+
 def test_recompute_span_uses_leaves_not_cached_child_spans():
     inner = node("wrapper", leaf("a", 5, 10), leaf("b", 12, 20))
     # Simulate stale cached spans on the child that are wider than its real leaves.

@@ -70,11 +70,27 @@ def from_tree(tree):
     grammar's real extras: comment/pragma/preproc_*) nor the structural tree
     (its content is malformed, not a well-formed child of its parent) --
     there is no sensible home for it in either list.
+
+    Iterative (explicit stack, no Python recursion): a real BC.History file can
+    carry a chain of thousands of left-associative binary operators, which
+    parses into a tree thousands of levels deep -- deep enough to blow Python's
+    default recursion limit. `stack` replaces the call stack a recursive
+    `visit()` would use; `enter()` makes exactly the same per-node decision a
+    recursive visit would (problems recorded before the extras check runs; a
+    plain extra is never descended into -- `cursor.goto_first_child()` is
+    never even called for it, so the cursor is left exactly where `visit()`
+    would have left it; an error-that-is-extra IS descended into, for nested
+    problems, but contributes nothing to the tree), just without recursing.
     """
     extras, problems = [], []
     cursor = tree.walk()
 
-    def visit(field_name):
+    def enter(field_name):
+        """Handle the node currently under the cursor without moving it.
+        Returns (out_or_None, descend): `out_or_None` is what this node
+        contributes to its parent's children (None for anything that is not a
+        real tree node -- either kind of extra); `descend` says whether the
+        driver should even attempt `cursor.goto_first_child()` for it."""
         n = cursor.node
         if n.is_error:
             problems.append(f"error@{n.start_byte}")
@@ -82,27 +98,41 @@ def from_tree(tree):
             problems.append(f"missing@{n.start_byte}")
         if n.is_extra:
             if n.is_error:
-                if cursor.goto_first_child():
-                    while True:
-                        visit(cursor.field_name)
-                        if not cursor.goto_next_sibling():
-                            break
-                    cursor.goto_parent()
-            else:
-                extras.append(Extra(n.type, n.start_byte, n.end_byte))
-            return None
-        out = Node(n.type, n.is_named, field_name, n.start_byte, n.end_byte, [])
-        if cursor.goto_first_child():
-            while True:
-                child = visit(cursor.field_name)
-                if child is not None:
-                    out.children.append(child)
-                if not cursor.goto_next_sibling():
-                    break
-            cursor.goto_parent()
-        return out
+                return None, True       # descend for nested problems; produces nothing
+            extras.append(Extra(n.type, n.start_byte, n.end_byte))
+            return None, False          # never descended into, same as `visit()`
+        return Node(n.type, n.is_named, field_name, n.start_byte, n.end_byte, []), True
 
-    root = visit(None)
+    root_out, root_descend = enter(None)
+    if root_descend and cursor.goto_first_child():
+        stack = [root_out]   # stack[-1] is the `out` (or None) finished children attach to
+        reached_root = False
+        while not reached_root:
+            out, descend = enter(cursor.field_name)
+            if descend and cursor.goto_first_child():
+                stack.append(out)
+                continue
+            # Fully resolved right here (leaf, plain extra, or a childless
+            # error-extra): hand it to its parent, then advance.
+            done = out
+            if stack[-1] is not None and done is not None:
+                stack[-1].children.append(done)
+            if cursor.goto_next_sibling():
+                continue
+            # Retrace upward through every exhausted ancestor.
+            while True:
+                if not cursor.goto_parent():
+                    reached_root = True
+                    break
+                done = stack.pop()
+                if stack:
+                    if stack[-1] is not None and done is not None:
+                        stack[-1].children.append(done)
+                else:
+                    root_out = done
+                if cursor.goto_next_sibling():
+                    break
+    root = root_out
 
     # Backstop: some MISSING tokens are aliased into a named node (e.g. a
     # missing type name aliased into `identifier`) such that the node itself

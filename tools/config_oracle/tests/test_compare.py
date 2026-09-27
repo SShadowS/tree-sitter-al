@@ -171,6 +171,67 @@ def test_big_moved_child_is_a_single_parent_not_a_cascade():
     assert triples(compare.structure(ref, low)) == [("structure", "parent", e_path)]
 
 
+def test_self_similar_wrapper_self_comparison_is_clean():
+    # S(E(E(x)), ;) compared against itself: the outer E and its inner E share
+    # kind AND leaf set. Move detection must not mistake the inner E for a move
+    # target of the (unmoved, same-position) outer E.
+    t = node("S", node("E", node("E", leaf("x", 0, 1, named=True))), leaf(";", 2, 3))
+    assert compare.structure(t, t) == []
+
+
+def test_self_referential_chain_self_comparison_is_clean():
+    # P(Q(P(x))): the outer P and the nested P share kind AND leaf set too.
+    t = node("P", node("Q", node("P", leaf("x", 0, 1, named=True))))
+    assert compare.structure(t, t) == []
+
+
+def test_real_parsed_file_self_comparison_is_clean(al_parser):
+    from tools.config_oracle import ir
+    src = (
+        b"codeunit 1 T { trigger OnRun()\n"
+        b"begin\n"
+        b"  X := (1 + (2 + (3 + Foo(Bar(4, 5), Baz.Qux))));\n"
+        b"end;\n"
+        b"}\n"
+    )
+    root, _, problems = ir.from_tree(al_parser.parse(src))
+    assert problems == []
+    assert compare.structure(root, root) == []
+
+
+def test_duplicated_moved_node_names_the_duplicate_as_extra():
+    ref = node("S", node("IF", leaf("if", 0, 2), node("E", leaf("x", 5, 6))))
+    low = node("S", node("IF", leaf("if", 0, 2)),
+               node("E", leaf("x", 5, 6)), node("E", leaf("x", 5, 6)))
+    e_path = "S.-@0-2/IF.-@0-2/E.-@5-6"
+    second_e_path = "S.-@0-2/E.-@5-6"
+    assert triples(compare.structure(ref, low)) == sorted([
+        ("structure", "parent", e_path),
+        ("structure", "extra", second_e_path),
+    ])
+
+
+def _deep_chain(depth, leaf_kind="x"):
+    n = leaf(leaf_kind, 0, 1, named=True)
+    for _ in range(depth):
+        n = node("wrap", n)
+    return n
+
+
+def test_structure_is_depth_safe_on_a_10000_deep_chain_clean():
+    t = _deep_chain(10_000)
+    assert compare.structure(t, t) == []
+
+
+def test_structure_is_depth_safe_on_a_10000_deep_chain_with_a_kind_change():
+    t = _deep_chain(10_000)
+    other = _deep_chain(10_000, leaf_kind="y")
+    ds = compare.structure(t, other)
+    assert kinds(ds) == [("structure", "kind")]
+    assert len(ds) == 1
+    assert ds[0].path.endswith("/x.-@0-1")  # path is built from the ref tree throughout
+
+
 def test_coverage_uncovered_double_masked():
     src = b"ab cd"
     active = bytearray([1, 1, 1, 1, 0])
