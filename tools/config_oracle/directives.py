@@ -66,6 +66,8 @@ def _tokens(buf: bytes, start: int, end: int):
     pos = start
     out = []
     while pos < end:
+        if not buf[pos:end].strip(b" \t"):
+            break  # nothing left but trailing spaces/tabs -- not a token to raise on
         m = _TOKEN.match(buf, pos, end)
         if not m or m.end() == pos:
             raise ResolveError("unsupported-condition-token", pos)
@@ -426,10 +428,12 @@ def discover(source: bytes) -> Discovery:
     condition-symbols the *reached* arms actually contain — growing the
     symbol set — until it stops growing.
     """
+    first_error = None
     try:
         seed_directives, seed_symbols = _lenient_scan(source)
-    except ResolveError:
+    except ResolveError as e:
         seed_directives, seed_symbols = [], set()
+        first_error = e
 
     symbols = set(seed_symbols)
     round_directives: dict = {}
@@ -443,7 +447,9 @@ def discover(source: bytes) -> Discovery:
             env = frozenset(n for n, bit in zip(names, bits) if bit)
             try:
                 r = resolve(source, env)
-            except ResolveError:
+            except ResolveError as e:
+                if first_error is None:
+                    first_error = e
                 continue
             any_success = True
             for dd in r.directives:
@@ -456,12 +462,17 @@ def discover(source: bytes) -> Discovery:
     else:
         raise ResolveError("discovery-not-converging", len(source))
 
-    if any_success:
-        directives = sorted(round_directives.values(), key=lambda dd: dd.hash)
-        free = tuple(sorted(symbols))
-    else:  # every configuration raised, even in the final round
-        directives = seed_directives
-        free = tuple(sorted(seed_symbols))
+    if not any_success:
+        # Every configuration raised, even in the final round -- the lenient
+        # seed's directives (if it even found any) are a cheap, unvalidated
+        # guess and must never be handed back as though they were confirmed;
+        # surface the failure so the caller records cannot-validate instead.
+        if first_error is not None:
+            raise first_error
+        raise ResolveError("discovery-failed", len(source))
+
+    directives = sorted(round_directives.values(), key=lambda dd: dd.hash)
+    free = tuple(sorted(symbols))
     return Discovery(directives, free, any(x.kind == "if" for x in directives))
 
 

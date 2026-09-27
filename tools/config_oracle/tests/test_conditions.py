@@ -69,6 +69,27 @@ def test_control_bytes_fail_closed(ch):
     assert err.value.reason == "unsupported-condition-token"
 
 
+@pytest.mark.parametrize("text,expected", [
+    ("not CLEAN25 ", "not CLEAN25"),
+    ("A\t", "A"),
+    ("A   // c", "A"),
+])
+def test_trailing_whitespace_or_comment_does_not_raise(text, expected):
+    """A condition followed only by spaces/tabs (or a trailing comment) before
+    the line end must parse -- Task 3's fix made `_tokens` raise here because a
+    run of trailing spaces/tabs matches no token alternative."""
+    c = cond(text)
+    assert text.encode()[c.start:c.end] == expected.encode()
+
+
+def test_trailing_control_byte_still_raises():
+    """A stray control byte must still fail closed even when only whitespace
+    would otherwise stop the scan -- the fix is specific to space/tab runs."""
+    with pytest.raises(ResolveError) as err:
+        cond("A \x0b")
+    assert err.value.reason == "unsupported-condition-token"
+
+
 def test_xor_as_symbol_fails_closed():
     with pytest.raises(ResolveError) as err:
         cond("xor")

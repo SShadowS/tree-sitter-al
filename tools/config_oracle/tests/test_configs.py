@@ -106,6 +106,23 @@ def test_discovery_finds_directives_hidden_by_an_active_arms_block_comment():
     assert disc.free_symbols == ("A", "B")
 
 
+def test_discover_raises_when_every_configuration_fails_to_resolve():
+    """Every configuration's resolve() fails here (each arm has its own
+    unterminated string), so discover() must surface a ResolveError -- a
+    cannot-validate record for the runner -- rather than silently falling
+    back to the lenient seed scan's guess."""
+    src = b"#if A\n  x := 'unterminated\n#else\n  y := 'also\n#endif\n"
+    with pytest.raises(d.ResolveError):
+        d.discover(src)
+
+
+def test_discover_still_succeeds_when_some_configuration_resolves():
+    src = b"#if A\nx;\n#else\ny;\n#endif\n"
+    disc = d.discover(src)
+    assert disc.has_conditionals is True
+    assert len(disc.directives) == 3
+
+
 def test_discovery_survives_a_comment_never_closed_in_a_dead_arm():
     # "#if false" is never taken, so its "/*" is never lexed and never
     # swallows the following "#endif" — matching alc, which does not lex
