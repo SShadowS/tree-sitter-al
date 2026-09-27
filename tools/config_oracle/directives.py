@@ -428,12 +428,12 @@ def discover(source: bytes) -> Discovery:
     condition-symbols the *reached* arms actually contain — growing the
     symbol set — until it stops growing.
     """
-    first_error = None
+    seed_error = None
     try:
         seed_directives, seed_symbols = _lenient_scan(source)
     except ResolveError as e:
         seed_directives, seed_symbols = [], set()
-        first_error = e
+        seed_error = e
 
     symbols = set(seed_symbols)
     round_directives: dict = {}
@@ -447,9 +447,7 @@ def discover(source: bytes) -> Discovery:
             env = frozenset(n for n, bit in zip(names, bits) if bit)
             try:
                 r = resolve(source, env)
-            except ResolveError as e:
-                if first_error is None:
-                    first_error = e
+            except ResolveError:
                 continue
             any_success = True
             for dd in r.directives:
@@ -462,17 +460,25 @@ def discover(source: bytes) -> Discovery:
     else:
         raise ResolveError("discovery-not-converging", len(source))
 
-    if not any_success:
-        # Every configuration raised, even in the final round -- the lenient
-        # seed's directives (if it even found any) are a cheap, unvalidated
-        # guess and must never be handed back as though they were confirmed;
-        # surface the failure so the caller records cannot-validate instead.
-        if first_error is not None:
-            raise first_error
-        raise ResolveError("discovery-failed", len(source))
-
-    directives = sorted(round_directives.values(), key=lambda dd: dd.hash)
-    free = tuple(sorted(symbols))
+    if any_success:
+        directives = sorted(round_directives.values(), key=lambda dd: dd.hash)
+        free = tuple(sorted(symbols))
+    elif seed_error is None:
+        # Every configuration raised, even in the final round, but the cheap
+        # lenient seed scan itself succeeded -- hand back its (unvalidated)
+        # directives/symbols so the runner can still report each
+        # configuration as its own cannot-validate record, rather than
+        # losing the file's directives entirely. `any(x.kind == "if" ...)`
+        # below is correct here too: the seed's directives are real
+        # directive lines, just not confirmed by any strict resolve().
+        directives = seed_directives
+        free = tuple(sorted(seed_symbols))
+    else:
+        # Every configuration raised AND even the lenient seed scan raised --
+        # there is nothing to hand back at all; surface that failure so the
+        # caller records this file as cannot-validate instead of silently
+        # returning an empty Discovery.
+        raise seed_error
     return Discovery(directives, free, any(x.kind == "if" for x in directives))
 
 

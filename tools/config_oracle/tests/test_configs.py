@@ -106,14 +106,34 @@ def test_discovery_finds_directives_hidden_by_an_active_arms_block_comment():
     assert disc.free_symbols == ("A", "B")
 
 
-def test_discover_raises_when_every_configuration_fails_to_resolve():
+def test_discover_falls_back_to_seed_when_it_succeeds_but_every_configuration_raises():
     """Every configuration's resolve() fails here (each arm has its own
-    unterminated string), so discover() must surface a ResolveError -- a
-    cannot-validate record for the runner -- rather than silently falling
-    back to the lenient seed scan's guess."""
+    unterminated string), but the LENIENT seed scan succeeds -- it tolerates
+    an unterminated quote that might only be in dead code. discover() must
+    hand back the seed's directives/symbols so the runner can report each
+    configuration as its own cannot-validate record, rather than losing the
+    file's directives entirely."""
     src = b"#if A\n  x := 'unterminated\n#else\n  y := 'also\n#endif\n"
+    disc = d.discover(src)
+    assert [x.kind for x in disc.directives] == ["if", "else", "endif"]
+    assert disc.free_symbols == ("A",)
+    assert disc.has_conditionals is True
+    for env in (frozenset(), frozenset({"A"})):
+        with pytest.raises(d.ResolveError):
+            d.resolve(src, env)
+
+
+def test_discover_raises_when_the_seed_itself_raises_and_every_configuration_raises():
+    """An unknown directive word makes even the lenient seed scan raise (it
+    still enforces real directive syntax, per _parse_directive), and it
+    appears in every arm here so every configuration's resolve() raises too
+    -- there is nothing to fall back to, so discover() must raise."""
+    src = b"#if A\n#bogus\n#else\n#bogus\n#endif\n"
     with pytest.raises(d.ResolveError):
         d.discover(src)
+    for env in (frozenset(), frozenset({"A"})):
+        with pytest.raises(d.ResolveError):
+            d.resolve(src, env)
 
 
 def test_discover_still_succeeds_when_some_configuration_resolves():

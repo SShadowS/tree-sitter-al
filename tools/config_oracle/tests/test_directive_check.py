@@ -33,3 +33,40 @@ def test_tree_directive_without_source_directive():
     src = b"x;\n"
     root = ir.Node("source_file", True, None, 0, 3, [ir.Node("preproc_else", True, None, 0, 1, [])])
     assert {d.kind for d in directive_check.check(root, discover(src))} == {"unmatched-tree"}
+
+
+def test_wrong_end_on_preproc_if_is_end_extent_only():
+    """preproc_if's own end (which must land on d.next_line) is wrong; its
+    condition extent is correct, so nothing else should fire."""
+    src = b"#if A\nx;\n#endif\n"
+    disc = discover(src)  # if@0 (next_line=6), endif@9 (keyword_end=15)
+    cond = ir.Node("identifier", True, "condition", 4, 5, [])
+    pif = ir.Node("preproc_if", True, None, 0, 5, [ir.Node("preproc_open", True, None, 0, 3, []), cond])  # end=5, should be 6
+    pend = ir.Node("preproc_endif", True, None, 9, 15, [])
+    root = ir.Node("source_file", True, None, 0, 16, [pif, pend])
+    assert {d.kind for d in directive_check.check(root, disc)} == {"end-extent"}
+
+
+def test_wrong_end_on_preproc_endif_is_end_extent_only():
+    """preproc_endif's end (which must land on d.keyword_end) is wrong."""
+    src = b"#if A\nx;\n#endif\n"
+    disc = discover(src)  # endif@9 keyword_end=15
+    cond = ir.Node("identifier", True, "condition", 4, 5, [])
+    pif = ir.Node("preproc_if", True, None, 0, 6, [ir.Node("preproc_open", True, None, 0, 3, []), cond])
+    pend = ir.Node("preproc_endif", True, None, 9, 14, [])  # end=14, should be 15
+    root = ir.Node("source_file", True, None, 0, 16, [pif, pend])
+    assert {d.kind for d in directive_check.check(root, disc)} == {"end-extent"}
+
+
+def test_source_directive_without_tree_node_is_unmatched_source():
+    """The tree is missing the #else node entirely -- discover() still finds
+    it in the source, so it must be reported as unmatched-source."""
+    src = b"#if A\nx;\n#else\ny;\n#endif\n"
+    disc = discover(src)  # if@0 (next_line=6), else@9 (keyword_end=14), endif@18 (keyword_end=24)
+    cond = ir.Node("identifier", True, "condition", 4, 5, [])
+    pif = ir.Node("preproc_if", True, None, 0, 6, [ir.Node("preproc_open", True, None, 0, 3, []), cond])
+    pend = ir.Node("preproc_endif", True, None, 18, 24, [])
+    root = ir.Node("source_file", True, None, 0, 25, [pif, pend])
+    discs = directive_check.check(root, disc)
+    assert {d.kind for d in discs} == {"unmatched-source"}
+    assert [d.path for d in discs] == ["else@9"]
