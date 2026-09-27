@@ -66,6 +66,9 @@ DC/*
 !tools/keyword-sync/*.py
 !tools/keyword-sync/output/
 tools/keyword-sync/__pycache__/
+# And allow config_oracle tools
+!tools/config_oracle/*.py
+tools/config_oracle/__pycache__/
 # Everything directly under tools/ is a checked-in helper, not scratch. These are
 # wired into validate-grammar.sh (orphan, duplicate, health and field-shape
 # checks); if they are not tracked, a fresh clone silently skips those steps.
