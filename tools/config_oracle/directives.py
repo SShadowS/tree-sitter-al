@@ -384,18 +384,18 @@ class Discovery:
     has_conditionals: bool
 
 
-def discover(source: bytes) -> Discovery:
-    """Find every conditional directive line by lexing ALL text as active.
+def _lenient_scan(source: bytes):
+    """One naive whole-file pass, lexed as if every line were active.
 
-    Used for the symbol universe and for directive-mismatch (the tree parses
-    every arm, so it must be compared against every arm's directives).
-
-    Lenient: alc never lexes an inactive arm's text, so a construct that is
-    only illegal there (an unterminated quote, a mid-line directive word)
-    must not make discovery itself fail — `resolve()` still enforces those
-    rules strictly for whichever one configuration it evaluates.
+    Cheap seed for the fixpoint in `discover()` below — not a correct answer
+    on its own. A block comment or verbatim string that only spans lines
+    because THIS pass treats an inactive arm as active can swallow real
+    directives (and, symmetrically, one that alc never lexes because its
+    arm is dead can look here like it "crosses" a directive that in fact
+    still ends the group just fine). Never raises past the caller for that
+    reason; a malformed directive line still raises through `_parse_directive`.
     """
-    directives, cond_syms, defined = [], set(), set()
+    directives, cond_syms = [], set()
     lexer = _Lexer(source, [], lenient=True)
     for ls, le, nxt in _lines(source):
         dir_ = _parse_directive(source, ls, le, nxt) if lexer.state == _Lexer.NORMAL else None
@@ -406,11 +406,62 @@ def discover(source: bytes) -> Discovery:
             directives.append(dir_)
             if dir_.cond is not None:
                 cond_syms |= dir_.cond.symbols
-        elif dir_.kind in ("define", "undef"):
-            defined.add(dir_.symbol)
-    if lexer.state != _Lexer.NORMAL:
-        raise ResolveError("lexing-crosses-directive", len(source))
-    free = tuple(sorted(cond_syms - defined))
+    return directives, cond_syms
+
+
+def discover(source: bytes) -> Discovery:
+    """Find every conditional directive line and the free-symbol universe.
+
+    No single lexing pass over the whole file — active or not — can see
+    every directive an arbitrary configuration would reach: `resolve()`
+    never lexes an inactive arm's text (matching alc), so a block comment or
+    verbatim string opened in one arm can hide a directive from every OTHER
+    configuration's point of view while a whole-file scan either wrongly
+    swallows it (if the scan treats that arm as active) or wrongly reports
+    it missing (if the arm is genuinely dead in every configuration and the
+    scan can't know that). So this is a fixpoint union over configurations:
+    seed a seemingly-free symbol set from a cheap lenient whole-file scan,
+    then repeatedly enumerate every configuration of the current symbol set,
+    resolve() each (skipping any that raise), and union the directives and
+    condition-symbols the *reached* arms actually contain — growing the
+    symbol set — until it stops growing.
+    """
+    try:
+        seed_directives, seed_symbols = _lenient_scan(source)
+    except ResolveError:
+        seed_directives, seed_symbols = [], set()
+
+    symbols = set(seed_symbols)
+    round_directives: dict = {}
+    any_success = False
+    for _ in range(8):
+        round_directives = {}
+        round_symbols = set(symbols)
+        any_success = False
+        names = sorted(symbols)
+        for bits in itertools.product((0, 1), repeat=len(names)):
+            env = frozenset(n for n, bit in zip(names, bits) if bit)
+            try:
+                r = resolve(source, env)
+            except ResolveError:
+                continue
+            any_success = True
+            for dd in r.directives:
+                round_directives[dd.hash] = dd
+                if dd.cond is not None:
+                    round_symbols |= dd.cond.symbols
+        if round_symbols == symbols:
+            break
+        symbols = round_symbols
+    else:
+        raise ResolveError("discovery-not-converging", len(source))
+
+    if any_success:
+        directives = sorted(round_directives.values(), key=lambda dd: dd.hash)
+        free = tuple(sorted(symbols))
+    else:  # every configuration raised, even in the final round
+        directives = seed_directives
+        free = tuple(sorted(seed_symbols))
     return Discovery(directives, free, any(x.kind == "if" for x in directives))
 
 

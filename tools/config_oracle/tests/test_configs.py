@@ -3,11 +3,23 @@ import pytest
 from tools.config_oracle import directives as d
 
 
-def test_define_only_symbol_is_not_free():
+def test_free_symbols_include_every_symbol_used_in_a_reached_condition():
+    # A symbol #define'd only inside an arm can still be supplied externally
+    # via preprocessorSymbols, so it stays free whether or not it is ever
+    # #define'd/#undef'd anywhere (controller ruling, fix round 1).
     src = b"#define DEBUG\n#if A and DEBUG\nx;\n#endif\n"
     disc = d.discover(src)
-    assert disc.free_symbols == ("A",)
-    assert len(d.configurations(disc)) == 2
+    assert disc.free_symbols == ("A", "DEBUG")
+    assert len(d.configurations(disc)) == 4
+
+
+def test_symbol_defined_only_inside_an_arm_is_still_free():
+    src = b"#if X\n#define B\n#endif\n#if B\ny;\n#endif\n"
+    disc = d.discover(src)
+    assert disc.free_symbols == ("B", "X")
+    # X unset means the internal "#define B" never fires, but B is still
+    # reachable by supplying it externally.
+    assert d.resolve(src, frozenset({"B"})).masked.count(b"y;") == 1
 
 
 def test_enumeration_is_exhaustive_and_ordered():
@@ -76,3 +88,29 @@ def test_discover_is_lenient_about_mid_line_directive_word_in_an_arm():
     with pytest.raises(d.ResolveError) as err:
         d.resolve(src, frozenset({"A"}))  # A set: the arm with the mid-line #if is active
     assert err.value.reason == "directive-after-code"
+
+
+# --- Fixpoint discovery (controller ruling, fix round 1) ---
+# A single whole-file lexing pass cannot see every directive: a block comment
+# or verbatim string inside one arm swallows directive-looking text for EVERY
+# configuration alike, even though resolve() (which never lexes inactive text)
+# would see those directives just fine in a configuration where that arm is
+# inactive. discover() must therefore union reached directives/symbols over
+# enumerated configurations until the symbol set stops growing.
+
+def test_discovery_finds_directives_hidden_by_an_active_arms_block_comment():
+    src = b"#if A\n/* comment\n#if B\nx;\n#endif\ncomment end */\ny;\n#endif\n"
+    disc = d.discover(src)
+    assert [x.hash for x in disc.directives] == [0, 17, 26, 51]
+    assert [x.kind for x in disc.directives] == ["if", "if", "endif", "endif"]
+    assert disc.free_symbols == ("A", "B")
+
+
+def test_discovery_survives_a_comment_never_closed_in_a_dead_arm():
+    # "#if false" is never taken, so its "/*" is never lexed and never
+    # swallows the following "#endif" — matching alc, which does not lex
+    # inactive text. The whole-file seed scan alone WOULD wrongly cross the
+    # directive here; discover() must not fail on it.
+    disc = d.discover(b"#if false\n/* never closed\n#endif\n")
+    assert len(disc.directives) == 2
+    assert [x.kind for x in disc.directives] == ["if", "endif"]
