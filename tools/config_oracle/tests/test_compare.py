@@ -116,6 +116,61 @@ def test_identical_text_other_arm_provenance_is_detected_at_leaf_level():
     ]
 
 
+def test_moved_subtree_with_inner_kind_change_realigns():
+    # E moves from inside IF to being S's direct sibling; M inside it (moved along
+    # with E) has its kind changed. The move must not swallow the inner defect.
+    ref = node("S", node("IF", leaf("if", 0, 2),
+                          node("E", node("M", leaf("x", 5, 6)))))
+    low = node("S", node("IF", leaf("if", 0, 2)),
+               node("E", node("ZZZ", leaf("x", 5, 6))))
+    e_path = "S.-@0-2/IF.-@0-2/E.-@5-6"
+    m_path = e_path + "/M.-@5-6"
+    assert triples(compare.structure(ref, low)) == sorted([
+        ("structure", "parent", e_path),
+        ("structure", "kind", m_path),
+    ])
+
+
+def test_moved_subtree_with_inner_field_change_realigns():
+    ref = node("S", node("IF", leaf("if", 0, 2),
+                          node("E", node("M", leaf("x", 5, 6)))))
+    low = node("S", node("IF", leaf("if", 0, 2)),
+               node("E", node("M", leaf("x", 5, 6), field="renamed")))
+    e_path = "S.-@0-2/IF.-@0-2/E.-@5-6"
+    m_path = e_path + "/M.-@5-6"
+    assert triples(compare.structure(ref, low)) == sorted([
+        ("structure", "parent", e_path),
+        ("structure", "field", m_path),
+    ])
+
+
+def test_chain_move_reports_moved_node_and_the_abandoned_wrapper():
+    # E moves out from inside W (which itself was inside IF); W is left holding
+    # nothing and must be reported missing, not silently folded into E's move.
+    ref = node("S", node("IF", leaf("if", 0, 2),
+                          node("W", node("E", leaf("x", 5, 6)))))
+    low = node("S", node("IF", leaf("if", 0, 2)),
+               node("E", leaf("x", 5, 6)))
+    e_path = "S.-@0-2/IF.-@0-2/W.-@5-6/E.-@5-6"
+    w_path = "S.-@0-2/IF.-@0-2/W.-@5-6"
+    assert triples(compare.structure(ref, low)) == sorted([
+        ("structure", "parent", e_path),
+        ("structure", "missing", w_path),
+    ])
+
+
+def test_big_moved_child_is_a_single_parent_not_a_cascade():
+    # E (which itself has 2 children, M(x) and y) moves whole out of IF. The
+    # move must be recognized directly -- not misfire as IF-vs-E overlap pairing
+    # cascading into 8 unrelated discrepancies.
+    ref = node("S", node("IF", leaf("if", 0, 2),
+                          node("E", node("M", leaf("x", 5, 6)), leaf("y", 7, 8))))
+    low = node("S", node("IF", leaf("if", 0, 2)),
+               node("E", node("M", leaf("x", 5, 6)), leaf("y", 7, 8)))
+    e_path = "S.-@0-2/IF.-@0-2/E.-@5-6"
+    assert triples(compare.structure(ref, low)) == [("structure", "parent", e_path)]
+
+
 def test_coverage_uncovered_double_masked():
     src = b"ab cd"
     active = bytearray([1, 1, 1, 1, 0])
