@@ -273,6 +273,16 @@ module.exports = grammar({
     [$.preproc_conditional_link_values, $.preproc_conditional_impl_values],
     [$.preproc_conditional_controladdin, $.preproc_conditional],
     [$.procedure, $.interface_procedure_suffix],
+    // _procedure_regular_tail is the `[;] body` that procedure and
+    // preproc_split_procedure share; it inherits procedure's existing
+    // `procedure P();` vs interface_procedure ambiguity, so each procedure
+    // entry needs a _procedure_regular_tail counterpart. All generator-required.
+    [$._procedure_regular_tail, $.interface_procedure_suffix],
+    [$.procedure, $._procedure_regular_tail, $._procedure_header, $.interface_procedure_suffix],
+    [$.procedure, $._procedure_regular_tail, $._procedure_header],
+    [$.procedure, $._procedure_regular_tail, $.interface_procedure_suffix],
+    [$._procedure_regular_tail, $._procedure_header, $.interface_procedure_suffix],
+    [$._procedure_regular_tail, $._procedure_header],
     [$.procedure, $._procedure_header, $.interface_procedure_suffix],
     [$._procedure_header, $.interface_procedure_suffix],
     [$.procedure, $._procedure_header],
@@ -1489,19 +1499,18 @@ module.exports = grammar({
     // wrapped member keeps its trailing comma so the list continues cleanly.
     preproc_conditional_option_members: $ => seq(
       $.preproc_if,
-      repeat(seq($.option_member, ',')),
-      optional($.option_member),
-      repeat(seq(
-        $.preproc_elif,
-        repeat(seq($.option_member, ',')),
-        optional($.option_member),
-      )),
-      optional(seq(
-        $.preproc_else,
-        repeat(seq($.option_member, ',')),
-        optional($.option_member),
-      )),
+      optional($._option_members_branch),
+      repeat(seq($.preproc_elif, optional($._option_members_branch))),
+      optional(seq($.preproc_else, optional($._option_members_branch))),
       $.preproc_endif,
+    ),
+
+    // One branch's members: `A, B,` or `A, B` -- the same text in every branch,
+    // so one rule. Non-empty (tree-sitter forbids empty rules); each use site
+    // wraps it in optional().
+    _option_members_branch: $ => choice(
+      seq(repeat1(seq($.option_member, ',')), optional($.option_member)),
+      $.option_member,
     ),
 
     option_member: $ => choice(
@@ -2919,8 +2928,7 @@ module.exports = grammar({
 
     procedure: $ => prec.right(seq(
       optional(field('modifier', $.procedure_modifier)),
-      $.procedure_keyword,
-      $._procedure_name_and_params,
+      $._procedure_head,
       // The return clause carried its own `optional(';')` AND was followed by
       // another one, so `procedure P(): T;` had two derivations for the single
       // `;`. Both put the token in the same place (a direct anonymous child of
@@ -2933,16 +2941,42 @@ module.exports = grammar({
           $._procedure_named_return,
         ),
       )),
-      optional(';'),
-      // Pragma-only #if/#endif between the procedure header and its body
-      // (BC wraps `#pragma warning restore ASxxxx` in `#if not CLEANxx`).
-      repeat($.preproc_pragma_only),
       choice(
-        $._routine_regular_body,
-        $.preproc_split_procedure_body,
-        $.preproc_split_complete_body,
-      )
+        $._procedure_regular_tail,
+        // Pragma-only #if/#endif between the procedure header and its body
+        // (BC wraps `#pragma warning restore ASxxxx` in `#if not CLEANxx`).
+        seq(
+          optional(';'),
+          repeat1($.preproc_pragma_only),
+          $._routine_regular_body,
+        ),
+        seq(
+          optional(';'),
+          repeat($.preproc_pragma_only),
+          choice(
+            $.preproc_split_procedure_body,
+            $.preproc_split_complete_body,
+          ),
+        ),
+      ),
     )),
+
+    // `[;] [var] begin … end [;]` after a signature -- shared by procedure and
+    // preproc_split_procedure, whose split signature is followed by the same
+    // text. Spelled separately, the body was parsed in two item contexts.
+    // prec.right, like `procedure` itself, for the trailing `;`.
+    _procedure_regular_tail: $ => prec.right(seq(
+      optional(';'),
+      $._routine_regular_body,
+    )),
+
+    // `procedure Name(params)` -- shared by procedure, interface_procedure and
+    // the preproc-split header, so all three reduce the same unit at the hard
+    // ')'. Each spelling it inline gave the same text a derivation per rule.
+    _procedure_head: $ => seq(
+      $.procedure_keyword,
+      $._procedure_name_and_params,
+    ),
 
     // Shared procedure name + parameter list, terminating at the hard ')'
     _procedure_name_and_params: $ => seq(
@@ -3025,8 +3059,7 @@ module.exports = grammar({
       repeat(seq($.preproc_elif, $._procedure_header)),
       optional(seq($.preproc_else, $._procedure_header)),
       $.preproc_endif,
-      optional(';'),
-      $._routine_regular_body,
+      $._procedure_regular_tail,
     )),
 
     // Procedure preamble: header + optional var section (used in preproc_split_procedure_preamble)
@@ -3055,8 +3088,7 @@ module.exports = grammar({
     _procedure_header: $ => seq(
       repeat($.attribute_item),
       optional(field('modifier', $.procedure_modifier)),
-      $.procedure_keyword,
-      $._procedure_name_and_params,
+      $._procedure_head,
       optional(choice(
         seq(
           choice(
@@ -3071,8 +3103,7 @@ module.exports = grammar({
     // Interface procedure declaration (no body, just signature)
     // Uses prec.dynamic to prefer full procedure when body follows
     interface_procedure: $ => prec.dynamic(-1, prec.right(-5, seq(
-      $.procedure_keyword,
-      $._procedure_name_and_params,
+      $._procedure_head,
       optional($.interface_procedure_suffix),
     ))),
 
@@ -3524,36 +3555,30 @@ module.exports = grammar({
     // #if COND / if X then Y else / #endif / Z;
     preproc_split_if_else_statement: $ => prec.right(seq(
       $.preproc_if,
-      $.if_keyword,
-      field('condition', $._expression),
-      $.then_keyword,
-      $._then_branch,
-      $.else_keyword,
+      $._preproc_if_then_else_head,
       choice(
         // Fragmented: else begin #endif stmts #if end; #endif
         // The if-then-begin-...-end-else-begin pattern where begin opens shared body
         $.preproc_fragmented_else_tail,
         // Normal: else followed by #elif/#else/#endif variants, then shared else body
         seq(
-          repeat(seq($.preproc_elif,
-            $.if_keyword,
-            field('condition', $._expression),
-            $.then_keyword,
-            $._then_branch,
-            $.else_keyword,
-          )),
-          optional(seq($.preproc_else,
-            $.if_keyword,
-            field('condition', $._expression),
-            $.then_keyword,
-            $._then_branch,
-            $.else_keyword,
-          )),
+          repeat(seq($.preproc_elif, $._preproc_if_then_else_head)),
+          optional(seq($.preproc_else, $._preproc_if_then_else_head)),
           $.preproc_endif,
           $._else_branch_simple,
         ),
       ),
     )),
+
+    // `if C then X else` — one branch's head in preproc_split_if_else_statement.
+    // Ends at the hard `else`, so it is a complete unit, not an open prefix.
+    _preproc_if_then_else_head: $ => seq(
+      $.if_keyword,
+      field('condition', $._expression),
+      $.then_keyword,
+      $._then_branch,
+      $.else_keyword,
+    ),
 
     // Preprocessor split if-then-begin:
     // #if COND / [preamble] if EXPR then begin / #endif / statements / #if COND / end[;] or end else begin...end; / #endif
