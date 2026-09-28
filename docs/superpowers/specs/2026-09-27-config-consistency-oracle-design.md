@@ -308,7 +308,7 @@ Each special rule gets a comment `// projection-contract: <id>` naming a stable 
   - Extracts every case from `test/corpus/*.txt` as (file, case name, source bytes, offset).
   - Reconciled against `tools/count_corpus_cases.py` **per file and by case name**, not by total. Two independent readers of the corpus format must agree, which also re-checks the silent-drop traps in CLAUDE.md.
   - Inputs are the cases that contain directives according to the **resolver**, never according to which trees contain `preproc` nodes: that would omit exactly the cases whose multi-configuration parse failed.
-  - Deliberate negatives are classified per case and per configuration in `tools/config_oracle/fixture-classes.tsv`, with the expected outcome and a reason. Files are never skipped wholesale.
+  - Deliberate negatives are classified per case and per configuration in `tools/config_oracle/fixture-classes.tsv`, with the expected outcome and a reason. Files are never skipped wholesale. Only `cannot-validate` records can be classified, and the expected outcome names the reason prefix of the record's first item (`cannot-validate:reference-error`), never a bare status. `*` expands to every predicted configuration of the case, and an entry or expansion that matches no record is stale and fails the run (exit 1). Case ids are `file#<case name>#<ordinal among same-named cases in the file>`, so inserting a case shifts no other id. *(final review, milestone 1.)*
   - The fixtures are **input**. Their expected S-expressions play no part in the verdict.
 - **Corpora.**
   - BC.History (`./BC.History`), DC (`./DC`), and BC 28.1 W1: `AL_BC28_ROOT`, defaulting to `H:/Git/BC28.1`, branch `bc28.1-w1` = `w1-28.1.49838.49886`, 16,928 `.al` files.
@@ -364,12 +364,14 @@ A fixture that now passes is a regression guard, not proof that the oracle detec
 |---|---|---|
 | 1 | `CRMSetupDefaults` `end else begin` over `#endif` | structure: `parent` |
 | 2 | `else #if … #else begin … end; #endif` lost `code_block` | structure: `missing` / `parent` |
-| 3 | `PREPROC_SPLIT_END` stopped by a trailing comment | structure |
+| 3 | `PREPROC_SPLIT_END` stopped by a trailing comment | on the real old parser: the `has_error` backstop (`multi-config-parse:has-error`). Structure: a labelled hand-built tree witness (see below) |
 | 4 | `#if`/`#elif` condition swallowed the next line (`c6b8107`) | `directive-mismatch` |
 | 5 | pragma block as `preproc_conditional_var_block` (`04ff498`) | representation contract, and **not** structure |
 | 6 | `#elif` absent from `preproc_split_code_block_end` | structure |
 
 Replay 6 is **not** an example of the silent class. The grammar's own comment on `preproc_split_code_block_end` says the defect left a MISSING `end_keyword`, which kept the error gate honest. It stays in the table as a structural replay, but is not counted as evidence that the oracle finds what the error gates cannot. *(sol)*
+
+Replay 3 is the stated exception to the rule below. The defect was **CLI-silent, not API-silent**: the old parser's tree hides a MISSING `end`, so `tree-sitter parse` reports no error but `has_error` is true, the multi-configuration parse is rejected, and the structure check never runs on the real old parser. Its detection there is the `has_error` backstop, through a `cannot-validate` record. Its structural detection is shown by a **labelled hand-built tree witness (spec §5)**, `replay.replay3_tree_witness`: the HEAD tree rewritten into the old parser's `call_statement` reading, checked equal to the `f47350d^` tree on every node kind the defect regroups, with the hidden MISSING token left out. `structure` must report it for `CLEAN22=0`. *(final review, milestone 1.)*
 
 Every replay also requires that **no earlier `cannot-validate` masks it**: a replay whose pre-fix run stops at `reference-error` or `resolver-leak` has not shown the expected detection.
 
@@ -410,7 +412,7 @@ Both reviewers found the first milestone too easy *(sol, gemini)*. It now has to
    - Scope: the probes and `docs/preproc-directive-semantics.md`; the resolver and its self-test; `ir.py`, `reference.py` and `compare.py` with the comparator mutations; branch selection for `preproc_conditional` and `preproc_conditional_statement`; `directive-mismatch` with extents; the var-block and pragma-only representation contracts with their positive controls; runner accounting; the `split-procedure` assembler (any tail), which replay 5 needs so that its structure check can pass.
    - Plus **one hard assembler, `split-case-end`**, and **one scanner-sensitive shape**, a `PREPROC_SPLIT_END` followed by a trailing comment. Each has a clean positive control and a false-positive control. The scanner-sensitive shape has replay 3. `split-case-end` has no historical silent defect to replay, so its negative is a hand-built bad tree with `following` placed inside the `case_statement`, labelled as such, plus a grammar mutant that drops the `following` field.
    - Plus the **resolver and single-configuration parse over every `#if` file in BC.History, DC and BC 28.1**. This needs no lowering. The exit is zero `cannot-validate: resolver-*` and zero `reference-error` over production flat AL, or each one investigated and classified. Resolver defects must surface here, not at milestone 5. *(gemini)*
-   - *Exit:* replays 2, 3, 4 and 5 caught with the expected kind, each without an earlier `cannot-validate`. Replay 5 is caught by the representation check and **not** by structure, which proves which check found it. The positive controls pass. **Elapsed time and peak memory** are measured and recorded. *(sol)*
+   - *Exit:* replays 2, 3, 4 and 5 caught with the expected kind, each without an earlier `cannot-validate`, except replay 3: on the real old parser it is detected by the `has_error` backstop (the defect was CLI-silent, not API-silent), and its structural detection is shown by a labelled hand-built tree witness (section 5). Replay 5 is caught by the representation check and **not** by structure, which proves which check found it. The positive controls pass. **Elapsed time and peak memory** are measured and recorded. *(sol)*
 2. **The remaining hard shapes.**
    - Scope: split procedure's witness matrix over every tail form; a report-brace ownership case; expression continuation with the precedence table and its self-test.
    - *Exit:* each has its witness matrix and edge-rewrite contracts, and replays 1 and 6 are caught. If the fragment design fails here, it is redesigned before the remaining handlers are written.

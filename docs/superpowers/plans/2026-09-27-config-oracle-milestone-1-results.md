@@ -10,10 +10,10 @@ wrapped in `./tools/ts-lock.sh`.
 | Criterion | Result | Evidence |
 |---|---|---|
 | Replay 2 caught (structure) | CAUGHT | `replay 2 (bad36e4^, case_else_preprocessor_test.txt): CAUGHT`. Case `#2` (all 8 configs) carries `structure\|parent` and `structure\|missing` items; the record status is `directive-mismatch` because `end-extent` items ride along, but the comparison ran. |
-| Replay 3 caught (structure) | **NOT MET as specified** | `replay 3 (f47350d^, scanner_lookahead_extras_test.txt): CAUGHT`, detected by `multi-config-parse:has-error@65`, **not by structure**. The pre-fix defect was CLI-silent (hidden MISSING token) but not API-silent: `has_error` is true, so the multi-config parse is rejected and the structure check never runs. The expected kind (structure) was not shown. |
+| Replay 3 caught (amended spec: backstop on the real old parser + structure on a labelled hand-built tree witness) | **MET as amended** (final fix wave) | Real old parser: `replay 3 (f47350d^, scanner_lookahead_extras_test.txt): CAUGHT`, detected by `multi-config-parse:has-error@65`. The pre-fix defect was CLI-silent (hidden MISSING token) but not API-silent, so the structure check never runs there. Structure: `replay 3 structure, hand-built tree witness (spec §5): CAUGHT (faithful to f47350d^ tree: True)` — `structure\|extra\|…/call_statement.-@143-146` and `structure\|missing\|…/end_keyword.-@143-146` for CLEAN22=0 (`test_replay_3_structure_on_a_hand_built_tree_witness`). **Still literally unmet against the original wording:** no structural detection by the whole instrument on a real pre-fix parser; the witness exercises the comparator and lowering, not the multi-config parse gate. |
 | Replay 4 caught (directive-mismatch) | CAUGHT, with two qualifications | `replay 4 (c6b8107^, hand-built): CAUGHT` — `directive\|condition-extent\|preproc_if@86`. Input is hand-built and labelled (no pre-fix fixture exists). The HEAD positive control for this input is a strict xfail: `XFAIL test_current_parser_passes_the_same_cases[head-4] - needs preproc_conditional_expression_tail lowering (milestone 2)`. |
 | Replay 5 caught by representation, NOT structure | CAUGHT | `replay 5 (04ff498^, preproc_split_procedure_tail_test.txt): CAUGHT` — both configs `representation-violation`, `var-block-without-var@116`, no structure item, structure ran. |
-| No replay masked by cannot-validate | **NOT MET for replay 3** | Replays 2, 4, 5: no cannot-validate among the detecting records. Replay 3's only records (CLEAN22=0, CLEAN22=1) are `cannot-validate`; `replay.py` does not count them as masked because the has-error item *is* its detection, but under the spec's rule ("no earlier cannot-validate masks it") the structural detection was never reached. |
+| No replay masked by cannot-validate | MET for 2, 4, 5; replay 3 is the spec's stated exception | Replays 2, 4, 5: no cannot-validate among the detecting records. Replay 3's real-parser records (CLEAN22=0, CLEAN22=1) are `cannot-validate` carrying its detection (the has_error item); the amended spec (section 5) names this exception and puts the structural evidence on the labelled witness. |
 | Positive controls pass | MET except head-4 | `python -m pytest tools/config_oracle/tests -q`: `225 passed, 8 deselected in 2.09s`. `-m slow`: `7 passed, 225 deselected, 1 xfailed in 50.65s` (the xfail is head-4 above). |
 | Resolver sweep: resolver-* cannot-validate | **0** | resolve-sweep summary: `pass: 5792`, `0 configurations not validated (none)`, exit code 0 |
 | Resolver sweep: reference-error | **0** | same summary |
@@ -22,13 +22,17 @@ wrapped in `./tools/ts-lock.sh`.
 | Elapsed time and peak memory, quick tier | 0.6 s, 57 MiB (max over processes) | quick summary |
 
 **Controller ruling on replay 3:** the controller accepted the has_error backstop as
-replay 3's detection (the old defect was CLI-silent, not API-silent); the spec
-criterion as literally worded stays NOT MET.
+replay 3's detection (the old defect was CLI-silent, not API-silent). The final fix
+wave amended the spec to say so (replay table row 3, section 5, milestone-1 exit) and
+added the labelled hand-built tree witness for its structural detection.
 
-Verdict: milestone 1 exit **not fully met as literally worded** — replay 3 is detected
-by the has_error backstop through a cannot-validate record rather than by structure
-(accepted by the controller, above), and replay 4's HEAD control is an xfail until
-milestone 2.
+Verdict: milestone 1 exit **met as amended**, with two stated limits: replay 3's
+structural detection is on a labelled hand-built tree, not on the real old parser
+(which the has_error backstop stops first), and replay 4's HEAD control is an xfail
+until milestone 2.
+
+**Case ids changed in the final fix wave.** Ids quoted below in the old `file#index`
+form (`preproc_interrupted_var_section.txt#0`) are now `file#<case name>#<ordinal>`.
 
 ### Resolve sweep
 
@@ -110,10 +114,8 @@ need the four-way probe before any is filed.
    grammar.js declares it an extra. Reproducer: `scanner_single_read_dispatch_test.txt#3`,
    CLEAN22=0 — `coverage|uncovered|ref@148` and `low@148` on an otherwise identical
    pair. Decide together with deferred-work item 6.
-2. **Replay 3: spec text to be updated to match the ruling.** The spec's replay table
-   says "structure"; the controller accepted the has_error backstop as replay 3's
-   detection, so the table entry and the "no earlier cannot-validate" rule need a
-   stated exception for replay 3.
+2. ~~Replay 3: spec text to be updated to match the ruling.~~ Done in the final fix
+   wave: the spec states the exception, and structure is shown on a labelled witness.
 3. Replay 4 HEAD control: `preproc_conditional_expression_tail` lowering (milestone 2).
 4. `&&`/`||` in `#if`: grammar accepts, alc rejects (AL0631); the oracle reports
    `cannot-validate`. Grammar side filed as deferred-work item 9.
