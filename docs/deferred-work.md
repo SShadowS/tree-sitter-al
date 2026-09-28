@@ -411,7 +411,21 @@ touch its arms, so the xfail still fails for the same reason.
 
 ---
 
-## 12. Hidden MISSING tokens are invisible to every command-line gate
+## 12. Hidden MISSING tokens are invisible to every command-line gate — RESOLVED 2026-09-29
+
+**Resolution (308f64c, roadmap A1):** `tools/has_error_sweep.py` classifies each
+input as clean / visible / hidden-only and exits 1 on either error class, 2 when
+it cannot run. It runs as validate-grammar.sh Step 3b (corpus fixtures) and
+Step 6b (`--full`), and in CI over the fixtures and `tools/gate-fixtures/al-corpus`.
+Measured: the 673528e^ parser gives hidden-only on 5 of the 8
+`test_directive_eol.py` inputs (`tree-sitter parse --json-summary`: 8 of 8
+successful). BC.History, DC, BC 28.1 and BCApps 29.0 have 0 hidden-only files.
+BCApps has 2 visible (EDocumentDE, APAC ERMPurchaseReportsIII).
+**Correction to the text below:** `tree-sitter test` is not blind. Its actual tree
+prints `(MISSING _directive_eol)`, so a corpus fixture that holds the triggering
+input fails Step 2. The blind tools are `tree-sitter parse`, `--json-summary` and
+parse-al-parallel.sh.
+
 
 **Established:** 2026-09-28, milestone 2 whole-branch review, then the
 `_directive_eol` fix (`673528e`). Before it, `#if A` followed by `\f\n`, `\v\n`,
