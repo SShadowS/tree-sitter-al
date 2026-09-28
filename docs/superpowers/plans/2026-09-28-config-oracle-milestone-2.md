@@ -1308,7 +1308,7 @@ git commit -m "feat(oracle): alc-measured precedence table with recomposition se
 
 Contracts:
 - **expression-continuation.** The chosen arm's `(operator, operand)` pairs, then the pairs after `#endif`, extend the preceding sibling expression. That expression and every operand are flattened (`expression.flatten`) and recomposed (`expression.compose`), keeping the preceding sibling's field. No other edge changes.
-- **operand-prefix.** In a binary node with a `preproc_operand_prefix` child, the chosen arm's `(operand, operator)` sits between the node's operator and its right operand. The whole node is flattened with it and recomposed. No arm selected leaves the node as `left op right`.
+- **operand-prefix.** In a binary node with a `preproc_operand_prefix` child, the chosen arm's `(operand, operator)` sits between the node's operator and its right operand. The WHOLE binary chain containing it (from the chain's top binary node, stopping at non-binary nodes and parenthesised atoms) is flattened with it and recomposed; regrouping only the prefix's own node is wrong for `a * #if X b or #endif c + d`. No arm selected leaves the chain's shape as parsed. *(Amended during execution, Task 11.)*
 
 - [ ] **Step 1: Write the failing tests**
 
