@@ -74,6 +74,9 @@ _STATEMENT_HOSTS = {
     "preproc_split_open_statement:<children>": "splice-repeat",
     "preproc_split_open_statement:continuation": "single-slot",
     "preproc_split_open_statement:then_branch": "single-slot",
+    # The two procedure-boundary block closings (BC 29 family H): statement runs.
+    "preproc_split_block_end_in_else:<children>": "splice-repeat",
+    "preproc_split_block_close_after_endif:<children>": "splice-repeat",
 }
 
 _BODY_HOSTS = {f"{p}:<children>": "splice-repeat" for p in (
@@ -186,6 +189,10 @@ register("preproc_split_open_statement", "unsupported")
 # BC 29 family H: a branch closes a layout container and opens a sibling. The
 # tree is the #if reading, so the other configuration cannot be lowered to it.
 register("preproc_split_container_reopen", "unsupported")
+# A procedure boundary inside #else: the tree is the #else reading, split over
+# two procedures' block closings, so neither lowers on its own.
+register("preproc_split_block_end_in_else", "unsupported")
+register("preproc_split_block_close_after_endif", "unsupported")
 
 # Non-prefixed special type: completes an earlier table relation (spec section 3).
 register("else_table_relation_fragment", "unsupported")
