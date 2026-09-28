@@ -113,3 +113,21 @@ def test_tail_inside_an_arguments_arm(al_parser):
     witness.assert_produces(al_parser, TAIL_IN_ARGUMENTS, "preproc_conditional_arguments")
     witness.assert_produces(al_parser, TAIL_IN_ARGUMENTS, "preproc_conditional_expression_tail")
     witness.assert_all_pass(al_parser, TAIL_IN_ARGUMENTS)
+
+
+# G7's split form (Task 18). `-1` before `#if` is ONE signed literal (the scanner
+# emits it before `#`), which is what the tail-inactive configuration's flat parse
+# gives; where the tail is live the flat parse reads unary minus instead, so no
+# tree holds both tokenisations. That configuration is one-reading, never a pass
+# and never a discrepancy.
+SIGNED_TAIL = (b"table 1 D\n{\n    fields\n    {\n        field(1; F; Integer)\n        {\n"
+               b"            MinValue = -1\n#if X\n                + 2\n#endif\n                ;\n"
+               b"        }\n    }\n}\n")
+
+
+def test_signed_literal_continued_by_a_tail_is_one_reading(al_parser):
+    witness.assert_produces(al_parser, SIGNED_TAIL, "preproc_conditional_expression_tail")
+    v = witness.verdicts(al_parser, SIGNED_TAIL)
+    assert v["X=0"][0] == "pass", v["X=0"]
+    assert v["X=1"][0] == "cannot-validate"
+    assert v["X=1"][1][0].startswith("lowering:one-reading")

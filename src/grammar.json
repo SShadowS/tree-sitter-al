@@ -2502,8 +2502,31 @@
       "type": "SEQ",
       "members": [
         {
-          "type": "SYMBOL",
-          "name": "_expression"
+          "type": "CHOICE",
+          "members": [
+            {
+              "type": "SYMBOL",
+              "name": "_expression"
+            },
+            {
+              "type": "ALIAS",
+              "content": {
+                "type": "SYMBOL",
+                "name": "_negative_integer"
+              },
+              "named": true,
+              "value": "integer"
+            },
+            {
+              "type": "ALIAS",
+              "content": {
+                "type": "SYMBOL",
+                "name": "_negative_decimal"
+              },
+              "named": true,
+              "value": "decimal"
+            }
+          ]
         },
         {
           "type": "SYMBOL",

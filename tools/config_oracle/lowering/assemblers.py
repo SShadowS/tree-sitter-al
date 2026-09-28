@@ -468,7 +468,8 @@ def expression_tail(node, ctx) -> Lowered:
     arms, endif = split_arms(node.copy(children=node.children[:cut + 1]))
     arm = _active(arms, endif, node, ctx)
     pieces = _lower_all(list(arm) + node.children[cut + 1:], ctx, node.kind)
-    return Lowered([], [ExpressionContinuation(None, _pairs(pieces, "operator", "operand", node))])
+    return Lowered([], [ExpressionContinuation(None, _pairs(pieces, "operator", "operand", node),
+                                               ctx.resolution.masked)])
 
 
 def operand_prefix(top, ctx) -> Lowered:

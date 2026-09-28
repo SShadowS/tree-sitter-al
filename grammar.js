@@ -1005,7 +1005,11 @@ module.exports = grammar({
 
     // Expressions that can appear as property values (member access, function calls, etc.)
     _property_value_with_split: $ => seq(
-      $._expression,
+      // A signed literal may be continued too (G7, split form):
+      // `MinValue = -1 #if X + 2 #endif ;`. The scanner emits `-1` as one
+      // literal before `#`, the tail-inactive configuration's flat reading;
+      // the oracle declares the tail-live configuration one-reading. +1 state.
+      choice($._expression, alias($._negative_integer, $.integer), alias($._negative_decimal, $.decimal)),
       $.preproc_conditional_expression_tail
     ),
 

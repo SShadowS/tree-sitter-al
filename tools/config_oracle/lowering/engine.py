@@ -146,12 +146,23 @@ class ExpressionContinuation(ToPrevious):
     lowered property_expression's only child is not one of its member kinds
     (PROPERTY_EXPRESSION_KINDS) the wrapper is replaced by that child, which
     takes the wrapper's field (`value`). Applied by engine._lower_ordinary, only
-    to a property_expression that held a tail."""
+    to a property_expression that held a tail.
+
+    One configuration class is **one-reading** (grammar finding G7, split form):
+    a signed literal continued by a tail, `MinValue = -1 #if X + 2 #endif ;`. The
+    scanner emits `-1` as one literal before `#`, which is the tail-inactive
+    configuration's flat reading; where a pair is live the flat parse reads unary
+    minus, a different tokenisation no tree can also hold. `masked` is that
+    configuration's text, read only for the literal's first byte."""
     pairs: list = field(default_factory=list)
+    masked: bytes = b""
 
     def apply(self, prev):
         if not self.pairs:
             return prev
+        if (not prev.children and prev.kind in ("integer", "decimal")
+                and self.masked[prev.start:prev.start + 1] == b"-"):
+            raise LoweringError("one-reading", prev, "signed literal continued by a live tail")
         try:
             flat = expression.flatten(prev)
             for op, operand in self.pairs:
