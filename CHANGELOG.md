@@ -53,7 +53,8 @@ public API — a change to node structure or field names is a **major** bump.
   `table_relation_value(table_relation_expression(simple_table_relation table:
   (integer)))`; they are now `integer`. The conditional keeps its node type,
   `preproc_conditional_table_relation`. 0 production sites (tree-harness
-  byte-identical).
+  byte-identical). The arm kinds listed here are superseded by G8 below: an arm
+  may now be any property value.
 - **Tree-shape change: a `#if` nested inside a whole-value `#if` arm has flat
   arms** (grammar finding G3). The inner conditional used to sit in a
   `table_relation_value` with `table_relation_expression(simple_table_relation)`
@@ -62,6 +63,39 @@ public API — a change to node structure or field names is a **major** bump.
   `table_relation_value`, as flat `TableRelation = Item;` gives. alc accepts
   the form in all four configurations. 0 production sites (tree-harness
   byte-identical).
+- **Tree-shape change: an `#if`/`#elif` line ends at its first newline**
+  (config-oracle production finding P1). The directive's terminator was a
+  lexical `/\r?\n/`, which is also a whitespace separator, so longest match
+  skipped a run of blank lines and took the LAST newline: `preproc_if` and
+  `preproc_elif` ran on over every blank line after the directive. A new hidden
+  external token, `_directive_eol`, takes exactly one newline after skipping
+  other whitespace and declines anything else. This is a **range change** to
+  `preproc_if`/`preproc_elif` in 34 production files (BC.History 21, BCApps 29.0
+  10, BC 28.1 3; tree-harness showed 21 BC.History and 4 BC 28.5 files changed,
+  every hunk a `preproc_if` end moving back to the line after the directive).
+  No node type, field or child changes.
+- **A signed literal before an operator no longer ERRORs** (grammar finding
+  G7). `Visible = -1 < X;` and `MinValue = -1 + 2;` ERRORed because the signed
+  literal token won by longest match. It is now an external token, emitted only
+  before `;`, `,`, `#` or end of input, so elsewhere `-` is unary minus. The
+  split form `MinValue = -1 #if X + 2 #endif ;` parses too, as a
+  `property_expression` holding the signed literal and its
+  `preproc_conditional_expression_tail`. Existing signed literals are unchanged
+  (tree-harness byte-identical on BC.History and BC 28.5). 0 production sites.
+- **Tree-shape change: a whole-value `#if` arm may hold any property value**
+  (grammar finding G8). `OptionMembers = #if X A,B; #else C; #endif`, a Caption
+  arm with `, Locked = true`, ML lists, object references, expressions,
+  where/sorting views, links, `OrderBy`, `Implementation` and decimal ranges
+  all ERRORed, because the arm kinds were listed by hand. An arm is now
+  `_property_value` itself, so each arm has the flat shape by construction.
+  This supersedes the arm-kind list in the G4 entry above, and covers G3: the
+  arms of a `#if` nested inside a whole-value arm have the same flat shape.
+  `node-types.json`: `preproc_conditional_table_relation`'s children widen to
+  every property-value kind (`caption_value`, `ml_value_list`,
+  `option_member_list`, `signed_integer_list`, `property_expression`,
+  `where_clause`, `sorting_value` and the rest), and `property_expression` may
+  hold a bare leaf plus a tail (the G7 split form). 0 production sites
+  (tree-harness byte-identical on BC.History, BC 28.5, BCApps 29.0 and DC).
 
 - **BC 29 (microsoft/BCApps `releases/29.0`, 36,716 files) now parses with 2
   error files, down from 33.** One of the two is invalid source. None of the 33
