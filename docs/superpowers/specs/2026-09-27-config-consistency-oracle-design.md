@@ -413,7 +413,10 @@ Both reviewers found the first milestone too easy *(sol, gemini)*. It now has to
    - Plus **one hard assembler, `split-case-end`**, and **one scanner-sensitive shape**, a `PREPROC_SPLIT_END` followed by a trailing comment. Each has a clean positive control and a false-positive control. The scanner-sensitive shape has replay 3. `split-case-end` has no historical silent defect to replay, so its negative is a hand-built bad tree with `following` placed inside the `case_statement`, labelled as such, plus a grammar mutant that drops the `following` field.
    - Plus the **resolver and single-configuration parse over every `#if` file in BC.History, DC and BC 28.1**. This needs no lowering. The exit is zero `cannot-validate: resolver-*` and zero `reference-error` over production flat AL, or each one investigated and classified. Resolver defects must surface here, not at milestone 5. *(gemini)*
    - *Exit:* replays 2, 3, 4 and 5 caught with the expected kind, each without an earlier `cannot-validate`, except replay 3: on the real old parser it is detected by the `has_error` backstop (the defect was CLI-silent, not API-silent), and its structural detection is shown by a labelled hand-built tree witness (section 5). Replay 5 is caught by the representation check and **not** by structure, which proves which check found it. The positive controls pass. **Elapsed time and peak memory** are measured and recorded. *(sol)*
-2. **The remaining hard shapes.**
+2. **The remaining hard shapes.** *Superseded 2026-09-28 by
+   `2026-09-28-config-oracle-milestone-2-design.md`, which keeps this scope and
+   adds the frequent branch-select and list-run families, one-reading contracts,
+   and a first ungated production run.*
    - Scope: split procedure's witness matrix over every tail form; a report-brace ownership case; expression continuation with the precedence table and its self-test.
    - *Exit:* each has its witness matrix and edge-rewrite contracts, and replays 1 and 6 are caught. If the fragment design fails here, it is redesigned before the remaining handlers are written.
 3. **Everything else, in order of frequency.**
