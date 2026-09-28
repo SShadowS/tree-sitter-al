@@ -1,8 +1,8 @@
 # BC 29 parse gaps (microsoft/BCApps releases/29.0)
 
-**Status:** families A, B and C RESOLVED (move* lists; move* in actions; nested
-`#if` among fields and keys) — BCApps 29.0 error files 33 -> 20. Remaining: F, I,
-E, D, G, H; J is invalid source. ProdOrderComponent.Table.al still fails, on H.
+**Status:** families A, B, C and F RESOLVED (move* lists; move* in actions;
+nested `#if` among fields and keys; split routine body) — BCApps 29.0 error files
+33 -> 18. Remaining: I, E, D, G, H; J is invalid source. ProdOrderComponent.Table.al still fails, on H.
 Corpus: `H:/Git/BCApps-29.0` (shallow clone of microsoft/BCApps
 `releases/29.0`, commit e16d6c30, 36,716 .al files, includes BaseApp layers).
 This analysis was produced by root-cause bisection of every failing file; the
@@ -208,7 +208,7 @@ Reproducers (all error):
   key are Medium. EDocumentDE is a nested pair of open headers with properties on each side
   and needs the D-style "open body over `#endif`" rule applied to a layout container. Do it last.
 
-## F. Split routine body (2 files)
+## F. Split routine body (2 files) — RESOLVED
 
 Reproducers (both error):
 ```al

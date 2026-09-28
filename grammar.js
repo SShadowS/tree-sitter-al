@@ -3025,10 +3025,13 @@ module.exports = grammar({
       $.preproc_else,
     ),
 
-    // #else branch opener of a split procedure body — complete unit ending at #endif
+    // #else branch opener of a split procedure body — complete unit ending at #endif.
+    // The branch may contribute statements of its own before the shared tail
+    // (SalesInvoiceHeader.Table.al, NO layer, BC 29); alc accepts both configs.
     _pspb_else_branch: $ => seq(
       optional($.var_section),
       $.begin_keyword,
+      optional(field('body', $.statement_block)),
       $.preproc_endif,
     ),
 
@@ -3225,11 +3228,11 @@ module.exports = grammar({
         $._procedure_return_specification,
         $._procedure_named_return,
       )),
-      optional(';'),
-      choice(
-        $._routine_regular_body,
-        $.preproc_split_complete_body,
-      )
+      // The same tail as a procedure: what may follow a routine header does not
+      // depend on which keyword opened it. The trigger took only two of its arms,
+      // so a split body (PaymentManagementFR.Codeunit.al:30, BC 29) or a
+      // pragma-only #if before `begin` was an ERROR. alc accepts both.
+      $._procedure_tail,
     ),
 
     // Preprocessor conditional wrapping a var section before begin

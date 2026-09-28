@@ -1,0 +1,149 @@
+================================================================================
+Split routine body: trigger host, #else branch with statements, pragma-only before trigger body
+================================================================================
+codeunit 50100 T
+{
+    trigger OnRun()
+#if not C28
+    var
+        I: Integer;
+    begin
+        if I = 0 then Error('x');
+#else
+    begin
+#endif
+        Message('y');
+    end;
+
+    procedure P(): Text
+#if C28
+    var
+        I: Integer;
+    begin
+        if I = 0 then exit('a');
+#else
+    begin
+        exit('b');
+#endif
+    end;
+}
+
+codeunit 50101 U
+{
+    trigger OnRun()
+#if not C28
+#pragma warning disable AL0432
+#endif
+    begin
+        Message('z');
+    end;
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (trigger_declaration
+        (trigger_keyword)
+        name: (identifier)
+        (preproc_split_procedure_body
+          (preproc_if
+            (preproc_open)
+            condition: (preproc_not_expression
+              (identifier)))
+          (var_section
+            (var_keyword)
+            body: (var_body
+              (variable_declaration
+                name: (identifier)
+                type: (type_specification
+                  (basic_type)))))
+          (begin_keyword)
+          body: (statement_block
+            (if_statement
+              (if_keyword)
+              condition: (comparison_expression
+                left: (identifier)
+                operator: (comparison_operator)
+                right: (integer))
+              (then_keyword)
+              then_branch: (call_expression
+                function: (identifier)
+                arguments: (argument_list
+                  (string_literal)))))
+          (preproc_else)
+          (begin_keyword)
+          (preproc_endif
+            (preproc_close))
+          body: (statement_block
+            (call_expression
+              function: (identifier)
+              arguments: (argument_list
+                (string_literal))))
+          (end_keyword)))
+      (procedure
+        (procedure_keyword)
+        name: (identifier)
+        return_type: (type_specification
+          (text_type
+            (text_keyword)))
+        (preproc_split_procedure_body
+          (preproc_if
+            (preproc_open)
+            condition: (identifier))
+          (var_section
+            (var_keyword)
+            body: (var_body
+              (variable_declaration
+                name: (identifier)
+                type: (type_specification
+                  (basic_type)))))
+          (begin_keyword)
+          body: (statement_block
+            (if_statement
+              (if_keyword)
+              condition: (comparison_expression
+                left: (identifier)
+                operator: (comparison_operator)
+                right: (integer))
+              (then_keyword)
+              then_branch: (exit_statement
+                (exit_keyword)
+                return_value: (string_literal))))
+          (preproc_else)
+          (begin_keyword)
+          body: (statement_block
+            (exit_statement
+              (exit_keyword)
+              return_value: (string_literal)))
+          (preproc_endif
+            (preproc_close))
+          (end_keyword)))))
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (trigger_declaration
+        (trigger_keyword)
+        name: (identifier)
+        (preproc_pragma_only
+          (preproc_if
+            (preproc_open)
+            condition: (preproc_not_expression
+              (identifier)))
+          (pragma)
+          (preproc_endif
+            (preproc_close)))
+        body: (code_block
+          (begin_keyword)
+          body: (statement_block
+            (call_expression
+              function: (identifier)
+              arguments: (argument_list
+                (string_literal))))
+          (end_keyword))))))

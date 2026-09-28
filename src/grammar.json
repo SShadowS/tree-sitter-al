@@ -11910,6 +11910,22 @@
           "name": "begin_keyword"
         },
         {
+          "type": "CHOICE",
+          "members": [
+            {
+              "type": "FIELD",
+              "name": "body",
+              "content": {
+                "type": "SYMBOL",
+                "name": "statement_block"
+              }
+            },
+            {
+              "type": "BLANK"
+            }
+          ]
+        },
+        {
           "type": "SYMBOL",
           "name": "preproc_endif"
         }
@@ -12659,29 +12675,8 @@
           ]
         },
         {
-          "type": "CHOICE",
-          "members": [
-            {
-              "type": "STRING",
-              "value": ";"
-            },
-            {
-              "type": "BLANK"
-            }
-          ]
-        },
-        {
-          "type": "CHOICE",
-          "members": [
-            {
-              "type": "SYMBOL",
-              "name": "_routine_regular_body"
-            },
-            {
-              "type": "SYMBOL",
-              "name": "preproc_split_complete_body"
-            }
-          ]
+          "type": "SYMBOL",
+          "name": "_procedure_tail"
         }
       ]
     },
