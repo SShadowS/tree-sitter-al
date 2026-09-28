@@ -1,0 +1,151 @@
+"""tools/has_error_sweep.py: the gate for errors no command-line tool prints.
+
+A MISSING node for a HIDDEN token is not printed by `tree-sitter parse`, its
+`--json-summary`, parse-al-parallel.sh or the corpus tests; only py-tree-sitter's
+`has_error` sees it (docs/deferred-work.md item 12). The key case is the mutation:
+the parser from before the `_directive_eol` whitespace fix (673528e^) must make the
+sweep report hidden-only and exit 1.
+"""
+import re
+
+import pytest
+
+from tools import has_error_sweep as sweep
+from tools.config_oracle import replay
+from tools.config_oracle.tests.test_directive_eol import EOLS
+from tools.query_coverage import loader
+
+REPO = loader.REPO_ROOT
+CLEAN = b"codeunit 50100 T { trigger OnRun() begin end; }\n"
+VISIBLE = b"codeunit 50100 T { procedure P() begin @@@ end; }\n"
+
+
+def eol_source(eol):
+    return b"codeunit 1 T { trigger OnRun() begin\n#if A" + eol + b"x := 1;\n#endif\nend; }\n"
+
+
+def write(root, files):
+    root.mkdir(parents=True, exist_ok=True)
+    for name, src in files.items():
+        (root / name).write_bytes(src)
+    return root
+
+
+def run(capsys, *argv):
+    code = sweep.main(list(map(str, argv)))
+    return code, capsys.readouterr().out
+
+
+def test_clean_source_exits_0(tmp_path, capsys):
+    code, out = run(capsys, "--root", write(tmp_path / "c", {"a.al": CLEAN}))
+    assert code == 0, out
+    assert "clean=1" in out and "hidden-only=0" in out and "visible=0" in out
+
+
+def test_error_source_is_visible_and_exits_1(tmp_path, capsys):
+    code, out = run(capsys, "--root", write(tmp_path / "v", {"a.al": CLEAN, "b.al": VISIBLE}))
+    assert code == 1, out
+    assert re.search(r"^visible\t.*b\.al\tERROR@\d+-\d+", out, re.M), out
+    assert "visible=1" in out and "hidden-only=0" in out
+
+
+def test_missing_root_exits_2(tmp_path, capsys):
+    code, out = run(capsys, "--root", tmp_path / "does-not-exist")
+    assert code == 2
+
+
+def test_empty_root_exits_2(tmp_path, capsys):
+    (tmp_path / "empty").mkdir()
+    (tmp_path / "empty" / "not-al.txt").write_text("x")
+    code, out = run(capsys, "--root", tmp_path / "empty")
+    assert code == 2
+
+
+def test_one_missing_root_among_good_ones_exits_2(tmp_path, capsys):
+    good = write(tmp_path / "g", {"a.al": CLEAN})
+    code, out = run(capsys, "--root", good, "--root", tmp_path / "nope")
+    assert code == 2
+
+
+def test_no_input_exits_2(capsys):
+    with pytest.raises(SystemExit) as e:
+        sweep.main([])
+    assert e.value.code == 2
+
+
+def test_broken_build_exits_2(tmp_path, capsys, monkeypatch):
+    def broken(_root, force=False):
+        raise loader.StaleParserError("tree-sitter build failed (exit 1): injected")
+    monkeypatch.setattr(loader, "ensure_library", broken)
+    code, out = run(capsys, "--root", write(tmp_path / "c", {"a.al": CLEAN}))
+    assert code == 2
+
+
+def test_unloadable_lib_exits_2(tmp_path, capsys):
+    code, out = run(capsys, "--root", write(tmp_path / "c", {"a.al": CLEAN}),
+                    "--lib", tmp_path / "no-such.dll")
+    assert code == 2
+
+
+def test_eol_inputs_are_clean_at_head(tmp_path, capsys):
+    """Positive control for the mutation below: the same files, the current parser."""
+    root = write(tmp_path / "eol", {f"eol{i}.al": eol_source(e) for i, e in enumerate(EOLS)})
+    code, out = run(capsys, "--root", root)
+    assert code == 0, out
+    assert f"clean={len(EOLS)}" in out
+
+
+@pytest.mark.slow
+def test_pre_fix_parser_reports_hidden_only(tmp_path, capsys):
+    """The mutation: 673528e^ skipped only space and tab before `_directive_eol`, so 5
+    of the 8 inputs leave a hidden MISSING token. The sweep must call them hidden-only
+    and exit 1, while every command-line gate reported them clean."""
+    sha = replay._sha("673528e^")
+    replay.cached_parser_at(sha)
+    lib = replay.CACHE / sha / f"al-replay-{sha[:12]}.dll"
+    assert lib.is_file()
+    root = write(tmp_path / "eol", {f"eol{i}.al": eol_source(e) for i, e in enumerate(EOLS)})
+    code, out = run(capsys, "--root", root, "--lib", lib)
+    assert code == 1, out
+    assert "hidden-only=5" in out and "visible=0" in out, out
+    assert len(re.findall(r"^hidden-only\t", out, re.M)) == 5, out
+
+
+def test_corpus_fixtures_exclude_exactly_the_deliberate_negatives():
+    names = sweep.deliberate_negatives()
+    assert names, "the deliberate-negative list is empty"
+    for n in names:
+        assert (REPO / "test" / "corpus" / n).is_file(), f"listed but absent: {n}"
+    files = {c.file for c in sweep.corpus_fixture_inputs_cases()}
+    assert not files & names
+    assert len(files) > 500
+
+
+def test_validate_grammar_reads_the_same_negatives_file():
+    """One source of truth: Step 3 reads the file the tool reads, and no copy of
+    the list survives inline in validate-grammar.sh or release.md."""
+    rel = sweep.NEGATIVES_FILE.relative_to(REPO).as_posix()
+    assert rel == "tools/deliberate-negatives.txt"
+    vg = (REPO / "validate-grammar.sh").read_text(encoding="utf-8")
+    release = (REPO / ".claude" / "commands" / "release.md").read_text(encoding="utf-8")
+    assert rel in vg and rel in release
+    greps = [line for line in release.splitlines() if "grep -vE" in line]
+    assert greps
+    for n in sweep.deliberate_negatives():
+        assert f'"{n}"' not in vg, f"{n} still listed inline in validate-grammar.sh"
+        assert not any(n[:-len(".txt")] in g for g in greps), f"{n} still inline in release.md"
+
+
+def test_worker_pool_reports_the_same(tmp_path, capsys):
+    code, out = run(capsys, "--root", write(tmp_path / "v", {"a.al": CLEAN, "b.al": VISIBLE}),
+                    "--jobs", 2)
+    assert code == 1, out
+    assert "clean=1" in out and "visible=1" in out and "hidden-only=0" in out
+
+
+def test_utf16_with_bom_is_decoded(tmp_path, capsys):
+    """`tree-sitter parse` detects a UTF-16 BOM; BCApps ships 19 such files."""
+    utf16 = CLEAN.decode().encode("utf-16")
+    assert utf16[:2] in (b"\xff\xfe", b"\xfe\xff")
+    code, out = run(capsys, "--root", write(tmp_path / "u", {"a.al": utf16}))
+    assert code == 0, out

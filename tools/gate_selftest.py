@@ -282,6 +282,59 @@ codeunit 50100 Broken { procedure P() begin @@@ end; }
   (ERROR))
 """
 
+# Steps 3b and 6b share one defect: 673528e (the `_directive_eol` whitespace fix)
+# reverted, so an `#if A` line ending in `\f\n` leaves a HIDDEN MISSING
+# `_directive_eol`. `tree-sitter parse` prints no MISSING for it and
+# `--json-summary` says successful, so Step 6 (parse-al-parallel.sh) passes.
+# `tree-sitter test` is NOT blind to it: its tree does print
+# `(MISSING _directive_eol)`, so a fixture holding the input fails Step 2 too.
+# Measured, not assumed: the first version of the 3b case asserted that Step 2
+# passed, and it did not.
+DIRECTIVE_EOL_FIX = (re.escape(r"while (lexer->lookahead != '\n' && is_extra_space(lexer->lookahead)) {")
+                     + r"(\n\s*lexer->advance\(lexer, true\);\n\s*\}\n)")
+# A re.sub replacement, so `\\t` is the two C characters `\t`. The pre-fix loop
+# plus its separate `\r` step, exactly as 673528e^ had them.
+DIRECTIVE_EOL_PRE_FIX = (r"while (lexer->lookahead == ' ' || lexer->lookahead == '\\t') {\1"
+                         r"    if (lexer->lookahead == '\\r') {" "\n"
+                         r"      lexer->advance(lexer, false);" "\n"
+                         r"    }" "\n")
+HIDDEN_MISSING_AL = "codeunit 1 T { trigger OnRun() begin\n#if A\f\nx := 1;\n#endif\nend; }\n"
+HIDDEN_MISSING_FIXTURE = """\
+================================================================================
+Form feed before a directive's newline (gate self-test)
+================================================================================
+codeunit 1 T { trigger OnRun() begin
+#if A\f
+x := 1;
+#endif
+end; }
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (trigger_declaration
+        (trigger_keyword)
+        name: (identifier)
+        body: (code_block
+          (begin_keyword)
+          body: (statement_block
+            (preproc_conditional_statement
+              (preproc_if
+                (preproc_open)
+                condition: (identifier))
+              (assignment_statement
+                left: (identifier)
+                operator: (assignment_operator)
+                right: (integer))
+              (preproc_endif
+                (preproc_close))))
+          (end_keyword))))))
+"""
+
 CASES: list[Case] = [
     # ---- validate-grammar.sh -------------------------------------------------
     Case(
@@ -321,6 +374,24 @@ CASES: list[Case] = [
                    "fixture that ought to error and does not, nor one whose "
                    "expected tree is simply wrong -- Tasks 7 and 8 shipped exactly "
                    "that, and both passed identically on the broken grammar",
+    ),
+    Case(
+        id="step3b-hidden-missing-token",
+        gate=VALIDATE,
+        why="the _directive_eol whitespace fix (673528e) reverted, with a fixture "
+            "whose #if line ends in a form feed: a hidden MISSING token",
+        mutations=[
+            sub("src/scanner.c", DIRECTIVE_EOL_FIX, DIRECTIVE_EOL_PRE_FIX, count=1),
+            create("test/corpus/zz_selftest_hidden_missing.txt", HIDDEN_MISSING_FIXTURE),
+        ],
+        must_contain=[
+            "has_error sweep found parse errors in the positive corpus fixtures",
+            "hidden-only",
+            "zz_selftest_hidden_missing.txt",
+        ],
+        must_not_contain=["All validation checks passed"],
+        blind_spot="has_error is a yes/no per tree. A defect that builds a WRONG tree "
+                   "with no ERROR and no MISSING token, hidden or not, passes it",
     ),
     Case(
         id="step4-orphan-tool-fails",
@@ -453,6 +524,28 @@ CASES: list[Case] = [
         env={"AL_PARSE_CORPUS": "./selftest-corpus", "PARSE_OUT_DIR": "."},
         must_contain=["AL parse run"],
         must_not_contain=["All validation checks passed"],
+    ),
+    Case(
+        id="step6b-hidden-missing-token",
+        gate=VALIDATE,
+        args=["--full"],
+        why="the same reverted scanner over an AL corpus file: Step 6 "
+            "(parse-al-parallel.sh, --json-summary) reports 0 errors, only 6b sees it",
+        mutations=[
+            make_al_corpus("selftest-corpus"),
+            create("selftest-corpus/zz_hidden_missing.al", HIDDEN_MISSING_AL),
+            sub("src/scanner.c", DIRECTIVE_EOL_FIX, DIRECTIVE_EOL_PRE_FIX, count=1),
+        ],
+        env={"AL_PARSE_CORPUS": "./selftest-corpus", "PARSE_OUT_DIR": "."},
+        # Step 6 passing is asserted, not tolerated: it is the blindness 6b closes.
+        must_contain=[
+            "AL parsing:", "0 errors",
+            "has_error sweep found parse errors in ./selftest-corpus",
+            "hidden-only", "zz_hidden_missing.al",
+        ],
+        must_not_contain=["AL parsing failed", "All validation checks passed"],
+        blind_spot="has_error is a yes/no per tree. A defect that builds a WRONG tree "
+                   "with no ERROR and no MISSING token, hidden or not, passes it",
     ),
     Case(
         id="step6-clean-corpus-passes",

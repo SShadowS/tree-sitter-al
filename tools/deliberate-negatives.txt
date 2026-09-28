@@ -1,0 +1,74 @@
+# deliberate-negatives.txt -- corpus fixtures whose ERROR nodes ARE the assertion.
+#
+# The one list. Read by validate-grammar.sh Step 3 (exempt from the expected-tree
+# ERROR/MISSING grep), by tools/has_error_sweep.py --corpus-fixtures (excluded
+# from the has_error sweep) and by the pre-flight grep in
+# .claude/commands/release.md. One corpus basename per line; `#` starts a
+# comment line. Every name must exist under test/corpus/
+# (tools/config_oracle/tests/test_has_error_sweep.py checks it).
+#
+# A `TableData Customer = R` fragment misplaced under OptionMembers is shaped
+# exactly like a valid tabledata_permission. Asserts recovery surfaces the
+# dangling remainder as an ERROR instead of silently accepting the whole
+# thing as a well-formed construct.
+option_members_tabledata_keyword_test.txt
+# Asserts `#` + newline + `pragma` stays an ERROR: whitespace tolerance after
+# `#` is horizontal-only (`[ \t]*`), so a directive may not straddle a line
+# break and swallow the following source.
+pragma_whitespace_tolerance_test.txt
+# Same horizontal-only rule for `#if`/`#elif`, plus `# ifx` — an identifier
+# that merely starts with "if" — must not lex as `#if`.
+preproc_if_elif_whitespace_tolerance_test.txt
+# Same horizontal-only rule for `#region`/`#endregion`.
+preproc_region_whitespace_audit_test.txt
+# A stray identifier before a var attribute must surface as its own node
+# rather than being absorbed into the '[' token. The input is not valid AL,
+# so the error is correct; what is asserted is that no byte disappears from
+# the tree. It lives in its own file rather than joining the clean scanner
+# fixtures so that those stay subject to this step.
+scanner_var_attribute_token_span_test.txt
+# The four directive-boundary negatives. #regionX / #pragmaX / #endregionZ
+# and an over-long directive word are rejected by alc (AL0621) and, since
+# 4.0.0, by the grammar; the ERROR is the assertion. They previously lived in
+# scanner_single_read_dispatch_test.txt asserting the OPPOSITE, back when the
+# scanner was aligned to the over-permissive grammar.
+#
+# This entry was carried on the gate branch BEFORE the fixture existed, and
+# that was the right call: `.claude/commands/release.md` runs an equivalent
+# pre-flight grep and says the two gates "must exempt exactly the same set --
+# change both or neither". Neither stream could edit the other's file, so the
+# sets would have diverged the moment the branches met and the new fixture
+# would have failed this step. An allow-list entry for an absent file is
+# inert, so carrying it early is free.
+directive_word_boundary_test.txt
+# The interface `Access = X` HEADER form, removed from the grammar in 4.0.0.
+# alc rejects it with AL0104 both bare ("'{' expected") and after an extends
+# clause ("',' expected"), and the field it fed was populated 0 times across
+# BC.History. The ERROR is the assertion; the accepted form is a body
+# property and is pinned in interface_extends_test.txt.
+interface_access_negative_test.txt
+# The separator fix (4.0.0): every comma-separated list required a comma
+# between adjacent items, where the old shape made it optional and absorbed
+# the second item silently. alc rejects all three of these with AL0104; the
+# ERROR is the assertion. BC.History is byte-identical across the change.
+missing_separator_negative_test.txt
+# Range positions alc rejects with AL0104 -- a SYNTAX error, not a type error,
+# so `1 + (1 .. 4)` has no reading in AL at all and the ERROR is the assertion.
+# Every case in it parsed CLEANLY before a171c19, which removed
+# `range_expression` from `_expression`. These are the probes that decided
+# that fix should be structural rather than a new precedence number.
+range_not_an_expression_negative_test.txt
+# `1 #if X + #endif 2` -- the OPERATOR alone inside the branch. alc rejects
+# it (AL0104), so the ERROR is the assertion and the boundary of the
+# #if-continuation work. Every other split position alc ACCEPTS and we parse.
+preproc_split_operator_negative_test.txt
+# U+E0041, a Cf TAG character, is not an identifier character: grammar.js's
+# `[\p{L}_][\p{L}\p{N}_]*` rejects it and so does alc (AL0183). The ERROR is
+# the assertion, and this one matters more than most — until 4.0.0 the
+# scanner's iswalpha() truncated the codepoint to 'A' on Windows, emitted
+# PROPERTY_NAME across it, and produced a clean `(property ...)` with NO
+# error node. Every error-count gate in this repo passed on a wrong tree, so
+# the only thing that can catch a regression here is a fixture pinning the
+# ERROR itself. Split from scanner_unicode_identifier_classification_test.txt
+# (its four positive cases) precisely so those stay subject to this step.
+scanner_unicode_identifier_negative_test.txt

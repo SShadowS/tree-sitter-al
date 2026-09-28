@@ -229,78 +229,25 @@ TEST_FILE_COUNT=0
 # PURPOSE — the ERROR *is* the assertion, so they are exempt from this step. A
 # hit in any other corpus file still fails it.
 #
-# Keep this list in sync with pre-flight check #3 in .claude/commands/release.md,
-# which greps for the same thing before a release. Both gates must exempt exactly
-# the same set: this one compares the file's basename for equality, and that one
-# anchors its grep to `(^|/)<name>.txt:` so it exempts the same basenames and
-# nothing else.
-DELIBERATE_ERROR_FIXTURES=(
-    # A `TableData Customer = R` fragment misplaced under OptionMembers is shaped
-    # exactly like a valid tabledata_permission. Asserts recovery surfaces the
-    # dangling remainder as an ERROR instead of silently accepting the whole
-    # thing as a well-formed construct.
-    "option_members_tabledata_keyword_test.txt"
-    # Asserts `#` + newline + `pragma` stays an ERROR: whitespace tolerance after
-    # `#` is horizontal-only (`[ \t]*`), so a directive may not straddle a line
-    # break and swallow the following source.
-    "pragma_whitespace_tolerance_test.txt"
-    # Same horizontal-only rule for `#if`/`#elif`, plus `# ifx` — an identifier
-    # that merely starts with "if" — must not lex as `#if`.
-    "preproc_if_elif_whitespace_tolerance_test.txt"
-    # Same horizontal-only rule for `#region`/`#endregion`.
-    "preproc_region_whitespace_audit_test.txt"
-    # A stray identifier before a var attribute must surface as its own node
-    # rather than being absorbed into the '[' token. The input is not valid AL,
-    # so the error is correct; what is asserted is that no byte disappears from
-    # the tree. It lives in its own file rather than joining the clean scanner
-    # fixtures so that those stay subject to this step.
-    "scanner_var_attribute_token_span_test.txt"
-    # The four directive-boundary negatives. #regionX / #pragmaX / #endregionZ
-    # and an over-long directive word are rejected by alc (AL0621) and, since
-    # 4.0.0, by the grammar; the ERROR is the assertion. They previously lived in
-    # scanner_single_read_dispatch_test.txt asserting the OPPOSITE, back when the
-    # scanner was aligned to the over-permissive grammar.
-    #
-    # This entry was carried on the gate branch BEFORE the fixture existed, and
-    # that was the right call: `.claude/commands/release.md` runs an equivalent
-    # pre-flight grep and says the two gates "must exempt exactly the same set --
-    # change both or neither". Neither stream could edit the other's file, so the
-    # sets would have diverged the moment the branches met and the new fixture
-    # would have failed this step. An allow-list entry for an absent file is
-    # inert, so carrying it early is free.
-    "directive_word_boundary_test.txt"
-    # The interface `Access = X` HEADER form, removed from the grammar in 4.0.0.
-    # alc rejects it with AL0104 both bare ("'{' expected") and after an extends
-    # clause ("',' expected"), and the field it fed was populated 0 times across
-    # BC.History. The ERROR is the assertion; the accepted form is a body
-    # property and is pinned in interface_extends_test.txt.
-    "interface_access_negative_test.txt"
-    # The separator fix (4.0.0): every comma-separated list required a comma
-    # between adjacent items, where the old shape made it optional and absorbed
-    # the second item silently. alc rejects all three of these with AL0104; the
-    # ERROR is the assertion. BC.History is byte-identical across the change.
-    "missing_separator_negative_test.txt"
-    # Range positions alc rejects with AL0104 -- a SYNTAX error, not a type error,
-    # so `1 + (1 .. 4)` has no reading in AL at all and the ERROR is the assertion.
-    # Every case in it parsed CLEANLY before a171c19, which removed
-    # `range_expression` from `_expression`. These are the probes that decided
-    # that fix should be structural rather than a new precedence number.
-    "range_not_an_expression_negative_test.txt"
-    # `1 #if X + #endif 2` -- the OPERATOR alone inside the branch. alc rejects
-    # it (AL0104), so the ERROR is the assertion and the boundary of the
-    # #if-continuation work. Every other split position alc ACCEPTS and we parse.
-    "preproc_split_operator_negative_test.txt"
-    # U+E0041, a Cf TAG character, is not an identifier character: grammar.js's
-    # `[\p{L}_][\p{L}\p{N}_]*` rejects it and so does alc (AL0183). The ERROR is
-    # the assertion, and this one matters more than most — until 4.0.0 the
-    # scanner's iswalpha() truncated the codepoint to 'A' on Windows, emitted
-    # PROPERTY_NAME across it, and produced a clean `(property ...)` with NO
-    # error node. Every error-count gate in this repo passed on a wrong tree, so
-    # the only thing that can catch a regression here is a fixture pinning the
-    # ERROR itself. Split from scanner_unicode_identifier_classification_test.txt
-    # (its four positive cases) precisely so those stay subject to this step.
-    "scanner_unicode_identifier_negative_test.txt"
-)
+# The list lives in ONE file, tools/deliberate-negatives.txt, with a reason per
+# entry. This step, tools/has_error_sweep.py (Step 3b) and the pre-flight grep
+# in .claude/commands/release.md all read it, so they cannot exempt different
+# sets. Matching is on exact basename. An unreadable or empty list fails: an
+# empty exemption set would be read as "every negative fixture is a defect",
+# and a missing file is a broken checkout.
+DELIBERATE_NEGATIVES_FILE="tools/deliberate-negatives.txt"
+DELIBERATE_ERROR_FIXTURES=()
+if [ -f "$DELIBERATE_NEGATIVES_FILE" ]; then
+    while IFS= read -r line; do
+        line="${line%$'\r'}"
+        case "$line" in ''|'#'*) continue ;; esac
+        DELIBERATE_ERROR_FIXTURES+=("$line")
+    done < "$DELIBERATE_NEGATIVES_FILE"
+fi
+if [ ${#DELIBERATE_ERROR_FIXTURES[@]} -eq 0 ]; then
+    print_error "$DELIBERATE_NEGATIVES_FILE is missing or lists nothing -- it is tracked in git, so this checkout is broken"
+    VALIDATION_FAILED=1
+fi
 
 is_deliberate_error_fixture() {
     local name allowed
@@ -368,6 +315,42 @@ else
     echo -e "\n${YELLOW}These test files contain ERROR or MISSING nodes, indicating incomplete parsing.${NC}"
     echo -e "${YELLOW}This is a serious issue that should be fixed.${NC}"
 fi
+
+# Step 3b: has_error over the positive corpus fixtures
+#
+# A MISSING node for a HIDDEN (`_`-prefixed) token is never printed, so an
+# expected tree cannot contain it, Step 2 passes, Step 3's grep finds nothing,
+# and `tree-sitter parse --json-summary` reports the file successful. Only
+# py-tree-sitter's `root_node.has_error` sees it. The `_directive_eol`
+# whitespace regression lived through every gate that way (fixed in 673528e;
+# docs/deferred-work.md item 12). tools/has_error_sweep.py parses every corpus
+# case except the deliberate negatives and fails on any has_error tree, naming
+# "hidden-only" separately from ERROR/MISSING nodes a tree would print.
+# Exit 2 (it could not run -- a failed build, no fixtures) fails too.
+run_has_error_sweep() {
+    local what="$1"; shift
+    local out status
+    out=$(python tools/has_error_sweep.py "$@" 2>&1) && status=0 || status=$?
+    if [ "$status" -eq 0 ]; then
+        print_success "has_error: $(echo "$out" | tail -1 | sed 's/^has_error_sweep: //') in $what"
+    elif [ "$status" -eq 1 ]; then
+        print_error "has_error sweep found parse errors in $what"
+        echo "$out" | grep -E '^(visible|hidden-only)'$'\t' | head -20 | sed 's/^/    /'
+        echo "$out" | tail -1
+        if echo "$out" | grep -q '^hidden-only'$'\t'; then
+            echo -e "${YELLOW}hidden-only: has_error is True with no ERROR/MISSING node a tree prints --${NC}"
+            echo -e "${YELLOW}a MISSING hidden token inside the named node. No CLI gate can see it.${NC}"
+        fi
+        VALIDATION_FAILED=1
+    else
+        print_error "has_error sweep could not run over $what (exit $status)"
+        echo "$out" | tail -5
+        VALIDATION_FAILED=1
+    fi
+}
+
+print_header "Step 3b: has_error Over Positive Corpus Fixtures"
+run_has_error_sweep "the positive corpus fixtures" --corpus-fixtures
 
 # Step 4: Check for orphaned rules
 print_header "Step 4: Checking for Orphaned Rules"
@@ -628,6 +611,12 @@ else
     else
         print_success "AL parsing: $PARSE_OK/$PARSE_TOTAL files parsed, 0 errors (${PARSE_RATE%?}.${PARSE_RATE: -1}%)"
     fi
+
+    # Step 6b: the same corpus through has_error. parse-al-parallel.sh counts
+    # `--json-summary` records, and a MISSING node for a HIDDEN token leaves
+    # `successful: true` -- see Step 3b. Only has_error sees that file.
+    print_header "Step 6b: has_error Over the AL Corpus (--full only)"
+    run_has_error_sweep "$AL_PARSE_CORPUS" --root "$AL_PARSE_CORPUS"
 fi
 
 # Step 7: Check for common issues

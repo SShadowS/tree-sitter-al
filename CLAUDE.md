@@ -40,6 +40,10 @@ python -m tools.query_coverage.qc run          # regression gate, exits 1 on a n
 python -m tools.query_coverage.qc run --all    # full picture
 python -m tools.query_coverage.qc accept       # freeze the current state as the baseline
 
+# has_error gate — the only thing that sees a MISSING node for a HIDDEN token
+python tools/has_error_sweep.py --root ./BC.History/   # exit 0 clean, 1 errors, 2 cannot run
+python tools/has_error_sweep.py --corpus-fixtures      # every corpus case minus tools/deliberate-negatives.txt
+
 # Standard development cycle
 tree-sitter generate         # Generate parser from grammar.js
 tree-sitter generate --report-states-for-rule -  # Rank rules by parser-state cost
@@ -48,6 +52,18 @@ tree-sitter test -u         # Update test expectations — see the two traps bel
 tree-sitter parse file.al -d > debug.log 2>&1  # Debug specific files
 python parse_bug_finder.py file.al debug.log   # Analyze parsing bugs
 ```
+
+**A MISSING node for a HIDDEN (`_`-prefixed) token is invisible to `tree-sitter parse`,
+its `--json-summary` and therefore `parse-al-parallel.sh`**: no `MISSING` is printed and the
+file counts as parsed OK. Only py-tree-sitter's `root_node.has_error` sees it.
+`tools/has_error_sweep.py` reads it and reports such files as `hidden-only`
+(validate-grammar.sh Step 3b over the corpus fixtures, Step 6b under `--full`, and CI).
+**A fix that touches a hidden token needs this gate over a production corpus, or a
+`has_error` pytest** (`tools/config_oracle/tests/test_directive_eol.py` is the model) — a
+clean `parse-al-parallel.sh` run proves nothing about it. `tree-sitter test` does print
+`(MISSING _hidden)` in its actual tree, so a corpus fixture catches the defect only if it
+holds the triggering input. The deliberate-negative fixture list lives in ONE file,
+`tools/deliberate-negatives.txt`, read by Step 3, the sweep and `release.md`.
 
 **Two traps in `tree-sitter test -u`. Both produce a test that passes whether the grammar is right or wrong.**
 
