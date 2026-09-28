@@ -12852,8 +12852,39 @@
             "name": "preproc_if"
           },
           {
+            "type": "REPEAT",
+            "content": {
+              "type": "SYMBOL",
+              "name": "_statement"
+            }
+          },
+          {
             "type": "SYMBOL",
             "name": "end_keyword"
+          },
+          {
+            "type": "REPEAT",
+            "content": {
+              "type": "SEQ",
+              "members": [
+                {
+                  "type": "CHOICE",
+                  "members": [
+                    {
+                      "type": "STRING",
+                      "value": ";"
+                    },
+                    {
+                      "type": "BLANK"
+                    }
+                  ]
+                },
+                {
+                  "type": "SYMBOL",
+                  "name": "end_keyword"
+                }
+              ]
+            }
           },
           {
             "type": "SYMBOL",
@@ -12861,14 +12892,7 @@
           },
           {
             "type": "SYMBOL",
-            "name": "begin_keyword"
-          },
-          {
-            "type": "REPEAT",
-            "content": {
-              "type": "SYMBOL",
-              "name": "_statement"
-            }
+            "name": "_reopen_block"
           },
           {
             "type": "SYMBOL",
@@ -12887,6 +12911,41 @@
           }
         ]
       }
+    },
+    "_reopen_block": {
+      "type": "SEQ",
+      "members": [
+        {
+          "type": "REPEAT",
+          "content": {
+            "type": "SYMBOL",
+            "name": "_preproc_if_header"
+          }
+        },
+        {
+          "type": "SYMBOL",
+          "name": "begin_keyword"
+        },
+        {
+          "type": "REPEAT",
+          "content": {
+            "type": "SYMBOL",
+            "name": "_statement"
+          }
+        },
+        {
+          "type": "CHOICE",
+          "members": [
+            {
+              "type": "SYMBOL",
+              "name": "_reopen_block"
+            },
+            {
+              "type": "BLANK"
+            }
+          ]
+        }
+      ]
     },
     "statement_block": {
       "type": "REPEAT1",
@@ -22584,6 +22643,10 @@
       "key_declaration"
     ],
     [
+      "_preproc_if_header",
+      "if_statement"
+    ],
+    [
       "layout_container_body"
     ],
     [
@@ -22628,7 +22691,8 @@
       "preproc_split_if_then_begin_else_shared",
       "preproc_split_if_begin_else",
       "_preproc_end_branch",
-      "_open_branch"
+      "_open_branch",
+      "preproc_split_else_begin_over_endif"
     ],
     [
       "filter_value",

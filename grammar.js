@@ -231,9 +231,17 @@ module.exports = grammar({
     // A bodiless key header before a directive: a complete key_declaration, or
     // the header half of a preproc_split_key. Only the `{` after #endif decides.
     [$.preproc_split_key, $.key_declaration],
+    // _reopen_block: `if E then begin …` left open at #endif, or a complete
+    // if_statement among the reopened block's statements.
+    [$._preproc_if_header, $.if_statement],
     // After container body items a `#if` continues the body, or opens
     // preproc_split_container_reopen; the `}` after the condition decides.
     [$.layout_container_body],
+    // preproc_split_open_statement. In case_body a `#if` may now open case
+    // patterns or statements, and a case-else, so patterns and expressions meet;
+    // everywhere else it overlaps the fixed-shape split rules, which win by
+    // prec.dynamic when both complete. GLR decides all of these past the
+    // condition.
     [$.preproc_conditional_statement, $.preproc_conditional_case_patterns],
     [$.preproc_conditional_statement, $.preproc_split_case_branch, $.preproc_conditional_case_patterns],
     [$._open_branch, $.case_else_branch],
@@ -251,7 +259,7 @@ module.exports = grammar({
     // ambiguity that was always there. GLR resolves it by which parse completes.
     [$._preproc_branch_statement, $._preproc_split_then_begin_open,
      $.preproc_split_if_then_begin_else_shared, $.preproc_split_if_begin_else,
-     $._preproc_end_branch, $._open_branch],
+     $._preproc_end_branch, $._open_branch, $.preproc_split_else_begin_over_endif],
     [$.filter_value, $._literal_value],
     [$.filter_value, $._expression],
     [$._body_element, $._action_element],
@@ -3317,16 +3325,33 @@ module.exports = grammar({
     // statements were flattened next to them, and the whole if/else read as a
     // single then-branch. Zero ERROR nodes. Real site: BaseApp
     // Integration/D365Sales/CRMSetupDefaults.Codeunit.al:76-84.
+    //
+    // Generalised for ProdOrderComponent.Table.al:209 (IT layer, BC 29; alc
+    // accepts both configs): the branch may open with statements, close more
+    // than one block (`end; end else`), and reopen a chain of
+    // `if E then begin stmts*` rather than a bare `begin`. The tail after
+    // #endif still takes exactly ONE `end` -- the host block's, in the #if-not
+    // reading -- so every enclosing block keeps its own `end` and the counts
+    // outside this node are those of that reading.
     preproc_split_else_begin_over_endif: $ => prec.right(25, seq(
       $.preproc_if,
-      $.end_keyword,
-      $.else_keyword,
-      $.begin_keyword,
       repeat($._statement),
+      $.end_keyword,
+      repeat(seq(optional(';'), $.end_keyword)),
+      $.else_keyword,
+      $._reopen_block,
       $.preproc_endif,
       repeat($._statement),
       $.end_keyword,
     )),
+
+    // `[if E then]* begin stmts* [<reopen>]` left open at #endif.
+    _reopen_block: $ => seq(
+      repeat($._preproc_if_header),
+      $.begin_keyword,
+      repeat($._statement),
+      optional($._reopen_block),
+    ),
 
     // Content-only statement run (no begin/end) so a statement container can
     // expose its inside as a single node. repeat1 (tree-sitter forbids
