@@ -10,7 +10,8 @@ from tools.config_oracle.ir import Node
 from tools.config_oracle.lowering import expression
 from tools.config_oracle.lowering.engine import (BlockCompletion, ElseAttachment, ExpressionContinuation,
                                                  Following, Lowered, LoweringError, RelationContinuation,
-                                                 SiblingsAfter, Terminator, _span_from_children, lower)
+                                                 SiblingsAfter, Terminator, VarTailMerge, _span_from_children,
+                                                 lower)
 from tools.config_oracle.lowering.select import chosen_arm, reading_active, split_arms
 
 
@@ -180,6 +181,33 @@ def split_case_statement_end(node, ctx) -> Lowered:
     # Order matters: the host inserts each fragment right after the anchor, so the
     # Terminator (inserted last) lands between the case and the Following statements.
     return Lowered([case], [Following(case, stmts), Terminator(case, term)])
+
+
+def split_var_section_tail(node, ctx) -> Lowered:
+    """Contract var-tail-merge (see engine.VarTailMerge). Host: a body-element
+    repeat slot (policy per registry, the census set for a `_body_element`
+    member). Children: `#if variables:var_body <body elements>... (#elif|#else
+    [variables:var_body] <body elements>...)* #endif`. The chosen arm's
+    `variables` var_body's own children (the declarations, lowered under
+    `var_body:<children>`) become a VarTailMerge fragment (a ToPrevious): it
+    binds to the preceding lowered sibling and there performs the named rewrite
+    (engine.VarTailMerge). The arm's other items are lowered in place (host
+    `<node.kind>:<children>`) and emitted as ordinary nodes, siblings placed
+    right after that section by the loop that binds ToPrevious fragments
+    (`frag._skip` set to their count). No arm selected (or an arm with no
+    `variables`) still emits a VarTailMerge, with `decls == []` -- a no-op that
+    still enforces the preceding-var_section check. Directives are `directive`,
+    other arms `inactive-arm`."""
+    ctx.policy(contracts.REGISTRY[node.kind], node)
+    arms, endif = split_arms(node)
+    arm = _active(arms, endif, node, ctx)
+    variables = next((c for c in arm if c.field == "variables"), None)
+    rest = [c for c in arm if c.field != "variables"]
+    decls = _lower_all(variables.children, ctx, variables.kind) if variables is not None else []
+    others = _lower_all(rest, ctx, node.kind)
+    frag = VarTailMerge(None, decls)
+    frag._skip = len(others)
+    return Lowered(others, [frag])
 
 
 def table_relation_select(node, ctx) -> Lowered:

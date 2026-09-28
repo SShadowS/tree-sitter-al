@@ -392,11 +392,6 @@ for t in ("preproc_conditional_case_patterns",
           "preproc_split_table_field"):
     register(t, "unsupported")
 
-# Added with the var_body fix (deferred-work item 8). Lowering must merge each
-# branch's `variables` into the PRECEDING sibling var_section — a cross-sibling
-# rewrite the engine has no fragment for yet (milestone 2).
-register("preproc_split_var_section_tail", "unsupported")
-
 # preproc_split_permissions_property assembles one property per branch from
 # that branch's head plus the shared tail. milestone 3.
 register("preproc_split_permissions_property", "unsupported")
@@ -478,6 +473,15 @@ register("preproc_operand_prefix", "assembler", _ASM + "operand_prefix",
          hosts={f"{k}:<children>": "consumed" for k in (
              "additive_expression", "comparison_expression", "logical_expression",
              "multiplicative_expression")})
+
+# --- Task 12: var-tail-merge (assemblers.split_var_section_tail / engine.VarTailMerge).
+# Added with the var_body fix (deferred-work item 8), unsupported until this task gave
+# the engine a ToPrevious fragment for the cross-sibling merge into the PRECEDING
+# var_section. Hosts are the census output (host_slots over node-types.json), which is
+# exactly _BODY_HOSTS: this type is a `_body_element` member (grammar.js), so it appears
+# everywhere every other body-element special type does.
+register("preproc_split_var_section_tail", "assembler", _ASM + "split_var_section_tail",
+         hosts=_BODY_HOSTS)
 
 SPECIAL_NON_PREFIXED = {"else_table_relation_fragment"}
 

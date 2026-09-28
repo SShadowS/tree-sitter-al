@@ -151,6 +151,35 @@ class ExpressionContinuation(ToPrevious):
         return expression.compose(flat, prev.field)
 
 
+@dataclass
+class VarTailMerge(ToPrevious):
+    """Contract **var-tail-merge** (produced by assemblers.split_var_section_tail).
+    The preceding lowered sibling must be a `var_section` (grammar.js comment on
+    `preproc_split_var_section_tail`: this node is always its sibling); anything
+    else is `contract-shape`, checked even when there is nothing to merge. The
+    chosen arm's `variables` declarations (already lowered) APPEND to that
+    section's `var_body`, created with field `body` if the section had none yet.
+    That is the named rewrite: only the var_body's children list grows, and its
+    (and the var_section's) span is recomputed from its children. No other edge
+    changes. An arm with no `variables`, or no arm chosen, carries `decls == []`
+    and this is a no-op."""
+    decls: list = field(default_factory=list)
+
+    def apply(self, prev):
+        if prev.kind != "var_section":
+            raise LoweringError("contract-shape", prev, "var-tail-merge needs a preceding var_section")
+        if not self.decls:
+            return prev
+        body = next((c for c in prev.children if c.field == "body"), None)
+        kids = list(prev.children)
+        if body is None:
+            body = Node("var_body", True, "body", 0, 0, [])
+            kids.append(body)
+        new_body = _span_from_children(body.copy(children=body.children + self.decls))
+        kids = [new_body if c is body else c for c in kids]
+        return _span_from_children(prev.copy(children=kids))
+
+
 # property_expression's own members (grammar.js property_expression), hand-written.
 PROPERTY_EXPRESSION_KINDS = frozenset({
     "call_expression", "member_expression", "qualified_enum_value", "database_reference",
