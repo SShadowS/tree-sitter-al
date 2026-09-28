@@ -186,7 +186,29 @@ caught one of its own case-construction bugs during the release — a probe that
 would otherwise have been filed as "alc rejects Implementation splits", which is
 false.
 
-## 8. `var_body` admits body elements: procedures land inside the global var section
+## 8. `var_body` admits body elements: procedures land inside the global var section — RESOLVED 2026-09-28
+
+**Resolution:** `var_body` no longer admits `preproc_split_procedure`, and
+`preproc_conditional_var`'s branches admit only `variable_declaration` and
+`var_attribute_item`. The conditional/split procedures now parse at body level,
+as siblings of the var section. The one real crossing (a branch that continues
+the var section and then starts procedures, `AOAIDeploymentsImpl.Codeunit.al:28`)
+gets a new sibling rule, `preproc_split_var_section_tail`, whose `variables`
+field holds the continued declarations. Measured after the fix:
+- BC.History, DC and BC 28.1: 0 ERROR/MISSING nodes.
+- tree-harness: exactly 59 BC.History files changed. Across them the only node
+  changes are re-spanned `var_section`/`var_body` and 116 `preproc_conditional_var`
+  -> 115 body-level `preproc_conditional` + 1 `preproc_split_var_section_tail`.
+- Config-oracle quick tier: discrepancies 9 -> 1 (the remaining one is the known
+  mid-file-BOM oracle false positive), pass 246 -> 264.
+- STATE_COUNT 14,661 -> 13,902.
+- Three fixtures had asserted the defect (a `protected var` section nested in
+  another var section's body; procedures inside `var_body`) and were corrected.
+- The oracle lowering for `preproc_split_var_section_tail` is milestone-2 work
+  (a cross-sibling merge into the preceding var_section); it is registered
+  `unsupported` until then.
+
+The original finding follows.
 
 **Established:** config-oracle quick tier, 2026-09-28 (milestone-1 results,
 `docs/superpowers/plans/2026-09-27-config-oracle-milestone-1-results.md`), grammar

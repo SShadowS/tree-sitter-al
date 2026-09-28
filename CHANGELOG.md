@@ -9,6 +9,21 @@ public API — a change to node structure or field names is a **major** bump.
 
 ### Fixed
 
+- **A `#if` after a global `var` section no longer lands inside it.** `var_body`
+  admitted `preproc_split_procedure`, and `preproc_conditional_var` admitted any
+  body element, so a conditional procedure right after a global var section was
+  parsed as part of that section: 459 procedures in 84 files across BC.History,
+  BC 28.1 and DC. Every configuration's own parse has them as siblings of the
+  var section. Found by the configuration-consistency oracle. The procedures now
+  parse at body level; a branch that continues the var section AND then starts
+  procedures gets the new sibling node `preproc_split_var_section_tail` (field
+  `variables`). 59 BC.History trees change; no ERROR nodes anywhere.
+
+  **Tree-shape change:** `var_body` and `preproc_conditional_var` no longer
+  contain procedures, triggers, attributes or nested var sections; queries that
+  relied on finding such procedures under `var_section` must look at the
+  object body instead. `node-types.json` changes accordingly.
+
 - **A split procedure signature accepts every body form an ordinary signature
   does.** `preproc_split_procedure` (the signature differs across `#if`/`#else`)
   took only `[;] [var] begin … end` after its `#endif`. Followed by a split body
