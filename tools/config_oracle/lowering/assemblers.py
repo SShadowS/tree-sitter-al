@@ -258,43 +258,74 @@ def split_var_section_tail(node, ctx) -> Lowered:
     return Lowered(others, [frag])
 
 
-def table_relation_select(node, ctx) -> Lowered:
-    """Contract else-relation-join (see engine.RelationContinuation). Hosts: a
-    `property:value` slot (the whole value is the #if) and a
-    `table_relation_value:<children>` slot (the #if continues the relation before
-    it). The chosen arm is ONE of: an `else_table_relation_fragment`
-    (-> RelationContinuation), or a complete relation value (-> a node taking the
-    conditional's own field); then an optional `;` (-> Terminator, terminator-hoist).
-    An empty or unselected arm contributes nothing. An arm kind outside the
-    registered `arm` set, or anything else, is contract-shape. Any other host
-    (policy `unsupported`) is unsupported-type. An arm that is itself a
-    whole-value conditional (G3) is lowered by this same contract and its
-    nodes and fragments pass through, its nodes taking this conditional's field."""
-    if ctx.policy(contracts.REGISTRY[node.kind], node) == "unsupported":
+def _select_arm(node, ctx):
+    """Shared by the two value selections below. Refuse an `unsupported` host;
+    account directives and inactive arms; split the chosen arm into its items
+    and its optional trailing `;` (lowered to a Terminator, terminator-hoist: it
+    is the configured property's own `;`). More than one item, or an item kind
+    outside the registered `arm` set, is contract-shape."""
+    entry = contracts.REGISTRY[node.kind]
+    if ctx.policy(entry, node) == "unsupported":
         raise LoweringError("unsupported-type", node, f"host {ctx.parent_kind}:{ctx.slot}")
     arms, endif = split_arms(node)
-    arm = _active(arms, endif, node, ctx)
-    frags, nodes = [], []
-    items = list(arm)
+    items = list(_active(arms, endif, node, ctx))
     semi = items.pop() if items and items[-1].kind == ";" else None
-    if len(items) > 1 or (items and items[0].kind not in contracts.REGISTRY[node.kind].arm):
+    if len(items) > 1 or (items and items[0].kind not in entry.arm):
         raise LoweringError("contract-shape", node, "arm: " + " ".join(c.kind for c in items))
+    term = [Terminator(None, _lower_all([semi], ctx, node.kind)[0])] if semi is not None else []
+    return items, term
+
+
+def table_relation_select(node, ctx) -> Lowered:
+    """Contract else-relation-join (see engine.RelationContinuation). Host: a
+    `table_relation_value:<children>` slot (the #if continues the relation before
+    it, G1); `table_relation_expression:<children>` is policy `unsupported` ->
+    unsupported-type. The chosen arm is ONE of: an `else_table_relation_fragment`
+    (-> RelationContinuation), or a complete `table_relation_expression` (-> a
+    node taking the conditional's own field); then an optional `;` (-> Terminator,
+    terminator-hoist). An empty or unselected arm contributes nothing. An arm
+    kind outside the registered `arm` set, or anything else, is contract-shape.
+    A whole property value that is a #if is NOT this contract since G6: it is
+    preproc_conditional_property_value, property_value_select."""
+    items, frags = _select_arm(node, ctx)
+    nodes = []
     if items and items[0].kind == "else_table_relation_fragment":
         frag = items[0]
         if len(frag.children) != 2 or frag.children[0].kind != "else_keyword":
             raise LoweringError("contract-shape", frag, "expected `else else_relation:`")
         else_kw = _lower_all(frag.children[:1], ctx, frag.kind)[0]   # an ordinary node: marked kept once
         rel = _lower_all(frag.children[1:], ctx, frag.kind)[0]
-        frags.append(RelationContinuation(None, else_kw, rel))
-    elif items and items[0].kind == node.kind:
-        r = lower(items[0], ctx.child(node.kind, "<children>"))
-        nodes = [n.copy(field=node.field) for n in r.nodes]
-        frags += r.frags
+        frags.insert(0, RelationContinuation(None, else_kw, rel))
     elif items:
         nodes = [n.copy(field=node.field) for n in _lower_all(items, ctx, node.kind)]
-    if semi is not None:
-        frags.append(Terminator(None, _lower_all([semi], ctx, node.kind)[0]))
     return Lowered(nodes, frags)
+
+
+def property_value_select(node, ctx) -> Lowered:
+    """Contract whole-value-select (G6). Hosts: `property:value` (a property's
+    whole value is the #if) and `preproc_conditional_property_value:value` (a
+    whole-value #if nested in a whole-value arm, G3), both single-slot. The
+    chosen arm is at most ONE node, in field `value`, of a registered arm kind
+    (-> that node, taking the conditional's own field: the flat parse's
+    `property.value`); then an optional `;` outside the field (-> Terminator,
+    terminator-hoist: the configured property's own `;`). An empty or unselected
+    arm contributes nothing. An arm node without the `value` field, a kind
+    outside the `arm` set, or anything else, is contract-shape. A nested
+    whole-value #if is lowered by this same contract from its
+    `preproc_conditional_property_value:value` host; its nodes take this
+    conditional's field and its fragments (its arm's Terminator) pass through.
+    No other edge changes."""
+    items, frags = _select_arm(node, ctx)
+    if items and items[0].field != "value":
+        raise LoweringError("contract-shape", node, f"arm value in field {items[0].field!r}, not 'value'")
+    if not items:
+        return Lowered([], frags)
+    if items[0].kind == node.kind:
+        r = lower(items[0], ctx.child(node.kind, "value"))
+        return Lowered([n.copy(field=node.field) for n in r.nodes], r.frags + frags)
+    # Any other arm value is an ordinary subtree: a fragment inside it is refused
+    # (_lower_all), as before G6.
+    return Lowered([n.copy(field=node.field) for n in _lower_all(items, ctx, node.kind)], frags)
 
 
 # --- One-reading contracts (spec P4). The node's text nests across the #if

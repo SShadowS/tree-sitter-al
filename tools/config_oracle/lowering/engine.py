@@ -440,7 +440,7 @@ def _consume(new, frags):
             for n in _path(vals[-1], target):
                 recompute_span(n)
         # anchor None: emitted by a special node that is itself a direct child of
-        # the property (table_relation_select on a whole-value #if); otherwise it
+        # the property (property_value_select on a whole-value #if); otherwise it
         # passed up through the property's child: the list (list-run) or the
         # table_relation_value holding an else-relation-join conditional.
         elif isinstance(f, Terminator) and new.kind == "property"                 and (f.anchor is None or any(c is f.anchor for c in new.children)):

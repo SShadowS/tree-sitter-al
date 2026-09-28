@@ -427,37 +427,41 @@ register("preproc_split_block_close_after_endif", "assembler", _ASM + "block_clo
          hosts={"code_block:<children>": "consumed"}, reading="arm:else")
 
 # --- Task 8: table relation, contract else-relation-join (assemblers.table_relation_select).
-# Hosts are the census output. Two grammar rules build this node type:
-#  * property:value -- _table_relation_whole_conditional (the whole value is the
-#    #if): each arm is one `_property_value` (G8; before it, identifier |
-#    quoted_identifier | table_relation_value (G2) or a literal leaf (G4)), the
-#    shape a flat parse of the arm gives, then an optional ';'.
-#  * table_relation_value:<children> -- preproc_conditional_table_relation after
-#    the relation it continues (G1): arm _tr_branch, i.e. table_relation_expression
-#    | else_table_relation_fragment, then an optional ';'.
+# Hosts are the census output. preproc_conditional_table_relation is a relation
+# CONTINUATION only (since G6): the #if extends the relation before it.
+#  * table_relation_value:<children> -- after the relation it continues (G1): arm
+#    _table_relation_branch, i.e. table_relation_expression |
+#    else_table_relation_fragment, then an optional ';'.
+#  * table_relation_expression:<children> -- nested inside an else chain.
+# A whole property value that is a #if is preproc_conditional_property_value
+# (whole-value-select, below); until G6 it shared this type and this entry.
 register("preproc_conditional_table_relation", "assembler",
          "tools.config_oracle.lowering.assemblers.table_relation_select",
          # Nested inside an else chain the arm's relation must merge into the
          # enclosing table_relation_expression, a rewrite this contract does not
          # name: refused as unsupported-type, milestone 3 (1 production file,
          # DC CDCDataTranslation.Table.al).
-         # preproc_conditional_table_relation:<children>: a whole-value #if nested
-         # in a whole-value arm (G3), lowered as the arm's value.
-         hosts={"property:value": "single-slot",
-                "preproc_conditional_table_relation:<children>": "single-slot",
-                "table_relation_expression:<children>": "unsupported",
+         hosts={"table_relation_expression:<children>": "unsupported",
                 "table_relation_value:<children>": "single-slot"},
-         # The literal leaves are the whole-value arm's (G4): any property's whole
-         # value may be a #if, and each arm holds the leaf its flat parse gives.
-         arm={"identifier", "quoted_identifier", "table_relation_value",
-              "table_relation_expression", "else_table_relation_fragment", ";",
+         arm={"table_relation_expression", "else_table_relation_fragment", ";"})
+# --- G6: a whole-property-value #if, contract whole-value-select
+# (assemblers.property_value_select). Hosts are the census output:
+#  * property:value -- _property_value_conditional, the whole value is the #if;
+#  * preproc_conditional_property_value:value -- a whole-value #if nested in a
+#    whole-value arm (G3), lowered as the arm's value.
+# Each nonempty arm is `value:` ONE `_property_value` (G8; before it, identifier
+# | quoted_identifier | table_relation_value (G2) or a literal leaf (G4)), the
+# shape a flat parse of the arm gives, then an optional ';' outside the field.
+register("preproc_conditional_property_value", "assembler",
+         "tools.config_oracle.lowering.assemblers.property_value_select",
+         hosts={"property:value": "single-slot",
+                "preproc_conditional_property_value:value": "single-slot"},
+         # Every visible kind _property_value offers (grammar.js _property_value),
+         # the nested whole value included, and the arm's own ';'.
+         arm={"identifier", "quoted_identifier", "table_relation_value", ";",
               "boolean", "integer", "decimal", "string_literal", "verbatim_string",
               "date_literal", "time_literal", "datetime_literal",
-              "preproc_conditional_table_relation",
-              # G8 (Task 18): a whole-value arm is `_property_value` itself, so
-              # every compound value it offers (grammar.js _property_value) is an
-              # arm kind too. The table_relation_value:<children> host's arms
-              # (_tr_branch) never produce these.
+              "preproc_conditional_property_value",
               "caption_value", "ml_value_list", "tabledata_permission_list",
               "order_by_list", "implementation_value_list", "option_member_list",
               "sorting_value", "link_value_list", "property_expression",
