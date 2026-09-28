@@ -7,6 +7,12 @@
 ; the value used to have no table_relation_value wrapper, and the open if-chain
 ; form had no table_relation_expression either. Found by the configuration-
 ; consistency oracle (tools/config_oracle, milestone 2).
+;
+; G2: when the whole value is a #if, each arm used to be a
+; table_relation_expression, which no flat parse gives: flat `Item;` is a
+; generic `identifier` value, flat `"X";` a `quoted_identifier`, and only a
+; longer relation is table_relation_value. Each arm now holds that value,
+; whether the `;` sits inside the arms or after #endif.
 
 ========================================================================
 Flat if-else relation
@@ -197,3 +203,263 @@ table 1 T
                               table: (identifier)))
                           (preproc_endif
                             (preproc_close)))))))))))))))
+
+========================================================================
+Flat bare-name relation is an identifier
+========================================================================
+table 1 T
+{
+    fields
+    {
+        field(1; F; Code[20])
+        {
+            TableRelation = Item;
+        }
+    }
+}
+
+------------------------------------------------------------------------
+
+(source_file
+  (table_declaration
+    (table_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (fields_section
+        (fields_keyword)
+        body: (fields_body
+          (field_declaration
+            (field_keyword)
+            id: (integer)
+            name: (identifier)
+            type: (type_specification
+              (code_type
+                (code_keyword)
+                length: (integer)))
+            body: (declaration_body
+              (property
+                name: (property_name)
+                value: (identifier)))))))))
+
+========================================================================
+Whole-value #if arms hold bare names as identifier and quoted_identifier
+========================================================================
+table 1 T
+{
+    fields
+    {
+        field(1; F; Code[20])
+        {
+            TableRelation =
+#if BC24
+                Item;
+#else
+                "Sales Header";
+#endif
+        }
+    }
+}
+
+------------------------------------------------------------------------
+
+(source_file
+  (table_declaration
+    (table_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (fields_section
+        (fields_keyword)
+        body: (fields_body
+          (field_declaration
+            (field_keyword)
+            id: (integer)
+            name: (identifier)
+            type: (type_specification
+              (code_type
+                (code_keyword)
+                length: (integer)))
+            body: (declaration_body
+              (property
+                name: (property_name)
+                value: (preproc_conditional_table_relation
+                  (preproc_if
+                    (preproc_open)
+                    condition: (identifier))
+                  (identifier)
+                  (preproc_else)
+                  (quoted_identifier)
+                  (preproc_endif
+                    (preproc_close)))))))))))
+
+========================================================================
+Flat relation with where is table_relation_value
+========================================================================
+table 1 T
+{
+    fields
+    {
+        field(1; F; Code[20])
+        {
+            TableRelation = Item where("No." = field(F));
+        }
+    }
+}
+
+------------------------------------------------------------------------
+
+(source_file
+  (table_declaration
+    (table_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (fields_section
+        (fields_keyword)
+        body: (fields_body
+          (field_declaration
+            (field_keyword)
+            id: (integer)
+            name: (identifier)
+            type: (type_specification
+              (code_type
+                (code_keyword)
+                length: (integer)))
+            body: (declaration_body
+              (property
+                name: (property_name)
+                value: (table_relation_value
+                  (table_relation_expression
+                    (simple_table_relation
+                      table: (identifier)
+                      (where_clause
+                        (where_keyword)
+                        (where_conditions
+                          (where_condition
+                            field: (quoted_identifier)
+                            (field_keyword)
+                            value: (identifier)))))))))))))))
+
+========================================================================
+Whole-value #if arm with where is table_relation_value
+========================================================================
+table 1 T
+{
+    fields
+    {
+        field(1; F; Code[20])
+        {
+            TableRelation =
+#if BC24
+                Item where("No." = field(F));
+#else
+                Customer;
+#endif
+        }
+    }
+}
+
+------------------------------------------------------------------------
+
+(source_file
+  (table_declaration
+    (table_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (fields_section
+        (fields_keyword)
+        body: (fields_body
+          (field_declaration
+            (field_keyword)
+            id: (integer)
+            name: (identifier)
+            type: (type_specification
+              (code_type
+                (code_keyword)
+                length: (integer)))
+            body: (declaration_body
+              (property
+                name: (property_name)
+                value: (preproc_conditional_table_relation
+                  (preproc_if
+                    (preproc_open)
+                    condition: (identifier))
+                  (table_relation_value
+                    (table_relation_expression
+                      (simple_table_relation
+                        table: (identifier)
+                        (where_clause
+                          (where_keyword)
+                          (where_conditions
+                            (where_condition
+                              field: (quoted_identifier)
+                              (field_keyword)
+                              value: (identifier)))))))
+                  (preproc_else)
+                  (identifier)
+                  (preproc_endif
+                    (preproc_close)))))))))))
+
+========================================================================
+Whole-value #if with the semicolon after endif has the same arms
+========================================================================
+table 1 T
+{
+    fields
+    {
+        field(1; F; Code[20])
+        {
+            TableRelation =
+#if BC24
+                Item
+#else
+                Customer where("No." = field(F))
+#endif
+                ;
+        }
+    }
+}
+
+------------------------------------------------------------------------
+
+(source_file
+  (table_declaration
+    (table_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (fields_section
+        (fields_keyword)
+        body: (fields_body
+          (field_declaration
+            (field_keyword)
+            id: (integer)
+            name: (identifier)
+            type: (type_specification
+              (code_type
+                (code_keyword)
+                length: (integer)))
+            body: (declaration_body
+              (property
+                name: (property_name)
+                value: (preproc_conditional_table_relation
+                  (preproc_if
+                    (preproc_open)
+                    condition: (identifier))
+                  (identifier)
+                  (preproc_else)
+                  (table_relation_value
+                    (table_relation_expression
+                      (simple_table_relation
+                        table: (identifier)
+                        (where_clause
+                          (where_keyword)
+                          (where_conditions
+                            (where_condition
+                              field: (quoted_identifier)
+                              (field_keyword)
+                              value: (identifier)))))))
+                  (preproc_endif
+                    (preproc_close)))))))))))

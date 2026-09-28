@@ -1928,8 +1928,13 @@
               "type": "CHOICE",
               "members": [
                 {
-                  "type": "SYMBOL",
-                  "name": "preproc_conditional_table_relation"
+                  "type": "ALIAS",
+                  "content": {
+                    "type": "SYMBOL",
+                    "name": "_table_relation_whole_conditional"
+                  },
+                  "named": true,
+                  "value": "preproc_conditional_table_relation"
                 },
                 {
                   "type": "ALIAS",
@@ -1945,6 +1950,153 @@
           }
         ]
       }
+    },
+    "_table_relation_whole_conditional": {
+      "type": "SEQ",
+      "members": [
+        {
+          "type": "SYMBOL",
+          "name": "preproc_if"
+        },
+        {
+          "type": "CHOICE",
+          "members": [
+            {
+              "type": "SYMBOL",
+              "name": "_table_relation_whole_branch"
+            },
+            {
+              "type": "BLANK"
+            }
+          ]
+        },
+        {
+          "type": "REPEAT",
+          "content": {
+            "type": "SEQ",
+            "members": [
+              {
+                "type": "SYMBOL",
+                "name": "preproc_elif"
+              },
+              {
+                "type": "CHOICE",
+                "members": [
+                  {
+                    "type": "SYMBOL",
+                    "name": "_table_relation_whole_branch"
+                  },
+                  {
+                    "type": "BLANK"
+                  }
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "type": "CHOICE",
+          "members": [
+            {
+              "type": "SEQ",
+              "members": [
+                {
+                  "type": "SYMBOL",
+                  "name": "preproc_else"
+                },
+                {
+                  "type": "CHOICE",
+                  "members": [
+                    {
+                      "type": "SYMBOL",
+                      "name": "_table_relation_whole_branch"
+                    },
+                    {
+                      "type": "BLANK"
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "type": "BLANK"
+            }
+          ]
+        },
+        {
+          "type": "SYMBOL",
+          "name": "preproc_endif"
+        }
+      ]
+    },
+    "_table_relation_whole_branch": {
+      "type": "CHOICE",
+      "members": [
+        {
+          "type": "PREC",
+          "value": 1,
+          "content": {
+            "type": "SEQ",
+            "members": [
+              {
+                "type": "CHOICE",
+                "members": [
+                  {
+                    "type": "SYMBOL",
+                    "name": "identifier"
+                  },
+                  {
+                    "type": "SYMBOL",
+                    "name": "quoted_identifier"
+                  },
+                  {
+                    "type": "ALIAS",
+                    "content": {
+                      "type": "SYMBOL",
+                      "name": "_value_start_keyword_name"
+                    },
+                    "named": true,
+                    "value": "identifier"
+                  }
+                ]
+              },
+              {
+                "type": "CHOICE",
+                "members": [
+                  {
+                    "type": "STRING",
+                    "value": ";"
+                  },
+                  {
+                    "type": "BLANK"
+                  }
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "type": "SEQ",
+          "members": [
+            {
+              "type": "SYMBOL",
+              "name": "table_relation_value"
+            },
+            {
+              "type": "CHOICE",
+              "members": [
+                {
+                  "type": "STRING",
+                  "value": ";"
+                },
+                {
+                  "type": "BLANK"
+                }
+              ]
+            }
+          ]
+        }
+      ]
     },
     "_table_relation_split_value": {
       "type": "CHOICE",
@@ -2061,6 +2213,15 @@
         {
           "type": "SYMBOL",
           "name": "table_relation_value"
+        },
+        {
+          "type": "ALIAS",
+          "content": {
+            "type": "SYMBOL",
+            "name": "_table_relation_whole_conditional"
+          },
+          "named": true,
+          "value": "preproc_conditional_table_relation"
         },
         {
           "type": "SYMBOL",
@@ -22946,6 +23107,13 @@
       "preproc_conditional_table_relation"
     ],
     [
+      "preproc_conditional_link_values",
+      "preproc_conditional_permissions",
+      "preproc_conditional_impl_values",
+      "preproc_conditional_table_relation",
+      "_table_relation_whole_conditional"
+    ],
+    [
       "_link_value_branch",
       "_permission_branch",
       "_impl_value_branch"
@@ -22953,6 +23121,10 @@
     [
       "preproc_conditional_permissions",
       "preproc_conditional_table_relation"
+    ],
+    [
+      "preproc_conditional_permissions",
+      "_table_relation_whole_conditional"
     ],
     [
       "_namespaced_ref_table",
