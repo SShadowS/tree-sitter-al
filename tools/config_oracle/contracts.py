@@ -41,7 +41,7 @@ def register(type_, kind, handler=None, hosts=None, alias_to=None, arm=None, rea
     if reading is not None and reading not in READINGS:
         raise ValueError(f"unknown reading {reading!r} for {type_}")
     REGISTRY[type_] = Entry(type_, kind, handler, dict(hosts or {}), alias_to,
-                            frozenset(arm) if arm else None, reading)
+                            frozenset(arm) if arm is not None else None, reading)
 
 
 def resolve_handler(entry):

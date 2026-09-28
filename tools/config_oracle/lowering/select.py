@@ -54,7 +54,8 @@ def branch_select(node, ctx) -> Lowered:
     (named rewrite **terminator-hoist**), which passes up through the list and is
     appended as the last child of the owning `property`. After the host list is
     built, it must read `item (, item)*`, ignoring bracket tokens (`(`, `)`, `[`,
-    `]`) at its ends. Anything else is `list-separator`.
+    `]`) wherever they appear and one trailing `;` (`engine._check_alternation`).
+    Anything else is `list-separator`.
     """
     entry = contracts.REGISTRY[node.kind]
     policy = ctx.policy(entry, node)

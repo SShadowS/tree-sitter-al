@@ -429,7 +429,8 @@ def _consume(new, frags):
         elif isinstance(f, SiblingsAfter) and new.kind in LAYOUT_HOSTS                 and any(c is f.anchor for c in new.children):
             at = next(i for i, c in enumerate(new.children) if c is f.anchor) + 1
             new.children[at:at] = list(f.nodes)
-        elif isinstance(f, RelationContinuation) and new.kind == "table_relation_value":
+        elif isinstance(f, RelationContinuation) and new.kind == "table_relation_value" \
+                and (f.anchor is None or any(c is f.anchor for c in new.children)):
             vals = [c for c in new.children if c.kind == "table_relation_expression"]
             if not vals:
                 raise LoweringError("unconsumed-fragment", new, "no relation to continue")

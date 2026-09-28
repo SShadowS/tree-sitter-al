@@ -92,8 +92,15 @@ def _has_error_backstop(rec):
     plain visible node) or only through its own has_error fallback (`has-error@`, replay
     3's shape: the MISSING token there is hidden inside an alias). Both are the same
     backstop from the runner's point of view -- `_check_config_inner` short-circuits to
-    `cannot-validate` on any `multi-config-parse:` item, regardless of which reason it carries."""
-    return any(i.startswith("multi-config-parse:") for i in rec.items)
+    `cannot-validate` on any `multi-config-parse:` item, regardless of which reason it carries.
+    Only those three reason shapes count: any other `multi-config-parse:` payload is not
+    this backstop."""
+    return any(i.startswith("multi-config-parse:")
+               and any(p.startswith(_BACKSTOP_REASONS) for p in i[len("multi-config-parse:"):].split(","))
+               for i in rec.items)
+
+
+_BACKSTOP_REASONS = ("has-error@", "missing@", "error@")
 
 
 REPLAYS = [
