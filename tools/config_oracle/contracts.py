@@ -123,7 +123,9 @@ register("preproc_conditional_var_block", "branch-select", "tools.config_oracle.
          hosts=_ROUTINE_TAIL_HOSTS)
 register("preproc_pragma_only", "branch-select", "tools.config_oracle.lowering.select.branch_select",
          hosts={"field_declaration:<children>": "splice-repeat", "preproc_split_procedure:<children>": "splice-repeat",
-                "procedure:<children>": "splice-repeat", "source_file:<children>": "splice-repeat"})
+                "procedure:<children>": "splice-repeat", "source_file:<children>": "splice-repeat",
+                # trigger_declaration shares _procedure_tail since the BC 29 family-F fix.
+                "trigger_declaration:<children>": "splice-repeat"})
 register("preproc_split_code_block_end", "assembler",
          "tools.config_oracle.lowering.assemblers.split_code_block_end",
          hosts={"code_block:<children>": "consumed"})
