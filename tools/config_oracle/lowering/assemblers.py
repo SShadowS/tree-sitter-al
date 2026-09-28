@@ -8,9 +8,9 @@ from __future__ import annotations
 from tools.config_oracle import contracts
 from tools.config_oracle.ir import Node
 from tools.config_oracle.lowering.engine import (BlockCompletion, ElseAttachment, Following, Lowered,
-                                                 LoweringError, RelationContinuation, Terminator,
-                                                 _span_from_children, lower)
-from tools.config_oracle.lowering.select import chosen_arm, split_arms
+                                                 LoweringError, RelationContinuation, SiblingsAfter,
+                                                 Terminator, _span_from_children, lower)
+from tools.config_oracle.lowering.select import chosen_arm, reading_active, split_arms
 
 
 def _active(arms, endif, node, ctx):
@@ -212,3 +212,142 @@ def table_relation_select(node, ctx) -> Lowered:
     if semi is not None:
         frags.append(Terminator(None, _lower_all([semi], ctx, node.kind)[0]))
     return Lowered(nodes, frags)
+
+
+# --- One-reading contracts (spec P4). The node's text nests across the #if
+# ranges, so its tree shows ONE configuration's nesting, the entry's `reading`.
+# That configuration lowers normally; every other one raises `one-reading`,
+# which is never a pass.
+
+def _one_reading(node):
+    return LoweringError("one-reading", node, node.kind)
+
+
+def _cut_at_endif(node):
+    cut = next((i for i, c in enumerate(node.children) if c.kind == "preproc_endif"), None)
+    if cut is None or node.children[0].kind != "preproc_if":
+        raise LoweringError("contract-shape", node, "expected `#if ... #endif ...`")
+    return cut
+
+
+def open_statement_reading(node, ctx) -> Lowered:
+    """Contract open-statement (reading arm:not-else-led). Host: a statement
+    position (policy per registry). If the chosen arm's first item is
+    `else_keyword`, raise one-reading: the tree shows that `else` as a SIBLING of
+    an if/case already complete before the #if, which no configuration's parse
+    has. Otherwise (a complete-prefix arm, or no arm chosen) raise
+    unsupported-type: milestone 3. Emits nothing; makes no edge rewrite."""
+    ctx.policy(contracts.REGISTRY[node.kind], node)
+    cut = _cut_at_endif(node)
+    arms, _ = split_arms(node.copy(children=node.children[:cut + 1]))
+    choice = chosen_arm(node, arms, ctx)
+    arm = next((items for d, items in arms if d.start == choice), [])
+    if arm and arm[0].kind == "else_keyword":
+        raise _one_reading(node)
+    raise LoweringError("unsupported-type", node, "complete-prefix arm (milestone 3)")
+
+
+def block_end_in_else(node, ctx) -> Lowered:
+    """Contract block-end-in-else (reading arm:else). Host: the last child of a
+    `code_block` (policy `consumed`). Children: `#if stmts* (#elif stmts*)* #else
+    stmts* end_keyword`; the group's #endif is in the NEXT procedure's block
+    (preproc_split_block_close_after_endif). In the #else configuration: the #else
+    arm's statements, with their `;`, are appended to the code_block's
+    `statement_block` and the node's `end_keyword` closes the code_block
+    (BlockCompletion). No other edge changes. Directives are `directive`, other
+    arms `inactive-arm`. Any other configuration raises one-reading."""
+    entry = contracts.REGISTRY[node.kind]
+    ctx.policy(entry, node)
+    end = node.children[-1]
+    if end.kind != "end_keyword" or node.children[0].kind != "preproc_if":
+        raise LoweringError("contract-shape", node, "expected `#if ... end`")
+    # No #endif of its own: split the arms by position, not via split_arms.
+    arms = []
+    for c in node.children[:-1]:
+        if c.kind in ("preproc_if", "preproc_elif", "preproc_else"):
+            arms.append((c, []))
+        else:
+            arms[-1][1].append(c)
+    if not reading_active(node, entry, ctx, arms):
+        raise _one_reading(node)
+    choice = chosen_arm(node, arms, ctx)
+    for d, items in arms:
+        ctx.accounting.mark(d, "directive")
+        if d.start != choice:
+            for c in items:
+                ctx.accounting.mark(c, "inactive-arm")
+    stmts = _lower_all(arms[-1][1], ctx, "statement_block")
+    end_l = _lower_all([end], ctx, "code_block")[0]
+    return Lowered([], [BlockCompletion(None, stmts, end_l)])
+
+
+def block_close_after_endif(node, ctx) -> Lowered:
+    """Contract block-close-after-endif (reading arm:else). Host: the last child
+    of a `code_block` (policy `consumed`). Children: `#endif stmts* end_keyword`,
+    no #if of its own. Its group is `group_of[#endif]`, the same group as the
+    preceding preproc_split_block_end_in_else, so both decide the same reading.
+    The #else reading is active when `arm_choice[group]` is that group's one
+    `#else` directive (found by kind in `resolution.directives`, so an #elif in
+    the group cannot be mistaken for it). In it: the #endif is `directive`, the
+    statements (with their `;`) are appended to the code_block's
+    `statement_block` and the `end` closes it (BlockCompletion). No other edge
+    changes. Any other configuration raises one-reading."""
+    entry = contracts.REGISTRY[node.kind]
+    ctx.policy(entry, node)
+    endif, end = node.children[0], node.children[-1]
+    if endif.kind != "preproc_endif" or end.kind != "end_keyword" or entry.reading != "arm:else":
+        raise LoweringError("contract-shape", node, "expected `#endif ... end`, reading arm:else")
+    res = ctx.resolution
+    group = res.group_of.get(endif.start)
+    if group is None or group not in res.arm_choice:
+        raise LoweringError("directive-unknown", node, f"no resolver group for #endif at {endif.start}")
+    elses = [d.hash for d in res.directives if d.kind == "else" and res.group_of.get(d.hash) == group]
+    if len(elses) != 1 or res.arm_choice[group] != elses[0]:
+        raise _one_reading(node)
+    ctx.accounting.mark(endif, "directive")
+    stmts = _lower_all(node.children[1:-1], ctx, "statement_block")
+    end_l = _lower_all([end], ctx, "code_block")[0]
+    return Lowered([], [BlockCompletion(None, stmts, end_l)])
+
+
+_REOPEN_KIND = {"group_keyword": "group_section", "repeater_keyword": "repeater_section",
+                "cuegroup_keyword": "cuegroup_section", "fixed_keyword": "fixed_section",
+                "grid_keyword": "grid_section"}
+
+
+def container_reopen(node, ctx) -> Lowered:
+    """Contract container-reopen (reading arm:if). Host: the closing position of
+    a layout container's body block (`<kind>_section:<children>`, policy
+    `consumed`). Children: `#if } <kw> ( name ) { [body] #endif [body] }`. In the
+    #if configuration, the named rewrite **container-reopen**:
+      * the arm's `}` closes the host container: returned as a node, at the
+        position a plain `}` takes;
+      * the header (`<kw>`, `(`, `name`, `)`), `{`, both body halves merged into
+        ONE `layout_container_body` (field `body`) and the final `}` build a NEW
+        container of the matching kind (group_keyword -> group_section, ...),
+        returned as SiblingsAfter: inserted right after the host container in its
+        layout body.
+    No other edge changes. Directives are `directive`. Any other configuration
+    raises one-reading."""
+    entry = contracts.REGISTRY[node.kind]
+    ctx.policy(entry, node)
+    cut = _cut_at_endif(node)
+    head, tail = node.children[1:cut], node.children[cut + 1:]
+    if not reading_active(node, entry, ctx, [(node.children[0], head)]):
+        raise _one_reading(node)
+    header = [c for c in head[1:] if c.field != "body"]
+    if not head or head[0].kind != "}" or not header or header[0].kind not in _REOPEN_KIND \
+            or header[-1].kind != "{" or not tail or tail[-1].kind != "}":
+        raise LoweringError("contract-shape", node, " ".join(c.kind for c in node.children))
+    ctx.accounting.mark(node.children[0], "directive")
+    ctx.accounting.mark(node.children[cut], "directive")
+    close = _lower_all(head[:1], ctx, node.kind)[0]
+    halves = [c for c in head[1:] + tail[:-1] if c.field == "body"]
+    body = [Node("layout_container_body", True, "body", halves[0].start, halves[-1].end,
+                 [k for h in halves for k in h.children])] if halves else []
+    kind = _REOPEN_KIND[header[0].kind]
+    raw = Node(kind, True, None, header[0].start, tail[-1].end, header + body + tail[-1:])
+    r = lower(raw, ctx.child(ctx.parent_kind, ctx.slot))
+    if r.frags:
+        raise LoweringError("unconsumed-fragment", node, "fragment escaping the reopened container")
+    return Lowered([close], [SiblingsAfter(None, r.nodes)])

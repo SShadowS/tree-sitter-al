@@ -100,9 +100,11 @@ def branch_select(node, ctx) -> Lowered:
     return out
 
 
-def reading_active(node, entry, ctx):
-    """True when the resolved configuration is the one the tree shows (spec P4)."""
-    arms, _ = split_arms(node)
+def reading_active(node, entry, ctx, arms=None):
+    """True when the resolved configuration is the one the tree shows (spec P4).
+    `arms` overrides split_arms for a node that is not a whole #if ... #endif group."""
+    if arms is None:
+        arms, _ = split_arms(node)
     choice = chosen_arm(node, arms, ctx)
     first = arms[0][0].start
     if entry.reading == "arm:if":

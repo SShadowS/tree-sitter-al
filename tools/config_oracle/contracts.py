@@ -407,16 +407,26 @@ register("preproc_split_modify", "unsupported")
 # BC 29 family D: only the #if-taken configuration is valid AL, so lowering the
 # other configuration must report cannot-validate, never a discrepancy. milestone 3.
 register("preproc_split_table_field_open", "unsupported")
+# --- Task 9: one-reading contracts (spec P4). The tree shows ONE configuration's
+# nesting (`reading`); every other configuration reports lowering:one-reading.
+_ASM = "tools.config_oracle.lowering.assemblers."
 # BC 29 family G: branches end in an open statement prefix, tail completes it.
-# else-led arms: milestone 2.
-register("preproc_split_open_statement", "unsupported")
+# An else-led arm is one-reading; complete-prefix arms stay unsupported-type (milestone 3).
+# case_body:<children> is a census host outside _STATEMENT_HOSTS: case_body's
+# repeat admits preproc_split_open_statement (grammar.js case_body), a repeat slot.
+register("preproc_split_open_statement", "assembler", _ASM + "open_statement_reading",
+         hosts={**_STATEMENT_HOSTS, "case_body:<children>": "splice-repeat"}, reading="arm:not-else-led")
 # BC 29 family H: a branch closes a layout container and opens a sibling. The
-# tree is the #if reading, so the other configuration cannot be lowered to it. milestone 2.
-register("preproc_split_container_reopen", "unsupported")
+# tree is the #if reading.
+register("preproc_split_container_reopen", "assembler", _ASM + "container_reopen",
+         hosts={f"{k}_section:<children>": "consumed" for k in ("group", "repeater", "cuegroup", "fixed", "grid")},
+         reading="arm:if")
 # A procedure boundary inside #else: the tree is the #else reading, split over
-# two procedures' block closings, so neither lowers on its own. milestone 2.
-register("preproc_split_block_end_in_else", "unsupported")
-register("preproc_split_block_close_after_endif", "unsupported")
+# two procedures' block closings. Both decide the same group's reading.
+register("preproc_split_block_end_in_else", "assembler", _ASM + "block_end_in_else",
+         hosts={"code_block:<children>": "consumed"}, reading="arm:else")
+register("preproc_split_block_close_after_endif", "assembler", _ASM + "block_close_after_endif",
+         hosts={"code_block:<children>": "consumed"}, reading="arm:else")
 
 # --- Task 8: table relation, contract else-relation-join (assemblers.table_relation_select).
 # Hosts are the census output. Two grammar rules build this node type:
