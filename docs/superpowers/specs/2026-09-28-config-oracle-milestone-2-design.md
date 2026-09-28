@@ -210,9 +210,13 @@ pins that the other configuration surfaces as
      the compiler-verified groupings in `test/corpus/operator_precedence_test.txt`
      (AL is Pascal-derived: comparisons bind looser than `and`/`or`/`xor`),
      never from the grammar's `prec()` values (base §3). The
-     levels, tightest first, are: unary (`not`, `-`, `+`); `*`, `/`, `div`,
-     `mod`, `and`; `+`, `-`, `or`, `xor`; comparisons. All levels are
-     left-associative. A parenthesised expression is an atom.
+     levels, tightest first, are the ones in that fixture's header: unary
+     (`not`, `-`, `+`); `*`, `/`, `div`, `mod`; `+`, `-`; `in`, `is`, `as`;
+     `and`; `or`, `xor`; the comparisons. All binary levels are
+     left-associative. A parenthesised expression is an atom. *(Corrected
+     while planning: an earlier draft of this line put `and` with `*` and
+     `or`/`xor` with `+`, which is Pascal's ladder, not the one alc
+     measured.)*
    - **Self-test:** every grouping in `test/corpus/operator_precedence_test.txt`
      is flattened and recomposed, and must equal its fixture tree. All 18 cases
      must pass.
