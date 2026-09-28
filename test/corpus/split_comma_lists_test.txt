@@ -1,0 +1,202 @@
+================================================================================
+A #if at an argument separator, on either side of the comma
+================================================================================
+codeunit 50100 T
+{
+    procedure P()
+    var
+        T: Text;
+    begin
+        T := StrSubstNo('%1', 1,
+#if not C28
+            2,
+#endif
+            3);
+        T := StrSubstNo('%1', 1
+#if not C28
+            , 2
+#endif
+            , 3);
+        T := StrSubstNo('%1', 1,
+#if not C28
+            2
+#else
+            4
+#endif
+            );
+        T := StrSubstNo('%1', 1
+#if not C28
+            , 2
+#endif
+            );
+        T := StrSubstNo(
+#if not C28
+            '%1', 2,
+#endif
+            '%1');
+    end;
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (procedure
+        (procedure_keyword)
+        name: (identifier)
+        (var_section
+          (var_keyword)
+          body: (var_body
+            (variable_declaration
+              name: (identifier)
+              type: (type_specification
+                (text_type
+                  (text_keyword))))))
+        body: (code_block
+          (begin_keyword)
+          body: (statement_block
+            (assignment_statement
+              left: (identifier)
+              operator: (assignment_operator)
+              right: (call_expression
+                function: (identifier)
+                arguments: (argument_list
+                  (string_literal)
+                  (integer)
+                  (preproc_conditional_arguments
+                    (preproc_if
+                      (preproc_open)
+                      condition: (preproc_not_expression
+                        (identifier)))
+                    (integer)
+                    (preproc_endif
+                      (preproc_close)))
+                  (integer))))
+            (assignment_statement
+              left: (identifier)
+              operator: (assignment_operator)
+              right: (call_expression
+                function: (identifier)
+                arguments: (argument_list
+                  (string_literal)
+                  (integer)
+                  (preproc_conditional_arguments
+                    (preproc_if
+                      (preproc_open)
+                      condition: (preproc_not_expression
+                        (identifier)))
+                    (integer)
+                    (preproc_endif
+                      (preproc_close)))
+                  (integer))))
+            (assignment_statement
+              left: (identifier)
+              operator: (assignment_operator)
+              right: (call_expression
+                function: (identifier)
+                arguments: (argument_list
+                  (string_literal)
+                  (integer)
+                  (preproc_conditional_arguments
+                    (preproc_if
+                      (preproc_open)
+                      condition: (preproc_not_expression
+                        (identifier)))
+                    (integer)
+                    (preproc_else)
+                    (integer)
+                    (preproc_endif
+                      (preproc_close))))))
+            (assignment_statement
+              left: (identifier)
+              operator: (assignment_operator)
+              right: (call_expression
+                function: (identifier)
+                arguments: (argument_list
+                  (string_literal)
+                  (integer)
+                  (preproc_conditional_arguments
+                    (preproc_if
+                      (preproc_open)
+                      condition: (preproc_not_expression
+                        (identifier)))
+                    (integer)
+                    (preproc_endif
+                      (preproc_close))))))
+            (assignment_statement
+              left: (identifier)
+              operator: (assignment_operator)
+              right: (call_expression
+                function: (identifier)
+                arguments: (argument_list
+                  (preproc_conditional_arguments
+                    (preproc_if
+                      (preproc_open)
+                      condition: (preproc_not_expression
+                        (identifier)))
+                    (string_literal)
+                    (integer)
+                    (preproc_endif
+                      (preproc_close)))
+                  (string_literal)))))
+          (end_keyword))))))
+
+================================================================================
+Permissions head repeated per #if branch, shared tail after #endif
+================================================================================
+permissionset 50100 P
+{
+    Assignable = true;
+#if not C29
+    Permissions = tabledata A = RIMD,
+                  tabledata B = RIMD,
+#else
+    Permissions = tabledata B = RIMD,
+#endif
+                  tabledata C = RIMD;
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (permissionset_declaration
+    (permissionset_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (property
+        name: (property_name)
+        value: (boolean))
+      (preproc_split_permissions_property
+        (preproc_if
+          (preproc_open)
+          condition: (preproc_not_expression
+            (identifier)))
+        name: (property_name)
+        value: (tabledata_permission_list
+          (tabledata_permission
+            (tabledata_keyword)
+            table_name: (identifier)
+            permission: (permission_type))
+          (tabledata_permission
+            (tabledata_keyword)
+            table_name: (identifier)
+            permission: (permission_type)))
+        (preproc_else)
+        name: (property_name)
+        value: (tabledata_permission_list
+          (tabledata_permission
+            (tabledata_keyword)
+            table_name: (identifier)
+            permission: (permission_type)))
+        (preproc_endif
+          (preproc_close))
+        value: (tabledata_permission_list
+          (tabledata_permission
+            (tabledata_keyword)
+            table_name: (identifier)
+            permission: (permission_type)))))))

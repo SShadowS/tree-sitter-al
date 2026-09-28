@@ -206,6 +206,11 @@ module.exports = grammar({
     // (`f(1 #if X + 2 #endif )`) or a statement-level conditional that merely
     // follows. The discriminator is past the condition, so GLR must explore both.
     [$._preproc_call_prefix, $._argument_expression],
+    // After an argument, a `#if` either CONTINUES it (preproc_conditional_expression_tail,
+    // branches open with an operator) or supplies further arguments
+    // (preproc_conditional_arguments, branches open with `,` or an argument).
+    // Decided past the condition, so GLR explores both.
+    [$._argument_expression],
     [$._preproc_split_then_begin_open, $.preproc_split_if_then_begin_else_shared, $.preproc_split_if_begin_else, $._preproc_branch_statement],
     // Inside a preprocessor branch a statement can be read as belonging to the
     // conditional or to an enclosing statement_block. The two were previously
@@ -614,6 +619,7 @@ module.exports = grammar({
     _body_element: $ => choice(
       $.property,
       alias($.permissions_property, $.property),
+      $.preproc_split_permissions_property,
       alias($.table_relation_property, $.property),
       $.empty_statement,
       // Table internals
@@ -710,6 +716,35 @@ module.exports = grammar({
       '=',
       field('value', $.tabledata_permission_list),
     )),
+
+    // `Permissions =` repeated per branch, each branch ending in a comma that
+    // runs into a shared tail after #endif (local.permissionset.al:16, NO layer,
+    // BC 29; alc accepts both configs):
+    //   #if not CLEAN29
+    //       Permissions = tabledata A = RIMD,
+    //                     tabledata B = RIMD,
+    //   #else
+    //       Permissions = tabledata B = RIMD,
+    //   #endif
+    //                     tabledata C = RIMD;
+    // The same split-prefix / shared-tail shape as preproc_split_call_statement.
+    // A list-internal #if (`Permissions = a, #if … b, #endif c;`) is not this:
+    // it is preproc_conditional_permissions inside an ordinary property.
+    preproc_split_permissions_property: $ => prec(25, seq(
+      $.preproc_if,
+      $._permissions_head,
+      repeat(seq($.preproc_elif, $._permissions_head)),
+      optional(seq($.preproc_else, $._permissions_head)),
+      $.preproc_endif,
+      field('value', $.tabledata_permission_list),
+      ';',
+    )),
+
+    _permissions_head: $ => seq(
+      field('name', $.property_name),
+      '=',
+      field('value', $.tabledata_permission_list),
+    ),
 
     // --- TableRelation property variant: ';' may be consumed inside preproc branches ---
     // Used when the terminating ';' is inside #if/#else branches of a conditional table relation.
@@ -5068,9 +5103,52 @@ module.exports = grammar({
     // backtracking is what cost 200 BC.History files. A declared conflict lets
     // GLR explore both readings and keep the one that parses, which is the
     // mechanism this grammar already uses for every other preproc ambiguity.
+    //
+    // A `#if` may also sit at a SEPARATOR, supplying whole arguments rather than
+    // continuing one (deferred-work item 1; ReleaseTransferDocument.Codeunit.al,
+    // IT layer, BC 29). Both sides of the comma are real and alc accepts every
+    // configuration of each:
+    //   f(1, #if X 2, #endif 3)    f(1 #if X , 2 #endif , 3)
+    //   f(1, #if X 2 #else 4 #endif )    f(#if X 'a', #endif 'b')
+    //
+    // The list is ELEMENTS separated by commas, and a group attaches to the
+    // element beside it, so every comma outside a branch is a real separator:
+    // `f(1,)` stays an ERROR. It is not `run [,] group [,] run`: that needs the
+    // parser to decide, on the comma, whether an argument or a `#if` follows --
+    // two tokens of lookahead -- and it shifted into the run and lost the group.
     _argument_expression_list: $ => seq(
+      $._argument_element,
+      repeat(seq(',', $._argument_element)),
+    ),
+
+    _argument_element: $ => choice(
+      seq($._argument_expression, repeat($.preproc_conditional_arguments)),
+      seq(
+        repeat1($.preproc_conditional_arguments),
+        optional(seq($._argument_expression, repeat($.preproc_conditional_arguments))),
+      ),
+    ),
+
+    preproc_conditional_arguments: $ => seq(
+      $.preproc_if,
+      optional($._argument_branch),
+      repeat(seq($.preproc_elif, optional($._argument_branch))),
+      optional(seq($.preproc_else, optional($._argument_branch))),
+      $.preproc_endif,
+    ),
+
+    // `[,] arg [, arg]* [,]` -- the commas that join the branch to the elements
+    // outside it. One flat seq, so the trailing comma is decided AFTER it is
+    // shifted, by whether an argument or a directive follows.
+    _argument_branch: $ => choice(
+      seq(',', optional($._argument_branch_run)),
+      $._argument_branch_run,
+    ),
+
+    _argument_branch_run: $ => seq(
       $._argument_expression,
-      repeat(seq(',', $._argument_expression))
+      repeat(seq(',', $._argument_expression)),
+      optional(','),
     ),
 
     _argument_expression: $ => seq(

@@ -47,7 +47,8 @@ during 4.0.0, after the run/group rework in `812ace7`. Not re-run since.
 neighbour is missing. Five families got that treatment. These six positions did not,
 so a `#if` at the separator is an `ERROR` here while `alc` accepts the file:
 
-- `argument_list`
+- `argument_list` — **RESOLVED** (BC 29 family I): `preproc_conditional_arguments`,
+  both sides of the comma pinned by `test/corpus/split_comma_lists_test.txt`
 - `parameter_list` (the `;`-led form)
 - `implements_clause`
 - `option_member_list`, **comma-leading** shape (see item 2)

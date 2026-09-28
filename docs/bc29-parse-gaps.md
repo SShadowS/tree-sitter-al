@@ -1,8 +1,9 @@
 # BC 29 parse gaps (microsoft/BCApps releases/29.0)
 
-**Status:** families A, B, C and F RESOLVED (move* lists; move* in actions;
-nested `#if` among fields and keys; split routine body) — BCApps 29.0 error files
-33 -> 18. Remaining: I, E, D, G, H; J is invalid source. ProdOrderComponent.Table.al still fails, on H.
+**Status:** families A, B, C, F and I RESOLVED (move* lists; move* in actions;
+nested `#if` among fields and keys; split routine body; split argument list and
+split Permissions head) — BCApps 29.0 error files 33 -> 15. Remaining: E, D, G,
+H; J is invalid source. ProdOrderComponent.Table.al still fails, on H.
 Corpus: `H:/Git/BCApps-29.0` (shallow clone of microsoft/BCApps
 `releases/29.0`, commit e16d6c30, 36,716 .al files, includes BaseApp layers).
 This analysis was produced by root-cause bisection of every failing file; the
@@ -252,7 +253,7 @@ codeunit 50101 U {
   `[var] $._preproc_begin_body_to_endif`, the existing helper that already covers "begin plus
   statements before `#endif`". Both are Low.
 
-## I. Split comma lists (3 files), docs/deferred-work.md items 1 and 2
+## I. Split comma lists (3 files), docs/deferred-work.md items 1 and 2 — RESOLVED
 
 1. `argument_list` (**deferred item 1, still open**). Reproducer:
    ```al
