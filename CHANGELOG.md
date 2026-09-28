@@ -9,6 +9,44 @@ public API — a change to node structure or field names is a **major** bump.
 
 ### Fixed
 
+- **Tree-shape change: a property whose whole value is a `#if` is now
+  `preproc_conditional_property_value`, with each arm's value in a `value`
+  field** (grammar finding G6). `Caption = #if X 'a'; #else 'b'; #endif`, and
+  every other whole-value `#if` (G2, G3, G4, G8 below), used to be a
+  `preproc_conditional_table_relation`, although most of its arms are not table
+  relations. It is now:
+
+  ```
+  (property
+    name: (property_name)
+    value: (preproc_conditional_property_value
+      (preproc_if ...)
+      value: (string_literal)
+      (preproc_else)
+      value: (string_literal)
+      (preproc_endif ...)))
+  ```
+
+  The `value` field holds one node per nonempty arm (`multiple: true`,
+  `required: false`); an arm's `;` stays outside it, and the field does not
+  say which condition an arm belongs to (directive order still does). A
+  whole-value `#if` nested in an arm is that arm's `value`. The arms keep the
+  flat shape, so a whole-value `TableRelation` arm is still `identifier`,
+  `quoted_identifier` or `table_relation_value`. 0 production sites
+  (tree-harness byte-identical on BC.History and BC 28.5). Parser states
+  15,587 -> 15,645 (+58, of which the field is +54).
+
+  **Migrating.** `preproc_conditional_table_relation` still exists, so a query
+  naming it still compiles, but it **silently stops matching whole-value
+  conditionals**. The old type now means only a relation continuation: a `#if`
+  that extends the table relation before it (`TableRelation = if (...) A else
+  #if X if (...) B; #else C; #endif`), whose arms are `table_relation_expression`
+  or `else_table_relation_fragment`. Do not rename the type blindly in your
+  queries. A query that wants "this property's whole value is chosen by a
+  `#if`" should match `(property value: (preproc_conditional_property_value))`;
+  a query that follows relation `else` chains keeps
+  `preproc_conditional_table_relation`; a query that wants both must list both.
+  `queries/folds.scm` and `queries/indents.scm` now fold and indent both types.
 - **Tree-shape change: a `TableRelation` value whose `;` sits inside a `#if`
   arm now has the flat shape** (grammar finding G1 of the
   configuration-consistency oracle). The else-continuation form used to give
@@ -23,7 +61,7 @@ public API — a change to node structure or field names is a **major** bump.
   `(property value: (if_table_relation))` or a second `value` field must now
   descend through `table_relation_value`.
 - **Tree-shape change: when a whole `TableRelation` value is a `#if`, each arm
-  of its `preproc_conditional_table_relation` holds the flat value shape**
+  of its conditional holds the flat value shape**
   (grammar finding G2). Arms used to be `table_relation_expression`, which no
   flat parse gives. A bare name is now `identifier` and a quoted name
   `quoted_identifier`, the same as flat `TableRelation = Item;`. Anything longer
@@ -33,7 +71,9 @@ public API — a change to node structure or field names is a **major** bump.
   0 production sites, as for G1. A query that expected
   `(preproc_conditional_table_relation (table_relation_expression))` for a
   whole-value `#if` must accept these arm kinds instead. Arms of a conditional
-  nested inside an `else` chain are unchanged.
+  nested inside an `else` chain are unchanged. The whole-value conditional is
+  `preproc_conditional_property_value` since G6 (above); it was
+  `preproc_conditional_table_relation` when this entry was written.
 - **Tree-shape change: a property value continued across a `#if`
   (`MinValue = 1 #if X + 2 #endif ;`) is now one `value: property_expression`**
   holding the expression and its `preproc_conditional_expression_tail`
@@ -51,16 +91,17 @@ public API — a change to node structure or field names is a **major** bump.
   `string_literal`, `verbatim_string`, `boolean`, `integer` or `decimal` (a
   negative one included), or a date/time literal. Integer arms used to be
   `table_relation_value(table_relation_expression(simple_table_relation table:
-  (integer)))`; they are now `integer`. The conditional keeps its node type,
-  `preproc_conditional_table_relation`. 0 production sites (tree-harness
+  (integer)))`; they are now `integer`. The conditional kept its node type,
+  then `preproc_conditional_table_relation`; since G6 (above) it is
+  `preproc_conditional_property_value`. 0 production sites (tree-harness
   byte-identical). The arm kinds listed here are superseded by G8 below: an arm
   may now be any property value.
 - **Tree-shape change: a `#if` nested inside a whole-value `#if` arm has flat
   arms** (grammar finding G3). The inner conditional used to sit in a
   `table_relation_value` with `table_relation_expression(simple_table_relation)`
-  arms; it is now a `preproc_conditional_table_relation` directly in the outer
-  arm, and its arms are `identifier`, `quoted_identifier`, a literal or
-  `table_relation_value`, as flat `TableRelation = Item;` gives. alc accepts
+  arms; it is now a whole-value conditional directly in the outer arm
+  (`preproc_conditional_property_value` since G6, above), and its arms are
+  `identifier`, `quoted_identifier`, a literal or `table_relation_value`, as flat `TableRelation = Item;` gives. alc accepts
   the form in all four configurations. 0 production sites (tree-harness
   byte-identical).
 - **Tree-shape change: an `#if`/`#elif` line ends at its first newline**
@@ -87,11 +128,16 @@ public API — a change to node structure or field names is a **major** bump.
   arm with `, Locked = true`, ML lists, object references, expressions,
   where/sorting views, links, `OrderBy`, `Implementation` and decimal ranges
   all ERRORed, because the arm kinds were listed by hand. An arm is now
-  `_property_value` itself, so each arm has the flat shape by construction.
+  `_property_value` itself, so each arm has the flat shape in the cases
+  measured -- not in every lookahead context: a single-pair ML arm before a
+  directive is `ml_value_list` where flat gives a comparison (G9, open,
+  `docs/deferred-work.md` item 11).
   This supersedes the arm-kind list in the G4 entry above, and covers G3: the
   arms of a `#if` nested inside a whole-value arm have the same flat shape.
-  `node-types.json`: `preproc_conditional_table_relation`'s children widen to
-  every property-value kind (`caption_value`, `ml_value_list`,
+  `node-types.json`: the whole-value conditional's children widen to
+  every property-value kind (then `preproc_conditional_table_relation`'s; since
+  G6, above, they are `preproc_conditional_property_value`'s `value` field, and
+  `preproc_conditional_table_relation` holds relation arms only) (`caption_value`, `ml_value_list`,
   `option_member_list`, `signed_integer_list`, `property_expression`,
   `where_clause`, `sorting_value` and the rest), and `property_expression` may
   hold a bare leaf plus a tail (the G7 split form). 0 production sites

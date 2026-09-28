@@ -399,7 +399,10 @@ pairs. The config oracle sees it in exactly one shape: a whole-value `#if` whose
 arm is a one-pair ML value with the `;` after `#endif` (the arm is `ml_value_list`
 before the directive, the flat parse is a comparison before `;`). That shape is a
 strict xfail, `test_single_pair_ml_arm_before_endif` in
-`tools/config_oracle/tests/test_table_relation.py`.
+`tools/config_oracle/tests/test_property_value_conditional.py` (moved there from
+`test_table_relation.py` by G6, unchanged). **Still open after G6**: G6 renamed
+the whole-value conditional (`preproc_conditional_property_value`) and did not
+touch its arms, so the xfail still fails for the same reason.
 
 ---
 
@@ -443,6 +446,8 @@ Flat, `Visible = Rec.A and B;` is `property_expression(logical_expression)` and
 `Visible = Rec.A;` is `table_relation_value`. With the `#if` the
 `table_relation_value` reading wins: the tree is `table_relation_value` holding a
 `preproc_conditional_table_relation` whose arm is `ERROR (identifier)` for `and`.
+Unchanged by G6 (re-parsed after it): this is the relation-continuation route,
+which keeps `preproc_conditional_table_relation`. Item 15 is the root question.
 G5's `preproc_conditional_expression_tail` would be
 the flat-shaped reading; why it loses here is not yet traced. Production sites:
 not measured. alc four-way probe not
@@ -461,6 +466,116 @@ source, the milestone-3 `unsupported-type` records) are classified in the result
 doc, not in any file the runner reads, so every production run exits 1 even when
 it is clean. Needed before the full tier can gate: a production classification
 file, keyed like `fixture-classes.tsv`, loaded by `--tier resolve|full`.
+
+---
+
+## 15. Dotted property references are classified as table relations
+
+**Established:** 2026-09-28, G6 design review (gpt-6-astra, section 2E). Not
+probed with alc; nothing here is a parse error.
+
+`Visible = Rec.A;` is `table_relation_value(table_relation_expression(
+simple_table_relation table: (member_expression)))`: an ordinary dotted
+expression, claimed to be a table relation and fielded `table`. Renaming
+`table_relation_value` alone would not help, because its descendants still say
+`simple_table_relation` and `table`. Reachability from every property is not
+the defect -- a relation-shaped value may be recognised without validating the
+name -- the misclassification is. A fix needs one neutral representation for
+an ambiguous dotted reference that the flat form AND the split forms (item 13,
+G10) both give, or contextual parsing keyed by the property name (the
+`CalcFormula` route, which CLAUDE.md says not to generalise lightly). G6 left
+this open on purpose: it is a property-grammar redesign, not a rename.
+
+---
+
+## 16. `CalcFormula` has no whole-value conditional
+
+**Established:** 2026-09-28, G6 design review (section 2F). Read from the
+grammar, not probed.
+
+`preproc_conditional_property_value` is reached through `_property_value`, and
+the `CalcFormula` arm of `property` takes `_calc_formula_expression` instead,
+so `CalcFormula = #if X sum(T.A) #else count(T) #endif;` does not get the new
+node. Support, if alc accepts the form, must keep formula-shaped arms
+(`aggregate_formula` / `lookup_formula`), not route them through
+`_property_value`, where a no-`where` aggregate is a call (issue #21).
+
+---
+
+## 17. `_property_with_terminator_in_if` has no host parity
+
+**Established:** 2026-09-28, G6 design review (section 2F); confirmed by
+reading `grammar.js`. Not probed with alc.
+
+The variant whose `;` sits inside a `#if` arm (`Caption = #if X 'a'; #else 'b';
+#endif`, no `;` after `#endif`) is aliased to `property` only in
+`_body_element`. `_action_element` (properties directly in an action area or
+group) and `assembly_body` list `$.property` alone, so there the inside-arms
+placement has no rule; the after-`#endif` placement works everywhere
+`property` does. A property inside an `action(...) { }` is unaffected: its body
+is a `declaration_body`. To do: an alc probe of both placements at each host,
+then either add the variant to those hosts or record why not.
+
+---
+
+## 18. A `#if` that opens a link or option-member list ERRORs
+
+**Established:** 2026-09-28, G6 acceptance fixtures. alc accepts both, with the
+symbol defined and undefined (probe discriminated: `OptionMembers = A B;`
+rejected in the same project).
+
+```al
+SubPageLink =
+#if X
+    A = field(B),
+#endif
+    B = field(A);          // ERROR since G8 (eb189bf); preproc_conditional_link_values before
+
+OptionMembers =
+#if X
+    A,
+#endif
+    B;                     // ERROR at 3c6ca40 too: never supported
+```
+
+The link form is a **G8 regression** (it parsed at `3c6ca40`, the commit
+before G8). `_link_value_seq` allows a leading conditional, but since a
+whole-value arm may be any `_property_value`, the arm `A = field(B),` also
+reduces to `link_value_list`. The likely mechanism, NOT traced: that rule's
+`prec.left(6)` decides the reduce/reduce against `_link_value_branch`
+statically, so GLR never keeps the list reading and the whole-value reading
+ERRORs at `B`. The permission
+form (`Permissions = #if X tabledata A = R, #endif tabledata B = R;`) is
+unaffected and stays list-internal (pinned in
+`test/corpus/property_value_conditional_node_test.txt`). The option form has no
+leading-conditional alternative at all: `option_member_list` admits a
+conditional only after a comma. Production sites: 0 (the G8 and G6
+tree-harness runs were byte-identical, so no production file had the link form). Neither is asserted by a fixture, because
+both trees contain ERROR.
+
+---
+
+## 19. A relation continued into a `#if` with the `;` after `#endif` loses its terminator
+
+**Established:** 2026-09-28, G6 acceptance fixtures; reproduced at `def2879`,
+before G6.
+
+```al
+TableRelation = if (Type = const(Item)) Item
+#if X
+    else Resource
+#else
+    else Customer
+#endif
+    ;
+```
+
+No ERROR, but the `;` is an `empty_statement` sibling of the `property`, not
+its terminator. `table_relation_value` is `choice(expression, conditional)`, so
+the flat `property` cannot hold `expression conditional`; only
+`_property_with_terminator_in_if` (via `_table_relation_split_value`) can,
+and that variant takes no `;`. The flat parse of either configuration keeps the
+`;` in the property. Not asserted by a fixture. alc not probed.
 
 ---
 
