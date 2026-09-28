@@ -92,6 +92,18 @@ def _file_level(parser, input_id, source, disc):
 
 
 def _check_config(parser, input_id, source, cid, env, mode, prep):
+    """A file-level directive discrepancy does NOT short-circuit: the configuration is still
+    resolved, lowered and compared, and the record is `directive-mismatch` carrying the
+    directive items ahead of whatever that run produced (a pass contributes nothing)."""
+    rec = _check_config_inner(parser, input_id, source, cid, env, mode, prep)
+    file_items = prep[2] if isinstance(prep, tuple) else []
+    dir_items = [i for i in file_items if "|directive|" in i]
+    if dir_items and not any(i.startswith("multi-config-parse") for i in rec.items):
+        return Record(input_id, cid, "directive-mismatch", dir_items + rec.items)
+    return rec
+
+
+def _check_config_inner(parser, input_id, source, cid, env, mode, prep):
     try:
         res = directives.resolve(source, env)
     except directives.ResolveError as e:
@@ -104,8 +116,6 @@ def _check_config(parser, input_id, source, cid, env, mode, prep):
     root, extras, file_items = prep
     if any(i.startswith("multi-config-parse") for i in file_items):
         return Record(input_id, cid, "cannot-validate", file_items)
-    if any("|directive|" in i for i in file_items):
-        return Record(input_id, cid, "directive-mismatch", file_items)
     z = first_zero_width_leaf(ref.root)
     if z is not None:
         return Record(input_id, cid, "cannot-validate", [f"zero-width-leaf@{z}"])

@@ -22,11 +22,31 @@ def test_region_only_file_is_counted_not_validated():
     assert s.no_directives == 1 and s.exit_code == 2      # zero validated pairs
 
 
-def test_resolver_failure_is_one_cannot_validate_record():
+def test_resolver_failure_is_carried_by_the_directive_mismatch():
+    # BAD's tree also has an unmatched #endif, and a directive discrepancy no longer
+    # short-circuits: each configuration's record is directive-mismatch carrying the
+    # directive item AND that configuration's resolver cannot-validate reason.
     s = runner.run([("bad", BAD), ("ok", STMT)], None, workers=1, mode="full")
     by = {(r.input_id, r.status) for r in s.records}
-    assert ("bad", "cannot-validate") in by and ("ok", "pass") in by
+    assert by == {("bad", "directive-mismatch"), ("ok", "pass")}
+    for r in s.records:
+        if r.input_id == "bad":
+            assert any("|directive|" in i for i in r.items)
+            assert any(i.startswith("resolver:") for i in r.items)
     assert s.exit_code == 1
+
+
+def test_directive_mismatch_does_not_short_circuit_the_comparison(al_parser, monkeypatch):
+    from tools.config_oracle import compare, directive_check
+    monkeypatch.setattr(directive_check, "check",
+                        lambda root, disc: [compare.Discrepancy("directive", "condition-extent", "preproc_if@0", "x")])
+    monkeypatch.setattr(compare, "structure",
+                        lambda ref, low: [compare.Discrepancy("structure", "missing", "p", "y")])
+    recs = runner.check_input(al_parser, "stmt", STMT)
+    assert [r.status for r in recs] == ["directive-mismatch", "directive-mismatch"]
+    for r in recs:
+        assert r.items[0] == "stmt|-|directive|condition-extent|preproc_if@0"
+        assert f"stmt|{r.config}|structure|missing|p" in r.items
 
 
 def test_discover_failure_is_exactly_one_dash_record(monkeypatch):
@@ -56,7 +76,7 @@ def test_single_dash_record_does_not_excuse_predicted_configurations(monkeypatch
 
 
 def test_classified_record_does_not_fail_the_run():
-    classes = {("bad", "*"): ("cannot-validate", "deliberately unterminated")}
+    classes = {("bad", "*"): ("directive-mismatch", "deliberately unterminated")}
     s = runner.run([("bad", BAD), ("ok", STMT)], None, workers=1, mode="full", classes=classes)
     assert s.exit_code == 0 and s.classified == 2
 

@@ -28,6 +28,8 @@ class Replay:
     file: str
     select: object      # Case -> bool
     detect: object      # list[Record] -> bool
+    note: str = ""
+    source: bytes | None = None   # a labelled hand-built INPUT, used instead of fixture cases
 
 
 @dataclass
@@ -65,18 +67,30 @@ def _replay5(recs):
             and not _structure(recs))
 
 
+# Hand-built input, labelled: no pre-fix fixture exists (the current fixture postdates
+# c6b8107, and the c6b8107^ grammar cannot parse it at all). At c6b8107^ this parses with
+# no ERROR and the #if condition swallows the next line: `X or C`.
+REPLAY_4_INPUT = (b"codeunit 50000 T { procedure P() var A: Boolean; C: Boolean; B: Boolean; begin\n"
+                  b"B := A\n#if X\n  or C\n#endif\n  ;\nend; }\n")
+
+
+def _has_error_backstop(rec):
+    return any(i.startswith("multi-config-parse:") and "has-error" in i for i in rec.items)
+
+
 REPLAYS = [
     Replay(2, "bad36e4^", "case_else_preprocessor_test.txt", lambda c: True,
-           lambda recs: any(r.status == "discrepancy" and _has(r, "|structure|missing|", "|structure|parent|")
-                            for r in recs)),
+           lambda recs: any(_has(r, "|structure|missing|", "|structure|parent|") for r in recs)),
     Replay(3, "f47350d^", "scanner_lookahead_extras_test.txt",
            lambda c: c.name.startswith("Comment between a split end and its #else"),
-           lambda recs: any(r.config == "CLEAN22=0" and r.status == "discrepancy" and _has(r, "|structure|")
-                            for r in recs)),
-    Replay(4, "c6b8107^", "preproc_expression_continuation_operators_test.txt",
-           lambda c: b"#if X\n  or (2 = 2)" in c.source.replace(b"\r\n", b"\n"),
+           lambda recs: any(r.config == "CLEAN22=0" and _has_error_backstop(r) for r in recs),
+           note="the old defect was CLI-silent (hidden MISSING token), not API-silent; "
+                "detected by the has_error backstop, not by structure"),
+    Replay(4, "c6b8107^", "hand-built", None,
            lambda recs: any(r.status == "directive-mismatch" and _has(r, "|directive|condition-extent|")
-                            for r in recs)),
+                            for r in recs),
+           note="hand-built input, labelled: no pre-fix fixture exists (the current fixture postdates c6b8107)",
+           source=REPLAY_4_INPUT),
     Replay(5, "04ff498^", "preproc_split_procedure_tail_test.txt",
            lambda c: c.name.startswith("Split signature followed by a pragma-only"),
            _replay5),
@@ -118,11 +132,19 @@ def run_replay(r: Replay, work):
     parser = (build_parser_at(r.commit, Path(work)) if work is not None
               else loader.make_parser(loader.load_language(loader.ensure_library(REPO))))
     build_s = time.perf_counter() - t0
-    cases = [c for c in fixtures.extract(REPO / "test" / "corpus") if c.file == r.file and r.select(c)]
-    if not cases:
+    if r.source is not None:
+        inputs = [(f"hand-built:replay-{r.number}", r.source)]
+    else:
+        inputs = [(c.id, c.source) for c in fixtures.extract(REPO / "test" / "corpus")
+                  if c.file == r.file and r.select(c)]
+    if not inputs:
         raise AssertionError(f"replay {r.number}: selector matched no case in {r.file}")
-    recs = [rec for c in cases for rec in runner.check_input(parser, c.id, c.source)]
-    return ReplayResult(r.detect(recs), all(x.status == "cannot-validate" for x in recs),
+    recs = [rec for i, src in inputs for rec in runner.check_input(parser, i, src)]
+    detected = r.detect(recs)
+    # Masked: nothing but cannot-validate, and none of it is the replay's own detection
+    # (replay 3's detection IS a cannot-validate record carrying the has_error item).
+    masked = all(x.status == "cannot-validate" for x in recs) and not detected
+    return ReplayResult(detected, masked,
                         [(x.input_id, x.config, x.status, x.items[:3]) for x in recs], recs, build_s)
 
 
@@ -136,6 +158,8 @@ def main() -> int:
                    else "CAUGHT" if res.detected else "NOT CAUGHT")
         failed += verdict != "CAUGHT"
         print(f"replay {r.number} ({r.commit}, {r.file}): {verdict}  build {res.build_s:.1f}s")
+        if r.note:
+            print(f"  note: {r.note}")
         for rec in res.records:
             print(f"  {rec.input_id} [{rec.config}] {rec.status}")
             for i in rec.items:
