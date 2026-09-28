@@ -385,8 +385,8 @@ for t in ("preproc_conditional_case_patterns",
           "preproc_split_declaration", "preproc_split_field",
           "preproc_split_if_begin_asymmetric", "preproc_split_if_begin_else", "preproc_split_if_else_statement",
           "preproc_split_if_statement", "preproc_split_if_then_begin", "preproc_split_if_then_begin_else_shared",
-          "preproc_split_procedure_body", "preproc_split_procedure_preamble", "preproc_split_report_brace_close",
-          "preproc_split_report_dataitem_header", "preproc_split_report_dataitem_open_over_endif",
+          "preproc_split_procedure_body", "preproc_split_procedure_preamble",
+          "preproc_split_report_dataitem_header",
           "preproc_split_table_field"):
     register(t, "unsupported")
 
@@ -485,6 +485,17 @@ register("preproc_operand_prefix", "assembler", _ASM + "operand_prefix",
 # everywhere every other body-element special type does.
 register("preproc_split_var_section_tail", "assembler", _ASM + "split_var_section_tail",
          hosts=_BODY_HOSTS)
+
+# --- Task 14: report-brace-owner (assemblers.report_brace_owner). One #if opens an
+# outer dataitem; a later #if closes the inner one early. Hosts are the census
+# output, every one a report/dataset body repeat. The brace close is consumed by
+# the assembler through the inner dataitem it closes, never lowered on its own.
+register("preproc_split_report_dataitem_open_over_endif", "assembler", _ASM + "report_brace_owner",
+         hosts={f"{k}:<children>": "splice-repeat" for k in (
+             "dataset_body", "dataset_mod_body", "preproc_conditional_dataset",
+             "preproc_conditional_report", "report_body")})
+register("preproc_split_report_brace_close", "fragment", None,
+         hosts={"report_dataitem:<children>": "consumed"})
 
 SPECIAL_NON_PREFIXED = {"else_table_relation_fragment"}
 

@@ -271,6 +271,10 @@ def lower(node, ctx) -> Lowered:
         entry = contracts.REGISTRY.get(node.kind)
         if entry is None:
             raise LoweringError("unregistered-type", node)
+        if entry.kind == "fragment":
+            # A fragment belongs to the assembler that owns its host; reaching it here
+            # means that assembler did not (e.g. a brace close outside its open node).
+            raise LoweringError("unconsumed-fragment", node, "fragment lowered on its own")
         if entry.kind == "unsupported" or entry.handler is None:
             raise LoweringError("unsupported-type", node)
         return contracts.resolve_handler(entry)(node, ctx)

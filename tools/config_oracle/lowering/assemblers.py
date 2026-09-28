@@ -510,3 +510,91 @@ def _flatten(node):
         return expression.flatten(node)
     except ValueError as e:
         raise LoweringError("contract-shape", node, str(e)) from None
+
+
+# Mutation seam for test_report_brace (a labelled bad lowering): False leaves the
+# `shared_body` items after the inner dataitem OUTSIDE it in the open-arm-inactive
+# configuration. Never False outside that test.
+_RB_MOVE_AFTER = True
+_RB_BRACE = "preproc_split_report_brace_close"
+
+
+def _report_body(items):
+    """`report_body` (field `body`) over lowered items, or nothing when empty."""
+    return [_span_from_children(Node("report_body", True, "body", 0, 0, items))] if items else []
+
+
+def _body_items(body, ctx):
+    return _lower_all(body.children, ctx, "report_body") if body is not None else []
+
+
+def report_brace_owner(node, ctx) -> Lowered:
+    """Contract report-brace-owner. Host: a report-body repeat slot (census set,
+    policy per registry). Children: `#if <dataitem header> { [conditional_body:
+    report_body] #endif [shared_body: report_body] }`. `shared_body` holds exactly
+    one `report_dataitem` (the INNER one) whose last child is a
+    `preproc_split_report_brace_close` = `#if [report_body] } [#else [report_body]]
+    #endif`, handled here and never lowered on its own. Rewrites allowed:
+      * open arm selected: ONE `report_dataitem` carrying this node's field, from
+        the arm's header pieces, `{`, `body: report_body(conditional_body items +
+        shared_body items)` and the final `}`. In it the inner dataitem's body
+        gains the brace-close #if arm's report_body items and closes at that arm's
+        `}`. The brace-close #if arm must be the chosen one, else contract-shape;
+      * open arm not selected: the outer dataitem dissolves. Emitted: the
+        shared_body items before the inner dataitem, then the inner dataitem with
+        body = its own items + the brace-close #else items + the shared_body items
+        after it, closed by this node's final `}`. The brace-close #if arm must NOT
+        be chosen (the #else, or no arm when it has none), else contract-shape.
+    Every `report_body` wrapper is rebuilt (field `body`, omitted when empty);
+    no other edge changes. Directives are `directive`, unselected arms
+    `inactive-arm`, every other leaf `kept`. Fragments are refused."""
+    ctx.policy(contracts.REGISTRY[node.kind], node)
+    kids = node.children
+    cut = _cut_at_endif(node)
+    shared = [c for c in kids[cut + 1:] if c.field == "shared_body"]
+    if kids[-1].kind != "}" or len(kids[cut + 1:-1]) != len(shared):
+        raise LoweringError("contract-shape", node, " ".join(c.kind for c in kids))
+    items = shared[0].children if shared else []
+    at = [i for i, c in enumerate(items) if c.kind == "report_dataitem" and c.children[-1].kind == _RB_BRACE]
+    if len(at) != 1:
+        raise LoweringError("contract-shape", node, f"{len(at)} inner dataitems closed by {_RB_BRACE}")
+    before, inner, after = items[:at[0]], items[at[0]], items[at[0] + 1:]
+    brace = inner.children[-1]
+    ctx.child("report_dataitem", "<children>").policy(contracts.REGISTRY[brace.kind], brace)
+
+    arms, endif = split_arms(node.copy(children=kids[:cut + 1]))
+    open_active = chosen_arm(node, arms, ctx) == arms[0][0].start
+    b_arms, b_endif = split_arms(brace)
+    if (chosen_arm(brace, b_arms, ctx) == b_arms[0][0].start) != open_active:
+        raise LoweringError("contract-shape", brace, f"brace-close arm disagrees with the open arm "
+                            f"({'selected' if open_active else 'not selected'})")
+    head = _active(arms, endif, node, ctx)
+    b_arm = _active(b_arms, b_endif, brace, ctx)
+    b_close = b_arm[-1:] if open_active else []
+    b_body = b_arm[:-1] if open_active else b_arm
+    if (open_active and (not b_close or b_close[0].kind != "}")) or len(b_body) > 1 \
+            or (b_body and b_body[0].kind != "report_body"):
+        raise LoweringError("contract-shape", brace, "arm: " + " ".join(c.kind for c in b_arm))
+
+    # The inner dataitem: header pieces and `{`, then its own body.
+    i_head = _lower_all([c for c in inner.children[:-1] if c.field != "body"], ctx, "report_dataitem")
+    i_items = _body_items(next((c for c in inner.children if c.field == "body"), None), ctx)
+    i_items += _body_items(b_body[0] if b_body else None, ctx)
+    before_l = _lower_all(before, ctx, "report_body")
+    if open_active:
+        close = _lower_all(b_close, ctx, "report_dataitem")
+        inner_l = _span_from_children(Node("report_dataitem", True, inner.field, 0, 0,
+                                           i_head + _report_body(i_items) + close))
+        o_head = _lower_all([c for c in head if c.field != "conditional_body"], ctx, "report_dataitem")
+        cond = next((c for c in head if c.field == "conditional_body"), None)
+        o_items = _body_items(cond, ctx) + before_l + [inner_l] + _lower_all(after, ctx, "report_body")
+        final = _lower_all(kids[-1:], ctx, "report_dataitem")
+        return Lowered([_span_from_children(Node("report_dataitem", True, node.field, 0, 0,
+                                                 o_head + _report_body(o_items) + final))])
+    after_l = _lower_all(after, ctx, "report_body")
+    if _RB_MOVE_AFTER:
+        i_items, after_l = i_items + after_l, []
+    final = _lower_all(kids[-1:], ctx, "report_dataitem")
+    inner_l = _span_from_children(Node("report_dataitem", True, inner.field, 0, 0,
+                                       i_head + _report_body(i_items) + final))
+    return Lowered(before_l + [inner_l] + after_l)
