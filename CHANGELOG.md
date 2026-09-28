@@ -34,6 +34,16 @@ public API — a change to node structure or field names is a **major** bump.
   `(preproc_conditional_table_relation (table_relation_expression))` for a
   whole-value `#if` must accept these arm kinds instead. Arms of a conditional
   nested inside an `else` chain are unchanged.
+- **Tree-shape change: a property value continued across a `#if`
+  (`MinValue = 1 #if X + 2 #endif ;`) is now one `value: property_expression`**
+  holding the expression and its `preproc_conditional_expression_tail`
+  (grammar finding G5). It used to give `property` two `value` fields, the
+  bare expression and the tail. Flat `MinValue = 1 * 3 + 2;` wraps a binary
+  value in `property_expression`, and with a binary value before the `#if` the
+  old tree matched no configuration's flat parse. 0 production sites
+  (BC.History and BC 28.5 tree-harness byte-identical), so only fixtures
+  changed. A query that matched the tail as a `value` of `property` must
+  descend through `property_expression`.
 
 - **BC 29 (microsoft/BCApps `releases/29.0`, 36,716 files) now parses with 2
   error files, down from 33.** One of the two is invalid source. None of the 33

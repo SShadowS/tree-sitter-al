@@ -454,12 +454,13 @@ register("else_table_relation_fragment", "fragment", None,
 # precedence table (lowering/expression.py). Hosts are the census output.
 # The tail follows the expression it continues and extends it (ToPrevious):
 # assignment RHS, exit value, argument (also inside a preproc_conditional_arguments
-# arm), if/while condition, for bound, subscript index, list element, property value.
+# arm), if/while condition, for bound, subscript index, list element, property value
+# (inside the property_expression that _property_value_with_split is aliased to, G5).
 register("preproc_conditional_expression_tail", "assembler", _ASM + "expression_tail",
          hosts={h: "consumed" for h in (
              "argument_list:<children>", "assignment_statement:<children>", "exit_statement:<children>",
              "for_statement:<children>", "if_statement:<children>", "list_literal:<children>",
-             "preproc_conditional_arguments:<children>", "property:value",
+             "preproc_conditional_arguments:<children>", "property_expression:<children>",
              "subscript_expression:<children>", "while_statement:<children>")})
 # The prefix sits inside a binary node, between `operator` and `right`. engine.lower's
 # binary hook lowers the whole chain before any slot lookup; operand_prefix still

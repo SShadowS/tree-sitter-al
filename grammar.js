@@ -865,7 +865,16 @@ module.exports = grammar({
       // option_member_list into an ERROR (caught by two fixtures while
       // BC.History stayed at 0 errors). Requiring the tail means this
       // alternative simply does not exist unless a #if actually follows.
-      $._property_value_with_split,
+      //
+      // Aliased to property_expression: flat `MinValue = 1 + 2;` wraps a binary
+      // value in property_expression, and a continued value is binary in every
+      // configuration whose tail is live. Until the fix the expression and the
+      // tail sat bare under `value` (grammar finding G5), so `1 * 3 #if X + 2
+      // #endif` matched no configuration's flat parse. The one shape the tree
+      // cannot carry -- a simple prefix (`1`) whose tail is inactive, where
+      // flat gives a bare `integer` -- is the oracle lowering's to unwrap
+      // (contract expression-continuation, property-expression-unwrap).
+      alias($._property_value_with_split, $.property_expression),
       // Simple values
       $.boolean,
       $.integer,

@@ -45,17 +45,20 @@ def test_every_config_passes(al_parser, src, kind):
     witness.assert_all_pass(al_parser, src)
 
 
-# A GENUINE discrepancy, not a lowering gap: `_property_value_with_split` is
-# `_expression tail`, so the multi-config tree's value is a bare expression, while
-# `MinValue = 1 + 2;` wraps a binary value in `property_expression` (grammar.js
-# _property_value). X=1 reports `structure|parent|...property_expression.value/additive_expression`.
-# Strict: this flips when the grammar gives the continued value the same wrapper.
-_GRAMMAR_DISCREPANCY = {"property": "property value continued by a tail lacks property_expression"}
+# Grammar finding G5: a continued property value is property_expression(expr, tail),
+# the wrapper flat `MinValue = 1 * 3 + 2;` gives. The "property" position above has
+# a SIMPLE prefix, whose X=0 flat parse is a bare `integer` (property-expression-unwrap);
+# this one has a BINARY prefix, wrapped in every configuration.
+PROPERTY_BINARY_PREFIX = POSITIONS["property"].replace(b"MinValue = 1" + bytes([10]), b"MinValue = 1 * 3" + bytes([10]))
+assert PROPERTY_BINARY_PREFIX != POSITIONS["property"]
 
 
-@pytest.mark.parametrize("name", [pytest.param(n, marks=pytest.mark.xfail(
-                                      strict=True, raises=AssertionError, reason=_GRAMMAR_DISCREPANCY[n]))
-                                  if n in _GRAMMAR_DISCREPANCY else n for n in sorted(POSITIONS)])
+def test_g5_property_binary_prefix_passes(al_parser):
+    witness.assert_produces(al_parser, PROPERTY_BINARY_PREFIX, "preproc_conditional_expression_tail")
+    witness.assert_all_pass(al_parser, PROPERTY_BINARY_PREFIX)
+
+
+@pytest.mark.parametrize("name", sorted(POSITIONS))
 def test_every_tail_position_passes(al_parser, name):
     witness.assert_produces(al_parser, POSITIONS[name], "preproc_conditional_expression_tail")
     witness.assert_all_pass(al_parser, POSITIONS[name])

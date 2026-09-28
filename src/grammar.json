@@ -2137,8 +2137,13 @@
       "type": "CHOICE",
       "members": [
         {
-          "type": "SYMBOL",
-          "name": "_property_value_with_split"
+          "type": "ALIAS",
+          "content": {
+            "type": "SYMBOL",
+            "name": "_property_value_with_split"
+          },
+          "named": true,
+          "value": "property_expression"
         },
         {
           "type": "SYMBOL",

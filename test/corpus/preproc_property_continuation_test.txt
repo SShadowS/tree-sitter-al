@@ -55,11 +55,12 @@ table 50133 D { fields { field(1; F; Integer) { MinValue = 1
             body: (declaration_body
               (property
                 name: (property_name)
-                value: (integer)
-                value: (preproc_conditional_expression_tail
-                  (preproc_if
-                    (preproc_open)
-                    condition: (identifier))
-                  operand: (integer)
-                  (preproc_endif
-                    (preproc_close)))))))))))
+                value: (property_expression
+                  (integer)
+                  (preproc_conditional_expression_tail
+                    (preproc_if
+                      (preproc_open)
+                      condition: (identifier))
+                    operand: (integer)
+                    (preproc_endif
+                      (preproc_close))))))))))))

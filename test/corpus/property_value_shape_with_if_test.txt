@@ -1,0 +1,91 @@
+; A property value has the same shape with or without a #if: every configuration
+; of the multi-configuration tree, lowered by the configuration-consistency
+; oracle (tools/config_oracle), equals the flat parse of that configuration's
+; text. Each case pins the #if form's tail or arms at the flat shape.
+;
+; G5: a value continued by preproc_conditional_expression_tail is
+; property_expression(expr, tail), the wrapper flat `MinValue = 1 * 3 + 2;`
+; gives. It used to be a bare expression plus the tail under `value`.
+
+================================================================================
+G5: a simple value continued by a #if tail is a property_expression
+================================================================================
+
+table 50100 D { fields { field(1; F; Integer) { MinValue = 1
+#if X
+ + 2
+#endif
+ ; } } }
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (table_declaration
+    (table_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (fields_section
+        (fields_keyword)
+        body: (fields_body
+          (field_declaration
+            (field_keyword)
+            id: (integer)
+            name: (identifier)
+            type: (type_specification
+              (basic_type))
+            body: (declaration_body
+              (property
+                name: (property_name)
+                value: (property_expression
+                  (integer)
+                  (preproc_conditional_expression_tail
+                    (preproc_if
+                      (preproc_open)
+                      condition: (identifier))
+                    operand: (integer)
+                    (preproc_endif
+                      (preproc_close))))))))))))
+
+================================================================================
+G5: a binary value continued by a #if tail keeps the flat property_expression wrapper
+================================================================================
+
+table 50100 D { fields { field(1; F; Integer) { MinValue = 1 * 3
+#if X
+ + 2
+#endif
+ ; } } }
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (table_declaration
+    (table_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (fields_section
+        (fields_keyword)
+        body: (fields_body
+          (field_declaration
+            (field_keyword)
+            id: (integer)
+            name: (identifier)
+            type: (type_specification
+              (basic_type))
+            body: (declaration_body
+              (property
+                name: (property_name)
+                value: (property_expression
+                  (multiplicative_expression
+                    left: (integer)
+                    right: (integer))
+                  (preproc_conditional_expression_tail
+                    (preproc_if
+                      (preproc_open)
+                      condition: (identifier))
+                    operand: (integer)
+                    (preproc_endif
+                      (preproc_close))))))))))))
+

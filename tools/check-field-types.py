@@ -167,13 +167,12 @@ FIELD_INVARIANTS = [
     # `types` is not pinned -- this is a 30-member choice of every legal
     # property value, and pinning it would fail on unrelated additions.
     #
-    # multiple=True here is NOT a residual defect and is unrelated to the '-':
-    # `permissions_property` and `table_relation_property` are both aliased to
-    # `property`, and those rules field their value more than once, so the
-    # generator widens the declared arity for the merged node type. In practice
-    # the field is single-valued -- 0 of 42,811 `property` nodes across 1,500
-    # BC.History files return more than one `value` child.
-    inv('property', 'value', True, set(), 'FIXED',
+    # multiple=False since grammar finding G5: the last rule that fielded the
+    # value twice was `_property_value_with_split` (`_expression tail`, both
+    # under `value`); it is now aliased to ONE property_expression. It was
+    # multiple=True until then, and before G1 `table_relation_property` also
+    # fielded its value twice.
+    inv('property', 'value', False, set(), 'FIXED',
         "'-' of a negated CalcFormula inherited the value field"),
 
     # ----------------------------------------------------------- DELIBERATE

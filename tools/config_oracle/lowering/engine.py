@@ -7,7 +7,8 @@ Rules that are load-bearing:
   * a fragment may only pass up through a node when the child it came from is
     that node's last original child, and must be consumed by a named consumer;
   * the only normalisation is removing an EMPTY_REMOVABLE container that
-    lowering emptied.
+    lowering emptied. (Unwrapping a continued property value is not one: it is
+    a named rewrite of contract expression-continuation, see ExpressionContinuation.)
 
 Lowering only selects and relabels. It never sees the reference parse (this
 package imports nothing from reference.py, tree_sitter, or the loader).
@@ -126,7 +127,16 @@ class ExpressionContinuation(ToPrevious):
     The preceding sibling expression and every pair's operand are flattened, the
     `(operator, operand)` pairs appended in order, and the whole recomposed by the
     precedence table (expression.compose), keeping the preceding sibling's field.
-    That regrouping is the named rewrite; no pairs leave the sibling untouched."""
+    That regrouping is the named rewrite; no pairs leave the sibling untouched.
+
+    Second named rewrite, **property-expression-unwrap**: a property value
+    continued by a tail is `property_expression(expr, tail)` (grammar.js
+    `_property_value`, finding G5), because flat `MinValue = 1 + 2;` wraps a
+    binary value. Flat `MinValue = 1;` does not wrap a simple one, so when the
+    lowered property_expression's only child is not one of its member kinds
+    (PROPERTY_EXPRESSION_KINDS) the wrapper is replaced by that child, which
+    takes the wrapper's field (`value`). Applied by engine._lower_ordinary, only
+    to a property_expression that held a tail."""
     pairs: list = field(default_factory=list)
 
     def apply(self, prev):
@@ -139,6 +149,15 @@ class ExpressionContinuation(ToPrevious):
         except ValueError as e:
             raise LoweringError("contract-shape", prev, str(e)) from None
         return expression.compose(flat, prev.field)
+
+
+# property_expression's own members (grammar.js property_expression), hand-written.
+PROPERTY_EXPRESSION_KINDS = frozenset({
+    "call_expression", "member_expression", "qualified_enum_value", "database_reference",
+    "unary_expression", "additive_expression", "multiplicative_expression", "comparison_expression",
+    "logical_expression", "ternary_expression", "parenthesized_expression", "subscript_expression",
+})
+_TAIL = "preproc_conditional_expression_tail"
 
 
 def bind_previous(kids, r, c):
@@ -269,6 +288,8 @@ def _lower_ordinary(node, ctx) -> Lowered:
             ctx.normalised.append(f"removed-empty:{node.kind}@{node.start}")
             return Lowered([], frags)
         raise LoweringError("empty-node", node)
+    if node.kind == "property_expression" and any(c.kind == _TAIL for c in node.children)             and len(kids) == 1 and kids[0].kind not in PROPERTY_EXPRESSION_KINDS:
+        return Lowered([kids[0].copy(field=node.field)], frags)   # property-expression-unwrap
     return Lowered([_span_from_children(new)], frags)
 
 
