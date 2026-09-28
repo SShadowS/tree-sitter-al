@@ -338,11 +338,14 @@ module.exports = grammar({
     // #if branch is identical in a link, permission and implementation list, and
     // the property name that would disambiguate is long past.
     [$._link_value_branch, $._permission_branch, $._impl_value_branch],
-    [$.preproc_conditional_permissions, $.preproc_conditional_table_relation],
     [$.preproc_conditional_permissions, $._table_relation_whole_conditional],
     // A #if nested in a whole-value arm (G3): both a nested whole value and
     // table_relation_value -> preproc_conditional_table_relation read it.
     [$.preproc_conditional_table_relation, $._table_relation_whole_conditional],
+    // ... and, with that arm's optional `;`, an empty nested #if before `;` is
+    // also an empty permission conditional. This three-way subsumes the former
+    // [preproc_conditional_permissions, preproc_conditional_table_relation].
+    [$.preproc_conditional_table_relation, $._table_relation_whole_conditional, $.preproc_conditional_permissions],
     [$._namespaced_ref_table, $._literal_value],
     [$.preproc_conditional_link_values, $.preproc_conditional_permissions, $.preproc_conditional_impl_values],
     [$.preproc_conditional_link_values, $.preproc_conditional_impl_values],
@@ -865,7 +868,8 @@ module.exports = grammar({
       // shapes too (grammar finding G3). It used to reach table_relation_value
       // -> preproc_conditional_table_relation, whose arms are
       // table_relation_expression.
-      alias($._table_relation_whole_conditional, $.preproc_conditional_table_relation),
+      // Like its siblings it takes an optional `;`: the inner `;` may follow its #endif.
+      seq(alias($._table_relation_whole_conditional, $.preproc_conditional_table_relation), optional(';')),
     ),
 
     // The value of a table_relation_property whose `;` sits inside a #if arm

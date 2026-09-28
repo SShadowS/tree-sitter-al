@@ -17,6 +17,7 @@
 ; are flat shapes too (`Item;` -> identifier). They used to be
 ; table_relation_expression(simple_table_relation). alc accepts it in all four
 ; configurations of X and Y.
+; The inner `;` may also follow the inner #endif (the nested arm's optional `;`).
 
 ================================================================================
 G5: a simple value continued by a #if tail is a property_expression
@@ -327,6 +328,120 @@ Customer;
                       (preproc_close)))
                   (preproc_else)
                   (identifier)
+                  (preproc_endif
+                    (preproc_close)))))))))))
+
+================================================================================
+G3: a nested #if whose semicolon follows the inner #endif
+================================================================================
+
+table 50100 D { fields { field(1; F; Code[20]) {
+TableRelation =
+#if X
+#if Y
+Item
+#else
+Resource
+#endif
+;
+#else
+Customer;
+#endif
+} } }
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (table_declaration
+    (table_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (fields_section
+        (fields_keyword)
+        body: (fields_body
+          (field_declaration
+            (field_keyword)
+            id: (integer)
+            name: (identifier)
+            type: (type_specification
+              (code_type
+                (code_keyword)
+                length: (integer)))
+            body: (declaration_body
+              (property
+                name: (property_name)
+                value: (preproc_conditional_table_relation
+                  (preproc_if
+                    (preproc_open)
+                    condition: (identifier))
+                  (preproc_conditional_table_relation
+                    (preproc_if
+                      (preproc_open)
+                      condition: (identifier))
+                    (identifier)
+                    (preproc_else)
+                    (identifier)
+                    (preproc_endif
+                      (preproc_close)))
+                  (preproc_else)
+                  (identifier)
+                  (preproc_endif
+                    (preproc_close)))))))))))
+
+================================================================================
+G3: a nested #if with literal arms whose semicolon follows the inner #endif
+================================================================================
+
+table 50100 D { fields { field(1; F; Integer) {
+MinValue =
+#if X
+#if Y
+1
+#else
+2
+#endif
+;
+#else
+3;
+#endif
+} } }
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (table_declaration
+    (table_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (fields_section
+        (fields_keyword)
+        body: (fields_body
+          (field_declaration
+            (field_keyword)
+            id: (integer)
+            name: (identifier)
+            type: (type_specification
+              (basic_type))
+            body: (declaration_body
+              (property
+                name: (property_name)
+                value: (preproc_conditional_table_relation
+                  (preproc_if
+                    (preproc_open)
+                    condition: (identifier))
+                  (preproc_conditional_table_relation
+                    (preproc_if
+                      (preproc_open)
+                      condition: (identifier))
+                    (integer)
+                    (preproc_else)
+                    (integer)
+                    (preproc_endif
+                      (preproc_close)))
+                  (preproc_else)
+                  (integer)
                   (preproc_endif
                     (preproc_close)))))))))))
 

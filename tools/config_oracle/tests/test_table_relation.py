@@ -121,3 +121,22 @@ def test_g3_nested_whole_value_every_config(al_parser):
     v = witness.verdicts(al_parser, G3_NESTED)
     assert len(v) == 4, v
     witness.assert_all_pass(al_parser, G3_NESTED)
+
+
+# Fix round 1 for G3: the inner `;` after the inner #endif (the nested arm's
+# optional `;`). Parsed clean at 7f48453 and must stay clean, for name and literal arms.
+G3_SEMI_AFTER = WHOLE.replace(b"#if BC24\n                Item;\n#else\n                Resource;\n#endif\n",
+                              b"#if X\n#if Y\n                Item\n#else\n                Resource\n#endif\n"
+                              b"                ;\n#else\n                Customer;\n#endif\n")
+G3_SEMI_AFTER_LITERAL = (G3_SEMI_AFTER.replace(b"Item\n", b"1\n").replace(b"Resource\n", b"2\n")
+                         .replace(b"Customer;", b"3;").replace(b"Code[20]", b"Integer")
+                         .replace(b"TableRelation", b"MinValue"))
+assert G3_SEMI_AFTER != WHOLE and b"Item" not in G3_SEMI_AFTER_LITERAL
+
+
+@pytest.mark.parametrize("src", [G3_SEMI_AFTER, G3_SEMI_AFTER_LITERAL], ids=["name", "literal"])
+def test_g3_nested_semicolon_after_endif_every_config(al_parser, src):
+    witness.assert_produces(al_parser, src, "preproc_conditional_table_relation")
+    v = witness.verdicts(al_parser, src)
+    assert len(v) == 4, v
+    witness.assert_all_pass(al_parser, src)
