@@ -32,6 +32,21 @@ P2_WITNESSES = {
     "preproc_conditional_dataset": [
         b"report 1 R\n{\n    dataset\n    {\n#if A\n        dataitem(D; Integer) { }\n#else\n#endif\n    }\n}\n",
     ],
+    "preproc_conditional_fields": [
+        # nested #if among fields (BC 29 family C), #else with a different field
+        b"table 1 T\n{\n    fields\n    {\n        field(1; A; Integer) { }\n#if A\n#if B\n        field(2; B; Integer) { }\n#endif\n        field(3; C; Integer) { }\n#else\n        field(4; D; Integer) { }\n#endif\n    }\n}\n",
+    ],
+    "preproc_conditional_keys": [
+        b"table 1 T\n{\n    fields { field(1; A; Integer) { } field(2; B; Integer) { } }\n    keys\n    {\n        key(PK; A) { }\n#if A\n#if B\n        key(K1; B) { }\n#endif\n        key(K2; A, B) { }\n#endif\n    }\n}\n",
+    ],
+    "preproc_conditional_fieldgroups": [
+        # a second fieldgroup in the #if arm, so the policy-swap probe has a
+        # config (A=1) that selects two nodes, not one
+        b"table 1 T\n{\n    fields { field(1; A; Integer) { } }\n    fieldgroups\n    {\n#if A\n        fieldgroup(DropDown; A) { }\n        fieldgroup(Brick2; A) { }\n#else\n        fieldgroup(Brick; A) { }\n#endif\n    }\n}\n",
+    ],
+    "preproc_conditional_var": [
+        b"codeunit 1 T\n{\n    var\n        X: Integer;\n#if A\n        Y: Integer;\n#else\n        Z: Integer;\n#endif\n\n    procedure P()\n    var\n        L: Integer;\n#if B\n        M: Integer;\n#endif\n    begin\n    end;\n}\n",
+    ],
 }
 
 # A witness whose arm is EMPTY in some configuration (Review Focus 1).
@@ -65,3 +80,11 @@ def test_policy_swap_trips_policy(al_parser, monkeypatch, kind, src):
 @pytest.mark.parametrize("kind,src", list(EMPTY_ARM.items()))
 def test_empty_arm_loses_and_gains_nothing(al_parser, kind, src):
     witness.assert_all_pass(al_parser, src)
+
+
+def test_nested_fields_and_keys_every_config(al_parser):
+    for kind in ("preproc_conditional_fields", "preproc_conditional_keys"):
+        src = P2_WITNESSES[kind][0]
+        v = witness.verdicts(al_parser, src)
+        assert set(v) >= {"A=0,B=0", "A=1,B=0", "A=1,B=1"} or len(v) >= 3, v
+        witness.assert_all_pass(al_parser, src)

@@ -99,9 +99,10 @@ _BODY_HOSTS = {f"{p}:<children>": "splice-repeat" for p in (
     "preproc_conditional_layout_mixed", "preproc_conditional_query", "preproc_conditional_report",
     "preproc_conditional_xmlport", "preproc_split_var_section_tail", "query_body", "report_body",
     "xmlport_body")}
-# preproc_conditional_var and var_body are NOT body hosts any more: since the
-# item-8 fix they admit only variable declarations (grammar.js var_body /
-# preproc_conditional_var). preproc_split_var_section_tail holds body elements
+# var_body is NOT a body host any more: since the item-8 fix it admits only
+# variable declarations (grammar.js var_body). preproc_conditional_var is
+# registered separately below (Task 5), also admitting only declarations, not
+# a member of _BODY_HOSTS. preproc_split_var_section_tail holds body elements
 # in `repeat1`/`repeat` after its `variables`, so splice-repeat.
 
 # preproc_split_procedure_preamble is NOT an exception, despite round-1 briefly
@@ -242,17 +243,50 @@ register("preproc_conditional_dataset", "branch-select", "tools.config_oracle.lo
          arm={"report_dataitem", "preproc_split_report_dataitem_header",
               "preproc_split_report_dataitem_open_over_endif", "attribute_item"})
 
+# --- branch-select, part B (Task 5): fields, keys, fieldgroups, var. Arm sets
+# are each type's own rule in grammar.js, with the hidden branch-item rules
+# (_field_branch_items, _key_branch_items) expanded to their visible members;
+# cross-checked against the census, which agrees exactly. preproc_split_table_field_open
+# and preproc_split_key are themselves unsupported (milestone 3), but they are
+# still real host slots for preproc_conditional_fields/keys per the census, so
+# they are declared here with the policy the shared repeat rule implies.
+register("preproc_conditional_fields", "branch-select", "tools.config_oracle.lowering.select.branch_select",
+         hosts={"fields_body:<children>": "splice-repeat",
+                "preproc_conditional_fields:<children>": "splice-repeat",
+                "preproc_split_table_field_open:<children>": "splice-repeat"},
+         # _field_branch_items (grammar.js:1672-1674).
+         arm={"field_declaration", "attribute_item", "modify_modification", "preproc_conditional_fields"})
+register("preproc_conditional_keys", "branch-select", "tools.config_oracle.lowering.select.branch_select",
+         hosts={"keys_body:<children>": "splice-repeat",
+                "preproc_conditional_keys:<children>": "splice-repeat",
+                "preproc_split_key:<children>": "splice-repeat"},
+         # _key_branch_items (grammar.js:1765).
+         arm={"key_declaration", "attribute_item", "preproc_conditional_keys"})
+register("preproc_conditional_fieldgroups", "branch-select", "tools.config_oracle.lowering.select.branch_select",
+         hosts={"fieldgroups_body:<children>": "splice-repeat",
+                "preproc_conditional_fieldgroups:<children>": "splice-repeat"},
+         # own rule (grammar.js:1806-1812): fieldgroup_declaration or a nested
+         # preproc_conditional_fieldgroups, nothing else -- no attribute_item, no
+         # modification (the addlast/addfirst fieldgroup modifications sit in
+         # fieldgroups_body directly, not inside this conditional).
+         arm={"fieldgroup_declaration", "preproc_conditional_fieldgroups"})
+register("preproc_conditional_var", "branch-select", "tools.config_oracle.lowering.select.branch_select",
+         hosts={"var_body:<children>": "splice-repeat"},
+         # own rule (grammar.js:3520-3532), post item-8 fix: declarations only,
+         # no self-nesting (unlike fields/keys/fieldgroups).
+         arm={"variable_declaration", "var_attribute_item"})
+
 # --- registered, not yet lowered (milestones 2-3). Unsupported is explicit, never a default.
 # preproc_split_else_begin_over_endif (in this loop, from Task 13): base shape
 # milestone 2, widened shapes one-reading.
 for t in ("preproc_conditional_case", "preproc_conditional_case_patterns",
           "preproc_conditional_controladdin", "preproc_conditional_expression_tail",
-          "preproc_conditional_fieldgroups", "preproc_conditional_fields", "preproc_conditional_impl_values",
-          "preproc_conditional_keys", "preproc_conditional_labels",
+          "preproc_conditional_impl_values",
+          "preproc_conditional_labels",
           "preproc_conditional_link_values",
           "preproc_conditional_list_elements", "preproc_conditional_option_members",
           "preproc_conditional_permissions", "preproc_conditional_query",
-          "preproc_conditional_table_relation", "preproc_conditional_var",
+          "preproc_conditional_table_relation",
           "preproc_conditional_where", "preproc_conditional_xmlport", "preproc_fragmented_else_tail",
           "preproc_guarded_statement", "preproc_operand_prefix", "preproc_split_brace_close",
           "preproc_split_brace_close_if_only", "preproc_split_call_statement", "preproc_split_case_branch",

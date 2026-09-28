@@ -62,10 +62,14 @@ def test_single_slot_with_two_statements_is_policy(al_parser):
 
 
 def test_unsupported_type_fails_closed(al_parser):
-    src = b"table 1 T { fields {\n#if A\n field(1; F; Integer) { }\n#endif\n } }"
+    # preproc_conditional_fields is registered (Task 5); preproc_conditional_where
+    # (a #if inside a CalcFormula where-clause) stays unsupported through milestone 2.
+    src = (b"table 1 T { fields { field(1; A; Integer) { "
+           b"CalcFormula = count(A where(B = filter(0),\n#if X\nC = filter(0),\n#endif\nD = filter(0))); "
+           b"} } }")
     root, extras, _ = ir.from_tree(al_parser.parse(src))
     with pytest.raises(LoweringError) as err:
-        lower_tree(root, extras, resolve(src, frozenset({"A"})))
+        lower_tree(root, extras, resolve(src, frozenset({"X"})))
     assert err.value.kind == "unsupported-type"
 
 

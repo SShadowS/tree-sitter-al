@@ -33,6 +33,14 @@ EMPTY_REMOVABLE = {
     # and preproc_split_container_reopen (both branches): optional(field('body',
     # $.layout_container_body)) (grammar.js:4687, 4708, 4710).
     "layout_container_body",
+    # Added with Task 5's fields/keys/fieldgroups branch-select: each section
+    # wraps its body the same single-site way, and a config that empties the
+    # whole section (BC.History-shaped: nested_preproc_fields_keys_test.txt,
+    # keys_body left empty by C28=0,S31=1 / C28=1,S31=1) hit the same
+    # false-negative empty-node gap dataset_body/layout_container_body did.
+    "fields_body",        # fields_section: optional(field('body', $.fields_body)) (grammar.js:1646-1651)
+    "keys_body",          # keys_section: optional(field('body', $.keys_body)) (grammar.js:1718-1723)
+    "fieldgroups_body",   # fieldgroups_section: optional(field('body', $.fieldgroups_body)) (grammar.js:1780-1785)
 }
 
 STATEMENT_HOSTS = {"statement_block", "case_branch"}
