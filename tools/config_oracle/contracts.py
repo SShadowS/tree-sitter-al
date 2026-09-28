@@ -183,6 +183,9 @@ register("preproc_split_modify", "unsupported")
 register("preproc_split_table_field_open", "unsupported")
 # BC 29 family G: branches end in an open statement prefix, tail completes it.
 register("preproc_split_open_statement", "unsupported")
+# BC 29 family H: a branch closes a layout container and opens a sibling. The
+# tree is the #if reading, so the other configuration cannot be lowered to it.
+register("preproc_split_container_reopen", "unsupported")
 
 # Non-prefixed special type: completes an earlier table relation (spec section 3).
 register("else_table_relation_fragment", "unsupported")
