@@ -186,55 +186,115 @@ caught one of its own case-construction bugs during the release — a probe that
 would otherwise have been filed as "alc rejects Implementation splits", which is
 false.
 
-## 8. `var_body` hosts `preproc_split_procedure`: the procedure lands inside the var section
+## 8. `var_body` admits body elements: procedures land inside the global var section
 
 **Established:** config-oracle quick tier, 2026-09-28 (milestone-1 results,
 `docs/superpowers/plans/2026-09-27-config-oracle-milestone-1-results.md`), grammar
-sha `61299ce05fb988e7`, HEAD `1243f8c`. alc four-way probe, all four ACCEPT
-(sanity ACCEPT, garbage control REJECT).
+sha `61299ce05fb988e7`, HEAD `1243f8c`. Production census and alc probe the same day.
 
-`var_body` (grammar.js, `var_body: $ => repeat1(choice(... $.preproc_split_procedure))`)
-lists `preproc_split_procedure` as a member. So an object-level `var` section
-followed by an `#if`-split procedure signature absorbs the whole procedure:
+Two grammar paths let a `var` section absorb what follows it:
+
+1. **Split shape.** `var_body: repeat1(choice(..., $.preproc_split_procedure))` lists the
+   split procedure directly, so a `var` section followed by an `#if`-split procedure
+   signature swallows the whole procedure and its attribute.
+2. **Conditional shape.** `preproc_conditional_var` (the next rule after
+   `var_attribute_item`) accepts `$.attribute_item` and `$._body_element` in every arm,
+   so a COMPLETE `#if … procedure … #endif` after a global `var` section is swallowed
+   too. Minimal repro:
+
+   ```al
+   codeunit 50100 P
+   {
+       var
+           G: Integer;
+
+   #if not CLEAN24
+       procedure X()
+       begin
+       end;
+   #endif
+   }
+   ```
+
+   parses as `var_section > var_body > (variable_declaration) (preproc_conditional_var
+   (preproc_if …) (procedure …) (preproc_endif …))`.
+
+In both, the tree claims a procedure is a member of the var section. No configuration
+of the text has that shape: the single-configuration reference ends `var_section` at
+its last `variable_declaration` and puts the attribute and procedure in
+`declaration_body` as siblings.
+
+**Census** (every tree of the 2,386 `#if` files in the three roots, counting direct
+`var_body` children that hold a non-variable body element; `pragma`-only conditionals
+excluded, they are extras):
+
+| corpus | split shape | conditional shape with procedure(s) | procedures inside | other |
+|---|---|---|---|---|
+| BC.History | 1 node / 1 file | 115 nodes / 58 files | 227 | 1 (`protected var` section nested in `var_body`, `Sales/Pricing/SalesPrice.Table.al:275`) |
+| BC 28.1 | 0 | 66 nodes / 24 files | 212 | 0 |
+| DC | 0 | 2 nodes / 2 files | 20 | 1 (procedure attribute alone in the `#if`, `Cloud Migration/CDCCloudMigrationMgt.Codeunit.al:16`) |
+| **total** | **1** | **183 nodes / 84 files** | **459** | 2 |
+
+Example sites (1-based rows):
+
+- split: `BC.History/BaseApp/Source/Base Application/Foundation/Shipping/ShippingAgent.Table.al:87`
+  (`GetTrackingInternetAddr`).
+- conditional: `BC.History/System Application/Source/System Application/Password/src/PasswordDialogManagement.Codeunit.al:20`
+  (its `var_section` spans rows 17–92 and holds five procedures).
+- conditional: `H:/Git/BC28.1/Application Test Library/Source/Application Test Library/LibraryPatterns.Codeunit.al:390`
+  (`var_section` rows 11–396).
+- conditional: `DC/Cloud/.dependencies/DC/Codeunit/CDCCaptureRTCLibrary.Codeunit.al:23`
+  (19 procedures in one conditional; `var_section` rows 8–213).
+
+**Why the oracle reported only 8 of these.** The quick tier's 8 discrepancies are all
+the split shape: `attribute_preproc_procedure.txt#0` (CLEAN24=0/1),
+`preproc_interrupted_var_section.txt#0` (CLEAN24=0/1), `#1` (CLEAN25=0/1), `#2`
+(CLEAN24=0/1); both files pin the wrong nesting as expected output. The conditional
+shape is invisible for now: `preproc_conditional_var` has no lowering handler in
+milestone 1, so every configuration containing one is `cannot-validate:
+lowering:unsupported-type` (22 quick-tier configurations). The resolve tier does no
+lowering and cannot see either shape.
+
+**alc probe** (four-way; `tools/config_oracle/probe_alc.compile_probe`, not committed
+as a script). The probe did **not** compile the table fixture or ShippingAgent: it used
+an Integer-typed codeunit copy of the split fixture, so it needs no symbols:
 
 ```al
+codeunit 50100 Probe
+{
     var
-        GlobalVar: Record "Test Record";
+        GlobalVar: Integer;
 
 #if not CLEAN24
-    [Obsolete('...', '24.0')]
+    [Obsolete('Field length will be increased', '24.0')]
     procedure TestProc(Param: Text[30]) Result: Text
 #else
     procedure TestProc(Param: Text[50]) Result: Text
 #endif
     var
         LocalVar: Text;
-    begin ... end;
+    begin
+        Result := Param;
+    end;
+}
 ```
 
-| | multi-configuration tree | single-configuration reference (either config) |
-|---|---|---|
-| `var_section` | spans to the procedure's final `;` | ends at the last global `variable_declaration` |
-| procedure | child of `var_body` | sibling of `var_section` in `declaration_body` |
-| `[Obsolete]` | inside the split procedure | `attribute_item` sibling in `declaration_body` |
+Flat undefined (the `#if not CLEAN24` arm with its directive lines removed), flat
+defined (the `#else` arm), split with `[]` and split with `["CLEAN24"]`: all four
+ACCEPT. Controls in the same session: `unit("        Message('x');")` ACCEPT and
+`unit("        GARBAGE!! ;;; }{")` REJECT (AL0104, AL0111, AL0183, AL0198). The
+conditional shape was not probed separately; its flat configurations are an ordinary
+var section followed by procedures.
 
-No configuration of that text has a procedure inside a var section; alc compiles
-both flat configurations and the split file under both symbol assignments.
-
-Cases (8 discrepancies, one root cause):
-`attribute_preproc_procedure.txt#0` (CLEAN24=0, CLEAN24=1),
-`preproc_interrupted_var_section.txt#0` (CLEAN24=0/1), `#1` (CLEAN25=0/1),
-`#2` (CLEAN24=0/1). Both corpus files pin the wrong nesting as expected output.
-
-Production: **1 site** over the 2,386 `#if` files of BC.History, DC and BC 28.1 —
-`BC.History/BaseApp/Source/Base Application/Foundation/Shipping/ShippingAgent.Table.al:87`
-(`GetTrackingInternetAddr`). Measured by walking every tree for a
-`preproc_split_procedure` whose parent is `var_body`.
-
-Fix direction (not attempted): drop the member from `var_body` so `var_section`
-ends at its last declaration and the split procedure is a `_body_element`
-sibling; the two fixtures' expected trees then change and must be re-derived,
-not `-u`'d.
+**Fix direction (not attempted):** `var_body`, and the arms of `preproc_conditional_var`
+when it sits in `var_body`, admit only `variable_declaration`, `var_attribute_item` and
+their own conditionals. A split or conditional procedure, and a procedure-level
+attribute, then end the `var_section` and attach as its sibling in `declaration_body`
+(which already hosts `preproc_split_procedure` and `preproc_conditional`). If
+`preproc_conditional_var` still needs body elements elsewhere, split it into a
+var-only form for `var_body`. The two fixtures' expected trees change and must be
+re-derived from `tree-sitter parse`, not `-u`'d; the census above is the
+before-measurement.
 
 ## 9. `&&` and `||` in `#if` conditions: the grammar accepts what alc rejects
 

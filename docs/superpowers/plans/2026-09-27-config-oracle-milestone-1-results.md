@@ -21,9 +21,14 @@ wrapped in `./tools/ts-lock.sh`.
 | Peak memory, resolve sweep | 525 MiB (max over processes, not a sum) | summary `peak RSS (max over processes): 525 MiB` |
 | Elapsed time and peak memory, quick tier | 0.6 s, 57 MiB (max over processes) | quick summary |
 
-Verdict: milestone 1 exit **not fully met** — replay 3 is detected, but by the
-has_error backstop through a cannot-validate record rather than by structure, and
-replay 4's HEAD control is an xfail until milestone 2.
+**Controller ruling on replay 3:** the controller accepted the has_error backstop as
+replay 3's detection (the old defect was CLI-silent, not API-silent); the spec
+criterion as literally worded stays NOT MET.
+
+Verdict: milestone 1 exit **not fully met as literally worded** — replay 3 is detected
+by the has_error backstop through a cannot-validate record rather than by structure
+(accepted by the controller, above), and replay 4's HEAD control is an xfail until
+milestone 2.
 
 ### Resolve sweep
 
@@ -54,7 +59,7 @@ None: zero non-pass records, so Step 2's grouping prints nothing.
 
 | Group | Count | Example | Classification | Action |
 |---|---|---|---|---|
-| `var_body` hosts `preproc_split_procedure` | 8 | `preproc_interrupted_var_section.txt#0` CLEAN24=0; also `attribute_preproc_procedure.txt#0` (×2), `preproc_interrupted_var_section.txt#0..#2` (×2 each) | **(a) grammar defect** | `docs/deferred-work.md` item 8 |
+| `var_body` hosts `preproc_split_procedure` (split shape; the conditional shape of the same defect, 183 production nodes, is not yet visible to the oracle) | 8 | `preproc_interrupted_var_section.txt#0` CLEAN24=0; also `attribute_preproc_procedure.txt#0` (×2), `preproc_interrupted_var_section.txt#0..#2` (×2 each) | **(a) grammar defect** | `docs/deferred-work.md` item 8 |
 | mid-file U+FEFF counted as uncovered | 1 | `scanner_single_read_dispatch_test.txt#3` CLEAN22=0, `coverage\|uncovered\|ref@148` and `low@148` | **(b) oracle defect** | follow-up below |
 
 **Group 1 evidence.** In every configuration the multi-config tree (and hence the
@@ -67,7 +72,12 @@ directly, and the lowered tree only mirrors that. alc four-way probe on a
 Integer-typed copy of the fixture: flat undefined ACCEPT, flat defined ACCEPT, split
 undefined ACCEPT, split defined ACCEPT (sanity ACCEPT, garbage REJECT). One
 production site: `BC.History/.../Shipping/ShippingAgent.Table.al:87`. The resolve tier
-cannot see this (no lowering), which is why the sweep is clean.
+cannot see this (no lowering), which is why the sweep is clean. The same defect has a
+second shape the quick tier cannot yet reach: `preproc_conditional_var` admits
+`_body_element`, so a complete `#if … procedure … #endif` after a global `var` section
+is also swallowed — 183 nodes (459 procedures) over the three corpora, reported as
+`lowering:unsupported-type` because that type has no handler in milestone 1. Census,
+examples and fix direction: deferred-work item 8.
 
 **Group 2 evidence.** Byte 148 is a U+FEFF on its own line between a split `end;` and
 `#else`. grammar.js:153 declares `/\uFEFF/` an `extra`; tree-sitter produces no node
@@ -100,9 +110,10 @@ need the four-way probe before any is filed.
    grammar.js declares it an extra. Reproducer: `scanner_single_read_dispatch_test.txt#3`,
    CLEAN22=0 — `coverage|uncovered|ref@148` and `low@148` on an otherwise identical
    pair. Decide together with deferred-work item 6.
-2. **Replay 3 does not reach the structure check.** Either find an input on which the
-   f47350d^ parser is API-silent (no `has_error`), or record in the spec that replay 3's
-   expected detection is the has_error backstop.
+2. **Replay 3: spec text to be updated to match the ruling.** The spec's replay table
+   says "structure"; the controller accepted the has_error backstop as replay 3's
+   detection, so the table entry and the "no earlier cannot-validate" rule need a
+   stated exception for replay 3.
 3. Replay 4 HEAD control: `preproc_conditional_expression_tail` lowering (milestone 2).
 4. `&&`/`||` in `#if`: grammar accepts, alc rejects (AL0631); the oracle reports
    `cannot-validate`. Grammar side filed as deferred-work item 9.
