@@ -162,6 +162,13 @@ for t in ("preproc_conditional_actions", "preproc_conditional_case", "preproc_co
 # rewrite the engine has no fragment for yet (milestone 2).
 register("preproc_split_var_section_tail", "unsupported")
 
+# Added with the BC 29 family-I fixes. preproc_conditional_arguments splices
+# its branch arguments into argument_list (a list-group, like the other
+# preproc_conditional_* lists); preproc_split_permissions_property assembles
+# one property per branch from that branch's head plus the shared tail.
+register("preproc_conditional_arguments", "unsupported")
+register("preproc_split_permissions_property", "unsupported")
+
 # Non-prefixed special type: completes an earlier table relation (spec section 3).
 register("else_table_relation_fragment", "unsupported")
 
