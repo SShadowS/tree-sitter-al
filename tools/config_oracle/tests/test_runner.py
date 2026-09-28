@@ -332,3 +332,12 @@ def test_explicit_and_wildcard_classification_of_one_configuration_is_rejected()
     classes = {("bad", "*"): ("cannot-validate:resolver", "x"), ("bad", "A=0"): ("cannot-validate:resolver", "y")}
     with pytest.raises(ValueError):
         runner.run([("bad", BAD)], None, workers=1, mode="full", classes=classes)
+
+
+def test_cli_full_tier_over_a_root(tmp_path):
+    from tools.config_oracle.__main__ import main
+    (tmp_path / "a.al").write_bytes(b"codeunit 1 T\n{\n    trigger OnRun()\n    begin\n#if A\n        x := 1;\n#endif\n    end;\n}\n")
+    rc = main(["run", "--tier", "full", "--root", str(tmp_path), "--workers", "1",
+               "--report", str(tmp_path / "rep")])
+    assert rc == 0
+    assert "pass: 2" in (tmp_path / "rep" / "summary.md").read_text(encoding="utf-8")
