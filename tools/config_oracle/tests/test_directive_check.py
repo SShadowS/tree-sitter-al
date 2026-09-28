@@ -7,6 +7,12 @@ CASES = [
     b"codeunit 1 T { trigger OnRun() begin\n#if A\nx := 1;\n#else\nx := 2;\n#endif\nend; }\n",
     b"codeunit 1 T { trigger OnRun() begin\r\n#if A // c\r\nx := 1;\r\n#endif\r\nend; }\r\n",
     b"codeunit 1 T { trigger OnRun() begin\n# if not (A or B)\nx := 1;\n#elif C\nx := 3;\n#endif\nend; }",
+    # Task 18 (the first production run, 128 end-extent items over 34 files): the
+    # directive's newline terminator skipped blank lines as whitespace and matched
+    # the LAST newline, so preproc_if/preproc_elif ran on over following blank lines.
+    b"codeunit 1 T { trigger OnRun() begin\n#if A\n\n\nx := 1;\n#elif B\n\nx := 2;\n#endif\nend; }\n",
+    b"codeunit 1 T { trigger OnRun() begin\r\n#if not A  \r\n\r\n  \r\nx := 1;\r\n#endif\r\nend; }\r\n",
+    b"codeunit 1 T { trigger OnRun() begin\n#if A // c\n\nx := 1;\n#endif\nend; }\n",
 ]
 
 

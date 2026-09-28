@@ -21,8 +21,9 @@ The scanner maintains a `ScannerState` holding a `depth` counter tracking `#if`/
 | `PREPROC_SPLIT_BEGIN` | `begin` at depth > 0, immediately before `#endif` — split detection | none |
 | `PREPROC_SPLIT_END` | `end` at depth > 0, followed by `;` then `#elif`/`#else`/`#endif` — split detection | none |
 | `CALC_FORMULA_PROPERTY_NAME` | `CalcFormula` followed by `=` — the one property keyed by name; falls back to `PROPERTY_NAME` where the grammar does not offer it | none |
+| `DIRECTIVE_EOL` | the ONE `\r?\n` ending an `#if`/`#elif` line, after skipped blanks (hidden `_directive_eol`). A lexical `/\r?\n/` is also a separator, and longest match took the LAST newline of a run of blank lines; `token.immediate(/[ \t]*\r?\n/)` grew a following comment leftward over the space. Valid alone (or in error recovery), so it returns without trying other tokens | none |
 
-**Scan function order:** error recovery guard → PREPROC_OPEN/CLOSE → VAR_ATTRIBUTE_OPEN → identifier dispatch (`BEGIN_KEYWORD` | `PREPROC_SPLIT_BEGIN` | `END_KEYWORD` | `PREPROC_SPLIT_END` | `PROPERTY_NAME` / `CALC_FORMULA_PROPERTY_NAME` | `CONTINUE_AS_IDENTIFIER`)
+**Scan function order:** error recovery guard → DIRECTIVE_EOL → PREPROC_OPEN/CLOSE → VAR_ATTRIBUTE_OPEN → identifier dispatch (`BEGIN_KEYWORD` | `PREPROC_SPLIT_BEGIN` | `END_KEYWORD` | `PREPROC_SPLIT_END` | `PROPERTY_NAME` / `CALC_FORMULA_PROPERTY_NAME` | `CONTINUE_AS_IDENTIFIER`)
 
 `VAR_ATTRIBUTE_OPEN` runs **before** the identifier tokens, not after — it did not until 4.0.0, and the old order is why a leading `b` was absorbed into a following `[`, producing a two-column `[` token whose text was `b[`.
 

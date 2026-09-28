@@ -22,6 +22,7 @@ enum TokenType {
   PREPROC_SPLIT_END = 7,
   VAR_ATTRIBUTE_OPEN = 8,
   CALC_FORMULA_PROPERTY_NAME = 9,
+  DIRECTIVE_EOL = 10,
 };
 
 // Named so the static assertion below can test its width AND its signedness.
@@ -495,8 +496,34 @@ bool tree_sitter_al_external_scanner_scan(
       valid_symbols[PREPROC_SPLIT_BEGIN] &&
       valid_symbols[PREPROC_SPLIT_END] &&
       valid_symbols[VAR_ATTRIBUTE_OPEN] &&
-      valid_symbols[CALC_FORMULA_PROPERTY_NAME]) {
+      valid_symbols[CALC_FORMULA_PROPERTY_NAME] &&
+      valid_symbols[DIRECTIVE_EOL]) {
     return false;
+  }
+
+  // DIRECTIVE_EOL: the newline that ends an #if/#elif line. Blanks (space, tab)
+  // before it are skipped; then exactly ONE `\r?\n` is the token, and anything
+  // else declines so the grammar lexes it (`and`, `or`, `)`, or a `// comment`
+  // extra, after which this is asked again at the newline). It exists because
+  // a lexical `/\r?\n/` is also a whitespace separator, and the lexer's longest
+  // match skipped a run of blank lines and took the LAST newline, stretching the
+  // preproc_if over them. Only a condition's end offers it, and no other
+  // external token is valid there outside error recovery (checked against
+  // ts_external_scanner_states), so declining costs no other token its turn.
+  if (valid_symbols[DIRECTIVE_EOL]) {
+    while (lexer->lookahead == ' ' || lexer->lookahead == '\t') {
+      lexer->advance(lexer, true);
+    }
+    if (lexer->lookahead == '\r') {
+      lexer->advance(lexer, false);
+    }
+    if (lexer->lookahead != '\n') {
+      return false;
+    }
+    lexer->advance(lexer, false);
+    lexer->mark_end(lexer);
+    lexer->result_symbol = DIRECTIVE_EOL;
+    return true;
   }
 
   // PREPROC_OPEN (#if) and PREPROC_CLOSE (#endif) — combined dispatch

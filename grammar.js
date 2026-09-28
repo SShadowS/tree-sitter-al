@@ -196,6 +196,7 @@ module.exports = grammar({
     $.preproc_split_end,        // [7] 'end' at depth > 0, followed by ; then #elif/#else/#endif
     $.var_attribute_open,       // [8] '[' when attribute is followed by variable declaration
     $.calc_formula_property_name, // [9] `CalcFormula` followed by = -- the one name-keyed property
+    $._directive_eol,           // [10] the ONE newline ending an #if/#elif line (hidden)
   ],
 
   conflicts: $ => [
@@ -3745,13 +3746,20 @@ module.exports = grammar({
       // WRONG VALUE -- with zero ERROR nodes. Corruption of meaning, not of
       // attachment, which is why this outranks every attachment fix.
       //
-      // `token(/\r?\n/)` rather than the `'\n'` string tree-sitter-c uses: an
-      // anonymous PATTERN token is hidden, so the terminator lands in no tree
-      // and BC.History stays byte-identical. A `'\n'` string literal is a
-      // VISIBLE anonymous child and would change every directive-bearing file.
-      // Covers LF, CRLF (the `\r` is skipped as an extra), and EOF with no
-      // trailing newline.
-      token(/\r?\n/)
+      // A HIDDEN terminator (`_directive_eol`), so it lands in no tree; a `'\n'`
+      // string literal would be a VISIBLE anonymous child in every
+      // directive-bearing file.
+      //
+      // An EXTERNAL token, not a lexical one. `token(/\r?\n/)` was also a
+      // whitespace separator, and the lexer's longest match skipped newlines as
+      // whitespace and took the LAST one of a run: `#if X` followed by blank
+      // lines ended the preproc_if on the last blank line (the config oracle's
+      // first production run: 128 end-extent items in 34 files). The lexical
+      // fixes fail too: token.immediate(/[ \t]*\r?\n/) made a token that starts
+      // with a space, and the lexer then grew a following `// comment` leftward
+      // over that space (5 comments in BC 28.5, tree-harness). The scanner takes
+      // exactly one `\r?\n` after skipped blanks, and declines anything else.
+      $._directive_eol
     ),
 
     // A preprocessor conditional whose only content is pragmas/comments (both
@@ -3810,8 +3818,8 @@ module.exports = grammar({
     preproc_elif: $ => seq(
       new RustRegex('(?i)#[ \\t]*elif'),
       field('condition', $._preproc_expression),
-      // Same line-scoping as preproc_if above.
-      token(/\r?\n/)
+      // Same line-scoping, and the same external terminator, as preproc_if above.
+      $._directive_eol
     ),
 
     preproc_else: $ => new RustRegex('(?i)#[ \\t]*else'),

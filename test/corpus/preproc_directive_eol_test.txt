@@ -1,0 +1,95 @@
+; An #if/#elif line ends at its FIRST newline. The terminator used to be a
+; lexical newline pattern, which is also a whitespace separator, so the lexer
+; skipped blank lines and took the last newline: the preproc_if ran on over
+; them. The corpus format carries no byte ranges, so the extent itself is
+; pinned by tools/config_oracle/tests/test_directive_check.py; these cases pin
+; that the external _directive_eol token keeps every shape around it parsing.
+
+========================================================================
+Blank lines after #if, comment then blank line after #elif
+========================================================================
+codeunit 50100 Probe
+{
+#if not X
+
+
+    procedure A()
+    begin
+    end;
+#elif Y // after the condition
+
+    procedure B()
+    begin
+    end;
+#endif
+}
+
+------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (preproc_conditional
+        (preproc_if
+          (preproc_open)
+          condition: (preproc_not_expression
+            (identifier)))
+        (procedure
+          (procedure_keyword)
+          name: (identifier)
+          body: (code_block
+            (begin_keyword)
+            (end_keyword)))
+        (preproc_elif
+          condition: (identifier)
+          (comment))
+        (procedure
+          (procedure_keyword)
+          name: (identifier)
+          body: (code_block
+            (begin_keyword)
+            (end_keyword)))
+        (preproc_endif
+          (preproc_close))))))
+
+========================================================================
+Trailing blanks and a blank line after #if in a statement block
+========================================================================
+codeunit 50100 Probe
+{
+    trigger OnRun()
+    begin
+#if X  	
+
+        A();
+#endif
+    end;
+}
+
+------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (trigger_declaration
+        (trigger_keyword)
+        name: (identifier)
+        body: (code_block
+          (begin_keyword)
+          body: (statement_block
+            (preproc_conditional_statement
+              (preproc_if
+                (preproc_open)
+                condition: (identifier))
+              (call_expression
+                function: (identifier)
+                arguments: (argument_list))
+              (preproc_endif
+                (preproc_close))))
+          (end_keyword))))))
