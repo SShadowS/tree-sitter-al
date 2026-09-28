@@ -171,6 +171,9 @@ register("preproc_split_permissions_property", "unsupported")
 # BC 29 family E: per-branch header, shared body after #endif (assembler shape).
 register("preproc_split_key", "unsupported")
 register("preproc_split_modify", "unsupported")
+# BC 29 family D: only the #if-taken configuration is valid AL, so lowering the
+# other configuration must report cannot-validate, never a discrepancy.
+register("preproc_split_table_field_open", "unsupported")
 
 # Non-prefixed special type: completes an earlier table relation (spec section 3).
 register("else_table_relation_fragment", "unsupported")
