@@ -6,6 +6,12 @@
 ; G5: a value continued by preproc_conditional_expression_tail is
 ; property_expression(expr, tail), the wrapper flat `MinValue = 1 * 3 + 2;`
 ; gives. It used to be a bare expression plus the tail under `value`.
+;
+; G4: when a whole value is a #if, an arm may be a literal, not only a name, and
+; holds the leaf its flat parse gives (`Caption = 'a';` -> string_literal).
+; The string and boolean forms used to ERROR; the integer form gave each arm
+; table_relation_value(table_relation_expression(simple_table_relation)).
+; alc accepts all four with X defined and undefined.
 
 ================================================================================
 G5: a simple value continued by a #if tail is a property_expression
@@ -88,4 +94,177 @@ table 50100 D { fields { field(1; F; Integer) { MinValue = 1 * 3
                     operand: (integer)
                     (preproc_endif
                       (preproc_close))))))))))))
+
+================================================================================
+G4: a whole-value #if with string arms holds string_literal
+================================================================================
+
+table 50100 D { fields { field(1; F; Integer) {
+Caption =
+#if X
+'a';
+#else
+'b';
+#endif
+} } }
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (table_declaration
+    (table_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (fields_section
+        (fields_keyword)
+        body: (fields_body
+          (field_declaration
+            (field_keyword)
+            id: (integer)
+            name: (identifier)
+            type: (type_specification
+              (basic_type))
+            body: (declaration_body
+              (property
+                name: (property_name)
+                value: (preproc_conditional_table_relation
+                  (preproc_if
+                    (preproc_open)
+                    condition: (identifier))
+                  (string_literal)
+                  (preproc_else)
+                  (string_literal)
+                  (preproc_endif
+                    (preproc_close)))))))))))
+
+================================================================================
+G4: a whole-value #if with boolean arms holds boolean
+================================================================================
+
+table 50100 D { fields { field(1; F; Integer) {
+Editable =
+#if X
+true;
+#else
+false;
+#endif
+} } }
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (table_declaration
+    (table_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (fields_section
+        (fields_keyword)
+        body: (fields_body
+          (field_declaration
+            (field_keyword)
+            id: (integer)
+            name: (identifier)
+            type: (type_specification
+              (basic_type))
+            body: (declaration_body
+              (property
+                name: (property_name)
+                value: (preproc_conditional_table_relation
+                  (preproc_if
+                    (preproc_open)
+                    condition: (identifier))
+                  (boolean)
+                  (preproc_else)
+                  (boolean)
+                  (preproc_endif
+                    (preproc_close)))))))))))
+
+================================================================================
+G4: a whole-value #if with integer arms holds integer, negative included
+================================================================================
+
+table 50100 D { fields { field(1; F; Integer) {
+MinValue =
+#if X
+1;
+#else
+-2;
+#endif
+} } }
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (table_declaration
+    (table_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (fields_section
+        (fields_keyword)
+        body: (fields_body
+          (field_declaration
+            (field_keyword)
+            id: (integer)
+            name: (identifier)
+            type: (type_specification
+              (basic_type))
+            body: (declaration_body
+              (property
+                name: (property_name)
+                value: (preproc_conditional_table_relation
+                  (preproc_if
+                    (preproc_open)
+                    condition: (identifier))
+                  (integer)
+                  (preproc_else)
+                  (integer)
+                  (preproc_endif
+                    (preproc_close)))))))))))
+
+================================================================================
+G4: a whole-value #if with the semicolon after #endif
+================================================================================
+
+table 50100 D { fields { field(1; F; Integer) {
+Caption =
+#if X
+'a'
+#else
+'b'
+#endif
+;
+} } }
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (table_declaration
+    (table_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (fields_section
+        (fields_keyword)
+        body: (fields_body
+          (field_declaration
+            (field_keyword)
+            id: (integer)
+            name: (identifier)
+            type: (type_specification
+              (basic_type))
+            body: (declaration_body
+              (property
+                name: (property_name)
+                value: (preproc_conditional_table_relation
+                  (preproc_if
+                    (preproc_open)
+                    condition: (identifier))
+                  (string_literal)
+                  (preproc_else)
+                  (string_literal)
+                  (preproc_endif
+                    (preproc_close)))))))))))
 

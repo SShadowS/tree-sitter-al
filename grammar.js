@@ -831,11 +831,27 @@ module.exports = grammar({
     // readings end (`;` or the next directive) the flat property path gives
     // the leaf, so the leaf wins here too. Before `.` or `where` there is no
     // conflict and table_relation_value takes it, as it does flat.
+    //
+    // Not only names (grammar finding G4): any property's whole value may be a
+    // #if, so an arm is also a literal, the leaf a flat parse of that arm
+    // gives. Before, `Caption = #if X 'a'; #else 'b'; #endif` and the boolean
+    // form ERRORed, and `MinValue = #if X 1; ...` gave each arm
+    // table_relation_value(simple_table_relation table: (integer)).
     _table_relation_whole_branch: $ => choice(
       prec(1, seq(choice(
         $.identifier,
         $.quoted_identifier,
         alias($._value_start_keyword_name, $.identifier),
+        $.boolean,
+        $.integer,
+        $.decimal,
+        alias($._negative_integer, $.integer),
+        alias($._negative_decimal, $.decimal),
+        $.string_literal,
+        $.verbatim_string,
+        $.date_literal,
+        $.time_literal,
+        $.datetime_literal,
       ), optional(';'))),
       seq($.table_relation_value, optional(';')),
     ),

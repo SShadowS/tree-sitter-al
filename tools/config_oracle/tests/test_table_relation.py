@@ -1,3 +1,5 @@
+import pytest
+
 from tools.config_oracle.tests import witness
 
 ELSE_JOIN = b"""table 1 T
@@ -80,3 +82,27 @@ def test_nested_host_is_refused_not_lowered(al_parser):
     v = witness.verdicts(al_parser, NESTED)
     assert v and all(i[0].startswith("lowering:unsupported-type") and "host table_relation_expression" in i[0]
                      for _, i in v.values()), v
+
+
+# Grammar finding G4: a whole-value #if on any property, arms not names. Each arm
+# holds the literal leaf its flat parse gives (`Caption = 'a';` -> string_literal).
+def _whole(prop, a, b, semi_after=False):
+    arm = (lambda v: v) if semi_after else (lambda v: v + ";")
+    tail = "\n                ;" if semi_after else ""
+    return (f"table 1 T\n{{\n    fields\n    {{\n        field(1; F; Integer)\n        {{\n"
+            f"            {prop} =\n#if X\n                {arm(a)}\n#else\n                {arm(b)}\n#endif{tail}\n"
+            f"        }}\n    }}\n}}\n").encode()
+
+
+G4_WHOLE = {
+    "string": _whole("Caption", "'a'", "'b'"),
+    "string-semi-after": _whole("Caption", "'a'", "'b'", semi_after=True),
+    "boolean": _whole("Editable", "true", "false"),
+    "integer": _whole("MinValue", "1", "-2"),
+}
+
+
+@pytest.mark.parametrize("name", sorted(G4_WHOLE))
+def test_g4_whole_value_literal_arms_every_config(al_parser, name):
+    witness.assert_produces(al_parser, G4_WHOLE[name], "preproc_conditional_table_relation")
+    witness.assert_all_pass(al_parser, G4_WHOLE[name])

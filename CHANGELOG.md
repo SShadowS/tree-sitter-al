@@ -44,6 +44,16 @@ public API — a change to node structure or field names is a **major** bump.
   (BC.History and BC 28.5 tree-harness byte-identical), so only fixtures
   changed. A query that matched the tail as a `value` of `property` must
   descend through `property_expression`.
+- **Tree-shape change: a whole property value that is a `#if` may have literal
+  arms** (grammar finding G4). `Caption = #if X 'a'; #else 'b'; #endif` and the
+  boolean form used to ERROR, although alc accepts both with `X` defined and
+  undefined. Each arm is now the leaf a flat parse of that arm gives:
+  `string_literal`, `verbatim_string`, `boolean`, `integer` or `decimal` (a
+  negative one included), or a date/time literal. Integer arms used to be
+  `table_relation_value(table_relation_expression(simple_table_relation table:
+  (integer)))`; they are now `integer`. The conditional keeps its node type,
+  `preproc_conditional_table_relation`. 0 production sites (tree-harness
+  byte-identical).
 
 - **BC 29 (microsoft/BCApps `releases/29.0`, 36,716 files) now parses with 2
   error files, down from 33.** One of the two is invalid source. None of the 33
