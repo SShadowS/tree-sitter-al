@@ -341,3 +341,50 @@ def test_cli_full_tier_over_a_root(tmp_path):
                "--report", str(tmp_path / "rep")])
     assert rc == 0
     assert "pass: 2" in (tmp_path / "rep" / "summary.md").read_text(encoding="utf-8")
+
+
+# Task 18: the first production run's largest cannot-validate cluster (1,656
+# configurations) was a whole object inside `#if not CLEANnn`: the configuration
+# that removes it leaves an EMPTY FILE, which the reference parses as a childless
+# source_file, but lowering refused the emptied root as empty-node.
+WHOLE_FILE_INACTIVE = (b"#if not CLEAN24\n"
+                       b"codeunit 50100 Probe\n{\n    trigger OnRun()\n    begin\n    end;\n}\n"
+                       b"#endif\n")
+
+
+@pytest.mark.parametrize("src", [WHOLE_FILE_INACTIVE,
+                                 b"// header\n#pragma warning disable AL0432\n" + WHOLE_FILE_INACTIVE])
+def test_configuration_that_empties_the_whole_file_is_compared(al_parser, src):
+    recs = {r.config: r for r in runner.check_input(al_parser, "f", src)}
+    assert {c: r.status for c, r in recs.items()} == {"CLEAN24=0": "pass", "CLEAN24=1": "pass"}
+
+
+def test_empty_root_is_still_compared_against_the_reference(al_parser, monkeypatch):
+    """The emptied root must go through the comparison, not skip it: a reference
+    that is NOT empty there must surface as a discrepancy."""
+    from tools.config_oracle import reference
+    real = reference.extract
+
+    def fake(parser, masked):
+        return real(parser, b"codeunit 50100 Probe { }\n" if not masked.strip() else masked)
+    monkeypatch.setattr(runner.reference, "extract", fake)
+    recs = {r.config: r for r in runner.check_input(al_parser, "f", WHOLE_FILE_INACTIVE)}
+    assert recs["CLEAN24=1"].status == "discrepancy"
+
+
+# Same run, 22 + 3 configurations: an area whose only actions / a layout whose only
+# elements are inside the #if. Both bodies are optional(field('body', ...)) at every
+# site (grammar.js _action_body_block; layout_section, area_section, add*_modification).
+EMPTY_ACTION_AREA = (b"page 50100 P\n{\n    actions\n    {\n        area(processing)\n        {\n"
+                     b"#if not CLEAN28\n            action(Edit)\n            {\n            }\n#endif\n"
+                     b"        }\n    }\n}\n")
+EMPTY_LAYOUT = (b"page 50100 P\n{\n    layout\n    {\n"
+                b"#if not CLEAN28\n        area(Content)\n        {\n        }\n#endif\n"
+                b"    }\n}\n")
+
+
+@pytest.mark.parametrize("src,kind", [(EMPTY_ACTION_AREA, "action_body"), (EMPTY_LAYOUT, "layout_body")])
+def test_emptied_action_and_layout_bodies_are_removed(al_parser, src, kind):
+    recs = {r.config: r for r in runner.check_input(al_parser, "e", src)}
+    assert {c: r.status for c, r in recs.items()} == {"CLEAN28=0": "pass", "CLEAN28=1": "pass"}
+    assert any(i.startswith(f"normalised:removed-empty:{kind}@") for i in recs["CLEAN28=1"].items)

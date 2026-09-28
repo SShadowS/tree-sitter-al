@@ -38,9 +38,17 @@ def _runs(offsets):
     return out
 
 
+def _tokens(root):
+    """The root's leaves; none for a childless root. That root is the empty file of a
+    configuration whose whole text is inactive, and `leaves()` would report the root
+    itself -- as one leaf spanning every byte, extras included (runner.first_zero_width_leaf
+    and Accounting.check_emitted make the same exception)."""
+    return root.leaves() if root.children else []
+
+
 def coverage(source, active, root, extras, side):
     count = [0] * len(source)
-    spans = [(l.start, l.end) for l in root.leaves() if l.end > l.start] + [(e.start, e.end) for e in extras]
+    spans = [(l.start, l.end) for l in _tokens(root) if l.end > l.start] + [(e.start, e.end) for e in extras]
     for s, e in spans:
         for k in range(s, e):
             count[k] += 1
@@ -360,8 +368,8 @@ def _structure_impl(ref, low):
 def leaf_boundaries(ref, low):
     """The two trees must tokenize the source identically -- same leaf (start, end)
     intervals -- independent of what kind/field/nesting a check disagrees about."""
-    r = sorted((l.start, l.end) for l in ref.leaves())
-    l = sorted((l.start, l.end) for l in low.leaves())
+    r = sorted((l.start, l.end) for l in _tokens(ref))
+    l = sorted((l.start, l.end) for l in _tokens(low))
     if r == l:
         return []
     for i, (a, b) in enumerate(zip(r, l)):

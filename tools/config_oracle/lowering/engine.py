@@ -46,6 +46,13 @@ EMPTY_REMOVABLE = {
     # Added with Task 6's query branch-select: same single-site shape, found the
     # same way (a witness config emptying the dataitem's body raised empty-node).
     "query_body",         # query_dataitem: optional(field('body', $.query_body)) (grammar.js:2860-2870)
+    # Added with Task 18's production run (22 + 3 configurations): an area whose
+    # only actions, or a layout whose only elements, sit inside the #if. Every
+    # site is optional(field('body', ...)): _action_body_block (the sole
+    # action_body site), and layout_section, area_section and the four
+    # add*_modification rules for layout_body.
+    "action_body",
+    "layout_body",
 }
 
 STATEMENT_HOSTS = {"statement_block", "case_branch"}
@@ -317,6 +324,11 @@ def _lower_ordinary(node, ctx) -> Lowered:
             raise LoweringError("unconsumed-fragment", node, f"{type(f).__name__} not from the last child")
         f.anchor = new
     if not new.children:
+        # The root emptied is an empty FILE (a whole object inside `#if not CLEANnn`):
+        # it is not removed, _lower_tree turns it into a childless root, and the
+        # comparison still runs against the reference's childless source_file.
+        if ctx.parent_kind is None:
+            return Lowered([], frags)
         if node.kind in EMPTY_REMOVABLE:
             ctx.normalised.append(f"removed-empty:{node.kind}@{node.start}")
             return Lowered([], frags)
