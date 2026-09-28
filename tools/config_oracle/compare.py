@@ -44,10 +44,14 @@ def coverage(source, active, root, extras, side):
     for s, e in spans:
         for k in range(s, e):
             count[k] += 1
-    lead = len(_BOM) if source.startswith(_BOM) else 0
+    bom = set()
+    at = source.find(_BOM)
+    while at != -1:
+        bom.update(range(at, at + len(_BOM)))
+        at = source.find(_BOM, at + len(_BOM))
     uncovered, double, masked = [], [], []
     for k, b in enumerate(source):
-        significant = active[k] and b not in _WS and k >= lead
+        significant = active[k] and b not in _WS and k not in bom
         if significant and count[k] == 0:
             uncovered.append(k)
         if count[k] > 1 and b not in _WS:

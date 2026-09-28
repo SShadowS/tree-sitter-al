@@ -302,3 +302,19 @@ def test_trivia_extent_swallowed_in_both_trees_is_reported():
 def test_trivia_extent_clean_control():
     events = [Extra("pragma", 10, 40), Extra("comment", 41, 50)]
     assert compare.trivia(events, list(events), list(events)) == []
+
+
+def test_mid_file_bom_is_trivia_not_uncovered():
+    # A BOM between two tokens: grammar.js declares U+FEFF an extra, so neither
+    # tree covers it, and it must not be reported (milestone-1 follow-up 1).
+    src = b"ab\xef\xbb\xbfcd"
+    root = node("r", leaf("x", 0, 2, named=True), leaf("y", 5, 7, named=True))
+    active = bytearray([1]) * len(src)
+    assert compare.coverage(src, active, root, [], "low") == []
+
+
+def test_leading_bom_still_trivia():
+    src = b"\xef\xbb\xbfab"
+    root = node("r", leaf("x", 3, 5, named=True))
+    active = bytearray([1]) * len(src)
+    assert compare.coverage(src, active, root, [], "low") == []
