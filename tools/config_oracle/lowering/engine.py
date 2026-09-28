@@ -27,6 +27,12 @@ EMPTY_REMOVABLE = {
     "declaration_body",  # _declaration_body_block: optional(field('body', $.declaration_body))
     "var_body",          # var_section: optional(field('body', $.var_body))
     "case_body",         # case_statement: optional(field('body', $.case_body))
+    # dataset_section: optional(field('body', $.dataset_body)) (grammar.js:2664).
+    "dataset_body",
+    # _layout_container_body_block, shared by group/repeater/cuegroup/fixed/grid_section,
+    # and preproc_split_container_reopen (both branches): optional(field('body',
+    # $.layout_container_body)) (grammar.js:4687, 4708, 4710).
+    "layout_container_body",
 }
 
 STATEMENT_HOSTS = {"statement_block", "case_branch"}

@@ -1,0 +1,67 @@
+"""P2 witness matrix: every branch-select family, every configuration (spec P2, base §5)."""
+import pytest
+
+from tools.config_oracle import contracts
+from tools.config_oracle.tests import witness
+
+P2_WITNESSES = {
+    "preproc_conditional_object": [
+        # first arm, #elif (two declarations, so the policy-swap probe has a
+        # config to trip on), #else, no arm (A and B both undefined -> #else)
+        b"#if A\ncodeunit 1 X { }\n#elif B\ncodeunit 2 Y { }\ncodeunit 5 V { }\n#else\ncodeunit 3 Z { }\n#endif\ncodeunit 4 W { }\n",
+        # namespace + using inside the arms, identical namespace in two arms,
+        # a second element (using) in the #if arm for the policy-swap probe
+        b"#if A\nnamespace N.A;\nusing System;\n#else\nnamespace N.A;\n#endif\nusing System.Text;\ncodeunit 1 X { }\n",
+    ],
+    "preproc_conditional_actions": [
+        b"page 1 P\n{\n    actions\n    {\n        area(Processing)\n        {\n#if A\n            action(X) { }\n#else\n            action(Y) { }\n            action(Z) { }\n#endif\n        }\n    }\n}\n",
+    ],
+    "preproc_conditional_layout": [
+        b"page 1 P\n{\n    layout\n    {\n        area(Content)\n        {\n#if A\n            field(X; Rec.X) { }\n#endif\n            field(Y; Rec.Y) { }\n        }\n    }\n}\n",
+    ],
+    "preproc_conditional_layout_mixed": [
+        b"page 1 P\n{\n    layout\n    {\n        area(Content)\n        {\n            group(G)\n            {\n#if A\n                Caption = 'a';\n                field(X; Rec.X) { }\n#endif\n            }\n        }\n    }\n}\n",
+    ],
+    "preproc_conditional_report": [
+        # two columns in the #if arm, so the policy-swap probe has a config to trip on
+        b"report 1 R\n{\n    dataset\n    {\n        dataitem(D; Integer)\n        {\n#if A\n            column(C1; 1) { }\n            column(C1b; 2) { }\n#else\n            column(C2; 2) { }\n#endif\n        }\n    }\n}\n",
+    ],
+    "preproc_conditional_rendering": [
+        b"report 1 R\n{\n    rendering\n    {\n#if A\n        layout(L1) { Type = RDLC; }\n#endif\n        layout(L2) { Type = Word; }\n    }\n}\n",
+    ],
+    "preproc_conditional_dataset": [
+        b"report 1 R\n{\n    dataset\n    {\n#if A\n        dataitem(D; Integer) { }\n#else\n#endif\n    }\n}\n",
+    ],
+}
+
+# A witness whose arm is EMPTY in some configuration (Review Focus 1).
+EMPTY_ARM = {
+    "preproc_conditional_dataset": P2_WITNESSES["preproc_conditional_dataset"][0],
+}
+
+
+def _cases():
+    return [(t, s) for t, srcs in P2_WITNESSES.items() for s in srcs]
+
+
+@pytest.mark.parametrize("kind,src", _cases())
+def test_witness_produces_its_type(al_parser, kind, src):
+    witness.assert_produces(al_parser, src, kind)
+
+
+@pytest.mark.parametrize("kind,src", _cases())
+def test_every_configuration_passes(al_parser, kind, src):
+    witness.assert_all_pass(al_parser, src)
+
+
+@pytest.mark.parametrize("kind,src", _cases())
+def test_policy_swap_trips_policy(al_parser, monkeypatch, kind, src):
+    e = contracts.REGISTRY[kind]
+    monkeypatch.setitem(contracts.REGISTRY, kind, contracts.Entry(
+        e.type, e.kind, e.handler, {h: "single-slot" for h in e.hosts}, e.alias_to, e.arm, e.reading))
+    assert witness.statuses_with(al_parser, src, "lowering:policy"), "the mutation tripped nothing"
+
+
+@pytest.mark.parametrize("kind,src", list(EMPTY_ARM.items()))
+def test_empty_arm_loses_and_gains_nothing(al_parser, kind, src):
+    witness.assert_all_pass(al_parser, src)
