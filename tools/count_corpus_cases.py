@@ -35,11 +35,24 @@ import sys
 import pathlib
 
 # tree-sitter cli/src/test.rs, in effect. The name block is one or more lines
-# that are non-empty AND do not begin with '='.
+# that are non-empty AND do not begin with '='. The closer is `={3,}` on its
+# own -- NOT a backreference to the opener's length: cli/src/test.rs's
+# HEADER_REGEX (vendored at .cache/tree-sitter-0.25.10/cli/src/test.rs:28-41)
+# has no such constraint, and a `(?P=equals)` backreference here made a header
+# closed by a different-length `===` line invisible to this scanner entirely
+# (not even counted as an orphan) -- verified against the installed
+# tree-sitter 0.27.0 CLI with a `=====`/`=======` pair.
 HEADER = re.compile(
-    rb"(?m)^(?P<equals>={3,})\r?\n(?P<name>(?:[^=\r\n][^\r\n]*\r?\n)+)(?P=equals)\r?\n"
+    rb"(?m)^(?P<equals>={3,})\r?\n(?P<name>(?:[^=\r\n][^\r\n]*\r?\n)+)={3,}\r?\n"
 )
-DIVIDER = re.compile(rb"(?m)^-{3,}[ \t]*\r?$")
+# No trailing-whitespace tolerance: real tree-sitter ties a marker line's
+# accepted "suffix" to a file-wide convention (test.rs's `first_suffix`), and
+# every header/divider line in this corpus uses none (verified: zero header or
+# divider lines here carry anything after the marker run). Under that
+# convention a `---` line with trailing spaces is REJECTED as a divider, not
+# tolerated -- verified against the installed tree-sitter 0.27.0 CLI, where
+# such a case is silently dropped exactly like a missing divider.
+DIVIDER = re.compile(rb"(?m)^-{3,}\r?$")
 # tree-sitter test attributes sit on their own line inside the header's name
 # block. `:skip` makes tree-sitter parse the header and then NOT run the case,
 # so it lands in the same declared-but-not-run gap as a missing divider and
