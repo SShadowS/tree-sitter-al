@@ -186,6 +186,71 @@ caught one of its own case-construction bugs during the release — a probe that
 would otherwise have been filed as "alc rejects Implementation splits", which is
 false.
 
+## 8. `var_body` hosts `preproc_split_procedure`: the procedure lands inside the var section
+
+**Established:** config-oracle quick tier, 2026-09-28 (milestone-1 results,
+`docs/superpowers/plans/2026-09-27-config-oracle-milestone-1-results.md`), grammar
+sha `61299ce05fb988e7`, HEAD `1243f8c`. alc four-way probe, all four ACCEPT
+(sanity ACCEPT, garbage control REJECT).
+
+`var_body` (grammar.js, `var_body: $ => repeat1(choice(... $.preproc_split_procedure))`)
+lists `preproc_split_procedure` as a member. So an object-level `var` section
+followed by an `#if`-split procedure signature absorbs the whole procedure:
+
+```al
+    var
+        GlobalVar: Record "Test Record";
+
+#if not CLEAN24
+    [Obsolete('...', '24.0')]
+    procedure TestProc(Param: Text[30]) Result: Text
+#else
+    procedure TestProc(Param: Text[50]) Result: Text
+#endif
+    var
+        LocalVar: Text;
+    begin ... end;
+```
+
+| | multi-configuration tree | single-configuration reference (either config) |
+|---|---|---|
+| `var_section` | spans to the procedure's final `;` | ends at the last global `variable_declaration` |
+| procedure | child of `var_body` | sibling of `var_section` in `declaration_body` |
+| `[Obsolete]` | inside the split procedure | `attribute_item` sibling in `declaration_body` |
+
+No configuration of that text has a procedure inside a var section; alc compiles
+both flat configurations and the split file under both symbol assignments.
+
+Cases (8 discrepancies, one root cause):
+`attribute_preproc_procedure.txt#0` (CLEAN24=0, CLEAN24=1),
+`preproc_interrupted_var_section.txt#0` (CLEAN24=0/1), `#1` (CLEAN25=0/1),
+`#2` (CLEAN24=0/1). Both corpus files pin the wrong nesting as expected output.
+
+Production: **1 site** over the 2,386 `#if` files of BC.History, DC and BC 28.1 —
+`BC.History/BaseApp/Source/Base Application/Foundation/Shipping/ShippingAgent.Table.al:87`
+(`GetTrackingInternetAddr`). Measured by walking every tree for a
+`preproc_split_procedure` whose parent is `var_body`.
+
+Fix direction (not attempted): drop the member from `var_body` so `var_section`
+ends at its last declaration and the split procedure is a `_body_element`
+sibling; the two fixtures' expected trees then change and must be re-derived,
+not `-u`'d.
+
+## 9. `&&` and `||` in `#if` conditions: the grammar accepts what alc rejects
+
+**Established:** `tools/config_oracle/probe_alc.py` probes `ampamp_rejected` and
+`pipepipe_rejected` (AL0631; `docs/preproc-directive-semantics.md`), against
+grammar.js `preproc_or_expression` / `preproc_and_expression`, which each take
+`choice(kw('or'|'and'), '||'|'&&')`.
+
+The parser builds a clean `preproc_and_expression` over `#if A && B`; the compiler
+refuses the file. The config oracle's resolver follows the compiler and reports
+such a file as `cannot-validate: resolver:unsupported-condition-token`, so the
+oracle cannot compare it. Production impact: zero — no `#if`/`#elif` line in
+BC.History, DC or BC 28.1 uses `&&` or `||` (grep, 2026-09-28). Per "parse
+structure, don't validate" this may be kept on purpose; if so, say so here and
+close the item, otherwise remove the two string alternatives.
+
 ---
 
 ## Longer-lived proposals, tracked separately
