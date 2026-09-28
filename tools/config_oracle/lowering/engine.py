@@ -90,6 +90,18 @@ class ElseAttachment(Frag):
 
 
 @dataclass
+class RelationContinuation(Frag):
+    """Contract **else-relation-join** (produced by assemblers.table_relation_select).
+    The owning `property` consumes it: in its preceding `value: table_relation_expression`,
+    follow `if_table_relation` -> `else_relation: table_relation_expression` ->
+    `if_table_relation` down to the deepest `if_table_relation` with no `else_keyword`,
+    append `else_kw` and `relation` (field `else_relation`) as its last two children,
+    and recompute the span of every node on that path. No other edge changes."""
+    else_kw: Node
+    relation: Node
+
+
+@dataclass
 class Lowered:
     nodes: list
     frags: list = field(default_factory=list)
@@ -213,6 +225,33 @@ def _span_from_children(node):
     return node
 
 
+def _deepest_open_if(expr):
+    """table_relation_expression -> the deepest if_table_relation on its else chain with no else."""
+    cur = next((c for c in expr.children if c.kind == "if_table_relation"), None)
+    if cur is None:
+        raise LoweringError("contract-shape", expr, "no if_table_relation to continue")
+    while True:
+        nxt = next((c for c in cur.children if c.field == "else_relation"), None)
+        if nxt is None:
+            return cur
+        inner = next((c for c in nxt.children if c.kind == "if_table_relation"), None)
+        if inner is None:
+            raise LoweringError("contract-shape", cur, "else chain already closed")
+        cur = inner
+
+
+def _path(top, target):
+    """Nodes from `target` up to `top`, deepest first, for span recomputation."""
+    stack = [(top, [top])]
+    while stack:
+        n, path = stack.pop()
+        if n is target:
+            return list(reversed(path))
+        for c in n.children:
+            stack.append((c, path + [c]))
+    raise LoweringError("contract-shape", top, "target not under top")
+
+
 def _consume(new, frags):
     rest = []
     for f in frags:
@@ -234,7 +273,19 @@ def _consume(new, frags):
             at = next(i for i, c in enumerate(new.children) if c is f.anchor) + 1
             insert = [f.leaf] if isinstance(f, Terminator) else list(f.statements)
             new.children[at:at] = insert
-        elif isinstance(f, Terminator) and new.kind == "property" and f.anchor is not None                 and any(c is f.anchor for c in new.children):
+        elif isinstance(f, RelationContinuation) and new.kind == "property":
+            vals = [c for c in new.children if c.field == "value" and c.kind == "table_relation_expression"]
+            if not vals:
+                raise LoweringError("unconsumed-fragment", new, "no relation to continue")
+            target = _deepest_open_if(vals[-1])
+            target.children.append(f.else_kw)
+            target.children.append(f.relation.copy(field="else_relation"))
+            for n in _path(vals[-1], target):
+                recompute_span(n)
+        # anchor None: emitted by a special node that is itself a direct child of
+        # the property (table_relation_select, else-relation-join); otherwise it
+        # passed up through the list that is the property's child (list-run).
+        elif isinstance(f, Terminator) and new.kind == "property"                 and (f.anchor is None or any(c is f.anchor for c in new.children)):
             new.children.append(f.leaf)   # terminator-hoist: the property's own `;`
         else:
             rest.append(f)

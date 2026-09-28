@@ -8,7 +8,8 @@ from __future__ import annotations
 from tools.config_oracle import contracts
 from tools.config_oracle.ir import Node
 from tools.config_oracle.lowering.engine import (BlockCompletion, ElseAttachment, Following, Lowered,
-                                                 LoweringError, Terminator, _span_from_children, lower)
+                                                 LoweringError, RelationContinuation, Terminator,
+                                                 _span_from_children, lower)
 from tools.config_oracle.lowering.select import chosen_arm, split_arms
 
 
@@ -178,3 +179,33 @@ def split_case_statement_end(node, ctx) -> Lowered:
     # Order matters: the host inserts each fragment right after the anchor, so the
     # Terminator (inserted last) lands between the case and the Following statements.
     return Lowered([case], [Following(case, stmts), Terminator(case, term)])
+
+
+def table_relation_select(node, ctx) -> Lowered:
+    """Contract else-relation-join (see engine.RelationContinuation). Host: a
+    `property:value` slot. The chosen arm is ONE of: an `else_table_relation_fragment`
+    (-> RelationContinuation), or a complete relation value (-> a node with field
+    `value`); then an optional `;` (-> Terminator, terminator-hoist). An empty or
+    unselected arm contributes nothing. Anything else is contract-shape. Any
+    other host (policy `unsupported`) is unsupported-type."""
+    if ctx.policy(contracts.REGISTRY[node.kind], node) == "unsupported":
+        raise LoweringError("unsupported-type", node, f"host {ctx.parent_kind}:{ctx.slot}")
+    arms, endif = split_arms(node)
+    arm = _active(arms, endif, node, ctx)
+    frags, nodes = [], []
+    items = list(arm)
+    semi = items.pop() if items and items[-1].kind == ";" else None
+    if len(items) > 1:
+        raise LoweringError("contract-shape", node, "arm: " + " ".join(c.kind for c in items))
+    if items and items[0].kind == "else_table_relation_fragment":
+        frag = items[0]
+        if len(frag.children) != 2 or frag.children[0].kind != "else_keyword":
+            raise LoweringError("contract-shape", frag, "expected `else else_relation:`")
+        else_kw = _lower_all(frag.children[:1], ctx, frag.kind)[0]   # an ordinary node: marked kept once
+        rel = _lower_all(frag.children[1:], ctx, frag.kind)[0]
+        frags.append(RelationContinuation(None, else_kw, rel))
+    elif items:
+        nodes = [n.copy(field="value") for n in _lower_all(items, ctx, node.kind)]
+    if semi is not None:
+        frags.append(Terminator(None, _lower_all([semi], ctx, node.kind)[0]))
+    return Lowered(nodes, frags)

@@ -381,7 +381,6 @@ register("preproc_conditional_link_values", "branch-select", _LIST_RUN,
 for t in ("preproc_conditional_case_patterns",
           "preproc_conditional_expression_tail",
           "preproc_conditional_impl_values",
-          "preproc_conditional_table_relation",
           "preproc_fragmented_else_tail",
           "preproc_guarded_statement", "preproc_operand_prefix", "preproc_split_brace_close",
           "preproc_split_brace_close_if_only", "preproc_split_call_statement", "preproc_split_case_branch",
@@ -419,8 +418,22 @@ register("preproc_split_container_reopen", "unsupported")
 register("preproc_split_block_end_in_else", "unsupported")
 register("preproc_split_block_close_after_endif", "unsupported")
 
+# --- Task 8: table relation, contract else-relation-join (assemblers.table_relation_select).
+# Hosts are the census output. The arm is _tr_branch (grammar.js:1298-1301):
+# _table_relation_branch_content (grammar.js:1307-1310), then an optional ';'.
+register("preproc_conditional_table_relation", "assembler",
+         "tools.config_oracle.lowering.assemblers.table_relation_select",
+         # Only property:value is lowered. Nested inside an else chain the arm's
+         # relation must merge into the enclosing table_relation_expression, a
+         # rewrite this contract does not name: refused as unsupported-type.
+         hosts={"property:value": "single-slot",
+                "table_relation_expression:<children>": "unsupported",
+                "table_relation_value:<children>": "unsupported"},
+         arm={"table_relation_expression", "else_table_relation_fragment", ";"})
 # Non-prefixed special type: completes an earlier table relation (spec section 3).
-register("else_table_relation_fragment", "unsupported")
+# Consumed by table_relation_select as a RelationContinuation; never lowered directly.
+register("else_table_relation_fragment", "fragment", None,
+         hosts={"preproc_conditional_table_relation:<children>": "consumed"})
 
 SPECIAL_NON_PREFIXED = {"else_table_relation_fragment"}
 
