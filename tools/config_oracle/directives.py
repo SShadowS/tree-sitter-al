@@ -272,7 +272,11 @@ class _Lexer:
             else:
                 c = s[i:i + 1]
                 if s.startswith(b"//", i):
-                    self.extras.append(ExtraEvent("comment", i, le))
+                    # grammar.js `comment` is `//[^\n]*`: it runs to the `\n`, so on a CRLF
+                    # line it INCLUDES the `\r` that `le` excludes. The event must end where
+                    # the grammar's token ends, or every CRLF comment is a false `extent`.
+                    nl = s.find(b"\n", le)
+                    self.extras.append(ExtraEvent("comment", i, len(s) if nl < 0 else nl))
                     return
                 if s.startswith(b"/*", i):
                     self.state, self.open_at, i = self.BLOCK, i, i + 2

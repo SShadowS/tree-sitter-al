@@ -288,3 +288,17 @@ def test_leaf_boundaries_on_a_split_token():
 
 def test_leaf_boundaries_clean_control():
     assert compare.leaf_boundaries(sample(), sample()) == []
+
+
+# ---- final review, finding 2: extents agree three ways, not only ref vs lowered ----
+
+def test_trivia_extent_swallowed_in_both_trees_is_reported():
+    events = [Extra("pragma", 10, 40)]
+    both = [Extra("pragma", 10, 60)]
+    ds = compare.trivia(events, both, list(both))
+    assert sorted((d.kind, d.path) for d in ds) == [("extent", "lowered@10"), ("extent", "reference@10")]
+
+
+def test_trivia_extent_clean_control():
+    events = [Extra("pragma", 10, 40), Extra("comment", 41, 50)]
+    assert compare.trivia(events, list(events), list(events)) == []

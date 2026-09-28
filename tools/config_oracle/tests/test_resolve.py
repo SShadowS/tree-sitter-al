@@ -181,3 +181,21 @@ def test_extras_include_define_undef_region_endregion_when_active():
     assert [e.kind for e in r.extras] == [
         "preproc_define", "preproc_undef", "preproc_region", "preproc_endregion",
     ]
+
+
+# ---- final review, finding 2: extra extents follow the grammar's token regexes ----
+# `comment` is `//[^\n]*` (grammar.js), so on a CRLF line it INCLUDES the `\r`; the
+# line-level directives (`pragma`, `preproc_region`, ...) are `[^\n\r]*` and do not.
+
+def test_line_comment_event_on_crlf_runs_to_the_newline():
+    src = b"x; // c\r\n#pragma warning disable X // y\r\n"
+    ev = {e.kind: (e.start, e.end) for e in resolve(src, frozenset()).extras}
+    assert ev["comment"] == (3, 8)          # includes the \r at 7
+    assert ev["pragma"] == (9, 39)         # stops before the \r at 39
+
+
+def test_crlf_comment_trivia_is_clean_end_to_end(al_parser):
+    from tools.config_oracle import runner
+    src = b"codeunit 1 T\r\n{\r\n    trigger OnRun()\r\n    begin\r\n#if A\r\n        x := 1; // t\r\n#endif\r\n    end;\r\n}\r\n"
+    recs = runner.check_input(al_parser, "crlf", src)
+    assert [r.status for r in recs] == ["pass", "pass"], [r.items for r in recs]

@@ -382,8 +382,11 @@ def trivia(events, ref_extras, low_extras):
             out.append(Discrepancy("trivia", "missing", f"{name}@{start}", kind))
         for (kind, start), _n in sorted((side - ev).items()):
             out.append(Discrepancy("trivia", "extra", f"{name}@{start}", kind))
-    ends_ref = {(x.kind, x.start): x.end for x in ref_extras}
-    for x in low_extras:
-        if (x.kind, x.start) in ends_ref and ends_ref[(x.kind, x.start)] != x.end:
-            out.append(Discrepancy("trivia", "extent", f"lowered@{x.start}", x.kind))
+    # Ends are checked against the RESOLVER on each side, not only tree against tree: an
+    # extra that swallows the same code in both parses agrees with itself and is still wrong.
+    ends = {(x.kind, x.start): x.end for x in events}
+    for name, xs in (("reference", ref_extras), ("lowered", low_extras)):
+        for x in xs:
+            if (x.kind, x.start) in ends and ends[(x.kind, x.start)] != x.end:
+                out.append(Discrepancy("trivia", "extent", f"{name}@{x.start}", x.kind))
     return out
