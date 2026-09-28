@@ -218,7 +218,7 @@ pins that the other configuration surfaces as
      `or`/`xor` with `+`, which is Pascal's ladder, not the one alc
      measured.)*
    - **Self-test:** every grouping in `test/corpus/operator_precedence_test.txt`
-     is flattened and recomposed, and must equal its fixture tree. All 18 cases
+     is flattened and recomposed, and must equal its fixture tree. All 9 cases
      must pass.
    - The replay-4 HEAD control turns from a strict xfail into a pass.
 4. **Assembler `else-begin-over-endif`,** for the base shape of
@@ -301,7 +301,7 @@ Unchanged from milestone 1:
 - The quick tier has zero discrepancies.
 - Replays 1 to 6 are caught with their expected kinds, and the replay-4 HEAD
   control passes.
-- The precedence self-test passes all 18 cases.
+- The precedence self-test passes all 9 cases (the file holds 9; an earlier draft counted its `===` lines, two per case).
 - Every P2 to P5 type has a complete witness matrix and its mutations.
 - The resolve sweep over all four corpora is clean, or each exception is
   classified.
