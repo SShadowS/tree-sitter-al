@@ -1,0 +1,272 @@
+================================================================================
+Split key and modify headers with a shared body after #endif
+================================================================================
+table 50100 T
+{
+    fields
+    {
+        field(1; A; Integer) { }
+        field(2; B; Integer) { }
+        field(3; C; Integer) { }
+    }
+    keys
+    {
+        key(PK; A) { Clustered = true; }
+#if not C28
+        key(K2; B) { }
+        key(K3; C, B)
+#else
+        key(K2; C, B)
+#endif
+        {
+        }
+    }
+}
+
+page 50100 P
+{
+    SourceTable = T;
+    layout
+    {
+        area(Content)
+        {
+            field(A; Rec.A) { }
+            field(B; Rec.B) { }
+        }
+    }
+    actions
+    {
+        area(Processing)
+        {
+            action(X) { }
+            action(Y) { }
+        }
+    }
+}
+
+pageextension 50100 PE extends P
+{
+    layout
+    {
+#if not C28
+        modify(A)
+#else
+        modify(B)
+#endif
+        {
+            Visible = false;
+        }
+    }
+    actions
+    {
+#if not C28
+        modify(X)
+#else
+        modify(Y)
+#endif
+        {
+            Caption = 'Z';
+        }
+    }
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (table_declaration
+    (table_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (fields_section
+        (fields_keyword)
+        body: (fields_body
+          (field_declaration
+            (field_keyword)
+            id: (integer)
+            name: (identifier)
+            type: (type_specification
+              (basic_type)))
+          (field_declaration
+            (field_keyword)
+            id: (integer)
+            name: (identifier)
+            type: (type_specification
+              (basic_type)))
+          (field_declaration
+            (field_keyword)
+            id: (integer)
+            name: (identifier)
+            type: (type_specification
+              (basic_type)))))
+      (keys_section
+        (keys_keyword)
+        body: (keys_body
+          (key_declaration
+            (key_keyword)
+            name: (identifier)
+            fields: (field_list
+              (identifier))
+            body: (declaration_body
+              (property
+                name: (property_name)
+                value: (boolean))))
+          (preproc_split_key
+            (preproc_if
+              (preproc_open)
+              condition: (preproc_not_expression
+                (identifier)))
+            (key_declaration
+              (key_keyword)
+              name: (identifier)
+              fields: (field_list
+                (identifier)))
+            (key_keyword)
+            name: (identifier)
+            fields: (field_list
+              (identifier)
+              (identifier))
+            (preproc_else)
+            (key_keyword)
+            name: (identifier)
+            fields: (field_list
+              (identifier)
+              (identifier))
+            (preproc_endif
+              (preproc_close)))))))
+  (page_declaration
+    (page_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (property
+        name: (property_name)
+        value: (identifier))
+      (layout_section
+        (layout_keyword)
+        body: (layout_body
+          (area_section
+            (area_keyword)
+            type: (content_keyword)
+            body: (layout_body
+              (page_field
+                (field_keyword)
+                name: (identifier)
+                source: (member_expression
+                  object: (identifier)
+                  member: (identifier)))
+              (page_field
+                (field_keyword)
+                name: (identifier)
+                source: (member_expression
+                  object: (identifier)
+                  member: (identifier)))))))
+      (actions_section
+        (actions_keyword)
+        body: (action_body
+          (action_area_section
+            (area_keyword)
+            type: (processing_keyword)
+            body: (action_body
+              (action_declaration
+                (action_keyword)
+                name: (identifier))
+              (action_declaration
+                (action_keyword)
+                name: (identifier))))))))
+  (pageextension_declaration
+    (pageextension_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    (extends_keyword)
+    base_object: (identifier)
+    body: (declaration_body
+      (layout_section
+        (layout_keyword)
+        body: (layout_body
+          (preproc_split_modify
+            (preproc_if
+              (preproc_open)
+              condition: (preproc_not_expression
+                (identifier)))
+            (modify_keyword)
+            target: (identifier)
+            (preproc_else)
+            (modify_keyword)
+            target: (identifier)
+            (preproc_endif
+              (preproc_close))
+            body: (declaration_body
+              (property
+                name: (property_name)
+                value: (boolean))))))
+      (actions_section
+        (actions_keyword)
+        body: (action_body
+          (preproc_split_modify
+            (preproc_if
+              (preproc_open)
+              condition: (preproc_not_expression
+                (identifier)))
+            (modify_keyword)
+            target: (identifier)
+            (preproc_else)
+            (modify_keyword)
+            target: (identifier)
+            (preproc_endif
+              (preproc_close))
+            body: (declaration_body
+              (property
+                name: (property_name)
+                value: (string_literal)))))))))
+
+================================================================================
+Bodiless keys in both branches stay a preproc_conditional_keys
+================================================================================
+table 50100 T
+{
+    keys
+    {
+#if not C28
+        key(K2; B)
+#else
+        key(K2; C)
+#endif
+        key(K4; C) { }
+    }
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (table_declaration
+    (table_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (keys_section
+        (keys_keyword)
+        body: (keys_body
+          (preproc_conditional_keys
+            (preproc_if
+              (preproc_open)
+              condition: (preproc_not_expression
+                (identifier)))
+            (key_declaration
+              (key_keyword)
+              name: (identifier)
+              fields: (field_list
+                (identifier)))
+            (preproc_else)
+            (key_declaration
+              (key_keyword)
+              name: (identifier)
+              fields: (field_list
+                (identifier)))
+            (preproc_endif
+              (preproc_close)))
+          (key_declaration
+            (key_keyword)
+            name: (identifier)
+            fields: (field_list
+              (identifier))))))))

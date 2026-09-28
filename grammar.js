@@ -71,6 +71,23 @@ function namespacedRefFielded($, name) {
 // modification. A LIST of elements is legal (alc, runtime 15.0) and first
 // appears in BC 29: `moveafter("Address 2"; City, CountyGroup)`. A helper, not
 // a hidden rule, so the fields stay on the four visible move rules.
+// `key(Name; fields)` without its body: the header half of a split key.
+function keyHeader($) {
+  return seq(
+    $.key_keyword,
+    '(',
+    field('name', $._identifier_or_quoted),
+    ';',
+    field('fields', $.field_list),
+    ')',
+  );
+}
+
+// `modify(Target)` without its body: the header half of a split modify.
+function modifyHeader($) {
+  return seq($.modify_keyword, '(', field('target', $._identifier_or_quoted), ')');
+}
+
 function moveArgs($) {
   return seq(
     '(',
@@ -211,6 +228,9 @@ module.exports = grammar({
     // (preproc_conditional_arguments, branches open with `,` or an argument).
     // Decided past the condition, so GLR explores both.
     [$._argument_expression],
+    // A bodiless key header before a directive: a complete key_declaration, or
+    // the header half of a preproc_split_key. Only the `{` after #endif decides.
+    [$.preproc_split_key, $.key_declaration],
     [$._preproc_split_then_begin_open, $.preproc_split_if_then_begin_else_shared, $.preproc_split_if_begin_else, $._preproc_branch_statement],
     // Inside a preprocessor branch a statement can be read as belonging to the
     // conditional or to an enclosing statement_block. The two were previously
@@ -1656,26 +1676,48 @@ module.exports = grammar({
       $.key_declaration,
       $.attribute_item,
       $.preproc_conditional_keys,
+      $.preproc_split_key,
     )),
+
+    // A key whose HEADER differs per branch and whose body is shared after
+    // #endif. A branch may lead with complete keys, which is what
+    // ItemLedgerEntry.Table.al:717 (IT layer, BC 29) does:
+    //   #if not CLEAN28 key(K21; ...) { } ... key(Key24; SystemModifiedAt)
+    //   #else key(Key21; SystemModifiedAt) #endif { }
+    // The body is required: without it the text is a preproc_conditional_keys.
+    // alc accepts both configs. Sibling of preproc_split_table_field.
+    //
+    // NO prec: a bodiless `key(K; A)` before `#else` is a complete key_declaration
+    // too, and only the `{` after `#endif` tells the readings apart. prec(25)
+    // resolved that shift/reduce silently and broke every plain
+    // `#if key(A; B) #else key(A; C) #endif`. GLR decides via the declared conflict.
+    preproc_split_key: $ => seq(
+      $.preproc_if,
+      optional($._key_branch_items),
+      $._key_header,
+      repeat(seq($.preproc_elif, optional($._key_branch_items), $._key_header)),
+      optional(seq($.preproc_else, optional($._key_branch_items), $._key_header)),
+      $.preproc_endif,
+      $._declaration_body_block,
+    ),
 
     preproc_conditional_keys: $ => seq(
       $.preproc_if,
-      repeat(choice($.key_declaration, $.attribute_item, $.preproc_conditional_keys)),
-      repeat(seq($.preproc_elif, repeat(choice($.key_declaration, $.attribute_item, $.preproc_conditional_keys)))),
-      optional(seq($.preproc_else, repeat(choice($.key_declaration, $.attribute_item, $.preproc_conditional_keys)))),
+      optional($._key_branch_items),
+      repeat(seq($.preproc_elif, optional($._key_branch_items))),
+      optional(seq($.preproc_else, optional($._key_branch_items))),
       $.preproc_endif,
     ),
 
+    _key_header: $ => keyHeader($),
+
+    // Shared by preproc_conditional_keys and preproc_split_key, so the two
+    // reach the same repeat symbol and differ only after the branch's items.
+    _key_branch_items: $ => repeat1(choice($.key_declaration, $.attribute_item, $.preproc_conditional_keys)),
+
     key_declaration: $ => seq(
-      $.key_keyword,
-      '(',
-      field('name', $._identifier_or_quoted),
-      ';',
-      field('fields', $.field_list),
-      ')',
-      optional(seq(
-        $._declaration_body_block
-      ))
+      $._key_header,
+      optional($._declaration_body_block),
     ),
 
     // Comma-separated list of field names
@@ -2042,6 +2084,7 @@ module.exports = grammar({
       $.addafter_modification,
       $.addbefore_modification,
       $.modify_modification,
+      $.preproc_split_modify,
       $.movefirst_modification,
       $.movelast_modification,
       $.moveafter_modification,
@@ -2291,12 +2334,24 @@ module.exports = grammar({
         )
     ),
 
+    // `modify(A) #else modify(B) #endif { … }` -- the target differs per branch,
+    // the body is shared (ServiceCreditMemoES.PageExt.al:144, ES layer, BC 29;
+    // alc accepts both configs). One rule for both hosts, layout and actions:
+    // the two modify rules differ only in which list they sit in.
+    preproc_split_modify: $ => prec(25, seq(
+      $.preproc_if,
+      $._modify_header,
+      repeat(seq($.preproc_elif, $._modify_header)),
+      optional(seq($.preproc_else, $._modify_header)),
+      $.preproc_endif,
+      $._declaration_body_block,
+    )),
+
+    _modify_header: $ => modifyHeader($),
+
     // modify("Name") { Visible = false; }
     modify_modification: $ => prec(2, seq(
-      $.modify_keyword,
-      '(',
-      field('target', $._identifier_or_quoted),
-      ')',
+      $._modify_header,
       $._declaration_body_block
     )),
 
@@ -2338,6 +2393,7 @@ module.exports = grammar({
       $.addafter_action_modification,
       $.addbefore_action_modification,
       $.modify_action_modification,
+      $.preproc_split_modify,
       // move* is legal in actions too (alc, runtime 15.0; first in BC 29:
       // CZ VATReportCZL.PageExt.al `movebefore(Submit_Promoted; Generate_Promoted)`)
       $.movefirst_modification,
@@ -2465,10 +2521,7 @@ module.exports = grammar({
     ),
 
     modify_action_modification: $ => prec(2, seq(
-      $.modify_keyword,
-      '(',
-      field('target', $._identifier_or_quoted),
-      ')',
+      $._modify_header,
       $._declaration_body_block
     )),
 
