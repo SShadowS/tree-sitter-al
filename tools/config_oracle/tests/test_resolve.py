@@ -27,6 +27,18 @@ def test_elif_is_first_match_so_else_taken_when_A_unset():
                                    + b"  \n" + b" " * 5 + b"\n" + b"d;\n" + b" " * 6 + b"\n" + b"e;\n")
 
 
+def elif_is_first_match(resolve_fn):
+    """The named first-match expectation, parameterised by the resolver under test so the
+    mutation test in test_configs.py can run it against a mutant. With A set, `#if A` is
+    taken, so the equally-true `#elif A` must NOT be (A unset cannot tell: both are false)."""
+    m = resolve_fn(SRC, frozenset({"A"})).masked
+    assert b"b;" in m and b"c;" not in m and b"d;" not in m
+
+
+def test_elif_is_first_match_so_a_true_elif_after_a_taken_if_is_not_taken():
+    elif_is_first_match(resolve)
+
+
 def test_offsets_are_preserved():
     for env in (set(), {"A"}):
         assert len(mask_of(SRC, env)) == len(SRC)

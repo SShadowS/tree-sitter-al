@@ -41,24 +41,31 @@ def test_unreachable_arm_is_reported():
     assert unreached == [src.index(b"#if not A")]
 
 
+_FIRST_MATCH = "f.active = f.parent_active and not f.taken and evaluate(d.cond.expr, frozenset(env))"
+_INDEPENDENT = "f.active = f.parent_active and evaluate(d.cond.expr, frozenset(env))"
+
+
+def _independent_elif_resolve(monkeypatch):
+    """A real mutant: a copy of directives.py whose #elif ignores whether an earlier arm was
+    taken. The input is untouched; only the resolver's frame logic differs."""
+    import inspect
+    import sys
+    import types
+    src = inspect.getsource(d)
+    assert src.count(_FIRST_MATCH) == 1, "mutation site moved; update the mutant"
+    mod = types.ModuleType("directives_independent_elif_mutant")
+    monkeypatch.setitem(sys.modules, mod.__name__, mod)      # dataclasses look their module up
+    exec(compile(src.replace(_FIRST_MATCH, _INDEPENDENT), d.__file__, "exec"), mod.__dict__)
+    return mod.resolve
+
+
 def test_first_match_mutation_is_caught(monkeypatch):
-    """Spec section 1 'Resolver self-test': switching #elif to independent
-    evaluation must fail a named case. This test IS that named case run under
-    the mutation; it asserts the mutant produces the wrong mask."""
-    src = b"#if A\none;\n#elif A\ntwo;\n#endif\n"
-    good = d.resolve(src, frozenset({"A"})).masked
-    assert b"one;" in good and b"two;" not in good
-
-    real = d.resolve
-
-    def independent_elif(source, env0):
-        # Mutant: evaluate each #elif as if no earlier arm had been taken.
-        r = real(source.replace(b"#elif", b"#endif\n#if"), env0)
-        return r
-
-    monkeypatch.setattr(d, "resolve", independent_elif)
-    mutant = d.resolve(src, frozenset({"A"})).masked
-    assert b"two;" in mutant, "the mutation did not change behaviour, so the named case cannot detect it"
+    """Spec section 1 'Resolver self-test': switching #elif to independent evaluation must
+    fail a named case. The named expectation passes on the real resolver and FAILS on the mutant."""
+    from tools.config_oracle.tests.test_resolve import elif_is_first_match
+    elif_is_first_match(d.resolve)
+    with pytest.raises(AssertionError):
+        elif_is_first_match(_independent_elif_resolve(monkeypatch))
 
 
 # --- Lenient discovery vs. strict resolve (controller ruling overriding the brief) ---
