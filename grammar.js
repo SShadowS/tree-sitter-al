@@ -343,7 +343,21 @@ module.exports = grammar({
     // #if branch is identical in a link, permission and implementation list, and
     // the property name that would disambiguate is long past.
     [$._link_value_branch, $._permission_branch, $._impl_value_branch],
-    [$.preproc_conditional_permissions, $._property_value_conditional],
+    // A whole value whose `;` sits inside the arms (_property_value_conditional_in_if,
+    // G11) reads the same `#if` as the `;`-after-#endif whole value and as every
+    // list-internal conditional until an arm's end, and a `#if` nested in its arm
+    // is either kind until the `;` or directive after the inner #endif. All four
+    // generator-required. They replace [preproc_conditional_permissions,
+    // _property_value_conditional], which tree-sitter then reported unnecessary.
+    [$._property_value_conditional_in_if, $._property_value_conditional, $.preproc_conditional_link_values, $.preproc_conditional_table_relation, $.preproc_conditional_permissions, $.preproc_conditional_impl_values],
+    [$._property_value_conditional_in_if, $.preproc_conditional_link_values, $.preproc_conditional_table_relation, $.preproc_conditional_permissions, $.preproc_conditional_impl_values],
+    [$._property_value_conditional_in_if, $.preproc_conditional_permissions],
+    [$._property_value_branch_in_if, $._property_value_branch],
+    // A link list OPENED by a #if (`SubPageLink = #if X A = field(B), #endif
+    // B = field(A);`): before the directive the arm is both a whole value's
+    // link_value_list and a list-internal _link_value_branch. G11: both now
+    // carry prec 6, so GLR keeps both and the text after #endif decides.
+    [$.link_value_list, $._link_value_branch],
     // A whole-value arm is one _property_value (G8), so a list arm ending in a
     // directive (`A, B #else`) is also a link, permission or implementation
     // branch until the directive, and a permission/implementation list arm is
@@ -824,8 +838,9 @@ module.exports = grammar({
     // conditional that ends the value. Two value forms:
     //   - a whole-property-value conditional (preproc_conditional_property_value),
     //       Caption = #if X 'A'; #else 'B'; #endif
-    //     whose arms each take an optional `;` -- so this variant does NOT
-    //     guarantee a terminator; an arm, or a whole configuration, may lack one;
+    //     whose every nonempty arm ENDS the property: a value then `;`, or a
+    //     nested conditional of the same kind (_property_value_conditional_in_if).
+    //     An empty arm still leaves its configuration without a value or `;`;
     //   - a relation continued into a #if whose arms carry the `;` (aliased to
     //     table_relation_value, the node a flat parse of one configuration
     //     gives: grammar finding G1):
@@ -838,18 +853,42 @@ module.exports = grammar({
       field('name', $.property_name),
       '=',
       field('value', choice(
-        alias($._property_value_conditional, $.preproc_conditional_property_value),
+        alias($._property_value_conditional_in_if, $.preproc_conditional_property_value),
         alias($._table_relation_split_value, $.table_relation_value),
       )),
     )),
 
+    // The whole-value conditional of _property_with_terminator_in_if: the
+    // same node and arm shape as _property_value_conditional, but an arm's `;`
+    // is REQUIRED, because nothing after #endif can end the property (G11).
+    // With the `;` optional, as it was, a #if that OPENS a list continued after
+    // #endif -- `SubPageLink = #if X A = field(B), #endif B = field(A);` -- had
+    // a reading that ended the property at #endif with no terminator and then
+    // started a second property `B`: a silent misparse. A list prefix never
+    // carries the `;`, so that reading no longer exists. Nested, an arm may be
+    // this conditional again (`#if X #if Y 'a'; #else 'b'; #endif #else ...`),
+    // or through _property_value the `;`-after-#endif kind followed by `;`.
+    _property_value_conditional_in_if: $ => seq(
+      $.preproc_if,
+      optional($._property_value_branch_in_if),
+      repeat(seq($.preproc_elif, optional($._property_value_branch_in_if))),
+      optional(seq($.preproc_else, optional($._property_value_branch_in_if))),
+      $.preproc_endif,
+    ),
+    _property_value_branch_in_if: $ => choice(
+      seq(field('value', $._property_value), ';'),
+      field('value', alias($._property_value_conditional_in_if, $.preproc_conditional_property_value)),
+    ),
+
     // A whole-property-value conditional: the entire value of a property is a
     // #if, and each nonempty arm holds ONE property value, fielded `value`,
     // then an optional `;` outside the field:
-    //   Caption = #if X 'A'; #else 'B'; #endif          (`;` inside the arms)
     //   MinValue = #if X 1 #else 2 #endif;               (`;` after #endif)
-    //   TableRelation = #if X Item; #else Customer where(...); #endif
-    // Arms and terminators are both optional, so the node does not promise
+    // This is _property_value's whole-value alternative, so the `;` after
+    // #endif belongs to the property. When the `;` is inside the arms and
+    // nothing follows #endif (`Caption = #if X 'A'; #else 'B'; #endif`), the
+    // same node comes from _property_value_conditional_in_if (G11).
+    // Arms and terminators are both optional here, so the node does not promise
     // that every configuration supplies a value or a `;`. Each arm's value has
     // the shape a flat parse of that arm gives: a bare name is an `identifier`
     // or `quoted_identifier`, a longer relation a table_relation_value.
@@ -949,8 +988,9 @@ module.exports = grammar({
       $.option_member_list,         // Option1, Option2, "Option 3"
       $.table_relation_value,       // Customer where(...) or if(...) Item else Resource
       // A whole value that is a #if with one value per arm, `;` after #endif.
-      // Same rule as _property_with_terminator_in_if's (`;` inside the arms),
-      // so both placements of the terminator give the same node and arm shape.
+      // The same node and arm shape as _property_with_terminator_in_if's
+      // (`;` inside the arms, _property_value_conditional_in_if), so both
+      // placements of the terminator give one shape.
       alias($._property_value_conditional, $.preproc_conditional_property_value),
       $.sorting_value,              // sorting("Starting Date")
       $.link_value_list,            // "Field" = field(Other), ...
@@ -1328,9 +1368,16 @@ module.exports = grammar({
       $.preproc_endif,
     ),
 
+    // prec(6) on the bare-seq arm matches link_value_list's prec.left(6)
+    // (G11). A #if that OPENS a link list has, before the directive, both this
+    // arm and a whole-value arm's link_value_list; tree-sitter resolves a
+    // reduce/reduce by precedence before it consults `conflicts`, so at 0
+    // against 6 the list-internal reading was dropped at generation time and
+    // only the whole-value reading was ever tried (the G8 regression). Equal
+    // precedence plus the declared conflict leaves it to GLR.
     _link_value_branch: $ => choice(
       seq(',', optional($._link_value_seq)),
-      $._link_value_seq,
+      prec(6, $._link_value_seq),
     ),
 
     link_value: $ => seq(

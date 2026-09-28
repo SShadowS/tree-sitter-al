@@ -9,6 +9,36 @@ public API — a change to node structure or field names is a **major** bump.
 
 ### Fixed
 
+- **Tree-shape change: a `#if` that opens a link list continued after
+  `#endif` is list-internal again** (grammar finding G11, a G8 regression).
+  `SubPageLink = #if X A = field(B), #endif B = field(A);` gave two
+  properties with no ERROR: a terminator-less `SubPageLink` whose value was a
+  `preproc_conditional_property_value`, then a second property named `B` with
+  a `call_expression` value. The quoted form (`"A" = field(B), ... "C" =
+  field(D);`) ERRORed. `RunPageLink` in an `action` did the same. All are now
+  one property, as before G8 and as alc reads them in every configuration:
+
+  ```
+  (property
+    name: (property_name)
+    value: (link_value_list
+      (preproc_conditional_link_values (preproc_if ...) (link_value ...) (preproc_endif ...))
+      (link_value ...)))
+  ```
+
+  Two causes. `link_value_list`'s `prec.left(6)` beat `_link_value_branch`
+  (prec 0) in a reduce/reduce that tree-sitter settles by precedence before it
+  consults `conflicts`, so the list-internal reading was never tried; the arm
+  now carries prec 6 and a declared conflict. And a whole value whose `;` sits
+  inside the arms accepted an arm with no `;`, which ended the property with
+  no terminator; each nonempty arm of that form now requires its `;` (or is a
+  nested conditional of the same form). So `Caption = #if X 'a' #else 'b'
+  #endif` followed by another property, which alc rejects (AL0104) in each
+  configuration without the `;`, now ERRORs instead of parsing. Whole-value
+  forms with the `;` inside every arm or after `#endif` are unchanged. 0
+  production sites (tree-harness byte-identical on BC.History and BC 28.5).
+  Parser states 15,645 -> 15,682 (+37, all from the required `;`; the prec
+  change costs 0); five conflicts added and one removed.
 - **Tree-shape change: a property whose whole value is a `#if` is now
   `preproc_conditional_property_value`, with each arm's value in a `value`
   field** (grammar finding G6). `Caption = #if X 'a'; #else 'b'; #endif`, and

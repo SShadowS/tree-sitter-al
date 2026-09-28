@@ -1931,7 +1931,7 @@
                   "type": "ALIAS",
                   "content": {
                     "type": "SYMBOL",
-                    "name": "_property_value_conditional"
+                    "name": "_property_value_conditional_in_if"
                   },
                   "named": true,
                   "value": "preproc_conditional_property_value"
@@ -1950,6 +1950,119 @@
           }
         ]
       }
+    },
+    "_property_value_conditional_in_if": {
+      "type": "SEQ",
+      "members": [
+        {
+          "type": "SYMBOL",
+          "name": "preproc_if"
+        },
+        {
+          "type": "CHOICE",
+          "members": [
+            {
+              "type": "SYMBOL",
+              "name": "_property_value_branch_in_if"
+            },
+            {
+              "type": "BLANK"
+            }
+          ]
+        },
+        {
+          "type": "REPEAT",
+          "content": {
+            "type": "SEQ",
+            "members": [
+              {
+                "type": "SYMBOL",
+                "name": "preproc_elif"
+              },
+              {
+                "type": "CHOICE",
+                "members": [
+                  {
+                    "type": "SYMBOL",
+                    "name": "_property_value_branch_in_if"
+                  },
+                  {
+                    "type": "BLANK"
+                  }
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "type": "CHOICE",
+          "members": [
+            {
+              "type": "SEQ",
+              "members": [
+                {
+                  "type": "SYMBOL",
+                  "name": "preproc_else"
+                },
+                {
+                  "type": "CHOICE",
+                  "members": [
+                    {
+                      "type": "SYMBOL",
+                      "name": "_property_value_branch_in_if"
+                    },
+                    {
+                      "type": "BLANK"
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "type": "BLANK"
+            }
+          ]
+        },
+        {
+          "type": "SYMBOL",
+          "name": "preproc_endif"
+        }
+      ]
+    },
+    "_property_value_branch_in_if": {
+      "type": "CHOICE",
+      "members": [
+        {
+          "type": "SEQ",
+          "members": [
+            {
+              "type": "FIELD",
+              "name": "value",
+              "content": {
+                "type": "SYMBOL",
+                "name": "_property_value"
+              }
+            },
+            {
+              "type": "STRING",
+              "value": ";"
+            }
+          ]
+        },
+        {
+          "type": "FIELD",
+          "name": "value",
+          "content": {
+            "type": "ALIAS",
+            "content": {
+              "type": "SYMBOL",
+              "name": "_property_value_conditional_in_if"
+            },
+            "named": true,
+            "value": "preproc_conditional_property_value"
+          }
+        }
+      ]
     },
     "_property_value_conditional": {
       "type": "SEQ",
@@ -3766,8 +3879,12 @@
           ]
         },
         {
-          "type": "SYMBOL",
-          "name": "_link_value_seq"
+          "type": "PREC",
+          "value": 6,
+          "content": {
+            "type": "SYMBOL",
+            "name": "_link_value_seq"
+          }
         }
       ]
     },
@@ -23055,8 +23172,31 @@
       "_impl_value_branch"
     ],
     [
+      "_property_value_conditional_in_if",
+      "_property_value_conditional",
+      "preproc_conditional_link_values",
+      "preproc_conditional_table_relation",
       "preproc_conditional_permissions",
-      "_property_value_conditional"
+      "preproc_conditional_impl_values"
+    ],
+    [
+      "_property_value_conditional_in_if",
+      "preproc_conditional_link_values",
+      "preproc_conditional_table_relation",
+      "preproc_conditional_permissions",
+      "preproc_conditional_impl_values"
+    ],
+    [
+      "_property_value_conditional_in_if",
+      "preproc_conditional_permissions"
+    ],
+    [
+      "_property_value_branch_in_if",
+      "_property_value_branch"
+    ],
+    [
+      "link_value_list",
+      "_link_value_branch"
     ],
     [
       "_permission_branch",

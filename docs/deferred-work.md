@@ -536,6 +536,20 @@ and `assembly_body`, then measure the conflicts and states that adds.
 
 ## 18. A `#if` that opens a link list is split off as a whole value (G8 regression); an opening option-member `#if` ERRORs
 
+**Link list: RESOLVED 2026-09-28 (G11, commit @G11-LINK@).** Traced:
+`link_value_list`'s `prec.left(6)` beat
+`_link_value_branch` (prec 0) in a reduce/reduce, which tree-sitter settles by
+precedence before `conflicts`, so the list-internal reading was dropped at
+generation time (measured: with only the arm `;` required, the unquoted form
+ERRORed instead of misparsing). Fix: prec 6 on the arm plus a declared
+conflict, and the `;`-inside-the-arms whole value
+(`_property_value_conditional_in_if`) now requires each nonempty arm's `;`, so
+it can no longer end a property with no terminator. alc four-way ACCEPTs the
+unquoted, quoted and `RunPageLink` forms; all three now match pre-G8
+(`3c6ca40`). Pinned by `test/corpus/link_list_opening_conditional_test.txt`
+and `tools/config_oracle/tests/test_list_opening_conditional.py`. The option
+form below is still open.
+
 **Established:** 2026-09-28, G6 acceptance fixtures, corrected in G6 fix round 1
 after review. Trees below re-parsed at G6 (`e842a75`); the review found the same
 at `def2879`. alc accepts every form here with the symbol defined and undefined
