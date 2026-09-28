@@ -68,6 +68,12 @@ _STATEMENT_HOSTS = {
     "preproc_split_if_begin_else:<children>": "splice-repeat",
     "preproc_split_if_then_begin:<children>": "splice-repeat",
     "preproc_split_if_then_begin_else_shared:<children>": "splice-repeat",
+    # preproc_split_open_statement (BC 29 family G): branch preambles and the
+    # guarded tail are statement runs; `continuation` is the one statement that
+    # completes a then/else; then_branch is the if-then-else head's, one per arm.
+    "preproc_split_open_statement:<children>": "splice-repeat",
+    "preproc_split_open_statement:continuation": "single-slot",
+    "preproc_split_open_statement:then_branch": "single-slot",
 }
 
 _BODY_HOSTS = {f"{p}:<children>": "splice-repeat" for p in (
@@ -111,7 +117,8 @@ register("preproc_split_begin", "token-alias", "tools.config_oracle.lowering.sel
          hosts={h: "any" for h in ("preproc_fragmented_else_tail:<children>",
                                    "preproc_split_if_begin_asymmetric:<children>",
                                    "preproc_split_if_then_begin:<children>",
-                                   "preproc_split_if_then_begin_else_shared:<children>")},
+                                   "preproc_split_if_then_begin_else_shared:<children>",
+                                   "preproc_split_open_statement:<children>")},
          alias_to="begin_keyword")
 register("preproc_split_end", "token-alias", "tools.config_oracle.lowering.select.token_alias",
          hosts={"preproc_split_code_block_end:<children>": "any"}, alias_to="end_keyword")
@@ -174,6 +181,8 @@ register("preproc_split_modify", "unsupported")
 # BC 29 family D: only the #if-taken configuration is valid AL, so lowering the
 # other configuration must report cannot-validate, never a discrepancy.
 register("preproc_split_table_field_open", "unsupported")
+# BC 29 family G: branches end in an open statement prefix, tail completes it.
+register("preproc_split_open_statement", "unsupported")
 
 # Non-prefixed special type: completes an earlier table relation (spec section 3).
 register("else_table_relation_fragment", "unsupported")
