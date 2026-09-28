@@ -231,6 +231,16 @@ module.exports = grammar({
     // A bodiless key header before a directive: a complete key_declaration, or
     // the header half of a preproc_split_key. Only the `{` after #endif decides.
     [$.preproc_split_key, $.key_declaration],
+    // preproc_split_block_close_after_endif lets a block's statements run into
+    // a `#endif` before its `end`, which every "begin left open at #endif" rule
+    // also reads; and preproc_split_block_end_in_else lets a block end inside an
+    // #else. GLR keeps the reading whose remaining structure completes.
+    [$.statement_block, $._open_begin],
+    [$.code_block, $._open_begin],
+    [$.statement_block, $._preproc_begin_body_to_endif],
+    [$._reopen_block, $.statement_block],
+    [$.code_block, $._reopen_block],
+    [$.preproc_split_else_begin_over_endif, $._preproc_end_branch, $._preproc_branch_statement],
     // _reopen_block: `if E then begin …` left open at #endif, or a complete
     // if_statement among the reopened block's statements.
     [$._preproc_if_header, $.if_statement],
@@ -3308,8 +3318,40 @@ module.exports = grammar({
         // Scanner's PREPROC_SPLIT_END only fires when end;#else or end;#endif
         $.preproc_split_code_block_end,
         $.preproc_split_else_begin_over_endif,
+        $.preproc_split_block_end_in_else,
+        $.preproc_split_block_close_after_endif,
       ),
     )),
+
+    // A procedure boundary inside an #else (ERMFinancialReportsIII.Codeunit.al
+    // :2172, GB tests, BC 29; alc accepts both configs):
+    //   procedure P() begin A();
+    //   #if not CLEAN27  B();
+    //   #else  C(); end;  local procedure Q(): Text begin exit('');
+    //   #endif
+    //   end;
+    // The procedure ranges cross the #if. The tree is the #else reading, which
+    // keeps both procedures as real nodes: P's block ends at the `end` inside
+    // #else (preproc_split_block_end_in_else) and Q's block carries the #endif
+    // before its own `end` (preproc_split_block_close_after_endif).
+    // Holding Q's header inside a statement of P instead measured +1,189 states;
+    // this form costs +412, nearly all of it because `end` becomes a valid
+    // lookahead after #else-branch statements, which splits their states.
+    // Sharing preproc_conditional_statement's branch repeat saved nothing.
+    preproc_split_block_end_in_else: $ => seq(
+      $.preproc_if,
+      repeat($._preproc_branch_statement),
+      repeat(seq($.preproc_elif, repeat($._preproc_branch_statement))),
+      $.preproc_else,
+      repeat($._preproc_branch_statement),
+      $.end_keyword,
+    ),
+
+    preproc_split_block_close_after_endif: $ => seq(
+      $.preproc_endif,
+      repeat($._statement),
+      $.end_keyword,
+    ),
 
     // A code_block closed by an `end` inside a conditional, which then opens an
     // `else begin` whose own `end;` sits OUTSIDE the `#endif`:

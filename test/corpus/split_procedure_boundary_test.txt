@@ -1,0 +1,91 @@
+================================================================================
+An #else branch ends the procedure and opens the next one
+================================================================================
+codeunit 50100 T
+{
+    procedure P()
+    begin
+        Message('a');
+#if not C28
+        Message('b');
+#else
+        Message(Q('c'));
+    end;
+
+    local procedure Q(T: Text): Text
+    begin
+        exit(T);
+#endif
+    end;
+
+    procedure R()
+    begin
+    end;
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (procedure
+        (procedure_keyword)
+        name: (identifier)
+        body: (code_block
+          (begin_keyword)
+          body: (statement_block
+            (call_expression
+              function: (identifier)
+              arguments: (argument_list
+                (string_literal))))
+          (preproc_split_block_end_in_else
+            (preproc_if
+              (preproc_open)
+              condition: (preproc_not_expression
+                (identifier)))
+            (call_expression
+              function: (identifier)
+              arguments: (argument_list
+                (string_literal)))
+            (preproc_else)
+            (call_expression
+              function: (identifier)
+              arguments: (argument_list
+                (call_expression
+                  function: (identifier)
+                  arguments: (argument_list
+                    (string_literal)))))
+            (end_keyword))))
+      (procedure
+        modifier: (procedure_modifier
+          (local_keyword))
+        (procedure_keyword)
+        name: (identifier)
+        parameters: (parameter_list
+          (parameter
+            name: (identifier)
+            type: (type_specification
+              (text_type
+                (text_keyword)))))
+        return_type: (type_specification
+          (text_type
+            (text_keyword)))
+        body: (code_block
+          (begin_keyword)
+          body: (statement_block
+            (exit_statement
+              (exit_keyword)
+              return_value: (identifier)))
+          (preproc_split_block_close_after_endif
+            (preproc_endif
+              (preproc_close))
+            (end_keyword))))
+      (procedure
+        (procedure_keyword)
+        name: (identifier)
+        body: (code_block
+          (begin_keyword)
+          (end_keyword))))))

@@ -12835,11 +12835,89 @@
               {
                 "type": "SYMBOL",
                 "name": "preproc_split_else_begin_over_endif"
+              },
+              {
+                "type": "SYMBOL",
+                "name": "preproc_split_block_end_in_else"
+              },
+              {
+                "type": "SYMBOL",
+                "name": "preproc_split_block_close_after_endif"
               }
             ]
           }
         ]
       }
+    },
+    "preproc_split_block_end_in_else": {
+      "type": "SEQ",
+      "members": [
+        {
+          "type": "SYMBOL",
+          "name": "preproc_if"
+        },
+        {
+          "type": "REPEAT",
+          "content": {
+            "type": "SYMBOL",
+            "name": "_preproc_branch_statement"
+          }
+        },
+        {
+          "type": "REPEAT",
+          "content": {
+            "type": "SEQ",
+            "members": [
+              {
+                "type": "SYMBOL",
+                "name": "preproc_elif"
+              },
+              {
+                "type": "REPEAT",
+                "content": {
+                  "type": "SYMBOL",
+                  "name": "_preproc_branch_statement"
+                }
+              }
+            ]
+          }
+        },
+        {
+          "type": "SYMBOL",
+          "name": "preproc_else"
+        },
+        {
+          "type": "REPEAT",
+          "content": {
+            "type": "SYMBOL",
+            "name": "_preproc_branch_statement"
+          }
+        },
+        {
+          "type": "SYMBOL",
+          "name": "end_keyword"
+        }
+      ]
+    },
+    "preproc_split_block_close_after_endif": {
+      "type": "SEQ",
+      "members": [
+        {
+          "type": "SYMBOL",
+          "name": "preproc_endif"
+        },
+        {
+          "type": "REPEAT",
+          "content": {
+            "type": "SYMBOL",
+            "name": "_statement"
+          }
+        },
+        {
+          "type": "SYMBOL",
+          "name": "end_keyword"
+        }
+      ]
     },
     "preproc_split_else_begin_over_endif": {
       "type": "PREC_RIGHT",
@@ -22641,6 +22719,31 @@
     [
       "preproc_split_key",
       "key_declaration"
+    ],
+    [
+      "statement_block",
+      "_open_begin"
+    ],
+    [
+      "code_block",
+      "_open_begin"
+    ],
+    [
+      "statement_block",
+      "_preproc_begin_body_to_endif"
+    ],
+    [
+      "_reopen_block",
+      "statement_block"
+    ],
+    [
+      "code_block",
+      "_reopen_block"
+    ],
+    [
+      "preproc_split_else_begin_over_endif",
+      "_preproc_end_branch",
+      "_preproc_branch_statement"
     ],
     [
       "_preproc_if_header",
