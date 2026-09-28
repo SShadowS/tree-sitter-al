@@ -101,3 +101,101 @@ def test_deep_ordinary_tree_lowers():
     root = ir.Node("source_file", True, None, 0, 1, [n])
     low, _, _ = lower_tree(root, [], resolve(b"x", frozenset()))
     assert low.leaf_intervals() == ((0, 1),)
+
+
+# --- fix round 1 -------------------------------------------------------------
+
+EMPTY_THEN = b"codeunit 1 T { trigger OnRun() begin if c then\n#if A\n x := 1\n#endif\n ; end; }"
+VAR_BLOCK = b"codeunit 1 T { procedure P()\n#if A\nvar\n x: Integer;\n#endif\nbegin end; }"
+EMPTY_ASSERTERROR = b"codeunit 1 T { trigger OnRun() begin asserterror\n#if A\n x := 1\n#endif\n ; end; }"
+
+
+def _lower(parser, src, env):
+    root, extras, problems = ir.from_tree(parser.parse(src))
+    assert problems == []
+    return lower_tree(root, extras, resolve(src, frozenset(env)))
+
+
+def test_mandatory_single_slot_with_empty_arm_is_policy(al_parser):
+    with pytest.raises(LoweringError) as err:
+        _lower(al_parser, EMPTY_THEN, [])
+    assert err.value.kind == "policy"
+    _lower(al_parser, EMPTY_THEN, ["A"])          # one node: fine
+
+
+@pytest.mark.parametrize("src", [VAR_BLOCK, EMPTY_ASSERTERROR])
+def test_optional_slot_with_empty_arm_lowers(al_parser, src):
+    for env, ds in run_all(al_parser, src).items():
+        assert ds == [], (env, ds)
+
+
+def test_accounting_rejects_inactive_leaf_marked_kept(al_parser, monkeypatch):
+    from tools.config_oracle.lowering import select
+
+    def lower_every_arm(node, ctx):
+        arms, endif = select.split_arms(node)
+        out = select.Lowered([])
+        for directive, content in arms:
+            ctx.accounting.mark(directive, "directive")
+            for c in content:
+                out.nodes.extend(select.lower(c, ctx.child(node.kind, "<children>")).nodes)
+        ctx.accounting.mark(endif, "directive")
+        return out
+
+    monkeypatch.setattr(select, "branch_select", lower_every_arm)
+    with pytest.raises(LoweringError) as err:
+        _lower(al_parser, STMT, [])
+    assert err.value.kind == "accounting"
+
+
+def test_fragment_dataclass_fields_are_required():
+    from tools.config_oracle.lowering import engine
+    with pytest.raises(TypeError):
+        engine.Terminator(anchor=None)
+    with pytest.raises(TypeError):
+        engine.BlockCompletion(anchor=None, statements=[])
+    with pytest.raises(TypeError):
+        engine.ElseAttachment(anchor=None, else_kw=ir.Node("x", False, None, 0, 1, []))
+
+
+def test_check_emitted_names_a_duplicated_interval():
+    from tools.config_oracle.lowering.engine import Accounting
+    acc = Accounting(resolve(b"xy", frozenset()))
+    lf = ir.Node("x", False, None, 0, 1, [])
+    acc.mark(lf, "kept")
+    low = ir.Node("source_file", True, None, 0, 1, [lf.copy(), lf.copy()])
+    with pytest.raises(LoweringError) as err:
+        acc.check_emitted(low)
+    assert "(0, 1)" in str(err.value)
+
+
+def test_fragment_anchor_survives_single_slot_selection(al_parser, monkeypatch):
+    """The arm's `;` is turned into a Terminator anchored to the arm statement; the
+    real branch_select must hand back that SAME node (field set in place), and the
+    statement_block must consume the Terminator after the if_statement."""
+    from tools.config_oracle.lowering import engine, select
+    src = b"codeunit 1 T { trigger OnRun() begin if c then\n#if A\n x := 1;\n#endif\n end; }"
+    real_lower, real_select = select.lower, select.branch_select
+    last, seen = [], []
+
+    def lower_semicolon_as_terminator(node, ctx):
+        if ctx.parent_kind == "preproc_conditional_statement" and node.kind == ";":
+            ctx.accounting.mark(node, "kept")
+            return engine.Lowered([], [engine.Terminator(anchor=last[-1], leaf=node.copy())])
+        r = real_lower(node, ctx)
+        last.extend(r.nodes)
+        return r
+
+    def checked_select(node, ctx):
+        out = real_select(node, ctx)
+        seen.append(out.frags[0].anchor is out.nodes[0] and out.nodes[0].field == "then_branch")
+        return out
+
+    monkeypatch.setattr(select, "lower", lower_semicolon_as_terminator)
+    monkeypatch.setattr(select, "branch_select", checked_select)
+    root, extras, _ = ir.from_tree(al_parser.parse(src))
+    res = resolve(src, frozenset({"A"}))
+    low, low_extras, _ = lower_tree(root, extras, res)
+    assert seen == [True]
+    ref = reference.extract(al_parser, res.masked)
+    assert compare.structure(ref.root, low) == []

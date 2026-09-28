@@ -59,7 +59,7 @@ def test_pragma_only_hosts_are_splice_repeat():
     assert hosts["source_file:<children>"] == "splice-repeat"
 
 
-def test_split_procedure_preamble_var_block_host_is_single_slot():
+def test_split_procedure_preamble_var_block_host_is_optional_slot():
     # _procedure_preamble (grammar.js:3074-3080) has
     # `optional(choice($.var_section, $.preproc_conditional_var_block))` — a single
     # optional, never a repeat of preproc_conditional_var_block itself. It is
@@ -67,12 +67,14 @@ def test_split_procedure_preamble_var_block_host_is_single_slot():
     # structure (grammar.js:3085-3089), so two var-block nodes seen in one parse are
     # one per arm of the OUTER conditional, not a genuine repeat at one position —
     # same shape as its three siblings (procedure, trigger_declaration,
-    # preproc_split_procedure), all single-slot.
+    # preproc_split_procedure), all at most one node. The slot is optional(...) in
+    # both _procedure_preamble (grammar.js:3075-3079) and _routine_regular_body
+    # (grammar.js:3005-3008), so zero nodes is legal: optional-slot.
     hosts = contracts.REGISTRY["preproc_conditional_var_block"].hosts
-    assert hosts["preproc_split_procedure_preamble:<children>"] == "single-slot"
-    assert hosts["procedure:<children>"] == "single-slot"
-    assert hosts["trigger_declaration:<children>"] == "single-slot"
-    assert hosts["preproc_split_procedure:<children>"] == "single-slot"
+    assert hosts["preproc_split_procedure_preamble:<children>"] == "optional-slot"
+    assert hosts["procedure:<children>"] == "optional-slot"
+    assert hosts["trigger_declaration:<children>"] == "optional-slot"
+    assert hosts["preproc_split_procedure:<children>"] == "optional-slot"
 
 
 def test_split_if_else_then_branch_host_is_single_slot():
@@ -85,6 +87,24 @@ def test_split_if_else_then_branch_host_is_single_slot():
         hosts = contracts.REGISTRY[owner].hosts
         assert hosts["preproc_split_if_else_statement:then_branch"] == "single-slot"
         assert hosts["preproc_split_if_else_statement:else_branch"] == "single-slot"
+
+
+def test_statement_slot_optionality():
+    # asserterror_statement: `optional(field('body', $._statement_inner))`
+    # (grammar.js:4694) -> optional-slot. Every other statement field is a bare
+    # fieldedStatement (grammar.js:70-76, 4286-4304) -> mandatory single-slot.
+    for owner in ("preproc_conditional_statement", "preproc_split_case_statement_end"):
+        hosts = contracts.REGISTRY[owner].hosts
+        assert hosts["asserterror_statement:body"] == "optional-slot"
+        for slot in ("if_statement:then_branch", "if_statement:else_branch", "case_branch:body",
+                     "for_statement:body", "while_statement:body"):
+            assert hosts[slot] == "single-slot", slot
+
+
+def test_token_alias_requires_alias_to():
+    with pytest.raises(ValueError):
+        contracts.register("preproc_test_alias_without_target", "token-alias", "x.y")
+    assert "preproc_test_alias_without_target" not in contracts.REGISTRY
 
 
 @pytest.mark.xfail(reason="handlers land in Tasks 10 and 12", strict=True)

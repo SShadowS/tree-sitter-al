@@ -25,6 +25,8 @@ REGISTRY: dict[str, Entry] = {}
 def register(type_, kind, handler=None, hosts=None, alias_to=None):
     if type_ in REGISTRY:
         raise ValueError(f"duplicate registry entry: {type_}")
+    if kind == "token-alias" and not alias_to:
+        raise ValueError(f"token-alias entry without alias_to: {type_}")
     REGISTRY[type_] = Entry(type_, kind, handler, dict(hosts or {}), alias_to)
 
 
@@ -37,7 +39,9 @@ def resolve_handler(entry):
 _STATEMENT_HOSTS = {
     "statement_block:<children>": "splice-repeat",
     "preproc_conditional_statement:<children>": "splice-repeat",
-    "asserterror_statement:body": "single-slot", "case_branch:body": "single-slot",
+    # asserterror_statement: `optional(field('body', $._statement_inner))` (grammar.js:4694).
+    # Every other statement field is a bare fieldedStatement (grammar.js:70-76, 4286-4304): mandatory.
+    "asserterror_statement:body": "optional-slot", "case_branch:body": "single-slot",
     "for_statement:body": "single-slot", "foreach_statement:body": "single-slot",
     "if_statement:else_branch": "single-slot", "if_statement:then_branch": "single-slot",
     "while_statement:body": "single-slot", "with_statement:body": "single-slot",
@@ -85,7 +89,11 @@ _BODY_HOSTS_WITH_VAR = dict(_BODY_HOSTS, **{"var_body:<children>": "splice-repea
 # structure (grammar.js:3085-3089), so two var-block nodes seen in one parse
 # were one per arm of the OUTER conditional, not a genuine repeat at one
 # position — same shape as the other three routine-tail hosts.
-_ROUTINE_TAIL_HOSTS = {f"{p}:<children>": "single-slot" for p in (
+# At most one node, and zero is legal: the slot is optional(...) in both
+# _procedure_preamble (grammar.js:3075-3079) and _routine_regular_body
+# (grammar.js:3005-3008), which serves procedure, preproc_split_procedure and
+# trigger_declaration (grammar.js:3238). Hence optional-slot, not single-slot.
+_ROUTINE_TAIL_HOSTS = {f"{p}:<children>": "optional-slot" for p in (
     "preproc_split_procedure", "preproc_split_procedure_preamble", "procedure", "trigger_declaration")}
 
 # --- directive plumbing: consumed by whichever owner contains it

@@ -42,7 +42,7 @@ def chosen_arm(node, arms, ctx):
 def branch_select(node, ctx) -> Lowered:
     entry = contracts.REGISTRY[node.kind]
     policy = ctx.policy(entry, node)
-    if policy not in ("splice-repeat", "single-slot"):
+    if policy not in ("splice-repeat", "single-slot", "optional-slot"):
         raise LoweringError("policy", node, f"branch-select cannot apply policy {policy!r}")
     arms, endif = split_arms(node)
     choice = chosen_arm(node, arms, ctx)
@@ -58,10 +58,13 @@ def branch_select(node, ctx) -> Lowered:
             for c in content:
                 ctx.accounting.mark(c, "inactive-arm")
     ctx.accounting.mark(endif, "directive")
-    if policy == "single-slot":
-        if len(out.nodes) > 1:
-            raise LoweringError("policy", node, f"{len(out.nodes)} nodes into a single slot")
-        out.nodes = [n.copy(field=node.field) for n in out.nodes]
+    if policy in ("single-slot", "optional-slot"):
+        # single-slot: exactly one node; optional-slot: at most one (spec section 3).
+        allowed = (1,) if policy == "single-slot" else (0, 1)
+        if len(out.nodes) not in allowed:
+            raise LoweringError("policy", node, f"{len(out.nodes)} nodes into a {policy}")
+        for n in out.nodes:
+            n.field = node.field   # in place: fresh lowered node, and fragment anchors keep identity
     return out
 
 

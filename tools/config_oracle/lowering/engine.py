@@ -14,6 +14,7 @@ package imports nothing from reference.py, tree_sitter, or the loader).
 """
 from __future__ import annotations
 
+import collections
 from dataclasses import dataclass, field
 
 from tools.config_oracle import contracts
@@ -44,24 +45,24 @@ class Frag:
 
 @dataclass
 class Terminator(Frag):
-    leaf: Node = None
+    leaf: Node
 
 
 @dataclass
 class Following(Frag):
-    statements: list = field(default_factory=list)
+    statements: list
 
 
 @dataclass
 class BlockCompletion(Frag):
-    statements: list = field(default_factory=list)
-    end: Node = None
+    statements: list
+    end: Node
 
 
 @dataclass
 class ElseAttachment(Frag):
-    else_kw: Node = None
-    branch: Node = None
+    else_kw: Node
+    branch: Node
 
 
 @dataclass
@@ -71,11 +72,17 @@ class Lowered:
 
 
 class Accounting:
-    def __init__(self):
+    def __init__(self, resolution):
+        self.active = resolution.active
         self.leaf = {}
 
     def mark(self, node, reason):
         for lf in node.leaves():
+            # A kept leaf must lie on a surviving line and an inactive-arm leaf on a
+            # masked one. Zero-width leaves carry no bytes, so nothing to check.
+            if lf.end > lf.start and reason in ("kept", "inactive-arm")                     and bool(self.active[lf.start]) != (reason == "kept"):
+                raise LoweringError("accounting", lf, f"{reason} leaf on a line that is "
+                                    f"{'masked' if reason == 'kept' else 'active'}")
             key = (lf.start, lf.end, lf.kind)
             if key in self.leaf:
                 raise LoweringError("accounting", lf, f"leaf accounted twice: {self.leaf[key]} then {reason}")
@@ -89,11 +96,11 @@ class Accounting:
     def check_emitted(self, low):
         """Every leaf accounted as `kept` appears in the output exactly once, and
         nothing else does. Keyed by interval only: a token alias changes kind."""
-        kept = sorted((s, e) for (s, e, _), why in self.leaf.items() if why == "kept")
-        emitted = sorted((lf.start, lf.end) for lf in low.leaves()) if low.children else []
+        kept = collections.Counter((s, e) for (s, e, _), why in self.leaf.items() if why == "kept")
+        emitted = collections.Counter((lf.start, lf.end) for lf in low.leaves()) if low.children             else collections.Counter()
         if kept != emitted:
-            missing = sorted(set(kept) - set(emitted))[:3]
-            extra = sorted(set(emitted) - set(kept))[:3]
+            missing = sorted((kept - emitted).elements())[:3]
+            extra = sorted((emitted - kept).elements())[:3]
             raise LoweringError("accounting", low, f"kept-but-not-emitted {missing}, emitted-but-not-kept {extra}")
 
 
@@ -191,7 +198,7 @@ def _consume(new, frags):
 
 
 def _lower_tree(root, extras, resolution):
-    acc = Accounting()
+    acc = Accounting(resolution)
     ctx = Ctx(resolution, acc)
     out = lower(root, ctx)
     if out.frags:
