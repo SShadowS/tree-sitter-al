@@ -379,10 +379,9 @@ register("preproc_conditional_link_values", "branch-select", _LIST_RUN,
 # preproc_split_else_begin_over_endif (in this loop, from Task 13): base shape
 # milestone 2, widened shapes one-reading.
 for t in ("preproc_conditional_case_patterns",
-          "preproc_conditional_expression_tail",
           "preproc_conditional_impl_values",
           "preproc_fragmented_else_tail",
-          "preproc_guarded_statement", "preproc_operand_prefix", "preproc_split_brace_close",
+          "preproc_guarded_statement", "preproc_split_brace_close",
           "preproc_split_brace_close_if_only", "preproc_split_call_statement", "preproc_split_case_branch",
           "preproc_split_case_extended", "preproc_split_code_block_over_endif", "preproc_split_complete_body",
           "preproc_split_declaration", "preproc_split_else_begin_over_endif", "preproc_split_field",
@@ -450,6 +449,25 @@ register("preproc_conditional_table_relation", "assembler",
 # Consumed by table_relation_select as a RelationContinuation; never lowered directly.
 register("else_table_relation_fragment", "fragment", None,
          hosts={"preproc_conditional_table_relation:<children>": "consumed"})
+
+# --- Task 11: expressions split across #if arms, regrouped by the alc-measured
+# precedence table (lowering/expression.py). Hosts are the census output.
+# The tail follows the expression it continues and extends it (ToPrevious):
+# assignment RHS, exit value, argument (also inside a preproc_conditional_arguments
+# arm), if/while condition, for bound, subscript index, list element, property value.
+register("preproc_conditional_expression_tail", "assembler", _ASM + "expression_tail",
+         hosts={h: "consumed" for h in (
+             "argument_list:<children>", "assignment_statement:<children>", "exit_statement:<children>",
+             "for_statement:<children>", "if_statement:<children>", "list_literal:<children>",
+             "preproc_conditional_arguments:<children>", "property:value",
+             "subscript_expression:<children>", "while_statement:<children>")})
+# The prefix sits inside a binary node, between `operator` and `right`. engine.lower's
+# binary hook lowers the whole chain before any slot lookup; operand_prefix still
+# checks these hosts, so the census and the handler agree.
+register("preproc_operand_prefix", "assembler", _ASM + "operand_prefix",
+         hosts={f"{k}:<children>": "consumed" for k in (
+             "additive_expression", "comparison_expression", "logical_expression",
+             "multiplicative_expression")})
 
 SPECIAL_NON_PREFIXED = {"else_table_relation_fragment"}
 

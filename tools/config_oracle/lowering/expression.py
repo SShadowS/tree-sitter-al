@@ -146,3 +146,29 @@ def compose(flat: list, field: str | None) -> Node:
     while ops:
         reduce_top()
     return operands[0].copy(field=field)
+
+
+PREFIX = "preproc_operand_prefix"
+
+
+def chain(node: Node) -> list:
+    """The maximal binary chain under `node`, in source order, as
+    `(parent_kind, node)` items: every atom, every operator, and every
+    `preproc_operand_prefix` (which sits between its binary node's operator and
+    right operand). Like `flatten`, but it also descends through binary nodes
+    carrying a prefix (4 children: left, operator, prefix, right). Iterative, for
+    the same depth reason as `flatten`. A binary kind of any other shape is a
+    ValueError."""
+    out: list = []
+    stack = [(None, node)]
+    while stack:
+        parent, n = stack.pop()
+        if n.kind not in BINARY_KINDS:
+            out.append((parent, n))
+            continue
+        kids = n.children
+        if [c.field for c in kids] not in (["left", "operator", "right"], ["left", "operator", None, "right"]) \
+                or (len(kids) == 4 and kids[2].kind != PREFIX):
+            raise ValueError(f"not a plain binary node: {n.kind}@{n.start}")
+        stack.extend((n.kind, c) for c in reversed(kids))
+    return out

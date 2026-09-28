@@ -20,6 +20,7 @@ from dataclasses import dataclass, field
 from tools.config_oracle import contracts
 from tools.config_oracle.compare import _run_with_deep_stack
 from tools.config_oracle.ir import Node, recompute_span
+from tools.config_oracle.lowering import expression
 
 # Content-only containers the grammar wraps in optional(field(...)) (spec section 2).
 EMPTY_REMOVABLE = {
@@ -110,6 +111,53 @@ class RelationContinuation(Frag):
 
 
 @dataclass
+class ToPrevious(Frag):
+    """Binds to the IMMEDIATELY PRECEDING lowered sibling, wherever it is lowered.
+    A fragment that also emits nodes sets `_skip` to their count, so it binds to
+    the sibling before them (`bind_previous`)."""
+
+    def apply(self, prev):
+        raise NotImplementedError
+
+
+@dataclass
+class ExpressionContinuation(ToPrevious):
+    """Contract **expression-continuation** (produced by assemblers.expression_tail).
+    The preceding sibling expression and every pair's operand are flattened, the
+    `(operator, operand)` pairs appended in order, and the whole recomposed by the
+    precedence table (expression.compose), keeping the preceding sibling's field.
+    That regrouping is the named rewrite; no pairs leave the sibling untouched."""
+    pairs: list = field(default_factory=list)
+
+    def apply(self, prev):
+        if not self.pairs:
+            return prev
+        try:
+            flat = expression.flatten(prev)
+            for op, operand in self.pairs:
+                flat += [op] + expression.flatten(operand)
+        except ValueError as e:
+            raise LoweringError("contract-shape", prev, str(e)) from None
+        return expression.compose(flat, prev.field)
+
+
+def bind_previous(kids, r, c):
+    """Append `r.nodes` to `kids`, apply every ToPrevious fragment of `r` to its
+    target sibling in `kids`, and return the other fragments."""
+    kids.extend(r.nodes)
+    rest = []
+    for f in r.frags:
+        if isinstance(f, ToPrevious):
+            target = len(kids) - 1 - getattr(f, "_skip", 0)
+            if target < 0 or not kids[target].named:
+                raise LoweringError("unconsumed-fragment", c, f"{type(f).__name__} with no preceding sibling")
+            kids[target] = f.apply(kids[target])
+        else:
+            rest.append(f)
+    return rest
+
+
+@dataclass
 class Lowered:
     nodes: list
     frags: list = field(default_factory=list)
@@ -178,7 +226,23 @@ def lower(node, ctx) -> Lowered:
         if entry.kind == "unsupported" or entry.handler is None:
             raise LoweringError("unsupported-type", node)
         return contracts.resolve_handler(entry)(node, ctx)
+    if node.kind in expression.BINARY_KINDS and _has_prefix(node, ctx):
+        # The binary hook: a chain holding a prefix is lowered whole, from its
+        # top node (contract operand-prefix, assemblers.operand_prefix).
+        return contracts.resolve_handler(contracts.REGISTRY[expression.PREFIX])(node, ctx)
     return _lower_ordinary(node, ctx)
+
+
+def _has_prefix(node, ctx):
+    """True for the TOP node of a binary chain holding a preproc_operand_prefix.
+    An inner node (a binary parent's left/right) was the top's to lower, so the
+    chain is walked once, not once per level."""
+    if ctx.parent_kind in expression.BINARY_KINDS and ctx.slot in ("left", "right"):
+        return False
+    try:
+        return any(n.kind == expression.PREFIX for _, n in expression.chain(node))
+    except ValueError:
+        return False   # not a plain chain: _lower_ordinary lowers it, and any prefix in it refuses
 
 
 def _lower_ordinary(node, ctx) -> Lowered:
@@ -191,8 +255,7 @@ def _lower_ordinary(node, ctx) -> Lowered:
         r = lower(c, ctx.child(node.kind, c.field or "<children>"))
         for f in r.frags:
             f._from_last = (i == last_index)
-        kids.extend(r.nodes)
-        frags.extend(r.frags)
+        frags.extend(bind_previous(kids, r, c))
     new = Node(node.kind, node.named, node.field, node.start, node.end, kids)
     if any(c.kind in LIST_RUN_TYPES for c in node.children):
         _check_alternation(new)

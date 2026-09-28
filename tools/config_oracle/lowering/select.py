@@ -3,7 +3,7 @@ from __future__ import annotations
 
 from tools.config_oracle import contracts
 from tools.config_oracle.ir import Node
-from tools.config_oracle.lowering.engine import Lowered, LoweringError, Terminator, lower
+from tools.config_oracle.lowering.engine import Lowered, LoweringError, Terminator, bind_previous, lower
 
 DIRECTIVES = ("preproc_if", "preproc_elif", "preproc_else")
 
@@ -70,8 +70,7 @@ def branch_select(node, ctx) -> Lowered:
                 if entry.arm is not None and c.kind not in entry.arm:
                     raise LoweringError("arm-content", c, f"{c.kind} not declared for {node.kind}")
                 r = lower(c, ctx.child(node.kind, c.field or "<children>"))
-                out.nodes.extend(r.nodes)
-                out.frags.extend(r.frags)
+                out.frags.extend(bind_previous(out.nodes, r, c))
         else:
             for c in content:
                 ctx.accounting.mark(c, "inactive-arm")

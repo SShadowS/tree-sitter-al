@@ -7,9 +7,10 @@ from __future__ import annotations
 
 from tools.config_oracle import contracts
 from tools.config_oracle.ir import Node
-from tools.config_oracle.lowering.engine import (BlockCompletion, ElseAttachment, Following, Lowered,
-                                                 LoweringError, RelationContinuation, SiblingsAfter,
-                                                 Terminator, _span_from_children, lower)
+from tools.config_oracle.lowering import expression
+from tools.config_oracle.lowering.engine import (BlockCompletion, ElseAttachment, ExpressionContinuation,
+                                                 Following, Lowered, LoweringError, RelationContinuation,
+                                                 SiblingsAfter, Terminator, _span_from_children, lower)
 from tools.config_oracle.lowering.select import chosen_arm, reading_active, split_arms
 
 
@@ -351,3 +352,76 @@ def container_reopen(node, ctx) -> Lowered:
     if r.frags:
         raise LoweringError("unconsumed-fragment", node, "fragment escaping the reopened container")
     return Lowered([close], [SiblingsAfter(None, r.nodes)])
+
+
+# --- Expressions split across #if arms (contracts expression-continuation and
+# operand-prefix). Both regroup a binary chain by the alc-measured precedence
+# table (lowering/expression.py), never by grammar.js prec() values.
+
+def _pairs(nodes, first, second, node):
+    """Lowered `first second first second ...` (by field) -> [(first, second)]."""
+    if len(nodes) % 2 or any(n.field != (first, second)[i % 2] for i, n in enumerate(nodes)):
+        raise LoweringError("contract-shape", node, "expected " + f"{first} {second} pairs: "
+                            + " ".join(f"{n.field}:{n.kind}" for n in nodes))
+    return list(zip(nodes[::2], nodes[1::2]))
+
+
+def expression_tail(node, ctx) -> Lowered:
+    """Contract expression-continuation. Host: the position right after the
+    expression it continues (census hosts, policy `consumed`). Children:
+    `#if (operator operand)+ (#elif ...)* [#else ...] #endif (operator operand)*`.
+    The chosen arm's `(operator, operand)` pairs, then the pairs after `#endif`,
+    extend the IMMEDIATELY PRECEDING lowered sibling (ExpressionContinuation, a
+    ToPrevious fragment): that expression and every operand are flattened and
+    recomposed by the precedence table, keeping the preceding sibling's field.
+    No other edge changes; emits no nodes. Directives are `directive`, other
+    arms `inactive-arm`, every other leaf `kept`."""
+    ctx.policy(contracts.REGISTRY[node.kind], node)
+    cut = next((i for i, c in enumerate(node.children) if c.kind == "preproc_endif"), None)
+    if cut is None:
+        raise LoweringError("contract-shape", node, "no #endif")
+    arms, endif = split_arms(node.copy(children=node.children[:cut + 1]))
+    arm = _active(arms, endif, node, ctx)
+    pieces = _lower_all(list(arm) + node.children[cut + 1:], ctx, node.kind)
+    return Lowered([], [ExpressionContinuation(None, _pairs(pieces, "operator", "operand", node))])
+
+
+def operand_prefix(top, ctx) -> Lowered:
+    """Contract operand-prefix. Called only from engine.lower's binary hook, with
+    the TOP binary node of a chain (expression.chain) holding at least one
+    `preproc_operand_prefix`; a prefix sits between its binary node's operator
+    and right operand. Each prefix's chosen arm is ONE `(operand, operator)`
+    pair, which takes the prefix's place; no arm chosen contributes nothing,
+    leaving `left op right`. The named rewrite: the WHOLE chain -- every atom,
+    operator and chosen pair, in source order -- is flattened and recomposed by
+    the precedence table, keeping the top node's field. The whole chain, not
+    just the prefix's own binary node, because the arm's operator may bind
+    looser than an enclosing one (`a * #if X b or #endif c + d` is
+    `(a*b) or (c+d)` with X). Directives are `directive`, other arms
+    `inactive-arm`, every other leaf `kept`."""
+    if top.kind not in expression.BINARY_KINDS:
+        raise LoweringError("contract-shape", top, "operand prefix outside a binary chain")
+    try:
+        items = expression.chain(top)
+    except ValueError as e:
+        raise LoweringError("contract-shape", top, str(e)) from None
+    flat = []
+    for parent, n in items:
+        if n.kind == expression.PREFIX:
+            ctx.child(parent, "<children>").policy(contracts.REGISTRY[n.kind], n)
+            arms, endif = split_arms(n)
+            pairs = _pairs(_lower_all(_active(arms, endif, n, ctx), ctx, n.kind), "operand", "operator", n)
+            if len(pairs) > 1:
+                raise LoweringError("contract-shape", n, f"{len(pairs)} operand/operator pairs in one arm")
+            for operand, op in pairs:
+                flat += _flatten(operand) + [op]
+        else:
+            flat += _flatten(_lower_all([n], ctx, parent)[0])
+    return Lowered([expression.compose(flat, top.field)])
+
+
+def _flatten(node):
+    try:
+        return expression.flatten(node)
+    except ValueError as e:
+        raise LoweringError("contract-shape", node, str(e)) from None
