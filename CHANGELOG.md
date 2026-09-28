@@ -9,6 +9,27 @@ public API — a change to node structure or field names is a **major** bump.
 
 ### Fixed
 
+- **A `#if` that opens an option-member list continued after `#endif` now
+  parses** (G11, deferred-work item 18). `OptionMembers = #if X A, #endif B,
+  C;` ERRORed, and always had: `option_member_list` admitted a conditional only
+  after a comma. alc accepts it in every configuration. It now has the shape a
+  mid-list `#if` already had:
+
+  ```
+  (property
+    name: (property_name)
+    value: (option_member_list
+      (preproc_conditional_option_members (preproc_if ...) (option_member ...) (preproc_endif ...))
+      (option_member ...)
+      (option_member ...)))
+  ```
+
+  A member must follow the `#endif`; with only the `;` after it the `#if` is a
+  whole value, as before. 0 production sites (tree-harness byte-identical on
+  BC.History and BC 28.5). Parser states 15,682 -> 15,750 (+68), eight
+  conflicts added. The configuration oracle gains the named rewrite
+  option-member-list-unwrap: a configuration left with one member parses flat
+  as a bare leaf, not a list.
 - **Tree-shape change: a `#if` that opens a link list continued after
   `#endif` is list-internal again** (grammar finding G11, a G8 regression).
   `SubPageLink = #if X A = field(B), #endif B = field(A);` gave two

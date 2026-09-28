@@ -209,6 +209,20 @@ PROPERTY_EXPRESSION_KINDS = frozenset({
 })
 _TAIL = "preproc_conditional_expression_tail"
 
+# Named rewrite **option-member-list-unwrap** (G11). An option-member list may
+# be opened by a #if (`OptionMembers = #if X A, #endif B;`), so a configuration
+# can leave it ONE member. Flat `OptionMembers = B;` is not a list: B reaches
+# _property_value directly, as a bare leaf of one of these kinds (grammar.js
+# `_property_value`, hand-written). So a property `value` option_member_list
+# that held a preproc_conditional_option_members, lowered to exactly one
+# option_member whose only child is one of these kinds, is replaced by that
+# child, which takes the list's field. Keyword members (`Local`, `Internal`,
+# ...) stay a list flat and are not unwrapped. Applied by _lower_ordinary.
+OPTION_MEMBER_BARE_KINDS = frozenset({
+    "identifier", "quoted_identifier", "string_literal", "integer", "boolean", "keyword_identifier",
+})
+_OPTION_COND = "preproc_conditional_option_members"
+
 
 def bind_previous(kids, r, c):
     """Append `r.nodes` to `kids`, apply every ToPrevious fragment of `r` to its
@@ -351,6 +365,12 @@ def _lower_ordinary(node, ctx) -> Lowered:
             and len(kids) == 1 and kids[0].kind not in PROPERTY_EXPRESSION_KINDS):
         ctx.normalised.append(f"property-expression-unwrap@{node.start}")
         return Lowered([kids[0].copy(field=node.field)], frags)
+    if (node.kind == "option_member_list" and node.field == "value"
+            and any(c.kind == _OPTION_COND for c in node.children)
+            and len(kids) == 1 and kids[0].kind == "option_member" and len(kids[0].children) == 1
+            and kids[0].children[0].kind in OPTION_MEMBER_BARE_KINDS):
+        ctx.normalised.append(f"option-member-list-unwrap@{node.start}")
+        return Lowered([kids[0].children[0].copy(field=node.field)], frags)
     return Lowered([_span_from_children(new)], frags)
 
 

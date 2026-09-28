@@ -36,3 +36,36 @@ def test_link_list_opened_by_if_every_config(al_parser, name):
     v = witness.verdicts(al_parser, src)
     assert len(v) == 2, v
     witness.assert_all_pass(al_parser, src)
+
+
+def _options(members):
+    return (f"table 50100 T\n{{\n    fields\n    {{\n        field(1; F; Option)\n        {{\n"
+            f"            OptionMembers =\n{members}\n        }}\n    }}\n}}\n").encode()
+
+
+# G11 item 2: an option-member list opened by a #if. It ERRORed until G11.
+OPTION_OPENING = {
+    "continued": _options("#if X\n                A,\n#endif\n                B, C;"),
+    "both-arms": _options("#if X\n                A,\n#else\n                B,\n#endif\n                C;"),
+    # X=0 leaves one member; its flat parse is a bare identifier
+    # (engine.OPTION_MEMBER_BARE_KINDS, rewrite option-member-list-unwrap).
+    "one-after": _options("#if X\n                A,\n#endif\n                B;"),
+}
+
+
+@pytest.mark.parametrize("name", sorted(OPTION_OPENING))
+def test_option_list_opened_by_if_every_config(al_parser, name):
+    src = OPTION_OPENING[name]
+    witness.assert_produces(al_parser, src, "preproc_conditional_option_members")
+    v = witness.verdicts(al_parser, src)
+    assert len(v) == 2, v
+    witness.assert_all_pass(al_parser, src)
+
+
+def test_single_member_without_unwrap_is_caught(al_parser, monkeypatch):
+    # Unmutated, every configuration passes (above). Without the rewrite the
+    # one-member configuration keeps the list the flat parse does not have.
+    from tools.config_oracle.lowering import engine
+    monkeypatch.setattr(engine, "OPTION_MEMBER_BARE_KINDS", frozenset())
+    v = witness.verdicts(al_parser, OPTION_OPENING["one-after"])
+    assert v["X=0"][0] == "discrepancy" and v["X=1"][0] == "pass", v

@@ -534,9 +534,9 @@ and `assembly_body`, then measure the conflicts and states that adds.
 
 ---
 
-## 18. A `#if` that opens a link list is split off as a whole value (G8 regression); an opening option-member `#if` ERRORs
+## 18. A `#if` that opens a link list is split off as a whole value (G8 regression); an opening option-member `#if` ERRORs — RESOLVED 2026-09-28
 
-**Link list: RESOLVED 2026-09-28 (G11, commit @G11-LINK@).** Traced:
+**Link list: RESOLVED 2026-09-28 (G11, commit `28c601f`).** Traced:
 `link_value_list`'s `prec.left(6)` beat
 `_link_value_branch` (prec 0) in a reduce/reduce, which tree-sitter settles by
 precedence before `conflicts`, so the list-internal reading was dropped at
@@ -547,8 +547,22 @@ conflict, and the `;`-inside-the-arms whole value
 it can no longer end a property with no terminator. alc four-way ACCEPTs the
 unquoted, quoted and `RunPageLink` forms; all three now match pre-G8
 (`3c6ca40`). Pinned by `test/corpus/link_list_opening_conditional_test.txt`
-and `tools/config_oracle/tests/test_list_opening_conditional.py`. The option
-form below is still open.
+and `tools/config_oracle/tests/test_list_opening_conditional.py`.
+
+**Option-member list: RESOLVED 2026-09-28 (G11, commit @G11-OPT@).**
+`option_member_list` gained a head alternative, `preproc_conditional_option_members`
+then a REQUIRED member, so a `#if` that opens the list and is continued after
+`#endif` gives `option_member_list(preproc_conditional_option_members ...)`,
+the mid-list shape. alc four-way ACCEPTs `A, #endif B, C;`, `A, #endif B;`,
+both arms prefixes, quoted members, and an opening `#if` followed by a
+mid-list one (X, Y all four); `A, #endif B C;` is rejected (AL0104). +68
+states, eight conflicts. Pinned by
+`test/corpus/option_list_opening_conditional_test.txt` and the oracle witness
+above. A configuration that leaves ONE member is a bare leaf flat
+(`OptionMembers = B;` is `value: identifier`), which the list cannot also be,
+so the oracle gains a named rewrite, **option-member-list-unwrap**
+(`lowering/engine.py`, with a mutant test). The history below is kept as it
+was established.
 
 **Established:** 2026-09-28, G6 acceptance fixtures, corrected in G6 fix round 1
 after review. Trees below re-parsed at G6 (`e842a75`); the review found the same

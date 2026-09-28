@@ -5,11 +5,10 @@
 ; list and a genuine relation continuation keeps preproc_conditional_table_relation.
 ; Expected trees were taken from `tree-sitter parse` output, fields included.
 ;
-; A #if that OPENS a link list continued after #endif (a G8 regression, fixed
-; by G11) is asserted in link_list_opening_conditional_test.txt.
-; Not asserted here, because the tree is a defect (docs/deferred-work.md item
-; 18): `OptionMembers = #if X A, #endif B;` -- ERROR (`B` is ERROR, `;` an
-; empty_statement); never supported. alc accepts it with X defined and undefined.
+; A #if that OPENS a list continued after #endif is list-internal since G11
+; (docs/deferred-work.md item 18): the link form (a G8 regression) is asserted
+; in link_list_opening_conditional_test.txt, the option-member form (which
+; never parsed) in option_list_opening_conditional_test.txt.
 ; Nor a
 ; relation continued into a #if with the `;` after #endif (`TableRelation = if
 ; (...) Item #if X else A #else else B #endif ;`): the `;` becomes an

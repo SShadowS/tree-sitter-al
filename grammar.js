@@ -358,6 +358,20 @@ module.exports = grammar({
     // link_value_list and a list-internal _link_value_branch. G11: both now
     // carry prec 6, so GLR keeps both and the text after #endif decides.
     [$.link_value_list, $._link_value_branch],
+    // An option-member list OPENED by a #if (`OptionMembers = #if X A,
+    // #endif B, C;`, G11 item 2): at value start a #if may now also open
+    // preproc_conditional_option_members, one more reading of an empty or
+    // list-shaped arm beside every conditional above, and before the directive
+    // an arm `A,` is both a whole value's option_member_list and an
+    // _option_members_branch. All eight generator-required.
+    [$._property_value_conditional, $.preproc_conditional_link_values, $.preproc_conditional_table_relation, $.preproc_conditional_permissions, $.preproc_conditional_impl_values, $.preproc_conditional_option_members],
+    [$.preproc_conditional_link_values, $.preproc_conditional_impl_values, $.preproc_conditional_option_members],
+    [$.preproc_conditional_link_values, $.preproc_conditional_option_members],
+    [$._property_value_conditional_in_if, $.preproc_conditional_permissions, $.preproc_conditional_option_members],
+    [$.preproc_conditional_link_values, $.preproc_conditional_permissions, $.preproc_conditional_option_members],
+    [$.preproc_conditional_permissions, $.preproc_conditional_option_members],
+    [$._property_value_conditional_in_if, $._property_value_conditional, $.preproc_conditional_link_values, $.preproc_conditional_table_relation, $.preproc_conditional_permissions, $.preproc_conditional_impl_values, $.preproc_conditional_option_members],
+    [$.option_member_list, $._option_members_branch],
     // A whole-value arm is one _property_value (G8), so a list arm ending in a
     // directive (`A, B #else`) is also a link, permission or implementation
     // branch until the directive, and a permission/implementation list arm is
@@ -1731,8 +1745,15 @@ module.exports = grammar({
       // IncludedPermissionSets entries behind `#if not CLEANxx`). The preproc
       // block is gated behind a comma so a bare `value #if` (next property
       // guarded) does NOT fork the single-value case.
+      // A #if may also OPEN the list, its members continued after #endif
+      // (`OptionMembers = #if X A, #endif B, C;`, alc-accepted in every
+      // configuration; it ERRORed until G11). A member must follow the
+      // #endif: with nothing after it the #if is a whole value instead.
       seq(
-        $.option_member,
+        choice(
+          $.option_member,
+          seq($.preproc_conditional_option_members, $.option_member),
+        ),
         repeat(seq(
           ',',
           choice(

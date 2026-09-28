@@ -5156,8 +5156,26 @@
             "type": "SEQ",
             "members": [
               {
-                "type": "SYMBOL",
-                "name": "option_member"
+                "type": "CHOICE",
+                "members": [
+                  {
+                    "type": "SYMBOL",
+                    "name": "option_member"
+                  },
+                  {
+                    "type": "SEQ",
+                    "members": [
+                      {
+                        "type": "SYMBOL",
+                        "name": "preproc_conditional_option_members"
+                      },
+                      {
+                        "type": "SYMBOL",
+                        "name": "option_member"
+                      }
+                    ]
+                  }
+                ]
               },
               {
                 "type": "REPEAT",
@@ -23197,6 +23215,50 @@
     [
       "link_value_list",
       "_link_value_branch"
+    ],
+    [
+      "_property_value_conditional",
+      "preproc_conditional_link_values",
+      "preproc_conditional_table_relation",
+      "preproc_conditional_permissions",
+      "preproc_conditional_impl_values",
+      "preproc_conditional_option_members"
+    ],
+    [
+      "preproc_conditional_link_values",
+      "preproc_conditional_impl_values",
+      "preproc_conditional_option_members"
+    ],
+    [
+      "preproc_conditional_link_values",
+      "preproc_conditional_option_members"
+    ],
+    [
+      "_property_value_conditional_in_if",
+      "preproc_conditional_permissions",
+      "preproc_conditional_option_members"
+    ],
+    [
+      "preproc_conditional_link_values",
+      "preproc_conditional_permissions",
+      "preproc_conditional_option_members"
+    ],
+    [
+      "preproc_conditional_permissions",
+      "preproc_conditional_option_members"
+    ],
+    [
+      "_property_value_conditional_in_if",
+      "_property_value_conditional",
+      "preproc_conditional_link_values",
+      "preproc_conditional_table_relation",
+      "preproc_conditional_permissions",
+      "preproc_conditional_impl_values",
+      "preproc_conditional_option_members"
+    ],
+    [
+      "option_member_list",
+      "_option_members_branch"
     ],
     [
       "_permission_branch",

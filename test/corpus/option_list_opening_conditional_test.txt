@@ -1,0 +1,402 @@
+; G11 (deferred-work item 18): a #if that OPENS an option-member list whose
+; members continue after #endif is list-internal:
+; option_member_list(preproc_conditional_option_members ...) then the members,
+; the same shape as a #if in mid-list. alc accepts every form here in every
+; configuration (split and flat). It ERRORed until G11: option_member_list
+; admitted a conditional only after a comma. The last two cases are whole-value
+; forms that must stay preproc_conditional_property_value.
+; Expected trees from `tree-sitter parse`.
+
+================================================================================
+G11: a #if opening an option list, members continued after #endif
+================================================================================
+
+table 50100 T
+{
+    fields
+    {
+        field(1; F; Option)
+        {
+            OptionMembers =
+#if X
+                A,
+#endif
+                B, C;
+        }
+    }
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (table_declaration
+    (table_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (fields_section
+        (fields_keyword)
+        body: (fields_body
+          (field_declaration
+            (field_keyword)
+            id: (integer)
+            name: (identifier)
+            type: (type_specification
+              (option_type
+                (option_keyword)))
+            body: (declaration_body
+              (property
+                name: (property_name)
+                value: (option_member_list
+                  (preproc_conditional_option_members
+                    (preproc_if
+                      (preproc_open)
+                      condition: (identifier))
+                    (option_member
+                      (identifier))
+                    (preproc_endif
+                      (preproc_close)))
+                  (option_member
+                    (identifier))
+                  (option_member
+                    (identifier)))))))))))
+
+================================================================================
+G11: a #if opening an option list, one member after #endif
+================================================================================
+
+table 50100 T
+{
+    fields
+    {
+        field(1; F; Option)
+        {
+            OptionMembers =
+#if X
+                A,
+#endif
+                B;
+        }
+    }
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (table_declaration
+    (table_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (fields_section
+        (fields_keyword)
+        body: (fields_body
+          (field_declaration
+            (field_keyword)
+            id: (integer)
+            name: (identifier)
+            type: (type_specification
+              (option_type
+                (option_keyword)))
+            body: (declaration_body
+              (property
+                name: (property_name)
+                value: (option_member_list
+                  (preproc_conditional_option_members
+                    (preproc_if
+                      (preproc_open)
+                      condition: (identifier))
+                    (option_member
+                      (identifier))
+                    (preproc_endif
+                      (preproc_close)))
+                  (option_member
+                    (identifier)))))))))))
+
+================================================================================
+G11: both arms of an opening #if are option prefixes
+================================================================================
+
+table 50100 T
+{
+    fields
+    {
+        field(1; F; Option)
+        {
+            OptionMembers =
+#if X
+                A,
+#else
+                B,
+#endif
+                C;
+        }
+    }
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (table_declaration
+    (table_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (fields_section
+        (fields_keyword)
+        body: (fields_body
+          (field_declaration
+            (field_keyword)
+            id: (integer)
+            name: (identifier)
+            type: (type_specification
+              (option_type
+                (option_keyword)))
+            body: (declaration_body
+              (property
+                name: (property_name)
+                value: (option_member_list
+                  (preproc_conditional_option_members
+                    (preproc_if
+                      (preproc_open)
+                      condition: (identifier))
+                    (option_member
+                      (identifier))
+                    (preproc_else)
+                    (option_member
+                      (identifier))
+                    (preproc_endif
+                      (preproc_close)))
+                  (option_member
+                    (identifier)))))))))))
+
+================================================================================
+G11: an opening option #if with quoted members
+================================================================================
+
+table 50100 T
+{
+    fields
+    {
+        field(1; F; Option)
+        {
+            OptionMembers =
+#if X
+                "A B",
+#endif
+                " ", C;
+        }
+    }
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (table_declaration
+    (table_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (fields_section
+        (fields_keyword)
+        body: (fields_body
+          (field_declaration
+            (field_keyword)
+            id: (integer)
+            name: (identifier)
+            type: (type_specification
+              (option_type
+                (option_keyword)))
+            body: (declaration_body
+              (property
+                name: (property_name)
+                value: (option_member_list
+                  (preproc_conditional_option_members
+                    (preproc_if
+                      (preproc_open)
+                      condition: (identifier))
+                    (option_member
+                      (quoted_identifier))
+                    (preproc_endif
+                      (preproc_close)))
+                  (option_member
+                    (quoted_identifier))
+                  (option_member
+                    (identifier)))))))))))
+
+================================================================================
+G11: an opening option #if, then a mid-list #if
+================================================================================
+
+table 50100 T
+{
+    fields
+    {
+        field(1; F; Option)
+        {
+            OptionMembers =
+#if X
+                A,
+#endif
+                B,
+#if Y
+                C,
+#endif
+                D;
+        }
+    }
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (table_declaration
+    (table_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (fields_section
+        (fields_keyword)
+        body: (fields_body
+          (field_declaration
+            (field_keyword)
+            id: (integer)
+            name: (identifier)
+            type: (type_specification
+              (option_type
+                (option_keyword)))
+            body: (declaration_body
+              (property
+                name: (property_name)
+                value: (option_member_list
+                  (preproc_conditional_option_members
+                    (preproc_if
+                      (preproc_open)
+                      condition: (identifier))
+                    (option_member
+                      (identifier))
+                    (preproc_endif
+                      (preproc_close)))
+                  (option_member
+                    (identifier))
+                  (preproc_conditional_option_members
+                    (preproc_if
+                      (preproc_open)
+                      condition: (identifier))
+                    (option_member
+                      (identifier))
+                    (preproc_endif
+                      (preproc_close)))
+                  (option_member
+                    (identifier)))))))))))
+
+================================================================================
+G11: whole-value option list, `;` after #endif, is unchanged
+================================================================================
+
+table 50100 T
+{
+    fields
+    {
+        field(1; F; Option)
+        {
+            OptionMembers =
+#if X
+                A, B
+#else
+                C
+#endif
+                ;
+        }
+    }
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (table_declaration
+    (table_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (fields_section
+        (fields_keyword)
+        body: (fields_body
+          (field_declaration
+            (field_keyword)
+            id: (integer)
+            name: (identifier)
+            type: (type_specification
+              (option_type
+                (option_keyword)))
+            body: (declaration_body
+              (property
+                name: (property_name)
+                value: (preproc_conditional_property_value
+                  (preproc_if
+                    (preproc_open)
+                    condition: (identifier))
+                  value: (option_member_list
+                    (option_member
+                      (identifier))
+                    (option_member
+                      (identifier)))
+                  (preproc_else)
+                  value: (identifier)
+                  (preproc_endif
+                    (preproc_close)))))))))))
+
+================================================================================
+G11: whole-value option list, `;` inside the arms, is unchanged
+================================================================================
+
+table 50100 T
+{
+    fields
+    {
+        field(1; F; Option)
+        {
+            OptionMembers =
+#if X
+                A, B;
+#else
+                C;
+#endif
+        }
+    }
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (table_declaration
+    (table_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (fields_section
+        (fields_keyword)
+        body: (fields_body
+          (field_declaration
+            (field_keyword)
+            id: (integer)
+            name: (identifier)
+            type: (type_specification
+              (option_type
+                (option_keyword)))
+            body: (declaration_body
+              (property
+                name: (property_name)
+                value: (preproc_conditional_property_value
+                  (preproc_if
+                    (preproc_open)
+                    condition: (identifier))
+                  value: (option_member_list
+                    (option_member
+                      (identifier))
+                    (option_member
+                      (identifier)))
+                  (preproc_else)
+                  value: (identifier)
+                  (preproc_endif
+                    (preproc_close)))))))))))
