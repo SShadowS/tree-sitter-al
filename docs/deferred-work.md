@@ -504,7 +504,7 @@ node. Support, if alc accepts the form, must keep formula-shaped arms
 
 ## 17. `_property_with_terminator_in_if` has no host parity: valid AL ERRORs at two hosts — RESOLVED 2026-09-28
 
-**RESOLVED 2026-09-28 (G11, commit @G11-HOST@).** `grammar.js` lists
+**RESOLVED 2026-09-28 (G11, commit `04af3f6`).** `grammar.js` lists
 `$.property` directly at exactly three hosts: `_body_element`,
 `_action_element` and `assembly_body` (every other property host reaches it
 through `_body_element`). The two without the variant now take
