@@ -3758,8 +3758,10 @@ module.exports = grammar({
       // first production run: 128 end-extent items in 34 files). The lexical
       // fixes fail too: token.immediate(/[ \t]*\r?\n/) made a token that starts
       // with a space, and the lexer then grew a following `// comment` leftward
-      // over that space (5 comments in BC 28.5, tree-harness). The scanner takes
-      // exactly one `\r?\n` after skipped blanks, and declines anything else.
+      // over that space (5 comments in BC 28.5, tree-harness). The scanner skips
+      // every extra-space character except `\n` (so `\r`, `\f`, `\v` and U+FEFF
+      // too, not only space and tab), takes exactly one `\n`, and declines
+      // anything else.
       $._directive_eol
     ),
 

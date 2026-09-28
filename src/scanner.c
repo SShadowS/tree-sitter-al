@@ -504,8 +504,11 @@ bool tree_sitter_al_external_scanner_scan(
     return false;
   }
 
-  // DIRECTIVE_EOL: the newline that ends an #if/#elif line. Blanks (space, tab)
-  // before it are skipped; then exactly ONE `\r?\n` is the token, and anything
+  // DIRECTIVE_EOL: the newline that ends an #if/#elif line. Every extra-space
+  // character except `\n` before it is skipped (`is_extra_space`: `\r`, `\f`,
+  // `\v` and U+FEFF as well as space and tab; skipping only space and tab left
+  // `\f\n`, `\r\r\n` and the rest a hidden MISSING token that only `has_error`
+  // shows). Then exactly ONE `\n` is the token, and anything
   // else declines so the grammar lexes it (`and`, `or`, `)`, or a `// comment`
   // extra, after which this is asked again at the newline). It exists because
   // a lexical `/\r?\n/` is also a whitespace separator, and the lexer's longest
@@ -514,11 +517,8 @@ bool tree_sitter_al_external_scanner_scan(
   // external token is valid there outside error recovery (checked against
   // ts_external_scanner_states), so declining costs no other token its turn.
   if (valid_symbols[DIRECTIVE_EOL]) {
-    while (lexer->lookahead == ' ' || lexer->lookahead == '\t') {
+    while (lexer->lookahead != '\n' && is_extra_space(lexer->lookahead)) {
       lexer->advance(lexer, true);
-    }
-    if (lexer->lookahead == '\r') {
-      lexer->advance(lexer, false);
     }
     if (lexer->lookahead != '\n') {
       return false;
