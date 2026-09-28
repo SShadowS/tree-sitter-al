@@ -1932,26 +1932,53 @@
                   "name": "preproc_conditional_table_relation"
                 },
                 {
-                  "type": "SEQ",
-                  "members": [
-                    {
-                      "type": "SYMBOL",
-                      "name": "table_relation_expression"
-                    },
-                    {
-                      "type": "SYMBOL",
-                      "name": "preproc_conditional_table_relation"
-                    }
-                  ]
-                },
-                {
-                  "type": "SYMBOL",
-                  "name": "if_table_relation"
+                  "type": "ALIAS",
+                  "content": {
+                    "type": "SYMBOL",
+                    "name": "_table_relation_split_value"
+                  },
+                  "named": true,
+                  "value": "table_relation_value"
                 }
               ]
             }
           }
         ]
+      }
+    },
+    "_table_relation_split_value": {
+      "type": "CHOICE",
+      "members": [
+        {
+          "type": "SEQ",
+          "members": [
+            {
+              "type": "SYMBOL",
+              "name": "table_relation_expression"
+            },
+            {
+              "type": "SYMBOL",
+              "name": "preproc_conditional_table_relation"
+            }
+          ]
+        },
+        {
+          "type": "ALIAS",
+          "content": {
+            "type": "SYMBOL",
+            "name": "_table_relation_open_if"
+          },
+          "named": true,
+          "value": "table_relation_expression"
+        }
+      ]
+    },
+    "_table_relation_open_if": {
+      "type": "PREC",
+      "value": -1,
+      "content": {
+        "type": "SYMBOL",
+        "name": "if_table_relation"
       }
     },
     "_property_value": {

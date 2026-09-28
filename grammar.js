@@ -806,10 +806,23 @@ module.exports = grammar({
       '=',
       field('value', choice(
         $.preproc_conditional_table_relation,
-        seq($.table_relation_expression, $.preproc_conditional_table_relation),
-        $.if_table_relation,
+        alias($._table_relation_split_value, $.table_relation_value),
       )),
     )),
+
+    // The value of a table_relation_property whose `;` sits inside a #if arm
+    // later in the chain. Aliased to table_relation_value so it has the shape a
+    // flat parse of any one configuration gives:
+    //   value: table_relation_value(table_relation_expression(...) ...)
+    // Until the fix it had no wrapper, and the if-chain form had no
+    // table_relation_expression either (grammar finding G1).
+    _table_relation_split_value: $ => choice(
+      seq($.table_relation_expression, $.preproc_conditional_table_relation),
+      alias($._table_relation_open_if, $.table_relation_expression),
+    ),
+    // prec(-1), as on table_relation_property: at a following `;` the ordinary
+    // property reading (table_relation_value -> table_relation_expression) wins.
+    _table_relation_open_if: $ => prec(-1, $.if_table_relation),
 
     _property_value: $ => choice(
       // A value continued across a #if boundary:

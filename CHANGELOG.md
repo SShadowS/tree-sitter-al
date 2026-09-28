@@ -9,6 +9,20 @@ public API — a change to node structure or field names is a **major** bump.
 
 ### Fixed
 
+- **Tree-shape change: a `TableRelation` value whose `;` sits inside a `#if`
+  arm now has the flat shape** (grammar finding G1 of the
+  configuration-consistency oracle). The else-continuation form used to give
+  `property` two `value` fields (`table_relation_expression`,
+  `preproc_conditional_table_relation`). It now gives one
+  `value: table_relation_value` holding both. The open-if-chain form
+  (`… else` then `#if`) used to give `value: if_table_relation`. It now gives
+  `value: table_relation_value(table_relation_expression(if_table_relation))`.
+  Both are what a flat parse of any one configuration gives. BC.History,
+  BC 28.5, BCApps 29.0 and DC have no such site (0 nodes, tree-harness
+  byte-identical), so only fixtures changed. A query that matched
+  `(property value: (if_table_relation))` or a second `value` field must now
+  descend through `table_relation_value`.
+
 - **BC 29 (microsoft/BCApps `releases/29.0`, 36,716 files) now parses with 2
   error files, down from 33.** One of the two is invalid source. None of the 33
   was new BC 29 syntax: all were `#if` shapes the grammar had no host for. Each

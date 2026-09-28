@@ -1,0 +1,199 @@
+; A table relation has ONE shape whether or not a #if follows it: every
+; configuration of a multi-configuration value lowers to exactly the tree a
+; flat parse of that configuration's text gives. Each conditional case below
+; is paired with the flat text of one of its configurations.
+;
+; G1: when the property's `;` sits inside a #if arm (table_relation_property),
+; the value used to have no table_relation_value wrapper, and the open if-chain
+; form had no table_relation_expression either. Found by the configuration-
+; consistency oracle (tools/config_oracle, milestone 2).
+
+========================================================================
+Flat if-else relation
+========================================================================
+table 1 T
+{
+    fields
+    {
+        field(1; F; Code[20])
+        {
+            TableRelation = if (Type = const(Item)) Item else Resource;
+        }
+    }
+}
+
+------------------------------------------------------------------------
+
+(source_file
+  (table_declaration
+    (table_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (fields_section
+        (fields_keyword)
+        body: (fields_body
+          (field_declaration
+            (field_keyword)
+            id: (integer)
+            name: (identifier)
+            type: (type_specification
+              (code_type
+                (code_keyword)
+                length: (integer)))
+            body: (declaration_body
+              (property
+                name: (property_name)
+                value: (table_relation_value
+                  (table_relation_expression
+                    (if_table_relation
+                      (if_keyword)
+                      (where_conditions
+                        (where_condition
+                          field: (identifier)
+                          (const_keyword)
+                          value: (identifier)))
+                      then_relation: (simple_table_relation
+                        table: (identifier))
+                      (else_keyword)
+                      else_relation: (table_relation_expression
+                        (simple_table_relation
+                          table: (identifier))))))))))))))
+
+========================================================================
+Else continuation in a #if arm has the flat wrapper
+========================================================================
+table 1 T
+{
+    fields
+    {
+        field(1; F; Code[20])
+        {
+            TableRelation = if (Type = const(Item)) Item
+#if BC24
+                else Resource;
+#else
+                else Customer;
+#endif
+        }
+    }
+}
+
+------------------------------------------------------------------------
+
+(source_file
+  (table_declaration
+    (table_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (fields_section
+        (fields_keyword)
+        body: (fields_body
+          (field_declaration
+            (field_keyword)
+            id: (integer)
+            name: (identifier)
+            type: (type_specification
+              (code_type
+                (code_keyword)
+                length: (integer)))
+            body: (declaration_body
+              (property
+                name: (property_name)
+                value: (table_relation_value
+                  (table_relation_expression
+                    (if_table_relation
+                      (if_keyword)
+                      (where_conditions
+                        (where_condition
+                          field: (identifier)
+                          (const_keyword)
+                          value: (identifier)))
+                      then_relation: (simple_table_relation
+                        table: (identifier))))
+                  (preproc_conditional_table_relation
+                    (preproc_if
+                      (preproc_open)
+                      condition: (identifier))
+                    (else_table_relation_fragment
+                      (else_keyword)
+                      else_relation: (table_relation_expression
+                        (simple_table_relation
+                          table: (identifier))))
+                    (preproc_else)
+                    (else_table_relation_fragment
+                      (else_keyword)
+                      else_relation: (table_relation_expression
+                        (simple_table_relation
+                          table: (identifier))))
+                    (preproc_endif
+                      (preproc_close))))))))))))
+
+========================================================================
+Open if-chain completed in a #if arm has the flat wrapper
+========================================================================
+table 1 T
+{
+    fields
+    {
+        field(1; F; Code[20])
+        {
+            TableRelation = if (Type = const(Item)) Item else
+#if BC24
+                Resource;
+#else
+                Customer;
+#endif
+        }
+    }
+}
+
+------------------------------------------------------------------------
+
+(source_file
+  (table_declaration
+    (table_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (fields_section
+        (fields_keyword)
+        body: (fields_body
+          (field_declaration
+            (field_keyword)
+            id: (integer)
+            name: (identifier)
+            type: (type_specification
+              (code_type
+                (code_keyword)
+                length: (integer)))
+            body: (declaration_body
+              (property
+                name: (property_name)
+                value: (table_relation_value
+                  (table_relation_expression
+                    (if_table_relation
+                      (if_keyword)
+                      (where_conditions
+                        (where_condition
+                          field: (identifier)
+                          (const_keyword)
+                          value: (identifier)))
+                      then_relation: (simple_table_relation
+                        table: (identifier))
+                      (else_keyword)
+                      else_relation: (table_relation_expression
+                        (preproc_conditional_table_relation
+                          (preproc_if
+                            (preproc_open)
+                            condition: (identifier))
+                          (table_relation_expression
+                            (simple_table_relation
+                              table: (identifier)))
+                          (preproc_else)
+                          (table_relation_expression
+                            (simple_table_relation
+                              table: (identifier)))
+                          (preproc_endif
+                            (preproc_close)))))))))))))))
