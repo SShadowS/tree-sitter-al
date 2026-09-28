@@ -250,7 +250,7 @@ Each entry declares an **insertion policy** and the parent slots it may appear i
 | policy | meaning |
 |---|---|
 | `splice-repeat` | into a repeat slot (statements, body elements) |
-| `single-slot` | exactly one node, or zero if the slot is optional; otherwise an error. No synthesised `begin … end` |
+| `single-slot` | exactly one node, or zero if the slot is optional; otherwise an error — except an arm holding exactly one statement followed by its `;`, which lowers to the statement plus a Terminator so the `;` lands after the enclosing statement, as in the reference. No synthesised `begin … end` |
 | `list-run` | into a comma- or semicolon-separated run, with the separators accounted for |
 
 A policy that does not fit the actual parent is an error, not a guess. Being a "transparent container" is a hypothesis checked per type, not inferred from the name. Known exceptions *(astra, round 2)*:
