@@ -214,7 +214,7 @@ these were gone: **(b) fixed** `7b53ebd`, `xmlport_body` has one site,
 | G7, split form: `MinValue = -1 #if X + 2 #endif ;` ERRORed | (a) | **fixed** `3c6ca40`: the continued value's base also takes the signed literal (+1 state). The tail-live configuration reads unary minus flat (two leaves where the tree has one), so the oracle declares it one-reading; the tail-inactive configuration passes. |
 | G8 whole-value arms that are lists or compound values ERRORed | (a) | **fixed** `eb189bf`: an arm is `_property_value` itself. +85 states, 7 conflicts (2 removed). 12 shapes x 2 `;` placements pass in every configuration. tree-harness byte-identical on BC.History, BC 28.5, BCApps 29.0 and DC. |
 | G8, `A.B` arm gets the table-relation shape | (c) | Flat `SourceTable = A.B;` gives the same `table_relation_value`. Not a defect. |
-| G9 flat `CaptionML = ENU='c';` is `property_expression(comparison)` | (a), deferred | **New.** alc accepts it. Only the property name separates it from a comparison (`Visible = A = 'b';`), the `CalcFormula` situation. 0 production sites (all 6 ML files have two or more pairs). `docs/deferred-work.md` item 11; strict xfail in `test_table_relation.py`. |
+| G9 flat `CaptionML = ENU='c';` is `property_expression(comparison)` | (a), deferred | **New.** alc accepts it. Only the property name separates it from a comparison (`Visible = A = 'b';`), the `CalcFormula` situation. 0 production sites (all 6 ML files have two or more pairs). `docs/deferred-work.md` item 11; strict xfail in `test_property_value_conditional.py` (moved from `test_table_relation.py` by G6). |
 
 Production sites of G7, G8 and G9: zero. The G7 and G8 fixes changed no production
 tree (tree-harness byte-identical: BC.History and BC 28.5 for both; BCApps 29.0 and

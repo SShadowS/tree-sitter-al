@@ -5,10 +5,19 @@
 ; list and a genuine relation continuation keeps preproc_conditional_table_relation.
 ; Expected trees were taken from `tree-sitter parse` output, fields included.
 ;
-; Not asserted here, because both ERROR (recorded in docs/deferred-work.md): a #if
-; that OPENS a link list or an option member list and is continued after #endif
-; (`SubPageLink = #if X "A" = field(B), #endif "C" = field(D);`). alc accepts
-; both with X defined and undefined. The link form parsed before G8. Nor a
+; Not asserted here, because each tree is a defect (docs/deferred-work.md item 18):
+; a #if that OPENS a list and is continued after #endif. alc accepts all three
+; with X defined and undefined.
+;   `SubPageLink = #if X A = field(B), #endif B = field(A);` -- NO ERROR, a
+;     silent misparse: a terminator-less property whose value is this node,
+;     then a SECOND property named `B` with a call_expression value. The CLI
+;     error-count gates cannot see it. A G8 regression: before G8 it was one
+;     link_value_list(preproc_conditional_link_values).
+;   `SubPageLink = #if X "A" = field(B), #endif "C" = field(D);` -- ERROR (a
+;     quoted name cannot start the second property). Also parsed before G8.
+;   `OptionMembers = #if X A, #endif B;` -- ERROR (`B` is ERROR, `;` an
+;     empty_statement); never supported.
+; Nor a
 ; relation continued into a #if with the `;` after #endif (`TableRelation = if
 ; (...) Item #if X else A #else else B #endif ;`): the `;` becomes an
 ; empty_statement instead of the property's terminator.

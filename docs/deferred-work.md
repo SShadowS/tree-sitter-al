@@ -502,56 +502,117 @@ node. Support, if alc accepts the form, must keep formula-shaped arms
 
 ---
 
-## 17. `_property_with_terminator_in_if` has no host parity
+## 17. `_property_with_terminator_in_if` has no host parity: valid AL ERRORs at two hosts
 
-**Established:** 2026-09-28, G6 design review (section 2F); confirmed by
-reading `grammar.js`. Not probed with alc.
+**Established:** 2026-09-28, G6 design review (section 2F), then a four-way alc
+probe in G6 fix round 1 (X defined/undefined x split/flat, runtime 15.0, no
+symbol packages). The probe discriminated: `OptionMembers = A B;` and an
+assembly `Version =` split whose arms lack the `;` were both rejected (AL0104)
+in the same project.
 
-The variant whose `;` sits inside a `#if` arm (`Caption = #if X 'a'; #else 'b';
+The variant whose `;` sits inside a `#if` arm (`ToolTip = #if X 'a'; #else 'b';
 #endif`, no `;` after `#endif`) is aliased to `property` only in
-`_body_element`. `_action_element` (properties directly in an action area or
-group) and `assembly_body` list `$.property` alone, so there the inside-arms
-placement has no rule; the after-`#endif` placement works everywhere
-`property` does. A property inside an `action(...) { }` is unaffected: its body
-is a `declaration_body`. To do: an alc probe of both placements at each host,
-then either add the variant to those hosts or record why not.
+`_body_element`. Two hosts list `$.property` alone:
+
+| host | probe | alc, all 4 configurations | this parser, split form |
+|---|---|---|---|
+| `_action_element`, via `action_body` (an `area(...)` in `actions`) | RoleCenter page, `area(Embedding) { ToolTip = #if X 'a'; #else 'b'; #endif action(A) { RunObject = page P; } }` | ACCEPT (exit 0, app written), flat and split | **ERROR** (3 ERROR nodes, from the `#if` line through `#endif`) |
+| `assembly_body` | `dotnet { assembly(mscorlib) { Version = #if X '4.0.0.0'; #else '2.0.0.0'; #endif Culture = ...; PublicKeyToken = ...; type(System.DateTime; MyDateTime) { } } }` | ACCEPT, flat and split | **ERROR** (1 ERROR node over the conditional) |
+
+The review also saw `Caption = #if X 'a'; #else 'b'; #endif` directly in
+`area(Processing)` give a MISSING `;`. That form is not valid AL anyway:
+AL0124, Caption cannot be used on an action area. ToolTip on `area(Embedding)`
+is the production shape: 5 sites in BC.History, e.g.
+`AccPayablesCoordinatorRC.Page.al:175`, all flat.
+
+The after-`#endif` placement works everywhere `property` does. A property
+inside `action(...) { }` or `group(...) { }` is unaffected: those bodies are
+`declaration_body` or include `_body_element`. Production sites of the split
+form at these two hosts: 0 (every file parses clean). To fix: add
+`alias($._property_with_terminator_in_if, $.property)` to `_action_element`
+and `assembly_body`, then measure the conflicts and states that adds.
 
 ---
 
-## 18. A `#if` that opens a link or option-member list ERRORs
+## 18. A `#if` that opens a link list is split off as a whole value (G8 regression); an opening option-member `#if` ERRORs
 
-**Established:** 2026-09-28, G6 acceptance fixtures. alc accepts both, with the
-symbol defined and undefined (probe discriminated: `OptionMembers = A B;`
-rejected in the same project).
+**Established:** 2026-09-28, G6 acceptance fixtures, corrected in G6 fix round 1
+after review. Trees below re-parsed at G6 (`e842a75`); the review found the same
+at `def2879`. alc accepts every form here with the symbol defined and undefined
+(probe discriminated: `OptionMembers = A B;` rejected in the same project).
+
+**Link list, unquoted field names: a SILENT misparse, no ERROR.**
 
 ```al
 SubPageLink =
 #if X
     A = field(B),
 #endif
-    B = field(A);          // ERROR since G8 (eb189bf); preproc_conditional_link_values before
+    B = field(A);
+```
 
+gives TWO properties:
+
+```
+(property name: (property_name)                 ; SubPageLink, no `;`
+  value: (preproc_conditional_property_value
+    (preproc_if ...) value: (link_value_list (link_value ...)) (preproc_endif ...)))
+(property name: (property_name)                 ; `B`
+  value: (property_expression (call_expression function: (identifier) ...)))
+```
+
+The first is `_property_with_terminator_in_if` (whole-value arm, no
+terminator); the second reads `B = field(A);` as a new property named `B`
+whose value is a call. The tree has no ERROR and no MISSING, so
+`parse-al-parallel.sh`, `validate-grammar.sh` and the corpus error-count gates
+all report it as clean. `RunPageLink` inside an `action(...)` behaves the same
+(review). At `3c6ca40`, the commit before G8, it was one
+`link_value_list(preproc_conditional_link_values ...)`: a **G8 regression**.
+
+**Link list, quoted field names: ERROR.**
+
+```al
+SubPageLink =
+#if X
+    "A" = field(B),
+#endif
+    "C" = field(D);
+```
+
+gives `property` holding `ERROR(preproc_conditional_property_value ...)` then
+`value: link_value_list` (ERROR over the `#if` ... `#endif` lines). A quoted
+name cannot start a property, so the split reading is not available and the
+parse errors instead. At `3c6ca40` this form was
+`link_value_list(preproc_conditional_link_values ...)` (measured).
+
+The likely mechanism for both, NOT traced: since G8 a whole-value arm may be any
+`_property_value`, so `A = field(B),` also reduces to `link_value_list`, and
+that rule's `prec.left(6)` decides the reduce/reduce against
+`_link_value_branch` statically; GLR never keeps the list-internal reading.
+
+**Option-member list: ERROR, and never supported.**
+
+```al
 OptionMembers =
 #if X
     A,
 #endif
-    B;                     // ERROR at 3c6ca40 too: never supported
+    B;
 ```
 
-The link form is a **G8 regression** (it parsed at `3c6ca40`, the commit
-before G8). `_link_value_seq` allows a leading conditional, but since a
-whole-value arm may be any `_property_value`, the arm `A = field(B),` also
-reduces to `link_value_list`. The likely mechanism, NOT traced: that rule's
-`prec.left(6)` decides the reduce/reduce against `_link_value_branch`
-statically, so GLR never keeps the list reading and the whole-value reading
-ERRORs at `B`. The permission
-form (`Permissions = #if X tabledata A = R, #endif tabledata B = R;`) is
-unaffected and stays list-internal (pinned in
-`test/corpus/property_value_conditional_node_test.txt`). The option form has no
-leading-conditional alternative at all: `option_member_list` admits a
-conditional only after a comma. Production sites: 0 (the G8 and G6
-tree-harness runs were byte-identical, so no production file had the link form). Neither is asserted by a fixture, because
-both trees contain ERROR.
+gives `property value: (preproc_conditional_property_value ... value:
+(option_member_list (option_member (identifier))) ...)` with no terminator,
+then `ERROR (identifier)` for `B` and an `empty_statement` for the `;`. It
+ERRORed at `3c6ca40` too: `option_member_list` admits a conditional only after
+a comma, so there is no list-internal reading to lose.
+
+The permission form (`Permissions = #if X tabledata A = R, #endif tabledata B =
+R;`) is unaffected and stays list-internal (pinned in
+`test/corpus/property_value_conditional_node_test.txt`, as are the mid-list
+link and option forms). Production sites: 0 for the ERROR forms; the silent
+form is invisible to the error-count gates, but the G8 and G6 tree-harness runs
+were byte-identical, so no BC.History or BC 28.5 file changed tree. None of
+the opening forms is asserted by a fixture: the fixture would bless a defect.
 
 ---
 

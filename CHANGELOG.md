@@ -101,9 +101,9 @@ public API — a change to node structure or field names is a **major** bump.
   `table_relation_value` with `table_relation_expression(simple_table_relation)`
   arms; it is now a whole-value conditional directly in the outer arm
   (`preproc_conditional_property_value` since G6, above), and its arms are
-  `identifier`, `quoted_identifier`, a literal or `table_relation_value`, as flat `TableRelation = Item;` gives. alc accepts
-  the form in all four configurations. 0 production sites (tree-harness
-  byte-identical).
+  `identifier`, `quoted_identifier`, a literal or `table_relation_value`, as
+  flat `TableRelation = Item;` gives. alc accepts the form in all four
+  configurations. 0 production sites (tree-harness byte-identical).
 - **Tree-shape change: an `#if`/`#elif` line ends at its first newline**
   (config-oracle production finding P1). The directive's terminator was a
   lexical `/\r?\n/`, which is also a whitespace separator, so longest match
@@ -134,13 +134,14 @@ public API — a change to node structure or field names is a **major** bump.
   `docs/deferred-work.md` item 11).
   This supersedes the arm-kind list in the G4 entry above, and covers G3: the
   arms of a `#if` nested inside a whole-value arm have the same flat shape.
-  `node-types.json`: the whole-value conditional's children widen to
-  every property-value kind (then `preproc_conditional_table_relation`'s; since
-  G6, above, they are `preproc_conditional_property_value`'s `value` field, and
-  `preproc_conditional_table_relation` holds relation arms only) (`caption_value`, `ml_value_list`,
-  `option_member_list`, `signed_integer_list`, `property_expression`,
-  `where_clause`, `sorting_value` and the rest), and `property_expression` may
-  hold a bare leaf plus a tail (the G7 split form). 0 production sites
+  `node-types.json`: the whole-value conditional's children widen to every
+  property-value kind: `caption_value`, `ml_value_list`, `option_member_list`,
+  `signed_integer_list`, `property_expression`, `where_clause`, `sorting_value`
+  and the rest. At G8 that conditional was `preproc_conditional_table_relation`;
+  since G6 (above) these kinds are the `value` field of
+  `preproc_conditional_property_value`, and `preproc_conditional_table_relation`
+  holds relation arms only. `property_expression` may also hold a bare leaf
+  plus a tail (the G7 split form). 0 production sites
   (tree-harness byte-identical on BC.History, BC 28.5, BCApps 29.0 and DC).
 
 - **BC 29 (microsoft/BCApps `releases/29.0`, 36,716 files) now parses with 2
