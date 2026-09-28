@@ -22,18 +22,45 @@ def test_region_only_file_is_counted_not_validated():
     assert s.no_directives == 1 and s.exit_code == 2      # zero validated pairs
 
 
-def test_resolver_failure_is_carried_by_the_directive_mismatch():
-    # BAD's tree also has an unmatched #endif, and a directive discrepancy no longer
-    # short-circuits: each configuration's record is directive-mismatch carrying the
-    # directive item AND that configuration's resolver cannot-validate reason.
+def test_resolver_failure_is_one_cannot_validate_record():
+    # BAD's multi-config tree has an error (a MISSING #endif), so its unmatched-tree
+    # directive item is unreliable and must NOT promote the resolver failure.
     s = runner.run([("bad", BAD), ("ok", STMT)], None, workers=1, mode="full")
     by = {(r.input_id, r.status) for r in s.records}
-    assert by == {("bad", "directive-mismatch"), ("ok", "pass")}
-    for r in s.records:
-        if r.input_id == "bad":
-            assert any("|directive|" in i for i in r.items)
-            assert any(i.startswith("resolver:") for i in r.items)
+    assert by == {("bad", "cannot-validate"), ("ok", "pass")}
     assert s.exit_code == 1
+
+
+@pytest.mark.parametrize("first_failure", ["resolver", "reference", "none"])
+def test_multi_config_parse_error_is_never_promoted_to_directive_mismatch(al_parser, monkeypatch, first_failure):
+    from dataclasses import replace
+    from tools.config_oracle import compare, directive_check, directives, reference
+    # Only the MULTI-configuration tree gets the error (reference.extract also uses ir.from_tree,
+    # so patching that would turn every variant into a reference failure).
+    real_file_level, real_extract = runner._file_level, reference.extract
+
+    def file_level(parser, input_id, source, disc):
+        (root, extras, items), rep = real_file_level(parser, input_id, source, disc)
+        return (root, extras, ["multi-config-parse:error@0"] + items), rep
+    monkeypatch.setattr(runner, "_file_level", file_level)
+    monkeypatch.setattr(directive_check, "check",
+                        lambda root, disc: [compare.Discrepancy("directive", "condition-extent", "preproc_if@0", "x")])
+    if first_failure == "resolver":
+        def boom(source, env):
+            raise directives.ResolveError("seed", 1)
+        monkeypatch.setattr(directives, "resolve", boom)
+    elif first_failure == "reference":
+        monkeypatch.setattr(reference, "extract", lambda p, m: replace(real_extract(p, m), problems=["error@1"]))
+    recs = runner.check_input(al_parser, "stmt", STMT)
+    assert [r.status for r in recs] == ["cannot-validate", "cannot-validate"]
+
+
+def test_directive_mismatch_reasons_are_counted_as_not_validated(tmp_path):
+    recs = [runner.Record("a", "X=0", "directive-mismatch", ["a|-|directive|end-extent|p", "lowering:unsupported-type:t@3"]),
+            runner.Record("a", "X=1", "directive-mismatch", ["a|-|directive|end-extent|p"])]
+    runner.write_report(runner.Summary(recs, 0, 0.0, 0, 1), tmp_path, {})
+    text = (tmp_path / "summary.md").read_text()
+    assert "directive-mismatch configurations also not validated: 1 (lowering:unsupported-type 1)" in text
 
 
 def test_directive_mismatch_does_not_short_circuit_the_comparison(al_parser, monkeypatch):
@@ -76,7 +103,7 @@ def test_single_dash_record_does_not_excuse_predicted_configurations(monkeypatch
 
 
 def test_classified_record_does_not_fail_the_run():
-    classes = {("bad", "*"): ("directive-mismatch", "deliberately unterminated")}
+    classes = {("bad", "*"): ("cannot-validate", "deliberately unterminated")}
     s = runner.run([("bad", BAD), ("ok", STMT)], None, workers=1, mode="full", classes=classes)
     assert s.exit_code == 0 and s.classified == 2
 

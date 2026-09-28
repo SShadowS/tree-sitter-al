@@ -97,6 +97,33 @@ REPLAYS = [
 ]
 
 
+CACHE = Path(tempfile.gettempdir()) / "tree-sitter-al-replay"
+
+
+def _sha(commit: str) -> str:
+    r = subprocess.run(["git", "-C", str(REPO), "rev-parse", "--verify", commit + "^{commit}"],
+                       capture_output=True, text=True)
+    if r.returncode != 0:
+        raise RuntimeError(f"git rev-parse {commit} failed: {r.stderr}")
+    return r.stdout.strip()
+
+
+def cached_parser_at(commit: str):
+    """The parser for `commit`, built once into CACHE/<full sha>/ and reused afterwards.
+
+    A fixed per-commit directory rather than a fresh temp dir: Windows cannot delete a
+    loaded DLL, so per-run temp dirs were left behind on every run. The key is the
+    RESOLVED sha, so the content is immutable; a directory without its DLL (an
+    interrupted build) is simply rebuilt.
+    """
+    sha = _sha(commit)
+    work = CACHE / sha
+    lib = work / f"al-replay-{sha[:12]}.dll"
+    if lib.is_file():
+        return loader.make_parser(loader.load_language(lib))
+    return build_parser_at(sha, work)
+
+
 def build_parser_at(commit: str, work: Path):
     """git archive grammar.js + src at `commit` into `work` and build it there.
 
@@ -116,7 +143,7 @@ def build_parser_at(commit: str, work: Path):
         tf.extractall(work, filter="data")
     # A distinct name per commit: Windows will not unload a DLL, and a same-named one
     # already loaded in this process must not be mistaken for it.
-    safe = "".join(ch if ch.isalnum() else "_" for ch in commit)
+    safe = "".join(ch if ch.isalnum() else "_" for ch in commit)[:12]
     lib = work / f"al-replay-{safe}.dll"
     with loader.build_lock(REPO):
         r = subprocess.run(["tree-sitter", "build", "--output", str(lib), str(work)], cwd=work,
@@ -127,10 +154,15 @@ def build_parser_at(commit: str, work: Path):
 
 
 def run_replay(r: Replay, work):
-    """`work=None` runs the same cases against the CURRENT parser (positive control)."""
+    """`work=None` runs the same cases against the CURRENT parser (positive control);
+    `work="cache"` uses the per-commit cache; a Path builds fresh into that directory."""
     t0 = time.perf_counter()
-    parser = (build_parser_at(r.commit, Path(work)) if work is not None
-              else loader.make_parser(loader.load_language(loader.ensure_library(REPO))))
+    if work is None:
+        parser = loader.make_parser(loader.load_language(loader.ensure_library(REPO)))
+    elif work == "cache":
+        parser = cached_parser_at(r.commit)
+    else:
+        parser = build_parser_at(r.commit, Path(work))
     build_s = time.perf_counter() - t0
     if r.source is not None:
         inputs = [(f"hand-built:replay-{r.number}", r.source)]
@@ -151,9 +183,7 @@ def run_replay(r: Replay, work):
 def main() -> int:
     failed = 0
     for r in REPLAYS:
-        # The loaded DLL cannot be deleted on Windows while this process runs.
-        with tempfile.TemporaryDirectory(prefix=f"replay{r.number}-", ignore_cleanup_errors=True) as tmp:
-            res = run_replay(r, Path(tmp))
+        res = run_replay(r, "cache")
         verdict = ("MASKED" if res.masked_by_cannot_validate
                    else "CAUGHT" if res.detected else "NOT CAUGHT")
         failed += verdict != "CAUGHT"

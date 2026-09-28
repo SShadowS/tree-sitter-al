@@ -94,11 +94,15 @@ def _file_level(parser, input_id, source, disc):
 def _check_config(parser, input_id, source, cid, env, mode, prep):
     """A file-level directive discrepancy does NOT short-circuit: the configuration is still
     resolved, lowered and compared, and the record is `directive-mismatch` carrying the
-    directive items ahead of whatever that run produced (a pass contributes nothing)."""
+    directive items ahead of whatever that run produced (a pass contributes nothing).
+
+    Never when the multi-configuration tree has errors: its directive items are then
+    unreliable. That is decided on the FILE-level items, because a resolver or reference
+    failure returns before the per-configuration record ever sees `multi-config-parse`."""
     rec = _check_config_inner(parser, input_id, source, cid, env, mode, prep)
     file_items = prep[2] if isinstance(prep, tuple) else []
     dir_items = [i for i in file_items if "|directive|" in i]
-    if dir_items and not any(i.startswith("multi-config-parse") for i in rec.items):
+    if dir_items and not any(i.startswith("multi-config-parse") for i in file_items):
         return Record(input_id, cid, "directive-mismatch", dir_items + rec.items)
     return rec
 
@@ -262,7 +266,20 @@ def run(inputs, lib_path, workers, mode, classes=None):
 def reason_of(record):
     """Coarse reason for grouping cannot-validate records: `lowering:unsupported-type`, `zero-width-leaf`."""
     head = record.items[0] if record.items else "unknown"
-    return ":".join(head.split("@", 1)[0].split(":")[:2])
+    return _coarse(head)
+
+
+def _coarse(item):
+    return ":".join(item.split("@", 1)[0].split(":")[:2])
+
+
+_NOT_VALIDATED = ("resolver:", "reference-error:", "lowering:", "zero-width-leaf@", INTERNAL)
+
+
+def unvalidated_reason(record):
+    """For a directive-mismatch record: the coarse reason its comparison did not run, or None."""
+    item = next((i for i in record.items if i.startswith(_NOT_VALIDATED)), None)
+    return None if item is None else _coarse(item)
 
 
 def write_report(summary, out_dir: Path, header: dict, classes=None):
@@ -276,10 +293,16 @@ def write_report(summary, out_dir: Path, header: dict, classes=None):
     unclassified = sum(r.status not in ("pass", "cannot-validate") and not is_classified(r, classes)
                        for r in summary.records)
     top = ", ".join(f"{k} {v}" for k, v in reasons.most_common(8)) or "none"
+    # A directive-mismatch record still ran its configuration; when that run stopped early,
+    # the configuration was not validated either, and must not drop out of the count.
+    dm = collections.Counter(filter(None, (unvalidated_reason(r) for r in summary.records
+                                           if r.status == "directive-mismatch")))
+    dm_top = ", ".join(f"{k} {v}" for k, v in dm.most_common(8)) or "none"
     lines = ["# Config-oracle report", "", *(f"- {k}: {v}" for k, v in sorted(header.items())), "",
              f"**{unclassified} unclassified findings, {summary.classified} classified, "
              f"{counts['cannot-validate']} configurations not validated ({top})**", "",
              f"- configurations checked: {len(summary.records)}",
+             f"- directive-mismatch configurations also not validated: {sum(dm.values())} ({dm_top})",
              *(f"- {k}: {v}" for k, v in sorted(counts.items())),
              f"- inputs without conditional directives: {summary.no_directives}",
              f"- elapsed: {summary.elapsed_s:.1f}s",
