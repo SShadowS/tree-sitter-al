@@ -67,6 +67,21 @@ function namespacedRefFielded($, name) {
 // `empty_statement` IS a ';'. Both are still reachable in branch position
 // (`while C do ;`, `case 1: Foo;`), but neither is reachable from
 // `_statement_inner` any more, so the then-branch of an if can bar them.
+// `( target ; element {, element} )` -- the argument list of every move*
+// modification. A LIST of elements is legal (alc, runtime 15.0) and first
+// appears in BC 29: `moveafter("Address 2"; City, CountyGroup)`. A helper, not
+// a hidden rule, so the fields stay on the four visible move rules.
+function moveArgs($) {
+  return seq(
+    '(',
+    field('target', $._identifier_or_quoted),
+    ';',
+    field('element', $._identifier_or_quoted),
+    repeat(seq(',', field('element', $._identifier_or_quoted))),
+    ')',
+  );
+}
+
 function fieldedStatement($, name) {
   return choice(
     field(name, $.call_statement),
@@ -2251,41 +2266,13 @@ module.exports = grammar({
     )),
 
     // movefirst(Content; "No.")
-    movefirst_modification: $ => seq(
-      $.movefirst_keyword,
-      '(',
-      field('target', $._identifier_or_quoted),
-      ';',
-      field('element', $._identifier_or_quoted),
-      ')'
-    ),
+    movefirst_modification: $ => seq($.movefirst_keyword, moveArgs($)),
 
-    movelast_modification: $ => seq(
-      $.movelast_keyword,
-      '(',
-      field('target', $._identifier_or_quoted),
-      ';',
-      field('element', $._identifier_or_quoted),
-      ')'
-    ),
+    movelast_modification: $ => seq($.movelast_keyword, moveArgs($)),
 
-    moveafter_modification: $ => seq(
-      $.moveafter_keyword,
-      '(',
-      field('target', $._identifier_or_quoted),
-      ';',
-      field('element', $._identifier_or_quoted),
-      ')'
-    ),
+    moveafter_modification: $ => seq($.moveafter_keyword, moveArgs($)),
 
-    movebefore_modification: $ => seq(
-      $.movebefore_keyword,
-      '(',
-      field('target', $._identifier_or_quoted),
-      ';',
-      field('element', $._identifier_or_quoted),
-      ')'
-    ),
+    movebefore_modification: $ => seq($.movebefore_keyword, moveArgs($)),
 
     // =====================================================================
     // Actions structure
@@ -2316,6 +2303,12 @@ module.exports = grammar({
       $.addafter_action_modification,
       $.addbefore_action_modification,
       $.modify_action_modification,
+      // move* is legal in actions too (alc, runtime 15.0; first in BC 29:
+      // CZ VATReportCZL.PageExt.al `movebefore(Submit_Promoted; Generate_Promoted)`)
+      $.movefirst_modification,
+      $.movelast_modification,
+      $.moveafter_modification,
+      $.movebefore_modification,
       // Preprocessor in actions
       $.preproc_conditional_actions,
     ),

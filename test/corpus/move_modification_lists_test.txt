@@ -1,0 +1,88 @@
+; move* in a page extension takes a LIST of controls after the target, and is
+; also legal inside actions. Neither shape occurred in BC.History/DC/BC 28.x;
+; both occur in BC 29 (BCApps releases/29.0): moveafter("Address 2"; City,
+; CountyGroup) in the GB postcode apps, CZ and FR localizations, and
+; movebefore(Submit_Promoted; Generate_Promoted) in a CZ actions section.
+; alc accepts both at runtime 15.0. See docs/bc29-parse-gaps.md families A, B.
+
+========================================================================
+move* with a list of controls
+========================================================================
+pageextension 50100 E extends P
+{
+    layout
+    {
+        moveafter("Address 2"; City, CountyGroup)
+        movefirst(General; "No.", Name, "Search Name")
+        movelast(General; Blocked)
+        movebefore(Name; "Name 2", Address)
+    }
+}
+------------------------------------------------------------------------
+
+(source_file
+  (pageextension_declaration
+    (pageextension_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    (extends_keyword)
+    base_object: (identifier)
+    body: (declaration_body
+      (layout_section
+        (layout_keyword)
+        body: (layout_body
+          (moveafter_modification
+            (moveafter_keyword)
+            target: (quoted_identifier)
+            element: (identifier)
+            element: (identifier))
+          (movefirst_modification
+            (movefirst_keyword)
+            target: (identifier)
+            element: (quoted_identifier)
+            element: (identifier)
+            element: (quoted_identifier))
+          (movelast_modification
+            (movelast_keyword)
+            target: (identifier)
+            element: (identifier))
+          (movebefore_modification
+            (movebefore_keyword)
+            target: (identifier)
+            element: (quoted_identifier)
+            element: (identifier)))))))
+
+========================================================================
+move* inside actions
+========================================================================
+pageextension 50101 E extends P
+{
+    actions
+    {
+        movebefore(Submit_Promoted; Generate_Promoted)
+        moveafter(Post; Preview, PostAndPrint)
+    }
+}
+------------------------------------------------------------------------
+
+(source_file
+  (pageextension_declaration
+    (pageextension_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    (extends_keyword)
+    base_object: (identifier)
+    body: (declaration_body
+      (actions_section
+        (actions_keyword)
+        body: (action_body
+          (movebefore_modification
+            (movebefore_keyword)
+            target: (identifier)
+            element: (identifier))
+          (moveafter_modification
+            (moveafter_keyword)
+            target: (identifier)
+            element: (identifier)
+            element: (identifier)))))))
+
