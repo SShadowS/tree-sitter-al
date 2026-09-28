@@ -1592,7 +1592,7 @@
           "type": "ALIAS",
           "content": {
             "type": "SYMBOL",
-            "name": "table_relation_property"
+            "name": "_property_with_terminator_in_if"
           },
           "named": true,
           "value": "property"
@@ -1903,7 +1903,7 @@
         }
       ]
     },
-    "table_relation_property": {
+    "_property_with_terminator_in_if": {
       "type": "PREC",
       "value": -1,
       "content": {
@@ -1931,10 +1931,10 @@
                   "type": "ALIAS",
                   "content": {
                     "type": "SYMBOL",
-                    "name": "_table_relation_whole_conditional"
+                    "name": "_property_value_conditional"
                   },
                   "named": true,
-                  "value": "preproc_conditional_table_relation"
+                  "value": "preproc_conditional_property_value"
                 },
                 {
                   "type": "ALIAS",
@@ -1951,7 +1951,7 @@
         ]
       }
     },
-    "_table_relation_whole_conditional": {
+    "_property_value_conditional": {
       "type": "SEQ",
       "members": [
         {
@@ -1963,7 +1963,7 @@
           "members": [
             {
               "type": "SYMBOL",
-              "name": "_table_relation_whole_branch"
+              "name": "_property_value_branch"
             },
             {
               "type": "BLANK"
@@ -1984,7 +1984,7 @@
                 "members": [
                   {
                     "type": "SYMBOL",
-                    "name": "_table_relation_whole_branch"
+                    "name": "_property_value_branch"
                   },
                   {
                     "type": "BLANK"
@@ -2009,7 +2009,7 @@
                   "members": [
                     {
                       "type": "SYMBOL",
-                      "name": "_table_relation_whole_branch"
+                      "name": "_property_value_branch"
                     },
                     {
                       "type": "BLANK"
@@ -2029,12 +2029,16 @@
         }
       ]
     },
-    "_table_relation_whole_branch": {
+    "_property_value_branch": {
       "type": "SEQ",
       "members": [
         {
-          "type": "SYMBOL",
-          "name": "_property_value"
+          "type": "FIELD",
+          "name": "value",
+          "content": {
+            "type": "SYMBOL",
+            "name": "_property_value"
+          }
         },
         {
           "type": "CHOICE",
@@ -2175,10 +2179,10 @@
           "type": "ALIAS",
           "content": {
             "type": "SYMBOL",
-            "name": "_table_relation_whole_conditional"
+            "name": "_property_value_conditional"
           },
           "named": true,
-          "value": "preproc_conditional_table_relation"
+          "value": "preproc_conditional_property_value"
         },
         {
           "type": "SYMBOL",
@@ -4099,7 +4103,7 @@
           "members": [
             {
               "type": "SYMBOL",
-              "name": "_tr_branch"
+              "name": "_table_relation_branch"
             },
             {
               "type": "BLANK"
@@ -4120,7 +4124,7 @@
                 "members": [
                   {
                     "type": "SYMBOL",
-                    "name": "_tr_branch"
+                    "name": "_table_relation_branch"
                   },
                   {
                     "type": "BLANK"
@@ -4145,7 +4149,7 @@
                   "members": [
                     {
                       "type": "SYMBOL",
-                      "name": "_tr_branch"
+                      "name": "_table_relation_branch"
                     },
                     {
                       "type": "BLANK"
@@ -4165,7 +4169,7 @@
         }
       ]
     },
-    "_tr_branch": {
+    "_table_relation_branch": {
       "type": "SEQ",
       "members": [
         {
@@ -23043,7 +23047,7 @@
       "preproc_conditional_permissions",
       "preproc_conditional_impl_values",
       "preproc_conditional_table_relation",
-      "_table_relation_whole_conditional"
+      "_property_value_conditional"
     ],
     [
       "_link_value_branch",
@@ -23052,7 +23056,7 @@
     ],
     [
       "preproc_conditional_permissions",
-      "_table_relation_whole_conditional"
+      "_property_value_conditional"
     ],
     [
       "_permission_branch",

@@ -1,6 +1,8 @@
 ; A property's whole value may be a #if whose arms are ANY property value
 ; (grammar finding G8). Each arm is `_property_value`, the rule the flat parse
 ; of that arm uses, so each arm has the flat shape. These forms ERRORed before.
+; The node is preproc_conditional_property_value, each arm's value fielded
+; `value` (G6; it was preproc_conditional_table_relation).
 ; alc four-way (symbol defined/undefined, split/flat) ACCEPTs both files, the
 ; page one with a source table, the Show variable and pages A and B added.
 
@@ -78,44 +80,44 @@ table 50100 T
                 value: (string_literal))
               (property
                 name: (property_name)
-                value: (preproc_conditional_table_relation
+                value: (preproc_conditional_property_value
                   (preproc_if
                     (preproc_open)
                     condition: (identifier))
-                  (option_member_list
+                  value: (option_member_list
                     (option_member
                       (identifier))
                     (option_member
                       (identifier)))
                   (preproc_else)
-                  (identifier)
+                  value: (identifier)
                   (preproc_endif
                     (preproc_close))))
               (property
                 name: (property_name)
-                value: (preproc_conditional_table_relation
+                value: (preproc_conditional_property_value
                   (preproc_if
                     (preproc_open)
                     condition: (identifier))
-                  (caption_value
+                  value: (caption_value
                     (string_literal)
                     (property_name)
                     (boolean))
                   (preproc_else)
-                  (string_literal)
+                  value: (string_literal)
                   (preproc_endif
                     (preproc_close))))
               (property
                 name: (property_name)
-                value: (preproc_conditional_table_relation
+                value: (preproc_conditional_property_value
                   (preproc_if
                     (preproc_open)
                     condition: (identifier))
-                  (signed_integer_list
+                  value: (signed_integer_list
                     (integer)
                     (integer))
                   (preproc_else)
-                  (integer)
+                  value: (integer)
                   (preproc_endif
                     (preproc_close))))))))
       (keys_section
@@ -182,11 +184,11 @@ page 50100 P
     body: (declaration_body
       (property
         name: (property_name)
-        value: (preproc_conditional_table_relation
+        value: (preproc_conditional_property_value
           (preproc_if
             (preproc_open)
             condition: (identifier))
-          (where_clause
+          value: (where_clause
             (where_keyword)
             (where_conditions
               (where_condition
@@ -194,7 +196,7 @@ page 50100 P
                 (const_keyword)
                 value: (integer))))
           (preproc_else)
-          (sorting_value
+          value: (sorting_value
             (sorting_keyword)
             (identifier))
           (preproc_endif
@@ -215,16 +217,16 @@ page 50100 P
                 body: (declaration_body
                   (property
                     name: (property_name)
-                    value: (preproc_conditional_table_relation
+                    value: (preproc_conditional_property_value
                       (preproc_if
                         (preproc_open)
                         condition: (identifier))
-                      (property_expression
+                      value: (property_expression
                         (logical_expression
                           left: (identifier)
                           right: (identifier)))
                       (preproc_else)
-                      (identifier)
+                      value: (identifier)
                       (preproc_endif
                         (preproc_close))))))))))
       (actions_section
@@ -240,15 +242,15 @@ page 50100 P
                 body: (declaration_body
                   (property
                     name: (property_name)
-                    value: (preproc_conditional_table_relation
+                    value: (preproc_conditional_property_value
                       (preproc_if
                         (preproc_open)
                         condition: (identifier))
-                      (object_reference_value
+                      value: (object_reference_value
                         (page_keyword)
                         (identifier))
                       (preproc_else)
-                      (object_reference_value
+                      value: (object_reference_value
                         (page_keyword)
                         (identifier))
                       (preproc_endif

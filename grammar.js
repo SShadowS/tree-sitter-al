@@ -331,17 +331,19 @@ module.exports = grammar({
     // The four-way [link_values, permissions, impl_values, table_relation]
     // conflict went the same way when the G3 two-way
     // [preproc_conditional_table_relation, _table_relation_whole_conditional]
-    // was declared (itself gone since G8, see below).
+    // was declared (itself gone since G8, see below; the hidden rule is
+    // _property_value_conditional since G6).
     //
-    // A TableRelation whose whole value is a #if (see table_relation_property)
-    // is one more reading of an empty or directive-only branch.
-    [$.preproc_conditional_link_values, $.preproc_conditional_permissions, $.preproc_conditional_impl_values, $.preproc_conditional_table_relation, $._table_relation_whole_conditional],
+    // A property whose whole value is a #if (_property_value_conditional,
+    // see _property_with_terminator_in_if) is one more reading of an empty or
+    // directive-only branch.
+    [$.preproc_conditional_link_values, $.preproc_conditional_permissions, $.preproc_conditional_impl_values, $.preproc_conditional_table_relation, $._property_value_conditional],
     // The same ambiguity the three lines below already declare at the
     // CONDITIONAL level, now also reachable one level down: a bare `,` opening a
     // #if branch is identical in a link, permission and implementation list, and
     // the property name that would disambiguate is long past.
     [$._link_value_branch, $._permission_branch, $._impl_value_branch],
-    [$.preproc_conditional_permissions, $._table_relation_whole_conditional],
+    [$.preproc_conditional_permissions, $._property_value_conditional],
     // A whole-value arm is one _property_value (G8), so a list arm ending in a
     // directive (`A, B #else`) is also a link, permission or implementation
     // branch until the directive, and a permission/implementation list arm is
@@ -691,7 +693,7 @@ module.exports = grammar({
       $.property,
       alias($.permissions_property, $.property),
       $.preproc_split_permissions_property,
-      alias($.table_relation_property, $.property),
+      alias($._property_with_terminator_in_if, $.property),
       $.empty_statement,
       // Table internals
       $.fields_section,
@@ -817,50 +819,71 @@ module.exports = grammar({
       field('value', $.tabledata_permission_list),
     ),
 
-    // --- TableRelation property variant: ';' may be consumed inside preproc branches ---
-    // Used when the terminating ';' is inside #if/#else branches of a conditional table relation.
-    // Pattern: TableRelation = if (...) Item else #if BC24 if (...) Table; #else IF (...) Table; #endif
-    // Two value forms: a whole-value #if (aliased to preproc_conditional_table_relation), or a
-    // relation continued into a #if whose arms carry the ';' (aliased to table_relation_value,
-    // the node a flat parse of one configuration gives: grammar finding G1).
-    // The alias ensures the AST node type remains 'property'.
+    // --- Property variant whose terminating `;` sits inside a #if arm ---
+    // The property's own `;` is not after the value: it is inside the arms of a
+    // conditional that ends the value. Two value forms:
+    //   - a whole-property-value conditional (preproc_conditional_property_value),
+    //       Caption = #if X 'A'; #else 'B'; #endif
+    //     whose arms each take an optional `;` -- so this variant does NOT
+    //     guarantee a terminator; an arm, or a whole configuration, may lack one;
+    //   - a relation continued into a #if whose arms carry the `;` (aliased to
+    //     table_relation_value, the node a flat parse of one configuration
+    //     gives: grammar finding G1):
+    //       TableRelation = if (...) Item else #if BC24 if (...) T; #else T2; #endif
+    // It is not the only such variant: permissions_property is a separate one
+    // for a permission list whose `;` is inside a list-internal #if.
+    // The alias keeps the AST node type `property`.
     // Lower precedence than 'property' so 'property' (with ';') is preferred when ';' follows.
-    table_relation_property: $ => prec(-1, seq(
+    _property_with_terminator_in_if: $ => prec(-1, seq(
       field('name', $.property_name),
       '=',
       field('value', choice(
-        alias($._table_relation_whole_conditional, $.preproc_conditional_table_relation),
+        alias($._property_value_conditional, $.preproc_conditional_property_value),
         alias($._table_relation_split_value, $.table_relation_value),
       )),
     )),
 
-    // The whole value is a #if, each arm a complete relation with its `;`:
+    // A whole-property-value conditional: the entire value of a property is a
+    // #if, and each nonempty arm holds ONE property value, fielded `value`,
+    // then an optional `;` outside the field:
+    //   Caption = #if X 'A'; #else 'B'; #endif          (`;` inside the arms)
+    //   MinValue = #if X 1 #else 2 #endif;               (`;` after #endif)
     //   TableRelation = #if X Item; #else Customer where(...); #endif
-    // Each arm holds the value a flat parse of that arm gives: `identifier`
-    // or `quoted_identifier` for a bare name (the generic property path), else
-    // table_relation_value. Until the fix the arms were table_relation_expression,
-    // which no flat parse gives (grammar finding G2).
-    _table_relation_whole_conditional: $ => seq(
+    // Arms and terminators are both optional, so the node does not promise
+    // that every configuration supplies a value or a `;`. Each arm's value has
+    // the shape a flat parse of that arm gives: a bare name is an `identifier`
+    // or `quoted_identifier`, a longer relation a table_relation_value.
+    //
+    // History. This was `_table_relation_whole_conditional`, aliased to
+    // preproc_conditional_table_relation although only some of its arms are
+    // relations (grammar finding G6). Its arms were table_relation_expression,
+    // which no flat parse gives (G2); it then gained literal leaves (G4) and a
+    // nested whole value (G3); and since G8 an arm is one _property_value.
+    // Relation CONTINUATIONS -- an if/else chain extended by a #if -- remain
+    // preproc_conditional_table_relation.
+    _property_value_conditional: $ => seq(
       $.preproc_if,
-      optional($._table_relation_whole_branch),
-      repeat(seq($.preproc_elif, optional($._table_relation_whole_branch))),
-      optional(seq($.preproc_else, optional($._table_relation_whole_branch))),
+      optional($._property_value_branch),
+      repeat(seq($.preproc_elif, optional($._property_value_branch))),
+      optional(seq($.preproc_else, optional($._property_value_branch))),
       $.preproc_endif,
     ),
     // An arm is ONE property value, the same `_property_value` a flat parse of
-    // that arm uses, then an optional `;` (grammar finding G8). Before, the arm
-    // listed its kinds by hand -- names and table relations (G2), literal
+    // that arm uses, then an optional `;` (grammar finding G8). Before G8 the
+    // arm listed its kinds by hand -- names and table relations (G2), literal
     // leaves (G4), a nested whole value (G3) -- and every other value ERRORed:
     // `OptionMembers = #if X A,B; #else C; #endif`, a Caption with `, Locked =
     // true`, ML lists, object references, expressions, where/sorting, links,
-    // OrderBy, Implementation. Reusing the flat rule is what makes the arm's
-    // shape the flat shape: `A` stays an identifier and `A.B` a
-    // table_relation_value because the flat path already decides that, and a
-    // nested #if is _property_value's own whole-value alternative. +85 states
-    // and the seven conflicts documented at the conflicts list.
-    _table_relation_whole_branch: $ => seq($._property_value, optional(';')),
+    // OrderBy, Implementation. Reusing the flat rule is what gives the arm the
+    // flat shape in most cases -- `A` stays an identifier and `A.B` a
+    // table_relation_value, and a nested #if is _property_value's own
+    // whole-value alternative -- but not in every lookahead context (the ML
+    // single-pair arm, grammar finding G9). The `;` is kept outside the field
+    // so the field carries only the value (G6). +85 states at G8 and the seven
+    // conflicts documented at the conflicts list.
+    _property_value_branch: $ => seq(field('value', $._property_value), optional(';')),
 
-    // The value of a table_relation_property whose `;` sits inside a #if arm
+    // The relation value of a _property_with_terminator_in_if whose `;` sits inside a #if arm
     // later in the chain. Aliased to table_relation_value so it has the shape a
     // flat parse of any one configuration gives:
     //   value: table_relation_value(table_relation_expression(...) ...)
@@ -870,7 +893,7 @@ module.exports = grammar({
       seq($.table_relation_expression, $.preproc_conditional_table_relation),
       alias($._table_relation_open_if, $.table_relation_expression),
     ),
-    // prec(-1), as on table_relation_property: at a following `;` the ordinary
+    // prec(-1), as on _property_with_terminator_in_if: at a following `;` the ordinary
     // property reading (table_relation_value -> table_relation_expression) wins.
     _table_relation_open_if: $ => prec(-1, $.if_table_relation),
 
@@ -925,10 +948,10 @@ module.exports = grammar({
       $.implementation_value_list,  // "IFace" = "Impl", ...
       $.option_member_list,         // Option1, Option2, "Option 3"
       $.table_relation_value,       // Customer where(...) or if(...) Item else Resource
-      // A whole value that is a #if with a relation per arm, `;` after #endif.
-      // Same rule as table_relation_property's (`;` inside the arms), so both
-      // placements of the terminator give arms the flat value shape.
-      alias($._table_relation_whole_conditional, $.preproc_conditional_table_relation),
+      // A whole value that is a #if with one value per arm, `;` after #endif.
+      // Same rule as _property_with_terminator_in_if's (`;` inside the arms),
+      // so both placements of the terminator give the same node and arm shape.
+      alias($._property_value_conditional, $.preproc_conditional_property_value),
       $.sorting_value,              // sorting("Starting Date")
       $.link_value_list,            // "Field" = field(Other), ...
       $.property_expression,        // Expressions used as property values
@@ -1379,14 +1402,14 @@ module.exports = grammar({
     // Preprocessor conditionals inside TableRelation value
     preproc_conditional_table_relation: $ => seq(
       $.preproc_if,
-      optional($._tr_branch),
-      repeat(seq($.preproc_elif, optional($._tr_branch))),
-      optional(seq($.preproc_else, optional($._tr_branch))),
+      optional($._table_relation_branch),
+      repeat(seq($.preproc_elif, optional($._table_relation_branch))),
+      optional(seq($.preproc_else, optional($._table_relation_branch))),
       $.preproc_endif,
     ),
 
     // One #if/#elif/#else branch of a TableRelation conditional
-    _tr_branch: $ => seq(
+    _table_relation_branch: $ => seq(
       $._table_relation_branch_content,
       optional(';'),
     ),

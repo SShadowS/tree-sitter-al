@@ -1,0 +1,791 @@
+; G6: a property whose WHOLE value is a #if is preproc_conditional_property_value.
+; Each nonempty arm's value is fielded `value`; the arm's `;` is outside the field.
+; Every case asserts property.value -> preproc_conditional_property_value at the
+; exact position, or -- for the last four -- that a list-internal #if stays in the
+; list and a genuine relation continuation keeps preproc_conditional_table_relation.
+; Expected trees were taken from `tree-sitter parse` output, fields included.
+;
+; Not asserted here, because both ERROR (recorded in docs/deferred-work.md): a #if
+; that OPENS a link list or an option member list and is continued after #endif
+; (`SubPageLink = #if X "A" = field(B), #endif "C" = field(D);`). alc accepts
+; both with X defined and undefined. The link form parsed before G8. Nor a
+; relation continued into a #if with the `;` after #endif (`TableRelation = if
+; (...) Item #if X else A #else else B #endif ;`): the `;` becomes an
+; empty_statement instead of the property's terminator.
+
+================================================================================
+G6: `;` inside the arms -- property.value is preproc_conditional_property_value, string arms
+================================================================================
+
+table 50100 T
+{
+    fields
+    {
+        field(1; F; Integer)
+        {
+            Caption =
+#if X
+                'A';
+#else
+                'B';
+#endif
+        }
+    }
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (table_declaration
+    (table_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (fields_section
+        (fields_keyword)
+        body: (fields_body
+          (field_declaration
+            (field_keyword)
+            id: (integer)
+            name: (identifier)
+            type: (type_specification
+              (basic_type))
+            body: (declaration_body
+              (property
+                name: (property_name)
+                value: (preproc_conditional_property_value
+                  (preproc_if
+                    (preproc_open)
+                    condition: (identifier))
+                  value: (string_literal)
+                  (preproc_else)
+                  value: (string_literal)
+                  (preproc_endif
+                    (preproc_close)))))))))))
+
+================================================================================
+G6: `;` after #endif -- same node, boolean arms
+================================================================================
+
+table 50100 T
+{
+    fields
+    {
+        field(1; F; Integer)
+        {
+            Editable =
+#if X
+                true
+#else
+                false
+#endif
+                ;
+        }
+    }
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (table_declaration
+    (table_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (fields_section
+        (fields_keyword)
+        body: (fields_body
+          (field_declaration
+            (field_keyword)
+            id: (integer)
+            name: (identifier)
+            type: (type_specification
+              (basic_type))
+            body: (declaration_body
+              (property
+                name: (property_name)
+                value: (preproc_conditional_property_value
+                  (preproc_if
+                    (preproc_open)
+                    condition: (identifier))
+                  value: (boolean)
+                  (preproc_else)
+                  value: (boolean)
+                  (preproc_endif
+                    (preproc_close)))))))))))
+
+================================================================================
+G6: #elif -- one value per arm, integer arms
+================================================================================
+
+table 50100 T
+{
+    fields
+    {
+        field(1; F; Integer)
+        {
+            MinValue =
+#if X
+                1;
+#elif Y
+                2;
+#else
+                3;
+#endif
+        }
+    }
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (table_declaration
+    (table_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (fields_section
+        (fields_keyword)
+        body: (fields_body
+          (field_declaration
+            (field_keyword)
+            id: (integer)
+            name: (identifier)
+            type: (type_specification
+              (basic_type))
+            body: (declaration_body
+              (property
+                name: (property_name)
+                value: (preproc_conditional_property_value
+                  (preproc_if
+                    (preproc_open)
+                    condition: (identifier))
+                  value: (integer)
+                  (preproc_elif
+                    condition: (identifier))
+                  value: (integer)
+                  (preproc_else)
+                  value: (integer)
+                  (preproc_endif
+                    (preproc_close)))))))))))
+
+================================================================================
+G6: an empty arm has no value field
+================================================================================
+
+table 50100 T
+{
+    fields
+    {
+        field(1; F; Integer)
+        {
+            MaxValue =
+#if X
+                10;
+#else
+#endif
+        }
+    }
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (table_declaration
+    (table_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (fields_section
+        (fields_keyword)
+        body: (fields_body
+          (field_declaration
+            (field_keyword)
+            id: (integer)
+            name: (identifier)
+            type: (type_specification
+              (basic_type))
+            body: (declaration_body
+              (property
+                name: (property_name)
+                value: (preproc_conditional_property_value
+                  (preproc_if
+                    (preproc_open)
+                    condition: (identifier))
+                  value: (integer)
+                  (preproc_else)
+                  (preproc_endif
+                    (preproc_close)))))))))))
+
+================================================================================
+G6: a pragma-only arm has no value field
+================================================================================
+
+table 50100 T
+{
+    fields
+    {
+        field(1; F; Integer)
+        {
+            InitValue =
+#if X
+                5;
+#else
+#pragma warning disable AL0432
+#endif
+        }
+    }
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (table_declaration
+    (table_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (fields_section
+        (fields_keyword)
+        body: (fields_body
+          (field_declaration
+            (field_keyword)
+            id: (integer)
+            name: (identifier)
+            type: (type_specification
+              (basic_type))
+            body: (declaration_body
+              (property
+                name: (property_name)
+                value: (preproc_conditional_property_value
+                  (preproc_if
+                    (preproc_open)
+                    condition: (identifier))
+                  value: (integer)
+                  (preproc_else)
+                  (pragma)
+                  (preproc_endif
+                    (preproc_close)))))))))))
+
+================================================================================
+G6: a nested whole-value #if is the value of the outer arm
+================================================================================
+
+table 50100 T
+{
+    fields
+    {
+        field(1; F; Integer)
+        {
+            Description =
+#if X
+#if Y
+                'a';
+#else
+                'b';
+#endif
+#else
+                'c';
+#endif
+        }
+    }
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (table_declaration
+    (table_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (fields_section
+        (fields_keyword)
+        body: (fields_body
+          (field_declaration
+            (field_keyword)
+            id: (integer)
+            name: (identifier)
+            type: (type_specification
+              (basic_type))
+            body: (declaration_body
+              (property
+                name: (property_name)
+                value: (preproc_conditional_property_value
+                  (preproc_if
+                    (preproc_open)
+                    condition: (identifier))
+                  value: (preproc_conditional_property_value
+                    (preproc_if
+                      (preproc_open)
+                      condition: (identifier))
+                    value: (string_literal)
+                    (preproc_else)
+                    value: (string_literal)
+                    (preproc_endif
+                      (preproc_close)))
+                  (preproc_else)
+                  value: (string_literal)
+                  (preproc_endif
+                    (preproc_close)))))))))))
+
+================================================================================
+G6: TableRelation whole value -- bare name identifier, longer relation table_relation_value
+================================================================================
+
+table 50100 T
+{
+    fields
+    {
+        field(1; F; Integer)
+        {
+            TableRelation =
+#if X
+                Item;
+#else
+                Customer where("No." = const('A'));
+#endif
+        }
+    }
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (table_declaration
+    (table_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (fields_section
+        (fields_keyword)
+        body: (fields_body
+          (field_declaration
+            (field_keyword)
+            id: (integer)
+            name: (identifier)
+            type: (type_specification
+              (basic_type))
+            body: (declaration_body
+              (property
+                name: (property_name)
+                value: (preproc_conditional_property_value
+                  (preproc_if
+                    (preproc_open)
+                    condition: (identifier))
+                  value: (identifier)
+                  (preproc_else)
+                  value: (table_relation_value
+                    (table_relation_expression
+                      (simple_table_relation
+                        table: (identifier)
+                        (where_clause
+                          (where_keyword)
+                          (where_conditions
+                            (where_condition
+                              field: (quoted_identifier)
+                              (const_keyword)
+                              value: (string_literal)))))))
+                  (preproc_endif
+                    (preproc_close)))))))))))
+
+================================================================================
+G6: caption_value arm with Locked
+================================================================================
+
+table 50100 T
+{
+    fields
+    {
+        field(1; F; Integer)
+        {
+            ToolTip =
+#if X
+                'Tip', Locked = true;
+#else
+                'Other';
+#endif
+        }
+    }
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (table_declaration
+    (table_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (fields_section
+        (fields_keyword)
+        body: (fields_body
+          (field_declaration
+            (field_keyword)
+            id: (integer)
+            name: (identifier)
+            type: (type_specification
+              (basic_type))
+            body: (declaration_body
+              (property
+                name: (property_name)
+                value: (preproc_conditional_property_value
+                  (preproc_if
+                    (preproc_open)
+                    condition: (identifier))
+                  value: (caption_value
+                    (string_literal)
+                    (property_name)
+                    (boolean))
+                  (preproc_else)
+                  value: (string_literal)
+                  (preproc_endif
+                    (preproc_close)))))))))))
+
+================================================================================
+G6: option_member_list arm
+================================================================================
+
+table 50100 T
+{
+    fields
+    {
+        field(1; F; Integer)
+        {
+            OptionMembers =
+#if X
+                A,B;
+#else
+                C;
+#endif
+        }
+    }
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (table_declaration
+    (table_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (fields_section
+        (fields_keyword)
+        body: (fields_body
+          (field_declaration
+            (field_keyword)
+            id: (integer)
+            name: (identifier)
+            type: (type_specification
+              (basic_type))
+            body: (declaration_body
+              (property
+                name: (property_name)
+                value: (preproc_conditional_property_value
+                  (preproc_if
+                    (preproc_open)
+                    condition: (identifier))
+                  value: (option_member_list
+                    (option_member
+                      (identifier))
+                    (option_member
+                      (identifier)))
+                  (preproc_else)
+                  value: (identifier)
+                  (preproc_endif
+                    (preproc_close)))))))))))
+
+================================================================================
+G6: ml_value_list arms
+================================================================================
+
+table 50100 T
+{
+    fields
+    {
+        field(1; F; Integer)
+        {
+            OptionCaptionML =
+#if X
+                ENU='A,B', DEU='C,D';
+#else
+                ENU='A', DEU='B';
+#endif
+        }
+    }
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (table_declaration
+    (table_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (fields_section
+        (fields_keyword)
+        body: (fields_body
+          (field_declaration
+            (field_keyword)
+            id: (integer)
+            name: (identifier)
+            type: (type_specification
+              (basic_type))
+            body: (declaration_body
+              (property
+                name: (property_name)
+                value: (preproc_conditional_property_value
+                  (preproc_if
+                    (preproc_open)
+                    condition: (identifier))
+                  value: (ml_value_list
+                    (ml_value_pair
+                      language: (identifier)
+                      value: (string_literal))
+                    (ml_value_pair
+                      language: (identifier)
+                      value: (string_literal)))
+                  (preproc_else)
+                  value: (ml_value_list
+                    (ml_value_pair
+                      language: (identifier)
+                      value: (string_literal))
+                    (ml_value_pair
+                      language: (identifier)
+                      value: (string_literal)))
+                  (preproc_endif
+                    (preproc_close)))))))))))
+
+================================================================================
+G6: a #if opening a permission list that continues after #endif stays list-internal
+================================================================================
+
+codeunit 50100 C
+{
+    Permissions =
+#if X
+        tabledata A = R,
+#endif
+        tabledata B = R;
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (property
+        name: (property_name)
+        value: (tabledata_permission_list
+          (preproc_conditional_permissions
+            (preproc_if
+              (preproc_open)
+              condition: (identifier))
+            (tabledata_permission
+              (tabledata_keyword)
+              table_name: (identifier)
+              permission: (permission_type))
+            (preproc_endif
+              (preproc_close)))
+          (tabledata_permission
+            (tabledata_keyword)
+            table_name: (identifier)
+            permission: (permission_type)))))))
+
+================================================================================
+G6: a #if inside a link list that continues after #endif stays list-internal
+================================================================================
+
+page 50100 P
+{
+    layout
+    {
+        area(Content)
+        {
+            part(L; Sub)
+            {
+                SubPageLink = "A" = field(B),
+#if X
+                    "C" = field(D),
+#endif
+                    "E" = field(F);
+            }
+        }
+    }
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (page_declaration
+    (page_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (layout_section
+        (layout_keyword)
+        body: (layout_body
+          (area_section
+            (area_keyword)
+            type: (content_keyword)
+            body: (layout_body
+              (part_section
+                (part_keyword)
+                name: (identifier)
+                source: (identifier)
+                body: (declaration_body
+                  (property
+                    name: (property_name)
+                    value: (link_value_list
+                      (link_value
+                        field: (quoted_identifier)
+                        (field_keyword)
+                        value: (identifier))
+                      (preproc_conditional_link_values
+                        (preproc_if
+                          (preproc_open)
+                          condition: (identifier))
+                        (link_value
+                          field: (quoted_identifier)
+                          (field_keyword)
+                          value: (identifier))
+                        (preproc_endif
+                          (preproc_close)))
+                      (link_value
+                        field: (quoted_identifier)
+                        (field_keyword)
+                        value: (identifier)))))))))))))
+
+================================================================================
+G6: a #if inside an option member list that continues after #endif stays list-internal
+================================================================================
+
+table 50100 T
+{
+    fields
+    {
+        field(1; F; Integer)
+        {
+            OptionMembers = A,
+#if X
+                B,
+#endif
+                C;
+        }
+    }
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (table_declaration
+    (table_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (fields_section
+        (fields_keyword)
+        body: (fields_body
+          (field_declaration
+            (field_keyword)
+            id: (integer)
+            name: (identifier)
+            type: (type_specification
+              (basic_type))
+            body: (declaration_body
+              (property
+                name: (property_name)
+                value: (option_member_list
+                  (option_member
+                    (identifier))
+                  (preproc_conditional_option_members
+                    (preproc_if
+                      (preproc_open)
+                      condition: (identifier))
+                    (option_member
+                      (identifier))
+                    (preproc_endif
+                      (preproc_close)))
+                  (option_member
+                    (identifier)))))))))))
+
+================================================================================
+G6: a relation continued into a #if whose arms carry the `;` keeps preproc_conditional_table_relation
+================================================================================
+
+table 50100 T
+{
+    fields
+    {
+        field(1; F; Integer)
+        {
+            TableRelation = if (Type = const(Item)) Item
+#if X
+            else if (Type = const(Res)) Resource;
+#else
+            else Customer;
+#endif
+        }
+    }
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (table_declaration
+    (table_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (fields_section
+        (fields_keyword)
+        body: (fields_body
+          (field_declaration
+            (field_keyword)
+            id: (integer)
+            name: (identifier)
+            type: (type_specification
+              (basic_type))
+            body: (declaration_body
+              (property
+                name: (property_name)
+                value: (table_relation_value
+                  (table_relation_expression
+                    (if_table_relation
+                      (if_keyword)
+                      (where_conditions
+                        (where_condition
+                          field: (identifier)
+                          (const_keyword)
+                          value: (identifier)))
+                      then_relation: (simple_table_relation
+                        table: (identifier))))
+                  (preproc_conditional_table_relation
+                    (preproc_if
+                      (preproc_open)
+                      condition: (identifier))
+                    (else_table_relation_fragment
+                      (else_keyword)
+                      else_relation: (table_relation_expression
+                        (if_table_relation
+                          (if_keyword)
+                          (where_conditions
+                            (where_condition
+                              field: (identifier)
+                              (const_keyword)
+                              value: (identifier)))
+                          then_relation: (simple_table_relation
+                            table: (identifier)))))
+                    (preproc_else)
+                    (else_table_relation_fragment
+                      (else_keyword)
+                      else_relation: (table_relation_expression
+                        (simple_table_relation
+                          table: (identifier))))
+                    (preproc_endif
+                      (preproc_close))))))))))))

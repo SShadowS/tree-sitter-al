@@ -13525,6 +13525,144 @@
     }
   },
   {
+    "type": "preproc_conditional_property_value",
+    "named": true,
+    "fields": {
+      "value": {
+        "multiple": true,
+        "required": false,
+        "types": [
+          {
+            "type": "boolean",
+            "named": true
+          },
+          {
+            "type": "caption_value",
+            "named": true
+          },
+          {
+            "type": "date_literal",
+            "named": true
+          },
+          {
+            "type": "datetime_literal",
+            "named": true
+          },
+          {
+            "type": "decimal",
+            "named": true
+          },
+          {
+            "type": "decimal_range_value",
+            "named": true
+          },
+          {
+            "type": "identifier",
+            "named": true
+          },
+          {
+            "type": "implementation_value_list",
+            "named": true
+          },
+          {
+            "type": "integer",
+            "named": true
+          },
+          {
+            "type": "keyword_identifier",
+            "named": true
+          },
+          {
+            "type": "link_value_list",
+            "named": true
+          },
+          {
+            "type": "ml_value_list",
+            "named": true
+          },
+          {
+            "type": "object_reference_value",
+            "named": true
+          },
+          {
+            "type": "option_member_list",
+            "named": true
+          },
+          {
+            "type": "order_by_list",
+            "named": true
+          },
+          {
+            "type": "preproc_conditional_property_value",
+            "named": true
+          },
+          {
+            "type": "property_expression",
+            "named": true
+          },
+          {
+            "type": "quoted_identifier",
+            "named": true
+          },
+          {
+            "type": "signed_integer_list",
+            "named": true
+          },
+          {
+            "type": "sorting_value",
+            "named": true
+          },
+          {
+            "type": "string_literal",
+            "named": true
+          },
+          {
+            "type": "table_relation_value",
+            "named": true
+          },
+          {
+            "type": "tabledata_permission_list",
+            "named": true
+          },
+          {
+            "type": "time_literal",
+            "named": true
+          },
+          {
+            "type": "verbatim_string",
+            "named": true
+          },
+          {
+            "type": "where_clause",
+            "named": true
+          }
+        ]
+      }
+    },
+    "children": {
+      "multiple": true,
+      "required": true,
+      "types": [
+        {
+          "type": "preproc_elif",
+          "named": true
+        },
+        {
+          "type": "preproc_else",
+          "named": true
+        },
+        {
+          "type": "preproc_endif",
+          "named": true
+        },
+        {
+          "type": "preproc_if",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
     "type": "preproc_conditional_query",
     "named": true,
     "fields": {},
@@ -14129,71 +14267,7 @@
       "required": true,
       "types": [
         {
-          "type": "boolean",
-          "named": true
-        },
-        {
-          "type": "caption_value",
-          "named": true
-        },
-        {
-          "type": "date_literal",
-          "named": true
-        },
-        {
-          "type": "datetime_literal",
-          "named": true
-        },
-        {
-          "type": "decimal",
-          "named": true
-        },
-        {
-          "type": "decimal_range_value",
-          "named": true
-        },
-        {
           "type": "else_table_relation_fragment",
-          "named": true
-        },
-        {
-          "type": "identifier",
-          "named": true
-        },
-        {
-          "type": "implementation_value_list",
-          "named": true
-        },
-        {
-          "type": "integer",
-          "named": true
-        },
-        {
-          "type": "keyword_identifier",
-          "named": true
-        },
-        {
-          "type": "link_value_list",
-          "named": true
-        },
-        {
-          "type": "ml_value_list",
-          "named": true
-        },
-        {
-          "type": "object_reference_value",
-          "named": true
-        },
-        {
-          "type": "option_member_list",
-          "named": true
-        },
-        {
-          "type": "order_by_list",
-          "named": true
-        },
-        {
-          "type": "preproc_conditional_table_relation",
           "named": true
         },
         {
@@ -14213,47 +14287,7 @@
           "named": true
         },
         {
-          "type": "property_expression",
-          "named": true
-        },
-        {
-          "type": "quoted_identifier",
-          "named": true
-        },
-        {
-          "type": "signed_integer_list",
-          "named": true
-        },
-        {
-          "type": "sorting_value",
-          "named": true
-        },
-        {
-          "type": "string_literal",
-          "named": true
-        },
-        {
           "type": "table_relation_expression",
-          "named": true
-        },
-        {
-          "type": "table_relation_value",
-          "named": true
-        },
-        {
-          "type": "tabledata_permission_list",
-          "named": true
-        },
-        {
-          "type": "time_literal",
-          "named": true
-        },
-        {
-          "type": "verbatim_string",
-          "named": true
-        },
-        {
-          "type": "where_clause",
           "named": true
         }
       ]
@@ -24242,7 +24276,7 @@
             "named": true
           },
           {
-            "type": "preproc_conditional_table_relation",
+            "type": "preproc_conditional_property_value",
             "named": true
           },
           {

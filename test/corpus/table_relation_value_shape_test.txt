@@ -3,7 +3,7 @@
 ; flat parse of that configuration's text gives. Each conditional case below
 ; is paired with the flat text of one of its configurations.
 ;
-; G1: when the property's `;` sits inside a #if arm (table_relation_property),
+; G1: when the property's `;` sits inside a #if arm (_property_with_terminator_in_if),
 ; the value used to have no table_relation_value wrapper, and the open if-chain
 ; form had no table_relation_expression either. Found by the configuration-
 ; consistency oracle (tools/config_oracle, milestone 2).
@@ -13,6 +13,10 @@
 ; generic `identifier` value, flat `"X";` a `quoted_identifier`, and only a
 ; longer relation is table_relation_value. Each arm now holds that value,
 ; whether the `;` sits inside the arms or after #endif.
+;
+; G6: a whole-value #if is preproc_conditional_property_value, each arm's value
+; fielded `value`; it used to share preproc_conditional_table_relation with the
+; genuine relation continuations, which keep that type.
 
 ========================================================================
 Flat if-else relation
@@ -283,13 +287,13 @@ table 1 T
             body: (declaration_body
               (property
                 name: (property_name)
-                value: (preproc_conditional_table_relation
+                value: (preproc_conditional_property_value
                   (preproc_if
                     (preproc_open)
                     condition: (identifier))
-                  (identifier)
+                  value: (identifier)
                   (preproc_else)
-                  (quoted_identifier)
+                  value: (quoted_identifier)
                   (preproc_endif
                     (preproc_close)))))))))))
 
@@ -382,11 +386,11 @@ table 1 T
             body: (declaration_body
               (property
                 name: (property_name)
-                value: (preproc_conditional_table_relation
+                value: (preproc_conditional_property_value
                   (preproc_if
                     (preproc_open)
                     condition: (identifier))
-                  (table_relation_value
+                  value: (table_relation_value
                     (table_relation_expression
                       (simple_table_relation
                         table: (identifier)
@@ -398,7 +402,7 @@ table 1 T
                               (field_keyword)
                               value: (identifier)))))))
                   (preproc_else)
-                  (identifier)
+                  value: (identifier)
                   (preproc_endif
                     (preproc_close)))))))))))
 
@@ -444,13 +448,13 @@ table 1 T
             body: (declaration_body
               (property
                 name: (property_name)
-                value: (preproc_conditional_table_relation
+                value: (preproc_conditional_property_value
                   (preproc_if
                     (preproc_open)
                     condition: (identifier))
-                  (identifier)
+                  value: (identifier)
                   (preproc_else)
-                  (table_relation_value
+                  value: (table_relation_value
                     (table_relation_expression
                       (simple_table_relation
                         table: (identifier)

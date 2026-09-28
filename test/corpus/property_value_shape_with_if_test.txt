@@ -18,6 +18,9 @@
 ; table_relation_expression(simple_table_relation). alc accepts it in all four
 ; configurations of X and Y.
 ; The inner `;` may also follow the inner #endif (the nested arm's optional `;`).
+;
+; G6: the whole-value #if is preproc_conditional_property_value (it was
+; preproc_conditional_table_relation), and each arm's value is fielded `value`.
 
 ================================================================================
 G5: a simple value continued by a #if tail is a property_expression
@@ -134,13 +137,13 @@ Caption =
             body: (declaration_body
               (property
                 name: (property_name)
-                value: (preproc_conditional_table_relation
+                value: (preproc_conditional_property_value
                   (preproc_if
                     (preproc_open)
                     condition: (identifier))
-                  (string_literal)
+                  value: (string_literal)
                   (preproc_else)
-                  (string_literal)
+                  value: (string_literal)
                   (preproc_endif
                     (preproc_close)))))))))))
 
@@ -177,13 +180,13 @@ false;
             body: (declaration_body
               (property
                 name: (property_name)
-                value: (preproc_conditional_table_relation
+                value: (preproc_conditional_property_value
                   (preproc_if
                     (preproc_open)
                     condition: (identifier))
-                  (boolean)
+                  value: (boolean)
                   (preproc_else)
-                  (boolean)
+                  value: (boolean)
                   (preproc_endif
                     (preproc_close)))))))))))
 
@@ -220,13 +223,13 @@ MinValue =
             body: (declaration_body
               (property
                 name: (property_name)
-                value: (preproc_conditional_table_relation
+                value: (preproc_conditional_property_value
                   (preproc_if
                     (preproc_open)
                     condition: (identifier))
-                  (integer)
+                  value: (integer)
                   (preproc_else)
-                  (integer)
+                  value: (integer)
                   (preproc_endif
                     (preproc_close)))))))))))
 
@@ -264,13 +267,13 @@ Caption =
             body: (declaration_body
               (property
                 name: (property_name)
-                value: (preproc_conditional_table_relation
+                value: (preproc_conditional_property_value
                   (preproc_if
                     (preproc_open)
                     condition: (identifier))
-                  (string_literal)
+                  value: (string_literal)
                   (preproc_else)
-                  (string_literal)
+                  value: (string_literal)
                   (preproc_endif
                     (preproc_close)))))))))))
 
@@ -313,21 +316,21 @@ Customer;
             body: (declaration_body
               (property
                 name: (property_name)
-                value: (preproc_conditional_table_relation
+                value: (preproc_conditional_property_value
                   (preproc_if
                     (preproc_open)
                     condition: (identifier))
-                  (preproc_conditional_table_relation
+                  value: (preproc_conditional_property_value
                     (preproc_if
                       (preproc_open)
                       condition: (identifier))
-                    (identifier)
+                    value: (identifier)
                     (preproc_else)
-                    (identifier)
+                    value: (identifier)
                     (preproc_endif
                       (preproc_close)))
                   (preproc_else)
-                  (identifier)
+                  value: (identifier)
                   (preproc_endif
                     (preproc_close)))))))))))
 
@@ -371,21 +374,21 @@ Customer;
             body: (declaration_body
               (property
                 name: (property_name)
-                value: (preproc_conditional_table_relation
+                value: (preproc_conditional_property_value
                   (preproc_if
                     (preproc_open)
                     condition: (identifier))
-                  (preproc_conditional_table_relation
+                  value: (preproc_conditional_property_value
                     (preproc_if
                       (preproc_open)
                       condition: (identifier))
-                    (identifier)
+                    value: (identifier)
                     (preproc_else)
-                    (identifier)
+                    value: (identifier)
                     (preproc_endif
                       (preproc_close)))
                   (preproc_else)
-                  (identifier)
+                  value: (identifier)
                   (preproc_endif
                     (preproc_close)))))))))))
 
@@ -427,21 +430,21 @@ MinValue =
             body: (declaration_body
               (property
                 name: (property_name)
-                value: (preproc_conditional_table_relation
+                value: (preproc_conditional_property_value
                   (preproc_if
                     (preproc_open)
                     condition: (identifier))
-                  (preproc_conditional_table_relation
+                  value: (preproc_conditional_property_value
                     (preproc_if
                       (preproc_open)
                       condition: (identifier))
-                    (integer)
+                    value: (integer)
                     (preproc_else)
-                    (integer)
+                    value: (integer)
                     (preproc_endif
                       (preproc_close)))
                   (preproc_else)
-                  (integer)
+                  value: (integer)
                   (preproc_endif
                     (preproc_close)))))))))))
 

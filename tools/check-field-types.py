@@ -170,8 +170,8 @@ FIELD_INVARIANTS = [
     # multiple=False since grammar finding G5: the last rule that fielded the
     # value twice was `_property_value_with_split` (`_expression tail`, both
     # under `value`); it is now aliased to ONE property_expression. It was
-    # multiple=True until then, and before G1 `table_relation_property` also
-    # fielded its value twice.
+    # multiple=True until then, and before G1 `table_relation_property` (now
+    # `_property_with_terminator_in_if`) also fielded its value twice.
     inv('property', 'value', False, set(), 'FIXED',
         "'-' of a negated CalcFormula inherited the value field"),
 
@@ -259,6 +259,19 @@ FIELD_INVARIANTS = [
         "single-node body; ';' no longer inherits the field"),
     inv('with_statement', 'body', False, set(), 'FIXED',
         "single-node body; ';' no longer inherits the field"),
+
+    # -- G6: the whole-property-value conditional ---------------------------
+    # `Caption = #if X 'a'; #else 'b'; #endif` used to be aliased to
+    # preproc_conditional_table_relation with unfielded arms. It is now
+    # preproc_conditional_property_value, and each nonempty arm is
+    # `seq(field('value', $._property_value), optional(';'))`: the field wraps
+    # the value ONLY, so the arm's ';' must never inherit it. multiple=True is
+    # one value per #if/#elif/#else ARM (the preproc_split_if_else_statement
+    # then_branch shape above), never two values in one arm; `property.value`
+    # above stays multiple=False. `types` is not pinned, for the reason given
+    # at `property.value`: it is every visible `_property_value` kind.
+    inv('preproc_conditional_property_value', 'value', True, set(), 'FIXED',
+        "one value per arm; the arm's ';' stays outside the field (G6)"),
 ]
 
 

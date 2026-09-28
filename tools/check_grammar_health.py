@@ -30,11 +30,12 @@ BASELINE_FILE = Path(__file__).resolve().parent.parent / '.grammar_baseline.json
 
 # _find_unused_rules()/_find_missing_definitions() below use a regex over `$.name`
 # and `name: $ =>` text, not a real JS parser, so they have known blind spots.
-# The baseline currently carries 31 entries that are each one of exactly four
+# The baseline currently carries 32 entries that are each one of exactly four
 # false-positive shapes, not real debt — verified by reading every one against
 # grammar.js (2026-08-10 review, Task 20 fix round 1; the 28th, the
 # CALC_FORMULA_PROPERTY_NAME external, added with issue #21; the 29th to 31st,
-# the DIRECTIVE_EOL and NEGATIVE_INTEGER/DECIMAL externals, config-oracle Task 18):
+# the DIRECTIVE_EOL and NEGATIVE_INTEGER/DECIMAL externals, config-oracle Task 18;
+# the 32nd, the preproc_conditional_property_value alias target, G6):
 #
 #   1. External scanner tokens (13) — declared in `externals: $ => [...]` and
 #      never given a `name: $ =>` rule body, e.g. `property_name`
@@ -45,9 +46,11 @@ BASELINE_FILE = Path(__file__).resolve().parent.parent / '.grammar_baseline.json
 #      e.g. `table_declaration: _object_with_id('table')`. The regex requires
 #      a literal `$ =>` right after the colon; a helper-function call doesn't
 #      match even though the rule is genuinely defined.
-#   3. Legitimate `alias()` targets (2) — `aggregate_function` (grammar.js
-#      `field('function', alias($.identifier, $.aggregate_function))`) and
-#      `object_type_keyword` (`alias(choice(...), $.object_type_keyword)`).
+#   3. Legitimate `alias()` targets (3) — `aggregate_function` (grammar.js
+#      `field('function', alias($.identifier, $.aggregate_function))`),
+#      `object_type_keyword` (`alias(choice(...), $.object_type_keyword)`) and
+#      `preproc_conditional_property_value`
+#      (`alias($._property_value_conditional, $.preproc_conditional_property_value)`).
 #      Real nodes with no `name: $ =>` definition by design — `alias()` is how
 #      a rule gets renamed in the tree without one.
 #   4. `unused_rules` via computed member access (3) — `entitlement_keyword`,

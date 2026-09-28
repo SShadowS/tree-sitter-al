@@ -165,12 +165,12 @@ table 50100 "Test Table"
             body: (declaration_body
               (property
                 name: (property_name)
-                value: (preproc_conditional_table_relation
+                value: (preproc_conditional_property_value
                   (preproc_if
                     (preproc_open)
                     condition: (identifier))
-                  (quoted_identifier)
+                  value: (quoted_identifier)
                   (preproc_else)
-                  (quoted_identifier)
+                  value: (quoted_identifier)
                   (preproc_endif
                     (preproc_close)))))))))))
