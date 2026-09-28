@@ -53,6 +53,9 @@ EMPTY_REMOVABLE = {
     # add*_modification rules for layout_body.
     "action_body",
     "layout_body",
+    # xmlport element: optional(field('body', $.xmlport_body)), its only site; the
+    # quick tier's xmlport_preprocessor_elements_test.txt empties one.
+    "xmlport_body",
 }
 
 STATEMENT_HOSTS = {"statement_block", "case_branch"}

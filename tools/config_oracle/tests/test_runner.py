@@ -383,7 +383,13 @@ EMPTY_LAYOUT = (b"page 50100 P\n{\n    layout\n    {\n"
                 b"    }\n}\n")
 
 
-@pytest.mark.parametrize("src,kind", [(EMPTY_ACTION_AREA, "action_body"), (EMPTY_LAYOUT, "layout_body")])
+EMPTY_XMLPORT_ELEMENT = (b"xmlport 50100 X\n{\n    schema\n    {\n        textelement(Root)\n        {\n"
+                         b"#if not CLEAN28\n            textelement(Child)\n            {\n            }\n#endif\n"
+                         b"        }\n    }\n}\n")
+
+
+@pytest.mark.parametrize("src,kind", [(EMPTY_ACTION_AREA, "action_body"), (EMPTY_LAYOUT, "layout_body"),
+                                      (EMPTY_XMLPORT_ELEMENT, "xmlport_body")])
 def test_emptied_action_and_layout_bodies_are_removed(al_parser, src, kind):
     recs = {r.config: r for r in runner.check_input(al_parser, "e", src)}
     assert {c: r.status for c, r in recs.items()} == {"CLEAN28=0": "pass", "CLEAN28=1": "pass"}
