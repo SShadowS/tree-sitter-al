@@ -316,30 +316,43 @@ else
     echo -e "${YELLOW}This is a serious issue that should be fixed.${NC}"
 fi
 
-# Step 3b: has_error over the positive corpus fixtures
+# Step 3b: has_error over every corpus case
 #
-# A MISSING node for a HIDDEN (`_`-prefixed) token is never printed, so an
-# expected tree cannot contain it, Step 2 passes, Step 3's grep finds nothing,
-# and `tree-sitter parse --json-summary` reports the file successful. Only
-# py-tree-sitter's `root_node.has_error` sees it. The `_directive_eol`
-# whitespace regression lived through every gate that way (fixed in 673528e;
-# docs/deferred-work.md item 12). tools/has_error_sweep.py parses every corpus
-# case except the deliberate negatives and fails on any has_error tree, naming
-# "hidden-only" separately from ERROR/MISSING nodes a tree would print.
-# Exit 2 (it could not run -- a failed build, no fixtures) fails too.
+# A MISSING node for a HIDDEN (`_`-prefixed) token is not printed by
+# `tree-sitter parse`, and `--json-summary` reports the file successful, so
+# parse-al-parallel.sh (Step 6) cannot see it. `tree-sitter test` (Step 2) does
+# print `(MISSING _x)` -- but only for a case that holds the triggering input.
+# py-tree-sitter's `root_node.has_error` sees it everywhere. The `_directive_eol`
+# whitespace regression (fixed in 673528e; docs/deferred-work.md item 12) passed
+# parse-al-parallel.sh that way. tools/has_error_sweep.py parses EVERY corpus
+# case; a case in a deliberate-negative file may be `visible` (its ERROR is the
+# assertion), but a hidden error fails everywhere. Exit 2 (it could not run -- a
+# failed build, no fixtures, a crash) fails too.
+#
+# The count is reconciled, not just printed: the sweep's `files=` must equal the
+# number the step above established independently (Step 2b's declared cases for
+# 3b, Step 6's parsed files for 6b). A reader that silently drops inputs would
+# otherwise report clean over fewer of them.
 run_has_error_sweep() {
-    local what="$1"; shift
-    local out status
+    local what="$1" expected="$2"; shift 2
+    local out status swept
     out=$(python tools/has_error_sweep.py "$@" 2>&1) && status=0 || status=$?
+    swept=$(echo "$out" | sed -n 's/^has_error_sweep: files=\([0-9][0-9]*\) .*/\1/p' | tail -1)
+    if [ "$status" -eq 0 ] || [ "$status" -eq 1 ]; then
+        if [ -z "$expected" ] || [ -z "$swept" ] || [ "$swept" -ne "$expected" ]; then
+            print_error "has_error sweep over $what examined ${swept:-an unreadable number of} input(s), expected ${expected:-<no count to reconcile against>}"
+            VALIDATION_FAILED=1
+        fi
+    fi
     if [ "$status" -eq 0 ]; then
         print_success "has_error: $(echo "$out" | tail -1 | sed 's/^has_error_sweep: //') in $what"
     elif [ "$status" -eq 1 ]; then
         print_error "has_error sweep found parse errors in $what"
         echo "$out" | grep -E '^(visible|hidden-only)'$'\t' | head -20 | sed 's/^/    /'
         echo "$out" | tail -1
-        if echo "$out" | grep -q '^hidden-only'$'\t'; then
-            echo -e "${YELLOW}hidden-only: has_error is True with no ERROR/MISSING node a tree prints --${NC}"
-            echo -e "${YELLOW}a MISSING hidden token inside the named node. No CLI gate can see it.${NC}"
+        if echo "$out" | grep -qE '^hidden-only'$'\t''|'$'\t''hidden: '; then
+            echo -e "${YELLOW}hidden: has_error is True under a node with no ERROR/MISSING a tree prints --${NC}"
+            echo -e "${YELLOW}a MISSING hidden token inside it. tree-sitter parse and --json-summary cannot see it.${NC}"
         fi
         VALIDATION_FAILED=1
     else
@@ -349,8 +362,8 @@ run_has_error_sweep() {
     fi
 }
 
-print_header "Step 3b: has_error Over Positive Corpus Fixtures"
-run_has_error_sweep "the positive corpus fixtures" --corpus-fixtures
+print_header "Step 3b: has_error Over Every Corpus Case"
+run_has_error_sweep "the corpus fixtures" "$DECLARED_CASES" --corpus-fixtures
 
 # Step 4: Check for orphaned rules
 print_header "Step 4: Checking for Orphaned Rules"
@@ -614,9 +627,10 @@ else
 
     # Step 6b: the same corpus through has_error. parse-al-parallel.sh counts
     # `--json-summary` records, and a MISSING node for a HIDDEN token leaves
-    # `successful: true` -- see Step 3b. Only has_error sees that file.
+    # `successful: true` -- see Step 3b. Only has_error sees that file. Its
+    # `files=` must equal Step 6's total.
     print_header "Step 6b: has_error Over the AL Corpus (--full only)"
-    run_has_error_sweep "$AL_PARSE_CORPUS" --root "$AL_PARSE_CORPUS"
+    run_has_error_sweep "$AL_PARSE_CORPUS" "$PARSE_TOTAL" --root "$AL_PARSE_CORPUS"
 fi
 
 # Step 7: Check for common issues

@@ -385,13 +385,27 @@ CASES: list[Case] = [
             create("test/corpus/zz_selftest_hidden_missing.txt", HIDDEN_MISSING_FIXTURE),
         ],
         must_contain=[
-            "has_error sweep found parse errors in the positive corpus fixtures",
+            "has_error sweep found parse errors in the corpus fixtures",
             "hidden-only",
             "zz_selftest_hidden_missing.txt",
         ],
         must_not_contain=["All validation checks passed"],
         blind_spot="has_error is a yes/no per tree. A defect that builds a WRONG tree "
                    "with no ERROR and no MISSING token, hidden or not, passes it",
+    ),
+    Case(
+        id="step3b-sweep-drops-a-case",
+        gate=VALIDATE,
+        why="the sweep silently reads one corpus case fewer than Step 2b declares; "
+            "it still reports every input it DID read as clean",
+        mutations=[sub(
+            "tools/has_error_sweep.py",
+            re.escape("for c in cases]"), "for c in cases[1:]]", count=1,
+        )],
+        must_contain=["has_error sweep over the corpus fixtures examined", "expected"],
+        must_not_contain=["All validation checks passed"],
+        blind_spot="reconciles the COUNT against Step 2b's independent reader. A sweep "
+                   "that reads the right number of the wrong inputs passes",
     ),
     Case(
         id="step4-orphan-tool-fails",
@@ -906,6 +920,23 @@ PREREQS = {
 }
 
 
+def failing_steps(out: str) -> list[str]:
+    """Every ✗ line of a gate's output, prefixed with the step header it sits under.
+
+    The output tail is only the summary ("Some validation checks failed!"), which
+    left a red control's cause to be guessed (step6-clean-corpus-passes: the
+    stale wasm at Step 9, inferred for a round before anyone looked).
+    """
+    step, found = "", []
+    for line in out.splitlines():
+        s = line.strip()
+        if s.startswith("Step "):
+            step = s
+        elif s.startswith("✗") and "Some validation checks failed" not in s:
+            found.append(f"[{step}] {s[1:].strip()}" if step else s[1:].strip())
+    return found
+
+
 def _safe(text: str) -> str:
     """Make text printable on this console.
 
@@ -1248,6 +1279,9 @@ def main() -> int:
             else:
                 print(_safe(f"  FAIL  {case.id:32s} {took:5.1f}s  {verdict}"), flush=True)
                 print(_safe(f"        injected: {case.why}"))
+                # The tail is only the summary; the failing steps are what say WHY.
+                for line in failing_steps(out):
+                    print(_safe(f"        ✗ {line}"))
                 for line in out.splitlines()[-12:]:
                     print(_safe(f"        | {line}"))
                 failed += 1

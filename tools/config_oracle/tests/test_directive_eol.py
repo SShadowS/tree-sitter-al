@@ -1,8 +1,8 @@
 """`_directive_eol` must accept every extra-space character before the newline.
 
-It is hidden, so a MISSING `_directive_eol` shows only as `has_error`: no
-command-line gate (`tree-sitter parse`, `--json-summary`, parse-al-parallel.sh,
-corpus tests) reports it. Before the fix the scanner skipped only space and tab.
+It is hidden, so a MISSING `_directive_eol` is not printed by `tree-sitter parse`
+and leaves `--json-summary` (and so parse-al-parallel.sh) successful; `has_error`
+shows it, and `tree-sitter test` prints it only for a corpus case holding the input. Before the fix the scanner skipped only space and tab.
 """
 import pytest
 

@@ -411,7 +411,7 @@ touch its arms, so the xfail still fails for the same reason.
 
 ---
 
-## 12. Hidden MISSING tokens are invisible to every command-line gate — RESOLVED 2026-09-29
+## 12. Hidden MISSING tokens are invisible to `tree-sitter parse`, `--json-summary` and parse-al-parallel.sh — RESOLVED 2026-09-29
 
 **Resolution (308f64c, roadmap A1):** `tools/has_error_sweep.py` classifies each
 input as clean / visible / hidden-only and exits 1 on either error class, 2 when
@@ -435,8 +435,9 @@ parse-al-parallel.sh.
 
 A MISSING node for a HIDDEN (`_`-prefixed) token is not printed. So
 `tree-sitter parse` shows no `MISSING`, `--json-summary` reports `successful`,
-`parse-al-parallel.sh` counts the file as parsed OK, and corpus tests cannot
-express it in an expected tree. The config oracle's replay 3 was the same class:
+and `parse-al-parallel.sh` counts the file as parsed OK. (`tree-sitter test` does
+print `(MISSING _directive_eol)`, so a corpus case holding the input would fail;
+none did.) The config oracle's replay 3 was the same class:
 "CLI-silent, not API-silent".
 
 Proposal: a gate that sweeps a corpus with py-tree-sitter and fails on any file
