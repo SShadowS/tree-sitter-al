@@ -40,8 +40,10 @@
 #
 # The counts now come from `tree-sitter parse --json-summary`, which emits one
 # record per file it actually parsed, each with its own `successful` verdict
-# (false for MISSING-only files as well as ERROR ones, so nothing is lost
-# relative to the old `\tParse:` text scrape). Each chunk must yield exactly one
+# (false for files with a visible MISSING node as well as ERROR ones, so nothing
+# is lost relative to the old `\tParse:` text scrape). A MISSING node for a
+# HIDDEN token (e.g. `_directive_eol`) is NOT reported: `successful` stays true
+# and only py-tree-sitter's `has_error` sees it (docs/deferred-work.md item 12). Each chunk must yield exactly one
 # record per file it listed, or the run dies naming that chunk. This is the same
 # per-chunk reconciliation tools/tree-harness.sh does, one script over.
 #

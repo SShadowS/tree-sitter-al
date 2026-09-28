@@ -1,7 +1,19 @@
 # Config oracle — milestone 2 results
 
-Measured on 2026-09-28, grammar `2c3928c57fe98fc7` (report header; HEAD `6b94cd9`,
-branch `feat/config-oracle-m2`). Corpora: BC.History `87e7d2a19d2`, DC `5e67e5b9c`,
+Measured on 2026-09-28 on branch `feat/config-oracle-m2`. The runs used different
+commits; each section names its own (the grammar hash is the report header's):
+
+| Section | HEAD | grammar |
+|---|---|---|
+| Resolve sweep | `6b94cd9` | `2c3928c57fe98fc7` |
+| First production run, run 1; Triage (clusters of run 1) | `df7997c` | `2c3928c57fe98fc7` |
+| First production run, run 3 (the recorded state) | `eb189bf` | `e8a637023c3d15ca` |
+| Exit table | after `0bea280` (no grammar change since `eb189bf`) | `e8a637023c3d15ca` |
+
+The final fix wave's scanner change (`673528e`) moves the grammar hash to
+`0148e8d7e4ec0526`; the quick tier gives the same numbers there.
+
+Corpora: BC.History `87e7d2a19d2`, DC `5e67e5b9c`,
 BC 28.1 W1 `4fc2ccf16` (`H:/Git/BC28.1`), BCApps 29.0 `e16d6c30`
 (`H:/Git/BCApps-29.0`). Every run below was wrapped in `./tools/ts-lock.sh`.
 

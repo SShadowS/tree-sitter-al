@@ -403,6 +403,67 @@ strict xfail, `test_single_pair_ml_arm_before_endif` in
 
 ---
 
+## 12. Hidden MISSING tokens are invisible to every command-line gate
+
+**Established:** 2026-09-28, milestone 2 whole-branch review, then the
+`_directive_eol` fix (`673528e`). Before it, `#if A` followed by `\f\n`, `\v\n`,
+` ﻿\n` or `\r\r\n` gave a MISSING `_directive_eol`. py-tree-sitter's
+`root_node.has_error` was True (`tools/config_oracle/tests/test_directive_eol.py`,
+5 of 8 cases failing on the old scanner).
+
+A MISSING node for a HIDDEN (`_`-prefixed) token is not printed. So
+`tree-sitter parse` shows no `MISSING`, `--json-summary` reports `successful`,
+`parse-al-parallel.sh` counts the file as parsed OK, and corpus tests cannot
+express it in an expected tree. The config oracle's replay 3 was the same class:
+"CLI-silent, not API-silent".
+
+Proposal: a gate that sweeps a corpus with py-tree-sitter and fails on any file
+whose `root_node.has_error` is True while it has no visible ERROR/MISSING node.
+The loader (`tools/query_coverage/loader.py`) and `ir.from_tree`'s
+`has-error@` fallback already exist, so it is a small script plus a
+`validate-grammar.sh --full` step. Until then, a fix touching a hidden token
+needs a `has_error` pytest, not a corpus fixture.
+
+---
+
+## 13. Candidate G10: `Visible = Rec.A #if X and B #endif ;` ERRORs
+
+**Established:** 2026-09-28, milestone 2 whole-branch review. Reproduced at
+`673528e` (page field, `has_error` True). The review found it predates this branch.
+
+```al
+Visible = Rec.A
+#if X
+ and B
+#endif
+;
+```
+
+Flat, `Visible = Rec.A and B;` is `property_expression(logical_expression)` and
+`Visible = Rec.A;` is `table_relation_value`. With the `#if` the
+`table_relation_value` reading wins: the tree is `table_relation_value` holding a
+`preproc_conditional_table_relation` whose arm is `ERROR (identifier)` for `and`.
+G5's `preproc_conditional_expression_tail` would be
+the flat-shaped reading; why it loses here is not yet traced. Production sites:
+not measured. alc four-way probe not
+yet run.
+
+---
+
+## 14. The resolve and full tiers exit 1 on production corpora
+
+**Established:** 2026-09-28, milestone 2 Task 17 and the P6 runs (results doc,
+"Resolve sweep" and "Run 3"). `runner.run` exits 0 only when every non-`pass`
+record is classified, and only the quick tier loads a classification file
+(`tools/config_oracle/fixture-classes.tsv`, fixtures only). Production records
+that cannot validate (the 7 BCApps `reference-error:error` records of invalid
+source, the milestone-3 `unsupported-type` records) are classified in the results
+doc, not in any file the runner reads, so every production run exits 1 even when
+it is clean. Needed before the full tier can gate: a production classification
+file, keyed like `fixture-classes.tsv`, loaded by `--tier resolve|full`.
+
+---
+
 ## Longer-lived proposals, tracked separately
 
 - [`python-bindings-modernization.md`](python-bindings-modernization.md) — the

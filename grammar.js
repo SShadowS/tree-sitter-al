@@ -820,8 +820,9 @@ module.exports = grammar({
     // --- TableRelation property variant: ';' may be consumed inside preproc branches ---
     // Used when the terminating ';' is inside #if/#else branches of a conditional table relation.
     // Pattern: TableRelation = if (...) Item else #if BC24 if (...) Table; #else IF (...) Table; #endif
-    // Restricted to preproc_conditional_table_relation (not plain table_relation_value) to avoid
-    // ambiguity with AccessByPermission/Permissions properties that use keyword identifiers.
+    // Two value forms: a whole-value #if (aliased to preproc_conditional_table_relation), or a
+    // relation continued into a #if whose arms carry the ';' (aliased to table_relation_value,
+    // the node a flat parse of one configuration gives: grammar finding G1).
     // The alias ensures the AST node type remains 'property'.
     // Lower precedence than 'property' so 'property' (with ';') is preferred when ';' follows.
     table_relation_property: $ => prec(-1, seq(

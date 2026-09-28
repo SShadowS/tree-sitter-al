@@ -854,13 +854,13 @@ bool tree_sitter_al_external_scanner_scan(
       }
       // Unreachable today, and the reason is worth stating exactly, because the
       // obvious claim — "property_name is never co-valid with begin_keyword" —
-      // is FALSE: rows 20 and 22 offer both, which is the whole basis of the
+      // is FALSE: rows 28, 30, 39 and 40 offer both, which is the whole basis of the
       // `b1 = 1;` defect fixed in 4.0.0.
       //
       // Reaching this line requires !BEGIN_KEYWORD && PREPROC_SPLIT_BEGIN. In
-      // ts_external_scanner_states, preproc_split_begin appears in rows 1, 9 and
-      // 16 only, and rows 9 and 16 BOTH also carry begin_keyword — so the arm
-      // above returns first, and row 1 is the all-nine recovery row the guard at
+      // ts_external_scanner_states, preproc_split_begin appears in rows 1, 13 and
+      // 52 only, and rows 13 and 52 BOTH also carry begin_keyword — so the arm
+      // above returns first, and row 1 is the all-thirteen recovery row the guard at
       // the top of scan() already rejects. Re-check that if a new row carries
       // preproc_split_begin without begin_keyword.
       return false;
@@ -889,7 +889,7 @@ bool tree_sitter_al_external_scanner_scan(
       // Skips the PROPERTY_NAME test below, and unlike the `begin` arm this one
       // has NO safety margin from the keyword itself. It is safe only because
       // ts_external_scanner_states pairs property_name with neither end_keyword
-      // nor preproc_split_end in any row outside the all-nine recovery row, so
+      // nor preproc_split_end in any row outside the all-thirteen recovery row, so
       // reaching here means property_name was not wanted anyway. That is a real
       // dependency on the generated table — a property named `end` in a state
       // that also wanted END_KEYWORD would be dropped. Re-check after any change
