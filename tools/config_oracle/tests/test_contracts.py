@@ -111,3 +111,20 @@ def test_every_handler_resolves():
     for e in contracts.REGISTRY.values():
         if e.handler:
             assert contracts.resolve_handler(e) is not None, e.type
+
+
+def test_branch_select_entries_declare_arm_unless_exempt():
+    for e in contracts.REGISTRY.values():
+        if e.kind == "branch-select" and e.type not in contracts.ARM_EXEMPT:
+            assert e.arm, f"{e.type} has no declared arm content"
+
+
+def test_census_rejects_an_arm_kind_that_does_not_exist():
+    contracts.REGISTRY["preproc_conditional_rendering"] = contracts.Entry(
+        "preproc_conditional_rendering", "branch-select", "tools.config_oracle.lowering.select.branch_select",
+        {}, None, frozenset({"no_such_kind"}), None)
+    try:
+        assert any("arm kind" in p for p in contracts.census(node_types()))
+    finally:
+        contracts.REGISTRY.pop("preproc_conditional_rendering")
+        contracts.register("preproc_conditional_rendering", "unsupported")

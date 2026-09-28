@@ -51,6 +51,8 @@ def branch_select(node, ctx) -> Lowered:
         ctx.accounting.mark(directive, "directive")
         if directive.start == choice:
             for c in content:
+                if entry.arm is not None and c.kind not in entry.arm:
+                    raise LoweringError("arm-content", c, f"{c.kind} not declared for {node.kind}")
                 r = lower(c, ctx.child(node.kind, c.field or "<children>"))
                 out.nodes.extend(r.nodes)
                 out.frags.extend(r.frags)
@@ -75,6 +77,21 @@ def branch_select(node, ctx) -> Lowered:
         for n in out.nodes:
             n.field = node.field   # in place: fresh lowered node, and fragment anchors keep identity
     return out
+
+
+def reading_active(node, entry, ctx):
+    """True when the resolved configuration is the one the tree shows (spec P4)."""
+    arms, _ = split_arms(node)
+    choice = chosen_arm(node, arms, ctx)
+    first = arms[0][0].start
+    if entry.reading == "arm:if":
+        return choice == first
+    if entry.reading == "arm:else":
+        return choice is not None and choice != first and arms[-1][0].kind == "preproc_else" \
+            and choice == arms[-1][0].start
+    if entry.reading == "arm:inactive":
+        return choice is None
+    raise LoweringError("contract-shape", node, f"reading {entry.reading!r} needs its own test")
 
 
 def token_alias(node, ctx) -> Lowered:

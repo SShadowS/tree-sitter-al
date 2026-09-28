@@ -17,17 +17,31 @@ class Entry:
     handler: str | None = None
     hosts: dict = field(default_factory=dict)
     alias_to: str | None = None
+    arm: frozenset | None = None
+    reading: str | None = None
+
+
+READINGS = frozenset({"arm:if", "arm:else", "arm:inactive", "arm:not-else-led"})
+
+# Registered in milestone 1, before `arm` existed. Their arms admit a whole
+# statement or body-element set; declaring it would restate _statement and
+# _body_element. Milestone 3 decides whether to.
+ARM_EXEMPT = frozenset({"preproc_conditional", "preproc_conditional_statement",
+                        "preproc_conditional_var_block", "preproc_pragma_only"})
 
 
 REGISTRY: dict[str, Entry] = {}
 
 
-def register(type_, kind, handler=None, hosts=None, alias_to=None):
+def register(type_, kind, handler=None, hosts=None, alias_to=None, arm=None, reading=None):
     if type_ in REGISTRY:
         raise ValueError(f"duplicate registry entry: {type_}")
     if kind == "token-alias" and not alias_to:
         raise ValueError(f"token-alias entry without alias_to: {type_}")
-    REGISTRY[type_] = Entry(type_, kind, handler, dict(hosts or {}), alias_to)
+    if reading is not None and reading not in READINGS:
+        raise ValueError(f"unknown reading {reading!r} for {type_}")
+    REGISTRY[type_] = Entry(type_, kind, handler, dict(hosts or {}), alias_to,
+                            frozenset(arm) if arm else None, reading)
 
 
 def resolve_handler(entry):
@@ -147,6 +161,8 @@ register("preproc_split_procedure", "assembler", "tools.config_oracle.lowering.a
          hosts=dict(_BODY_HOSTS))
 
 # --- registered, not yet lowered (milestones 2-3). Unsupported is explicit, never a default.
+# preproc_split_else_begin_over_endif (in this loop, from Task 13): base shape
+# milestone 2, widened shapes one-reading.
 for t in ("preproc_conditional_actions", "preproc_conditional_case", "preproc_conditional_case_patterns",
           "preproc_conditional_controladdin", "preproc_conditional_dataset", "preproc_conditional_expression_tail",
           "preproc_conditional_fieldgroups", "preproc_conditional_fields", "preproc_conditional_impl_values",
@@ -174,23 +190,25 @@ register("preproc_split_var_section_tail", "unsupported")
 
 # Added with the BC 29 family-I fixes. preproc_conditional_arguments splices
 # its branch arguments into argument_list (a list-group, like the other
-# preproc_conditional_* lists); preproc_split_permissions_property assembles
-# one property per branch from that branch's head plus the shared tail.
+# preproc_conditional_* lists). milestone 2.
 register("preproc_conditional_arguments", "unsupported")
+# preproc_split_permissions_property assembles one property per branch from
+# that branch's head plus the shared tail. milestone 3.
 register("preproc_split_permissions_property", "unsupported")
-# BC 29 family E: per-branch header, shared body after #endif (assembler shape).
+# BC 29 family E: per-branch header, shared body after #endif (assembler shape). milestone 3.
 register("preproc_split_key", "unsupported")
 register("preproc_split_modify", "unsupported")
 # BC 29 family D: only the #if-taken configuration is valid AL, so lowering the
-# other configuration must report cannot-validate, never a discrepancy.
+# other configuration must report cannot-validate, never a discrepancy. milestone 3.
 register("preproc_split_table_field_open", "unsupported")
 # BC 29 family G: branches end in an open statement prefix, tail completes it.
+# else-led arms: milestone 2.
 register("preproc_split_open_statement", "unsupported")
 # BC 29 family H: a branch closes a layout container and opens a sibling. The
-# tree is the #if reading, so the other configuration cannot be lowered to it.
+# tree is the #if reading, so the other configuration cannot be lowered to it. milestone 2.
 register("preproc_split_container_reopen", "unsupported")
 # A procedure boundary inside #else: the tree is the #else reading, split over
-# two procedures' block closings, so neither lowers on its own.
+# two procedures' block closings, so neither lowers on its own. milestone 2.
 register("preproc_split_block_end_in_else", "unsupported")
 register("preproc_split_block_close_after_endif", "unsupported")
 
@@ -235,4 +253,9 @@ def census(node_types):
             problems.append(f"host slot not classified: {e.type} in {slot}")
         for slot in sorted(e.hosts.keys() - real):
             problems.append(f"stale host slot: {e.type} in {slot}")
+    known = {t["type"] for t in node_types}
+    for e in REGISTRY.values():
+        for k in sorted(e.arm or ()):
+            if k not in known:
+                problems.append(f"arm kind does not exist: {k} in {e.type}")
     return problems

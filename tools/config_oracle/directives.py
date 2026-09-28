@@ -199,6 +199,7 @@ class Resolution:
     active: bytearray
     directives: list = field(default_factory=list)
     arm_choice: dict = field(default_factory=dict)
+    group_of: dict = field(default_factory=dict)
     extras: list = field(default_factory=list)
     trace: list = field(default_factory=list)
 
@@ -345,6 +346,7 @@ def resolve(source: bytes, env0: frozenset) -> Resolution:
                 if not stack:
                     raise ResolveError(f"unbalanced-{d.kind}", d.hash)
                 f = stack[-1]
+                res.group_of[d.hash] = f.if_hash
                 if d.kind == "elif":
                     if f.seen_else:
                         raise ResolveError("elif-after-else", d.hash)

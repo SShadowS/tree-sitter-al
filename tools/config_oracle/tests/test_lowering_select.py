@@ -199,3 +199,35 @@ def test_fragment_anchor_survives_single_slot_selection(al_parser, monkeypatch):
     assert seen == [True]
     ref = reference.extract(al_parser, res.masked)
     assert compare.structure(ref.root, low) == []
+
+
+def test_arm_content_outside_the_declaration_is_an_error(al_parser, monkeypatch):
+    from tools.config_oracle import contracts
+    e = contracts.REGISTRY["preproc_conditional_statement"]
+    monkeypatch.setitem(contracts.REGISTRY, "preproc_conditional_statement",
+                        contracts.Entry(e.type, e.kind, e.handler, e.hosts, e.alias_to,
+                                        frozenset({"no_such_kind"}), None))
+    root, extras, _ = ir.from_tree(al_parser.parse(STMT))
+    res = resolve(STMT, frozenset({"A"}))
+    with pytest.raises(LoweringError) as err:
+        lower_tree(root, extras, res)
+    assert err.value.kind == "arm-content"
+
+
+def test_reading_active_reports_whether_the_if_arm_is_taken(al_parser, monkeypatch):
+    from tools.config_oracle import contracts
+    from tools.config_oracle.lowering import select
+    e = contracts.REGISTRY["preproc_conditional_statement"]
+    fake_entry = contracts.Entry(e.type, e.kind, e.handler, e.hosts, e.alias_to, e.arm, "arm:if")
+    real_select = select.branch_select
+    seen = []
+
+    def capturing(node, ctx):
+        seen.append(select.reading_active(node, fake_entry, ctx))
+        return real_select(node, ctx)
+
+    monkeypatch.setattr(select, "branch_select", capturing)
+    root, extras, _ = ir.from_tree(al_parser.parse(STMT))
+    lower_tree(root, extras, resolve(STMT, frozenset({"A"})))   # #if arm taken
+    lower_tree(root, extras, resolve(STMT, frozenset()))        # #else arm taken
+    assert seen == [True, False]

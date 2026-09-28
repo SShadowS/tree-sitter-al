@@ -206,6 +206,14 @@ def test_line_comment_event_on_crlf_runs_to_the_newline():
     assert ev["pragma"] == (9, 39)         # stops before the \r at 39
 
 
+def test_group_of_maps_every_later_directive_to_its_if():
+    src = b"#if A\nx\n#elif B\ny\n#else\nz\n#endif\n"
+    res = resolve(src, frozenset())
+    if_at = src.index(b"#if")
+    for d in (b"#elif", b"#else", b"#endif"):
+        assert res.group_of[src.index(d)] == if_at
+
+
 def test_crlf_comment_trivia_is_clean_end_to_end(al_parser):
     from tools.config_oracle import runner
     src = b"codeunit 1 T\r\n{\r\n    trigger OnRun()\r\n    begin\r\n#if A\r\n        x := 1; // t\r\n#endif\r\n    end;\r\n}\r\n"
