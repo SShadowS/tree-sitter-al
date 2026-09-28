@@ -9,6 +9,18 @@ public API — a change to node structure or field names is a **major** bump.
 
 ### Fixed
 
+- **A property whose `;` sits inside the `#if` arms now parses directly in an
+  action area and in a .NET assembly** (G11, deferred-work item 17).
+  `ToolTip = #if X 'a'; #else 'b'; #endif` on `area(Embedding)`, and an
+  assembly `Version =` split the same way, ERRORed; alc accepts both in all
+  four configurations. That variant was reachable only through
+  `_body_element`, and these are the only other two hosts that list
+  `property` directly. Both now take the whole-value form; the relation form
+  is left out, because no relation property is valid there (alc AL0124, as for
+  `Permissions`) and it would cost +128 more states. The node is the same
+  `property(value: preproc_conditional_property_value)` as everywhere else. 0
+  production sites (tree-harness byte-identical on BC.History and BC 28.5).
+  Parser states 15,781 -> 15,870 (+89), one conflict added.
 - **Tree-shape change: a relation continued into a `#if` keeps the `;` that
   follows `#endif`** (G11, deferred-work item 19). In `TableRelation = if
   (...) Item #if X else Resource #else else Customer #endif ;` the `;` was an

@@ -502,7 +502,24 @@ node. Support, if alc accepts the form, must keep formula-shaped arms
 
 ---
 
-## 17. `_property_with_terminator_in_if` has no host parity: valid AL ERRORs at two hosts
+## 17. `_property_with_terminator_in_if` has no host parity: valid AL ERRORs at two hosts — RESOLVED 2026-09-28
+
+**RESOLVED 2026-09-28 (G11, commit @G11-HOST@).** `grammar.js` lists
+`$.property` directly at exactly three hosts: `_body_element`,
+`_action_element` and `assembly_body` (every other property host reaches it
+through `_body_element`). The two without the variant now take
+`_property_whole_value_in_if`: the whole-value form of
+`_property_with_terminator_in_if`, without its relation form. Measured: the
+full variant at both hosts cost +217 states (action +161, assembly +61), the
+whole-value one +89 (action +66, assembly +28), with one conflict needed at
+the action host. No relation property is valid at either host: alc rejects
+`TableRelation` there (AL0124), and also `Permissions`, flat and split, so
+`permissions_property` has no parity gap either. Pinned by
+`test/corpus/property_terminator_in_if_hosts_test.txt` (area, assembly, and
+an action group, which always parsed; alc four-way ACCEPTs all three) and
+`test_semicolon_inside_arms_at_direct_property_hosts` in
+`tools/config_oracle/tests/test_property_value_conditional.py`
+(cannot-validate before, pass after). The text below is the original report.
 
 **Established:** 2026-09-28, G6 design review (section 2F), then a four-way alc
 probe in G6 fix round 1 (X defined/undefined x split/flat, runtime 15.0, no
@@ -646,7 +663,7 @@ the opening forms is asserted by a fixture: the fixture would bless a defect.
 
 ## 19. A relation continued into a `#if` with the `;` after `#endif` loses its terminator — RESOLVED 2026-09-28
 
-**RESOLVED 2026-09-28 (G11, commit @G11-REL@).** `table_relation_value`
+**RESOLVED 2026-09-28 (G11, commit `824fcf4`).** `table_relation_value`
 gained a third form, `table_relation_expression preproc_conditional_table_relation`,
 so the flat `property` holds the continuation and its `;`. alc four-way
 ACCEPTs the `#if/#else` form, the no-`#else` form and an `else` before the

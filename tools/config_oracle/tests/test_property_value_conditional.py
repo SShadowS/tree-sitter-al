@@ -152,3 +152,49 @@ def test_whole_value_arm_is_any_property_value(al_parser, name, a, b, semi_insid
                                        "the arm before #endif is ml_value_list (docs/deferred-work.md item 11)")
 def test_single_pair_ml_arm_before_endif(al_parser):
     witness.assert_all_pass(al_parser, _whole_page("CaptionML", "ENU='a', DAN='b'", "ENU='c'", semi_inside=False))
+
+
+# G11, deferred-work item 17: the `;`-inside-the-arms whole value at the two
+# hosts that list `property` directly (they ERRORed): an action area and a
+# dotnet assembly body. alc accepts both in all four configurations.
+AREA_HOST = b"""page 50100 P
+{
+    PageType = RoleCenter;
+    actions
+    {
+        area(Embedding)
+        {
+            ToolTip =
+#if X
+                'a';
+#else
+                'b';
+#endif
+            action(A) { RunObject = page P; }
+        }
+    }
+}
+"""
+ASSEMBLY_HOST = b"""dotnet
+{
+    assembly(mscorlib)
+    {
+        Version =
+#if X
+            '4.0.0.0';
+#else
+            '2.0.0.0';
+#endif
+        Culture = 'neutral';
+        type(System.DateTime; MyDateTime) { }
+    }
+}
+"""
+
+
+@pytest.mark.parametrize("src", [AREA_HOST, ASSEMBLY_HOST], ids=["action-area", "assembly"])
+def test_semicolon_inside_arms_at_direct_property_hosts(al_parser, src):
+    witness.assert_produces(al_parser, src, NODE)
+    v = witness.verdicts(al_parser, src)
+    assert len(v) == 2, v
+    witness.assert_all_pass(al_parser, src)

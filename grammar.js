@@ -358,6 +358,10 @@ module.exports = grammar({
     // link_value_list and a list-internal _link_value_branch. G11: both now
     // carry prec 6, so GLR keeps both and the text after #endif decides.
     [$.link_value_list, $._link_value_branch],
+    // _property_whole_value_in_if at an action area (G11, item 17): there a
+    // #if after `Name =` also opens an option-member list. Generator-required
+    // (not needed for the assembly_body host alone, measured).
+    [$._property_value_conditional_in_if, $.preproc_conditional_option_members],
     // A relation continued into a #if with the `;` after #endif (G11, item
     // 19): table_relation_value now also holds `expression conditional`, so
     // after a relation a #if is one more list-or-relation conditional until an
@@ -865,6 +869,8 @@ module.exports = grammar({
     //     table_relation_value, the node a flat parse of one configuration
     //     gives: grammar finding G1):
     //       TableRelation = if (...) Item else #if BC24 if (...) T; #else T2; #endif
+    // It is aliased to property in _body_element only; the two hosts that list
+    // `$.property` directly take _property_whole_value_in_if (below).
     // It is not the only such variant: permissions_property is a separate one
     // for a permission list whose `;` is inside a list-internal #if.
     // The alias keeps the AST node type `property`.
@@ -888,6 +894,25 @@ module.exports = grammar({
     // carries the `;`, so that reading no longer exists. Nested, an arm may be
     // this conditional again (`#if X #if Y 'a'; #else 'b'; #endif #else ...`),
     // or through _property_value the `;`-after-#endif kind followed by `;`.
+    // _property_with_terminator_in_if without the relation form, for the two
+    // hosts that list `$.property` directly outside _body_element:
+    // _action_element (area level) and assembly_body (G11, deferred-work item
+    // 17). alc accepts `ToolTip = #if X 'a'; #else 'b'; #endif` on
+    // area(Embedding) and an assembly `Version =` split the same way, in all
+    // four configurations; both ERRORed. No relation property is valid at
+    // either host (TableRelation there is AL0124, as is Permissions, so
+    // permissions_property is not needed either), and the relation form costs
+    // most of the states: the full variant at both hosts was +217, this one
+    // +89 (action +66, assembly +28, measured separately). prec(-2): in an
+    // action `group`, whose body has both _action_element and _body_element,
+    // the two variants reduce the same text to the same `property` node, and
+    // the lower precedence hands it to _property_with_terminator_in_if.
+    _property_whole_value_in_if: $ => prec(-2, seq(
+      field('name', $.property_name),
+      '=',
+      field('value', alias($._property_value_conditional_in_if, $.preproc_conditional_property_value)),
+    )),
+
     _property_value_conditional_in_if: $ => seq(
       $.preproc_if,
       optional($._property_value_branch_in_if),
@@ -2631,6 +2656,8 @@ module.exports = grammar({
       $.customaction_declaration,
       // Properties/triggers directly in action areas
       $.property,
+      // `;` inside a #if arm (`ToolTip = #if X 'a'; #else 'b'; #endif`), G11.
+      alias($._property_whole_value_in_if, $.property),
       $.trigger_declaration,
       $.attribute_item,
       // Extension action modifications
@@ -3194,6 +3221,8 @@ module.exports = grammar({
     assembly_body: $ => repeat1(choice(
       $.type_declaration,
       $.property,
+      // `;` inside a #if arm (`Version = #if X '4.0.0.0'; #else ...; #endif`), G11.
+      alias($._property_whole_value_in_if, $.property),
       $.empty_statement,
     )),
 

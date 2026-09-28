@@ -1,0 +1,192 @@
+; G11 (deferred-work item 17): a property whose `;` sits inside the #if arms
+; (`ToolTip = #if X 'a'; #else 'b'; #endif`, nothing after #endif) is a
+; `property` at every host that lists properties. It was accepted only through
+; _body_element, and ERRORed at the two hosts that list `$.property` directly:
+; an action area (_action_element) and assembly_body. alc accepts all three
+; cases in all four configurations. The group case always parsed (an action
+; group's body also takes _body_element) and is pinned unchanged. Expected trees from
+; `tree-sitter parse`.
+
+================================================================================
+G11: `;` inside the #if arms, property directly in an action area
+================================================================================
+
+
+page 50100 P
+{
+    PageType = RoleCenter;
+    actions
+    {
+        area(Embedding)
+        {
+            ToolTip =
+#if X
+                    'a';
+#else
+                    'b';
+#endif
+            action(A) { RunObject = page P; }
+        }
+    }
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (page_declaration
+    (page_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (property
+        name: (property_name)
+        value: (identifier))
+      (actions_section
+        (actions_keyword)
+        body: (action_body
+          (action_area_section
+            (area_keyword)
+            type: (embedding_keyword)
+            body: (action_body
+              (property
+                name: (property_name)
+                value: (preproc_conditional_property_value
+                  (preproc_if
+                    (preproc_open)
+                    condition: (identifier))
+                  value: (string_literal)
+                  (preproc_else)
+                  value: (string_literal)
+                  (preproc_endif
+                    (preproc_close))))
+              (action_declaration
+                (action_keyword)
+                name: (identifier)
+                body: (declaration_body
+                  (property
+                    name: (property_name)
+                    value: (object_reference_value
+                      (page_keyword)
+                      (identifier))))))))))))
+
+================================================================================
+G11: `;` inside the #if arms, property in a dotnet assembly
+================================================================================
+
+
+dotnet
+{
+    assembly(mscorlib)
+    {
+        Version =
+#if X
+            '4.0.0.0';
+#else
+            '2.0.0.0';
+#endif
+        Culture = 'neutral';
+        PublicKeyToken = 'b77a5c561934e089';
+        type(System.DateTime; MyDateTime) { }
+    }
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (dotnet_declaration
+    (dotnet_keyword)
+    body: (dotnet_body
+      (assembly_declaration
+        (assembly_keyword)
+        name: (dotnet_assembly_name)
+        body: (assembly_body
+          (property
+            name: (property_name)
+            value: (preproc_conditional_property_value
+              (preproc_if
+                (preproc_open)
+                condition: (identifier))
+              value: (string_literal)
+              (preproc_else)
+              value: (string_literal)
+              (preproc_endif
+                (preproc_close))))
+          (property
+            name: (property_name)
+            value: (string_literal))
+          (property
+            name: (property_name)
+            value: (string_literal))
+          (type_declaration
+            (type_keyword)
+            dotnet_type: (dotnet_assembly_name)
+            al_name: (identifier)))))))
+
+================================================================================
+G11: `;` inside the #if arms, property in an action group, is unchanged
+================================================================================
+
+
+page 50100 P
+{
+    PageType = RoleCenter;
+    actions
+    {
+        area(Embedding)
+        {
+            group(G)
+            {
+            ToolTip =
+#if X
+                    'a';
+#else
+                    'b';
+#endif
+            action(A) { RunObject = page P; }
+            }
+        }
+    }
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (page_declaration
+    (page_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (property
+        name: (property_name)
+        value: (identifier))
+      (actions_section
+        (actions_keyword)
+        body: (action_body
+          (action_area_section
+            (area_keyword)
+            type: (embedding_keyword)
+            body: (action_body
+              (action_group_section
+                (group_keyword)
+                name: (identifier)
+                body: (action_group_body
+                  (property
+                    name: (property_name)
+                    value: (preproc_conditional_property_value
+                      (preproc_if
+                        (preproc_open)
+                        condition: (identifier))
+                      value: (string_literal)
+                      (preproc_else)
+                      value: (string_literal)
+                      (preproc_endif
+                        (preproc_close))))
+                  (action_declaration
+                    (action_keyword)
+                    name: (identifier)
+                    body: (declaration_body
+                      (property
+                        name: (property_name)
+                        value: (object_reference_value
+                          (page_keyword)
+                          (identifier))))))))))))))
