@@ -367,9 +367,9 @@ A fixture that now passes is a regression guard, not proof that the oracle detec
 | 3 | `PREPROC_SPLIT_END` stopped by a trailing comment | on the real old parser: the `has_error` backstop (`multi-config-parse:has-error`). Structure: a labelled hand-built tree witness (see below) |
 | 4 | `#if`/`#elif` condition swallowed the next line (`c6b8107`) | `directive-mismatch` |
 | 5 | pragma block as `preproc_conditional_var_block` (`04ff498`) | representation contract, and **not** structure |
-| 6 | `#elif` absent from `preproc_split_code_block_end` | structure |
+| 6 | `#elif` absent from `preproc_split_code_block_end` | on the real old parser: the has_error backstop (the defect left a MISSING end_keyword); not an example of the silent class |
 
-Replay 6 is **not** an example of the silent class. The grammar's own comment on `preproc_split_code_block_end` says the defect left a MISSING `end_keyword`, which kept the error gate honest. It stays in the table as a structural replay, but is not counted as evidence that the oracle finds what the error gates cannot. *(sol)*
+Replay 6 is **not** an example of the silent class. The grammar's own comment on `preproc_split_code_block_end` says the defect left a MISSING `end_keyword`, which kept the error gate honest. Probed against the real `bc1a366^` parser (milestone 2, Task 16): every case in the fixture has `has_error` true, so it is caught by the `has_error` backstop, the same as replay 3, not by structure. It stays in the table, but is not counted as evidence that the oracle finds what the error gates cannot. *(sol)*
 
 Replay 3 is the stated exception to the rule below. The defect was **CLI-silent, not API-silent**: the old parser's tree hides a MISSING `end`, so `tree-sitter parse` reports no error but `has_error` is true, the multi-configuration parse is rejected, and the structure check never runs on the real old parser. Its detection there is the `has_error` backstop, through a `cannot-validate` record. Its structural detection is shown by a **labelled hand-built tree witness (spec §5)**, `replay.replay3_tree_witness`: the HEAD tree rewritten into the old parser's `call_statement` reading, checked equal to the `f47350d^` tree on every node kind the defect regroups, with the hidden MISSING token left out. `structure` must report it for `CLEAN22=0`. *(final review, milestone 1.)*
 

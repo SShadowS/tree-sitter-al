@@ -86,7 +86,14 @@ def _replay1(recs):
 
 
 def _has_error_backstop(rec):
-    return any(i.startswith("multi-config-parse:") and "has-error" in i for i in rec.items)
+    """The multi-config tree was rejected (`multi-config-parse:...`) before the structure
+    check ever ran -- whether `ir.from_tree` found the MISSING/ERROR node directly
+    (`missing@`/`error@`, replay 6's shape: the old grammar's MISSING `end_keyword` is a
+    plain visible node) or only through its own has_error fallback (`has-error@`, replay
+    3's shape: the MISSING token there is hidden inside an alias). Both are the same
+    backstop from the runner's point of view -- `_check_config_inner` short-circuits to
+    `cannot-validate` on any `multi-config-parse:` item, regardless of which reason it carries."""
+    return any(i.startswith("multi-config-parse:") for i in rec.items)
 
 
 REPLAYS = [
@@ -109,6 +116,13 @@ REPLAYS = [
     Replay(5, "04ff498^", "preproc_split_procedure_tail_test.txt",
            lambda c: c.name.startswith("Split signature followed by a pragma-only"),
            _replay5),
+    Replay(6, "bc1a366^", "preproc_split_code_block_end_elif_test.txt", lambda c: True,
+           lambda recs: any(_has_error_backstop(r) for r in recs),
+           note="probed (base spec §5, step 1): every case in this file has has_error=True on "
+                "the bc1a366^ parser -- the missing #elif branch leaves a MISSING end_keyword, "
+                "so the multi-configuration parse is rejected before the structure check runs, "
+                "same as replay 3. Detected by the has_error backstop, not by structure; base "
+                "spec row 6 amended to match"),
 ]
 
 
