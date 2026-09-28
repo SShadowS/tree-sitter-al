@@ -43,6 +43,8 @@ class Summary:
     peak_rss_bytes: int
     exit_code: int
     classified: int = 0
+    stale: list = field(default_factory=list)       # classification lines matching no record
+    classified_keys: set = field(default_factory=set)
 
 
 def peak_rss_bytes() -> int:
@@ -217,20 +219,40 @@ def _expected(inputs):
     return expected, no_dir, todo
 
 
+def expand_classes(classes, expected):
+    """-> ({(input_id, config): (expected, reason)}, stale lines).
+
+    `*` expands to every configuration `discover` predicts for that case, and each
+    expansion must then match its own record. A case with no predicted configuration
+    (renamed, removed, or no longer an input) is stale as it stands."""
+    out, stale = {}, []
+    for (case, cfg), value in sorted(classes.items()):
+        cfgs = expected.get(case, []) if cfg == "*" else [cfg]
+        if not cfgs:
+            stale.append(f"{case}\t{cfg}\t{value[0]}\tnot an input")
+        for c in cfgs:
+            if (case, c) in out:
+                raise ValueError(f"overlapping classification: {case} {c}")
+            out[(case, c)] = value
+    return out, stale
+
+
 def is_classified(record, classes):
-    """A representation violation is never classified: fixture-classes cannot excuse one."""
-    if record.status == "representation-violation":
+    """Only a cannot-validate record, and only when the classification names its status AND
+    the reason of its first item, on whole `:` segments. `classes` is `expand_classes` output.
+    A discrepancy or representation violation is never classified: the quick tier has no baseline."""
+    entry = classes.get((record.input_id, record.config))
+    if record.status != "cannot-validate" or entry is None:
         return False
-    for key in ((record.input_id, record.config), (record.input_id, "*")):
-        if key in classes and classes[key][0] == record.status:
-            return True
-    return False
+    status, _, prefix = entry[0].partition(":")
+    head = record.items[0].split("@", 1)[0] if record.items else ""
+    return status == "cannot-validate" and bool(prefix) and (head == prefix or head.startswith(prefix + ":"))
 
 
 def run(inputs, lib_path, workers, mode, classes=None):
     t0 = time.perf_counter()
-    classes = classes or {}
     expected, no_dir, todo = _expected(inputs)
+    classes, stale = expand_classes(classes or {}, expected)
     sources = dict(inputs)
     jobs = [(i, sources[i], mode) for i in todo]
     records, peak = [], peak_rss_bytes()
@@ -254,13 +276,15 @@ def run(inputs, lib_path, workers, mode, classes=None):
         want, have = sorted(expected.get(input_id, [])), sorted(got.get(input_id, []))
         if want != have:
             raise IncompleteRun(f"{input_id}: expected {want}, got {have}")
-    n_classified = sum(r.status != "pass" and is_classified(r, classes) for r in records)
+    keys = {(r.input_id, r.config) for r in records if is_classified(r, classes)}
+    stale += [f"{i}\t{c}\t{v[0]}\tmatches no record" for (i, c), v in sorted(classes.items()) if (i, c) not in keys]
     validated = sum(r.status != "cannot-validate" for r in records)
     if validated == 0 or any(i.startswith(INTERNAL) for r in records for i in r.items):
         code = 2
     else:
-        code = 0 if all(r.status == "pass" or is_classified(r, classes) for r in records) else 1
-    return Summary(records, no_dir, time.perf_counter() - t0, peak, code, n_classified)
+        clean = all(r.status == "pass" or (r.input_id, r.config) in keys for r in records)
+        code = 0 if clean and not stale else 1
+    return Summary(records, no_dir, time.perf_counter() - t0, peak, code, len(keys), stale, keys)
 
 
 def reason_of(record):
@@ -282,16 +306,15 @@ def unvalidated_reason(record):
     return None if item is None else _coarse(item)
 
 
-def write_report(summary, out_dir: Path, header: dict, classes=None):
-    classes = classes or {}
+def write_report(summary, out_dir: Path, header: dict):
     out_dir.mkdir(parents=True, exist_ok=True)
+    keys = summary.classified_keys
     with open(out_dir / "findings.jsonl", "w", encoding="utf-8", newline="\n") as f:
         for r in summary.records:
-            f.write(json.dumps({**asdict(r), "classified": r.status != "pass" and is_classified(r, classes)}) + "\n")
+            f.write(json.dumps({**asdict(r), "classified": (r.input_id, r.config) in keys}) + "\n")
     counts = collections.Counter(r.status for r in summary.records)
     reasons = collections.Counter(reason_of(r) for r in summary.records if r.status == "cannot-validate")
-    unclassified = sum(r.status not in ("pass", "cannot-validate") and not is_classified(r, classes)
-                       for r in summary.records)
+    unclassified = sum(r.status not in ("pass", "cannot-validate") for r in summary.records)
     top = ", ".join(f"{k} {v}" for k, v in reasons.most_common(8)) or "none"
     # A directive-mismatch record still ran its configuration; when that run stopped early,
     # the configuration was not validated either, and must not drop out of the count.
@@ -305,6 +328,8 @@ def write_report(summary, out_dir: Path, header: dict, classes=None):
              f"- directive-mismatch configurations also not validated: {sum(dm.values())} ({dm_top})",
              *(f"- {k}: {v}" for k, v in sorted(counts.items())),
              f"- inputs without conditional directives: {summary.no_directives}",
+             f"- stale classifications: {len(summary.stale)}",
+             *(f"  - `{x}`" for x in summary.stale),
              f"- elapsed: {summary.elapsed_s:.1f}s",
              f"- peak RSS (max over processes): {summary.peak_rss_bytes / 2**20:.0f} MiB",
              f"- exit code: {summary.exit_code}"]

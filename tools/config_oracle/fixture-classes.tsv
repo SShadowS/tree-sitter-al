@@ -1,3 +1,8 @@
-# case_id<TAB>config_id or *<TAB>expected status<TAB>reason
-# Only deliberate negatives belong here. Milestone 1 starts empty; entries are
-# added one at a time, each with the reason the case is expected not to pass.
+# case_id<TAB>config_id or *<TAB>cannot-validate:<reason prefix><TAB>reason
+# Only deliberate negatives belong here, and only cannot-validate records can be
+# classified: the quick tier has NO baseline, so a discrepancy always fails.
+# case_id is file#<case name>#<ordinal among same-named cases in that file>
+# (`%`, `#`, `|`, tab in the name are %-escaped). The reason prefix must match the
+# record's first item on whole `:` segments (e.g. cannot-validate:reference-error).
+# `*` expands to every predicted configuration of the case. An entry (or `*`
+# expansion) that matches no record is STALE and fails the run with exit 1.

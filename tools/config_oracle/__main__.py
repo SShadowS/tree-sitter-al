@@ -73,7 +73,7 @@ def _run(args):
             inputs += [(str(p), p.read_bytes()) for p in sorted(root.rglob("*.al"))]
         mode = "resolve"
     summary = runner.run(inputs, None, args.workers, mode, classes)
-    runner.write_report(summary, Path(args.report), header, classes)
+    runner.write_report(summary, Path(args.report), header)
     print((Path(args.report) / "summary.md").read_text(encoding="utf-8"))
     return summary.exit_code
 

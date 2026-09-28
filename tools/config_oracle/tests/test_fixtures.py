@@ -1,3 +1,4 @@
+import pytest
 from collections import Counter
 from pathlib import Path
 
@@ -21,7 +22,7 @@ def test_source_is_the_input_block(tmp_path):
     # line before the divider survives as a single embedded "\n".
     assert case.source == b"line1\nline2\n"
     assert case.offset == 17  # byte right after "=====\nName\n=====\n"
-    assert case.id == "a.txt#0"
+    assert case.id == "a.txt#Name#0"
 
 
 def test_source_with_no_blank_line_before_divider_has_no_trailing_newline(tmp_path):
@@ -32,7 +33,7 @@ def test_source_with_no_blank_line_before_divider_has_no_trailing_newline(tmp_pa
     [case] = fixtures.extract(tmp_path)
     assert case.source == b"abc"
     assert case.offset == 18  # byte right after "=====\nName2\n=====\n"
-    assert case.id == "b.txt#0"
+    assert case.id == "b.txt#Name2#0"
 
 
 def test_classes_file_parses():
@@ -158,3 +159,44 @@ tight body no blank line
 
     [tight_case] = [c for c in cases if c.name == "No blank line before divider"]
     assert tight_case.source == b"tight body no blank line"
+
+
+# ---- final review, finding 3: case ids do not shift when a case is inserted ----
+
+def _corpus(tmp_path, *names):
+    eq, dash = "=" * 10, "-" * 10
+    (tmp_path / "c.txt").write_text("".join(f"{eq}\n{n}\n{eq}\nx;\n{dash}\n\n(t)\n\n" for n in names))
+    return [c.id for c in fixtures.extract(tmp_path)]
+
+
+def test_case_id_is_name_and_ordinal_among_same_named_cases(tmp_path):
+    assert _corpus(tmp_path, "A", "B", "A") == ["c.txt#A#0", "c.txt#B#0", "c.txt#A#1"]
+
+
+def test_inserting_a_case_does_not_shift_later_ids(tmp_path):
+    before = _corpus(tmp_path, "A", "B")
+    after = _corpus(tmp_path, "New", "A", "B")
+    assert after[1:] == before
+
+
+def test_case_id_escapes_separators(tmp_path):
+    assert _corpus(tmp_path, "a#b|c%d") == ["c.txt#a%23b%7Cc%25d#0"]
+
+
+def _classes(tmp_path, line):
+    p = tmp_path / "classes.tsv"
+    p.write_text("# header\n" + line + "\n", encoding="utf-8")
+    return fixtures.load_classes(p)
+
+
+def test_classes_require_a_cannot_validate_reason_prefix(tmp_path):
+    ok = _classes(tmp_path, "c.txt#A#0\t*\tcannot-validate:reference-error\tdeliberate negative")
+    assert ok == {("c.txt#A#0", "*"): ("cannot-validate:reference-error", "deliberate negative")}
+    for bad in ("discrepancy", "cannot-validate", "cannot-validate:", "pass:x", "representation-violation:x"):
+        with pytest.raises(ValueError):
+            _classes(tmp_path, f"c.txt#A#0\t*\t{bad}\treason")
+
+
+def test_classes_require_a_reason(tmp_path):
+    with pytest.raises(ValueError):
+        _classes(tmp_path, "c.txt#A#0\t*\tcannot-validate:resolver\t ")

@@ -38,17 +38,22 @@ _EQ = re.compile(rb"^={3,}\r?$")
 _DASH = re.compile(rb"^-{3,}\r?$")
 
 
+def _esc(name: str) -> str:
+    """`%`, `#`, `|` and tab would collide with the id, discrepancy-id and TSV separators."""
+    return name.replace("%", "%25").replace("#", "%23").replace("|", "%7C").replace("\t", "%09")
+
+
 @dataclass(frozen=True)
 class Case:
     file: str
     name: str
-    index: int
+    ordinal: int  # among the cases of THIS name in this file: inserting a case shifts no other id
     source: bytes
     offset: int  # byte offset in the file where `source` (pre-strip) begins
 
     @property
     def id(self):
-        return f"{self.file}#{self.index}"
+        return f"{self.file}#{_esc(self.name)}#{self.ordinal}"
 
 
 def _is_skip_line(line: bytes) -> bool:
@@ -127,7 +132,7 @@ def extract(root: Path) -> list:
         data = path.read_bytes()
         lines, offsets = _line_offsets(data)
         headers = _headers(lines)
-        index = 0
+        seen = {}
         for k, (name, skip, open_idx, close_idx) in enumerate(headers):
             body_lo = close_idx + 1
             body_hi = headers[k + 1][2] if k + 1 < len(headers) else len(lines)
@@ -137,17 +142,25 @@ def extract(root: Path) -> list:
             start_off = offsets[body_lo] if body_lo < len(offsets) else len(data)
             end_off = offsets[div_idx]
             source = _strip_trailing_newline(data[start_off:end_off])
-            out.append(Case(rel, name, index, source, start_off))
-            index += 1
+            out.append(Case(rel, name, seen.get(name, 0), source, start_off))
+            seen[name] = seen.get(name, 0) + 1
     return out
 
 
 def load_classes(path: Path) -> dict:
+    """Deliberate negatives only. `expected` is `cannot-validate:<reason prefix>`: nothing
+    else can be classified (the quick tier has no baseline), and a bare status would excuse
+    any failure of that status. The runner reports an entry that matches no record as stale."""
     classes = {}
     for line in path.read_text(encoding="utf-8").splitlines():
         if not line.strip() or line.startswith("#"):
             continue
         case_id, config, expected, reason = line.split("\t")
+        status, _, prefix = expected.partition(":")
+        if status != "cannot-validate" or not prefix:
+            raise ValueError(f"classification must be cannot-validate:<reason>: {case_id} {config} {expected}")
+        if not reason.strip():
+            raise ValueError(f"classification without a reason: {case_id} {config}")
         if (case_id, config) in classes:
             raise ValueError(f"duplicate classification: {case_id} {config}")
         classes[(case_id, config)] = (expected, reason)

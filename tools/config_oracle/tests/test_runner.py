@@ -103,9 +103,9 @@ def test_single_dash_record_does_not_excuse_predicted_configurations(monkeypatch
 
 
 def test_classified_record_does_not_fail_the_run():
-    classes = {("bad", "*"): ("cannot-validate", "deliberately unterminated")}
+    classes = {("bad", "*"): ("cannot-validate:resolver", "deliberately unterminated")}
     s = runner.run([("bad", BAD), ("ok", STMT)], None, workers=1, mode="full", classes=classes)
-    assert s.exit_code == 0 and s.classified == 2
+    assert s.exit_code == 0 and s.classified == 2 and s.stale == []
 
 
 def test_classification_with_a_different_status_does_not_count():
@@ -210,7 +210,7 @@ def test_representation_violation_is_never_hidden_by_cannot_validate(monkeypatch
 
 def test_representation_violation_is_never_classified(monkeypatch):
     _rep_violation(monkeypatch)
-    classes = {("stmt", "*"): ("cannot-validate", "x"), ("stmt", "A=0"): ("representation-violation", "x")}
+    classes = {("stmt", "*"): ("cannot-validate:lowering", "x")}
     s = runner.run([("stmt", STMT)], None, workers=1, mode="full", classes=classes)
     assert s.classified == 0 and s.exit_code == 1
 
@@ -272,3 +272,63 @@ def test_lone_stray_conditional_is_an_input_not_no_directives(stray):
     assert s.no_directives == 0 and s.records
     assert {r.status for r in s.records} == {"cannot-validate"}
     assert all(r.items[0].startswith("resolver:") for r in s.records)
+
+
+# ---- final review, finding 3: fixture-classes.tsv is not a baseline ----
+
+def _disc(monkeypatch):
+    from tools.config_oracle.compare import Discrepancy
+    monkeypatch.setattr(runner.compare, "structure", lambda ref, low: [Discrepancy("structure", "missing", "p", "y")])
+
+
+def test_a_discrepancy_can_never_be_classified(monkeypatch):
+    _disc(monkeypatch)
+    classes = {("stmt", "A=0"): ("discrepancy", "x"), ("stmt", "A=1"): ("cannot-validate:resolver", "x")}
+    s = runner.run([("stmt", STMT)], None, workers=1, mode="full", classes=classes)
+    assert s.classified == 0 and s.exit_code == 1
+    assert len(s.stale) == 2
+
+
+def test_classification_must_match_the_reason_prefix():
+    classes = {("bad", "*"): ("cannot-validate:reference-error", "wrong reason")}
+    s = runner.run([("bad", BAD), ("ok", STMT)], None, workers=1, mode="full", classes=classes)
+    assert s.classified == 0 and s.exit_code == 1 and len(s.stale) == 2
+
+
+def test_a_reason_prefix_matches_whole_segments_only():
+    classes = {("bad", "*"): ("cannot-validate:resol", "partial word")}
+    s = runner.run([("bad", BAD), ("ok", STMT)], None, workers=1, mode="full", classes=classes)
+    assert s.classified == 0 and s.exit_code == 1
+
+
+def test_status_only_classification_matches_nothing():
+    classes = {("bad", "*"): ("cannot-validate", "no reason prefix")}
+    s = runner.run([("bad", BAD), ("ok", STMT)], None, workers=1, mode="full", classes=classes)
+    assert s.classified == 0 and s.exit_code == 1
+
+
+def test_wildcard_expands_to_every_predicted_configuration():
+    # Both configurations of BAD fail to resolve, so `*` classifies both, and only both.
+    classes = {("bad", "*"): ("cannot-validate:resolver:unbalanced-if", "x")}
+    s = runner.run([("bad", BAD), ("ok", STMT)], None, workers=1, mode="full", classes=classes)
+    assert s.classified == 2 and s.stale == [] and s.exit_code == 0
+    # ...and against a case that passes, each expanded configuration is stale on its own.
+    s = runner.run([("bad", BAD), ("ok", STMT)], None, workers=1, mode="full",
+                   classes={("ok", "*"): ("cannot-validate:resolver", "x")})
+    assert sorted(x.split("\t")[1] for x in s.stale) == ["A=0", "A=1"] and s.exit_code == 1
+
+
+def test_classification_of_an_unknown_case_or_configuration_is_stale(tmp_path):
+    classes = {("gone", "*"): ("cannot-validate:resolver", "renamed case"),
+               ("ok", "A=7"): ("cannot-validate:resolver", "no such configuration")}
+    s = runner.run([("ok", STMT)], None, workers=1, mode="full", classes=classes)
+    assert s.exit_code == 1 and len(s.stale) == 2
+    runner.write_report(s, tmp_path, {})
+    text = (tmp_path / "summary.md").read_text()
+    assert "stale classifications: 2" in text and "gone\t*" in text and "ok\tA=7" in text
+
+
+def test_explicit_and_wildcard_classification_of_one_configuration_is_rejected():
+    classes = {("bad", "*"): ("cannot-validate:resolver", "x"), ("bad", "A=0"): ("cannot-validate:resolver", "y")}
+    with pytest.raises(ValueError):
+        runner.run([("bad", BAD)], None, workers=1, mode="full", classes=classes)
