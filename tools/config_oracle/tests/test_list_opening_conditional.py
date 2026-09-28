@@ -69,3 +69,10 @@ def test_single_member_without_unwrap_is_caught(al_parser, monkeypatch):
     monkeypatch.setattr(engine, "OPTION_MEMBER_BARE_KINDS", frozenset())
     v = witness.verdicts(al_parser, OPTION_OPENING["one-after"])
     assert v["X=0"][0] == "discrepancy" and v["X=1"][0] == "pass", v
+
+
+def test_single_member_unwrap_is_recorded_only_where_it_fires(al_parser):
+    v = witness.verdicts(al_parser, OPTION_OPENING["one-after"])
+    unwrap = lambda items: [i for i in items if i.startswith("normalised:option-member-list-unwrap@")]
+    assert v["X=0"][0] == "pass" and len(unwrap(v["X=0"][1])) == 1, v
+    assert v["X=1"][0] == "pass" and not unwrap(v["X=1"][1]), v

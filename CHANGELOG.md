@@ -49,7 +49,9 @@ public API — a change to node structure or field names is a **major** bump.
   ```
 
   A member must follow the `#endif`; with only the `;` after it the `#if` is a
-  whole value, as before. 0 production sites (tree-harness byte-identical on
+  whole value, as before. An opening `#if` whose arms lack the trailing comma
+  (`#if X A #else B #endif C;`, invalid AL) is now also accepted as a list:
+  the parser records structure and does not validate. 0 production sites (tree-harness byte-identical on
   BC.History and BC 28.5). Parser states 15,682 -> 15,750 (+68), eight
   conflicts added. The configuration oracle gains the named rewrite
   option-member-list-unwrap: a configuration left with one member parses flat

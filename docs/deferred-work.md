@@ -52,6 +52,11 @@ so a `#if` at the separator is an `ERROR` here while `alc` accepts the file:
 - `parameter_list` (the `;`-led form)
 - `implements_clause`
 - `option_member_list`, **comma-leading** shape (see item 2)
+- `link_value_list`, **comma-leading** shape. Reproducer:
+  `SubPageLink = B = field(A) #if X , D = field(C) #endif , F = field(E);`
+  (each directive on its own line). It ERRORs at `3c6ca40` (pre-G8), `a9a170d`
+  and after G11 (`5f3f6b9`); alc accepts it in all four configurations (G11
+  review probe, 2026-09-28). Cause not traced.
 - key field list
 - `ml_value_list`
 

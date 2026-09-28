@@ -56,6 +56,16 @@ def branch_select(node, ctx) -> Lowered:
     built, it must read `item (, item)*`, ignoring bracket tokens (`(`, `)`, `[`,
     `]`) wherever they appear and one trailing `;` (`engine._check_alternation`).
     Anything else is `list-separator`.
+
+    One more named rewrite belongs to the list-run of
+    `preproc_conditional_option_members`: **option-member-list-unwrap** (G11).
+    A #if may open an option-member list (`OptionMembers = #if X A, #endif B;`),
+    so a configuration can leave the host `option_member_list` (field `value`)
+    with ONE bare member, which flat `OptionMembers = B;` parses as the bare
+    leaf, not a list. The host list is then replaced by that leaf, which takes
+    the list's field. It is applied by engine._lower_ordinary once the host is
+    built (conditions and kind set: engine.OPTION_MEMBER_BARE_KINDS) and
+    recorded in `ctx.normalised`.
     """
     entry = contracts.REGISTRY[node.kind]
     policy = ctx.policy(entry, node)

@@ -174,6 +174,11 @@ Because of masking, both sides are already in original-file coordinates.
 
 The only allowed normalisation is hand-listed and minimal. **A content-only container that is empty after lowering is removed.** Examples are `statement_block`, `declaration_body` and `var_body`, which the grammar wraps in `optional(field(...))`, so the single-configuration tree has no node where lowering would leave an empty shell. Each listed type cites its rule. Nothing else is normalised: no flattening, re-sorting or merging.
 
+*Amendment, 2026-09-28 (G5, G11).* Two **named edge rewrites** also change the lowered tree. They are not general normalisations: each belongs to one contract, fires only under the conditions below, and is recorded in `ctx.normalised` (so it reaches the record items as `normalised:<name>@<offset>`). See §3.
+
+- **`property-expression-unwrap`** (contract expression-continuation, `assemblers.expression_tail` / `engine.ExpressionContinuation`). It fires when a `property_expression` that held a `preproc_conditional_expression_tail` lowers to one child that is not one of `property_expression`'s member kinds (`engine.PROPERTY_EXPRESSION_KINDS`), i.e. the configuration's tail is inactive and the prefix is simple. That child replaces the wrapper and takes its field, because flat `MinValue = 1;` has no wrapper.
+- **`option-member-list-unwrap`** (the list-run of `preproc_conditional_option_members`, `select.branch_select`, applied in `engine._lower_ordinary`). It fires when an `option_member_list` in field `value` that held a `preproc_conditional_option_members` lowers to exactly one `option_member` whose only child is a bare value leaf (`engine.OPTION_MEMBER_BARE_KINDS`), i.e. a `#if` that opens the list leaves one member in this configuration. That leaf replaces the list and takes its field, because flat `OptionMembers = B;` is not a list.
+
 Removing empty containers cannot hide a handler that wrongly empties one *(gemini)*. A container can only become empty if its content was dropped, and dropped active content fails the byte-coverage check below, regardless of whether a contract covers the type. Each removal is also recorded in the report with the accounting reason that emptied it (`inactive-arm` or `directive`), so a removal with any other cause is an error.
 
 ### Checks (`compare.py`), per (file, configuration)
@@ -266,6 +271,8 @@ Each `preproc_conditional_*` entry is checked against its rule in `grammar.js` b
 Assemblers are ordinary Python functions. Fragment dataclasses (`RoutineTail`, `CaseCompletion`, `BlockCompletion`, `ExpressionContinuation`, …) are introduced only when a real consumer needs one.
 
 Every contract that may rewrite a parent/field edge **names** the rewrite, for example `split-case-end`: *`following` statements become siblings of the reconstructed `case_statement`.* Any edge change not named by the running contract is an error.
+
+*Amendment, 2026-09-28.* The named rewrites in force include, besides the per-contract ones such as `split-case-end` and `terminator-hoist`, the two unwraps listed under §2 "Allowed normalisation": `property-expression-unwrap` (named by the expression-continuation contract) and `option-member-list-unwrap` (named by the `preproc_conditional_option_members` list-run). Each replaces one wrapper node by its single child under stated conditions, and each is recorded in `ctx.normalised`.
 
 Expression continuation (`preproc_conditional_expression_tail`, `preproc_operand_prefix`) needs composition that respects precedence. The assembler composes the fragments the tree recorded. The tree already labels them: `_expression_continuation` carries `operator` and `operand` fields. It **never reparses the selected source**.
 
