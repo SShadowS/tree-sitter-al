@@ -1,0 +1,116 @@
+================================================================================
+A #if branch closes a layout group and opens a sibling group
+================================================================================
+table 50100 T
+{
+    fields
+    {
+        field(1; A; Integer) { }
+        field(2; B; Integer) { }
+        field(3; C; Integer) { }
+    }
+}
+
+page 50100 P
+{
+    SourceTable = T;
+    layout
+    {
+        area(Content)
+        {
+            group(G)
+            {
+                field(A; Rec.A) { }
+#if not C28
+            }
+            group(R)
+            {
+                Caption = 'R';
+                field(B; Rec.B) { }
+#endif
+                field(C; Rec.C) { }
+            }
+        }
+    }
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (table_declaration
+    (table_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (fields_section
+        (fields_keyword)
+        body: (fields_body
+          (field_declaration
+            (field_keyword)
+            id: (integer)
+            name: (identifier)
+            type: (type_specification
+              (basic_type)))
+          (field_declaration
+            (field_keyword)
+            id: (integer)
+            name: (identifier)
+            type: (type_specification
+              (basic_type)))
+          (field_declaration
+            (field_keyword)
+            id: (integer)
+            name: (identifier)
+            type: (type_specification
+              (basic_type)))))))
+  (page_declaration
+    (page_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (property
+        name: (property_name)
+        value: (identifier))
+      (layout_section
+        (layout_keyword)
+        body: (layout_body
+          (area_section
+            (area_keyword)
+            type: (content_keyword)
+            body: (layout_body
+              (group_section
+                (group_keyword)
+                name: (identifier)
+                body: (layout_container_body
+                  (page_field
+                    (field_keyword)
+                    name: (identifier)
+                    source: (member_expression
+                      object: (identifier)
+                      member: (identifier))))
+                (preproc_split_container_reopen
+                  (preproc_if
+                    (preproc_open)
+                    condition: (preproc_not_expression
+                      (identifier)))
+                  (group_keyword)
+                  name: (identifier)
+                  body: (layout_container_body
+                    (property
+                      name: (property_name)
+                      value: (string_literal))
+                    (page_field
+                      (field_keyword)
+                      name: (identifier)
+                      source: (member_expression
+                        object: (identifier)
+                        member: (identifier))))
+                  (preproc_endif
+                    (preproc_close))
+                  body: (layout_container_body
+                    (page_field
+                      (field_keyword)
+                      name: (identifier)
+                      source: (member_expression
+                        object: (identifier)
+                        member: (identifier)))))))))))))

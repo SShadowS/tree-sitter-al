@@ -231,6 +231,9 @@ module.exports = grammar({
     // A bodiless key header before a directive: a complete key_declaration, or
     // the header half of a preproc_split_key. Only the `{` after #endif decides.
     [$.preproc_split_key, $.key_declaration],
+    // After container body items a `#if` continues the body, or opens
+    // preproc_split_container_reopen; the `}` after the condition decides.
+    [$.layout_container_body],
     [$.preproc_conditional_statement, $.preproc_conditional_case_patterns],
     [$.preproc_conditional_statement, $.preproc_split_case_branch, $.preproc_conditional_case_patterns],
     [$._open_branch, $.case_else_branch],
@@ -4615,7 +4618,30 @@ module.exports = grammar({
     _layout_container_body_block: $ => seq(
       '{',
       optional(field('body', $.layout_container_body)),
-      '}'
+      choice('}', $.preproc_split_container_reopen),
+    ),
+
+    // A branch that CLOSES the container and opens a sibling one, whose body
+    // continues after #endif (BankAccountCard.Page.al:387, FR layer, BC 29;
+    // alc accepts both configs):
+    //   group(G) { field(A)
+    //   #if not CLEAN28
+    //   } group(R) { Caption = 'R'; field(B)
+    //   #endif
+    //   field(C) }
+    // The braces cross the #if, so no tree nests both readings. This is the #if
+    // reading: the node closes G and holds R's header and both halves of R's
+    // body, so field(C) belongs to R. Sibling of preproc_split_brace_close.
+    preproc_split_container_reopen: $ => seq(
+      $.preproc_if,
+      '}',
+      choice($.group_keyword, $.repeater_keyword, $.cuegroup_keyword, $.fixed_keyword, $.grid_keyword),
+      $._paren_name,
+      '{',
+      optional(field('body', $.layout_container_body)),
+      $.preproc_endif,
+      optional(field('body', $.layout_container_body)),
+      '}',
     ),
 
 

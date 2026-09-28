@@ -4485,11 +4485,15 @@
       }
     },
     "children": {
-      "multiple": false,
+      "multiple": true,
       "required": true,
       "types": [
         {
           "type": "cuegroup_keyword",
+          "named": true
+        },
+        {
+          "type": "preproc_split_container_reopen",
           "named": true
         }
       ]
@@ -6066,11 +6070,15 @@
       }
     },
     "children": {
-      "multiple": false,
+      "multiple": true,
       "required": true,
       "types": [
         {
           "type": "fixed_keyword",
+          "named": true
+        },
+        {
+          "type": "preproc_split_container_reopen",
           "named": true
         }
       ]
@@ -7041,11 +7049,15 @@
       }
     },
     "children": {
-      "multiple": false,
+      "multiple": true,
       "required": true,
       "types": [
         {
           "type": "grid_keyword",
+          "named": true
+        },
+        {
+          "type": "preproc_split_container_reopen",
           "named": true
         }
       ]
@@ -7086,11 +7098,15 @@
       }
     },
     "children": {
-      "multiple": false,
+      "multiple": true,
       "required": true,
       "types": [
         {
           "type": "group_keyword",
+          "named": true
+        },
+        {
+          "type": "preproc_split_container_reopen",
           "named": true
         }
       ]
@@ -17759,6 +17775,70 @@
     }
   },
   {
+    "type": "preproc_split_container_reopen",
+    "named": true,
+    "fields": {
+      "body": {
+        "multiple": true,
+        "required": false,
+        "types": [
+          {
+            "type": "layout_container_body",
+            "named": true
+          }
+        ]
+      },
+      "name": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "identifier",
+            "named": true
+          },
+          {
+            "type": "quoted_identifier",
+            "named": true
+          }
+        ]
+      }
+    },
+    "children": {
+      "multiple": true,
+      "required": true,
+      "types": [
+        {
+          "type": "cuegroup_keyword",
+          "named": true
+        },
+        {
+          "type": "fixed_keyword",
+          "named": true
+        },
+        {
+          "type": "grid_keyword",
+          "named": true
+        },
+        {
+          "type": "group_keyword",
+          "named": true
+        },
+        {
+          "type": "preproc_endif",
+          "named": true
+        },
+        {
+          "type": "preproc_if",
+          "named": true
+        },
+        {
+          "type": "repeater_keyword",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
     "type": "preproc_split_declaration",
     "named": true,
     "fields": {
@@ -24614,9 +24694,13 @@
       }
     },
     "children": {
-      "multiple": false,
+      "multiple": true,
       "required": true,
       "types": [
+        {
+          "type": "preproc_split_container_reopen",
+          "named": true
+        },
         {
           "type": "repeater_keyword",
           "named": true

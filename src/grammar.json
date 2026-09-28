@@ -16838,6 +16838,101 @@
           ]
         },
         {
+          "type": "CHOICE",
+          "members": [
+            {
+              "type": "STRING",
+              "value": "}"
+            },
+            {
+              "type": "SYMBOL",
+              "name": "preproc_split_container_reopen"
+            }
+          ]
+        }
+      ]
+    },
+    "preproc_split_container_reopen": {
+      "type": "SEQ",
+      "members": [
+        {
+          "type": "SYMBOL",
+          "name": "preproc_if"
+        },
+        {
+          "type": "STRING",
+          "value": "}"
+        },
+        {
+          "type": "CHOICE",
+          "members": [
+            {
+              "type": "SYMBOL",
+              "name": "group_keyword"
+            },
+            {
+              "type": "SYMBOL",
+              "name": "repeater_keyword"
+            },
+            {
+              "type": "SYMBOL",
+              "name": "cuegroup_keyword"
+            },
+            {
+              "type": "SYMBOL",
+              "name": "fixed_keyword"
+            },
+            {
+              "type": "SYMBOL",
+              "name": "grid_keyword"
+            }
+          ]
+        },
+        {
+          "type": "SYMBOL",
+          "name": "_paren_name"
+        },
+        {
+          "type": "STRING",
+          "value": "{"
+        },
+        {
+          "type": "CHOICE",
+          "members": [
+            {
+              "type": "FIELD",
+              "name": "body",
+              "content": {
+                "type": "SYMBOL",
+                "name": "layout_container_body"
+              }
+            },
+            {
+              "type": "BLANK"
+            }
+          ]
+        },
+        {
+          "type": "SYMBOL",
+          "name": "preproc_endif"
+        },
+        {
+          "type": "CHOICE",
+          "members": [
+            {
+              "type": "FIELD",
+              "name": "body",
+              "content": {
+                "type": "SYMBOL",
+                "name": "layout_container_body"
+              }
+            },
+            {
+              "type": "BLANK"
+            }
+          ]
+        },
+        {
           "type": "STRING",
           "value": "}"
         }
@@ -22487,6 +22582,9 @@
     [
       "preproc_split_key",
       "key_declaration"
+    ],
+    [
+      "layout_container_body"
     ],
     [
       "preproc_conditional_statement",
