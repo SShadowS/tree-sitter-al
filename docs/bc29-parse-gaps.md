@@ -1,11 +1,17 @@
 # BC 29 parse gaps (microsoft/BCApps releases/29.0)
 
-**Status:** families A, B, C, F and I RESOLVED (move* lists; move* in actions;
-nested `#if` among fields and keys; split routine body; split argument list and
-split Permissions head); E partly (split key and modify headers; EDocumentDE's
-nested open headers remain); D (field body opened in #if, closed after #endif)
-; G (branches ending in an open statement prefix, one general rule) — BCApps
-29.0 error files 33 -> 5. Remaining: E (EDocumentDE), H; J is invalid source. ProdOrderComponent.Table.al still fails, on H.
+**Status (2026-09-28):** BCApps 29.0 error files 33 -> 2. Families A, B, C, D,
+F, G, H and I are RESOLVED, and E is resolved except EDocumentDE. The two files
+that remain:
+- `Apps/DE/EDocumentDE/app/src/EDocumentServiceDE.PageExt.al` (E, nested open
+  layout headers). Deferred on measured cost, not shape: see
+  `docs/deferred-work.md` item 10.
+- `Layers/APAC/Tests/SINGLESERVER/ERMPurchaseReportsIII.Codeunit.al` (J). The
+  source is invalid, so this file is excluded.
+
+Every fix was verified four ways: an alc probe of each configuration, a fixture
+proved able to fail, tree-harness byte-identical over BC.History and BC28.5, and
+0 errors over DC and BC28.1.
 Corpus: `H:/Git/BCApps-29.0` (shallow clone of microsoft/BCApps
 `releases/29.0`, commit e16d6c30, 36,716 .al files, includes BaseApp layers).
 This analysis was produced by root-cause bisection of every failing file; the
@@ -167,7 +173,7 @@ table 50100 T { fields {
   analogue of `preproc_split_code_block_over_endif`. Medium effort. The fixture must pin that
   only one config is valid, and must not claim the other is.
 
-## E. Split section header with a shared body (3 files)
+## E. Split section header with a shared body (3 files) — RESOLVED except EDocumentDE (deferred-work item 10)
 
 Reproducers (all error):
 ```al
@@ -316,7 +322,7 @@ shape, and these are the neighbours:
   - Watch for GLR forks against `preproc_conditional_statement`. Build the fixture set first
     and run `tree-harness` verify. Med-Hard.
 
-## H. A branch closes an enclosing construct and reopens a sibling (2 files + ProdOrderComponent)
+## H. A branch closes an enclosing construct and reopens a sibling (2 files + ProdOrderComponent) — RESOLVED
 
 The text balances in both configs, but each branch has a different nesting, so no single
 tree is correct for both.

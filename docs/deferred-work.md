@@ -334,6 +334,45 @@ BC.History, DC or BC 28.1 uses `&&` or `||` (grep, 2026-09-28). Per "parse
 structure, don't validate" this may be kept on purpose; if so, say so here and
 close the item, otherwise remove the two string alternatives.
 
+## 10. Split `add*` headers whose bodies stay open over `#endif` (EDocumentDE)
+
+**Established:** by measurement on 2026-09-28, during the BC 29 family-E work
+(`docs/bc29-parse-gaps.md`). alc accepts both configurations.
+
+```al
+#if not CLEAN27
+    addafter(A) { group(X) { Caption = 'X';
+#else
+    addlast(B) { group(Y) { ShowCaption = false;
+#endif
+        field(F; Rec.F) { } } }
+```
+
+The one-level form fails too: `#if addafter(A) { #else addlast(B) { #endif … }`.
+The only file is `Apps/DE/EDocumentDE/app/src/EDocumentServiceDE.PageExt.al`.
+A `preproc_split_layout_open` rule parses it. Its cost against 14,630 states:
+
+| attempt | STATE_COUNT |
+|---|---|
+| depth 1, branch `add*(…) {` only | +835 |
+| depth 1, branch `add*(…) { <layout elements>` | +1,508 |
+| depth 1, branch body as the shared `layout_body` | +2,270 |
+| depths 1 and 2 (the real file) | `generate` still running after 600 s CPU; stopped |
+
+**Why it costs this much.** After `#if add*(…) {`, `preproc_conditional_layout`
+reads the same text as a complete `add*_modification`, until the `#else`. So
+two nonterminals share the whole layout-body prefix, and LR must copy that
+automaton for each. The same mechanism made the recursive `begin` arm of
+`preproc_split_open_statement` cost +2,540 (family G). There, a narrower arm
+solved it. Here no narrower arm exists: the headers and braces are the
+construct.
+
+**What would fix it cheaply.** The general answer to crossing constructs is a
+configuration-aware parse: parse each configuration and merge the trees. This
+is the same answer recorded for family H. The configuration-consistency oracle
+already resolves configurations, so its resolver is a starting point. This is
+an architecture change, not a rule, and it is not filed as a known limitation.
+
 ---
 
 ## Longer-lived proposals, tracked separately

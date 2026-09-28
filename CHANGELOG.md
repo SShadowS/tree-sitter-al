@@ -9,6 +9,40 @@ public API — a change to node structure or field names is a **major** bump.
 
 ### Fixed
 
+- **BC 29 (microsoft/BCApps `releases/29.0`, 36,716 files) now parses with 2
+  error files, down from 33.** One of the two is invalid source. None of the 33
+  was new BC 29 syntax: all were `#if` shapes the grammar had no host for. Each
+  fix was verified by `alc` in every configuration, and none changes a
+  BC.History or BC 28.5 tree (tree-harness byte-identical). The analysis is in
+  `docs/bc29-parse-gaps.md`.
+  - `move*` takes a list of controls and is legal in `actions`.
+  - An `#if` may nest directly among table fields and keys.
+  - A trigger takes the same tail as a procedure: split body, pragma-only
+    `#if` before `begin`. A split body's `#else` branch may hold statements.
+  - An `#if` may sit at an argument separator, on either side of the comma
+    (new `preproc_conditional_arguments`; deferred-work item 1). A
+    `Permissions =` head may repeat per branch
+    (`preproc_split_permissions_property`).
+  - New split-header rules with a shared body: `preproc_split_key` and
+    `preproc_split_modify`.
+  - A table field body may open inside `#if` and close after `#endif`
+    (`preproc_split_table_field_open`). Only the `#if` reading compiles.
+  - One general rule for branches that end in an open statement prefix:
+    `if … then`, `if … else`, `else`, `else begin`
+    (`preproc_split_open_statement`, field `continuation`).
+  - Crossings: a layout container closed and a sibling opened
+    (`preproc_split_container_reopen`); several blocks closed and an
+    `if … then begin` chain reopened
+    (`preproc_split_else_begin_over_endif`, widened); a procedure boundary
+    inside `#else` (`preproc_split_block_end_in_else`,
+    `preproc_split_block_close_after_endif`).
+
+  Unresolved: `EDocumentServiceDE.PageExt.al`. The fix is deferred because of
+  its measured state cost; see `docs/deferred-work.md` item 10.
+
+  `node-types.json` gains the new node types listed above. No existing node
+  loses a child type or a field.
+
 - **A `#if` after a global `var` section no longer lands inside it.** `var_body`
   admitted `preproc_split_procedure`, and `preproc_conditional_var` admitted any
   body element, so a conditional procedure right after a global var section was
@@ -45,7 +79,10 @@ public API — a change to node structure or field names is a **major** bump.
 
 - STATE_COUNT 15,321 → 14,661 (−4.3%), `parser.c` 36.45 → 35.10 MB, by
   factoring shared units out of the preprocessor split rules. Tree-identical
-  over all 15,358 BC.History files.
+  over all 15,358 BC.History files. The BC 29 fixes above then raised
+  STATE_COUNT to 15,358. The largest costs are the procedure boundary (+412),
+  the reopen chain (+316) and `preproc_split_open_statement` (+350). Each is
+  recorded with its measurement in the commit that added it.
 
 ## [4.3.0] — 2026-09-09
 
