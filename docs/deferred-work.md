@@ -373,6 +373,34 @@ is the same answer recorded for family H. The configuration-consistency oracle
 already resolves configurations, so its resolver is a starting point. This is
 an architecture change, not a rule, and it is not filed as a known limitation.
 
+## 11. A one-pair ML value parses as a comparison (G9)
+
+**Established:** 2026-09-28, config-oracle milestone 2 Task 18, while fixing G8.
+alc accepts `CaptionML = ENU='c';` (probe: a table with that property compiles;
+`CaptionML = ENU=;` is rejected with AL0219).
+
+```al
+CaptionML = ENU='c';            // (property_expression (comparison_expression ...))
+CaptionML = ENU='a', DAN='b';   // (ml_value_list (ml_value_pair ...) (ml_value_pair ...))
+```
+
+With one pair, `ENU='c'` is also a complete expression, and the flat parse takes
+`property_expression`. Nothing in the value tells the two apart: `Visible = A = 'b';`
+really is a comparison. Only the property NAME does, which makes this the
+`CalcFormula` situation (CLAUDE.md: the one property keyed by name, "do not
+generalise this"). A fix is therefore a design decision, not a rule: key the ML
+properties (`CaptionML`, `ToolTipML`, `OptionCaptionML`, ... every name ending in
+`ML`) by name in the scanner, as `CALC_FORMULA_PROPERTY_NAME` does, or accept the
+expression reading.
+
+Production impact: zero. ML properties occur in 6 files over BC.History, DC,
+BC 28.1 and BCApps 29.0 (`grep -rlE '^\s*\w+ML\s*='`), and every one has two or more
+pairs. The config oracle sees it in exactly one shape: a whole-value `#if` whose
+arm is a one-pair ML value with the `;` after `#endif` (the arm is `ml_value_list`
+before the directive, the flat parse is a comparison before `;`). That shape is a
+strict xfail, `test_single_pair_ml_arm_before_endif` in
+`tools/config_oracle/tests/test_table_relation.py`.
+
 ---
 
 ## Longer-lived proposals, tracked separately

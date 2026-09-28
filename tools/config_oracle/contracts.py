@@ -428,9 +428,9 @@ register("preproc_split_block_close_after_endif", "assembler", _ASM + "block_clo
 # --- Task 8: table relation, contract else-relation-join (assemblers.table_relation_select).
 # Hosts are the census output. Two grammar rules build this node type:
 #  * property:value -- _table_relation_whole_conditional (the whole value is the
-#    #if): each arm is identifier | quoted_identifier | table_relation_value (G2)
-#    or a literal leaf (G4), the shape a flat parse of the arm gives, then an
-#    optional ';'.
+#    #if): each arm is one `_property_value` (G8; before it, identifier |
+#    quoted_identifier | table_relation_value (G2) or a literal leaf (G4)), the
+#    shape a flat parse of the arm gives, then an optional ';'.
 #  * table_relation_value:<children> -- preproc_conditional_table_relation after
 #    the relation it continues (G1): arm _tr_branch, i.e. table_relation_expression
 #    | else_table_relation_fragment, then an optional ';'.
@@ -451,7 +451,16 @@ register("preproc_conditional_table_relation", "assembler",
               "table_relation_expression", "else_table_relation_fragment", ";",
               "boolean", "integer", "decimal", "string_literal", "verbatim_string",
               "date_literal", "time_literal", "datetime_literal",
-              "preproc_conditional_table_relation"})
+              "preproc_conditional_table_relation",
+              # G8 (Task 18): a whole-value arm is `_property_value` itself, so
+              # every compound value it offers (grammar.js _property_value) is an
+              # arm kind too. The table_relation_value:<children> host's arms
+              # (_tr_branch) never produce these.
+              "caption_value", "ml_value_list", "tabledata_permission_list",
+              "order_by_list", "implementation_value_list", "option_member_list",
+              "sorting_value", "link_value_list", "property_expression",
+              "keyword_identifier", "where_clause", "object_reference_value",
+              "decimal_range_value", "signed_integer_list"})
 # Non-prefixed special type: completes an earlier table relation (spec section 3).
 # Consumed by table_relation_select as a RelationContinuation; never lowered directly.
 register("else_table_relation_fragment", "fragment", None,

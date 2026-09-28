@@ -331,7 +331,7 @@ module.exports = grammar({
     // The four-way [link_values, permissions, impl_values, table_relation]
     // conflict went the same way when the G3 two-way
     // [preproc_conditional_table_relation, _table_relation_whole_conditional]
-    // was declared below.
+    // was declared (itself gone since G8, see below).
     //
     // A TableRelation whose whole value is a #if (see table_relation_property)
     // is one more reading of an empty or directive-only branch.
@@ -342,13 +342,19 @@ module.exports = grammar({
     // the property name that would disambiguate is long past.
     [$._link_value_branch, $._permission_branch, $._impl_value_branch],
     [$.preproc_conditional_permissions, $._table_relation_whole_conditional],
-    // A #if nested in a whole-value arm (G3): both a nested whole value and
-    // table_relation_value -> preproc_conditional_table_relation read it.
-    [$.preproc_conditional_table_relation, $._table_relation_whole_conditional],
-    // ... and, with that arm's optional `;`, an empty nested #if before `;` is
-    // also an empty permission conditional. This three-way subsumes the former
-    // [preproc_conditional_permissions, preproc_conditional_table_relation].
-    [$.preproc_conditional_table_relation, $._table_relation_whole_conditional, $.preproc_conditional_permissions],
+    // A whole-value arm is one _property_value (G8), so a list arm ending in a
+    // directive (`A, B #else`) is also a link, permission or implementation
+    // branch until the directive, and a permission/implementation list arm is
+    // also that conditional's branch. Generator-required, all seven. They
+    // subsume the two G3 entries that stood here, which tree-sitter now
+    // reports as unnecessary.
+    [$._permission_branch, $.option_member_list],
+    [$._link_value_branch, $._permission_branch, $._impl_value_branch, $.option_member_list],
+    [$._link_value_branch, $._permission_branch, $.option_member_list],
+    [$._link_value_branch, $.option_member_list],
+    [$._link_value_branch, $._impl_value_branch, $.option_member_list],
+    [$.tabledata_permission_list, $._permission_branch],
+    [$.implementation_value_list, $._impl_value_branch],
     [$._namespaced_ref_table, $._literal_value],
     [$.preproc_conditional_link_values, $.preproc_conditional_permissions, $.preproc_conditional_impl_values],
     [$.preproc_conditional_link_values, $.preproc_conditional_impl_values],
@@ -840,40 +846,18 @@ module.exports = grammar({
       optional(seq($.preproc_else, optional($._table_relation_whole_branch))),
       $.preproc_endif,
     ),
-    // prec(1): a bare name is also a one-part simple_table_relation. Where both
-    // readings end (`;` or the next directive) the flat property path gives
-    // the leaf, so the leaf wins here too. Before `.` or `where` there is no
-    // conflict and table_relation_value takes it, as it does flat.
-    //
-    // Not only names (grammar finding G4): any property's whole value may be a
-    // #if, so an arm is also a literal, the leaf a flat parse of that arm
-    // gives. Before, `Caption = #if X 'a'; #else 'b'; #endif` and the boolean
-    // form ERRORed, and `MinValue = #if X 1; ...` gave each arm
-    // table_relation_value(simple_table_relation table: (integer)).
-    _table_relation_whole_branch: $ => choice(
-      prec(1, seq(choice(
-        $.identifier,
-        $.quoted_identifier,
-        alias($._value_start_keyword_name, $.identifier),
-        $.boolean,
-        $.integer,
-        $.decimal,
-        alias($._negative_integer, $.integer),
-        alias($._negative_decimal, $.decimal),
-        $.string_literal,
-        $.verbatim_string,
-        $.date_literal,
-        $.time_literal,
-        $.datetime_literal,
-      ), optional(';'))),
-      seq($.table_relation_value, optional(';')),
-      // A #if nested in an arm is itself a whole value, so its arms are flat
-      // shapes too (grammar finding G3). It used to reach table_relation_value
-      // -> preproc_conditional_table_relation, whose arms are
-      // table_relation_expression.
-      // Like its siblings it takes an optional `;`: the inner `;` may follow its #endif.
-      seq(alias($._table_relation_whole_conditional, $.preproc_conditional_table_relation), optional(';')),
-    ),
+    // An arm is ONE property value, the same `_property_value` a flat parse of
+    // that arm uses, then an optional `;` (grammar finding G8). Before, the arm
+    // listed its kinds by hand -- names and table relations (G2), literal
+    // leaves (G4), a nested whole value (G3) -- and every other value ERRORed:
+    // `OptionMembers = #if X A,B; #else C; #endif`, a Caption with `, Locked =
+    // true`, ML lists, object references, expressions, where/sorting, links,
+    // OrderBy, Implementation. Reusing the flat rule is what makes the arm's
+    // shape the flat shape: `A` stays an identifier and `A.B` a
+    // table_relation_value because the flat path already decides that, and a
+    // nested #if is _property_value's own whole-value alternative. +85 states
+    // and the seven conflicts documented at the conflicts list.
+    _table_relation_whole_branch: $ => seq($._property_value, optional(';')),
 
     // The value of a table_relation_property whose `;` sits inside a #if arm
     // later in the chain. Aliased to table_relation_value so it has the shape a
@@ -969,10 +953,13 @@ module.exports = grammar({
     )),
 
     // Signed integer list: -1, 0, 1, 2 (used by OptionOrdinalValues)
-    signed_integer_list: $ => prec.left(5, seq(
+    // prec.dynamic(1): in a whole-value arm ending at a directive (G8),
+    // `-1, 0 #else` is also an option_member_list until the directive; flat,
+    // the `;` settles it for signed_integer_list, and so must the arm.
+    signed_integer_list: $ => prec.dynamic(1, prec.left(5, seq(
       $._signed_integer,
       repeat1(seq(',', $._signed_integer))
-    )),
+    ))),
 
     _signed_integer: $ => choice(
       $.integer,

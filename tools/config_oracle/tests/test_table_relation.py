@@ -140,3 +140,34 @@ def test_g3_nested_semicolon_after_endif_every_config(al_parser, src):
     v = witness.verdicts(al_parser, src)
     assert len(v) == 4, v
     witness.assert_all_pass(al_parser, src)
+
+
+# G8 (Task 18): a whole-value arm is any property value. Each shape in both `;`
+# placements (inside every arm, and once after #endif), both configurations.
+def _whole(name, a, b, semi_inside):
+    arm = (f"        {a};\n#else\n        {b};\n#endif\n" if semi_inside
+           else f"        {a}\n#else\n        {b}\n#endif\n    ;\n")
+    return f"page 50100 P\n{{\n    {name} =\n#if X\n{arm}}}\n".encode()
+
+
+G8_SHAPES = [("OptionMembers", "A,B", "C"), ("Caption", "'a', Comment = 'x'", "'b', Locked = true"),
+             ("OptionOrdinalValues", "-1, 0", "1"), ("RunObject", "Page A", "Page B"),
+             ("Visible", "A and B", "not C"), ("DecimalPlaces", "0 : 5", "2"),
+             ("SourceTableView", "where(A = const(1))", "sorting(B)"),
+             ("RunPageLink", "A = field(B)", "C = const(1)"), ("OrderBy", "ascending(A)", "descending(B)"),
+             ("Image", "Order", "Page"), ("Implementation", "I = J", "I = K"),
+             ("CaptionML", "ENU='a', DAN='b'", "ENU='c', DAN='d'")]
+
+
+@pytest.mark.parametrize("semi_inside", [True, False])
+@pytest.mark.parametrize("name,a,b", G8_SHAPES)
+def test_whole_value_arm_is_any_property_value(al_parser, name, a, b, semi_inside):
+    src = _whole(name, a, b, semi_inside)
+    witness.assert_produces(al_parser, src, "preproc_conditional_table_relation")
+    witness.assert_all_pass(al_parser, src)
+
+
+@pytest.mark.xfail(strict=True, reason="G9: flat `CaptionML = ENU='c';` is property_expression(comparison), "
+                                       "the arm before #endif is ml_value_list (docs/deferred-work.md item 11)")
+def test_single_pair_ml_arm_before_endif(al_parser):
+    witness.assert_all_pass(al_parser, _whole("CaptionML", "ENU='a', DAN='b'", "ENU='c'", False))

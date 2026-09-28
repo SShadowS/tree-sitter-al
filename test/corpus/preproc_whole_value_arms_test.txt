@@ -1,0 +1,255 @@
+; A property's whole value may be a #if whose arms are ANY property value
+; (grammar finding G8). Each arm is `_property_value`, the rule the flat parse
+; of that arm uses, so each arm has the flat shape. These forms ERRORed before.
+; alc four-way (symbol defined/undefined, split/flat) ACCEPTs both files, the
+; page one with a source table, the Show variable and pages A and B added.
+
+================================================================================
+Whole-value #if arms: option list, caption with Locked, signed list with the `;` after #endif
+================================================================================
+
+table 50100 T
+{
+    TableType = CDS;
+    ExternalName = 't';
+    fields
+    {
+        field(1; O; Option)
+        {
+            ExternalName = 'o';
+            ExternalType = 'Picklist';
+            OptionMembers =
+#if X
+                A,B;
+#else
+                C;
+#endif
+            Caption =
+#if X
+                'a', Locked = true;
+#else
+                'b';
+#endif
+            OptionOrdinalValues =
+#if X
+                -1, 0
+#else
+                1
+#endif
+            ;
+        }
+    }
+    keys
+    {
+        key(PK; O) { }
+    }
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (table_declaration
+    (table_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (property
+        name: (property_name)
+        value: (identifier))
+      (property
+        name: (property_name)
+        value: (string_literal))
+      (fields_section
+        (fields_keyword)
+        body: (fields_body
+          (field_declaration
+            (field_keyword)
+            id: (integer)
+            name: (identifier)
+            type: (type_specification
+              (option_type
+                (option_keyword)))
+            body: (declaration_body
+              (property
+                name: (property_name)
+                value: (string_literal))
+              (property
+                name: (property_name)
+                value: (string_literal))
+              (property
+                name: (property_name)
+                value: (preproc_conditional_table_relation
+                  (preproc_if
+                    (preproc_open)
+                    condition: (identifier))
+                  (option_member_list
+                    (option_member
+                      (identifier))
+                    (option_member
+                      (identifier)))
+                  (preproc_else)
+                  (identifier)
+                  (preproc_endif
+                    (preproc_close))))
+              (property
+                name: (property_name)
+                value: (preproc_conditional_table_relation
+                  (preproc_if
+                    (preproc_open)
+                    condition: (identifier))
+                  (caption_value
+                    (string_literal)
+                    (property_name)
+                    (boolean))
+                  (preproc_else)
+                  (string_literal)
+                  (preproc_endif
+                    (preproc_close))))
+              (property
+                name: (property_name)
+                value: (preproc_conditional_table_relation
+                  (preproc_if
+                    (preproc_open)
+                    condition: (identifier))
+                  (signed_integer_list
+                    (integer)
+                    (integer))
+                  (preproc_else)
+                  (integer)
+                  (preproc_endif
+                    (preproc_close))))))))
+      (keys_section
+        (keys_keyword)
+        body: (keys_body
+          (key_declaration
+            (key_keyword)
+            name: (identifier)
+            fields: (field_list
+              (identifier))))))))
+
+================================================================================
+Whole-value #if arms: where/sorting view, expression, object reference
+================================================================================
+
+page 50100 P
+{
+    SourceTableView =
+#if X
+        where(A = const(1));
+#else
+        sorting(B);
+#endif
+    layout
+    {
+        area(Content)
+        {
+            field(F; Rec.F)
+            {
+                Visible =
+#if X
+                    A and B
+#else
+                    C
+#endif
+                ;
+            }
+        }
+    }
+    actions
+    {
+        area(Processing)
+        {
+            action(Go)
+            {
+                RunObject =
+#if X
+                    Page A;
+#else
+                    Page B;
+#endif
+            }
+        }
+    }
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (page_declaration
+    (page_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (property
+        name: (property_name)
+        value: (preproc_conditional_table_relation
+          (preproc_if
+            (preproc_open)
+            condition: (identifier))
+          (where_clause
+            (where_keyword)
+            (where_conditions
+              (where_condition
+                field: (identifier)
+                (const_keyword)
+                value: (integer))))
+          (preproc_else)
+          (sorting_value
+            (sorting_keyword)
+            (identifier))
+          (preproc_endif
+            (preproc_close))))
+      (layout_section
+        (layout_keyword)
+        body: (layout_body
+          (area_section
+            (area_keyword)
+            type: (content_keyword)
+            body: (layout_body
+              (page_field
+                (field_keyword)
+                name: (identifier)
+                source: (member_expression
+                  object: (identifier)
+                  member: (identifier))
+                body: (declaration_body
+                  (property
+                    name: (property_name)
+                    value: (preproc_conditional_table_relation
+                      (preproc_if
+                        (preproc_open)
+                        condition: (identifier))
+                      (property_expression
+                        (logical_expression
+                          left: (identifier)
+                          right: (identifier)))
+                      (preproc_else)
+                      (identifier)
+                      (preproc_endif
+                        (preproc_close))))))))))
+      (actions_section
+        (actions_keyword)
+        body: (action_body
+          (action_area_section
+            (area_keyword)
+            type: (processing_keyword)
+            body: (action_body
+              (action_declaration
+                (action_keyword)
+                name: (identifier)
+                body: (declaration_body
+                  (property
+                    name: (property_name)
+                    value: (preproc_conditional_table_relation
+                      (preproc_if
+                        (preproc_open)
+                        condition: (identifier))
+                      (object_reference_value
+                        (page_keyword)
+                        (identifier))
+                      (preproc_else)
+                      (object_reference_value
+                        (page_keyword)
+                        (identifier))
+                      (preproc_endif
+                        (preproc_close)))))))))))))

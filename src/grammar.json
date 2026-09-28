@@ -2030,145 +2030,21 @@
       ]
     },
     "_table_relation_whole_branch": {
-      "type": "CHOICE",
+      "type": "SEQ",
       "members": [
         {
-          "type": "PREC",
-          "value": 1,
-          "content": {
-            "type": "SEQ",
-            "members": [
-              {
-                "type": "CHOICE",
-                "members": [
-                  {
-                    "type": "SYMBOL",
-                    "name": "identifier"
-                  },
-                  {
-                    "type": "SYMBOL",
-                    "name": "quoted_identifier"
-                  },
-                  {
-                    "type": "ALIAS",
-                    "content": {
-                      "type": "SYMBOL",
-                      "name": "_value_start_keyword_name"
-                    },
-                    "named": true,
-                    "value": "identifier"
-                  },
-                  {
-                    "type": "SYMBOL",
-                    "name": "boolean"
-                  },
-                  {
-                    "type": "SYMBOL",
-                    "name": "integer"
-                  },
-                  {
-                    "type": "SYMBOL",
-                    "name": "decimal"
-                  },
-                  {
-                    "type": "ALIAS",
-                    "content": {
-                      "type": "SYMBOL",
-                      "name": "_negative_integer"
-                    },
-                    "named": true,
-                    "value": "integer"
-                  },
-                  {
-                    "type": "ALIAS",
-                    "content": {
-                      "type": "SYMBOL",
-                      "name": "_negative_decimal"
-                    },
-                    "named": true,
-                    "value": "decimal"
-                  },
-                  {
-                    "type": "SYMBOL",
-                    "name": "string_literal"
-                  },
-                  {
-                    "type": "SYMBOL",
-                    "name": "verbatim_string"
-                  },
-                  {
-                    "type": "SYMBOL",
-                    "name": "date_literal"
-                  },
-                  {
-                    "type": "SYMBOL",
-                    "name": "time_literal"
-                  },
-                  {
-                    "type": "SYMBOL",
-                    "name": "datetime_literal"
-                  }
-                ]
-              },
-              {
-                "type": "CHOICE",
-                "members": [
-                  {
-                    "type": "STRING",
-                    "value": ";"
-                  },
-                  {
-                    "type": "BLANK"
-                  }
-                ]
-              }
-            ]
-          }
+          "type": "SYMBOL",
+          "name": "_property_value"
         },
         {
-          "type": "SEQ",
+          "type": "CHOICE",
           "members": [
             {
-              "type": "SYMBOL",
-              "name": "table_relation_value"
+              "type": "STRING",
+              "value": ";"
             },
             {
-              "type": "CHOICE",
-              "members": [
-                {
-                  "type": "STRING",
-                  "value": ";"
-                },
-                {
-                  "type": "BLANK"
-                }
-              ]
-            }
-          ]
-        },
-        {
-          "type": "SEQ",
-          "members": [
-            {
-              "type": "ALIAS",
-              "content": {
-                "type": "SYMBOL",
-                "name": "_table_relation_whole_conditional"
-              },
-              "named": true,
-              "value": "preproc_conditional_table_relation"
-            },
-            {
-              "type": "CHOICE",
-              "members": [
-                {
-                  "type": "STRING",
-                  "value": ";"
-                },
-                {
-                  "type": "BLANK"
-                }
-              ]
+              "type": "BLANK"
             }
           ]
         }
@@ -2397,32 +2273,36 @@
       }
     },
     "signed_integer_list": {
-      "type": "PREC_LEFT",
-      "value": 5,
+      "type": "PREC_DYNAMIC",
+      "value": 1,
       "content": {
-        "type": "SEQ",
-        "members": [
-          {
-            "type": "SYMBOL",
-            "name": "_signed_integer"
-          },
-          {
-            "type": "REPEAT1",
-            "content": {
-              "type": "SEQ",
-              "members": [
-                {
-                  "type": "STRING",
-                  "value": ","
-                },
-                {
-                  "type": "SYMBOL",
-                  "name": "_signed_integer"
-                }
-              ]
+        "type": "PREC_LEFT",
+        "value": 5,
+        "content": {
+          "type": "SEQ",
+          "members": [
+            {
+              "type": "SYMBOL",
+              "name": "_signed_integer"
+            },
+            {
+              "type": "REPEAT1",
+              "content": {
+                "type": "SEQ",
+                "members": [
+                  {
+                    "type": "STRING",
+                    "value": ","
+                  },
+                  {
+                    "type": "SYMBOL",
+                    "name": "_signed_integer"
+                  }
+                ]
+              }
             }
-          }
-        ]
+          ]
+        }
       }
     },
     "_signed_integer": {
@@ -23175,13 +23055,36 @@
       "_table_relation_whole_conditional"
     ],
     [
-      "preproc_conditional_table_relation",
-      "_table_relation_whole_conditional"
+      "_permission_branch",
+      "option_member_list"
     ],
     [
-      "preproc_conditional_table_relation",
-      "_table_relation_whole_conditional",
-      "preproc_conditional_permissions"
+      "_link_value_branch",
+      "_permission_branch",
+      "_impl_value_branch",
+      "option_member_list"
+    ],
+    [
+      "_link_value_branch",
+      "_permission_branch",
+      "option_member_list"
+    ],
+    [
+      "_link_value_branch",
+      "option_member_list"
+    ],
+    [
+      "_link_value_branch",
+      "_impl_value_branch",
+      "option_member_list"
+    ],
+    [
+      "tabledata_permission_list",
+      "_permission_branch"
+    ],
+    [
+      "implementation_value_list",
+      "_impl_value_branch"
     ],
     [
       "_namespaced_ref_table",
