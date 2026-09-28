@@ -1,7 +1,8 @@
 # BC 29 parse gaps (microsoft/BCApps releases/29.0)
 
-**Status:** families A and B RESOLVED (move* lists; move* in actions) — BCApps
-29.0 error files 33 -> 23. Remaining: C, F, I, E, D, G, H; J is invalid source.
+**Status:** families A, B and C RESOLVED (move* lists; move* in actions; nested
+`#if` among fields and keys) — BCApps 29.0 error files 33 -> 20. Remaining: F, I,
+E, D, G, H; J is invalid source. ProdOrderComponent.Table.al still fails, on H.
 Corpus: `H:/Git/BCApps-29.0` (shallow clone of microsoft/BCApps
 `releases/29.0`, commit e16d6c30, 36,716 .al files, includes BaseApp layers).
 This analysis was produced by root-cause bisection of every failing file; the
@@ -102,7 +103,7 @@ pageextension 50101 E extends P { actions { movebefore(Submit_Promoted; Generate
   `actions` section (69-247), so the reported location is far from the cause.
 - **Fix:** add the four move rules, list-capable after A, to `_action_element`.
 
-## C. Nested `#if` directly among table fields (3 files + ProdOrderComponent)
+## C. Nested `#if` directly among table fields (3 files + ProdOrderComponent) — RESOLVED
 
 Reproducer (errors):
 ```al

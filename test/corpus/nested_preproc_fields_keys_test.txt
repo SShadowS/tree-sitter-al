@@ -1,0 +1,98 @@
+================================================================================
+Nested #if among table fields and keys
+================================================================================
+table 50100 T
+{
+    fields
+    {
+#if not S31
+#if not C28
+        field(2; B; Integer) { }
+#endif
+        field(3; C; Integer) { }
+#else
+        field(4; D; Integer) { }
+#endif
+    }
+    keys
+    {
+#if not S31
+#if not C28
+        key(K1; B) { }
+#endif
+        key(K2; C) { }
+#endif
+    }
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (table_declaration
+    (table_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (fields_section
+        (fields_keyword)
+        body: (fields_body
+          (preproc_conditional_fields
+            (preproc_if
+              (preproc_open)
+              condition: (preproc_not_expression
+                (identifier)))
+            (preproc_conditional_fields
+              (preproc_if
+                (preproc_open)
+                condition: (preproc_not_expression
+                  (identifier)))
+              (field_declaration
+                (field_keyword)
+                id: (integer)
+                name: (identifier)
+                type: (type_specification
+                  (basic_type)))
+              (preproc_endif
+                (preproc_close)))
+            (field_declaration
+              (field_keyword)
+              id: (integer)
+              name: (identifier)
+              type: (type_specification
+                (basic_type)))
+            (preproc_else)
+            (field_declaration
+              (field_keyword)
+              id: (integer)
+              name: (identifier)
+              type: (type_specification
+                (basic_type)))
+            (preproc_endif
+              (preproc_close)))))
+      (keys_section
+        (keys_keyword)
+        body: (keys_body
+          (preproc_conditional_keys
+            (preproc_if
+              (preproc_open)
+              condition: (preproc_not_expression
+                (identifier)))
+            (preproc_conditional_keys
+              (preproc_if
+                (preproc_open)
+                condition: (preproc_not_expression
+                  (identifier)))
+              (key_declaration
+                (key_keyword)
+                name: (identifier)
+                fields: (field_list
+                  (identifier)))
+              (preproc_endif
+                (preproc_close)))
+            (key_declaration
+              (key_keyword)
+              name: (identifier)
+              fields: (field_list
+                (identifier)))
+            (preproc_endif
+              (preproc_close))))))))

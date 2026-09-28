@@ -1577,14 +1577,14 @@ module.exports = grammar({
 
     preproc_conditional_fields: $ => seq(
       $.preproc_if,
-      repeat(choice($.field_declaration, $.attribute_item, $.modify_modification)),
+      repeat(choice($.field_declaration, $.attribute_item, $.modify_modification, $.preproc_conditional_fields)),
       repeat(seq(
         $.preproc_elif,
-        repeat(choice($.field_declaration, $.attribute_item, $.modify_modification)),
+        repeat(choice($.field_declaration, $.attribute_item, $.modify_modification, $.preproc_conditional_fields)),
       )),
       optional(seq(
         $.preproc_else,
-        repeat(choice($.field_declaration, $.attribute_item, $.modify_modification)),
+        repeat(choice($.field_declaration, $.attribute_item, $.modify_modification, $.preproc_conditional_fields)),
       )),
       $.preproc_endif,
     ),
@@ -1625,9 +1625,9 @@ module.exports = grammar({
 
     preproc_conditional_keys: $ => seq(
       $.preproc_if,
-      repeat(choice($.key_declaration, $.attribute_item)),
-      repeat(seq($.preproc_elif, repeat(choice($.key_declaration, $.attribute_item)))),
-      optional(seq($.preproc_else, repeat(choice($.key_declaration, $.attribute_item)))),
+      repeat(choice($.key_declaration, $.attribute_item, $.preproc_conditional_keys)),
+      repeat(seq($.preproc_elif, repeat(choice($.key_declaration, $.attribute_item, $.preproc_conditional_keys)))),
+      optional(seq($.preproc_else, repeat(choice($.key_declaration, $.attribute_item, $.preproc_conditional_keys)))),
       $.preproc_endif,
     ),
 
