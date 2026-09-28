@@ -86,6 +86,20 @@ def scan(root: pathlib.Path):
     return runnable, headers, orphan_eq, dropped, skipped, unmodelled
 
 
+def cases(root: pathlib.Path):
+    """(rel_path, case_name) for every RUNNABLE case -- the names scan() counts."""
+    out = []
+    for path in sorted(root.rglob("*.txt")):
+        data = path.read_bytes()
+        hits = list(HEADER.finditer(data))
+        rel = str(path.relative_to(root)).replace("\\", "/")
+        for i, m in enumerate(hits):
+            end = hits[i + 1].start() if i + 1 < len(hits) else len(data)
+            if DIVIDER.search(data[m.end():end]) and not SKIP_ATTR.search(m.group("name")):
+                out.append((rel, m.group("name").split(b"\n")[0].strip().decode("utf8", "replace")))
+    return out
+
+
 def main() -> int:
     root = pathlib.Path(sys.argv[1] if len(sys.argv) > 1 else "test/corpus")
     if not root.is_dir():
