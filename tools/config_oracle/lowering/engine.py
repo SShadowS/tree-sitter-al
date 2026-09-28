@@ -92,8 +92,8 @@ class ElseAttachment(Frag):
 @dataclass
 class RelationContinuation(Frag):
     """Contract **else-relation-join** (produced by assemblers.table_relation_select).
-    The owning `property` consumes it: in its preceding `value: table_relation_expression`,
-    follow `if_table_relation` -> `else_relation: table_relation_expression` ->
+    The owning `table_relation_value` consumes it: in its preceding `table_relation_expression`
+    child (the conditional is that child's next sibling, grammar finding G1), follow `if_table_relation` -> `else_relation: table_relation_expression` ->
     `if_table_relation` down to the deepest `if_table_relation` with no `else_keyword`,
     append `else_kw` and `relation` (field `else_relation`) as its last two children,
     and recompute the span of every node on that path. No other edge changes."""
@@ -273,8 +273,8 @@ def _consume(new, frags):
             at = next(i for i, c in enumerate(new.children) if c is f.anchor) + 1
             insert = [f.leaf] if isinstance(f, Terminator) else list(f.statements)
             new.children[at:at] = insert
-        elif isinstance(f, RelationContinuation) and new.kind == "property":
-            vals = [c for c in new.children if c.field == "value" and c.kind == "table_relation_expression"]
+        elif isinstance(f, RelationContinuation) and new.kind == "table_relation_value":
+            vals = [c for c in new.children if c.kind == "table_relation_expression"]
             if not vals:
                 raise LoweringError("unconsumed-fragment", new, "no relation to continue")
             target = _deepest_open_if(vals[-1])
@@ -283,8 +283,9 @@ def _consume(new, frags):
             for n in _path(vals[-1], target):
                 recompute_span(n)
         # anchor None: emitted by a special node that is itself a direct child of
-        # the property (table_relation_select, else-relation-join); otherwise it
-        # passed up through the list that is the property's child (list-run).
+        # the property (table_relation_select on a whole-value #if); otherwise it
+        # passed up through the property's child: the list (list-run) or the
+        # table_relation_value holding an else-relation-join conditional.
         elif isinstance(f, Terminator) and new.kind == "property"                 and (f.anchor is None or any(c is f.anchor for c in new.children)):
             new.children.append(f.leaf)   # terminator-hoist: the property's own `;`
         else:

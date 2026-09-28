@@ -419,17 +419,23 @@ register("preproc_split_block_end_in_else", "unsupported")
 register("preproc_split_block_close_after_endif", "unsupported")
 
 # --- Task 8: table relation, contract else-relation-join (assemblers.table_relation_select).
-# Hosts are the census output. The arm is _tr_branch (grammar.js:1298-1301):
-# _table_relation_branch_content (grammar.js:1307-1310), then an optional ';'.
+# Hosts are the census output. Two grammar rules build this node type:
+#  * property:value -- _table_relation_whole_conditional (the whole value is the
+#    #if): each arm is identifier | quoted_identifier | table_relation_value, the
+#    shape a flat parse of the arm gives (G2), then an optional ';'.
+#  * table_relation_value:<children> -- preproc_conditional_table_relation after
+#    the relation it continues (G1): arm _tr_branch, i.e. table_relation_expression
+#    | else_table_relation_fragment, then an optional ';'.
 register("preproc_conditional_table_relation", "assembler",
          "tools.config_oracle.lowering.assemblers.table_relation_select",
-         # Only property:value is lowered. Nested inside an else chain the arm's
-         # relation must merge into the enclosing table_relation_expression, a
-         # rewrite this contract does not name: refused as unsupported-type.
+         # Nested inside an else chain the arm's relation must merge into the
+         # enclosing table_relation_expression, a rewrite this contract does not
+         # name: refused as unsupported-type.
          hosts={"property:value": "single-slot",
                 "table_relation_expression:<children>": "unsupported",
-                "table_relation_value:<children>": "unsupported"},
-         arm={"table_relation_expression", "else_table_relation_fragment", ";"})
+                "table_relation_value:<children>": "single-slot"},
+         arm={"identifier", "quoted_identifier", "table_relation_value",
+              "table_relation_expression", "else_table_relation_fragment", ";"})
 # Non-prefixed special type: completes an earlier table relation (spec section 3).
 # Consumed by table_relation_select as a RelationContinuation; never lowered directly.
 register("else_table_relation_fragment", "fragment", None,

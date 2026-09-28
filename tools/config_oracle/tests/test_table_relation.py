@@ -1,5 +1,3 @@
-import pytest
-
 from tools.config_oracle.tests import witness
 
 ELSE_JOIN = b"""table 1 T
@@ -38,15 +36,11 @@ WHOLE = b"""table 1 T
 """
 
 
-@pytest.mark.xfail(strict=True, reason="grammar finding G1 (table_relation_property lacks the "
-                                        "table_relation_value wrapper)")
 def test_else_relation_join_every_config(al_parser):
     witness.assert_produces(al_parser, ELSE_JOIN, "else_table_relation_fragment")
     witness.assert_all_pass(al_parser, ELSE_JOIN)
 
 
-@pytest.mark.xfail(strict=True, reason="grammar finding G2 (a bare relation in a #if arm parses as "
-                                        "table_relation_expression, flat as identifier)")
 def test_whole_relation_arm_every_config(al_parser):
     witness.assert_produces(al_parser, WHOLE, "preproc_conditional_table_relation")
     witness.assert_all_pass(al_parser, WHOLE)
@@ -54,12 +48,10 @@ def test_whole_relation_arm_every_config(al_parser):
 
 def test_join_at_the_wrong_depth_is_caught(al_parser, monkeypatch):
     from tools.config_oracle.lowering import engine
-    # Compared with the unmutated run: G1 already makes ELSE_JOIN a discrepancy, so
-    # only items the mutation ALONE adds prove it is caught.
-    base = {c: set(i) for c, (_, i) in witness.verdicts(al_parser, ELSE_JOIN).items()}
+    # Unmutated, every configuration passes (test_else_relation_join_every_config).
     monkeypatch.setattr(engine, "_deepest_open_if", lambda expr: expr.children[0])  # the SHALLOWEST if
     v = witness.verdicts(al_parser, ELSE_JOIN)
-    assert any(s == "discrepancy" and set(i) - base[c] for c, (s, i) in v.items()), v
+    assert any(s == "discrepancy" for s, _ in v.values()), v
 
 
 NESTED = b"""table 1 T

@@ -182,12 +182,15 @@ def split_case_statement_end(node, ctx) -> Lowered:
 
 
 def table_relation_select(node, ctx) -> Lowered:
-    """Contract else-relation-join (see engine.RelationContinuation). Host: a
-    `property:value` slot. The chosen arm is ONE of: an `else_table_relation_fragment`
-    (-> RelationContinuation), or a complete relation value (-> a node with field
-    `value`); then an optional `;` (-> Terminator, terminator-hoist). An empty or
-    unselected arm contributes nothing. Anything else is contract-shape. Any
-    other host (policy `unsupported`) is unsupported-type."""
+    """Contract else-relation-join (see engine.RelationContinuation). Hosts: a
+    `property:value` slot (the whole value is the #if) and a
+    `table_relation_value:<children>` slot (the #if continues the relation before
+    it). The chosen arm is ONE of: an `else_table_relation_fragment`
+    (-> RelationContinuation), or a complete relation value (-> a node taking the
+    conditional's own field); then an optional `;` (-> Terminator, terminator-hoist).
+    An empty or unselected arm contributes nothing. An arm kind outside the
+    registered `arm` set, or anything else, is contract-shape. Any other host
+    (policy `unsupported`) is unsupported-type."""
     if ctx.policy(contracts.REGISTRY[node.kind], node) == "unsupported":
         raise LoweringError("unsupported-type", node, f"host {ctx.parent_kind}:{ctx.slot}")
     arms, endif = split_arms(node)
@@ -195,7 +198,7 @@ def table_relation_select(node, ctx) -> Lowered:
     frags, nodes = [], []
     items = list(arm)
     semi = items.pop() if items and items[-1].kind == ";" else None
-    if len(items) > 1:
+    if len(items) > 1 or (items and items[0].kind not in contracts.REGISTRY[node.kind].arm):
         raise LoweringError("contract-shape", node, "arm: " + " ".join(c.kind for c in items))
     if items and items[0].kind == "else_table_relation_fragment":
         frag = items[0]
@@ -205,7 +208,7 @@ def table_relation_select(node, ctx) -> Lowered:
         rel = _lower_all(frag.children[1:], ctx, frag.kind)[0]
         frags.append(RelationContinuation(None, else_kw, rel))
     elif items:
-        nodes = [n.copy(field="value") for n in _lower_all(items, ctx, node.kind)]
+        nodes = [n.copy(field=node.field) for n in _lower_all(items, ctx, node.kind)]
     if semi is not None:
         frags.append(Terminator(None, _lower_all([semi], ctx, node.kind)[0]))
     return Lowered(nodes, frags)
