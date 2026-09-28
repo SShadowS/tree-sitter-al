@@ -168,6 +168,9 @@ register("preproc_split_var_section_tail", "unsupported")
 # one property per branch from that branch's head plus the shared tail.
 register("preproc_conditional_arguments", "unsupported")
 register("preproc_split_permissions_property", "unsupported")
+# BC 29 family E: per-branch header, shared body after #endif (assembler shape).
+register("preproc_split_key", "unsupported")
+register("preproc_split_modify", "unsupported")
 
 # Non-prefixed special type: completes an earlier table relation (spec section 3).
 register("else_table_relation_fragment", "unsupported")
