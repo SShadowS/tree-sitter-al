@@ -9,10 +9,9 @@
 ; (docs/deferred-work.md item 18): the link form (a G8 regression) is asserted
 ; in link_list_opening_conditional_test.txt, the option-member form (which
 ; never parsed) in option_list_opening_conditional_test.txt.
-; Nor a
-; relation continued into a #if with the `;` after #endif (`TableRelation = if
-; (...) Item #if X else A #else else B #endif ;`): the `;` becomes an
-; empty_statement instead of the property's terminator.
+; A relation continued into a #if with the `;` after #endif (`TableRelation =
+; if (...) Item #if X else A #else else B #endif ;`) keeps the `;` since G11
+; (item 19): table_relation_continuation_semicolon_after_test.txt.
 
 ================================================================================
 G6: `;` inside the arms -- property.value is preproc_conditional_property_value, string arms

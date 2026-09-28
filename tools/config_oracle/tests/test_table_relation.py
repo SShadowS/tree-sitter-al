@@ -62,3 +62,31 @@ def test_nested_host_is_refused_not_lowered(al_parser):
     v = witness.verdicts(al_parser, NESTED)
     assert v and all(i[0].startswith("lowering:unsupported-type") and "host table_relation_expression" in i[0]
                      for _, i in v.values()), v
+
+
+# Item 19 (G11): the continuation's arms carry no `;`; the property's own `;`
+# follows #endif. It used to become an empty_statement sibling of the property.
+SEMI_AFTER = b"""table 1 T
+{
+    fields
+    {
+        field(1; F; Code[20])
+        {
+            TableRelation = if (Type = const(Item)) Item
+#if X
+                else Resource
+#else
+                else Customer
+#endif
+                ;
+        }
+    }
+}
+"""
+
+
+def test_else_join_with_semicolon_after_endif_every_config(al_parser):
+    witness.assert_produces(al_parser, SEMI_AFTER, "else_table_relation_fragment")
+    v = witness.verdicts(al_parser, SEMI_AFTER)
+    assert len(v) == 2, v
+    witness.assert_all_pass(al_parser, SEMI_AFTER)

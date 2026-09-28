@@ -358,6 +358,12 @@ module.exports = grammar({
     // link_value_list and a list-internal _link_value_branch. G11: both now
     // carry prec 6, so GLR keeps both and the text after #endif decides.
     [$.link_value_list, $._link_value_branch],
+    // A relation continued into a #if with the `;` after #endif (G11, item
+    // 19): table_relation_value now also holds `expression conditional`, so
+    // after a relation a #if is one more list-or-relation conditional until an
+    // arm's content. Generator-required; the same four-way that the G3
+    // conflict once subsumed (see above).
+    [$.preproc_conditional_link_values, $.preproc_conditional_table_relation, $.preproc_conditional_permissions, $.preproc_conditional_impl_values],
     // An option-member list OPENED by a #if (`OptionMembers = #if X A,
     // #endif B, C;`, G11 item 2): at value start a #if may now also open
     // preproc_conditional_option_members, one more reading of an empty or
@@ -1455,9 +1461,18 @@ module.exports = grammar({
     // --- TableRelation value ---
     // Customer where("No." = field("Customer No."))
     // if("Type" = const(Item)) Item else Resource
+    // The third form is a relation continued into a #if whose arms carry no
+    // `;` -- `if (...) Item #if X else Resource #else else Customer #endif ;`
+    // -- so the `;` after #endif is the property's own terminator (G11,
+    // deferred-work item 19). Until G11 only _table_relation_split_value held
+    // `expression conditional`, and that variant takes no `;`, so the `;`
+    // became an empty_statement sibling of the property with no ERROR. Same
+    // children as _table_relation_split_value's alias, so both placements of
+    // the `;` give one shape.
     table_relation_value: $ => prec.right(5, choice(
       $.table_relation_expression,
       $.preproc_conditional_table_relation,
+      seq($.table_relation_expression, $.preproc_conditional_table_relation),
     )),
 
     // Preprocessor conditionals inside TableRelation value

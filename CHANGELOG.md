@@ -9,6 +9,18 @@ public API — a change to node structure or field names is a **major** bump.
 
 ### Fixed
 
+- **Tree-shape change: a relation continued into a `#if` keeps the `;` that
+  follows `#endif`** (G11, deferred-work item 19). In `TableRelation = if
+  (...) Item #if X else Resource #else else Customer #endif ;` the `;` was an
+  `empty_statement` sibling of the `property`, with no ERROR, because the only
+  rule holding `expression conditional` was the variant whose `;` sits inside
+  the arms. `table_relation_value` now also holds `table_relation_expression
+  preproc_conditional_table_relation`, so the property ends at the `;`, as a
+  flat parse of either configuration does; the value is the same
+  `table_relation_value` the `;`-inside form gives (G1). alc accepts it in
+  every configuration. 0 production sites (tree-harness byte-identical on
+  BC.History and BC 28.5). Parser states 15,750 -> 15,781 (+31), one conflict
+  added.
 - **A `#if` that opens an option-member list continued after `#endif` now
   parses** (G11, deferred-work item 18). `OptionMembers = #if X A, #endif B,
   C;` ERRORed, and always had: `option_member_list` admitted a conditional only

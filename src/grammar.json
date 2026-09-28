@@ -4204,6 +4204,19 @@
           {
             "type": "SYMBOL",
             "name": "preproc_conditional_table_relation"
+          },
+          {
+            "type": "SEQ",
+            "members": [
+              {
+                "type": "SYMBOL",
+                "name": "table_relation_expression"
+              },
+              {
+                "type": "SYMBOL",
+                "name": "preproc_conditional_table_relation"
+              }
+            ]
           }
         ]
       }
@@ -23215,6 +23228,12 @@
     [
       "link_value_list",
       "_link_value_branch"
+    ],
+    [
+      "preproc_conditional_link_values",
+      "preproc_conditional_table_relation",
+      "preproc_conditional_permissions",
+      "preproc_conditional_impl_values"
     ],
     [
       "_property_value_conditional",

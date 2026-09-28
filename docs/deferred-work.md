@@ -549,7 +549,7 @@ unquoted, quoted and `RunPageLink` forms; all three now match pre-G8
 (`3c6ca40`). Pinned by `test/corpus/link_list_opening_conditional_test.txt`
 and `tools/config_oracle/tests/test_list_opening_conditional.py`.
 
-**Option-member list: RESOLVED 2026-09-28 (G11, commit @G11-OPT@).**
+**Option-member list: RESOLVED 2026-09-28 (G11, commit `6fed757`).**
 `option_member_list` gained a head alternative, `preproc_conditional_option_members`
 then a REQUIRED member, so a `#if` that opens the list and is continued after
 `#endif` gives `option_member_list(preproc_conditional_option_members ...)`,
@@ -644,7 +644,18 @@ the opening forms is asserted by a fixture: the fixture would bless a defect.
 
 ---
 
-## 19. A relation continued into a `#if` with the `;` after `#endif` loses its terminator
+## 19. A relation continued into a `#if` with the `;` after `#endif` loses its terminator — RESOLVED 2026-09-28
+
+**RESOLVED 2026-09-28 (G11, commit @G11-REL@).** `table_relation_value`
+gained a third form, `table_relation_expression preproc_conditional_table_relation`,
+so the flat `property` holds the continuation and its `;`. alc four-way
+ACCEPTs the `#if/#else` form, the no-`#else` form and an `else` before the
+`#if` (the last always parsed); `else Resource Customer` is rejected (AL0104).
++31 states, one conflict. Pinned by
+`test/corpus/table_relation_continuation_semicolon_after_test.txt` and
+`test_else_join_with_semicolon_after_endif_every_config` in
+`tools/config_oracle/tests/test_table_relation.py` (discrepancy before, pass
+after). The text below is the original report.
 
 **Established:** 2026-09-28, G6 acceptance fixtures; reproduced at `def2879`,
 before G6.
