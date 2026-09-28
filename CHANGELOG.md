@@ -22,6 +22,18 @@ public API — a change to node structure or field names is a **major** bump.
   byte-identical), so only fixtures changed. A query that matched
   `(property value: (if_table_relation))` or a second `value` field must now
   descend through `table_relation_value`.
+- **Tree-shape change: when a whole `TableRelation` value is a `#if`, each arm
+  of its `preproc_conditional_table_relation` holds the flat value shape**
+  (grammar finding G2). Arms used to be `table_relation_expression`, which no
+  flat parse gives. A bare name is now `identifier` and a quoted name
+  `quoted_identifier`, the same as flat `TableRelation = Item;`. Anything longer
+  is `table_relation_value`. This holds whether the `;` sits inside the arms or
+  after `#endif`. In the second placement the conditional is now the property's
+  `value` directly and no longer sits inside `table_relation_value`. There are
+  0 production sites, as for G1. A query that expected
+  `(preproc_conditional_table_relation (table_relation_expression))` for a
+  whole-value `#if` must accept these arm kinds instead. Arms of a conditional
+  nested inside an `else` chain are unchanged.
 
 - **BC 29 (microsoft/BCApps `releases/29.0`, 36,716 files) now parses with 2
   error files, down from 33.** One of the two is invalid source. None of the 33
