@@ -1,0 +1,88 @@
+================================================================================
+Field body opened inside #if, closed after #endif (one valid configuration)
+================================================================================
+// Compiles ONLY with S31 undefined: defined, alc rejects it (AL0104). The tree is that one reading.
+table 50100 T
+{
+    fields
+    {
+        field(1; A; Integer) { }
+#if not S31
+        field(2; B; Integer) { }
+        field(3; C; Integer)
+        {
+            Caption = 'X';
+#if C28
+            ObsoleteState = Pending;
+#endif
+#endif
+            trigger OnValidate()
+            begin
+            end;
+        }
+        field(4; D; Integer) { }
+    }
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (comment)
+  (table_declaration
+    (table_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (fields_section
+        (fields_keyword)
+        body: (fields_body
+          (field_declaration
+            (field_keyword)
+            id: (integer)
+            name: (identifier)
+            type: (type_specification
+              (basic_type)))
+          (preproc_split_table_field_open
+            (preproc_if
+              (preproc_open)
+              condition: (preproc_not_expression
+                (identifier)))
+            (field_declaration
+              (field_keyword)
+              id: (integer)
+              name: (identifier)
+              type: (type_specification
+                (basic_type)))
+            (field_keyword)
+            id: (integer)
+            name: (identifier)
+            type: (type_specification
+              (basic_type))
+            body: (declaration_body
+              (property
+                name: (property_name)
+                value: (string_literal))
+              (preproc_conditional
+                (preproc_if
+                  (preproc_open)
+                  condition: (identifier))
+                (property
+                  name: (property_name)
+                  value: (identifier))
+                (preproc_endif
+                  (preproc_close))))
+            (preproc_endif
+              (preproc_close))
+            body: (declaration_body
+              (trigger_declaration
+                (trigger_keyword)
+                name: (identifier)
+                body: (code_block
+                  (begin_keyword)
+                  (end_keyword)))))
+          (field_declaration
+            (field_keyword)
+            id: (integer)
+            name: (identifier)
+            type: (type_specification
+              (basic_type))))))))

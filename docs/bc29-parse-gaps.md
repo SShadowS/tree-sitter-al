@@ -3,8 +3,9 @@
 **Status:** families A, B, C, F and I RESOLVED (move* lists; move* in actions;
 nested `#if` among fields and keys; split routine body; split argument list and
 split Permissions head); E partly (split key and modify headers; EDocumentDE's
-nested open headers remain) — BCApps 29.0 error files 33 -> 13. Remaining: E
-(EDocumentDE), D, G, H; J is invalid source. ProdOrderComponent.Table.al still fails, on H.
+nested open headers remain); D (field body opened in #if, closed after #endif)
+— BCApps 29.0 error files 33 -> 10. Remaining: E (EDocumentDE), G, H; J is
+invalid source. ProdOrderComponent.Table.al still fails, on H.
 Corpus: `H:/Git/BCApps-29.0` (shallow clone of microsoft/BCApps
 `releases/29.0`, commit e16d6c30, 36,716 .al files, includes BaseApp layers).
 This analysis was produced by root-cause bisection of every failing file; the
@@ -132,7 +133,7 @@ table 50100 T { fields {
 - **Fix:** add `$.preproc_conditional_fields` to its own three branch choices, copying
   fieldgroups. Do the same for keys. This is a generic host change and needs no split rule.
 
-## D. Field body opened inside `#if`, closed after `#endif` (3 files)
+## D. Field body opened inside `#if`, closed after `#endif` (3 files) — RESOLVED
 
 Reproducer (errors):
 ```al

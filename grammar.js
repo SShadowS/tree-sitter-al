@@ -251,7 +251,6 @@ module.exports = grammar({
     [$._body_element, $._procedure_header],
     [$._body_element, $._action_element, $._procedure_header],
     [$.page_field, $._field_header],
-    [$.field_declaration, $._table_field_header],
     // Fielded variant inherits the property-value ambiguity that the unfielded
     // `_namespaced_or_simple_ref` used to carry here.
     [$._property_value, $.option_member, $._namespaced_ref_table],
@@ -1626,33 +1625,54 @@ module.exports = grammar({
       $.attribute_item,
       $.preproc_conditional_fields,
       $.preproc_split_table_field,
+      $.preproc_split_table_field_open,
       // Extension modifications inside fields section
       $.modify_modification,
     )),
 
     preproc_conditional_fields: $ => seq(
       $.preproc_if,
-      repeat(choice($.field_declaration, $.attribute_item, $.modify_modification, $.preproc_conditional_fields)),
-      repeat(seq(
-        $.preproc_elif,
-        repeat(choice($.field_declaration, $.attribute_item, $.modify_modification, $.preproc_conditional_fields)),
-      )),
-      optional(seq(
-        $.preproc_else,
-        repeat(choice($.field_declaration, $.attribute_item, $.modify_modification, $.preproc_conditional_fields)),
-      )),
+      optional($._field_branch_items),
+      repeat(seq($.preproc_elif, optional($._field_branch_items))),
+      optional(seq($.preproc_else, optional($._field_branch_items))),
       $.preproc_endif,
     ),
 
+    // Shared by preproc_conditional_fields and preproc_split_table_field_open,
+    // so both reach the same repeat symbol (same device as _key_branch_items).
+    _field_branch_items: $ => repeat1(choice(
+      $.field_declaration, $.attribute_item, $.modify_modification, $.preproc_conditional_fields,
+    )),
+
+    // A field whose BODY is opened inside a #if and closed after #endif:
+    //   #if not CLEANSCHEMA26
+    //       field(13; A; Code[10])
+    //       {
+    //           ObsoleteState = Removed;
+    //   #endif
+    //           trigger OnValidate() begin … end;
+    //       }
+    // Only the #if-taken configuration compiles (alc: symbol undefined ACCEPT,
+    // defined REJECT, AL0104) -- Microsoft ships these as removed-field schema
+    // blocks nobody builds clean (FixedAssetShift.Table.al, SOASetup.Table.al,
+    // BankAccount.Table.al, BC 29). So the tree is that one reading, and it is
+    // unambiguous. The branch may lead with complete fields. Table-field
+    // analogue of preproc_split_code_block_over_endif.
+    preproc_split_table_field_open: $ => seq(
+      $.preproc_if,
+      optional($._field_branch_items),
+      $._table_field_header,
+      '{',
+      optional(field('body', $.declaration_body)),
+      $.preproc_endif,
+      optional(field('body', $.declaration_body)),
+      '}',
+    ),
+
     field_declaration: $ => seq(
-      $.field_keyword,
-      '(',
-      field('id', $.integer),
-      ';',
-      field('name', $._identifier_or_quoted),
-      ';',
-      field('type', $.type_specification),
-      ')',
+      // Shared with preproc_split_table_field(_open), which must reduce the
+      // same unit at the hard ')'.
+      $._table_field_header,
       // A pragma-only #if/#endif may sit between the field header and its body
       // (Microsoft BC wraps `#pragma warning disable/restore ASxxxx` in
       // `#if not CLEANxx`/`#endif`). It only attaches here when a `{` body
