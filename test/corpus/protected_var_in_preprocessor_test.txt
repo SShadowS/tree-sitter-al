@@ -31,24 +31,24 @@ table 50000 "Test Table"
           (variable_declaration
             (identifier)
             (type_specification
-              (basic_type)))
-          (preproc_conditional_var
-            (preproc_if
-              (preproc_open)
-              (preproc_not_expression
-                (identifier)))
-            (var_section
-              (protected_keyword)
-              (var_keyword)
-              (var_body
-                (variable_declaration
-                  (identifier)
-                  (type_specification
-                    (record_type
-                      (record_keyword)
-                      (identifier))))))
-            (preproc_endif
-              (preproc_close)))))
+              (basic_type)))))
+      (preproc_conditional
+        (preproc_if
+          (preproc_open)
+          (preproc_not_expression
+            (identifier)))
+        (var_section
+          (protected_keyword)
+          (var_keyword)
+          (var_body
+            (variable_declaration
+              (identifier)
+              (type_specification
+                (record_type
+                  (record_keyword)
+                  (identifier))))))
+        (preproc_endif
+          (preproc_close)))
       (procedure
         (procedure_keyword)
         (identifier)
@@ -89,30 +89,30 @@ table 50001 "Sales Price"
           (variable_declaration
             (identifier)
             (basic_type)
-            (string_literal))
-          (preproc_conditional_var
-            (preproc_if
-              (preproc_open)
-              (preproc_not_expression
-                (identifier)))
-            (var_section
-              (protected_keyword)
-              (var_keyword)
-              (var_body
-                (variable_declaration
-                  (identifier)
-                  (type_specification
-                    (record_type
-                      (record_keyword)
-                      (identifier))))
-                (variable_declaration
-                  (identifier)
-                  (type_specification
-                    (record_type
-                      (record_keyword)
-                      (identifier))))))
-            (preproc_endif
-              (preproc_close)))))
+            (string_literal))))
+      (preproc_conditional
+        (preproc_if
+          (preproc_open)
+          (preproc_not_expression
+            (identifier)))
+        (var_section
+          (protected_keyword)
+          (var_keyword)
+          (var_body
+            (variable_declaration
+              (identifier)
+              (type_specification
+                (record_type
+                  (record_keyword)
+                  (identifier))))
+            (variable_declaration
+              (identifier)
+              (type_specification
+                (record_type
+                  (record_keyword)
+                  (identifier))))))
+        (preproc_endif
+          (preproc_close)))
       (var_section
         (protected_keyword)
         (var_keyword)
@@ -156,22 +156,22 @@ table 50002 "Test Table"
           (variable_declaration
             (identifier)
             (basic_type)
-            (string_literal))
-          (pragma)
-          (preproc_conditional_var
-            (preproc_if
-              (preproc_open)
-              (preproc_not_expression
-                (identifier)))
-            (var_section
-              (protected_keyword)
-              (var_keyword)
-              (var_body
-                (variable_declaration
-                  (identifier)
-                  (type_specification
-                    (record_type
-                      (record_keyword)
-                      (identifier))))))
-            (preproc_endif
-              (preproc_close))))))))
+            (string_literal))))
+      (pragma)
+      (preproc_conditional
+        (preproc_if
+          (preproc_open)
+          (preproc_not_expression
+            (identifier)))
+        (var_section
+          (protected_keyword)
+          (var_keyword)
+          (var_body
+            (variable_declaration
+              (identifier)
+              (type_specification
+                (record_type
+                  (record_keyword)
+                  (identifier))))))
+        (preproc_endif
+          (preproc_close))))))

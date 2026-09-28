@@ -1691,6 +1691,10 @@
         },
         {
           "type": "SYMBOL",
+          "name": "preproc_split_var_section_tail"
+        },
+        {
+          "type": "SYMBOL",
           "name": "modify_modification"
         }
       ]
@@ -12723,13 +12727,143 @@
           {
             "type": "SYMBOL",
             "name": "preproc_conditional_var"
-          },
-          {
-            "type": "SYMBOL",
-            "name": "preproc_split_procedure"
           }
         ]
       }
+    },
+    "_var_tail_declarations": {
+      "type": "REPEAT1",
+      "content": {
+        "type": "CHOICE",
+        "members": [
+          {
+            "type": "SYMBOL",
+            "name": "variable_declaration"
+          },
+          {
+            "type": "SYMBOL",
+            "name": "var_attribute_item"
+          }
+        ]
+      }
+    },
+    "preproc_split_var_section_tail": {
+      "type": "SEQ",
+      "members": [
+        {
+          "type": "SYMBOL",
+          "name": "preproc_if"
+        },
+        {
+          "type": "FIELD",
+          "name": "variables",
+          "content": {
+            "type": "ALIAS",
+            "content": {
+              "type": "SYMBOL",
+              "name": "_var_tail_declarations"
+            },
+            "named": true,
+            "value": "var_body"
+          }
+        },
+        {
+          "type": "REPEAT1",
+          "content": {
+            "type": "SYMBOL",
+            "name": "_body_element"
+          }
+        },
+        {
+          "type": "REPEAT",
+          "content": {
+            "type": "SEQ",
+            "members": [
+              {
+                "type": "SYMBOL",
+                "name": "preproc_elif"
+              },
+              {
+                "type": "CHOICE",
+                "members": [
+                  {
+                    "type": "FIELD",
+                    "name": "variables",
+                    "content": {
+                      "type": "ALIAS",
+                      "content": {
+                        "type": "SYMBOL",
+                        "name": "_var_tail_declarations"
+                      },
+                      "named": true,
+                      "value": "var_body"
+                    }
+                  },
+                  {
+                    "type": "BLANK"
+                  }
+                ]
+              },
+              {
+                "type": "REPEAT",
+                "content": {
+                  "type": "SYMBOL",
+                  "name": "_body_element"
+                }
+              }
+            ]
+          }
+        },
+        {
+          "type": "CHOICE",
+          "members": [
+            {
+              "type": "SEQ",
+              "members": [
+                {
+                  "type": "SYMBOL",
+                  "name": "preproc_else"
+                },
+                {
+                  "type": "CHOICE",
+                  "members": [
+                    {
+                      "type": "FIELD",
+                      "name": "variables",
+                      "content": {
+                        "type": "ALIAS",
+                        "content": {
+                          "type": "SYMBOL",
+                          "name": "_var_tail_declarations"
+                        },
+                        "named": true,
+                        "value": "var_body"
+                      }
+                    },
+                    {
+                      "type": "BLANK"
+                    }
+                  ]
+                },
+                {
+                  "type": "REPEAT",
+                  "content": {
+                    "type": "SYMBOL",
+                    "name": "_body_element"
+                  }
+                }
+              ]
+            },
+            {
+              "type": "BLANK"
+            }
+          ]
+        },
+        {
+          "type": "SYMBOL",
+          "name": "preproc_endif"
+        }
+      ]
     },
     "var_attribute_item": {
       "type": "SEQ",
@@ -12771,14 +12905,6 @@
               {
                 "type": "SYMBOL",
                 "name": "var_attribute_item"
-              },
-              {
-                "type": "SYMBOL",
-                "name": "attribute_item"
-              },
-              {
-                "type": "SYMBOL",
-                "name": "_body_element"
               }
             ]
           }
@@ -12804,14 +12930,6 @@
                     {
                       "type": "SYMBOL",
                       "name": "var_attribute_item"
-                    },
-                    {
-                      "type": "SYMBOL",
-                      "name": "attribute_item"
-                    },
-                    {
-                      "type": "SYMBOL",
-                      "name": "_body_element"
                     }
                   ]
                 }
@@ -12841,14 +12959,6 @@
                       {
                         "type": "SYMBOL",
                         "name": "var_attribute_item"
-                      },
-                      {
-                        "type": "SYMBOL",
-                        "name": "attribute_item"
-                      },
-                      {
-                        "type": "SYMBOL",
-                        "name": "_body_element"
                       }
                     ]
                   }
@@ -21534,10 +21644,6 @@
       "_preproc_end_branch"
     ],
     [
-      "_body_element",
-      "preproc_conditional_var"
-    ],
-    [
       "filter_value",
       "_literal_value"
     ],
@@ -21623,14 +21729,6 @@
       "preproc_conditional"
     ],
     [
-      "_body_element",
-      "_procedure_header",
-      "preproc_conditional_var"
-    ],
-    [
-      "_body_element"
-    ],
-    [
       "order_keyword",
       "_value_start_keyword_name"
     ],
@@ -21662,11 +21760,6 @@
     ],
     [
       "preproc_conditional_link_values",
-      "preproc_conditional_permissions"
-    ],
-    [
-      "preproc_conditional_link_values",
-      "preproc_conditional_table_relation",
       "preproc_conditional_permissions"
     ],
     [

@@ -74,12 +74,12 @@ _BODY_HOSTS = {f"{p}:<children>": "splice-repeat" for p in (
     "action_group_body", "controladdin_body", "dataset_mod_body", "declaration_body", "interface_body",
     "layout_container_body", "preproc_conditional", "preproc_conditional_controladdin",
     "preproc_conditional_layout_mixed", "preproc_conditional_query", "preproc_conditional_report",
-    "preproc_conditional_var", "preproc_conditional_xmlport", "query_body", "report_body", "xmlport_body")}
-
-# preproc_split_procedure also lands inside var_body (grammar.js:3284,
-# `var_body: $ => repeat1(choice(..., $.preproc_split_procedure))`) — the same
-# repeat1-of-choice shape as declaration_body and friends, so splice-repeat.
-_BODY_HOSTS_WITH_VAR = dict(_BODY_HOSTS, **{"var_body:<children>": "splice-repeat"})
+    "preproc_conditional_xmlport", "preproc_split_var_section_tail", "query_body", "report_body",
+    "xmlport_body")}
+# preproc_conditional_var and var_body are NOT body hosts any more: since the
+# item-8 fix they admit only variable declarations (grammar.js var_body /
+# preproc_conditional_var). preproc_split_var_section_tail holds body elements
+# in `repeat1`/`repeat` after its `variables`, so splice-repeat.
 
 # preproc_split_procedure_preamble is NOT an exception, despite round-1 briefly
 # treating it as one: _procedure_preamble (grammar.js:3074-3080) has
@@ -132,7 +132,7 @@ register("preproc_split_case_statement_end", "assembler",
 register("preproc_split_case_end_branch", "fragment", None,
          hosts={"preproc_split_case_statement_end:<children>": "consumed"})
 register("preproc_split_procedure", "assembler", "tools.config_oracle.lowering.assemblers.split_procedure",
-         hosts=dict(_BODY_HOSTS_WITH_VAR))
+         hosts=dict(_BODY_HOSTS))
 
 # --- registered, not yet lowered (milestones 2-3). Unsupported is explicit, never a default.
 for t in ("preproc_conditional_actions", "preproc_conditional_case", "preproc_conditional_case_patterns",
@@ -154,6 +154,11 @@ for t in ("preproc_conditional_actions", "preproc_conditional_case", "preproc_co
           "preproc_split_report_dataitem_header", "preproc_split_report_dataitem_open_over_endif",
           "preproc_split_table_field"):
     register(t, "unsupported")
+
+# Added with the var_body fix (deferred-work item 8). Lowering must merge each
+# branch's `variables` into the PRECEDING sibling var_section — a cross-sibling
+# rewrite the engine has no fragment for yet (milestone 2).
+register("preproc_split_var_section_tail", "unsupported")
 
 # Non-prefixed special type: completes an earlier table relation (spec section 3).
 register("else_table_relation_fragment", "unsupported")

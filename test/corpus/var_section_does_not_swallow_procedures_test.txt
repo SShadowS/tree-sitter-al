@@ -1,0 +1,181 @@
+; A #if that follows a global var section and holds procedures is a SIBLING
+; of the var section, never part of it. Until this fixture var_body admitted
+; preproc_split_procedure and preproc_conditional_var admitted any body
+; element, so 459 procedures in 84 files (BC.History, BC 28.1, DC) were
+; parsed inside var_section; every single-configuration parse disagreed.
+; Found by the configuration-consistency oracle (docs/deferred-work.md item 8).
+; Case 2 is the one real crossing: the branch continues the var section and
+; then starts the procedures (alc accepts it flat and split, CLEAN25 set and
+; unset); preproc_split_var_section_tail holds it.
+
+========================================================================
+A conditional procedure after a var section is a sibling of it
+========================================================================
+codeunit 50000 T
+{
+    var
+        A: Integer;
+
+#if not CLEAN24
+    procedure P()
+    begin
+    end;
+#endif
+}
+------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (var_section
+        (var_keyword)
+        body: (var_body
+          (variable_declaration
+            name: (identifier)
+            type: (type_specification
+              (basic_type)))))
+      (preproc_conditional
+        (preproc_if
+          (preproc_open)
+          condition: (preproc_not_expression
+            (identifier)))
+        (procedure
+          (procedure_keyword)
+          name: (identifier)
+          body: (code_block
+            (begin_keyword)
+            (end_keyword)))
+        (preproc_endif
+          (preproc_close))))))
+
+========================================================================
+A branch that continues the var section and then starts procedures
+========================================================================
+codeunit 50000 T
+{
+    var
+        A: Integer;
+#if not CLEAN25
+        B: Integer;
+
+    procedure P()
+    begin
+    end;
+#endif
+
+    procedure Q()
+    begin
+    end;
+}
+------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (var_section
+        (var_keyword)
+        body: (var_body
+          (variable_declaration
+            name: (identifier)
+            type: (type_specification
+              (basic_type)))))
+      (preproc_split_var_section_tail
+        (preproc_if
+          (preproc_open)
+          condition: (preproc_not_expression
+            (identifier)))
+        variables: (var_body
+          (variable_declaration
+            name: (identifier)
+            type: (type_specification
+              (basic_type))))
+        (procedure
+          (procedure_keyword)
+          name: (identifier)
+          body: (code_block
+            (begin_keyword)
+            (end_keyword)))
+        (preproc_endif
+          (preproc_close)))
+      (procedure
+        (procedure_keyword)
+        name: (identifier)
+        body: (code_block
+          (begin_keyword)
+          (end_keyword))))))
+
+========================================================================
+A split procedure after a var section is a sibling of it
+========================================================================
+table 50000 T
+{
+    var
+        A: Integer;
+
+#if not CLEAN24
+    [Obsolete('Use Q', '24.0')]
+    procedure P(x: Integer)
+#else
+    procedure P(x: Integer; y: Integer)
+#endif
+    begin
+    end;
+}
+------------------------------------------------------------------------
+
+(source_file
+  (table_declaration
+    (table_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (var_section
+        (var_keyword)
+        body: (var_body
+          (variable_declaration
+            name: (identifier)
+            type: (type_specification
+              (basic_type)))))
+      (preproc_split_procedure
+        (preproc_if
+          (preproc_open)
+          condition: (preproc_not_expression
+            (identifier)))
+        (attribute_item
+          attribute: (attribute_content
+            name: (identifier)
+            arguments: (attribute_arguments
+              (attribute_argument_list
+                (string_literal)
+                (string_literal)))))
+        (procedure_keyword)
+        name: (identifier)
+        parameters: (parameter_list
+          (parameter
+            name: (identifier)
+            type: (type_specification
+              (basic_type))))
+        (preproc_else)
+        (procedure_keyword)
+        name: (identifier)
+        parameters: (parameter_list
+          (parameter
+            name: (identifier)
+            type: (type_specification
+              (basic_type)))
+          (parameter
+            name: (identifier)
+            type: (type_specification
+              (basic_type))))
+        (preproc_endif
+          (preproc_close))
+        body: (code_block
+          (begin_keyword)
+          (end_keyword))))))
+

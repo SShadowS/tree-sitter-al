@@ -201,7 +201,6 @@ module.exports = grammar({
     [$._preproc_branch_statement, $._preproc_split_then_begin_open,
      $.preproc_split_if_then_begin_else_shared, $.preproc_split_if_begin_else,
      $._preproc_end_branch],
-    [$._body_element, $.preproc_conditional_var],
     [$.filter_value, $._literal_value],
     [$.filter_value, $._expression],
     [$._body_element, $._action_element],
@@ -231,8 +230,6 @@ module.exports = grammar({
     [$.preproc_conditional_query, $.preproc_conditional],
     [$._xmlport_body_element, $.preproc_conditional],
     [$.preproc_conditional_xmlport, $.preproc_conditional],
-    [$._body_element, $._procedure_header, $.preproc_conditional_var],
-    [$._body_element],
     // At value start `Order` / `Table` are the keyword (`order(descending)`,
     // `RunObject = Table X`) or a name (`Visible = Order = Order::X`) until
     // the next token. sorting_value's order-first arm carries prec.dynamic
@@ -253,7 +250,6 @@ module.exports = grammar({
     // = field(X)`), as a permission entry always could (`table X = RIMD`), so
     // an empty `#if` block before it is either one until the `=` after it.
     [$.preproc_conditional_link_values, $.preproc_conditional_permissions],
-    [$.preproc_conditional_link_values, $.preproc_conditional_table_relation, $.preproc_conditional_permissions],
     // `[$._single_pattern, $._expression]` used to live here and is GONE: the
     // separator fix made it unnecessary. It existed because a case pattern list
     // whose commas were optional could not be told apart from a single
@@ -641,6 +637,9 @@ module.exports = grammar({
       $.preproc_split_procedure_preamble,
       // Preprocessor conditionals
       $.preproc_conditional,
+      // A conditional that continues the preceding var section AND then
+      // starts the procedures that follow it
+      $.preproc_split_var_section_tail,
       // Extension modifications (table/page extensions)
       $.modify_modification,
     ),
@@ -3281,12 +3280,51 @@ module.exports = grammar({
       optional(field('body', $.var_body)),
     )),
 
+    // Only variable declarations and their own conditionals. It used to admit
+    // preproc_split_procedure, and preproc_conditional_var used to admit any
+    // _body_element, so a `#if … procedure … #endif` right after a global var
+    // section was read as PART of that section: 459 procedures in 84 files of
+    // BC.History / BC 28.1 / DC sat inside var_section (found by the
+    // configuration-consistency oracle; docs/deferred-work.md item 8). Every
+    // configuration's own parse has those procedures as SIBLINGS of the var
+    // section, so the old tree was wrong in every configuration.
     var_body: $ => repeat1(choice(
       $.variable_declaration,
       $.var_attribute_item,
       $.preproc_conditional_var,
-      $.preproc_split_procedure,
     )),
+
+    // A conditional whose branch holds the LAST declarations of the preceding
+    // var section and then the procedures that follow it:
+    //
+    //     var
+    //         A: Integer;
+    //     #if not CLEAN25
+    //         B: Integer;              <- continues the var section
+    //
+    //     procedure P() begin end;     <- starts the object body
+    //     #endif
+    //
+    // The var section ends INSIDE the branch, so no properly nested tree can
+    // hold B inside var_section and P outside it (the same crossing as
+    // preproc_split_case_statement_end). This node is a SIBLING of the
+    // var_section; each branch's continued declarations are its `variables`
+    // field, and its body elements are ordinary children. The first branch
+    // must have both, which keeps the rule apart from preproc_conditional_var
+    // (declarations only) and preproc_conditional (body elements only).
+    // Real site: System Application AOAIDeploymentsImpl.Codeunit.al:28.
+    // Plain declarations only (no nested conditional): a nested `#if` first
+    // would be ambiguous with every body-level conditional kind.
+    _var_tail_declarations: $ => repeat1(choice($.variable_declaration, $.var_attribute_item)),
+
+    preproc_split_var_section_tail: $ => seq(
+      $.preproc_if,
+      field('variables', alias($._var_tail_declarations, $.var_body)),
+      repeat1($._body_element),
+      repeat(seq($.preproc_elif, optional(field('variables', alias($._var_tail_declarations, $.var_body))), repeat($._body_element))),
+      optional(seq($.preproc_else, optional(field('variables', alias($._var_tail_declarations, $.var_body))), repeat($._body_element))),
+      $.preproc_endif,
+    ),
 
     // Attribute inside a var section — uses scanner token to ensure the attribute
     // is followed by a variable declaration (not a procedure or other construct).
@@ -3299,14 +3337,14 @@ module.exports = grammar({
 
     preproc_conditional_var: $ => seq(
       $.preproc_if,
-      repeat(choice($.variable_declaration, $.var_attribute_item, $.attribute_item, $._body_element)),
+      repeat(choice($.variable_declaration, $.var_attribute_item)),
       repeat(seq(
         $.preproc_elif,
-        repeat(choice($.variable_declaration, $.var_attribute_item, $.attribute_item, $._body_element)),
+        repeat(choice($.variable_declaration, $.var_attribute_item)),
       )),
       optional(seq(
         $.preproc_else,
-        repeat(choice($.variable_declaration, $.var_attribute_item, $.attribute_item, $._body_element)),
+        repeat(choice($.variable_declaration, $.var_attribute_item)),
       )),
       $.preproc_endif,
     ),

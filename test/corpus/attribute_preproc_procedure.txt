@@ -43,64 +43,64 @@ table 50000 "Test"
             type: (type_specification
               (object_reference_type
                 object_type: (codeunit_keyword)
-                reference: (quoted_identifier))))
-          (preproc_split_procedure
-            (preproc_if
-              (preproc_open)
-              condition: (preproc_not_expression
-                (identifier)))
-            (attribute_item
-              attribute: (attribute_content
-                name: (identifier)
-                arguments: (attribute_arguments
-                  (attribute_argument_list
-                    (string_literal)
-                    (string_literal)))))
-            (procedure_keyword)
+                reference: (quoted_identifier))))))
+      (preproc_split_procedure
+        (preproc_if
+          (preproc_open)
+          condition: (preproc_not_expression
+            (identifier)))
+        (attribute_item
+          attribute: (attribute_content
             name: (identifier)
-            parameters: (parameter_list
-              (parameter
-                name: (identifier)
-                type: (type_specification
-                  (text_type
-                    (text_keyword)
-                    length: (integer)))))
-            return_value: (identifier)
-            return_type: (type_specification
-              (text_type
-                (text_keyword)))
-            (preproc_else)
-            (procedure_keyword)
+            arguments: (attribute_arguments
+              (attribute_argument_list
+                (string_literal)
+                (string_literal)))))
+        (procedure_keyword)
+        name: (identifier)
+        parameters: (parameter_list
+          (parameter
             name: (identifier)
-            parameters: (parameter_list
-              (parameter
-                name: (identifier)
-                type: (type_specification
-                  (text_type
-                    (text_keyword)
-                    length: (integer)))))
-            return_value: (identifier)
-            return_type: (type_specification
+            type: (type_specification
               (text_type
-                (text_keyword)))
-            (preproc_endif
-              (preproc_close))
-            (var_section
-              (var_keyword)
-              body: (var_body
-                (variable_declaration
-                  name: (identifier)
-                  type: (type_specification
-                    (text_type
-                      (text_keyword))))))
-            body: (code_block
-              (begin_keyword)
-              body: (statement_block
-                (assignment_statement
-                  left: (identifier)
-                  operator: (assignment_operator)
-                  right: (identifier)))
-              (end_keyword))))))))
+                (text_keyword)
+                length: (integer)))))
+        return_value: (identifier)
+        return_type: (type_specification
+          (text_type
+            (text_keyword)))
+        (preproc_else)
+        (procedure_keyword)
+        name: (identifier)
+        parameters: (parameter_list
+          (parameter
+            name: (identifier)
+            type: (type_specification
+              (text_type
+                (text_keyword)
+                length: (integer)))))
+        return_value: (identifier)
+        return_type: (type_specification
+          (text_type
+            (text_keyword)))
+        (preproc_endif
+          (preproc_close))
+        (var_section
+          (var_keyword)
+          body: (var_body
+            (variable_declaration
+              name: (identifier)
+              type: (type_specification
+                (text_type
+                  (text_keyword))))))
+        body: (code_block
+          (begin_keyword)
+          body: (statement_block
+            (assignment_statement
+              left: (identifier)
+              operator: (assignment_operator)
+              right: (identifier)))
+          (end_keyword))))))
 
 ================================================================================
 Multiple attributes in preprocessor branch
