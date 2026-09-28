@@ -122,3 +122,93 @@ def test_report_files(tmp_path):
 
 def test_peak_rss_is_positive():
     assert runner.peak_rss_bytes() > 0
+
+
+# ---- fix round 1 ----
+
+WHOLE_FILE_IN_IF = b"#if A\ncodeunit 1 T { }\n#endif\n"
+EMPTY_BODY = b"codeunit 1 T\n{\n    trigger OnRun()\n    begin\n#if A\n        x := 1;\n#endif\n    end;\n}\n"
+
+
+def test_empty_configuration_is_not_a_zero_width_leaf(al_parser):
+    recs = {r.config: r for r in runner.check_input(al_parser, "w", WHOLE_FILE_IN_IF)}
+    assert not any(i.startswith("zero-width-leaf") for i in recs["A=0"].items), recs["A=0"]
+
+
+def test_childless_root_is_not_a_zero_width_leaf():
+    assert runner.first_zero_width_leaf(Node("source_file", True, None, 0, 0, [])) is None
+    deep = Node("source_file", True, None, 0, 0, [Node("x", True, None, 0, 0, [])])
+    assert runner.first_zero_width_leaf(deep) == 0
+
+
+def _rep_violation(monkeypatch):
+    from tools.config_oracle.compare import Discrepancy
+    from tools.config_oracle.lowering.engine import LoweringError
+    monkeypatch.setattr(runner.representation, "check",
+                        lambda root: [Discrepancy("representation", "var-block-without-var", "p@1", "procedure")])
+
+    def fail(root, extras, res):
+        raise LoweringError("unsupported-type", root)
+    monkeypatch.setattr(runner, "lower_tree", fail)
+
+
+def test_representation_violation_is_never_hidden_by_cannot_validate(monkeypatch, al_parser):
+    _rep_violation(monkeypatch)
+    recs = runner.check_input(al_parser, "stmt", STMT)
+    assert {r.status for r in recs} == {"representation-violation"}
+    for r in recs:
+        assert r.items[0] == "stmt|-|representation|var-block-without-var|p@1"
+        assert r.items[1].startswith("lowering:unsupported-type")
+
+
+def test_representation_violation_is_never_classified(monkeypatch):
+    _rep_violation(monkeypatch)
+    classes = {("stmt", "*"): ("cannot-validate", "x"), ("stmt", "A=0"): ("representation-violation", "x")}
+    s = runner.run([("stmt", STMT)], None, workers=1, mode="full", classes=classes)
+    assert s.classified == 0 and s.exit_code == 1
+
+
+def test_build_failure_exits_2(monkeypatch, tmp_path, capsys):
+    from tools.config_oracle.__main__ import main
+    from tools.query_coverage import loader
+
+    def broken(*a, **k):
+        raise RuntimeError("build failed")
+    monkeypatch.setattr(loader, "ensure_library", broken)
+    assert main(["run", "--tier", "quick", "--workers", "1", "--report", str(tmp_path)]) == 2
+    assert "build failed" in capsys.readouterr().err
+
+
+def test_normalisations_are_recorded_without_changing_status(al_parser):
+    recs = {r.config: r for r in runner.check_input(al_parser, "e", EMPTY_BODY)}
+    assert recs["A=0"].status == "pass"
+    assert recs["A=0"].items == ["normalised:removed-empty:statement_block@45"]
+
+
+def test_internal_error_carries_traceback(monkeypatch, al_parser):
+    def crash(*a):
+        raise KeyError("bug")
+    monkeypatch.setattr(runner.compare, "structure", crash)
+    recs = runner.check_input(al_parser, "stmt", STMT)
+    assert "Traceback" in recs[0].items[0]
+
+
+@pytest.mark.parametrize("mutate", [
+    lambda recs: recs + [runner.Record(recs[0].input_id, "A=2", "pass")],              # extra config
+    lambda recs: recs + [recs[0]],                                                      # duplicate config
+    lambda recs: recs + [runner.Record("foreign", "-", "pass")],                        # foreign input
+])
+def test_any_record_mismatch_is_incomplete(monkeypatch, mutate):
+    real = runner.check_input
+    monkeypatch.setattr(runner, "check_input", lambda *a, **k: mutate(real(*a, **k)))
+    with pytest.raises(runner.IncompleteRun):
+        runner.run([("stmt", STMT)], None, workers=1, mode="full")
+
+
+def test_workers_2_matches_workers_1(tmp_path):
+    inputs = [("bad", BAD), ("ok", STMT), ("w", WHOLE_FILE_IN_IF), ("e", EMPTY_BODY)] * 1
+    out = {}
+    for w in (1, 2):
+        runner.write_report(runner.run(inputs, None, workers=w, mode="full"), tmp_path / str(w), {})
+        out[w] = (tmp_path / str(w) / "findings.jsonl").read_bytes()
+    assert out[1] == out[2]

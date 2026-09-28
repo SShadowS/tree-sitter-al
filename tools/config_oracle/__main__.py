@@ -6,6 +6,7 @@ import hashlib
 import os
 import subprocess
 import sys
+import traceback
 from pathlib import Path
 
 from tools.config_oracle import fixtures, runner
@@ -35,7 +36,17 @@ def main(argv=None):
     r.add_argument("--workers", type=int, default=max(1, (os.cpu_count() or 2) - 1))
     r.add_argument("--report", default=str(REPO / "tools" / "config_oracle" / "reports"))
     args = ap.parse_args(argv)
-    header = {"grammar": _sha([REPO / "grammar.js", REPO / "src" / "scanner.c", REPO / "src" / "parser.c"]),
+    try:
+        return _run(args)
+    except Exception:  # noqa: BLE001 -- anything short of a completed run is "could not run"
+        traceback.print_exc()
+        return 2
+
+
+def _run(args):
+    grammar = [REPO / "grammar.js", REPO / "src" / "scanner.c", REPO / "src" / "parser.c",
+               *sorted((REPO / "src").rglob("*.h"))]
+    header = {"grammar": _sha(grammar),
               "tier": args.tier}
     classes = {}
     if args.tier == "quick":
@@ -56,11 +67,7 @@ def main(argv=None):
             header[f"corpus {root}"] = _git_head(root)
             inputs += [(str(p), p.read_bytes()) for p in sorted(root.rglob("*.al"))]
         mode = "resolve"
-    try:
-        summary = runner.run(inputs, None, args.workers, mode, classes)
-    except runner.IncompleteRun as e:
-        print(f"incomplete run: {e}", file=sys.stderr)
-        return 2
+    summary = runner.run(inputs, None, args.workers, mode, classes)
     runner.write_report(summary, Path(args.report), header, classes)
     print((Path(args.report) / "summary.md").read_text(encoding="utf-8"))
     return summary.exit_code

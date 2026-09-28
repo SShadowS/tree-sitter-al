@@ -11,6 +11,7 @@ import ctypes
 import json
 import sys
 import time
+import traceback
 from concurrent.futures import ProcessPoolExecutor
 from dataclasses import asdict, dataclass, field
 from pathlib import Path
@@ -64,7 +65,11 @@ def peak_rss_bytes() -> int:
 
 
 def first_zero_width_leaf(root):
-    """Start of the first zero-width leaf, or None. The comparator is not sound for them."""
+    """Start of the first zero-width leaf BELOW the root, or None. The comparator is not
+    sound for them. A childless root is not one: it is the empty file of a configuration
+    whose whole text is inactive, and `leaves()` would report the root itself."""
+    if not root.children:
+        return None
     for leaf in root.leaves():
         if leaf.start == leaf.end:
             return leaf.start
@@ -72,16 +77,18 @@ def first_zero_width_leaf(root):
 
 
 def _internal(e):
-    return f"{INTERNAL}:{type(e).__name__}:{e}"
+    return f"{INTERNAL}:{type(e).__name__}:{e}\n{traceback.format_exc()}"
 
 
 def _file_level(parser, input_id, source, disc):
     """The multi-configuration tree and the checks that need no configuration."""
     root, extras, problems = ir.from_tree(parser.parse(source))
+    rep = [compare.discrepancy_id(input_id, "-", d) for d in representation.check(root)]
+    if disc is None:
+        return (root, extras, []), rep
     file_items = ["multi-config-parse:" + ",".join(problems)] if problems else []
     file_items += [compare.discrepancy_id(input_id, "-", d) for d in directive_check.check(root, disc)]
-    rep = [compare.discrepancy_id(input_id, "-", d) for d in representation.check(root)]
-    return root, extras, file_items, rep
+    return (root, extras, file_items), rep
 
 
 def _check_config(parser, input_id, source, cid, env, mode, prep):
@@ -94,7 +101,7 @@ def _check_config(parser, input_id, source, cid, env, mode, prep):
         return Record(input_id, cid, "cannot-validate", ["reference-error:" + ",".join(ref.problems)])
     if mode == "resolve":
         return Record(input_id, cid, "pass")
-    root, extras, file_items, rep = prep
+    root, extras, file_items = prep
     if any(i.startswith("multi-config-parse") for i in file_items):
         return Record(input_id, cid, "cannot-validate", file_items)
     if any("|directive|" in i for i in file_items):
@@ -103,7 +110,7 @@ def _check_config(parser, input_id, source, cid, env, mode, prep):
     if z is not None:
         return Record(input_id, cid, "cannot-validate", [f"zero-width-leaf@{z}"])
     try:
-        low, low_extras, _normalised = lower_tree(root, extras, res)
+        low, low_extras, normalised = lower_tree(root, extras, res)
     except LoweringError as e:
         return Record(input_id, cid, "cannot-validate", [f"lowering:{e.kind}:{e}"])
     z = first_zero_width_leaf(low)
@@ -116,9 +123,9 @@ def _check_config(parser, input_id, source, cid, env, mode, prep):
           + compare.leaf_boundaries(ref.root, low)
           + compare.trivia(res.extras, ref.extras, low_extras))
     items = [compare.discrepancy_id(input_id, cid, d) for d in ds]
-    if rep:
-        return Record(input_id, cid, "representation-violation", rep + items)
-    return Record(input_id, cid, "discrepancy" if items else "pass", items)
+    # Each empty-container removal is reported (spec section 2); it never changes the status.
+    notes = [f"normalised:{n}" for n in normalised]
+    return Record(input_id, cid, "discrepancy" if items else "pass", items + notes)
 
 
 def check_input(parser, input_id, source, mode="full"):
@@ -127,27 +134,37 @@ def check_input(parser, input_id, source, mode="full"):
     `mode="full"` lowers and runs every check; `mode="resolve"` runs the resolver and the
     reference parse only. An exception inside the oracle itself becomes an `internal-error`
     record for that configuration (never a dropped one), and makes the run exit 2.
+
+    Representation contracts are checked FIRST, on the multi-configuration tree: when any
+    is violated, every record of the input is `representation-violation`, carrying those
+    items ahead of whatever else applied, so no earlier cannot-validate can hide one.
     """
     try:
         disc = directives.discover(source)
     except directives.ResolveError as e:
-        return [Record(input_id, "-", "cannot-validate", [f"resolver:{e.reason}@{e.offset}"])]
-    prep = None
+        disc, records = None, [Record(input_id, "-", "cannot-validate", [f"resolver:{e.reason}@{e.offset}"])]
+    prep, rep = None, []
     if mode == "full":
         try:
-            prep = _file_level(parser, input_id, source, disc)
+            prep, rep = _file_level(parser, input_id, source, disc)
         except Exception as e:  # noqa: BLE001 -- recorded, not swallowed
-            prep = e
-    records = []
-    for env in directives.configurations(disc):
-        cid = directives.config_id(env, disc.free_symbols)
-        if isinstance(prep, Exception):
-            records.append(Record(input_id, cid, "cannot-validate", [_internal(prep)]))
-            continue
-        try:
-            records.append(_check_config(parser, input_id, source, cid, env, mode, prep))
-        except Exception as e:  # noqa: BLE001 -- recorded, not swallowed
-            records.append(Record(input_id, cid, "cannot-validate", [_internal(e)]))
+            prep = _internal(e)
+    if disc is not None:
+        records = []
+        for env in directives.configurations(disc):
+            cid = directives.config_id(env, disc.free_symbols)
+            if isinstance(prep, str):
+                records.append(Record(input_id, cid, "cannot-validate", [prep]))
+                continue
+            try:
+                records.append(_check_config(parser, input_id, source, cid, env, mode, prep))
+            except Exception as e:  # noqa: BLE001 -- recorded, not swallowed
+                records.append(Record(input_id, cid, "cannot-validate", [_internal(e)]))
+    if disc is None and isinstance(prep, str):
+        records[0].items.append(prep)
+    if rep:
+        for r in records:
+            r.status, r.items = "representation-violation", rep + r.items
     return records
 
 
@@ -187,6 +204,9 @@ def _expected(inputs):
 
 
 def is_classified(record, classes):
+    """A representation violation is never classified: fixture-classes cannot excuse one."""
+    if record.status == "representation-violation":
+        return False
     for key in ((record.input_id, record.config), (record.input_id, "*")):
         if key in classes and classes[key][0] == record.status:
             return True
@@ -222,7 +242,7 @@ def run(inputs, lib_path, workers, mode, classes=None):
             raise IncompleteRun(f"{input_id}: expected {want}, got {have}")
     n_classified = sum(r.status != "pass" and is_classified(r, classes) for r in records)
     validated = sum(r.status != "cannot-validate" for r in records)
-    if validated == 0 or any(r.items and r.items[0].startswith(INTERNAL) for r in records):
+    if validated == 0 or any(i.startswith(INTERNAL) for r in records for i in r.items):
         code = 2
     else:
         code = 0 if all(r.status == "pass" or is_classified(r, classes) for r in records) else 1
