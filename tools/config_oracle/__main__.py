@@ -1,4 +1,5 @@
-"""python -m tools.config_oracle run --tier quick|resolve [--root PATH ...] [--workers N] [--report DIR]"""
+"""python -m tools.config_oracle run --tier quick|resolve [--root PATH ...] [--workers N] [--report DIR]
+   python -m tools.config_oracle replay"""
 from __future__ import annotations
 
 import argparse
@@ -35,7 +36,11 @@ def main(argv=None):
     r.add_argument("--root", action="append", default=[])
     r.add_argument("--workers", type=int, default=max(1, (os.cpu_count() or 2) - 1))
     r.add_argument("--report", default=str(REPO / "tools" / "config_oracle" / "reports"))
+    sub.add_parser("replay", help="historical-defect replays (spec section 5)")
     args = ap.parse_args(argv)
+    if args.cmd == "replay":
+        from tools.config_oracle import replay
+        return replay.main()
     try:
         return _run(args)
     except Exception:  # noqa: BLE001 -- anything short of a completed run is "could not run"

@@ -8,6 +8,20 @@ if str(REPO_ROOT) not in sys.path:
     sys.path.insert(0, str(REPO_ROOT))
 
 
+def pytest_configure(config):
+    config.addinivalue_line("markers", "slow: builds historical parsers; run with -m slow")
+
+
+def pytest_collection_modifyitems(config, items):
+    """`slow` tests run only when a -m expression is given (e.g. `-m slow`)."""
+    if config.getoption("markexpr"):
+        return
+    slow = [i for i in items if i.get_closest_marker("slow")]
+    if slow:
+        config.hook.pytest_deselected(items=slow)
+        items[:] = [i for i in items if not i.get_closest_marker("slow")]
+
+
 @pytest.fixture(scope="session")
 def al_language():
     from tools.query_coverage import loader
