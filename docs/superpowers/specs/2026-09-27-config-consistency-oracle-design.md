@@ -362,7 +362,7 @@ A fixture that now passes is a regression guard, not proof that the oracle detec
 
 | # | Defect | Expected detection |
 |---|---|---|
-| 1 | `CRMSetupDefaults` `end else begin` over `#endif` | structure: `parent` |
+| 1 | `CRMSetupDefaults` `end else begin` over `#endif` | structure: `missing` *(was `parent`; amended 2026-09-28: the old parser flattens the if/else into the then-block, and the comparator's max-leaf-overlap pairing matches that block to the reference's else_branch, so the reference's then_branch is `missing`. The detection is still structural and ran on a validated comparison.)* |
 | 2 | `else #if … #else begin … end; #endif` lost `code_block` | structure: `missing` / `parent` |
 | 3 | `PREPROC_SPLIT_END` stopped by a trailing comment | on the real old parser: the `has_error` backstop (`multi-config-parse:has-error`). Structure: a labelled hand-built tree witness (see below) |
 | 4 | `#if`/`#elif` condition swallowed the next line (`c6b8107`) | `directive-mismatch` |
