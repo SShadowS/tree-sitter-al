@@ -1,8 +1,9 @@
 """tools/has_error_sweep.py: the gate for errors no command-line tool prints.
 
 A MISSING node for a HIDDEN token is not printed by `tree-sitter parse`, its
-`--json-summary`, parse-al-parallel.sh or the corpus tests; only py-tree-sitter's
-`has_error` sees it (docs/deferred-work.md item 12). The key case is the mutation:
+`--json-summary` or parse-al-parallel.sh; only py-tree-sitter's `has_error` sees it
+(docs/deferred-work.md item 12). `tree-sitter test` does print `(MISSING _x)`, but
+only for a fixture that holds the triggering input. The key case is the mutation:
 the parser from before the `_directive_eol` whitespace fix (673528e^) must make the
 sweep report hidden-only and exit 1.
 """
@@ -11,7 +12,7 @@ import re
 import pytest
 
 from tools import has_error_sweep as sweep
-from tools.config_oracle import replay
+from tools.config_oracle import fixtures, replay
 from tools.config_oracle.tests.test_directive_eol import EOLS
 from tools.query_coverage import loader
 
@@ -99,7 +100,7 @@ def test_eol_inputs_are_clean_at_head(tmp_path, capsys):
 def test_pre_fix_parser_reports_hidden_only(tmp_path, capsys):
     """The mutation: 673528e^ skipped only space and tab before `_directive_eol`, so 5
     of the 8 inputs leave a hidden MISSING token. The sweep must call them hidden-only
-    and exit 1, while every command-line gate reported them clean."""
+    and exit 1, while `tree-sitter parse --json-summary` reported all 8 successful."""
     sha = replay._sha("673528e^")
     replay.cached_parser_at(sha)
     lib = replay.CACHE / sha / f"al-replay-{sha[:12]}.dll"
@@ -110,15 +111,78 @@ def test_pre_fix_parser_reports_hidden_only(tmp_path, capsys):
     assert "hidden-only=5" in out and "visible=0" in out, out
     assert len(re.findall(r"^hidden-only\t", out, re.M)) == 5, out
 
+    # M4: a file with a visible ERROR AND the hidden MISSING reports both.
+    both = b"codeunit 1 T { trigger OnRun() begin\n#if A\f\nx := 1;\n#endif\nend;\n" \
+           b"procedure P() begin @@@ end; }\n"
+    root2 = write(tmp_path / "both", {"both.al": both})
+    code, out = run(capsys, "--root", root2, "--lib", lib)
+    assert code == 1, out
+    assert re.search(r"^visible\t.*both\.al\tERROR@.*\thidden: preproc_if@", out, re.M), out
+    assert "visible=1" in out and "with-hidden=1" in out, out
 
-def test_corpus_fixtures_exclude_exactly_the_deliberate_negatives():
+
+def test_every_corpus_case_is_swept():
+    """No case is excluded, negatives included: a negative FILE holds clean cases too."""
+    items = sweep._inputs([], True)
+    assert len(items) == len(fixtures.extract(sweep.CORPUS))
+    assert any(neg for _, _, neg in items)
+
+
+def test_clean_case_inside_a_negative_file_is_swept(al_parser):
+    """preproc_if_elif_whitespace_tolerance_test.txt is a negative file, and 6 of its
+    12 cases are the positive `#if` whitespace cases: exactly where a hidden MISSING
+    `_directive_eol` would appear. They must be parsed, and must be clean."""
+    target = "preproc_if_elif_whitespace_tolerance_test.txt"
+    assert target in sweep.deliberate_negatives()
+    sweep._init(al_parser)
+    mine = [it for it in sweep._inputs([], True) if it[0].startswith(target + "#")]
+    assert mine and all(neg for _, _, neg in mine)
+    verdicts = [sweep._check(it)[1] for it in mine]
+    assert "clean" in verdicts, verdicts
+
+
+def test_negative_accepts_visible_but_never_hidden():
+    assert sweep.accepted("clean", False) and sweep.accepted("clean", True)
+    assert sweep.accepted("visible", True)
+    assert not sweep.accepted("visible", False)
+    assert not sweep.accepted("hidden-only", True)
+    assert not sweep.accepted("hidden-only", False)
+    assert not sweep.accepted("visible+hidden", True)
+
+
+def test_negatives_match_by_basename_like_step_3():
+    """Step 3 compares `basename`; the sweep compares the case file's name. Both must
+    exempt a negative wherever it sits under test/corpus/."""
     names = sweep.deliberate_negatives()
     assert names, "the deliberate-negative list is empty"
+    on_disk = {p.name for p in sweep.CORPUS.rglob("*.txt")}
     for n in names:
-        assert (REPO / "test" / "corpus" / n).is_file(), f"listed but absent: {n}"
-    files = {c.file for c in sweep.corpus_fixture_inputs_cases()}
-    assert not files & names
-    assert len(files) > 500
+        assert n in on_disk, f"listed but absent: {n}"
+        assert sweep.is_negative(n) and sweep.is_negative(f"sub/dir/{n}")
+    assert not sweep.is_negative("sub/" + "x" + next(iter(names)))
+    vg = (REPO / "validate-grammar.sh").read_text(encoding="utf-8")
+    assert 'name=$(basename "$1")' in vg
+
+
+def test_undecodable_input_cannot_run_exits_2(tmp_path, capsys):
+    """A truncated UTF-16 file is a crash after setup: `cannot run`, never exit 1."""
+    root = write(tmp_path / "bad", {"a.al": CLEAN, "b.al": b"\xff\xfe\x41"})
+    code, out = run(capsys, "--root", root)
+    assert code == 2, out
+    code, out = run(capsys, "--root", root, "--jobs", 2)
+    assert code == 2, out
+
+
+def test_gate_selftest_prints_failing_steps():
+    import importlib.util
+    spec = importlib.util.spec_from_file_location("gate_selftest", REPO / "tools" / "gate_selftest.py")
+    gs = importlib.util.module_from_spec(spec)
+    import sys
+    sys.modules["gate_selftest"] = gs  # dataclasses resolves the module by name
+    spec.loader.exec_module(gs)
+    out = ("Step 3b: x\n✓ fine\nStep 9: WASM Freshness\n"
+           "✗ Committed wasm is stale\n✗ Some validation checks failed!\n")
+    assert gs.failing_steps(out) == ["[Step 9: WASM Freshness] Committed wasm is stale"]
 
 
 def test_validate_grammar_reads_the_same_negatives_file():

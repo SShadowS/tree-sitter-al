@@ -42,7 +42,7 @@ python -m tools.query_coverage.qc accept       # freeze the current state as the
 
 # has_error gate — the only thing that sees a MISSING node for a HIDDEN token
 python tools/has_error_sweep.py --root ./BC.History/   # exit 0 clean, 1 errors, 2 cannot run
-python tools/has_error_sweep.py --corpus-fixtures      # every corpus case minus tools/deliberate-negatives.txt
+python tools/has_error_sweep.py --corpus-fixtures      # every corpus case; negatives may be visible, never hidden
 
 # Standard development cycle
 tree-sitter generate         # Generate parser from grammar.js
