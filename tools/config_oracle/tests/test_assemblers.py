@@ -72,6 +72,26 @@ SLOT_TERMINATOR = b"""codeunit 1 T
 }
 """
 
+# The same [statement, ';'] exemption inside a `case_branch:body` single slot: the
+# case_branch itself must consume the Terminator, so its last child is that `;`.
+CASE_SLOT_TERMINATOR = b"""codeunit 1 T
+{
+    trigger OnRun()
+    begin
+        case c of
+            1:
+#if A
+                x := 1;
+#else
+                x := 2;
+#endif
+            2:
+                y := 3;
+        end;
+    end;
+}
+"""
+
 # A split signature followed by a split BODY (preproc_split_complete_body) is a
 # milestone-2 type and deliberately not here; replay 5's HEAD positive control
 # covers the pragma-only tail.
@@ -90,8 +110,8 @@ def all_configs(parser, src):
                     + compare.trivia(res.extras, ref.extras, low_extras))
 
 
-@pytest.mark.parametrize("src", [SPLIT_END, NESTED, SPLIT_PROC, SLOT_TERMINATOR],
-                         ids=["split_end", "nested", "split_proc", "slot_terminator"])
+@pytest.mark.parametrize("src", [SPLIT_END, NESTED, SPLIT_PROC, SLOT_TERMINATOR, CASE_SLOT_TERMINATOR],
+                         ids=["split_end", "nested", "split_proc", "slot_terminator", "case_slot_terminator"])
 def test_every_configuration_matches(al_parser, src):
     n = 0
     for env, ds in all_configs(al_parser, src):
@@ -114,6 +134,31 @@ def test_fixtures_exercise_the_intended_types(al_parser):
     assert "preproc_split_code_block_end" in kinds(NESTED)
     assert "preproc_split_procedure" in kinds(SPLIT_PROC)
     assert "preproc_conditional_statement" in kinds(SLOT_TERMINATOR)
+    assert "preproc_conditional_statement" in kinds(CASE_SLOT_TERMINATOR)
+
+
+def test_case_branch_consumes_the_slot_terminator(al_parser):
+    root, extras, problems = ir.from_tree(al_parser.parse(CASE_SLOT_TERMINATOR))
+    assert problems == []
+    # the conditional really is the case_branch's body slot, holding [statement, ';'] per arm
+    stack, cond = [root], None
+    while stack:
+        n = stack.pop()
+        if n.kind == "preproc_conditional_statement":
+            cond = n
+        stack.extend(n.children)
+    assert cond.field == "body"
+    for env in configurations(discover(CASE_SLOT_TERMINATOR)):
+        low, _, _ = lower_tree(root, extras, resolve(CASE_SLOT_TERMINATOR, env))
+        stack, branches = [low], []
+        while stack:
+            n = stack.pop()
+            if n.kind == "case_branch":
+                branches.append(n)
+            stack.extend(n.children)
+        first = min(branches, key=lambda b: b.start)
+        assert [c.kind for c in first.children][-2:] == ["assignment_statement", ";"], sorted(env)
+        assert first.children[-2].field == "body"
 
 
 def test_else_attachment_needs_an_if_owner(al_parser):

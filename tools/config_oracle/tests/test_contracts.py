@@ -109,7 +109,5 @@ def test_token_alias_requires_alias_to():
 
 def test_every_handler_resolves():
     for e in contracts.REGISTRY.values():
-        if e.type == "preproc_split_case_statement_end":  # Task 13
-            continue
         if e.handler:
             assert contracts.resolve_handler(e) is not None, e.type

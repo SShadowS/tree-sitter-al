@@ -7,8 +7,8 @@ from __future__ import annotations
 
 from tools.config_oracle import contracts
 from tools.config_oracle.ir import Node
-from tools.config_oracle.lowering.engine import (BlockCompletion, ElseAttachment, Lowered, LoweringError,
-                                                 Terminator, _span_from_children, lower)
+from tools.config_oracle.lowering.engine import (BlockCompletion, ElseAttachment, Following, Lowered,
+                                                 LoweringError, Terminator, _span_from_children, lower)
 from tools.config_oracle.lowering.select import chosen_arm, split_arms
 
 
@@ -118,3 +118,63 @@ def split_procedure(node, ctx) -> Lowered:
                        ctx, "procedure")
     proc = _span_from_children(Node("procedure", True, node.field, 0, 0, parts))
     return Lowered(attrs + [proc])
+
+
+def split_case_statement_end(node, ctx) -> Lowered:
+    """Contract split-case-end. Host: a statement position (policy per registry).
+    Children: `case_keyword expression of_keyword [body: case_body] pattern-run ':'`
+    then an #if/#elif/#else group whose every arm is ONE
+    `preproc_split_case_end_branch` = `body [;] end_keyword ; following: statement_block`.
+    Rewrites allowed:
+      * the pieces before `#if` plus the chosen branch assemble ONE `case_statement`
+        carrying this node's field, children in the reference's order:
+        `case_keyword expression of_keyword body: case_body end_keyword`;
+      * the pattern run (fields `pattern`, `,`) and `:`, followed by the branch's
+        `body` statement and its optional `;`, form a NEW final `case_branch`
+        appended to the `case_body` (created, field `body`, if the node had none);
+        a Terminator the body slot emits is consumed by that case_branch;
+      * the branch's `end_keyword` is the case_statement's `end_keyword`;
+      * the `;` after it -> Terminator anchored to the case_statement;
+      * the `following` statement_block is dissolved: its statements -> Following
+        anchored to the case_statement, i.e. SIBLINGS after it (and after its `;`)
+        in the host, never inside it.
+    Every piece is lowered through `lower()`, so a `preproc_conditional_case_patterns`
+    in the pattern run raises unsupported-type (milestone 2). Anything else in the
+    shape is contract-shape; a fragment escaping the case or `following` is refused.
+    """
+    ctx.policy(contracts.REGISTRY[node.kind], node)
+    cut = next((i for i, c in enumerate(node.children) if c.kind == "preproc_if"), None)
+    of = next((i for i, c in enumerate(node.children) if c.kind == "of_keyword"), None)
+    if cut is None or of is None or of > cut:
+        raise LoweringError("contract-shape", node, "expected `case … of` before #if")
+    lead, rest = node.children[:of + 1], node.children[of + 1:cut]
+    body = rest[0] if rest and rest[0].kind == "case_body" and rest[0].field == "body" else None
+    patterns = rest[1:] if body is not None else rest
+    if len(patterns) < 2 or patterns[-1].kind != ":":
+        raise LoweringError("contract-shape", node, "no `pattern… :` before #if")
+    arms, endif = split_arms(node.copy(children=node.children[cut:]))
+    arm = _active(arms, endif, node, ctx)
+    if len(arm) != 1 or arm[0].kind != "preproc_split_case_end_branch":
+        raise LoweringError("contract-shape", node, "chosen arm is not one case_end_branch")
+    br = arm[0]
+    ctx.child(node.kind, "<children>").policy(contracts.REGISTRY[br.kind], br)
+    ends = [i for i, c in enumerate(br.children) if c.kind == "end_keyword"]
+    tail = br.children[ends[0]:] if len(ends) == 1 else []
+    if len(tail) != 3 or tail[1].kind != ";" or tail[2].field != "following"             or tail[2].kind != "statement_block" or ends[0] == 0:
+        raise LoweringError("contract-shape", br, "expected `body [;] end ; following:` "
+                            + " ".join(f"{c.field}:{c.kind}" if c.field else c.kind for c in br.children))
+    end_kw, semi, following = tail
+    branch = Node("case_branch", True, None, patterns[0].start, br.children[ends[0] - 1].end,
+                  patterns + br.children[:ends[0]])
+    case_body = body.copy(children=body.children + [branch]) if body is not None         else Node("case_body", True, "body", branch.start, branch.end, [branch])
+    raw = Node("case_statement", True, node.field, node.start, end_kw.end, lead + [case_body, end_kw])
+    r = lower(raw, ctx)
+    f = lower(following, ctx.child(br.kind, "following"))
+    if r.frags or f.frags:
+        raise LoweringError("unconsumed-fragment", node, "fragment escaping the case or `following`")
+    case = r.nodes[0]
+    stmts = f.nodes[0].children if f.nodes else []
+    term = _lower_all([semi], ctx, "statement_block")[0]
+    # Order matters: the host inserts each fragment right after the anchor, so the
+    # Terminator (inserted last) lands between the case and the Following statements.
+    return Lowered([case], [Following(case, stmts), Terminator(case, term)])
