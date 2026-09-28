@@ -120,6 +120,33 @@ _BODY_HOSTS = {f"{p}:<children>": "splice-repeat" for p in (
 _ROUTINE_TAIL_HOSTS = {f"{p}:<children>": "optional-slot" for p in (
     "preproc_split_procedure", "preproc_split_procedure_preamble", "procedure", "trigger_declaration")}
 
+# _body_element (grammar.js:667-714): every object/section-body member, shared
+# by preproc_conditional_layout_mixed, preproc_conditional_report and (Task 6)
+# preproc_conditional_query/xmlport/controladdin. Defined once (round-1 review
+# of Task 4: the member list was repeated inline at each of its arms).
+_BODY_ELEMENT = frozenset({
+    "property", "preproc_split_permissions_property", "empty_statement", "fields_section",
+    "keys_section", "fieldgroups_section", "enum_value_declaration", "labels_section",
+    "layout_section", "actions_section", "views_section", "analysisviews_section",
+    "dataset_section", "requestpage_section", "rendering_section", "elements_section",
+    "schema_section", "assembly_declaration", "procedure", "trigger_declaration", "var_section",
+    "attribute_item", "event_declaration", "preproc_split_procedure",
+    "preproc_split_procedure_preamble", "preproc_conditional", "preproc_split_var_section_tail",
+    "modify_modification",
+})
+# _layout_element (grammar.js:2115-2141): every layout-container member,
+# including its own self-reference to preproc_conditional_layout. Shared by
+# preproc_conditional_layout's own arm and preproc_conditional_layout_mixed's.
+_LAYOUT_ELEMENT = frozenset({
+    "area_section", "group_section", "repeater_section", "cuegroup_section", "fixed_section",
+    "grid_section", "page_field", "part_section", "systempart_section", "usercontrol_section",
+    "label_section", "preproc_conditional_layout", "preproc_split_field",
+    "addfirst_modification", "addlast_modification", "addafter_modification",
+    "addbefore_modification", "modify_modification", "preproc_split_modify",
+    "movefirst_modification", "movelast_modification", "moveafter_modification",
+    "movebefore_modification",
+})
+
 # --- directive plumbing: consumed by whichever owner contains it
 for t in ("preproc_if", "preproc_elif", "preproc_else", "preproc_endif", "preproc_open", "preproc_close",
           "preproc_and_expression", "preproc_or_expression", "preproc_not_expression",
@@ -197,44 +224,20 @@ register("preproc_conditional_layout", "branch-select", "tools.config_oracle.low
                 "preproc_conditional_layout_mixed:<children>": "splice-repeat",
                 "preproc_split_brace_close:<children>": "splice-repeat",
                 "preproc_split_brace_close_if_only:<children>": "splice-repeat"},
-         arm={"area_section", "group_section", "repeater_section", "cuegroup_section", "fixed_section",
-              "grid_section", "page_field", "part_section", "systempart_section", "usercontrol_section",
-              "label_section", "preproc_conditional_layout", "preproc_split_field",
-              "addfirst_modification", "addlast_modification", "addafter_modification",
-              "addbefore_modification", "modify_modification", "preproc_split_modify",
-              "movefirst_modification", "movelast_modification", "moveafter_modification",
-              "movebefore_modification"})
+         arm=_LAYOUT_ELEMENT)
 register("preproc_conditional_layout_mixed", "branch-select", "tools.config_oracle.lowering.select.branch_select",
          hosts={"layout_container_body:<children>": "splice-repeat"},
-         # _body_element ∪ _layout_element (grammar.js seq at preproc_conditional_layout_mixed):
+         # _body_element | _layout_element (grammar.js seq at preproc_conditional_layout_mixed):
          # neither expansion includes preproc_conditional_layout_mixed itself.
-         arm={"property", "preproc_split_permissions_property", "empty_statement", "fields_section",
-              "keys_section", "fieldgroups_section", "enum_value_declaration", "labels_section",
-              "layout_section", "actions_section", "views_section", "analysisviews_section",
-              "dataset_section", "requestpage_section", "rendering_section", "elements_section",
-              "schema_section", "assembly_declaration", "procedure", "trigger_declaration", "var_section",
-              "attribute_item", "event_declaration", "preproc_split_procedure",
-              "preproc_split_procedure_preamble", "preproc_conditional", "preproc_split_var_section_tail",
-              "modify_modification",
-              "area_section", "group_section", "repeater_section", "cuegroup_section", "fixed_section",
-              "grid_section", "page_field", "part_section", "systempart_section", "usercontrol_section",
-              "label_section", "preproc_conditional_layout", "preproc_split_field",
-              "addfirst_modification", "addlast_modification", "addafter_modification",
-              "addbefore_modification", "preproc_split_modify", "movefirst_modification",
-              "movelast_modification", "moveafter_modification", "movebefore_modification"})
+         arm=_BODY_ELEMENT | _LAYOUT_ELEMENT)
 register("preproc_conditional_report", "branch-select", "tools.config_oracle.lowering.select.branch_select",
          hosts={"report_body:<children>": "splice-repeat",
                 "preproc_conditional_report:<children>": "splice-repeat"},
+         # _report_body_element (grammar.js:2766-2775): its own 4 members, plus
+         # _body_element, plus its self-reference.
          arm={"report_column", "report_dataitem", "preproc_split_report_dataitem_header",
               "preproc_split_report_dataitem_open_over_endif",
-              "property", "preproc_split_permissions_property", "empty_statement", "fields_section",
-              "keys_section", "fieldgroups_section", "enum_value_declaration", "labels_section",
-              "layout_section", "actions_section", "views_section", "analysisviews_section",
-              "dataset_section", "requestpage_section", "rendering_section", "elements_section",
-              "schema_section", "assembly_declaration", "procedure", "trigger_declaration", "var_section",
-              "attribute_item", "event_declaration", "preproc_split_procedure",
-              "preproc_split_procedure_preamble", "preproc_conditional", "preproc_split_var_section_tail",
-              "modify_modification", "preproc_conditional_report"})
+              "preproc_conditional_report"} | _BODY_ELEMENT)
 register("preproc_conditional_rendering", "branch-select", "tools.config_oracle.lowering.select.branch_select",
          hosts={"rendering_body:<children>": "splice-repeat"},
          arm={"rendering_layout"})
@@ -276,18 +279,65 @@ register("preproc_conditional_var", "branch-select", "tools.config_oracle.loweri
          # no self-nesting (unlike fields/keys/fieldgroups).
          arm={"variable_declaration", "var_attribute_item"})
 
+# --- branch-select, part C (Task 6): case, labels, query, xmlport, controladdin.
+register("preproc_conditional_case", "branch-select", "tools.config_oracle.lowering.select.branch_select",
+         hosts={"case_body:<children>": "splice-repeat"},
+         # own rule (grammar.js:4727-4734): repeat($.case_branch) then optional
+         # ($.case_else_branch), no self-nesting. The task-5 brief described this
+         # arm as holding a nested preproc_conditional_case; the rule itself has
+         # no such reference (only preproc_split_case_branch nests, one level
+         # down, inside case_branch's own choice) -- read from grammar.js, not
+         # the brief.
+         #
+         # case_else_branch is declared here (grammar-true) but deliberately
+         # EXCLUDED from the arm. It is one of case_body's repeat1 members only
+         # in the multi-config tree (via preproc_conditional_case); in every
+         # single-configuration parse case_statement carries it as its OWN
+         # optional field, a SIBLING of case_body, never case_body's child
+         # (grammar.js:4585-4592: `optional(field('body', case_body)),
+         # optional(case_else_branch), end_keyword`). Splicing it into case_body
+         # like an ordinary arm member is a genuine structural discrepancy, not
+         # a policy mismatch: found live over BC.History
+         # (case_preprocessor_else.txt, config CLEAN25=0) as `case_body.body/
+         # case_else_branch` (lowered) vs `case_statement.-/case_else_branch`
+         # (reference) -- extra/missing at the same two paths. Re-parenting a
+         # fragment from case_body to its case_statement grandparent needs a
+         # new Fragment kind that survives a NON-last original child (case_body
+         # is not case_statement's last child; end_keyword is), which none of
+         # engine.py's four Fragment types do today. Left unsupported
+         # (arm-content -> cannot-validate) rather than papered over; milestone 3.
+         arm={"case_branch"})
+register("preproc_conditional_labels", "branch-select", "tools.config_oracle.lowering.select.branch_select",
+         hosts={"labels_body:<children>": "splice-repeat"},
+         # own rule (grammar.js:2072-2078): label_declaration only, no self-nesting.
+         arm={"label_declaration"})
+register("preproc_conditional_query", "branch-select", "tools.config_oracle.lowering.select.branch_select",
+         hosts={"query_body:<children>": "splice-repeat",
+                "preproc_conditional_query:<children>": "splice-repeat"},
+         # _query_body_element (grammar.js:2873-2879): its own 3 members, _body_element, self-reference.
+         arm={"query_column", "query_filter", "query_dataitem", "preproc_conditional_query"} | _BODY_ELEMENT)
+register("preproc_conditional_xmlport", "branch-select", "tools.config_oracle.lowering.select.branch_select",
+         hosts={"xmlport_body:<children>": "splice-repeat",
+                "preproc_conditional_xmlport:<children>": "splice-repeat"},
+         # _xmlport_body_element (grammar.js:2949-2954): its own 2 members, _body_element, self-reference.
+         arm={"xmlport_element", "xmlport_attribute", "preproc_conditional_xmlport"} | _BODY_ELEMENT)
+register("preproc_conditional_controladdin", "branch-select", "tools.config_oracle.lowering.select.branch_select",
+         hosts={"controladdin_body:<children>": "splice-repeat",
+                "preproc_conditional_controladdin:<children>": "splice-repeat"},
+         # own rule (grammar.js:589-601): _body_element, interface_procedure, self-reference.
+         arm={"interface_procedure", "preproc_conditional_controladdin"} | _BODY_ELEMENT)
+
 # --- registered, not yet lowered (milestones 2-3). Unsupported is explicit, never a default.
 # preproc_split_else_begin_over_endif (in this loop, from Task 13): base shape
 # milestone 2, widened shapes one-reading.
-for t in ("preproc_conditional_case", "preproc_conditional_case_patterns",
-          "preproc_conditional_controladdin", "preproc_conditional_expression_tail",
+for t in ("preproc_conditional_case_patterns",
+          "preproc_conditional_expression_tail",
           "preproc_conditional_impl_values",
-          "preproc_conditional_labels",
           "preproc_conditional_link_values",
           "preproc_conditional_list_elements", "preproc_conditional_option_members",
-          "preproc_conditional_permissions", "preproc_conditional_query",
+          "preproc_conditional_permissions",
           "preproc_conditional_table_relation",
-          "preproc_conditional_where", "preproc_conditional_xmlport", "preproc_fragmented_else_tail",
+          "preproc_conditional_where", "preproc_fragmented_else_tail",
           "preproc_guarded_statement", "preproc_operand_prefix", "preproc_split_brace_close",
           "preproc_split_brace_close_if_only", "preproc_split_call_statement", "preproc_split_case_branch",
           "preproc_split_case_extended", "preproc_split_code_block_over_endif", "preproc_split_complete_body",

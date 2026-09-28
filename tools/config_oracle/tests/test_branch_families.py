@@ -47,6 +47,23 @@ P2_WITNESSES = {
     "preproc_conditional_var": [
         b"codeunit 1 T\n{\n    var\n        X: Integer;\n#if A\n        Y: Integer;\n#else\n        Z: Integer;\n#endif\n\n    procedure P()\n    var\n        L: Integer;\n#if B\n        M: Integer;\n#endif\n    begin\n    end;\n}\n",
     ],
+    "preproc_conditional_case": [
+        b"codeunit 1 T\n{\n    procedure P(i: Integer)\n    begin\n        case i of\n            1:\n                i := 1;\n#if A\n            2:\n                i := 2;\n#endif\n            3:\n                i := 3;\n        end;\n    end;\n}\n",
+    ],
+    "preproc_conditional_labels": [
+        b"report 1 R\n{\n    labels\n    {\n#if A\n        L1 = 'x';\n#endif\n        L2 = 'y';\n    }\n}\n",
+    ],
+    "preproc_conditional_query": [
+        b"query 1 Q\n{\n    elements\n    {\n        dataitem(D; Integer)\n        {\n#if A\n            column(C; Number) { }\n#endif\n        }\n    }\n}\n",
+    ],
+    "preproc_conditional_xmlport": [
+        # a second textelement in the #if arm, so the policy-swap probe has a
+        # config (A=1) that selects two nodes, not one
+        b"xmlport 1 X\n{\n    schema\n    {\n        textelement(Root)\n        {\n#if A\n            textelement(E1) { }\n            textelement(E1b) { }\n#else\n            textelement(E2) { }\n#endif\n        }\n    }\n}\n",
+    ],
+    "preproc_conditional_controladdin": [
+        b"controladdin C\n{\n#if A\n    Scripts = 'a.js';\n#endif\n    RequestedHeight = 1;\n}\n",
+    ],
 }
 
 # A witness whose arm is EMPTY in some configuration (Review Focus 1).

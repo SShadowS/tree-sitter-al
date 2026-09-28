@@ -41,6 +41,9 @@ EMPTY_REMOVABLE = {
     "fields_body",        # fields_section: optional(field('body', $.fields_body)) (grammar.js:1646-1651)
     "keys_body",          # keys_section: optional(field('body', $.keys_body)) (grammar.js:1718-1723)
     "fieldgroups_body",   # fieldgroups_section: optional(field('body', $.fieldgroups_body)) (grammar.js:1780-1785)
+    # Added with Task 6's query branch-select: same single-site shape, found the
+    # same way (a witness config emptying the dataitem's body raised empty-node).
+    "query_body",         # query_dataitem: optional(field('body', $.query_body)) (grammar.js:2860-2870)
 }
 
 STATEMENT_HOSTS = {"statement_block", "case_branch"}
