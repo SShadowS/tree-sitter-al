@@ -97,6 +97,87 @@ REPLAYS = [
 ]
 
 
+REPLAY_3_WITNESS_LABEL = "hand-built tree witness (spec §5)"
+# Kinds whose (kind, field, span) the witness must share with the old parser's tree: the
+# nodes the defect regroups. Everything else keeps HEAD's shape, so a structure item can
+# only come from the regrouping, not from unrelated grammar drift since f47350d^.
+_R3_KINDS = {"code_block", "statement_block", "if_statement", "preproc_conditional_statement",
+             "call_statement", "begin_keyword", "end_keyword", "preproc_split_code_block_end"}
+
+
+def _r3_signature(root):
+    out, stack = [], [root]
+    while stack:
+        n = stack.pop()
+        if n.kind in _R3_KINDS:
+            out.append((n.kind, n.field, n.start, n.end))
+        stack.extend(n.children)
+    return sorted(out)
+
+
+def replay3_tree_witness(old_parser=None):
+    """REPLAY_3_WITNESS_LABEL: replay 3's STRUCTURAL detection, shown on a labelled hand-built tree.
+
+    On the real old parser replay 3 is caught only by the has_error backstop: the defect
+    was CLI-silent (its MISSING `end` is hidden), not API-silent. This builds the tree the
+    old parser produced, minus that hidden MISSING token -- the API-silent variant a
+    backstop cannot see -- and requires `structure` to report it for CLEAN22=0.
+
+    The pre-fix reading is taken from the old parser (f47350d^) itself: the HEAD
+    multi-configuration tree is rewritten so that the `end;` under `#if not CLEAN22` is a
+    `call_statement` inside a `preproc_conditional_statement` (transplanted from the old
+    tree) appended to the then-block's statements; the then-block takes the procedure's
+    closing `end` and `;`, and the outer block has no `end`. The rewrite is checked against
+    the old tree on every node kind it touches.
+
+    -> (structure discrepancies, witness signature, old-tree signature)."""
+    from tools.config_oracle import compare, directives, ir, reference
+    from tools.config_oracle.lowering import lower_tree
+    r = next(x for x in REPLAYS if x.number == 3)
+    [case] = [c for c in fixtures.extract(REPO / "test" / "corpus") if c.file == r.file and r.select(c)]
+    src = case.source
+    head = loader.make_parser(loader.load_language(loader.ensure_library(REPO)))
+    old = old_parser or cached_parser_at(r.commit)
+    root, extras, problems = ir.from_tree(head.parse(src))
+    old_root, _, old_problems = ir.from_tree(old.parse(src))
+    assert not problems and old_problems, (problems, old_problems)   # HEAD clean; old has_error
+
+    def find(n, pred, parent=None):
+        if pred(n):
+            return n, parent
+        for c in n.children:
+            hit = find(c, pred, n)
+            if hit:
+                return hit
+        return None
+
+    outer, proc = find(root, lambda n: n.kind == "code_block" and n.field == "body")
+    then_cb, _ = find(outer, lambda n: n.field == "then_branch")
+    begin, stmts, split = then_cb.children
+    assert split.kind == "preproc_split_code_block_end", split.kind
+    old_cond, _ = find(old_root, lambda n: n.kind == "preproc_conditional_statement")
+    outer_end, semi = outer.children[-1], proc.children[-1]
+    assert (outer_end.kind, semi.kind) == ("end_keyword", ";")
+    stmts.children.append(old_cond)
+    then_cb.children = [begin, stmts, outer_end, semi]
+    outer.children.remove(outer_end)
+    proc.children.remove(semi)
+
+    def respan(n):
+        for c in n.children:
+            respan(c)
+        ir.recompute_span(n)
+    respan(root)
+    witness_sig = _r3_signature(find(root, lambda n: n.kind == "procedure")[0])
+    old_sig = _r3_signature(find(old_root, lambda n: n.kind == "procedure")[0])
+
+    res = directives.resolve(src, frozenset())                       # CLEAN22=0
+    ref = reference.extract(head, res.masked)
+    assert not ref.problems, ref.problems
+    low, _low_extras, _ = lower_tree(root, extras, res)
+    return compare.structure(ref.root, low), witness_sig, old_sig
+
+
 CACHE = Path(tempfile.gettempdir()) / "tree-sitter-al-replay"
 
 
@@ -194,6 +275,13 @@ def main() -> int:
             print(f"  {rec.input_id} [{rec.config}] {rec.status}")
             for i in rec.items:
                 print(f"      {i.splitlines()[0] if i else i}")
+    ds, witness, old = replay3_tree_witness()
+    ok = witness == old and any(d.check == "structure" and d.path.endswith("call_statement.-@143-146") for d in ds)
+    failed += not ok
+    print(f"replay 3 structure, {REPLAY_3_WITNESS_LABEL}: {'CAUGHT' if ok else 'NOT CAUGHT'}"
+          f"  (faithful to f47350d^ tree: {witness == old})")
+    for d in ds:
+        print(f"      structure|{d.kind}|{d.path}")
     return 1 if failed else 0
 
 
