@@ -288,8 +288,10 @@ def _lower_ordinary(node, ctx) -> Lowered:
             ctx.normalised.append(f"removed-empty:{node.kind}@{node.start}")
             return Lowered([], frags)
         raise LoweringError("empty-node", node)
-    if node.kind == "property_expression" and any(c.kind == _TAIL for c in node.children)             and len(kids) == 1 and kids[0].kind not in PROPERTY_EXPRESSION_KINDS:
-        return Lowered([kids[0].copy(field=node.field)], frags)   # property-expression-unwrap
+    if (node.kind == "property_expression" and any(c.kind == _TAIL for c in node.children)
+            and len(kids) == 1 and kids[0].kind not in PROPERTY_EXPRESSION_KINDS):
+        ctx.normalised.append(f"property-expression-unwrap@{node.start}")
+        return Lowered([kids[0].copy(field=node.field)], frags)
     return Lowered([_span_from_children(new)], frags)
 
 

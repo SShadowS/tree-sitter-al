@@ -380,7 +380,10 @@ def expression_tail(node, ctx) -> Lowered:
     extend the IMMEDIATELY PRECEDING lowered sibling (ExpressionContinuation, a
     ToPrevious fragment): that expression and every operand are flattened and
     recomposed by the precedence table, keeping the preceding sibling's field.
-    No other edge changes; emits no nodes. Directives are `directive`, other
+    The one other rewrite is **property-expression-unwrap** (see
+    engine.ExpressionContinuation): a host property_expression whose lowered
+    content is not one of its member kinds is replaced by that content. No
+    other edge changes; emits no nodes. Directives are `directive`, other
     arms `inactive-arm`, every other leaf `kept`."""
     ctx.policy(contracts.REGISTRY[node.kind], node)
     cut = next((i for i, c in enumerate(node.children) if c.kind == "preproc_endif"), None)
