@@ -375,7 +375,8 @@ register("preproc_conditional_link_values", "branch-select", _LIST_RUN,
          # _link_value_branch / _link_value_seq / _link_value_run (grammar.js:1190-1224).
          arm={"link_value", "preproc_conditional_link_values", ","})
 
-# --- registered, not yet lowered (milestones 2-3). Unsupported is explicit, never a default.
+# --- registered, not yet lowered: milestone 3 (spec "Registry state at exit"), every
+# one of them. Unsupported is explicit, never a default.
 for t in ("preproc_conditional_case_patterns",
           "preproc_conditional_impl_values",
           "preproc_fragmented_else_tail",
@@ -438,7 +439,8 @@ register("preproc_conditional_table_relation", "assembler",
          "tools.config_oracle.lowering.assemblers.table_relation_select",
          # Nested inside an else chain the arm's relation must merge into the
          # enclosing table_relation_expression, a rewrite this contract does not
-         # name: refused as unsupported-type.
+         # name: refused as unsupported-type, milestone 3 (1 production file,
+         # DC CDCDataTranslation.Table.al).
          # preproc_conditional_table_relation:<children>: a whole-value #if nested
          # in a whole-value arm (G3), lowered as the arm's value.
          hosts={"property:value": "single-slot",
