@@ -45,9 +45,29 @@ def test_dropped_terminator_is_caught(al_parser, monkeypatch):
     assert v and all(s != "pass" for s, _ in v.values()), v
 
 
+def test_arm_value_without_its_field_is_contract_shape(al_parser, monkeypatch):
+    # Unmutated, every configuration passes (test_whole_relation_arm_every_config).
+    # An arm value outside field `value` is not the contract's shape: strip the
+    # field from every arm item and the selection must refuse, not lower it.
+    from tools.config_oracle.lowering import assemblers
+    real = assemblers.split_arms
+
+    def unfielded(node):
+        arms, endif = real(node)
+        if node.kind != NODE:
+            return arms, endif
+        return [(d, [c.copy(field=None) if c.field == "value" else c for c in items])
+                for d, items in arms], endif
+    monkeypatch.setattr(assemblers, "split_arms", unfielded)
+    v = witness.verdicts(al_parser, WHOLE)
+    assert v and all(s != "pass" and any(i.startswith("lowering:contract-shape") and "not 'value'" in i
+                                         for i in items)
+                     for s, items in v.values()), v
+
+
 # Grammar finding G4: a whole-value #if on any property, arms not names. Each arm
 # holds the literal leaf its flat parse gives (`Caption = 'a';` -> string_literal).
-def _whole(prop, a, b, semi_after=False):
+def _whole_field(prop, a, b, semi_after=False):
     arm = (lambda v: v) if semi_after else (lambda v: v + ";")
     tail = "\n                ;" if semi_after else ""
     return (f"table 1 T\n{{\n    fields\n    {{\n        field(1; F; Integer)\n        {{\n"
@@ -56,10 +76,10 @@ def _whole(prop, a, b, semi_after=False):
 
 
 G4_WHOLE = {
-    "string": _whole("Caption", "'a'", "'b'"),
-    "string-semi-after": _whole("Caption", "'a'", "'b'", semi_after=True),
-    "boolean": _whole("Editable", "true", "false"),
-    "integer": _whole("MinValue", "1", "-2"),
+    "string": _whole_field("Caption", "'a'", "'b'"),
+    "string-semi-after": _whole_field("Caption", "'a'", "'b'", semi_after=True),
+    "boolean": _whole_field("Editable", "true", "false"),
+    "integer": _whole_field("MinValue", "1", "-2"),
 }
 
 
@@ -105,7 +125,7 @@ def test_g3_nested_semicolon_after_endif_every_config(al_parser, src):
 
 # G8 (Task 18): a whole-value arm is any property value. Each shape in both `;`
 # placements (inside every arm, and once after #endif), both configurations.
-def _whole(name, a, b, semi_inside):
+def _whole_page(name, a, b, semi_inside):
     arm = (f"        {a};\n#else\n        {b};\n#endif\n" if semi_inside
            else f"        {a}\n#else\n        {b}\n#endif\n    ;\n")
     return f"page 50100 P\n{{\n    {name} =\n#if X\n{arm}}}\n".encode()
@@ -123,7 +143,7 @@ G8_SHAPES = [("OptionMembers", "A,B", "C"), ("Caption", "'a', Comment = 'x'", "'
 @pytest.mark.parametrize("semi_inside", [True, False])
 @pytest.mark.parametrize("name,a,b", G8_SHAPES)
 def test_whole_value_arm_is_any_property_value(al_parser, name, a, b, semi_inside):
-    src = _whole(name, a, b, semi_inside)
+    src = _whole_page(name, a, b, semi_inside)
     witness.assert_produces(al_parser, src, NODE)
     witness.assert_all_pass(al_parser, src)
 
@@ -131,4 +151,4 @@ def test_whole_value_arm_is_any_property_value(al_parser, name, a, b, semi_insid
 @pytest.mark.xfail(strict=True, reason="G9: flat `CaptionML = ENU='c';` is property_expression(comparison), "
                                        "the arm before #endif is ml_value_list (docs/deferred-work.md item 11)")
 def test_single_pair_ml_arm_before_endif(al_parser):
-    witness.assert_all_pass(al_parser, _whole("CaptionML", "ENU='a', DAN='b'", "ENU='c'", False))
+    witness.assert_all_pass(al_parser, _whole_page("CaptionML", "ENU='a', DAN='b'", "ENU='c'", semi_inside=False))
