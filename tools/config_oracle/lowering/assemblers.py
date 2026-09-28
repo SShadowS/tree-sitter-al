@@ -87,13 +87,61 @@ def split_code_block_end(node, ctx) -> Lowered:
     end1, else_kw, begin = _lower_all(arm[first:first + 3], ctx, "code_block")
     inner = _lower_all(arm[first + 3:second], ctx, "statement_block")
     end2 = _lower_all([arm[second]], ctx, "code_block")[0]
+    return Lowered([], [BlockCompletion(None, lead, end1),
+                        ElseAttachment(None, else_kw, _else_block(begin, inner, end2))]
+                   + _terminator(arm[second + 1:], node, ctx, "shape B"))
+
+
+def _else_block(begin, inner, end):
+    """A NEW `code_block(begin [body: statement_block(inner)] end)`, field `else_branch`."""
     kids = [begin]
     if inner:
         kids.append(_span_from_children(Node("statement_block", True, "body", 0, 0, inner)))
-    kids.append(end2)
-    branch = _span_from_children(Node("code_block", True, "else_branch", 0, 0, kids))
-    return Lowered([], [BlockCompletion(None, lead, end1), ElseAttachment(None, else_kw, branch)]
-                   + _terminator(arm[second + 1:], node, ctx, "shape B"))
+    kids.append(end)
+    return _span_from_children(Node("code_block", True, "else_branch", 0, 0, kids))
+
+
+def else_begin_over_endif(node, ctx) -> Lowered:
+    """Contract else-begin-over-endif (reading arm:inactive, used only for the
+    widened shapes). Host: the last child of a `code_block` (policy `consumed`).
+    Children: `#if stmts* end (; end)* else [if E then]* begin stmts* ... #endif
+    stmts* end`, one #if arm, no #else. Rewrites allowed:
+      * arm not selected: the statements after #endif, with their `;`, are
+        appended to the code_block's `statement_block` (created as its `body` if
+        the block had none) and the final `end` closes it (BlockCompletion);
+      * arm selected, BASE shape `#if end else begin stmts* #endif stmts* end`:
+        the arm's `end` closes the code_block (BlockCompletion, no statements);
+        `else_keyword` + a NEW `code_block(begin_keyword [body: statement_block(
+        arm stmts + tail stmts)] final end_keyword)` -> ElseAttachment, which only
+        the `if_statement` whose `then_branch` is this code_block consumes (as in
+        split-code-block-end shape B);
+      * arm selected, WIDENED shape (statements before the first `end`, more than
+        one `end`, or an `if … then` / nested `begin` reopen): one-reading.
+    No other edge changes. Directives are `directive`, the unselected arm
+    `inactive-arm`, every other leaf `kept`."""
+    entry = contracts.REGISTRY[node.kind]
+    ctx.policy(entry, node)
+    cut = _cut_at_endif(node)
+    tail = node.children[cut + 1:]
+    if not tail or tail[-1].kind != "end_keyword":
+        raise LoweringError("contract-shape", node, "tail does not end in `end`")
+    arms, endif = split_arms(node.copy(children=node.children[:cut + 1]))
+    if not reading_active(node, entry, ctx, arms):
+        arm = arms[0][1]
+        base = ([i for i, c in enumerate(arm) if c.kind == "end_keyword"] == [0] and len(arm) >= 3
+                and arm[1].kind == "else_keyword" and arm[2].kind == "begin_keyword"
+                and not any(c.kind in ("if_keyword", "begin_keyword") for c in arm[3:]))
+        if not base:
+            raise _one_reading(node)
+    arm = _active(arms, endif, node, ctx)
+    stmts = _lower_all(tail[:-1], ctx, "statement_block")
+    end = _lower_all(tail[-1:], ctx, "code_block")[0]
+    if not arm:
+        return Lowered([], [BlockCompletion(None, stmts, end)])
+    end1, else_kw, begin = _lower_all(arm[:3], ctx, "code_block")
+    inner = _lower_all(arm[3:], ctx, "statement_block") + stmts
+    return Lowered([], [BlockCompletion(None, [], end1),
+                        ElseAttachment(None, else_kw, _else_block(begin, inner, end))])
 
 
 def split_procedure(node, ctx) -> Lowered:

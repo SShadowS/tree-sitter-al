@@ -34,3 +34,14 @@ def test_replay_3_structure_on_a_hand_built_tree_witness():
     r3 = next(r for r in replay.REPLAYS if r.number == 3)
     head = replay.run_replay(r3, None)
     assert [rec.status for rec in head.records if rec.config == "CLEAN22=0"] == ["pass"], head.statuses
+
+
+def test_replay_1_structure_parent_on_the_cached_old_parser():
+    """Replay 1 (bad36e4^, CRMSetupDefaults `end else begin` over `#endif`): caught by
+    structure as the then_branch code_block `missing` in CLEAN25=0 (the spec's table
+    predicted `parent`; see replay._replay1), and not masked by cannot-validate."""
+    r = replay.REPLAYS[0]
+    assert r.number == 1
+    result = replay.run_replay(r, "cache")
+    assert not result.masked_by_cannot_validate, result.statuses
+    assert result.detected, result.statuses

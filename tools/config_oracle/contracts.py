@@ -376,15 +376,13 @@ register("preproc_conditional_link_values", "branch-select", _LIST_RUN,
          arm={"link_value", "preproc_conditional_link_values", ","})
 
 # --- registered, not yet lowered (milestones 2-3). Unsupported is explicit, never a default.
-# preproc_split_else_begin_over_endif (in this loop, from Task 13): base shape
-# milestone 2, widened shapes one-reading.
 for t in ("preproc_conditional_case_patterns",
           "preproc_conditional_impl_values",
           "preproc_fragmented_else_tail",
           "preproc_guarded_statement", "preproc_split_brace_close",
           "preproc_split_brace_close_if_only", "preproc_split_call_statement", "preproc_split_case_branch",
           "preproc_split_case_extended", "preproc_split_code_block_over_endif", "preproc_split_complete_body",
-          "preproc_split_declaration", "preproc_split_else_begin_over_endif", "preproc_split_field",
+          "preproc_split_declaration", "preproc_split_field",
           "preproc_split_if_begin_asymmetric", "preproc_split_if_begin_else", "preproc_split_if_else_statement",
           "preproc_split_if_statement", "preproc_split_if_then_begin", "preproc_split_if_then_begin_else_shared",
           "preproc_split_procedure_body", "preproc_split_procedure_preamble", "preproc_split_report_brace_close",
@@ -419,6 +417,11 @@ register("preproc_split_container_reopen", "assembler", _ASM + "container_reopen
 # two procedures' block closings. Both decide the same group's reading.
 register("preproc_split_block_end_in_else", "assembler", _ASM + "block_end_in_else",
          hosts={"code_block:<children>": "consumed"}, reading="arm:else")
+# `end else begin` over #endif: the base shape lowers in both configurations; the
+# widened shapes (ProdOrderComponent) are one-reading, the tree being the
+# arm-not-selected reading (the rule comment says so).
+register("preproc_split_else_begin_over_endif", "assembler", _ASM + "else_begin_over_endif",
+         hosts={"code_block:<children>": "consumed"}, reading="arm:inactive")
 register("preproc_split_block_close_after_endif", "assembler", _ASM + "block_close_after_endif",
          hosts={"code_block:<children>": "consumed"}, reading="arm:else")
 

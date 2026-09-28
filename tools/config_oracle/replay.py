@@ -74,11 +74,26 @@ REPLAY_4_INPUT = (b"codeunit 50000 T { procedure P() var A: Boolean; C: Boolean;
                   b"B := A\n#if X\n  or C\n#endif\n  ;\nend; }\n")
 
 
+def _replay1(recs):
+    """CLEAN25=0 (arm selected): the old tree flattens `end else begin B();` into the
+    then-block, so the reference's then_branch code_block has no lowered partner. The
+    spec's table says `parent`; alignment pairs the flattened block with the reference's
+    else_branch (more shared leaves), so the defect surfaces as the then_branch `missing`."""
+    return any(r.config == "CLEAN25=0" and structure_ran(r)
+               and any("|structure|missing|" in i and i.rsplit("/", 1)[-1].startswith("code_block.then_branch@")
+                       for i in r.items)
+               for r in recs)
+
+
 def _has_error_backstop(rec):
     return any(i.startswith("multi-config-parse:") and "has-error" in i for i in rec.items)
 
 
 REPLAYS = [
+    Replay(1, "bad36e4^", "preproc_block_over_conditional_test.txt",
+           lambda c: c.name.startswith("Shape C"), _replay1,
+           note="spec expected structure `parent`; the comparator reports the lost then-block as "
+                "`missing` (the flattened then-branch pairs with the reference's larger else-branch)"),
     Replay(2, "bad36e4^", "case_else_preprocessor_test.txt", lambda c: True,
            lambda recs: any(_has(r, "|structure|missing|", "|structure|parent|") for r in recs)),
     Replay(3, "f47350d^", "scanner_lookahead_extras_test.txt",
