@@ -109,3 +109,115 @@ table 50000 T
                 left: (identifier)
                 right: (integer))))
           (end_keyword))))))
+
+================================================================================
+A negative literal followed by an operator is unary minus in an expression value (grammar finding G7)
+================================================================================
+
+page 50101 P
+{
+    layout { area(Content) { field(O; Rec.O) { Visible = -1 < Rec.O; MinValue = -1500; DecimalPlaces = -1.5; OptionOrdinalValues = -1, 0, 1; } } }
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (page_declaration
+    (page_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (layout_section
+        (layout_keyword)
+        body: (layout_body
+          (area_section
+            (area_keyword)
+            type: (content_keyword)
+            body: (layout_body
+              (page_field
+                (field_keyword)
+                name: (identifier)
+                source: (member_expression
+                  object: (identifier)
+                  member: (identifier))
+                body: (declaration_body
+                  (property
+                    name: (property_name)
+                    value: (property_expression
+                      (comparison_expression
+                        left: (unary_expression
+                          operand: (integer))
+                        operator: (comparison_operator)
+                        right: (member_expression
+                          object: (identifier)
+                          member: (identifier)))))
+                  (property
+                    name: (property_name)
+                    value: (integer))
+                  (property
+                    name: (property_name)
+                    value: (decimal))
+                  (property
+                    name: (property_name)
+                    value: (signed_integer_list
+                      (integer)
+                      (integer)
+                      (integer))))))))))))
+
+================================================================================
+A signed literal ends at a comment before its terminator
+================================================================================
+
+table 50100 T
+{
+    fields
+    {
+        field(1; F; Integer)
+        {
+            MinValue = -1 // the floor
+            ;
+            MaxValue = -2 /* c */ ;
+        }
+        field(2; D; Decimal)
+        {
+            MinValue = -1.5;
+        }
+    }
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (table_declaration
+    (table_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (fields_section
+        (fields_keyword)
+        body: (fields_body
+          (field_declaration
+            (field_keyword)
+            id: (integer)
+            name: (identifier)
+            type: (type_specification
+              (basic_type))
+            body: (declaration_body
+              (property
+                name: (property_name)
+                value: (integer)
+                (comment))
+              (property
+                name: (property_name)
+                value: (integer)
+                (multiline_comment))))
+          (field_declaration
+            (field_keyword)
+            id: (integer)
+            name: (identifier)
+            type: (type_specification
+              (basic_type))
+            body: (declaration_body
+              (property
+                name: (property_name)
+                value: (decimal)))))))))

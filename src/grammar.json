@@ -2456,46 +2456,6 @@
         }
       ]
     },
-    "_negative_integer": {
-      "type": "TOKEN",
-      "content": {
-        "type": "SEQ",
-        "members": [
-          {
-            "type": "STRING",
-            "value": "-"
-          },
-          {
-            "type": "PATTERN",
-            "value": "\\d+"
-          }
-        ]
-      }
-    },
-    "_negative_decimal": {
-      "type": "TOKEN",
-      "content": {
-        "type": "SEQ",
-        "members": [
-          {
-            "type": "STRING",
-            "value": "-"
-          },
-          {
-            "type": "PATTERN",
-            "value": "\\d+"
-          },
-          {
-            "type": "STRING",
-            "value": "."
-          },
-          {
-            "type": "PATTERN",
-            "value": "\\d+"
-          }
-        ]
-      }
-    },
     "object_reference_value": {
       "type": "PREC",
       "value": 3,
@@ -23350,6 +23310,14 @@
     {
       "type": "SYMBOL",
       "name": "_directive_eol"
+    },
+    {
+      "type": "SYMBOL",
+      "name": "_negative_integer"
+    },
+    {
+      "type": "SYMBOL",
+      "name": "_negative_decimal"
     }
   ],
   "inline": [

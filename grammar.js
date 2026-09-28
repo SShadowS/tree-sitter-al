@@ -197,6 +197,8 @@ module.exports = grammar({
     $.var_attribute_open,       // [8] '[' when attribute is followed by variable declaration
     $.calc_formula_property_name, // [9] `CalcFormula` followed by = -- the one name-keyed property
     $._directive_eol,           // [10] the ONE newline ending an #if/#elif line (hidden)
+    $._negative_integer,        // [11] `-1` as one signed literal, only before ; , # or EOF
+    $._negative_decimal,        // [12] `-1.5`, likewise
   ],
 
   conflicts: $ => [
@@ -919,9 +921,11 @@ module.exports = grammar({
       // sites, plus 7 single-entry `OptionOrdinalValues = -1;`). These two
       // tokens are valid only at a property-value start and inside
       // signed_integer_list, never in an expression, so `X := 5 -3` in code is
-      // untouched; where both this and the bare '-' of unary_expression are
-      // valid, longest match picks the literal. Aliased so the value stays a
-      // plain integer/decimal leaf whose text carries the sign.
+      // untouched. Where both this and the bare '-' of unary_expression are
+      // valid, the scanner decides: the literal only when the value ends after
+      // it (`;` `,` `#` or EOF), unary minus otherwise (G7, see
+      // _negative_integer). Aliased so the value stays a plain integer/decimal
+      // leaf whose text carries the sign.
       alias($._negative_integer, $.integer),
       alias($._negative_decimal, $.decimal),
       $.string_literal,
@@ -976,8 +980,14 @@ module.exports = grammar({
       seq('-', $.integer),                     // `- 1` with whitespace, as before
     ),
 
-    _negative_integer: $ => token(seq('-', /\d+/)),
-    _negative_decimal: $ => token(seq('-', /\d+/, '.', /\d+/)),
+    // _negative_integer / _negative_decimal are EXTERNAL (scanner.c), not
+    // token(seq('-', /\d+/)): a lexical token won by longest match wherever it
+    // was valid, so in `Visible = -1 < Rec.O;` it took `-1`, after which only a
+    // terminator could follow and the rest ERRORed (grammar finding G7). The
+    // scanner emits the signed literal only when a terminator follows it (`;`,
+    // `,`, `#` or end of input, after whitespace and comments) -- the only
+    // places a signed literal ends -- and otherwise declines, so `-` lexes as
+    // unary minus and the value is property_expression, exactly as `- 1 < X`.
 
     // Object reference as property value: Codeunit "BOM-Explode BOM"
     // Also supports namespace: Page Microsoft.Sales."Sales Order"

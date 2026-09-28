@@ -23,6 +23,8 @@ enum TokenType {
   VAR_ATTRIBUTE_OPEN = 8,
   CALC_FORMULA_PROPERTY_NAME = 9,
   DIRECTIVE_EOL = 10,
+  NEGATIVE_INTEGER = 11,
+  NEGATIVE_DECIMAL = 12,
 };
 
 // Named so the static assertion below can test its width AND its signedness.
@@ -497,7 +499,8 @@ bool tree_sitter_al_external_scanner_scan(
       valid_symbols[PREPROC_SPLIT_END] &&
       valid_symbols[VAR_ATTRIBUTE_OPEN] &&
       valid_symbols[CALC_FORMULA_PROPERTY_NAME] &&
-      valid_symbols[DIRECTIVE_EOL]) {
+      valid_symbols[DIRECTIVE_EOL] &&
+      valid_symbols[NEGATIVE_INTEGER] && valid_symbols[NEGATIVE_DECIMAL]) {
     return false;
   }
 
@@ -524,6 +527,55 @@ bool tree_sitter_al_external_scanner_scan(
     lexer->mark_end(lexer);
     lexer->result_symbol = DIRECTIVE_EOL;
     return true;
+  }
+
+  // NEGATIVE_INTEGER / NEGATIVE_DECIMAL: `-1` / `-1.5` as ONE signed literal
+  // (issue #23), but only where it ends the value: before `;`, `,`, `#` or end
+  // of input, after whitespace and comments. As a lexical token it won by
+  // longest match wherever it was valid, so `Visible = -1 < Rec.O;` lexed `-1`
+  // and ERRORed at `<` (grammar finding G7). Declining here lets the grammar
+  // lex `-` as unary minus, giving the tree `- 1 < Rec.O` gets.
+  //
+  // Only a `-` commits this block: no other external token starts with one, so
+  // returning false after reading it costs no later block its turn. Anything
+  // else falls through with only leading whitespace skipped, which every later
+  // block skips too.
+  if (valid_symbols[NEGATIVE_INTEGER] || valid_symbols[NEGATIVE_DECIMAL]) {
+    skip_whitespace(lexer);
+    if (lexer->lookahead == '-') {
+      lexer->advance(lexer, false);
+      if (lexer->lookahead < '0' || lexer->lookahead > '9') {
+        return false;
+      }
+      while (lexer->lookahead >= '0' && lexer->lookahead <= '9') {
+        lexer->advance(lexer, false);
+      }
+      enum TokenType symbol = NEGATIVE_INTEGER;
+      lexer->mark_end(lexer);
+      if (lexer->lookahead == '.') {
+        lexer->advance(lexer, false);
+        if (lexer->lookahead < '0' || lexer->lookahead > '9') {
+          return false;  // `-1.` is no literal the grammar has either
+        }
+        while (lexer->lookahead >= '0' && lexer->lookahead <= '9') {
+          lexer->advance(lexer, false);
+        }
+        symbol = NEGATIVE_DECIMAL;
+        lexer->mark_end(lexer);
+      }
+      if (!valid_symbols[symbol]) {
+        return false;
+      }
+      if (!skip_whitespace_and_comments(lexer)) {
+        return false;  // a bare '/' follows: a division, not the value's end
+      }
+      int32_t c = lexer->lookahead;
+      if (c == ';' || c == ',' || c == '#' || lexer->eof(lexer)) {
+        lexer->result_symbol = symbol;
+        return true;
+      }
+      return false;
+    }
   }
 
   // PREPROC_OPEN (#if) and PREPROC_CLOSE (#endif) — combined dispatch
