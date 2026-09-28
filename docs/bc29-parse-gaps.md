@@ -4,8 +4,8 @@
 nested `#if` among fields and keys; split routine body; split argument list and
 split Permissions head); E partly (split key and modify headers; EDocumentDE's
 nested open headers remain); D (field body opened in #if, closed after #endif)
-— BCApps 29.0 error files 33 -> 10. Remaining: E (EDocumentDE), G, H; J is
-invalid source. ProdOrderComponent.Table.al still fails, on H.
+; G (branches ending in an open statement prefix, one general rule) — BCApps
+29.0 error files 33 -> 5. Remaining: E (EDocumentDE), H; J is invalid source. ProdOrderComponent.Table.al still fails, on H.
 Corpus: `H:/Git/BCApps-29.0` (shallow clone of microsoft/BCApps
 `releases/29.0`, commit e16d6c30, 36,716 .al files, includes BaseApp layers).
 This analysis was produced by root-cause bisection of every failing file; the
@@ -287,7 +287,7 @@ codeunit 50101 U {
    `#if (Permissions = <seq> ,)+ [#else …] #endif <seq> ;`, with the same shape as
    `preproc_split_call_statement` (split call prefix, shared argument tail). Low-Medium.
 
-## G. A branch ends in an open statement prefix (5 files)
+## G. A branch ends in an open statement prefix (5 files) — RESOLVED
 
 Every one of these is a branch whose last token is `then`, `else` or `else begin`. The
 statement that completes it comes after `#endif`. The existing rules each cover one fixed

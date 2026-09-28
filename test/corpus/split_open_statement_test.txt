@@ -1,0 +1,464 @@
+================================================================================
+Branches ending in an open statement prefix, completed after #endif
+================================================================================
+codeunit 50100 T
+{
+    procedure MixedBranches(A: Integer; K: Integer)
+    var
+        C: Integer;
+    begin
+        case K of
+            1:
+#if not C28
+                if A = 0 then begin
+                    C := 1;
+                end else
+#else
+                if A <> 0 then
+#endif
+                    C := 2;
+            2:
+                C := 3;
+        end;
+    end;
+
+    procedure PreambleElseBegin(A: Integer; B: Boolean)
+    var
+        C: Integer;
+    begin
+        repeat
+#if not C28
+            C := 0;
+            if B then
+                Message('m')
+            else begin
+#endif
+                C := 1;
+                if C > 0 then
+                    C := 2;
+#if not C28
+            end;
+#endif
+        until A = 0;
+    end;
+
+    procedure BeginThenOpenElse(Handled: Boolean; Y: Boolean)
+    var
+        C: Integer;
+    begin
+        if not Handled then
+#if not C28
+        begin
+            C := 1;
+            if Y then begin
+                C := 2;
+            end else
+#endif
+                C := 3;
+#if not C28
+        end;
+#endif
+        C := 4;
+    end;
+
+    procedure ElseAlternation(N: Integer)
+    var
+        C: Integer;
+    begin
+        if N < 1 then
+            Message('a')
+#if not C28
+        else begin
+#else
+        else
+#endif
+            for C := 1 to 2 do begin
+                Message('b');
+            end;
+#if not C28
+            Message('c');
+        end;
+#endif
+    end;
+
+    procedure CaseElseAlternation(K: Integer)
+    var
+        C: Integer;
+        H: Boolean;
+    begin
+        case K of
+            1:
+                C := 1
+#if C28
+            else
+#else
+            else begin
+                H := false;
+#endif
+#if not C28
+                if not H then
+#endif
+                    C := 2;
+#if not C28
+            end;
+#endif
+        end;
+    end;
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (procedure
+        (procedure_keyword)
+        name: (identifier)
+        parameters: (parameter_list
+          (parameter
+            name: (identifier)
+            type: (type_specification
+              (basic_type)))
+          (parameter
+            name: (identifier)
+            type: (type_specification
+              (basic_type))))
+        (var_section
+          (var_keyword)
+          body: (var_body
+            (variable_declaration
+              name: (identifier)
+              type: (type_specification
+                (basic_type)))))
+        body: (code_block
+          (begin_keyword)
+          body: (statement_block
+            (case_statement
+              (case_keyword)
+              expression: (identifier)
+              (of_keyword)
+              body: (case_body
+                (case_branch
+                  pattern: (integer)
+                  body: (preproc_split_open_statement
+                    (preproc_if
+                      (preproc_open)
+                      condition: (preproc_not_expression
+                        (identifier)))
+                    (if_keyword)
+                    condition: (comparison_expression
+                      left: (identifier)
+                      operator: (comparison_operator)
+                      right: (integer))
+                    (then_keyword)
+                    then_branch: (code_block
+                      (begin_keyword)
+                      body: (statement_block
+                        (assignment_statement
+                          left: (identifier)
+                          operator: (assignment_operator)
+                          right: (integer)))
+                      (end_keyword))
+                    (else_keyword)
+                    (preproc_else)
+                    (if_keyword)
+                    condition: (comparison_expression
+                      left: (identifier)
+                      operator: (comparison_operator)
+                      right: (integer))
+                    (then_keyword)
+                    (preproc_endif
+                      (preproc_close))
+                    continuation: (assignment_statement
+                      left: (identifier)
+                      operator: (assignment_operator)
+                      right: (integer))))
+                (case_branch
+                  pattern: (integer)
+                  body: (assignment_statement
+                    left: (identifier)
+                    operator: (assignment_operator)
+                    right: (integer))))
+              (end_keyword)))
+          (end_keyword)))
+      (procedure
+        (procedure_keyword)
+        name: (identifier)
+        parameters: (parameter_list
+          (parameter
+            name: (identifier)
+            type: (type_specification
+              (basic_type)))
+          (parameter
+            name: (identifier)
+            type: (type_specification
+              (basic_type))))
+        (var_section
+          (var_keyword)
+          body: (var_body
+            (variable_declaration
+              name: (identifier)
+              type: (type_specification
+                (basic_type)))))
+        body: (code_block
+          (begin_keyword)
+          body: (statement_block
+            (repeat_statement
+              (repeat_keyword)
+              body: (statement_block
+                (preproc_split_open_statement
+                  (preproc_if
+                    (preproc_open)
+                    condition: (preproc_not_expression
+                      (identifier)))
+                  (assignment_statement
+                    left: (identifier)
+                    operator: (assignment_operator)
+                    right: (integer))
+                  (if_keyword)
+                  condition: (identifier)
+                  (then_keyword)
+                  then_branch: (call_expression
+                    function: (identifier)
+                    arguments: (argument_list
+                      (string_literal)))
+                  (else_keyword)
+                  (preproc_split_begin)
+                  (preproc_endif
+                    (preproc_close))
+                  (assignment_statement
+                    left: (identifier)
+                    operator: (assignment_operator)
+                    right: (integer))
+                  (if_statement
+                    (if_keyword)
+                    condition: (comparison_expression
+                      left: (identifier)
+                      operator: (comparison_operator)
+                      right: (integer))
+                    (then_keyword)
+                    then_branch: (assignment_statement
+                      left: (identifier)
+                      operator: (assignment_operator)
+                      right: (integer)))
+                  (preproc_if
+                    (preproc_open)
+                    condition: (preproc_not_expression
+                      (identifier)))
+                  (end_keyword)
+                  (preproc_endif
+                    (preproc_close))))
+              (until_keyword)
+              condition: (comparison_expression
+                left: (identifier)
+                operator: (comparison_operator)
+                right: (integer))))
+          (end_keyword)))
+      (procedure
+        (procedure_keyword)
+        name: (identifier)
+        parameters: (parameter_list
+          (parameter
+            name: (identifier)
+            type: (type_specification
+              (basic_type)))
+          (parameter
+            name: (identifier)
+            type: (type_specification
+              (basic_type))))
+        (var_section
+          (var_keyword)
+          body: (var_body
+            (variable_declaration
+              name: (identifier)
+              type: (type_specification
+                (basic_type)))))
+        body: (code_block
+          (begin_keyword)
+          body: (statement_block
+            (if_statement
+              (if_keyword)
+              condition: (unary_expression
+                operand: (identifier))
+              (then_keyword)
+              then_branch: (preproc_split_open_statement
+                (preproc_if
+                  (preproc_open)
+                  condition: (preproc_not_expression
+                    (identifier)))
+                (begin_keyword)
+                (assignment_statement
+                  left: (identifier)
+                  operator: (assignment_operator)
+                  right: (integer))
+                (if_keyword)
+                condition: (identifier)
+                (then_keyword)
+                then_branch: (code_block
+                  (begin_keyword)
+                  body: (statement_block
+                    (assignment_statement
+                      left: (identifier)
+                      operator: (assignment_operator)
+                      right: (integer)))
+                  (end_keyword))
+                (else_keyword)
+                (preproc_endif
+                  (preproc_close))
+                (assignment_statement
+                  left: (identifier)
+                  operator: (assignment_operator)
+                  right: (integer))
+                (preproc_if
+                  (preproc_open)
+                  condition: (preproc_not_expression
+                    (identifier)))
+                (end_keyword)
+                (preproc_endif
+                  (preproc_close))))
+            (assignment_statement
+              left: (identifier)
+              operator: (assignment_operator)
+              right: (integer)))
+          (end_keyword)))
+      (procedure
+        (procedure_keyword)
+        name: (identifier)
+        parameters: (parameter_list
+          (parameter
+            name: (identifier)
+            type: (type_specification
+              (basic_type))))
+        (var_section
+          (var_keyword)
+          body: (var_body
+            (variable_declaration
+              name: (identifier)
+              type: (type_specification
+                (basic_type)))))
+        body: (code_block
+          (begin_keyword)
+          body: (statement_block
+            (if_statement
+              (if_keyword)
+              condition: (comparison_expression
+                left: (identifier)
+                operator: (comparison_operator)
+                right: (integer))
+              (then_keyword)
+              then_branch: (call_expression
+                function: (identifier)
+                arguments: (argument_list
+                  (string_literal))))
+            (preproc_split_open_statement
+              (preproc_if
+                (preproc_open)
+                condition: (preproc_not_expression
+                  (identifier)))
+              (else_keyword)
+              (begin_keyword)
+              (preproc_else)
+              (else_keyword)
+              (preproc_endif
+                (preproc_close))
+              (for_statement
+                (for_keyword)
+                variable: (identifier)
+                start: (integer)
+                direction: (to_keyword)
+                end: (integer)
+                (do_keyword)
+                body: (code_block
+                  (begin_keyword)
+                  body: (statement_block
+                    (call_expression
+                      function: (identifier)
+                      arguments: (argument_list
+                        (string_literal))))
+                  (end_keyword)))
+              (preproc_if
+                (preproc_open)
+                condition: (preproc_not_expression
+                  (identifier)))
+              (call_expression
+                function: (identifier)
+                arguments: (argument_list
+                  (string_literal)))
+              (end_keyword)
+              (preproc_endif
+                (preproc_close))))
+          (end_keyword)))
+      (procedure
+        (procedure_keyword)
+        name: (identifier)
+        parameters: (parameter_list
+          (parameter
+            name: (identifier)
+            type: (type_specification
+              (basic_type))))
+        (var_section
+          (var_keyword)
+          body: (var_body
+            (variable_declaration
+              name: (identifier)
+              type: (type_specification
+                (basic_type)))
+            (variable_declaration
+              name: (identifier)
+              type: (type_specification
+                (basic_type)))))
+        body: (code_block
+          (begin_keyword)
+          body: (statement_block
+            (case_statement
+              (case_keyword)
+              expression: (identifier)
+              (of_keyword)
+              body: (case_body
+                (case_branch
+                  pattern: (integer)
+                  body: (assignment_statement
+                    left: (identifier)
+                    operator: (assignment_operator)
+                    right: (integer)))
+                (preproc_split_open_statement
+                  (preproc_if
+                    (preproc_open)
+                    condition: (identifier))
+                  (else_keyword)
+                  (preproc_else)
+                  (else_keyword)
+                  (begin_keyword)
+                  (assignment_statement
+                    left: (identifier)
+                    operator: (assignment_operator)
+                    right: (boolean))
+                  (preproc_endif
+                    (preproc_close))
+                  (preproc_split_if_statement
+                    (preproc_if
+                      (preproc_open)
+                      condition: (preproc_not_expression
+                        (identifier)))
+                    (if_keyword)
+                    condition: (unary_expression
+                      operand: (identifier))
+                    (then_keyword)
+                    (preproc_endif
+                      (preproc_close))
+                    then_branch: (assignment_statement
+                      left: (identifier)
+                      operator: (assignment_operator)
+                      right: (integer)))
+                  (preproc_if
+                    (preproc_open)
+                    condition: (preproc_not_expression
+                      (identifier)))
+                  (end_keyword)
+                  (preproc_endif
+                    (preproc_close))))
+              (end_keyword)))
+          (end_keyword))))))

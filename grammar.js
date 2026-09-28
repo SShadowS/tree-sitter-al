@@ -231,7 +231,15 @@ module.exports = grammar({
     // A bodiless key header before a directive: a complete key_declaration, or
     // the header half of a preproc_split_key. Only the `{` after #endif decides.
     [$.preproc_split_key, $.key_declaration],
-    [$._preproc_split_then_begin_open, $.preproc_split_if_then_begin_else_shared, $.preproc_split_if_begin_else, $._preproc_branch_statement],
+    [$.preproc_conditional_statement, $.preproc_conditional_case_patterns],
+    [$.preproc_conditional_statement, $.preproc_split_case_branch, $.preproc_conditional_case_patterns],
+    [$._open_branch, $.case_else_branch],
+    [$._single_pattern, $._expression],
+    [$.preproc_split_open_statement, $._statement],
+    [$._open_prefix, $.preproc_split_if_else_statement],
+    [$.preproc_split_if_statement, $._open_prefix],
+    // _open_branch: preproc_split_open_statement's branch reads the same prefix.
+    [$._open_branch, $._preproc_split_then_begin_open, $.preproc_split_if_then_begin_else_shared, $.preproc_split_if_begin_else, $._preproc_branch_statement],
     // Inside a preprocessor branch a statement can be read as belonging to the
     // conditional or to an enclosing statement_block. The two were previously
     // indistinguishable because both used `repeat($._statement)` and tree-sitter
@@ -240,7 +248,7 @@ module.exports = grammar({
     // ambiguity that was always there. GLR resolves it by which parse completes.
     [$._preproc_branch_statement, $._preproc_split_then_begin_open,
      $.preproc_split_if_then_begin_else_shared, $.preproc_split_if_begin_else,
-     $._preproc_end_branch],
+     $._preproc_end_branch, $._open_branch],
     [$.filter_value, $._literal_value],
     [$.filter_value, $._expression],
     [$._body_element, $._action_element],
@@ -3701,6 +3709,62 @@ module.exports = grammar({
       $._preproc_if_header,
     ),
 
+    // The general form of every split statement above: each branch ENDS in an
+    // open statement prefix, and the text after #endif completes it. A branch is
+    //   [stmts]* ( if E then | if E then S else [begin stmts*]
+    //            | begin stmts* <prefix> )
+    //   | else [begin stmts*]
+    // and the shared tail is either the one statement that completes a
+    // then/else, or statements closed by an `#if end; #endif` guard when a
+    // branch opened a block. BC 29 has five shapes no fixed rule covered
+    // (docs/bc29-parse-gaps.md, family G), all accepted by alc in both configs:
+    // mixed then/else heads per branch (NorwegianVATTools), a preamble before
+    // `if … else begin` (CalculateSubcontracts), `begin … if … else` as a then
+    // branch (DetailedCalculation), and `else begin` / `else` alternating per
+    // branch after an if or inside a case (Check.Report, MfgCarryOutAction).
+    //
+    // A branch that opens with `else` continues an if or case that is already
+    // complete before the #if, so this node is that statement's next SIBLING,
+    // not its else_branch: the else's `begin … end` crosses the #if ranges and
+    // no properly nested tree can hold both. Same trade as case_body's
+    // preproc_split_case_extended.
+    //
+    // prec.dynamic(-10): the fixed-shape rules above are special cases of this
+    // one, and when both complete the existing, more specific tree wins, so no
+    // tree that parsed before changes.
+    preproc_split_open_statement: $ => prec.dynamic(-10, seq(
+      $.preproc_if,
+      $._open_branch,
+      repeat(seq($.preproc_elif, $._open_branch)),
+      optional(seq($.preproc_else, $._open_branch)),
+      $.preproc_endif,
+      choice(
+        fieldedStatement($, 'continuation'),
+        seq(repeat1($._statement), $._preproc_end_guard),
+      ),
+    )),
+
+    _open_branch: $ => choice(
+      seq(repeat($._statement), $._open_prefix),
+      seq($.else_keyword, optional($._open_begin)),
+    ),
+
+    // The `begin` arm is deliberately narrow: `begin stmts* if E then S else`
+    // (DetailedCalculation.Report.al:160), not `begin <any branch>`. The
+    // recursive form measured +2,540 states for no extra file: inside an opened
+    // `begin` the parser must keep a code_block reading and a prefix reading
+    // alive through every `if E then` header, which copies the statement and
+    // expression automata. This arm costs 12.
+    _open_prefix: $ => choice(
+      $._preproc_if_header,
+      seq($._preproc_if_then_else_head, optional($._open_begin)),
+      seq($.begin_keyword, repeat($._statement), $._preproc_if_then_else_head),
+    ),
+
+    // `begin stmts*` left open at the directive. PREPROC_SPLIT_BEGIN is the
+    // scanner's token for a `begin` immediately before `#endif`.
+    _open_begin: $ => seq(choice($.begin_keyword, $.preproc_split_begin), repeat($._statement)),
+
     // Preprocessor-split if-else: full if-then-X-else inside #if, Y outside
     // #if COND / if X then Y else / #endif / Z;
     preproc_split_if_else_statement: $ => prec.right(seq(
@@ -4130,6 +4194,7 @@ module.exports = grammar({
           $.preproc_split_if_begin_else,
           $.preproc_split_if_then_begin_else_shared,
           $.preproc_guarded_statement,
+          $.preproc_split_open_statement,
           $.preproc_split_call_statement,
           $.preproc_split_code_block_over_endif,
     ),
@@ -4460,6 +4525,9 @@ module.exports = grammar({
       $.case_branch,
       $.preproc_conditional_case,
       $.preproc_split_case_extended,
+      // `else` / `else begin` alternating per branch as the case's else part
+      // (MfgCarryOutAction.Codeunit.al, W1, BC 29).
+      $.preproc_split_open_statement,
     )),
 
     // A `case` whose FINAL branch body, the case's own `end;`, and the
