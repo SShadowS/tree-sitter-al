@@ -3,7 +3,7 @@ from __future__ import annotations
 
 from tools.config_oracle import contracts
 from tools.config_oracle.ir import Node
-from tools.config_oracle.lowering.engine import Lowered, LoweringError, lower
+from tools.config_oracle.lowering.engine import Lowered, LoweringError, Terminator, lower
 
 DIRECTIVES = ("preproc_if", "preproc_elif", "preproc_else")
 
@@ -59,6 +59,15 @@ def branch_select(node, ctx) -> Lowered:
                 ctx.accounting.mark(c, "inactive-arm")
     ctx.accounting.mark(endif, "directive")
     if policy in ("single-slot", "optional-slot"):
+        # An arm of exactly [statement, ';']: the grammar put the ENCLOSING
+        # statement's terminator inside the arm (BC.History
+        # AOAIAuthorization.Codeunit.al). The `;` becomes a Terminator anchored to
+        # the statement, so it lands after the enclosing statement in its host,
+        # as in the reference. Nothing else is exempt from the count below.
+        if len(out.nodes) == 2 and not out.frags and out.nodes[0].named \
+                and out.nodes[1].kind == ";" and not out.nodes[1].children:
+            stmt, semi = out.nodes
+            out = Lowered([stmt], [Terminator(stmt, semi)])
         # single-slot: exactly one node; optional-slot: at most one (spec section 3).
         allowed = (1,) if policy == "single-slot" else (0, 1)
         if len(out.nodes) not in allowed:

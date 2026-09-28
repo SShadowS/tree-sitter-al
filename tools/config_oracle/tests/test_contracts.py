@@ -107,8 +107,9 @@ def test_token_alias_requires_alias_to():
     assert "preproc_test_alias_without_target" not in contracts.REGISTRY
 
 
-@pytest.mark.xfail(reason="handlers land in Tasks 10 and 12", strict=True)
 def test_every_handler_resolves():
     for e in contracts.REGISTRY.values():
+        if e.type == "preproc_split_case_statement_end":  # Task 13
+            continue
         if e.handler:
             assert contracts.resolve_handler(e) is not None, e.type
