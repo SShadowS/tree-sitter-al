@@ -468,9 +468,8 @@ def discover(source: bytes) -> Discovery:
         # lenient seed scan itself succeeded -- hand back its (unvalidated)
         # directives/symbols so the runner can still report each
         # configuration as its own cannot-validate record, rather than
-        # losing the file's directives entirely. `any(x.kind == "if" ...)`
-        # below is correct here too: the seed's directives are real
-        # directive lines, just not confirmed by any strict resolve().
+        # losing the file's directives entirely. The seed's directives are
+        # real directive lines, just not confirmed by any strict resolve().
         directives = seed_directives
         free = tuple(sorted(seed_symbols))
     else:
@@ -479,7 +478,10 @@ def discover(source: bytes) -> Discovery:
         # caller records this file as cannot-validate instead of silently
         # returning an empty Discovery.
         raise seed_error
-    return Discovery(directives, free, any(x.kind == "if" for x in directives))
+    # ANY conditional directive line makes the file an input -- not only an `#if`. A file
+    # whose only conditional is a stray `#endif`/`#else`/`#elif` has no `if` at all, and
+    # must still yield its cannot-validate records rather than be counted no-directives.
+    return Discovery(directives, free, bool(directives))
 
 
 def configurations(disc: Discovery) -> list:

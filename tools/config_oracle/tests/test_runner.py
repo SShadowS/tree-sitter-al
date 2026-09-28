@@ -259,3 +259,16 @@ def test_workers_2_matches_workers_1(tmp_path):
         runner.write_report(runner.run(inputs, None, workers=w, mode="full"), tmp_path / str(w), {})
         out[w] = (tmp_path / str(w) / "findings.jsonl").read_bytes()
     assert out[1] == out[2]
+
+
+# ---- final review, finding 1: a stray #endif/#else/#elif is a conditional directive ----
+
+@pytest.mark.parametrize("stray", [b"#endif", b"#else", b"#elif A"])
+def test_lone_stray_conditional_is_an_input_not_no_directives(stray):
+    src = b"codeunit 1 X {\n" + stray + b"\n}"
+    expected, no_dir, todo = runner._expected([("s", src)])
+    assert no_dir == 0 and todo == ["s"] and expected["s"]
+    s = runner.run([("s", src)], None, workers=1, mode="full")
+    assert s.no_directives == 0 and s.records
+    assert {r.status for r in s.records} == {"cannot-validate"}
+    assert all(r.items[0].startswith("resolver:") for r in s.records)
