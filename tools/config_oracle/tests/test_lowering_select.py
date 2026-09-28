@@ -62,11 +62,10 @@ def test_single_slot_with_two_statements_is_policy(al_parser):
 
 
 def test_unsupported_type_fails_closed(al_parser):
-    # preproc_conditional_fields is registered (Task 5); preproc_conditional_where
-    # (a #if inside a CalcFormula where-clause) stays unsupported through milestone 2.
-    src = (b"table 1 T { fields { field(1; A; Integer) { "
-           b"CalcFormula = count(A where(B = filter(0),\n#if X\nC = filter(0),\n#endif\nD = filter(0))); "
-           b"} } }")
+    # preproc_conditional_where became list-run in Task 7; preproc_split_permissions_property
+    # (a per-branch `Permissions =` head over a shared tail) stays unsupported until milestone 3.
+    src = (b"codeunit 1 T {\n#if X\n    Permissions = tabledata A = R,\n"
+           b"#else\n    Permissions = tabledata B = R,\n#endif\n    tabledata C = R;\n}\n")
     root, extras, _ = ir.from_tree(al_parser.parse(src))
     with pytest.raises(LoweringError) as err:
         lower_tree(root, extras, resolve(src, frozenset({"X"})))

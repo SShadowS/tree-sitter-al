@@ -327,17 +327,62 @@ register("preproc_conditional_controladdin", "branch-select", "tools.config_orac
          # own rule (grammar.js:589-601): _body_element, interface_procedure, self-reference.
          arm={"interface_procedure", "preproc_conditional_controladdin"} | _BODY_ELEMENT)
 
+# --- branch-select, part D (Task 7): the list-run lists. Each arm splices items AND
+# separators into its host list (select.branch_select, list-run); the host list is
+# then checked for item/separator alternation (engine._check_alternation). Arm sets
+# are each type's own `_*_branch` / `_*_seq` / `_*_run` helpers with the hidden
+# rules expanded to visible members; host sets are the census output.
+# _expression (grammar.js:5023-5055), with _literal_value (grammar.js:5572-5582)
+# expanded. _value_start_keyword_name and continue_as_identifier alias to identifier.
+_EXPRESSION = frozenset({
+    "multiplicative_expression", "additive_expression", "comparison_expression",
+    "logical_expression", "in_expression", "is_expression", "as_expression",
+    "qualified_enum_value", "database_reference", "call_expression", "member_expression",
+    "subscript_expression", "identifier", "quoted_identifier", "integer", "decimal", "boolean",
+    "string_literal", "verbatim_string", "datetime_literal", "date_literal", "time_literal",
+    "biginteger_literal", "parenthesized_expression", "unary_expression", "list_literal",
+    "keyword_identifier", "ternary_expression", "assignment_expression",
+})
+_LIST_RUN = "tools.config_oracle.lowering.select.branch_select"
+register("preproc_conditional_permissions", "branch-select", _LIST_RUN,
+         hosts={"tabledata_permission_list:<children>": "list-run",
+                "preproc_conditional_permissions:<children>": "list-run"},
+         # _permission_branch / _permission_seq / _permission_run (grammar.js:1349-1391):
+         # the trailing ';' is the property's own terminator (terminator-hoist).
+         arm={"tabledata_permission", "preproc_conditional_permissions", ",", ";"})
+register("preproc_conditional_arguments", "branch-select", _LIST_RUN,
+         hosts={"argument_list:<children>": "list-run"},
+         # _argument_branch / _argument_branch_run (grammar.js:5366-5386), each item an
+         # _argument_expression (grammar.js:5388-5391). No ';' and no self-nesting.
+         arm=_EXPRESSION | {"preproc_conditional_expression_tail", ","})
+register("preproc_conditional_list_elements", "branch-select", _LIST_RUN,
+         hosts={"list_literal:<children>": "list-run"},
+         # own rule (grammar.js:5480-5486): repeat1(seq(',', _list_element)), and
+         # _list_element (grammar.js:5488-5491) is range_expression | _expression.
+         arm=_EXPRESSION | {"range_expression", ","})
+register("preproc_conditional_option_members", "branch-select", _LIST_RUN,
+         hosts={"option_member_list:<children>": "list-run"},
+         # _option_members_branch (grammar.js:1597-1612): option_member and ','; no self-nesting.
+         arm={"option_member", ","})
+register("preproc_conditional_where", "branch-select", _LIST_RUN,
+         hosts={"where_conditions:<children>": "list-run",
+                "preproc_conditional_where:<children>": "list-run"},
+         # _where_branch / _where_seq / _where_run (grammar.js:1044-1076).
+         arm={"where_condition", "preproc_conditional_where", ","})
+register("preproc_conditional_link_values", "branch-select", _LIST_RUN,
+         hosts={"link_value_list:<children>": "list-run",
+                "preproc_conditional_link_values:<children>": "list-run"},
+         # _link_value_branch / _link_value_seq / _link_value_run (grammar.js:1190-1224).
+         arm={"link_value", "preproc_conditional_link_values", ","})
+
 # --- registered, not yet lowered (milestones 2-3). Unsupported is explicit, never a default.
 # preproc_split_else_begin_over_endif (in this loop, from Task 13): base shape
 # milestone 2, widened shapes one-reading.
 for t in ("preproc_conditional_case_patterns",
           "preproc_conditional_expression_tail",
           "preproc_conditional_impl_values",
-          "preproc_conditional_link_values",
-          "preproc_conditional_list_elements", "preproc_conditional_option_members",
-          "preproc_conditional_permissions",
           "preproc_conditional_table_relation",
-          "preproc_conditional_where", "preproc_fragmented_else_tail",
+          "preproc_fragmented_else_tail",
           "preproc_guarded_statement", "preproc_operand_prefix", "preproc_split_brace_close",
           "preproc_split_brace_close_if_only", "preproc_split_call_statement", "preproc_split_case_branch",
           "preproc_split_case_extended", "preproc_split_code_block_over_endif", "preproc_split_complete_body",
@@ -354,10 +399,6 @@ for t in ("preproc_conditional_case_patterns",
 # rewrite the engine has no fragment for yet (milestone 2).
 register("preproc_split_var_section_tail", "unsupported")
 
-# Added with the BC 29 family-I fixes. preproc_conditional_arguments splices
-# its branch arguments into argument_list (a list-group, like the other
-# preproc_conditional_* lists). milestone 2.
-register("preproc_conditional_arguments", "unsupported")
 # preproc_split_permissions_property assembles one property per branch from
 # that branch's head plus the shared tail. milestone 3.
 register("preproc_split_permissions_property", "unsupported")

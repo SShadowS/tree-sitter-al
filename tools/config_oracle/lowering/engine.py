@@ -48,6 +48,13 @@ EMPTY_REMOVABLE = {
 
 STATEMENT_HOSTS = {"statement_block", "case_branch"}
 
+# Special types lowered under the list-run policy (select.branch_select): their
+# host list is checked for item/separator alternation once it is rebuilt.
+LIST_RUN_TYPES = frozenset({"preproc_conditional_permissions", "preproc_conditional_arguments",
+                            "preproc_conditional_list_elements", "preproc_conditional_option_members",
+                            "preproc_conditional_where", "preproc_conditional_link_values"})
+_BRACKETS = {"(", ")", "[", "]"}
+
 
 class LoweringError(Exception):
     def __init__(self, kind, node, detail=""):
@@ -167,6 +174,8 @@ def _lower_ordinary(node, ctx) -> Lowered:
         kids.extend(r.nodes)
         frags.extend(r.frags)
     new = Node(node.kind, node.named, node.field, node.start, node.end, kids)
+    if any(c.kind in LIST_RUN_TYPES for c in node.children):
+        _check_alternation(new)
     frags = _consume(new, frags)
     for f in frags:
         if not getattr(f, "_from_last", False):
@@ -178,6 +187,22 @@ def _lower_ordinary(node, ctx) -> Lowered:
             return Lowered([], frags)
         raise LoweringError("empty-node", node)
     return Lowered([_span_from_children(new)], frags)
+
+
+def _check_alternation(new):
+    seq = [c for c in new.children if c.kind not in _BRACKETS]
+    # A single trailing `;` is not an item: whether it belongs here (terminator
+    # placement) is judged by the structure check against the reference.
+    if seq and seq[-1].kind == ";" and not seq[-1].children:
+        seq.pop()
+    want_item = True
+    for c in seq:
+        is_sep = c.kind == "," and not c.children
+        if is_sep == want_item:
+            raise LoweringError("list-separator", new, "list does not alternate item, separator")
+        want_item = not want_item
+    if seq and want_item:
+        raise LoweringError("list-separator", new, "list ends with a separator")
 
 
 def _span_from_children(node):
@@ -209,6 +234,8 @@ def _consume(new, frags):
             at = next(i for i, c in enumerate(new.children) if c is f.anchor) + 1
             insert = [f.leaf] if isinstance(f, Terminator) else list(f.statements)
             new.children[at:at] = insert
+        elif isinstance(f, Terminator) and new.kind == "property" and f.anchor is not None                 and any(c is f.anchor for c in new.children):
+            new.children.append(f.leaf)   # terminator-hoist: the property's own `;`
         else:
             rest.append(f)
     return rest

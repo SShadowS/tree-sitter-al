@@ -7,6 +7,13 @@ from tools.config_oracle.lowering.engine import Lowered, LoweringError, Terminat
 
 DIRECTIVES = ("preproc_if", "preproc_elif", "preproc_else")
 
+HOIST_TERMINATOR = True   # mutation switch for the terminator-hoist contract test
+
+
+def _splice_arm(items):
+    """The chosen arm's lowered items, in order. A seam for the separator mutation test."""
+    return items
+
 
 def split_arms(node):
     arms, endif, current = [], None, None
@@ -40,9 +47,18 @@ def chosen_arm(node, arms, ctx):
 
 
 def branch_select(node, ctx) -> Lowered:
+    """Lower an #if group to its chosen arm, under the host slot's policy.
+
+    **list-run.** The chosen arm's items AND separators splice into the host list
+    in order. A trailing `;` in the arm is not spliced: it becomes a `Terminator`
+    (named rewrite **terminator-hoist**), which passes up through the list and is
+    appended as the last child of the owning `property`. After the host list is
+    built, it must read `item (, item)*`, ignoring bracket tokens (`(`, `)`, `[`,
+    `]`) at its ends. Anything else is `list-separator`.
+    """
     entry = contracts.REGISTRY[node.kind]
     policy = ctx.policy(entry, node)
-    if policy not in ("splice-repeat", "single-slot", "optional-slot"):
+    if policy not in ("splice-repeat", "single-slot", "optional-slot", "list-run"):
         raise LoweringError("policy", node, f"branch-select cannot apply policy {policy!r}")
     arms, endif = split_arms(node)
     choice = chosen_arm(node, arms, ctx)
@@ -60,6 +76,11 @@ def branch_select(node, ctx) -> Lowered:
             for c in content:
                 ctx.accounting.mark(c, "inactive-arm")
     ctx.accounting.mark(endif, "directive")
+    if policy == "list-run":
+        out.nodes = _splice_arm(out.nodes)
+        if HOIST_TERMINATOR and out.nodes and out.nodes[-1].kind == ";" and not out.nodes[-1].children:
+            semi = out.nodes.pop()
+            out.frags.append(Terminator(None, semi))
     if policy in ("single-slot", "optional-slot"):
         # An arm of exactly [statement, ';']: the grammar put the ENCLOSING
         # statement's terminator inside the arm (BC.History
