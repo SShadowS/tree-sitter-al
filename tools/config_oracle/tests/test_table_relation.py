@@ -106,3 +106,18 @@ G4_WHOLE = {
 def test_g4_whole_value_literal_arms_every_config(al_parser, name):
     witness.assert_produces(al_parser, G4_WHOLE[name], "preproc_conditional_table_relation")
     witness.assert_all_pass(al_parser, G4_WHOLE[name])
+
+
+# Grammar finding G3: a whole-value #if nested in a whole-value arm. Its arms are
+# flat shapes too (`Item;` -> identifier), in all four configurations.
+G3_NESTED = WHOLE.replace(b"#if BC24\n                Item;\n#else\n                Resource;\n#endif\n",
+                          b"#if X\n#if Y\n                Item;\n#else\n                Resource;\n#endif\n"
+                          b"#else\n                Customer;\n#endif\n")
+assert G3_NESTED != WHOLE
+
+
+def test_g3_nested_whole_value_every_config(al_parser):
+    witness.assert_produces(al_parser, G3_NESTED, "preproc_conditional_table_relation")
+    v = witness.verdicts(al_parser, G3_NESTED)
+    assert len(v) == 4, v
+    witness.assert_all_pass(al_parser, G3_NESTED)

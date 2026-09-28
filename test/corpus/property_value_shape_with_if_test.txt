@@ -12,6 +12,11 @@
 ; The string and boolean forms used to ERROR; the integer form gave each arm
 ; table_relation_value(table_relation_expression(simple_table_relation)).
 ; alc accepts all four with X defined and undefined.
+;
+; G3: a #if nested in a whole-value arm is itself a whole value, so its arms
+; are flat shapes too (`Item;` -> identifier). They used to be
+; table_relation_expression(simple_table_relation). alc accepts it in all four
+; configurations of X and Y.
 
 ================================================================================
 G5: a simple value continued by a #if tail is a property_expression
@@ -265,6 +270,63 @@ Caption =
                   (string_literal)
                   (preproc_else)
                   (string_literal)
+                  (preproc_endif
+                    (preproc_close)))))))))))
+
+================================================================================
+G3: a #if nested in a whole-value TableRelation arm has flat arms
+================================================================================
+
+table 50100 D { fields { field(1; F; Code[20]) {
+TableRelation =
+#if X
+#if Y
+Item;
+#else
+Resource;
+#endif
+#else
+Customer;
+#endif
+} } }
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (table_declaration
+    (table_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (fields_section
+        (fields_keyword)
+        body: (fields_body
+          (field_declaration
+            (field_keyword)
+            id: (integer)
+            name: (identifier)
+            type: (type_specification
+              (code_type
+                (code_keyword)
+                length: (integer)))
+            body: (declaration_body
+              (property
+                name: (property_name)
+                value: (preproc_conditional_table_relation
+                  (preproc_if
+                    (preproc_open)
+                    condition: (identifier))
+                  (preproc_conditional_table_relation
+                    (preproc_if
+                      (preproc_open)
+                      condition: (identifier))
+                    (identifier)
+                    (preproc_else)
+                    (identifier)
+                    (preproc_endif
+                      (preproc_close)))
+                  (preproc_else)
+                  (identifier)
                   (preproc_endif
                     (preproc_close)))))))))))
 

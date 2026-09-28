@@ -54,6 +54,14 @@ public API — a change to node structure or field names is a **major** bump.
   (integer)))`; they are now `integer`. The conditional keeps its node type,
   `preproc_conditional_table_relation`. 0 production sites (tree-harness
   byte-identical).
+- **Tree-shape change: a `#if` nested inside a whole-value `#if` arm has flat
+  arms** (grammar finding G3). The inner conditional used to sit in a
+  `table_relation_value` with `table_relation_expression(simple_table_relation)`
+  arms; it is now a `preproc_conditional_table_relation` directly in the outer
+  arm, and its arms are `identifier`, `quoted_identifier`, a literal or
+  `table_relation_value`, as flat `TableRelation = Item;` gives. alc accepts
+  the form in all four configurations. 0 production sites (tree-harness
+  byte-identical).
 
 - **BC 29 (microsoft/BCApps `releases/29.0`, 36,716 files) now parses with 2
   error files, down from 33.** One of the two is invalid source. None of the 33

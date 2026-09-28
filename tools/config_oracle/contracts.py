@@ -441,7 +441,10 @@ register("preproc_conditional_table_relation", "assembler",
          # Nested inside an else chain the arm's relation must merge into the
          # enclosing table_relation_expression, a rewrite this contract does not
          # name: refused as unsupported-type.
+         # preproc_conditional_table_relation:<children>: a whole-value #if nested
+         # in a whole-value arm (G3), lowered as the arm's value.
          hosts={"property:value": "single-slot",
+                "preproc_conditional_table_relation:<children>": "single-slot",
                 "table_relation_expression:<children>": "unsupported",
                 "table_relation_value:<children>": "single-slot"},
          # The literal leaves are the whole-value arm's (G4): any property's whole
@@ -449,7 +452,8 @@ register("preproc_conditional_table_relation", "assembler",
          arm={"identifier", "quoted_identifier", "table_relation_value",
               "table_relation_expression", "else_table_relation_fragment", ";",
               "boolean", "integer", "decimal", "string_literal", "verbatim_string",
-              "date_literal", "time_literal", "datetime_literal"})
+              "date_literal", "time_literal", "datetime_literal",
+              "preproc_conditional_table_relation"})
 # Non-prefixed special type: completes an earlier table relation (spec section 3).
 # Consumed by table_relation_select as a RelationContinuation; never lowered directly.
 register("else_table_relation_fragment", "fragment", None,

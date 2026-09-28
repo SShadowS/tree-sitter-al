@@ -325,7 +325,11 @@ module.exports = grammar({
     // outright, and tree-sitter now reports the declaration as unnecessary.
     // Two `case_branch`/`preproc_split_case_branch` conflicts went the same way.
     //
-    [$.preproc_conditional_link_values, $.preproc_conditional_permissions, $.preproc_conditional_impl_values, $.preproc_conditional_table_relation],
+    // The four-way [link_values, permissions, impl_values, table_relation]
+    // conflict went the same way when the G3 two-way
+    // [preproc_conditional_table_relation, _table_relation_whole_conditional]
+    // was declared below.
+    //
     // A TableRelation whose whole value is a #if (see table_relation_property)
     // is one more reading of an empty or directive-only branch.
     [$.preproc_conditional_link_values, $.preproc_conditional_permissions, $.preproc_conditional_impl_values, $.preproc_conditional_table_relation, $._table_relation_whole_conditional],
@@ -336,6 +340,9 @@ module.exports = grammar({
     [$._link_value_branch, $._permission_branch, $._impl_value_branch],
     [$.preproc_conditional_permissions, $.preproc_conditional_table_relation],
     [$.preproc_conditional_permissions, $._table_relation_whole_conditional],
+    // A #if nested in a whole-value arm (G3): both a nested whole value and
+    // table_relation_value -> preproc_conditional_table_relation read it.
+    [$.preproc_conditional_table_relation, $._table_relation_whole_conditional],
     [$._namespaced_ref_table, $._literal_value],
     [$.preproc_conditional_link_values, $.preproc_conditional_permissions, $.preproc_conditional_impl_values],
     [$.preproc_conditional_link_values, $.preproc_conditional_impl_values],
@@ -854,6 +861,11 @@ module.exports = grammar({
         $.datetime_literal,
       ), optional(';'))),
       seq($.table_relation_value, optional(';')),
+      // A #if nested in an arm is itself a whole value, so its arms are flat
+      // shapes too (grammar finding G3). It used to reach table_relation_value
+      // -> preproc_conditional_table_relation, whose arms are
+      // table_relation_expression.
+      alias($._table_relation_whole_conditional, $.preproc_conditional_table_relation),
     ),
 
     // The value of a table_relation_property whose `;` sits inside a #if arm

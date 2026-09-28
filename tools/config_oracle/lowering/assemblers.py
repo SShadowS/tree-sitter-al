@@ -191,7 +191,9 @@ def table_relation_select(node, ctx) -> Lowered:
     conditional's own field); then an optional `;` (-> Terminator, terminator-hoist).
     An empty or unselected arm contributes nothing. An arm kind outside the
     registered `arm` set, or anything else, is contract-shape. Any other host
-    (policy `unsupported`) is unsupported-type."""
+    (policy `unsupported`) is unsupported-type. An arm that is itself a
+    whole-value conditional (G3) is lowered by this same contract and its
+    nodes and fragments pass through, its nodes taking this conditional's field."""
     if ctx.policy(contracts.REGISTRY[node.kind], node) == "unsupported":
         raise LoweringError("unsupported-type", node, f"host {ctx.parent_kind}:{ctx.slot}")
     arms, endif = split_arms(node)
@@ -208,6 +210,10 @@ def table_relation_select(node, ctx) -> Lowered:
         else_kw = _lower_all(frag.children[:1], ctx, frag.kind)[0]   # an ordinary node: marked kept once
         rel = _lower_all(frag.children[1:], ctx, frag.kind)[0]
         frags.append(RelationContinuation(None, else_kw, rel))
+    elif items and items[0].kind == node.kind:
+        r = lower(items[0], ctx.child(node.kind, "<children>"))
+        nodes = [n.copy(field=node.field) for n in r.nodes]
+        frags += r.frags
     elif items:
         nodes = [n.copy(field=node.field) for n in _lower_all(items, ctx, node.kind)]
     if semi is not None:
