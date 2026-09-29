@@ -100,6 +100,19 @@ jobs:
       - name: Run harness unit tests
         run: python -m pytest tools/query_coverage/tests -q
 
+      # A MISSING node for a HIDDEN token is printed by neither `tree-sitter
+      # parse` nor its --json-summary; only py-tree-sitter's has_error sees it
+      # (docs/deferred-work.md item 12). BC.History is absent here, so the sweep
+      # covers the positive corpus fixtures and the committed gate-fixture corpus.
+      - name: has_error sweep unit tests
+        run: python -m pytest tools/config_oracle/tests/test_has_error_sweep.py -q
+
+      - name: has_error sweep over the positive corpus fixtures
+        run: python tools/has_error_sweep.py --corpus-fixtures
+
+      - name: has_error sweep over the gate-fixture AL corpus
+        run: python tools/has_error_sweep.py --root tools/gate-fixtures/al-corpus
+
   gate-selftest:
     # Mutation testing for the VALIDATION GATES, not for the grammar.
     #
