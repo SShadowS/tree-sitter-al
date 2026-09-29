@@ -507,6 +507,12 @@ doc, not in any file the runner reads, so every production run exits 1 even when
 it is clean. Needed before the full tier can gate: a production classification
 file, keyed like `fixture-classes.tsv`, loaded by `--tier resolve|full`.
 
+**2026-09-29 (roadmap A3):** the quick tier had the same defect. `fixture-classes.tsv`
+listed nothing, so `run --tier quick` exited 1 on every clean tree. Its 150
+cannot-validate records are now classified there, as `negative`, `invalid-config` or
+`debt(C1)`, and the quick tier exits 0 and gates (Step 5e, CI). The production half
+is still open (A4).
+
 ---
 
 ## 15. Dotted property references are classified as table relations
