@@ -20,7 +20,7 @@ table 50100 "Test Table"
             IF ("Type" = CONST("Allocation Account")) "Allocation Account" WHERE("Account Type" = CONST(Fixed));
 #else
             IF ("Type" = CONST("Allocation Account")) "G/L Account";
-#endif;
+#endif
         }
     }
 }
@@ -138,7 +138,7 @@ table 50100 "Test Table"
             "Allocation Account";
 #else
             "G/L Account";
-#endif;
+#endif
         }
     }
 }
