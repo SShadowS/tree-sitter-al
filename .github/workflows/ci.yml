@@ -104,8 +104,10 @@ jobs:
       # parse` nor its --json-summary; only py-tree-sitter's has_error sees it
       # (docs/deferred-work.md item 12). BC.History is absent here, so the sweep
       # covers the positive corpus fixtures and the committed gate-fixture corpus.
-      - name: has_error sweep unit tests
-        run: python -m pytest tools/config_oracle/tests/test_has_error_sweep.py -q
+      # test_alc_probe.py fakes `al`; its `slow` tests need the real compiler, are
+      # deselected without `-m`, and skip where `al` is absent anyway.
+      - name: has_error sweep and alc_probe unit tests
+        run: python -m pytest tools/config_oracle/tests/test_has_error_sweep.py tools/config_oracle/tests/test_alc_probe.py -q
 
       - name: has_error sweep over the positive corpus fixtures
         run: python tools/has_error_sweep.py --corpus-fixtures
