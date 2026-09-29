@@ -4,12 +4,14 @@ DELIBERATE NEGATIVE -- the OPERATOR itself on the far side of a #if boundary
 The ERROR is the assertion. Exempt in validate-grammar.sh Step 3 and in
 release.md pre-flight #3.
 .
-`1 #if X + #endif 2` puts only the OPERATOR inside the branch. alc 18.0.37.11445
-REJECTS it: `AL0104: Syntax error, 'end' expected`. So our ERROR is CORRECT and
-must stay -- this is the boundary of the #if-continuation work, not a gap in it.
-.
-Recorded because it is the one shape in that sweep the compiler refuses, and the
-temptation on seeing an ERROR beside eight fixed siblings is to "fix" it too.
+`1 #if X + #endif 2` puts only the OPERATOR inside the branch. CORRECTED
+2026-09-29 (A3 review, alc 18.0.41, four-way): alc REJECTS it only with X
+undefined (`i := 1 2`, AL0104/AL0111). With X defined it is `i := 1 + 2` and
+alc ACCEPTS it, split and flat. The first probe (18.0.37) compiled only the
+undefined configuration. So the ERROR is correct for X=0 and a GRAMMAR GAP for
+X=1: valid AL the parser ERRORs on. Owned by roadmap B3, docs/deferred-work.md
+item 3; recorded by tools/alc_probe/cases/oracle-negative/split-operator.al.
+Until B3 lands this tree pins today's behaviour, not the right one.
 Every other position measured -- assignment RHS, exit value, argument, if
 condition, property value, for bound, subscript, while condition, list elements,
 #elif/#else spans, multiple splits in one expression -- alc ACCEPTS, and all of

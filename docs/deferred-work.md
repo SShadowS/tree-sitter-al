@@ -103,6 +103,16 @@ failure there most likely means someone fixed the parser and should update the
 fixture — not that they broke it. Do not regenerate it with `tree-sitter test -u`
 without reading the header.
 
+**A second shape, found 2026-09-29 (A3 review):** an operator ALONE inside a `#if`
+arm, `i := 1` / `#if X` / ` +` / `#endif` / ` 2;`
+(`test/corpus/preproc_split_operator_negative_test.txt`). It was filed as a deliberate
+negative on a one-configuration alc probe. The four-way probe
+(`tools/alc_probe/cases/oracle-negative/split-operator.al`, alc 18.0.41) says:
+X undefined REJECT (AL0104, AL0111), **X defined ACCEPT, split and flat**. So with X
+defined this is valid AL, and the parser ERRORs on it: a grammar gap. The fixture still
+asserts the ERROR, and `fixture-classes.tsv` classifies that configuration
+`debt(B3)`. Both must change when B3 fixes it.
+
 ## 4. `_expression_statement` accepts any expression as a statement
 
 **Established:** two measured attempts, both reverted. Their diffs are stashed with
