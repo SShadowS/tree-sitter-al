@@ -428,22 +428,14 @@ EOF
 al compile /project:"$PWD" /out:"$PWD/test.app"; echo "EXIT=$?"
 ```
 
-Exit `0` + `test.app` written = compiler accepts. Exit `1` with no `test.app` = rejected (errors may be silent — re-run capturing stderr or trim the file to isolate).
+Exit `0` + `test.app` written = compiler accepts. No `test.app` is a rejection only if an error is located in the `.al` file; otherwise the project is broken (see below).
 
-**Three traps that make a working probe look like a rejection.** All three exit `1` with an empty error log, which is indistinguishable from a real compile error:
-- **No `application` or `dependencies` key.** Those pull in Base/System Application symbol packages that are not present locally; without the symbols the project fails to load and emits *no diagnostics at all* — for valid and invalid code alike, so the probe silently loses all discriminating power. `runtime` must be one the installed `al` supports (`15.0` works; `12.0` does not).
-- **Relative paths.** `/project:.` exits `1` with an empty error log — pass absolute paths for both `/project:` and `/out:`.
+**Traps that make a working probe look like a rejection, or a broken one look like a verdict** (alc 18.0.41, re-verified 2026-09-29). Judge by *where* an error is located: an error located in a `.al` file (`...\Test.al(7,15): error AL1073`) is about the source; one located in `app.json` (`...\app.json(1,175): error AL1043`) or unlocated (`error AL1021`, `error AL1028`) is about the project. `tools/alc_probe` classifies exactly that way.
+- **Missing symbols read as a real rejection.** An `application` or `dependencies` key is harmless for a self-contained probe (it compiles). But any reference to a Base/System Application object without the symbol packages fails with a `.al`-located **AL0185**, which looks exactly like a genuine REJECT. Keep probes self-contained, or supply real packages via `/packagecachepath:`.
+- **Relative paths under Git Bash.** `/project:.` exits `1` with an empty log, but that is MSYS path conversion, not alc: Git Bash rewrites the argument to `C:\Program Files\Git\project;.`. PowerShell, `MSYS_NO_PATHCONV=1`, or absolute Windows paths all work.
+- **Runtime.** alc 18.0.41 builds runtimes `12.0` through `18.0`; `19.0` gives `AL1043`, located in `app.json`.
 - **`/packagecachepath:` cuts both ways.** Pointed at an EMPTY directory it fails with `AL1022` — omit it and the compiler finds its default cache. But when you have real symbol packages (a 28.0 cache, say), it is REQUIRED: without it alc emits `AL1021`. Check which situation you are in rather than copying either form.
 - **One case file at a time.** `al compile` compiles *every* `.al` in the project directory, so a leftover probe file fails the run you are reading.
-
-**Re-measured 2026-09-29 with alc 18.0.41 (A2), and not all of the above reproduces.** A bare
-`application` key, a `dependencies` entry and runtime `12.0` all compiled a trivial codeunit.
-Runtime `19.0` gives `AL1043`, a bad runtime string `AL1039`, a bad `id` `AL1040`/`AL1053`, a
-missing `app.json` `AL1001`: a broken project now names itself with an AL1xxx code instead
-of an empty log, which is why `tools/alc_probe` counts AL1xxx as BROKEN, never as REJECT.
-The relative-path trap is **Git Bash**, not alc: MSYS rewrites the argument `/project:.` to
-`C:\Program Files\Git\project;.` (empty log, exit 1), and `MSYS_NO_PATHCONV=1` makes the
-same command succeed. Absolute Windows paths are not rewritten.
 
 Sanity-check the probe before trusting a rejection: compile a form you know is valid and confirm exit `0` + `test.app`. If that fails too, the project is broken, not the syntax. Example: confirmed `Codeunit::<integer>` is valid AL (old-school soft cross-extension reference) when both LLMs claimed otherwise.
 

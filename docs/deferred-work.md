@@ -186,16 +186,23 @@ first:
 
 ## 7. Adopt the split-matrix probe tooling under `tools/` — RESOLVED 2026-09-29
 
-**RESOLVED 2026-09-29 (roadmap A2, commits `a9b0431`, `282aa1b`, `74fe12e`).**
+**RESOLVED 2026-09-29 (roadmap A2, commits `a9b0431`, `282aa1b`, `74fe12e`; fix round 1 `fc22ba2`).**
 `python -m tools.alc_probe run <case.al|dir> [--check] [--json OUT]` compiles every
 symbol assignment of a case split and flat (the oracle resolver's text), after a valid
 and a garbage control, in isolated projects with a fresh `.app`, and records the
-compiler's identity. A broken project is `BROKEN` and exits 2; a flat/split
+compiler's identity. A broken project (no error located in a `.al` file) is `BROKEN` and exits 2; a flat/split
 disagreement is `MISMATCH`. The compile core, `tools/alc_probe/core.py`, is shared
 with `tools/config_oracle/probe_alc.py`. The BC 29 and G11 probes (items 1, 17, 18,
 19) are committed under `tools/alc_probe/cases/` and reproduce every recorded
 verdict. Format and exit codes: `tools/alc_probe/README.md`. The text below is the
 original entry.
+
+**Still separate:** `tools/precedence/probe.sh` compiles its 196 cases through its own
+bash loop, and reads any missing `.app` as a REJECT (its four controls are the only
+guard against a broken rig). Porting it to `tools/alc_probe/core.py` means a Python
+rewrite that keeps the `alc-results.tsv` first-error-message format, and re-validating
+all 196 rows against a BC 28 symbol-package cache, since those results were taken with
+alc 18.0.37. Not done in A2.
 
 **Established:** the method (see *The instrument*, above) exists and works; the
 tooling that automates it was written ad hoc during the release and never landed.
