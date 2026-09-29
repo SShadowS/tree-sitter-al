@@ -229,6 +229,24 @@ def make_al_corpus(dirname: str, *, broken: bool = False, empty: bool = False) -
     return Mutation(f"materialise {kind} AL corpus at {dirname}", _apply)
 
 
+def git_corpus(dirname: str, label: str) -> Mutation:
+    """Make a materialised corpus its own committed git repo and record its HEAD in the
+    scratch production-classes.tsv, so the oracle's corpus identity check applies to it."""
+
+    def _apply(root: Path) -> None:
+        dest = root / dirname
+        git = ["git", "-C", str(dest), "-c", "user.name=selftest", "-c", "user.email=selftest@invalid",
+               "-c", "core.autocrlf=false"]
+        for args in (["init", "-q"], ["add", "."], ["commit", "-q", "-m", "selftest corpus"]):
+            if subprocess.run(git + args, capture_output=True).returncode:
+                raise SelfTestError(f"cannot make {dirname} a git repo: git {' '.join(args)} failed")
+        head = subprocess.run(git + ["rev-parse", "HEAD"], capture_output=True, text=True).stdout.strip()
+        with (root / "tools/config_oracle/production-classes.tsv").open("a", encoding="utf-8") as fh:
+            fh.write(f"# corpus-head {label} {head}\n")
+
+    return Mutation(f"commit {dirname} as a git repo, record its head as {label}", _apply)
+
+
 # --------------------------------------------------------------------------
 # Cases
 # --------------------------------------------------------------------------
@@ -678,6 +696,22 @@ CASES: list[Case] = [
         expect_exit="1",
         must_contain=["- stale classifications: 1", "selftest:Guarded.Codeunit.al\tCLEAN25=0",
                       "- exit code: 1"],
+        slow=False,
+    ),
+    Case(
+        id="oracle-resolve-dirty-tracked-al",
+        gate=ORACLE,
+        module=ORACLE_MODULE,
+        args=["run", "--tier", "resolve", "--root", "selftest-corpus"],
+        why="a tracked .al edited under an unchanged, recorded HEAD: the oracle reads the "
+            "working tree, so its content-free keys could keep classifying a changed file",
+        setup=[make_al_corpus("selftest-corpus"), git_corpus("selftest-corpus", "selftest")],
+        mutations=[append("selftest-corpus/Runner.Codeunit.al", "// edited after the commit\n")],
+        expect_exit="1",
+        must_contain=["tracked .al changed in the working tree (M Runner.Codeunit.al)",
+                      "## Corpus identity mismatch (exit 1)"],
+        blind_spot="files inside a submodule of the corpus: the check runs git in the corpus "
+                   "repo only",
         slow=False,
     ),
     Case(
