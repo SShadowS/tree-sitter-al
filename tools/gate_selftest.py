@@ -278,8 +278,8 @@ ORACLE_REVERSED_ARM = sub("tools/config_oracle/lowering/select.py",
                           r"(?m)^            for c in content:$",
                           "            for c in reversed(content):", count=1)
 ORACLE_STALE_ENTRY = ("preproc_define_undef_test.txt#Defined symbol used in a later %23if#0\tDEBUG=1"
-                      "\tcannot-validate:reference-error\tgate self-test: an entry left behind "
-                      "after its record was fixed\n")
+                      "\tcannot-validate:reference-error\tdebt(C1): gate self-test, an entry left "
+                      "behind after its record was fixed\n")
 
 # A byte-identical duplicate of an existing key — the shape Task 10 found by
 # hand. Line 382 is `declaration_body: $ => repeat1($._body_element),`; the
@@ -571,6 +571,23 @@ CASES: list[Case] = [
         must_contain=["- stage (c) fixture differential: FAIL (exit 1",
                       "- stale classifications: 1",
                       "Defined symbol used in a later %23if#0\tDEBUG=1"],
+        slow=False,
+    ),
+    Case(
+        id="oracle-quick-dropped-configuration",
+        gate=ORACLE,
+        module=ORACLE_MODULE,
+        args=["run", "--tier", "quick"],
+        why="a worker loses the first configuration of every input: the runner must "
+            "call that incomplete (exit 2), never count what is left as a clean run",
+        mutations=[sub("tools/config_oracle/runner.py",
+                       re.escape("return check_input(_PARSER, input_id, source, mode), peak_rss_bytes()"),
+                       "return check_input(_PARSER, input_id, source, mode)[1:], peak_rss_bytes()",
+                       count=1)],
+        expect_exit="2",
+        must_contain=["- stage (c) fixture differential: COULD NOT RUN", "IncompleteRun",
+                      "- quick tier exit code: 2"],
+        must_not_contain=["- stage (c) fixture differential: PASS"],
         slow=False,
     ),
     Case(
