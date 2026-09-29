@@ -190,8 +190,8 @@ def _classes(tmp_path, line):
 
 
 def test_classes_require_a_cannot_validate_reason_prefix(tmp_path):
-    ok = _classes(tmp_path, "c.txt#A#0\t*\tcannot-validate:reference-error\tdeliberate negative")
-    assert ok == {("c.txt#A#0", "*"): ("cannot-validate:reference-error", "deliberate negative")}
+    ok = _classes(tmp_path, "c.txt#A#0\t*\tcannot-validate:reference-error\tdebt(C1): no handler")
+    assert ok == {("c.txt#A#0", "*"): ("cannot-validate:reference-error", "debt(C1): no handler")}
     for bad in ("discrepancy", "cannot-validate", "cannot-validate:", "pass:x", "representation-violation:x"):
         with pytest.raises(ValueError):
             _classes(tmp_path, f"c.txt#A#0\t*\t{bad}\treason")
@@ -200,3 +200,44 @@ def test_classes_require_a_cannot_validate_reason_prefix(tmp_path):
 def test_classes_require_a_reason(tmp_path):
     with pytest.raises(ValueError):
         _classes(tmp_path, "c.txt#A#0\t*\tcannot-validate:resolver\t ")
+
+
+# ---- categories and evidence (A3 fix round 1, review F1) ----
+
+NEG_CASE = "tools/alc_probe/cases/oracle-negative/split-operator.al"   # X: accept; !X: reject
+
+
+def test_classes_require_a_category(tmp_path):
+    with pytest.raises(ValueError, match="must start with"):
+        _classes(tmp_path, "c.txt#A#0\t*\tcannot-validate:resolver\tdeliberate negative")
+
+
+@pytest.mark.parametrize("category", ["negative", "invalid-config"])
+def test_rejection_claims_need_evidence(tmp_path, category):
+    with pytest.raises(ValueError, match="evidence"):
+        _classes(tmp_path, f"c.txt#A#0\tX=0\tcannot-validate:resolver\t{category}: alc rejects it")
+
+
+def test_a_star_negative_cannot_rest_on_a_manual_note(tmp_path):
+    line = "c.txt#A#0\t{}\tcannot-validate:resolver\tnegative: AL0621; evidence: alc manual, 2026-09-29"
+    assert _classes(tmp_path, line.format("-"))
+    with pytest.raises(ValueError, match="needs alc_probe evidence"):
+        _classes(tmp_path, line.format("*"))
+
+
+def test_a_star_negative_over_a_configuration_alc_accepts_is_rejected(tmp_path):
+    """The F1 defect: `*` claimed X=1 was rejected, and alc accepts it."""
+    line = ("c.txt#A#0\t{}\tcannot-validate:multi-config-parse:error\tnegative: x; "
+            f"evidence: alc_probe {NEG_CASE}")
+    assert _classes(tmp_path, line.format("X=0"))
+    for cfg in ("*", "X=1"):
+        with pytest.raises(ValueError, match="does not expect a reject"):
+            _classes(tmp_path, line.format(cfg))
+
+
+def test_evidence_must_exist_and_name_the_configs_symbols(tmp_path):
+    line = "c.txt#A#0\t{}\tcannot-validate:x\tinvalid-config: x; evidence: alc_probe {}"
+    with pytest.raises(ValueError, match="does not exist"):
+        _classes(tmp_path, line.format("X=0", "tools/alc_probe/cases/no-such.al"))
+    with pytest.raises(ValueError, match="does not name the symbols"):
+        _classes(tmp_path, line.format("Y=0", NEG_CASE))
