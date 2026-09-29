@@ -168,6 +168,9 @@ _KINDS = {
 # oracle records it as `: host <parent>:<slot>`): a shorter prefix would absorb a
 # different refusal, or the same one re-parented by a grammar change.
 _PRODUCTION_LOWERING = re.compile(r"lowering:(?P<k>[a-z-]+):(?P=k) at (?P<t>\w+)(?P<tail>: .+)?$")
+# The host an unsupported-type or one-reading entry pins: `<parent>:<slot>`, the slot required.
+# A slotless `: host if_statement` would match every slot of that parent (N2).
+_HOST_TAIL = re.compile(r": host \w+:(?:<children>|\w+)(?:, |$)")
 _EVIDENCE = re.compile(r"evidence: (?:alc_probe (?P<case>\S+\.al)|alc manual,)")
 
 
@@ -205,7 +208,7 @@ def load_classes(path: Path, kind: str = "fixture") -> dict:
         if kind == "production" and prefix.startswith("lowering"):
             lm = _PRODUCTION_LOWERING.match(prefix)
             if not lm or (lm.group("k") in ("unsupported-type", "one-reading") and lm.group("t").startswith("preproc")
-                          and not (lm.group("tail") or "").startswith(": host ")):
+                          and not _HOST_TAIL.match(lm.group("tail") or "")):
                 raise ValueError(f"a production lowering prefix must be `lowering:<kind>:<kind> at <type>`, "
                                  f"plus `: host <parent>:<slot>` for unsupported-type and one-reading: "
                                  f"{case_id} {config} {prefix}")

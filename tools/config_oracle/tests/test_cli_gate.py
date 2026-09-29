@@ -425,7 +425,12 @@ def test_a_production_lowering_entry_must_name_type_and_host(tmp_path):
                                   "signed literal continued by a live tail", reason="debt(C1, M3): x"))
     for short in ("lowering", "lowering:unsupported-type", "lowering:unsupported-type:unsupported-type",
                   "lowering:unsupported-type:unsupported-type at preproc_x",
-                  "lowering:one-reading:one-reading at preproc_x"):
+                  "lowering:one-reading:one-reading at preproc_x",
+                  # N2: a host without its slot would match every slot of that parent
+                  "lowering:unsupported-type:unsupported-type at preproc_x: host if_statement",
+                  "lowering:one-reading:one-reading at preproc_x: host if_statement, complete-prefix arm",
+                  "lowering:unsupported-type:unsupported-type at preproc_x: host if_statement:",
+                  "lowering:unsupported-type:unsupported-type at preproc_x: host :then_branch"):
         with pytest.raises(ValueError, match="lowering"):
             _load(tmp_path, _entry("a:x.al", prefix=short, reason="debt(C1, M3): x"))
 
@@ -452,3 +457,11 @@ def test_a_corpus_head_mismatch_exits_1(tmp_path, capsys, monkeypatch):
     assert "## Corpus HEAD mismatch (exit 1)" in captured.out and "- exit code: 1" in captured.out
     cli.PRODUCTION_CLASSES.write_text("# corpus-head other deadbeef\n", encoding="utf-8")
     assert _resolve(a, tmp_path=tmp_path) == 0
+
+
+def test_a_slotless_host_entry_exits_2(tmp_path, capsys):
+    """N2: `: host <parent>` without `:<slot>` is malformed, and the run exits 2."""
+    a = _root(tmp_path, "a", {"s.al": STMT})
+    _classify(tmp_path, _entry("a:s.al", prefix="lowering:unsupported-type:unsupported-type at "
+                               "preproc_x: host if_statement", reason="debt(C1, M3): x"))
+    assert _resolve(a, tmp_path=tmp_path) == 2
