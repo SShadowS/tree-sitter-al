@@ -49,7 +49,7 @@ python -m tools.config_oracle run --tier quick # (a) registry census, (b) self-t
 python -m tools.config_oracle run --tier resolve --root ./DC --root ./BC.History  # per-root table; empty or overlapping root = exit 2
 python -m tools.config_oracle replay           # historical-defect replays; ~80s cold, ~10s warm
 # A fixture cannot-validate record must be classified in tools/config_oracle/fixture-classes.tsv
-# (negative / invalid-config / debt(C1)); an entry matching no record is stale and fails.
+# (negative / invalid-config need alc evidence; debt(<owner>)); an entry matching no record is stale and fails.
 
 # Standard development cycle
 tree-sitter generate         # Generate parser from grammar.js
