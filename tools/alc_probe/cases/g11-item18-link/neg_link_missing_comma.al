@@ -1,6 +1,7 @@
 // Negative control: no comma between the links.
-// expect: * reject
+// expect: * reject(AL0104,AL0124,AL0224)
 // source: commit 28c601f control (`A = field(B) B = field(A);` REJECT, AL0104)
+// source: AL0124, AL0224: recorded by A2, 2026-09-29 (the record lists AL0104 only)
 table 50100 T
 {
     fields

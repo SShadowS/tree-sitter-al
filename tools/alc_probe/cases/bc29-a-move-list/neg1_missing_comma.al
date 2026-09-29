@@ -1,5 +1,5 @@
 // Negative control: two controls with no comma.
-// expect: * reject
+// expect: * reject(AL0104)
 // source: docs/bc29-parse-gaps.md family A negative control (moveafter(A; C B) gives AL0104)
 table 50100 Tbl { fields { field(1; A; Integer) { } field(2; B; Integer) { } field(3; C; Integer) { } } }
 page 50100 Pg

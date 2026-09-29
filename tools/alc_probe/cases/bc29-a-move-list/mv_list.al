@@ -1,5 +1,6 @@
+// runtime: 15.0 17.0 18.0
 // expect: * accept
-// source: docs/bc29-parse-gaps.md family A (moveafter(A; C, B) ACCEPT at runtime 15.0), commit a939a05
+// source: docs/bc29-parse-gaps.md family A (moveafter(A; C, B) ACCEPT at runtime 15.0, 17.0 and 18.0), commit a939a05
 table 50100 Tbl { fields { field(1; A; Integer) { } field(2; B; Integer) { } field(3; C; Integer) { } } }
 page 50100 Pg
 {

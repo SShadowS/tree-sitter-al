@@ -10,6 +10,7 @@ exactly the arms predicted. Every expectation below was recorded from alc on
 from __future__ import annotations
 
 import argparse
+import hashlib
 import sys
 import tempfile
 from concurrent.futures import ThreadPoolExecutor
@@ -90,9 +91,15 @@ PROBES: list[tuple[str, str, list[str], bool]] = [
 
 
 def compile_probe(workdir: Path, name: str, source: str, symbols: list[str]) -> tuple[str, bool, list[str]]:
-    """(name, accepted, source codes) through the shared core, tools/alc_probe/core.py."""
-    v = core.compile_project(workdir / name, source, symbols)
-    return name, v.kind == core.ACCEPT, list(v.syntax_codes)
+    """(name, accepted, source codes) through the shared core, tools/alc_probe/core.py.
+
+    The directory name carries a hash of `name`, so two probes whose names differ only
+    in case (`true_literal`, `TRUE_literal`) never share a directory on a
+    case-insensitive filesystem.
+    """
+    tag = hashlib.sha1(name.encode("utf-8")).hexdigest()[:8]
+    v = core.compile_project(workdir / f"{name}-{tag}", source, symbols)
+    return name, v.kind == core.ACCEPT, list(v.source_codes)
 
 
 def main(argv: list[str] | None = None) -> int:
@@ -110,7 +117,7 @@ def main(argv: list[str] | None = None) -> int:
         accepted = v.kind == core.ACCEPT
         ok = accepted == expected
         failures += not ok
-        print(f"{'ok  ' if ok else 'DIFF'} {name:42} {'ACCEPT' if accepted else 'REJECT'} {','.join(v.syntax_codes)}")
+        print(f"{'ok  ' if ok else 'DIFF'} {name:42} {'ACCEPT' if accepted else 'REJECT'} {','.join(v.source_codes)}")
     broken = [name for (name, *_), v in zip(PROBES, verdicts) if v.kind == core.BROKEN]
     if broken or verdicts[0].kind != core.ACCEPT or verdicts[1].kind != core.REJECT:
         print(f"probe project is broken: the sanity/garbage controls did not behave, or BROKEN: {broken}", file=sys.stderr)

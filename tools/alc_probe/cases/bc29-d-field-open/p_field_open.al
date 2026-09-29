@@ -1,6 +1,6 @@
 // Valid only with S31 undefined: the field's `{` opens inside the #if.
 // expect: * accept
-// expect: S31 reject
+// expect: S31 reject(AL0104,AL0198)
 // source: docs/bc29-parse-gaps.md family D (undefined ACCEPT, S31 REJECT with AL0104, AL0198), commit 5b809bc
 table 50100 T
 {
