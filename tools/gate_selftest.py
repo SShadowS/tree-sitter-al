@@ -257,14 +257,29 @@ class Case:
     # detector that catches 5% of instances and reports nothing on the rest looks
     # identical to a complete one in a green run; this is where that gets said.
     blind_spot: str = ""
-    expect_exit: str = "nonzero"     # "nonzero" | "zero"
+    expect_exit: str = "nonzero"     # "nonzero" | "zero" | an exact code, e.g. "2"
     slow: bool = True                # runs the full validate-grammar.sh
     needs: Sequence[str] = ()        # environment prerequisites, see PREREQS
+    # A Python gate: run as `python -m <module> *args`. `gate` still names its file,
+    # so the does-the-gate-exist guard applies to it the same as to a script.
+    module: str | None = None
 
 
 VALIDATE = "./validate-grammar.sh"
 PAP = "./parse-al-parallel.sh"
 HARNESS = "./tools/tree-harness.sh"
+
+ORACLE = "tools/config_oracle/__main__.py"
+ORACLE_MODULE = "tools.config_oracle"
+# The first `for c in content:` in select.py is branch_select's loop over the CHOSEN
+# arm (the second marks inactive-arm content). Reversing it keeps every node and
+# byte, so only the comparator's structure check can see it.
+ORACLE_REVERSED_ARM = sub("tools/config_oracle/lowering/select.py",
+                          r"(?m)^            for c in content:$",
+                          "            for c in reversed(content):", count=1)
+ORACLE_STALE_ENTRY = ("preproc_define_undef_test.txt#Defined symbol used in a later %23if#0\tDEBUG=1"
+                      "\tcannot-validate:reference-error\tgate self-test: an entry left behind "
+                      "after its record was fixed\n")
 
 # A byte-identical duplicate of an existing key — the shape Task 10 found by
 # hand. Line 382 is `declaration_body: $ => repeat1($._body_element),`; the
@@ -499,6 +514,109 @@ CASES: list[Case] = [
         why="the grammar health baseline is absent; this reported success before Task 20",
         mutations=[remove(".grammar_baseline.json")],
         must_contain=["Grammar health baseline missing"],
+        must_not_contain=["All validation checks passed"],
+    ),
+    # ---- the config oracle (roadmap A3) ----------------------------------------
+    # Run as `python -m tools.config_oracle`, the command Step 5e and CI run, so each
+    # case is fast; step5e-oracle-discrepancy proves the Step 5e wiring itself. Every
+    # case builds the scratch tree's parser once (al.dll is not copied). Exit codes
+    # are asserted exactly: 1 is a finding, 2 is could-not-run, and a case that
+    # expects one must not pass on the other.
+    Case(
+        id="oracle-quick-planted-discrepancy",
+        gate=ORACLE,
+        module=ORACLE_MODULE,
+        args=["run", "--tier", "quick"],
+        why="branch selection lowers the chosen arm's children in reverse: a wrong "
+            "lowered tree, which the comparator must report as a discrepancy",
+        mutations=[ORACLE_REVERSED_ARM],
+        expect_exit="1",
+        must_contain=["- stage (c) fixture differential: FAIL (exit 1", "- discrepancy: ",
+                      "- stage (a) registry census: PASS"],
+        blind_spot="the fixture differential compares only configurations it can lower; "
+                   "the ones classified cannot-validate in "
+                   "tools/config_oracle/fixture-classes.tsv are compared for nothing",
+        slow=False,
+    ),
+    Case(
+        id="oracle-quick-unregistered-type",
+        gate=ORACLE,
+        module=ORACLE_MODULE,
+        args=["run", "--tier", "quick"],
+        why="a new named preproc_* type in the grammar that the oracle's registry does "
+            "not know; the census reads the node-types.json the scratch build generated",
+        mutations=[
+            sub("grammar.js", r"(\n    \$\.preproc_undef,\n)",
+                r"\1    $.preproc_zz_gate_selftest,\n", count=1),
+            sub("grammar.js", r"(\n    preproc_region: \$ => )",
+                r"\n    preproc_zz_gate_selftest: $ => '#zz-gate-selftest',\1", count=1),
+        ],
+        expect_exit="1",
+        must_contain=["- stage (a) registry census: FAIL (1 problems)",
+                      "unregistered: preproc_zz_gate_selftest",
+                      "- stage (c) fixture differential: PASS"],
+        blind_spot="the census keys on the `preproc` name prefix (plus "
+                   "contracts.SPECIAL_NON_PREFIXED); a special type named otherwise is "
+                   "invisible to it",
+        slow=False,
+    ),
+    Case(
+        id="oracle-quick-stale-classification",
+        gate=ORACLE,
+        module=ORACLE_MODULE,
+        args=["run", "--tier", "quick"],
+        why="a fixture-classes.tsv entry left behind for a configuration that passes",
+        mutations=[append("tools/config_oracle/fixture-classes.tsv", ORACLE_STALE_ENTRY)],
+        expect_exit="1",
+        must_contain=["- stage (c) fixture differential: FAIL (exit 1",
+                      "- stale classifications: 1",
+                      "Defined symbol used in a later %23if#0\tDEBUG=1"],
+        slow=False,
+    ),
+    Case(
+        id="oracle-quick-clean-passes",
+        gate=ORACLE,
+        module=ORACLE_MODULE,
+        args=["run", "--tier", "quick"],
+        why="the control: an unmodified tree passes every stage, so the RED cases "
+            "above are red for their mutation and not for the environment",
+        expect_exit="0",
+        must_contain=["- stage (a) registry census: PASS", "- stage (b) self-tests: PASS (",
+                      "- stage (c) fixture differential: PASS", "- quick tier exit code: 0"],
+        slow=False,
+    ),
+    Case(
+        id="oracle-resolve-empty-root",
+        gate=ORACLE,
+        module=ORACLE_MODULE,
+        args=["run", "--tier", "resolve", "--root", "selftest-corpus", "--root", "selftest-empty"],
+        why="an empty corpus root beside a healthy one; the healthy root alone passes",
+        setup=[make_al_corpus("selftest-corpus"), make_al_corpus("selftest-empty", empty=True)],
+        expect_exit="2",
+        must_contain=["corpus root has no .al files: selftest-empty"],
+        must_not_contain=["Per root"],
+        slow=False,
+    ),
+    Case(
+        id="oracle-resolve-healthy-root-passes",
+        gate=ORACLE,
+        module=ORACLE_MODULE,
+        args=["run", "--tier", "resolve", "--root", "selftest-corpus"],
+        why="the control for the empty-root case: the same healthy root on its own "
+            "passes, and the per-root table accounts for every file",
+        setup=[make_al_corpus("selftest-corpus")],
+        expect_exit="0",
+        must_contain=["| selftest-corpus | 6 | 2 | 2 | 0 | 0 | 0 | 0 |", "- exit code: 0"],
+        slow=False,
+    ),
+    Case(
+        id="step5e-oracle-discrepancy",
+        gate=VALIDATE,
+        why="the planted discrepancy of oracle-quick-planted-discrepancy, through "
+            "validate-grammar.sh: Step 5e must fail the run",
+        mutations=[ORACLE_REVERSED_ARM],
+        must_contain=["config oracle quick tier failed (exit 1)",
+                      "- stage (c) fixture differential: FAIL (exit 1"],
         must_not_contain=["All validation checks passed"],
     ),
     # ---- Step 9: wasm freshness -----------------------------------------------
@@ -993,7 +1111,8 @@ def run_case(case: Case, workdir: Path, timeout: int) -> tuple[bool, str, str]:
     for mutation in case.mutations:
         mutation.apply(workdir)
 
-    cmd = [BASH, case.gate, *case.args]
+    cmd = ([sys.executable, "-m", case.module, *case.args] if case.module
+           else [BASH, case.gate, *case.args])
     try:
         proc = _run_tree(cmd, cwd=workdir, env=env, timeout=timeout)
     except subprocess.TimeoutExpired:
@@ -1006,6 +1125,8 @@ def run_case(case: Case, workdir: Path, timeout: int) -> tuple[bool, str, str]:
         problems.append("exited 0; expected non-zero")
     if case.expect_exit == "zero" and proc.returncode != 0:
         problems.append(f"exited {proc.returncode}; expected 0")
+    if case.expect_exit.isdigit() and proc.returncode != int(case.expect_exit):
+        problems.append(f"exited {proc.returncode}; expected {case.expect_exit}")
     for needle in case.must_contain:
         if needle not in out:
             problems.append(f"output never said {needle!r}")
@@ -1024,9 +1145,9 @@ def run_case(case: Case, workdir: Path, timeout: int) -> tuple[bool, str, str]:
 
     if problems:
         return False, "; ".join(problems), out
-    verdict = (f"exit {proc.returncode}, named the defect"
-               if case.expect_exit == "nonzero"
-               else f"exit {proc.returncode}, clean as required")
+    verdict = (f"exit {proc.returncode}, clean as required"
+               if case.expect_exit in ("zero", "0")
+               else f"exit {proc.returncode}, named the defect")
     return True, verdict, out
 
 
