@@ -44,6 +44,13 @@ python -m tools.query_coverage.qc accept       # freeze the current state as the
 python tools/has_error_sweep.py --root ./BC.History/   # exit 0 clean, 1 errors, 2 cannot run
 python tools/has_error_sweep.py --corpus-fixtures      # every corpus case; negatives may be visible, never hidden
 
+# Config oracle (validate-grammar.sh Step 5e, CI job `config-oracle`) — exit 0 clean, 1 finding, 2 cannot run
+python -m tools.config_oracle run --tier quick # (a) registry census, (b) self-tests, (c) fixture differential; ~10s
+python -m tools.config_oracle run --tier resolve --root ./DC --root ./BC.History  # per-root table; empty or overlapping root = exit 2
+python -m tools.config_oracle replay           # historical-defect replays; ~80s cold, ~10s warm
+# A fixture cannot-validate record must be classified in tools/config_oracle/fixture-classes.tsv
+# (negative / invalid-config need alc evidence; debt(<owner>)); an entry matching no record is stale and fails.
+
 # Standard development cycle
 tree-sitter generate         # Generate parser from grammar.js
 tree-sitter generate --report-states-for-rule -  # Rank rules by parser-state cost

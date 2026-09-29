@@ -104,16 +104,61 @@ jobs:
       # parse` nor its --json-summary; only py-tree-sitter's has_error sees it
       # (docs/deferred-work.md item 12). BC.History is absent here, so the sweep
       # covers the positive corpus fixtures and the committed gate-fixture corpus.
-      # test_alc_probe.py fakes `al`; its `slow` tests need the real compiler, are
-      # deselected without `-m`, and skip where `al` is absent anyway.
-      - name: has_error sweep and alc_probe unit tests
-        run: python -m pytest tools/config_oracle/tests/test_has_error_sweep.py tools/config_oracle/tests/test_alc_probe.py -q
-
+      # The sweep's unit tests (test_has_error_sweep.py) and test_alc_probe.py run
+      # in the config-oracle job, with the rest of tools/config_oracle/tests.
       - name: has_error sweep over the positive corpus fixtures
         run: python tools/has_error_sweep.py --corpus-fixtures
 
       - name: has_error sweep over the gate-fixture AL corpus
         run: python tools/has_error_sweep.py --root tools/gate-fixtures/al-corpus
+
+  config-oracle:
+    # The configuration-consistency oracle as a gate (roadmap A3): its unit tests,
+    # the quick tier -- the same command as validate-grammar.sh Step 5e, needing no
+    # corpus -- and the historical-defect replays. The resolve and full tiers need
+    # the production corpora, which runners do not have (roadmap C3).
+    name: Config oracle
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      # Replays build the parser from commits before each fix (replay.py), so the
+      # whole history must be present; a shallow clone makes replay exit 2.
+      - name: Checkout repository
+        uses: actions/checkout@v6
+        with:
+          fetch-depth: 0
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.13'
+
+      - name: Set up tree-sitter
+        uses: tree-sitter/setup-action/cli@v2
+
+      - name: Install dependencies
+        run: pip install -r tools/query_coverage/requirements.txt
+
+      # All of tools/config_oracle/tests. `slow` tests (a historical-parser build or
+      # the real `al` compiler) are deselected without `-m` by the suite's conftest.
+      - name: Oracle unit tests
+        run: python -m pytest tools/config_oracle/tests -q
+
+      - name: Quick tier (census, self-tests, fixture differential)
+        run: python -m tools.config_oracle run --tier quick
+
+      # One parser per historical commit, built into $TMPDIR/tree-sitter-al-replay/<sha>
+      # (replay.CACHE). The commits are listed in replay.py, so its hash is the key;
+      # the built files never change for a given sha. A miss only costs the builds.
+      - name: Cache historical parsers
+        uses: actions/cache@v4
+        with:
+          path: /tmp/tree-sitter-al-replay
+          key: replay-parsers-${{ runner.os }}-${{ hashFiles('tools/config_oracle/replay.py') }}
+
+      # Exit 2 when a commit or a build is unavailable: a replay is never skipped.
+      - name: Historical-defect replays
+        run: python -m tools.config_oracle replay
 
   gate-selftest:
     # Mutation testing for the VALIDATION GATES, not for the grammar.

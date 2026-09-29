@@ -147,10 +147,17 @@ def extract(root: Path) -> list:
     return out
 
 
+_CATEGORY = re.compile(r"(negative|invalid-config|debt\([A-Za-z0-9]+\)):")
+_EVIDENCE = re.compile(r"evidence: (?:alc_probe (?P<case>\S+\.al)|alc manual,)")
+
+
 def load_classes(path: Path) -> dict:
-    """Deliberate negatives only. `expected` is `cannot-validate:<reason prefix>`: nothing
-    else can be classified (the quick tier has no baseline), and a bare status would excuse
-    any failure of that status. The runner reports an entry that matches no record as stale."""
+    """Classifications of cannot-validate records (the header of fixture-classes.tsv states
+    the rules). `expected` is `cannot-validate:<reason prefix>`: nothing else can be
+    classified (the quick tier has no baseline), and a bare status would excuse any failure
+    of that status. Every reason starts with a category; `negative` and `invalid-config`
+    need compiler evidence, checked by `_check_evidence`. The runner reports an entry that
+    matches no record as stale."""
     classes = {}
     for line in path.read_text(encoding="utf-8").splitlines():
         if not line.strip() or line.startswith("#"):
@@ -161,7 +168,49 @@ def load_classes(path: Path) -> dict:
             raise ValueError(f"classification must be cannot-validate:<reason>: {case_id} {config} {expected}")
         if not reason.strip():
             raise ValueError(f"classification without a reason: {case_id} {config}")
+        m = _CATEGORY.match(reason)
+        if not m:
+            raise ValueError(f"reason must start with negative:, invalid-config: or debt(<owner>): {case_id} {config}")
+        if m.group(1) in ("negative", "invalid-config"):
+            _check_evidence(path, case_id, config, reason)
         if (case_id, config) in classes:
             raise ValueError(f"duplicate classification: {case_id} {config}")
         classes[(case_id, config)] = (expected, reason)
     return classes
+
+
+def _check_evidence(path: Path, case_id: str, config: str, reason: str) -> None:
+    """A claim that alc rejects input must name its evidence, and an alc_probe case must
+    expect a reject for every configuration the entry covers: all of them for `*`."""
+    m = _EVIDENCE.search(reason)
+    if not m:
+        raise ValueError(f"no `evidence: alc_probe <case>` or `evidence: alc manual`: {case_id} {config}")
+    if m.group("case") is None:
+        if config == "*":
+            raise ValueError(f"a `*` entry needs alc_probe evidence for every configuration, "
+                             f"not a manual note: {case_id}")
+        return
+    from tools.alc_probe import matrix      # lazy: only the loader needs the probe's case parser
+    probe = Path(__file__).resolve().parents[2] / m.group("case")   # repo-relative
+    if not probe.is_file():
+        raise ValueError(f"evidence case does not exist: {m.group('case')} ({case_id} {config})")
+    text = probe.read_text(encoding="utf-8")
+    # The probe must say which fixture it is: a path alone lets an unrelated probe that
+    # happens to share the symbol names stand in as evidence.
+    named = [l[len("// Fixture "):].strip() for l in text.splitlines() if l.startswith("// Fixture ")]
+    if named != [case_id]:
+        raise ValueError(f"{m.group('case')} is the probe for {named or 'no fixture'}, not {case_id}")
+    case = matrix.parse_case(probe, probe.name, text, check=False)
+    if config == "*":
+        envs = case.envs
+    else:
+        pairs = dict(kv.split("=") for kv in config.split(",")) if config != "-" else {}
+        if sorted(pairs) != sorted(case.symbols):
+            raise ValueError(f"config {config} does not name the symbols of {m.group('case')} "
+                             f"({list(case.symbols)}): {case_id}")
+        envs = [frozenset(k for k, v in pairs.items() if v == "1")]
+    for env in envs:
+        exp = case.expected(env)
+        if exp is None or exp.kind != "REJECT":
+            raise ValueError(f"{m.group('case')} does not expect a reject for "
+                             f"{sorted(env) or 'no symbols'}, which {case_id} {config} claims is rejected")

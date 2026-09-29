@@ -59,8 +59,10 @@ missing_separator_negative_test.txt
 # that fix should be structural rather than a new precedence number.
 range_not_an_expression_negative_test.txt
 # `1 #if X + #endif 2` -- the OPERATOR alone inside the branch. alc rejects
-# it (AL0104), so the ERROR is the assertion and the boundary of the
-# #if-continuation work. Every other split position alc ACCEPTS and we parse.
+# it only with X undefined (AL0104); with X defined it is valid AL and the
+# ERROR is a grammar gap owned by roadmap B3 (docs/deferred-work.md item 3,
+# tools/alc_probe/cases/oracle-negative/split-operator.al). Listed here until
+# B3 fixes it: it must leave this list then.
 preproc_split_operator_negative_test.txt
 # U+E0041, a Cf TAG character, is not an identifier character: grammar.js's
 # `[\p{L}_][\p{L}\p{N}_]*` rejects it and so does alc (AL0183). The ERROR is

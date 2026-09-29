@@ -20,7 +20,7 @@ table 123 "Test Table"
             IF (Type = CONST("Allocation Account")) "Allocation Account" WHERE("Account Type" = CONST(Fixed));
             #else
             IF (Type = CONST("Allocation Account")) "G/L Account";
-            #endif;
+            #endif
         }
     }
 }
@@ -198,7 +198,7 @@ table 125 "Complex Test"
             Table4;
             #else
             Table5;
-            #endif;
+            #endif
 
             trigger OnValidate()
             begin

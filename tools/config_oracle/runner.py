@@ -45,6 +45,7 @@ class Summary:
     classified: int = 0
     stale: list = field(default_factory=list)       # classification lines matching no record
     classified_keys: set = field(default_factory=set)
+    expected: dict = field(default_factory=dict)    # {input_id: [config ids]} `discover` predicted
 
 
 def peak_rss_bytes() -> int:
@@ -269,13 +270,7 @@ def run(inputs, lib_path, workers, mode, classes=None):
             for recs, p in pool.map(_work, jobs, chunksize=8):
                 records.extend(recs)
                 peak = max(peak, p)
-    got = collections.defaultdict(list)
-    for r in records:
-        got[r.input_id].append(r.config)
-    for input_id in sorted(set(expected) | set(got)):
-        want, have = sorted(expected.get(input_id, [])), sorted(got.get(input_id, []))
-        if want != have:
-            raise IncompleteRun(f"{input_id}: expected {want}, got {have}")
+    check_exact(expected, records)
     keys = {(r.input_id, r.config) for r in records if is_classified(r, classes)}
     stale += [f"{i}\t{c}\t{v[0]}\tmatches no record" for (i, c), v in sorted(classes.items()) if (i, c) not in keys]
     validated = sum(r.status != "cannot-validate" for r in records)
@@ -284,7 +279,59 @@ def run(inputs, lib_path, workers, mode, classes=None):
     else:
         clean = all(r.status == "pass" or (r.input_id, r.config) in keys for r in records)
         code = 0 if clean and not stale else 1
-    return Summary(records, no_dir, time.perf_counter() - t0, peak, code, len(keys), stale, keys)
+    return Summary(records, no_dir, time.perf_counter() - t0, peak, code, len(keys), stale, keys, expected)
+
+
+def check_exact(expected, records):
+    """Raise IncompleteRun unless `records` hold exactly the predicted (input, configuration) set."""
+    got = collections.defaultdict(list)
+    for r in records:
+        got[r.input_id].append(r.config)
+    for input_id in sorted(set(expected) | set(got)):
+        want, have = sorted(expected.get(input_id, [])), sorted(got.get(input_id, []))
+        if want != have:
+            raise IncompleteRun(f"{input_id}: expected {want}, got {have}")
+
+
+_ROOT_STATUSES = ("pass", "discrepancy", "directive-mismatch", "representation-violation", "cannot-validate")
+
+
+def per_root(summary, root_of, files):
+    """-> [(root, files, Counter of status, Counter of cannot-validate reason)], in `files` order.
+
+    `root_of` maps each input id to the root it was collected from, `files` each root to
+    its `.al` count. Each root's records must be exactly the set predicted for that root's
+    inputs (the same `check_exact` the whole run passed), so the per-root sets add up to
+    the total or the run is IncompleteRun. A record from no requested root fails too."""
+    by = collections.defaultdict(list)
+    for r in summary.records:
+        by[root_of.get(r.input_id)].append(r)
+    if None in by:
+        raise IncompleteRun(f"{by[None][0].input_id}: a record from no requested root")
+    rows = []
+    for root in files:
+        mine = {i: c for i, c in summary.expected.items() if root_of.get(i) == root}
+        check_exact(mine, by[root])
+        rows.append((root, files[root], collections.Counter(r.status for r in by[root]),
+                     collections.Counter(reason_of(r) for r in by[root] if r.status == "cannot-validate")))
+    return rows
+
+
+def root_table(rows):
+    """Markdown lines for `per_root` rows, with a total row."""
+    head = ["root", "files", "configurations", *_ROOT_STATUSES]
+    out = ["| " + " | ".join(head) + " |", "|" + "---|" * len(head)]
+    tot_files, tot = 0, collections.Counter()
+    for root, n, statuses, reasons in rows:
+        tot_files += n
+        tot += statuses
+        why = ", ".join(f"{k} {v}" for k, v in reasons.most_common())
+        cells = [str(statuses[s]) for s in _ROOT_STATUSES]
+        cells[-1] += f" ({why})" if why else ""
+        out.append(f"| {root} | {n} | {sum(statuses.values())} | " + " | ".join(cells) + " |")
+    out.append(f"| **total** | {tot_files} | {sum(tot.values())} | "
+               + " | ".join(str(tot[s]) for s in _ROOT_STATUSES) + " |")
+    return out
 
 
 def reason_of(record):
@@ -306,7 +353,9 @@ def unvalidated_reason(record):
     return None if item is None else _coarse(item)
 
 
-def write_report(summary, out_dir: Path, header: dict):
+def write_report(summary, out_dir: Path, header: dict, extra=()):
+    """`extra`: markdown lines placed after the header (the quick tier's stages, the
+    per-root table)."""
     out_dir.mkdir(parents=True, exist_ok=True)
     keys = summary.classified_keys
     with open(out_dir / "findings.jsonl", "w", encoding="utf-8", newline="\n") as f:
@@ -322,6 +371,7 @@ def write_report(summary, out_dir: Path, header: dict):
                                            if r.status == "directive-mismatch")))
     dm_top = ", ".join(f"{k} {v}" for k, v in dm.most_common(8)) or "none"
     lines = ["# Config-oracle report", "", *(f"- {k}: {v}" for k, v in sorted(header.items())), "",
+             *extra, *([""] if extra else []),
              f"**{unclassified} unclassified findings, {summary.classified} classified, "
              f"{counts['cannot-validate']} configurations not validated ({top})**", "",
              f"- configurations checked: {len(summary.records)}",

@@ -103,6 +103,16 @@ failure there most likely means someone fixed the parser and should update the
 fixture — not that they broke it. Do not regenerate it with `tree-sitter test -u`
 without reading the header.
 
+**A second shape, found 2026-09-29 (A3 review):** an operator ALONE inside a `#if`
+arm, `i := 1` / `#if X` / ` +` / `#endif` / ` 2;`
+(`test/corpus/preproc_split_operator_negative_test.txt`). It was filed as a deliberate
+negative on a one-configuration alc probe. The four-way probe
+(`tools/alc_probe/cases/oracle-negative/split-operator.al`, alc 18.0.41) says:
+X undefined REJECT (AL0104, AL0111), **X defined ACCEPT, split and flat**. So with X
+defined this is valid AL, and the parser ERRORs on it: a grammar gap. The fixture still
+asserts the ERROR, and `fixture-classes.tsv` classifies that configuration
+`debt(B3)`. Both must change when B3 fixes it.
+
 ## 4. `_expression_statement` accepts any expression as a statement
 
 **Established:** two measured attempts, both reverted. Their diffs are stashed with
@@ -507,6 +517,12 @@ doc, not in any file the runner reads, so every production run exits 1 even when
 it is clean. Needed before the full tier can gate: a production classification
 file, keyed like `fixture-classes.tsv`, loaded by `--tier resolve|full`.
 
+**2026-09-29 (roadmap A3):** the quick tier had the same defect. `fixture-classes.tsv`
+listed nothing, so `run --tier quick` exited 1 on every clean tree. Its 150
+cannot-validate records are now classified there, as `negative`, `invalid-config` or
+`debt(C1)`, and the quick tier exits 0 and gates (Step 5e, CI). The production half
+is still open (A4).
+
 ---
 
 ## 15. Dotted property references are classified as table relations
@@ -735,6 +751,46 @@ and that variant takes no `;`. The flat parse of either configuration keeps the
 `;` in the property. Not asserted by a fixture. alc not probed.
 
 ---
+
+## 20. `#endif;`: the grammar accepts a token after `#endif` that alc rejects
+
+**Established:** 2026-09-29, A3 (config-oracle gate) review and fix rounds 1-2. Manual
+alc 18.0.41 compiles, each with X defined and undefined, runtime 15.0, no symbols
+packages:
+
+| input | alc |
+|---|---|
+| `TableRelation = #if X T; #else T; #endif;` (property) | REJECT, AL0631, both configurations |
+| `begin #if X Message('a'); #endif; end;` (code block) | REJECT, AL0631, both configurations |
+| the same two without the `;` after `#endif` (controls) | ACCEPT |
+| `#endregion;` | ACCEPT (region lines take free text) |
+
+**What the grammar does:** no ERROR, no MISSING (`has_error` is false, checked with
+py-tree-sitter). `preproc_close` covers `#endif` alone, and the `;` is parsed as
+something else in each of the two shapes:
+- in a property it becomes the property's `;` terminator;
+- in a code block it becomes an empty statement.
+
+This is the same class as item 9 (the grammar accepts what alc rejects). Four positive
+fixtures had this typo until A3 fix round 1 (45660ac) corrected them. So no fixture
+exercises the shape now, and this item is its only record.
+
+**Production impact:** 0 `#endif` lines with a trailing token in BC.History, DC,
+BC 28.1 W1 (`H:/Git/BC28.1`) and BCApps 29.0 (`H:/Git/BCApps-29.0`). Measured with
+`grep -rniE '^\s*#\s*endif\s*[^[:space:]/]' --include=*.al`. The two production
+directive lines that do end in `;` are `#endregion;` (the Continia connector's
+`ContiniaAPIRequests.Codeunit.al:882`, in BC 28.1 and BCApps 29.0), which alc
+accepts.
+
+**Owner:** roadmap B2 (directive-word boundaries, and what may follow a directive
+word).
+
+**Not pinned by alc_probe.** The oracle's resolver, which `alc_probe` uses for
+discovery, refuses a token after `#endif` (`resolver:trailing-token`), so no
+`alc_probe` case can hold this input. It is the same limit as the 13
+resolver-refused deliberate negatives in `fixture-classes.tsv`. C2's raw-compile
+mode, which skips the resolver, is what can pin it. Until then the table above is the
+evidence. B2 should add a negative fixture asserting the ERROR once it is fixed.
 
 ## Longer-lived proposals, tracked separately
 
