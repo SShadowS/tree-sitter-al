@@ -46,7 +46,8 @@ python tools/has_error_sweep.py --corpus-fixtures      # every corpus case; nega
 
 # Config oracle (validate-grammar.sh Step 5e, CI job `config-oracle`) — exit 0 clean, 1 finding, 2 cannot run
 python -m tools.config_oracle run --tier quick # (a) registry census, (b) self-tests, (c) fixture differential; ~10s
-python -m tools.config_oracle run --tier resolve --root ./DC --root ./BC.History  # per-root table; empty or overlapping root = exit 2
+./tools/ts-lock.sh python -m tools.config_oracle run --tier full|resolve --root ./BC.History --root ./DC --root H:/Git/BC28.1 --root H:/Git/BCApps-29.0  # full ~20 min, resolve ~13 min
+#   gates: 0 = every refusal is in production-classes.tsv (still NOT validated); 1 = unclassified refusal, stale entry, discrepancy; 2 = unlabelled/empty/overlapping root
 python -m tools.config_oracle replay           # historical-defect replays; ~80s cold, ~10s warm
 # A fixture cannot-validate record must be classified in tools/config_oracle/fixture-classes.tsv
 # (negative / invalid-config need alc evidence; debt(<owner>)); an entry matching no record is stale and fails.
