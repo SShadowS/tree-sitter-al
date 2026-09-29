@@ -1189,7 +1189,9 @@ def run_case(case: Case, workdir: Path, timeout: int) -> tuple[bool, str, str]:
     except subprocess.TimeoutExpired:
         return False, f"timed out after {timeout}s (process tree killed)", ""
 
-    out = ANSI.sub("", proc.stdout.decode("utf-8", errors="replace"))
+    # Python's text-mode stdout writes CRLF on Windows, so a `must_contain` that pins a
+    # line end ("...: 2\n") matched on ubuntu and never here. Compare on LF.
+    out = ANSI.sub("", proc.stdout.decode("utf-8", errors="replace")).replace("\r\n", "\n")
 
     problems = []
     if case.expect_exit == "nonzero" and proc.returncode == 0:
