@@ -205,6 +205,8 @@ def test_classes_require_a_reason(tmp_path):
 # ---- categories and evidence (A3 fix round 1, review F1) ----
 
 NEG_CASE = "tools/alc_probe/cases/oracle-negative/split-operator.al"   # X: accept; !X: reject
+NEG_ID = ("preproc_split_operator_negative_test.txt#DELIBERATE NEGATIVE -- the OPERATOR itself on "
+          "the far side of a %23if boundary#0")
 
 
 def test_classes_require_a_category(tmp_path):
@@ -227,7 +229,7 @@ def test_a_star_negative_cannot_rest_on_a_manual_note(tmp_path):
 
 def test_a_star_negative_over_a_configuration_alc_accepts_is_rejected(tmp_path):
     """The F1 defect: `*` claimed X=1 was rejected, and alc accepts it."""
-    line = ("c.txt#A#0\t{}\tcannot-validate:multi-config-parse:error\tnegative: x; "
+    line = (f"{NEG_ID}\t{{}}\tcannot-validate:multi-config-parse:error\tnegative: x; "
             f"evidence: alc_probe {NEG_CASE}")
     assert _classes(tmp_path, line.format("X=0"))
     for cfg in ("*", "X=1"):
@@ -236,8 +238,18 @@ def test_a_star_negative_over_a_configuration_alc_accepts_is_rejected(tmp_path):
 
 
 def test_evidence_must_exist_and_name_the_configs_symbols(tmp_path):
-    line = "c.txt#A#0\t{}\tcannot-validate:x\tinvalid-config: x; evidence: alc_probe {}"
+    line = NEG_ID + "\t{}\tcannot-validate:x\tinvalid-config: x; evidence: alc_probe {}"
     with pytest.raises(ValueError, match="does not exist"):
         _classes(tmp_path, line.format("X=0", "tools/alc_probe/cases/no-such.al"))
     with pytest.raises(ValueError, match="does not name the symbols"):
         _classes(tmp_path, line.format("Y=0", NEG_CASE))
+
+
+def test_evidence_must_be_the_probe_for_this_fixture(tmp_path):
+    """Re-review m1: X=0 pointed at an unrelated probe that also uses X, and rejects X=0,
+    was accepted on the path alone."""
+    other = "tools/alc_probe/cases/oracle-invalid-config/13-g6-pragma-only-arm.al"
+    line = f"{NEG_ID}\tX=0\tcannot-validate:multi-config-parse:error\tnegative: x; evidence: alc_probe {{}}"
+    assert _classes(tmp_path, line.format(NEG_CASE))
+    with pytest.raises(ValueError, match="is the probe for"):
+        _classes(tmp_path, line.format(other))

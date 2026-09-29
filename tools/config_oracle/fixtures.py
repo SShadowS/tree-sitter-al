@@ -162,7 +162,7 @@ def load_classes(path: Path) -> dict:
     for line in path.read_text(encoding="utf-8").splitlines():
         if not line.strip() or line.startswith("#"):
             continue
-        case_id, config, expected, reason = line.split("	")
+        case_id, config, expected, reason = line.split("\t")
         status, _, prefix = expected.partition(":")
         if status != "cannot-validate" or not prefix:
             raise ValueError(f"classification must be cannot-validate:<reason>: {case_id} {config} {expected}")
@@ -194,7 +194,13 @@ def _check_evidence(path: Path, case_id: str, config: str, reason: str) -> None:
     probe = Path(__file__).resolve().parents[2] / m.group("case")   # repo-relative
     if not probe.is_file():
         raise ValueError(f"evidence case does not exist: {m.group('case')} ({case_id} {config})")
-    case = matrix.parse_case(probe, probe.name, probe.read_text(encoding="utf-8"), check=False)
+    text = probe.read_text(encoding="utf-8")
+    # The probe must say which fixture it is: a path alone lets an unrelated probe that
+    # happens to share the symbol names stand in as evidence.
+    named = [l[len("// Fixture "):].strip() for l in text.splitlines() if l.startswith("// Fixture ")]
+    if named != [case_id]:
+        raise ValueError(f"{m.group('case')} is the probe for {named or 'no fixture'}, not {case_id}")
+    case = matrix.parse_case(probe, probe.name, text, check=False)
     if config == "*":
         envs = case.envs
     else:

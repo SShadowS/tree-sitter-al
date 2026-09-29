@@ -258,6 +258,7 @@ codeunit 1 T
 #if not CLEAN27
         if not Ok then begin
 #region Inner
+#endregion
 #endif
             exit(false);
         end;
@@ -297,6 +298,7 @@ codeunit 1 T
               (then_keyword)
               (preproc_split_begin)
               (preproc_region)
+              (preproc_endregion)
               (preproc_endif
                 (preproc_close))
               (exit_statement
