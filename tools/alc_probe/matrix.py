@@ -138,7 +138,7 @@ def flat_text(case: Case, env: frozenset) -> str:
 
 
 def _fmt(v: core.Verdict) -> str:
-    codes = v.syntax_codes
+    codes = v.codes if v.kind == core.BROKEN else v.syntax_codes   # a BROKEN verdict is explained by its AL1xxx codes
     return v.kind + (f"({','.join(codes)})" if codes else "")
 
 
