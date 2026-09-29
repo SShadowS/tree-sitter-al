@@ -408,7 +408,8 @@ register("preproc_split_table_field_open", "unsupported")
 # nesting (`reading`); every other configuration reports lowering:one-reading.
 _ASM = "tools.config_oracle.lowering.assemblers."
 # BC 29 family G: branches end in an open statement prefix, tail completes it.
-# An else-led arm is one-reading; complete-prefix arms stay unsupported-type (milestone 3).
+# The assembler lowers no arm: an else-led arm raises one-reading, any other raises
+# unsupported-type; both are milestone 3 (A4 fix 1, I2).
 # case_body:<children> is a census host outside _STATEMENT_HOSTS: case_body's
 # repeat admits preproc_split_open_statement (grammar.js case_body), a repeat slot.
 register("preproc_split_open_statement", "assembler", _ASM + "open_statement_reading",

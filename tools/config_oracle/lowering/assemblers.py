@@ -345,12 +345,16 @@ def _cut_at_endif(node):
 
 
 def open_statement_reading(node, ctx) -> Lowered:
-    """Contract open-statement (reading arm:not-else-led). Host: a statement
-    position (policy per registry). If the chosen arm's first item is
-    `else_keyword`, raise one-reading: the tree shows that `else` as a SIBLING of
-    an if/case already complete before the #if, which no configuration's parse
-    has. Otherwise (a complete-prefix arm, or no arm chosen) raise
-    unsupported-type: milestone 3. Emits nothing; makes no edge rewrite."""
+    """Contract open-statement (declared reading arm:not-else-led). Host: a
+    statement position (policy per registry). LOWERS NO ARM: every path raises.
+    If the chosen arm's first item is `else_keyword`, raise one-reading: the tree
+    shows that `else` as a SIBLING of an if/case already complete before the #if,
+    which no configuration's parse has; when every arm is else-led (Check.Report
+    GB, MfgCarryOutAction W1) no configuration is the declared reading at all.
+    Otherwise (a complete-prefix arm, or no arm chosen) raise unsupported-type.
+    Both are milestone 3: the else-led lowering attaches the arm to the preceding
+    if/case (as ElseAttachment does for else_begin), the complete-prefix one
+    completes the arm's open prefix with the continuation after #endif."""
     ctx.policy(contracts.REGISTRY[node.kind], node)
     cut = _cut_at_endif(node)
     arms, _ = split_arms(node.copy(children=node.children[:cut + 1]))
