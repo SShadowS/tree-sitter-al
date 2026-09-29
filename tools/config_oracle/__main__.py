@@ -2,7 +2,8 @@
    python -m tools.config_oracle replay
 
 Exit codes (spec section 4): 0 clean; 1 a discrepancy, representation violation, stale
-entry, unclassified refusal or census problem; 2 could not run or incomplete. The quick
+entry, unclassified refusal, census problem or corpus identity mismatch (HEAD, dirty or
+unrecorded `.al`); 2 could not run or incomplete. The quick
 tier classifies refusals from fixture-classes.tsv, resolve and full from
 production-classes.tsv (only the requested corpora's entries)."""
 from __future__ import annotations
@@ -196,17 +197,67 @@ def recorded_heads():
     return heads
 
 
-def head_mismatches(roots):
-    """A requested corpus whose HEAD is not the one its entries were generated from. Keys
-    like `reference-error:error` carry no content, and only a record's first item is keyed,
-    so a changed corpus can keep matching its old entries: a mismatch fails the run (exit 1)
-    until the file is regenerated from that HEAD. A label with no recorded head is not checked."""
-    heads, out = recorded_heads(), []
+def recorded_untracked():
+    """`# corpus-untracked <label> <sha256> <path>` header lines: the untracked `.al` files
+    in a corpus's working tree when its entries were generated -> {label: {path: sha256}}."""
+    out = {}
+    for line in PRODUCTION_CLASSES.read_text(encoding="utf-8").splitlines():
+        if line.startswith("# corpus-untracked "):
+            label, sha, path = line.split(" ", 4)[2:]
+            out.setdefault(label, {})[path] = sha
+    return out
+
+
+def al_status(root):
+    """-> (tracked `.al` changes, {untracked `.al` path: sha256}) of a git corpus, or None
+    when `root` is not a git work tree. `_collect` reads the working tree, not HEAD, so both
+    reach the oracle. `ls-files --others` without `--exclude-standard` lists ignored files
+    too, one by one (the oracle reads them as well), and `:(icase)` matches `rglob`, which
+    is case-insensitive on Windows. Paths are relative to `root`."""
+    def git(*args):
+        r = subprocess.run(["git", "-C", str(root), *args, "--", ":(icase)*.al"], capture_output=True)
+        return None if r.returncode else [x for x in r.stdout.decode("utf-8").split("\0") if x]
+    changed = git("diff", "-z", "--no-renames", "--relative", "--name-status", "HEAD")
+    others = git("ls-files", "-z", "--others")
+    if changed is None or others is None:
+        return None
+    tracked = [f"{st} {path}" for st, path in zip(changed[::2], changed[1::2])]
+    return tracked, {path: hashlib.sha256((Path(root) / path).read_bytes()).hexdigest() for path in others}
+
+
+def corpus_mismatches(roots):
+    """A requested corpus that is not the one its entries were generated from. Keys like
+    `reference-error:error` carry no content, and only a record's first item is keyed, so a
+    changed corpus can keep matching its old entries. Each of these fails the run (exit 1):
+    another HEAD; a modified, deleted or renamed tracked `.al`; an untracked `.al` that is
+    not recorded, or whose sha256 differs; a recorded untracked `.al` that is gone (stale).
+    A label with no recorded head is not checked; a root that is not a git work tree gets
+    only the HEAD check, which it fails. Non-`.al` files are ignored."""
+    heads, recorded, out = recorded_heads(), recorded_untracked(), []
     for root in roots:
         label = corpus_label(root)
-        if label in heads and _git_head(root, short=False) != heads[label]:
-            out.append(f"corpus {label} ({root}) is at {_git_head(root, short=False)}, but "
+        if label not in heads:
+            continue
+        head = _git_head(root, short=False)
+        if head != heads[label]:
+            out.append(f"corpus {label} ({root}) is at {head}, but "
                        f"{PRODUCTION_CLASSES.name} was generated at {heads[label]}: regenerate it")
+        status = al_status(root)
+        if status is None:
+            continue
+        tracked, untracked = status
+        out += [f"corpus {label}: tracked .al changed in the working tree ({t}): "
+                f"the oracle reads the working tree, not HEAD" for t in tracked]
+        want = recorded.get(label, {})
+        for path, sha in sorted(untracked.items()):
+            if path not in want:
+                out.append(f"corpus {label}: untracked .al is not recorded: {path} (sha256 {sha}); "
+                           f"record `# corpus-untracked {label} {sha} {path}` or remove the file")
+            elif want[path] != sha:
+                out.append(f"corpus {label}: untracked .al {path} has sha256 {sha}, "
+                           f"recorded {want[path]}")
+        out += [f"corpus {label}: recorded untracked .al is gone (stale entry): {path}"
+                for path in sorted(set(want) - set(untracked))]
     return out
 
 
@@ -261,10 +312,10 @@ def _run(args):
     header["classifications"] = (f"{PRODUCTION_CLASSES.name}, {len(classes)} of {total} "
                                  f"entries apply to the requested corpora and tier")
     summary = runner.run(inputs, None, args.workers, args.tier, classes)
-    stale_heads = head_mismatches(roots)
+    stale_heads = corpus_mismatches(roots)
     extra = ["## Per root", "", *runner.root_table(runner.per_root(summary, root_of, files))]
     if stale_heads:
-        extra += ["", "## Corpus HEAD mismatch (exit 1)", "", *(f"- {m}" for m in stale_heads)]
+        extra += ["", "## Corpus identity mismatch (exit 1)", "", *(f"- {m}" for m in stale_heads)]
         summary.exit_code = max(summary.exit_code, 1)
     runner.write_report(summary, Path(args.report), header, extra)
     print((Path(args.report) / "summary.md").read_text(encoding="utf-8"))

@@ -30,9 +30,15 @@
 # `# corpus-head <label> <sha>`: the corpus commit a label's entries were generated from.
 # A requested corpus at another HEAD fails the run (exit 1, "regenerate it"): content-free
 # keys (`reference-error:error`, `multi-config-parse:error`) and first-item-only matching
-# would otherwise keep classifying a changed corpus. Only HEAD is compared, not a dirty
-# working tree. Regenerate from a fresh full run (the A4 generator rewrites these lines).
+# would otherwise keep classifying a changed corpus. The oracle reads the working tree, not
+# HEAD, so a modified, deleted or renamed tracked `.al` fails the run too (exit 1, files named).
+# `# corpus-untracked <label> <sha256> <path>`: an untracked (or ignored) `.al` in that
+# corpus's working tree, which the oracle reads. An untracked `.al` with no line, a sha256
+# that differs, and a line whose file is gone (stale) each fail the run (exit 1). Other
+# dirty files (parse outputs such as parsed.txt) are ignored. A label with no corpus-head
+# line is not checked. Regenerate from a fresh full run (the A4 generator rewrites these lines).
 # corpus-head bc-history 87e7d2a19d2097560d47116202f47d4a20940a14
+# corpus-untracked bc-history 9fdbbfbc0b6eff960fe10baa912016cb312f0546085f598c71984097de1426ae SubscriptionBilling/Source/Subscription & Recurring Billing/Billing/Codeunits/SalesDocuments.Codeunit2.al
 # corpus-head bc28.1 4fc2ccf162f81dcd083e02c44f363ca3b7b89831
 # corpus-head bcapps-29.0 e16d6c302714c558b21ec994bea98d4b064a72e8
 # corpus-head dc 5e67e5b9cda1c92d497832a970ea970e1c8a042d

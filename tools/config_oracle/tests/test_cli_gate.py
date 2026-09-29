@@ -454,7 +454,7 @@ def test_a_corpus_head_mismatch_exits_1(tmp_path, capsys, monkeypatch):
     assert _resolve(a, tmp_path=tmp_path) == 1
     captured = capsys.readouterr()
     assert "corpus a" in captured.err and "generated at deadbeef: regenerate it" in captured.err
-    assert "## Corpus HEAD mismatch (exit 1)" in captured.out and "- exit code: 1" in captured.out
+    assert "## Corpus identity mismatch (exit 1)" in captured.out and "- exit code: 1" in captured.out
     cli.PRODUCTION_CLASSES.write_text("# corpus-head other deadbeef\n", encoding="utf-8")
     assert _resolve(a, tmp_path=tmp_path) == 0
 
@@ -465,3 +465,88 @@ def test_a_slotless_host_entry_exits_2(tmp_path, capsys):
     _classify(tmp_path, _entry("a:s.al", prefix="lowering:unsupported-type:unsupported-type at "
                                "preproc_x: host if_statement", reason="debt(C1, M3): x"))
     assert _resolve(a, tmp_path=tmp_path) == 2
+
+
+# ---- N1: the corpus working tree is part of its identity --------------------------------
+
+def _git(root, *args):
+    import subprocess
+    subprocess.run(["git", "-C", str(root), "-c", "user.name=t", "-c", "user.email=t@t", *args],
+                   check=True, capture_output=True)
+
+
+@pytest.fixture
+def repo(tmp_path):
+    """A committed git corpus `a` whose head is recorded, and a writer for the header."""
+    a = _root(tmp_path, "a", {"s.al": STMT, "t.al": STMT, "parsed.txt": b"x\n"})
+    _git(a, "init", "-q")
+    _git(a, "config", "core.autocrlf", "false")
+    _git(a, "add", ".")
+    _git(a, "commit", "-q", "-m", "c")
+    head = cli._git_head(a, short=False)
+
+    def header(*extra):
+        cli.PRODUCTION_CLASSES.write_text("".join(f"{l}\n" for l in (f"# corpus-head a {head}", *extra)),
+                                          encoding="utf-8")
+    header()
+    return a, header
+
+
+def _sha256(data):
+    return __import__("hashlib").sha256(data).hexdigest()
+
+
+def test_a_clean_corpus_and_dirty_non_al_files_pass(repo, tmp_path):
+    a, _ = repo
+    assert _resolve(a, tmp_path=tmp_path) == 0
+    (a / "parsed.txt").write_bytes(b"changed\n")            # tracked non-.al, modified
+    (a / "errors_new.txt").write_bytes(b"new\n")            # untracked non-.al
+    assert _resolve(a, tmp_path=tmp_path) == 0
+
+
+@pytest.mark.parametrize("change", ["modify", "delete", "rename"])
+def test_a_changed_tracked_al_file_exits_1_and_is_named(repo, tmp_path, capsys, change):
+    a, _ = repo
+    if change == "modify":
+        (a / "t.al").write_bytes(STMT + b"\n// edited\n")
+    elif change == "delete":
+        (a / "t.al").unlink()
+    else:
+        _git(a, "mv", "t.al", "u.al")
+    assert _resolve(a, tmp_path=tmp_path) == 1
+    err = capsys.readouterr().err
+    assert "tracked .al changed in the working tree" in err
+    assert {"modify": "(M t.al)", "delete": "(D t.al)", "rename": "(D t.al)"}[change] in err
+
+
+def test_untracked_al_files_must_be_recorded_by_content(repo, tmp_path, capsys):
+    a, header = repo
+    (a / "sub").mkdir()
+    (a / "sub" / "x y.al").write_bytes(STMT)
+    assert _resolve(a, tmp_path=tmp_path) == 1                              # not recorded
+    assert "untracked .al is not recorded: sub/x y.al" in capsys.readouterr().err
+    header(f"# corpus-untracked a {_sha256(STMT)} sub/x y.al")
+    assert _resolve(a, tmp_path=tmp_path) == 0                              # recorded, same sha
+    (a / "sub" / "x y.al").write_bytes(STMT + b"\n")
+    assert _resolve(a, tmp_path=tmp_path) == 1                              # sha differs
+    assert f"recorded {_sha256(STMT)}" in capsys.readouterr().err
+    (a / "sub" / "x y.al").unlink()
+    assert _resolve(a, tmp_path=tmp_path) == 1                              # gone: stale
+    assert "recorded untracked .al is gone (stale entry): sub/x y.al" in capsys.readouterr().err
+
+
+def test_an_ignored_al_file_counts_as_untracked(repo, tmp_path, capsys):
+    """The oracle reads ignored files too, so they are recorded like any untracked file."""
+    a, _ = repo
+    (a / ".gitignore").write_bytes(b"skip/\n")
+    (a / "skip").mkdir()
+    (a / "skip" / "i.al").write_bytes(STMT)
+    assert _resolve(a, tmp_path=tmp_path) == 1
+    assert "untracked .al is not recorded: skip/i.al" in capsys.readouterr().err
+
+
+def test_a_non_git_root_with_a_recorded_head_fails_the_head_check(tmp_path, capsys):
+    a = _root(tmp_path, "a", {"s.al": STMT})
+    cli.PRODUCTION_CLASSES.write_text("# corpus-head a deadbeef\n", encoding="utf-8")
+    assert _resolve(a, tmp_path=tmp_path) == 1
+    assert "is at not-a-git-repo" in capsys.readouterr().err
