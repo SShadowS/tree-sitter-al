@@ -34,16 +34,18 @@ Grammar: `U:\Git\tree-sitter-al` at `df0e5b5` (main). Research only, nothing in 
   whole file comes out clean.
 - **Substitution check** (`scratchpad/sub.py`). Rewrite the suspected construct in memory and
   confirm the error count drops to 0. Used for the move-list family: all 9 files go 1 -> 0.
-- **Minimal reproducers** in `scratchpad/r/*.al` and `scratchpad/alc/p_*.al`. Every `p_*`
-  probe file also errors in tree-sitter (checked).
-- **alc probes**: `scratchpad/alc/probe.sh <file> <runtime> [symbols]`. The project has no
+- **Minimal reproducers** in `scratchpad/r/*.al` (not committed) and the alc probes, now
+  committed as `tools/alc_probe/cases/bc29-*/` (one directory per family). Every `p_*`
+  probe file also errors in tree-sitter (checked at the time of this analysis).
+- **alc probes**, run then by an uncommitted `probe.sh`, now by
+  `python -m tools.alc_probe run tools/alc_probe/cases --check`. The project has no
   application or dependencies keys. The installed `al` is 18.0.41 and supports runtimes
   15.0-18.0 (19.0 and 20.0 give AL1043). Sanity probe accepted; two negative move probes
   rejected with AL0104 and AL0270, so the probe discriminates.
   - Every `#if` probe was compiled with its symbol **undefined and defined** (split file,
-    both configs). alc does not parse inactive branches, so each split config is the flat
-    text of that branch. The flat pair of the four-way rule is therefore implied, not run
-    separately.
+    both configs). At the time the flat pair of the four-way rule was implied, not run.
+    Since A2 (2026-09-29) the tool compiles every assignment split AND flat, and every
+    verdict below reproduces in both.
 
 ## Summary table
 
@@ -77,7 +79,7 @@ pageextension 50101 E extends P { layout { moveafter("Address 2"; City, CountyGr
 - **Grammar:** `grammar.js:2254-2288`. `movefirst/movelast/moveafter/movebefore_modification`
   take exactly one `field('element', $._identifier_or_quoted)`, so the `,` is an ERROR.
 - **alc:** `moveafter(A; C, B)`, `movefirst(G; C, B)`, `movelast(G; A, B)` and
-  `movebefore(A; C, B)` all ACCEPT at runtime 15.0, 17.0 and 18.0 (`alc/mv_*.al`).
+  `movebefore(A; C, B)` all ACCEPT at runtime 15.0, 17.0 and 18.0 (`tools/alc_probe/cases/bc29-a-move-list/`).
   Negative controls: `moveafter(A; C B)` gives AL0104 "',' expected"; `moveafter(A; Nope)`
   gives AL0270. This is old syntax that simply appears for the first time in this corpus.
 - **Files:**
@@ -106,7 +108,7 @@ pageextension 50101 E extends P { actions { movebefore(Submit_Promoted; Generate
 - **Grammar:** the move rules are referenced only from the layout element choice
   (`grammar.js:1995-1998`). `_action_element` (`grammar.js:2300-2321`) has
   `add*_action_modification` and `modify_action_modification` but no move.
-- **alc:** `movebefore(X; Z)` and `movebefore(X; Z, Y)` in `actions` both ACCEPT at 15.0, 17.0 and 18.0 (`alc/mv_actions*.al`).
+- **alc:** `movebefore(X; Z)` and `movebefore(X; Z, Y)` in `actions` both ACCEPT at 15.0, 17.0 and 18.0 (`tools/alc_probe/cases/bc29-b-move-actions/`).
 - **File:** `Apps/CZ/CoreLocalizationPack/app/Src/PageExtensions/VATReportCZL.PageExt.al:188`.
   Deleting that one line takes the file to 0 errors. The first ERROR spans the whole
   `actions` section (69-247), so the reported location is far from the cause.
@@ -130,7 +132,7 @@ table 50100 T { fields {
   `preproc_conditional_keys` (1611) has the same gap, which is latent: `r/keysnest.al` errors
   and no file hits it yet. `preproc_conditional_fieldgroups` (1665) already recurses. Page
   layout and actions nesting parse fine.
-- **alc:** `alc/p_nested_fields.al` ACCEPTs with symbols undefined and with `S31,C28` defined.
+- **alc:** `tools/alc_probe/cases/bc29-c-nested-fields/p_nested_fields.al` ACCEPTs with symbols undefined and with `S31,C28` defined.
 - **Files:**
   - `Layers/IT/BaseApp/Manufacturing/Document/ProdOrderRoutingLine.Table.al:797`
   - `Layers/IT/BaseApp/Purchases/Archive/PurchaseLineArchive.Table.al:1146`
@@ -154,9 +156,9 @@ table 50100 T { fields {
     field(3; C; Integer) { }
 } }
 ```
-- **Validity:** this text is valid **only with the symbol undefined**. alc/p_field_open.al:
+- **Validity:** this text is valid **only with the symbol undefined**. `tools/alc_probe/cases/bc29-d-field-open/p_field_open.al`:
   undefined ACCEPT, `S31` REJECT (AL0104 "'}' expected", AL0198). The FixedAssetShift
-  variant with a trailing trigger (`alc/p_field_open_trigger.al`): undefined ACCEPT,
+  variant with a trailing trigger (`p_field_open_trigger.al`, same directory): undefined ACCEPT,
   `CLEANSCHEMA26` REJECT (AL0104, AL0162). So Microsoft ships files that do not compile in
   their own CLEANSCHEMA configuration. They are removed-field schema blocks that nobody
   builds clean.

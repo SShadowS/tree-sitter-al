@@ -10,16 +10,15 @@ exactly the arms predicted. Every expectation below was recorded from alc on
 from __future__ import annotations
 
 import argparse
-import json
-import re
-import shutil
-import subprocess
+import hashlib
 import sys
 import tempfile
 from concurrent.futures import ThreadPoolExecutor
 from pathlib import Path
 
-G = "GARBAGE!! ;;; }{"
+from tools.alc_probe import core
+
+G = core.GARBAGE
 
 
 def unit(trigger: str, top: str = "") -> str:
@@ -92,20 +91,15 @@ PROBES: list[tuple[str, str, list[str], bool]] = [
 
 
 def compile_probe(workdir: Path, name: str, source: str, symbols: list[str]) -> tuple[str, bool, list[str]]:
-    project = workdir / name
-    shutil.rmtree(project, ignore_errors=True)
-    project.mkdir(parents=True)
-    (project / "Test.al").write_text(source, encoding="utf-8", newline="\n")
-    (project / "app.json").write_text(json.dumps({
-        "id": "11111111-2222-3333-4444-555555555555", "name": "Probe", "publisher": "Test",
-        "version": "1.0.0.0", "platform": "1.0.0.0", "idRanges": [{"from": 50000, "to": 99999}],
-        "runtime": "15.0", "target": "OnPrem", "preprocessorSymbols": symbols,
-    }), encoding="utf-8")
-    out = project / "test.app"
-    result = subprocess.run(["al", "compile", f"/project:{project}", f"/out:{out}"],
-                            capture_output=True, text=True)
-    codes = sorted({c for c in re.findall(r"error (AL\d+)", result.stdout + result.stderr) if c != "AL1021"})
-    return name, out.is_file(), codes
+    """(name, accepted, source codes) through the shared core, tools/alc_probe/core.py.
+
+    The directory name carries a hash of `name`, so two probes whose names differ only
+    in case (`true_literal`, `TRUE_literal`) never share a directory on a
+    case-insensitive filesystem.
+    """
+    tag = hashlib.sha1(name.encode("utf-8")).hexdigest()[:8]
+    v = core.compile_project(workdir / f"{name}-{tag}", source, symbols)
+    return name, v.kind == core.ACCEPT, list(v.source_codes)
 
 
 def main(argv: list[str] | None = None) -> int:
@@ -114,15 +108,19 @@ def main(argv: list[str] | None = None) -> int:
     args = parser.parse_args(argv)
     with tempfile.TemporaryDirectory(prefix="alc-probe-") as tmp:
         with ThreadPoolExecutor(max_workers=6) as pool:
-            results = list(pool.map(lambda p: compile_probe(Path(tmp), p[0], p[1], p[2]), PROBES))
-    expected = {name: exp for name, _, _, exp in PROBES}
+            # One directory per probe, keyed by index: `true_literal` and `TRUE_literal` are the
+            # same directory on a case-insensitive filesystem, and shared it until A2 (AL1028).
+            verdicts = list(pool.map(lambda ip: core.compile_project(Path(tmp) / f"{ip[0]:03d}", ip[1][1], ip[1][2]),
+                                     enumerate(PROBES)))
     failures = 0
-    for name, accepted, codes in results:
-        ok = accepted == expected[name]
+    for (name, _, _, expected), v in zip(PROBES, verdicts):
+        accepted = v.kind == core.ACCEPT
+        ok = accepted == expected
         failures += not ok
-        print(f"{'ok  ' if ok else 'DIFF'} {name:42} {'ACCEPT' if accepted else 'REJECT'} {','.join(codes)}")
-    if not results[0][1] or results[1][1]:
-        print("probe project is broken: the sanity/garbage controls did not behave", file=sys.stderr)
+        print(f"{'ok  ' if ok else 'DIFF'} {name:42} {'ACCEPT' if accepted else 'REJECT'} {','.join(v.source_codes)}")
+    broken = [name for (name, *_), v in zip(PROBES, verdicts) if v.kind == core.BROKEN]
+    if broken or verdicts[0].kind != core.ACCEPT or verdicts[1].kind != core.REJECT:
+        print(f"probe project is broken: the sanity/garbage controls did not behave, or BROKEN: {broken}", file=sys.stderr)
         return 2
     return 1 if (args.check and failures) else 0
 

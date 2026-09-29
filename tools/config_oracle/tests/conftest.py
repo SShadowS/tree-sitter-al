@@ -9,7 +9,7 @@ if str(REPO_ROOT) not in sys.path:
 
 
 def pytest_configure(config):
-    config.addinivalue_line("markers", "slow: builds historical parsers; run with -m slow")
+    config.addinivalue_line("markers", "slow: needs a historical-parser build or the real `al` compiler; run with -m slow")
 
 
 def pytest_collection_modifyitems(config, items):

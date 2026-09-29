@@ -205,3 +205,10 @@ tools/query_coverage/reports/
 !tools/precedence/**/*.py
 !tools/precedence/cases/*.al
 tools/precedence/**/__pycache__/
+
+# tools/alc_probe/ is the split/flat alc matrix runner (roadmap A2). Its
+# cases/<family>/*.al ARE the recorded compiler verdicts; without these lines the
+# blanket *.al and *.py rules above would leave a README and no probes.
+!tools/alc_probe/**/*.py
+!tools/alc_probe/cases/**/*.al
+tools/alc_probe/**/__pycache__/
