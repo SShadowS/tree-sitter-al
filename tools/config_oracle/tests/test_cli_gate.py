@@ -288,7 +288,8 @@ def test_an_entry_naming_an_unknown_corpus_label_exits_2(tmp_path, capsys):
 
 def test_the_resolve_tier_applies_only_entries_for_its_stages(tmp_path, capsys):
     a = _root(tmp_path, "a", {"s.al": STMT})
-    _classify(tmp_path, _entry("a:s.al", prefix="lowering:unsupported-type"))
+    _classify(tmp_path, _entry("a:s.al", prefix="lowering:unsupported-type:unsupported-type at "
+                               "preproc_x: host statement_block:<children>"))
     assert _resolve(a, tmp_path=tmp_path) == 0
     assert "0 of 1 entries apply" in capsys.readouterr().out
 
@@ -370,3 +371,69 @@ def test_reason_key_drops_the_offset_and_keeps_the_host():
 def test_an_entry_can_pin_the_host(prefix, hit):
     rec = runner.Record("a:x.al", "A=0", "cannot-validate", [ARM])
     assert runner.is_classified(rec, {("a:x.al", "A=0"): (f"cannot-validate:{prefix}", "other: x")}) is hit
+
+
+# ---- the host is part of the key (A4 fix 1, I1) ----
+# One refused construct in two hosts. The oracle records the host of an unsupported-type
+# and a one-reading refusal (`: host <parent>:<slot>`), so a grammar change that
+# re-parents the node changes the key and its entry no longer classifies the record.
+
+_SPLIT_THEN = ("        if not IsHandled then\n#if not C27\n            if Q <> 0 then begin\n"
+               "                Message('a');\n#endif\n                Message('b');\n"
+               "#if not C27\n            end;\n#endif\n        Message('c');\n")
+_SPLIT_STMT = _SPLIT_THEN.replace("        if not IsHandled then\n", "", 1)
+_ELSE_LED_IF = ("        if N < 1 then\n            Message('a')\n#if not C28\n        else begin\n"
+                "#else\n        else\n#endif\n            Message('b');\n#if not C28\n"
+                "            Message('c');\n        end;\n#endif\n")
+_ELSE_LED_CASE = ("        case N of\n            1:\n                Message('a')\n" +
+                  _ELSE_LED_IF.split("            Message('a')\n", 1)[1] + "        end;\n")
+
+
+def _proc(body):
+    return ("codeunit 1 T\n{\n    procedure P(N: Integer; Q: Integer; IsHandled: Boolean)\n"
+            "    begin\n" + body + "    end;\n}\n").encode()
+
+
+@pytest.mark.parametrize("a, b, kind, host_a, host_b", [
+    (_SPLIT_STMT, _SPLIT_THEN, "unsupported-type at preproc_split_if_then_begin",
+     "statement_block:<children>", "if_statement:then_branch"),
+    (_ELSE_LED_IF, _ELSE_LED_CASE, "one-reading at preproc_split_open_statement",
+     "statement_block:<children>", "case_body:<children>"),
+])
+def test_a_record_whose_host_differs_from_its_entry_is_not_classified(al_parser, a, b, kind, host_a, host_b):
+    from tools.config_oracle.tests import witness
+    recs = {}
+    for name, src in (("a", a), ("b", b)):
+        v = witness.verdicts(al_parser, _proc(src), "x:y.al")
+        cfg, (status, items) = sorted(v.items())[0]
+        assert status == "cannot-validate", v
+        recs[name] = runner.Record("x:y.al", cfg, status, items)
+    key_a, key_b = (runner.reason_key(recs[n].items[0]) for n in "ab")
+    assert key_a == f"lowering:{kind.split(' ')[0]}:{kind}: host {host_a}", key_a
+    assert key_b == f"lowering:{kind.split(' ')[0]}:{kind}: host {host_b}", key_b
+    for n in "ab":
+        entry = {("x:y.al", recs[n].config): (f"cannot-validate:{key_a}", "debt(C1, M3): x")}
+        assert runner.is_classified(recs[n], entry) is (n == "a")
+
+
+def test_a_production_lowering_entry_must_name_type_and_host(tmp_path):
+    """M4: `cannot-validate:lowering` alone would absorb any refusal of that input and
+    configuration; an unsupported-type or one-reading entry must also pin the host."""
+    ok = "lowering:unsupported-type:unsupported-type at preproc_x: host statement_block:<children>"
+    assert _load(tmp_path, _entry("a:x.al", prefix=ok, reason="debt(C1, M3): x"))
+    assert _load(tmp_path, _entry("a:x.al", prefix="lowering:one-reading:one-reading at integer: "
+                                  "signed literal continued by a live tail", reason="debt(C1, M3): x"))
+    for short in ("lowering", "lowering:unsupported-type", "lowering:unsupported-type:unsupported-type",
+                  "lowering:unsupported-type:unsupported-type at preproc_x",
+                  "lowering:one-reading:one-reading at preproc_x"):
+        with pytest.raises(ValueError, match="lowering"):
+            _load(tmp_path, _entry("a:x.al", prefix=short, reason="debt(C1, M3): x"))
+
+
+def test_the_real_production_file_has_no_selftest_entry():
+    """M3: the test-only `selftest` label is never requested by a production run, so a
+    committed entry for it would be neither applied nor stale-checked."""
+    classes = fixtures.load_classes(cli.REPO / "tools" / "config_oracle" / "production-classes.tsv",
+                                    "production")
+    assert not [k for k, _ in classes if k.startswith("selftest:")]
+

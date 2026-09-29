@@ -163,6 +163,11 @@ _KINDS = {
                               r"debt\((?P<owner>[A-Za-z0-9]+), (?P<milestone>[A-Za-z0-9]+)\)):"),
                    ("invalid-source",), "// Source "),
 }
+# A production `lowering:` prefix names at least the refusal kind and the node type, and
+# for an unsupported-type or one-reading refusal of a special node also its host (the
+# oracle records it as `: host <parent>:<slot>`): a shorter prefix would absorb a
+# different refusal, or the same one re-parented by a grammar change.
+_PRODUCTION_LOWERING = re.compile(r"lowering:(?P<k>[a-z-]+):(?P=k) at (?P<t>\w+)(?P<tail>: .+)?$")
 _EVIDENCE = re.compile(r"evidence: (?:alc_probe (?P<case>\S+\.al)|alc manual,)")
 
 
@@ -197,6 +202,13 @@ def load_classes(path: Path, kind: str = "fixture") -> dict:
             raise ValueError(f"debt owner {m.group('owner')} is not a roadmap sub-project: {case_id} {config}")
         if kind == "production" and m.group("milestone") and m.group("milestone") not in MILESTONES:
             raise ValueError(f"debt milestone {m.group('milestone')} is not a roadmap milestone: {case_id} {config}")
+        if kind == "production" and prefix.startswith("lowering"):
+            lm = _PRODUCTION_LOWERING.match(prefix)
+            if not lm or (lm.group("k") in ("unsupported-type", "one-reading") and lm.group("t").startswith("preproc")
+                          and not (lm.group("tail") or "").startswith(": host ")):
+                raise ValueError(f"a production lowering prefix must be `lowering:<kind>:<kind> at <type>`, "
+                                 f"plus `: host <parent>:<slot>` for unsupported-type and one-reading: "
+                                 f"{case_id} {config} {prefix}")
         if m.group("cat") in rejecting:
             _check_evidence(path, case_id, config, reason, marker)
         if (case_id, config) in classes:
