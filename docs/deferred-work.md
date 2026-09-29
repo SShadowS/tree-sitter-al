@@ -28,6 +28,8 @@ must therefore be compiled **four** ways before a verdict means anything:
 | split, symbol undefined | alc accepts the split file taking the else branch |
 | split, symbol defined | alc accepts the split file taking the then branch |
 
+`python -m tools.alc_probe run <case.al>` runs all four (all 2^n for n symbols) and
+reports a broken project as `BROKEN` rather than a rejection; see item 7.
 `preprocessorSymbols` in `app.json` selects the config. A single-config probe is
 worthless and has already produced one false ACCEPT and one false REJECT in this
 project's history — one of which reached a committed fixture before it was caught
@@ -182,7 +184,18 @@ first:
   scanner calls clean (22 bytes on a 6-line codeunit, 213 on a real
   PermissionSet).
 
-## 7. Adopt the split-matrix probe tooling under `tools/`
+## 7. Adopt the split-matrix probe tooling under `tools/` — RESOLVED 2026-09-29
+
+**RESOLVED 2026-09-29 (roadmap A2, commits `a9b0431`, `282aa1b`, `74fe12e`).**
+`python -m tools.alc_probe run <case.al|dir> [--check] [--json OUT]` compiles every
+symbol assignment of a case split and flat (the oracle resolver's text), after a valid
+and a garbage control, in isolated projects with a fresh `.app`, and records the
+compiler's identity. A broken project is `BROKEN` and exits 2; a flat/split
+disagreement is `MISMATCH`. The compile core, `tools/alc_probe/core.py`, is shared
+with `tools/config_oracle/probe_alc.py`. The BC 29 and G11 probes (items 1, 17, 18,
+19) are committed under `tools/alc_probe/cases/` and reproduce every recorded
+verdict. Format and exit codes: `tools/alc_probe/README.md`. The text below is the
+original entry.
 
 **Established:** the method (see *The instrument*, above) exists and works; the
 tooling that automates it was written ad hoc during the release and never landed.

@@ -400,6 +400,20 @@ between checkouts are documented under **Quick Reference**, with the `-u` traps.
 
 When uncertain whether the AL compiler accepts a construct (esp. niche or undocumented forms), use the **`al compile`** CLI to test directly — it's the ground truth, not LLM recall or web search.
 
+**For anything with `#if`, run the four-way probe with the tool, not by hand:**
+
+```bash
+python -m tools.alc_probe run my_probe.al                    # every symbol assignment, split AND flat
+python -m tools.alc_probe run tools/alc_probe/cases --check  # the committed, recorded verdicts
+```
+
+It compiles each symbol assignment twice (the file as written, and the oracle resolver's
+flat text), runs a valid and a garbage control first, and reports a broken project as
+`BROKEN` (exit 2) instead of a rejection. A flat/split disagreement is `MISMATCH`. Commit a
+probe whose verdict matters under `tools/alc_probe/cases/<family>/` with an `// expect:` and
+a `// source:` header (`tools/alc_probe/README.md`). The manual recipe below is what it
+automates, and the traps are why it exists.
+
 ```bash
 # Minimal probe project
 mkdir -p /tmp/al-probe && cd /tmp/al-probe
@@ -421,6 +435,15 @@ Exit `0` + `test.app` written = compiler accepts. Exit `1` with no `test.app` = 
 - **Relative paths.** `/project:.` exits `1` with an empty error log — pass absolute paths for both `/project:` and `/out:`.
 - **`/packagecachepath:` cuts both ways.** Pointed at an EMPTY directory it fails with `AL1022` — omit it and the compiler finds its default cache. But when you have real symbol packages (a 28.0 cache, say), it is REQUIRED: without it alc emits `AL1021`. Check which situation you are in rather than copying either form.
 - **One case file at a time.** `al compile` compiles *every* `.al` in the project directory, so a leftover probe file fails the run you are reading.
+
+**Re-measured 2026-09-29 with alc 18.0.41 (A2), and not all of the above reproduces.** A bare
+`application` key, a `dependencies` entry and runtime `12.0` all compiled a trivial codeunit.
+Runtime `19.0` gives `AL1043`, a bad runtime string `AL1039`, a bad `id` `AL1040`/`AL1053`, a
+missing `app.json` `AL1001`: a broken project now names itself with an AL1xxx code instead
+of an empty log, which is why `tools/alc_probe` counts AL1xxx as BROKEN, never as REJECT.
+The relative-path trap is **Git Bash**, not alc: MSYS rewrites the argument `/project:.` to
+`C:\Program Files\Git\project;.` (empty log, exit 1), and `MSYS_NO_PATHCONV=1` makes the
+same command succeed. Absolute Windows paths are not rewritten.
 
 Sanity-check the probe before trusting a rejection: compile a form you know is valid and confirm exit `0` + `test.app`. If that fails too, the project is broken, not the syntax. Example: confirmed `Codeunit::<integer>` is valid AL (old-school soft cross-extension reference) when both LLMs claimed otherwise.
 
