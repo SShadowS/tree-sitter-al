@@ -110,11 +110,24 @@ def test_selftest_stage_runs_the_named_modules():
 
 # ---- per-root accounting -----------------------------------------------------------
 
-def _root(tmp_path, name, files):
+@pytest.fixture(autouse=True)
+def _labels(monkeypatch, tmp_path):
+    """A private copy of the root -> label map, which `_root` extends (each root is
+    labelled by its directory name), and an empty production classification file."""
+    monkeypatch.setattr(cli, "CORPORA", dict(cli.CORPORA))
+    classes = tmp_path / "production-classes.tsv"
+    classes.write_text("# none\n", encoding="utf-8")
+    monkeypatch.setattr(cli, "PRODUCTION_CLASSES", classes)
+
+
+def _root(tmp_path, name, files, label=True):
     d = tmp_path / name
     d.mkdir()
     for fname, src in files.items():
+        (d / fname).parent.mkdir(parents=True, exist_ok=True)
         (d / fname).write_bytes(src)
+    if label:
+        cli.CORPORA[name] = d
     return d
 
 
@@ -184,3 +197,176 @@ def test_replay_exits_2_when_a_historical_parser_cannot_be_built(monkeypatch, ca
     monkeypatch.setattr(replay, "cached_parser_at", unavailable)
     assert cli.main(["replay"]) == 2
     assert "could not run" in capsys.readouterr().err
+
+
+# ---- production classifications (roadmap A4) ---------------------------------------
+
+BAD = b"#if A\ncodeunit 1 T { }\n"          # unterminated #if: A=0 and A=1 cannot-validate
+SRC_PROBE = "tools/alc_probe/cases/production-invalid/fixed-asset-shift.al"
+SRC_ID = "bcapps-29.0:src/Apps/IN/INFADepreciation/app/src/table/FixedAssetShift.Table.al"
+
+
+def _classify(tmp_path, *lines):
+    cli.PRODUCTION_CLASSES.write_text("# test\n" + "".join(l + "\n" for l in lines), encoding="utf-8")
+
+
+def _entry(case, cfg="*", prefix="resolver:unbalanced-if", reason="other: synthetic, unterminated #if"):
+    return f"{case}\t{cfg}\tcannot-validate:{prefix}\t{reason}"
+
+
+def test_input_ids_are_label_and_posix_relative_path(tmp_path, capsys):
+    a = _root(tmp_path, "a", {"s.al": STMT, "sub/bad.al": BAD})   # all-refused would be exit 2
+    assert _resolve(a, tmp_path=tmp_path) == 1
+    ids = {r["input_id"] for r in map(__import__("json").loads,
+                                       (tmp_path / "rep" / "findings.jsonl").read_text().splitlines())}
+    assert ids == {"a:s.al", "a:sub/bad.al"}
+
+
+def test_a_root_with_no_label_exits_2(tmp_path, capsys):
+    a = _root(tmp_path, "a", {"s.al": STMT}, label=False)
+    assert _resolve(a, tmp_path=tmp_path) == 2
+    assert f"corpus root has no label: {a}" in capsys.readouterr().err
+
+
+def test_the_same_root_spelled_two_ways_gets_one_label(tmp_path):
+    a = _root(tmp_path, "a", {"s.al": STMT})
+    assert cli.corpus_label(a) == cli.corpus_label(a / "." / ".." / "a") == "a"
+
+
+def test_a_clean_classified_production_run_exits_0(tmp_path, capsys):
+    a = _root(tmp_path, "a", {"s.al": STMT, "bad.al": BAD})
+    _classify(tmp_path, _entry("a:bad.al"))
+    assert _resolve(a, tmp_path=tmp_path) == 0
+    out = capsys.readouterr().out
+    assert "- stale classifications: 0" in out and "- exit code: 0" in out
+
+
+def test_a_classified_record_still_counts_as_not_validated(tmp_path, capsys):
+    a = _root(tmp_path, "a", {"s.al": STMT, "bad.al": BAD})
+    _classify(tmp_path, _entry("a:bad.al"))
+    assert _resolve(a, tmp_path=tmp_path) == 0
+    out = capsys.readouterr().out
+    assert "- validated (pass): 2\n" in out                        # s.al's two, nothing else
+    assert "- not validated, classified by category: 2 (other 2)\n" in out
+    assert "- not validated, unclassified: 0\n" in out
+    # every matched `other` entry is printed
+    assert "  - `a:bad.al A=0`: other: synthetic" in out
+    assert "  - `a:bad.al A=1`: other: synthetic" in out
+
+
+def test_an_unclassified_refusal_exits_1(tmp_path, capsys):
+    a = _root(tmp_path, "a", {"s.al": STMT, "bad.al": BAD, "bad2.al": BAD})
+    _classify(tmp_path, _entry("a:bad.al"))
+    assert _resolve(a, tmp_path=tmp_path) == 1
+    assert "- not validated, unclassified: 2\n" in capsys.readouterr().out
+
+
+def test_a_stale_production_entry_exits_1(tmp_path, capsys):
+    a = _root(tmp_path, "a", {"s.al": STMT, "bad.al": BAD})
+    _classify(tmp_path, _entry("a:bad.al"), _entry("a:s.al", "A=0"))
+    assert _resolve(a, tmp_path=tmp_path) == 1
+    out = capsys.readouterr().out
+    assert "- stale classifications: 1" in out and "a:s.al\tA=0" in out
+
+
+def test_an_entry_for_a_corpus_not_requested_is_neither_stale_nor_applied(tmp_path, capsys):
+    a = _root(tmp_path, "a", {"s.al": STMT, "bad.al": BAD})
+    b = _root(tmp_path, "b", {"s.al": STMT, "bad.al": BAD})
+    _classify(tmp_path, _entry("a:bad.al"), _entry("b:bad.al"), _entry("b:gone.al"))
+    assert _resolve(a, tmp_path=tmp_path) == 0                     # b's entries: not stale
+    out = capsys.readouterr().out
+    assert "1 of 3 entries apply" in out and "- stale classifications: 0" in out
+    _classify(tmp_path, _entry("a:bad.al"))
+    assert _resolve(b, tmp_path=tmp_path) == 1                     # a's entry: not applied to b
+
+
+def test_an_entry_naming_an_unknown_corpus_label_exits_2(tmp_path, capsys):
+    a = _root(tmp_path, "a", {"s.al": STMT})
+    _classify(tmp_path, _entry("nosuch:bad.al"))
+    assert _resolve(a, tmp_path=tmp_path) == 2
+
+
+def test_the_resolve_tier_applies_only_entries_for_its_stages(tmp_path, capsys):
+    a = _root(tmp_path, "a", {"s.al": STMT})
+    _classify(tmp_path, _entry("a:s.al", prefix="lowering:unsupported-type"))
+    assert _resolve(a, tmp_path=tmp_path) == 0
+    assert "0 of 1 entries apply" in capsys.readouterr().out
+
+
+def test_a_discrepancy_is_never_classified():
+    rec = runner.Record("a:x.al", "A=0", "discrepancy", ["resolver:x@1"])
+    classes = {("a:x.al", "A=0"): ("cannot-validate:resolver", "other: x")}
+    assert not runner.is_classified(rec, classes)
+
+
+# ---- the production loader ----
+
+def _load(tmp_path, line):
+    p = tmp_path / "p.tsv"
+    p.write_text(line + "\n", encoding="utf-8")
+    return fixtures.load_classes(p, "production")
+
+
+@pytest.mark.parametrize("reason", ["debt(C1, M3): no handler for preproc_x at y",
+                                    "debt(F1, F1): needs the configuration-aware parse",
+                                    "other: something"])
+def test_production_categories_load(tmp_path, reason):
+    assert _load(tmp_path, _entry("a:x.al", reason=reason))
+
+
+@pytest.mark.parametrize("reason", ["debt(C1): no milestone", "debt(Z9, M3): unknown owner",
+                                    "debt(C1, M9): unknown milestone", "debt(C1,M3): no space",
+                                    "negative: a fixture category", "other:", "invalid-source x"])
+def test_malformed_production_categories_are_rejected(tmp_path, reason):
+    with pytest.raises(ValueError):
+        _load(tmp_path, _entry("a:x.al", reason=reason))
+
+
+def test_a_malformed_debt_owner_exits_2(tmp_path, capsys):
+    a = _root(tmp_path, "a", {"s.al": STMT, "bad.al": BAD})
+    _classify(tmp_path, _entry("a:bad.al", reason="debt(Z9, M3): nobody"))
+    assert _resolve(a, tmp_path=tmp_path) == 2
+    assert "debt owner Z9 is not a roadmap sub-project" in capsys.readouterr().err
+
+
+def test_invalid_source_needs_its_own_probe(tmp_path):
+    ok = f"invalid-source: CLEANSCHEMA26 defined; evidence: alc_probe {SRC_PROBE}"
+    assert _load(tmp_path, _entry(SRC_ID, "CLEANSCHEMA26=1", "reference-error:error", ok))
+    with pytest.raises(ValueError, match="evidence"):
+        _load(tmp_path, _entry(SRC_ID, "CLEANSCHEMA26=1", "reference-error:error", "invalid-source: x"))
+    with pytest.raises(ValueError, match="is the probe for"):      # `// Source` names another input
+        _load(tmp_path, _entry(SRC_ID.replace("Shift", "Shift2"), "CLEANSCHEMA26=1", "reference-error:error", ok))
+    with pytest.raises(ValueError, match="does not expect a reject"):   # alc accepts CLEANSCHEMA26=0
+        _load(tmp_path, _entry(SRC_ID, "CLEANSCHEMA26=0", "reference-error:error", ok))
+    with pytest.raises(ValueError, match="needs alc_probe evidence"):
+        _load(tmp_path, _entry(SRC_ID, "*", "reference-error:error",
+                               "invalid-source: x; evidence: alc manual, 2026-09-29"))
+
+
+def test_the_real_production_file_loads():
+    assert fixtures.load_classes(cli.REPO / "tools" / "config_oracle" / "production-classes.tsv",
+                                 "production") is not None
+
+
+ARM = "lowering:arm-content:arm-content at case_else_branch@9493: case_else_branch not declared for preproc_conditional_case"
+
+
+def test_reason_key_drops_the_offset_and_keeps_the_host():
+    assert runner.reason_key(ARM) == ("lowering:arm-content:arm-content at case_else_branch: "
+                                      "case_else_branch not declared for preproc_conditional_case")
+    assert runner.reason_key("reference-error:error@12,error@40") == "reference-error:error"
+    assert runner.reason_key("lowering:unsupported-type:unsupported-type at x@5") == \
+        "lowering:unsupported-type:unsupported-type at x"
+
+
+@pytest.mark.parametrize("prefix, hit", [
+    ("lowering:arm-content:arm-content at case_else_branch", True),
+    ("lowering:arm-content:arm-content at case_else_branch: case_else_branch not declared "
+     "for preproc_conditional_case", True),
+    ("lowering:arm-content:arm-content at case_else_branch: case_else_branch not declared "
+     "for some_other_host", False),
+    ("lowering:arm-content:arm-content at case_else", False),        # whole segments only
+])
+def test_an_entry_can_pin_the_host(prefix, hit):
+    rec = runner.Record("a:x.al", "A=0", "cannot-validate", [ARM])
+    assert runner.is_classified(rec, {("a:x.al", "A=0"): (f"cannot-validate:{prefix}", "other: x")}) is hit

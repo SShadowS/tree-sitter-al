@@ -2,7 +2,9 @@
    python -m tools.config_oracle replay
 
 Exit codes (spec section 4): 0 clean; 1 a discrepancy, representation violation, stale
-entry or census problem; 2 could not run or incomplete."""
+entry, unclassified refusal or census problem; 2 could not run or incomplete. The quick
+tier classifies refusals from fixture-classes.tsv, resolve and full from
+production-classes.tsv (only the requested corpora's entries)."""
 from __future__ import annotations
 
 import argparse
@@ -18,6 +20,24 @@ from tools.config_oracle import fixtures, runner
 
 REPO = Path(__file__).resolve().parents[2]
 CLASSES = REPO / "tools" / "config_oracle" / "fixture-classes.tsv"
+PRODUCTION_CLASSES = REPO / "tools" / "config_oracle" / "production-classes.tsv"
+
+# The one root -> label map. A production record's id is `<label>:<posix path relative to
+# the root>`, the same on every machine, and production-classes.tsv is keyed by it. A
+# requested root that is none of these exits 2 (compared after resolve()).
+CORPORA = {
+    "bc-history": REPO / "BC.History",
+    "dc": REPO / "DC",
+    "bc28.1": Path(os.environ.get("AL_BC28_ROOT", "H:/Git/BC28.1")),
+    "bcapps-29.0": Path("H:/Git/BCApps-29.0"),
+    # TEST-ONLY: tools/gate_selftest.py's oracle cases build their corpus at this path in
+    # the scratch copy of the repo (REPO is that copy). A label, rather than a CLI option
+    # to relabel roots or swap the classification file, keeps the gate case on exactly the
+    # production code path, and gives no production run a way around the map.
+    "selftest": REPO / "selftest-corpus",
+}
+# The resolve tier runs only these stages, so only entries for their reasons apply there.
+RESOLVE_REASONS = ("resolver", "reference-error")
 
 # The oracle's own self-tests (spec sections 1-3), corpus-free and about a second: the
 # resolver self-test and its #elif first-match mutation, the comparator's mutations, the
@@ -144,8 +164,29 @@ def _could_not_run(out, tier, why):
 
 # ---- resolve / full tiers: per-corpus accounting --------------------------------------
 
+def corpus_label(root):
+    r = Path(root).resolve()
+    return next((label for label, p in CORPORA.items() if p.resolve() == r), None)
+
+
+def production_classes(labels, tier):
+    """The production-classes.tsv entries for the requested corpora (and, in the resolve
+    tier, for the stages it runs). An entry for another corpus is neither applied nor
+    stale-checked; one whose label is in no map is a typo that would never apply."""
+    classes = fixtures.load_classes(PRODUCTION_CLASSES, "production")
+    unknown = sorted({c.split(":", 1)[0] for c, _ in classes} - set(CORPORA))
+    if unknown:
+        raise ValueError(f"production-classes.tsv names unknown corpus labels: {unknown}")
+    out = {k: v for k, v in classes.items() if k[0].split(":", 1)[0] in labels}
+    if tier == "resolve":
+        out = {k: v for k, v in out.items()
+               if v[0].split(":")[1] in RESOLVE_REASONS}
+    return out, len(classes)
+
+
 def _collect(roots):
     """-> (inputs, {input id: root}, {root: .al count}), or an error message.
+    An input id is `<corpus label>:<posix path relative to the root>`.
 
     Roots must not overlap: a file under two requested roots would be attributed to
     either, so equal or nested roots are rejected rather than de-duplicated."""
@@ -159,10 +200,15 @@ def _collect(roots):
         paths = sorted(root.rglob("*.al"))
         if not paths:
             return None, f"corpus root has no .al files: {root}"
+        label = corpus_label(root)
+        if label is None:
+            return None, (f"corpus root has no label: {root} (labels: "
+                          + ", ".join(f"{k} = {v}" for k, v in CORPORA.items()) + ")")
         files[str(root)] = len(paths)
         for p in paths:
-            inputs.append((str(p), p.read_bytes()))
-            root_of[str(p)] = str(root)
+            input_id = f"{label}:{p.relative_to(root).as_posix()}"
+            inputs.append((input_id, p.read_bytes()))
+            root_of[input_id] = str(root)
     return (inputs, root_of, files), None
 
 
@@ -182,10 +228,13 @@ def _run(args):
         return 2
     assert collected is not None      # _collect returns None only with an error message
     inputs, root_of, files = collected
+    classes, total = production_classes({corpus_label(r) for r in roots}, args.tier)
     header = _header(args.tier)
     for root in roots:
-        header[f"corpus {root}"] = _git_head(root)
-    summary = runner.run(inputs, None, args.workers, args.tier, {})
+        header[f"corpus {root}"] = f"{corpus_label(root)}, {_git_head(root)}"
+    header["classifications"] = (f"{PRODUCTION_CLASSES.name}, {len(classes)} of {total} "
+                                 f"entries apply to the requested corpora and tier")
+    summary = runner.run(inputs, None, args.workers, args.tier, classes)
     extra = ["## Per root", "", *runner.root_table(runner.per_root(summary, root_of, files))]
     runner.write_report(summary, Path(args.report), header, extra)
     print((Path(args.report) / "summary.md").read_text(encoding="utf-8"))
