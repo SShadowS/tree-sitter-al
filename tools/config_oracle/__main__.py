@@ -21,10 +21,11 @@ CLASSES = REPO / "tools" / "config_oracle" / "fixture-classes.tsv"
 
 # The oracle's own self-tests (spec sections 1-3), corpus-free and about a second: the
 # resolver self-test and its #elif first-match mutation, the comparator's mutations, the
-# precedence table's recomposition, and the representation contracts' controls. They
+# precedence table's recomposition, the representation contracts' controls, and the check
+# that lowering never imports a parser (test_isolation.py). They
 # exist only as pytest modules, so the quick tier runs those modules rather than a copy.
 SELFTESTS = ("test_resolve.py", "test_configs.py", "test_compare.py",
-             "test_precedence.py", "test_representation.py")
+             "test_precedence.py", "test_representation.py", "test_isolation.py")
 
 PASS, FAIL = "PASS", "FAIL"
 
@@ -80,6 +81,9 @@ def _stage_census():
 
 
 def _stage_selftests():
+    import importlib.util
+    if importlib.util.find_spec("pytest") is None:   # pytest's own exit 1 would read as a finding
+        return 2, "COULD NOT RUN (pytest is not installed)", []
     tests = [str(REPO / "tools" / "config_oracle" / "tests" / t) for t in SELFTESTS]
     r = subprocess.run([sys.executable, "-m", "pytest", "-q", "-p", "no:cacheprovider", *tests],
                        cwd=REPO, capture_output=True, text=True, encoding="utf-8", errors="replace")
@@ -95,6 +99,8 @@ def _quick(args):
     """(a) registry census, (b) self-tests, (c) fixture differential. Every stage runs and
     reports whatever an earlier one found; the exit code is the worst stage's."""
     from tools.query_coverage import loader
+    out = Path(args.report)
+    _could_not_run(out, "quick", "the parser build, before any stage")   # replaced when a stage runs
     lib = loader.ensure_library(REPO)   # first: `generate` keeps node-types.json current for (a)
     header = _header("quick")
     stages, details = [], []
@@ -105,7 +111,6 @@ def _quick(args):
             code, status, lines = 2, "COULD NOT RUN", traceback.format_exc().splitlines()
         stages.append((label, code, status))
         details += [f"{label}:", *(f"  {x}" for x in lines)] if lines else []
-    out = Path(args.report)
     summary = None
     try:
         inputs = [(c.id, c.source) for c in fixtures.extract(REPO / "test" / "corpus")]
@@ -127,6 +132,14 @@ def _quick(args):
                                         encoding="utf-8")
     print((out / "summary.md").read_text(encoding="utf-8"))
     return code
+
+
+def _could_not_run(out, tier, why):
+    """Overwrite summary.md first, so a run that stops early never leaves an earlier run's
+    summary for Step 5e's "see summary.md" to point at."""
+    out.mkdir(parents=True, exist_ok=True)
+    (out / "summary.md").write_text(f"# Config-oracle report\n\n- tier: {tier}\n\n"
+                                    f"**could not run (exit 2): {why}**\n", encoding="utf-8")
 
 
 # ---- resolve / full tiers: per-corpus accounting --------------------------------------
@@ -154,6 +167,7 @@ def _collect(roots):
 
 
 def _run(args):
+    _could_not_run(Path(args.report), args.tier, "stopped before the runner finished; see stderr")
     if not args.root:
         print(f"--tier {args.tier} needs at least one --root", file=sys.stderr)
         return 2
@@ -166,6 +180,7 @@ def _run(args):
     if err:
         print(err, file=sys.stderr)
         return 2
+    assert collected is not None      # _collect returns None only with an error message
     inputs, root_of, files = collected
     header = _header(args.tier)
     for root in roots:

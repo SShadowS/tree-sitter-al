@@ -74,6 +74,35 @@ def test_a_fixture_discrepancy_fails_stage_c(tiny_quick, capsys, monkeypatch):
     assert "- discrepancy: 1" in out
 
 
+def test_a_missing_pytest_is_could_not_run_not_a_finding(monkeypatch):
+    import importlib.util
+    real = importlib.util.find_spec
+    monkeypatch.setattr(importlib.util, "find_spec", lambda n, *a: None if n == "pytest" else real(n, *a))
+    code, status, _ = cli._stage_selftests()
+    assert (code, status) == (2, "COULD NOT RUN (pytest is not installed)")
+
+
+def test_a_build_failure_leaves_no_stale_summary(tiny_quick, tmp_path, monkeypatch):
+    from tools.query_coverage import loader
+    rep = tmp_path / "rep"
+    rep.mkdir()
+    (rep / "summary.md").write_text("an earlier green run\n", encoding="utf-8")
+
+    def broken(root):
+        raise loader.StaleParserError("tree-sitter build failed")
+    monkeypatch.setattr(loader, "ensure_library", broken)
+    assert cli.main(tiny_quick) == 2
+    assert "could not run (exit 2)" in (rep / "summary.md").read_text(encoding="utf-8")
+
+
+def test_a_refused_resolve_run_leaves_no_stale_summary(tmp_path):
+    rep = tmp_path / "rep"
+    rep.mkdir()
+    (rep / "summary.md").write_text("an earlier green run\n", encoding="utf-8")
+    assert _resolve(tmp_path / "missing", tmp_path=tmp_path) == 2
+    assert "could not run (exit 2)" in (rep / "summary.md").read_text(encoding="utf-8")
+
+
 def test_selftest_stage_runs_the_named_modules():
     code, status, lines = cli._stage_selftests()
     assert (code, lines) == (0, []) and status.startswith("PASS (") and " passed" in status
