@@ -290,6 +290,11 @@ class Ctx:
     def child(self, parent_kind, slot):
         return Ctx(self.resolution, self.accounting, parent_kind, slot, self.normalised)
 
+    def host(self):
+        """`host <parent>:<slot>`: the refusal detail that keys a classification to where
+        the refused node sits, so a re-parented node no longer matches its entry."""
+        return f"host {self.parent_kind}:{self.slot}"
+
     def policy(self, entry, node):
         host = f"{self.parent_kind}:{self.slot}"
         if host not in entry.hosts:
@@ -311,7 +316,7 @@ def lower(node, ctx) -> Lowered:
             # means that assembler did not (e.g. a brace close outside its open node).
             raise LoweringError("unconsumed-fragment", node, "fragment lowered on its own")
         if entry.kind == "unsupported" or entry.handler is None:
-            raise LoweringError("unsupported-type", node)
+            raise LoweringError("unsupported-type", node, ctx.host())
         return contracts.resolve_handler(entry)(node, ctx)
     if node.kind in expression.BINARY_KINDS and _has_prefix(node, ctx):
         # The binary hook: a chain holding a prefix is lowered whole, from its

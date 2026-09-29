@@ -46,6 +46,7 @@ class Summary:
     stale: list = field(default_factory=list)       # classification lines matching no record
     classified_keys: set = field(default_factory=set)
     expected: dict = field(default_factory=dict)    # {input_id: [config ids]} `discover` predicted
+    classes: dict = field(default_factory=dict)     # `expand_classes` output: {(input_id, config): (expected, reason)}
 
 
 def peak_rss_bytes() -> int:
@@ -246,8 +247,19 @@ def is_classified(record, classes):
     if record.status != "cannot-validate" or entry is None:
         return False
     status, _, prefix = entry[0].partition(":")
-    head = record.items[0].split("@", 1)[0] if record.items else ""
+    head = reason_key(record.items[0]) if record.items else ""
     return status == "cannot-validate" and bool(prefix) and (head == prefix or head.startswith(prefix + ":"))
+
+
+def reason_key(item):
+    """The item without its `@offset`: `lowering:arm-content:arm-content at case_else_branch`,
+    plus the text after the offset when the item carries one (`...: case_else_branch not
+    declared for preproc_conditional_case`, the host), so an entry can pin that too. The
+    offset itself moves with every edit above it, and never keys anything."""
+    head, _, rest = item.partition("@")
+    num = rest[:len(rest) - len(rest.lstrip("0123456789"))]
+    tail = rest[len(num):]
+    return head + (": " + tail[2:].splitlines()[0] if num and tail.startswith(": ") else "")
 
 
 def run(inputs, lib_path, workers, mode, classes=None):
@@ -279,7 +291,7 @@ def run(inputs, lib_path, workers, mode, classes=None):
     else:
         clean = all(r.status == "pass" or (r.input_id, r.config) in keys for r in records)
         code = 0 if clean and not stale else 1
-    return Summary(records, no_dir, time.perf_counter() - t0, peak, code, len(keys), stale, keys, expected)
+    return Summary(records, no_dir, time.perf_counter() - t0, peak, code, len(keys), stale, keys, expected, classes)
 
 
 def check_exact(expected, records):
@@ -370,11 +382,22 @@ def write_report(summary, out_dir: Path, header: dict, extra=()):
     dm = collections.Counter(filter(None, (unvalidated_reason(r) for r in summary.records
                                            if r.status == "directive-mismatch")))
     dm_top = ", ".join(f"{k} {v}" for k, v in dm.most_common(8)) or "none"
+    # A classification says why a configuration was not validated; it never makes it
+    # validated. Only `pass` is validated, and the two counts are never summed.
+    from tools.config_oracle.fixtures import category
+    cats = collections.Counter(category(summary.classes[k][1]) for k in keys)
+    others = sorted(k for k in keys if category(summary.classes[k][1]) == "other")
     lines = ["# Config-oracle report", "", *(f"- {k}: {v}" for k, v in sorted(header.items())), "",
              *extra, *([""] if extra else []),
              f"**{unclassified} unclassified findings, {summary.classified} classified, "
              f"{counts['cannot-validate']} configurations not validated ({top})**", "",
              f"- configurations checked: {len(summary.records)}",
+             f"- validated (pass): {counts['pass']}",
+             f"- not validated, classified by category: {len(keys)} "
+             f"({', '.join(f'{k} {v}' for k, v in sorted(cats.items())) or 'none'})",
+             # `other` has no evidence and no owner, so every matched one is shown, every run.
+             *(f"  - `{i} {c}`: {summary.classes[(i, c)][1]}" for i, c in others),
+             f"- not validated, unclassified: {sum(r.status != 'pass' for r in summary.records) - len(keys)}",
              f"- directive-mismatch configurations also not validated: {sum(dm.values())} ({dm_top})",
              *(f"- {k}: {v}" for k, v in sorted(counts.items())),
              f"- inputs without conditional directives: {summary.no_directives}",

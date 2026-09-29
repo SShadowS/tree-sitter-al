@@ -147,17 +147,47 @@ def extract(root: Path) -> list:
     return out
 
 
-_CATEGORY = re.compile(r"(negative|invalid-config|debt\([A-Za-z0-9]+\)):")
+# The roadmap's sub-project ids (docs/superpowers/plans/2026-09-28-roadmap-remaining-work.md):
+# a debt entry's owner is the one that removes it. A production entry also names the
+# milestone it goes by: a sub-project id, or M3/M4/M5 (the oracle milestones C1/C2/C3 run).
+ROADMAP = frozenset({*(f"A{i}" for i in range(1, 8)), *(f"B{i}" for i in range(1, 10)),
+                     "C1", "C2", "C3", "D1", "D2", "E1", "E2", "E3", "F1"})
+MILESTONES = ROADMAP | {"M3", "M4", "M5"}
+
+# kind -> (category pattern, categories that claim alc rejects the input, the probe's
+# line naming the input it stands for). The two files share everything else.
+_KINDS = {
+    "fixture": (re.compile(r"(?P<cat>negative|invalid-config|debt\((?P<owner>[A-Za-z0-9]+)\)):"),
+                ("negative", "invalid-config"), "// Fixture "),
+    "production": (re.compile(r"(?P<cat>invalid-source|other|"
+                              r"debt\((?P<owner>[A-Za-z0-9]+), (?P<milestone>[A-Za-z0-9]+)\)):"),
+                   ("invalid-source",), "// Source "),
+}
+# A production `lowering:` prefix names at least the refusal kind and the node type, and
+# for an unsupported-type or one-reading refusal of a special node also its host (the
+# oracle records it as `: host <parent>:<slot>`): a shorter prefix would absorb a
+# different refusal, or the same one re-parented by a grammar change.
+_PRODUCTION_LOWERING = re.compile(r"lowering:(?P<k>[a-z-]+):(?P=k) at (?P<t>\w+)(?P<tail>: .+)?$")
+# The host an unsupported-type or one-reading entry pins: `<parent>:<slot>`, the slot required.
+# A slotless `: host if_statement` would match every slot of that parent (N2).
+_HOST_TAIL = re.compile(r": host \w+:(?:<children>|\w+)(?:, |$)")
 _EVIDENCE = re.compile(r"evidence: (?:alc_probe (?P<case>\S+\.al)|alc manual,)")
 
 
-def load_classes(path: Path) -> dict:
-    """Classifications of cannot-validate records (the header of fixture-classes.tsv states
-    the rules). `expected` is `cannot-validate:<reason prefix>`: nothing else can be
-    classified (the quick tier has no baseline), and a bare status would excuse any failure
-    of that status. Every reason starts with a category; `negative` and `invalid-config`
-    need compiler evidence, checked by `_check_evidence`. The runner reports an entry that
-    matches no record as stale."""
+def category(reason: str) -> str:
+    """`negative`, `invalid-source`, `other`, `debt(C1, M3)`: the reason up to its first `:`."""
+    return reason.split(":", 1)[0]
+
+
+def load_classes(path: Path, kind: str = "fixture") -> dict:
+    """Classifications of cannot-validate records (the headers of fixture-classes.tsv and
+    production-classes.tsv state the rules). `expected` is `cannot-validate:<reason
+    prefix>`: nothing else can be classified (there is no baseline), and a bare status
+    would excuse any failure of that status. Every reason starts with a category of its
+    `kind`; a debt owner (and a production milestone) must be a known roadmap id; the
+    categories that claim alc rejects the input need compiler evidence, checked by
+    `_check_evidence`. The runner reports an entry that matches no record as stale."""
+    pattern, rejecting, marker = _KINDS[kind]
     classes = {}
     for line in path.read_text(encoding="utf-8").splitlines():
         if not line.strip() or line.startswith("#"):
@@ -168,18 +198,29 @@ def load_classes(path: Path) -> dict:
             raise ValueError(f"classification must be cannot-validate:<reason>: {case_id} {config} {expected}")
         if not reason.strip():
             raise ValueError(f"classification without a reason: {case_id} {config}")
-        m = _CATEGORY.match(reason)
-        if not m:
-            raise ValueError(f"reason must start with negative:, invalid-config: or debt(<owner>): {case_id} {config}")
-        if m.group(1) in ("negative", "invalid-config"):
-            _check_evidence(path, case_id, config, reason)
+        m = pattern.match(reason)
+        if not m or not reason[m.end():].strip():
+            raise ValueError(f"reason must start with one of {pattern.pattern} and say why: {case_id} {config}")
+        if m.group("owner") and m.group("owner") not in ROADMAP:
+            raise ValueError(f"debt owner {m.group('owner')} is not a roadmap sub-project: {case_id} {config}")
+        if kind == "production" and m.group("milestone") and m.group("milestone") not in MILESTONES:
+            raise ValueError(f"debt milestone {m.group('milestone')} is not a roadmap milestone: {case_id} {config}")
+        if kind == "production" and prefix.startswith("lowering"):
+            lm = _PRODUCTION_LOWERING.match(prefix)
+            if not lm or (lm.group("k") in ("unsupported-type", "one-reading") and lm.group("t").startswith("preproc")
+                          and not _HOST_TAIL.match(lm.group("tail") or "")):
+                raise ValueError(f"a production lowering prefix must be `lowering:<kind>:<kind> at <type>`, "
+                                 f"plus `: host <parent>:<slot>` for unsupported-type and one-reading: "
+                                 f"{case_id} {config} {prefix}")
+        if m.group("cat") in rejecting:
+            _check_evidence(path, case_id, config, reason, marker)
         if (case_id, config) in classes:
             raise ValueError(f"duplicate classification: {case_id} {config}")
         classes[(case_id, config)] = (expected, reason)
     return classes
 
 
-def _check_evidence(path: Path, case_id: str, config: str, reason: str) -> None:
+def _check_evidence(path: Path, case_id: str, config: str, reason: str, marker: str) -> None:
     """A claim that alc rejects input must name its evidence, and an alc_probe case must
     expect a reject for every configuration the entry covers: all of them for `*`."""
     m = _EVIDENCE.search(reason)
@@ -195,11 +236,11 @@ def _check_evidence(path: Path, case_id: str, config: str, reason: str) -> None:
     if not probe.is_file():
         raise ValueError(f"evidence case does not exist: {m.group('case')} ({case_id} {config})")
     text = probe.read_text(encoding="utf-8")
-    # The probe must say which fixture it is: a path alone lets an unrelated probe that
-    # happens to share the symbol names stand in as evidence.
-    named = [l[len("// Fixture "):].strip() for l in text.splitlines() if l.startswith("// Fixture ")]
+    # The probe must say which input it is (`// Fixture <case id>`, `// Source <label>:<path>`):
+    # a path alone lets an unrelated probe that happens to share the symbol names stand in.
+    named = [l[len(marker):].strip() for l in text.splitlines() if l.startswith(marker)]
     if named != [case_id]:
-        raise ValueError(f"{m.group('case')} is the probe for {named or 'no fixture'}, not {case_id}")
+        raise ValueError(f"{m.group('case')} is the probe for {named or 'no input'}, not {case_id}")
     case = matrix.parse_case(probe, probe.name, text, check=False)
     if config == "*":
         envs = case.envs

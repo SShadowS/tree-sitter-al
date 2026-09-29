@@ -110,11 +110,24 @@ def test_selftest_stage_runs_the_named_modules():
 
 # ---- per-root accounting -----------------------------------------------------------
 
-def _root(tmp_path, name, files):
+@pytest.fixture(autouse=True)
+def _labels(monkeypatch, tmp_path):
+    """A private copy of the root -> label map, which `_root` extends (each root is
+    labelled by its directory name), and an empty production classification file."""
+    monkeypatch.setattr(cli, "CORPORA", dict(cli.CORPORA))
+    classes = tmp_path / "production-classes.tsv"
+    classes.write_text("# none\n", encoding="utf-8")
+    monkeypatch.setattr(cli, "PRODUCTION_CLASSES", classes)
+
+
+def _root(tmp_path, name, files, label=True):
     d = tmp_path / name
     d.mkdir()
     for fname, src in files.items():
+        (d / fname).parent.mkdir(parents=True, exist_ok=True)
         (d / fname).write_bytes(src)
+    if label:
+        cli.CORPORA[name] = d
     return d
 
 
@@ -184,3 +197,356 @@ def test_replay_exits_2_when_a_historical_parser_cannot_be_built(monkeypatch, ca
     monkeypatch.setattr(replay, "cached_parser_at", unavailable)
     assert cli.main(["replay"]) == 2
     assert "could not run" in capsys.readouterr().err
+
+
+# ---- production classifications (roadmap A4) ---------------------------------------
+
+BAD = b"#if A\ncodeunit 1 T { }\n"          # unterminated #if: A=0 and A=1 cannot-validate
+SRC_PROBE = "tools/alc_probe/cases/production-invalid/fixed-asset-shift.al"
+SRC_ID = "bcapps-29.0:src/Apps/IN/INFADepreciation/app/src/table/FixedAssetShift.Table.al"
+
+
+def _classify(tmp_path, *lines):
+    cli.PRODUCTION_CLASSES.write_text("# test\n" + "".join(l + "\n" for l in lines), encoding="utf-8")
+
+
+def _entry(case, cfg="*", prefix="resolver:unbalanced-if", reason="other: synthetic, unterminated #if"):
+    return f"{case}\t{cfg}\tcannot-validate:{prefix}\t{reason}"
+
+
+def test_input_ids_are_label_and_posix_relative_path(tmp_path, capsys):
+    a = _root(tmp_path, "a", {"s.al": STMT, "sub/bad.al": BAD})   # all-refused would be exit 2
+    assert _resolve(a, tmp_path=tmp_path) == 1
+    ids = {r["input_id"] for r in map(__import__("json").loads,
+                                       (tmp_path / "rep" / "findings.jsonl").read_text().splitlines())}
+    assert ids == {"a:s.al", "a:sub/bad.al"}
+
+
+def test_a_root_with_no_label_exits_2(tmp_path, capsys):
+    a = _root(tmp_path, "a", {"s.al": STMT}, label=False)
+    assert _resolve(a, tmp_path=tmp_path) == 2
+    assert f"corpus root has no label: {a}" in capsys.readouterr().err
+
+
+def test_the_same_root_spelled_two_ways_gets_one_label(tmp_path):
+    a = _root(tmp_path, "a", {"s.al": STMT})
+    assert cli.corpus_label(a) == cli.corpus_label(a / "." / ".." / "a") == "a"
+
+
+def test_a_clean_classified_production_run_exits_0(tmp_path, capsys):
+    a = _root(tmp_path, "a", {"s.al": STMT, "bad.al": BAD})
+    _classify(tmp_path, _entry("a:bad.al"))
+    assert _resolve(a, tmp_path=tmp_path) == 0
+    out = capsys.readouterr().out
+    assert "- stale classifications: 0" in out and "- exit code: 0" in out
+
+
+def test_a_classified_record_still_counts_as_not_validated(tmp_path, capsys):
+    a = _root(tmp_path, "a", {"s.al": STMT, "bad.al": BAD})
+    _classify(tmp_path, _entry("a:bad.al"))
+    assert _resolve(a, tmp_path=tmp_path) == 0
+    out = capsys.readouterr().out
+    assert "- validated (pass): 2\n" in out                        # s.al's two, nothing else
+    assert "- not validated, classified by category: 2 (other 2)\n" in out
+    assert "- not validated, unclassified: 0\n" in out
+    # every matched `other` entry is printed
+    assert "  - `a:bad.al A=0`: other: synthetic" in out
+    assert "  - `a:bad.al A=1`: other: synthetic" in out
+
+
+def test_an_unclassified_refusal_exits_1(tmp_path, capsys):
+    a = _root(tmp_path, "a", {"s.al": STMT, "bad.al": BAD, "bad2.al": BAD})
+    _classify(tmp_path, _entry("a:bad.al"))
+    assert _resolve(a, tmp_path=tmp_path) == 1
+    assert "- not validated, unclassified: 2\n" in capsys.readouterr().out
+
+
+def test_a_stale_production_entry_exits_1(tmp_path, capsys):
+    a = _root(tmp_path, "a", {"s.al": STMT, "bad.al": BAD})
+    _classify(tmp_path, _entry("a:bad.al"), _entry("a:s.al", "A=0"))
+    assert _resolve(a, tmp_path=tmp_path) == 1
+    out = capsys.readouterr().out
+    assert "- stale classifications: 1" in out and "a:s.al\tA=0" in out
+
+
+def test_an_entry_for_a_corpus_not_requested_is_neither_stale_nor_applied(tmp_path, capsys):
+    a = _root(tmp_path, "a", {"s.al": STMT, "bad.al": BAD})
+    b = _root(tmp_path, "b", {"s.al": STMT, "bad.al": BAD})
+    _classify(tmp_path, _entry("a:bad.al"), _entry("b:bad.al"), _entry("b:gone.al"))
+    assert _resolve(a, tmp_path=tmp_path) == 0                     # b's entries: not stale
+    out = capsys.readouterr().out
+    assert "1 of 3 entries apply" in out and "- stale classifications: 0" in out
+    _classify(tmp_path, _entry("a:bad.al"))
+    assert _resolve(b, tmp_path=tmp_path) == 1                     # a's entry: not applied to b
+
+
+def test_an_entry_naming_an_unknown_corpus_label_exits_2(tmp_path, capsys):
+    a = _root(tmp_path, "a", {"s.al": STMT})
+    _classify(tmp_path, _entry("nosuch:bad.al"))
+    assert _resolve(a, tmp_path=tmp_path) == 2
+
+
+def test_the_resolve_tier_applies_only_entries_for_its_stages(tmp_path, capsys):
+    a = _root(tmp_path, "a", {"s.al": STMT})
+    _classify(tmp_path, _entry("a:s.al", prefix="lowering:unsupported-type:unsupported-type at "
+                               "preproc_x: host statement_block:<children>"))
+    assert _resolve(a, tmp_path=tmp_path) == 0
+    assert "0 of 1 entries apply" in capsys.readouterr().out
+
+
+def test_a_discrepancy_is_never_classified():
+    rec = runner.Record("a:x.al", "A=0", "discrepancy", ["resolver:x@1"])
+    classes = {("a:x.al", "A=0"): ("cannot-validate:resolver", "other: x")}
+    assert not runner.is_classified(rec, classes)
+
+
+# ---- the production loader ----
+
+def _load(tmp_path, line):
+    p = tmp_path / "p.tsv"
+    p.write_text(line + "\n", encoding="utf-8")
+    return fixtures.load_classes(p, "production")
+
+
+@pytest.mark.parametrize("reason", ["debt(C1, M3): no handler for preproc_x at y",
+                                    "debt(F1, F1): needs the configuration-aware parse",
+                                    "other: something"])
+def test_production_categories_load(tmp_path, reason):
+    assert _load(tmp_path, _entry("a:x.al", reason=reason))
+
+
+@pytest.mark.parametrize("reason", ["debt(C1): no milestone", "debt(Z9, M3): unknown owner",
+                                    "debt(C1, M9): unknown milestone", "debt(C1,M3): no space",
+                                    "negative: a fixture category", "other:", "invalid-source x"])
+def test_malformed_production_categories_are_rejected(tmp_path, reason):
+    with pytest.raises(ValueError):
+        _load(tmp_path, _entry("a:x.al", reason=reason))
+
+
+def test_a_malformed_debt_owner_exits_2(tmp_path, capsys):
+    a = _root(tmp_path, "a", {"s.al": STMT, "bad.al": BAD})
+    _classify(tmp_path, _entry("a:bad.al", reason="debt(Z9, M3): nobody"))
+    assert _resolve(a, tmp_path=tmp_path) == 2
+    assert "debt owner Z9 is not a roadmap sub-project" in capsys.readouterr().err
+
+
+def test_invalid_source_needs_its_own_probe(tmp_path):
+    ok = f"invalid-source: CLEANSCHEMA26 defined; evidence: alc_probe {SRC_PROBE}"
+    assert _load(tmp_path, _entry(SRC_ID, "CLEANSCHEMA26=1", "reference-error:error", ok))
+    with pytest.raises(ValueError, match="evidence"):
+        _load(tmp_path, _entry(SRC_ID, "CLEANSCHEMA26=1", "reference-error:error", "invalid-source: x"))
+    with pytest.raises(ValueError, match="is the probe for"):      # `// Source` names another input
+        _load(tmp_path, _entry(SRC_ID.replace("Shift", "Shift2"), "CLEANSCHEMA26=1", "reference-error:error", ok))
+    with pytest.raises(ValueError, match="does not expect a reject"):   # alc accepts CLEANSCHEMA26=0
+        _load(tmp_path, _entry(SRC_ID, "CLEANSCHEMA26=0", "reference-error:error", ok))
+    with pytest.raises(ValueError, match="needs alc_probe evidence"):
+        _load(tmp_path, _entry(SRC_ID, "*", "reference-error:error",
+                               "invalid-source: x; evidence: alc manual, 2026-09-29"))
+
+
+def test_the_real_production_file_loads():
+    assert fixtures.load_classes(cli.REPO / "tools" / "config_oracle" / "production-classes.tsv",
+                                 "production") is not None
+
+
+ARM = "lowering:arm-content:arm-content at case_else_branch@9493: case_else_branch not declared for preproc_conditional_case"
+
+
+def test_reason_key_drops_the_offset_and_keeps_the_host():
+    assert runner.reason_key(ARM) == ("lowering:arm-content:arm-content at case_else_branch: "
+                                      "case_else_branch not declared for preproc_conditional_case")
+    assert runner.reason_key("reference-error:error@12,error@40") == "reference-error:error"
+    assert runner.reason_key("lowering:unsupported-type:unsupported-type at x@5") == \
+        "lowering:unsupported-type:unsupported-type at x"
+
+
+@pytest.mark.parametrize("prefix, hit", [
+    ("lowering:arm-content:arm-content at case_else_branch", True),
+    ("lowering:arm-content:arm-content at case_else_branch: case_else_branch not declared "
+     "for preproc_conditional_case", True),
+    ("lowering:arm-content:arm-content at case_else_branch: case_else_branch not declared "
+     "for some_other_host", False),
+    ("lowering:arm-content:arm-content at case_else", False),        # whole segments only
+])
+def test_an_entry_can_pin_the_host(prefix, hit):
+    rec = runner.Record("a:x.al", "A=0", "cannot-validate", [ARM])
+    assert runner.is_classified(rec, {("a:x.al", "A=0"): (f"cannot-validate:{prefix}", "other: x")}) is hit
+
+
+# ---- the host is part of the key (A4 fix 1, I1) ----
+# One refused construct in two hosts. The oracle records the host of an unsupported-type
+# and a one-reading refusal (`: host <parent>:<slot>`), so a grammar change that
+# re-parents the node changes the key and its entry no longer classifies the record.
+
+_SPLIT_THEN = ("        if not IsHandled then\n#if not C27\n            if Q <> 0 then begin\n"
+               "                Message('a');\n#endif\n                Message('b');\n"
+               "#if not C27\n            end;\n#endif\n        Message('c');\n")
+_SPLIT_STMT = _SPLIT_THEN.replace("        if not IsHandled then\n", "", 1)
+_ELSE_LED_IF = ("        if N < 1 then\n            Message('a')\n#if not C28\n        else begin\n"
+                "#else\n        else\n#endif\n            Message('b');\n#if not C28\n"
+                "            Message('c');\n        end;\n#endif\n")
+_ELSE_LED_CASE = ("        case N of\n            1:\n                Message('a')\n" +
+                  _ELSE_LED_IF.split("            Message('a')\n", 1)[1] + "        end;\n")
+
+
+def _proc(body):
+    return ("codeunit 1 T\n{\n    procedure P(N: Integer; Q: Integer; IsHandled: Boolean)\n"
+            "    begin\n" + body + "    end;\n}\n").encode()
+
+
+@pytest.mark.parametrize("a, b, kind, host_a, host_b", [
+    (_SPLIT_STMT, _SPLIT_THEN, "unsupported-type at preproc_split_if_then_begin",
+     "statement_block:<children>", "if_statement:then_branch"),
+    (_ELSE_LED_IF, _ELSE_LED_CASE, "one-reading at preproc_split_open_statement",
+     "statement_block:<children>", "case_body:<children>"),
+])
+def test_a_record_whose_host_differs_from_its_entry_is_not_classified(al_parser, a, b, kind, host_a, host_b):
+    from tools.config_oracle.tests import witness
+    recs = {}
+    for name, src in (("a", a), ("b", b)):
+        v = witness.verdicts(al_parser, _proc(src), "x:y.al")
+        cfg, (status, items) = sorted(v.items())[0]
+        assert status == "cannot-validate", v
+        recs[name] = runner.Record("x:y.al", cfg, status, items)
+    key_a, key_b = (runner.reason_key(recs[n].items[0]) for n in "ab")
+    assert key_a == f"lowering:{kind.split(' ')[0]}:{kind}: host {host_a}", key_a
+    assert key_b == f"lowering:{kind.split(' ')[0]}:{kind}: host {host_b}", key_b
+    for n in "ab":
+        entry = {("x:y.al", recs[n].config): (f"cannot-validate:{key_a}", "debt(C1, M3): x")}
+        assert runner.is_classified(recs[n], entry) is (n == "a")
+
+
+def test_a_production_lowering_entry_must_name_type_and_host(tmp_path):
+    """M4: `cannot-validate:lowering` alone would absorb any refusal of that input and
+    configuration; an unsupported-type or one-reading entry must also pin the host."""
+    ok = "lowering:unsupported-type:unsupported-type at preproc_x: host statement_block:<children>"
+    assert _load(tmp_path, _entry("a:x.al", prefix=ok, reason="debt(C1, M3): x"))
+    assert _load(tmp_path, _entry("a:x.al", prefix="lowering:one-reading:one-reading at integer: "
+                                  "signed literal continued by a live tail", reason="debt(C1, M3): x"))
+    for short in ("lowering", "lowering:unsupported-type", "lowering:unsupported-type:unsupported-type",
+                  "lowering:unsupported-type:unsupported-type at preproc_x",
+                  "lowering:one-reading:one-reading at preproc_x",
+                  # N2: a host without its slot would match every slot of that parent
+                  "lowering:unsupported-type:unsupported-type at preproc_x: host if_statement",
+                  "lowering:one-reading:one-reading at preproc_x: host if_statement, complete-prefix arm",
+                  "lowering:unsupported-type:unsupported-type at preproc_x: host if_statement:",
+                  "lowering:unsupported-type:unsupported-type at preproc_x: host :then_branch"):
+        with pytest.raises(ValueError, match="lowering"):
+            _load(tmp_path, _entry("a:x.al", prefix=short, reason="debt(C1, M3): x"))
+
+
+def test_the_real_production_file_has_no_selftest_entry():
+    """M3: the test-only `selftest` label is never requested by a production run, so a
+    committed entry for it would be neither applied nor stale-checked."""
+    classes = fixtures.load_classes(cli.REPO / "tools" / "config_oracle" / "production-classes.tsv",
+                                    "production")
+    assert not [k for k, _ in classes if k.startswith("selftest:")]
+
+
+def test_a_corpus_head_mismatch_exits_1(tmp_path, capsys, monkeypatch):
+    """M6: a corpus at another commit than the one its entries were generated from fails
+    the run; a matching head, or a label with no recorded head, does not."""
+    a = _root(tmp_path, "a", {"s.al": STMT})
+    monkeypatch.setattr(cli, "_git_head", lambda path, short=True: "c0ffee")
+    cli.PRODUCTION_CLASSES.write_text("# corpus-head a c0ffee\n", encoding="utf-8")
+    assert _resolve(a, tmp_path=tmp_path) == 0
+    cli.PRODUCTION_CLASSES.write_text("# corpus-head a deadbeef\n", encoding="utf-8")
+    assert _resolve(a, tmp_path=tmp_path) == 1
+    captured = capsys.readouterr()
+    assert "corpus a" in captured.err and "generated at deadbeef: regenerate it" in captured.err
+    assert "## Corpus identity mismatch (exit 1)" in captured.out and "- exit code: 1" in captured.out
+    cli.PRODUCTION_CLASSES.write_text("# corpus-head other deadbeef\n", encoding="utf-8")
+    assert _resolve(a, tmp_path=tmp_path) == 0
+
+
+def test_a_slotless_host_entry_exits_2(tmp_path, capsys):
+    """N2: `: host <parent>` without `:<slot>` is malformed, and the run exits 2."""
+    a = _root(tmp_path, "a", {"s.al": STMT})
+    _classify(tmp_path, _entry("a:s.al", prefix="lowering:unsupported-type:unsupported-type at "
+                               "preproc_x: host if_statement", reason="debt(C1, M3): x"))
+    assert _resolve(a, tmp_path=tmp_path) == 2
+
+
+# ---- N1: the corpus working tree is part of its identity --------------------------------
+
+def _git(root, *args):
+    import subprocess
+    subprocess.run(["git", "-C", str(root), "-c", "user.name=t", "-c", "user.email=t@t", *args],
+                   check=True, capture_output=True)
+
+
+@pytest.fixture
+def repo(tmp_path):
+    """A committed git corpus `a` whose head is recorded, and a writer for the header."""
+    a = _root(tmp_path, "a", {"s.al": STMT, "t.al": STMT, "parsed.txt": b"x\n"})
+    _git(a, "init", "-q")
+    _git(a, "config", "core.autocrlf", "false")
+    _git(a, "add", ".")
+    _git(a, "commit", "-q", "-m", "c")
+    head = cli._git_head(a, short=False)
+
+    def header(*extra):
+        cli.PRODUCTION_CLASSES.write_text("".join(f"{l}\n" for l in (f"# corpus-head a {head}", *extra)),
+                                          encoding="utf-8")
+    header()
+    return a, header
+
+
+def _sha256(data):
+    return __import__("hashlib").sha256(data).hexdigest()
+
+
+def test_a_clean_corpus_and_dirty_non_al_files_pass(repo, tmp_path):
+    a, _ = repo
+    assert _resolve(a, tmp_path=tmp_path) == 0
+    (a / "parsed.txt").write_bytes(b"changed\n")            # tracked non-.al, modified
+    (a / "errors_new.txt").write_bytes(b"new\n")            # untracked non-.al
+    assert _resolve(a, tmp_path=tmp_path) == 0
+
+
+@pytest.mark.parametrize("change", ["modify", "delete", "rename"])
+def test_a_changed_tracked_al_file_exits_1_and_is_named(repo, tmp_path, capsys, change):
+    a, _ = repo
+    if change == "modify":
+        (a / "t.al").write_bytes(STMT + b"\n// edited\n")
+    elif change == "delete":
+        (a / "t.al").unlink()
+    else:
+        _git(a, "mv", "t.al", "u.al")
+    assert _resolve(a, tmp_path=tmp_path) == 1
+    err = capsys.readouterr().err
+    assert "tracked .al changed in the working tree" in err
+    assert {"modify": "(M t.al)", "delete": "(D t.al)", "rename": "(D t.al)"}[change] in err
+
+
+def test_untracked_al_files_must_be_recorded_by_content(repo, tmp_path, capsys):
+    a, header = repo
+    (a / "sub").mkdir()
+    (a / "sub" / "x y.al").write_bytes(STMT)
+    assert _resolve(a, tmp_path=tmp_path) == 1                              # not recorded
+    assert "untracked .al is not recorded: sub/x y.al" in capsys.readouterr().err
+    header(f"# corpus-untracked a {_sha256(STMT)} sub/x y.al")
+    assert _resolve(a, tmp_path=tmp_path) == 0                              # recorded, same sha
+    (a / "sub" / "x y.al").write_bytes(STMT + b"\n")
+    assert _resolve(a, tmp_path=tmp_path) == 1                              # sha differs
+    assert f"recorded {_sha256(STMT)}" in capsys.readouterr().err
+    (a / "sub" / "x y.al").unlink()
+    assert _resolve(a, tmp_path=tmp_path) == 1                              # gone: stale
+    assert "recorded untracked .al is gone (stale entry): sub/x y.al" in capsys.readouterr().err
+
+
+def test_an_ignored_al_file_counts_as_untracked(repo, tmp_path, capsys):
+    """The oracle reads ignored files too, so they are recorded like any untracked file."""
+    a, _ = repo
+    (a / ".gitignore").write_bytes(b"skip/\n")
+    (a / "skip").mkdir()
+    (a / "skip" / "i.al").write_bytes(STMT)
+    assert _resolve(a, tmp_path=tmp_path) == 1
+    assert "untracked .al is not recorded: skip/i.al" in capsys.readouterr().err
+
+
+def test_a_non_git_root_with_a_recorded_head_fails_the_head_check(tmp_path, capsys):
+    a = _root(tmp_path, "a", {"s.al": STMT})
+    cli.PRODUCTION_CLASSES.write_text("# corpus-head a deadbeef\n", encoding="utf-8")
+    assert _resolve(a, tmp_path=tmp_path) == 1
+    assert "is at not-a-git-repo" in capsys.readouterr().err

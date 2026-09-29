@@ -229,6 +229,24 @@ def make_al_corpus(dirname: str, *, broken: bool = False, empty: bool = False) -
     return Mutation(f"materialise {kind} AL corpus at {dirname}", _apply)
 
 
+def git_corpus(dirname: str, label: str) -> Mutation:
+    """Make a materialised corpus its own committed git repo and record its HEAD in the
+    scratch production-classes.tsv, so the oracle's corpus identity check applies to it."""
+
+    def _apply(root: Path) -> None:
+        dest = root / dirname
+        git = ["git", "-C", str(dest), "-c", "user.name=selftest", "-c", "user.email=selftest@invalid",
+               "-c", "core.autocrlf=false"]
+        for args in (["init", "-q"], ["add", "."], ["commit", "-q", "-m", "selftest corpus"]):
+            if subprocess.run(git + args, capture_output=True).returncode:
+                raise SelfTestError(f"cannot make {dirname} a git repo: git {' '.join(args)} failed")
+        head = subprocess.run(git + ["rev-parse", "HEAD"], capture_output=True, text=True).stdout.strip()
+        with (root / "tools/config_oracle/production-classes.tsv").open("a", encoding="utf-8") as fh:
+            fh.write(f"# corpus-head {label} {head}\n")
+
+    return Mutation(f"commit {dirname} as a git repo, record its head as {label}", _apply)
+
+
 # --------------------------------------------------------------------------
 # Cases
 # --------------------------------------------------------------------------
@@ -280,6 +298,13 @@ ORACLE_REVERSED_ARM = sub("tools/config_oracle/lowering/select.py",
 ORACLE_STALE_ENTRY = ("preproc_define_undef_test.txt#Defined symbol used in a later %23if#0\tDEBUG=1"
                       "\tcannot-validate:reference-error\tdebt(C1): gate self-test, an entry left "
                       "behind after its record was fixed\n")
+
+# A production refusal for the A4 cases: an unterminated #if, which the resolver refuses
+# in both configurations. Stable on purpose: no handler or grammar fix can make it pass.
+ORACLE_REFUSED = "Refused.Codeunit.al"
+ORACLE_REFUSED_AL = "codeunit 50190 Refused\n{\n#if SELFTEST\n    procedure P()\n    begin\n    end;\n}\n"
+ORACLE_REFUSED_ENTRY = ("selftest:Refused.Codeunit.al\t*\tcannot-validate:resolver:unbalanced-if"
+                        "\tother: gate self-test, an unterminated #if\n")
 
 # A byte-identical duplicate of an existing key — the shape Task 10 found by
 # hand. Line 382 is `declaration_body: $ => repeat1($._body_element),`; the
@@ -624,6 +649,69 @@ CASES: list[Case] = [
         setup=[make_al_corpus("selftest-corpus")],
         expect_exit="0",
         must_contain=["| selftest-corpus | 6 | 2 | 2 | 0 | 0 | 0 | 0 |", "- exit code: 0"],
+        slow=False,
+    ),
+    # ---- production classifications (roadmap A4) ----
+    # The corpus sits at selftest-corpus, the one TEST-ONLY label in
+    # tools/config_oracle/__main__.py's CORPORA, so these run the production path as it is.
+    # The real production-classes.tsv entries name other corpora: never applied, never stale.
+    Case(
+        id="oracle-full-classified-refusal-passes",
+        gate=ORACLE,
+        module=ORACLE_MODULE,
+        args=["run", "--tier", "full", "--root", "selftest-corpus"],
+        why="a production corpus whose one refusal is classified exits 0, and the "
+            "classified configurations still count as not validated",
+        setup=[make_al_corpus("selftest-corpus"), create("selftest-corpus/" + ORACLE_REFUSED, ORACLE_REFUSED_AL)],
+        mutations=[append("tools/config_oracle/production-classes.tsv", ORACLE_REFUSED_ENTRY)],
+        expect_exit="0",
+        must_contain=["- validated (pass): 2\n", "- not validated, classified by category: 2 (other 2)",
+                      "  - `selftest:Refused.Codeunit.al SELFTEST=0`: other: gate self-test",
+                      "- not validated, unclassified: 0", "- stale classifications: 0",
+                      "- exit code: 0"],
+        slow=False,
+    ),
+    Case(
+        id="oracle-full-unclassified-refusal",
+        gate=ORACLE,
+        module=ORACLE_MODULE,
+        args=["run", "--tier", "full", "--root", "selftest-corpus"],
+        why="the same corpus without its classification: a new production refusal exits 1",
+        setup=[make_al_corpus("selftest-corpus")],
+        mutations=[create("selftest-corpus/" + ORACLE_REFUSED, ORACLE_REFUSED_AL)],
+        expect_exit="1",
+        must_contain=["- not validated, unclassified: 2", "- exit code: 1"],
+        slow=False,
+    ),
+    Case(
+        id="oracle-full-stale-production-entry",
+        gate=ORACLE,
+        module=ORACLE_MODULE,
+        args=["run", "--tier", "full", "--root", "selftest-corpus"],
+        why="a production-classes.tsv entry for a configuration that passes is stale",
+        setup=[make_al_corpus("selftest-corpus"), create("selftest-corpus/" + ORACLE_REFUSED, ORACLE_REFUSED_AL)],
+        mutations=[append("tools/config_oracle/production-classes.tsv", ORACLE_REFUSED_ENTRY
+                          + "selftest:Guarded.Codeunit.al\tCLEAN25=0\tcannot-validate:resolver"
+                            "\tother: gate self-test, an entry left behind\n")],
+        expect_exit="1",
+        must_contain=["- stale classifications: 1", "selftest:Guarded.Codeunit.al\tCLEAN25=0",
+                      "- exit code: 1"],
+        slow=False,
+    ),
+    Case(
+        id="oracle-resolve-dirty-tracked-al",
+        gate=ORACLE,
+        module=ORACLE_MODULE,
+        args=["run", "--tier", "resolve", "--root", "selftest-corpus"],
+        why="a tracked .al edited under an unchanged, recorded HEAD: the oracle reads the "
+            "working tree, so its content-free keys could keep classifying a changed file",
+        setup=[make_al_corpus("selftest-corpus"), git_corpus("selftest-corpus", "selftest")],
+        mutations=[append("selftest-corpus/Runner.Codeunit.al", "// edited after the commit\n")],
+        expect_exit="1",
+        must_contain=["tracked .al changed in the working tree (M Runner.Codeunit.al)",
+                      "## Corpus identity mismatch (exit 1)"],
+        blind_spot="files inside a submodule of the corpus: the check runs git in the corpus "
+                   "repo only",
         slow=False,
     ),
     Case(
@@ -1135,7 +1223,9 @@ def run_case(case: Case, workdir: Path, timeout: int) -> tuple[bool, str, str]:
     except subprocess.TimeoutExpired:
         return False, f"timed out after {timeout}s (process tree killed)", ""
 
-    out = ANSI.sub("", proc.stdout.decode("utf-8", errors="replace"))
+    # Python's text-mode stdout writes CRLF on Windows, so a `must_contain` that pins a
+    # line end ("...: 2\n") matched on ubuntu and never here. Compare on LF.
+    out = ANSI.sub("", proc.stdout.decode("utf-8", errors="replace")).replace("\r\n", "\n")
 
     problems = []
     if case.expect_exit == "nonzero" and proc.returncode == 0:

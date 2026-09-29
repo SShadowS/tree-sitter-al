@@ -132,7 +132,7 @@ def else_begin_over_endif(node, ctx) -> Lowered:
                 and arm[1].kind == "else_keyword" and arm[2].kind == "begin_keyword"
                 and not any(c.kind in ("if_keyword", "begin_keyword") for c in arm[3:]))
         if not base:
-            raise _one_reading(node)
+            raise _one_reading(node, ctx)
     arm = _active(arms, endif, node, ctx)
     stmts = _lower_all(tail[:-1], ctx, "statement_block")
     end = _lower_all(tail[-1:], ctx, "code_block")[0]
@@ -266,7 +266,7 @@ def _select_arm(node, ctx):
     outside the registered `arm` set, is contract-shape."""
     entry = contracts.REGISTRY[node.kind]
     if ctx.policy(entry, node) == "unsupported":
-        raise LoweringError("unsupported-type", node, f"host {ctx.parent_kind}:{ctx.slot}")
+        raise LoweringError("unsupported-type", node, ctx.host())
     arms, endif = split_arms(node)
     items = list(_active(arms, endif, node, ctx))
     semi = items.pop() if items and items[-1].kind == ";" else None
@@ -333,8 +333,8 @@ def property_value_select(node, ctx) -> Lowered:
 # That configuration lowers normally; every other one raises `one-reading`,
 # which is never a pass.
 
-def _one_reading(node):
-    return LoweringError("one-reading", node, node.kind)
+def _one_reading(node, ctx):
+    return LoweringError("one-reading", node, ctx.host())
 
 
 def _cut_at_endif(node):
@@ -345,20 +345,24 @@ def _cut_at_endif(node):
 
 
 def open_statement_reading(node, ctx) -> Lowered:
-    """Contract open-statement (reading arm:not-else-led). Host: a statement
-    position (policy per registry). If the chosen arm's first item is
-    `else_keyword`, raise one-reading: the tree shows that `else` as a SIBLING of
-    an if/case already complete before the #if, which no configuration's parse
-    has. Otherwise (a complete-prefix arm, or no arm chosen) raise
-    unsupported-type: milestone 3. Emits nothing; makes no edge rewrite."""
+    """Contract open-statement (declared reading arm:not-else-led). Host: a
+    statement position (policy per registry). LOWERS NO ARM: every path raises.
+    If the chosen arm's first item is `else_keyword`, raise one-reading: the tree
+    shows that `else` as a SIBLING of an if/case already complete before the #if,
+    which no configuration's parse has; when every arm is else-led (Check.Report
+    GB, MfgCarryOutAction W1) no configuration is the declared reading at all.
+    Otherwise (a complete-prefix arm, or no arm chosen) raise unsupported-type.
+    Both are milestone 3: the else-led lowering attaches the arm to the preceding
+    if/case (as ElseAttachment does for else_begin), the complete-prefix one
+    completes the arm's open prefix with the continuation after #endif."""
     ctx.policy(contracts.REGISTRY[node.kind], node)
     cut = _cut_at_endif(node)
     arms, _ = split_arms(node.copy(children=node.children[:cut + 1]))
     choice = chosen_arm(node, arms, ctx)
     arm = next((items for d, items in arms if d.start == choice), [])
     if arm and arm[0].kind == "else_keyword":
-        raise _one_reading(node)
-    raise LoweringError("unsupported-type", node, "complete-prefix arm (milestone 3)")
+        raise _one_reading(node, ctx)
+    raise LoweringError("unsupported-type", node, f"{ctx.host()}, complete-prefix arm (milestone 3)")
 
 
 def block_end_in_else(node, ctx) -> Lowered:
@@ -383,7 +387,7 @@ def block_end_in_else(node, ctx) -> Lowered:
         else:
             arms[-1][1].append(c)
     if not reading_active(node, entry, ctx, arms):
-        raise _one_reading(node)
+        raise _one_reading(node, ctx)
     choice = chosen_arm(node, arms, ctx)
     for d, items in arms:
         ctx.accounting.mark(d, "directive")
@@ -417,7 +421,7 @@ def block_close_after_endif(node, ctx) -> Lowered:
         raise LoweringError("directive-unknown", node, f"no resolver group for #endif at {endif.start}")
     elses = [d.hash for d in res.directives if d.kind == "else" and res.group_of.get(d.hash) == group]
     if len(elses) != 1 or res.arm_choice[group] != elses[0]:
-        raise _one_reading(node)
+        raise _one_reading(node, ctx)
     ctx.accounting.mark(endif, "directive")
     stmts = _lower_all(node.children[1:-1], ctx, "statement_block")
     end_l = _lower_all([end], ctx, "code_block")[0]
@@ -448,7 +452,7 @@ def container_reopen(node, ctx) -> Lowered:
     cut = _cut_at_endif(node)
     head, tail = node.children[1:cut], node.children[cut + 1:]
     if not reading_active(node, entry, ctx, [(node.children[0], head)]):
-        raise _one_reading(node)
+        raise _one_reading(node, ctx)
     header = [c for c in head[1:] if c.field != "body"]
     if not head or head[0].kind != "}" or not header or header[0].kind not in _REOPEN_KIND \
             or header[-1].kind != "{" or not tail or tail[-1].kind != "}":

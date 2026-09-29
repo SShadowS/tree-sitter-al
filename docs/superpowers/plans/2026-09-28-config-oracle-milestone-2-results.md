@@ -58,6 +58,8 @@ still has zero production impact across all four corpora.
 
 ### Classification
 
+> **Superseded (roadmap A4, 2026-09-29):** this classification of the resolve sweep's refusals is superseded by `tools/config_oracle/production-classes.tsv`, which `run --tier resolve|full` loads and checks record by record. The invalid-source evidence is now `tools/alc_probe/cases/production-invalid/`.
+
 One cluster, 3 files, 7 configurations. Every record was examined; none was sampled.
 
 | Cluster | Records | Files (configuration) | Classification | Evidence |
@@ -133,6 +135,8 @@ carried only directive items (one also carried `empty-node`).
 
 ### Run 3: after the Task 18 fixes (the recorded state)
 
+> **Superseded (roadmap A4, 2026-09-29):** the classification of this run's refusals is superseded by `tools/config_oracle/production-classes.tsv`, record by record (see also "Production clusters" below).
+
 HEAD `eb189bf` (grammar `e8a637023c3d15ca`; the later commits change no grammar
 file). `elapsed: 902.8s` inside `runner.run` (21 m 49 s wall), peak RSS 1,256 MiB,
 exit code 1. It is slower than run 1 on the same input. Two causes are known and
@@ -173,6 +177,8 @@ Every cluster of run 1, grouped by `(check, kind, first special type on the path
 (scratchpad script, not in the repo), then the fixture-found findings.
 
 ### Production clusters
+
+> **Superseded (roadmap A4, 2026-09-29):** this cluster table is superseded by `tools/config_oracle/production-classes.tsv`, which classifies every record exactly.
 
 | # | Cluster | Records | Class | Evidence and fix |
 |---|---|---|---|---|

@@ -505,7 +505,7 @@ yet run.
 
 ---
 
-## 14. The resolve and full tiers exit 1 on production corpora
+## 14. The resolve and full tiers exit 1 on production corpora — RESOLVED 2026-09-29
 
 **Established:** 2026-09-28, milestone 2 Task 17 and the P6 runs (results doc,
 "Resolve sweep" and "Run 3"). `runner.run` exits 0 only when every non-`pass`
@@ -522,6 +522,13 @@ listed nothing, so `run --tier quick` exited 1 on every clean tree. Its 150
 cannot-validate records are now classified there, as `negative`, `invalid-config` or
 `debt(C1)`, and the quick tier exits 0 and gates (Step 5e, CI). The production half
 is still open (A4).
+
+**2026-09-29 (roadmap A4): RESOLVED** in d4e32aa. `--tier resolve|full` load
+`tools/config_oracle/production-classes.tsv`: 434 exact entries (debt(C1, M3) 413,
+debt(F1, F1) 14, invalid-source 7, the last backed by `tools/alc_probe/cases/production-invalid/`).
+Measured on all four corpora: full exits 0 (1,295 s; 14,228 pass, 434 classified, 0 stale,
+0 discrepancies), resolve exits 0 (476 s; 14,655 pass, 7 classified). A classified
+configuration still counts as not validated.
 
 ---
 
