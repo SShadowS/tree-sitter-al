@@ -29,7 +29,7 @@ CORPORA = {
     "bc-history": REPO / "BC.History",
     "dc": REPO / "DC",
     "bc28.1": Path(os.environ.get("AL_BC28_ROOT", "H:/Git/BC28.1")),
-    "bcapps-29.0": Path("H:/Git/BCApps-29.0"),
+    "bcapps-29.0": Path(os.environ.get("AL_BCAPPS29_ROOT", "H:/Git/BCApps-29.0")),
     # TEST-ONLY: tools/gate_selftest.py's oracle cases build their corpus at this path in
     # the scratch copy of the repo (REPO is that copy). A label, rather than a CLI option
     # to relabel roots or swap the classification file, keeps the gate case on exactly the
@@ -57,8 +57,9 @@ def _sha(paths):
     return h.hexdigest()[:16]
 
 
-def _git_head(path):
-    r = subprocess.run(["git", "-C", str(path), "rev-parse", "--short", "HEAD"], capture_output=True, text=True)
+def _git_head(path, short=True):
+    r = subprocess.run(["git", "-C", str(path), "rev-parse", *(["--short"] if short else []), "HEAD"],
+                       capture_output=True, text=True)
     return r.stdout.strip() or "not-a-git-repo"
 
 
@@ -184,6 +185,31 @@ def production_classes(labels, tier):
     return out, len(classes)
 
 
+def recorded_heads():
+    """`# corpus-head <label> <sha>` header lines of production-classes.tsv: the corpus
+    commit each label's entries were generated from."""
+    heads = {}
+    for line in PRODUCTION_CLASSES.read_text(encoding="utf-8").splitlines():
+        if line.startswith("# corpus-head "):
+            label, sha = line.split()[2:4]
+            heads[label] = sha
+    return heads
+
+
+def head_mismatches(roots):
+    """A requested corpus whose HEAD is not the one its entries were generated from. Keys
+    like `reference-error:error` carry no content, and only a record's first item is keyed,
+    so a changed corpus can keep matching its old entries: a mismatch fails the run (exit 1)
+    until the file is regenerated from that HEAD. A label with no recorded head is not checked."""
+    heads, out = recorded_heads(), []
+    for root in roots:
+        label = corpus_label(root)
+        if label in heads and _git_head(root, short=False) != heads[label]:
+            out.append(f"corpus {label} ({root}) is at {_git_head(root, short=False)}, but "
+                       f"{PRODUCTION_CLASSES.name} was generated at {heads[label]}: regenerate it")
+    return out
+
+
 def _collect(roots):
     """-> (inputs, {input id: root}, {root: .al count}), or an error message.
     An input id is `<corpus label>:<posix path relative to the root>`.
@@ -235,9 +261,15 @@ def _run(args):
     header["classifications"] = (f"{PRODUCTION_CLASSES.name}, {len(classes)} of {total} "
                                  f"entries apply to the requested corpora and tier")
     summary = runner.run(inputs, None, args.workers, args.tier, classes)
+    stale_heads = head_mismatches(roots)
     extra = ["## Per root", "", *runner.root_table(runner.per_root(summary, root_of, files))]
+    if stale_heads:
+        extra += ["", "## Corpus HEAD mismatch (exit 1)", "", *(f"- {m}" for m in stale_heads)]
+        summary.exit_code = max(summary.exit_code, 1)
     runner.write_report(summary, Path(args.report), header, extra)
     print((Path(args.report) / "summary.md").read_text(encoding="utf-8"))
+    for m in stale_heads:
+        print(f"config-oracle: {m}", file=sys.stderr)
     return summary.exit_code
 
 

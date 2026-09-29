@@ -26,6 +26,16 @@
 #                            piece: the node type, and the host where there is one.
 #   other:                   anything else. Every matched `other` entry is printed in the
 #                            run summary, every run.
+#
+# `# corpus-head <label> <sha>`: the corpus commit a label's entries were generated from.
+# A requested corpus at another HEAD fails the run (exit 1, "regenerate it"): content-free
+# keys (`reference-error:error`, `multi-config-parse:error`) and first-item-only matching
+# would otherwise keep classifying a changed corpus. Only HEAD is compared, not a dirty
+# working tree. Regenerate from a fresh full run (the A4 generator rewrites these lines).
+# corpus-head bc-history 87e7d2a19d2097560d47116202f47d4a20940a14
+# corpus-head bc28.1 4fc2ccf162f81dcd083e02c44f363ca3b7b89831
+# corpus-head bcapps-29.0 e16d6c302714c558b21ec994bea98d4b064a72e8
+# corpus-head dc 5e67e5b9cda1c92d497832a970ea970e1c8a042d
 bc-history:BankDeposits/Source/_Exclude_Bank Deposits/src/tables/BankDepositHeader.Table.al	CLEAN24=0	cannot-validate:lowering:unsupported-type:unsupported-type at preproc_split_if_then_begin: host statement_block:<children>	debt(C1, M3): no lowering handler is registered for preproc_split_if_then_begin; registry `unsupported`, milestone 3
 bc-history:BankDeposits/Source/_Exclude_Bank Deposits/src/tables/BankDepositHeader.Table.al	CLEAN24=1	cannot-validate:lowering:unsupported-type:unsupported-type at preproc_split_if_then_begin: host statement_block:<children>	debt(C1, M3): no lowering handler is registered for preproc_split_if_then_begin; registry `unsupported`, milestone 3
 bc-history:BaseApp/Source/Base Application/CRM/BusinessRelation/BankContUpdate.Codeunit.al	CLEAN24=0	cannot-validate:lowering:unsupported-type:unsupported-type at preproc_split_if_then_begin: host statement_block:<children>	debt(C1, M3): no lowering handler is registered for preproc_split_if_then_begin; registry `unsupported`, milestone 3

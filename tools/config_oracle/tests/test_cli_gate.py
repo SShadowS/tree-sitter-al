@@ -437,3 +437,18 @@ def test_the_real_production_file_has_no_selftest_entry():
                                     "production")
     assert not [k for k, _ in classes if k.startswith("selftest:")]
 
+
+def test_a_corpus_head_mismatch_exits_1(tmp_path, capsys, monkeypatch):
+    """M6: a corpus at another commit than the one its entries were generated from fails
+    the run; a matching head, or a label with no recorded head, does not."""
+    a = _root(tmp_path, "a", {"s.al": STMT})
+    monkeypatch.setattr(cli, "_git_head", lambda path, short=True: "c0ffee")
+    cli.PRODUCTION_CLASSES.write_text("# corpus-head a c0ffee\n", encoding="utf-8")
+    assert _resolve(a, tmp_path=tmp_path) == 0
+    cli.PRODUCTION_CLASSES.write_text("# corpus-head a deadbeef\n", encoding="utf-8")
+    assert _resolve(a, tmp_path=tmp_path) == 1
+    captured = capsys.readouterr()
+    assert "corpus a" in captured.err and "generated at deadbeef: regenerate it" in captured.err
+    assert "## Corpus HEAD mismatch (exit 1)" in captured.out and "- exit code: 1" in captured.out
+    cli.PRODUCTION_CLASSES.write_text("# corpus-head other deadbeef\n", encoding="utf-8")
+    assert _resolve(a, tmp_path=tmp_path) == 0
