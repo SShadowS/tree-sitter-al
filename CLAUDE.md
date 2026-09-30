@@ -53,7 +53,7 @@ python -m tools.config_oracle replay           # historical-defect replays; ~80s
 # (negative / invalid-config need alc evidence; debt(<owner>)); an entry matching no record is stale and fails.
 
 # Perf baselines (docs/performance-baselines.md): baseline ~35 min; one group: native [--cc zig]|wasm|incremental|build|oracle; merge BASE NEW
-python -m tools.perf baseline; python -m tools.perf compare docs/perf/baseline-<date>.json NEW.json  # incremental exits 1 on a mismatch
+python -m tools.perf ab --lib-a OLD.dll --lib-b NEW.dll --corpus dc   # speed DECISIONS: same session, pinned, ABBA; baselines/compare are context (sessions drift ~30%)
 
 # Standard development cycle
 tree-sitter generate         # Generate parser from grammar.js
