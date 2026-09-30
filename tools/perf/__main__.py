@@ -46,6 +46,11 @@ def measure(groups, labels, full_oracle=True):
         g = result["groups"]
         for name in groups:
             common.log(f"=== {name} ===")
+            # Per group, not only at the start: a disturbance mid-run shows up here (the first
+            # baseline's native passes ran ~20% slow with a clean start reading).
+            load = result["env"].setdefault("load_before_group", {})[name] = common.machine_load()
+            if load["busy"]:
+                common.warn(f"machine is busy before {name}: CPU {load['cpu_percent_2s']}% over 2 s")
             if name == "native":
                 from tools.perf import native
                 g[name] = native.measure(labels)
@@ -116,7 +121,7 @@ def main(argv=None):
         out = Path(args.out) if args.out else common.REPO / "tools" / "perf" / "reports"
         path = out / f"{args.cmd}-{datetime.datetime.now():%Y-%m-%d-%H%M%S}.json"
     out.mkdir(parents=True, exist_ok=True)
-    path.write_text(json.dumps(result, indent=1) + "\n", encoding="utf-8")
+    path.write_text(json.dumps(result, indent=1) + "\n", encoding="utf-8", newline="\n")
     common.log(f"wrote {path}")
     if args.cmd == "baseline" and not args.out:
         _render(path, DOC)

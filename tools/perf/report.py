@@ -95,6 +95,8 @@ def render(r, json_rel):
             ld = env[when]
             L.append(f"| {when.replace('_', ' ')} | CPU {ld['cpu_percent_2s']}% over 2 s, "
                      f"{_mib(ld['ram_available_bytes'])} RAM free{' -- BUSY' if ld['busy'] else ''} |")
+    for name, ld in env.get("load_before_group", {}).items():
+        L.append(f"| load before {name} | CPU {ld['cpu_percent_2s']}% over 2 s{' -- BUSY' if ld['busy'] else ''} |")
     L += ["", "`grammar_sha` is the oracle's hash (first 16 hex digits of sha256 over grammar.js, "
           "src/scanner.c, src/parser.c and src/**/*.h): the same inputs, so an oracle report and a "
           "perf result with equal hashes measured the same parser.", ""]
