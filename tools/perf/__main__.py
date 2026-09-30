@@ -181,7 +181,10 @@ def main(argv=None):
               f"  A {r['lib_a']['path']}: median {stats_median(r['seconds']['A']):.3f} s\n"
               f"  B {r['lib_b']['path']}: median {stats_median(r['seconds']['B']):.3f} s\n"
               f"  time A / time B: median {q['median']:.3f} (min {q['min']:.3f}, max {q['max']:.3f}; "
-              f"95% CI of the median {q['ci95_median'][0]:.3f}-{q['ci95_median'][1]:.3f})\n  wrote {path}")
+              f"within-run 95% CI of the median {q['ci95_median'][0]:.3f}-{q['ci95_median'][1]:.3f}; it "
+              f"understates between-run variance)\n"
+              + (f"  WARNING: {r['below_resolution']}\n" if r.get("below_resolution") else "")
+              + f"  wrote {path}")
         return 0
     labels = tuple(args.corpus or common.LABELS)
     if args.cmd == "baseline":

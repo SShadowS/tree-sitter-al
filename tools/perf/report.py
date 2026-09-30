@@ -433,7 +433,15 @@ def _compiler_section(g):
               f"| A `{ab['lib_a']['path']}` | {stats_median(ab['seconds']['A']):.3f} |",
               f"| B `{ab['lib_b']['path']}` | {stats_median(ab['seconds']['B']):.3f} |", "",
               f"**time A / time B = {q['median']:.3f}** (per-round min {q['min']:.3f}, max {q['max']:.3f}; "
-              f"95% CI of the median {q['ci95_median'][0]:.3f}-{q['ci95_median'][1]:.3f}).", ""]
+              f"within-run 95% CI of the median {q['ci95_median'][0]:.3f}-{q['ci95_median'][1]:.3f}).", "",
+              "**Resolution of `ab`.** The CI is a *within-run* interval: a run's rounds share one "
+              "machine state, and independent A/A runs wandered +/-2-3%, more than one run's CI width. "
+              "Measured with a deliberately slowed scanner (re-review 2): at 8 rounds on DC, `ab` "
+              "resolves a difference of about **5%**; about 2% only sometimes; 1% and under not at all. "
+              "**A decision about a difference under 5% needs >= 24 rounds, or two independent `ab` "
+              "runs that agree.** `ab` warns, and records `below_resolution` in its JSON, when a result "
+              "is under 5% from fewer than 24 rounds. The 2.01x above is far outside that band."
+              + (f" This run: {ab['below_resolution']}." if ab.get("below_resolution") else ""), ""]
     if z and n:
         L += ["Throughput with the clang build (a separate run, so not decision-grade against the "
               "MSVC table: see *Session drift* below):", "", _measured(z), "",
@@ -517,7 +525,9 @@ No pass/fail thresholds: those are roadmap D2's.
   noise floor (5% single-threaded, 10% parallel, `--floor`), and warns when the CPU or the pin
   differs. **Decisions -- "is B faster than A" -- use `python -m tools.perf ab`**: both
   libraries in one process, on the pinned CPU, interleaved ABBA, trees checked identical, with a
-  ratio and its confidence interval. The baselines are context, not the yardstick.
+  ratio and a within-run confidence interval. The baselines are context, not the yardstick.
+  `ab` itself resolves ~5% at 8 rounds on DC (~2% only sometimes, <=1% not at all): a decision
+  about a difference under 5% needs >= 24 rounds, or two independent `ab` runs that agree.
 - **Load.** Each group is sampled every second for CPU used by processes **outside** the
   measuring process tree (system busy CPU minus the tree's), in logical cores. The idle
   workstation measured mean 2.9-3.4, p95 5.0-5.9 and max 6.0-10.3 cores (desktop apps only). A

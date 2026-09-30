@@ -6,8 +6,16 @@ speed comparison (roadmap D1).
 Why not compare two baselines: single-threaded figures drifted ~30% between sessions on this
 machine with clean load readings, and CCD placement alone moved a DC pass ~12%. A ratio of two
 libraries measured in the SAME process, on the SAME pinned CPU, interleaved A,B,B,A,A,B,...
-cancels both: a drift during the run hits A and B alike, and the ABBA order cancels a linear
-trend within each pair of rounds.
+cancels most of both: a drift during the run hits A and B alike. The ratio is per round, so a
+linear trend biases AB rounds and BA rounds in opposite directions; the median roughly cancels
+it and the spread widens.
+
+RESOLUTION (re-review 2, N3). At 8 rounds on DC, `ab` resolves a difference of about 5%; ~2%
+only sometimes; 1% and under not at all. Independent A/A runs wandered +/-2-3%, more than one
+run's CI width: the rounds of one run share one machine state, so the bootstrap CI is a
+WITHIN-RUN interval and understates the between-run variance. Rule: a decision about a
+difference under 5% needs >= 24 rounds, or two independent `ab` runs that agree. `ab` warns,
+and records `below_resolution` in the JSON, when a result falls under that bar.
 
 Before any timing, both libraries parse every file and the complete cursor-derived trees
 (tools/perf/incremental.rows: every node, named and anonymous, type, grammar symbol, fields,
@@ -104,6 +112,27 @@ def run(lib_a, lib_b, labels, rounds=8):
         "rounds": rounds, "order": "".join(order), "pin": p.record(),
         "seconds": {"A": [s for w, s in zip(order, secs) if w == "A"], "B": [s for w, s in zip(order, secs) if w == "B"]},
         "ratio_a_over_b": {"median": stats.median(r), "min": min(r), "max": max(r), "runs": r,
-                           "ci95_median": [lo, hi], "ci_method": "percentile bootstrap of the median, 4000 resamples, seed 0"},
+                           "ci95_median": [lo, hi],
+                           "ci_method": "percentile bootstrap of the median over this run's rounds, 4000 "
+                                        "resamples, seed 0. A WITHIN-RUN interval: the rounds share one "
+                                        "machine state, so it understates between-run variance "
+                                        "(independent A/A runs wandered +/-2-3%)"},
+        "below_resolution": below_resolution(stats.median(r), rounds),
     })
+    if result["below_resolution"]:
+        common.warn(f"ab: {result['below_resolution']}")
     return result
+
+
+RESOLUTION, ROUNDS_FOR_SMALL = 0.05, 24
+
+
+def below_resolution(ratio, rounds):
+    """None, or the warning when |1 - ratio| < 5% from fewer than 24 rounds: at 8 rounds on
+    DC `ab` resolves ~5%, ~2% only sometimes and <= 1% not at all (re-review 2, N3)."""
+    if abs(1 - ratio) >= RESOLUTION or rounds >= ROUNDS_FOR_SMALL:
+        return None
+    return (f"the measured difference ({(ratio - 1) * 100:+.1f}%) is below this run's resolution: "
+            f"{rounds} rounds resolve ~5% (~2% only sometimes, <=1% not at all). A decision about "
+            f"a difference under 5% needs >= {ROUNDS_FOR_SMALL} rounds, or two independent `ab` runs "
+            "that agree. The CI is within-run and understates between-run variance")

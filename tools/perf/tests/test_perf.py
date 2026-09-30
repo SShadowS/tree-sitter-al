@@ -383,3 +383,13 @@ def test_mean_rule_needs_enough_samples():
     long = load.summary([5.0] * load.MEAN_MIN_SAMPLES)
     assert long["mean_rule_applies"] and long["flagged"]
     assert load.summary([12.0])["flagged"]                       # the max rule always applies
+
+
+def test_ab_warns_below_resolution():
+    from tools.perf import ab
+    assert ab.below_resolution(2.013, 8) is None                    # a 2x difference: resolved
+    assert ab.below_resolution(0.94, 8) is None                     # 6%: at resolution
+    msg = ab.below_resolution(1.02, 8)
+    assert msg and "below this run's resolution" in msg and ">= 24 rounds" in msg
+    assert "two independent `ab` runs" in msg and "within-run" in msg
+    assert ab.below_resolution(0.99, 8) and ab.below_resolution(1.02, 24) is None
