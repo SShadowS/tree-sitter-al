@@ -37,7 +37,7 @@ class TreeSampler(threading.Thread):
             procs = [self.root, *self.root.children(recursive=True)]
         except psutil.NoSuchProcess:
             return
-        rss, private = [], 0
+        rss, private, peak = [], 0, 0
         for p in procs:
             try:
                 mi = p.memory_info()
@@ -45,10 +45,14 @@ class TreeSampler(threading.Thread):
                 continue
             rss.append(mi.rss)
             private += getattr(mi, "private", 0)
+            # Windows keeps each process's exact lifetime peak working set: the per-process max
+            # then does not depend on a sample landing on the peak (it read 1,266 MiB sampled
+            # against the oracle's own 1,278 MiB).
+            peak = max(peak, getattr(mi, "peak_wset", 0) or mi.rss)
         if rss:
             self.samples += 1
             self.peak_sum = max(self.peak_sum, sum(rss))
-            self.peak_single = max(self.peak_single, max(rss))
+            self.peak_single = max(self.peak_single, peak)
             self.peak_private_sum = max(self.peak_private_sum, private)
             self.peak_processes = max(self.peak_processes, len(rss))
 
@@ -122,6 +126,14 @@ def _src_digest():
     return h.hexdigest()
 
 
+def _src_state():
+    """What a failed generate/build left in src/: a partly written parser.c must be visible."""
+    git = lambda *a: subprocess.run(["git", *a], cwd=common.REPO, capture_output=True,  # noqa: E731
+                                    text=True).stdout.strip() or "(clean)"
+    return (f"git status --short src/:\n{git('status', '--short', 'src/')}\n"
+            f"git diff --stat src/:\n{git('diff', '--stat', '--', 'src/')}")
+
+
 def parser_metrics():
     text = (common.REPO / "src" / "parser.c").read_text(encoding="utf-8", errors="replace")
     m = {k: int(re.search(rf"#define {k} (\d+)", text).group(1))
@@ -149,7 +161,7 @@ def build_inner(out_path):
                 secs.append((time.perf_counter_ns() - t) / 1e9)
                 if proc.returncode:
                     raise RuntimeError(f"{' '.join(cmd)} exited {proc.returncode} (run {r + 1}):\n"
-                                       f"{proc.stdout}{proc.stderr}")
+                                       f"{proc.stdout}{proc.stderr}\n{_src_state()}")
         res[name] = stats.spread(secs[1:] if name == "generate" else secs)
     after = _src_digest()
     diffstat = subprocess.run(["git", "diff", "--stat", "--", "src"], cwd=common.REPO,
@@ -168,3 +180,105 @@ def build():
     if not res["src_unchanged_by_generate"]:
         common.warn(f"tree-sitter generate changed src/:\n{res['git_diff_stat_src']}")
     return {**res, **parser_metrics()}
+
+
+# ---- which compiler built the native library ------------------------------------------
+
+def _pe_linker_version(path):
+    """MajorLinkerVersion.MinorLinkerVersion from a PE optional header (Windows DLL), or None."""
+    data = Path(path).read_bytes()[:4096]
+    if data[:2] != b"MZ":
+        return None
+    pe = int.from_bytes(data[0x3C:0x40], "little")
+    if data[pe:pe + 4] != b"PE\0\0":
+        return None
+    opt = pe + 4 + 20
+    return f"{data[opt + 2]}.{data[opt + 3]}"
+
+
+def _file_sha(path):
+    return hashlib.sha256(Path(path).read_bytes()).hexdigest()
+
+
+def _compiler_version(exe):
+    """cl.exe prints its banner on stderr when run bare; gcc/clang answer --version."""
+    bare = Path(exe).name.lower() == "cl.exe"
+    try:
+        r = subprocess.run([exe] if bare else [exe, "--version"], capture_output=True, text=True, timeout=30)
+    except (OSError, subprocess.TimeoutExpired) as e:
+        return f"? ({e})"
+    return next((l.strip() for l in (r.stderr + r.stdout).splitlines() if l.strip()), "?")
+
+
+def parse_invocation(text):
+    """-> (compiler path, [flags]) from `tree-sitter build -v` output: the line that runs the
+    compiler. Include paths, output/object paths, source files and everything after `-link`
+    are inputs, not flags, and are dropped."""
+    for line in text.splitlines():
+        # The path may hold spaces (C:\Program Files\...\cl.exe), so match the executable
+        # by its name, not by splitting first.
+        m = re.match(r"^(?:\[\]\s*)?(\S.*?(?:^|[\\/])(?:cl|clang-cl|clang|gcc|cc)(?:\.exe)?)(?=\s)", line, re.I)
+        if not m:
+            continue
+        exe, rest = m.group(1), line[m.end():].split()
+        if "-link" in rest:
+            rest = rest[:rest.index("-link")]
+        flags, skip = [], False
+        for t in rest:
+            if skip:
+                skip = False
+                continue
+            if t in ("-I", "-o", "/I"):
+                skip = True
+                continue
+            if t.startswith(("-I", "/I", "/Fo", "-Fo", "-o")) or t.endswith((".c", ".cc")):
+                continue
+            if t.startswith(("-", "/")):
+                flags.append(t)
+        return exe, flags
+    return None, []
+
+
+def compiler_probe():
+    """The compiler and flags behind al.dll, taken from a real invocation: `tree-sitter build
+    -v` of the same sources with the same CLI -- the command loader.ensure_library runs -- to a
+    temporary output. al.dll itself cannot be byte-compared with the probe: the MSVC linker
+    embeds the output file name, so two builds to different paths differ in 51 bytes. Its PE
+    linker version is recorded as the cross-check against the probe's compiler."""
+    with tempfile.TemporaryDirectory() as tmp:
+        r = common.ts_lock("tree-sitter", "build", "-v", "--output", str(Path(tmp) / "probe.dll"), ".",
+                           capture_output=True, text=True)
+    exe, flags = parse_invocation(r.stdout + r.stderr)
+    lib = common.REPO / "al.dll"
+    return {"built_by": "tree-sitter build (tools/query_coverage/loader.ensure_library)",
+            "probe": "tree-sitter build -v --output <tmp>/probe.dll .", "probe_exit": r.returncode,
+            "compiler": exe or "?", "compiler_version": _compiler_version(exe) if exe else "?",
+            "flags": flags, "library_sha256": _file_sha(lib) if lib.is_file() else None,
+            "library_pe_linker_version": _pe_linker_version(lib) if lib.is_file() else None}
+
+
+def zig_library():
+    """A clang -O2 build of the same sources via `zig cc`, for `native --cc zig`: the compiler
+    sensitivity comparison (docs/performance-baselines.md). Cached by source sha."""
+    import shutil
+    zig = shutil.which("zig")
+    if not zig:
+        raise SystemExit("perf: --cc zig needs zig on PATH")
+    src = common.REPO / "src"
+    key = hashlib.sha256((src / "parser.c").read_bytes() + (src / "scanner.c").read_bytes()).hexdigest()[:16]
+    out = common.REPO / "tools" / "perf" / "reports" / f"al-zig-{key}.dll"
+    flags = ["-shared", "-O2"]
+    cmd = [zig, "cc", *flags, "-I", str(src), str(src / "parser.c"), str(src / "scanner.c"), "-o", str(out)]
+    if not out.is_file():
+        out.parent.mkdir(parents=True, exist_ok=True)
+        common.log("building the zig cc (clang -O2) library")
+        subprocess.run(cmd, cwd=common.REPO, check=True)
+    ver = subprocess.run([zig, "cc", "--version"], capture_output=True, text=True).stdout.splitlines()
+    return out, {"built_by": "tools.perf --cc zig", "probe": " ".join(["zig", "cc", *flags, "-I src",
+                 "src/parser.c", "src/scanner.c", "-o", out.name]),
+                 "compiler": zig, "compiler_version": (ver[0] if ver else "?") + f" (zig {_zig_version(zig)})",
+                 "flags": flags, "library_sha256": _file_sha(out), "library_pe_linker_version": _pe_linker_version(out)}
+
+
+def _zig_version(zig):
+    return subprocess.run([zig, "version"], capture_output=True, text=True).stdout.strip()

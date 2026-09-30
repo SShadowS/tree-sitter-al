@@ -63,17 +63,25 @@ def source(data: bytes) -> bytes:
 
 
 def load(labels):
-    """-> ([(label, relpath, bytes)], read seconds). The oracle's enumeration: sorted
+    """-> ([(label, relpath, bytes)], read info). The oracle's enumeration: sorted
     rglob("*.al") per root. Reading (and `source`'s transcoding) is timed on its own, so no
-    parse time includes I/O."""
-    files, t0 = [], time.perf_counter_ns()
+    parse time includes I/O. read info: {seconds, per_corpus: {label: seconds}, utf16: [ids
+    of the transcoded files]} -- per corpus because the roots sit on different drives."""
+    files, info, t0 = [], {"per_corpus": {}, "utf16": []}, time.perf_counter_ns()
     for label in labels:
-        root = oracle.CORPORA[label]
+        root, t1 = oracle.CORPORA[label], time.perf_counter_ns()
         paths = sorted(root.rglob("*.al"))
         if not paths:
             raise SystemExit(f"perf: corpus {label} ({root}) has no .al files")
-        files += [(label, p.relative_to(root).as_posix(), source(p.read_bytes())) for p in paths]
-    return files, (time.perf_counter_ns() - t0) / 1e9
+        for p in paths:
+            raw = p.read_bytes()
+            rel = p.relative_to(root).as_posix()
+            if raw[:2] in (UTF16LE_BOM, UTF16BE_BOM):
+                info["utf16"].append(f"{label}:{rel}")
+            files.append((label, rel, source(raw)))
+        info["per_corpus"][label] = (time.perf_counter_ns() - t1) / 1e9
+    info["seconds"] = (time.perf_counter_ns() - t0) / 1e9
+    return files, info
 
 
 def _cpu_model():
@@ -95,10 +103,12 @@ def _out(*cmd):
 
 
 def machine_load():
-    import psutil
-    cpu = psutil.cpu_percent(interval=2)
-    return {"cpu_percent_2s": cpu, "ram_available_bytes": psutil.virtual_memory().available,
-            "busy": cpu > BUSY_PERCENT}
+    """A 2 s reading with the top 5 processes, the CPU clock and the power plan. `busy` keeps
+    the old 20% rule for the start warning; the per-group judgement is tools/perf/load.py's
+    continuous outside-CPU sampling."""
+    from tools.perf import load
+    snap = load.snapshot()
+    return snap | {"busy": snap["cpu_percent_2s"] > BUSY_PERCENT}
 
 
 def environment(labels):
@@ -119,7 +129,10 @@ def environment(labels):
         # The inputs the oracle hashes (grammar.js, scanner.c, parser.c, src/**/*.h).
         "grammar_sha": oracle._header("perf")["grammar"],
         "repo_head": oracle._git_head(REPO, short=False),
-        "corpora": {l: {"root": str(oracle.CORPORA[l]), "head": oracle._git_head(oracle.CORPORA[l], short=False)}
+        "repo_dirty": _out("git", "status", "--porcelain", "--untracked-files=no") not in ("", "?"),
+        "cpu_affinity": _affinity(),
+        "corpora": {l: {"root": str(oracle.CORPORA[l]), "head": oracle._git_head(oracle.CORPORA[l], short=False),
+                        "drive": oracle.CORPORA[l].resolve().drive or "/"}
                     for l in labels},
         "load_at_start": machine_load(),
     }
@@ -127,6 +140,15 @@ def environment(labels):
         warn(f"machine is busy at start: CPU {env['load_at_start']['cpu_percent_2s']}% over 2 s "
              f"(> {BUSY_PERCENT}%); numbers may be inflated")
     return env
+
+
+def _affinity():
+    import psutil
+    try:
+        cpus = psutil.Process().cpu_affinity()
+    except (AttributeError, psutil.Error):
+        return "n/a"
+    return "all" if len(cpus) == psutil.cpu_count() else cpus
 
 
 def warn(msg):
