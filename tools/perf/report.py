@@ -242,13 +242,17 @@ result holds only its own group, and `compare` lists the other file's extra metr
 
 - **Timing** is `time.perf_counter_ns` (Node: `process.hrtime.bigint`). A warm-up pass is
   discarded, then 3 passes; figures are the median and (min-max). Only the parse call is timed.
-  Reading the files is timed on its own and depends on the OS file cache (the first run after
-  a reboot reads from disk).
+  Reading the files is timed on its own and depends on the OS file cache and on on-access
+  scanning: the same 70,355 files took 11 s in one run and 298 s in the next. It is reported,
+  never compared.
 - **Percentiles** are linear interpolation between closest ranks (numpy's default), over each
   file's median time across the passes. p99 over ~70k files is well sampled; `max` is one file.
 - **Parallel** throughput is bounded by the slowest chunk at the end of the pass and by the
   machine's other load; it is the number to compare between runs on the same machine, not a
-  scaling law.
+  scaling law. Its within-run spread under-states run-to-run noise: an independent re-run of
+  `native` on the same idle machine moved `dc` (a 0.13 s pass) by 6% and `bc28.1` by 2.4%,
+  beyond the recorded spread, while every single-threaded figure stayed inside it. Treat a
+  parallel delta under ~5% (under ~10% for `dc`) as noise.
 - **Machine load** is recorded at the start (and end) of every run; above 20% CPU the run
   warns in its output and in the JSON. This workstation runs other work, so the spread is the
   honest error bar: compare medians only when the spreads are small against the delta.
