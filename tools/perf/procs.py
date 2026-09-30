@@ -20,8 +20,9 @@ INTERVAL = 0.25
 class TreeSampler(threading.Thread):
     """Samples a process and all its descendants every `interval` s. Records the peak of the
     SUM of RSS over the tree (aggregate), the largest single-process RSS (per-process max),
-    and on Windows the peak sum of private bytes, which -- unlike RSS -- does not count a
-    page shared by several processes (al.dll's code in every worker) once per process."""
+    and on Windows the peak sum of private (committed, not necessarily resident) bytes, which
+    -- unlike RSS -- does not count a page shared by several processes (al.dll's code in
+    every worker) once per process."""
 
     def __init__(self, pid, interval=INTERVAL):
         super().__init__(daemon=True)

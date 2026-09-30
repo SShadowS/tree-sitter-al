@@ -131,8 +131,8 @@ def render(r, json_rel):
         L += ["## WASM throughput (web-tree-sitter under Node, single-threaded)", "",
               f"`tree-sitter-al.wasm` ({w['wasm_bytes']:,} bytes, checked fresh with "
               f"`tools/check-wasm-fresh.sh`), web-tree-sitter {w['web_tree_sitter']}. Same file list, "
-              f"read first ({w['read_seconds']:.2f} s); each file is decoded to a JS string (BOM kept) "
-              f"outside the timed region, so only `parser.parse()` is timed. Warm-up discarded, "
+              f"read first ({w['read_seconds']:.2f} s); each file is decoded to a JS string outside "
+              f"the timed region (a UTF-8 BOM kept; UTF-16 decoded as UTF-16, as natively), so only `parser.parse()` is timed. Warm-up discarded, "
               f"{w['repeats']} timed passes.", "",
               "| corpus | files | has_error | files/s | MiB/s | p50 ms | p95 ms | p99 ms | max ms |",
               "|---|---:|---:|---:|---:|---:|---:|---:|---:|"]
@@ -149,8 +149,10 @@ def render(r, json_rel):
               f"{len(w['invalid_utf8_files'])}.", ""]
         if "native" in g:
             nat, was = g["native"]["corpora"]["combined"], w["corpora"]["combined"]
-            L += [f"WASM / native single-threaded time, all corpora: "
-                  f"{was['single']['seconds']['median'] / nat['single']['seconds']['median']:.2f}x.", ""]
+            ratio = was['single']['seconds']['median'] / nat['single']['seconds']['median']
+            L += [f"WASM / native single-threaded time, all corpora: {ratio:.2f}x"
+                  + (" -- WASM is the faster one here; see the caveat on the native build." if ratio < 1 else ".")
+                  , ""]
 
     if "incremental" in g:
         i = g["incremental"]
@@ -194,7 +196,8 @@ def render(r, json_rel):
               f"{o['workers']} workers), sampled every 250 ms. *Aggregate* is the peak of the SUM of RSS "
               "(Windows: working set) over the tree; *per-process max* is the largest single process, "
               "which is what the oracle's own `peak RSS (max over processes)` line reports. *Private sum* "
-              "is the peak sum of private bytes, which does not count shared pages once per process.", "",
+              "is the peak sum of private (committed) bytes: it never counts a shared page twice, but it "
+              "counts memory committed and not resident, so it can exceed the RSS sum.", "",
               "| tier | runs | wall, s | aggregate peak | per-process max | private sum |", "|---|---:|---:|---:|---:|---:|",
               f"| quick | {q['repeats']} (+1 warm-up) | {_t(q['seconds'])} | {_mib(q['peak_rss_sum_bytes'])} | "
               f"{_mib(q['peak_rss_single_process_bytes'])} | {_mib(q['peak_private_sum_bytes'])} |"]
@@ -213,7 +216,7 @@ def render(r, json_rel):
 CAVEATS = """## Reproducing and comparing
 
 ```bash
-python -m tools.perf baseline                       # everything, all 4 corpora (~1.5 h); writes
+python -m tools.perf baseline                       # everything, all 4 corpora (~30 min); writes
                                                     # docs/perf/baseline-<date>.json and this file
 python -m tools.perf native      [--corpus LABEL ...] [--out DIR]   # one group at a time; the
 python -m tools.perf wasm        [--corpus LABEL ...] [--out DIR]   # result goes to
@@ -248,11 +251,17 @@ result holds only its own group, and `compare` lists the other file's extra metr
   warns in its output and in the JSON. This workstation runs other work, so the spread is the
   honest error bar: compare medians only when the spreads are small against the delta.
 - **Memory**: RSS sums count shared pages (the parser DLL mapped by every worker) once per
-  process, so the aggregate over-states physical use; the private sum does not. Both are
+  process, so the aggregate over-states physical use. The private sum (Windows only) counts
+  no shared page twice but is commit charge, not residency, so it can be the larger. Both are
   sampled, so a peak shorter than 250 ms can be missed.
 - **Incremental equivalence** covers only the edit kinds listed, at one pseudo-random site per
   kind per file; it proves nothing about other edits. The seed is fixed so a later run edits
   the same sites while the corpora and the parser are unchanged.
+- **The native library is `tree-sitter build`'s**, which on this machine compiles with MSVC
+  (`al.dll` imports `VCRUNTIME140.dll`); the WASM is built by emscripten (clang). That native
+  is slower than WASM single-threaded is a measured fact about these two builds, not about the
+  grammar. Compare native with native and WASM with WASM; a different compiler or flags moves
+  the native numbers without any grammar change.
 - `benchmark.sh` (`tree-sitter parse` over BC.History, appending to the untracked
   `benchmark-results.txt`) measures CLI wall time including process start and I/O; it is kept,
   and is not comparable with these numbers.
