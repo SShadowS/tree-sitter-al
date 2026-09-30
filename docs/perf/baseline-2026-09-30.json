@@ -1,0 +1,2527 @@
+{
+ "schema": 1,
+ "command": "python -m tools.perf baseline",
+ "started": "2026-09-30T16:50:14+02:00",
+ "env": {
+  "cpu": "AMD Ryzen 9 9950X3D 16-Core Processor",
+  "cores_logical": 32,
+  "cores_physical": 16,
+  "ram_bytes": 100556894208,
+  "os": "Windows-11-10.0.26200-SP0",
+  "python": "3.13.14",
+  "py_tree_sitter": "0.25.2",
+  "psutil": "7.2.2",
+  "tree_sitter_cli": "tree-sitter 0.27.0",
+  "node": "v24.14.0",
+  "web_tree_sitter": "0.27.0",
+  "grammar_sha": "d82c45da03d9d4ee",
+  "repo_head": "b9cea71890977098b7163c45c14ad9d87dec0b09",
+  "corpora": {
+   "bc-history": {
+    "root": "U:\\Git\\tree-sitter-al\\BC.History",
+    "head": "87e7d2a19d2097560d47116202f47d4a20940a14"
+   },
+   "dc": {
+    "root": "U:\\Git\\tree-sitter-al\\DC",
+    "head": "5e67e5b9cda1c92d497832a970ea970e1c8a042d"
+   },
+   "bc28.1": {
+    "root": "H:\\Git\\BC28.1",
+    "head": "4fc2ccf162f81dcd083e02c44f363ca3b7b89831"
+   },
+   "bcapps-29.0": {
+    "root": "H:\\Git\\BCApps-29.0",
+    "head": "e16d6c302714c558b21ec994bea98d4b064a72e8"
+   }
+  },
+  "load_at_start": {
+   "cpu_percent_2s": 10.9,
+   "ram_available_bytes": 49480196096,
+   "busy": false
+  },
+  "load_at_end": {
+   "cpu_percent_2s": 10.7,
+   "ram_available_bytes": 47327043584,
+   "busy": false
+  }
+ },
+ "groups": {
+  "build": {
+   "generate": {
+    "median": 2.2991889,
+    "min": 2.2895631,
+    "max": 2.3221398,
+    "runs": [
+     2.2895631,
+     2.3221398,
+     2.2991889
+    ]
+   },
+   "build": {
+    "median": 13.2405222,
+    "min": 12.9617509,
+    "max": 13.5503739,
+    "runs": [
+     13.2405222,
+     13.5503739,
+     12.9617509
+    ]
+   },
+   "src_unchanged_by_generate": true,
+   "git_diff_stat_src": "",
+   "build_command": "tree-sitter build --output <tmp>/al-perf-N.dll .",
+   "parser_c_bytes": 39556063,
+   "parser_c_mib": 37.72,
+   "LANGUAGE_VERSION": 15,
+   "STATE_COUNT": 15870,
+   "LARGE_STATE_COUNT": 5750,
+   "SYMBOL_COUNT": 1026,
+   "wasm_bytes": 13043917
+  },
+  "native": {
+   "read_seconds": 10.9601628,
+   "repeats": 3,
+   "workers": 31,
+   "chunk": 8,
+   "corpora": {
+    "bc-history": {
+     "files": 15358,
+     "bytes": 229163318,
+     "has_error": 0,
+     "has_error_files": [],
+     "single": {
+      "seconds": {
+       "median": 28.2615533,
+       "min": 26.1673521,
+       "max": 28.5409068,
+       "runs": [
+        28.5409068,
+        28.2615533,
+        26.1673521
+       ]
+      },
+      "files_per_s": {
+       "median": 543.4237756493023,
+       "min": 538.1048369493292,
+       "max": 586.9145621348521,
+       "runs": [
+        538.1048369493292,
+        543.4237756493023,
+        586.9145621348521
+       ]
+      },
+      "mib_per_s": {
+       "median": 7.7330204861400205,
+       "min": 7.6573310081037125,
+       "max": 8.351902393633404,
+       "runs": [
+        7.6573310081037125,
+        7.7330204861400205,
+        8.351902393633404
+       ]
+      }
+     },
+     "latency_ms": {
+      "p50": 0.4341,
+      "p95": 7.690329999999999,
+      "p99": 22.161078000000018,
+      "max": 86.3366,
+      "mean": 1.8028629639275948
+     },
+     "slowest": [
+      {
+       "file": "bc-history:BaseApp/Source/Base Application/Purchases/Posting/PurchPost.Codeunit.al",
+       "bytes": 642803,
+       "ms": 86.337
+      },
+      {
+       "file": "bc-history:BaseApp/Source/Base Application/Sales/Posting/SalesPost.Codeunit.al",
+       "bytes": 672437,
+       "ms": 85.18
+      },
+      {
+       "file": "bc-history:BaseApp/Source/Base Application/Utilities/CopyDocumentMgt.Codeunit.al",
+       "bytes": 704083,
+       "ms": 81.142
+      },
+      {
+       "file": "bc-history:BaseApp/Source/Base Application/Finance/GeneralLedger/Posting/GenJnlPostLine.Codeunit.al",
+       "bytes": 594425,
+       "ms": 79.399
+      },
+      {
+       "file": "bc-history:BaseApp/Test/Tests-ERM/ERMPurchaseOrder.Codeunit.al",
+       "bytes": 608502,
+       "ms": 75.082
+      },
+      {
+       "file": "bc-history:BaseApp/Source/Base Application/Sales/Document/SalesLine.Table.al",
+       "bytes": 530174,
+       "ms": 73.701
+      },
+      {
+       "file": "bc-history:BaseApp/Source/Base Application/Purchases/Document/PurchaseLine.Table.al",
+       "bytes": 510422,
+       "ms": 66.003
+      },
+      {
+       "file": "bc-history:BaseApp/Test/Tests-SCM-Manufacturing/SCMProductionOrderIII.Codeunit.al",
+       "bytes": 548981,
+       "ms": 65.69
+      },
+      {
+       "file": "bc-history:BaseApp/Test/Tests-SCM-Manufacturing/SCMProductionOrdersII.Codeunit.al",
+       "bytes": 499488,
+       "ms": 64.422
+      },
+      {
+       "file": "bc-history:BaseApp/Source/Base Application/Inventory/Posting/ItemJnlPostLine.Codeunit.al",
+       "bytes": 448100,
+       "ms": 63.705
+      }
+     ],
+     "parallel": {
+      "seconds": {
+       "median": 1.3138282,
+       "min": 1.3092634,
+       "max": 1.324654,
+       "runs": [
+        1.3092634,
+        1.324654,
+        1.3138282
+       ]
+      },
+      "files_per_s": {
+       "median": 11689.504000599167,
+       "min": 11593.970953924572,
+       "max": 11730.259930889384,
+       "runs": [
+        11730.259930889384,
+        11593.970953924572,
+        11689.504000599167
+       ]
+      },
+      "mib_per_s": {
+       "median": 166.3437964256195,
+       "min": 164.98434356370652,
+       "max": 166.92376082539087,
+       "runs": [
+        166.92376082539087,
+        164.98434356370652,
+        166.3437964256195
+       ]
+      }
+     }
+    },
+    "dc": {
+     "files": 1352,
+     "bytes": 15077654,
+     "has_error": 0,
+     "has_error_files": [],
+     "single": {
+      "seconds": {
+       "median": 2.0334042,
+       "min": 1.8575993,
+       "max": 2.0643265,
+       "runs": [
+        2.0334042,
+        2.0643265,
+        1.8575993
+       ]
+      },
+      "files_per_s": {
+       "median": 664.894859566042,
+       "min": 654.9351568174899,
+       "max": 727.8211183649779,
+       "runs": [
+        664.894859566042,
+        654.9351568174899,
+        727.8211183649779
+       ]
+      },
+      "mib_per_s": {
+       "median": 7.071477166940031,
+       "min": 6.965550929787493,
+       "max": 7.740728246107738,
+       "runs": [
+        7.071477166940031,
+        6.965550929787493,
+        7.740728246107738
+       ]
+      }
+     },
+     "latency_ms": {
+      "p50": 0.46230000000000004,
+      "p95": 5.9732400000000005,
+      "p99": 14.588389000000001,
+      "max": 49.2235,
+      "mean": 1.4736495562130176
+     },
+     "slowest": [
+      {
+       "file": "dc:Cloud/.dependencies/DC/Codeunit/CDCPurchDocManagement.Codeunit.al",
+       "bytes": 343785,
+       "ms": 49.224
+      },
+      {
+       "file": "dc:Test/.dependencies/DC/Test/Codeunit/CDCRegisterTest.Codeunit.al",
+       "bytes": 240647,
+       "ms": 30.166
+      },
+      {
+       "file": "dc:Cloud/.dependencies/DC/Codeunit/CDCPurchRegister.Codeunit.al",
+       "bytes": 193121,
+       "ms": 29.929
+      },
+      {
+       "file": "dc:Cloud/.dependencies/DC/Codeunit/CDCCaptureManagement.Codeunit.al",
+       "bytes": 158058,
+       "ms": 27.447
+      },
+      {
+       "file": "dc:Cloud/Modules/Approvals/Codeunits/CDCApprovalManagement.Codeunit.al",
+       "bytes": 177175,
+       "ms": 25.831
+      },
+      {
+       "file": "dc:Test/src/Tests/MatchTest.Codeunit.al",
+       "bytes": 196827,
+       "ms": 24.993
+      },
+      {
+       "file": "dc:Cloud/.dependencies/DC/Codeunit/CDCCreateDocCaptureRoles.Codeunit.al",
+       "bytes": 101420,
+       "ms": 22.549
+      },
+      {
+       "file": "dc:Test/.dependencies/DC/Test/Codeunit/CDCAdvancedApprovalTest.Codeunit.al",
+       "bytes": 167238,
+       "ms": 21.176
+      },
+      {
+       "file": "dc:Test/.dependencies/DC/Test/Codeunit/CDCAdvPOApprovalTest.Codeunit.al",
+       "bytes": 165880,
+       "ms": 19.501
+      },
+      {
+       "file": "dc:Test/.dependencies/DC/Test/Codeunit/CDCAdvPROApprovalTest.Codeunit.al",
+       "bytes": 167553,
+       "ms": 19.236
+      }
+     ],
+     "parallel": {
+      "seconds": {
+       "median": 0.1537508,
+       "min": 0.15364,
+       "max": 0.1580696,
+       "runs": [
+        0.15364,
+        0.1580696,
+        0.1537508
+       ]
+      },
+      "files_per_s": {
+       "median": 8793.450180421825,
+       "min": 8553.194289097966,
+       "max": 8799.791720906014,
+       "runs": [
+        8799.791720906014,
+        8553.194289097966,
+        8793.450180421825
+       ]
+      },
+      "mib_per_s": {
+       "median": 93.52257920908355,
+       "min": 90.96734205350023,
+       "max": 93.59002454738324,
+       "runs": [
+        93.59002454738324,
+        90.96734205350023,
+        93.52257920908355
+       ]
+      }
+     }
+    },
+    "bc28.1": {
+     "files": 16928,
+     "bytes": 253140020,
+     "has_error": 0,
+     "has_error_files": [],
+     "single": {
+      "seconds": {
+       "median": 30.5749319,
+       "min": 27.715658,
+       "max": 31.052949,
+       "runs": [
+        30.5749319,
+        31.052949,
+        27.715658
+       ]
+      },
+      "files_per_s": {
+       "median": 553.6561800158908,
+       "min": 545.1334106786444,
+       "max": 610.7738809592757,
+       "runs": [
+        553.6561800158908,
+        545.1334106786444,
+        610.7738809592757
+       ]
+      },
+      "mib_per_s": {
+       "median": 7.895786532514385,
+       "min": 7.774241845068063,
+       "max": 8.710351943604024,
+       "runs": [
+        7.895786532514385,
+        7.774241845068063,
+        8.710351943604024
+       ]
+      }
+     },
+     "latency_ms": {
+      "p50": 0.41225,
+      "p95": 7.635469999999994,
+      "p99": 22.157703999999974,
+      "max": 90.9395,
+      "mean": 1.768518501890359
+     },
+     "slowest": [
+      {
+       "file": "bc28.1:BaseApp/Source/Base Application/Sales/Posting/SalesPost.Codeunit.al",
+       "bytes": 790566,
+       "ms": 90.939
+      },
+      {
+       "file": "bc28.1:BaseApp/Source/Base Application/Utilities/CopyDocumentMgt.Codeunit.al",
+       "bytes": 704145,
+       "ms": 89.671
+      },
+      {
+       "file": "bc28.1:BaseApp/Source/Base Application/Purchases/Posting/PurchPost.Codeunit.al",
+       "bytes": 629873,
+       "ms": 89.348
+      },
+      {
+       "file": "bc28.1:BaseApp/Test/Tests-ERM/ERMPurchaseOrder.Codeunit.al",
+       "bytes": 639025,
+       "ms": 79.48
+      },
+      {
+       "file": "bc28.1:BaseApp/Source/Base Application/Finance/GeneralLedger/Posting/GenJnlPostLine.Codeunit.al",
+       "bytes": 613862,
+       "ms": 77.865
+      },
+      {
+       "file": "bc28.1:BaseApp/Source/Base Application/Sales/Document/SalesLine.Table.al",
+       "bytes": 717526,
+       "ms": 74.421
+      },
+      {
+       "file": "bc28.1:BaseApp/Test/Tests-SCM-Manufacturing/SCMProductionOrderIII.Codeunit.al",
+       "bytes": 610248,
+       "ms": 71.585
+      },
+      {
+       "file": "bc28.1:BaseApp/Test/Tests-SCM-Manufacturing/SCMProductionOrdersII.Codeunit.al",
+       "bytes": 562604,
+       "ms": 70.113
+      },
+      {
+       "file": "bc28.1:BaseApp/Source/Base Application/Sales/Document/SalesHeader.Table.al",
+       "bytes": 665328,
+       "ms": 67.461
+      },
+      {
+       "file": "bc28.1:BaseApp/Source/Base Application/Inventory/Posting/ItemJnlPostLine.Codeunit.al",
+       "bytes": 449936,
+       "ms": 65.78
+      }
+     ],
+     "parallel": {
+      "seconds": {
+       "median": 1.4641031,
+       "min": 1.4480259,
+       "max": 1.4810487,
+       "runs": [
+        1.4810487,
+        1.4480259,
+        1.4641031
+       ]
+      },
+      "files_per_s": {
+       "median": 11562.027291657261,
+       "min": 11429.738941062504,
+       "max": 11690.398631681934,
+       "runs": [
+        11429.738941062504,
+        11690.398631681934,
+        11562.027291657261
+       ]
+      },
+      "mib_per_s": {
+       "median": 164.88807074349097,
+       "min": 163.0014836977099,
+       "max": 166.71879662412422,
+       "runs": [
+        163.0014836977099,
+        166.71879662412422,
+        164.88807074349097
+       ]
+      }
+     }
+    },
+    "bcapps-29.0": {
+     "files": 36717,
+     "bytes": 733371700,
+     "has_error": 2,
+     "has_error_files": [
+      "bcapps-29.0:src/Apps/DE/EDocumentDE/app/src/EDocumentServiceDE.PageExt.al",
+      "bcapps-29.0:src/Layers/APAC/Tests/SINGLESERVER/ERMPurchaseReportsIII.Codeunit.al"
+     ],
+     "single": {
+      "seconds": {
+       "median": 82.520063,
+       "min": 81.0835491,
+       "max": 87.9149178,
+       "runs": [
+        87.9149178,
+        82.520063,
+        81.0835491
+       ]
+      },
+      "files_per_s": {
+       "median": 444.94633989797126,
+       "min": 417.64243110058396,
+       "max": 452.82921637676566,
+       "runs": [
+        417.64243110058396,
+        444.94633989797126,
+        452.82921637676566
+       ]
+      },
+      "mib_per_s": {
+       "median": 8.47548740564085,
+       "min": 7.95539337544816,
+       "max": 8.625643085832678,
+       "runs": [
+        7.95539337544816,
+        8.47548740564085,
+        8.625643085832678
+       ]
+      }
+     },
+     "latency_ms": {
+      "p50": 0.4949,
+      "p95": 9.241419999999994,
+      "p99": 29.005471999999955,
+      "max": 258.6513,
+      "mean": 2.279020066998938
+     },
+     "slowest": [
+      {
+       "file": "bcapps-29.0:src/Apps/AU/ContosoCoffeeDemoDatasetAU/app/DemoData/Foundation/1.Setup Data/CreateAUPostCode.Codeunit.al",
+       "bytes": 1543572,
+       "ms": 258.651
+      },
+      {
+       "file": "bcapps-29.0:src/Apps/ES/ContosoCoffeeDemoDatasetES/app/DemoData/Finance/1.Setup Data/CreateESGLAccounts.Codeunit.al",
+       "bytes": 1031927,
+       "ms": 159.17
+      },
+      {
+       "file": "bcapps-29.0:src/Apps/NO/ContosoCoffeeDemoDatasetNO/app/DemoData/Foundation/1.Setup Data/CreatePostCodeNO.Codeunit.al",
+       "bytes": 599842,
+       "ms": 108.159
+      },
+      {
+       "file": "bcapps-29.0:src/Layers/APAC/BaseApp/Finance/GeneralLedger/Posting/GenJnlPostLine.Codeunit.al",
+       "bytes": 789397,
+       "ms": 105.285
+      },
+      {
+       "file": "bcapps-29.0:src/Layers/IT/BaseApp/Sales/Posting/SalesPost.Codeunit.al",
+       "bytes": 807276,
+       "ms": 98.563
+      },
+      {
+       "file": "bcapps-29.0:src/Layers/IT/BaseApp/Purchases/Posting/PurchPost.Codeunit.al",
+       "bytes": 662008,
+       "ms": 98.077
+      },
+      {
+       "file": "bcapps-29.0:src/Layers/CH/BaseApp/Sales/Posting/SalesPost.Codeunit.al",
+       "bytes": 800198,
+       "ms": 98.004
+      },
+      {
+       "file": "bcapps-29.0:src/Layers/RU/BaseApp/Sales/Posting/SalesPost.Codeunit.al",
+       "bytes": 832090,
+       "ms": 97.97
+      },
+      {
+       "file": "bcapps-29.0:src/Layers/NA/BaseApp/Sales/Posting/SalesPost.Codeunit.al",
+       "bytes": 831982,
+       "ms": 96.818
+      },
+      {
+       "file": "bcapps-29.0:src/Layers/RU/BaseApp/Finance/GeneralLedger/Posting/GenJnlPostLine.Codeunit.al",
+       "bytes": 786763,
+       "ms": 95.149
+      }
+     ],
+     "parallel": {
+      "seconds": {
+       "median": 4.206059,
+       "min": 4.1938556,
+       "max": 4.2715262,
+       "runs": [
+        4.206059,
+        4.2715262,
+        4.1938556
+       ]
+      },
+      "files_per_s": {
+       "median": 8729.549442839485,
+       "min": 8595.756711032229,
+       "max": 8754.950933456077,
+       "runs": [
+        8729.549442839485,
+        8595.756711032229,
+        8754.950933456077
+       ]
+      },
+      "mib_per_s": {
+       "median": 166.28339133359506,
+       "min": 163.73486241736956,
+       "max": 166.76724746297643,
+       "runs": [
+        166.28339133359506,
+        163.73486241736956,
+        166.76724746297643
+       ]
+      }
+     }
+    },
+    "combined": {
+     "files": 70355,
+     "bytes": 1230752692,
+     "has_error": 2,
+     "has_error_files": [
+      "bcapps-29.0:src/Apps/DE/EDocumentDE/app/src/EDocumentServiceDE.PageExt.al",
+      "bcapps-29.0:src/Layers/APAC/Tests/SINGLESERVER/ERMPurchaseReportsIII.Codeunit.al"
+     ],
+     "single": {
+      "seconds": {
+       "median": 143.8988918,
+       "min": 136.8241585,
+       "max": 149.0641607,
+       "runs": [
+        149.0641607,
+        143.8988918,
+        136.8241585
+       ]
+      },
+      "files_per_s": {
+       "median": 488.91967908817486,
+       "min": 471.97797022178514,
+       "max": 514.2001293580037,
+       "runs": [
+        471.97797022178514,
+        488.91967908817486,
+        514.2001293580037
+       ]
+      },
+      "mib_per_s": {
+       "median": 8.156680135101999,
+       "min": 7.874040458125036,
+       "max": 8.578435599940137,
+       "runs": [
+        7.874040458125036,
+        8.156680135101999,
+        8.578435599940137
+       ]
+      }
+     },
+     "latency_ms": {
+      "p50": 0.4592,
+      "p95": 8.461790000000004,
+      "p99": 25.672580000000053,
+      "max": 258.6513,
+      "mean": 2.036770728448582
+     },
+     "slowest": [
+      {
+       "file": "bcapps-29.0:src/Apps/AU/ContosoCoffeeDemoDatasetAU/app/DemoData/Foundation/1.Setup Data/CreateAUPostCode.Codeunit.al",
+       "bytes": 1543572,
+       "ms": 258.651
+      },
+      {
+       "file": "bcapps-29.0:src/Apps/ES/ContosoCoffeeDemoDatasetES/app/DemoData/Finance/1.Setup Data/CreateESGLAccounts.Codeunit.al",
+       "bytes": 1031927,
+       "ms": 159.17
+      },
+      {
+       "file": "bcapps-29.0:src/Apps/NO/ContosoCoffeeDemoDatasetNO/app/DemoData/Foundation/1.Setup Data/CreatePostCodeNO.Codeunit.al",
+       "bytes": 599842,
+       "ms": 108.159
+      },
+      {
+       "file": "bcapps-29.0:src/Layers/APAC/BaseApp/Finance/GeneralLedger/Posting/GenJnlPostLine.Codeunit.al",
+       "bytes": 789397,
+       "ms": 105.285
+      },
+      {
+       "file": "bcapps-29.0:src/Layers/IT/BaseApp/Sales/Posting/SalesPost.Codeunit.al",
+       "bytes": 807276,
+       "ms": 98.563
+      },
+      {
+       "file": "bcapps-29.0:src/Layers/IT/BaseApp/Purchases/Posting/PurchPost.Codeunit.al",
+       "bytes": 662008,
+       "ms": 98.077
+      },
+      {
+       "file": "bcapps-29.0:src/Layers/CH/BaseApp/Sales/Posting/SalesPost.Codeunit.al",
+       "bytes": 800198,
+       "ms": 98.004
+      },
+      {
+       "file": "bcapps-29.0:src/Layers/RU/BaseApp/Sales/Posting/SalesPost.Codeunit.al",
+       "bytes": 832090,
+       "ms": 97.97
+      },
+      {
+       "file": "bcapps-29.0:src/Layers/NA/BaseApp/Sales/Posting/SalesPost.Codeunit.al",
+       "bytes": 831982,
+       "ms": 96.818
+      },
+      {
+       "file": "bcapps-29.0:src/Layers/RU/BaseApp/Finance/GeneralLedger/Posting/GenJnlPostLine.Codeunit.al",
+       "bytes": 786763,
+       "ms": 95.149
+      }
+     ],
+     "parallel": {
+      "seconds": {
+       "median": 7.2484082,
+       "min": 7.1913754,
+       "max": 7.3752144,
+       "runs": [
+        7.2484082,
+        7.3752144,
+        7.1913754
+       ]
+      },
+      "files_per_s": {
+       "median": 9706.269026073891,
+       "min": 9539.383695747205,
+       "max": 9783.246748598327,
+       "runs": [
+        9706.269026073891,
+        9539.383695747205,
+        9783.246748598327
+       ]
+      },
+      "mib_per_s": {
+       "median": 161.93034385235808,
+       "min": 159.14618457847843,
+       "max": 163.21456841319284,
+       "runs": [
+        161.93034385235808,
+        159.14618457847843,
+        163.21456841319284
+       ]
+      }
+     }
+    }
+   }
+  },
+  "wasm": {
+   "web_tree_sitter": "0.27.0",
+   "wasm_bytes": 13043917,
+   "read_seconds": 3.7704786,
+   "repeats": 3,
+   "invalid_utf8_files": [
+    "bc28.1:TestFramework/AITestToolkit/AI Test Toolkit/src/AITTestContext.Codeunit.al"
+   ],
+   "has_error_disagreements": {
+    "wasm_only": [],
+    "native_only": []
+   },
+   "corpora": {
+    "bc-history": {
+     "files": 15358,
+     "bytes": 229163318,
+     "has_error": 0,
+     "single": {
+      "seconds": {
+       "median": 14.2523913,
+       "min": 14.2016953,
+       "max": 17.5082353,
+       "runs": [
+        17.5082353,
+        14.2523913,
+        14.2016953
+       ]
+      },
+      "files_per_s": {
+       "median": 1077.5735577790374,
+       "min": 877.187205725982,
+       "max": 1081.4201879123543,
+       "runs": [
+        877.187205725982,
+        1077.5735577790374,
+        1081.4201879123543
+       ]
+      },
+      "mib_per_s": {
+       "median": 15.334070335203196,
+       "min": 12.482535612200625,
+       "max": 15.388808590974211,
+       "runs": [
+        12.482535612200625,
+        15.334070335203196,
+        15.388808590974211
+       ]
+      }
+     },
+     "latency_ms": {
+      "p50": 0.2246,
+      "p95": 3.9823599999999986,
+      "p99": 11.053380000000011,
+      "max": 44.0012,
+      "mean": 0.9335117332986066
+     },
+     "slowest": [
+      {
+       "file": "bc-history:BaseApp/Source/Base Application/Sales/Posting/SalesPost.Codeunit.al",
+       "bytes": 672437,
+       "ms": 44.001
+      },
+      {
+       "file": "bc-history:BaseApp/Source/Base Application/Utilities/CopyDocumentMgt.Codeunit.al",
+       "bytes": 704083,
+       "ms": 42.773
+      },
+      {
+       "file": "bc-history:BaseApp/Source/Base Application/Purchases/Posting/PurchPost.Codeunit.al",
+       "bytes": 642803,
+       "ms": 41.955
+      },
+      {
+       "file": "bc-history:BaseApp/Source/Base Application/Finance/GeneralLedger/Posting/GenJnlPostLine.Codeunit.al",
+       "bytes": 594425,
+       "ms": 39.846
+      },
+      {
+       "file": "bc-history:BaseApp/Test/Tests-ERM/ERMPurchaseOrder.Codeunit.al",
+       "bytes": 608502,
+       "ms": 38.77
+      },
+      {
+       "file": "bc-history:BaseApp/Test/Tests-SCM-Manufacturing/SCMProductionOrderIII.Codeunit.al",
+       "bytes": 548981,
+       "ms": 34.221
+      },
+      {
+       "file": "bc-history:BaseApp/Source/Base Application/Sales/Document/SalesLine.Table.al",
+       "bytes": 530174,
+       "ms": 34.054
+      },
+      {
+       "file": "bc-history:BaseApp/Source/Base Application/Purchases/Document/PurchaseLine.Table.al",
+       "bytes": 510422,
+       "ms": 33.997
+      },
+      {
+       "file": "bc-history:BaseApp/Test/Tests-SCM/SCMWarehouseIII.Codeunit.al",
+       "bytes": 461973,
+       "ms": 32.042
+      },
+      {
+       "file": "bc-history:BaseApp/Source/Base Application/Sales/Document/SalesHeader.Table.al",
+       "bytes": 490428,
+       "ms": 31.865
+      }
+     ]
+    },
+    "dc": {
+     "files": 1352,
+     "bytes": 15077654,
+     "has_error": 0,
+     "single": {
+      "seconds": {
+       "median": 0.9967612,
+       "min": 0.9896587,
+       "max": 1.2981283,
+       "runs": [
+        1.2981283,
+        0.9896587,
+        0.9967612
+       ]
+      },
+      "files_per_s": {
+       "median": 1356.3930859266993,
+       "min": 1041.4995189612614,
+       "max": 1366.1275346743275,
+       "runs": [
+        1041.4995189612614,
+        1366.1275346743275,
+        1356.3930859266993
+       ]
+      },
+      "mib_per_s": {
+       "median": 14.425893956807268,
+       "min": 11.076849161565896,
+       "max": 14.529424509136293,
+       "runs": [
+        11.076849161565896,
+        14.529424509136293,
+        14.425893956807268
+       ]
+      }
+     },
+     "latency_ms": {
+      "p50": 0.22849999999999998,
+      "p95": 3.0963600000000024,
+      "p99": 7.436927000000002,
+      "max": 24.8839,
+      "mean": 0.7424247041420118
+     },
+     "slowest": [
+      {
+       "file": "dc:Cloud/.dependencies/DC/Codeunit/CDCPurchDocManagement.Codeunit.al",
+       "bytes": 343785,
+       "ms": 24.884
+      },
+      {
+       "file": "dc:Test/.dependencies/DC/Test/Codeunit/CDCRegisterTest.Codeunit.al",
+       "bytes": 240647,
+       "ms": 14.712
+      },
+      {
+       "file": "dc:Cloud/.dependencies/DC/Codeunit/CDCPurchRegister.Codeunit.al",
+       "bytes": 193121,
+       "ms": 13.53
+      },
+      {
+       "file": "dc:Test/src/Tests/MatchTest.Codeunit.al",
+       "bytes": 196827,
+       "ms": 13.438
+      },
+      {
+       "file": "dc:Cloud/.dependencies/DC/Codeunit/CDCCaptureManagement.Codeunit.al",
+       "bytes": 158058,
+       "ms": 13.191
+      },
+      {
+       "file": "dc:Cloud/Modules/Approvals/Codeunits/CDCApprovalManagement.Codeunit.al",
+       "bytes": 177175,
+       "ms": 12.082
+      },
+      {
+       "file": "dc:Test/.dependencies/DC/Test/Codeunit/CDCAdvPOApprovalTest.Codeunit.al",
+       "bytes": 165880,
+       "ms": 10.959
+      },
+      {
+       "file": "dc:Test/.dependencies/DC/Test/Codeunit/CDCAdvPROApprovalTest.Codeunit.al",
+       "bytes": 167553,
+       "ms": 10.95
+      },
+      {
+       "file": "dc:Test/.dependencies/DC/Test/Codeunit/CDCAdvancedApprovalTest.Codeunit.al",
+       "bytes": 167238,
+       "ms": 10.671
+      },
+      {
+       "file": "dc:Cloud/.dependencies/DC/Codeunit/CDCCreateDocCaptureRoles.Codeunit.al",
+       "bytes": 101420,
+       "ms": 10.012
+      }
+     ]
+    },
+    "bc28.1": {
+     "files": 16928,
+     "bytes": 253140020,
+     "has_error": 0,
+     "single": {
+      "seconds": {
+       "median": 15.4517809,
+       "min": 15.375938,
+       "max": 15.6890619,
+       "runs": [
+        15.6890619,
+        15.4517809,
+        15.375938
+       ]
+      },
+      "files_per_s": {
+       "median": 1095.5371493780372,
+       "min": 1078.9682715191532,
+       "max": 1100.9409637317738,
+       "runs": [
+        1078.9682715191532,
+        1095.5371493780372,
+        1100.9409637317738
+       ]
+      },
+      "mib_per_s": {
+       "median": 15.623644749490621,
+       "min": 15.3873531169231,
+       "max": 15.70070948052499,
+       "runs": [
+        15.3873531169231,
+        15.623644749490621,
+        15.70070948052499
+       ]
+      }
+     },
+     "latency_ms": {
+      "p50": 0.21315,
+      "p95": 3.8637449999999993,
+      "p99": 10.93549999999999,
+      "max": 46.9992,
+      "mean": 0.9064136519376181
+     },
+     "slowest": [
+      {
+       "file": "bc28.1:BaseApp/Source/Base Application/Sales/Posting/SalesPost.Codeunit.al",
+       "bytes": 790566,
+       "ms": 46.999
+      },
+      {
+       "file": "bc28.1:BaseApp/Source/Base Application/Utilities/CopyDocumentMgt.Codeunit.al",
+       "bytes": 704145,
+       "ms": 42.834
+      },
+      {
+       "file": "bc28.1:BaseApp/Source/Base Application/Purchases/Posting/PurchPost.Codeunit.al",
+       "bytes": 629873,
+       "ms": 41.742
+      },
+      {
+       "file": "bc28.1:BaseApp/Test/Tests-ERM/ERMPurchaseOrder.Codeunit.al",
+       "bytes": 639025,
+       "ms": 40.655
+      },
+      {
+       "file": "bc28.1:BaseApp/Source/Base Application/Finance/GeneralLedger/Posting/GenJnlPostLine.Codeunit.al",
+       "bytes": 613862,
+       "ms": 39.731
+      },
+      {
+       "file": "bc28.1:BaseApp/Source/Base Application/Sales/Document/SalesLine.Table.al",
+       "bytes": 717526,
+       "ms": 39.462
+      },
+      {
+       "file": "bc28.1:BaseApp/Test/Tests-SCM-Manufacturing/SCMProductionOrderIII.Codeunit.al",
+       "bytes": 610248,
+       "ms": 38.333
+      },
+      {
+       "file": "bc28.1:BaseApp/Source/Base Application/Sales/Document/SalesHeader.Table.al",
+       "bytes": 665328,
+       "ms": 36.116
+      },
+      {
+       "file": "bc28.1:BaseApp/Test/Tests-SCM-Manufacturing/SCMProductionOrdersII.Codeunit.al",
+       "bytes": 562604,
+       "ms": 35.523
+      },
+      {
+       "file": "bc28.1:BaseApp/Source/Base Application/Purchases/Document/PurchaseLine.Table.al",
+       "bytes": 542201,
+       "ms": 35.009
+      }
+     ]
+    },
+    "bcapps-29.0": {
+     "files": 36717,
+     "bytes": 733371700,
+     "has_error": 2,
+     "single": {
+      "seconds": {
+       "median": 44.9151123,
+       "min": 44.9015967,
+       "max": 45.1343631,
+       "runs": [
+        45.1343631,
+        44.9015967,
+        44.9151123
+       ]
+      },
+      "files_per_s": {
+       "median": 817.4754135035304,
+       "min": 813.5043341289555,
+       "max": 817.7214775972544,
+       "runs": [
+        813.5043341289555,
+        817.7214775972544,
+        817.4754135035304
+       ]
+      },
+      "mib_per_s": {
+       "median": 15.571546387276639,
+       "min": 15.49590393287702,
+       "max": 15.576233498823205,
+       "runs": [
+        15.49590393287702,
+        15.576233498823205,
+        15.571546387276639
+       ]
+      }
+     },
+     "latency_ms": {
+      "p50": 0.2645,
+      "p95": 5.013659999999994,
+      "p99": 15.776999999999852,
+      "max": 116.0372,
+      "mean": 1.2165528147724487
+     },
+     "slowest": [
+      {
+       "file": "bcapps-29.0:src/Apps/AU/ContosoCoffeeDemoDatasetAU/app/DemoData/Foundation/1.Setup Data/CreateAUPostCode.Codeunit.al",
+       "bytes": 1543572,
+       "ms": 116.037
+      },
+      {
+       "file": "bcapps-29.0:src/Apps/ES/ContosoCoffeeDemoDatasetES/app/DemoData/Finance/1.Setup Data/CreateESGLAccounts.Codeunit.al",
+       "bytes": 1031927,
+       "ms": 74.728
+      },
+      {
+       "file": "bcapps-29.0:src/Layers/SE/DemoTool/CreateSEPostCodes.Codeunit.al",
+       "bytes": 729253,
+       "ms": 51.937
+      },
+      {
+       "file": "bcapps-29.0:src/Layers/RU/BaseApp/Finance/GeneralLedger/Posting/GenJnlPostLine.Codeunit.al",
+       "bytes": 786763,
+       "ms": 51.322
+      },
+      {
+       "file": "bcapps-29.0:src/Layers/APAC/BaseApp/Finance/GeneralLedger/Posting/GenJnlPostLine.Codeunit.al",
+       "bytes": 789397,
+       "ms": 51.035
+      },
+      {
+       "file": "bcapps-29.0:src/Layers/NA/BaseApp/Sales/Posting/SalesPost.Codeunit.al",
+       "bytes": 831982,
+       "ms": 48.862
+      },
+      {
+       "file": "bcapps-29.0:src/Layers/RU/BaseApp/Sales/Posting/SalesPost.Codeunit.al",
+       "bytes": 832090,
+       "ms": 48.791
+      },
+      {
+       "file": "bcapps-29.0:src/Layers/ES/BaseApp/Finance/GeneralLedger/Posting/GenJnlPostLine.Codeunit.al",
+       "bytes": 732600,
+       "ms": 48.418
+      },
+      {
+       "file": "bcapps-29.0:src/Layers/IT/BaseApp/Sales/Posting/SalesPost.Codeunit.al",
+       "bytes": 807276,
+       "ms": 47.917
+      },
+      {
+       "file": "bcapps-29.0:src/Layers/APAC/BaseApp/Sales/Posting/SalesPost.Codeunit.al",
+       "bytes": 817219,
+       "ms": 47.466
+      }
+     ]
+    },
+    "combined": {
+     "files": 70355,
+     "bytes": 1230752692,
+     "has_error": 2,
+     "single": {
+      "seconds": {
+       "median": 75.5954276,
+       "min": 75.4895068,
+       "max": 79.6297886,
+       "runs": [
+        79.6297886,
+        75.5954276,
+        75.4895068
+       ]
+      },
+      "files_per_s": {
+       "median": 930.677981904821,
+       "min": 883.5261431298086,
+       "max": 931.9838343413312,
+       "runs": [
+        883.5261431298086,
+        930.677981904821,
+        931.9838343413312
+       ]
+      },
+      "mib_per_s": {
+       "median": 15.526563834242431,
+       "min": 14.7399265129815,
+       "max": 15.548349458924427,
+       "runs": [
+        14.7399265129815,
+        15.526563834242431,
+        15.548349458924427
+       ]
+      }
+     },
+     "latency_ms": {
+      "p50": 0.2422,
+      "p95": 4.4387500000000015,
+      "p99": 13.455380000000115,
+      "max": 116.0372,
+      "mean": 1.0710336351360956
+     },
+     "slowest": [
+      {
+       "file": "bcapps-29.0:src/Apps/AU/ContosoCoffeeDemoDatasetAU/app/DemoData/Foundation/1.Setup Data/CreateAUPostCode.Codeunit.al",
+       "bytes": 1543572,
+       "ms": 116.037
+      },
+      {
+       "file": "bcapps-29.0:src/Apps/ES/ContosoCoffeeDemoDatasetES/app/DemoData/Finance/1.Setup Data/CreateESGLAccounts.Codeunit.al",
+       "bytes": 1031927,
+       "ms": 74.728
+      },
+      {
+       "file": "bcapps-29.0:src/Layers/SE/DemoTool/CreateSEPostCodes.Codeunit.al",
+       "bytes": 729253,
+       "ms": 51.937
+      },
+      {
+       "file": "bcapps-29.0:src/Layers/RU/BaseApp/Finance/GeneralLedger/Posting/GenJnlPostLine.Codeunit.al",
+       "bytes": 786763,
+       "ms": 51.322
+      },
+      {
+       "file": "bcapps-29.0:src/Layers/APAC/BaseApp/Finance/GeneralLedger/Posting/GenJnlPostLine.Codeunit.al",
+       "bytes": 789397,
+       "ms": 51.035
+      },
+      {
+       "file": "bcapps-29.0:src/Layers/NA/BaseApp/Sales/Posting/SalesPost.Codeunit.al",
+       "bytes": 831982,
+       "ms": 48.862
+      },
+      {
+       "file": "bcapps-29.0:src/Layers/RU/BaseApp/Sales/Posting/SalesPost.Codeunit.al",
+       "bytes": 832090,
+       "ms": 48.791
+      },
+      {
+       "file": "bcapps-29.0:src/Layers/ES/BaseApp/Finance/GeneralLedger/Posting/GenJnlPostLine.Codeunit.al",
+       "bytes": 732600,
+       "ms": 48.418
+      },
+      {
+       "file": "bcapps-29.0:src/Layers/IT/BaseApp/Sales/Posting/SalesPost.Codeunit.al",
+       "bytes": 807276,
+       "ms": 47.917
+      },
+      {
+       "file": "bcapps-29.0:src/Layers/APAC/BaseApp/Sales/Posting/SalesPost.Codeunit.al",
+       "bytes": 817219,
+       "ms": 47.466
+      }
+     ]
+    }
+   }
+  },
+  "incremental": {
+   "seed": 20260930,
+   "sample_size": 300,
+   "categories": {
+    "split": 60,
+    "if": 80,
+    "bom": 30,
+    "block_comment": 20,
+    "random": 110
+   },
+   "bom_files": 79,
+   "crlf_files": 225,
+   "files_with_if": 145,
+   "edits_per_kind_independent": {
+    "ident_insert": 300,
+    "ident_delete": 300,
+    "semicolon_delete": 300,
+    "semicolon_insert": 300,
+    "if_eol_space": 145,
+    "if_eol_formfeed": 145,
+    "endif_newline": 145,
+    "beginend_delete": 80,
+    "beginend_insert": 145,
+    "line_comment_insert": 253,
+    "block_comment_insert": 14,
+    "string_insert": 277,
+    "else_line_delete": 46
+   },
+   "edits_checked": 4892,
+   "mismatches": 0,
+   "mismatch_details": [],
+   "incremental_ms": {
+    "p50": 0.093,
+    "p95": 1.8624199999999982,
+    "p99": 10.563617000000006,
+    "max": 26.3297,
+    "mean": 0.5201944603434178
+   },
+   "fresh_ms": {
+    "p50": 1.3032,
+    "p95": 11.472114999999995,
+    "p99": 22.558204000000003,
+    "max": 49.5089,
+    "mean": 3.0544222199509403
+   },
+   "speed_ratio_incremental_over_fresh": {
+    "median": 0.07740260618338388,
+    "p95": 0.796370618231669
+   },
+   "sample": [
+    {
+     "file": "bc-history:BaseApp/Source/Base Application/Warehouse/Document/WarehouseShipmentHeader.Table.al",
+     "category": "split"
+    },
+    {
+     "file": "bc-history:BaseApp/Source/Base Application/Service/Loaner/Loaner.Table.al",
+     "category": "split"
+    },
+    {
+     "file": "bc-history:BaseApp/Source/Base Application/Warehouse/History/PostedWhseShipmentHeader.Table.al",
+     "category": "split"
+    },
+    {
+     "file": "bc-history:BaseApp/Source/Base Application/Inventory/Counting/Document/PhysInvtOrderPost.Codeunit.al",
+     "category": "split"
+    },
+    {
+     "file": "bc-history:BaseApp/Source/Base Application/Service/Document/ServiceHeader.Table.al",
+     "category": "split"
+    },
+    {
+     "file": "bc-history:BaseApp/Source/Base Application/CRM/BusinessRelation/BankContUpdate.Codeunit.al",
+     "category": "split"
+    },
+    {
+     "file": "bc-history:Shopify/app/Shopify Connector/src/Order handling/Codeunits/ShpfyImportOrder.Codeunit.al",
+     "category": "split"
+    },
+    {
+     "file": "bc-history:BaseApp/Source/Base Application/Inventory/Counting/Recording/PhysInvtRecordLine.Table.al",
+     "category": "split"
+    },
+    {
+     "file": "bc-history:BaseApp/Source/Base Application/Manufacturing/Journal/ProductionJournalMgt.Codeunit.al",
+     "category": "split"
+    },
+    {
+     "file": "bc-history:BaseApp/Source/Base Application/Manufacturing/Inventory/Planning/MfgPlanningComponent.TableExt.al",
+     "category": "split"
+    },
+    {
+     "file": "bc-history:BaseApp/Source/Base Application/Warehouse/History/PostedWhseReceiptHeader.Table.al",
+     "category": "split"
+    },
+    {
+     "file": "bc-history:BaseApp/Source/Base Application/Manufacturing/MachineCenter/MachineCenter.Table.al",
+     "category": "split"
+    },
+    {
+     "file": "bc-history:BaseApp/Source/Base Application/Sales/Reminder/ReminderHeader.Table.al",
+     "category": "split"
+    },
+    {
+     "file": "bc-history:BaseApp/Source/Base Application/Manufacturing/Document/ProdOrderWarehouseMgt.Codeunit.al",
+     "category": "split"
+    },
+    {
+     "file": "bc-history:System Application/Source/System Application/Email/src/Connector/DefaultEmailConnectorv2.Codeunit.al",
+     "category": "split"
+    },
+    {
+     "file": "bc-history:BaseApp/Source/Base Application/System/RapidStart/RapidStartServicesRC.Page.al",
+     "category": "split"
+    },
+    {
+     "file": "bc-history:BaseApp/Source/Base Application/Purchases/Vendor/Vendor.Table.al",
+     "category": "split"
+    },
+    {
+     "file": "bc-history:BaseApp/Source/Base Application/Projects/Project/WIP/JobPostWIPtoGL.Report.al",
+     "category": "split"
+    },
+    {
+     "file": "bc-history:BaseApp/Source/Base Application/Service/Item/ServItemManagement.Codeunit.al",
+     "category": "split"
+    },
+    {
+     "file": "bc-history:BaseApp/Source/Base Application/Projects/Project/WIP/JobCalculateWIP.Report.al",
+     "category": "split"
+    },
+    {
+     "file": "bc-history:EDocument Core/Source/E-Document Core/src/Integration/Send/EDocumentGetResponse.Codeunit.al",
+     "category": "if"
+    },
+    {
+     "file": "bc-history:BaseApp/Source/Base Application/eServices/EDocument/O365IncomingDocAttPict.Page.al",
+     "category": "if"
+    },
+    {
+     "file": "bc-history:System Application/Source/System Application/ControlAddIns/src/MicrosoftDynamicsNavClientRoleCenterSelector.ControlAddin.al",
+     "category": "if"
+    },
+    {
+     "file": "bc-history:BaseApp/Source/Base Application/eServices/EDocument/DocExchServiceSetup.Table.al",
+     "category": "if"
+    },
+    {
+     "file": "bc-history:BaseApp/Test/Tests-Physical Inventory/PhysInvtOrderSubformUT.Codeunit.al",
+     "category": "if"
+    },
+    {
+     "file": "bc-history:BaseApp/Source/Base Application/Sales/Peppol/PEPPOLManagement.Codeunit.al",
+     "category": "if"
+    },
+    {
+     "file": "bc-history:Shopify/app/Shopify Connector/src/Base/Tables/ShpfyTemplatesWarnings.Table.al",
+     "category": "if"
+    },
+    {
+     "file": "bc-history:Shopify/app/Shopify Connector/src/Order handling/Tables/ShpfyOrderTaxLine.Table.al",
+     "category": "if"
+    },
+    {
+     "file": "bc-history:BaseApp/Source/Base Application/Sales/Receivables/ApplyCustomerEntries.Page.al",
+     "category": "if"
+    },
+    {
+     "file": "bc-history:BaseApp/Source/Base Application/System/JobQueue/JobQueueEntry.Table.al",
+     "category": "if"
+    },
+    {
+     "file": "bc-history:BaseApp/Source/Base Application/Inventory/Counting/Tracking/PhysInvtTrackingLines.Page.al",
+     "category": "if"
+    },
+    {
+     "file": "bc-history:BaseApp/Source/Base Application/OtherCapabilities/Upgrade/UpgradeConfigFieldMap.Codeunit.al",
+     "category": "if"
+    },
+    {
+     "file": "bc-history:BaseApp/Source/Base Application/Utilities/MoveEntries.Codeunit.al",
+     "category": "if"
+    },
+    {
+     "file": "bc-history:BaseApp/Source/Base Application/CashFlow/Worksheet/CashFlowWorksheetLine.Table.al",
+     "category": "if"
+    },
+    {
+     "file": "bc-history:BaseApp/Source/Base Application/CRM/Opportunity/Opportunity.Table.al",
+     "category": "if"
+    },
+    {
+     "file": "bc-history:BaseApp/Source/Base Application/System/JobQueue/JobQueueErrorHandler.Codeunit.al",
+     "category": "if"
+    },
+    {
+     "file": "bc-history:BaseApp/Source/Base Application/Service/Document/ServDocumentAttachmentMgt.Codeunit.al",
+     "category": "if"
+    },
+    {
+     "file": "bc-history:EDocument Core/Source/E-Document Core/src/Log/EDocumentLog.Codeunit.al",
+     "category": "if"
+    },
+    {
+     "file": "bc-history:PowerBIReports/Source/PowerBI Reports/src/Finance/Queries/GLEntriesIncomeStatement.Query.al",
+     "category": "if"
+    },
+    {
+     "file": "bc-history:ContosoCoffeeDemoDataset/Source/Contoso Coffee Demo Dataset/DemoData/Warehousing/WhseDemoAccount.Table.al",
+     "category": "if"
+    },
+    {
+     "file": "bc-history:BaseApp/Source/Base Application/Finance/Intercompany/Partner/ICPartner.Table.al",
+     "category": "bom"
+    },
+    {
+     "file": "bc-history:PaymentPractices/Source/Payment Practices/src/Core/Interfaces/PaymentPracticeDataGenerator.Interface.al",
+     "category": "bom"
+    },
+    {
+     "file": "bc-history:SAF-T/Source/SAF-T/src/Setup/CreateStandardDataSAFT.Codeunit.al",
+     "category": "bom"
+    },
+    {
+     "file": "bc-history:ServiceDeclaration/Source/Service Declaration/src/Setup/ServiceDeclarationSetup.Page.al",
+     "category": "bom"
+    },
+    {
+     "file": "bc-history:BaseApp/Source/Base Application/Inventory/Intrastat/TransactionTypes.Page.al",
+     "category": "bom"
+    },
+    {
+     "file": "bc-history:BaseApp/Source/Base Application/eServices/OnlineMap/OnlineMapSetup.Page.al",
+     "category": "bom"
+    },
+    {
+     "file": "bc-history:RecommendedApps/Source/Recommended Apps/src/Permissions/RecommAppsObjects.PermissionSet.al",
+     "category": "bom"
+    },
+    {
+     "file": "bc-history:BaseApp/Source/Base Application/OtherCapabilities/Approvals/ApprovalCommentsFactBox.Page.al",
+     "category": "bom"
+    },
+    {
+     "file": "bc-history:BaseApp/Source/Base Application/Modules/System/OnboardingSignal/OnboardingSignal.Codeunit.al",
+     "category": "bom"
+    },
+    {
+     "file": "bc-history:EDocument Core/Source/E-Document Core/src/Document/EDocument.Page.al",
+     "category": "bom"
+    },
+    {
+     "file": "bc-history:System Application/Test/System Application Test/Barcode/src/IDAutomation1D/IDA1DEAN8Test.Codeunit.al",
+     "category": "block_comment"
+    },
+    {
+     "file": "bc-history:DataSearch/app/Data Search/DataSearchObjectMapping.Codeunit.al",
+     "category": "block_comment"
+    },
+    {
+     "file": "bc-history:BaseApp/Source/Base Application/Foundation/Period/DateCompression.Codeunit.al",
+     "category": "block_comment"
+    },
+    {
+     "file": "bc-history:EDocumentConnectors/SignUp/Source/E-Document Connector - SignUp/src/SignUpAPIRequests.Codeunit.al",
+     "category": "block_comment"
+    },
+    {
+     "file": "bc-history:BaseApp/Source/Base Application/System/DataAdministration/DataAdministrationGuide.Page.al",
+     "category": "block_comment"
+    },
+    {
+     "file": "bc-history:BaseApp/Test/Tests-VAT/NonDeductibleVATPmtDisc.Codeunit.al",
+     "category": "random"
+    },
+    {
+     "file": "bc-history:BaseApp/Source/Base Application/Sales/Document/BatchPostSalesInvoices.Report.al",
+     "category": "random"
+    },
+    {
+     "file": "bc-history:BaseApp/Source/Base Application/Permissions/OnPrem/Jobs/JobsView.PermissionSet.al",
+     "category": "random"
+    },
+    {
+     "file": "bc-history:BaseApp/Source/Base Application/Warehouse/Structure/BinContent.Page.al",
+     "category": "random"
+    },
+    {
+     "file": "bc-history:BaseApp/Source/Base Application/Service/Ledger/ServiceLedgerEntryEntryType.Enum.al",
+     "category": "random"
+    },
+    {
+     "file": "bc-history:ContosoCoffeeDemoDataset/Source/Contoso Coffee Demo Dataset/DemoData/Inventory/2.Master Data/CreateItemCategory.Codeunit.al",
+     "category": "random"
+    },
+    {
+     "file": "bc-history:BaseApp/Source/Base Application/CRM/Contact/AltAddrDateRanges.Page.al",
+     "category": "random"
+    },
+    {
+     "file": "bc-history:System Application/Source/System Application/Table Information/src/TableInformationCacheImpl.Codeunit.al",
+     "category": "random"
+    },
+    {
+     "file": "bc-history:Shopify/app/Shopify Connector/src/Order Returns/Codeunits/ShpfyReturnEnumConvertor.Codeunit.al",
+     "category": "random"
+    },
+    {
+     "file": "bc-history:System Application/Source/System Application/Azure Blob Services API/src/Helper/ABSHttpContentHelper.Codeunit.al",
+     "category": "random"
+    },
+    {
+     "file": "bc-history:BaseApp/Test/Tests-CRM integration/CRMJobQueueEntryInactivity.Codeunit.al",
+     "category": "random"
+    },
+    {
+     "file": "bc-history:PowerBIReports/Source/PowerBI Reports/src/Autogenerated/SalesActualvsBudgetQty.Page.al",
+     "category": "random"
+    },
+    {
+     "file": "bc-history:BaseApp/Source/Base Application/Finance/VAT/Setup/VATReportingDateUsage.Enum.al",
+     "category": "random"
+    },
+    {
+     "file": "bc-history:BaseApp/Source/Base Application/Inventory/Item/ItemReplenishmentFactBox.Page.al",
+     "category": "random"
+    },
+    {
+     "file": "bc-history:BaseApp/Source/Base Application/CashFlow/Account/CashFlowAccountType.Enum.al",
+     "category": "random"
+    },
+    {
+     "file": "bc-history:BaseApp/Source/Base Application/Integration/Graph/GraphMgtJournalLines.Codeunit.al",
+     "category": "random"
+    },
+    {
+     "file": "bc-history:BaseApp/Source/Base Application/System/DataExchange/TransformationRules.Page.al",
+     "category": "random"
+    },
+    {
+     "file": "bc-history:System Application/Source/System Application/AI/src/Copilot/CopilotTelemetryInstall.Codeunit.al",
+     "category": "random"
+    },
+    {
+     "file": "bc-history:BaseApp/Test/Tests-SCM-Service/ServiceOrderReleasevalidate.Codeunit.al",
+     "category": "random"
+    },
+    {
+     "file": "bc-history:Sustainability/Source/Sustainability/src/Journal/SustGenJournalLine.TableExt.al",
+     "category": "random"
+    },
+    {
+     "file": "dc:Cloud/Al/Standard Extensions/Page Extensions/CDCPurchaseInvoices.PageExtension.al",
+     "category": "if"
+    },
+    {
+     "file": "dc:Test/src/Tests/CDCTest2800Upgrade.Codeunit.al",
+     "category": "if"
+    },
+    {
+     "file": "dc:Cloud/.dependencies/DC/Codeunit/CDCDataTransMgt.Codeunit.al",
+     "category": "if"
+    },
+    {
+     "file": "dc:US/PurchaseContracts/Codeunit/CDCPCSalesTaxCalculate.Codeunit.al",
+     "category": "if"
+    },
+    {
+     "file": "dc:Test/src/Tests/CDCTest2700Upgrade.Codeunit.al",
+     "category": "if"
+    },
+    {
+     "file": "dc:Cloud/Al/Standard Extensions/Page Extensions/CDCPostedPurchaseCreditMem.PageExtension.al",
+     "category": "if"
+    },
+    {
+     "file": "dc:Cloud/.dependencies/DC/Codeunit/CDCCaptureRTCLibrary.Codeunit.al",
+     "category": "if"
+    },
+    {
+     "file": "dc:Cloud/.dependencies/DC/Table/CDCTempDocumentLine.Table.al",
+     "category": "if"
+    },
+    {
+     "file": "dc:Cloud/Modules/Continia Online/Codeunit/CDCContiniaOnlineMgt.Codeunit.al",
+     "category": "if"
+    },
+    {
+     "file": "dc:Cloud/Al/Standard Subscribers/CDCDataMergeSubsc.Codeunit.al",
+     "category": "if"
+    },
+    {
+     "file": "dc:Cloud/Al/Overrides/CDCAllocationAccountMgt.Codeunit.al",
+     "category": "if"
+    },
+    {
+     "file": "dc:Cloud/.dependencies/DC/Codeunit/CDCConfigurationMgt.Codeunit.al",
+     "category": "if"
+    },
+    {
+     "file": "dc:Cloud/.dependencies/DC/Table/CDCDataTranslation.Table.al",
+     "category": "if"
+    },
+    {
+     "file": "dc:Cloud/Al/Standard Extensions/Page Extensions/CDCPurchaseReturnOrder.PageExtension.al",
+     "category": "if"
+    },
+    {
+     "file": "dc:Cloud/Al/Telemetry/CDCSendDailyTelemetry.Codeunit.al",
+     "category": "if"
+    },
+    {
+     "file": "dc:Cloud/.dependencies/DC/Codeunit/CDCXmlLibrary.Codeunit.al",
+     "category": "if"
+    },
+    {
+     "file": "dc:Cloud/.dependencies/DC/Codeunit/CDCLookupGLAccount.Codeunit.al",
+     "category": "if"
+    },
+    {
+     "file": "dc:Cloud/Al/Standard Extensions/Page Extensions/CDCPurchaseOrder.PageExtension.al",
+     "category": "if"
+    },
+    {
+     "file": "dc:US/PurchaseContracts/Page/CDCPurchaseContractStats.Page.al",
+     "category": "if"
+    },
+    {
+     "file": "dc:Cloud/Al/Standard Extensions/Page Extensions/CDCPostedPurchaseInvoices.PageExtension.al",
+     "category": "if"
+    },
+    {
+     "file": "dc:OnPrem/Al/Implementations/CDCFileSysMgtSubscr.Codeunit.al",
+     "category": "block_comment"
+    },
+    {
+     "file": "dc:Cloud/.dependencies/DC/Table/CDCTemplateField.Table.al",
+     "category": "block_comment"
+    },
+    {
+     "file": "dc:Test/.dependencies/DC/Test/Codeunit/CDCAllocationsTest.Codeunit.al",
+     "category": "block_comment"
+    },
+    {
+     "file": "dc:Test/.dependencies/DC/Test/Codeunit/CDCRegisterTest.Codeunit.al",
+     "category": "block_comment"
+    },
+    {
+     "file": "dc:Test/src/Tests/MatchTest.Codeunit.al",
+     "category": "block_comment"
+    },
+    {
+     "file": "dc:Cloud/.dependencies/DC/Page/CDCFileLookupListPart.Page.al",
+     "category": "random"
+    },
+    {
+     "file": "dc:Cloud/.dependencies/DC/Table/CDCPaymentMethodMapping.Table.al",
+     "category": "random"
+    },
+    {
+     "file": "dc:Cloud/Al/Profiles/DocumentCapture.Profile.al",
+     "category": "random"
+    },
+    {
+     "file": "dc:Cloud/Al/Standard Extensions/Page Extensions/CDCUserTaskList.PageExtension.al",
+     "category": "random"
+    },
+    {
+     "file": "dc:Cloud/.dependencies/DC/Page/CDCStdAmtDistribCodes.Page.al",
+     "category": "random"
+    },
+    {
+     "file": "dc:Cloud/.dependencies/DC/Page/CDCXMLPathLookup.Page.al",
+     "category": "random"
+    },
+    {
+     "file": "dc:Cloud/.dependencies/DC/Table/CDCUserPagePreference.Table.al",
+     "category": "random"
+    },
+    {
+     "file": "dc:Cloud/.dependencies/DC/Page/CDCHeaderAmountPosting.Page.al",
+     "category": "random"
+    },
+    {
+     "file": "dc:Cloud/Al/Standard Extensions/Page Extensions/CDCSelectSendingOptions.PageExtension.al",
+     "category": "random"
+    },
+    {
+     "file": "dc:Cloud/.dependencies/DC/Page/CDCDocumentListUIC.Page.al",
+     "category": "random"
+    },
+    {
+     "file": "dc:Cloud/.dependencies/DC/Table/CDCEmailUIC.Table.al",
+     "category": "random"
+    },
+    {
+     "file": "dc:Cloud/.dependencies/DC/Page/CDCPurchRetShptMatchSp.Page.al",
+     "category": "random"
+    },
+    {
+     "file": "dc:Cloud/Modules/Storage/CDCDocumentFileInterface.Codeunit.al",
+     "category": "random"
+    },
+    {
+     "file": "dc:Cloud/Modules/Purchase Contracts/Base/src/Pages/CDCPurchContrArchList.Page.al",
+     "category": "random"
+    },
+    {
+     "file": "dc:DemoApp/AL/eDocuments/LocalizationSpecifics/Implementations/Defaults/EDocsDefaultReceiverType.Codeunit.al",
+     "category": "random"
+    },
+    {
+     "file": "dc:DemoApp/AL/eDocuments/LocalizationSpecifics/Implementations/EDocsAustraliaHandler.Codeunit.al",
+     "category": "random"
+    },
+    {
+     "file": "dc:Cloud/Modules/Approvals/Codeunits/CDCApprovalManagement.Codeunit.al",
+     "category": "random"
+    },
+    {
+     "file": "dc:Cloud/.dependencies/DC/Page/CDCTemplateSubpage.Page.al",
+     "category": "random"
+    },
+    {
+     "file": "dc:Cloud/.dependencies/DC/Codeunit/CDCSubmitReviewMgt.Codeunit.al",
+     "category": "random"
+    },
+    {
+     "file": "dc:Cloud/Modules/Continia Users/Pages/CDCContiniaUserList.Page.al",
+     "category": "random"
+    },
+    {
+     "file": "dc:Cloud/Al/Error Handling/CDCErrorActions.Codeunit.al",
+     "category": "random"
+    },
+    {
+     "file": "dc:Cloud/.dependencies/DC/Page/CDCStorageMigrationStatus.Page.al",
+     "category": "random"
+    },
+    {
+     "file": "dc:Cloud/Modules/Purchase Contracts/Base/src/Codeunits/CDCReviewMgt.Codeunit.al",
+     "category": "random"
+    },
+    {
+     "file": "dc:Test/.dependencies/DC/Test/Codeunit/CDCRunStorMigrWizard.Codeunit.al",
+     "category": "random"
+    },
+    {
+     "file": "dc:Test/.dependencies/DC/Test/Codeunit/CDCPCLibrary.Codeunit.al",
+     "category": "random"
+    },
+    {
+     "file": "dc:Cloud/.dependencies/DC/Codeunit/CDCLocalInitialization.Codeunit.al",
+     "category": "random"
+    },
+    {
+     "file": "dc:Cloud/.dependencies/DC/Codeunit/CDCMatchTrackingMgt.Codeunit.al",
+     "category": "random"
+    },
+    {
+     "file": "dc:Cloud/.dependencies/DC/Page/CDCDragandDropCategories2.Page.al",
+     "category": "random"
+    },
+    {
+     "file": "dc:Cloud/.dependencies/DC/Page/CDCTemplateFieldWizard.Page.al",
+     "category": "random"
+    },
+    {
+     "file": "dc:Cloud/.dependencies/DC/Table/CDCTempDisplayDocument.Table.al",
+     "category": "random"
+    },
+    {
+     "file": "dc:Cloud/.dependencies/DC/Page/CDCPurchaseList.Page.al",
+     "category": "random"
+    },
+    {
+     "file": "dc:Test/.dependencies/DC/Test/Codeunit/CDCApprovalSetupTest.Codeunit.al",
+     "category": "random"
+    },
+    {
+     "file": "dc:Cloud/.dependencies/DC/Codeunit/CDCAboutDocumentCapture.Codeunit.al",
+     "category": "random"
+    },
+    {
+     "file": "dc:Cloud/.dependencies/DC/Codeunit/CDCOrderChangeValidation.Codeunit.al",
+     "category": "random"
+    },
+    {
+     "file": "dc:Cloud/.dependencies/DC/Codeunit/CDCPurchDocManagement.Codeunit.al",
+     "category": "random"
+    },
+    {
+     "file": "dc:Cloud/.dependencies/DC/Codeunit/CDCDocumentModificationMgt.Codeunit.al",
+     "category": "random"
+    },
+    {
+     "file": "dc:Cloud/.dependencies/DC/Codeunit/CDCPurchRcptAfterCapt.Codeunit.al",
+     "category": "random"
+    },
+    {
+     "file": "dc:Cloud/Modules/WebServices/CDCWebUserCompanyWS.Page.al",
+     "category": "random"
+    },
+    {
+     "file": "dc:Cloud/.dependencies/DC/Page/CDCDocumentCommentsListPart.Page.al",
+     "category": "random"
+    },
+    {
+     "file": "dc:Cloud/Modules/Approvals/Tables/CDCApprovalFlowLine.Table.al",
+     "category": "random"
+    },
+    {
+     "file": "dc:Cloud/Al/Standard Extensions/Page Extensions/CDCCurrrency Card.PageExtension.al",
+     "category": "random"
+    },
+    {
+     "file": "dc:Cloud/.dependencies/DC/Codeunit/CDCPurchSalesLineCapt.Codeunit.al",
+     "category": "random"
+    },
+    {
+     "file": "dc:Cloud/.dependencies/DC/Codeunit/CDCSalesPostSubscr.Codeunit.al",
+     "category": "random"
+    },
+    {
+     "file": "dc:Cloud/.dependencies/DC/Codeunit/CDCWebJobandDimMgnt.Codeunit.al",
+     "category": "random"
+    },
+    {
+     "file": "dc:Cloud/.dependencies/DC/Table/CDCEventEntry.Table.al",
+     "category": "random"
+    },
+    {
+     "file": "dc:Cloud/.dependencies/DC/Codeunit/CDCPermissionPagesMgt.Codeunit.al",
+     "category": "random"
+    },
+    {
+     "file": "dc:Cloud/Modules/Approvals/Pages/CDCApprovalGroupCard.Page.al",
+     "category": "random"
+    },
+    {
+     "file": "dc:OnPrem/Al/Implementations/CDCCreateProfileSubscr.Codeunit.al",
+     "category": "random"
+    },
+    {
+     "file": "dc:Cloud/Al/Obsolete/CDCFile.Table.al",
+     "category": "random"
+    },
+    {
+     "file": "dc:Cloud/Modules/WebServices/CDCLocationListWS.Page.al",
+     "category": "random"
+    },
+    {
+     "file": "bc28.1:BaseApp/Source/Base Application/Manufacturing/Journal/ProductionJournalMgt.Codeunit.al",
+     "category": "split"
+    },
+    {
+     "file": "bc28.1:BaseApp/Source/Base Application/Service/Document/ServiceOrderStatistics.Page.al",
+     "category": "split"
+    },
+    {
+     "file": "bc28.1:BaseApp/Source/Base Application/System/DataExchange/XMLBufferWriter.Codeunit.al",
+     "category": "split"
+    },
+    {
+     "file": "bc28.1:BaseApp/Source/Base Application/Manufacturing/Inventory/Planning/MfgPlanningComponent.TableExt.al",
+     "category": "split"
+    },
+    {
+     "file": "bc28.1:BaseApp/Source/Base Application/Manufacturing/Document/CalcConsumption.Report.al",
+     "category": "split"
+    },
+    {
+     "file": "bc28.1:BaseApp/Source/Base Application/Manufacturing/Warehouse/Request/MfgWhseSourceCreateDocument.ReportExt.al",
+     "category": "split"
+    },
+    {
+     "file": "bc28.1:BaseApp/Source/Base Application/Manufacturing/MachineCenter/MachineCenter.Table.al",
+     "category": "split"
+    },
+    {
+     "file": "bc28.1:BaseApp/Source/Base Application/Manufacturing/Warehouse/Activity/MfgCreateInvtPickMovement.Codeunit.al",
+     "category": "split"
+    },
+    {
+     "file": "bc28.1:EDocument Core/Source/E-Document Core/src/Integration/EDocumentNoIntegration.Codeunit.al",
+     "category": "split"
+    },
+    {
+     "file": "bc28.1:BaseApp/Source/Base Application/Utilities/PageManagement.Codeunit.al",
+     "category": "split"
+    },
+    {
+     "file": "bc28.1:Email - Outlook REST API/Source/Email - Outlook REST API/src/EmailOutlookAPIClient.Codeunit.al",
+     "category": "split"
+    },
+    {
+     "file": "bc28.1:System Application/Source/System Application/Email/src/Connector/EmailConnector.Enum.al",
+     "category": "split"
+    },
+    {
+     "file": "bc28.1:BaseApp/Source/Base Application/Manufacturing/Warehouse/Request/MfgGetOutboundSourceDocs.ReportExt.al",
+     "category": "split"
+    },
+    {
+     "file": "bc28.1:EDocument Core/Source/E-Document Core/src/Integration/EDocumentIntegration.Enum.al",
+     "category": "split"
+    },
+    {
+     "file": "bc28.1:BaseApp/Source/Base Application/Service/Document/ServiceStatistics.Page.al",
+     "category": "split"
+    },
+    {
+     "file": "bc28.1:System Application/Source/System Application/Email/src/Account/EmailAccounts.Page.al",
+     "category": "split"
+    },
+    {
+     "file": "bc28.1:BaseApp/Source/Base Application/Manufacturing/Inventory/BOM/MfgCalculateBOMTree.Codeunit.al",
+     "category": "split"
+    },
+    {
+     "file": "bc28.1:BaseApp/Source/Base Application/Manufacturing/MfgCreateInventoryPutaway.Codeunit.al",
+     "category": "split"
+    },
+    {
+     "file": "bc28.1:BaseApp/Source/Base Application/Manufacturing/Document/ProdOrderWarehouseMgt.Codeunit.al",
+     "category": "split"
+    },
+    {
+     "file": "bc28.1:BaseApp/Source/Base Application/System/OAuth/OAuth20Setup.Table.al",
+     "category": "split"
+    },
+    {
+     "file": "bc28.1:BaseApp/Source/Base Application/Inventory/Document/AvailableInvtDocLines.Page.al",
+     "category": "if"
+    },
+    {
+     "file": "bc28.1:PowerBIReports/Source/Power BI Report embeddings for Dynamics 365 Business Central/_Obsolete/Sustainability/EmbeddedPages/RealizedEmissionsvsTarget.Page.al",
+     "category": "if"
+    },
+    {
+     "file": "bc28.1:PowerBIReports/Source/Power BI Report embeddings for Dynamics 365 Business Central/Manufacturing/APIs/ItemLedgerEntriesProd.Query.al",
+     "category": "if"
+    },
+    {
+     "file": "bc28.1:SubscriptionBilling/Source/Subscription Billing/Base/Enums/ContractLineType.Enum.al",
+     "category": "if"
+    },
+    {
+     "file": "bc28.1:BaseApp/Source/Base Application/RoleCenters/CEOandPresidentRoleCenter.Page.al",
+     "category": "if"
+    },
+    {
+     "file": "bc28.1:System Application/Source/System Application/AI/src/Copilot/CopilotSettings.Table.al",
+     "category": "if"
+    },
+    {
+     "file": "bc28.1:SubscriptionBilling/Source/Subscription Billing/Overdue Service Commitments/Queries/OverdueVendorServComm.Query.al",
+     "category": "if"
+    },
+    {
+     "file": "bc28.1:BaseApp/Source/Base Application/Inventory/Location/ResponsibilityCenter.Table.al",
+     "category": "if"
+    },
+    {
+     "file": "bc28.1:SubscriptionBilling/Source/Subscription Billing/Service Objects/Pages/ServiceObjects.Page.al",
+     "category": "if"
+    },
+    {
+     "file": "bc28.1:BaseApp/Source/Base Application/Manufacturing/Reports/ProdOrderShortageList.Report.al",
+     "category": "if"
+    },
+    {
+     "file": "bc28.1:System Application/Source/System Application/Email/src/EmailAttachmentUpgrade.Codeunit.al",
+     "category": "if"
+    },
+    {
+     "file": "bc28.1:Sustainability/Source/Sustainability/src/PowerBI/Embedded/SustOverviewPowerBI.Page.al",
+     "category": "if"
+    },
+    {
+     "file": "bc28.1:BaseApp/Source/Base Application/Inventory/BOM/Tree/CalculateBOMTree.Codeunit.al",
+     "category": "if"
+    },
+    {
+     "file": "bc28.1:BaseApp/Source/Base Application/Sales/Setup/SalesReceivablesSetup.Table.al",
+     "category": "if"
+    },
+    {
+     "file": "bc28.1:BusinessFoundation/Source/Business Foundation/NoSeries/src/Setup/NoSeriesSetupImpl.Codeunit.al",
+     "category": "if"
+    },
+    {
+     "file": "bc28.1:BaseApp/Test/Tests-TestLibraries/LibraryBookingManager.Codeunit.al",
+     "category": "if"
+    },
+    {
+     "file": "bc28.1:TestFramework/AITestToolkit/AI Test Toolkit/src/Logs/AITTestSuiteCompare.Page.al",
+     "category": "if"
+    },
+    {
+     "file": "bc28.1:System Application/Source/System Application/User Settings/src/UserSettings.Codeunit.al",
+     "category": "if"
+    },
+    {
+     "file": "bc28.1:BaseApp/Source/Base Application/Integration/FieldService/FSResourcePayType.Table.al",
+     "category": "if"
+    },
+    {
+     "file": "bc28.1:BaseApp/Source/Base Application/Finance/GeneralLedger/Account/GLAccountList.Page.al",
+     "category": "if"
+    },
+    {
+     "file": "bc28.1:BaseApp/Source/Base Application/Manufacturing/Document/PlannedProdOrderLines.Page.al",
+     "category": "bom"
+    },
+    {
+     "file": "bc28.1:BaseApp/Source/Base Application/eServices/EDocument/ReadSoftOCRMasterDataSync.Codeunit.al",
+     "category": "bom"
+    },
+    {
+     "file": "bc28.1:BaseApp/Source/Base Application/CRM/Duplicates/ContactDuplicates.Page.al",
+     "category": "bom"
+    },
+    {
+     "file": "bc28.1:BaseApp/Source/Base Application/Assembly/Inventory/Item/AsmItemCard.PageExt.al",
+     "category": "bom"
+    },
+    {
+     "file": "bc28.1:BaseApp/Source/Base Application/HumanResources/Employee/EmployeePostingGroup.Table.al",
+     "category": "bom"
+    },
+    {
+     "file": "bc28.1:BaseApp/Source/Base Application/Foundation/Reporting/SelectSendingOptions.Page.al",
+     "category": "bom"
+    },
+    {
+     "file": "bc28.1:Withholding Tax/Source/Withholding Tax/src/Purchase/Setup/WthldgTaxBusPostGroup.Table.al",
+     "category": "bom"
+    },
+    {
+     "file": "bc28.1:BaseApp/Source/Base Application/Inventory/Ledger/ItemApplicationEntryHistory.Table.al",
+     "category": "bom"
+    },
+    {
+     "file": "bc28.1:BaseApp/Source/Base Application/Service/Contract/ServiceContractTemplateList.Page.al",
+     "category": "bom"
+    },
+    {
+     "file": "bc28.1:Withholding Tax/Source/Withholding Tax/src/Purchase/Setup/WithholdingTaxRevenueTypes.Table.al",
+     "category": "bom"
+    },
+    {
+     "file": "bc28.1:SalesLinesSuggestions/Test/Sales Lines Suggestions Tests/SLSTestAppInstall.Codeunit.al",
+     "category": "block_comment"
+    },
+    {
+     "file": "bc28.1:System Application/Test/System Application Test/Barcode/src/IDAutomation1D/IDA1DEAN13Test.Codeunit.al",
+     "category": "block_comment"
+    },
+    {
+     "file": "bc28.1:BaseApp/Test/Tests-Misc/60SP1VAT1to1.Codeunit.al",
+     "category": "block_comment"
+    },
+    {
+     "file": "bc28.1:BankAccRecWithAI/Test/Bank Account Reconciliation With AI Tests/src/BankAccRecAITestInstall.Codeunit.al",
+     "category": "block_comment"
+    },
+    {
+     "file": "bc28.1:System Application/Test/System Application Test/Barcode/src/IDAutomation1D/IDA1DUPCATest.Codeunit.al",
+     "category": "block_comment"
+    },
+    {
+     "file": "bc28.1:BaseApp/Source/Base Application/Service/Permissions/ServD365CustomerEdit.permissionsetext.al",
+     "category": "random"
+    },
+    {
+     "file": "bc28.1:System Application/Source/System Application/MCP/src/Configuration/Pages/MCPConnectionString.Page.al",
+     "category": "random"
+    },
+    {
+     "file": "bc28.1:External File Storage - Azure File Service Connector/Source/External File Storage - Azure File Service Connector/permissions/ExtFileShareEdit.PermissionSet.al",
+     "category": "random"
+    },
+    {
+     "file": "bc28.1:BaseApp/Source/Base Application/Finance/GeneralLedger/Reports/ClosingTrialBalance.Report.al",
+     "category": "random"
+    },
+    {
+     "file": "bc28.1:EDocument Core/Source/E-Document Core/src/Processing/Import/EDocEmptyDraft.Codeunit.al",
+     "category": "random"
+    },
+    {
+     "file": "bc28.1:BaseApp/Source/Base Application/Warehouse/Activity/InventoryPutaway.Page.al",
+     "category": "random"
+    },
+    {
+     "file": "bc28.1:BaseApp/Source/Base Application/Service/Contract/FiledServiceContractHeader.Table.al",
+     "category": "random"
+    },
+    {
+     "file": "bc28.1:System Application/Test/System Application Test Library/Edit in Excel/Permissions/EditInExcelTestLibAdm.PermissionSet.al",
+     "category": "random"
+    },
+    {
+     "file": "bc28.1:System Application/Source/System Application/System Permissions/permissions/PageScriptingPlay.Permissionset.al",
+     "category": "random"
+    },
+    {
+     "file": "bc28.1:BaseApp/Source/Base Application/Bank/BankAccount/BankAccountBalanceBuffer.Table.al",
+     "category": "random"
+    },
+    {
+     "file": "bc28.1:BaseApp/Test/Tests-ERM/ERMApplicationVendor.Codeunit.al",
+     "category": "random"
+    },
+    {
+     "file": "bc28.1:BaseApp/Source/Base Application/Inventory/Intrastat/Territory.Table.al",
+     "category": "random"
+    },
+    {
+     "file": "bc28.1:APIV1/Test/_Exclude_APIV1_ Tests/src/APIV1AgedAPE2E.Codeunit.al",
+     "category": "random"
+    },
+    {
+     "file": "bc28.1:BaseApp/Source/Base Application/Purchases/Vendor/PurchOutstdAmountOnVAT.Query.al",
+     "category": "random"
+    },
+    {
+     "file": "bc28.1:PowerBIReports/Source/Power BI Report embeddings for Dynamics 365 Business Central/Core/PermissionSets/PowerBIEmbeddedObjects.PermissionSet.al",
+     "category": "random"
+    },
+    {
+     "file": "bc28.1:BaseApp/Test/Tests-SCM/SCMPrepaymentOrders.Codeunit.al",
+     "category": "random"
+    },
+    {
+     "file": "bc28.1:BaseApp/Test/Tests-SCM/SCMSalesOrderManagement.Codeunit.al",
+     "category": "random"
+    },
+    {
+     "file": "bc28.1:BaseApp/Source/Base Application/Inventory/Analysis/AnalysisTypeList.Page.al",
+     "category": "random"
+    },
+    {
+     "file": "bc28.1:BaseApp/Test/Tests-SMB/O365StandardDocumentReports.Codeunit.al",
+     "category": "random"
+    },
+    {
+     "file": "bc28.1:SalesAndInventoryForecast/Test/Sales and Inventory Forecast Tests/src/SalesForecastTests.Codeunit.al",
+     "category": "random"
+    },
+    {
+     "file": "bcapps-29.0:src/Layers/IT/BaseApp/Manufacturing/Inventory/Planning/MfgPlanningLineManagement.Codeunit.al",
+     "category": "split"
+    },
+    {
+     "file": "bcapps-29.0:src/Layers/FR/BaseApp/Bank/BankAccount/BankAccount.Table.al",
+     "category": "split"
+    },
+    {
+     "file": "bcapps-29.0:src/System Application/App/Email/src/Connector/EmailConnector.Enum.al",
+     "category": "split"
+    },
+    {
+     "file": "bcapps-29.0:src/Layers/W1/BaseApp/System/OAuth/OAuth20Setup.Table.al",
+     "category": "split"
+    },
+    {
+     "file": "bcapps-29.0:src/Layers/GB/BaseApp/Bank/Check/Check.Report.al",
+     "category": "split"
+    },
+    {
+     "file": "bcapps-29.0:src/Layers/GB/BaseApp/Finance/VAT/Reporting/ECSalesListSuggestLines.Codeunit.al",
+     "category": "split"
+    },
+    {
+     "file": "bcapps-29.0:src/Layers/IT/BaseApp/Purchases/Document/PurchaseLines.Page.al",
+     "category": "split"
+    },
+    {
+     "file": "bcapps-29.0:src/Apps/IN/INFADepreciation/app/src/table/FixedAssetShift.Table.al",
+     "category": "split"
+    },
+    {
+     "file": "bcapps-29.0:src/Layers/GB/Tests/Local/UTREPVATREP.Codeunit.al",
+     "category": "split"
+    },
+    {
+     "file": "bcapps-29.0:src/Apps/W1/EDocument/App/src/Integration/EDocumentNoIntegration.Codeunit.al",
+     "category": "split"
+    },
+    {
+     "file": "bcapps-29.0:src/Layers/DACH/Tests/SCM-Manufacturing/SCMWIPCostingProductionII.Codeunit.al",
+     "category": "split"
+    },
+    {
+     "file": "bcapps-29.0:src/Layers/W1/BaseApp/Finance/FinancialReports/AccScheduleOverview.Page.al",
+     "category": "split"
+    },
+    {
+     "file": "bcapps-29.0:src/Layers/IT/BaseApp/Inventory/Transfer/TransferOrderPostShipment.Codeunit.al",
+     "category": "split"
+    },
+    {
+     "file": "bcapps-29.0:src/Layers/IT/BaseApp/Inventory/Transfer/TransferLines.Page.al",
+     "category": "split"
+    },
+    {
+     "file": "bcapps-29.0:src/Apps/CZ/CoreLocalizationPack/app/Src/Codeunits/VATRepDateMgtHandlerCZL.Codeunit.al",
+     "category": "split"
+    },
+    {
+     "file": "bcapps-29.0:src/Apps/W1/Email - Outlook REST API/app/src/EmailOutlookAPIClient.Codeunit.al",
+     "category": "split"
+    },
+    {
+     "file": "bcapps-29.0:src/Layers/W1/Tests/SCM-Manufacturing/SCMWIPCostingProductionII.Codeunit.al",
+     "category": "split"
+    },
+    {
+     "file": "bcapps-29.0:src/Apps/FR/PaymentManagementFR/app/src/Codeunits/PaymentManagementFR.Codeunit.al",
+     "category": "split"
+    },
+    {
+     "file": "bcapps-29.0:src/Layers/IT/BaseApp/Manufacturing/Reports/DetailedCalculation.Report.al",
+     "category": "split"
+    },
+    {
+     "file": "bcapps-29.0:src/Layers/FR/BaseApp/Bank/BankAccount/BankAccountCard.Page.al",
+     "category": "split"
+    },
+    {
+     "file": "bcapps-29.0:src/Apps/W1/ContosoCoffeeDemoDataset/app/DemoData/Manufacturing/ManufacturingDemoAccount.Table.al",
+     "category": "if"
+    },
+    {
+     "file": "bcapps-29.0:src/Layers/W1/BaseApp/Inventory/Ledger/ItemApplicationEntry.Table.al",
+     "category": "if"
+    },
+    {
+     "file": "bcapps-29.0:src/Layers/W1/BaseApp/Inventory/Availability/ItemAvailabilitybyBOMLevel.Page.al",
+     "category": "if"
+    },
+    {
+     "file": "bcapps-29.0:src/Layers/W1/BaseApp/Purchases/Vendor/VendorBankAccount.Table.al",
+     "category": "if"
+    },
+    {
+     "file": "bcapps-29.0:src/Layers/CH/BaseApp/Service/Local/Bank/Payment/ServiceInvoiceESR.Report.al",
+     "category": "if"
+    },
+    {
+     "file": "bcapps-29.0:src/Apps/W1/Email - SMTP Connector/app/src/Notification/SMTPEmailOutbox.PageExt.al",
+     "category": "if"
+    },
+    {
+     "file": "bcapps-29.0:src/Apps/W1/EDocument/App/src/Document/EDocumentsSetup.Table.al",
+     "category": "if"
+    },
+    {
+     "file": "bcapps-29.0:src/Layers/GB/BaseApp/Finance/VAT/Reporting/VATReportsConfiguration.Table.al",
+     "category": "if"
+    },
+    {
+     "file": "bcapps-29.0:src/Apps/CZ/CoreLocalizationPack/app/Src/Reports/ServiceContractCZL.Report.al",
+     "category": "if"
+    },
+    {
+     "file": "bcapps-29.0:src/Layers/NA/BaseApp/Foundation/Navigate/DocumentEntries.Report.al",
+     "category": "if"
+    },
+    {
+     "file": "bcapps-29.0:src/Layers/NO/BaseApp/Local/Purchases/Payables/WaitingJournal.Table.al",
+     "category": "if"
+    },
+    {
+     "file": "bcapps-29.0:src/Layers/W1/BaseApp/Integration/SynchEngine/ManIntegrationTableMapping.Table.al",
+     "category": "if"
+    },
+    {
+     "file": "bcapps-29.0:src/Apps/W1/Sustainability/app/src/PowerBI/Embedded/CO2eAnalysisPowerBI.Page.al",
+     "category": "if"
+    },
+    {
+     "file": "bcapps-29.0:src/Layers/CZ/BaseApp/Inventory/Intrastat/IntrastatJnlLine.Table.al",
+     "category": "if"
+    },
+    {
+     "file": "bcapps-29.0:src/Layers/NA/BaseApp/Finance/GeneralLedger/Journal/PostedGenJournalLine.Table.al",
+     "category": "if"
+    },
+    {
+     "file": "bcapps-29.0:src/Layers/IS/Tests/NewObjectTests-Internal/CloudMigCountryTables.Codeunit.al",
+     "category": "if"
+    },
+    {
+     "file": "bcapps-29.0:src/Layers/W1/BaseApp/Sales/Document/SalesCreditMemos.Page.al",
+     "category": "if"
+    },
+    {
+     "file": "bcapps-29.0:src/Layers/NO/BaseApp/Local/Finance/VAT/NorwegianVATTools.Codeunit.al",
+     "category": "if"
+    },
+    {
+     "file": "bcapps-29.0:src/Layers/APAC/BaseApp/Local/FinancialMgt/WithholdingTax/PurchTaxCrMemoLine.Table.al",
+     "category": "if"
+    },
+    {
+     "file": "bcapps-29.0:src/Layers/SE/BaseApp/Local/FinancialMgt/AutomaticAccounts/AutomaticAccHeader.Table.al",
+     "category": "if"
+    },
+    {
+     "file": "bcapps-29.0:src/Apps/SE/SIE/app/src/ExportEngineSIE/FileTypeSIE.Enum.al",
+     "category": "bom"
+    },
+    {
+     "file": "bcapps-29.0:src/Layers/NL/BaseApp/HumanResources/Payables/EmployeeLedgerEntry.Table.al",
+     "category": "bom"
+    },
+    {
+     "file": "bcapps-29.0:src/Layers/W1/BaseApp/Inventory/Counting/Document/PhysInvtOrderHeader.Table.al",
+     "category": "bom"
+    },
+    {
+     "file": "bcapps-29.0:src/Apps/IN/INReports/app/src/queries/TDS27Q.Query.al",
+     "category": "bom"
+    },
+    {
+     "file": "bcapps-29.0:src/Layers/W1/BaseApp/Projects/TimeSheet/MyTimeSheets.Table.al",
+     "category": "bom"
+    },
+    {
+     "file": "bcapps-29.0:src/Apps/DK/VATReportsDK/app/src/Intrastat/RemoveControls/VATDKPurchaseInvoice.PageExt.al",
+     "category": "bom"
+    },
+    {
+     "file": "bcapps-29.0:src/Layers/NO/BaseApp/Local/EServices/DocumentCapture/OCRPaymentBBS.Report.al",
+     "category": "bom"
+    },
+    {
+     "file": "bcapps-29.0:src/Layers/W1/BaseApp/Warehouse/Structure/LotBinBuffer.Table.al",
+     "category": "bom"
+    },
+    {
+     "file": "bcapps-29.0:src/Apps/IN/INGateEntry/app/src/page/PostedInwardGateEntry.Page.al",
+     "category": "bom"
+    },
+    {
+     "file": "bcapps-29.0:src/Apps/CZ/AdvancePaymentsLocalization/app/Src/Codeunits/VendEntryEditHandlerCZZ.Codeunit.al",
+     "category": "bom"
+    },
+    {
+     "file": "bcapps-29.0:src/System Application/Test/Barcode/src/IDAutomation1D/IDA1DUPCATest.Codeunit.al",
+     "category": "block_comment"
+    },
+    {
+     "file": "bcapps-29.0:src/Layers/NA/BaseApp/Local/Inventory/Reports/TopInventoryItems.Report.al",
+     "category": "block_comment"
+    },
+    {
+     "file": "bcapps-29.0:src/Apps/W1/EDocumentConnectors/ForNAV/App/src/Integration/ForNAVAPIRequests.Codeunit.al",
+     "category": "block_comment"
+    },
+    {
+     "file": "bcapps-29.0:src/Layers/W1/AlCosting/TestscriptManagement.Codeunit.103492.al",
+     "category": "block_comment"
+    },
+    {
+     "file": "bcapps-29.0:src/System Application/Test/Barcode/src/IDAutomation1D/IDA1DEAN13Test.Codeunit.al",
+     "category": "block_comment"
+    },
+    {
+     "file": "bcapps-29.0:src/Apps/W1/RecommendedApps/app/src/Pages/RecommendedAppsList.Page.al",
+     "category": "random"
+    },
+    {
+     "file": "bcapps-29.0:src/Apps/DK/ContosoCoffeeDemoDatasetDK/app/DemoData/Purchases/1.Setup Data/CreateVendorPostingGroupDK.Codeunit.al",
+     "category": "random"
+    },
+    {
+     "file": "bcapps-29.0:src/Layers/NA/BaseApp/Sales/Document/ReturnOrderConfirmation.Report.al",
+     "category": "random"
+    },
+    {
+     "file": "bcapps-29.0:src/System Application/App/Barcode/src/IDAutomation 1D Provider/Encoders/IDA1DCode128Encoder.Codeunit.al",
+     "category": "random"
+    },
+    {
+     "file": "bcapps-29.0:src/Layers/W1/BaseApp/Permissions/d365invdocpost.permissionset.al",
+     "category": "random"
+    },
+    {
+     "file": "bcapps-29.0:src/Layers/W1/BaseApp/Inventory/Counting/Document/PhysInvtOrderPostPrint.Codeunit.al",
+     "category": "random"
+    },
+    {
+     "file": "bcapps-29.0:src/Apps/IN/INGST/app/GSTDistribution/src/Page/PostedGSTDistInvoice.page.al",
+     "category": "random"
+    },
+    {
+     "file": "bcapps-29.0:src/Layers/RU/BaseApp/Local/PostedPaymentOrderList.Page.al",
+     "category": "random"
+    },
+    {
+     "file": "bcapps-29.0:src/Apps/W1/Subcontracting/Test/Tests/SubcSubcontractingSyncTest.Codeunit.al",
+     "category": "random"
+    },
+    {
+     "file": "bcapps-29.0:src/Layers/IT/BaseApp/Manufacturing/Inventory/Journal/MfgItemJnlCheckLine.Codeunit.al",
+     "category": "random"
+    },
+    {
+     "file": "bcapps-29.0:src/Layers/RU/Tests/ERM/TestGenJnlPostPreview.Codeunit.al",
+     "category": "random"
+    },
+    {
+     "file": "bcapps-29.0:src/Layers/IN/DemoTool/CreateFADeprSetupsIN.Codeunit.al",
+     "category": "random"
+    },
+    {
+     "file": "bcapps-29.0:src/Layers/W1/BaseApp/Inventory/Costing/StandardCostWorksheet.Table.al",
+     "category": "random"
+    },
+    {
+     "file": "bcapps-29.0:src/System Application/App/External File Storage/src/Account/FileAccount.Table.al",
+     "category": "random"
+    },
+    {
+     "file": "bcapps-29.0:src/Apps/W1/AgentSamples/app/SalesValidation/Profile/SVSalesOrderStatistics.PageCust.al",
+     "category": "random"
+    },
+    {
+     "file": "bcapps-29.0:src/Layers/GB/DemoTool/CreateJobPostingGroup.Codeunit.al",
+     "category": "random"
+    },
+    {
+     "file": "bcapps-29.0:src/Layers/W1/BaseApp/Integration/Dataverse/CRMIntegrationTableSynch.Codeunit.al",
+     "category": "random"
+    },
+    {
+     "file": "bcapps-29.0:src/Layers/W1/BaseApp/Service/Inventory/ServUndoPostingMgt.Codeunit.al",
+     "category": "random"
+    },
+    {
+     "file": "bcapps-29.0:src/Apps/W1/HybridBaseDeployment/app/src/tables/RecordLinkMapping.Table.al",
+     "category": "random"
+    },
+    {
+     "file": "bcapps-29.0:src/Layers/NA/BaseApp/Local/Finance/GeneralLedger/Account/GIFICodes.Page.al",
+     "category": "random"
+    }
+   ]
+  },
+  "oracle": {
+   "workers": 31,
+   "quick": {
+    "seconds": {
+     "median": 2.2939033,
+     "min": 2.2744006,
+     "max": 2.4634618,
+     "runs": [
+      2.4634618,
+      2.2939033,
+      2.2744006
+     ]
+    },
+    "peak_rss_sum_bytes": 748314624,
+    "peak_rss_single_process_bytes": 619487232,
+    "peak_private_sum_bytes": 998809600,
+    "repeats": 3
+   },
+   "full": {
+    "exit_code": 0,
+    "seconds": 618.3616936,
+    "peak_rss_sum_bytes": 7556788224,
+    "peak_rss_single_process_bytes": 1323139072,
+    "peak_private_sum_bytes": 8728502272,
+    "peak_processes": 34,
+    "samples": 2189,
+    "interval_s": 0.25,
+    "repeats": 1,
+    "roots": [
+     "U:\\Git\\tree-sitter-al\\BC.History",
+     "U:\\Git\\tree-sitter-al\\DC",
+     "H:\\Git\\BC28.1",
+     "H:\\Git\\BCApps-29.0"
+    ],
+    "oracle_own_peak_rss_line": "peak RSS (max over processes): 1277 MiB"
+   }
+  }
+ },
+ "finished": "2026-09-30T17:20:02+02:00",
+ "warnings": []
+}

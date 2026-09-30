@@ -52,6 +52,9 @@ python -m tools.config_oracle replay           # historical-defect replays; ~80s
 # A fixture cannot-validate record must be classified in tools/config_oracle/fixture-classes.tsv
 # (negative / invalid-config need alc evidence; debt(<owner>)); an entry matching no record is stale and fails.
 
+# Perf baselines (docs/performance-baselines.md): baseline ~30 min; one group: native|wasm|incremental|build|oracle
+python -m tools.perf baseline; python -m tools.perf compare docs/perf/baseline-<date>.json NEW.json  # incremental exits 1 on a mismatch
+
 # Standard development cycle
 tree-sitter generate         # Generate parser from grammar.js
 tree-sitter generate --report-states-for-rule -  # Rank rules by parser-state cost
