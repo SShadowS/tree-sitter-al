@@ -278,27 +278,31 @@ def measure(labels, seed=SEED, size=SAMPLE, report_dir=None):
     for label, cats in short.items():
         common.warn(f"incremental sample: {label} could not fill " + ", ".join(f"{c} (short {n})" for c, n in cats.items()))
     mismatches, timings, per_kind = [], [], {k: 0 for k in KINDS}
-    for n, (i, cat) in enumerate(chosen):
-        label, rel, src = files[i]
-        fid = f"{label}:{rel}"
-        if n % 50 == 0:
-            common.log(f"incremental: file {n + 1}/{len(chosen)}")
-        tree = parser.parse(src)
-        rng = random.Random(f"{seed}:{fid}")
-        edits = sites(src, tree, rng)
-        for e in edits:
-            per_kind[e.kind] += 1
-            check(parser, fid, src, e, tree.copy(), mismatches, timings, "independent")
-        cur_src, cur_tree = src, tree                          # chain: reuse the incremental tree
-        for kind in [e.kind for e in edits]:
-            e = next((x for x in sites(cur_src, cur_tree, rng) if x.kind == kind), None)
-            if e is not None:
-                cur_src, cur_tree = check(parser, fid, cur_src, e, cur_tree, mismatches, timings, "chain")
+    from tools.perf import pin
+    with pin.Pinned() as pinned:                               # the same CPU as native
+        for n, (i, cat) in enumerate(chosen):
+            label, rel, src = files[i]
+            fid = f"{label}:{rel}"
+            if n % 50 == 0:
+                common.log(f"incremental: file {n + 1}/{len(chosen)}")
+            tree = parser.parse(src)
+            rng = random.Random(f"{seed}:{fid}")
+            edits = sites(src, tree, rng)
+            for e in edits:
+                per_kind[e.kind] += 1
+                check(parser, fid, src, e, tree.copy(), mismatches, timings, "independent")
+            cur_src, cur_tree = src, tree                          # chain: reuse the incremental tree
+            for kind in [e.kind for e in edits]:
+                e = next((x for x in sites(cur_src, cur_tree, rng) if x.kind == kind), None)
+                if e is not None:
+                    cur_src, cur_tree = check(parser, fid, cur_src, e, cur_tree, mismatches, timings, "chain")
+            pinned.note()
     ratio = [inc / fresh for inc, fresh in timings if fresh]
     cats = {}
     for i, cat in chosen:
         cats[cat] = cats.get(cat, 0) + 1
     result = {
+        "pin": pinned.record(),
         "seed": seed, "sample_size": len(chosen), "categories": cats, "quota_shortfalls": short,
         "checks": ["tree: complete cursor rows incl. grammar_name", "edit-points: shifted nodes of the edited old tree"],
         "bom_files": sum(files[i][2].startswith(BOM) for i, _ in chosen),

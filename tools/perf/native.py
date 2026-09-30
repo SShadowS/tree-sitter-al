@@ -25,21 +25,24 @@ def _throughput(seconds_runs, files, nbytes):
 
 
 def single(parser, files):
-    """Warm-up pass (discarded), then REPEATS passes. -> (per-file ns [repeat][file], has_error flags).
-    Only the parse() call is timed, per file."""
+    """Warm-up pass (discarded), then REPEATS passes, the thread pinned to pin.pin_cpu().
+    -> (per-file ns [repeat][file], has_error flags, pin record). Only parse() is timed."""
+    from tools.perf import pin
     clock = time.perf_counter_ns
-    errors = [parser.parse(src).root_node.has_error for _, _, src in files]   # warm-up
-    runs = []
-    for r in range(REPEATS):
-        common.log(f"native single-threaded pass {r + 1}/{REPEATS}")
-        ns = []
-        for _, _, src in files:
-            t = clock()
-            tree = parser.parse(src)
-            ns.append(clock() - t)
-            del tree
-        runs.append(ns)
-    return runs, errors
+    with pin.Pinned() as p:
+        errors = [parser.parse(src).root_node.has_error for _, _, src in files]   # warm-up
+        runs = []
+        for r in range(REPEATS):
+            common.log(f"native single-threaded pass {r + 1}/{REPEATS}")
+            ns = []
+            for _, _, src in files:
+                t = clock()
+                tree = parser.parse(src)
+                ns.append(clock() - t)
+                del tree
+                p.note()
+            runs.append(ns)
+    return runs, errors, p.record()
 
 
 # ---- parallel: workers read the corpus from one shared-memory block, so no I/O and no
@@ -93,7 +96,7 @@ def measure(labels, workers=common.DEFAULT_WORKERS, lib=None):
     files, read = common.load(labels)
     total_bytes = sum(len(s) for *_, s in files)
     common.log(f"native: {len(files)} files, {total_bytes / MiB:.1f} MiB read in {read['seconds']:.2f} s")
-    runs, errors = single(loader.make_parser(loader.load_language(lib)), files)
+    runs, errors, pinned = single(loader.make_parser(loader.load_language(lib)), files)
     per_file_ms = [stats.median([runs[r][i] for r in range(REPEATS)]) / 1e6 for i in range(len(files))]
 
     spans, i = {}, 0      # label -> (lo, hi) index range; load() keeps corpora contiguous
@@ -105,7 +108,8 @@ def measure(labels, workers=common.DEFAULT_WORKERS, lib=None):
 
     result = {"read_seconds": read["seconds"], "read_seconds_per_corpus": read["per_corpus"],
               "utf16_transcoded": len(read["utf16"]), "repeats": REPEATS, "workers": workers,
-              "chunk": CHUNK, "corpora": {}}
+              "chunk": CHUNK, "corpora": {}, "single_pin": pinned,
+              "parallel_affinity": "all logical CPUs: both CCDs, whatever the scheduler picks"}
     for name, (lo, hi) in spans.items():
         sub = files[lo:hi]
         nbytes = sum(len(s) for *_, s in sub)
@@ -126,7 +130,7 @@ def measure(labels, workers=common.DEFAULT_WORKERS, lib=None):
     result["single_spread_percent"] = round((secs["max"] - secs["min"]) / secs["median"] * 100, 2)
     if result["single_spread_percent"] > SPREAD_WARN:
         common.warn(f"native single-threaded passes spread {result['single_spread_percent']}% "
-                    f"(> {SPREAD_WARN}%): {[round(x, 1) for x in secs['runs']]} s -- a disturbed run?")
+                    f"(> {SPREAD_WARN}%): {[round(x, 3) for x in secs['runs']]} s -- a disturbed run?")
     for label in labels:
         got = result["corpora"][label]["has_error"]
         if got != KNOWN_HAS_ERROR.get(label, got):
@@ -145,6 +149,9 @@ def measure(labels, workers=common.DEFAULT_WORKERS, lib=None):
             start_all(pool, workers)
             for name, (lo, hi) in spans.items():
                 entry, ranges = result["corpora"][name], _chunks(lo, hi)
+                if name == "combined" and len(labels) == 1:        # the same files as the one corpus
+                    entry["parallel"] = result["corpora"][labels[0]]["parallel"]
+                    continue
                 parallel(pool, ranges)                              # warm-up
                 secs = []
                 for r in range(REPEATS):

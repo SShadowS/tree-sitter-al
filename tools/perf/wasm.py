@@ -35,13 +35,22 @@ def measure(labels, native_error_ids=None):
         manifest, out = Path(tmp) / "manifest.json", Path(tmp) / "out.json"
         manifest.write_text(json.dumps({"wasm": str(WASM), "repeats": native.REPEATS, "files": paths}))
         common.log(f"wasm: {len(files)} files")
-        subprocess.run(["node", str(SCRIPT), str(manifest), str(out)], cwd=common.REPO, check=True)
+        # The whole node process is pinned to the native runs' CPU, right after it starts:
+        # it reads every file and loads the wasm before its first timed parse.
+        from tools.perf import pin
+        cpu = pin.pin_cpu()[0]
+        node = subprocess.Popen(["node", str(SCRIPT), str(manifest), str(out)], cwd=common.REPO)
+        pin.pin_process(node.pid, (cpu,))
+        if node.wait():
+            raise subprocess.CalledProcessError(node.returncode, "node wasm_bench.mjs")
         raw = json.loads(out.read_text())
     wasm_errors = {ids[i] for i, e in enumerate(raw["has_error"]) if e}
     per_file_ms = [stats.median([run[i] for run in raw["ns"]]) / 1e6 for i in range(len(files))]
     result = {"web_tree_sitter": raw["web_tree_sitter"], "wasm_bytes": WASM.stat().st_size,
               "read_seconds": raw["read_seconds"], "repeats": native.REPEATS,
               "invalid_utf8_files": [ids[i] for i in raw["invalid_utf8"]],
+              "pin": {"pinned_to": [cpu], "ran_on": "not observable from node: the whole process's "
+                      "affinity is the one CPU, so it can run nowhere else"},
               "has_error_disagreements": {"wasm_only": sorted(wasm_errors - set(native_error_ids)),
                                           "native_only": sorted(set(native_error_ids) - wasm_errors)},
               "corpora": {}}

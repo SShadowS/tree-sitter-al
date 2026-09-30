@@ -129,6 +129,11 @@ def environment(labels):
         # The inputs the oracle hashes (grammar.js, scanner.c, parser.c, src/**/*.h).
         "grammar_sha": oracle._header("perf")["grammar"],
         "repo_head": oracle._git_head(REPO, short=False),
+        # The CCD map (which logical CPUs share which L3, and the SMT pairs), the CPU the
+        # single-threaded groups are pinned to and why, and the AMD 3D V-Cache driver state.
+        "cpu_topology": _pin().topology(),
+        "single_thread_pin": dict(zip(("cpu", "why"), _pin().pin_cpu())),
+        "amd_3d_vcache_driver": _pin().amd_vcache_driver(),
         "repo_dirty": _out("git", "status", "--porcelain", "--untracked-files=no") not in ("", "?"),
         "cpu_affinity": _affinity(),
         "corpora": {l: {"root": str(oracle.CORPORA[l]), "head": oracle._git_head(oracle.CORPORA[l], short=False),
@@ -140,6 +145,11 @@ def environment(labels):
         warn(f"machine is busy at start: CPU {env['load_at_start']['cpu_percent_2s']}% over 2 s "
              f"(> {BUSY_PERCENT}%); numbers may be inflated")
     return env
+
+
+def _pin():
+    from tools.perf import pin
+    return pin
 
 
 def _affinity():
