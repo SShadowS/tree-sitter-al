@@ -75,23 +75,23 @@
  "groups": {
   "build": {
    "generate": {
-    "median": 2.7253128,
-    "min": 2.627017,
-    "max": 2.802417,
+    "median": 2.2067662,
+    "min": 2.2026368,
+    "max": 2.2232101,
     "runs": [
-     2.7253128,
-     2.802417,
-     2.627017
+     2.2067662,
+     2.2026368,
+     2.2232101
     ]
    },
    "build": {
-    "median": 10.4785357,
-    "min": 10.4252195,
-    "max": 10.6963636,
+    "median": 10.1790264,
+    "min": 10.0992932,
+    "max": 10.2615551,
     "runs": [
-     10.6963636,
-     10.4252195,
-     10.4785357
+     10.2615551,
+     10.0992932,
+     10.1790264
     ]
    },
    "src_unchanged_by_generate": true,
@@ -103,10 +103,71 @@
    "STATE_COUNT": 15870,
    "LARGE_STATE_COUNT": 5750,
    "SYMBOL_COUNT": 1026,
-   "wasm_bytes": 13043917
+   "wasm_bytes": 13043917,
+   "meta": {
+    "corpora": [
+     "bc-history",
+     "dc",
+     "bc28.1",
+     "bcapps-29.0"
+    ],
+    "command": "python -m tools.perf baseline --groups build,native,incremental --out tools/perf/reports/fix1",
+    "started": "2026-09-30T18:54:46+02:00",
+    "start_snapshot": {
+     "cpu_percent_2s": 11.4,
+     "ram_available_bytes": 42563080192,
+     "top5": [
+      "Task Manager.exe 65%",
+      "python.exe 61%",
+      "wezterm-gui.exe 24%",
+      "WmiPrvSE.exe 24%",
+      "CorsairCpuIdService.exe 18%"
+     ],
+     "cpu_mhz": 4300.0,
+     "power_plan": "Balanced"
+    },
+    "library": {
+     "built_by": "tree-sitter build (tools/query_coverage/loader.ensure_library)",
+     "probe": "tree-sitter build -v --output <tmp>/probe.dll .",
+     "probe_exit": 0,
+     "compiler": "C:\\Program Files\\Microsoft Visual Studio\\2022\\Enterprise\\VC\\Tools\\MSVC\\14.44.35207\\bin\\HostX64\\x64\\cl.exe",
+     "compiler_version": "Microsoft (R) C/C++ Optimizing Compiler Version 19.44.35228 for x64",
+     "flags": [
+      "-nologo",
+      "-MD",
+      "-O2",
+      "-Brepro",
+      "-std:c11",
+      "-W4",
+      "-LD",
+      "-utf-8"
+     ],
+     "library_sha256": "8397a2c4d756915cdfe0b903eb4d53622b11671494e6ecbfcdbfcb62eff100ee",
+     "library_pe_linker_version": "14.44"
+    },
+    "load": {
+     "sampled": true,
+     "interval_s": 1.0,
+     "samples": 38,
+     "outside_cores_mean": 2.889,
+     "outside_cores_max": 4.571,
+     "outside_cores_p95": 4.121,
+     "threshold_max_cores": 11.5,
+     "threshold_mean_cores": 4.5,
+     "flagged": false
+    },
+    "finished": "2026-09-30T18:55:34+02:00"
+   }
   },
   "native": {
-   "read_seconds": 297.6373757,
+   "read_seconds": 7.0921902,
+   "read_seconds_per_corpus": {
+    "bc-history": 0.8611103,
+    "dc": 0.0868504,
+    "bc28.1": 1.9207659,
+    "bcapps-29.0": 4.2234451
+   },
+   "utf16_transcoded": 19,
    "repeats": 3,
    "workers": 31,
    "chunk": 8,
@@ -118,124 +179,124 @@
      "has_error_files": [],
      "single": {
       "seconds": {
-       "median": 22.4986013,
-       "min": 22.4261779,
-       "max": 22.5080547,
+       "median": 21.7203689,
+       "min": 21.6888011,
+       "max": 21.9616739,
        "runs": [
-        22.4986013,
-        22.5080547,
-        22.4261779
+        21.6888011,
+        21.7203689,
+        21.9616739
        ]
       },
       "files_per_s": {
-       "median": 682.6202124840534,
-       "min": 682.3335114784487,
-       "max": 684.8246753629828,
+       "median": 707.0782301492126,
+       "min": 699.3091724215066,
+       "max": 708.1073743628918,
        "runs": [
-        682.6202124840534,
-        682.3335114784487,
-        684.8246753629828
+        708.1073743628918,
+        707.0782301492126,
+        699.3091724215066
        ]
       },
       "mib_per_s": {
-       "median": 9.713811437648708,
-       "min": 9.709731629496977,
-       "max": 9.745181350721296,
+       "median": 10.061853536890807,
+       "min": 9.951298413507455,
+       "max": 10.076498448733439,
        "runs": [
-        9.713811437648708,
-        9.709731629496977,
-        9.745181350721296
+        10.076498448733439,
+        10.061853536890807,
+        9.951298413507455
        ]
       }
      },
      "latency_ms": {
-      "p50": 0.3462,
-      "p95": 6.1849549999999995,
-      "p99": 17.634572000000002,
-      "max": 76.6765,
-      "mean": 1.4563458002344054
+      "p50": 0.3295,
+      "p95": 5.894429999999999,
+      "p99": 16.917922,
+      "max": 70.8742,
+      "mean": 1.3875087836957938
      },
      "slowest": [
       {
        "file": "bc-history:BaseApp/Source/Base Application/Sales/Posting/SalesPost.Codeunit.al",
        "bytes": 672437,
-       "ms": 76.677
+       "ms": 70.874
       },
       {
        "file": "bc-history:BaseApp/Source/Base Application/Purchases/Posting/PurchPost.Codeunit.al",
        "bytes": 642803,
-       "ms": 72.055
+       "ms": 68.215
       },
       {
        "file": "bc-history:BaseApp/Source/Base Application/Utilities/CopyDocumentMgt.Codeunit.al",
        "bytes": 704083,
-       "ms": 70.063
+       "ms": 65.677
       },
       {
        "file": "bc-history:BaseApp/Source/Base Application/Finance/GeneralLedger/Posting/GenJnlPostLine.Codeunit.al",
        "bytes": 594425,
-       "ms": 65.135
+       "ms": 61.173
       },
       {
        "file": "bc-history:BaseApp/Test/Tests-ERM/ERMPurchaseOrder.Codeunit.al",
        "bytes": 608502,
-       "ms": 60.867
+       "ms": 58.271
       },
       {
        "file": "bc-history:BaseApp/Source/Base Application/Sales/Document/SalesLine.Table.al",
        "bytes": 530174,
-       "ms": 55.59
-      },
-      {
-       "file": "bc-history:BaseApp/Source/Base Application/Purchases/Document/PurchaseLine.Table.al",
-       "bytes": 510422,
-       "ms": 54.517
-      },
-      {
-       "file": "bc-history:BaseApp/Source/Base Application/Sales/Document/SalesHeader.Table.al",
-       "bytes": 490428,
-       "ms": 53.964
+       "ms": 52.989
       },
       {
        "file": "bc-history:BaseApp/Test/Tests-SCM-Manufacturing/SCMProductionOrderIII.Codeunit.al",
        "bytes": 548981,
-       "ms": 53.858
+       "ms": 52.54
       },
       {
-       "file": "bc-history:BaseApp/Source/Base Application/Inventory/Posting/ItemJnlPostLine.Codeunit.al",
-       "bytes": 448100,
-       "ms": 49.87
+       "file": "bc-history:BaseApp/Source/Base Application/Purchases/Document/PurchaseLine.Table.al",
+       "bytes": 510422,
+       "ms": 51.367
+      },
+      {
+       "file": "bc-history:BaseApp/Source/Base Application/Sales/Document/SalesHeader.Table.al",
+       "bytes": 490428,
+       "ms": 50.551
+      },
+      {
+       "file": "bc-history:BaseApp/Test/Tests-SCM-Manufacturing/SCMProductionOrdersII.Codeunit.al",
+       "bytes": 499488,
+       "ms": 47.603
       }
      ],
      "parallel": {
       "seconds": {
-       "median": 1.2741837,
-       "min": 1.2723688,
-       "max": 1.2860804,
+       "median": 1.2975174,
+       "min": 1.2701665,
+       "max": 1.3129508,
        "runs": [
-        1.2741837,
-        1.2723688,
-        1.2860804
+        1.2701665,
+        1.3129508,
+        1.2975174
        ]
       },
       "files_per_s": {
-       "median": 12053.20708466134,
-       "min": 11941.710642662776,
-       "max": 12070.399714296673,
+       "median": 11836.450131612879,
+       "min": 11697.315695302519,
+       "max": 12091.328184139638,
        "runs": [
-        12053.20708466134,
-        12070.399714296673,
-        11941.710642662776
+        12091.328184139638,
+        11697.315695302519,
+        11836.450131612879
        ]
       },
       "mib_per_s": {
-       "median": 171.51935834608312,
-       "min": 169.93274342649036,
-       "max": 171.76401263457427,
+       "median": 168.434866953644,
+       "min": 166.45495828102474,
+       "max": 172.0618286177742,
        "runs": [
-        171.51935834608312,
-        171.76401263457427,
-        169.93274342649036
+        172.0618286177742,
+        166.45495828102474,
+        168.434866953644
        ]
       }
      }
@@ -247,124 +308,124 @@
      "has_error_files": [],
      "single": {
       "seconds": {
-       "median": 1.5890712,
-       "min": 1.5718231,
-       "max": 1.5925535,
+       "median": 1.5350079,
+       "min": 1.5337177,
+       "max": 1.5928672,
        "runs": [
-        1.5890712,
-        1.5718231,
-        1.5925535
+        1.5350079,
+        1.5337177,
+        1.5928672
        ]
       },
       "files_per_s": {
-       "median": 850.811467730332,
-       "min": 848.9510713454839,
-       "max": 860.1476845581415,
+       "median": 880.7772259673712,
+       "min": 848.783878530489,
+       "max": 881.5181568289914,
        "runs": [
-        850.811467730332,
-        860.1476845581415,
-        848.9510713454839
+        880.7772259673712,
+        881.5181568289914,
+        848.783878530489
        ]
       },
       "mib_per_s": {
-       "median": 9.048789866344542,
-       "min": 9.02900365448317,
-       "max": 9.148085030344674,
+       "median": 9.36749014220706,
+       "min": 9.027225478344938,
+       "max": 9.375370298888747,
        "runs": [
-        9.048789866344542,
-        9.148085030344674,
-        9.02900365448317
+        9.36749014220706,
+        9.375370298888747,
+        9.027225478344938
        ]
       }
      },
      "latency_ms": {
-      "p50": 0.3755,
-      "p95": 4.887735,
-      "p99": 11.478877000000002,
-      "max": 40.9436,
-      "mean": 1.166278698224852
+      "p50": 0.35705,
+      "p95": 4.752115000000003,
+      "p99": 11.089299000000002,
+      "max": 39.448,
+      "mean": 1.1193862426035504
      },
      "slowest": [
       {
        "file": "dc:Cloud/.dependencies/DC/Codeunit/CDCPurchDocManagement.Codeunit.al",
        "bytes": 343785,
-       "ms": 40.944
+       "ms": 39.448
       },
       {
        "file": "dc:Cloud/.dependencies/DC/Codeunit/CDCCaptureManagement.Codeunit.al",
        "bytes": 158058,
-       "ms": 24.015
+       "ms": 23.041
       },
       {
        "file": "dc:Cloud/.dependencies/DC/Codeunit/CDCPurchRegister.Codeunit.al",
        "bytes": 193121,
-       "ms": 22.073
+       "ms": 21.903
       },
       {
        "file": "dc:Test/.dependencies/DC/Test/Codeunit/CDCRegisterTest.Codeunit.al",
        "bytes": 240647,
-       "ms": 21.596
+       "ms": 21.279
       },
       {
        "file": "dc:Test/src/Tests/MatchTest.Codeunit.al",
        "bytes": 196827,
-       "ms": 20.616
+       "ms": 20.36
       },
       {
        "file": "dc:Cloud/Modules/Approvals/Codeunits/CDCApprovalManagement.Codeunit.al",
        "bytes": 177175,
-       "ms": 20.273
+       "ms": 19.608
       },
       {
        "file": "dc:Cloud/.dependencies/DC/Codeunit/CDCCreateDocCaptureRoles.Codeunit.al",
        "bytes": 101420,
-       "ms": 19.396
+       "ms": 19.179
       },
       {
        "file": "dc:Test/.dependencies/DC/Test/Codeunit/CDCAdvancedApprovalTest.Codeunit.al",
        "bytes": 167238,
-       "ms": 15.336
-      },
-      {
-       "file": "dc:Test/.dependencies/DC/Test/Codeunit/CDCAdvPOApprovalTest.Codeunit.al",
-       "bytes": 165880,
-       "ms": 15.274
+       "ms": 15.064
       },
       {
        "file": "dc:Test/.dependencies/DC/Test/Codeunit/CDCAdvPROApprovalTest.Codeunit.al",
        "bytes": 167553,
-       "ms": 15.045
+       "ms": 14.526
+      },
+      {
+       "file": "dc:Test/.dependencies/DC/Test/Codeunit/CDCAdvPOApprovalTest.Codeunit.al",
+       "bytes": 165880,
+       "ms": 14.36
       }
      ],
      "parallel": {
       "seconds": {
-       "median": 0.1325677,
-       "min": 0.1316692,
-       "max": 0.1392229,
+       "median": 0.1300633,
+       "min": 0.1297338,
+       "max": 0.1369675,
        "runs": [
-        0.1325677,
-        0.1392229,
-        0.1316692
+        0.1300633,
+        0.1297338,
+        0.1369675
        ]
       },
       "files_per_s": {
-       "median": 10198.562696644807,
-       "min": 9711.046099456338,
-       "max": 10268.156865842582,
+       "median": 10394.938464578401,
+       "min": 9870.954788544728,
+       "max": 10421.339697133668,
        "runs": [
-        10198.562696644807,
-        9711.046099456338,
-        10268.156865842582
+        10394.938464578401,
+        10421.339697133668,
+        9870.954788544728
        ]
       },
       "mib_per_s": {
-       "median": 108.46662777931547,
-       "min": 103.28165389070304,
-       "max": 109.20679529806486,
+       "median": 110.55517868191843,
+       "min": 104.98235984054584,
+       "max": 110.8359685098252,
        "runs": [
-        108.46662777931547,
-        103.28165389070304,
-        109.20679529806486
+        110.55517868191843,
+        110.8359685098252,
+        104.98235984054584
        ]
       }
      }
@@ -376,124 +437,124 @@
      "has_error_files": [],
      "single": {
       "seconds": {
-       "median": 24.1810162,
-       "min": 24.1568039,
-       "max": 24.2909374,
+       "median": 23.3724387,
+       "min": 23.3540218,
+       "max": 23.4393409,
        "runs": [
-        24.2909374,
-        24.1810162,
-        24.1568039
+        23.3724387,
+        23.3540218,
+        23.4393409
        ]
       },
       "files_per_s": {
-       "median": 700.0532922185463,
-       "min": 696.8854153812936,
-       "max": 700.7549537627368,
+       "median": 724.2718749755454,
+       "min": 722.2046077242726,
+       "max": 724.843033245777,
        "runs": [
-        696.8854153812936,
-        700.0532922185463,
-        700.7549537627368
+        724.2718749755454,
+        724.843033245777,
+        722.2046077242726
        ]
       },
       "mib_per_s": {
-       "median": 9.983581067555154,
-       "min": 9.938403428126428,
-       "max": 9.993587584182213,
+       "median": 10.328966464614771,
+       "min": 10.29948480883114,
+       "max": 10.33711185148266,
        "runs": [
-        9.938403428126428,
-        9.983581067555154,
-        9.993587584182213
+        10.328966464614771,
+        10.33711185148266,
+        10.29948480883114
        ]
       }
      },
      "latency_ms": {
-      "p50": 0.3319,
-      "p95": 6.090704999999999,
-      "p99": 17.458652999999998,
-      "max": 76.1849,
-      "mean": 1.4224646443761815
+      "p50": 0.31625000000000003,
+      "p95": 5.760434999999998,
+      "p99": 16.566517999999967,
+      "max": 72.1345,
+      "mean": 1.351507295604915
      },
      "slowest": [
       {
        "file": "bc28.1:BaseApp/Source/Base Application/Sales/Posting/SalesPost.Codeunit.al",
        "bytes": 790566,
-       "ms": 76.185
+       "ms": 72.135
       },
       {
        "file": "bc28.1:BaseApp/Source/Base Application/Purchases/Posting/PurchPost.Codeunit.al",
        "bytes": 629873,
-       "ms": 71.695
+       "ms": 67.182
       },
       {
        "file": "bc28.1:BaseApp/Source/Base Application/Utilities/CopyDocumentMgt.Codeunit.al",
        "bytes": 704145,
-       "ms": 68.678
-      },
-      {
-       "file": "bc28.1:BaseApp/Test/Tests-ERM/ERMPurchaseOrder.Codeunit.al",
-       "bytes": 639025,
-       "ms": 65.109
+       "ms": 65.635
       },
       {
        "file": "bc28.1:BaseApp/Source/Base Application/Finance/GeneralLedger/Posting/GenJnlPostLine.Codeunit.al",
        "bytes": 613862,
-       "ms": 65.05
+       "ms": 62.593
       },
       {
-       "file": "bc28.1:BaseApp/Test/Tests-SCM-Manufacturing/SCMProductionOrderIII.Codeunit.al",
-       "bytes": 610248,
-       "ms": 59.714
+       "file": "bc28.1:BaseApp/Test/Tests-ERM/ERMPurchaseOrder.Codeunit.al",
+       "bytes": 639025,
+       "ms": 60.015
       },
       {
        "file": "bc28.1:BaseApp/Source/Base Application/Sales/Document/SalesLine.Table.al",
        "bytes": 717526,
-       "ms": 58.444
+       "ms": 57.431
+      },
+      {
+       "file": "bc28.1:BaseApp/Test/Tests-SCM-Manufacturing/SCMProductionOrderIII.Codeunit.al",
+       "bytes": 610248,
+       "ms": 55.587
       },
       {
        "file": "bc28.1:BaseApp/Source/Base Application/Purchases/Document/PurchaseLine.Table.al",
        "bytes": 542201,
-       "ms": 57.349
-      },
-      {
-       "file": "bc28.1:BaseApp/Test/Tests-SCM-Manufacturing/SCMProductionOrdersII.Codeunit.al",
-       "bytes": 562604,
-       "ms": 56.192
+       "ms": 53.585
       },
       {
        "file": "bc28.1:BaseApp/Source/Base Application/Sales/Document/SalesHeader.Table.al",
        "bytes": 665328,
-       "ms": 54.692
+       "ms": 52.677
+      },
+      {
+       "file": "bc28.1:BaseApp/Test/Tests-SCM-Manufacturing/SCMProductionOrdersII.Codeunit.al",
+       "bytes": 562604,
+       "ms": 52.644
       }
      ],
      "parallel": {
       "seconds": {
-       "median": 1.3677522,
-       "min": 1.3579731,
-       "max": 1.3704921,
+       "median": 1.3598558,
+       "min": 1.3493711,
+       "max": 1.3777216,
        "runs": [
-        1.3579731,
-        1.3677522,
-        1.3704921
+        1.3598558,
+        1.3777216,
+        1.3493711
        ]
       },
       "files_per_s": {
-       "median": 12376.510891373453,
-       "min": 12351.76766068188,
-       "max": 12465.63720592109,
+       "median": 12448.378717802285,
+       "min": 12286.9526034868,
+       "max": 12545.103418918636,
        "runs": [
-        12465.63720592109,
-        12376.510891373453,
-        12351.76766068188
+        12448.378717802285,
+        12286.9526034868,
+        12545.103418918636
        ]
       },
       "mib_per_s": {
-       "median": 176.5035622158491,
-       "min": 176.1506947238619,
-       "max": 177.77460800111908,
+       "median": 177.52848171737358,
+       "min": 175.22635598408593,
+       "max": 178.9078894075651,
        "runs": [
-        177.77460800111908,
-        176.5035622158491,
-        176.1506947238619
+        177.52848171737358,
+        175.22635598408593,
+        178.9078894075651
        ]
       }
      }
@@ -508,124 +569,124 @@
      ],
      "single": {
       "seconds": {
-       "median": 69.6067126,
-       "min": 69.5902612,
-       "max": 69.6934838,
+       "median": 67.3987044,
+       "min": 67.1554615,
+       "max": 67.4250251,
        "runs": [
-        69.6934838,
-        69.6067126,
-        69.5902612
+        67.1554615,
+        67.3987044,
+        67.4250251
        ]
       },
       "files_per_s": {
-       "median": 527.4922292480165,
-       "min": 526.8354801342274,
-       "max": 527.616930398876,
+       "median": 544.7730832048456,
+       "min": 544.560420193303,
+       "max": 546.7462985121471,
        "runs": [
-        526.8354801342274,
-        527.4922292480165,
-        527.616930398876
+        546.7462985121471,
+        544.7730832048456,
+        544.560420193303
        ]
       },
       "mib_per_s": {
-       "median": 10.047849245349788,
-       "min": 10.0353392675312,
-       "max": 10.050224594776912,
+       "median": 10.37702075871342,
+       "min": 10.372969882204604,
+       "max": 10.414607226981673,
        "runs": [
-        10.0353392675312,
-        10.047849245349788,
-        10.050224594776912
+        10.414607226981673,
+        10.37702075871342,
+        10.372969882204604
        ]
       }
      },
      "latency_ms": {
-      "p50": 0.4103,
-      "p95": 7.709979999999999,
-      "p99": 23.928735999999702,
-      "max": 213.2333,
-      "mean": 1.8875883841272434
+      "p50": 0.3896,
+      "p95": 7.325899999999993,
+      "p99": 22.9452439999999,
+      "max": 203.086,
+      "mean": 1.798392935152654
      },
      "slowest": [
       {
        "file": "bcapps-29.0:src/Apps/AU/ContosoCoffeeDemoDatasetAU/app/DemoData/Foundation/1.Setup Data/CreateAUPostCode.Codeunit.al",
        "bytes": 1543572,
-       "ms": 213.233
+       "ms": 203.086
       },
       {
        "file": "bcapps-29.0:src/Apps/ES/ContosoCoffeeDemoDatasetES/app/DemoData/Finance/1.Setup Data/CreateESGLAccounts.Codeunit.al",
        "bytes": 1031927,
-       "ms": 126.798
-      },
-      {
-       "file": "bcapps-29.0:src/Apps/NO/ContosoCoffeeDemoDatasetNO/app/DemoData/Foundation/1.Setup Data/CreatePostCodeNO.Codeunit.al",
-       "bytes": 599842,
-       "ms": 90.918
-      },
-      {
-       "file": "bcapps-29.0:src/Layers/RU/BaseApp/Finance/GeneralLedger/Posting/GenJnlPostLine.Codeunit.al",
-       "bytes": 786763,
-       "ms": 83.957
-      },
-      {
-       "file": "bcapps-29.0:src/Layers/APAC/BaseApp/Finance/GeneralLedger/Posting/GenJnlPostLine.Codeunit.al",
-       "bytes": 789397,
-       "ms": 83.296
-      },
-      {
-       "file": "bcapps-29.0:src/Layers/NA/BaseApp/Sales/Posting/SalesPost.Codeunit.al",
-       "bytes": 831982,
-       "ms": 80.789
-      },
-      {
-       "file": "bcapps-29.0:src/Layers/RU/BaseApp/Sales/Posting/SalesPost.Codeunit.al",
-       "bytes": 832090,
-       "ms": 79.915
-      },
-      {
-       "file": "bcapps-29.0:src/Layers/ES/BaseApp/Finance/GeneralLedger/Posting/GenJnlPostLine.Codeunit.al",
-       "bytes": 732600,
-       "ms": 79.635
+       "ms": 119.23
       },
       {
        "file": "bcapps-29.0:src/Layers/APAC/BaseApp/Sales/Posting/SalesPost.Codeunit.al",
        "bytes": 817219,
-       "ms": 79.549
+       "ms": 91.423
       },
       {
-       "file": "bcapps-29.0:src/Layers/IT/BaseApp/Sales/Posting/SalesPost.Codeunit.al",
-       "bytes": 807276,
-       "ms": 79.08
+       "file": "bcapps-29.0:src/Apps/NO/ContosoCoffeeDemoDatasetNO/app/DemoData/Foundation/1.Setup Data/CreatePostCodeNO.Codeunit.al",
+       "bytes": 599842,
+       "ms": 83.96
+      },
+      {
+       "file": "bcapps-29.0:src/Layers/APAC/BaseApp/Finance/GeneralLedger/Posting/GenJnlPostLine.Codeunit.al",
+       "bytes": 789397,
+       "ms": 76.862
+      },
+      {
+       "file": "bcapps-29.0:src/Layers/RU/BaseApp/Finance/GeneralLedger/Posting/GenJnlPostLine.Codeunit.al",
+       "bytes": 786763,
+       "ms": 76.582
+      },
+      {
+       "file": "bcapps-29.0:src/Layers/NA/BaseApp/Purchases/Posting/PurchPost.Codeunit.al",
+       "bytes": 690788,
+       "ms": 76.282
+      },
+      {
+       "file": "bcapps-29.0:src/Layers/RU/BaseApp/Sales/Posting/SalesPost.Codeunit.al",
+       "bytes": 832090,
+       "ms": 76.008
+      },
+      {
+       "file": "bcapps-29.0:src/Layers/NA/BaseApp/Sales/Posting/SalesPost.Codeunit.al",
+       "bytes": 831982,
+       "ms": 75.496
+      },
+      {
+       "file": "bcapps-29.0:src/Layers/ES/BaseApp/Finance/GeneralLedger/Posting/GenJnlPostLine.Codeunit.al",
+       "bytes": 732600,
+       "ms": 74.488
       }
      ],
      "parallel": {
       "seconds": {
-       "median": 3.9330129,
-       "min": 3.9129943,
-       "max": 3.9896034,
+       "median": 3.8981009,
+       "min": 3.8915061,
+       "max": 3.9575542,
        "runs": [
-        3.9330129,
-        3.9896034,
-        3.9129943
+        3.8915061,
+        3.8981009,
+        3.9575542
        ]
       },
       "files_per_s": {
-       "median": 9335.591042683842,
-       "min": 9203.170420398177,
-       "max": 9383.351261206795,
+       "median": 9419.202052979183,
+       "min": 9277.699848052618,
+       "max": 9435.164446999068,
        "runs": [
-        9335.591042683842,
-        9203.170420398177,
-        9383.351261206795
+        9435.164446999068,
+        9419.202052979183,
+        9277.699848052618
        ]
       },
       "mib_per_s": {
-       "median": 177.82747538641163,
-       "min": 175.30508287344787,
-       "max": 178.73722807855597,
+       "median": 179.42012600781817,
+       "min": 176.72474445686416,
+       "max": 179.72418305323728,
        "runs": [
-        177.82747538641163,
-        175.30508287344787,
-        178.73722807855597
+        179.72418305323728,
+        179.42012600781817,
+        176.72474445686416
        ]
       }
      }
@@ -640,128 +701,183 @@
      ],
      "single": {
       "seconds": {
-       "median": 117.8676066,
-       "min": 117.7657965,
-       "max": 118.0720937,
+       "median": 114.0068128,
+       "min": 113.7517092,
+       "max": 114.4189071,
        "runs": [
-        118.0720937,
-        117.8676066,
-        117.7657965
+        113.7517092,
+        114.0068128,
+        114.4189071
        ]
       },
       "files_per_s": {
-       "median": 596.8985205473749,
-       "min": 595.8647619035149,
-       "max": 597.4145472705227,
+       "median": 617.1122433132347,
+       "min": 614.8896347918359,
+       "max": 618.4962010223579,
        "runs": [
-        595.8647619035149,
-        596.8985205473749,
-        597.4145472705227
+        618.4962010223579,
+        617.1122433132347,
+        614.8896347918359
        ]
       },
       "mib_per_s": {
-       "median": 9.95809846374069,
-       "min": 9.940852198238371,
-       "max": 9.966707372528594,
+       "median": 10.295325370312009,
+       "min": 10.25824544174703,
+       "max": 10.318414030549372,
        "runs": [
-        9.940852198238371,
-        9.95809846374069,
-        9.966707372528594
+        10.318414030549372,
+        10.295325370312009,
+        10.25824544174703
        ]
       }
      },
      "latency_ms": {
-      "p50": 0.374,
-      "p95": 6.899130000000003,
-      "p99": 21.139904000000048,
-      "max": 213.2333,
-      "mean": 1.6676772340274324
+      "p50": 0.3558,
+      "p95": 6.564990000000001,
+      "p99": 20.362976000000035,
+      "max": 203.086,
+      "mean": 1.588127055646365
      },
      "slowest": [
       {
        "file": "bcapps-29.0:src/Apps/AU/ContosoCoffeeDemoDatasetAU/app/DemoData/Foundation/1.Setup Data/CreateAUPostCode.Codeunit.al",
        "bytes": 1543572,
-       "ms": 213.233
+       "ms": 203.086
       },
       {
        "file": "bcapps-29.0:src/Apps/ES/ContosoCoffeeDemoDatasetES/app/DemoData/Finance/1.Setup Data/CreateESGLAccounts.Codeunit.al",
        "bytes": 1031927,
-       "ms": 126.798
-      },
-      {
-       "file": "bcapps-29.0:src/Apps/NO/ContosoCoffeeDemoDatasetNO/app/DemoData/Foundation/1.Setup Data/CreatePostCodeNO.Codeunit.al",
-       "bytes": 599842,
-       "ms": 90.918
-      },
-      {
-       "file": "bcapps-29.0:src/Layers/RU/BaseApp/Finance/GeneralLedger/Posting/GenJnlPostLine.Codeunit.al",
-       "bytes": 786763,
-       "ms": 83.957
-      },
-      {
-       "file": "bcapps-29.0:src/Layers/APAC/BaseApp/Finance/GeneralLedger/Posting/GenJnlPostLine.Codeunit.al",
-       "bytes": 789397,
-       "ms": 83.296
-      },
-      {
-       "file": "bcapps-29.0:src/Layers/NA/BaseApp/Sales/Posting/SalesPost.Codeunit.al",
-       "bytes": 831982,
-       "ms": 80.789
-      },
-      {
-       "file": "bcapps-29.0:src/Layers/RU/BaseApp/Sales/Posting/SalesPost.Codeunit.al",
-       "bytes": 832090,
-       "ms": 79.915
-      },
-      {
-       "file": "bcapps-29.0:src/Layers/ES/BaseApp/Finance/GeneralLedger/Posting/GenJnlPostLine.Codeunit.al",
-       "bytes": 732600,
-       "ms": 79.635
+       "ms": 119.23
       },
       {
        "file": "bcapps-29.0:src/Layers/APAC/BaseApp/Sales/Posting/SalesPost.Codeunit.al",
        "bytes": 817219,
-       "ms": 79.549
+       "ms": 91.423
       },
       {
-       "file": "bcapps-29.0:src/Layers/IT/BaseApp/Sales/Posting/SalesPost.Codeunit.al",
-       "bytes": 807276,
-       "ms": 79.08
+       "file": "bcapps-29.0:src/Apps/NO/ContosoCoffeeDemoDatasetNO/app/DemoData/Foundation/1.Setup Data/CreatePostCodeNO.Codeunit.al",
+       "bytes": 599842,
+       "ms": 83.96
+      },
+      {
+       "file": "bcapps-29.0:src/Layers/APAC/BaseApp/Finance/GeneralLedger/Posting/GenJnlPostLine.Codeunit.al",
+       "bytes": 789397,
+       "ms": 76.862
+      },
+      {
+       "file": "bcapps-29.0:src/Layers/RU/BaseApp/Finance/GeneralLedger/Posting/GenJnlPostLine.Codeunit.al",
+       "bytes": 786763,
+       "ms": 76.582
+      },
+      {
+       "file": "bcapps-29.0:src/Layers/NA/BaseApp/Purchases/Posting/PurchPost.Codeunit.al",
+       "bytes": 690788,
+       "ms": 76.282
+      },
+      {
+       "file": "bcapps-29.0:src/Layers/RU/BaseApp/Sales/Posting/SalesPost.Codeunit.al",
+       "bytes": 832090,
+       "ms": 76.008
+      },
+      {
+       "file": "bcapps-29.0:src/Layers/NA/BaseApp/Sales/Posting/SalesPost.Codeunit.al",
+       "bytes": 831982,
+       "ms": 75.496
+      },
+      {
+       "file": "bcapps-29.0:src/Layers/ES/BaseApp/Finance/GeneralLedger/Posting/GenJnlPostLine.Codeunit.al",
+       "bytes": 732600,
+       "ms": 74.488
       }
      ],
      "parallel": {
       "seconds": {
-       "median": 6.6214136,
-       "min": 6.5879388,
-       "max": 6.7164693,
+       "median": 6.607448,
+       "min": 6.5801849,
+       "max": 6.622607,
        "runs": [
-        6.5879388,
-        6.6214136,
-        6.7164693
+        6.622607,
+        6.5801849,
+        6.607448
        ]
       },
       "files_per_s": {
-       "median": 10625.37461789126,
-       "min": 10474.997630079244,
-       "max": 10679.364538116231,
+       "median": 10647.832567127278,
+       "min": 10623.459915407935,
+       "max": 10691.948793110661,
        "runs": [
-        10679.364538116231,
-        10625.37461789126,
-        10474.997630079244
+        10623.459915407935,
+        10691.948793110661,
+        10647.832567127278
        ]
       },
       "mib_per_s": {
-       "median": 177.2638447186341,
-       "min": 174.75509524152102,
-       "max": 178.16456221606856,
+       "median": 177.63851220747435,
+       "min": 177.23190160736578,
+       "max": 178.37450619484142,
        "runs": [
-        178.16456221606856,
-        177.2638447186341,
-        174.75509524152102
+        177.23190160736578,
+        178.37450619484142,
+        177.63851220747435
        ]
       }
      }
     }
+   },
+   "single_spread_percent": 0.59,
+   "meta": {
+    "corpora": [
+     "bc-history",
+     "dc",
+     "bc28.1",
+     "bcapps-29.0"
+    ],
+    "command": "python -m tools.perf baseline --groups build,native,incremental --out tools/perf/reports/fix1",
+    "started": "2026-09-30T18:55:34+02:00",
+    "start_snapshot": {
+     "cpu_percent_2s": 10.0,
+     "ram_available_bytes": 42030489600,
+     "top5": [
+      "Task Manager.exe 69%",
+      "python.exe 61%",
+      "wezterm-gui.exe 25%",
+      "WmiPrvSE.exe 23%",
+      "System 20%"
+     ],
+     "cpu_mhz": 4300.0,
+     "power_plan": "Balanced"
+    },
+    "library": {
+     "built_by": "tree-sitter build (tools/query_coverage/loader.ensure_library)",
+     "probe": "tree-sitter build -v --output <tmp>/probe.dll .",
+     "probe_exit": 0,
+     "compiler": "C:\\Program Files\\Microsoft Visual Studio\\2022\\Enterprise\\VC\\Tools\\MSVC\\14.44.35207\\bin\\HostX64\\x64\\cl.exe",
+     "compiler_version": "Microsoft (R) C/C++ Optimizing Compiler Version 19.44.35228 for x64",
+     "flags": [
+      "-nologo",
+      "-MD",
+      "-O2",
+      "-Brepro",
+      "-std:c11",
+      "-W4",
+      "-LD",
+      "-utf-8"
+     ],
+     "library_sha256": "8397a2c4d756915cdfe0b903eb4d53622b11671494e6ecbfcdbfcb62eff100ee",
+     "library_pe_linker_version": "14.44"
+    },
+    "load": {
+     "sampled": true,
+     "interval_s": 1.0,
+     "samples": 500,
+     "outside_cores_mean": 3.125,
+     "outside_cores_max": 9.759,
+     "outside_cores_p95": 5.628,
+     "threshold_max_cores": 11.5,
+     "threshold_mean_cores": 4.5,
+     "flagged": false
+    },
+    "finished": "2026-09-30T19:04:34+02:00"
    }
   },
   "wasm": {
@@ -1257,6 +1373,22 @@
       }
      ]
     }
+   },
+   "meta": {
+    "corpora": [
+     "bc-history",
+     "bc28.1",
+     "bcapps-29.0",
+     "dc"
+    ],
+    "command": "python -m tools.perf baseline",
+    "started": "2026-09-30T17:35:52+02:00",
+    "finished": "2026-09-30T18:08:38+02:00",
+    "load": {
+     "sampled": false,
+     "note": "not sampled: measured before continuous load sampling existed; the 2 s reading before the group was 12.3% CPU"
+    },
+    "library": "not recorded (compiler identity was not captured by that run)"
    }
   },
   "incremental": {
@@ -1267,46 +1399,64 @@
     "if": 80,
     "bom": 30,
     "block_comment": 20,
-    "random": 110
+    "random": 105,
+    "utf16": 5
    },
-   "bom_files": 79,
-   "crlf_files": 225,
-   "files_with_if": 145,
+   "quota_shortfalls": {
+    "bc-history": {
+     "utf16": 5
+    },
+    "dc": {
+     "split": 20,
+     "bom": 10,
+     "utf16": 5
+    },
+    "bc28.1": {
+     "utf16": 5
+    }
+   },
+   "checks": [
+    "tree: complete cursor rows incl. grammar_name",
+    "edit-points: shifted nodes of the edited old tree"
+   ],
+   "bom_files": 76,
+   "crlf_files": 220,
+   "files_with_if": 144,
    "edits_per_kind_independent": {
     "ident_insert": 300,
     "ident_delete": 300,
     "semicolon_delete": 300,
     "semicolon_insert": 300,
-    "if_eol_space": 145,
-    "if_eol_formfeed": 145,
-    "endif_newline": 145,
-    "beginend_delete": 80,
-    "beginend_insert": 145,
-    "line_comment_insert": 253,
+    "if_eol_space": 144,
+    "if_eol_formfeed": 144,
+    "endif_newline": 144,
+    "beginend_delete": 79,
+    "beginend_insert": 144,
+    "line_comment_insert": 250,
     "block_comment_insert": 14,
-    "string_insert": 277,
-    "else_line_delete": 46
+    "string_insert": 272,
+    "else_line_delete": 45
    },
-   "edits_checked": 4892,
+   "edits_checked": 4864,
    "mismatches": 0,
    "mismatch_details": [],
    "incremental_ms": {
-    "p50": 0.0901,
-    "p95": 1.8219749999999986,
-    "p99": 10.464932000000008,
-    "max": 26.4938,
-    "mean": 0.5161533524121014
+    "p50": 0.09195,
+    "p95": 1.7954800000000004,
+    "p99": 10.689244999999998,
+    "max": 31.1676,
+    "mean": 0.5204286800986843
    },
    "fresh_ms": {
-    "p50": 1.3199,
-    "p95": 11.412024999999996,
-    "p99": 22.586819,
-    "max": 51.3348,
-    "mean": 3.031791394112837
+    "p50": 1.2786499999999998,
+    "p95": 11.328740000000007,
+    "p99": 22.656982999999997,
+    "max": 48.8568,
+    "mean": 3.0192258018092106
    },
    "speed_ratio_incremental_over_fresh": {
-    "median": 0.07768153382767647,
-    "p95": 0.7970480199293978
+    "median": 0.0813311898262837,
+    "p95": 0.8156127074232704
    },
    "sample": [
     {
@@ -2430,7 +2580,27 @@
      "category": "block_comment"
     },
     {
-     "file": "bcapps-29.0:src/Apps/W1/RecommendedApps/app/src/Pages/RecommendedAppsList.Page.al",
+     "file": "bcapps-29.0:src/Apps/W1/HybridGP/app/src/Migration/GPTables/GPSY03300.Table.al",
+     "category": "utf16"
+    },
+    {
+     "file": "bcapps-29.0:src/Apps/W1/HybridGP/app/src/Migration/GPTables/GPIV00300.Table.al",
+     "category": "utf16"
+    },
+    {
+     "file": "bcapps-29.0:src/Apps/W1/HybridGP/app/src/Migration/GPTables/GPGL10111.Table.al",
+     "category": "utf16"
+    },
+    {
+     "file": "bcapps-29.0:src/Apps/W1/HybridGP/app/src/Migration/GPTables/GPIV10200.Table.al",
+     "category": "utf16"
+    },
+    {
+     "file": "bcapps-29.0:src/Apps/W1/HybridGP/app/src/Migration/GPTables/GPPM20000.Table.al",
+     "category": "utf16"
+    },
+    {
+     "file": "bcapps-29.0:src/Layers/W1/Tests/ERM-Purchase/ERMPurchBatchPosting.Codeunit.al",
      "category": "random"
     },
     {
@@ -2438,19 +2608,19 @@
      "category": "random"
     },
     {
-     "file": "bcapps-29.0:src/Layers/NA/BaseApp/Sales/Document/ReturnOrderConfirmation.Report.al",
+     "file": "bcapps-29.0:src/Layers/ES/BaseApp/Bank/Payment/PaymentRegistrationMgt.Codeunit.al",
      "category": "random"
     },
     {
-     "file": "bcapps-29.0:src/System Application/App/Barcode/src/IDAutomation 1D Provider/Encoders/IDA1DCode128Encoder.Codeunit.al",
+     "file": "bcapps-29.0:src/Layers/NA/Tests/ERM/ERMEditPostingGroups.Codeunit.al",
      "category": "random"
     },
     {
-     "file": "bcapps-29.0:src/Layers/W1/BaseApp/Permissions/d365invdocpost.permissionset.al",
+     "file": "bcapps-29.0:src/System Application/App/Language/src/AllowedLanguage.Table.al",
      "category": "random"
     },
     {
-     "file": "bcapps-29.0:src/Layers/W1/BaseApp/Inventory/Counting/Document/PhysInvtOrderPostPrint.Codeunit.al",
+     "file": "bcapps-29.0:src/Layers/W1/BaseApp/System/RapidStart/ConfigPackages.Page.al",
      "category": "random"
     },
     {
@@ -2458,27 +2628,27 @@
      "category": "random"
     },
     {
-     "file": "bcapps-29.0:src/Layers/RU/BaseApp/Local/PostedPaymentOrderList.Page.al",
+     "file": "bcapps-29.0:src/Layers/RU/BaseApp/Local/PostedPurchFAReceiptFA14.Report.al",
      "category": "random"
     },
     {
-     "file": "bcapps-29.0:src/Apps/W1/Subcontracting/Test/Tests/SubcSubcontractingSyncTest.Codeunit.al",
+     "file": "bcapps-29.0:src/System Application/App/Cryptography Management/src/AesCryptoServiceProviderImpl.Codeunit.al",
      "category": "random"
     },
     {
-     "file": "bcapps-29.0:src/Layers/IT/BaseApp/Manufacturing/Inventory/Journal/MfgItemJnlCheckLine.Codeunit.al",
+     "file": "bcapps-29.0:src/Layers/RU/Tests/Local/ERMCurrAdjmtPrepmtPurch.Codeunit.al",
      "category": "random"
     },
     {
-     "file": "bcapps-29.0:src/Layers/RU/Tests/ERM/TestGenJnlPostPreview.Codeunit.al",
+     "file": "bcapps-29.0:src/Layers/CH/BaseApp/Local/Bank/DirectDebit/SwissSEPADDExportFile.Codeunit.al",
      "category": "random"
     },
     {
-     "file": "bcapps-29.0:src/Layers/IN/DemoTool/CreateFADeprSetupsIN.Codeunit.al",
+     "file": "bcapps-29.0:src/Layers/ES/BaseApp/Purchases/Document/BlanketPurchaseOrder.Page.al",
      "category": "random"
     },
     {
-     "file": "bcapps-29.0:src/Layers/W1/BaseApp/Inventory/Costing/StandardCostWorksheet.Table.al",
+     "file": "bcapps-29.0:src/Layers/ES/BaseApp/Local/EServices/EDocument/ElectPmtsManagement.Codeunit.al",
      "category": "random"
     },
     {
@@ -2488,28 +2658,62 @@
     {
      "file": "bcapps-29.0:src/Apps/W1/AgentSamples/app/SalesValidation/Profile/SVSalesOrderStatistics.PageCust.al",
      "category": "random"
-    },
-    {
-     "file": "bcapps-29.0:src/Layers/GB/DemoTool/CreateJobPostingGroup.Codeunit.al",
-     "category": "random"
-    },
-    {
-     "file": "bcapps-29.0:src/Layers/W1/BaseApp/Integration/Dataverse/CRMIntegrationTableSynch.Codeunit.al",
-     "category": "random"
-    },
-    {
-     "file": "bcapps-29.0:src/Layers/W1/BaseApp/Service/Inventory/ServUndoPostingMgt.Codeunit.al",
-     "category": "random"
-    },
-    {
-     "file": "bcapps-29.0:src/Apps/W1/HybridBaseDeployment/app/src/tables/RecordLinkMapping.Table.al",
-     "category": "random"
-    },
-    {
-     "file": "bcapps-29.0:src/Layers/NA/BaseApp/Local/Finance/GeneralLedger/Account/GIFICodes.Page.al",
-     "category": "random"
     }
-   ]
+   ],
+   "meta": {
+    "corpora": [
+     "bc-history",
+     "dc",
+     "bc28.1",
+     "bcapps-29.0"
+    ],
+    "command": "python -m tools.perf baseline --groups build,native,incremental --out tools/perf/reports/fix1",
+    "started": "2026-09-30T19:04:34+02:00",
+    "start_snapshot": {
+     "cpu_percent_2s": 6.9,
+     "ram_available_bytes": 42843205632,
+     "top5": [
+      "Task Manager.exe 66%",
+      "python.exe 64%",
+      "WmiPrvSE.exe 27%",
+      "CorsairCpuIdService.exe 18%",
+      "LightingService.exe 15%"
+     ],
+     "cpu_mhz": 4300.0,
+     "power_plan": "Balanced"
+    },
+    "library": {
+     "built_by": "tree-sitter build (tools/query_coverage/loader.ensure_library)",
+     "probe": "tree-sitter build -v --output <tmp>/probe.dll .",
+     "probe_exit": 0,
+     "compiler": "C:\\Program Files\\Microsoft Visual Studio\\2022\\Enterprise\\VC\\Tools\\MSVC\\14.44.35207\\bin\\HostX64\\x64\\cl.exe",
+     "compiler_version": "Microsoft (R) C/C++ Optimizing Compiler Version 19.44.35228 for x64",
+     "flags": [
+      "-nologo",
+      "-MD",
+      "-O2",
+      "-Brepro",
+      "-std:c11",
+      "-W4",
+      "-LD",
+      "-utf-8"
+     ],
+     "library_sha256": "8397a2c4d756915cdfe0b903eb4d53622b11671494e6ecbfcdbfcb62eff100ee",
+     "library_pe_linker_version": "14.44"
+    },
+    "load": {
+     "sampled": true,
+     "interval_s": 1.0,
+     "samples": 129,
+     "outside_cores_mean": 3.438,
+     "outside_cores_max": 7.291,
+     "outside_cores_p95": 6.229,
+     "threshold_max_cores": 11.5,
+     "threshold_mean_cores": 4.5,
+     "flagged": false
+    },
+    "finished": "2026-09-30T19:06:59+02:00"
+   }
   },
   "oracle": {
    "workers": 31,
@@ -2546,9 +2750,857 @@
      "H:\\Git\\BCApps-29.0"
     ],
     "oracle_own_peak_rss_line": "peak RSS (max over processes): 1278 MiB"
+   },
+   "meta": {
+    "corpora": [
+     "bc-history",
+     "bc28.1",
+     "bcapps-29.0",
+     "dc"
+    ],
+    "command": "python -m tools.perf baseline",
+    "started": "2026-09-30T17:35:52+02:00",
+    "finished": "2026-09-30T18:08:38+02:00",
+    "load": {
+     "sampled": false,
+     "note": "not sampled: measured before continuous load sampling existed; the 2 s reading before the group was 14.9% CPU"
+    },
+    "library": "not recorded (compiler identity was not captured by that run)"
+   }
+  },
+  "native_zig": {
+   "read_seconds": 7.1813201,
+   "read_seconds_per_corpus": {
+    "bc-history": 0.9005249,
+    "dc": 0.0932172,
+    "bc28.1": 1.880024,
+    "bcapps-29.0": 4.307534
+   },
+   "utf16_transcoded": 19,
+   "repeats": 3,
+   "workers": 31,
+   "chunk": 8,
+   "corpora": {
+    "bc-history": {
+     "files": 15358,
+     "bytes": 229163318,
+     "has_error": 0,
+     "has_error_files": [],
+     "single": {
+      "seconds": {
+       "median": 10.6642977,
+       "min": 10.636242,
+       "max": 10.7048821,
+       "runs": [
+        10.7048821,
+        10.636242,
+        10.6642977
+       ]
+      },
+      "files_per_s": {
+       "median": 1440.1323398914492,
+       "min": 1434.672503305758,
+       "max": 1443.9310425618373,
+       "runs": [
+        1434.672503305758,
+        1443.9310425618373,
+        1440.1323398914492
+       ]
+      },
+      "mib_per_s": {
+       "median": 20.493348628014957,
+       "min": 20.41565414709594,
+       "max": 20.54740486715497,
+       "runs": [
+        20.41565414709594,
+        20.54740486715497,
+        20.493348628014957
+       ]
+      }
+     },
+     "latency_ms": {
+      "p50": 0.16375,
+      "p95": 2.8580349999999997,
+      "p99": 8.38498500000002,
+      "max": 32.9383,
+      "mean": 0.6782615054043495
+     },
+     "slowest": [
+      {
+       "file": "bc-history:BaseApp/Source/Base Application/Sales/Posting/SalesPost.Codeunit.al",
+       "bytes": 672437,
+       "ms": 32.938
+      },
+      {
+       "file": "bc-history:BaseApp/Source/Base Application/Utilities/CopyDocumentMgt.Codeunit.al",
+       "bytes": 704083,
+       "ms": 32.253
+      },
+      {
+       "file": "bc-history:BaseApp/Source/Base Application/Purchases/Posting/PurchPost.Codeunit.al",
+       "bytes": 642803,
+       "ms": 31.25
+      },
+      {
+       "file": "bc-history:BaseApp/Test/Tests-ERM/ERMPurchaseOrder.Codeunit.al",
+       "bytes": 608502,
+       "ms": 29.506
+      },
+      {
+       "file": "bc-history:BaseApp/Source/Base Application/Finance/GeneralLedger/Posting/GenJnlPostLine.Codeunit.al",
+       "bytes": 594425,
+       "ms": 28.789
+      },
+      {
+       "file": "bc-history:BaseApp/Test/Tests-SCM-Manufacturing/SCMProductionOrderIII.Codeunit.al",
+       "bytes": 548981,
+       "ms": 26.299
+      },
+      {
+       "file": "bc-history:BaseApp/Source/Base Application/Sales/Document/SalesLine.Table.al",
+       "bytes": 530174,
+       "ms": 25.766
+      },
+      {
+       "file": "bc-history:BaseApp/Source/Base Application/Purchases/Document/PurchaseLine.Table.al",
+       "bytes": 510422,
+       "ms": 25.321
+      },
+      {
+       "file": "bc-history:BaseApp/Test/Tests-SCM-Manufacturing/SCMProductionOrdersII.Codeunit.al",
+       "bytes": 499488,
+       "ms": 23.833
+      },
+      {
+       "file": "bc-history:BaseApp/Source/Base Application/Sales/Document/SalesHeader.Table.al",
+       "bytes": 490428,
+       "ms": 23.711
+      }
+     ],
+     "parallel": {
+      "seconds": {
+       "median": 0.6810338,
+       "min": 0.6776437,
+       "max": 0.6896474,
+       "runs": [
+        0.6776437,
+        0.6896474,
+        0.6810338
+       ]
+      },
+      "files_per_s": {
+       "median": 22551.009949873267,
+       "min": 22269.350975585494,
+       "max": 22663.82761324277,
+       "runs": [
+        22663.82761324277,
+        22269.350975585494,
+        22551.009949873267
+       ]
+      },
+      "mib_per_s": {
+       "median": 320.90502797223587,
+       "min": 316.89696885544424,
+       "max": 322.51044411545195,
+       "runs": [
+        322.51044411545195,
+        316.89696885544424,
+        320.90502797223587
+       ]
+      }
+     }
+    },
+    "dc": {
+     "files": 1352,
+     "bytes": 15077654,
+     "has_error": 0,
+     "has_error_files": [],
+     "single": {
+      "seconds": {
+       "median": 0.7519932,
+       "min": 0.7397566,
+       "max": 0.756597,
+       "runs": [
+        0.7397566,
+        0.756597,
+        0.7519932
+       ]
+      },
+      "files_per_s": {
+       "median": 1797.888597928811,
+       "min": 1786.9486661987823,
+       "max": 1827.6281685083986,
+       "runs": [
+        1827.6281685083986,
+        1786.9486661987823,
+        1797.888597928811
+       ]
+      },
+      "mib_per_s": {
+       "median": 19.12141143225758,
+       "min": 19.005059987628766,
+       "max": 19.43770609340959,
+       "runs": [
+        19.43770609340959,
+        19.005059987628766,
+        19.12141143225758
+       ]
+      }
+     },
+     "latency_ms": {
+      "p50": 0.17295,
+      "p95": 2.25895,
+      "p99": 5.388184,
+      "max": 19.006,
+      "mean": 0.5413062869822485
+     },
+     "slowest": [
+      {
+       "file": "dc:Cloud/.dependencies/DC/Codeunit/CDCPurchDocManagement.Codeunit.al",
+       "bytes": 343785,
+       "ms": 19.006
+      },
+      {
+       "file": "dc:Test/.dependencies/DC/Test/Codeunit/CDCRegisterTest.Codeunit.al",
+       "bytes": 240647,
+       "ms": 10.559
+      },
+      {
+       "file": "dc:Cloud/.dependencies/DC/Codeunit/CDCPurchRegister.Codeunit.al",
+       "bytes": 193121,
+       "ms": 10.284
+      },
+      {
+       "file": "dc:Cloud/.dependencies/DC/Codeunit/CDCCaptureManagement.Codeunit.al",
+       "bytes": 158058,
+       "ms": 10.151
+      },
+      {
+       "file": "dc:Test/src/Tests/MatchTest.Codeunit.al",
+       "bytes": 196827,
+       "ms": 10.07
+      },
+      {
+       "file": "dc:Cloud/.dependencies/DC/Codeunit/CDCCreateDocCaptureRoles.Codeunit.al",
+       "bytes": 101420,
+       "ms": 9.264
+      },
+      {
+       "file": "dc:Cloud/Modules/Approvals/Codeunits/CDCApprovalManagement.Codeunit.al",
+       "bytes": 177175,
+       "ms": 8.974
+      },
+      {
+       "file": "dc:Test/.dependencies/DC/Test/Codeunit/CDCAdvancedApprovalTest.Codeunit.al",
+       "bytes": 167238,
+       "ms": 8.212
+      },
+      {
+       "file": "dc:Test/.dependencies/DC/Test/Codeunit/CDCAdvPOApprovalTest.Codeunit.al",
+       "bytes": 165880,
+       "ms": 7.845
+      },
+      {
+       "file": "dc:Test/.dependencies/DC/Test/Codeunit/CDCAdvPROApprovalTest.Codeunit.al",
+       "bytes": 167553,
+       "ms": 7.691
+      }
+     ],
+     "parallel": {
+      "seconds": {
+       "median": 0.0698741,
+       "min": 0.0681837,
+       "max": 0.0886704,
+       "runs": [
+        0.0886704,
+        0.0698741,
+        0.0681837
+       ]
+      },
+      "files_per_s": {
+       "median": 19349.086428304625,
+       "min": 15247.478301665495,
+       "max": 19828.786058838108,
+       "runs": [
+        15247.478301665495,
+        19349.086428304625,
+        19828.786058838108
+       ]
+      },
+      "mib_per_s": {
+       "median": 205.78685623800467,
+       "min": 162.16427772356909,
+       "max": 210.88869292015482,
+       "runs": [
+        162.16427772356909,
+        205.78685623800467,
+        210.88869292015482
+       ]
+      }
+     }
+    },
+    "bc28.1": {
+     "files": 16928,
+     "bytes": 253140020,
+     "has_error": 0,
+     "has_error_files": [],
+     "single": {
+      "seconds": {
+       "median": 11.566315,
+       "min": 11.566174,
+       "max": 11.576779,
+       "runs": [
+        11.566315,
+        11.576779,
+        11.566174
+       ]
+      },
+      "files_per_s": {
+       "median": 1463.5603474399582,
+       "min": 1462.237466915452,
+       "max": 1463.5781892957862,
+       "runs": [
+        1463.5603474399582,
+        1462.237466915452,
+        1463.5781892957862
+       ]
+      },
+      "mib_per_s": {
+       "median": 20.872087222988867,
+       "min": 20.853221395049907,
+       "max": 20.872341668780397,
+       "runs": [
+        20.872087222988867,
+        20.853221395049907,
+        20.872341668780397
+       ]
+      }
+     },
+     "latency_ms": {
+      "p50": 0.1562,
+      "p95": 2.8113649999999994,
+      "p99": 8.287528,
+      "max": 34.0888,
+      "mean": 0.6667653473534972
+     },
+     "slowest": [
+      {
+       "file": "bc28.1:BaseApp/Source/Base Application/Sales/Posting/SalesPost.Codeunit.al",
+       "bytes": 790566,
+       "ms": 34.089
+      },
+      {
+       "file": "bc28.1:BaseApp/Source/Base Application/Utilities/CopyDocumentMgt.Codeunit.al",
+       "bytes": 704145,
+       "ms": 31.817
+      },
+      {
+       "file": "bc28.1:BaseApp/Source/Base Application/Purchases/Posting/PurchPost.Codeunit.al",
+       "bytes": 629873,
+       "ms": 31.518
+      },
+      {
+       "file": "bc28.1:BaseApp/Test/Tests-ERM/ERMPurchaseOrder.Codeunit.al",
+       "bytes": 639025,
+       "ms": 31.094
+      },
+      {
+       "file": "bc28.1:BaseApp/Source/Base Application/Finance/GeneralLedger/Posting/GenJnlPostLine.Codeunit.al",
+       "bytes": 613862,
+       "ms": 29.805
+      },
+      {
+       "file": "bc28.1:BaseApp/Test/Tests-SCM-Manufacturing/SCMProductionOrderIII.Codeunit.al",
+       "bytes": 610248,
+       "ms": 28.876
+      },
+      {
+       "file": "bc28.1:BaseApp/Source/Base Application/Sales/Document/SalesLine.Table.al",
+       "bytes": 717526,
+       "ms": 28.78
+      },
+      {
+       "file": "bc28.1:BaseApp/Test/Tests-SCM-Manufacturing/SCMProductionOrdersII.Codeunit.al",
+       "bytes": 562604,
+       "ms": 27.286
+      },
+      {
+       "file": "bc28.1:BaseApp/Source/Base Application/Sales/Document/SalesHeader.Table.al",
+       "bytes": 665328,
+       "ms": 26.581
+      },
+      {
+       "file": "bc28.1:BaseApp/Source/Base Application/Purchases/Document/PurchaseLine.Table.al",
+       "bytes": 542201,
+       "ms": 26.436
+      }
+     ],
+     "parallel": {
+      "seconds": {
+       "median": 0.7445743,
+       "min": 0.7360984,
+       "max": 0.7555747,
+       "runs": [
+        0.7360984,
+        0.7555747,
+        0.7445743
+       ]
+      },
+      "files_per_s": {
+       "median": 22735.138722891723,
+       "min": 22404.13820102764,
+       "max": 22996.925411059172,
+       "runs": [
+        22996.925411059172,
+        22404.13820102764,
+        22735.138722891723
+       ]
+      },
+      "mib_per_s": {
+       "median": 324.2297451423779,
+       "min": 319.5092894568392,
+       "max": 327.96313037572753,
+       "runs": [
+        327.96313037572753,
+        319.5092894568392,
+        324.2297451423779
+       ]
+      }
+     }
+    },
+    "bcapps-29.0": {
+     "files": 36717,
+     "bytes": 733371700,
+     "has_error": 2,
+     "has_error_files": [
+      "bcapps-29.0:src/Apps/DE/EDocumentDE/app/src/EDocumentServiceDE.PageExt.al",
+      "bcapps-29.0:src/Layers/APAC/Tests/SINGLESERVER/ERMPurchaseReportsIII.Codeunit.al"
+     ],
+     "single": {
+      "seconds": {
+       "median": 34.0051033,
+       "min": 34.0022496,
+       "max": 34.0256321,
+       "runs": [
+        34.0256321,
+        34.0022496,
+        34.0051033
+       ]
+      },
+      "files_per_s": {
+       "median": 1079.749697452029,
+       "min": 1079.0982484055012,
+       "max": 1079.8403173888823,
+       "runs": [
+        1079.0982484055012,
+        1079.8403173888823,
+        1079.749697452029
+       ]
+      },
+      "mib_per_s": {
+       "median": 20.56743508463888,
+       "min": 20.55502606428256,
+       "max": 20.5691612436487,
+       "runs": [
+        20.55502606428256,
+        20.5691612436487,
+        20.56743508463888
+       ]
+      }
+     },
+     "latency_ms": {
+      "p50": 0.1948,
+      "p95": 3.617679999999993,
+      "p99": 11.942267999999974,
+      "max": 96.3838,
+      "mean": 0.9055027916224092
+     },
+     "slowest": [
+      {
+       "file": "bcapps-29.0:src/Apps/AU/ContosoCoffeeDemoDatasetAU/app/DemoData/Foundation/1.Setup Data/CreateAUPostCode.Codeunit.al",
+       "bytes": 1543572,
+       "ms": 96.384
+      },
+      {
+       "file": "bcapps-29.0:src/Apps/ES/ContosoCoffeeDemoDatasetES/app/DemoData/Finance/1.Setup Data/CreateESGLAccounts.Codeunit.al",
+       "bytes": 1031927,
+       "ms": 64.89
+      },
+      {
+       "file": "bcapps-29.0:src/Layers/SE/DemoTool/CreateSEPostCodes.Codeunit.al",
+       "bytes": 729253,
+       "ms": 47.788
+      },
+      {
+       "file": "bcapps-29.0:src/Layers/W1/AlCosting/ValuEntryRefMgmt.Codeunit.al",
+       "bytes": 377663,
+       "ms": 42.876
+      },
+      {
+       "file": "bcapps-29.0:src/Apps/CH/ContosoCoffeeDemoDatasetCH/app/DemoData/Foundation/1.Setup Data/CreateCHPostCode.Codeunit.al",
+       "bytes": 499019,
+       "ms": 39.942
+      },
+      {
+       "file": "bcapps-29.0:src/Layers/APAC/BaseApp/Finance/GeneralLedger/Posting/GenJnlPostLine.Codeunit.al",
+       "bytes": 789397,
+       "ms": 38.717
+      },
+      {
+       "file": "bcapps-29.0:src/Apps/NO/ContosoCoffeeDemoDatasetNO/app/DemoData/Foundation/1.Setup Data/CreatePostCodeNO.Codeunit.al",
+       "bytes": 599842,
+       "ms": 38.434
+      },
+      {
+       "file": "bcapps-29.0:src/Layers/RU/BaseApp/Finance/GeneralLedger/Posting/GenJnlPostLine.Codeunit.al",
+       "bytes": 786763,
+       "ms": 38.219
+      },
+      {
+       "file": "bcapps-29.0:src/Layers/W1/AlCosting/GLEntryRefMgmt.Codeunit.al",
+       "bytes": 457907,
+       "ms": 38.167
+      },
+      {
+       "file": "bcapps-29.0:src/Layers/NA/BaseApp/Sales/Posting/SalesPost.Codeunit.al",
+       "bytes": 831982,
+       "ms": 36.434
+      }
+     ],
+     "parallel": {
+      "seconds": {
+       "median": 2.131786,
+       "min": 2.1161062,
+       "max": 2.1369147,
+       "runs": [
+        2.1161062,
+        2.131786,
+        2.1369147
+       ]
+      },
+      "files_per_s": {
+       "median": 17223.58623238918,
+       "min": 17182.24878138561,
+       "max": 17351.208554655717,
+       "runs": [
+        17351.208554655717,
+        17223.58623238918,
+        17182.24878138561
+       ]
+      },
+      "mib_per_s": {
+       "median": 328.0806585038036,
+       "min": 327.29324884572577,
+       "max": 330.51165138554455,
+       "runs": [
+        330.51165138554455,
+        328.0806585038036,
+        327.29324884572577
+       ]
+      }
+     }
+    },
+    "combined": {
+     "files": 70355,
+     "bytes": 1230752692,
+     "has_error": 2,
+     "has_error_files": [
+      "bcapps-29.0:src/Apps/DE/EDocumentDE/app/src/EDocumentServiceDE.PageExt.al",
+      "bcapps-29.0:src/Layers/APAC/Tests/SINGLESERVER/ERMPurchaseReportsIII.Codeunit.al"
+     ],
+     "single": {
+      "seconds": {
+       "median": 56.9875682,
+       "min": 56.9718676,
+       "max": 57.0365858,
+       "runs": [
+        57.0365858,
+        56.9718676,
+        56.9875682
+       ]
+      },
+      "files_per_s": {
+       "median": 1234.5675069532094,
+       "min": 1233.5065118852187,
+       "max": 1234.9077354100991,
+       "runs": [
+        1233.5065118852187,
+        1234.9077354100991,
+        1234.5675069532094
+       ]
+      },
+      "mib_per_s": {
+       "median": 20.596373371977855,
+       "min": 20.578672719366242,
+       "max": 20.6020494263778,
+       "runs": [
+        20.578672719366242,
+        20.6020494263778,
+        20.596373371977855
+       ]
+      }
+     },
+     "latency_ms": {
+      "p50": 0.1779,
+      "p95": 3.2241200000000014,
+      "p99": 10.122184000000034,
+      "max": 96.3838,
+      "mean": 0.7914566995949115
+     },
+     "slowest": [
+      {
+       "file": "bcapps-29.0:src/Apps/AU/ContosoCoffeeDemoDatasetAU/app/DemoData/Foundation/1.Setup Data/CreateAUPostCode.Codeunit.al",
+       "bytes": 1543572,
+       "ms": 96.384
+      },
+      {
+       "file": "bcapps-29.0:src/Apps/ES/ContosoCoffeeDemoDatasetES/app/DemoData/Finance/1.Setup Data/CreateESGLAccounts.Codeunit.al",
+       "bytes": 1031927,
+       "ms": 64.89
+      },
+      {
+       "file": "bcapps-29.0:src/Layers/SE/DemoTool/CreateSEPostCodes.Codeunit.al",
+       "bytes": 729253,
+       "ms": 47.788
+      },
+      {
+       "file": "bcapps-29.0:src/Layers/W1/AlCosting/ValuEntryRefMgmt.Codeunit.al",
+       "bytes": 377663,
+       "ms": 42.876
+      },
+      {
+       "file": "bcapps-29.0:src/Apps/CH/ContosoCoffeeDemoDatasetCH/app/DemoData/Foundation/1.Setup Data/CreateCHPostCode.Codeunit.al",
+       "bytes": 499019,
+       "ms": 39.942
+      },
+      {
+       "file": "bcapps-29.0:src/Layers/APAC/BaseApp/Finance/GeneralLedger/Posting/GenJnlPostLine.Codeunit.al",
+       "bytes": 789397,
+       "ms": 38.717
+      },
+      {
+       "file": "bcapps-29.0:src/Apps/NO/ContosoCoffeeDemoDatasetNO/app/DemoData/Foundation/1.Setup Data/CreatePostCodeNO.Codeunit.al",
+       "bytes": 599842,
+       "ms": 38.434
+      },
+      {
+       "file": "bcapps-29.0:src/Layers/RU/BaseApp/Finance/GeneralLedger/Posting/GenJnlPostLine.Codeunit.al",
+       "bytes": 786763,
+       "ms": 38.219
+      },
+      {
+       "file": "bcapps-29.0:src/Layers/W1/AlCosting/GLEntryRefMgmt.Codeunit.al",
+       "bytes": 457907,
+       "ms": 38.167
+      },
+      {
+       "file": "bcapps-29.0:src/Layers/NA/BaseApp/Sales/Posting/SalesPost.Codeunit.al",
+       "bytes": 831982,
+       "ms": 36.434
+      }
+     ],
+     "parallel": {
+      "seconds": {
+       "median": 3.6045938,
+       "min": 3.5986875,
+       "max": 3.6371039,
+       "runs": [
+        3.6371039,
+        3.5986875,
+        3.6045938
+       ]
+      },
+      "files_per_s": {
+       "median": 19518.149312690934,
+       "min": 19343.687157246182,
+       "max": 19550.183226523557,
+       "runs": [
+        19343.687157246182,
+        19550.183226523557,
+        19518.149312690934
+       ]
+      },
+      "mib_per_s": {
+       "median": 325.62260752050673,
+       "min": 322.7120435597817,
+       "max": 326.1570314755732,
+       "runs": [
+        322.7120435597817,
+        326.1570314755732,
+        325.62260752050673
+       ]
+      }
+     }
+    }
+   },
+   "single_spread_percent": 0.11,
+   "meta": {
+    "corpora": [
+     "bc-history",
+     "dc",
+     "bc28.1",
+     "bcapps-29.0"
+    ],
+    "command": "python -m tools.perf native --cc zig --out tools/perf/reports/fix1",
+    "started": "2026-09-30T19:07:27+02:00",
+    "start_snapshot": {
+     "cpu_percent_2s": 9.4,
+     "ram_available_bytes": 42336079872,
+     "top5": [
+      "Task Manager.exe 70%",
+      "python.exe 63%",
+      "WmiPrvSE.exe 28%",
+      "CorsairCpuIdService.exe 17%",
+      "System 15%"
+     ],
+     "cpu_mhz": 4300.0,
+     "power_plan": "Balanced"
+    },
+    "library": {
+     "built_by": "tools.perf --cc zig",
+     "probe": "zig cc -shared -O2 -I src src/parser.c src/scanner.c -o al-zig-02d8fbec6caf7f94.dll",
+     "compiler": "C:\\Users\\SShadowS\\AppData\\Local\\Microsoft\\WinGet\\Packages\\zig.zig_Microsoft.Winget.Source_8wekyb3d8bbwe\\zig-x86_64-windows-0.16.0\\zig.EXE",
+     "compiler_version": "clang version 21.1.0 (zig 0.16.0)",
+     "flags": [
+      "-shared",
+      "-O2"
+     ],
+     "library_sha256": "ef2495dcb3716420048b1829992901d1efcaad2c4f786fb60ae684974276b999",
+     "library_pe_linker_version": "14.0"
+    },
+    "load": {
+     "sampled": true,
+     "interval_s": 1.0,
+     "samples": 264,
+     "outside_cores_mean": 3.228,
+     "outside_cores_max": 6.616,
+     "outside_cores_p95": 5.183,
+     "threshold_max_cores": 11.5,
+     "threshold_mean_cores": 4.5,
+     "flagged": false
+    },
+    "finished": "2026-09-30T19:12:14+02:00"
    }
   }
  },
  "finished": "2026-09-30T18:08:38+02:00",
- "warnings": []
+ "warnings": [
+  "[baseline-2026-09-30.json] incremental sample: bc-history could not fill utf16 (short 5)",
+  "[baseline-2026-09-30.json] incremental sample: dc could not fill split (short 20), bom (short 10), utf16 (short 5)",
+  "[baseline-2026-09-30.json] incremental sample: bc28.1 could not fill utf16 (short 5)"
+ ],
+ "merges": [
+  {
+   "from": "baseline-2026-09-30.json",
+   "groups": [
+    "build",
+    "incremental",
+    "native"
+   ],
+   "command": "python -m tools.perf baseline --groups build,native,incremental --out tools/perf/reports/fix1",
+   "started": "2026-09-30T18:54:27+02:00",
+   "finished": "2026-09-30T19:07:07+02:00",
+   "env_differences": {
+    "repo_head": "273421a4f5ae165aa9ee12955a87d9dc6ab5c196",
+    "repo_dirty": false,
+    "cpu_affinity": "all",
+    "corpora": {
+     "bc-history": {
+      "root": "U:\\Git\\tree-sitter-al\\BC.History",
+      "head": "87e7d2a19d2097560d47116202f47d4a20940a14",
+      "drive": "U:"
+     },
+     "dc": {
+      "root": "U:\\Git\\tree-sitter-al\\DC",
+      "head": "5e67e5b9cda1c92d497832a970ea970e1c8a042d",
+      "drive": "U:"
+     },
+     "bc28.1": {
+      "root": "H:\\Git\\BC28.1",
+      "head": "4fc2ccf162f81dcd083e02c44f363ca3b7b89831",
+      "drive": "H:"
+     },
+     "bcapps-29.0": {
+      "root": "H:\\Git\\BCApps-29.0",
+      "head": "e16d6c302714c558b21ec994bea98d4b064a72e8",
+      "drive": "H:"
+     }
+    },
+    "native_library": {
+     "built_by": "tree-sitter build (tools/query_coverage/loader.ensure_library)",
+     "probe": "tree-sitter build -v --output <tmp>/probe.dll .",
+     "probe_exit": 0,
+     "compiler": "C:\\Program Files\\Microsoft Visual Studio\\2022\\Enterprise\\VC\\Tools\\MSVC\\14.44.35207\\bin\\HostX64\\x64\\cl.exe",
+     "compiler_version": "Microsoft (R) C/C++ Optimizing Compiler Version 19.44.35228 for x64",
+     "flags": [
+      "-nologo",
+      "-MD",
+      "-O2",
+      "-Brepro",
+      "-std:c11",
+      "-W4",
+      "-LD",
+      "-utf-8"
+     ],
+     "library_sha256": "8397a2c4d756915cdfe0b903eb4d53622b11671494e6ecbfcdbfcb62eff100ee",
+     "library_pe_linker_version": "14.44"
+    }
+   }
+  },
+  {
+   "from": "native-2026-09-30-191223.json",
+   "groups": [
+    "native_zig"
+   ],
+   "command": "python -m tools.perf native --cc zig --out tools/perf/reports/fix1",
+   "started": "2026-09-30T19:07:07+02:00",
+   "finished": "2026-09-30T19:12:23+02:00",
+   "env_differences": {
+    "repo_head": "273421a4f5ae165aa9ee12955a87d9dc6ab5c196",
+    "repo_dirty": false,
+    "cpu_affinity": "all",
+    "corpora": {
+     "bc-history": {
+      "root": "U:\\Git\\tree-sitter-al\\BC.History",
+      "head": "87e7d2a19d2097560d47116202f47d4a20940a14",
+      "drive": "U:"
+     },
+     "dc": {
+      "root": "U:\\Git\\tree-sitter-al\\DC",
+      "head": "5e67e5b9cda1c92d497832a970ea970e1c8a042d",
+      "drive": "U:"
+     },
+     "bc28.1": {
+      "root": "H:\\Git\\BC28.1",
+      "head": "4fc2ccf162f81dcd083e02c44f363ca3b7b89831",
+      "drive": "H:"
+     },
+     "bcapps-29.0": {
+      "root": "H:\\Git\\BCApps-29.0",
+      "head": "e16d6c302714c558b21ec994bea98d4b064a72e8",
+      "drive": "H:"
+     }
+    },
+    "native_library": {
+     "built_by": "tree-sitter build (tools/query_coverage/loader.ensure_library)",
+     "probe": "tree-sitter build -v --output <tmp>/probe.dll .",
+     "probe_exit": 0,
+     "compiler": "C:\\Program Files\\Microsoft Visual Studio\\2022\\Enterprise\\VC\\Tools\\MSVC\\14.44.35207\\bin\\HostX64\\x64\\cl.exe",
+     "compiler_version": "Microsoft (R) C/C++ Optimizing Compiler Version 19.44.35228 for x64",
+     "flags": [
+      "-nologo",
+      "-MD",
+      "-O2",
+      "-Brepro",
+      "-std:c11",
+      "-W4",
+      "-LD",
+      "-utf-8"
+     ],
+     "library_sha256": "8397a2c4d756915cdfe0b903eb4d53622b11671494e6ecbfcdbfcb62eff100ee",
+     "library_pe_linker_version": "14.44"
+    }
+   }
+  }
+ ]
 }
