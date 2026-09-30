@@ -144,8 +144,11 @@ def build_inner(out_path):
                 cmd = (["tree-sitter", "generate"] if name == "generate"
                        else ["tree-sitter", "build", "--output", str(lib), "."])
                 t = time.perf_counter_ns()
-                subprocess.run(cmd, cwd=common.REPO, check=True, capture_output=True)
+                proc = subprocess.run(cmd, cwd=common.REPO, capture_output=True, text=True)
                 secs.append((time.perf_counter_ns() - t) / 1e9)
+                if proc.returncode:
+                    raise RuntimeError(f"{' '.join(cmd)} exited {proc.returncode} (run {r + 1}):\n"
+                                       f"{proc.stdout}{proc.stderr}")
         res[name] = stats.spread(secs[1:] if name == "generate" else secs)
     after = _src_digest()
     diffstat = subprocess.run(["git", "diff", "--stat", "--", "src"], cwd=common.REPO,

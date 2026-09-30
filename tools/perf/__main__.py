@@ -20,7 +20,10 @@ from pathlib import Path
 
 from tools.perf import common, report
 
-GROUPS = ("native", "wasm", "incremental", "build", "oracle")
+# `build` first: it runs `tree-sitter generate`, and a src/ it changed must be known before
+# anything is measured against it.
+GROUPS = ("build", "native", "wasm", "incremental", "oracle")
+PARTIAL = common.REPO / "tools" / "perf" / "reports" / "partial.json"
 BASELINE_DIR = common.REPO / "docs" / "perf"
 DOC = common.REPO / "docs" / "performance-baselines.md"
 
@@ -60,6 +63,10 @@ def measure(groups, labels, full_oracle=True):
             elif name == "oracle":
                 from tools.perf import procs
                 g[name] = procs.oracle(labels, full_oracle)
+            # A checkpoint only, so a late failure does not lose an hour. It is never a
+            # result: the committed baseline comes from one complete run.
+            PARTIAL.parent.mkdir(parents=True, exist_ok=True)
+            PARTIAL.write_text(json.dumps(result, indent=1), encoding="utf-8")
         result["env"]["load_at_end"] = common.machine_load()
         result["finished"] = _now()
         result["warnings"] = warnings
