@@ -799,6 +799,46 @@ resolver-refused deliberate negatives in `fixture-classes.tsv`. C2's raw-compile
 mode, which skips the resolver, is what can pin it. Until then the table above is the
 evidence. B2 should add a negative fixture asserting the ERROR once it is fixed.
 
+## 21. The MSVC-built native library parses ~2x slower than clang -O2
+
+**Established:** 2026-09-30, A5 (performance baselines) and its independent review.
+
+**Evidence:**
+- `tree-sitter build -v` shows the library every local tool loads (`al.dll`, via
+  `tools/query_coverage/loader.ensure_library`) is built by MSVC 19.44 with
+  `-nologo -MD -O2 -Brepro -std:c11 -W4 -LD -utf-8`: an optimised build, not a debug one.
+- The reviewer built the same `src/parser.c` and `src/scanner.c` with `zig cc -shared -O2`
+  (clang), loaded both DLLs into one py-tree-sitter process and timed DC (1,352 files)
+  single-threaded, three interleaved passes after a warm-up, timing only `parse()`:
+  MSVC 1.527-1.538 s, clang 0.741-0.749 s, i.e. **2.06x**. The two DLLs produce identical
+  `rows()` trees on every DC file. Same runtime (`.pyd`) in both, so the difference is the
+  grammar DLL's own code (generated lexer and parse tables, scanner), not call overhead; it
+  holds on the largest files too.
+- WASM (emscripten, clang) sits between the two: 1.009 s on DC. So "WASM is faster than
+  native", which the first baseline reported, holds only against MSVC.
+- `python -m tools.perf native --cc zig` reproduces the comparison over all four corpora;
+  `docs/performance-baselines.md` ("Compiler sensitivity") has the recorded figures.
+
+**Who ships MSVC code:** the Python wheels built on `windows-latest` in
+`.github/workflows/publish-pypi.yml` (setuptools' MSVC defaults plus `/std:c11 /utf-8`
+from `setup.py`), and every Windows `npm install` (no prebuilds are published;
+node-gyp compiles `binding.gyp` with MSVC on the user's machine). So Windows consumers of
+both bindings get this code generation.
+
+**Questions to answer:**
+- `/O2` against `/Ox`, and `/Ob3` (aggressive inlining) on the generated lexer;
+- `/GL` + `/LTCG` (whole-program optimisation). Node's `common.gypi` may already turn it on
+  for node-gyp Release builds (not checked), so measure the Node binding's own build as well
+  as `tree-sitter build`'s;
+- the `parser.c` table layout: which function is slow under MSVC (a profile of `ts_lex` and
+  the parse-table lookups), and whether the size of `ts_lex`'s switch (STATE_COUNT 15,870)
+  defeats MSVC's jump-table or register allocation where clang copes;
+- whether clang-cl is an acceptable build for the Windows wheels.
+
+**Owner:** roadmap E3 (artifact verification), because shipped Windows wheels are affected;
+D2 measures (its thresholds must be set per compiler: `tools/perf compare` warns when the
+compiler or flags differ). Do not tune the grammar against MSVC numbers alone (D1).
+
 ## Longer-lived proposals, tracked separately
 
 - [`python-bindings-modernization.md`](python-bindings-modernization.md) — the
