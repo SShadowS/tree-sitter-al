@@ -156,7 +156,7 @@ def main(argv=None):
             common.log(f"dropped {g} from {args.base}")
         if args.new:
             new = json.loads(Path(args.new).read_text(encoding="utf-8"))
-            base = report.merge(base, new, Path(args.new).name)
+            base = report.merge(base, new, Path(args.new).as_posix())
             common.log(f"merged {', '.join(new['groups'])} from {args.new} into {args.base}")
         _write(Path(args.base), base)
         return 0

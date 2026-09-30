@@ -282,7 +282,8 @@ def test_merge_marks_old_groups_not_sampled_and_refuses_another_parser():
     assert merged["groups"]["native"] is new["groups"]["native"]
     assert merged["groups"]["wasm"]["meta"]["load"]["sampled"] is False
     assert "12.3% CPU" in merged["groups"]["wasm"]["meta"]["load"]["note"]
-    assert merged["merges"][0]["groups"] == ["build", "native"] and merged["warnings"] == ["[new.json] w"]
+    assert merged["merges"][0]["groups"] == ["build", "native"] and merged["merges"][0]["warnings"] == ["w"]
+    assert merged["warnings"] == []                      # the base run's own warnings only
     other = copy.deepcopy(new)
     other["env"]["grammar_sha"] = "different"
     with pytest.raises(ValueError):
