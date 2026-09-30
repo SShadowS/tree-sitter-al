@@ -287,3 +287,98 @@ def test_merge_marks_old_groups_not_sampled_and_refuses_another_parser():
     other["env"]["grammar_sha"] = "different"
     with pytest.raises(ValueError):
         report.merge(copy.deepcopy(old), other, "x")
+
+
+# ---- fix round 2: ab, noise floor, cross-session, placement, exited workers ------------
+
+def test_ab_schedule_is_abba():
+    from tools.perf import ab
+    assert ab.schedule(4) == list("ABBAABBA")
+    assert ab.schedule(1) == ["A", "B"]
+
+
+def test_ab_ratios_pair_each_round_whatever_the_order():
+    from tools.perf import ab
+    order = ab.schedule(3)                       # A B B A A B
+    secs = [2.0, 1.0, 1.1, 2.2, 1.8, 0.9]        # A is 2x B in every round
+    assert ab.ratios(order, secs) == pytest.approx([2.0, 2.0, 2.0])
+    with pytest.raises(ValueError):
+        ab.ratios(order, secs[:-1])
+
+
+def test_ab_bootstrap_ci_brackets_the_median_and_is_deterministic():
+    from tools.perf import ab
+    r = [1.98, 2.01, 2.03, 2.00, 1.99, 2.05, 2.02, 2.00]
+    lo, hi = ab.bootstrap_ci(r)
+    assert lo <= stats.median(r) <= hi and hi - lo < 0.06
+    assert ab.bootstrap_ci(r) == (lo, hi)
+    assert ab.bootstrap_ci([2.0] * 5) == (2.0, 2.0)
+
+
+def test_compare_noise_floor():
+    a = _result(10.0, 9.95, 10.05)
+    b = _result(10.4, 10.35, 10.45)               # +4%: beyond the spread, under the 5% floor
+    line = _rows(report.compare(a, b))["native.corpora.dc.single.seconds"]
+    assert not line.rstrip().endswith("!")
+    assert _rows(report.compare(a, b, floor=0.0))["native.corpora.dc.single.seconds"].rstrip().endswith("!")
+    c = _result(10.7, 10.65, 10.75)               # +7%: beyond the 5% floor
+    assert _rows(report.compare(a, c))["native.corpora.dc.single.seconds"].rstrip().endswith("!")
+
+
+def test_compare_cross_session_and_placement_headers():
+    base = _run(LABELS4, {"dc": (850, 848, 860)})
+    later = _run(LABELS4, {"dc": (850, 848, 860)})
+    base["groups"]["native"]["meta"]["started"] = "t1"
+    later["groups"]["native"]["meta"]["started"] = "t2"
+    later["groups"]["native"]["single_pin"] = {"pinned_to": [2]}
+    lines = report.compare(base, later)
+    assert any(l.startswith("CROSS-SESSION native") and "not decision-grade" in l for l in lines)
+    assert any(l.startswith("WARNING native: CPU or pin differs") for l in lines)
+    same = report.compare(base, base)
+    assert not [l for l in same if l.startswith(("CROSS-SESSION", "WARNING"))]
+
+
+def test_compiler_identity_ignores_the_install_path_and_sees_link_flags():
+    a = _run(LABELS4, {"dc": (1, 1, 1)})
+    b = _run(LABELS4, {"dc": (1, 1, 1)})
+    b["groups"]["native"]["meta"]["library"] = dict(a["groups"]["native"]["meta"]["library"],
+                                                    compiler="C:/VS/Community/cl.exe")
+    assert not any(l.startswith("WARNING") for l in report.compare(a, b))
+    b["groups"]["native"]["meta"]["library"]["link_flags"] = ["/LTCG"]
+    assert any(l.startswith("WARNING native: the native library") for l in report.compare(a, b))
+    from tools.perf import procs
+    exe, flags, link = procs.parse_invocation(
+        r"[] C:\Program Files\VS\cl.exe -nologo -O2 -I U:\x\src -W4 U:\x\src\parser.c -link -out:C:\t\a.dll /LTCG")
+    assert exe.endswith("cl.exe") and flags == ["-nologo", "-O2", "-W4"] and link == ["/LTCG"]
+
+
+EXIT_WAVES = ("import subprocess, sys\n"
+              "for _ in range(4):\n"
+              "    ps = [subprocess.Popen([sys.executable, '-c', {spin!r}]) for _ in range(4)]\n"
+              "    [p.wait() for p in ps]\n")
+
+
+@pytest.mark.skipif(sys.platform != "win32", reason="the handle-keeping path is Windows-only")
+def test_load_monitor_keeps_the_cpu_of_exited_workers():
+    """Waves of 4 short-lived spinners, each exiting between two 1 s samples. Without the kept
+    handles their last slice is lost and reads as OUTSIDE CPU (re-review: 9.8 vs 3.8 cores)."""
+    from tools.perf.load import LoadMonitor
+    sleeper = subprocess.Popen([sys.executable, "-c", "import time; time.sleep(8)"])
+    waves = subprocess.Popen([sys.executable, "-c", EXIT_WAVES.format(spin=SPIN.format(s=0.6))])
+    inside, outside = LoadMonitor(1.0, root_pid=waves.pid), LoadMonitor(1.0, root_pid=sleeper.pid)
+    inside.start(), outside.start()
+    waves.wait()
+    time.sleep(1.2)
+    a, b = inside.stop(), outside.stop()
+    sleeper.kill()
+    # the spinners are ~4 cores for most of the window: outside for the sleeper's monitor only
+    assert b["outside_cores_mean"] - a["outside_cores_mean"] > 1.5
+
+
+def test_mean_rule_needs_enough_samples():
+    from tools.perf import load
+    short = load.summary([5.0] * 12)
+    assert short["mean_rule_applies"] is False and short["flagged"] is False
+    long = load.summary([5.0] * load.MEAN_MIN_SAMPLES)
+    assert long["mean_rule_applies"] and long["flagged"]
+    assert load.summary([12.0])["flagged"]                       # the max rule always applies
