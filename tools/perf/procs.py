@@ -129,7 +129,7 @@ def _src_digest():
 def _src_state():
     """What a failed generate/build left in src/: a partly written parser.c must be visible."""
     git = lambda *a: subprocess.run(["git", *a], cwd=common.REPO, capture_output=True,  # noqa: E731
-                                    text=True).stdout.strip() or "(clean)"
+                                    text=True).stdout.rstrip() or "(clean)"
     return (f"git status --short src/:\n{git('status', '--short', 'src/')}\n"
             f"git diff --stat src/:\n{git('diff', '--stat', '--', 'src/')}")
 
@@ -211,9 +211,9 @@ def _compiler_version(exe):
 
 
 def parse_invocation(text):
-    """-> (compiler path, [flags]) from `tree-sitter build -v` output: the line that runs the
-    compiler. Include paths, output/object paths, source files and everything after `-link`
-    are inputs, not flags, and are dropped."""
+    """-> (compiler path, [compile flags], [link flags]) from `tree-sitter build -v` output: the
+    line that runs the compiler. Include paths, output/object paths and source files are
+    inputs, not flags, and are dropped; after `-link`, output and import-library paths are."""
     for line in text.splitlines():
         # The path may hold spaces (C:\Program Files\...\cl.exe), so match the executable
         # by its name, not by splitting first.
@@ -221,8 +221,11 @@ def parse_invocation(text):
         if not m:
             continue
         exe, rest = m.group(1), line[m.end():].split()
+        link = []
         if "-link" in rest:
-            rest = rest[:rest.index("-link")]
+            rest, after = rest[:rest.index("-link")], rest[rest.index("-link") + 1:]
+            link = [t for t in after if t.startswith(("-", "/"))
+                    and not t.lower().startswith(("-out:", "/out:", "-implib:", "/implib:"))]
         flags, skip = [], False
         for t in rest:
             if skip:
@@ -235,8 +238,8 @@ def parse_invocation(text):
                 continue
             if t.startswith(("-", "/")):
                 flags.append(t)
-        return exe, flags
-    return None, []
+        return exe, flags, link
+    return None, [], []
 
 
 def compiler_probe():
@@ -248,12 +251,12 @@ def compiler_probe():
     with tempfile.TemporaryDirectory() as tmp:
         r = common.ts_lock("tree-sitter", "build", "-v", "--output", str(Path(tmp) / "probe.dll"), ".",
                            capture_output=True, text=True)
-    exe, flags = parse_invocation(r.stdout + r.stderr)
+    exe, flags, link = parse_invocation(r.stdout + r.stderr)
     lib = common.REPO / "al.dll"
     return {"built_by": "tree-sitter build (tools/query_coverage/loader.ensure_library)",
             "probe": "tree-sitter build -v --output <tmp>/probe.dll .", "probe_exit": r.returncode,
             "compiler": exe or "?", "compiler_version": _compiler_version(exe) if exe else "?",
-            "flags": flags, "library_sha256": _file_sha(lib) if lib.is_file() else None,
+            "flags": flags, "link_flags": link, "library_sha256": _file_sha(lib) if lib.is_file() else None,
             "library_pe_linker_version": _pe_linker_version(lib) if lib.is_file() else None}
 
 
@@ -277,7 +280,7 @@ def zig_library():
     return out, {"built_by": "tools.perf --cc zig", "probe": " ".join(["zig", "cc", *flags, "-I src",
                  "src/parser.c", "src/scanner.c", "-o", out.name]),
                  "compiler": zig, "compiler_version": (ver[0] if ver else "?") + f" (zig {_zig_version(zig)})",
-                 "flags": flags, "library_sha256": _file_sha(out), "library_pe_linker_version": _pe_linker_version(out)}
+                 "flags": flags, "link_flags": [], "library_sha256": _file_sha(out), "library_pe_linker_version": _pe_linker_version(out)}
 
 
 def _zig_version(zig):

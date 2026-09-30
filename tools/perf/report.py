@@ -39,11 +39,34 @@ def corpus_set(result, group):
 
 
 def library(result, group):
-    """(compiler, version, flags) of the native library a group used, or None if unrecorded."""
+    """The native library's build identity -- (compiler name, version, compile flags, link
+    flags) -- or None if unrecorded. The compiler is keyed by its file name, not its full path,
+    so moving between VS editions or toolset directories with the same compiler is not a change."""
     lib = (result.get("groups", {}).get(group, {}).get("meta") or {}).get("library")
     if not isinstance(lib, dict):
         lib = result.get("env", {}).get("native_library")
-    return (lib["compiler"], lib["compiler_version"], tuple(lib["flags"])) if isinstance(lib, dict) else None
+    if not isinstance(lib, dict):
+        return None
+    name = lib["compiler"].replace("\\", "/").rsplit("/", 1)[-1].lower()
+    return name, lib["compiler_version"], tuple(lib["flags"]), tuple(lib.get("link_flags", ()))
+
+
+def placement(result, group):
+    """(CPU model, pinned CPU set) of a single-threaded group; the set is None when unpinned
+    (every file before fix round 2)."""
+    g = result.get("groups", {}).get(group, {})
+    pin = g.get("single_pin") or g.get("pin")
+    return result.get("env", {}).get("cpu"), tuple(pin["pinned_to"]) if isinstance(pin, dict) else None
+
+
+def session(result, group):
+    return (result.get("groups", {}).get(group, {}).get("meta") or {}).get("started") or result.get("started")
+
+
+# Noise floors for `!`, as a fraction of the old median (fix round 2): same-session re-runs
+# agree to ~0.3%, but sessions drifted ~30% single-threaded, so no within-run spread is a
+# sufficient error bar on its own.
+FLOOR_SINGLE, FLOOR_PARALLEL = 0.05, 0.10
 
 
 def comparable(path, sets_equal):
@@ -56,9 +79,10 @@ def comparable(path, sets_equal):
     return len(rest) >= 2 and rest[0] == "corpora" and rest[1] != "combined"
 
 
-def compare(old, new):
+def compare(old, new, floor=None):
     """-> lines: one per metric present in either file.
-    `!`   the median moved by more than the measured spread (max - min) of either run;
+    `!`   |delta median| > max(old spread, new spread, floor x old median), the floor being
+          FLOOR_PARALLEL for `.parallel.` figures and FLOOR_SINGLE otherwise, or `floor` for all;
     `?`   an exact count changed (both values integers: files, has_error, STATE_COUNT...);
           a float without a spread (a percentile, a single run) is shown without a flag;
     `n/c` not comparable: an aggregate over two different corpus sets. No delta is printed;
@@ -73,6 +97,15 @@ def compare(old, new):
         if not same[g] and g not in CORPUS_FREE:
             head.append(f"NOTE {g}: corpus sets differ ({'+'.join(sa)} vs {'+'.join(sb)}): only its "
                         "per-corpus entries are compared; every aggregate is n/c")
+        ta, tb = session(old, g), session(new, g)
+        if ta != tb:
+            head.append(f"CROSS-SESSION {g}: measured {ta} vs {tb}. Single-threaded figures have "
+                        "drifted up to ~30% between sessions on this machine: informational only, not "
+                        "decision-grade. Decide with `python -m tools.perf ab` (same session, interleaved)")
+        pa, pb = placement(old, g), placement(new, g)
+        if (g in ("native", "native_zig", "wasm", "incremental")) and pa != pb:
+            head.append(f"WARNING {g}: CPU or pin differs ({pa} vs {pb}): placement alone moved a DC "
+                        "pass ~12%; the single-threaded figures are not comparable")
         if g in NATIVE_GROUPS:
             la, lb = library(old, g), library(new, g)
             if la is None or lb is None:
@@ -97,7 +130,8 @@ def compare(old, new):
         delta = yv - xv
         rel = f"{delta / xv * 100:+.2f}%" if xv else ("+0.00%" if not delta else "n/a")
         if timed:
-            flag = "!" if abs(delta) > max(x["max"] - x["min"], y["max"] - y["min"]) else ""
+            f = floor if floor is not None else (FLOOR_PARALLEL if ".parallel." in path else FLOOR_SINGLE)
+            flag = "!" if abs(delta) > max(x["max"] - x["min"], y["max"] - y["min"], f * abs(xv)) else ""
         else:
             flag = "?" if delta and isinstance(xv, int) and isinstance(yv, int) else ""
         lines.append(f"{path:<70} {_num(xv):>14} {_num(yv):>14} {_num(delta):>14} {rel:>9}  {flag}")
@@ -213,9 +247,26 @@ def render(r, json_rel, notes=None):
     for when in ("load_at_start", "load_at_end"):
         if when in env:
             ld = env[when]
-            extra = f"; top: {', '.join(ld['top5'])}; {ld['cpu_mhz']:.0f} MHz; plan {ld['power_plan']}" if "top5" in ld else ""
+            top = ld.get("top5_outside_our_tree") or ld.get("top5")
+            extra = f"; top: {', '.join(top)}; {ld['cpu_mhz']:.0f} MHz (psutil's base-clock figure); plan {ld['power_plan']}" if top else ""
             L.append(f"| {when.replace('_', ' ')} | CPU {ld['cpu_percent_2s']}% over 2 s, "
                      f"{_mib(ld['ram_available_bytes'])} RAM free{extra} |")
+    drv = env.get("amd_3d_vcache_driver")
+    if drv:
+        L.append(f"| AMD 3D V-Cache driver | {drv} |")
+    topo = env.get("cpu_topology")
+    if topo:
+        L += ["", "## CPU topology and placement", "",
+              f"Read from {topo['source']}:", "",
+              "| CCD | L3 | logical CPUs | SMT pairs |", "|---|---:|---|---|"]
+        for i, c in enumerate(topo["ccds"]):
+            L.append(f"| {i} | {c['l3_bytes'] >> 20} MiB | {c['cpus'][0]}-{c['cpus'][-1]} | "
+                     f"{' '.join('/'.join(map(str, p)) for p in c['smt_pairs'])} |")
+        pin = env.get("single_thread_pin", {})
+        L += ["", f"**Single-threaded groups (native, wasm's node process, incremental, ab) are pinned to "
+              f"{pin.get('why', '?')}.** The parallel groups use every logical CPU, so they span both "
+              "CCDs and carry the two CCDs' asymmetry (cache against clock) inside every figure. The "
+              "measured difference between the CCDs is in the notes below."]
     L += ["", "`grammar_sha` is the oracle's hash (first 16 hex digits of sha256 over grammar.js, "
           "src/scanner.c, src/parser.c and src/**/*.h): the same inputs, so an oracle report and a "
           "perf result with equal hashes measured the same parser. Each group below says when it was "
@@ -234,7 +285,10 @@ def render(r, json_rel, notes=None):
               f"{n['workers']} worker processes (the oracle's default `--workers`, logical cores - 1) "
               f"reading the sources from one shared-memory block, {n['chunk']} files per task."
               + (f" Single-threaded passes spread {n['single_spread_percent']}% (warned above 2%)."
-                 if "single_spread_percent" in n else ""), "",
+                 if "single_spread_percent" in n else "")
+              + (f" The single-threaded thread was pinned to CPU {n['single_pin']['pinned_to']} and ran on "
+                 f"{n['single_pin']['ran_on']} (CPU: parses)." if "single_pin" in n else
+                 " The single-threaded run was **not pinned** (measured before fix round 2)."), "",
               "| corpus | files | size | has_error | single files/s | single MiB/s | parallel files/s | parallel MiB/s |",
               "|---|---:|---:|---:|---:|---:|---:|---:|"]
         for name, c in n["corpora"].items():
@@ -349,37 +403,45 @@ def render(r, json_rel, notes=None):
 
 
 def _compiler_section(g):
-    n, z, w = g.get("native"), g.get("native_zig"), g.get("wasm")
+    n, z, w, ab = g.get("native"), g.get("native_zig"), g.get("wasm"), g.get("ab")
     L = ["## Compiler sensitivity", "",
          "The native figures above are **`tree-sitter build`'s MSVC `-O2` library** -- what a user of "
          "the CLI, the loader and the Windows bindings gets on this machine (see the environment "
          "table for the exact compiler and flags). The grammar DLL's own code (the generated lexer "
          "and parse tables, and the scanner) is compiler-sensitive: the same `src/parser.c` and "
-         "`src/scanner.c` built with clang `-O2` (`python -m tools.perf native --cc zig`, which runs "
-         "`zig cc -shared -O2`) parse identical trees much faster. **Compare native with native built "
-         "by the same compiler and flags**; `compare` warns when they differ.", ""]
+         "`src/scanner.c` built with clang `-O2` (`zig cc -shared -O2`, `native --cc zig`) parse "
+         "identical trees about twice as fast. **Compare native with native built by the same "
+         "compiler and flags**; `compare` warns when they differ. `docs/deferred-work.md` item 21.", ""]
+    if ab and "ratio_a_over_b" in ab:
+        q = ab["ratio_a_over_b"]
+        L += ["The decision-grade figure is a same-session interleaved A/B run "
+              f"(`python -m tools.perf ab`, {ab['rounds']} rounds `{ab['order']}`, pinned to CPU "
+              f"{ab['pin']['pinned_to']}, over {'+'.join(ab['corpora'])}, {ab['files']:,} files, every tree "
+              "checked identical first):", "", _measured(ab), "",
+              "| library | median pass, s |", "|---|---:|",
+              f"| A `{ab['lib_a']['path']}` | {stats_median(ab['seconds']['A']):.3f} |",
+              f"| B `{ab['lib_b']['path']}` | {stats_median(ab['seconds']['B']):.3f} |", "",
+              f"**time A / time B = {q['median']:.3f}** (per-round min {q['min']:.3f}, max {q['max']:.3f}; "
+              f"95% CI of the median {q['ci95_median'][0]:.3f}-{q['ci95_median'][1]:.3f}).", ""]
     if z and n:
-        L += [_measured(z), "",
-              "| corpus | MSVC -O2 files/s | clang -O2 files/s | clang / MSVC | WASM files/s |",
-              "|---|---:|---:|---:|---:|"]
-        for name, c in z["corpora"].items():
-            m = n["corpora"].get(name)
-            wv = w["corpora"].get(name) if w else None
-            if not m:
-                continue
-            ms, zs = m["single"]["files_per_s"]["median"], c["single"]["files_per_s"]["median"]
-            L.append(f"| {name} | {ms:,.0f} | {zs:,.0f} | {zs / ms:.2f}x | "
-                     f"{wv['single']['files_per_s']['median']:,.0f} |" if wv else f"| {name} | {ms:,.0f} | {zs:,.0f} | {zs / ms:.2f}x | - |")
+        L += ["Throughput with the clang build (a separate run, so not decision-grade against the "
+              "MSVC table: see *Session drift* below):", "", _measured(z), "",
+              "| corpus | clang -O2 files/s |", "|---|---:|"]
+        L += [f"| {k} | {c['single']['files_per_s']['median']:,.0f} |" for k, c in z["corpora"].items()]
         L.append("")
-        if w:
-            nat, cl, wa = (x["corpora"]["combined"]["single"]["seconds"]["median"] for x in (n, z, w))
-            L += [f"All corpora, single-threaded time: WASM is {wa / nat:.2f}x the MSVC time and "
-                  f"{wa / cl:.2f}x the clang time. \"WASM is faster than native\" holds only against MSVC."
-                  + ("" if (w.get("meta") or {}).get("started") == (n.get("meta") or {}).get("started") else
-                     " The WASM column was measured in a different session from the native columns (see "
-                     "each group's *Measured* line); between sessions single-threaded figures drift ~3.5%, "
-                     "which cannot change these ratios' conclusion but does move their second decimal."), ""]
+    if w and n:
+        nat, wa = (x["corpora"]["combined"]["single"]["seconds"]["median"] for x in (n, w))
+        same = (w.get("meta") or {}).get("started") == (n.get("meta") or {}).get("started") or             (w.get("meta") or {}).get("command") == (n.get("meta") or {}).get("command")
+        L += [f"WASM against MSVC native, single-threaded, all corpora: WASM takes {wa / nat:.2f}x the "
+              "MSVC time" + (" (same session)" if same else " (different sessions)") + ". The only claim "
+              "this supports is \"WASM is faster than the MSVC-built native library\"; nothing here "
+              "compares WASM with a clang-built native library in one session.", ""]
     return L
+
+
+def stats_median(xs):
+    from tools.perf import stats
+    return stats.median(xs)
 
 
 CAVEATS = """## Reproducing and comparing
@@ -394,8 +456,10 @@ python -m tools.perf wasm        [--corpus LABEL ...] [--out DIR]   # result goe
 python -m tools.perf incremental [--corpus LABEL ...] [--out DIR]   # tools/perf/reports/ unless
 python -m tools.perf build                                          # --out says otherwise
 python -m tools.perf oracle      [--no-full]
-python -m tools.perf compare OLD.json NEW.json      # per-metric delta and relative change
-python -m tools.perf merge BASE.json NEW.json       # replace BASE's groups with NEW's
+python -m tools.perf ab --lib-a A.dll --lib-b B.dll [--corpus LABEL] [--rounds N]  # DECISIONS
+python -m tools.perf compare OLD.json NEW.json [--floor F]   # context: delta and relative change
+python -m tools.perf merge BASE.json [NEW.json] [--drop GROUP]   # replace/drop BASE's groups
+python -m tools.perf.pin [calibrate N]              # the CCD map, the pin, cache vs frequency CCD
 python -m tools.perf render docs/perf/baseline-<date>.json          # re-render this file
 python -m tools.perf.load 120                       # calibrate the idle outside-CPU floor
 ```
@@ -404,8 +468,9 @@ Corpus labels are the oracle's (`tools/config_oracle/__main__.CORPORA`): `bc-his
 `bc28.1` (`AL_BC28_ROOT`), `bcapps-29.0` (`AL_BCAPPS29_ROOT`). `incremental` exits 1 on any
 mismatch; the others exit 0 when they complete.
 
-`compare` flags `!` when a median moved by more than the measured spread (max - min) of either
-run, and `?` when an exact count changed (files, has_error, STATE_COUNT). A float with no
+`compare` flags `!` when a median moved by more than the larger of either run's spread
+(max - min) and a noise floor (5% of the old median single-threaded, 10% parallel,
+`--floor`), and `?` when an exact count changed (files, has_error, STATE_COUNT). A float with no
 measured spread (a percentile, a single run) is printed without a flag: its noise is not known.
 A group measured over a different corpus set compares only its per-corpus entries; every
 aggregate (`combined`, the incremental sample, the oracle's full tier) prints `n/c`, never a
@@ -428,22 +493,30 @@ No pass/fail thresholds: those are roadmap D2's.
   scaling law. Its within-run spread under-states run-to-run noise: an independent re-run of
   `native` on the same idle machine moved `dc` (a 0.13 s pass) by 6% and `bc28.1` by 2.4%,
   beyond the recorded spread, while every single-threaded figure stayed inside it. Treat a
-  parallel delta under ~5% (under ~10% for `dc`) as noise.
-- **Session-to-session drift, single-threaded.** Two clean runs of the same `al.dll` about 80
-  minutes apart (17:35 and 18:55 on 2026-09-30, both unflagged, outside-CPU mean ~3 cores)
-  differ by +3.3% to +3.6% on every corpus's single-threaded figure, far beyond each run's own
-  0.3-0.6% spread; `generate` moved 19% the same way. A same-session re-run agreed to 0.3%. The
-  cause is not known (clock boost, thermals and memory placement are unrecorded candidates).
-  Until D2 measures more sessions, treat a single-threaded delta under ~4% between runs on
-  different occasions as noise, whatever `compare`'s `!` says: its spread is within-run.
+  parallel delta under ~5% (under ~10% for `dc`) as noise. The parallel groups run on both
+  CCDs (96 MiB-L3 cache CCD and 32 MiB-L3 frequency CCD), so each figure mixes the two.
+- **Session drift: cross-session comparisons are informational only.** On 2026-09-30 the same
+  `al.dll`, with clean load, measured DC single-threaded at 1.527-1.589 s in some sessions and
+  2.016-2.023 s in another (+31%; clang +29%), and the four corpora moved +3.3-3.6% between
+  two runs 80 minutes apart. Placement is part of it: unpinned, which CCD the thread landed on
+  moved a DC pass ~12%, and pinned calibrations still show machine-wide episodes where every
+  CPU runs 15-20% slow for a few passes. Pinning (above) removes the placement term, not the
+  episodes. So: a single-threaded delta between two runs made at different times is **never a
+  decision**. `compare` prints `CROSS-SESSION ... not decision-grade` for such groups, applies a
+  noise floor (5% single-threaded, 10% parallel, `--floor`), and warns when the CPU or the pin
+  differs. **Decisions -- "is B faster than A" -- use `python -m tools.perf ab`**: both
+  libraries in one process, on the pinned CPU, interleaved ABBA, trees checked identical, with a
+  ratio and its confidence interval. The baselines are context, not the yardstick.
 - **Load.** Each group is sampled every second for CPU used by processes **outside** the
   measuring process tree (system busy CPU minus the tree's), in logical cores. The idle
   workstation measured mean 2.9-3.4, p95 5.0-5.9 and max 6.0-10.3 cores (desktop apps only). A
   group is FLAGGED when the max exceeds 11.5 cores (idle max + one core: a burst beyond anything
   the idle machine does) or the mean exceeds 4.5 cores (idle mean + one core: one competing thread
-  held for the whole group). A start-only 20% rule could not see one competing thread (3% of 32
-  threads) and passed a run that came out 20% slow. The native group also warns when its
-  single-threaded passes spread more than 2%.
+  held for the whole group; applied only from 60 samples up, since a ~12-sample group read a
+  clean mean of 4.6 once in three). A start-only 20% rule could not see one competing thread
+  (3% of 32 threads) and passed a run that came out 20% slow. The native group also warns when
+  its single-threaded passes spread more than 2%. The monitor sees load; it does **not** see
+  the session drift above, which happened with clean readings.
 - **Memory**: RSS sums count shared pages (the parser DLL mapped by every worker) once per
   process, so the aggregate over-states physical use. The private sum (Windows only) counts
   no shared page twice but is commit charge, not residency, so it can be the larger. Sums are

@@ -34,6 +34,9 @@ INTERVAL = 1.0
 # run, so neither is proven to catch it; they catch what they are calibrated for.
 OUTSIDE_MAX_CORES = 11.5
 OUTSIDE_MEAN_CORES = 4.5
+# The mean rule needs enough samples: on a ~12-sample DC group one clean run in three read a
+# mean of 4.63 (re-review). Below this many samples the mean is reported, not flagged.
+MEAN_MIN_SAMPLES = 60
 
 
 class _TreeCpu:
@@ -126,7 +129,8 @@ def summary(samples):
            "outside_cores_mean": round(sum(s) / len(s), 3), "outside_cores_max": round(s[-1], 3),
            "outside_cores_p95": round(s[min(len(s) - 1, int(0.95 * len(s)))], 3),
            "threshold_max_cores": OUTSIDE_MAX_CORES, "threshold_mean_cores": OUTSIDE_MEAN_CORES}
-    out["flagged"] = s[-1] > OUTSIDE_MAX_CORES or out["outside_cores_mean"] > OUTSIDE_MEAN_CORES
+    out["mean_rule_applies"] = len(s) >= MEAN_MIN_SAMPLES
+    out["flagged"] = s[-1] > OUTSIDE_MAX_CORES or (out["mean_rule_applies"] and out["outside_cores_mean"] > OUTSIDE_MEAN_CORES)
     return out
 
 
@@ -134,7 +138,9 @@ def snapshot():
     """One named reading at a group's start: total CPU over 2 s, the top 5 processes, free
     RAM, the CPU clock and the power plan."""
     import psutil
-    procs = list(psutil.process_iter(["name", "pid"]))
+    me = psutil.Process()
+    ours = {me.pid, *(c.pid for c in me.children(recursive=True))}
+    procs = [p for p in psutil.process_iter(["name", "pid"]) if p.pid not in ours]
     for p in procs:
         try:
             p.cpu_percent(None)
@@ -150,7 +156,7 @@ def snapshot():
             pass
     freq = psutil.cpu_freq()
     return {"cpu_percent_2s": total, "ram_available_bytes": psutil.virtual_memory().available,
-            "top5": [f"{n} {c:.0f}%" for c, n in sorted(top, reverse=True)[:5]],
+            "top5_outside_our_tree": [f"{n} {c:.0f}%" for c, n in sorted(top, reverse=True)[:5]],
             "cpu_mhz": freq.current if freq else None, "power_plan": power_plan()}
 
 

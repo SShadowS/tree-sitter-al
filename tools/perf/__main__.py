@@ -36,7 +36,7 @@ def _now():
     return datetime.datetime.now().astimezone().isoformat(timespec="seconds")
 
 
-def measure(groups, labels, full_oracle=True, cc=None, checkpoint=False):
+def measure(groups, labels, full_oracle=True, cc=None, checkpoint=False, ab_args=None):
     from tools.perf import procs
     warnings = []
     orig_warn = common.warn
@@ -81,6 +81,10 @@ def measure(groups, labels, full_oracle=True, cc=None, checkpoint=False):
                     g[name] = procs.build()
                 elif name == "oracle":
                     g[name] = procs.oracle(labels, full_oracle)
+                elif name == "ab":
+                    from tools.perf import ab
+                    g[name] = ab.run(*ab_args[:2], labels, ab_args[2])
+                    meta["library"] = "two libraries, see lib_a / lib_b"
             finally:
                 meta["load"] = monitor.stop()
             meta["finished"] = _now()
@@ -116,12 +120,21 @@ def main(argv=None):
             p.add_argument("--groups", help="comma-separated subset of " + ",".join(GROUPS))
         if name == "native":
             p.add_argument("--cc", choices=["zig"], help="time a clang -O2 build (zig cc) instead of al.dll")
+    ab = sub.add_parser("ab", help="same-session interleaved A/B of two native libraries")
+    ab.add_argument("--lib-a", required=True)
+    ab.add_argument("--lib-b", required=True)
+    ab.add_argument("--corpus", action="append", choices=common.LABELS)
+    ab.add_argument("--rounds", type=int, default=8)
+    ab.add_argument("--out")
     c = sub.add_parser("compare")
     c.add_argument("old")
     c.add_argument("new")
+    c.add_argument("--floor", type=float, help="noise floor for `!` as a fraction of the old median "
+                   "(default 0.05 single-threaded, 0.10 parallel)")
     m = sub.add_parser("merge")
     m.add_argument("base")
-    m.add_argument("new")
+    m.add_argument("new", nargs="?")
+    m.add_argument("--drop", action="append", default=[], help="remove a group from BASE (recorded)")
     r = sub.add_parser("render")
     r.add_argument("result")
     r.add_argument("--doc", default=str(DOC))
@@ -131,22 +144,45 @@ def main(argv=None):
 
     if args.cmd == "compare":
         old, new = (json.loads(Path(p).read_text(encoding="utf-8")) for p in (args.old, args.new))
-        print("\n".join(report.compare(old, new)))
+        print("\n".join(report.compare(old, new, args.floor)))
         return 0
     if args.cmd == "render":
         return _render(Path(args.result), Path(args.doc))
     if args.cmd == "merge":
         base = json.loads(Path(args.base).read_text(encoding="utf-8"))
-        new = json.loads(Path(args.new).read_text(encoding="utf-8"))
-        merged = report.merge(base, new, Path(args.new).name)
-        _write(Path(args.base), merged)
-        common.log(f"merged {', '.join(new['groups'])} from {args.new} into {args.base}")
+        for g in args.drop:
+            base["groups"].pop(g)
+            base.setdefault("merges", []).append({"dropped": g, "at": _now()})
+            common.log(f"dropped {g} from {args.base}")
+        if args.new:
+            new = json.loads(Path(args.new).read_text(encoding="utf-8"))
+            base = report.merge(base, new, Path(args.new).name)
+            common.log(f"merged {', '.join(new['groups'])} from {args.new} into {args.base}")
+        _write(Path(args.base), base)
         return 0
     if args.cmd == "_build-inner":
         from tools.perf import procs
         procs.build_inner(args.out)
         return 0
 
+    if args.cmd == "ab":
+        labels = tuple(args.corpus or ("dc",))
+        result = measure(("ab",), labels, ab_args=(args.lib_a, args.lib_b, args.rounds))
+        out = Path(args.out) if args.out else common.REPO / "tools" / "perf" / "reports"
+        out.mkdir(parents=True, exist_ok=True)
+        path = out / f"ab-{datetime.datetime.now():%Y-%m-%d-%H%M%S}.json"
+        _write(path, result)
+        r = result["groups"]["ab"]
+        if not r["trees_identical"]:
+            print(f"perf: ab: the libraries build different trees ({len(r['differing_files'])}+ files); see {path}")
+            return 1
+        q = r["ratio_a_over_b"]
+        print(f"perf: ab over {'+'.join(labels)}, {r['rounds']} rounds {r['order']}, pinned {r['pin']}:\n"
+              f"  A {r['lib_a']['path']}: median {stats_median(r['seconds']['A']):.3f} s\n"
+              f"  B {r['lib_b']['path']}: median {stats_median(r['seconds']['B']):.3f} s\n"
+              f"  time A / time B: median {q['median']:.3f} (min {q['min']:.3f}, max {q['max']:.3f}; "
+              f"95% CI of the median {q['ci95_median'][0]:.3f}-{q['ci95_median'][1]:.3f})\n  wrote {path}")
+        return 0
     labels = tuple(args.corpus or common.LABELS)
     if args.cmd == "baseline":
         groups = tuple(x for x in (args.groups or ",".join(GROUPS)).split(",") if x)
@@ -176,6 +212,11 @@ def main(argv=None):
     if mism:
         print(f"perf: {mism} incremental/fresh mismatches (exit 1); see {path}", file=sys.stderr)
     return 1 if mism else 0
+
+
+def stats_median(xs):
+    from tools.perf import stats
+    return stats.median(xs)
 
 
 def _write(path, result):
