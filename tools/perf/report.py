@@ -189,7 +189,9 @@ def render(r, json_rel, notes=None):
          f"- command: `{r['command']}`"]
     for m in r.get("merges", []):
         L.append(f"- groups **{', '.join(m['groups'])}** re-measured {m['started']} to {m['finished']} "
-                 f"by `{m['command']}` and merged from `{m['from']}` with `python -m tools.perf merge`")
+                 f"by `{m['command']}`"
+                 + (f" at repo `{m['env_differences']['repo_head'][:7]}`" if "repo_head" in m["env_differences"] else "")
+                 + f", merged from `{m['from']}` with `python -m tools.perf merge`")
     L.append("")
     if r.get("warnings"):
         L += ["**Warnings raised during these runs:**", "", *(f"- {w}" for w in r["warnings"]), ""]
@@ -372,7 +374,11 @@ def _compiler_section(g):
         if w:
             nat, cl, wa = (x["corpora"]["combined"]["single"]["seconds"]["median"] for x in (n, z, w))
             L += [f"All corpora, single-threaded time: WASM is {wa / nat:.2f}x the MSVC time and "
-                  f"{wa / cl:.2f}x the clang time. \"WASM is faster than native\" holds only against MSVC.", ""]
+                  f"{wa / cl:.2f}x the clang time. \"WASM is faster than native\" holds only against MSVC."
+                  + ("" if (w.get("meta") or {}).get("started") == (n.get("meta") or {}).get("started") else
+                     " The WASM column was measured in a different session from the native columns (see "
+                     "each group's *Measured* line); between sessions single-threaded figures drift ~3.5%, "
+                     "which cannot change these ratios' conclusion but does move their second decimal."), ""]
     return L
 
 
@@ -423,6 +429,13 @@ No pass/fail thresholds: those are roadmap D2's.
   `native` on the same idle machine moved `dc` (a 0.13 s pass) by 6% and `bc28.1` by 2.4%,
   beyond the recorded spread, while every single-threaded figure stayed inside it. Treat a
   parallel delta under ~5% (under ~10% for `dc`) as noise.
+- **Session-to-session drift, single-threaded.** Two clean runs of the same `al.dll` about 80
+  minutes apart (17:35 and 18:55 on 2026-09-30, both unflagged, outside-CPU mean ~3 cores)
+  differ by +3.3% to +3.6% on every corpus's single-threaded figure, far beyond each run's own
+  0.3-0.6% spread; `generate` moved 19% the same way. A same-session re-run agreed to 0.3%. The
+  cause is not known (clock boost, thermals and memory placement are unrecorded candidates).
+  Until D2 measures more sessions, treat a single-threaded delta under ~4% between runs on
+  different occasions as noise, whatever `compare`'s `!` says: its spread is within-run.
 - **Load.** Each group is sampled every second for CPU used by processes **outside** the
   measuring process tree (system busy CPU minus the tree's), in logical cores. The idle
   workstation measured mean 2.9-3.4, p95 5.0-5.9 and max 6.0-10.3 cores (desktop apps only). A
