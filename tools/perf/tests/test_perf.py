@@ -1,5 +1,6 @@
 """The parts of tools/perf that can go wrong silently."""
 import random
+import time
 import subprocess
 import sys
 
@@ -128,16 +129,19 @@ def test_pipeline_detects_a_missing_tree_edit(al_parser):
 def test_comparator_detects_field_span_and_anonymous_changes(al_parser):
     rows = inc.rows(al_parser.parse(MULTI))
     assert inc.diff(rows, list(rows)) is None
-    named_field = next(i for i, r in enumerate(rows) if r[5] is not None)
-    anon = next(i for i, r in enumerate(rows) if not r[2] and r[1] == ";")
+    col = inc.ROW_FIELDS.index
+    named_field = next(i for i, r in enumerate(rows) if r[col("field")] is not None)
+    anon = next(i for i, r in enumerate(rows) if not r[col("named")] and r[col("type")] == ";")
 
     def altered(i, col, value):
         out = list(rows)
         out[i] = out[i][:col] + (value,) + out[i][col + 1:]
         return out
 
-    for alt in (altered(named_field, 5, "bogus"), altered(named_field, 7, rows[named_field][7] + 1),
-                altered(anon, 10, True), rows[:anon] + rows[anon + 1:]):
+    for alt in (altered(named_field, col("field"), "bogus"),
+                altered(named_field, col("end_byte"), rows[named_field][col("end_byte")] + 1),
+                altered(named_field, col("grammar_name"), "keyword_as_identifier"),
+                altered(anon, col("has_error"), True), rows[:anon] + rows[anon + 1:]):
         d = inc.diff(rows, alt)
         assert d is not None and d["index"] <= max(named_field, anon)
     assert inc.diff(rows, rows[:-1])["fresh"] is None
@@ -169,3 +173,117 @@ def test_utf16_sources_are_transcoded_like_the_sweep():
     assert source(("\ufeff" + text).encode("utf-16-le")) == text.encode("utf-8")
     assert source(("\ufeff" + text).encode("utf-16-be")) == text.encode("utf-8")
     assert source(b"\xef\xbb\xbfx") == b"\xef\xbb\xbfx"             # a UTF-8 BOM is kept
+
+
+# ---- the outside-CPU load monitor -----------------------------------------------------
+
+SPIN = "import time\nt = time.time() + {s}\nwhile time.time() < t: pass"
+PARENT_OF_SPINNER = ("import subprocess, sys, time; subprocess.run([sys.executable, '-c', {spin!r}])")
+
+
+def test_load_monitor_counts_outside_and_excludes_our_tree():
+    """Two monitors over the same window see the same idle noise. One is rooted at a process
+    whose CHILD spins, the other at an unrelated sleeper: the spin is outside only for the
+    second, so their means differ by about one core."""
+    from tools.perf.load import LoadMonitor
+    sleeper = subprocess.Popen([sys.executable, "-c", "import time; time.sleep(6)"])
+    ours = subprocess.Popen([sys.executable, "-c", PARENT_OF_SPINNER.format(spin=SPIN.format(s=4))])
+    time.sleep(0.5)
+    inside, outside = LoadMonitor(0.5, root_pid=ours.pid), LoadMonitor(0.5, root_pid=sleeper.pid)
+    inside.start(), outside.start()
+    time.sleep(3.0)
+    a, b = inside.stop(), outside.stop()
+    ours.wait(), sleeper.kill()
+    assert a["sampled"] and a["samples"] >= 4
+    assert 0.6 < b["outside_cores_mean"] - a["outside_cores_mean"] < 1.6
+
+
+def test_edit_points_check_catches_wrong_points(al_parser):
+    """The tree comparison cannot see a wrong edit POINT (tree-sitter re-lexes and recomputes
+    from bytes); the shifted-node check on the edited old tree can: columns counted in
+    characters, and a new_end_point one row off."""
+    src = "codeunit 1 A { trigger OnRun() begin Æble := 'ø'; X := 1; end; }".encode("utf-8")
+    at = src.index(b"X := 1")
+    e = inc.Edit("t", at, at, b"Y := 2; ")
+    good = inc.edit_args(src, e)
+    fresh_rows = inc.rows(al_parser.parse(e.apply(src)))
+    chars = len(src[:at].decode("utf-8"))
+    wrong = dict(good, start_point=(0, chars), old_end_point=(0, chars),
+                 new_end_point=(0, chars + len(e.new)))
+    row_off = dict(good, new_end_point=(1, good["new_end_point"][1]))
+    assert chars != at                              # the line really has multi-byte text
+    for args, bad in ((good, False), (wrong, True), (row_off, True)):
+        old = al_parser.parse(src)
+        old.edit(**args)
+        assert (inc.shifted_points(old, fresh_rows, args["new_end_byte"]) is not None) is bad
+
+
+def test_sample_takes_utf16_files_and_reports_shortfalls(al_parser):
+    files = [("a", f"f{i}.al", b"codeunit 1 A { }") for i in range(20)]
+    chosen, short = inc.sample(files, ["a"], al_parser, size=10, utf16=["a:f3.al", "a:f7.al"])
+    cats = dict((files[i][1], c) for i, c in chosen)
+    assert cats["f3.al"] == "utf16" and cats["f7.al"] == "utf16"
+    assert short["a"]["utf16"] == 3 and short["a"]["split"] == 20
+    assert len(chosen) == 10
+
+
+# ---- compare across corpus sets and compilers; merge ----------------------------------
+
+LABELS4 = ("bc-history", "dc", "bc28.1", "bcapps-29.0")
+
+
+def _run(labels, corpora, lib_flags=("-O2",)):
+    """A result shaped like `native` over `labels`: {name: (median, lo, hi)} per corpus entry."""
+    def entry(m, lo, hi):
+        return {"files": 10, "single": {"files_per_s": {"median": m, "min": lo, "max": hi, "runs": []}},
+                "latency_ms": {"p50": m / 100, "p99": m / 10}}
+    lib = {"compiler": "cl.exe", "compiler_version": "19.44", "flags": list(lib_flags)}
+    return {"env": {"corpora": {l: {"head": "h"} for l in labels}, "grammar_sha": "g", "native_library": lib},
+            "groups": {"native": {"read_seconds": 10.0, "corpora": {k: entry(*v) for k, v in corpora.items()},
+                                  "meta": {"corpora": list(labels), "library": lib}},
+                       "build": {"STATE_COUNT": 15870, "meta": {"corpora": list(labels)}}}}
+
+
+def test_compare_subset_run_against_the_four_corpus_baseline_has_no_false_flag():
+    base = _run(LABELS4, {"dc": (850.8, 848, 860), "bc-history": (682.6, 682, 684), "combined": (596.9, 595, 597)})
+    dc_only = _run(("dc",), {"dc": (853.7, 850, 856), "combined": (853.7, 850, 856)})
+    lines = report.compare(base, dc_only)
+    rows = _rows([l for l in lines if not l.startswith(("NOTE", "WARNING"))])
+    comb = rows["native.corpora.combined.single.files_per_s"].split()
+    assert comb[-1] == "n/c" and comb[3] == "n/c" and "%" not in rows["native.corpora.combined.single.files_per_s"]
+    assert rows["native.read_seconds"].split()[-1] == "n/c"
+    assert rows["native.corpora.combined.latency_ms.p99"].split()[-1] == "n/c"
+    dc = rows["native.corpora.dc.single.files_per_s"].split()
+    assert dc[4] == "+0.34%" and len(dc) == 5                     # compared, inside the spread: no flag
+    assert rows["native.corpora.dc.latency_ms.p99"].split()[-1] != "?"   # a float without a spread
+    assert rows["native.corpora.bc-history.single.files_per_s"].split()[-1] == "-"
+    assert rows["build.STATE_COUNT"].split()[3] == "0"            # corpus-free group still compared
+    assert not [l for l in lines if l.rstrip().endswith("!")]
+    assert any(l.startswith("NOTE native: corpus sets differ") for l in lines)
+
+
+def test_compare_warns_on_a_different_compiler():
+    a = _run(LABELS4, {"dc": (850, 848, 860)})
+    b = _run(LABELS4, {"dc": (850, 848, 860)}, lib_flags=("-O2", "/GL"))
+    lines = report.compare(a, b)
+    assert any(l.startswith("WARNING native: the native library was built differently") for l in lines)
+    assert not any(l.startswith("WARNING") for l in report.compare(a, a))
+
+
+def test_merge_marks_old_groups_not_sampled_and_refuses_another_parser():
+    import copy
+    old = {"command": "c", "started": "s", "finished": "f", "warnings": [],
+           "env": {"grammar_sha": "g", "corpora": {"dc": {"head": "h"}},
+                   "load_before_group": {"wasm": {"cpu_percent_2s": 12.3}}},
+           "groups": {"wasm": {"x": 1}, "native": {"x": 1}}}
+    new = _run(("dc",), {"dc": (1, 1, 1)})
+    new |= {"command": "n", "started": "s2", "finished": "f2", "warnings": ["w"]}
+    merged = report.merge(copy.deepcopy(old), new, "new.json")
+    assert merged["groups"]["native"] is new["groups"]["native"]
+    assert merged["groups"]["wasm"]["meta"]["load"]["sampled"] is False
+    assert "12.3% CPU" in merged["groups"]["wasm"]["meta"]["load"]["note"]
+    assert merged["merges"][0]["groups"] == ["build", "native"] and merged["warnings"] == ["[new.json] w"]
+    other = copy.deepcopy(new)
+    other["env"]["grammar_sha"] = "different"
+    with pytest.raises(ValueError):
+        report.merge(copy.deepcopy(old), other, "x")
