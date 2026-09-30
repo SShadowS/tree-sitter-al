@@ -9,7 +9,7 @@
 // Files are read into memory (Buffers) before any timing. Each file is decoded to a JS
 // string just before its parse, outside the timed region: only parser.parse() is timed,
 // the same as the native run. The BOM is kept (ignoreBOM), so both runtimes see the same
-// text. A warm-up pass is discarded; trees are deleted after each parse (WASM heap).
+// text; UTF-16 files (BOM) are decoded as UTF-16, as natively. A warm-up pass is discarded; trees are deleted after each parse (WASM heap).
 import { readFileSync, writeFileSync } from 'node:fs';
 import { Parser, Language } from 'web-tree-sitter';
 
@@ -27,13 +27,16 @@ parser.setLanguage(await Language.load(manifest.wasm));
 
 const lenient = new TextDecoder('utf-8', { ignoreBOM: true });
 const strict = new TextDecoder('utf-8', { ignoreBOM: true, fatal: true });
+// UTF-16 with a BOM is decoded as UTF-16, BOM dropped: the native side's common.source().
+const utf16 = (b) => (b[0] === 0xff && b[1] === 0xfe ? 'utf-16le' : b[0] === 0xfe && b[1] === 0xff ? 'utf-16be' : null);
+const decoders = buffers.map((b) => (utf16(b) ? new TextDecoder(utf16(b)) : lenient));
 const invalid = [];
-buffers.forEach((b, i) => { try { strict.decode(b); } catch { invalid.push(i); } });
+buffers.forEach((b, i) => { if (!utf16(b)) { try { strict.decode(b); } catch { invalid.push(i); } } });
 
 function pass(record) {
   const ns = [], errors = [];
-  for (const b of buffers) {
-    const text = lenient.decode(b);
+  for (let i = 0; i < buffers.length; i++) {
+    const text = decoders[i].decode(buffers[i]);
     const t = process.hrtime.bigint();
     const tree = parser.parse(text);
     ns.push(Number(process.hrtime.bigint() - t));

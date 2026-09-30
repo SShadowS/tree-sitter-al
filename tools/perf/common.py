@@ -52,16 +52,27 @@ def parser():
     return loader.make_parser(loader.load_language(library()))
 
 
+UTF16LE_BOM, UTF16BE_BOM = bytes([0xFF, 0xFE]), bytes([0xFE, 0xFF])
+
+
+def source(data: bytes) -> bytes:
+    """UTF-16 with a BOM becomes UTF-8, as tools/has_error_sweep.py and `tree-sitter parse`
+    do: BCApps ships 19 such files (HybridGP GP tables), and read as UTF-8 each is one
+    whole-file ERROR, which would count as 19 spurious has_error files and time garbage."""
+    return data.decode("utf-16").encode("utf-8") if data[:2] in (UTF16LE_BOM, UTF16BE_BOM) else data
+
+
 def load(labels):
     """-> ([(label, relpath, bytes)], read seconds). The oracle's enumeration: sorted
-    rglob("*.al") per root. Reading is timed on its own, so no parse time includes I/O."""
+    rglob("*.al") per root. Reading (and `source`'s transcoding) is timed on its own, so no
+    parse time includes I/O."""
     files, t0 = [], time.perf_counter_ns()
     for label in labels:
         root = oracle.CORPORA[label]
         paths = sorted(root.rglob("*.al"))
         if not paths:
             raise SystemExit(f"perf: corpus {label} ({root}) has no .al files")
-        files += [(label, p.relative_to(root).as_posix(), p.read_bytes()) for p in paths]
+        files += [(label, p.relative_to(root).as_posix(), source(p.read_bytes())) for p in paths]
     return files, (time.perf_counter_ns() - t0) / 1e9
 
 

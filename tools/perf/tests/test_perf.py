@@ -161,3 +161,11 @@ def test_sampler_sums_over_a_spawned_child():
     assert s.peak_single >= 150 * MiB                      # the child alone
     assert s.peak_sum >= 250 * MiB                         # parent + child together
     assert s.peak_sum > s.peak_single
+
+
+def test_utf16_sources_are_transcoded_like_the_sweep():
+    from tools.perf.common import source
+    text = "codeunit 1 \"Æ\" { }"
+    assert source(("\ufeff" + text).encode("utf-16-le")) == text.encode("utf-8")
+    assert source(("\ufeff" + text).encode("utf-16-be")) == text.encode("utf-8")
+    assert source(b"\xef\xbb\xbfx") == b"\xef\xbb\xbfx"             # a UTF-8 BOM is kept
