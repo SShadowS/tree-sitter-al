@@ -24,9 +24,10 @@ SEED = 20260930
 SAMPLE = 300
 BOM = b"\xef\xbb\xbf"
 # Per-corpus quotas: files with a split construct, other files with `#if`, BOM files,
-# files with a `/*` (block comments are rare in AL: a uniform sample of 300 held one),
+# files with a `/*` (block comments are rare in AL: a uniform sample of 300 held one), files
+# that were UTF-16 on disk (edited as the transcoded UTF-8 every parser here sees),
 # then uniform random to fill the corpus's share.
-QUOTAS = (("split", 20), ("if", 20), ("bom", 10), ("block_comment", 5))
+QUOTAS = (("split", 20), ("if", 20), ("bom", 10), ("block_comment", 5), ("utf16", 5))
 DIRECTIVE = re.compile(rb"(?im)^[ \t]*#[ \t]*(if|elif|else|endif)\b[^\r\n]*")
 IF_LINE = re.compile(rb"(?im)^[ \t]*#[ \t]*if\b[^\r\n]*")
 ENDIF = re.compile(rb"(?i)#[ \t]*endif\b")
@@ -68,7 +69,7 @@ def rows(tree):
     c, out, depth = tree.walk(), [], 0
     while True:
         n = c.node
-        out.append((depth, n.type, n.is_named, n.is_missing, n.is_extra, c.field_name,
+        out.append((depth, n.type, n.grammar_name, n.is_named, n.is_missing, n.is_extra, c.field_name,
                     n.start_byte, n.end_byte, tuple(n.start_point), tuple(n.end_point), n.has_error))
         if c.goto_first_child():
             depth += 1
@@ -79,8 +80,27 @@ def rows(tree):
             depth -= 1
 
 
-ROW_FIELDS = ("depth", "type", "named", "missing", "extra", "field", "start_byte", "end_byte",
-              "start_point", "end_point", "has_error")
+# `type` is the displayed (alias) name; `grammar_name` is the symbol behind it, so an
+# `identifier` that is really `keyword_as_identifier` differs from a real one.
+ROW_FIELDS = ("depth", "type", "grammar_name", "named", "missing", "extra", "field", "start_byte",
+              "end_byte", "start_point", "end_point", "has_error")
+START, END, SPOINT, EPOINT = 7, 8, 9, 10          # indexes into a row
+
+
+def shifted_points(edited_old, fresh_rows, new_end):
+    """Point check for the edit ARGUMENTS. Tree-sitter re-lexes around an edit and recomputes
+    positions from byte lengths, so a wrong start/new_end point never shows in the reparsed
+    tree. It does show in the edited OLD tree: a node wholly after the edit is only shifted,
+    and its shifted points come straight from the edit's points. Each such node that the fresh
+    tree has at the same bytes, type and symbol must have the fresh tree's points.
+    -> None, or {old, fresh} of the first disagreeing node."""
+    fresh = {(r[1], r[2], r[START], r[END]): (r[SPOINT], r[EPOINT]) for r in fresh_rows}
+    for r in rows(edited_old):
+        if r[START] >= new_end:
+            want = fresh.get((r[1], r[2], r[START], r[END]))
+            if want is not None and want != (r[SPOINT], r[EPOINT]):
+                return {"edited_old": dict(zip(ROW_FIELDS, r)), "fresh_points": want}
+    return None
 
 
 def diff(a, b):
@@ -194,10 +214,12 @@ def _has_split(tree):
                 return False
 
 
-def sample(files, labels, parser, seed=SEED, size=SAMPLE):
-    """-> [(index into files, category)]: per corpus an equal share of `size`, filled by
-    QUOTAS first. Candidates are shuffled with Random(f"{seed}:{label}:{category}")."""
-    share, chosen = size // len(labels), []
+def sample(files, labels, parser, seed=SEED, size=SAMPLE, utf16=()):
+    """-> ([(index into files, category)], {label: {category: shortfall}}): per corpus an equal
+    share of `size`, filled by QUOTAS first. Candidates are shuffled with
+    Random(f"{seed}:{label}:{category}"). A quota the corpus cannot fill is reported, not hidden."""
+    share, chosen, short = size // len(labels), [], {}
+    utf16 = set(utf16)
     for label in labels:
         idx = [i for i, f in enumerate(files) if f[0] == label]
         taken = set()
@@ -207,44 +229,54 @@ def sample(files, labels, parser, seed=SEED, size=SAMPLE):
             random.Random(f"{seed}:{label}:{cat}").shuffle(cands)
             for i in cands:
                 if n <= 0:
-                    return
+                    break
                 if test is None or test(i):
                     taken.add(i)
                     chosen.append((i, cat))
                     n -= 1
+            if n > 0 and cat != "random":
+                short.setdefault(label, {})[cat] = n
 
         with_if = [i for i in idx if IF_LINE.search(files[i][2])]
         take("split", with_if, dict(QUOTAS)["split"], lambda i: _has_split(parser.parse(files[i][2])))
         take("if", with_if, dict(QUOTAS)["if"])
         take("bom", [i for i in idx if files[i][2].startswith(BOM)], dict(QUOTAS)["bom"])
         take("block_comment", [i for i in idx if b"/*" in files[i][2]], dict(QUOTAS)["block_comment"])
+        take("utf16", [i for i in idx if f"{files[i][0]}:{files[i][1]}" in utf16], dict(QUOTAS)["utf16"])
         take("random", idx, share - len(taken))
-    return chosen
+    return chosen, short
 
 
 # ---- the run --------------------------------------------------------------------------
 
 def check(parser, fid, src, e, old_tree, mismatches, timings, mode):
     new = e.apply(src)
-    old_tree.edit(**edit_args(src, e))
+    args = edit_args(src, e)
+    old_tree.edit(**args)
     t0 = time.perf_counter_ns()
     inc = parser.parse(new, old_tree)
     t1 = time.perf_counter_ns()
     fresh = parser.parse(new)
     t2 = time.perf_counter_ns()
     timings.append((t1 - t0, t2 - t1))
-    d = diff(rows(inc), rows(fresh))
+    fresh_rows = rows(fresh)
+    where = {"file": fid, "mode": mode, "kind": e.kind, "start": e.start, "old_end": e.old_end,
+             "new": e.new.decode("utf-8", "replace")}
+    d = diff(rows(inc), fresh_rows)
     if d:
-        mismatches.append({"file": fid, "mode": mode, "kind": e.kind, "start": e.start,
-                           "old_end": e.old_end, "new": e.new.decode("utf-8", "replace"),
-                           "first_difference": d})
+        mismatches.append(where | {"check": "tree", "first_difference": d})
+    p = shifted_points(old_tree, fresh_rows, args["new_end_byte"])
+    if p:
+        mismatches.append(where | {"check": "edit-points", "first_difference": p})
     return new, inc
 
 
 def measure(labels, seed=SEED, size=SAMPLE, report_dir=None):
-    files, _ = common.load(labels)
+    files, read = common.load(labels)
     parser = common.parser()
-    chosen = sample(files, labels, parser, seed, size)
+    chosen, short = sample(files, labels, parser, seed, size, read["utf16"])
+    for label, cats in short.items():
+        common.warn(f"incremental sample: {label} could not fill " + ", ".join(f"{c} (short {n})" for c, n in cats.items()))
     mismatches, timings, per_kind = [], [], {k: 0 for k in KINDS}
     for n, (i, cat) in enumerate(chosen):
         label, rel, src = files[i]
@@ -267,7 +299,8 @@ def measure(labels, seed=SEED, size=SAMPLE, report_dir=None):
     for i, cat in chosen:
         cats[cat] = cats.get(cat, 0) + 1
     result = {
-        "seed": seed, "sample_size": len(chosen), "categories": cats,
+        "seed": seed, "sample_size": len(chosen), "categories": cats, "quota_shortfalls": short,
+        "checks": ["tree: complete cursor rows incl. grammar_name", "edit-points: shifted nodes of the edited old tree"],
         "bom_files": sum(files[i][2].startswith(BOM) for i, _ in chosen),
         "crlf_files": sum(b"\r\n" in files[i][2] for i, _ in chosen),
         "files_with_if": sum(bool(IF_LINE.search(files[i][2])) for i, _ in chosen),
