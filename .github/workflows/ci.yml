@@ -149,6 +149,10 @@ jobs:
       - name: Perf tooling unit tests
         run: python -m pytest tools/perf/tests -q
 
+      # Tests for the standalone gate scripts under tools/ (tools/check-runtime-ranges.py).
+      - name: Tool unit tests
+        run: python -m pytest tools/tests -q
+
       - name: Quick tier (census, self-tests, fixture differential)
         run: python -m tools.config_oracle run --tier quick
 

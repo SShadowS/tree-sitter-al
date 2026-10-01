@@ -8,14 +8,13 @@ import importlib.util
 import shutil
 import subprocess
 import sys
+from pathlib import Path
 
 import pytest
 
-from tools.query_coverage import loader
-
-REPO = loader.REPO_ROOT
+REPO = Path(__file__).resolve().parents[2]
 SCRIPT = REPO / "tools" / "check-runtime-ranges.py"
-MANIFESTS = ["pyproject.toml", "tools/query_coverage/requirements.txt", "package.json",
+MANIFESTS = ["pyproject.toml", "setup.py", "tools/query_coverage/requirements.txt", "package.json",
              "Cargo.toml", "go.mod", "Package.swift"]
 
 spec = importlib.util.spec_from_file_location("check_runtime_ranges", SCRIPT)
@@ -75,12 +74,38 @@ def test_tilde_equal_two_components_has_no_minor_ceiling():
     ("Package.swift", 'from: "0.10.0"', 'from: "0.8.0"', "swift"),
     ("Cargo.toml", 'tree-sitter = "0.25"', 'tree-sitter = "0.24"', "rust"),
     ("package.json", '"tree-sitter": "^0.25.0"', '"tree-sitter": ">=0.22.4"', "node"),
+    ("package.json", '"web-tree-sitter": "^0.27.0"', '"web-tree-sitter": "^0.24.7"', "wasm"),
+    # A runtime declared outside the `core` extra is checked too.
+    ("pyproject.toml", '[project.optional-dependencies]',
+     '[project.optional-dependencies]\nother = ["tree_sitter>=0.24"]', "python"),
+    ("pyproject.toml", 'requires-python = ">=3.12"',
+     'requires-python = ">=3.12"\ndependencies = ["tree-sitter>=0.24"]', "python"),
+    ("Cargo.toml", '[build-dependencies]', '[build-dependencies]\ntree-sitter = "0.24"', "rust"),
+    # An unsatisfiable range installs nothing; it must not pass.
+    ("pyproject.toml", '"tree-sitter~=0.25"', '"tree-sitter>=0.25,<0.25"', "python"),
+    ("package.json", '"tree-sitter": "^0.25.0"', '"tree-sitter": "~0.25.0"', None),
 ])
 def test_other_old_floors_fail(root, rel, old, new, runtime):
     edit(root / rel, old, new)
     code, out = run(root)
+    if runtime is None:  # a control: a different but valid spelling still passes
+        assert code == 0, out
+        return
     assert code == 1, out
     assert f"FAIL {runtime}" in out
+
+
+def test_tree_sitter_al_itself_is_not_a_runtime(root):
+    # The grammar's own package name starts with "tree-sitter"; it must not be read as one.
+    edit(root / "pyproject.toml", '"tree-sitter~=0.25"', '"tree-sitter~=0.25", "tree-sitter-al>=0.0"')
+    code, out = run(root)
+    assert code == 0, out
+
+
+def test_setup_py_requirement_exits_2(root):
+    edit(root / "setup.py", "zip_safe=False", 'zip_safe=False, install_requires=["tree-sitter>=0.24"]')
+    code, out = run(root)
+    assert code == 2, out
 
 
 def test_newer_abi_fails_everything_pinned_to_0_25(root):

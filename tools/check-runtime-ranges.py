@@ -53,6 +53,11 @@ RUNTIMES = {
     # pseudo-version (v0.0.0-20240827094217-dd81d9e9be82) is still 13..14, so no
     # version of it loads ABI 15.
     "go-smacker": [("0.0.0", 13, 14)],
+    # npm `web-tree-sitter` (the WASM runtime): its ABI range lives in tree-sitter.wasm and is
+    # read at runtime, so it was measured: under Node, each version loaded this repo's
+    # tree-sitter-al.wasm. 0.24.7: "Incompatible language version 15. Compatibility range 13
+    # through 14."; 0.25.0: MIN_COMPATIBLE_VERSION 13, LANGUAGE_VERSION 15, parses.
+    "wasm": [("0.24.7", 13, 14), ("0.25.0", 13, 15)],
     # SwiftTreeSitter (ChimeHQ) bundles no api.h; its Package.swift pins the
     # tree-sitter package: 0.9.0 `.upToNextMinor(from: "0.23.0")` (ABI 13..14),
     # 0.10.0 `.upToNextMinor(from: "0.25.0")` (ABI 13..15).
@@ -122,50 +127,83 @@ def semver(spec: str) -> tuple:
     return pad(raw), caret(raw)
 
 
+PY_NAME = re.compile(r"\s*tree[-_]sitter(?![-_\w])", re.I)   # not tree-sitter-al, tree_sitter_x
+NPM_RUNTIMES = {"tree-sitter": "node", "web-tree-sitter": "wasm"}
+
+
+def py_requirement(where: str, req: str):
+    """A PEP 508 tree-sitter requirement -> one declaration. Extras and markers are refused."""
+    spec = PY_NAME.sub("", req, count=1).strip()
+    if not spec or spec[0] in "[;@":
+        raise Unreadable(f"{where}: {req!r} has no plain version range")
+    return where, "python", req.strip(), pep440(spec)
+
+
 def declarations(root: Path):
-    """Yield (where, runtime, spec, (lo, hi_exclusive)). Raises Unreadable."""
+    """Yield (where, runtime, spec, (lo, hi_exclusive)) for every place a runtime is declared.
+    Each manifest must declare at least one, so a deleted declaration cannot pass by silence.
+    Raises Unreadable."""
     def read(rel):
         p = root / rel
         if not p.is_file():
             raise Unreadable(f"{rel}: missing")
         return p.read_text(encoding="utf-8")
 
-    deps = tomllib.loads(read("pyproject.toml")).get("project", {}).get("optional-dependencies", {}).get("core", [])
-    reqs = [d for d in deps if re.match(r"tree[-_]sitter(?![-_\w])", d)]
-    if len(reqs) != 1:
-        raise Unreadable(f"pyproject.toml: expected one tree-sitter in [project.optional-dependencies].core, found {reqs}")
-    spec = reqs[0][len("tree-sitter"):]
-    yield "pyproject.toml [core]", "python", reqs[0], pep440(spec)
+    def require(found, rel):
+        if not found:
+            raise Unreadable(f"{rel}: declares no tree-sitter runtime")
 
-    req = [line.strip() for line in read("tools/query_coverage/requirements.txt").splitlines()
-           if re.match(r"tree[-_]sitter(?![-_\w])", line.strip())]
-    if len(req) != 1:
-        raise Unreadable("tools/query_coverage/requirements.txt: expected one tree-sitter line")
-    yield "tools/query_coverage/requirements.txt", "python", req[0], pep440(req[0][len("tree-sitter"):])
+    # pyproject: [project].dependencies, every optional-dependencies extra, every
+    # [dependency-groups] group.
+    py = tomllib.loads(read("pyproject.toml"))
+    lists = [("[project.dependencies]", py.get("project", {}).get("dependencies", []))]
+    lists += [(f"[{k}]", v) for k, v in py.get("project", {}).get("optional-dependencies", {}).items()]
+    lists += [(f"[dependency-groups.{k}]", v) for k, v in py.get("dependency-groups", {}).items()]
+    found = [py_requirement(f"pyproject.toml {name}", r) for name, reqs in lists
+             for r in reqs if isinstance(r, str) and PY_NAME.match(r)]
+    require(found, "pyproject.toml")
+    yield from found
+    # setup.py declares nothing today; a requirement there would bypass this check.
+    if re.search(r"(install_requires|extras_require)[^\n]*tree[-_]sitter", read("setup.py")):
+        raise Unreadable("setup.py declares a tree-sitter requirement; declare it in pyproject.toml")
 
-    peer = json.loads(read("package.json")).get("peerDependencies", {}).get("tree-sitter")
-    if peer is None:
-        raise Unreadable("package.json: no peerDependencies.tree-sitter")
-    yield "package.json peerDependencies", "node", f"tree-sitter {peer}", semver(peer)
+    reqfiles = sorted(p.relative_to(root).as_posix() for pat in ("requirements*.txt", "tools/**/requirements*.txt")
+                      for p in root.glob(pat))
+    for rel in reqfiles:
+        for line in read(rel).splitlines():
+            if PY_NAME.match(line.split("#")[0]):
+                yield py_requirement(rel, line.split("#")[0])
 
-    dev = tomllib.loads(read("Cargo.toml")).get("dev-dependencies", {}).get("tree-sitter")
-    if isinstance(dev, dict):
-        dev = dev.get("version")
-    if not isinstance(dev, str):
-        raise Unreadable("Cargo.toml: no [dev-dependencies] tree-sitter version")
-    yield "Cargo.toml [dev-dependencies]", "rust", f'tree-sitter = "{dev}"', semver(dev)
+    pkg = json.loads(read("package.json"))
+    found = [(f"package.json {section}", NPM_RUNTIMES[name], f"{name} {spec}", semver(spec))
+             for section in ("dependencies", "devDependencies", "peerDependencies", "optionalDependencies")
+             for name, spec in pkg.get(section, {}).items() if name in NPM_RUNTIMES]
+    require(found, "package.json")
+    yield from found
+
+    cargo = tomllib.loads(read("Cargo.toml"))
+    found = []
+    for section in ("dependencies", "dev-dependencies", "build-dependencies"):
+        dep = cargo.get(section, {}).get("tree-sitter")
+        if dep is None:
+            continue
+        spec = dep.get("version") if isinstance(dep, dict) else dep
+        if not isinstance(spec, str):
+            raise Unreadable(f"Cargo.toml [{section}] tree-sitter has no version")
+        found.append((f"Cargo.toml [{section}]", "rust", f'tree-sitter = "{spec}"', semver(spec)))
+    require(found, "Cargo.toml")
+    yield from found
 
     # The root module, plus any nested binding module (bindings/go/go.mod was one until A6).
     gomods = ["go.mod"] + sorted(p.relative_to(root).as_posix() for p in root.glob("bindings/**/go.mod"))
-    found = 0
+    found = []
     for rel in gomods:
         for m in re.finditer(r"github\.com/(tree-sitter|smacker)/go-tree-sitter\s+(v\S+)", read(rel)):
-            found += 1
             # Go's minimal version selection: the required version IS the floor.
             runtime = "go" if m.group(1) == "tree-sitter" else "go-smacker"
-            yield rel, runtime, m.group(0), (ver(m.group(2)), INF)
-    if not found:
-        raise Unreadable("no go.mod requires a go-tree-sitter runtime")
+            found.append((rel, runtime, m.group(0), (ver(m.group(2)), INF)))
+    require(found, "go.mod")
+    yield from found
 
     m = re.search(r'\.package\(\s*url:\s*"[^"]*(?:SwiftTreeSitter|swift-tree-sitter)[^"]*",\s*from:\s*"([^"]+)"\s*\)',
                   read("Package.swift"))
@@ -182,6 +220,8 @@ def fmt(v: tuple) -> str:
 def check(runtime: str, lo: tuple, hi: tuple, abi: int) -> list[str]:
     """The problems with admitting [lo, hi) of `runtime` for a grammar of ABI `abi`."""
     table = [(ver(v), a, b) for v, a, b in RUNTIMES[runtime]]
+    if lo >= hi:
+        return [f"admits no version at all ([{fmt(lo)}, {fmt(hi)}) is empty): nothing can install"]
     if lo < table[0][0]:
         return [f"admits {fmt(lo)}, older than the table's first entry {fmt(table[0][0])}"]
     bad = []

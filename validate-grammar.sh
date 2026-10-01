@@ -771,8 +771,9 @@ fi
 # binding. pyproject's `core = ["tree-sitter~=0.24"]` admitted 0.24.0 (ABI 13..14),
 # so `pip install tree-sitter-al[core]` could resolve to a runtime that refuses to
 # load the grammar, and nothing here noticed. tools/check-runtime-ranges.py maps
-# every declared range (pyproject, requirements, npm peer, Cargo, go.mod,
-# Package.swift) onto a hand-maintained runtime -> ABI table. Exit 1 is a range
+# every declared range (every pyproject list, requirements files, the npm
+# tree-sitter and web-tree-sitter entries, Cargo, go.mod, Package.swift) onto a
+# hand-maintained runtime -> ABI table. Exit 1 is a range
 # admitting an incompatible runtime; exit 2 is an unreadable range or manifest.
 # Both fail validation.
 print_header "Step 11: Runtime Ranges vs. Grammar ABI"
