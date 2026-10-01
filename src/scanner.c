@@ -430,16 +430,43 @@ static bool line_rest_is_blank(TSLexer *lexer) {
 // Without this the second directive lexed as an extra (#region, #pragma) and
 // the line parsed clean. DIRECTIVE_EOL, asked after the condition, returns
 // before the '#' dispatch, so this check at the opener is where it is seen.
+//
+// B3: the condition must also be COMPLETE on its line. A line whose last
+// condition word is `and`, `or` or `not`, or whose parentheses do not balance,
+// is AL0629 (probe_alc.py dangling_*): the operand on the next line is not
+// read. Without this the grammar's condition simply continued across the
+// newline (DIRECTIVE_EOL cannot fire mid-expression) and absorbed it. Words
+// are compared whole, so `band` and `andx` are symbols. Every check here
+// works off ONE pass over the line; when the verdict is only known at its
+// end, the end is marked so the MALFORMED_DIRECTIVE token still covers the
+// line (consume_line only marks what it advances over).
 static bool opener_line_is_malformed(TSLexer *lexer) {
+  int depth = 0;           // '(' minus ')'; negative is unbalanced for good
+  bool dangling = false;   // the last word read was and/or/not
   while (lexer->lookahead != '\n' && !lexer->eof(lexer)) {
-    if (lexer->lookahead == '#') return true;
-    if (lexer->lookahead == '/') {
+    int32_t c = lexer->lookahead;
+    if (c == '#') return true;
+    if (c == '/') {
       lexer->advance(lexer, false);
       if (lexer->lookahead == '*') return true;
-      if (lexer->lookahead == '/') return false;
+      if (lexer->lookahead == '/') break;
+      dangling = false;
+    } else if (is_identifier_char(c)) {
+      char word[4];
+      size_t len = 0;
+      bool fits = read_word_ci(lexer, word, sizeof(word), &len);
+      dangling = fits && (strcmp(word, "and") == 0 || strcmp(word, "or") == 0 ||
+                          strcmp(word, "not") == 0);
     } else {
+      if (c == '(') depth++;
+      if (c == ')' && --depth < 0) return true;
+      if (!is_extra_space(c)) dangling = false;
       lexer->advance(lexer, false);
     }
+  }
+  if (depth != 0 || dangling) {
+    lexer->mark_end(lexer);
+    return true;
   }
   return false;
 }
