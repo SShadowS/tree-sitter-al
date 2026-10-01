@@ -68,8 +68,10 @@ python parse_bug_finder.py file.al debug.log   # Analyze parsing bugs
 `validate-grammar.sh` source `tools/default-cc.sh`, and `loader.ensure_library` applies the same
 rule (`loader.build_env`): if `CC` is unset and clang-cl is on PATH or in
 `C:/Program Files/LLVM/bin`, it becomes `CC`. The library parses ~2.05x faster with identical
-trees and compiles in ~3 s instead of ~11 s (`docs/deferred-work.md` item 21). Opt out with
-`TS_AL_NO_CLANG=1`; an explicit `CC` always wins (`CC=cl` forces MSVC). Linux/macOS: no change.
+trees and compiles in ~3 s instead of ~11 s (`docs/deferred-work.md` item 21). **To force MSVC,
+set `TS_AL_NO_CLANG=1`.** An explicit `CC` always wins, but `CC=cl` works only inside a VS developer
+shell: from Git Bash or plain PowerShell `cl` is not on PATH and the build fails with "program not
+found". Linux/macOS: no change.
 
 **A MISSING node for a HIDDEN (`_`-prefixed) token is invisible to `tree-sitter parse`,
 its `--json-summary` and therefore `parse-al-parallel.sh`**: no `MISSING` is printed and the
