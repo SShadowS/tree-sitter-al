@@ -423,10 +423,16 @@ static bool line_rest_is_blank(TSLexer *lexer) {
   return false;
 }
 
-// After `#if`/`#elif`: does a block comment open anywhere on the rest of the
-// line? alc rejects that (AL0631) where it accepts a trailing `//` comment.
-static bool line_has_block_comment(TSLexer *lexer) {
+// After `#if`/`#elif`: does a block comment open, or a second directive
+// start, anywhere on the rest of the line? alc rejects both (AL0631:
+// `#if A /* c */`, `#if A #region R`) where it accepts a trailing `//` comment.
+// A `#` cannot occur in a condition, so any `#` before a `//` is a directive.
+// Without this the second directive lexed as an extra (#region, #pragma) and
+// the line parsed clean. DIRECTIVE_EOL, asked after the condition, returns
+// before the '#' dispatch, so this check at the opener is where it is seen.
+static bool opener_line_is_malformed(TSLexer *lexer) {
   while (lexer->lookahead != '\n' && !lexer->eof(lexer)) {
+    if (lexer->lookahead == '#') return true;
     if (lexer->lookahead == '/') {
       lexer->advance(lexer, false);
       if (lexer->lookahead == '*') return true;
@@ -678,9 +684,10 @@ bool tree_sitter_al_external_scanner_scan(
       // What alc lets follow the word on its line (AL0631 otherwise,
       // tools/config_oracle/probe_alc.py): after #endif/#else, only spaces
       // and an optional `//` comment; after #if/#elif, a condition with no
-      // block comment anywhere on the line. Any other word is AL0621.
+      // block comment and no second directive on the line. Any other word is
+      // AL0621.
       bool malformed = (is_else || is_endif) ? !line_rest_is_blank(lexer)
-                     : (is_if || is_elif)    ? line_has_block_comment(lexer)
+                     : (is_if || is_elif)    ? opener_line_is_malformed(lexer)
                      : true;
       if (malformed) {
         // `#elsewhere`, `#regionX` (the extras regex matches its `#region`
