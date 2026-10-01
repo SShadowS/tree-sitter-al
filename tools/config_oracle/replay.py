@@ -74,6 +74,11 @@ REPLAY_4_INPUT = (b"codeunit 50000 T { procedure P() var A: Boolean; C: Boolean;
                   b"B := A\n#if X\n  or C\n#endif\n  ;\nend; }\n")
 
 
+# Review I1's reproduction: an in-file #define fixes B, so a truth table cannot tell the
+# two groupings apart in any configuration.
+REPLAY_8_INPUT = b"#define B\n#if not A and B\ncodeunit 50000 T { }\n#endif\n"
+
+
 def _replay1(recs):
     """CLEAN25=0 (arm selected): the old tree flattens `end else begin B();` into the
     then-block, so the reference's then_branch code_block has no lowered partner. The
@@ -130,6 +135,17 @@ REPLAYS = [
                 "so the multi-configuration parse is rejected before the structure check runs, "
                 "same as replay 3. Detected by the has_error backstop, not by structure; base "
                 "spec row 6 amended to match"),
+    Replay(7, "81076bf^", "preproc_condition_precedence_test.txt", lambda c: True,
+           lambda recs: any(_has(r, "|directive|condition-structure|") for r in recs),
+           note="B1: `not` had no precedence, so `not A and B` was not (A and B) -- a silent "
+                "wrong tree with no ERROR. Caught by condition_check, never by structure: "
+                "the resolver masks the text, so the reference never sees a condition"),
+    Replay(8, "81076bf^", "hand-built", None,
+           lambda recs: bool(recs) and all(_has(r, "|condition-structure|if@10 ast: ") for r in recs),
+           note="B1 review I1, hand-built: `#define B` puts B in every reached environment, so "
+                "the old not(A and B) evaluates like (not A) and B in every configuration; only "
+                "the AST comparison sees the wrong grouping, and must, in each configuration",
+           source=REPLAY_8_INPUT),
 ]
 
 

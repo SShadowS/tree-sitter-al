@@ -3939,10 +3939,14 @@ module.exports = grammar({
       $._preproc_expression,
     )),
 
-    preproc_not_expression: $ => seq(
+    // `not` binds tighter than `and` (2) and `or` (1): alc reads `not A and B`
+    // as `(not A) and B` (tools/config_oracle/probe_alc.py prec_not_and). With
+    // no prec this parsed as `not (A and B)`, with zero ERROR nodes.
+    // test/corpus/preproc_condition_precedence_test.txt pins it.
+    preproc_not_expression: $ => prec(3, seq(
       alias(kw('not'), 'not'),
       $._preproc_expression
-    ),
+    )),
 
     // Pure grammar literals — elif, like else, has NO external-scanner token
     // and touches no scanner state (it doesn't change #if/#endif nesting

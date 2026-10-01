@@ -343,10 +343,10 @@ codeunit 50100 C
   (preproc_conditional_object
     (preproc_if
       (preproc_open)
-      condition: (preproc_not_expression
-        (preproc_or_expression
-          (identifier)
-          (identifier))))
+      condition: (preproc_or_expression
+        (preproc_not_expression
+          (identifier))
+        (identifier)))
     (preproc_conditional_object
       (preproc_if
         (preproc_open)

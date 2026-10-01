@@ -32,6 +32,8 @@ def test_quick_reports_one_line_per_stage_in_order(tiny_quick, capsys):
         "- stage (a) registry census: PASS",
         "- stage (b) self-tests: PASS (stubbed)",
         "- stage (c) fixture differential: PASS",
+        "- stage (d) condition structure: PASS (0 condition-structure: ast 0, truth 0; 2 conditions "
+        "compared over 2 configurations; skipped: none)",
     ]
 
 
@@ -43,6 +45,8 @@ def test_census_failure_exits_1_names_the_problem_and_later_stages_still_run(tin
         "- stage (a) registry census: FAIL (1 problems)",
         "- stage (b) self-tests: PASS (stubbed)",
         "- stage (c) fixture differential: PASS",
+        "- stage (d) condition structure: PASS (0 condition-structure: ast 0, truth 0; 2 conditions "
+        "compared over 2 configurations; skipped: none)",
     ]
     assert "  unregistered: preproc_zz_selftest" in out
     assert "- quick tier exit code: 1" in out
@@ -72,6 +76,22 @@ def test_a_fixture_discrepancy_fails_stage_c(tiny_quick, capsys, monkeypatch):
     out = capsys.readouterr().out
     assert _stage_lines(out)[2].startswith("- stage (c) fixture differential: FAIL (exit 1")
     assert "- discrepancy: 1" in out
+
+
+def test_a_condition_structure_discrepancy_fails_stage_d(tiny_quick, capsys, monkeypatch):
+    """B1: the tree's #if grouping disagreeing with the resolver's turns (c) AND (d) red."""
+    from tools.config_oracle import condition_check
+    from tools.config_oracle.directives import Not
+    real = condition_check.tree_conditions
+
+    def negated(root, source):     # every condition read as its negation: always differs
+        return {h: (s, e, Not(x)) for h, (s, e, x) in real(root, source).items()}
+    monkeypatch.setattr(condition_check, "tree_conditions", negated)
+    assert cli.main(tiny_quick) == 1
+    lines = _stage_lines(capsys.readouterr().out)
+    assert lines[2].startswith("- stage (c) fixture differential: FAIL (exit 1")
+    assert lines[3].startswith("- stage (d) condition structure: FAIL (4 condition-structure: ast 2, "
+                               "truth 2, in 2 configurations")
 
 
 def test_a_missing_pytest_is_could_not_run_not_a_finding(monkeypatch):
