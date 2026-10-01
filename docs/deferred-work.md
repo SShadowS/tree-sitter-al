@@ -354,7 +354,7 @@ var-only form for `var_body`. The two fixtures' expected trees change and must b
 re-derived from `tree-sitter parse`, not `-u`'d; the census above is the
 before-measurement.
 
-## 9. `&&` and `||` in `#if` conditions: the grammar accepts what alc rejects
+## 9. `&&` and `||` in `#if` conditions: the grammar accepts what alc rejects — RESOLVED 2026-10-01
 
 **Established:** `tools/config_oracle/probe_alc.py` probes `ampamp_rejected` and
 `pipepipe_rejected` (AL0631; `docs/preproc-directive-semantics.md`), against
@@ -368,6 +368,14 @@ oracle cannot compare it. Production impact: zero — no `#if`/`#elif` line in
 BC.History, DC or BC 28.1 uses `&&` or `||` (grep, 2026-09-28). Per "parse
 structure, don't validate" this may be kept on purpose; if so, say so here and
 close the item, otherwise remove the two string alternatives.
+
+**Fixed (roadmap B2, decision 3):** 1d01707 removes both alternatives from
+`preproc_or_expression`/`preproc_and_expression` and the `"&&"`/`"||"` captures from
+`queries/highlights.scm`. `#if A && B` is now an ERROR in the condition, pinned by two
+cases of `test/corpus/directive_line_rejected_negative_test.txt`. The resolver's
+`unsupported-condition-token` refusal keeps its classification (fixture-classes.tsv).
+Production: still 0 sites in the four corpora; tree-harness: all 15,358 BC.History trees
+byte-identical.
 
 ## 10. Split `add*` headers whose bodies stay open over `#endif` (EDocumentDE)
 
@@ -759,7 +767,7 @@ and that variant takes no `;`. The flat parse of either configuration keeps the
 
 ---
 
-## 20. `#endif;`: the grammar accepts a token after `#endif` that alc rejects
+## 20. `#endif;`: the grammar accepts a token after `#endif` that alc rejects — RESOLVED 2026-10-01
 
 **Established:** 2026-09-29, A3 (config-oracle gate) review and fix rounds 1-2. Manual
 alc 18.0.41 compiles, each with X defined and undefined, runtime 15.0, no symbols
@@ -798,6 +806,16 @@ discovery, refuses a token after `#endif` (`resolver:trailing-token`), so no
 resolver-refused deliberate negatives in `fixture-classes.tsv`. C2's raw-compile
 mode, which skips the resolver, is what can pin it. Until then the table above is the
 evidence. B2 should add a negative fixture asserting the ERROR once it is fixed.
+
+**Fixed (roadmap B2):** 1d01707. The scanner's `#` dispatch checks the rest of an
+`#endif`/`#else` line after `mark_end`: anything but spaces and a `//` comment makes the
+line the hidden external `_malformed_directive`, which no rule takes, so it is an ERROR.
+The same dispatch rejects prefix forms (`#elsewhere`, `#regionx`, AL0621) and a block
+comment on an `#if`/`#elif` line. Pinned now: `tools/config_oracle/probe_alc.py`
+`endif_semicolon_rejected`, `endif_trailing_word_rejected`, `else_semicolon_rejected`
+(probe_alc.py compiles raw, past the resolver that keeps these out of alc_probe), and
+`test/corpus/directive_line_rejected_negative_test.txt`. `#endregion;` stays clean
+(`directive_line_accepted_test.txt`, probe `endregion_semicolon_accepted`).
 
 ## 21. The MSVC-built native library parses ~2x slower than clang -O2
 
