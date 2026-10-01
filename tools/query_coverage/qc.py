@@ -303,7 +303,7 @@ def cmd_run(args) -> int:
         diff = baseline.diff(base, gating_clusters)
 
     provenance = model.Provenance(
-        build_stamp=loader.compute_stamp(repo_root),
+        build_stamp=loader.library_stamp(repo_root),
         manifest_hash=manifest_digest,
         tree_sitter_version=_tree_sitter_version(),
         scope=scope,

@@ -79,7 +79,7 @@ def test_ensure_library_runs_generate_before_build_when_stamp_differs(
     assert calls[1][:2] == ["tree-sitter", "build"]
     # generate must run BEFORE build reads the sources it regenerates from.
     assert calls.index(calls[0]) < calls.index(calls[1])
-    assert loader.read_stamp(tmp_path) == loader.compute_stamp(tmp_path)
+    assert loader.read_stamp(tmp_path) == loader.library_stamp(tmp_path)
 
 
 def test_ensure_library_raises_and_leaves_stamp_unwritten_when_generate_fails(
@@ -113,7 +113,7 @@ def test_ensure_library_stamps_the_post_generate_state(tmp_path: Path, monkeypat
     mismatch and regenerate + rebuild — every single time, forever.
     """
     _stampable(tmp_path)
-    pre_generate = loader.compute_stamp(tmp_path)
+    pre_generate = loader.library_stamp(tmp_path)
 
     def fake_run(cmd, **kwargs):
         if cmd[:2] == ["tree-sitter", "generate"]:
@@ -126,7 +126,7 @@ def test_ensure_library_stamps_the_post_generate_state(tmp_path: Path, monkeypat
     loader.ensure_library(tmp_path)
 
     assert loader.read_stamp(tmp_path) != pre_generate
-    assert loader.read_stamp(tmp_path) == loader.compute_stamp(tmp_path)
+    assert loader.read_stamp(tmp_path) == loader.library_stamp(tmp_path)
 
     # ...and a second call is therefore a no-op rather than another rebuild.
     calls: list[list[str]] = []
@@ -140,3 +140,83 @@ def test_ensure_library_stamps_the_post_generate_state(tmp_path: Path, monkeypat
     loader.ensure_library(tmp_path)
 
     assert calls == []
+
+
+# ---- build_env: the Python twin of tools/default-cc.sh -------------------------
+
+CLANG = r"C:\LLVM\bin\clang-cl.EXE"
+
+
+def _env(environ, *, windows=True, on_path=CLANG, llvm_file=False):
+    return loader.build_env(environ, is_windows=windows, which=lambda _name: on_path,
+                            isfile=lambda _path: llvm_file)
+
+
+def test_build_env_defaults_cc_to_clang_cl_when_unset():
+    assert _env({"PATH": "x"}) == {"PATH": "x", "CC": CLANG, "TS_AL_DEFAULT_CC": CLANG}
+
+
+def test_build_env_falls_back_to_the_llvm_install_dir():
+    env = _env({}, on_path=None, llvm_file=True)
+    assert env == {"CC": loader.LLVM_CLANG_CL, "TS_AL_DEFAULT_CC": loader.LLVM_CLANG_CL}
+
+
+@pytest.mark.parametrize("cc", ["sentinel-cc-xyz", "cl"])
+def test_build_env_explicit_cc_wins(cc):
+    """Exact, and never a value the lookup could also return: a suffix check once let
+    CC=cl "win" after the rule had replaced it with clang-cl."""
+    assert _env({"CC": cc}) == {"CC": cc}
+
+
+def test_build_env_opt_out():
+    assert _env({"TS_AL_NO_CLANG": "1"}) == {"TS_AL_NO_CLANG": "1"}
+
+
+def test_build_env_not_windows_is_a_no_op():
+    assert _env({}, windows=False) == {}
+
+
+def test_build_env_clang_cl_absent_changes_nothing():
+    assert _env({}, on_path=None, llvm_file=False) == {}
+
+
+def test_build_env_reapplies_the_rule_to_an_inherited_default():
+    """ts-lock.sh exported CC=TS_AL_DEFAULT_CC; that is not an explicit CC, so the opt-out
+    still applies to it."""
+    inherited = {"CC": "/x/clang-cl", "TS_AL_DEFAULT_CC": "/x/clang-cl", "TS_AL_NO_CLANG": "1"}
+    assert _env(inherited) == {"TS_AL_NO_CLANG": "1"}
+
+
+def test_build_env_never_touches_os_environ(monkeypatch):
+    monkeypatch.delenv("CC", raising=False)
+    loader.build_env(is_windows=True, which=lambda _name: CLANG)
+    assert "CC" not in loader.os.environ
+
+
+def test_library_stamp_keys_the_compiler_by_name(tmp_path: Path):
+    _stampable(tmp_path)
+    base = loader.compute_stamp(tmp_path)
+    assert loader.library_stamp(tmp_path, {"CC": CLANG}) == f"{base} cc=clang-cl"
+    assert loader.library_stamp(tmp_path, {"CC": "C:/Program Files/LLVM/bin/clang-cl.exe"}) == f"{base} cc=clang-cl"
+    assert loader.library_stamp(tmp_path, {}) == f"{base} cc="
+
+
+def test_ensure_library_builds_with_build_env_and_rebuilds_on_compiler_change(tmp_path: Path, monkeypatch):
+    _stampable(tmp_path)
+    envs = []
+
+    def fake_run(cmd, **kwargs):
+        if cmd[:2] == ["tree-sitter", "build"]:
+            envs.append(kwargs.get("env"))
+            (tmp_path / loader.LIB_NAME).write_bytes(b"library")
+        return subprocess.CompletedProcess(cmd, 0, stdout="", stderr="")
+
+    monkeypatch.setattr(loader.subprocess, "run", fake_run)
+    monkeypatch.setattr(loader, "build_env", lambda: {"CC": CLANG})
+    loader.ensure_library(tmp_path)
+    loader.ensure_library(tmp_path)
+    assert [e["CC"] for e in envs] == [CLANG]       # second call: fresh, no rebuild
+
+    monkeypatch.setattr(loader, "build_env", lambda: {"CC": "cl"})
+    loader.ensure_library(tmp_path)
+    assert [e["CC"] for e in envs] == [CLANG, "cl"]  # compiler changed: rebuilt

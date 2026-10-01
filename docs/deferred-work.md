@@ -871,6 +871,10 @@ MSVC `-O2`.
    loads them. Keep the MSVC compile as the fallback. Do not set `msbuild_toolset: ClangCL`,
    which would make source installs need the VS clang component.
 3. Document `CC=clang-cl` for the local dev loop. The fallback without LLVM is `-0`.
+   **DONE 2026-10-01 (6fd1f36, 77fb11d):** clang-cl is now the default CC on Windows when LLVM
+   is installed and `CC` is unset (`tools/default-cc.sh`, `loader.build_env`); opt out with
+   `TS_AL_NO_CLANG=1`. BC.History trees are byte-identical between the two libraries
+   (tree-harness). E3 still owns 1, 2 and 4.
 4. Take `tools.perf` baselines with `CC=clang-cl`, and keep an MSVC-against-clang-cl `ab` row
    as a canary.
 

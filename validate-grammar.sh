@@ -61,6 +61,9 @@ for arg in "$@"; do
     esac
 done
 
+# clang-cl as CC on Windows when LLVM is installed and CC is unset; see the file.
+. "$(dirname "$0")/tools/default-cc.sh"
+
 # Start validation
 echo -e "${BLUE}Starting comprehensive grammar validation...${NC}"
 START_TIME=$(date +%s)
@@ -469,7 +472,13 @@ fi
 # compiler. Only a genuine compile failure fails validation.
 print_header "Step 5c: Compile-Checking tools/fieldwalk.c"
 FIELDWALK_TS_DIR=$(ls -d .cache/tree-sitter-*/lib 2>/dev/null | head -1)
-FIELDWALK_CC="${CC:-cc}"
+# gcc-style flags (-O0 -o) below, so a CC that tools/default-cc.sh chose
+# (clang-cl) is ignored here; only a caller's explicit CC is honoured.
+if [ -n "${TS_AL_DEFAULT_CC:-}" ] && [ "${CC:-}" = "$TS_AL_DEFAULT_CC" ]; then
+    FIELDWALK_CC=cc
+else
+    FIELDWALK_CC="${CC:-cc}"
+fi
 command -v "$FIELDWALK_CC" >/dev/null 2>&1 || FIELDWALK_CC=gcc
 
 if [ ! -f "tools/fieldwalk.c" ]; then
