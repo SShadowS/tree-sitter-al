@@ -25,8 +25,8 @@ public API — a change to node structure or field names is a **major** bump.
   one implementation for the native binding and web-tree-sitter that never loads the
   addon; Rust `tree_sitter_al::traversal` behind the new `traversal` feature (off by
   default; adds `tree-sitter >=0.25, <0.27` and `serde_json`). All three give the same
-  visits on the same fixtures. `npm test` now runs the traversal JS tests (CI: Node 18
-  and 24). Additive: no parse tree changes. See `docs/traversal.md`, which also shows
+  visits on the same fixtures. `npm test` now runs the traversal JS tests. Three new CI
+  jobs: `traversal`, `traversal-node` (Node 18 and 24) and `traversal-packages`. Additive: no parse tree changes. See `docs/traversal.md`, which also shows
   how to migrate the walk patterns that lose `#if` content today. Recursion alone
   does not fix node-kind recognition: use `SplitInfo`.
 

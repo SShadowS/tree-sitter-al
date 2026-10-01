@@ -98,7 +98,8 @@ from tree_sitter import Language, Parser
 import tree_sitter_al
 from tree_sitter_al import traversal
 
-policy = traversal.load_policy()
+policy = traversal.load_policy()   # reads the policy shipped inside the installed package;
+                                   # from a checkout pass traversal/policy.json explicitly
 source = open("MyCodeunit.Codeunit.al", "rb").read()
 tree = Parser(Language(tree_sitter_al.language())).parse(source)
 doc = traversal.Document(tree, source, policy)
@@ -117,8 +118,9 @@ for v in traversal.walk(doc, policy):
 
 ## JavaScript (native `tree-sitter` or `web-tree-sitter`)
 
-One implementation serves both runtimes and never loads the native addon, so it is
-safe in a browser bundle.
+One implementation serves both runtimes and never loads the native addon, so it works with a
+bundler that resolves a JSON `require` (`traversal/index.js` is CommonJS and requires
+`./policy.json`). It is not tested in a real browser yet; that is deferred to F1b.
 
 ```js
 const T = require('@sshadows/tree-sitter-al/traversal');
@@ -135,7 +137,7 @@ for (const v of T.walk(doc, policy)) {
 ## Rust
 
 ```toml
-tree-sitter-al = { version = "4", features = ["traversal"] }
+tree-sitter-al = { version = "5", features = ["traversal"] }
 ```
 
 ```rust
