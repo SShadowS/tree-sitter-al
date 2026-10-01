@@ -247,7 +247,7 @@ def census(roots, jobs=None) -> int:
 def main(argv=None) -> int:
     for stream in (sys.stdout, sys.stderr):  # AL text is UTF-8; a cp1252 console is not
         if hasattr(stream, "reconfigure"):
-            stream.reconfigure(encoding="utf-8")
+            stream.reconfigure(encoding="utf-8", newline="\n")  # no CR: --sexp is pasted into fixtures
     doc = __doc__ or ""
     ap = argparse.ArgumentParser(description=doc.split("\n")[1],
                                  formatter_class=argparse.RawDescriptionHelpFormatter,
