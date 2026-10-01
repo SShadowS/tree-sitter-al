@@ -80,7 +80,9 @@ class ArmDescriptor:
     group_id: tuple          # (revision, '#if' byte offset)
     arm_id: int
     directive_offsets: tuple  # '#' of the arm's opening directive, then of its closing one if any
-    raw_range: tuple         # (start, end) of the arm body, before masking
+    raw_range: tuple         # (start, end) of the arm body, before masking. It starts after
+                             # the line terminator of the arm's directive line (spec 3.3: a
+                             # trailing `//` belongs to the directive), or at EOF
 
 
 @dataclass(frozen=True)
@@ -138,13 +140,25 @@ class Document:
         self.tree = tree
         self.source = source
         self.revision = fnv1a64(source)
-        self.groups, self.unpaired, self._by_parent = _pair(tree.root_node, policy, self.revision, len(source))
+        self.groups, self.unpaired, self._by_parent = _pair(tree.root_node, policy, self.revision, source)
 
     def descriptors(self):
         return [a for g in self.groups for a in g.arms]
 
 
-def _pair(root, policy, revision, eof):
+def _line_end(source: bytes, end: int) -> int:
+    """The first byte after the newline ending the line a directive ends on (or EOF).
+
+    `#if`/`#elif` nodes end after their newline and `#else` before it, so this is
+    what makes every arm start in the same place: a trailing comment on any
+    directive line is outside the arm.
+    """
+    nl = source.find(b"\n", max(end - 1, 0))
+    return len(source) if nl < 0 else nl + 1
+
+
+def _pair(root, policy, revision, source):
+    eof = len(source)
     open_, done, unpaired, by_parent = [], [], [], {}
     stack = [(root, None)]
     while stack:
@@ -174,8 +188,10 @@ def _pair(root, policy, revision, eof):
                 continue
             closer = ds[idx + 1] if idx + 1 < len(ds) else None
             offsets = (d.start, closer.start) if closer else (d.start,)
+            end = closer.start if closer else eof
+            # min: a MISSING #endif (error recovery) can sit before the newline
             arms.append(ArmDescriptor((revision, ds[0].start), len(arms), offsets,
-                                      (d.end, closer.start if closer else eof)))
+                                      (min(_line_end(source, d.end), end), end)))
         groups[ds[0].start] = Group(ds[0].start, tuple(ds), tuple(arms))
     return tuple(groups.values()), tuple(unpaired), {k: [groups[o] for o in v] for k, v in by_parent.items()}
 
@@ -255,6 +271,8 @@ def split_info(node, document: Document, policy: Policy):
     if not groups:
         return None
     ranges = [a.raw_range for g in groups for a in g.arms]
+    # an arm's directive line, '#' to the arm start: a trailing comment there is the directive's
+    ranges += [(a.directive_offsets[0], a.raw_range[0]) for g in groups for a in g.arms]
     shared = []
     for child, field in _kids(node):
         if child.is_named and policy.cls(child.type) == "directive":

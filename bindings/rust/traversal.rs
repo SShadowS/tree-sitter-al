@@ -251,6 +251,7 @@ impl<'t> Document<'t> {
                     continue;
                 }
                 let closer = ds.get(idx + 1);
+                let end = closer.map_or(eof, |c| c.start);
                 arms.push(ArmDescriptor {
                     group_id: (revision.clone(), if_offset),
                     arm_id: arms.len(),
@@ -258,7 +259,8 @@ impl<'t> Document<'t> {
                         Some(c) => vec![d.start, c.start],
                         None => vec![d.start],
                     },
-                    raw_range: (d.end, closer.map_or(eof, |c| c.start)),
+                    // min: a MISSING #endif (error recovery) can sit before the newline
+                    raw_range: (line_end(source, d.end).min(end), end),
                 });
             }
             groups.push(Group { if_offset, directives: ds, arms });
@@ -274,6 +276,14 @@ impl<'t> Document<'t> {
     pub fn descriptors(&self) -> Vec<&ArmDescriptor> {
         self.groups.iter().flat_map(|g| g.arms.iter()).collect()
     }
+}
+
+/// The first byte after the newline ending the line a directive ends on, or EOF.
+/// `#if`/`#elif` nodes end after their newline and `#else` before it; every arm
+/// starts here, so a trailing comment on any directive line is outside the arm.
+fn line_end(source: &[u8], end: usize) -> usize {
+    let from = end.saturating_sub(1).min(source.len());
+    source[from..].iter().position(|&b| b == b'\n').map_or(source.len(), |i| from + i + 1)
 }
 
 pub fn groups_of<'d, 't>(node: Node<'t>, doc: &'d Document<'t>) -> Vec<&'d Group<'t>> {
@@ -344,7 +354,11 @@ pub fn split_info<'t>(node: Node<'t>, doc: &Document<'t>, policy: &Policy) -> Op
     if groups.is_empty() {
         return None;
     }
-    let ranges: Vec<(usize, usize)> = groups.iter().flat_map(|g| g.arms.iter().map(|a| a.raw_range)).collect();
+    // Each arm, and its directive line ('#' to the arm start): a trailing comment there is the directive's.
+    let ranges: Vec<(usize, usize)> = groups
+        .iter()
+        .flat_map(|g| g.arms.iter().flat_map(|a| [a.raw_range, (a.directive_offsets[0], a.raw_range.0)]))
+        .collect();
     let shared = kids(node)
         .into_iter()
         .filter(|(_, c)| !(c.is_named() && policy.class(c.kind()) == "directive"))
@@ -472,7 +486,7 @@ mod tests {
         let policy = Policy::bundled();
         let mut parser = parser();
         let paths = fixtures();
-        assert_eq!(paths.len(), 12);
+        assert_eq!(paths.len(), 13);
         for path in paths {
             let source = std::fs::read(&path).unwrap();
             let tree = parser.parse(&source, None).unwrap();
@@ -557,7 +571,8 @@ mod tests {
         let g = &doc.groups[0];
         assert_eq!(g.if_offset, source.windows(3).position(|w| w == b"#if").unwrap());
         let ranges: Vec<(usize, usize)> = g.arms.iter().map(|a| a.raw_range).collect();
-        assert_eq!(ranges, [(46, 86), (91, 133)]);
+        // #else is 86-91; its arm starts after the CRLF at 91-93, like the #if arm.
+        assert_eq!(ranges, [(46, 86), (93, 133)]);
         assert_eq!(&source[g.arms[0].raw_range.0 - 2..g.arms[0].raw_range.0], b"\r\n");
     }
 
@@ -572,5 +587,22 @@ mod tests {
         let a = Document::new(&a_tree, &a_src, &policy);
         let b = Document::new(&b_tree, &b_src, &policy);
         assert!(bind_arm(a.descriptors()[0], &b, &policy).is_err());
+    }
+
+    #[test]
+    fn an_unclosed_else_on_the_last_line_has_an_empty_arm() {
+        let policy = Policy::bundled();
+        let mut parser = parser();
+        let cases: [(&[u8], (usize, usize)); 4] = [
+            (b"codeunit 1 C\n{\n}\n#if A\n#else", (28, 28)),
+            (b"codeunit 1 C\n{\n}\n#if A\n#else // c", (33, 33)),
+            (b"codeunit 1 C\n{\n}\n#if A\n#else\n", (28, 28)),
+            (b"codeunit 1 C\r\n{\r\n}\r\n#if A\r\n#else\r\n", (32, 32)),
+        ];
+        for (src, want) in cases {
+            let tree = parser.parse(src, None).unwrap();
+            let doc = Document::new(&tree, src, &policy);
+            assert_eq!(doc.groups[0].arms[1].raw_range, want, "{:?}", String::from_utf8_lossy(src));
+        }
     }
 }

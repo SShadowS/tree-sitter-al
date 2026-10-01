@@ -38,12 +38,14 @@ def test_groups_and_arms_come_from_the_trees_own_directives(parse):
     # Line 1 holds multi-byte text, so every offset below is a UTF-8 byte offset.
     assert doc.source[93:96] == b"#if"
     assert [(g.if_offset, [a.raw_range for a in g.arms]) for g in doc.groups] == [
-        (93, [(105, 140), (145, 594)]),               # #if CLEAN25 / #else, around both objects
-        (179, [(191, 251), (265, 302), (307, 345)]),  # #if CLEAN24 / #elif / #else, members
-        (441, [(453, 524), (538, 554), (559, 576)]),  # the same, statements
+        (93, [(105, 140), (146, 594)]),               # #if CLEAN25 / #else, around both objects
+        (179, [(191, 251), (265, 302), (308, 345)]),  # #if CLEAN24 / #elif / #else, members
+        (441, [(453, 524), (538, 554), (560, 576)]),  # the same, statements
         (489, [(501, 517)]),                          # #if CLEAN26, nested in arm 0 of 441
     ]
     assert doc.groups[1].arms[1].directive_offsets == (251, 302)
+    # Every arm starts after its directive line's newline, #else included.
+    assert all(doc.source[a.raw_range[0] - 1:a.raw_range[0]] == b"\n" for g in doc.groups for a in g.arms)
     assert [d.role for d in doc.groups[1].directives] == ["if", "elif", "else", "endif"]
     assert doc.unpaired == ()
 
@@ -112,7 +114,9 @@ def test_crlf_and_a_leading_bom_keep_byte_offsets(parse):
     (group,) = doc.groups
     assert group.if_offset == doc.source.index(b"#if")
     assert doc.source[group.arms[0].raw_range[0] - 2:group.arms[0].raw_range[0]] == b"\r\n"
-    assert [a.raw_range for a in group.arms] == [(46, 86), (91, 133)]
+    # #else is 86-91; its arm starts after the CRLF at 91-93, as the #if arm does after its own.
+    assert [a.raw_range for a in group.arms] == [(46, 86), (93, 133)]
+    assert doc.source[91:93] == b"\r\n"
 
 
 def test_walk_is_iterative_and_fast_on_large_and_deep_input(T, policy, al_parser):
@@ -137,3 +141,47 @@ def test_a_subtree_walk_root_visit_equals_the_full_walk_visit(T, policy, parse):
     assert containers and all(v.host is not None for v in containers)
     for v in containers:
         assert T.walk(doc, policy, root=v.node)[0] == v
+
+
+def test_a_trailing_comment_on_any_directive_line_is_outside_every_arm(T, policy, parse):
+    """directive_comments.al, offsets by hand: `#if A // c-if` is 38-52 (the comment is
+    inside the preproc_if node), `#else // c-else` is 144-160 with the comment at 150-159,
+    so arm 2 starts at 160, the byte after the newline. Spec 3.3: the comment belongs to
+    the directive, for #if, #elif and #else alike."""
+    doc = parse("directive_comments.al")
+    src = doc.source
+    group = doc.groups[0]
+    assert src[38:52] == b"#if A // c-if\n" and src[144:160] == b"#else // c-else\n"
+    assert [a.raw_range[0] for a in group.arms] == [52, 107, 160]
+    comments = {src[c.start_byte:c.end_byte]: c for c in _named(doc.tree.root_node) if c.type == "comment"}
+    for text in (b"// c-if", b"// c-elif", b"// c-else", b"// s-if", b"// s-else"):
+        c = comments[text]
+        assert not any(lo <= c.start_byte < hi for g in doc.groups for a in g.arms for lo, hi in [a.raw_range]), text
+    visits = T.walk(doc, policy)
+    by_text = {src[v.start:v.end]: v for v in visits if v.type == "comment"}
+    assert by_text[b"// c-else"].arms == () and by_text[b"// s-else"].arms == ()
+    held = [f.node for v in visits if v.split for g in v.split.groups for a in g.arms for f in a.fragments]
+    held += [f.node for v in visits if v.split for f in v.split.shared]
+    assert not [n for n in held if n.type == "comment"], "a directive-line comment became arm content or shared"
+
+
+@pytest.mark.parametrize("src, want", [
+    (b"codeunit 1 C\n{\n}\n#if A\n#else", (28, 28)),             # no newline: the arm starts at EOF
+    (b"codeunit 1 C\n{\n}\n#if A\n#else // c", (33, 33)),        # the comment is the directive's
+    # With a final newline, error recovery puts a MISSING #endif at the end of `#else`
+    # (28 and 32), before the newline: the arm is empty there, never inverted.
+    (b"codeunit 1 C\n{\n}\n#if A\n#else\n", (28, 28)),
+    (b"codeunit 1 C\r\n{\r\n}\r\n#if A\r\n#else\r\n", (32, 32)),
+])
+def test_an_unclosed_else_on_the_last_line_has_an_empty_arm(T, policy, al_parser, src, want):
+    doc = T.Document(al_parser.parse(src), src, policy)
+    (group,) = doc.groups
+    assert group.arms[1].raw_range == want
+
+
+def _named(node):
+    stack = [node]
+    while stack:
+        n = stack.pop()
+        yield n
+        stack.extend(n.children)

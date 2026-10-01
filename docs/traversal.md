@@ -62,7 +62,13 @@ the policy does not cover.
 each with **every** arm as `ArmFragments`: the descriptor (group id, arm id,
 directive offsets, raw byte range) and the pieces inside that range in source order,
 with field names, anonymous tokens kept as tokens. `SplitInfo.shared` lists the
-node's own children outside every arm.
+node's own children outside every arm and outside every directive line.
+
+An arm's raw range starts at the first byte after the line terminator of its
+directive's line (LF or CRLF), or at the end of the file, for `#if`, `#elif`
+and `#else` alike. A trailing comment on a directive line (`#else // old API`)
+therefore belongs to the directive, never to the arm: it is not one of the arm's
+pieces, not in `shared`, and its visit has no arm path.
 
 An arm can cross node boundaries: in `preproc_split_block_end_in_else` the `#else`
 arm closes one procedure and opens the next, and its pieces say so.

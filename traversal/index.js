@@ -129,11 +129,17 @@ function pair(doc, policy) {
     ds.forEach((d, idx) => {
       if (d.role === 'endif') return;
       const closer = idx + 1 < ds.length ? ds[idx + 1] : null;
+      const end = closer ? closer.start : eof;
+      // The first byte after the newline ending the directive's line, or EOF. #if/#elif
+      // nodes end after their newline and #else before it; every arm starts here, so a
+      // trailing comment on any directive line is outside the arm (spec 3.3).
+      const nl = doc.text.indexOf('\n', Math.max(d.node.endIndex - 1, 0));
+      const lineEnd = doc.bytes[nl < 0 ? doc.text.length : nl + 1];
       arms.push({
         groupId: [doc.revision, ds[0].start],
         armId: arms.length,
         directiveOffsets: closer ? [d.start, closer.start] : [d.start],
-        rawRange: [d.end, closer ? closer.start : eof],
+        rawRange: [Math.min(lineEnd, end), end], // min: a MISSING #endif can sit before the newline
       });
     });
     byIf.set(ds[0].start, { ifOffset: ds[0].start, directives: ds, arms });
@@ -191,6 +197,8 @@ function splitInfo(node, doc, policy) {
   const groups = groupsOf(node, doc);
   if (!groups.length) return null;
   const ranges = groups.flatMap((g) => g.arms.map((a) => a.rawRange));
+  // an arm's directive line, '#' to the arm start: a trailing comment there is the directive's
+  for (const g of groups) for (const a of g.arms) ranges.push([a.directiveOffsets[0], a.rawRange[0]]);
   const shared = [];
   for (const [field, child] of kids(node)) {
     if (child.isNamed && policy.cls(child.type) === 'directive') continue;

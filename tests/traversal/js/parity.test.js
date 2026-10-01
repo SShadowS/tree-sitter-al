@@ -27,8 +27,8 @@ test.before(async () => {
   parsers['native tree-sitter'] = native;
 });
 
-test('there are twelve fixtures, each with an expected-visits file', () => {
-  assert.strictEqual(FIXTURES.length, 12);
+test('there are thirteen fixtures, each with an expected-visits file', () => {
+  assert.strictEqual(FIXTURES.length, 13);
   for (const f of FIXTURES) assert.ok(fs.existsSync(path.join(FIX, f.replace(/\.al$/, '.visits.json'))), f);
 });
 
@@ -75,6 +75,14 @@ for (const runtime of ['web-tree-sitter', 'native tree-sitter']) {
     for (const v of containers) {
       const sub = T.walk(doc, policy, { root: v.node })[0];
       assert.deepStrictEqual(T.visitsToJson([sub], doc), T.visitsToJson([v], doc));
+    }
+  });
+
+  test(`${runtime}: an unclosed #else on the last line has an empty arm, never an inverted one`, () => {
+    for (const [src, want] of [['codeunit 1 C\n{\n}\n#if A\n#else', [28, 28]], ['codeunit 1 C\n{\n}\n#if A\n#else // c', [33, 33]],
+      ['codeunit 1 C\n{\n}\n#if A\n#else\n', [28, 28]], ['codeunit 1 C\r\n{\r\n}\r\n#if A\r\n#else\r\n', [32, 32]]]) {
+      const doc = new T.Document(parsers[runtime].parse(src), src, policy);
+      assert.deepStrictEqual(doc.groups[0].arms[1].rawRange, want, JSON.stringify(src));
     }
   });
 

@@ -14,7 +14,7 @@ ALS = sorted(support.FIXTURES.glob("*.al"))
 
 
 def test_every_fixture_has_an_expected_file_and_no_file_is_orphaned():
-    assert len(ALS) == 12
+    assert len(ALS) == 13
     assert sorted(p.stem for p in support.FIXTURES.glob("*.visits.json")) == \
         sorted(p.stem + ".visits" for p in ALS)
 
