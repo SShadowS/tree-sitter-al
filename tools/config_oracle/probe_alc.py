@@ -113,6 +113,11 @@ PROBES: list[tuple[str, str, list[str], bool]] = [
     ("else_begin_rejected", unit(f"#if A\n        Message('t');\n#else begin\n        {G}\n#endif"), ["A"], False),
     ("region_mid_expression_control", unit("        Message(Format(1 +\n#region R\n        2));\n#endregion"), [], True),
     ("prefix_regionx_mid_expression_rejected", unit("        Message(Format(1 +\n#regionX\n        2));\n#endregion"), [], False),
+    # B2 fix round 2: a second directive on an #if/#elif line.
+    ("if_then_region_rejected", unit("#if A #region R\n        Message('t');\n#endregion\n#endif"), ["A"], False),
+    ("if_then_pragma_rejected", unit("#if A #pragma warning disable AL0432\n        Message('t');\n#endif"), ["A"], False),
+    ("if_line_comment_with_hash_accepted", unit("#if A // #region R\n        Message('t');\n#endif"), ["A"], True),
+    ("elif_then_region_rejected", unit(f"#if B\n        {G}\n#elif A #region R\n        Message('t');\n#endregion\n#endif"), ["A"], False),
     ("endif_at_eof_no_newline", unit("        Message('t');") + "#if A\n#endif", ["A"], True),
 ]
 

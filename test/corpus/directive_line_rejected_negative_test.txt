@@ -1138,3 +1138,124 @@ codeunit 50100 P
               right: (identifier))
             (ERROR))
           (end_keyword))))))
+
+================================================================================
+NEGATIVE: #if A #region R -- a second directive on an #if line (AL0631)
+B2 fix round 2, re-review N1(ii): the #region lexed as an extra and the line
+parsed clean. The '#' dispatch now refuses any `#` before a `//` on an
+#if/#elif line.
+================================================================================
+codeunit 50100 P
+{
+    trigger OnRun()
+    begin
+#if A #region R
+        Message('x');
+#endregion
+#endif
+    end;
+}
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (trigger_declaration
+        (trigger_keyword)
+        name: (identifier)
+        body: (code_block
+          (begin_keyword)
+          (ERROR)
+          body: (statement_block
+            (call_expression
+              function: (identifier)
+              arguments: (argument_list
+                (string_literal))))
+          (preproc_endregion)
+          (preproc_split_block_close_after_endif
+            (preproc_endif
+              (preproc_close))
+            (end_keyword)))))))
+
+================================================================================
+NEGATIVE: #if A #pragma -- a second directive on an #if line (AL0631)
+================================================================================
+codeunit 50100 P
+{
+    trigger OnRun()
+    begin
+#if A #pragma warning disable AL0432
+        Message('x');
+#endif
+    end;
+}
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (trigger_declaration
+        (trigger_keyword)
+        name: (identifier)
+        body: (code_block
+          (begin_keyword)
+          (ERROR)
+          body: (statement_block
+            (call_expression
+              function: (identifier)
+              arguments: (argument_list
+                (string_literal))))
+          (preproc_split_block_close_after_endif
+            (preproc_endif
+              (preproc_close))
+            (end_keyword)))))))
+
+================================================================================
+NEGATIVE: #elif A #region R -- a second directive on an #elif line (AL0631)
+================================================================================
+codeunit 50100 P
+{
+    trigger OnRun()
+    begin
+#if B
+        Message('x');
+#elif A #region R
+        Message('y');
+#endregion
+#endif
+    end;
+}
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    (ERROR
+      (trigger_keyword)
+      (identifier)
+      (begin_keyword)
+      (preproc_if
+        (preproc_open)
+        condition: (identifier))
+      (call_expression
+        function: (identifier)
+        arguments: (argument_list
+          (string_literal)))
+      (ERROR)
+      (call_expression
+        function: (identifier)
+        arguments: (argument_list
+          (string_literal)))
+      (preproc_endregion)
+      (ERROR
+        (UNEXPECTED 'i'))
+      (if_keyword)
+      (identifier))))
