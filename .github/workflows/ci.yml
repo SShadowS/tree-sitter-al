@@ -212,6 +212,11 @@ jobs:
       - name: Run the gate self-test
         run: python tools/gate_selftest.py
 
+      # ts-lock.sh and validate-grammar.sh source it; its Windows cases run
+      # here on stubs, since no Windows job sources it.
+      - name: Check the default-compiler rule (tools/default-cc.sh)
+        run: bash tools/test-default-cc.sh
+
   query:
     name: Validate queries
     runs-on: ubuntu-latest

@@ -119,4 +119,8 @@ export TS_LOCK_ACTIVE="$TS_LOCK_TOKEN"
 # a different tree. Force a rebuild from THIS checkout before running.
 touch src/scanner.c src/parser.c 2>/dev/null || true
 
+# clang-cl as CC on Windows when LLVM is installed and CC is unset (prints one
+# line to stderr; see the file for the rule and the opt-out).
+. "$(dirname "$0")/default-cc.sh"
+
 "$@"
