@@ -44,12 +44,18 @@ positive probe has a control that must fail.
 | A directive word with more word characters after it (`#ifx`, `#endifx`, `#elsex`, `#elsewhere`, `#elifx`, `#regionx`, `#endregionx`, `#pragmax`, `#definex`, `#undefx`) | Rejected (AL0621): the word is matched whole | `prefix_*_rejected` |
 | `#endif` as the last line with no newline after it | Allowed | `endif_at_eof_no_newline` |
 
-**What the parser does with these (B2, 2026-10-01).** Every rejected directive line in
-this table is an ERROR on that line. The scanner's `#` dispatch (`src/scanner.c`) reads
+**What the parser does with these (B2, 2026-10-01).** These rejected forms are an ERROR on
+their line: a directive word with more word characters after it, anything but a `//`
+comment after `#else`/`#endif`, and a block comment or a second directive (`#if A #region
+R`, probes `if_then_*_rejected`, `elif_then_region_rejected`) on an `#if`/`#elif` line.
+**Not covered:** a directive after code on the same line (AL0620, the first row of
+this table) still parses clean, tracked as `docs/deferred-work.md` item 26. (`&&`/`||`
+are an ERROR too, inside the condition, because the grammar no longer has them.) The
+scanner's `#` dispatch (`src/scanner.c`) reads
 the directive word once and checks the rest of the line; a malformed line becomes the
-hidden external token `_malformed_directive`, which no grammar rule takes. This holds in
-every parse state: the never-emitted extra `_scanner_hook` makes tree-sitter call the
-scanner everywhere. Until B2 most of
+hidden external token `_malformed_directive`, which no grammar rule takes. For the covered
+forms this holds in every parse state: the never-emitted extra `_scanner_hook` makes
+tree-sitter call the scanner everywhere. Until B2 most of
 these parsed with zero ERROR nodes (`#elsewhere` as `#else` plus an identifier, `#endif;`
 as `#endif` plus an empty statement). Fixtures:
 `test/corpus/directive_line_rejected_negative_test.txt` and

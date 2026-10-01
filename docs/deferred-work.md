@@ -1054,6 +1054,39 @@ tree's condition AST to equal the resolver's, parentheses dropped. Replays 7 and
 (81076bf^, 8 is that `#define` case) catch the old grammar; gate_selftest `oracle-quick-condition-structure` and
 `step5e-oracle-condition-structure` revert the prec and go red.
 
+## 26. A directive after code on the same line parses clean; alc rejects it (AL0620)
+
+**Established:** 2026-10-01, B2 fix-round-2 re-review (N1), against 675e626 and 39626c7
+(same behaviour at both, so not a B2 regression). alc 18.0.41 verdicts:
+
+| input (in a trigger body) | alc | parser |
+|---|---|---|
+| `Message('t'); #if A` | REJECT AL0620 (probe `if_after_code_rejected`) | clean |
+| `#if A` / `Message('b'); #endif` | REJECT AL0620 (probe `endif_after_code_rejected`) | clean |
+| `Message('t'); #else`, `…; #region R`, `…; #pragma …` | REJECT, same rule (re-review's own compiles) | clean |
+
+`docs/preproc-directive-semantics.md`'s first "Directive lines" row: a directive must be
+the first token on its line.
+
+**Why B2 does not catch it:** the scanner's `#` dispatch decides from the directive word and
+the REST of its line. At a `#` it cannot see what started the line, because the scanner
+holds no column or "line has code" state and tree-sitter hands it no context. It needs
+its own design: for example a serialized "last token ended on this line" flag, or a check in
+the token BEFORE the `#` (every statement terminator would have to look ahead), and both
+change the scanner's state contract.
+
+**Production impact:** 0 sites in BC.History, DC, BC 28.1 and BCApps 29.0 (grep for a
+directive word after non-blank, non-`//` text on a line, excluding `#` inside quoted
+strings and the BOM-prefixed first line; 2026-10-01).
+
+**Sibling, fixed in B2 fix round 2:** a second directive on an `#if`/`#elif` line
+(`#if A #region R`, `#if A #pragma …`, `#elif A #region R`; AL0631) parsed clean too. The
+dispatch now refuses any `#` before a `//` on an opener line (`opener_line_is_malformed`);
+pinned by three cases of `test/corpus/directive_line_rejected_negative_test.txt`.
+
+**Owner:** unassigned (a B-row candidate). A fix must add AL0620 negatives and keep
+`#endregion;`, trailing `//` comments and indented directives clean.
+
 ## Longer-lived proposals, tracked separately
 
 - [`python-bindings-modernization.md`](python-bindings-modernization.md) — the
