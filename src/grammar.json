@@ -14520,25 +14520,29 @@
       }
     },
     "preproc_not_expression": {
-      "type": "SEQ",
-      "members": [
-        {
-          "type": "ALIAS",
-          "content": {
-            "type": "TOKEN",
+      "type": "PREC",
+      "value": 3,
+      "content": {
+        "type": "SEQ",
+        "members": [
+          {
+            "type": "ALIAS",
             "content": {
-              "type": "PATTERN",
-              "value": "(?i)not"
-            }
+              "type": "TOKEN",
+              "content": {
+                "type": "PATTERN",
+                "value": "(?i)not"
+              }
+            },
+            "named": false,
+            "value": "not"
           },
-          "named": false,
-          "value": "not"
-        },
-        {
-          "type": "SYMBOL",
-          "name": "_preproc_expression"
-        }
-      ]
+          {
+            "type": "SYMBOL",
+            "name": "_preproc_expression"
+          }
+        ]
+      }
     },
     "preproc_elif": {
       "type": "SEQ",

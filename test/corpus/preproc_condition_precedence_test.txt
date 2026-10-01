@@ -1,0 +1,236 @@
+;; B1: in #if/#elif conditions `not` binds tighter than `and`, which binds tighter
+;; than `or` (alc-probed: tools/config_oracle/probe_alc.py prec_not_and and friends;
+;; docs/preproc-directive-semantics.md). Until B1 `preproc_not_expression` had no prec
+;; and `not A and B` parsed as not (A and B). Expected trees are hand-written.
+
+================================================================================
+#if: not A and B is (not A) and B
+================================================================================
+
+#if not A and B
+#endif
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (preproc_conditional_object
+    (preproc_if
+      (preproc_open)
+      condition: (preproc_and_expression
+        (preproc_not_expression
+          (identifier))
+        (identifier)))
+    (preproc_endif
+      (preproc_close))))
+
+================================================================================
+#if: not A or B is (not A) or B
+================================================================================
+
+#if not A or B
+#endif
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (preproc_conditional_object
+    (preproc_if
+      (preproc_open)
+      condition: (preproc_or_expression
+        (preproc_not_expression
+          (identifier))
+        (identifier)))
+    (preproc_endif
+      (preproc_close))))
+
+================================================================================
+#if: A or not B
+================================================================================
+
+#if A or not B
+#endif
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (preproc_conditional_object
+    (preproc_if
+      (preproc_open)
+      condition: (preproc_or_expression
+        (identifier)
+        (preproc_not_expression
+          (identifier))))
+    (preproc_endif
+      (preproc_close))))
+
+================================================================================
+#if: A and B or C is (A and B) or C
+================================================================================
+
+#if A and B or C
+#endif
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (preproc_conditional_object
+    (preproc_if
+      (preproc_open)
+      condition: (preproc_or_expression
+        (preproc_and_expression
+          (identifier)
+          (identifier))
+        (identifier)))
+    (preproc_endif
+      (preproc_close))))
+
+================================================================================
+#if: A or B and C is A or (B and C)
+================================================================================
+
+#if A or B and C
+#endif
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (preproc_conditional_object
+    (preproc_if
+      (preproc_open)
+      condition: (preproc_or_expression
+        (identifier)
+        (preproc_and_expression
+          (identifier)
+          (identifier))))
+    (preproc_endif
+      (preproc_close))))
+
+================================================================================
+#if: not not A
+================================================================================
+
+#if not not A
+#endif
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (preproc_conditional_object
+    (preproc_if
+      (preproc_open)
+      condition: (preproc_not_expression
+        (preproc_not_expression
+          (identifier))))
+    (preproc_endif
+      (preproc_close))))
+
+================================================================================
+#if: not (A and B) keeps the parenthesised operand
+================================================================================
+
+#if not (A and B)
+#endif
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (preproc_conditional_object
+    (preproc_if
+      (preproc_open)
+      condition: (preproc_not_expression
+        (preproc_parenthesized_expression
+          (preproc_and_expression
+            (identifier)
+            (identifier)))))
+    (preproc_endif
+      (preproc_close))))
+
+================================================================================
+#if: (A or B) and C
+================================================================================
+
+#if (A or B) and C
+#endif
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (preproc_conditional_object
+    (preproc_if
+      (preproc_open)
+      condition: (preproc_and_expression
+        (preproc_parenthesized_expression
+          (preproc_or_expression
+            (identifier)
+            (identifier)))
+        (identifier)))
+    (preproc_endif
+      (preproc_close))))
+
+================================================================================
+#if: not A and not B is (not A) and (not B)
+================================================================================
+
+#if not A and not B
+#endif
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (preproc_conditional_object
+    (preproc_if
+      (preproc_open)
+      condition: (preproc_and_expression
+        (preproc_not_expression
+          (identifier))
+        (preproc_not_expression
+          (identifier))))
+    (preproc_endif
+      (preproc_close))))
+
+================================================================================
+#elif: not A and B is (not A) and B
+================================================================================
+
+#if A
+#elif not A and B
+#endif
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (preproc_conditional_object
+    (preproc_if
+      (preproc_open)
+      condition: (identifier))
+    (preproc_elif
+      condition: (preproc_and_expression
+        (preproc_not_expression
+          (identifier))
+        (identifier)))
+    (preproc_endif
+      (preproc_close))))
+
+================================================================================
+#elif: A or B and C is A or (B and C)
+================================================================================
+
+#if A
+#elif A or B and C
+#endif
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (preproc_conditional_object
+    (preproc_if
+      (preproc_open)
+      condition: (identifier))
+    (preproc_elif
+      condition: (preproc_or_expression
+        (identifier)
+        (preproc_and_expression
+          (identifier)
+          (identifier))))
+    (preproc_endif
+      (preproc_close))))
