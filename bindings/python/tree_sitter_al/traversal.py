@@ -185,6 +185,51 @@ def _kids(node):
     return [(c, node.field_name_for_child(i)) for i, c in enumerate(node.children)]
 
 
+def groups_of(node, document: Document):
+    return list(document._by_parent.get(node.id, ()))
+
+
+def bind_arm(descriptor: ArmDescriptor, document: Document, policy: Policy) -> ArmFragments:
+    if descriptor.group_id[0] != document.revision:
+        raise WrongDocument(f"descriptor revision {descriptor.group_id[0]} != document {document.revision}")
+    lo, hi = descriptor.raw_range
+    out = []
+    # Start at the smallest node holding the whole arm, one level up if the arm IS
+    # that node, so its field name is known: walking from the root is O(siblings)
+    # per arm, quadratic in a body of thousands of groups.
+    top = document.tree.root_node.descendant_for_byte_range(lo, hi) or document.tree.root_node
+    while top.parent is not None and lo <= top.start_byte and top.end_byte <= hi:
+        top = top.parent
+    stack = [(top, None)]
+    while stack:
+        node, field = stack.pop()
+        if node.end_byte <= lo or node.start_byte >= hi:
+            continue
+        if lo <= node.start_byte and node.end_byte <= hi:
+            if not (node.is_named and policy.cls(node.type) == "directive"):
+                out.append(Fragment(field, node))
+            continue
+        stack.extend(reversed(_kids(node)))
+    return ArmFragments(descriptor, tuple(out))
+
+
+def split_info(node, document: Document, policy: Policy):
+    groups = groups_of(node, document)
+    if not groups:
+        return None
+    ranges = [a.raw_range for g in groups for a in g.arms]
+    shared = []
+    for child, field in _kids(node):
+        if child.is_named and policy.cls(child.type) == "directive":
+            continue
+        if any(lo <= child.start_byte and child.end_byte <= hi for lo, hi in ranges):
+            continue
+        shared.append(Fragment(field, child))
+    return SplitInfo(tuple(GroupArms((document.revision, g.if_offset),
+                                     tuple(bind_arm(a, document, policy) for a in g.arms)) for g in groups),
+                     tuple(shared))
+
+
 def walk(document: Document, policy: Policy, *, root=None, include_directives=False, include_trivia=False):
     arms = sorted(document.descriptors(), key=lambda a: (a.raw_range[0], -a.raw_range[1]))
     active, k, out = [], 0, []
@@ -207,7 +252,26 @@ def walk(document: Document, policy: Policy, *, root=None, include_directives=Fa
         active = [a for a in active if a.raw_range[1] > start]
         path = tuple((a.group_id[1], a.arm_id) for a in active if a.raw_range[1] >= end)
         host = policy.host_policy(node.type, parent.type, field) if cls == "branch-container" and parent else None
-        split = None                     # SplitInfo arrives with split_info (Task 3)
+        split = split_info(node, document, policy) if cls in SPLIT_CLASSES else None
         out.append(Visit(node, cls, node.type, field, start, end, path, host, split))
         stack.extend((child, f, node) for child, f in reversed(_kids(node)))
     return out
+
+
+def _frag_json(f: Fragment):
+    return [f.field, f.node.type, f.node.is_named, f.node.start_byte, f.node.end_byte]
+
+
+def split_to_json(s: SplitInfo):
+    return {"groups": [{"if": g.group_id[1],
+                        "arms": [{"arm": a.descriptor.arm_id, "range": list(a.descriptor.raw_range),
+                                  "fragments": [_frag_json(f) for f in a.fragments]} for a in g.arms]}
+                       for g in s.groups],
+            "shared": [_frag_json(f) for f in s.shared]}
+
+
+def visits_to_json(visits):
+    """The parity form: what every runtime must produce for the same fixture."""
+    return [{"class": v.cls, "type": v.type, "field": v.field, "start": v.start, "end": v.end,
+             "arms": [list(a) for a in v.arms], "host": v.host,
+             "split": split_to_json(v.split) if v.split else None} for v in visits]
