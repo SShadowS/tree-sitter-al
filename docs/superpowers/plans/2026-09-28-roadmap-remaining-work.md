@@ -9,7 +9,7 @@ reviewed execution, the way milestone 2 and G6 were done.
 (`scratchpad/astra-roadmap.md` of the 2026-09-28 session). The user approved it
 and adopted its recommendations on all five decisions. The review also found a
 defect that revision 1 missed. It is confirmed and scheduled first in Phase B:
-`#if not A and B` parses as `not (A and B)`.
+`#if not A and B` parsed as `not (A and B)` (fixed in B1, 2026-10-01).
 
 **The sources:**
 - `docs/deferred-work.md`: items 1-4, 6, 7, 9-16;

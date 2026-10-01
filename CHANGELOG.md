@@ -39,9 +39,10 @@ public API — a change to node structure or field names is a **major** bump.
   with 0 production sites in the four corpora (tree-harness: all 15,358 BC.History trees
   byte-identical). Pinned by `test/corpus/preproc_condition_precedence_test.txt`. The
   config oracle gains a condition-structure stage: each `#if`/`#elif` condition, as the
-  tree groups it, is evaluated per configuration against the resolver's reading, and a
-  difference is an unclassifiable `condition-structure` discrepancy (replay 7 catches
-  the pre-fix parser).
+  tree groups it, must equal the resolver's `parse_condition` AST (parentheses dropped)
+  and must evaluate like it in every configuration. A difference is an unclassifiable
+  `condition-structure` discrepancy (replays 7 and 8 catch the pre-fix parser, 8 under an
+  in-file `#define` that a truth table alone cannot see through).
 
 - **The Python sdist can be built.** It shipped neither `src/*.h` nor
   `src/tree_sitter/*.h`, so `pip install` from it stopped at

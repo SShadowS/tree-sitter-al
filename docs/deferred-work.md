@@ -1029,8 +1029,11 @@ sites in the four corpora; tree-harness over BC.History: all 15,358 trees byte-i
 `lossless_keyword_nodes_test.txt`, which asserted the defect, was corrected by hand.
 
 **Gated:** 9733550 adds the config oracle's condition-structure stage, which evaluates the
-tree's grouping per configuration against the resolver's. Replay 7 (81076bf^) catches the
-old grammar; gate_selftest `oracle-quick-condition-structure` and
+tree's grouping per configuration against the resolver's. The B1 review (I1) showed that a
+truth table alone is blind under an in-file `#define` (`#define B` above `#if not A and B`:
+every reached configuration evaluates both groupings alike), so the stage also requires the
+tree's condition AST to equal the resolver's, parentheses dropped. Replays 7 and 8
+(81076bf^, 8 is that `#define` case) catch the old grammar; gate_selftest `oracle-quick-condition-structure` and
 `step5e-oracle-condition-structure` revert the prec and go red.
 
 ## Longer-lived proposals, tracked separately
