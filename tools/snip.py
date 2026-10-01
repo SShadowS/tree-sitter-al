@@ -8,8 +8,10 @@
     python tools/snip.py --sexp 'x := 1;'                     # tree-sitter test format
     python tools/snip.py --census --root ./BC.History/        # two-shape detector
 
-A literal `\\n` in the ARGUMENT is a newline (directives need their own lines); text read
-with -f or from stdin is taken as is.
+A literal `\\n` in the ARGUMENT is a newline (directives need their own lines). That also
+rewrites a `\\n` inside an AL string, so for text holding backslashes use -f or stdin,
+which are taken as is: read as bytes (no CR/LF translation), UTF-8 with a BOM stripped,
+or UTF-16 with a BOM (has_error_sweep.read_al).
 
 Default output is the tree from a TREE CURSOR, so fields on anonymous children show
 (`operator: "+"`; `tree-sitter parse` hides them, see tools/edge-census.c), with the
@@ -17,11 +19,13 @@ text of every leaf and of any node under 40 characters. Then `has_error`, then e
 ERROR and MISSING node, plus every HIDDEN error site: a MISSING `_hidden` token that
 `tree-sitter parse` does not print (CLAUDE.md, "A MISSING node for a HIDDEN token").
 The node holding it is reported, since the API never exposes the hidden node itself.
-Positions are line:col, 1-based, in the SNIPPET (not the wrapper), unless --raw.
+Positions are line:col, 1-based, in the SNIPPET; a position in the wrapper's head or tail
+is labelled `wrapper` and given in the wrapped text. Columns count BYTES, not characters
+(tree-sitter's points do), so a non-ASCII character before it moves a column by 2 or more.
 
---sexp prints the named-node s-expression with field labels, exactly what `tree-sitter
-test` compares (tools/tests/test_snip.py proves it equals ts_node_string), so it pastes
-into a corpus fixture and asserts fields (CLAUDE.md -u trap 2).
+--sexp pretty-prints ts_node_string (py-tree-sitter's str(root_node)), which is exactly
+the string `tree-sitter test` compares, with field labels, MISSING and UNEXPECTED; it
+pastes into a corpus fixture and asserts fields (CLAUDE.md -u trap 2).
 
 --census counts nodes by (type, named children, anonymous children) over every .al under
 the roots, and flags a leaf-like type (`*_keyword`, `*identifier`) with more than one
@@ -39,6 +43,7 @@ from __future__ import annotations
 import argparse
 import contextlib
 import os
+import re
 import sys
 from collections import Counter, defaultdict
 from concurrent.futures import ProcessPoolExecutor
@@ -57,16 +62,20 @@ OBJECT_TAIL = "\n}\n"
 SHORT = 40
 
 
-def wrap(text: str, mode: str) -> tuple[str, int]:
-    """(source, row of the snippet's first line in the source)."""
+def wrap(text: str, mode: str) -> tuple[str, tuple[int, int], tuple[int, int]]:
+    """(source, snippet start point, snippet end point); points are (row, byte column)."""
     head, tail = {"statement": (STATEMENT_HEAD, STATEMENT_TAIL),
                   "object": (OBJECT_HEAD, OBJECT_TAIL), "raw": ("", "")}[mode]
-    return head + text + tail, head.count("\n")
+    row0, lines = head.count("\n"), text.split("\n")
+    end = (row0 + len(lines) - 1, len(lines[-1].encode("utf-8", "surrogateescape")))
+    return head + text + tail, (row0, 0), end
 
 
-def _pos(node, row0: int, end=False) -> str:
-    r, c = node.end_point if end else node.start_point
-    return f"{r - row0 + 1}:{c + 1}" if r >= row0 else f"wrapper {r + 1}:{c + 1}"
+def _pos(node, start, end, at_end=False) -> str:
+    r, c = node.end_point if at_end else node.start_point
+    if start <= (r, c) <= end:
+        return f"{r - start[0] + 1}:{c + 1}"
+    return f"wrapper {r + 1}:{c + 1}"
 
 
 def _text(node) -> str | None:
@@ -104,30 +113,38 @@ def render_tree(tree) -> str:
     return "\n".join(out)
 
 
-def sexp(tree) -> str:
-    """Named nodes (and MISSING tokens) with field labels: tree-sitter test's format."""
-    out = []
+# ts_node_string's tokens (tree-sitter lib/src/subtree.c, ts_subtree__write_to_string):
+# a whole `(MISSING "x")` or `(UNEXPECTED 'c')` (their text may hold parentheses), an
+# opening `(type` or `(MISSING type`, a `)`, or a `field:` label.
+SEXP_TOKEN = re.compile(r"""\(MISSING ".*?"\)|\(UNEXPECTED (?:'(?:\\.|[^\\])'|INVALID|-?\d+)\)"""
+                        r"""|\((?:MISSING )?[^\s()]+|\)|[^\s()]+:""")
 
-    def rec(cursor, indent):
-        n = cursor.node
-        label = f"{cursor.field_name}: " if cursor.field_name else ""
-        if n.is_missing:
-            name = n.type if n.is_named else f'"{n.type}"'
-            out.append(f"{indent}{label}(MISSING {name})")
-            return
-        out.append(f"{indent}{label}({n.type}")
-        if cursor.goto_first_child():
-            while True:
-                c = cursor.node
-                if c.is_named or c.is_missing:
-                    out.append("\n")
-                    rec(cursor, indent + "  ")
-                if not cursor.goto_next_sibling():
-                    break
-            cursor.goto_parent()
-        out.append(")")
-    rec(tree.walk(), "")
+
+def pretty_sexp(flat: str) -> str:
+    """One node per line, indented by depth, a field label on its node's line. Only
+    whitespace differs from `flat`, and tree-sitter test ignores whitespace."""
+    out, depth, after_field = [], 0, False
+    for t in SEXP_TOKEN.findall(flat):
+        if t == ")":
+            out.append(")")
+            depth -= 1
+            continue
+        if not after_field and out:
+            out.append("\n" + "  " * depth)
+        out.append(t + (" " if t.endswith(":") else ""))
+        after_field = t.endswith(":") and not t.startswith("(")
+        if t.startswith("(") and not t.endswith(")"):
+            depth += 1
     return "".join(out)
+
+
+def sexp(tree) -> str:
+    flat = str(tree.root_node)
+    pretty = pretty_sexp(flat)
+    if " ".join(pretty.split()) != flat:  # a token SEXP_TOKEN does not know: never guess
+        print("snip: --sexp could not pretty-print this tree; printing it flat", file=sys.stderr)
+        return flat
+    return pretty
 
 
 def problems(tree):
@@ -153,19 +170,19 @@ def problems(tree):
 
 
 def snip(args) -> int:
-    if args.file:
-        text = sys.stdin.read() if args.file == "-" else Path(args.file).read_text(encoding="utf-8-sig")
-    elif args.snippet == "-":
-        text = sys.stdin.read()
+    if args.file == "-" or (not args.file and args.snippet == "-"):
+        text = has_error_sweep.decode_al(sys.stdin.buffer.read())
+    elif args.file:
+        text = has_error_sweep.read_al(args.file)
     elif args.snippet is not None:
         text = args.snippet.replace("\\n", "\n")
     else:
         print("snip: give a snippet, -f FILE, or - for stdin", file=sys.stderr)
         return 2
     mode = "raw" if args.raw else "object" if args.object else "statement"
-    source, row0 = wrap(text, mode)
+    source, start, end = wrap(text, mode)
     parser = loader.make_parser(loader.load_language(loader.ensure_library(loader.REPO_ROOT)))
-    tree = parser.parse(source.encode("utf-8"))
+    tree = parser.parse(source.encode("utf-8", "surrogateescape"))
     if args.sexp:
         print(sexp(tree))
     else:
@@ -173,7 +190,7 @@ def snip(args) -> int:
         print(f"\nhas_error: {tree.root_node.has_error}")
         for kind, n in problems(tree):
             what = n.type if kind != "HIDDEN" else f"inside {n.type} (a MISSING hidden token)"
-            print(f"{kind}\t{_pos(n, row0)}-{_pos(n, row0, end=True)}\t{what}")
+            print(f"{kind}\t{_pos(n, start, end)}-{_pos(n, start, end, at_end=True)}\t{what}")
     return 1 if tree.root_node.has_error else 0
 
 
@@ -185,11 +202,9 @@ def leaf_like(t: str) -> bool:
 
 def _shapes(item):
     _, src, _ = item
-    data = src.read_bytes()
-    if data[:2] in (b"\xff\xfe", b"\xfe\xff"):  # as has_error_sweep._check
-        data = data.decode("utf-16").encode("utf-8")
+    data = has_error_sweep.read_al(src).encode("utf-8", "surrogateescape")
     counts = Counter()
-    for n, _, _ in walk(has_error_sweep._PARSER.parse(data)):
+    for n, _, _ in walk(has_error_sweep.PARSER.parse(data)):
         if n.is_named and not n.is_missing:
             named = n.named_child_count
             counts[(n.type, named, n.child_count - named)] += 1
@@ -206,15 +221,15 @@ def flag(total: Counter):
 
 def census(roots, jobs=None) -> int:
     try:
-        inputs = has_error_sweep._inputs(roots, False)
-        lib_path, parser = has_error_sweep._parser(None)
+        inputs = has_error_sweep.inputs(roots, False)
+        lib_path, parser = has_error_sweep.load_parser(None)
     except has_error_sweep.CannotRun as e:
         print(f"snip --census: CANNOT RUN: {e}", file=sys.stderr)
         return 2
-    has_error_sweep._init(parser)
+    has_error_sweep.init_worker(parser)
     jobs = jobs or (1 if len(inputs) < 500 else os.cpu_count() or 1)
     total = Counter()
-    with (ProcessPoolExecutor(jobs, initializer=has_error_sweep._init, initargs=(lib_path,))
+    with (ProcessPoolExecutor(jobs, initializer=has_error_sweep.init_worker, initargs=(lib_path,))
           if jobs > 1 else contextlib.nullcontext()) as pool:
         for c in (pool.map(_shapes, inputs, chunksize=64) if pool else map(_shapes, inputs)):
             total.update(c)
@@ -230,9 +245,13 @@ def census(roots, jobs=None) -> int:
 
 
 def main(argv=None) -> int:
-    ap = argparse.ArgumentParser(description=__doc__.split("\n")[1],
+    for stream in (sys.stdout, sys.stderr):  # AL text is UTF-8; a cp1252 console is not
+        if hasattr(stream, "reconfigure"):
+            stream.reconfigure(encoding="utf-8")
+    doc = __doc__ or ""
+    ap = argparse.ArgumentParser(description=doc.split("\n")[1],
                                  formatter_class=argparse.RawDescriptionHelpFormatter,
-                                 epilog=__doc__.split("\n", 2)[2])
+                                 epilog=doc.split("\n", 2)[2])
     ap.add_argument("snippet", nargs="?", help="AL text; '-' reads stdin")
     ap.add_argument("-f", dest="file", help="read the text from FILE ('-' is stdin)")
     g = ap.add_mutually_exclusive_group()
