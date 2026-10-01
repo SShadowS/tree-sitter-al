@@ -52,6 +52,13 @@ python -m tools.config_oracle replay           # historical-defect replays; ~80s
 # A fixture cannot-validate record must be classified in tools/config_oracle/fixture-classes.tsv
 # (negative / invalid-config need alc evidence; debt(<owner>)); an entry matching no record is stale and fails.
 
+# Traversal helper (roadmap F0, docs/traversal.md) -- validate-grammar.sh Step 5f is the census
+python tools/traversal_census.py               # exit 0 clean, 1 finding, 2 cannot run
+./tools/ts-lock.sh python -m pytest tests/traversal -q
+npm test                                       # the traversal JS tests (after `npx node-gyp rebuild`)
+cargo test --features traversal
+python tests/traversal/regen_expected.py      # a -u: review every hunk of the diff
+
 # Perf baselines (docs/performance-baselines.md): baseline ~35 min; one group: native [--cc zig]|wasm|incremental|build|oracle; merge BASE NEW
 python -m tools.perf ab --lib-a OLD.dll --lib-b NEW.dll --corpus dc   # speed DECISIONS: same session, pinned, ABBA; baselines/compare are context (sessions drift ~30%)
 
