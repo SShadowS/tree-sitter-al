@@ -77,8 +77,9 @@ scanner_unicode_identifier_negative_test.txt
 # Verdicts: tools/config_oracle/probe_alc.py. The ERROR is the assertion.
 directive_line_rejected_negative_test.txt
 # B3 (2026-10-01): an #if/#elif condition left incomplete at the end of its line
-# -- a trailing and/or/not, unbalanced parentheses, or no condition word at all. alc rejects every case
-# (AL0629; AL0631 for a stray `)`), tools/config_oracle/probe_alc.py dangling_*.
+# -- a trailing and/or/not, unbalanced parentheses, or no condition word at
+# all. alc rejects every case (AL0629; AL0631 for a stray `)`):
+# tools/config_oracle/probe_alc.py dangling_* and empty_*_next_line_rejected.
 # Until B3 this file was preproc_dangling_operator_known_wrong_test.txt, a
 # tripwire pinning the clean WRONG tree. The ERROR is the assertion.
 preproc_dangling_operator_negative_test.txt
