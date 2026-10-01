@@ -78,6 +78,10 @@ tools/config_oracle/reports/
 # fixture that is not tracked is a fixture that does not survive, and these are
 # the only proof the gates fail when they should.
 !tools/gate-fixtures/*/*.py
+# Unit tests for the standalone scripts directly under tools/ (check-runtime-ranges.py).
+# CI runs them; untracked, they would vanish from a fresh clone without a failure.
+!tools/tests/*.py
+tools/tests/__pycache__/
 # Written to the repo root by every text-format run of
 # tools/find_unused_definitions.py — a report, not a source artifact
 grammar_analysis.json

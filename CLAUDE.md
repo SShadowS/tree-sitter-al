@@ -473,6 +473,8 @@ Sanity-check the probe before trusting a rejection: compile a form you know is v
 - `docs/superpowers/specs/` — Design specs for major changes
 - `docs/database-reference-numeric-id-fix.md` — `Codeunit::N` / `Page::N` numeric ID support
 - `docs/preproc-define-undef.md` — `#define`/`#undef` support, compiler-verified accept/reject matrix
+- `docs/state-reduction-method.md` — how to cut parser states: measure by stubbing, what
+  factorings worked and failed (with numbers), and the preservation gates for roadmap D1
 
 ## Philosophy: No Known Limitations
 

@@ -155,10 +155,13 @@ Query constants are also available:
 use tree_sitter_al::{HIGHLIGHTS_QUERY, TAGS_QUERY, LOCALS_QUERY, FOLDS_QUERY, INDENTS_QUERY, TEXTOBJECTS_QUERY};
 ```
 
-### Python (tree-sitter 0.24+)
+### Python (tree-sitter 0.25+)
+
+The grammar is ABI 15, which py-tree-sitter loads from 0.25.0. The `core` extra
+pulls in a compatible runtime:
 
 ```bash
-pip install tree-sitter-al
+pip install "tree-sitter-al[core]"
 ```
 
 ```python
@@ -168,7 +171,7 @@ import tree_sitter_al
 lang = tree_sitter.Language(tree_sitter_al.language())
 parser = tree_sitter.Parser(lang)
 tree = parser.parse(b'codeunit 50100 MyCodeunit { }')
-print(tree.root_node.sexp())
+print(tree.root_node)
 ```
 
 ### Node.js

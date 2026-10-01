@@ -774,6 +774,27 @@ else
     print_warning "Not a git checkout (a scratch copy) -- skipping the executable-bit check; it runs in the real repo and in CI"
 fi
 
+# Step 11: Declared tree-sitter runtime ranges can load the grammar's ABI
+#
+# src/parser.c is ABI 15, which needs a tree-sitter runtime >= 0.25 in every
+# binding. pyproject's `core = ["tree-sitter~=0.24"]` admitted 0.24.0 (ABI 13..14),
+# so `pip install tree-sitter-al[core]` could resolve to a runtime that refuses to
+# load the grammar, and nothing here noticed. tools/check-runtime-ranges.py maps
+# every declared range (every pyproject list, requirements files, the npm
+# tree-sitter and web-tree-sitter entries, Cargo, go.mod, Package.swift) onto a
+# hand-maintained runtime -> ABI table. Exit 1 is a range
+# admitting an incompatible runtime; exit 2 is an unreadable range or manifest.
+# Both fail validation.
+print_header "Step 11: Runtime Ranges vs. Grammar ABI"
+if RANGE_OUTPUT=$(python tools/check-runtime-ranges.py 2>&1); then
+    print_success "Every declared runtime range loads the grammar's ABI"
+else
+    range_status=$?
+    print_error "Declared runtime range check failed (exit $range_status)"
+    echo "$RANGE_OUTPUT"
+    VALIDATION_FAILED=1
+fi
+
 # Final summary
 print_header "Validation Summary"
 END_TIME=$(date +%s)

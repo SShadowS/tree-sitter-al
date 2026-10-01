@@ -80,6 +80,14 @@ COPY_FILES = [
     # it cannot mutation-test either; step9-wasm-stale below needs these.
     "tree-sitter-al.wasm",
     "tree-sitter-al.wasm.inputs.sha256",
+    # Step 11 (A6) reads every manifest that declares a tree-sitter runtime. A
+    # missing one makes it exit 2, which failed the step6-clean-corpus-passes
+    # control and let every expect-nonzero validate case pass for that reason.
+    "pyproject.toml",
+    "setup.py",
+    "Cargo.toml",
+    "go.mod",
+    "Package.swift",
 ]
 COPY_DIRS = ["tools", "test", "queries", "src"]
 
@@ -741,6 +749,22 @@ CASES: list[Case] = [
         must_not_contain=["All validation checks passed"],
         blind_spot="compares a stamp of the sources against the recorded one. A wasm "
                    "rebuilt from the right sources by a broken toolchain stamps clean",
+    ),
+    # ---- Step 11: declared runtime ranges against the grammar's ABI ----------
+    Case(
+        id="step11-stale-runtime-range",
+        gate=VALIDATE,
+        why="pyproject's core extra back at ~=0.24, the range A6 fixed: it admits "
+            "py-tree-sitter 0.24.0 (ABI 13..14) for an ABI 15 grammar, so `pip install "
+            "tree-sitter-al[core]` could resolve to a runtime that cannot load it",
+        mutations=[sub("pyproject.toml", r'"tree-sitter~=0\.25"', '"tree-sitter~=0.24"', count=1)],
+        must_contain=["Step 11: Runtime Ranges vs. Grammar ABI",
+                      "Declared runtime range check failed (exit 1)",
+                      "FAIL python     pyproject.toml [core]: tree-sitter~=0.24",
+                      "admits 0.24.0..<0.25.0, which loads ABI 13..14, not 15"],
+        must_not_contain=["All validation checks passed"],
+        blind_spot="the runtime -> ABI table is hand-maintained: a future runtime release "
+                   "that drops ABI 15 passes until someone adds it to the table",
     ),
     Case(
         id="step6-broken-al-file",

@@ -149,6 +149,10 @@ jobs:
       - name: Perf tooling unit tests
         run: python -m pytest tools/perf/tests -q
 
+      # Tests for the standalone gate scripts under tools/ (tools/check-runtime-ranges.py).
+      - name: Tool unit tests
+        run: python -m pytest tools/tests -q
+
       - name: Quick tier (census, self-tests, fixture differential)
         run: python -m tools.config_oracle run --tier quick
 
@@ -257,6 +261,11 @@ jobs:
       # -- which is what kept "Gate self-test" red from its first run.
       - name: Check every tracked script is executable
         run: bash tools/check-exec-bits.sh
+
+      # src/parser.c's ABI against every declared tree-sitter runtime range
+      # (validate-grammar.sh Step 11). Needs only Python's stdlib (tomllib).
+      - name: Check declared runtime ranges load the grammar's ABI
+        run: python3 tools/check-runtime-ranges.py
 
   scanner-default-flags:
     # Every first-party build of src/scanner.c passes -std=c11 (Makefile),
