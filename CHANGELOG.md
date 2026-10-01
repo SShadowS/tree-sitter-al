@@ -9,6 +9,22 @@ public API — a change to node structure or field names is a **major** bump.
 
 ### Fixed
 
+- **The Python `core` extra now requires a runtime that can load the grammar.**
+  `pyproject.toml` declared `core = ["tree-sitter~=0.24"]`, which admits
+  py-tree-sitter 0.24.0, and 0.24.0 loads ABI 13..14 while `src/parser.c` is
+  ABI 15. `pip install tree-sitter-al[core]` could resolve to it, and the first
+  `Parser(Language(tree_sitter_al.language()))` then failed with
+  `ValueError: Incompatible Language version 15. Must be between 13 and 14`.
+  It is now `tree-sitter~=0.25` (>=0.25, <1.0); 0.25.0 is the first release that
+  loads ABI 15. The other declared ranges are corrected the same way: the npm
+  peer dependency was `"latest"` (a dist-tag, not a range) and is `^0.25.0`; the
+  Go module required go-tree-sitter v0.23.1 (ABI 13..14) and requires v0.25.0,
+  and the Go binding test moved from `smacker/go-tree-sitter` (no release loads
+  ABI 15) to the official module and now calls `SetLanguage`, which is where an
+  ABI mismatch is reported; the Swift test target's SwiftTreeSitter floor
+  `0.8.0` is `0.10.0`, the first release on tree-sitter 0.25. New
+  `tools/check-runtime-ranges.py` (validate-grammar.sh Step 11, and CI) fails
+  when any declared range admits a runtime that cannot load the ABI.
 - **A property whose `;` sits inside the `#if` arms now parses directly in an
   action area and in a .NET assembly** (G11, deferred-work item 17).
   `ToolTip = #if X 'a'; #else 'b'; #endif` on `area(Embedding)`, and an

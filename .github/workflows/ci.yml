@@ -253,6 +253,11 @@ jobs:
       - name: Check every tracked script is executable
         run: bash tools/check-exec-bits.sh
 
+      # src/parser.c's ABI against every declared tree-sitter runtime range
+      # (validate-grammar.sh Step 11). Needs only Python's stdlib (tomllib).
+      - name: Check declared runtime ranges load the grammar's ABI
+        run: python3 tools/check-runtime-ranges.py
+
   scanner-default-flags:
     # Every first-party build of src/scanner.c passes -std=c11 (Makefile),
     # /std:c11 (binding.gyp) or cc.std("c11") (bindings/rust/build.rs), so no
