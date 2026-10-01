@@ -146,12 +146,12 @@ class Document:
 
 def _pair(root, policy, revision, eof):
     open_, done, unpaired, by_parent = [], [], [], {}
-    stack = [root]
+    stack = [(root, None)]
     while stack:
-        node = stack.pop()
+        node, parent_id = stack.pop()
         role = policy.role(node.type) if node.is_named else None
         if role is None:
-            stack.extend(reversed(node.children))
+            stack.extend((c, node.id) for c in reversed(node.children))
             continue
         d = Directive(role, node.start_byte, node.end_byte, node)
         if role == "if":
@@ -162,9 +162,7 @@ def _pair(root, policy, revision, eof):
         else:
             open_[-1].append(d)
         group = open_[-1]
-        parent_ids = by_parent.setdefault(node.parent.id, [])
-        if group[0].start not in parent_ids:
-            parent_ids.append(group[0].start)
+        by_parent.setdefault(parent_id, {})[group[0].start] = None   # dict: ordered set
         if role == "endif":
             done.append(open_.pop())
     done.extend(open_)                    # unclosed at EOF
@@ -190,7 +188,11 @@ def _kids(node):
 def walk(document: Document, policy: Policy, *, root=None, include_directives=False, include_trivia=False):
     arms = sorted(document.descriptors(), key=lambda a: (a.raw_range[0], -a.raw_range[1]))
     active, k, out = [], 0, []
-    stack = [(root if root is not None else document.tree.root_node, None, None)]
+    start_node = root if root is not None else document.tree.root_node
+    parent0, field0 = start_node.parent, None
+    if parent0 is not None:              # a subtree root keeps its real parent and field
+        field0 = next((parent0.field_name_for_child(i) for i, c in enumerate(parent0.children) if c == start_node), None)
+    stack = [(start_node, field0, parent0)]
     while stack:
         node, field, parent = stack.pop()
         if not node.is_named:

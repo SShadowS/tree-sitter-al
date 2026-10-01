@@ -119,8 +119,8 @@ def test_walk_is_iterative_and_fast_on_large_and_deep_input(T, policy, al_parser
     groups = "".join(f"#if C{i}\n    procedure P{i}()\n    begin\n        X := {i};\n    end;\n#else\n"
                      f"    procedure Q{i}()\n    begin\n    end;\n#endif\n" for i in range(2000))
     src = f"codeunit 50100 Big\n{{\n{groups}}}\n".encode()
-    doc = T.Document(al_parser.parse(src), src, policy)
     start = time.perf_counter()
+    doc = T.Document(al_parser.parse(src), src, policy)
     visits = T.walk(doc, policy)
     assert time.perf_counter() - start < 3, "walk is quadratic in the number of groups again (measured: 0.16 s linear, 4.4 s quadratic)"
     assert len(doc.groups) == 2000 and sum(v.type == "procedure" for v in visits) == 4000
@@ -128,3 +128,12 @@ def test_walk_is_iterative_and_fast_on_large_and_deep_input(T, policy, al_parser
             + ";\n end;\n}\n").encode()
     doc = T.Document(al_parser.parse(deep), deep, policy)
     assert len(T.walk(doc, policy)) > 5000          # no RecursionError
+
+
+def test_a_subtree_walk_root_visit_equals_the_full_walk_visit(T, policy, parse):
+    doc = parse("containers.al")
+    full = T.walk(doc, policy)
+    containers = [v for v in full if v.cls == "branch-container"]
+    assert containers and all(v.host is not None for v in containers)
+    for v in containers:
+        assert T.walk(doc, policy, root=v.node)[0] == v
