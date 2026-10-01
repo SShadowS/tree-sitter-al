@@ -35,6 +35,17 @@ KEYWORD_OPERATOR_SPLIT = unit(
     "        b := b\n#if X\n            xor\n#endif\n            true;"
 ).replace("    begin\n", "    var\n        i: Integer;\n        b: Boolean;\n    begin\n", 1)
 
+def _ml(prop: str) -> str:
+    return f"table 50100 T\n{{\n    {prop}\n    fields {{ field(1; F; Integer) {{ }} }}\n}}\n"
+
+
+def _tc(pairs: str) -> str:
+    return f"codeunit 50100 C\n{{\n    var\n        T: TextConst {pairs};\n}}\n"
+
+
+_NS = "xmlport 50100 X\n{{\n    Namespaces = {};\n    schema {{ textelement(R) {{ }} }}\n}}\n"
+
+
 # (name, source, symbols, expected_accept)
 PROBES: list[tuple[str, str, list[str], bool]] = [
     ("sanity", unit("        Message('x');"), [], True),
@@ -148,6 +159,18 @@ PROBES: list[tuple[str, str, list[str], bool]] = [
     # preproc_split_operator_test.txt. X defined: `7 mod 2`, `b xor true`; undefined: `7 2`.
     ("split_keyword_operator_defined", KEYWORD_OPERATOR_SPLIT, ["X"], True),
     ("split_keyword_operator_undefined_rejected", KEYWORD_OPERATOR_SPLIT, [], False),
+    # B4 (2026-10-01): pair-list properties. Each is a syntactic rejection the keyed grammar
+    # must ERROR on. Codes (alc 18.0.41, runtime 15.0; tools/alc_probe/cases/pair-list-keying):
+    ("ml_locked_true_rejected", _ml("CaptionML = ENU='a', Locked = true;"), [], False),  # AL0104,AL0219
+    ("textconst_locked_true_rejected", _tc("ENU='a', Locked = true"), [], False),  # AL0104,AL0219
+    ("textconst_maxlength_rejected", _tc("ENU='a', MaxLength = 5"), [], False),  # AL0104,AL0219
+    ("namespaces_locked_true_rejected", _NS.format("cac = 'urn', Locked = true"), [], False),  # AL0104,AL0219
+    ("ml_trailing_comma_rejected", _ml("CaptionML = ENU='a',;"), [], False),  # AL0301
+    ("ml_missing_comma_rejected", _ml("CaptionML = ENU='a' DAN='b';"), [], False),  # AL0104
+    ("ml_string_value_rejected", _ml("CaptionML = 'abc';"), [], False),  # AL0107
+    ("ml_identifier_value_rejected", _ml("CaptionML = ENU=Foo;"), [], False),  # AL0104,AL0219
+    ("instructionaltextml_semicolon_rejected", "page 50100 P\n{\n    InstructionalTextML = ENU='a'; ESP='b';\n}\n", [], False),  # AL0124
+    ("tooltipml_unquoted_rejected", "table 50101 T { fields { field(1; F; Integer) { } } }\npage 50100 P\n{\n    SourceTable = T;\n    layout { area(Content) { field(F; F) { ToolTipML = DAN=Dette felt; } } }\n}\n", [], False),  # AL0104,AL0219 (field-level: page-level ToolTipML needs runtime 18.0; DAN='Dette felt' is accepted)
 ]
 
 
