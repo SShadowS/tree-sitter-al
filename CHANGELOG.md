@@ -21,10 +21,17 @@ public API — a change to node structure or field names is a **major** bump.
   Go module required go-tree-sitter v0.23.1 (ABI 13..14) and requires v0.25.0,
   and the Go binding test moved from `smacker/go-tree-sitter` (no release loads
   ABI 15) to the official module and now calls `SetLanguage`, which is where an
-  ABI mismatch is reported; the Swift test target's SwiftTreeSitter floor
+  ABI mismatch is reported. **Go import path change:** the nested
+  `bindings/go/go.mod` (module `github.com/tree-sitter/tree-sitter-al`, left over
+  from an old grammar template) is removed, so the binding is now package
+  `github.com/sshadows/tree-sitter-al/bindings/go` in the root module, as the
+  current template lays it out. Import that path; the old module path never
+  resolved to this repository; the Swift test target's SwiftTreeSitter floor
   `0.8.0` is `0.10.0`, the first release on tree-sitter 0.25. New
   `tools/check-runtime-ranges.py` (validate-grammar.sh Step 11, and CI) fails
-  when any declared range admits a runtime that cannot load the ABI.
+  when any declared range admits a runtime that cannot load the ABI, including
+  the `web-tree-sitter` devDependency (WASM runtime; 0.25.0 is its first release
+  that loads ABI 15).
 - **A property whose `;` sits inside the `#if` arms now parses directly in an
   action area and in a .NET assembly** (G11, deferred-work item 17).
   `ToolTip = #if X 'a'; #else 'b'; #endif` on `area(Embedding)`, and an
