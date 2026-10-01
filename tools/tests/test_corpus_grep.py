@@ -27,3 +27,16 @@ def test_bad_pattern_exits_2(tmp_path):
     p = run("-E", "a(", AL_BC28_ROOT=str(tmp_path), AL_BCAPPS29_ROOT=str(tmp_path))
     assert p.returncode == 2
     assert "bad pattern" in p.stderr
+
+
+def test_one_grep_counts_lines_and_files_and_matches_any_case_of_al(tmp_path):
+    (tmp_path / "a.Al").write_text("x := zz_marker_qq;\ny := zz_marker_qq;\n")
+    (tmp_path / "sub").mkdir()
+    (tmp_path / "sub" / "b.AL").write_text("zz_marker_qq\n")
+    (tmp_path / "c.txt").write_text("zz_marker_qq\n")  # not .al: never searched
+    p = run("-l", "zz_marker_qq", AL_BC28_ROOT=str(tmp_path), AL_BCAPPS29_ROOT=str(tmp_path / "no"))
+    assert p.returncode == 0, p.stderr
+    bc28 = next(l for l in p.stdout.splitlines() if l.startswith("bc28.1"))
+    assert bc28.split()[1:5] == ["3", "lines", "2", "files"], bc28
+    listed = [l for l in p.stdout.splitlines() if l.endswith((".Al", ".AL"))]
+    assert len(listed) == 2, p.stdout
