@@ -187,6 +187,7 @@ once. The only view is `git ls-files -s`; the fix is `git update-index --chmod=+
 | `DIRECTIVE_EOL` | the ONE newline ending an `#if`/`#elif` line (hidden `_directive_eol`); a lexical `/\r?\n/` took the last of a run of blank lines |
 | `NEGATIVE_INTEGER` / `NEGATIVE_DECIMAL` | `-1` / `-1.5` as one signed literal (issue #23), emitted only before `;` `,` `#` or EOF; otherwise `-` is unary minus (G7: `Visible = -1 < X;` ERRORed) |
 | `MALFORMED_DIRECTIVE` | a `#` line alc rejects (`#elsewhere`, `#regionX`, `#endif;`, `#else B`, a block comment on `#if`/`#elif`), as hidden `_malformed_directive`, which no rule takes: the line becomes an ERROR (B2). `#else`/`#elif` stay regexes; the `#` dispatch is their gatekeeper |
+| `SCANNER_HOOK` | never emitted; in `extras` so that every parse state calls the scanner (and so the `#` gatekeeper). Do not return it, ever |
 
 ## Property Handling
 

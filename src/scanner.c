@@ -26,6 +26,7 @@ enum TokenType {
   NEGATIVE_INTEGER = 11,
   NEGATIVE_DECIMAL = 12,
   MALFORMED_DIRECTIVE = 13,  // in no grammar rule: see the '#' dispatch
+  SCANNER_HOOK = 14,         // an extra that is NEVER emitted: see the '#' dispatch
 };
 
 // Named so the static assertion below can test its width AND its signedness.
@@ -265,9 +266,8 @@ static bool read_word_ci(TSLexer *lexer, char *buf, size_t cap, size_t *out_len)
     lexer->advance(lexer, false);
   }
   *out_len = len;
-  // Always NUL-terminated, so an over-long word is still usable for a PREFIX
-  // test (every candidate is shorter than any buffer here). Only a whole-word
-  // test has to check the return value.
+  // Always NUL-terminated. An over-long word is truncated here, and the return
+  // value says so: every caller treats it as a miss (see word_in).
   buf[len > cap - 1 ? cap - 1 : len] = '\0';
   return len <= cap - 1;
 }
@@ -370,10 +370,11 @@ static bool skip_whitespace_and_comments(TSLexer *lexer) {
 // in the lookaheads below. Until B2 the lookaheads also had a prefix mode,
 // because `#else`/`#elif` were grammar regexes with no trailing boundary (the
 // lexer compiler rejects `\b` and lookahead), so `#elseX` WAS `#else` to the
-// parser and the lookahead had to agree. Both are scanner tokens now, and alc
-// rejects every prefix form (AL0621, tools/config_oracle/probe_alc.py
-// prefix_*), so a prefix test would only make the scanner disagree with the
-// parser about what a directive is.
+// parser and the lookahead had to agree. They are still grammar regexes, but
+// the '#' dispatch below now claims every prefix form as MALFORMED_DIRECTIVE
+// before their regexes see it, and alc rejects every prefix form (AL0621,
+// tools/config_oracle/probe_alc.py prefix_*). A prefix test here would only
+// make the scanner disagree with the parser about what a directive is.
 //
 // Directives that grammar.js declares as `extras`. Comments are extras too, but
 // they are handled by skip_whitespace_and_comments rather than listed here.
@@ -414,7 +415,12 @@ static bool line_rest_is_blank(TSLexer *lexer) {
   if (lexer->lookahead == '\n' || lexer->eof(lexer)) return true;
   if (lexer->lookahead != '/') return false;
   lexer->advance(lexer, false);
-  return lexer->lookahead == '/';
+  if (lexer->lookahead == '/') return true;
+  // A lone '/' (`#endif /`) is part of the malformed line. Mark it here:
+  // consume_line only marks characters it advances over itself, and at a
+  // newline it advances over none.
+  lexer->mark_end(lexer);
+  return false;
 }
 
 // After `#if`/`#elif`: does a block comment open anywhere on the rest of the
@@ -499,7 +505,7 @@ bool tree_sitter_al_external_scanner_scan(
       valid_symbols[CALC_FORMULA_PROPERTY_NAME] &&
       valid_symbols[DIRECTIVE_EOL] &&
       valid_symbols[NEGATIVE_INTEGER] && valid_symbols[NEGATIVE_DECIMAL] &&
-      valid_symbols[MALFORMED_DIRECTIVE]) {
+      valid_symbols[MALFORMED_DIRECTIVE] && valid_symbols[SCANNER_HOOK]) {
     return false;
   }
 
@@ -586,7 +592,20 @@ bool tree_sitter_al_external_scanner_scan(
   // one is declined and lexed by its regex as before.
   //
   // It runs whatever is valid, not only when #if/#endif is: the gatekeeper has
-  // to see `#elsewhere` and `#regionX` in every state the scanner is called in.
+  // to see `#elsewhere` and `#regionX` in every state. The scanner is called in
+  // every state because of SCANNER_HOOK: an external token listed in grammar.js
+  // `extras`, so valid everywhere, and NEVER returned by this function. Before
+  // it, 3,937 of 15,870 parse states had no valid external token, so tree-sitter
+  // never called the scanner there and a malformed line in those states (77 of
+  // the states where #else is valid, 71 for #elif, and most mid-expression
+  // positions for the extras) still lexed through the grammar's regexes. The
+  // hook cannot change a tree: tree-sitter only ever receives a token this
+  // function returns, the internal lexer has no definition for an external
+  // token, and every token this function does return is guarded by
+  // valid_symbols except MALFORMED_DIRECTIVE, which is only returned for a
+  // line alc rejects. A hook-only state therefore lexes exactly as it did
+  // before, except for such lines.
+  //
   // No other block's token starts with '#', so declining here costs nothing
   // (the whitespace skip is the same marking skip every later block starts
   // with).

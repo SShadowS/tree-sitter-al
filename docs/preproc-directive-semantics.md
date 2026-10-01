@@ -47,7 +47,9 @@ positive probe has a control that must fail.
 **What the parser does with these (B2, 2026-10-01).** Every rejected directive line in
 this table is an ERROR on that line. The scanner's `#` dispatch (`src/scanner.c`) reads
 the directive word once and checks the rest of the line; a malformed line becomes the
-hidden external token `_malformed_directive`, which no grammar rule takes. Until B2 most of
+hidden external token `_malformed_directive`, which no grammar rule takes. This holds in
+every parse state: the never-emitted extra `_scanner_hook` makes tree-sitter call the
+scanner everywhere. Until B2 most of
 these parsed with zero ERROR nodes (`#elsewhere` as `#else` plus an identifier, `#endif;`
 as `#endif` plus an empty statement). Fixtures:
 `test/corpus/directive_line_rejected_negative_test.txt` and

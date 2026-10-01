@@ -48,10 +48,17 @@ public API — a change to node structure or field names is a **major** bump.
   nodes: `#elsewhere` as `#else` plus an identifier, `#endif;` as `#endif` plus an empty
   statement or a property terminator. The scanner's `#` dispatch reads the directive
   word once and claims a malformed line as a new hidden external token,
-  `_malformed_directive`, that no rule takes, so the ERROR sits on that line.
+  `_malformed_directive`, that no rule takes, so the ERROR sits on that line. A
+  second hidden external, `_scanner_hook`, sits in `extras` and is never emitted: it
+  makes every parse state call the scanner, so this holds in every position (before
+  it, 3,937 of 15,870 states never called the scanner, and `#else /* c */` there still
+  parsed clean).
   `#endregion;` (valid, 2 production sites) and every well-formed spelling (`#ELSE`,
   `# else`, `#Else`, a trailing `//` comment) parse as before. 0 production sites;
-  all 15,358 BC.History trees byte-identical (tree-harness). STATE_COUNT unchanged.
+  all 15,358 BC.History trees byte-identical (tree-harness). STATE_COUNT unchanged;
+  parser.c +1.9%; native parse speed over DC unchanged within resolution (`tools.perf ab`, 24 rounds, two
+  runs: 0.998 with CI 0.991-1.007, and 0.978 with CI 0.964-0.985; both warned of a busy
+  machine).
   Pinned by `test/corpus/directive_line_rejected_negative_test.txt` (20 negatives)
   and `test/corpus/directive_line_accepted_test.txt`; verdicts in
   `tools/config_oracle/probe_alc.py`. `#elseX continues a split end` in

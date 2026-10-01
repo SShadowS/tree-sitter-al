@@ -183,6 +183,10 @@ module.exports = grammar({
     $.preproc_define,
     $.preproc_undef,
     /\uFEFF/,  // BOM
+    // Never emitted (see externals). As an extra it is valid in EVERY parse
+    // state, so every state calls the scanner and its '#' gatekeeper sees
+    // every directive line.
+    $._scanner_hook,
   ],
 
   externals: $ => [
@@ -201,6 +205,8 @@ module.exports = grammar({
     $._negative_decimal,        // [12] `-1.5`, likewise
     $._malformed_directive,     // [13] a `#` line alc rejects (AL0621/AL0631). In NO rule:
                                 //      the scanner returns it only to make that line an ERROR
+    $._scanner_hook,            // [14] NEVER emitted. In `extras` only, so that every parse
+                                //      state has a valid external token and calls the scanner
   ],
 
   conflicts: $ => [

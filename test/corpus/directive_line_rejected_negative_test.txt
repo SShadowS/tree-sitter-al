@@ -755,3 +755,386 @@ codeunit 50100 P
               (preproc_endif
                 (preproc_close))))
           (end_keyword))))))
+
+================================================================================
+NEGATIVE: #elsebegin in a split procedure body (AL0621)
+B2 fix round 1, review I1: the shape of NoSeriesSetupImpl.Codeunit.al:199
+(BC.History). The state after `if not IsHandled then` and a #pragma had no
+valid external token, so the scanner was never called and `#elsebegin` lexed
+as `#else` plus `begin` with zero ERROR nodes. The never-emitted extra
+_scanner_hook makes every state call the scanner.
+================================================================================
+codeunit 50100 P
+{
+    procedure ValidateDefaultNos(var NoSeries: Record "No. Series"; xRecNoSeries: Record "No. Series")
+#if not CLEAN24
+#pragma warning disable AL0432
+    var
+        IsHandled: Boolean;
+    begin
+        IsHandled := false;
+        NoSeries.OnBeforeValidateDefaultNos(NoSeries, IsHandled);
+        if not IsHandled then
+#pragma warning restore AL0432
+#elsebegin
+    begin
+#endif
+            if (NoSeries."Default Nos." = false) and (xRecNoSeries."Default Nos." <> NoSeries."Default Nos.") then
+                NoSeries.Validate("Manual Nos.", true);
+    end;
+}
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    (ERROR
+      (procedure_keyword)
+      name: (identifier)
+      parameters: (parameter_list
+        (parameter
+          modifier: (var_keyword)
+          name: (identifier)
+          type: (type_specification
+            (record_type
+              (record_keyword)
+              reference: (quoted_identifier))))
+        (parameter
+          name: (identifier)
+          type: (type_specification
+            (record_type
+              (record_keyword)
+              reference: (quoted_identifier)))))
+      (preproc_if
+        (preproc_open)
+        condition: (preproc_not_expression
+          (identifier)))
+      (pragma)
+      (var_section
+        (var_keyword)
+        body: (var_body
+          (variable_declaration
+            name: (identifier)
+            type: (type_specification
+              (basic_type)))))
+      (begin_keyword)
+      (assignment_statement
+        left: (identifier)
+        operator: (assignment_operator)
+        right: (boolean))
+      (call_expression
+        function: (member_expression
+          object: (identifier)
+          member: (identifier))
+        arguments: (argument_list
+          (identifier)
+          (identifier)))
+      (if_statement
+        (if_keyword)
+        condition: (unary_expression
+          operand: (identifier))
+        (then_keyword)
+        (pragma)
+        (ERROR)
+        then_branch: (code_block
+          (begin_keyword)
+          (preproc_split_block_close_after_endif
+            (preproc_endif
+              (preproc_close))
+            (if_statement
+              (if_keyword)
+              condition: (logical_expression
+                left: (parenthesized_expression
+                  (comparison_expression
+                    left: (member_expression
+                      object: (identifier)
+                      member: (quoted_identifier))
+                    operator: (comparison_operator)
+                    right: (boolean)))
+                right: (parenthesized_expression
+                  (comparison_expression
+                    left: (member_expression
+                      object: (identifier)
+                      member: (quoted_identifier))
+                    operator: (comparison_operator)
+                    right: (member_expression
+                      object: (identifier)
+                      member: (quoted_identifier)))))
+              (then_keyword)
+              then_branch: (call_expression
+                function: (member_expression
+                  object: (identifier)
+                  member: (identifier))
+                arguments: (argument_list
+                  (quoted_identifier)
+                  (boolean))))
+            (end_keyword)))))))
+
+================================================================================
+NEGATIVE: #else begin in a split procedure body (AL0631)
+================================================================================
+codeunit 50100 P
+{
+    procedure ValidateDefaultNos(var NoSeries: Record "No. Series"; xRecNoSeries: Record "No. Series")
+#if not CLEAN24
+#pragma warning disable AL0432
+    var
+        IsHandled: Boolean;
+    begin
+        IsHandled := false;
+        NoSeries.OnBeforeValidateDefaultNos(NoSeries, IsHandled);
+        if not IsHandled then
+#pragma warning restore AL0432
+#else begin
+    begin
+#endif
+            if (NoSeries."Default Nos." = false) and (xRecNoSeries."Default Nos." <> NoSeries."Default Nos.") then
+                NoSeries.Validate("Manual Nos.", true);
+    end;
+}
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    (ERROR
+      (procedure_keyword)
+      name: (identifier)
+      parameters: (parameter_list
+        (parameter
+          modifier: (var_keyword)
+          name: (identifier)
+          type: (type_specification
+            (record_type
+              (record_keyword)
+              reference: (quoted_identifier))))
+        (parameter
+          name: (identifier)
+          type: (type_specification
+            (record_type
+              (record_keyword)
+              reference: (quoted_identifier)))))
+      (preproc_if
+        (preproc_open)
+        condition: (preproc_not_expression
+          (identifier)))
+      (pragma)
+      (var_section
+        (var_keyword)
+        body: (var_body
+          (variable_declaration
+            name: (identifier)
+            type: (type_specification
+              (basic_type)))))
+      (begin_keyword)
+      (assignment_statement
+        left: (identifier)
+        operator: (assignment_operator)
+        right: (boolean))
+      (call_expression
+        function: (member_expression
+          object: (identifier)
+          member: (identifier))
+        arguments: (argument_list
+          (identifier)
+          (identifier)))
+      (if_statement
+        (if_keyword)
+        condition: (unary_expression
+          operand: (identifier))
+        (then_keyword)
+        (pragma)
+        (ERROR)
+        then_branch: (code_block
+          (begin_keyword)
+          (preproc_split_block_close_after_endif
+            (preproc_endif
+              (preproc_close))
+            (if_statement
+              (if_keyword)
+              condition: (logical_expression
+                left: (parenthesized_expression
+                  (comparison_expression
+                    left: (member_expression
+                      object: (identifier)
+                      member: (quoted_identifier))
+                    operator: (comparison_operator)
+                    right: (boolean)))
+                right: (parenthesized_expression
+                  (comparison_expression
+                    left: (member_expression
+                      object: (identifier)
+                      member: (quoted_identifier))
+                    operator: (comparison_operator)
+                    right: (member_expression
+                      object: (identifier)
+                      member: (quoted_identifier)))))
+              (then_keyword)
+              then_branch: (call_expression
+                function: (member_expression
+                  object: (identifier)
+                  member: (identifier))
+                arguments: (argument_list
+                  (quoted_identifier)
+                  (boolean))))
+            (end_keyword)))))))
+
+================================================================================
+NEGATIVE: #else /* c */ in a split procedure body (AL0631)
+================================================================================
+codeunit 50100 P
+{
+    procedure ValidateDefaultNos(var NoSeries: Record "No. Series"; xRecNoSeries: Record "No. Series")
+#if not CLEAN24
+#pragma warning disable AL0432
+    var
+        IsHandled: Boolean;
+    begin
+        IsHandled := false;
+        NoSeries.OnBeforeValidateDefaultNos(NoSeries, IsHandled);
+        if not IsHandled then
+#pragma warning restore AL0432
+#else /* c */
+    begin
+#endif
+            if (NoSeries."Default Nos." = false) and (xRecNoSeries."Default Nos." <> NoSeries."Default Nos.") then
+                NoSeries.Validate("Manual Nos.", true);
+    end;
+}
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    (ERROR
+      (procedure_keyword)
+      name: (identifier)
+      parameters: (parameter_list
+        (parameter
+          modifier: (var_keyword)
+          name: (identifier)
+          type: (type_specification
+            (record_type
+              (record_keyword)
+              reference: (quoted_identifier))))
+        (parameter
+          name: (identifier)
+          type: (type_specification
+            (record_type
+              (record_keyword)
+              reference: (quoted_identifier)))))
+      (preproc_if
+        (preproc_open)
+        condition: (preproc_not_expression
+          (identifier)))
+      (pragma)
+      (var_section
+        (var_keyword)
+        body: (var_body
+          (variable_declaration
+            name: (identifier)
+            type: (type_specification
+              (basic_type)))))
+      (begin_keyword)
+      (assignment_statement
+        left: (identifier)
+        operator: (assignment_operator)
+        right: (boolean))
+      (call_expression
+        function: (member_expression
+          object: (identifier)
+          member: (identifier))
+        arguments: (argument_list
+          (identifier)
+          (identifier)))
+      (if_statement
+        (if_keyword)
+        condition: (unary_expression
+          operand: (identifier))
+        (then_keyword)
+        (pragma)
+        (ERROR)
+        then_branch: (code_block
+          (begin_keyword)
+          (preproc_split_block_close_after_endif
+            (preproc_endif
+              (preproc_close))
+            (if_statement
+              (if_keyword)
+              condition: (logical_expression
+                left: (parenthesized_expression
+                  (comparison_expression
+                    left: (member_expression
+                      object: (identifier)
+                      member: (quoted_identifier))
+                    operator: (comparison_operator)
+                    right: (boolean)))
+                right: (parenthesized_expression
+                  (comparison_expression
+                    left: (member_expression
+                      object: (identifier)
+                      member: (quoted_identifier))
+                    operator: (comparison_operator)
+                    right: (member_expression
+                      object: (identifier)
+                      member: (quoted_identifier)))))
+              (then_keyword)
+              then_branch: (call_expression
+                function: (member_expression
+                  object: (identifier)
+                  member: (identifier))
+                arguments: (argument_list
+                  (quoted_identifier)
+                  (boolean))))
+            (end_keyword)))))))
+
+================================================================================
+NEGATIVE: #regionX inside a member expression (AL0621)
+B2 fix round 1, review I1: mid-expression states had no valid external
+token, and `x := Rec.` + `#regionX` + `;` parsed as a member_expression with
+a preproc_region extra inside it, clean.
+================================================================================
+codeunit 50100 P
+{
+    trigger OnRun()
+    var
+        x: Integer;
+    begin
+        x := Rec.
+#regionX
+        ;
+    end;
+}
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (trigger_declaration
+        (trigger_keyword)
+        name: (identifier)
+        (var_section
+          (var_keyword)
+          body: (var_body
+            (variable_declaration
+              name: (identifier)
+              type: (type_specification
+                (basic_type)))))
+        body: (code_block
+          (begin_keyword)
+          body: (statement_block
+            (assignment_statement
+              left: (identifier)
+              operator: (assignment_operator)
+              right: (identifier))
+            (ERROR))
+          (end_keyword))))))
