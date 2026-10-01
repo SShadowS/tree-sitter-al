@@ -31,8 +31,8 @@ read every variant of it.
 |---|---|---|
 | ordinary | not a configuration node | descends normally |
 | branch-container | a `#if` whose arms are alternatives in one host slot | visits it with its host policy and a `SplitInfo`, then every arm |
-| assembler | one construct built from arm pieces plus shared parts, possibly crossing `#endif` | visits it with a `SplitInfo`; never presents its children as a flat list |
-| fragment | a piece that only makes sense inside an assembler | visits it with class `fragment`; its assembler's `SplitInfo` lists it |
+| assembler | one construct built from arm pieces plus shared parts, possibly crossing `#endif` | visits it with a `SplitInfo`, then descends: every arm piece and shared part is **also** an ordinary visit, with its arm path |
+| fragment | a piece that only makes sense inside an assembler | visits it with class `fragment`, then descends into it; its assembler's `SplitInfo` lists it |
 | token-alias | a keyword emitted by a split token (`preproc_split_begin` is a `begin`) | visits it like any token |
 | directive | `#if` / `#elif` / `#else` / `#endif` and their parts | skipped unless `include_directives` |
 | trivia | `#pragma`, `#region`, `#endregion`, `#define`, `#undef` | skipped unless `include_trivia` |
@@ -69,6 +69,32 @@ directive's line (LF or CRLF), or at the end of the file, for `#if`, `#elif`
 and `#else` alike. A trailing comment on a directive line (`#else // old API`)
 therefore belongs to the directive, never to the arm: it is not one of the arm's
 pieces, not in `shared`, and its visit has no arm path.
+
+### Do not count twice
+
+`walk` never hides an assembler's children. `SplitInfo` is a **structured view of
+nodes that `walk` also visits**: each named arm piece and shared part of a
+`preproc_split_procedure`, for example, is visited again as an ordinary node, with
+its arm path. A consumer that collects sites from both must dedupe, by node id or by
+taking each kind of site from one source only:
+
+```python
+seen = set()                        # node ids already collected, from either source
+for v in traversal.walk(doc, policy):
+    if v.split:
+        for g in v.split.groups:
+            for arm in g.arms:
+                for f in traversal.arm_pieces(arm, doc, policy):
+                    if f.node.is_named and f.node.id not in seen:
+                        seen.add(f.node.id)
+                        collect(f.node, arm.descriptor)
+    if v.node.id not in seen:
+        seen.add(v.node.id)
+        collect(v.node, None)
+```
+
+One set for both paths matters: an arm can cross node boundaries, so a piece can be
+walked before the node whose `SplitInfo` lists it.
 
 An arm can cross node boundaries: in `preproc_split_block_end_in_else` the `#else`
 arm closes one procedure and opens the next, and its pieces say so.

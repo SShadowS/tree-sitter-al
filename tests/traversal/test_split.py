@@ -84,6 +84,21 @@ def test_only_containers_assemblers_and_fragments_carry_a_split(T, policy, parse
     assert {v.cls for v in T.walk(doc, policy) if v.split} == {"branch-container", "assembler"}
 
 
+def test_walk_visits_an_assemblers_arm_pieces_too(T, policy, parse):
+    """I2: walk descends into every assembler, so each arm piece of a split procedure is
+    ALSO an ordinary visit, with its arm path. A consumer that reads both SplitInfo and
+    walk must dedupe by node id (or take statements from one source only)."""
+    doc = parse("assemblers.al")
+    v = visit(T, policy, doc, "preproc_split_procedure")
+    visits = {x.node.id: x for x in T.walk(doc, policy)}
+    for g in v.split.groups:
+        for a in g.arms:
+            named = [f.node for f in a.fragments if f.node.is_named]
+            assert named and all(n.id in visits for n in named)
+            assert all(visits[n.id].arms[-1] == (g.group_id[1], a.descriptor.arm_id) for n in named)
+    assert all(f.node.id in visits for f in v.split.shared if f.node.is_named)
+
+
 def test_arm_pieces_never_keeps_a_directive_from_an_expanded_fragment(T, policy, parse):
     """M1. In today's grammar no fragment that holds its own directives can be an arm
     piece, so an overriding policy makes the nested statement conditional of

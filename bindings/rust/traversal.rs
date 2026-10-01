@@ -594,6 +594,27 @@ mod tests {
     }
 
     #[test]
+    fn walk_also_visits_an_assemblers_arm_pieces() {
+        // Consumers that read both SplitInfo and walk must dedupe by node id.
+        let policy = Policy::bundled();
+        let (source, tree) = parse_fixture(&mut parser(), "assemblers.al");
+        let doc = Document::new(&tree, &source, &policy);
+        let visits = walk(&doc, &policy, None, WalkOptions::default());
+        let by_id: HashMap<usize, &Visit> = visits.iter().map(|v| (v.node.id(), v)).collect();
+        let v = visits.iter().find(|v| v.kind == "preproc_split_procedure").unwrap();
+        for g in &v.split.as_ref().unwrap().groups {
+            for a in &g.arms {
+                let named: Vec<_> = a.fragments.iter().filter(|f| f.node.is_named()).collect();
+                assert!(!named.is_empty());
+                for f in named {
+                    let seen = by_id.get(&f.node.id()).expect("an arm piece is also a walk visit");
+                    assert_eq!(seen.arms.last(), Some(&(g.group_id.1, a.descriptor.arm_id)));
+                }
+            }
+        }
+    }
+
+    #[test]
     fn arm_pieces_never_keeps_a_directive_of_an_expanded_fragment() {
         // No grammar fixture can trigger it (see the Python test), so the nested statement
         // conditional of containers.al (#if at 489, in arm 0 of 441) is made a fragment.

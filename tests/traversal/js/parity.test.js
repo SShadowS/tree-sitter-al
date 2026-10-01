@@ -78,6 +78,24 @@ for (const runtime of ['web-tree-sitter', 'native tree-sitter']) {
     }
   });
 
+  test(`${runtime}: walk also visits an assembler's arm pieces (dedupe by node id)`, () => {
+    const text = fs.readFileSync(path.join(FIX, 'assemblers.al'), 'utf8');
+    const doc = new T.Document(parsers[runtime].parse(text), text, policy);
+    const visits = T.walk(doc, policy);
+    const byId = new Map(visits.map((v) => [v.node.id, v]));
+    const v = visits.find((x) => x.type === 'preproc_split_procedure');
+    for (const g of v.split.groups) {
+      for (const a of g.arms) {
+        const named = a.fragments.filter((f) => f.node.isNamed);
+        assert.ok(named.length);
+        for (const f of named) {
+          assert.ok(byId.has(f.node.id), f.node.type);
+          assert.deepStrictEqual(byId.get(f.node.id).arms.at(-1), [g.groupId[1], a.descriptor.armId]);
+        }
+      }
+    }
+  });
+
   test(`${runtime}: armPieces never keeps a directive of an expanded fragment (policy override)`, () => {
     // See the Python test: no grammar fixture can trigger it, so the nested statement
     // conditional of containers.al (#if at 489, in arm 0 of 441) is made a fragment.
