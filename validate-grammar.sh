@@ -571,6 +571,23 @@ else
     VALIDATION_FAILED=1
 fi
 
+# Step 5f: Traversal-policy census (roadmap F0)
+#
+# traversal/policy.json classifies every node type that is not ordinary, for the
+# traversal helpers in every binding (docs/traversal.md). tools/traversal_census.py
+# fails when the grammar or the contracts registry moved and the policy did not.
+# Needs no parser, so it never skips. Exit 1 is a finding, 2 could not run; both
+# fail validation.
+print_header "Step 5f: Traversal Policy Census"
+if CENSUS_OUTPUT=$(python tools/traversal_census.py 2>&1); then
+    print_success "traversal policy census: clean"
+else
+    census_status=$?
+    print_error "traversal census failed (exit $census_status)"
+    echo "$CENSUS_OUTPUT"
+    VALIDATION_FAILED=1
+fi
+
 # Step 6: Parse a real AL corpus (opt-in, --full)
 #
 # THIS STEP NEVER PARSED A FILE. Five independent defects, each of which alone
