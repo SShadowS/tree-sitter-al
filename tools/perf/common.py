@@ -42,7 +42,7 @@ def ts_lock(*cmd, **kw):
 def library() -> Path:
     """The built al.dll, rebuilt under ts-lock first if its stamp is stale."""
     lib = REPO / loader.LIB_NAME
-    if not (lib.is_file() and loader.read_stamp(REPO) == loader.compute_stamp(REPO)):
+    if not (lib.is_file() and loader.read_stamp(REPO) == loader.library_stamp(REPO)):
         ts_lock(sys.executable, "-c", "from tools.query_coverage import loader; "
                 "loader.ensure_library(loader.REPO_ROOT)", check=True)
     return lib

@@ -264,7 +264,7 @@ def build_parser_at(commit: str, work: Path):
     lib = work / f"al-replay-{safe}.dll"
     with loader.build_lock(REPO):
         r = subprocess.run(["tree-sitter", "build", "--output", str(lib), str(work)], cwd=work,
-                           capture_output=True, text=True)
+                           capture_output=True, text=True, env=loader.build_env())
     if r.returncode != 0:
         raise RuntimeError(f"tree-sitter build at {commit} failed:\n{r.stdout}\n{r.stderr}")
     return loader.make_parser(loader.load_language(lib))

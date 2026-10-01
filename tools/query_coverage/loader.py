@@ -5,6 +5,8 @@ from __future__ import annotations
 import contextlib
 import ctypes
 import hashlib
+import os
+import shutil
 import subprocess
 import time
 import warnings
@@ -12,6 +14,7 @@ from pathlib import Path
 
 REPO_ROOT = Path(__file__).resolve().parents[2]
 LIB_NAME = "al.dll"
+LLVM_CLANG_CL = "C:/Program Files/LLVM/bin/clang-cl.exe"
 STAMP_RELPATH = Path("tools/query_coverage/reports/.build-stamp")
 
 
@@ -87,6 +90,41 @@ def compute_stamp(repo_root: Path) -> str:
     return digest.hexdigest()
 
 
+def build_env(environ=None, *, is_windows=None, which=shutil.which, isfile=os.path.isfile) -> dict:
+    """A copy of `environ` (default os.environ) for a `tree-sitter build` subprocess, with
+    clang-cl as CC under the rule in tools/default-cc.sh -- the shell twin; keep the two
+    identical. os.environ itself is never modified.
+
+    Windows only; only when CC is unset or empty (an explicit CC, CC=cl included, wins);
+    not when TS_AL_NO_CLANG=1; clang-cl from PATH, else LLVM_CLANG_CL; not found -> no
+    change (MSVC). A CC equal to TS_AL_DEFAULT_CC is the rule's own earlier choice
+    (inherited from ts-lock.sh), not an explicit one, so the rule is re-applied to it.
+    """
+    env = dict(os.environ if environ is None else environ)
+    if not (os.name == "nt" if is_windows is None else is_windows):
+        return env
+    if env.get("TS_AL_DEFAULT_CC") and env.get("CC") == env["TS_AL_DEFAULT_CC"]:
+        del env["CC"]
+    env.pop("TS_AL_DEFAULT_CC", None)
+    if env.get("CC") or env.get("TS_AL_NO_CLANG") == "1":
+        return env
+    found = which("clang-cl") or (LLVM_CLANG_CL if isfile(LLVM_CLANG_CL) else None)
+    if found:
+        env["CC"] = env["TS_AL_DEFAULT_CC"] = found
+    return env
+
+
+def library_stamp(repo_root: Path, env=None) -> str:
+    """compute_stamp plus the compiler `build_env` selects, so switching compilers
+    rebuilds al.dll instead of keeping the other compiler's library (the trees are
+    identical either way; its speed and tools/perf's compiler probe are not). The
+    compiler is keyed by name ("clang-cl", "cl", "" for the MSVC default), not path,
+    so the shell's C:/.../clang-cl and Python's ...\\clang-cl.EXE agree."""
+    cc = (build_env() if env is None else env).get("CC", "")
+    name = cc.replace("\\", "/").rsplit("/", 1)[-1].lower().removesuffix(".exe")
+    return f"{compute_stamp(repo_root)} cc={name}"
+
+
 def _stamp_path(repo_root: Path) -> Path:
     return repo_root / STAMP_RELPATH
 
@@ -121,14 +159,15 @@ def ensure_library(repo_root: Path, force: bool = False) -> Path:
     generated output.
     """
     lib_path = repo_root / LIB_NAME
-    before_generate = compute_stamp(repo_root)
+    env = build_env()
+    before_generate = library_stamp(repo_root, env)
 
     if not force and lib_path.is_file() and read_stamp(repo_root) == before_generate:
         return lib_path
 
     with build_lock(repo_root):
         # Another process may have finished the build while we waited.
-        if not force and lib_path.is_file() and read_stamp(repo_root) == compute_stamp(repo_root):
+        if not force and lib_path.is_file() and read_stamp(repo_root) == library_stamp(repo_root, env):
             return lib_path
 
         generate_result = subprocess.run(
@@ -146,6 +185,7 @@ def ensure_library(repo_root: Path, force: bool = False) -> Path:
         result = subprocess.run(
             ["tree-sitter", "build", "--output", str(lib_path), str(repo_root)],
             cwd=repo_root,
+            env=env,
             capture_output=True,
             text=True,
         )
@@ -159,7 +199,7 @@ def ensure_library(repo_root: Path, force: bool = False) -> Path:
         # them current. Stamping the pre-generate hashes would record a state that
         # no longer exists on disk, so the very next run would see a mismatch and
         # regenerate + rebuild again, every time.
-        write_stamp(repo_root, compute_stamp(repo_root))
+        write_stamp(repo_root, library_stamp(repo_root, env))
     return lib_path
 
 
