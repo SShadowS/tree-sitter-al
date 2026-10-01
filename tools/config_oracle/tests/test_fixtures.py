@@ -205,8 +205,7 @@ def test_classes_require_a_reason(tmp_path):
 # ---- categories and evidence (A3 fix round 1, review F1) ----
 
 NEG_CASE = "tools/alc_probe/cases/oracle-negative/split-operator.al"   # X: accept; !X: reject
-NEG_ID = ("preproc_split_operator_negative_test.txt#DELIBERATE NEGATIVE -- the OPERATOR itself on "
-          "the far side of a %23if boundary#0")
+NEG_ID = "preproc_split_operator_test.txt#An OPERATOR alone in a %23if arm: the operand follows %23endif#0"
 
 
 def test_classes_require_a_category(tmp_path):

@@ -483,6 +483,10 @@ register("else_table_relation_fragment", "fragment", None,
 # assignment RHS, exit value, argument (also inside a preproc_conditional_arguments
 # arm), if/while condition, for bound, subscript index, list element, property value
 # (inside the property_expression that _property_value_with_split is aliased to, G5).
+# B3 (2026-10-01): a second grammar form whose arms hold ONE operator each, the operand
+# following #endif (`i := 1 #if X + #endif 2;`). Same type, hosts and fields, so a chosen
+# arm still lowers to `operator operand ...` pairs; no arm chosen is contract-shape, and
+# that configuration is invalid AL (alc_probe oracle-negative/split-operator.al).
 register("preproc_conditional_expression_tail", "assembler", _ASM + "expression_tail",
          hosts={h: "consumed" for h in (
              "argument_list:<children>", "assignment_statement:<children>", "exit_statement:<children>",

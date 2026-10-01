@@ -59,12 +59,6 @@ missing_separator_negative_test.txt
 # `range_expression` from `_expression`. These are the probes that decided
 # that fix should be structural rather than a new precedence number.
 range_not_an_expression_negative_test.txt
-# `1 #if X + #endif 2` -- the OPERATOR alone inside the branch. alc rejects
-# it only with X undefined (AL0104); with X defined it is valid AL and the
-# ERROR is a grammar gap owned by roadmap B3 (docs/deferred-work.md item 3,
-# tools/alc_probe/cases/oracle-negative/split-operator.al). Listed here until
-# B3 fixes it: it must leave this list then.
-preproc_split_operator_negative_test.txt
 # U+E0041, a Cf TAG character, is not an identifier character: grammar.js's
 # `[\p{L}_][\p{L}\p{N}_]*` rejects it and so does alc (AL0183). The ERROR is
 # the assertion, and this one matters more than most — until 4.0.0 the
@@ -82,3 +76,10 @@ scanner_unicode_identifier_negative_test.txt
 # `&&`/`||` in a condition. 17 of the 20 parsed with zero ERROR nodes before B2.
 # Verdicts: tools/config_oracle/probe_alc.py. The ERROR is the assertion.
 directive_line_rejected_negative_test.txt
+# B3 (2026-10-01): an #if/#elif condition left incomplete at the end of its line
+# -- a trailing and/or/not, unbalanced parentheses, or no condition word at
+# all. alc rejects every case (AL0629; AL0631 for a stray `)`):
+# tools/config_oracle/probe_alc.py dangling_* and empty_*_next_line_rejected.
+# Until B3 this file was preproc_dangling_operator_known_wrong_test.txt, a
+# tripwire pinning the clean WRONG tree. The ERROR is the assertion.
+preproc_dangling_operator_negative_test.txt

@@ -4575,14 +4575,38 @@ module.exports = grammar({
     // continuations that FOLLOW `#endif` itself, rather than leaving them to a
     // repeat in the host rule -- that placement is what let the statement
     // alternative win in earlier attempts.
-    preproc_conditional_expression_tail: $ => prec.right(seq(
-      $.preproc_if,
-      repeat1($._expression_continuation),
-      repeat(seq($.preproc_elif, repeat1($._expression_continuation))),
-      optional(seq($.preproc_else, repeat1($._expression_continuation))),
-      $.preproc_endif,
-      repeat($._expression_continuation)
+    //
+    // Second form (B3): every arm holds ONLY an operator, and the operand
+    // follows `#endif` -- `i := 1 #if X + #endif 2;`. alc accepts it with X
+    // defined, split and flat (tools/alc_probe/cases/oracle-negative/
+    // split-operator.al). It has the same hosts and fields as the first form,
+    // so after a chosen arm the children still read `operator operand ...`.
+    // The arms are a hidden COMPLETE unit ending at #endif
+    // (docs/state-reduction-method.md §2): +103 states, where the same arms
+    // spelled inline in this seq cost +260. No conflict is declared.
+    preproc_conditional_expression_tail: $ => prec.right(choice(
+      seq(
+        $.preproc_if,
+        repeat1($._expression_continuation),
+        repeat(seq($.preproc_elif, repeat1($._expression_continuation))),
+        optional(seq($.preproc_else, repeat1($._expression_continuation))),
+        $.preproc_endif,
+        repeat($._expression_continuation)
+      ),
+      seq(
+        $._preproc_operator_arms,
+        field('operand', $._expression),
+        repeat($._expression_continuation)
+      )
     )),
+
+    _preproc_operator_arms: $ => seq(
+      $.preproc_if,
+      field('operator', $._continuation_operator),
+      repeat(seq($.preproc_elif, field('operator', $._continuation_operator))),
+      optional(seq($.preproc_else, field('operator', $._continuation_operator))),
+      $.preproc_endif
+    ),
 
     // The operator set is `_continuation_operator`, not the four arithmetic
     // operators it used to be. With only `+ - * /`, a branch opening with any

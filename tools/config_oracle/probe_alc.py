@@ -29,6 +29,12 @@ def cond(c: str) -> str:
     return unit(f"#if {c}\n        Message('t');\n#else\n        {G}\n#endif")
 
 
+# B3 fix round 1 (M3): preproc_split_operator_test.txt's keyword-operator case, verbatim body.
+KEYWORD_OPERATOR_SPLIT = unit(
+    "        i := 7\n#if X\n            mod\n#endif\n            2;\n"
+    "        b := b\n#if X\n            xor\n#endif\n            true;"
+).replace("    begin\n", "    var\n        i: Integer;\n        b: Boolean;\n    begin\n", 1)
+
 # (name, source, symbols, expected_accept)
 PROBES: list[tuple[str, str, list[str], bool]] = [
     ("sanity", unit("        Message('x');"), [], True),
@@ -119,6 +125,29 @@ PROBES: list[tuple[str, str, list[str], bool]] = [
     ("if_line_comment_with_hash_accepted", unit("#if A // #region R\n        Message('t');\n#endif"), ["A"], True),
     ("elif_then_region_rejected", unit(f"#if B\n        {G}\n#elif A #region R\n        Message('t');\n#endregion\n#endif"), ["A"], False),
     ("endif_at_eof_no_newline", unit("        Message('t');") + "#if A\n#endif", ["A"], True),
+    # B3 (2026-10-01): a condition must be complete on its own line (AL0629). Each probe
+    # defines every symbol, so the continuation reading (`A and B`, active) would compile;
+    # the REJECT is the directive line. The one-line forms are the controls.
+    ("dangling_and_rejected", unit("#if A and\nB\n        Message('t');\n#endif"), ["A", "B"], False),
+    ("dangling_or_rejected", unit("#if A or\nB\n        Message('t');\n#endif"), ["A", "B"], False),
+    ("dangling_not_rejected", unit("#if not\nA\n        Message('t');\n#endif"), [], False),
+    ("dangling_and_comment_rejected", unit("#if A and // c\nB\n        Message('t');\n#endif"), ["A", "B"], False),
+    ("dangling_elif_or_rejected", unit(f"#if C\n        {G}\n#elif A or\nB\n        Message('t');\n#endif"), ["A", "B"], False),
+    ("unbalanced_open_paren_rejected", unit("#if (A and\nB)\n        Message('t');\n#endif"), ["A", "B"], False),
+    ("unbalanced_close_paren_rejected", unit("#if A)\n        Message('t');\n#endif"), ["A"], False),
+    ("one_line_and_control", unit("#if A and B\n        Message('t');\n#endif"), ["A", "B"], True),
+    ("paren_one_line_comment_paren_control", unit("#if (A and (B)) // x (\n        Message('t');\n#endif"), ["A", "B"], True),
+    ("symbol_band_control", unit("#if band\n        Message('t');\n#endif"), ["band"], True),
+    # B3 fix round 1: an EMPTY condition with the operand on the next line. A is defined,
+    # so `#if A` read across the newline would compile.
+    ("empty_if_next_line_rejected", unit("#if\nA\n        Message('t');\n#endif"), ["A"], False),
+    ("empty_if_space_next_line_rejected", unit("#if \nA\n        Message('t');\n#endif"), ["A"], False),
+    ("empty_elif_next_line_rejected", unit(f"#if C\n        {G}\n#elif\nA\n        Message('t');\n#endif"), ["A"], False),
+    ("empty_if_comment_next_line_rejected", unit("#if // c\nA\n        Message('t');\n#endif"), ["A"], False),
+    # B3 fix round 1 (M3): a keyword operator alone in an arm, the fixture case of
+    # preproc_split_operator_test.txt. X defined: `7 mod 2`, `b xor true`; undefined: `7 2`.
+    ("split_keyword_operator_defined", KEYWORD_OPERATOR_SPLIT, ["X"], True),
+    ("split_keyword_operator_undefined_rejected", KEYWORD_OPERATOR_SPLIT, [], False),
 ]
 
 

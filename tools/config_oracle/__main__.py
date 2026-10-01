@@ -43,10 +43,14 @@ RESOLVE_REASONS = ("resolver", "reference-error")
 # The oracle's own self-tests (spec sections 1-3), corpus-free and about a second: the
 # resolver self-test and its #elif first-match mutation, the comparator's mutations, the
 # precedence table's recomposition, the representation contracts' controls, and the check
-# that lowering never imports a parser (test_isolation.py). They
+# that lowering never imports a parser (test_isolation.py), and the fixture-classes
+# loader with its evidence rules (test_fixtures.py: added in B3 fix round 1, after a
+# fixture rename broke its hard-coded case id and nothing local ran it; it reads only
+# test/corpus and tmp files and imports no parser). They
 # exist only as pytest modules, so the quick tier runs those modules rather than a copy.
 SELFTESTS = ("test_resolve.py", "test_configs.py", "test_compare.py",
-             "test_precedence.py", "test_representation.py", "test_isolation.py")
+             "test_precedence.py", "test_representation.py", "test_isolation.py",
+             "test_fixtures.py")
 
 PASS, FAIL = "PASS", "FAIL"
 
