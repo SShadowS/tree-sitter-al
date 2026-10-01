@@ -115,7 +115,17 @@ def caret(v: tuple) -> tuple:
 
 
 def semver(spec: str) -> tuple:
-    """npm range or Cargo requirement: ^X, ~X, >=X, =X or bare X."""
+    """npm range or Cargo requirement: ^X, ~X, >=X, =X, bare X, or a comma-joined
+    Cargo pair of `>=X` and `<Y` (the traversal feature's `>=0.25, <0.27`)."""
+    if "," in spec:
+        lo, hi = (0, 0, 0), INF
+        for part in spec.split(","):
+            m = re.fullmatch(r"\s*(>=|<)\s*v?(\d+(?:\.\d+){0,2})\s*", part)
+            if not m:
+                raise Unreadable(f"unsupported range {spec!r}")
+            v = ver(m.group(2))
+            lo, hi = (max(lo, v), hi) if m.group(1) == ">=" else (lo, min(hi, v))
+        return lo, hi
     m = re.fullmatch(r"\s*(\^|~|>=|=)?\s*v?(\d+(?:\.\d+){0,2})\s*", spec)
     if not m:
         raise Unreadable(f"unsupported range {spec!r}")

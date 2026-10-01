@@ -72,7 +72,7 @@ def test_tilde_equal_two_components_has_no_minor_ceiling():
     ("go.mod", "github.com/tree-sitter/go-tree-sitter v0.25.0",
      "github.com/smacker/go-tree-sitter v0.0.0-20240827094217-dd81d9e9be82", "go-smacker"),
     ("Package.swift", 'from: "0.10.0"', 'from: "0.8.0"', "swift"),
-    ("Cargo.toml", 'tree-sitter = "0.25"', 'tree-sitter = "0.24"', "rust"),
+    ("Cargo.toml", 'tree-sitter = ">=0.25, <0.27"', 'tree-sitter = "0.24"', "rust"),
     ("package.json", '"tree-sitter": "^0.25.0"', '"tree-sitter": ">=0.22.4"', "node"),
     ("package.json", '"web-tree-sitter": "^0.27.0"', '"web-tree-sitter": "^0.24.7"', "wasm"),
     # A runtime declared outside the `core` extra is checked too.
@@ -127,5 +127,25 @@ def test_unreadable_range_exits_2(root, rel, old, new):
 
 def test_missing_manifest_exits_2(root):
     (root / "go.mod").unlink()
+    code, out = run(root)
+    assert code == 2, out
+
+
+def test_cargo_compound_range_is_read():
+    assert crr.semver(">=0.25, <0.27") == ((0, 25, 0), (0, 27, 0))
+    assert crr.semver("<0.27, >=0.25.1") == ((0, 25, 1), (0, 27, 0))
+
+
+def test_cargo_compound_range_with_an_old_floor_fails(root):
+    edit(root / "Cargo.toml", 'tree-sitter = { version = ">=0.25, <0.27", optional = true }',
+         'tree-sitter = { version = ">=0.24.7, <0.27", optional = true }')
+    code, out = run(root)
+    assert code == 1, out
+    assert "admits 0.24.7..<0.25.0, which loads ABI 13..14, not 15" in out
+
+
+@pytest.mark.parametrize("spec", [">=0.25, ^0.26", ">=0.25,"])
+def test_cargo_compound_range_with_another_operator_exits_2(root, spec):
+    edit(root / "Cargo.toml", '">=0.25, <0.27", optional = true', f'"{spec}", optional = true')
     code, out = run(root)
     assert code == 2, out
