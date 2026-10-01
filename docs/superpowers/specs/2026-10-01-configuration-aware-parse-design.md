@@ -1,7 +1,12 @@
 # Configuration-aware parsing: scope and design (roadmap A7)
 
-**Status:** v2, 2026-10-01. The user approved v1's design section by section. v2 folds in a
-second review round:
+**Status:** v3, 2026-10-01. The user approved v1's design section by section.
+
+- **v2** folded in the second review round.
+- **v3** folds in a third round (`spec2-review-{sol,astra,gemini}.md`): sol and astra said
+  "rework narrowly", gemini said "approve with changes".
+
+The second round was:
 
 - gpt-6-sol: rework;
 - gpt-6-astra: rework;
@@ -16,7 +21,8 @@ acceptance gates. v2 awaits the user's review.
 
 - the consumer inventory (`.superpowers/sdd/a7/consumers.md`, summarised in §1);
 - the design reviews (`.superpowers/sdd/a7/{sol,astra,gemini}-review.md`);
-- the spec reviews (`.superpowers/sdd/a7/spec-review-{sol,astra,gemini}.md`).
+- the spec reviews (`.superpowers/sdd/a7/spec-review-{sol,astra,gemini}.md` and
+  `spec2-review-{sol,astra,gemini}.md`).
 
 **Terms used throughout:**
 
@@ -104,30 +110,55 @@ three independent ports.
 
 ```c
 typedef struct al_limits {
-    size_t max_source_bytes;      /* default 64 MiB */
-    uint32_t max_nesting;         /* default 64 */
-    uint32_t max_condition_depth; /* default 32 */
-    size_t max_output_records;    /* directives + groups + events */
+    size_t max_source_bytes;       /* default 64 MiB */
+    uint32_t max_nesting;          /* default 64 */
+    uint32_t max_condition_depth;  /* default 32: parser recursion */
+    uint32_t max_condition_nodes;  /* default 256: AST nodes per condition */
+    size_t max_output_records;     /* directives + groups + events */
     size_t max_symbols;
 } al_limits;
 
+typedef enum al_status { AL_OK, AL_FAILED, AL_CANCELLED, AL_OUT_OF_MEMORY } al_status;
+
+/* Returns non-zero to request cancellation. The adapter owns the synchronisation:
+   native adapters read an atomic flag (C11 atomic_load, Rust AtomicBool);
+   the WASM adapter calls Atomics.load on a SharedArrayBuffer word. */
+typedef int (*al_cancel_fn)(void *ctx);
+
 typedef struct al_resolution al_resolution;   /* opaque */
 
-/* Reentrant and thread-safe: no global or static mutable state. All output lives in one
-   arena owned by the returned al_resolution. `cancel` is polled throughout scanning,
-   condition parsing and evaluation, at least every 64 KiB of input and at every directive,
-   so a single long line is still bounded. It may be NULL. */
-al_resolution *al_resolve(const uint8_t *source, size_t len,
-                          const char *const *symbols, size_t nsymbols,
-                          const al_limits *limits,
-                          const volatile int *cancel);
+/* Reentrant and thread-safe: no global or static mutable state.
+   On AL_OK, or on AL_FAILED, *out receives a resolution. On AL_FAILED it carries only the
+   status code and offset, never a masked buffer.
+   On AL_CANCELLED or AL_OUT_OF_MEMORY, *out is NULL. Because the status is returned
+   separately, an allocation failure of the resolution itself is still reported.
+   All output lives in one arena owned by the resolution. `cancel` (which may be NULL) is
+   polled throughout scanning, condition parsing and evaluation: at least every 64 KiB of
+   input and at every directive, so a single long line is still bounded. */
+al_status al_resolve(const uint8_t *source, size_t len,
+                     const char *const *symbols, size_t nsymbols,
+                     const al_limits *limits,
+                     al_cancel_fn cancel, void *cancel_ctx,
+                     al_resolution **out);
 void al_resolution_free(al_resolution *);
-/* accessors return pointers into the arena; they are valid until al_resolution_free */
+/* Accessors return pointers into the arena. They stay valid until al_resolution_free. */
 ```
 
-- **The condition parser** carries an explicit depth counter. If the counter passes
-  `max_condition_depth`, it returns `limit-exceeded` without recursing further.
-- **Allocation failure** returns the status `out-of-memory`.
+**Conditions are bounded in two ways:**
+
+- **Recursion depth.** The condition parser counts its depth. If the depth passes
+  `max_condition_depth`, it stops with `limit-exceeded`.
+- **AST size.** A flat chain such as `A and A and …` builds a deep AST without deep
+  recursion, so `max_condition_nodes` caps the AST node count. Evaluation is iterative,
+  with an explicit stack.
+
+**Outcome mapping** (§4.1):
+
+| Core status | Outcome |
+|---|---|
+| `AL_CANCELLED` | `cancelled` |
+| `AL_OUT_OF_MEMORY` | `operational-error` |
+| `AL_FAILED` | `resolution-failed` |
 
 ### 3.2 Input
 
@@ -154,11 +185,11 @@ void al_resolution_free(al_resolution *);
 |---|---|---|
 | `masked` | Same length as the source. See the masking rules below. | yes (`Resolution.masked`) |
 | `selected_source` | Sorted intervals of original bytes that are *selected source*: in an active arm, and not part of a conditional-directive line. | yes (`Resolution.active`). Its definition is unchanged. |
-| `retained_layout` | Bytes kept although not selected: the `\r` and `\n` of masked lines, and the leading BOM. | new; it can be derived from the reference |
+| `retained_layout` | Positions kept verbatim in `masked` but **outside** `selected_source`: the `\r` and `\n` of masked lines, and the leading BOM **only when it is not selected**. The reference marks the BOM as selected when the first line is ordinary active text. It marks it as not selected when the first line is a conditional directive. Both forms are pinned in the kernel. | new; derived from the reference |
 | `conditional_directives[]` | For `#if`/`#elif`/`#else`/`#endif`: kind, `#` offset, physical line span, condition token span, condition AST | yes (`Resolution.directives`) |
-| `definitions[]` | Active `#define`/`#undef`, in order: offset, symbol, and the change to the environment. These are **deltas**, not full environment snapshots, to avoid quadratic output. | **new** |
-| `groups[]` | For each group: its arms, and a state | partly. The reference has `arm_choice`, where a missing entry means the group was not visited and `None` means no arm was selected. |
-| `extras[]` | Active `#pragma`/`#region`/`#endregion`/`#define`/`#undef` events: kind and span | yes (`ExtraEvent` holds kind, start and end) |
+| `definitions[]` | `DefinitionDelta { offset, action: DEFINE or UNDEFINE, symbol }`, one per active `#define`/`#undef`, in order. These are deltas rather than full environment snapshots, so the output cannot grow quadratically. | **new**; F1a's first deliverable |
+| `groups[]` | For each group: its `group_id`, its `ArmDescriptor`s (§5.1) and its state | partly. The reference has `arm_choice`: a missing entry means the group was not visited, and `None` means no arm was selected. |
+| `extras[]` | Active trivia events in order, each with kind and span. The kinds are `comment`, `multiline_comment`, `pragma`, `preproc_region`, `preproc_endregion`, `define` and `undef`. | yes (`ExtraEvent` holds kind, start and end, with these kinds) |
 | `status` | `ok`, or a code with a byte offset (§3.4) | yes (`ResolveError`) |
 
 Each group has one of these states:
@@ -185,9 +216,19 @@ schema. Where the reference needs new code, the work is listed in F1a.
 - **Active text:** the scanner tracks `/* */` block comments, `//` line comments, ordinary
   quoted strings and identifiers, and verbatim `@'…'` strings. A directive-looking line
   inside a block comment or a verbatim string is text.
+- **An open active block comment or verbatim string suppresses directives.** While one is
+  open, a later line that starts with `#` is comment or string content, not a directive,
+  until the comment or string closes. The reference already behaves this way.
 - **Inactive text:** only lines that start with a directive (optional whitespace, then `#`)
   are recognised.
-- A `/* */` comment on a directive line is `block-comment-on-directive`.
+- **Block comments on directive lines are diagnosed per directive kind**, exactly as the
+  reference does:
+  - on `#if`/`#elif`/`#else`/`#endif`: `block-comment-on-directive`;
+  - on `#define`/`#undef`: any trailing content, a block comment included, is
+    `malformed-define`;
+  - `#pragma`/`#region`/`#endregion` lines are not checked.
+
+  Any intentional change to this behaviour needs its own compiler-backed kernel vector.
 
 ### 3.4 Status codes: fail closed
 
@@ -237,7 +278,10 @@ Four tiers. Only tier 1 is authoritative.
    - nesting and depth at their limits;
    - `#elif` first-match;
    - sequential `#define`/`#undef`;
-   - the three group states.
+   - the three group states;
+   - both first-line BOM forms;
+   - a long flat `and` chain at `max_condition_nodes`;
+   - an open active comment spanning a `#`-line.
 2. **Compiler anchoring.** Every `tools/alc_probe` case contributes the compiler's
    *selection* verdict: alc identity, discriminating controls, and both split and flat
    compiles. Those cases also run as **raw compiler probes** for inputs the resolver refuses.
@@ -274,7 +318,7 @@ configured.parse(new_source, symbols, *, limits, previous=None, edits=None, canc
 | Outcome | Meaning |
 |---|---|
 | `resolution-failed` | the core's code; there is no tree |
-| `cancelled` | the parser is reset afterwards, never resumed |
+| `cancelled` | from the core or the parse; the parser is reset afterwards, never resumed |
 | `operational-error` | artifact load or allocation failure |
 | `parsed-clean` | `has_error` is false. This is **not** a validity claim. |
 | `parsed-recovered` | `has_error` is true. The tree is returned, and its error and missing nodes are listed. |
@@ -321,23 +365,32 @@ Compiler validity is always `unknown` from the API.
 
 v1 is correctness first. A faster scheme may replace it only if it passes the same tests.
 
-1. **Re-resolve the whole new source.** The cost of this is measured, not assumed.
-2. **If `new_masked` equals `previous.masked` byte for byte** and the edits are
-   equal-length, reuse the previous tree and update only the source and revision.
-   Otherwise go on.
-3. **Compute the masked edit.** The masked buffer always has the same length as its source.
-   So the `edits` from step 1, applied in original coordinates, are also edits to the masked
-   buffer: insertions and deletions at the same offsets. On top of those come the bytes
-   whose masking flipped.
-   - Express the source edits as `tree.edit` calls in **descending start-offset order**,
-     with points computed from the old and new masked texts.
-   - Express the flipped regions as replacement edits.
-   - **Fall back to a fresh parse** if:
-     - the flipped bytes exceed 64 KiB;
-     - they span more than 16 disjoint regions;
-     - `edits` were not supplied.
-4. **Parse** `new_masked` with the copied and edited tree.
-5. **If re-resolution fails,** return `resolution-failed` and keep no tree.
+1. **Re-resolve the whole new source.** The cost of this is measured, not assumed. If
+   re-resolution fails or is cancelled, report that outcome and keep no tree.
+2. **Check for a version change.** If `symbols`, `grammar_build_id`, the resolver version or
+   the schema version changed, parse fresh.
+3. **Reuse the tree only.** If `new_masked` equals `previous.masked` byte for byte, reuse
+   the previous tree. Even then, the result still carries the **new** resolution, source,
+   revision and coordinate maps. A changed `#if A` → `#if B` can leave the masked bytes
+   unchanged while group selection changes. An inactive `é` → `ab` keeps the UTF-8 length
+   and the masked bytes, but changes the UTF-16 map.
+4. **Otherwise apply one bounded replacement** (v1). Compute the longest common prefix and
+   suffix of `previous.masked` and `new_masked`, and move both boundaries outwards to UTF-8
+   character boundaries. That gives a single `tree.edit` on a copy of the previous tree:
+   - `start` comes from the prefix;
+   - `old_end` and `old_end_point` are computed in `previous.masked`;
+   - `new_end` and `new_end_point` are computed in `new_masked`.
+
+   No intermediate buffers are involved, because there is exactly one edit. The caller's
+   `edits` serve only as a consistency check: applied to `previous.source`, they must yield
+   `new_source`.
+
+   **Fall back to a fresh parse** when the replacement exceeds 1 MiB.
+5. **Parse** `new_masked` with the edited copy.
+
+A finer-grained scheme with several edits may replace step 4 later. It must specify an
+intermediate buffer for each edit, as `tools/perf/incremental.py::edit_args()` does, and
+pass the same tests.
 
 **What forces a fresh parse:** a change of symbol set, `grammar_build_id`, resolver version
 or schema version.
@@ -362,12 +415,24 @@ points.
 
 ### 4.5 Cancellation
 
-Cancellation spans every phase: resolution, diffing and the parse. The parse uses
-tree-sitter's progress callback or timeout, and the parser is reset after any
-cancellation. In WASM a synchronous call cannot see a flag set from the same thread, so
-cancellation is supported **only when the API runs in a Worker**. The cancel flag is then
-a `SharedArrayBuffer` word, read by both the resolver and the progress callback. On the
-main thread the API offers no mid-call cancellation, and the docs say so.
+Cancellation spans every phase: resolution (`al_cancel_fn`), diffing, and the parse
+(tree-sitter's progress callback or timeout). The parser is reset after a cancellation.
+
+How each runtime cancels:
+
+- **Native.** Adapters back the cancel token with a real atomic flag (C11 `atomic_int`,
+  Rust `AtomicBool`, Python a `threading.Event` read through a C atomic). A plain
+  `volatile int` is not used, because concurrent writes to it are a data race.
+- **WASM.** Cancellation is supported only when **both** of these hold:
+  - the API runs in a Worker;
+  - `SharedArrayBuffer` is available, which requires the page to be cross-origin isolated.
+
+  When they hold, the cancel token is a `SharedArrayBuffer` word. The resolver's
+  `al_cancel_fn` is a JS import that calls `Atomics.load` on it, and so is the parse
+  progress callback. No shared linear memory is needed.
+- **WASM without those capabilities.** Passing a cancel token is rejected with an explicit
+  `operational-error: cancellation-unsupported`, never silently ignored. The documented
+  fallback is to terminate the Worker.
 
 Tests cover cancellation during a long-line resolution, during diffing and during a parse.
 Each test is followed by a successful parse of a different document on the same parser.
@@ -380,27 +445,42 @@ Parsing all configurations at once, and merging configured trees.
 
 ### 5.1 The shared arm model
 
-F0, P2 and P3 all use one model. It is defined here before any of them is planned, and it
-adds **no** P1 node types.
+F0, P2 and P3 all use one model, defined here before any of them is planned. It adds **no**
+P1 node types. The model has three layers, which keep the resolver independent of the tree
+and the tree independent of any configuration.
 
 ```
-select_arm(group_id, resolution)
-  -> selected(ArmView) | no-selection | parent-inactive | unresolved
+# 1. Resolver layer, with no tree. The core outputs it (groups[] in 3.3).
+ArmDescriptor {
+  group_id,          # (document revision, '#if' byte offset)
+  arm_id,            # 0-based within the group
+  directive_offsets, # the '#' offsets of this arm's directive lines
+  raw_range          # byte range of the arm body, before any masking
+}
 
-ArmView {
-  group_id,
-  arm_id,
-  source_ranges,        # the selected source bytes of the arm
-  fielded_fragments     # ordered (field name | none, P1 child node | anonymous token)
-                        # pieces: the P1 children inside the arm, in source order.
-                        # Hidden rules such as _procedure_header appear as their children.
+# 2. Configuration-dependent selection, from the resolution alone.
+select_arm(group_id, resolution)
+  -> selected(arm_id) | no-selection | parent-inactive | unresolved
+selected_ranges(arm_id, resolution)   # selected-source bytes inside the arm
+
+# 3. Tree binding, unconfigured. It needs a P1 document.
+bind_arm(descriptor, p1_document, traversal_policy) -> ArmFragments {
+  descriptor,
+  fragments    # ordered (field name or none, P1 child node or anonymous token): the P1
+               # pieces inside raw_range, in source order. Hidden rules such as
+               # _procedure_header appear as their children.
 }
 ```
 
-- **One P1 node may contain several groups.** For example, `preproc_split_if_then_begin`
-  has an opening group and a closing group. `groups_of(p1_node)` lists them in order.
-- **`active_arms(p1_node, configured)`** returns, for each group, its `select_arm` result.
-  This replaces v1's `active_arm → node`, which promised a node that does not exist.
+- **`p1_document`** pairs a P1 tree with its source revision and `grammar_build_id`. A
+  descriptor from another revision is rejected.
+- **A P1 node can hold several groups.** For example, `preproc_split_if_then_begin` has an
+  opening group and a closing group. `groups_of(p1_node)` lists them in order.
+- **F0 uses layers 1 and 3 only, with no configuration.** F0 needs the arm boundaries, which
+  come from the core's `groups[]` or from the P1 tree's own directive nodes. It never needs a
+  selection.
+- **P3 combines all three:**
+  `active_arms(p1_node, configured) = [(descriptor, select_arm(…), bind_arm(…))]`.
 
 ### 5.2 Source coverage
 
@@ -459,7 +539,7 @@ as a classification rule.
 | Class | Meaning | Default `walk` behaviour |
 |---|---|---|
 | ordinary | not a configuration node | normal descent |
-| branch container | a group whose arms are complete units (registry kind `branch-select`) | descend into every arm, and report `(group, arm)` to the visitor |
+| branch container | a group whose arms are alternatives in one host slot (registry kind `branch-select`). An arm is **not** necessarily a complete unit. | descend into every arm, and report `(group, arm, host policy)` to the visitor |
 | assembler | a construct built from arm fragments plus shared parts, possibly crossing `#endif` (registry `assembler`) | hand the visitor a `SplitInfo` and never flatten it |
 | fragment | a piece that only makes sense inside an assembler (registry `fragment`) | delivered through `SplitInfo` |
 | token alias | a keyword or terminal emitted by a split token (registry `token-alias`) | treated as an ordinary token |
@@ -476,13 +556,20 @@ Known exceptions that **must** be pinned by witnesses:
 - `preproc_split_case_end_branch` and `preproc_split_report_brace_close` are fragments.
 - `else_table_relation_fragment` has no prefix.
 - `pragma` is not in the registry today.
-- The 7 registry `unsupported` types each get an explicit class and a witness. An
-  `unsupported` lowering status is not a traversal class.
+- Every registry `unsupported` type gets an explicit class and a witness. The set is taken
+  from the census, never from a hard-coded count: there are 27 today, 23 in the
+  registration loop plus 4 explicit. An `unsupported` lowering status is not a traversal
+  class.
+- **Host policies** (`list-run`, `single-slot`, `splice-repeat`) are part of the traversal
+  metadata for every branch container. A `list-run` arm can carry separators and, for
+  permissions, the property terminator. Witnesses must cover a separator and a terminator,
+  not only the assembler exceptions.
 
 **`SplitInfo`** carries:
 
 - the `groups_of` list;
-- each group's arms as `ArmView` fragments (§5.1), unconfigured, so every arm is present;
+- each group's arms as `ArmFragments` (§5.1, layers 1 and 3), unconfigured, so every arm is
+  present;
 - the shared parts, in source order, with their field names;
 - anonymous tokens, kept as tokens.
 
@@ -504,7 +591,7 @@ fails the gate. Same discipline as `contracts.census`.
 | DevOpsWorker | recognises split procedures |
 | al-differ, code-graph-rag | find definitions in every conditional arm, and object bodies through split declarations |
 | graphify | its `#elif` and `#else` condition case. It is reported `unsupported` until the symbolic API exists. |
-| **LethAL R214, part 1** | statement-position recognition under conditional parents. The previously lost active call and assignment sites must be found. |
+| **LethAL R214, part 1** | LethAL's own mutation-site rule (`is_mutation_site`), or a harness that reproduces it, rewritten on F0's `walk` and `SplitInfo`. Statements under conditional parents must pass site selection, and the previously lost active call and assignment sites must be found. |
 
 4. **Docs:** recursion alone does not fix node-kind recognition. Use `SplitInfo`.
 
@@ -535,15 +622,20 @@ next to `scanner.c` is not exposed through `web-tree-sitter`.
 
 Go and Swift come later.
 
-**Clean-install artifact tests:** install each published artifact into a clean environment
-with no Python and no repository tools, then load and parse. Include a real browser WASM
-load.
+**Clean-install artifact tests:** install each published artifact into a clean
+environment with no repository checkout and no repository tools, then load and parse.
+
+- The native, JS and WASM artifacts must not require Python.
+- The Python artifact needs only its declared interpreter and runtime.
+
+Include a real browser WASM load.
 
 **Identity:** every result carries `grammar_build_id`, `resolver_version` and
 `schema_version`. Package semver alone does not identify unreleased builds.
 
-**`node-types.json`:** the canonical file at the repo root and in every package is always
-generated from the full grammar.
+**`node-types.json`:** the canonical file stays at its existing location,
+`src/node-types.json`, which `bindings/rust/lib.rs` includes, and at its existing package
+paths. It is always generated from the full grammar.
 
 ### 7.2 Slim grammar (F1d): a spike that yields eligibility, not a release
 
@@ -555,14 +647,17 @@ removed by a generate-time flag.
 - the directive extras that masking keeps;
 - scanner compatibility: external-token order and the error-recovery guard.
 
-**Harnesses come first, and must be built and verified before any number counts:**
+**Harnesses.**
 
-- `ab` in parse-only configured-input mode. Corpus files are resolved and masked into
-  memory **once**, before the timed ABBA loop.
-- an end-to-end API benchmark: resolver plus parse plus adapter;
-- a WASM A/B harness covering throughput, compressed size, and instantiate and compile
-  time;
-- an incremental benchmark.
+- **F1b already builds these (§8.4):**
+  - `ab` in parse-only configured-input mode, with masking done once before the timed loop;
+  - the end-to-end API benchmark;
+  - the incremental benchmark.
+- **F1d adds:**
+  - slim-against-full A/B modes for each of the above;
+  - a WASM A/B harness covering throughput, brotli size, and instantiate plus compile time.
+
+Every harness is verified before any number counts.
 
 **Before any timing,** the complete public trees must be equivalent on masked inputs:
 
@@ -575,9 +670,11 @@ removed by a generate-time flag.
 
 **Eligibility.** Two bars are declared in advance and assessed independently:
 
-- **Native/all runtimes:** median parse throughput ratio slim/full ≥ 1.25 on the configured
-  workload. The 95% CI lower bound must be ≥ 1.20, from 24 or more `ab` rounds or two
-  agreeing runs. No runtime may show a p99 latency or peak-memory regression > 5%.
+- **Native/all runtimes:** the **end-to-end** throughput ratio slim/full, through the
+  configured API (resolver plus parse plus adapter), must be ≥ 1.25. That is a median, with
+  a 95% CI lower bound ≥ 1.20, from 24 or more interleaved rounds or two agreeing runs. No
+  runtime may show a p99 latency or peak-memory regression > 5%. Parse-only `ab` ratios are
+  recorded as explanation, not as the bar.
 - **WASM-only:** a reduction of ≥ 40% in **brotli-compressed** artifact size (including the
   companion resolver and loader), **or** a reduction of ≥ 40% in `WebAssembly.instantiate`
   plus compile time in Node/V8. Throughput may not regress by more than 5%.
@@ -611,8 +708,13 @@ Each row gets an expected class: `valid`, `expected-invalid` (with compiler evid
 **The gate requires all of the following:**
 
 1. **Every row is accounted for** in every runtime under test, and every requested root is
-   non-empty. The successful population must be non-vacuous: every named witness plus at
-   least 1,000 corpus configurations, with the count reported.
+   non-empty. There are two populations:
+   - **Quick tier** (`validate-grammar.sh`, CI): every named witness and alc-probe row.
+     Every one must have an outcome.
+   - **Full tier** (`--full`, the corpus sweep): the quick tier plus at least 1,000 corpus
+     configurations across the four corpora, with the count reported.
+
+   Neither tier may pass vacuously.
 2. **Zero unclassified outcomes.**
    - Every `valid` row must be `parsed-clean`. Visible ERROR nodes count, not just hidden
      MISSING ones.
@@ -642,9 +744,10 @@ Each row gets an expected class: `valid`, `expected-invalid` (with compiler evid
      versions, runtime;
    - per-root counts of clean, recovered, failed, classified and untested.
 
-**Placement:** `validate-grammar.sh` runs the manifest witnesses. CI runs the witnesses and
-the gate self-test. The corpus sweep (`python -m tools.configured sweep`) runs under
-`--full`.
+**Placement:**
+
+- the quick tier runs in `validate-grammar.sh` and CI, along with the gate self-test;
+- the full tier runs in `python -m tools.configured sweep` under `validate-grammar.sh --full`.
 
 ### 8.2 P3: correspondence
 
@@ -659,8 +762,13 @@ the gate self-test. The corpus sweep (`python -m tools.configured sweep`) runs u
    intervals, parent.
 2. **Mutation tests:** wrong parentage, provenance with the same text but a different arm,
    a dropped link, a stale document. Each must fail.
-3. **`unsupported` cells** are listed explicitly, each with an owner. They **never count**
-   toward the mandatory minimum.
+3. **Completion rule.** The required cells are every `(type, host, arm shape, reading)`
+   cell that is observed **either** in the four production corpora **or** in a corpus
+   fixture.
+   - The census lists them, and every required cell needs a supported witness.
+   - `unsupported` is allowed **only** for cells that are observed in neither, and each
+     such cell needs an owner.
+   - A required cell marked `unsupported` fails the gate.
 4. **Coverage witnesses:**
    - directive-only, trivia-only and ERROR nodes;
    - wrong-document rejection;
@@ -674,18 +782,19 @@ The four tiers of §3.6, in CI.
 
 ### 8.4 Performance
 
-P2 performance is measured with the harnesses from §7.2, on the pinned V-Cache core, under
-`docs/performance-baselines.md` (same session, `ab`).
+F1b builds the configured harnesses and records P2 baselines: configured `ab`, end-to-end
+and incremental. They are measured on the pinned V-Cache core under
+`docs/performance-baselines.md` (same session, `ab`). F1d reuses them.
 
 ## 9. Roadmap placement and release boundaries
 
 | Item | Content | Depends on | When |
 |---|---|---|---|
-| **F0** | Classified traversal policy (§6), `SplitInfo` and `ArmView` (§5.1, unconfigured), Rust/Python/Node/WASM helpers, consumer canaries including LethAL R214 part 1 | this spec | in parallel with Phase B |
+| **F0** | Classified traversal policy (§6), `SplitInfo` and `ArmDescriptor`/`ArmFragments` (§5.1 layers 1 and 3, unconfigured), Rust/Python/Node/WASM helpers, consumer canaries including LethAL R214 part 1 | this spec | in parallel with Phase B |
 | **F1a** | `al_preproc` C core, the reference schema upgrade, the four conformance tiers, limits, cancellation, `app.json` helper | this spec | in parallel with Phase C |
-| **F1b** | `configured` API and adapters, coordinates, incremental model, cancellation, packaging and clean-install tests, the P2 gate (§8.1), **coverage (§5.2), including R214 part 2**, first consumers al-perf (P2) and LethAL (coverage) | F1a | after F1a |
+| **F1b** | `configured` API and adapters, coordinates, incremental model, cancellation, packaging and clean-install tests, the P2 gate (§8.1), **coverage (§5.2), including R214 part 2**, first consumers al-perf (P2) and LethAL (coverage); the configured `ab`, end-to-end and incremental harnesses with recorded P2 baselines (§8.4) | F1a | after F1a |
 | **F1c** | structural correspondence (§5.3), the supported matrix (§8.2), configured semantic lowering, al-sem `object_kind_of` fix | F1b **and** the relevant C1 contracts | after both |
-| **F1d** | slim-grammar spike: harnesses plus eligibility (§7.2) | F1b | after F1b |
+| **F1d** | slim-grammar spike: slim-vs-full modes of the F1b harnesses, a WASM A/B harness, eligibility (§7.2) | F1b | after F1b |
 | **E4** | consumer compatibility process (§10), own brainstorm | this spec | before the next release |
 
 **Release boundaries.**
