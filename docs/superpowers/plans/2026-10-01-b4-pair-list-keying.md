@@ -29,7 +29,7 @@ pair list instead of a comparison, matching alc 18.0.41.
   `docs/agent-brief-rules.md`.
 - **Git Bash with Windows paths.** Never `2>nul`. Run `tree-sitter` only through
   `./tools/ts-lock.sh`. `python -m tools.perf ab` takes the lock itself, so do not wrap it.
-- **Branch:** `fix/b4-pair-list-keying`, off main at `db7e291`. Do not push.
+- **Branch:** `fix/b4-pair-list-keying`, off main at `e552175` (this plan's commit; the grammar is unchanged since `db7e291`). Do not push.
 - **Forbidden commands:**
   - `git stash`, `git reset --hard`, `git checkout --`, `git restore`, `git clean -f`.
   - `find /`, or any search outside the repo, the scratchpad or the four corpus roots.
