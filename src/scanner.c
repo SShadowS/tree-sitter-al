@@ -433,7 +433,8 @@ static bool line_rest_is_blank(TSLexer *lexer) {
 //
 // B3: the condition must also be COMPLETE on its line. A line whose last
 // condition word is `and`, `or` or `not`, or whose parentheses do not balance,
-// is AL0629 (probe_alc.py dangling_*): the operand on the next line is not
+// is AL0629 (probe_alc.py dangling_*), and so is a line with no condition at
+// all (empty_*): the operand on the next line is not
 // read. Without this the grammar's condition simply continued across the
 // newline (DIRECTIVE_EOL cannot fire mid-expression) and absorbed it. Words
 // are compared whole, so `band` and `andx` are symbols. Every check here
@@ -442,7 +443,10 @@ static bool line_rest_is_blank(TSLexer *lexer) {
 // line (consume_line only marks what it advances over).
 static bool opener_line_is_malformed(TSLexer *lexer) {
   int depth = 0;           // '(' minus ')'; negative is unbalanced for good
-  bool dangling = false;   // the last word read was and/or/not
+  // The last word read was and/or/not -- or no word has been read yet: an
+  // EMPTY condition (`#if`, `#if // c`) with the operand on the next line is
+  // the same AL0629 class (probe_alc empty_*_next_line_rejected).
+  bool dangling = true;
   while (lexer->lookahead != '\n' && !lexer->eof(lexer)) {
     int32_t c = lexer->lookahead;
     if (c == '#') return true;

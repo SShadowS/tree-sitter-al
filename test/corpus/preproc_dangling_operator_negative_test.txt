@@ -363,3 +363,212 @@ BAR
                 (preproc_close))))
           (end_keyword))))))
 
+================================================================================
+DELIBERATE NEGATIVE -- an empty #if condition: the next line is not its condition
+--
+B3 fix round 1: a line with NO condition word is incomplete too. Before it,
+`#if` / `FOO` parsed clean as `#if FOO`, condition read across the newline.
+alc rejects all four forms with AL0629 with FOO defined (probe_alc
+empty_*_next_line_rejected).
+================================================================================
+
+codeunit 50500 X
+{
+    procedure P()
+    var
+        i: Integer;
+    begin
+#if
+FOO
+        i := 1;
+#endif
+    end;
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (procedure
+        (procedure_keyword)
+        name: (identifier)
+        (var_section
+          (var_keyword)
+          body: (var_body
+            (variable_declaration
+              name: (identifier)
+              type: (type_specification
+                (basic_type)))))
+        body: (code_block
+          (begin_keyword)
+          (ERROR)
+          body: (statement_block
+            (identifier)
+            (assignment_statement
+              left: (identifier)
+              operator: (assignment_operator)
+              right: (integer)))
+          (preproc_split_block_close_after_endif
+            (preproc_endif
+              (preproc_close))
+            (end_keyword)))))))
+
+================================================================================
+DELIBERATE NEGATIVE -- an empty #if condition with a trailing space
+================================================================================
+
+codeunit 50500 X
+{
+    procedure P()
+    var
+        i: Integer;
+    begin
+#if 
+FOO
+        i := 1;
+#endif
+    end;
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (procedure
+        (procedure_keyword)
+        name: (identifier)
+        (var_section
+          (var_keyword)
+          body: (var_body
+            (variable_declaration
+              name: (identifier)
+              type: (type_specification
+                (basic_type)))))
+        body: (code_block
+          (begin_keyword)
+          (ERROR)
+          body: (statement_block
+            (identifier)
+            (assignment_statement
+              left: (identifier)
+              operator: (assignment_operator)
+              right: (integer)))
+          (preproc_split_block_close_after_endif
+            (preproc_endif
+              (preproc_close))
+            (end_keyword)))))))
+
+================================================================================
+DELIBERATE NEGATIVE -- an empty #if condition before a line comment
+================================================================================
+
+codeunit 50500 X
+{
+    procedure P()
+    var
+        i: Integer;
+    begin
+#if // operand below
+FOO
+        i := 1;
+#endif
+    end;
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (procedure
+        (procedure_keyword)
+        name: (identifier)
+        (var_section
+          (var_keyword)
+          body: (var_body
+            (variable_declaration
+              name: (identifier)
+              type: (type_specification
+                (basic_type)))))
+        body: (code_block
+          (begin_keyword)
+          (ERROR)
+          body: (statement_block
+            (identifier)
+            (assignment_statement
+              left: (identifier)
+              operator: (assignment_operator)
+              right: (integer)))
+          (preproc_split_block_close_after_endif
+            (preproc_endif
+              (preproc_close))
+            (end_keyword)))))))
+
+================================================================================
+DELIBERATE NEGATIVE -- an empty #elif condition
+================================================================================
+
+codeunit 50500 X
+{
+    procedure P()
+    var
+        i: Integer;
+    begin
+#if BAZ
+        i := 2;
+#elif
+FOO
+        i := 1;
+#endif
+    end;
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (procedure
+        (procedure_keyword)
+        name: (identifier)
+        (var_section
+          (var_keyword)
+          body: (var_body
+            (variable_declaration
+              name: (identifier)
+              type: (type_specification
+                (basic_type)))))
+        body: (code_block
+          (begin_keyword)
+          body: (statement_block
+            (preproc_conditional_statement
+              (preproc_if
+                (preproc_open)
+                condition: (identifier))
+              (assignment_statement
+                left: (identifier)
+                operator: (assignment_operator)
+                right: (integer))
+              (ERROR)
+              (identifier)
+              (assignment_statement
+                left: (identifier)
+                operator: (assignment_operator)
+                right: (integer))
+              (preproc_endif
+                (preproc_close))))
+          (end_keyword))))))

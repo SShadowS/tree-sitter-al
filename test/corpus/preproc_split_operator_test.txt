@@ -228,3 +228,82 @@ codeunit 50206 D
                         left: (integer)
                         right: (integer))))))))
           (end_keyword))))))
+
+================================================================================
+An operator alone in a #if arm: a keyword operator (mod, xor) is not a statement
+--
+Before B3 both statements parsed CLEAN and WRONG: no tail rule matched, so the
+#if became a statement-level preproc_conditional_statement holding `mod` (or
+`xor`) as an identifier STATEMENT, and `2` (or `true`) was a loose statement
+after #endif. Zero ERROR nodes. alc reads `7 mod 2` and `b xor true` with X
+defined. Now both are the tail's operator-only form, operand after #endif.
+================================================================================
+
+codeunit 50207 D
+{
+    procedure P()
+    var
+        i: Integer;
+        b: Boolean;
+    begin
+        i := 7
+#if X
+            mod
+#endif
+            2;
+        b := b
+#if X
+            xor
+#endif
+            true;
+    end;
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (procedure
+        (procedure_keyword)
+        name: (identifier)
+        (var_section
+          (var_keyword)
+          body: (var_body
+            (variable_declaration
+              name: (identifier)
+              type: (type_specification
+                (basic_type)))
+            (variable_declaration
+              name: (identifier)
+              type: (type_specification
+                (basic_type)))))
+        body: (code_block
+          (begin_keyword)
+          body: (statement_block
+            (assignment_statement
+              left: (identifier)
+              operator: (assignment_operator)
+              right: (integer)
+              (preproc_conditional_expression_tail
+                (preproc_if
+                  (preproc_open)
+                  condition: (identifier))
+                (preproc_endif
+                  (preproc_close))
+                operand: (integer)))
+            (assignment_statement
+              left: (identifier)
+              operator: (assignment_operator)
+              right: (identifier)
+              (preproc_conditional_expression_tail
+                (preproc_if
+                  (preproc_open)
+                  condition: (identifier))
+                (preproc_endif
+                  (preproc_close))
+                operand: (boolean))))
+          (end_keyword))))))
