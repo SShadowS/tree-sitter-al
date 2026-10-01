@@ -1,0 +1,15 @@
+{"revision": "4f8911193c875a4d", "arms": [
+{"type": "preproc_conditional_permissions", "start": 72, "if": 72, "arm": 0, "pieces": [[null, "tabledata_permission", true, 102, 122], [null, ";", false, 122, 123]]},
+{"type": "preproc_conditional_permissions", "start": 72, "if": 72, "arm": 1, "pieces": [[null, "tabledata_permission", true, 148, 166], [null, ",", false, 166, 167], [null, "tabledata_permission", true, 186, 208], [null, ";", false, 208, 209]]},
+{"type": "preproc_split_procedure", "start": 260, "if": 260, "arm": 0, "pieces": [[null, "procedure_keyword", true, 276, 285], ["name", "identifier", true, 286, 291], [null, "(", false, 291, 292], ["parameters", "parameter_list", true, 292, 302], [null, ")", false, 302, 303]]},
+{"type": "preproc_split_procedure", "start": 260, "if": 260, "arm": 1, "pieces": [[null, "procedure_keyword", true, 314, 323], ["name", "identifier", true, 324, 329], [null, "(", false, 329, 330], ["parameters", "parameter_list", true, 330, 352], [null, ")", false, 352, 353]]},
+{"type": "preproc_conditional_expression_tail", "start": 468, "if": 468, "arm": 0, "pieces": [["operator", "+", false, 492, 493], ["operand", "integer", true, 494, 495]]},
+{"type": "preproc_split_if_then_begin", "start": 539, "if": 539, "arm": 0, "pieces": [[null, "if_keyword", true, 563, 565], ["condition", "comparison_expression", true, 566, 571], [null, "then_keyword", true, 572, 576], [null, "begin_keyword", true, 577, 582], [null, "call_expression", true, 599, 611], [null, ";", false, 611, 612]]},
+{"type": "preproc_split_if_then_begin", "start": 539, "if": 650, "arm": 0, "pieces": [[null, "end_keyword", true, 674, 677], [null, ";", false, 677, 678]]},
+{"type": "preproc_split_case_statement_end", "start": 827, "if": 899, "arm": 0, "pieces": [["body", "call_expression", true, 927, 941], [null, ";", false, 941, 942], [null, "end_keyword", true, 955, 958], [null, ";", false, 958, 959], ["following", "statement_block", true, 972, 991]]},
+{"type": "preproc_split_case_statement_end", "start": 827, "if": 899, "arm": 1, "pieces": [["body", "call_expression", true, 1014, 1029], [null, ";", false, 1029, 1030], [null, "end_keyword", true, 1043, 1046], [null, ";", false, 1046, 1047], ["following", "statement_block", true, 1060, 1079]]},
+{"type": "preproc_conditional_table_relation", "start": 1239, "if": 1239, "arm": 0, "pieces": [[null, "else_keyword", true, 1267, 1271], ["else_relation", "table_relation_expression", true, 1272, 1308], [null, ";", false, 1308, 1309]]},
+{"type": "preproc_conditional_table_relation", "start": 1239, "if": 1239, "arm": 1, "pieces": [[null, "else_keyword", true, 1332, 1336], ["else_relation", "table_relation_expression", true, 1337, 1378], [null, ";", false, 1378, 1379]]},
+{"type": "preproc_conditional_property_value", "start": 1470, "if": 1470, "arm": 0, "pieces": [["value", "identifier", true, 1498, 1513], [null, ";", false, 1513, 1514]]},
+{"type": "preproc_conditional_property_value", "start": 1470, "if": 1470, "arm": 1, "pieces": [["value", "identifier", true, 1537, 1551], [null, ";", false, 1551, 1552]]}
+]}

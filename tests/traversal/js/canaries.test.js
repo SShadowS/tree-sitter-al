@@ -174,24 +174,13 @@ const SITE_TYPES = new Set(['call_expression', 'assignment_statement']);
 // The fields LethAL already treats as holding one statement (SINGLE_STATEMENT_SLOTS' field half).
 const STATEMENT_FIELDS = new Set([...SINGLE_STATEMENT_SLOTS].map((s) => s.split('.')[1]));
 
-// A fragment is one piece of its assembler's arm (SplitInfo gives it no groups of its
-// own when it sits inside one arm), so its children are pieces of that same arm.
-function expandFragments(pieces) {
-  return pieces.flatMap((f) => {
-    if (policy.cls(f.node.type) !== 'fragment') return [f];
-    const kids = [];
-    for (let i = 0; i < f.node.childCount; i++) kids.push({ field: f.node.fieldNameForChild(i) || null, node: f.node.child(i) });
-    return expandFragments(kids);
-  });
-}
-
 // Statements a split construct holds -- an arm piece or a shared part of an assembler,
-// or a piece of a fragment in one of its arms -- are statements when the assembler
-// itself fills a statement slot. SplitInfo says which pieces those are; the parent-type
-// check never could.
-function splitStatementSites(v) {
+// or a piece of a fragment in one of its arms (T.armPieces expands those) -- are
+// statements when the assembler itself fills a statement slot. SplitInfo says which
+// pieces those are; the parent-type check never could.
+function splitStatementSites(v, doc) {
   if (v.cls !== 'assembler' || !v.split || !isStatementSlotF0(v)) return [];
-  const pieces = expandFragments([...v.split.groups.flatMap((g) => g.arms.flatMap((a) => a.fragments)), ...v.split.shared]);
+  const pieces = [...v.split.groups.flatMap((g) => g.arms.flatMap((a) => T.armPieces(a, doc, policy))), ...v.split.shared];
   return pieces.filter((f) => (f.field === null || STATEMENT_FIELDS.has(f.field)) && SITE_TYPES.has(f.node.type))
     .map((f) => f.node);
 }
@@ -201,7 +190,7 @@ function splitStatementSites(v) {
 function siteTable(name) {
   const { doc } = load(name);
   const visits = T.walk(doc, policy);
-  const held = new Set(visits.flatMap(splitStatementSites).map((n) => n.id));
+  const held = new Set(visits.flatMap((v) => splitStatementSites(v, doc)).map((n) => n.id));
   return visits.filter((v) => SITE_TYPES.has(v.type)).map((v) => [
     textOf(doc, v.node).split(/\r?\n/)[0],
     v.arms.map(([g, a]) => `${g}/${a}`).join(' '),

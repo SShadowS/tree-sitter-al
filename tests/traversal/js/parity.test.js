@@ -47,6 +47,25 @@ for (const runtime of ['web-tree-sitter', 'native tree-sitter']) {
 }
 
 for (const runtime of ['web-tree-sitter', 'native tree-sitter']) {
+  test(`${runtime}: assemblers.al matches its expected arm pieces`, () => {
+    const text = fs.readFileSync(path.join(FIX, 'assemblers.al'), 'utf8');
+    const want = JSON.parse(fs.readFileSync(path.join(FIX, 'assemblers.arm_pieces.json'), 'utf8'));
+    const doc = new T.Document(parsers[runtime].parse(text), text, policy);
+    const arms = [];
+    for (const v of T.walk(doc, policy)) {
+      if (!v.split) continue;
+      for (const g of v.split.groups) {
+        for (const a of g.arms) {
+          arms.push({ type: v.type, start: v.start, if: g.groupId[1], arm: a.descriptor.armId,
+            pieces: T.armPieces(a, doc, policy).map((f) => [f.field, f.node.type, f.node.isNamed, doc.start(f.node), doc.end(f.node)]) });
+        }
+      }
+    }
+    assert.deepStrictEqual({ revision: doc.revision, arms }, want);
+  });
+}
+
+for (const runtime of ['web-tree-sitter', 'native tree-sitter']) {
   // Ports of the two Python fixes that came after the plan (Task 2 rulings).
   test(`${runtime}: a subtree walk's root visit equals its full-walk visit`, () => {
     const text = fs.readFileSync(path.join(FIX, 'containers.al'), 'utf8');

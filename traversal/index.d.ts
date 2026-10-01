@@ -96,6 +96,8 @@ export interface WalkOptions<N extends TSNode = TSNode> {
 
 export declare function groupsOf<N extends TSNode>(node: N, doc: Document<N>): Group<N>[];
 export declare function bindArm<N extends TSNode>(descriptor: ArmDescriptor, doc: Document<N>, policy: Policy): ArmFragments<N>;
+/** The arm's fragments, each `fragment`-class piece expanded recursively into its children. */
+export declare function armPieces<N extends TSNode>(armFragments: ArmFragments<N>, doc: Document<N>, policy: Policy): Fragment<N>[];
 export declare function splitInfo<N extends TSNode>(node: N, doc: Document<N>, policy: Policy): SplitInfo<N> | null;
 export declare function walk<N extends TSNode>(doc: Document<N>, policy: Policy, options?: WalkOptions<N>): Visit<N>[];
 export declare function visitsToJson<N extends TSNode>(visits: Visit<N>[], doc: Document<N>): unknown[];

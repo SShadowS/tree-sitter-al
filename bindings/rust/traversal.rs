@@ -317,6 +317,28 @@ pub fn bind_arm<'t>(d: &ArmDescriptor, doc: &Document<'t>, policy: &Policy) -> R
     Ok(ArmFragments { descriptor: d.clone(), fragments: out })
 }
 
+/// An arm's fragments with every `fragment`-class piece replaced, in place and
+/// recursively, by its own children (field names kept, anonymous tokens kept). A
+/// fragment wholly inside one arm gets no `SplitInfo` of its own; this reaches inside it.
+pub fn arm_pieces<'t>(arm: &ArmFragments<'t>, doc: &Document<'t>, policy: &Policy) -> Result<Vec<Fragment<'t>>, WrongDocument> {
+    let d = &arm.descriptor;
+    if d.group_id.0 != doc.revision {
+        return Err(WrongDocument(format!("descriptor revision {} != document {}", d.group_id.0, doc.revision)));
+    }
+    fn add<'t>(pieces: Vec<Fragment<'t>>, policy: &Policy, out: &mut Vec<Fragment<'t>>) {
+        for f in pieces {
+            if f.node.is_named() && policy.class(f.node.kind()) == "fragment" {
+                add(kids(f.node).into_iter().map(|(field, node)| Fragment { field, node }).collect(), policy, out);
+            } else {
+                out.push(f);
+            }
+        }
+    }
+    let mut out = Vec::new();
+    add(arm.fragments.clone(), policy, &mut out);
+    Ok(out)
+}
+
 pub fn split_info<'t>(node: Node<'t>, doc: &Document<'t>, policy: &Policy) -> Option<SplitInfo<'t>> {
     let groups = groups_of(node, doc);
     if groups.is_empty() {
@@ -463,6 +485,29 @@ mod tests {
                 serde_json::from_str(&std::fs::read_to_string(path.with_extension("visits.json")).unwrap()).unwrap();
             assert_eq!(got, want, "{}", path.display());
         }
+    }
+
+    #[test]
+    fn assemblers_matches_its_expected_arm_pieces() {
+        let policy = Policy::bundled();
+        let (source, tree) = parse_fixture(&mut parser(), "assemblers.al");
+        let doc = Document::new(&tree, &source, &policy);
+        let mut arms = Vec::new();
+        for v in walk(&doc, &policy, None, WalkOptions::default()) {
+            let Some(split) = &v.split else { continue };
+            for g in &split.groups {
+                for a in &g.arms {
+                    let pieces = arm_pieces(a, &doc, &policy).unwrap();
+                    arms.push(json!({
+                        "type": v.kind, "start": v.start, "if": g.group_id.1, "arm": a.descriptor.arm_id,
+                        "pieces": pieces.iter().map(frag_json).collect::<Vec<_>>(),
+                    }));
+                }
+            }
+        }
+        let path = Path::new(env!("CARGO_MANIFEST_DIR")).join("tests/traversal/fixtures/assemblers.arm_pieces.json");
+        let want: Value = serde_json::from_str(&std::fs::read_to_string(path).unwrap()).unwrap();
+        assert_eq!(json!({"revision": doc.revision, "arms": arms}), want);
     }
 
     #[test]

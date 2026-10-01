@@ -213,6 +213,43 @@ def bind_arm(descriptor: ArmDescriptor, document: Document, policy: Policy) -> A
     return ArmFragments(descriptor, tuple(out))
 
 
+def arm_pieces(arm_fragments: ArmFragments, document: Document, policy: Policy):
+    """An arm's fragments with every `fragment`-class piece replaced, in place and
+    recursively, by its own children (field names kept, anonymous tokens kept).
+
+    A fragment wholly inside one arm gets no SplitInfo of its own, so this is how a
+    consumer reaches the statements it holds. Source order, UTF-8 byte offsets.
+    """
+    if arm_fragments.descriptor.group_id[0] != document.revision:
+        raise WrongDocument(f"descriptor revision {arm_fragments.descriptor.group_id[0]} != document {document.revision}")
+    out = []
+
+    def add(pieces):
+        for f in pieces:
+            if f.node.is_named and policy.cls(f.node.type) == "fragment":
+                add(Fragment(field, child) for child, field in _kids(f.node))
+            else:
+                out.append(f)
+
+    add(arm_fragments.fragments)
+    return out
+
+
+def arm_pieces_to_json(document: Document, visits, policy: Policy) -> str:
+    """The shared arm-pieces file: per split visit, per group, per arm, one line."""
+    lines = []
+    for v in visits:
+        if v.split is None:
+            continue
+        for g in v.split.groups:
+            for a in g.arms:
+                lines.append(json.dumps({"type": v.type, "start": v.start, "if": g.group_id[1],
+                                         "arm": a.descriptor.arm_id,
+                                         "pieces": [_frag_json(f) for f in arm_pieces(a, document, policy)]},
+                                        ensure_ascii=False))
+    return '{"revision": "%s", "arms": [\n%s\n]}\n' % (document.revision, ",\n".join(lines))
+
+
 def split_info(node, document: Document, policy: Policy):
     groups = groups_of(node, document)
     if not groups:

@@ -170,6 +170,23 @@ function bindArm(descriptor, doc, policy) {
   return { descriptor, fragments: out };
 }
 
+// An arm's fragments with every `fragment`-class piece replaced, in place and
+// recursively, by its own children (field names kept, anonymous tokens kept). A
+// fragment wholly inside one arm gets no SplitInfo of its own; this reaches inside it.
+function armPieces(armFragments, doc, policy) {
+  const d = armFragments.descriptor;
+  if (d.groupId[0] !== doc.revision) throw new WrongDocument(`descriptor revision ${d.groupId[0]} != document ${doc.revision}`);
+  const out = [];
+  const add = (pieces) => {
+    for (const f of pieces) {
+      if (f.node.isNamed && policy.cls(f.node.type) === 'fragment') add(kids(f.node).map(([field, node]) => ({ field, node })));
+      else out.push(f);
+    }
+  };
+  add(armFragments.fragments);
+  return out;
+}
+
 function splitInfo(node, doc, policy) {
   const groups = groupsOf(node, doc);
   if (!groups.length) return null;
@@ -243,5 +260,5 @@ function visitsToJson(visits, doc) {
 
 module.exports = {
   SCHEMA, CLASSES, SPLIT_CLASSES, PolicyError, WrongDocument, Policy, loadPolicy, fnv1a64, byteTable,
-  Document, groupsOf, bindArm, splitInfo, walk, visitsToJson,
+  Document, groupsOf, bindArm, armPieces, splitInfo, walk, visitsToJson,
 };

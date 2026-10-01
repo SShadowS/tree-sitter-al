@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Rewrite tests/traversal/fixtures/*.visits.json from the Python walker.
+"""Rewrite tests/traversal/fixtures/*.visits.json (and assemblers.arm_pieces.json) from the Python walker.
 
 The same trap as `tree-sitter test -u`: this blesses whatever the walker does today.
 Run it only after a deliberate change, then read `git diff tests/traversal/fixtures`
@@ -11,6 +11,8 @@ these files only make the three runtimes agree with it.
 """
 import support
 
+ARM_PIECES_FIXTURE = "assemblers.al"   # arm_pieces (Task 8b): the fixture with fragments in arms
+
 T = support.load_traversal()
 policy = T.load_policy(support.POLICY)
 parser = support.make_parser()
@@ -20,3 +22,7 @@ for path in sorted(support.FIXTURES.glob("*.al")):
     out = path.with_suffix(".visits.json")
     out.write_text(T.dump_expected(doc, T.walk(doc, policy)), encoding="utf-8", newline="\n")
     print(f"wrote {out.relative_to(support.REPO).as_posix()}")
+    if path.name == ARM_PIECES_FIXTURE:
+        out = path.with_suffix(".arm_pieces.json")
+        out.write_text(T.arm_pieces_to_json(doc, T.walk(doc, policy), policy), encoding="utf-8", newline="\n")
+        print(f"wrote {out.relative_to(support.REPO).as_posix()}")
