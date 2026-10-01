@@ -305,6 +305,25 @@ jobs:
           })().catch((e) => { console.error(e); process.exit(1); });
           EOF
           node check.js
+          # The same from an ES module: the documented subpath must resolve through `exports`.
+          cat > check.mjs <<'EOF'
+          import T, { walk } from '@sshadows/tree-sitter-al/traversal';
+          import { createRequire } from 'node:module';
+          import { Parser, Language } from 'web-tree-sitter';
+          const require = createRequire(import.meta.url);
+          if (walk !== T.walk) throw new Error('named export missing');
+          await Parser.init();
+          const p = new Parser();
+          p.setLanguage(await Language.load(require.resolve('@sshadows/tree-sitter-al/tree-sitter-al.wasm')));
+          const text = 'codeunit 1 C\n{\n#if A\n    procedure P()\n    begin\n    end;\n#endif\n}\n';
+          const policy = T.loadPolicy();
+          const doc = new T.Document(p.parse(text), text, policy);
+          const v = T.walk(doc, policy).find((x) => x.type === 'preproc_conditional');
+          if (!v || v.cls !== 'branch-container' || v.host !== 'splice-repeat') throw new Error('ESM traversal from the packed tarball is broken');
+          for (const s of ['@sshadows/tree-sitter-al', '@sshadows/tree-sitter-al/bindings/node', '@sshadows/tree-sitter-al/traversal/policy.json']) require.resolve(s);
+          console.log('npm clean install (ESM): ok');
+          EOF
+          node check.mjs
 
       - name: Crate carries the policy and builds with the feature
         run: |

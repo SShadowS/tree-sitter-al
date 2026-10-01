@@ -21,8 +21,9 @@ public API — a change to node structure or field names is a **major** bump.
   `arm_pieces` / `armPieces` (all three runtimes) returns an arm's pieces with
   fragments expanded recursively, since a fragment wholly inside one arm has no
   `SplitInfo` of its own; it does not expand shared parts.
-  Python `tree_sitter_al.traversal`; JavaScript `@sshadows/tree-sitter-al/traversal`,
-  one implementation for the native binding and web-tree-sitter that never loads the
+  Python `tree_sitter_al.traversal`; JavaScript `@sshadows/tree-sitter-al/traversal`
+  (from `require()` and from ES modules: `package.json` gains an `exports` map that
+  keeps every existing deep path open), one implementation for the native binding and web-tree-sitter that never loads the
   addon; Rust `tree_sitter_al::traversal` behind the new `traversal` feature (off by
   default; adds `tree-sitter >=0.25, <0.27` and `serde_json`). All three give the same
   visits on the same fixtures. `npm test` now runs the traversal JS tests. Three new CI

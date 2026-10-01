@@ -159,6 +159,8 @@ bundler that resolves a JSON `require` (`traversal/index.js` is CommonJS and req
 
 ```js
 const T = require('@sshadows/tree-sitter-al/traversal');
+// or, from an ES module or TypeScript (`nodenext`):
+// import T from '@sshadows/tree-sitter-al/traversal';
 const policy = T.loadPolicy();
 const doc = new T.Document(parser.parse(text), text, policy);   // pass the same text you parsed
 for (const v of T.walk(doc, policy)) {
