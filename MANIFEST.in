@@ -1,4 +1,7 @@
-# The sdist carried neither of these, so it could not compile (parser.c and
-# scanner.c include headers from src/) and shipped no queries.
+# The traversal policy lives at the repo root, outside the package; setup.py's Build
+# copies it into tree_sitter_al/. Without this line an sdist install has no policy.
+include traversal/policy.json
+# Found while adding the line above: the sdist carried neither of these, so it could not
+# compile (parser.c and scanner.c include headers from src/) and shipped no queries.
 include src/*.h src/tree_sitter/*.h
 recursive-include queries *.scm

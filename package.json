@@ -26,6 +26,9 @@
     "bindings/node/*",
     "queries/*.scm",
     "src/**",
+    "traversal/*.js",
+    "traversal/*.d.ts",
+    "traversal/*.json",
     "*.wasm"
   ],
   "dependencies": {
@@ -51,7 +54,7 @@
     "install": "node-gyp-build",
     "prestart": "tree-sitter build --wasm",
     "start": "tree-sitter playground",
-    "test": "node --test bindings/node/*_test.js"
+    "test": "node --test tests/traversal/js/parity.test.js tests/traversal/js/canaries.test.js"
   },
   "publishConfig": {
     "access": "public"

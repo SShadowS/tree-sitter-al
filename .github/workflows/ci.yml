@@ -18,6 +18,12 @@ on:
       - validate-grammar.sh
       - parse-al-parallel.sh
       - .github/workflows/ci.yml
+      - traversal/**
+      - tests/**
+      - package.json
+      - Cargo.toml
+      - setup.py
+      - MANIFEST.in
   pull_request:
     paths:
       - grammar.js
@@ -33,6 +39,12 @@ on:
       - validate-grammar.sh
       - parse-al-parallel.sh
       - .github/workflows/ci.yml
+      - traversal/**
+      - tests/**
+      - package.json
+      - Cargo.toml
+      - setup.py
+      - MANIFEST.in
 
 concurrency:
   group: ${{github.workflow}}-${{github.ref}}
@@ -168,6 +180,136 @@ jobs:
       # Exit 2 when a commit or a build is unavailable: a replay is never skipped.
       - name: Historical-defect replays
         run: python -m tools.config_oracle replay
+
+  traversal:
+    # Roadmap F0: the classified traversal helper. One policy (traversal/policy.json),
+    # one set of fixtures (tests/traversal/fixtures) whose expected visits the Python
+    # walker writes; Rust (here) and Node (traversal-node) must match them.
+    name: Traversal helper (Python, Rust)
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v6
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.13'
+
+      - name: Set up tree-sitter
+        uses: tree-sitter/setup-action/cli@v2
+
+      - name: Install dependencies
+        run: pip install -r tools/query_coverage/requirements.txt
+
+      - name: Policy census (validate-grammar.sh Step 5f)
+        run: python tools/traversal_census.py
+
+      - name: Walker, SplitInfo, witnesses, canaries, expected visits
+        run: python -m pytest tests/traversal -q
+
+      # The feature declares tree-sitter >=0.25, <0.27: test both ends.
+      - name: Rust on tree-sitter 0.25
+        run: cargo update -p tree-sitter --precise 0.25.10 && cargo test --features traversal
+
+      - name: Rust on tree-sitter 0.26
+        run: cargo update -p tree-sitter --precise 0.26.13 && cargo test --features traversal
+
+  traversal-node:
+    name: Traversal helper (Node ${{ matrix.node }}, native and WASM)
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        node: [18, 24]
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v6
+
+      - name: Set up Node
+        uses: actions/setup-node@v6
+        with:
+          node-version: ${{ matrix.node }}
+
+      # The install script builds the native binding from src/ (there are no prebuilds
+      # in the repo), so the native leg tests the committed grammar, never a stale build.
+      - name: Install
+        run: npm ci
+
+      # `npm test` is `node --test` over tests/traversal/js/*.test.js, listed by name:
+      # a directory argument is loaded as a module on Node 24.
+      - name: Parity and canaries under both JS runtimes
+        run: npm test
+
+  traversal-packages:
+    # Each published artifact, installed clean outside the checkout, must carry the
+    # policy and walk a tree. npm installs with --ignore-scripts: the traversal module
+    # must work without the native addon.
+    name: Traversal helper in the packaged artifacts
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v6
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Set up Node
+        uses: actions/setup-node@v6
+        with:
+          node-version: '24'
+
+      - name: Python sdist, installed into a clean venv
+        run: |
+          python -m pip install build
+          python -m build --sdist --outdir "$RUNNER_TEMP/dist"
+          python -m venv "$RUNNER_TEMP/venv"
+          "$RUNNER_TEMP/venv/bin/pip" install "$RUNNER_TEMP"/dist/*.tar.gz "tree-sitter~=0.25"
+          cd "$RUNNER_TEMP"
+          cat > check.py <<'EOF'
+          from tree_sitter import Language, Parser
+          import tree_sitter_al
+          from tree_sitter_al import traversal
+          policy = traversal.load_policy()
+          src = b"codeunit 1 C\n{\n#if A\n    procedure P()\n    begin\n    end;\n#endif\n}\n"
+          tree = Parser(Language(tree_sitter_al.language())).parse(src)
+          doc = traversal.Document(tree, src, policy)
+          v = next(x for x in traversal.walk(doc, policy) if x.type == "preproc_conditional")
+          assert (v.cls, v.host) == ("branch-container", "splice-repeat"), v
+          assert tree_sitter_al.HIGHLIGHTS_QUERY, "the sdist shipped no queries"
+          print("python sdist clean install: ok")
+          EOF
+          "$RUNNER_TEMP/venv/bin/python" check.py
+
+      - name: npm tarball, installed with scripts off
+        run: |
+          npm pack --pack-destination "$RUNNER_TEMP"
+          mkdir "$RUNNER_TEMP/npm-clean" && cd "$RUNNER_TEMP/npm-clean"
+          npm init -y >/dev/null
+          npm install --ignore-scripts "$RUNNER_TEMP"/sshadows-tree-sitter-al-*.tgz web-tree-sitter@0.27.0
+          cat > check.js <<'EOF'
+          const T = require('@sshadows/tree-sitter-al/traversal');
+          const { Parser, Language } = require('web-tree-sitter');
+          (async () => {
+            await Parser.init();
+            const p = new Parser();
+            p.setLanguage(await Language.load(require.resolve('@sshadows/tree-sitter-al/tree-sitter-al.wasm')));
+            const text = 'codeunit 1 C\n{\n#if A\n    procedure P()\n    begin\n    end;\n#endif\n}\n';
+            const policy = T.loadPolicy();
+            const doc = new T.Document(p.parse(text), text, policy);
+            const v = T.walk(doc, policy).find((x) => x.type === 'preproc_conditional');
+            if (!v || v.cls !== 'branch-container' || v.host !== 'splice-repeat') throw new Error('traversal from the packed tarball is broken');
+            console.log('npm clean install: ok');
+          })().catch((e) => { console.error(e); process.exit(1); });
+          EOF
+          node check.js
+
+      - name: Crate carries the policy and builds with the feature
+        run: |
+          cargo package --allow-dirty --list | grep -qx 'traversal/policy.json'
+          cargo package --allow-dirty --features traversal
 
   gate-selftest:
     # Mutation testing for the VALIDATION GATES, not for the grammar.
