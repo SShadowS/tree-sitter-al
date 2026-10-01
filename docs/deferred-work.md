@@ -974,6 +974,47 @@ all four corpora parse with 0 errors.
 
 **Before fixing:** probe both configurations with `tools/alc_probe`.
 
+
+## 24. F0 traversal helper: residuals from the final review (fix before the next release)
+
+**Established:** 2026-10-01. These are the final whole-branch review and scoped
+re-review of F0 (merge f557dc7). The SDD process allows one fix wave, and the user
+chose to merge with these open.
+
+1. **A trailing comment on an `#endif` line is listed in a split node's `shared`.**
+   - The same comment on an `#if`, `#elif` or `#else` line is excluded, because
+     `split_info` excludes each opener's directive line.
+   - Spec §3.3 treats all four directive kinds the same: the masked line includes any
+     trailing `//`.
+   - Repro: in `tests/traversal/fixtures/cross_node.al`, write `#endif // c-endif`.
+     `preproc_split_block_close_after_endif.shared` then lists the comment.
+   - Why it matters: `shared` is public API in the next major, so changing it after the
+     release is breaking.
+   - Fix: in `split_info`, add `(closer.start, line_end(closer))` to the excluded ranges
+     in Python, JS and Rust. Add an `#endif // c` case inside an assembler and regenerate
+     the expected files.
+2. **The CHANGELOG over-claims.**
+   - It says the `exports` map "keeps every existing deep path open", and it calls the
+     package change "additive".
+   - Deep imports that relied on extension or directory lookup no longer resolve.
+     `bindings/node` and `traversal` are the exceptions.
+   - Fix: add a Changed/breaking line saying that deep imports must name the file,
+     extension included.
+3. **`docs/traversal.md:65` describes `shared` wrongly.** It says `shared` lies "outside
+   every directive line". Correct it together with point 1.
+4. **Nit: the dedupe snippet in `docs/traversal.md`** calls `collect(v.node, None)`, so a
+   piece walked before its `SplitInfo` loses its arm attribution. Use `v.arms`.
+
+These were parked as polish, with no dependent work:
+- Rust `Policy` has no `alias_to` accessor.
+- The runtimes raise different error types for a malformed policy, and all three accept
+  an empty policy.
+- A node from another tree is accepted silently.
+- API naming differs beyond what the docs table covers.
+
+**Owner:** E1/E3 release gating. Points 1–3 must be fixed before the next major is
+published.
+
 ## Longer-lived proposals, tracked separately
 
 - [`python-bindings-modernization.md`](python-bindings-modernization.md) — the
