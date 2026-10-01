@@ -1,9 +1,49 @@
 # tree-sitter-al — grammar improvements requested by the owned-IR consumer
 
+> **Status 2026-10-01: CLOSED. All four issues are fixed; none is carried to
+> `docs/deferred-work.md`.** Reconciled against `src/node-types.json` and `grammar.js` at
+> `d34e04c` (roadmap A6). The body below is the original v3.0.1 request, kept as written;
+> its `grammar.js` line numbers and code excerpts are from v3.0.1 and are stale.
+>
+> | # | Issue | Verdict | Fixed by | First release |
+> |---|---|---|---|---|
+> | 1 | `left`/`operator`/`right` bleed from the inline `in`/`is`/`as` seqs | FIXED | `a6128d0` | v3.1.0 |
+> | 2 | `case_else_branch` has no `body` field | FIXED (the preferred fix 1) | `a6128d0`, then `61c6a66` | v3.1.0 / v4.0.0 |
+> | 3 | `statement_block` carries `left`/`operator`/`right` | FIXED (with issue 1) | `a6128d0` | v3.1.0 |
+> | 4 | `trigger_declaration.name` is `multiple` and includes `::` | FIXED | `57cdb06` | v3.1.0 |
+>
+> **Evidence** (`src/node-types.json` at `d34e04c`, compared with the same file at `eeb2839`,
+> the v3.0.1 pin):
+>
+> 1. At v3.0.1, 46 named node types carried a `left` field. Now the only node types with
+>    `left`/`operator`/`right` are the ones that really are binary: `additive_expression`,
+>    `multiplicative_expression`, `comparison_expression`, `logical_expression`,
+>    `assignment_expression`, `assignment_statement`, and the new `in_expression`,
+>    `is_expression` and `as_expression` (`range_expression` has `left`/`right`). For
+>    example, `in_expression` has `"left": {"multiple": false, "required": true, ...}`,
+>    `"operator": in_keyword` and `"right": list_literal`. `if_statement`, `while_statement`,
+>    `case_else_branch` and the rest carry none of them.
+> 2. `case_else_branch`: `"fields": {"body": {"multiple": false, "required": false, "types":
+>    [{"type": "statement_block"}]}}`. `a6128d0` added `field('body', ...)` over a `repeat`,
+>    which made `body` `multiple: true`; `61c6a66` (4.0.0) wrapped it in `statement_block`, so
+>    `body` is one node, as it is on `case_branch`. `tools/check-field-types.py` pins this
+>    contract. The else branch is still a child of `case_statement`, not of `case_body`. The
+>    request offered that move as an alternative ("pick one; first preferred") and it was
+>    not taken, so a consumer that walks only `case_body` still has to look for
+>    `case_else_branch` beside it.
+> 3. `statement_block`: `"fields": {}` (v3.0.1: `left`, `operator`, `right`).
+> 4. `trigger_declaration.name`: `"multiple": false`, types `identifier`,
+>    `member_trigger_name`, `quoted_identifier`. There is no `::` in the field (v3.0.1:
+>    `multiple: true`, types `::`, `identifier`, `quoted_identifier`). The new
+>    `member_trigger_name` has the fields `object` and `member`.
+>
+> The CHANGELOG has no entry for the two v3.1.0 commits (`a6128d0`, `57cdb06`). Only the
+> 4.0.0 `statement_block` change is described there, in the 4.0.0 section.
+
 **Requested by:** the `al-call-hierarchy` owned-AL-syntax-IR migration (a consumer that
 lowers the CST into an owned IR; it generates a typed node layer from `node-types.json`).
 **Grammar baseline:** `eeb2839` (v3.0.1) — the rev the consumer currently pins.
-**Status:** proposal. None are blocking (the consumer has workarounds); they materially
+**Status (original, against v3.0.1):** proposal. None are blocking (the consumer has workarounds); they materially
 improve `node-types.json` quality and fix one correctness footgun.
 
 > **Validation contract (how to prove a fix is behavior-preserving):** after each change,
