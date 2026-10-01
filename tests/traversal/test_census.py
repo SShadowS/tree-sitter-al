@@ -127,8 +127,7 @@ def test_no_traversal_source_classifies_by_name():
     sources = [support.MODULE, support.REPO / "traversal" / "index.js",
                support.REPO / "bindings" / "rust" / "traversal.rs", SCRIPT]
     for path in sources:
-        if not path.exists():
-            continue                     # the JS and Rust walkers arrive in later tasks
+        assert path.exists(), f"{path} is missing: a moved walker would pass this test vacuously"
         text = path.read_text(encoding="utf-8").split("#[cfg(test)]")[0]   # Rust: not its tests
         assert not re.search(r"(startswith|startsWith|starts_with)\(\s*['\"]preproc", text), path
         if path != SCRIPT:
