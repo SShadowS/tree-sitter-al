@@ -10,7 +10,7 @@
 #
 # The test count comes from tools/count_corpus_cases.py by default: it counts the
 # cases a run actually EXECUTES (not the declared headers), and validate-grammar.sh
-# Step 3 fails if it ever disagrees with the suite's own total. So the default is the
+# Step 2b fails if it ever disagrees with the suite's own total. So the default is the
 # real number without the lock or the ~1 min run. --tests is the direct measurement.
 # With --vs, REV's count is taken from REV's test/corpus by the same script.
 #
@@ -55,7 +55,8 @@ figures() {
 
 mib() { awk -v b="$1" 'BEGIN { printf "%.1f", b / 1048576 }'; }
 
-read -r S L Y B G T <<<"$(figures "" test/corpus)"
+out="$(figures "" test/corpus)" || exit 2
+read -r S L Y B G T <<<"$out"
 if [ "$TESTS" -eq 1 ]; then
   T="$(./tools/ts-lock.sh tree-sitter test 2>&1 | sed -n 's/^Total parses: \([0-9][0-9]*\);.*/\1/p' | tail -1)"
   [ -n "$T" ] || { echo "metrics: no 'Total parses' line from tree-sitter test" >&2; exit 2; }
@@ -66,7 +67,8 @@ if [ -n "$VS" ]; then
   git rev-parse --verify --quiet "$VS^{commit}" >/dev/null || { echo "metrics: no such revision: $VS" >&2; exit 2; }
   TMP="$(mktemp -d)"; trap 'rm -rf "${TMP:?}"' EXIT
   git archive "$VS" test/corpus | tar -x -C "$TMP"
-  read -r S0 L0 Y0 B0 G0 T0 <<<"$(figures "$VS" "$TMP/test/corpus")"
+  out="$(figures "$VS" "$TMP/test/corpus")" || exit 2
+  read -r S0 L0 Y0 B0 G0 T0 <<<"$out"
   delta() {  # delta OLD NEW [UNIT [pct]]
     awk -v a="$1" -v b="$2" -v u="${3:-}" -v p="${4:-}" 'BEGIN {
     d = b - a; s = (d > 0 ? "+" : "") d u
