@@ -7,8 +7,37 @@ public API — a change to node structure or field names is a **major** bump.
 
 ## [Unreleased]
 
+### Added
+
+- **A classified traversal helper for `#if` code, in every binding (roadmap F0).**
+  The tree parses every `#if` branch, so it holds conditional containers, constructs
+  assembled from pieces in different branches, their fragments and the directive
+  lines. `traversal/policy.json` classifies every such node type into seven classes
+  (never by its name), ships in the npm, PyPI and crates.io packages, and is gated
+  against `src/node-types.json` and the oracle registry by
+  `tools/traversal_census.py` (validate-grammar.sh Step 5f). `walk` reports each node
+  with its class, field, UTF-8 byte span and the `#if` arms around it; split
+  constructs carry a `SplitInfo` listing every arm's pieces and the shared parts.
+  `arm_pieces` / `armPieces` (all three runtimes) returns an arm's pieces with
+  fragments expanded recursively, since a fragment wholly inside one arm has no
+  `SplitInfo` of its own; it does not expand shared parts.
+  Python `tree_sitter_al.traversal`; JavaScript `@sshadows/tree-sitter-al/traversal`
+  (from `require()` and from ES modules: `package.json` gains an `exports` map that
+  keeps every existing deep path open), one implementation for the native binding and web-tree-sitter that never loads the
+  addon; Rust `tree_sitter_al::traversal` behind the new `traversal` feature (off by
+  default; adds `tree-sitter >=0.25, <0.27` and `serde_json`). All three give the same
+  visits on the same fixtures. `npm test` now runs the traversal JS tests. Three new CI
+  jobs: `traversal`, `traversal-node` (Node 18 and 24) and `traversal-packages`. Additive: no parse tree changes. See `docs/traversal.md`, which also shows
+  how to migrate the walk patterns that lose `#if` content today. Recursion alone
+  does not fix node-kind recognition: use `SplitInfo`.
+
 ### Fixed
 
+- **The Python sdist can be built.** It shipped neither `src/*.h` nor
+  `src/tree_sitter/*.h`, so `pip install` from it stopped at
+  `fatal error: tree_sitter/parser.h: No such file or directory`, and it carried no
+  `queries/*.scm`. Wheels were unaffected. The sdist now includes them, and the
+  traversal policy.
 - **The Python `core` extra now requires a runtime that can load the grammar.**
   `pyproject.toml` declared `core = ["tree-sitter~=0.24"]`, which admits
   py-tree-sitter 0.24.0, and 0.24.0 loads ABI 13..14 while `src/parser.c` is

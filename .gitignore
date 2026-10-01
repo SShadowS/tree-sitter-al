@@ -222,3 +222,11 @@ tools/alc_probe/**/__pycache__/
 !tools/perf/**/*.py
 tools/perf/**/__pycache__/
 tools/perf/reports/
+
+# The traversal helper (roadmap F0). `*.py` and `*.al` above would swallow its Python
+# module, its tests and the AL fixtures every runtime's tests share -- silently, and
+# only in a fresh clone (CLAUDE.md: "A corpus file can also be invisible to git").
+!bindings/python/tree_sitter_al/*.py
+!tests/traversal/*.py
+!tests/traversal/fixtures/*.al
+tests/traversal/__pycache__/

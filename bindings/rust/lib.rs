@@ -43,6 +43,12 @@ pub const FOLDS_QUERY: &str = include_str!("../../queries/folds.scm");
 pub const INDENTS_QUERY: &str = include_str!("../../queries/indents.scm");
 pub const TEXTOBJECTS_QUERY: &str = include_str!("../../queries/textobjects.scm");
 
+/// Classified traversal over the all-branches tree (roadmap F0): every `#if` arm,
+/// with its group and arm identity, and `SplitInfo` for constructs built from arm
+/// fragments. Off by default; enable the `traversal` feature. See docs/traversal.md.
+#[cfg(feature = "traversal")]
+pub mod traversal;
+
 #[cfg(test)]
 mod tests {
     #[test]

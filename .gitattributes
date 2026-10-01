@@ -11,3 +11,7 @@ Makefile linguist-generated
 CMakeLists.txt linguist-generated
 Package.swift linguist-generated
 go.mod linguist-generated
+
+# The CRLF + BOM traversal fixture must keep its CRLF line endings in every checkout:
+# under `text=auto eol=lf` it would silently become an LF fixture.
+tests/traversal/fixtures/crlf_bom.al -text

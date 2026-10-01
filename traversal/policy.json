@@ -1,0 +1,617 @@
+{
+  "schema": 1,
+  "types": {
+    "comment": {
+      "class": "ordinary",
+      "arm_boundary": "none",
+      "reason": "Extra, but source content: comment consumers need it in every arm."
+    },
+    "else_table_relation_fragment": {
+      "class": "fragment",
+      "arm_boundary": "assembler",
+      "reason": "Exception (spec 6.1): a fragment with no prefix; completes the relation before the #if it sits in."
+    },
+    "multiline_comment": {
+      "class": "ordinary",
+      "arm_boundary": "none",
+      "reason": "Extra, but source content: comment consumers need it in every arm."
+    },
+    "pragma": {
+      "class": "trivia",
+      "arm_boundary": "none",
+      "reason": "Exception (spec 6.1): not in the contracts registry; an extra, so it can sit inside any arm. Skipped by walk unless include_trivia."
+    },
+    "preproc_and_expression": {
+      "class": "directive",
+      "arm_boundary": "none",
+      "reason": "Conditional-directive line or a piece of one; walk skips it unless include_directives."
+    },
+    "preproc_close": {
+      "class": "directive",
+      "arm_boundary": "none",
+      "reason": "Conditional-directive line or a piece of one; walk skips it unless include_directives."
+    },
+    "preproc_conditional": {
+      "class": "branch-container",
+      "arm_boundary": "own-directives",
+      "hosts": {
+        "action_group_body:<children>": "splice-repeat",
+        "controladdin_body:<children>": "splice-repeat",
+        "dataset_mod_body:<children>": "splice-repeat",
+        "declaration_body:<children>": "splice-repeat",
+        "interface_body:<children>": "splice-repeat",
+        "layout_container_body:<children>": "splice-repeat",
+        "preproc_conditional:<children>": "splice-repeat",
+        "preproc_conditional_controladdin:<children>": "splice-repeat",
+        "preproc_conditional_layout_mixed:<children>": "splice-repeat",
+        "preproc_conditional_query:<children>": "splice-repeat",
+        "preproc_conditional_report:<children>": "splice-repeat",
+        "preproc_conditional_xmlport:<children>": "splice-repeat",
+        "preproc_split_var_section_tail:<children>": "splice-repeat",
+        "query_body:<children>": "splice-repeat",
+        "report_body:<children>": "splice-repeat",
+        "xmlport_body:<children>": "splice-repeat"
+      },
+      "reason": "Registry branch-select: arms are alternatives in one host slot."
+    },
+    "preproc_conditional_actions": {
+      "class": "branch-container",
+      "arm_boundary": "own-directives",
+      "hosts": {
+        "action_body:<children>": "splice-repeat",
+        "action_group_body:<children>": "splice-repeat",
+        "preproc_conditional_actions:<children>": "splice-repeat"
+      },
+      "reason": "Registry branch-select: arms are alternatives in one host slot."
+    },
+    "preproc_conditional_arguments": {
+      "class": "branch-container",
+      "arm_boundary": "own-directives",
+      "hosts": {
+        "argument_list:<children>": "list-run"
+      },
+      "reason": "Registry branch-select: arms are alternatives in one host slot."
+    },
+    "preproc_conditional_case": {
+      "class": "branch-container",
+      "arm_boundary": "own-directives",
+      "hosts": {
+        "case_body:<children>": "splice-repeat"
+      },
+      "reason": "Registry branch-select: arms are alternatives in one host slot."
+    },
+    "preproc_conditional_case_patterns": {
+      "class": "branch-container",
+      "arm_boundary": "own-directives",
+      "hosts": {
+        "case_branch:<children>": "list-run",
+        "preproc_conditional_case_patterns:<children>": "list-run",
+        "preproc_split_case_branch:<children>": "list-run",
+        "preproc_split_case_extended:<children>": "list-run",
+        "preproc_split_case_statement_end:<children>": "list-run"
+      },
+      "reason": "Arms are alternative case-pattern runs in one pattern list; registry unsupported (milestone 3), classified here by hand."
+    },
+    "preproc_conditional_controladdin": {
+      "class": "branch-container",
+      "arm_boundary": "own-directives",
+      "hosts": {
+        "controladdin_body:<children>": "splice-repeat",
+        "preproc_conditional_controladdin:<children>": "splice-repeat"
+      },
+      "reason": "Registry branch-select: arms are alternatives in one host slot."
+    },
+    "preproc_conditional_dataset": {
+      "class": "branch-container",
+      "arm_boundary": "own-directives",
+      "hosts": {
+        "dataset_body:<children>": "splice-repeat"
+      },
+      "reason": "Registry branch-select: arms are alternatives in one host slot."
+    },
+    "preproc_conditional_expression_tail": {
+      "class": "assembler",
+      "arm_boundary": "own-directives",
+      "reason": "Exception (spec 6.1): an assembler whose continuation comes after #endif; the tail extends the expression BEFORE it, so its arms are not complete expressions."
+    },
+    "preproc_conditional_fieldgroups": {
+      "class": "branch-container",
+      "arm_boundary": "own-directives",
+      "hosts": {
+        "fieldgroups_body:<children>": "splice-repeat",
+        "preproc_conditional_fieldgroups:<children>": "splice-repeat"
+      },
+      "reason": "Registry branch-select: arms are alternatives in one host slot."
+    },
+    "preproc_conditional_fields": {
+      "class": "branch-container",
+      "arm_boundary": "own-directives",
+      "hosts": {
+        "fields_body:<children>": "splice-repeat",
+        "preproc_conditional_fields:<children>": "splice-repeat",
+        "preproc_split_table_field_open:<children>": "splice-repeat"
+      },
+      "reason": "Registry branch-select: arms are alternatives in one host slot."
+    },
+    "preproc_conditional_impl_values": {
+      "class": "branch-container",
+      "arm_boundary": "own-directives",
+      "hosts": {
+        "implementation_value_list:<children>": "list-run",
+        "preproc_conditional_impl_values:<children>": "list-run"
+      },
+      "reason": "Arms are alternative runs of implementation values in one list; registry unsupported (milestone 3), classified here by hand."
+    },
+    "preproc_conditional_keys": {
+      "class": "branch-container",
+      "arm_boundary": "own-directives",
+      "hosts": {
+        "keys_body:<children>": "splice-repeat",
+        "preproc_conditional_keys:<children>": "splice-repeat",
+        "preproc_split_key:<children>": "splice-repeat"
+      },
+      "reason": "Registry branch-select: arms are alternatives in one host slot."
+    },
+    "preproc_conditional_labels": {
+      "class": "branch-container",
+      "arm_boundary": "own-directives",
+      "hosts": {
+        "labels_body:<children>": "splice-repeat"
+      },
+      "reason": "Registry branch-select: arms are alternatives in one host slot."
+    },
+    "preproc_conditional_layout": {
+      "class": "branch-container",
+      "arm_boundary": "own-directives",
+      "hosts": {
+        "layout_body:<children>": "splice-repeat",
+        "layout_container_body:<children>": "splice-repeat",
+        "preproc_conditional_layout:<children>": "splice-repeat",
+        "preproc_conditional_layout_mixed:<children>": "splice-repeat",
+        "preproc_split_brace_close:<children>": "splice-repeat",
+        "preproc_split_brace_close_if_only:<children>": "splice-repeat"
+      },
+      "reason": "Registry branch-select: arms are alternatives in one host slot."
+    },
+    "preproc_conditional_layout_mixed": {
+      "class": "branch-container",
+      "arm_boundary": "own-directives",
+      "hosts": {
+        "layout_container_body:<children>": "splice-repeat"
+      },
+      "reason": "Registry branch-select: arms are alternatives in one host slot."
+    },
+    "preproc_conditional_link_values": {
+      "class": "branch-container",
+      "arm_boundary": "own-directives",
+      "hosts": {
+        "link_value_list:<children>": "list-run",
+        "preproc_conditional_link_values:<children>": "list-run"
+      },
+      "reason": "Registry branch-select: arms are alternatives in one host slot."
+    },
+    "preproc_conditional_list_elements": {
+      "class": "branch-container",
+      "arm_boundary": "own-directives",
+      "hosts": {
+        "list_literal:<children>": "list-run"
+      },
+      "reason": "Registry branch-select: arms are alternatives in one host slot."
+    },
+    "preproc_conditional_object": {
+      "class": "branch-container",
+      "arm_boundary": "own-directives",
+      "hosts": {
+        "preproc_conditional_object:<children>": "splice-repeat",
+        "source_file:<children>": "splice-repeat"
+      },
+      "reason": "Registry branch-select: arms are alternatives in one host slot."
+    },
+    "preproc_conditional_option_members": {
+      "class": "branch-container",
+      "arm_boundary": "own-directives",
+      "hosts": {
+        "option_member_list:<children>": "list-run"
+      },
+      "reason": "Registry branch-select: arms are alternatives in one host slot."
+    },
+    "preproc_conditional_permissions": {
+      "class": "branch-container",
+      "arm_boundary": "own-directives",
+      "hosts": {
+        "preproc_conditional_permissions:<children>": "list-run",
+        "tabledata_permission_list:<children>": "list-run"
+      },
+      "reason": "Registry branch-select: arms are alternatives in one host slot."
+    },
+    "preproc_conditional_property_value": {
+      "class": "assembler",
+      "arm_boundary": "own-directives",
+      "reason": "Exception (spec 6.1): an assembler; each arm is the whole property value and the arm may carry the property's own ';' (contract whole-value-select)."
+    },
+    "preproc_conditional_query": {
+      "class": "branch-container",
+      "arm_boundary": "own-directives",
+      "hosts": {
+        "preproc_conditional_query:<children>": "splice-repeat",
+        "query_body:<children>": "splice-repeat"
+      },
+      "reason": "Registry branch-select: arms are alternatives in one host slot."
+    },
+    "preproc_conditional_rendering": {
+      "class": "branch-container",
+      "arm_boundary": "own-directives",
+      "hosts": {
+        "rendering_body:<children>": "splice-repeat"
+      },
+      "reason": "Registry branch-select: arms are alternatives in one host slot."
+    },
+    "preproc_conditional_report": {
+      "class": "branch-container",
+      "arm_boundary": "own-directives",
+      "hosts": {
+        "preproc_conditional_report:<children>": "splice-repeat",
+        "report_body:<children>": "splice-repeat"
+      },
+      "reason": "Registry branch-select: arms are alternatives in one host slot."
+    },
+    "preproc_conditional_statement": {
+      "class": "branch-container",
+      "arm_boundary": "own-directives",
+      "hosts": {
+        "asserterror_statement:body": "optional-slot",
+        "case_branch:body": "single-slot",
+        "for_statement:body": "single-slot",
+        "foreach_statement:body": "single-slot",
+        "if_statement:else_branch": "single-slot",
+        "if_statement:then_branch": "single-slot",
+        "preproc_conditional_statement:<children>": "splice-repeat",
+        "preproc_fragmented_else_tail:<children>": "splice-repeat",
+        "preproc_guarded_statement:then_branch": "single-slot",
+        "preproc_split_block_close_after_endif:<children>": "splice-repeat",
+        "preproc_split_block_end_in_else:<children>": "splice-repeat",
+        "preproc_split_case_branch:body": "single-slot",
+        "preproc_split_case_end_branch:body": "single-slot",
+        "preproc_split_case_extended:body": "single-slot",
+        "preproc_split_code_block_end:<children>": "splice-repeat",
+        "preproc_split_code_block_over_endif:<children>": "splice-repeat",
+        "preproc_split_else_begin_over_endif:<children>": "splice-repeat",
+        "preproc_split_if_begin_asymmetric:<children>": "splice-repeat",
+        "preproc_split_if_begin_else:<children>": "splice-repeat",
+        "preproc_split_if_else_statement:else_branch": "single-slot",
+        "preproc_split_if_else_statement:then_branch": "single-slot",
+        "preproc_split_if_statement:else_branch": "single-slot",
+        "preproc_split_if_statement:then_branch": "single-slot",
+        "preproc_split_if_then_begin:<children>": "splice-repeat",
+        "preproc_split_if_then_begin_else_shared:<children>": "splice-repeat",
+        "preproc_split_open_statement:<children>": "splice-repeat",
+        "preproc_split_open_statement:continuation": "single-slot",
+        "preproc_split_open_statement:then_branch": "single-slot",
+        "statement_block:<children>": "splice-repeat",
+        "while_statement:body": "single-slot",
+        "with_statement:body": "single-slot"
+      },
+      "reason": "Registry branch-select: arms are alternatives in one host slot."
+    },
+    "preproc_conditional_table_relation": {
+      "class": "assembler",
+      "arm_boundary": "own-directives",
+      "reason": "Exception (spec 6.1): an assembler; each arm continues the relation before it (contract else-relation-join)."
+    },
+    "preproc_conditional_var": {
+      "class": "branch-container",
+      "arm_boundary": "own-directives",
+      "hosts": {
+        "var_body:<children>": "splice-repeat"
+      },
+      "reason": "Registry branch-select: arms are alternatives in one host slot."
+    },
+    "preproc_conditional_var_block": {
+      "class": "branch-container",
+      "arm_boundary": "own-directives",
+      "hosts": {
+        "preproc_split_procedure:<children>": "optional-slot",
+        "preproc_split_procedure_preamble:<children>": "optional-slot",
+        "procedure:<children>": "optional-slot",
+        "trigger_declaration:<children>": "optional-slot"
+      },
+      "reason": "Registry branch-select: arms are alternatives in one host slot."
+    },
+    "preproc_conditional_where": {
+      "class": "branch-container",
+      "arm_boundary": "own-directives",
+      "hosts": {
+        "preproc_conditional_where:<children>": "list-run",
+        "where_conditions:<children>": "list-run"
+      },
+      "reason": "Registry branch-select: arms are alternatives in one host slot."
+    },
+    "preproc_conditional_xmlport": {
+      "class": "branch-container",
+      "arm_boundary": "own-directives",
+      "hosts": {
+        "preproc_conditional_xmlport:<children>": "splice-repeat",
+        "xmlport_body:<children>": "splice-repeat"
+      },
+      "reason": "Registry branch-select: arms are alternatives in one host slot."
+    },
+    "preproc_define": {
+      "class": "trivia",
+      "arm_boundary": "none",
+      "reason": "Line-level directive that is an extra; walk skips it unless include_trivia."
+    },
+    "preproc_elif": {
+      "class": "directive",
+      "arm_boundary": "none",
+      "role": "elif",
+      "reason": "Conditional-directive line or a piece of one; walk skips it unless include_directives."
+    },
+    "preproc_else": {
+      "class": "directive",
+      "arm_boundary": "none",
+      "role": "else",
+      "reason": "Conditional-directive line or a piece of one; walk skips it unless include_directives."
+    },
+    "preproc_endif": {
+      "class": "directive",
+      "arm_boundary": "none",
+      "role": "endif",
+      "reason": "Conditional-directive line or a piece of one; walk skips it unless include_directives."
+    },
+    "preproc_endregion": {
+      "class": "trivia",
+      "arm_boundary": "none",
+      "reason": "Line-level directive that is an extra; walk skips it unless include_trivia."
+    },
+    "preproc_fragmented_else_tail": {
+      "class": "assembler",
+      "arm_boundary": "own-directives",
+      "reason": "Registry unsupported (milestone 3); classified by hand: arms are pieces of one construct, not complete units."
+    },
+    "preproc_guarded_statement": {
+      "class": "assembler",
+      "arm_boundary": "own-directives",
+      "reason": "Registry unsupported (milestone 3); classified by hand: arms are pieces of one construct, not complete units."
+    },
+    "preproc_if": {
+      "class": "directive",
+      "arm_boundary": "none",
+      "role": "if",
+      "reason": "Conditional-directive line or a piece of one; walk skips it unless include_directives."
+    },
+    "preproc_not_expression": {
+      "class": "directive",
+      "arm_boundary": "none",
+      "reason": "Conditional-directive line or a piece of one; walk skips it unless include_directives."
+    },
+    "preproc_open": {
+      "class": "directive",
+      "arm_boundary": "none",
+      "reason": "Conditional-directive line or a piece of one; walk skips it unless include_directives."
+    },
+    "preproc_operand_prefix": {
+      "class": "assembler",
+      "arm_boundary": "own-directives",
+      "reason": "Registry assembler: one construct built from arm fragments plus shared parts."
+    },
+    "preproc_or_expression": {
+      "class": "directive",
+      "arm_boundary": "none",
+      "reason": "Conditional-directive line or a piece of one; walk skips it unless include_directives."
+    },
+    "preproc_parenthesized_expression": {
+      "class": "directive",
+      "arm_boundary": "none",
+      "reason": "Conditional-directive line or a piece of one; walk skips it unless include_directives."
+    },
+    "preproc_pragma_only": {
+      "class": "branch-container",
+      "arm_boundary": "own-directives",
+      "hosts": {
+        "field_declaration:<children>": "splice-repeat",
+        "preproc_split_procedure:<children>": "splice-repeat",
+        "procedure:<children>": "splice-repeat",
+        "source_file:<children>": "splice-repeat",
+        "trigger_declaration:<children>": "splice-repeat"
+      },
+      "reason": "Registry branch-select whose arms hold only extras (pragmas, comments); every arm is empty of structure."
+    },
+    "preproc_region": {
+      "class": "trivia",
+      "arm_boundary": "none",
+      "reason": "Line-level directive that is an extra; walk skips it unless include_trivia."
+    },
+    "preproc_split_begin": {
+      "class": "token-alias",
+      "arm_boundary": "none",
+      "alias_to": "begin_keyword",
+      "reason": "Exception (spec 6.1): a token alias; a 'begin' lexed at #if depth > 0 just before #endif. Treat as begin_keyword."
+    },
+    "preproc_split_block_close_after_endif": {
+      "class": "assembler",
+      "arm_boundary": "cross-node",
+      "reason": "A group that crosses a node boundary: only the #endif is here; the #if is in the previous procedure's preproc_split_block_end_in_else."
+    },
+    "preproc_split_block_end_in_else": {
+      "class": "assembler",
+      "arm_boundary": "cross-node",
+      "reason": "A group that crosses a node boundary: #if/#else here, #endif inside the NEXT procedure's preproc_split_block_close_after_endif."
+    },
+    "preproc_split_brace_close": {
+      "class": "assembler",
+      "arm_boundary": "own-directives",
+      "reason": "Registry unsupported (milestone 3); classified by hand: arms are pieces of one construct, not complete units."
+    },
+    "preproc_split_brace_close_if_only": {
+      "class": "assembler",
+      "arm_boundary": "own-directives",
+      "reason": "Registry unsupported (milestone 3); classified by hand: arms are pieces of one construct, not complete units."
+    },
+    "preproc_split_call_statement": {
+      "class": "assembler",
+      "arm_boundary": "own-directives",
+      "reason": "Registry unsupported (milestone 3); classified by hand: arms are pieces of one construct, not complete units."
+    },
+    "preproc_split_case_branch": {
+      "class": "assembler",
+      "arm_boundary": "own-directives",
+      "reason": "Registry unsupported (milestone 3); classified by hand: arms are pieces of one construct, not complete units."
+    },
+    "preproc_split_case_end_branch": {
+      "class": "fragment",
+      "arm_boundary": "assembler",
+      "reason": "Exception (spec 6.1): a fragment; one arm of preproc_split_case_statement_end (the case's own end plus the statements after it)."
+    },
+    "preproc_split_case_extended": {
+      "class": "assembler",
+      "arm_boundary": "own-directives",
+      "reason": "Registry unsupported (milestone 3); classified by hand: arms are pieces of one construct, not complete units."
+    },
+    "preproc_split_case_statement_end": {
+      "class": "assembler",
+      "arm_boundary": "own-directives",
+      "reason": "Registry assembler: one construct built from arm fragments plus shared parts."
+    },
+    "preproc_split_code_block_end": {
+      "class": "assembler",
+      "arm_boundary": "own-directives",
+      "reason": "Registry assembler: one construct built from arm fragments plus shared parts."
+    },
+    "preproc_split_code_block_over_endif": {
+      "class": "assembler",
+      "arm_boundary": "own-directives",
+      "reason": "Registry unsupported (milestone 3); classified by hand: arms are pieces of one construct, not complete units."
+    },
+    "preproc_split_complete_body": {
+      "class": "assembler",
+      "arm_boundary": "own-directives",
+      "reason": "Registry unsupported (milestone 3); classified by hand: arms are pieces of one construct, not complete units."
+    },
+    "preproc_split_container_reopen": {
+      "class": "assembler",
+      "arm_boundary": "own-directives",
+      "reason": "Registry assembler: one construct built from arm fragments plus shared parts."
+    },
+    "preproc_split_declaration": {
+      "class": "assembler",
+      "arm_boundary": "own-directives",
+      "reason": "Registry unsupported (milestone 3); classified by hand: arms are pieces of one construct, not complete units."
+    },
+    "preproc_split_else_begin_over_endif": {
+      "class": "assembler",
+      "arm_boundary": "own-directives",
+      "reason": "Registry assembler: one construct built from arm fragments plus shared parts."
+    },
+    "preproc_split_end": {
+      "class": "token-alias",
+      "arm_boundary": "none",
+      "alias_to": "end_keyword",
+      "reason": "Exception (spec 6.1): a token alias; an 'end' lexed at #if depth > 0 before ';' and a directive. Treat as end_keyword."
+    },
+    "preproc_split_field": {
+      "class": "assembler",
+      "arm_boundary": "own-directives",
+      "reason": "Registry unsupported (milestone 3); classified by hand: arms are pieces of one construct, not complete units."
+    },
+    "preproc_split_if_begin_asymmetric": {
+      "class": "assembler",
+      "arm_boundary": "own-directives",
+      "reason": "Registry unsupported (milestone 3); classified by hand: arms are pieces of one construct, not complete units."
+    },
+    "preproc_split_if_begin_else": {
+      "class": "assembler",
+      "arm_boundary": "own-directives",
+      "reason": "Registry unsupported (milestone 3); classified by hand: arms are pieces of one construct, not complete units."
+    },
+    "preproc_split_if_else_statement": {
+      "class": "assembler",
+      "arm_boundary": "own-directives",
+      "reason": "Registry unsupported (milestone 3); classified by hand: arms are pieces of one construct, not complete units."
+    },
+    "preproc_split_if_statement": {
+      "class": "assembler",
+      "arm_boundary": "own-directives",
+      "reason": "Registry unsupported (milestone 3); classified by hand: arms are pieces of one construct, not complete units."
+    },
+    "preproc_split_if_then_begin": {
+      "class": "assembler",
+      "arm_boundary": "own-directives",
+      "reason": "Registry unsupported (milestone 3); classified by hand: arms are pieces of one construct, not complete units."
+    },
+    "preproc_split_if_then_begin_else_shared": {
+      "class": "assembler",
+      "arm_boundary": "own-directives",
+      "reason": "Registry unsupported (milestone 3); classified by hand: arms are pieces of one construct, not complete units."
+    },
+    "preproc_split_key": {
+      "class": "assembler",
+      "arm_boundary": "own-directives",
+      "reason": "Registry unsupported (milestone 3); classified by hand: arms are pieces of one construct, not complete units."
+    },
+    "preproc_split_modify": {
+      "class": "assembler",
+      "arm_boundary": "own-directives",
+      "reason": "Registry unsupported (milestone 3); classified by hand: arms are pieces of one construct, not complete units."
+    },
+    "preproc_split_open_statement": {
+      "class": "assembler",
+      "arm_boundary": "own-directives",
+      "reason": "Registry assembler: one construct built from arm fragments plus shared parts."
+    },
+    "preproc_split_permissions_property": {
+      "class": "assembler",
+      "arm_boundary": "own-directives",
+      "reason": "Registry unsupported (milestone 3); classified by hand: arms are pieces of one construct, not complete units."
+    },
+    "preproc_split_procedure": {
+      "class": "assembler",
+      "arm_boundary": "own-directives",
+      "reason": "Registry assembler: one construct built from arm fragments plus shared parts."
+    },
+    "preproc_split_procedure_body": {
+      "class": "assembler",
+      "arm_boundary": "own-directives",
+      "reason": "Registry unsupported (milestone 3); classified by hand: arms are pieces of one construct, not complete units."
+    },
+    "preproc_split_procedure_preamble": {
+      "class": "assembler",
+      "arm_boundary": "own-directives",
+      "reason": "Registry unsupported (milestone 3); classified by hand: arms are pieces of one construct, not complete units."
+    },
+    "preproc_split_report_brace_close": {
+      "class": "fragment",
+      "arm_boundary": "own-directives",
+      "reason": "Exception (spec 6.1): a fragment; a report_dataitem's closing brace that sits inside one arm. It carries its own #if group."
+    },
+    "preproc_split_report_dataitem_header": {
+      "class": "assembler",
+      "arm_boundary": "own-directives",
+      "reason": "Registry unsupported (milestone 3); classified by hand: arms are pieces of one construct, not complete units."
+    },
+    "preproc_split_report_dataitem_open_over_endif": {
+      "class": "assembler",
+      "arm_boundary": "own-directives",
+      "reason": "Registry assembler: one construct built from arm fragments plus shared parts."
+    },
+    "preproc_split_table_field": {
+      "class": "assembler",
+      "arm_boundary": "own-directives",
+      "reason": "Registry unsupported (milestone 3); classified by hand: arms are pieces of one construct, not complete units."
+    },
+    "preproc_split_table_field_open": {
+      "class": "assembler",
+      "arm_boundary": "own-directives",
+      "reason": "Registry unsupported (milestone 3); classified by hand: arms are pieces of one construct, not complete units."
+    },
+    "preproc_split_var_section_tail": {
+      "class": "assembler",
+      "arm_boundary": "own-directives",
+      "reason": "Registry assembler: one construct built from arm fragments plus shared parts."
+    },
+    "preproc_undef": {
+      "class": "trivia",
+      "arm_boundary": "none",
+      "reason": "Line-level directive that is an extra; walk skips it unless include_trivia."
+    }
+  }
+}

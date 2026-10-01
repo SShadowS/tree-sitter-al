@@ -89,7 +89,7 @@ COPY_FILES = [
     "go.mod",
     "Package.swift",
 ]
-COPY_DIRS = ["tools", "test", "queries", "src"]
+COPY_DIRS = ["tools", "test", "queries", "src", "traversal"]
 
 
 class SelfTestError(RuntimeError):
@@ -730,6 +730,18 @@ CASES: list[Case] = [
         mutations=[ORACLE_REVERSED_ARM],
         must_contain=["config oracle quick tier failed (exit 1)",
                       "- stage (c) fixture differential: FAIL (exit 1"],
+        must_not_contain=["All validation checks passed"],
+    ),
+    # ---- Step 5f: traversal-policy census (roadmap F0) -------------------------
+    Case(
+        id="step5f-traversal-census-unclassified",
+        gate=VALIDATE,
+        why="the policy entry for else_table_relation_fragment, the unprefixed fragment "
+            "of spec 6.1, deleted: a special type the registry knows with no traversal class",
+        mutations=[sub("traversal/policy.json",
+                       r'    "else_table_relation_fragment": \{\n(?:      .*\n)+?    \},\n', "", count=1)],
+        must_contain=["traversal census failed (exit 1)",
+                      "unclassified: else_table_relation_fragment (registry kind fragment)"],
         must_not_contain=["All validation checks passed"],
     ),
     # ---- Step 9: wasm freshness -----------------------------------------------

@@ -1,0 +1,94 @@
+# One witness per traversal-policy entry (spec 6.1, D8). Hand-maintained.
+# `class` is a second, independent statement of what the policy must say: a policy
+# edit that flips a class passes the census (which reads the policy) and fails here.
+# source: corpus:<tools.config_oracle.fixtures Case.id> | fixture:<file in fixtures/>
+type	class	source
+comment	ordinary	corpus:al_built_in_functions.txt#AL Built-in Functions#0
+else_table_relation_fragment	fragment	corpus:preproc_split_table_relation_branch.txt#TableRelation with semicolon inside %23if branch (Pattern 1: else if in preproc)#0
+multiline_comment	ordinary	corpus:multiline_comment_test.txt#Multiline comment in codeunit#0
+pragma	trivia	corpus:action_group_preprocessor_test.txt#Action group with preprocessor conditional actionref#0
+preproc_and_expression	directive	corpus:preproc_compound_conditions.txt#Preprocessor with AND condition#0
+preproc_close	directive	corpus:action_group_preprocessor_test.txt#Action group with preprocessor conditional actionref#0
+preproc_conditional	branch-container	corpus:conditional_procedure_test.txt#Procedures inside conditional compilation blocks test#0
+preproc_conditional_actions	branch-container	corpus:action_group_preprocessor_test.txt#Action group with preprocessor conditional actionref#0
+preproc_conditional_arguments	branch-container	corpus:split_comma_lists_test.txt#A %23if at an argument separator, on either side of the comma#0
+preproc_conditional_case	branch-container	corpus:case_preprocessor_else.txt#Case statement with preprocessor conditional else branch#0
+preproc_conditional_case_patterns	branch-container	corpus:case_statement.txt#Case statement with preprocessor conditional in pattern list#0
+preproc_conditional_controladdin	branch-container	corpus:controladdin_attributed_procedure_test.txt#ControlAddin with preprocessor conditional attributes#0
+preproc_conditional_dataset	branch-container	corpus:preprocessor.txt#Preprocessor conditional in dataset section (around dataitems)#0
+preproc_conditional_expression_tail	assembler	corpus:preproc_arg_continuation_test.txt#A call argument continued across a %23if boundary#0
+preproc_conditional_fieldgroups	branch-container	corpus:fieldgroups_preproc.txt#Fieldgroups with preprocessor conditionals#0
+preproc_conditional_fields	branch-container	corpus:nested_preproc_fields_keys_test.txt#Nested %23if among table fields and keys#0
+preproc_conditional_impl_values	branch-container	fixture:impl_values.al
+preproc_conditional_keys	branch-container	corpus:key_preprocessor_test.txt#Key with nested preprocessor conditionals#0
+preproc_conditional_labels	branch-container	corpus:preproc_conditional_labels.txt#%23if/%23endif wrapping a label inside report labels (BC CLEANxx pattern)#0
+preproc_conditional_layout	branch-container	corpus:page_preproc_trigger_var_test.txt#Page with preprocessor containing trigger with var section and variable#0
+preproc_conditional_layout_mixed	branch-container	corpus:preprocessor_layout_properties_test.txt#Mixed preprocessor conditional content in grid section#0
+preproc_conditional_link_values	branch-container	corpus:link_list_opening_conditional_test.txt#G11: a %23if opening a link list, unquoted names, is list-internal#0
+preproc_conditional_list_elements	branch-container	corpus:preproc_inlist_continuation_test.txt#A list literal whose %23if supplies further ELEMENTS#0
+preproc_conditional_object	branch-container	corpus:enum_empty_value_test.txt#Enum wrapped in preprocessor conditional with empty value#0
+preproc_conditional_option_members	branch-container	corpus:option_list_opening_conditional_test.txt#G11: a %23if opening an option list, members continued after %23endif#0
+preproc_conditional_permissions	branch-container	corpus:permissions_with_preprocessor_test.txt#Table with Permissions property containing preprocessor conditionals#0
+preproc_conditional_property_value	assembler	corpus:link_list_opening_conditional_test.txt#G11: whole-value link list, `;` inside the arms, is unchanged#0
+preproc_conditional_query	branch-container	fixture:query_conditional.al
+preproc_conditional_rendering	branch-container	corpus:preproc_conditional_rendering_layout.txt#%23if/%23endif wrapping a layout inside report rendering (BC CLEANxx pattern)#0
+preproc_conditional_report	branch-container	corpus:preprocessor_in_dataitem.txt#Preprocessor directives in dataitem column declarations#0
+preproc_conditional_statement	branch-container	corpus:case_else_preprocessor_test.txt#Case statement with preprocessor conditional in else branch#0
+preproc_conditional_table_relation	assembler	corpus:preproc_split_table_relation_branch.txt#TableRelation with semicolon inside %23if branch (Pattern 1: else if in preproc)#0
+preproc_conditional_var	branch-container	corpus:case_else_preprocessor_test.txt#Case statement with preprocessor conditional in else branch#0
+preproc_conditional_var_block	branch-container	corpus:procedure_preproc_var_test.txt#Procedure with preprocessor conditional var section#0
+preproc_conditional_where	branch-container	corpus:calc_formula_preprocessor.txt#CalcFormula with preprocessor directives in where clause#0
+preproc_conditional_xmlport	branch-container	corpus:xmlport_preprocessor_elements_test.txt#XMLPort with preprocessor conditionals in table elements#0
+preproc_define	trivia	corpus:preproc_define_undef_test.txt#%23define at the top of a file, followed by an object declaration#0
+preproc_elif	directive	corpus:case_else_preprocessor_test.txt#Nested case with multiple preprocessor conditions#0
+preproc_else	directive	corpus:action_group_preprocessor_test.txt#Nested action groups with preprocessor conditionals#0
+preproc_endif	directive	corpus:action_group_preprocessor_test.txt#Action group with preprocessor conditional actionref#0
+preproc_endregion	trivia	corpus:malformed_region_directive_test.txt#Correct region directive syntax#0
+preproc_fragmented_else_tail	assembler	corpus:preproc_fragmented_if_else_in_repeat.txt#Preprocessor fragmented if-else inside repeat-until loop#0
+preproc_guarded_statement	assembler	corpus:preprocessor.txt#Preprocessor split if-statement with guard statements#0
+preproc_if	directive	corpus:action_group_preprocessor_test.txt#Action group with preprocessor conditional actionref#0
+preproc_not_expression	directive	corpus:action_group_preprocessor_test.txt#Action group with preprocessor conditional actionref#0
+preproc_open	directive	corpus:action_group_preprocessor_test.txt#Action group with preprocessor conditional actionref#0
+preproc_operand_prefix	assembler	corpus:preproc_dangling_operator_continuation_test.txt#An expression whose operator dangles before %23if keeps one binary expression#0
+preproc_or_expression	directive	corpus:preproc_compound_conditions.txt#Preprocessor with OR condition#0
+preproc_parenthesized_expression	directive	corpus:preproc_expression_parens_test.txt#Parenthesized preprocessor condition#0
+preproc_pragma_only	branch-container	corpus:pragma_if_between_field_header_and_body.txt#Pragma-only %23if/%23endif between field header and body (BC CLEANxx pattern)#0
+preproc_region	trivia	corpus:malformed_region_directive_test.txt#Correct region directive syntax#0
+preproc_split_begin	token-alias	corpus:preproc_begin_end_named_test.txt#PRIORITY GUARD: begin immediately before %23endif stays preproc_split_begin#0
+preproc_split_block_close_after_endif	assembler	corpus:split_procedure_boundary_test.txt#An %23else branch ends the procedure and opens the next one#0
+preproc_split_block_end_in_else	assembler	corpus:split_procedure_boundary_test.txt#An %23else branch ends the procedure and opens the next one#0
+preproc_split_brace_close	assembler	fixture:split_brace_close.al
+preproc_split_brace_close_if_only	assembler	corpus:preproc_split_layout_closing.txt#Layout addlast modification with closing brace inside %23if (no %23else)#0
+preproc_split_call_statement	assembler	corpus:preproc_split_call_argument.txt#Split call statement: function call with first argument in %23if/%23else#0
+preproc_split_case_branch	assembler	fixture:split_case_branch.al
+preproc_split_case_end_branch	fragment	corpus:preproc_split_brace_and_case_test.txt#A case statement whose own end lives inside each branch#0
+preproc_split_case_extended	assembler	corpus:preproc_split_case_extra_branches.txt#Case with extra branches in %23if and modified pattern#0
+preproc_split_case_statement_end	assembler	corpus:preproc_split_brace_and_case_test.txt#A case statement whose own end lives inside each branch#0
+preproc_split_code_block_end	assembler	corpus:preproc_split_code_block_end_elif_test.txt#split code block end: %23elif branch, both branches bare end;#0
+preproc_split_code_block_over_endif	assembler	corpus:preproc_block_over_conditional_test.txt#Shape A: begin opens in one %23if, shared code follows, end; closes in a later %23if#0
+preproc_split_complete_body	assembler	corpus:preproc_split_complete_body.txt#Trigger with complete body split across %23if/%23else (Pattern 1)#0
+preproc_split_container_reopen	assembler	corpus:split_container_reopen_test.txt#A %23if branch closes a layout group and opens a sibling group#0
+preproc_split_declaration	assembler	corpus:declared_but_unexercised_fields_test.txt#preproc_split_declaration.base_object -- an extension object split across %23if#0
+preproc_split_else_begin_over_endif	assembler	corpus:preproc_block_over_conditional_test.txt#Shape C: end else begin inside a %23if, with the else block's end; outside it#0
+preproc_split_end	token-alias	corpus:preproc_split_code_block_end_elif_test.txt#split code block end: %23elif branch, both branches bare end;#0
+preproc_split_field	assembler	corpus:preproc_split_declarations.txt#Preprocessor-split field section with different names#0
+preproc_split_if_begin_asymmetric	assembler	corpus:preproc_begin_end_named_test.txt#PRIORITY GUARD: begin immediately before %23endif stays preproc_split_begin#0
+preproc_split_if_begin_else	assembler	corpus:preproc_split_if_begin_else.txt#Preprocessor split if-then-begin with else alternative#0
+preproc_split_if_else_statement	assembler	corpus:preproc_fragmented_if_else_in_repeat.txt#Preprocessor fragmented if-else inside repeat-until loop#0
+preproc_split_if_statement	assembler	corpus:declared_but_unexercised_fields_test.txt#preproc_split_if_statement.else_branch -- the shared tail carries an else#0
+preproc_split_if_then_begin	assembler	corpus:preproc_split_block_over_endif_test.txt#A split block nested as the then-branch of an ordinary if#0
+preproc_split_if_then_begin_else_shared	assembler	corpus:preproc_split_block_over_endif_test.txt#Both %23if and %23else open a block, one shared end else begin follows#0
+preproc_split_key	assembler	corpus:split_key_modify_header_test.txt#Split key and modify headers with a shared body after %23endif#0
+preproc_split_modify	assembler	corpus:split_key_modify_header_test.txt#Split key and modify headers with a shared body after %23endif#0
+preproc_split_open_statement	assembler	corpus:split_open_statement_test.txt#Branches ending in an open statement prefix, completed after %23endif#0
+preproc_split_permissions_property	assembler	corpus:split_comma_lists_test.txt#Permissions head repeated per %23if branch, shared tail after %23endif#0
+preproc_split_procedure	assembler	corpus:attribute_preproc_procedure.txt#Var section followed by attributed procedure in preprocessor#0
+preproc_split_procedure_body	assembler	corpus:preproc_split_procedure_tail_test.txt#Split signature followed by a split procedure body#0
+preproc_split_procedure_preamble	assembler	corpus:preproc_split_procedure_preamble_test.txt#Procedure with header and var both split across %23if/%23else, shared body after %23endif#0
+preproc_split_report_brace_close	fragment	corpus:preproc_split_brace_and_case_test.txt#A report dataitem whose closing brace is inside a branch#0
+preproc_split_report_dataitem_header	assembler	corpus:preproc_split_brace_and_case_test.txt#A report dataitem header that differs between branches, shared body#0
+preproc_split_report_dataitem_open_over_endif	assembler	corpus:preproc_split_brace_and_case_test.txt#A report dataitem opened inside a branch and closed after %23endif#0
+preproc_split_table_field	assembler	corpus:preproc_split_field_type.txt#Field header type split across preprocessor branches#0
+preproc_split_table_field_open	assembler	corpus:split_table_field_open_test.txt#Field body opened inside %23if, closed after %23endif (one valid configuration)#0
+preproc_split_var_section_tail	assembler	corpus:var_section_does_not_swallow_procedures_test.txt#A branch that continues the var section and then starts procedures#0
+preproc_undef	trivia	corpus:preproc_define_undef_test.txt#%23define followed by %23undef#0

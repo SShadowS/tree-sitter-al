@@ -1,4 +1,4 @@
-from os.path import isdir, join
+from os.path import isdir, isfile, join
 from platform import system
 
 from setuptools import Extension, find_packages, setup
@@ -11,6 +11,11 @@ class Build(build):
         if isdir("queries"):
             dest = join(self.build_lib, "tree_sitter_al", "queries")
             self.copy_tree("queries", dest)
+        # The traversal policy (roadmap F0): one data file shared by every binding.
+        if isfile(join("traversal", "policy.json")):
+            self.mkpath(join(self.build_lib, "tree_sitter_al"))
+            self.copy_file(join("traversal", "policy.json"),
+                           join(self.build_lib, "tree_sitter_al", "traversal_policy.json"))
         super().run()
 
 
@@ -26,7 +31,7 @@ setup(
     packages=find_packages("bindings/python"),
     package_dir={"": "bindings/python"},
     package_data={
-        "tree_sitter_al": ["*.pyi", "py.typed"],
+        "tree_sitter_al": ["*.pyi", "py.typed", "traversal_policy.json"],
         "tree_sitter_al.queries": ["*.scm"],
     },
     ext_package="tree_sitter_al",
