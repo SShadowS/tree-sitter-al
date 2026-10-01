@@ -30,16 +30,17 @@ BASELINE_FILE = Path(__file__).resolve().parent.parent / '.grammar_baseline.json
 
 # _find_unused_rules()/_find_missing_definitions() below use a regex over `$.name`
 # and `name: $ =>` text, not a real JS parser, so they have known blind spots.
-# The baseline currently carries 34 entries that are each one of exactly four
+# The baseline currently carries 36 entries that are each one of exactly four
 # false-positive shapes, not real debt — verified by reading every one against
 # grammar.js (2026-08-10 review, Task 20 fix round 1; the 28th, the
 # CALC_FORMULA_PROPERTY_NAME external, added with issue #21; the 29th to 31st,
 # the DIRECTIVE_EOL and NEGATIVE_INTEGER/DECIMAL externals, config-oracle Task 18;
 # the 32nd, the preproc_conditional_property_value alias target, G6; the 33rd,
 # the MALFORMED_DIRECTIVE external, B2, which no rule references at all; the 34th,
-# the SCANNER_HOOK external, B2 fix round 1, referenced only from `extras`):
+# the SCANNER_HOOK external, B2 fix round 1, referenced only from `extras`; the
+# 35th and 36th, the ML_PROPERTY_NAME and NAMESPACES_PROPERTY_NAME externals, B4):
 #
-#   1. External scanner tokens (15) — declared in `externals: $ => [...]` and
+#   1. External scanner tokens (17) — declared in `externals: $ => [...]` and
 #      never given a `name: $ =>` rule body, e.g. `property_name`
 #      (the PROPERTY_NAME scanner token). Reported as "missing" because the
 #      only definition-shaped pattern the regex looks for doesn't apply to

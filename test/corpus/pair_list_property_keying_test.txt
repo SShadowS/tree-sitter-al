@@ -1,0 +1,859 @@
+; B4 (G9): the 13 ML property names and `Namespaces` are keyed by NAME in the
+; scanner, like CalcFormula. A one-pair value `ENU='x'` is also a complete
+; comparison, so before B4 every one-pair ML property was a comparison_expression
+; and every Namespaces list was an ml_value_list. The name list is alc's own
+; (alc 18.0.41, ObjectParser / PropertyNameToSyntaxDefinition), never a suffix:
+; FooML, CaptionMLX and ToolTipML2 stay generic. Spec:
+; docs/superpowers/specs/2026-10-01-pair-list-property-keying-design.md.
+;
+; Host audit (src/parser.c ts_external_scanner_states, read after generating B4):
+; 14 of 61 rows offer property_name. 12 also offer _ml_property_name and
+; _namespaces_property_name (rows 1, 3, 9, 10, 21, 27, 29, 36, 38, 42, 43, 54;
+; row 1 is the all-tokens recovery row). The two that offer property_name
+; WITHOUT the keyed tokens host no ML or Namespaces property:
+;   row 58 (property_name, preproc_close): states 11871, 11904 -- caption_value's
+;     sub-field name (`, Locked =`) inside a whole-value #if arm; confirmed by a
+;     debug parse of `Caption = #if X 'a', #else 'b', Locked = true, #endif ;`.
+;   row 60 (property_name only): states 13655, 13806, 14286 (caption_value
+;     sub-field name, flat), 15763 (the same in a #if arm), and 13017, 13965,
+;     13969, 14010, 14012, 14042, 14043, 14174, 14175, 15987
+;     (preproc_split_permissions_property's _permissions_head after #elif/#else).
+
+================================================================================
+B4 keyed one pair: CaptionML and OptionCaptionML on a table field
+================================================================================
+
+table 50100 T
+{
+    fields
+    {
+        field(1; F; Option)
+        {
+            CaptionML = ENU='Field';
+            OptionCaptionML = ENU='A,B';
+        }
+    }
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (table_declaration
+    (table_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (fields_section
+        (fields_keyword)
+        body: (fields_body
+          (field_declaration
+            (field_keyword)
+            id: (integer)
+            name: (identifier)
+            type: (type_specification
+              (option_type
+                (option_keyword)))
+            body: (declaration_body
+              (property
+                name: (property_name)
+                value: (ml_value_list
+                  (ml_value_pair
+                    language: (identifier)
+                    value: (string_literal))))
+              (property
+                name: (property_name)
+                value: (ml_value_list
+                  (ml_value_pair
+                    language: (identifier)
+                    value: (string_literal)))))))))))
+
+================================================================================
+B4 keyed one pair: page, page field, page action and page view hosts
+================================================================================
+
+page 50100 P
+{
+    InstructionalTextML = ENU='Do this';
+    PromotedActionCategoriesML = ENU='New,Process';
+
+    layout
+    {
+        area(Content)
+        {
+            field(F; Rec.F)
+            {
+                ToolTipML = ENU='Tip';
+            }
+        }
+    }
+
+    actions
+    {
+        area(Processing)
+        {
+            action(A)
+            {
+                CaptionML = ENU='Act';
+                AboutTextML = ENU='About';
+                AboutTitleML = ENU='Title';
+            }
+        }
+    }
+
+    views
+    {
+        view(V)
+        {
+            CaptionML = ENU='View';
+        }
+    }
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (page_declaration
+    (page_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (property
+        name: (property_name)
+        value: (ml_value_list
+          (ml_value_pair
+            language: (identifier)
+            value: (string_literal))))
+      (property
+        name: (property_name)
+        value: (ml_value_list
+          (ml_value_pair
+            language: (identifier)
+            value: (string_literal))))
+      (layout_section
+        (layout_keyword)
+        body: (layout_body
+          (area_section
+            (area_keyword)
+            type: (content_keyword)
+            body: (layout_body
+              (page_field
+                (field_keyword)
+                name: (identifier)
+                source: (member_expression
+                  object: (identifier)
+                  member: (identifier))
+                body: (declaration_body
+                  (property
+                    name: (property_name)
+                    value: (ml_value_list
+                      (ml_value_pair
+                        language: (identifier)
+                        value: (string_literal))))))))))
+      (actions_section
+        (actions_keyword)
+        body: (action_body
+          (action_area_section
+            (area_keyword)
+            type: (processing_keyword)
+            body: (action_body
+              (action_declaration
+                (action_keyword)
+                name: (identifier)
+                body: (declaration_body
+                  (property
+                    name: (property_name)
+                    value: (ml_value_list
+                      (ml_value_pair
+                        language: (identifier)
+                        value: (string_literal))))
+                  (property
+                    name: (property_name)
+                    value: (ml_value_list
+                      (ml_value_pair
+                        language: (identifier)
+                        value: (string_literal))))
+                  (property
+                    name: (property_name)
+                    value: (ml_value_list
+                      (ml_value_pair
+                        language: (identifier)
+                        value: (string_literal))))))))))
+      (views_section
+        (views_keyword)
+        body: (views_body
+          (view_definition
+            (view_keyword)
+            name: (identifier)
+            body: (declaration_body
+              (property
+                name: (property_name)
+                value: (ml_value_list
+                  (ml_value_pair
+                    language: (identifier)
+                    value: (string_literal)))))))))))
+
+================================================================================
+B4 keyed one pair: CaptionML on an enum value
+================================================================================
+
+enum 50100 E
+{
+    value(0; None)
+    {
+        CaptionML = ENU='None';
+    }
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (enum_declaration
+    (enum_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (enum_value_declaration
+        (value_keyword)
+        value_id: (integer)
+        value_name: (identifier)
+        body: (declaration_body
+          (property
+            name: (property_name)
+            value: (ml_value_list
+              (ml_value_pair
+                language: (identifier)
+                value: (string_literal)))))))))
+
+================================================================================
+B4 keyed one pair: CaptionML and ProfileDescriptionML on a profile
+================================================================================
+
+profile P
+{
+    CaptionML = ENU='Prof';
+    ProfileDescriptionML = ENU='Desc';
+    RoleCenter = "RC";
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (profile_declaration
+    (profile_keyword)
+    object_name: (identifier)
+    body: (declaration_body
+      (property
+        name: (property_name)
+        value: (ml_value_list
+          (ml_value_pair
+            language: (identifier)
+            value: (string_literal))))
+      (property
+        name: (property_name)
+        value: (ml_value_list
+          (ml_value_pair
+            language: (identifier)
+            value: (string_literal))))
+      (property
+        name: (property_name)
+        value: (quoted_identifier)))))
+
+================================================================================
+B4 keyed one pair: CaptionML on a permission set
+================================================================================
+
+permissionset 50100 PS
+{
+    CaptionML = ENU='Perm';
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (permissionset_declaration
+    (permissionset_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (property
+        name: (property_name)
+        value: (ml_value_list
+          (ml_value_pair
+            language: (identifier)
+            value: (string_literal)))))))
+
+================================================================================
+B4 keyed one pair: EntityCaptionML, EntitySetCaptionML and a query column CaptionML
+================================================================================
+
+query 50100 Q
+{
+    EntityCaptionML = ENU='Ent';
+    EntitySetCaptionML = ENU='Ents';
+
+    elements
+    {
+        dataitem(D; T)
+        {
+            column(C; F)
+            {
+                CaptionML = ENU='Col';
+            }
+        }
+    }
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (query_declaration
+    (query_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (property
+        name: (property_name)
+        value: (ml_value_list
+          (ml_value_pair
+            language: (identifier)
+            value: (string_literal))))
+      (property
+        name: (property_name)
+        value: (ml_value_list
+          (ml_value_pair
+            language: (identifier)
+            value: (string_literal))))
+      (elements_section
+        (elements_keyword)
+        body: (elements_body
+          (query_dataitem
+            (dataitem_keyword)
+            name: (identifier)
+            table_name: (identifier)
+            body: (query_body
+              (query_column
+                (column_keyword)
+                name: (identifier)
+                field_name: (identifier)
+                body: (declaration_body
+                  (property
+                    name: (property_name)
+                    value: (ml_value_list
+                      (ml_value_pair
+                        language: (identifier)
+                        value: (string_literal)))))))))))))
+
+================================================================================
+B4 keyed one pair: report, report data item (docs example) and report layout
+================================================================================
+
+report 50100 R
+{
+    AdditionalSearchTermsML = ENU='Search';
+
+    dataset
+    {
+        dataitem(Customer; Customer)
+        {
+            RequestFilterHeadingML = DAN='Kundeliste'; // Customer list
+        }
+    }
+
+    rendering
+    {
+        layout(L)
+        {
+            Type = RDLC;
+            SummaryML = ENU='Sum';
+        }
+    }
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (report_declaration
+    (report_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (property
+        name: (property_name)
+        value: (ml_value_list
+          (ml_value_pair
+            language: (identifier)
+            value: (string_literal))))
+      (dataset_section
+        (dataset_keyword)
+        body: (dataset_body
+          (report_dataitem
+            (dataitem_keyword)
+            name: (identifier)
+            table_name: (identifier)
+            body: (report_body
+              (property
+                name: (property_name)
+                value: (ml_value_list
+                  (ml_value_pair
+                    language: (identifier)
+                    value: (string_literal)))))
+            (comment))))
+      (rendering_section
+        (rendering_keyword)
+        body: (rendering_body
+          (rendering_layout
+            (layout_keyword)
+            name: (identifier)
+            body: (declaration_body
+              (property
+                name: (property_name)
+                value: (identifier))
+              (property
+                name: (property_name)
+                value: (ml_value_list
+                  (ml_value_pair
+                    language: (identifier)
+                    value: (string_literal)))))))))))
+
+================================================================================
+B4 keyed two pairs: CaptionML and OptionCaptionML (the production shapes)
+================================================================================
+
+table 50100 T
+{
+    fields
+    {
+        field(1; F; Option)
+        {
+            CaptionML = ENU='Field', DAN='Felt';
+            OptionCaptionML = ENU='A,B', DAN='X,Y';
+        }
+    }
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (table_declaration
+    (table_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (fields_section
+        (fields_keyword)
+        body: (fields_body
+          (field_declaration
+            (field_keyword)
+            id: (integer)
+            name: (identifier)
+            type: (type_specification
+              (option_type
+                (option_keyword)))
+            body: (declaration_body
+              (property
+                name: (property_name)
+                value: (ml_value_list
+                  (ml_value_pair
+                    language: (identifier)
+                    value: (string_literal))
+                  (ml_value_pair
+                    language: (identifier)
+                    value: (string_literal))))
+              (property
+                name: (property_name)
+                value: (ml_value_list
+                  (ml_value_pair
+                    language: (identifier)
+                    value: (string_literal))
+                  (ml_value_pair
+                    language: (identifier)
+                    value: (string_literal)))))))))))
+
+================================================================================
+B4 Namespaces: the docs one-pair example
+================================================================================
+
+xmlport 50100 X
+{
+    Namespaces = bc = 'urn:microsoft-dynamics-bc/xmlports/x100';
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (xmlport_declaration
+    (xmlport_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (property
+        name: (property_name)
+        value: (namespace_value_list
+          (namespace_pair
+            prefix: (identifier)
+            uri: (string_literal)))))))
+
+================================================================================
+B4 Namespaces: the empty prefix
+================================================================================
+
+xmlport 50100 X
+{
+    Namespaces = "" = 'urn:a';
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (xmlport_declaration
+    (xmlport_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (property
+        name: (property_name)
+        value: (namespace_value_list
+          (namespace_pair
+            prefix: (quoted_identifier)
+            uri: (string_literal)))))))
+
+================================================================================
+B4 Namespaces: six pairs (SalesInvoicePEPPOL20.XmlPort.al:17)
+================================================================================
+
+xmlport 50100 X
+{
+    Namespaces = "" = 'urn:oasis:names:specification:ubl:schema:xsd:Invoice-2', cac = 'urn:oasis:names:specification:ubl:schema:xsd:CommonAggregateComponents-2', cbc = 'urn:oasis:names:specification:ubl:schema:xsd:CommonBasicComponents-2', ccts = 'urn:un:unece:uncefact:documentation:2', qdt = 'urn:oasis:names:specification:ubl:schema:xsd:QualifiedDatatypes-2', udt = 'urn:un:unece:uncefact:data:specification:UnqualifiedDataTypesSchemaModule:2';
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (xmlport_declaration
+    (xmlport_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (property
+        name: (property_name)
+        value: (namespace_value_list
+          (namespace_pair
+            prefix: (quoted_identifier)
+            uri: (string_literal))
+          (namespace_pair
+            prefix: (identifier)
+            uri: (string_literal))
+          (namespace_pair
+            prefix: (identifier)
+            uri: (string_literal))
+          (namespace_pair
+            prefix: (identifier)
+            uri: (string_literal))
+          (namespace_pair
+            prefix: (identifier)
+            uri: (string_literal))
+          (namespace_pair
+            prefix: (identifier)
+            uri: (string_literal)))))))
+
+================================================================================
+B4 keyed name: any case, a comment or a newline before the equals sign
+================================================================================
+
+table 50100 T
+{
+    captionml = ENU='c';
+    CAPTIONML = ENU='c';
+    CaptionML /* c */ = ENU='c';
+    CaptionML
+        = ENU='c';
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (table_declaration
+    (table_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (property
+        name: (property_name)
+        value: (ml_value_list
+          (ml_value_pair
+            language: (identifier)
+            value: (string_literal))))
+      (property
+        name: (property_name)
+        value: (ml_value_list
+          (ml_value_pair
+            language: (identifier)
+            value: (string_literal))))
+      (property
+        name: (property_name)
+        (multiline_comment)
+        value: (ml_value_list
+          (ml_value_pair
+            language: (identifier)
+            value: (string_literal))))
+      (property
+        name: (property_name)
+        value: (ml_value_list
+          (ml_value_pair
+            language: (identifier)
+            value: (string_literal)))))))
+
+================================================================================
+B4 keyed pair forms: a quoted language, Locked and Comment as language names
+================================================================================
+
+table 50100 T
+{
+    CaptionML = "ENU"='a';
+    CaptionML = ENU='a', Locked='x';
+    CaptionML = ENU='a', Comment='x';
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (table_declaration
+    (table_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (property
+        name: (property_name)
+        value: (ml_value_list
+          (ml_value_pair
+            language: (quoted_identifier)
+            value: (string_literal))))
+      (property
+        name: (property_name)
+        value: (ml_value_list
+          (ml_value_pair
+            language: (identifier)
+            value: (string_literal))
+          (ml_value_pair
+            language: (identifier)
+            value: (string_literal))))
+      (property
+        name: (property_name)
+        value: (ml_value_list
+          (ml_value_pair
+            language: (identifier)
+            value: (string_literal))
+          (ml_value_pair
+            language: (identifier)
+            value: (string_literal)))))))
+
+================================================================================
+B4 keyed empty value: CaptionML = ; has no value field
+================================================================================
+
+table 50100 T
+{
+    CaptionML = ;
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (table_declaration
+    (table_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (property
+        name: (property_name)))))
+
+================================================================================
+B4 regression: unknown and near-miss names with one pair stay comparisons
+================================================================================
+
+table 50100 T
+{
+    fields
+    {
+        field(1; F; Integer)
+        {
+            Visible = A = 'b';
+            FooML = A = 'b';
+            CaptionMLX = A = 'b';
+            ToolTipML2 = A = 'b';
+        }
+    }
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (table_declaration
+    (table_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (fields_section
+        (fields_keyword)
+        body: (fields_body
+          (field_declaration
+            (field_keyword)
+            id: (integer)
+            name: (identifier)
+            type: (type_specification
+              (basic_type))
+            body: (declaration_body
+              (property
+                name: (property_name)
+                value: (property_expression
+                  (comparison_expression
+                    left: (identifier)
+                    operator: (comparison_operator)
+                    right: (string_literal))))
+              (property
+                name: (property_name)
+                value: (property_expression
+                  (comparison_expression
+                    left: (identifier)
+                    operator: (comparison_operator)
+                    right: (string_literal))))
+              (property
+                name: (property_name)
+                value: (property_expression
+                  (comparison_expression
+                    left: (identifier)
+                    operator: (comparison_operator)
+                    right: (string_literal))))
+              (property
+                name: (property_name)
+                value: (property_expression
+                  (comparison_expression
+                    left: (identifier)
+                    operator: (comparison_operator)
+                    right: (string_literal)))))))))))
+
+================================================================================
+B4 regression: an unknown name with two pairs stays ml_value_list (generic path)
+================================================================================
+
+table 50100 T
+{
+    fields
+    {
+        field(1; F; Integer)
+        {
+            FooML = A='x', B='y';
+        }
+    }
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (table_declaration
+    (table_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (fields_section
+        (fields_keyword)
+        body: (fields_body
+          (field_declaration
+            (field_keyword)
+            id: (integer)
+            name: (identifier)
+            type: (type_specification
+              (basic_type))
+            body: (declaration_body
+              (property
+                name: (property_name)
+                value: (ml_value_list
+                  (ml_value_pair
+                    language: (identifier)
+                    value: (string_literal))
+                  (ml_value_pair
+                    language: (identifier)
+                    value: (string_literal)))))))))))
+
+================================================================================
+B4 regression: Caption sub-fields, CalcFormula and TextConst are unchanged
+================================================================================
+
+table 50100 T
+{
+    fields
+    {
+        field(1; F; Integer)
+        {
+            Caption = 'x', Locked = true, Comment = 'y', MaxLength = 20;
+            CalcFormula = count(T);
+        }
+    }
+}
+
+codeunit 50100 C
+{
+    var
+        T: TextConst ENU='a';
+        U: TextConst ENU='a', DAN='b';
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (table_declaration
+    (table_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (fields_section
+        (fields_keyword)
+        body: (fields_body
+          (field_declaration
+            (field_keyword)
+            id: (integer)
+            name: (identifier)
+            type: (type_specification
+              (basic_type))
+            body: (declaration_body
+              (property
+                name: (property_name)
+                value: (caption_value
+                  (string_literal)
+                  (property_name)
+                  (boolean)
+                  (property_name)
+                  (string_literal)
+                  (property_name)
+                  (integer)))
+              (property
+                name: (property_name)
+                value: (aggregate_formula
+                  function: (aggregate_function)
+                  target: (calc_field_reference
+                    (identifier))))))))))
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (var_section
+        (var_keyword)
+        body: (var_body
+          (variable_declaration
+            name: (identifier)
+            type: (basic_type)
+            (ml_value_list
+              (ml_value_pair
+                language: (identifier)
+                value: (string_literal))))
+          (variable_declaration
+            name: (identifier)
+            type: (basic_type)
+            (ml_value_list
+              (ml_value_pair
+                language: (identifier)
+                value: (string_literal))
+              (ml_value_pair
+                language: (identifier)
+                value: (string_literal)))))))))

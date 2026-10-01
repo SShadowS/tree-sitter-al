@@ -83,3 +83,17 @@ directive_line_rejected_negative_test.txt
 # Until B3 this file was preproc_dangling_operator_known_wrong_test.txt, a
 # tripwire pinning the clean WRONG tree. The ERROR is the assertion.
 preproc_dangling_operator_negative_test.txt
+# B4 (G9) pair-list negatives: Locked = true after an ML property, a TextConst
+# and Namespaces, a trailing comma, a missing comma, a string-only value, an
+# identifier text, MaxLength after a TextConst and an unquoted ToolTipML. alc
+# 18.0.41 rejects each as syntax (AL0104/AL0107/AL0219/AL0301); the ERROR on the
+# offending line is the assertion, never a fallback to a comparison. Evidence:
+# probe_alc ml_locked_true_rejected, textconst_locked_true_rejected,
+# namespaces_locked_true_rejected, ml_trailing_comma_rejected,
+# ml_missing_comma_rejected, ml_string_value_rejected,
+# ml_identifier_value_rejected, textconst_maxlength_rejected,
+# instructionaltextml_semicolon_rejected, tooltipml_unquoted_rejected; and
+# alc_probe tools/alc_probe/cases/pair-list-keying/tooltipml-unquoted-rejected.al
+# (page level; the probe_alc case is field level). The InstructionalTextML `;`
+# case parses clean on purpose: its AL0124 is a context rejection.
+pair_list_property_keying_negative_test.txt

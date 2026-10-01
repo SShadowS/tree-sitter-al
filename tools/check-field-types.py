@@ -272,6 +272,22 @@ FIELD_INVARIANTS = [
     # at `property.value`: it is every visible `_property_value` kind.
     inv('preproc_conditional_property_value', 'value', True, set(), 'FIXED',
         "one value per arm; the arm's ';' stays outside the field (G6)"),
+
+    # -- B4 (G9): name-keyed pair lists --------------------------------------
+    # The 13 ML properties and Namespaces are keyed by name in the scanner, so
+    # a one-pair value reaches its list instead of a comparison. Each pair has
+    # exactly one name-role field and one string-role field (spec
+    # 2026-10-01-pair-list-property-keying-design.md section 4). The '='
+    # between them must never inherit either field.
+    inv('namespace_pair', 'prefix', False, set(), 'FIXED',
+        'one prefix name per Namespaces pair (B4)',
+        types={'identifier', 'quoted_identifier'}),
+    inv('namespace_pair', 'uri', False, set(), 'FIXED',
+        'one URI string per Namespaces pair (B4)',
+        types={'string_literal'}),
+    inv('ml_value_pair', 'language', False, set(), 'FIXED',
+        'one language name per ML pair; pinned as it stood when B4 keyed the ML names',
+        types={'identifier', 'quoted_identifier'}),
 ]
 
 

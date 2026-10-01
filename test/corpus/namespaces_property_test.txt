@@ -32,16 +32,16 @@ xmlport 50000 "Test XMLPort"
         value: (identifier))
       (property
         name: (property_name)
-        value: (ml_value_list
-          (ml_value_pair
-            language: (quoted_identifier)
-            value: (string_literal))
-          (ml_value_pair
-            language: (identifier)
-            value: (string_literal))
-          (ml_value_pair
-            language: (identifier)
-            value: (string_literal))))
+        value: (namespace_value_list
+          (namespace_pair
+            prefix: (quoted_identifier)
+            uri: (string_literal))
+          (namespace_pair
+            prefix: (identifier)
+            uri: (string_literal))
+          (namespace_pair
+            prefix: (identifier)
+            uri: (string_literal))))
       (schema_section
         (schema_keyword)
         body: (schema_body
@@ -73,11 +73,10 @@ xmlport 50001 "Simple XMLPort"
     body: (declaration_body
       (property
         name: (property_name)
-        value: (property_expression
-          (comparison_expression
-            left: (identifier)
-            operator: (comparison_operator)
-            right: (string_literal))))
+        value: (namespace_value_list
+          (namespace_pair
+            prefix: (identifier)
+            uri: (string_literal))))
       (schema_section
         (schema_keyword)
         body: (schema_body

@@ -207,6 +207,8 @@ module.exports = grammar({
                                 //      the scanner returns it only to make that line an ERROR
     $._scanner_hook,            // [14] NEVER emitted. In `extras` only, so that every parse
                                 //      state has a valid external token and calls the scanner
+    $._ml_property_name,        // [15] one of the 13 compiler ML names followed by = (B4)
+    $._namespaces_property_name, // [16] `Namespaces` followed by = (B4)
   ],
 
   conflicts: $ => [
@@ -823,7 +825,29 @@ module.exports = grammar({
         field('value', $._calc_formula_expression),
         ';'
       ),
+      // The 13 ML properties and Namespaces are keyed by NAME, like CalcFormula:
+      // the scanner emits _ml_property_name / _namespaces_property_name for
+      // exactly those words. A one-pair value `ENU='x'` is also a complete
+      // comparison expression, so no value-shape rule can tell `CaptionML = ENU='x';`
+      // from `Visible = A = 'b';` -- only the name can. The name list is the
+      // compiler's own (alc 18.0.41, ObjectParser / PropertyNameToSyntaxDefinition;
+      // spec 2026-10-01-pair-list-property-keying-design.md), never a suffix match.
+      seq(
+        field('name', alias($._ml_property_name, $.property_name)),
+        '=',
+        optional(field('value', $._ml_property_value)),
+        ';'
+      ),
+      seq(
+        field('name', alias($._namespaces_property_name, $.property_name)),
+        '=',
+        optional(field('value', $._namespaces_property_value)),
+        ';'
+      ),
     ),
+
+    _ml_property_value: $ => $.ml_value_list,
+    _namespaces_property_value: $ => $.namespace_value_list,
 
     // --- Permissions property: Name = tabledata_permission_list (no trailing ;) ---
     // Used when the terminating ';' is consumed inside the permission list's preproc branch.
@@ -1163,16 +1187,34 @@ module.exports = grammar({
 
     // --- ML (Multilingual) value list ---
     // ENU='English', DEU='German'
+    // There is no `, Locked = <boolean>` tail: alc 18.0.41 rejects it with
+    // AL0219 in all three hosts (ML property, TextConst, Namespaces), and 0
+    // corpus files use it (B4; tools/alc_probe/cases/pair-list-keying/).
     ml_value_list: $ => prec.right(seq(
       $.ml_value_pair,
       repeat(seq(',', $.ml_value_pair)),
-      optional(seq(',', $.locked_keyword, '=', $.boolean))
     )),
 
     ml_value_pair: $ => seq(
       field('language', $._plain_name),
       '=',
       field('value', $.string_literal)
+    ),
+
+    // --- Namespaces value list (XmlPort) ---
+    // "" = 'urn:a', cac = 'urn:b'. The same list grammar as ml_value_list in
+    // alc, but its own node: a prefix and a URI, not a language and a text.
+    // Reached ONLY from property's Namespaces arm; adding it to _property_value
+    // would make it a second, identically shaped list for every unknown name.
+    namespace_value_list: $ => prec.right(seq(
+      $.namespace_pair,
+      repeat(seq(',', $.namespace_pair)),
+    )),
+
+    namespace_pair: $ => seq(
+      field('prefix', $._plain_name),
+      '=',
+      field('uri', $.string_literal)
     ),
 
     // --- CalcFormula values ---
