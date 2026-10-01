@@ -95,8 +95,9 @@ def build_env(environ=None, *, is_windows=None, which=shutil.which, isfile=os.pa
     clang-cl as CC under the rule in tools/default-cc.sh -- the shell twin; keep the two
     identical. os.environ itself is never modified.
 
-    Windows only; only when CC is unset or empty (an explicit CC, CC=cl included, wins);
-    not when TS_AL_NO_CLANG=1; clang-cl from PATH, else LLVM_CLANG_CL; not found -> no
+    Windows only; only when CC is unset or empty (an explicit CC wins); not when
+    TS_AL_NO_CLANG=1, which is the way to force MSVC (CC=cl works only inside a VS
+    developer shell); clang-cl from PATH, else LLVM_CLANG_CL; not found -> no
     change (MSVC). A CC equal to TS_AL_DEFAULT_CC is the rule's own earlier choice
     (inherited from ts-lock.sh), not an explicit one, so the rule is re-applied to it.
     """

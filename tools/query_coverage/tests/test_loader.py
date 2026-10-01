@@ -153,21 +153,23 @@ def _env(environ, *, windows=True, on_path=CLANG, llvm_file=False):
 
 
 def test_build_env_defaults_cc_to_clang_cl_when_unset():
-    env = _env({"PATH": "x"})
-    assert env["CC"] == CLANG and env["TS_AL_DEFAULT_CC"] == CLANG and env["PATH"] == "x"
+    assert _env({"PATH": "x"}) == {"PATH": "x", "CC": CLANG, "TS_AL_DEFAULT_CC": CLANG}
 
 
 def test_build_env_falls_back_to_the_llvm_install_dir():
-    assert _env({}, on_path=None, llvm_file=True)["CC"] == loader.LLVM_CLANG_CL
+    env = _env({}, on_path=None, llvm_file=True)
+    assert env == {"CC": loader.LLVM_CLANG_CL, "TS_AL_DEFAULT_CC": loader.LLVM_CLANG_CL}
 
 
-@pytest.mark.parametrize("cc", ["cl", "gcc", CLANG])
+@pytest.mark.parametrize("cc", ["sentinel-cc-xyz", "cl"])
 def test_build_env_explicit_cc_wins(cc):
-    assert _env({"CC": cc})["CC"] == cc
+    """Exact, and never a value the lookup could also return: a suffix check once let
+    CC=cl "win" after the rule had replaced it with clang-cl."""
+    assert _env({"CC": cc}) == {"CC": cc}
 
 
 def test_build_env_opt_out():
-    assert "CC" not in _env({"TS_AL_NO_CLANG": "1"})
+    assert _env({"TS_AL_NO_CLANG": "1"}) == {"TS_AL_NO_CLANG": "1"}
 
 
 def test_build_env_not_windows_is_a_no_op():
@@ -181,8 +183,8 @@ def test_build_env_clang_cl_absent_changes_nothing():
 def test_build_env_reapplies_the_rule_to_an_inherited_default():
     """ts-lock.sh exported CC=TS_AL_DEFAULT_CC; that is not an explicit CC, so the opt-out
     still applies to it."""
-    inherited = {"CC": CLANG, "TS_AL_DEFAULT_CC": CLANG, "TS_AL_NO_CLANG": "1"}
-    assert "CC" not in _env(inherited)
+    inherited = {"CC": "/x/clang-cl", "TS_AL_DEFAULT_CC": "/x/clang-cl", "TS_AL_NO_CLANG": "1"}
+    assert _env(inherited) == {"TS_AL_NO_CLANG": "1"}
 
 
 def test_build_env_never_touches_os_environ(monkeypatch):
