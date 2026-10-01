@@ -8,6 +8,15 @@
 #   ./tools/session-cleanup.sh --yes        # actually delete
 #   ./tools/session-cleanup.sh --yes --keep-snapshots 4
 #   ./tools/session-cleanup.sh --yes --all-snapshots     # delete every baseline
+#   ./tools/session-cleanup.sh --procs [--older-than MIN] [--yes]
+#                                           # leftover find/tail/grep/head/sleep processes
+#
+# --procs lists find, tail, grep, head and sleep processes older than MIN minutes
+# (default 30) with pid, age, parent and command line, and with --yes kills them
+# (psutil's kill: TerminateProcess on Windows, as `taskkill //F`; SIGKILL elsewhere).
+# Nothing outside those five names is ever touched: not bash, python, node, an MCP
+# server, or anything else. It runs alone, skipping the file cleanup below and its
+# dirty-tree refusal, which exist for deleting files.
 #
 # Design notes, because this script deletes things:
 #
@@ -31,13 +40,17 @@ REPO="$(pwd)"
 DRY=1
 KEEP_SNAPSHOTS=2
 ALL_SNAPSHOTS=0
+PROCS=0
+OLDER_THAN=30
 
 while [ $# -gt 0 ]; do
   case "$1" in
     --yes|-y)            DRY=0 ;;
     --keep-snapshots)    KEEP_SNAPSHOTS="${2:?--keep-snapshots needs a number}"; shift ;;
     --all-snapshots)     ALL_SNAPSHOTS=1 ;;
-    -h|--help)           sed -n '2,20p' "$0"; exit 0 ;;
+    --procs)             PROCS=1 ;;
+    --older-than)        OLDER_THAN="${2:?--older-than needs minutes}"; shift ;;
+    -h|--help)           sed -n '2,29p' "$0"; exit 0 ;;
     *) echo "unknown argument: $1" >&2; exit 2 ;;
   esac
   shift
@@ -46,6 +59,49 @@ done
 case "$KEEP_SNAPSHOTS" in
   ''|*[!0-9]*) echo "--keep-snapshots must be a non-negative integer" >&2; exit 2 ;;
 esac
+
+# --- --procs: leftover search/wait processes ---------------------------------
+if [ "$PROCS" -eq 1 ]; then
+  case "$OLDER_THAN" in
+    ''|*[!0-9]*) echo "--older-than must be a non-negative integer" >&2; exit 2 ;;
+  esac
+  exec python - "$OLDER_THAN" "$DRY" <<'PY'
+import sys, time
+import psutil
+
+NAMES = {"find", "tail", "grep", "head", "sleep"}  # never widen this to a shell or runtime
+minutes, dry = int(sys.argv[1]), sys.argv[2] == "1"
+now, hits = time.time(), []
+for p in psutil.process_iter(["name"]):  # name first: other attributes are slow on Windows
+    if (p.info["name"] or "").lower().removesuffix(".exe") not in NAMES:
+        continue
+    try:
+        p.info.update(ppid=p.ppid(), age=(now - p.create_time()) / 60)
+    except psutil.Error:
+        continue  # gone, or not ours to inspect
+    if p.info["age"] >= minutes:
+        hits.append((p, p.info["age"]))
+print(f"--procs: {', '.join(sorted(NAMES))} older than {minutes} min"
+      + (" (DRY RUN, nothing is killed; pass --yes)" if dry else " (KILLING)"))
+for p, age in hits:
+    try:
+        cmd = " ".join(p.cmdline()) or p.info["name"]
+    except psutil.Error:
+        cmd = p.info["name"]
+    try:
+        parent = f'{p.info["ppid"]} {psutil.Process(p.info["ppid"]).name()}'
+    except psutil.Error:
+        parent = f'{p.info["ppid"]} (gone)'
+    verb = "would kill" if dry else "killed"
+    if not dry:
+        try:
+            p.kill()
+        except psutil.Error as e:
+            verb = f"FAILED ({type(e).__name__})"
+    print(f"  {verb:<11} pid={p.pid:<7} age={age:6.0f} min  parent={parent}  {cmd}")
+print(f"{len(hits)} process(es)" + (" would be killed" if dry and hits else ""))
+PY
+fi
 
 # --- refuse to run over uncommitted work -------------------------------------
 if ! git rev-parse --git-dir >/dev/null 2>&1; then
@@ -56,7 +112,7 @@ if [ -n "$DIRTY" ]; then
   echo "REFUSING TO RUN — tracked files are modified:"
   echo "$DIRTY"
   echo
-  echo "Commit or stash first. This script deletes things; it will not do that"
+  echo "Commit first (never stash: docs/agent-brief-rules.md). This script deletes things; it will not do that"
   echo "while there is uncommitted work to confuse the picture."
   exit 1
 fi
