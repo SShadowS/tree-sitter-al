@@ -144,6 +144,11 @@ jobs:
       - name: Oracle unit tests
         run: python -m pytest tools/config_oracle/tests -q
 
+      # tools/perf (roadmap A5): percentile maths, `compare`, edit offsets and points,
+      # the tree comparator and the process-tree sampler. No corpus needed.
+      - name: Perf tooling unit tests
+        run: python -m pytest tools/perf/tests -q
+
       - name: Quick tier (census, self-tests, fixture differential)
         run: python -m tools.config_oracle run --tier quick
 

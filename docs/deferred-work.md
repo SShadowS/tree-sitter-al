@@ -799,6 +799,91 @@ resolver-refused deliberate negatives in `fixture-classes.tsv`. C2's raw-compile
 mode, which skips the resolver, is what can pin it. Until then the table above is the
 evidence. B2 should add a negative fixture asserting the ERROR once it is fixed.
 
+## 21. The MSVC-built native library parses ~2x slower than clang -O2
+
+**Established:** 2026-09-30, A5 (performance baselines) and its independent review.
+
+**Evidence:**
+- `tree-sitter build -v` shows the library every local tool loads (`al.dll`, via
+  `tools/query_coverage/loader.ensure_library`) is built by MSVC 19.44 with
+  `-nologo -MD -O2 -Brepro -std:c11 -W4 -LD -utf-8`: an optimised build, not a debug one.
+- The reviewer built the same `src/parser.c` and `src/scanner.c` with `zig cc -shared -O2`
+  (clang), loaded both DLLs into one py-tree-sitter process and timed DC (1,352 files)
+  single-threaded, three interleaved passes after a warm-up, timing only `parse()`:
+  MSVC 1.527-1.538 s, clang 0.741-0.749 s, i.e. **2.06x**. The two DLLs produce identical
+  `rows()` trees on every DC file. Same runtime (`.pyd`) in both, so the difference is the
+  grammar DLL's own code (generated lexer and parse tables, scanner), not call overhead; it
+  holds on the largest files too.
+- WASM (emscripten, clang) sits between the two: 1.009 s on DC. So "WASM is faster than
+  native", which the first baseline reported, holds only against MSVC.
+- `python -m tools.perf native --cc zig` reproduces the comparison over all four corpora;
+  `docs/performance-baselines.md` ("Compiler sensitivity") has the recorded figures.
+
+**Who ships MSVC code:** the Python wheels built on `windows-latest` in
+`.github/workflows/publish-pypi.yml` (setuptools' MSVC defaults plus `/std:c11 /utf-8`
+from `setup.py`), and every Windows `npm install` (no prebuilds are published;
+node-gyp compiles `binding.gyp` with MSVC on the user's machine). So Windows consumers of
+both bindings get this code generation.
+
+**Answered by the compiler spike, 2026-09-30/10-01.** The report is
+`.superpowers/sdd/spike-cc/spike-report.md`; the table is in `docs/performance-baselines.md`,
+"Compiler sensitivity: the compiler spike". Every speed figure below is an `ab` ratio against
+MSVC `-O2`.
+
+- **Tree identity.** 33 builds were checked against MSVC's complete `rows()` trees on all four
+  corpora (70,355 files), and all 33 are identical. No compiler-dependent parse was found.
+- **The compiler decides; flags do not.**
+  - MSVC `/Ox`, `/Ob3`, `/GL`+`/LTCG`, the setuptools wheel flags and the node-gyp Release
+    flags (`/Ox /Ot /Ob2 /Oy /Oi /Gy /MT`; no LTCG, since `node_with_ltcg` is false) all
+    measure **1.00x**.
+  - clang-cl `/O2` measures **2.07x** on DC and **2.05x** on BC.History. clang `-O2`/`-O3`,
+    `-flto` and `-march=native` all come out at 2.04-2.07x.
+  - zig cc is about 1.5% behind clang-cl, and gcc 13 about 5% behind.
+  - With the wheel's own flags, swapping MSVC for clang-cl gives **2.04x** on BC.History. With
+    node-gyp's flags it gives 2.09x on DC.
+- **PGO.**
+  - MSVC PGO reaches 2.0x, about 2% behind plain clang-cl (two 24-round runs agree).
+  - clang PGO adds 0-3% on top of clang-cl, which `ab` cannot resolve. The gap between
+    training on the measured set and on a disjoint set is also below resolution.
+- **Why (a hypothesis, not proven).**
+  - In every slow MSVC build, `ts_lex_keywords` has a **14,952-byte stack frame**. At `-O1` it
+    is 9,224 bytes, at `-Od` 232 bytes, and clang's is 32 bytes. The PGO builds have none.
+  - Speed follows the frame: `-O2` 1.00x, `-O1` 1.11x, `-Od` **1.68x**, PGO 2.0x.
+  - Removing the `__chkstk` probe (`-Gs32768`) changed nothing, so the likely cost is how
+    MSVC's optimiser spills in that giant function.
+  - It is not jump-table lowering: `-Od` has the same single jump table as `-O2`.
+- **Build time** for `parser.c` + `scanner.c`: MSVC takes 11.3 s at `-O2` (13.3 s at `-O1`);
+  clang, clang-cl and gcc take 2.7-2.8 s.
+- **Tools.**
+  - `tree-sitter build` and `tree-sitter test` honour `CC`.
+  - `tree-sitter test` rewrites the mtimes of `src/*.c` on every run here, so it always
+    recompiles: 11.9 s with MSVC, 3.2 s with `CC=clang-cl`.
+  - ccache and sccache cannot cache `tree-sitter build`, which compiles both files in one call.
+    They do help per-file builds: for example sccache+cl takes 0.8 s on a hit, across
+    worktrees, and a `scanner.c`-only edit becomes 0.2-0.9 s. They do not help the CI wheel
+    job or the grammar loop, because every grammar edit regenerates `parser.c`.
+
+**Recommended action (E3):**
+1. Build the Windows wheels with clang-cl: a `build_ext` override that sets the compiler
+   executable, since setuptools ignores `CC` on Windows, keeping MS `link.exe`. Verify that
+   LLVM is on the runner, and `ab` the built wheel's library before release.
+2. Publish clang-cl-built Windows prebuilds for the Node binding. `node-gyp-build` already
+   loads them. Keep the MSVC compile as the fallback. Do not set `msbuild_toolset: ClangCL`,
+   which would make source installs need the VS clang component.
+3. Document `CC=clang-cl` for the local dev loop. The fallback without LLVM is `-0`.
+4. Take `tools.perf` baselines with `CC=clang-cl`, and keep an MSVC-against-clang-cl `ab` row
+   as a canary.
+
+Rejected, with the reasons measured above:
+- MSVC flag tuning: no effect.
+- MSVC PGO: slower than clang-cl, and it needs a training step and a profile refresh on every
+  grammar change.
+- clang PGO: gain unresolved, same upkeep.
+
+**Owner:** roadmap E3 (artifact verification), because shipped Windows wheels are affected;
+D2 measures (its thresholds must be set per compiler: `tools/perf compare` warns when the
+compiler or flags differ). Do not tune the grammar against MSVC numbers alone (D1).
+
 ## Longer-lived proposals, tracked separately
 
 - [`python-bindings-modernization.md`](python-bindings-modernization.md) — the
