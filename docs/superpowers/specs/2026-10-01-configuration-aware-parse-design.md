@@ -1,6 +1,6 @@
 # Configuration-aware parsing: scope and design (roadmap A7)
 
-**Status:** v3, 2026-10-01. The user approved v1's design section by section.
+**Status:** v3, **approved by the user 2026-10-01**. The user approved v1's design section by section.
 
 - **v2** folded in the second review round.
 - **v3** folds in a third round (`spec2-review-{sol,astra,gemini}.md`): sol and astra said
