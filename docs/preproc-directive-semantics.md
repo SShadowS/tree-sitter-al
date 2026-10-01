@@ -17,7 +17,7 @@ positive probe has a control that must fail.
 | Are symbols case-sensitive? | **Yes**, both `preprocessorSymbols` and `#define`d symbols | `symbol_case_*`, `defined_symbol_case_sensitive` |
 | Operators | `and`, `or`, `not`, parentheses. Keywords are case-insensitive (`AND`, `NOT`) | `and_*`, `or_*`, `not_*`, `paren_true` |
 | Rejected operators | `&&`, `\|\|`, `xor` (AL0631); `!`, `==` (AL0629) | `*_rejected` |
-| Precedence | `not` > `and` > `or` | `prec_*` |
+| Precedence | `not` > `and` > `or`. The grammar encodes it since B1 (`preproc_not_expression` is `prec(3)`), pinned by `test/corpus/preproc_condition_precedence_test.txt`; the config oracle's condition-structure stage checks the tree's grouping against the resolver per configuration | `prec_*` |
 | Literals | `true`, `false`, case-insensitive | `*_literal` |
 | Malformed | empty condition, two operands with no operator, `#elif` with no condition: rejected | `two_words_rejected`, `empty_condition_rejected`, `elif_without_condition_rejected` |
 | Symbol shape | `[A-Za-z_][A-Za-z0-9_]*` (digits and `_` allowed) | `digit_symbol`, `underscore_symbol` |

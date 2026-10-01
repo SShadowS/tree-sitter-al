@@ -1015,6 +1015,24 @@ These were parked as polish, with no dependent work:
 **Owner:** E1/E3 release gating. Points 1–3 must be fixed before the next major is
 published.
 
+## 25. `#if not A and B` grouped as `not (A and B)` (roadmap B1) — RESOLVED 2026-10-01
+
+**Established:** 2026-09-28 (grep, all four corpora) and reproduced at 6b3ee0b:
+`preproc_not_expression` had no precedence, so the tree read `not (A and B)` where alc
+reads `(not A) and B` (`docs/preproc-directive-semantics.md`, probes `prec_*`). A silent
+wrong tree: no ERROR, and no gate looked at condition grouping.
+
+**Fixed:** 81076bf makes `not` `prec(3)`, above `and` (2) and `or` (1). STATE_COUNT
+15870 before and after, no new conflict. Production impact re-measured: 0 `not X and/or Y`
+sites in the four corpora; tree-harness over BC.History: all 15,358 trees byte-identical.
+`test/corpus/preproc_condition_precedence_test.txt` pins 11 cases (4 failed before), and
+`lossless_keyword_nodes_test.txt`, which asserted the defect, was corrected by hand.
+
+**Gated:** 9733550 adds the config oracle's condition-structure stage, which evaluates the
+tree's grouping per configuration against the resolver's. Replay 7 (81076bf^) catches the
+old grammar; gate_selftest `oracle-quick-condition-structure` and
+`step5e-oracle-condition-structure` revert the prec and go red.
+
 ## Longer-lived proposals, tracked separately
 
 - [`python-bindings-modernization.md`](python-bindings-modernization.md) — the

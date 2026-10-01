@@ -33,6 +33,16 @@ public API — a change to node structure or field names is a **major** bump.
 
 ### Fixed
 
+- **`not` now binds tighter than `and`/`or` in `#if`/`#elif` conditions (roadmap B1).**
+  `#if not A and B` parsed as `not (A and B)`; alc reads `(not A) and B`
+  (`docs/preproc-directive-semantics.md`). This is a tree change for `not X and/or Y`,
+  with 0 production sites in the four corpora (tree-harness: all 15,358 BC.History trees
+  byte-identical). Pinned by `test/corpus/preproc_condition_precedence_test.txt`. The
+  config oracle gains a condition-structure stage: each `#if`/`#elif` condition, as the
+  tree groups it, is evaluated per configuration against the resolver's reading, and a
+  difference is an unclassifiable `condition-structure` discrepancy (replay 7 catches
+  the pre-fix parser).
+
 - **The Python sdist can be built.** It shipped neither `src/*.h` nor
   `src/tree_sitter/*.h`, so `pip install` from it stopped at
   `fatal error: tree_sitter/parser.h: No such file or directory`, and it carried no
