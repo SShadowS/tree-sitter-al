@@ -202,6 +202,9 @@ class Resolution:
     group_of: dict = field(default_factory=dict)
     extras: list = field(default_factory=list)
     trace: list = field(default_factory=list)
+    # The symbol environment in effect at each #if/#elif (hash -> env): preprocessorSymbols
+    # plus the active #define/#undef above it. Read by condition_check; selects nothing.
+    env_at: dict = field(default_factory=dict)
 
 
 def _lines(src: bytes):
@@ -337,6 +340,8 @@ def resolve(source: bytes, env0: frozenset) -> Resolution:
             d = _parse_directive(source, ls, le, nxt)
         if d is not None and d.kind in ("if", "elif", "else", "endif"):
             res.directives.append(d)
+            if d.cond is not None:
+                res.env_at[d.hash] = frozenset(env)
             if d.kind == "if":
                 taken = here and evaluate(d.cond.expr, frozenset(env))
                 stack.append(_Frame(d.hash, here, taken, taken, False))

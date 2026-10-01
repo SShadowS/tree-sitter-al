@@ -303,6 +303,10 @@ ORACLE_MODULE = "tools.config_oracle"
 ORACLE_REVERSED_ARM = sub("tools/config_oracle/lowering/select.py",
                           r"(?m)^            for c in content:$",
                           "            for c in reversed(content):", count=1)
+# B1 reverted: `not` without its prec(3), so `not A and B` groups as not (A and B) again.
+# A grammar mutation, so the scratch build regenerates parser.c once per run.
+ORACLE_NOT_UNPREC = sub("grammar.js", re.escape("preproc_not_expression: $ => prec(3, seq("),
+                        "preproc_not_expression: $ => (seq(", count=1)
 ORACLE_STALE_ENTRY = ("preproc_define_undef_test.txt#Defined symbol used in a later %23if#0\tDEBUG=1"
                       "\tcannot-validate:reference-error\tdebt(C1): gate self-test, an entry left "
                       "behind after its record was fixed\n")
@@ -624,6 +628,22 @@ CASES: list[Case] = [
         slow=False,
     ),
     Case(
+        id="oracle-quick-condition-structure",
+        gate=ORACLE,
+        module=ORACLE_MODULE,
+        args=["run", "--tier", "quick"],
+        why="B1 reverted in grammar.js: `#if not A and B` parses as not (A and B) with no "
+            "ERROR; the tree's condition must disagree with the resolver's",
+        mutations=[ORACLE_NOT_UNPREC],
+        expect_exit="1",
+        must_contain=["- stage (d) condition structure: FAIL (", " condition-structure in ",
+                      "- stage (a) registry census: PASS"],
+        blind_spot="compares truth per configuration, so a regrouping that is equivalent "
+                   "under every assignment (e.g. of a symbol with itself) is invisible; that "
+                   "is the point, the tree is only wrong where it changes a branch",
+        slow=False,
+    ),
+    Case(
         id="oracle-quick-clean-passes",
         gate=ORACLE,
         module=ORACLE_MODULE,
@@ -632,7 +652,8 @@ CASES: list[Case] = [
             "above are red for their mutation and not for the environment",
         expect_exit="0",
         must_contain=["- stage (a) registry census: PASS", "- stage (b) self-tests: PASS (",
-                      "- stage (c) fixture differential: PASS", "- quick tier exit code: 0"],
+                      "- stage (c) fixture differential: PASS",
+                      "- stage (d) condition structure: PASS (", "- quick tier exit code: 0"],
         slow=False,
     ),
     Case(
@@ -730,6 +751,16 @@ CASES: list[Case] = [
         mutations=[ORACLE_REVERSED_ARM],
         must_contain=["config oracle quick tier failed (exit 1)",
                       "- stage (c) fixture differential: FAIL (exit 1"],
+        must_not_contain=["All validation checks passed"],
+    ),
+    Case(
+        id="step5e-oracle-condition-structure",
+        gate=VALIDATE,
+        why="B1 reverted in grammar.js, through validate-grammar.sh: Step 5e must fail "
+            "the run naming condition-structure (Step 2 fails too, on the B1 fixture)",
+        mutations=[ORACLE_NOT_UNPREC],
+        must_contain=["config oracle quick tier failed (exit 1)",
+                      "- stage (d) condition structure: FAIL ("],
         must_not_contain=["All validation checks passed"],
     ),
     # ---- Step 5f: traversal-policy census (roadmap F0) -------------------------

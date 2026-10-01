@@ -551,9 +551,11 @@ fi
 
 # Step 5e: Config-oracle quick tier
 #
-# Needs no corpus, so it runs on every clone and never skips. Three stages, each
+# Needs no corpus, so it runs on every clone and never skips. Four stages, each
 # reported on its own line: (a) the registry census over src/node-types.json,
-# (b) the oracle's self-tests, (c) the fixture differential over test/corpus.
+# (b) the oracle's self-tests, (c) the fixture differential over test/corpus,
+# (d) condition structure: every #if/#elif condition as the tree groups it,
+# evaluated per configuration against the resolver's reading (roadmap B1).
 # Exit 1 is a finding (discrepancy, representation violation, stale
 # fixture-classes.tsv entry, census problem); exit 2 means it could not run.
 # Both fail validation. The full tier over the production corpora is NOT here
@@ -565,7 +567,7 @@ else
     oracle_status=$?
 fi
 if [ "$oracle_status" -eq 0 ]; then
-    print_success "config oracle quick tier: clean (census, self-tests, fixture differential)"
+    print_success "config oracle quick tier: clean (census, self-tests, fixture differential, condition structure)"
 else
     print_error "config oracle quick tier failed (exit $oracle_status) — see tools/config_oracle/reports/summary.md"
     VALIDATION_FAILED=1

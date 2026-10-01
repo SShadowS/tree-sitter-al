@@ -130,6 +130,11 @@ REPLAYS = [
                 "so the multi-configuration parse is rejected before the structure check runs, "
                 "same as replay 3. Detected by the has_error backstop, not by structure; base "
                 "spec row 6 amended to match"),
+    Replay(7, "81076bf^", "preproc_condition_precedence_test.txt", lambda c: True,
+           lambda recs: any(_has(r, "|directive|condition-structure|") for r in recs),
+           note="B1: `not` had no precedence, so `not A and B` was not (A and B) -- a silent "
+                "wrong tree with no ERROR. Caught by condition_check, never by structure: "
+                "the resolver masks the text, so the reference never sees a condition"),
 ]
 
 

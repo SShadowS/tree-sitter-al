@@ -118,7 +118,8 @@ def _stage_selftests():
 
 
 def _quick(args):
-    """(a) registry census, (b) self-tests, (c) fixture differential. Every stage runs and
+    """(a) registry census, (b) self-tests, (c) fixture differential, (d) condition structure
+    (B1: the tree's #if/#elif grouping against the resolver's). Every stage runs and
     reports whatever an earlier one found; the exit code is the worst stage's."""
     from tools.query_coverage import loader
     out = Path(args.report)
@@ -140,6 +141,7 @@ def _quick(args):
         c = summary.exit_code
         stages.append(("(c) fixture differential", c, PASS if c == 0 else
                        f"{FAIL if c == 1 else 'COULD NOT RUN'} (exit {c}; the counts below say why)"))
+        stages.append(("(d) condition structure", *runner.condition_stage(summary)))
     except Exception:  # noqa: BLE001
         stages.append(("(c) fixture differential", 2, "COULD NOT RUN"))
         details += ["(c) fixture differential:", *(f"  {x}" for x in traceback.format_exc().splitlines())]
@@ -313,7 +315,8 @@ def _run(args):
                                  f"entries apply to the requested corpora and tier")
     summary = runner.run(inputs, None, args.workers, args.tier, classes)
     stale_heads = corpus_mismatches(roots)
-    extra = ["## Per root", "", *runner.root_table(runner.per_root(summary, root_of, files))]
+    extra = ["## Per root", "", *runner.root_table(runner.per_root(summary, root_of, files)),
+             "", f"- stage condition structure: {runner.condition_stage(summary)[1]}"]
     if stale_heads:
         extra += ["", "## Corpus identity mismatch (exit 1)", "", *(f"- {m}" for m in stale_heads)]
         summary.exit_code = max(summary.exit_code, 1)

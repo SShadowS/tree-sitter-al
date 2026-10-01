@@ -16,7 +16,8 @@ from concurrent.futures import ProcessPoolExecutor
 from dataclasses import asdict, dataclass, field
 from pathlib import Path
 
-from tools.config_oracle import compare, directive_check, directives, ir, reference, representation
+from tools.config_oracle import (compare, condition_check, directive_check, directives, ir, reference,
+                                  representation)
 from tools.config_oracle.lowering import lower_tree
 from tools.config_oracle.lowering.engine import LoweringError
 
@@ -33,6 +34,7 @@ class Record:
     config: str
     status: str
     items: list = field(default_factory=list)
+    cond_checked: int = 0     # #if/#elif conditions condition_check compared in this configuration
 
 
 @dataclass
@@ -95,7 +97,7 @@ def _file_level(parser, input_id, source, disc):
     return (root, extras, file_items), rep
 
 
-def _check_config(parser, input_id, source, cid, env, mode, prep):
+def _check_config(parser, input_id, source, cid, env, mode, prep, conds=None):
     """A file-level directive discrepancy does NOT short-circuit: the configuration is still
     resolved, lowered and compared, and the record is `directive-mismatch` carrying the
     directive items ahead of whatever that run produced (a pass contributes nothing).
@@ -103,19 +105,32 @@ def _check_config(parser, input_id, source, cid, env, mode, prep):
     Never when the multi-configuration tree has errors: its directive items are then
     unreliable. That is decided on the FILE-level items, because a resolver or reference
     failure returns before the per-configuration record ever sees `multi-config-parse`."""
-    rec = _check_config_inner(parser, input_id, source, cid, env, mode, prep)
+    rec = _check_config_inner(parser, input_id, source, cid, env, mode, prep, conds)
     file_items = prep[2] if isinstance(prep, tuple) else []
     dir_items = [i for i in file_items if "|directive|" in i]
     if dir_items and not any(i.startswith("multi-config-parse") for i in file_items):
-        return Record(input_id, cid, "directive-mismatch", dir_items + rec.items)
+        return Record(input_id, cid, "directive-mismatch", dir_items + rec.items, rec.cond_checked)
     return rec
 
 
-def _check_config_inner(parser, input_id, source, cid, env, mode, prep):
+def _check_config_inner(parser, input_id, source, cid, env, mode, prep, conds=None):
+    """`conds` is `condition_check.tree_conditions` of the multi-configuration tree (None
+    when that tree has errors). A condition-structure item makes the record a `discrepancy`
+    whatever else the configuration found, so no cannot-validate can hide or classify it."""
     try:
         res = directives.resolve(source, env)
     except directives.ResolveError as e:
         return Record(input_id, cid, "cannot-validate", [f"resolver:{e.reason}@{e.offset}"])
+    cond, checked = condition_check.check(conds, res) if conds is not None else ([], 0)
+    rec = _after_resolve(parser, input_id, source, cid, mode, prep, res)
+    rec.cond_checked = checked
+    if cond:
+        rec = Record(input_id, cid, "discrepancy",
+                     [compare.discrepancy_id(input_id, cid, d) for d in cond] + rec.items, checked)
+    return rec
+
+
+def _after_resolve(parser, input_id, source, cid, mode, prep, res):
     ref = reference.extract(parser, res.masked)
     if ref.problems:
         return Record(input_id, cid, "cannot-validate", ["reference-error:" + ",".join(ref.problems)])
@@ -161,10 +176,21 @@ def check_input(parser, input_id, source, mode="full"):
         disc = directives.discover(source)
     except directives.ResolveError as e:
         disc, records = None, [Record(input_id, "-", "cannot-validate", [f"resolver:{e.reason}@{e.offset}"])]
-    prep, rep = None, []
+    prep, rep, conds = None, [], None
     if mode == "full":
         try:
             prep, rep = _file_level(parser, input_id, source, disc)
+        except Exception as e:  # noqa: BLE001 -- recorded, not swallowed
+            prep = _internal(e)
+    if disc is not None and not isinstance(prep, str):
+        try:
+            if isinstance(prep, tuple):
+                root, bad = prep[0], any(i.startswith("multi-config-parse") for i in prep[2])
+            else:   # the resolve tier builds no multi-configuration tree; this stage needs one
+                root, _, problems = ir.from_tree(parser.parse(source))
+                bad = bool(problems)
+            if not bad:   # a tree with errors is not read, as for the directive items
+                conds = condition_check.tree_conditions(root, source)
         except Exception as e:  # noqa: BLE001 -- recorded, not swallowed
             prep = _internal(e)
     if disc is not None:
@@ -175,7 +201,7 @@ def check_input(parser, input_id, source, mode="full"):
                 records.append(Record(input_id, cid, "cannot-validate", [prep]))
                 continue
             try:
-                records.append(_check_config(parser, input_id, source, cid, env, mode, prep))
+                records.append(_check_config(parser, input_id, source, cid, env, mode, prep, conds))
             except Exception as e:  # noqa: BLE001 -- recorded, not swallowed
                 records.append(Record(input_id, cid, "cannot-validate", [_internal(e)]))
     if disc is None and isinstance(prep, str):
@@ -292,6 +318,20 @@ def run(inputs, lib_path, workers, mode, classes=None):
         clean = all(r.status == "pass" or (r.input_id, r.config) in keys for r in records)
         code = 0 if clean and not stale else 1
     return Summary(records, no_dir, time.perf_counter() - t0, peak, code, len(keys), stale, keys, expected, classes)
+
+
+def condition_stage(summary):
+    """-> (code, status) of the condition-structure stage (B1) over a finished run. Its
+    discrepancies already fail the run as discrepancies; this line says the stage ran."""
+    bad = [r for r in summary.records if any("|condition-structure|" in i for i in r.items)]
+    n = sum(r.cond_checked for r in summary.records)
+    if bad:
+        k = sum("|condition-structure|" in i for r in bad for i in r.items)
+        return 1, (f"FAIL ({k} condition-structure in {len(bad)} configurations of "
+                   f"{len({r.input_id for r in bad})} inputs; {n} conditions compared)")
+    if n == 0:
+        return 2, "COULD NOT RUN (no condition was compared)"
+    return 0, f"PASS ({n} conditions compared over {len(summary.records)} configurations, 0 condition-structure)"
 
 
 def check_exact(expected, records):
