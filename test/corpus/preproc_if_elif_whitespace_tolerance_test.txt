@@ -290,10 +290,7 @@ codeunit 50000 "If Test"
     (codeunit_keyword)
     object_id: (integer)
     object_name: (quoted_identifier)
-    (ERROR
-      (UNEXPECTED 'i')
-      (identifier)
-      (identifier))
+    (ERROR)
     body: (declaration_body
       (procedure
         (procedure_keyword)
@@ -478,11 +475,8 @@ codeunit 50000 "If Test"
       (call_expression
         function: (identifier)
         arguments: (argument_list))
-      (ERROR
-        (UNEXPECTED 'i'))
-      (identifier)
-      (ERROR
-        (identifier)))))
+      (ERROR)
+      (identifier))))
 
 ================================================================================
 NEGATIVE: `#ifendif` must NOT be recognized as `#endif` either — same prefix
@@ -518,11 +512,8 @@ codeunit 50000 "If Test"
       (call_expression
         function: (identifier)
         arguments: (argument_list))
-      (ERROR
-        (UNEXPECTED 'i'))
-      (identifier)
-      (ERROR
-        (identifier)))))
+      (ERROR)
+      (identifier))))
 
 ================================================================================
 CONTROL for the two cases above: `#xendif` was ALWAYS an honest error, because
@@ -559,8 +550,5 @@ codeunit 50000 "If Test"
       (call_expression
         function: (identifier)
         arguments: (argument_list))
-      (ERROR
-        (UNEXPECTED 'x'))
-      (identifier)
-      (ERROR
-        (identifier)))))
+      (ERROR)
+      (identifier))))

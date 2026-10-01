@@ -27,9 +27,10 @@ preproc_region_whitespace_audit_test.txt
 # the tree. It lives in its own file rather than joining the clean scanner
 # fixtures so that those stay subject to this step.
 scanner_var_attribute_token_span_test.txt
-# The four directive-boundary negatives. #regionX / #pragmaX / #endregionZ
-# and an over-long directive word are rejected by alc (AL0621) and, since
-# 4.0.0, by the grammar; the ERROR is the assertion. They previously lived in
+# The directive-boundary negatives. #regionX / #pragmaX / #endregionZ, an
+# over-long directive word, #elifX and #elseX are rejected by alc (AL0621) and,
+# since B2 (the scanner's '#' dispatch), by the parser on the directive line
+# itself; the ERROR is the assertion. They previously lived in
 # scanner_single_read_dispatch_test.txt asserting the OPPOSITE, back when the
 # scanner was aligned to the over-permissive grammar.
 #
@@ -74,3 +75,10 @@ preproc_split_operator_negative_test.txt
 # ERROR itself. Split from scanner_unicode_identifier_classification_test.txt
 # (its four positive cases) precisely so those stay subject to this step.
 scanner_unicode_identifier_negative_test.txt
+# B2 (2026-10-01): one case per directive line alc rejects -- every prefix form
+# (#ifx, #endifx, #elsex, #elsewhere, #elifx, #regionx, #endregionx, #pragmax,
+# #definex, #undefx; AL0621), trailing content after #endif/#else (`;`, a word,
+# a block comment; AL0631), a block comment on an #if/#elif line (AL0631), and
+# `&&`/`||` in a condition. 17 of the 20 parsed with zero ERROR nodes before B2.
+# Verdicts: tools/config_oracle/probe_alc.py. The ERROR is the assertion.
+directive_line_rejected_negative_test.txt

@@ -183,6 +183,10 @@ module.exports = grammar({
     $.preproc_define,
     $.preproc_undef,
     /\uFEFF/,  // BOM
+    // Never emitted (see externals). As an extra it is valid in EVERY parse
+    // state, so every state calls the scanner and its '#' gatekeeper sees
+    // every directive line.
+    $._scanner_hook,
   ],
 
   externals: $ => [
@@ -199,6 +203,10 @@ module.exports = grammar({
     $._directive_eol,           // [10] the ONE newline ending an #if/#elif line (hidden)
     $._negative_integer,        // [11] `-1` as one signed literal, only before ; , # or EOF
     $._negative_decimal,        // [12] `-1.5`, likewise
+    $._malformed_directive,     // [13] a `#` line alc rejects (AL0621/AL0631). In NO rule:
+                                //      the scanner returns it only to make that line an ERROR
+    $._scanner_hook,            // [14] NEVER emitted. In `extras` only, so that every parse
+                                //      state has a valid external token and calls the scanner
   ],
 
   conflicts: $ => [
@@ -3929,13 +3937,13 @@ module.exports = grammar({
 
     preproc_or_expression: $ => prec.left(1, seq(
       $._preproc_expression,
-      choice(alias(kw('or'), 'or'), '||'),
+      alias(kw('or'), 'or'),
       $._preproc_expression,
     )),
 
     preproc_and_expression: $ => prec.left(2, seq(
       $._preproc_expression,
-      choice(alias(kw('and'), 'and'), '&&'),
+      alias(kw('and'), 'and'),
       $._preproc_expression,
     )),
 
@@ -3948,16 +3956,20 @@ module.exports = grammar({
       $._preproc_expression
     )),
 
-    // Pure grammar literals — elif, like else, has NO external-scanner token
-    // and touches no scanner state (it doesn't change #if/#endif nesting
-    // depth, unlike preproc_open/preproc_close). Horizontal whitespace after
-    // the '#' is tolerated the same way the scanner tolerates it for
-    // #if/#endif. `[ \t]*` NEVER `\s*` — the regex crate's `\s` matches '\n',
-    // which would let the token span a newline and swallow the next line's
-    // source. `elif` and `else` carry no external token and touch no depth
-    // state, so a regex here is a plain literal-vs-regex swap with no
-    // scanner interaction. See the Task 4 design note for the full "why
-    // elif differs from if/endif" reasoning.
+    // `#elif` and `#else` are grammar regexes, and the regexes alone would
+    // accept a prefix: tree-sitter's lexer compiler rejects `\b` and
+    // lookahead, so `#elsewhere` lexed as `#else` plus an identifier, and
+    // `#else B` as `#else` plus `B`, with zero ERROR nodes while alc rejects
+    // both (AL0621, AL0631). The scanner's '#' dispatch is the gatekeeper: it
+    // reads the directive word whole, and a prefix form, anything but a `//`
+    // comment after `#else`, or a block comment on an `#elif` line becomes
+    // `_malformed_directive`, which no rule takes. A well-formed line is
+    // declined there and lexed here. Making these two external tokens instead
+    // was measured and rejected (B2): STATE_COUNT 15,870 -> 25,301 and
+    // parser.c 39.6 MB -> 67.9 MB.
+    //
+    // Horizontal whitespace only after the '#': `[ \t]*` NEVER `\s*`, whose
+    // `\n` would let the token span into the next line's source.
     preproc_elif: $ => seq(
       new RustRegex('(?i)#[ \\t]*elif'),
       field('condition', $._preproc_expression),

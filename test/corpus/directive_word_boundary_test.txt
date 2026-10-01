@@ -7,10 +7,11 @@ split end; and its #else. That was the scanner being aligned to an
 over-permissive grammar in 3bcd3d1; the grammar has now moved instead.
 tree-sitter's lexer compiler rejects zero-width assertions, so neither a
 word-boundary escape nor lookahead is available; the boundary is expressed as a
-MANDATORY non-word character absorbed by the existing trailing wildcard. One
-consequence is visible below -- #region still matches as a seven-character
-prefix and the tail is left over, rather than the directive failing to match
-outright. The file is rejected either way, which is what alc does too.
+MANDATORY non-word character absorbed by the existing trailing wildcard. That
+was not enough on its own: #region still matched as a seven-character prefix
+and left the tail an identifier, which a statement list took cleanly (B2,
+2026-10-01). The scanner's '#' dispatch now claims the whole line as
+_malformed_directive, so the ERROR sits on the directive line itself.
 ================================================================================
 codeunit 1 T
 {
@@ -71,9 +72,7 @@ codeunit 1 T
                         (identifier)))
                     (call_statement
                       function: (identifier))
-                    (preproc_region)
-                    (identifier)
-                    (identifier)
+                    (ERROR)
                     (preproc_else)
                     (assignment_statement
                       left: (identifier)
@@ -156,11 +155,7 @@ codeunit 1 T
                         (identifier)))
                     (call_statement
                       function: (identifier))
-                    (pragma)
-                    (identifier)
-                    (identifier)
-                    (identifier)
-                    (identifier)
+                    (ERROR)
                     (preproc_else)
                     (assignment_statement
                       left: (identifier)
@@ -246,8 +241,7 @@ codeunit 1 T
                         (identifier)))
                     (call_statement
                       function: (identifier))
-                    (preproc_region)
-                    (identifier)
+                    (ERROR)
                     (preproc_else)
                     (assignment_statement
                       left: (identifier)
@@ -330,8 +324,7 @@ codeunit 1 T
                         (identifier)))
                     (call_statement
                       function: (identifier))
-                    (preproc_endregion)
-                    (identifier)
+                    (ERROR)
                     (preproc_else)
                     (assignment_statement
                       left: (identifier)
@@ -423,10 +416,7 @@ codeunit 1 T
                 (identifier)))
             (call_statement
               function: (identifier))
-            (preproc_elif
-              (ERROR
-                (identifier))
-              condition: (identifier))
+            (ERROR)
             (assignment_statement
               left: (identifier)
               operator: (assignment_operator)
@@ -444,3 +434,91 @@ codeunit 1 T
             (preproc_endif
               (preproc_close))))
         (end_keyword)))))
+
+================================================================================
+NEGATIVE: #elseX is not #else (AL0621)
+This case previously lived in scanner_single_read_dispatch_test.txt as
+"#elseX continues a split end", asserting the OPPOSITE: preproc_else was
+`(?i)#[ \t]*else` with no trailing boundary, so the parser read `#else` and
+then `X` as content, and PREPROC_SPLIT_END tested #else/#elif as a PREFIX to
+agree with it. alc rejects `#elseX` (tools/config_oracle/probe_alc.py
+prefix_elsex_rejected, AL0621), so that fixture blessed a defect. Since B2 the
+scanner reads the word whole and claims the line as _malformed_directive.
+================================================================================
+codeunit 1 T
+{
+    procedure X()
+    var
+        x: Integer;
+    begin
+        if x = 1 then begin
+            x := 9;
+#if not CLEAN22
+        end;
+#elseX
+        x := 2;
+        end else begin x := 3; end;
+#endif
+    end;
+}
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (procedure
+        (procedure_keyword)
+        name: (identifier)
+        (var_section
+          (var_keyword)
+          body: (var_body
+            (variable_declaration
+              name: (identifier)
+              type: (type_specification
+                (basic_type)))))
+        body: (code_block
+          (begin_keyword)
+          body: (statement_block
+            (if_statement
+              (if_keyword)
+              condition: (comparison_expression
+                left: (identifier)
+                operator: (comparison_operator)
+                right: (integer))
+              (then_keyword)
+              then_branch: (code_block
+                (begin_keyword)
+                body: (statement_block
+                  (assignment_statement
+                    left: (identifier)
+                    operator: (assignment_operator)
+                    right: (integer))
+                  (preproc_conditional_statement
+                    (preproc_if
+                      (preproc_open)
+                      condition: (preproc_not_expression
+                        (identifier)))
+                    (call_statement
+                      function: (identifier))
+                    (ERROR)
+                    (assignment_statement
+                      left: (identifier)
+                      operator: (assignment_operator)
+                      right: (integer))
+                    (identifier)
+                    (identifier)
+                    (code_block
+                      (begin_keyword)
+                      body: (statement_block
+                        (assignment_statement
+                          left: (identifier)
+                          operator: (assignment_operator)
+                          right: (integer)))
+                      (end_keyword))
+                    (preproc_endif
+                      (preproc_close))))
+                (end_keyword))))
+          (MISSING end_keyword))))))

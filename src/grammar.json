@@ -14454,25 +14454,16 @@
             "name": "_preproc_expression"
           },
           {
-            "type": "CHOICE",
-            "members": [
-              {
-                "type": "ALIAS",
-                "content": {
-                  "type": "TOKEN",
-                  "content": {
-                    "type": "PATTERN",
-                    "value": "(?i)or"
-                  }
-                },
-                "named": false,
-                "value": "or"
-              },
-              {
-                "type": "STRING",
-                "value": "||"
+            "type": "ALIAS",
+            "content": {
+              "type": "TOKEN",
+              "content": {
+                "type": "PATTERN",
+                "value": "(?i)or"
               }
-            ]
+            },
+            "named": false,
+            "value": "or"
           },
           {
             "type": "SYMBOL",
@@ -14492,25 +14483,16 @@
             "name": "_preproc_expression"
           },
           {
-            "type": "CHOICE",
-            "members": [
-              {
-                "type": "ALIAS",
-                "content": {
-                  "type": "TOKEN",
-                  "content": {
-                    "type": "PATTERN",
-                    "value": "(?i)and"
-                  }
-                },
-                "named": false,
-                "value": "and"
-              },
-              {
-                "type": "STRING",
-                "value": "&&"
+            "type": "ALIAS",
+            "content": {
+              "type": "TOKEN",
+              "content": {
+                "type": "PATTERN",
+                "value": "(?i)and"
               }
-            ]
+            },
+            "named": false,
+            "value": "and"
           },
           {
             "type": "SYMBOL",
@@ -22996,6 +22978,10 @@
     {
       "type": "PATTERN",
       "value": "\\uFEFF"
+    },
+    {
+      "type": "SYMBOL",
+      "name": "_scanner_hook"
     }
   ],
   "conflicts": [
@@ -23529,6 +23515,14 @@
     {
       "type": "SYMBOL",
       "name": "_negative_decimal"
+    },
+    {
+      "type": "SYMBOL",
+      "name": "_malformed_directive"
+    },
+    {
+      "type": "SYMBOL",
+      "name": "_scanner_hook"
     }
   ],
   "inline": [

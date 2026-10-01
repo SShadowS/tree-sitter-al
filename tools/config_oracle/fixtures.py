@@ -171,7 +171,7 @@ _PRODUCTION_LOWERING = re.compile(r"lowering:(?P<k>[a-z-]+):(?P=k) at (?P<t>\w+)
 # The host an unsupported-type or one-reading entry pins: `<parent>:<slot>`, the slot required.
 # A slotless `: host if_statement` would match every slot of that parent (N2).
 _HOST_TAIL = re.compile(r": host \w+:(?:<children>|\w+)(?:, |$)")
-_EVIDENCE = re.compile(r"evidence: (?:alc_probe (?P<case>\S+\.al)|alc manual,)")
+_EVIDENCE = re.compile(r"evidence: (?:alc_probe (?P<case>\S+\.al)|probe_alc (?P<raw>\w+)|alc manual,)")
 
 
 def category(reason: str) -> str:
@@ -225,7 +225,21 @@ def _check_evidence(path: Path, case_id: str, config: str, reason: str, marker: 
     expect a reject for every configuration the entry covers: all of them for `*`."""
     m = _EVIDENCE.search(reason)
     if not m:
-        raise ValueError(f"no `evidence: alc_probe <case>` or `evidence: alc manual`: {case_id} {config}")
+        raise ValueError(f"no `evidence: alc_probe <case>`, `evidence: probe_alc <name>` or "
+                         f"`evidence: alc manual`: {case_id} {config}")
+    if m.group("raw") is not None:
+        # A raw compile recorded in tools/config_oracle/probe_alc.py, which `--check` keeps
+        # honest. It is ONE compile, so it cannot stand for every configuration of a `*`.
+        from tools.config_oracle.probe_alc import PROBES   # lazy, like the alc_probe import
+        expected = {name: accept for name, _, _, accept in PROBES}
+        if m.group("raw") not in expected:
+            raise ValueError(f"evidence probe_alc {m.group('raw')} is not in probe_alc.PROBES: {case_id} {config}")
+        if expected[m.group("raw")]:
+            raise ValueError(f"evidence probe_alc {m.group('raw')} expects an ACCEPT: {case_id} {config}")
+        if config == "*":
+            raise ValueError(f"a `*` entry needs alc_probe evidence for every configuration, "
+                             f"not one raw compile: {case_id}")
+        return
     if m.group("case") is None:
         if config == "*":
             raise ValueError(f"a `*` entry needs alc_probe evidence for every configuration, "

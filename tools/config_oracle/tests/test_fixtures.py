@@ -227,6 +227,18 @@ def test_a_star_negative_cannot_rest_on_a_manual_note(tmp_path):
         _classes(tmp_path, line.format("*"))
 
 
+def test_probe_alc_evidence_must_name_a_recorded_reject(tmp_path):
+    """B2 review M5: `evidence: probe_alc <name>` is checked against probe_alc.PROBES."""
+    line = "c.txt#A#0\t{}\tcannot-validate:resolver\tnegative: AL0631; evidence: probe_alc {}"
+    assert _classes(tmp_path, line.format("-", "endif_semicolon_rejected"))
+    with pytest.raises(ValueError, match="not in probe_alc.PROBES"):
+        _classes(tmp_path, line.format("-", "no_such_probe"))
+    with pytest.raises(ValueError, match="expects an ACCEPT"):
+        _classes(tmp_path, line.format("-", "endregion_semicolon_accepted"))
+    with pytest.raises(ValueError, match="not one raw compile"):
+        _classes(tmp_path, line.format("*", "endif_semicolon_rejected"))
+
+
 def test_a_star_negative_over_a_configuration_alc_accepts_is_rejected(tmp_path):
     """The F1 defect: `*` claimed X=1 was rejected, and alc accepts it."""
     line = (f"{NEG_ID}\t{{}}\tcannot-validate:multi-config-parse:error\tnegative: x; "

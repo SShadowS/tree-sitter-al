@@ -276,9 +276,8 @@
 ; 3,000 corpus files, 107,958 of these sat in `property` alone and none of them
 ; were reachable — only link_value's `=` had a pattern.
 ;
-; "&&" and "||" are the preprocessor forms of and/or. They occur in no
-; BC.History file, but the word forms `and`/`or` are captured and leaving their
-; symbolic twins out would be an inconsistency waiting to surprise someone.
+; No "&&"/"||": they were never preprocessor forms of and/or. alc rejects both in
+; an #if condition (AL0631), and B2 removed them from the grammar.
 [
   "="
   "<>"
@@ -286,8 +285,6 @@
   "<"
   ">="
   "<="
-  "&&"
-  "||"
 ] @operator
 
 ; Comparison operators (named node wrapping =, <>, <, >, <=, >=)

@@ -1,0 +1,1261 @@
+================================================================================
+NEGATIVE: #ifx A -- a prefix of #if (AL0621)
+B2 (2026-10-01): every directive line here is one alc rejects, recorded in
+tools/config_oracle/probe_alc.py (prefix_*, *_rejected). Each parsed with zero
+ERROR nodes before B2 in this statement-list position, except #ifx/#endifx/#elifx.
+The ERROR on the directive line is the assertion.
+================================================================================
+codeunit 50100 P
+{
+    trigger OnRun()
+    begin
+#ifx A
+        Message('x');
+#endif
+    end;
+}
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (trigger_declaration
+        (trigger_keyword)
+        name: (identifier)
+        body: (code_block
+          (begin_keyword)
+          (ERROR)
+          body: (statement_block
+            (call_expression
+              function: (identifier)
+              arguments: (argument_list
+                (string_literal))))
+          (preproc_split_block_close_after_endif
+            (preproc_endif
+              (preproc_close))
+            (end_keyword)))))))
+
+================================================================================
+NEGATIVE: #endifx -- a prefix of #endif (AL0621)
+================================================================================
+codeunit 50100 P
+{
+    trigger OnRun()
+    begin
+#if A
+        Message('x');
+#endifx
+    end;
+}
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    (ERROR
+      (trigger_keyword)
+      (identifier)
+      (begin_keyword)
+      (preproc_if
+        (preproc_open)
+        condition: (identifier))
+      (call_expression
+        function: (identifier)
+        arguments: (argument_list
+          (string_literal)))
+      (ERROR)
+      (identifier))))
+
+================================================================================
+NEGATIVE: #elsex -- a prefix of #else (AL0621)
+================================================================================
+codeunit 50100 P
+{
+    trigger OnRun()
+    begin
+#if A
+        Message('x');
+#elsex
+        Message('y');
+#endif
+    end;
+}
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    (ERROR
+      (trigger_keyword)
+      (identifier)
+      (begin_keyword)
+      (preproc_if
+        (preproc_open)
+        condition: (identifier))
+      (call_expression
+        function: (identifier)
+        arguments: (argument_list
+          (string_literal)))
+      (ERROR)
+      (call_expression
+        function: (identifier)
+        arguments: (argument_list
+          (string_literal)))
+      (ERROR
+        (UNEXPECTED 'i'))
+      (if_keyword)
+      (identifier))))
+
+================================================================================
+NEGATIVE: #elsewhere -- a prefix of #else (AL0621)
+================================================================================
+codeunit 50100 P
+{
+    trigger OnRun()
+    begin
+#if A
+        Message('x');
+#elsewhere
+        Message('y');
+#endif
+    end;
+}
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    (ERROR
+      (trigger_keyword)
+      (identifier)
+      (begin_keyword)
+      (preproc_if
+        (preproc_open)
+        condition: (identifier))
+      (call_expression
+        function: (identifier)
+        arguments: (argument_list
+          (string_literal)))
+      (ERROR)
+      (call_expression
+        function: (identifier)
+        arguments: (argument_list
+          (string_literal)))
+      (ERROR
+        (UNEXPECTED 'i'))
+      (if_keyword)
+      (identifier))))
+
+================================================================================
+NEGATIVE: #elifx A -- a prefix of #elif (AL0621)
+================================================================================
+codeunit 50100 P
+{
+    trigger OnRun()
+    begin
+#if A
+        Message('x');
+#elifx A
+        Message('y');
+#endif
+    end;
+}
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    (ERROR
+      (trigger_keyword)
+      (identifier)
+      (begin_keyword)
+      (preproc_if
+        (preproc_open)
+        condition: (identifier))
+      (call_expression
+        function: (identifier)
+        arguments: (argument_list
+          (string_literal)))
+      (ERROR)
+      (call_expression
+        function: (identifier)
+        arguments: (argument_list
+          (string_literal)))
+      (ERROR
+        (UNEXPECTED 'i'))
+      (if_keyword)
+      (identifier))))
+
+================================================================================
+NEGATIVE: #regionx -- a prefix of #region (AL0621)
+================================================================================
+codeunit 50100 P
+{
+    trigger OnRun()
+    begin
+#regionx
+        Message('x');
+#endregion
+    end;
+}
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (trigger_declaration
+        (trigger_keyword)
+        name: (identifier)
+        body: (code_block
+          (begin_keyword)
+          (ERROR)
+          body: (statement_block
+            (call_expression
+              function: (identifier)
+              arguments: (argument_list
+                (string_literal))))
+          (preproc_endregion)
+          (end_keyword))))))
+
+================================================================================
+NEGATIVE: #endregionx -- a prefix of #endregion (AL0621)
+================================================================================
+codeunit 50100 P
+{
+    trigger OnRun()
+    begin
+#region
+        Message('x');
+#endregionx
+    end;
+}
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (trigger_declaration
+        (trigger_keyword)
+        name: (identifier)
+        body: (code_block
+          (begin_keyword)
+          (preproc_region)
+          body: (statement_block
+            (call_expression
+              function: (identifier)
+              arguments: (argument_list
+                (string_literal))))
+          (ERROR)
+          (end_keyword))))))
+
+================================================================================
+NEGATIVE: #pragmax -- a prefix of #pragma (AL0621)
+================================================================================
+codeunit 50100 P
+{
+    trigger OnRun()
+    begin
+#pragmax warning disable AL0001
+        Message('x');
+    end;
+}
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (trigger_declaration
+        (trigger_keyword)
+        name: (identifier)
+        body: (code_block
+          (begin_keyword)
+          (ERROR)
+          body: (statement_block
+            (call_expression
+              function: (identifier)
+              arguments: (argument_list
+                (string_literal))))
+          (end_keyword))))))
+
+================================================================================
+NEGATIVE: #definex A -- a prefix of #define (AL0621)
+================================================================================
+codeunit 50100 P
+{
+    trigger OnRun()
+    begin
+#definex A
+        Message('x');
+    end;
+}
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (trigger_declaration
+        (trigger_keyword)
+        name: (identifier)
+        body: (code_block
+          (begin_keyword)
+          (ERROR)
+          body: (statement_block
+            (call_expression
+              function: (identifier)
+              arguments: (argument_list
+                (string_literal))))
+          (end_keyword))))))
+
+================================================================================
+NEGATIVE: #undefx A -- a prefix of #undef (AL0621)
+================================================================================
+codeunit 50100 P
+{
+    trigger OnRun()
+    begin
+#undefx A
+        Message('x');
+    end;
+}
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (trigger_declaration
+        (trigger_keyword)
+        name: (identifier)
+        body: (code_block
+          (begin_keyword)
+          (ERROR)
+          body: (statement_block
+            (call_expression
+              function: (identifier)
+              arguments: (argument_list
+                (string_literal))))
+          (end_keyword))))))
+
+================================================================================
+NEGATIVE: #endif; -- a token after #endif (AL0631, deferred-work item 20)
+================================================================================
+codeunit 50100 P
+{
+    trigger OnRun()
+    begin
+#if A
+        Message('x');
+#endif;
+    end;
+}
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    (ERROR
+      (trigger_keyword)
+      (identifier)
+      (begin_keyword)
+      (preproc_if
+        (preproc_open)
+        condition: (identifier))
+      (ERROR
+        (call_expression
+          function: (identifier)
+          arguments: (argument_list
+            (string_literal)))
+        (ERROR
+          (UNEXPECTED 'i'))
+        (if_keyword))
+      (empty_statement)
+      (end_keyword))))
+
+================================================================================
+NEGATIVE: #endif X -- a word after #endif (AL0631)
+================================================================================
+codeunit 50100 P
+{
+    trigger OnRun()
+    begin
+#if A
+        Message('x');
+#endif X
+    end;
+}
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    (ERROR
+      (trigger_keyword)
+      (identifier)
+      (begin_keyword)
+      (preproc_if
+        (preproc_open)
+        condition: (identifier))
+      (call_expression
+        function: (identifier)
+        arguments: (argument_list
+          (string_literal)))
+      (ERROR
+        (UNEXPECTED 'i'))
+      (if_keyword)
+      (identifier)
+      (identifier))))
+
+================================================================================
+NEGATIVE: #endif /* c */ -- a block comment after #endif (AL0631)
+================================================================================
+codeunit 50100 P
+{
+    trigger OnRun()
+    begin
+#if A
+        Message('x');
+#endif /* c */
+    end;
+}
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    (ERROR
+      (trigger_keyword)
+      (identifier)
+      (begin_keyword)
+      (preproc_if
+        (preproc_open)
+        condition: (identifier))
+      (call_expression
+        function: (identifier)
+        arguments: (argument_list
+          (string_literal)))
+      (ERROR
+        (UNEXPECTED 'i'))
+      (if_keyword)
+      (multiline_comment)
+      (identifier))))
+
+================================================================================
+NEGATIVE: #else B -- a word after #else (AL0631)
+================================================================================
+codeunit 50100 P
+{
+    trigger OnRun()
+    begin
+#if A
+        Message('x');
+#else B
+        Message('y');
+#endif
+    end;
+}
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    (ERROR
+      (trigger_keyword)
+      (identifier)
+      (begin_keyword)
+      (preproc_if
+        (preproc_open)
+        condition: (identifier))
+      (call_expression
+        function: (identifier)
+        arguments: (argument_list
+          (string_literal)))
+      (ERROR)
+      (call_expression
+        function: (identifier)
+        arguments: (argument_list
+          (string_literal)))
+      (ERROR
+        (UNEXPECTED 'i'))
+      (if_keyword)
+      (identifier))))
+
+================================================================================
+NEGATIVE: #else /* c */ -- a block comment after #else (AL0631)
+================================================================================
+codeunit 50100 P
+{
+    trigger OnRun()
+    begin
+#if A
+        Message('x');
+#else /* c */
+        Message('y');
+#endif
+    end;
+}
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    (ERROR
+      (trigger_keyword)
+      (identifier)
+      (begin_keyword)
+      (preproc_if
+        (preproc_open)
+        condition: (identifier))
+      (call_expression
+        function: (identifier)
+        arguments: (argument_list
+          (string_literal)))
+      (ERROR)
+      (call_expression
+        function: (identifier)
+        arguments: (argument_list
+          (string_literal)))
+      (ERROR
+        (UNEXPECTED 'i'))
+      (if_keyword)
+      (identifier))))
+
+================================================================================
+NEGATIVE: #else; -- a token after #else (AL0631)
+================================================================================
+codeunit 50100 P
+{
+    trigger OnRun()
+    begin
+#if A
+        Message('x');
+#else;
+        Message('y');
+#endif
+    end;
+}
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    (ERROR
+      (trigger_keyword)
+      (identifier)
+      (begin_keyword)
+      (preproc_if
+        (preproc_open)
+        condition: (identifier))
+      (call_expression
+        function: (identifier)
+        arguments: (argument_list
+          (string_literal)))
+      (ERROR)
+      (call_expression
+        function: (identifier)
+        arguments: (argument_list
+          (string_literal)))
+      (ERROR
+        (UNEXPECTED 'i'))
+      (if_keyword)
+      (identifier))))
+
+================================================================================
+NEGATIVE: #elif A /* c */ -- a block comment on an #elif line (AL0631)
+================================================================================
+codeunit 50100 P
+{
+    trigger OnRun()
+    begin
+#if A
+        Message('x');
+#elif A /* c */
+        Message('y');
+#endif
+    end;
+}
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    (ERROR
+      (trigger_keyword)
+      (identifier)
+      (begin_keyword)
+      (preproc_if
+        (preproc_open)
+        condition: (identifier))
+      (call_expression
+        function: (identifier)
+        arguments: (argument_list
+          (string_literal)))
+      (ERROR)
+      (call_expression
+        function: (identifier)
+        arguments: (argument_list
+          (string_literal)))
+      (ERROR
+        (UNEXPECTED 'i'))
+      (if_keyword)
+      (identifier))))
+
+================================================================================
+NEGATIVE: #if A /* c */ -- a block comment on an #if line (AL0631)
+================================================================================
+codeunit 50100 P
+{
+    trigger OnRun()
+    begin
+#if A /* c */
+        Message('x');
+#endif
+    end;
+}
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (trigger_declaration
+        (trigger_keyword)
+        name: (identifier)
+        body: (code_block
+          (begin_keyword)
+          (ERROR)
+          body: (statement_block
+            (call_expression
+              function: (identifier)
+              arguments: (argument_list
+                (string_literal))))
+          (preproc_split_block_close_after_endif
+            (preproc_endif
+              (preproc_close))
+            (end_keyword)))))))
+
+================================================================================
+NEGATIVE: #if A && B -- `&&` is not a condition operator (AL0631, deferred-work item 9)
+================================================================================
+codeunit 50100 P
+{
+    trigger OnRun()
+    begin
+#if A && B
+        Message('x');
+#endif
+    end;
+}
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (trigger_declaration
+        (trigger_keyword)
+        name: (identifier)
+        body: (code_block
+          (begin_keyword)
+          body: (statement_block
+            (preproc_conditional_statement
+              (preproc_if
+                (preproc_open)
+                (ERROR
+                  (identifier)
+                  (filter_operator))
+                condition: (identifier))
+              (call_expression
+                function: (identifier)
+                arguments: (argument_list
+                  (string_literal)))
+              (preproc_endif
+                (preproc_close))))
+          (end_keyword))))))
+
+================================================================================
+NEGATIVE: #if A || B -- `||` is not a condition operator (AL0631, deferred-work item 9)
+================================================================================
+codeunit 50100 P
+{
+    trigger OnRun()
+    begin
+#if A || B
+        Message('x');
+#endif
+    end;
+}
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (trigger_declaration
+        (trigger_keyword)
+        name: (identifier)
+        body: (code_block
+          (begin_keyword)
+          body: (statement_block
+            (preproc_conditional_statement
+              (preproc_if
+                (preproc_open)
+                (ERROR
+                  (identifier)
+                  (filter_operator))
+                condition: (identifier))
+              (call_expression
+                function: (identifier)
+                arguments: (argument_list
+                  (string_literal)))
+              (preproc_endif
+                (preproc_close))))
+          (end_keyword))))))
+
+================================================================================
+NEGATIVE: #elsebegin in a split procedure body (AL0621)
+B2 fix round 1, review I1: the shape of NoSeriesSetupImpl.Codeunit.al:199
+(BC.History). The state after `if not IsHandled then` and a #pragma had no
+valid external token, so the scanner was never called and `#elsebegin` lexed
+as `#else` plus `begin` with zero ERROR nodes. The never-emitted extra
+_scanner_hook makes every state call the scanner.
+================================================================================
+codeunit 50100 P
+{
+    procedure ValidateDefaultNos(var NoSeries: Record "No. Series"; xRecNoSeries: Record "No. Series")
+#if not CLEAN24
+#pragma warning disable AL0432
+    var
+        IsHandled: Boolean;
+    begin
+        IsHandled := false;
+        NoSeries.OnBeforeValidateDefaultNos(NoSeries, IsHandled);
+        if not IsHandled then
+#pragma warning restore AL0432
+#elsebegin
+    begin
+#endif
+            if (NoSeries."Default Nos." = false) and (xRecNoSeries."Default Nos." <> NoSeries."Default Nos.") then
+                NoSeries.Validate("Manual Nos.", true);
+    end;
+}
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    (ERROR
+      (procedure_keyword)
+      name: (identifier)
+      parameters: (parameter_list
+        (parameter
+          modifier: (var_keyword)
+          name: (identifier)
+          type: (type_specification
+            (record_type
+              (record_keyword)
+              reference: (quoted_identifier))))
+        (parameter
+          name: (identifier)
+          type: (type_specification
+            (record_type
+              (record_keyword)
+              reference: (quoted_identifier)))))
+      (preproc_if
+        (preproc_open)
+        condition: (preproc_not_expression
+          (identifier)))
+      (pragma)
+      (var_section
+        (var_keyword)
+        body: (var_body
+          (variable_declaration
+            name: (identifier)
+            type: (type_specification
+              (basic_type)))))
+      (begin_keyword)
+      (assignment_statement
+        left: (identifier)
+        operator: (assignment_operator)
+        right: (boolean))
+      (call_expression
+        function: (member_expression
+          object: (identifier)
+          member: (identifier))
+        arguments: (argument_list
+          (identifier)
+          (identifier)))
+      (if_statement
+        (if_keyword)
+        condition: (unary_expression
+          operand: (identifier))
+        (then_keyword)
+        (pragma)
+        (ERROR)
+        then_branch: (code_block
+          (begin_keyword)
+          (preproc_split_block_close_after_endif
+            (preproc_endif
+              (preproc_close))
+            (if_statement
+              (if_keyword)
+              condition: (logical_expression
+                left: (parenthesized_expression
+                  (comparison_expression
+                    left: (member_expression
+                      object: (identifier)
+                      member: (quoted_identifier))
+                    operator: (comparison_operator)
+                    right: (boolean)))
+                right: (parenthesized_expression
+                  (comparison_expression
+                    left: (member_expression
+                      object: (identifier)
+                      member: (quoted_identifier))
+                    operator: (comparison_operator)
+                    right: (member_expression
+                      object: (identifier)
+                      member: (quoted_identifier)))))
+              (then_keyword)
+              then_branch: (call_expression
+                function: (member_expression
+                  object: (identifier)
+                  member: (identifier))
+                arguments: (argument_list
+                  (quoted_identifier)
+                  (boolean))))
+            (end_keyword)))))))
+
+================================================================================
+NEGATIVE: #else begin in a split procedure body (AL0631)
+================================================================================
+codeunit 50100 P
+{
+    procedure ValidateDefaultNos(var NoSeries: Record "No. Series"; xRecNoSeries: Record "No. Series")
+#if not CLEAN24
+#pragma warning disable AL0432
+    var
+        IsHandled: Boolean;
+    begin
+        IsHandled := false;
+        NoSeries.OnBeforeValidateDefaultNos(NoSeries, IsHandled);
+        if not IsHandled then
+#pragma warning restore AL0432
+#else begin
+    begin
+#endif
+            if (NoSeries."Default Nos." = false) and (xRecNoSeries."Default Nos." <> NoSeries."Default Nos.") then
+                NoSeries.Validate("Manual Nos.", true);
+    end;
+}
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    (ERROR
+      (procedure_keyword)
+      name: (identifier)
+      parameters: (parameter_list
+        (parameter
+          modifier: (var_keyword)
+          name: (identifier)
+          type: (type_specification
+            (record_type
+              (record_keyword)
+              reference: (quoted_identifier))))
+        (parameter
+          name: (identifier)
+          type: (type_specification
+            (record_type
+              (record_keyword)
+              reference: (quoted_identifier)))))
+      (preproc_if
+        (preproc_open)
+        condition: (preproc_not_expression
+          (identifier)))
+      (pragma)
+      (var_section
+        (var_keyword)
+        body: (var_body
+          (variable_declaration
+            name: (identifier)
+            type: (type_specification
+              (basic_type)))))
+      (begin_keyword)
+      (assignment_statement
+        left: (identifier)
+        operator: (assignment_operator)
+        right: (boolean))
+      (call_expression
+        function: (member_expression
+          object: (identifier)
+          member: (identifier))
+        arguments: (argument_list
+          (identifier)
+          (identifier)))
+      (if_statement
+        (if_keyword)
+        condition: (unary_expression
+          operand: (identifier))
+        (then_keyword)
+        (pragma)
+        (ERROR)
+        then_branch: (code_block
+          (begin_keyword)
+          (preproc_split_block_close_after_endif
+            (preproc_endif
+              (preproc_close))
+            (if_statement
+              (if_keyword)
+              condition: (logical_expression
+                left: (parenthesized_expression
+                  (comparison_expression
+                    left: (member_expression
+                      object: (identifier)
+                      member: (quoted_identifier))
+                    operator: (comparison_operator)
+                    right: (boolean)))
+                right: (parenthesized_expression
+                  (comparison_expression
+                    left: (member_expression
+                      object: (identifier)
+                      member: (quoted_identifier))
+                    operator: (comparison_operator)
+                    right: (member_expression
+                      object: (identifier)
+                      member: (quoted_identifier)))))
+              (then_keyword)
+              then_branch: (call_expression
+                function: (member_expression
+                  object: (identifier)
+                  member: (identifier))
+                arguments: (argument_list
+                  (quoted_identifier)
+                  (boolean))))
+            (end_keyword)))))))
+
+================================================================================
+NEGATIVE: #else /* c */ in a split procedure body (AL0631)
+================================================================================
+codeunit 50100 P
+{
+    procedure ValidateDefaultNos(var NoSeries: Record "No. Series"; xRecNoSeries: Record "No. Series")
+#if not CLEAN24
+#pragma warning disable AL0432
+    var
+        IsHandled: Boolean;
+    begin
+        IsHandled := false;
+        NoSeries.OnBeforeValidateDefaultNos(NoSeries, IsHandled);
+        if not IsHandled then
+#pragma warning restore AL0432
+#else /* c */
+    begin
+#endif
+            if (NoSeries."Default Nos." = false) and (xRecNoSeries."Default Nos." <> NoSeries."Default Nos.") then
+                NoSeries.Validate("Manual Nos.", true);
+    end;
+}
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    (ERROR
+      (procedure_keyword)
+      name: (identifier)
+      parameters: (parameter_list
+        (parameter
+          modifier: (var_keyword)
+          name: (identifier)
+          type: (type_specification
+            (record_type
+              (record_keyword)
+              reference: (quoted_identifier))))
+        (parameter
+          name: (identifier)
+          type: (type_specification
+            (record_type
+              (record_keyword)
+              reference: (quoted_identifier)))))
+      (preproc_if
+        (preproc_open)
+        condition: (preproc_not_expression
+          (identifier)))
+      (pragma)
+      (var_section
+        (var_keyword)
+        body: (var_body
+          (variable_declaration
+            name: (identifier)
+            type: (type_specification
+              (basic_type)))))
+      (begin_keyword)
+      (assignment_statement
+        left: (identifier)
+        operator: (assignment_operator)
+        right: (boolean))
+      (call_expression
+        function: (member_expression
+          object: (identifier)
+          member: (identifier))
+        arguments: (argument_list
+          (identifier)
+          (identifier)))
+      (if_statement
+        (if_keyword)
+        condition: (unary_expression
+          operand: (identifier))
+        (then_keyword)
+        (pragma)
+        (ERROR)
+        then_branch: (code_block
+          (begin_keyword)
+          (preproc_split_block_close_after_endif
+            (preproc_endif
+              (preproc_close))
+            (if_statement
+              (if_keyword)
+              condition: (logical_expression
+                left: (parenthesized_expression
+                  (comparison_expression
+                    left: (member_expression
+                      object: (identifier)
+                      member: (quoted_identifier))
+                    operator: (comparison_operator)
+                    right: (boolean)))
+                right: (parenthesized_expression
+                  (comparison_expression
+                    left: (member_expression
+                      object: (identifier)
+                      member: (quoted_identifier))
+                    operator: (comparison_operator)
+                    right: (member_expression
+                      object: (identifier)
+                      member: (quoted_identifier)))))
+              (then_keyword)
+              then_branch: (call_expression
+                function: (member_expression
+                  object: (identifier)
+                  member: (identifier))
+                arguments: (argument_list
+                  (quoted_identifier)
+                  (boolean))))
+            (end_keyword)))))))
+
+================================================================================
+NEGATIVE: #regionX inside a member expression (AL0621)
+B2 fix round 1, review I1: mid-expression states had no valid external
+token, and `x := Rec.` + `#regionX` + `;` parsed as a member_expression with
+a preproc_region extra inside it, clean.
+================================================================================
+codeunit 50100 P
+{
+    trigger OnRun()
+    var
+        x: Integer;
+    begin
+        x := Rec.
+#regionX
+        ;
+    end;
+}
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (trigger_declaration
+        (trigger_keyword)
+        name: (identifier)
+        (var_section
+          (var_keyword)
+          body: (var_body
+            (variable_declaration
+              name: (identifier)
+              type: (type_specification
+                (basic_type)))))
+        body: (code_block
+          (begin_keyword)
+          body: (statement_block
+            (assignment_statement
+              left: (identifier)
+              operator: (assignment_operator)
+              right: (identifier))
+            (ERROR))
+          (end_keyword))))))
+
+================================================================================
+NEGATIVE: #if A #region R -- a second directive on an #if line (AL0631)
+B2 fix round 2, re-review N1(ii): the #region lexed as an extra and the line
+parsed clean. The '#' dispatch now refuses any `#` before a `//` on an
+#if/#elif line.
+================================================================================
+codeunit 50100 P
+{
+    trigger OnRun()
+    begin
+#if A #region R
+        Message('x');
+#endregion
+#endif
+    end;
+}
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (trigger_declaration
+        (trigger_keyword)
+        name: (identifier)
+        body: (code_block
+          (begin_keyword)
+          (ERROR)
+          body: (statement_block
+            (call_expression
+              function: (identifier)
+              arguments: (argument_list
+                (string_literal))))
+          (preproc_endregion)
+          (preproc_split_block_close_after_endif
+            (preproc_endif
+              (preproc_close))
+            (end_keyword)))))))
+
+================================================================================
+NEGATIVE: #if A #pragma -- a second directive on an #if line (AL0631)
+================================================================================
+codeunit 50100 P
+{
+    trigger OnRun()
+    begin
+#if A #pragma warning disable AL0432
+        Message('x');
+#endif
+    end;
+}
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (trigger_declaration
+        (trigger_keyword)
+        name: (identifier)
+        body: (code_block
+          (begin_keyword)
+          (ERROR)
+          body: (statement_block
+            (call_expression
+              function: (identifier)
+              arguments: (argument_list
+                (string_literal))))
+          (preproc_split_block_close_after_endif
+            (preproc_endif
+              (preproc_close))
+            (end_keyword)))))))
+
+================================================================================
+NEGATIVE: #elif A #region R -- a second directive on an #elif line (AL0631)
+================================================================================
+codeunit 50100 P
+{
+    trigger OnRun()
+    begin
+#if B
+        Message('x');
+#elif A #region R
+        Message('y');
+#endregion
+#endif
+    end;
+}
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    (ERROR
+      (trigger_keyword)
+      (identifier)
+      (begin_keyword)
+      (preproc_if
+        (preproc_open)
+        condition: (identifier))
+      (call_expression
+        function: (identifier)
+        arguments: (argument_list
+          (string_literal)))
+      (ERROR)
+      (call_expression
+        function: (identifier)
+        arguments: (argument_list
+          (string_literal)))
+      (preproc_endregion)
+      (ERROR
+        (UNEXPECTED 'i'))
+      (if_keyword)
+      (identifier))))

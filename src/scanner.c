@@ -25,6 +25,8 @@ enum TokenType {
   DIRECTIVE_EOL = 10,
   NEGATIVE_INTEGER = 11,
   NEGATIVE_DECIMAL = 12,
+  MALFORMED_DIRECTIVE = 13,  // in no grammar rule: see the '#' dispatch
+  SCANNER_HOOK = 14,         // an extra that is NEVER emitted: see the '#' dispatch
 };
 
 // Named so the static assertion below can test its width AND its signedness.
@@ -242,13 +244,10 @@ static void skip_whitespace(TSLexer *lexer) {
 // it against an ASCII spelling is a whole-word, case-insensitive test with no
 // truncation. The characters are consumed either way.
 //
-// Returns false when the word did not fit. That return value governs WHOLE-WORD
-// tests only — an over-long word cannot equal any candidate, so such a test must
-// treat it as a miss. **A PREFIX test stays valid and must still run**: `buf` is
-// always NUL-terminated, every candidate is shorter than every buffer here, and
-// `#regionAAAAAAAAAAAAAAAAAAAA` is a preproc_region to the parser exactly like
-// `#regionX` is. peek_directive_ci_skip_extras depends on that, and rejecting
-// over-long words outright was one of the two defects fixed in item 3.
+// Returns false when the word did not fit. An over-long word cannot equal any
+// candidate, so every test here treats it as a miss. `buf` is NUL-terminated
+// either way. (Until B2 a PREFIX test also ran on this buffer and had to accept
+// an over-long word; nothing tests a prefix any more — see word_in.)
 //
 // NOTHING in this scanner matches a candidate keyword against the live lexer
 // any more, and nothing should. A match that walks the lexer stops on the first
@@ -267,9 +266,8 @@ static bool read_word_ci(TSLexer *lexer, char *buf, size_t cap, size_t *out_len)
     lexer->advance(lexer, false);
   }
   *out_len = len;
-  // Always NUL-terminated, so an over-long word is still usable for a PREFIX
-  // test (every candidate is shorter than any buffer here). Only a whole-word
-  // test has to check the return value.
+  // Always NUL-terminated. An over-long word is truncated here, and the return
+  // value says so: every caller treats it as a miss (see word_in).
   buf[len > cap - 1 ? cap - 1 : len] = '\0';
   return len <= cap - 1;
 }
@@ -368,47 +366,26 @@ static bool skip_whitespace_and_comments(TSLexer *lexer) {
   }
 }
 
-// A directive name plus HOW grammar.js matches it. The two modes are not
-// interchangeable, and getting one wrong makes the scanner disagree with the
-// parser about what a directive even is:
+// Every directive word is compared WHOLE, everywhere: in the '#' dispatch and
+// in the lookaheads below. Until B2 the lookaheads also had a prefix mode,
+// because `#else`/`#elif` were grammar regexes with no trailing boundary (the
+// lexer compiler rejects `\b` and lookahead), so `#elseX` WAS `#else` to the
+// parser and the lookahead had to agree. They are still grammar regexes, but
+// the '#' dispatch below now claims every prefix form as MALFORMED_DIRECTIVE
+// before their regexes see it, and alc rejects every prefix form (AL0621,
+// tools/config_oracle/probe_alc.py prefix_*). A prefix test here would only
+// make the scanner disagree with the parser about what a directive is.
 //
-//   whole_word = true   The grammar reaches this directive ONLY through the
-//                       scanner's own '#' dispatch, which compares the whole
-//                       word. `#endif` is the only one: `#endifX` is not a
-//                       preproc_close for the parser either, so the lookahead
-//                       must not treat it as one.
-//
-//   whole_word = false  The grammar matches it with a regex carrying no
-//                       trailing boundary, so an identifier that merely starts
-//                       with the directive name is still that directive to the
-//                       parser. Only #else and #elif are like this now.
-//
-// The five extras directives moved from prefix to whole word in 4.0.0, when
-// their regexes were tightened to reject #regionX (which alc rejects, AL0621).
-// #else and #elif could NOT be tightened the same way: tree-sitter's lexer
-// compiler rejects zero-width assertions outright — both \b and lookahead
-// fail with "Unexpected rule ExpandRegex(Assertion)" — and the five were only
-// fixable because their trailing [^\n\r]* could absorb a MANDATORY
-// non-word character, which #[ \t]*else has nowhere to put. So the grammar
-// still reads #elseX as #else plus an identifier, and this table still has to
-// mirror that. Keep every entry matching its rule, not a convention.
-typedef struct {
-  const char *name;
-  bool whole_word;
-} DirectiveMatch;
-
 // Directives that grammar.js declares as `extras`. Comments are extras too, but
 // they are handled by skip_whitespace_and_comments rather than listed here.
 // Everything transparent to the parse tree must be stepped over by a lookahead
-// scanning for a structural directive. Keep in sync with the `extras` array —
-// including the match mode, which mirrors each one's regex.
-static const DirectiveMatch TRANSPARENT_DIRECTIVES[] = {
-  { "pragma", true }, { "endregion", true }, { "region", true },
-  { "define", true }, { "undef", true }, { NULL, false },
+// scanning for a structural directive. Keep in sync with the `extras` array.
+static const char *const TRANSPARENT_DIRECTIVES[] = {
+  "pragma", "endregion", "region", "define", "undef", NULL,
 };
 
 // Target sets for peek_directive_ci_skip_extras. Bare words, no '#'.
-static const DirectiveMatch DIRECTIVE_ENDIF[] = { { "endif", true }, { NULL, false } };
+static const char *const DIRECTIVE_ENDIF[] = { "endif", NULL };
 // PREPROC_SPLIT_END's continuation set. "elif" belongs here for the same reason
 // "else" does: `#if … end; #elif …` is a branch alternative, and alc accepts it
 // (verified — both the #elif and #else forms compile). Omitting it made the
@@ -416,18 +393,64 @@ static const DirectiveMatch DIRECTIVE_ENDIF[] = { { "endif", true }, { NULL, fal
 // Adding a target here is free: every target is tested against ONE buffered
 // read of the directive word (see peek_directive_ci_skip_extras), so a third
 // entry cannot resurrect the consume-the-prefix trap described there.
-static const DirectiveMatch DIRECTIVE_BRANCH_OR_ENDIF[] = {
-  { "elif", false }, { "else", false }, { "endif", true }, { NULL, false },
-};
+static const char *const DIRECTIVE_BRANCH_OR_ENDIF[] = { "elif", "else", "endif", NULL };
 
-// Test one buffered directive word against one candidate. `truncated` says the
-// word was longer than the buffer; every candidate is at most 9 bytes, so a
-// prefix test is still decisive, but a whole-word test can only fail.
-static bool directive_matches(const DirectiveMatch *d, const char *word, bool truncated) {
-  size_t n = strlen(d->name);
-  if (strncmp(word, d->name, n) != 0) return false;
-  if (!d->whole_word) return true;
-  return !truncated && word[n] == '\0';
+// Is the buffered word one of `words`? `truncated` (the word did not fit its
+// buffer) can only be a miss: every candidate fits.
+static bool word_in(const char *const *words, const char *word, bool truncated) {
+  if (truncated) return false;
+  for (int i = 0; words[i] != NULL; i++) {
+    if (strcmp(word, words[i]) == 0) return true;
+  }
+  return false;
+}
+
+// After `#endif`/`#else`: is the rest of the line blank but for an optional
+// `//` comment? alc rejects anything else, a `/* */` comment included (AL0631).
+// Reads past the token; the caller has already called mark_end.
+static bool line_rest_is_blank(TSLexer *lexer) {
+  while (lexer->lookahead != '\n' && is_extra_space(lexer->lookahead)) {
+    lexer->advance(lexer, false);
+  }
+  if (lexer->lookahead == '\n' || lexer->eof(lexer)) return true;
+  if (lexer->lookahead != '/') return false;
+  lexer->advance(lexer, false);
+  if (lexer->lookahead == '/') return true;
+  // A lone '/' (`#endif /`) is part of the malformed line. Mark it here:
+  // consume_line only marks characters it advances over itself, and at a
+  // newline it advances over none.
+  lexer->mark_end(lexer);
+  return false;
+}
+
+// After `#if`/`#elif`: does a block comment open, or a second directive
+// start, anywhere on the rest of the line? alc rejects both (AL0631:
+// `#if A /* c */`, `#if A #region R`) where it accepts a trailing `//` comment.
+// A `#` cannot occur in a condition, so any `#` before a `//` is a directive.
+// Without this the second directive lexed as an extra (#region, #pragma) and
+// the line parsed clean. DIRECTIVE_EOL, asked after the condition, returns
+// before the '#' dispatch, so this check at the opener is where it is seen.
+static bool opener_line_is_malformed(TSLexer *lexer) {
+  while (lexer->lookahead != '\n' && !lexer->eof(lexer)) {
+    if (lexer->lookahead == '#') return true;
+    if (lexer->lookahead == '/') {
+      lexer->advance(lexer, false);
+      if (lexer->lookahead == '*') return true;
+      if (lexer->lookahead == '/') return false;
+    } else {
+      lexer->advance(lexer, false);
+    }
+  }
+  return false;
+}
+
+// Extend the token to the last non-space character before the newline.
+static void consume_line(TSLexer *lexer) {
+  while (lexer->lookahead != '\n' && !lexer->eof(lexer)) {
+    bool space = is_extra_space(lexer->lookahead);
+    lexer->advance(lexer, false);
+    if (!space) lexer->mark_end(lexer);
+  }
 }
 
 // Skip whitespace, comments and transparent-directive lines, then test whether
@@ -443,7 +466,7 @@ static bool directive_matches(const DirectiveMatch *d, const char *word, bool tr
 // later ones. An earlier walking `read_keyword_ci("else") ||
 // read_keyword_ci("endif")` in PREPROC_SPLIT_END made the "endif" arm
 // permanently unreachable exactly this way.
-static bool peek_directive_ci_skip_extras(TSLexer *lexer, const DirectiveMatch *targets) {
+static bool peek_directive_ci_skip_extras(TSLexer *lexer, const char *const *targets) {
   while (true) {
     if (!skip_whitespace_and_comments(lexer)) return false;
     if (lexer->lookahead != '#') return false;
@@ -455,26 +478,13 @@ static bool peek_directive_ci_skip_extras(TSLexer *lexer, const DirectiveMatch *
       lexer->advance(lexer, false);
     }
 
-    // Read the directive word ONCE. Longest AL directive is "endregion" (9), so
-    // 15 stored bytes always decide a prefix test; an over-long word is kept
-    // rather than rejected, because `#regionAAAAAAAAAAAAAA` is still a
-    // preproc_region to the parser.
+    // Read the directive word ONCE. Longest AL directive is "endregion" (9).
     char word[16];
     size_t len = 0;
     bool truncated = !read_word_ci(lexer, word, sizeof(word), &len);
 
-    for (int i = 0; targets[i].name != NULL; i++) {
-      if (directive_matches(&targets[i], word, truncated)) return true;
-    }
-
-    bool transparent = false;
-    for (int i = 0; TRANSPARENT_DIRECTIVES[i].name != NULL; i++) {
-      if (directive_matches(&TRANSPARENT_DIRECTIVES[i], word, truncated)) {
-        transparent = true;
-        break;
-      }
-    }
-    if (!transparent) return false;
+    if (word_in(targets, word, truncated)) return true;
+    if (!word_in(TRANSPARENT_DIRECTIVES, word, truncated)) return false;
 
     // Skip the rest of this directive's line, then look again.
     while (lexer->lookahead != '\0' && lexer->lookahead != '\n') {
@@ -500,7 +510,8 @@ bool tree_sitter_al_external_scanner_scan(
       valid_symbols[VAR_ATTRIBUTE_OPEN] &&
       valid_symbols[CALC_FORMULA_PROPERTY_NAME] &&
       valid_symbols[DIRECTIVE_EOL] &&
-      valid_symbols[NEGATIVE_INTEGER] && valid_symbols[NEGATIVE_DECIMAL]) {
+      valid_symbols[NEGATIVE_INTEGER] && valid_symbols[NEGATIVE_DECIMAL] &&
+      valid_symbols[MALFORMED_DIRECTIVE] && valid_symbols[SCANNER_HOOK]) {
     return false;
   }
 
@@ -578,10 +589,33 @@ bool tree_sitter_al_external_scanner_scan(
     }
   }
 
-  // PREPROC_OPEN (#if) and PREPROC_CLOSE (#endif) — combined dispatch
-  // We must handle both in one block because consuming '#' is irreversible
-  // within a single scanner call.
-  if (valid_symbols[PREPROC_OPEN] || valid_symbols[PREPROC_CLOSE]) {
+  // The '#' dispatch: PREPROC_OPEN (#if), PREPROC_CLOSE (#endif) and
+  // MALFORMED_DIRECTIVE, in one block because consuming '#' is irreversible
+  // within a single scanner call. It is also the gatekeeper for the directives
+  // the GRAMMAR lexes (#elif, #else and the five extras): their regexes cannot
+  // refuse a prefix or a trailing token, so a malformed line is claimed here
+  // as MALFORMED_DIRECTIVE before the internal lexer sees it, and a well-formed
+  // one is declined and lexed by its regex as before.
+  //
+  // It runs whatever is valid, not only when #if/#endif is: the gatekeeper has
+  // to see `#elsewhere` and `#regionX` in every state. The scanner is called in
+  // every state because of SCANNER_HOOK: an external token listed in grammar.js
+  // `extras`, so valid everywhere, and NEVER returned by this function. Before
+  // it, 3,937 of 15,870 parse states had no valid external token, so tree-sitter
+  // never called the scanner there and a malformed line in those states (77 of
+  // the states where #else is valid, 71 for #elif, and most mid-expression
+  // positions for the extras) still lexed through the grammar's regexes. The
+  // hook cannot change a tree: tree-sitter only ever receives a token this
+  // function returns, the internal lexer has no definition for an external
+  // token, and every token this function does return is guarded by
+  // valid_symbols except MALFORMED_DIRECTIVE, which is only returned for a
+  // line alc rejects. A hook-only state therefore lexes exactly as it did
+  // before, except for such lines.
+  //
+  // No other block's token starts with '#', so declining here costs nothing
+  // (the whitespace skip is the same marking skip every later block starts
+  // with).
+  {
     skip_whitespace(lexer);
     if (lexer->lookahead == '#') {
       lexer->advance(lexer, false);
@@ -621,28 +655,57 @@ bool tree_sitter_al_external_scanner_scan(
       //
       // One buffered read cannot do that: the word is compared whole, so a
       // partial candidate match can neither leak into the next comparison nor
-      // return true. "endif" (5) is the longest candidate.
-      char word[8];
+      // return true. "endregion" (9) is the longest directive word.
+      char word[12];
       size_t len = 0;
-      if (!read_word_ci(lexer, word, sizeof(word), &len)) return false;
-      if (valid_symbols[PREPROC_OPEN] && len == 2 && strcmp(word, "if") == 0) {
-        state->depth++;
-        lexer->result_symbol = PREPROC_OPEN;
+      bool truncated = !read_word_ci(lexer, word, sizeof(word), &len);
+      // The token is the '#' and the word. Every check below reads past it.
+      lexer->mark_end(lexer);
+
+      static const char *const OTHERS[] = {
+        "pragma", "region", "endregion", "define", "undef", NULL,
+      };
+      bool is_if = !truncated && strcmp(word, "if") == 0;
+      bool is_elif = !truncated && strcmp(word, "elif") == 0;
+      bool is_else = !truncated && strcmp(word, "else") == 0;
+      bool is_endif = !truncated && strcmp(word, "endif") == 0;
+
+      if (len == 0 || word_in(OTHERS, word, truncated)) {
+        // A bare '#', or an extras directive: the grammar's regexes own those.
+        return false;
+      }
+      enum TokenType symbol = is_if ? PREPROC_OPEN : PREPROC_CLOSE;
+      if ((is_if || is_endif) && !valid_symbols[symbol]) {
+        // A real directive the parser cannot take here. Declining leaves it
+        // to the internal lexer, which has no token for it: an ERROR, as
+        // before B2.
+        return false;
+      }
+      // What alc lets follow the word on its line (AL0631 otherwise,
+      // tools/config_oracle/probe_alc.py): after #endif/#else, only spaces
+      // and an optional `//` comment; after #if/#elif, a condition with no
+      // block comment and no second directive on the line. Any other word is
+      // AL0621.
+      bool malformed = (is_else || is_endif) ? !line_rest_is_blank(lexer)
+                     : (is_if || is_elif)    ? opener_line_is_malformed(lexer)
+                     : true;
+      if (malformed) {
+        // `#elsewhere`, `#regionX` (the extras regex matches its `#region`
+        // and leaves `X` an identifier, clean in a statement list), `#endif;`.
+        // No rule takes this token, so the parser wraps the whole line in an
+        // ERROR. It is never valid outside error recovery, which returned
+        // above, so it is emitted unasked.
+        consume_line(lexer);
+        lexer->result_symbol = MALFORMED_DIRECTIVE;
         return true;
       }
-      if (valid_symbols[PREPROC_CLOSE] && len == 5 && strcmp(word, "endif") == 0) {
-        if (state->depth > 0) state->depth--;
-        lexer->result_symbol = PREPROC_CLOSE;
-        return true;
+      if (is_elif || is_else) {
+        return false;  // well-formed: the grammar's regex lexes it
       }
-      // '#' (+ optional whitespace) was consumed but neither matched —
-      // return false. Per the external-scanner contract, ALL advances made
-      // during this (failed) scan are discarded by tree-sitter; the lexer
-      // resets to the original '#' position for the next lex attempt (e.g.
-      // the parser's generic error-recovery machinery). This is the existing
-      // invariant the pre-whitespace code already relied on (see the note
-      // above) — untouched by this change.
-      return false;
+      if (symbol == PREPROC_OPEN) state->depth++;
+      if (symbol == PREPROC_CLOSE && state->depth > 0) state->depth--;
+      lexer->result_symbol = symbol;
+      return true;
     }
   }
 

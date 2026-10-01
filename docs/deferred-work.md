@@ -354,7 +354,7 @@ var-only form for `var_body`. The two fixtures' expected trees change and must b
 re-derived from `tree-sitter parse`, not `-u`'d; the census above is the
 before-measurement.
 
-## 9. `&&` and `||` in `#if` conditions: the grammar accepts what alc rejects
+## 9. `&&` and `||` in `#if` conditions: the grammar accepts what alc rejects — RESOLVED 2026-10-01
 
 **Established:** `tools/config_oracle/probe_alc.py` probes `ampamp_rejected` and
 `pipepipe_rejected` (AL0631; `docs/preproc-directive-semantics.md`), against
@@ -368,6 +368,14 @@ oracle cannot compare it. Production impact: zero — no `#if`/`#elif` line in
 BC.History, DC or BC 28.1 uses `&&` or `||` (grep, 2026-09-28). Per "parse
 structure, don't validate" this may be kept on purpose; if so, say so here and
 close the item, otherwise remove the two string alternatives.
+
+**Fixed (roadmap B2, decision 3):** 1d01707 removes both alternatives from
+`preproc_or_expression`/`preproc_and_expression` and the `"&&"`/`"||"` captures from
+`queries/highlights.scm`. `#if A && B` is now an ERROR in the condition, pinned by two
+cases of `test/corpus/directive_line_rejected_negative_test.txt`. The resolver's
+`unsupported-condition-token` refusal keeps its classification (fixture-classes.tsv).
+Production: still 0 sites in the four corpora; tree-harness: all 15,358 BC.History trees
+byte-identical.
 
 ## 10. Split `add*` headers whose bodies stay open over `#endif` (EDocumentDE)
 
@@ -759,7 +767,7 @@ and that variant takes no `;`. The flat parse of either configuration keeps the
 
 ---
 
-## 20. `#endif;`: the grammar accepts a token after `#endif` that alc rejects
+## 20. `#endif;`: the grammar accepts a token after `#endif` that alc rejects — RESOLVED 2026-10-01
 
 **Established:** 2026-09-29, A3 (config-oracle gate) review and fix rounds 1-2. Manual
 alc 18.0.41 compiles, each with X defined and undefined, runtime 15.0, no symbols
@@ -798,6 +806,16 @@ discovery, refuses a token after `#endif` (`resolver:trailing-token`), so no
 resolver-refused deliberate negatives in `fixture-classes.tsv`. C2's raw-compile
 mode, which skips the resolver, is what can pin it. Until then the table above is the
 evidence. B2 should add a negative fixture asserting the ERROR once it is fixed.
+
+**Fixed (roadmap B2):** 1d01707. The scanner's `#` dispatch checks the rest of an
+`#endif`/`#else` line after `mark_end`: anything but spaces and a `//` comment makes the
+line the hidden external `_malformed_directive`, which no rule takes, so it is an ERROR.
+The same dispatch rejects prefix forms (`#elsewhere`, `#regionx`, AL0621) and a block
+comment on an `#if`/`#elif` line. Pinned now: `tools/config_oracle/probe_alc.py`
+`endif_semicolon_rejected`, `endif_trailing_word_rejected`, `else_semicolon_rejected`
+(probe_alc.py compiles raw, past the resolver that keeps these out of alc_probe), and
+`test/corpus/directive_line_rejected_negative_test.txt`. `#endregion;` stays clean
+(`directive_line_accepted_test.txt`, probe `endregion_semicolon_accepted`).
 
 ## 21. The MSVC-built native library parses ~2x slower than clang -O2
 
@@ -1035,6 +1053,39 @@ every reached configuration evaluates both groupings alike), so the stage also r
 tree's condition AST to equal the resolver's, parentheses dropped. Replays 7 and 8
 (81076bf^, 8 is that `#define` case) catch the old grammar; gate_selftest `oracle-quick-condition-structure` and
 `step5e-oracle-condition-structure` revert the prec and go red.
+
+## 26. A directive after code on the same line parses clean; alc rejects it (AL0620)
+
+**Established:** 2026-10-01, B2 fix-round-2 re-review (N1), against 675e626 and 39626c7
+(same behaviour at both, so not a B2 regression). alc 18.0.41 verdicts:
+
+| input (in a trigger body) | alc | parser |
+|---|---|---|
+| `Message('t'); #if A` | REJECT AL0620 (probe `if_after_code_rejected`) | clean |
+| `#if A` / `Message('b'); #endif` | REJECT AL0620 (probe `endif_after_code_rejected`) | clean |
+| `Message('t'); #else`, `…; #region R`, `…; #pragma …` | REJECT, same rule (re-review's own compiles) | clean |
+
+`docs/preproc-directive-semantics.md`'s first "Directive lines" row: a directive must be
+the first token on its line.
+
+**Why B2 does not catch it:** the scanner's `#` dispatch decides from the directive word and
+the REST of its line. At a `#` it cannot see what started the line, because the scanner
+holds no column or "line has code" state and tree-sitter hands it no context. It needs
+its own design: for example a serialized "last token ended on this line" flag, or a check in
+the token BEFORE the `#` (every statement terminator would have to look ahead), and both
+change the scanner's state contract.
+
+**Production impact:** 0 sites in BC.History, DC, BC 28.1 and BCApps 29.0 (grep for a
+directive word after non-blank, non-`//` text on a line, excluding `#` inside quoted
+strings and the BOM-prefixed first line; 2026-10-01).
+
+**Sibling, fixed in B2 fix round 2:** a second directive on an `#if`/`#elif` line
+(`#if A #region R`, `#if A #pragma …`, `#elif A #region R`; AL0631) parsed clean too. The
+dispatch now refuses any `#` before a `//` on an opener line (`opener_line_is_malformed`);
+pinned by three cases of `test/corpus/directive_line_rejected_negative_test.txt`.
+
+**Owner:** unassigned (a B-row candidate). A fix must add AL0620 negatives and keep
+`#endregion;`, trailing `//` comments and indented directives clean.
 
 ## Longer-lived proposals, tracked separately
 
