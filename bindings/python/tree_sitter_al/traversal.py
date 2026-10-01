@@ -275,3 +275,9 @@ def visits_to_json(visits):
     return [{"class": v.cls, "type": v.type, "field": v.field, "start": v.start, "end": v.end,
              "arms": [list(a) for a in v.arms], "host": v.host,
              "split": split_to_json(v.split) if v.split else None} for v in visits]
+
+
+def dump_expected(document: Document, visits) -> str:
+    """A fixture's expected-visits file: one visit per line, so a review reads a diff."""
+    lines = [json.dumps(v, ensure_ascii=False) for v in visits_to_json(visits)]
+    return '{"revision": "%s", "visits": [\n%s\n]}\n' % (document.revision, ",\n".join(lines))
