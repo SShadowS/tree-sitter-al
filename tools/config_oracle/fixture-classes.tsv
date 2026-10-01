@@ -17,7 +17,8 @@
 #                    fixture pins the tree of the configuration(s) that are. Needs `evidence:`.
 #   debt(<owner>):   verification debt with the roadmap item that removes it. debt(C1):
 #                    the oracle has no lowering for this shape yet, each reason naming the
-#                    missing piece. debt(B3): valid AL the grammar gets wrong.
+#                    missing piece. A grammar gap (valid AL the grammar gets wrong) is
+#                    debt(<row>) too; the last one, debt(B3), was closed 2026-10-01.
 #                    Adding a handler turns its entry stale, which records the fix.
 # Evidence is `evidence: alc_probe <case .al>` (a tools/alc_probe/cases file that
 # `python -m tools.alc_probe run tools/alc_probe/cases --check` keeps honest; the loader
@@ -98,8 +99,7 @@ preproc_split_layout_closing.txt#Layout addfirst modification with closing brace
 preproc_split_layout_closing.txt#Layout addfirst modification with closing brace inside %23if (no %23else)#0	CLEAN24=1	cannot-validate:reference-error:missing	invalid-config: alc rejects this configuration (AL0104); evidence: alc_probe tools/alc_probe/cases/oracle-invalid-config/11-layout-addfirst-brace-in-if.al
 preproc_split_layout_closing.txt#Layout addlast modification with closing brace inside %23if (no %23else)#0	CLEAN28=0	cannot-validate:lowering:unsupported-type:unsupported-type at preproc_split_brace_close_if_only: host addlast_modification:<children>	debt(C1): no lowering handler is registered for preproc_split_brace_close_if_only
 preproc_split_layout_closing.txt#Layout addlast modification with closing brace inside %23if (no %23else)#0	CLEAN28=1	cannot-validate:reference-error:missing	invalid-config: alc rejects this configuration (AL0104); evidence: alc_probe tools/alc_probe/cases/oracle-invalid-config/12-layout-addlast-brace-in-if.al
-preproc_split_operator_negative_test.txt#DELIBERATE NEGATIVE -- the OPERATOR itself on the far side of a %23if boundary#0	X=0	cannot-validate:multi-config-parse:error	negative: alc rejects this configuration (AL0104,AL0111); evidence: alc_probe tools/alc_probe/cases/oracle-negative/split-operator.al
-preproc_split_operator_negative_test.txt#DELIBERATE NEGATIVE -- the OPERATOR itself on the far side of a %23if boundary#0	X=1	cannot-validate:multi-config-parse:error	debt(B3): VALID AL that the grammar ERRORs on: alc accepts it split and flat. An operator alone inside a #if arm; deferred-work item 3. evidence: alc_probe tools/alc_probe/cases/oracle-negative/split-operator.al
+preproc_split_operator_test.txt#An OPERATOR alone in a %23if arm: the operand follows %23endif#0	X=0	cannot-validate:lowering:contract-shape:contract-shape at preproc_conditional_expression_tail	negative: no arm chosen leaves `i := 1 2`, which alc rejects (AL0104,AL0111); evidence: alc_probe tools/alc_probe/cases/oracle-negative/split-operator.al
 preproc_split_procedure_preamble_test.txt#Procedure with header and var both split across %23if/%23else, shared body after %23endif#0	*	cannot-validate:lowering:unsupported-type:unsupported-type at preproc_split_procedure_preamble: host declaration_body:<children>	debt(C1): no lowering handler is registered for preproc_split_procedure_preamble
 preproc_split_procedure_preamble_test.txt#Procedure with modifier, header and var both split across %23if/%23else#0	*	cannot-validate:lowering:unsupported-type:unsupported-type at preproc_split_procedure_preamble: host declaration_body:<children>	debt(C1): no lowering handler is registered for preproc_split_procedure_preamble
 preproc_split_procedure_tail_test.txt#Split signature followed by a split complete body#0	*	cannot-validate:lowering:unsupported-type:unsupported-type at preproc_split_complete_body: host procedure:<children>	debt(C1): no lowering handler is registered for preproc_split_complete_body

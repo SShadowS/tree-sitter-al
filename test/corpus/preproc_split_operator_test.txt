@@ -1,0 +1,230 @@
+================================================================================
+An OPERATOR alone in a #if arm: the operand follows #endif
+--
+`1 #if X + #endif 2` puts only the OPERATOR inside the branch. alc 18.0.41,
+four-way (tools/alc_probe/cases/oracle-negative/split-operator.al): with X
+defined it is `i := 1 + 2` and alc ACCEPTS it, split and flat; with X
+undefined it is `i := 1 2` and alc REJECTS it (AL0104/AL0111). The parser
+does not evaluate conditions, so it builds the one tree for both; the X=0
+configuration is classified negative in tools/config_oracle/fixture-classes.tsv.
+.
+Until B3 (2026-10-01) this file was preproc_split_operator_negative_test.txt
+and pinned an ERROR: the tail rule's arms had to hold `operator operand`
+pairs. preproc_conditional_expression_tail now has a second form whose arms
+hold ONE operator each, with the operand after #endif, so a chosen arm still
+reads `operator operand ...` and the oracle's expression_tail lowering is
+unchanged. Same hosts as the first form. The operator field is an anonymous
+`+` here, so it does not print; cases 3 and 4 pin it where it is named.
+================================================================================
+
+codeunit 50203 D { procedure P() var i: Integer; begin i := 1
+#if X
+ +
+#endif
+ 2; end; }
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (procedure
+        (procedure_keyword)
+        name: (identifier)
+        (var_section
+          (var_keyword)
+          body: (var_body
+            (variable_declaration
+              name: (identifier)
+              type: (type_specification
+                (basic_type)))))
+        body: (code_block
+          (begin_keyword)
+          body: (statement_block
+            (assignment_statement
+              left: (identifier)
+              operator: (assignment_operator)
+              right: (integer)
+              (preproc_conditional_expression_tail
+                (preproc_if
+                  (preproc_open)
+                  condition: (identifier))
+                (preproc_endif
+                  (preproc_close))
+                operand: (integer))))
+          (end_keyword))))))
+
+================================================================================
+An operator alone in a #if arm, with an #else operator arm
+================================================================================
+
+codeunit 50204 D
+{
+    procedure P()
+    var
+        i: Integer;
+    begin
+        i := 1
+#if X
+            +
+#else
+            -
+#endif
+            2;
+    end;
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (procedure
+        (procedure_keyword)
+        name: (identifier)
+        (var_section
+          (var_keyword)
+          body: (var_body
+            (variable_declaration
+              name: (identifier)
+              type: (type_specification
+                (basic_type)))))
+        body: (code_block
+          (begin_keyword)
+          body: (statement_block
+            (assignment_statement
+              left: (identifier)
+              operator: (assignment_operator)
+              right: (integer)
+              (preproc_conditional_expression_tail
+                (preproc_if
+                  (preproc_open)
+                  condition: (identifier))
+                (preproc_else)
+                (preproc_endif
+                  (preproc_close))
+                operand: (integer))))
+          (end_keyword))))))
+
+================================================================================
+An operator alone in a #if arm: named comparison operators in an if condition
+--
+The `operator` fields print here because comparison_operator is a named node.
+================================================================================
+
+codeunit 50205 D
+{
+    procedure P()
+    var
+        i: Integer;
+    begin
+        if i
+#if X
+            >
+#else
+            <=
+#endif
+            2 then
+            exit;
+    end;
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (procedure
+        (procedure_keyword)
+        name: (identifier)
+        (var_section
+          (var_keyword)
+          body: (var_body
+            (variable_declaration
+              name: (identifier)
+              type: (type_specification
+                (basic_type)))))
+        body: (code_block
+          (begin_keyword)
+          body: (statement_block
+            (if_statement
+              (if_keyword)
+              condition: (identifier)
+              (preproc_conditional_expression_tail
+                (preproc_if
+                  (preproc_open)
+                  condition: (identifier))
+                operator: (comparison_operator)
+                (preproc_else)
+                operator: (comparison_operator)
+                (preproc_endif
+                  (preproc_close))
+                operand: (integer))
+              (then_keyword)
+              then_branch: (exit_statement
+                (exit_keyword))))
+          (end_keyword))))))
+
+================================================================================
+An operator alone in a #if arm: the operand after #endif is a whole expression
+--
+`2 + 3` is ONE operand (the greedy `_expression`), as after the first form's
+`#endif`. The oracle flattens and recomposes the chain by the alc precedence
+table, so with X it compares against flat `1 * 2 + 3` = `(1 * 2) + 3`.
+================================================================================
+
+codeunit 50206 D
+{
+    procedure P()
+    begin
+        Message(Format(1
+#if X
+            *
+#else
+            div
+#endif
+            2 + 3));
+    end;
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (procedure
+        (procedure_keyword)
+        name: (identifier)
+        body: (code_block
+          (begin_keyword)
+          body: (statement_block
+            (call_expression
+              function: (identifier)
+              arguments: (argument_list
+                (call_expression
+                  function: (identifier)
+                  arguments: (argument_list
+                    (integer)
+                    (preproc_conditional_expression_tail
+                      (preproc_if
+                        (preproc_open)
+                        condition: (identifier))
+                      (preproc_else)
+                      (preproc_endif
+                        (preproc_close))
+                      operand: (additive_expression
+                        left: (integer)
+                        right: (integer))))))))
+          (end_keyword))))))

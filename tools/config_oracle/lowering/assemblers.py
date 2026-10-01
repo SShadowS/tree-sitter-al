@@ -486,7 +486,10 @@ def _pairs(nodes, first, second, node):
 def expression_tail(node, ctx) -> Lowered:
     """Contract expression-continuation. Host: the position right after the
     expression it continues (census hosts, policy `consumed`). Children:
-    `#if (operator operand)+ (#elif ...)* [#else ...] #endif (operator operand)*`.
+    `#if (operator operand)+ (#elif ...)* [#else ...] #endif (operator operand)*`, or
+    (B3) `#if operator (#elif operator)* [#else operator] #endif operand (operator operand)*`;
+    both read as pairs once an arm is chosen, and the second with no arm chosen is
+    `contract-shape` (that configuration is invalid AL).
     The chosen arm's `(operator, operand)` pairs, then the pairs after `#endif`,
     extend the IMMEDIATELY PRECEDING lowered sibling (ExpressionContinuation, a
     ToPrevious fragment): that expression and every operand are flattened and
