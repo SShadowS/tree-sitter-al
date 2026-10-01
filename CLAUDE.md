@@ -62,6 +62,14 @@ python tests/traversal/regen_expected.py      # a -u: review every hunk of the d
 # Perf baselines (docs/performance-baselines.md): baseline ~35 min; one group: native [--cc zig]|wasm|incremental|build|oracle; merge BASE NEW
 python -m tools.perf ab --lib-a OLD.dll --lib-b NEW.dll --corpus dc   # speed DECISIONS: same session, pinned, ABBA; baselines/compare are context (sessions drift ~30%)
 
+# Workflow tools -- use these, not ad-hoc versions
+python tools/snip.py 'x := a + 1;'                 # cursor tree with fields, has_error, ERROR/MISSING/hidden; --object, --raw, -f, --sexp
+python tools/snip.py --census --root ./BC.History   # two-shape detector for *_keyword/*identifier types; exit 1 if any flagged
+./tools/metrics.sh [--vs REV] [--tests]            # STATE/LARGE_STATE/SYMBOL_COUNT, parser.c size, grammar.js lines, tests, deltas vs REV
+python tools/nodetypes.py show|who-has TYPE        # node-types.json questions; `diff REV` for added/removed types and changed fields
+./tools/corpus-grep.sh [-E|-P] [-i] [-l|-c] PAT    # sites over BC.History, DC, BC28.1, BCApps-29.0 (*.al only)
+./tools/session-cleanup.sh --procs [--yes]         # leftover find/tail/grep/head/sleep older than 30 min; dry run by default
+
 # Standard development cycle
 tree-sitter generate         # Generate parser from grammar.js
 tree-sitter generate --report-states-for-rule -  # Rank rules by parser-state cost
@@ -475,6 +483,7 @@ Sanity-check the probe before trusting a rejection: compile a form you know is v
 - **tree-sitter** — Grammar development guide, API reference
 
 **Project docs:**
+- `docs/agent-brief-rules.md` — the checklist every subagent brief links: blocked commands, process, environment and editing rules, and the tools above
 - `docs/deferred-work.md` — **open items carried past 4.0.0**, each tagged with how it
   was established. Read this before concluding something is unexplored; it also holds
   the four-way `alc` probe rule that every `#if` question depends on

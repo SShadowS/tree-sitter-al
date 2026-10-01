@@ -121,7 +121,23 @@ def classify(tree):
     return "hidden-only", None, hidden
 
 
-def _inputs(roots, corpus_fixtures):
+def decode_al(data: bytes) -> str:
+    """AL source bytes as text. UTF-16 with a BOM is decoded as such, as `tree-sitter
+    parse` does: BCApps ships 19 such files (HybridGP GP tables), and read as UTF-8 each
+    is one whole-file ERROR. Anything else is UTF-8 with a BOM stripped (the scanner
+    skips U+FEFF as an extra, so the tree is unchanged). Bytes that are not UTF-8
+    survive as surrogates: encode with ("utf-8", "surrogateescape") to get them back."""
+    if data[:2] in (b"\xff\xfe", b"\xfe\xff"):
+        return data.decode("utf-16")
+    return data.decode("utf-8-sig", "surrogateescape")
+
+
+def read_al(path) -> str:
+    """decode_al of a file's bytes; read as bytes, so no CR/LF translation."""
+    return decode_al(Path(path).read_bytes())
+
+
+def inputs(roots, corpus_fixtures):
     """[(label, bytes-or-Path, is_negative)]."""
     out = []
     for r in roots:
@@ -143,7 +159,7 @@ def _inputs(roots, corpus_fixtures):
     return out
 
 
-def _parser(lib):
+def load_parser(lib):
     try:
         path = Path(lib) if lib else loader.ensure_library(REPO)
         return path, loader.make_parser(loader.load_language(path))
@@ -151,24 +167,20 @@ def _parser(lib):
         raise CannotRun(f"cannot load the parser: {type(e).__name__}: {e}") from e
 
 
-_PARSER = None
+PARSER = None
 
 
-def _init(parser_or_lib):
-    global _PARSER
-    _PARSER = (parser_or_lib if not isinstance(parser_or_lib, Path)
+def init_worker(parser_or_lib):
+    global PARSER
+    PARSER = (parser_or_lib if not isinstance(parser_or_lib, Path)
                else loader.make_parser(loader.load_language(parser_or_lib)))
 
 
-def _check(item):
+def check(item):
     """(label, category, negative, visible-where, hidden-where)."""
     label, src, negative = item
-    data = src.read_bytes() if isinstance(src, Path) else src
-    if data[:2] in (b"\xff\xfe", b"\xfe\xff"):
-        # UTF-16 with a BOM, which `tree-sitter parse` detects. BCApps ships 19 such
-        # files (HybridGP GP tables); read as UTF-8, each is one whole-file ERROR.
-        data = data.decode("utf-16").encode("utf-8")
-    category, vis, hid = classify(_PARSER.parse(data))
+    text = read_al(src) if isinstance(src, Path) else decode_al(src)
+    category, vis, hid = classify(PARSER.parse(text.encode("utf-8", "surrogateescape")))
     return label, category, negative, vis and _where(vis), hid and _where(hid)
 
 
@@ -188,14 +200,14 @@ def main(argv=None) -> int:
     counts = dict.fromkeys(("clean", "visible", "with-hidden", "hidden-only", "negative-visible"), 0)
     failed = 0
     try:
-        inputs = _inputs(args.root, args.corpus_fixtures)
-        lib_path, parser = _parser(args.lib)
-        jobs = args.jobs or (1 if len(inputs) < 500 else os.cpu_count() or 1)
-        _init(parser)
+        items = inputs(args.root, args.corpus_fixtures)
+        lib_path, parser = load_parser(args.lib)
+        jobs = args.jobs or (1 if len(items) < 500 else os.cpu_count() or 1)
+        init_worker(parser)
         # Workers load the same library the parent just built or was given.
-        with (ProcessPoolExecutor(jobs, initializer=_init, initargs=(lib_path,)) if jobs > 1
+        with (ProcessPoolExecutor(jobs, initializer=init_worker, initargs=(lib_path,)) if jobs > 1
               else contextlib.nullcontext()) as pool:
-            results = pool.map(_check, inputs, chunksize=64) if pool else map(_check, inputs)
+            results = pool.map(check, items, chunksize=64) if pool else map(check, items)
             for label, category, negative, vis, hid in results:
                 if category == "clean":
                     counts["clean"] += 1
@@ -221,7 +233,7 @@ def main(argv=None) -> int:
               file=sys.stderr)
         return 2
 
-    print(f"has_error_sweep: files={len(inputs)} clean={counts['clean']} "
+    print(f"has_error_sweep: files={len(items)} clean={counts['clean']} "
           f"visible={counts['visible']} with-hidden={counts['with-hidden']} "
           f"hidden-only={counts['hidden-only']} negative-visible={counts['negative-visible']} "
           f"failed={failed} ({time.perf_counter() - t0:.1f}s)")

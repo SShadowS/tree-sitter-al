@@ -123,7 +123,7 @@ def test_pre_fix_parser_reports_hidden_only(tmp_path, capsys):
 
 def test_every_corpus_case_is_swept():
     """No case is excluded, negatives included: a negative FILE holds clean cases too."""
-    items = sweep._inputs([], True)
+    items = sweep.inputs([], True)
     assert len(items) == len(fixtures.extract(sweep.CORPUS))
     assert any(neg for _, _, neg in items)
 
@@ -134,10 +134,10 @@ def test_clean_case_inside_a_negative_file_is_swept(al_parser):
     `_directive_eol` would appear. They must be parsed, and must be clean."""
     target = "preproc_if_elif_whitespace_tolerance_test.txt"
     assert target in sweep.deliberate_negatives()
-    sweep._init(al_parser)
-    mine = [it for it in sweep._inputs([], True) if it[0].startswith(target + "#")]
+    sweep.init_worker(al_parser)
+    mine = [it for it in sweep.inputs([], True) if it[0].startswith(target + "#")]
     assert mine and all(neg for _, _, neg in mine)
-    verdicts = [sweep._check(it)[1] for it in mine]
+    verdicts = [sweep.check(it)[1] for it in mine]
     assert "clean" in verdicts, verdicts
 
 
