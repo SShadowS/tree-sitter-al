@@ -554,8 +554,8 @@ fi
 # Needs no corpus, so it runs on every clone and never skips. Four stages, each
 # reported on its own line: (a) the registry census over src/node-types.json,
 # (b) the oracle's self-tests, (c) the fixture differential over test/corpus,
-# (d) condition structure: every #if/#elif condition as the tree groups it,
-# evaluated per configuration against the resolver's reading (roadmap B1).
+# (d) condition structure: every #if/#elif condition as the tree groups it must
+# equal the resolver's AST and evaluate like it per configuration (roadmap B1).
 # Exit 1 is a finding (discrepancy, representation violation, stale
 # fixture-classes.tsv entry, census problem); exit 2 means it could not run.
 # Both fail validation. The full tier over the production corpora is NOT here

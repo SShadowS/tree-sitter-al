@@ -35,6 +35,7 @@ class Record:
     status: str
     items: list = field(default_factory=list)
     cond_checked: int = 0     # #if/#elif conditions condition_check compared in this configuration
+    cond_skipped: dict = field(default_factory=dict)   # {condition_check skip reason: count}
 
 
 @dataclass
@@ -109,24 +110,27 @@ def _check_config(parser, input_id, source, cid, env, mode, prep, conds=None):
     file_items = prep[2] if isinstance(prep, tuple) else []
     dir_items = [i for i in file_items if "|directive|" in i]
     if dir_items and not any(i.startswith("multi-config-parse") for i in file_items):
-        return Record(input_id, cid, "directive-mismatch", dir_items + rec.items, rec.cond_checked)
+        return Record(input_id, cid, "directive-mismatch", dir_items + rec.items,
+                      rec.cond_checked, rec.cond_skipped)
     return rec
 
 
 def _check_config_inner(parser, input_id, source, cid, env, mode, prep, conds=None):
     """`conds` is `condition_check.tree_conditions` of the multi-configuration tree (None
     when that tree has errors). A condition-structure item makes the record a `discrepancy`
-    whatever else the configuration found, so no cannot-validate can hide or classify it."""
+    here whatever else the configuration found, so no cannot-validate can hide or classify
+    it; `_check_config` and `check_input` may re-wrap it as `directive-mismatch` or
+    `representation-violation`, which are just as unclassifiable."""
     try:
         res = directives.resolve(source, env)
     except directives.ResolveError as e:
         return Record(input_id, cid, "cannot-validate", [f"resolver:{e.reason}@{e.offset}"])
-    cond, checked = condition_check.check(conds, res) if conds is not None else ([], 0)
+    cond, checked, skipped = condition_check.check(conds, res)
     rec = _after_resolve(parser, input_id, source, cid, mode, prep, res)
-    rec.cond_checked = checked
+    rec.cond_checked, rec.cond_skipped = checked, skipped
     if cond:
         rec = Record(input_id, cid, "discrepancy",
-                     [compare.discrepancy_id(input_id, cid, d) for d in cond] + rec.items, checked)
+                     [compare.discrepancy_id(input_id, cid, d) for d in cond] + rec.items, checked, skipped)
     return rec
 
 
@@ -322,16 +326,27 @@ def run(inputs, lib_path, workers, mode, classes=None):
 
 def condition_stage(summary):
     """-> (code, status) of the condition-structure stage (B1) over a finished run. Its
-    discrepancies already fail the run as discrepancies; this line says the stage ran."""
-    bad = [r for r in summary.records if any("|condition-structure|" in i for i in r.items)]
+    discrepancies already fail the run as discrepancies; the status line also says how many
+    conditions were compared and how many were skipped, and why (an errored tree is counted
+    in files: the resolve tier records nothing else about it)."""
+    items = [i for r in summary.records for i in r.items if "|condition-structure|" in i]
+    n_ast = sum(" ast: " in i for i in items)
     n = sum(r.cond_checked for r in summary.records)
-    if bad:
-        k = sum("|condition-structure|" in i for r in bad for i in r.items)
-        return 1, (f"FAIL ({k} condition-structure in {len(bad)} configurations of "
-                   f"{len({r.input_id for r in bad})} inputs; {n} conditions compared)")
+    skipped = collections.Counter()
+    for r in summary.records:
+        skipped.update(r.cond_skipped)
+    errored = sorted({r.input_id for r in summary.records if r.cond_skipped.get("errored-tree")})
+    skip = ", ".join(f"{k} {v}" for k, v in sorted(skipped.items())) or "none"
+    tail = (f"{n} conditions compared over {len(summary.records)} configurations; skipped: {skip}"
+            + (f" ({len(errored)} files with an errored tree)" if errored else ""))
+    if items:
+        bad = {(r.input_id, r.config) for r in summary.records
+               if any("|condition-structure|" in i for i in r.items)}
+        return 1, (f"FAIL ({len(items)} condition-structure: ast {n_ast}, truth {len(items) - n_ast}, "
+                   f"in {len(bad)} configurations of {len({i for i, _ in bad})} inputs; {tail})")
     if n == 0:
-        return 2, "COULD NOT RUN (no condition was compared)"
-    return 0, f"PASS ({n} conditions compared over {len(summary.records)} configurations, 0 condition-structure)"
+        return 2, f"COULD NOT RUN (no condition was compared; {tail})"
+    return 0, f"PASS (0 condition-structure: ast 0, truth 0; {tail})"
 
 
 def check_exact(expected, records):

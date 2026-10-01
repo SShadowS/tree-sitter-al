@@ -636,11 +636,13 @@ CASES: list[Case] = [
             "ERROR; the tree's condition must disagree with the resolver's",
         mutations=[ORACLE_NOT_UNPREC],
         expect_exit="1",
-        must_contain=["- stage (d) condition structure: FAIL (", " condition-structure in ",
+        must_contain=["- stage (d) condition structure: FAIL (", " condition-structure: ast ",
                       "- stage (a) registry census: PASS"],
-        blind_spot="compares truth per configuration, so a regrouping that is equivalent "
-                   "under every assignment (e.g. of a symbol with itself) is invisible; that "
-                   "is the point, the tree is only wrong where it changes a branch",
+        blind_spot="the resolver's parse_condition is the reference, so a grouping both get "
+                   "wrong the same way agrees (alc_probe pins the resolver, not this stage); "
+                   "conditions it cannot compare are skipped and only counted: no tree node "
+                   "at the directive, a condition extent that differs (condition-extent in "
+                   "the full tier), and every condition of a file whose tree has errors",
         slow=False,
     ),
     Case(

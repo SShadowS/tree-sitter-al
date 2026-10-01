@@ -32,7 +32,8 @@ def test_quick_reports_one_line_per_stage_in_order(tiny_quick, capsys):
         "- stage (a) registry census: PASS",
         "- stage (b) self-tests: PASS (stubbed)",
         "- stage (c) fixture differential: PASS",
-        "- stage (d) condition structure: PASS (2 conditions compared over 2 configurations, 0 condition-structure)",
+        "- stage (d) condition structure: PASS (0 condition-structure: ast 0, truth 0; 2 conditions "
+        "compared over 2 configurations; skipped: none)",
     ]
 
 
@@ -44,7 +45,8 @@ def test_census_failure_exits_1_names_the_problem_and_later_stages_still_run(tin
         "- stage (a) registry census: FAIL (1 problems)",
         "- stage (b) self-tests: PASS (stubbed)",
         "- stage (c) fixture differential: PASS",
-        "- stage (d) condition structure: PASS (2 conditions compared over 2 configurations, 0 condition-structure)",
+        "- stage (d) condition structure: PASS (0 condition-structure: ast 0, truth 0; 2 conditions "
+        "compared over 2 configurations; skipped: none)",
     ]
     assert "  unregistered: preproc_zz_selftest" in out
     assert "- quick tier exit code: 1" in out
@@ -88,7 +90,8 @@ def test_a_condition_structure_discrepancy_fails_stage_d(tiny_quick, capsys, mon
     assert cli.main(tiny_quick) == 1
     lines = _stage_lines(capsys.readouterr().out)
     assert lines[2].startswith("- stage (c) fixture differential: FAIL (exit 1")
-    assert lines[3].startswith("- stage (d) condition structure: FAIL (2 condition-structure in 2 configurations")
+    assert lines[3].startswith("- stage (d) condition structure: FAIL (4 condition-structure: ast 2, "
+                               "truth 2, in 2 configurations")
 
 
 def test_a_missing_pytest_is_could_not_run_not_a_finding(monkeypatch):

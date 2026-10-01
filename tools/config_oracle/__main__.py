@@ -315,8 +315,11 @@ def _run(args):
                                  f"entries apply to the requested corpora and tier")
     summary = runner.run(inputs, None, args.workers, args.tier, classes)
     stale_heads = corpus_mismatches(roots)
+    cond_code, cond_status = runner.condition_stage(summary)
+    # The stage's own code counts: "could not run" (2) fails the run like any other stage.
+    summary.exit_code = max(summary.exit_code, cond_code)
     extra = ["## Per root", "", *runner.root_table(runner.per_root(summary, root_of, files)),
-             "", f"- stage condition structure: {runner.condition_stage(summary)[1]}"]
+             "", f"- stage condition structure: {cond_status}"]
     if stale_heads:
         extra += ["", "## Corpus identity mismatch (exit 1)", "", *(f"- {m}" for m in stale_heads)]
         summary.exit_code = max(summary.exit_code, 1)

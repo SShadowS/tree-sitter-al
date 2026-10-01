@@ -1,11 +1,23 @@
 """The tree's `#if`/`#elif` condition grouping against the resolver's (roadmap B1).
 
 The resolver stays the only branch selector. This stage reads each condition node of the
-multi-configuration tree into the resolver's own AST classes, evaluates it under the
-environment the resolver had at that directive (`Resolution.env_at`), and reports a
-`condition-structure` discrepancy wherever its truth differs from the resolver's
-evaluation of `parse_condition`. Directives the resolver refuses never reach here, and a
-condition whose extent differs is `directive_check`'s `condition-extent`, not this.
+multi-configuration tree into the resolver's own AST classes and makes two comparisons
+against the resolver's `parse_condition` AST for the same directive, both reported as a
+`directive|condition-structure` discrepancy naming both readings:
+
+- `ast`: the two ASTs must be EQUAL. Normalisation: parentheses are dropped (the resolver
+  keeps no paren node, so the tree's `preproc_parenthesized_expression` is read as its
+  operand); `true`/`false` are literals on both sides; symbols keep their spelling (they
+  are case-sensitive); operators are left-associative on both sides. Nothing else is
+  normalised, so this is exact. It sees a wrong grouping that every reached configuration
+  happens to evaluate alike (e.g. `#define B` above `#if not A and B`).
+- `truth`: the tree's AST, evaluated under the environment the resolver had at that
+  directive (`Resolution.env_at`, active `#define`/`#undef` included), must give the
+  resolver's value. Redundant while `ast` holds; it is what a branch actually depends on.
+
+Not compared, and counted as skipped: a directive with no tree node at its `#`, one whose
+condition extent differs (directive_check's `condition-extent` in the full tier), and every
+directive of a tree with errors. Directives the resolver refuses never reach here.
 """
 from __future__ import annotations
 
@@ -67,19 +79,31 @@ def show(e) -> str:
     return f"{name}({show(e.left)},{show(e.right)})"
 
 
-def check(trees: dict, res) -> tuple:
-    """-> (discrepancies, number of conditions compared) for one configuration."""
-    out, checked = [], 0
+SKIP_NO_NODE, SKIP_EXTENT, SKIP_ERRORED_TREE = "no-node", "extent", "errored-tree"
+
+
+def check(trees, res) -> tuple:
+    """-> (discrepancies, number compared, {skip reason: count}) for one configuration.
+    `trees` is `tree_conditions(...)`, or None when the multi-configuration tree has errors."""
+    out, checked, skipped = [], 0, {}
     for d in res.directives:
-        t = trees.get(d.hash)
-        if d.cond is None or t is None or (t[0], t[1]) != (d.cond.start, d.cond.end):
+        if d.cond is None:
             continue
-        env, expr = res.env_at[d.hash], t[2]
+        t = None if trees is None else trees.get(d.hash)
+        why = (SKIP_ERRORED_TREE if trees is None else SKIP_NO_NODE if t is None
+               else SKIP_EXTENT if (t[0], t[1]) != (d.cond.start, d.cond.end) else None)
+        if why:
+            skipped[why] = skipped.get(why, 0) + 1
+            continue
         checked += 1
+        expr, env = t[2], res.env_at[d.hash]
+        if expr != d.cond.expr:
+            out.append(Discrepancy("directive", "condition-structure",
+                                   f"{d.kind}@{d.hash} ast: tree {show(expr)} vs resolver {show(d.cond.expr)}", ""))
         want = evaluate(d.cond.expr, env)
         got = None if isinstance(expr, Unreadable) else evaluate(expr, env)
         if got != want:
             out.append(Discrepancy("directive", "condition-structure",
-                                   f"{d.kind}@{d.hash}: tree {show(expr)}={got} "
+                                   f"{d.kind}@{d.hash} truth: tree {show(expr)}={got} "
                                    f"vs resolver {show(d.cond.expr)}={want}", ""))
-    return out, checked
+    return out, checked, skipped
