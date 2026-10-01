@@ -97,8 +97,9 @@ and saved 107 states (`42aaf7b`).
 
 Each entry names the edit that was tried, because the result belongs to that edit (§5).
 
-- **Partial-prefix extraction into the `preproc_split_*` rules** (`_preproc_if_header`,
-  `_preproc_var_begin`, a full `_procedure_signature` that included the return clause). This
+- **Partial-prefix extraction into the `preproc_split_*` rules** (`_preproc_if_header` and
+  `_preproc_var_begin`; also a full `_procedure_signature` that included the return clause,
+  *from the 4.0.0 session notes, unverified*: the worklist plan names only the first two). This
   gave an unresolved conflict at generate. A hidden rule that ends in the middle of a
   construct, and that several sibling rules can reach, forces a reduce before the parser can
   know which sibling it is in. The fix is to extract a smaller piece that ends at a hard
@@ -119,8 +120,9 @@ Each entry names the edit that was tried, because the result belongs to that edi
   the time). STATE_COUNT went **up** by 64 (10,825 → 10,889), and a corpus case
   (`arr[idx] in [...]` as a case pattern) became an ERROR. `_single_pattern`, `filter_value`
   and `calc_field_reference` overlap the cascade tiers, and each needs many exact two-way
-  conflict declarations. A three-way conflict `[A, B, C]` does not cover its two-way subsets.
-  The conflicts cost more than the cascade saved. (Worklist plan, "P3-X".)
+  conflict declarations. *(From the 4.0.0 session notes, unverified: a three-way conflict
+  `[A, B, C]` does not cover its two-way subsets. The worklist plan says only that the
+  declarations had to be exact two-way ones.)* The conflicts cost more than the cascade saved. (Worklist plan, "P3-X".)
 - **One `_if_head` shared by `if_statement` and every split rule.** STATE_COUNT went up by
   125 to 193. Narrowing the then-branch of the split if-else saved only 3 (`97ee3f2`).
 - **`prec(25)` on a new split rule.** It silently resolved a shift/reduce conflict against an
@@ -154,6 +156,19 @@ Fewer states alone is not success. Each reduction must pass all of these on the
 (`AL_BCAPPS29_ROOT`). They are listed in roadmap row D1, and the corpus labels are those in
 `tools/config_oracle/__main__.CORPORA`. Take every "before" measurement fresh, from the
 commit just before the change.
+
+**Worktree caveat.** `CORPORA` resolves `bc-history` and `dc` under the repo root
+(`REPO / "BC.History"`, `REPO / "DC"`), and so do the `./BC.History` / `./DC` paths in the
+commands below. Both corpora live only in the main worktree, so in a git worktree those
+labels point at directories that do not exist. Do not symlink them in. The oracle and
+`tools.perf` key every root by these labels: the oracle refuses a root that matches no
+label (exit 2, "unlabelled"), so passing the main worktree's absolute `BC.History` path
+from a worktree does not work. Run those two from the main worktree. The path-based
+gates (`tree-harness.sh`, `has_error_sweep.py --root`) take the main worktree's absolute
+paths fine. `bc28.1` and `bcapps-29.0` are absolute (`AL_BC28_ROOT`, `AL_BCAPPS29_ROOT`)
+and work anywhere. All worktrees also share
+one compiled `al.dll`, so wrap every build and every `tree-sitter` command in
+`./tools/ts-lock.sh`.
 
 | Gate | How |
 |---|---|
