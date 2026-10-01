@@ -81,6 +81,7 @@ branch × nesting.
 | B7 | **Separator and continuation audit, then fixes.** First a FRESH audit: the six-site list from 4.0.0 was never re-verified. It covers separator positions and expression continuation hosts (`foreach` iterable, `repeat` condition and `with` operand have no continuation facility today, and `in`/`is`/`as` are not continuation operators). The output is an enumerated, compiler-tested matrix. Then the fixes: `parameter_list` (`;`-led), `implements_clause`, the key field list and comma-leading option members, independently. The comma-leading `link_value_list` goes with a shared link/property ambiguity matrix, because the G8/G11 history shows the interaction. `ml_value_list` comes after B4. | 1, 2, new | audit, then bounded per host | Every host has BOTH comma placements pinned, and active oracle witnesses ship in the same change. |
 | B8 | **CalcFormula whole-value conditional.** | 16 | bounded | First alc-probe that it is valid. The arms stay formula-shaped (`aggregate_formula` / `lookup_formula`). |
 | B9 | **The doubled BOM.** | 6 | bounded | Probe alc first. Its verdict decides between absorbing it as an extra and surfacing it as text. |
+| B10 | **`case_else_branch` has two shapes.** A plain `else` is a sibling of `case_body`; an `else` inside `#if` is under `case_body` → `preproc_conditional_case`. BC.History: 1,468 against 2. Found in A6; the owned-IR consumer's request itself is satisfied. | 22 | **spec, tree-shape change** | One shape (or a documented, pinned pair), production census of the moved nodes, consumer migration note (E2). |
 
 **Oracle work interleaved into Phase B (the start of C1).** These are the
 recorded leading blockers (milestone-2 results), and none waits on a
@@ -143,11 +144,11 @@ These are release gates, not an afterthought.
 
 A1 → A2 → A3 → A4 → A5 → A6 → A7 (spec)
 → B1 → B2 → B3, with C1's first handlers (split-if-then-begin, split-if-else, split-declaration) interleaved
-→ B4 (spec) → B5 (spec) → B6 (research + spec) → B7 (audit, then hosts) → B8 → B9, with the rest of C1 interleaved
+→ B4 (spec) → B5 (spec) → B6 (research + spec) → B7 (audit, then hosts) → B8 → B9 → B10 (spec), with the rest of C1 interleaved
 → C1 complete → C2 → C3
 → D1 → D2
 → E1 → E2 → E3 → stable major release
 → F1 (per the A7 contract; it may start earlier if A7 decides so).
 
-Specs B4, B5, B6 and A7 each wait for user approval. Work continues on other
+Specs B4, B5, B6, B10 and A7 each wait for user approval. Work continues on other
 items while a spec is under review.

@@ -884,6 +884,56 @@ Rejected, with the reasons measured above:
 D2 measures (its thresholds must be set per compiler: `tools/perf compare` warns when the
 compiler or flags differ). Do not tune the grammar against MSVC numbers alone (D1).
 
+## 22. `case_else_branch` has two shapes: a sibling of `case_body`, or inside it under `#if`
+
+**Established:** 2026-10-01, A6, while closing
+[`improvements-for-owned-ir-consumer.md`](improvements-for-owned-ir-consumer.md) issue 2.
+The consumer's request is satisfied: `case_else_branch` has a single `body`
+(`statement_block`), as `case_branch` does. This item is a consistency candidate that the
+reconciliation turned up, not an open request.
+
+**The two shapes.** A plain `else` is a direct child of `case_statement`, beside `case_body`
+(`case_statement` has `optional($.case_else_branch)` after `field('body', $.case_body)`). An
+`else` inside `#if` is a child of `preproc_conditional_case`, which sits inside `case_body`
+(`grammar.js`, `preproc_conditional_case`, about line 4961: every branch takes
+`optional($.case_else_branch)`). Parsed with this branch's library (py-tree-sitter 0.25.0,
+both `has_error` False):
+
+```
+case X of 1: A(); else B(); end;          case X of 1: A();
+                                          #if C
+                                          else B();
+                                          #endif
+                                          end;
+
+case_statement                            case_statement
+  body: case_body                           body: case_body
+    case_branch ...                           case_branch ...
+  case_else_branch                            preproc_conditional_case
+    else_keyword                                preproc_if ...
+    body: statement_block                       case_else_branch
+  end_keyword                                     else_keyword
+                                                  body: statement_block
+                                                preproc_endif ...
+                                            end_keyword
+```
+
+**Production.** BC.History has 1,470 `case_else_branch` nodes: 1,468 as direct children of
+`case_statement` (826 files), and 2 under `preproc_conditional_case`
+(`Sales/Receivables/ApplyCustomerEntries.Page.al:1241`, an `else` that exists only under
+`#if not CLEAN25`, and `Inventory/Availability/ItemAvailabilityLineList.Page.al:156`). So a
+consumer that looks for the else only beside `case_body` misses 2 in BC.History. One that
+looks only inside `case_body` misses the other 1,468.
+
+**Options for the spec.** (a) Put every else under `case_body`, which moves 1,468 nodes in
+826 files. (b) Give `case_statement` an `else` field, and let the `#if` form keep its node
+inside the conditional, documented as the one place it appears. (c) Keep both shapes and
+pin them in `tools/check-field-types.py` and the docs. Any option other than (c) is a
+tree-shape change and needs E2's consumer migration check.
+
+**Owner:** Phase B, roadmap row B10 (a tree-shape spec). It waits for user approval like
+B4 to B6.
+
 ## Longer-lived proposals, tracked separately
 
 - [`python-bindings-modernization.md`](python-bindings-modernization.md) — the
@@ -891,10 +941,9 @@ compiler or flags differ). Do not tune the grammar against MSVC numbers alone (D
   `tree-sitter` (0.24+) expects a `PyCapsule`. Written against `tree-sitter==0.25.2`
   as used by `code-graph-rag`.
 - [`improvements-for-owned-ir-consumer.md`](improvements-for-owned-ir-consumer.md) —
-  proposals from a downstream consumer that lowers the CST into an owned IR.
-  **Baseline is v3.0.1 (`eeb2839`)**, so parts of it are stale: 4.0.0 removed four
-  never-populated fields and changed keyword node shape. Diff it against the current
-  `node-types.json` before treating any item as open.
+  proposals from a downstream consumer that lowers the CST into an owned IR, made against
+  v3.0.1 (`eeb2839`). **Closed 2026-10-01:** all four issues are fixed; the
+  header gives the commits and the evidence. Item 22 is the one consistency follow-up.
 - [`history-scanner-token-drop-v3.3.0.md`](history-scanner-token-drop-v3.3.0.md) —
   **historical.** The byte-gap measurement taken against the released v3.3.0 tag
   that started the losslessness work. Kept because the *method* is reusable, not
