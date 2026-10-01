@@ -4,7 +4,9 @@
 // ONE implementation for both JS runtimes: it touches only the SyntaxNode API
 // that the native `tree-sitter` binding and `web-tree-sitter` share (type,
 // isNamed, startIndex, endIndex, childCount, child(i), fieldNameForChild(i),
-// parent, id). It never requires the native addon, so it is browser-safe.
+// parent, id). It never requires the native addon; it needs a bundler that
+// resolves a JSON require (policy.json). It has not been tested in a real
+// browser: that is deferred to F1b.
 //
 // Both runtimes index the source as UTF-16 code units. Every position this
 // module reports is a canonical UTF-8 byte offset, converted from the text.
