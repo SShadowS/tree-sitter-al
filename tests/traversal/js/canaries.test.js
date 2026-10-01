@@ -77,7 +77,11 @@ test('DevOpsWorker: a split procedure is invisible to findDefinition before F0',
 // ---------------------------------------------------------------------------
 // al-differ: src/engine/walker.ts (5590605). MATCHABLE_TYPES :10-61 and
 // CONTAINER_TYPES :63-136 are the subsets this fixture can reach; collectMatchable
-// :185-195 is verbatim; callers :288 and :423 recurse into each matched node.
+// :185-195 is verbatim; it is called at :288-289 (diffChildren) and :423-424 (walkRoots).
+// allMatchable is NOT al-differ's recursion: al-differ descends only into matched
+// pairs (walkPair :238-245; makeAdded/makeDeleted give children: []), while this
+// descends into every match. It over-approximates what al-differ can see, so an
+// empty `before` here is empty in al-differ too.
 const MATCHABLE_TYPES = new Set(['codeunit_declaration', 'procedure', 'trigger_declaration', 'property',
   'variable_declaration', 'field_declaration']);
 const CONTAINER_TYPES = new Set(['fields_section', 'var_section', 'declaration_body', 'fields_body', 'var_body']);
@@ -106,7 +110,7 @@ test('al-differ: definitions in every conditional arm, and through split declara
   const c = load('containers.al');
   assert.deepStrictEqual(allMatchable(c.tree.rootNode), [], 'before: #if content is absent from the diff');
 
-  const after = T.walk(c.doc, policy).filter((v) => MATCHABLE_TYPES.has(v.type) && v.type !== 'variable_declaration')
+  const after = T.walk(c.doc, policy).filter((v) => MATCHABLE_TYPES.has(v.type))
     .map((v) => [v.type, nameOf(c.doc, v.node), v.arms.map(([g, a]) => `${g}/${a}`).join(' ')]);
   assert.deepStrictEqual(after, [
     ['codeunit_declaration', '"Containers Æ"', '93/0'],
@@ -115,6 +119,7 @@ test('al-differ: definitions in every conditional arm, and through split declara
     ['procedure', 'B', '93/1 179/1'],
     ['procedure', 'C', '93/1 179/2'],
     ['procedure', 'Stmts', '93/1'],
+    ['variable_declaration', 'X', '93/1'],
   ]);
 
   const s = load('split_declaration.al');
@@ -166,42 +171,71 @@ function isStatementSlotF0(visit) {
 }
 
 const SITE_TYPES = new Set(['call_expression', 'assignment_statement']);
+// The fields LethAL already treats as holding one statement (SINGLE_STATEMENT_SLOTS' field half).
+const STATEMENT_FIELDS = new Set([...SINGLE_STATEMENT_SLOTS].map((s) => s.split('.')[1]));
 
-test('LethAL R214 part 1: statements under conditional parents pass site selection', () => {
-  const { tree, doc } = load('containers.al');
-  const stmts = T.walk(doc, policy).find((v) => v.type === 'procedure' && nameOf(doc, v.node) === 'Stmts');
-  const visits = T.walk(doc, policy, { root: stmts.node }).filter((v) => SITE_TYPES.has(v.type));
-
-  const before = visits.filter((v) => isStatementSlot(v.node, fieldOf(v.node))).map((v) => textOf(doc, v.node));
-  assert.deepStrictEqual(before, ["Message('control')"], 'before: every site inside #if is lost');
-
-  const after = visits.filter(isStatementSlotF0).map((v) => [textOf(doc, v.node), v.arms.map(([g, a]) => `${g}/${a}`).join(' ')]);
-  assert.deepStrictEqual(after, [
-    ["Message('control')", '93/1'],
-    ['DoThing(X)', '93/1 441/0'],
-    ['X := 1', '93/1 441/0'],
-    ['X := 3', '93/1 441/0 489/0'],
-    ['X := 4', '93/1 441/1'],
-    ['X := 2', '93/1 441/2'],
-  ]);
-  assert.ok(tree.rootNode, 'tree kept alive for the visits above');
-});
-
-// Statements an assembler holds directly -- an arm piece or a shared part -- are
-// statements when the assembler itself fills a statement slot. SplitInfo says which
-// pieces those are; the parent-type check never could.
-function assemblerStatementSites(v) {
-  if (v.cls !== 'assembler' || !v.split || !isStatementSlotF0(v)) return [];
-  const pieces = [...v.split.groups.flatMap((g) => g.arms.flatMap((a) => a.fragments)), ...v.split.shared];
-  return pieces.filter((f) => f.field === null && SITE_TYPES.has(f.node.type)).map((f) => f.node);
+// A fragment is one piece of its assembler's arm (SplitInfo gives it no groups of its
+// own when it sits inside one arm), so its children are pieces of that same arm.
+function expandFragments(pieces) {
+  return pieces.flatMap((f) => {
+    if (policy.cls(f.node.type) !== 'fragment') return [f];
+    const kids = [];
+    for (let i = 0; i < f.node.childCount; i++) kids.push({ field: f.node.fieldNameForChild(i) || null, node: f.node.child(i) });
+    return expandFragments(kids);
+  });
 }
 
-test('LethAL R214 part 1: statements held by a split construct are found through SplitInfo', () => {
-  const { doc } = load('assemblers.al');
+// Statements a split construct holds -- an arm piece or a shared part of an assembler,
+// or a piece of a fragment in one of its arms -- are statements when the assembler
+// itself fills a statement slot. SplitInfo says which pieces those are; the parent-type
+// check never could.
+function splitStatementSites(v) {
+  if (v.cls !== 'assembler' || !v.split || !isStatementSlotF0(v)) return [];
+  const pieces = expandFragments([...v.split.groups.flatMap((g) => g.arms.flatMap((a) => a.fragments)), ...v.split.shared]);
+  return pieces.filter((f) => (f.field === null || STATEMENT_FIELDS.has(f.field)) && SITE_TYPES.has(f.node.type))
+    .map((f) => f.node);
+}
+
+// EVERY call and assignment the walk reaches in the fixture, never a filtered subset:
+// [text, arm path, selected by LethAL's rule as it is, selected by the F0 rewrite].
+function siteTable(name) {
+  const { doc } = load(name);
   const visits = T.walk(doc, policy);
-  const held = visits.filter((v) => SITE_TYPES.has(v.type) && policy.cls(v.node.parent.type) === 'assembler');
-  assert.deepStrictEqual(held.map((v) => textOf(doc, v.node)), ["Message('a')", "Message('b')"]);
-  assert.deepStrictEqual(held.filter((v) => isStatementSlot(v.node, v.field)), [], 'before: both are lost');
-  const after = visits.flatMap(assemblerStatementSites).map((n) => textOf(doc, n));
-  assert.deepStrictEqual(after, ["Message('a')", "Message('b')"]);
+  const held = new Set(visits.flatMap(splitStatementSites).map((n) => n.id));
+  return visits.filter((v) => SITE_TYPES.has(v.type)).map((v) => [
+    textOf(doc, v.node).split(/\r?\n/)[0],
+    v.arms.map(([g, a]) => `${g}/${a}`).join(' '),
+    isStatementSlot(v.node, fieldOf(v.node)),
+    isStatementSlotF0(v) || held.has(v.node.id),
+  ]);
+}
+
+test('LethAL R214 part 1: statements under conditional parents pass site selection', () => {
+  assert.deepStrictEqual(siteTable('containers.al'), [
+    ["Message('å')", '93/1 179/0', true, true],
+    ["Message('control')", '93/1', true, true],
+    ['DoThing(X)', '93/1 441/0', false, true],
+    ['X := 1', '93/1 441/0', false, true],
+    ['X := 3', '93/1 441/0 489/0', false, true],
+    ['X := 4', '93/1 441/1', false, true],
+    ['X := 2', '93/1 441/2', false, true],
+  ]);
+});
+
+// Message('a') and Message('b') are held by an assembler (preproc_split_if_then_begin);
+// Message('two') and Message('deux') sit in the `body` of a fragment
+// (preproc_split_case_end_branch) inside one (preproc_split_case_statement_end).
+// No site in this fixture needs configuration to decide; none is out of scope.
+test('LethAL R214 part 1: statements held by a split construct are found through SplitInfo', () => {
+  assert.deepStrictEqual(siteTable('assemblers.al'), [
+    ["Message('x')", '', true, true],
+    ['X := X', '', true, true],
+    ["Message('a')", '539/0', false, true],
+    ["Message('b')", '', false, true],
+    ["Message('one')", '', true, true],
+    ["Message('two')", '899/0', false, true],
+    ["Message('after a')", '899/0', true, true],
+    ["Message('deux')", '899/1', false, true],
+    ["Message('after b')", '899/1', true, true],
+  ]);
 });

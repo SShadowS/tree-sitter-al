@@ -21,7 +21,7 @@ def _split_names(split, keyword, name_field, doc):
 
 
 # --- code-graph-rag (81398cae) ------------------------------------------------
-# codebase_rag/parsers/al/object_extractor.py:21-.. OBJECT_TYPE_TO_LABELS keys (the
+# codebase_rag/parsers/al/object_extractor.py:21-86 OBJECT_TYPE_TO_LABELS keys (the
 # subset this fixture set reaches); procedure_extractor.py:15-22 PROCEDURE_NODE_TYPES.
 OBJECT_TYPES = {"codeunit_declaration", "table_declaration", "page_declaration", "enum_declaration"}
 PROCEDURE_NODE_TYPES = {"procedure", "trigger_declaration", "event_declaration", "interface_procedure"}
@@ -60,8 +60,10 @@ def cgr_after(doc, policy, T):
         elif v.cls == "assembler" and v.split:
             names = sorted(set(_split_names(v.split, "procedure_keyword", "name", doc) or [])) or None
         if names:
-            owner = max((o for o in owners if o[0] <= v.start and v.end <= o[1]), key=lambda o: o[0])
-            out += [(owner[2], n) for n in names]
+            around = [o for o in owners if o[0] <= v.start and v.end <= o[1]]
+            # A definition with no object around it has no owner; report it as such.
+            owner = max(around, key=lambda o: o[0])[2] if around else None
+            out += [(owner, n) for n in names]
     return out
 
 
@@ -74,8 +76,10 @@ def test_code_graph_rag_definitions_in_every_arm(T, policy, parse):
 
 def test_code_graph_rag_split_procedure_and_split_declaration(T, policy, parse):
     doc = parse("assemblers.al")
-    assert ("\"Assemblers\"", "Split") not in cgr_before(doc)
-    assert ("\"Assemblers\"", "Split") in cgr_after(doc, policy, T)
+    assert cgr_before(doc) == [('"Assemblers"', "First"), ('"Assemblers"', "Tail"),
+                               ('"Assemblers"', "CaseEnd")]
+    assert cgr_after(doc, policy, T) == [('"Assemblers"', "First"), ('"Assemblers"', "Split"),
+                                         ('"Assemblers"', "Tail"), ('"Assemblers"', "CaseEnd")]
     doc = parse("split_declaration.al")
     assert cgr_before(doc) == []
     assert cgr_after(doc, policy, T) == [('"Test Impl"', "TestMethod")]
@@ -143,6 +147,7 @@ def test_graphify_elif_else_condition(T, policy, parse):
     visits = {(_text(doc, v.node) if v.type == "assignment_statement" else
                _text(doc, v.node.child_by_field_name("name"))): v
               for v in T.walk(doc, policy) if v.type in ("assignment_statement", "procedure")}
+    # Assignment statements stand in for graphify's nodes and edges: it tags by source line only.
     ranges = graphify_before_ranges(doc)
     before = {k: graphify_before_tag(ranges, v.node) for k, v in visits.items()}
     assert before["A"] is None             # member-level #if: only preproc_conditional_statement is read
