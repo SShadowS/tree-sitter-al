@@ -20,6 +20,7 @@ positive probe has a control that must fail.
 | Precedence | `not` > `and` > `or`. The grammar encodes it since B1 (`preproc_not_expression` is `prec(3)`), pinned by `test/corpus/preproc_condition_precedence_test.txt`; the config oracle's condition-structure stage checks the tree's grouping against the resolver per configuration | `prec_*` |
 | Literals | `true`, `false`, case-insensitive | `*_literal` |
 | Malformed | empty condition, two operands with no operator, `#elif` with no condition: rejected | `two_words_rejected`, `empty_condition_rejected`, `elif_without_condition_rejected` |
+| A condition left incomplete at the end of its line (`#if A and` / `B`, `#if not` / `A`, `#elif A or` / `B`, `#if A and // c` / `B`, `#if (A and` / `B)`) | Rejected (AL0629), with every symbol defined: the next line is never read as the operand. A stray `)` (`#if A)`) is AL0631. One-line forms, and a `(` inside the trailing `//` comment, are accepted. The parser makes the line an ERROR since B3 (2026-10-01) | `dangling_*_rejected`, `unbalanced_*_paren_rejected`, `one_line_and_control`, `paren_one_line_comment_paren_control`, `symbol_band_control` |
 | Symbol shape | `[A-Za-z_][A-Za-z0-9_]*` (digits and `_` allowed) | `digit_symbol`, `underscore_symbol` |
 | A symbol spelled like an operator (`and`) | **Not established**: the probe did not discriminate. The resolver fails closed | — |
 
@@ -29,6 +30,7 @@ positive probe has a control that must fail.
 |---|---|---|
 | `#elif` | First true arm wins; later true arms are inactive | `elif_*` |
 | Nested arm no assignment selects | Legal; simply never active | `nested_unreachable_arm` |
+| An arm holding only a binary operator, the operand after `#endif` (`i := 1 #if X + #endif 2;`) | Legal with X defined (`1 + 2`), rejected without it (`1 2`, AL0104/AL0111), split and flat. The parser takes it since B3 as the operator-only form of `preproc_conditional_expression_tail` | `tools/alc_probe/cases/oracle-negative/split-operator.al` |
 
 ## Directive lines
 
@@ -64,6 +66,14 @@ as `#endif` plus an empty statement). Fixtures:
 contract: `tools/config_oracle/directives.py` refuses the same lines
 (`resolver:unknown-directive`, `resolver:trailing-token`,
 `resolver:block-comment-on-directive`, `resolver:unsupported-condition-token`).
+
+**B3 (2026-10-01): incomplete conditions.** The same check on an `#if`/`#elif` line
+(`opener_line_is_malformed`, one pass over the rest of the line) also refuses a line whose
+last condition word before any `//` is `and`, `or` or `not`, or whose parentheses do not
+balance (the Conditions table's "incomplete at the end of its line" row). Before B3 the
+condition grammar simply continued across the newline and `#if A and` / `B` parsed clean as
+`A and B`. Fixture: `test/corpus/preproc_dangling_operator_negative_test.txt`. The resolver
+refuses the same lines (`resolver:unsupported-condition`).
 
 ## Lexing
 

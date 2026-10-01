@@ -87,31 +87,37 @@ Same program, same `alc` verdict, different side of the comma. Every host needs
 **both** placements pinned by a fixture, or the next audit will read the rule's
 existence as coverage — as this one nearly did.
 
-## 3. The dangling-operator residual
+## 3. The dangling-operator residual — RESOLVED 2026-10-01
 
-**Established:** measured directly, and pinned as a fixture.
+**Established:** measured directly; resolved by roadmap B3 (branch
+`fix/b3-dangling-operator`). Step 0 found 0 sites of either shape in BC.History, DC,
+BC 28.1 and BCApps 29.0.
 
-`test/corpus/preproc_dangling_operator_known_wrong_test.txt` asserts a tree this
-project believes is **WRONG**. `#if FOO and` with the operand on the following line
-is absorbed into `condition: (preproc_and_expression FOO BAR)` with zero `ERROR`
-nodes; `alc` rejects the same input in both configs with `AL0629`. The newline
-terminator added to `preproc_if` cannot fire while the condition is grammatically
-incomplete.
+**Shape 1, an incomplete condition.** `#if FOO and` with the operand on the following
+line was absorbed into `condition: (preproc_and_expression FOO BAR)` with zero `ERROR`
+nodes; alc rejects it in every configuration (AL0629). The newline terminator could not
+fire while the condition was grammatically incomplete. **Fix:** the scanner's
+`opener_line_is_malformed` (the B2 check on the rest of an `#if`/`#elif` line) also
+refuses a line whose last condition word before any `//` is `and`/`or`/`not`, or whose
+parentheses do not balance, so `_malformed_directive` makes the line an ERROR. alc
+evidence: `probe_alc.py` `dangling_*`, `unbalanced_*_paren_rejected` and three accepted
+controls. The tripwire fixture became
+`test/corpus/preproc_dangling_operator_negative_test.txt` (7 deliberate negatives).
+An empty condition (`#if` alone) was already an ERROR and is unchanged.
 
-The fixture is a **tripwire**: its header says the expectation is the defect, so a
-failure there most likely means someone fixed the parser and should update the
-fixture — not that they broke it. Do not regenerate it with `tree-sitter test -u`
-without reading the header.
-
-**A second shape, found 2026-09-29 (A3 review):** an operator ALONE inside a `#if`
-arm, `i := 1` / `#if X` / ` +` / `#endif` / ` 2;`
-(`test/corpus/preproc_split_operator_negative_test.txt`). It was filed as a deliberate
-negative on a one-configuration alc probe. The four-way probe
-(`tools/alc_probe/cases/oracle-negative/split-operator.al`, alc 18.0.41) says:
-X undefined REJECT (AL0104, AL0111), **X defined ACCEPT, split and flat**. So with X
-defined this is valid AL, and the parser ERRORs on it: a grammar gap. The fixture still
-asserts the ERROR, and `fixture-classes.tsv` classifies that configuration
-`debt(B3)`. Both must change when B3 fixes it.
+**Shape 2, an operator alone in an arm** (found 2026-09-29, A3 review):
+`i := 1` / `#if X` / ` +` / `#endif` / ` 2;`. alc: X undefined REJECT (AL0104, AL0111),
+X defined ACCEPT, split and flat (`tools/alc_probe/cases/oracle-negative/split-operator.al`).
+The parser ERRORed in every configuration. **Fix:** `preproc_conditional_expression_tail`
+gained a second form whose arms each hold ONE operator, the operand after `#endif`, through
+the hidden complete unit `_preproc_operator_arms`. Same node type, fields and hosts, so the
+oracle's `expression_tail` lowering is unchanged; `node-types.json` is byte-identical.
+Measured: STATE_COUNT 15,870 -> 15,973 (+0.65%; the same arms spelled inline cost +260),
+no new conflict, `tools.perf ab` over DC 24 rounds 1.006 (CI 0.992-1.019). The fixture is
+now the positive `test/corpus/preproc_split_operator_test.txt` (4 cases, fields pinned);
+the X=0 configuration of its first case is classified `negative` in `fixture-classes.tsv`,
+and the `debt(B3)` line is gone. An arm mixing the two forms
+(`#if X + #else + 3 #endif 2`) still ERRORs; one configuration of it is invalid AL anyway.
 
 ## 4. `_expression_statement` accepts any expression as a statement
 

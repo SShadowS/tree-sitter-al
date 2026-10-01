@@ -72,7 +72,29 @@ public API — a change to node structure or field names is a **major** bump.
   `scanner_single_read_dispatch_test.txt` asserted the opposite and moved to
   `directive_word_boundary_test.txt` as a negative.
 
+- **An `#if`/`#elif` condition left incomplete at the end of its line is now an ERROR
+  (roadmap B3, deferred-work item 3).** `#if FOO and` with `BAR` on the next line parsed
+  clean as `FOO and BAR`: the condition continued across the newline. alc rejects it in
+  every configuration (AL0629). The scanner's `#if`/`#elif` line check
+  (`opener_line_is_malformed`) now also refuses a line whose last condition word before
+  any `//` is `and`, `or` or `not`, or whose parentheses do not balance (a stray `)` is
+  AL0631), so the line becomes `_malformed_directive`, an ERROR. 0 production sites in
+  the four corpora; all 15,358 BC.History trees byte-identical. The tripwire fixture
+  that pinned the wrong tree is now `preproc_dangling_operator_negative_test.txt`
+  (7 deliberate negatives); verdicts in `tools/config_oracle/probe_alc.py`
+  (`dangling_*`, `unbalanced_*_paren_rejected`, three accepted controls).
+
 ### Fixed
+
+- **An operator alone in a `#if` arm, with the operand after `#endif`, parses (roadmap
+  B3).** `i := 1 #if X + #endif 2;` is valid AL with X defined (alc accepts it, split and
+  flat) and was an ERROR in every configuration. `preproc_conditional_expression_tail`
+  gains a second form whose arms each hold one operator (`operator` field), followed by
+  `#endif` and the `operand`, in the same hosts as the first form. No new node type or
+  field; `node-types.json` is unchanged. STATE_COUNT 15,870 -> 15,973 (+0.65%), no new
+  conflict, `tools.perf ab` over DC at 24 rounds 1.006 (CI 0.992-1.019). The former
+  negative fixture is now `test/corpus/preproc_split_operator_test.txt` (4 positive
+  cases). An arm mixing an operator-only arm with an `operator operand` arm still ERRORs.
 
 - **`not` now binds tighter than `and`/`or` in `#if`/`#elif` conditions (roadmap B1).**
   `#if not A and B` parsed as `not (A and B)`; alc reads `(not A) and B`
