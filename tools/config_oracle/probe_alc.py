@@ -108,6 +108,11 @@ PROBES: list[tuple[str, str, list[str], bool]] = [
     ("block_comment_on_elif_rejected", unit(f"#if B\n        {G}\n#elif A /* c */\n        Message('t');\n#endif"), ["A"], False),
     ("endregion_semicolon_accepted", unit("#region R\n        Message('t');\n#endregion;"), [], True),
     ("cap_Else_word", unit(f"#if A\n        Message('t');\n#Else\n        {G}\n#endif"), ["A"], True),
+    # B2 fix round 1: the review's witnesses for the states that never called the scanner.
+    ("prefix_elsebegin_rejected", unit(f"#if A\n        Message('t');\n#elsebegin\n        {G}\n#endif"), ["A"], False),
+    ("else_begin_rejected", unit(f"#if A\n        Message('t');\n#else begin\n        {G}\n#endif"), ["A"], False),
+    ("region_mid_expression_control", unit("        Message(Format(1 +\n#region R\n        2));\n#endregion"), [], True),
+    ("prefix_regionx_mid_expression_rejected", unit("        Message(Format(1 +\n#regionX\n        2));\n#endregion"), [], False),
     ("endif_at_eof_no_newline", unit("        Message('t');") + "#if A\n#endif", ["A"], True),
 ]
 
