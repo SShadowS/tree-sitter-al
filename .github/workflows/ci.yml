@@ -21,7 +21,10 @@ on:
       - traversal/**
       - tests/**
       - package.json
+      - package-lock.json
       - Cargo.toml
+      - Cargo.lock
+      - pyproject.toml
       - setup.py
       - MANIFEST.in
   pull_request:
@@ -42,7 +45,10 @@ on:
       - traversal/**
       - tests/**
       - package.json
+      - package-lock.json
       - Cargo.toml
+      - Cargo.lock
+      - pyproject.toml
       - setup.py
       - MANIFEST.in
 
@@ -187,6 +193,7 @@ jobs:
     # walker writes; Rust (here) and Node (traversal-node) must match them.
     name: Traversal helper (Python, Rust)
     runs-on: ubuntu-latest
+    timeout-minutes: 20
     steps:
       - name: Checkout repository
         uses: actions/checkout@v6
@@ -218,6 +225,7 @@ jobs:
   traversal-node:
     name: Traversal helper (Node ${{ matrix.node }}, native and WASM)
     runs-on: ubuntu-latest
+    timeout-minutes: 20
     strategy:
       fail-fast: false
       matrix:
@@ -247,6 +255,7 @@ jobs:
     # must work without the native addon.
     name: Traversal helper in the packaged artifacts
     runs-on: ubuntu-latest
+    timeout-minutes: 20
     steps:
       - name: Checkout repository
         uses: actions/checkout@v6
