@@ -1102,6 +1102,44 @@ pinned by three cases of `test/corpus/directive_line_rejected_negative_test.txt`
 **Owner:** unassigned (a B-row candidate). A fix must add AL0620 negatives and keep
 `#endregion;`, trailing `//` comments and indented directives clean.
 
+## 27. `identifier` has two shapes: a `TableData` option member keeps an anonymous `"tabledata"` child
+
+**Established:** 2026-10-01, by the shape census added on `chore/workflow-tools`
+(`python tools/snip.py --census --root DIR`, which flags any `*_keyword`/`*identifier` type
+with more than one `(named, anonymous)` child shape):
+
+| root | `identifier` named=0 anon=0 | named=0 anon=1 | exit |
+|---|---|---|---|
+| BC.History | (one shape) | 0 | 0 |
+| DC | 399,599 | 5 | 1 |
+| BCApps-29.0 | 17,762,156 | 1 | 1 |
+| BC28.1 | (one shape) | 0 | 0 |
+
+Every one of the 6 is an option member spelled `TableData`, in a variable's
+`Option TableData,"Table",Form,…` (DC: `CDCCaptureEngine.Codeunit.al:25`,
+`CDCCaptureUIHandling.Codeunit.al:42`, `CDCContiniaLicenseMgt.Codeunit.al:13` and `:63`,
+`CDCSustainabilityMgt.Codeunit.al:41`) or an `OptionMembers = TableData,…` property
+(BCApps: `Layers/NL/BaseApp/Local/Bank/Reconciliation/ImportProtocol.Table.al:27`).
+
+**Cause:** `option_member` reaches `tabledata_keyword` through `alias(…, $.identifier)`, and
+`tabledata_keyword` is `alias(kw('tabledata'), 'tabledata')`, so the aliased "identifier"
+keeps the visible anonymous `"tabledata"` child. Every other `identifier` is a leaf. That is
+the two-shape defect `.claude/rules/contextual-keywords.md` forbids ("demote the named ones"
+for an outer node that claims to be an `identifier`). The comment above `tabledata_keyword`
+in `grammar.js` (around lines 1616-1633) calls the child deliberate ("merely gives it the
+anonymous "tabledata" child"). It argues that one rule must serve both sites to avoid two
+competing reductions, which is a constraint on the fix, not a reason for the shape.
+
+**Also to correct with the fix:** CLAUDE.md ("`_tabledata_keyword` is deliberately
+excluded: it is a *hidden* … token helper") and `.claude/rules/contextual-keywords.md`
+("`_tabledata_keyword` is not in these counts: it is a *hidden* … token helper") describe a
+rule that no longer exists. It is the visible `tabledata_keyword` now, and the
+`option_member` use is exactly this defect.
+
+**Owner:** roadmap B (grammar correctness). A fix must keep `Permissions = tabledata X = R`
+and `OptionMembers = TableData,…` both clean, and end with the census at 0 flagged on all
+four roots.
+
 ## Longer-lived proposals, tracked separately
 
 - [`python-bindings-modernization.md`](python-bindings-modernization.md) — the
