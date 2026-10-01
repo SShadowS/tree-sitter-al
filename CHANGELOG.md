@@ -64,8 +64,8 @@ public API — a change to node structure or field names is a **major** bump.
   before / time after): 0.978 (CI 0.964-0.985), 0.998 (CI 0.991-1.007), 0.960
   (CI 0.931-1.009). Incremental, DC: 0.1092 -> 0.1147 ms per edit. The incremental cost
   is mechanical: tree-sitter reuses a token across differing parse states only when the
-  state calls no scanner, and now every state does. Revisit with roadmap D2's
-  performance work (the clang-cl / PGO track).
+  state calls no scanner, and now every state does. Revisit with roadmap D1/D2 (state
+  reduction, performance) and deferred-work item 21 (the compiler).
   Pinned by `test/corpus/directive_line_rejected_negative_test.txt` (27 negatives)
   and `test/corpus/directive_line_accepted_test.txt`; verdicts in
   `tools/config_oracle/probe_alc.py`. `#elseX continues a split end` in

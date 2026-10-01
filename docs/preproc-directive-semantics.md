@@ -39,6 +39,7 @@ positive probe has a control that must fail.
 | Directive word case | Case-insensitive (`#IF`, `#ELSE`, `#ENDIF`) | `upper_directive_words` |
 | Trailing `//` comment on `#if`, `#elif`, `#else`, `#endif` | Allowed | `line_comment_on_if_else_endif`, `elif_trailing_line_comment` |
 | Trailing `/* */` comment on a directive | Rejected (AL0631), on `#if` and `#elif` lines too | `block_comment_on_*_rejected` |
+| A second directive on an `#if`/`#elif` line (`#if A #region R`, `#if A #pragma …`, `#elif A #region R`) | Rejected (AL0631); a `#` inside the line's trailing `//` comment is allowed. The parser makes it an ERROR since B2 fix round 2 | `if_then_region_rejected`, `if_then_pragma_rejected`, `elif_then_region_rejected`, `if_line_comment_with_hash_accepted` |
 | Extra token after `#else` or `#endif` (`#else B`, `#else;`, `#endif;`, `#endif X`) | Rejected (AL0631) | `else_trailing_word_rejected`, `else_semicolon_rejected`, `endif_semicolon_rejected`, `endif_trailing_word_rejected` |
 | Extra token after `#endregion` (`#endregion;`) | Allowed: region lines take free text | `endregion_semicolon_accepted` |
 | A directive word with more word characters after it (`#ifx`, `#endifx`, `#elsex`, `#elsewhere`, `#elifx`, `#regionx`, `#endregionx`, `#pragmax`, `#definex`, `#undefx`) | Rejected (AL0621): the word is matched whole | `prefix_*_rejected` |
