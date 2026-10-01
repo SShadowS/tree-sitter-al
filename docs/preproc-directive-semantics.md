@@ -16,7 +16,7 @@ positive probe has a control that must fail.
 |---|---|---|
 | Are symbols case-sensitive? | **Yes**, both `preprocessorSymbols` and `#define`d symbols | `symbol_case_*`, `defined_symbol_case_sensitive` |
 | Operators | `and`, `or`, `not`, parentheses. Keywords are case-insensitive (`AND`, `NOT`) | `and_*`, `or_*`, `not_*`, `paren_true` |
-| Rejected operators | `&&`, `\|\|`, `xor` (AL0631); `!`, `==` (AL0629) | `*_rejected` |
+| Rejected operators | `&&`, `\|\|`, `xor` (AL0631); `!`, `==` (AL0629). The grammar dropped `&&`/`\|\|` in B2 (2026-10-01): they are now an ERROR in the condition | `*_rejected` |
 | Precedence | `not` > `and` > `or`. The grammar encodes it since B1 (`preproc_not_expression` is `prec(3)`), pinned by `test/corpus/preproc_condition_precedence_test.txt`; the config oracle's condition-structure stage checks the tree's grouping against the resolver per configuration | `prec_*` |
 | Literals | `true`, `false`, case-insensitive | `*_literal` |
 | Malformed | empty condition, two operands with no operator, `#elif` with no condition: rejected | `two_words_rejected`, `empty_condition_rejected`, `elif_without_condition_rejected` |
@@ -38,8 +38,23 @@ positive probe has a control that must fail.
 | Whitespace | Leading indentation and spaces/tabs between `#` and the word are allowed | `space_after_hash`, `tab_after_hash`, `indented_directives` |
 | Directive word case | Case-insensitive (`#IF`, `#ELSE`, `#ENDIF`) | `upper_directive_words` |
 | Trailing `//` comment on `#if`, `#elif`, `#else`, `#endif` | Allowed | `line_comment_on_if_else_endif`, `elif_trailing_line_comment` |
-| Trailing `/* */` comment on a directive | Rejected (AL0631) | `block_comment_on_*_rejected` |
-| Extra token after `#else` | Rejected (AL0631) | `else_trailing_word_rejected` |
+| Trailing `/* */` comment on a directive | Rejected (AL0631), on `#if` and `#elif` lines too | `block_comment_on_*_rejected` |
+| Extra token after `#else` or `#endif` (`#else B`, `#else;`, `#endif;`, `#endif X`) | Rejected (AL0631) | `else_trailing_word_rejected`, `else_semicolon_rejected`, `endif_semicolon_rejected`, `endif_trailing_word_rejected` |
+| Extra token after `#endregion` (`#endregion;`) | Allowed: region lines take free text | `endregion_semicolon_accepted` |
+| A directive word with more word characters after it (`#ifx`, `#endifx`, `#elsex`, `#elsewhere`, `#elifx`, `#regionx`, `#endregionx`, `#pragmax`, `#definex`, `#undefx`) | Rejected (AL0621): the word is matched whole | `prefix_*_rejected` |
+| `#endif` as the last line with no newline after it | Allowed | `endif_at_eof_no_newline` |
+
+**What the parser does with these (B2, 2026-10-01).** Every rejected directive line in
+this table is an ERROR on that line. The scanner's `#` dispatch (`src/scanner.c`) reads
+the directive word once and checks the rest of the line; a malformed line becomes the
+hidden external token `_malformed_directive`, which no grammar rule takes. Until B2 most of
+these parsed with zero ERROR nodes (`#elsewhere` as `#else` plus an identifier, `#endif;`
+as `#endif` plus an empty statement). Fixtures:
+`test/corpus/directive_line_rejected_negative_test.txt` and
+`test/corpus/directive_line_accepted_test.txt`. The table is still the resolver's
+contract: `tools/config_oracle/directives.py` refuses the same lines
+(`resolver:unknown-directive`, `resolver:trailing-token`,
+`resolver:block-comment-on-directive`, `resolver:unsupported-condition-token`).
 
 ## Lexing
 

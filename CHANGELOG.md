@@ -31,6 +31,33 @@ public API — a change to node structure or field names is a **major** bump.
   how to migrate the walk patterns that lose `#if` content today. Recursion alone
   does not fix node-kind recognition: use `SplitInfo`.
 
+### Changed
+
+- **`&&` and `||` are no longer `#if`/`#elif` condition operators (roadmap B2,
+  deferred-work item 9).** alc rejects both (AL0631); only `and`, `or`, `not` and
+  parentheses combine symbols. `#if A && B` now has an ERROR in the condition instead of
+  a clean `preproc_and_expression`. The anonymous `"&&"`/`"||"` node types are gone from
+  `node-types.json`, and `queries/highlights.scm` no longer captures them. 0 production
+  sites in BC.History, DC, BC 28.1 and BCApps 29.0.
+- **A malformed directive line is now an ERROR, matching alc (roadmap B2,
+  deferred-work item 20).** Directive words are matched whole: `#elsewhere`, `#elsex`,
+  `#elifx A`, `#ifx`, `#endifx`, `#regionx`, `#endregionx`, `#pragmax`, `#definex`,
+  `#undefx` (AL0621). After `#endif` and `#else` only a `//` comment may follow
+  (`#endif;`, `#endif X`, `#else B`, `#endif /* c */` are AL0631), and a block comment
+  on an `#if`/`#elif` line is AL0631. Until now most of these parsed with zero ERROR
+  nodes: `#elsewhere` as `#else` plus an identifier, `#endif;` as `#endif` plus an empty
+  statement or a property terminator. The scanner's `#` dispatch reads the directive
+  word once and claims a malformed line as a new hidden external token,
+  `_malformed_directive`, that no rule takes, so the ERROR sits on that line.
+  `#endregion;` (valid, 2 production sites) and every well-formed spelling (`#ELSE`,
+  `# else`, `#Else`, a trailing `//` comment) parse as before. 0 production sites;
+  all 15,358 BC.History trees byte-identical (tree-harness). STATE_COUNT unchanged.
+  Pinned by `test/corpus/directive_line_rejected_negative_test.txt` (20 negatives)
+  and `test/corpus/directive_line_accepted_test.txt`; verdicts in
+  `tools/config_oracle/probe_alc.py`. `#elseX continues a split end` in
+  `scanner_single_read_dispatch_test.txt` asserted the opposite and moved to
+  `directive_word_boundary_test.txt` as a negative.
+
 ### Fixed
 
 - **`not` now binds tighter than `and`/`or` in `#if`/`#elif` conditions (roadmap B1).**

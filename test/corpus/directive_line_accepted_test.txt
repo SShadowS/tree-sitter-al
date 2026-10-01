@@ -1,0 +1,321 @@
+================================================================================
+`//` comments after #if, #elif, #else and #endif are accepted
+B2 (2026-10-01): alc accepts a trailing `//` comment on every conditional
+directive (tools/config_oracle/probe_alc.py line_comment_on_if_else_endif,
+elif_trailing_line_comment, else_line_comment_only). The trailing-content
+check B2 added to #else/#endif must leave these clean, with the comment an
+extra.
+================================================================================
+codeunit 50100 P
+{
+    trigger OnRun()
+    begin
+#if A // c
+        Message('a');
+#elif B // c
+        Message('b');
+#else // c
+        Message('c');
+#endif // c
+    end;
+}
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (trigger_declaration
+        (trigger_keyword)
+        name: (identifier)
+        body: (code_block
+          (begin_keyword)
+          body: (statement_block
+            (preproc_conditional_statement
+              (preproc_if
+                (preproc_open)
+                condition: (identifier)
+                (comment))
+              (call_expression
+                function: (identifier)
+                arguments: (argument_list
+                  (string_literal)))
+              (preproc_elif
+                condition: (identifier)
+                (comment))
+              (call_expression
+                function: (identifier)
+                arguments: (argument_list
+                  (string_literal)))
+              (preproc_else)
+              (comment)
+              (call_expression
+                function: (identifier)
+                arguments: (argument_list
+                  (string_literal)))
+              (preproc_endif
+                (preproc_close))))
+          (comment)
+          (end_keyword))))))
+
+================================================================================
+#ELSE in upper case is #else
+================================================================================
+codeunit 50100 P
+{
+    trigger OnRun()
+    begin
+#if A
+        Message('a');
+#ELSE
+        Message('b');
+#endif
+    end;
+}
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (trigger_declaration
+        (trigger_keyword)
+        name: (identifier)
+        body: (code_block
+          (begin_keyword)
+          body: (statement_block
+            (preproc_conditional_statement
+              (preproc_if
+                (preproc_open)
+                condition: (identifier))
+              (call_expression
+                function: (identifier)
+                arguments: (argument_list
+                  (string_literal)))
+              (preproc_else)
+              (call_expression
+                function: (identifier)
+                arguments: (argument_list
+                  (string_literal)))
+              (preproc_endif
+                (preproc_close))))
+          (end_keyword))))))
+
+================================================================================
+#Else in mixed case is #else
+================================================================================
+codeunit 50100 P
+{
+    trigger OnRun()
+    begin
+#if A
+        Message('a');
+#Else
+        Message('b');
+#endif
+    end;
+}
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (trigger_declaration
+        (trigger_keyword)
+        name: (identifier)
+        body: (code_block
+          (begin_keyword)
+          body: (statement_block
+            (preproc_conditional_statement
+              (preproc_if
+                (preproc_open)
+                condition: (identifier))
+              (call_expression
+                function: (identifier)
+                arguments: (argument_list
+                  (string_literal)))
+              (preproc_else)
+              (call_expression
+                function: (identifier)
+                arguments: (argument_list
+                  (string_literal)))
+              (preproc_endif
+                (preproc_close))))
+          (end_keyword))))))
+
+================================================================================
+`# else` with a space after the hash is #else
+================================================================================
+codeunit 50100 P
+{
+    trigger OnRun()
+    begin
+#if A
+        Message('a');
+# else
+        Message('b');
+#endif
+    end;
+}
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (trigger_declaration
+        (trigger_keyword)
+        name: (identifier)
+        body: (code_block
+          (begin_keyword)
+          body: (statement_block
+            (preproc_conditional_statement
+              (preproc_if
+                (preproc_open)
+                condition: (identifier))
+              (call_expression
+                function: (identifier)
+                arguments: (argument_list
+                  (string_literal)))
+              (preproc_else)
+              (call_expression
+                function: (identifier)
+                arguments: (argument_list
+                  (string_literal)))
+              (preproc_endif
+                (preproc_close))))
+          (end_keyword))))))
+
+================================================================================
+`#<tab>else` with a tab after the hash is #else
+================================================================================
+codeunit 50100 P
+{
+    trigger OnRun()
+    begin
+#if A
+        Message('a');
+#	else
+        Message('b');
+#endif
+    end;
+}
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (trigger_declaration
+        (trigger_keyword)
+        name: (identifier)
+        body: (code_block
+          (begin_keyword)
+          body: (statement_block
+            (preproc_conditional_statement
+              (preproc_if
+                (preproc_open)
+                condition: (identifier))
+              (call_expression
+                function: (identifier)
+                arguments: (argument_list
+                  (string_literal)))
+              (preproc_else)
+              (call_expression
+                function: (identifier)
+                arguments: (argument_list
+                  (string_literal)))
+              (preproc_endif
+                (preproc_close))))
+          (end_keyword))))))
+
+================================================================================
+#endregion; is accepted -- region lines take free text
+alc accepts it (probe_alc.py endregion_semicolon_accepted), and it occurs in
+production (the Continia connector, BC 28.1 and BCApps 29.0). B2's
+trailing-content rule is for #else/#endif only.
+================================================================================
+codeunit 50100 P
+{
+    trigger OnRun()
+    begin
+#region R
+        Message('a');
+#endregion;
+    end;
+}
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (trigger_declaration
+        (trigger_keyword)
+        name: (identifier)
+        body: (code_block
+          (begin_keyword)
+          (preproc_region)
+          body: (statement_block
+            (call_expression
+              function: (identifier)
+              arguments: (argument_list
+                (string_literal))))
+          (preproc_endregion)
+          (end_keyword))))))
+
+================================================================================
+#if conditions combine with the words and/or/not, never &&/||
+================================================================================
+codeunit 50100 P
+{
+    trigger OnRun()
+    begin
+#if A and B or not C
+        Message('a');
+#endif
+    end;
+}
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (trigger_declaration
+        (trigger_keyword)
+        name: (identifier)
+        body: (code_block
+          (begin_keyword)
+          body: (statement_block
+            (preproc_conditional_statement
+              (preproc_if
+                (preproc_open)
+                condition: (preproc_or_expression
+                  (preproc_and_expression
+                    (identifier)
+                    (identifier))
+                  (preproc_not_expression
+                    (identifier))))
+              (call_expression
+                function: (identifier)
+                arguments: (argument_list
+                  (string_literal)))
+              (preproc_endif
+                (preproc_close))))
+          (end_keyword))))))
