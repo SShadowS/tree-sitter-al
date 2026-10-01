@@ -938,6 +938,42 @@ tree-shape change and needs E2's consumer migration check.
 **Owner:** Phase B, roadmap row B10 (a tree-shape spec). It waits for user approval like
 B4 to B6.
 
+
+## 23. A `Permissions` list ending inside an `#if` arm ERRORs when a split procedure follows
+
+**Established:** 2026-10-01, during F0 plan drafting. Reproduced with
+`./tools/ts-lock.sh tree-sitter parse` at 0a8e220: the repro below gives 4 ERROR/MISSING
+nodes. The same file without the split procedure gives 0.
+
+```al
+codeunit 50101 X
+{
+    Permissions = tabledata Customer = r,
+#if CLEAN25
+                  tabledata Vendor = r;
+#else
+                  tabledata Item = r;
+#endif
+
+#if CLEAN25
+    procedure A()
+#else
+    procedure A(B: Integer)
+#endif
+    begin
+    end;
+}
+```
+
+Each configuration on its own is ordinary AL: a permissions list, then one procedure. The
+failure comes from the interaction between the permissions split, whose `;` sits inside
+the arms, and the `preproc_split_procedure` that follows it. It has 0 production sites:
+all four corpora parse with 0 errors.
+
+**Owner:** roadmap B7, the separator and continuation audit.
+
+**Before fixing:** probe both configurations with `tools/alc_probe`.
+
 ## Longer-lived proposals, tracked separately
 
 - [`python-bindings-modernization.md`](python-bindings-modernization.md) — the
