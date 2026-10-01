@@ -3,8 +3,8 @@ package tree_sitter_al_test
 import (
 	"testing"
 
-	tree_sitter "github.com/tree-sitter/go-tree-sitter"
 	tree_sitter_al "github.com/sshadows/tree-sitter-al/bindings/go"
+	tree_sitter "github.com/tree-sitter/go-tree-sitter"
 )
 
 // NewLanguage only wraps the pointer, so a nil check cannot see an ABI the
