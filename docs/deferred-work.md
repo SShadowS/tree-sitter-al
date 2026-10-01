@@ -102,8 +102,14 @@ refuses a line whose last condition word before any `//` is `and`/`or`/`not`, or
 parentheses do not balance, so `_malformed_directive` makes the line an ERROR. alc
 evidence: `probe_alc.py` `dangling_*`, `unbalanced_*_paren_rejected` and three accepted
 controls. The tripwire fixture became
-`test/corpus/preproc_dangling_operator_negative_test.txt` (7 deliberate negatives).
-An empty condition (`#if` alone) was already an ERROR and is unchanged.
+`test/corpus/preproc_dangling_operator_negative_test.txt` (11 deliberate negatives).
+**An empty condition is the same class, and B3 at first missed it** (fix round 1, review
+I1): `#if`, `#if ` or `#if // c` (or `#elif`) with `A` on the next line parsed clean as
+`condition: A`, read across the newline, and alc rejects all four with AL0629 (probe_alc
+`empty_*_next_line_rejected`). The earlier note here, that an empty condition "was already
+an ERROR", held only when the next line could not be read as a condition, and even then
+it was a hidden-only MISSING that `tree-sitter parse` does not show. The check now starts
+from "dangling", so a line with no condition word is incomplete. 0 production sites.
 
 **Shape 2, an operator alone in an arm** (found 2026-09-29, A3 review):
 `i := 1` / `#if X` / ` +` / `#endif` / ` 2;`. alc: X undefined REJECT (AL0104, AL0111),
@@ -116,7 +122,10 @@ Measured: STATE_COUNT 15,870 -> 15,973 (+0.65%; the same arms spelled inline cos
 no new conflict, `tools.perf ab` over DC 24 rounds 1.006 (CI 0.992-1.019). The fixture is
 now the positive `test/corpus/preproc_split_operator_test.txt` (4 cases, fields pinned);
 the X=0 configuration of its first case is classified `negative` in `fixture-classes.tsv`,
-and the `debt(B3)` line is gone. An arm mixing the two forms
+and the `debt(B3)` line is gone. Shape 2 also fixed a silent wrong tree:
+`i := 7 #if X mod #endif 2;` (and `xor`) parsed clean with `mod`/`xor` as an identifier
+STATEMENT and the operand a loose statement; fixture case 5 pins the tail tree (alc:
+probe_alc `split_keyword_operator_*`). An arm mixing the two forms
 (`#if X + #else + 3 #endif 2`) still ERRORs; one configuration of it is invalid AL anyway.
 
 ## 4. `_expression_statement` accepts any expression as a statement

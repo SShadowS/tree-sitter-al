@@ -77,12 +77,14 @@ public API — a change to node structure or field names is a **major** bump.
   clean as `FOO and BAR`: the condition continued across the newline. alc rejects it in
   every configuration (AL0629). The scanner's `#if`/`#elif` line check
   (`opener_line_is_malformed`) now also refuses a line whose last condition word before
-  any `//` is `and`, `or` or `not`, or whose parentheses do not balance (a stray `)` is
-  AL0631), so the line becomes `_malformed_directive`, an ERROR. 0 production sites in
+  any `//` is `and`, `or` or `not`, whose parentheses do not balance (a stray `)` is
+  AL0631), or that has no condition word at all (`#if` or `#elif` alone, or before a
+  `//` comment, with the operand on the next line: AL0629), so the line becomes `_malformed_directive`, an ERROR. 0 production sites in
   the four corpora; all 15,358 BC.History trees byte-identical. The tripwire fixture
   that pinned the wrong tree is now `preproc_dangling_operator_negative_test.txt`
-  (7 deliberate negatives); verdicts in `tools/config_oracle/probe_alc.py`
-  (`dangling_*`, `unbalanced_*_paren_rejected`, three accepted controls).
+  (11 deliberate negatives); verdicts in `tools/config_oracle/probe_alc.py`
+  (`dangling_*`, `unbalanced_*_paren_rejected`, `empty_*_next_line_rejected`, three
+  accepted controls).
 
 ### Fixed
 
@@ -95,6 +97,12 @@ public API — a change to node structure or field names is a **major** bump.
   conflict, `tools.perf ab` over DC at 24 rounds 1.006 (CI 0.992-1.019). The former
   negative fixture is now `test/corpus/preproc_split_operator_test.txt` (4 positive
   cases). An arm mixing an operator-only arm with an `operator operand` arm still ERRORs.
+- **A keyword operator alone in a `#if` arm no longer parses as a statement (roadmap B3).**
+  `i := 7 #if X mod #endif 2;` and `b := b #if X xor #endif true;` parsed clean and wrong:
+  `mod`/`xor` became an identifier statement inside a statement-level conditional, and the
+  operand a loose statement after `#endif`. Both now take the tail's operator-only form
+  above (alc accepts them with X defined; probe_alc `split_keyword_operator_*`). Pinned by
+  case 5 of `test/corpus/preproc_split_operator_test.txt`.
 
 - **`not` now binds tighter than `and`/`or` in `#if`/`#elif` conditions (roadmap B1).**
   `#if not A and B` parsed as `not (A and B)`; alc reads `(not A) and B`
