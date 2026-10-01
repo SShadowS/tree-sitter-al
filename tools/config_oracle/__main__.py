@@ -26,6 +26,7 @@ PRODUCTION_CLASSES = REPO / "tools" / "config_oracle" / "production-classes.tsv"
 # The one root -> label map. A production record's id is `<label>:<posix path relative to
 # the root>`, the same on every machine, and production-classes.tsv is keyed by it. A
 # requested root that is none of these exits 2 (compared after resolve()).
+# tools/corpus-grep.sh reads its four roots from this map too (all but "selftest").
 CORPORA = {
     "bc-history": REPO / "BC.History",
     "dc": REPO / "DC",
