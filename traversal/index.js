@@ -185,7 +185,9 @@ function armPieces(armFragments, doc, policy) {
   const out = [];
   const add = (pieces) => {
     for (const f of pieces) {
-      if (f.node.isNamed && policy.cls(f.node.type) === 'fragment') add(kids(f.node).map(([field, node]) => ({ field, node })));
+      const cls = f.node.isNamed ? policy.cls(f.node.type) : null;
+      if (cls === 'directive') continue; // never a piece, even as an expanded fragment's own child
+      if (cls === 'fragment') add(kids(f.node).map(([field, node]) => ({ field, node })));
       else out.push(f);
     }
   };

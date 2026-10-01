@@ -90,6 +90,9 @@ tokens kept). It exists because a fragment lying wholly inside one arm gets no
 `SplitInfo` of its own; without it every consumer re-implements the expansion, and
 the first canary got that wrong.
 
+A directive is never a piece: when `arm_pieces` expands a fragment that holds its own
+`#if` lines, those directive nodes are dropped, as `bind_arm` drops them.
+
 Limitation: **`arm_pieces` expands the arm's pieces only. It does not expand
 `SplitInfo.shared`**; shared parts are returned as they are.
 

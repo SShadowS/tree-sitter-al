@@ -82,3 +82,18 @@ def test_only_containers_assemblers_and_fragments_carry_a_split(T, policy, parse
     assert T.groups_of(error[0].node, doc)  # the ERROR node does hold the group
     doc = parse("assemblers.al")
     assert {v.cls for v in T.walk(doc, policy) if v.split} == {"branch-container", "assembler"}
+
+
+def test_arm_pieces_never_keeps_a_directive_from_an_expanded_fragment(T, policy, parse):
+    """M1. In today's grammar no fragment that holds its own directives can be an arm
+    piece, so an overriding policy makes the nested statement conditional of
+    containers.al (#if CLEAN26 at 489, inside arm 0 of 441) a fragment: expanding it
+    must give its statements, never its #if/#endif nodes."""
+    doc = parse("containers.al")
+    over = T.Policy({**policy.types, "preproc_conditional_statement": {"class": "fragment"}})
+    (outer,) = [g for g in doc.groups if g.if_offset == 441]
+    arm = T.bind_arm(outer.arms[0], doc, over)
+    assert any(f.node.start_byte == 489 for f in arm.fragments)       # the nested group is one piece
+    pieces = T.arm_pieces(arm, doc, over)
+    assert not [f.type for f in pieces if f.node.is_named and over.cls(f.type) == "directive"]
+    assert [doc.source[f.node.start_byte:f.node.end_byte] for f in pieces if f.type == "assignment_statement"] ==         [b"X := 1", b"X := 3"]

@@ -242,7 +242,11 @@ def arm_pieces(arm_fragments: ArmFragments, document: Document, policy: Policy):
 
     def add(pieces):
         for f in pieces:
-            if f.node.is_named and policy.cls(f.node.type) == "fragment":
+            cls = policy.cls(f.node.type) if f.node.is_named else None
+            if cls == "directive":
+                continue                 # a directive is never a piece (as in bind_arm), even
+                                         # one an expanded fragment holds as its own child
+            if cls == "fragment":
                 add(Fragment(field, child) for child, field in _kids(f.node))
             else:
                 out.append(f)

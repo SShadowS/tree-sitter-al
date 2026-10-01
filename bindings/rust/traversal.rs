@@ -337,7 +337,11 @@ pub fn arm_pieces<'t>(arm: &ArmFragments<'t>, doc: &Document<'t>, policy: &Polic
     }
     fn add<'t>(pieces: Vec<Fragment<'t>>, policy: &Policy, out: &mut Vec<Fragment<'t>>) {
         for f in pieces {
-            if f.node.is_named() && policy.class(f.node.kind()) == "fragment" {
+            let class = if f.node.is_named() { policy.class(f.node.kind()) } else { "" };
+            if class == "directive" {
+                continue; // never a piece, even as an expanded fragment's own child
+            }
+            if class == "fragment" {
                 add(kids(f.node).into_iter().map(|(field, node)| Fragment { field, node }).collect(), policy, out);
             } else {
                 out.push(f);
@@ -587,6 +591,28 @@ mod tests {
         let a = Document::new(&a_tree, &a_src, &policy);
         let b = Document::new(&b_tree, &b_src, &policy);
         assert!(bind_arm(a.descriptors()[0], &b, &policy).is_err());
+    }
+
+    #[test]
+    fn arm_pieces_never_keeps_a_directive_of_an_expanded_fragment() {
+        // No grammar fixture can trigger it (see the Python test), so the nested statement
+        // conditional of containers.al (#if at 489, in arm 0 of 441) is made a fragment.
+        let mut data: Value = serde_json::from_str(POLICY_JSON).unwrap();
+        data["types"]["preproc_conditional_statement"]["class"] = json!("fragment");
+        let over = Policy::from_json(&data.to_string()).unwrap();
+        let (source, tree) = parse_fixture(&mut parser(), "containers.al");
+        let doc = Document::new(&tree, &source, &over);
+        let outer = doc.groups.iter().find(|g| g.if_offset == 441).unwrap();
+        let arm = bind_arm(&outer.arms[0], &doc, &over).unwrap();
+        assert!(arm.fragments.iter().any(|f| f.node.start_byte() == 489));
+        let pieces = arm_pieces(&arm, &doc, &over).unwrap();
+        assert!(!pieces.iter().any(|f| f.node.is_named() && over.class(f.node.kind()) == "directive"));
+        let stmts: Vec<&[u8]> = pieces
+            .iter()
+            .filter(|f| f.node.kind() == "assignment_statement")
+            .map(|f| &source[f.node.byte_range()])
+            .collect();
+        assert_eq!(stmts, [b"X := 1".as_slice(), b"X := 3".as_slice()]);
     }
 
     #[test]

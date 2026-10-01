@@ -78,6 +78,20 @@ for (const runtime of ['web-tree-sitter', 'native tree-sitter']) {
     }
   });
 
+  test(`${runtime}: armPieces never keeps a directive of an expanded fragment (policy override)`, () => {
+    // See the Python test: no grammar fixture can trigger it, so the nested statement
+    // conditional of containers.al (#if at 489, in arm 0 of 441) is made a fragment.
+    const text = fs.readFileSync(path.join(FIX, 'containers.al'), 'utf8');
+    const over = T.loadPolicy({ schema: 1, types: { ...policy.types, preproc_conditional_statement: { class: 'fragment' } } });
+    const doc = new T.Document(parsers[runtime].parse(text), text, over);
+    const outer = doc.groups.find((g) => g.ifOffset === 441);
+    const arm = T.bindArm(outer.arms[0], doc, over);
+    assert.ok(arm.fragments.some((f) => doc.start(f.node) === 489));
+    const pieces = T.armPieces(arm, doc, over);
+    assert.deepStrictEqual(pieces.filter((f) => f.node.isNamed && over.cls(f.node.type) === 'directive').map((f) => f.node.type), []);
+    assert.deepStrictEqual(pieces.filter((f) => f.node.type === 'assignment_statement').map((f) => f.node.text), ['X := 1', 'X := 3']);
+  });
+
   test(`${runtime}: an unclosed #else on the last line has an empty arm, never an inverted one`, () => {
     for (const [src, want] of [['codeunit 1 C\n{\n}\n#if A\n#else', [28, 28]], ['codeunit 1 C\n{\n}\n#if A\n#else // c', [33, 33]],
       ['codeunit 1 C\n{\n}\n#if A\n#else\n', [28, 28]], ['codeunit 1 C\r\n{\r\n}\r\n#if A\r\n#else\r\n', [32, 32]]]) {
