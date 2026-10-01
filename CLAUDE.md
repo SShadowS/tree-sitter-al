@@ -485,6 +485,26 @@ Sanity-check the probe before trusting a rejection: compile a form you know is v
 - `docs/state-reduction-method.md` — how to cut parser states: measure by stubbing, what
   factorings worked and failed (with numbers), and the preservation gates for roadmap D1
 
+## Where tree-sitter's own source lives
+
+When you need tree-sitter internals (how `valid_symbols` is built, when the external scanner is
+called, lex-mode reuse, `test -u` behaviour), read a local copy. **Never search for it with
+`find /`**: in Git Bash `/` spans every mounted drive, including the corpora on `H:`, and such
+searches have run for hours as orphans after the agent that started them finished.
+
+- `U:/Git/tree-sitter-upstream`: a read-only shallow clone at tag `v0.27.0`, matching the
+  installed CLI.
+  - `lib/src/` holds the runtime C (`parser.c`, `lexer.c`, `subtree.c`, `language.c`).
+  - `crates/cli/src/` holds the CLI (`parse.rs`, the test runner).
+  - `crates/generate/` holds the generator (lex modes, conflicts, precedence).
+  - `lib/binding_web/` holds web-tree-sitter.
+- The runtime crate versions the bindings build against are at
+  `~/.cargo/registry/src/index.crates.io-*/tree-sitter-<version>/src`.
+- The web-tree-sitter JS is at `node_modules/web-tree-sitter/`.
+
+After a CLI upgrade, move the clone to the new tag:
+`git -C U:/Git/tree-sitter-upstream fetch --depth 1 origin tag vX && git -C U:/Git/tree-sitter-upstream checkout vX`.
+
 ## Philosophy: No Known Limitations
 
 **Never give up on a failing pattern:**
