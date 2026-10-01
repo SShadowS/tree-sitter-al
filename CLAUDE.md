@@ -64,6 +64,13 @@ tree-sitter parse file.al -d > debug.log 2>&1  # Debug specific files
 python parse_bug_finder.py file.al debug.log   # Analyze parsing bugs
 ```
 
+**On Windows, local builds use clang-cl when LLVM is installed.** `tools/ts-lock.sh` and
+`validate-grammar.sh` source `tools/default-cc.sh`, and `loader.ensure_library` applies the same
+rule (`loader.build_env`): if `CC` is unset and clang-cl is on PATH or in
+`C:/Program Files/LLVM/bin`, it becomes `CC`. The library parses ~2.05x faster with identical
+trees and compiles in ~3 s instead of ~11 s (`docs/deferred-work.md` item 21). Opt out with
+`TS_AL_NO_CLANG=1`; an explicit `CC` always wins (`CC=cl` forces MSVC). Linux/macOS: no change.
+
 **A MISSING node for a HIDDEN (`_`-prefixed) token is invisible to `tree-sitter parse`,
 its `--json-summary` and therefore `parse-al-parallel.sh`**: no `MISSING` is printed and the
 file counts as parsed OK. Only py-tree-sitter's `root_node.has_error` sees it.
