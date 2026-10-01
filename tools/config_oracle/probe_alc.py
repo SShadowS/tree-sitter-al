@@ -87,6 +87,28 @@ PROBES: list[tuple[str, str, list[str], bool]] = [
     ("upper_directive_words", unit(f"#IF A\n        Message('t');\n#ELSE\n        {G}\n#ENDIF"), ["A"], True),
     ("indented_directives", unit(f"        #if A\n        Message('t');\n        #else\n        {G}\n        #endif"), ["A"], True),
     ("nested_unreachable_arm", unit(f"#if A\n#if not A\n        {G}\n#endif\n        Message('t');\n#endif"), ["A"], True),
+    # B2 (2026-10-01): directive words are whole words, and nothing but a `//` comment may
+    # follow `#endif`/`#else`. Every text outside the probed line is valid ACTIVE code, so a
+    # REJECT is the directive line itself; `{G}` sits only where a prefix-as-`#else`
+    # reading would make it inactive and so turn that reading into an ACCEPT.
+    ("prefix_ifx_rejected", unit("#ifx A\n        Message('t');\n#endif"), ["A"], False),
+    ("prefix_endifx_rejected", unit("#if A\n        Message('t');\n#endifx"), ["A"], False),
+    ("prefix_elsex_rejected", unit(f"#if A\n        Message('t');\n#elsex\n        {G}\n#endif"), ["A"], False),
+    ("prefix_elsewhere_rejected", unit(f"#if A\n        Message('t');\n#elsewhere\n        {G}\n#endif"), ["A"], False),
+    ("prefix_elifx_rejected", unit(f"#if A\n        Message('t');\n#elifx A\n        {G}\n#endif"), ["A"], False),
+    ("prefix_regionx_rejected", unit("#regionx\n        Message('t');\n#endregion"), [], False),
+    ("prefix_endregionx_rejected", unit("#region\n        Message('t');\n#endregionx"), [], False),
+    ("prefix_pragmax_rejected", unit("#pragmax warning disable AL0001\n        Message('t');"), [], False),
+    ("prefix_definex_rejected", "#definex A\n" + unit("        Message('t');"), [], False),
+    ("prefix_undefx_rejected", "#undefx A\n" + unit("        Message('t');"), [], False),
+    ("endif_semicolon_rejected", unit("#if A\n        Message('t');\n#endif;"), ["A"], False),
+    ("endif_trailing_word_rejected", unit("#if A\n        Message('t');\n#endif X"), ["A"], False),
+    ("else_line_comment_only", unit(f"#if A\n        Message('t');\n#else // c\n        {G}\n#endif"), ["A"], True),
+    ("else_semicolon_rejected", unit(f"#if A\n        Message('t');\n#else;\n        {G}\n#endif"), ["A"], False),
+    ("block_comment_on_elif_rejected", unit(f"#if B\n        {G}\n#elif A /* c */\n        Message('t');\n#endif"), ["A"], False),
+    ("endregion_semicolon_accepted", unit("#region R\n        Message('t');\n#endregion;"), [], True),
+    ("cap_Else_word", unit(f"#if A\n        Message('t');\n#Else\n        {G}\n#endif"), ["A"], True),
+    ("endif_at_eof_no_newline", unit("        Message('t');") + "#if A\n#endif", ["A"], True),
 ]
 
 
