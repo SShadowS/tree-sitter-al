@@ -2,7 +2,8 @@
 
 **Status:** approved in conversation on 2026-10-04, section by section. Revised the same day
 after a gpt-6.1-sol review: 9 findings, all verified against the decompiled compiler and the
-grammar before they were adopted (§9). This revision awaits review.
+grammar before they were adopted (§9). Revised again after a second round of that review: 6
+findings, all adopted (§9). This revision 3 awaits review.
 **Roadmap row:** B5 (`docs/superpowers/plans/2026-09-28-roadmap-remaining-work.md`).
 **Resolves:** deferred-work items 13 (G10) and 15. It also fixes the relation target shape, which
 was found while writing this spec (§1, case 4).
@@ -73,20 +74,57 @@ parse `Enabled` as a client-side boolean expression.
 The target is a single qualified name. The compiler makes no table/field split, and the target
 is never an expression.
 
-**The eight properties whose dotted values are misparsed today (class D2, §4.2), by host:**
+**The segment grammar.** `ParseQualifiedName` (`LanguageParser.cs:696`) reads one
+`ParseIdentifierName()` per segment, separated by `.`. `ParseIdentifierName` takes a token for
+which `SyntaxKind.IsTokenIdentifier()` holds (`SyntaxFacts.cs:3792`):
+- an `IdentifierToken`, which covers plain and double-quoted names;
+- or one of the **101 keyword kinds** in `IsKeywordAllowedIdentifier`, among them `System`,
+  `Table`, `TableData`, `Page`, `Codeunit`, `Field`, `Type`, `Filter`, `Order`, `Enum` and
+  `Namespace`.
 
-| property | host(s) where production uses a dotted value | parse delegate | reaches |
-|---|---|---|---|
-| `AutoFormatExpression`, `DataCaptionExpression` | field / page | `ParseTextExpressionPropertyValue` (10083) | `ParseExpressionPropertyValue` |
-| `Visible`, `ShowMandatory` | page field, action, group | `ParseClientSideBooleanExpressionPropertyValue` (10088) | `ParseExpressionPropertyValue` |
-| `Enabled`, `Editable` | page field, action, group | ClientSideBooleanExpression (2407, 2414, 2662, 1686) | `ParseExpressionPropertyValue` |
-| `StyleExpr` | page field | `ParseStyleExpressionPropertyValue` (9973) | `ParseExpressionPropertyValue` |
-| `IndentationColumn` | page | `ParseIntegerExpressionPropertyValue` (9978) | `ParseExpressionPropertyValue` |
+No integer or other literal token is a segment. The 101 spellings are committed as data with
+their provenance: `tools/alc_facts/keyword-allowed-identifiers.txt`, alc version, DLL sha256,
+and the method each was read from. That list, not the corpus, defines the segment rule (§3.2
+item 1).
 
-`Enabled` and `Editable` in the table-field and page hosts (862, 871, 1084, 1295) are literal
-Boolean (`ParseBooleanLiteralValue`, 9968). A dotted value there is invalid AL. The census
-records each D2 site's host (§5.5), and the gate fails if any D2 site sits in a host whose
-delegate is not an expression parser.
+**The eight D2 properties: what the compiler expects, by host.** `ObjectParser`'s
+`PropertyTypeInfo` tables are generated data, not prose. One row per (upper-cased name, host
+kind, value kind, parse delegate) is extracted from the decompiled tables into
+`tools/alc_facts/property-hosts.tsv`, with the same provenance header as the keyword list. Hand
+transcription is what put wrong host rows in revision 2 of this spec: line 1084 is a Key entry,
+and `IndentationColumn` is registered on PageGroup.
+
+The rule the census enforces (§5.5) reads that file. A D2 site is legitimate only if every
+compiler host its tree context can map to gives that name a delegate that reaches
+`ParseExpressionPropertyValue`.
+
+The four expression delegates do reach it:
+- `ParseTextExpressionPropertyValue` (10083);
+- `ParseClientSideBooleanExpressionPropertyValue` (10088);
+- `ParseStyleExpressionPropertyValue` (9973);
+- `ParseIntegerExpressionPropertyValue` (9978).
+
+`ParseBooleanPropertyValue` (9968) does not: it calls `ParseBooleanLiteralValue`. So
+`Enabled = Rec."X";` is valid in a page field (ClientSideBooleanExpression) and invalid in a
+table field (Boolean).
+
+**Mapping a tree context to a compiler host** is an explicit table in the census, with one row
+per context:
+- table field;
+- tableextension added field;
+- page field;
+- page action;
+- page group;
+- page part;
+- page label;
+- report and xmlport request-page field, which reach `ParsePageLayout` (10706-10722,
+  11574-11592), so page-field dispatch;
+- control `modify`, which resolves through `LookupAnyControlProperty`, a field-first lookup
+  chain (9482-9485, 9552-9561): all hosts in the chain;
+- action `modify`, which resolves through `LookupAnyActionProperty` (9369-9378): all hosts in
+  that chain.
+
+An unmapped context fails visibly. It is never guessed.
 
 **Relation-like grammars that are NOT relations.** They are out of scope here:
 - the TableFilter kind (`SubPageLink`, `RunPageLink`, `LinkFields`, `DataItemTableFilter`,
@@ -153,25 +191,44 @@ production sites. §5.5 replaces it with a per-site manifest.
 
 ### 3.2 Grammar (`grammar.js`)
 
-1. **New node `qualified_name`**, the relation target:
+1. **New node `qualified_name`**, the relation target. It follows `ParseQualifiedName` (§2.1):
    ```javascript
    qualified_name: $ => prec.right(seq(
      $._qualified_name_segment,
      repeat(seq('.', $._qualified_name_segment)),
    )),
+   _qualified_name_segment: $ => choice(
+     $.identifier,
+     $.quoted_identifier,
+     alias($._keyword_allowed_identifier, $.identifier),
+   ),
+   // The compiler's IsKeywordAllowedIdentifier set, one bare kw() per spelling, generated
+   // from tools/alc_facts/keyword-allowed-identifiers.txt.
+   _keyword_allowed_identifier: $ => choice(kw('system'), kw('table'), /* ... all 101 */),
    ```
-   - A segment is an `identifier` or `quoted_identifier` leaf.
-   - A keyword spelling used as a segment is aliased to `identifier`. That covers `System` in
-     the §1 targets, and any keyword the corpus shows in segment position.
-   - The plan takes the keyword list from the production targets and pins each one.
-   - Segments have no field. The node names the whole target, and nothing asserts which segment
-     is the table.
+   - **Spellings.** They are the compiler's own keyword texts (`SyntaxFacts` text for each
+     kind), not the `SyntaxKind` names. `PageGroupKeyword` is spelled `group`, not `pagegroup`.
+     The data file records kind → text.
+   - **Leaf shape.** The alternatives are **bare** `kw()` tokens aliased to `identifier`, so a
+     keyword segment is a childless `identifier` leaf. That is the `keyword_as_identifier`
+     direction in `.claude/rules/contextual-keywords.md`: the outer node claims to be an
+     identifier, so the named `*_keyword` rules must not be used here.
+   - **Containment.** These tokens become valid only in the keyed `TableRelation` target
+     states: the value start, the token after `.`, and the target after `if (...)` or `else`.
+     No generic property state gains them, so the `word`-extraction hazard described at
+     `_plain_name` (`grammar.js:6290-6330`) cannot reach other properties. The plan verifies
+     this from `src/parser.c` lex states. A keyword token that does leak into a generic state is
+     a stop.
+   - **Fields.** Segments have none. The node names the whole target, and nothing asserts which
+     segment is the table.
 2. **`simple_table_relation`** becomes:
    ```javascript
-   seq(field('target', choice($.integer, $.qualified_name)), optional(prec(25, $.where_clause)))
+   seq(field('target', $.qualified_name), optional(prec(25, $.where_clause)))
    ```
    - It loses the repeated `table:` fields and the `member_expression` alternative.
-   - `integer` keeps `TableRelation = 18;`. The probe checks that alc accepts it.
+   - **No integer target.** `ParseQualifiedName` reads identifier tokens only. `TableRelation
+     = 18;` is a decide-by-probe case (§5.1), expected to be rejected. If alc accepts it, the
+     probe shows the accepting path, and `integer` is added back to `target` with that evidence.
 3. **`property`** gets a fourth keyed arm:
    ```javascript
    seq(
@@ -181,38 +238,65 @@ production sites. §5.5 replaces it with a per-site manifest.
      ';'
    ),
    ```
-4. **`_table_relation_property_value`** separates the whole value from relation continuation:
-   - A **value-start relation**, aliased to `table_relation_value`. It begins with a
-     `simple_table_relation` or an `if_table_relation`, **never with a `#if`**, and may then
-     continue into `preproc_conditional_table_relation`, the existing split form.
-   - A **whole-value conditional**, aliased to `preproc_conditional_property_value`. It is built
-     with B4's `keyedValueConditional`, and each arm is recursive:
-     `seq(field('value', $._table_relation_property_value), optional(';'))`.
-
-   A `#if` at value start is therefore always the whole-value wrapper, and an arm can hold a
-   nested whole value. That gives one derivation per input. `table_relation_value`'s bare
-   `preproc_conditional_table_relation` alternative and `table_relation_expression`'s are no
-   longer reachable at value start.
-
-   The plan checks whether alc accepts a continuation after a value-start `#if`, e.g.
-   `#if X if (...) A #else if (...) B #endif else C`. If alc accepts it, this item is revisited
-   before any grammar change.
+   The empty value (`TableRelation = ;`) stays only if the §5.1 probe accepts it.
+4. **The keyed value, written out.** Root and continuation are separated by structure:
+   ```javascript
+   // A value-start relation: never begins with #if.
+   _table_relation_head: $ => choice($.simple_table_relation, $.if_table_relation),
+   _table_relation_property_value: $ => choice(
+     alias($._table_relation_rooted, $.table_relation_value),
+     alias($._table_relation_whole_conditional, $.preproc_conditional_property_value),
+   ),
+   _table_relation_rooted: $ => prec.right(5, seq(
+     alias($._table_relation_head, $.table_relation_expression),
+     optional($.preproc_conditional_table_relation),   // the continued split, as today
+   )),
+   _table_relation_whole_conditional: $ => keyedValueConditional($,
+     seq(field('value', $._table_relation_property_value), optional(';'))),
+   // `;` inside the arms (no `;` after #endif): the keyed _table_relation_split_value.
+   _table_relation_keyed_split: $ => choice(
+     seq(alias($._table_relation_head, $.table_relation_expression),
+         $.preproc_conditional_table_relation),
+     alias($._table_relation_open_if, $.table_relation_expression),   // unchanged prec(-1) if_table_relation
+   ),
+   ```
+   - **Continuations nested under `else` are unchanged.** `if_table_relation.else_relation` is
+     still `table_relation_expression`, and that still includes
+     `preproc_conditional_table_relation`. The DC witness (`ELSE` then `#if BC24 IF ...; #else
+     IF ...; #endif`, no `;` after `#endif`;
+     `DC/Cloud/.dependencies/DC/Table/CDCDataTranslation.Table.al:129-148`) takes
+     `_table_relation_open_if` → `if_table_relation` → `else_relation:
+     table_relation_expression(preproc_conditional_table_relation ...)`. That is the parse it
+     gets today, apart from D3 targets.
+   - **Where `#if` is unreachable.** `table_relation_value`'s own bare
+     `preproc_conditional_table_relation` alternatives are removed: the old
+     `table_relation_value` rule has no remaining user once item 5 lands, and `_table_relation_rooted`
+     replaces it. A value-start `#if` therefore has exactly one derivation, the whole-value
+     wrapper. Arms are recursive, so a nested whole value is a nested
+     `preproc_conditional_property_value`.
+   - **Value-start `#if` followed by a continuation**, e.g. `#if X if (...) A #else if (...) B
+     #endif else C`, has no derivation under this design. alc is probed first (§5.1). If alc
+     accepts it, this item is redesigned before any grammar change.
 5. **`_property_value`** loses `$.table_relation_value`.
 6. **`_property_with_terminator_in_if` and `_property_whole_value_in_if`** lose the generic
    relation form, `alias($._table_relation_split_value, $.table_relation_value)`. Each gains a
    keyed `TableRelation` arm:
-   - **`_property_with_terminator_in_if`:** the keyed conditional, plus the relation continued
-     into a `#if` whose arms carry the `;`.
-   - **`_property_whole_value_in_if`:** the keyed conditional only.
+   - **`_property_with_terminator_in_if`:** two values, `alias($._table_relation_whole_conditional,
+     $.preproc_conditional_property_value)` and `alias($._table_relation_keyed_split,
+     $.table_relation_value)`.
+   - **`_property_whole_value_in_if`:** the whole conditional only.
 
-   After this item and item 5, no route from a generic property reaches
-   `table_relation_value`, `preproc_conditional_table_relation` or `simple_table_relation`.
-   Every reference is checked by grep in the plan.
+   `_table_relation_split_value` is deleted.
+
+   After items 4, 5 and 6, no route from a generic property reaches `table_relation_value`,
+   `preproc_conditional_table_relation`, `simple_table_relation` or `qualified_name`. The plan
+   checks every reference by grep and by a debug parse.
 7. **Conflicts.** The `conflicts` entries that pair `preproc_conditional_table_relation` with
    the generic conditionals (around `grammar.js:356-406`) are re-checked after the change. An
    entry the generator no longer needs is deleted, with the STATE_COUNT measured.
 8. **Unchanged:**
-   - `if_table_relation`, keeping `then_relation:` and `else_relation:`;
+   - `if_table_relation`, keeping `then_relation:` and `else_relation:`, and its
+     `else_relation` route into `preproc_conditional_table_relation`;
    - `else_table_relation_fragment`;
    - `where_clause`;
    - `preproc_conditional_table_relation`'s own arm grammar.
@@ -244,7 +328,7 @@ TableRelation = Customer."No." where(...);
                   (simple_table_relation
                     target: (qualified_name (identifier) (quoted_identifier))
                     (where_clause ...)))))
-TableRelation = 18;            -> ... (simple_table_relation target: (integer))
+TableRelation = System.Environment.Company.Name;  -> target: (qualified_name (identifier) (identifier) (identifier) (identifier))
 TableRelation = if (...) A else B;   -> if_table_relation, unchanged apart from the targets
 TableRelation = #if ... #endif [;]
   -> (property name: (property_name)
@@ -259,9 +343,11 @@ TableRelation = ;              -> (property name: (property_name))   -- only if 
 
 **Field rules:**
 - `property.name` is `property_name` in every arm.
-- `simple_table_relation.target` is exactly one node, `qualified_name` or `integer`. It is
-  never repeated and never an expression.
-- `qualified_name` has no fields. Its segment children are `identifier` or `quoted_identifier`.
+- `simple_table_relation.target` is exactly one `qualified_name`. It is never repeated and
+  never an expression. An integer target exists only if the §5.1 probe proves alc accepts one.
+- `qualified_name` has no fields. Its children are segment leaves, each an `identifier` or a
+  `quoted_identifier`, in source order. A keyword segment such as `System` is a childless
+  `identifier`.
 - Every arm `value:` of a `TableRelation` whole-value `#if` is a `table_relation_value` or a
   nested `preproc_conditional_property_value`. Both `;` placements give the same tree.
 - A split inside a relation keeps its node: `table_relation_value` holding
@@ -269,7 +355,7 @@ TableRelation = ;              -> (property name: (property_name))   -- only if 
 
 **Who enforces what:**
 - **`tools/check-field-types.py`**, which checks `node-types.json`, gets the type-level rules:
-  - `simple_table_relation.target`: single, `{integer, qualified_name}`;
+  - `simple_table_relation.target`: single, `{qualified_name}`;
   - `qualified_name`: no fields;
   - the `table` field on `simple_table_relation` is gone.
 - **The runtime census (§5.5)** enforces the rules that depend on the property name.
@@ -284,7 +370,7 @@ TableRelation = ;              -> (property name: (property_name))   -- only if 
 |---|---|---|---|
 | D1 | `TableRelation` value `identifier` / `quoted_identifier` | `table_relation_value(table_relation_expression(simple_table_relation target: (qualified_name (same leaf))))` | 36,118 |
 | D2 | other property value `table_relation_value(...)` | `property_expression(...)`, with the expression the value really is: `member_expression`, or a subscript base for `CustLedgEntry[6]."Currency Code"` | 14,011 |
-| D3 | `simple_table_relation` with one or more `table:` children, or `table: member_expression` | `target: (qualified_name ...)` or `target: (integer)`, same segments in source order | every relation under `TableRelation`: 25,714 values, each `simple_table_relation` in them |
+| D3 | `simple_table_relation` with one or more `table:` children, or `table: member_expression` | `target: (qualified_name ...)` whose segment sequence equals the old target's normalised sequence (below) | every relation under `TableRelation`: 25,714 values, each `simple_table_relation` in them |
 
 **Fixture-only classes** (input that does not occur in production):
 - **F1:** a `TableRelation` whole-value `#if`. Arms become uniformly `table_relation_value`;
@@ -292,6 +378,25 @@ TableRelation = ;              -> (property name: (property_name))   -- only if 
 - **F2:** G10, ERROR → `property_expression` + `preproc_conditional_expression_tail`.
 - **F3:** a generic property's whole-value `#if` whose arm held a `table_relation_value`. The
   arm becomes `property_expression`.
+
+**D3 segment normalisation.** This is how the gate compares an old target with a new one. The
+old target is mapped recursively to a sequence of segments, each a source span plus its exact
+text:
+- `identifier` or `quoted_identifier` → one segment;
+- `keyword_identifier` (e.g. `System` reached through the old `member_expression` route) → one
+  segment over its own span, recorded as an authorised keyword → `identifier` conversion;
+- `member_expression` → the normalisation of its `object`, then its `member` as one segment;
+- the repeated `table:` children of the old `namespacedRefFielded` form → one segment each, in
+  order;
+- anything else → **classification failure**. That covers a call, a subscript or an arithmetic
+  base.
+
+The new target's sequence is its segment children. They must match span for span and text for
+text, quotes and casing included. Splitting text on `.` is never used: a quoted segment can
+contain a dot. Everything outside the target must be unchanged: the `where_clause`, the `if`
+condition, `else` attachment, and every conditional's position.
+
+The six production `member_expression` targets (§1) are pinned individually.
 
 A changed file is not proof. The gate compares each changed subtree against its class (§5.5).
 
@@ -323,18 +428,33 @@ A changed file is not proof. The gate compares each changed subtree against its 
 Cases go under `tools/alc_probe/cases/table-relation-keying/`, written and run **before** any
 grammar change.
 
+**Self-contained probes.** Every probe declares the tables it relates to, so a missing symbol
+cannot look like a rejection (CLAUDE.md, the AL0185 trap). Each verdict records syntactic
+diagnostics separately from symbol diagnostics. A namespace-qualified target declares its
+namespace.
+
 - **Accept, each in a table field and in a page field:**
   - bare, quoted, dotted;
   - namespace-qualified, with a keyword first segment (`System.Environment.Company.Name`);
   - `where`, `if`/`else`;
   - lowercase `tablerelation`;
-  - `TableRelation = 18;`;
   - whole-value `#if` with both `;` placements, and nested;
+  - the DC witness shape: `else` then a `#if` whose arms carry the `;`;
   - `AutoFormatExpression = Rec."Currency Code";`;
   - `AutoFormatExpression = CustLedgEntry[6]."Currency Code";`.
+- **Keyword segments (§3.2 item 1).** A sample of the 101 compiler-allowed keywords in first,
+  middle and last position, each spelled in mixed case and as a quoted identifier. The sample
+  has at least 12 spellings, and includes `System`, `Table`, `Field`, `Order`, `Filter` and one
+  page keyword whose text differs from its kind name, e.g. `group`. Every one should be
+  accepted. Two keywords *outside* the set, e.g. `begin` and `where`, should be rejected as
+  segments.
 - **Decide by probe:**
   - `TableRelation = ;`. Accept means the contract keeps the empty value. Reject means the
     empty arm goes, and the case becomes a negative.
+  - Integer targets: `TableRelation = 18;`, `TableRelation = 18."No.";`,
+    `TableRelation = Customer.18;`, and `TableRelation = 18 where(...)`. All are expected to be
+    rejected (§3.2 item 2). An accepted form is added to `target` with the accepting path
+    named.
   - A continuation after a value-start `#if` (§3.2 item 4).
 - **G10, four-way:** `X` defined and undefined, each as written and resolved flat.
 - **Reject:**
@@ -367,6 +487,9 @@ grammar change.
     | xmlport request-page field | ✓ | | |
 
     Each host case must be accepted by alc.
+- **The two production `else` + `#if` sites** are pinned as fixtures, with exact parents and
+  fields, in their real layout. One is `CDCDataTranslation.Table.al:129-148`; the plan finds
+  the other from the census manifest.
 - **`table_relation_keying_negative_test.txt`:** the §5.1 rejects. Each ERRORs inside the
   value. None becomes a clean expression, a clean target or a clean second property.
 - **Existing fixtures** that assert old shapes are rewritten by hand, each hunk traced to D1–D3
@@ -394,31 +517,69 @@ are not proof of context coverage.
 ### 5.5 Gates
 
 **The committed relation census**, `tools/relation_census.py`, run over the four corpora. Its
-exit codes follow `has_error_sweep.py`. It enforces, in both directions:
+exit codes follow `has_error_sweep.py`: 0 clean, 1 finding, 2 cannot run. A census that cannot
+run never reports clean.
+
+**Two modes.**
+- `check` validates one parser library's trees against the contract.
+- `delta` takes a **baseline** library (built from `6b15b9b`) and a **current** library, parses
+  the same source with both, and classifies every difference.
+
+`tree-harness verify` only reports differences and exits 1 on any intended change
+(`tools/tree-harness.sh`). So `delta` is the gate for B5's changes, and tree-harness stays the
+zero-change gate for everything else.
+
+**Inventories.** Each mode builds an immutable inventory per library: every `property` node
+and every relation node, keyed by a **site ID** of path, start byte and end byte, plus the
+file's sha256. The source hashes must be identical between the two inventories, or the census
+exits 2. A property present in one inventory and missing from the other is a finding; that
+covers a dropped or reparented property.
+
+**`check` enforces, in both directions:**
 
 | check | what it requires |
 |---|---|
 | relation shape | every nonempty `TableRelation` value is `table_relation_value` or `preproc_conditional_property_value`, recursively through whole-value arms |
-| relations stay put | no `table_relation_value`, `simple_table_relation` or `qualified_name` appears outside a `TableRelation` property |
-| target | every `simple_table_relation` has exactly one `target`, and no `table` field |
-| D2 hosts | every D2 site's host has an expression-parser delegate for that name (§2.1) |
-| errors | `has_error` is reported per file |
+| relations stay put | no `table_relation_value`, `preproc_conditional_table_relation`, `simple_table_relation` or `qualified_name` appears outside a `TableRelation` property |
+| target | every `simple_table_relation` has exactly one `target` child, it is a `qualified_name`, no `table` field occurs, and every segment child is an `identifier` or `quoted_identifier` leaf with no children |
+| D2 hosts | every D2 site's tree context maps, through the census's context table (§2.1), to compiler hosts whose delegate for that name reaches `ParseExpressionPropertyValue` in `tools/alc_facts/property-hosts.tsv`; an unmapped context fails |
+| errors | `has_error` per file, compared between the two inventories: a file that newly errors is a finding |
 
-It also writes a per-site manifest:
-- path, line and source hash;
-- property name and host;
-- old and new subtree shape;
-- the D/F class.
+**`delta` classifies each difference by comparison root.**
+- **D1 and D2:** the root is the property's `value` subtree.
+- **D3:** the root is each `simple_table_relation`'s `target` subtree, with the rest of the
+  relation compared node for node.
 
-**Mutation proof.** The census is proven able to fail in both directions:
-- force a `TableRelation` onto the generic path, by disabling the keyed token in a scratch
-  build;
-- force a generic dotted value onto the relation path, by restoring `table_relation_value` to
-  `_property_value`.
+Roots are disjoint by construction: D3 is evaluated inside values that D1 and D2 do not claim.
+A difference matching no class predicate is a finding, and so is a site matching two.
+
+**Predicates:**
+- **D1:** the old value is a leaf, and the new value is the wrapper whose target's single
+  segment equals that leaf's span and text.
+- **D2:** the property name is not `TableRelation`, and the old value is `table_relation_value`.
+  The new value is `property_expression`, and its normalised dotted chain equals the old
+  segment sequence.
+- **D3:** the §4.2 normalisation.
+
+The census writes a per-site manifest (site ID, property name, mapped host, class, old and new
+shape) to `reports/`. The manifest's totals go in the B5 done note.
+
+**Mutation proof.** The census is shown to fail, with the expected finding, on each of these
+scratch builds or edited trees:
+- a `TableRelation` forced onto the generic path, by disabling the keyed token;
+- a generic dotted value forced onto the relation path, by restoring `table_relation_value` to
+  `_property_value`;
+- a dropped property;
+- two segments reordered;
+- `target` replaced by a `table` field;
+- a segment wrapped in a non-leaf node;
+- a `preproc_conditional_table_relation` moved from `else_relation` to the root.
 
 **The other gates:**
-- **`tree-harness verify` against a fresh `.snapshots/baseline-b5`:** every changed subtree
-  matches its manifest class, and nothing else changes.
+- **`relation_census.py delta`** against the `6b15b9b` library: every difference is classified,
+  and no finding is left.
+- **`tree-harness verify` against a fresh `.snapshots/baseline-b5`:** every changed file is one
+  the census manifest lists. tree-harness cannot classify a change, only list it.
 - **`validate-grammar.sh --full`:** exit 0, BC.History 0 errors.
 - **has_error sweeps over all four corpora:** no new error files.
 - **The usual suite:** `snip.py --census`, `qc run`, the traversal census and pytest, and
@@ -457,7 +618,9 @@ It also writes a per-site manifest:
 |---|---|
 | A host offers `PROPERTY_NAME` without the keyed token | §5.4 in both directions, plus §5.2's host list |
 | G10 still ERRORs on the expression path | §3.3: it is the first task, and its fix is in scope |
-| A keyword spelling occurs as a target segment and is not covered by `qualified_name` | The plan derives the keyword list from the production targets. The census `has_error` check fails on any miss |
+| A compiler-allowed keyword segment is missing from `_keyword_allowed_identifier`, or one of its tokens leaks into a generic property state | The list is generated from the compiler (§2.1), and the probes sample it (§5.1). The plan checks lex states in `src/parser.c` for leaks. Census `has_error` fails on a production miss |
+| An integer or other non-identifier target is valid AL after all | Decide-by-probe before any grammar change (§5.1). It is added back with the accepting path as evidence |
+| The DC `else` + `#if` witness loses its attachment | Pinned with exact parents and fields (§5.2). The census mutation moves the conditional (§5.5). The oracle cannot validate this attachment (`test_table_relation.py:38-68`, and `production-classes.tsv` debt), so its exit 0 is not evidence here |
 | A value-start `#if` followed by a continuation is valid AL | Probed first (§5.1). If alc accepts it, §3.2 item 4 is revisited before any grammar change |
 | Removing `table_relation_value` from `_property_value` exposes another false generic reading, e.g. link syntax | Not prevented here. It is stated (§4.3, §8). The census fails if any relation node appears outside `TableRelation` |
 | The target change hides a fixture that asserted `table:` segments as correct | That is D3. Each hunk is traced |
@@ -494,3 +657,22 @@ decompiled `ObjectParser.cs` and the grammar before it was adopted:
    manifest.
 8. **Host fixtures underspecified.** Adopted: the explicit table in §5.2.
 9. **Two scanner guards missing; G10 needs both routes removed.** Adopted: §3.1 and §3.3.
+
+**Round 2** (same reviewer, revision 2). It marked findings 2, 4, 5, 8 and 9 resolved, and 1, 3,
+6 and 7 partly resolved. Six findings followed, all adopted:
+
+1. **Corpus-derived keyword segments.** Replaced by the compiler's `IsKeywordAllowedIdentifier`
+   set, read from `SyntaxFacts.cs:3792` and from `ParseQualifiedName` / `ParseIdentifierName`
+   (`LanguageParser.cs:403`, `:696`). They are bare `kw()` tokens aliased to `identifier`, and a
+   leak check is added (§3.2 item 1, §5.1).
+2. **Integer target assumed.** `ParseQualifiedName` reads identifier tokens only, so integers
+   are decide-by-probe (§3.2 item 2, §5.1).
+3. **The nested-`else` split route not explicit.** The productions are written out (§3.2
+   item 4), and the DC witnesses are pinned (§5.2).
+4. **Host matrix errors**: line 1084 is Key, and `IndentationColumn` is PageGroup. Replaced by
+   generated `tools/alc_facts/property-hosts.tsv` and an explicit context → host table that
+   includes the `modify` lookup chains (§2.1).
+5. **D3 equivalence undefined.** A recursive normalisation over spans and text is added (§4.2).
+6. **Census incomplete.** It now has `check` and `delta` modes, before and after inventories
+   with byte-range site IDs, runtime segment checks, disjoint comparison roots and more
+   mutations (§5.5).
