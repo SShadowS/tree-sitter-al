@@ -21,6 +21,14 @@ Where an older passage disagrees, this block wins:
    ...)`, the mirror of the existing `relation preproc_conditional_table_relation` split. It
    costs one declared conflict between that reading and the whole-value wrapper, decided at the
    token after `#endif`. It ERRORs today, and has 0 production sites.
+5. **Reserved segment words.** `else` and `where` are not keywords at the first segment
+   (only `if` is valid at value start), so keyword extraction alone let `Else."No."` and
+   `Where."No."` parse clean, though alc rejects both. `_qualified_name_segment` therefore
+   carries a reserved-word set of `if`, `else` and `where`, at 0 states (Task 4). Item 1's
+   claim is corrected accordingly.
+6. **Budget.** `_property_whole_value_in_if`'s two hosts, the action area and the assembly body,
+   reject `TableRelation` (AL0124, deferred-work item 17). They get no keyed arm, which keeps
+   STATE_COUNT within budget (Task 4: 17,325 with the arm, 17,223 without).
 4. **`modify` contexts use first-match.** `LookupAnyControlProperty` is
    `PageField ?? PageGroup ?? PagePart ?? PageArea` (ObjectParser.cs ~9482), and
    `LookupAnyActionProperty` is `PageAction ?? PageActionRef ?? PageActionGroup ??
