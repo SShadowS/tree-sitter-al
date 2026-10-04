@@ -33,6 +33,22 @@ public API — a change to node structure or field names is a **major** bump.
 
 ### Changed
 
+- **The 13 ML properties and `Namespaces` are keyed by NAME (roadmap B4, G9,
+  deferred-work item 11). Breaking for tree consumers.** The scanner emits a keyed
+  property-name token for exactly the compiler's 13 ML names (`CaptionML`, `ToolTipML`,
+  `OptionCaptionML`, ...) and `Namespaces`, the way it already did for `CalcFormula`;
+  `FooML`, `CaptionMLX` and every other name stay generic.
+  - `Namespaces` values parse as `namespace_value_list` / `namespace_pair` with fields
+    `prefix:` and `uri:`, not `ml_value_list` / `language:`. 6 BC.History files change
+    (the PEPPOL XmlPorts), nothing else.
+  - One-pair values of the 13 ML properties (`CaptionML = ENU='x';`) parse as
+    `ml_value_list`, not `comparison_expression`. That holds inside a whole-value `#if`
+    as well, with the `;` after `#endif` or inside every arm.
+  - `, Locked = <boolean>` inside an ML list or a TextConst is now an ERROR, as alc
+    reports AL0104/AL0219.
+  - Cost: STATE_COUNT 15,973 -> 16,893 (+5.8%), parser.c +3.1%, `tools.perf ab` over DC
+    0.983 (CI 0.963-0.999, busy machine). Almost all of it is the whole-value `#if` with
+    the `;` inside the arms, which no corpus uses but alc accepts.
 - **`&&` and `||` are no longer `#if`/`#elif` condition operators (roadmap B2,
   deferred-work item 9).** alc rejects both (AL0631); only `and`, `or`, `not` and
   parentheses combine symbols. `#if A && B` now has an ERROR in the condition instead of
