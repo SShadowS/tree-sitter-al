@@ -21,6 +21,12 @@ Where an older passage disagrees, this block wins:
    ...)`, the mirror of the existing `relation preproc_conditional_table_relation` split. It
    costs one declared conflict between that reading and the whole-value wrapper, decided at the
    token after `#endif`. It ERRORs today, and has 0 production sites.
+4. **`modify` contexts use first-match.** `LookupAnyControlProperty` is
+   `PageField ?? PageGroup ?? PagePart ?? PageArea` (ObjectParser.cs ~9482), and
+   `LookupAnyActionProperty` is `PageAction ?? PageActionRef ?? PageActionGroup ??
+   PageActionArea` (~9287). `??` means the first host that has the property supplies the
+   delegate. So the D2 check uses that host only, not "all hosts in the chain" as §2.1 says.
+   Source: the Task 3 review.
 
 **Roadmap row:** B5 (`docs/superpowers/plans/2026-09-28-roadmap-remaining-work.md`).
 **Resolves:** deferred-work items 13 (G10) and 15. It also fixes the relation target shape, which
