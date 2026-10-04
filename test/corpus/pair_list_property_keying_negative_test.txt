@@ -6,7 +6,8 @@
 ;     ml_missing_comma_rejected, ml_string_value_rejected,
 ;     ml_identifier_value_rejected, textconst_maxlength_rejected,
 ;     instructionaltextml_semicolon_rejected, tooltipml_unquoted_rejected
-;   alc_probe: tools/alc_probe/cases/pair-list-keying/*-rejected.al
+;   alc_probe: tools/alc_probe/cases/pair-list-keying/*-rejected.al (the two
+;     keyed whole-value #if cases, ml-arm-*.al, are rejected in every configuration)
 ;     (tooltipml-unquoted-rejected.al is the page-level ToolTipML form used here;
 ;     the probe_alc case is field-level)
 ;
@@ -340,3 +341,102 @@ page 50100 P
           (identifier)
           (identifier)
           (identifier))))))
+
+================================================================================
+B4 negative: a keyed whole-value #if arm holding a comparison (AL0104, AL0219)
+================================================================================
+
+table 50100 T
+{
+    CaptionML =
+#if X
+        A = 1
+#else
+        B = 2
+#endif
+        ;
+    fields { field(1; F; Integer) { } }
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (table_declaration
+    (table_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (property
+        name: (property_name)
+        (ERROR
+          (preproc_if
+            (preproc_open)
+            condition: (identifier))
+          (ERROR
+            (identifier)
+            (integer))
+          (preproc_else)
+          (identifier)
+          (integer)
+          (UNEXPECTED 'i')))
+      (fields_section
+        (fields_keyword)
+        body: (fields_body
+          (field_declaration
+            (field_keyword)
+            id: (integer)
+            name: (identifier)
+            type: (type_specification
+              (basic_type))))))))
+
+================================================================================
+B4 negative: a keyed whole-value #if arm with a trailing comma (AL0301)
+================================================================================
+
+table 50100 T
+{
+    CaptionML =
+#if X
+        ENU='a',;
+#else
+        ENU='b',;
+#endif
+    fields { field(1; F; Integer) { } }
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (table_declaration
+    (table_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (property
+        name: (property_name)
+        value: (preproc_conditional_property_value
+          (preproc_if
+            (preproc_open)
+            condition: (identifier))
+          value: (ml_value_list
+            (ml_value_pair
+              language: (identifier)
+              value: (string_literal)))
+          (ERROR)
+          (preproc_else)
+          value: (ml_value_list
+            (ml_value_pair
+              language: (identifier)
+              value: (string_literal)))
+          (ERROR)
+          (preproc_endif
+            (preproc_close))))
+      (fields_section
+        (fields_keyword)
+        body: (fields_body
+          (field_declaration
+            (field_keyword)
+            id: (integer)
+            name: (identifier)
+            type: (type_specification
+              (basic_type))))))))

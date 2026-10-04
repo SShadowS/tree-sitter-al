@@ -857,3 +857,233 @@ codeunit 50100 C
               (ml_value_pair
                 language: (identifier)
                 value: (string_literal)))))))))
+
+================================================================================
+B4 whole-value #if: ML, one-pair arms, `;` after #endif
+================================================================================
+
+page 50100 P
+{
+    CaptionML =
+#if X
+        ENU='a'
+#else
+        ENU='b'
+#endif
+        ;
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (page_declaration
+    (page_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (property
+        name: (property_name)
+        value: (preproc_conditional_property_value
+          (preproc_if
+            (preproc_open)
+            condition: (identifier))
+          value: (ml_value_list
+            (ml_value_pair
+              language: (identifier)
+              value: (string_literal)))
+          (preproc_else)
+          value: (ml_value_list
+            (ml_value_pair
+              language: (identifier)
+              value: (string_literal)))
+          (preproc_endif
+            (preproc_close)))))))
+
+================================================================================
+B4 whole-value #if: ML, `;` in every arm, one-pair and two-pair arms
+================================================================================
+
+page 50100 P
+{
+    CaptionML =
+#if X
+        ENU='a';
+#else
+        ENU='b', DAN='c';
+#endif
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (page_declaration
+    (page_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (property
+        name: (property_name)
+        value: (preproc_conditional_property_value
+          (preproc_if
+            (preproc_open)
+            condition: (identifier))
+          value: (ml_value_list
+            (ml_value_pair
+              language: (identifier)
+              value: (string_literal)))
+          (preproc_else)
+          value: (ml_value_list
+            (ml_value_pair
+              language: (identifier)
+              value: (string_literal))
+            (ml_value_pair
+              language: (identifier)
+              value: (string_literal)))
+          (preproc_endif
+            (preproc_close)))))))
+
+================================================================================
+B4 whole-value #if: ML, #elif and #else
+================================================================================
+
+page 50100 P
+{
+    CaptionML =
+#if X
+        ENU='a'
+#elif Y
+        ENU='b'
+#else
+        ENU='c'
+#endif
+        ;
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (page_declaration
+    (page_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (property
+        name: (property_name)
+        value: (preproc_conditional_property_value
+          (preproc_if
+            (preproc_open)
+            condition: (identifier))
+          value: (ml_value_list
+            (ml_value_pair
+              language: (identifier)
+              value: (string_literal)))
+          (preproc_elif
+            condition: (identifier))
+          value: (ml_value_list
+            (ml_value_pair
+              language: (identifier)
+              value: (string_literal)))
+          (preproc_else)
+          value: (ml_value_list
+            (ml_value_pair
+              language: (identifier)
+              value: (string_literal)))
+          (preproc_endif
+            (preproc_close)))))))
+
+================================================================================
+B4 whole-value #if: ML, nested
+================================================================================
+
+page 50100 P
+{
+    CaptionML =
+#if X
+#if Y
+        ENU='a'
+#else
+        ENU='b'
+#endif
+#else
+        ENU='c'
+#endif
+        ;
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (page_declaration
+    (page_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (property
+        name: (property_name)
+        value: (preproc_conditional_property_value
+          (preproc_if
+            (preproc_open)
+            condition: (identifier))
+          value: (preproc_conditional_property_value
+            (preproc_if
+              (preproc_open)
+              condition: (identifier))
+            value: (ml_value_list
+              (ml_value_pair
+                language: (identifier)
+                value: (string_literal)))
+            (preproc_else)
+            value: (ml_value_list
+              (ml_value_pair
+                language: (identifier)
+                value: (string_literal)))
+            (preproc_endif
+              (preproc_close)))
+          (preproc_else)
+          value: (ml_value_list
+            (ml_value_pair
+              language: (identifier)
+              value: (string_literal)))
+          (preproc_endif
+            (preproc_close)))))))
+
+================================================================================
+B4 whole-value #if: Namespaces, one-pair arms
+================================================================================
+
+xmlport 50100 X
+{
+    Namespaces =
+#if X
+        bc = 'urn:a'
+#else
+        bc = 'urn:b'
+#endif
+        ;
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (xmlport_declaration
+    (xmlport_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (property
+        name: (property_name)
+        value: (preproc_conditional_property_value
+          (preproc_if
+            (preproc_open)
+            condition: (identifier))
+          value: (namespace_value_list
+            (namespace_pair
+              prefix: (identifier)
+              uri: (string_literal)))
+          (preproc_else)
+          value: (namespace_value_list
+            (namespace_pair
+              prefix: (identifier)
+              uri: (string_literal)))
+          (preproc_endif
+            (preproc_close)))))))

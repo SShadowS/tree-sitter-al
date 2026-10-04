@@ -107,6 +107,19 @@ function fieldedStatement($, name) {
   );
 }
 
+// A keyed property's whole-value #if (B4). Same arm structure and public node as
+// _property_value_conditional / _property_value_conditional_in_if, but every arm holds the
+// family's own list, never _property_value, so a one-pair arm cannot become a comparison.
+function keyedValueConditional($, branch) {
+  return seq(
+    $.preproc_if,
+    optional(branch),
+    repeat(seq($.preproc_elif, optional(branch))),
+    optional(seq($.preproc_else, optional(branch))),
+    $.preproc_endif,
+  );
+}
+
 // Object declaration helper — with object ID
 function _object_with_id(keyword_name) {
   return $ => seq(
@@ -846,8 +859,25 @@ module.exports = grammar({
       ),
     ),
 
-    _ml_property_value: $ => $.ml_value_list,
-    _namespaces_property_value: $ => $.namespace_value_list,
+    // A keyed value is the family's list, or a whole-value #if whose arms are that
+    // list again (spec 2026-10-01 §3.3). ONE conditional per family, with an optional
+    // `;` in each arm, serves both placements: the `property` arm takes the `;` after
+    // #endif, and _property_with_terminator_in_if / _property_whole_value_in_if end the
+    // property at #endif when the `;` sits in the arms. Separate `_in_if` rules, as
+    // the generic family has, measured STATE_COUNT 17257 and needed a declared
+    // conflict (the two readings differ only after #endif); this is 16893 with none.
+    _ml_property_value: $ => choice(
+      $.ml_value_list,
+      alias($._ml_value_conditional, $.preproc_conditional_property_value),
+    ),
+    _ml_value_conditional: $ => keyedValueConditional($,
+      seq(field('value', $._ml_property_value), optional(';'))),
+    _namespaces_property_value: $ => choice(
+      $.namespace_value_list,
+      alias($._namespaces_value_conditional, $.preproc_conditional_property_value),
+    ),
+    _namespaces_value_conditional: $ => keyedValueConditional($,
+      seq(field('value', $._namespaces_property_value), optional(';'))),
 
     // --- Permissions property: Name = tabledata_permission_list (no trailing ;) ---
     // Used when the terminating ';' is consumed inside the permission list's preproc branch.
@@ -907,13 +937,26 @@ module.exports = grammar({
     // for a permission list whose `;` is inside a list-internal #if.
     // The alias keeps the AST node type `property`.
     // Lower precedence than 'property' so 'property' (with ';') is preferred when ';' follows.
-    _property_with_terminator_in_if: $ => prec(-1, seq(
-      field('name', $.property_name),
-      '=',
-      field('value', choice(
-        alias($._property_value_conditional_in_if, $.preproc_conditional_property_value),
-        alias($._table_relation_split_value, $.table_relation_value),
-      )),
+    _property_with_terminator_in_if: $ => prec(-1, choice(
+      seq(
+        field('name', $.property_name),
+        '=',
+        field('value', choice(
+          alias($._property_value_conditional_in_if, $.preproc_conditional_property_value),
+          alias($._table_relation_split_value, $.table_relation_value),
+        )),
+      ),
+      // The keyed names (B4): their arms hold the family's list only.
+      seq(
+        field('name', alias($._ml_property_name, $.property_name)),
+        '=',
+        field('value', alias($._ml_value_conditional, $.preproc_conditional_property_value)),
+      ),
+      seq(
+        field('name', alias($._namespaces_property_name, $.property_name)),
+        '=',
+        field('value', alias($._namespaces_value_conditional, $.preproc_conditional_property_value)),
+      ),
     )),
 
     // The whole-value conditional of _property_with_terminator_in_if: the
@@ -939,10 +982,22 @@ module.exports = grammar({
     // action `group`, whose body has both _action_element and _body_element,
     // the two variants reduce the same text to the same `property` node, and
     // the lower precedence hands it to _property_with_terminator_in_if.
-    _property_whole_value_in_if: $ => prec(-2, seq(
-      field('name', $.property_name),
-      '=',
-      field('value', alias($._property_value_conditional_in_if, $.preproc_conditional_property_value)),
+    _property_whole_value_in_if: $ => prec(-2, choice(
+      seq(
+        field('name', $.property_name),
+        '=',
+        field('value', alias($._property_value_conditional_in_if, $.preproc_conditional_property_value)),
+      ),
+      seq(
+        field('name', alias($._ml_property_name, $.property_name)),
+        '=',
+        field('value', alias($._ml_value_conditional, $.preproc_conditional_property_value)),
+      ),
+      seq(
+        field('name', alias($._namespaces_property_name, $.property_name)),
+        '=',
+        field('value', alias($._namespaces_value_conditional, $.preproc_conditional_property_value)),
+      ),
     )),
 
     _property_value_conditional_in_if: $ => seq(
