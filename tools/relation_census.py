@@ -16,6 +16,7 @@ from typing import NamedTuple
 if __package__ in (None, ""):
     sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 from tools.alc_facts.extract import load_property_hosts  # noqa: E402
+from tools import has_error_sweep  # noqa: E402
 from tools.query_coverage import loader  # noqa: E402
 
 RELATION_TYPES = {"table_relation_value", "preproc_conditional_table_relation",
@@ -30,10 +31,11 @@ SHAPE_OK = {"table_relation_value", "preproc_conditional_property_value"}
 # generic `declaration_body` and any `preproc_*` wrapper) -> compiler host kinds (spec §2.1).
 # Built from data: `check` with this map empty, every distinct `d2-unmapped` key over the four
 # corpora, each mapped by hand against tools/alc_facts/property-hosts.tsv.
-_CTRL_CHAIN = ("PageField", "PageGroup", "PagePart", "PageLabel", "PageSystemPart", "PageChartPart",
-               "PageUserControl", "PageView", "PageAnalysisView")  # LookupAnyControlProperty: field first
-_ACT_CHAIN = ("PageAction", "PageActionGroup", "PageCustomAction", "PageFileUploadAction",
-              "PageSystemAction", "PageActionRef")  # LookupAnyActionProperty
+# Lookup chains, decompiled ObjectParser.cs (alc 18.0.41.62505), first match wins:
+# LookupAnyControlProperty (line 9482) = PageField ?? PageGroup ?? PagePart ?? PageArea
+# LookupAnyActionProperty  (line 9287) = PageAction ?? PageActionRef ?? PageActionGroup ?? PageActionArea
+_CTRL_CHAIN = ("PageField", "PageGroup", "PagePart", "PageArea")
+_ACT_CHAIN = ("PageAction", "PageActionRef", "PageActionGroup", "PageActionArea")
 CONTEXT_HOSTS: dict[tuple[str, ...], tuple[str, ...]] = {
     # table field
     ("field_declaration", "fields_body", "fields_section"): ("Field",),
@@ -254,22 +256,32 @@ def _al_files(roots):
         r = Path(r)
         if not r.is_dir():
             raise FileNotFoundError(f"root not a directory: {r}")
-        yield from sorted(r.rglob("*.al"))
+        files = sorted(p for p in r.rglob("*") if p.suffix.lower() == ".al" and p.is_file())
+        if not files:
+            raise FileNotFoundError(f"root holds no .al files: {r}")
+        yield from files
+
+
+def _read(f: Path) -> bytes:
+    """The parse buffer, exactly as has_error_sweep builds it (UTF-16 BOM decoded, UTF-8 BOM
+    stripped); node offsets and hashes refer to THIS buffer."""
+    return has_error_sweep.decode_al(f.read_bytes()).encode("utf-8", "surrogateescape")
 
 
 def check(roots, parser, *, rows: list | None = None, target_check: bool | None = None) -> list[Finding]:
     out: list[Finding] = []
     for f in _al_files(roots):
-        src = f.read_bytes()
+        src = _read(f)
         out.extend(check_tree(str(f), parser.parse(src), src, target_check=target_check, rows=rows))
     return out
 
 
 # --- delta -----------------------------------------------------------------------------
 
-def _sexp(n, fields=("table", "target")) -> str:
-    """Named-node S-expression with field names; a simple_table_relation's target subtree
-    (old `table:` children, new `target:`) collapses to one placeholder."""
+def _sexp(n, fields) -> str:
+    """Named-node S-expression with field names, spans and MISSING marks; a
+    simple_table_relation's target children collapse to one placeholder: pass ("table",) for an
+    OLD tree and ("target",) for a NEW one, so a stray field of the other kind stays visible."""
     parts, placed = [], False
     cur = n.walk()
     if cur.goto_first_child():
@@ -285,7 +297,8 @@ def _sexp(n, fields=("table", "target")) -> str:
                     parts.append((fn + ":" if fn else "") + _sexp(c, fields))
             if not cur.goto_next_sibling():
                 break
-    return f"({n.type}{''.join(' ' + p for p in parts)})"
+    miss = "!" if n.is_missing else ""
+    return f"({n.type}{miss}@{n.start_byte}-{n.end_byte}{''.join(' ' + p for p in parts)})"
 
 
 def _strs(v):
@@ -335,7 +348,7 @@ def _d3(name, o, n):
         tg = b.children_by_field_name("target")
         if len(tg) != 1 or normalise_old_target(a) != segments(tg[0]):
             return False
-    return _sexp(o) == _sexp(n)
+    return _sexp(o, ("table",)) == _sexp(n, ("target",))
 
 
 def classify(name: str, old_value, new_value) -> str:
@@ -361,11 +374,13 @@ def delta(roots, base_parser, cur_parser) -> DeltaResult:
     rows: list = []
     d3_old = 0
     for f in _al_files(roots):
-        src, path = f.read_bytes(), str(f)
+        src, path = _read(f), str(f)
         sha = hashlib.sha256(src).hexdigest()
-        if hashlib.sha256(f.read_bytes()).hexdigest() != sha:
+        if hashlib.sha256(_read(f)).hexdigest() != sha:
             raise RuntimeError(f"source hash changed while reading {path}")
         bt, ct = base_parser.parse(src), cur_parser.parse(src)
+        if ct.root_node.has_error and not bt.root_node.has_error:
+            findings.append(Finding("has-error-new", path, 0, len(src), "base clean, current has_error"))
         bi, ci = _inventory(path, bt), _inventory(path, ct)
         for k in bi.keys() ^ ci.keys():
             findings.append(Finding("site-dropped", path, k[1], k[2],

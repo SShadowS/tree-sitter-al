@@ -82,3 +82,46 @@ def test_manifest_rows_and_unmapped_d2(tmp_path):
     fs = rc.check_tree("p", rc.parser_for(None).parse(src), src, rows=rows)
     assert rows and rows[0][4] == "autoformatexpression"
     assert rc.CONTEXT_HOSTS or any(f.kind == "d2-unmapped" for f in fs)
+
+
+@needs_base
+def test_utf16_bom_file_is_decoded_before_parsing(tmp_path):
+    (tmp_path / "u.al").write_bytes(b"\xff\xfe" + _field(b"TableRelation = Customer;").decode().encode("utf-16-le"))
+    rows = []
+    fs = rc.check([tmp_path], _base(), rows=rows)
+    assert not [f for f in fs if f.kind == "has-error"]
+    assert [r[4] for r in rows] == ["tablerelation"]
+
+
+def test_root_without_al_files_cannot_run(tmp_path):
+    (tmp_path / "x.txt").write_text("hi")
+    with pytest.raises(FileNotFoundError):
+        rc.check([tmp_path], rc.parser_for(None))
+    assert rc.main(["check", "--root", str(tmp_path)]) == 2
+
+
+@needs_base
+def test_delta_flags_new_has_error(tmp_path):
+    (tmp_path / "a.al").write_bytes(_field(b"TableRelation = A.B;"))
+    base = _base()
+
+    class Broken:
+        def parse(self, src):
+            return base.parse(b"table table table {{ ;;; )")
+
+    kinds = {f.kind for f in rc.delta([tmp_path], base, Broken()).findings}
+    assert "has-error-new" in kinds
+
+
+@needs_base
+def test_sexp_sees_spans_and_stray_fields():
+    p = _base()
+    a, _ = _value(_field(b"TableRelation = A.B where(X = const(1));"), p)
+    b, _ = _value(_field(b"TableRelation = A.B where(X  =  const(1));"), p)
+    assert rc._sexp(a, ("table",)) != rc._sexp(b, ("table",))       # a re-spanned node outside the target
+    assert rc._sexp(a, ("table",)) != rc._sexp(a, ("target",))      # a stray `table:` beside `target:` stays visible
+
+
+def test_chains_are_the_decompiled_ones():
+    assert rc._CTRL_CHAIN == ("PageField", "PageGroup", "PagePart", "PageArea")
+    assert rc._ACT_CHAIN == ("PageAction", "PageActionRef", "PageActionGroup", "PageActionArea")
