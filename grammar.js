@@ -107,6 +107,19 @@ function fieldedStatement($, name) {
   );
 }
 
+// A keyed property's whole-value #if (B4). Same arm structure and public node as
+// _property_value_conditional / _property_value_conditional_in_if, but every arm holds the
+// family's own list, never _property_value, so a one-pair arm cannot become a comparison.
+function keyedValueConditional($, branch) {
+  return seq(
+    $.preproc_if,
+    optional(branch),
+    repeat(seq($.preproc_elif, optional(branch))),
+    optional(seq($.preproc_else, optional(branch))),
+    $.preproc_endif,
+  );
+}
+
 // Object declaration helper — with object ID
 function _object_with_id(keyword_name) {
   return $ => seq(
@@ -207,6 +220,8 @@ module.exports = grammar({
                                 //      the scanner returns it only to make that line an ERROR
     $._scanner_hook,            // [14] NEVER emitted. In `extras` only, so that every parse
                                 //      state has a valid external token and calls the scanner
+    $._ml_property_name,        // [15] one of the 13 compiler ML names followed by = (B4)
+    $._namespaces_property_name, // [16] `Namespaces` followed by = (B4)
   ],
 
   conflicts: $ => [
@@ -823,7 +838,46 @@ module.exports = grammar({
         field('value', $._calc_formula_expression),
         ';'
       ),
+      // The 13 ML properties and Namespaces are keyed by NAME, like CalcFormula:
+      // the scanner emits _ml_property_name / _namespaces_property_name for
+      // exactly those words. A one-pair value `ENU='x'` is also a complete
+      // comparison expression, so no value-shape rule can tell `CaptionML = ENU='x';`
+      // from `Visible = A = 'b';` -- only the name can. The name list is the
+      // compiler's own (alc 18.0.41, ObjectParser / PropertyNameToSyntaxDefinition;
+      // spec 2026-10-01-pair-list-property-keying-design.md), never a suffix match.
+      seq(
+        field('name', alias($._ml_property_name, $.property_name)),
+        '=',
+        optional(field('value', $._ml_property_value)),
+        ';'
+      ),
+      seq(
+        field('name', alias($._namespaces_property_name, $.property_name)),
+        '=',
+        optional(field('value', $._namespaces_property_value)),
+        ';'
+      ),
     ),
+
+    // A keyed value is the family's list, or a whole-value #if whose arms are that
+    // list again (spec 2026-10-01 §3.3). ONE conditional per family, with an optional
+    // `;` in each arm, serves both placements: the `property` arm takes the `;` after
+    // #endif, and _property_with_terminator_in_if / _property_whole_value_in_if end the
+    // property at #endif when the `;` sits in the arms. Separate `_in_if` rules, as
+    // the generic family has, measured STATE_COUNT 17257 and needed a declared
+    // conflict (the two readings differ only after #endif); this is 16893 with none.
+    _ml_property_value: $ => choice(
+      $.ml_value_list,
+      alias($._ml_value_conditional, $.preproc_conditional_property_value),
+    ),
+    _ml_value_conditional: $ => keyedValueConditional($,
+      seq(field('value', $._ml_property_value), optional(';'))),
+    _namespaces_property_value: $ => choice(
+      $.namespace_value_list,
+      alias($._namespaces_value_conditional, $.preproc_conditional_property_value),
+    ),
+    _namespaces_value_conditional: $ => keyedValueConditional($,
+      seq(field('value', $._namespaces_property_value), optional(';'))),
 
     // --- Permissions property: Name = tabledata_permission_list (no trailing ;) ---
     // Used when the terminating ';' is consumed inside the permission list's preproc branch.
@@ -883,13 +937,26 @@ module.exports = grammar({
     // for a permission list whose `;` is inside a list-internal #if.
     // The alias keeps the AST node type `property`.
     // Lower precedence than 'property' so 'property' (with ';') is preferred when ';' follows.
-    _property_with_terminator_in_if: $ => prec(-1, seq(
-      field('name', $.property_name),
-      '=',
-      field('value', choice(
-        alias($._property_value_conditional_in_if, $.preproc_conditional_property_value),
-        alias($._table_relation_split_value, $.table_relation_value),
-      )),
+    _property_with_terminator_in_if: $ => prec(-1, choice(
+      seq(
+        field('name', $.property_name),
+        '=',
+        field('value', choice(
+          alias($._property_value_conditional_in_if, $.preproc_conditional_property_value),
+          alias($._table_relation_split_value, $.table_relation_value),
+        )),
+      ),
+      // The keyed names (B4): their arms hold the family's list only.
+      seq(
+        field('name', alias($._ml_property_name, $.property_name)),
+        '=',
+        field('value', alias($._ml_value_conditional, $.preproc_conditional_property_value)),
+      ),
+      seq(
+        field('name', alias($._namespaces_property_name, $.property_name)),
+        '=',
+        field('value', alias($._namespaces_value_conditional, $.preproc_conditional_property_value)),
+      ),
     )),
 
     // The whole-value conditional of _property_with_terminator_in_if: the
@@ -915,10 +982,22 @@ module.exports = grammar({
     // action `group`, whose body has both _action_element and _body_element,
     // the two variants reduce the same text to the same `property` node, and
     // the lower precedence hands it to _property_with_terminator_in_if.
-    _property_whole_value_in_if: $ => prec(-2, seq(
-      field('name', $.property_name),
-      '=',
-      field('value', alias($._property_value_conditional_in_if, $.preproc_conditional_property_value)),
+    _property_whole_value_in_if: $ => prec(-2, choice(
+      seq(
+        field('name', $.property_name),
+        '=',
+        field('value', alias($._property_value_conditional_in_if, $.preproc_conditional_property_value)),
+      ),
+      seq(
+        field('name', alias($._ml_property_name, $.property_name)),
+        '=',
+        field('value', alias($._ml_value_conditional, $.preproc_conditional_property_value)),
+      ),
+      seq(
+        field('name', alias($._namespaces_property_name, $.property_name)),
+        '=',
+        field('value', alias($._namespaces_value_conditional, $.preproc_conditional_property_value)),
+      ),
     )),
 
     _property_value_conditional_in_if: $ => seq(
@@ -1163,16 +1242,34 @@ module.exports = grammar({
 
     // --- ML (Multilingual) value list ---
     // ENU='English', DEU='German'
+    // There is no `, Locked = <boolean>` tail: alc 18.0.41 rejects it with
+    // AL0219 in all three hosts (ML property, TextConst, Namespaces), and 0
+    // corpus files use it (B4; tools/alc_probe/cases/pair-list-keying/).
     ml_value_list: $ => prec.right(seq(
       $.ml_value_pair,
       repeat(seq(',', $.ml_value_pair)),
-      optional(seq(',', $.locked_keyword, '=', $.boolean))
     )),
 
     ml_value_pair: $ => seq(
       field('language', $._plain_name),
       '=',
       field('value', $.string_literal)
+    ),
+
+    // --- Namespaces value list (XmlPort) ---
+    // "" = 'urn:a', cac = 'urn:b'. The same list grammar as ml_value_list in
+    // alc, but its own node: a prefix and a URI, not a language and a text.
+    // Reached ONLY from property's Namespaces arm; adding it to _property_value
+    // would make it a second, identically shaped list for every unknown name.
+    namespace_value_list: $ => prec.right(seq(
+      $.namespace_pair,
+      repeat(seq(',', $.namespace_pair)),
+    )),
+
+    namespace_pair: $ => seq(
+      field('prefix', $._plain_name),
+      '=',
+      field('uri', $.string_literal)
     ),
 
     // --- CalcFormula values ---

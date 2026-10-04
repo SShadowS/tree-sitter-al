@@ -148,10 +148,17 @@ def test_whole_value_arm_is_any_property_value(al_parser, name, a, b, semi_insid
     witness.assert_all_pass(al_parser, src)
 
 
-@pytest.mark.xfail(strict=True, reason="G9: flat `CaptionML = ENU='c';` is property_expression(comparison), "
-                                       "the arm before #endif is ml_value_list (docs/deferred-work.md item 11)")
+# G9, fixed by B4: the keyed name makes a one-pair arm ml_value_list, flat and in an arm alike.
 def test_single_pair_ml_arm_before_endif(al_parser):
     witness.assert_all_pass(al_parser, _whole_page("CaptionML", "ENU='a', DAN='b'", "ENU='c'", semi_inside=False))
+
+
+@pytest.mark.parametrize("semi_inside", [True, False])
+def test_namespaces_whole_value_arms(al_parser, semi_inside):
+    src = _whole_page("Namespaces", "bc = 'urn:a', x = 'urn:x'", "bc = 'urn:b'",
+                      semi_inside).replace(b"page 50100 P", b"xmlport 50100 X")
+    witness.assert_produces(al_parser, src, NODE)
+    witness.assert_all_pass(al_parser, src)
 
 
 # G11, deferred-work item 17: the `;`-inside-the-arms whole value at the two

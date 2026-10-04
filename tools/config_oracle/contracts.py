@@ -462,12 +462,14 @@ register("preproc_conditional_property_value", "assembler",
          hosts={"property:value": "single-slot",
                 "preproc_conditional_property_value:value": "single-slot"},
          # Every visible kind _property_value offers (grammar.js _property_value),
-         # the nested whole value included, and the arm's own ';'.
+         # the nested whole value included, and the arm's own ';'. Plus
+         # namespace_value_list, the arm of a keyed Namespaces whole value (B4).
          arm={"identifier", "quoted_identifier", "table_relation_value", ";",
               "boolean", "integer", "decimal", "string_literal", "verbatim_string",
               "date_literal", "time_literal", "datetime_literal",
               "preproc_conditional_property_value",
-              "caption_value", "ml_value_list", "tabledata_permission_list",
+              "caption_value", "ml_value_list", "namespace_value_list",
+              "tabledata_permission_list",
               "order_by_list", "implementation_value_list", "option_member_list",
               "sorting_value", "link_value_list", "property_expression",
               "keyword_identifier", "where_clause", "object_reference_value",

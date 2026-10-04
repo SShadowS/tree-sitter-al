@@ -9981,14 +9981,6 @@
       "required": true,
       "types": [
         {
-          "type": "boolean",
-          "named": true
-        },
-        {
-          "type": "locked_keyword",
-          "named": true
-        },
-        {
           "type": "ml_value_pair",
           "named": true
         }
@@ -10629,6 +10621,51 @@
       "types": [
         {
           "type": "identifier",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
+    "type": "namespace_pair",
+    "named": true,
+    "fields": {
+      "prefix": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "identifier",
+            "named": true
+          },
+          {
+            "type": "quoted_identifier",
+            "named": true
+          }
+        ]
+      },
+      "uri": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "string_literal",
+            "named": true
+          }
+        ]
+      }
+    }
+  },
+  {
+    "type": "namespace_value_list",
+    "named": true,
+    "fields": {},
+    "children": {
+      "multiple": true,
+      "required": true,
+      "types": [
+        {
+          "type": "namespace_pair",
           "named": true
         }
       ]
@@ -13578,6 +13615,10 @@
           },
           {
             "type": "ml_value_list",
+            "named": true
+          },
+          {
+            "type": "namespace_value_list",
             "named": true
           },
           {
@@ -24261,6 +24302,10 @@
           },
           {
             "type": "ml_value_list",
+            "named": true
+          },
+          {
+            "type": "namespace_value_list",
             "named": true
           },
           {

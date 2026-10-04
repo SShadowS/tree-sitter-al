@@ -20,19 +20,21 @@ The scanner maintains a `ScannerState` holding a `depth` counter tracking `#if`/
 | `END_KEYWORD` | `end` at any depth — named node for queries | none |
 | `PREPROC_SPLIT_BEGIN` | `begin` at depth > 0, immediately before `#endif` — split detection | none |
 | `PREPROC_SPLIT_END` | `end` at depth > 0, followed by `;` then `#elif`/`#else`/`#endif` — split detection | none |
-| `CALC_FORMULA_PROPERTY_NAME` | `CalcFormula` followed by `=` — the one property keyed by name; falls back to `PROPERTY_NAME` where the grammar does not offer it | none |
+| `CALC_FORMULA_PROPERTY_NAME` | `CalcFormula` followed by `=` — keyed by name; falls back to `PROPERTY_NAME` where the grammar does not offer it | none |
+| `ML_PROPERTY_NAME` | one of the compiler's 13 ML names (`ML_PROPERTY_NAMES` in `scanner.c`, never a suffix match) followed by `=` — keyed by name (B4); same fallback | none |
+| `NAMESPACES_PROPERTY_NAME` | `Namespaces` followed by `=` — keyed by name (B4); same fallback | none |
 | `DIRECTIVE_EOL` | the ONE `\n` ending an `#if`/`#elif` line, after skipping every extra-space character except `\n` (`is_extra_space`: space, tab, `\r`, `\f`, `\v`, U+FEFF), hidden `_directive_eol`. Skipping only space and tab once left `\f\n` and `\r\r\n` a hidden MISSING token that only `has_error` shows. A lexical `/\r?\n/` is also a separator, and longest match took the LAST newline of a run of blank lines; `token.immediate(/[ \t]*\r?\n/)` grew a following comment leftward over the space. Valid alone (or in error recovery), so it returns without trying other tokens | none |
 | `NEGATIVE_INTEGER` / `NEGATIVE_DECIMAL` | `-1` / `-1.5` as one signed literal (issue #23), emitted only when `;` `,` `#` or EOF follows (after whitespace and comments); otherwise it declines and `-` lexes as unary minus. As lexical tokens they won by longest match and `Visible = -1 < X;` ERRORed (G7). Only a `-` commits the block | none |
 | `MALFORMED_DIRECTIVE` | hidden `_malformed_directive`, in **no** grammar rule. The `#` dispatch emits it for a directive line alc rejects: a word that is not exactly a directive (`#elsewhere`, `#regionX`, `#ifx`; AL0621), anything but spaces and a `//` comment after `#endif`/`#else` (`#endif;`, `#else B`; AL0631), or a block comment or a second `#` directive on an `#if`/`#elif` line (AL0631), or (B3) an `#if`/`#elif` condition left incomplete at the end of its line: last word before any `//` is `and`/`or`/`not`, no condition word at all, or unbalanced parentheses (AL0629). It covers the line up to its last non-space character (for an incomplete condition with no `//`, up to the newline, trailing spaces and `\r` included: that verdict is reached only at the newline, too late to mark the last non-space character); the parser has no action for it, so the line becomes an ERROR. Never valid outside error recovery, so it is emitted unasked (B2) | none |
 | `SCANNER_HOOK` | hidden `_scanner_hook`, in `extras`, **never emitted**. Exists only so every parse state has a valid external token and therefore calls the scanner, which lets the `#` gatekeeper see every directive line (B2 fix round 1) | none |
 
-**Scan function order:** error recovery guard → DIRECTIVE_EOL → NEGATIVE_INTEGER/DECIMAL → the `#` dispatch (PREPROC_OPEN / PREPROC_CLOSE / MALFORMED_DIRECTIVE; runs whatever is valid) → VAR_ATTRIBUTE_OPEN → identifier dispatch (`BEGIN_KEYWORD` | `PREPROC_SPLIT_BEGIN` | `END_KEYWORD` | `PREPROC_SPLIT_END` | `PROPERTY_NAME` / `CALC_FORMULA_PROPERTY_NAME` | `CONTINUE_AS_IDENTIFIER`)
+**Scan function order:** error recovery guard → DIRECTIVE_EOL → NEGATIVE_INTEGER/DECIMAL → the `#` dispatch (PREPROC_OPEN / PREPROC_CLOSE / MALFORMED_DIRECTIVE; runs whatever is valid) → VAR_ATTRIBUTE_OPEN → identifier dispatch (`BEGIN_KEYWORD` | `PREPROC_SPLIT_BEGIN` | `END_KEYWORD` | `PREPROC_SPLIT_END` | `CALC_FORMULA_PROPERTY_NAME` / `ML_PROPERTY_NAME` / `NAMESPACES_PROPERTY_NAME` / `PROPERTY_NAME` | `CONTINUE_AS_IDENTIFIER`)
 
 `VAR_ATTRIBUTE_OPEN` runs **before** the identifier tokens, not after — it did not until 4.0.0, and the old order is why a leading `b` was absorbed into a following `[`, producing a two-column `[` token whose text was `b[`.
 
 ## Single-Read Identifier Dispatch
 
-**Every identifier-initial token is decided in ONE scan over ONE read of the identifier.** Seven tokens compete for the same text — `BEGIN_KEYWORD`, `END_KEYWORD`, their two `PREPROC_SPLIT_*` competitors, `PROPERTY_NAME`, `CALC_FORMULA_PROPERTY_NAME` and `CONTINUE_AS_IDENTIFIER` — and they cannot be sequential blocks that each do their own read.
+**Every identifier-initial token is decided in ONE scan over ONE read of the identifier.** Nine tokens compete for the same text — `BEGIN_KEYWORD`, `END_KEYWORD`, their two `PREPROC_SPLIT_*` competitors, `PROPERTY_NAME`, the three keyed names (`CALC_FORMULA_PROPERTY_NAME`, `ML_PROPERTY_NAME`, `NAMESPACES_PROPERTY_NAME`) and `CONTINUE_AS_IDENTIFIER` — and they cannot be sequential blocks that each do their own read.
 
 Two independent reasons, both of which produced live bugs:
 
@@ -50,7 +52,7 @@ lexer->mark_end(lexer);                                  // pin the token to the
 // BEGIN_KEYWORD / END_KEYWORD are the fallback at EVERY depth.
 ```
 
-`read_identifier_word` returns `WORD_NOT_IDENTIFIER` when the lookahead cannot start an identifier and `WORD_OTHER` when the word is longer than the longest keyword tested (`calcformula`, 11 chars; it was `continue`, 8, until the CalcFormula token). `mark_end` before any lookahead is what makes the fallback safe, since the lookaheads advance well past the word.
+`read_identifier_word` returns `WORD_NOT_IDENTIFIER` when the lookahead cannot start an identifier and `WORD_OTHER` when the word is longer than the longest word tested (`promotedactioncategoriesml`, 26 chars, in a 32-byte buffer; it was `calcformula`, 11, until B4, and `continue`, 8, before that). The keyed property names are emitted in the order CalcFormula → ML → Namespaces → generic `PROPERTY_NAME` → decline, each only if `valid_symbols` offers it. `mark_end` before any lookahead is what makes the fallback safe, since the lookaheads advance well past the word.
 
 A failed lookahead is not a failed scan — `begin` is still a `begin`.
 

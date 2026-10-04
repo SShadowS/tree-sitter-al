@@ -431,7 +431,16 @@ is the same answer recorded for family H. The configuration-consistency oracle
 already resolves configurations, so its resolver is a starting point. This is
 an architecture change, not a rule, and it is not filed as a known limitation.
 
-## 11. A one-pair ML value parses as a comparison (G9)
+## 11. A one-pair ML value parses as a comparison (G9) — RESOLVED 2026-10-04
+
+**Resolution (7dea427, c3858ff, roadmap B4):** the compiler's 13 ML names and
+`Namespaces` are keyed by name in the scanner (`ML_PROPERTY_NAME`,
+`NAMESPACES_PROPERTY_NAME`), like CalcFormula. A one-pair ML value is `ml_value_list`,
+flat and in a whole-value `#if` arm with either `;` placement; `Namespaces` is
+`namespace_value_list`. The strict xfail below now passes and is no longer an xfail.
+Correction to the text below: the keyed set is **the compiler's 13**, read from alc's
+own tables, not "every name ending in `ML`" (`FooML`, `CaptionMLX` stay generic).
+Spec: docs/superpowers/specs/2026-10-01-pair-list-property-keying-design.md.
 
 **Established:** 2026-09-28, config-oracle milestone 2 Task 18, while fixing G8.
 alc accepts `CaptionML = ENU='c';` (probe: a table with that property compiles;

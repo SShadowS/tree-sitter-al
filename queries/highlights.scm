@@ -364,6 +364,11 @@
 
 (datetime_literal) @string.special
 
+; XmlPort Namespaces = prefix = 'uri', ... (namespace_pair, keyed by name since B4).
+; After the generic string capture so the URI's more specific capture wins.
+(namespace_pair prefix: (_) @namespace)
+(namespace_pair uri: (string_literal) @string.special.url)
+
 ; =============================================================================
 ; Types
 ; =============================================================================

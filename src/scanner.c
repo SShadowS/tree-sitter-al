@@ -27,6 +27,8 @@ enum TokenType {
   NEGATIVE_DECIMAL = 12,
   MALFORMED_DIRECTIVE = 13,  // in no grammar rule: see the '#' dispatch
   SCANNER_HOOK = 14,         // an extra that is NEVER emitted: see the '#' dispatch
+  ML_PROPERTY_NAME = 15,          // one of the 13 compiler ML names followed by =
+  NAMESPACES_PROPERTY_NAME = 16,  // `Namespaces` followed by =
 };
 
 // Named so the static assertion below can test its width AND its signedness.
@@ -280,6 +282,20 @@ enum IdentifierWord {
   WORD_END,
   WORD_CONTINUE,
   WORD_CALCFORMULA,  // the one property name the scanner keys on (issue #21)
+  WORD_ML_PROPERTY,  // value grammar: CommaSeparatedIdentifierEqualsStringList (B4)
+  WORD_NAMESPACES,   // same list grammar, its own node (B4)
+};
+
+// The compiler's pair-list property names, lowercase. Source: alc 18.0.41.62505,
+// Microsoft.Dynamics.Nav.CodeAnalysis.dll, ObjectParser (PropertyTypeInfo tables keyed by
+// the upper-cased name) and PropertyNameToSyntaxDefinition, read 2026-10-01. These 13 map
+// to MultilanguagePropertyValueSyntax; Namespaces uses the same list parser. Never derive
+// this from a suffix: `FooML` has no pair grammar in alc.
+static const char *const ML_PROPERTY_NAMES[] = {
+  "abouttextml", "abouttitleml", "additionalsearchtermsml", "captionml",
+  "entitycaptionml", "entitysetcaptionml", "instructionaltextml", "optioncaptionml",
+  "profiledescriptionml", "promotedactioncategoriesml", "requestfilterheadingml",
+  "summaryml", "tooltipml",
 };
 
 // Consume ONE complete identifier and classify it.
@@ -298,7 +314,7 @@ enum IdentifierWord {
 static enum IdentifierWord read_identifier_word(TSLexer *lexer) {
   if (!is_identifier_start(lexer->lookahead)) return WORD_NOT_IDENTIFIER;
 
-  char buf[12];  // longest keyword tested is "calcformula" (11) plus the NUL
+  char buf[32];  // longest word tested: "promotedactioncategoriesml" (26) plus the NUL
   size_t len = 0;
   if (!read_word_ci(lexer, buf, sizeof(buf), &len)) {
     return WORD_OTHER;  // too long to be any keyword
@@ -308,6 +324,10 @@ static enum IdentifierWord read_identifier_word(TSLexer *lexer) {
   if (len == 3 && strcmp(buf, "end") == 0) return WORD_END;
   if (len == 8 && strcmp(buf, "continue") == 0) return WORD_CONTINUE;
   if (len == 11 && strcmp(buf, "calcformula") == 0) return WORD_CALCFORMULA;
+  if (len == 10 && strcmp(buf, "namespaces") == 0) return WORD_NAMESPACES;
+  for (size_t i = 0; i < sizeof(ML_PROPERTY_NAMES) / sizeof(ML_PROPERTY_NAMES[0]); i++) {
+    if (strcmp(buf, ML_PROPERTY_NAMES[i]) == 0) return WORD_ML_PROPERTY;
+  }
   return WORD_OTHER;
 }
 
@@ -542,7 +562,8 @@ bool tree_sitter_al_external_scanner_scan(
       valid_symbols[CALC_FORMULA_PROPERTY_NAME] &&
       valid_symbols[DIRECTIVE_EOL] &&
       valid_symbols[NEGATIVE_INTEGER] && valid_symbols[NEGATIVE_DECIMAL] &&
-      valid_symbols[MALFORMED_DIRECTIVE] && valid_symbols[SCANNER_HOOK]) {
+      valid_symbols[MALFORMED_DIRECTIVE] && valid_symbols[SCANNER_HOOK] &&
+      valid_symbols[ML_PROPERTY_NAME] && valid_symbols[NAMESPACES_PROPERTY_NAME]) {
     return false;
   }
 
@@ -926,7 +947,8 @@ bool tree_sitter_al_external_scanner_scan(
   if (valid_symbols[BEGIN_KEYWORD] || valid_symbols[PREPROC_SPLIT_BEGIN] ||
       valid_symbols[END_KEYWORD] || valid_symbols[PREPROC_SPLIT_END] ||
       valid_symbols[CONTINUE_AS_IDENTIFIER] || valid_symbols[PROPERTY_NAME] ||
-      valid_symbols[CALC_FORMULA_PROPERTY_NAME]) {
+      valid_symbols[CALC_FORMULA_PROPERTY_NAME] ||
+      valid_symbols[ML_PROPERTY_NAME] || valid_symbols[NAMESPACES_PROPERTY_NAME]) {
     skip_whitespace(lexer);
     enum IdentifierWord word = read_identifier_word(lexer);
     if (word == WORD_NOT_IDENTIFIER) return false;  // nothing consumed
@@ -998,7 +1020,8 @@ bool tree_sitter_al_external_scanner_scan(
     // the continue test needs. (No parse state offers both — see the
     // ts_external_scanner_states table — but unlike the two arms above, this
     // ORDER does not depend on that holding.)
-    if (valid_symbols[PROPERTY_NAME] || valid_symbols[CALC_FORMULA_PROPERTY_NAME]) {
+    if (valid_symbols[PROPERTY_NAME] || valid_symbols[CALC_FORMULA_PROPERTY_NAME] ||
+        valid_symbols[ML_PROPERTY_NAME] || valid_symbols[NAMESPACES_PROPERTY_NAME]) {
       // Skip whitespace and comments. '\n' belongs here just as much as '\r' —
       // the leading skip above already accepts it, and alc accepts a property
       // whose '=' sits on the next line (verified). Omitting it made
@@ -1018,11 +1041,20 @@ bool tree_sitter_al_external_scanner_scan(
         // so the name is what this reads. Falls back to PROPERTY_NAME where
         // the grammar does not offer the keyed token, so a state that only
         // knows the generic property keeps working.
-        lexer->result_symbol =
-            (word == WORD_CALCFORMULA && valid_symbols[CALC_FORMULA_PROPERTY_NAME])
-                ? CALC_FORMULA_PROPERTY_NAME
-                : PROPERTY_NAME;
-        if (lexer->result_symbol == PROPERTY_NAME && !valid_symbols[PROPERTY_NAME]) {
+        //
+        // The 13 ML names and `Namespaces` are keyed the same way, for the same
+        // reason: their value is a pair list, and a one-pair list `ENU='x'` is
+        // also a complete comparison, so only the name can choose the reading
+        // (spec 2026-10-01-pair-list-property-keying-design.md, section 3.1).
+        if (word == WORD_CALCFORMULA && valid_symbols[CALC_FORMULA_PROPERTY_NAME]) {
+          lexer->result_symbol = CALC_FORMULA_PROPERTY_NAME;
+        } else if (word == WORD_ML_PROPERTY && valid_symbols[ML_PROPERTY_NAME]) {
+          lexer->result_symbol = ML_PROPERTY_NAME;
+        } else if (word == WORD_NAMESPACES && valid_symbols[NAMESPACES_PROPERTY_NAME]) {
+          lexer->result_symbol = NAMESPACES_PROPERTY_NAME;
+        } else if (valid_symbols[PROPERTY_NAME]) {
+          lexer->result_symbol = PROPERTY_NAME;  // a keyed name where the state offers only the generic token
+        } else {
           return false;
         }
         return true;

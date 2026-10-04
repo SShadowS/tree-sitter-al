@@ -1,0 +1,442 @@
+; B4 (G9) negatives: pair-list values alc 18.0.41 rejects as SYNTAX. On the keyed
+; path each one is an ERROR on the offending line, never a fallback to the
+; comparison reading. Evidence, all expected-reject:
+;   probe_alc: ml_locked_true_rejected, textconst_locked_true_rejected,
+;     namespaces_locked_true_rejected, ml_trailing_comma_rejected,
+;     ml_missing_comma_rejected, ml_string_value_rejected,
+;     ml_identifier_value_rejected, textconst_maxlength_rejected,
+;     instructionaltextml_semicolon_rejected, tooltipml_unquoted_rejected
+;   alc_probe: tools/alc_probe/cases/pair-list-keying/*-rejected.al (the two
+;     keyed whole-value #if cases, ml-arm-*.al, are rejected in every configuration)
+;     (tooltipml-unquoted-rejected.al is the page-level ToolTipML form used here;
+;     the probe_alc case is field-level)
+;
+; One case is NOT an ERROR, on purpose: `InstructionalTextML = ENU='a'; ESP='b';`.
+; alc's AL0124 there is "property cannot be used in this context" -- the `;` ends
+; the ML property and `ESP='b';` is a second, unknown property. That is a
+; context rejection, the same code alc gives for Permissions or TableRelation at
+; a host that does not take them, and the parser accepts any `Name = Value ;`
+; (parse structure, don't validate). The case pins that reading.
+
+================================================================================
+B4 negative: Locked = true after an ML property (AL0104, AL0219)
+================================================================================
+
+table 50100 T
+{
+    CaptionML = ENU='a', Locked = true;
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (table_declaration
+    (table_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (property
+        name: (property_name)
+        value: (ml_value_list
+          (ml_value_pair
+            language: (identifier)
+            value: (string_literal)))
+        (ERROR
+          (identifier)
+          (identifier))))))
+
+================================================================================
+B4 negative: OptionCaptionML with a Locked = true tail (moved from option_caption_locked_test.txt)
+================================================================================
+
+table 50002 TestTable3
+{
+    fields
+    {
+        field(1; Language; Option)
+        {
+            OptionMembers = EN,FR,DE;
+            OptionCaptionML = ENU = 'English,French,German', FRA = 'Anglais,Français,Allemand', Locked = true;
+        }
+    }
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (table_declaration
+    (table_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (fields_section
+        (fields_keyword)
+        body: (fields_body
+          (field_declaration
+            (field_keyword)
+            id: (integer)
+            name: (identifier)
+            type: (type_specification
+              (option_type
+                (option_keyword)))
+            body: (declaration_body
+              (property
+                name: (property_name)
+                value: (option_member_list
+                  (option_member
+                    (identifier))
+                  (option_member
+                    (identifier))
+                  (option_member
+                    (identifier))))
+              (property
+                name: (property_name)
+                value: (ml_value_list
+                  (ml_value_pair
+                    language: (identifier)
+                    value: (string_literal))
+                  (ml_value_pair
+                    language: (identifier)
+                    value: (string_literal)))
+                (ERROR
+                  (identifier)
+                  (identifier))))))))))
+
+================================================================================
+B4 negative: Locked = true after a TextConst (AL0104, AL0219)
+================================================================================
+
+codeunit 50100 C
+{
+    var
+        T: TextConst ENU='a', Locked = true;
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (var_section
+        (var_keyword)
+        body: (var_body
+          (variable_declaration
+            name: (identifier)
+            type: (basic_type)
+            (ml_value_list
+              (ml_value_pair
+                language: (identifier)
+                value: (string_literal)))
+            (ERROR
+              (identifier)
+              (identifier))))))))
+
+================================================================================
+B4 negative: Locked = true after Namespaces (AL0104, AL0219)
+================================================================================
+
+xmlport 50100 X
+{
+    Namespaces = cac = 'urn', Locked = true;
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (xmlport_declaration
+    (xmlport_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (property
+        name: (property_name)
+        value: (namespace_value_list
+          (namespace_pair
+            prefix: (identifier)
+            uri: (string_literal)))
+        (ERROR
+          (identifier)
+          (identifier))))))
+
+================================================================================
+B4 negative: a trailing comma (AL0301)
+================================================================================
+
+table 50100 T
+{
+    CaptionML = ENU='a',;
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (table_declaration
+    (table_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (property
+        name: (property_name)
+        value: (ml_value_list
+          (ml_value_pair
+            language: (identifier)
+            value: (string_literal)))
+        (ERROR)))))
+
+================================================================================
+B4 negative: a missing comma between pairs (AL0104)
+================================================================================
+
+table 50100 T
+{
+    CaptionML = ENU='a' DAN='b';
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (table_declaration
+    (table_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (property
+        name: (property_name)
+        (ERROR
+          (ml_value_pair
+            language: (identifier)
+            value: (string_literal)))
+        value: (ml_value_list
+          (ml_value_pair
+            language: (identifier)
+            value: (string_literal)))))))
+
+================================================================================
+B4 negative: a string-only ML value (AL0107)
+================================================================================
+
+table 50100 T
+{
+    CaptionML = 'abc';
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (table_declaration
+    (table_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (property
+        name: (property_name)
+        (ERROR
+          (string_literal))))))
+
+================================================================================
+B4 negative: an identifier as the ML text (AL0104, AL0219)
+================================================================================
+
+table 50100 T
+{
+    CaptionML = ENU=Foo;
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (table_declaration
+    (table_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (property
+        name: (property_name)
+        (ERROR
+          (identifier)
+          (identifier))))))
+
+================================================================================
+B4 negative: MaxLength after a TextConst (AL0104, AL0219)
+================================================================================
+
+codeunit 50100 C
+{
+    var
+        T: TextConst ENU='a', MaxLength = 5;
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (var_section
+        (var_keyword)
+        body: (var_body
+          (variable_declaration
+            name: (identifier)
+            type: (basic_type)
+            (ml_value_list
+              (ml_value_pair
+                language: (identifier)
+                value: (string_literal)))
+            (ERROR
+              (identifier)
+              (integer))))))))
+
+================================================================================
+B4 negative: InstructionalTextML with ; between pairs (AL0124, a context rejection: clean)
+================================================================================
+
+page 50100 P
+{
+    InstructionalTextML = ENU='a'; ESP='b';
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (page_declaration
+    (page_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (property
+        name: (property_name)
+        value: (ml_value_list
+          (ml_value_pair
+            language: (identifier)
+            value: (string_literal))))
+      (property
+        name: (property_name)
+        value: (string_literal)))))
+
+================================================================================
+B4 negative: an unquoted ToolTipML text (AL0104, AL0219)
+================================================================================
+
+page 50100 P
+{
+    ToolTipML = DAN=Dette felt;
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (page_declaration
+    (page_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (property
+        name: (property_name)
+        (ERROR
+          (identifier)
+          (identifier)
+          (identifier))))))
+
+================================================================================
+B4 negative: a keyed whole-value #if arm holding a comparison (AL0104, AL0219)
+================================================================================
+
+table 50100 T
+{
+    CaptionML =
+#if X
+        A = 1
+#else
+        B = 2
+#endif
+        ;
+    fields { field(1; F; Integer) { } }
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (table_declaration
+    (table_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (property
+        name: (property_name)
+        (ERROR
+          (preproc_if
+            (preproc_open)
+            condition: (identifier))
+          (ERROR
+            (identifier)
+            (integer))
+          (preproc_else)
+          (identifier)
+          (integer)
+          (UNEXPECTED 'i')))
+      (fields_section
+        (fields_keyword)
+        body: (fields_body
+          (field_declaration
+            (field_keyword)
+            id: (integer)
+            name: (identifier)
+            type: (type_specification
+              (basic_type))))))))
+
+================================================================================
+B4 negative: a keyed whole-value #if arm with a trailing comma (AL0301)
+================================================================================
+
+table 50100 T
+{
+    CaptionML =
+#if X
+        ENU='a',;
+#else
+        ENU='b',;
+#endif
+    fields { field(1; F; Integer) { } }
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (table_declaration
+    (table_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (property
+        name: (property_name)
+        value: (preproc_conditional_property_value
+          (preproc_if
+            (preproc_open)
+            condition: (identifier))
+          value: (ml_value_list
+            (ml_value_pair
+              language: (identifier)
+              value: (string_literal)))
+          (ERROR)
+          (preproc_else)
+          value: (ml_value_list
+            (ml_value_pair
+              language: (identifier)
+              value: (string_literal)))
+          (ERROR)
+          (preproc_endif
+            (preproc_close))))
+      (fields_section
+        (fields_keyword)
+        body: (fields_body
+          (field_declaration
+            (field_keyword)
+            id: (integer)
+            name: (identifier)
+            type: (type_specification
+              (basic_type))))))))

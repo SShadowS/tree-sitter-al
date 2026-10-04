@@ -191,7 +191,9 @@ once. The only view is `git ls-files -s`; the fix is `git update-index --chmod=+
 | `END_KEYWORD` | `end` at any depth — named node for queries |
 | `PREPROC_SPLIT_BEGIN` | `begin` at depth > 0, immediately before `#endif` — split detection |
 | `PREPROC_SPLIT_END` | `end` at depth > 0, followed by `;` then `#elif`/`#else`/`#endif` — split detection |
-| `CALC_FORMULA_PROPERTY_NAME` | `CalcFormula` followed by `=` — the one property keyed by NAME; its value has its own grammar (see below) |
+| `CALC_FORMULA_PROPERTY_NAME` | `CalcFormula` followed by `=` — keyed by NAME; its value has its own grammar (see below) |
+| `ML_PROPERTY_NAME` | one of the compiler's 13 ML names followed by `=` — keyed by NAME, value `ml_value_list` (B4) |
+| `NAMESPACES_PROPERTY_NAME` | `Namespaces` followed by `=` — keyed by NAME, value `namespace_value_list` (B4) |
 | `DIRECTIVE_EOL` | the ONE newline ending an `#if`/`#elif` line (hidden `_directive_eol`); a lexical `/\r?\n/` took the last of a run of blank lines |
 | `NEGATIVE_INTEGER` / `NEGATIVE_DECIMAL` | `-1` / `-1.5` as one signed literal (issue #23), emitted only before `;` `,` `#` or EOF; otherwise `-` is unary minus (G7: `Visible = -1 < X;` ERRORed) |
 | `MALFORMED_DIRECTIVE` | a `#` line alc rejects (`#elsewhere`, `#regionX`, `#endif;`, `#else B`, a block comment on `#if`/`#elif`), as hidden `_malformed_directive`, which no rule takes: the line becomes an ERROR (B2). `#else`/`#elif` stay regexes; the `#` dispatch is their gatekeeper |
@@ -221,7 +223,17 @@ property: $ => seq(
 
 **Adding new property support:** Most properties work automatically via the generic rule. Only add a dedicated rule if the property has syntax beyond `Name = Expression ;`.
 
-**One property is keyed by NAME, and the scanner does it: `CalcFormula`.** Its value (`sum/count/exist/min/max/average/lookup(Table.Field [where(...)])`) is also a syntactically complete call expression when there is no `where()`, and the property name is the only thing that separates `CalcFormula = Count(X)` from `DataCaptionExpression = Caption(Rec)` — real code has both shapes. So `PROPERTY_NAME`'s lookahead emits `CALC_FORMULA_PROPERTY_NAME` for that one word, and `property` has a second arm whose value is `_calc_formula_expression` only. Before the fix for issue #21, the GLR tiebreak gave 22 no-`where` aggregates in BC.History to `property_expression`. Do not generalise this: it exists because the compiler itself parses CalcFormula's value with a different grammar, and no value-shape rule could tell the two apart.
+**Name-keyed properties: three families, and the scanner keys them.** `PROPERTY_NAME`'s lookahead reads the word once and emits a keyed token instead, falling back to `PROPERTY_NAME` where the parse state does not offer it (order: CalcFormula → ML → Namespaces → generic → decline). `property` has one arm per family, whose value has that family's grammar only.
+
+- **`CalcFormula`** → `CALC_FORMULA_PROPERTY_NAME`. Its value (`sum/count/exist/min/max/average/lookup(Table.Field [where(...)])`) is also a complete call expression when there is no `where()`, and only the name separates `CalcFormula = Count(X)` from `DataCaptionExpression = Caption(Rec)`. Before issue #21 the GLR tiebreak gave 22 no-`where` aggregates in BC.History to `property_expression`.
+- **The compiler's 13 ML names** (`CaptionML`, `ToolTipML`, `OptionCaptionML`, `PromotedActionCategoriesML`, …; the list is in `src/scanner.c`) → `ML_PROPERTY_NAME`, value `ml_value_list`. A one-pair `ENU='x'` is also a complete comparison, so before B4 every one-pair ML value was a `comparison_expression` (G9).
+- **`Namespaces`** → `NAMESPACES_PROPERTY_NAME`, value `namespace_value_list` / `namespace_pair` (`prefix:`, `uri:`).
+
+Each keyed value may also be a whole-value `#if` whose arms are that family's list again, with the `;` after `#endif` or inside every arm (`preproc_conditional_property_value`). The rule for adding a family:
+
+> Key a name only when the compiler parses that name's value with its own grammar *and* that grammar cannot be told apart from an expression in ours. The keyed list comes from the compiler's tables, never from a naming pattern such as "ends in ML".
+
+`FooML` and `CaptionMLX` stay generic, and fixtures pin that.
 
 ## Keyword Architecture
 
