@@ -4,6 +4,24 @@
 after a gpt-6.1-sol review: 9 findings, all verified against the decompiled compiler and the
 grammar before they were adopted (§9). Revised again after a second round of that review: 6
 findings, all adopted (§9). This revision 3 awaits review.
+**Revision 4 (2026-10-05, Task 1 compiler evidence).** Three probe results amend this spec.
+Where an older passage disagrees, this block wins:
+1. **Segments.** alc accepts `begin`, `end` and `then` as relation-target segments, and rejects
+   `if`, `else` and `where`. The segment rule is therefore "a word the property-value lexer
+   makes an identifier", not the 101-kind `IsKeywordAllowedIdentifier` list.
+   `_qualified_name_segment` is `identifier | quoted_identifier`, with no keyword list. In the
+   keyed states, the only keyword tokens tree-sitter's keyword extraction can produce are `if`
+   (value start) and `where` / `else` (after a target), which matches alc's rejections. The
+   facts file stays: the containment test uses it as a word list.
+2. **Empty value and integer targets.** `TableRelation = ;` and the four integer forms are
+   rejected (AL0107). The keyed arm's value is required, and all five are negatives.
+3. **A value-start `#if` followed by a shared `else` continuation** is accepted
+   (`#if X if (..) A #else if (..) B #endif else C`, split and flat). It parses as
+   `table_relation_value(preproc_conditional_table_relation ..., else_table_relation_fragment
+   ...)`, the mirror of the existing `relation preproc_conditional_table_relation` split. It
+   costs one declared conflict between that reading and the whole-value wrapper, decided at the
+   token after `#endif`. It ERRORs today, and has 0 production sites.
+
 **Roadmap row:** B5 (`docs/superpowers/plans/2026-09-28-roadmap-remaining-work.md`).
 **Resolves:** deferred-work items 13 (G10) and 15. It also fixes the relation target shape, which
 was found while writing this spec (§1, case 4).
@@ -197,11 +215,7 @@ production sites. §5.5 replaces it with a per-site manifest.
      $._qualified_name_segment,
      repeat(seq('.', $._qualified_name_segment)),
    )),
-   _qualified_name_segment: $ => choice(
-     $.identifier,
-     $.quoted_identifier,
-     alias($._keyword_allowed_identifier, $.identifier),
-   ),
+   _qualified_name_segment: $ => choice($.identifier, $.quoted_identifier),   // rev 4
    // The compiler's IsKeywordAllowedIdentifier set, one bare kw() per spelling, generated
    // from tools/alc_facts/keyword-allowed-identifiers.txt.
    _keyword_allowed_identifier: $ => choice(kw('system'), kw('table'), /* ... all 101 */),
@@ -238,7 +252,7 @@ production sites. §5.5 replaces it with a per-site manifest.
      ';'
    ),
    ```
-   The empty value (`TableRelation = ;`) stays only if the §5.1 probe accepts it.
+   Rev 4: the value is required (`TableRelation = ;` is AL0107), so drop the `optional()`.
 4. **The keyed value, written out.** Root and continuation are separated by structure:
    ```javascript
    // A value-start relation: never begins with #if.
@@ -275,7 +289,7 @@ production sites. §5.5 replaces it with a per-site manifest.
      wrapper. Arms are recursive, so a nested whole value is a nested
      `preproc_conditional_property_value`.
    - **Value-start `#if` followed by a continuation**, e.g. `#if X if (...) A #else if (...) B
-     #endif else C`, has no derivation under this design. alc is probed first (§5.1). If alc
+     #endif else C`: superseded by rev 4 item 3, because alc accepts it. Original text: it has no derivation under this design. alc is probed first (§5.1). If alc
      accepts it, this item is redesigned before any grammar change.
 5. **`_property_value`** loses `$.table_relation_value`.
 6. **`_property_with_terminator_in_if` and `_property_whole_value_in_if`** lose the generic
@@ -337,7 +351,8 @@ TableRelation = #if ... #endif [;]
                 value: (table_relation_value ...) | (preproc_conditional_property_value ...)
                 ...
                 (preproc_endif ...)))
-TableRelation = ;              -> (property name: (property_name))   -- only if alc accepts it (§5.1)
+TableRelation = #if X if (..) A #else if (..) B #endif else C;
+  -> (table_relation_value (preproc_conditional_table_relation ...) (else_table_relation_fragment ...))   -- rev 4
 <other name> = A.B;            -> (property name: (property_name) value: (property_expression (member_expression ...)))
 ```
 
@@ -676,3 +691,6 @@ decompiled `ObjectParser.cs` and the grammar before it was adopted:
 6. **Census incomplete.** It now has `check` and `delta` modes, before and after inventories
    with byte-range site IDs, runtime segment checks, disjoint comparison roots and more
    mutations (§5.5).
+
+**Round 3** (Task 1 compiler evidence, 2026-10-05). These are not review findings. They are probe
+verdicts, recorded as revision 4 at the top of this spec.
