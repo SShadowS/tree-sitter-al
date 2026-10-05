@@ -50,7 +50,9 @@ public API — a change to node structure or field names is a **major** bump.
     unfielded prefix, not an `option_member_list`; the Permissions empty prefix and an empty-value
     arm at a permissionset; the ML, Namespaces and Implementation empty-prefix splits (two
     properties, now one); the ML, Namespaces and three-group link `;`-inside splits (now one
-    property with a sequence); the item 35 unquoted run (one property with a sequence); a suffix
+    property with a sequence), and likewise the generic (`Visible = #if X A = B; #endif #if not
+    X C = D; #endif`), Implementation and Permissions `;`-inside runs (the Permissions base tree
+    was a list of element conditionals, at a codeunit and a permissionset); the item 35 unquoted run (one property with a sequence); a suffix
     decoration plus `;` is owned by the property (base left it unterminated); directive-only empty
     groups lose `value:` where no core remains; G11 now applies to ML, Namespaces, TableRelation
     and CalcFormula, so an arm lacking its own `;` with no `;` after the run is an ERROR where
@@ -58,6 +60,15 @@ public API — a change to node structure or field names is a **major** bump.
   - A sequence is a one-reading construct: it assumes at most one group supplies the value in a
     configuration. Configuration-dependent property boundaries are refused by the oracle as
     `lowering:one-reading` and classified debt (roadmap B12, deferred-work item 36).
+  - Intended, with a known wrong tree: **continuation absorption** (spec 3.4 amendment 7). A
+    non-terminated `;`-inside group followed by a conditional block whose arms also parse as
+    properties is read as a continuation of the value: `Caption = #if X 'a'; #endif #if Y
+    Editable = false; #endif` is one property with a sequence, where the base gave `Caption`
+    and a conditional `Editable` property. The tree is wrong in the configurations where the
+    earlier group already ended the property (X=1,Y=1: two properties). It is a one-reading
+    guess, chosen because without condition evaluation it cannot be told from the ML and link
+    continuations this change fixes (`ENU='b';` parses as a property too); the oracle refuses
+    those configurations as `lowering:one-reading`, debt(B12). 0 sites in the four corpora.
   - Not supported, still ERRORs, owned by roadmap B13 (deferred-work item 37): runs whose groups
     are fragments of one value (generic `;`-after runs, `Page` + `"P"`, `F` + `(1)`, ML pairs
     joined by `,` across groups, comma-free `OptionMembers` alternatives, and the others in

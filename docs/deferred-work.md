@@ -1343,13 +1343,28 @@ X defined is `Visible = true; Caption = 'x';`, two properties. X undefined is `V
 configuration's flat tree. The grammar reads a run as one value (a sequence), the only reading under which every arm parses,
 so the tree is exact for the configurations consistent with that reading and the oracle refuses the others.
 
+**Continuation absorption** (spec 3.4 amendment 7) is the same residue seen from the other side. A non-terminated `;`-inside
+group followed by a conditional block whose arms also parse as properties is read as a continuation of the value:
+`Caption = #if X 'a'; #endif #if Y Editable = false; #endif` is one sequence, and the complementary three-group run
+(`Caption = #if X 'a'; #endif #if not X 'b'; #endif #if Y Visible = true; #endif`) one three-group sequence. That is a
+one-reading guess, wrong in the Y=1 configurations (there the earlier group already ended the property, and the last group
+is a property of its own); it is chosen because without condition evaluation it cannot be told from the ML and link
+continuations B11 fixes (`ENU='b';` parses as a property too).
+
 **Evidence:** alc accepts each configuration flat (`tools/alc_probe/cases/value-runs/boundary-complementary-three.al`,
-`boundary-mixed-after.al`, `boundary-visible-caption.al`: accept in every configuration). Fixtures:
-`test/corpus/property_value_run_test.txt` ("configuration-dependent boundary (spec 3.4)", the complementary three-group run).
-Oracle: a `;`-inside site whose configuration selects no terminator (`Caption = #if X 'a'; #endif #if Y #endif ;` at X=0, which
-lowers to `Caption = ;`) is a property-level hook in `tools/config_oracle/engine.py`, refused as `lowering:one-reading` and
-classified debt(B12) in `tools/config_oracle/fixture-classes.tsv` (5 records; `production-classes.tsv` has none, since the
-corpora hold no such site). It is never a discrepancy.
+`boundary-mixed-after.al`, `boundary-visible-caption.al`: accept in every configuration;
+`continuation-absorption-editable.al`: accept with X defined). Fixtures:
+`test/corpus/property_value_run_test.txt` ("configuration-dependent boundary (spec 3.4)", the complementary three-group run),
+`test/corpus/property_value_run_review_test.txt` (the `Editable` absorption case).
+Oracle, debt(B12) records in `tools/config_oracle/fixture-classes.tsv` (`production-classes.tsv` has none, since the corpora
+hold no such site), never a discrepancy:
+- **2 hook records (b1).** A `;`-inside site whose configuration selects no terminator (`Caption = #if X 'a'; #endif #if Y
+  #endif ;` at X=0, which lowers to `Caption = ;`) is refused by the property-level hook `_check_site_boundary` in
+  `tools/config_oracle/lowering/engine.py` as `lowering:one-reading`. The hook decides from the selection: a selected
+  terminator that does not end the property is `contract-shape`, a lowering defect, never this debt.
+- **4 `value_run_select` records.** A second value, or a value after a selected terminator, in a sequence
+  (`assemblers.value_run_select`): the Visible/Caption boundary (X=1), the complementary three-group run (X=0,Y=1 and
+  X=1,Y=1; reason "one-reading guess, wrong in Y=1 configurations") and the `Editable` absorption (X=1,Y=1).
 Ruling-1 configurations (a terminated group, an empty block, then `;`) are `invalid-config` instead: the oracle refuses them as
 `reference-error` and alc rejects them (AL0104, AL0124).
 
@@ -1399,6 +1414,12 @@ in the scanner would lift it, as it did for the five other families.
 
 The arm-site shape of a nested group, a decoration, then `;` is NOT a gap: it parses and is pinned
 (`nested-empty-semi-arm-*.al` probes, accepted for the configurations where the arm is not active).
+
+**Deferred by the controller (B11 final review, Minor 1): `OptionMembers` adjacency over-acceptance.**
+`OptionMembers = #if X A, #endif #if Y B, #endif C D;` parses clean at head (an ERROR at the base library) although it is
+invalid AL in every configuration (`C D` are two members without a separator). The structural over-acceptance comes from the
+entirely conditional `OptionMembers` form (spec 3.1 step 3). The oracle catches it: every configuration's flat parse ERRORs, so
+each is `reference-error:error`, never a silent pass (measured 2026-10-06; no fixture, 0 production sites). Keying `OptionMembers` by name (above) is where it would be fixed.
 
 **Next step:** a generic prefix/suffix-compatible value state set, or per-family keying, whichever the state budget allows (D1 first).
 

@@ -247,6 +247,23 @@ ends at the terminated group. The empty block and the `;` are ordinary content: 
 whose sequence ends at the terminated group, the block as body content, then an
 `empty_statement`. Fixtures: CaptionML, CalcFormula, and ToolTipML at an action-area host.
 
+**Execution amendment (final review, §3.2 and §4.2): a suffix empty group after a plain value.**
+The row "directive-only empty groups between the core and the `;`" holds for the generic, ML,
+Namespaces and CalcFormula sites. Four families keep an older reading, measured at the base and
+head libraries (2026-10-06):
+- **Implementation** `Implementation = I = C #if X #endif ;` and **link**
+  `SubPageLink = A = field(B) #if X #endif ;`: the empty group stays the list's element
+  conditional (`preproc_conditional_impl_values` / `preproc_conditional_link_values`), the base
+  tree. Link is the `listValue` exception of §4.1's generator; Implementation reaches the same
+  through its own list.
+- **Permissions** `Permissions = tabledata A = R #if X #endif ;`: likewise a
+  `preproc_conditional_permissions` element, the base tree. For the `;`-after placement
+  Permissions behaves as a list family (§3.1 step 3), element conditionals included.
+- **TableRelation** `TableRelation = Customer #if X #endif ;`: the empty group stays inside
+  `table_relation_value` as a `preproc_conditional_table_relation`, the base tree.
+- **`OptionMembers`** `OptionMembers = A,B #if X #endif ;`: the empty group is an unfielded
+  property decoration (base: an ERROR).
+
 At an arm site the core is required: an arm is absent, or holds a value (no bare-`;` arm).
 B11 narrows no family's optionality.
 
@@ -314,6 +331,15 @@ at the base library and pinned by a fixture. Every one has 0 sites in the four c
    conditional** (`Permissions = #if X #if Y #endif ; #else tabledata A = R; #endif`).
 3. **The ML `;`-inside split, the three-group link `;`-inside split and the Namespaces
    `;`-inside split become one property with a sequence.** The base gave clean, silent splits.
+   The final review measured three more, each pinned in
+   `test/corpus/property_value_run_review_test.txt`:
+   - generic `Visible = #if X A = B; #endif #if not X C = D; #endif` (base: `Visible` with the
+     first group, then a conditional `C = D` property);
+   - Implementation `Implementation = #if X I = C; #endif #if not X J = D; #endif` (base: the
+     same split);
+   - Permissions `Permissions = #if X tabledata A = R; #endif #if not X tabledata B = R; #endif`
+     at a codeunit and at a permissionset (base: one `tabledata_permission_list` of two element
+     conditionals, each holding its `;`; now a sequence of two groups).
 4. **A suffix decoration plus `;` is owned by the property** for `;`-after single groups
    (`CaptionML = #if X ENU='a' #else ENU='b' #endif #if Y #endif ;`,
    `TableRelation = #if X Cust."No." #endif #if Z #endif ;`). The base left the property
@@ -327,6 +353,21 @@ at the base library and pinned by a fixture. Every one has 0 sites in the four c
    `Caption = #if X 'a', #endif #if not X 'b' #endif ;` is an `option_member_list` of element
    conditionals (`option_member_list` is part of the generic `_property_value`; consistent with
    §3's `,`-edge rule).
+7. **Continuation absorption** (final review; controller ruling: keep the grammar, name it).
+   A non-terminated `;`-inside group followed by a conditional block whose arms also parse as
+   properties is read as a continuation of the value (§4.3, `prec.dynamic`):
+   `Caption = #if X 'a'; #endif #if Y Editable = false; #endif` is one property with a
+   two-group sequence, where the base gave `Caption` plus a conditional `Editable` property.
+   **Effect: the tree is wrong in every configuration where the earlier group already ended
+   the property** (X=1,Y=1 here: `Caption = 'a'; Editable = false;` is two properties). It is
+   a one-reading guess, chosen because without condition evaluation it cannot be told from
+   the ML and link continuations B11 exists to fix (`CaptionML = #if X ENU='a'; #endif #if not X
+   ENU='b'; #endif`, whose `ENU='b';` also parses as a property; item 35 is the link
+   equivalent). The oracle refuses the wrong configurations as
+   `lowering:one-reading`, classified debt(B12) (item 36). Pinned:
+   `test/corpus/property_value_run_review_test.txt` (first case) and the complementary
+   three-group case of `property_value_run_test.txt`; alc probe
+   `tools/alc_probe/cases/value-runs/continuation-absorption-editable.al`.
 
 **No contract migrations.** The link and Implementation `;`-after runs keep their element
 conditionals (§3.1 step 3).
@@ -409,6 +450,10 @@ Visible =
 
 This is `Visible` (one group), then a conditional `Caption` property, then an `empty_statement`.
 
+**Execution amendment (final review).** A suffix empty group after a plain value keeps its base
+reading in Implementation, link, Permissions and TableRelation, and is a decoration in
+`OptionMembers`; see the §3.2 amendment.
+
 In step 4, an arm `;` in a non-last, non-terminated group makes the boundary
 configuration-dependent (§3.4). The tree is the sequence. The oracle refuses the configurations
 in which a later group is active after an earlier arm's `;` (§5.3).
@@ -431,7 +476,9 @@ in which a later group is active after an earlier arm's `;` (§5.3).
   also parse as properties.
   - It is the only reading under which an arm like `false;` parses at all (§3.4).
   - In the exclusive-condition case it is every configuration's reading.
-  - Configurations where it is not are refused by the oracle as one-reading (§3.4).
+  - Configurations where it is not are refused by the oracle as one-reading (§3.4). This
+    includes a following block whose arms are themselves properties, the continuation
+    absorption of §3.4 amendment 7.
 - **The last core-bearing group may be terminated or not.** Every earlier one is
   non-terminated.
 - **The termination witness:** the run holds at least one present, terminated arm.
@@ -1027,5 +1074,8 @@ carry the detail.
     `afterSequenceRules` generator).
 28. The two BCApps-29.0 visible-ERROR files are pre-existing and outside B11
     (`docs/bc29-parse-gaps.md`).
+29. Final review: continuation absorption is kept and named (§3.4 amendment 7), not changed in
+    the grammar.
+30. Final review Minor 1 (`OptionMembers` adjacency over-acceptance) is deferred to B13 (item 37).
 
 The per-rule precedence audit is `docs/b11-precedence-audit.md`.
