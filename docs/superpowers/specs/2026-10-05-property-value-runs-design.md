@@ -1,8 +1,9 @@
 # B11: property values made of a run of `#if` groups
 
-**Status:** revision 6, 2026-10-05. Revision 5 had a fifth gpt-6.1-sol round: no blocker,
-4 majors and 1 minor, all verified against the code and adopted (§9, round 5). Earlier rounds:
-§9, rounds 1-4. This revision awaits review.
+**Status:** revision 7, 2026-10-05. Six gpt-6.1-sol rounds; the sixth approved the design within
+its B11 scope, with no blocker or major, and its 5 minor edits are adopted (§9, round 6). Every
+finding of every round was verified against the code or a live parse before adoption. This
+revision awaits the user's review.
 **Roadmap row:** B11, new (`docs/superpowers/plans/2026-09-28-roadmap-remaining-work.md`).
 Absorbs deferred-work items 33 and 35, and the ML empty-prefix split recorded under item 33
 during B8.
@@ -89,7 +90,7 @@ not this scan.
   - an *arm site*, from an arm's directive header to the arm's `;` or the next directive.
 - The *run* is the maximal sequence of consecutive `#if … #endif` groups at a value site.
 
-**Group predicates.** These are three separate predicates, each carried by its own production
+**Group predicates.** These are four separate predicates, each carried by its own production
 state:
 - **directive-only empty:** recursively, every arm is absent or holds only directive-only
   empty groups. No value, no `;`. Only these are decorations, lowered to nothing.
@@ -104,8 +105,10 @@ Syntactic value presence and value contribution are different. A group whose onl
 empty-value terminated arms (`#if X #if Y #endif ; #endif`) is core-bearing and contributes no
 value. It lowers to no value node plus its terminator (§5.3).
 
-**Fragments are not groups of a run.** An arm must parse as a complete value of the family, or
-as an empty-value terminated arm, for its group to take part in a run. Fragment arms never
+**Fragments are not groups of a run.** This gate applies to *whole-value group candidates*
+only, not to the element conditionals of step 3, whose arms may begin or end with the list's
+joining `,`. An arm must parse as a complete value of the family, or as an empty-value
+terminated arm, for its group to take part in a run. Fragment arms never
 form a whole-value group. They are either the existing continuation forms (TableRelation's
 relation splits, §4.4), or an ERROR, as today. This is decided before §3.1's step 1. Examples:
 - TableRelation `."No."`, or `where(...)` alone;
@@ -200,7 +203,7 @@ and the enclosing group at an arm site.
 | either | an arm's own `;` | its group, unfielded, outside `value:`, as today |
 | `;` inside the arms | directive-only empty groups after the last core-bearing group | **not** the site: the site ends at that group's terminated arms, so they are ordinary content after it, parsed as today |
 | either | directive-only empty groups before the core | the site's node, unfielded |
-| either, directly after the run | an unconditional `;` | the property, unfielded, as today (§3.1). Mixed placement makes it standalone per configuration |
+| either, directly after the run | an unconditional `;` | the site's node, unfielded, as today (§3.1). Configured lowering hoists it to the property, where mixed placement makes it standalone per configuration |
 | either, after a **terminated** group and a following block | anything after that block, including an unconditional `;` | **not** the site: every configuration ended the value at the group, so the block and what follows are ordinary content (the §4.2 example) |
 
 **The core is optional exactly where the family's value is optional today.** The matrix is read
@@ -324,7 +327,9 @@ Every comma and every ordinal survives in the tree.
 
 ### 4.2 `;` after the last `#endif`
 
-Per family (§3.1):
+This is the `;`-after placement: some arm lacks its own `;`, and the unconditional `;` after the
+run ends the value. A run whose arms all end in `;` is step 2 even when a `;` follows it
+(§3.1). Per family:
 - **List families:** element conditionals (step 3).
 - **CalcFormula, TableRelation, ML and Namespaces:** the site is `prefix* core? suffix* ';'`,
   where `core` is a plain value, a group, or `sequence = group (empty* group)+` (step 4). Arms
@@ -391,8 +396,9 @@ task, three spikes are built: generic, link and ML. ML has its own keyed rules.
   - item 35.
 - **ML:** step 4 against step 5 (a comma-edge arm).
 
-**Delayed decisions.** The placement is known only at the end of the run (a `;` after the last
-`#endif`, or not), so the spikes keep the `;`-inside and `;`-after readings alive across the
+**Delayed decisions.** Placement is decided by arm termination (§3.1), which is known only once
+every arm of the run has been read. The token after the last `#endif` decides suffix ownership
+and continuation. So the spikes keep the `;`-inside and `;`-after readings alive across the
 whole run. They also keep continuation and the end of the site alive. No decision may commit at
 the first group.
 
@@ -576,7 +582,21 @@ a family-specific, hole-aware check:
 - every `,` and every ordinal is preserved;
 - the one-member unwrap (`option-member-list-unwrap`) still applies.
 
-Link and Implementation keep the strict `item (, item)*` check (`_check_alternation`).
+Link and Implementation use the strict `item (, item)*` check (`_check_alternation`).
+
+**Implementation list-run lowering.** `preproc_conditional_impl_values` is registered
+`unsupported` today (`contracts.py`), and is absent from `LIST_RUN_TYPES` (`engine.py`). B11
+gives it:
+- a branch-select handler;
+- its recursive arm set;
+- its host registrations;
+- `LIST_RUN_TYPES` membership, so the configured list is spliced and the strict validator runs.
+
+**Strict validators against the flat grammar.** `_impl_value_run` and the link list accept a
+trailing `,` that the strict validator refuses (the link case is already recorded in
+`tools/deliberate-negatives.txt`). A refusal (`list-separator`) is cannot-validate. It is
+classified invalid-config only with alc evidence that the configured text is rejected. The
+probes (§5.1) cover missing, leading and trailing separators for link and Implementation.
 
 **Emptied lists: `list-value-empty`.** A step 3 run can select nothing in a configuration, in
 any of the three list families:
@@ -885,3 +905,15 @@ New: 4 majors and 1 minor, each verified before adoption:
    families, at property and nested whole-value arm sites. Comma-only `OptionMembers` values are
    kept (§5.3).
 5. **Spike count was stale (minor).** Adopted: three spikes, generic, link and ML (§4.3).
+
+**Round 6** (revision 6). Every round-5 finding was resolved in design. The reviewer
+**approved the design within its stated B11 scope**, with no blocker or major. It raised 5
+minor consistency edits, all adopted:
+1. §4.2 and the spike's "Delayed decisions" now say that arm termination decides placement.
+2. The §3.2 row for a directly following `;` names the site's node, not `property`.
+3. The Implementation lowering requirements are restored to §5.3. Revision 6's edit script had
+   inserted them and then replaced the paragraph around them, so they survived only in this
+   record.
+4. The fragment gate is scoped to whole-value group candidates, not step 3's element
+   conditionals.
+5. "Three predicates" is now "four".
