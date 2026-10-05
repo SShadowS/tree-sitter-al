@@ -134,7 +134,11 @@ table 361 "Analysis by Dim. Parameters"
                 value: (string_literal))
               (property
                 name: (property_name)
-                value: (quoted_identifier))))
+                value: (table_relation_value
+                  (table_relation_expression
+                    (simple_table_relation
+                      target: (qualified_name
+                        (quoted_identifier))))))))
           (field_declaration
             (field_keyword)
             id: (integer)

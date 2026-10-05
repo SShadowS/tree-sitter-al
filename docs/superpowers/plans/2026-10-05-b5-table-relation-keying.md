@@ -131,7 +131,7 @@ from tools.alc_facts import extract
 
 def test_keyword_set_has_the_compiler_size_and_known_members():
     kws = extract.load_keywords()
-    assert len(kws) == 101
+    assert len(kws) == 99   # 101 IsKeywordAllowedIdentifier kinds, 99 distinct texts: field, filter twice
     for w in ("system", "table", "tabledata", "page", "codeunit", "field", "type",
               "filter", "order", "enum", "namespace", "group"):   # group = PageGroupKeyword
         assert w in kws
@@ -280,7 +280,7 @@ python -m tools.alc_facts.extract --dll "$ALC_DLL"
 python -m pytest tools/alc_facts/tests/test_extract.py -q
 ```
 
-Expected: `keywords=101`, and both tests pass. If the keyword count is not 101, the switch
+Expected: `keywords=99` (101 kinds, 99 distinct texts), and both tests pass. If the count is not 99, the switch
 parse is wrong. Fix the extractor; never edit the data file by hand.
 
 - [ ] **Step 4: Write the alc_probe cases**, one file per §5.1 item, under
@@ -737,7 +737,11 @@ Today: relation-shape <N>, relation-outside <M> (the D1/D2 defects).
   - `ValidateTableRelation = false;` and `TestTableRelation = false;` as generic boolean
     properties;
   - `AutoFormatExpression = Rec."Currency Code";` as `property_expression`;
-  - `AutoFormatExpression = CustLedgEntry[6]."Currency Code";`.
+  - `AutoFormatExpression = CustLedgEntry[6]."Currency Code";`;
+  - the conditional head with a shared tail, from the Task 1 probe:
+    `#if X if (F2 = const(1)) Customer #else if (F2 = const(2)) Vendor #endif else "G/L Account";`
+    → `table_relation_value(preproc_conditional_table_relation ..., else_table_relation_fragment ...)`;
+  - segments that are words alc accepts: `Begin."No."`, `Then`, `End."No."`, `Table."No."`.
 
 Run: `./tools/ts-lock.sh tree-sitter test --file-name table_relation_keying_test.txt`
 Expected: FAIL on the D1, D2, D3, G10 and whole-value cases.
@@ -776,27 +780,33 @@ Expected: FAIL on the D1, D2, D3, G10 and whole-value cases.
 // externals: append
     $._table_relation_property_name, // [17] `TableRelation` followed by = (B5)
 
-// property: a fourth keyed arm after Namespaces. Drop optional() if Task 1 found
-// `TableRelation = ;` rejected.
+// property: a fourth keyed arm after Namespaces. No optional(): Task 1 found
+// `TableRelation = ;` rejected by alc (AL0107), so it is a negative (Ruling: controller, Task 1).
       seq(
         field('name', alias($._table_relation_property_name, $.property_name)),
         '=',
-        optional(field('value', $._table_relation_property_value)),
+        field('value', $._table_relation_property_value),
         ';'
       ),
 
     // TableRelation's value is the compiler's relation grammar (ParseTableRelationPropertyValue:
-    // optional if(...), ONE ParseQualifiedName target, optional where, optional else). A value
-    // never starts with #if as a relation: a value-start #if is the whole-value wrapper, so
-    // each input has one derivation (spec 2026-10-04 §3.2 item 4).
+    // optional if(...), ONE ParseQualifiedName target, optional where, optional else).
+    // A value-start #if is the whole-value wrapper, UNLESS a shared `else` continuation follows
+    // #endif (alc accepts `#if X if (..) A #else if (..) B #endif else C`, Task 1 probe):
+    // then it is the relation's conditional head, mirroring the existing
+    // `relation preproc_conditional_table_relation` split (spec 2026-10-04 §3.2 item 4, rev 4).
     _table_relation_head: $ => choice($.simple_table_relation, $.if_table_relation),
     _table_relation_property_value: $ => choice(
       alias($._table_relation_rooted, $.table_relation_value),
       alias($._table_relation_whole_conditional, $.preproc_conditional_property_value),
     ),
-    _table_relation_rooted: $ => prec.right(5, seq(
-      alias($._table_relation_head, $.table_relation_expression),
-      optional($.preproc_conditional_table_relation),
+    _table_relation_rooted: $ => prec.right(5, choice(
+      seq(
+        alias($._table_relation_head, $.table_relation_expression),
+        optional($.preproc_conditional_table_relation),
+      ),
+      // the conditional head with a shared else tail
+      seq($.preproc_conditional_table_relation, $.else_table_relation_fragment),
     )),
     _table_relation_whole_conditional: $ => keyedValueConditional($,
       seq(field('value', $._table_relation_property_value), optional(';'))),
@@ -811,38 +821,30 @@ Expected: FAIL on the D1, D2, D3, G10 and whole-value cases.
       optional(prec(25, $.where_clause)),
     )),
 
-    // The relation target, as alc's ParseQualifiedName reads it: identifier-token segments,
-    // where an identifier token is IdentifierToken or one of the 101 IsKeywordAllowedIdentifier
-    // keywords (tools/alc_facts/keyword-allowed-identifiers.txt). Segments carry no field:
-    // which one is the table needs symbol resolution (spec 2026-10-04 §3.2 item 1).
+    // The relation target, as alc's ParseQualifiedName reads it: identifier-token segments.
+    // In the keyed TableRelation states the only keyword tokens are `if` (value start) and
+    // `where` / `else` (after a target), so every other word -- `System`, `Table`, `Begin`,
+    // `Then` -- extracts as `identifier`, matching alc (Task 1 probes: begin/end/then and the
+    // 36 keyword-segment cases accepted; if/else/where rejected). Segments carry no field:
+    // which one is the table needs symbol resolution (spec 2026-10-04 §3.2 item 1, rev 4).
     qualified_name: $ => prec.right(seq(
       $._qualified_name_segment,
       repeat(seq('.', $._qualified_name_segment)),
     )),
-    _qualified_name_segment: $ => choice(
-      $.identifier,
-      $.quoted_identifier,
-      alias($._keyword_allowed_identifier, $.identifier),
-    ),
+    _qualified_name_segment: $ => choice($.identifier, $.quoted_identifier),
 ```
 
-  **`_keyword_allowed_identifier`** is generated from the facts file by a module-level helper
-  at the top of `grammar.js`:
+  **The conditional head needs one declared conflict.** At a value-start `#if` the parser
+  cannot know whether this is a whole value (`preproc_conditional_property_value`) or a
+  conditional head (`preproc_conditional_table_relation` + `else` tail) until the token after
+  `#endif`. Generation will report it. Add exactly that conflict (the two conditional rules as
+  the generator names them) with a comment citing the Task 1 probe and spec §3.2 item 4. If the
+  generator asks for a different or broader conflict, STOP and report the exact message.
 
-```javascript
-const KEYWORD_ALLOWED_IDENTIFIERS = require('fs')
-  .readFileSync(require('path').join(__dirname, 'tools/alc_facts/keyword-allowed-identifiers.txt'), 'utf8')
-  .split(/\r?\n/).filter(l => l && !l.startsWith('#'));
-// ... in rules:
-    _keyword_allowed_identifier: $ => choice(...KEYWORD_ALLOWED_IDENTIFIERS.map(w => kw(w))),
-```
-
-  If `tree-sitter generate` refuses `require('fs')`, use the fallback. Check that it refuses by
-  running generate, not by assumption. The fallback inlines the 101 `kw('...')` calls,
-  generated by
-  `python -c "from tools.alc_facts.extract import load_keywords as k; print(', '.join(f\"kw('{w}')\" for w in k()))"`.
-  A comment above the list then names the facts file, and Task 6 adds a pytest that compares
-  the inlined list with `load_keywords()`.
+  **Keyword extraction is what makes `System` an identifier here.** Verify it rather than
+  assume it: the fixture's `System.Environment.Company.Name`, `Begin."No."`, `Table."No."`
+  and `Then` cases must give `identifier` segment leaves. A keyword token that does steal a
+  segment word in these states is a STOP: report the word and the parse state.
 
   **The other edits, in the same step:**
   - `_property_value`: delete `$.table_relation_value,`.
@@ -923,7 +925,8 @@ Expected: exit 0.
   first command, see FAIL, then revert.
 
 - [ ] **Step 8: Negative fixture**, `test/corpus/table_relation_keying_negative_test.txt`, with
-  one case per Task 1 reject. Each expected tree is written by hand, as it really comes out,
+  one case per Task 1 reject. That includes `TableRelation = ;` and the four integer forms
+  (all AL0107 in Task 1), and `If`, `Else` and `Where` as segment words. Each expected tree is written by hand, as it really comes out,
   with the ERROR inside the value. A reject must never come out as a clean
   `property_expression` or a clean target.
 
@@ -991,13 +994,13 @@ grep -n "ts_external_scanner_states" -A70 src/parser.c | head -100
 
   If a real field host lacks the keyed token, give it the keyed arm. Do not paper over it.
 
-- [ ] **Step 2: Keyword containment (Review focus 1).** A behavioral proof over all 101
-  words: no generic property value may parse differently from the pre-change library. Create
+- [ ] **Step 2: Keyword containment (Review focus 1).** A behavioral proof over every word
+  in `keyword-allowed-identifiers.txt`: no generic property value may parse differently from the pre-change library. Create
   `tools/tests/test_keyword_containment.py`:
 
 ```python
-"""B5 Review focus 1: the 101 keyword-allowed segment tokens never leak into a generic
-property value (the issue #27 class). Every generic placement must give the same tree as the
+"""B5 Review focus 1: the keyed TableRelation states never change how a generic
+property value lexes these words (the issue #27 class). Every generic placement must give the same tree as the
 pre-B5 library."""
 import os
 from pathlib import Path
@@ -1024,7 +1027,7 @@ def test_generic_value_tree_unchanged(word):
 ```
 
 Run: `B5_BASE_LIB="$SCRATCH/al_base.dll" ./tools/ts-lock.sh python -m pytest tools/tests/test_keyword_containment.py -q`
-Expected: 101 passed.
+Expected: 99 passed.
 
   Also write the containment fixture, so `tree-sitter test` pins the shape without the base
   library. Generic properties whose value is one of these words must stay `identifier` leaves:

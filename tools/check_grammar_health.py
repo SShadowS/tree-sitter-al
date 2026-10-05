@@ -38,7 +38,11 @@ BASELINE_FILE = Path(__file__).resolve().parent.parent / '.grammar_baseline.json
 # the 32nd, the preproc_conditional_property_value alias target, G6; the 33rd,
 # the MALFORMED_DIRECTIVE external, B2, which no rule references at all; the 34th,
 # the SCANNER_HOOK external, B2 fix round 1, referenced only from `extras`; the
-# 35th and 36th, the ML_PROPERTY_NAME and NAMESPACES_PROPERTY_NAME externals, B4):
+# 35th and 36th, the ML_PROPERTY_NAME and NAMESPACES_PROPERTY_NAME externals, B4; the
+# 37th to 45th, B5: externals `_table_relation_property_name` and six more already
+# counted by shape 1, plus the alias-only names `table_relation_value` and
+# `preproc_conditional_property_value` of shape 3 -- all nine re-verified against
+# grammar.js in the B5 final review as false positives):
 #
 #   1. External scanner tokens (17) — declared in `externals: $ => [...]` and
 #      never given a `name: $ =>` rule body, e.g. `property_name`

@@ -38,8 +38,9 @@ table 50100 "IC Setup"
                 (table_relation_value
                   (table_relation_expression
                     (simple_table_relation
-                      (quoted_identifier)
-                      (identifier)
+                      (qualified_name
+                        (quoted_identifier)
+                        (identifier))
                       (where_clause
                         (where_keyword)
                         (where_conditions
@@ -89,8 +90,9 @@ table 50101 "Workflow Rule"
                 (table_relation_value
                   (table_relation_expression
                     (simple_table_relation
-                      (identifier)
-                      (quoted_identifier)
+                      (qualified_name
+                        (identifier)
+                        (quoted_identifier))
                       (where_clause
                         (where_keyword)
                         (where_conditions
@@ -139,8 +141,9 @@ table 50102 "Test Filter"
                 (table_relation_value
                   (table_relation_expression
                     (simple_table_relation
-                      (quoted_identifier)
-                      (identifier)
+                      (qualified_name
+                        (quoted_identifier)
+                        (identifier))
                       (where_clause
                         (where_keyword)
                         (where_conditions
@@ -189,7 +192,8 @@ table 50103 "Integration Setup"
                 (table_relation_value
                   (table_relation_expression
                     (simple_table_relation
-                      (quoted_identifier)
+                      (qualified_name
+                        (quoted_identifier))
                       (where_clause
                         (where_keyword)
                         (where_conditions

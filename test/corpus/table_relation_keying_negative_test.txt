@@ -1,0 +1,346 @@
+; B5 negatives: every input alc 18.0.41 rejects in a TableRelation value (Task 1
+; probes, tools/alc_probe/cases/table-relation-keying/): the empty value and the four
+; integer forms (decide-empty-value.al, decide-int-18.al, decide-int-18-field.al,
+; decide-int-field-segment.al, decide-int-where.al; all AL0107), and `if`, `else` and
+; `where` as a segment word (kw-if-first-rejected.al, kw-else-first-rejected.al,
+; kw-where-first-rejected.al). Each must carry an ERROR or MISSING node; none may
+; come out as a clean property_expression or a clean target. Expected trees are
+; the `tree-sitter parse` output with positions removed, read case by case.
+
+========================================================================
+TableRelation keying negative: empty value (AL0107)
+========================================================================
+table 50100 T
+{
+    fields
+    {
+        field(1; F; Code[20])
+        {
+            TableRelation = ;
+        }
+    }
+}
+------------------------------------------------------------------------
+
+(source_file
+  (table_declaration
+    (table_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (fields_section
+        (fields_keyword)
+        body: (fields_body
+          (field_declaration
+            (field_keyword)
+            id: (integer)
+            name: (identifier)
+            type: (type_specification
+              (code_type
+                (code_keyword)
+                length: (integer)))
+            body: (declaration_body
+              (property
+                name: (property_name)
+                value: (table_relation_value
+                  (table_relation_expression
+                    (simple_table_relation
+                      target: (qualified_name
+                        (MISSING identifier)))))))))))))
+
+========================================================================
+TableRelation keying negative: integer target (AL0107)
+========================================================================
+table 50100 T
+{
+    fields
+    {
+        field(1; F; Code[20])
+        {
+            TableRelation = 18;
+        }
+    }
+}
+------------------------------------------------------------------------
+
+(source_file
+  (table_declaration
+    (table_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (fields_section
+        (fields_keyword)
+        body: (fields_body
+          (field_declaration
+            (field_keyword)
+            id: (integer)
+            name: (identifier)
+            type: (type_specification
+              (code_type
+                (code_keyword)
+                length: (integer)))
+            (ERROR
+              (property_name)
+              (integer))
+            body: (declaration_body
+              (empty_statement))))))))
+
+========================================================================
+TableRelation keying negative: integer table with a field (AL0107)
+========================================================================
+table 50100 T
+{
+    fields
+    {
+        field(1; F; Code[20])
+        {
+            TableRelation = 18."No.";
+        }
+    }
+}
+------------------------------------------------------------------------
+
+(source_file
+  (table_declaration
+    (table_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (fields_section
+        (fields_keyword)
+        body: (fields_body
+          (field_declaration
+            (field_keyword)
+            id: (integer)
+            name: (identifier)
+            type: (type_specification
+              (code_type
+                (code_keyword)
+                length: (integer)))
+            body: (declaration_body
+              (property
+                name: (property_name)
+                (ERROR
+                  (integer))
+                value: (table_relation_value
+                  (table_relation_expression
+                    (simple_table_relation
+                      target: (qualified_name
+                        (quoted_identifier)))))))))))))
+
+========================================================================
+TableRelation keying negative: integer field segment (AL0107)
+========================================================================
+table 50100 T
+{
+    fields
+    {
+        field(1; F; Code[20])
+        {
+            TableRelation = Customer.18;
+        }
+    }
+}
+------------------------------------------------------------------------
+
+(source_file
+  (table_declaration
+    (table_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (fields_section
+        (fields_keyword)
+        body: (fields_body
+          (field_declaration
+            (field_keyword)
+            id: (integer)
+            name: (identifier)
+            type: (type_specification
+              (code_type
+                (code_keyword)
+                length: (integer)))
+            body: (declaration_body
+              (property
+                name: (property_name)
+                value: (table_relation_value
+                  (table_relation_expression
+                    (simple_table_relation
+                      target: (qualified_name
+                        (identifier)))))
+                (ERROR
+                  (integer))))))))))
+
+========================================================================
+TableRelation keying negative: integer target with where (AL0107)
+========================================================================
+table 50100 T
+{
+    fields
+    {
+        field(1; F; Code[20])
+        {
+            TableRelation = 18 where("No." = const('A'));
+        }
+    }
+}
+------------------------------------------------------------------------
+
+(source_file
+  (table_declaration
+    (table_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (fields_section
+        (fields_keyword)
+        body: (fields_body
+          (field_declaration
+            (field_keyword)
+            id: (integer)
+            name: (identifier)
+            type: (type_specification
+              (code_type
+                (code_keyword)
+                length: (integer)))
+            body: (declaration_body
+              (property
+                name: (property_name)
+                (ERROR
+                  (integer))
+                value: (table_relation_value
+                  (table_relation_expression
+                    (simple_table_relation
+                      target: (qualified_name
+                        (quoted_identifier)))))
+                (ERROR
+                  (filter_operator)
+                  (string_literal))))))))))
+
+========================================================================
+TableRelation keying negative: If as a segment word
+========================================================================
+table 50100 T
+{
+    fields
+    {
+        field(1; F; Code[20])
+        {
+            TableRelation = If."No.";
+        }
+    }
+}
+------------------------------------------------------------------------
+
+(source_file
+  (table_declaration
+    (table_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (fields_section
+        (fields_keyword)
+        body: (fields_body
+          (field_declaration
+            (field_keyword)
+            id: (integer)
+            name: (identifier)
+            type: (type_specification
+              (code_type
+                (code_keyword)
+                length: (integer)))
+            body: (declaration_body
+              (property
+                name: (property_name)
+                (ERROR
+                  (if_keyword))
+                value: (table_relation_value
+                  (table_relation_expression
+                    (simple_table_relation
+                      target: (qualified_name
+                        (quoted_identifier)))))))))))))
+
+========================================================================
+TableRelation keying negative: Else as a segment word
+========================================================================
+table 50100 T
+{
+    fields
+    {
+        field(1; F; Code[20])
+        {
+            TableRelation = Else."No.";
+        }
+    }
+}
+------------------------------------------------------------------------
+
+(source_file
+  (table_declaration
+    (table_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (fields_section
+        (fields_keyword)
+        body: (fields_body
+          (field_declaration
+            (field_keyword)
+            id: (integer)
+            name: (identifier)
+            type: (type_specification
+              (code_type
+                (code_keyword)
+                length: (integer)))
+            body: (declaration_body
+              (property
+                name: (property_name)
+                (ERROR)
+                value: (table_relation_value
+                  (table_relation_expression
+                    (simple_table_relation
+                      target: (qualified_name
+                        (quoted_identifier)))))))))))))
+
+========================================================================
+TableRelation keying negative: Where as a segment word
+========================================================================
+table 50100 T
+{
+    fields
+    {
+        field(1; F; Code[20])
+        {
+            TableRelation = Where."No.";
+        }
+    }
+}
+------------------------------------------------------------------------
+
+(source_file
+  (table_declaration
+    (table_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (fields_section
+        (fields_keyword)
+        body: (fields_body
+          (field_declaration
+            (field_keyword)
+            id: (integer)
+            name: (identifier)
+            type: (type_specification
+              (code_type
+                (code_keyword)
+                length: (integer)))
+            body: (declaration_body
+              (property
+                name: (property_name)
+                (ERROR)
+                value: (table_relation_value
+                  (table_relation_expression
+                    (simple_table_relation
+                      target: (qualified_name
+                        (quoted_identifier)))))))))))))

@@ -1,0 +1,2713 @@
+; B5 (G10): `TableRelation` is keyed by NAME in the scanner (TABLE_RELATION_PROPERTY_NAME,
+; aliased to property_name), like CalcFormula and B4's ML names, and its value is one
+; `target: (qualified_name ...)`. Spec:
+; docs/superpowers/specs/2026-10-04-table-relation-keying-design.md (rev 4 overrides).
+;
+; Host audit, spec 5.4 (src/parser.c ts_external_scanner_states, read after Task 4's
+; generate; 60 rows, 14 offer property_name):
+; (a) property_name WITHOUT _table_relation_property_name: 2 rows, neither a host where
+;     TableRelation can occur. Every bare $.property_name in grammar.js sits beside a keyed
+;     arm, except caption_value's sub-field name and _permissions_head (the #elif/#else arms
+;     of preproc_split_permissions_property, whose value is a tabledata list); each state's
+;     valid symbols (lookahead_iterator) are only property_name, those two rules' own
+;     follow-ups, and extras.
+;   row 58 (property_name, preproc_close, _scanner_hook): states 12481, 12615 -- caption
+;     sub-field name (`, Locked =`) in a whole-value #if arm; debug parse of
+;     `Caption = #if X 'a', Locked = true, Comment = 'x'; #else ... #endif` hits both.
+;   row 60 (property_name, _scanner_hook): 14092, 14139 (caption sub-field name, flat; hit
+;     by `Caption = 'a', Locked = true, Comment = 'x';`); 14465, 15133, 15137, 15360, 16650
+;     (_permissions_head after #elif/#else; hit by debug parses of the split in a codeunit,
+;     and nested in an outer #if); 14544, 15182, 15184, 15209, 15210, 15686, 15903 (not hit
+;     by a debug parse; valid symbols are property_name and _permissions_head only, so they
+;     are further _permissions_head contexts).
+; (b) a keyed token WITHOUT property_name: 0 rows. All 12 rows that offer one keyed token
+;     offer all four and property_name (rows 1, 3, 8, 9, 21, 27, 29, 36, 38, 42, 43, 54;
+;     row 1 is the all-tokens recovery row).
+; _property_whole_value_in_if has no keyed TableRelation arm (rev 4 item 6, AL0124 at both
+; hosts), yet adds no (a) row: both hosts also list `$.property`, so the name states are
+; keyed rows (debug parse: action area 4381 in row 9, assembly body 10524 in row 54).
+;
+; Hosts, spec 5.2 (each is tools/alc_probe/cases/table-relation-keying/host-*.al, accepted
+; split and flat): table field, tableextension added field, tableextension modify, page
+; field (flat, whole-value #if, continued); report and xmlport request-page fields (flat).
+; pageextension `modify` has no case: alc rejects TableRelation there with AL0246 ("cannot
+; be customized"), recorded in host-pageext-modify-rejected.al.
+
+========================================================================
+TableRelation keying: dotted target with where (spec 4.1 row 1)
+========================================================================
+table 50100 T
+{
+    fields
+    {
+        field(1; F; Code[20])
+        {
+            TableRelation = Customer."No." where("No." = const('A'));
+        }
+    }
+}
+
+------------------------------------------------------------------------
+
+(source_file
+  (table_declaration
+    (table_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (fields_section
+        (fields_keyword)
+        body: (fields_body
+          (field_declaration
+            (field_keyword)
+            id: (integer)
+            name: (identifier)
+            type: (type_specification
+              (code_type
+                (code_keyword)
+                length: (integer)))
+            body: (declaration_body
+              (property
+                name: (property_name)
+                value: (table_relation_value
+                  (table_relation_expression
+                    (simple_table_relation
+                      target: (qualified_name
+                        (identifier)
+                        (quoted_identifier))
+                      (where_clause
+                        (where_keyword)
+                        (where_conditions
+                          (where_condition
+                            field: (quoted_identifier)
+                            (const_keyword)
+                            value: (string_literal)))))))))))))))
+
+========================================================================
+TableRelation keying: System.Environment.Company.Name is four identifier segments
+========================================================================
+table 50100 T
+{
+    fields
+    {
+        field(1; F; Code[20])
+        {
+            TableRelation = System.Environment.Company.Name;
+        }
+    }
+}
+
+------------------------------------------------------------------------
+
+(source_file
+  (table_declaration
+    (table_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (fields_section
+        (fields_keyword)
+        body: (fields_body
+          (field_declaration
+            (field_keyword)
+            id: (integer)
+            name: (identifier)
+            type: (type_specification
+              (code_type
+                (code_keyword)
+                length: (integer)))
+            body: (declaration_body
+              (property
+                name: (property_name)
+                value: (table_relation_value
+                  (table_relation_expression
+                    (simple_table_relation
+                      target: (qualified_name
+                        (identifier)
+                        (identifier)
+                        (identifier)
+                        (identifier)))))))))))))
+
+========================================================================
+TableRelation keying: if/else chain
+========================================================================
+table 50100 T
+{
+    fields
+    {
+        field(1; F; Code[20])
+        {
+            TableRelation = if (F2 = const(1)) Customer else Vendor;
+        }
+    }
+}
+
+------------------------------------------------------------------------
+
+(source_file
+  (table_declaration
+    (table_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (fields_section
+        (fields_keyword)
+        body: (fields_body
+          (field_declaration
+            (field_keyword)
+            id: (integer)
+            name: (identifier)
+            type: (type_specification
+              (code_type
+                (code_keyword)
+                length: (integer)))
+            body: (declaration_body
+              (property
+                name: (property_name)
+                value: (table_relation_value
+                  (table_relation_expression
+                    (if_table_relation
+                      (if_keyword)
+                      (where_conditions
+                        (where_condition
+                          field: (identifier)
+                          (const_keyword)
+                          value: (integer)))
+                      then_relation: (simple_table_relation
+                        target: (qualified_name
+                          (identifier)))
+                      (else_keyword)
+                      else_relation: (table_relation_expression
+                        (simple_table_relation
+                          target: (qualified_name
+                            (identifier)))))))))))))))
+
+========================================================================
+TableRelation keying: bare identifier is a relation (D1)
+========================================================================
+table 50100 T
+{
+    fields
+    {
+        field(1; F; Code[20])
+        {
+            TableRelation = Customer;
+        }
+    }
+}
+
+------------------------------------------------------------------------
+
+(source_file
+  (table_declaration
+    (table_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (fields_section
+        (fields_keyword)
+        body: (fields_body
+          (field_declaration
+            (field_keyword)
+            id: (integer)
+            name: (identifier)
+            type: (type_specification
+              (code_type
+                (code_keyword)
+                length: (integer)))
+            body: (declaration_body
+              (property
+                name: (property_name)
+                value: (table_relation_value
+                  (table_relation_expression
+                    (simple_table_relation
+                      target: (qualified_name
+                        (identifier)))))))))))))
+
+========================================================================
+TableRelation keying: bare quoted identifier is a relation (D1)
+========================================================================
+table 50100 T
+{
+    fields
+    {
+        field(1; F; Code[20])
+        {
+            TableRelation = "G/L Account";
+        }
+    }
+}
+
+------------------------------------------------------------------------
+
+(source_file
+  (table_declaration
+    (table_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (fields_section
+        (fields_keyword)
+        body: (fields_body
+          (field_declaration
+            (field_keyword)
+            id: (integer)
+            name: (identifier)
+            type: (type_specification
+              (code_type
+                (code_keyword)
+                length: (integer)))
+            body: (declaration_body
+              (property
+                name: (property_name)
+                value: (table_relation_value
+                  (table_relation_expression
+                    (simple_table_relation
+                      target: (qualified_name
+                        (quoted_identifier)))))))))))))
+
+========================================================================
+TableRelation keying: quoted segment containing dots
+========================================================================
+table 50100 T
+{
+    fields
+    {
+        field(1; F; Code[20])
+        {
+            TableRelation = "Acc. Sched. Name".Name;
+        }
+    }
+}
+
+------------------------------------------------------------------------
+
+(source_file
+  (table_declaration
+    (table_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (fields_section
+        (fields_keyword)
+        body: (fields_body
+          (field_declaration
+            (field_keyword)
+            id: (integer)
+            name: (identifier)
+            type: (type_specification
+              (code_type
+                (code_keyword)
+                length: (integer)))
+            body: (declaration_body
+              (property
+                name: (property_name)
+                value: (table_relation_value
+                  (table_relation_expression
+                    (simple_table_relation
+                      target: (qualified_name
+                        (quoted_identifier)
+                        (identifier)))))))))))))
+
+========================================================================
+TableRelation keying: dotted target
+========================================================================
+table 50100 T
+{
+    fields
+    {
+        field(1; F; Code[20])
+        {
+            TableRelation = Customer.Name;
+        }
+    }
+}
+
+------------------------------------------------------------------------
+
+(source_file
+  (table_declaration
+    (table_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (fields_section
+        (fields_keyword)
+        body: (fields_body
+          (field_declaration
+            (field_keyword)
+            id: (integer)
+            name: (identifier)
+            type: (type_specification
+              (code_type
+                (code_keyword)
+                length: (integer)))
+            body: (declaration_body
+              (property
+                name: (property_name)
+                value: (table_relation_value
+                  (table_relation_expression
+                    (simple_table_relation
+                      target: (qualified_name
+                        (identifier)
+                        (identifier)))))))))))))
+
+========================================================================
+TableRelation keying: lowercase name
+========================================================================
+table 50100 T
+{
+    fields
+    {
+        field(1; F; Code[20])
+        {
+            tablerelation = Customer;
+        }
+    }
+}
+
+------------------------------------------------------------------------
+
+(source_file
+  (table_declaration
+    (table_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (fields_section
+        (fields_keyword)
+        body: (fields_body
+          (field_declaration
+            (field_keyword)
+            id: (integer)
+            name: (identifier)
+            type: (type_specification
+              (code_type
+                (code_keyword)
+                length: (integer)))
+            body: (declaration_body
+              (property
+                name: (property_name)
+                value: (table_relation_value
+                  (table_relation_expression
+                    (simple_table_relation
+                      target: (qualified_name
+                        (identifier)))))))))))))
+
+========================================================================
+TableRelation keying: uppercase name
+========================================================================
+table 50100 T
+{
+    fields
+    {
+        field(1; F; Code[20])
+        {
+            TABLERELATION = Customer;
+        }
+    }
+}
+
+------------------------------------------------------------------------
+
+(source_file
+  (table_declaration
+    (table_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (fields_section
+        (fields_keyword)
+        body: (fields_body
+          (field_declaration
+            (field_keyword)
+            id: (integer)
+            name: (identifier)
+            type: (type_specification
+              (code_type
+                (code_keyword)
+                length: (integer)))
+            body: (declaration_body
+              (property
+                name: (property_name)
+                value: (table_relation_value
+                  (table_relation_expression
+                    (simple_table_relation
+                      target: (qualified_name
+                        (identifier)))))))))))))
+
+========================================================================
+TableRelation keying: comment between name and =
+========================================================================
+table 50100 T
+{
+    fields
+    {
+        field(1; F; Code[20])
+        {
+            TableRelation /* c */ = Customer;
+        }
+    }
+}
+
+------------------------------------------------------------------------
+
+(source_file
+  (table_declaration
+    (table_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (fields_section
+        (fields_keyword)
+        body: (fields_body
+          (field_declaration
+            (field_keyword)
+            id: (integer)
+            name: (identifier)
+            type: (type_specification
+              (code_type
+                (code_keyword)
+                length: (integer)))
+            body: (declaration_body
+              (property
+                name: (property_name)
+                (multiline_comment)
+                value: (table_relation_value
+                  (table_relation_expression
+                    (simple_table_relation
+                      target: (qualified_name
+                        (identifier)))))))))))))
+
+========================================================================
+TableRelation keying: comment between segments
+========================================================================
+table 50100 T
+{
+    fields
+    {
+        field(1; F; Code[20])
+        {
+            TableRelation = Customer /* c */ ."No.";
+        }
+    }
+}
+
+------------------------------------------------------------------------
+
+(source_file
+  (table_declaration
+    (table_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (fields_section
+        (fields_keyword)
+        body: (fields_body
+          (field_declaration
+            (field_keyword)
+            id: (integer)
+            name: (identifier)
+            type: (type_specification
+              (code_type
+                (code_keyword)
+                length: (integer)))
+            body: (declaration_body
+              (property
+                name: (property_name)
+                value: (table_relation_value
+                  (table_relation_expression
+                    (simple_table_relation
+                      target: (qualified_name
+                        (identifier)
+                        (multiline_comment)
+                        (quoted_identifier)))))))))))))
+
+========================================================================
+TableRelation keying: page field target
+========================================================================
+page 50100 P
+{
+    layout
+    {
+        area(Content)
+        {
+            field(F; Rec.F)
+            {
+            TableRelation = Customer."No.";
+            }
+        }
+    }
+}
+
+------------------------------------------------------------------------
+
+(source_file
+  (page_declaration
+    (page_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (layout_section
+        (layout_keyword)
+        body: (layout_body
+          (area_section
+            (area_keyword)
+            type: (content_keyword)
+            body: (layout_body
+              (page_field
+                (field_keyword)
+                name: (identifier)
+                source: (member_expression
+                  object: (identifier)
+                  member: (identifier))
+                body: (declaration_body
+                  (property
+                    name: (property_name)
+                    value: (table_relation_value
+                      (table_relation_expression
+                        (simple_table_relation
+                          target: (qualified_name
+                            (identifier)
+                            (quoted_identifier)))))))))))))))
+
+========================================================================
+TableRelation keying: whole-value #if, semicolon after #endif
+========================================================================
+table 50100 T
+{
+    fields
+    {
+        field(1; F; Code[20])
+        {
+            TableRelation =
+#if X
+            Customer
+#else
+            Vendor."No."
+#endif
+            ;
+        }
+    }
+}
+
+------------------------------------------------------------------------
+
+(source_file
+  (table_declaration
+    (table_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (fields_section
+        (fields_keyword)
+        body: (fields_body
+          (field_declaration
+            (field_keyword)
+            id: (integer)
+            name: (identifier)
+            type: (type_specification
+              (code_type
+                (code_keyword)
+                length: (integer)))
+            body: (declaration_body
+              (property
+                name: (property_name)
+                value: (preproc_conditional_property_value
+                  (preproc_if
+                    (preproc_open)
+                    condition: (identifier))
+                  value: (table_relation_value
+                    (table_relation_expression
+                      (simple_table_relation
+                        target: (qualified_name
+                          (identifier)))))
+                  (preproc_else)
+                  value: (table_relation_value
+                    (table_relation_expression
+                      (simple_table_relation
+                        target: (qualified_name
+                          (identifier)
+                          (quoted_identifier)))))
+                  (preproc_endif
+                    (preproc_close)))))))))))
+
+========================================================================
+TableRelation keying: whole-value #if, semicolon in the arms
+========================================================================
+table 50100 T
+{
+    fields
+    {
+        field(1; F; Code[20])
+        {
+            TableRelation =
+#if X
+            Customer;
+#else
+            Vendor."No.";
+#endif
+        }
+    }
+}
+
+------------------------------------------------------------------------
+
+(source_file
+  (table_declaration
+    (table_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (fields_section
+        (fields_keyword)
+        body: (fields_body
+          (field_declaration
+            (field_keyword)
+            id: (integer)
+            name: (identifier)
+            type: (type_specification
+              (code_type
+                (code_keyword)
+                length: (integer)))
+            body: (declaration_body
+              (property
+                name: (property_name)
+                value: (preproc_conditional_property_value
+                  (preproc_if
+                    (preproc_open)
+                    condition: (identifier))
+                  value: (table_relation_value
+                    (table_relation_expression
+                      (simple_table_relation
+                        target: (qualified_name
+                          (identifier)))))
+                  (preproc_else)
+                  value: (table_relation_value
+                    (table_relation_expression
+                      (simple_table_relation
+                        target: (qualified_name
+                          (identifier)
+                          (quoted_identifier)))))
+                  (preproc_endif
+                    (preproc_close)))))))))))
+
+========================================================================
+TableRelation keying: nested whole-value #if
+========================================================================
+table 50100 T
+{
+    fields
+    {
+        field(1; F; Code[20])
+        {
+            TableRelation =
+#if X
+#if Y
+            Customer
+#else
+            Vendor
+#endif
+#else
+            "G/L Account"
+#endif
+            ;
+        }
+    }
+}
+
+------------------------------------------------------------------------
+
+(source_file
+  (table_declaration
+    (table_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (fields_section
+        (fields_keyword)
+        body: (fields_body
+          (field_declaration
+            (field_keyword)
+            id: (integer)
+            name: (identifier)
+            type: (type_specification
+              (code_type
+                (code_keyword)
+                length: (integer)))
+            body: (declaration_body
+              (property
+                name: (property_name)
+                value: (preproc_conditional_property_value
+                  (preproc_if
+                    (preproc_open)
+                    condition: (identifier))
+                  value: (preproc_conditional_property_value
+                    (preproc_if
+                      (preproc_open)
+                      condition: (identifier))
+                    value: (table_relation_value
+                      (table_relation_expression
+                        (simple_table_relation
+                          target: (qualified_name
+                            (identifier)))))
+                    (preproc_else)
+                    value: (table_relation_value
+                      (table_relation_expression
+                        (simple_table_relation
+                          target: (qualified_name
+                            (identifier)))))
+                    (preproc_endif
+                      (preproc_close)))
+                  (preproc_else)
+                  value: (table_relation_value
+                    (table_relation_expression
+                      (simple_table_relation
+                        target: (qualified_name
+                          (quoted_identifier)))))
+                  (preproc_endif
+                    (preproc_close)))))))))))
+
+========================================================================
+TableRelation keying: conditional head with a shared else tail (Task 1 probe)
+========================================================================
+table 50100 T
+{
+    fields
+    {
+        field(1; F; Code[20])
+        {
+            TableRelation =
+#if X
+            if (F2 = const(1)) Customer
+#else
+            if (F2 = const(2)) Vendor
+#endif
+            else "G/L Account";
+        }
+    }
+}
+
+------------------------------------------------------------------------
+
+(source_file
+  (table_declaration
+    (table_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (fields_section
+        (fields_keyword)
+        body: (fields_body
+          (field_declaration
+            (field_keyword)
+            id: (integer)
+            name: (identifier)
+            type: (type_specification
+              (code_type
+                (code_keyword)
+                length: (integer)))
+            body: (declaration_body
+              (property
+                name: (property_name)
+                value: (table_relation_value
+                  (preproc_conditional_table_relation
+                    (preproc_if
+                      (preproc_open)
+                      condition: (identifier))
+                    (table_relation_expression
+                      (if_table_relation
+                        (if_keyword)
+                        (where_conditions
+                          (where_condition
+                            field: (identifier)
+                            (const_keyword)
+                            value: (integer)))
+                        then_relation: (simple_table_relation
+                          target: (qualified_name
+                            (identifier)))))
+                    (preproc_else)
+                    (table_relation_expression
+                      (if_table_relation
+                        (if_keyword)
+                        (where_conditions
+                          (where_condition
+                            field: (identifier)
+                            (const_keyword)
+                            value: (integer)))
+                        then_relation: (simple_table_relation
+                          target: (qualified_name
+                            (identifier)))))
+                    (preproc_endif
+                      (preproc_close)))
+                  (else_table_relation_fragment
+                    (else_keyword)
+                    else_relation: (table_relation_expression
+                      (simple_table_relation
+                        target: (qualified_name
+                          (quoted_identifier))))))))))))))
+
+========================================================================
+TableRelation keying: DC else + #if chain, CDCDataTranslation.Table.al:129-148
+========================================================================
+table 50100 T
+{
+    fields
+    {
+        field(1; F; Code[20])
+        {
+            TableRelation = IF ("Translate to Type" = CONST("G/L Account")) "G/L Account"
+            ELSE
+            IF ("Translate to Type" = CONST(Item)) Item
+            ELSE
+            IF ("Translate to Type" = CONST(Resource)) Resource
+            ELSE
+            IF ("Translate to Type" = CONST("Fixed Asset")) "Fixed Asset"
+            ELSE
+            IF ("Translate to Type" = CONST("Charge (Item)")) "Item Charge"
+            ELSE
+            IF ("Translate to Type" = CONST("Amount Distribution Code")) "CDC Std. Amt Distribution Code" WHERE("Distribute by Dimensions" = CONST(FALSE))
+            ELSE
+            IF ("Translate to Type" = CONST("Purchase Contract")) "CDC Purch. Contract Header" WHERE("Vendor No." = FIELD("Vendor No."))
+            ELSE
+#if BC24
+            IF ("Translate to Type" = CONST("Allocation Account")) "Allocation Account" WHERE("Account Type" = CONST(Fixed));
+#else
+            IF ("Translate to Type" = CONST("Allocation Account")) "G/L Account";
+#endif
+        }
+    }
+}
+
+------------------------------------------------------------------------
+
+(source_file
+  (table_declaration
+    (table_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (fields_section
+        (fields_keyword)
+        body: (fields_body
+          (field_declaration
+            (field_keyword)
+            id: (integer)
+            name: (identifier)
+            type: (type_specification
+              (code_type
+                (code_keyword)
+                length: (integer)))
+            body: (declaration_body
+              (property
+                name: (property_name)
+                value: (table_relation_value
+                  (table_relation_expression
+                    (if_table_relation
+                      (if_keyword)
+                      (where_conditions
+                        (where_condition
+                          field: (quoted_identifier)
+                          (const_keyword)
+                          value: (quoted_identifier)))
+                      then_relation: (simple_table_relation
+                        target: (qualified_name
+                          (quoted_identifier)))
+                      (else_keyword)
+                      else_relation: (table_relation_expression
+                        (if_table_relation
+                          (if_keyword)
+                          (where_conditions
+                            (where_condition
+                              field: (quoted_identifier)
+                              (const_keyword)
+                              value: (identifier)))
+                          then_relation: (simple_table_relation
+                            target: (qualified_name
+                              (identifier)))
+                          (else_keyword)
+                          else_relation: (table_relation_expression
+                            (if_table_relation
+                              (if_keyword)
+                              (where_conditions
+                                (where_condition
+                                  field: (quoted_identifier)
+                                  (const_keyword)
+                                  value: (identifier)))
+                              then_relation: (simple_table_relation
+                                target: (qualified_name
+                                  (identifier)))
+                              (else_keyword)
+                              else_relation: (table_relation_expression
+                                (if_table_relation
+                                  (if_keyword)
+                                  (where_conditions
+                                    (where_condition
+                                      field: (quoted_identifier)
+                                      (const_keyword)
+                                      value: (quoted_identifier)))
+                                  then_relation: (simple_table_relation
+                                    target: (qualified_name
+                                      (quoted_identifier)))
+                                  (else_keyword)
+                                  else_relation: (table_relation_expression
+                                    (if_table_relation
+                                      (if_keyword)
+                                      (where_conditions
+                                        (where_condition
+                                          field: (quoted_identifier)
+                                          (const_keyword)
+                                          value: (quoted_identifier)))
+                                      then_relation: (simple_table_relation
+                                        target: (qualified_name
+                                          (quoted_identifier)))
+                                      (else_keyword)
+                                      else_relation: (table_relation_expression
+                                        (if_table_relation
+                                          (if_keyword)
+                                          (where_conditions
+                                            (where_condition
+                                              field: (quoted_identifier)
+                                              (const_keyword)
+                                              value: (quoted_identifier)))
+                                          then_relation: (simple_table_relation
+                                            target: (qualified_name
+                                              (quoted_identifier))
+                                            (where_clause
+                                              (where_keyword)
+                                              (where_conditions
+                                                (where_condition
+                                                  field: (quoted_identifier)
+                                                  (const_keyword)
+                                                  value: (boolean)))))
+                                          (else_keyword)
+                                          else_relation: (table_relation_expression
+                                            (if_table_relation
+                                              (if_keyword)
+                                              (where_conditions
+                                                (where_condition
+                                                  field: (quoted_identifier)
+                                                  (const_keyword)
+                                                  value: (quoted_identifier)))
+                                              then_relation: (simple_table_relation
+                                                target: (qualified_name
+                                                  (quoted_identifier))
+                                                (where_clause
+                                                  (where_keyword)
+                                                  (where_conditions
+                                                    (where_condition
+                                                      field: (quoted_identifier)
+                                                      (field_keyword)
+                                                      value: (quoted_identifier)))))
+                                              (else_keyword)
+                                              else_relation: (table_relation_expression
+                                                (preproc_conditional_table_relation
+                                                  (preproc_if
+                                                    (preproc_open)
+                                                    condition: (identifier))
+                                                  (table_relation_expression
+                                                    (if_table_relation
+                                                      (if_keyword)
+                                                      (where_conditions
+                                                        (where_condition
+                                                          field: (quoted_identifier)
+                                                          (const_keyword)
+                                                          value: (quoted_identifier)))
+                                                      then_relation: (simple_table_relation
+                                                        target: (qualified_name
+                                                          (quoted_identifier))
+                                                        (where_clause
+                                                          (where_keyword)
+                                                          (where_conditions
+                                                            (where_condition
+                                                              field: (quoted_identifier)
+                                                              (const_keyword)
+                                                              value: (identifier)))))))
+                                                  (preproc_else)
+                                                  (table_relation_expression
+                                                    (if_table_relation
+                                                      (if_keyword)
+                                                      (where_conditions
+                                                        (where_condition
+                                                          field: (quoted_identifier)
+                                                          (const_keyword)
+                                                          value: (quoted_identifier)))
+                                                      then_relation: (simple_table_relation
+                                                        target: (qualified_name
+                                                          (quoted_identifier)))))
+                                                  (preproc_endif
+                                                    (preproc_close)))))))))))))))))))))))))))
+
+========================================================================
+TableRelation keying: G10, a dotted expression continued past #if is a property_expression
+========================================================================
+page 50100 P
+{
+    layout
+    {
+        area(Content)
+        {
+            field(F; Rec.F)
+            {
+            Visible = Rec.A
+#if X
+             and B
+#endif
+            ;
+            }
+        }
+    }
+}
+
+------------------------------------------------------------------------
+
+(source_file
+  (page_declaration
+    (page_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (layout_section
+        (layout_keyword)
+        body: (layout_body
+          (area_section
+            (area_keyword)
+            type: (content_keyword)
+            body: (layout_body
+              (page_field
+                (field_keyword)
+                name: (identifier)
+                source: (member_expression
+                  object: (identifier)
+                  member: (identifier))
+                body: (declaration_body
+                  (property
+                    name: (property_name)
+                    value: (property_expression
+                      (member_expression
+                        object: (identifier)
+                        member: (identifier))
+                      (preproc_conditional_expression_tail
+                        (preproc_if
+                          (preproc_open)
+                          condition: (identifier))
+                        operand: (identifier)
+                        (preproc_endif
+                          (preproc_close))))))))))))))
+
+========================================================================
+TableRelation keying: ValidateTableRelation and TestTableRelation are generic properties
+========================================================================
+table 50100 T
+{
+    fields
+    {
+        field(1; F; Code[20])
+        {
+            ValidateTableRelation = false;
+            TestTableRelation = false;
+        }
+    }
+}
+
+------------------------------------------------------------------------
+
+(source_file
+  (table_declaration
+    (table_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (fields_section
+        (fields_keyword)
+        body: (fields_body
+          (field_declaration
+            (field_keyword)
+            id: (integer)
+            name: (identifier)
+            type: (type_specification
+              (code_type
+                (code_keyword)
+                length: (integer)))
+            body: (declaration_body
+              (property
+                name: (property_name)
+                value: (boolean))
+              (property
+                name: (property_name)
+                value: (boolean)))))))))
+
+========================================================================
+TableRelation keying: AutoFormatExpression member value is an expression (D2)
+========================================================================
+table 50100 T
+{
+    fields
+    {
+        field(1; F; Code[20])
+        {
+            AutoFormatExpression = Rec."Currency Code";
+        }
+    }
+}
+
+------------------------------------------------------------------------
+
+(source_file
+  (table_declaration
+    (table_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (fields_section
+        (fields_keyword)
+        body: (fields_body
+          (field_declaration
+            (field_keyword)
+            id: (integer)
+            name: (identifier)
+            type: (type_specification
+              (code_type
+                (code_keyword)
+                length: (integer)))
+            body: (declaration_body
+              (property
+                name: (property_name)
+                value: (property_expression
+                  (member_expression
+                    object: (identifier)
+                    member: (quoted_identifier)))))))))))
+
+========================================================================
+TableRelation keying: AutoFormatExpression subscript base is an expression (D2)
+========================================================================
+table 50100 T
+{
+    fields
+    {
+        field(1; F; Code[20])
+        {
+            AutoFormatExpression = CustLedgEntry[6]."Currency Code";
+        }
+    }
+}
+
+------------------------------------------------------------------------
+
+(source_file
+  (table_declaration
+    (table_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (fields_section
+        (fields_keyword)
+        body: (fields_body
+          (field_declaration
+            (field_keyword)
+            id: (integer)
+            name: (identifier)
+            type: (type_specification
+              (code_type
+                (code_keyword)
+                length: (integer)))
+            body: (declaration_body
+              (property
+                name: (property_name)
+                value: (property_expression
+                  (member_expression
+                    object: (subscript_expression
+                      object: (identifier)
+                      index: (integer))
+                    member: (quoted_identifier)))))))))))
+
+========================================================================
+TableRelation keying: Begin segment is an identifier
+========================================================================
+table 50100 T
+{
+    fields
+    {
+        field(1; F; Code[20])
+        {
+            TableRelation = Begin."No.";
+        }
+    }
+}
+
+------------------------------------------------------------------------
+
+(source_file
+  (table_declaration
+    (table_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (fields_section
+        (fields_keyword)
+        body: (fields_body
+          (field_declaration
+            (field_keyword)
+            id: (integer)
+            name: (identifier)
+            type: (type_specification
+              (code_type
+                (code_keyword)
+                length: (integer)))
+            body: (declaration_body
+              (property
+                name: (property_name)
+                value: (table_relation_value
+                  (table_relation_expression
+                    (simple_table_relation
+                      target: (qualified_name
+                        (identifier)
+                        (quoted_identifier)))))))))))))
+
+========================================================================
+TableRelation keying: Then segment is an identifier
+========================================================================
+table 50100 T
+{
+    fields
+    {
+        field(1; F; Code[20])
+        {
+            TableRelation = Then;
+        }
+    }
+}
+
+------------------------------------------------------------------------
+
+(source_file
+  (table_declaration
+    (table_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (fields_section
+        (fields_keyword)
+        body: (fields_body
+          (field_declaration
+            (field_keyword)
+            id: (integer)
+            name: (identifier)
+            type: (type_specification
+              (code_type
+                (code_keyword)
+                length: (integer)))
+            body: (declaration_body
+              (property
+                name: (property_name)
+                value: (table_relation_value
+                  (table_relation_expression
+                    (simple_table_relation
+                      target: (qualified_name
+                        (identifier)))))))))))))
+
+========================================================================
+TableRelation keying: End segment is an identifier
+========================================================================
+table 50100 T
+{
+    fields
+    {
+        field(1; F; Code[20])
+        {
+            TableRelation = End."No.";
+        }
+    }
+}
+
+------------------------------------------------------------------------
+
+(source_file
+  (table_declaration
+    (table_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (fields_section
+        (fields_keyword)
+        body: (fields_body
+          (field_declaration
+            (field_keyword)
+            id: (integer)
+            name: (identifier)
+            type: (type_specification
+              (code_type
+                (code_keyword)
+                length: (integer)))
+            body: (declaration_body
+              (property
+                name: (property_name)
+                value: (table_relation_value
+                  (table_relation_expression
+                    (simple_table_relation
+                      target: (qualified_name
+                        (identifier)
+                        (quoted_identifier)))))))))))))
+
+========================================================================
+TableRelation keying: Table segment is an identifier
+========================================================================
+table 50100 T
+{
+    fields
+    {
+        field(1; F; Code[20])
+        {
+            TableRelation = Table."No.";
+        }
+    }
+}
+
+------------------------------------------------------------------------
+
+(source_file
+  (table_declaration
+    (table_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (fields_section
+        (fields_keyword)
+        body: (fields_body
+          (field_declaration
+            (field_keyword)
+            id: (integer)
+            name: (identifier)
+            type: (type_specification
+              (code_type
+                (code_keyword)
+                length: (integer)))
+            body: (declaration_body
+              (property
+                name: (property_name)
+                value: (table_relation_value
+                  (table_relation_expression
+                    (simple_table_relation
+                      target: (qualified_name
+                        (identifier)
+                        (quoted_identifier)))))))))))))
+========================================================================
+TableRelation keying host: table field, flat
+========================================================================
+table 50105 T2
+{
+    fields
+    {
+        field(1; F; Code[20])
+        {
+            TableRelation = if (F2 = const(1)) Customer else Vendor where("No." = const('A'));
+        }
+        field(2; F2; Integer) { }
+    }
+}
+------------------------------------------------------------------------
+
+(source_file
+  (table_declaration
+    (table_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (fields_section
+        (fields_keyword)
+        body: (fields_body
+          (field_declaration
+            (field_keyword)
+            id: (integer)
+            name: (identifier)
+            type: (type_specification
+              (code_type
+                (code_keyword)
+                length: (integer)))
+            body: (declaration_body
+              (property
+                name: (property_name)
+                value: (table_relation_value
+                  (table_relation_expression
+                    (if_table_relation
+                      (if_keyword)
+                      (where_conditions
+                        (where_condition
+                          field: (identifier)
+                          (const_keyword)
+                          value: (integer)))
+                      then_relation: (simple_table_relation
+                        target: (qualified_name
+                          (identifier)))
+                      (else_keyword)
+                      else_relation: (table_relation_expression
+                        (simple_table_relation
+                          target: (qualified_name
+                            (identifier))
+                          (where_clause
+                            (where_keyword)
+                            (where_conditions
+                              (where_condition
+                                field: (quoted_identifier)
+                                (const_keyword)
+                                value: (string_literal))))))))))))
+          (field_declaration
+            (field_keyword)
+            id: (integer)
+            name: (identifier)
+            type: (type_specification
+              (basic_type))))))))
+
+========================================================================
+TableRelation keying host: table field, whole-value #if
+========================================================================
+table 50105 T2
+{
+    fields
+    {
+        field(1; F; Code[20])
+        {
+            TableRelation =
+#if X
+            Customer
+#else
+            Vendor."No."
+#endif
+            ;
+        }
+        field(2; F2; Integer) { }
+    }
+}
+------------------------------------------------------------------------
+
+(source_file
+  (table_declaration
+    (table_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (fields_section
+        (fields_keyword)
+        body: (fields_body
+          (field_declaration
+            (field_keyword)
+            id: (integer)
+            name: (identifier)
+            type: (type_specification
+              (code_type
+                (code_keyword)
+                length: (integer)))
+            body: (declaration_body
+              (property
+                name: (property_name)
+                value: (preproc_conditional_property_value
+                  (preproc_if
+                    (preproc_open)
+                    condition: (identifier))
+                  value: (table_relation_value
+                    (table_relation_expression
+                      (simple_table_relation
+                        target: (qualified_name
+                          (identifier)))))
+                  (preproc_else)
+                  value: (table_relation_value
+                    (table_relation_expression
+                      (simple_table_relation
+                        target: (qualified_name
+                          (identifier)
+                          (quoted_identifier)))))
+                  (preproc_endif
+                    (preproc_close))))))
+          (field_declaration
+            (field_keyword)
+            id: (integer)
+            name: (identifier)
+            type: (type_specification
+              (basic_type))))))))
+
+========================================================================
+TableRelation keying host: table field, continued past #if
+========================================================================
+table 50105 T2
+{
+    fields
+    {
+        field(1; F; Code[20])
+        {
+            TableRelation = if (F2 = const(1)) Customer
+#if X
+            else Vendor
+#else
+            else "G/L Account"
+#endif
+            ;
+        }
+        field(2; F2; Integer) { }
+    }
+}
+------------------------------------------------------------------------
+
+(source_file
+  (table_declaration
+    (table_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (fields_section
+        (fields_keyword)
+        body: (fields_body
+          (field_declaration
+            (field_keyword)
+            id: (integer)
+            name: (identifier)
+            type: (type_specification
+              (code_type
+                (code_keyword)
+                length: (integer)))
+            body: (declaration_body
+              (property
+                name: (property_name)
+                value: (table_relation_value
+                  (table_relation_expression
+                    (if_table_relation
+                      (if_keyword)
+                      (where_conditions
+                        (where_condition
+                          field: (identifier)
+                          (const_keyword)
+                          value: (integer)))
+                      then_relation: (simple_table_relation
+                        target: (qualified_name
+                          (identifier)))))
+                  (preproc_conditional_table_relation
+                    (preproc_if
+                      (preproc_open)
+                      condition: (identifier))
+                    (else_table_relation_fragment
+                      (else_keyword)
+                      else_relation: (table_relation_expression
+                        (simple_table_relation
+                          target: (qualified_name
+                            (identifier)))))
+                    (preproc_else)
+                    (else_table_relation_fragment
+                      (else_keyword)
+                      else_relation: (table_relation_expression
+                        (simple_table_relation
+                          target: (qualified_name
+                            (quoted_identifier)))))
+                    (preproc_endif
+                      (preproc_close)))))))
+          (field_declaration
+            (field_keyword)
+            id: (integer)
+            name: (identifier)
+            type: (type_specification
+              (basic_type))))))))
+
+========================================================================
+TableRelation keying host: tableextension added field, flat
+========================================================================
+tableextension 50110 TE extends T
+{
+    fields
+    {
+        field(50110; NewF; Code[20])
+        {
+            TableRelation = if (F2 = const(1)) Customer else Vendor where("No." = const('A'));
+        }
+    }
+}
+------------------------------------------------------------------------
+
+(source_file
+  (tableextension_declaration
+    (tableextension_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    (extends_keyword)
+    base_object: (identifier)
+    body: (declaration_body
+      (fields_section
+        (fields_keyword)
+        body: (fields_body
+          (field_declaration
+            (field_keyword)
+            id: (integer)
+            name: (identifier)
+            type: (type_specification
+              (code_type
+                (code_keyword)
+                length: (integer)))
+            body: (declaration_body
+              (property
+                name: (property_name)
+                value: (table_relation_value
+                  (table_relation_expression
+                    (if_table_relation
+                      (if_keyword)
+                      (where_conditions
+                        (where_condition
+                          field: (identifier)
+                          (const_keyword)
+                          value: (integer)))
+                      then_relation: (simple_table_relation
+                        target: (qualified_name
+                          (identifier)))
+                      (else_keyword)
+                      else_relation: (table_relation_expression
+                        (simple_table_relation
+                          target: (qualified_name
+                            (identifier))
+                          (where_clause
+                            (where_keyword)
+                            (where_conditions
+                              (where_condition
+                                field: (quoted_identifier)
+                                (const_keyword)
+                                value: (string_literal)))))))))))))))))
+
+========================================================================
+TableRelation keying host: tableextension added field, whole-value #if
+========================================================================
+tableextension 50110 TE extends T
+{
+    fields
+    {
+        field(50110; NewF; Code[20])
+        {
+            TableRelation =
+#if X
+            Customer
+#else
+            Vendor."No."
+#endif
+            ;
+        }
+    }
+}
+------------------------------------------------------------------------
+
+(source_file
+  (tableextension_declaration
+    (tableextension_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    (extends_keyword)
+    base_object: (identifier)
+    body: (declaration_body
+      (fields_section
+        (fields_keyword)
+        body: (fields_body
+          (field_declaration
+            (field_keyword)
+            id: (integer)
+            name: (identifier)
+            type: (type_specification
+              (code_type
+                (code_keyword)
+                length: (integer)))
+            body: (declaration_body
+              (property
+                name: (property_name)
+                value: (preproc_conditional_property_value
+                  (preproc_if
+                    (preproc_open)
+                    condition: (identifier))
+                  value: (table_relation_value
+                    (table_relation_expression
+                      (simple_table_relation
+                        target: (qualified_name
+                          (identifier)))))
+                  (preproc_else)
+                  value: (table_relation_value
+                    (table_relation_expression
+                      (simple_table_relation
+                        target: (qualified_name
+                          (identifier)
+                          (quoted_identifier)))))
+                  (preproc_endif
+                    (preproc_close)))))))))))
+
+========================================================================
+TableRelation keying host: tableextension added field, continued past #if
+========================================================================
+tableextension 50110 TE extends T
+{
+    fields
+    {
+        field(50110; NewF; Code[20])
+        {
+            TableRelation = if (F2 = const(1)) Customer
+#if X
+            else Vendor
+#else
+            else "G/L Account"
+#endif
+            ;
+        }
+    }
+}
+------------------------------------------------------------------------
+
+(source_file
+  (tableextension_declaration
+    (tableextension_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    (extends_keyword)
+    base_object: (identifier)
+    body: (declaration_body
+      (fields_section
+        (fields_keyword)
+        body: (fields_body
+          (field_declaration
+            (field_keyword)
+            id: (integer)
+            name: (identifier)
+            type: (type_specification
+              (code_type
+                (code_keyword)
+                length: (integer)))
+            body: (declaration_body
+              (property
+                name: (property_name)
+                value: (table_relation_value
+                  (table_relation_expression
+                    (if_table_relation
+                      (if_keyword)
+                      (where_conditions
+                        (where_condition
+                          field: (identifier)
+                          (const_keyword)
+                          value: (integer)))
+                      then_relation: (simple_table_relation
+                        target: (qualified_name
+                          (identifier)))))
+                  (preproc_conditional_table_relation
+                    (preproc_if
+                      (preproc_open)
+                      condition: (identifier))
+                    (else_table_relation_fragment
+                      (else_keyword)
+                      else_relation: (table_relation_expression
+                        (simple_table_relation
+                          target: (qualified_name
+                            (identifier)))))
+                    (preproc_else)
+                    (else_table_relation_fragment
+                      (else_keyword)
+                      else_relation: (table_relation_expression
+                        (simple_table_relation
+                          target: (qualified_name
+                            (quoted_identifier)))))
+                    (preproc_endif
+                      (preproc_close))))))))))))
+
+========================================================================
+TableRelation keying host: tableextension modify, flat
+========================================================================
+tableextension 50110 TE extends T
+{
+    fields
+    {
+        modify(F)
+        {
+            TableRelation = if (F2 = const(1)) Customer else Vendor where("No." = const('A'));
+        }
+    }
+}
+------------------------------------------------------------------------
+
+(source_file
+  (tableextension_declaration
+    (tableextension_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    (extends_keyword)
+    base_object: (identifier)
+    body: (declaration_body
+      (fields_section
+        (fields_keyword)
+        body: (fields_body
+          (modify_modification
+            (modify_keyword)
+            target: (identifier)
+            body: (declaration_body
+              (property
+                name: (property_name)
+                value: (table_relation_value
+                  (table_relation_expression
+                    (if_table_relation
+                      (if_keyword)
+                      (where_conditions
+                        (where_condition
+                          field: (identifier)
+                          (const_keyword)
+                          value: (integer)))
+                      then_relation: (simple_table_relation
+                        target: (qualified_name
+                          (identifier)))
+                      (else_keyword)
+                      else_relation: (table_relation_expression
+                        (simple_table_relation
+                          target: (qualified_name
+                            (identifier))
+                          (where_clause
+                            (where_keyword)
+                            (where_conditions
+                              (where_condition
+                                field: (quoted_identifier)
+                                (const_keyword)
+                                value: (string_literal)))))))))))))))))
+
+========================================================================
+TableRelation keying host: tableextension modify, whole-value #if
+========================================================================
+tableextension 50110 TE extends T
+{
+    fields
+    {
+        modify(F)
+        {
+            TableRelation =
+#if X
+            Customer
+#else
+            Vendor."No."
+#endif
+            ;
+        }
+    }
+}
+------------------------------------------------------------------------
+
+(source_file
+  (tableextension_declaration
+    (tableextension_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    (extends_keyword)
+    base_object: (identifier)
+    body: (declaration_body
+      (fields_section
+        (fields_keyword)
+        body: (fields_body
+          (modify_modification
+            (modify_keyword)
+            target: (identifier)
+            body: (declaration_body
+              (property
+                name: (property_name)
+                value: (preproc_conditional_property_value
+                  (preproc_if
+                    (preproc_open)
+                    condition: (identifier))
+                  value: (table_relation_value
+                    (table_relation_expression
+                      (simple_table_relation
+                        target: (qualified_name
+                          (identifier)))))
+                  (preproc_else)
+                  value: (table_relation_value
+                    (table_relation_expression
+                      (simple_table_relation
+                        target: (qualified_name
+                          (identifier)
+                          (quoted_identifier)))))
+                  (preproc_endif
+                    (preproc_close)))))))))))
+
+========================================================================
+TableRelation keying host: tableextension modify, continued past #if
+========================================================================
+tableextension 50110 TE extends T
+{
+    fields
+    {
+        modify(F)
+        {
+            TableRelation = if (F2 = const(1)) Customer
+#if X
+            else Vendor
+#else
+            else "G/L Account"
+#endif
+            ;
+        }
+    }
+}
+------------------------------------------------------------------------
+
+(source_file
+  (tableextension_declaration
+    (tableextension_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    (extends_keyword)
+    base_object: (identifier)
+    body: (declaration_body
+      (fields_section
+        (fields_keyword)
+        body: (fields_body
+          (modify_modification
+            (modify_keyword)
+            target: (identifier)
+            body: (declaration_body
+              (property
+                name: (property_name)
+                value: (table_relation_value
+                  (table_relation_expression
+                    (if_table_relation
+                      (if_keyword)
+                      (where_conditions
+                        (where_condition
+                          field: (identifier)
+                          (const_keyword)
+                          value: (integer)))
+                      then_relation: (simple_table_relation
+                        target: (qualified_name
+                          (identifier)))))
+                  (preproc_conditional_table_relation
+                    (preproc_if
+                      (preproc_open)
+                      condition: (identifier))
+                    (else_table_relation_fragment
+                      (else_keyword)
+                      else_relation: (table_relation_expression
+                        (simple_table_relation
+                          target: (qualified_name
+                            (identifier)))))
+                    (preproc_else)
+                    (else_table_relation_fragment
+                      (else_keyword)
+                      else_relation: (table_relation_expression
+                        (simple_table_relation
+                          target: (qualified_name
+                            (quoted_identifier)))))
+                    (preproc_endif
+                      (preproc_close))))))))))))
+
+========================================================================
+TableRelation keying host: page field, flat
+========================================================================
+page 50106 P2
+{
+    SourceTable = T;
+    layout
+    {
+        area(Content)
+        {
+            field(F; Rec.F)
+            {
+                TableRelation = if (F2 = const(1)) Customer else Vendor where("No." = const('A'));
+            }
+        }
+    }
+}
+------------------------------------------------------------------------
+
+(source_file
+  (page_declaration
+    (page_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (property
+        name: (property_name)
+        value: (identifier))
+      (layout_section
+        (layout_keyword)
+        body: (layout_body
+          (area_section
+            (area_keyword)
+            type: (content_keyword)
+            body: (layout_body
+              (page_field
+                (field_keyword)
+                name: (identifier)
+                source: (member_expression
+                  object: (identifier)
+                  member: (identifier))
+                body: (declaration_body
+                  (property
+                    name: (property_name)
+                    value: (table_relation_value
+                      (table_relation_expression
+                        (if_table_relation
+                          (if_keyword)
+                          (where_conditions
+                            (where_condition
+                              field: (identifier)
+                              (const_keyword)
+                              value: (integer)))
+                          then_relation: (simple_table_relation
+                            target: (qualified_name
+                              (identifier)))
+                          (else_keyword)
+                          else_relation: (table_relation_expression
+                            (simple_table_relation
+                              target: (qualified_name
+                                (identifier))
+                              (where_clause
+                                (where_keyword)
+                                (where_conditions
+                                  (where_condition
+                                    field: (quoted_identifier)
+                                    (const_keyword)
+                                    value: (string_literal)))))))))))))))))))
+
+========================================================================
+TableRelation keying host: page field, whole-value #if
+========================================================================
+page 50106 P2
+{
+    SourceTable = T;
+    layout
+    {
+        area(Content)
+        {
+            field(F; Rec.F)
+            {
+                TableRelation =
+#if X
+                Customer
+#else
+                Vendor."No."
+#endif
+                ;
+            }
+        }
+    }
+}
+------------------------------------------------------------------------
+
+(source_file
+  (page_declaration
+    (page_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (property
+        name: (property_name)
+        value: (identifier))
+      (layout_section
+        (layout_keyword)
+        body: (layout_body
+          (area_section
+            (area_keyword)
+            type: (content_keyword)
+            body: (layout_body
+              (page_field
+                (field_keyword)
+                name: (identifier)
+                source: (member_expression
+                  object: (identifier)
+                  member: (identifier))
+                body: (declaration_body
+                  (property
+                    name: (property_name)
+                    value: (preproc_conditional_property_value
+                      (preproc_if
+                        (preproc_open)
+                        condition: (identifier))
+                      value: (table_relation_value
+                        (table_relation_expression
+                          (simple_table_relation
+                            target: (qualified_name
+                              (identifier)))))
+                      (preproc_else)
+                      value: (table_relation_value
+                        (table_relation_expression
+                          (simple_table_relation
+                            target: (qualified_name
+                              (identifier)
+                              (quoted_identifier)))))
+                      (preproc_endif
+                        (preproc_close)))))))))))))
+
+========================================================================
+TableRelation keying host: page field, continued past #if
+========================================================================
+page 50106 P2
+{
+    SourceTable = T;
+    layout
+    {
+        area(Content)
+        {
+            field(F; Rec.F)
+            {
+                TableRelation = if (F2 = const(1)) Customer
+#if X
+                else Vendor
+#else
+                else "G/L Account"
+#endif
+                ;
+            }
+        }
+    }
+}
+------------------------------------------------------------------------
+
+(source_file
+  (page_declaration
+    (page_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (property
+        name: (property_name)
+        value: (identifier))
+      (layout_section
+        (layout_keyword)
+        body: (layout_body
+          (area_section
+            (area_keyword)
+            type: (content_keyword)
+            body: (layout_body
+              (page_field
+                (field_keyword)
+                name: (identifier)
+                source: (member_expression
+                  object: (identifier)
+                  member: (identifier))
+                body: (declaration_body
+                  (property
+                    name: (property_name)
+                    value: (table_relation_value
+                      (table_relation_expression
+                        (if_table_relation
+                          (if_keyword)
+                          (where_conditions
+                            (where_condition
+                              field: (identifier)
+                              (const_keyword)
+                              value: (integer)))
+                          then_relation: (simple_table_relation
+                            target: (qualified_name
+                              (identifier)))))
+                      (preproc_conditional_table_relation
+                        (preproc_if
+                          (preproc_open)
+                          condition: (identifier))
+                        (else_table_relation_fragment
+                          (else_keyword)
+                          else_relation: (table_relation_expression
+                            (simple_table_relation
+                              target: (qualified_name
+                                (identifier)))))
+                        (preproc_else)
+                        (else_table_relation_fragment
+                          (else_keyword)
+                          else_relation: (table_relation_expression
+                            (simple_table_relation
+                              target: (qualified_name
+                                (quoted_identifier)))))
+                        (preproc_endif
+                          (preproc_close))))))))))))))
+
+========================================================================
+TableRelation keying host: report request-page field, flat
+========================================================================
+report 50130 R
+{
+    ProcessingOnly = true;
+    requestpage
+    {
+        layout
+        {
+            area(Content)
+            {
+                field(Fx; V)
+                {
+                    TableRelation = Customer."No." where("No." = const('A'));
+                }
+            }
+        }
+    }
+    var
+        V: Code[20];
+}
+------------------------------------------------------------------------
+
+(source_file
+  (report_declaration
+    (report_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (property
+        name: (property_name)
+        value: (boolean))
+      (requestpage_section
+        (requestpage_keyword)
+        body: (declaration_body
+          (layout_section
+            (layout_keyword)
+            body: (layout_body
+              (area_section
+                (area_keyword)
+                type: (content_keyword)
+                body: (layout_body
+                  (page_field
+                    (field_keyword)
+                    name: (identifier)
+                    source: (identifier)
+                    body: (declaration_body
+                      (property
+                        name: (property_name)
+                        value: (table_relation_value
+                          (table_relation_expression
+                            (simple_table_relation
+                              target: (qualified_name
+                                (identifier)
+                                (quoted_identifier))
+                              (where_clause
+                                (where_keyword)
+                                (where_conditions
+                                  (where_condition
+                                    field: (quoted_identifier)
+                                    (const_keyword)
+                                    value: (string_literal))))))))))))))))
+      (var_section
+        (var_keyword)
+        body: (var_body
+          (variable_declaration
+            name: (identifier)
+            type: (type_specification
+              (code_type
+                (code_keyword)
+                length: (integer)))))))))
+
+========================================================================
+TableRelation keying host: xmlport request-page field, flat
+========================================================================
+xmlport 50140 X
+{
+    schema
+    {
+        textelement(Root) { }
+    }
+    requestpage
+    {
+        layout
+        {
+            area(Content)
+            {
+                field(Fx; V)
+                {
+                    TableRelation = Customer."No." where("No." = const('A'));
+                }
+            }
+        }
+    }
+    var
+        V: Code[20];
+}
+------------------------------------------------------------------------
+
+(source_file
+  (xmlport_declaration
+    (xmlport_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (schema_section
+        (schema_keyword)
+        body: (schema_body
+          (xmlport_element
+            element_type: (textelement_keyword)
+            name: (identifier))))
+      (requestpage_section
+        (requestpage_keyword)
+        body: (declaration_body
+          (layout_section
+            (layout_keyword)
+            body: (layout_body
+              (area_section
+                (area_keyword)
+                type: (content_keyword)
+                body: (layout_body
+                  (page_field
+                    (field_keyword)
+                    name: (identifier)
+                    source: (identifier)
+                    body: (declaration_body
+                      (property
+                        name: (property_name)
+                        value: (table_relation_value
+                          (table_relation_expression
+                            (simple_table_relation
+                              target: (qualified_name
+                                (identifier)
+                                (quoted_identifier))
+                              (where_clause
+                                (where_keyword)
+                                (where_conditions
+                                  (where_condition
+                                    field: (quoted_identifier)
+                                    (const_keyword)
+                                    value: (string_literal))))))))))))))))
+      (var_section
+        (var_keyword)
+        body: (var_body
+          (variable_declaration
+            name: (identifier)
+            type: (type_specification
+              (code_type
+                (code_keyword)
+                length: (integer)))))))))
+
+========================================================================
+TableRelation keying host: whole TableRelation property inside a field-body #if/#else
+========================================================================
+table 50105 T2
+{
+    fields
+    {
+        field(1; F; Code[20])
+        {
+#if X
+            TableRelation = Customer;
+#else
+            TableRelation = Vendor where("No." = const('A'));
+#endif
+        }
+        field(2; F2; Integer) { }
+    }
+}
+------------------------------------------------------------------------
+
+(source_file
+  (table_declaration
+    (table_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (fields_section
+        (fields_keyword)
+        body: (fields_body
+          (field_declaration
+            (field_keyword)
+            id: (integer)
+            name: (identifier)
+            type: (type_specification
+              (code_type
+                (code_keyword)
+                length: (integer)))
+            body: (declaration_body
+              (preproc_conditional
+                (preproc_if
+                  (preproc_open)
+                  condition: (identifier))
+                (property
+                  name: (property_name)
+                  value: (table_relation_value
+                    (table_relation_expression
+                      (simple_table_relation
+                        target: (qualified_name
+                          (identifier))))))
+                (preproc_else)
+                (property
+                  name: (property_name)
+                  value: (table_relation_value
+                    (table_relation_expression
+                      (simple_table_relation
+                        target: (qualified_name
+                          (identifier))
+                        (where_clause
+                          (where_keyword)
+                          (where_conditions
+                            (where_condition
+                              field: (quoted_identifier)
+                              (const_keyword)
+                              value: (string_literal))))))))
+                (preproc_endif
+                  (preproc_close)))))
+          (field_declaration
+            (field_keyword)
+            id: (integer)
+            name: (identifier)
+            type: (type_specification
+              (basic_type))))))))
+
+========================================================================
+TableRelation keying: DC else inside the #if arms, CDCTempDocumentLine.Table.al:166-179
+========================================================================
+table 50100 T
+{
+    fields
+    {
+        field(27;"Translate to No.";Code[20])
+        {
+            TableRelation = IF ("Translate to Type"=CONST(" ")) Item
+                            ELSE IF ("Translate to Type"=CONST("G/L Account")) "G/L Account" WHERE ("Direct Posting"=CONST(TRUE),
+                                                                                                "Account Type"=CONST(Posting),
+                                                                                                Blocked=CONST(FALSE))
+                                                                                                ELSE IF ("Translate to Type"=CONST(Item)) Item
+                                                                                                ELSE IF ("Translate to Type"=CONST(Resource)) Resource
+                                                                                                ELSE IF ("Translate to Type"=CONST("Fixed Asset")) "Fixed Asset"
+                                                                                                ELSE IF ("Translate to Type"=CONST("Charge (Item)")) "Item Charge"
+                                                                                                ELSE IF ("Translate to Type"=CONST("Amount Distribution Code")) "CDC Std. Amt Distribution Code" WHERE ("Distribute by Dimensions"=CONST(FALSE))
+#if BC24       
+            ELSE IF ("Translate to Type" = CONST("Allocation Account")) "Allocation Account" WHERE("Account Type" = CONST(Fixed));
+#else     
+            ELSE IF ("Translate to Type" = CONST("Allocation Account")) "G/L Account";
+#endif
+            ValidateTableRelation = false;
+        }
+    }
+}
+------------------------------------------------------------------------
+
+(source_file
+  (table_declaration
+    (table_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (fields_section
+        (fields_keyword)
+        body: (fields_body
+          (field_declaration
+            (field_keyword)
+            id: (integer)
+            name: (quoted_identifier)
+            type: (type_specification
+              (code_type
+                (code_keyword)
+                length: (integer)))
+            body: (declaration_body
+              (property
+                name: (property_name)
+                value: (table_relation_value
+                  (table_relation_expression
+                    (if_table_relation
+                      (if_keyword)
+                      (where_conditions
+                        (where_condition
+                          field: (quoted_identifier)
+                          (const_keyword)
+                          value: (quoted_identifier)))
+                      then_relation: (simple_table_relation
+                        target: (qualified_name
+                          (identifier)))
+                      (else_keyword)
+                      else_relation: (table_relation_expression
+                        (if_table_relation
+                          (if_keyword)
+                          (where_conditions
+                            (where_condition
+                              field: (quoted_identifier)
+                              (const_keyword)
+                              value: (quoted_identifier)))
+                          then_relation: (simple_table_relation
+                            target: (qualified_name
+                              (quoted_identifier))
+                            (where_clause
+                              (where_keyword)
+                              (where_conditions
+                                (where_condition
+                                  field: (quoted_identifier)
+                                  (const_keyword)
+                                  value: (boolean))
+                                (where_condition
+                                  field: (quoted_identifier)
+                                  (const_keyword)
+                                  value: (identifier))
+                                (where_condition
+                                  field: (identifier)
+                                  (const_keyword)
+                                  value: (boolean)))))
+                          (else_keyword)
+                          else_relation: (table_relation_expression
+                            (if_table_relation
+                              (if_keyword)
+                              (where_conditions
+                                (where_condition
+                                  field: (quoted_identifier)
+                                  (const_keyword)
+                                  value: (identifier)))
+                              then_relation: (simple_table_relation
+                                target: (qualified_name
+                                  (identifier)))
+                              (else_keyword)
+                              else_relation: (table_relation_expression
+                                (if_table_relation
+                                  (if_keyword)
+                                  (where_conditions
+                                    (where_condition
+                                      field: (quoted_identifier)
+                                      (const_keyword)
+                                      value: (identifier)))
+                                  then_relation: (simple_table_relation
+                                    target: (qualified_name
+                                      (identifier)))
+                                  (else_keyword)
+                                  else_relation: (table_relation_expression
+                                    (if_table_relation
+                                      (if_keyword)
+                                      (where_conditions
+                                        (where_condition
+                                          field: (quoted_identifier)
+                                          (const_keyword)
+                                          value: (quoted_identifier)))
+                                      then_relation: (simple_table_relation
+                                        target: (qualified_name
+                                          (quoted_identifier)))
+                                      (else_keyword)
+                                      else_relation: (table_relation_expression
+                                        (if_table_relation
+                                          (if_keyword)
+                                          (where_conditions
+                                            (where_condition
+                                              field: (quoted_identifier)
+                                              (const_keyword)
+                                              value: (quoted_identifier)))
+                                          then_relation: (simple_table_relation
+                                            target: (qualified_name
+                                              (quoted_identifier)))
+                                          (else_keyword)
+                                          else_relation: (table_relation_expression
+                                            (if_table_relation
+                                              (if_keyword)
+                                              (where_conditions
+                                                (where_condition
+                                                  field: (quoted_identifier)
+                                                  (const_keyword)
+                                                  value: (quoted_identifier)))
+                                              then_relation: (simple_table_relation
+                                                target: (qualified_name
+                                                  (quoted_identifier))
+                                                (where_clause
+                                                  (where_keyword)
+                                                  (where_conditions
+                                                    (where_condition
+                                                      field: (quoted_identifier)
+                                                      (const_keyword)
+                                                      value: (boolean)))))))))))))))))))
+                  (preproc_conditional_table_relation
+                    (preproc_if
+                      (preproc_open)
+                      condition: (identifier))
+                    (else_table_relation_fragment
+                      (else_keyword)
+                      else_relation: (table_relation_expression
+                        (if_table_relation
+                          (if_keyword)
+                          (where_conditions
+                            (where_condition
+                              field: (quoted_identifier)
+                              (const_keyword)
+                              value: (quoted_identifier)))
+                          then_relation: (simple_table_relation
+                            target: (qualified_name
+                              (quoted_identifier))
+                            (where_clause
+                              (where_keyword)
+                              (where_conditions
+                                (where_condition
+                                  field: (quoted_identifier)
+                                  (const_keyword)
+                                  value: (identifier))))))))
+                    (preproc_else)
+                    (else_table_relation_fragment
+                      (else_keyword)
+                      else_relation: (table_relation_expression
+                        (if_table_relation
+                          (if_keyword)
+                          (where_conditions
+                            (where_condition
+                              field: (quoted_identifier)
+                              (const_keyword)
+                              value: (quoted_identifier)))
+                          then_relation: (simple_table_relation
+                            target: (qualified_name
+                              (quoted_identifier))))))
+                    (preproc_endif
+                      (preproc_close)))))
+              (property
+                name: (property_name)
+                value: (boolean)))))))))
+
+========================================================================
+TableRelation keying: whole-value #if, open if-relation arms, semicolon after #endif
+========================================================================
+table 50100 T
+{
+    fields
+    {
+        field(1; F; Code[20])
+        {
+            TableRelation =
+#if X
+            if (F2 = const(1)) Customer
+#else
+            if (F2 = const(2)) Vendor
+#endif
+            ;
+        }
+        field(2; F2; Integer) { }
+    }
+}
+------------------------------------------------------------------------
+
+(source_file
+  (table_declaration
+    (table_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (fields_section
+        (fields_keyword)
+        body: (fields_body
+          (field_declaration
+            (field_keyword)
+            id: (integer)
+            name: (identifier)
+            type: (type_specification
+              (code_type
+                (code_keyword)
+                length: (integer)))
+            body: (declaration_body
+              (property
+                name: (property_name)
+                value: (preproc_conditional_property_value
+                  (preproc_if
+                    (preproc_open)
+                    condition: (identifier))
+                  value: (table_relation_value
+                    (table_relation_expression
+                      (if_table_relation
+                        (if_keyword)
+                        (where_conditions
+                          (where_condition
+                            field: (identifier)
+                            (const_keyword)
+                            value: (integer)))
+                        then_relation: (simple_table_relation
+                          target: (qualified_name
+                            (identifier))))))
+                  (preproc_else)
+                  value: (table_relation_value
+                    (table_relation_expression
+                      (if_table_relation
+                        (if_keyword)
+                        (where_conditions
+                          (where_condition
+                            field: (identifier)
+                            (const_keyword)
+                            value: (integer)))
+                        then_relation: (simple_table_relation
+                          target: (qualified_name
+                            (identifier))))))
+                  (preproc_endif
+                    (preproc_close))))))
+          (field_declaration
+            (field_keyword)
+            id: (integer)
+            name: (identifier)
+            type: (type_specification
+              (basic_type))))))))

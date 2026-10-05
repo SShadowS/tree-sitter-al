@@ -476,8 +476,14 @@ register("preproc_conditional_property_value", "assembler",
               "decimal_range_value", "signed_integer_list"})
 # Non-prefixed special type: completes an earlier table relation (spec section 3).
 # Consumed by table_relation_select as a RelationContinuation; never lowered directly.
+# B5: also a direct child of table_relation_value, as the shared `else` tail after a
+# value-start #if that is the relation's conditional head (`#if X if (..) A #else
+# if (..) B #endif else C`; alc accepts it, tools/alc_probe/cases/table-relation-keying/
+# decide-value-start-if-continuation.al). No assembler joins that tail to every arm's
+# relation yet: unsupported, milestone 3 (0 production sites).
 register("else_table_relation_fragment", "fragment", None,
-         hosts={"preproc_conditional_table_relation:<children>": "consumed"})
+         hosts={"preproc_conditional_table_relation:<children>": "consumed",
+                "table_relation_value:<children>": "unsupported"})
 
 # --- Task 11: expressions split across #if arms, regrouped by the alc-measured
 # precedence table (lowering/expression.py). Hosts are the census output.

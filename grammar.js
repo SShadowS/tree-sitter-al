@@ -184,6 +184,14 @@ module.exports = grammar({
     // Entries must be rule symbols (or a token already extracted elsewhere); a
     // fresh kw() here fails generate with "Reserved word must be a token".
     implementation_names: $ => [$._true_token, $._false_token],
+    // `if`, `else` and `where` inside a TableRelation target segment (B5, spec 2026-10-04
+    // rev 4 item 5). alc's lexer makes them keywords everywhere, so `If."No."`,
+    // `Else."No."` and `Where."No."` are rejected (Task 1 probes
+    // tools/alc_probe/cases/table-relation-keying/kw-{if,else,where}-first-rejected.al); without this set keyword
+    // extraction lexed `Else`/`Where` at value start as an identifier, because no
+    // keyword is valid there but `if`, and the reject parsed as a clean target.
+    // Sits on _qualified_name_segment, the rule that names $.identifier directly.
+    relation_target_names: $ => [$._if_token, $._else_token, $._where_token],
   },
 
   extras: $ => [
@@ -222,6 +230,7 @@ module.exports = grammar({
                                 //      state has a valid external token and calls the scanner
     $._ml_property_name,        // [15] one of the 13 compiler ML names followed by = (B4)
     $._namespaces_property_name, // [16] `Namespaces` followed by = (B4)
+    $._table_relation_property_name, // [17] `TableRelation` followed by = (B5)
   ],
 
   conflicts: $ => [
@@ -308,7 +317,6 @@ module.exports = grammar({
     [$.page_field, $._field_header],
     // Fielded variant inherits the property-value ambiguity that the unfielded
     // `_namespaced_or_simple_ref` used to carry here.
-    [$._property_value, $.option_member, $._namespaced_ref_table],
     // `Prop = table Foo.Bar` is object_reference_value (unfielded ref) until
     // the '=' that would make it a tabledata_permission (fielded ref) appears,
     // so both dotted-name forms stay live across the dots.
@@ -339,7 +347,6 @@ module.exports = grammar({
     [$._plain_name, $._identifier_or_quoted],
     [$._implementation_head, $._plain_name],
     [$._implementation_head, $._expression, $._plain_name],
-    [$._property_value, $.option_member, $._plain_name],
     // A link value may now start with the `table` token (`RunPageLink = Table
     // = field(X)`), as a permission entry always could (`table X = RIMD`), so
     // an empty `#if` block before it is either one until the `=` after it.
@@ -360,7 +367,7 @@ module.exports = grammar({
     // A property whose whole value is a #if (_property_value_conditional,
     // see _property_with_terminator_in_if) is one more reading of an empty or
     // directive-only branch.
-    [$.preproc_conditional_link_values, $.preproc_conditional_permissions, $.preproc_conditional_impl_values, $.preproc_conditional_table_relation, $._property_value_conditional],
+    [$.preproc_conditional_link_values, $.preproc_conditional_permissions, $.preproc_conditional_impl_values, $._property_value_conditional],
     // The same ambiguity the three lines below already declare at the
     // CONDITIONAL level, now also reachable one level down: a bare `,` opening a
     // #if branch is identical in a link, permission and implementation list, and
@@ -372,8 +379,8 @@ module.exports = grammar({
     // is either kind until the `;` or directive after the inner #endif. All four
     // generator-required. They replace [preproc_conditional_permissions,
     // _property_value_conditional], which tree-sitter then reported unnecessary.
-    [$._property_value_conditional_in_if, $._property_value_conditional, $.preproc_conditional_link_values, $.preproc_conditional_table_relation, $.preproc_conditional_permissions, $.preproc_conditional_impl_values],
-    [$._property_value_conditional_in_if, $.preproc_conditional_link_values, $.preproc_conditional_table_relation, $.preproc_conditional_permissions, $.preproc_conditional_impl_values],
+    [$._property_value_conditional_in_if, $._property_value_conditional, $.preproc_conditional_link_values, $.preproc_conditional_permissions, $.preproc_conditional_impl_values],
+    [$._property_value_conditional_in_if, $.preproc_conditional_link_values, $.preproc_conditional_permissions, $.preproc_conditional_impl_values],
     [$._property_value_conditional_in_if, $.preproc_conditional_permissions],
     [$._property_value_branch_in_if, $._property_value_branch],
     // A link list OPENED by a #if (`SubPageLink = #if X A = field(B), #endif
@@ -385,25 +392,30 @@ module.exports = grammar({
     // #if after `Name =` also opens an option-member list. Generator-required
     // (not needed for the assembly_body host alone, measured).
     [$._property_value_conditional_in_if, $.preproc_conditional_option_members],
-    // A relation continued into a #if with the `;` after #endif (G11, item
-    // 19): table_relation_value now also holds `expression conditional`, so
-    // after a relation a #if is one more list-or-relation conditional until an
-    // arm's content. Generator-required; the same four-way that the G3
-    // conflict once subsumed (see above).
-    [$.preproc_conditional_link_values, $.preproc_conditional_table_relation, $.preproc_conditional_permissions, $.preproc_conditional_impl_values],
+    // A keyed TableRelation value that starts with #if (B5) has two readings until
+    // the token after #endif: the whole-value wrapper (_table_relation_whole_conditional)
+    // or the relation's conditional head (preproc_conditional_table_relation) with a
+    // shared `else` tail, which alc accepts (Task 1 probe
+    // tools/alc_probe/cases/table-relation-keying/decide-value-start-if-continuation.al;
+    // spec 2026-10-04 rev 4 item 3). Both generator-required, one per level:
+    // the arm content (whole-value arm _table_relation_head vs conditional-head arm
+    // table_relation_expression) ...
+    [$._table_relation_head, $.table_relation_expression],
+    // ... and the #elif repeat (whole-value wrapper vs conditional head).
+    [$._table_relation_whole_conditional, $.preproc_conditional_table_relation],
     // An option-member list OPENED by a #if (`OptionMembers = #if X A,
     // #endif B, C;`, G11 item 2): at value start a #if may now also open
     // preproc_conditional_option_members, one more reading of an empty or
     // list-shaped arm beside every conditional above, and before the directive
     // an arm `A,` is both a whole value's option_member_list and an
     // _option_members_branch. All eight generator-required.
-    [$._property_value_conditional, $.preproc_conditional_link_values, $.preproc_conditional_table_relation, $.preproc_conditional_permissions, $.preproc_conditional_impl_values, $.preproc_conditional_option_members],
+    [$._property_value_conditional, $.preproc_conditional_link_values, $.preproc_conditional_permissions, $.preproc_conditional_impl_values, $.preproc_conditional_option_members],
     [$.preproc_conditional_link_values, $.preproc_conditional_impl_values, $.preproc_conditional_option_members],
     [$.preproc_conditional_link_values, $.preproc_conditional_option_members],
     [$._property_value_conditional_in_if, $.preproc_conditional_permissions, $.preproc_conditional_option_members],
     [$.preproc_conditional_link_values, $.preproc_conditional_permissions, $.preproc_conditional_option_members],
     [$.preproc_conditional_permissions, $.preproc_conditional_option_members],
-    [$._property_value_conditional_in_if, $._property_value_conditional, $.preproc_conditional_link_values, $.preproc_conditional_table_relation, $.preproc_conditional_permissions, $.preproc_conditional_impl_values, $.preproc_conditional_option_members],
+    [$._property_value_conditional_in_if, $._property_value_conditional, $.preproc_conditional_link_values, $.preproc_conditional_permissions, $.preproc_conditional_impl_values, $.preproc_conditional_option_members],
     [$.option_member_list, $._option_members_branch],
     // A whole-value arm is one _property_value (G8), so a list arm ending in a
     // directive (`A, B #else`) is also a link, permission or implementation
@@ -418,7 +430,6 @@ module.exports = grammar({
     [$._link_value_branch, $._impl_value_branch, $.option_member_list],
     [$.tabledata_permission_list, $._permission_branch],
     [$.implementation_value_list, $._impl_value_branch],
-    [$._namespaced_ref_table, $._literal_value],
     [$.preproc_conditional_link_values, $.preproc_conditional_permissions, $.preproc_conditional_impl_values],
     [$.preproc_conditional_link_values, $.preproc_conditional_impl_values],
     [$.preproc_conditional_controladdin, $.preproc_conditional],
@@ -857,6 +868,15 @@ module.exports = grammar({
         optional(field('value', $._namespaces_property_value)),
         ';'
       ),
+      // TableRelation is keyed by NAME too (B5): its value is the compiler's relation
+      // grammar, and `Customer."No."` cannot be told from a member access otherwise.
+      // No optional(): `TableRelation = ;` is AL0107 (Task 1 probe), so it is a negative.
+      seq(
+        field('name', alias($._table_relation_property_name, $.property_name)),
+        '=',
+        field('value', $._table_relation_property_value),
+        ';'
+      ),
     ),
 
     // A keyed value is the family's list, or a whole-value #if whose arms are that
@@ -878,6 +898,35 @@ module.exports = grammar({
     ),
     _namespaces_value_conditional: $ => keyedValueConditional($,
       seq(field('value', $._namespaces_property_value), optional(';'))),
+
+    // TableRelation's value is the compiler's relation grammar (ParseTableRelationPropertyValue:
+    // optional if(...), ONE ParseQualifiedName target, optional where, optional else).
+    // A value-start #if is the whole-value wrapper, UNLESS a shared `else` continuation follows
+    // #endif (alc accepts `#if X if (..) A #else if (..) B #endif else C`, Task 1 probe):
+    // then it is the relation's conditional head, mirroring the existing
+    // `relation preproc_conditional_table_relation` split (spec 2026-10-04 §3.2 item 4, rev 4).
+    _table_relation_head: $ => choice($.simple_table_relation, $.if_table_relation),
+    _table_relation_property_value: $ => choice(
+      alias($._table_relation_rooted, $.table_relation_value),
+      alias($._table_relation_whole_conditional, $.preproc_conditional_property_value),
+    ),
+    _table_relation_rooted: $ => prec.right(5, choice(
+      seq(
+        alias($._table_relation_head, $.table_relation_expression),
+        optional($.preproc_conditional_table_relation),
+      ),
+      // the conditional head with a shared else tail
+      seq($.preproc_conditional_table_relation, $.else_table_relation_fragment),
+    )),
+    _table_relation_whole_conditional: $ => keyedValueConditional($,
+      seq(field('value', $._table_relation_property_value), optional(';'))),
+    // `;` inside the arms (no `;` after #endif): the keyed form of the old
+    // generic _table_relation_split_value.
+    _table_relation_keyed_split: $ => choice(
+      seq(alias($._table_relation_head, $.table_relation_expression),
+          $.preproc_conditional_table_relation),
+      alias($._table_relation_open_if, $.table_relation_expression),
+    ),
 
     // --- Permissions property: Name = tabledata_permission_list (no trailing ;) ---
     // Used when the terminating ';' is consumed inside the permission list's preproc branch.
@@ -943,7 +992,15 @@ module.exports = grammar({
         '=',
         field('value', choice(
           alias($._property_value_conditional_in_if, $.preproc_conditional_property_value),
-          alias($._table_relation_split_value, $.table_relation_value),
+        )),
+      ),
+      // TableRelation (B5): the relation forms are reachable through its name only.
+      seq(
+        field('name', alias($._table_relation_property_name, $.property_name)),
+        '=',
+        field('value', choice(
+          alias($._table_relation_whole_conditional, $.preproc_conditional_property_value),
+          alias($._table_relation_keyed_split, $.table_relation_value),
         )),
       ),
       // The keyed names (B4): their arms hold the family's list only.
@@ -998,6 +1055,8 @@ module.exports = grammar({
         '=',
         field('value', alias($._namespaces_value_conditional, $.preproc_conditional_property_value)),
       ),
+      // No keyed TableRelation arm: both hosts reject TableRelation (AL0124, deferred-work
+      // item 17), and it cost ~102 states (spec 2026-10-04 rev 4 item 6, Ruling M).
     )),
 
     _property_value_conditional_in_if: $ => seq(
@@ -1023,7 +1082,8 @@ module.exports = grammar({
     // Arms and terminators are both optional here, so the node does not promise
     // that every configuration supplies a value or a `;`. Each arm's value has
     // the shape a flat parse of that arm gives: a bare name is an `identifier`
-    // or `quoted_identifier`, a longer relation a table_relation_value.
+    // or `quoted_identifier`, `A.B` a property_expression (B5: relations are
+    // TableRelation's keyed _table_relation_whole_conditional only).
     //
     // History. This was `_table_relation_whole_conditional`, aliased to
     // preproc_conditional_table_relation although only some of its arms are
@@ -1047,23 +1107,13 @@ module.exports = grammar({
     // true`, ML lists, object references, expressions, where/sorting, links,
     // OrderBy, Implementation. Reusing the flat rule is what gives the arm the
     // flat shape in most cases -- `A` stays an identifier and `A.B` a
-    // table_relation_value, and a nested #if is _property_value's own
+    // property_expression (B5), and a nested #if is _property_value's own
     // whole-value alternative -- but not in every lookahead context (the ML
     // single-pair arm, grammar finding G9). The `;` is kept outside the field
     // so the field carries only the value (G6). +85 states at G8 and the seven
     // conflicts documented at the conflicts list.
     _property_value_branch: $ => seq(field('value', $._property_value), optional(';')),
 
-    // The relation value of a _property_with_terminator_in_if whose `;` sits inside a #if arm
-    // later in the chain. Aliased to table_relation_value so it has the shape a
-    // flat parse of any one configuration gives:
-    //   value: table_relation_value(table_relation_expression(...) ...)
-    // Until the fix it had no wrapper, and the if-chain form had no
-    // table_relation_expression either (grammar finding G1).
-    _table_relation_split_value: $ => choice(
-      seq($.table_relation_expression, $.preproc_conditional_table_relation),
-      alias($._table_relation_open_if, $.table_relation_expression),
-    ),
     // prec(-1), as on _property_with_terminator_in_if: at a following `;` the ordinary
     // property reading (table_relation_value -> table_relation_expression) wins.
     _table_relation_open_if: $ => prec(-1, $.if_table_relation),
@@ -1118,7 +1168,6 @@ module.exports = grammar({
       $.order_by_list,              // ascending("No.", Name)
       $.implementation_value_list,  // "IFace" = "Impl", ...
       $.option_member_list,         // Option1, Option2, "Option 3"
-      $.table_relation_value,       // Customer where(...) or if(...) Item else Resource
       // A whole value that is a #if with one value per arm, `;` after #endif.
       // The same node and arm shape as _property_with_terminator_in_if's
       // (`;` inside the arms, _property_value_conditional_in_if), so both
@@ -1591,19 +1640,8 @@ module.exports = grammar({
     // --- TableRelation value ---
     // Customer where("No." = field("Customer No."))
     // if("Type" = const(Item)) Item else Resource
-    // The third form is a relation continued into a #if whose arms carry no
-    // `;` -- `if (...) Item #if X else Resource #else else Customer #endif ;`
-    // -- so the `;` after #endif is the property's own terminator (G11,
-    // deferred-work item 19). Until G11 only _table_relation_split_value held
-    // `expression conditional`, and that variant takes no `;`, so the `;`
-    // became an empty_statement sibling of the property with no ERROR. Same
-    // children as _table_relation_split_value's alias, so both placements of
-    // the `;` give one shape.
-    table_relation_value: $ => prec.right(5, choice(
-      $.table_relation_expression,
-      $.preproc_conditional_table_relation,
-      seq($.table_relation_expression, $.preproc_conditional_table_relation),
-    )),
+    // `table_relation_value` is an alias name only since B5: the keyed
+    // _table_relation_rooted and _table_relation_keyed_split produce it.
 
     // Preprocessor conditionals inside TableRelation value
     preproc_conditional_table_relation: $ => seq(
@@ -1655,9 +1693,23 @@ module.exports = grammar({
     )),
 
     simple_table_relation: $ => prec.right(20, seq(
-      choice($._namespaced_ref_table, field('table', $.member_expression)),
-      optional(prec(25, $.where_clause))
+      field('target', $.qualified_name),
+      optional(prec(25, $.where_clause)),
     )),
+
+    // The relation target, as alc's ParseQualifiedName reads it: identifier-token segments.
+    // In the keyed TableRelation states the only keyword tokens are `if` (value start) and
+    // `where` / `else` (after a target), so every other word -- `System`, `Table`, `Begin`,
+    // `Then` -- extracts as `identifier`, matching alc (Task 1 probes: begin/end/then and the
+    // 36 keyword-segment cases accepted; if/else/where rejected). That is not enough at the
+    // first segment, where only `if` is a live keyword: `Else."No."` and `Where."No."` parsed
+    // clean, so `relation_target_names` reserves if/else/where (spec rev 4 item 5). Segments carry no field:
+    // which one is the table needs symbol resolution (spec 2026-10-04 §3.2 item 1, rev 4).
+    qualified_name: $ => prec.right(seq(
+      $._qualified_name_segment,
+      repeat(seq('.', $._qualified_name_segment)),
+    )),
+    _qualified_name_segment: $ => reserved('relation_target_names', choice($.identifier, $.quoted_identifier)),
 
     // --- Permissions value list ---
     // tabledata Customer = R, tabledata "Sales Header" = RIMD
@@ -2236,7 +2288,6 @@ module.exports = grammar({
     // Fielded forms of the above — one per distinct field name. Each name part
     // carries the field individually so the separating '.' does not.
     _namespaced_ref_reference: $ => namespacedRefFielded($, 'reference'),
-    _namespaced_ref_table: $ => namespacedRefFielded($, 'table'),
     _namespaced_ref_table_name: $ => namespacedRefFielded($, 'table_name'),
 
     // array[10] of Integer, array[10,20] of Text[100]
@@ -5995,9 +6046,11 @@ module.exports = grammar({
     // type that queries and tree-walkers rely on (see CLAUDE.md § Keyword
     // Architecture, which uses exit_keyword as its worked example). One alias
     // per keyword now covers every source casing.
-    if_keyword: $ => prec(10, alias(kw('if'), 'if')),
+    if_keyword: $ => prec(10, alias($._if_token, 'if')),
+    _if_token: $ => kw('if'),
     then_keyword: $ => prec(10, alias(kw('then'), 'then')),
-    else_keyword: $ => prec(10, alias(kw('else'), 'else')),
+    else_keyword: $ => prec(10, alias($._else_token, 'else')),
+    _else_token: $ => kw('else'),
     case_keyword: $ => prec(10, alias(kw('case'), 'case')),
     of_keyword: $ => prec(10, alias(kw('of'), 'of')),
     for_keyword: $ => prec(10, alias(kw('for'), 'for')),
@@ -6130,7 +6183,8 @@ module.exports = grammar({
     //
     // where_keyword keeps kw()'s second argument: it promotes parse precedence to
     // LEXICAL precedence, and dropping it can make other rules unreachable.
-    where_keyword: $ => alias(kw('where', 15), 'where'),
+    where_keyword: $ => alias($._where_token, 'where'),
+    _where_token: $ => kw('where', 15),
     field_keyword: $ => alias(kw('field'), 'field'),
     const_keyword: $ => alias(kw('const'), 'const'),
     upperlimit_keyword: $ => alias(kw('upperlimit'), 'upperlimit'),

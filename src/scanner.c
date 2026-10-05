@@ -29,6 +29,7 @@ enum TokenType {
   SCANNER_HOOK = 14,         // an extra that is NEVER emitted: see the '#' dispatch
   ML_PROPERTY_NAME = 15,          // one of the 13 compiler ML names followed by =
   NAMESPACES_PROPERTY_NAME = 16,  // `Namespaces` followed by =
+  TABLE_RELATION_PROPERTY_NAME = 17,  // `TableRelation` followed by = (B5)
 };
 
 // Named so the static assertion below can test its width AND its signedness.
@@ -284,6 +285,7 @@ enum IdentifierWord {
   WORD_CALCFORMULA,  // the one property name the scanner keys on (issue #21)
   WORD_ML_PROPERTY,  // value grammar: CommaSeparatedIdentifierEqualsStringList (B4)
   WORD_NAMESPACES,   // same list grammar, its own node (B4)
+  WORD_TABLE_RELATION,  // value grammar: TableRelationPropertyValueSyntax (B5)
 };
 
 // The compiler's pair-list property names, lowercase. Source: alc 18.0.41.62505,
@@ -325,6 +327,7 @@ static enum IdentifierWord read_identifier_word(TSLexer *lexer) {
   if (len == 8 && strcmp(buf, "continue") == 0) return WORD_CONTINUE;
   if (len == 11 && strcmp(buf, "calcformula") == 0) return WORD_CALCFORMULA;
   if (len == 10 && strcmp(buf, "namespaces") == 0) return WORD_NAMESPACES;
+  if (len == 13 && strcmp(buf, "tablerelation") == 0) return WORD_TABLE_RELATION;
   for (size_t i = 0; i < sizeof(ML_PROPERTY_NAMES) / sizeof(ML_PROPERTY_NAMES[0]); i++) {
     if (strcmp(buf, ML_PROPERTY_NAMES[i]) == 0) return WORD_ML_PROPERTY;
   }
@@ -563,7 +566,8 @@ bool tree_sitter_al_external_scanner_scan(
       valid_symbols[DIRECTIVE_EOL] &&
       valid_symbols[NEGATIVE_INTEGER] && valid_symbols[NEGATIVE_DECIMAL] &&
       valid_symbols[MALFORMED_DIRECTIVE] && valid_symbols[SCANNER_HOOK] &&
-      valid_symbols[ML_PROPERTY_NAME] && valid_symbols[NAMESPACES_PROPERTY_NAME]) {
+      valid_symbols[ML_PROPERTY_NAME] && valid_symbols[NAMESPACES_PROPERTY_NAME] &&
+      valid_symbols[TABLE_RELATION_PROPERTY_NAME]) {
     return false;
   }
 
@@ -948,7 +952,8 @@ bool tree_sitter_al_external_scanner_scan(
       valid_symbols[END_KEYWORD] || valid_symbols[PREPROC_SPLIT_END] ||
       valid_symbols[CONTINUE_AS_IDENTIFIER] || valid_symbols[PROPERTY_NAME] ||
       valid_symbols[CALC_FORMULA_PROPERTY_NAME] ||
-      valid_symbols[ML_PROPERTY_NAME] || valid_symbols[NAMESPACES_PROPERTY_NAME]) {
+      valid_symbols[ML_PROPERTY_NAME] || valid_symbols[NAMESPACES_PROPERTY_NAME] ||
+      valid_symbols[TABLE_RELATION_PROPERTY_NAME]) {
     skip_whitespace(lexer);
     enum IdentifierWord word = read_identifier_word(lexer);
     if (word == WORD_NOT_IDENTIFIER) return false;  // nothing consumed
@@ -1021,7 +1026,8 @@ bool tree_sitter_al_external_scanner_scan(
     // ts_external_scanner_states table — but unlike the two arms above, this
     // ORDER does not depend on that holding.)
     if (valid_symbols[PROPERTY_NAME] || valid_symbols[CALC_FORMULA_PROPERTY_NAME] ||
-        valid_symbols[ML_PROPERTY_NAME] || valid_symbols[NAMESPACES_PROPERTY_NAME]) {
+        valid_symbols[ML_PROPERTY_NAME] || valid_symbols[NAMESPACES_PROPERTY_NAME] ||
+        valid_symbols[TABLE_RELATION_PROPERTY_NAME]) {
       // Skip whitespace and comments. '\n' belongs here just as much as '\r' —
       // the leading skip above already accepts it, and alc accepts a property
       // whose '=' sits on the next line (verified). Omitting it made
@@ -1046,12 +1052,16 @@ bool tree_sitter_al_external_scanner_scan(
         // reason: their value is a pair list, and a one-pair list `ENU='x'` is
         // also a complete comparison, so only the name can choose the reading
         // (spec 2026-10-01-pair-list-property-keying-design.md, section 3.1).
+        // TableRelation is keyed because its value is the compiler's relation
+        // grammar, not an expression (spec 2026-10-04 section 2.1).
         if (word == WORD_CALCFORMULA && valid_symbols[CALC_FORMULA_PROPERTY_NAME]) {
           lexer->result_symbol = CALC_FORMULA_PROPERTY_NAME;
         } else if (word == WORD_ML_PROPERTY && valid_symbols[ML_PROPERTY_NAME]) {
           lexer->result_symbol = ML_PROPERTY_NAME;
         } else if (word == WORD_NAMESPACES && valid_symbols[NAMESPACES_PROPERTY_NAME]) {
           lexer->result_symbol = NAMESPACES_PROPERTY_NAME;
+        } else if (word == WORD_TABLE_RELATION && valid_symbols[TABLE_RELATION_PROPERTY_NAME]) {
+          lexer->result_symbol = TABLE_RELATION_PROPERTY_NAME;
         } else if (valid_symbols[PROPERTY_NAME]) {
           lexer->result_symbol = PROPERTY_NAME;  // a keyed name where the state offers only the generic token
         } else {

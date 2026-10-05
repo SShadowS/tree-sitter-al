@@ -296,7 +296,11 @@ table 50100 MyTable
     (declaration_body
       (property
         (property_name)
-        (identifier)))))
+        (table_relation_value
+          (table_relation_expression
+            (simple_table_relation
+              (qualified_name
+                (identifier)))))))))
 
 ========================================================================
 TableRelation with where clause
@@ -318,7 +322,8 @@ table 50100 MyTable
         (table_relation_value
           (table_relation_expression
             (simple_table_relation
-              (identifier)
+              (qualified_name
+                (identifier))
               (where_clause
                 (where_keyword)
                 (where_conditions
@@ -354,11 +359,13 @@ table 50100 MyTable
                   (const_keyword)
                   (identifier)))
               (simple_table_relation
-                (identifier))
+                (qualified_name
+                  (identifier)))
               (else_keyword)
               (table_relation_expression
                 (simple_table_relation
-                  (identifier))))))))))
+                  (qualified_name
+                    (identifier)))))))))))
 
 ========================================================================
 Permissions property

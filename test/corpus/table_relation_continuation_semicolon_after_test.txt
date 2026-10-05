@@ -78,7 +78,8 @@ table 50100 T
                           (const_keyword)
                           value: (identifier)))
                       then_relation: (simple_table_relation
-                        table: (identifier))))
+                        target: (qualified_name
+                          (identifier)))))
                   (preproc_conditional_table_relation
                     (preproc_if
                       (preproc_open)
@@ -87,13 +88,15 @@ table 50100 T
                       (else_keyword)
                       else_relation: (table_relation_expression
                         (simple_table_relation
-                          table: (identifier))))
+                          target: (qualified_name
+                            (identifier)))))
                     (preproc_else)
                     (else_table_relation_fragment
                       (else_keyword)
                       else_relation: (table_relation_expression
                         (simple_table_relation
-                          table: (identifier))))
+                          target: (qualified_name
+                            (identifier)))))
                     (preproc_endif
                       (preproc_close))))))))))))
 
@@ -164,7 +167,8 @@ table 50100 T
                           (const_keyword)
                           value: (identifier)))
                       then_relation: (simple_table_relation
-                        table: (identifier))))
+                        target: (qualified_name
+                          (identifier)))))
                   (preproc_conditional_table_relation
                     (preproc_if
                       (preproc_open)
@@ -173,7 +177,8 @@ table 50100 T
                       (else_keyword)
                       else_relation: (table_relation_expression
                         (simple_table_relation
-                          table: (identifier))))
+                          target: (qualified_name
+                            (identifier)))))
                     (preproc_endif
                       (preproc_close))))))))))))
 
@@ -246,7 +251,8 @@ table 50100 T
                           (const_keyword)
                           value: (identifier)))
                       then_relation: (simple_table_relation
-                        table: (identifier))
+                        target: (qualified_name
+                          (identifier)))
                       (else_keyword)
                       else_relation: (table_relation_expression
                         (preproc_conditional_table_relation
@@ -262,10 +268,12 @@ table 50100 T
                                   (const_keyword)
                                   value: (identifier)))
                               then_relation: (simple_table_relation
-                                table: (identifier))))
+                                target: (qualified_name
+                                  (identifier)))))
                           (preproc_else)
                           (table_relation_expression
                             (simple_table_relation
-                              table: (identifier)))
+                              target: (qualified_name
+                                (identifier))))
                           (preproc_endif
                             (preproc_close)))))))))))))))

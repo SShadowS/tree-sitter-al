@@ -140,7 +140,11 @@ table 50102 "Test Table Relation"
             body: (declaration_body
               (property
                 name: (property_name)
-                value: (identifier))
+                value: (table_relation_value
+                  (table_relation_expression
+                    (simple_table_relation
+                      target: (qualified_name
+                        (identifier))))))
               (property
                 name: (property_name)
                 value: (boolean)))))))))

@@ -70,6 +70,9 @@ tools/keyword-sync/__pycache__/
 !tools/config_oracle/**/*.py
 tools/config_oracle/**/__pycache__/
 tools/config_oracle/reports/
+# And the compiler-facts extractor and its tests (B5)
+!tools/alc_facts/**/*.py
+tools/alc_facts/**/__pycache__/
 # Everything directly under tools/ is a checked-in helper, not scratch. These are
 # wired into validate-grammar.sh (orphan, duplicate, health and field-shape
 # checks); if they are not tracked, a fresh clone silently skips those steps.
@@ -232,3 +235,6 @@ tools/perf/reports/
 !tests/traversal/*.py
 !tests/traversal/fixtures/*.al
 tests/traversal/__pycache__/
+
+# Bytecode for the scripts directly under tools/ (never commit)
+tools/__pycache__/

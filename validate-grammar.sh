@@ -681,6 +681,24 @@ else
     # `files=` must equal Step 6's total.
     print_header "Step 6b: has_error Over the AL Corpus (--full only)"
     run_has_error_sweep "$AL_PARSE_CORPUS" "$PARSE_TOTAL" --root "$AL_PARSE_CORPUS"
+
+    # Step 6c: TableRelation / D2 shape census (B5). Exit 0 required; the summary
+    # must name a TableRelation-site denominator > 0, so an empty or mis-rooted run
+    # cannot pass.
+    print_header "Step 6c: TableRelation Census Over the AL Corpus (--full only)"
+    rel_out=$(python tools/relation_census.py check --root "$AL_PARSE_CORPUS" 2>&1) && rel_status=0 || rel_status=$?
+    rel_sites=$(echo "$rel_out" | sed -n 's/.* tablerelation_sites=\([0-9][0-9]*\) .*/\1/p' | tail -1)
+    if [ "$rel_status" -ne 0 ]; then
+        print_error "relation_census found findings or could not run (exit $rel_status)"
+        echo "$rel_out" | tail -20
+        VALIDATION_FAILED=1
+    elif [ -z "$rel_sites" ] || [ "$rel_sites" -le 0 ]; then
+        print_error "relation_census saw no TableRelation sites in $AL_PARSE_CORPUS"
+        echo "$rel_out" | tail -3
+        VALIDATION_FAILED=1
+    else
+        print_success "$(echo "$rel_out" | tail -1)"
+    fi
 fi
 
 # Step 7: Check for common issues
