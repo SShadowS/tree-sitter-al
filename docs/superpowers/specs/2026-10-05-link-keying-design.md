@@ -1,6 +1,8 @@
 # B5b: the link family keyed by name (link-syntax leak)
 
-**Status:** revision 2, 2026-10-05. Revision 1 was approved in conversation section by section,
+**Status:** revision 3, 2026-10-05. Revision 2 had a second gpt-6.1-sol round: 1 blocker
+and 4 majors, all verified and adopted (§9, round 2).
+**Revision 2 history:** 2026-10-05. Revision 1 was approved in conversation section by section,
 then reviewed by gpt-6.1-sol. All 9 of its findings were verified against the decompiled
 compiler, the grammar and live parses before they were adopted (§9). This revision awaits
 review.
@@ -148,32 +150,68 @@ dispatches it (`SyntaxFacts.cs:4270-4274`; `ObjectParser.cs:9785-9794`).
      ';'
    ),
    ```
-2. **The two terminator placements get two conditionals.** This mirrors the generic
-   `_property_value_conditional` / `_property_value_conditional_in_if` pair. B5's single
-   optional-`;` conditional must NOT be reused here: for links it revives G11, the documented
-   silent split that the `_in_if` comment describes at `grammar.js:1019-1028`. A link run accepts
-   a trailing comma (§2.3), so an arm `A = field(B),` could end the property at `#endif` and leave
-   `B = field(A);` as a second property.
+2. **The two terminator placements get two conditionals, with different arm rules.** This
+   mirrors the generic pair (`_property_value_conditional`, whose arms take an optional `;`, and
+   `_property_value_conditional_in_if`). B5's single conditional is NOT reused.
 
    ```javascript
    _link_property_value: $ => choice(
      $.link_value_list,
      alias($._link_whole_conditional, $.preproc_conditional_property_value),
    ),
-   // `;` after #endif: arms carry no `;`
+   // `;` after #endif (the property arm). Arms MAY end in `;`, as the generic rule's arms do:
+   // `#if X A = field(B); #else A = field(C) #endif ;` is valid AL. With X defined it is a
+   // terminated property plus an empty property, and the compiler's property list accepts a
+   // standalone `;` (ObjectParser.cs:7505-7516). It parses clean today through the generic path.
    _link_whole_conditional: $ => keyedValueConditional($,
-     field('value', $._link_property_value)),
-   // `;` inside the arms: every non-empty arm ENDS in `;`, or is this conditional again
-   _link_whole_conditional_in_if: $ => keyedValueConditional($, choice(
-     seq(field('value', $._link_property_value), ';'),
-     field('value', alias($._link_whole_conditional_in_if, $.preproc_conditional_property_value)),
-   )),
+     seq(field('value', $._link_property_value), optional(';'))),
    ```
 
-   The G11 trees must stay exactly as `test/corpus/link_list_opening_conditional_test.txt` pins
-   them: a `#if` that opens a list continued after `#endif` is list-internal, and the last four
-   cases are whole-value forms. The structure above is what preserves them; a tiebreak or a STOP
-   gate is not. Every G11 case is re-run under the keyed name.
+   **The `;`-inside-the-arms conditional** (`_link_whole_conditional_in_if`, used only by
+   `_property_with_terminator_in_if`) takes no `;` after `#endif`. So EVERY configuration must
+   reach a `;` inside the conditional, which means:
+   - every arm is present and non-empty, and ends in `;` or is this conditional again;
+   - an `#else` arm is required.
+
+   Anything else leaves some configuration without a terminator, which is invalid AL. This is
+   written as its own rule (not `keyedValueConditional`, whose arms are all optional):
+
+   ```javascript
+   _link_whole_conditional_in_if: $ => seq(
+     $.preproc_if, $._link_in_if_arm,
+     repeat(seq($.preproc_elif, $._link_in_if_arm)),
+     $.preproc_else, $._link_in_if_arm,
+     $.preproc_endif,
+   ),
+   _link_in_if_arm: $ => choice(
+     seq(field('value', $._link_property_value), ';'),
+     seq(';'),   // only if §5.1 shows an empty value is accepted; no `value` field
+     field('value', alias($._link_whole_conditional_in_if, $.preproc_conditional_property_value)),
+   ),
+   ```
+
+   **This excludes both G11 splits structurally:**
+   - the non-empty unterminated prefix, `#if X A = field(B), #endif B = field(A);`;
+   - the empty prefix, `#if X #endif B = field(A);`.
+
+   **The empty prefix is a silent split TODAY** (live parse at `821c914`: two properties,
+   `SubPageLink` and `B`). B5b fixes it for the link family. The generic `_in_if` route has the
+   same shape, which matters wherever a continuation can look like a property (e.g.
+   `Implementation` pairs). That becomes a deferred-work item (§6).
+
+   **A standalone whole value still has two complete readings:** the whole-value wrapper, and a
+   list opening with `preproc_conditional_link_values`. Today a declared conflict and GLR decide
+   between them (G11), and the fixture pins the wrapper
+   (`link_list_opening_conditional_test.txt:336-401`). The keyed rules are new symbols, so the
+   conflicts that decide this get declared for them too, with comments naming both readings.
+
+   The empty-value arm (`seq(';')`, or an empty arm in the outside conditional) exists only if
+   §5.1 accepts an empty value. It is represented as an arm with no `value` field, never as an
+   empty `link_value_list`.
+
+   **What must hold, checked against the generated parser:**
+   - all eight G11 fixture cases keep their exact trees;
+   - mixed-placement and nested mixed-placement cases parse as ONE property, with correct spans.
 3. **`_property_value`** loses `$.link_value_list`.
 4. **The `_in_if` hosts.**
    - `_property_with_terminator_in_if` gains a keyed link arm whose value is
@@ -195,6 +233,25 @@ dispatches it (`SyntaxFacts.cs:4270-4274`; `ObjectParser.cs:9785-9794`).
    - **`const(...)`:** decimals, signed numbers, bigintegers, dates, times and datetimes are each
      probed. The compiler's `TryParseIdentifierOrLiteralOrOptionAccessExpression` takes literal
      tokens (10384-10409).
+   - **A signed value is a local rule, NOT the external `NEGATIVE_INTEGER` / `NEGATIVE_DECIMAL`
+     tokens.** Those decline before `)` (`src/scanner.c:599`), and they must keep their
+     boundaries. The rule:
+
+     ```javascript
+     _const_unsigned_numeric: $ => choice($.integer, $.decimal, $.biginteger_literal),
+     _const_numeric: $ => choice(
+       $._const_unsigned_numeric,
+       alias(seq(field('operator', '-'), field('operand', $._const_unsigned_numeric)),
+             $.unary_expression),
+     ),
+     ```
+
+     It goes inside the existing `const` argument's `field('value', ...)`, so sign and magnitude
+     form ONE value node with `unary_expression`'s existing fields (`grammar.js:5717-5720`), and
+     no new public type. Do not field the magnitude alone, alias a signed sequence to `integer`,
+     or admit unrestricted `_expression`.
+   - **More probes:** `-1.5`, a signed biginteger, a space or a comment between the sign and the
+     magnitude, and unary `+`. Unary `+` is added only if accepted.
    - **`filter(...)` with parentheses** (8821-8831): probed. If accepted, it is recorded as a
      deferred-work item rather than built in B5b. That is a `filter_value` grammar change shared
      with `where_clause`, it ERRORs today already (§2.3), and it has 0 production sites.
@@ -240,16 +297,30 @@ RunPageLink = #if X A = field(B), #endif B = field(A);    -- G11: list-internal,
 | class | change | production sites |
 |---|---|---|
 | L1 | a non-family property whose value held `link_value*` → `property_expression`, including inside a whole-value `#if` arm | 0 (§2.2) |
-| L3 | a family value that fell back to `property_expression` (a form item 6 adds) → `link_value_list` | 0 (§2.2) |
+| L3 | a family pair that fell back to an expression (a form item 6 adds) → the equivalent `link_value` | 0 (§2.2) |
 | — | the 20,004 family values, the 3 list-internal `SubPageLink` sites, every G11 fixture | **unchanged** |
 
 There is no blanket class for whole-value fixtures: a fixture that does not change is unchanged.
 Only measured deltas are classified, each hunk traced.
 
+**L1 and L3 are leaf rewrites, not whole-value predicates.** The census finds each rewrite root
+by descending through UNCHANGED conditional envelopes. The envelope's kind, arm fields, ordering,
+delimiters and spans must be identical. At each root it compares field names, source spans,
+operators, marker keywords and argument structure:
+- **L1** requires the old link pair and the new comparison to cover the same tokens;
+- **L3** requires the old expression and the new `link_value` to cover the same tokens, with the
+  marker keyword being one of item 6's additions.
+
+One envelope may hold several rewrites, each reported with its own class. Anything else is a
+finding. Reparenting (same span, different parent) is caught by the per-corpus full-tree
+tree-harness, not by the census, and the spec says so.
+
 **The production gate is exact, over all four corpora:**
 - `tree-harness verify` against a fresh per-corpus baseline reports **0 changed files** for each
   of BC.History, DC, BC28.1 and BCApps-29.0;
-- `relation_census.py delta` reports **0 rows and 0 findings**.
+- `relation_census.py delta --expect-no-rows` reports **0 rows and 0 findings**. The new flag makes
+  any classified row exit 1. Today a run with rows and no findings exits 0
+  (`tools/relation_census.py:462`).
 
 ### 4.3 Consumers
 
@@ -281,7 +352,12 @@ change.
   - Every TableFilter `field(...)` form from §2.1, plus `const(...)` and `filter(...)`.
   - Lowercase names.
   - Whole-value `#if` with both `;` placements, and nested.
-  - Every G11 fixture case, under each delegate kind.
+  - Delegate-valid variants of each G11 shape: `field(...)` pairs for report `DataItemLink`,
+    `DataItem.Field` pairs for query `DataItemLink`, and `field`/`const`/`filter` pairs for
+    TableFilter. The original G11 fixtures stay unchanged, including the two generic `Caption`
+    cases. Over-acceptance fixtures are kept separate and labelled.
+  - The mixed `;` placement (§3.2 item 2), and a nested mixed placement.
+  - The empty-prefix G11 shape (`#if X #endif B = field(A);`), with `X` defined and undefined.
   - `Visible = Flag = Rec.OtherFlag;` on a page field.
 - **Decide by probe:**
   - An empty value, for each delegate: `RunPageLink = ;`, `DataItemLink = ;` on a report and on
@@ -309,18 +385,31 @@ change.
 
 - **`link_keying_test.txt`.** Every row of §4.1, every G11 case under a keyed name, item 6's
   added forms, and the leak cases (`Visible = Flag = Rec.OtherFlag;`, `Caption = A = B.C;`).
-- **The host × placement matrix.** Each row is one host, with alc accepting each case:
+- **The host × property matrix.** Each row is one compiler host and the one family property it
+  owns, and each needs alc to accept it. The placements are the columns: flat, `;` after
+  `#endif`, `;` in the arms, mixed, list-internal `#if`, a comment between the name and `=`,
+  and the whole property inside a body-level `#if` / `#else`.
 
-  | host | flat | `;` after `#endif` | `;` in the arms | list-internal `#if` | comment between name and `=` |
-  |---|---|---|---|---|---|
-  | page action | ✓ | ✓ | ✓ | ✓ | ✓ |
-  | page part, page system part | ✓ | ✓ | ✓ | ✓ | ✓ |
-  | pageextension `addafter` part/action | ✓ | ✓ | ✓ | ✓ | ✓ |
-  | pageextension `modify` part/action, if alc allows the property there (first-match lookup, B5 Ruling L) | ✓ | ✓ | ✓ | ✓ | ✓ |
-  | report data item, request page | ✓ | ✓ | ✓ | ✓ | ✓ |
-  | query data item, column, filter | ✓ | ✓ | ✓ | ✓ | ✓ |
-  | xmlport table element | ✓ | ✓ | ✓ | ✓ | ✓ |
-  | a whole family property inside a body-level `#if` / `#else` | ✓ | ✓ | ✓ | ✓ | ✓ |
+  | host | property |
+  |---|---|
+  | page action (`actions` area) | `RunPageLink` |
+  | page part | `SubPageLink` |
+  | page system part | `SubPageLink` |
+  | pageextension `addafter` action | `RunPageLink` |
+  | pageextension `addafter` part | `SubPageLink` |
+  | pageextension `modify` action | `RunPageLink`, if alc allows it (first-match lookup, B5 Ruling L) |
+  | pageextension `modify` part | `SubPageLink`, if alc allows it |
+  | report data item | `DataItemLink`, `field(...)` form |
+  | reportextension added data item | `DataItemLink`, if alc accepts it |
+  | report request-page part / system part / action | `SubPageLink` / `RunPageLink` |
+  | xmlport request-page part / system part / action | `SubPageLink` / `RunPageLink` |
+  | query data item | `DataItemLink`, `DataItem.Field` form; `DataItemTableFilter` |
+  | query column | `ColumnFilter` |
+  | query filter | `ColumnFilter` |
+  | xmlport table element | `LinkFields` |
+
+  A request page's root owns none of the six names (§2.1). Body-level `#if` is a placement
+  applied to these rows, not a host.
 
 - **Regressions,** each unchanged:
   - `SourceTableView`, `SubPageView`, `RunPageView` and `DataItemTableView` with `where(...)`
@@ -362,7 +451,8 @@ evidence. §5.2's matrix is the context-coverage side; shared scanner rows are n
 - **Mutation proofs:**
   - a family name forced onto the generic path, by disabling the keyed token;
   - `link_value_list` restored to `_property_value`;
-  - a dropped or reparented property;
+  - a dropped property (census);
+  - a reparented property (per-corpus tree-harness: the census cannot see it);
   - a whole-value conditional misclassified as list-internal, and the reverse.
 - **Production deltas (§4.2), over all four corpora:**
   - `tree-harness verify` with fresh per-corpus baselines: 0 changed files for each corpus;
@@ -401,12 +491,17 @@ evidence. §5.2's matrix is the context-coverage side; shared scanner rows are n
 - **`docs/deferred-work.md`:** new items for whatever §5.1 leaves open:
   - the trailing comma (B7);
   - `filter((...))` if accepted;
-  - `chartpart` if accepted.
+  - `chartpart` if accepted;
+  - the empty-prefix silent split in the generic `_in_if` route (e.g. `Implementation =`,
+    then `#if X` / `#endif`, then `A = B;`). It is pre-existing, outside the link family, and
+    needs a probe and a production count.
 
 ## 7. Risks
 
 | Risk | Mitigation |
 |---|---|
+| An empty-prefix or empty-arm conditional ends the property early | §3.2 item 2: every inside-route arm is present and terminated, and `#else` is required. The empty-prefix shape is probed and pinned |
+| Mixed `;` placement stops parsing | §3.2 item 2: outside-route arms keep an optional `;`, as the generic route does today |
 | G11's silent split returns through the `;`-inside-the-arms conditional | §3.2 item 2: required arm `;`, structurally, as the generic `_in_if` conditional does. Every G11 case is re-run under a keyed name |
 | A valid link form missing from `link_value` turns a fallback into an ERROR | §3.2 item 6 and §5.1's value-form probes. Production: 0 sites (§2.2), confirmed by the 0-delta gate |
 | Empty-value decision taken from one delegate | §5.1 probes all three delegates |
@@ -456,3 +551,23 @@ against the source before it was adopted:
 9. **The exact-zero gate covered BC.History only, and the L2 class was blanket.** Adopted:
    per-corpus tree-harness over all four corpora, L2 dropped, measured classes only, and the
    wider regression list.
+
+**Round 2** (revision 2). The reviewer marked 4 of the 9 findings resolved and 5 partly
+resolved, then raised 1 blocker and 4 majors. All were verified before adoption:
+
+1. **The outside conditional forbade arm semicolons (blocker).** Verified: the mixed placement
+   parses clean today, and the compiler's property list accepts a standalone `;`
+   (`ObjectParser.cs:7505-7516`). Adopted: outside arms take an optional `;`; empty arms are
+   represented without a `value` field.
+2. **G11 ownership not structurally guaranteed.** Verified: the empty-prefix shape is a silent
+   split TODAY (live parse: two properties). Adopted: the inside route requires every arm to be
+   present and terminated, plus an `#else`. Conflicts are declared for the keyed symbols, and
+   the "structure alone preserves G11" overclaim is gone. The generic route's empty-prefix split
+   becomes a deferred item.
+3. **Signed `const` needs a local rule.** Verified: the negative-number scanner tokens decline
+   before `)`. Adopted: `_const_numeric`, aliased to `unary_expression`.
+4. **L3 was not a safe predicate; zero rows not enforced.** Verified: the census exits 0 when
+   there are rows and no findings (`tools/relation_census.py:462`). Adopted: leaf-rewrite roots
+   through unchanged envelopes, `--expect-no-rows`, and reparenting assigned to tree-harness.
+5. **The host matrix had an impossible row.** Adopted: explicit host × property rows, and
+   delegate-valid G11 variants.
