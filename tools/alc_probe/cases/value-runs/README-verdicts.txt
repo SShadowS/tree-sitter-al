@@ -46,6 +46,7 @@ bare-semi-arm-tablerelation.al: accept [X=0]; reject(AL0107) [X=1]
 boundary-complementary-three.al: accept in all 4 configurations
 boundary-mixed-after.al: accept in all 2 configurations
 boundary-visible-caption.al: accept in all 2 configurations
+continuation-absorption-editable.al: accept [X=1 Y=0 | X=1 Y=1]; reject(AL0219) [X=0 Y=1]; reject(AL0104,AL0219) [X=0 Y=0] (recorded 2026-10-06, B11 final review)
 generic-elif-run-inside.al: accept [X=0 Y=0 | X=1 Y=0 | X=1 Y=1]; reject(AL0104,AL0198) [X=0 Y=1]
 generic-empty-after-last-inside.al: accept in all 4 configurations
 generic-empty-between-groups-inside.al: accept in all 4 configurations
