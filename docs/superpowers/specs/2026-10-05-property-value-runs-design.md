@@ -1,15 +1,15 @@
 # B11: property values made of a run of `#if` groups
 
-**Status:** revision 2, 2026-10-05. Revision 1 was approved in conversation section by section,
-then reviewed by gpt-6.1-sol: 2 blockers, 8 majors, 1 minor. All were verified against the
-code and live parses before they were adopted (§9, round 1). This revision awaits review.
+**Status:** revision 3, 2026-10-05. Revision 2 had a second gpt-6.1-sol round: 1 blocker,
+7 majors and 1 minor, all verified against the code and adopted (§9, round 2). Revision 1's
+round: §9, round 1. This revision awaits review.
 **Roadmap row:** B11, new (`docs/superpowers/plans/2026-09-28-roadmap-remaining-work.md`).
 Absorbs deferred-work items 33 and 35, and the ML empty-prefix split recorded under item 33
 during B8.
 **Ships in:** the next major release. Adds one node type,
-`preproc_conditional_property_value_sequence`. **Previously correct trees do not change.** The
-intended changes are named in §3.4. That is a measurement target, proven over all four corpora
-(§5.4), not a conclusion.
+`preproc_conditional_property_value_sequence`. **Previously correct trees do not change**,
+except the contract migrations named in §3.4. That is a measurement target, proven over all
+four corpora (§5.4), not a conclusion.
 
 ## 1. Problem
 
@@ -84,43 +84,84 @@ not this scan.
 ## 3. Tree contract
 
 **Terms.**
+- A *value site* is a position that holds one whole value:
+  - the *property site*, from `=` to the property's terminator;
+  - an *arm site*, from an arm's directive header to the arm's `;` or the next directive.
 - The *run* is the maximal sequence of consecutive `#if … #endif` groups at a value site.
 - A group is *empty* when, recursively, no arm holds a value: every arm is absent, or holds
   only empty groups.
 - A group is *value-bearing* otherwise.
-- A *value site* is the value position of `property`, and the value position of every
-  whole-value arm.
+- A group is *terminated* when it has `#else` and every arm is present and ends in `;`,
+  recursively. Every configuration has then emitted a `;` by the group's `#endif`.
 
 ### 3.1 Shapes
 
 | shape at a value site | tree |
 |---|---|
 | plain value, or one value-bearing group | unchanged |
-| empty groups around a plain value or one value-bearing group | each empty group is an unfielded `preproc_conditional_property_value` sibling of the value (B8's form), at every value site |
-| a run that is the entire value and holds 2+ value-bearing groups | `value: (preproc_conditional_property_value_sequence …)` |
+| empty groups around the site's core | each empty group is an unfielded `preproc_conditional_property_value` child of the site's enclosing node: `property` at the property site, the enclosing group at an arm site. This is B8's form. |
+| a run of 2+ value-bearing groups with **no list separator crossing a group boundary** | `value: (preproc_conditional_property_value_sequence …)` |
+| a run whose groups are joined by list separators | element conditionals of the family's list, as today |
+
+**The separator rule.** It decides between alternative whole values and list concatenation.
+- **Concatenation.** Groups are list fragments when a list separator (`,`) crosses a group
+  boundary: an arm ends in `,` before `#endif`, or the next group's arm starts with `,`, or an
+  unconditional `,` or member sits between or around the groups. Then several groups can be
+  active at once, and together they form one list. These stay the family's element
+  conditionals (`preproc_conditional_link_values`, `preproc_conditional_impl_values`,
+  `preproc_conditional_option_members`), as today:
+
+  ```al
+  SubPageLink =
+  #if X
+      A = field(B),
+  #else
+      A = field(C),
+  #endif
+  #if Y
+      D = field(E)
+  #else
+      D = field(F)
+  #endif
+  ;
+  ```
+
+- **Alternatives.** With no separator crossing a boundary, two active value-bearing groups
+  would put two values side by side, which is not a value in any family. In every valid
+  configuration, at most one group is active before the property ends. The run is then a
+  sequence of alternative whole values.
+
+A single whole-value group is already one `preproc_conditional_property_value` in every family
+(§2.2). The sequence extends that rule to several groups.
 
 **Inside a sequence:**
 - each value-bearing group is `value: (preproc_conditional_property_value …)`;
 - empty groups between two value-bearing groups are unfielded children;
 - the sequence spans from its first value-bearing group to its last.
 
-**Entire value.** The run is the entire value when nothing but the property's own `;`, empty
-groups or the end of the property follows it, and nothing but `=` or empty groups precedes it.
-- This holds in every family, list families included. A single whole-value group is already a
-  whole value in every family (§2.2), so a sequence is that rule extended to several groups.
-- Element conditionals (`preproc_conditional_link_values`, `preproc_conditional_impl_values`,
-  `preproc_conditional_option_members`) remain where the list has unconditional members or
-  separators outside the groups (`#if X A = field(B), #endif B = field(A)`).
+**Only the core is fielded.** The field `value` goes on the site's core: the plain value, the
+group or the sequence. Decorations are never fielded and never wrapped, so `property.value`
+stays `multiple=False` and each arm still holds at most one `value:`.
 
 ### 3.2 Ownership of `;` and empty groups
 
+Each row applies at every value site. "The site's node" is `property` at the property site,
+and the enclosing group at an arm site.
+
 | placement | token | parent |
 |---|---|---|
-| `;` after the last `#endif` | the trailing `;` | `property`, unfielded, as today |
-| `;` after the last `#endif` | empty groups between the last value-bearing group and the `;` | `property`, unfielded |
+| `;` after the last `#endif` | the trailing `;` | the site's node, unfielded, as today |
+| `;` after the last `#endif` | empty groups between the core and the `;` | the site's node, unfielded |
 | either | an arm's own `;` | its group, unfielded, outside `value:`, as today |
-| `;` inside the arms | empty groups after the last value-bearing group | **not** the property: the property ends at that group's terminated arms, so these are ordinary content of the host body, parsed as today |
-| either | empty groups before the first value-bearing group | `property`, unfielded |
+| `;` inside the arms | empty groups after the last value-bearing group | **not** the site: the site ends at that group's terminated arms, so they are ordinary content after it, parsed as today |
+| either | empty groups before the core | the site's node, unfielded |
+| either, after a **terminated** group | anything that follows, including an unconditional `;` | **not** the site: every configuration has already ended the value. An unconditional `;` there is a standalone `;` (`empty_statement`), as B5b's mixed placement already gives |
+
+**The core may be empty.** It is optional exactly where the family's value is optional today:
+- the generic and link arms of `property` accept an empty value;
+- the others require one.
+
+An all-empty site, empty groups and no core, is that empty-value case (§4.1).
 
 ### 3.3 Why a new node type
 
@@ -171,10 +212,15 @@ mechanism, P4's `reading` contracts, works the same way.
 **Intended changes to clean trees,** named so that the zero-delta gates can allow exactly these
 and nothing else:
 - the generic empty prefix (`option_member_list` → value plus unfielded prefix);
-- the ML, Namespaces and Implementation empty-prefix splits (two properties → one);
-- the link and Implementation `;`-after runs that are the entire value (list of element
-  conditionals → sequence; §3.1 "entire value");
-- the item 35 unquoted split (two properties → one, with a sequence).
+- the ML, Namespaces and Implementation empty-prefix splits (two properties → one).
+
+**Contract migrations.** These are flat-correct today, and are changed deliberately for
+uniformity:
+- the link and Implementation `;`-after runs with no separator crossing a group boundary;
+- the item 35 unquoted run.
+
+They go from a list of element conditionals (or a split) to a sequence. That is the
+representation a single group already has, and the CHANGELOG names it as a migration.
 
 ## 4. Mechanism (`grammar.js`)
 
@@ -198,21 +244,42 @@ The six families therefore cannot drift apart.
 **Witness.** A value-bearing group rule requires at least one present value, recursively
 (B5b's termination witness).
 
-**All-empty whole values.** Whether today's all-empty whole value (`N = #if X #endif ;`) keeps
-parsing is decided per family by alc probe:
-- where alc rejects it as syntax, it becomes a deliberate negative;
-- where the rejection is only semantic, as with an empty `DataItemLink` (AL0171), it keeps
-  parsing, as an empty group followed by the property's `;`, with no value.
+**All-empty sites.** An all-empty site (`N = #if X #endif ;`) parses exactly where the family's
+core is optional (§3.2): generic and link. Its tree is the empty groups and the property's
+`;`, with no `value:`. In the other families it is an ERROR. Each case is pinned against an
+alc probe:
+- an all-empty site alc rejects as syntax, in a family whose core is required, is a deliberate
+  negative;
+- one the grammar accepts although alc rejects it as syntax is recorded as over-acceptance,
+  as `RunPageLink = ;` already is (B5b, CLAUDE.md). The parser does not validate.
 
 ### 4.2 `;` after the last `#endif`
 
 The run continues until the property's `;`, and arms may carry their own `;` (mixed placement).
-The value site is `prefix* (plain | group | sequence) suffix* ';'`, with
+The site is `prefix* core? suffix* ';'`, where `core` is a plain value, a group, or
 `sequence = group (empty* group)+`.
 
-An arm `;` in a non-last group makes the property's boundary configuration-dependent (§3.4,
-second example in §9 round 1). The tree is still the sequence. The oracle refuses the
-configurations in which a later group is active after an earlier arm's `;` (§5.3).
+**A terminated group ends the site in both placements.** No continuation is offered after a
+terminated group (§3.2), so an unconditional `;` after it is a standalone `;`:
+
+```al
+Visible =
+#if X
+    true;
+#else
+    false;
+#endif
+#if Y
+    Caption = 'c';
+#endif
+;
+```
+
+This is `Visible` (one group), then a conditional `Caption` property, then an `empty_statement`.
+
+An arm `;` in a non-last, non-terminated group still makes the boundary configuration-dependent
+(§3.4). The tree is the sequence. The oracle refuses the configurations in which a later group
+is active after an earlier arm's `;` (§5.3).
 
 ### 4.3 `;` inside the arms
 
@@ -241,15 +308,35 @@ The complete and incomplete group productions are **disjoint**:
   incomplete.
 - **The termination witness:** the run holds at least one present, terminated arm.
 
-**Feasibility is gated by a spike.** Before the main grammar task, a generation spike builds the
-generic family's productions:
-- the disjoint complete/incomplete group states;
-- the recursive witnesses;
-- the empty rule;
-- the sequence alias.
+**Feasibility is gated by a spike, of grammar and lowering together.** Before the main grammar
+task, two spikes are built.
 
-It reports STATE_COUNT, the generator-required conflicts, and the trees of the §5.2 boundary
-counterexamples. The remaining families follow only if the spike's trees are right.
+**Families.**
+- **Generic:** the disjoint terminated / non-terminated group states, the recursive
+  witnesses, the empty rule and the sequence alias.
+- **Link:** the separator rule against the element-conditional reading, under link
+  precedence 6.
+
+**Delayed decisions.** Both spikes must keep two readings alive until they are decided:
+- sequence against list-element (the separator may sit in a later group);
+- continuation against the end of the site.
+
+**Common prefixes.** The spikes are tested on common prefixes ending in each of:
+- ordinary members;
+- separators outside the groups;
+- the property's `;`;
+- nested-arm delimiters;
+- trailing empty groups;
+- a terminated group followed by a conditional property and an unconditional `;`.
+
+**Precedence.** Conflicting arm reductions keep compatible static precedence. A
+`prec.dynamic` preference applies only to a completed interpretation, never to a conditional
+prefix.
+
+**Lowering.** Each spike also runs the §5.3 lowering on its trees.
+
+**Report.** STATE_COUNT, the generator-required conflicts, the trees, and the oracle records.
+The remaining families follow only if both spikes are right.
 
 ### 4.4 Hosts and preserved forms
 
@@ -323,41 +410,77 @@ rename must fail the file, and the suite total must move by exactly the number o
 
 ### 5.3 Oracle
 
-**Assembler: ordered lowering.** `preproc_conditional_property_value_sequence` is registered as
-an assembler, contract `whole-value-run`:
-- **Walk:** the groups are walked in source order. Each group's selected arm is lowered through
-  `property_value_select`, which returns its value node (fielded `value`, taking the
-  sequence's field) and any `Terminator` fragment.
-- **Before the first selected terminator:** at most one value may be selected. A second
-  selected value raises `lowering:one-reading` at the sequence (§3.4).
-- **At the first selected terminator:** the property ends there. The fragment passes up, and
-  the engine's existing terminator hoist and mixed-placement handling apply unchanged
-  (`engine.py`, the B5b mixed-placement branch: the earlier `;` ends the property, a later
-  standalone `;` becomes an `empty_statement` sibling).
-- **After the first selected terminator:** any further selected **value** raises
-  `lowering:one-reading`. That content belongs to the host body in that configuration, and a
-  value node cannot be re-read as body content. Further selected **terminators** follow the
-  mixed-placement rule.
-- **Zero selected values:** the assembler emits no value. Validity is left to the flat
-  reference parse: a family where alc rejects `N = ;` gives a reference error, classified
-  invalid-config with alc evidence; one where alc accepts it passes. Zero values are never
-  ruled a discrepancy by the assembler.
-- **Accounting:** empty groups and unselected arms are accounted as directives and inactive
+**Selector changes, not reuse.** `property_value_select` gets a sibling selector for whole-value
+sites, `whole_value_select`. TableRelation's `table_relation_select` and the shared `_select_arm`
+keep their behaviour.
+
+`whole_value_select`:
+- **Decorations.** Recognizes empty groups in an arm and lowers them as directives (no
+  nodes), apart from the arm's core.
+- **Nesting.** Dispatches a nested `preproc_conditional_property_value` and a nested sequence
+  recursively, preserving their ordered fragments. Today only a same-kind nested group gets
+  fragment-preserving dispatch, and `_lower_all` refuses the rest.
+- **Arm kinds.** Registers the sequence in the arm set, at the hosts `property:value` and
+  `preproc_conditional_property_value:value`.
+
+**Sequence assembler: ordered lowering, zero or one value.**
+`preproc_conditional_property_value_sequence` is an assembler, contract `whole-value-run`. Its
+output is **zero or one** value node: the host's `single-slot` is metadata here, and the
+assembler enforces the cardinality itself.
+- **Walk.** The groups are walked in source order, each through `whole_value_select`.
+- **Before the first selected terminator,** at most one value may be selected. A second one
+  raises `lowering:one-reading` at the sequence.
+- **At the first selected terminator,** the property ends. The fragment passes up to the
+  engine's terminator hoist.
+- **After it,** a further selected **value** raises `lowering:one-reading`. That content is
+  host-body content in that configuration, and a value node cannot be re-read as body content.
+  Further selected terminators become standalone `;`.
+- **Accounting.** Empty groups and unselected arms are accounted as directives and inactive
   arms.
 
-**Hosts:**
-- `property:value` (single-slot) for the sequence;
-- `preproc_conditional_property_value_sequence:value` for its groups;
-- `preproc_conditional_property_value_sequence:<children>` for its interior empty groups;
-- `property:<children>` and `preproc_conditional_property_value:<children>` (optional-slot) for
-  prefix and suffix empty groups at both kinds of value site.
+**The predicate is the sequence's own**, with `reading=None`, using the existing
+`lowering:one-reading` refusal category. `ExpressionContinuation` (G7) refuses the same way
+without a registry reading. The P4 arm-reading predicates (`READINGS`) do not describe a run,
+and `reading_active()` needs a directly owned directive group, which the sequence does not
+have. So no new `READINGS` entry is added.
 
-**Classification:**
-- every `lowering:one-reading` record is classified in `fixture-classes.tsv` as
-  `debt(B11-boundary)`, pinned to the record's reason and host, with a deferred-work entry
-  (§6);
-- every invalid-config record carries alc evidence;
-- no discrepancy is ever classified, and the runner's rule stays as it is.
+**Engine fix: ordered standalone `;`.** Today each later terminator becomes its own
+`SiblingsAfter`, inserted at anchor+1, so a third `;` lands before the second. The fix collects
+every later terminator of one property into ONE source-ordered `SiblingsAfter`. This applies to
+mixed placement today as well. Tests cover three and four active `;`, with and without the
+property's own trailing `;`.
+
+**Zero selected values.** The contract is:
+- zero selected values produce no value node;
+- a reference parse error becomes cannot-validate (`reference-error`), classified
+  invalid-config with alc evidence;
+- a clean reference is compared normally, whole structure and boundary.
+
+The reference is a tree-sitter parse of the configured text, not an alc compilation. Compiler
+validity is established separately by the §5.1 probes, and known over-acceptance (an empty
+`RunPageLink`) is recorded there, not inferred from the oracle.
+
+**Hosts.**
+
+| host slot | node | policy |
+|---|---|---|
+| `property:value` | sequence | single-slot (cardinality enforced by the assembler) |
+| `preproc_conditional_property_value:value` | sequence | single-slot |
+| `preproc_conditional_property_value_sequence:value` | its groups | — |
+| `preproc_conditional_property_value_sequence:<children>` | interior empty groups | — |
+| `property:<children>` | decorations at the property site | optional-slot |
+| `preproc_conditional_property_value:<children>` | decorations at an arm site | optional-slot |
+
+**Classification.**
+- **Configuration-dependent boundaries.** The residue gets its own roadmap row, **B12**
+  ("configuration-dependent property boundaries"), the owner that would remove the debt with
+  a multi-configuration representation. Its records are classified `debt(B12)`, each pinned
+  to the refusal kind, the sequence node and its host.
+  - `tools/config_oracle/fixtures.py` `ROADMAP` gains B10, which is missing today, B11 and
+    B12.
+  - Loader tests pin the new owners.
+- **invalid-config records** carry alc evidence.
+- **Discrepancies** are never classified; the runner's rule is unchanged.
 
 **Tiers:** quick tier clean; full tier over the four corpora clean.
 
@@ -401,11 +524,11 @@ an assembler, contract `whole-value-run`:
   - item 33 RESOLVED;
   - item 35 RESOLVED; its recorded unquoted split is confirmed at `bf72a2d`, and the quoted
     probe ERRORs instead;
-  - a new entry, `B11-boundary`, for the configuration-dependent boundaries of §3.4, with the
+  - a new entry for the configuration-dependent boundaries of §3.4 (roadmap row B12), with the
     probes, the fixtures and the classified records. It also records the alternatives
     considered and not adopted: tracking condition text in the scanner, and a
     multi-configuration representation.
-- Roadmap: row B11 added, marked done when it lands.
+- Roadmap: rows B11 (marked done when it lands) and B12 (the residue's owner) added.
 - CLAUDE.md / `.claude/rules`: the run mechanism, wherever whole-value conditionals are
   described.
 
@@ -424,7 +547,7 @@ an assembler, contract `whole-value-run`:
 - `Permissions` (`permissions_property`): its own list-internal `#if` rule; production sites
   exist and parse correctly.
 - Values continued across `#if` with an operator (`preproc_conditional_expression_tail`, B3).
-- Condition evaluation in the scanner, or a multi-configuration tree (§6, `B11-boundary`).
+- Condition evaluation in the scanner, or a multi-configuration tree (§6, roadmap row B12).
 
 ## 9. Review record
 
@@ -469,3 +592,36 @@ verified against the code or live parses before adoption:
     (§3.3, §5.5).
 11. **Item 35 was not stale.** Verified: the recorded unquoted reproducer still splits
     silently at HEAD, and only the quoted probe ERRORs. Adopted: corrected in §1, §2.2 and §6.
+
+**Round 2** (revision 2). Round-1 status: 2, 10 and 11 resolved, and 8 resolved as acceptance
+criteria; 1, 3, 4, 5, 6, 7 and 9 partly resolved. New: 1 blocker, 7 majors and 1 minor, each
+verified against the code before adoption:
+
+1. **An entirely conditional list can concatenate (blocker).** Verified by construction: two
+   groups whose arms carry `,` form one two-entry list in every configuration, and §5.3 of
+   revision 2 would have refused all of them. Adopted: the separator rule (§3.1) replaces the
+   "entire value" rule. The contract migrations are named apart from the preservation promise
+   (§3.4, Status).
+2. **The spike omitted the delayed sequence-against-list decision.** Adopted: a link spike
+   beside the generic one, with common-prefix cases and the precedence rule (§4.3).
+3. **§4.2 bypassed the terminated-group boundary.** Verified: revision 2 stated it for the
+   inside placement only. Adopted: a terminated group ends the site in both placements, and
+   the fixture has the final standalone `;` (§3.2, §4.2).
+4. **Recursive site ownership and the all-empty core.** Adopted:
+   - property and arm sites with explicit owners;
+   - only the core fielded;
+   - the core optional exactly where the family's value is optional today (§3, §4.1).
+5. **`property_value_select` cannot lower the nested shapes.** Verified: `_select_arm` raises
+   contract-shape on more than one item, and only a same-kind nested group gets
+   fragment-preserving dispatch. Adopted: `whole_value_select`, with decorations, recursive
+   dispatch, the nested sequence host, and the assembler enforcing zero-or-one (§5.3).
+6. **`SiblingsAfter` order.** Verified: each fragment inserts at anchor+1. Adopted: one
+   source-ordered `SiblingsAfter` per property, with 3- and 4-`;` tests (§5.3).
+7. **`debt(B11-boundary)` fails the loader.** Verified: the owner regex is `[A-Za-z0-9]+`, and
+   `ROADMAP` covers B1-B9, so B10 is missing too. Adopted: roadmap row B12 as the owner, and
+   `ROADMAP` gains B10, B11 and B12, with loader tests (§5.3).
+8. **The reference parse is not alc.** Verified: `reference.extract` parses the configured
+   text with tree-sitter. Adopted: the zero-value contract restated, and compiler validity
+   kept separate (§5.3).
+9. **P4 terminology.** Verified: `ExpressionContinuation` raises one-reading with no registry
+   reading. Adopted: the sequence's own predicate, with `reading=None` (§5.3).
