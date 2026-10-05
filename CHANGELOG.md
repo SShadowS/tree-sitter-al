@@ -33,6 +33,34 @@ public API — a change to node structure or field names is a **major** bump.
 
 ### Changed
 
+- **`TableRelation` is keyed by NAME, a relation has one `target`, and other properties'
+  dotted values are expressions (roadmap B5, G10, deferred-work items 13 and 15). Breaking
+  for tree consumers.** The scanner emits `TABLE_RELATION_PROPERTY_NAME` for the one word
+  `TableRelation`, the way it does for `CalcFormula`, the 13 ML names and `Namespaces`;
+  `ValidateTableRelation` and `TestTableRelation` stay generic. The compiler reaches its
+  relation grammar through that name and nothing else.
+  - D1, 36,118 BC.History/DC values: a `TableRelation` target is
+    `simple_table_relation target: (qualified_name ...)`, not `table:` on every segment
+    (the field segment was fielded `table` too).
+  - D2, 14,011 values: a dotted value of any OTHER property (`AutoFormatExpression =
+    Rec."Currency Code";`, `Visible = Rec.A;`) is an expression, no longer a
+    `table_relation_value` with `Rec` fielded `table:`.
+  - D3, 25,714 values: a bare `TableRelation = Customer;` is relation-shaped, no longer a
+    generic leaf.
+  - G10: `Visible = Rec.A #if X and B #endif ;` parses as an expression continued across the
+    `#if`, not a relation with an ERROR arm.
+  - Cost: STATE_COUNT 16,893 -> 17,223 (+1.95%), parser.c +0.53%; `tools.perf ab` over DC,
+    24 rounds, the 1,199 of 1,352 files whose trees are identical in both libraries (the
+    other 153 change by design): ratio 1.012 (CI 1.007-1.027), no slowdown.
+  - Migration:
+    1. A relation's target is `simple_table_relation target: (qualified_name ...)`. Read its
+       text whole; which segment is the table needs symbol resolution.
+    2. Every `TableRelation` value is relation-shaped, bare names included: match the
+       property named `TableRelation`, or `simple_table_relation`.
+    3. A dotted value of any other property is an expression.
+    4. `TableRelation = ;` and integer targets are ERRORs (alc AL0107).
+    5. A generic property can still take link syntax (`Visible = Flag = Rec.OtherFlag;` is a
+       clean `link_value_list`); that is roadmap B5b, not fixed here.
 - **The 13 ML properties and `Namespaces` are keyed by NAME (roadmap B4, G9,
   deferred-work item 11). Breaking for tree consumers.** The scanner emits a keyed
   property-name token for exactly the compiler's 13 ML names (`CaptionML`, `ToolTipML`,

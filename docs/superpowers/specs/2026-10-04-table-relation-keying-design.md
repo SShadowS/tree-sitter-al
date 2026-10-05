@@ -511,9 +511,10 @@ namespace.
     | tableextension added field | ✓ | ✓ | ✓ |
     | tableextension `modify` | ✓ | ✓ | ✓ |
     | page field | ✓ | ✓ | ✓ |
-    | pageextension `modify` | ✓ | ✓ | ✓ |
     | report request-page field | ✓ | | |
     | xmlport request-page field | ✓ | | |
+
+    A pageextension `modify` has no row: alc rejects `TableRelation` there (AL0246, Ruling Q).
 
     Each host case must be accepted by alc.
 - **The two production `else` + `#if` sites** are pinned as fixtures, with exact parents and

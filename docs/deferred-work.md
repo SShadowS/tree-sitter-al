@@ -511,7 +511,13 @@ needs a `has_error` pytest, not a corpus fixture.
 
 ---
 
-## 13. Candidate G10: `Visible = Rec.A #if X and B #endif ;` ERRORs
+## 13. Candidate G10: `Visible = Rec.A #if X and B #endif ;` ERRORs — RESOLVED 2026-10-05
+
+**Resolution (e0f9e8c, roadmap B5):** `TableRelation` is keyed by name and a dotted value
+of any other property is an expression, so `Visible = Rec.A #if X and B #endif ;` parses as
+the expression continued across the `#if`, like the flat `Visible = Rec.A and B;`. Spec:
+docs/superpowers/specs/2026-10-04-table-relation-keying-design.md. The text below is the
+original finding.
 
 **Established:** 2026-09-28, milestone 2 whole-branch review. Reproduced at
 `673528e` (page field, `has_error` True). The review found it predates this branch.
@@ -564,7 +570,15 @@ configuration still counts as not validated.
 
 ---
 
-## 15. Dotted property references are classified as table relations
+## 15. Dotted property references are classified as table relations — RESOLVED 2026-10-05
+
+**Resolution (e0f9e8c, roadmap B5):** correction to the root question below: the compiler
+answers it with per-host dispatch. It reaches its relation grammar
+(`ParseTableRelationPropertyValue`) through the one property name `TableRelation` and
+nothing else, so the fix is the CalcFormula route after all: name-keying that one name
+(`TABLE_RELATION_PROPERTY_NAME`), with no neutral node. A relation target is one
+`qualified_name`; 14,011 dotted values of other properties became expressions. Spec §2.1.
+The text below is the original finding.
 
 **Established:** 2026-09-28, G6 design review (gpt-6-astra, section 2E). Not
 probed with alc; nothing here is a parse error.
@@ -1148,6 +1162,22 @@ rule that no longer exists. It is the visible `tabledata_keyword` now, and the
 **Owner:** roadmap B (grammar correctness). A fix must keep `Permissions = tabledata X = R`
 and `OptionMembers = TableData,…` both clean, and end with the census at 0 flagged on all
 four roots.
+
+## 28. `Visible = Where;` ERRORs
+
+**Established:** 2026-10-05, found in the B5 Task 4 review. Pre-existing at the B4 merge
+(`6b15b9b`) and not caused by B5.
+
+A property value that is the single word `where` ERRORs: `where_keyword` wins the lexer at
+value start, where no keyword can be an identifier in the generic value position, so the
+word never becomes an `identifier`. Whether alc accepts `Visible = Where;` was not probed.
+
+**Production sites:** 0 in all four corpora, measured with
+`./tools/corpus-grep.sh -P -i -c '^\s*\w+\s*=\s*where\s*;'` (BC.History, DC, BC28.1,
+BCApps-29.0: 0 lines, 0 files each).
+
+**Owner:** unassigned. Probe alc first (`python -m tools.alc_probe`); if accepted, fix by
+reserved-word handling at value start, as B5 did for `_qualified_name_segment`.
 
 ## Longer-lived proposals, tracked separately
 
