@@ -4,6 +4,10 @@
 its B11 scope, with no blocker or major, and its 5 minor edits are adopted (§9, round 6). Every
 finding of every round was verified against the code or a live parse before adoption. This
 revision awaits the user's review.
+**Execution (revision 8, 2026-10-06):** implemented on `fix/b11-value-runs`. Execution found
+spec misses and ambiguities; each is recorded as a marked **Execution amendment** in the
+section it amends (the reviewed text above it is kept) and as a ruling line in §10. The
+amendments to §2.2, §3.1, §3.2, §3.4 and §5.3 are authoritative where they differ from the text.
 **Roadmap row:** B11, new (`docs/superpowers/plans/2026-09-28-roadmap-remaining-work.md`).
 Absorbs deferred-work items 33 and 35, and the ML empty-prefix split recorded under item 33
 during B8.
@@ -67,6 +71,11 @@ ends, is a function of the configuration.
 | `CalcFormula` | clean, unfielded prefix (right, B8) | ERROR | ERROR |
 | `SubPageLink` | clean, element conditional in the list | unquoted `A = field(..)`: clean, **two properties** (item 35); quoted `"No."`: ERROR | clean, list of two element conditionals |
 | `OptionMembers` | clean, element conditional in the list | ERROR | ERROR |
+
+**Execution amendment (§2.2).** Two cells above are corrected by measurement at the base library:
+the ML `;`-inside cell is **clean, a silent split** (one property per group), not ERROR, and
+the three-group link `;`-inside shape is the same silent split. Both are now one property
+with a sequence (§3.4 item 3).
 
 A single whole-value group is one `preproc_conditional_property_value` in every family. That
 includes `OptionMembers` (`#if X A,B #else C #endif;` gives arms `option_member_list` and
@@ -144,6 +153,13 @@ are mutually exclusive by construction:
 - When some arm lacks its `;`, the trailing `;` is required and ends the value, which is the
   `;`-after placement.
 
+**Execution amendment (§3.1 step 3).** A comma-free `OptionMembers` `;`-after run
+(`OptionMembers = #if X A #endif #if not X B #endif ;`) stays an ERROR, owned by B13.
+`OptionMembers` reaches the grammar through the generic `_property_value`, so without the
+property name the run cannot be told from the generic step-5 run. The entirely conditional
+form that carries joining commas is supported as written. alc evidence:
+`tools/alc_probe/cases/value-runs/b13-optionmembers-comma-free.al`.
+
 The spikes keep both readings alive until the run's last `#endif` and the token after it
 (§4.3).
 
@@ -218,6 +234,19 @@ from the `property` arms in `grammar.js`:
 | TableRelation | required | ERROR |
 | CalcFormula | required | ERROR |
 
+**Execution amendment (§3.2 matrix).** "Required core" for TableRelation and CalcFormula
+applies to the property site's all-empty form, which ERRORs. The empty-value terminated
+*arm* (`#if Y #endif ;`) stays admitted in those two families, because it parsed before B11
+and §3.1 forbids a previously clean tree becoming an ERROR. It is structural over-acceptance
+(alc rejects the arm when it is active).
+
+**Execution amendment (ruling 20, §3.2 and §4.2).** A `;`-after run whose last core-bearing
+group is terminated, followed by a directive-only empty group and `;`
+(`CaptionML = #if X ENU='a' #endif #if not X ENU='b'; #else ENU='c'; #endif #if Z #endif ;`),
+ends at the terminated group. The empty block and the `;` are ordinary content: a property
+whose sequence ends at the terminated group, the block as body content, then an
+`empty_statement`. Fixtures: CaptionML, CalcFormula, and ToolTipML at an action-area host.
+
 At an arm site the core is required: an arm is absent, or holds a value (no bare-`;` arm).
 B11 narrows no family's optionality.
 
@@ -273,6 +302,31 @@ and nothing else:
 - the Permissions empty prefix (`preproc_conditional_permissions` element → value plus unfielded prefix);
 - the ML, Namespaces and Implementation empty-prefix splits (two properties → one; for Implementation including a nested empty prefix, `#if X #if Y #endif #endif`, which was a `preproc_conditional_impl_values` list element);
 - the item 35 unquoted `;`-inside run (two properties → one, with a sequence).
+
+**Execution amendments (revision 8): further intended changes to clean trees,** each measured
+at the base library and pinned by a fixture. Every one has 0 sites in the four corpora.
+1. **Field drop: directive-only empty groups lose `value:`** and become unfielded
+   decorations, wherever no core remains. All-empty sites in generic, Permissions, ML,
+   Namespaces and link (`Permissions = #if X #if Y #endif #endif ;`); an empty-value
+   terminated arm (`#if X #if Y #endif ; #else 'b'; #endif`); the empty slots of a
+   `;`-after group; a link value made only of empty element conditionals.
+2. **A Permissions empty-value arm at a permissionset reads as a permission-list element
+   conditional** (`Permissions = #if X #if Y #endif ; #else tabledata A = R; #endif`).
+3. **The ML `;`-inside split, the three-group link `;`-inside split and the Namespaces
+   `;`-inside split become one property with a sequence.** The base gave clean, silent splits.
+4. **A suffix decoration plus `;` is owned by the property** for `;`-after single groups
+   (`CaptionML = #if X ENU='a' #else ENU='b' #endif #if Y #endif ;`,
+   `TableRelation = #if X Cust."No." #endif #if Z #endif ;`). The base left the property
+   unterminated and made the `;` an `empty_statement`. `CaptionML = ENU='a' #if Y #endif ;`
+   went from ERROR to clean.
+5. **G11 now applies to ML, Namespaces, TableRelation and CalcFormula.** In the `;`-inside
+   placement an arm lacking its own `;`, with no `;` after the run, is an ERROR, as generic and
+   link already were. The base parsed these clean, with a wrong tree in the configuration where
+   that arm is active.
+6. **The step-3 option form also parses at generic hosts**:
+   `Caption = #if X 'a', #endif #if not X 'b' #endif ;` is an `option_member_list` of element
+   conditionals (`option_member_list` is part of the generic `_property_value`; consistent with
+   §3's `,`-edge rule).
 
 **No contract migrations.** The link and Implementation `;`-after runs keep their element
 conditionals (§3.1 step 3).
@@ -539,6 +593,13 @@ rename must fail the file, and the suite total must move by exactly the number o
 **Negatives.** Shapes alc rejects as syntax (§4.1) go in `tools/deliberate-negatives.txt`.
 
 ### 5.3 Oracle
+
+**Execution amendment (§5.3).** `property_value_select` was deleted, not kept as a sibling: its
+role is `whole_value_select`. The b1 refusal (a `;`-inside site whose configuration selects no
+terminator, `Caption = #if X 'a'; #endif #if Y #endif ;` at X=0) is a property-level hook in
+`engine.py`, refused as `lowering:one-reading` and classified debt(B12). Ruling-1
+configuration-dependent configurations are classified `invalid-config` instead (the oracle
+refuses them as `reference-error`, and alc rejects them, AL0104/AL0124).
 
 **Selector changes, not reuse.** `property_value_select` gets a sibling selector for whole-value
 sites, `whole_value_select`. TableRelation's `table_relation_select` and the shared `_select_arm`
@@ -918,3 +979,53 @@ minor consistency edits, all adopted:
 4. The fragment gate is scoped to whole-value group candidates, not step 3's element
    conditionals.
 5. "Three predicates" is now "four".
+
+## 10. Execution record (revision 8)
+
+Rulings made during execution, in order. Each is a one-line decision; the amendments above
+carry the detail.
+
+1. T2 `LINK_EMPTY` is a two-group `;`-after run, because a single group parses as a whole-value
+   conditional and never reaches the rewrite.
+2. T2 `OPTION_HOLES` uses `OptionMembers = #if X A, #endif B,,C;`, the nearest shape that parses
+   clean today.
+3. T2 `SEMIS` must give 3+ terminator fragments for one property and fail before the engine fix.
+4. T3 all-empty generic site: decorations with no value are one repeat, each an unfielded child.
+5. The +7.36% generic-only STATE_COUNT is a measurement, not a cap (§4.5); the cost judgement
+   was made at the spike gate after Task 5.
+6. Suffix decorations at arm sites are in scope (§3.2 applies every row at every value site).
+7. The Permissions empty prefix is a §3.1 step-1 tree and a §3.4 intended correction.
+8. Later dispatches carry the actual rule names from Task 3's report.
+9. b1 at X=0 is a configuration-dependent boundary: refused `lowering:one-reading`, debt(B12).
+10. Empty list openers must still accept a nested-empty-only group (a previously clean tree).
+11. A nested-empty prefix is a decoration in every family, Implementation included.
+12. The 20 split-Permissions gate records classified debt(C1) pass spike gate 1: they stop at
+    `preproc_split_permissions_property`, which is unsupported before B11.
+13. A `;` directly after a nested `;`-inside core is the arm's own (a forbidden regression
+    otherwise); fixed in Task 3 round 3.
+14. The web-runtime parity failure on `value_run.al` is expected until the WASM rebuild commit.
+15. The 370 base-clean, head-ERROR sweep forms are not regressions: no core and no `;` anywhere,
+    so invalid AL in every configuration, and base's clean trees were silent junk.
+16. ML `;`-inside arms lacking `;` now ERROR (G11), accepted; 0 corpus sites.
+17. The valid-everywhere shape `#if X ENU='a' #else ENU='b'; #endif #if X #if Y #endif ; #endif`
+    goes to B13.
+18. Field drops and the ML and three-group link `;`-inside split fix are named in §2.2 and §3.4.
+19. `_ml_sequence_after_t`, `afterGroupRules` and `listValue` are accepted restructurings.
+20. A terminated group followed by an empty block and `;` ends the site (§3.2); fixed in the
+    shared `afterGroupRules` for ML, Namespaces, TableRelation and CalcFormula.
+21. Ruling 16 extends to Namespaces, TableRelation and CalcFormula (G11).
+22. Comma-free `OptionMembers` `;`-after alternatives stay an ERROR, owned by B13 (§3.1 step 3).
+23. TableRelation and CalcFormula arms keep the empty-value terminated arm because base parsed it.
+24. The action-area ML fix is made (the ML after-sequence forms at `_property_whole_value_in_if`,
+    about +100 states); Namespaces is AL0124 at both hosts and is not added.
+25. Ruling-1 configuration-dependent configurations are classified `invalid-config`, superseding
+    the "one-reading debt(B12)" wording of ruling 20.
+26. The all-comma conditional `OptionMembers` run reads as `tabledata_permission_list`: pinned as a
+    change detector (it holds the `prec.dynamic(-1)` that preserves base trees), invalid AL
+    everywhere (AL0153), pre-existing and not endorsed.
+27. Mixed placement is witnessed only for CaptionML among the four step-4 families (same
+    `afterSequenceRules` generator).
+28. The two BCApps-29.0 visible-ERROR files are pre-existing and outside B11
+    (`docs/bc29-parse-gaps.md`).
+
+The per-rule precedence audit is `docs/b11-precedence-audit.md`.

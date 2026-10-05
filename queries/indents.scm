@@ -161,6 +161,7 @@
   (preproc_conditional_layout)
   (preproc_conditional_object)
   (preproc_conditional_property_value)
+  (preproc_conditional_property_value_sequence)
   (preproc_conditional_query)
   (preproc_conditional_report)
   (preproc_conditional_statement)

@@ -33,6 +33,43 @@ public API — a change to node structure or field names is a **major** bump.
 
 ### Changed
 
+- **A property value may be a run of `#if` groups (roadmap B11, deferred-work items 33 and 35).
+  Breaking for tree consumers only at the shapes listed below; every previously correct
+  production tree is byte-identical in all four corpora (BC.History 15,358 files, DC 1,352,
+  BC28.1 16,928, BCApps-29.0).** Several consecutive `#if ... #endif` groups at one value site,
+  which alc accepts, were a silent wrong tree or an ERROR. They now parse in every family
+  (generic, `CaptionML` and the other ML names, `Namespaces`, `TableRelation`, `CalcFormula`,
+  the link family, `Implementation`, `OptionMembers`).
+  - New node `preproc_conditional_property_value_sequence`, with field `value` (multiple, types
+    `{preproc_conditional_property_value}`). Directive-only empty groups around a value are
+    unfielded decorations, never wrapped. `property.value` stays single. Spec:
+    `docs/superpowers/specs/2026-10-05-property-value-runs-design.md`, with the execution
+    amendments and ruling record.
+  - Intended corrections to clean trees (spec 3.4), each pinned by a fixture, 0 sites in the
+    four corpora: the generic empty prefix (`Caption = #if X #endif 'a';`) is a value plus an
+    unfielded prefix, not an `option_member_list`; the Permissions empty prefix and an empty-value
+    arm at a permissionset; the ML, Namespaces and Implementation empty-prefix splits (two
+    properties, now one); the ML, Namespaces and three-group link `;`-inside splits (now one
+    property with a sequence); the item 35 unquoted run (one property with a sequence); a suffix
+    decoration plus `;` is owned by the property (base left it unterminated); directive-only empty
+    groups lose `value:` where no core remains; G11 now applies to ML, Namespaces, TableRelation
+    and CalcFormula, so an arm lacking its own `;` with no `;` after the run is an ERROR where
+    the base gave a clean tree that was wrong in the configuration where that arm is active.
+  - A sequence is a one-reading construct: it assumes at most one group supplies the value in a
+    configuration. Configuration-dependent property boundaries are refused by the oracle as
+    `lowering:one-reading` and classified debt (roadmap B12, deferred-work item 36).
+  - Not supported, still ERRORs, owned by roadmap B13 (deferred-work item 37): runs whose groups
+    are fragments of one value (generic `;`-after runs, `Page` + `"P"`, `F` + `(1)`, ML pairs
+    joined by `,` across groups, comma-free `OptionMembers` alternatives, and the others in
+    `test/corpus/property_value_run_b13_gap_test.txt`, each with its alc probe).
+  - Cost, accepted at the spec 7 gate on 2026-10-05: STATE_COUNT 17,918 -> 23,149 (+29.2%),
+    parser.c 43,042,406 -> 52,813,474 bytes (+22.7%), `tree-sitter-al.wasm` 14,709,663 ->
+    19,741,295 bytes (+34.2%). `tools.perf ab` over DC, 24 rounds, all 1,352 files (trees
+    identical), on a busy machine (outside CPU mean 12.4 cores): 0.989 (CI 0.978-1.015), no
+    slowdown. State reduction is left to roadmap D1. Empty-only link slots fork under GLR (a
+    `prec.dynamic` decoration-versus-list second derivation).
+  - Queries: `folds.scm` and `indents.scm` capture the sequence beside the group.
+
 - **The link family is keyed by NAME, and generic property values lose link syntax (roadmap
   B5b). Breaking for tree consumers only where a generic property held link syntax; every
   production tree is unchanged.** The scanner emits `LINK_PROPERTY_NAME` for exactly the
