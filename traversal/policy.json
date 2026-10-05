@@ -229,6 +229,11 @@
       "arm_boundary": "own-directives",
       "reason": "Exception (spec 6.1): an assembler; each arm is the whole property value and the arm may carry the property's own ';' (contract whole-value-select)."
     },
+    "preproc_conditional_property_value_sequence": {
+      "class": "assembler",
+      "arm_boundary": "none",
+      "reason": "B11: a run of whole-value groups (contract whole-value-run); it owns no directives, its child groups do, so split_info on a child gives that group's arms (spec 5.5)."
+    },
     "preproc_conditional_query": {
       "class": "branch-container",
       "arm_boundary": "own-directives",

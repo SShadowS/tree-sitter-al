@@ -34,6 +34,10 @@ def check_witness(T, policy, doc, type_, expected):
     for v in default:
         if expected == "branch-container":
             assert v.split and v.split.groups and v.host is not None
+        elif expected == "assembler" and policy.types[type_].get("arm_boundary") == "none":
+            # Owns no directives (B11 spec 5.5): its child groups do, and carry the split.
+            assert v.split is None
+            assert [c for c in T.walk(doc, policy, root=v.node) if c.node.parent == v.node and c.split]
         elif expected == "assembler":
             assert v.split and v.split.groups
         elif expected == "fragment":
@@ -104,6 +108,17 @@ def property_value(T, policy, doc):
                                                    [("value", "identifier", "SystemMetadata"), (None, ";", ";")]]
 
 
+def value_sequence(T, policy, doc):
+    """B11 spec 5.5: the sequence carries no split; every group in it does, with its arms."""
+    v = one(T, policy, doc, "preproc_conditional_property_value_sequence")
+    assert v.cls == "assembler" and v.field == "value" and v.split is None
+    groups = [x for x in T.walk(doc, policy) if x.node.parent == v.node]
+    assert [(x.type, x.field, x.cls) for x in groups] == [("preproc_conditional_property_value", "value", "assembler")] * 2
+    assert [[frags(a, doc) for a in x.split.groups[0].arms] for x in groups] == [
+        [[("value", "string_literal", "'a'"), (None, ";", ";")]],
+        [[("value", "string_literal", "'b'"), (None, ";", ";")]]]
+
+
 def case_end_branch(T, policy, doc):
     owner = one(T, policy, doc, "preproc_split_case_statement_end")
     (group,) = owner.split.groups
@@ -159,6 +174,8 @@ NAMED = [  # (check, fixture, policy type to mutate, mutation)
     (table_relation, "assemblers.al", "preproc_conditional_table_relation", {"class": "ordinary"}),
     (table_relation, "assemblers.al", "else_table_relation_fragment", {"class": "ordinary"}),
     (property_value, "assemblers.al", "preproc_conditional_property_value", {"class": "ordinary"}),
+    (value_sequence, "value_run.al", "preproc_conditional_property_value_sequence", {"class": "ordinary"}),
+    (value_sequence, "value_run.al", "preproc_conditional_property_value", {"class": "ordinary"}),
     (case_end_branch, "assemblers.al", "preproc_split_case_end_branch", {"class": "ordinary"}),
     (report_brace_close, "corpus:preproc_split_brace_and_case_test.txt#A report dataitem whose closing brace is inside a branch#0",
      "preproc_split_report_brace_close", {"class": "ordinary"}),

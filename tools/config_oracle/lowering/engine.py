@@ -358,6 +358,8 @@ def _lower_ordinary(node, ctx) -> Lowered:
         else:
             _check_alternation(new)
     frags = _consume(new, frags)
+    if node.kind == "property":
+        _check_site_boundary(node, new, ctx)
     for f in frags:
         if not getattr(f, "_from_last", False):
             raise LoweringError("unconsumed-fragment", node, f"{type(f).__name__} not from the last child")
@@ -389,6 +391,23 @@ def _lower_ordinary(node, ctx) -> Lowered:
         ctx.normalised.append(f"option-member-list-unwrap@{node.start}")
         return Lowered([kids[0].children[0].copy(field=node.field)], frags)
     return Lowered([_span_from_children(new)], frags)
+
+
+# B11 (spec 2026-10-05 5.3): a whole value that is a #if or a run of them.
+_WHOLE_VALUE_KINDS = frozenset({"preproc_conditional_property_value", "preproc_conditional_property_value_sequence"})
+
+
+def _check_site_boundary(node, new, ctx):
+    """A property that ends at its whole-value core (a `;`-inside site: no `;` of its own
+    after the core) is terminated only by a selected arm's `;`. A configuration that
+    selects none moves the property's boundary beyond the site (`Caption = #if X 'a';
+    #endif #if Y #endif ;` at X=0 is `Caption = ;`), which the tree cannot hold:
+    lowering:one-reading at the core, debt B12. A `;`-after site, where the property owns
+    its `;`, never reaches this."""
+    core = next((c for c in node.children if c.field == "value" and c.kind in _WHOLE_VALUE_KINDS), None)
+    if (core is not None and node.children[-1] is core
+            and not (new.children and new.children[-1].kind == ";" and not new.children[-1].children)):
+        raise LoweringError("one-reading", core, ctx.child("property", "value").host())
 
 
 def _check_option_holes(new):
@@ -491,7 +510,7 @@ def _consume(new, frags):
             for n in _path(vals[-1], target):
                 recompute_span(n)
         # anchor None: emitted by a special node that is itself a direct child of
-        # the property (property_value_select on a whole-value #if); otherwise it
+        # the property (whole_value_select on a whole-value #if); otherwise it
         # passed up through the property's child: the list (list-run) or the
         # table_relation_value holding an else-relation-join conditional.
         elif isinstance(f, Terminator) and new.kind == "property"                 and (f.anchor is None or any(c is f.anchor for c in new.children)):

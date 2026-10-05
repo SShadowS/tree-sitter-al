@@ -490,7 +490,7 @@ mod tests {
         let policy = Policy::bundled();
         let mut parser = parser();
         let paths = fixtures();
-        assert_eq!(paths.len(), 13);
+        assert_eq!(paths.len(), 14);
         for path in paths {
             let source = std::fs::read(&path).unwrap();
             let tree = parser.parse(&source, None).unwrap();
@@ -526,6 +526,31 @@ mod tests {
         let path = Path::new(env!("CARGO_MANIFEST_DIR")).join("tests/traversal/fixtures/assemblers.arm_pieces.json");
         let want: Value = serde_json::from_str(&std::fs::read_to_string(path).unwrap()).unwrap();
         assert_eq!(json!({"revision": doc.revision, "arms": arms}), want);
+    }
+
+    #[test]
+    fn every_group_of_a_value_sequence_carries_its_own_split() {
+        // B11 witness (spec 5.5): the sequence owns no directives; each group does.
+        let policy = Policy::bundled();
+        let (source, tree) = parse_fixture(&mut parser(), "value_run.al");
+        let doc = Document::new(&tree, &source, &policy);
+        let visits = walk(&doc, &policy, None, WalkOptions::default());
+        let seq: Vec<&Visit> = visits.iter().filter(|v| v.kind == "preproc_conditional_property_value_sequence").collect();
+        assert_eq!(seq.len(), 1);
+        assert!(seq[0].split.is_none());
+        let arms: Vec<Vec<Vec<(Option<&str>, &str, &[u8])>>> = visits
+            .iter()
+            .filter(|v| v.kind == "preproc_conditional_property_value")
+            .map(|v| {
+                v.split.as_ref().expect("a group carries its split").groups[0]
+                    .arms
+                    .iter()
+                    .map(|a| a.fragments.iter().map(|f| (f.field, f.node.kind(), &source[f.node.byte_range()])).collect())
+                    .collect()
+            })
+            .collect();
+        let arm = |lit: &'static [u8]| vec![vec![(Some("value"), "string_literal", lit), (None, ";", b";".as_slice())]];
+        assert_eq!(arms, vec![arm(b"'a'"), arm(b"'b'")]);
     }
 
     #[test]

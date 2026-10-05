@@ -1,3 +1,4 @@
+// Fixture property_value_run_test.txt#B11: generic Caption, %23if/%23elif group then a second group, `;` inside (step 2)#0
 // B11: Generic Caption, #if/#elif group then a second group, `;` inside every arm (spec 3.1 step 2).
 // source: docs/superpowers/specs/2026-10-05-property-value-runs-design.md 5.1
 // expect: * accept

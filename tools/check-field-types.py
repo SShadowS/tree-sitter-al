@@ -177,6 +177,11 @@ FIELD_INVARIANTS = [
     # `_property_with_terminator_in_if`) also fielded its value twice.
     inv('property', 'value', False, set(), 'FIXED',
         "'-' of a negated CalcFormula inherited the value field"),
+    # B11: a run of whole-value groups. Several groups, one value per configuration
+    # (spec 3.3). property.value stays single (its pin above is unchanged).
+    inv('preproc_conditional_property_value_sequence', 'value', True, set(), 'FIXED',
+        "a run of whole-value groups is one sequence node, never sibling property values",
+        types={'preproc_conditional_property_value'}),
 
     # ----------------------------------------------------------- DELIBERATE
     # The four `operator` fields are purely anonymous: the operator token IS

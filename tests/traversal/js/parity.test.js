@@ -27,8 +27,8 @@ test.before(async () => {
   parsers['native tree-sitter'] = native;
 });
 
-test('there are thirteen fixtures, each with an expected-visits file', () => {
-  assert.strictEqual(FIXTURES.length, 13);
+test('there are fourteen fixtures, each with an expected-visits file', () => {
+  assert.strictEqual(FIXTURES.length, 14);
   for (const f of FIXTURES) assert.ok(fs.existsSync(path.join(FIX, f.replace(/\.al$/, '.visits.json'))), f);
 });
 
@@ -134,6 +134,23 @@ for (const runtime of ['web-tree-sitter', 'native tree-sitter']) {
     const deep = `codeunit 1 D\n{\n procedure P()\n begin\n  X := ${'('.repeat(5000)}1${')'.repeat(5000)};\n end;\n}\n`;
     const d2 = new T.Document(parsers[runtime].parse(deep), deep, policy);
     assert.ok(T.walk(d2, policy).length > 5000);   // no stack overflow
+  });
+}
+
+// B11 witness (spec 5.5): a value sequence owns no directives; each of its groups
+// carries its own split, with its arms.
+for (const runtime of ['web-tree-sitter', 'native tree-sitter']) {
+  test(`${runtime}: every group of a value sequence carries its own split`, () => {
+    const text = fs.readFileSync(path.join(FIX, 'value_run.al'), 'utf8');
+    const doc = new T.Document(parsers[runtime].parse(text), text, policy);
+    const visits = T.walk(doc, policy);
+    const seq = visits.filter((v) => v.type === 'preproc_conditional_property_value_sequence');
+    assert.strictEqual(seq.length, 1);
+    assert.strictEqual(seq[0].split, null);
+    const groups = visits.filter((v) => v.type === 'preproc_conditional_property_value');
+    const arm = (lit) => [[['value', 'string_literal', lit], [null, ';', ';']]];
+    assert.deepStrictEqual(groups.map((v) => v.split.groups[0].arms.map((a) => a.fragments.map(
+      (f) => [f.field, f.node.type, text.slice(f.node.startIndex, f.node.endIndex)]))), [arm("'a'"), arm("'b'")]);
   });
 }
 
