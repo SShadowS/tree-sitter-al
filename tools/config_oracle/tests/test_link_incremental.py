@@ -4,6 +4,9 @@ import pytest
 HOST = (b"page 50100 P\n{\n    actions { area(Processing) { action(A)\n    {\n        %s\n"
         b"    }\n    }\n    }\n}\n")
 
+REPORT_HOST = (b"report 50100 R\n{\n    dataset { dataitem(D; Cust)\n    {\n        %s\n"
+               b"    }\n    }\n}\n")
+
 EDITS = [
     (b'RunPageLink = "No." = field("No.");', b'RunPageLinkX = "No." = field("No.");'),
     (b'RunPageLinkX = "No." = field("No.");', b'RunPageLink = "No." = field("No.");'),
@@ -16,6 +19,14 @@ EDITS = [
     (b'RunPageLink =\n#if X\n "No." = field("No."),\n#endif\n A = field(B);',
      b'RunPageLink =\n#if X\n "No." = field("No."),\n#endif\n;'),
     (b'RunPageLink = "No." = field("No.");', b'RunPageLink  = "No." = field("No.");'),
+]
+
+
+REPORT_EDITS = [
+    (b'DataItemLink = "No." = field("No.");', b'dataitemlink = "No." = field("No.");'),
+    (b'dataitemlink = "No." = field("No.");', b'DataItemLink = "No." = field("No.");'),
+    (b'DataItemLink = "No." = field("No.");', b'DataItemLinkX = "No." = field("No.");'),
+    (b'DataItemLink = "No." = field("No.");', b'Visible = "No." = field("No.");'),
 ]
 
 
@@ -41,6 +52,15 @@ def _edit(parser, old_src, new_src):
 @pytest.mark.parametrize("before,after", EDITS)
 def test_incremental_equals_fresh(al_parser, before, after):
     old_src, new_src = HOST % before, HOST % after
+    incremental = _edit(al_parser, old_src, new_src)
+    fresh = al_parser.parse(new_src)
+    assert str(incremental.root_node) == str(fresh.root_node)
+    assert incremental.root_node.has_error == fresh.root_node.has_error
+
+
+@pytest.mark.parametrize("before,after", REPORT_EDITS)
+def test_incremental_equals_fresh_report_dataitem(al_parser, before, after):
+    old_src, new_src = REPORT_HOST % before, REPORT_HOST % after
     incremental = _edit(al_parser, old_src, new_src)
     fresh = al_parser.parse(new_src)
     assert str(incremental.root_node) == str(fresh.root_node)

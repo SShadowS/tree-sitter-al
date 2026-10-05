@@ -247,7 +247,7 @@ def _host_rows():
 
 
 def check_tree(path: str, tree, src: bytes, *, target_check: bool | None = None,
-               rows: list | None = None) -> list[Finding]:
+               rows: list | None = None, stats: Counter | None = None) -> list[Finding]:
     """Per-file core of `check`. target_check None = on iff the language has `qualified_name`."""
     if target_check is None:
         target_check = tree.language.id_for_node_kind("qualified_name", True) is not None
@@ -266,6 +266,8 @@ def check_tree(path: str, tree, src: bytes, *, target_check: bool | None = None,
             name = prop_name(n)
             v = n.child_by_field_name("value")
             hosts: tuple[str, ...] = ()
+            if stats is not None and name in LINK_NAMES and v is not None:
+                stats["link"] += 1
             if name in LINK_NAMES and v is not None and not _link_shape_ok(v):
                 add("link-shape", n, v.type)
             if name == "tablerelation":
@@ -320,11 +322,12 @@ def _read(f: Path) -> bytes:
     return has_error_sweep.decode_al(f.read_bytes()).encode("utf-8", "surrogateescape")
 
 
-def check(roots, parser, *, rows: list | None = None, target_check: bool | None = None) -> list[Finding]:
+def check(roots, parser, *, rows: list | None = None, target_check: bool | None = None,
+          stats: Counter | None = None) -> list[Finding]:
     out: list[Finding] = []
     for f in _al_files(roots):
         src = _read(f)
-        out.extend(check_tree(str(f), parser.parse(src), src, target_check=target_check, rows=rows))
+        out.extend(check_tree(str(f), parser.parse(src), src, target_check=target_check, rows=rows, stats=stats))
     return out
 
 
@@ -627,11 +630,12 @@ def main(argv=None) -> int:
         cur = parser_for(a.cur_lib)
         if a.mode == "check":
             rows: list = []
-            findings = check(a.root, cur, rows=rows)
+            stats: Counter = Counter()
+            findings = check(a.root, cur, rows=rows, stats=stats)
             res_rows = rows
             tr = sum(1 for r in rows if r[4] == "tablerelation")
             extra = (f" files={sum(1 for _ in _al_files(a.root))} tablerelation_sites={tr}"
-                     f" d2_sites={len(rows) - tr}")
+                     f" d2_sites={len(rows) - tr} link_sites={stats['link']}")
         else:
             if not a.base_lib:
                 raise RuntimeError("delta needs --base-lib")

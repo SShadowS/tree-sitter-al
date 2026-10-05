@@ -688,12 +688,17 @@ else
     print_header "Step 6c: TableRelation Census Over the AL Corpus (--full only)"
     rel_out=$(python tools/relation_census.py check --root "$AL_PARSE_CORPUS" 2>&1) && rel_status=0 || rel_status=$?
     rel_sites=$(echo "$rel_out" | sed -n 's/.* tablerelation_sites=\([0-9][0-9]*\) .*/\1/p' | tail -1)
+    link_sites=$(echo "$rel_out" | sed -n 's/.* link_sites=\([0-9][0-9]*\)$/\1/p' | tail -1)
     if [ "$rel_status" -ne 0 ]; then
         print_error "relation_census found findings or could not run (exit $rel_status)"
         echo "$rel_out" | tail -20
         VALIDATION_FAILED=1
     elif [ -z "$rel_sites" ] || [ "$rel_sites" -le 0 ]; then
         print_error "relation_census saw no TableRelation sites in $AL_PARSE_CORPUS"
+        echo "$rel_out" | tail -3
+        VALIDATION_FAILED=1
+    elif [ -z "$link_sites" ] || [ "$link_sites" -le 0 ]; then
+        print_error "relation_census saw no link-family sites in $AL_PARSE_CORPUS"
         echo "$rel_out" | tail -3
         VALIDATION_FAILED=1
     else
