@@ -351,8 +351,10 @@ function afterSequenceRules(p) {
 }
 
 // B11: the declared conflicts of a keyed `;`-after family (valueRunRules + afterGroupRules +
-// afterSequenceRules, not listValue), all generator-required, first measured on ML (Task 5):
-function keyedRunConflicts($, p, value) {
+// afterSequenceRules, not listValue), all generator-required, first measured on ML (Task 5).
+// `afterLeadEmpty: false` drops the after_lead / empty-group entry, for a family where
+// another conflict already subsumes it (the generator reports it unnecessary).
+function keyedRunConflicts($, p, value, { afterLeadEmpty = true } = {}) {
   const r = s => $[`${p}_${s}`];
   return [
     // sequence continuation (§4.3): after a non-terminated group the run continues or the
@@ -373,7 +375,7 @@ function keyedRunConflicts($, p, value) {
     [r('tail_lead'), r('after_lead'), $._empty_value_conditional],
     [r('after_gap'), $._empty_value_conditional],
     [r('tail_lead'), $._empty_value_conditional],
-    [r('after_lead'), $._empty_value_conditional],
+    ...(afterLeadEmpty ? [[r('after_lead'), $._empty_value_conditional]] : []),
     // step 4 against step 2: a run of non-terminated `;`-inside groups is the `;`-inside
     // sequence or the lead of a `;`-after sequence until a group with an arm without `;`
     // appears or the run ends; a `;`-after sequence is open or ends in a terminated group
@@ -750,8 +752,7 @@ module.exports = grammar({
     ...keyedRunConflicts($, '_calc_formula', $._calc_formula_value),
     // TableRelation: its after_lead / empty-group reading is subsumed by the
     // conditional-head entries below (reported unnecessary)
-    ...keyedRunConflicts($, '_table_relation', $._table_relation_property_value)
-      .filter(c => c.map(x => x.name).join() !== '_table_relation_after_lead,_empty_value_conditional'),
+    ...keyedRunConflicts($, '_table_relation', $._table_relation_property_value, { afterLeadEmpty: false }),
     // _property_whole_value_in_if at an action area (G11, item 17): there a
     // #if after `Name =` also opens an option-member list. Generator-required
     // (not needed for the assembly_body host alone, measured).
