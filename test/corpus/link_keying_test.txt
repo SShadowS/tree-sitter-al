@@ -7,6 +7,54 @@
 ; (tools/alc_probe/cases/link-keying/README-verdicts.txt). No production DataItemLink carries
 ; a comment (searched BC.History, DC, BC28.1, BCApps-29.0), so the comment case is the probe.
 ; Expected trees from tools/snip.py --sexp, with field labels.
+;
+; Host audit, spec 5.4 (src/parser.c ts_external_scanner_states at ace7d60, STATE_COUNT
+; 17,525; 61 rows, 14 offer property_name, 12 offer _link_property_name). A state's row is
+; its ts_lex_modes external_lex_state; a debug parse's `lex_external state:N` is that row.
+; (a) property_name WITHOUT _link_property_name: 2 rows, neither a host where a family name
+;     can occur. Every bare $.property_name in grammar.js sits beside a keyed arm, except
+;     caption_value's sub-field name and _permissions_head; each (a) state's valid symbols
+;     (lookahead_iterator) are property_name, those rules' own follow-ups, and extras only.
+;   row 58 (property_name, preproc_close, _scanner_hook): 12659, 12851 -- caption sub-field
+;     name in a whole-value #if arm; both hit by a debug parse of
+;     `Caption = #if X 'a', Locked = true, Comment = 'x'; #else ... #endif` (page and action).
+;   row 60 (property_name, _scanner_hook), 14 states:
+;     14327, 14372 -- caption sub-field name, flat; hit by `Caption = 'a', Locked = true,
+;       Comment = 'x';` in table, field, fieldgroup, enum value, Label var,
+;       report column/request page, xmlport, query, permissionset, pageextension hosts.
+;     15752, 15977 -- caption sub-field name after the first one: not hit by a debug parse
+;       (the runtime takes the REDUCE of a count-2 action), but they are the SHIFT_REPEAT
+;       targets of aux_sym_caption_value_repeat1 (parse actions 24197, 20975), and
+;       property_name then `=` leads to the same value states as 14327 / 12659 (boolean,
+;       integer, string_literal).
+;     15395, 15398, 15434, 15442, 15463, 15574, 17230 -- _permissions_head after #elif or
+;       #else (preproc_split_permissions_property); hit by debug parses of the split in a
+;       codeunit, table, page field/part/action/group, report dataitem/column/request page,
+;       query dataitem/column, xmlport text/table element, enum value, permissionset and
+;       permissionsetextension, flat and nested in an outer #if/#elif/#else.
+;     15433, 15461, 15577 -- not hit by a debug parse; valid symbols are property_name and
+;       _permissions_head only, and property_name then `=` leads to state 8265, the
+;       tabledata permission list, so they are further _permissions_head contexts.
+; (b) _link_property_name WITHOUT property_name: 0 rows. All 12 rows that offer it offer all
+;     five keyed tokens and property_name (rows 1, 3, 8, 9, 21, 24, 28, 33, 37, 42, 43, 54;
+;     row 1 is the all-tokens recovery row).
+; _property_whole_value_in_if has no keyed link arm (RunPageLink on an action area is
+; AL0124, probe decide-runpagelink-action-area.al), yet adds no (a) row: both hosts also list
+; `$.property`, so their name states are keyed rows (debug parse: action area 4249 in row 9,
+; dotnet assembly body 10586 in row 54).
+;
+; Host x property x placement matrix, spec 5.2: 13 hosts accepted by alc in all 7 placements
+; (flat, `;` after #endif, `;` in the arms, mixed, list-internal #if, a comment between the
+; name and `=`, the whole property in a body-level #if/#else), 91 tuples, one case each. 89
+; are the "Host matrix:" cases at the end; the other 2 are the cases above named for probes
+; host-page-part-subpagelink-mixed.al and host-report-dataitem-dataitemlink-comment.al. Each
+; case is its probe from the host object on (the extension object alone for pageextension
+; and reportextension); the probe's support table and pages are dropped.
+; Rejected tuples, no case (README-verdicts.txt): page systempart SubPageLink (AL0171),
+; pageextension modify action RunPageLink (AL0255), pageextension modify part SubPageLink
+; (AL0246), report request-page action RunPageLink (AL0255), report request-page systempart
+; SubPageLink (AL0171), xmlport request-page action RunPageLink (AL0255), xmlport
+; request-page systempart SubPageLink (AL0171).
 
 ================================================================================
 4.1: RunPageLink with two entries is one link_value_list
@@ -3277,3 +3325,5435 @@ report 50130 R
                     field: (identifier)
                     (field_keyword)
                     value: (identifier)))))))))))
+
+================================================================================
+Host matrix: page-action, RunPageLink, flat (probe host-page-action-runpagelink-flat.al)
+================================================================================
+
+page 50100 P
+{
+    SourceTable = Cust;
+    actions { area(Processing) { action(A) {
+        RunObject = page CustCard;
+        RunPageLink = "No." = field("No."), Name = field(Name);
+    } } }
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (page_declaration
+    (page_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (property
+        name: (property_name)
+        value: (identifier))
+      (actions_section
+        (actions_keyword)
+        body: (action_body
+          (action_area_section
+            (area_keyword)
+            type: (processing_keyword)
+            body: (action_body
+              (action_declaration
+                (action_keyword)
+                name: (identifier)
+                body: (declaration_body
+                  (property
+                    name: (property_name)
+                    value: (object_reference_value
+                      (page_keyword)
+                      (identifier)))
+                  (property
+                    name: (property_name)
+                    value: (link_value_list
+                      (link_value
+                        field: (quoted_identifier)
+                        (field_keyword)
+                        value: (quoted_identifier))
+                      (link_value
+                        field: (identifier)
+                        (field_keyword)
+                        value: (identifier)))))))))))))
+
+================================================================================
+Host matrix: page-action, RunPageLink, semi-after (probe host-page-action-runpagelink-semi-after.al)
+================================================================================
+
+page 50100 P
+{
+    SourceTable = Cust;
+    actions { area(Processing) { action(A) {
+        RunObject = page CustCard;
+        RunPageLink =
+#if X
+        "No." = field("No.")
+#else
+        Name = field(Name)
+#endif
+        ;
+    } } }
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (page_declaration
+    (page_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (property
+        name: (property_name)
+        value: (identifier))
+      (actions_section
+        (actions_keyword)
+        body: (action_body
+          (action_area_section
+            (area_keyword)
+            type: (processing_keyword)
+            body: (action_body
+              (action_declaration
+                (action_keyword)
+                name: (identifier)
+                body: (declaration_body
+                  (property
+                    name: (property_name)
+                    value: (object_reference_value
+                      (page_keyword)
+                      (identifier)))
+                  (property
+                    name: (property_name)
+                    value: (preproc_conditional_property_value
+                      (preproc_if
+                        (preproc_open)
+                        condition: (identifier))
+                      value: (link_value_list
+                        (link_value
+                          field: (quoted_identifier)
+                          (field_keyword)
+                          value: (quoted_identifier)))
+                      (preproc_else)
+                      value: (link_value_list
+                        (link_value
+                          field: (identifier)
+                          (field_keyword)
+                          value: (identifier)))
+                      (preproc_endif
+                        (preproc_close)))))))))))))
+
+================================================================================
+Host matrix: page-action, RunPageLink, semi-arms (probe host-page-action-runpagelink-semi-arms.al)
+================================================================================
+
+page 50100 P
+{
+    SourceTable = Cust;
+    actions { area(Processing) { action(A) {
+        RunObject = page CustCard;
+        RunPageLink =
+#if X
+        "No." = field("No.");
+#else
+        Name = field(Name);
+#endif
+    } } }
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (page_declaration
+    (page_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (property
+        name: (property_name)
+        value: (identifier))
+      (actions_section
+        (actions_keyword)
+        body: (action_body
+          (action_area_section
+            (area_keyword)
+            type: (processing_keyword)
+            body: (action_body
+              (action_declaration
+                (action_keyword)
+                name: (identifier)
+                body: (declaration_body
+                  (property
+                    name: (property_name)
+                    value: (object_reference_value
+                      (page_keyword)
+                      (identifier)))
+                  (property
+                    name: (property_name)
+                    value: (preproc_conditional_property_value
+                      (preproc_if
+                        (preproc_open)
+                        condition: (identifier))
+                      value: (link_value_list
+                        (link_value
+                          field: (quoted_identifier)
+                          (field_keyword)
+                          value: (quoted_identifier)))
+                      (preproc_else)
+                      value: (link_value_list
+                        (link_value
+                          field: (identifier)
+                          (field_keyword)
+                          value: (identifier)))
+                      (preproc_endif
+                        (preproc_close)))))))))))))
+
+================================================================================
+Host matrix: page-action, RunPageLink, mixed (probe host-page-action-runpagelink-mixed.al)
+================================================================================
+
+page 50100 P
+{
+    SourceTable = Cust;
+    actions { area(Processing) { action(A) {
+        RunObject = page CustCard;
+        RunPageLink =
+#if X
+        "No." = field("No.");
+#else
+        Name = field(Name)
+#endif
+        ;
+    } } }
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (page_declaration
+    (page_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (property
+        name: (property_name)
+        value: (identifier))
+      (actions_section
+        (actions_keyword)
+        body: (action_body
+          (action_area_section
+            (area_keyword)
+            type: (processing_keyword)
+            body: (action_body
+              (action_declaration
+                (action_keyword)
+                name: (identifier)
+                body: (declaration_body
+                  (property
+                    name: (property_name)
+                    value: (object_reference_value
+                      (page_keyword)
+                      (identifier)))
+                  (property
+                    name: (property_name)
+                    value: (preproc_conditional_property_value
+                      (preproc_if
+                        (preproc_open)
+                        condition: (identifier))
+                      value: (link_value_list
+                        (link_value
+                          field: (quoted_identifier)
+                          (field_keyword)
+                          value: (quoted_identifier)))
+                      (preproc_else)
+                      value: (link_value_list
+                        (link_value
+                          field: (identifier)
+                          (field_keyword)
+                          value: (identifier)))
+                      (preproc_endif
+                        (preproc_close)))))))))))))
+
+================================================================================
+Host matrix: page-action, RunPageLink, list-internal (probe host-page-action-runpagelink-list-internal.al)
+================================================================================
+
+page 50100 P
+{
+    SourceTable = Cust;
+    actions { area(Processing) { action(A) {
+        RunObject = page CustCard;
+        RunPageLink =
+#if X
+        "No." = field("No."),
+#endif
+        Name = field(Name);
+    } } }
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (page_declaration
+    (page_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (property
+        name: (property_name)
+        value: (identifier))
+      (actions_section
+        (actions_keyword)
+        body: (action_body
+          (action_area_section
+            (area_keyword)
+            type: (processing_keyword)
+            body: (action_body
+              (action_declaration
+                (action_keyword)
+                name: (identifier)
+                body: (declaration_body
+                  (property
+                    name: (property_name)
+                    value: (object_reference_value
+                      (page_keyword)
+                      (identifier)))
+                  (property
+                    name: (property_name)
+                    value: (link_value_list
+                      (preproc_conditional_link_values
+                        (preproc_if
+                          (preproc_open)
+                          condition: (identifier))
+                        (link_value
+                          field: (quoted_identifier)
+                          (field_keyword)
+                          value: (quoted_identifier))
+                        (preproc_endif
+                          (preproc_close)))
+                      (link_value
+                        field: (identifier)
+                        (field_keyword)
+                        value: (identifier)))))))))))))
+
+================================================================================
+Host matrix: page-action, RunPageLink, comment (probe host-page-action-runpagelink-comment.al)
+================================================================================
+
+page 50100 P
+{
+    SourceTable = Cust;
+    actions { area(Processing) { action(A) {
+        RunObject = page CustCard;
+        RunPageLink /* c */ = "No." = field("No."), Name = field(Name);
+    } } }
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (page_declaration
+    (page_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (property
+        name: (property_name)
+        value: (identifier))
+      (actions_section
+        (actions_keyword)
+        body: (action_body
+          (action_area_section
+            (area_keyword)
+            type: (processing_keyword)
+            body: (action_body
+              (action_declaration
+                (action_keyword)
+                name: (identifier)
+                body: (declaration_body
+                  (property
+                    name: (property_name)
+                    value: (object_reference_value
+                      (page_keyword)
+                      (identifier)))
+                  (property
+                    name: (property_name)
+                    (multiline_comment)
+                    value: (link_value_list
+                      (link_value
+                        field: (quoted_identifier)
+                        (field_keyword)
+                        value: (quoted_identifier))
+                      (link_value
+                        field: (identifier)
+                        (field_keyword)
+                        value: (identifier)))))))))))))
+
+================================================================================
+Host matrix: page-action, RunPageLink, body-if (probe host-page-action-runpagelink-body-if.al)
+================================================================================
+
+page 50100 P
+{
+    SourceTable = Cust;
+    actions { area(Processing) { action(A) {
+        RunObject = page CustCard;
+#if X
+        RunPageLink = "No." = field("No.");
+#else
+        RunPageLink = Name = field(Name);
+#endif
+    } } }
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (page_declaration
+    (page_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (property
+        name: (property_name)
+        value: (identifier))
+      (actions_section
+        (actions_keyword)
+        body: (action_body
+          (action_area_section
+            (area_keyword)
+            type: (processing_keyword)
+            body: (action_body
+              (action_declaration
+                (action_keyword)
+                name: (identifier)
+                body: (declaration_body
+                  (property
+                    name: (property_name)
+                    value: (object_reference_value
+                      (page_keyword)
+                      (identifier)))
+                  (preproc_conditional
+                    (preproc_if
+                      (preproc_open)
+                      condition: (identifier))
+                    (property
+                      name: (property_name)
+                      value: (link_value_list
+                        (link_value
+                          field: (quoted_identifier)
+                          (field_keyword)
+                          value: (quoted_identifier))))
+                    (preproc_else)
+                    (property
+                      name: (property_name)
+                      value: (link_value_list
+                        (link_value
+                          field: (identifier)
+                          (field_keyword)
+                          value: (identifier))))
+                    (preproc_endif
+                      (preproc_close))))))))))))
+
+================================================================================
+Host matrix: page-part, SubPageLink, flat (probe host-page-part-subpagelink-flat.al)
+================================================================================
+
+page 50100 P
+{
+    SourceTable = Cust;
+    layout { area(Content) { part(L; CustList) {
+        SubPageLink = "No." = field("No."), Name = field(Name);
+    } } }
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (page_declaration
+    (page_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (property
+        name: (property_name)
+        value: (identifier))
+      (layout_section
+        (layout_keyword)
+        body: (layout_body
+          (area_section
+            (area_keyword)
+            type: (content_keyword)
+            body: (layout_body
+              (part_section
+                (part_keyword)
+                name: (identifier)
+                source: (identifier)
+                body: (declaration_body
+                  (property
+                    name: (property_name)
+                    value: (link_value_list
+                      (link_value
+                        field: (quoted_identifier)
+                        (field_keyword)
+                        value: (quoted_identifier))
+                      (link_value
+                        field: (identifier)
+                        (field_keyword)
+                        value: (identifier)))))))))))))
+
+================================================================================
+Host matrix: page-part, SubPageLink, semi-after (probe host-page-part-subpagelink-semi-after.al)
+================================================================================
+
+page 50100 P
+{
+    SourceTable = Cust;
+    layout { area(Content) { part(L; CustList) {
+        SubPageLink =
+#if X
+        "No." = field("No.")
+#else
+        Name = field(Name)
+#endif
+        ;
+    } } }
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (page_declaration
+    (page_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (property
+        name: (property_name)
+        value: (identifier))
+      (layout_section
+        (layout_keyword)
+        body: (layout_body
+          (area_section
+            (area_keyword)
+            type: (content_keyword)
+            body: (layout_body
+              (part_section
+                (part_keyword)
+                name: (identifier)
+                source: (identifier)
+                body: (declaration_body
+                  (property
+                    name: (property_name)
+                    value: (preproc_conditional_property_value
+                      (preproc_if
+                        (preproc_open)
+                        condition: (identifier))
+                      value: (link_value_list
+                        (link_value
+                          field: (quoted_identifier)
+                          (field_keyword)
+                          value: (quoted_identifier)))
+                      (preproc_else)
+                      value: (link_value_list
+                        (link_value
+                          field: (identifier)
+                          (field_keyword)
+                          value: (identifier)))
+                      (preproc_endif
+                        (preproc_close)))))))))))))
+
+================================================================================
+Host matrix: page-part, SubPageLink, semi-arms (probe host-page-part-subpagelink-semi-arms.al)
+================================================================================
+
+page 50100 P
+{
+    SourceTable = Cust;
+    layout { area(Content) { part(L; CustList) {
+        SubPageLink =
+#if X
+        "No." = field("No.");
+#else
+        Name = field(Name);
+#endif
+    } } }
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (page_declaration
+    (page_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (property
+        name: (property_name)
+        value: (identifier))
+      (layout_section
+        (layout_keyword)
+        body: (layout_body
+          (area_section
+            (area_keyword)
+            type: (content_keyword)
+            body: (layout_body
+              (part_section
+                (part_keyword)
+                name: (identifier)
+                source: (identifier)
+                body: (declaration_body
+                  (property
+                    name: (property_name)
+                    value: (preproc_conditional_property_value
+                      (preproc_if
+                        (preproc_open)
+                        condition: (identifier))
+                      value: (link_value_list
+                        (link_value
+                          field: (quoted_identifier)
+                          (field_keyword)
+                          value: (quoted_identifier)))
+                      (preproc_else)
+                      value: (link_value_list
+                        (link_value
+                          field: (identifier)
+                          (field_keyword)
+                          value: (identifier)))
+                      (preproc_endif
+                        (preproc_close)))))))))))))
+
+================================================================================
+Host matrix: page-part, SubPageLink, list-internal (probe host-page-part-subpagelink-list-internal.al)
+================================================================================
+
+page 50100 P
+{
+    SourceTable = Cust;
+    layout { area(Content) { part(L; CustList) {
+        SubPageLink =
+#if X
+        "No." = field("No."),
+#endif
+        Name = field(Name);
+    } } }
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (page_declaration
+    (page_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (property
+        name: (property_name)
+        value: (identifier))
+      (layout_section
+        (layout_keyword)
+        body: (layout_body
+          (area_section
+            (area_keyword)
+            type: (content_keyword)
+            body: (layout_body
+              (part_section
+                (part_keyword)
+                name: (identifier)
+                source: (identifier)
+                body: (declaration_body
+                  (property
+                    name: (property_name)
+                    value: (link_value_list
+                      (preproc_conditional_link_values
+                        (preproc_if
+                          (preproc_open)
+                          condition: (identifier))
+                        (link_value
+                          field: (quoted_identifier)
+                          (field_keyword)
+                          value: (quoted_identifier))
+                        (preproc_endif
+                          (preproc_close)))
+                      (link_value
+                        field: (identifier)
+                        (field_keyword)
+                        value: (identifier)))))))))))))
+
+================================================================================
+Host matrix: page-part, SubPageLink, comment (probe host-page-part-subpagelink-comment.al)
+================================================================================
+
+page 50100 P
+{
+    SourceTable = Cust;
+    layout { area(Content) { part(L; CustList) {
+        SubPageLink /* c */ = "No." = field("No."), Name = field(Name);
+    } } }
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (page_declaration
+    (page_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (property
+        name: (property_name)
+        value: (identifier))
+      (layout_section
+        (layout_keyword)
+        body: (layout_body
+          (area_section
+            (area_keyword)
+            type: (content_keyword)
+            body: (layout_body
+              (part_section
+                (part_keyword)
+                name: (identifier)
+                source: (identifier)
+                body: (declaration_body
+                  (property
+                    name: (property_name)
+                    (multiline_comment)
+                    value: (link_value_list
+                      (link_value
+                        field: (quoted_identifier)
+                        (field_keyword)
+                        value: (quoted_identifier))
+                      (link_value
+                        field: (identifier)
+                        (field_keyword)
+                        value: (identifier)))))))))))))
+
+================================================================================
+Host matrix: page-part, SubPageLink, body-if (probe host-page-part-subpagelink-body-if.al)
+================================================================================
+
+page 50100 P
+{
+    SourceTable = Cust;
+    layout { area(Content) { part(L; CustList) {
+#if X
+        SubPageLink = "No." = field("No.");
+#else
+        SubPageLink = Name = field(Name);
+#endif
+    } } }
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (page_declaration
+    (page_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (property
+        name: (property_name)
+        value: (identifier))
+      (layout_section
+        (layout_keyword)
+        body: (layout_body
+          (area_section
+            (area_keyword)
+            type: (content_keyword)
+            body: (layout_body
+              (part_section
+                (part_keyword)
+                name: (identifier)
+                source: (identifier)
+                body: (declaration_body
+                  (preproc_conditional
+                    (preproc_if
+                      (preproc_open)
+                      condition: (identifier))
+                    (property
+                      name: (property_name)
+                      value: (link_value_list
+                        (link_value
+                          field: (quoted_identifier)
+                          (field_keyword)
+                          value: (quoted_identifier))))
+                    (preproc_else)
+                    (property
+                      name: (property_name)
+                      value: (link_value_list
+                        (link_value
+                          field: (identifier)
+                          (field_keyword)
+                          value: (identifier))))
+                    (preproc_endif
+                      (preproc_close))))))))))))
+
+================================================================================
+Host matrix: pageext-addafter-action, RunPageLink, flat (probe host-pageext-addafter-action-runpagelink-flat.al)
+================================================================================
+
+pageextension 50120 PE extends P
+{
+    actions { addafter(A) { action(B) {
+        RunObject = page CustCard;
+        RunPageLink = "No." = field("No."), Name = field(Name);
+    } } }
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (pageextension_declaration
+    (pageextension_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    (extends_keyword)
+    base_object: (identifier)
+    body: (declaration_body
+      (actions_section
+        (actions_keyword)
+        body: (action_body
+          (addafter_action_modification
+            (addafter_keyword)
+            target: (identifier)
+            body: (action_body
+              (action_declaration
+                (action_keyword)
+                name: (identifier)
+                body: (declaration_body
+                  (property
+                    name: (property_name)
+                    value: (object_reference_value
+                      (page_keyword)
+                      (identifier)))
+                  (property
+                    name: (property_name)
+                    value: (link_value_list
+                      (link_value
+                        field: (quoted_identifier)
+                        (field_keyword)
+                        value: (quoted_identifier))
+                      (link_value
+                        field: (identifier)
+                        (field_keyword)
+                        value: (identifier)))))))))))))
+
+================================================================================
+Host matrix: pageext-addafter-action, RunPageLink, semi-after (probe host-pageext-addafter-action-runpagelink-semi-after.al)
+================================================================================
+
+pageextension 50120 PE extends P
+{
+    actions { addafter(A) { action(B) {
+        RunObject = page CustCard;
+        RunPageLink =
+#if X
+        "No." = field("No.")
+#else
+        Name = field(Name)
+#endif
+        ;
+    } } }
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (pageextension_declaration
+    (pageextension_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    (extends_keyword)
+    base_object: (identifier)
+    body: (declaration_body
+      (actions_section
+        (actions_keyword)
+        body: (action_body
+          (addafter_action_modification
+            (addafter_keyword)
+            target: (identifier)
+            body: (action_body
+              (action_declaration
+                (action_keyword)
+                name: (identifier)
+                body: (declaration_body
+                  (property
+                    name: (property_name)
+                    value: (object_reference_value
+                      (page_keyword)
+                      (identifier)))
+                  (property
+                    name: (property_name)
+                    value: (preproc_conditional_property_value
+                      (preproc_if
+                        (preproc_open)
+                        condition: (identifier))
+                      value: (link_value_list
+                        (link_value
+                          field: (quoted_identifier)
+                          (field_keyword)
+                          value: (quoted_identifier)))
+                      (preproc_else)
+                      value: (link_value_list
+                        (link_value
+                          field: (identifier)
+                          (field_keyword)
+                          value: (identifier)))
+                      (preproc_endif
+                        (preproc_close)))))))))))))
+
+================================================================================
+Host matrix: pageext-addafter-action, RunPageLink, semi-arms (probe host-pageext-addafter-action-runpagelink-semi-arms.al)
+================================================================================
+
+pageextension 50120 PE extends P
+{
+    actions { addafter(A) { action(B) {
+        RunObject = page CustCard;
+        RunPageLink =
+#if X
+        "No." = field("No.");
+#else
+        Name = field(Name);
+#endif
+    } } }
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (pageextension_declaration
+    (pageextension_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    (extends_keyword)
+    base_object: (identifier)
+    body: (declaration_body
+      (actions_section
+        (actions_keyword)
+        body: (action_body
+          (addafter_action_modification
+            (addafter_keyword)
+            target: (identifier)
+            body: (action_body
+              (action_declaration
+                (action_keyword)
+                name: (identifier)
+                body: (declaration_body
+                  (property
+                    name: (property_name)
+                    value: (object_reference_value
+                      (page_keyword)
+                      (identifier)))
+                  (property
+                    name: (property_name)
+                    value: (preproc_conditional_property_value
+                      (preproc_if
+                        (preproc_open)
+                        condition: (identifier))
+                      value: (link_value_list
+                        (link_value
+                          field: (quoted_identifier)
+                          (field_keyword)
+                          value: (quoted_identifier)))
+                      (preproc_else)
+                      value: (link_value_list
+                        (link_value
+                          field: (identifier)
+                          (field_keyword)
+                          value: (identifier)))
+                      (preproc_endif
+                        (preproc_close)))))))))))))
+
+================================================================================
+Host matrix: pageext-addafter-action, RunPageLink, mixed (probe host-pageext-addafter-action-runpagelink-mixed.al)
+================================================================================
+
+pageextension 50120 PE extends P
+{
+    actions { addafter(A) { action(B) {
+        RunObject = page CustCard;
+        RunPageLink =
+#if X
+        "No." = field("No.");
+#else
+        Name = field(Name)
+#endif
+        ;
+    } } }
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (pageextension_declaration
+    (pageextension_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    (extends_keyword)
+    base_object: (identifier)
+    body: (declaration_body
+      (actions_section
+        (actions_keyword)
+        body: (action_body
+          (addafter_action_modification
+            (addafter_keyword)
+            target: (identifier)
+            body: (action_body
+              (action_declaration
+                (action_keyword)
+                name: (identifier)
+                body: (declaration_body
+                  (property
+                    name: (property_name)
+                    value: (object_reference_value
+                      (page_keyword)
+                      (identifier)))
+                  (property
+                    name: (property_name)
+                    value: (preproc_conditional_property_value
+                      (preproc_if
+                        (preproc_open)
+                        condition: (identifier))
+                      value: (link_value_list
+                        (link_value
+                          field: (quoted_identifier)
+                          (field_keyword)
+                          value: (quoted_identifier)))
+                      (preproc_else)
+                      value: (link_value_list
+                        (link_value
+                          field: (identifier)
+                          (field_keyword)
+                          value: (identifier)))
+                      (preproc_endif
+                        (preproc_close)))))))))))))
+
+================================================================================
+Host matrix: pageext-addafter-action, RunPageLink, list-internal (probe host-pageext-addafter-action-runpagelink-list-internal.al)
+================================================================================
+
+pageextension 50120 PE extends P
+{
+    actions { addafter(A) { action(B) {
+        RunObject = page CustCard;
+        RunPageLink =
+#if X
+        "No." = field("No."),
+#endif
+        Name = field(Name);
+    } } }
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (pageextension_declaration
+    (pageextension_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    (extends_keyword)
+    base_object: (identifier)
+    body: (declaration_body
+      (actions_section
+        (actions_keyword)
+        body: (action_body
+          (addafter_action_modification
+            (addafter_keyword)
+            target: (identifier)
+            body: (action_body
+              (action_declaration
+                (action_keyword)
+                name: (identifier)
+                body: (declaration_body
+                  (property
+                    name: (property_name)
+                    value: (object_reference_value
+                      (page_keyword)
+                      (identifier)))
+                  (property
+                    name: (property_name)
+                    value: (link_value_list
+                      (preproc_conditional_link_values
+                        (preproc_if
+                          (preproc_open)
+                          condition: (identifier))
+                        (link_value
+                          field: (quoted_identifier)
+                          (field_keyword)
+                          value: (quoted_identifier))
+                        (preproc_endif
+                          (preproc_close)))
+                      (link_value
+                        field: (identifier)
+                        (field_keyword)
+                        value: (identifier)))))))))))))
+
+================================================================================
+Host matrix: pageext-addafter-action, RunPageLink, comment (probe host-pageext-addafter-action-runpagelink-comment.al)
+================================================================================
+
+pageextension 50120 PE extends P
+{
+    actions { addafter(A) { action(B) {
+        RunObject = page CustCard;
+        RunPageLink /* c */ = "No." = field("No."), Name = field(Name);
+    } } }
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (pageextension_declaration
+    (pageextension_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    (extends_keyword)
+    base_object: (identifier)
+    body: (declaration_body
+      (actions_section
+        (actions_keyword)
+        body: (action_body
+          (addafter_action_modification
+            (addafter_keyword)
+            target: (identifier)
+            body: (action_body
+              (action_declaration
+                (action_keyword)
+                name: (identifier)
+                body: (declaration_body
+                  (property
+                    name: (property_name)
+                    value: (object_reference_value
+                      (page_keyword)
+                      (identifier)))
+                  (property
+                    name: (property_name)
+                    (multiline_comment)
+                    value: (link_value_list
+                      (link_value
+                        field: (quoted_identifier)
+                        (field_keyword)
+                        value: (quoted_identifier))
+                      (link_value
+                        field: (identifier)
+                        (field_keyword)
+                        value: (identifier)))))))))))))
+
+================================================================================
+Host matrix: pageext-addafter-action, RunPageLink, body-if (probe host-pageext-addafter-action-runpagelink-body-if.al)
+================================================================================
+
+pageextension 50120 PE extends P
+{
+    actions { addafter(A) { action(B) {
+        RunObject = page CustCard;
+#if X
+        RunPageLink = "No." = field("No.");
+#else
+        RunPageLink = Name = field(Name);
+#endif
+    } } }
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (pageextension_declaration
+    (pageextension_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    (extends_keyword)
+    base_object: (identifier)
+    body: (declaration_body
+      (actions_section
+        (actions_keyword)
+        body: (action_body
+          (addafter_action_modification
+            (addafter_keyword)
+            target: (identifier)
+            body: (action_body
+              (action_declaration
+                (action_keyword)
+                name: (identifier)
+                body: (declaration_body
+                  (property
+                    name: (property_name)
+                    value: (object_reference_value
+                      (page_keyword)
+                      (identifier)))
+                  (preproc_conditional
+                    (preproc_if
+                      (preproc_open)
+                      condition: (identifier))
+                    (property
+                      name: (property_name)
+                      value: (link_value_list
+                        (link_value
+                          field: (quoted_identifier)
+                          (field_keyword)
+                          value: (quoted_identifier))))
+                    (preproc_else)
+                    (property
+                      name: (property_name)
+                      value: (link_value_list
+                        (link_value
+                          field: (identifier)
+                          (field_keyword)
+                          value: (identifier))))
+                    (preproc_endif
+                      (preproc_close))))))))))))
+
+================================================================================
+Host matrix: pageext-addafter-part, SubPageLink, flat (probe host-pageext-addafter-part-subpagelink-flat.al)
+================================================================================
+
+pageextension 50120 PE extends P
+{
+    layout { addafter(L) { part(L2; CustList) {
+        SubPageLink = "No." = field("No."), Name = field(Name);
+    } } }
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (pageextension_declaration
+    (pageextension_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    (extends_keyword)
+    base_object: (identifier)
+    body: (declaration_body
+      (layout_section
+        (layout_keyword)
+        body: (layout_body
+          (addafter_modification
+            (addafter_keyword)
+            target: (identifier)
+            body: (layout_body
+              (part_section
+                (part_keyword)
+                name: (identifier)
+                source: (identifier)
+                body: (declaration_body
+                  (property
+                    name: (property_name)
+                    value: (link_value_list
+                      (link_value
+                        field: (quoted_identifier)
+                        (field_keyword)
+                        value: (quoted_identifier))
+                      (link_value
+                        field: (identifier)
+                        (field_keyword)
+                        value: (identifier)))))))))))))
+
+================================================================================
+Host matrix: pageext-addafter-part, SubPageLink, semi-after (probe host-pageext-addafter-part-subpagelink-semi-after.al)
+================================================================================
+
+pageextension 50120 PE extends P
+{
+    layout { addafter(L) { part(L2; CustList) {
+        SubPageLink =
+#if X
+        "No." = field("No.")
+#else
+        Name = field(Name)
+#endif
+        ;
+    } } }
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (pageextension_declaration
+    (pageextension_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    (extends_keyword)
+    base_object: (identifier)
+    body: (declaration_body
+      (layout_section
+        (layout_keyword)
+        body: (layout_body
+          (addafter_modification
+            (addafter_keyword)
+            target: (identifier)
+            body: (layout_body
+              (part_section
+                (part_keyword)
+                name: (identifier)
+                source: (identifier)
+                body: (declaration_body
+                  (property
+                    name: (property_name)
+                    value: (preproc_conditional_property_value
+                      (preproc_if
+                        (preproc_open)
+                        condition: (identifier))
+                      value: (link_value_list
+                        (link_value
+                          field: (quoted_identifier)
+                          (field_keyword)
+                          value: (quoted_identifier)))
+                      (preproc_else)
+                      value: (link_value_list
+                        (link_value
+                          field: (identifier)
+                          (field_keyword)
+                          value: (identifier)))
+                      (preproc_endif
+                        (preproc_close)))))))))))))
+
+================================================================================
+Host matrix: pageext-addafter-part, SubPageLink, semi-arms (probe host-pageext-addafter-part-subpagelink-semi-arms.al)
+================================================================================
+
+pageextension 50120 PE extends P
+{
+    layout { addafter(L) { part(L2; CustList) {
+        SubPageLink =
+#if X
+        "No." = field("No.");
+#else
+        Name = field(Name);
+#endif
+    } } }
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (pageextension_declaration
+    (pageextension_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    (extends_keyword)
+    base_object: (identifier)
+    body: (declaration_body
+      (layout_section
+        (layout_keyword)
+        body: (layout_body
+          (addafter_modification
+            (addafter_keyword)
+            target: (identifier)
+            body: (layout_body
+              (part_section
+                (part_keyword)
+                name: (identifier)
+                source: (identifier)
+                body: (declaration_body
+                  (property
+                    name: (property_name)
+                    value: (preproc_conditional_property_value
+                      (preproc_if
+                        (preproc_open)
+                        condition: (identifier))
+                      value: (link_value_list
+                        (link_value
+                          field: (quoted_identifier)
+                          (field_keyword)
+                          value: (quoted_identifier)))
+                      (preproc_else)
+                      value: (link_value_list
+                        (link_value
+                          field: (identifier)
+                          (field_keyword)
+                          value: (identifier)))
+                      (preproc_endif
+                        (preproc_close)))))))))))))
+
+================================================================================
+Host matrix: pageext-addafter-part, SubPageLink, mixed (probe host-pageext-addafter-part-subpagelink-mixed.al)
+================================================================================
+
+pageextension 50120 PE extends P
+{
+    layout { addafter(L) { part(L2; CustList) {
+        SubPageLink =
+#if X
+        "No." = field("No.");
+#else
+        Name = field(Name)
+#endif
+        ;
+    } } }
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (pageextension_declaration
+    (pageextension_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    (extends_keyword)
+    base_object: (identifier)
+    body: (declaration_body
+      (layout_section
+        (layout_keyword)
+        body: (layout_body
+          (addafter_modification
+            (addafter_keyword)
+            target: (identifier)
+            body: (layout_body
+              (part_section
+                (part_keyword)
+                name: (identifier)
+                source: (identifier)
+                body: (declaration_body
+                  (property
+                    name: (property_name)
+                    value: (preproc_conditional_property_value
+                      (preproc_if
+                        (preproc_open)
+                        condition: (identifier))
+                      value: (link_value_list
+                        (link_value
+                          field: (quoted_identifier)
+                          (field_keyword)
+                          value: (quoted_identifier)))
+                      (preproc_else)
+                      value: (link_value_list
+                        (link_value
+                          field: (identifier)
+                          (field_keyword)
+                          value: (identifier)))
+                      (preproc_endif
+                        (preproc_close)))))))))))))
+
+================================================================================
+Host matrix: pageext-addafter-part, SubPageLink, list-internal (probe host-pageext-addafter-part-subpagelink-list-internal.al)
+================================================================================
+
+pageextension 50120 PE extends P
+{
+    layout { addafter(L) { part(L2; CustList) {
+        SubPageLink =
+#if X
+        "No." = field("No."),
+#endif
+        Name = field(Name);
+    } } }
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (pageextension_declaration
+    (pageextension_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    (extends_keyword)
+    base_object: (identifier)
+    body: (declaration_body
+      (layout_section
+        (layout_keyword)
+        body: (layout_body
+          (addafter_modification
+            (addafter_keyword)
+            target: (identifier)
+            body: (layout_body
+              (part_section
+                (part_keyword)
+                name: (identifier)
+                source: (identifier)
+                body: (declaration_body
+                  (property
+                    name: (property_name)
+                    value: (link_value_list
+                      (preproc_conditional_link_values
+                        (preproc_if
+                          (preproc_open)
+                          condition: (identifier))
+                        (link_value
+                          field: (quoted_identifier)
+                          (field_keyword)
+                          value: (quoted_identifier))
+                        (preproc_endif
+                          (preproc_close)))
+                      (link_value
+                        field: (identifier)
+                        (field_keyword)
+                        value: (identifier)))))))))))))
+
+================================================================================
+Host matrix: pageext-addafter-part, SubPageLink, comment (probe host-pageext-addafter-part-subpagelink-comment.al)
+================================================================================
+
+pageextension 50120 PE extends P
+{
+    layout { addafter(L) { part(L2; CustList) {
+        SubPageLink /* c */ = "No." = field("No."), Name = field(Name);
+    } } }
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (pageextension_declaration
+    (pageextension_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    (extends_keyword)
+    base_object: (identifier)
+    body: (declaration_body
+      (layout_section
+        (layout_keyword)
+        body: (layout_body
+          (addafter_modification
+            (addafter_keyword)
+            target: (identifier)
+            body: (layout_body
+              (part_section
+                (part_keyword)
+                name: (identifier)
+                source: (identifier)
+                body: (declaration_body
+                  (property
+                    name: (property_name)
+                    (multiline_comment)
+                    value: (link_value_list
+                      (link_value
+                        field: (quoted_identifier)
+                        (field_keyword)
+                        value: (quoted_identifier))
+                      (link_value
+                        field: (identifier)
+                        (field_keyword)
+                        value: (identifier)))))))))))))
+
+================================================================================
+Host matrix: pageext-addafter-part, SubPageLink, body-if (probe host-pageext-addafter-part-subpagelink-body-if.al)
+================================================================================
+
+pageextension 50120 PE extends P
+{
+    layout { addafter(L) { part(L2; CustList) {
+#if X
+        SubPageLink = "No." = field("No.");
+#else
+        SubPageLink = Name = field(Name);
+#endif
+    } } }
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (pageextension_declaration
+    (pageextension_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    (extends_keyword)
+    base_object: (identifier)
+    body: (declaration_body
+      (layout_section
+        (layout_keyword)
+        body: (layout_body
+          (addafter_modification
+            (addafter_keyword)
+            target: (identifier)
+            body: (layout_body
+              (part_section
+                (part_keyword)
+                name: (identifier)
+                source: (identifier)
+                body: (declaration_body
+                  (preproc_conditional
+                    (preproc_if
+                      (preproc_open)
+                      condition: (identifier))
+                    (property
+                      name: (property_name)
+                      value: (link_value_list
+                        (link_value
+                          field: (quoted_identifier)
+                          (field_keyword)
+                          value: (quoted_identifier))))
+                    (preproc_else)
+                    (property
+                      name: (property_name)
+                      value: (link_value_list
+                        (link_value
+                          field: (identifier)
+                          (field_keyword)
+                          value: (identifier))))
+                    (preproc_endif
+                      (preproc_close))))))))))))
+
+================================================================================
+Host matrix: query-column, ColumnFilter, flat (probe host-query-column-columnfilter-flat.al)
+================================================================================
+
+query 50150 Q
+{
+    elements { dataitem(C; Cust) { column(No; "No.") { } dataitem(D; Cust) { DataItemLink = "No." = C."No.";
+        column(Cnt) {
+        ColumnFilter = Cnt = const(0), Cnt = filter(1);
+        Method = Count;
+    } } } }
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (query_declaration
+    (query_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (elements_section
+        (elements_keyword)
+        body: (elements_body
+          (query_dataitem
+            (dataitem_keyword)
+            name: (identifier)
+            table_name: (identifier)
+            body: (query_body
+              (query_column
+                (column_keyword)
+                name: (identifier)
+                field_name: (quoted_identifier))
+              (query_dataitem
+                (dataitem_keyword)
+                name: (identifier)
+                table_name: (identifier)
+                body: (query_body
+                  (property
+                    name: (property_name)
+                    value: (link_value_list
+                      (link_value
+                        field: (quoted_identifier)
+                        value: (identifier)
+                        value: (quoted_identifier))))
+                  (query_column
+                    (column_keyword)
+                    name: (identifier)
+                    body: (declaration_body
+                      (property
+                        name: (property_name)
+                        value: (link_value_list
+                          (link_value
+                            field: (identifier)
+                            (const_keyword)
+                            value: (integer))
+                          (link_value
+                            field: (identifier)
+                            (filter_keyword)
+                            value: (filter_value
+                              (integer)))))
+                      (property
+                        name: (property_name)
+                        value: (identifier)))))))))))))
+
+================================================================================
+Host matrix: query-column, ColumnFilter, semi-after (probe host-query-column-columnfilter-semi-after.al)
+================================================================================
+
+query 50150 Q
+{
+    elements { dataitem(C; Cust) { column(No; "No.") { } dataitem(D; Cust) { DataItemLink = "No." = C."No.";
+        column(Cnt) {
+        ColumnFilter =
+#if X
+        Cnt = const(0)
+#else
+        Cnt = filter(1)
+#endif
+        ;
+        Method = Count;
+    } } } }
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (query_declaration
+    (query_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (elements_section
+        (elements_keyword)
+        body: (elements_body
+          (query_dataitem
+            (dataitem_keyword)
+            name: (identifier)
+            table_name: (identifier)
+            body: (query_body
+              (query_column
+                (column_keyword)
+                name: (identifier)
+                field_name: (quoted_identifier))
+              (query_dataitem
+                (dataitem_keyword)
+                name: (identifier)
+                table_name: (identifier)
+                body: (query_body
+                  (property
+                    name: (property_name)
+                    value: (link_value_list
+                      (link_value
+                        field: (quoted_identifier)
+                        value: (identifier)
+                        value: (quoted_identifier))))
+                  (query_column
+                    (column_keyword)
+                    name: (identifier)
+                    body: (declaration_body
+                      (property
+                        name: (property_name)
+                        value: (preproc_conditional_property_value
+                          (preproc_if
+                            (preproc_open)
+                            condition: (identifier))
+                          value: (link_value_list
+                            (link_value
+                              field: (identifier)
+                              (const_keyword)
+                              value: (integer)))
+                          (preproc_else)
+                          value: (link_value_list
+                            (link_value
+                              field: (identifier)
+                              (filter_keyword)
+                              value: (filter_value
+                                (integer))))
+                          (preproc_endif
+                            (preproc_close))))
+                      (property
+                        name: (property_name)
+                        value: (identifier)))))))))))))
+
+================================================================================
+Host matrix: query-column, ColumnFilter, semi-arms (probe host-query-column-columnfilter-semi-arms.al)
+================================================================================
+
+query 50150 Q
+{
+    elements { dataitem(C; Cust) { column(No; "No.") { } dataitem(D; Cust) { DataItemLink = "No." = C."No.";
+        column(Cnt) {
+        ColumnFilter =
+#if X
+        Cnt = const(0);
+#else
+        Cnt = filter(1);
+#endif
+        Method = Count;
+    } } } }
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (query_declaration
+    (query_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (elements_section
+        (elements_keyword)
+        body: (elements_body
+          (query_dataitem
+            (dataitem_keyword)
+            name: (identifier)
+            table_name: (identifier)
+            body: (query_body
+              (query_column
+                (column_keyword)
+                name: (identifier)
+                field_name: (quoted_identifier))
+              (query_dataitem
+                (dataitem_keyword)
+                name: (identifier)
+                table_name: (identifier)
+                body: (query_body
+                  (property
+                    name: (property_name)
+                    value: (link_value_list
+                      (link_value
+                        field: (quoted_identifier)
+                        value: (identifier)
+                        value: (quoted_identifier))))
+                  (query_column
+                    (column_keyword)
+                    name: (identifier)
+                    body: (declaration_body
+                      (property
+                        name: (property_name)
+                        value: (preproc_conditional_property_value
+                          (preproc_if
+                            (preproc_open)
+                            condition: (identifier))
+                          value: (link_value_list
+                            (link_value
+                              field: (identifier)
+                              (const_keyword)
+                              value: (integer)))
+                          (preproc_else)
+                          value: (link_value_list
+                            (link_value
+                              field: (identifier)
+                              (filter_keyword)
+                              value: (filter_value
+                                (integer))))
+                          (preproc_endif
+                            (preproc_close))))
+                      (property
+                        name: (property_name)
+                        value: (identifier)))))))))))))
+
+================================================================================
+Host matrix: query-column, ColumnFilter, mixed (probe host-query-column-columnfilter-mixed.al)
+================================================================================
+
+query 50150 Q
+{
+    elements { dataitem(C; Cust) { column(No; "No.") { } dataitem(D; Cust) { DataItemLink = "No." = C."No.";
+        column(Cnt) {
+        ColumnFilter =
+#if X
+        Cnt = const(0);
+#else
+        Cnt = filter(1)
+#endif
+        ;
+        Method = Count;
+    } } } }
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (query_declaration
+    (query_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (elements_section
+        (elements_keyword)
+        body: (elements_body
+          (query_dataitem
+            (dataitem_keyword)
+            name: (identifier)
+            table_name: (identifier)
+            body: (query_body
+              (query_column
+                (column_keyword)
+                name: (identifier)
+                field_name: (quoted_identifier))
+              (query_dataitem
+                (dataitem_keyword)
+                name: (identifier)
+                table_name: (identifier)
+                body: (query_body
+                  (property
+                    name: (property_name)
+                    value: (link_value_list
+                      (link_value
+                        field: (quoted_identifier)
+                        value: (identifier)
+                        value: (quoted_identifier))))
+                  (query_column
+                    (column_keyword)
+                    name: (identifier)
+                    body: (declaration_body
+                      (property
+                        name: (property_name)
+                        value: (preproc_conditional_property_value
+                          (preproc_if
+                            (preproc_open)
+                            condition: (identifier))
+                          value: (link_value_list
+                            (link_value
+                              field: (identifier)
+                              (const_keyword)
+                              value: (integer)))
+                          (preproc_else)
+                          value: (link_value_list
+                            (link_value
+                              field: (identifier)
+                              (filter_keyword)
+                              value: (filter_value
+                                (integer))))
+                          (preproc_endif
+                            (preproc_close))))
+                      (property
+                        name: (property_name)
+                        value: (identifier)))))))))))))
+
+================================================================================
+Host matrix: query-column, ColumnFilter, list-internal (probe host-query-column-columnfilter-list-internal.al)
+================================================================================
+
+query 50150 Q
+{
+    elements { dataitem(C; Cust) { column(No; "No.") { } dataitem(D; Cust) { DataItemLink = "No." = C."No.";
+        column(Cnt) {
+        ColumnFilter =
+#if X
+        Cnt = const(0),
+#endif
+        Cnt = filter(1);
+        Method = Count;
+    } } } }
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (query_declaration
+    (query_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (elements_section
+        (elements_keyword)
+        body: (elements_body
+          (query_dataitem
+            (dataitem_keyword)
+            name: (identifier)
+            table_name: (identifier)
+            body: (query_body
+              (query_column
+                (column_keyword)
+                name: (identifier)
+                field_name: (quoted_identifier))
+              (query_dataitem
+                (dataitem_keyword)
+                name: (identifier)
+                table_name: (identifier)
+                body: (query_body
+                  (property
+                    name: (property_name)
+                    value: (link_value_list
+                      (link_value
+                        field: (quoted_identifier)
+                        value: (identifier)
+                        value: (quoted_identifier))))
+                  (query_column
+                    (column_keyword)
+                    name: (identifier)
+                    body: (declaration_body
+                      (property
+                        name: (property_name)
+                        value: (link_value_list
+                          (preproc_conditional_link_values
+                            (preproc_if
+                              (preproc_open)
+                              condition: (identifier))
+                            (link_value
+                              field: (identifier)
+                              (const_keyword)
+                              value: (integer))
+                            (preproc_endif
+                              (preproc_close)))
+                          (link_value
+                            field: (identifier)
+                            (filter_keyword)
+                            value: (filter_value
+                              (integer)))))
+                      (property
+                        name: (property_name)
+                        value: (identifier)))))))))))))
+
+================================================================================
+Host matrix: query-column, ColumnFilter, comment (probe host-query-column-columnfilter-comment.al)
+================================================================================
+
+query 50150 Q
+{
+    elements { dataitem(C; Cust) { column(No; "No.") { } dataitem(D; Cust) { DataItemLink = "No." = C."No.";
+        column(Cnt) {
+        ColumnFilter /* c */ = Cnt = const(0), Cnt = filter(1);
+        Method = Count;
+    } } } }
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (query_declaration
+    (query_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (elements_section
+        (elements_keyword)
+        body: (elements_body
+          (query_dataitem
+            (dataitem_keyword)
+            name: (identifier)
+            table_name: (identifier)
+            body: (query_body
+              (query_column
+                (column_keyword)
+                name: (identifier)
+                field_name: (quoted_identifier))
+              (query_dataitem
+                (dataitem_keyword)
+                name: (identifier)
+                table_name: (identifier)
+                body: (query_body
+                  (property
+                    name: (property_name)
+                    value: (link_value_list
+                      (link_value
+                        field: (quoted_identifier)
+                        value: (identifier)
+                        value: (quoted_identifier))))
+                  (query_column
+                    (column_keyword)
+                    name: (identifier)
+                    body: (declaration_body
+                      (property
+                        name: (property_name)
+                        (multiline_comment)
+                        value: (link_value_list
+                          (link_value
+                            field: (identifier)
+                            (const_keyword)
+                            value: (integer))
+                          (link_value
+                            field: (identifier)
+                            (filter_keyword)
+                            value: (filter_value
+                              (integer)))))
+                      (property
+                        name: (property_name)
+                        value: (identifier)))))))))))))
+
+================================================================================
+Host matrix: query-column, ColumnFilter, body-if (probe host-query-column-columnfilter-body-if.al)
+================================================================================
+
+query 50150 Q
+{
+    elements { dataitem(C; Cust) { column(No; "No.") { } dataitem(D; Cust) { DataItemLink = "No." = C."No.";
+        column(Cnt) {
+#if X
+        ColumnFilter = Cnt = const(0);
+#else
+        ColumnFilter = Cnt = filter(1);
+#endif
+        Method = Count;
+    } } } }
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (query_declaration
+    (query_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (elements_section
+        (elements_keyword)
+        body: (elements_body
+          (query_dataitem
+            (dataitem_keyword)
+            name: (identifier)
+            table_name: (identifier)
+            body: (query_body
+              (query_column
+                (column_keyword)
+                name: (identifier)
+                field_name: (quoted_identifier))
+              (query_dataitem
+                (dataitem_keyword)
+                name: (identifier)
+                table_name: (identifier)
+                body: (query_body
+                  (property
+                    name: (property_name)
+                    value: (link_value_list
+                      (link_value
+                        field: (quoted_identifier)
+                        value: (identifier)
+                        value: (quoted_identifier))))
+                  (query_column
+                    (column_keyword)
+                    name: (identifier)
+                    body: (declaration_body
+                      (preproc_conditional
+                        (preproc_if
+                          (preproc_open)
+                          condition: (identifier))
+                        (property
+                          name: (property_name)
+                          value: (link_value_list
+                            (link_value
+                              field: (identifier)
+                              (const_keyword)
+                              value: (integer))))
+                        (preproc_else)
+                        (property
+                          name: (property_name)
+                          value: (link_value_list
+                            (link_value
+                              field: (identifier)
+                              (filter_keyword)
+                              value: (filter_value
+                                (integer)))))
+                        (preproc_endif
+                          (preproc_close)))
+                      (property
+                        name: (property_name)
+                        value: (identifier)))))))))))))
+
+================================================================================
+Host matrix: query-dataitem, DataItemLink, flat (probe host-query-dataitem-dataitemlink-flat.al)
+================================================================================
+
+query 50150 Q
+{
+    elements { dataitem(C; Cust) { column(No; "No.") { } dataitem(D; Cust) {
+        DataItemLink = "No." = C."No.", Name = C.Name;
+        column(N2; Name) { }
+    } } }
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (query_declaration
+    (query_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (elements_section
+        (elements_keyword)
+        body: (elements_body
+          (query_dataitem
+            (dataitem_keyword)
+            name: (identifier)
+            table_name: (identifier)
+            body: (query_body
+              (query_column
+                (column_keyword)
+                name: (identifier)
+                field_name: (quoted_identifier))
+              (query_dataitem
+                (dataitem_keyword)
+                name: (identifier)
+                table_name: (identifier)
+                body: (query_body
+                  (property
+                    name: (property_name)
+                    value: (link_value_list
+                      (link_value
+                        field: (quoted_identifier)
+                        value: (identifier)
+                        value: (quoted_identifier))
+                      (link_value
+                        field: (identifier)
+                        value: (identifier)
+                        value: (identifier))))
+                  (query_column
+                    (column_keyword)
+                    name: (identifier)
+                    field_name: (identifier)))))))))))
+
+================================================================================
+Host matrix: query-dataitem, DataItemLink, semi-after (probe host-query-dataitem-dataitemlink-semi-after.al)
+================================================================================
+
+query 50150 Q
+{
+    elements { dataitem(C; Cust) { column(No; "No.") { } dataitem(D; Cust) {
+        DataItemLink =
+#if X
+        "No." = C."No."
+#else
+        Name = C.Name
+#endif
+        ;
+        column(N2; Name) { }
+    } } }
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (query_declaration
+    (query_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (elements_section
+        (elements_keyword)
+        body: (elements_body
+          (query_dataitem
+            (dataitem_keyword)
+            name: (identifier)
+            table_name: (identifier)
+            body: (query_body
+              (query_column
+                (column_keyword)
+                name: (identifier)
+                field_name: (quoted_identifier))
+              (query_dataitem
+                (dataitem_keyword)
+                name: (identifier)
+                table_name: (identifier)
+                body: (query_body
+                  (property
+                    name: (property_name)
+                    value: (preproc_conditional_property_value
+                      (preproc_if
+                        (preproc_open)
+                        condition: (identifier))
+                      value: (link_value_list
+                        (link_value
+                          field: (quoted_identifier)
+                          value: (identifier)
+                          value: (quoted_identifier)))
+                      (preproc_else)
+                      value: (link_value_list
+                        (link_value
+                          field: (identifier)
+                          value: (identifier)
+                          value: (identifier)))
+                      (preproc_endif
+                        (preproc_close))))
+                  (query_column
+                    (column_keyword)
+                    name: (identifier)
+                    field_name: (identifier)))))))))))
+
+================================================================================
+Host matrix: query-dataitem, DataItemLink, semi-arms (probe host-query-dataitem-dataitemlink-semi-arms.al)
+================================================================================
+
+query 50150 Q
+{
+    elements { dataitem(C; Cust) { column(No; "No.") { } dataitem(D; Cust) {
+        DataItemLink =
+#if X
+        "No." = C."No.";
+#else
+        Name = C.Name;
+#endif
+        column(N2; Name) { }
+    } } }
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (query_declaration
+    (query_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (elements_section
+        (elements_keyword)
+        body: (elements_body
+          (query_dataitem
+            (dataitem_keyword)
+            name: (identifier)
+            table_name: (identifier)
+            body: (query_body
+              (query_column
+                (column_keyword)
+                name: (identifier)
+                field_name: (quoted_identifier))
+              (query_dataitem
+                (dataitem_keyword)
+                name: (identifier)
+                table_name: (identifier)
+                body: (query_body
+                  (property
+                    name: (property_name)
+                    value: (preproc_conditional_property_value
+                      (preproc_if
+                        (preproc_open)
+                        condition: (identifier))
+                      value: (link_value_list
+                        (link_value
+                          field: (quoted_identifier)
+                          value: (identifier)
+                          value: (quoted_identifier)))
+                      (preproc_else)
+                      value: (link_value_list
+                        (link_value
+                          field: (identifier)
+                          value: (identifier)
+                          value: (identifier)))
+                      (preproc_endif
+                        (preproc_close))))
+                  (query_column
+                    (column_keyword)
+                    name: (identifier)
+                    field_name: (identifier)))))))))))
+
+================================================================================
+Host matrix: query-dataitem, DataItemLink, mixed (probe host-query-dataitem-dataitemlink-mixed.al)
+================================================================================
+
+query 50150 Q
+{
+    elements { dataitem(C; Cust) { column(No; "No.") { } dataitem(D; Cust) {
+        DataItemLink =
+#if X
+        "No." = C."No.";
+#else
+        Name = C.Name
+#endif
+        ;
+        column(N2; Name) { }
+    } } }
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (query_declaration
+    (query_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (elements_section
+        (elements_keyword)
+        body: (elements_body
+          (query_dataitem
+            (dataitem_keyword)
+            name: (identifier)
+            table_name: (identifier)
+            body: (query_body
+              (query_column
+                (column_keyword)
+                name: (identifier)
+                field_name: (quoted_identifier))
+              (query_dataitem
+                (dataitem_keyword)
+                name: (identifier)
+                table_name: (identifier)
+                body: (query_body
+                  (property
+                    name: (property_name)
+                    value: (preproc_conditional_property_value
+                      (preproc_if
+                        (preproc_open)
+                        condition: (identifier))
+                      value: (link_value_list
+                        (link_value
+                          field: (quoted_identifier)
+                          value: (identifier)
+                          value: (quoted_identifier)))
+                      (preproc_else)
+                      value: (link_value_list
+                        (link_value
+                          field: (identifier)
+                          value: (identifier)
+                          value: (identifier)))
+                      (preproc_endif
+                        (preproc_close))))
+                  (query_column
+                    (column_keyword)
+                    name: (identifier)
+                    field_name: (identifier)))))))))))
+
+================================================================================
+Host matrix: query-dataitem, DataItemLink, list-internal (probe host-query-dataitem-dataitemlink-list-internal.al)
+================================================================================
+
+query 50150 Q
+{
+    elements { dataitem(C; Cust) { column(No; "No.") { } dataitem(D; Cust) {
+        DataItemLink =
+#if X
+        "No." = C."No.",
+#endif
+        Name = C.Name;
+        column(N2; Name) { }
+    } } }
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (query_declaration
+    (query_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (elements_section
+        (elements_keyword)
+        body: (elements_body
+          (query_dataitem
+            (dataitem_keyword)
+            name: (identifier)
+            table_name: (identifier)
+            body: (query_body
+              (query_column
+                (column_keyword)
+                name: (identifier)
+                field_name: (quoted_identifier))
+              (query_dataitem
+                (dataitem_keyword)
+                name: (identifier)
+                table_name: (identifier)
+                body: (query_body
+                  (property
+                    name: (property_name)
+                    value: (link_value_list
+                      (preproc_conditional_link_values
+                        (preproc_if
+                          (preproc_open)
+                          condition: (identifier))
+                        (link_value
+                          field: (quoted_identifier)
+                          value: (identifier)
+                          value: (quoted_identifier))
+                        (preproc_endif
+                          (preproc_close)))
+                      (link_value
+                        field: (identifier)
+                        value: (identifier)
+                        value: (identifier))))
+                  (query_column
+                    (column_keyword)
+                    name: (identifier)
+                    field_name: (identifier)))))))))))
+
+================================================================================
+Host matrix: query-dataitem, DataItemLink, comment (probe host-query-dataitem-dataitemlink-comment.al)
+================================================================================
+
+query 50150 Q
+{
+    elements { dataitem(C; Cust) { column(No; "No.") { } dataitem(D; Cust) {
+        DataItemLink /* c */ = "No." = C."No.", Name = C.Name;
+        column(N2; Name) { }
+    } } }
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (query_declaration
+    (query_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (elements_section
+        (elements_keyword)
+        body: (elements_body
+          (query_dataitem
+            (dataitem_keyword)
+            name: (identifier)
+            table_name: (identifier)
+            body: (query_body
+              (query_column
+                (column_keyword)
+                name: (identifier)
+                field_name: (quoted_identifier))
+              (query_dataitem
+                (dataitem_keyword)
+                name: (identifier)
+                table_name: (identifier)
+                body: (query_body
+                  (property
+                    name: (property_name)
+                    (multiline_comment)
+                    value: (link_value_list
+                      (link_value
+                        field: (quoted_identifier)
+                        value: (identifier)
+                        value: (quoted_identifier))
+                      (link_value
+                        field: (identifier)
+                        value: (identifier)
+                        value: (identifier))))
+                  (query_column
+                    (column_keyword)
+                    name: (identifier)
+                    field_name: (identifier)))))))))))
+
+================================================================================
+Host matrix: query-dataitem, DataItemLink, body-if (probe host-query-dataitem-dataitemlink-body-if.al)
+================================================================================
+
+query 50150 Q
+{
+    elements { dataitem(C; Cust) { column(No; "No.") { } dataitem(D; Cust) {
+#if X
+        DataItemLink = "No." = C."No.";
+#else
+        DataItemLink = Name = C.Name;
+#endif
+        column(N2; Name) { }
+    } } }
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (query_declaration
+    (query_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (elements_section
+        (elements_keyword)
+        body: (elements_body
+          (query_dataitem
+            (dataitem_keyword)
+            name: (identifier)
+            table_name: (identifier)
+            body: (query_body
+              (query_column
+                (column_keyword)
+                name: (identifier)
+                field_name: (quoted_identifier))
+              (query_dataitem
+                (dataitem_keyword)
+                name: (identifier)
+                table_name: (identifier)
+                body: (query_body
+                  (preproc_conditional_query
+                    (preproc_if
+                      (preproc_open)
+                      condition: (identifier))
+                    (property
+                      name: (property_name)
+                      value: (link_value_list
+                        (link_value
+                          field: (quoted_identifier)
+                          value: (identifier)
+                          value: (quoted_identifier))))
+                    (preproc_else)
+                    (property
+                      name: (property_name)
+                      value: (link_value_list
+                        (link_value
+                          field: (identifier)
+                          value: (identifier)
+                          value: (identifier))))
+                    (preproc_endif
+                      (preproc_close)))
+                  (query_column
+                    (column_keyword)
+                    name: (identifier)
+                    field_name: (identifier)))))))))))
+
+================================================================================
+Host matrix: query-dataitem-tablefilter, DataItemTableFilter, flat (probe host-query-dataitem-tablefilter-dataitemtablefilter-flat.al)
+================================================================================
+
+query 50150 Q
+{
+    elements { dataitem(C; Cust) {
+        DataItemTableFilter = Name = const('A'), "No." = filter(1);
+        column(No; "No.") { }
+    } }
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (query_declaration
+    (query_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (elements_section
+        (elements_keyword)
+        body: (elements_body
+          (query_dataitem
+            (dataitem_keyword)
+            name: (identifier)
+            table_name: (identifier)
+            body: (query_body
+              (property
+                name: (property_name)
+                value: (link_value_list
+                  (link_value
+                    field: (identifier)
+                    (const_keyword)
+                    value: (string_literal))
+                  (link_value
+                    field: (quoted_identifier)
+                    (filter_keyword)
+                    value: (filter_value
+                      (integer)))))
+              (query_column
+                (column_keyword)
+                name: (identifier)
+                field_name: (quoted_identifier)))))))))
+
+================================================================================
+Host matrix: query-dataitem-tablefilter, DataItemTableFilter, semi-after (probe host-query-dataitem-tablefilter-dataitemtablefilter-semi-after.al)
+================================================================================
+
+query 50150 Q
+{
+    elements { dataitem(C; Cust) {
+        DataItemTableFilter =
+#if X
+        Name = const('A')
+#else
+        "No." = filter(1)
+#endif
+        ;
+        column(No; "No.") { }
+    } }
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (query_declaration
+    (query_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (elements_section
+        (elements_keyword)
+        body: (elements_body
+          (query_dataitem
+            (dataitem_keyword)
+            name: (identifier)
+            table_name: (identifier)
+            body: (query_body
+              (property
+                name: (property_name)
+                value: (preproc_conditional_property_value
+                  (preproc_if
+                    (preproc_open)
+                    condition: (identifier))
+                  value: (link_value_list
+                    (link_value
+                      field: (identifier)
+                      (const_keyword)
+                      value: (string_literal)))
+                  (preproc_else)
+                  value: (link_value_list
+                    (link_value
+                      field: (quoted_identifier)
+                      (filter_keyword)
+                      value: (filter_value
+                        (integer))))
+                  (preproc_endif
+                    (preproc_close))))
+              (query_column
+                (column_keyword)
+                name: (identifier)
+                field_name: (quoted_identifier)))))))))
+
+================================================================================
+Host matrix: query-dataitem-tablefilter, DataItemTableFilter, semi-arms (probe host-query-dataitem-tablefilter-dataitemtablefilter-semi-arms.al)
+================================================================================
+
+query 50150 Q
+{
+    elements { dataitem(C; Cust) {
+        DataItemTableFilter =
+#if X
+        Name = const('A');
+#else
+        "No." = filter(1);
+#endif
+        column(No; "No.") { }
+    } }
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (query_declaration
+    (query_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (elements_section
+        (elements_keyword)
+        body: (elements_body
+          (query_dataitem
+            (dataitem_keyword)
+            name: (identifier)
+            table_name: (identifier)
+            body: (query_body
+              (property
+                name: (property_name)
+                value: (preproc_conditional_property_value
+                  (preproc_if
+                    (preproc_open)
+                    condition: (identifier))
+                  value: (link_value_list
+                    (link_value
+                      field: (identifier)
+                      (const_keyword)
+                      value: (string_literal)))
+                  (preproc_else)
+                  value: (link_value_list
+                    (link_value
+                      field: (quoted_identifier)
+                      (filter_keyword)
+                      value: (filter_value
+                        (integer))))
+                  (preproc_endif
+                    (preproc_close))))
+              (query_column
+                (column_keyword)
+                name: (identifier)
+                field_name: (quoted_identifier)))))))))
+
+================================================================================
+Host matrix: query-dataitem-tablefilter, DataItemTableFilter, mixed (probe host-query-dataitem-tablefilter-dataitemtablefilter-mixed.al)
+================================================================================
+
+query 50150 Q
+{
+    elements { dataitem(C; Cust) {
+        DataItemTableFilter =
+#if X
+        Name = const('A');
+#else
+        "No." = filter(1)
+#endif
+        ;
+        column(No; "No.") { }
+    } }
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (query_declaration
+    (query_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (elements_section
+        (elements_keyword)
+        body: (elements_body
+          (query_dataitem
+            (dataitem_keyword)
+            name: (identifier)
+            table_name: (identifier)
+            body: (query_body
+              (property
+                name: (property_name)
+                value: (preproc_conditional_property_value
+                  (preproc_if
+                    (preproc_open)
+                    condition: (identifier))
+                  value: (link_value_list
+                    (link_value
+                      field: (identifier)
+                      (const_keyword)
+                      value: (string_literal)))
+                  (preproc_else)
+                  value: (link_value_list
+                    (link_value
+                      field: (quoted_identifier)
+                      (filter_keyword)
+                      value: (filter_value
+                        (integer))))
+                  (preproc_endif
+                    (preproc_close))))
+              (query_column
+                (column_keyword)
+                name: (identifier)
+                field_name: (quoted_identifier)))))))))
+
+================================================================================
+Host matrix: query-dataitem-tablefilter, DataItemTableFilter, list-internal (probe host-query-dataitem-tablefilter-dataitemtablefilter-list-internal.al)
+================================================================================
+
+query 50150 Q
+{
+    elements { dataitem(C; Cust) {
+        DataItemTableFilter =
+#if X
+        Name = const('A'),
+#endif
+        "No." = filter(1);
+        column(No; "No.") { }
+    } }
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (query_declaration
+    (query_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (elements_section
+        (elements_keyword)
+        body: (elements_body
+          (query_dataitem
+            (dataitem_keyword)
+            name: (identifier)
+            table_name: (identifier)
+            body: (query_body
+              (property
+                name: (property_name)
+                value: (link_value_list
+                  (preproc_conditional_link_values
+                    (preproc_if
+                      (preproc_open)
+                      condition: (identifier))
+                    (link_value
+                      field: (identifier)
+                      (const_keyword)
+                      value: (string_literal))
+                    (preproc_endif
+                      (preproc_close)))
+                  (link_value
+                    field: (quoted_identifier)
+                    (filter_keyword)
+                    value: (filter_value
+                      (integer)))))
+              (query_column
+                (column_keyword)
+                name: (identifier)
+                field_name: (quoted_identifier)))))))))
+
+================================================================================
+Host matrix: query-dataitem-tablefilter, DataItemTableFilter, comment (probe host-query-dataitem-tablefilter-dataitemtablefilter-comment.al)
+================================================================================
+
+query 50150 Q
+{
+    elements { dataitem(C; Cust) {
+        DataItemTableFilter /* c */ = Name = const('A'), "No." = filter(1);
+        column(No; "No.") { }
+    } }
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (query_declaration
+    (query_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (elements_section
+        (elements_keyword)
+        body: (elements_body
+          (query_dataitem
+            (dataitem_keyword)
+            name: (identifier)
+            table_name: (identifier)
+            body: (query_body
+              (property
+                name: (property_name)
+                (multiline_comment)
+                value: (link_value_list
+                  (link_value
+                    field: (identifier)
+                    (const_keyword)
+                    value: (string_literal))
+                  (link_value
+                    field: (quoted_identifier)
+                    (filter_keyword)
+                    value: (filter_value
+                      (integer)))))
+              (query_column
+                (column_keyword)
+                name: (identifier)
+                field_name: (quoted_identifier)))))))))
+
+================================================================================
+Host matrix: query-dataitem-tablefilter, DataItemTableFilter, body-if (probe host-query-dataitem-tablefilter-dataitemtablefilter-body-if.al)
+================================================================================
+
+query 50150 Q
+{
+    elements { dataitem(C; Cust) {
+#if X
+        DataItemTableFilter = Name = const('A');
+#else
+        DataItemTableFilter = "No." = filter(1);
+#endif
+        column(No; "No.") { }
+    } }
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (query_declaration
+    (query_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (elements_section
+        (elements_keyword)
+        body: (elements_body
+          (query_dataitem
+            (dataitem_keyword)
+            name: (identifier)
+            table_name: (identifier)
+            body: (query_body
+              (preproc_conditional_query
+                (preproc_if
+                  (preproc_open)
+                  condition: (identifier))
+                (property
+                  name: (property_name)
+                  value: (link_value_list
+                    (link_value
+                      field: (identifier)
+                      (const_keyword)
+                      value: (string_literal))))
+                (preproc_else)
+                (property
+                  name: (property_name)
+                  value: (link_value_list
+                    (link_value
+                      field: (quoted_identifier)
+                      (filter_keyword)
+                      value: (filter_value
+                        (integer)))))
+                (preproc_endif
+                  (preproc_close)))
+              (query_column
+                (column_keyword)
+                name: (identifier)
+                field_name: (quoted_identifier)))))))))
+
+================================================================================
+Host matrix: query-filter, ColumnFilter, flat (probe host-query-filter-columnfilter-flat.al)
+================================================================================
+
+query 50150 Q
+{
+    elements { dataitem(C; Cust) { column(No; "No.") { } filter(F; Name) {
+        ColumnFilter = F = const('A'), F = const('B');
+    } } }
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (query_declaration
+    (query_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (elements_section
+        (elements_keyword)
+        body: (elements_body
+          (query_dataitem
+            (dataitem_keyword)
+            name: (identifier)
+            table_name: (identifier)
+            body: (query_body
+              (query_column
+                (column_keyword)
+                name: (identifier)
+                field_name: (quoted_identifier))
+              (query_filter
+                (filter_keyword)
+                name: (identifier)
+                field_name: (identifier)
+                body: (declaration_body
+                  (property
+                    name: (property_name)
+                    value: (link_value_list
+                      (link_value
+                        field: (identifier)
+                        (const_keyword)
+                        value: (string_literal))
+                      (link_value
+                        field: (identifier)
+                        (const_keyword)
+                        value: (string_literal)))))))))))))
+
+================================================================================
+Host matrix: query-filter, ColumnFilter, semi-after (probe host-query-filter-columnfilter-semi-after.al)
+================================================================================
+
+query 50150 Q
+{
+    elements { dataitem(C; Cust) { column(No; "No.") { } filter(F; Name) {
+        ColumnFilter =
+#if X
+        F = const('A')
+#else
+        F = const('B')
+#endif
+        ;
+    } } }
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (query_declaration
+    (query_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (elements_section
+        (elements_keyword)
+        body: (elements_body
+          (query_dataitem
+            (dataitem_keyword)
+            name: (identifier)
+            table_name: (identifier)
+            body: (query_body
+              (query_column
+                (column_keyword)
+                name: (identifier)
+                field_name: (quoted_identifier))
+              (query_filter
+                (filter_keyword)
+                name: (identifier)
+                field_name: (identifier)
+                body: (declaration_body
+                  (property
+                    name: (property_name)
+                    value: (preproc_conditional_property_value
+                      (preproc_if
+                        (preproc_open)
+                        condition: (identifier))
+                      value: (link_value_list
+                        (link_value
+                          field: (identifier)
+                          (const_keyword)
+                          value: (string_literal)))
+                      (preproc_else)
+                      value: (link_value_list
+                        (link_value
+                          field: (identifier)
+                          (const_keyword)
+                          value: (string_literal)))
+                      (preproc_endif
+                        (preproc_close)))))))))))))
+
+================================================================================
+Host matrix: query-filter, ColumnFilter, semi-arms (probe host-query-filter-columnfilter-semi-arms.al)
+================================================================================
+
+query 50150 Q
+{
+    elements { dataitem(C; Cust) { column(No; "No.") { } filter(F; Name) {
+        ColumnFilter =
+#if X
+        F = const('A');
+#else
+        F = const('B');
+#endif
+    } } }
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (query_declaration
+    (query_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (elements_section
+        (elements_keyword)
+        body: (elements_body
+          (query_dataitem
+            (dataitem_keyword)
+            name: (identifier)
+            table_name: (identifier)
+            body: (query_body
+              (query_column
+                (column_keyword)
+                name: (identifier)
+                field_name: (quoted_identifier))
+              (query_filter
+                (filter_keyword)
+                name: (identifier)
+                field_name: (identifier)
+                body: (declaration_body
+                  (property
+                    name: (property_name)
+                    value: (preproc_conditional_property_value
+                      (preproc_if
+                        (preproc_open)
+                        condition: (identifier))
+                      value: (link_value_list
+                        (link_value
+                          field: (identifier)
+                          (const_keyword)
+                          value: (string_literal)))
+                      (preproc_else)
+                      value: (link_value_list
+                        (link_value
+                          field: (identifier)
+                          (const_keyword)
+                          value: (string_literal)))
+                      (preproc_endif
+                        (preproc_close)))))))))))))
+
+================================================================================
+Host matrix: query-filter, ColumnFilter, mixed (probe host-query-filter-columnfilter-mixed.al)
+================================================================================
+
+query 50150 Q
+{
+    elements { dataitem(C; Cust) { column(No; "No.") { } filter(F; Name) {
+        ColumnFilter =
+#if X
+        F = const('A');
+#else
+        F = const('B')
+#endif
+        ;
+    } } }
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (query_declaration
+    (query_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (elements_section
+        (elements_keyword)
+        body: (elements_body
+          (query_dataitem
+            (dataitem_keyword)
+            name: (identifier)
+            table_name: (identifier)
+            body: (query_body
+              (query_column
+                (column_keyword)
+                name: (identifier)
+                field_name: (quoted_identifier))
+              (query_filter
+                (filter_keyword)
+                name: (identifier)
+                field_name: (identifier)
+                body: (declaration_body
+                  (property
+                    name: (property_name)
+                    value: (preproc_conditional_property_value
+                      (preproc_if
+                        (preproc_open)
+                        condition: (identifier))
+                      value: (link_value_list
+                        (link_value
+                          field: (identifier)
+                          (const_keyword)
+                          value: (string_literal)))
+                      (preproc_else)
+                      value: (link_value_list
+                        (link_value
+                          field: (identifier)
+                          (const_keyword)
+                          value: (string_literal)))
+                      (preproc_endif
+                        (preproc_close)))))))))))))
+
+================================================================================
+Host matrix: query-filter, ColumnFilter, list-internal (probe host-query-filter-columnfilter-list-internal.al)
+================================================================================
+
+query 50150 Q
+{
+    elements { dataitem(C; Cust) { column(No; "No.") { } filter(F; Name) {
+        ColumnFilter =
+#if X
+        F = const('A'),
+#endif
+        F = const('B');
+    } } }
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (query_declaration
+    (query_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (elements_section
+        (elements_keyword)
+        body: (elements_body
+          (query_dataitem
+            (dataitem_keyword)
+            name: (identifier)
+            table_name: (identifier)
+            body: (query_body
+              (query_column
+                (column_keyword)
+                name: (identifier)
+                field_name: (quoted_identifier))
+              (query_filter
+                (filter_keyword)
+                name: (identifier)
+                field_name: (identifier)
+                body: (declaration_body
+                  (property
+                    name: (property_name)
+                    value: (link_value_list
+                      (preproc_conditional_link_values
+                        (preproc_if
+                          (preproc_open)
+                          condition: (identifier))
+                        (link_value
+                          field: (identifier)
+                          (const_keyword)
+                          value: (string_literal))
+                        (preproc_endif
+                          (preproc_close)))
+                      (link_value
+                        field: (identifier)
+                        (const_keyword)
+                        value: (string_literal)))))))))))))
+
+================================================================================
+Host matrix: query-filter, ColumnFilter, comment (probe host-query-filter-columnfilter-comment.al)
+================================================================================
+
+query 50150 Q
+{
+    elements { dataitem(C; Cust) { column(No; "No.") { } filter(F; Name) {
+        ColumnFilter /* c */ = F = const('A'), F = const('B');
+    } } }
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (query_declaration
+    (query_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (elements_section
+        (elements_keyword)
+        body: (elements_body
+          (query_dataitem
+            (dataitem_keyword)
+            name: (identifier)
+            table_name: (identifier)
+            body: (query_body
+              (query_column
+                (column_keyword)
+                name: (identifier)
+                field_name: (quoted_identifier))
+              (query_filter
+                (filter_keyword)
+                name: (identifier)
+                field_name: (identifier)
+                body: (declaration_body
+                  (property
+                    name: (property_name)
+                    (multiline_comment)
+                    value: (link_value_list
+                      (link_value
+                        field: (identifier)
+                        (const_keyword)
+                        value: (string_literal))
+                      (link_value
+                        field: (identifier)
+                        (const_keyword)
+                        value: (string_literal)))))))))))))
+
+================================================================================
+Host matrix: query-filter, ColumnFilter, body-if (probe host-query-filter-columnfilter-body-if.al)
+================================================================================
+
+query 50150 Q
+{
+    elements { dataitem(C; Cust) { column(No; "No.") { } filter(F; Name) {
+#if X
+        ColumnFilter = F = const('A');
+#else
+        ColumnFilter = F = const('B');
+#endif
+    } } }
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (query_declaration
+    (query_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (elements_section
+        (elements_keyword)
+        body: (elements_body
+          (query_dataitem
+            (dataitem_keyword)
+            name: (identifier)
+            table_name: (identifier)
+            body: (query_body
+              (query_column
+                (column_keyword)
+                name: (identifier)
+                field_name: (quoted_identifier))
+              (query_filter
+                (filter_keyword)
+                name: (identifier)
+                field_name: (identifier)
+                body: (declaration_body
+                  (preproc_conditional
+                    (preproc_if
+                      (preproc_open)
+                      condition: (identifier))
+                    (property
+                      name: (property_name)
+                      value: (link_value_list
+                        (link_value
+                          field: (identifier)
+                          (const_keyword)
+                          value: (string_literal))))
+                    (preproc_else)
+                    (property
+                      name: (property_name)
+                      value: (link_value_list
+                        (link_value
+                          field: (identifier)
+                          (const_keyword)
+                          value: (string_literal))))
+                    (preproc_endif
+                      (preproc_close))))))))))))
+
+================================================================================
+Host matrix: report-dataitem, DataItemLink, flat (probe host-report-dataitem-dataitemlink-flat.al)
+================================================================================
+
+report 50130 R
+{
+    dataset { dataitem(C; Cust) { } dataitem(D; Cust) {
+        DataItemLinkReference = C;
+        DataItemLink = "No." = field("No."), Name = field(Name);
+    } }
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (report_declaration
+    (report_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (dataset_section
+        (dataset_keyword)
+        body: (dataset_body
+          (report_dataitem
+            (dataitem_keyword)
+            name: (identifier)
+            table_name: (identifier))
+          (report_dataitem
+            (dataitem_keyword)
+            name: (identifier)
+            table_name: (identifier)
+            body: (report_body
+              (property
+                name: (property_name)
+                value: (identifier))
+              (property
+                name: (property_name)
+                value: (link_value_list
+                  (link_value
+                    field: (quoted_identifier)
+                    (field_keyword)
+                    value: (quoted_identifier))
+                  (link_value
+                    field: (identifier)
+                    (field_keyword)
+                    value: (identifier)))))))))))
+
+================================================================================
+Host matrix: report-dataitem, DataItemLink, semi-after (probe host-report-dataitem-dataitemlink-semi-after.al)
+================================================================================
+
+report 50130 R
+{
+    dataset { dataitem(C; Cust) { } dataitem(D; Cust) {
+        DataItemLinkReference = C;
+        DataItemLink =
+#if X
+        "No." = field("No.")
+#else
+        Name = field(Name)
+#endif
+        ;
+    } }
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (report_declaration
+    (report_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (dataset_section
+        (dataset_keyword)
+        body: (dataset_body
+          (report_dataitem
+            (dataitem_keyword)
+            name: (identifier)
+            table_name: (identifier))
+          (report_dataitem
+            (dataitem_keyword)
+            name: (identifier)
+            table_name: (identifier)
+            body: (report_body
+              (property
+                name: (property_name)
+                value: (identifier))
+              (property
+                name: (property_name)
+                value: (preproc_conditional_property_value
+                  (preproc_if
+                    (preproc_open)
+                    condition: (identifier))
+                  value: (link_value_list
+                    (link_value
+                      field: (quoted_identifier)
+                      (field_keyword)
+                      value: (quoted_identifier)))
+                  (preproc_else)
+                  value: (link_value_list
+                    (link_value
+                      field: (identifier)
+                      (field_keyword)
+                      value: (identifier)))
+                  (preproc_endif
+                    (preproc_close)))))))))))
+
+================================================================================
+Host matrix: report-dataitem, DataItemLink, semi-arms (probe host-report-dataitem-dataitemlink-semi-arms.al)
+================================================================================
+
+report 50130 R
+{
+    dataset { dataitem(C; Cust) { } dataitem(D; Cust) {
+        DataItemLinkReference = C;
+        DataItemLink =
+#if X
+        "No." = field("No.");
+#else
+        Name = field(Name);
+#endif
+    } }
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (report_declaration
+    (report_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (dataset_section
+        (dataset_keyword)
+        body: (dataset_body
+          (report_dataitem
+            (dataitem_keyword)
+            name: (identifier)
+            table_name: (identifier))
+          (report_dataitem
+            (dataitem_keyword)
+            name: (identifier)
+            table_name: (identifier)
+            body: (report_body
+              (property
+                name: (property_name)
+                value: (identifier))
+              (property
+                name: (property_name)
+                value: (preproc_conditional_property_value
+                  (preproc_if
+                    (preproc_open)
+                    condition: (identifier))
+                  value: (link_value_list
+                    (link_value
+                      field: (quoted_identifier)
+                      (field_keyword)
+                      value: (quoted_identifier)))
+                  (preproc_else)
+                  value: (link_value_list
+                    (link_value
+                      field: (identifier)
+                      (field_keyword)
+                      value: (identifier)))
+                  (preproc_endif
+                    (preproc_close)))))))))))
+
+================================================================================
+Host matrix: report-dataitem, DataItemLink, mixed (probe host-report-dataitem-dataitemlink-mixed.al)
+================================================================================
+
+report 50130 R
+{
+    dataset { dataitem(C; Cust) { } dataitem(D; Cust) {
+        DataItemLinkReference = C;
+        DataItemLink =
+#if X
+        "No." = field("No.");
+#else
+        Name = field(Name)
+#endif
+        ;
+    } }
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (report_declaration
+    (report_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (dataset_section
+        (dataset_keyword)
+        body: (dataset_body
+          (report_dataitem
+            (dataitem_keyword)
+            name: (identifier)
+            table_name: (identifier))
+          (report_dataitem
+            (dataitem_keyword)
+            name: (identifier)
+            table_name: (identifier)
+            body: (report_body
+              (property
+                name: (property_name)
+                value: (identifier))
+              (property
+                name: (property_name)
+                value: (preproc_conditional_property_value
+                  (preproc_if
+                    (preproc_open)
+                    condition: (identifier))
+                  value: (link_value_list
+                    (link_value
+                      field: (quoted_identifier)
+                      (field_keyword)
+                      value: (quoted_identifier)))
+                  (preproc_else)
+                  value: (link_value_list
+                    (link_value
+                      field: (identifier)
+                      (field_keyword)
+                      value: (identifier)))
+                  (preproc_endif
+                    (preproc_close)))))))))))
+
+================================================================================
+Host matrix: report-dataitem, DataItemLink, list-internal (probe host-report-dataitem-dataitemlink-list-internal.al)
+================================================================================
+
+report 50130 R
+{
+    dataset { dataitem(C; Cust) { } dataitem(D; Cust) {
+        DataItemLinkReference = C;
+        DataItemLink =
+#if X
+        "No." = field("No."),
+#endif
+        Name = field(Name);
+    } }
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (report_declaration
+    (report_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (dataset_section
+        (dataset_keyword)
+        body: (dataset_body
+          (report_dataitem
+            (dataitem_keyword)
+            name: (identifier)
+            table_name: (identifier))
+          (report_dataitem
+            (dataitem_keyword)
+            name: (identifier)
+            table_name: (identifier)
+            body: (report_body
+              (property
+                name: (property_name)
+                value: (identifier))
+              (property
+                name: (property_name)
+                value: (link_value_list
+                  (preproc_conditional_link_values
+                    (preproc_if
+                      (preproc_open)
+                      condition: (identifier))
+                    (link_value
+                      field: (quoted_identifier)
+                      (field_keyword)
+                      value: (quoted_identifier))
+                    (preproc_endif
+                      (preproc_close)))
+                  (link_value
+                    field: (identifier)
+                    (field_keyword)
+                    value: (identifier)))))))))))
+
+================================================================================
+Host matrix: report-dataitem, DataItemLink, body-if (probe host-report-dataitem-dataitemlink-body-if.al)
+================================================================================
+
+report 50130 R
+{
+    dataset { dataitem(C; Cust) { } dataitem(D; Cust) {
+        DataItemLinkReference = C;
+#if X
+        DataItemLink = "No." = field("No.");
+#else
+        DataItemLink = Name = field(Name);
+#endif
+    } }
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (report_declaration
+    (report_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (dataset_section
+        (dataset_keyword)
+        body: (dataset_body
+          (report_dataitem
+            (dataitem_keyword)
+            name: (identifier)
+            table_name: (identifier))
+          (report_dataitem
+            (dataitem_keyword)
+            name: (identifier)
+            table_name: (identifier)
+            body: (report_body
+              (property
+                name: (property_name)
+                value: (identifier))
+              (preproc_conditional
+                (preproc_if
+                  (preproc_open)
+                  condition: (identifier))
+                (property
+                  name: (property_name)
+                  value: (link_value_list
+                    (link_value
+                      field: (quoted_identifier)
+                      (field_keyword)
+                      value: (quoted_identifier))))
+                (preproc_else)
+                (property
+                  name: (property_name)
+                  value: (link_value_list
+                    (link_value
+                      field: (identifier)
+                      (field_keyword)
+                      value: (identifier))))
+                (preproc_endif
+                  (preproc_close))))))))))
+
+================================================================================
+Host matrix: report-requestpage-part, SubPageLink, flat (probe host-report-requestpage-part-subpagelink-flat.al)
+================================================================================
+
+report 50130 R
+{
+    ProcessingOnly = true;
+    requestpage { layout { area(Content) { part(L; CustList) {
+        SubPageLink = "No." = const('A'), Name = const('B');
+    } } } }
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (report_declaration
+    (report_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (property
+        name: (property_name)
+        value: (boolean))
+      (requestpage_section
+        (requestpage_keyword)
+        body: (declaration_body
+          (layout_section
+            (layout_keyword)
+            body: (layout_body
+              (area_section
+                (area_keyword)
+                type: (content_keyword)
+                body: (layout_body
+                  (part_section
+                    (part_keyword)
+                    name: (identifier)
+                    source: (identifier)
+                    body: (declaration_body
+                      (property
+                        name: (property_name)
+                        value: (link_value_list
+                          (link_value
+                            field: (quoted_identifier)
+                            (const_keyword)
+                            value: (string_literal))
+                          (link_value
+                            field: (identifier)
+                            (const_keyword)
+                            value: (string_literal)))))))))))))))
+
+================================================================================
+Host matrix: report-requestpage-part, SubPageLink, semi-after (probe host-report-requestpage-part-subpagelink-semi-after.al)
+================================================================================
+
+report 50130 R
+{
+    ProcessingOnly = true;
+    requestpage { layout { area(Content) { part(L; CustList) {
+        SubPageLink =
+#if X
+        "No." = const('A')
+#else
+        Name = const('B')
+#endif
+        ;
+    } } } }
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (report_declaration
+    (report_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (property
+        name: (property_name)
+        value: (boolean))
+      (requestpage_section
+        (requestpage_keyword)
+        body: (declaration_body
+          (layout_section
+            (layout_keyword)
+            body: (layout_body
+              (area_section
+                (area_keyword)
+                type: (content_keyword)
+                body: (layout_body
+                  (part_section
+                    (part_keyword)
+                    name: (identifier)
+                    source: (identifier)
+                    body: (declaration_body
+                      (property
+                        name: (property_name)
+                        value: (preproc_conditional_property_value
+                          (preproc_if
+                            (preproc_open)
+                            condition: (identifier))
+                          value: (link_value_list
+                            (link_value
+                              field: (quoted_identifier)
+                              (const_keyword)
+                              value: (string_literal)))
+                          (preproc_else)
+                          value: (link_value_list
+                            (link_value
+                              field: (identifier)
+                              (const_keyword)
+                              value: (string_literal)))
+                          (preproc_endif
+                            (preproc_close)))))))))))))))
+
+================================================================================
+Host matrix: report-requestpage-part, SubPageLink, semi-arms (probe host-report-requestpage-part-subpagelink-semi-arms.al)
+================================================================================
+
+report 50130 R
+{
+    ProcessingOnly = true;
+    requestpage { layout { area(Content) { part(L; CustList) {
+        SubPageLink =
+#if X
+        "No." = const('A');
+#else
+        Name = const('B');
+#endif
+    } } } }
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (report_declaration
+    (report_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (property
+        name: (property_name)
+        value: (boolean))
+      (requestpage_section
+        (requestpage_keyword)
+        body: (declaration_body
+          (layout_section
+            (layout_keyword)
+            body: (layout_body
+              (area_section
+                (area_keyword)
+                type: (content_keyword)
+                body: (layout_body
+                  (part_section
+                    (part_keyword)
+                    name: (identifier)
+                    source: (identifier)
+                    body: (declaration_body
+                      (property
+                        name: (property_name)
+                        value: (preproc_conditional_property_value
+                          (preproc_if
+                            (preproc_open)
+                            condition: (identifier))
+                          value: (link_value_list
+                            (link_value
+                              field: (quoted_identifier)
+                              (const_keyword)
+                              value: (string_literal)))
+                          (preproc_else)
+                          value: (link_value_list
+                            (link_value
+                              field: (identifier)
+                              (const_keyword)
+                              value: (string_literal)))
+                          (preproc_endif
+                            (preproc_close)))))))))))))))
+
+================================================================================
+Host matrix: report-requestpage-part, SubPageLink, mixed (probe host-report-requestpage-part-subpagelink-mixed.al)
+================================================================================
+
+report 50130 R
+{
+    ProcessingOnly = true;
+    requestpage { layout { area(Content) { part(L; CustList) {
+        SubPageLink =
+#if X
+        "No." = const('A');
+#else
+        Name = const('B')
+#endif
+        ;
+    } } } }
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (report_declaration
+    (report_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (property
+        name: (property_name)
+        value: (boolean))
+      (requestpage_section
+        (requestpage_keyword)
+        body: (declaration_body
+          (layout_section
+            (layout_keyword)
+            body: (layout_body
+              (area_section
+                (area_keyword)
+                type: (content_keyword)
+                body: (layout_body
+                  (part_section
+                    (part_keyword)
+                    name: (identifier)
+                    source: (identifier)
+                    body: (declaration_body
+                      (property
+                        name: (property_name)
+                        value: (preproc_conditional_property_value
+                          (preproc_if
+                            (preproc_open)
+                            condition: (identifier))
+                          value: (link_value_list
+                            (link_value
+                              field: (quoted_identifier)
+                              (const_keyword)
+                              value: (string_literal)))
+                          (preproc_else)
+                          value: (link_value_list
+                            (link_value
+                              field: (identifier)
+                              (const_keyword)
+                              value: (string_literal)))
+                          (preproc_endif
+                            (preproc_close)))))))))))))))
+
+================================================================================
+Host matrix: report-requestpage-part, SubPageLink, list-internal (probe host-report-requestpage-part-subpagelink-list-internal.al)
+================================================================================
+
+report 50130 R
+{
+    ProcessingOnly = true;
+    requestpage { layout { area(Content) { part(L; CustList) {
+        SubPageLink =
+#if X
+        "No." = const('A'),
+#endif
+        Name = const('B');
+    } } } }
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (report_declaration
+    (report_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (property
+        name: (property_name)
+        value: (boolean))
+      (requestpage_section
+        (requestpage_keyword)
+        body: (declaration_body
+          (layout_section
+            (layout_keyword)
+            body: (layout_body
+              (area_section
+                (area_keyword)
+                type: (content_keyword)
+                body: (layout_body
+                  (part_section
+                    (part_keyword)
+                    name: (identifier)
+                    source: (identifier)
+                    body: (declaration_body
+                      (property
+                        name: (property_name)
+                        value: (link_value_list
+                          (preproc_conditional_link_values
+                            (preproc_if
+                              (preproc_open)
+                              condition: (identifier))
+                            (link_value
+                              field: (quoted_identifier)
+                              (const_keyword)
+                              value: (string_literal))
+                            (preproc_endif
+                              (preproc_close)))
+                          (link_value
+                            field: (identifier)
+                            (const_keyword)
+                            value: (string_literal)))))))))))))))
+
+================================================================================
+Host matrix: report-requestpage-part, SubPageLink, comment (probe host-report-requestpage-part-subpagelink-comment.al)
+================================================================================
+
+report 50130 R
+{
+    ProcessingOnly = true;
+    requestpage { layout { area(Content) { part(L; CustList) {
+        SubPageLink /* c */ = "No." = const('A'), Name = const('B');
+    } } } }
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (report_declaration
+    (report_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (property
+        name: (property_name)
+        value: (boolean))
+      (requestpage_section
+        (requestpage_keyword)
+        body: (declaration_body
+          (layout_section
+            (layout_keyword)
+            body: (layout_body
+              (area_section
+                (area_keyword)
+                type: (content_keyword)
+                body: (layout_body
+                  (part_section
+                    (part_keyword)
+                    name: (identifier)
+                    source: (identifier)
+                    body: (declaration_body
+                      (property
+                        name: (property_name)
+                        (multiline_comment)
+                        value: (link_value_list
+                          (link_value
+                            field: (quoted_identifier)
+                            (const_keyword)
+                            value: (string_literal))
+                          (link_value
+                            field: (identifier)
+                            (const_keyword)
+                            value: (string_literal)))))))))))))))
+
+================================================================================
+Host matrix: report-requestpage-part, SubPageLink, body-if (probe host-report-requestpage-part-subpagelink-body-if.al)
+================================================================================
+
+report 50130 R
+{
+    ProcessingOnly = true;
+    requestpage { layout { area(Content) { part(L; CustList) {
+#if X
+        SubPageLink = "No." = const('A');
+#else
+        SubPageLink = Name = const('B');
+#endif
+    } } } }
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (report_declaration
+    (report_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (property
+        name: (property_name)
+        value: (boolean))
+      (requestpage_section
+        (requestpage_keyword)
+        body: (declaration_body
+          (layout_section
+            (layout_keyword)
+            body: (layout_body
+              (area_section
+                (area_keyword)
+                type: (content_keyword)
+                body: (layout_body
+                  (part_section
+                    (part_keyword)
+                    name: (identifier)
+                    source: (identifier)
+                    body: (declaration_body
+                      (preproc_conditional
+                        (preproc_if
+                          (preproc_open)
+                          condition: (identifier))
+                        (property
+                          name: (property_name)
+                          value: (link_value_list
+                            (link_value
+                              field: (quoted_identifier)
+                              (const_keyword)
+                              value: (string_literal))))
+                        (preproc_else)
+                        (property
+                          name: (property_name)
+                          value: (link_value_list
+                            (link_value
+                              field: (identifier)
+                              (const_keyword)
+                              value: (string_literal))))
+                        (preproc_endif
+                          (preproc_close))))))))))))))
+
+================================================================================
+Host matrix: reportext-dataitem, DataItemLink, flat (probe host-reportext-dataitem-dataitemlink-flat.al)
+================================================================================
+
+reportextension 50131 RE extends R
+{
+    dataset { addlast(C) { dataitem(D; Cust) {
+        DataItemLinkReference = C;
+        DataItemLink = "No." = field("No."), Name = field(Name);
+    } } }
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (reportextension_declaration
+    (reportextension_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    (extends_keyword)
+    base_object: (identifier)
+    body: (declaration_body
+      (dataset_section
+        (dataset_keyword)
+        body: (dataset_body
+          (addlast_dataset_modification
+            (addlast_keyword)
+            target: (identifier)
+            body: (dataset_mod_body
+              (report_dataitem
+                (dataitem_keyword)
+                name: (identifier)
+                table_name: (identifier)
+                body: (report_body
+                  (property
+                    name: (property_name)
+                    value: (identifier))
+                  (property
+                    name: (property_name)
+                    value: (link_value_list
+                      (link_value
+                        field: (quoted_identifier)
+                        (field_keyword)
+                        value: (quoted_identifier))
+                      (link_value
+                        field: (identifier)
+                        (field_keyword)
+                        value: (identifier)))))))))))))
+
+================================================================================
+Host matrix: reportext-dataitem, DataItemLink, semi-after (probe host-reportext-dataitem-dataitemlink-semi-after.al)
+================================================================================
+
+reportextension 50131 RE extends R
+{
+    dataset { addlast(C) { dataitem(D; Cust) {
+        DataItemLinkReference = C;
+        DataItemLink =
+#if X
+        "No." = field("No.")
+#else
+        Name = field(Name)
+#endif
+        ;
+    } } }
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (reportextension_declaration
+    (reportextension_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    (extends_keyword)
+    base_object: (identifier)
+    body: (declaration_body
+      (dataset_section
+        (dataset_keyword)
+        body: (dataset_body
+          (addlast_dataset_modification
+            (addlast_keyword)
+            target: (identifier)
+            body: (dataset_mod_body
+              (report_dataitem
+                (dataitem_keyword)
+                name: (identifier)
+                table_name: (identifier)
+                body: (report_body
+                  (property
+                    name: (property_name)
+                    value: (identifier))
+                  (property
+                    name: (property_name)
+                    value: (preproc_conditional_property_value
+                      (preproc_if
+                        (preproc_open)
+                        condition: (identifier))
+                      value: (link_value_list
+                        (link_value
+                          field: (quoted_identifier)
+                          (field_keyword)
+                          value: (quoted_identifier)))
+                      (preproc_else)
+                      value: (link_value_list
+                        (link_value
+                          field: (identifier)
+                          (field_keyword)
+                          value: (identifier)))
+                      (preproc_endif
+                        (preproc_close)))))))))))))
+
+================================================================================
+Host matrix: reportext-dataitem, DataItemLink, semi-arms (probe host-reportext-dataitem-dataitemlink-semi-arms.al)
+================================================================================
+
+reportextension 50131 RE extends R
+{
+    dataset { addlast(C) { dataitem(D; Cust) {
+        DataItemLinkReference = C;
+        DataItemLink =
+#if X
+        "No." = field("No.");
+#else
+        Name = field(Name);
+#endif
+    } } }
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (reportextension_declaration
+    (reportextension_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    (extends_keyword)
+    base_object: (identifier)
+    body: (declaration_body
+      (dataset_section
+        (dataset_keyword)
+        body: (dataset_body
+          (addlast_dataset_modification
+            (addlast_keyword)
+            target: (identifier)
+            body: (dataset_mod_body
+              (report_dataitem
+                (dataitem_keyword)
+                name: (identifier)
+                table_name: (identifier)
+                body: (report_body
+                  (property
+                    name: (property_name)
+                    value: (identifier))
+                  (property
+                    name: (property_name)
+                    value: (preproc_conditional_property_value
+                      (preproc_if
+                        (preproc_open)
+                        condition: (identifier))
+                      value: (link_value_list
+                        (link_value
+                          field: (quoted_identifier)
+                          (field_keyword)
+                          value: (quoted_identifier)))
+                      (preproc_else)
+                      value: (link_value_list
+                        (link_value
+                          field: (identifier)
+                          (field_keyword)
+                          value: (identifier)))
+                      (preproc_endif
+                        (preproc_close)))))))))))))
+
+================================================================================
+Host matrix: reportext-dataitem, DataItemLink, mixed (probe host-reportext-dataitem-dataitemlink-mixed.al)
+================================================================================
+
+reportextension 50131 RE extends R
+{
+    dataset { addlast(C) { dataitem(D; Cust) {
+        DataItemLinkReference = C;
+        DataItemLink =
+#if X
+        "No." = field("No.");
+#else
+        Name = field(Name)
+#endif
+        ;
+    } } }
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (reportextension_declaration
+    (reportextension_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    (extends_keyword)
+    base_object: (identifier)
+    body: (declaration_body
+      (dataset_section
+        (dataset_keyword)
+        body: (dataset_body
+          (addlast_dataset_modification
+            (addlast_keyword)
+            target: (identifier)
+            body: (dataset_mod_body
+              (report_dataitem
+                (dataitem_keyword)
+                name: (identifier)
+                table_name: (identifier)
+                body: (report_body
+                  (property
+                    name: (property_name)
+                    value: (identifier))
+                  (property
+                    name: (property_name)
+                    value: (preproc_conditional_property_value
+                      (preproc_if
+                        (preproc_open)
+                        condition: (identifier))
+                      value: (link_value_list
+                        (link_value
+                          field: (quoted_identifier)
+                          (field_keyword)
+                          value: (quoted_identifier)))
+                      (preproc_else)
+                      value: (link_value_list
+                        (link_value
+                          field: (identifier)
+                          (field_keyword)
+                          value: (identifier)))
+                      (preproc_endif
+                        (preproc_close)))))))))))))
+
+================================================================================
+Host matrix: reportext-dataitem, DataItemLink, list-internal (probe host-reportext-dataitem-dataitemlink-list-internal.al)
+================================================================================
+
+reportextension 50131 RE extends R
+{
+    dataset { addlast(C) { dataitem(D; Cust) {
+        DataItemLinkReference = C;
+        DataItemLink =
+#if X
+        "No." = field("No."),
+#endif
+        Name = field(Name);
+    } } }
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (reportextension_declaration
+    (reportextension_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    (extends_keyword)
+    base_object: (identifier)
+    body: (declaration_body
+      (dataset_section
+        (dataset_keyword)
+        body: (dataset_body
+          (addlast_dataset_modification
+            (addlast_keyword)
+            target: (identifier)
+            body: (dataset_mod_body
+              (report_dataitem
+                (dataitem_keyword)
+                name: (identifier)
+                table_name: (identifier)
+                body: (report_body
+                  (property
+                    name: (property_name)
+                    value: (identifier))
+                  (property
+                    name: (property_name)
+                    value: (link_value_list
+                      (preproc_conditional_link_values
+                        (preproc_if
+                          (preproc_open)
+                          condition: (identifier))
+                        (link_value
+                          field: (quoted_identifier)
+                          (field_keyword)
+                          value: (quoted_identifier))
+                        (preproc_endif
+                          (preproc_close)))
+                      (link_value
+                        field: (identifier)
+                        (field_keyword)
+                        value: (identifier)))))))))))))
+
+================================================================================
+Host matrix: reportext-dataitem, DataItemLink, comment (probe host-reportext-dataitem-dataitemlink-comment.al)
+================================================================================
+
+reportextension 50131 RE extends R
+{
+    dataset { addlast(C) { dataitem(D; Cust) {
+        DataItemLinkReference = C;
+        DataItemLink /* c */ = "No." = field("No."), Name = field(Name);
+    } } }
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (reportextension_declaration
+    (reportextension_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    (extends_keyword)
+    base_object: (identifier)
+    body: (declaration_body
+      (dataset_section
+        (dataset_keyword)
+        body: (dataset_body
+          (addlast_dataset_modification
+            (addlast_keyword)
+            target: (identifier)
+            body: (dataset_mod_body
+              (report_dataitem
+                (dataitem_keyword)
+                name: (identifier)
+                table_name: (identifier)
+                body: (report_body
+                  (property
+                    name: (property_name)
+                    value: (identifier))
+                  (property
+                    name: (property_name)
+                    (multiline_comment)
+                    value: (link_value_list
+                      (link_value
+                        field: (quoted_identifier)
+                        (field_keyword)
+                        value: (quoted_identifier))
+                      (link_value
+                        field: (identifier)
+                        (field_keyword)
+                        value: (identifier)))))))))))))
+
+================================================================================
+Host matrix: reportext-dataitem, DataItemLink, body-if (probe host-reportext-dataitem-dataitemlink-body-if.al)
+================================================================================
+
+reportextension 50131 RE extends R
+{
+    dataset { addlast(C) { dataitem(D; Cust) {
+        DataItemLinkReference = C;
+#if X
+        DataItemLink = "No." = field("No.");
+#else
+        DataItemLink = Name = field(Name);
+#endif
+    } } }
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (reportextension_declaration
+    (reportextension_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    (extends_keyword)
+    base_object: (identifier)
+    body: (declaration_body
+      (dataset_section
+        (dataset_keyword)
+        body: (dataset_body
+          (addlast_dataset_modification
+            (addlast_keyword)
+            target: (identifier)
+            body: (dataset_mod_body
+              (report_dataitem
+                (dataitem_keyword)
+                name: (identifier)
+                table_name: (identifier)
+                body: (report_body
+                  (property
+                    name: (property_name)
+                    value: (identifier))
+                  (preproc_conditional
+                    (preproc_if
+                      (preproc_open)
+                      condition: (identifier))
+                    (property
+                      name: (property_name)
+                      value: (link_value_list
+                        (link_value
+                          field: (quoted_identifier)
+                          (field_keyword)
+                          value: (quoted_identifier))))
+                    (preproc_else)
+                    (property
+                      name: (property_name)
+                      value: (link_value_list
+                        (link_value
+                          field: (identifier)
+                          (field_keyword)
+                          value: (identifier))))
+                    (preproc_endif
+                      (preproc_close))))))))))))
+
+================================================================================
+Host matrix: xmlport-requestpage-part, SubPageLink, flat (probe host-xmlport-requestpage-part-subpagelink-flat.al)
+================================================================================
+
+xmlport 50140 X
+{
+    schema { textelement(Root) { } }
+    requestpage { layout { area(Content) { part(L; CustList) {
+        SubPageLink = "No." = const('A'), Name = const('B');
+    } } } }
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (xmlport_declaration
+    (xmlport_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (schema_section
+        (schema_keyword)
+        body: (schema_body
+          (xmlport_element
+            element_type: (textelement_keyword)
+            name: (identifier))))
+      (requestpage_section
+        (requestpage_keyword)
+        body: (declaration_body
+          (layout_section
+            (layout_keyword)
+            body: (layout_body
+              (area_section
+                (area_keyword)
+                type: (content_keyword)
+                body: (layout_body
+                  (part_section
+                    (part_keyword)
+                    name: (identifier)
+                    source: (identifier)
+                    body: (declaration_body
+                      (property
+                        name: (property_name)
+                        value: (link_value_list
+                          (link_value
+                            field: (quoted_identifier)
+                            (const_keyword)
+                            value: (string_literal))
+                          (link_value
+                            field: (identifier)
+                            (const_keyword)
+                            value: (string_literal)))))))))))))))
+
+================================================================================
+Host matrix: xmlport-requestpage-part, SubPageLink, semi-after (probe host-xmlport-requestpage-part-subpagelink-semi-after.al)
+================================================================================
+
+xmlport 50140 X
+{
+    schema { textelement(Root) { } }
+    requestpage { layout { area(Content) { part(L; CustList) {
+        SubPageLink =
+#if X
+        "No." = const('A')
+#else
+        Name = const('B')
+#endif
+        ;
+    } } } }
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (xmlport_declaration
+    (xmlport_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (schema_section
+        (schema_keyword)
+        body: (schema_body
+          (xmlport_element
+            element_type: (textelement_keyword)
+            name: (identifier))))
+      (requestpage_section
+        (requestpage_keyword)
+        body: (declaration_body
+          (layout_section
+            (layout_keyword)
+            body: (layout_body
+              (area_section
+                (area_keyword)
+                type: (content_keyword)
+                body: (layout_body
+                  (part_section
+                    (part_keyword)
+                    name: (identifier)
+                    source: (identifier)
+                    body: (declaration_body
+                      (property
+                        name: (property_name)
+                        value: (preproc_conditional_property_value
+                          (preproc_if
+                            (preproc_open)
+                            condition: (identifier))
+                          value: (link_value_list
+                            (link_value
+                              field: (quoted_identifier)
+                              (const_keyword)
+                              value: (string_literal)))
+                          (preproc_else)
+                          value: (link_value_list
+                            (link_value
+                              field: (identifier)
+                              (const_keyword)
+                              value: (string_literal)))
+                          (preproc_endif
+                            (preproc_close)))))))))))))))
+
+================================================================================
+Host matrix: xmlport-requestpage-part, SubPageLink, semi-arms (probe host-xmlport-requestpage-part-subpagelink-semi-arms.al)
+================================================================================
+
+xmlport 50140 X
+{
+    schema { textelement(Root) { } }
+    requestpage { layout { area(Content) { part(L; CustList) {
+        SubPageLink =
+#if X
+        "No." = const('A');
+#else
+        Name = const('B');
+#endif
+    } } } }
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (xmlport_declaration
+    (xmlport_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (schema_section
+        (schema_keyword)
+        body: (schema_body
+          (xmlport_element
+            element_type: (textelement_keyword)
+            name: (identifier))))
+      (requestpage_section
+        (requestpage_keyword)
+        body: (declaration_body
+          (layout_section
+            (layout_keyword)
+            body: (layout_body
+              (area_section
+                (area_keyword)
+                type: (content_keyword)
+                body: (layout_body
+                  (part_section
+                    (part_keyword)
+                    name: (identifier)
+                    source: (identifier)
+                    body: (declaration_body
+                      (property
+                        name: (property_name)
+                        value: (preproc_conditional_property_value
+                          (preproc_if
+                            (preproc_open)
+                            condition: (identifier))
+                          value: (link_value_list
+                            (link_value
+                              field: (quoted_identifier)
+                              (const_keyword)
+                              value: (string_literal)))
+                          (preproc_else)
+                          value: (link_value_list
+                            (link_value
+                              field: (identifier)
+                              (const_keyword)
+                              value: (string_literal)))
+                          (preproc_endif
+                            (preproc_close)))))))))))))))
+
+================================================================================
+Host matrix: xmlport-requestpage-part, SubPageLink, mixed (probe host-xmlport-requestpage-part-subpagelink-mixed.al)
+================================================================================
+
+xmlport 50140 X
+{
+    schema { textelement(Root) { } }
+    requestpage { layout { area(Content) { part(L; CustList) {
+        SubPageLink =
+#if X
+        "No." = const('A');
+#else
+        Name = const('B')
+#endif
+        ;
+    } } } }
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (xmlport_declaration
+    (xmlport_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (schema_section
+        (schema_keyword)
+        body: (schema_body
+          (xmlport_element
+            element_type: (textelement_keyword)
+            name: (identifier))))
+      (requestpage_section
+        (requestpage_keyword)
+        body: (declaration_body
+          (layout_section
+            (layout_keyword)
+            body: (layout_body
+              (area_section
+                (area_keyword)
+                type: (content_keyword)
+                body: (layout_body
+                  (part_section
+                    (part_keyword)
+                    name: (identifier)
+                    source: (identifier)
+                    body: (declaration_body
+                      (property
+                        name: (property_name)
+                        value: (preproc_conditional_property_value
+                          (preproc_if
+                            (preproc_open)
+                            condition: (identifier))
+                          value: (link_value_list
+                            (link_value
+                              field: (quoted_identifier)
+                              (const_keyword)
+                              value: (string_literal)))
+                          (preproc_else)
+                          value: (link_value_list
+                            (link_value
+                              field: (identifier)
+                              (const_keyword)
+                              value: (string_literal)))
+                          (preproc_endif
+                            (preproc_close)))))))))))))))
+
+================================================================================
+Host matrix: xmlport-requestpage-part, SubPageLink, list-internal (probe host-xmlport-requestpage-part-subpagelink-list-internal.al)
+================================================================================
+
+xmlport 50140 X
+{
+    schema { textelement(Root) { } }
+    requestpage { layout { area(Content) { part(L; CustList) {
+        SubPageLink =
+#if X
+        "No." = const('A'),
+#endif
+        Name = const('B');
+    } } } }
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (xmlport_declaration
+    (xmlport_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (schema_section
+        (schema_keyword)
+        body: (schema_body
+          (xmlport_element
+            element_type: (textelement_keyword)
+            name: (identifier))))
+      (requestpage_section
+        (requestpage_keyword)
+        body: (declaration_body
+          (layout_section
+            (layout_keyword)
+            body: (layout_body
+              (area_section
+                (area_keyword)
+                type: (content_keyword)
+                body: (layout_body
+                  (part_section
+                    (part_keyword)
+                    name: (identifier)
+                    source: (identifier)
+                    body: (declaration_body
+                      (property
+                        name: (property_name)
+                        value: (link_value_list
+                          (preproc_conditional_link_values
+                            (preproc_if
+                              (preproc_open)
+                              condition: (identifier))
+                            (link_value
+                              field: (quoted_identifier)
+                              (const_keyword)
+                              value: (string_literal))
+                            (preproc_endif
+                              (preproc_close)))
+                          (link_value
+                            field: (identifier)
+                            (const_keyword)
+                            value: (string_literal)))))))))))))))
+
+================================================================================
+Host matrix: xmlport-requestpage-part, SubPageLink, comment (probe host-xmlport-requestpage-part-subpagelink-comment.al)
+================================================================================
+
+xmlport 50140 X
+{
+    schema { textelement(Root) { } }
+    requestpage { layout { area(Content) { part(L; CustList) {
+        SubPageLink /* c */ = "No." = const('A'), Name = const('B');
+    } } } }
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (xmlport_declaration
+    (xmlport_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (schema_section
+        (schema_keyword)
+        body: (schema_body
+          (xmlport_element
+            element_type: (textelement_keyword)
+            name: (identifier))))
+      (requestpage_section
+        (requestpage_keyword)
+        body: (declaration_body
+          (layout_section
+            (layout_keyword)
+            body: (layout_body
+              (area_section
+                (area_keyword)
+                type: (content_keyword)
+                body: (layout_body
+                  (part_section
+                    (part_keyword)
+                    name: (identifier)
+                    source: (identifier)
+                    body: (declaration_body
+                      (property
+                        name: (property_name)
+                        (multiline_comment)
+                        value: (link_value_list
+                          (link_value
+                            field: (quoted_identifier)
+                            (const_keyword)
+                            value: (string_literal))
+                          (link_value
+                            field: (identifier)
+                            (const_keyword)
+                            value: (string_literal)))))))))))))))
+
+================================================================================
+Host matrix: xmlport-requestpage-part, SubPageLink, body-if (probe host-xmlport-requestpage-part-subpagelink-body-if.al)
+================================================================================
+
+xmlport 50140 X
+{
+    schema { textelement(Root) { } }
+    requestpage { layout { area(Content) { part(L; CustList) {
+#if X
+        SubPageLink = "No." = const('A');
+#else
+        SubPageLink = Name = const('B');
+#endif
+    } } } }
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (xmlport_declaration
+    (xmlport_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (schema_section
+        (schema_keyword)
+        body: (schema_body
+          (xmlport_element
+            element_type: (textelement_keyword)
+            name: (identifier))))
+      (requestpage_section
+        (requestpage_keyword)
+        body: (declaration_body
+          (layout_section
+            (layout_keyword)
+            body: (layout_body
+              (area_section
+                (area_keyword)
+                type: (content_keyword)
+                body: (layout_body
+                  (part_section
+                    (part_keyword)
+                    name: (identifier)
+                    source: (identifier)
+                    body: (declaration_body
+                      (preproc_conditional
+                        (preproc_if
+                          (preproc_open)
+                          condition: (identifier))
+                        (property
+                          name: (property_name)
+                          value: (link_value_list
+                            (link_value
+                              field: (quoted_identifier)
+                              (const_keyword)
+                              value: (string_literal))))
+                        (preproc_else)
+                        (property
+                          name: (property_name)
+                          value: (link_value_list
+                            (link_value
+                              field: (identifier)
+                              (const_keyword)
+                              value: (string_literal))))
+                        (preproc_endif
+                          (preproc_close))))))))))))))
+
+================================================================================
+Host matrix: xmlport-tableelement, LinkFields, flat (probe host-xmlport-tableelement-linkfields-flat.al)
+================================================================================
+
+xmlport 50140 X
+{
+    schema { textelement(Root) { tableelement(C; Cust) { fieldelement(No; C."No.") { } tableelement(D; Cust) {
+        LinkTable = C;
+        LinkFields = "No." = field("No."), Name = field(Name);
+        fieldelement(N2; D.Name) { }
+    } } } }
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (xmlport_declaration
+    (xmlport_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (schema_section
+        (schema_keyword)
+        body: (schema_body
+          (xmlport_element
+            element_type: (textelement_keyword)
+            name: (identifier)
+            body: (xmlport_body
+              (xmlport_element
+                element_type: (tableelement_keyword)
+                name: (identifier)
+                source: (identifier)
+                body: (xmlport_body
+                  (xmlport_element
+                    element_type: (fieldelement_keyword)
+                    name: (identifier)
+                    source: (member_expression
+                      object: (identifier)
+                      member: (quoted_identifier)))
+                  (xmlport_element
+                    element_type: (tableelement_keyword)
+                    name: (identifier)
+                    source: (identifier)
+                    body: (xmlport_body
+                      (property
+                        name: (property_name)
+                        value: (identifier))
+                      (property
+                        name: (property_name)
+                        value: (link_value_list
+                          (link_value
+                            field: (quoted_identifier)
+                            (field_keyword)
+                            value: (quoted_identifier))
+                          (link_value
+                            field: (identifier)
+                            (field_keyword)
+                            value: (identifier))))
+                      (xmlport_element
+                        element_type: (fieldelement_keyword)
+                        name: (identifier)
+                        source: (member_expression
+                          object: (identifier)
+                          member: (identifier))))))))))))))
+
+================================================================================
+Host matrix: xmlport-tableelement, LinkFields, semi-after (probe host-xmlport-tableelement-linkfields-semi-after.al)
+================================================================================
+
+xmlport 50140 X
+{
+    schema { textelement(Root) { tableelement(C; Cust) { fieldelement(No; C."No.") { } tableelement(D; Cust) {
+        LinkTable = C;
+        LinkFields =
+#if X
+        "No." = field("No.")
+#else
+        Name = field(Name)
+#endif
+        ;
+        fieldelement(N2; D.Name) { }
+    } } } }
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (xmlport_declaration
+    (xmlport_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (schema_section
+        (schema_keyword)
+        body: (schema_body
+          (xmlport_element
+            element_type: (textelement_keyword)
+            name: (identifier)
+            body: (xmlport_body
+              (xmlport_element
+                element_type: (tableelement_keyword)
+                name: (identifier)
+                source: (identifier)
+                body: (xmlport_body
+                  (xmlport_element
+                    element_type: (fieldelement_keyword)
+                    name: (identifier)
+                    source: (member_expression
+                      object: (identifier)
+                      member: (quoted_identifier)))
+                  (xmlport_element
+                    element_type: (tableelement_keyword)
+                    name: (identifier)
+                    source: (identifier)
+                    body: (xmlport_body
+                      (property
+                        name: (property_name)
+                        value: (identifier))
+                      (property
+                        name: (property_name)
+                        value: (preproc_conditional_property_value
+                          (preproc_if
+                            (preproc_open)
+                            condition: (identifier))
+                          value: (link_value_list
+                            (link_value
+                              field: (quoted_identifier)
+                              (field_keyword)
+                              value: (quoted_identifier)))
+                          (preproc_else)
+                          value: (link_value_list
+                            (link_value
+                              field: (identifier)
+                              (field_keyword)
+                              value: (identifier)))
+                          (preproc_endif
+                            (preproc_close))))
+                      (xmlport_element
+                        element_type: (fieldelement_keyword)
+                        name: (identifier)
+                        source: (member_expression
+                          object: (identifier)
+                          member: (identifier))))))))))))))
+
+================================================================================
+Host matrix: xmlport-tableelement, LinkFields, semi-arms (probe host-xmlport-tableelement-linkfields-semi-arms.al)
+================================================================================
+
+xmlport 50140 X
+{
+    schema { textelement(Root) { tableelement(C; Cust) { fieldelement(No; C."No.") { } tableelement(D; Cust) {
+        LinkTable = C;
+        LinkFields =
+#if X
+        "No." = field("No.");
+#else
+        Name = field(Name);
+#endif
+        fieldelement(N2; D.Name) { }
+    } } } }
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (xmlport_declaration
+    (xmlport_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (schema_section
+        (schema_keyword)
+        body: (schema_body
+          (xmlport_element
+            element_type: (textelement_keyword)
+            name: (identifier)
+            body: (xmlport_body
+              (xmlport_element
+                element_type: (tableelement_keyword)
+                name: (identifier)
+                source: (identifier)
+                body: (xmlport_body
+                  (xmlport_element
+                    element_type: (fieldelement_keyword)
+                    name: (identifier)
+                    source: (member_expression
+                      object: (identifier)
+                      member: (quoted_identifier)))
+                  (xmlport_element
+                    element_type: (tableelement_keyword)
+                    name: (identifier)
+                    source: (identifier)
+                    body: (xmlport_body
+                      (property
+                        name: (property_name)
+                        value: (identifier))
+                      (property
+                        name: (property_name)
+                        value: (preproc_conditional_property_value
+                          (preproc_if
+                            (preproc_open)
+                            condition: (identifier))
+                          value: (link_value_list
+                            (link_value
+                              field: (quoted_identifier)
+                              (field_keyword)
+                              value: (quoted_identifier)))
+                          (preproc_else)
+                          value: (link_value_list
+                            (link_value
+                              field: (identifier)
+                              (field_keyword)
+                              value: (identifier)))
+                          (preproc_endif
+                            (preproc_close))))
+                      (xmlport_element
+                        element_type: (fieldelement_keyword)
+                        name: (identifier)
+                        source: (member_expression
+                          object: (identifier)
+                          member: (identifier))))))))))))))
+
+================================================================================
+Host matrix: xmlport-tableelement, LinkFields, mixed (probe host-xmlport-tableelement-linkfields-mixed.al)
+================================================================================
+
+xmlport 50140 X
+{
+    schema { textelement(Root) { tableelement(C; Cust) { fieldelement(No; C."No.") { } tableelement(D; Cust) {
+        LinkTable = C;
+        LinkFields =
+#if X
+        "No." = field("No.");
+#else
+        Name = field(Name)
+#endif
+        ;
+        fieldelement(N2; D.Name) { }
+    } } } }
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (xmlport_declaration
+    (xmlport_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (schema_section
+        (schema_keyword)
+        body: (schema_body
+          (xmlport_element
+            element_type: (textelement_keyword)
+            name: (identifier)
+            body: (xmlport_body
+              (xmlport_element
+                element_type: (tableelement_keyword)
+                name: (identifier)
+                source: (identifier)
+                body: (xmlport_body
+                  (xmlport_element
+                    element_type: (fieldelement_keyword)
+                    name: (identifier)
+                    source: (member_expression
+                      object: (identifier)
+                      member: (quoted_identifier)))
+                  (xmlport_element
+                    element_type: (tableelement_keyword)
+                    name: (identifier)
+                    source: (identifier)
+                    body: (xmlport_body
+                      (property
+                        name: (property_name)
+                        value: (identifier))
+                      (property
+                        name: (property_name)
+                        value: (preproc_conditional_property_value
+                          (preproc_if
+                            (preproc_open)
+                            condition: (identifier))
+                          value: (link_value_list
+                            (link_value
+                              field: (quoted_identifier)
+                              (field_keyword)
+                              value: (quoted_identifier)))
+                          (preproc_else)
+                          value: (link_value_list
+                            (link_value
+                              field: (identifier)
+                              (field_keyword)
+                              value: (identifier)))
+                          (preproc_endif
+                            (preproc_close))))
+                      (xmlport_element
+                        element_type: (fieldelement_keyword)
+                        name: (identifier)
+                        source: (member_expression
+                          object: (identifier)
+                          member: (identifier))))))))))))))
+
+================================================================================
+Host matrix: xmlport-tableelement, LinkFields, list-internal (probe host-xmlport-tableelement-linkfields-list-internal.al)
+================================================================================
+
+xmlport 50140 X
+{
+    schema { textelement(Root) { tableelement(C; Cust) { fieldelement(No; C."No.") { } tableelement(D; Cust) {
+        LinkTable = C;
+        LinkFields =
+#if X
+        "No." = field("No."),
+#endif
+        Name = field(Name);
+        fieldelement(N2; D.Name) { }
+    } } } }
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (xmlport_declaration
+    (xmlport_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (schema_section
+        (schema_keyword)
+        body: (schema_body
+          (xmlport_element
+            element_type: (textelement_keyword)
+            name: (identifier)
+            body: (xmlport_body
+              (xmlport_element
+                element_type: (tableelement_keyword)
+                name: (identifier)
+                source: (identifier)
+                body: (xmlport_body
+                  (xmlport_element
+                    element_type: (fieldelement_keyword)
+                    name: (identifier)
+                    source: (member_expression
+                      object: (identifier)
+                      member: (quoted_identifier)))
+                  (xmlport_element
+                    element_type: (tableelement_keyword)
+                    name: (identifier)
+                    source: (identifier)
+                    body: (xmlport_body
+                      (property
+                        name: (property_name)
+                        value: (identifier))
+                      (property
+                        name: (property_name)
+                        value: (link_value_list
+                          (preproc_conditional_link_values
+                            (preproc_if
+                              (preproc_open)
+                              condition: (identifier))
+                            (link_value
+                              field: (quoted_identifier)
+                              (field_keyword)
+                              value: (quoted_identifier))
+                            (preproc_endif
+                              (preproc_close)))
+                          (link_value
+                            field: (identifier)
+                            (field_keyword)
+                            value: (identifier))))
+                      (xmlport_element
+                        element_type: (fieldelement_keyword)
+                        name: (identifier)
+                        source: (member_expression
+                          object: (identifier)
+                          member: (identifier))))))))))))))
+
+================================================================================
+Host matrix: xmlport-tableelement, LinkFields, comment (probe host-xmlport-tableelement-linkfields-comment.al)
+================================================================================
+
+xmlport 50140 X
+{
+    schema { textelement(Root) { tableelement(C; Cust) { fieldelement(No; C."No.") { } tableelement(D; Cust) {
+        LinkTable = C;
+        LinkFields /* c */ = "No." = field("No."), Name = field(Name);
+        fieldelement(N2; D.Name) { }
+    } } } }
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (xmlport_declaration
+    (xmlport_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (schema_section
+        (schema_keyword)
+        body: (schema_body
+          (xmlport_element
+            element_type: (textelement_keyword)
+            name: (identifier)
+            body: (xmlport_body
+              (xmlport_element
+                element_type: (tableelement_keyword)
+                name: (identifier)
+                source: (identifier)
+                body: (xmlport_body
+                  (xmlport_element
+                    element_type: (fieldelement_keyword)
+                    name: (identifier)
+                    source: (member_expression
+                      object: (identifier)
+                      member: (quoted_identifier)))
+                  (xmlport_element
+                    element_type: (tableelement_keyword)
+                    name: (identifier)
+                    source: (identifier)
+                    body: (xmlport_body
+                      (property
+                        name: (property_name)
+                        value: (identifier))
+                      (property
+                        name: (property_name)
+                        (multiline_comment)
+                        value: (link_value_list
+                          (link_value
+                            field: (quoted_identifier)
+                            (field_keyword)
+                            value: (quoted_identifier))
+                          (link_value
+                            field: (identifier)
+                            (field_keyword)
+                            value: (identifier))))
+                      (xmlport_element
+                        element_type: (fieldelement_keyword)
+                        name: (identifier)
+                        source: (member_expression
+                          object: (identifier)
+                          member: (identifier))))))))))))))
+
+================================================================================
+Host matrix: xmlport-tableelement, LinkFields, body-if (probe host-xmlport-tableelement-linkfields-body-if.al)
+================================================================================
+
+xmlport 50140 X
+{
+    schema { textelement(Root) { tableelement(C; Cust) { fieldelement(No; C."No.") { } tableelement(D; Cust) {
+        LinkTable = C;
+#if X
+        LinkFields = "No." = field("No.");
+#else
+        LinkFields = Name = field(Name);
+#endif
+        fieldelement(N2; D.Name) { }
+    } } } }
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (xmlport_declaration
+    (xmlport_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (schema_section
+        (schema_keyword)
+        body: (schema_body
+          (xmlport_element
+            element_type: (textelement_keyword)
+            name: (identifier)
+            body: (xmlport_body
+              (xmlport_element
+                element_type: (tableelement_keyword)
+                name: (identifier)
+                source: (identifier)
+                body: (xmlport_body
+                  (xmlport_element
+                    element_type: (fieldelement_keyword)
+                    name: (identifier)
+                    source: (member_expression
+                      object: (identifier)
+                      member: (quoted_identifier)))
+                  (xmlport_element
+                    element_type: (tableelement_keyword)
+                    name: (identifier)
+                    source: (identifier)
+                    body: (xmlport_body
+                      (property
+                        name: (property_name)
+                        value: (identifier))
+                      (preproc_conditional
+                        (preproc_if
+                          (preproc_open)
+                          condition: (identifier))
+                        (property
+                          name: (property_name)
+                          value: (link_value_list
+                            (link_value
+                              field: (quoted_identifier)
+                              (field_keyword)
+                              value: (quoted_identifier))))
+                        (preproc_else)
+                        (property
+                          name: (property_name)
+                          value: (link_value_list
+                            (link_value
+                              field: (identifier)
+                              (field_keyword)
+                              value: (identifier))))
+                        (preproc_endif
+                          (preproc_close)))
+                      (xmlport_element
+                        element_type: (fieldelement_keyword)
+                        name: (identifier)
+                        source: (member_expression
+                          object: (identifier)
+                          member: (identifier))))))))))))))
