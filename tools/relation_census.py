@@ -178,6 +178,10 @@ def _outside(n) -> bool:
 
 def _shape_ok(v) -> bool:
     if v.type == "table_relation_value":
+        kids = v.named_children
+        if kids and kids[0].type == "preproc_conditional_table_relation":
+            # the conditional head is legal only with the shared `else` tail after #endif
+            return any(k.type == "else_table_relation_fragment" for k in kids[1:])
         return True
     if v.type == "preproc_conditional_property_value":
         subs = v.children_by_field_name("value")

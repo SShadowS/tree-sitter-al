@@ -125,3 +125,86 @@ def test_sexp_sees_spans_and_stray_fields():
 def test_chains_are_the_decompiled_ones():
     assert rc._CTRL_CHAIN == ("PageField", "PageGroup", "PagePart", "PageArea")
     assert rc._ACT_CHAIN == ("PageAction", "PageActionRef", "PageActionGroup", "PageActionArea")
+
+
+# --- §5.5 mutation proofs: each edits a tree or source in memory and asserts the finding kind ---
+
+class _P:
+    """Read-only proxy over a tree-sitter Node; `over` maps (type, text) -> {attr: value} overrides."""
+
+    def __init__(self, n, over):
+        self._n, self._o = n, over
+
+    def _wrap(self, x):
+        if isinstance(x, list):
+            return [self._wrap(i) for i in x]
+        if callable(x):
+            return lambda *a, **k: self._wrap(x(*a, **k))
+        return _P(x, self._o) if hasattr(x, "children") else x
+
+    def __getattr__(self, a):
+        ov = self._o.get((self._n.type, self._n.text), {})
+        if a in ov:
+            return ov[a]
+        return self._wrap(getattr(self._n, a))
+
+
+class _T:
+    def __init__(self, tree, over):
+        self.language, self.root_node = tree.language, _P(tree.root_node, over)
+
+
+class _Fake:  # a bare node for an override value
+    def __init__(self, type_):
+        self.type, self.text, self.children, self.named_children = type_, b"", [], []
+        self.start_byte = self.end_byte = 0
+        self.is_named, self.child_count = True, 0
+        self.parent = None
+
+
+def _check_fake(prop, over):
+    src = _field(prop)
+    tree = rc.parser_for(None).parse(src)
+    return rc.check_tree("x", _T(tree, over), src, target_check=True)
+
+
+def test_mutation_dropped_property(tmp_path):
+    (tmp_path / "a.al").write_bytes(_field(b"TableRelation = A.B;"))
+    real = rc.parser_for(None)
+
+    class Dropped:
+        def parse(self, src):
+            return real.parse(src.replace(b"TableRelation = A.B;", b" " * 20))
+
+    assert "site-dropped" in {f.kind for f in rc.delta([tmp_path], real, Dropped()).findings}
+
+
+@needs_base
+def test_mutation_reordered_segments(tmp_path):
+    (tmp_path / "a.al").write_bytes(_field(b"TableRelation = Aa.Bb;"))
+    cur = rc.parser_for(None)
+
+    class Swapped:
+        def parse(self, src):
+            return cur.parse(src.replace(b"Aa.Bb", b"Bb.Aa"))
+
+    fs = rc.delta([tmp_path], _base(), Swapped()).findings
+    assert {f.kind for f in fs} == {"unclassified"}
+
+
+def test_mutation_non_leaf_segment():
+    fs = _check_fake(b"TableRelation = Aa.Bb;", {("identifier", b"Bb"): {"child_count": 1}})
+    assert any(f.kind == "target" and "children=1" in f.detail for f in fs)
+
+
+def test_mutation_conditional_moved_to_root():
+    kinds = {f.kind for f in _check_fake(
+        b"TableRelation = Aa;",
+        {("table_relation_value", b"Aa"): {"named_children": [_Fake("preproc_conditional_table_relation")]}})}
+    assert "relation-shape" in kinds
+
+
+def test_conditional_head_with_else_tail_is_legal():
+    src = _field(b"TableRelation =\n#if X\n if (Y = const(1)) A\n#endif\n else B;")
+    fs = rc.check_tree("x", rc.parser_for(None).parse(src), src)
+    assert not [f for f in fs if f.kind in ("relation-shape", "relation-outside", "target")], fs
