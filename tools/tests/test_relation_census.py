@@ -387,3 +387,73 @@ def test_l3_unary_without_operand_is_no_approved_form(keep):
 def test_l3_decimal_must_be_a_leaf():
     with pytest.raises(rc.Unclassifiable, match="const argument"):
         _l3_unary(b"-15", None, type_="decimal")
+
+
+# --- B5b Task 5: mutation proofs (spec 2026-10-05 §5.5), current library, in-memory edits ---
+
+def _link_check(prop, over):
+    src = _page_action(prop)
+    tree = rc.parser_for(None).parse(src)
+    return {f.kind for f in rc.check_tree("x", _T(tree, over), src)}
+
+
+def test_mutation_link_list_under_visible_is_link_outside():
+    src = b"Visible = Flag = Rec.OtherFlag;"
+    v, _ = _value(_page_action(src), rc.parser_for(None))
+    assert "link-outside" in _link_check(src, {(v.type, v.text): {"type": "link_value_list"}})
+
+
+def _cond_value(prop):
+    tree = rc.parser_for(None).parse(_page_action(prop))
+    return next(n.child_by_field_name("value") for n in rc.walk(tree.root_node) if n.type == "property")
+
+
+WHOLE = b'RunPageLink =\n#if X\n "No." = field("No.")\n#else\n "No." = field(Code)\n#endif\n;'
+SPLIT = b'RunPageLink =\n#if X\n "No." = field("No."),\n#endif\n A = field(B);'
+
+
+def test_mutation_whole_value_arm_became_list_internal():
+    v = _cond_value(WHOLE)
+    arm = v.children_by_field_name("value")[0]
+    assert v.type == "preproc_conditional_property_value"
+    assert "link-shape" in _link_check(WHOLE, {(arm.type, arm.text): {"type": "preproc_conditional_link_values"}})
+
+
+def test_mutation_list_internal_conditional_became_whole_value():
+    v = _cond_value(SPLIT)
+    assert v.type == "link_value_list"
+    kinds = _link_check(SPLIT, {(v.type, v.text): {"type": "preproc_conditional_property_value"}})
+    assert "link-shape" in kinds
+
+
+def test_mutation_envelope_swap_is_unclassifiable_in_rewrite_records():
+    old, new = _cond_value(WHOLE), _cond_value(SPLIT)
+    with pytest.raises(rc.Unclassifiable):
+        rc.rewrite_records("RunPageLink", old, new, approved_const_forms=rc.APPROVED_CONST_FORMS)
+
+
+def test_mutation_dropped_link_property(tmp_path):
+    (tmp_path / "a.al").write_bytes(_page_action(b'RunPageLink = "No." = field("No.");'))
+    real = rc.parser_for(None)
+
+    class Dropped:
+        def parse(self, src):
+            return real.parse(src.replace(b'RunPageLink = "No." = field("No.");', b" " * 34))
+
+    assert "site-dropped" in {f.kind for f in rc.delta([tmp_path], real, Dropped()).findings}
+
+
+EMPTY_PREFIX = b'RunPageLink =\n#if X\n "No." = field("No."),\n#endif\n;\n        Foo = 1;'
+
+
+def test_mutation_empty_prefix_split_loses_sibling_either_direction(tmp_path):
+    (tmp_path / "a.al").write_bytes(_page_action(EMPTY_PREFIX))
+    real = rc.parser_for(None)
+
+    class NoSibling:
+        def parse(self, src):
+            return real.parse(src.replace(b"Foo = 1;", b" " * 8))
+
+    for base, cur, detail in ((real, NoSibling(), "base only"), (NoSibling(), real, "current only")):
+        fs = [f for f in rc.delta([tmp_path], base, cur).findings if f.kind == "site-dropped"]
+        assert [f.detail for f in fs] == [detail]
