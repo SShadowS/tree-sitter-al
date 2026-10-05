@@ -146,9 +146,10 @@ FIELD_INVARIANTS = [
     inv('object_reference_type', 'reference', True, set(), 'FIXED',
         "'.' separator inherited the field from a seq-spanning field",
         types={'identifier', 'integer', 'quoted_identifier'}),
-    inv('simple_table_relation', 'table', True, set(), 'FIXED',
-        "'.' separator inherited the field from a seq-spanning field",
-        types={'identifier', 'integer', 'member_expression', 'quoted_identifier'}),
+    inv('simple_table_relation', 'target', False, set(), 'FIXED',
+        "B5: one qualified_name target, as alc's ParseQualifiedName; was a 'table' field on "
+        "every segment plus a member_expression escape",
+        types={'qualified_name'}),
     inv('report_dataitem', 'table_name', True, set(), 'FIXED',
         "'.' separator inherited the field from a seq-spanning field",
         types={'identifier', 'integer', 'quoted_identifier'}),

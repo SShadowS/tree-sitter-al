@@ -40,11 +40,10 @@ page 50100 "Test Page"
                 body: (declaration_body
                   (property
                     name: (property_name)
-                    value: (table_relation_value
-                      (table_relation_expression
-                        (simple_table_relation
-                          table: (identifier)
-                          table: (quoted_identifier))))))))))))))
+                    value: (property_expression
+                      (member_expression
+                        object: (identifier)
+                        member: (quoted_identifier)))))))))))))
 
 ================================================================================
 StyleExpr with member expression
@@ -88,11 +87,10 @@ page 50101 "Test Page 2"
                 body: (declaration_body
                   (property
                     name: (property_name)
-                    value: (table_relation_value
-                      (table_relation_expression
-                        (simple_table_relation
-                          table: (identifier)
-                          table: (identifier))))))))))))))
+                    value: (property_expression
+                      (member_expression
+                        object: (identifier)
+                        member: (identifier)))))))))))))
 
 ================================================================================
 StyleExpr with complex expressions

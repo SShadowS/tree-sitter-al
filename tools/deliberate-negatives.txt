@@ -97,3 +97,12 @@ preproc_dangling_operator_negative_test.txt
 # (page level; the probe_alc case is field level). The InstructionalTextML `;`
 # case parses clean on purpose: its AL0124 is a context rejection.
 pair_list_property_keying_negative_test.txt
+# B5 TableRelation negatives: the empty value and the four integer targets
+# (AL0107), and `if`, `else` and `where` as a segment word. alc 18.0.41 rejects
+# each; the ERROR or MISSING node is the assertion, never a clean target or a
+# property_expression. Evidence: alc_probe
+# tools/alc_probe/cases/table-relation-keying/decide-empty-value.al,
+# decide-int-18.al, decide-int-18-field.al, decide-int-field-segment.al,
+# decide-int-where.al, kw-if-first-rejected.al, kw-else-first-rejected.al,
+# kw-where-first-rejected.al.
+table_relation_keying_negative_test.txt

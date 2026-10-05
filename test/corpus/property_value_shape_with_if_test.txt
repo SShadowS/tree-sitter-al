@@ -324,13 +324,25 @@ Customer;
                     (preproc_if
                       (preproc_open)
                       condition: (identifier))
-                    value: (identifier)
+                    value: (table_relation_value
+                      (table_relation_expression
+                        (simple_table_relation
+                          target: (qualified_name
+                            (identifier)))))
                     (preproc_else)
-                    value: (identifier)
+                    value: (table_relation_value
+                      (table_relation_expression
+                        (simple_table_relation
+                          target: (qualified_name
+                            (identifier)))))
                     (preproc_endif
                       (preproc_close)))
                   (preproc_else)
-                  value: (identifier)
+                  value: (table_relation_value
+                    (table_relation_expression
+                      (simple_table_relation
+                        target: (qualified_name
+                          (identifier)))))
                   (preproc_endif
                     (preproc_close)))))))))))
 
@@ -382,13 +394,25 @@ Customer;
                     (preproc_if
                       (preproc_open)
                       condition: (identifier))
-                    value: (identifier)
+                    value: (table_relation_value
+                      (table_relation_expression
+                        (simple_table_relation
+                          target: (qualified_name
+                            (identifier)))))
                     (preproc_else)
-                    value: (identifier)
+                    value: (table_relation_value
+                      (table_relation_expression
+                        (simple_table_relation
+                          target: (qualified_name
+                            (identifier)))))
                     (preproc_endif
                       (preproc_close)))
                   (preproc_else)
-                  value: (identifier)
+                  value: (table_relation_value
+                    (table_relation_expression
+                      (simple_table_relation
+                        target: (qualified_name
+                          (identifier)))))
                   (preproc_endif
                     (preproc_close)))))))))))
 

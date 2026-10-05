@@ -38,8 +38,9 @@ table 50100 "Test Filter And"
                 value: (table_relation_value
                   (table_relation_expression
                     (simple_table_relation
-                      table: (identifier)
-                      table: (quoted_identifier)
+                      target: (qualified_name
+                        (identifier)
+                        (quoted_identifier))
                       (where_clause
                         (where_keyword)
                         (where_conditions
@@ -93,8 +94,9 @@ table 50101 "Test Multiple And"
                 value: (table_relation_value
                   (table_relation_expression
                     (simple_table_relation
-                      table: (identifier)
-                      table: (quoted_identifier)
+                      target: (qualified_name
+                        (identifier)
+                        (quoted_identifier))
                       (where_clause
                         (where_keyword)
                         (where_conditions
@@ -149,8 +151,9 @@ table 50102 "Test Mixed And"
                 value: (table_relation_value
                   (table_relation_expression
                     (simple_table_relation
-                      table: (identifier)
-                      table: (quoted_identifier)
+                      target: (qualified_name
+                        (identifier)
+                        (quoted_identifier))
                       (where_clause
                         (where_keyword)
                         (where_conditions
@@ -204,8 +207,9 @@ table 50103 "Test And Identifiers"
                 value: (table_relation_value
                   (table_relation_expression
                     (simple_table_relation
-                      table: (identifier)
-                      table: (identifier)
+                      target: (qualified_name
+                        (identifier)
+                        (identifier))
                       (where_clause
                         (where_keyword)
                         (where_conditions
@@ -257,8 +261,9 @@ table 50104 "Test Complex And"
                 value: (table_relation_value
                   (table_relation_expression
                     (simple_table_relation
-                      table: (identifier)
-                      table: (identifier)
+                      target: (qualified_name
+                        (identifier)
+                        (identifier))
                       (where_clause
                         (where_keyword)
                         (where_conditions

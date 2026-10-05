@@ -43,11 +43,10 @@ page 1505 "Workflow Templates"
                 body: (layout_container_body
                   (property
                     name: (property_name)
-                    value: (table_relation_value
-                      (table_relation_expression
-                        (simple_table_relation
-                          table: (identifier)
-                          table: (identifier)))))
+                    value: (property_expression
+                      (member_expression
+                        object: (identifier)
+                        member: (identifier))))
                   (property
                     name: (property_name)
                     value: (identifier))
@@ -106,11 +105,10 @@ page 50100 "Test Page"
                 body: (layout_container_body
                   (property
                     name: (property_name)
-                    value: (table_relation_value
-                      (table_relation_expression
-                        (simple_table_relation
-                          table: (identifier)
-                          table: (quoted_identifier)))))
+                    value: (property_expression
+                      (member_expression
+                        object: (identifier)
+                        member: (quoted_identifier))))
                   (property
                     name: (property_name)
                     value: (quoted_identifier))

@@ -45,11 +45,10 @@ table 50001 TestTable
             body: (declaration_body
               (property
                 name: (property_name)
-                value: (table_relation_value
-                  (table_relation_expression
-                    (simple_table_relation
-                      table: (identifier)
-                      table: (quoted_identifier)))))))
+                value: (property_expression
+                  (member_expression
+                    object: (identifier)
+                    member: (quoted_identifier))))))
           (field_declaration
             (field_keyword)
             id: (integer)
@@ -59,11 +58,10 @@ table 50001 TestTable
             body: (declaration_body
               (property
                 name: (property_name)
-                value: (table_relation_value
-                  (table_relation_expression
-                    (simple_table_relation
-                      table: (identifier)
-                      table: (quoted_identifier)))))))
+                value: (property_expression
+                  (member_expression
+                    object: (identifier)
+                    member: (quoted_identifier))))))
           (field_declaration
             (field_keyword)
             id: (integer)
@@ -73,11 +71,10 @@ table 50001 TestTable
             body: (declaration_body
               (property
                 name: (property_name)
-                value: (table_relation_value
-                  (table_relation_expression
-                    (simple_table_relation
-                      table: (identifier)
-                      table: (identifier)))))))
+                value: (property_expression
+                  (member_expression
+                    object: (identifier)
+                    member: (identifier))))))
           (field_declaration
             (field_keyword)
             id: (integer)

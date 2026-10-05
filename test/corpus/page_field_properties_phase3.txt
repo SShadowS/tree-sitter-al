@@ -66,5 +66,6 @@ page 50005 "Test Field Properties Phase 3"
                     value: (table_relation_value
                       (table_relation_expression
                         (simple_table_relation
-                          table: (identifier)
-                          table: (quoted_identifier))))))))))))))
+                          target: (qualified_name
+                            (identifier)
+                            (quoted_identifier)))))))))))))))

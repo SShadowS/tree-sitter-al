@@ -127,11 +127,10 @@ page 50001 "Permission Set Tree"
                     (identifier))
                   (property
                     (property_name)
-                    (table_relation_value
-                      (table_relation_expression
-                        (simple_table_relation
-                          (identifier)
-                          (identifier)))))
+                    (property_expression
+                      (member_expression
+                        (identifier)
+                        (identifier))))
                   (property
                     (property_name)
                     (option_member_list

@@ -54,7 +54,8 @@ table 123 "Test Table"
                           (const_keyword)
                           value: (quoted_identifier)))
                       then_relation: (simple_table_relation
-                        table: (quoted_identifier))
+                        target: (qualified_name
+                          (quoted_identifier)))
                       (else_keyword)
                       else_relation: (table_relation_expression
                         (if_table_relation
@@ -65,7 +66,8 @@ table 123 "Test Table"
                               (const_keyword)
                               value: (quoted_identifier)))
                           then_relation: (simple_table_relation
-                            table: (quoted_identifier))
+                            target: (qualified_name
+                              (quoted_identifier)))
                           (else_keyword)
                           else_relation: (table_relation_expression
                             (preproc_conditional_table_relation
@@ -81,7 +83,8 @@ table 123 "Test Table"
                                       (const_keyword)
                                       value: (quoted_identifier)))
                                   then_relation: (simple_table_relation
-                                    table: (quoted_identifier))))
+                                    target: (qualified_name
+                                      (quoted_identifier)))))
                               (preproc_else)
                               (table_relation_expression
                                 (if_table_relation
@@ -92,6 +95,7 @@ table 123 "Test Table"
                                       (const_keyword)
                                       value: (quoted_identifier)))
                                   then_relation: (simple_table_relation
-                                    table: (quoted_identifier))))
+                                    target: (qualified_name
+                                      (quoted_identifier)))))
                               (preproc_endif
                                 (preproc_close)))))))))))))))))

@@ -45,8 +45,9 @@ table 50100 "Test Table"
                             (filter_operator)
                             (integer))))
                       (simple_table_relation
-                        (identifier)
-                        (quoted_identifier)))))))))))))
+                        (qualified_name
+                          (identifier)
+                          (quoted_identifier))))))))))))))
 
 ================================================================================
 Filter with greater than operator
@@ -95,8 +96,9 @@ table 50100 "Test Table"
                             (filter_operator)
                             (integer))))
                       (simple_table_relation
-                        (identifier)
-                        (quoted_identifier)))))))))))))
+                        (qualified_name
+                          (identifier)
+                          (quoted_identifier))))))))))))))
 
 ================================================================================
 Filter with less than or equal operator
@@ -145,8 +147,9 @@ table 50100 "Test Table"
                             (filter_operator)
                             (integer))))
                       (simple_table_relation
-                        (quoted_identifier)
-                        (identifier)))))))))))))
+                        (qualified_name
+                          (quoted_identifier)
+                          (identifier))))))))))))))
 
 ================================================================================
 Filter with greater than or equal operator
@@ -195,5 +198,6 @@ table 50100 "Test Table"
                             (filter_operator)
                             (integer))))
                       (simple_table_relation
-                        (quoted_identifier)
-                        (identifier)))))))))))))
+                        (qualified_name
+                          (quoted_identifier)
+                          (identifier))))))))))))))

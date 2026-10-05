@@ -24564,6 +24564,25 @@
     }
   },
   {
+    "type": "qualified_name",
+    "named": true,
+    "fields": {},
+    "children": {
+      "multiple": true,
+      "required": true,
+      "types": [
+        {
+          "type": "identifier",
+          "named": true
+        },
+        {
+          "type": "quoted_identifier",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
     "type": "query_body",
     "named": true,
     "fields": {},
@@ -26168,24 +26187,12 @@
     "type": "simple_table_relation",
     "named": true,
     "fields": {
-      "table": {
-        "multiple": true,
+      "target": {
+        "multiple": false,
         "required": true,
         "types": [
           {
-            "type": "identifier",
-            "named": true
-          },
-          {
-            "type": "integer",
-            "named": true
-          },
-          {
-            "type": "member_expression",
-            "named": true
-          },
-          {
-            "type": "quoted_identifier",
+            "type": "qualified_name",
             "named": true
           }
         ]
@@ -27169,6 +27176,10 @@
       "multiple": true,
       "required": true,
       "types": [
+        {
+          "type": "else_table_relation_fragment",
+          "named": true
+        },
         {
           "type": "preproc_conditional_table_relation",
           "named": true
