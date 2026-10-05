@@ -270,6 +270,7 @@ mechanism, P4's `reading` contracts, works the same way.
 **Intended changes to clean trees,** named so that the zero-delta gates can allow exactly these
 and nothing else:
 - the generic empty prefix (`option_member_list` → value plus unfielded prefix);
+- the Permissions empty prefix (`preproc_conditional_permissions` element → value plus unfielded prefix);
 - the ML, Namespaces and Implementation empty-prefix splits (two properties → one);
 - the item 35 unquoted `;`-inside run (two properties → one, with a sequence).
 
