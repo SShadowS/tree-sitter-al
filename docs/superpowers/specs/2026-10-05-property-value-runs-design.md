@@ -1,8 +1,8 @@
 # B11: property values made of a run of `#if` groups
 
-**Status:** revision 3, 2026-10-05. Revision 2 had a second gpt-6.1-sol round: 1 blocker,
-7 majors and 1 minor, all verified against the code and adopted (§9, round 2). Revision 1's
-round: §9, round 1. This revision awaits review.
+**Status:** revision 4, 2026-10-05. Revision 3 had a third gpt-6.1-sol round: 1 blocker,
+4 majors and 1 minor, all verified against the code and adopted (§9, round 3). Earlier rounds:
+§9, rounds 1 and 2. This revision awaits review.
 **Roadmap row:** B11, new (`docs/superpowers/plans/2026-09-28-roadmap-remaining-work.md`).
 Absorbs deferred-work items 33 and 35, and the ML empty-prefix split recorded under item 33
 during B8.
@@ -88,55 +88,72 @@ not this scan.
   - the *property site*, from `=` to the property's terminator;
   - an *arm site*, from an arm's directive header to the arm's `;` or the next directive.
 - The *run* is the maximal sequence of consecutive `#if … #endif` groups at a value site.
-- A group is *empty* when, recursively, no arm holds a value: every arm is absent, or holds
-  only empty groups.
-- A group is *value-bearing* otherwise.
-- A group is *terminated* when it has `#else` and every arm is present and ends in `;`,
+
+**Group predicates.** These are three separate predicates, each carried by its own production
+state:
+- **directive-only empty:** recursively, every arm is absent or holds only directive-only
+  empty groups. No value, no `;`. Only these are decorations, lowered to nothing.
+- **value-bearing:** at least one arm holds a value, recursively.
+- **terminated:** the group has `#else`, and every arm is present and ends in `;`,
   recursively. Every configuration has then emitted a `;` by the group's `#endif`.
 
-### 3.1 Shapes
+**No bare-`;` arms.** An arm holding only `;` (`#if X ; #else true; #endif`) is not admitted,
+as today: every arm production that carries a `;` carries a value before it. alc's verdict on
+the bare-`;` arm is recorded by a probe (§5.1). So "terminated" implies "value-bearing" arm by
+arm, and a `;` is never erased as a decoration.
 
-| shape at a value site | tree |
+### 3.1 Routing a run
+
+A run is routed by what its groups' arms can be. There are three kinds, and the grammar forms
+only the first two:
+
+| run kind | when | tree |
+|---|---|---|
+| **(a) alternatives** | every group is value-bearing or directive-only empty; every arm value is a complete value of the family; no arm has the family list's own separator at its edge (below); and no group after the first value-bearing one holds a *continuation-capable* value (below) | 2+ value-bearing groups: `value: (preproc_conditional_property_value_sequence …)`; 1: unchanged |
+| **(b) list concatenation** | link, Implementation or `OptionMembers`, when the family list's own separator sits at an arm edge, or the list has unconditional members or separators | the family's element conditionals, as today. `OptionMembers` gains the entirely conditional form (§4.1) |
+| **(c) other concatenation** | anything else that concatenates across groups | not formed: it stays an ERROR, visible, owned by roadmap row **B13** (§6) |
+
+A value is never given a tree whose reading is silently wrong in the configurations where
+several groups are active. When the grammar cannot give the concatenation its own structure,
+it gives no structure (c).
+
+**The family list's own separator** is a `,` that is a direct separator child of the family's
+top-level list production at this value site:
+- `link_value_list`'s `,`;
+- `implementation_value_list`'s `,`;
+- `option_member_list`'s `,`.
+
+These commas are **not** it:
+- commas nested deeper: in `where_conditions`, call arguments, `sorting(...)` fields, or a nested
+  group's own list;
+- commas of a non-list value's own punctuation: a caption's `, Locked = true`, ML and
+  Namespaces pairs.
+
+At an *arm edge* means the last token before the arm's closing directive, or the first token
+after its opening directive. The decision is local to the group (the separator is inside it,
+or at the next group's first arm token), so the spikes keep both readings alive across that
+one boundary (§4.3).
+
+**Continuation-capable values** are complete values that some other complete value of the same
+family can precede, forming one value. They are listed per family, from the flat grammar:
+
+| family | continuation-capable kinds |
 |---|---|
-| plain value, or one value-bearing group | unchanged |
-| empty groups around the site's core | each empty group is an unfielded `preproc_conditional_property_value` child of the site's enclosing node: `property` at the property site, the enclosing group at an arm site. This is B8's form. |
-| a run of 2+ value-bearing groups with **no list separator crossing a group boundary** | `value: (preproc_conditional_property_value_sequence …)` |
-| a run whose groups are joined by list separators | element conditionals of the family's list, as today |
+| generic | `where_clause`; the `order(...)`-only `sorting_value` (both can follow a `sorting(...)`: `sorting_value` is `sorting(...) [order] [where]`) |
+| ML, Namespaces | none as complete values; their pair lists concatenate only through `,`, which is (c) |
+| TableRelation | none at the whole-value level; relation continuations are the existing relation forms (§4.4) |
+| CalcFormula | none |
+| link, Implementation, OptionMembers | none besides their lists' `,`, which is (b) |
 
-**The separator rule.** It decides between alternative whole values and list concatenation.
-- **Concatenation.** Groups are list fragments when a list separator (`,`) crosses a group
-  boundary: an arm ends in `,` before `#endif`, or the next group's arm starts with `,`, or an
-  unconditional `,` or member sits between or around the groups. Then several groups can be
-  active at once, and together they form one list. These stay the family's element
-  conditionals (`preproc_conditional_link_values`, `preproc_conditional_impl_values`,
-  `preproc_conditional_option_members`), as today:
+The spikes (§4.3) check this table against the generated grammar: a second complete value
+following a first must yield no sequence.
 
-  ```al
-  SubPageLink =
-  #if X
-      A = field(B),
-  #else
-      A = field(C),
-  #endif
-  #if Y
-      D = field(E)
-  #else
-      D = field(F)
-  #endif
-  ;
-  ```
-
-- **Alternatives.** With no separator crossing a boundary, two active value-bearing groups
-  would put two values side by side, which is not a value in any family. In every valid
-  configuration, at most one group is active before the property ends. The run is then a
-  sequence of alternative whole values.
-
-A single whole-value group is already one `preproc_conditional_property_value` in every family
-(§2.2). The sequence extends that rule to several groups.
+**A single whole-value group** is already one `preproc_conditional_property_value` in every
+family (§2.2). A sequence extends that rule to several groups.
 
 **Inside a sequence:**
 - each value-bearing group is `value: (preproc_conditional_property_value …)`;
-- empty groups between two value-bearing groups are unfielded children;
+- directive-only empty groups between two value-bearing groups are unfielded children;
 - the sequence spans from its first value-bearing group to its last.
 
 **Only the core is fielded.** The field `value` goes on the site's core: the plain value, the
@@ -151,17 +168,26 @@ and the enclosing group at an arm site.
 | placement | token | parent |
 |---|---|---|
 | `;` after the last `#endif` | the trailing `;` | the site's node, unfielded, as today |
-| `;` after the last `#endif` | empty groups between the core and the `;` | the site's node, unfielded |
+| `;` after the last `#endif` | directive-only empty groups between the core and the `;` | the site's node, unfielded |
 | either | an arm's own `;` | its group, unfielded, outside `value:`, as today |
-| `;` inside the arms | empty groups after the last value-bearing group | **not** the site: the site ends at that group's terminated arms, so they are ordinary content after it, parsed as today |
-| either | empty groups before the core | the site's node, unfielded |
+| `;` inside the arms | directive-only empty groups after the last value-bearing group | **not** the site: the site ends at that group's terminated arms, so they are ordinary content after it, parsed as today |
+| either | directive-only empty groups before the core | the site's node, unfielded |
 | either, after a **terminated** group | anything that follows, including an unconditional `;` | **not** the site: every configuration has already ended the value. An unconditional `;` there is a standalone `;` (`empty_statement`), as B5b's mixed placement already gives |
 
-**The core may be empty.** It is optional exactly where the family's value is optional today:
-- the generic and link arms of `property` accept an empty value;
-- the others require one.
+**The core is optional exactly where the family's value is optional today.** The matrix is read
+from the `property` arms in `grammar.js`:
 
-An all-empty site, empty groups and no core, is that empty-value case (§4.1).
+| family | property value today | all-empty site |
+|---|---|---|
+| generic | optional | parses: decorations and `;`, no `value:` |
+| ML | optional (`optional(field('value', …))`) | parses |
+| Namespaces | optional | parses |
+| link | optional | parses |
+| TableRelation | required | ERROR |
+| CalcFormula | required | ERROR |
+
+At an arm site the core is required: an arm is absent, or holds a value (no bare-`;` arm).
+B11 narrows no family's optionality.
 
 ### 3.3 Why a new node type
 
@@ -216,11 +242,16 @@ and nothing else:
 
 **Contract migrations.** These are flat-correct today, and are changed deliberately for
 uniformity:
-- the link and Implementation `;`-after runs with no separator crossing a group boundary;
+- the link and Implementation `;`-after runs of kind (a), with no list separator at an arm
+  edge and no unconditional member;
 - the item 35 unquoted run.
 
 They go from a list of element conditionals (or a split) to a sequence. That is the
 representation a single group already has, and the CHANGELOG names it as a migration.
+
+**New support, no clean tree changed:**
+- runs of kind (a) that ERROR today, in every family;
+- the entirely conditional `OptionMembers` run of kind (b).
 
 ## 4. Mechanism (`grammar.js`)
 
@@ -244,14 +275,24 @@ The six families therefore cannot drift apart.
 **Witness.** A value-bearing group rule requires at least one present value, recursively
 (B5b's termination witness).
 
-**All-empty sites.** An all-empty site (`N = #if X #endif ;`) parses exactly where the family's
-core is optional (§3.2): generic and link. Its tree is the empty groups and the property's
-`;`, with no `value:`. In the other families it is an ERROR. Each case is pinned against an
-alc probe:
-- an all-empty site alc rejects as syntax, in a family whose core is required, is a deliberate
-  negative;
-- one the grammar accepts although alc rejects it as syntax is recorded as over-acceptance,
-  as `RunPageLink = ;` already is (B5b, CLAUDE.md). The parser does not validate.
+**All-empty sites** follow the §3.2 matrix:
+- generic, ML, Namespaces and link parse them;
+- TableRelation and CalcFormula ERROR.
+
+Each is pinned against an alc probe. Structural acceptance and compiler validity are recorded
+separately: where the grammar accepts what alc rejects as syntax, it is recorded as
+over-acceptance, as `RunPageLink = ;` already is (B5b, CLAUDE.md). The parser does not
+validate.
+
+**`OptionMembers` (kind (b)).** Today an opening `preproc_conditional_option_members` requires a
+following ordinary member, and an entirely conditional comma run ERRORs (live parse). The
+option-list production gains the entirely conditional form, with element conditionals carrying
+their `,` exactly as the link list does, and blank slots preserved:
+- leading `,`;
+- consecutive `,,`;
+- trailing `,`.
+
+Every comma and every ordinal survives in the tree.
 
 ### 4.2 `;` after the last `#endif`
 
@@ -333,6 +374,13 @@ task, two spikes are built.
 `prec.dynamic` preference applies only to a completed interpretation, never to a conditional
 prefix.
 
+**Kind (c) witnesses.** Each spike checks that the following yield no sequence and stay an
+ERROR, rather than becoming a silent tree:
+- `sorting(...)` then `where(...)` across groups;
+- ML pairs across groups with `,`;
+- a caption with `, Locked = true` across groups;
+- comma-edge arms in non-list families.
+
 **Lowering.** Each spike also runs the §5.3 lowering on its trees.
 
 **Report.** STATE_COUNT, the generator-required conflicts, the trees, and the oracle records.
@@ -384,7 +432,14 @@ Committed before any grammar change, with `--check` clean:
 - the all-empty whole value per family (§4.1);
 - `OptionMembers` and link runs with commas inside and between groups, missing separators, and a
   configuration leaving one option member;
-- the entirely conditional two-entry list of §3.1, every configuration valid;
+- the entirely conditional two-entry list of §3.1, every configuration valid, for link,
+  Implementation and `OptionMembers`;
+- `OptionMembers` blank slots across groups: leading, consecutive and trailing `,`;
+- the kind (c) shapes:
+  - `SourceTableView` `sorting(...)` then `where(...)` across groups;
+  - ML and Namespaces pairs joined by `,` across groups;
+  - a caption with `, Locked = true` across groups;
+- a bare-`;` arm, per family (§3, "No bare-`;` arms");
 - the terminated-group-then-property example of §4.2;
 - the action and assembly hosts for generic and ML values.
 
@@ -399,7 +454,10 @@ Committed before any grammar change, with `--check` clean:
 - the list-family runs under the separator rule (§3.1): no separator crossing a boundary →
   sequence; separators crossing boundaries, including the entirely conditional two-entry list
   of §3.1 → element conditionals, unchanged;
-- the terminated-group-then-property example of §4.2, with the final standalone `;`.
+- the terminated-group-then-property example of §4.2, with the final standalone `;`;
+- the kind (c) shapes as deliberate ERRORs owned by B13. They are listed in
+  `tools/deliberate-negatives.txt`, with a note that they are valid AL whose structure is
+  deferred, not invalid input.
 
 Each tree is checked by hand against the flat tree of every configuration. A `bogus:` field
 rename must fail the file, and the suite total must move by exactly the number of cases added.
@@ -448,6 +506,17 @@ without a registry reading. The P4 arm-reading predicates (`READINGS`) do not de
 and `reading_active()` needs a directly owned directive group, which the sequence does not
 have. So no new `READINGS` entry is added.
 
+These are registered on the `preproc_conditional_property_value` entry. `branch_select`'s
+exactly-one behaviour is never substituted for the assembler's zero-or-one rule.
+
+**`OptionMembers` validator: holes allowed.** The list-run path for `option_member_list` gets
+a family-specific, hole-aware check:
+- leading, consecutive and trailing `,` are legal;
+- every `,` and every ordinal is preserved;
+- the one-member unwrap (`option-member-list-unwrap`) still applies.
+
+Link and Implementation keep the strict `item (, item)*` check (`_check_alternation`).
+
 **Engine fix: ordered standalone `;`.** Today each later terminator becomes its own
 `SiblingsAfter`, inserted at anchor+1, so a third `;` lands before the second. The fix collects
 every later terminator of one property into ONE source-ordered `SiblingsAfter`. This applies to
@@ -470,8 +539,8 @@ validity is established separately by the §5.1 probes, and known over-acceptanc
 |---|---|---|
 | `property:value` | sequence | single-slot (cardinality enforced by the assembler) |
 | `preproc_conditional_property_value:value` | sequence | single-slot |
-| `preproc_conditional_property_value_sequence:value` | its groups | — |
-| `preproc_conditional_property_value_sequence:<children>` | interior empty groups | — |
+| `preproc_conditional_property_value_sequence:value` | its groups | optional-slot (each group lowers to zero or one value; the assembler enforces the total) |
+| `preproc_conditional_property_value_sequence:<children>` | interior directive-only empty groups | optional-slot (zero nodes) |
 | `property:<children>` | decorations at the property site | optional-slot |
 | `preproc_conditional_property_value:<children>` | decorations at an arm site | optional-slot |
 
@@ -480,8 +549,8 @@ validity is established separately by the §5.1 probes, and known over-acceptanc
   ("configuration-dependent property boundaries"), the owner that would remove the debt with
   a multi-configuration representation. Its records are classified `debt(B12)`, each pinned
   to the refusal kind, the sequence node and its host.
-  - `tools/config_oracle/fixtures.py` `ROADMAP` gains B10, which is missing today, B11 and
-    B12.
+  - `tools/config_oracle/fixtures.py` `ROADMAP` gains B10, which is missing today, B11, B12
+    and B13.
   - Loader tests pin the new owners.
 - **invalid-config records** carry alc evidence.
 - **Discrepancies** are never classified; the runner's rule is unchanged.
@@ -532,7 +601,10 @@ validity is established separately by the §5.1 probes, and known over-acceptanc
     probes, the fixtures and the classified records. It also records the alternatives
     considered and not adopted: tracking condition text in the scanner, and a
     multi-configuration representation.
-- Roadmap: rows B11 (marked done when it lands) and B12 (the residue's owner) added.
+- Roadmap: rows added:
+  - B11, marked done when it lands;
+  - B12, the configuration-dependent boundaries' owner;
+  - B13, conditional value fragments: the kind (c) concatenations, each with its probe.
 - CLAUDE.md / `.claude/rules`: the run mechanism, wherever whole-value conditionals are
   described.
 
@@ -552,6 +624,9 @@ validity is established separately by the §5.1 probes, and known over-acceptanc
   exist and parse correctly.
 - Values continued across `#if` with an operator (`preproc_conditional_expression_tail`, B3).
 - Condition evaluation in the scanner, or a multi-configuration tree (§6, roadmap row B12).
+- Kind (c) concatenations: `sorting`/`order`/`where` across groups, ML and Namespaces pair
+  concatenation across groups, caption attributes across groups (roadmap row B13). They stay
+  visible ERRORs.
 
 ## 9. Review record
 
@@ -629,3 +704,33 @@ verified against the code before adoption:
    kept separate (§5.3).
 9. **P4 terminology.** Verified: `ExpressionContinuation` raises one-reading with no registry
    reading. Adopted: the sequence's own predicate, with `reading=None` (§5.3).
+
+**Round 3** (revision 3). Round-2 status: 2, 6, 7, 8 and 9 resolved; 1, 3, 4 and 5 partly
+resolved. New: 1 blocker, 4 majors and 1 minor, each verified before adoption:
+
+1. **No crossing comma does not imply alternatives (blocker).** Verified:
+   - `sorting_value` is `sorting(...) [order] [where]` (`grammar.js` `sorting_value`), and
+     `where_clause` is a complete `_property_value` alone;
+   - the reviewer's `SourceTableView` run ERRORs today (live parse).
+
+   Adopted: three run kinds (§3.1). Alternatives exclude continuation-capable values per family.
+   Other concatenations are not formed, stay visible ERRORs, and are owned by the new row B13.
+   This keeps them out of B12 and out of any silent tree.
+2. **Crossing comma lacked a grammar-level definition.** Adopted: the family list's own
+   separator, a direct separator child of the top-level `link_value_list`,
+   `implementation_value_list` or `option_member_list`, at an arm edge. It excludes nested
+   commas and caption, ML and Namespaces punctuation (§3.1). Verified: ML and Namespaces have
+   no element-conditional production, so their comma concatenation is kind (c).
+3. **The optional-core matrix was wrong.** Verified: ML and Namespaces use
+   `optional(field('value', …))`. Adopted: the matrix in §3.2. No family's optionality is
+   narrowed.
+4. **Value-empty and terminator-free were conflated.** Adopted: three predicates (§3), with
+   only directive-only empty groups erased. Bare-`;` arms are not admitted (as today) and are
+   probed, so a `;` is never erased.
+5. **`OptionMembers` concatenation needed a hole-aware contract.** Verified: `_check_alternation`
+   raises on a trailing separator, and today's entirely conditional option run ERRORs (live
+   parse), while the link and Implementation ones parse as element conditionals. Adopted: the
+   production extension (§4.1) and a family-specific hole-aware validator, with link and
+   Implementation kept strict (§5.3).
+6. **Sequence-child host policies were blank (minor).** Adopted: optional-slot for both, on
+   the group's registry entry, with the assembler enforcing zero-or-one (§5.3).
