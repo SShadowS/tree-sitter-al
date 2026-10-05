@@ -271,7 +271,7 @@ mechanism, P4's `reading` contracts, works the same way.
 and nothing else:
 - the generic empty prefix (`option_member_list` → value plus unfielded prefix);
 - the Permissions empty prefix (`preproc_conditional_permissions` element → value plus unfielded prefix);
-- the ML, Namespaces and Implementation empty-prefix splits (two properties → one);
+- the ML, Namespaces and Implementation empty-prefix splits (two properties → one; for Implementation including a nested empty prefix, `#if X #if Y #endif #endif`, which was a `preproc_conditional_impl_values` list element);
 - the item 35 unquoted `;`-inside run (two properties → one, with a sequence).
 
 **No contract migrations.** The link and Implementation `;`-after runs keep their element
