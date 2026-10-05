@@ -3,6 +3,7 @@
 #
 # DECIDE-BY-PROBE VERDICTS (file: verdict). Reject codes are .al-located codes.
 decide-chartpart-subpagelink.al: * reject(AL0171)
+decide-chartpart-bare.al: * accept
 decide-const-biginteger.al: * accept
 decide-const-date.al: * accept
 decide-const-datetime-nonzero.al: * reject(AL0257)
@@ -23,8 +24,12 @@ decide-empty-value-reportdataitemlink.al: * reject(AL0171)
 decide-empty-value-tablefilter.al: * reject(AL0104,AL0107,AL0292)
 decide-enabled-status-const.al: * reject(AL0118)
 decide-filter-parenthesized.al: * accept
+decide-generic-empty-prefix-implementation.al: * accept
+decide-generic-empty-prefix-visible.al: * accept
 decide-runpagelink-action-area.al: * reject(AL0104,AL0114,AL0124,AL0198)
 decide-trailing-comma.al: * reject(AL0104,AL0107,AL0292)
+decide-two-conditionals-one-link.al: * accept
+decide-where-const-negative.al: * accept
 #
 # CROSS-DELEGATE NEGATIVES (neg-*): every one is rejected by alc; pinned as it parses in test/corpus.
 neg-const-no-parens.al: * reject(AL0104)
@@ -38,7 +43,8 @@ ACCEPTED (7 placements each: flat, semi-after, semi-arms, mixed, list-internal, 
 REJECTED (no fixture, no placement variants): page-systempart-subpagelink reject(AL0171), pageext-modify-action-runpagelink reject(AL0255), pageext-modify-part-subpagelink reject(AL0246), report-requestpage-action-runpagelink reject(AL0255), report-requestpage-systempart-subpagelink reject(AL0171), xmlport-requestpage-action-runpagelink reject(AL0255), xmlport-requestpage-systempart-subpagelink reject(AL0171)
 #
 # NOTES
-# - Empty value: EVERY delegate rejects it (TableFilter AL0107; report and query DataItemLink AL0171). No optional() on the keyed value, no ;-only arms.
+# - Empty value: every delegate rejects it, but differently. TableFilter (RunPageLink = ;) is a SYNTAX reject (AL0104,AL0107,AL0292); report and query DataItemLink
+#   are SEMANTIC rejects (AL0171). The grammar's shared keyed value is optional, so DataItemLink = ; parses (correct) and RunPageLink = ; over-accepts.
 # - const: accepted = 1.5, -1, -1.5, 1L, -1L, '- 1', '- 1.5', '-/*c*/1' (space or comment between sign and magnitude), a date (20240101D), a time (120000T), 0DT.
 #   Rejected = unary plus (+1, +1.5: AL0104 syntax), a negative date (-20240101D: AL0104,AL0434), 20240101DT (AL0257, a RANGE error: it lexes as a datetime literal, only 0DT is valid).
 # - filter((1|2)&3): ACCEPTED -> deferred-work item (filter_value grammar), no grammar change in B5b.
@@ -53,3 +59,5 @@ REJECTED (no fixture, no placement variants): page-systempart-subpagelink reject
 # - Visible = Flag = Rec.Flag on a page field (leak-visible-flag-equals-amount.al) is accepted.
 # - g11-page-part-empty-arms-elif.al (added by B5b Task 3): two leading absent arms (#if X #elif Y) then a terminated #else arm; !X!Y accepts, every
 #   other assignment rejects (AL0104,AL0107,AL0292: no value, the arms hold the `;`). Exercises _link_whole_conditional_in_if's leading-absent-arms branch.
+# - Deferred-item probes (B5b final review): decide-chartpart-bare (item 32), decide-generic-empty-prefix-visible / -implementation (item 33),
+#   decide-where-const-negative (item 34), decide-two-conditionals-one-link (item 35). All accept, both X assignments where X is used; the grammar shapes are open.

@@ -46,7 +46,7 @@ public API — a change to node structure or field names is a **major** bump.
   - `const` arguments in a link may be signed, decimal or biginteger (`-1`, `1.5`, `-1.5`,
     `1L`), which alc accepts; before, `RunPageLink = Amount = const(1.5);` fell back to a
     `property_expression`. The signed form is a named `_const_negative` rule aliased to
-    `unary_expression`. Unary plus and a negative date stay rejected, as in alc.
+    `unary_expression`. Unary plus and a negative date now ERROR, as alc rejects them (AL0104); before, a one-entry value silently fell back to a `property_expression`.
   - The keyed value is optional: alc rejects an empty `DataItemLink` value only
     semantically (AL0171), and `RunPageLink = ;` is accepted as structural over-acceptance.
     The three value grammars behind the six names (TableFilter, ReportDataItemLink,

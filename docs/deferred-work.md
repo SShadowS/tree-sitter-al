@@ -1223,8 +1223,8 @@ is shared with `where_clause`, so a fix covers both hosts. Production sites: 0
 
 **Established:** 2026-10-05, B5b. A bare `chartpart(C; "Sales Chart") { }` in a page layout is ERROR in
 the grammar (pre-existing, not a B5b regression). alc ACCEPTS it (probe in the B5b Task 6 session:
-split and flat ACCEPT on alc 18.0.41). `SubPageLink` inside a chartpart is rejected by alc (AL0171,
-`decide-chartpart-subpagelink.al`), so that is not the reason to add it. Production sites: 0
+split and flat ACCEPT on alc 18.0.41; committed as `tools/alc_probe/cases/link-keying/decide-chartpart-bare.al`). `SubPageLink` inside a chartpart is rejected by alc (AL0171,
+`tools/alc_probe/cases/link-keying/decide-chartpart-subpagelink.al`), so that is not the reason to add it. Production sites: 0
 (`./tools/corpus-grep.sh -P -i -c '^\s*chartpart\s*\('`).
 
 **Next step:** a `chartpart` rule beside `part`/`systempart`, with the hosts the compiler allows.
@@ -1239,7 +1239,17 @@ ACCEPTED by alc for both X assignments (split and flat). The grammar gives no ER
 `option_member (boolean)`: the generic `_in_if` route reads the empty prefix as a split list, not as
 a transparent block before one value. Same family as the B5b G11 empty-prefix shapes, which the keyed
 link rules handle. Production sites: 0 in all four corpora (a multi-line scan for
-`Name =` followed by `#if` and an immediate `#endif`/`#else`/`#elif`).
+`Name =` followed by `#if` and an immediate `#endif`/`#else`/`#elif`). Probe:
+`tools/alc_probe/cases/link-keying/decide-generic-empty-prefix-visible.al` (accept, X=0 and X=1, split and flat).
+
+The milder-looking `Visible` case is the `option_member_list` shape. The same pattern under
+`Implementation` is worse, a silent split into TWO properties, `has_error` False, identical at the
+pre-B5b base library: `Implementation =` / `#if X` / `#endif` / `IFoo = FooImpl;` in an enum value
+parses as a `property` `Implementation` whose value is an empty `preproc_conditional_property_value`,
+followed by a separate `property` named `IFoo`. alc ACCEPTS it for both X assignments, split and flat
+(`tools/alc_probe/cases/link-keying/decide-generic-empty-prefix-implementation.al`). Production sites: 0
+(`./tools/corpus-grep.sh -P -i` for a line ending in a link-family name or `Implementation`, 16 hits over the four
+corpora, none followed on the next line by `#if`).
 
 **Next step:** decide with an alc four-way probe whether the generic value should treat an empty
 arm as transparent; fix only if a production shape needs it.
@@ -1250,10 +1260,40 @@ arm as transparent; fix only if a production shape needs it.
 
 **Established:** 2026-10-05, found in the B5b Task 3 review; pre-existing. `where_condition`'s `const`
 takes no signed number, so `TableRelation = Cust."No." where(Amount = const(-1));` ERRORs on the `-1`.
-alc ACCEPTS it (probe in the B5b Task 6 session, split and flat). Link `const` arguments were fixed
+alc ACCEPTS it (probe `tools/alc_probe/cases/link-keying/decide-where-const-negative.al`, split and flat). Link `const` arguments were fixed
 in B5b; the `where` const was not. Production sites: 0 (`./tools/corpus-grep.sh -P -i -c 'where\s*\([^)]*=\s*const\s*\(\s*-'`).
 
 **Next step:** reuse the `_const_negative` rule in `where_condition`'s const.
+
+**Owner:** unassigned.
+
+## 35. Two sequential conditionals forming one link value split silently
+
+**Established:** 2026-10-05, B5b final review; pre-existing, the same tree at the pre-B5b base
+library. Both conditionals are valid AL in every configuration (alc ACCEPTS X defined and undefined,
+split and flat: `tools/alc_probe/cases/link-keying/decide-two-conditionals-one-link.al`):
+
+```al
+SubPageLink =
+#if X
+    A = field(B);
+#endif
+#if not X
+    A = field(C);
+#endif
+```
+
+At HEAD, `has_error` is False and the tree is silently wrong: the `SubPageLink` property holds a
+`preproc_conditional_property_value` with the first arm's `link_value_list`, and the second `#if not X`
+arm becomes a separate `preproc_conditional` holding a `property` `A` whose value is a
+`property_expression` (`field(C)`, a call). The spec 3.2 witness covers the shapes it names
+(nested, nested-after, nested-mixed, empty-prefix, exhaustive-elif-not, independent-no-else) but not
+this third shape, a second, separate conditional continuing a value the first one opened.
+Production sites: 0 (the oracle full tier is clean; a scan of every link-family name ending a line
+with `=`, 16 hits over four corpora, none followed by `#if`).
+
+**Next step:** decide whether a conditional after a conditional-terminated link value continues it,
+with an alc four-way probe, in the link rules (`_link_whole_conditional_in_if`).
 
 **Owner:** unassigned.
 
