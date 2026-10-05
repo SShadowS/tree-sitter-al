@@ -357,9 +357,12 @@ def _lower_ordinary(node, ctx) -> Lowered:
             _check_option_holes(new)
         else:
             _check_alternation(new)
+    # Read the selection before _consume places it: a Terminator from the last child (the
+    # core, at a `;`-inside site) is a selected arm's `;`.
+    selected_terminator = any(isinstance(f, Terminator) and getattr(f, "_from_last", False) for f in frags)
     frags = _consume(new, frags)
     if node.kind == "property":
-        _check_site_boundary(node, new, ctx)
+        _check_site_boundary(node, new, ctx, selected_terminator)
     for f in frags:
         if not getattr(f, "_from_last", False):
             raise LoweringError("unconsumed-fragment", node, f"{type(f).__name__} not from the last child")
@@ -397,17 +400,22 @@ def _lower_ordinary(node, ctx) -> Lowered:
 _WHOLE_VALUE_KINDS = frozenset({"preproc_conditional_property_value", "preproc_conditional_property_value_sequence"})
 
 
-def _check_site_boundary(node, new, ctx):
+def _check_site_boundary(node, new, ctx, selected_terminator):
     """A property that ends at its whole-value core (a `;`-inside site: no `;` of its own
     after the core) is terminated only by a selected arm's `;`. A configuration that
     selects none moves the property's boundary beyond the site (`Caption = #if X 'a';
     #endif #if Y #endif ;` at X=0 is `Caption = ;`), which the tree cannot hold:
-    lowering:one-reading at the core, debt B12. A `;`-after site, where the property owns
-    its `;`, never reaches this."""
+    lowering:one-reading at the core, debt B12. The verdict comes from the selection, not
+    from the lowered shape: when a terminator WAS selected and the property still does not
+    end in it, that is a lowering defect, contract-shape, never absorbed as debt. A
+    `;`-after site, where the property owns its `;`, never reaches this."""
     core = next((c for c in node.children if c.field == "value" and c.kind in _WHOLE_VALUE_KINDS), None)
-    if (core is not None and node.children[-1] is core
-            and not (new.children and new.children[-1].kind == ";" and not new.children[-1].children)):
+    if core is None or node.children[-1] is not core:
+        return
+    if not selected_terminator:
         raise LoweringError("one-reading", core, ctx.child("property", "value").host())
+    if not (new.children and new.children[-1].kind == ";" and not new.children[-1].children):
+        raise LoweringError("contract-shape", core, "a selected terminator does not end the property")
 
 
 def _check_option_holes(new):

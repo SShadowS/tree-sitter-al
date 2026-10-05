@@ -96,3 +96,40 @@ def test_empty_value_terminated_arm_keeps_its_terminator(al_parser):
 def test_link_and_ml_runs_pass(al_parser, src):
     witness.assert_produces(al_parser, src, SEQ)
     witness.assert_all_pass(al_parser, src)
+
+
+def test_selected_terminator_not_placed_is_contract_shape(al_parser, monkeypatch):
+    # The b1 hook decides from the selection, not the lowered shape. Mutation: _consume
+    # drops every Terminator a property would take (a lowering defect: the terminator was
+    # selected and never placed). The configurations that select a `;` (X=1) must then be
+    # contract-shape, unclassified, never `lowering:one-reading`, which fixture-classes.tsv
+    # classifies debt(B12) for this case; the ones that select none (X=0) stay one-reading.
+    from tools.config_oracle.lowering import engine
+
+    real = engine._consume
+
+    def drop_terminators(new, frags):
+        if new.kind == "property":
+            frags = [f for f in frags if not isinstance(f, engine.Terminator)]
+        return real(new, frags)
+    monkeypatch.setattr(engine, "_consume", drop_terminators)
+    v = witness.verdicts(al_parser, B1)
+    for cid in ("X=1,Y=0", "X=1,Y=1"):
+        status, items = v[cid]
+        assert status == "cannot-validate", v
+        assert items[0].startswith("lowering:contract-shape:"), v
+        assert not any("one-reading" in i for i in items), v
+    for cid in ("X=0,Y=0", "X=0,Y=1"):
+        assert v[cid][1][0].startswith("lowering:one-reading"), v
+
+
+def test_value_run_select_honours_unsupported_policy(al_parser, monkeypatch):
+    import dataclasses
+
+    from tools.config_oracle import contracts
+    entry = contracts.REGISTRY[SEQ]
+    monkeypatch.setitem(contracts.REGISTRY, SEQ, dataclasses.replace(
+        entry, hosts={**entry.hosts, "property:value": "unsupported"}))
+    v = witness.verdicts(al_parser, RUN_INSIDE)
+    assert all(s == "cannot-validate" and items[0].startswith("lowering:unsupported-type")
+               for s, items in v.values()), v

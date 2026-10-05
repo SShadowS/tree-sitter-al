@@ -368,7 +368,8 @@ def value_run_select(node, ctx) -> Lowered:
     ExpressionContinuation's is. Every selected terminator passes up in source order (the
     first is the property's own, later ones become standalone `;` by mixed placement).
     No other edge changes."""
-    ctx.policy(contracts.REGISTRY[node.kind], node)
+    if ctx.policy(contracts.REGISTRY[node.kind], node) == "unsupported":
+        raise LoweringError("unsupported-type", node, ctx.host())
     values, frags, terminated = [], [], False
     for c in node.children:
         if c.kind != PCPV:
