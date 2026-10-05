@@ -77,10 +77,12 @@ FIELD_INVARIANTS = [
     inv('link_value', 'value', True, set(), 'FIXED',
         "'.' leaked from a seq-spanning field; each name part now fielded alone",
         types={
-            'boolean', 'database_reference', 'date_literal', 'datetime_literal',
-            'filter_value', 'identifier', 'integer', 'keyword_identifier',
-            'qualified_enum_value', 'quoted_identifier', 'string_literal',
-            'time_literal',
+            'biginteger_literal', 'boolean', 'database_reference', 'date_literal',
+            'datetime_literal', 'decimal', 'filter_value', 'identifier', 'integer',
+            'keyword_identifier', 'qualified_enum_value', 'quoted_identifier',
+            'string_literal', 'time_literal',
+            # B5b: const(-1) is ONE unary_expression(operator: '-', operand: numeric).
+            'unary_expression',
         }),
 
     # Implementation = "IFace" = "Impl" -- one entry is also a complete

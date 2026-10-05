@@ -33,6 +33,29 @@ public API — a change to node structure or field names is a **major** bump.
 
 ### Changed
 
+- **The link family is keyed by NAME, and generic property values lose link syntax (roadmap
+  B5b). Breaking for tree consumers only where a generic property held link syntax; every
+  production tree is unchanged.** The scanner emits `LINK_PROPERTY_NAME` for exactly the
+  compiler's six link names (`SubPageLink`, `RunPageLink`, `LinkFields`, `DataItemTableFilter`,
+  `ColumnFilter`, `DataItemLink`), the way it does for `TableRelation`; `FooLink` stays
+  generic.
+  - Link syntax appears only under those six properties. `Visible = Flag = Rec.OtherFlag;`
+    and `Enabled = Status = const(Open);` are a `property_expression` (alc rejects the second
+    only semantically, AL0118), and a dotted or `field(...)` comparison under any other
+    property is an expression, no longer a `link_value_list`.
+  - `const` arguments in a link may be signed, decimal or biginteger (`-1`, `1.5`, `-1.5`,
+    `1L`), which alc accepts; before, `RunPageLink = Amount = const(1.5);` fell back to a
+    `property_expression`. The signed form is a named `_const_negative` rule aliased to
+    `unary_expression`. Unary plus and a negative date now ERROR, as alc rejects them (AL0104); before, a one-entry value silently fell back to a `property_expression`.
+  - The keyed value is optional: alc rejects an empty `DataItemLink` value only
+    semantically (AL0171), and `RunPageLink = ;` is accepted as structural over-acceptance.
+    The three value grammars behind the six names (TableFilter, ReportDataItemLink,
+    QueryDataItemLink) share one union grammar, which deliberately over-accepts.
+  - Production trees are byte-identical in all four corpora (BC.History, DC, BC28.1,
+    BCApps-29.0).
+  - Cost: STATE_COUNT 17,223 -> 17,525 (+1.75%), parser.c +0.97%; `tools.perf ab` over DC,
+    24 rounds, all 1,352 files (trees identical): 0.998 (CI 0.973-1.035), no slowdown.
+
 - **`TableRelation` is keyed by NAME, a relation has one `target`, and other properties'
   dotted values are expressions (roadmap B5, G10, deferred-work items 13 and 15). Breaking
   for tree consumers.** The scanner emits `TABLE_RELATION_PROPERTY_NAME` for the one word

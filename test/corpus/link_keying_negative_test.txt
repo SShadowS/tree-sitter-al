@@ -1,0 +1,762 @@
+; B5b deliberate negatives: every source is a Task 1 probe that alc 18.0.41 REJECTS
+; (tools/alc_probe/cases/link-keying, verdict in each case header). Pinned as they really
+; parse. OVER-ACCEPTED cases are clean trees on purpose: the parser takes structure, and the
+; reject is semantic or a value-kind distinction the neutral link union does not make
+; (spec 2026-10-05 §2.1). The ERROR cases show the ERROR inside the property value
+; (chartpart excepted: that ERROR is at the control and predates B5b).
+; Listed in tools/deliberate-negatives.txt.
+
+================================================================================
+NEGATIVE neg-runpagelink-dotted.al, alc reject(AL0104,AL0292): OVER-ACCEPTED: a clean link tree (the dotted DataItem.Field arm is one union grammar)
+================================================================================
+
+page 50100 P
+{
+    SourceTable = Cust;
+    actions { area(Processing) { action(A) {
+        RunObject = page CustCard;
+        RunPageLink = "No." = Cust.Name;
+    } } }
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (page_declaration
+    (page_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (property
+        name: (property_name)
+        value: (identifier))
+      (actions_section
+        (actions_keyword)
+        body: (action_body
+          (action_area_section
+            (area_keyword)
+            type: (processing_keyword)
+            body: (action_body
+              (action_declaration
+                (action_keyword)
+                name: (identifier)
+                body: (declaration_body
+                  (property
+                    name: (property_name)
+                    value: (object_reference_value
+                      (page_keyword)
+                      (identifier)))
+                  (property
+                    name: (property_name)
+                    value: (link_value_list
+                      (link_value
+                        field: (quoted_identifier)
+                        value: (identifier)
+                        value: (identifier)))))))))))))
+
+================================================================================
+NEGATIVE neg-dataitemlink-const-report.al, alc reject(AL0104,AL0107): OVER-ACCEPTED: a clean link tree (const() is TableFilter-only in alc)
+================================================================================
+
+report 50130 R
+{
+    dataset { dataitem(C; Cust) { } dataitem(D; Cust) {
+        DataItemLinkReference = C;
+        DataItemLink = "No." = const(1);
+    } }
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (report_declaration
+    (report_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (dataset_section
+        (dataset_keyword)
+        body: (dataset_body
+          (report_dataitem
+            (dataitem_keyword)
+            name: (identifier)
+            table_name: (identifier))
+          (report_dataitem
+            (dataitem_keyword)
+            name: (identifier)
+            table_name: (identifier)
+            body: (report_body
+              (property
+                name: (property_name)
+                value: (identifier))
+              (property
+                name: (property_name)
+                value: (link_value_list
+                  (link_value
+                    field: (quoted_identifier)
+                    (const_keyword)
+                    value: (integer)))))))))))
+
+================================================================================
+NEGATIVE neg-dataitemlink-const-query.al, alc reject(AL0104,AL0107): OVER-ACCEPTED: a clean link tree (const() is TableFilter-only in alc)
+================================================================================
+
+query 50150 Q
+{
+    elements { dataitem(C; Cust) { column(No; "No.") { } dataitem(D; Cust) {
+        DataItemLink = "No." = const(1);
+        column(N2; Name) { }
+    } } }
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (query_declaration
+    (query_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (elements_section
+        (elements_keyword)
+        body: (elements_body
+          (query_dataitem
+            (dataitem_keyword)
+            name: (identifier)
+            table_name: (identifier)
+            body: (query_body
+              (query_column
+                (column_keyword)
+                name: (identifier)
+                field_name: (quoted_identifier))
+              (query_dataitem
+                (dataitem_keyword)
+                name: (identifier)
+                table_name: (identifier)
+                body: (query_body
+                  (property
+                    name: (property_name)
+                    value: (link_value_list
+                      (link_value
+                        field: (quoted_identifier)
+                        (const_keyword)
+                        value: (integer))))
+                  (query_column
+                    (column_keyword)
+                    name: (identifier)
+                    field_name: (identifier)))))))))))
+
+================================================================================
+NEGATIVE decide-empty-value-tablefilter.al, alc reject(AL0104,AL0107,AL0292): OVER-ACCEPTED: a clean property with no value (Ruling S')
+================================================================================
+
+page 50100 P
+{
+    SourceTable = Cust;
+    actions { area(Processing) { action(A) {
+        RunObject = page CustCard;
+        RunPageLink = ;
+    } } }
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (page_declaration
+    (page_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (property
+        name: (property_name)
+        value: (identifier))
+      (actions_section
+        (actions_keyword)
+        body: (action_body
+          (action_area_section
+            (area_keyword)
+            type: (processing_keyword)
+            body: (action_body
+              (action_declaration
+                (action_keyword)
+                name: (identifier)
+                body: (declaration_body
+                  (property
+                    name: (property_name)
+                    value: (object_reference_value
+                      (page_keyword)
+                      (identifier)))
+                  (property
+                    name: (property_name)))))))))))
+
+================================================================================
+NEGATIVE decide-empty-value-reportdataitemlink.al, alc reject(AL0171): OVER-ACCEPTED: a clean property with no value (semantic AL0171)
+================================================================================
+
+report 50130 R
+{
+    dataset { dataitem(C; Cust) { } dataitem(D; Cust) {
+        DataItemLinkReference = C;
+        DataItemLink = ;
+    } }
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (report_declaration
+    (report_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (dataset_section
+        (dataset_keyword)
+        body: (dataset_body
+          (report_dataitem
+            (dataitem_keyword)
+            name: (identifier)
+            table_name: (identifier))
+          (report_dataitem
+            (dataitem_keyword)
+            name: (identifier)
+            table_name: (identifier)
+            body: (report_body
+              (property
+                name: (property_name)
+                value: (identifier))
+              (property
+                name: (property_name)))))))))
+
+================================================================================
+NEGATIVE decide-empty-value-querydataitemlink.al, alc reject(AL0171): OVER-ACCEPTED: a clean property with no value (semantic AL0171)
+================================================================================
+
+query 50150 Q
+{
+    elements { dataitem(C; Cust) { column(No; "No.") { } dataitem(D; Cust) {
+        DataItemLink = ;
+        column(N2; Name) { }
+    } } }
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (query_declaration
+    (query_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (elements_section
+        (elements_keyword)
+        body: (elements_body
+          (query_dataitem
+            (dataitem_keyword)
+            name: (identifier)
+            table_name: (identifier)
+            body: (query_body
+              (query_column
+                (column_keyword)
+                name: (identifier)
+                field_name: (quoted_identifier))
+              (query_dataitem
+                (dataitem_keyword)
+                name: (identifier)
+                table_name: (identifier)
+                body: (query_body
+                  (property
+                    name: (property_name))
+                  (query_column
+                    (column_keyword)
+                    name: (identifier)
+                    field_name: (identifier)))))))))))
+
+================================================================================
+NEGATIVE decide-trailing-comma.al, alc reject(AL0104,AL0107,AL0292): OVER-ACCEPTED: a clean link tree (the run keeps its trailing comma; deferred to B7)
+================================================================================
+
+page 50100 P
+{
+    SourceTable = Cust;
+    actions { area(Processing) { action(A) {
+        RunObject = page CustCard;
+        RunPageLink = "No." = field("No."),;
+    } } }
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (page_declaration
+    (page_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (property
+        name: (property_name)
+        value: (identifier))
+      (actions_section
+        (actions_keyword)
+        body: (action_body
+          (action_area_section
+            (area_keyword)
+            type: (processing_keyword)
+            body: (action_body
+              (action_declaration
+                (action_keyword)
+                name: (identifier)
+                body: (declaration_body
+                  (property
+                    name: (property_name)
+                    value: (object_reference_value
+                      (page_keyword)
+                      (identifier)))
+                  (property
+                    name: (property_name)
+                    value: (link_value_list
+                      (link_value
+                        field: (quoted_identifier)
+                        (field_keyword)
+                        value: (quoted_identifier)))))))))))))
+
+================================================================================
+NEGATIVE decide-chartpart-subpagelink.al, alc reject(AL0171): ERROR at the chartpart control itself, which this grammar does not know (pre-existing, unchanged by B5b)
+================================================================================
+
+page 50100 P
+{
+    SourceTable = Cust;
+    layout { area(Content) { chartpart(C; "Sales Chart") {
+        SubPageLink = "No." = field("No.");
+    } } }
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (page_declaration
+    (page_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (property
+        name: (property_name)
+        value: (identifier))
+      (layout_section
+        (layout_keyword)
+        body: (layout_body
+          (area_section
+            (area_keyword)
+            type: (content_keyword)
+            (ERROR
+              (identifier)
+              (identifier)
+              (quoted_identifier)
+              (identifier)
+              (quoted_identifier)
+              (field_keyword)
+              (quoted_identifier)
+              (ERROR))))))))
+
+================================================================================
+NEGATIVE decide-const-datetime-nonzero.al, alc reject(AL0257): OVER-ACCEPTED: a clean link tree (AL0257 is a range error)
+================================================================================
+
+page 50100 P
+{
+    SourceTable = Cust;
+    actions { area(Processing) { action(A) {
+        RunObject = page CustCard;
+        RunPageLink = Stamp = const(20240101DT);
+    } } }
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (page_declaration
+    (page_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (property
+        name: (property_name)
+        value: (identifier))
+      (actions_section
+        (actions_keyword)
+        body: (action_body
+          (action_area_section
+            (area_keyword)
+            type: (processing_keyword)
+            body: (action_body
+              (action_declaration
+                (action_keyword)
+                name: (identifier)
+                body: (declaration_body
+                  (property
+                    name: (property_name)
+                    value: (object_reference_value
+                      (page_keyword)
+                      (identifier)))
+                  (property
+                    name: (property_name)
+                    value: (link_value_list
+                      (link_value
+                        field: (identifier)
+                        (const_keyword)
+                        value: (datetime_literal)))))))))))))
+
+================================================================================
+NEGATIVE decide-enabled-status-const.al, alc reject(AL0118): OVER-ACCEPTED: a property_expression, L1 (semantic AL0118, Ruling T)
+================================================================================
+
+page 50100 P
+{
+    SourceTable = Cust;
+    layout { area(Content) { field(F; Rec.Flag) {
+        Enabled = Status = const(Open);
+    } } }
+    var
+        Status: Option Open,Closed;
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (page_declaration
+    (page_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (property
+        name: (property_name)
+        value: (identifier))
+      (layout_section
+        (layout_keyword)
+        body: (layout_body
+          (area_section
+            (area_keyword)
+            type: (content_keyword)
+            body: (layout_body
+              (page_field
+                (field_keyword)
+                name: (identifier)
+                source: (member_expression
+                  object: (identifier)
+                  member: (identifier))
+                body: (declaration_body
+                  (property
+                    name: (property_name)
+                    value: (property_expression
+                      (comparison_expression
+                        left: (identifier)
+                        operator: (comparison_operator)
+                        right: (call_expression
+                          function: (identifier)
+                          arguments: (argument_list
+                            (identifier))))))))))))
+      (var_section
+        (var_keyword)
+        body: (var_body
+          (variable_declaration
+            name: (identifier)
+            type: (type_specification
+              (option_type
+                (option_keyword)
+                (option_member_list
+                  (option_member
+                    (identifier))
+                  (option_member
+                    (identifier)))))))))))
+
+================================================================================
+NEGATIVE decide-runpagelink-action-area.al, alc reject(AL0104,AL0114,AL0124,AL0198): OVER-ACCEPTED: a clean link tree through the flat property arm (AL0124 host)
+================================================================================
+
+page 50100 P
+{
+    SourceTable = Cust;
+    actions { area(Processing) {
+        RunPageLink = "No." = field("No.");
+        action(A) { RunObject = page CustCard; }
+    } }
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (page_declaration
+    (page_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (property
+        name: (property_name)
+        value: (identifier))
+      (actions_section
+        (actions_keyword)
+        body: (action_body
+          (action_area_section
+            (area_keyword)
+            type: (processing_keyword)
+            body: (action_body
+              (property
+                name: (property_name)
+                value: (link_value_list
+                  (link_value
+                    field: (quoted_identifier)
+                    (field_keyword)
+                    value: (quoted_identifier))))
+              (action_declaration
+                (action_keyword)
+                name: (identifier)
+                body: (declaration_body
+                  (property
+                    name: (property_name)
+                    value: (object_reference_value
+                      (page_keyword)
+                      (identifier))))))))))))
+
+================================================================================
+NEGATIVE neg-const-no-parens.al, alc reject(AL0104): ERROR in the value position of the property
+================================================================================
+
+page 50100 P
+{
+    SourceTable = Cust;
+    actions { area(Processing) { action(A) {
+        RunObject = page CustCard;
+        RunPageLink = "No." = const 1;
+    } } }
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (page_declaration
+    (page_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (property
+        name: (property_name)
+        value: (identifier))
+      (actions_section
+        (actions_keyword)
+        body: (action_body
+          (action_area_section
+            (area_keyword)
+            type: (processing_keyword)
+            body: (action_body
+              (action_declaration
+                (action_keyword)
+                name: (identifier)
+                body: (declaration_body
+                  (property
+                    name: (property_name)
+                    value: (object_reference_value
+                      (page_keyword)
+                      (identifier)))
+                  (property
+                    name: (property_name)
+                    (ERROR
+                      (quoted_identifier)
+                      (const_keyword)
+                      (integer))))))))))))
+
+================================================================================
+NEGATIVE neg-missing-equals.al, alc reject(AL0104): ERROR in the value position of the property
+================================================================================
+
+page 50100 P
+{
+    SourceTable = Cust;
+    actions { area(Processing) { action(A) {
+        RunObject = page CustCard;
+        RunPageLink = "No." field("No.");
+    } } }
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (page_declaration
+    (page_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (property
+        name: (property_name)
+        value: (identifier))
+      (actions_section
+        (actions_keyword)
+        body: (action_body
+          (action_area_section
+            (area_keyword)
+            type: (processing_keyword)
+            body: (action_body
+              (action_declaration
+                (action_keyword)
+                name: (identifier)
+                body: (declaration_body
+                  (property
+                    name: (property_name)
+                    value: (object_reference_value
+                      (page_keyword)
+                      (identifier)))
+                  (property
+                    name: (property_name)
+                    (ERROR
+                      (quoted_identifier)
+                      (identifier)
+                      (quoted_identifier))))))))))))
+
+================================================================================
+NEGATIVE decide-const-plus-integer.al, alc reject(AL0104): ERROR inside the value (no unary + in const)
+================================================================================
+
+page 50100 P
+{
+    SourceTable = Cust;
+    actions { area(Processing) { action(A) {
+        RunObject = page CustCard;
+        RunPageLink = Amount = const(+1);
+    } } }
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (page_declaration
+    (page_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (property
+        name: (property_name)
+        value: (identifier))
+      (actions_section
+        (actions_keyword)
+        body: (action_body
+          (action_area_section
+            (area_keyword)
+            type: (processing_keyword)
+            body: (action_body
+              (action_declaration
+                (action_keyword)
+                name: (identifier)
+                body: (declaration_body
+                  (property
+                    name: (property_name)
+                    value: (object_reference_value
+                      (page_keyword)
+                      (identifier)))
+                  (property
+                    name: (property_name)
+                    value: (link_value_list
+                      (link_value
+                        field: (identifier)
+                        (const_keyword)
+                        (ERROR
+                          (unary_expression
+                            operand: (integer)))))))))))))))
+
+================================================================================
+NEGATIVE decide-const-plus-decimal.al, alc reject(AL0104): ERROR inside the value (no unary + in const)
+================================================================================
+
+page 50100 P
+{
+    SourceTable = Cust;
+    actions { area(Processing) { action(A) {
+        RunObject = page CustCard;
+        RunPageLink = Amount = const(+1.5);
+    } } }
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (page_declaration
+    (page_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (property
+        name: (property_name)
+        value: (identifier))
+      (actions_section
+        (actions_keyword)
+        body: (action_body
+          (action_area_section
+            (area_keyword)
+            type: (processing_keyword)
+            body: (action_body
+              (action_declaration
+                (action_keyword)
+                name: (identifier)
+                body: (declaration_body
+                  (property
+                    name: (property_name)
+                    value: (object_reference_value
+                      (page_keyword)
+                      (identifier)))
+                  (property
+                    name: (property_name)
+                    value: (link_value_list
+                      (link_value
+                        field: (identifier)
+                        (const_keyword)
+                        (ERROR
+                          (unary_expression
+                            operand: (decimal)))))))))))))))
+
+================================================================================
+NEGATIVE decide-const-negative-date.al, alc reject(AL0104,AL0434): ERROR inside the value (no signed date in const)
+================================================================================
+
+page 50100 P
+{
+    SourceTable = Cust;
+    actions { area(Processing) { action(A) {
+        RunObject = page CustCard;
+        RunPageLink = Posted = const(-20240101D);
+    } } }
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (page_declaration
+    (page_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (property
+        name: (property_name)
+        value: (identifier))
+      (actions_section
+        (actions_keyword)
+        body: (action_body
+          (action_area_section
+            (area_keyword)
+            type: (processing_keyword)
+            body: (action_body
+              (action_declaration
+                (action_keyword)
+                name: (identifier)
+                body: (declaration_body
+                  (property
+                    name: (property_name)
+                    value: (object_reference_value
+                      (page_keyword)
+                      (identifier)))
+                  (property
+                    name: (property_name)
+                    value: (link_value_list
+                      (link_value
+                        field: (identifier)
+                        (const_keyword)
+                        (ERROR
+                          (unary_expression
+                            operand: (date_literal)))))))))))))))

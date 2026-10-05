@@ -106,3 +106,15 @@ pair_list_property_keying_negative_test.txt
 # decide-int-where.al, kw-if-first-rejected.al, kw-else-first-rejected.al,
 # kw-where-first-rejected.al.
 table_relation_keying_negative_test.txt
+# B5b link-family negatives: every case is an alc_probe that alc 18.0.41 rejects,
+# pinned as it parses. Ten are OVER-ACCEPTED clean trees on purpose (semantic or
+# value-kind rejects the neutral link union does not separate: empty value, dotted
+# or const() DataItemLink forms, trailing comma, 20240101DT, an AL0124 host, and
+# `Enabled = Status = const(Open)` as a property_expression); six carry an ERROR:
+# const without parentheses, a missing `=`, unary `+` (integer and decimal) and a
+# signed date in const(), plus chartpart, whose ERROR predates B5b. Evidence:
+# tools/alc_probe/cases/link-keying/neg-*.al and decide-{chartpart-subpagelink,
+# const-datetime-nonzero,const-negative-date,const-plus-decimal,const-plus-integer,
+# empty-value-querydataitemlink,empty-value-reportdataitemlink,empty-value-tablefilter,
+# enabled-status-const,runpagelink-action-area,trailing-comma}.al.
+link_keying_negative_test.txt
