@@ -235,6 +235,9 @@ module.exports = grammar({
   ],
 
   conflicts: $ => [
+    // B8: `CalcFormula = #if X #elif Y #endif` is an empty prefix when a formula follows
+    // #endif and a value with absent arms when `;` does; only that token decides.
+    [$._calc_formula_empty_conditional, $._calc_formula_conditional],
     // An empty #if/#endif (pragma-only, pragmas are extras) after a bodiless
     // field can attach either field-internally (preproc_pragma_only, then `{`
     // body) or at section level (preproc_conditional_fields). GLR explores both;
@@ -857,7 +860,11 @@ module.exports = grammar({
       seq(
         field('name', alias($.calc_formula_property_name, $.property_name)),
         '=',
-        field('value', $._calc_formula_expression),
+        // `#if X #endif sum(S.A);` (B8): an all-empty #if before the formula is
+        // valid AL and stays inside this property, unfielded. A formula is not a
+        // list, so no list-element prefix can absorb it as one absorbs it elsewhere.
+        repeat(alias($._calc_formula_empty_conditional, $.preproc_conditional_property_value)),
+        field('value', $._calc_formula_value),
         ';'
       ),
       // The 13 ML properties and Namespaces are keyed by NAME, like CalcFormula:
@@ -1072,6 +1079,12 @@ module.exports = grammar({
           alias($._table_relation_whole_conditional, $.preproc_conditional_property_value),
           alias($._table_relation_keyed_split, $.table_relation_value),
         )),
+      ),
+      // CalcFormula (B8): `;` inside the arms.
+      seq(
+        field('name', alias($.calc_formula_property_name, $.property_name)),
+        '=',
+        field('value', alias($._calc_formula_conditional, $.preproc_conditional_property_value)),
       ),
       // The keyed names (B4): their arms hold the family's list only.
       seq(
@@ -1404,6 +1417,21 @@ module.exports = grammar({
       $.lookup_formula,
       $.aggregate_formula,
     ),
+    // A whole-value #if around the formula (B8, deferred-work item 16): the ML pattern,
+    // one conditional with an optional arm `;` serving both placements. alc accepts every
+    // shape (tools/alc_probe/cases/calcformula-conditional).
+    _calc_formula_value: $ => choice(
+      $._calc_formula_expression,
+      alias($._calc_formula_conditional, $.preproc_conditional_property_value),
+    ),
+    _calc_formula_empty_conditional: $ => seq(
+      $.preproc_if,
+      repeat($.preproc_elif),
+      optional($.preproc_else),
+      $.preproc_endif,
+    ),
+    _calc_formula_conditional: $ => keyedValueConditional($,
+      seq(field('value', $._calc_formula_value), optional(';'))),
 
     lookup_formula: $ => seq(
       $.lookup_keyword,

@@ -13582,6 +13582,10 @@
         "required": false,
         "types": [
           {
+            "type": "aggregate_formula",
+            "named": true
+          },
+          {
             "type": "boolean",
             "named": true
           },
@@ -13623,6 +13627,10 @@
           },
           {
             "type": "link_value_list",
+            "named": true
+          },
+          {
+            "type": "lookup_formula",
             "named": true
           },
           {
@@ -24378,6 +24386,16 @@
           }
         ]
       }
+    },
+    "children": {
+      "multiple": true,
+      "required": false,
+      "types": [
+        {
+          "type": "preproc_conditional_property_value",
+          "named": true
+        }
+      ]
     }
   },
   {

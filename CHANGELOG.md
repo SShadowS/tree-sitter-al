@@ -155,6 +155,18 @@ public API — a change to node structure or field names is a **major** bump.
 
 ### Fixed
 
+- **A whole-value `#if` around a `CalcFormula` value parses (roadmap B8, deferred-work item
+  16).** `CalcFormula = #if X sum(S.A) #else max(S.A) #endif;` was an ERROR with the `;` after
+  `#endif`, in the arms, or mixed; alc accepts every shape (`#elif`, nested, `where()` arms, a
+  `- sum(...)` arm; `tools/alc_probe/cases/calcformula-conditional`). The value is a
+  `preproc_conditional_property_value` whose arms stay formula-shaped (`value:`
+  `aggregate_formula` / `lookup_formula`), never `_property_value`, where a no-`where`
+  aggregate is a call (issue #21). An all-empty `#if` before the formula
+  (`CalcFormula = #if X #endif sum(S.A);`) stays inside the one property as an unfielded
+  `preproc_conditional_property_value`. One declared conflict, scoped to the CalcFormula
+  `#if`. STATE_COUNT 17,525 -> 17,918 (+2.2%). Additive: no production tree changes
+  (BC.History byte-identical).
+
 - **An operator alone in a `#if` arm, with the operand after `#endif`, parses (roadmap
   B3).** `i := 1 #if X + #endif 2;` is valid AL with X defined (alc accepts it, split and
   flat) and was an ERROR in every configuration. `preproc_conditional_expression_tail`

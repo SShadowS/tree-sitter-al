@@ -597,7 +597,16 @@ this open on purpose: it is a property-grammar redesign, not a rename.
 
 ---
 
-## 16. `CalcFormula` has no whole-value conditional
+## 16. `CalcFormula` has no whole-value conditional — RESOLVED 2026-10-05
+
+**RESOLVED 2026-10-05 (roadmap B8).** alc accepts the whole-value `#if` in every shape probed
+(`tools/alc_probe/cases/calcformula-conditional`, 10 cases, 48 compiles); a `tableextension`
+`modify` host is rejected (AL0171) and gets no grammar. `_calc_formula_value` adds a keyed
+conditional (`keyedValueConditional`, arms `value:` `aggregate_formula` / `lookup_formula`, the
+ML pattern with an optional arm `;`), `_property_with_terminator_in_if` gains a CalcFormula arm
+for the `;`-in-the-arms placement, and an all-empty `#if` before the formula is an unfielded
+prefix inside the property. Pinned by `test/corpus/calcformula_conditional_test.txt` and
+`tools/config_oracle/tests/test_calcformula_incremental.py`. The text below is the original report.
 
 **Established:** 2026-09-28, G6 design review (section 2F). Read from the
 grammar, not probed.
@@ -1250,6 +1259,12 @@ followed by a separate `property` named `IFoo`. alc ACCEPTS it for both X assign
 (`tools/alc_probe/cases/link-keying/decide-generic-empty-prefix-implementation.al`). Production sites: 0
 (`./tools/corpus-grep.sh -P -i` for a line ending in a link-family name or `Implementation`, 16 hits over the four
 corpora, none followed on the next line by `#if`).
+
+**Also, observed in B8 (2026-10-05), not probed:** `CaptionML =` / `#if X` / `#endif` / ` ENU='a';`
+splits silently the same way, the ML keyed conditional (B4) allowing all arms absent: a `property`
+whose value is the empty conditional, then a property `ENU`. CalcFormula (B8) does not split: its
+keyed value takes an all-empty `#if` as an unfielded prefix inside the property, a template for the
+keyed families here.
 
 **Next step:** decide with an alc four-way probe whether the generic value should treat an empty
 arm as transparent; fix only if a production shape needs it.

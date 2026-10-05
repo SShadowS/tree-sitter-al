@@ -460,7 +460,10 @@ register("preproc_conditional_table_relation", "assembler",
 register("preproc_conditional_property_value", "assembler",
          "tools.config_oracle.lowering.assemblers.property_value_select",
          hosts={"property:value": "single-slot",
-                "preproc_conditional_property_value:value": "single-slot"},
+                "preproc_conditional_property_value:value": "single-slot",
+                # B8: the unfielded all-empty #if before a CalcFormula value
+                # (`CalcFormula = #if X #endif sum(S.A);`); it lowers to nothing.
+                "property:<children>": "optional-slot"},
          # Every visible kind _property_value offers (grammar.js _property_value),
          # the nested whole value included, and the arm's own ';'. Plus
          # namespace_value_list, the arm of a keyed Namespaces whole value (B4).
@@ -473,7 +476,9 @@ register("preproc_conditional_property_value", "assembler",
               "order_by_list", "implementation_value_list", "option_member_list",
               "sorting_value", "link_value_list", "property_expression",
               "keyword_identifier", "where_clause", "object_reference_value",
-              "decimal_range_value", "signed_integer_list"})
+              "decimal_range_value", "signed_integer_list",
+              # B8: a CalcFormula whole value's arms
+              "aggregate_formula", "lookup_formula"})
 # Non-prefixed special type: completes an earlier table relation (spec section 3).
 # Consumed by table_relation_select as a RelationContinuation; never lowered directly.
 # B5: also a direct child of table_relation_value, as the shared `else` tail after a
