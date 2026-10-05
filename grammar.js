@@ -219,6 +219,10 @@ function valueRunRules(p, value, optionalCore) {
       // is optional, and only after at least one decoration -- never a bare `;`
       ...(optionalCore ? [seq(repeat1($._value_decoration), ';')] : []),
       seq(deco($), field('value', groupT($))),
+      // a `;`-inside core (one group or a sequence) followed DIRECTLY by `;`: that `;`
+      // is the arm's own, as at the property site (§3.2 "directly after the run", at
+      // every value site)
+      seq(deco($), field('value', $[n('in_core')]), ';'),
     ),
     [n('arm_nt')]: $ => seq(deco($), field('value', choice(
       groupNt($),

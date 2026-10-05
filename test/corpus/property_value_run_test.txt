@@ -3667,3 +3667,186 @@ DefaultImplementation =
           (implementation_value
             interface: (identifier)
             implementation: (identifier)))))))
+
+================================================================================
+B11 regression: a `;` directly after a nested `;`-inside group is the arm's own (2 levels)
+================================================================================
+
+page 50100 P { layout { area(Content) { field(F; Rec.Flag) {
+Caption =
+#if X
+#if Y
+'a';
+#endif
+;
+#endif
+;
+} } } }
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (page_declaration
+    (page_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (layout_section
+        (layout_keyword)
+        body: (layout_body
+          (area_section
+            (area_keyword)
+            type: (content_keyword)
+            body: (layout_body
+              (page_field
+                (field_keyword)
+                name: (identifier)
+                source: (member_expression
+                  object: (identifier)
+                  member: (identifier))
+                body: (declaration_body
+                  (property
+                    name: (property_name)
+                    value: (preproc_conditional_property_value
+                      (preproc_if
+                        (preproc_open)
+                        condition: (identifier))
+                      value: (preproc_conditional_property_value
+                        (preproc_if
+                          (preproc_open)
+                          condition: (identifier))
+                        value: (string_literal)
+                        (preproc_endif
+                          (preproc_close)))
+                      (preproc_endif
+                        (preproc_close)))))))))))))
+
+================================================================================
+B11 regression: a `;` directly after a nested `;`-inside group is the arm's own (3 levels)
+================================================================================
+
+page 50100 P { layout { area(Content) { field(F; Rec.Flag) {
+Caption =
+#if X
+#if Y
+#if Z
+'a';
+#endif
+;
+#endif
+;
+#endif
+;
+} } } }
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (page_declaration
+    (page_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (layout_section
+        (layout_keyword)
+        body: (layout_body
+          (area_section
+            (area_keyword)
+            type: (content_keyword)
+            body: (layout_body
+              (page_field
+                (field_keyword)
+                name: (identifier)
+                source: (member_expression
+                  object: (identifier)
+                  member: (identifier))
+                body: (declaration_body
+                  (property
+                    name: (property_name)
+                    value: (preproc_conditional_property_value
+                      (preproc_if
+                        (preproc_open)
+                        condition: (identifier))
+                      value: (preproc_conditional_property_value
+                        (preproc_if
+                          (preproc_open)
+                          condition: (identifier))
+                        value: (preproc_conditional_property_value
+                          (preproc_if
+                            (preproc_open)
+                            condition: (identifier))
+                          value: (string_literal)
+                          (preproc_endif
+                            (preproc_close)))
+                        (preproc_endif
+                          (preproc_close)))
+                      (preproc_endif
+                        (preproc_close)))))))))))))
+
+================================================================================
+B11: a `;` directly after a nested `;`-inside sequence is the arm's own
+================================================================================
+
+page 50100 P { layout { area(Content) { field(F; Rec.Flag) {
+Caption =
+#if X
+#if Y
+'a';
+#endif
+#if not Y
+'b';
+#endif
+;
+#else
+'c';
+#endif
+} } } }
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (page_declaration
+    (page_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (layout_section
+        (layout_keyword)
+        body: (layout_body
+          (area_section
+            (area_keyword)
+            type: (content_keyword)
+            body: (layout_body
+              (page_field
+                (field_keyword)
+                name: (identifier)
+                source: (member_expression
+                  object: (identifier)
+                  member: (identifier))
+                body: (declaration_body
+                  (property
+                    name: (property_name)
+                    value: (preproc_conditional_property_value
+                      (preproc_if
+                        (preproc_open)
+                        condition: (identifier))
+                      value: (preproc_conditional_property_value_sequence
+                        value: (preproc_conditional_property_value
+                          (preproc_if
+                            (preproc_open)
+                            condition: (identifier))
+                          value: (string_literal)
+                          (preproc_endif
+                            (preproc_close)))
+                        value: (preproc_conditional_property_value
+                          (preproc_if
+                            (preproc_open)
+                            condition: (preproc_not_expression
+                              (identifier)))
+                          value: (string_literal)
+                          (preproc_endif
+                            (preproc_close))))
+                      (preproc_else)
+                      value: (string_literal)
+                      (preproc_endif
+                        (preproc_close)))))))))))))
