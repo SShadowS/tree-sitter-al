@@ -75,11 +75,14 @@ def test_a_preproc_named_type_with_no_signal_is_not_flagged():
 
 
 def test_an_unregistered_unprefixed_fragment_is_detected_through_its_parents():
-    pol = policy()
-    del pol["types"]["else_table_relation_fragment"]
-    registry = {k: v for k, v in contracts.REGISTRY.items() if k != "else_table_relation_fragment"}
-    assert run(pol, registry=registry) == [
-        "unclassified: else_table_relation_fragment (only ever a child of special types)"]
+    """A synthetic type: `else_table_relation_fragment` used to be the example, but since B5
+    `table_relation_value` (an ordinary type) holds it directly, so it is no longer only a
+    child of special types."""
+    nt = copy.deepcopy(node_types()) + [{"type": "unprefixed_tail", "named": True}]
+    for t in nt:
+        if t["type"] == "preproc_conditional_table_relation":
+            t["children"]["types"].append({"type": "unprefixed_tail", "named": True})
+    assert run(nt=nt) == ["unclassified: unprefixed_tail (only ever a child of special types)"]
 
 
 def test_a_stale_entry_fails():
