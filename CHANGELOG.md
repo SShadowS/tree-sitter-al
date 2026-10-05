@@ -39,14 +39,14 @@ public API — a change to node structure or field names is a **major** bump.
   `TableRelation`, the way it does for `CalcFormula`, the 13 ML names and `Namespaces`;
   `ValidateTableRelation` and `TestTableRelation` stay generic. The compiler reaches its
   relation grammar through that name and nothing else.
-  - D1, 36,118 BC.History/DC values: a `TableRelation` target is
-    `simple_table_relation target: (qualified_name ...)`, not `table:` on every segment
-    (the field segment was fielded `table` too).
+  - D1, 36,118 values (four-corpus totals: BC.History, DC, BC28.1, BCApps-29.0): a bare
+    `TableRelation = Customer;` is relation-shaped, no longer a generic leaf.
   - D2, 14,011 values: a dotted value of any OTHER property (`AutoFormatExpression =
     Rec."Currency Code";`, `Visible = Rec.A;`) is an expression, no longer a
     `table_relation_value` with `Rec` fielded `table:`.
-  - D3, 25,714 values: a bare `TableRelation = Customer;` is relation-shaped, no longer a
-    generic leaf.
+  - D3, 25,714 values: on values that were already relations, a `TableRelation` target is
+    `simple_table_relation target: (qualified_name ...)`, not `table:` on every segment
+    (the field segment was fielded `table` too).
   - G10: `Visible = Rec.A #if X and B #endif ;` parses as an expression continued across the
     `#if`, not a relation with an ERROR arm.
   - Cost: STATE_COUNT 16,893 -> 17,223 (+1.95%), parser.c +0.53%; `tools.perf ab` over DC,

@@ -437,7 +437,9 @@ def main(argv=None) -> int:
             rows: list = []
             findings = check(a.root, cur, rows=rows)
             res_rows = rows
-            extra = ""
+            tr = sum(1 for r in rows if r[4] == "tablerelation")
+            extra = (f" files={sum(1 for _ in _al_files(a.root))} tablerelation_sites={tr}"
+                     f" d2_sites={len(rows) - tr}")
         else:
             if not a.base_lib:
                 raise RuntimeError("delta needs --base-lib")

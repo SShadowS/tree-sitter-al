@@ -1179,6 +1179,24 @@ BCApps-29.0: 0 lines, 0 files each).
 **Owner:** unassigned. Probe alc first (`python -m tools.alc_probe`); if accepted, fix by
 reserved-word handling at value start, as B5 did for `_qualified_name_segment`.
 
+## 29. Four `TableRelation` shapes with `#if` inside the chain ERROR
+
+**Established:** 2026-10-05, found in the B5 final review with `python tools/snip.py --raw`
+inside a table field. Not B5 regressions (the shapes ERROR the same way before B5). alc
+validity was not probed. Production sites: 0.
+
+| shape (`TableRelation = ...;`) | tree today |
+|---|---|
+| `if (A = const(X)) Item #if X else if (A = const(Y)) Vendor #endif else Customer` | ERROR on `else Customer` (mid-chain `#if` plus a shared `else`) |
+| `Customer #if X where(A = const(1)) #endif` | one ERROR spanning the whole value |
+| `#if X Item #else Resource #endif where(A = const(1))` | one ERROR spanning the whole value |
+| `if (A = const(X)) #if X Item #else Vendor #endif` | ERROR on `#if X` and on `#else Vendor #endif;` |
+
+**Next step:** the four-way alc probe (`python -m tools.alc_probe run`) on each shape; fix
+only the ones alc accepts.
+
+**Owner:** unassigned.
+
 ## Longer-lived proposals, tracked separately
 
 - [`python-bindings-modernization.md`](python-bindings-modernization.md) — the

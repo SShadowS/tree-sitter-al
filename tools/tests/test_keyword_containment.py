@@ -23,3 +23,40 @@ def test_generic_value_tree_unchanged(word):
     for site in SITES:
         src = site.replace(b"%s", w)
         assert str(cur.parse(src).root_node) == str(base.parse(src).root_node), (word, src)
+
+
+# Absolute form: needs no base library, so the containment proof still runs after merge.
+# The value node of a generic property is a childless `identifier` for every keyword
+# except these, whose pinned shapes are what the pre-B5 library gave (measured at B5 review).
+# `where` ERRORs as a generic value at base too (deferred-work item 28): it is pinned as an
+# ERROR, so fixing item 28 fails this test on purpose and the pin is dropped then.
+PINNED = {w: "keyword_identifier" for w in
+          ("action", "codeunit", "enum", "page", "query", "report", "system", "xmlport")}
+PINNED.update({w: "option_member_list" for w in ("internal", "local", "protected", "tabledata")})
+
+
+def _values(n, out):
+    if n.type == "property":
+        out.append(n.child_by_field_name("value"))
+    for c in n.children:
+        _values(c, out)
+
+
+@pytest.mark.parametrize("word", load_keywords())
+def test_generic_value_shape_absolute(word):
+    cur = rc.parser_for(None)
+    w = word.capitalize().encode()
+    for site in SITES:
+        root = cur.parse(site.replace(b"%s", w)).root_node
+        if word == "where":
+            assert root.has_error, "item 28 fixed? drop the pin"
+            continue
+        assert not root.has_error, (word, site)
+        vals = []
+        _values(root, vals)
+        assert vals, (word, site)
+        want = PINNED.get(word, "identifier")
+        for v in vals:
+            assert v.type == want, (word, v.type, want)
+            if want == "identifier":
+                assert v.child_count == 0, (word, "identifier has children")
