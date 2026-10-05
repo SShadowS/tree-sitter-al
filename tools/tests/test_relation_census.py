@@ -341,3 +341,49 @@ def test_delta_emits_one_row_per_rewrite(tmp_path):
     r = rc.delta([tmp_path], base, Alt())
     assert not r.findings
     assert [(row[5], row[8]) for row in r.rows] == [("L1", "1"), ("L1", "4")]
+
+
+# L3 const-argument STRUCTURE, not just type (review fix round 1). The new side is the base
+# library's link pair for `const(155)`; its integer is proxied into a node with the given type
+# and the children of a real old-side argument of the same span.
+
+def _l3_pair(arg: bytes, keep=None, type_="unary_expression"):
+    old = _pv(b"RunPageLink = X = const(" + arg + b");")
+    u = next(n for n in rc.walk(old) if n.type == "argument_list").named_children[0]
+    idx = range(u.child_count) if keep is None else keep
+    kids, names = [u.children[i] for i in idx], [u.field_name_for_child(i) for i in idx]
+    new = _pv(b"RunPageLink = X = const(155);", {("integer", b"155"): {
+        "type": type_, "children": kids, "child_count": len(kids), "field_name_for_child": names.__getitem__}})
+    return old, new
+
+
+def _l3_unary(arg, keep=None, type_="unary_expression"):
+    return _recs("RunPageLink", *_l3_pair(arg, keep, type_))
+
+
+@needs_b5b_base
+def test_l3_signed_number_is_approved():
+    assert _l3_unary(b"-15") == [((), "L3")]
+
+
+@needs_b5b_base
+@pytest.mark.parametrize("arg", [b"-Ab", b"+15"])  # an identifier operand; unary plus (alc rejects it, Task 1)
+def test_l3_unary_argument_that_is_not_a_signed_number(arg):
+    with pytest.raises(rc.Unclassifiable, match="const argument"):
+        _l3_unary(arg)
+
+
+@needs_b5b_base
+@pytest.mark.parametrize("keep", [[0], []])  # the operator without an operand; a bare node (the reviewer's probe)
+def test_l3_unary_without_operand_is_no_approved_form(keep):
+    _, new = _l3_pair(b"-15", keep)
+    v = next(n for n in rc.walk(new) if n.type == "unary_expression")
+    assert not rc._const_form_ok(v, rc.APPROVED_CONST_FORMS)
+    with pytest.raises(rc.Unclassifiable):  # through rewrite_records too (its token check fires first)
+        _l3_unary(b"-15", keep)
+
+
+@needs_b5b_base
+def test_l3_decimal_must_be_a_leaf():
+    with pytest.raises(rc.Unclassifiable, match="const argument"):
+        _l3_unary(b"-15", None, type_="decimal")

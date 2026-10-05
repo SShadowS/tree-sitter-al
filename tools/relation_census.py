@@ -478,6 +478,29 @@ def _pair(link_list, prop_expr):
     return k[2], lv.children_by_field_name("value"), r
 
 
+_NUMERIC_LEAVES = {"integer", "decimal", "biginteger_literal"}
+_COMMENTS = {"comment", "multiline_comment"}
+
+
+def _const_form_ok(v, approved) -> bool:
+    """An approved L3 `const` argument by type AND structure (spec §4.2: sign and magnitude only):
+    a `decimal`/`biginteger_literal` leaf, or a `unary_expression` that is exactly
+    `operator: "-"` + `operand: <numeric leaf>` (comments between them allowed; unary `+` is
+    rejected by alc, Task 1)."""
+    if v.type not in approved:
+        return False
+    if v.type in ("decimal", "biginteger_literal"):
+        return v.child_count == 0
+    if v.type == "unary_expression":
+        fielded = [(f, c) for f, c in _kids(v) if f is not None]
+        others = [c for f, c in _kids(v) if f is None]
+        if [f for f, _ in fielded] != ["operator", "operand"] or any(c.type not in _COMMENTS for c in others):
+            return False
+        op, od = fielded[0][1], fielded[1][1]
+        return op.type == "-" and od.type in _NUMERIC_LEAVES and od.child_count == 0
+    return False  # an approved type with no structural rule here is not accepted
+
+
 def _rewrite(name, o, n, approved) -> str | None:
     if o.type == "link_value_list" and n.type == "property_expression":
         if name in LINK_NAMES:
@@ -493,7 +516,7 @@ def _rewrite(name, o, n, approved) -> str | None:
                 or marker.type != "const_keyword" or args is None or args.named_child_count != 1):
             raise Unclassifiable(f"L3 at {r.start_byte}: not a one-argument const(...)")
         arg = args.named_children[0]
-        if len(vals) != 1 or vals[0].type not in approved or _span(vals[0]) != _span(arg):
+        if len(vals) != 1 or not _const_form_ok(vals[0], approved) or _span(vals[0]) != _span(arg):
             raise Unclassifiable(f"L3 const argument {[v.type for v in vals]} at {arg.start_byte}"
                                  f" is not one approved form {sorted(approved)}")
         return "L3"
@@ -558,7 +581,7 @@ def delta(roots, base_parser, cur_parser, *, approved_const_forms=APPROVED_CONST
                 if (bv is None) != (cv is None):
                     findings.append(Finding("unclassified", path, k[1], k[2], "value presence differs"))
                 continue
-            if str(bv) == str(cv):
+            if str(bv) == str(cv):  # anonymous-only / span-only changes: left to tree-harness (spec §4.2)
                 continue
             try:
                 try:
