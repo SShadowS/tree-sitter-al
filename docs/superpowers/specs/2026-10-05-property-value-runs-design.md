@@ -355,7 +355,7 @@ task, two spikes are built.
 **Families.**
 - **Generic:** the disjoint terminated / non-terminated group states, the recursive
   witnesses, the empty rule and the sequence alias.
-- **Link:** the separator rule against the element-conditional reading, under link
+- **Link:** the §3.1 routing, kind (a) against kind (b) (element conditionals), under link
   precedence 6.
 
 **Delayed decisions.** Both spikes must keep two readings alive until they are decided:
@@ -451,9 +451,9 @@ Committed before any grammar change, with `--check` clean:
   value sites;
 - the terminated-group-then-property block (the property ends);
 - the configuration-dependent boundary examples;
-- the list-family runs under the separator rule (§3.1): no separator crossing a boundary →
-  sequence; separators crossing boundaries, including the entirely conditional two-entry list
-  of §3.1 → element conditionals, unchanged;
+- the list-family runs under the §3.1 routing: kind (a) → sequence; kind (b), including the
+  entirely conditional two-entry list of §3.1 → element conditionals (unchanged for link and
+  Implementation, new for `OptionMembers`);
 - the terminated-group-then-property example of §4.2, with the final standalone `;`;
 - the kind (c) shapes as deliberate ERRORs owned by B13. They are listed in
   `tools/deliberate-negatives.txt`, with a note that they are valid AL whose structure is
