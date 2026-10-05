@@ -1,3 +1,4 @@
+// Fixture property_value_run_negative_test.txt#B11 negative: TableRelation all-empty value is an ERROR, the core is required (alc AL0107 in every configuration)#0
 // B11: All-empty whole value, TableRelation: `N = #if X #endif ;` (spec 4.1).
 // source: docs/superpowers/specs/2026-10-05-property-value-runs-design.md 5.1
 // expect: * reject(AL0107)

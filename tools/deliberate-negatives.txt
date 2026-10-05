@@ -118,3 +118,7 @@ table_relation_keying_negative_test.txt
 # empty-value-querydataitemlink,empty-value-reportdataitemlink,empty-value-tablefilter,
 # enabled-status-const,runpagelink-action-area,trailing-comma}.al.
 link_keying_negative_test.txt
+# B11 (spec 2026-10-05 §3.2 matrix): the all-empty TableRelation and CalcFormula values.
+# Their core is required; alc rejects both in every configuration (AL0107; AL0104/AL0107/
+# AL0176), tools/alc_probe/cases/value-runs/all-empty-{tablerelation,calcformula}.al.
+property_value_run_negative_test.txt
