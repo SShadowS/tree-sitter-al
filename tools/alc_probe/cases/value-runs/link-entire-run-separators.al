@@ -1,3 +1,4 @@
+// Fixture property_value_run_test.txt#B11: SubPageLink, entirely conditional run with leading and trailing separator groups (step 3, unchanged)#0
 // B11: SubPageLink entirely conditional run: missing, leading and trailing separators, nothing selected.
 // source: docs/superpowers/specs/2026-10-05-property-value-runs-design.md 5.1
 // expect: * accept

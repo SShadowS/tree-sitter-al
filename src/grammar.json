@@ -1879,12 +1879,57 @@
               "type": "CHOICE",
               "members": [
                 {
-                  "type": "FIELD",
-                  "name": "value",
-                  "content": {
-                    "type": "SYMBOL",
-                    "name": "_ml_property_value"
-                  }
+                  "type": "CHOICE",
+                  "members": [
+                    {
+                      "type": "REPEAT1",
+                      "content": {
+                        "type": "SYMBOL",
+                        "name": "_value_decoration"
+                      }
+                    },
+                    {
+                      "type": "SEQ",
+                      "members": [
+                        {
+                          "type": "REPEAT",
+                          "content": {
+                            "type": "SYMBOL",
+                            "name": "_value_decoration"
+                          }
+                        },
+                        {
+                          "type": "FIELD",
+                          "name": "value",
+                          "content": {
+                            "type": "CHOICE",
+                            "members": [
+                              {
+                                "type": "SYMBOL",
+                                "name": "_ml_property_value"
+                              },
+                              {
+                                "type": "ALIAS",
+                                "content": {
+                                  "type": "SYMBOL",
+                                  "name": "_ml_sequence_after"
+                                },
+                                "named": true,
+                                "value": "preproc_conditional_property_value_sequence"
+                              }
+                            ]
+                          }
+                        },
+                        {
+                          "type": "REPEAT",
+                          "content": {
+                            "type": "SYMBOL",
+                            "name": "_value_decoration"
+                          }
+                        }
+                      ]
+                    }
+                  ]
                 },
                 {
                   "type": "BLANK"
@@ -1896,6 +1941,65 @@
               "value": ";"
             }
           ]
+        },
+        {
+          "type": "PREC",
+          "value": 1,
+          "content": {
+            "type": "SEQ",
+            "members": [
+              {
+                "type": "FIELD",
+                "name": "name",
+                "content": {
+                  "type": "ALIAS",
+                  "content": {
+                    "type": "SYMBOL",
+                    "name": "_ml_property_name"
+                  },
+                  "named": true,
+                  "value": "property_name"
+                }
+              },
+              {
+                "type": "STRING",
+                "value": "="
+              },
+              {
+                "type": "REPEAT",
+                "content": {
+                  "type": "SYMBOL",
+                  "name": "_value_decoration"
+                }
+              },
+              {
+                "type": "FIELD",
+                "name": "value",
+                "content": {
+                  "type": "CHOICE",
+                  "members": [
+                    {
+                      "type": "SYMBOL",
+                      "name": "_ml_in_core"
+                    },
+                    {
+                      "type": "ALIAS",
+                      "content": {
+                        "type": "SYMBOL",
+                        "name": "_ml_sequence_after_t"
+                      },
+                      "named": true,
+                      "value": "preproc_conditional_property_value_sequence"
+                    }
+                  ]
+                }
+              },
+              {
+                "type": "STRING",
+                "value": ";"
+              }
+            ]
+          }
         },
         {
           "type": "SEQ",
@@ -1997,12 +2101,28 @@
               "type": "CHOICE",
               "members": [
                 {
-                  "type": "FIELD",
-                  "name": "value",
-                  "content": {
-                    "type": "SYMBOL",
-                    "name": "_link_property_value"
-                  }
+                  "type": "CHOICE",
+                  "members": [
+                    {
+                      "type": "FIELD",
+                      "name": "value",
+                      "content": {
+                        "type": "SYMBOL",
+                        "name": "_link_property_value"
+                      }
+                    },
+                    {
+                      "type": "PREC_DYNAMIC",
+                      "value": 1,
+                      "content": {
+                        "type": "REPEAT1",
+                        "content": {
+                          "type": "SYMBOL",
+                          "name": "_value_decoration"
+                        }
+                      }
+                    }
+                  ]
                 },
                 {
                   "type": "BLANK"
@@ -2014,6 +2134,51 @@
               "value": ";"
             }
           ]
+        },
+        {
+          "type": "PREC",
+          "value": 1,
+          "content": {
+            "type": "SEQ",
+            "members": [
+              {
+                "type": "FIELD",
+                "name": "name",
+                "content": {
+                  "type": "ALIAS",
+                  "content": {
+                    "type": "SYMBOL",
+                    "name": "_link_property_name"
+                  },
+                  "named": true,
+                  "value": "property_name"
+                }
+              },
+              {
+                "type": "STRING",
+                "value": "="
+              },
+              {
+                "type": "REPEAT",
+                "content": {
+                  "type": "SYMBOL",
+                  "name": "_value_decoration"
+                }
+              },
+              {
+                "type": "FIELD",
+                "name": "value",
+                "content": {
+                  "type": "SYMBOL",
+                  "name": "_link_in_core"
+                }
+              },
+              {
+                "type": "STRING",
+                "value": ";"
+              }
+            ]
+          }
         }
       ]
     },
@@ -2028,14 +2193,161 @@
           "type": "ALIAS",
           "content": {
             "type": "SYMBOL",
-            "name": "_ml_value_conditional"
+            "name": "_ml_after_group"
           },
           "named": true,
           "value": "preproc_conditional_property_value"
         }
       ]
     },
-    "_ml_value_conditional": {
+    "_ml_arm_t": {
+      "type": "CHOICE",
+      "members": [
+        {
+          "type": "SEQ",
+          "members": [
+            {
+              "type": "REPEAT",
+              "content": {
+                "type": "SYMBOL",
+                "name": "_value_decoration"
+              }
+            },
+            {
+              "type": "FIELD",
+              "name": "value",
+              "content": {
+                "type": "SYMBOL",
+                "name": "_ml_property_value"
+              }
+            },
+            {
+              "type": "REPEAT",
+              "content": {
+                "type": "SYMBOL",
+                "name": "_value_decoration"
+              }
+            },
+            {
+              "type": "STRING",
+              "value": ";"
+            }
+          ]
+        },
+        {
+          "type": "SEQ",
+          "members": [
+            {
+              "type": "REPEAT1",
+              "content": {
+                "type": "SYMBOL",
+                "name": "_value_decoration"
+              }
+            },
+            {
+              "type": "STRING",
+              "value": ";"
+            }
+          ]
+        },
+        {
+          "type": "SEQ",
+          "members": [
+            {
+              "type": "REPEAT",
+              "content": {
+                "type": "SYMBOL",
+                "name": "_value_decoration"
+              }
+            },
+            {
+              "type": "FIELD",
+              "name": "value",
+              "content": {
+                "type": "ALIAS",
+                "content": {
+                  "type": "SYMBOL",
+                  "name": "_ml_group_t"
+                },
+                "named": true,
+                "value": "preproc_conditional_property_value"
+              }
+            }
+          ]
+        },
+        {
+          "type": "SEQ",
+          "members": [
+            {
+              "type": "REPEAT",
+              "content": {
+                "type": "SYMBOL",
+                "name": "_value_decoration"
+              }
+            },
+            {
+              "type": "FIELD",
+              "name": "value",
+              "content": {
+                "type": "SYMBOL",
+                "name": "_ml_in_core"
+              }
+            },
+            {
+              "type": "STRING",
+              "value": ";"
+            }
+          ]
+        }
+      ]
+    },
+    "_ml_arm_nt": {
+      "type": "SEQ",
+      "members": [
+        {
+          "type": "REPEAT",
+          "content": {
+            "type": "SYMBOL",
+            "name": "_value_decoration"
+          }
+        },
+        {
+          "type": "FIELD",
+          "name": "value",
+          "content": {
+            "type": "CHOICE",
+            "members": [
+              {
+                "type": "ALIAS",
+                "content": {
+                  "type": "SYMBOL",
+                  "name": "_ml_group_nt"
+                },
+                "named": true,
+                "value": "preproc_conditional_property_value"
+              },
+              {
+                "type": "ALIAS",
+                "content": {
+                  "type": "SYMBOL",
+                  "name": "_ml_sequence_in"
+                },
+                "named": true,
+                "value": "preproc_conditional_property_value_sequence"
+              }
+            ]
+          }
+        }
+      ]
+    },
+    "_ml_gap": {
+      "type": "REPEAT1",
+      "content": {
+        "type": "SYMBOL",
+        "name": "_value_decoration"
+      }
+    },
+    "_ml_group_t": {
       "type": "SEQ",
       "members": [
         {
@@ -2043,37 +2355,862 @@
           "name": "preproc_if"
         },
         {
-          "type": "CHOICE",
+          "type": "SYMBOL",
+          "name": "_ml_arm_t"
+        },
+        {
+          "type": "SYMBOL",
+          "name": "_ml_tail_t"
+        }
+      ]
+    },
+    "_ml_tail_t": {
+      "type": "CHOICE",
+      "members": [
+        {
+          "type": "SEQ",
           "members": [
             {
-              "type": "SEQ",
+              "type": "SYMBOL",
+              "name": "preproc_elif"
+            },
+            {
+              "type": "SYMBOL",
+              "name": "_ml_arm_t"
+            },
+            {
+              "type": "SYMBOL",
+              "name": "_ml_tail_t"
+            }
+          ]
+        },
+        {
+          "type": "SEQ",
+          "members": [
+            {
+              "type": "SYMBOL",
+              "name": "preproc_else"
+            },
+            {
+              "type": "SYMBOL",
+              "name": "_ml_arm_t"
+            },
+            {
+              "type": "SYMBOL",
+              "name": "preproc_endif"
+            }
+          ]
+        }
+      ]
+    },
+    "_ml_group_nt": {
+      "type": "CHOICE",
+      "members": [
+        {
+          "type": "SEQ",
+          "members": [
+            {
+              "type": "SYMBOL",
+              "name": "preproc_if"
+            },
+            {
+              "type": "SYMBOL",
+              "name": "_ml_arm_t"
+            },
+            {
+              "type": "SYMBOL",
+              "name": "_ml_tail_10"
+            }
+          ]
+        },
+        {
+          "type": "SEQ",
+          "members": [
+            {
+              "type": "SYMBOL",
+              "name": "preproc_if"
+            },
+            {
+              "type": "SYMBOL",
+              "name": "_ml_arm_nt"
+            },
+            {
+              "type": "SYMBOL",
+              "name": "_ml_tail_any"
+            }
+          ]
+        },
+        {
+          "type": "SEQ",
+          "members": [
+            {
+              "type": "SYMBOL",
+              "name": "preproc_if"
+            },
+            {
+              "type": "CHOICE",
               "members": [
                 {
-                  "type": "FIELD",
-                  "name": "value",
-                  "content": {
-                    "type": "SYMBOL",
-                    "name": "_ml_property_value"
-                  }
+                  "type": "SYMBOL",
+                  "name": "_ml_gap"
                 },
                 {
-                  "type": "CHOICE",
-                  "members": [
-                    {
-                      "type": "STRING",
-                      "value": ";"
-                    },
-                    {
-                      "type": "BLANK"
-                    }
-                  ]
+                  "type": "BLANK"
                 }
               ]
             },
             {
-              "type": "BLANK"
+              "type": "SYMBOL",
+              "name": "_ml_tail_lead"
             }
           ]
+        }
+      ]
+    },
+    "_ml_tail_10": {
+      "type": "CHOICE",
+      "members": [
+        {
+          "type": "SEQ",
+          "members": [
+            {
+              "type": "SYMBOL",
+              "name": "preproc_elif"
+            },
+            {
+              "type": "SYMBOL",
+              "name": "_ml_arm_t"
+            },
+            {
+              "type": "SYMBOL",
+              "name": "_ml_tail_10"
+            }
+          ]
+        },
+        {
+          "type": "SEQ",
+          "members": [
+            {
+              "type": "SYMBOL",
+              "name": "preproc_elif"
+            },
+            {
+              "type": "CHOICE",
+              "members": [
+                {
+                  "type": "CHOICE",
+                  "members": [
+                    {
+                      "type": "SYMBOL",
+                      "name": "_ml_arm_nt"
+                    },
+                    {
+                      "type": "SYMBOL",
+                      "name": "_ml_gap"
+                    }
+                  ]
+                },
+                {
+                  "type": "BLANK"
+                }
+              ]
+            },
+            {
+              "type": "SYMBOL",
+              "name": "_ml_tail_any"
+            }
+          ]
+        },
+        {
+          "type": "SEQ",
+          "members": [
+            {
+              "type": "SYMBOL",
+              "name": "preproc_else"
+            },
+            {
+              "type": "CHOICE",
+              "members": [
+                {
+                  "type": "CHOICE",
+                  "members": [
+                    {
+                      "type": "SYMBOL",
+                      "name": "_ml_arm_nt"
+                    },
+                    {
+                      "type": "SYMBOL",
+                      "name": "_ml_gap"
+                    }
+                  ]
+                },
+                {
+                  "type": "BLANK"
+                }
+              ]
+            },
+            {
+              "type": "SYMBOL",
+              "name": "preproc_endif"
+            }
+          ]
+        },
+        {
+          "type": "SYMBOL",
+          "name": "preproc_endif"
+        }
+      ]
+    },
+    "_ml_tail_any": {
+      "type": "CHOICE",
+      "members": [
+        {
+          "type": "SEQ",
+          "members": [
+            {
+              "type": "SYMBOL",
+              "name": "preproc_elif"
+            },
+            {
+              "type": "CHOICE",
+              "members": [
+                {
+                  "type": "CHOICE",
+                  "members": [
+                    {
+                      "type": "SYMBOL",
+                      "name": "_ml_arm_t"
+                    },
+                    {
+                      "type": "SYMBOL",
+                      "name": "_ml_arm_nt"
+                    },
+                    {
+                      "type": "SYMBOL",
+                      "name": "_ml_gap"
+                    }
+                  ]
+                },
+                {
+                  "type": "BLANK"
+                }
+              ]
+            },
+            {
+              "type": "SYMBOL",
+              "name": "_ml_tail_any"
+            }
+          ]
+        },
+        {
+          "type": "SEQ",
+          "members": [
+            {
+              "type": "SYMBOL",
+              "name": "preproc_else"
+            },
+            {
+              "type": "CHOICE",
+              "members": [
+                {
+                  "type": "CHOICE",
+                  "members": [
+                    {
+                      "type": "SYMBOL",
+                      "name": "_ml_arm_t"
+                    },
+                    {
+                      "type": "SYMBOL",
+                      "name": "_ml_arm_nt"
+                    },
+                    {
+                      "type": "SYMBOL",
+                      "name": "_ml_gap"
+                    }
+                  ]
+                },
+                {
+                  "type": "BLANK"
+                }
+              ]
+            },
+            {
+              "type": "SYMBOL",
+              "name": "preproc_endif"
+            }
+          ]
+        },
+        {
+          "type": "SYMBOL",
+          "name": "preproc_endif"
+        }
+      ]
+    },
+    "_ml_tail_lead": {
+      "type": "CHOICE",
+      "members": [
+        {
+          "type": "SEQ",
+          "members": [
+            {
+              "type": "SYMBOL",
+              "name": "preproc_elif"
+            },
+            {
+              "type": "CHOICE",
+              "members": [
+                {
+                  "type": "SYMBOL",
+                  "name": "_ml_gap"
+                },
+                {
+                  "type": "BLANK"
+                }
+              ]
+            },
+            {
+              "type": "SYMBOL",
+              "name": "_ml_tail_lead"
+            }
+          ]
+        },
+        {
+          "type": "SEQ",
+          "members": [
+            {
+              "type": "SYMBOL",
+              "name": "preproc_elif"
+            },
+            {
+              "type": "CHOICE",
+              "members": [
+                {
+                  "type": "SYMBOL",
+                  "name": "_ml_arm_t"
+                },
+                {
+                  "type": "SYMBOL",
+                  "name": "_ml_arm_nt"
+                }
+              ]
+            },
+            {
+              "type": "SYMBOL",
+              "name": "_ml_tail_any"
+            }
+          ]
+        },
+        {
+          "type": "SEQ",
+          "members": [
+            {
+              "type": "SYMBOL",
+              "name": "preproc_else"
+            },
+            {
+              "type": "CHOICE",
+              "members": [
+                {
+                  "type": "SYMBOL",
+                  "name": "_ml_arm_t"
+                },
+                {
+                  "type": "SYMBOL",
+                  "name": "_ml_arm_nt"
+                }
+              ]
+            },
+            {
+              "type": "SYMBOL",
+              "name": "preproc_endif"
+            }
+          ]
+        }
+      ]
+    },
+    "_ml_sequence_in": {
+      "type": "SEQ",
+      "members": [
+        {
+          "type": "FIELD",
+          "name": "value",
+          "content": {
+            "type": "ALIAS",
+            "content": {
+              "type": "SYMBOL",
+              "name": "_ml_group_nt"
+            },
+            "named": true,
+            "value": "preproc_conditional_property_value"
+          }
+        },
+        {
+          "type": "REPEAT",
+          "content": {
+            "type": "SYMBOL",
+            "name": "_ml_seq_step_nt"
+          }
+        },
+        {
+          "type": "SYMBOL",
+          "name": "_ml_seq_step_last"
+        }
+      ]
+    },
+    "_ml_seq_step_nt": {
+      "type": "PREC_DYNAMIC",
+      "value": 1,
+      "content": {
+        "type": "SEQ",
+        "members": [
+          {
+            "type": "REPEAT",
+            "content": {
+              "type": "SYMBOL",
+              "name": "_value_decoration"
+            }
+          },
+          {
+            "type": "FIELD",
+            "name": "value",
+            "content": {
+              "type": "ALIAS",
+              "content": {
+                "type": "SYMBOL",
+                "name": "_ml_group_nt"
+              },
+              "named": true,
+              "value": "preproc_conditional_property_value"
+            }
+          }
+        ]
+      }
+    },
+    "_ml_seq_step_last": {
+      "type": "PREC_DYNAMIC",
+      "value": 1,
+      "content": {
+        "type": "SEQ",
+        "members": [
+          {
+            "type": "REPEAT",
+            "content": {
+              "type": "SYMBOL",
+              "name": "_value_decoration"
+            }
+          },
+          {
+            "type": "FIELD",
+            "name": "value",
+            "content": {
+              "type": "CHOICE",
+              "members": [
+                {
+                  "type": "ALIAS",
+                  "content": {
+                    "type": "SYMBOL",
+                    "name": "_ml_group_nt"
+                  },
+                  "named": true,
+                  "value": "preproc_conditional_property_value"
+                },
+                {
+                  "type": "ALIAS",
+                  "content": {
+                    "type": "SYMBOL",
+                    "name": "_ml_group_t"
+                  },
+                  "named": true,
+                  "value": "preproc_conditional_property_value"
+                }
+              ]
+            }
+          }
+        ]
+      }
+    },
+    "_ml_in_core": {
+      "type": "CHOICE",
+      "members": [
+        {
+          "type": "ALIAS",
+          "content": {
+            "type": "SYMBOL",
+            "name": "_ml_group_t"
+          },
+          "named": true,
+          "value": "preproc_conditional_property_value"
+        },
+        {
+          "type": "ALIAS",
+          "content": {
+            "type": "SYMBOL",
+            "name": "_ml_group_nt"
+          },
+          "named": true,
+          "value": "preproc_conditional_property_value"
+        },
+        {
+          "type": "ALIAS",
+          "content": {
+            "type": "SYMBOL",
+            "name": "_ml_sequence_in"
+          },
+          "named": true,
+          "value": "preproc_conditional_property_value_sequence"
+        }
+      ]
+    },
+    "_ml_after_group": {
+      "type": "CHOICE",
+      "members": [
+        {
+          "type": "SEQ",
+          "members": [
+            {
+              "type": "SYMBOL",
+              "name": "preproc_if"
+            },
+            {
+              "type": "SYMBOL",
+              "name": "_ml_after_branch"
+            },
+            {
+              "type": "SYMBOL",
+              "name": "_ml_after_rest"
+            }
+          ]
+        },
+        {
+          "type": "SEQ",
+          "members": [
+            {
+              "type": "SYMBOL",
+              "name": "preproc_if"
+            },
+            {
+              "type": "CHOICE",
+              "members": [
+                {
+                  "type": "SYMBOL",
+                  "name": "_ml_after_gap"
+                },
+                {
+                  "type": "BLANK"
+                }
+              ]
+            },
+            {
+              "type": "SYMBOL",
+              "name": "_ml_after_lead"
+            }
+          ]
+        }
+      ]
+    },
+    "_ml_after_gap": {
+      "type": "CHOICE",
+      "members": [
+        {
+          "type": "SYMBOL",
+          "name": "_ml_arm_t"
+        },
+        {
+          "type": "SYMBOL",
+          "name": "_ml_arm_nt"
+        },
+        {
+          "type": "REPEAT1",
+          "content": {
+            "type": "SYMBOL",
+            "name": "_value_decoration"
+          }
+        }
+      ]
+    },
+    "_ml_after_rest": {
+      "type": "CHOICE",
+      "members": [
+        {
+          "type": "SEQ",
+          "members": [
+            {
+              "type": "SYMBOL",
+              "name": "preproc_elif"
+            },
+            {
+              "type": "CHOICE",
+              "members": [
+                {
+                  "type": "CHOICE",
+                  "members": [
+                    {
+                      "type": "SYMBOL",
+                      "name": "_ml_after_branch"
+                    },
+                    {
+                      "type": "SYMBOL",
+                      "name": "_ml_after_gap"
+                    }
+                  ]
+                },
+                {
+                  "type": "BLANK"
+                }
+              ]
+            },
+            {
+              "type": "SYMBOL",
+              "name": "_ml_after_rest"
+            }
+          ]
+        },
+        {
+          "type": "SEQ",
+          "members": [
+            {
+              "type": "SYMBOL",
+              "name": "preproc_else"
+            },
+            {
+              "type": "CHOICE",
+              "members": [
+                {
+                  "type": "CHOICE",
+                  "members": [
+                    {
+                      "type": "SYMBOL",
+                      "name": "_ml_after_branch"
+                    },
+                    {
+                      "type": "SYMBOL",
+                      "name": "_ml_after_gap"
+                    }
+                  ]
+                },
+                {
+                  "type": "BLANK"
+                }
+              ]
+            },
+            {
+              "type": "SYMBOL",
+              "name": "preproc_endif"
+            }
+          ]
+        },
+        {
+          "type": "SYMBOL",
+          "name": "preproc_endif"
+        }
+      ]
+    },
+    "_ml_after_lead": {
+      "type": "CHOICE",
+      "members": [
+        {
+          "type": "SEQ",
+          "members": [
+            {
+              "type": "SYMBOL",
+              "name": "preproc_elif"
+            },
+            {
+              "type": "CHOICE",
+              "members": [
+                {
+                  "type": "SYMBOL",
+                  "name": "_ml_after_gap"
+                },
+                {
+                  "type": "BLANK"
+                }
+              ]
+            },
+            {
+              "type": "SYMBOL",
+              "name": "_ml_after_lead"
+            }
+          ]
+        },
+        {
+          "type": "SEQ",
+          "members": [
+            {
+              "type": "SYMBOL",
+              "name": "preproc_elif"
+            },
+            {
+              "type": "SYMBOL",
+              "name": "_ml_after_branch"
+            },
+            {
+              "type": "SYMBOL",
+              "name": "_ml_after_rest"
+            }
+          ]
+        },
+        {
+          "type": "SEQ",
+          "members": [
+            {
+              "type": "SYMBOL",
+              "name": "preproc_else"
+            },
+            {
+              "type": "SYMBOL",
+              "name": "_ml_after_branch"
+            },
+            {
+              "type": "SYMBOL",
+              "name": "preproc_endif"
+            }
+          ]
+        }
+      ]
+    },
+    "_ml_after_branch": {
+      "type": "SEQ",
+      "members": [
+        {
+          "type": "REPEAT",
+          "content": {
+            "type": "SYMBOL",
+            "name": "_value_decoration"
+          }
+        },
+        {
+          "type": "FIELD",
+          "name": "value",
+          "content": {
+            "type": "SYMBOL",
+            "name": "_ml_property_value"
+          }
+        },
+        {
+          "type": "REPEAT",
+          "content": {
+            "type": "SYMBOL",
+            "name": "_value_decoration"
+          }
+        }
+      ]
+    },
+    "_ml_sequence_after": {
+      "type": "CHOICE",
+      "members": [
+        {
+          "type": "SEQ",
+          "members": [
+            {
+              "type": "FIELD",
+              "name": "value",
+              "content": {
+                "type": "ALIAS",
+                "content": {
+                  "type": "SYMBOL",
+                  "name": "_ml_after_group"
+                },
+                "named": true,
+                "value": "preproc_conditional_property_value"
+              }
+            },
+            {
+              "type": "REPEAT1",
+              "content": {
+                "type": "SYMBOL",
+                "name": "_ml_sequence_after_step"
+              }
+            }
+          ]
+        },
+        {
+          "type": "SEQ",
+          "members": [
+            {
+              "type": "SYMBOL",
+              "name": "_ml_sequence_after_lead"
+            },
+            {
+              "type": "REPEAT",
+              "content": {
+                "type": "SYMBOL",
+                "name": "_ml_sequence_after_step"
+              }
+            }
+          ]
+        }
+      ]
+    },
+    "_ml_sequence_after_t": {
+      "type": "SEQ",
+      "members": [
+        {
+          "type": "CHOICE",
+          "members": [
+            {
+              "type": "FIELD",
+              "name": "value",
+              "content": {
+                "type": "ALIAS",
+                "content": {
+                  "type": "SYMBOL",
+                  "name": "_ml_after_group"
+                },
+                "named": true,
+                "value": "preproc_conditional_property_value"
+              }
+            },
+            {
+              "type": "SYMBOL",
+              "name": "_ml_sequence_after_lead"
+            }
+          ]
+        },
+        {
+          "type": "REPEAT",
+          "content": {
+            "type": "SYMBOL",
+            "name": "_ml_sequence_after_step"
+          }
+        },
+        {
+          "type": "REPEAT",
+          "content": {
+            "type": "SYMBOL",
+            "name": "_value_decoration"
+          }
+        },
+        {
+          "type": "FIELD",
+          "name": "value",
+          "content": {
+            "type": "ALIAS",
+            "content": {
+              "type": "SYMBOL",
+              "name": "_ml_group_t"
+            },
+            "named": true,
+            "value": "preproc_conditional_property_value"
+          }
+        }
+      ]
+    },
+    "_ml_sequence_after_lead": {
+      "type": "SEQ",
+      "members": [
+        {
+          "type": "FIELD",
+          "name": "value",
+          "content": {
+            "type": "ALIAS",
+            "content": {
+              "type": "SYMBOL",
+              "name": "_ml_group_nt"
+            },
+            "named": true,
+            "value": "preproc_conditional_property_value"
+          }
         },
         {
           "type": "REPEAT",
@@ -2081,98 +3218,86 @@
             "type": "SEQ",
             "members": [
               {
-                "type": "SYMBOL",
-                "name": "preproc_elif"
+                "type": "REPEAT",
+                "content": {
+                  "type": "SYMBOL",
+                  "name": "_value_decoration"
+                }
               },
               {
-                "type": "CHOICE",
-                "members": [
-                  {
-                    "type": "SEQ",
-                    "members": [
-                      {
-                        "type": "FIELD",
-                        "name": "value",
-                        "content": {
-                          "type": "SYMBOL",
-                          "name": "_ml_property_value"
-                        }
-                      },
-                      {
-                        "type": "CHOICE",
-                        "members": [
-                          {
-                            "type": "STRING",
-                            "value": ";"
-                          },
-                          {
-                            "type": "BLANK"
-                          }
-                        ]
-                      }
-                    ]
+                "type": "FIELD",
+                "name": "value",
+                "content": {
+                  "type": "ALIAS",
+                  "content": {
+                    "type": "SYMBOL",
+                    "name": "_ml_group_nt"
                   },
-                  {
-                    "type": "BLANK"
-                  }
-                ]
+                  "named": true,
+                  "value": "preproc_conditional_property_value"
+                }
               }
             ]
           }
         },
         {
-          "type": "CHOICE",
-          "members": [
-            {
-              "type": "SEQ",
-              "members": [
-                {
-                  "type": "SYMBOL",
-                  "name": "preproc_else"
-                },
-                {
-                  "type": "CHOICE",
-                  "members": [
-                    {
-                      "type": "SEQ",
-                      "members": [
-                        {
-                          "type": "FIELD",
-                          "name": "value",
-                          "content": {
-                            "type": "SYMBOL",
-                            "name": "_ml_property_value"
-                          }
-                        },
-                        {
-                          "type": "CHOICE",
-                          "members": [
-                            {
-                              "type": "STRING",
-                              "value": ";"
-                            },
-                            {
-                              "type": "BLANK"
-                            }
-                          ]
-                        }
-                      ]
-                    },
-                    {
-                      "type": "BLANK"
-                    }
-                  ]
-                }
-              ]
-            },
-            {
-              "type": "BLANK"
-            }
-          ]
+          "type": "REPEAT",
+          "content": {
+            "type": "SYMBOL",
+            "name": "_value_decoration"
+          }
         },
         {
-          "type": "SYMBOL",
-          "name": "preproc_endif"
+          "type": "FIELD",
+          "name": "value",
+          "content": {
+            "type": "ALIAS",
+            "content": {
+              "type": "SYMBOL",
+              "name": "_ml_after_group"
+            },
+            "named": true,
+            "value": "preproc_conditional_property_value"
+          }
+        }
+      ]
+    },
+    "_ml_sequence_after_step": {
+      "type": "SEQ",
+      "members": [
+        {
+          "type": "REPEAT",
+          "content": {
+            "type": "SYMBOL",
+            "name": "_value_decoration"
+          }
+        },
+        {
+          "type": "FIELD",
+          "name": "value",
+          "content": {
+            "type": "CHOICE",
+            "members": [
+              {
+                "type": "ALIAS",
+                "content": {
+                  "type": "SYMBOL",
+                  "name": "_ml_after_group"
+                },
+                "named": true,
+                "value": "preproc_conditional_property_value"
+              },
+              {
+                "type": "ALIAS",
+                "content": {
+                  "type": "SYMBOL",
+                  "name": "_ml_group_nt"
+                },
+                "named": true,
+                "value": "preproc_conditional_property_value"
+              }
+            ]
+          }
         }
       ]
     },
@@ -2603,155 +3728,14 @@
           "type": "ALIAS",
           "content": {
             "type": "SYMBOL",
-            "name": "_link_whole_conditional"
+            "name": "_link_after_group"
           },
           "named": true,
           "value": "preproc_conditional_property_value"
         }
       ]
     },
-    "_link_whole_conditional": {
-      "type": "SEQ",
-      "members": [
-        {
-          "type": "SYMBOL",
-          "name": "preproc_if"
-        },
-        {
-          "type": "CHOICE",
-          "members": [
-            {
-              "type": "SEQ",
-              "members": [
-                {
-                  "type": "FIELD",
-                  "name": "value",
-                  "content": {
-                    "type": "SYMBOL",
-                    "name": "_link_property_value"
-                  }
-                },
-                {
-                  "type": "CHOICE",
-                  "members": [
-                    {
-                      "type": "STRING",
-                      "value": ";"
-                    },
-                    {
-                      "type": "BLANK"
-                    }
-                  ]
-                }
-              ]
-            },
-            {
-              "type": "BLANK"
-            }
-          ]
-        },
-        {
-          "type": "REPEAT",
-          "content": {
-            "type": "SEQ",
-            "members": [
-              {
-                "type": "SYMBOL",
-                "name": "preproc_elif"
-              },
-              {
-                "type": "CHOICE",
-                "members": [
-                  {
-                    "type": "SEQ",
-                    "members": [
-                      {
-                        "type": "FIELD",
-                        "name": "value",
-                        "content": {
-                          "type": "SYMBOL",
-                          "name": "_link_property_value"
-                        }
-                      },
-                      {
-                        "type": "CHOICE",
-                        "members": [
-                          {
-                            "type": "STRING",
-                            "value": ";"
-                          },
-                          {
-                            "type": "BLANK"
-                          }
-                        ]
-                      }
-                    ]
-                  },
-                  {
-                    "type": "BLANK"
-                  }
-                ]
-              }
-            ]
-          }
-        },
-        {
-          "type": "CHOICE",
-          "members": [
-            {
-              "type": "SEQ",
-              "members": [
-                {
-                  "type": "SYMBOL",
-                  "name": "preproc_else"
-                },
-                {
-                  "type": "CHOICE",
-                  "members": [
-                    {
-                      "type": "SEQ",
-                      "members": [
-                        {
-                          "type": "FIELD",
-                          "name": "value",
-                          "content": {
-                            "type": "SYMBOL",
-                            "name": "_link_property_value"
-                          }
-                        },
-                        {
-                          "type": "CHOICE",
-                          "members": [
-                            {
-                              "type": "STRING",
-                              "value": ";"
-                            },
-                            {
-                              "type": "BLANK"
-                            }
-                          ]
-                        }
-                      ]
-                    },
-                    {
-                      "type": "BLANK"
-                    }
-                  ]
-                }
-              ]
-            },
-            {
-              "type": "BLANK"
-            }
-          ]
-        },
-        {
-          "type": "SYMBOL",
-          "name": "preproc_endif"
-        }
-      ]
-    },
-    "_link_in_if_arm": {
+    "_link_arm_t": {
       "type": "CHOICE",
       "members": [
         {
@@ -2772,83 +3756,179 @@
           ]
         },
         {
-          "type": "FIELD",
-          "name": "value",
-          "content": {
-            "type": "ALIAS",
-            "content": {
-              "type": "SYMBOL",
-              "name": "_link_whole_conditional_in_if"
-            },
-            "named": true,
-            "value": "preproc_conditional_property_value"
-          }
-        }
-      ]
-    },
-    "_link_in_if_tail": {
-      "type": "SEQ",
-      "members": [
-        {
-          "type": "REPEAT",
+          "type": "PREC_DYNAMIC",
+          "value": 1,
           "content": {
             "type": "SEQ",
             "members": [
               {
-                "type": "SYMBOL",
-                "name": "preproc_elif"
+                "type": "REPEAT1",
+                "content": {
+                  "type": "SYMBOL",
+                  "name": "_value_decoration"
+                }
               },
               {
-                "type": "CHOICE",
-                "members": [
-                  {
-                    "type": "SYMBOL",
-                    "name": "_link_in_if_arm"
-                  },
-                  {
-                    "type": "BLANK"
-                  }
-                ]
+                "type": "STRING",
+                "value": ";"
               }
             ]
           }
         },
         {
-          "type": "CHOICE",
+          "type": "SEQ",
           "members": [
             {
-              "type": "SEQ",
-              "members": [
-                {
-                  "type": "SYMBOL",
-                  "name": "preproc_else"
-                },
-                {
-                  "type": "CHOICE",
-                  "members": [
-                    {
-                      "type": "SYMBOL",
-                      "name": "_link_in_if_arm"
-                    },
-                    {
-                      "type": "BLANK"
-                    }
-                  ]
-                }
-              ]
+              "type": "REPEAT",
+              "content": {
+                "type": "SYMBOL",
+                "name": "_value_decoration"
+              }
             },
             {
-              "type": "BLANK"
+              "type": "FIELD",
+              "name": "value",
+              "content": {
+                "type": "ALIAS",
+                "content": {
+                  "type": "SYMBOL",
+                  "name": "_link_group_t"
+                },
+                "named": true,
+                "value": "preproc_conditional_property_value"
+              }
             }
           ]
         },
         {
-          "type": "SYMBOL",
-          "name": "preproc_endif"
+          "type": "SEQ",
+          "members": [
+            {
+              "type": "REPEAT",
+              "content": {
+                "type": "SYMBOL",
+                "name": "_value_decoration"
+              }
+            },
+            {
+              "type": "FIELD",
+              "name": "value",
+              "content": {
+                "type": "SYMBOL",
+                "name": "_link_in_core"
+              }
+            },
+            {
+              "type": "STRING",
+              "value": ";"
+            }
+          ]
         }
       ]
     },
-    "_link_whole_conditional_in_if": {
+    "_link_arm_nt": {
+      "type": "SEQ",
+      "members": [
+        {
+          "type": "REPEAT",
+          "content": {
+            "type": "SYMBOL",
+            "name": "_value_decoration"
+          }
+        },
+        {
+          "type": "FIELD",
+          "name": "value",
+          "content": {
+            "type": "CHOICE",
+            "members": [
+              {
+                "type": "ALIAS",
+                "content": {
+                  "type": "SYMBOL",
+                  "name": "_link_group_nt"
+                },
+                "named": true,
+                "value": "preproc_conditional_property_value"
+              },
+              {
+                "type": "ALIAS",
+                "content": {
+                  "type": "SYMBOL",
+                  "name": "_link_sequence_in"
+                },
+                "named": true,
+                "value": "preproc_conditional_property_value_sequence"
+              }
+            ]
+          }
+        }
+      ]
+    },
+    "_link_gap": {
+      "type": "REPEAT1",
+      "content": {
+        "type": "SYMBOL",
+        "name": "_value_decoration"
+      }
+    },
+    "_link_group_t": {
+      "type": "SEQ",
+      "members": [
+        {
+          "type": "SYMBOL",
+          "name": "preproc_if"
+        },
+        {
+          "type": "SYMBOL",
+          "name": "_link_arm_t"
+        },
+        {
+          "type": "SYMBOL",
+          "name": "_link_tail_t"
+        }
+      ]
+    },
+    "_link_tail_t": {
+      "type": "CHOICE",
+      "members": [
+        {
+          "type": "SEQ",
+          "members": [
+            {
+              "type": "SYMBOL",
+              "name": "preproc_elif"
+            },
+            {
+              "type": "SYMBOL",
+              "name": "_link_arm_t"
+            },
+            {
+              "type": "SYMBOL",
+              "name": "_link_tail_t"
+            }
+          ]
+        },
+        {
+          "type": "SEQ",
+          "members": [
+            {
+              "type": "SYMBOL",
+              "name": "preproc_else"
+            },
+            {
+              "type": "SYMBOL",
+              "name": "_link_arm_t"
+            },
+            {
+              "type": "SYMBOL",
+              "name": "preproc_endif"
+            }
+          ]
+        }
+      ]
+    },
+    "_link_group_nt": {
       "type": "CHOICE",
       "members": [
         {
@@ -2860,11 +3940,11 @@
             },
             {
               "type": "SYMBOL",
-              "name": "_link_in_if_arm"
+              "name": "_link_arm_t"
             },
             {
               "type": "SYMBOL",
-              "name": "_link_in_if_tail"
+              "name": "_link_tail_10"
             }
           ]
         },
@@ -2876,54 +3956,655 @@
               "name": "preproc_if"
             },
             {
-              "type": "REPEAT",
-              "content": {
-                "type": "SYMBOL",
-                "name": "preproc_elif"
-              }
+              "type": "SYMBOL",
+              "name": "_link_arm_nt"
+            },
+            {
+              "type": "SYMBOL",
+              "name": "_link_tail_any"
+            }
+          ]
+        },
+        {
+          "type": "SEQ",
+          "members": [
+            {
+              "type": "SYMBOL",
+              "name": "preproc_if"
             },
             {
               "type": "CHOICE",
               "members": [
                 {
-                  "type": "SEQ",
-                  "members": [
-                    {
-                      "type": "SYMBOL",
-                      "name": "preproc_elif"
-                    },
-                    {
-                      "type": "SYMBOL",
-                      "name": "_link_in_if_arm"
-                    },
-                    {
-                      "type": "SYMBOL",
-                      "name": "_link_in_if_tail"
-                    }
-                  ]
+                  "type": "SYMBOL",
+                  "name": "_link_gap"
                 },
                 {
-                  "type": "SEQ",
-                  "members": [
-                    {
-                      "type": "SYMBOL",
-                      "name": "preproc_else"
-                    },
-                    {
-                      "type": "SYMBOL",
-                      "name": "_link_in_if_arm"
-                    },
-                    {
-                      "type": "SYMBOL",
-                      "name": "preproc_endif"
-                    }
-                  ]
+                  "type": "BLANK"
                 }
               ]
+            },
+            {
+              "type": "SYMBOL",
+              "name": "_link_tail_lead"
             }
           ]
         }
       ]
+    },
+    "_link_tail_10": {
+      "type": "CHOICE",
+      "members": [
+        {
+          "type": "SEQ",
+          "members": [
+            {
+              "type": "SYMBOL",
+              "name": "preproc_elif"
+            },
+            {
+              "type": "SYMBOL",
+              "name": "_link_arm_t"
+            },
+            {
+              "type": "SYMBOL",
+              "name": "_link_tail_10"
+            }
+          ]
+        },
+        {
+          "type": "SEQ",
+          "members": [
+            {
+              "type": "SYMBOL",
+              "name": "preproc_elif"
+            },
+            {
+              "type": "CHOICE",
+              "members": [
+                {
+                  "type": "CHOICE",
+                  "members": [
+                    {
+                      "type": "SYMBOL",
+                      "name": "_link_arm_nt"
+                    },
+                    {
+                      "type": "SYMBOL",
+                      "name": "_link_gap"
+                    }
+                  ]
+                },
+                {
+                  "type": "BLANK"
+                }
+              ]
+            },
+            {
+              "type": "SYMBOL",
+              "name": "_link_tail_any"
+            }
+          ]
+        },
+        {
+          "type": "SEQ",
+          "members": [
+            {
+              "type": "SYMBOL",
+              "name": "preproc_else"
+            },
+            {
+              "type": "CHOICE",
+              "members": [
+                {
+                  "type": "CHOICE",
+                  "members": [
+                    {
+                      "type": "SYMBOL",
+                      "name": "_link_arm_nt"
+                    },
+                    {
+                      "type": "SYMBOL",
+                      "name": "_link_gap"
+                    }
+                  ]
+                },
+                {
+                  "type": "BLANK"
+                }
+              ]
+            },
+            {
+              "type": "SYMBOL",
+              "name": "preproc_endif"
+            }
+          ]
+        },
+        {
+          "type": "SYMBOL",
+          "name": "preproc_endif"
+        }
+      ]
+    },
+    "_link_tail_any": {
+      "type": "CHOICE",
+      "members": [
+        {
+          "type": "SEQ",
+          "members": [
+            {
+              "type": "SYMBOL",
+              "name": "preproc_elif"
+            },
+            {
+              "type": "CHOICE",
+              "members": [
+                {
+                  "type": "CHOICE",
+                  "members": [
+                    {
+                      "type": "SYMBOL",
+                      "name": "_link_arm_t"
+                    },
+                    {
+                      "type": "SYMBOL",
+                      "name": "_link_arm_nt"
+                    },
+                    {
+                      "type": "SYMBOL",
+                      "name": "_link_gap"
+                    }
+                  ]
+                },
+                {
+                  "type": "BLANK"
+                }
+              ]
+            },
+            {
+              "type": "SYMBOL",
+              "name": "_link_tail_any"
+            }
+          ]
+        },
+        {
+          "type": "SEQ",
+          "members": [
+            {
+              "type": "SYMBOL",
+              "name": "preproc_else"
+            },
+            {
+              "type": "CHOICE",
+              "members": [
+                {
+                  "type": "CHOICE",
+                  "members": [
+                    {
+                      "type": "SYMBOL",
+                      "name": "_link_arm_t"
+                    },
+                    {
+                      "type": "SYMBOL",
+                      "name": "_link_arm_nt"
+                    },
+                    {
+                      "type": "SYMBOL",
+                      "name": "_link_gap"
+                    }
+                  ]
+                },
+                {
+                  "type": "BLANK"
+                }
+              ]
+            },
+            {
+              "type": "SYMBOL",
+              "name": "preproc_endif"
+            }
+          ]
+        },
+        {
+          "type": "SYMBOL",
+          "name": "preproc_endif"
+        }
+      ]
+    },
+    "_link_tail_lead": {
+      "type": "CHOICE",
+      "members": [
+        {
+          "type": "SEQ",
+          "members": [
+            {
+              "type": "SYMBOL",
+              "name": "preproc_elif"
+            },
+            {
+              "type": "CHOICE",
+              "members": [
+                {
+                  "type": "SYMBOL",
+                  "name": "_link_gap"
+                },
+                {
+                  "type": "BLANK"
+                }
+              ]
+            },
+            {
+              "type": "SYMBOL",
+              "name": "_link_tail_lead"
+            }
+          ]
+        },
+        {
+          "type": "SEQ",
+          "members": [
+            {
+              "type": "SYMBOL",
+              "name": "preproc_elif"
+            },
+            {
+              "type": "CHOICE",
+              "members": [
+                {
+                  "type": "SYMBOL",
+                  "name": "_link_arm_t"
+                },
+                {
+                  "type": "SYMBOL",
+                  "name": "_link_arm_nt"
+                }
+              ]
+            },
+            {
+              "type": "SYMBOL",
+              "name": "_link_tail_any"
+            }
+          ]
+        },
+        {
+          "type": "SEQ",
+          "members": [
+            {
+              "type": "SYMBOL",
+              "name": "preproc_else"
+            },
+            {
+              "type": "CHOICE",
+              "members": [
+                {
+                  "type": "SYMBOL",
+                  "name": "_link_arm_t"
+                },
+                {
+                  "type": "SYMBOL",
+                  "name": "_link_arm_nt"
+                }
+              ]
+            },
+            {
+              "type": "SYMBOL",
+              "name": "preproc_endif"
+            }
+          ]
+        }
+      ]
+    },
+    "_link_sequence_in": {
+      "type": "SEQ",
+      "members": [
+        {
+          "type": "FIELD",
+          "name": "value",
+          "content": {
+            "type": "ALIAS",
+            "content": {
+              "type": "SYMBOL",
+              "name": "_link_group_nt"
+            },
+            "named": true,
+            "value": "preproc_conditional_property_value"
+          }
+        },
+        {
+          "type": "REPEAT",
+          "content": {
+            "type": "SYMBOL",
+            "name": "_link_seq_step_nt"
+          }
+        },
+        {
+          "type": "SYMBOL",
+          "name": "_link_seq_step_last"
+        }
+      ]
+    },
+    "_link_seq_step_nt": {
+      "type": "PREC_DYNAMIC",
+      "value": 1,
+      "content": {
+        "type": "SEQ",
+        "members": [
+          {
+            "type": "REPEAT",
+            "content": {
+              "type": "SYMBOL",
+              "name": "_value_decoration"
+            }
+          },
+          {
+            "type": "FIELD",
+            "name": "value",
+            "content": {
+              "type": "ALIAS",
+              "content": {
+                "type": "SYMBOL",
+                "name": "_link_group_nt"
+              },
+              "named": true,
+              "value": "preproc_conditional_property_value"
+            }
+          }
+        ]
+      }
+    },
+    "_link_seq_step_last": {
+      "type": "PREC_DYNAMIC",
+      "value": 1,
+      "content": {
+        "type": "SEQ",
+        "members": [
+          {
+            "type": "REPEAT",
+            "content": {
+              "type": "SYMBOL",
+              "name": "_value_decoration"
+            }
+          },
+          {
+            "type": "FIELD",
+            "name": "value",
+            "content": {
+              "type": "CHOICE",
+              "members": [
+                {
+                  "type": "ALIAS",
+                  "content": {
+                    "type": "SYMBOL",
+                    "name": "_link_group_nt"
+                  },
+                  "named": true,
+                  "value": "preproc_conditional_property_value"
+                },
+                {
+                  "type": "ALIAS",
+                  "content": {
+                    "type": "SYMBOL",
+                    "name": "_link_group_t"
+                  },
+                  "named": true,
+                  "value": "preproc_conditional_property_value"
+                }
+              ]
+            }
+          }
+        ]
+      }
+    },
+    "_link_in_core": {
+      "type": "CHOICE",
+      "members": [
+        {
+          "type": "ALIAS",
+          "content": {
+            "type": "SYMBOL",
+            "name": "_link_group_t"
+          },
+          "named": true,
+          "value": "preproc_conditional_property_value"
+        },
+        {
+          "type": "ALIAS",
+          "content": {
+            "type": "SYMBOL",
+            "name": "_link_group_nt"
+          },
+          "named": true,
+          "value": "preproc_conditional_property_value"
+        },
+        {
+          "type": "ALIAS",
+          "content": {
+            "type": "SYMBOL",
+            "name": "_link_sequence_in"
+          },
+          "named": true,
+          "value": "preproc_conditional_property_value_sequence"
+        }
+      ]
+    },
+    "_link_after_group": {
+      "type": "CHOICE",
+      "members": [
+        {
+          "type": "SEQ",
+          "members": [
+            {
+              "type": "SYMBOL",
+              "name": "preproc_if"
+            },
+            {
+              "type": "SYMBOL",
+              "name": "_link_after_branch"
+            },
+            {
+              "type": "SYMBOL",
+              "name": "_link_after_rest"
+            }
+          ]
+        },
+        {
+          "type": "SEQ",
+          "members": [
+            {
+              "type": "SYMBOL",
+              "name": "preproc_if"
+            },
+            {
+              "type": "CHOICE",
+              "members": [
+                {
+                  "type": "SYMBOL",
+                  "name": "_link_after_gap"
+                },
+                {
+                  "type": "BLANK"
+                }
+              ]
+            },
+            {
+              "type": "SYMBOL",
+              "name": "_link_after_lead"
+            }
+          ]
+        }
+      ]
+    },
+    "_link_after_gap": {
+      "type": "CHOICE",
+      "members": [
+        {
+          "type": "SYMBOL",
+          "name": "_link_arm_t"
+        },
+        {
+          "type": "SYMBOL",
+          "name": "_link_arm_nt"
+        },
+        {
+          "type": "PREC_DYNAMIC",
+          "value": 1,
+          "content": {
+            "type": "REPEAT1",
+            "content": {
+              "type": "SYMBOL",
+              "name": "_value_decoration"
+            }
+          }
+        }
+      ]
+    },
+    "_link_after_rest": {
+      "type": "CHOICE",
+      "members": [
+        {
+          "type": "SEQ",
+          "members": [
+            {
+              "type": "SYMBOL",
+              "name": "preproc_elif"
+            },
+            {
+              "type": "CHOICE",
+              "members": [
+                {
+                  "type": "CHOICE",
+                  "members": [
+                    {
+                      "type": "SYMBOL",
+                      "name": "_link_after_branch"
+                    },
+                    {
+                      "type": "SYMBOL",
+                      "name": "_link_after_gap"
+                    }
+                  ]
+                },
+                {
+                  "type": "BLANK"
+                }
+              ]
+            },
+            {
+              "type": "SYMBOL",
+              "name": "_link_after_rest"
+            }
+          ]
+        },
+        {
+          "type": "SEQ",
+          "members": [
+            {
+              "type": "SYMBOL",
+              "name": "preproc_else"
+            },
+            {
+              "type": "CHOICE",
+              "members": [
+                {
+                  "type": "CHOICE",
+                  "members": [
+                    {
+                      "type": "SYMBOL",
+                      "name": "_link_after_branch"
+                    },
+                    {
+                      "type": "SYMBOL",
+                      "name": "_link_after_gap"
+                    }
+                  ]
+                },
+                {
+                  "type": "BLANK"
+                }
+              ]
+            },
+            {
+              "type": "SYMBOL",
+              "name": "preproc_endif"
+            }
+          ]
+        },
+        {
+          "type": "SYMBOL",
+          "name": "preproc_endif"
+        }
+      ]
+    },
+    "_link_after_lead": {
+      "type": "CHOICE",
+      "members": [
+        {
+          "type": "SEQ",
+          "members": [
+            {
+              "type": "SYMBOL",
+              "name": "preproc_elif"
+            },
+            {
+              "type": "CHOICE",
+              "members": [
+                {
+                  "type": "SYMBOL",
+                  "name": "_link_after_gap"
+                },
+                {
+                  "type": "BLANK"
+                }
+              ]
+            },
+            {
+              "type": "SYMBOL",
+              "name": "_link_after_lead"
+            }
+          ]
+        },
+        {
+          "type": "SEQ",
+          "members": [
+            {
+              "type": "SYMBOL",
+              "name": "preproc_elif"
+            },
+            {
+              "type": "SYMBOL",
+              "name": "_link_after_branch"
+            },
+            {
+              "type": "SYMBOL",
+              "name": "_link_after_rest"
+            }
+          ]
+        },
+        {
+          "type": "SEQ",
+          "members": [
+            {
+              "type": "SYMBOL",
+              "name": "preproc_else"
+            },
+            {
+              "type": "SYMBOL",
+              "name": "_link_after_branch"
+            },
+            {
+              "type": "SYMBOL",
+              "name": "preproc_endif"
+            }
+          ]
+        }
+      ]
+    },
+    "_link_after_branch": {
+      "type": "FIELD",
+      "name": "value",
+      "content": {
+        "type": "SYMBOL",
+        "name": "_link_property_value"
+      }
     },
     "_const_unsigned_numeric": {
       "type": "CHOICE",
@@ -3315,16 +4996,18 @@
                 "value": "="
               },
               {
+                "type": "REPEAT",
+                "content": {
+                  "type": "SYMBOL",
+                  "name": "_value_decoration"
+                }
+              },
+              {
                 "type": "FIELD",
                 "name": "value",
                 "content": {
-                  "type": "ALIAS",
-                  "content": {
-                    "type": "SYMBOL",
-                    "name": "_ml_value_conditional"
-                  },
-                  "named": true,
-                  "value": "preproc_conditional_property_value"
+                  "type": "SYMBOL",
+                  "name": "_ml_in_core"
                 }
               }
             ]
@@ -3385,16 +5068,18 @@
                 "value": "="
               },
               {
+                "type": "REPEAT",
+                "content": {
+                  "type": "SYMBOL",
+                  "name": "_value_decoration"
+                }
+              },
+              {
                 "type": "FIELD",
                 "name": "value",
                 "content": {
-                  "type": "ALIAS",
-                  "content": {
-                    "type": "SYMBOL",
-                    "name": "_link_whole_conditional_in_if"
-                  },
-                  "named": true,
-                  "value": "preproc_conditional_property_value"
+                  "type": "SYMBOL",
+                  "name": "_link_in_core"
                 }
               }
             ]
@@ -3461,16 +5146,18 @@
                 "value": "="
               },
               {
+                "type": "REPEAT",
+                "content": {
+                  "type": "SYMBOL",
+                  "name": "_value_decoration"
+                }
+              },
+              {
                 "type": "FIELD",
                 "name": "value",
                 "content": {
-                  "type": "ALIAS",
-                  "content": {
-                    "type": "SYMBOL",
-                    "name": "_ml_value_conditional"
-                  },
-                  "named": true,
-                  "value": "preproc_conditional_property_value"
+                  "type": "SYMBOL",
+                  "name": "_ml_in_core"
                 }
               }
             ]
@@ -27255,17 +28942,160 @@
       "_link_value_branch"
     ],
     [
-      "_link_whole_conditional",
-      "_link_whole_conditional_in_if",
+      "_link_sequence_in",
+      "_link_in_core"
+    ],
+    [
+      "_link_seq_step_nt",
+      "_link_seq_step_last"
+    ],
+    [
+      "_ml_seq_step_nt",
+      "_ml_seq_step_last"
+    ],
+    [
+      "_link_arm_t",
+      "_link_arm_nt",
+      "_link_tail_10"
+    ],
+    [
+      "_link_arm_t",
+      "_link_arm_nt",
+      "_link_tail_lead"
+    ],
+    [
+      "_link_arm_nt",
+      "_link_tail_10"
+    ],
+    [
+      "_link_arm_t",
+      "_link_arm_nt",
+      "_link_tail_lead",
+      "_link_after_gap"
+    ],
+    [
+      "_ml_arm_t",
+      "_ml_arm_nt",
+      "_ml_tail_10"
+    ],
+    [
+      "_ml_arm_t",
+      "_ml_arm_nt",
+      "_ml_tail_lead"
+    ],
+    [
+      "_ml_arm_nt",
+      "_ml_tail_10"
+    ],
+    [
+      "_ml_arm_t",
+      "_ml_arm_nt",
+      "_ml_tail_lead",
+      "_ml_after_gap",
+      "_ml_after_branch"
+    ],
+    [
+      "_link_group_t",
+      "_link_group_nt",
+      "_link_after_gap"
+    ],
+    [
+      "_link_group_nt",
+      "_link_after_gap"
+    ],
+    [
+      "_link_tail_lead",
+      "_link_after_gap"
+    ],
+    [
+      "_ml_group_t",
+      "_ml_group_nt",
+      "_ml_after_gap"
+    ],
+    [
+      "_ml_group_nt",
+      "_ml_after_gap"
+    ],
+    [
+      "_ml_tail_lead",
+      "_ml_after_gap"
+    ],
+    [
+      "_link_arm_t",
+      "_link_arm_nt",
+      "_link_group_nt",
+      "_link_after_gap",
+      "_empty_value_conditional"
+    ],
+    [
+      "_link_tail_lead",
+      "_link_after_lead",
+      "_empty_value_conditional",
       "preproc_conditional_link_values"
     ],
     [
-      "_link_whole_conditional",
+      "_empty_value_conditional",
       "preproc_conditional_link_values"
     ],
     [
-      "_link_whole_conditional",
-      "_link_in_if_arm"
+      "_link_after_gap",
+      "_empty_value_conditional"
+    ],
+    [
+      "_link_tail_lead",
+      "_empty_value_conditional"
+    ],
+    [
+      "_link_after_lead",
+      "preproc_conditional_link_values"
+    ],
+    [
+      "_ml_arm_t",
+      "_ml_arm_nt",
+      "_ml_group_nt",
+      "_ml_after_gap",
+      "_ml_after_branch",
+      "_empty_value_conditional"
+    ],
+    [
+      "_ml_tail_lead",
+      "_ml_after_lead",
+      "_empty_value_conditional"
+    ],
+    [
+      "_ml_after_gap",
+      "_empty_value_conditional"
+    ],
+    [
+      "_ml_tail_lead",
+      "_empty_value_conditional"
+    ],
+    [
+      "_ml_after_lead",
+      "_empty_value_conditional"
+    ],
+    [
+      "_ml_sequence_in",
+      "_ml_in_core",
+      "_ml_sequence_after_lead"
+    ],
+    [
+      "_ml_seq_step_nt",
+      "_ml_seq_step_last",
+      "_ml_sequence_after_lead"
+    ],
+    [
+      "_ml_seq_step_nt",
+      "_ml_sequence_after_lead"
+    ],
+    [
+      "_ml_property_value",
+      "_ml_sequence_after",
+      "_ml_sequence_after_t"
+    ],
+    [
+      "_ml_sequence_after",
+      "_ml_sequence_after_t"
     ],
     [
       "_table_relation_head",

@@ -76,3 +76,23 @@ def test_semicolon_inside_site_without_terminator_is_one_reading(al_parser):
 
 def test_semicolon_after_site_with_no_value_passes(al_parser):
     witness.assert_all_pass(al_parser, SEMI_AFTER)
+
+
+# Spike gates 2-3 (link, ML).
+DIL = (b"table 50101 Cust { fields { field(1; A; Code[20]) { } field(2; B; Code[20]) { } } }\n"
+       b"report 50100 R { dataset { dataitem(D; Cust) { dataitem(E; Cust) {\n"
+       b"DataItemLink =\n#if X\n#if Y\n#endif\n;\n#endif\n#if not X\nA = field(B);\n#endif\n"
+       b"} } } }\n")
+LINK_ITEM35 = _page_field("SubPageLink =\n#if X\n A = field(B);\n#endif\n#if not X\n A = field(C);\n#endif")
+ML_AFTER = _page_field("CaptionML =\n#if X\n ENU='a'\n#endif\n#if not X\n ENU='b'\n#endif\n;")
+ML_AFTER_T = _page_field("CaptionML =\n#if X\n ENU='a'\n#endif\n#if not X\n ENU='b';\n#else\n#if Y\n#endif\n;\n#endif\n;")
+
+
+def test_empty_value_terminated_arm_keeps_its_terminator(al_parser):
+    witness.assert_all_pass(al_parser, DIL)
+
+
+@pytest.mark.parametrize("src", [LINK_ITEM35, ML_AFTER, ML_AFTER_T])
+def test_link_and_ml_runs_pass(al_parser, src):
+    witness.assert_produces(al_parser, src, SEQ)
+    witness.assert_all_pass(al_parser, src)

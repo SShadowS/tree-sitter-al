@@ -1,3 +1,4 @@
+// Fixture property_value_run_test.txt#B11: SubPageLink, a nested group carries the joining `,` (step 3, unchanged)#0
 // B11: SubPageLink, a nested group carrying the joining `,` (spec 9 round 4, finding 3).
 // source: docs/superpowers/specs/2026-10-05-property-value-runs-design.md 5.1
 // expect: * accept
