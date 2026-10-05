@@ -527,7 +527,7 @@ TableRelation =
                       (preproc_close))))))))))))
 
 ================================================================================
-B11: OptionMembers all-comma run of conditionals, `;` after: the Permissions list reading wins (prec.dynamic(-1))
+B11 audit: prec.dynamic(-1) keeps the pre-B11 reading of an all-`,` conditional run (OptionMembers here is invalid AL in every configuration, alc AL0153; the permission-list reading is pre-existing, pinned to detect change, not endorsed)
 ================================================================================
 
 table 50101 Cust { fields { field(1; "No."; Code[20]) { } field(2; Name; Text[30]) { } field(3; Amount; Decimal) { } field(4; Flag; Boolean) { } } }
