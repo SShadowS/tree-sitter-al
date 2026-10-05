@@ -116,11 +116,17 @@ The leak has **0 production sites**. The family's 20,004 values are already righ
      seq(field('value', $._link_property_value), optional(';'))),
    ```
 
-   **One derivation per input.** Unlike `table_relation_value`, `link_value_list` cannot start
-   with `#if`, because `_link_value_seq`'s `#if`-first arm requires a preceding run or a leading
-   comma inside the branch. If generation shows a value-start conflict anyway, record the
-   generator's exact message. Then resolve it the B5 way: one derivation per input, and a
-   declared conflict only where the reading depends on the token after `#endif`.
+   **A value-start `#if` has two readings, as it does today.** `link_value_list` CAN start with
+   `#if`: `_link_value_seq`'s second arm is `seq(optional(run), repeat1(seq(conditional,
+   optional(run))))`. So a value-start `#if` is either the whole-value wrapper or a list that
+   opens with a conditional. That is grammar finding G11, which a declared conflict and GLR
+   already decide today (the `_link_value_branch` comment, `grammar.js` around 1568-1577). It is
+   pinned by `test/corpus/link_list_opening_conditional_test.txt`.
+
+   B5b must keep exactly today's G11 trees for those inputs, under the keyed name. It does not
+   redesign them. If the keyed arm moves a G11 fixture's tree, that is a STOP, to be reported
+   with the generator message and the tree delta. Any new conflict the keyed arm needs is
+   declared with a comment naming the two readings.
 3. **`_property_value`** loses `$.link_value_list`.
 4. **`_property_with_terminator_in_if`** gains a keyed link arm with the whole conditional,
    following B5. That covers the `;`-inside-the-arms placement.
@@ -296,6 +302,7 @@ Run in both directions, as in B4 and B5. Every row offering `PROPERTY_NAME` with
 | Risk | Mitigation |
 |---|---|
 | A family host whose state lacks the keyed token: a link value ERRORs, or becomes an expression | §5.4 audit, plus one fixture per §2.1 host. tree-harness requires 0 production changes, so a production host regression fails the gate |
+| A keyed arm moves a G11 tree (a link list opening with `#if`) | §3.2 item 2: STOP and report. The existing G11 fixture pins today's tree |
 | Removing `prec.dynamic` exposes a different tie inside the keyed arm | The keyed arm offers no expression reading. The generator and the one-entry fixtures show it |
 | A family value that relied on the generic whole-value path (`;`-inside-the-arms at a host) loses it | §3.2 item 4, and the host fixtures cover both placements |
 | `Enabled = Status = const(Open)`-style input that alc accepts as an expression | It becomes `property_expression(comparison_expression ... call_expression)`. The §5.1 decide-by-probe case pins it either way |
