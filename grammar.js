@@ -141,6 +141,52 @@ function witnessConditional($, arm, gap) {
   ));
 }
 
+// B11: the #if that OPENS a permission or implementation list at a property value
+// (spec 2026-10-05 §3: emptiness is recursive). Its witness is a branch holding a list
+// element, a `,` or (permissions) a `;` somewhere, recursively: a branch of only nested
+// all-absent conditionals does not count, so `#if X #if Y #endif #endif` is a decoration
+// of the value like `#if X #endif`, never this opener. Rules, for prefix p:
+//   p_empty_conditional -- the recursive all-absent conditional (aliased to `cond`)
+//   p_open_conditional  -- the witnessed opener, built from tail units ending at #endif
+//   p_branch_w / p_seq_w -- a branch / sequence with an element (the witness)
+// `withSemi`: a branch may also be witnessed by the property's `;` (permissions).
+function listOpenerRules(p, cond, branch, seq_, run, more, withSemi) {
+  const n = x => `${p}_${x}`;
+  const empty = $ => alias($[n('empty_conditional')], $[cond]);
+  return {
+    [n('empty_conditional')]: $ => seq(
+      $.preproc_if, repeat(empty($)),
+      repeat(seq($.preproc_elif, repeat(empty($)))),
+      optional(seq($.preproc_else, repeat(empty($)))),
+      $.preproc_endif,
+    ),
+    [n('open_conditional')]: $ => choice(
+      seq($.preproc_if, $[n('branch_w')], $[n('open_rest')]),
+      seq($.preproc_if, optional($[n('branch_e')]), $[n('open_lead')]),
+    ),
+    [n('open_rest')]: $ => choice(
+      seq($.preproc_elif, optional($[branch]), $[n('open_rest')]),
+      seq($.preproc_else, optional($[branch]), $.preproc_endif),
+      $.preproc_endif,
+    ),
+    [n('open_lead')]: $ => choice(
+      seq($.preproc_elif, optional($[n('branch_e')]), $[n('open_lead')]),
+      seq($.preproc_elif, $[n('branch_w')], $[n('open_rest')]),
+      seq($.preproc_else, $[n('branch_w')], $.preproc_endif),
+    ),
+    [n('branch_e')]: $ => repeat1(empty($)),
+    [n('branch_w')]: $ => choice(
+      withSemi ? seq(',', optional($[seq_]), optional(';')) : seq(',', optional($[seq_])),
+      withSemi ? seq($[n('seq_w')], optional(';')) : $[n('seq_w')],
+      ...(withSemi ? [seq(repeat1(empty($)), ';')] : []),
+    ),
+    [n('seq_w')]: $ => prec.right(seq(repeat(empty($)), choice(
+      seq($[run], optional($[more])),
+      seq(alias($[n('open_conditional')], $[cond]), optional($[run]), optional($[more])),
+    ))),
+  };
+}
+
 // B11 (spec 2026-10-05-property-value-runs-design.md §3, §4): a property value made of a
 // run of #if groups, `;` inside every arm (§3.1 step 2). One generator per family keeps
 // the six families from drifting. Slots of a group are:
@@ -507,27 +553,6 @@ module.exports = grammar({
     // `;`-inside group's, the witnessed list openers, a list-internal conditional --
     // reads the same directive-only arms until then. Generator-required.
     [$._empty_value_conditional, $._generic_tail_lead],
-    [$._empty_value_conditional, $.preproc_conditional_permissions, $.preproc_conditional_impl_values],
-    [$._empty_value_conditional, $.preproc_conditional_permissions],
-    [$._empty_value_conditional, $.preproc_conditional_impl_values],
-    [$._empty_value_conditional, $._generic_tail_lead, $._property_value_conditional_lead, $._permission_open_conditional, $._impl_value_open_conditional, $._option_members_open_conditional],
-    [$._empty_value_conditional, $._generic_tail_lead, $._property_value_conditional_lead, $._permission_open_conditional, $.preproc_conditional_permissions, $._impl_value_open_conditional, $.preproc_conditional_impl_values, $._option_members_open_conditional],
-    [$._empty_value_conditional, $._property_value_conditional_lead, $._permission_open_conditional, $._impl_value_open_conditional, $._option_members_open_conditional],
-    [$._empty_value_conditional, $._property_value_conditional_lead, $._permission_open_conditional, $.preproc_conditional_permissions, $._impl_value_open_conditional, $.preproc_conditional_impl_values, $._option_members_open_conditional],
-    // B11: a permission / implementation list OPENED by a #if takes a witnessed opener
-    // (_permission_open_conditional, _impl_value_open_conditional), a list-internal one
-    // the plain conditional: inside a slot both read the same arm until the token after
-    // #endif shows whether a list started there. The two self-conflicts: the witnessed
-    // opener's leading absent #elif slots and the #elif slots after its witness are
-    // one hidden repeat, so an `#elif` arm is read as either until the next directive;
-    // both readings give the same children. The list/seq pairs: the top-level list and
-    // the branch-level sequence read the same run before a #if. Generator-required.
-    [$._permission_open_conditional, $.preproc_conditional_permissions],
-    [$._impl_value_open_conditional, $.preproc_conditional_impl_values],
-    [$._permission_open_conditional],
-    [$._impl_value_open_conditional],
-    [$.tabledata_permission_list, $._permission_seq],
-    [$.implementation_value_list, $._impl_value_seq],
     // B11: inside a group a slot is arm_t (value then `;`, or a terminated nested
     // group), arm_nt (a non-terminated nested group or sequence), a gap, or -- in the
     // `;`-after group -- an arm without its own `;` (_property_value_branch), until the
@@ -544,15 +569,40 @@ module.exports = grammar({
     [$._empty_value_conditional, $._property_value_gap],
     [$._generic_tail_lead, $._property_value_gap],
     [$._generic_arm_t, $._generic_arm_nt, $._generic_tail_lead, $._property_value_gap, $._property_value_branch],
-    // B11: the hosts with no decoration slot (permissions_property, the split
-    // Permissions heads and tail, option_type) also accept a list opened by an
-    // all-absent #if (_permission_empty_conditional, _option_members_empty_conditional),
-    // which reads the same directives as a decoration or a witnessed opener until an
-    // arm, a list element or the property's end. Generator-required.
-    [$._empty_value_conditional, $._generic_tail_lead, $._property_value_conditional_lead, $._permission_open_conditional, $._permission_empty_conditional, $._impl_value_open_conditional, $._option_members_open_conditional],
+    // B11: at a value start, an all-absent #if is a decoration; at the hosts with no
+    // decoration slot (permissions_property, the split Permissions heads and tail,
+    // option_type) it opens a list (_permission_empty_conditional,
+    // _option_members_empty_conditional); everywhere it reads the same directives as
+    // the witnessed openers' leading-gap tails (_permission_open_lead,
+    // _impl_value_open_lead) and the generic groups' until an arm, a list element or
+    // the property's end. Emptiness is recursive (_impl_value_empty_conditional,
+    // nested). Generator-required.
     [$._empty_value_conditional, $._permission_empty_conditional],
     [$._option_members_open_conditional, $._option_members_empty_conditional],
-    [$._permission_open_conditional, $._permission_empty_conditional],
+    [$._empty_value_conditional, $._generic_tail_lead, $._property_value_conditional_lead, $._permission_empty_conditional, $._permission_open_lead, $._impl_value_open_lead, $._option_members_open_conditional],
+    [$._empty_value_conditional, $._generic_tail_lead, $._property_value_conditional_lead, $._permission_empty_conditional, $._permission_open_lead, $._impl_value_empty_conditional, $._impl_value_open_lead, $._option_members_open_conditional],
+    [$._empty_value_conditional, $._permission_empty_conditional, $._impl_value_empty_conditional],
+    [$._empty_value_conditional, $._impl_value_empty_conditional],
+    [$._empty_value_conditional, $._generic_tail_lead, $._property_value_conditional_lead, $._permission_open_lead, $._impl_value_open_lead, $._option_members_open_conditional],
+    [$._permission_empty_conditional, $._permission_open_lead],
+    [$._impl_value_empty_conditional, $._impl_value_open_lead],
+    [$._empty_value_conditional, $._property_value_conditional_lead, $._permission_open_lead, $._impl_value_open_lead, $._option_members_open_conditional],
+    [$._empty_value_conditional, $._property_value_conditional_lead, $._permission_empty_conditional, $._permission_open_lead, $._impl_value_empty_conditional, $._impl_value_open_lead, $._option_members_open_conditional],
+    // B11: inside a witnessed list opener (listOpenerRules), a branch is witnessed
+    // (_branch_w / _seq_w: an element, a `,` or a `;`) or all-absent until that token;
+    // the opener and the plain list both read the run before a #if; a one-member
+    // branch is also an option_member_list; the two slot-less empty-open lists read
+    // the same conditional until its end. Generator-required.
+    [$._permission_branch_w, $.option_member_list],
+    [$._permission_branch_w, $._impl_value_branch_w, $.option_member_list],
+    [$._impl_value_branch_w, $.option_member_list],
+    [$._permission_empty_conditional, $._permission_open_conditional, $._permission_branch_w, $._permission_seq_w],
+    [$.tabledata_permission_list, $._permission_seq_w],
+    [$._impl_value_open_conditional, $._impl_value_seq_w],
+    [$.implementation_value_list, $._impl_value_seq_w],
+    [$._impl_value_empty_conditional, $._impl_value_open_conditional, $._impl_value_seq_w],
+    [$._permission_open_conditional, $._permission_branch_w, $._permission_seq_w],
+    [$._permission_list_empty_open, $._permission_list_empty_any],
     // B11 (§4.3): after a non-terminated group the run either continues (a sequence
     // step) or the property ends there and the `#if` is body content; a step is the
     // last one or not until the token after its #endif. Every step carries
@@ -604,10 +654,9 @@ module.exports = grammar({
     // also that conditional's branch. Generator-required, all five (seven until
     // B5b removed the link-only readings). They
     // subsume the two G3 entries that stood here, which tree-sitter now
-    // reports as unnecessary.
-    [$._permission_branch, $.option_member_list],
-    [$._permission_branch, $._impl_value_branch, $.option_member_list],
-    [$._impl_value_branch, $.option_member_list],
+    // reports as unnecessary. B11: four of the five moved to the witnessed openers'
+    // branches (_permission_branch_w, _impl_value_branch_w, below) once a list opened
+    // by a #if needed one; the plain-branch entries were then reported unnecessary.
     [$.preproc_conditional_permissions, $.preproc_conditional_impl_values],
     [$.preproc_conditional_controladdin, $.preproc_conditional],
     [$.procedure, $.interface_procedure_suffix],
@@ -1243,7 +1292,7 @@ module.exports = grammar({
       // list element, as before the witness (no decoration slot here).
       field('value', choice(
         $.tabledata_permission_list,
-        alias($._permission_list_empty_open, $.tabledata_permission_list),
+        alias($._permission_list_empty_any, $.tabledata_permission_list),
       )),
       ';',
     )),
@@ -1253,7 +1302,7 @@ module.exports = grammar({
       '=',
       field('value', choice(
         $.tabledata_permission_list,
-        alias($._permission_list_empty_open, $.tabledata_permission_list),
+        alias($._permission_list_empty_any, $.tabledata_permission_list),
       )),
     ),
 
@@ -2069,18 +2118,22 @@ module.exports = grammar({
       seq(alias($._permission_open_conditional, $.preproc_conditional_permissions),
         optional($._permission_run), optional($._permission_more)),
     )),
-    _permission_open_conditional: $ => witnessConditional($, $._permission_branch, null),
+    ...listOpenerRules('_permission', 'preproc_conditional_permissions', '_permission_branch',
+      '_permission_seq', '_permission_run', '_permission_more', true),
     // A permission list opened by an all-absent #if, for the hosts with no decoration
     // slot (permissions_property, preproc_split_permissions_property and its heads):
     // the shape tabledata_permission_list had before B11's witness.
+    // At permissions_property, never the empty conditional alone: then nothing is a
+    // list there, and the property would end at the #endif of an empty value.
     _permission_list_empty_open: $ => prec.right(seq(
       alias($._permission_empty_conditional, $.preproc_conditional_permissions),
-      // never the empty conditional alone: then nothing is a list here, and the
-      // property would end at the #endif of an empty value
       choice(seq($._permission_run, optional($._permission_more)), $._permission_more),
     )),
-    _permission_empty_conditional: $ => seq(
-      $.preproc_if, repeat($.preproc_elif), optional($.preproc_else), $.preproc_endif),
+    // In a split head or tail the list may be that conditional alone (base tree).
+    _permission_list_empty_any: $ => prec.right(seq(
+      alias($._permission_empty_conditional, $.preproc_conditional_permissions),
+      optional($._permission_run), optional($._permission_more),
+    )),
     _permission_more: $ => prec.right(repeat1(seq($.preproc_conditional_permissions, optional($._permission_run)))),
 
     // prec.right: after a run, `preproc_open` is a shift/reduce — extend the
@@ -2200,7 +2253,8 @@ module.exports = grammar({
       seq(alias($._impl_value_open_conditional, $.preproc_conditional_impl_values),
         optional($._impl_value_run), optional($._impl_value_more)),
     )),
-    _impl_value_open_conditional: $ => witnessConditional($, $._impl_value_branch, null),
+    ...listOpenerRules('_impl_value', 'preproc_conditional_impl_values', '_impl_value_branch',
+      '_impl_value_seq', '_impl_value_run', '_impl_value_more', false),
     _impl_value_more: $ => prec.right(repeat1(seq($.preproc_conditional_impl_values, optional($._impl_value_run)))),
 
     // prec.right: after a run, `preproc_open` is a shift/reduce — extend the

@@ -3470,3 +3470,200 @@ Caption =
                       value: (string_literal)
                       (preproc_endif
                         (preproc_close)))))))))))))
+
+================================================================================
+B11 regression: a split Permissions head whose whole list is one empty #if stays a list
+================================================================================
+
+permissionset 50100 PS
+{
+#if V
+    Permissions =
+#if X
+#endif
+#else
+    Permissions = tabledata C = R,
+#endif
+    tabledata D = R;
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (permissionset_declaration
+    (permissionset_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (preproc_split_permissions_property
+        (preproc_if
+          (preproc_open)
+          condition: (identifier))
+        name: (property_name)
+        value: (tabledata_permission_list
+          (preproc_conditional_permissions
+            (preproc_if
+              (preproc_open)
+              condition: (identifier))
+            (preproc_endif
+              (preproc_close))))
+        (preproc_else)
+        name: (property_name)
+        value: (tabledata_permission_list
+          (tabledata_permission
+            (tabledata_keyword)
+            table_name: (identifier)
+            permission: (permission_type)))
+        (preproc_endif
+          (preproc_close))
+        value: (tabledata_permission_list
+          (tabledata_permission
+            (tabledata_keyword)
+            table_name: (identifier)
+            permission: (permission_type)))))))
+
+================================================================================
+B11 regression: a split Permissions #else head whose whole list is one empty #if stays a list
+================================================================================
+
+permissionset 50100 PS
+{
+#if V
+    Permissions = tabledata C = R,
+#else
+    Permissions =
+#if X
+#endif
+#endif
+    tabledata D = R;
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (permissionset_declaration
+    (permissionset_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (preproc_split_permissions_property
+        (preproc_if
+          (preproc_open)
+          condition: (identifier))
+        name: (property_name)
+        value: (tabledata_permission_list
+          (tabledata_permission
+            (tabledata_keyword)
+            table_name: (identifier)
+            permission: (permission_type)))
+        (preproc_else)
+        name: (property_name)
+        value: (tabledata_permission_list
+          (preproc_conditional_permissions
+            (preproc_if
+              (preproc_open)
+              condition: (identifier))
+            (preproc_endif
+              (preproc_close))))
+        (preproc_endif
+          (preproc_close))
+        value: (tabledata_permission_list
+          (tabledata_permission
+            (tabledata_keyword)
+            table_name: (identifier)
+            permission: (permission_type)))))))
+
+================================================================================
+B11 regression: a split Permissions tail that is one empty #if stays a list
+================================================================================
+
+permissionset 50100 PS
+{
+#if V
+    Permissions = tabledata A = R,
+#else
+    Permissions = tabledata B = R,
+#endif
+#if X
+#endif
+;
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (permissionset_declaration
+    (permissionset_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (preproc_split_permissions_property
+        (preproc_if
+          (preproc_open)
+          condition: (identifier))
+        name: (property_name)
+        value: (tabledata_permission_list
+          (tabledata_permission
+            (tabledata_keyword)
+            table_name: (identifier)
+            permission: (permission_type)))
+        (preproc_else)
+        name: (property_name)
+        value: (tabledata_permission_list
+          (tabledata_permission
+            (tabledata_keyword)
+            table_name: (identifier)
+            permission: (permission_type)))
+        (preproc_endif
+          (preproc_close))
+        value: (tabledata_permission_list
+          (preproc_conditional_permissions
+            (preproc_if
+              (preproc_open)
+              condition: (identifier))
+            (preproc_endif
+              (preproc_close))))))))
+
+================================================================================
+B11: Implementation nested empty prefix is a decoration of the value (spec 3.4)
+================================================================================
+
+enum 50100 E implements IFoo
+{
+DefaultImplementation =
+#if X
+#if Y
+#endif
+#endif
+    IFoo = A;
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (enum_declaration
+    (enum_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    (implements_clause
+      (implements_keyword)
+      interface: (identifier))
+    body: (declaration_body
+      (property
+        name: (property_name)
+        (preproc_conditional_property_value
+          (preproc_if
+            (preproc_open)
+            condition: (identifier))
+          (preproc_conditional_property_value
+            (preproc_if
+              (preproc_open)
+              condition: (identifier))
+            (preproc_endif
+              (preproc_close)))
+          (preproc_endif
+            (preproc_close)))
+        value: (implementation_value_list
+          (implementation_value
+            interface: (identifier)
+            implementation: (identifier)))))))
