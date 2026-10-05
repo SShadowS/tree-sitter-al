@@ -1,15 +1,15 @@
 {
   "_note": "The known_unused/known_missing entries below are regex-detector false positives, not confirmed dead code -- see the comment above BASELINE_NOTE in tools/check_grammar_health.py for the four categories and how each was verified. Re-verify before assuming a NEW entry is also a false positive.",
-  "created": "2026-10-05T02:50:53.111466",
+  "created": "2026-10-05T11:19:40.109040",
   "metrics": {
-    "timestamp": "2026-10-05T02:50:52.787984",
-    "rule_count": 600,
+    "timestamp": "2026-10-05T11:19:39.729264",
+    "rule_count": 608,
     "conflict_count": 0,
-    "external_count": 18,
+    "external_count": 19,
     "test_results": {
-      "passed": 1868,
+      "passed": 2030,
       "failed": 0,
-      "total": 1868,
+      "total": 2030,
       "success": true
     },
     "unused_rules": [
@@ -19,6 +19,7 @@
     ],
     "missing_definitions": [
       "_directive_eol",
+      "_link_property_name",
       "_malformed_directive",
       "_ml_property_name",
       "_namespaces_property_name",
@@ -54,7 +55,7 @@
       "var_attribute_open",
       "xmlport_declaration"
     ],
-    "scanner_lines": 1112
+    "scanner_lines": 1131
   },
   "known_unused": [
     "entitlement_keyword",
@@ -63,6 +64,7 @@
   ],
   "known_missing": [
     "_directive_eol",
+    "_link_property_name",
     "_malformed_directive",
     "_ml_property_name",
     "_namespaces_property_name",

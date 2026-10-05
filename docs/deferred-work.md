@@ -1197,6 +1197,66 @@ only the ones alc accepts.
 
 **Owner:** unassigned.
 
+## 30. A trailing comma in a link list is accepted (`RunPageLink = A = field(B),;`)
+
+**Established:** 2026-10-05, B5b. alc 18.0.41 REJECTS it (AL0104, AL0107, AL0292; probe
+`tools/alc_probe/cases/link-keying/decide-trailing-comma.al`). The grammar accepts it as a clean
+`link_value_list` (`_link_value_run`'s `optional(',')`, the separator placement). Production sites
+in the link properties: 0 (`./tools/corpus-grep.sh -P -i -c '(SubPageLink|RunPageLink|LinkFields|DataItemTableFilter|ColumnFilter|DataItemLink)\s*=[^;]*,\s*;'`, single-line form).
+
+**Next step:** roadmap B7 (separator audit), with the comma-leading link list it already carries.
+
+**Owner:** B7.
+
+## 31. `filter((1|2)&3)` ERRORs
+
+**Established:** 2026-10-05, B5b. alc ACCEPTS `RunPageLink = Amount = filter((1|2)&3);` (probe
+`decide-filter-parenthesized.al`). `filter_value` has no parentheses, so the grammar ERRORs; the rule
+is shared with `where_clause`, so a fix covers both hosts. Production sites: 0
+(`./tools/corpus-grep.sh -P -c 'filter\s*\(\s*\('`).
+
+**Next step:** parenthesised groups in `filter_value`, checked against both hosts.
+
+**Owner:** unassigned.
+
+## 32. `chartpart` has no grammar rule
+
+**Established:** 2026-10-05, B5b. A bare `chartpart(C; "Sales Chart") { }` in a page layout is ERROR in
+the grammar (pre-existing, not a B5b regression). alc ACCEPTS it (probe in the B5b Task 6 session:
+split and flat ACCEPT on alc 18.0.41). `SubPageLink` inside a chartpart is rejected by alc (AL0171,
+`decide-chartpart-subpagelink.al`), so that is not the reason to add it. Production sites: 0
+(`./tools/corpus-grep.sh -P -i -c '^\s*chartpart\s*\('`).
+
+**Next step:** a `chartpart` rule beside `part`/`systempart`, with the hosts the compiler allows.
+
+**Owner:** unassigned.
+
+## 33. A generic property whose value follows an empty `#if` block parses clean, with the wrong shape
+
+**Established:** 2026-10-05, B5b. `Visible =` / `#if X` / `#endif` / ` false;` in a page field is
+ACCEPTED by alc for both X assignments (split and flat). The grammar gives no ERROR but the value is an
+`option_member_list` holding a `preproc_conditional_option_members` (the empty `#if ... #endif`) and an
+`option_member (boolean)`: the generic `_in_if` route reads the empty prefix as a split list, not as
+a transparent block before one value. Same family as the B5b G11 empty-prefix shapes, which the keyed
+link rules handle. Production sites: 0 in all four corpora (a multi-line scan for
+`Name =` followed by `#if` and an immediate `#endif`/`#else`/`#elif`).
+
+**Next step:** decide with an alc four-way probe whether the generic value should treat an empty
+arm as transparent; fix only if a production shape needs it.
+
+**Owner:** unassigned.
+
+## 34. `where(B = const(-1))` ERRORs
+
+**Established:** 2026-10-05, found in the B5b Task 3 review; pre-existing. `where_condition`'s `const`
+takes no signed number, so `TableRelation = Cust."No." where(Amount = const(-1));` ERRORs on the `-1`.
+alc ACCEPTS it (probe in the B5b Task 6 session, split and flat). Link `const` arguments were fixed
+in B5b; the `where` const was not. Production sites: 0 (`./tools/corpus-grep.sh -P -i -c 'where\s*\([^)]*=\s*const\s*\(\s*-'`).
+
+**Next step:** reuse the `_const_negative` rule in `where_condition`'s const.
+
+**Owner:** unassigned.
+
 ## Longer-lived proposals, tracked separately
 
 - [`python-bindings-modernization.md`](python-bindings-modernization.md) — the
