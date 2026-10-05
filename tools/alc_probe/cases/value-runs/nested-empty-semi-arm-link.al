@@ -1,4 +1,5 @@
 // B11: Nested-empty-then-`;` arm in a report dataitem DataItemLink (spec 9 round 4, finding 4).
+// NOTE: a different shape from nested-empty-semi-arm-link-two-groups: a single group with an #else arm, not two groups.
 // source: docs/superpowers/specs/2026-10-05-property-value-runs-design.md 5.1
 // expect: * accept
 // expect: X !Y reject(AL0171)

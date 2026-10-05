@@ -1,4 +1,5 @@
 // B11: Configuration-dependent boundary: Visible/Caption (spec 3.4 example).
+// NOTE: all configurations were compiled and accepted; alc reads each configuration flat, the one-reading residue is ours (spec 3.4).
 // source: docs/superpowers/specs/2026-10-05-property-value-runs-design.md 5.1
 // expect: * accept
 table 50101 Cust { fields { field(1; "No."; Code[20]) { } field(2; Name; Text[30]) { } field(3; Amount; Decimal) { } field(4; Flag; Boolean) { } } }

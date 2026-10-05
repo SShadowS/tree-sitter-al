@@ -1,5 +1,4 @@
-// B11: Configuration-dependent boundary, `;`-after mixed placement (spec 9 round 1).
-// NOTE: all configurations were compiled and accepted; alc reads each configuration flat, the one-reading residue is ours (spec 3.4).
+// B11: Nested-empty-then-`;` arm, CaptionML: `N = #if X #if Y #endif ; #else v; #endif` (spec 3, Bare `;` arms).
 // source: docs/superpowers/specs/2026-10-05-property-value-runs-design.md 5.1
 // expect: * accept
 table 50101 Cust { fields { field(1; "No."; Code[20]) { } field(2; Name; Text[30]) { } field(3; Amount; Decimal) { } field(4; Flag; Boolean) { } } }
@@ -8,14 +7,12 @@ interface IFoo { procedure Bar(); }
 codeunit 50104 FooImpl implements IFoo { procedure Bar() begin end; }
 codeunit 50107 FooImpl2 implements IFoo { procedure Bar() begin end; }
 page 50100 P { SourceTable = Cust; layout { area(Content) { field(F; Rec.Flag) {
-Visible =
+CaptionML =
 #if X
-    true;
+#if Y
+#endif
+    ;
 #else
-    false
+    ENU='a';
 #endif
-#if X
-    Caption = 'x'
-#endif
-;
 } } } }

@@ -13,6 +13,13 @@ Effects (Task 1 brief, Step 3 table):
   decimal-range, runobject; accepted for ml-pairs, namespaces-pairs, sorting-where): all remain B13 debt, none become negatives.
 - the three boundary-* cases accept in every configuration (alc reads each configuration flat; the one-reading residue is ours).
 
+- Symbol convention for impl-entire-run-separators.al: five symbols, V W X Y Z, in this order of the text: V,W are the leading/trailing
+  separator groups' symbols (`#if W ,` leads, `#if V ,` trails), Y selects `IFoo = FooImpl`, X is the joining `,`, Z selects `IBar = BarImpl`.
+  The only valid configuration is V=0 W=0 X=1 Y=1 Z=1.
+- nested-empty-semi-arm-link.al is a DIFFERENT shape from the spec 5.1 one: a single group with an #else arm. The spec shape (first group
+  = nested empty group then `;`, then a separate second group) is nested-empty-semi-arm-link-two-groups.al.
+- nested-empty-semi-arm-<caption|captionml|namespaces>: the nested-empty-then-`;` arm for the other optional-core families (see rows).
+
 all-empty-calcformula.al: reject(AL0104,AL0107,AL0176) in all 2 configurations
 all-empty-caption.al: reject(AL0219) in all 2 configurations
 all-empty-captionml.al: accept in all 2 configurations
@@ -57,7 +64,13 @@ impl-entire-run-separators.al: accept [V=0 W=0 X=1 Y=1 Z=1]; reject(AL0104) [V=0
 link-comma-concat.al: accept in all 4 configurations
 link-entire-run-separators.al: accept [W=0 X=0 Y=0 Z=1 | W=0 X=0 Y=1 Z=0]; reject(AL0104,AL0107,AL0198,AL0224,AL0292) [W=1 X=1 Y=1 Z=1]; reject(AL0104,AL0107,AL0224,AL0292) [W=0 X=1 Y=1 Z=1]; reject(AL0104,AL0107,AL0292) x10; reject(AL0104,AL0124,AL0198,AL0224) [W=1 X=0 Y=1 Z=1]; reject(AL0104,AL0124,AL0224) [W=0 X=0 Y=1 Z=1]
 link-nested-joining-comma.al: accept [X=0 Y=0 | X=0 Y=1 | X=1 Y=1]; reject(AL0104,AL0124,AL0224) [X=1 Y=0]
+link-trailing-semi-after-terminated-run.al: accept in all 2 configurations
+nested-empty-semi-arm-caption.al: accept [X=0 Y=0 | X=0 Y=1]; reject(AL0219) [X=1 Y=0 | X=1 Y=1]
+nested-empty-semi-arm-captionml.al: accept in all 4 configurations
+nested-empty-semi-arm-link-two-groups.al: accept [X=0 Y=0 | X=0 Y=1]; reject(AL0171) [X=1 Y=0 | X=1 Y=1]
 nested-empty-semi-arm-link.al: accept [X=0 Y=0 | X=0 Y=1]; reject(AL0171) [X=1 Y=0 | X=1 Y=1]
+nested-empty-semi-arm-namespaces.al: accept in all 4 configurations
+optionmembers-blank-slots-only.al: reject(AL0153) in all 4 configurations
 optionmembers-blank-slots.al: accept in all 8 configurations
 optionmembers-comma-concat.al: accept in all 4 configurations
 optionmembers-entire-run.al: accept in all 4 configurations
