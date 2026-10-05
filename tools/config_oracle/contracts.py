@@ -378,11 +378,15 @@ register("preproc_conditional_link_values", "branch-select", _LIST_RUN,
                 "preproc_conditional_link_values:<children>": "list-run"},
          # _link_value_branch / _link_value_seq / _link_value_run (grammar.js:1190-1224).
          arm={"link_value", "preproc_conditional_link_values", ","})
+register("preproc_conditional_impl_values", "branch-select", _LIST_RUN,
+         hosts={"implementation_value_list:<children>": "list-run",
+                "preproc_conditional_impl_values:<children>": "list-run"},
+         # _impl_value_seq / _impl_value_branch / _impl_value_run (grammar.js).
+         arm={"implementation_value", "preproc_conditional_impl_values", ","})
 
 # --- registered, not yet lowered: milestone 3 (spec "Registry state at exit"), every
 # one of them. Unsupported is explicit, never a default.
 for t in ("preproc_conditional_case_patterns",
-          "preproc_conditional_impl_values",
           "preproc_fragmented_else_tail",
           "preproc_guarded_statement", "preproc_split_brace_close",
           "preproc_split_brace_close_if_only", "preproc_split_call_statement", "preproc_split_case_branch",

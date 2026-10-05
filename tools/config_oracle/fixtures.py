@@ -150,7 +150,7 @@ def extract(root: Path) -> list:
 # The roadmap's sub-project ids (docs/superpowers/plans/2026-09-28-roadmap-remaining-work.md):
 # a debt entry's owner is the one that removes it. A production entry also names the
 # milestone it goes by: a sub-project id, or M3/M4/M5 (the oracle milestones C1/C2/C3 run).
-ROADMAP = frozenset({*(f"A{i}" for i in range(1, 8)), *(f"B{i}" for i in range(1, 10)),
+ROADMAP = frozenset({*(f"A{i}" for i in range(1, 8)), *(f"B{i}" for i in range(1, 14)),
                      "C1", "C2", "C3", "D1", "D2", "E1", "E2", "E3", "F1"})
 MILESTONES = ROADMAP | {"M3", "M4", "M5"}
 

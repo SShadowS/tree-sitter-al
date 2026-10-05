@@ -65,7 +65,10 @@ LAYOUT_HOSTS = {"layout_body", "layout_container_body"}
 # host list is checked for item/separator alternation once it is rebuilt.
 LIST_RUN_TYPES = frozenset({"preproc_conditional_permissions", "preproc_conditional_arguments",
                             "preproc_conditional_list_elements", "preproc_conditional_option_members",
-                            "preproc_conditional_where", "preproc_conditional_link_values"})
+                            "preproc_conditional_where", "preproc_conditional_link_values",
+                            "preproc_conditional_impl_values"})
+# Lists a list family can leave empty at an optional value site (B11 spec 5.3).
+LIST_VALUE_EMPTY_KINDS = frozenset({"link_value_list", "implementation_value_list", "option_member_list"})
 _BRACKETS = {"(", ")", "[", "]"}
 
 
@@ -350,7 +353,10 @@ def _lower_ordinary(node, ctx) -> Lowered:
         frags.extend(bind_previous(kids, r, c))
     new = Node(node.kind, node.named, node.field, node.start, node.end, kids)
     if any(c.kind in LIST_RUN_TYPES for c in node.children):
-        _check_alternation(new)
+        if new.kind == "option_member_list":
+            _check_option_holes(new)
+        else:
+            _check_alternation(new)
     frags = _consume(new, frags)
     for f in frags:
         if not getattr(f, "_from_last", False):
@@ -365,6 +371,12 @@ def _lower_ordinary(node, ctx) -> Lowered:
         if node.kind in EMPTY_REMOVABLE:
             ctx.normalised.append(f"removed-empty:{node.kind}@{node.start}")
             return Lowered([], frags)
+        # list-value-empty (B11 spec 5.3): a list family's list emptied by its element
+        # conditionals, at an optional value site.
+        if (node.kind in LIST_VALUE_EMPTY_KINDS and node.field == "value"
+                and ctx.parent_kind in ("property", "preproc_conditional_property_value")):
+            ctx.normalised.append(f"list-value-empty:{node.kind}@{node.start}")
+            return Lowered([], frags)
         raise LoweringError("empty-node", node)
     if (node.kind == "property_expression" and any(c.kind == _TAIL for c in node.children)
             and len(kids) == 1 and kids[0].kind not in PROPERTY_EXPRESSION_KINDS):
@@ -377,6 +389,19 @@ def _lower_ordinary(node, ctx) -> Lowered:
         ctx.normalised.append(f"option-member-list-unwrap@{node.start}")
         return Lowered([kids[0].children[0].copy(field=node.field)], frags)
     return Lowered([_span_from_children(new)], frags)
+
+
+def _check_option_holes(new):
+    """OptionMembers keeps blank ordinals (B11 spec 5.3): leading, consecutive and trailing
+    `,` are legal. Only two members side by side, with no separator, are refused."""
+    prev_item = False
+    for c in new.children:
+        if c.kind == ";" and not c.children:
+            continue
+        is_sep = c.kind == "," and not c.children
+        if not is_sep and prev_item:
+            raise LoweringError("list-separator", new, "two members without a separator")
+        prev_item = not is_sep
 
 
 def _check_alternation(new):
@@ -483,9 +508,17 @@ def _consume(new, frags):
                 first, later = sorted((last, f.leaf), key=lambda n: n.start)
                 new.children[-1] = first
                 recompute_span(new)
-                sib = SiblingsAfter(None, [Node("empty_statement", True, None, later.start, later.end, [later])])
-                sib._from_last = True
-                rest.append(sib)
+                stmt = Node("empty_statement", True, None, later.start, later.end, [later])
+                sib = next((r for r in rest if isinstance(r, SiblingsAfter)
+                            and getattr(r, "_mixed_semis", False)), None)
+                if sib is None:
+                    sib = SiblingsAfter(None, [stmt])
+                    sib._from_last = True
+                    sib._mixed_semis = True
+                    rest.append(sib)
+                else:
+                    sib.nodes.append(stmt)
+                    sib.nodes.sort(key=lambda n: n.start)
         else:
             rest.append(f)
     return rest
