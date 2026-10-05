@@ -231,6 +231,7 @@ module.exports = grammar({
     $._ml_property_name,        // [15] one of the 13 compiler ML names followed by = (B4)
     $._namespaces_property_name, // [16] `Namespaces` followed by = (B4)
     $._table_relation_property_name, // [17] `TableRelation` followed by = (B5)
+    $._link_property_name,  // [18] one of the six compiler link-family names followed by = (B5b)
   ],
 
   conflicts: $ => [
@@ -339,18 +340,18 @@ module.exports = grammar({
     [$.order_keyword, $._value_start_keyword_name],
     [$.table_keyword, $._value_start_keyword_name],
     // `Prop = identifier . = ...` at value start: the identifier may open a
-    // comparison, a link_value / where_condition / ml_value_pair (via
-    // _plain_name), an implementation_value (via _implementation_head) or an
-    // option list. GLR carries them all to the discriminating token. See
-    // _plain_name for why value-start heads do not use _identifier_or_quoted.
+    // comparison, a where_condition / ml_value_pair (via _plain_name), an
+    // implementation_value (via _implementation_head) or an option list. GLR
+    // carries them all to the discriminating token. See _plain_name for why
+    // value-start heads do not use _identifier_or_quoted. B5b: link_value left
+    // the generic value start (it is keyed), and tree-sitter then reported
+    // [_implementation_head, _plain_name] unnecessary, so it is gone.
     [$._expression, $._plain_name],
     [$._plain_name, $._identifier_or_quoted],
-    [$._implementation_head, $._plain_name],
     [$._implementation_head, $._expression, $._plain_name],
-    // A link value may now start with the `table` token (`RunPageLink = Table
-    // = field(X)`), as a permission entry always could (`table X = RIMD`), so
-    // an empty `#if` block before it is either one until the `=` after it.
-    [$.preproc_conditional_link_values, $.preproc_conditional_permissions],
+    // [preproc_conditional_link_values, preproc_conditional_permissions] stood here
+    // (a link value starting with `table` against `table X = RIMD`). Gone in B5b: a
+    // link list is reachable only under a keyed link name, a permission list never is.
     // `[$._single_pattern, $._expression]` used to live here and is GONE: the
     // separator fix made it unnecessary. It existed because a case pattern list
     // whose commas were optional could not be told apart from a single
@@ -367,20 +368,21 @@ module.exports = grammar({
     // A property whose whole value is a #if (_property_value_conditional,
     // see _property_with_terminator_in_if) is one more reading of an empty or
     // directive-only branch.
-    [$.preproc_conditional_link_values, $.preproc_conditional_permissions, $.preproc_conditional_impl_values, $._property_value_conditional],
+    [$.preproc_conditional_permissions, $.preproc_conditional_impl_values, $._property_value_conditional],
     // The same ambiguity the three lines below already declare at the
     // CONDITIONAL level, now also reachable one level down: a bare `,` opening a
-    // #if branch is identical in a link, permission and implementation list, and
-    // the property name that would disambiguate is long past.
-    [$._link_value_branch, $._permission_branch, $._impl_value_branch],
+    // #if branch is identical in a permission and implementation list, and
+    // the property name that would disambiguate is long past. (Link lists left
+    // every mixed entry in B5b: they are reachable only under a keyed link name.)
+    [$._permission_branch, $._impl_value_branch],
     // A whole value whose `;` sits inside the arms (_property_value_conditional_in_if,
     // G11) reads the same `#if` as the `;`-after-#endif whole value and as every
     // list-internal conditional until an arm's end, and a `#if` nested in its arm
     // is either kind until the `;` or directive after the inner #endif. All four
     // generator-required. They replace [preproc_conditional_permissions,
     // _property_value_conditional], which tree-sitter then reported unnecessary.
-    [$._property_value_conditional_in_if, $._property_value_conditional, $.preproc_conditional_link_values, $.preproc_conditional_permissions, $.preproc_conditional_impl_values],
-    [$._property_value_conditional_in_if, $.preproc_conditional_link_values, $.preproc_conditional_permissions, $.preproc_conditional_impl_values],
+    [$._property_value_conditional_in_if, $._property_value_conditional, $.preproc_conditional_permissions, $.preproc_conditional_impl_values],
+    [$._property_value_conditional_in_if, $.preproc_conditional_permissions, $.preproc_conditional_impl_values],
     [$._property_value_conditional_in_if, $.preproc_conditional_permissions],
     [$._property_value_branch_in_if, $._property_value_branch],
     // A link list OPENED by a #if (`SubPageLink = #if X A = field(B), #endif
@@ -388,6 +390,18 @@ module.exports = grammar({
     // link_value_list and a list-internal _link_value_branch. G11: both now
     // carry prec 6, so GLR keeps both and the text after #endif decides.
     [$.link_value_list, $._link_value_branch],
+    // A keyed link value that starts with #if (B5b) has three readings until an
+    // arm's end or the token after #endif: the `;`-after-#endif whole value
+    // (_link_whole_conditional), the `;`-inside-the-arms whole value
+    // (_link_whole_conditional_in_if), and a list OPENED by the #if
+    // (preproc_conditional_link_values, G11). Generator-required.
+    [$._link_whole_conditional, $._link_whole_conditional_in_if, $.preproc_conditional_link_values],
+    // ... and, where every arm so far is absent, only the two that need no present arm:
+    // the `;`-after-#endif whole value and the list-opening #if. Generator-required.
+    [$._link_whole_conditional, $.preproc_conditional_link_values],
+    // Outside against inside at an arm's end: `#if X A = field(B);` is a terminated
+    // arm of either whole value until #endif and what follows it. Generator-required.
+    [$._link_whole_conditional, $._link_in_if_arm],
     // _property_whole_value_in_if at an action area (G11, item 17): there a
     // #if after `Name =` also opens an option-member list. Generator-required
     // (not needed for the assembly_body host alone, measured).
@@ -408,30 +422,27 @@ module.exports = grammar({
     // preproc_conditional_option_members, one more reading of an empty or
     // list-shaped arm beside every conditional above, and before the directive
     // an arm `A,` is both a whole value's option_member_list and an
-    // _option_members_branch. All eight generator-required.
-    [$._property_value_conditional, $.preproc_conditional_link_values, $.preproc_conditional_permissions, $.preproc_conditional_impl_values, $.preproc_conditional_option_members],
-    [$.preproc_conditional_link_values, $.preproc_conditional_impl_values, $.preproc_conditional_option_members],
-    [$.preproc_conditional_link_values, $.preproc_conditional_option_members],
+    // _option_members_branch. All six generator-required (eight until B5b
+    // removed the link-only readings).
+    [$._property_value_conditional, $.preproc_conditional_permissions, $.preproc_conditional_impl_values, $.preproc_conditional_option_members],
+    [$.preproc_conditional_impl_values, $.preproc_conditional_option_members],
     [$._property_value_conditional_in_if, $.preproc_conditional_permissions, $.preproc_conditional_option_members],
-    [$.preproc_conditional_link_values, $.preproc_conditional_permissions, $.preproc_conditional_option_members],
     [$.preproc_conditional_permissions, $.preproc_conditional_option_members],
-    [$._property_value_conditional_in_if, $._property_value_conditional, $.preproc_conditional_link_values, $.preproc_conditional_permissions, $.preproc_conditional_impl_values, $.preproc_conditional_option_members],
+    [$._property_value_conditional_in_if, $._property_value_conditional, $.preproc_conditional_permissions, $.preproc_conditional_impl_values, $.preproc_conditional_option_members],
     [$.option_member_list, $._option_members_branch],
     // A whole-value arm is one _property_value (G8), so a list arm ending in a
     // directive (`A, B #else`) is also a link, permission or implementation
     // branch until the directive, and a permission/implementation list arm is
-    // also that conditional's branch. Generator-required, all seven. They
+    // also that conditional's branch. Generator-required, all five (seven until
+    // B5b removed the link-only readings). They
     // subsume the two G3 entries that stood here, which tree-sitter now
     // reports as unnecessary.
     [$._permission_branch, $.option_member_list],
-    [$._link_value_branch, $._permission_branch, $._impl_value_branch, $.option_member_list],
-    [$._link_value_branch, $._permission_branch, $.option_member_list],
-    [$._link_value_branch, $.option_member_list],
-    [$._link_value_branch, $._impl_value_branch, $.option_member_list],
+    [$._permission_branch, $._impl_value_branch, $.option_member_list],
+    [$._impl_value_branch, $.option_member_list],
     [$.tabledata_permission_list, $._permission_branch],
     [$.implementation_value_list, $._impl_value_branch],
-    [$.preproc_conditional_link_values, $.preproc_conditional_permissions, $.preproc_conditional_impl_values],
-    [$.preproc_conditional_link_values, $.preproc_conditional_impl_values],
+    [$.preproc_conditional_permissions, $.preproc_conditional_impl_values],
     [$.preproc_conditional_controladdin, $.preproc_conditional],
     [$.procedure, $.interface_procedure_suffix],
     // _procedure_tail (and its _procedure_regular_tail arm) is the text after a
@@ -877,6 +888,17 @@ module.exports = grammar({
         field('value', $._table_relation_property_value),
         ';'
       ),
+      // The six link-family names are keyed by NAME (B5b): a one-entry `A = field(B)` is
+      // also a complete comparison, so only the name can choose the link reading.
+      // optional(): an empty DataItemLink value is rejected only semantically (AL0171,
+      // Task 1 probes), so the parser accepts it; `RunPageLink = ;` (AL0107) is the
+      // same arm's structural over-acceptance (Ruling S').
+      seq(
+        field('name', alias($._link_property_name, $.property_name)),
+        '=',
+        optional(field('value', $._link_property_value)),
+        ';'
+      ),
     ),
 
     // A keyed value is the family's list, or a whole-value #if whose arms are that
@@ -927,6 +949,54 @@ module.exports = grammar({
           $.preproc_conditional_table_relation),
       alias($._table_relation_open_if, $.table_relation_expression),
     ),
+
+    // The six link-family names reach the compiler's TableFilter / ReportDataItemLink /
+    // QueryDataItemLink grammars (spec 2026-10-05 §2.1). One neutral union grammar
+    // (link_value) serves all three: deliberate over-acceptance, not equivalence.
+    _link_property_value: $ => choice(
+      $.link_value_list,
+      alias($._link_whole_conditional, $.preproc_conditional_property_value),
+    ),
+    // `;` after #endif: arms MAY end in `;` (mixed placement is valid AL; the compiler's
+    // property list accepts a standalone `;`, ObjectParser.cs:7505-7516).
+    _link_whole_conditional: $ => keyedValueConditional($,
+      seq(field('value', $._link_property_value), optional(';'))),
+    // `;` inside the arms: arms may be absent and #else is optional, but the conditional
+    // must hold at least one present arm, recursively -- the termination witness that
+    // excludes the empty-prefix split (`#if X #endif B = field(A);`), spec §3.2 item 2.
+    _link_in_if_arm: $ => choice(
+      seq(field('value', $._link_property_value), ';'),
+      field('value', alias($._link_whole_conditional_in_if, $.preproc_conditional_property_value)),
+    ),
+    _link_in_if_tail: $ => seq(
+      repeat(seq($.preproc_elif, optional($._link_in_if_arm))),
+      optional(seq($.preproc_else, optional($._link_in_if_arm))),
+      $.preproc_endif,
+    ),
+    _link_whole_conditional_in_if: $ => choice(
+      // the #if arm is the witness
+      seq($.preproc_if, $._link_in_if_arm, $._link_in_if_tail),
+      // a later arm is the witness, after leading absent arms
+      seq($.preproc_if,
+        repeat($.preproc_elif),
+        choice(
+          seq($.preproc_elif, $._link_in_if_arm, $._link_in_if_tail),
+          seq($.preproc_else, $._link_in_if_arm, $.preproc_endif),
+        )),
+    ),
+
+    // const(...)'s numeric argument: sign and magnitude are ONE value node. Local `-`, not the
+    // external NEGATIVE_* tokens, which decline before `)` (spec 2026-10-05 §3.2 item 6).
+    // No unary `+`: alc rejects it (AL0104, Task 1 probes decide-const-plus-*.al).
+    _const_unsigned_numeric: $ => choice($.integer, $.decimal, $.biginteger_literal),
+    _const_numeric: $ => choice(
+      $._const_unsigned_numeric,
+      alias($._const_negative, $.unary_expression),
+    ),
+    // A rule of its own, not alias(seq(...)): an alias over a bare seq renames each
+    // CHILD (giving `operator: (unary_expression) operand: (unary_expression ...)`),
+    // while an alias over a rule symbol makes the one wrapping node.
+    _const_negative: $ => seq(field('operator', '-'), field('operand', $._const_unsigned_numeric)),
 
     // --- Permissions property: Name = tabledata_permission_list (no trailing ;) ---
     // Used when the terminating ';' is consumed inside the permission list's preproc branch.
@@ -1014,6 +1084,12 @@ module.exports = grammar({
         '=',
         field('value', alias($._namespaces_value_conditional, $.preproc_conditional_property_value)),
       ),
+      // The link family (B5b): `;` inside the arms, at least one present arm.
+      seq(
+        field('name', alias($._link_property_name, $.property_name)),
+        '=',
+        field('value', alias($._link_whole_conditional_in_if, $.preproc_conditional_property_value)),
+      ),
     )),
 
     // The whole-value conditional of _property_with_terminator_in_if: the
@@ -1057,6 +1133,8 @@ module.exports = grammar({
       ),
       // No keyed TableRelation arm: both hosts reject TableRelation (AL0124, deferred-work
       // item 17), and it cost ~102 states (spec 2026-10-04 rev 4 item 6, Ruling M).
+      // No keyed link arm either: RunPageLink on an action area is AL0124 (B5b Task 1,
+      // tools/alc_probe/cases/link-keying/decide-runpagelink-action-area.al).
     )),
 
     _property_value_conditional_in_if: $ => seq(
@@ -1174,7 +1252,6 @@ module.exports = grammar({
       // placements of the terminator give one shape.
       alias($._property_value_conditional, $.preproc_conditional_property_value),
       $.sorting_value,              // sorting("Starting Date")
-      $.link_value_list,            // "Field" = field(Other), ...
       $.property_expression,        // Expressions used as property values
       $.keyword_identifier,         // Keywords used as simple property values (TestIsolation = Codeunit)
       // `Image = Order;` / `Visible = Table;`: a word whose keyword token is
@@ -1585,18 +1662,17 @@ module.exports = grammar({
       choice(
         // --- Structured link forms -------------------------------------------
         // field()/const()/filter()/upperlimit() and the dotted DataItem.Field
-        // reference are unambiguously link syntax. A one-entry list is still a
-        // complete `A = B` expression though, so property_expression ->
-        // comparison_expression parses it too; the tie survives to a GLR
-        // ambiguity, where static prec does not apply and the arbitrary
-        // symbol-id tiebreak used to hand every single-entry DataItemLink /
-        // RunPageLink / SubPageLink / ColumnFilter to property_expression.
-        // prec.dynamic settles it in favour of the link reading so one query
-        // on link_value finds every link site, not just the comma-separated
-        // ones. Two-or-more entries were never ambiguous — the comma already
-        // rules property_expression out — so this only moves the single-entry
-        // trees.
-        prec.dynamic(1, choice(
+        // reference. Until B5b a one-entry list was also a complete `A = B`
+        // comparison under the generic property name, and a prec.dynamic(1)
+        // here settled that tie for the link reading. That competitor is gone:
+        // link_value_list is reachable only through the six keyed link names
+        // (_link_property_value), and a generic name goes to the expression path
+        // (spec 2026-10-05 §3.2 item 5). What still competes is the G11
+        // whole-value against list-opening `#if` choice, and prec.dynamic never
+        // decided that one: both readings hold the same pairs and received the
+        // same increment. The keyed conditionals' structure and the declared
+        // conflicts decide it.
+        choice(
           seq(
             choice($.field_keyword, $.upperlimit_keyword),
             '(',
@@ -1611,7 +1687,7 @@ module.exports = grammar({
             ')'
           ),
           seq($.const_keyword, '(', optional(field('value', choice(
-            $.string_literal, $.identifier, $.quoted_identifier, $.integer, $.boolean,
+            $.string_literal, $.identifier, $.quoted_identifier, $._const_numeric, $.boolean,
             alias($._value_start_keyword_name, $.identifier),
             $.database_reference, $.qualified_enum_value, $.keyword_identifier,
             $.datetime_literal, $.date_literal, $.time_literal,
@@ -1625,14 +1701,11 @@ module.exports = grammar({
             '.',
             field('value', $._identifier_or_quoted)
           )),
-        )),
+        ),
         // --- Bare value: Field = "Value" or Field = Value ---------------------
-        // Deliberately NOT dynamic-boosted. A single `Prop = A = B` with a bare
-        // right-hand side is never a link in practice — it is Implementation /
-        // DefaultImplementation / UnknownValueImplementation syntax (which wants
-        // implementation_value_list) or an ordinary boolean property expression
-        // such as `Visible = HideActions = false`. Leaving this branch at
-        // dynamic 0 keeps all of those trees exactly as they are.
+        // Reachable only under a link-family name (B5b). `Implementation = A = B`
+        // and `Visible = HideActions = false` never get here: their generic name
+        // sends them to implementation_value_list / property_expression.
         field('value', prec(-1, $._identifier_or_quoted)),
       )
     ),

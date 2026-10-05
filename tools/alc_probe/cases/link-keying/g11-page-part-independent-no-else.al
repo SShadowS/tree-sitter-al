@@ -1,3 +1,4 @@
+// Fixture link_keying_test.txt#G11 independent-no-else, page-part (probe g11-page-part-independent-no-else.al) is one property#0
 // G11 shape independent-no-else, delegate-valid pairs, page-part (B5b 5.1).
 // expect: * reject(AL0104,AL0107,AL0292)
 // expect: !X !Y reject(AL0104,AL0107,AL0292)

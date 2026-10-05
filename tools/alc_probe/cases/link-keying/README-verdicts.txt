@@ -51,3 +51,5 @@ REJECTED (no fixture, no placement variants): page-systempart-subpagelink reject
 # - G11 shapes (delegate-valid pairs, page part / report data item / query data item): nested, nested-after, nested-mixed, empty-prefix, exhaustive-elif-not accept in every
 #   assignment. independent-no-else: X&!Y, !X&Y, X&Y accept, !X&!Y rejects. empty-arm-beside-terminated: !X accepts, X rejects (empty value).
 # - Visible = Flag = Rec.Flag on a page field (leak-visible-flag-equals-amount.al) is accepted.
+# - g11-page-part-empty-arms-elif.al (added by B5b Task 3): two leading absent arms (#if X #elif Y) then a terminated #else arm; !X!Y accepts, every
+#   other assignment rejects (AL0104,AL0107,AL0292: no value, the arms hold the `;`). Exercises _link_whole_conditional_in_if's leading-absent-arms branch.

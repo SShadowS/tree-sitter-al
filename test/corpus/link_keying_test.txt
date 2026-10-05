@@ -1,0 +1,3279 @@
+; B5b (spec 2026-10-05-link-keying-design.md): the six link-family names (ColumnFilter,
+; DataItemLink, DataItemTableFilter, LinkFields, RunPageLink, SubPageLink) are keyed by the
+; scanner, and only they reach link_value_list. A generic name with link-shaped text is a
+; property_expression (L1). const() takes a decimal, a biginteger and a `-`-signed number as
+; ONE value node (L3). The G11 variants, the mixed placement and the const forms are verbatim
+; Task 1 probes, accepted by alc 18.0.41 in the recorded assignments
+; (tools/alc_probe/cases/link-keying/README-verdicts.txt). No production DataItemLink carries
+; a comment (searched BC.History, DC, BC28.1, BCApps-29.0), so the comment case is the probe.
+; Expected trees from tools/snip.py --sexp, with field labels.
+
+================================================================================
+4.1: RunPageLink with two entries is one link_value_list
+================================================================================
+
+page 50100 P
+{
+    actions
+    {
+        area(Processing)
+        {
+            action(A)
+            {
+                RunPageLink = "No." = field("No."), Type = const(Item);
+            }
+        }
+    }
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (page_declaration
+    (page_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (actions_section
+        (actions_keyword)
+        body: (action_body
+          (action_area_section
+            (area_keyword)
+            type: (processing_keyword)
+            body: (action_body
+              (action_declaration
+                (action_keyword)
+                name: (identifier)
+                body: (declaration_body
+                  (property
+                    name: (property_name)
+                    value: (link_value_list
+                      (link_value
+                        field: (quoted_identifier)
+                        (field_keyword)
+                        value: (quoted_identifier))
+                      (link_value
+                        field: (identifier)
+                        (const_keyword)
+                        value: (identifier)))))))))))))
+
+================================================================================
+4.1: RunPageLink with one entry is a link_value_list
+================================================================================
+
+page 50100 P
+{
+    actions
+    {
+        area(Processing)
+        {
+            action(A)
+            {
+                RunPageLink = "No." = field("No.");
+            }
+        }
+    }
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (page_declaration
+    (page_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (actions_section
+        (actions_keyword)
+        body: (action_body
+          (action_area_section
+            (area_keyword)
+            type: (processing_keyword)
+            body: (action_body
+              (action_declaration
+                (action_keyword)
+                name: (identifier)
+                body: (declaration_body
+                  (property
+                    name: (property_name)
+                    value: (link_value_list
+                      (link_value
+                        field: (quoted_identifier)
+                        (field_keyword)
+                        value: (quoted_identifier)))))))))))))
+
+================================================================================
+4.1: whole-value SubPageLink, `;` after #endif, is preproc_conditional_property_value
+================================================================================
+
+page 50100 P
+{
+    layout
+    {
+        area(Content)
+        {
+            part(L; Q)
+            {
+                SubPageLink =
+#if X
+                    A = field(B)
+#else
+                    A = field(C)
+#endif
+                    ;
+            }
+        }
+    }
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (page_declaration
+    (page_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (layout_section
+        (layout_keyword)
+        body: (layout_body
+          (area_section
+            (area_keyword)
+            type: (content_keyword)
+            body: (layout_body
+              (part_section
+                (part_keyword)
+                name: (identifier)
+                source: (identifier)
+                body: (declaration_body
+                  (property
+                    name: (property_name)
+                    value: (preproc_conditional_property_value
+                      (preproc_if
+                        (preproc_open)
+                        condition: (identifier))
+                      value: (link_value_list
+                        (link_value
+                          field: (identifier)
+                          (field_keyword)
+                          value: (identifier)))
+                      (preproc_else)
+                      value: (link_value_list
+                        (link_value
+                          field: (identifier)
+                          (field_keyword)
+                          value: (identifier)))
+                      (preproc_endif
+                        (preproc_close)))))))))))))
+
+================================================================================
+4.1: whole-value SubPageLink, `;` inside the arms, is preproc_conditional_property_value
+================================================================================
+
+page 50100 P
+{
+    layout
+    {
+        area(Content)
+        {
+            part(L; Q)
+            {
+                SubPageLink =
+#if X
+                    A = field(B);
+#else
+                    A = field(C);
+#endif
+            }
+        }
+    }
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (page_declaration
+    (page_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (layout_section
+        (layout_keyword)
+        body: (layout_body
+          (area_section
+            (area_keyword)
+            type: (content_keyword)
+            body: (layout_body
+              (part_section
+                (part_keyword)
+                name: (identifier)
+                source: (identifier)
+                body: (declaration_body
+                  (property
+                    name: (property_name)
+                    value: (preproc_conditional_property_value
+                      (preproc_if
+                        (preproc_open)
+                        condition: (identifier))
+                      value: (link_value_list
+                        (link_value
+                          field: (identifier)
+                          (field_keyword)
+                          value: (identifier)))
+                      (preproc_else)
+                      value: (link_value_list
+                        (link_value
+                          field: (identifier)
+                          (field_keyword)
+                          value: (identifier)))
+                      (preproc_endif
+                        (preproc_close)))))))))))))
+
+================================================================================
+4.1: RunPageLink opened by a list-internal #if is one property (G11)
+================================================================================
+
+page 50100 P
+{
+    actions
+    {
+        area(Processing)
+        {
+            action(A)
+            {
+                RunPageLink =
+#if X
+                    A = field(B),
+#endif
+                    B = field(A);
+            }
+        }
+    }
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (page_declaration
+    (page_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (actions_section
+        (actions_keyword)
+        body: (action_body
+          (action_area_section
+            (area_keyword)
+            type: (processing_keyword)
+            body: (action_body
+              (action_declaration
+                (action_keyword)
+                name: (identifier)
+                body: (declaration_body
+                  (property
+                    name: (property_name)
+                    value: (link_value_list
+                      (preproc_conditional_link_values
+                        (preproc_if
+                          (preproc_open)
+                          condition: (identifier))
+                        (link_value
+                          field: (identifier)
+                          (field_keyword)
+                          value: (identifier))
+                        (preproc_endif
+                          (preproc_close)))
+                      (link_value
+                        field: (identifier)
+                        (field_keyword)
+                        value: (identifier)))))))))))))
+
+================================================================================
+4.1: a generic name with a dotted comparison is a property_expression
+================================================================================
+
+page 50100 P
+{
+    layout
+    {
+        area(Content)
+        {
+            field(F; Rec.F)
+            {
+                FooLink = A = Rec.B;
+            }
+        }
+    }
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (page_declaration
+    (page_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (layout_section
+        (layout_keyword)
+        body: (layout_body
+          (area_section
+            (area_keyword)
+            type: (content_keyword)
+            body: (layout_body
+              (page_field
+                (field_keyword)
+                name: (identifier)
+                source: (member_expression
+                  object: (identifier)
+                  member: (identifier))
+                body: (declaration_body
+                  (property
+                    name: (property_name)
+                    value: (property_expression
+                      (comparison_expression
+                        left: (identifier)
+                        operator: (comparison_operator)
+                        right: (member_expression
+                          object: (identifier)
+                          member: (identifier))))))))))))))
+
+================================================================================
+4.1: FooLink = A = field(B) is generic, a property_expression
+================================================================================
+
+page 50100 P
+{
+    layout
+    {
+        area(Content)
+        {
+            field(F; Rec.F)
+            {
+                FooLink = A = field(B);
+            }
+        }
+    }
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (page_declaration
+    (page_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (layout_section
+        (layout_keyword)
+        body: (layout_body
+          (area_section
+            (area_keyword)
+            type: (content_keyword)
+            body: (layout_body
+              (page_field
+                (field_keyword)
+                name: (identifier)
+                source: (member_expression
+                  object: (identifier)
+                  member: (identifier))
+                body: (declaration_body
+                  (property
+                    name: (property_name)
+                    value: (property_expression
+                      (comparison_expression
+                        left: (identifier)
+                        operator: (comparison_operator)
+                        right: (call_expression
+                          function: (identifier)
+                          arguments: (argument_list
+                            (identifier)))))))))))))))
+
+================================================================================
+G11 nested, page-part (probe g11-page-part-nested.al) is one property
+================================================================================
+
+page 50100 P
+{
+    SourceTable = Cust;
+    layout { area(Content) { part(L; CustList) {
+        SubPageLink =
+#if X
+#if Y
+        "No." = field("No.");
+#else
+        Name = field(Name);
+#endif
+#else
+        Name = field(Name);
+#endif
+    } } }
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (page_declaration
+    (page_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (property
+        name: (property_name)
+        value: (identifier))
+      (layout_section
+        (layout_keyword)
+        body: (layout_body
+          (area_section
+            (area_keyword)
+            type: (content_keyword)
+            body: (layout_body
+              (part_section
+                (part_keyword)
+                name: (identifier)
+                source: (identifier)
+                body: (declaration_body
+                  (property
+                    name: (property_name)
+                    value: (preproc_conditional_property_value
+                      (preproc_if
+                        (preproc_open)
+                        condition: (identifier))
+                      value: (preproc_conditional_property_value
+                        (preproc_if
+                          (preproc_open)
+                          condition: (identifier))
+                        value: (link_value_list
+                          (link_value
+                            field: (quoted_identifier)
+                            (field_keyword)
+                            value: (quoted_identifier)))
+                        (preproc_else)
+                        value: (link_value_list
+                          (link_value
+                            field: (identifier)
+                            (field_keyword)
+                            value: (identifier)))
+                        (preproc_endif
+                          (preproc_close)))
+                      (preproc_else)
+                      value: (link_value_list
+                        (link_value
+                          field: (identifier)
+                          (field_keyword)
+                          value: (identifier)))
+                      (preproc_endif
+                        (preproc_close)))))))))))))
+
+================================================================================
+G11 nested, report-dataitem (probe g11-report-dataitem-nested.al) is one property
+================================================================================
+
+report 50130 R
+{
+    dataset { dataitem(C; Cust) { } dataitem(D; Cust) {
+        DataItemLinkReference = C;
+        DataItemLink =
+#if X
+#if Y
+        "No." = field("No.");
+#else
+        Name = field(Name);
+#endif
+#else
+        Name = field(Name);
+#endif
+    } }
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (report_declaration
+    (report_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (dataset_section
+        (dataset_keyword)
+        body: (dataset_body
+          (report_dataitem
+            (dataitem_keyword)
+            name: (identifier)
+            table_name: (identifier))
+          (report_dataitem
+            (dataitem_keyword)
+            name: (identifier)
+            table_name: (identifier)
+            body: (report_body
+              (property
+                name: (property_name)
+                value: (identifier))
+              (property
+                name: (property_name)
+                value: (preproc_conditional_property_value
+                  (preproc_if
+                    (preproc_open)
+                    condition: (identifier))
+                  value: (preproc_conditional_property_value
+                    (preproc_if
+                      (preproc_open)
+                      condition: (identifier))
+                    value: (link_value_list
+                      (link_value
+                        field: (quoted_identifier)
+                        (field_keyword)
+                        value: (quoted_identifier)))
+                    (preproc_else)
+                    value: (link_value_list
+                      (link_value
+                        field: (identifier)
+                        (field_keyword)
+                        value: (identifier)))
+                    (preproc_endif
+                      (preproc_close)))
+                  (preproc_else)
+                  value: (link_value_list
+                    (link_value
+                      field: (identifier)
+                      (field_keyword)
+                      value: (identifier)))
+                  (preproc_endif
+                    (preproc_close)))))))))))
+
+================================================================================
+G11 nested, query-dataitem (probe g11-query-dataitem-nested.al) is one property
+================================================================================
+
+query 50150 Q
+{
+    elements { dataitem(C; Cust) { column(No; "No.") { } dataitem(D; Cust) {
+        DataItemLink =
+#if X
+#if Y
+        "No." = C."No.";
+#else
+        Name = C.Name;
+#endif
+#else
+        Name = C.Name;
+#endif
+        column(N2; Name) { }
+    } } }
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (query_declaration
+    (query_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (elements_section
+        (elements_keyword)
+        body: (elements_body
+          (query_dataitem
+            (dataitem_keyword)
+            name: (identifier)
+            table_name: (identifier)
+            body: (query_body
+              (query_column
+                (column_keyword)
+                name: (identifier)
+                field_name: (quoted_identifier))
+              (query_dataitem
+                (dataitem_keyword)
+                name: (identifier)
+                table_name: (identifier)
+                body: (query_body
+                  (property
+                    name: (property_name)
+                    value: (preproc_conditional_property_value
+                      (preproc_if
+                        (preproc_open)
+                        condition: (identifier))
+                      value: (preproc_conditional_property_value
+                        (preproc_if
+                          (preproc_open)
+                          condition: (identifier))
+                        value: (link_value_list
+                          (link_value
+                            field: (quoted_identifier)
+                            value: (identifier)
+                            value: (quoted_identifier)))
+                        (preproc_else)
+                        value: (link_value_list
+                          (link_value
+                            field: (identifier)
+                            value: (identifier)
+                            value: (identifier)))
+                        (preproc_endif
+                          (preproc_close)))
+                      (preproc_else)
+                      value: (link_value_list
+                        (link_value
+                          field: (identifier)
+                          value: (identifier)
+                          value: (identifier)))
+                      (preproc_endif
+                        (preproc_close))))
+                  (query_column
+                    (column_keyword)
+                    name: (identifier)
+                    field_name: (identifier)))))))))))
+
+================================================================================
+G11 nested-after, page-part (probe g11-page-part-nested-after.al) is one property
+================================================================================
+
+page 50100 P
+{
+    SourceTable = Cust;
+    layout { area(Content) { part(L; CustList) {
+        SubPageLink =
+#if X
+#if Y
+        "No." = field("No.")
+#else
+        Name = field(Name)
+#endif
+#else
+        Name = field(Name)
+#endif
+        ;
+    } } }
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (page_declaration
+    (page_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (property
+        name: (property_name)
+        value: (identifier))
+      (layout_section
+        (layout_keyword)
+        body: (layout_body
+          (area_section
+            (area_keyword)
+            type: (content_keyword)
+            body: (layout_body
+              (part_section
+                (part_keyword)
+                name: (identifier)
+                source: (identifier)
+                body: (declaration_body
+                  (property
+                    name: (property_name)
+                    value: (preproc_conditional_property_value
+                      (preproc_if
+                        (preproc_open)
+                        condition: (identifier))
+                      value: (preproc_conditional_property_value
+                        (preproc_if
+                          (preproc_open)
+                          condition: (identifier))
+                        value: (link_value_list
+                          (link_value
+                            field: (quoted_identifier)
+                            (field_keyword)
+                            value: (quoted_identifier)))
+                        (preproc_else)
+                        value: (link_value_list
+                          (link_value
+                            field: (identifier)
+                            (field_keyword)
+                            value: (identifier)))
+                        (preproc_endif
+                          (preproc_close)))
+                      (preproc_else)
+                      value: (link_value_list
+                        (link_value
+                          field: (identifier)
+                          (field_keyword)
+                          value: (identifier)))
+                      (preproc_endif
+                        (preproc_close)))))))))))))
+
+================================================================================
+G11 nested-after, report-dataitem (probe g11-report-dataitem-nested-after.al) is one property
+================================================================================
+
+report 50130 R
+{
+    dataset { dataitem(C; Cust) { } dataitem(D; Cust) {
+        DataItemLinkReference = C;
+        DataItemLink =
+#if X
+#if Y
+        "No." = field("No.")
+#else
+        Name = field(Name)
+#endif
+#else
+        Name = field(Name)
+#endif
+        ;
+    } }
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (report_declaration
+    (report_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (dataset_section
+        (dataset_keyword)
+        body: (dataset_body
+          (report_dataitem
+            (dataitem_keyword)
+            name: (identifier)
+            table_name: (identifier))
+          (report_dataitem
+            (dataitem_keyword)
+            name: (identifier)
+            table_name: (identifier)
+            body: (report_body
+              (property
+                name: (property_name)
+                value: (identifier))
+              (property
+                name: (property_name)
+                value: (preproc_conditional_property_value
+                  (preproc_if
+                    (preproc_open)
+                    condition: (identifier))
+                  value: (preproc_conditional_property_value
+                    (preproc_if
+                      (preproc_open)
+                      condition: (identifier))
+                    value: (link_value_list
+                      (link_value
+                        field: (quoted_identifier)
+                        (field_keyword)
+                        value: (quoted_identifier)))
+                    (preproc_else)
+                    value: (link_value_list
+                      (link_value
+                        field: (identifier)
+                        (field_keyword)
+                        value: (identifier)))
+                    (preproc_endif
+                      (preproc_close)))
+                  (preproc_else)
+                  value: (link_value_list
+                    (link_value
+                      field: (identifier)
+                      (field_keyword)
+                      value: (identifier)))
+                  (preproc_endif
+                    (preproc_close)))))))))))
+
+================================================================================
+G11 nested-after, query-dataitem (probe g11-query-dataitem-nested-after.al) is one property
+================================================================================
+
+query 50150 Q
+{
+    elements { dataitem(C; Cust) { column(No; "No.") { } dataitem(D; Cust) {
+        DataItemLink =
+#if X
+#if Y
+        "No." = C."No."
+#else
+        Name = C.Name
+#endif
+#else
+        Name = C.Name
+#endif
+        ;
+        column(N2; Name) { }
+    } } }
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (query_declaration
+    (query_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (elements_section
+        (elements_keyword)
+        body: (elements_body
+          (query_dataitem
+            (dataitem_keyword)
+            name: (identifier)
+            table_name: (identifier)
+            body: (query_body
+              (query_column
+                (column_keyword)
+                name: (identifier)
+                field_name: (quoted_identifier))
+              (query_dataitem
+                (dataitem_keyword)
+                name: (identifier)
+                table_name: (identifier)
+                body: (query_body
+                  (property
+                    name: (property_name)
+                    value: (preproc_conditional_property_value
+                      (preproc_if
+                        (preproc_open)
+                        condition: (identifier))
+                      value: (preproc_conditional_property_value
+                        (preproc_if
+                          (preproc_open)
+                          condition: (identifier))
+                        value: (link_value_list
+                          (link_value
+                            field: (quoted_identifier)
+                            value: (identifier)
+                            value: (quoted_identifier)))
+                        (preproc_else)
+                        value: (link_value_list
+                          (link_value
+                            field: (identifier)
+                            value: (identifier)
+                            value: (identifier)))
+                        (preproc_endif
+                          (preproc_close)))
+                      (preproc_else)
+                      value: (link_value_list
+                        (link_value
+                          field: (identifier)
+                          value: (identifier)
+                          value: (identifier)))
+                      (preproc_endif
+                        (preproc_close))))
+                  (query_column
+                    (column_keyword)
+                    name: (identifier)
+                    field_name: (identifier)))))))))))
+
+================================================================================
+G11 nested-mixed, page-part (probe g11-page-part-nested-mixed.al) is one property
+================================================================================
+
+page 50100 P
+{
+    SourceTable = Cust;
+    layout { area(Content) { part(L; CustList) {
+        SubPageLink =
+#if X
+#if Y
+        "No." = field("No.");
+#else
+        Name = field(Name)
+#endif
+        ;
+#else
+        Name = field(Name);
+#endif
+    } } }
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (page_declaration
+    (page_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (property
+        name: (property_name)
+        value: (identifier))
+      (layout_section
+        (layout_keyword)
+        body: (layout_body
+          (area_section
+            (area_keyword)
+            type: (content_keyword)
+            body: (layout_body
+              (part_section
+                (part_keyword)
+                name: (identifier)
+                source: (identifier)
+                body: (declaration_body
+                  (property
+                    name: (property_name)
+                    value: (preproc_conditional_property_value
+                      (preproc_if
+                        (preproc_open)
+                        condition: (identifier))
+                      value: (preproc_conditional_property_value
+                        (preproc_if
+                          (preproc_open)
+                          condition: (identifier))
+                        value: (link_value_list
+                          (link_value
+                            field: (quoted_identifier)
+                            (field_keyword)
+                            value: (quoted_identifier)))
+                        (preproc_else)
+                        value: (link_value_list
+                          (link_value
+                            field: (identifier)
+                            (field_keyword)
+                            value: (identifier)))
+                        (preproc_endif
+                          (preproc_close)))
+                      (preproc_else)
+                      value: (link_value_list
+                        (link_value
+                          field: (identifier)
+                          (field_keyword)
+                          value: (identifier)))
+                      (preproc_endif
+                        (preproc_close)))))))))))))
+
+================================================================================
+G11 nested-mixed, report-dataitem (probe g11-report-dataitem-nested-mixed.al) is one property
+================================================================================
+
+report 50130 R
+{
+    dataset { dataitem(C; Cust) { } dataitem(D; Cust) {
+        DataItemLinkReference = C;
+        DataItemLink =
+#if X
+#if Y
+        "No." = field("No.");
+#else
+        Name = field(Name)
+#endif
+        ;
+#else
+        Name = field(Name);
+#endif
+    } }
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (report_declaration
+    (report_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (dataset_section
+        (dataset_keyword)
+        body: (dataset_body
+          (report_dataitem
+            (dataitem_keyword)
+            name: (identifier)
+            table_name: (identifier))
+          (report_dataitem
+            (dataitem_keyword)
+            name: (identifier)
+            table_name: (identifier)
+            body: (report_body
+              (property
+                name: (property_name)
+                value: (identifier))
+              (property
+                name: (property_name)
+                value: (preproc_conditional_property_value
+                  (preproc_if
+                    (preproc_open)
+                    condition: (identifier))
+                  value: (preproc_conditional_property_value
+                    (preproc_if
+                      (preproc_open)
+                      condition: (identifier))
+                    value: (link_value_list
+                      (link_value
+                        field: (quoted_identifier)
+                        (field_keyword)
+                        value: (quoted_identifier)))
+                    (preproc_else)
+                    value: (link_value_list
+                      (link_value
+                        field: (identifier)
+                        (field_keyword)
+                        value: (identifier)))
+                    (preproc_endif
+                      (preproc_close)))
+                  (preproc_else)
+                  value: (link_value_list
+                    (link_value
+                      field: (identifier)
+                      (field_keyword)
+                      value: (identifier)))
+                  (preproc_endif
+                    (preproc_close)))))))))))
+
+================================================================================
+G11 nested-mixed, query-dataitem (probe g11-query-dataitem-nested-mixed.al) is one property
+================================================================================
+
+query 50150 Q
+{
+    elements { dataitem(C; Cust) { column(No; "No.") { } dataitem(D; Cust) {
+        DataItemLink =
+#if X
+#if Y
+        "No." = C."No.";
+#else
+        Name = C.Name
+#endif
+        ;
+#else
+        Name = C.Name;
+#endif
+        column(N2; Name) { }
+    } } }
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (query_declaration
+    (query_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (elements_section
+        (elements_keyword)
+        body: (elements_body
+          (query_dataitem
+            (dataitem_keyword)
+            name: (identifier)
+            table_name: (identifier)
+            body: (query_body
+              (query_column
+                (column_keyword)
+                name: (identifier)
+                field_name: (quoted_identifier))
+              (query_dataitem
+                (dataitem_keyword)
+                name: (identifier)
+                table_name: (identifier)
+                body: (query_body
+                  (property
+                    name: (property_name)
+                    value: (preproc_conditional_property_value
+                      (preproc_if
+                        (preproc_open)
+                        condition: (identifier))
+                      value: (preproc_conditional_property_value
+                        (preproc_if
+                          (preproc_open)
+                          condition: (identifier))
+                        value: (link_value_list
+                          (link_value
+                            field: (quoted_identifier)
+                            value: (identifier)
+                            value: (quoted_identifier)))
+                        (preproc_else)
+                        value: (link_value_list
+                          (link_value
+                            field: (identifier)
+                            value: (identifier)
+                            value: (identifier)))
+                        (preproc_endif
+                          (preproc_close)))
+                      (preproc_else)
+                      value: (link_value_list
+                        (link_value
+                          field: (identifier)
+                          value: (identifier)
+                          value: (identifier)))
+                      (preproc_endif
+                        (preproc_close))))
+                  (query_column
+                    (column_keyword)
+                    name: (identifier)
+                    field_name: (identifier)))))))))))
+
+================================================================================
+G11 empty-prefix, page-part (probe g11-page-part-empty-prefix.al) is one property
+================================================================================
+
+page 50100 P
+{
+    SourceTable = Cust;
+    layout { area(Content) { part(L; CustList) {
+        SubPageLink =
+#if X
+#endif
+        "No." = field("No.");
+    } } }
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (page_declaration
+    (page_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (property
+        name: (property_name)
+        value: (identifier))
+      (layout_section
+        (layout_keyword)
+        body: (layout_body
+          (area_section
+            (area_keyword)
+            type: (content_keyword)
+            body: (layout_body
+              (part_section
+                (part_keyword)
+                name: (identifier)
+                source: (identifier)
+                body: (declaration_body
+                  (property
+                    name: (property_name)
+                    value: (link_value_list
+                      (preproc_conditional_link_values
+                        (preproc_if
+                          (preproc_open)
+                          condition: (identifier))
+                        (preproc_endif
+                          (preproc_close)))
+                      (link_value
+                        field: (quoted_identifier)
+                        (field_keyword)
+                        value: (quoted_identifier)))))))))))))
+
+================================================================================
+G11 empty-prefix, report-dataitem (probe g11-report-dataitem-empty-prefix.al) is one property
+================================================================================
+
+report 50130 R
+{
+    dataset { dataitem(C; Cust) { } dataitem(D; Cust) {
+        DataItemLinkReference = C;
+        DataItemLink =
+#if X
+#endif
+        "No." = field("No.");
+    } }
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (report_declaration
+    (report_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (dataset_section
+        (dataset_keyword)
+        body: (dataset_body
+          (report_dataitem
+            (dataitem_keyword)
+            name: (identifier)
+            table_name: (identifier))
+          (report_dataitem
+            (dataitem_keyword)
+            name: (identifier)
+            table_name: (identifier)
+            body: (report_body
+              (property
+                name: (property_name)
+                value: (identifier))
+              (property
+                name: (property_name)
+                value: (link_value_list
+                  (preproc_conditional_link_values
+                    (preproc_if
+                      (preproc_open)
+                      condition: (identifier))
+                    (preproc_endif
+                      (preproc_close)))
+                  (link_value
+                    field: (quoted_identifier)
+                    (field_keyword)
+                    value: (quoted_identifier)))))))))))
+
+================================================================================
+G11 empty-prefix, query-dataitem (probe g11-query-dataitem-empty-prefix.al) is one property
+================================================================================
+
+query 50150 Q
+{
+    elements { dataitem(C; Cust) { column(No; "No.") { } dataitem(D; Cust) {
+        DataItemLink =
+#if X
+#endif
+        "No." = C."No.";
+        column(N2; Name) { }
+    } } }
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (query_declaration
+    (query_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (elements_section
+        (elements_keyword)
+        body: (elements_body
+          (query_dataitem
+            (dataitem_keyword)
+            name: (identifier)
+            table_name: (identifier)
+            body: (query_body
+              (query_column
+                (column_keyword)
+                name: (identifier)
+                field_name: (quoted_identifier))
+              (query_dataitem
+                (dataitem_keyword)
+                name: (identifier)
+                table_name: (identifier)
+                body: (query_body
+                  (property
+                    name: (property_name)
+                    value: (link_value_list
+                      (preproc_conditional_link_values
+                        (preproc_if
+                          (preproc_open)
+                          condition: (identifier))
+                        (preproc_endif
+                          (preproc_close)))
+                      (link_value
+                        field: (quoted_identifier)
+                        value: (identifier)
+                        value: (quoted_identifier))))
+                  (query_column
+                    (column_keyword)
+                    name: (identifier)
+                    field_name: (identifier)))))))))))
+
+================================================================================
+G11 exhaustive-elif-not, page-part (probe g11-page-part-exhaustive-elif-not.al) is one property
+================================================================================
+
+page 50100 P
+{
+    SourceTable = Cust;
+    layout { area(Content) { part(L; CustList) {
+        SubPageLink =
+#if X
+        "No." = field("No.");
+#elif not X
+        Name = field(Name);
+#endif
+    } } }
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (page_declaration
+    (page_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (property
+        name: (property_name)
+        value: (identifier))
+      (layout_section
+        (layout_keyword)
+        body: (layout_body
+          (area_section
+            (area_keyword)
+            type: (content_keyword)
+            body: (layout_body
+              (part_section
+                (part_keyword)
+                name: (identifier)
+                source: (identifier)
+                body: (declaration_body
+                  (property
+                    name: (property_name)
+                    value: (preproc_conditional_property_value
+                      (preproc_if
+                        (preproc_open)
+                        condition: (identifier))
+                      value: (link_value_list
+                        (link_value
+                          field: (quoted_identifier)
+                          (field_keyword)
+                          value: (quoted_identifier)))
+                      (preproc_elif
+                        condition: (preproc_not_expression
+                          (identifier)))
+                      value: (link_value_list
+                        (link_value
+                          field: (identifier)
+                          (field_keyword)
+                          value: (identifier)))
+                      (preproc_endif
+                        (preproc_close)))))))))))))
+
+================================================================================
+G11 exhaustive-elif-not, report-dataitem (probe g11-report-dataitem-exhaustive-elif-not.al) is one property
+================================================================================
+
+report 50130 R
+{
+    dataset { dataitem(C; Cust) { } dataitem(D; Cust) {
+        DataItemLinkReference = C;
+        DataItemLink =
+#if X
+        "No." = field("No.");
+#elif not X
+        Name = field(Name);
+#endif
+    } }
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (report_declaration
+    (report_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (dataset_section
+        (dataset_keyword)
+        body: (dataset_body
+          (report_dataitem
+            (dataitem_keyword)
+            name: (identifier)
+            table_name: (identifier))
+          (report_dataitem
+            (dataitem_keyword)
+            name: (identifier)
+            table_name: (identifier)
+            body: (report_body
+              (property
+                name: (property_name)
+                value: (identifier))
+              (property
+                name: (property_name)
+                value: (preproc_conditional_property_value
+                  (preproc_if
+                    (preproc_open)
+                    condition: (identifier))
+                  value: (link_value_list
+                    (link_value
+                      field: (quoted_identifier)
+                      (field_keyword)
+                      value: (quoted_identifier)))
+                  (preproc_elif
+                    condition: (preproc_not_expression
+                      (identifier)))
+                  value: (link_value_list
+                    (link_value
+                      field: (identifier)
+                      (field_keyword)
+                      value: (identifier)))
+                  (preproc_endif
+                    (preproc_close)))))))))))
+
+================================================================================
+G11 exhaustive-elif-not, query-dataitem (probe g11-query-dataitem-exhaustive-elif-not.al) is one property
+================================================================================
+
+query 50150 Q
+{
+    elements { dataitem(C; Cust) { column(No; "No.") { } dataitem(D; Cust) {
+        DataItemLink =
+#if X
+        "No." = C."No.";
+#elif not X
+        Name = C.Name;
+#endif
+        column(N2; Name) { }
+    } } }
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (query_declaration
+    (query_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (elements_section
+        (elements_keyword)
+        body: (elements_body
+          (query_dataitem
+            (dataitem_keyword)
+            name: (identifier)
+            table_name: (identifier)
+            body: (query_body
+              (query_column
+                (column_keyword)
+                name: (identifier)
+                field_name: (quoted_identifier))
+              (query_dataitem
+                (dataitem_keyword)
+                name: (identifier)
+                table_name: (identifier)
+                body: (query_body
+                  (property
+                    name: (property_name)
+                    value: (preproc_conditional_property_value
+                      (preproc_if
+                        (preproc_open)
+                        condition: (identifier))
+                      value: (link_value_list
+                        (link_value
+                          field: (quoted_identifier)
+                          value: (identifier)
+                          value: (quoted_identifier)))
+                      (preproc_elif
+                        condition: (preproc_not_expression
+                          (identifier)))
+                      value: (link_value_list
+                        (link_value
+                          field: (identifier)
+                          value: (identifier)
+                          value: (identifier)))
+                      (preproc_endif
+                        (preproc_close))))
+                  (query_column
+                    (column_keyword)
+                    name: (identifier)
+                    field_name: (identifier)))))))))))
+
+================================================================================
+G11 independent-no-else, page-part (probe g11-page-part-independent-no-else.al) is one property
+================================================================================
+
+page 50100 P
+{
+    SourceTable = Cust;
+    layout { area(Content) { part(L; CustList) {
+        SubPageLink =
+#if X
+        "No." = field("No.");
+#elif Y
+        Name = field(Name);
+#endif
+    } } }
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (page_declaration
+    (page_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (property
+        name: (property_name)
+        value: (identifier))
+      (layout_section
+        (layout_keyword)
+        body: (layout_body
+          (area_section
+            (area_keyword)
+            type: (content_keyword)
+            body: (layout_body
+              (part_section
+                (part_keyword)
+                name: (identifier)
+                source: (identifier)
+                body: (declaration_body
+                  (property
+                    name: (property_name)
+                    value: (preproc_conditional_property_value
+                      (preproc_if
+                        (preproc_open)
+                        condition: (identifier))
+                      value: (link_value_list
+                        (link_value
+                          field: (quoted_identifier)
+                          (field_keyword)
+                          value: (quoted_identifier)))
+                      (preproc_elif
+                        condition: (identifier))
+                      value: (link_value_list
+                        (link_value
+                          field: (identifier)
+                          (field_keyword)
+                          value: (identifier)))
+                      (preproc_endif
+                        (preproc_close)))))))))))))
+
+================================================================================
+G11 independent-no-else, report-dataitem (probe g11-report-dataitem-independent-no-else.al) is one property
+================================================================================
+
+report 50130 R
+{
+    dataset { dataitem(C; Cust) { } dataitem(D; Cust) {
+        DataItemLinkReference = C;
+        DataItemLink =
+#if X
+        "No." = field("No.");
+#elif Y
+        Name = field(Name);
+#endif
+    } }
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (report_declaration
+    (report_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (dataset_section
+        (dataset_keyword)
+        body: (dataset_body
+          (report_dataitem
+            (dataitem_keyword)
+            name: (identifier)
+            table_name: (identifier))
+          (report_dataitem
+            (dataitem_keyword)
+            name: (identifier)
+            table_name: (identifier)
+            body: (report_body
+              (property
+                name: (property_name)
+                value: (identifier))
+              (property
+                name: (property_name)
+                value: (preproc_conditional_property_value
+                  (preproc_if
+                    (preproc_open)
+                    condition: (identifier))
+                  value: (link_value_list
+                    (link_value
+                      field: (quoted_identifier)
+                      (field_keyword)
+                      value: (quoted_identifier)))
+                  (preproc_elif
+                    condition: (identifier))
+                  value: (link_value_list
+                    (link_value
+                      field: (identifier)
+                      (field_keyword)
+                      value: (identifier)))
+                  (preproc_endif
+                    (preproc_close)))))))))))
+
+================================================================================
+G11 independent-no-else, query-dataitem (probe g11-query-dataitem-independent-no-else.al) is one property
+================================================================================
+
+query 50150 Q
+{
+    elements { dataitem(C; Cust) { column(No; "No.") { } dataitem(D; Cust) {
+        DataItemLink =
+#if X
+        "No." = C."No.";
+#elif Y
+        Name = C.Name;
+#endif
+        column(N2; Name) { }
+    } } }
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (query_declaration
+    (query_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (elements_section
+        (elements_keyword)
+        body: (elements_body
+          (query_dataitem
+            (dataitem_keyword)
+            name: (identifier)
+            table_name: (identifier)
+            body: (query_body
+              (query_column
+                (column_keyword)
+                name: (identifier)
+                field_name: (quoted_identifier))
+              (query_dataitem
+                (dataitem_keyword)
+                name: (identifier)
+                table_name: (identifier)
+                body: (query_body
+                  (property
+                    name: (property_name)
+                    value: (preproc_conditional_property_value
+                      (preproc_if
+                        (preproc_open)
+                        condition: (identifier))
+                      value: (link_value_list
+                        (link_value
+                          field: (quoted_identifier)
+                          value: (identifier)
+                          value: (quoted_identifier)))
+                      (preproc_elif
+                        condition: (identifier))
+                      value: (link_value_list
+                        (link_value
+                          field: (identifier)
+                          value: (identifier)
+                          value: (identifier)))
+                      (preproc_endif
+                        (preproc_close))))
+                  (query_column
+                    (column_keyword)
+                    name: (identifier)
+                    field_name: (identifier)))))))))))
+
+================================================================================
+G11 empty-arm-beside-terminated, page-part (probe g11-page-part-empty-arm-beside-terminated.al) is one property
+================================================================================
+
+page 50100 P
+{
+    SourceTable = Cust;
+    layout { area(Content) { part(L; CustList) {
+        SubPageLink =
+#if X
+#else
+        Name = field(Name);
+#endif
+    } } }
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (page_declaration
+    (page_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (property
+        name: (property_name)
+        value: (identifier))
+      (layout_section
+        (layout_keyword)
+        body: (layout_body
+          (area_section
+            (area_keyword)
+            type: (content_keyword)
+            body: (layout_body
+              (part_section
+                (part_keyword)
+                name: (identifier)
+                source: (identifier)
+                body: (declaration_body
+                  (property
+                    name: (property_name)
+                    value: (preproc_conditional_property_value
+                      (preproc_if
+                        (preproc_open)
+                        condition: (identifier))
+                      (preproc_else)
+                      value: (link_value_list
+                        (link_value
+                          field: (identifier)
+                          (field_keyword)
+                          value: (identifier)))
+                      (preproc_endif
+                        (preproc_close)))))))))))))
+
+================================================================================
+G11 empty-arm-beside-terminated, report-dataitem (probe g11-report-dataitem-empty-arm-beside-terminated.al) is one property
+================================================================================
+
+report 50130 R
+{
+    dataset { dataitem(C; Cust) { } dataitem(D; Cust) {
+        DataItemLinkReference = C;
+        DataItemLink =
+#if X
+#else
+        Name = field(Name);
+#endif
+    } }
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (report_declaration
+    (report_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (dataset_section
+        (dataset_keyword)
+        body: (dataset_body
+          (report_dataitem
+            (dataitem_keyword)
+            name: (identifier)
+            table_name: (identifier))
+          (report_dataitem
+            (dataitem_keyword)
+            name: (identifier)
+            table_name: (identifier)
+            body: (report_body
+              (property
+                name: (property_name)
+                value: (identifier))
+              (property
+                name: (property_name)
+                value: (preproc_conditional_property_value
+                  (preproc_if
+                    (preproc_open)
+                    condition: (identifier))
+                  (preproc_else)
+                  value: (link_value_list
+                    (link_value
+                      field: (identifier)
+                      (field_keyword)
+                      value: (identifier)))
+                  (preproc_endif
+                    (preproc_close)))))))))))
+
+================================================================================
+G11 empty-arm-beside-terminated, query-dataitem (probe g11-query-dataitem-empty-arm-beside-terminated.al) is one property
+================================================================================
+
+query 50150 Q
+{
+    elements { dataitem(C; Cust) { column(No; "No.") { } dataitem(D; Cust) {
+        DataItemLink =
+#if X
+#else
+        Name = C.Name;
+#endif
+        column(N2; Name) { }
+    } } }
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (query_declaration
+    (query_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (elements_section
+        (elements_keyword)
+        body: (elements_body
+          (query_dataitem
+            (dataitem_keyword)
+            name: (identifier)
+            table_name: (identifier)
+            body: (query_body
+              (query_column
+                (column_keyword)
+                name: (identifier)
+                field_name: (quoted_identifier))
+              (query_dataitem
+                (dataitem_keyword)
+                name: (identifier)
+                table_name: (identifier)
+                body: (query_body
+                  (property
+                    name: (property_name)
+                    value: (preproc_conditional_property_value
+                      (preproc_if
+                        (preproc_open)
+                        condition: (identifier))
+                      (preproc_else)
+                      value: (link_value_list
+                        (link_value
+                          field: (identifier)
+                          value: (identifier)
+                          value: (identifier)))
+                      (preproc_endif
+                        (preproc_close))))
+                  (query_column
+                    (column_keyword)
+                    name: (identifier)
+                    field_name: (identifier)))))))))))
+
+================================================================================
+Mixed `;` placement, page part (probe host-page-part-subpagelink-mixed.al), one property
+================================================================================
+
+page 50100 P
+{
+    SourceTable = Cust;
+    layout { area(Content) { part(L; CustList) {
+        SubPageLink =
+#if X
+        "No." = field("No.");
+#else
+        Name = field(Name)
+#endif
+        ;
+    } } }
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (page_declaration
+    (page_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (property
+        name: (property_name)
+        value: (identifier))
+      (layout_section
+        (layout_keyword)
+        body: (layout_body
+          (area_section
+            (area_keyword)
+            type: (content_keyword)
+            body: (layout_body
+              (part_section
+                (part_keyword)
+                name: (identifier)
+                source: (identifier)
+                body: (declaration_body
+                  (property
+                    name: (property_name)
+                    value: (preproc_conditional_property_value
+                      (preproc_if
+                        (preproc_open)
+                        condition: (identifier))
+                      value: (link_value_list
+                        (link_value
+                          field: (quoted_identifier)
+                          (field_keyword)
+                          value: (quoted_identifier)))
+                      (preproc_else)
+                      value: (link_value_list
+                        (link_value
+                          field: (identifier)
+                          (field_keyword)
+                          value: (identifier)))
+                      (preproc_endif
+                        (preproc_close)))))))))))))
+
+================================================================================
+Empty prefix `#if X #endif` then a pair is ONE property, list-internal
+================================================================================
+
+page 50100 P
+{
+    layout
+    {
+        area(Content)
+        {
+            part(L; Q)
+            {
+                SubPageLink =
+#if X
+#endif
+                    B = field(A);
+            }
+        }
+    }
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (page_declaration
+    (page_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (layout_section
+        (layout_keyword)
+        body: (layout_body
+          (area_section
+            (area_keyword)
+            type: (content_keyword)
+            body: (layout_body
+              (part_section
+                (part_keyword)
+                name: (identifier)
+                source: (identifier)
+                body: (declaration_body
+                  (property
+                    name: (property_name)
+                    value: (link_value_list
+                      (preproc_conditional_link_values
+                        (preproc_if
+                          (preproc_open)
+                          condition: (identifier))
+                        (preproc_endif
+                          (preproc_close)))
+                      (link_value
+                        field: (identifier)
+                        (field_keyword)
+                        value: (identifier)))))))))))))
+
+================================================================================
+`#if X ...; #elif not X ...; #endif` with no #else is one whole value
+================================================================================
+
+page 50100 P
+{
+    layout
+    {
+        area(Content)
+        {
+            part(L; Q)
+            {
+                SubPageLink =
+#if X
+                    A = field(B);
+#elif not X
+                    A = field(C);
+#endif
+            }
+        }
+    }
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (page_declaration
+    (page_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (layout_section
+        (layout_keyword)
+        body: (layout_body
+          (area_section
+            (area_keyword)
+            type: (content_keyword)
+            body: (layout_body
+              (part_section
+                (part_keyword)
+                name: (identifier)
+                source: (identifier)
+                body: (declaration_body
+                  (property
+                    name: (property_name)
+                    value: (preproc_conditional_property_value
+                      (preproc_if
+                        (preproc_open)
+                        condition: (identifier))
+                      value: (link_value_list
+                        (link_value
+                          field: (identifier)
+                          (field_keyword)
+                          value: (identifier)))
+                      (preproc_elif
+                        condition: (preproc_not_expression
+                          (identifier)))
+                      value: (link_value_list
+                        (link_value
+                          field: (identifier)
+                          (field_keyword)
+                          value: (identifier)))
+                      (preproc_endif
+                        (preproc_close)))))))))))))
+
+================================================================================
+G11 empty-arms-elif, page-part (probe g11-page-part-empty-arms-elif.al): two leading absent arms, one whole value
+================================================================================
+
+page 50100 P
+{
+    SourceTable = Cust;
+    layout { area(Content) { part(L; CustList) {
+        SubPageLink =
+#if X
+#elif Y
+#else
+        Name = field(Name);
+#endif
+    } } }
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (page_declaration
+    (page_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (property
+        name: (property_name)
+        value: (identifier))
+      (layout_section
+        (layout_keyword)
+        body: (layout_body
+          (area_section
+            (area_keyword)
+            type: (content_keyword)
+            body: (layout_body
+              (part_section
+                (part_keyword)
+                name: (identifier)
+                source: (identifier)
+                body: (declaration_body
+                  (property
+                    name: (property_name)
+                    value: (preproc_conditional_property_value
+                      (preproc_if
+                        (preproc_open)
+                        condition: (identifier))
+                      (preproc_elif
+                        condition: (identifier))
+                      (preproc_else)
+                      value: (link_value_list
+                        (link_value
+                          field: (identifier)
+                          (field_keyword)
+                          value: (identifier)))
+                      (preproc_endif
+                        (preproc_close)))))))))))))
+
+================================================================================
+const(1.5) is one link value (probe decide-const-decimal.al)
+================================================================================
+
+page 50100 P
+{
+    actions
+    {
+        area(Processing)
+        {
+            action(A)
+            {
+                RunPageLink = Amount = const(1.5);
+            }
+        }
+    }
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (page_declaration
+    (page_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (actions_section
+        (actions_keyword)
+        body: (action_body
+          (action_area_section
+            (area_keyword)
+            type: (processing_keyword)
+            body: (action_body
+              (action_declaration
+                (action_keyword)
+                name: (identifier)
+                body: (declaration_body
+                  (property
+                    name: (property_name)
+                    value: (link_value_list
+                      (link_value
+                        field: (identifier)
+                        (const_keyword)
+                        value: (decimal)))))))))))))
+
+================================================================================
+const(-1) is one link value (probe decide-const-neg-integer.al)
+================================================================================
+
+page 50100 P
+{
+    actions
+    {
+        area(Processing)
+        {
+            action(A)
+            {
+                RunPageLink = Amount = const(-1);
+            }
+        }
+    }
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (page_declaration
+    (page_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (actions_section
+        (actions_keyword)
+        body: (action_body
+          (action_area_section
+            (area_keyword)
+            type: (processing_keyword)
+            body: (action_body
+              (action_declaration
+                (action_keyword)
+                name: (identifier)
+                body: (declaration_body
+                  (property
+                    name: (property_name)
+                    value: (link_value_list
+                      (link_value
+                        field: (identifier)
+                        (const_keyword)
+                        value: (unary_expression
+                          operand: (integer))))))))))))))
+
+================================================================================
+const(-1.5) is one link value (probe decide-const-neg-decimal.al)
+================================================================================
+
+page 50100 P
+{
+    actions
+    {
+        area(Processing)
+        {
+            action(A)
+            {
+                RunPageLink = Amount = const(-1.5);
+            }
+        }
+    }
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (page_declaration
+    (page_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (actions_section
+        (actions_keyword)
+        body: (action_body
+          (action_area_section
+            (area_keyword)
+            type: (processing_keyword)
+            body: (action_body
+              (action_declaration
+                (action_keyword)
+                name: (identifier)
+                body: (declaration_body
+                  (property
+                    name: (property_name)
+                    value: (link_value_list
+                      (link_value
+                        field: (identifier)
+                        (const_keyword)
+                        value: (unary_expression
+                          operand: (decimal))))))))))))))
+
+================================================================================
+const(1L) is one link value (probe decide-const-biginteger.al)
+================================================================================
+
+page 50100 P
+{
+    actions
+    {
+        area(Processing)
+        {
+            action(A)
+            {
+                RunPageLink = Amount = const(1L);
+            }
+        }
+    }
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (page_declaration
+    (page_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (actions_section
+        (actions_keyword)
+        body: (action_body
+          (action_area_section
+            (area_keyword)
+            type: (processing_keyword)
+            body: (action_body
+              (action_declaration
+                (action_keyword)
+                name: (identifier)
+                body: (declaration_body
+                  (property
+                    name: (property_name)
+                    value: (link_value_list
+                      (link_value
+                        field: (identifier)
+                        (const_keyword)
+                        value: (biginteger_literal)))))))))))))
+
+================================================================================
+const(-1L) is one link value (probe decide-const-neg-biginteger.al)
+================================================================================
+
+page 50100 P
+{
+    actions
+    {
+        area(Processing)
+        {
+            action(A)
+            {
+                RunPageLink = Amount = const(-1L);
+            }
+        }
+    }
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (page_declaration
+    (page_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (actions_section
+        (actions_keyword)
+        body: (action_body
+          (action_area_section
+            (area_keyword)
+            type: (processing_keyword)
+            body: (action_body
+              (action_declaration
+                (action_keyword)
+                name: (identifier)
+                body: (declaration_body
+                  (property
+                    name: (property_name)
+                    value: (link_value_list
+                      (link_value
+                        field: (identifier)
+                        (const_keyword)
+                        value: (unary_expression
+                          operand: (biginteger_literal))))))))))))))
+
+================================================================================
+const(- 1) is one link value (probe decide-const-neg-space-integer.al)
+================================================================================
+
+page 50100 P
+{
+    actions
+    {
+        area(Processing)
+        {
+            action(A)
+            {
+                RunPageLink = Amount = const(- 1);
+            }
+        }
+    }
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (page_declaration
+    (page_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (actions_section
+        (actions_keyword)
+        body: (action_body
+          (action_area_section
+            (area_keyword)
+            type: (processing_keyword)
+            body: (action_body
+              (action_declaration
+                (action_keyword)
+                name: (identifier)
+                body: (declaration_body
+                  (property
+                    name: (property_name)
+                    value: (link_value_list
+                      (link_value
+                        field: (identifier)
+                        (const_keyword)
+                        value: (unary_expression
+                          operand: (integer))))))))))))))
+
+================================================================================
+const(- 1.5) is one link value (probe decide-const-neg-space-decimal.al)
+================================================================================
+
+page 50100 P
+{
+    actions
+    {
+        area(Processing)
+        {
+            action(A)
+            {
+                RunPageLink = Amount = const(- 1.5);
+            }
+        }
+    }
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (page_declaration
+    (page_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (actions_section
+        (actions_keyword)
+        body: (action_body
+          (action_area_section
+            (area_keyword)
+            type: (processing_keyword)
+            body: (action_body
+              (action_declaration
+                (action_keyword)
+                name: (identifier)
+                body: (declaration_body
+                  (property
+                    name: (property_name)
+                    value: (link_value_list
+                      (link_value
+                        field: (identifier)
+                        (const_keyword)
+                        value: (unary_expression
+                          operand: (decimal))))))))))))))
+
+================================================================================
+const(-/*c*/1) is one link value (probe decide-const-neg-comment-integer.al)
+================================================================================
+
+page 50100 P
+{
+    actions
+    {
+        area(Processing)
+        {
+            action(A)
+            {
+                RunPageLink = Amount = const(-/*c*/1);
+            }
+        }
+    }
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (page_declaration
+    (page_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (actions_section
+        (actions_keyword)
+        body: (action_body
+          (action_area_section
+            (area_keyword)
+            type: (processing_keyword)
+            body: (action_body
+              (action_declaration
+                (action_keyword)
+                name: (identifier)
+                body: (declaration_body
+                  (property
+                    name: (property_name)
+                    value: (link_value_list
+                      (link_value
+                        field: (identifier)
+                        (const_keyword)
+                        value: (unary_expression
+                          (multiline_comment)
+                          operand: (integer))))))))))))))
+
+================================================================================
+const(20240101D) is one link value (probe decide-const-date.al)
+================================================================================
+
+page 50100 P
+{
+    actions
+    {
+        area(Processing)
+        {
+            action(A)
+            {
+                RunPageLink = Amount = const(20240101D);
+            }
+        }
+    }
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (page_declaration
+    (page_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (actions_section
+        (actions_keyword)
+        body: (action_body
+          (action_area_section
+            (area_keyword)
+            type: (processing_keyword)
+            body: (action_body
+              (action_declaration
+                (action_keyword)
+                name: (identifier)
+                body: (declaration_body
+                  (property
+                    name: (property_name)
+                    value: (link_value_list
+                      (link_value
+                        field: (identifier)
+                        (const_keyword)
+                        value: (date_literal)))))))))))))
+
+================================================================================
+const(120000T) is one link value (probe decide-const-time.al)
+================================================================================
+
+page 50100 P
+{
+    actions
+    {
+        area(Processing)
+        {
+            action(A)
+            {
+                RunPageLink = Amount = const(120000T);
+            }
+        }
+    }
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (page_declaration
+    (page_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (actions_section
+        (actions_keyword)
+        body: (action_body
+          (action_area_section
+            (area_keyword)
+            type: (processing_keyword)
+            body: (action_body
+              (action_declaration
+                (action_keyword)
+                name: (identifier)
+                body: (declaration_body
+                  (property
+                    name: (property_name)
+                    value: (link_value_list
+                      (link_value
+                        field: (identifier)
+                        (const_keyword)
+                        value: (time_literal)))))))))))))
+
+================================================================================
+const(0DT) is one link value (probe decide-const-datetime.al)
+================================================================================
+
+page 50100 P
+{
+    actions
+    {
+        area(Processing)
+        {
+            action(A)
+            {
+                RunPageLink = Amount = const(0DT);
+            }
+        }
+    }
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (page_declaration
+    (page_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (actions_section
+        (actions_keyword)
+        body: (action_body
+          (action_area_section
+            (area_keyword)
+            type: (processing_keyword)
+            body: (action_body
+              (action_declaration
+                (action_keyword)
+                name: (identifier)
+                body: (declaration_body
+                  (property
+                    name: (property_name)
+                    value: (link_value_list
+                      (link_value
+                        field: (identifier)
+                        (const_keyword)
+                        value: (datetime_literal)))))))))))))
+
+================================================================================
+Leak: Visible = Flag = Rec.OtherFlag is a property_expression
+================================================================================
+
+page 50100 P
+{
+    layout
+    {
+        area(Content)
+        {
+            field(F; Rec.F)
+            {
+                Visible = Flag = Rec.OtherFlag;
+            }
+        }
+    }
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (page_declaration
+    (page_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (layout_section
+        (layout_keyword)
+        body: (layout_body
+          (area_section
+            (area_keyword)
+            type: (content_keyword)
+            body: (layout_body
+              (page_field
+                (field_keyword)
+                name: (identifier)
+                source: (member_expression
+                  object: (identifier)
+                  member: (identifier))
+                body: (declaration_body
+                  (property
+                    name: (property_name)
+                    value: (property_expression
+                      (comparison_expression
+                        left: (identifier)
+                        operator: (comparison_operator)
+                        right: (member_expression
+                          object: (identifier)
+                          member: (identifier))))))))))))))
+
+================================================================================
+Leak: Caption = A = B.C is a property_expression
+================================================================================
+
+page 50100 P
+{
+    layout
+    {
+        area(Content)
+        {
+            field(F; Rec.F)
+            {
+                Caption = A = B.C;
+            }
+        }
+    }
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (page_declaration
+    (page_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (layout_section
+        (layout_keyword)
+        body: (layout_body
+          (area_section
+            (area_keyword)
+            type: (content_keyword)
+            body: (layout_body
+              (page_field
+                (field_keyword)
+                name: (identifier)
+                source: (member_expression
+                  object: (identifier)
+                  member: (identifier))
+                body: (declaration_body
+                  (property
+                    name: (property_name)
+                    value: (property_expression
+                      (comparison_expression
+                        left: (identifier)
+                        operator: (comparison_operator)
+                        right: (member_expression
+                          object: (identifier)
+                          member: (identifier))))))))))))))
+
+================================================================================
+Regression: SourceTableView with where is unchanged
+================================================================================
+
+page 50100 P
+{
+    SourceTableView = sorting("No.") where(Type = const(Item), Amount = filter(<>0));
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (page_declaration
+    (page_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (property
+        name: (property_name)
+        value: (sorting_value
+          (sorting_keyword)
+          (quoted_identifier)
+          (where_clause
+            (where_keyword)
+            (where_conditions
+              (where_condition
+                field: (identifier)
+                (const_keyword)
+                value: (identifier))
+              (where_condition
+                field: (identifier)
+                (filter_keyword)
+                value: (filter_value
+                  (filter_operator)
+                  (integer))))))))))
+
+================================================================================
+Regression: SubPageView with where is unchanged
+================================================================================
+
+page 50100 P
+{
+    layout
+    {
+        area(Content)
+        {
+            part(L; Q)
+            {
+                SubPageView = sorting("No.") where(Blocked = const(false));
+            }
+        }
+    }
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (page_declaration
+    (page_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (layout_section
+        (layout_keyword)
+        body: (layout_body
+          (area_section
+            (area_keyword)
+            type: (content_keyword)
+            body: (layout_body
+              (part_section
+                (part_keyword)
+                name: (identifier)
+                source: (identifier)
+                body: (declaration_body
+                  (property
+                    name: (property_name)
+                    value: (sorting_value
+                      (sorting_keyword)
+                      (quoted_identifier)
+                      (where_clause
+                        (where_keyword)
+                        (where_conditions
+                          (where_condition
+                            field: (identifier)
+                            (const_keyword)
+                            value: (boolean)))))))))))))))
+
+================================================================================
+Regression: RunPageView with where is unchanged
+================================================================================
+
+page 50100 P
+{
+    actions
+    {
+        area(Processing)
+        {
+            action(A)
+            {
+                RunPageView = where("No." = field("No."));
+            }
+        }
+    }
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (page_declaration
+    (page_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (actions_section
+        (actions_keyword)
+        body: (action_body
+          (action_area_section
+            (area_keyword)
+            type: (processing_keyword)
+            body: (action_body
+              (action_declaration
+                (action_keyword)
+                name: (identifier)
+                body: (declaration_body
+                  (property
+                    name: (property_name)
+                    value: (where_clause
+                      (where_keyword)
+                      (where_conditions
+                        (where_condition
+                          field: (quoted_identifier)
+                          (field_keyword)
+                          value: (quoted_identifier))))))))))))))
+
+================================================================================
+Regression: DataItemTableView with where is unchanged
+================================================================================
+
+report 50100 R
+{
+    dataset
+    {
+        dataitem(C; Cust)
+        {
+            DataItemTableView = sorting("No.") where(Blocked = const(false));
+        }
+    }
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (report_declaration
+    (report_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (dataset_section
+        (dataset_keyword)
+        body: (dataset_body
+          (report_dataitem
+            (dataitem_keyword)
+            name: (identifier)
+            table_name: (identifier)
+            body: (report_body
+              (property
+                name: (property_name)
+                value: (sorting_value
+                  (sorting_keyword)
+                  (quoted_identifier)
+                  (where_clause
+                    (where_keyword)
+                    (where_conditions
+                      (where_condition
+                        field: (identifier)
+                        (const_keyword)
+                        value: (boolean)))))))))))))
+
+================================================================================
+Regression: Filters with where is unchanged
+================================================================================
+
+page 50100 P
+{
+    views
+    {
+        view(V)
+        {
+            Filters = where(Blocked = const(false));
+        }
+    }
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (page_declaration
+    (page_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (views_section
+        (views_keyword)
+        body: (views_body
+          (view_definition
+            (view_keyword)
+            name: (identifier)
+            body: (declaration_body
+              (property
+                name: (property_name)
+                value: (where_clause
+                  (where_keyword)
+                  (where_conditions
+                    (where_condition
+                      field: (identifier)
+                      (const_keyword)
+                      value: (boolean))))))))))))
+
+================================================================================
+Regression: CalcFormula with where is unchanged
+================================================================================
+
+table 50100 T
+{
+    fields
+    {
+        field(1; F; Decimal)
+        {
+            CalcFormula = sum("L".Amount where("No." = field("No.")));
+        }
+    }
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (table_declaration
+    (table_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (fields_section
+        (fields_keyword)
+        body: (fields_body
+          (field_declaration
+            (field_keyword)
+            id: (integer)
+            name: (identifier)
+            type: (type_specification
+              (basic_type))
+            body: (declaration_body
+              (property
+                name: (property_name)
+                value: (aggregate_formula
+                  function: (aggregate_function)
+                  target: (calc_field_reference
+                    (quoted_identifier)
+                    (identifier))
+                  (where_clause
+                    (where_keyword)
+                    (where_conditions
+                      (where_condition
+                        field: (quoted_identifier)
+                        (field_keyword)
+                        value: (quoted_identifier)))))))))))))
+
+================================================================================
+Regression: TableRelation with where is unchanged
+================================================================================
+
+table 50100 T
+{
+    fields
+    {
+        field(1; F; Code[20])
+        {
+            TableRelation = Item where(Type = const(Inventory));
+        }
+    }
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (table_declaration
+    (table_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (fields_section
+        (fields_keyword)
+        body: (fields_body
+          (field_declaration
+            (field_keyword)
+            id: (integer)
+            name: (identifier)
+            type: (type_specification
+              (code_type
+                (code_keyword)
+                length: (integer)))
+            body: (declaration_body
+              (property
+                name: (property_name)
+                value: (table_relation_value
+                  (table_relation_expression
+                    (simple_table_relation
+                      target: (qualified_name
+                        (identifier))
+                      (where_clause
+                        (where_keyword)
+                        (where_conditions
+                          (where_condition
+                            field: (identifier)
+                            (const_keyword)
+                            value: (identifier)))))))))))))))
+
+================================================================================
+Regression: Implementation = A = B is an implementation_value_list
+================================================================================
+
+enum 50100 E implements I
+{
+    Implementation = I = Impl;
+    value(0; A) { }
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (enum_declaration
+    (enum_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    (implements_clause
+      (implements_keyword)
+      interface: (identifier))
+    body: (declaration_body
+      (property
+        name: (property_name)
+        value: (implementation_value_list
+          (implementation_value
+            interface: (identifier)
+            implementation: (identifier))))
+      (enum_value_declaration
+        (value_keyword)
+        value_id: (integer)
+        value_name: (identifier)))))
+
+================================================================================
+Production: ResourceCard.Page.al:278 list-internal SubPageLink, verbatim
+================================================================================
+
+page 50100 P
+{
+    layout
+    {
+        area(FactBoxes)
+        {
+            part(Control1906609707; "Resource Statistics FactBox")
+            {
+                ApplicationArea = Jobs;
+                SubPageLink = "No." = field("No."),
+                              "Unit of Measure Filter" = field("Unit of Measure Filter"),
+#if not CLEAN25
+                              "Service Zone Filter" = field("Service Zone Filter"),
+#endif
+                              "Chargeable Filter" = field("Chargeable Filter");
+                Visible = true;
+            }
+        }
+    }
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (page_declaration
+    (page_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (layout_section
+        (layout_keyword)
+        body: (layout_body
+          (area_section
+            (area_keyword)
+            type: (factboxes_keyword)
+            body: (layout_body
+              (part_section
+                (part_keyword)
+                name: (identifier)
+                source: (quoted_identifier)
+                body: (declaration_body
+                  (property
+                    name: (property_name)
+                    value: (identifier))
+                  (property
+                    name: (property_name)
+                    value: (link_value_list
+                      (link_value
+                        field: (quoted_identifier)
+                        (field_keyword)
+                        value: (quoted_identifier))
+                      (link_value
+                        field: (quoted_identifier)
+                        (field_keyword)
+                        value: (quoted_identifier))
+                      (preproc_conditional_link_values
+                        (preproc_if
+                          (preproc_open)
+                          condition: (preproc_not_expression
+                            (identifier)))
+                        (link_value
+                          field: (quoted_identifier)
+                          (field_keyword)
+                          value: (quoted_identifier))
+                        (preproc_endif
+                          (preproc_close)))
+                      (link_value
+                        field: (quoted_identifier)
+                        (field_keyword)
+                        value: (quoted_identifier))))
+                  (property
+                    name: (property_name)
+                    value: (boolean)))))))))))
+
+================================================================================
+Production: ResourceList.Page.al:163 list-internal SubPageLink, verbatim
+================================================================================
+
+page 50100 P
+{
+    layout
+    {
+        area(FactBoxes)
+        {
+            part(Control1906609707; "Resource Statistics FactBox")
+            {
+                ApplicationArea = Jobs;
+                SubPageLink = "No." = field("No."),
+                              "Chargeable Filter" = field("Chargeable Filter"),
+#if not CLEAN25
+                              "Service Zone Filter" = field("Service Zone Filter"),
+#endif
+                              "Unit of Measure Filter" = field("Unit of Measure Filter");
+                Visible = true;
+            }
+        }
+    }
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (page_declaration
+    (page_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (layout_section
+        (layout_keyword)
+        body: (layout_body
+          (area_section
+            (area_keyword)
+            type: (factboxes_keyword)
+            body: (layout_body
+              (part_section
+                (part_keyword)
+                name: (identifier)
+                source: (quoted_identifier)
+                body: (declaration_body
+                  (property
+                    name: (property_name)
+                    value: (identifier))
+                  (property
+                    name: (property_name)
+                    value: (link_value_list
+                      (link_value
+                        field: (quoted_identifier)
+                        (field_keyword)
+                        value: (quoted_identifier))
+                      (link_value
+                        field: (quoted_identifier)
+                        (field_keyword)
+                        value: (quoted_identifier))
+                      (preproc_conditional_link_values
+                        (preproc_if
+                          (preproc_open)
+                          condition: (preproc_not_expression
+                            (identifier)))
+                        (link_value
+                          field: (quoted_identifier)
+                          (field_keyword)
+                          value: (quoted_identifier))
+                        (preproc_endif
+                          (preproc_close)))
+                      (link_value
+                        field: (quoted_identifier)
+                        (field_keyword)
+                        value: (quoted_identifier))))
+                  (property
+                    name: (property_name)
+                    value: (boolean)))))))))))
+
+================================================================================
+Production: ResourceList.Page.al:174 list-internal SubPageLink, verbatim
+================================================================================
+
+page 50100 P
+{
+    layout
+    {
+        area(FactBoxes)
+        {
+            part(Control1907012907; "Resource Details FactBox")
+            {
+                ApplicationArea = Jobs;
+                SubPageLink = "No." = field("No."),
+                              "Chargeable Filter" = field("Chargeable Filter"),
+#if not CLEAN25
+                              "Service Zone Filter" = field("Service Zone Filter"),
+#endif
+                              "Unit of Measure Filter" = field("Unit of Measure Filter");
+                Visible = true;
+            }
+        }
+    }
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (page_declaration
+    (page_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (layout_section
+        (layout_keyword)
+        body: (layout_body
+          (area_section
+            (area_keyword)
+            type: (factboxes_keyword)
+            body: (layout_body
+              (part_section
+                (part_keyword)
+                name: (identifier)
+                source: (quoted_identifier)
+                body: (declaration_body
+                  (property
+                    name: (property_name)
+                    value: (identifier))
+                  (property
+                    name: (property_name)
+                    value: (link_value_list
+                      (link_value
+                        field: (quoted_identifier)
+                        (field_keyword)
+                        value: (quoted_identifier))
+                      (link_value
+                        field: (quoted_identifier)
+                        (field_keyword)
+                        value: (quoted_identifier))
+                      (preproc_conditional_link_values
+                        (preproc_if
+                          (preproc_open)
+                          condition: (preproc_not_expression
+                            (identifier)))
+                        (link_value
+                          field: (quoted_identifier)
+                          (field_keyword)
+                          value: (quoted_identifier))
+                        (preproc_endif
+                          (preproc_close)))
+                      (link_value
+                        field: (quoted_identifier)
+                        (field_keyword)
+                        value: (quoted_identifier))))
+                  (property
+                    name: (property_name)
+                    value: (boolean)))))))))))
+
+================================================================================
+DataItemLink with a comment between the name and `=` (probe host-report-dataitem-dataitemlink-comment.al)
+================================================================================
+
+report 50130 R
+{
+    dataset { dataitem(C; Cust) { } dataitem(D; Cust) {
+        DataItemLinkReference = C;
+        DataItemLink /* c */ = "No." = field("No."), Name = field(Name);
+    } }
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (report_declaration
+    (report_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (dataset_section
+        (dataset_keyword)
+        body: (dataset_body
+          (report_dataitem
+            (dataitem_keyword)
+            name: (identifier)
+            table_name: (identifier))
+          (report_dataitem
+            (dataitem_keyword)
+            name: (identifier)
+            table_name: (identifier)
+            body: (report_body
+              (property
+                name: (property_name)
+                value: (identifier))
+              (property
+                name: (property_name)
+                (multiline_comment)
+                value: (link_value_list
+                  (link_value
+                    field: (quoted_identifier)
+                    (field_keyword)
+                    value: (quoted_identifier))
+                  (link_value
+                    field: (identifier)
+                    (field_keyword)
+                    value: (identifier)))))))))))

@@ -1,3 +1,4 @@
+// Fixture link_keying_test.txt#G11 empty-arm-beside-terminated, page-part (probe g11-page-part-empty-arm-beside-terminated.al) is one property#0
 // G11 shape empty-arm-beside-terminated, delegate-valid pairs, page-part (B5b 5.1).
 // expect: * accept
 // expect: !X accept

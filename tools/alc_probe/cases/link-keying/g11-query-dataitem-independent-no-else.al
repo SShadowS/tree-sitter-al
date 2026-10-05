@@ -1,3 +1,4 @@
+// Fixture link_keying_test.txt#G11 independent-no-else, query-dataitem (probe g11-query-dataitem-independent-no-else.al) is one property#0
 // G11 shape independent-no-else, delegate-valid pairs, query-dataitem (B5b 5.1).
 // expect: * reject(AL0104,AL0107,AL0124,AL0198)
 // expect: !X !Y reject(AL0104,AL0107,AL0124,AL0198)

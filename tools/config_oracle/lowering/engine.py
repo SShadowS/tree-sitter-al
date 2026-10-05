@@ -451,7 +451,8 @@ def _consume(new, frags):
             at = next(i for i, c in enumerate(new.children) if c is f.anchor) + 1
             insert = [f.leaf] if isinstance(f, Terminator) else list(f.statements)
             new.children[at:at] = insert
-        elif isinstance(f, SiblingsAfter) and new.kind in LAYOUT_HOSTS                 and any(c is f.anchor for c in new.children):
+        elif isinstance(f, SiblingsAfter) and (new.kind in LAYOUT_HOSTS or getattr(f.anchor, "kind", None) == "property") \
+                and any(c is f.anchor for c in new.children):
             at = next(i for i, c in enumerate(new.children) if c is f.anchor) + 1
             new.children[at:at] = list(f.nodes)
         elif isinstance(f, RelationContinuation) and new.kind == "table_relation_value" \
@@ -469,7 +470,22 @@ def _consume(new, frags):
         # passed up through the property's child: the list (list-run) or the
         # table_relation_value holding an else-relation-join conditional.
         elif isinstance(f, Terminator) and new.kind == "property"                 and (f.anchor is None or any(c is f.anchor for c in new.children)):
-            new.children.append(f.leaf)   # terminator-hoist: the property's own `;`
+            last = new.children[-1] if f.anchor is None and new.children[-1:] \
+                and new.children[-1].kind == ";" else None
+            if last is None:
+                new.children.append(f.leaf)   # terminator-hoist: the property's own `;`
+            else:
+                # Mixed placement (B5b): the property already ends in a `;` (its own after
+                # #endif, or a nested arm's hoisted one). The EARLIER `;` ends it, and the
+                # later one is a standalone `;`, which a flat parse gives as an
+                # empty_statement sibling (`A = x; ;`). Valid AL: alc's property list
+                # accepts it (spec 2026-10-05 §3.2 item 2).
+                first, later = sorted((last, f.leaf), key=lambda n: n.start)
+                new.children[-1] = first
+                recompute_span(new)
+                sib = SiblingsAfter(None, [Node("empty_statement", True, None, later.start, later.end, [later])])
+                sib._from_last = True
+                rest.append(sib)
         else:
             rest.append(f)
     return rest

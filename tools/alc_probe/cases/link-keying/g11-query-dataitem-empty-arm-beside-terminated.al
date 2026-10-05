@@ -1,3 +1,4 @@
+// Fixture link_keying_test.txt#G11 empty-arm-beside-terminated, query-dataitem (probe g11-query-dataitem-empty-arm-beside-terminated.al) is one property#0
 // G11 shape empty-arm-beside-terminated, delegate-valid pairs, query-dataitem (B5b 5.1).
 // expect: * accept
 // expect: !X accept
