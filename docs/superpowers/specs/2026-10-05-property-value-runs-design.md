@@ -384,6 +384,8 @@ Committed before any grammar change, with `--check` clean:
 - the all-empty whole value per family (§4.1);
 - `OptionMembers` and link runs with commas inside and between groups, missing separators, and a
   configuration leaving one option member;
+- the entirely conditional two-entry list of §3.1, every configuration valid;
+- the terminated-group-then-property example of §4.2;
 - the action and assembly hosts for generic and ML values.
 
 ### 5.2 Fixtures
@@ -392,10 +394,12 @@ Committed before any grammar change, with `--check` clean:
 `tree-sitter parse` output, so every field is labelled. It holds:
 - every §5.1 shape × family, including nested-empty, nested-prefix and nested-run cases at arm
   value sites;
-- the complete-then-property block (the property ends);
+- the terminated-group-then-property block (the property ends);
 - the configuration-dependent boundary examples;
-- the list-family runs (entire value → sequence; with unconditional members → element
-  conditionals, unchanged).
+- the list-family runs under the separator rule (§3.1): no separator crossing a boundary →
+  sequence; separators crossing boundaries, including the entirely conditional two-entry list
+  of §3.1 → element conditionals, unchanged;
+- the terminated-group-then-property example of §4.2, with the final standalone `;`.
 
 Each tree is checked by hand against the flat tree of every configuration. A `bogus:` field
 rename must fail the file, and the suite total must move by exactly the number of cases added.
