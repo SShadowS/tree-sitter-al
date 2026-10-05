@@ -1,0 +1,614 @@
+================================================================================
+B11: Namespaces, `;`-inside run then the property's own `;` (step 2, prec(1) arm)
+================================================================================
+
+table 50101 Cust { fields { field(1; "No."; Code[20]) { } field(2; Name; Text[30]) { } field(3; Amount; Decimal) { } field(4; Flag; Boolean) { } } }
+xmlport 50100 X {
+Namespaces =
+#if X
+    a = 'u';
+#endif
+#if not X
+    a = 'v';
+#endif
+;
+schema { textelement(R) { } } }
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (table_declaration
+    (table_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (fields_section
+        (fields_keyword)
+        body: (fields_body
+          (field_declaration
+            (field_keyword)
+            id: (integer)
+            name: (quoted_identifier)
+            type: (type_specification
+              (code_type
+                (code_keyword)
+                length: (integer))))
+          (field_declaration
+            (field_keyword)
+            id: (integer)
+            name: (identifier)
+            type: (type_specification
+              (text_type
+                (text_keyword)
+                length: (integer))))
+          (field_declaration
+            (field_keyword)
+            id: (integer)
+            name: (identifier)
+            type: (type_specification
+              (basic_type)))
+          (field_declaration
+            (field_keyword)
+            id: (integer)
+            name: (identifier)
+            type: (type_specification
+              (basic_type)))))))
+  (xmlport_declaration
+    (xmlport_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (property
+        name: (property_name)
+        value: (preproc_conditional_property_value_sequence
+          value: (preproc_conditional_property_value
+            (preproc_if
+              (preproc_open)
+              condition: (identifier))
+            value: (namespace_value_list
+              (namespace_pair
+                prefix: (identifier)
+                uri: (string_literal)))
+            (preproc_endif
+              (preproc_close)))
+          value: (preproc_conditional_property_value
+            (preproc_if
+              (preproc_open)
+              condition: (preproc_not_expression
+                (identifier)))
+            value: (namespace_value_list
+              (namespace_pair
+                prefix: (identifier)
+                uri: (string_literal)))
+            (preproc_endif
+              (preproc_close)))))
+      (schema_section
+        (schema_keyword)
+        body: (schema_body
+          (xmlport_element
+            element_type: (textelement_keyword)
+            name: (identifier)))))))
+
+================================================================================
+B11: TableRelation, `;`-inside run then the property's own `;` (step 2, prec(1) arm)
+================================================================================
+
+table 50101 Cust { fields { field(1; "No."; Code[20]) { } field(2; Name; Text[30]) { } field(3; Amount; Decimal) { } field(4; Flag; Boolean) { } } }
+table 50100 T { fields { field(1; K; Code[20]) {
+TableRelation =
+#if X
+    Cust."No.";
+#endif
+#if not X
+    Cust."No." where(Flag = const(true));
+#endif
+;
+} } }
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (table_declaration
+    (table_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (fields_section
+        (fields_keyword)
+        body: (fields_body
+          (field_declaration
+            (field_keyword)
+            id: (integer)
+            name: (quoted_identifier)
+            type: (type_specification
+              (code_type
+                (code_keyword)
+                length: (integer))))
+          (field_declaration
+            (field_keyword)
+            id: (integer)
+            name: (identifier)
+            type: (type_specification
+              (text_type
+                (text_keyword)
+                length: (integer))))
+          (field_declaration
+            (field_keyword)
+            id: (integer)
+            name: (identifier)
+            type: (type_specification
+              (basic_type)))
+          (field_declaration
+            (field_keyword)
+            id: (integer)
+            name: (identifier)
+            type: (type_specification
+              (basic_type)))))))
+  (table_declaration
+    (table_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (fields_section
+        (fields_keyword)
+        body: (fields_body
+          (field_declaration
+            (field_keyword)
+            id: (integer)
+            name: (identifier)
+            type: (type_specification
+              (code_type
+                (code_keyword)
+                length: (integer)))
+            body: (declaration_body
+              (property
+                name: (property_name)
+                value: (preproc_conditional_property_value_sequence
+                  value: (preproc_conditional_property_value
+                    (preproc_if
+                      (preproc_open)
+                      condition: (identifier))
+                    value: (table_relation_value
+                      (table_relation_expression
+                        (simple_table_relation
+                          target: (qualified_name
+                            (identifier)
+                            (quoted_identifier)))))
+                    (preproc_endif
+                      (preproc_close)))
+                  value: (preproc_conditional_property_value
+                    (preproc_if
+                      (preproc_open)
+                      condition: (preproc_not_expression
+                        (identifier)))
+                    value: (table_relation_value
+                      (table_relation_expression
+                        (simple_table_relation
+                          target: (qualified_name
+                            (identifier)
+                            (quoted_identifier))
+                          (where_clause
+                            (where_keyword)
+                            (where_conditions
+                              (where_condition
+                                field: (identifier)
+                                (const_keyword)
+                                value: (boolean)))))))
+                    (preproc_endif
+                      (preproc_close))))))))))))
+
+================================================================================
+B11: CalcFormula, `;`-inside run then the property's own `;` (step 2, prec(1) arm)
+================================================================================
+
+table 50101 Cust { fields { field(1; "No."; Code[20]) { } field(2; Name; Text[30]) { } field(3; Amount; Decimal) { } field(4; Flag; Boolean) { } } }
+table 50100 T { fields { field(1; K; Code[20]) { } field(2; F; Decimal) { FieldClass = FlowField;
+CalcFormula =
+#if X
+    sum(Cust.Amount);
+#endif
+#if not X
+    max(Cust.Amount);
+#endif
+;
+} } }
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (table_declaration
+    (table_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (fields_section
+        (fields_keyword)
+        body: (fields_body
+          (field_declaration
+            (field_keyword)
+            id: (integer)
+            name: (quoted_identifier)
+            type: (type_specification
+              (code_type
+                (code_keyword)
+                length: (integer))))
+          (field_declaration
+            (field_keyword)
+            id: (integer)
+            name: (identifier)
+            type: (type_specification
+              (text_type
+                (text_keyword)
+                length: (integer))))
+          (field_declaration
+            (field_keyword)
+            id: (integer)
+            name: (identifier)
+            type: (type_specification
+              (basic_type)))
+          (field_declaration
+            (field_keyword)
+            id: (integer)
+            name: (identifier)
+            type: (type_specification
+              (basic_type)))))))
+  (table_declaration
+    (table_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (fields_section
+        (fields_keyword)
+        body: (fields_body
+          (field_declaration
+            (field_keyword)
+            id: (integer)
+            name: (identifier)
+            type: (type_specification
+              (code_type
+                (code_keyword)
+                length: (integer))))
+          (field_declaration
+            (field_keyword)
+            id: (integer)
+            name: (identifier)
+            type: (type_specification
+              (basic_type))
+            body: (declaration_body
+              (property
+                name: (property_name)
+                value: (identifier))
+              (property
+                name: (property_name)
+                value: (preproc_conditional_property_value_sequence
+                  value: (preproc_conditional_property_value
+                    (preproc_if
+                      (preproc_open)
+                      condition: (identifier))
+                    value: (aggregate_formula
+                      function: (aggregate_function)
+                      target: (calc_field_reference
+                        (identifier)
+                        (identifier)))
+                    (preproc_endif
+                      (preproc_close)))
+                  value: (preproc_conditional_property_value
+                    (preproc_if
+                      (preproc_open)
+                      condition: (preproc_not_expression
+                        (identifier)))
+                    value: (aggregate_formula
+                      function: (aggregate_function)
+                      target: (calc_field_reference
+                        (identifier)
+                        (identifier)))
+                    (preproc_endif
+                      (preproc_close))))))))))))
+
+================================================================================
+B11: Namespaces, `;`-after run ending in a terminated group, the property's `;` directly after (step 4)
+================================================================================
+
+table 50101 Cust { fields { field(1; "No."; Code[20]) { } field(2; Name; Text[30]) { } field(3; Amount; Decimal) { } field(4; Flag; Boolean) { } } }
+xmlport 50100 X {
+Namespaces =
+#if X
+    a = 'u'
+#endif
+#if not X
+    a = 'v';
+#else
+#if Y
+#endif
+    ;
+#endif
+;
+schema { textelement(R) { } } }
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (table_declaration
+    (table_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (fields_section
+        (fields_keyword)
+        body: (fields_body
+          (field_declaration
+            (field_keyword)
+            id: (integer)
+            name: (quoted_identifier)
+            type: (type_specification
+              (code_type
+                (code_keyword)
+                length: (integer))))
+          (field_declaration
+            (field_keyword)
+            id: (integer)
+            name: (identifier)
+            type: (type_specification
+              (text_type
+                (text_keyword)
+                length: (integer))))
+          (field_declaration
+            (field_keyword)
+            id: (integer)
+            name: (identifier)
+            type: (type_specification
+              (basic_type)))
+          (field_declaration
+            (field_keyword)
+            id: (integer)
+            name: (identifier)
+            type: (type_specification
+              (basic_type)))))))
+  (xmlport_declaration
+    (xmlport_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (property
+        name: (property_name)
+        value: (preproc_conditional_property_value_sequence
+          value: (preproc_conditional_property_value
+            (preproc_if
+              (preproc_open)
+              condition: (identifier))
+            value: (namespace_value_list
+              (namespace_pair
+                prefix: (identifier)
+                uri: (string_literal)))
+            (preproc_endif
+              (preproc_close)))
+          value: (preproc_conditional_property_value
+            (preproc_if
+              (preproc_open)
+              condition: (preproc_not_expression
+                (identifier)))
+            value: (namespace_value_list
+              (namespace_pair
+                prefix: (identifier)
+                uri: (string_literal)))
+            (preproc_else)
+            (preproc_conditional_property_value
+              (preproc_if
+                (preproc_open)
+                condition: (identifier))
+              (preproc_endif
+                (preproc_close)))
+            (preproc_endif
+              (preproc_close)))))
+      (schema_section
+        (schema_keyword)
+        body: (schema_body
+          (xmlport_element
+            element_type: (textelement_keyword)
+            name: (identifier)))))))
+
+================================================================================
+B11: TableRelation, `;`-after run ending in a terminated group, the property's `;` directly after (step 4)
+================================================================================
+
+table 50101 Cust { fields { field(1; "No."; Code[20]) { } field(2; Name; Text[30]) { } field(3; Amount; Decimal) { } field(4; Flag; Boolean) { } } }
+table 50100 T { fields { field(1; K; Code[20]) {
+TableRelation =
+#if X
+    Cust."No."
+#endif
+#if not X
+    Cust."No." where(Flag = const(true));
+#else
+#if Y
+#endif
+    ;
+#endif
+;
+} } }
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (table_declaration
+    (table_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (fields_section
+        (fields_keyword)
+        body: (fields_body
+          (field_declaration
+            (field_keyword)
+            id: (integer)
+            name: (quoted_identifier)
+            type: (type_specification
+              (code_type
+                (code_keyword)
+                length: (integer))))
+          (field_declaration
+            (field_keyword)
+            id: (integer)
+            name: (identifier)
+            type: (type_specification
+              (text_type
+                (text_keyword)
+                length: (integer))))
+          (field_declaration
+            (field_keyword)
+            id: (integer)
+            name: (identifier)
+            type: (type_specification
+              (basic_type)))
+          (field_declaration
+            (field_keyword)
+            id: (integer)
+            name: (identifier)
+            type: (type_specification
+              (basic_type)))))))
+  (table_declaration
+    (table_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (fields_section
+        (fields_keyword)
+        body: (fields_body
+          (field_declaration
+            (field_keyword)
+            id: (integer)
+            name: (identifier)
+            type: (type_specification
+              (code_type
+                (code_keyword)
+                length: (integer)))
+            body: (declaration_body
+              (property
+                name: (property_name)
+                value: (preproc_conditional_property_value_sequence
+                  value: (preproc_conditional_property_value
+                    (preproc_if
+                      (preproc_open)
+                      condition: (identifier))
+                    value: (table_relation_value
+                      (table_relation_expression
+                        (simple_table_relation
+                          target: (qualified_name
+                            (identifier)
+                            (quoted_identifier)))))
+                    (preproc_endif
+                      (preproc_close)))
+                  value: (preproc_conditional_property_value
+                    (preproc_if
+                      (preproc_open)
+                      condition: (preproc_not_expression
+                        (identifier)))
+                    value: (table_relation_value
+                      (table_relation_expression
+                        (simple_table_relation
+                          target: (qualified_name
+                            (identifier)
+                            (quoted_identifier))
+                          (where_clause
+                            (where_keyword)
+                            (where_conditions
+                              (where_condition
+                                field: (identifier)
+                                (const_keyword)
+                                value: (boolean)))))))
+                    (preproc_else)
+                    (preproc_conditional_property_value
+                      (preproc_if
+                        (preproc_open)
+                        condition: (identifier))
+                      (preproc_endif
+                        (preproc_close)))
+                    (preproc_endif
+                      (preproc_close))))))))))))
+
+================================================================================
+B11: OptionMembers all-comma run of conditionals, `;` after: the Permissions list reading wins (prec.dynamic(-1))
+================================================================================
+
+table 50101 Cust { fields { field(1; "No."; Code[20]) { } field(2; Name; Text[30]) { } field(3; Amount; Decimal) { } field(4; Flag; Boolean) { } } }
+table 50100 T { fields { field(1; K; Option) {
+OptionMembers =
+#if X
+    ,
+#endif
+#if Y
+    ,
+#endif
+;
+} } }
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (table_declaration
+    (table_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (fields_section
+        (fields_keyword)
+        body: (fields_body
+          (field_declaration
+            (field_keyword)
+            id: (integer)
+            name: (quoted_identifier)
+            type: (type_specification
+              (code_type
+                (code_keyword)
+                length: (integer))))
+          (field_declaration
+            (field_keyword)
+            id: (integer)
+            name: (identifier)
+            type: (type_specification
+              (text_type
+                (text_keyword)
+                length: (integer))))
+          (field_declaration
+            (field_keyword)
+            id: (integer)
+            name: (identifier)
+            type: (type_specification
+              (basic_type)))
+          (field_declaration
+            (field_keyword)
+            id: (integer)
+            name: (identifier)
+            type: (type_specification
+              (basic_type)))))))
+  (table_declaration
+    (table_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (fields_section
+        (fields_keyword)
+        body: (fields_body
+          (field_declaration
+            (field_keyword)
+            id: (integer)
+            name: (identifier)
+            type: (type_specification
+              (option_type
+                (option_keyword)))
+            body: (declaration_body
+              (property
+                name: (property_name)
+                value: (tabledata_permission_list
+                  (preproc_conditional_permissions
+                    (preproc_if
+                      (preproc_open)
+                      condition: (identifier))
+                    (preproc_endif
+                      (preproc_close)))
+                  (preproc_conditional_permissions
+                    (preproc_if
+                      (preproc_open)
+                      condition: (identifier))
+                    (preproc_endif
+                      (preproc_close))))))))))))
