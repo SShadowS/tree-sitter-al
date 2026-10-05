@@ -257,12 +257,16 @@ dispatches it (`SyntaxFacts.cs:4270-4274`; `ObjectParser.cs:9785-9794`).
 
      ```javascript
      _const_unsigned_numeric: $ => choice($.integer, $.decimal, $.biginteger_literal),
+     _const_negative: $ => seq(field('operator', '-'), field('operand', $._const_unsigned_numeric)),
      _const_numeric: $ => choice(
        $._const_unsigned_numeric,
-       alias(seq(field('operator', '-'), field('operand', $._const_unsigned_numeric)),
-             $.unary_expression),
+       alias($._const_negative, $.unary_expression),
      ),
      ```
+
+     **Implementation note (Task 3):** the negative sequence must be a named hidden rule
+     (`_const_negative`) aliased to `unary_expression`. An alias wrapped around an inline `seq`
+     applies to each child separately, not to the sequence, so it does not produce one node.
 
      `_const_numeric` REPLACES the existing standalone `$.integer` alternative of the `const`
      argument (`grammar.js:1608-1614`); it does not add a second route to `integer`. It goes
