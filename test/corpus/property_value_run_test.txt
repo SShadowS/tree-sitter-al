@@ -2943,3 +2943,530 @@ Caption =
                       value: (string_literal)
                       (preproc_endif
                         (preproc_close)))))))))))))
+
+================================================================================
+B11 regression: Permissions opened by an empty #if, `;` inside a branch, stays permissions_property with its element conditional
+================================================================================
+
+permissionset 50100 PS
+{
+Permissions =
+#if X
+#endif
+    tabledata A = R,
+#if Y
+    tabledata B = R;
+#else
+    tabledata C = R;
+#endif
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (permissionset_declaration
+    (permissionset_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (property
+        name: (property_name)
+        value: (tabledata_permission_list
+          (preproc_conditional_permissions
+            (preproc_if
+              (preproc_open)
+              condition: (identifier))
+            (preproc_endif
+              (preproc_close)))
+          (tabledata_permission
+            (tabledata_keyword)
+            table_name: (identifier)
+            permission: (permission_type))
+          (preproc_conditional_permissions
+            (preproc_if
+              (preproc_open)
+              condition: (identifier))
+            (tabledata_permission
+              (tabledata_keyword)
+              table_name: (identifier)
+              permission: (permission_type))
+            (preproc_else)
+            (tabledata_permission
+              (tabledata_keyword)
+              table_name: (identifier)
+              permission: (permission_type))
+            (preproc_endif
+              (preproc_close))))))))
+
+================================================================================
+B11 regression: an empty #if opening a split Permissions tail stays a list element
+================================================================================
+
+permissionset 50100 PS
+{
+#if X
+    Permissions = tabledata A = R,
+#else
+    Permissions = tabledata B = R,
+#endif
+#if Y
+#endif
+    tabledata C = R;
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (permissionset_declaration
+    (permissionset_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (preproc_split_permissions_property
+        (preproc_if
+          (preproc_open)
+          condition: (identifier))
+        name: (property_name)
+        value: (tabledata_permission_list
+          (tabledata_permission
+            (tabledata_keyword)
+            table_name: (identifier)
+            permission: (permission_type)))
+        (preproc_else)
+        name: (property_name)
+        value: (tabledata_permission_list
+          (tabledata_permission
+            (tabledata_keyword)
+            table_name: (identifier)
+            permission: (permission_type)))
+        (preproc_endif
+          (preproc_close))
+        value: (tabledata_permission_list
+          (preproc_conditional_permissions
+            (preproc_if
+              (preproc_open)
+              condition: (identifier))
+            (preproc_endif
+              (preproc_close)))
+          (tabledata_permission
+            (tabledata_keyword)
+            table_name: (identifier)
+            permission: (permission_type)))))))
+
+================================================================================
+B11 regression: an empty #if opening a split Permissions head stays a list element
+================================================================================
+
+codeunit 50100 C
+{
+#if X
+    Permissions = tabledata A = R,
+#else
+    Permissions =
+#if Z
+#endif
+        tabledata B = R,
+#endif
+    tabledata C = R;
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (preproc_split_permissions_property
+        (preproc_if
+          (preproc_open)
+          condition: (identifier))
+        name: (property_name)
+        value: (tabledata_permission_list
+          (tabledata_permission
+            (tabledata_keyword)
+            table_name: (identifier)
+            permission: (permission_type)))
+        (preproc_else)
+        name: (property_name)
+        value: (tabledata_permission_list
+          (preproc_conditional_permissions
+            (preproc_if
+              (preproc_open)
+              condition: (identifier))
+            (preproc_endif
+              (preproc_close)))
+          (tabledata_permission
+            (tabledata_keyword)
+            table_name: (identifier)
+            permission: (permission_type)))
+        (preproc_endif
+          (preproc_close))
+        value: (tabledata_permission_list
+          (tabledata_permission
+            (tabledata_keyword)
+            table_name: (identifier)
+            permission: (permission_type)))))))
+
+================================================================================
+B11 regression: an Option type list opened by an empty #if keeps its element conditional
+================================================================================
+
+codeunit 50100 C
+{
+var
+    X: Option
+#if X
+#endif
+        A, B;
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (var_section
+        (var_keyword)
+        body: (var_body
+          (variable_declaration
+            name: (identifier)
+            type: (type_specification
+              (option_type
+                (option_keyword)
+                (option_member_list
+                  (preproc_conditional_option_members
+                    (preproc_if
+                      (preproc_open)
+                      condition: (identifier))
+                    (preproc_endif
+                      (preproc_close)))
+                  (option_member
+                    (identifier))
+                  (option_member
+                    (identifier)))))))))))
+
+================================================================================
+B11: Permissions empty prefix is a decoration of the value (spec 3.4 intended change)
+================================================================================
+
+codeunit 50100 C
+{
+Permissions =
+#if X
+#endif
+    tabledata Customer = R;
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (property
+        name: (property_name)
+        (preproc_conditional_property_value
+          (preproc_if
+            (preproc_open)
+            condition: (identifier))
+          (preproc_endif
+            (preproc_close)))
+        value: (tabledata_permission_list
+          (tabledata_permission
+            (tabledata_keyword)
+            table_name: (identifier)
+            permission: (permission_type)))))))
+
+================================================================================
+B11: empty group after a terminated group is body content, then an empty_statement
+================================================================================
+
+page 50100 P { layout { area(Content) { field(F; Rec.Flag) {
+Caption =
+#if X
+    'a';
+#else
+    'b';
+#endif
+#if Y
+#endif
+;
+} } } }
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (page_declaration
+    (page_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (layout_section
+        (layout_keyword)
+        body: (layout_body
+          (area_section
+            (area_keyword)
+            type: (content_keyword)
+            body: (layout_body
+              (page_field
+                (field_keyword)
+                name: (identifier)
+                source: (member_expression
+                  object: (identifier)
+                  member: (identifier))
+                body: (declaration_body
+                  (property
+                    name: (property_name)
+                    value: (preproc_conditional_property_value
+                      (preproc_if
+                        (preproc_open)
+                        condition: (identifier))
+                      value: (string_literal)
+                      (preproc_else)
+                      value: (string_literal)
+                      (preproc_endif
+                        (preproc_close))))
+                  (preproc_conditional
+                    (preproc_if
+                      (preproc_open)
+                      condition: (identifier))
+                    (preproc_endif
+                      (preproc_close)))
+                  (empty_statement))))))))))
+
+================================================================================
+B11: empty group after a non-terminated `;`-inside group is body content, then an empty_statement
+================================================================================
+
+page 50100 P { layout { area(Content) { field(F; Rec.Flag) {
+Caption =
+#if X
+    'a';
+#endif
+#if Y
+#endif
+;
+} } } }
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (page_declaration
+    (page_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (layout_section
+        (layout_keyword)
+        body: (layout_body
+          (area_section
+            (area_keyword)
+            type: (content_keyword)
+            body: (layout_body
+              (page_field
+                (field_keyword)
+                name: (identifier)
+                source: (member_expression
+                  object: (identifier)
+                  member: (identifier))
+                body: (declaration_body
+                  (property
+                    name: (property_name)
+                    value: (preproc_conditional_property_value
+                      (preproc_if
+                        (preproc_open)
+                        condition: (identifier))
+                      value: (string_literal)
+                      (preproc_endif
+                        (preproc_close))))
+                  (preproc_conditional
+                    (preproc_if
+                      (preproc_open)
+                      condition: (identifier))
+                    (preproc_endif
+                      (preproc_close)))
+                  (empty_statement))))))))))
+
+================================================================================
+B11: empty group after a `;`-inside sequence is body content, then an empty_statement
+================================================================================
+
+page 50100 P { layout { area(Content) { field(F; Rec.Flag) {
+Caption =
+#if X
+    'a';
+#endif
+#if not X
+    'b';
+#endif
+#if Y
+#endif
+;
+} } } }
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (page_declaration
+    (page_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (layout_section
+        (layout_keyword)
+        body: (layout_body
+          (area_section
+            (area_keyword)
+            type: (content_keyword)
+            body: (layout_body
+              (page_field
+                (field_keyword)
+                name: (identifier)
+                source: (member_expression
+                  object: (identifier)
+                  member: (identifier))
+                body: (declaration_body
+                  (property
+                    name: (property_name)
+                    value: (preproc_conditional_property_value_sequence
+                      value: (preproc_conditional_property_value
+                        (preproc_if
+                          (preproc_open)
+                          condition: (identifier))
+                        value: (string_literal)
+                        (preproc_endif
+                          (preproc_close)))
+                      value: (preproc_conditional_property_value
+                        (preproc_if
+                          (preproc_open)
+                          condition: (preproc_not_expression
+                            (identifier)))
+                        value: (string_literal)
+                        (preproc_endif
+                          (preproc_close)))))
+                  (preproc_conditional
+                    (preproc_if
+                      (preproc_open)
+                      condition: (identifier))
+                    (preproc_endif
+                      (preproc_close)))
+                  (empty_statement))))))))))
+
+================================================================================
+B11: suffix decoration inside a terminated arm, before its `;`
+================================================================================
+
+page 50100 P { layout { area(Content) { field(F; Rec.Flag) {
+Caption =
+#if X
+    'a'
+#if Y
+#endif
+    ;
+#else
+    'b';
+#endif
+} } } }
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (page_declaration
+    (page_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (layout_section
+        (layout_keyword)
+        body: (layout_body
+          (area_section
+            (area_keyword)
+            type: (content_keyword)
+            body: (layout_body
+              (page_field
+                (field_keyword)
+                name: (identifier)
+                source: (member_expression
+                  object: (identifier)
+                  member: (identifier))
+                body: (declaration_body
+                  (property
+                    name: (property_name)
+                    value: (preproc_conditional_property_value
+                      (preproc_if
+                        (preproc_open)
+                        condition: (identifier))
+                      value: (string_literal)
+                      (preproc_conditional_property_value
+                        (preproc_if
+                          (preproc_open)
+                          condition: (identifier))
+                        (preproc_endif
+                          (preproc_close)))
+                      (preproc_else)
+                      value: (string_literal)
+                      (preproc_endif
+                        (preproc_close)))))))))))))
+
+================================================================================
+B11: suffix decoration inside an arm without `;`, `;` after #endif
+================================================================================
+
+page 50100 P { layout { area(Content) { field(F; Rec.Flag) {
+Caption =
+#if X
+    'a'
+#if Y
+#endif
+#else
+    'b'
+#endif
+;
+} } } }
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (page_declaration
+    (page_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (layout_section
+        (layout_keyword)
+        body: (layout_body
+          (area_section
+            (area_keyword)
+            type: (content_keyword)
+            body: (layout_body
+              (page_field
+                (field_keyword)
+                name: (identifier)
+                source: (member_expression
+                  object: (identifier)
+                  member: (identifier))
+                body: (declaration_body
+                  (property
+                    name: (property_name)
+                    value: (preproc_conditional_property_value
+                      (preproc_if
+                        (preproc_open)
+                        condition: (identifier))
+                      value: (string_literal)
+                      (preproc_conditional_property_value
+                        (preproc_if
+                          (preproc_open)
+                          condition: (identifier))
+                        (preproc_endif
+                          (preproc_close)))
+                      (preproc_else)
+                      value: (string_literal)
+                      (preproc_endif
+                        (preproc_close)))))))))))))
