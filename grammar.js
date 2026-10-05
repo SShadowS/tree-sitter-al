@@ -1701,7 +1701,9 @@ module.exports = grammar({
     // In the keyed TableRelation states the only keyword tokens are `if` (value start) and
     // `where` / `else` (after a target), so every other word -- `System`, `Table`, `Begin`,
     // `Then` -- extracts as `identifier`, matching alc (Task 1 probes: begin/end/then and the
-    // 36 keyword-segment cases accepted; if/else/where rejected). Segments carry no field:
+    // 36 keyword-segment cases accepted; if/else/where rejected). That is not enough at the
+    // first segment, where only `if` is a live keyword: `Else."No."` and `Where."No."` parsed
+    // clean, so `relation_target_names` reserves if/else/where (spec rev 4 item 5). Segments carry no field:
     // which one is the table needs symbol resolution (spec 2026-10-04 §3.2 item 1, rev 4).
     qualified_name: $ => prec.right(seq(
       $._qualified_name_segment,

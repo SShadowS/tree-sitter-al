@@ -1,0 +1,104 @@
+; B5 review focus 1 (keyword containment): the keyed TableRelation states must not
+; change how a generic property value lexes a keyword word. Each value here is a word
+; in tools/alc_facts/keyword-allowed-identifiers.txt and must stay an `identifier`
+; leaf, as before B5. The behavioural proof over all 99 words against the pre-B5
+; library is tools/tests/test_keyword_containment.py (needs B5_BASE_LIB); this fixture
+; pins the shape without that library. Spec:
+; docs/superpowers/specs/2026-10-04-table-relation-keying-design.md, rev 4 items 1 and 5.
+
+========================================================================
+B5 containment: keyword words as generic property values on a page
+========================================================================
+page 50100 P
+{
+    CaptionClass = Order;
+
+    layout
+    {
+        area(Content)
+        {
+            field(F; Rec.F)
+            {
+                Visible = Table;
+                Image = Filter;
+                ApplicationArea = Assembly;
+                Editable = Type;
+            }
+        }
+    }
+}
+------------------------------------------------------------------------
+
+(source_file
+  (page_declaration
+    (page_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (property
+        name: (property_name)
+        value: (identifier))
+      (layout_section
+        (layout_keyword)
+        body: (layout_body
+          (area_section
+            (area_keyword)
+            type: (content_keyword)
+            body: (layout_body
+              (page_field
+                (field_keyword)
+                name: (identifier)
+                source: (member_expression
+                  object: (identifier)
+                  member: (identifier))
+                body: (declaration_body
+                  (property
+                    name: (property_name)
+                    value: (identifier))
+                  (property
+                    name: (property_name)
+                    value: (identifier))
+                  (property
+                    name: (property_name)
+                    value: (identifier))
+                  (property
+                    name: (property_name)
+                    value: (identifier)))))))))))
+
+========================================================================
+B5 containment: keyword word as a generic property value on a table field
+========================================================================
+table 50100 T
+{
+    fields
+    {
+        field(1; F; Code[20])
+        {
+            Description = Field;
+        }
+    }
+}
+------------------------------------------------------------------------
+
+(source_file
+  (table_declaration
+    (table_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (fields_section
+        (fields_keyword)
+        body: (fields_body
+          (field_declaration
+            (field_keyword)
+            id: (integer)
+            name: (identifier)
+            type: (type_specification
+              (code_type
+                (code_keyword)
+                length: (integer)))
+            body: (declaration_body
+              (property
+                name: (property_name)
+                value: (identifier)))))))))
+
