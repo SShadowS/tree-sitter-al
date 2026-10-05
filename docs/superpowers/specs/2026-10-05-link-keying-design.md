@@ -1,7 +1,7 @@
 # B5b: the link family keyed by name (link-syntax leak)
 
-**Status:** revision 3, 2026-10-05. Revision 2 had a second gpt-6.1-sol round: 1 blocker
-and 4 majors, all verified and adopted (§9, round 2).
+**Status:** revision 4, 2026-10-05. Revision 3 had a third gpt-6.1-sol round: 1 blocker,
+3 majors and 1 minor, all verified and adopted (§9, round 3). Revision 2's round: §9, round 2.
 **Revision 2 history:** 2026-10-05. Revision 1 was approved in conversation section by section,
 then reviewed by gpt-6.1-sol. All 9 of its findings were verified against the decompiled
 compiler, the grammar and live parses before they were adopted (§9). This revision awaits
@@ -163,30 +163,48 @@ dispatches it (`SyntaxFacts.cs:4270-4274`; `ObjectParser.cs:9785-9794`).
    // `#if X A = field(B); #else A = field(C) #endif ;` is valid AL. With X defined it is a
    // terminated property plus an empty property, and the compiler's property list accepts a
    // standalone `;` (ObjectParser.cs:7505-7516). It parses clean today through the generic path.
-   _link_whole_conditional: $ => keyedValueConditional($,
-     seq(field('value', $._link_property_value), optional(';'))),
+   _link_whole_conditional: $ => keyedValueConditional($, choice(
+     seq(field('value', $._link_property_value), optional(';')),
+     ';',   // only if §5.1 enables empty values; unfielded
+   )),
    ```
 
    **The `;`-inside-the-arms conditional** (`_link_whole_conditional_in_if`, used only by
-   `_property_with_terminator_in_if`) takes no `;` after `#endif`. So EVERY configuration must
-   reach a `;` inside the conditional, which means:
-   - every arm is present and non-empty, and ends in `;` or is this conditional again;
-   - an `#else` arm is required.
+   `_property_with_terminator_in_if`) takes no `;` after `#endif`. Its rules:
+   - **Arms may be absent, and `#else` is optional**, as in the generic `_in_if` route
+     (`grammar.js:1059-1072`). A source can be valid in some configurations only: the repo
+     parses every branch and classifies the invalid ones (`invalid-config`, the
+     `fixture-classes.tsv` header). Exhaustive conditions without `#else` are also valid AL in
+     every configuration: `#if X ...; #elif not X ...; #endif`.
+   - **Every present value-bearing arm ends in `;`.** The `;` may be the only content of an arm
+     if §5.1 enables empty values; that arm is unfielded.
+   - **A present arm may be this conditional again**, nested. A nested conditional counts as
+     present only if it itself contains a present arm.
+   - **The conditional must contain at least one present arm, recursively.** This is the
+     termination witness. It excludes the empty-prefix split, `#if X #endif B = field(A);`,
+     without evaluating configurations.
 
-   Anything else leaves some configuration without a terminator, which is invalid AL. This is
-   written as its own rule (not `keyedValueConditional`, whose arms are all optional):
+   A grammar sketch (the plan settles the exact form against the generator):
 
    ```javascript
-   _link_whole_conditional_in_if: $ => seq(
-     $.preproc_if, $._link_in_if_arm,
-     repeat(seq($.preproc_elif, $._link_in_if_arm)),
-     $.preproc_else, $._link_in_if_arm,
-     $.preproc_endif,
-   ),
    _link_in_if_arm: $ => choice(
      seq(field('value', $._link_property_value), ';'),
-     seq(';'),   // only if §5.1 shows an empty value is accepted; no `value` field
+     ';',   // only if §5.1 enables empty values
      field('value', alias($._link_whole_conditional_in_if, $.preproc_conditional_property_value)),
+   ),
+   _link_in_if_tail: $ => seq(       // the rest, arms optional
+     repeat(seq($.preproc_elif, optional($._link_in_if_arm))),
+     optional(seq($.preproc_else, optional($._link_in_if_arm))),
+     $.preproc_endif,
+   ),
+   _link_whole_conditional_in_if: $ => choice(
+     seq($.preproc_if, $._link_in_if_arm, $._link_in_if_tail),   // the #if arm is the witness
+     seq($.preproc_if,                                           // a later arm is the witness
+       repeat(seq($.preproc_elif)),
+       choice(
+         seq($.preproc_elif, $._link_in_if_arm, $._link_in_if_tail),
+         seq($.preproc_else, $._link_in_if_arm, $.preproc_endif),
+       )),
    ),
    ```
 
@@ -246,12 +264,21 @@ dispatches it (`SyntaxFacts.cs:4270-4274`; `ObjectParser.cs:9785-9794`).
      ),
      ```
 
-     It goes inside the existing `const` argument's `field('value', ...)`, so sign and magnitude
+     `_const_numeric` REPLACES the existing standalone `$.integer` alternative of the `const`
+     argument (`grammar.js:1608-1614`); it does not add a second route to `integer`. It goes
+     inside the existing `const` argument's `field('value', ...)`, so sign and magnitude
      form ONE value node with `unary_expression`'s existing fields (`grammar.js:5717-5720`), and
      no new public type. Do not field the magnitude alone, alias a signed sequence to `integer`,
      or admit unrestricted `_expression`.
    - **More probes:** `-1.5`, a signed biginteger, a space or a comment between the sign and the
      magnitude, and unary `+`. Unary `+` is added only if accepted.
+   - **`tools/check-field-types.py` pins `link_value.value`'s exact type set**
+     (`tools/check-field-types.py:77-84`). Each form the probes approve is added to that set
+     (`decimal`, `biginteger_literal`, `unary_expression`, as approved), keeping `multiple=True`
+     and no anonymous members.
+   - **Conflicts.** `qualified_enum_value` admits expression bases, so a numeric prefix may
+     overlap it. The generated conflicts touching `_const_numeric` are audited, and no complete
+     wrong reading of `const(-1)` may survive.
    - **`filter(...)` with parentheses** (8821-8831): probed. If accepted, it is recorded as a
      deferred-work item rather than built in B5b. That is a `filter_value` grammar change shared
      with `where_clause`, it ERRORs today already (§2.3), and it has 0 production sites.
@@ -308,8 +335,23 @@ by descending through UNCHANGED conditional envelopes. The envelope's kind, arm 
 delimiters and spans must be identical. At each root it compares field names, source spans,
 operators, marker keywords and argument structure:
 - **L1** requires the old link pair and the new comparison to cover the same tokens;
-- **L3** requires the old expression and the new `link_value` to cover the same tokens, with the
-  marker keyword being one of item 6's additions.
+- **L3** requires a family property whose old comparison and new link pair cover the same tokens,
+  and whose `const` ARGUMENT is one of the specifically approved added forms (item 6). It is not
+  a marker keyword: `const` already exists. Any other `const` argument fails classification.
+
+**The wrappers differ, and the predicate maps them explicitly:**
+- old `property_expression → comparison_expression`;
+- new `link_value_list → link_value`.
+
+The left-hand name, the `=` token, the right-hand form (marker kind, spans, ordered arguments)
+and any numeric sign and magnitude are normalised before comparing. An unrecognised wrapper or
+argument structure is a finding.
+
+**The census interface changes.** `classify(name, old, new)` returns one class per property
+(`tools/relation_census.py:354-409`). It becomes an envelope walker that returns a list of
+rewrite records `(property site ID, slot path, class)`. The unchanged envelope is compared with
+an all-child cursor walk, not `_sexp`, because `_sexp` skips anonymous children (285-305); only
+authorised rewrite roots are masked.
 
 One envelope may hold several rewrites, each reported with its own class. Anything else is a
 finding. Reparenting (same span, different parent) is caught by the per-corpus full-tree
@@ -358,6 +400,11 @@ change.
     cases. Over-acceptance fixtures are kept separate and labelled.
   - The mixed `;` placement (§3.2 item 2), and a nested mixed placement.
   - The empty-prefix G11 shape (`#if X #endif B = field(A);`), with `X` defined and undefined.
+  - The `;`-inside-the-arms route without `#else`:
+    - exhaustive (`#if X ...; #elif not X ...; #endif`);
+    - independent `X`/`Y`, where `!X & !Y` is classified `invalid-config` with alc evidence;
+    - nested;
+    - empty arms beside a terminated arm.
   - `Visible = Flag = Rec.OtherFlag;` on a page field.
 - **Decide by probe:**
   - An empty value, for each delegate: `RunPageLink = ;`, `DataItemLink = ;` on a report and on
@@ -383,7 +430,7 @@ change.
 
 ### 5.2 Fixtures (`test/corpus/`)
 
-- **`link_keying_test.txt`.** Every row of §4.1, every G11 case under a keyed name, item 6's
+- **`link_keying_test.txt`.** Every row of §4.1, the delegate-valid G11 variants of §5.1, item 6's
   added forms, and the leak cases (`Visible = Flag = Rec.OtherFlag;`, `Caption = A = B.C;`).
 - **The host × property matrix.** Each row is one compiler host and the one family property it
   owns, and each needs alc to accept it. The placements are the columns: flat, `;` after
@@ -409,7 +456,11 @@ change.
   | xmlport table element | `LinkFields` |
 
   A request page's root owns none of the six names (§2.1). Body-level `#if` is a placement
-  applied to these rows, not a host.
+  applied to these rows, not a host. **Every expanded host × property × placement tuple gets
+  its own probe and fixture case.** That splits the combined rows (request-page part, system
+  part and action; query data item `DataItemLink` and `DataItemTableFilter`). It also adds
+  report-extension and page-extension request-page contexts where the probes establish
+  acceptance.
 
 - **Regressions,** each unchanged:
   - `SourceTableView`, `SubPageView`, `RunPageView` and `DataItemTableView` with `where(...)`
@@ -571,3 +622,23 @@ resolved, then raised 1 blocker and 4 majors. All were verified before adoption:
    through unchanged envelopes, `--expect-no-rows`, and reparenting assigned to tree-harness.
 5. **The host matrix had an impossible row.** Adopted: explicit host × property rows, and
    delegate-valid G11 variants.
+
+**Round 3** (revision 3). The reviewer marked round-2 finding 3 resolved and the rest partly
+resolved, then raised 1 blocker, 3 majors and 1 minor. All were verified before adoption:
+
+1. **A mandatory `#else` rejected valid AL (blocker).** Verified:
+   - `#if X ...; #elif not X ...; #endif` is exhaustive with no `#else`;
+   - the generic `_in_if` route allows absent arms and no `#else` (`grammar.js:1059-1072`);
+   - the repo accepts configuration-partial sources (`invalid-config`, `fixture-classes.tsv`).
+
+   Adopted: a recursive termination witness (at least one present arm) replaces "every arm plus
+   `#else`".
+2. **The outside conditional had no `;`-only arm.** Adopted, gated on the empty-value decision.
+3. **The numeric additions contradicted the `link_value.value` pin.** Verified at
+   `check-field-types.py:77-84`. Adopted: the pin is updated, `_const_numeric` replaces the
+   `integer` alternative, and conflicts with `qualified_enum_value` are audited.
+4. **L3 tested a marker keyword.** Adopted: the probed `const` argument forms, an explicit
+   wrapper mapping, and a census envelope walker returning rewrite records with an all-child
+   cursor comparison.
+5. **The matrix rows still combined hosts.** Adopted: one tuple per host × property × placement,
+   and the contradictory G11 wording is fixed.
