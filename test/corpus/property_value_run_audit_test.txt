@@ -612,3 +612,89 @@ OptionMembers =
                       condition: (identifier))
                     (preproc_endif
                       (preproc_close))))))))))))
+
+================================================================================
+B11 audit: a list opened by a #if whose arm holds a nested opener, then the run (seq_w open-conditional alternative)
+================================================================================
+
+permissionset 50100 PS
+{
+    Permissions =
+#if X
+#if Y
+        tabledata A = R,
+#endif
+#endif
+        tabledata B = R;
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (permissionset_declaration
+    (permissionset_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (property
+        name: (property_name)
+        value: (tabledata_permission_list
+          (preproc_conditional_permissions
+            (preproc_if
+              (preproc_open)
+              condition: (identifier))
+            (preproc_conditional_permissions
+              (preproc_if
+                (preproc_open)
+                condition: (identifier))
+              (tabledata_permission
+                (tabledata_keyword)
+                table_name: (identifier)
+                permission: (permission_type))
+              (preproc_endif
+                (preproc_close)))
+            (preproc_endif
+              (preproc_close)))
+          (tabledata_permission
+            (tabledata_keyword)
+            table_name: (identifier)
+            permission: (permission_type)))))))
+
+================================================================================
+B11 audit: a list opened by a #if whose arm holds a run, then the run (seq_w run alternative)
+================================================================================
+
+permissionset 50100 PS
+{
+    Permissions =
+#if X
+        tabledata A = R,
+#endif
+        tabledata B = R;
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (permissionset_declaration
+    (permissionset_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (property
+        name: (property_name)
+        value: (tabledata_permission_list
+          (preproc_conditional_permissions
+            (preproc_if
+              (preproc_open)
+              condition: (identifier))
+            (tabledata_permission
+              (tabledata_keyword)
+              table_name: (identifier)
+              permission: (permission_type))
+            (preproc_endif
+              (preproc_close)))
+          (tabledata_permission
+            (tabledata_keyword)
+            table_name: (identifier)
+            permission: (permission_type)))))))
