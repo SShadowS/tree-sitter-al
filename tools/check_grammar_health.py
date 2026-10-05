@@ -248,6 +248,12 @@ class GrammarHealthChecker:
                 match = re.match(definition_pattern, line)
                 if match:
                     defined.add(match.group(1))
+            # Rules a JS generator builds under computed keys (B11's valueRunRules:
+            # `[n('arm_t')]: $ => ...`) have no `name: $ =>` line; the generated
+            # src/grammar.json lists every rule tree-sitter actually saw.
+            grammar_json = Path('src/grammar.json')
+            if grammar_json.exists():
+                defined.update(json.loads(grammar_json.read_text(encoding='utf-8'))['rules'])
 
             # Find all rule references
             referenced = set()
