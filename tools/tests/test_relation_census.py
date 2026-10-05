@@ -208,3 +208,136 @@ def test_conditional_head_with_else_tail_is_legal():
     src = _field(b"TableRelation =\n#if X\n if (Y = const(1)) A\n#endif\n else B;")
     fs = rc.check_tree("x", rc.parser_for(None).parse(src), src)
     assert not [f for f in fs if f.kind in ("relation-shape", "relation-outside", "target")], fs
+
+
+# --- B5b: link keying (spec 2026-10-05 §4.1, §4.2, §5.5) --------------------------------
+
+B5B_BASE = os.environ.get("B5B_BASE_LIB")
+needs_b5b_base = pytest.mark.skipif(not B5B_BASE, reason="set B5B_BASE_LIB to the pre-B5b library")
+
+
+def _b5b():
+    return rc.parser_for(Path(B5B_BASE))
+
+
+def _page_action(prop: bytes) -> bytes:
+    return (b"page 50100 P\n{\n    actions { area(Processing) { action(A)\n    {\n        "
+            + prop + b"\n    }\n    }\n    }\n}\n")
+
+
+def test_link_names_are_the_six():
+    assert rc.LINK_NAMES == {"subpagelink", "runpagelink", "linkfields",
+                             "dataitemtablefilter", "columnfilter", "dataitemlink"}
+
+
+@needs_b5b_base
+def test_link_outside_flags_todays_leak(tmp_path):
+    p = rc.parser_for(Path(B5B_BASE))
+    (tmp_path / "a.al").write_bytes(_page_action(b"Visible = Flag = Rec.OtherFlag;"))
+    kinds = {f.kind for f in rc.check([tmp_path], p)}
+    assert "link-outside" in kinds
+
+
+@needs_b5b_base
+def test_link_shape_clean_on_a_real_link(tmp_path):
+    p = rc.parser_for(Path(B5B_BASE))
+    (tmp_path / "a.al").write_bytes(_page_action(b'RunPageLink = "No." = field("No.");'))
+    kinds = {f.kind for f in rc.check([tmp_path], p)}
+    assert "link-shape" not in kinds and "link-outside" not in kinds
+
+
+def test_expect_no_rows_exits_1_on_a_row(tmp_path, monkeypatch):
+    # a fake delta that returns one classified row and no findings; parser_for is faked too,
+    # because main loads --base-lib before it calls delta
+    monkeypatch.setattr(rc, "delta", lambda *a, **k: rc.DeltaResult([], [("x", 0, 1, "h", "n", "L1", "a", "b")], 0))
+    monkeypatch.setattr(rc, "parser_for", lambda lib: None)
+    (tmp_path / "a.al").write_bytes(b"codeunit 1 C { }")
+    assert rc.main(["delta", "--root", str(tmp_path), "--base-lib", "x", "--expect-no-rows"]) == 1
+    assert rc.main(["delta", "--root", str(tmp_path), "--base-lib", "x"]) == 0  # the flag is what changes it
+
+
+@needs_b5b_base
+def test_link_outside_reports_the_outermost_node_once(tmp_path):
+    (tmp_path / "a.al").write_bytes(_page_action(b"Visible = A = field(B), C = const(1);"))
+    fs = [f for f in rc.check([tmp_path], _b5b()) if f.kind == "link-outside"]
+    assert [f.detail for f in fs] == ["link_value_list"]
+
+
+def test_mutation_link_value_not_a_list():
+    src = _page_action(b'RunPageLink = "No." = field("No.");')
+    tree = rc.parser_for(None).parse(src)
+    prop = next(n for n in rc.walk(tree.root_node) if n.type == "property")
+    over = {("property", prop.text): {"child_by_field_name":
+            lambda f: _Fake("property_expression") if f == "value" else prop.child_by_field_name(f)}}
+    kinds = {f.kind for f in rc.check_tree("x", _T(tree, over), src)}
+    assert "link-shape" in kinds
+
+
+# Leaf rewrites. Pre-Task-3 there is no post-B5b library, so each NEW side is the base library's
+# parse of a same-length substitute source (every span is kept), with _P overrides where a node
+# type must differ. `field` -> `Xield` turns a link pair into a comparison; `1.5` -> `155` turns
+# a comparison into a link pair.
+
+L1_OLD = b"Visible =\n#if A\n F = field(G);\n#else\n F = filter(G);\n#endif"
+L3_OLD = b"RunPageLink =\n#if A\n X = const(1.5);\n#else\n Y = const(2.5);\n#endif"
+L3_NEW = L3_OLD.replace(b"1.5", b"155").replace(b"2.5", b"255")
+_AS_DECIMAL = {("integer", b"155"): {"type": "decimal"}, ("integer", b"255"): {"type": "decimal"}}
+
+
+def _pv(prop, over=None):
+    v, _ = _value(_page_action(prop), _b5b())
+    return _P(v, over) if over else v
+
+
+def _recs(name, old, new):
+    return rc.rewrite_records(name, old, new, approved_const_forms=rc.APPROVED_CONST_FORMS)
+
+
+@needs_b5b_base
+def test_l1_inside_a_whole_value_arm_envelope_unchanged():
+    assert _recs("Visible", _pv(L1_OLD), _pv(L1_OLD.replace(b"field(G)", b"Xield(G)"))) == [((1,), "L1")]
+
+
+@needs_b5b_base
+def test_two_l3_rewrites_in_one_envelope():
+    assert _recs("RunPageLink", _pv(L3_OLD), _pv(L3_NEW, _AS_DECIMAL)) == [((1,), "L3"), ((4,), "L3")]
+
+
+@needs_b5b_base
+def test_l3_const_argument_outside_the_approved_forms():
+    with pytest.raises(rc.Unclassifiable, match="const argument"):
+        _recs("RunPageLink", _pv(L3_OLD), _pv(L3_NEW))  # integer is no approved form
+
+
+@needs_b5b_base
+def test_l3_under_a_non_family_name_is_unclassifiable():
+    with pytest.raises(rc.Unclassifiable):
+        _recs("Visible", _pv(L3_OLD), _pv(L3_NEW, _AS_DECIMAL))
+
+
+@needs_b5b_base
+def test_envelope_whose_else_moved():
+    new = _pv(L1_OLD.replace(b"field(G)", b"Xield(G)"), {("preproc_else", b"#else"): {"start_byte": 0}})
+    with pytest.raises(rc.Unclassifiable, match="envelope"):
+        _recs("Visible", _pv(L1_OLD), new)
+
+
+@needs_b5b_base
+def test_l1_whose_right_span_differs():
+    new = _pv(L1_OLD.replace(b"field(G)", b"Xield(G)"), {("call_expression", b"Xield(G)"): {"end_byte": 999}})
+    with pytest.raises(rc.Unclassifiable, match="right"):
+        _recs("Visible", _pv(L1_OLD), new)
+
+
+@needs_b5b_base
+def test_delta_emits_one_row_per_rewrite(tmp_path):
+    (tmp_path / "a.al").write_bytes(_page_action(L1_OLD.replace(b"filter(G)", b"field(H)")))
+    base = _b5b()
+
+    class Alt:
+        def parse(self, src):
+            return base.parse(src.replace(b"field(", b"Xield("))
+
+    r = rc.delta([tmp_path], base, Alt())
+    assert not r.findings
+    assert [(row[5], row[8]) for row in r.rows] == [("L1", "1"), ("L1", "4")]

@@ -1,7 +1,9 @@
-"""B5 relation census: the TableRelation contract and the D1/D2/D3 delta (spec 2026-10-04 §5.5).
+"""B5 relation census: the TableRelation contract and the D1/D2/D3 delta (spec 2026-10-04 §5.5),
+plus the B5b link contract (link-shape, link-outside) and the L1/L3 leaf rewrites (spec 2026-10-05).
 
     python tools/relation_census.py check --root ./BC.History [--cur-lib DLL] [--manifest OUT.tsv]
     python tools/relation_census.py delta --root ./BC.History --base-lib BASE.dll [--cur-lib DLL] [--manifest OUT.tsv]
+                                          [--expect-no-rows]
 
 Exit 0 clean, 1 finding, 2 cannot run (a census that cannot run never reports clean).
 """
@@ -26,6 +28,18 @@ D2_NAMES = {"autoformatexpression", "enabled", "styleexpr", "datacaptionexpressi
 EXPR_DELEGATES = {"ParseTextExpressionPropertyValue", "ParseClientSideBooleanExpressionPropertyValue",
                   "ParseStyleExpressionPropertyValue", "ParseIntegerExpressionPropertyValue"}
 SHAPE_OK = {"table_relation_value", "preproc_conditional_property_value"}
+
+# B5b (spec 2026-10-05 §4.1): link syntax belongs to these six names only.
+LINK_NAMES = frozenset({"subpagelink", "runpagelink", "linkfields",
+                        "dataitemtablefilter", "columnfilter", "dataitemlink"})
+LINK_TYPES = {"link_value_list", "link_value", "preproc_conditional_link_values"}
+# L3's approved `const(...)` argument forms: the node types the B5b grammar produces for the
+# arguments Task 1's alc 18.0.41 probes showed the compiler accepts and the old grammar did not:
+# `decimal` (1.5), `unary_expression` (-1, -1.5, -1L, also with a space or comment after the
+# sign), `biginteger_literal` (1L). Date/time/datetime were already link values, so not L3.
+APPROVED_CONST_FORMS = frozenset({"decimal", "unary_expression", "biginteger_literal"})
+# Conditional envelopes a leaf rewrite may sit under; they must be unchanged (§4.2).
+ENVELOPES = {"preproc_conditional_property_value", "preproc_conditional_link_values", "preproc_if"}
 
 # Tree-context key (types of the nearest three named ancestors of a D2 property, skipping the
 # generic `declaration_body` and any `preproc_*` wrapper) -> compiler host kinds (spec §2.1).
@@ -189,6 +203,36 @@ def _shape_ok(v) -> bool:
     return False
 
 
+def _link_owner(n) -> str | None:
+    """The name of the nearest enclosing property, or None."""
+    a = n.parent
+    while a is not None and a.type != "property":
+        a = a.parent
+    return prop_name(a) if a is not None else None
+
+
+def _link_outermost(n) -> bool:
+    """No link node between n and its property: a site is reported once, at its outermost node."""
+    a = n.parent
+    while a is not None and a.type != "property":
+        if a.type in LINK_TYPES:
+            return False
+        a = a.parent
+    return True
+
+
+def _link_shape_ok(v) -> bool:
+    # No `;`-only-arm case: a keyed link value is optional in `property` (`Name = ;` has no
+    # value field) and there are no `;`-only conditional arms (controller ruling S'), so a
+    # conditional with no `value` arm stays a finding.
+    if v.type == "link_value_list":
+        return True
+    if v.type == "preproc_conditional_property_value":
+        arms = v.children_by_field_name("value")
+        return bool(arms) and all(_link_shape_ok(a) for a in arms)
+    return False
+
+
 _HOSTS_BY_NAME: dict[str, dict[str, set[str]]] | None = None
 
 
@@ -222,6 +266,8 @@ def check_tree(path: str, tree, src: bytes, *, target_check: bool | None = None,
             name = prop_name(n)
             v = n.child_by_field_name("value")
             hosts: tuple[str, ...] = ()
+            if name in LINK_NAMES and v is not None and not _link_shape_ok(v):
+                add("link-shape", n, v.type)
             if name == "tablerelation":
                 if v is not None and not _shape_ok(v):
                     add("relation-shape", n, v.type)
@@ -244,6 +290,8 @@ def check_tree(path: str, tree, src: bytes, *, target_check: bool | None = None,
                              v.type if v is not None else "", ",".join(hosts)))
         if t in RELATION_TYPES and _outside(n):
             add("relation-outside", n, t)
+        if t in LINK_TYPES and _link_owner(n) not in LINK_NAMES and _link_outermost(n):
+            add("link-outside", n, t)
         if target_check and t == "simple_table_relation":
             tg = n.children_by_field_name("target")
             if len(tg) != 1 or tg[0].type != "qualified_name" or n.children_by_field_name("table"):
@@ -369,11 +417,122 @@ def classify(name: str, old_value, new_value) -> str:
     raise Unclassifiable("ambiguous: " + "+".join(hits) if hits else "unclassified")
 
 
+# --- B5b leaf rewrites (spec 2026-10-05 §4.2) -------------------------------------------
+# Children are read through `children` + `field_name_for_child`: the all-child walk, anonymous
+# children included (unlike `_sexp`), and it also works through the tests' node proxies.
+# Both trees parse the SAME buffer, so equal spans mean equal text: spans are compared, not text.
+
+class Rewrite(NamedTuple):
+    slot_path: tuple  # all-child indexes from the value root to the rewrite root
+    cls: str          # "L1" | "L3"
+
+
+def _span(n):
+    return (n.start_byte, n.end_byte)
+
+
+def _kids(n):
+    return [(n.field_name_for_child(i), c) for i, c in enumerate(n.children)]
+
+
+def _same(a, b) -> bool:
+    """Identical subtrees: type, namedness, MISSING, span, and every child's field name."""
+    if ((a.type, a.is_named, a.is_missing, _span(a), a.child_count)
+            != (b.type, b.is_named, b.is_missing, _span(b), b.child_count)):
+        return False
+    return all(fa == fb and _same(ca, cb) for (fa, ca), (fb, cb) in zip(_kids(a), _kids(b)))
+
+
+def _leaves(n) -> list:
+    return [_span(x) for x in walk(n) if x.child_count == 0]
+
+
+def _only_child(n, want: str):
+    if n.child_count != 1 or n.children[0].type != want or _span(n.children[0]) != _span(n):
+        raise Unclassifiable(f"{n.type} at {n.start_byte}: not exactly one {want}")
+    return n.children[0]
+
+
+def _pair(link_list, prop_expr):
+    """The wrapper mapping shared by L1 and L3: link_value_list -> link_value against
+    property_expression -> comparison_expression; field = left, `=` = operator, the link's
+    right-hand side = right, and the same token sequence. Returns (marker, values, right)."""
+    lv = _only_child(link_list, "link_value")
+    k = lv.children
+    if len(k) < 3 or lv.field_name_for_child(0) != "field" or k[1].type != "=":
+        raise Unclassifiable(f"link_value at {lv.start_byte}: not `field = ...`")
+    ce = _only_child(prop_expr, "comparison_expression")
+    l, op, r = (ce.child_by_field_name(f) for f in ("left", "operator", "right"))
+    if None in (l, op, r) or ce.child_count != 3 or op.text.strip() != b"=":
+        raise Unclassifiable(f"comparison at {ce.start_byte}: not `left = right`")
+    if _span(link_list) != _span(prop_expr):
+        raise Unclassifiable(f"wrapper span {_span(link_list)} != {_span(prop_expr)}")
+    if _span(k[0]) != _span(l):
+        raise Unclassifiable(f"field {_span(k[0])} != left {_span(l)}")
+    if _span(k[1]) != _span(op):
+        raise Unclassifiable(f"`=` {_span(k[1])} != operator {_span(op)}")
+    if (k[2].start_byte, lv.end_byte) != _span(r):
+        raise Unclassifiable(f"link right-hand side {(k[2].start_byte, lv.end_byte)} != right {_span(r)}")
+    if _leaves(link_list) != _leaves(prop_expr):
+        raise Unclassifiable(f"tokens differ at {link_list.start_byte}")
+    return k[2], lv.children_by_field_name("value"), r
+
+
+def _rewrite(name, o, n, approved) -> str | None:
+    if o.type == "link_value_list" and n.type == "property_expression":
+        if name in LINK_NAMES:
+            raise Unclassifiable(f"L1 shape under family name {name}")
+        _pair(o, n)
+        return "L1"
+    if o.type == "property_expression" and n.type == "link_value_list":
+        if name not in LINK_NAMES:
+            raise Unclassifiable(f"L3 shape under non-family name {name}")
+        marker, vals, r = _pair(n, o)
+        fn, args = r.child_by_field_name("function"), r.child_by_field_name("arguments")
+        if (r.type != "call_expression" or fn is None or fn.text.lower() != b"const"
+                or marker.type != "const_keyword" or args is None or args.named_child_count != 1):
+            raise Unclassifiable(f"L3 at {r.start_byte}: not a one-argument const(...)")
+        arg = args.named_children[0]
+        if len(vals) != 1 or vals[0].type not in approved or _span(vals[0]) != _span(arg):
+            raise Unclassifiable(f"L3 const argument {[v.type for v in vals]} at {arg.start_byte}"
+                                 f" is not one approved form {sorted(approved)}")
+        return "L3"
+    return None
+
+
+def rewrite_records(name, old_value, new_value, *, approved_const_forms) -> list[Rewrite]:
+    """Descend through UNCHANGED conditional envelopes to the L1/L3 rewrite roots (one record
+    each); anything else raises Unclassifiable. Identical values give []."""
+    name = name.lower()
+    out: list[Rewrite] = []
+
+    def go(o, n, path):
+        if _same(o, n):
+            return
+        cls = _rewrite(name, o, n, approved_const_forms)
+        if cls:
+            out.append(Rewrite(path, cls))
+            return
+        if (o.type not in ENVELOPES
+                or (o.type, o.is_named, _span(o), o.child_count) != (n.type, n.is_named, _span(n), n.child_count)):
+            if not path:  # the value itself is neither: no predicate applies (as classify says)
+                raise Unclassifiable("unclassified")
+            raise Unclassifiable(f"{o.type} -> {n.type} at {o.start_byte}: not a rewrite root, "
+                                 f"nor an unchanged envelope (slot {path})")
+        for i, ((fo, co), (fn, cn)) in enumerate(zip(_kids(o), _kids(n))):
+            if fo != fn:
+                raise Unclassifiable(f"envelope {o.type} at {o.start_byte}: field {fo} -> {fn}")
+            go(co, cn, path + (i,))
+
+    go(old_value, new_value, ())
+    return out
+
+
 def _inventory(path, tree):
     return {(path, p.start_byte, p.end_byte): p for p in walk(tree.root_node) if p.type == "property"}
 
 
-def delta(roots, base_parser, cur_parser) -> DeltaResult:
+def delta(roots, base_parser, cur_parser, *, approved_const_forms=APPROVED_CONST_FORMS) -> DeltaResult:
     findings: list[Finding] = []
     rows: list = []
     d3_old = 0
@@ -402,14 +561,22 @@ def delta(roots, base_parser, cur_parser) -> DeltaResult:
             if str(bv) == str(cv):
                 continue
             try:
-                cls = classify(name, bv, cv)
+                try:
+                    recs = [Rewrite((), classify(name, bv, cv))]
+                except Unclassifiable as e:
+                    if str(e) != "unclassified":  # D1/D2/D3 ambiguous or unclassifiable: report it
+                        raise
+                    recs = rewrite_records(name, bv, cv, approved_const_forms=approved_const_forms)
+                    if not recs:
+                        raise
             except Unclassifiable as e:
                 msg = str(e)
                 kind = "ambiguous" if msg.startswith("ambiguous") else (
                     "unclassified" if msg == "unclassified" else "unclassifiable")
                 findings.append(Finding(kind, path, k[1], k[2], f"{name}: {bv.type} -> {cv.type}; {msg}"))
                 continue
-            rows.append((path, k[1], k[2], sha, name, cls, bv.type, cv.type))
+            for slot, cls in recs:  # slot "" = the whole value (D1/D2/D3)
+                rows.append((path, k[1], k[2], sha, name, cls, bv.type, cv.type, ".".join(map(str, slot))))
     return DeltaResult(findings, rows, d3_old)
 
 
@@ -428,6 +595,8 @@ def main(argv=None) -> int:
     ap.add_argument("--base-lib", type=Path)
     ap.add_argument("--cur-lib", type=Path)
     ap.add_argument("--manifest", type=Path)
+    ap.add_argument("--expect-no-rows", action="store_true",
+                    help="delta: any classified row exits 1 (the B5b production gate is 0 rows, 0 findings)")
     a = ap.parse_args(argv)
     try:
         if not a.root:
@@ -459,6 +628,9 @@ def main(argv=None) -> int:
             continue
         print(f"{f.kind}\t{f.path}:{f.start}-{f.end}\t{f.detail}")
     print(f"relation_census {a.mode}: findings={len(findings)} {dict(sorted(by.items()))}{extra}")
+    if a.mode == "delta" and a.expect_no_rows and res_rows:
+        print(f"relation_census: --expect-no-rows: {len(res_rows)} rows", file=sys.stderr)
+        return 1
     return 1 if findings else 0
 
 
