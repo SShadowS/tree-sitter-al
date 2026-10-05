@@ -1,0 +1,534 @@
+========================================================================
+B13 gap: RunObject `Page` then `CustList` across groups -- valid AL, structure deferred (roadmap B13)
+========================================================================
+page 50100 P { actions { area(Processing) { action(A) {
+RunObject =
+#if X
+    Page
+#endif
+#if X
+    CustList
+#endif
+;
+} } } }
+------------------------------------------------------------------------
+
+(source_file
+  (page_declaration
+    (page_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (actions_section
+        (actions_keyword)
+        body: (action_body
+          (action_area_section
+            (area_keyword)
+            type: (processing_keyword)
+            body: (action_body
+              (action_declaration
+                (action_keyword)
+                name: (identifier)
+                body: (declaration_body
+                  (property
+                    name: (property_name)
+                    value: (preproc_conditional_property_value
+                      (preproc_if
+                        (preproc_open)
+                        condition: (identifier))
+                      value: (keyword_identifier
+                        (page_keyword))
+                      (preproc_endif
+                        (preproc_close)))
+                    (ERROR
+                      (preproc_if
+                        (preproc_open)
+                        condition: (identifier))
+                      (identifier)
+                      (UNEXPECTED 'i'))))))))))))
+
+========================================================================
+B13 gap: call `Format` then `(1)` across groups -- valid AL, structure deferred (roadmap B13)
+========================================================================
+page 50100 P { SourceTable = Cust;
+DataCaptionExpression =
+#if X
+    Format
+#endif
+#if X
+    (1)
+#endif
+;
+layout { area(Content) { field(F; Rec.Flag) { } } } }
+------------------------------------------------------------------------
+
+(source_file
+  (page_declaration
+    (page_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (property
+        name: (property_name)
+        value: (identifier))
+      (property
+        name: (property_name)
+        value: (preproc_conditional_property_value
+          (preproc_if
+            (preproc_open)
+            condition: (identifier))
+          value: (identifier)
+          (preproc_endif
+            (preproc_close)))
+        (ERROR
+          (preproc_if
+            (preproc_open)
+            condition: (identifier))
+          (integer)
+          (UNEXPECTED 'i')))
+      (layout_section
+        (layout_keyword)
+        body: (layout_body
+          (area_section
+            (area_keyword)
+            type: (content_keyword)
+            body: (layout_body
+              (page_field
+                (field_keyword)
+                name: (identifier)
+                source: (member_expression
+                  object: (identifier)
+                  member: (identifier))))))))))
+
+========================================================================
+B13 gap: decimal range `0 :` then `5` across groups -- valid AL, structure deferred (roadmap B13)
+========================================================================
+table 50100 T { fields { field(1; K; Decimal) {
+DecimalPlaces =
+#if X
+    0 :
+#endif
+#if X
+    5
+#endif
+;
+} } }
+------------------------------------------------------------------------
+
+(source_file
+  (table_declaration
+    (table_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (fields_section
+        (fields_keyword)
+        body: (fields_body
+          (field_declaration
+            (field_keyword)
+            id: (integer)
+            name: (identifier)
+            type: (type_specification
+              (basic_type))
+            body: (declaration_body
+              (property
+                name: (property_name)
+                value: (preproc_conditional_property_value
+                  (preproc_if
+                    (preproc_open)
+                    condition: (identifier))
+                  value: (decimal_range_value
+                    min: (integer))
+                  (preproc_endif
+                    (preproc_close)))
+                (ERROR
+                  (preproc_if
+                    (preproc_open)
+                    condition: (identifier))
+                  (integer)
+                  (UNEXPECTED 'i'))))))))))
+
+========================================================================
+B13 gap: SourceTableView `sorting()` then `where()` across groups -- valid AL, structure deferred (roadmap B13)
+========================================================================
+page 50100 P { SourceTable = Cust;
+SourceTableView =
+#if X
+    sorting(Name)
+#endif
+#if X
+    where(Amount = const(1))
+#endif
+;
+layout { area(Content) { field(F; Rec.Flag) { } } } }
+------------------------------------------------------------------------
+
+(source_file
+  (page_declaration
+    (page_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (property
+        name: (property_name)
+        value: (identifier))
+      (property
+        name: (property_name)
+        (ERROR
+          (preproc_conditional_property_value
+            (preproc_if
+              (preproc_open)
+              condition: (identifier))
+            value: (sorting_value
+              (sorting_keyword)
+              (identifier))
+            (preproc_endif
+              (preproc_close)))
+          (preproc_if
+            (preproc_open)
+            condition: (identifier)))
+        value: (where_clause
+          (where_keyword)
+          (where_conditions
+            (where_condition
+              field: (identifier)
+              (const_keyword)
+              value: (integer))))
+        (ERROR
+          (UNEXPECTED 'i')))
+      (layout_section
+        (layout_keyword)
+        body: (layout_body
+          (area_section
+            (area_keyword)
+            type: (content_keyword)
+            body: (layout_body
+              (page_field
+                (field_keyword)
+                name: (identifier)
+                source: (member_expression
+                  object: (identifier)
+                  member: (identifier))))))))))
+
+========================================================================
+B13 gap: ML pairs joined by `,` across groups -- valid AL, structure deferred (roadmap B13)
+========================================================================
+page 50100 P { layout { area(Content) { field(F; X) {
+CaptionML =
+#if X
+    ENU = 'a',
+#endif
+#if X
+    DAN = 'b'
+#endif
+;
+} } } }
+------------------------------------------------------------------------
+
+(source_file
+  (page_declaration
+    (page_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (layout_section
+        (layout_keyword)
+        body: (layout_body
+          (area_section
+            (area_keyword)
+            type: (content_keyword)
+            body: (layout_body
+              (page_field
+                (field_keyword)
+                name: (identifier)
+                source: (identifier)
+                body: (declaration_body
+                  (property
+                    name: (property_name)
+                    value: (preproc_conditional_property_value
+                      (preproc_if
+                        (preproc_open)
+                        condition: (identifier))
+                      value: (ml_value_list
+                        (ml_value_pair
+                          language: (identifier)
+                          value: (string_literal))
+                        (ERROR
+                          (UNEXPECTED 'i')
+                          (UNEXPECTED 'i')
+                          (identifier))
+                        (ml_value_pair
+                          language: (identifier)
+                          value: (string_literal)))
+                      (preproc_endif
+                        (preproc_close)))))))))))))
+
+========================================================================
+B13 gap: Namespaces pairs joined by `,` across groups -- valid AL, structure deferred (roadmap B13)
+========================================================================
+xmlport 50100 X {
+Namespaces =
+#if X
+    a = 'u',
+#endif
+#if X
+    b = 'v'
+#endif
+;
+schema { textelement(R) { } } }
+------------------------------------------------------------------------
+
+(source_file
+  (xmlport_declaration
+    (xmlport_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (property
+        name: (property_name)
+        value: (preproc_conditional_property_value
+          (preproc_if
+            (preproc_open)
+            condition: (identifier))
+          value: (namespace_value_list
+            (namespace_pair
+              prefix: (identifier)
+              uri: (string_literal))
+            (ERROR
+              (UNEXPECTED 'i')
+              (UNEXPECTED 'i')
+              (identifier))
+            (namespace_pair
+              prefix: (identifier)
+              uri: (string_literal)))
+          (preproc_endif
+            (preproc_close))))
+      (schema_section
+        (schema_keyword)
+        body: (schema_body
+          (xmlport_element
+            element_type: (textelement_keyword)
+            name: (identifier)))))))
+
+========================================================================
+B13 gap: Caption `'a',` then `Locked = true` across groups -- valid AL, structure deferred (roadmap B13)
+========================================================================
+page 50100 P { layout { area(Content) { field(F; X) {
+Caption =
+#if X
+    'a',
+#endif
+#if X
+    Locked = true
+#endif
+;
+} } } }
+------------------------------------------------------------------------
+
+(source_file
+  (page_declaration
+    (page_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (layout_section
+        (layout_keyword)
+        body: (layout_body
+          (area_section
+            (area_keyword)
+            type: (content_keyword)
+            body: (layout_body
+              (page_field
+                (field_keyword)
+                name: (identifier)
+                source: (identifier)
+                body: (declaration_body
+                  (property
+                    name: (property_name)
+                    value: (option_member_list
+                      (preproc_conditional_option_members
+                        (preproc_if
+                          (preproc_open)
+                          condition: (identifier))
+                        (option_member
+                          (string_literal))
+                        (preproc_endif
+                          (preproc_close)))
+                      (preproc_conditional_option_members
+                        (preproc_if
+                          (preproc_open)
+                          condition: (identifier))
+                        (ERROR
+                          (option_member
+                            (identifier)))
+                        (option_member
+                          (boolean))
+                        (preproc_endif
+                          (preproc_close))))))))))))))
+
+========================================================================
+B13 gap: comma-free OptionMembers alternatives, `;` after the last #endif -- valid AL, structure deferred (roadmap B13)
+========================================================================
+table 50100 T { fields { field(1; K; Option) {
+OptionMembers =
+#if X
+    A
+#endif
+#if not X
+    B
+#endif
+;
+} } }
+------------------------------------------------------------------------
+
+(source_file
+  (table_declaration
+    (table_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (fields_section
+        (fields_keyword)
+        body: (fields_body
+          (field_declaration
+            (field_keyword)
+            id: (integer)
+            name: (identifier)
+            type: (type_specification
+              (option_type
+                (option_keyword)))
+            body: (declaration_body
+              (property
+                name: (property_name)
+                value: (preproc_conditional_property_value
+                  (preproc_if
+                    (preproc_open)
+                    condition: (identifier))
+                  value: (identifier)
+                  (preproc_endif
+                    (preproc_close)))
+                (ERROR
+                  (preproc_if
+                    (preproc_open)
+                    condition: (preproc_not_expression
+                      (identifier)))
+                  (identifier)
+                  (UNEXPECTED 'i'))))))))))
+
+========================================================================
+B13 gap: CaptionML conditional terminator, `;` in the #else arm then a conditional `;` -- valid AL, structure deferred (roadmap B13)
+========================================================================
+page 50100 P { layout { area(Content) { field(F; X) {
+CaptionML =
+#if X
+    ENU='a'
+#else
+    ENU='b';
+#endif
+#if X
+#if Y
+#endif
+;
+#endif
+} } } }
+------------------------------------------------------------------------
+
+(source_file
+  (page_declaration
+    (page_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (layout_section
+        (layout_keyword)
+        body: (layout_body
+          (area_section
+            (area_keyword)
+            type: (content_keyword)
+            body: (layout_body
+              (page_field
+                (field_keyword)
+                name: (identifier)
+                source: (identifier)
+                body: (declaration_body
+                  (property
+                    name: (property_name)
+                    value: (preproc_conditional_property_value_sequence
+                      value: (preproc_conditional_property_value
+                        (preproc_if
+                          (preproc_open)
+                          condition: (identifier))
+                        value: (ml_value_list
+                          (ml_value_pair
+                            language: (identifier)
+                            value: (string_literal)))
+                        (preproc_else)
+                        value: (ml_value_list
+                          (ml_value_pair
+                            language: (identifier)
+                            value: (string_literal)))
+                        (preproc_endif
+                          (preproc_close)))
+                      value: (preproc_conditional_property_value
+                        (preproc_if
+                          (preproc_open)
+                          condition: (identifier))
+                        (preproc_conditional_property_value
+                          (preproc_if
+                            (preproc_open)
+                            condition: (identifier))
+                          (preproc_endif
+                            (preproc_close)))
+                        (preproc_endif
+                          (preproc_close))))
+                    (MISSING ";")))))))))))
+
+========================================================================
+B13 gap: generic two groups, `;` after the last #endif -- valid AL, structure deferred (roadmap B13)
+========================================================================
+page 50100 P { layout { area(Content) { field(F; X) {
+Caption =
+#if X
+    'a'
+#endif
+#if not X
+    'b'
+#endif
+    ;
+} } } }
+------------------------------------------------------------------------
+
+(source_file
+  (page_declaration
+    (page_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (layout_section
+        (layout_keyword)
+        body: (layout_body
+          (area_section
+            (area_keyword)
+            type: (content_keyword)
+            body: (layout_body
+              (page_field
+                (field_keyword)
+                name: (identifier)
+                source: (identifier)
+                body: (declaration_body
+                  (property
+                    name: (property_name)
+                    value: (preproc_conditional_property_value
+                      (preproc_if
+                        (preproc_open)
+                        condition: (identifier))
+                      value: (string_literal)
+                      (preproc_endif
+                        (preproc_close)))
+                    (ERROR
+                      (preproc_if
+                        (preproc_open)
+                        condition: (preproc_not_expression
+                          (identifier)))
+                      (string_literal)
+                      (UNEXPECTED 'i'))))))))))))

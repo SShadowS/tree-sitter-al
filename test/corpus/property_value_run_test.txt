@@ -10249,3 +10249,141 @@ action(A) { RunObject = page P; } } } }
                     value: (object_reference_value
                       (page_keyword)
                       (identifier))))))))))))
+
+================================================================================
+B11: Namespaces all-empty value: decorations and `;`, no value (alc accepts, an empty Namespaces value is valid)
+================================================================================
+
+xmlport 50100 X {
+Namespaces =
+#if X
+#endif
+;
+schema { textelement(R) { } } }
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (xmlport_declaration
+    (xmlport_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (property
+        name: (property_name)
+        (preproc_conditional_property_value
+          (preproc_if
+            (preproc_open)
+            condition: (identifier))
+          (preproc_endif
+            (preproc_close))))
+      (schema_section
+        (schema_keyword)
+        body: (schema_body
+          (xmlport_element
+            element_type: (textelement_keyword)
+            name: (identifier)))))))
+
+================================================================================
+B11: Namespaces arm of a nested empty group then `;` (empty-value terminated arm)
+================================================================================
+
+xmlport 50100 X {
+Namespaces =
+#if X
+#if Y
+#endif
+    ;
+#else
+    a = 'u';
+#endif
+schema { textelement(R) { } } }
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (xmlport_declaration
+    (xmlport_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (property
+        name: (property_name)
+        value: (preproc_conditional_property_value
+          (preproc_if
+            (preproc_open)
+            condition: (identifier))
+          (preproc_conditional_property_value
+            (preproc_if
+              (preproc_open)
+              condition: (identifier))
+            (preproc_endif
+              (preproc_close)))
+          (preproc_else)
+          value: (namespace_value_list
+            (namespace_pair
+              prefix: (identifier)
+              uri: (string_literal)))
+          (preproc_endif
+            (preproc_close))))
+      (schema_section
+        (schema_keyword)
+        body: (schema_body
+          (xmlport_element
+            element_type: (textelement_keyword)
+            name: (identifier)))))))
+
+================================================================================
+B11: a procedure following a `;`-inside run is not swallowed by the run
+================================================================================
+
+codeunit 50100 C {
+Description =
+#if X
+ 'a';
+#endif
+#if not X
+ 'b';
+#endif
+procedure P() begin end;
+procedure Q() begin end;
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (property
+        name: (property_name)
+        value: (preproc_conditional_property_value_sequence
+          value: (preproc_conditional_property_value
+            (preproc_if
+              (preproc_open)
+              condition: (identifier))
+            value: (string_literal)
+            (preproc_endif
+              (preproc_close)))
+          value: (preproc_conditional_property_value
+            (preproc_if
+              (preproc_open)
+              condition: (preproc_not_expression
+                (identifier)))
+            value: (string_literal)
+            (preproc_endif
+              (preproc_close)))))
+      (procedure
+        (procedure_keyword)
+        name: (identifier)
+        body: (code_block
+          (begin_keyword)
+          (end_keyword)))
+      (procedure
+        (procedure_keyword)
+        name: (identifier)
+        body: (code_block
+          (begin_keyword)
+          (end_keyword))))))

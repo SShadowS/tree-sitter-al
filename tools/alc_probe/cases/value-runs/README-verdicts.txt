@@ -78,3 +78,5 @@ optionmembers-selects-nothing.al: accept [X=0 Y=1 | X=1 Y=0 | X=1 Y=1]; reject(A
 calcformula-after-t-suffix-empty.al: accept [X=0 Z=0 | X=0 Z=1]; reject(AL0104,AL0124) [X=1 Z=0 | X=1 Z=1]  (B11 Task 6, controller ruling 1)
 captionml-after-t-suffix-empty.al: accept [X=0 Z=0 | X=0 Z=1]; reject(AL0104) [X=1 Z=0 | X=1 Z=1]  (B11 Task 6, controller ruling 1)
 tooltipml-after-t-action-area.al: accept [X=0 Z=0 | X=0 Z=1]; reject(AL0104) [X=1 Z=0 | X=1 Z=1]  (B11 Task 6 fix round 1, ruling 1 at the action-area host)
+b13-optionmembers-comma-free.al: accept in all 2 configurations
+b13-ml-conditional-terminator.al: accept in all 4 configurations

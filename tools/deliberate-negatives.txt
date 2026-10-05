@@ -122,3 +122,6 @@ link_keying_negative_test.txt
 # Their core is required; alc rejects both in every configuration (AL0107; AL0104/AL0107/
 # AL0176), tools/alc_probe/cases/value-runs/all-empty-{tablerelation,calcformula}.al.
 property_value_run_negative_test.txt
+# B11: valid AL whose run-of-#if structure is deferred to roadmap B13 (spec §3.1 step 5).
+# Not invalid input. Cases leave this file as B13 gives them structure.
+property_value_run_b13_gap_test.txt
