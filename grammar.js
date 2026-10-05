@@ -751,7 +751,7 @@ module.exports = grammar({
     // TableRelation: its after_lead / empty-group reading is subsumed by the
     // conditional-head entries below (reported unnecessary)
     ...keyedRunConflicts($, '_table_relation', $._table_relation_property_value)
-      .filter(c => !(c.length === 2 && c[0].name === '_table_relation_after_lead')),
+      .filter(c => c.map(x => x.name).join() !== '_table_relation_after_lead,_empty_value_conditional'),
     // _property_whole_value_in_if at an action area (G11, item 17): there a
     // #if after `Name =` also opens an option-member list. Generator-required
     // (not needed for the assembly_body host alone, measured).
@@ -1663,7 +1663,10 @@ module.exports = grammar({
         field('name', alias($._ml_property_name, $.property_name)),
         '=',
         repeat($._value_decoration),
-        field('value', $._ml_in_core),
+        field('value', choice(
+          $._ml_in_core,
+          alias($._ml_sequence_after_t, $.preproc_conditional_property_value_sequence),
+        )),
       ),
       seq(
         field('name', alias($._namespaces_property_name, $.property_name)),
@@ -1671,10 +1674,11 @@ module.exports = grammar({
         repeat($._value_decoration),
         field('value', $._namespaces_in_core),
       ),
-      // B11: the `;`-inside core only (spec 2026-10-05 §4.4). A `;`-after run ending in a
-      // terminated group and followed by a block (as _property_with_terminator_in_if
-      // reads it) is not offered at these hosts: +100 states, measured; with the `;`
-      // directly after the run, the `property` arm, which both hosts list, reads it.
+      // B11: the `;`-inside core (spec 2026-10-05 §4.4), and for ML also a `;`-after run
+      // ending in a terminated group (step 4), as _property_with_terminator_in_if: the
+      // site ends at that group, so a following block is host content (§3.2, controller
+      // ruling 1). alc accepts ML at the action area. Namespaces takes the core only:
+      // both hosts reject it (AL0124).
       // No keyed TableRelation arm: both hosts reject TableRelation (AL0124, deferred-work
       // item 17), and it cost ~102 states (spec 2026-10-04 rev 4 item 6, Ruling M).
       // No keyed link arm either: RunPageLink on an action area is AL0124 (B5b Task 1,
@@ -2653,8 +2657,8 @@ module.exports = grammar({
       // B11 §3.1 step 3: an entirely conditional OptionMembers list, `;` after: element
       // conditionals carry their own `,` and blank slots stay (spec §5.3, hole-aware), as
       // the link list's conditional-led form does. Separators are the oracle's per
-      // configuration (list validator), not the grammar's. A `,` must appear somewhere --
-      // in the leading #if's arms, at list level, or in the next #if's arms -- so a run of
+      // configuration (list validator), not the grammar's. The leading #if must have an arm
+      // holding a `,` (`#if X A #endif , B;` is an ERROR, B13 debt), so a run of
       // comma-free single values (`Caption = #if X 'a' #endif #if not X 'b' #endif ;`)
       // stays the generic step 5 ERROR (B13): without the property name, a run of bare
       // members is indistinguishable from it. The element after the leader is never a
@@ -2731,9 +2735,8 @@ module.exports = grammar({
       seq(',', optional($._option_members_branch)),
       seq($.option_member, ',', optional($._option_members_branch)),
     ),
-    // The leaders of the entirely conditional list (option_member_list, B11): a #if with
-    // an arm holding a `,` (every other present arm one member), and a #if whose every
-    // present arm is one member.
+    // The leader of the entirely conditional list (option_member_list, B11): a #if with
+    // an arm holding a `,` (every other present arm one member).
     _option_members_run_open: $ => witnessConditional($, $._option_members_branch_c, $.option_member),
 
     option_member: $ => choice(

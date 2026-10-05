@@ -10158,3 +10158,94 @@ CalcFormula =
                 (preproc_endif
                   (preproc_close)))
               (empty_statement))))))))
+
+================================================================================
+B11: ToolTipML `;`-after run ending in a terminated group at the action-area host: the property ends at the group, a conditional action and an action follow (ruling 1)
+================================================================================
+
+page 50100 P { PageType = RoleCenter; actions { area(Embedding) {
+ToolTipML =
+#if X
+ENU='a'
+#endif
+#if not X
+ENU='b';
+#else
+ENU='c';
+#endif
+#if Z
+action(B) { RunObject = page P; }
+#endif
+action(A) { RunObject = page P; } } } }
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (page_declaration
+    (page_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (property
+        name: (property_name)
+        value: (identifier))
+      (actions_section
+        (actions_keyword)
+        body: (action_body
+          (action_area_section
+            (area_keyword)
+            type: (embedding_keyword)
+            body: (action_body
+              (property
+                name: (property_name)
+                value: (preproc_conditional_property_value_sequence
+                  value: (preproc_conditional_property_value
+                    (preproc_if
+                      (preproc_open)
+                      condition: (identifier))
+                    value: (ml_value_list
+                      (ml_value_pair
+                        language: (identifier)
+                        value: (string_literal)))
+                    (preproc_endif
+                      (preproc_close)))
+                  value: (preproc_conditional_property_value
+                    (preproc_if
+                      (preproc_open)
+                      condition: (preproc_not_expression
+                        (identifier)))
+                    value: (ml_value_list
+                      (ml_value_pair
+                        language: (identifier)
+                        value: (string_literal)))
+                    (preproc_else)
+                    value: (ml_value_list
+                      (ml_value_pair
+                        language: (identifier)
+                        value: (string_literal)))
+                    (preproc_endif
+                      (preproc_close)))))
+              (preproc_conditional_actions
+                (preproc_if
+                  (preproc_open)
+                  condition: (identifier))
+                (action_declaration
+                  (action_keyword)
+                  name: (identifier)
+                  body: (declaration_body
+                    (property
+                      name: (property_name)
+                      value: (object_reference_value
+                        (page_keyword)
+                        (identifier)))))
+                (preproc_endif
+                  (preproc_close)))
+              (action_declaration
+                (action_keyword)
+                name: (identifier)
+                body: (declaration_body
+                  (property
+                    name: (property_name)
+                    value: (object_reference_value
+                      (page_keyword)
+                      (identifier))))))))))))

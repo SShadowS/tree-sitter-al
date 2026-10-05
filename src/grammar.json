@@ -7404,8 +7404,22 @@
                 "type": "FIELD",
                 "name": "value",
                 "content": {
-                  "type": "SYMBOL",
-                  "name": "_ml_in_core"
+                  "type": "CHOICE",
+                  "members": [
+                    {
+                      "type": "SYMBOL",
+                      "name": "_ml_in_core"
+                    },
+                    {
+                      "type": "ALIAS",
+                      "content": {
+                        "type": "SYMBOL",
+                        "name": "_ml_sequence_after_t"
+                      },
+                      "named": true,
+                      "value": "preproc_conditional_property_value_sequence"
+                    }
+                  ]
                 }
               }
             ]
