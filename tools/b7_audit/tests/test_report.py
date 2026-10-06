@@ -44,7 +44,9 @@ def two_configs(cid, host, **kw):
 
 
 def test_report_deterministic(tmp_path):
-    recs = cell("k1@hA#p1", "hA", err=True) + cell("k2@hB#p1", "hB", oracle="discrepancy") +         two_configs("k3@hC#p2", "hC", oracle="cannot-validate") + two_configs("k4@hD#p1", "hD") +         two_configs("k1@hA#p9", "hA", placement="p9", err=True)
+    recs = cell("k1@hA#p1", "hA", err=True) + cell("k2@hB#p1", "hB", oracle="discrepancy") + \
+        two_configs("k3@hC#p2", "hC", oracle="cannot-validate") + two_configs("k4@hD#p1", "hD") + \
+        two_configs("k1@hA#p9", "hA", placement="p9", err=True)
     out = []
     for i in range(6):
         shuffled = recs[:]
@@ -103,7 +105,9 @@ def test_qualifier_not_probed_and_seed_and_blocked():
                        HEADER, link)
     assert list(a["families"]) == [("link-list-comma-leading", "GAP")]
     assert report.rank(a["families"]) == [("link-list-comma-leading", "GAP")]
-    for p in ("lead-optional", "sep-after", "first-replace+not"):   # separator trails, or is not in an arm
+    a = report.analyse(cell("kl@hL#holes-lead", "hL", placement="holes-lead", key="kl", err=True), HEADER, link)
+    assert list(a["families"]) == [("link-list-comma-leading", "GAP")]
+    for p in ("lead-optional", "sep-after", "first-replace+not", "holes-trail", "holes-mid"):
         a = report.analyse(cell(f"kl@hL#{p}", "hL", placement=p, key="kl", err=True), HEADER, link)
         assert list(a["families"]) == [("link-list", "GAP")], p
 
@@ -142,3 +146,21 @@ def test_assertion_closes_and_fails_cell(al_parser, tmp_path):
     assert "| SILENT | S | 1 |" in bad
     stale = report.build(ev, reg, asr("(x)", ",".join(["0" * 64] * 4)), sources={}, parser=al_parser)
     assert "| UNCHECKED | U | 1 |" in stale
+
+
+def test_assertion_needs_the_measured_source(al_parser, tmp_path):
+    src = b"codeunit 50100 P { trigger OnRun() begin Foo(1); end; }"
+    sha = hashlib.sha256(src).hexdigest()
+    recs = cell("k1@hA#p1", "hA", oracle="cannot-validate")
+    recs[0]["source_sha256"] = sha
+    ev = tmp_path / "e.jsonl"
+    evidence.write(recs, HEADER, ev)
+    reg = tmp_path / "r.tsv"
+    reg.write_text(registry.HEADER + "\nk1\thA\tlist-separator\tfa\tx \u27e8HOLE\u27e9\t\t\tp\n", encoding="utf-8")
+    asr = tmp_path / "a.tsv"
+    asr.write_text("cell_or_class\texpect\tfingerprints\treason\nk1@hA#p1\t(call_expression)\t"
+                   + ",".join(judge.fingerprints(sha)) + "\tr\n", encoding="utf-8")
+    for srcs, why in (({"k1@hA#p1": src + b" "}, "source changed since evidence"),
+                      ({}, "not in the regenerated universe")):
+        text = report.build(ev, reg, asr, sources=srcs, parser=al_parser)
+        assert "| UNCHECKED | U | 1 |" in text and why in text.split("## UNCHECKED")[1]
