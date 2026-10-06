@@ -160,7 +160,7 @@ lex as an identifier in a statement or an expression:
   2.3.
 - `is` and `as` are not in the set: alc accepts them as bare names in code.
 - `in` and `not` are already operators; reserving them as names changes no valid tree (2.3).
-- If a site that covers expressions costs more than the state budget (6), the fallback is the
+- If a site that covers expressions costs well past the state guideline (6), the fallback is the
   statement start only (the call callee and the assignment target), which still closes every
   tear that begins a statement, and the expression residual becomes a deferred item.
 
@@ -227,16 +227,18 @@ Existing fixtures:
 - Incremental: an edit sequence compared fresh against incremental after every step:
   `Foo();` to `1 + Foo();` and back, adding and removing parentheses and `;`, `Order()` to `Order`,
   inserting and deleting a whole `#if` group, an arithmetic-tail arm to a complete-statement arm.
-- Performance: `tools.perf ab` over DC, at least 24 rounds, three independent runs, budget 1% on
-  the ratio, plus a synthetic directive-heavy assignment file for tail latency.
+- Performance: `tools.perf ab` over DC, at least 24 rounds, three independent runs, guideline 1% on
+  the ratio (a guideline, not a cap: an overrun is reported with its cause and decided, as B4 and
+  B11 were), plus a synthetic directive-heavy assignment file for tail latency.
 - `src/parser.c`, `src/grammar.json`, `src/node-types.json` committed together; WASM rebuilt in its
   own commit, the final gates run on the combined state.
 
-## 6. Budgets
+## 6. Budgets (guidelines, not caps)
 
 STATE_COUNT: the research build is 23,211 (+25). The reserved set adds lex states, not parse
-states, in principle; the budget for the whole of B6 is +1% (23,418). Over budget, take the
-4.3 fallback before anything else.
+states, in principle; the guideline for the whole of B6 is +1% (23,418). An overrun does not fail
+the work: it is measured, attributed to the edit that caused it, and put to the user with the
+4.3 fallback as the alternative, the way B4 (+5.8%) and B11 (+29.2%) were accepted.
 
 ## 7. Out of scope
 
