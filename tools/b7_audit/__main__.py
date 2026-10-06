@@ -1,4 +1,5 @@
-"""python -m tools.b7_audit census [--check|--list]"""
+"""python -m tools.b7_audit census [--check|--list]
+   python -m tools.b7_audit run [--only FAMILY|KEY|PLACEMENT] [--jobs N] [--check] [--accept-tool]"""
 import argparse
 import sys
 from pathlib import Path
@@ -43,7 +44,20 @@ def main(argv=None):
     m = c.add_mutually_exclusive_group()
     m.add_argument("--check", action="store_true")
     m.add_argument("--list", action="store_true")
-    return cmd_census(p.parse_args(argv))
+    r = sub.add_parser("run")
+    r.add_argument("--only")
+    r.add_argument("--jobs", type=int, default=6)
+    r.add_argument("--check", action="store_true")
+    r.add_argument("--accept-tool", action="store_true")
+    a = p.parse_args(argv)
+    if a.cmd == "run":
+        from . import evidence
+        try:
+            return evidence.run(only=a.only, jobs=a.jobs, check=a.check, accept_tool=a.accept_tool)
+        except (evidence.ProbeBroken, evidence.OracleCrash, evidence.GeneratorBug) as e:
+            print(f"{type(e).__name__}: {e}", file=sys.stderr)
+            return 2
+    return cmd_census(a)
 
 
 if __name__ == "__main__":
