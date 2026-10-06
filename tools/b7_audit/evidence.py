@@ -409,19 +409,23 @@ def corpus_warnings(old, new):
             for n in sorted(set(old) | set(new)) if old.get(n) != new.get(n)]
 
 
-def header(identity, runtime, corpora=None):
+def oracle_sha256():
     oracle = hashlib.sha256()
     pkg = REPO / "tools" / "config_oracle"
     for p in sorted(pkg.rglob("*.py")):
         if "tests" not in p.relative_to(pkg).parts:
             oracle.update(p.relative_to(pkg).as_posix().encode() + b"\0" + p.read_bytes() + b"\0")
+    return oracle.hexdigest()
+
+
+def header(identity, runtime, corpora=None):
     if corpora is None:
         corpora = {n: corpus_entry(r) for n, r in corpus_roots().items()}
     return {"alc": identity_dict(identity), "runtime": runtime, "corpora": corpora,
             "production_shapes": json.loads(seeds.SHAPES_JSON.read_text(encoding="utf-8")),
             "production_shapes_sha256": _sha(seeds.SHAPES_JSON),
             "parser": {f"src/{f}": _sha(REPO / "src" / f) for f in ("parser.c", "scanner.c")},
-            "oracle_sha256": oracle.hexdigest()}
+            "oracle_sha256": oracle_sha256()}
 
 
 # --- run ------------------------------------------------------------------------------------------
