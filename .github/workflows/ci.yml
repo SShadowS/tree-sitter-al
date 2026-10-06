@@ -212,6 +212,9 @@ jobs:
       - name: Policy census (validate-grammar.sh Step 5f)
         run: python tools/traversal_census.py
 
+      - name: B7 audit census (validate-grammar.sh Step 5g)
+        run: python -m tools.b7_audit census --check
+
       - name: Walker, SplitInfo, witnesses, canaries, expected visits
         run: python -m pytest tests/traversal -q
 

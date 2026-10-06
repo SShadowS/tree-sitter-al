@@ -590,6 +590,22 @@ else
     VALIDATION_FAILED=1
 fi
 
+# Step 5g: B7a separator/continuation audit census (roadmap B7a)
+#
+# tools/b7_audit/registry.tsv must cover every separator and continuation site the
+# grammar census finds (docs/b7-separator-continuation-matrix.md). `census --check`
+# needs no parser and no alc. Exit 1 is a finding, 2 could not run; both fail
+# validation. The slow `run --check` (evidence replay against alc) is NOT here.
+print_header "Step 5g: B7 Audit Census"
+if CENSUS_OUTPUT=$(python -m tools.b7_audit census --check 2>&1); then
+    print_success "b7 audit census: clean"
+else
+    census_status=$?
+    print_error "b7 audit census failed (exit $census_status)"
+    echo "$CENSUS_OUTPUT"
+    VALIDATION_FAILED=1
+fi
+
 # Step 6: Parse a real AL corpus (opt-in, --full)
 #
 # THIS STEP NEVER PARSED A FILE. Five independent defects, each of which alone

@@ -38,7 +38,35 @@ project's history — one of which reached a committed fixture before it was cau
 
 ---
 
-## 1. Six separator positions have no preprocessor host
+## 1. Separator positions without a preprocessor host: audited by B7a (2026-10-07)
+
+**Established:** B7a, a fresh audit (`python -m tools.b7_audit`, spec
+`docs/superpowers/specs/2026-10-06-b7a-separator-continuation-audit-design.md`): 24,355 cells over every separator,
+terminator and continuation site the grammar census finds, each judged against `alc` 18.0.41 and the config oracle.
+Totals: GAP 14,692, SILENT 1,362, MIXED 3,981, REJECTED/over-accepts 3, UNCHECKED 117, REJECTED 144, CONSISTENT 4,056.
+The matrix `docs/b7-separator-continuation-matrix.md` is the record; the 4.0.0 six-site list below is superseded by it. In the matrix, by family
+(GAP unless noted; `sites` = production sites of the host shapes, 0 for all but a few):
+
+- `parameter-list` (the `;`-led form): GAP, 0 sites
+- `implements`: GAP, 0 sites
+- `option-members`: GAP, 6 sites, owner B13 (items 37, 38)
+- `link-list` (GAP, OVERACCEPT) and `link-list-comma-leading`: owner B12 / B7b+ with `link-property-ambiguity` as its
+  dependency; the G11 reproducer is the seed `g11-item1-link-comma-leading__comma_leading_link`
+- `key-fields`: GAP, 0 sites
+- `ml-pairs`, `namespace-pairs`: GAP, 0 sites
+- `argument_list` stays RESOLVED for the shapes the old record pinned; the matrix still finds `arguments` GAP (1 site) and
+  SILENT at other placements
+
+The audit found far more than six: the largest families are SILENT `statement-terminator` and `split-if-begin`
+(Section 'Ranked fix list' of the matrix, proposed B7b+ order in the roadmap row B7). Every defect group has a pinned
+witness: an alc probe in `tools/alc_probe/cases/b7-audit/` and a `test/corpus/b7_gap_*_test.txt` case (GAP and
+over-accepts, `:error` attribute), or a `tools/b7_audit/tests/test_silent.py` case (SILENT).
+
+**Next step:** B7b+ per the ranked list; each fix flips its group's witnesses. Re-run `run --only <family>` and `report`.
+
+**Owner:** B7b+ (B12 / B13 for the families named above).
+
+### Old record, as written (4.0.0)
 
 **Established:** an audit that enumerated all 26 separator sites in `grammar.js`,
 mapped each to its owning rule, and probed the unhosted ones against `alc`. Done
@@ -67,6 +95,19 @@ scanner-classification design sketched during the release is an architecture
 upgrade, not a prerequisite.
 
 ## 2. A rule existing is not the same as the shape being covered
+
+**Established:** B7a (2026-10-07) turned this into a gate: every host is probed at BOTH comma placements and every
+other placement of the §6.1 table (`lead-optional`, `holes-lead`, `holes-mid`, `holes-trail`, `trail`, `one-elem`, `empty-list`, ...).
+A rule's existence is no longer read as coverage; a cell is CONSISTENT only with a holding assertion or an oracle pass.
+The matrix `docs/b7-separator-continuation-matrix.md` lists per (family, base placement) which placement is GAP, SILENT or CONSISTENT.
+`option-members` shows the original shape: `X, #if FOO Y #endif` versus `X #if FOO , Y #endif` are separate
+placements with separate verdicts.
+
+**Next step:** none separate; resolved into item 1 and the matrix.
+
+**Owner:** B7b+.
+
+### Old record, as written
 
 **Established:** by construction, during the same audit. This is the reason item 1
 says "shape" rather than "site".
@@ -1224,6 +1265,10 @@ in the link properties: 0 (`./tools/corpus-grep.sh -P -i -c '(SubPageLink|RunPag
 
 **Next step:** roadmap B7 (separator audit), with the comma-leading link list it already carries.
 
+**B7a cross-reference (2026-10-07):** the matrix cells are family `link-list`, OVERACCEPT, base placements `trail` (6 cells),
+`holes-trail` (6) and the seed `link-keying__decide-trailing-comma` (witness
+`tools/alc_probe/cases/b7-audit/link-list__seed-link-keying__decide-trailing-comma__overaccept.al`); owner B12.
+
 **Owner:** B7.
 
 ## 31. `filter((1|2)&3)` ERRORs — RESOLVED 2026-10-06
@@ -1477,6 +1522,11 @@ Production sites: 0 (tree-harness over the four corpora shows no valid tree chan
 **Next step:** B7 gives both hosts a continuation, moves the two cases to a positive fixture, and inverts
 `test_b7_gap_is_loud_not_silent` (has_error must become False).
 
+**B7a cross-reference (2026-10-07):** shape 1 is family `repeat-until` GAP (the `chain`, `consecutive`, `first`, `nested`,
+`op-only`, `suffix` ... groups, 864 cells, `sites` 293); shape 2 is family `assignment` GAP, base placement `semi-in-arms`
+(40 cells), with `op-only` OVERACCEPT beside it. Both are ranked in the matrix (#23 and #21/#22), witnesses in
+`test/corpus/b7_gap_repeat_until_test.txt` and `test/corpus/b7_gap_assignment_test.txt`.
+
 **Owner:** B7.
 
 ## 40. A bare parenless call has two shapes: `Bar;` and `Order;`
@@ -1487,6 +1537,35 @@ statement: `call_statement` takes only identifier and quoted-identifier tokens, 
 `_value_start_keyword_name`. Pinned in `test/corpus/expression_statement_test.txt` as current behaviour, not a contract.
 
 **Next step:** pick one shape for "a bare name as a statement" and route every arm to it.
+
+**Owner:** unassigned.
+
+## 41. A bare `(identifier)` statement parses clean in a `statement_block` (B7a, as_expression SILENT witness)
+
+**Established:** 2026-10-07, B7a Task 10 (`tools/b7_audit/tests/test_silent.py`, group `type-test` / `consecutive`, cell
+`bnd:as_expression:left:end@as_expression#consecutive/type-test`). With `as` continued across two `#if` arms
+(`Intf2 := Intf #if X as IFoo #endif #if Y as IFoo #endif as IFoo;`) the parser reads the middle as separate
+statements, a bare `(identifier)` among them, with no ERROR; the oracle reports a discrepancy in `X=0,Y=0` (the reading
+differs from the flat text). That the tree holds a bare identifier statement is the over-acceptance: B6 narrowed
+`_expression_statement` to an invocation, and a bare name is the item 40 shape, which still accepts a name that is
+not a call. What alc says about a bare name statement was not probed separately (the cell's alc verdict is the whole file); run
+`python -m tools.alc_probe run` on `Intf;` before `end` first.
+
+**Next step:** probe `Foo;` where `Foo` is a variable (not a procedure) against alc; decide with item 40 whether a bare
+name is a statement or an ERROR.
+
+**Owner:** unassigned.
+
+## 42. 117 UNCHECKED cells in the B7a matrix: generator imprecisions (audit debt)
+
+**Established:** 2026-10-07, B7a Task 10. The 117 cells all carry `representative vector mismatch`: alc disagreed with the
+generator's intended vector (the cell's class representative is not a valid instance of the intent), so the judge returns
+UNCHECKED before any assertion: `permissions` 96 (AL0393), `arguments` 12 (AL0135), `integer-list` 6 (AL0456),
+`statement-terminator` 3 (`;` before `end`). They are listed in the matrix section 'UNCHECKED' and never ranked, so none
+is a known defect and none is known clean.
+
+**Next step:** fix the four templates in `tools/b7_audit/registry.tsv` (a valid filling per vector), re-run
+`run --only permissions|arguments|integer-list|statement-terminator`, close the cells with assertions, `report`.
 
 **Owner:** unassigned.
 
