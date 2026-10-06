@@ -72,6 +72,23 @@ def _caller_repeat(rules):
     return out
 
 
+def _unwrap(node, path):
+    while node["type"] in TRANSPARENT:
+        node, path = node["content"], f"{path}.0" if path else "0"
+    return node, path
+
+
+def _joining_paths(body):
+    """Paths of a helper rule's STRING when it is the body, or the first/last member of its top SEQ."""
+    node, path = _unwrap(body, "")
+    if node["type"] != "SEQ":
+        return {path}
+    out = set()
+    for i in (0, len(node["members"]) - 1):
+        out.add(_unwrap(node["members"][i], f"{path}.{i}" if path else str(i))[1])
+    return out
+
+
 def occurrences(g):
     rules = g["rules"]
     crep = _caller_repeat(rules)
@@ -93,7 +110,7 @@ def occurrences(g):
             elif si is not None and _list_recursive(
                     rules, g["inline"], rule, anc[si], anc[si + 1] if si + 1 < len(anc) else n):
                 ctx = "recursive"
-            elif rule in crep:
+            elif rule in crep and path in _joining_paths(body):
                 ctx = "caller-repeat"
             else:
                 ctx = "fixed"

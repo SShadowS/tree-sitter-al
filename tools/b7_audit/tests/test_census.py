@@ -28,6 +28,13 @@ def test_hidden_helper_right_recursion():
     assert ("hrec", ",", "recursive") in occ(grammar.load(MINI))
 
 
+def test_caller_repeat_only_when_separator_joins():
+    got = occ(grammar.load(MINI))
+    assert ("hdr", ";", "fixed") in got                       # interior separator
+    assert ("_trailer", ",", "caller-repeat") in got          # separator last
+    assert ("_helper", ",", "caller-repeat") in got           # separator first
+
+
 def test_brackets_are_not_boundaries():
     assert not any(o.text in "()" for o in census.occurrences(grammar.load(MINI)))
 

@@ -260,6 +260,52 @@
      "name": "hrec"
     }
    ]
+  },
+  "hdr": {
+   "type": "SEQ",
+   "members": [
+    {
+     "type": "SYMBOL",
+     "name": "item"
+    },
+    {
+     "type": "STRING",
+     "value": ";"
+    },
+    {
+     "type": "SYMBOL",
+     "name": "item"
+    }
+   ]
+  },
+  "_trailer": {
+   "type": "SEQ",
+   "members": [
+    {
+     "type": "SYMBOL",
+     "name": "item"
+    },
+    {
+     "type": "STRING",
+     "value": ","
+    }
+   ]
+  },
+  "callers": {
+   "type": "REPEAT",
+   "content": {
+    "type": "CHOICE",
+    "members": [
+     {
+      "type": "SYMBOL",
+      "name": "hdr"
+     },
+     {
+      "type": "SYMBOL",
+      "name": "_trailer"
+     }
+    ]
+   }
   }
  },
  "inline": [
