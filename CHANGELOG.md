@@ -203,6 +203,36 @@ public API — a change to node structure or field names is a **major** bump.
 
 ### Fixed
 
+- **A statement must be an invocation, and the operator words are not names in code (roadmap B6,
+  deferred-work item 4).** `_expression_statement` was any expression, so `1;`, `'abc';`,
+  `1 + 2;`, `-Foo();`, `(Foo());`, `Rec.Get() = true;` and `Arr[1];` parsed clean, and so did
+  the fragments of a torn `#if` continuation (`Foo()` / `#if A` / `+ 2` / `#endif` / `;`), which
+  reparsed as loose statements beside a truncated host. alc rejects all of them (AL0104 for a
+  literal, unary or operator-led statement, AL0117 for a comparison, parenthesised or subscript
+  one; `tools/alc_probe/cases/expression-statement`). The rule is now a call, a member, a bare or
+  quoted name, or `Order`/`Table` (a parenless call to a procedure of that name), and it is no
+  longer inlined, which is what sank the two earlier attempts. `X;` and `Rec.Name;` stay accepted:
+  alc rejects them only when the name is a variable or a field (AL0117), which needs symbols. A parenless keyword-identifier statement (`Session;`, `Codeunit;`, a
+  `keyword_identifier` statement before) now ERRORs too, and alc rejects it (AL0117,
+  `reject-bare-keyword-identifier.al`).
+  A new contextual reserved set `code_names` makes `and`, `or`, `xor`, `div`, `mod`, `in` and
+  `not` keywords in code: `and(C);` (AL0104) and `C := and;` (AL0224) now ERROR, and a torn
+  keyword-operator continuation no longer reads as a call to a function named `and`. `is` and
+  `as` are not in the set; declaring the words (`procedure and()`, `value(0; and)`, a field
+  `div`, an option member) still parses. STATE_COUNT 23,186 -> 23,213. `tools.perf ab` over DC,
+  24 rounds, three runs on a busy machine, time old/new: 1.017, 1.019, 1.014 (new 1.4-1.9%
+  faster; timed with the masking wrapper in `docs/b6-audit.md`, see below). Valid trees are
+  byte-identical in BC.History, DC and BC28.1; in BCApps-29.0 two files that already hold an
+  ERROR change their recovery (`docs/b6-audit.md`). The `prec(-1)` on the rule is load-bearing:
+  without it `X[1] := 2;` splits into `X` and a list-literal statement.
+  Metadata change: the anonymous `in` child of `in_keyword` now reports `grammar_name`
+  `identifier` (one token serves both `in_keyword` and `option_member`'s alias); its `type`,
+  text and query matching are unchanged, but `tools.perf ab`'s tree check refuses to compare
+  across this boundary. Two valid shapes are a loud ERROR until roadmap B7 (deferred-work item
+  39): a repeat-until condition continued by a keyword-operator `#if` arm, and an assignment
+  continued with `;` inside every arm (`test/corpus/expression_statement_b7_gap_test.txt`).
+  Before B6 both parsed clean and wrong.
+
 - **Three valid link/where/layout forms that ERRORed now parse (deferred-work items 31, 32
   and 34).** All three are accepted by alc 18.0.41, split and flat
   (`tools/alc_probe/cases/deferred-31-32-34`, 41 probes); none occurs in the four

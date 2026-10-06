@@ -10,10 +10,12 @@ NOTHING about it, while the identical file with the `@` deleted produces seven
 diagnostics pointing straight at it.
 .
 This file is malformed AL -- alc rejects it with AL0104 at the closing quote of
-'a', which is exactly where our verbatim_string ends. We report NO error node,
-because the leftover `a` and `'; // trailing '` are both legal statements under
-`_expression_statement`. That gap is the deliberate parse-structure-don't-
-validate choice, not a lexing disagreement.
+'a', which is exactly where our verbatim_string ends. Since B6 (2026-10-06)
+`_expression_statement` is an invocation only, so the leftover `'; // trailing '`
+is no longer a legal statement: it is an ERROR, and this file is a deliberate
+negative (tools/deliberate-negatives.txt). The bare `a` stays a statement (a
+bare name needs symbols to reject). Before B6 both were legal statements and
+the file parsed with no error node.
 .
 What is pinned here is the SHAPE, not an error count: the verbatim_string must
 end at the apostrophe before `a` (swallowing `s := ` from the next line), the
@@ -52,6 +54,7 @@ codeunit 50100 T
               left: (identifier)
               operator: (assignment_operator)
               right: (verbatim_string))
-            (identifier)
+            (identifier))
+          (ERROR
             (string_literal))
           (end_keyword))))))

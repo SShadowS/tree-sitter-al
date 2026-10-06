@@ -1,0 +1,649 @@
+; B6 (roadmap, spec docs/superpowers/specs/2026-10-06-expression-statement-narrowing-design.md
+; section 5.2): GLR-adversarial splits around the narrowed _expression_statement. Every
+; expected tree was written by hand from the FLAT reading (each configuration resolved) and
+; then compared with the parser, never taken from `tree-sitter test -u`. A continuation arm
+; must stay inside the assignment's preproc_conditional_expression_tail; it must never
+; detach into a statement (`or (D)` as a call to `or`, `+ 2` as a unary statement). Where
+; `;` closes the assignment before `#if`, the calls in the arms are statements.
+
+================================================================================
+B6 split: arithmetic arms then a shared tail
+================================================================================
+codeunit 50101 P {
+  procedure Main()
+  var Rec: Record T; X: Integer; Arr: array[3] of Integer; C: Boolean;
+  begin
+B := A
+#if X
++ 2
+#else
+- 3
+#endif
+* 4;
+  end;
+}
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (procedure
+        (procedure_keyword)
+        name: (identifier)
+        (var_section
+          (var_keyword)
+          body: (var_body
+            (variable_declaration
+              name: (identifier)
+              type: (type_specification
+                (record_type
+                  (record_keyword)
+                  reference: (identifier))))
+            (variable_declaration
+              name: (identifier)
+              type: (type_specification
+                (basic_type)))
+            (variable_declaration
+              name: (identifier)
+              type: (type_specification
+                (array_type
+                  (array_keyword)
+                  sizes: (integer)
+                  (of_keyword)
+                  element_type: (type_specification
+                    (basic_type)))))
+            (variable_declaration
+              name: (identifier)
+              type: (type_specification
+                (basic_type)))))
+        body: (code_block
+          (begin_keyword)
+          body: (statement_block
+            (assignment_statement
+              left: (identifier)
+              operator: (assignment_operator)
+              right: (identifier)
+              (preproc_conditional_expression_tail
+                (preproc_if
+                  (preproc_open)
+                  condition: (identifier))
+                operand: (integer)
+                (preproc_else)
+                operand: (integer)
+                (preproc_endif
+                  (preproc_close))
+                operand: (integer))))
+          (end_keyword))))))
+
+================================================================================
+B6 split: operator-only arms, operand after endif
+================================================================================
+codeunit 50101 P {
+  procedure Main()
+  var Rec: Record T; X: Integer; Arr: array[3] of Integer; C: Boolean;
+  begin
+B := 1
+#if X
++
+#else
+-
+#endif
+2;
+  end;
+}
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (procedure
+        (procedure_keyword)
+        name: (identifier)
+        (var_section
+          (var_keyword)
+          body: (var_body
+            (variable_declaration
+              name: (identifier)
+              type: (type_specification
+                (record_type
+                  (record_keyword)
+                  reference: (identifier))))
+            (variable_declaration
+              name: (identifier)
+              type: (type_specification
+                (basic_type)))
+            (variable_declaration
+              name: (identifier)
+              type: (type_specification
+                (array_type
+                  (array_keyword)
+                  sizes: (integer)
+                  (of_keyword)
+                  element_type: (type_specification
+                    (basic_type)))))
+            (variable_declaration
+              name: (identifier)
+              type: (type_specification
+                (basic_type)))))
+        body: (code_block
+          (begin_keyword)
+          body: (statement_block
+            (assignment_statement
+              left: (identifier)
+              operator: (assignment_operator)
+              right: (integer)
+              (preproc_conditional_expression_tail
+                (preproc_if
+                  (preproc_open)
+                  condition: (identifier))
+                (preproc_else)
+                (preproc_endif
+                  (preproc_close))
+                operand: (integer))))
+          (end_keyword))))))
+
+================================================================================
+B6 split: keyword-operator arms, no detached call
+================================================================================
+codeunit 50101 P {
+  procedure Main()
+  var Rec: Record T; X: Integer; Arr: array[3] of Integer; C: Boolean;
+  begin
+B := A
+#if X
+and (C)
+#else
+or (D)
+#endif
+;
+  end;
+}
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (procedure
+        (procedure_keyword)
+        name: (identifier)
+        (var_section
+          (var_keyword)
+          body: (var_body
+            (variable_declaration
+              name: (identifier)
+              type: (type_specification
+                (record_type
+                  (record_keyword)
+                  reference: (identifier))))
+            (variable_declaration
+              name: (identifier)
+              type: (type_specification
+                (basic_type)))
+            (variable_declaration
+              name: (identifier)
+              type: (type_specification
+                (array_type
+                  (array_keyword)
+                  sizes: (integer)
+                  (of_keyword)
+                  element_type: (type_specification
+                    (basic_type)))))
+            (variable_declaration
+              name: (identifier)
+              type: (type_specification
+                (basic_type)))))
+        body: (code_block
+          (begin_keyword)
+          body: (statement_block
+            (assignment_statement
+              left: (identifier)
+              operator: (assignment_operator)
+              right: (identifier)
+              (preproc_conditional_expression_tail
+                (preproc_if
+                  (preproc_open)
+                  condition: (identifier))
+                operand: (parenthesized_expression
+                  (identifier))
+                (preproc_else)
+                operand: (parenthesized_expression
+                  (identifier))
+                (preproc_endif
+                  (preproc_close)))))
+          (end_keyword))))))
+
+================================================================================
+B6 split: semicolon before #if, calls in the arms are statements
+================================================================================
+codeunit 50101 P {
+  procedure Main()
+  var Rec: Record T; X: Integer; Arr: array[3] of Integer; C: Boolean;
+  begin
+B := A;
+#if X
+Foo();
+#else
+Bar();
+#endif
+Baz();
+  end;
+}
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (procedure
+        (procedure_keyword)
+        name: (identifier)
+        (var_section
+          (var_keyword)
+          body: (var_body
+            (variable_declaration
+              name: (identifier)
+              type: (type_specification
+                (record_type
+                  (record_keyword)
+                  reference: (identifier))))
+            (variable_declaration
+              name: (identifier)
+              type: (type_specification
+                (basic_type)))
+            (variable_declaration
+              name: (identifier)
+              type: (type_specification
+                (array_type
+                  (array_keyword)
+                  sizes: (integer)
+                  (of_keyword)
+                  element_type: (type_specification
+                    (basic_type)))))
+            (variable_declaration
+              name: (identifier)
+              type: (type_specification
+                (basic_type)))))
+        body: (code_block
+          (begin_keyword)
+          body: (statement_block
+            (assignment_statement
+              left: (identifier)
+              operator: (assignment_operator)
+              right: (identifier))
+            (preproc_conditional_statement
+              (preproc_if
+                (preproc_open)
+                condition: (identifier))
+              (call_expression
+                function: (identifier)
+                arguments: (argument_list))
+              (preproc_else)
+              (call_expression
+                function: (identifier)
+                arguments: (argument_list))
+              (preproc_endif
+                (preproc_close)))
+            (call_expression
+              function: (identifier)
+              arguments: (argument_list)))
+          (end_keyword))))))
+
+================================================================================
+B6 split: arithmetic arms with #elif
+================================================================================
+codeunit 50101 P {
+  procedure Main()
+  var Rec: Record T; X: Integer; Arr: array[3] of Integer; C: Boolean;
+  begin
+B := A
+#if X
++ 2
+#elif Y
+- 5
+#else
+- 3
+#endif
+* 4;
+  end;
+}
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (procedure
+        (procedure_keyword)
+        name: (identifier)
+        (var_section
+          (var_keyword)
+          body: (var_body
+            (variable_declaration
+              name: (identifier)
+              type: (type_specification
+                (record_type
+                  (record_keyword)
+                  reference: (identifier))))
+            (variable_declaration
+              name: (identifier)
+              type: (type_specification
+                (basic_type)))
+            (variable_declaration
+              name: (identifier)
+              type: (type_specification
+                (array_type
+                  (array_keyword)
+                  sizes: (integer)
+                  (of_keyword)
+                  element_type: (type_specification
+                    (basic_type)))))
+            (variable_declaration
+              name: (identifier)
+              type: (type_specification
+                (basic_type)))))
+        body: (code_block
+          (begin_keyword)
+          body: (statement_block
+            (assignment_statement
+              left: (identifier)
+              operator: (assignment_operator)
+              right: (identifier)
+              (preproc_conditional_expression_tail
+                (preproc_if
+                  (preproc_open)
+                  condition: (identifier))
+                operand: (integer)
+                (preproc_elif
+                  condition: (identifier))
+                operand: (integer)
+                (preproc_else)
+                operand: (integer)
+                (preproc_endif
+                  (preproc_close))
+                operand: (integer))))
+          (end_keyword))))))
+
+================================================================================
+B6 split: arithmetic arms with a comment on every directive line
+================================================================================
+codeunit 50101 P {
+  procedure Main()
+  var Rec: Record T; X: Integer; Arr: array[3] of Integer; C: Boolean;
+  begin
+B := A
+#if X // c
++ 2
+#elif Y // c
+- 5
+#else // c
+- 3
+#endif // c
+* 4;
+  end;
+}
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (procedure
+        (procedure_keyword)
+        name: (identifier)
+        (var_section
+          (var_keyword)
+          body: (var_body
+            (variable_declaration
+              name: (identifier)
+              type: (type_specification
+                (record_type
+                  (record_keyword)
+                  reference: (identifier))))
+            (variable_declaration
+              name: (identifier)
+              type: (type_specification
+                (basic_type)))
+            (variable_declaration
+              name: (identifier)
+              type: (type_specification
+                (array_type
+                  (array_keyword)
+                  sizes: (integer)
+                  (of_keyword)
+                  element_type: (type_specification
+                    (basic_type)))))
+            (variable_declaration
+              name: (identifier)
+              type: (type_specification
+                (basic_type)))))
+        body: (code_block
+          (begin_keyword)
+          body: (statement_block
+            (assignment_statement
+              left: (identifier)
+              operator: (assignment_operator)
+              right: (identifier)
+              (preproc_conditional_expression_tail
+                (preproc_if
+                  (preproc_open)
+                  condition: (identifier)
+                  (comment))
+                operand: (integer)
+                (preproc_elif
+                  condition: (identifier)
+                  (comment))
+                operand: (integer)
+                (preproc_else)
+                (comment)
+                operand: (integer)
+                (preproc_endif
+                  (preproc_close))
+                (comment)
+                operand: (integer))))
+          (end_keyword))))))
+
+================================================================================
+B6 split: keyword-operator arms in a case branch
+================================================================================
+codeunit 50101 P {
+  procedure Main()
+  var Rec: Record T; X: Integer; Arr: array[3] of Integer; C: Boolean;
+  begin
+case X of
+1:
+begin
+B := A
+#if X
+and (C)
+#else
+or (D)
+#endif
+;
+end;
+end;
+  end;
+}
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (procedure
+        (procedure_keyword)
+        name: (identifier)
+        (var_section
+          (var_keyword)
+          body: (var_body
+            (variable_declaration
+              name: (identifier)
+              type: (type_specification
+                (record_type
+                  (record_keyword)
+                  reference: (identifier))))
+            (variable_declaration
+              name: (identifier)
+              type: (type_specification
+                (basic_type)))
+            (variable_declaration
+              name: (identifier)
+              type: (type_specification
+                (array_type
+                  (array_keyword)
+                  sizes: (integer)
+                  (of_keyword)
+                  element_type: (type_specification
+                    (basic_type)))))
+            (variable_declaration
+              name: (identifier)
+              type: (type_specification
+                (basic_type)))))
+        body: (code_block
+          (begin_keyword)
+          body: (statement_block
+            (case_statement
+              (case_keyword)
+              expression: (identifier)
+              (of_keyword)
+              body: (case_body
+                (case_branch
+                  pattern: (integer)
+                  body: (code_block
+                    (begin_keyword)
+                    body: (statement_block
+                      (assignment_statement
+                        left: (identifier)
+                        operator: (assignment_operator)
+                        right: (identifier)
+                        (preproc_conditional_expression_tail
+                          (preproc_if
+                            (preproc_open)
+                            condition: (identifier))
+                          operand: (parenthesized_expression
+                            (identifier))
+                          (preproc_else)
+                          operand: (parenthesized_expression
+                            (identifier))
+                          (preproc_endif
+                            (preproc_close)))))
+                    (end_keyword))))
+              (end_keyword)))
+          (end_keyword))))))
+
+================================================================================
+B6 split: keyword-operator arms in both branches of if-else
+================================================================================
+codeunit 50101 P {
+  procedure Main()
+  var Rec: Record T; X: Integer; Arr: array[3] of Integer; C: Boolean;
+  begin
+if C then
+B := A
+#if X
+and (C)
+#else
+or (D)
+#endif
+else
+B := A
+#if X
+and (C)
+#else
+or (D)
+#endif
+;
+  end;
+}
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (procedure
+        (procedure_keyword)
+        name: (identifier)
+        (var_section
+          (var_keyword)
+          body: (var_body
+            (variable_declaration
+              name: (identifier)
+              type: (type_specification
+                (record_type
+                  (record_keyword)
+                  reference: (identifier))))
+            (variable_declaration
+              name: (identifier)
+              type: (type_specification
+                (basic_type)))
+            (variable_declaration
+              name: (identifier)
+              type: (type_specification
+                (array_type
+                  (array_keyword)
+                  sizes: (integer)
+                  (of_keyword)
+                  element_type: (type_specification
+                    (basic_type)))))
+            (variable_declaration
+              name: (identifier)
+              type: (type_specification
+                (basic_type)))))
+        body: (code_block
+          (begin_keyword)
+          body: (statement_block
+            (if_statement
+              (if_keyword)
+              condition: (identifier)
+              (then_keyword)
+              then_branch: (assignment_statement
+                left: (identifier)
+                operator: (assignment_operator)
+                right: (identifier)
+                (preproc_conditional_expression_tail
+                  (preproc_if
+                    (preproc_open)
+                    condition: (identifier))
+                  operand: (parenthesized_expression
+                    (identifier))
+                  (preproc_else)
+                  operand: (parenthesized_expression
+                    (identifier))
+                  (preproc_endif
+                    (preproc_close))))
+              (else_keyword)
+              else_branch: (assignment_statement
+                left: (identifier)
+                operator: (assignment_operator)
+                right: (identifier)
+                (preproc_conditional_expression_tail
+                  (preproc_if
+                    (preproc_open)
+                    condition: (identifier))
+                  operand: (parenthesized_expression
+                    (identifier))
+                  (preproc_else)
+                  operand: (parenthesized_expression
+                    (identifier))
+                  (preproc_endif
+                    (preproc_close))))))
+          (end_keyword))))))

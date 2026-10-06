@@ -438,7 +438,9 @@ module.exports = grammar({
   // Reserved-word sets (tree-sitter >= 0.25). `global` is deliberately empty:
   // AL keyword-vs-identifier disambiguation is contextual and handled by the
   // grammar (see keyword_as_identifier) and the scanner. The contextual sets
-  // below are applied with reserved('name', rule) at exactly one site each.
+  // below are applied with reserved('name', rule): the first two at exactly one
+  // site each, `code_names` on three rules (`_expression`, `call_expression`'s
+  // `function` choice and `_expression_statement`; see its comment).
   reserved: {
     global: $ => [],
     // `true`/`false` inside an implementation mapping. A one-entry
@@ -460,6 +462,22 @@ module.exports = grammar({
     // keyword is valid there but `if`, and the reject parsed as a clean target.
     // Sits on _qualified_name_segment, the rule that names $.identifier directly.
     relation_target_names: $ => [$._if_token, $._else_token, $._where_token],
+    // B6: in code, alc never reads these seven words as a bare identifier: a statement
+    // starting with one is AL0104 and an expression reading one is AL0224
+    // (tools/alc_probe/cases/expression-statement). Declaring one is fine
+    // (`procedure and()`, `value(0; and)`, a field `div`), and is then referenced
+    // quoted. `is`/`as` are names in code and are NOT here. Without this set a torn
+    // keyword-operator continuation (`until A #if X and (B) #endif ;`) read as a call
+    // to a function named `and`, with no ERROR.
+    // Applied on the three rules that name $.identifier directly in code: `_expression`
+    // (the expression primary), `call_expression`'s `function` choice (the callee) and
+    // `_expression_statement` (the statement start), for +0 states. A generic property
+    // value shares its first parse state with `option_member`, so the set reaches a first
+    // option member too. alc accepts the seven words as option members
+    // (tools/alc_probe/cases/expression-statement/accept-option-member-operator-words.al),
+    // so `option_member` has seven arms that take the tokens back as identifiers (+2 states).
+    code_names: $ => [$._and_token, $._or_token, $._xor_token, $._div_token,
+                      $._mod_token, $._in_token, $._not_token],
   },
 
   extras: $ => [
@@ -517,7 +535,12 @@ module.exports = grammar({
     [$.preproc_pragma_only, $.preproc_conditional_var_block],
     [$._property_value, $.option_member],
     [$.caption_value, $.option_member],
-    [$.assignment_statement, $.assignment_expression],
+    // B6: narrowing _expression_statement exposes the decision at `x := e • #if`:
+    // continue the right-hand side (preproc_conditional_expression_tail) or end the
+    // assignment and open a preproc_conditional_statement. Only the arm content
+    // decides, so it stays a GLR fork; static precedence would commit first (see
+    // _expression_continuation's comment for what that did).
+    [$.assignment_statement],
     [$.preproc_conditional, $.preproc_conditional_layout],
     [$.preproc_conditional, $.preproc_conditional_layout, $.preproc_conditional_layout_mixed],
     [$.preproc_conditional, $.preproc_conditional_layout_mixed],
@@ -559,7 +582,6 @@ module.exports = grammar({
     [$.preproc_conditional_statement, $.preproc_conditional_case_patterns],
     [$.preproc_conditional_statement, $.preproc_split_case_branch, $.preproc_conditional_case_patterns],
     [$._open_branch, $.case_else_branch],
-    [$._single_pattern, $._expression],
     [$.preproc_split_open_statement, $._statement],
     [$._open_prefix, $.preproc_split_if_else_statement],
     [$.preproc_split_if_statement, $._open_prefix],
@@ -625,6 +647,8 @@ module.exports = grammar({
     // whose commas were optional could not be told apart from a single
     // expression mid-parse. Requiring the separator removes the ambiguity
     // outright, and tree-sitter now reports the declaration as unnecessary.
+    // It was declared again later, and B6's narrowing of `_expression_statement`
+    // made it unnecessary once more (2026-10-06), so the entry is absent.
     // Two `case_branch`/`preproc_split_case_branch` conflicts went the same way.
     //
     // The four-way [link_values, permissions, impl_values, table_relation]
@@ -888,7 +912,6 @@ module.exports = grammar({
   // Trivial pass-through wrappers — macro-substituted to drop a layer of indirection.
   inline: $ => [
     $._field_source,
-    $._expression_statement,
   ],
 
   rules: {
@@ -1926,6 +1949,15 @@ module.exports = grammar({
     boolean: $ => choice($._true_token, $._false_token),
     _true_token: $ => kw('true'),
     _false_token: $ => kw('false'),
+    // B6: the operator words as rule symbols, so the `code_names` reserved set can list
+    // them (a reserved entry must be a symbol, not a fresh kw()).
+    _and_token: $ => kw('and'),
+    _or_token: $ => kw('or'),
+    _xor_token: $ => kw('xor'),
+    _div_token: $ => kw('div'),
+    _mod_token: $ => kw('mod'),
+    _in_token: $ => kw('in'),
+    _not_token: $ => kw('not'),
 
     decimal: $ => token(seq(/\d+/, '.', /\d+/)),
 
@@ -2774,6 +2806,19 @@ module.exports = grammar({
       // gone, so dropping it would orphan that rule.
       $.public_keyword,      // 'Public' as option member
       $.boolean,             // true/false as option member
+      // B6: the seven `code_names` operator words, which alc accepts as option
+      // members in any position (`OptionMembers = and,or;`; production: BCApps
+      // TaxTestConditionItem.Table.al, `" ",and,or`). A first member shares its
+      // parse state with the generic property value's `_expression`, whose
+      // `code_names` set then reserves the word, so the identifier arm cannot take
+      // it; the keyword token arrives instead and is renamed back to an identifier.
+      alias($._and_token, $.identifier),
+      alias($._or_token, $.identifier),
+      alias($._xor_token, $.identifier),
+      alias($._div_token, $.identifier),
+      alias($._mod_token, $.identifier),
+      alias($._in_token, $.identifier),
+      alias($._not_token, $.identifier),
     ),
 
     // =====================================================================
@@ -4865,13 +4910,13 @@ module.exports = grammar({
 
     preproc_or_expression: $ => prec.left(1, seq(
       $._preproc_expression,
-      alias(kw('or'), 'or'),
+      alias($._or_token, 'or'),
       $._preproc_expression,
     )),
 
     preproc_and_expression: $ => prec.left(2, seq(
       $._preproc_expression,
-      alias(kw('and'), 'and'),
+      alias($._and_token, 'and'),
       $._preproc_expression,
     )),
 
@@ -4880,7 +4925,7 @@ module.exports = grammar({
     // no prec this parsed as `not (A and B)`, with zero ERROR nodes.
     // test/corpus/preproc_condition_precedence_test.txt pins it.
     preproc_not_expression: $ => prec(3, seq(
-      alias(kw('not'), 'not'),
+      alias($._not_token, 'not'),
       $._preproc_expression
     )),
 
@@ -5458,35 +5503,41 @@ module.exports = grammar({
       ';'
     )),
 
-    // KNOWN: this accepts ANY expression as a statement, and that is what makes
-    // an unhosted `#if` continuation tear SILENTLY rather than loudly. A
-    // fragment like `+ 3` after a grammatically complete construct reparses as
-    // a statement, so the host keeps a truncated expression and the rest floats
-    // off as unfielded siblings -- zero ERROR nodes, every byte covered.
-    // `1 + 2;` and `+ 3;` are not statements in AL; alc rejects both.
+    // A statement expression is an INVOCATION and nothing else (roadmap B6, spec
+    // docs/superpowers/specs/2026-10-06-expression-statement-narrowing-design.md).
+    // alc accepts only assignments and method invocations as statements: a literal,
+    // unary or operator-led statement is AL0104, and a comparison, parenthesised or
+    // subscript statement is AL0117 ("Only assignment and method invocation can be
+    // used as a statement"; tools/alc_probe/cases/expression-statement). `X;` and
+    // `Rec.Name;` are AL0117 too, but only symbols tell a variable from a procedure or
+    // a field from a method, so a bare name and a member stay accepted.
     //
-    // Narrowing it is the "fail-loud backstop": it attaches nothing, but it
-    // converts the whole class -- including positions nobody has enumerated --
-    // from silent to loud. Worth more than any individual host attachment.
+    // This is the fail-loud backstop: a fragment of an unhosted `#if` continuation
+    // (`Foo()` / `#if A` / `+ 2` / `#endif` / `;`) used to reparse as a statement, the
+    // host keeping a truncated expression and the rest floating off with no ERROR.
+    // Now it ERRORs. It attaches nothing: hosts with no continuation facility
+    // (`repeat ... until`, `foreach ... in`, `with`) still need B7.
     //
-    // TWO ATTEMPTS, both measured, both reverted:
-    //   1. choice(call_expression, member_expression)
-    //        -> BC.History 35.7%. Too narrow: the preproc-split rules carry
-    //           bare identifiers and literals as branch content.
-    //   2. + identifier, quoted_identifier, string_literal, verbatim_string,
-    //      wrapped in prec(20) with a declared [assignment_statement] conflict
-    //        -> generates, but BC.History 33.3%.
+    // NOT in `inline`, on purpose. Two earlier narrowings left it inlined, so its
+    // precedence and conflicts were macro-substituted into each host separately, and
+    // BC.History fell to 35.7% / 33.3%. De-inlined, BC.History, DC and BC28.1 are
+    // byte-identical and BCApps differs only in two files that already hold an ERROR.
     //
-    // THE LEAD FOR WHOEVER PICKS THIS UP, found while reverting attempt 2:
-    // `_expression_statement` is listed in the `inline` array (see the top of
-    // this file), so it is MACRO-SUBSTITUTED at every use site. A `prec(20)` on
-    // it is therefore applied independently at each of the four consumers --
-    // including the preproc-split guard block at `repeat1(seq(prec(2,
-    // $._expression_statement), ';'))`, which already carries its own
-    // precedence. That interaction, not the allowlist, is the likely cause of
-    // both collapses. Removing it from `inline` first, so the precedence
-    // applies once, is the experiment neither attempt ran.
-    _expression_statement: $ => $._expression,
+    // prec(-1): at `begin X • -` the statement reduction and the `_expression` one
+    // compete; no statement can be followed by an operator, so the expression wins.
+    // It also keeps a subscript target together. Statements need no separator and a
+    // list literal can start one, so at `X • [` GLR otherwise keeps `X` plus a
+    // `[1] := 2;` statement instead of `X[1] := 2;`. Measured without it (docs/b6-audit.md):
+    // 381 / 10 / 405 / 979 files change in BC.History / DC / BC28.1 / BCApps.
+    // The `_value_start_keyword_name` arm: `table`/`order` are live keyword tokens at
+    // statement start, so a parenless call to a procedure named `Order` arrives as one.
+    _expression_statement: $ => prec(-1, reserved('code_names', choice(
+      $.call_expression,
+      $.member_expression,
+      $.identifier,
+      $.quoted_identifier,
+      alias($._value_start_keyword_name, $.identifier),
+    ))),
 
     empty_statement: $ => ';',
 
@@ -5596,11 +5647,11 @@ module.exports = grammar({
     // opening the branch (_expression_continuation).
     _continuation_operator: $ => choice(
       '+', '-', '*', '/',
-      alias(kw('div'), 'div'),
-      alias(kw('mod'), 'mod'),
-      alias(kw('and'), 'and'),
-      alias(kw('or'), 'or'),
-      alias(kw('xor'), 'xor'),
+      alias($._div_token, 'div'),
+      alias($._mod_token, 'mod'),
+      alias($._and_token, 'and'),
+      alias($._or_token, 'or'),
+      alias($._xor_token, 'xor'),
       $.comparison_operator
     ),
 
@@ -6223,7 +6274,7 @@ module.exports = grammar({
       field('right', $.type_specification)
     )),
 
-    _expression: $ => choice(
+    _expression: $ => reserved('code_names', choice(
       // Binary operators
       $.multiplicative_expression,
       $.additive_expression,
@@ -6257,7 +6308,7 @@ module.exports = grammar({
       $.ternary_expression,
       // Assignment as expression (for asserterror and other contexts)
       prec.left(1, $.assignment_expression),
-    ),
+    )),
 
     // Keywords that can appear as identifiers in expressions (e.g., Codeunit.Run())
     //
@@ -6351,7 +6402,7 @@ module.exports = grammar({
       // alias() pins the anonymous node name so queries keep matching "div"
       // and "mod" whatever the source casing. Without it a bare kw() token is
       // auto-named multiplicative_expression_token1.
-      field('operator', choice('*', '/', alias(kw('div'), 'div'), alias(kw('mod'), 'mod'))),
+      field('operator', choice('*', '/', alias($._div_token, 'div'), alias($._mod_token, 'mod'))),
       optional($.preproc_operand_prefix),
       field('right', $._expression)
     )),
@@ -6435,21 +6486,21 @@ module.exports = grammar({
       // AND (prec 4) — above OR/XOR, below `in`/`is`/`as` (5)
       prec.left(4, seq(
         field('left', $._expression),
-        field('operator', alias(kw('and'), 'and')),
+        field('operator', alias($._and_token, 'and')),
         optional($.preproc_operand_prefix),
         field('right', $._expression)
       )),
       // OR (prec 3)
       prec.left(3, seq(
         field('left', $._expression),
-        field('operator', alias(kw('or'), 'or')),
+        field('operator', alias($._or_token, 'or')),
         optional($.preproc_operand_prefix),
         field('right', $._expression)
       )),
       // XOR (prec 3) — same level as OR, so `a or b xor c` is `(a or b) xor c`
       prec.left(3, seq(
         field('left', $._expression),
-        field('operator', alias(kw('xor'), 'xor')),
+        field('operator', alias($._xor_token, 'xor')),
         optional($.preproc_operand_prefix),
         field('right', $._expression)
       )),
@@ -6496,14 +6547,14 @@ module.exports = grammar({
     // caught it. `not X * Y` is never valid AL under either grouping, so only
     // the arithmetic unaries reach real code.
     unary_expression: $ => prec.right(8, seq(
-      field('operator', choice('+', '-', alias(kw('not'), 'not'))),
+      field('operator', choice('+', '-', alias($._not_token, 'not'))),
       field('operand', $._expression)
     )),
 
     // --- Postfix expressions ---
 
     call_expression: $ => prec(12, seq(
-      field('function', choice(
+      field('function', reserved('code_names', choice(
         $.identifier,
         // `Continue(X)`: the scanner hands `continue` back as a name when `(`
         // follows (issue #22); it is a different symbol from $.identifier, so
@@ -6519,7 +6570,7 @@ module.exports = grammar({
         $.qualified_enum_value,
         $.keyword_identifier,     // System(), Dialog(), etc.
         $.subscript_expression,   // X[1]()
-      )),
+      ))),
       field('arguments', $.argument_list)
     )),
 
@@ -6844,7 +6895,7 @@ module.exports = grammar({
     break_keyword: $ => prec(10, alias(kw('break'), 'break')),
     with_keyword: $ => prec(10, alias(kw('with'), 'with')),
     asserterror_keyword: $ => alias(kw('asserterror', 10), 'asserterror'),
-    in_keyword: $ => prec(10, alias(kw('in'), 'in')),
+    in_keyword: $ => prec(10, alias($._in_token, 'in')),
     to_keyword: $ => prec(10, alias(kw('to'), 'to')),
     downto_keyword: $ => prec(10, alias(kw('downto'), 'downto')),
 
