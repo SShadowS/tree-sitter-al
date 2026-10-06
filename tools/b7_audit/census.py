@@ -116,3 +116,101 @@ def occurrences(g):
                 ctx = "fixed"
             out.append(Occurrence(rule, path, n["value"], ctx))
     return sorted(out, key=key_of)
+
+
+TAIL, PREFIX, EXPR = "preproc_conditional_expression_tail", "preproc_operand_prefix", "_expression"
+
+
+def _first_leaf(node):
+    node, _ = _unwrap(node, "")
+    while node["type"] == "SEQ" and node["members"]:
+        node, _ = _unwrap(node["members"][0], "")
+    return node
+
+
+def _tail_mechanisms(rules):
+    """Read the tail rule's CHOICE: a form opening with #if is the suffix form, one opening
+    with the operator-arms helper is the operator-only form."""
+    body = rules.get(TAIL)
+    if body is None:
+        return ()
+    body, _ = _unwrap(body, "")
+    forms = body["members"] if body["type"] == "CHOICE" else [body]
+    out = set()
+    for f in forms:
+        h = _first_leaf(f)
+        if h["type"] == "STRING" and h["value"] == "#if" or h.get("name") == "preproc_if":
+            out.add("tail")
+        elif h.get("name") == "_preproc_operator_arms":
+            out.add("tail-operator-only")
+    return tuple(sorted(out))
+
+
+def _expr_names(rules):
+    """_expression plus hidden rules that are only a choice of symbols one of which is such a name
+    (fixpoint), e.g. `_field_source`, `_list_element` (range_expression | _expression)."""
+    names, grew = {EXPR}, True
+    while grew:
+        grew = False
+        for n, body in rules.items():
+            b, _ = _unwrap(body, "")
+            ms = b["members"] if b["type"] == "CHOICE" else [b]
+            ms = [_unwrap(m, "")[0] for m in ms]
+            if (n.startswith("_") and n not in names and all(m["type"] == "SYMBOL" for m in ms)
+                    and any(m["name"] in names for m in ms)):
+                names.add(n)
+                grew = True
+    return names
+
+
+def _sibling_sym(node, name):
+    """(found, optional) for a sibling that is SYMBOL name, or CHOICE[SYMBOL name, BLANK]."""
+    n, _ = _unwrap(node, "")
+    if n["type"] == "SYMBOL" and n["name"] == name:
+        return True, False
+    if n["type"] == "CHOICE" and any(m["type"] == "BLANK" for m in n["members"]):
+        if any(_unwrap(m, "")[0] == {"type": "SYMBOL", "name": name} for m in n["members"]):
+            return True, True
+    return False, False
+
+
+def boundaries(g):
+    rules = g["rules"]
+    names, tail_m = _expr_names(rules), _tail_mechanisms(rules)
+    acc = {}
+    for rule, body in rules.items():
+        seen = set()
+        for path, n, anc in iter_nodes(body):
+            if n["type"] != "SYMBOL" or n["name"] not in names:
+                continue
+            slot = next((a["name"] for a in reversed(anc) if a["type"] == "FIELD"), path)
+            repeated = any(a["type"] in ("REPEAT", "REPEAT1") for a in anc)
+            i, cur = len(anc), n
+            while i > 0 and anc[i - 1]["type"] in TRANSPARENT | {"CHOICE"}:
+                i -= 1
+                cur = anc[i]
+            sibs = anc[i - 1]["members"] if i > 0 and anc[i - 1]["type"] == "SEQ" else []
+            k = next((j for j, m in enumerate(sibs) if m is cur), None)
+            nxt = sibs[k + 1] if k is not None and k + 1 < len(sibs) else None
+            prv = sibs[k - 1] if k else None
+            edges = {}
+            if slot in seen and repeated:
+                edges["between"] = ((), False)
+            else:
+                edges["start"] = ((), False)
+                edges["end"] = ((), False)
+                if prv is not None and _sibling_sym(prv, PREFIX)[0]:
+                    edges["start"] = (("operand-prefix",), not _sibling_sym(prv, PREFIX)[1])
+            if nxt is not None and "end" in edges or nxt is not None and "between" in edges:
+                found, opt = _sibling_sym(nxt, TAIL)
+                if found and tail_m:
+                    edges["end" if "end" in edges else "between"] = (tail_m, not opt)
+            seen.add(slot)
+            for e, (m, req) in edges.items():
+                key = (rule, slot, e)
+                if key in acc:           # same slot in several arms: union, required only if all are
+                    pm, preq = acc[key]
+                    acc[key] = (tuple(sorted(set(pm) | set(m))), preq and req)
+                else:
+                    acc[key] = (m, req)
+    return sorted((Boundary(r, s, e, m, q) for (r, s, e), (m, q) in acc.items()), key=key_of)

@@ -55,3 +55,25 @@ def test_boundary_key():
 def test_real_grammar_finds_item_30_trailing_comma():
     g = grammar.load(Path("src/grammar.json"))
     assert ("_link_value_run", ",", "optional") in occ(g)   # deferred item 30
+
+
+def bnd(g):
+    return {(b.rule, b.slot, b.edge): (b.mechanisms, b.required) for b in census.boundaries(g)}
+
+
+def test_edges_and_mechanisms():
+    b = bnd(grammar.load(MINI))
+    assert b[("assign", "right", "end")] == (("tail", "tail-operator-only"), False)
+    assert b[("loop", "end", "end")][0] == ("tail", "tail-operator-only")
+    assert b[("loop", "start", "end")][0] == ()          # tail is after `end`, not `start`
+    assert b[("idx", "index", "end")][0] != ()           # first index has the tail
+    assert b[("idx", "index", "between")][0] == ()       # later indices do not
+    assert b[("req", "value", "end")] == (("tail", "tail-operator-only"), True)
+    assert b[("until", "condition", "end")][0] == ()
+    assert ("operand-prefix",) == b[("binop", "right", "start")][0]
+
+
+def test_real_grammar_until_has_no_mechanism():
+    b = bnd(grammar.load(Path("src/grammar.json")))
+    hits = [k for k, (m, _) in b.items() if k[0] == "repeat_statement" and k[2] == "end"]
+    assert hits and all(b[k][0] == () for k in hits)     # deferred item 39, shape 1
