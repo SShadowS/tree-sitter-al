@@ -16,20 +16,27 @@
 ;   Rec.Get() = true;       AL0117  reject-comparison.al
 ;   Arr[1];                 AL0117  reject-subscript.al
 ;   Foo()[1];               not probed; subscript of a call, the same shape as Arr[1] (AL0117)
-;   Foo() #if + 2 #endif ;  X: AL0175 torn-call-plus.al (the tail tears off a call)
-;   exit(1) #if + 2 #endif; X: AL0104,AL0111 torn-exit-plus.al
+;   Foo() #if A + 2 #endif ;  defined: AL0175 torn-call-plus.al (the tail tears off a call)
+;   exit(1) #if A + 2 #endif; defined: AL0104,AL0111 torn-exit-plus.al
 ;   exit; (a + b);          a parenthesized statement, AL0117 per reject-parenthesized.al;
 ;                           moved from exit_statement_spacing_test.txt, it still pins the
 ;                           exit_statement as valueless (no return_value).
+;   and(C); ... not(C);     AL0104  reject-stmt-start-{and,or,xor,div,mod,in,not}.al
+;   and := true;            AL0104  reject-assign-to-and.al
+;   C := and;               AL0224  reject-read-and-in-expression.al
+;   Foo() #if A or (2 = 2) #endif ;  defined: AL0117 torn-call-or.al
 ;
-; The two torn cases recover wide: the ERROR holding the stray `+ 2` sits inside an outer
-; ERROR that takes the whole procedure, because in recovery the scanner declines every
-; external and `#endif` / `end` lex as fragments, as after a malformed directive line
-; (.claude/rules/scanner.md, "Error recovery after a malformed line is wide"). What is
-; asserted is the ERROR, not the recovery shape.
+; The operator-word cases ERROR through the `code_names` reserved set (grammar.js
+; `reserved:`): in code the seven words never lex as an identifier, so the word is a bare
+; operator token with nothing to attach to. Inside an ERROR that token is mostly hidden, so
+; most trees show only what follows it (`not(C)` keeps a unary_expression, and recovery
+; surfaces `in` as an identifier); in every case the ERROR covers the word.
 ;
-; The operator-word shapes (`and(C);`, `C := and;`, the torn `or (2 = 2)`) belong to the
-; reserved-word set and are added with it (B6 task 5).
+; The recovery shape of the three torn cases is incidental: they recover wide (an outer
+; ERROR takes the whole procedure, because in recovery the scanner declines every external
+; and `#endif` / `end` lex as fragments; .claude/rules/scanner.md, "Error recovery after a
+; malformed line is wide"). When a grammar change moves it, re-check only that an ERROR
+; still covers the fragment.
 
 ================================================================================
 B6 negative: integer statement
@@ -737,7 +744,7 @@ exit(1)
         function: (identifier)))))
 
 ================================================================================
-bare exit does not swallow a following parenthesized-expression statement
+bare exit stays valueless; a following parenthesized expression is an ERROR
 ================================================================================
 codeunit 1 T { procedure X() begin exit; (a + b); end; }
 --------------------------------------------------------------------------------
@@ -763,3 +770,577 @@ codeunit 1 T { procedure X() begin exit; (a + b); end; }
                   right: (identifier))))
             (empty_statement))
           (end_keyword))))))
+
+================================================================================
+B6 negative: operator word and as a call statement
+================================================================================
+codeunit 50101 P {
+  procedure Main()
+  var Rec: Record T; X: Integer; Arr: array[3] of Integer; C: Boolean;
+  begin
+and(C);
+  end;
+}
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (procedure
+        (procedure_keyword)
+        name: (identifier)
+        (var_section
+          (var_keyword)
+          body: (var_body
+            (variable_declaration
+              name: (identifier)
+              type: (type_specification
+                (record_type
+                  (record_keyword)
+                  reference: (identifier))))
+            (variable_declaration
+              name: (identifier)
+              type: (type_specification
+                (basic_type)))
+            (variable_declaration
+              name: (identifier)
+              type: (type_specification
+                (array_type
+                  (array_keyword)
+                  sizes: (integer)
+                  (of_keyword)
+                  element_type: (type_specification
+                    (basic_type)))))
+            (variable_declaration
+              name: (identifier)
+              type: (type_specification
+                (basic_type)))))
+        body: (code_block
+          (begin_keyword)
+          (ERROR
+            (parenthesized_expression
+              (identifier)))
+          body: (statement_block
+            (empty_statement))
+          (end_keyword))))))
+
+================================================================================
+B6 negative: operator word or as a call statement
+================================================================================
+codeunit 50101 P {
+  procedure Main()
+  var Rec: Record T; X: Integer; Arr: array[3] of Integer; C: Boolean;
+  begin
+or(C);
+  end;
+}
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (procedure
+        (procedure_keyword)
+        name: (identifier)
+        (var_section
+          (var_keyword)
+          body: (var_body
+            (variable_declaration
+              name: (identifier)
+              type: (type_specification
+                (record_type
+                  (record_keyword)
+                  reference: (identifier))))
+            (variable_declaration
+              name: (identifier)
+              type: (type_specification
+                (basic_type)))
+            (variable_declaration
+              name: (identifier)
+              type: (type_specification
+                (array_type
+                  (array_keyword)
+                  sizes: (integer)
+                  (of_keyword)
+                  element_type: (type_specification
+                    (basic_type)))))
+            (variable_declaration
+              name: (identifier)
+              type: (type_specification
+                (basic_type)))))
+        body: (code_block
+          (begin_keyword)
+          (ERROR
+            (parenthesized_expression
+              (identifier)))
+          body: (statement_block
+            (empty_statement))
+          (end_keyword))))))
+
+================================================================================
+B6 negative: operator word xor as a call statement
+================================================================================
+codeunit 50101 P {
+  procedure Main()
+  var Rec: Record T; X: Integer; Arr: array[3] of Integer; C: Boolean;
+  begin
+xor(C);
+  end;
+}
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (procedure
+        (procedure_keyword)
+        name: (identifier)
+        (var_section
+          (var_keyword)
+          body: (var_body
+            (variable_declaration
+              name: (identifier)
+              type: (type_specification
+                (record_type
+                  (record_keyword)
+                  reference: (identifier))))
+            (variable_declaration
+              name: (identifier)
+              type: (type_specification
+                (basic_type)))
+            (variable_declaration
+              name: (identifier)
+              type: (type_specification
+                (array_type
+                  (array_keyword)
+                  sizes: (integer)
+                  (of_keyword)
+                  element_type: (type_specification
+                    (basic_type)))))
+            (variable_declaration
+              name: (identifier)
+              type: (type_specification
+                (basic_type)))))
+        body: (code_block
+          (begin_keyword)
+          (ERROR
+            (parenthesized_expression
+              (identifier)))
+          body: (statement_block
+            (empty_statement))
+          (end_keyword))))))
+
+================================================================================
+B6 negative: operator word div as a call statement
+================================================================================
+codeunit 50101 P {
+  procedure Main()
+  var Rec: Record T; X: Integer; Arr: array[3] of Integer; C: Boolean;
+  begin
+div(C);
+  end;
+}
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (procedure
+        (procedure_keyword)
+        name: (identifier)
+        (var_section
+          (var_keyword)
+          body: (var_body
+            (variable_declaration
+              name: (identifier)
+              type: (type_specification
+                (record_type
+                  (record_keyword)
+                  reference: (identifier))))
+            (variable_declaration
+              name: (identifier)
+              type: (type_specification
+                (basic_type)))
+            (variable_declaration
+              name: (identifier)
+              type: (type_specification
+                (array_type
+                  (array_keyword)
+                  sizes: (integer)
+                  (of_keyword)
+                  element_type: (type_specification
+                    (basic_type)))))
+            (variable_declaration
+              name: (identifier)
+              type: (type_specification
+                (basic_type)))))
+        body: (code_block
+          (begin_keyword)
+          (ERROR
+            (parenthesized_expression
+              (identifier)))
+          body: (statement_block
+            (empty_statement))
+          (end_keyword))))))
+
+================================================================================
+B6 negative: operator word mod as a call statement
+================================================================================
+codeunit 50101 P {
+  procedure Main()
+  var Rec: Record T; X: Integer; Arr: array[3] of Integer; C: Boolean;
+  begin
+mod(C);
+  end;
+}
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (procedure
+        (procedure_keyword)
+        name: (identifier)
+        (var_section
+          (var_keyword)
+          body: (var_body
+            (variable_declaration
+              name: (identifier)
+              type: (type_specification
+                (record_type
+                  (record_keyword)
+                  reference: (identifier))))
+            (variable_declaration
+              name: (identifier)
+              type: (type_specification
+                (basic_type)))
+            (variable_declaration
+              name: (identifier)
+              type: (type_specification
+                (array_type
+                  (array_keyword)
+                  sizes: (integer)
+                  (of_keyword)
+                  element_type: (type_specification
+                    (basic_type)))))
+            (variable_declaration
+              name: (identifier)
+              type: (type_specification
+                (basic_type)))))
+        body: (code_block
+          (begin_keyword)
+          (ERROR
+            (parenthesized_expression
+              (identifier)))
+          body: (statement_block
+            (empty_statement))
+          (end_keyword))))))
+
+================================================================================
+B6 negative: operator word in as a call statement
+================================================================================
+codeunit 50101 P {
+  procedure Main()
+  var Rec: Record T; X: Integer; Arr: array[3] of Integer; C: Boolean;
+  begin
+in(C);
+  end;
+}
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (procedure
+        (procedure_keyword)
+        name: (identifier)
+        (var_section
+          (var_keyword)
+          body: (var_body
+            (variable_declaration
+              name: (identifier)
+              type: (type_specification
+                (record_type
+                  (record_keyword)
+                  reference: (identifier))))
+            (variable_declaration
+              name: (identifier)
+              type: (type_specification
+                (basic_type)))
+            (variable_declaration
+              name: (identifier)
+              type: (type_specification
+                (array_type
+                  (array_keyword)
+                  sizes: (integer)
+                  (of_keyword)
+                  element_type: (type_specification
+                    (basic_type)))))
+            (variable_declaration
+              name: (identifier)
+              type: (type_specification
+                (basic_type)))))
+        body: (code_block
+          (begin_keyword)
+          (ERROR
+            (identifier)
+            (parenthesized_expression
+              (identifier)))
+          body: (statement_block
+            (empty_statement))
+          (end_keyword))))))
+
+================================================================================
+B6 negative: operator word not as a call statement
+================================================================================
+codeunit 50101 P {
+  procedure Main()
+  var Rec: Record T; X: Integer; Arr: array[3] of Integer; C: Boolean;
+  begin
+not(C);
+  end;
+}
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (procedure
+        (procedure_keyword)
+        name: (identifier)
+        (var_section
+          (var_keyword)
+          body: (var_body
+            (variable_declaration
+              name: (identifier)
+              type: (type_specification
+                (record_type
+                  (record_keyword)
+                  reference: (identifier))))
+            (variable_declaration
+              name: (identifier)
+              type: (type_specification
+                (basic_type)))
+            (variable_declaration
+              name: (identifier)
+              type: (type_specification
+                (array_type
+                  (array_keyword)
+                  sizes: (integer)
+                  (of_keyword)
+                  element_type: (type_specification
+                    (basic_type)))))
+            (variable_declaration
+              name: (identifier)
+              type: (type_specification
+                (basic_type)))))
+        body: (code_block
+          (begin_keyword)
+          (ERROR
+            (unary_expression
+              operand: (parenthesized_expression
+                (identifier))))
+          body: (statement_block
+            (empty_statement))
+          (end_keyword))))))
+
+================================================================================
+B6 negative: assignment to operator word and
+================================================================================
+codeunit 50101 P {
+  procedure Main()
+  var Rec: Record T; X: Integer; Arr: array[3] of Integer; C: Boolean;
+  begin
+and := true;
+  end;
+}
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (procedure
+        (procedure_keyword)
+        name: (identifier)
+        (var_section
+          (var_keyword)
+          body: (var_body
+            (variable_declaration
+              name: (identifier)
+              type: (type_specification
+                (record_type
+                  (record_keyword)
+                  reference: (identifier))))
+            (variable_declaration
+              name: (identifier)
+              type: (type_specification
+                (basic_type)))
+            (variable_declaration
+              name: (identifier)
+              type: (type_specification
+                (array_type
+                  (array_keyword)
+                  sizes: (integer)
+                  (of_keyword)
+                  element_type: (type_specification
+                    (basic_type)))))
+            (variable_declaration
+              name: (identifier)
+              type: (type_specification
+                (basic_type)))))
+        body: (code_block
+          (begin_keyword)
+          (ERROR
+            (boolean))
+          body: (statement_block
+            (empty_statement))
+          (end_keyword))))))
+
+================================================================================
+B6 negative: operator word and read as a value
+================================================================================
+codeunit 50101 P {
+  procedure Main()
+  var Rec: Record T; X: Integer; Arr: array[3] of Integer; C: Boolean;
+  begin
+C := and;
+  end;
+}
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (procedure
+        (procedure_keyword)
+        name: (identifier)
+        (var_section
+          (var_keyword)
+          body: (var_body
+            (variable_declaration
+              name: (identifier)
+              type: (type_specification
+                (record_type
+                  (record_keyword)
+                  reference: (identifier))))
+            (variable_declaration
+              name: (identifier)
+              type: (type_specification
+                (basic_type)))
+            (variable_declaration
+              name: (identifier)
+              type: (type_specification
+                (array_type
+                  (array_keyword)
+                  sizes: (integer)
+                  (of_keyword)
+                  element_type: (type_specification
+                    (basic_type)))))
+            (variable_declaration
+              name: (identifier)
+              type: (type_specification
+                (basic_type)))))
+        body: (code_block
+          (begin_keyword)
+          (ERROR
+            (identifier)
+            (assignment_operator))
+          body: (statement_block
+            (empty_statement))
+          (end_keyword))))))
+
+================================================================================
+B6 negative: call torn by a keyword-operator #if arm
+================================================================================
+codeunit 50101 P {
+  procedure Main()
+  var Rec: Record T; X: Integer; Arr: array[3] of Integer; C: Boolean;
+  begin
+Foo()
+#if A
+  or (2 = 2)
+#endif
+  ;
+  end;
+}
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    (ERROR
+      (procedure_keyword)
+      name: (identifier)
+      (var_section
+        (var_keyword)
+        body: (var_body
+          (variable_declaration
+            name: (identifier)
+            type: (type_specification
+              (record_type
+                (record_keyword)
+                reference: (identifier))))
+          (variable_declaration
+            name: (identifier)
+            type: (type_specification
+              (basic_type)))
+          (variable_declaration
+            name: (identifier)
+            type: (type_specification
+              (array_type
+                (array_keyword)
+                sizes: (integer)
+                (of_keyword)
+                element_type: (type_specification
+                  (basic_type)))))
+          (variable_declaration
+            name: (identifier)
+            type: (type_specification
+              (basic_type)))))
+      (begin_keyword)
+      (call_expression
+        function: (identifier)
+        arguments: (argument_list))
+      (preproc_if
+        (preproc_open)
+        condition: (identifier))
+      (ERROR
+        (parenthesized_expression
+          (comparison_expression
+            left: (integer)
+            operator: (comparison_operator)
+            right: (integer)))
+        (UNEXPECTED 'i')
+        (if_keyword))
+      (empty_statement)
+      (call_statement
+        function: (identifier)))))

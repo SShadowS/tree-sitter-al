@@ -54,6 +54,8 @@ REJECT = [
 # Valid AL in every configuration that B6 makes LOUD and B7 must parse (spec §7).
 B7_GAP = [
     b"repeat Foo(); until C\n#if A\n  and (C)\n#endif\n  ;",
+    # alc accepts it in both configurations; needs a `;`-inside-arms assignment continuation.
+    b"B := A\n#if A\n  + 1;\n  Foo();\n#else\n  ;\n#endif",
 ]
 
 
