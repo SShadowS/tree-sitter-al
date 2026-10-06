@@ -14,8 +14,10 @@ in-list families it depends on.
 Owner: B13 when a member seed is a `b13` twin or the family is `option-members` (items 37/38); B12 when a
 member seed is a `value-runs__` seed or the family is `property-value` (item 36); else B7b+.
 
-Assertion rows can only close a cell when the caller passes `holds` ({cell id or class key: bool}); the
-report itself never parses, so without it every assertion is unevaluated and its cell stays UNCHECKED.
+The one thing the report parses (parser only, never alc or the oracle): the source of each cell that
+has a FRESH assertion row (fingerprints match the current cell source, parser.c, scanner.c and oracle),
+regenerated from the registry, then judge.check_assertion on its tree decides whether the row holds. A
+cell without an assertion row, or with a stale one, is not parsed: the committed evidence is enough.
 """
 import dataclasses
 import json
@@ -37,10 +39,22 @@ TIER = {"SILENT": 0, "GAP": 1, "OVERACCEPT": 1}
 NOT_PROBED = {"qualifier", "na", "lexical"}
 
 
+# Shapes of placements.LIST_SHAPES whose #if arm OPENS with the separator (checked against the shape
+# strings; `lead-optional`, `first-replace`, `sep-after`, `trail`, `empty`, `one-elem` and `empty-list`
+# open with an element). holes-* arms hold only the separator, so they open with it too.
+SEP_OPENING = frozenset({"sep-before", "sep-before-end", "count-differs", "both-in-arm", "sep-only",
+                         "adjacent-indep", "adjacent-compl", "elif", "nested",
+                         "holes-lead", "holes-mid", "holes-trail"})
+
+
+def shape_id(placement):
+    """`sep-before+comments@Name` -> `sep-before`."""
+    return placement.split("+")[0].split("@")[0]
+
+
 def subfamily(family, placement):
     """The comma-leading link list is its own family (it alone depends on the link/property matrix)."""
-    # ponytail: placement-name heuristic ("lead" in the id); exact once Task 10 shows the real ids
-    return "link-list-comma-leading" if family == "link-list" and "lead" in placement else family
+    return "link-list-comma-leading" if family == "link-list" and shape_id(placement) in SEP_OPENING         else family
 
 
 def display(v):
@@ -90,12 +104,14 @@ def owner_of(family, seeds):
     return "B7b+"
 
 
-def analyse(records, header, rows, assertions=(), holds=None):
-    """-> {cells, families, rows, records} for the renderer."""
-    holds = holds or {}
+def analyse(records, header, rows, assertions=(), check=None):
+    """-> {cells, families, rows, records} for the renderer. check(cell id, assertion) -> bool is called
+    only for a cell whose assertion row is fresh (see the module docstring)."""
     by_cell = defaultdict(list)
     for r in records:
         by_cell[r["cell"]].append(r)
+    for rs in by_cell.values():
+        rs.sort(key=lambda r: r["config"])            # recs[0] must not depend on record order
     index, host_families = {}, defaultdict(set)
     for r in rows:
         for h in r.hosts:
@@ -107,8 +123,8 @@ def analyse(records, header, rows, assertions=(), holds=None):
     for cid in sorted(by_cell):
         recs = by_cell[cid]
         r0 = recs[0]
-        if any((r0["key"], h) in gap_rows for h in (r0["host"],)):
-            continue                                  # collapsed into one template-level GAP entry
+        if (r0["key"], r0["host"]) in gap_rows:
+            continue    # collapsed into one template-level GAP entry (cells are generated for the witness host)
         row = index.get((r0["key"], r0["host"]))
         seed = r0["key"].startswith("seed:")
         cls = ("seed", "seed", r0["placement"]) if seed else \
@@ -116,8 +132,8 @@ def analyse(records, header, rows, assertions=(), holds=None):
         clskey = "/".join(cls)
         a = next((x for x in assertions if x.cell_or_class == cid), None) or \
             next((x for x in assertions if x.cell_or_class == clskey), None)
-        if a is not None and (cid in holds or clskey in holds):
-            a = dataclasses.replace(a, holds=holds.get(cid, holds.get(clskey)))
+        if a is not None and check is not None and judge._fresh(a, r0["source_sha256"], None):
+            a = dataclasses.replace(a, holds=check(cid, a))
         v = judge.verdict(recs, a, lookup=by_cell.get, cls=clskey)
         fam = seed_family(cid, r0["host"], host_families) if seed else subfamily(cls[1], r0["placement"])
         cells.append({"id": cid, "key": r0["key"], "host": r0["host"], "placement": r0["placement"],
@@ -258,10 +274,23 @@ def render(a, header):
 
 
 def build(evidence_path=evidence.EVIDENCE, registry_path=HERE / "registry.tsv",
-          assertions_path=judge.ASSERTIONS, holds=None):
+          assertions_path=judge.ASSERTIONS, sources=None, parser=None):
+    """sources {cell id: source bytes} and parser are injectable for tests; by default the sources are
+    regenerated from the registry and seeds, and the parser is the repo's, both only when a fresh
+    assertion row needs them."""
     header, records = evidence.read(evidence_path)
-    return render(analyse(records, header, registry.load(registry_path),
-                          judge.load_assertions(assertions_path), holds), header)
+    rows = registry.load(registry_path)
+    state = {}
+
+    def check(cid, a):
+        if "parser" not in state:
+            from tools.query_coverage import loader
+            state["parser"] = parser or loader.make_parser(
+                loader.load_language(loader.ensure_library(loader.REPO_ROOT)))
+            state["sources"] = sources if sources is not None else {
+                e.cell.id: e.cell.source.encode("utf-8") for e in evidence.universe(registry_path)}
+        return judge.check_assertion(state["parser"].parse(state["sources"][cid]).root_node, a)
+    return render(analyse(records, header, rows, judge.load_assertions(assertions_path), check), header)
 
 
 def write(path=DEFAULT_OUT, **kw):
