@@ -65,7 +65,10 @@ LAYOUT_HOSTS = {"layout_body", "layout_container_body"}
 # host list is checked for item/separator alternation once it is rebuilt.
 LIST_RUN_TYPES = frozenset({"preproc_conditional_permissions", "preproc_conditional_arguments",
                             "preproc_conditional_list_elements", "preproc_conditional_option_members",
-                            "preproc_conditional_where", "preproc_conditional_link_values"})
+                            "preproc_conditional_where", "preproc_conditional_link_values",
+                            "preproc_conditional_impl_values"})
+# Lists a list family can leave empty at an optional value site (B11 spec 5.3).
+LIST_VALUE_EMPTY_KINDS = frozenset({"link_value_list", "implementation_value_list", "option_member_list"})
 _BRACKETS = {"(", ")", "[", "]"}
 
 
@@ -350,8 +353,16 @@ def _lower_ordinary(node, ctx) -> Lowered:
         frags.extend(bind_previous(kids, r, c))
     new = Node(node.kind, node.named, node.field, node.start, node.end, kids)
     if any(c.kind in LIST_RUN_TYPES for c in node.children):
-        _check_alternation(new)
+        if new.kind == "option_member_list":
+            _check_option_holes(new)
+        else:
+            _check_alternation(new)
+    # Read the selection before _consume places it: a Terminator from the last child (the
+    # core, at a `;`-inside site) is a selected arm's `;`.
+    selected_terminator = any(isinstance(f, Terminator) and getattr(f, "_from_last", False) for f in frags)
     frags = _consume(new, frags)
+    if node.kind == "property":
+        _check_site_boundary(node, new, ctx, selected_terminator)
     for f in frags:
         if not getattr(f, "_from_last", False):
             raise LoweringError("unconsumed-fragment", node, f"{type(f).__name__} not from the last child")
@@ -365,6 +376,12 @@ def _lower_ordinary(node, ctx) -> Lowered:
         if node.kind in EMPTY_REMOVABLE:
             ctx.normalised.append(f"removed-empty:{node.kind}@{node.start}")
             return Lowered([], frags)
+        # list-value-empty (B11 spec 5.3): a list family's list emptied by its element
+        # conditionals, at an optional value site.
+        if (node.kind in LIST_VALUE_EMPTY_KINDS and node.field == "value"
+                and ctx.parent_kind in ("property", "preproc_conditional_property_value")):
+            ctx.normalised.append(f"list-value-empty:{node.kind}@{node.start}")
+            return Lowered([], frags)
         raise LoweringError("empty-node", node)
     if (node.kind == "property_expression" and any(c.kind == _TAIL for c in node.children)
             and len(kids) == 1 and kids[0].kind not in PROPERTY_EXPRESSION_KINDS):
@@ -377,6 +394,41 @@ def _lower_ordinary(node, ctx) -> Lowered:
         ctx.normalised.append(f"option-member-list-unwrap@{node.start}")
         return Lowered([kids[0].children[0].copy(field=node.field)], frags)
     return Lowered([_span_from_children(new)], frags)
+
+
+# B11 (spec 2026-10-05 5.3): a whole value that is a #if or a run of them.
+_WHOLE_VALUE_KINDS = frozenset({"preproc_conditional_property_value", "preproc_conditional_property_value_sequence"})
+
+
+def _check_site_boundary(node, new, ctx, selected_terminator):
+    """A property that ends at its whole-value core (a `;`-inside site: no `;` of its own
+    after the core) is terminated only by a selected arm's `;`. A configuration that
+    selects none moves the property's boundary beyond the site (`Caption = #if X 'a';
+    #endif #if Y #endif ;` at X=0 is `Caption = ;`), which the tree cannot hold:
+    lowering:one-reading at the core, debt B12. The verdict comes from the selection, not
+    from the lowered shape: when a terminator WAS selected and the property still does not
+    end in it, that is a lowering defect, contract-shape, never absorbed as debt. A
+    `;`-after site, where the property owns its `;`, never reaches this."""
+    core = next((c for c in node.children if c.field == "value" and c.kind in _WHOLE_VALUE_KINDS), None)
+    if core is None or node.children[-1] is not core:
+        return
+    if not selected_terminator:
+        raise LoweringError("one-reading", core, ctx.child("property", "value").host())
+    if not (new.children and new.children[-1].kind == ";" and not new.children[-1].children):
+        raise LoweringError("contract-shape", core, "a selected terminator does not end the property")
+
+
+def _check_option_holes(new):
+    """OptionMembers keeps blank ordinals (B11 spec 5.3): leading, consecutive and trailing
+    `,` are legal. Only two members side by side, with no separator, are refused."""
+    prev_item = False
+    for c in new.children:
+        if c.kind == ";" and not c.children:
+            continue
+        is_sep = c.kind == "," and not c.children
+        if not is_sep and prev_item:
+            raise LoweringError("list-separator", new, "two members without a separator")
+        prev_item = not is_sep
 
 
 def _check_alternation(new):
@@ -466,7 +518,7 @@ def _consume(new, frags):
             for n in _path(vals[-1], target):
                 recompute_span(n)
         # anchor None: emitted by a special node that is itself a direct child of
-        # the property (property_value_select on a whole-value #if); otherwise it
+        # the property (whole_value_select on a whole-value #if); otherwise it
         # passed up through the property's child: the list (list-run) or the
         # table_relation_value holding an else-relation-join conditional.
         elif isinstance(f, Terminator) and new.kind == "property"                 and (f.anchor is None or any(c is f.anchor for c in new.children)):
@@ -483,9 +535,17 @@ def _consume(new, frags):
                 first, later = sorted((last, f.leaf), key=lambda n: n.start)
                 new.children[-1] = first
                 recompute_span(new)
-                sib = SiblingsAfter(None, [Node("empty_statement", True, None, later.start, later.end, [later])])
-                sib._from_last = True
-                rest.append(sib)
+                stmt = Node("empty_statement", True, None, later.start, later.end, [later])
+                sib = next((r for r in rest if isinstance(r, SiblingsAfter)
+                            and getattr(r, "_mixed_semis", False)), None)
+                if sib is None:
+                    sib = SiblingsAfter(None, [stmt])
+                    sib._from_last = True
+                    sib._mixed_semis = True
+                    rest.append(sib)
+                else:
+                    sib.nodes.append(stmt)
+                    sib.nodes.sort(key=lambda n: n.start)
         else:
             rest.append(f)
     return rest

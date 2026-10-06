@@ -286,7 +286,7 @@ def table_relation_select(node, ctx) -> Lowered:
     terminator-hoist). An empty or unselected arm contributes nothing. An arm
     kind outside the registered `arm` set, or anything else, is contract-shape.
     A whole property value that is a #if is NOT this contract since G6: it is
-    preproc_conditional_property_value, property_value_select."""
+    preproc_conditional_property_value, whole_value_select."""
     items, frags = _select_arm(node, ctx)
     nodes = []
     if items and items[0].kind == "else_table_relation_fragment":
@@ -301,31 +301,90 @@ def table_relation_select(node, ctx) -> Lowered:
     return Lowered(nodes, frags)
 
 
-def property_value_select(node, ctx) -> Lowered:
-    """Contract whole-value-select (G6). Hosts: `property:value` (a property's
-    whole value is the #if) and `preproc_conditional_property_value:value` (a
-    whole-value #if nested in a whole-value arm, G3), both single-slot. The
-    chosen arm is at most ONE node, in field `value`, of a registered arm kind
-    (-> that node, taking the conditional's own field: the flat parse's
-    `property.value`); then an optional `;` outside the field (-> Terminator,
-    terminator-hoist: the configured property's own `;`). An empty or unselected
-    arm contributes nothing. An arm node without the `value` field, a kind
-    outside the `arm` set, or anything else, is contract-shape. A nested
-    whole-value #if is lowered by this same contract from its
-    `preproc_conditional_property_value:value` host; its nodes take this
-    conditional's field and its fragments (its arm's Terminator) pass through.
+PCPV = "preproc_conditional_property_value"
+PCPV_SEQ = "preproc_conditional_property_value_sequence"
+
+
+def _is_decoration(c):
+    return c.kind == PCPV and c.field is None
+
+
+def whole_value_select(node, ctx) -> Lowered:
+    """Contract whole-value-select (G6), at every value site (B11 spec 5.3). Hosts:
+    `property:value` (a property's whole value is the #if),
+    `preproc_conditional_property_value:value` (nested in a whole-value arm, G3),
+    `preproc_conditional_property_value_sequence:value` (a group of a run), and the three
+    decoration slots `property:<children>`, `preproc_conditional_property_value:<children>`
+    and `preproc_conditional_property_value_sequence:<children>`. The chosen arm holds:
+      * unfielded directive-only empty groups (decorations, before or after the core),
+        lowered by this same contract to nothing: directives and inactive arms only;
+      * at most ONE core in field `value`, of a registered arm kind (-> that node, taking
+        this conditional's own field: the flat parse's `property.value`). A nested group
+        or sequence in the core is lowered recursively, its fragments passing up in
+        source order;
+      * an optional `;` outside the field (-> Terminator, terminator-hoist: the
+        configured property's own `;`).
+    An empty or unselected arm contributes nothing. An arm item without the `value`
+    field, a kind outside the `arm` set, a decoration that lowers to nodes, or more than
+    one value node, is contract-shape: a sequence, not an arm, is where several groups
+    live. No other edge changes."""
+    entry = contracts.REGISTRY[node.kind]
+    if ctx.policy(entry, node) == "unsupported":
+        raise LoweringError("unsupported-type", node, ctx.host())
+    arms, endif = split_arms(node)
+    nodes, frags = [], []
+    for c in _active(arms, endif, node, ctx):
+        if c.kind == ";" and not c.children:
+            frags.append(Terminator(None, _lower_all([c], ctx, node.kind)[0]))
+        elif _is_decoration(c):
+            r = lower(c, ctx.child(node.kind, "<children>"))
+            if r.nodes:
+                raise LoweringError("contract-shape", c, "decoration lowered to nodes")
+            frags.extend(r.frags)
+        elif c.field != "value":
+            raise LoweringError("contract-shape", node, f"arm value in field {c.field!r}, not 'value'")
+        elif c.kind not in entry.arm:
+            raise LoweringError("contract-shape", node, "arm: " + c.kind)
+        elif c.kind in (PCPV, PCPV_SEQ):
+            r = lower(c, ctx.child(node.kind, "value"))
+            nodes.extend(n.copy(field=node.field) for n in r.nodes)
+            frags.extend(r.frags)
+        else:
+            # Any other arm value is an ordinary subtree: a fragment inside it is refused.
+            nodes.extend(n.copy(field=node.field) for n in _lower_all([c], ctx, node.kind))
+    if len(nodes) > 1:
+        raise LoweringError("contract-shape", node, f"{len(nodes)} values in one arm")
+    return Lowered(nodes, frags)
+
+
+def value_run_select(node, ctx) -> Lowered:
+    """Contract whole-value-run (B11 spec 5.3). Hosts: `property:value` and
+    `preproc_conditional_property_value:value`. Children: core-bearing groups in field
+    `value` and unfielded directive-only empty groups between them, each lowered by
+    whole_value_select, in source order. Zero or one value results, taking this node's
+    field: a second value, or any value after a selected terminator, is
+    lowering:one-reading -- the property's boundary moves with the configuration there
+    (spec 3.4, roadmap B12). The predicate is this sequence's own (reading=None), as
+    ExpressionContinuation's is. Every selected terminator passes up in source order (the
+    first is the property's own, later ones become standalone `;` by mixed placement).
     No other edge changes."""
-    items, frags = _select_arm(node, ctx)
-    if items and items[0].field != "value":
-        raise LoweringError("contract-shape", node, f"arm value in field {items[0].field!r}, not 'value'")
-    if not items:
-        return Lowered([], frags)
-    if items[0].kind == node.kind:
-        r = lower(items[0], ctx.child(node.kind, "value"))
-        return Lowered([n.copy(field=node.field) for n in r.nodes], r.frags + frags)
-    # Any other arm value is an ordinary subtree: a fragment inside it is refused
-    # (_lower_all), as before G6.
-    return Lowered([n.copy(field=node.field) for n in _lower_all(items, ctx, node.kind)], frags)
+    if ctx.policy(contracts.REGISTRY[node.kind], node) == "unsupported":
+        raise LoweringError("unsupported-type", node, ctx.host())
+    values, frags, terminated = [], [], False
+    for c in node.children:
+        if c.kind != PCPV:
+            raise LoweringError("contract-shape", node, "child: " + c.kind)
+        r = lower(c, ctx.child(node.kind, c.field or "<children>"))
+        if c.field is None and r.nodes:
+            raise LoweringError("contract-shape", c, "decoration lowered to nodes")
+        for n in r.nodes:
+            if values or terminated:
+                raise LoweringError("one-reading", node, ctx.host())
+            values.append(n.copy(field=node.field))
+        for f in r.frags:
+            terminated = terminated or isinstance(f, Terminator)
+            frags.append(f)
+    return Lowered(values, frags)
 
 
 # --- One-reading contracts (spec P4). The node's text nests across the #if

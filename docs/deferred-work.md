@@ -1240,7 +1240,12 @@ split and flat ACCEPT on alc 18.0.41; committed as `tools/alc_probe/cases/link-k
 
 **Owner:** unassigned.
 
-## 33. A generic property whose value follows an empty `#if` block parses clean, with the wrong shape
+## 33. A generic property whose value follows an empty `#if` block parses clean, with the wrong shape — RESOLVED 2026-10-06
+
+**Resolved by B11** (`de14527`, `ee410df`, `1a7caaa`, `4d6f6dd` generic, Permissions and Implementation, including a nested
+empty prefix; `fbeb24b` ML; `33e1b49` Namespaces, TableRelation, CalcFormula). An empty `#if` before the value is a
+decoration of the value in every family: a value plus an unfielded prefix, one property. Spec
+`docs/superpowers/specs/2026-10-05-property-value-runs-design.md` 3.4. The record below is kept as written.
 
 **Established:** 2026-10-05, B5b. `Visible =` / `#if X` / `#endif` / ` false;` in a page field is
 ACCEPTED by alc for both X assignments (split and flat). The grammar gives no ERROR but the value is an
@@ -1282,7 +1287,12 @@ in B5b; the `where` const was not. Production sites: 0 (`./tools/corpus-grep.sh 
 
 **Owner:** unassigned.
 
-## 35. Two sequential conditionals forming one link value split silently
+## 35. Two sequential conditionals forming one link value split silently — RESOLVED 2026-10-06
+
+**Resolved by B11** (`fbeb24b`). The unquoted reproducer below is now one `SubPageLink` property whose value is a
+`preproc_conditional_property_value_sequence` of two `link_value_list` groups, `has_error` False. The quoted form
+(`"No." = field(B)`) ERRORed at the base library and is the same tree now (spec 1, 2.2). Both measured on 2026-10-06.
+The record below is kept as written.
 
 **Established:** 2026-10-05, B5b final review; pre-existing, the same tree at the pre-B5b base
 library. Both conditionals are valid AL in every configuration (alc ACCEPTS X defined and undefined,
@@ -1309,6 +1319,121 @@ with `=`, 16 hits over four corpora, none followed by `#if`).
 
 **Next step:** decide whether a conditional after a conditional-terminated link value continues it,
 with an alc four-way probe, in the link rules (`_link_whole_conditional_in_if`).
+
+**Owner:** unassigned.
+
+## 36. Configuration-dependent property boundaries (roadmap B12)
+
+**Established:** 2026-10-06, B11 (spec 3.4 and the revision 1 blocker). alc does not parse inactive arms, so where a property
+ends can depend on the configuration:
+
+```al
+Visible =
+#if X
+    true;
+#endif
+#if X
+    Caption = 'x';
+#else
+    false;
+#endif
+```
+
+X defined is `Visible = true; Caption = 'x';`, two properties. X undefined is `Visible = false;`, one. No single tree is every
+configuration's flat tree. The grammar reads a run as one value (a sequence), the only reading under which every arm parses,
+so the tree is exact for the configurations consistent with that reading and the oracle refuses the others.
+
+**Continuation absorption** (spec 3.4 amendment 7) is the same residue seen from the other side. A non-terminated `;`-inside
+group followed by a conditional block whose arms also parse as properties is read as a continuation of the value:
+`Caption = #if X 'a'; #endif #if Y Editable = false; #endif` is one sequence, and the complementary three-group run
+(`Caption = #if X 'a'; #endif #if not X 'b'; #endif #if Y Visible = true; #endif`) one three-group sequence. That is a
+one-reading guess, wrong in the Y=1 configurations (there the earlier group already ended the property, and the last group
+is a property of its own); it is chosen because without condition evaluation it cannot be told from the ML and link
+continuations B11 fixes (`ENU='b';` parses as a property too).
+
+**Evidence:** alc accepts each configuration flat (`tools/alc_probe/cases/value-runs/boundary-complementary-three.al`,
+`boundary-mixed-after.al`, `boundary-visible-caption.al`: accept in every configuration;
+`continuation-absorption-editable.al`: accept with X defined). Fixtures:
+`test/corpus/property_value_run_test.txt` ("configuration-dependent boundary (spec 3.4)", the complementary three-group run),
+`test/corpus/property_value_run_review_test.txt` (the `Editable` absorption case).
+Oracle, debt(B12) records in `tools/config_oracle/fixture-classes.tsv` (`production-classes.tsv` has none, since the corpora
+hold no such site), never a discrepancy:
+- **2 hook records (b1).** A `;`-inside site whose configuration selects no terminator (`Caption = #if X 'a'; #endif #if Y
+  #endif ;` at X=0, which lowers to `Caption = ;`) is refused by the property-level hook `_check_site_boundary` in
+  `tools/config_oracle/lowering/engine.py` as `lowering:one-reading`. The hook decides from the selection: a selected
+  terminator that does not end the property is `contract-shape`, a lowering defect, never this debt.
+- **4 `value_run_select` records.** A second value, or a value after a selected terminator, in a sequence
+  (`assemblers.value_run_select`): the Visible/Caption boundary (X=1), the complementary three-group run (X=0,Y=1 and
+  X=1,Y=1; reason "one-reading guess, wrong in Y=1 configurations") and the `Editable` absorption (X=1,Y=1).
+Ruling-1 configurations (a terminated group, an empty block, then `;`) are `invalid-config` instead: the oracle refuses them as
+`reference-error` and alc rejects them (AL0104, AL0124).
+
+**Alternatives considered:**
+- **Condition text in the scanner.** The scanner would evaluate `X`/`not X` to decide where a property ends. Rejected: the
+  grammar has no symbol table, `#define` is per file and configuration is external input, so the tree would depend on
+  something the parser does not have.
+- **A multi-configuration tree.** One tree per configuration, or a tree holding every boundary. That is roadmap F1 (the
+  representation decision, A7), not a grammar change.
+
+**Next step:** decide with F1. Until then the sequence is a one-reading construct and the refusals stay classified.
+
+**Owner:** unassigned.
+
+## 37. Conditional value fragments (roadmap B13)
+
+**Established:** 2026-10-06, B11. A run whose groups are fragments of ONE value, not alternative values, cannot be told from the
+generic union without prefix/suffix-compatible states over the whole `_property_value` (spec 3.1 step 5). These shapes are valid AL
+(alc accepts X defined; the X undefined configuration leaves `N = ;` and is rejected for some) and stay visible ERRORs. Every one
+is a case in `test/corpus/property_value_run_b13_gap_test.txt` (10 cases), pinned as an ERROR with its probe in
+`tools/alc_probe/cases/value-runs/`:
+
+| shape | probe |
+|---|---|
+| generic `Caption`, two groups, `;` after the last `#endif` | `caption-seq-after.al` |
+| RunObject `Page` then `CustList` across groups | `b13-runobject-page-p.al` |
+| call `Format` then `(1)` | `b13-call-f-paren.al` |
+| decimal range `0 :` then `5` | `b13-decimal-range.al` |
+| SourceTableView `sorting()` then `where()` | `b13-sorting-where.al` |
+| ML pairs joined by `,` across groups | `b13-ml-pairs-comma.al` |
+| Namespaces pairs joined by `,` across groups | `b13-namespaces-pairs-comma.al` |
+| Caption `'a',` then `Locked = true` | `b13-caption-locked.al` |
+| comma-free `OptionMembers` alternatives, `;` after (`#if X A #endif #if not X B #endif ;`) | `b13-optionmembers-comma-free.al` |
+| ML conditional terminator (`#if X ENU='a' #else ENU='b'; #endif #if X #if Y #endif ; #endif`) | `b13-ml-conditional-terminator.al` |
+
+Also not supported, outside the gap file:
+- **Bare `;` arms.** alc accepts `CaptionML = #if X ; #else ENU='a'; #endif` and the Namespaces equivalent in every
+  configuration (an empty ML or Namespaces value is valid; `bare-semi-arm-captionml.al`, `bare-semi-arm-namespaces.al`), and
+  the grammar does not admit an arm holding only `;` (it ERRORs). Every other family rejects the active bare-`;` arm, so only
+  ML and Namespaces are gaps.
+- **A `,` after a conditional member, outside the group.** `OptionMembers = #if X A #endif , B;` ERRORs; alc accepts both
+  configurations (`b13-optionmembers-trailing-after-comma.al`).
+
+The comma-free `OptionMembers` form is a spec 3.1 step-3 deviation: `OptionMembers` reaches the grammar through the generic
+`_property_value`, so without the property name the run cannot be told from the generic step-5 run. Keying `OptionMembers` by name
+in the scanner would lift it, as it did for the five other families.
+
+The arm-site shape of a nested group, a decoration, then `;` is NOT a gap: it parses and is pinned
+(`nested-empty-semi-arm-*.al` probes, accepted for the configurations where the arm is not active).
+
+**Deferred by the controller (B11 final review, Minor 1): `OptionMembers` adjacency over-acceptance.**
+`OptionMembers = #if X A, #endif #if Y B, #endif C D;` parses clean at head (an ERROR at the base library) although it is
+invalid AL in every configuration (`C D` are two members without a separator). The structural over-acceptance comes from the
+entirely conditional `OptionMembers` form (spec 3.1 step 3). The oracle catches it: every configuration's flat parse ERRORs, so
+each is `reference-error:error`, never a silent pass (measured 2026-10-06; no fixture, 0 production sites). Keying `OptionMembers` by name (above) is where it would be fixed.
+
+**Next step:** a generic prefix/suffix-compatible value state set, or per-family keying, whichever the state budget allows (D1 first).
+
+**Owner:** unassigned.
+
+## 38. An all-comma conditional `OptionMembers` run reads as a `tabledata_permission_list`
+
+**Established:** 2026-10-06, B11 precedence audit. `OptionMembers = #if X , #endif #if Y , #endif ;` parses as a
+`tabledata_permission_list` of two `preproc_conditional_permissions`. The reading is pre-existing (the base library gives the
+identical tree, controller A/B) and the text is invalid AL in every configuration (alc AL0153,
+`optionmembers-blank-slots-only.al`). It is pinned in `test/corpus/property_value_run_audit_test.txt` as a change detector for the
+`prec.dynamic(-1)` that preserves base trees, and not endorsed. Production sites: 0.
+
+**Next step:** none required; revisit if `OptionMembers` is keyed by name (item 37), which would remove the ambiguity.
 
 **Owner:** unassigned.
 

@@ -1,0 +1,663 @@
+================================================================================
+B11 one-reading (spec 3.4): a non-terminated `;`-inside group then a conditional property is read as a continuation, the chosen one-reading, NOT the X=1,Y=1 tree (two properties)
+================================================================================
+
+page 50100 P { layout { area(Content) { field(F; Rec.Flag) {
+Caption =
+#if X
+    'a';
+#endif
+#if Y
+    Editable = false;
+#endif
+} } } }
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (page_declaration
+    (page_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (layout_section
+        (layout_keyword)
+        body: (layout_body
+          (area_section
+            (area_keyword)
+            type: (content_keyword)
+            body: (layout_body
+              (page_field
+                (field_keyword)
+                name: (identifier)
+                source: (member_expression
+                  object: (identifier)
+                  member: (identifier))
+                body: (declaration_body
+                  (property
+                    name: (property_name)
+                    value: (preproc_conditional_property_value_sequence
+                      value: (preproc_conditional_property_value
+                        (preproc_if
+                          (preproc_open)
+                          condition: (identifier))
+                        value: (string_literal)
+                        (preproc_endif
+                          (preproc_close)))
+                      value: (preproc_conditional_property_value
+                        (preproc_if
+                          (preproc_open)
+                          condition: (identifier))
+                        value: (property_expression
+                          (comparison_expression
+                            left: (identifier)
+                            operator: (comparison_operator)
+                            right: (boolean)))
+                        (preproc_endif
+                          (preproc_close))))))))))))))
+
+================================================================================
+B11 correction (spec 3.4 amendment 3): generic Visible `;`-inside run of A = B / C = D is one property with a sequence (base: a property, then a conditional property)
+================================================================================
+
+page 50100 P { layout { area(Content) { field(F; Rec.Flag) {
+Visible =
+#if X
+    A = B;
+#endif
+#if not X
+    C = D;
+#endif
+} } } }
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (page_declaration
+    (page_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (layout_section
+        (layout_keyword)
+        body: (layout_body
+          (area_section
+            (area_keyword)
+            type: (content_keyword)
+            body: (layout_body
+              (page_field
+                (field_keyword)
+                name: (identifier)
+                source: (member_expression
+                  object: (identifier)
+                  member: (identifier))
+                body: (declaration_body
+                  (property
+                    name: (property_name)
+                    value: (preproc_conditional_property_value_sequence
+                      value: (preproc_conditional_property_value
+                        (preproc_if
+                          (preproc_open)
+                          condition: (identifier))
+                        value: (implementation_value_list
+                          (implementation_value
+                            interface: (identifier)
+                            implementation: (identifier)))
+                        (preproc_endif
+                          (preproc_close)))
+                      value: (preproc_conditional_property_value
+                        (preproc_if
+                          (preproc_open)
+                          condition: (preproc_not_expression
+                            (identifier)))
+                        value: (implementation_value_list
+                          (implementation_value
+                            interface: (identifier)
+                            implementation: (identifier)))
+                        (preproc_endif
+                          (preproc_close))))))))))))))
+
+================================================================================
+B11 correction (spec 3.4 amendment 3): Implementation `;`-inside run is one property with a sequence (base: a property, then a conditional property)
+================================================================================
+
+interface IFoo { }
+interface IBar { }
+codeunit 50100 A implements IFoo, IBar { }
+codeunit 50101 C implements IFoo, IBar { }
+codeunit 50102 D implements IFoo, IBar { }
+enum 50100 E implements IFoo, IBar
+{
+    value(0; V)
+    {
+Implementation =
+#if X
+        IFoo = C;
+#endif
+#if not X
+        IFoo = D;
+#endif
+    }
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (interface_declaration
+    (interface_keyword)
+    object_name: (identifier))
+  (interface_declaration
+    (interface_keyword)
+    object_name: (identifier))
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    (implements_clause
+      (implements_keyword)
+      interface: (identifier)
+      interface: (identifier)))
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    (implements_clause
+      (implements_keyword)
+      interface: (identifier)
+      interface: (identifier)))
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    (implements_clause
+      (implements_keyword)
+      interface: (identifier)
+      interface: (identifier)))
+  (enum_declaration
+    (enum_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    (implements_clause
+      (implements_keyword)
+      interface: (identifier)
+      interface: (identifier))
+    body: (declaration_body
+      (enum_value_declaration
+        (value_keyword)
+        value_id: (integer)
+        value_name: (identifier)
+        body: (declaration_body
+          (property
+            name: (property_name)
+            value: (preproc_conditional_property_value_sequence
+              value: (preproc_conditional_property_value
+                (preproc_if
+                  (preproc_open)
+                  condition: (identifier))
+                value: (implementation_value_list
+                  (implementation_value
+                    interface: (identifier)
+                    implementation: (identifier)))
+                (preproc_endif
+                  (preproc_close)))
+              value: (preproc_conditional_property_value
+                (preproc_if
+                  (preproc_open)
+                  condition: (preproc_not_expression
+                    (identifier)))
+                value: (implementation_value_list
+                  (implementation_value
+                    interface: (identifier)
+                    implementation: (identifier)))
+                (preproc_endif
+                  (preproc_close))))))))))
+
+================================================================================
+B11 correction (spec 3.4 amendment 3): Permissions `;`-inside run at a codeunit is one sequence (base: a list of element conditionals)
+================================================================================
+
+codeunit 50100 CU
+{
+Permissions =
+#if X
+    tabledata A = R;
+#endif
+#if not X
+    tabledata B = R;
+#endif
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (property
+        name: (property_name)
+        value: (preproc_conditional_property_value_sequence
+          value: (preproc_conditional_property_value
+            (preproc_if
+              (preproc_open)
+              condition: (identifier))
+            value: (tabledata_permission_list
+              (tabledata_permission
+                (tabledata_keyword)
+                table_name: (identifier)
+                permission: (permission_type)))
+            (preproc_endif
+              (preproc_close)))
+          value: (preproc_conditional_property_value
+            (preproc_if
+              (preproc_open)
+              condition: (preproc_not_expression
+                (identifier)))
+            value: (tabledata_permission_list
+              (tabledata_permission
+                (tabledata_keyword)
+                table_name: (identifier)
+                permission: (permission_type)))
+            (preproc_endif
+              (preproc_close))))))))
+
+================================================================================
+B11 correction (spec 3.4 amendment 3): Permissions `;`-inside run at a permissionset is one sequence (base: a list of element conditionals)
+================================================================================
+
+permissionset 50100 PS
+{
+Permissions =
+#if X
+    tabledata A = R;
+#endif
+#if not X
+    tabledata B = R;
+#endif
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (permissionset_declaration
+    (permissionset_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (property
+        name: (property_name)
+        value: (preproc_conditional_property_value_sequence
+          value: (preproc_conditional_property_value
+            (preproc_if
+              (preproc_open)
+              condition: (identifier))
+            value: (tabledata_permission_list
+              (tabledata_permission
+                (tabledata_keyword)
+                table_name: (identifier)
+                permission: (permission_type)))
+            (preproc_endif
+              (preproc_close)))
+          value: (preproc_conditional_property_value
+            (preproc_if
+              (preproc_open)
+              condition: (preproc_not_expression
+                (identifier)))
+            value: (tabledata_permission_list
+              (tabledata_permission
+                (tabledata_keyword)
+                table_name: (identifier)
+                permission: (permission_type)))
+            (preproc_endif
+              (preproc_close))))))))
+
+================================================================================
+B11: Implementation witnessed list opener (listOpenerRules) stays an element conditional of the list
+================================================================================
+
+interface IFoo { }
+interface IBar { }
+codeunit 50100 A implements IFoo, IBar { }
+codeunit 50101 C implements IFoo, IBar { }
+codeunit 50102 D implements IFoo, IBar { }
+enum 50100 E implements IFoo, IBar
+{
+    value(0; V)
+    {
+Implementation =
+#if X
+        IFoo = A,
+#endif
+        IBar = C;
+    }
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (interface_declaration
+    (interface_keyword)
+    object_name: (identifier))
+  (interface_declaration
+    (interface_keyword)
+    object_name: (identifier))
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    (implements_clause
+      (implements_keyword)
+      interface: (identifier)
+      interface: (identifier)))
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    (implements_clause
+      (implements_keyword)
+      interface: (identifier)
+      interface: (identifier)))
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    (implements_clause
+      (implements_keyword)
+      interface: (identifier)
+      interface: (identifier)))
+  (enum_declaration
+    (enum_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    (implements_clause
+      (implements_keyword)
+      interface: (identifier)
+      interface: (identifier))
+    body: (declaration_body
+      (enum_value_declaration
+        (value_keyword)
+        value_id: (integer)
+        value_name: (identifier)
+        body: (declaration_body
+          (property
+            name: (property_name)
+            value: (implementation_value_list
+              (preproc_conditional_impl_values
+                (preproc_if
+                  (preproc_open)
+                  condition: (identifier))
+                (implementation_value
+                  interface: (identifier)
+                  implementation: (identifier))
+                (preproc_endif
+                  (preproc_close)))
+              (implementation_value
+                interface: (identifier)
+                implementation: (identifier)))))))))
+
+================================================================================
+B11: Implementation witnessed list opener with a nested empty group before the witness element
+================================================================================
+
+interface IFoo { }
+interface IBar { }
+codeunit 50100 A implements IFoo, IBar { }
+codeunit 50101 C implements IFoo, IBar { }
+codeunit 50102 D implements IFoo, IBar { }
+enum 50100 E implements IFoo, IBar
+{
+    value(0; V)
+    {
+Implementation =
+#if X
+#if Y
+#endif
+        IFoo = A,
+#endif
+        IBar = C;
+    }
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (interface_declaration
+    (interface_keyword)
+    object_name: (identifier))
+  (interface_declaration
+    (interface_keyword)
+    object_name: (identifier))
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    (implements_clause
+      (implements_keyword)
+      interface: (identifier)
+      interface: (identifier)))
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    (implements_clause
+      (implements_keyword)
+      interface: (identifier)
+      interface: (identifier)))
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    (implements_clause
+      (implements_keyword)
+      interface: (identifier)
+      interface: (identifier)))
+  (enum_declaration
+    (enum_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    (implements_clause
+      (implements_keyword)
+      interface: (identifier)
+      interface: (identifier))
+    body: (declaration_body
+      (enum_value_declaration
+        (value_keyword)
+        value_id: (integer)
+        value_name: (identifier)
+        body: (declaration_body
+          (property
+            name: (property_name)
+            value: (implementation_value_list
+              (preproc_conditional_impl_values
+                (preproc_if
+                  (preproc_open)
+                  condition: (identifier))
+                (preproc_conditional_impl_values
+                  (preproc_if
+                    (preproc_open)
+                    condition: (identifier))
+                  (preproc_endif
+                    (preproc_close)))
+                (implementation_value
+                  interface: (identifier)
+                  implementation: (identifier))
+                (preproc_endif
+                  (preproc_close)))
+              (implementation_value
+                interface: (identifier)
+                implementation: (identifier)))))))))
+
+================================================================================
+B11: Implementation empty prefix is a decoration of the value (spec 3.4)
+================================================================================
+
+interface IFoo { }
+interface IBar { }
+codeunit 50100 A implements IFoo, IBar { }
+codeunit 50101 C implements IFoo, IBar { }
+codeunit 50102 D implements IFoo, IBar { }
+enum 50100 E implements IFoo, IBar
+{
+    value(0; V)
+    {
+Implementation =
+#if X
+#endif
+        IFoo = A;
+    }
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (interface_declaration
+    (interface_keyword)
+    object_name: (identifier))
+  (interface_declaration
+    (interface_keyword)
+    object_name: (identifier))
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    (implements_clause
+      (implements_keyword)
+      interface: (identifier)
+      interface: (identifier)))
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    (implements_clause
+      (implements_keyword)
+      interface: (identifier)
+      interface: (identifier)))
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    (implements_clause
+      (implements_keyword)
+      interface: (identifier)
+      interface: (identifier)))
+  (enum_declaration
+    (enum_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    (implements_clause
+      (implements_keyword)
+      interface: (identifier)
+      interface: (identifier))
+    body: (declaration_body
+      (enum_value_declaration
+        (value_keyword)
+        value_id: (integer)
+        value_name: (identifier)
+        body: (declaration_body
+          (property
+            name: (property_name)
+            (preproc_conditional_property_value
+              (preproc_if
+                (preproc_open)
+                condition: (identifier))
+              (preproc_endif
+                (preproc_close)))
+            value: (implementation_value_list
+              (implementation_value
+                interface: (identifier)
+                implementation: (identifier)))))))))
+
+================================================================================
+B11: Implementation `;`-after run keeps its element conditionals (spec 3.1 step 3, unchanged)
+================================================================================
+
+interface IFoo { }
+interface IBar { }
+codeunit 50100 A implements IFoo, IBar { }
+codeunit 50101 C implements IFoo, IBar { }
+codeunit 50102 D implements IFoo, IBar { }
+enum 50100 E implements IFoo, IBar
+{
+    value(0; V)
+    {
+Implementation =
+#if X
+        IFoo = C
+#endif
+#if not X
+        IFoo = D
+#endif
+;
+    }
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (interface_declaration
+    (interface_keyword)
+    object_name: (identifier))
+  (interface_declaration
+    (interface_keyword)
+    object_name: (identifier))
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    (implements_clause
+      (implements_keyword)
+      interface: (identifier)
+      interface: (identifier)))
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    (implements_clause
+      (implements_keyword)
+      interface: (identifier)
+      interface: (identifier)))
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    (implements_clause
+      (implements_keyword)
+      interface: (identifier)
+      interface: (identifier)))
+  (enum_declaration
+    (enum_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    (implements_clause
+      (implements_keyword)
+      interface: (identifier)
+      interface: (identifier))
+    body: (declaration_body
+      (enum_value_declaration
+        (value_keyword)
+        value_id: (integer)
+        value_name: (identifier)
+        body: (declaration_body
+          (property
+            name: (property_name)
+            value: (implementation_value_list
+              (preproc_conditional_impl_values
+                (preproc_if
+                  (preproc_open)
+                  condition: (identifier))
+                (implementation_value
+                  interface: (identifier)
+                  implementation: (identifier))
+                (preproc_endif
+                  (preproc_close)))
+              (preproc_conditional_impl_values
+                (preproc_if
+                  (preproc_open)
+                  condition: (preproc_not_expression
+                    (identifier)))
+                (implementation_value
+                  interface: (identifier)
+                  implementation: (identifier))
+                (preproc_endif
+                  (preproc_close))))))))))

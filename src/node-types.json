@@ -7824,7 +7824,7 @@
     "fields": {},
     "children": {
       "multiple": true,
-      "required": false,
+      "required": true,
       "types": [
         {
           "type": "implementation_value",
@@ -13658,6 +13658,10 @@
             "named": true
           },
           {
+            "type": "preproc_conditional_property_value_sequence",
+            "named": true
+          },
+          {
             "type": "property_expression",
             "named": true
           },
@@ -13705,6 +13709,10 @@
       "required": true,
       "types": [
         {
+          "type": "preproc_conditional_property_value",
+          "named": true
+        },
+        {
           "type": "preproc_elif",
           "named": true
         },
@@ -13718,6 +13726,32 @@
         },
         {
           "type": "preproc_if",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
+    "type": "preproc_conditional_property_value_sequence",
+    "named": true,
+    "fields": {
+      "value": {
+        "multiple": true,
+        "required": true,
+        "types": [
+          {
+            "type": "preproc_conditional_property_value",
+            "named": true
+          }
+        ]
+      }
+    },
+    "children": {
+      "multiple": true,
+      "required": false,
+      "types": [
+        {
+          "type": "preproc_conditional_property_value",
           "named": true
         }
       ]
@@ -24345,6 +24379,10 @@
             "named": true
           },
           {
+            "type": "preproc_conditional_property_value_sequence",
+            "named": true
+          },
+          {
             "type": "property_expression",
             "named": true
           },
@@ -27308,7 +27346,7 @@
     "fields": {},
     "children": {
       "multiple": true,
-      "required": false,
+      "required": true,
       "types": [
         {
           "type": "preproc_conditional_permissions",

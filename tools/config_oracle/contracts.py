@@ -378,11 +378,15 @@ register("preproc_conditional_link_values", "branch-select", _LIST_RUN,
                 "preproc_conditional_link_values:<children>": "list-run"},
          # _link_value_branch / _link_value_seq / _link_value_run (grammar.js:1190-1224).
          arm={"link_value", "preproc_conditional_link_values", ","})
+register("preproc_conditional_impl_values", "branch-select", _LIST_RUN,
+         hosts={"implementation_value_list:<children>": "list-run",
+                "preproc_conditional_impl_values:<children>": "list-run"},
+         # _impl_value_seq / _impl_value_branch / _impl_value_run (grammar.js).
+         arm={"implementation_value", "preproc_conditional_impl_values", ","})
 
 # --- registered, not yet lowered: milestone 3 (spec "Registry state at exit"), every
 # one of them. Unsupported is explicit, never a default.
 for t in ("preproc_conditional_case_patterns",
-          "preproc_conditional_impl_values",
           "preproc_fragmented_else_tail",
           "preproc_guarded_statement", "preproc_split_brace_close",
           "preproc_split_brace_close_if_only", "preproc_split_call_statement", "preproc_split_case_branch",
@@ -450,7 +454,7 @@ register("preproc_conditional_table_relation", "assembler",
                 "table_relation_value:<children>": "single-slot"},
          arm={"table_relation_expression", "else_table_relation_fragment", ";"})
 # --- G6: a whole-property-value #if, contract whole-value-select
-# (assemblers.property_value_select). Hosts are the census output:
+# (assemblers.whole_value_select). Hosts are the census output:
 #  * property:value -- _property_value_conditional, the whole value is the #if;
 #  * preproc_conditional_property_value:value -- a whole-value #if nested in a
 #    whole-value arm (G3), lowered as the arm's value.
@@ -458,12 +462,19 @@ register("preproc_conditional_table_relation", "assembler",
 # | quoted_identifier | table_relation_value (G2) or a literal leaf (G4)), the
 # shape a flat parse of the arm gives, then an optional ';' outside the field.
 register("preproc_conditional_property_value", "assembler",
-         "tools.config_oracle.lowering.assemblers.property_value_select",
+         "tools.config_oracle.lowering.assemblers.whole_value_select",
          hosts={"property:value": "single-slot",
                 "preproc_conditional_property_value:value": "single-slot",
-                # B8: the unfielded all-empty #if before a CalcFormula value
-                # (`CalcFormula = #if X #endif sum(S.A);`); it lowers to nothing.
-                "property:<children>": "optional-slot"},
+                # B8, generalised by B11: an unfielded directive-only empty #if (a
+                # decoration) at the property site (`Caption = #if X #endif 'a';`); it
+                # lowers to nothing.
+                "property:<children>": "optional-slot",
+                # B11 (spec 5.3 hosts table): a decoration at an arm site, a group of a
+                # run (each lowers to zero or one value; value_run_select enforces the
+                # total), and a decoration between two groups of a run.
+                "preproc_conditional_property_value:<children>": "optional-slot",
+                "preproc_conditional_property_value_sequence:value": "optional-slot",
+                "preproc_conditional_property_value_sequence:<children>": "optional-slot"},
          # Every visible kind _property_value offers (grammar.js _property_value),
          # the nested whole value included, and the arm's own ';'. Plus
          # namespace_value_list, the arm of a keyed Namespaces whole value (B4).
@@ -471,6 +482,7 @@ register("preproc_conditional_property_value", "assembler",
               "boolean", "integer", "decimal", "string_literal", "verbatim_string",
               "date_literal", "time_literal", "datetime_literal",
               "preproc_conditional_property_value",
+              "preproc_conditional_property_value_sequence",
               "caption_value", "ml_value_list", "namespace_value_list",
               "tabledata_permission_list",
               "order_by_list", "implementation_value_list", "option_member_list",
@@ -479,6 +491,13 @@ register("preproc_conditional_property_value", "assembler",
               "decimal_range_value", "signed_integer_list",
               # B8: a CalcFormula whole value's arms
               "aggregate_formula", "lookup_formula"})
+# B11 (spec 2026-10-05-property-value-runs-design.md 5.3): a run of 2+ core-bearing
+# whole-value groups. Contract whole-value-run: zero or one value, enforced by the
+# assembler (single-slot here is metadata); anything else is one-reading (debt B12).
+register("preproc_conditional_property_value_sequence", "assembler",
+         "tools.config_oracle.lowering.assemblers.value_run_select",
+         hosts={"property:value": "single-slot",
+                "preproc_conditional_property_value:value": "single-slot"})
 # Non-prefixed special type: completes an earlier table relation (spec section 3).
 # Consumed by table_relation_select as a RelationContinuation; never lowered directly.
 # B5: also a direct child of table_relation_value, as the shared `else` tail after a

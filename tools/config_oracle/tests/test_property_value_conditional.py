@@ -1,5 +1,5 @@
 """Whole property values that are a #if: preproc_conditional_property_value,
-contract whole-value-select (assemblers.property_value_select). Until G6 these
+contract whole-value-select (assemblers.whole_value_select). Until G6 these
 shared preproc_conditional_table_relation with the relation continuations, whose
 witnesses stay in test_table_relation.py."""
 import pytest
@@ -35,12 +35,12 @@ def test_dropped_terminator_is_caught(al_parser, monkeypatch):
     # Unmutated, every configuration passes (above). The arm's `;` is the
     # property's own terminator: a selection that discards it must not pass.
     from tools.config_oracle.lowering import assemblers, engine
-    real = assemblers.property_value_select
+    real = assemblers.whole_value_select
 
     def no_terminator(node, ctx):
         r = real(node, ctx)
         return engine.Lowered(r.nodes, [f for f in r.frags if not isinstance(f, engine.Terminator)])
-    monkeypatch.setattr(assemblers, "property_value_select", no_terminator)
+    monkeypatch.setattr(assemblers, "whole_value_select", no_terminator)
     v = witness.verdicts(al_parser, WHOLE)
     assert v and all(s != "pass" for s, _ in v.values()), v
 

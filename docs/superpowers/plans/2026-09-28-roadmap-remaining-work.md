@@ -83,6 +83,9 @@ branch × nesting.
 | B8 | **DONE 2026-10-05 (branch `fix/b8-calcformula-conditional`).** alc probes first (`tools/alc_probe/cases/calcformula-conditional`), then a keyed whole-value conditional with formula-shaped arms, both `;` placements, and an all-empty `#if` prefix kept inside the property. STATE_COUNT 17,525 -> 17,918 (+2.2%, one declared conflict). BC.History byte-identical. ML's empty-prefix split recorded under item 33. Original row: **CalcFormula whole-value conditional.** | 16 | bounded | First alc-probe that it is valid. The arms stay formula-shaped (`aggregate_formula` / `lookup_formula`). |
 | B9 | **The doubled BOM.** | 6 | bounded | Probe alc first. Its verdict decides between absorbing it as an extra and surfacing it as text. |
 | B10 | **`case_else_branch` has two shapes.** A plain `else` is a sibling of `case_body`; an `else` inside `#if` is under `case_body` → `preproc_conditional_case`. BC.History: 1,468 against 2. Found in A6; the owned-IR consumer's request itself is satisfied. | 22 | **spec, tree-shape change** | One shape (or a documented, pinned pair), production census of the moved nodes, consumer migration note (E2). |
+| B11 | **DONE 2026-10-06 (branch `fix/b11-value-runs`).** A property value made of a run of `#if` groups: a new `preproc_conditional_property_value_sequence` node, five routing steps (spec 3.1), directive-only empty groups as unfielded decorations, in all eight families. alc evidence first (`tools/alc_probe/cases/value-runs`, 85 cases), six gpt-6.1-sol spec rounds, an oracle assembler (`whole-value-run`) and `whole_value_select`. STATE_COUNT 17,918 -> 23,149 (+29.2%, accepted at the spec 7 gate), parser.c +22.7%, perf ratio 0.989 (CI 0.978-1.015, DC, 24 rounds). All four corpora byte-identical for previously correct trees. Absorbs deferred-work items 33 and 35. State cost left to D1. | 33, 35 | **spec, tree-shape change** | Spec `docs/superpowers/specs/2026-10-05-property-value-runs-design.md`; precedence audit `docs/b11-precedence-audit.md`. |
+| B12 | **Configuration-dependent property boundaries.** Where a property ends can depend on the `#if` configuration; a sequence is a one-reading construct and the oracle refuses the others as `lowering:one-reading` (debt B12). Condition text in the scanner is rejected (no symbol table). | 36 | **research, representation** | Decide with F1/A7: a multi-configuration tree or a configured-tree API. |
+| B13 | **Conditional value fragments.** Runs whose groups are fragments of one value (`Page` + `"P"`, `F` + `(1)`, ML pairs joined by `,`, comma-free `OptionMembers`, bare-`;` ML/Namespaces arms, ...) stay visible ERRORs, pinned by `test/corpus/property_value_run_b13_gap_test.txt`. | 37, 38 | bounded, state-budget bound | Prefix/suffix-compatible states over the generic union, or per-family keying; take D1's state reduction first. |
 
 **Oracle work interleaved into Phase B (the start of C1).** These are the
 recorded leading blockers (milestone-2 results), and none waits on a
@@ -150,7 +153,7 @@ These are release gates, not an afterthought.
 
 A1 → A2 → A3 → A4 → A5 → A6 → A7 (spec)
 → B1 → B2 → B3, with C1's first handlers (split-if-then-begin, split-if-else, split-declaration) interleaved
-→ B4 (spec) → B5 (spec) → B6 (research + spec) → B7 (audit, then hosts) → B8 → B9 → B10 (spec), with the rest of C1 interleaved
+→ B4 (spec) → B5 (spec) → B6 (research + spec) → B7 (audit, then hosts) → B8 → B9 → B10 (spec) → B11 → B12 → B13, with the rest of C1 interleaved
 → C1 complete → C2 → C3
 → D1 → D2
 → E1 → E2 → E3 → E4 → stable major release (also gated by F0)

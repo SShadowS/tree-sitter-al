@@ -107,17 +107,285 @@ function fieldedStatement($, name) {
   );
 }
 
-// A keyed property's whole-value #if (B4). Same arm structure and public node as
-// _property_value_conditional / _property_value_conditional_in_if, but every arm holds the
-// family's own list, never _property_value, so a one-pair arm cannot become a comparison.
-function keyedValueConditional($, branch) {
-  return seq(
-    $.preproc_if,
-    optional(branch),
-    repeat(seq($.preproc_elif, optional(branch))),
-    optional(seq($.preproc_else, optional(branch))),
+// A #if group with at least one present arm (the witness, spec 2026-10-05 §4.1). `arm` is a
+// present arm; `gap` is what a non-witness slot may hold besides nothing (null: absent only).
+// The group is never directive-only empty, so it cannot read the same text as
+// _empty_value_conditional, the one rule that may.
+function witnessConditional($, arm, gap) {
+  const slot = gap ? choice(arm, gap) : arm;
+  const lead = gap ? optional(gap) : blank();
+  const rest = seq(
+    repeat(seq($.preproc_elif, optional(slot))),
+    optional(seq($.preproc_else, optional(slot))),
     $.preproc_endif,
   );
+  return seq($.preproc_if, choice(
+    seq(arm, rest),
+    seq(lead, repeat(seq($.preproc_elif, lead)), choice(
+      seq($.preproc_elif, arm, rest),
+      seq($.preproc_else, arm, $.preproc_endif),
+    )),
+  ));
+}
+
+// B11: the #if that OPENS a permission or implementation list at a property value
+// (spec 2026-10-05 §3: emptiness is recursive). Its witness is a branch holding a list
+// element, a `,` or (permissions) a `;` somewhere, recursively: a branch of only nested
+// all-absent conditionals does not count, so `#if X #if Y #endif #endif` is a decoration
+// of the value like `#if X #endif`, never this opener. Rules, for prefix p:
+//   p_empty_conditional -- the recursive all-absent conditional (aliased to `cond`)
+//   p_open_conditional  -- the witnessed opener, built from tail units ending at #endif
+//   p_branch_w / p_seq_w -- a branch / sequence with an element (the witness)
+// `withSemi`: a branch may also be witnessed by the property's `;` (permissions).
+function listOpenerRules(p, cond, branch, seq_, run, more, withSemi) {
+  const n = x => `${p}_${x}`;
+  const empty = $ => alias($[n('empty_conditional')], $[cond]);
+  return {
+    [n('empty_conditional')]: $ => seq(
+      $.preproc_if, repeat(empty($)),
+      repeat(seq($.preproc_elif, repeat(empty($)))),
+      optional(seq($.preproc_else, repeat(empty($)))),
+      $.preproc_endif,
+    ),
+    [n('open_conditional')]: $ => choice(
+      seq($.preproc_if, $[n('branch_w')], $[n('open_rest')]),
+      seq($.preproc_if, optional($[n('branch_e')]), $[n('open_lead')]),
+    ),
+    [n('open_rest')]: $ => choice(
+      seq($.preproc_elif, optional($[branch]), $[n('open_rest')]),
+      seq($.preproc_else, optional($[branch]), $.preproc_endif),
+      $.preproc_endif,
+    ),
+    [n('open_lead')]: $ => choice(
+      seq($.preproc_elif, optional($[n('branch_e')]), $[n('open_lead')]),
+      seq($.preproc_elif, $[n('branch_w')], $[n('open_rest')]),
+      seq($.preproc_else, $[n('branch_w')], $.preproc_endif),
+    ),
+    [n('branch_e')]: $ => repeat1(empty($)),
+    [n('branch_w')]: $ => choice(
+      withSemi ? seq(',', optional($[seq_]), optional(';')) : seq(',', optional($[seq_])),
+      withSemi ? seq($[n('seq_w')], optional(';')) : $[n('seq_w')],
+      ...(withSemi ? [seq(repeat1(empty($)), ';')] : []),
+    ),
+    [n('seq_w')]: $ => prec.right(seq(repeat(empty($)), choice(
+      seq($[run], optional($[more])),
+      seq(alias($[n('open_conditional')], $[cond]), optional($[run]), optional($[more])),
+    ))),
+  };
+}
+
+// B11 (spec 2026-10-05-property-value-runs-design.md §3, §4): a property value made of a
+// run of #if groups, `;` inside every arm (§3.1 step 2). One generator per family keeps
+// the six families from drifting. Slots of a group are:
+//   arm_t  -- a present arm that ends in `;` in every configuration: a value then `;`,
+//             a terminated nested group, or decorations then `;` (empty-value)
+//   arm_nt -- a present arm that may not: a non-terminated nested group or sequence
+//   gap    -- decorations only (or nothing at all)
+// group_t  -- #else present and every slot arm_t: every configuration has emitted `;`
+//             by #endif (terminated)
+// group_nt -- core-bearing and not terminated: some slot is arm_t or arm_nt, and #else
+//             is missing or some slot is arm_nt or a gap
+// The two are disjoint by construction and share their all-arm_t prefix (the same
+// `repeat(seq(#elif, arm_t))`), so the slot after #else decides between them with no
+// declared conflict. A directive-only empty group is neither: it is _empty_value_conditional.
+// sequence_in -- 2+ core-bearing groups, every non-last one group_nt (§4.3); each step
+//             after the first carries prec.dynamic(1), so a longer run outranks a shorter
+//             run followed by a conditional body block that also parses (§4.3).
+// in_core  -- the core of a `;`-inside property site: one group or a sequence.
+// `listValue`: the family's value is a list whose own element conditionals already read a
+// directive-only empty group next to the list (link, §3.1 step 3), so the arm takes no
+// decorations around a plain value -- they would be a second reading of the same text.
+function valueRunRules(p, value, listValue) {
+  const n = s => `${p}_${s}`;
+  const deco = $ => repeat($._value_decoration);
+  const groupT = $ => alias($[n('group_t')], $.preproc_conditional_property_value);
+  const groupNt = $ => alias($[n('group_nt')], $.preproc_conditional_property_value);
+  return {
+    [n('arm_t')]: $ => choice(
+      // decorations before and after the value (§3.2 at an arm site); none after a
+      // terminated nested group, whose arms already ended the site
+      listValue ? seq(field('value', value($)), ';')
+        : seq(deco($), field('value', value($)), deco($), ';'),
+      // an empty-value terminated arm (§3 "Bare `;` arms"), only after at least one
+      // decoration -- never a bare `;`. In every family, the required-core ones
+      // (TableRelation, CalcFormula) included: their whole-value conditional admitted it
+      // before B11 (`#if X A; #else #if Y #endif ; #endif`, valid when X is defined), and
+      // only the property site's core is required (§3.2 matrix). (listValue: a list of
+      // only directive-only empty element conditionals reads the same text;
+      // prec.dynamic hands it to the empty-value arm, §3.2)
+      listValue ? prec.dynamic(1, seq(repeat1($._value_decoration), ';'))
+        : seq(repeat1($._value_decoration), ';'),
+      seq(deco($), field('value', groupT($))),
+      // a `;`-inside core (one group or a sequence) followed DIRECTLY by `;`: that `;`
+      // is the arm's own, as at the property site (§3.2 "directly after the run", at
+      // every value site)
+      seq(deco($), field('value', $[n('in_core')]), ';'),
+    ),
+    [n('arm_nt')]: $ => seq(deco($), field('value', choice(
+      groupNt($),
+      alias($[n('sequence_in')], $.preproc_conditional_property_value_sequence),
+    ))),
+    [n('gap')]: $ => repeat1($._value_decoration),
+    // The tails are complete units ending at #endif (docs/state-reduction-method.md §2),
+    // one per state of the slots read so far, right-recursive over #elif:
+    //   tail_t    -- every slot arm_t so far; the group can still be group_t
+    //   tail_10   -- every slot arm_t so far; this group_nt still needs its gap or no #else
+    //   tail_any  -- core and gap both seen: any slot, any ending
+    //   tail_lead -- only gaps so far: a later slot must be the witness
+    // tail_t and tail_10 read the same `#elif arm_t` steps in parallel; the slot after
+    // #else (or a bare #endif) decides which reduces, with no declared conflict. Spelled
+    // as one inline choice per group alternative, the slots' item sets multiplied with
+    // the `;`-after group's: +2,263 states more (21,499 against 19,236), same trees.
+    [n('group_t')]: $ => seq($.preproc_if, $[n('arm_t')], $[n('tail_t')]),
+    [n('tail_t')]: $ => choice(
+      seq($.preproc_elif, $[n('arm_t')], $[n('tail_t')]),
+      seq($.preproc_else, $[n('arm_t')], $.preproc_endif),
+    ),
+    [n('group_nt')]: $ => choice(
+      seq($.preproc_if, $[n('arm_t')], $[n('tail_10')]),
+      seq($.preproc_if, $[n('arm_nt')], $[n('tail_any')]),
+      seq($.preproc_if, optional($[n('gap')]), $[n('tail_lead')]),
+    ),
+    [n('tail_10')]: $ => choice(
+      seq($.preproc_elif, $[n('arm_t')], $[n('tail_10')]),
+      seq($.preproc_elif, optional(choice($[n('arm_nt')], $[n('gap')])), $[n('tail_any')]),
+      seq($.preproc_else, optional(choice($[n('arm_nt')], $[n('gap')])), $.preproc_endif),
+      $.preproc_endif,
+    ),
+    [n('tail_any')]: $ => choice(
+      seq($.preproc_elif, optional(choice($[n('arm_t')], $[n('arm_nt')], $[n('gap')])), $[n('tail_any')]),
+      seq($.preproc_else, optional(choice($[n('arm_t')], $[n('arm_nt')], $[n('gap')])), $.preproc_endif),
+      $.preproc_endif,
+    ),
+    [n('tail_lead')]: $ => choice(
+      seq($.preproc_elif, optional($[n('gap')]), $[n('tail_lead')]),
+      seq($.preproc_elif, choice($[n('arm_t')], $[n('arm_nt')]), $[n('tail_any')]),
+      seq($.preproc_else, choice($[n('arm_t')], $[n('arm_nt')]), $.preproc_endif),
+    ),
+    [n('sequence_in')]: $ => seq(
+      field('value', groupNt($)),
+      repeat($[n('seq_step_nt')]),
+      $[n('seq_step_last')],
+    ),
+    [n('seq_step_nt')]: $ => prec.dynamic(1, seq(deco($), field('value', groupNt($)))),
+    [n('seq_step_last')]: $ => prec.dynamic(1, seq(deco($), field('value', choice(groupNt($), groupT($))))),
+    [n('in_core')]: $ => choice(
+      groupT($),
+      groupNt($),
+      alias($[n('sequence_in')], $.preproc_conditional_property_value_sequence),
+    ),
+  };
+}
+
+// B11: a keyed family's `;`-after group (§3.1 steps 3-4, §4.2), the family form of the
+// generic _property_value_conditional: its witness is an arm WITHOUT its own `;`
+// (after_branch), so a group whose every present arm ends in `;` is only the `;`-inside
+// group (valueRunRules) and an all-absent group only _empty_value_conditional. The other
+// slots may be terminated arms, non-terminated nested groups or decorations. Needs the
+// same family's valueRunRules (arm_t, arm_nt). `listValue` as in valueRunRules.
+function afterGroupRules(p, value, listValue) {
+  const n = s => `${p}_${s}`;
+  const deco = $ => repeat($._value_decoration);
+  const slot = $ => choice($[n('after_branch')], $[n('after_gap')]);
+  return {
+    [n('after_group')]: $ => choice(
+      seq($.preproc_if, $[n('after_branch')], $[n('after_rest')]),
+      seq($.preproc_if, optional($[n('after_gap')]), $[n('after_lead')]),
+    ),
+    // (listValue: a list of only directive-only empty element conditionals reads the
+    // same text as decorations; prec.dynamic hands it to the decorations, §3.2)
+    [n('after_gap')]: $ => choice($[n('arm_t')], $[n('arm_nt')],
+      listValue ? prec.dynamic(1, repeat1($._value_decoration)) : repeat1($._value_decoration)),
+    [n('after_rest')]: $ => choice(
+      seq($.preproc_elif, optional(slot($)), $[n('after_rest')]),
+      seq($.preproc_else, optional(slot($)), $.preproc_endif),
+      $.preproc_endif,
+    ),
+    [n('after_lead')]: $ => choice(
+      seq($.preproc_elif, optional($[n('after_gap')]), $[n('after_lead')]),
+      seq($.preproc_elif, $[n('after_branch')], $[n('after_rest')]),
+      seq($.preproc_else, $[n('after_branch')], $.preproc_endif),
+    ),
+    [n('after_branch')]: $ => listValue ? field('value', value($))
+      : seq(deco($), field('value', value($)), deco($)),
+  };
+}
+
+// B11 §3.1 step 4: a keyed family's `;`-after run of complete values (CalcFormula,
+// TableRelation, ML, Namespaces). Two complete values of these families cannot concatenate
+// (a formula is closed, a relation's continuations are not complete relations, pair lists
+// join only through `,`), and a `,`-edge arm is not a complete value (step 5, B13).
+// Every group is core-bearing; at least one is a `;`-after group (an arm without its own
+// `;`), else the run is the `;`-inside sequence (sequence_in) and the `;` the property's own.
+// A terminated group ends the site (§4.2): it is never a step, only the last group of
+// sequence_after_t, after which the site has ended -- a directly following `;` is the
+// property's own, anything after a following block is body content (§3.2).
+// Needs the family's valueRunRules and afterGroupRules.
+//   sequence_after_lead -- non-terminated `;`-inside groups, then the first `;`-after group
+function afterSequenceRules(p) {
+  const n = s => `${p}_${s}`;
+  const deco = $ => repeat($._value_decoration);
+  const grp = (r) => $ => alias($[n(r)], $.preproc_conditional_property_value);
+  return {
+    [n('sequence_after')]: $ => choice(
+      seq(field('value', grp('after_group')($)), repeat1($[n('sequence_after_step')])),
+      seq($[n('sequence_after_lead')], repeat($[n('sequence_after_step')])),
+    ),
+    [n('sequence_after_t')]: $ => seq(
+      choice(field('value', grp('after_group')($)), $[n('sequence_after_lead')]),
+      repeat($[n('sequence_after_step')]),
+      deco($),
+      field('value', grp('group_t')($)),
+    ),
+    [n('sequence_after_lead')]: $ => seq(
+      field('value', grp('group_nt')($)),
+      repeat(seq(deco($), field('value', grp('group_nt')($)))),
+      deco($),
+      field('value', grp('after_group')($)),
+    ),
+    [n('sequence_after_step')]: $ => seq(deco($), field('value', choice(
+      grp('after_group')($),
+      grp('group_nt')($),
+    ))),
+  };
+}
+
+// B11: the declared conflicts of a keyed `;`-after family (valueRunRules + afterGroupRules +
+// afterSequenceRules, not listValue), all generator-required, first measured on ML (Task 5).
+// `afterLeadEmpty: false` drops the after_lead / empty-group entry, for a family where
+// another conflict already subsumes it (the generator reports it unnecessary).
+function keyedRunConflicts($, p, value, { afterLeadEmpty = true } = {}) {
+  const r = s => $[`${p}_${s}`];
+  return [
+    // sequence continuation (§4.3): after a non-terminated group the run continues or the
+    // property ends there; a step is the last one or not until the token after its #endif
+    [r('seq_step_nt'), r('seq_step_last')],
+    // slot kind: arm_t / arm_nt / gap / (`;`-after group) a gap slot or the witness arm,
+    // until the `;`, the nested group's #endif or the next directive
+    [r('arm_t'), r('arm_nt'), r('tail_10')],
+    [r('arm_t'), r('arm_nt'), r('tail_lead')],
+    [r('arm_nt'), r('tail_10')],
+    [r('arm_t'), r('arm_nt'), r('tail_lead'), r('after_gap'), r('after_branch')],
+    // `;` inside against `;` after (§3.1: placement is decided by arm termination)
+    [r('group_t'), r('group_nt'), r('after_gap')],
+    [r('group_nt'), r('after_gap')],
+    [r('tail_lead'), r('after_gap')],
+    // directive-only empty against core-bearing (§4.1 witness)
+    [r('arm_t'), r('arm_nt'), r('group_nt'), r('after_gap'), r('after_branch'), $._empty_value_conditional],
+    [r('tail_lead'), r('after_lead'), $._empty_value_conditional],
+    [r('after_gap'), $._empty_value_conditional],
+    [r('tail_lead'), $._empty_value_conditional],
+    ...(afterLeadEmpty ? [[r('after_lead'), $._empty_value_conditional]] : []),
+    // step 4 against step 2: a run of non-terminated `;`-inside groups is the `;`-inside
+    // sequence or the lead of a `;`-after sequence until a group with an arm without `;`
+    // appears or the run ends; a `;`-after sequence is open or ends in a terminated group
+    // until its last group's #endif
+    [r('sequence_in'), r('in_core'), r('sequence_after_lead')],
+    [r('seq_step_nt'), r('seq_step_last'), r('sequence_after_lead')],
+    [r('seq_step_nt'), r('sequence_after_lead')],
+    [value, r('sequence_after'), r('sequence_after_t')],
+    [r('sequence_after'), r('sequence_after_t')],
+  ];
 }
 
 // Object declaration helper — with object ID
@@ -235,9 +503,6 @@ module.exports = grammar({
   ],
 
   conflicts: $ => [
-    // B8: `CalcFormula = #if X #elif Y #endif` is an empty prefix when a formula follows
-    // #endif and a value with absent arms when `;` does; only that token decides.
-    [$._calc_formula_empty_conditional, $._calc_formula_conditional],
     // An empty #if/#endif (pragma-only, pragmas are extras) after a bodiless
     // field can attach either field-internally (preproc_pragma_only, then `{`
     // body) or at section level (preproc_conditional_fields). GLR explores both;
@@ -371,80 +636,177 @@ module.exports = grammar({
     // A property whose whole value is a #if (_property_value_conditional,
     // see _property_with_terminator_in_if) is one more reading of an empty or
     // directive-only branch.
-    [$.preproc_conditional_permissions, $.preproc_conditional_impl_values, $._property_value_conditional],
     // The same ambiguity the three lines below already declare at the
     // CONDITIONAL level, now also reachable one level down: a bare `,` opening a
     // #if branch is identical in a permission and implementation list, and
     // the property name that would disambiguate is long past. (Link lists left
     // every mixed entry in B5b: they are reachable only under a keyed link name.)
     [$._permission_branch, $._impl_value_branch],
-    // A whole value whose `;` sits inside the arms (_property_value_conditional_in_if,
-    // G11) reads the same `#if` as the `;`-after-#endif whole value and as every
-    // list-internal conditional until an arm's end, and a `#if` nested in its arm
-    // is either kind until the `;` or directive after the inner #endif. All four
-    // generator-required. They replace [preproc_conditional_permissions,
-    // _property_value_conditional], which tree-sitter then reported unnecessary.
-    [$._property_value_conditional_in_if, $._property_value_conditional, $.preproc_conditional_permissions, $.preproc_conditional_impl_values],
-    [$._property_value_conditional_in_if, $.preproc_conditional_permissions, $.preproc_conditional_impl_values],
-    [$._property_value_conditional_in_if, $.preproc_conditional_permissions],
-    [$._property_value_branch_in_if, $._property_value_branch],
+    // The four G11 entries for _property_value_conditional_in_if (a whole value whose
+    // `;` sits inside the arms) stood here; B11 replaced that rule by the generic
+    // valueRunRules family and the entries below, and removed the G11/item 2 entries
+    // that tree-sitter then reported unnecessary.
+    // B11 (spec 2026-10-05 §3.2): after a complete value a `#if` opens a suffix
+    // decoration (`Caption = 'a' #if X #endif ;`) or continues the value
+    // (preproc_conditional_expression_tail, whose arms open with an operator); a lone
+    // member is also an option_member. The arm content after the #if line decides.
+    // Generator-required.
+    [$._property_value, $._property_value_with_split],
+    [$._property_value, $._property_value_with_split, $.option_member],
+    [$._property_value, $._literal_value],
+    [$._property_value, $.option_member, $._expression],
+    [$._property_value, $.option_member, $._literal_value],
+    // B11: a `#if` at a value site, or nested in a slot, is a directive-only empty group
+    // (_empty_value_conditional, a decoration) until some arm holds a value or a `;`;
+    // every core-bearing reading -- the `;`-after group's leading-gap tail, the generic
+    // `;`-inside group's, the witnessed list openers, a list-internal conditional --
+    // reads the same directive-only arms until then. Generator-required.
+    [$._empty_value_conditional, $._generic_tail_lead],
+    // B11: inside a group a slot is arm_t (value then `;`, or a terminated nested
+    // group), arm_nt (a non-terminated nested group or sequence), a gap, or -- in the
+    // `;`-after group -- an arm without its own `;` (_property_value_branch), until the
+    // `;`, the nested group's #endif or the next directive. At the property site the
+    // `;`-inside groups and the `;`-after group (whose non-witness slots,
+    // _property_value_gap, are the same arm_t / arm_nt / gap) read the same slots until
+    // an arm without `;` appears or the run ends. Generator-required.
+    [$._generic_arm_t, $._generic_arm_nt, $._generic_tail_lead],
+    [$._generic_arm_t, $._generic_arm_nt, $._generic_tail_10],
+    [$._generic_arm_nt, $._generic_tail_10],
+    [$._empty_value_conditional, $._generic_arm_t, $._generic_arm_nt, $._generic_group_nt, $._property_value_gap, $._property_value_branch],
+    [$._generic_group_t, $._generic_group_nt, $._property_value_gap],
+    [$._generic_group_nt, $._property_value_gap],
+    [$._empty_value_conditional, $._property_value_gap],
+    [$._generic_tail_lead, $._property_value_gap],
+    [$._generic_arm_t, $._generic_arm_nt, $._generic_tail_lead, $._property_value_gap, $._property_value_branch],
+    // B11: at a value start, an all-absent #if is a decoration; at the hosts with no
+    // decoration slot (permissions_property, the split Permissions heads and tail,
+    // option_type) it opens a list (_permission_empty_conditional,
+    // _option_members_empty_conditional); everywhere it reads the same directives as
+    // the witnessed openers' leading-gap tails (_permission_open_lead,
+    // _impl_value_open_lead) and the generic groups' until an arm, a list element or
+    // the property's end. Emptiness is recursive (_impl_value_empty_conditional,
+    // nested). Generator-required.
+    [$._empty_value_conditional, $._permission_empty_conditional],
+    [$._empty_value_conditional, $._permission_empty_conditional, $._impl_value_empty_conditional],
+    [$._empty_value_conditional, $._impl_value_empty_conditional],
+    [$._permission_empty_conditional, $._permission_open_lead],
+    [$._impl_value_empty_conditional, $._impl_value_open_lead],
+    // B11: inside a witnessed list opener (listOpenerRules), a branch is witnessed
+    // (_branch_w / _seq_w: an element, a `,` or a `;`) or all-absent until that token;
+    // the opener and the plain list both read the run before a #if; a one-member
+    // branch is also an option_member_list; the two slot-less empty-open lists read
+    // the same conditional until its end. Generator-required.
+    [$._permission_branch_w, $.option_member_list],
+    [$._permission_branch_w, $._impl_value_branch_w, $.option_member_list],
+    [$._impl_value_branch_w, $.option_member_list],
+    [$._permission_empty_conditional, $._permission_open_conditional, $._permission_branch_w, $._permission_seq_w],
+    [$.tabledata_permission_list, $._permission_seq_w],
+    [$._impl_value_open_conditional, $._impl_value_seq_w],
+    [$.implementation_value_list, $._impl_value_seq_w],
+    [$._impl_value_empty_conditional, $._impl_value_open_conditional, $._impl_value_seq_w],
+    [$._permission_open_conditional, $._permission_branch_w, $._permission_seq_w],
+    [$._permission_list_empty_open, $._permission_list_empty_any],
+    // B11 (§4.3): after a non-terminated group the run either continues (a sequence
+    // step) or the property ends there and the `#if` is body content; a step is the
+    // last one or not until the token after its #endif. Every step carries
+    // prec.dynamic(1), so when both complete the longer sequence wins.
+    [$._generic_sequence_in, $._generic_in_core],
+    [$._generic_seq_step_nt, $._generic_seq_step_last],
     // A link list OPENED by a #if (`SubPageLink = #if X A = field(B), #endif
     // B = field(A);`): before the directive the arm is both a whole value's
     // link_value_list and a list-internal _link_value_branch. G11: both now
     // carry prec 6, so GLR keeps both and the text after #endif decides.
     [$.link_value_list, $._link_value_branch],
-    // A keyed link value that starts with #if (B5b) has three readings until an
-    // arm's end or the token after #endif: the `;`-after-#endif whole value
-    // (_link_whole_conditional), the `;`-inside-the-arms whole value
-    // (_link_whole_conditional_in_if), and a list OPENED by the #if
-    // (preproc_conditional_link_values, G11). Generator-required.
-    [$._link_whole_conditional, $._link_whole_conditional_in_if, $.preproc_conditional_link_values],
-    // ... and, where every arm so far is absent, only the two that need no present arm:
-    // the `;`-after-#endif whole value and the list-opening #if. Generator-required.
-    [$._link_whole_conditional, $.preproc_conditional_link_values],
-    // Outside against inside at an arm's end: `#if X A = field(B);` is a terminated
-    // arm of either whole value until #endif and what follows it. Generator-required.
-    [$._link_whole_conditional, $._link_in_if_arm],
+    // B11 spike 2 (link), the same readings as the generic family's entries above.
+    // All generator-required.
+    // Sequence continuation (§4.3): after a non-terminated group the run continues or the
+    // property ends there; a step is the last one or not until the token after its #endif.
+    [$._link_sequence_in, $._link_in_core],
+    [$._link_seq_step_nt, $._link_seq_step_last],
+    // Slot kind: arm_t / arm_nt / gap / (`;`-after group) a gap slot, until the `;`, the
+    // nested group's #endif or the next directive.
+    [$._link_arm_t, $._link_arm_nt, $._link_tail_10],
+    [$._link_arm_t, $._link_arm_nt, $._link_tail_lead],
+    [$._link_arm_nt, $._link_tail_10],
+    [$._link_arm_t, $._link_arm_nt, $._link_tail_lead, $._link_after_gap],
+    // `;` inside against `;` after (§3.1 placement is decided by arm termination): a group
+    // whose slots so far all end in `;` is a `;`-inside group or the gap prefix of a
+    // `;`-after group until an arm without `;` appears or the group ends.
+    [$._link_group_t, $._link_group_nt, $._link_after_gap],
+    [$._link_group_nt, $._link_after_gap],
+    [$._link_tail_lead, $._link_after_gap],
+    // Directive-only empty against core-bearing (§4.1 witness): a #if is a decoration
+    // until some arm holds a value or a `;`; for link also a list element conditional
+    // (step 3), which reads directive-only arms the same way.
+    [$._link_arm_t, $._link_arm_nt, $._link_group_nt, $._link_after_gap, $._empty_value_conditional],
+    [$._link_tail_lead, $._link_after_lead, $._empty_value_conditional, $.preproc_conditional_link_values],
+    [$._empty_value_conditional, $.preproc_conditional_link_values],
+    [$._link_after_gap, $._empty_value_conditional],
+    [$._link_tail_lead, $._empty_value_conditional],
+    [$._link_after_lead, $.preproc_conditional_link_values],
+    // The keyed `;`-after families (ML, Namespaces, CalcFormula, TableRelation; B11 §3.1
+    // steps 2 and 4): the same readings, one family each, listed by keyedRunConflicts
+    // with their comments.
+    ...keyedRunConflicts($, '_ml', $._ml_property_value),
+    ...keyedRunConflicts($, '_namespaces', $._namespaces_property_value),
+    ...keyedRunConflicts($, '_calc_formula', $._calc_formula_value),
+    // TableRelation: its after_lead / empty-group reading is subsumed by the
+    // conditional-head entries below (reported unnecessary)
+    ...keyedRunConflicts($, '_table_relation', $._table_relation_property_value, { afterLeadEmpty: false }),
     // _property_whole_value_in_if at an action area (G11, item 17): there a
     // #if after `Name =` also opens an option-member list. Generator-required
     // (not needed for the assembly_body host alone, measured).
-    [$._property_value_conditional_in_if, $.preproc_conditional_option_members],
     // A keyed TableRelation value that starts with #if (B5) has two readings until
-    // the token after #endif: the whole-value wrapper (_table_relation_whole_conditional)
-    // or the relation's conditional head (preproc_conditional_table_relation) with a
-    // shared `else` tail, which alc accepts (Task 1 probe
+    // the token after #endif: the whole-value wrapper (B5's _table_relation_whole_conditional,
+    // since B11 the family's groups) or the relation's conditional head
+    // (preproc_conditional_table_relation) with a shared `else` tail, which alc accepts (Task 1 probe
     // tools/alc_probe/cases/table-relation-keying/decide-value-start-if-continuation.al;
     // spec 2026-10-04 rev 4 item 3). Both generator-required, one per level:
     // the arm content (whole-value arm _table_relation_head vs conditional-head arm
     // table_relation_expression) ...
     [$._table_relation_head, $.table_relation_expression],
-    // ... and the #elif repeat (whole-value wrapper vs conditional head).
-    [$._table_relation_whole_conditional, $.preproc_conditional_table_relation],
+    // ... and the #elif repeat. B11: the whole-value wrapper is now the family's groups
+    // (valueRunRules / afterGroupRules), so the conditional head meets each of them, and
+    // the directive-only empty group, until the arm content or the token after #endif.
+    [$._table_relation_tail_lead, $._table_relation_after_lead, $._empty_value_conditional, $.preproc_conditional_table_relation],
+    [$._empty_value_conditional, $.preproc_conditional_table_relation],
+    [$._table_relation_after_lead, $._empty_value_conditional, $.preproc_conditional_table_relation],
     // An option-member list OPENED by a #if (`OptionMembers = #if X A,
     // #endif B, C;`, G11 item 2): at value start a #if may now also open
     // preproc_conditional_option_members, one more reading of an empty or
     // list-shaped arm beside every conditional above, and before the directive
     // an arm `A,` is both a whole value's option_member_list and an
-    // _option_members_branch. All six generator-required (eight until B5b
-    // removed the link-only readings).
-    [$._property_value_conditional, $.preproc_conditional_permissions, $.preproc_conditional_impl_values, $.preproc_conditional_option_members],
-    [$.preproc_conditional_impl_values, $.preproc_conditional_option_members],
-    [$._property_value_conditional_in_if, $.preproc_conditional_permissions, $.preproc_conditional_option_members],
-    [$.preproc_conditional_permissions, $.preproc_conditional_option_members],
-    [$._property_value_conditional_in_if, $._property_value_conditional, $.preproc_conditional_permissions, $.preproc_conditional_impl_values, $.preproc_conditional_option_members],
+    // _option_members_branch.
     [$.option_member_list, $._option_members_branch],
+    // B11 §3.1 step 3 (the entirely conditional OptionMembers list): its leader
+    // (_option_members_run_open, witnessed by an arm with a `,`) is one more reading of
+    // every value-start #if above, and of the G11 opener, until an arm, a list element
+    // or the token after #endif; a branch with a `,` (_option_members_branch_c: blank
+    // slots, `A,`) is also a whole-value arm's option_member_list, or a permission /
+    // implementation branch opening with `,`, until the directive or the next token.
+    // The entries with _option_members_run_open replace the same entries without it.
+    // All generator-required.
+    [$._empty_value_conditional, $._generic_tail_lead, $._property_value_conditional_lead, $._permission_empty_conditional, $._permission_open_lead, $._impl_value_empty_conditional, $._impl_value_open_lead, $._option_members_open_conditional, $._option_members_run_open],
+    [$._empty_value_conditional, $._generic_tail_lead, $._property_value_conditional_lead, $._permission_empty_conditional, $._permission_open_lead, $._impl_value_open_lead, $._option_members_open_conditional, $._option_members_run_open],
+    [$._empty_value_conditional, $._generic_tail_lead, $._property_value_conditional_lead, $._permission_open_lead, $._impl_value_open_lead, $._option_members_open_conditional, $._option_members_run_open],
+    [$._empty_value_conditional, $._property_value_conditional_lead, $._permission_empty_conditional, $._permission_open_lead, $._impl_value_empty_conditional, $._impl_value_open_lead, $._option_members_open_conditional, $._option_members_run_open],
+    [$._empty_value_conditional, $._property_value_conditional_lead, $._permission_open_lead, $._impl_value_open_lead, $._option_members_open_conditional, $._option_members_run_open],
+    [$._option_members_open_conditional, $._option_members_empty_conditional, $._option_members_run_open],
+    [$.option_member_list, $._option_members_branch, $._option_members_run_open],
+    [$._option_members_branch, $._option_members_run_open],
+    [$.option_member_list, $._option_members_branch_c],
+    [$._permission_branch_w, $.option_member_list, $._option_members_branch_c],
+    [$._permission_branch_w, $._impl_value_branch_w, $.option_member_list, $._option_members_branch_c],
+    [$._impl_value_branch_w, $.option_member_list, $._option_members_branch_c],
     // A whole-value arm is one _property_value (G8), so a list arm ending in a
     // directive (`A, B #else`) is also a link, permission or implementation
     // branch until the directive, and a permission/implementation list arm is
     // also that conditional's branch. Generator-required, all five (seven until
     // B5b removed the link-only readings). They
     // subsume the two G3 entries that stood here, which tree-sitter now
-    // reports as unnecessary.
-    [$._permission_branch, $.option_member_list],
-    [$._permission_branch, $._impl_value_branch, $.option_member_list],
-    [$._impl_value_branch, $.option_member_list],
-    [$.tabledata_permission_list, $._permission_branch],
-    [$.implementation_value_list, $._impl_value_branch],
+    // reports as unnecessary. B11: four of the five moved to the witnessed openers'
+    // branches (_permission_branch_w, _impl_value_branch_w, below) once a list opened
+    // by a #if needed one; the plain-branch entries were then reported unnecessary.
     [$.preproc_conditional_permissions, $.preproc_conditional_impl_values],
     [$.preproc_conditional_controladdin, $.preproc_conditional],
     [$.procedure, $.interface_procedure_suffix],
@@ -835,9 +1197,35 @@ module.exports = grammar({
       seq(
         field('name', $.property_name),   // Scanner token: identifier followed by =
         '=',
-        optional(field('value', $._property_value)),
+        // B11 (spec 2026-10-05 §3.1 steps 1-2, §3.2): directive-only empty groups
+        // around the value are decorations, unfielded; only the core is fielded. An
+        // all-empty value is decorations alone (one alternative, so prefix and suffix
+        // never compete for the same groups). A core whose every arm ends in `;` is the
+        // next alternative, never this one.
+        optional(choice(
+          repeat1($._value_decoration),
+          seq(
+            repeat($._value_decoration),
+            field('value', $._property_value),
+            repeat($._value_decoration),
+          ),
+        )),
         ';'
       ),
+      // A `;`-inside core (one group or a sequence, every present arm ending in `;`)
+      // followed DIRECTLY by `;`: that `;` is the property's own (§3.1 step 2). No
+      // suffix decoration: after such a core the site has ended (§3.2 rows 4 and 7), so
+      // `#if Y #endif ;` after it is body content and an empty_statement.
+      // prec(1): the `;` is shifted here, never left to end the property at the core
+      // (_generic_in_core) and start an empty_statement. Only that `;` is decided: a
+      // `#if` after a non-terminated group still forks (continuation, §4.3).
+      prec(1, seq(
+        field('name', $.property_name),
+        '=',
+        repeat($._value_decoration),
+        field('value', $._generic_in_core),
+        ';'
+      )),
       // CalcFormula is the one property whose value has a grammar of its own
       // rather than an expression: sum/count/exist/min/max/average/lookup over
       // a field reference with an optional where(). The scanner emits
@@ -863,10 +1251,26 @@ module.exports = grammar({
         // `#if X #endif sum(S.A);` (B8): an all-empty #if before the formula is
         // valid AL and stays inside this property, unfielded. A formula is not a
         // list, so no list-element prefix can absorb it as one absorbs it elsewhere.
-        repeat(alias($._calc_formula_empty_conditional, $.preproc_conditional_property_value)),
-        field('value', $._calc_formula_value),
+        // B11: decorations after the core too, and a `;`-after run (§3.1 step 4); the
+        // core is required (§3.2 matrix).
+        repeat($._value_decoration),
+        field('value', choice(
+          $._calc_formula_value,
+          alias($._calc_formula_sequence_after, $.preproc_conditional_property_value_sequence),
+        )),
+        repeat($._value_decoration),
         ';'
       ),
+      prec(1, seq(
+        field('name', alias($.calc_formula_property_name, $.property_name)),
+        '=',
+        repeat($._value_decoration),
+        field('value', choice(
+          $._calc_formula_in_core,
+          alias($._calc_formula_sequence_after_t, $.preproc_conditional_property_value_sequence),
+        )),
+        ';'
+      )),
       // The 13 ML properties and Namespaces are keyed by NAME, like CalcFormula:
       // the scanner emits _ml_property_name / _namespaces_property_name for
       // exactly those words. A one-pair value `ENU='x'` is also a complete
@@ -874,59 +1278,146 @@ module.exports = grammar({
       // from `Visible = A = 'b';` -- only the name can. The name list is the
       // compiler's own (alc 18.0.41, ObjectParser / PropertyNameToSyntaxDefinition;
       // spec 2026-10-01-pair-list-property-keying-design.md), never a suffix match.
+      // B11: decorations around the core, as the generic arm (§3.1 step 1); the core may
+      // be a `;`-after run of complete ML values (step 4, _ml_sequence_after).
       seq(
         field('name', alias($._ml_property_name, $.property_name)),
         '=',
-        optional(field('value', $._ml_property_value)),
+        optional(choice(
+          repeat1($._value_decoration),
+          seq(
+            repeat($._value_decoration),
+            field('value', choice(
+              $._ml_property_value,
+              alias($._ml_sequence_after, $.preproc_conditional_property_value_sequence),
+            )),
+            repeat($._value_decoration),
+          ),
+        )),
         ';'
       ),
+      // a `;`-inside ML core followed directly by `;` (§3.1 step 2), as the generic arm;
+      // and a `;`-after run whose last group is terminated: the site ends there, so no
+      // suffix decoration, only the directly following `;` (§3.2)
+      prec(1, seq(
+        field('name', alias($._ml_property_name, $.property_name)),
+        '=',
+        repeat($._value_decoration),
+        field('value', choice(
+          $._ml_in_core,
+          alias($._ml_sequence_after_t, $.preproc_conditional_property_value_sequence),
+        )),
+        ';'
+      )),
+      // Namespaces (B11): the ML arms again.
       seq(
         field('name', alias($._namespaces_property_name, $.property_name)),
         '=',
-        optional(field('value', $._namespaces_property_value)),
+        optional(choice(
+          repeat1($._value_decoration),
+          seq(
+            repeat($._value_decoration),
+            field('value', choice(
+              $._namespaces_property_value,
+              alias($._namespaces_sequence_after, $.preproc_conditional_property_value_sequence),
+            )),
+            repeat($._value_decoration),
+          ),
+        )),
         ';'
       ),
+      prec(1, seq(
+        field('name', alias($._namespaces_property_name, $.property_name)),
+        '=',
+        repeat($._value_decoration),
+        field('value', choice(
+          $._namespaces_in_core,
+          alias($._namespaces_sequence_after_t, $.preproc_conditional_property_value_sequence),
+        )),
+        ';'
+      )),
       // TableRelation is keyed by NAME too (B5): its value is the compiler's relation
       // grammar, and `Customer."No."` cannot be told from a member access otherwise.
       // No optional(): `TableRelation = ;` is AL0107 (Task 1 probe), so it is a negative.
+      // B11: decorations around the core and a `;`-after run (§3.1 step 4); the core is
+      // required (§3.2 matrix). After a plain relation a `#if` stays the relation's own
+      // continuation (preproc_conditional_table_relation, whose arms may be absent):
+      // _table_relation_rooted's prec.right shifts it, so a trailing empty group there is
+      // the preserved form, not a decoration (§4.4).
       seq(
         field('name', alias($._table_relation_property_name, $.property_name)),
         '=',
-        field('value', $._table_relation_property_value),
+        repeat($._value_decoration),
+        field('value', choice(
+          $._table_relation_property_value,
+          alias($._table_relation_sequence_after, $.preproc_conditional_property_value_sequence),
+        )),
+        repeat($._value_decoration),
         ';'
       ),
+      prec(1, seq(
+        field('name', alias($._table_relation_property_name, $.property_name)),
+        '=',
+        repeat($._value_decoration),
+        field('value', choice(
+          $._table_relation_in_core,
+          alias($._table_relation_sequence_after_t, $.preproc_conditional_property_value_sequence),
+        )),
+        ';'
+      )),
       // The six link-family names are keyed by NAME (B5b): a one-entry `A = field(B)` is
       // also a complete comparison, so only the name can choose the link reading.
       // optional(): an empty DataItemLink value is rejected only semantically (AL0171,
       // Task 1 probes), so the parser accepts it; `RunPageLink = ;` (AL0107) is the
       // same arm's structural over-acceptance (Ruling S').
+      // B11: the `;`-after placement keeps the list's own element conditionals (§3.1
+      // step 3), so a directive-only empty group next to the list stays a list element and
+      // only an all-empty value is decorations (prec.dynamic: the same text is also a
+      // list of empty element conditionals).
       seq(
         field('name', alias($._link_property_name, $.property_name)),
         '=',
-        optional(field('value', $._link_property_value)),
+        optional(choice(
+          field('value', $._link_property_value),
+          prec.dynamic(1, repeat1($._value_decoration)),
+        )),
         ';'
       ),
+      // a `;`-inside link core followed directly by `;` (§3.1 step 2), as the generic arm
+      prec(1, seq(
+        field('name', alias($._link_property_name, $.property_name)),
+        '=',
+        repeat($._value_decoration),
+        field('value', $._link_in_core),
+        ';'
+      )),
     ),
 
     // A keyed value is the family's list, or a whole-value #if whose arms are that
-    // list again (spec 2026-10-01 §3.3). ONE conditional per family, with an optional
-    // `;` in each arm, serves both placements: the `property` arm takes the `;` after
-    // #endif, and _property_with_terminator_in_if / _property_whole_value_in_if end the
-    // property at #endif when the `;` sits in the arms. Separate `_in_if` rules, as
-    // the generic family has, measured STATE_COUNT 17257 and needed a declared
-    // conflict (the two readings differ only after #endif); this is 16893 with none.
+    // list again (spec 2026-10-01 §3.3). Until B11 ONE conditional per family
+    // (keyedValueConditional, an optional `;` in each arm) served both placements. B11:
+    // each keyed family's `;`-inside groups (valueRunRules) and `;`-after group
+    // (afterGroupRules) are disjoint, as the generic family's, because a run of groups (a
+    // sequence) needs each group's placement decided; every arm still holds the family's
+    // own value, never _property_value, so a one-pair arm cannot become a comparison.
     _ml_property_value: $ => choice(
       $.ml_value_list,
-      alias($._ml_value_conditional, $.preproc_conditional_property_value),
+      alias($._ml_after_group, $.preproc_conditional_property_value),
     ),
-    _ml_value_conditional: $ => keyedValueConditional($,
-      seq(field('value', $._ml_property_value), optional(';'))),
+    // B11: the ML `;`-inside rules and the `;`-after group (witnessed by an arm without
+    // its own `;`).
+    ...valueRunRules('_ml', $ => $._ml_property_value),
+    ...afterGroupRules('_ml', $ => $._ml_property_value),
+    ...afterSequenceRules('_ml'),
+    // B11: Namespaces is structurally the ML family again (a pair list, optional core,
+    // both placements, a `;`-after sequence, §3.1 steps 2 and 4).
     _namespaces_property_value: $ => choice(
       $.namespace_value_list,
-      alias($._namespaces_value_conditional, $.preproc_conditional_property_value),
+      alias($._namespaces_after_group, $.preproc_conditional_property_value),
     ),
-    _namespaces_value_conditional: $ => keyedValueConditional($,
-      seq(field('value', $._namespaces_property_value), optional(';'))),
+    ...valueRunRules('_namespaces', $ => $._namespaces_property_value),
+    ...afterGroupRules('_namespaces', $ => $._namespaces_property_value),
+    ...afterSequenceRules('_namespaces'),
 
     // TableRelation's value is the compiler's relation grammar (ParseTableRelationPropertyValue:
     // optional if(...), ONE ParseQualifiedName target, optional where, optional else).
@@ -935,9 +1426,14 @@ module.exports = grammar({
     // then it is the relation's conditional head, mirroring the existing
     // `relation preproc_conditional_table_relation` split (spec 2026-10-04 §3.2 item 4, rev 4).
     _table_relation_head: $ => choice($.simple_table_relation, $.if_table_relation),
+    // B11: a value-start group is the keyed family's `;`-after group (afterGroupRules) or,
+    // `;` inside, its valueRunRules groups (§3.1 steps 2 and 4), with a REQUIRED core
+    // (`TableRelation = #if X #endif ;` is AL0107 in every configuration,
+    // tools/alc_probe/cases/value-runs/all-empty-tablerelation.al). The relation's own
+    // continuation forms (§4.4) are unchanged.
     _table_relation_property_value: $ => choice(
       alias($._table_relation_rooted, $.table_relation_value),
-      alias($._table_relation_whole_conditional, $.preproc_conditional_property_value),
+      alias($._table_relation_after_group, $.preproc_conditional_property_value),
     ),
     _table_relation_rooted: $ => prec.right(5, choice(
       seq(
@@ -947,8 +1443,9 @@ module.exports = grammar({
       // the conditional head with a shared else tail
       seq($.preproc_conditional_table_relation, $.else_table_relation_fragment),
     )),
-    _table_relation_whole_conditional: $ => keyedValueConditional($,
-      seq(field('value', $._table_relation_property_value), optional(';'))),
+    ...valueRunRules('_table_relation', $ => $._table_relation_property_value),
+    ...afterGroupRules('_table_relation', $ => $._table_relation_property_value),
+    ...afterSequenceRules('_table_relation'),
     // `;` inside the arms (no `;` after #endif): the keyed form of the old
     // generic _table_relation_split_value.
     _table_relation_keyed_split: $ => choice(
@@ -962,35 +1459,16 @@ module.exports = grammar({
     // (link_value) serves all three: deliberate over-acceptance, not equivalence.
     _link_property_value: $ => choice(
       $.link_value_list,
-      alias($._link_whole_conditional, $.preproc_conditional_property_value),
+      alias($._link_after_group, $.preproc_conditional_property_value),
     ),
-    // `;` after #endif: arms MAY end in `;` (mixed placement is valid AL; the compiler's
-    // property list accepts a standalone `;`, ObjectParser.cs:7505-7516).
-    _link_whole_conditional: $ => keyedValueConditional($,
-      seq(field('value', $._link_property_value), optional(';'))),
-    // `;` inside the arms: arms may be absent and #else is optional, but the conditional
-    // must hold at least one present arm, recursively -- the termination witness that
-    // excludes the empty-prefix split (`#if X #endif B = field(A);`), spec §3.2 item 2.
-    _link_in_if_arm: $ => choice(
-      seq(field('value', $._link_property_value), ';'),
-      field('value', alias($._link_whole_conditional_in_if, $.preproc_conditional_property_value)),
-    ),
-    _link_in_if_tail: $ => seq(
-      repeat(seq($.preproc_elif, optional($._link_in_if_arm))),
-      optional(seq($.preproc_else, optional($._link_in_if_arm))),
-      $.preproc_endif,
-    ),
-    _link_whole_conditional_in_if: $ => choice(
-      // the #if arm is the witness
-      seq($.preproc_if, $._link_in_if_arm, $._link_in_if_tail),
-      // a later arm is the witness, after leading absent arms
-      seq($.preproc_if,
-        repeat($.preproc_elif),
-        choice(
-          seq($.preproc_elif, $._link_in_if_arm, $._link_in_if_tail),
-          seq($.preproc_else, $._link_in_if_arm, $.preproc_endif),
-        )),
-    ),
+    // B11: the link `;`-inside rules (step 2) and the `;`-after group (witnessed by an arm
+    // without its own `;`; mixed placement is valid AL, the compiler's property list
+    // accepts a standalone `;`, ObjectParser.cs:7505-7516). They replace B5b's
+    // _link_whole_conditional / _link_whole_conditional_in_if, whose termination witness
+    // (spec 2026-10-05 §3.2 item 2) is now group_t / group_nt's. A list arm takes no
+    // decorations: its element conditionals read them (listValue).
+    ...valueRunRules('_link', $ => $._link_property_value, true),
+    ...afterGroupRules('_link', $ => $._link_property_value, true),
 
     // const(...)'s numeric argument: sign and magnitude are ONE value node. Local `-`, not the
     // external NEGATIVE_* tokens, which decline before `)` (spec 2026-10-05 §3.2 item 6).
@@ -1010,10 +1488,25 @@ module.exports = grammar({
     // Pattern: Permissions = tabledata Foo = rimd, tabledata Bar = rimd #if ... ; #endif
     // The alias ensures the AST node type remains 'property'.
     // Lower precedence than 'property' so 'property' (with ';') is preferred when ';' follows.
-    permissions_property: $ => prec(-1, seq(
-      field('name', $.property_name),
-      '=',
-      field('value', $.tabledata_permission_list),
+    //
+    // B11: tabledata_permission_list's opening #if needs a witness (an empty one is a
+    // decoration of `property`'s value). Here, where the `;` is inside a branch, no
+    // decoration slot exists, so a list opened by an all-absent #if keeps its base tree:
+    // the empty conditional is the list's first element (_permission_list_empty_open).
+    // When `property` also completes (`Permissions = #if X #endif tabledata A = R;`,
+    // whose `;` this reading leaves to an empty_statement), prec.dynamic(-1) gives the
+    // text to `property`, as prec(-1) did when both read one list.
+    permissions_property: $ => prec(-1, choice(
+      seq(
+        field('name', $.property_name),
+        '=',
+        field('value', $.tabledata_permission_list),
+      ),
+      prec.dynamic(-1, seq(
+        field('name', $.property_name),
+        '=',
+        field('value', alias($._permission_list_empty_open, $.tabledata_permission_list)),
+      )),
     )),
 
     // `Permissions =` repeated per branch, each branch ending in a comma that
@@ -1035,14 +1528,22 @@ module.exports = grammar({
       repeat(seq($.preproc_elif, $._permissions_head)),
       optional(seq($.preproc_else, $._permissions_head)),
       $.preproc_endif,
-      field('value', $.tabledata_permission_list),
+      // B11: the tail continues the heads' lists, so an all-absent #if opening it is a
+      // list element, as before the witness (no decoration slot here).
+      field('value', choice(
+        $.tabledata_permission_list,
+        alias($._permission_list_empty_any, $.tabledata_permission_list),
+      )),
       ';',
     )),
 
     _permissions_head: $ => seq(
       field('name', $.property_name),
       '=',
-      field('value', $.tabledata_permission_list),
+      field('value', choice(
+        $.tabledata_permission_list,
+        alias($._permission_list_empty_any, $.tabledata_permission_list),
+      )),
     ),
 
     // --- Property variant whose terminating `;` sits inside a #if arm ---
@@ -1051,7 +1552,8 @@ module.exports = grammar({
     //   - a whole-property-value conditional (preproc_conditional_property_value),
     //       Caption = #if X 'A'; #else 'B'; #endif
     //     whose every nonempty arm ENDS the property: a value then `;`, or a
-    //     nested conditional of the same kind (_property_value_conditional_in_if).
+    //     nested conditional of the same kind (B11: _generic_in_core, one group or a
+    //     sequence of groups, spec 2026-10-05 §3.1 step 2).
     //     An empty arm still leaves its configuration without a value or `;`;
     //   - a relation continued into a #if whose arms carry the `;` (aliased to
     //     table_relation_value, the node a flat parse of one configuration
@@ -1064,44 +1566,67 @@ module.exports = grammar({
     // The alias keeps the AST node type `property`.
     // Lower precedence than 'property' so 'property' (with ';') is preferred when ';' follows.
     _property_with_terminator_in_if: $ => prec(-1, choice(
+      // B11: the generic core is one group or a sequence of groups (§3.1 step 2),
+      // decorations before it unfielded.
       seq(
         field('name', $.property_name),
         '=',
-        field('value', choice(
-          alias($._property_value_conditional_in_if, $.preproc_conditional_property_value),
-        )),
+        repeat($._value_decoration),
+        field('value', $._generic_in_core),
       ),
       // TableRelation (B5): the relation forms are reachable through its name only.
+      // B11: one group or a sequence (§3.1 step 2), or a `;`-after run ending in a
+      // terminated group (step 4); the relation splits stay a separate alternative (§4.4).
       seq(
         field('name', alias($._table_relation_property_name, $.property_name)),
         '=',
+        repeat($._value_decoration),
         field('value', choice(
-          alias($._table_relation_whole_conditional, $.preproc_conditional_property_value),
+          $._table_relation_in_core,
+          alias($._table_relation_sequence_after_t, $.preproc_conditional_property_value_sequence),
           alias($._table_relation_keyed_split, $.table_relation_value),
         )),
       ),
-      // CalcFormula (B8): `;` inside the arms.
+      // CalcFormula (B8): `;` inside the arms. B11: one group or a sequence (§3.1 step 2),
+      // or a `;`-after run ending in a terminated group (step 4), as ML.
       seq(
         field('name', alias($.calc_formula_property_name, $.property_name)),
         '=',
-        field('value', alias($._calc_formula_conditional, $.preproc_conditional_property_value)),
+        repeat($._value_decoration),
+        field('value', choice(
+          $._calc_formula_in_core,
+          alias($._calc_formula_sequence_after_t, $.preproc_conditional_property_value_sequence),
+        )),
       ),
-      // The keyed names (B4): their arms hold the family's list only.
+      // The keyed names (B4): their arms hold the family's list only. B11: the ML core
+      // is one group or a sequence (§3.1 step 2), or a `;`-after run ending in a terminated
+      // group (step 4): the site ends at that group, so a block after it and an
+      // unconditional `;` after the block are body content (§3.2, last row).
       seq(
         field('name', alias($._ml_property_name, $.property_name)),
         '=',
-        field('value', alias($._ml_value_conditional, $.preproc_conditional_property_value)),
+        repeat($._value_decoration),
+        field('value', choice(
+          $._ml_in_core,
+          alias($._ml_sequence_after_t, $.preproc_conditional_property_value_sequence),
+        )),
       ),
       seq(
         field('name', alias($._namespaces_property_name, $.property_name)),
         '=',
-        field('value', alias($._namespaces_value_conditional, $.preproc_conditional_property_value)),
+        repeat($._value_decoration),
+        field('value', choice(
+          $._namespaces_in_core,
+          alias($._namespaces_sequence_after_t, $.preproc_conditional_property_value_sequence),
+        )),
       ),
-      // The link family (B5b): `;` inside the arms, at least one present arm.
+      // The link family (B5b): `;` inside the arms. B11: one group or a sequence (§3.1
+      // step 2); the termination witness is group_t / group_nt's.
       seq(
         field('name', alias($._link_property_name, $.property_name)),
         '=',
-        field('value', alias($._link_whole_conditional_in_if, $.preproc_conditional_property_value)),
+        repeat($._value_decoration),
+        field('value', $._link_in_core),
       ),
     )),
 
@@ -1132,35 +1657,49 @@ module.exports = grammar({
       seq(
         field('name', $.property_name),
         '=',
-        field('value', alias($._property_value_conditional_in_if, $.preproc_conditional_property_value)),
+        repeat($._value_decoration),
+        field('value', $._generic_in_core),
       ),
       seq(
         field('name', alias($._ml_property_name, $.property_name)),
         '=',
-        field('value', alias($._ml_value_conditional, $.preproc_conditional_property_value)),
+        repeat($._value_decoration),
+        field('value', choice(
+          $._ml_in_core,
+          alias($._ml_sequence_after_t, $.preproc_conditional_property_value_sequence),
+        )),
       ),
       seq(
         field('name', alias($._namespaces_property_name, $.property_name)),
         '=',
-        field('value', alias($._namespaces_value_conditional, $.preproc_conditional_property_value)),
+        repeat($._value_decoration),
+        field('value', $._namespaces_in_core),
       ),
+      // B11: the `;`-inside core (spec 2026-10-05 §4.4), and for ML also a `;`-after run
+      // ending in a terminated group (step 4), as _property_with_terminator_in_if: the
+      // site ends at that group, so a following block is host content (§3.2, controller
+      // ruling 1). alc accepts ML at the action area. Namespaces takes the core only:
+      // both hosts reject it (AL0124).
       // No keyed TableRelation arm: both hosts reject TableRelation (AL0124, deferred-work
       // item 17), and it cost ~102 states (spec 2026-10-04 rev 4 item 6, Ruling M).
       // No keyed link arm either: RunPageLink on an action area is AL0124 (B5b Task 1,
       // tools/alc_probe/cases/link-keying/decide-runpagelink-action-area.al).
     )),
 
-    _property_value_conditional_in_if: $ => seq(
-      $.preproc_if,
-      optional($._property_value_branch_in_if),
-      repeat(seq($.preproc_elif, optional($._property_value_branch_in_if))),
-      optional(seq($.preproc_else, optional($._property_value_branch_in_if))),
+    // B11: the directive-only empty group (spec 2026-10-05 §3, §4.1), shared by every
+    // family: directive headers and nested empty groups, no value, no `;`. It is the only
+    // rule that may read an empty group; every core-bearing group rule has a witness.
+    _empty_value_conditional: $ => seq(
+      $.preproc_if, repeat($._value_decoration),
+      repeat(seq($.preproc_elif, repeat($._value_decoration))),
+      optional(seq($.preproc_else, repeat($._value_decoration))),
       $.preproc_endif,
     ),
-    _property_value_branch_in_if: $ => choice(
-      seq(field('value', $._property_value), ';'),
-      field('value', alias($._property_value_conditional_in_if, $.preproc_conditional_property_value)),
-    ),
+    _value_decoration: $ => alias($._empty_value_conditional, $.preproc_conditional_property_value),
+    // The generic family's `;`-inside rules. They replace G11's
+    // _property_value_conditional_in_if, which allowed an all-absent group and a single
+    // group only.
+    ...valueRunRules('_generic', $ => $._property_value),
 
     // A whole-property-value conditional: the entire value of a property is a
     // #if, and each nonempty arm holds ONE property value, fielded `value`,
@@ -1169,12 +1708,12 @@ module.exports = grammar({
     // This is _property_value's whole-value alternative, so the `;` after
     // #endif belongs to the property. When the `;` is inside the arms and
     // nothing follows #endif (`Caption = #if X 'A'; #else 'B'; #endif`), the
-    // same node comes from _property_value_conditional_in_if (G11).
+    // same node comes from _generic_group_t / _generic_group_nt (G11, B11).
     // Arms and terminators are both optional here, so the node does not promise
     // that every configuration supplies a value or a `;`. Each arm's value has
     // the shape a flat parse of that arm gives: a bare name is an `identifier`
     // or `quoted_identifier`, `A.B` a property_expression (B5: relations are
-    // TableRelation's keyed _table_relation_whole_conditional only).
+    // TableRelation's keyed groups only).
     //
     // History. This was `_table_relation_whole_conditional`, aliased to
     // preproc_conditional_table_relation although only some of its arms are
@@ -1183,15 +1722,40 @@ module.exports = grammar({
     // nested whole value (G3); and since G8 an arm is one _property_value.
     // Relation CONTINUATIONS -- an if/else chain extended by a #if -- remain
     // preproc_conditional_table_relation.
-    _property_value_conditional: $ => seq(
-      $.preproc_if,
-      optional($._property_value_branch),
-      repeat(seq($.preproc_elif, optional($._property_value_branch))),
-      optional(seq($.preproc_else, optional($._property_value_branch))),
+    //
+    // B11: the `;`-after group. Its witness (witnessConditional) is an arm WITHOUT its
+    // own `;` (_property_value_branch): a group whose every present arm ends in `;`,
+    // recursively, is the `;`-inside placement (§3.1), _generic_group_t / _group_nt,
+    // and a group with no present arm is _empty_value_conditional. The other slots
+    // may be terminated arms, non-terminated nested groups or decorations.
+    // Right-recursive tail units ending at #endif, as the generic `;`-inside groups
+    // (valueRunRules): spelled through witnessConditional's hidden repeats, the leading
+    // `#elif` slots met _generic_tail_10's in one auxiliary symbol, a conflict the
+    // generator cannot be told about.
+    _property_value_conditional: $ => choice(
+      seq($.preproc_if, $._property_value_branch, $._property_value_conditional_rest),
+      seq($.preproc_if, optional($._property_value_gap), $._property_value_conditional_lead),
+    ),
+    // a slot that is not the witness: a terminated arm, a non-terminated nested group
+    // or sequence, or decorations only
+    _property_value_gap: $ => choice($._generic_arm_t, $._generic_arm_nt, repeat1($._value_decoration)),
+    // after the witness: any slot
+    _property_value_conditional_rest: $ => choice(
+      seq($.preproc_elif, optional(choice($._property_value_branch, $._property_value_gap)),
+        $._property_value_conditional_rest),
+      seq($.preproc_else, optional(choice($._property_value_branch, $._property_value_gap)),
+        $.preproc_endif),
       $.preproc_endif,
     ),
+    // before the witness: gaps, then the witness in an #elif or the #else slot
+    _property_value_conditional_lead: $ => choice(
+      seq($.preproc_elif, optional($._property_value_gap), $._property_value_conditional_lead),
+      seq($.preproc_elif, $._property_value_branch, $._property_value_conditional_rest),
+      seq($.preproc_else, $._property_value_branch, $.preproc_endif),
+    ),
     // An arm is ONE property value, the same `_property_value` a flat parse of
-    // that arm uses, then an optional `;` (grammar finding G8). Before G8 the
+    // that arm uses, then an optional `;` (grammar finding G8; since B11 an arm with its
+    // own `;` is _generic_arm_t, through _property_value_gap). Before G8 the
     // arm listed its kinds by hand -- names and table relations (G2), literal
     // leaves (G4), a nested whole value (G3) -- and every other value ERRORed:
     // `OptionMembers = #if X A,B; #else C; #endif`, a Caption with `, Locked =
@@ -1203,7 +1767,13 @@ module.exports = grammar({
     // single-pair arm, grammar finding G9). The `;` is kept outside the field
     // so the field carries only the value (G6). +85 states at G8 and the seven
     // conflicts documented at the conflicts list.
-    _property_value_branch: $ => seq(field('value', $._property_value), optional(';')),
+    // B11: the arm without its own `;` (an arm with one is _generic_arm_t); decorations
+    // before and after the value, unfielded (§3.2 at an arm site).
+    _property_value_branch: $ => seq(
+      repeat($._value_decoration),
+      field('value', $._property_value),
+      repeat($._value_decoration),
+    ),
 
     // prec(-1), as on _property_with_terminator_in_if: at a following `;` the ordinary
     // property reading (table_relation_value -> table_relation_expression) wins.
@@ -1261,7 +1831,7 @@ module.exports = grammar({
       $.option_member_list,         // Option1, Option2, "Option 3"
       // A whole value that is a #if with one value per arm, `;` after #endif.
       // The same node and arm shape as _property_with_terminator_in_if's
-      // (`;` inside the arms, _property_value_conditional_in_if), so both
+      // (`;` inside the arms, _generic_in_core), so both
       // placements of the terminator give one shape.
       alias($._property_value_conditional, $.preproc_conditional_property_value),
       $.sorting_value,              // sorting("Starting Date")
@@ -1417,21 +1987,20 @@ module.exports = grammar({
       $.lookup_formula,
       $.aggregate_formula,
     ),
-    // A whole-value #if around the formula (B8, deferred-work item 16): the ML pattern,
-    // one conditional with an optional arm `;` serving both placements. alc accepts every
-    // shape (tools/alc_probe/cases/calcformula-conditional).
+    // A whole-value #if around the formula (B8, deferred-work item 16; alc accepts every
+    // shape, tools/alc_probe/cases/calcformula-conditional). B11: the keyed family's
+    // `;`-inside groups, `;`-after group and sequences (§3.1 steps 2 and 4), with a
+    // REQUIRED core: `CalcFormula = #if X #endif ;` is AL0104/AL0107 in every
+    // configuration (tools/alc_probe/cases/value-runs/all-empty-calcformula.al), so an
+    // all-empty site, which B8's optional-arm conditional read as a value, is an ERROR.
+    // An arm is a formula (or a nested group), never a call (issue #21).
     _calc_formula_value: $ => choice(
       $._calc_formula_expression,
-      alias($._calc_formula_conditional, $.preproc_conditional_property_value),
+      alias($._calc_formula_after_group, $.preproc_conditional_property_value),
     ),
-    _calc_formula_empty_conditional: $ => seq(
-      $.preproc_if,
-      repeat($.preproc_elif),
-      optional($.preproc_else),
-      $.preproc_endif,
-    ),
-    _calc_formula_conditional: $ => keyedValueConditional($,
-      seq(field('value', $._calc_formula_value), optional(';'))),
+    ...valueRunRules('_calc_formula', $ => $._calc_formula_value),
+    ...afterGroupRules('_calc_formula', $ => $._calc_formula_value),
+    ...afterSequenceRules('_calc_formula'),
 
     lookup_formula: $ => seq(
       $.lookup_keyword,
@@ -1818,17 +2387,38 @@ module.exports = grammar({
     // Items separated by commas, with preproc blocks interleaved
     // See the separator rule on `where_conditions`. alc on the omitted comma:
     //   Permissions = tabledata T1 = R tabledata T2 = R;  -> AL0104 "',' expected"
-    tabledata_permission_list: $ => $._permission_seq,
+    // B11: a list OPENED by a #if needs a witness in that #if; an empty opening #if is a
+    // decoration of the value (spec 2026-10-05 §3.1 step 1). Branches keep _permission_seq.
+    tabledata_permission_list: $ => prec.right(choice(
+      $._permission_run,
+      seq($._permission_run, $._permission_more),
+      seq(alias($._permission_open_conditional, $.preproc_conditional_permissions),
+        optional($._permission_run), optional($._permission_more)),
+    )),
+    ...listOpenerRules('_permission', 'preproc_conditional_permissions', '_permission_branch',
+      '_permission_seq', '_permission_run', '_permission_more', true),
+    // A permission list opened by an all-absent #if, for the hosts with no decoration
+    // slot (permissions_property, preproc_split_permissions_property and its heads):
+    // the shape tabledata_permission_list had before B11's witness.
+    // At permissions_property, never the empty conditional alone: then nothing is a
+    // list there, and the property would end at the #endif of an empty value.
+    _permission_list_empty_open: $ => prec.right(seq(
+      alias($._permission_empty_conditional, $.preproc_conditional_permissions),
+      choice(seq($._permission_run, optional($._permission_more)), $._permission_more),
+    )),
+    // In a split head or tail the list may be that conditional alone (base tree).
+    _permission_list_empty_any: $ => prec.right(seq(
+      alias($._permission_empty_conditional, $.preproc_conditional_permissions),
+      optional($._permission_run), optional($._permission_more),
+    )),
+    _permission_more: $ => prec.right(repeat1(seq($.preproc_conditional_permissions, optional($._permission_run)))),
 
     // prec.right: after a run, `preproc_open` is a shift/reduce — extend the
     // list or close it. A list extends as far as it can, same as every other
     // list rule here.
     _permission_seq: $ => prec.right(choice(
       $._permission_run,
-      seq(
-        optional($._permission_run),
-        repeat1(seq($.preproc_conditional_permissions, optional($._permission_run))),
-      ),
+      seq(optional($._permission_run), $._permission_more),
     )),
 
     _permission_run: $ => prec.right(seq(
@@ -1933,17 +2523,23 @@ module.exports = grammar({
     // --- Implementation value list ---
     // "My Interface" = "My Codeunit"
     // See the separator rule on `where_conditions`.
-    implementation_value_list: $ => prec.left($._impl_value_seq),
+    // B11: as tabledata_permission_list, the opening #if needs a witness.
+    implementation_value_list: $ => prec.right(choice(
+      $._impl_value_run,
+      seq($._impl_value_run, $._impl_value_more),
+      seq(alias($._impl_value_open_conditional, $.preproc_conditional_impl_values),
+        optional($._impl_value_run), optional($._impl_value_more)),
+    )),
+    ...listOpenerRules('_impl_value', 'preproc_conditional_impl_values', '_impl_value_branch',
+      '_impl_value_seq', '_impl_value_run', '_impl_value_more', false),
+    _impl_value_more: $ => prec.right(repeat1(seq($.preproc_conditional_impl_values, optional($._impl_value_run)))),
 
     // prec.right: after a run, `preproc_open` is a shift/reduce — extend the
     // list or close it. A list extends as far as it can, same as every other
     // list rule here.
     _impl_value_seq: $ => prec.right(choice(
       $._impl_value_run,
-      seq(
-        optional($._impl_value_run),
-        repeat1(seq($.preproc_conditional_impl_values, optional($._impl_value_run))),
-      ),
+      seq(optional($._impl_value_run), $._impl_value_more),
     )),
 
     _impl_value_run: $ => prec.right(seq(
@@ -2050,16 +2646,31 @@ module.exports = grammar({
       seq(
         choice(
           $.option_member,
-          seq($.preproc_conditional_option_members, $.option_member),
+          // B11: the opening #if has a witness, so an empty one is a decoration of the
+          // value, never a list opener (spec 2026-10-05 §3.4, the generic empty prefix).
+          seq(alias($._option_members_open_conditional, $.preproc_conditional_option_members), $.option_member),
         ),
-        repeat(seq(
-          ',',
-          choice(
-            optional($.option_member),
-            seq($.preproc_conditional_option_members, optional($.option_member))
-          )
+        repeat(choice(
+          seq(',', optional($.option_member)),
+          $._option_members_comma_conditional,
         ))
       ),
+      // B11 §3.1 step 3: an entirely conditional OptionMembers list, `;` after: element
+      // conditionals carry their own `,` and blank slots stay (spec §5.3, hole-aware), as
+      // the link list's conditional-led form does. Separators are the oracle's per
+      // configuration (list validator), not the grammar's. The leading #if must have an arm
+      // holding a `,` (`#if X A #endif , B;` is an ERROR, B13 debt), so a run of
+      // comma-free single values (`Caption = #if X 'a' #endif #if not X 'b' #endif ;`)
+      // stays the generic step 5 ERROR (B13): without the property name, a run of bare
+      // members is indistinguishable from it. The element after the leader is never a
+      // member: that is the first alternative's (`#if X A, #endif B, C`).
+      // prec.dynamic(-1): where another reading completes (an all-`,` run is also a
+      // Permissions list of `,` arms), that reading, the tree before B11, stays.
+      prec.dynamic(-1, seq(
+        alias($._option_members_run_open, $.preproc_conditional_option_members),
+        choice($.preproc_conditional_option_members, ','),
+        repeat(choice($.preproc_conditional_option_members, ',', $.option_member)),
+      )),
       // With leading commas (blank entries): ,,,Member,Member
       // Used by OptionMembers property and Option type: ,Sale,"Total Sale"
       seq(
@@ -2082,13 +2693,52 @@ module.exports = grammar({
       $.preproc_endif,
     ),
 
+    // `, #if ... #endif [member]` inside an option list. A rule of its own,
+    // prec.right(1), B11: after a `,` a #if is a mid-list conditional, never the end of
+    // the list (an empty slot) followed by a suffix decoration. Inside the list's repeat
+    // the two were one auxiliary symbol's items, which tree-sitter marks a repetition
+    // conflict and resolves to the reduce at runtime (lib/src/parser.c,
+    // `shift.repetition`), so precedence there was never consulted; out here the
+    // shift's prec(1) beats the reduce (right: a member after #endif is shifted, as the
+    // list did).
+    _option_members_comma_conditional: $ => prec.right(1, seq(
+      ',', $.preproc_conditional_option_members, optional($.option_member))),
+    // B11: the #if that OPENS an option list at a property has a witness (an empty one
+    // is a decoration of the value).
+    _option_members_open_conditional: $ => witnessConditional($, $._option_members_branch, null),
+    // An option list opened by an all-absent #if, for option_type, which has no
+    // decoration slot: the shape option_member_list had there before the witness.
+    _option_member_list_empty_open: $ => prec.right(seq(
+      alias($._option_members_empty_conditional, $.preproc_conditional_option_members),
+      $.option_member,
+      repeat(choice(
+        seq(',', optional($.option_member)),
+        $._option_members_comma_conditional,
+      )),
+    )),
+    _option_members_empty_conditional: $ => seq(
+      $.preproc_if, repeat($.preproc_elif), optional($.preproc_else), $.preproc_endif),
     // One branch's members: `A, B,` or `A, B` -- the same text in every branch,
-    // so one rule. Non-empty (tree-sitter forbids empty rules); each use site
-    // wraps it in optional().
+    // so one rule. Non-empty (tree-sitter forbids empty rules): the list-internal
+    // conditional wraps it in optional(), witnessConditional takes it as the witness.
+    // B11 (spec 2026-10-05 §4.1, §5.3 hole-aware): a branch may also hold blank slots --
+    // a leading `,`, consecutive `,,` and a trailing `,` -- so that every comma and
+    // every ordinal of an entirely conditional list survives. Either one member, or a
+    // branch with at least one `,` (_option_members_branch_c), which the entirely
+    // conditional list uses as its witness.
     _option_members_branch: $ => choice(
-      seq(repeat1(seq($.option_member, ',')), optional($.option_member)),
+      $._option_members_branch_c,
       $.option_member,
     ),
+    // Right-recursive: no two members adjacent. (A repeat here would be merged with
+    // option_member_list's identical `repeat1(',')` into one auxiliary symbol.)
+    _option_members_branch_c: $ => choice(
+      seq(',', optional($._option_members_branch)),
+      seq($.option_member, ',', optional($._option_members_branch)),
+    ),
+    // The leader of the entirely conditional list (option_member_list, B11): a #if with
+    // an arm holding a `,` (every other present arm one member).
+    _option_members_run_open: $ => witnessConditional($, $._option_members_branch_c, $.option_member),
 
     option_member: $ => choice(
       $.identifier,
@@ -2336,9 +2986,15 @@ module.exports = grammar({
 
     // Option with optional member list: Option OptionA, OptionB
     // Supports leading commas: Option ,,,,"Page","Query"
+    // B11: option_member_list's opening #if needs a witness (at a property an empty one
+    // is a decoration of the value); a type has no decoration slot, so an all-absent
+    // opening #if keeps its base tree here (_option_member_list_empty_open).
     option_type: $ => prec.right(1, seq(
       $.option_keyword,
-      optional($.option_member_list)
+      optional(choice(
+        $.option_member_list,
+        alias($._option_member_list_empty_open, $.option_member_list),
+      ))
     )),
 
     // Record "Customer" or Record Customer or Record 2000000041 [temporary]
