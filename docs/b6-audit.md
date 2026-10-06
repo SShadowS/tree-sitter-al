@@ -55,7 +55,10 @@ split. Example (DC, `CDCAdvPOApprovalTest.Codeunit.al`, line 90):
 >    left: (list_literal [89, 17] - [89, 20]
 ```
 
-Classified by a script over every hunk: bc 5,448 of 5,590, dc 2,019 of 2,019, bc28 5,912 of
+Classification rule, applied to every diff hunk (`NNN[,NNN]{a,c,d}NNN` header up to the
+next header or `=== CHANGED`): a hunk is the subscript split when a `<` line contains
+`subscript_expression` and a `>` line contains `list_literal`; otherwise it "involves ERROR"
+when any of its lines contains `ERROR`; otherwise it is "other". Counts: bc 5,448 of 5,590, dc 2,019 of 2,019, bc28 5,912 of
 6,062 and bcapps 14,735 of 15,228 are this subscript split. The remaining bc/bc28 hunks, and
 467 in bcapps, are its consequence on the enclosing node: the end of a `for`/`if` whose body
 was `X[i] := …` moves to the end of the lone `X` (`for_statement [57, 8] - [58, 51]` becomes
@@ -151,7 +154,14 @@ No changed node is a valid procedure outside an old ERROR region. **Pass.**
 
 ## Step 4: performance
 
-OLD library: main `48d04e2` (its `src/` equals this branch's base `43b157d`), checked out as a
+OLD library: main `48d04e2`. Its `src/` equals this branch's base `43b157d`:
+
+```
+$ git diff --stat 48d04e2 43b157d -- src/; echo "exit=$?"
+exit=0
+```
+
+(no output before `exit=0`: no file differs). It was checked out as a
 throwaway worktree in the scratchpad and built with
 `./tools/ts-lock.sh tree-sitter build --output old.dll <worktree>`. NEW: the same command on
 this checkout. Both clang-cl; the worktree was removed afterwards.
@@ -163,9 +173,68 @@ anonymous `in` token: `in` on main, `identifier` on this branch, 114 rows. Type,
 fields and `has_error` agree. This comes from Task 5's `_in_token` under the `code_names`
 reserved set. tree-harness does not see it because it compares the displayed tree.
 
-To time anyway, `ab` was run through a scratchpad wrapper that replaces `ab.trees_identical`
-with the same comparison, except that the `grammar_name` of anonymous `in` rows is ignored.
-Everything else (pinning to CPU 2, ABBA order, warm-up, bootstrap CI) is `ab` unchanged.
+The 43-file figure came from this script (`rowdiff.py`, run from the repo root with
+`PYTHONPATH=. python rowdiff.py <dir holding old.dll and new.dll>`). Python's `glob` skips
+dot-directories, so `.dependencies` is not covered, which is why it reports 43 and not 148.
+Output: `files 43 row-count-differs 0` and `114 (('grammar_name',), 'in', 'in', 'identifier')`.
+
+```python
+import sys, json, collections, glob
+from pathlib import Path
+from tools.query_coverage import loader
+from tools.perf import incremental
+S = sys.argv[1]
+pa = loader.make_parser(loader.load_language(Path(S + '/old.dll')))
+pb = loader.make_parser(loader.load_language(Path(S + '/new.dll')))
+kinds = collections.Counter(); nfiles = 0; other = 0
+for f in glob.glob('DC/**/*.al', recursive=True):
+    src = open(f, 'rb').read()
+    ra, rb = incremental.rows(pa.parse(src)), incremental.rows(pb.parse(src))
+    if ra == rb: continue
+    nfiles += 1
+    if len(ra) != len(rb): other += 1; continue
+    for x, y in zip(ra, rb):
+        if x != y:
+            diff = tuple(incremental.ROW_FIELDS[i] for i in range(len(x)) if x[i] != y[i])
+            kinds[(diff, x[1], x[2], y[2])] += 1
+print('files', nfiles, 'row-count-differs', other)
+for k, v in kinds.most_common(): print(v, k)
+```
+
+To time anyway, `ab` was run through this wrapper (`ab_mask_in.py`). It replaces
+`ab.trees_identical` with the same comparison over `tools.perf.incremental.rows`, which has
+these fields per node: depth, type, grammar_name, named, missing, extra, field, start_byte,
+end_byte, start_point, end_point, has_error. The one exception: `grammar_name` is set to
+`None` on rows whose type is `in` and that are anonymous. Every other field of every row is
+compared as before.
+
+```python
+"""Run `python -m tools.perf ab` with ONE relaxation of its tree-identity check: the
+grammar_name of the anonymous `in` token is ignored (B6 Task 5 backs it with `_in_token`,
+reported as `identifier`; type, spans, fields and everything else are still compared)."""
+import sys
+from tools.perf import ab, incremental
+
+def rows_masked(tree):
+    return [r[:2] + (None,) + r[3:] if (r[1] == 'in' and not r[3]) else r
+            for r in incremental.rows(tree)]
+
+def trees_identical(pa, pb, files):
+    return [f"{l}:{rel}" for l, rel, src in files if rows_masked(pa.parse(src)) != rows_masked(pb.parse(src))]
+
+ab.trees_identical = trees_identical
+from tools.perf.__main__ import main
+sys.exit(main(['ab'] + sys.argv[1:]))
+```
+
+Run three times from the repo root, N = 1, 2, 3:
+
+```
+PYTHONPATH=. python ab_mask_in.py --lib-a old.dll --lib-b new.dll --corpus dc --rounds 24 --out abmN
+```
+
+The tree check passed on all 1,352 files. Everything else (pinning to CPU 2, ABBA order,
+warm-up, bootstrap CI) is `ab` unchanged.
 The machine was busy in all three runs: outside-CPU mean 8.7-10.1 cores, over `ab`'s 4.5
 threshold.
 
@@ -190,6 +259,8 @@ interleaved:
 | 3 | 157.89 | 33.98 | 4.65 |
 
 Both libraries build byte-identical trees for this file (5,000 `assignment_statement`, no
-ERROR or MISSING). On this input the narrowed grammar is about 4x faster, presumably because
-GLR no longer keeps a statement reading of each torn continuation alive. Not investigated
-further.
+ERROR or MISSING). On this input the narrowed library took about a quarter of the time.
+**Not investigated: do not quote the ~4x as established.** It is three single-shot CLI
+timings on one synthetic input, not pinned and not `ab`. No cause was measured. One
+possibility is that GLR no longer keeps a statement reading of each torn continuation alive,
+but that is a guess.
