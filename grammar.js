@@ -439,7 +439,8 @@ module.exports = grammar({
   // AL keyword-vs-identifier disambiguation is contextual and handled by the
   // grammar (see keyword_as_identifier) and the scanner. The contextual sets
   // below are applied with reserved('name', rule): the first two at exactly one
-  // site each, `code_names` at three (see its comment).
+  // site each, `code_names` on three rules (`_expression`, `call_expression`'s
+  // `function` choice and `_expression_statement`; see its comment).
   reserved: {
     global: $ => [],
     // `true`/`false` inside an implementation mapping. A one-entry
@@ -472,7 +473,9 @@ module.exports = grammar({
     // (the expression primary), `call_expression`'s `function` choice (the callee) and
     // `_expression_statement` (the statement start), for +0 states. A generic property
     // value shares its first parse state with `option_member`, so the set reaches a first
-    // option member too; `option_member` takes the seven tokens back as identifiers (+2).
+    // option member too. alc accepts the seven words as option members
+    // (tools/alc_probe/cases/expression-statement/accept-option-member-operator-words.al),
+    // so `option_member` has seven arms that take the tokens back as identifiers (+2 states).
     code_names: $ => [$._and_token, $._or_token, $._xor_token, $._div_token,
                       $._mod_token, $._in_token, $._not_token],
   },
@@ -5518,10 +5521,14 @@ module.exports = grammar({
     // NOT in `inline`, on purpose. Two earlier narrowings left it inlined, so its
     // precedence and conflicts were macro-substituted into each host separately, and
     // BC.History fell to 35.7% / 33.3%. De-inlined, BC.History, DC and BC28.1 are
-    // byte-identical and BCApps differs only in one file that already holds an ERROR.
+    // byte-identical and BCApps differs only in two files that already hold an ERROR.
     //
     // prec(-1): at `begin X • -` the statement reduction and the `_expression` one
     // compete; no statement can be followed by an operator, so the expression wins.
+    // It also keeps a subscript target together. Statements need no separator and a
+    // list literal can start one, so at `X • [` GLR otherwise keeps `X` plus a
+    // `[1] := 2;` statement instead of `X[1] := 2;`. Measured without it (docs/b6-audit.md):
+    // 381 / 10 / 405 / 979 files change in BC.History / DC / BC28.1 / BCApps.
     // The `_value_start_keyword_name` arm: `table`/`order` are live keyword tokens at
     // statement start, so a parenless call to a procedure named `Order` arrives as one.
     _expression_statement: $ => prec(-1, reserved('code_names', choice(

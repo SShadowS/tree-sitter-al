@@ -128,7 +128,16 @@ STATEMENT and the operand a loose statement; fixture case 5 pins the tail tree (
 probe_alc `split_keyword_operator_*`). An arm mixing the two forms
 (`#if X + #else + 3 #endif 2`) still ERRORs; one configuration of it is invalid AL anyway.
 
-## 4. `_expression_statement` accepts any expression as a statement
+## 4. `_expression_statement` accepts any expression as a statement — RESOLVED 2026-10-06
+
+**Resolved by B6** (`8217c85` narrowing and de-inlining, `9dbf281` reserved set `code_names`; evidence `9dcd7c9`,
+fixtures `46da22e`, `bb97903`, audit `b576b60`, oracle `be4d14c`, `c74b55e`; spec
+`docs/superpowers/specs/2026-10-06-expression-statement-narrowing-design.md`). The rule is an invocation (call,
+member, bare or quoted name, `Order`/`Table`) and is no longer in `inline`; the lead below was right. Literal,
+unary, operator-led, comparison, parenthesised and subscript statements now ERROR, as alc rejects them (AL0104,
+AL0117). STATE_COUNT 23,186 -> 23,213; valid trees byte-identical in BC.History, DC and BC28.1, and in BCApps two
+files that already hold an ERROR change their recovery (`docs/b6-audit.md`). Left open: items 39 (B7 gaps) and 40.
+The record below is kept as written.
 
 **Established:** two measured attempts, both reverted. Their diffs are stashed with
 the messages `failed: _expression_statement restriction (BC 35.7%)` and
@@ -1445,6 +1454,39 @@ identical tree, controller A/B) and the text is invalid AL in every configuratio
 `prec.dynamic(-1)` that preserves base trees, and not endorsed. Production sites: 0.
 
 **Next step:** none required; revisit if `OptionMembers` is keyed by name (item 37), which would remove the ambiguity.
+
+**Owner:** unassigned.
+
+## 39. Two valid split shapes that B6 made a loud ERROR (roadmap B7)
+
+**Established:** 2026-10-06, B6. Both are valid AL in every configuration, parsed clean and wrong before B6, and ERROR
+since:
+
+1. A repeat-until condition continued by a keyword-operator `#if` arm: `repeat Foo(); until C` / `#if X` / `and (C)` /
+   `#endif` / `;`. Before B6 the continuation read as a call to a function named `and`; `code_names` now reserves the
+   word. alc accepts both configurations (`tools/alc_probe/cases/expression-statement/torn-until-and.al`).
+   `repeat ... until` has no continuation facility.
+2. An assignment continued with `;` inside every arm: `B := A` / `#if X` / `+ 1;` / `Foo();` / `#else` / `;` /
+   `#endif`. Before B6 `+ 1` was a unary statement; a statement is now an invocation. alc accepted both configurations
+   (B6 Task 4 split probe, not committed). The assignment's tail takes only `;`-after-`#endif` arms.
+
+Pinned in `test/corpus/expression_statement_b7_gap_test.txt` (listed in `tools/deliberate-negatives.txt`) and in the
+`B7_GAP` list of `tools/config_oracle/tests/test_expression_statement.py`; the oracle classifies both `debt(B7)`.
+Production sites: 0 (tree-harness over the four corpora shows no valid tree changed).
+
+**Next step:** B7 gives both hosts a continuation, moves the two cases to a positive fixture, and inverts
+`test_b7_gap_is_loud_not_silent` (has_error must become False).
+
+**Owner:** B7.
+
+## 40. A bare parenless call has two shapes: `Bar;` and `Order;`
+
+**Established:** 2026-10-06, B6 Task 4; pre-existing, not changed by B6. `Bar;` parses as
+`(call_statement function: (identifier))`, but `Bar` before `end` (no `;`) and `Order;` give a bare `(identifier)`
+statement: `call_statement` takes only identifier and quoted-identifier tokens, and `Order` arrives through
+`_value_start_keyword_name`. Pinned in `test/corpus/expression_statement_test.txt` as current behaviour, not a contract.
+
+**Next step:** pick one shape for "a bare name as a statement" and route every arm to it.
 
 **Owner:** unassigned.
 
