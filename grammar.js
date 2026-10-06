@@ -2125,8 +2125,10 @@ module.exports = grammar({
           ')'
         ),
         // const(value) — also accepts keyword identifiers like Report, Page, Codeunit, Action
+        // Numbers are _const_numeric, as in a link's const (B5b): sign and magnitude are ONE
+        // value node, so const(-1), const(1.5) and const(1000L) parse (deferred-work 34).
         seq($.const_keyword, '(', optional(field('value', choice(
-          $.string_literal, $.identifier, $.quoted_identifier, $.integer, $.boolean,
+          $.string_literal, $.identifier, $.quoted_identifier, $._const_numeric, $.boolean,
             alias($._value_start_keyword_name, $.identifier),
           $.database_reference, $.qualified_enum_value, $.keyword_identifier,
           $.datetime_literal, $.date_literal, $.time_literal,
@@ -2153,6 +2155,7 @@ module.exports = grammar({
       $.database_reference,    // Report::"Name", Page::"Name", etc.
       $.keyword_identifier,    // Keywords used as filter values (Page, Codeunit, etc.)
       '..',  // Range operator
+      $.filter_group,          // (1|2)&3: a parenthesised sub-filter (deferred-work 31)
       seq('-', $.integer),     // Negative integer: -1, -100
       '-',   // Negation sign (standalone)
       $.filter_operator,
@@ -2175,6 +2178,12 @@ module.exports = grammar({
     // *expression* comparison, already visible, and its members are single
     // operators rather than the runs a filter allows.
     filter_operator: $ => token(prec(-1, /[<>=|&@*%]+/)),
+
+    // A parenthesised group inside a filter, `filter((1|2)&3)`: alc groups alternatives
+    // and ranges this way, at link and where hosts alike, nested to any depth, and refuses
+    // unbalanced parentheses (AL0104; tools/alc_probe/cases/deferred-31-32-34). Recursive,
+    // so the parentheses must balance; a `(` inside a string literal stays text.
+    filter_group: $ => seq('(', $.filter_value, ')'),
 
     // --- Sorting/SourceTableView value ---
     // sorting("Starting Date") order(ascending) where("Status" = const(Active))
@@ -3257,6 +3266,7 @@ module.exports = grammar({
       $.page_field,
       $.part_section,
       $.systempart_section,
+      $.chartpart_section,
       $.usercontrol_section,
       $.label_section,
       // Preprocessor in layout
@@ -3378,6 +3388,19 @@ module.exports = grammar({
     // part(PartName; PageName) { }
     part_section: $ => seq(
       $.part_keyword,
+      '(',
+      field('name', $._identifier_or_quoted),
+      ';',
+      field('source', $._identifier_or_quoted),
+      ')',
+      $._declaration_body_block
+    ),
+
+    // chartpart(Chart; "Sales Chart") { } -- a reserved word in alc (AL0104 as a variable or
+    // field name), valid wherever part is except a repeater (AL0376, a host rule the
+    // parser does not enforce, as for part). Deferred-work 32.
+    chartpart_section: $ => seq(
+      $.chartpart_keyword,
       '(',
       field('name', $._identifier_or_quoted),
       ';',
@@ -6914,6 +6937,7 @@ module.exports = grammar({
     grid_keyword: $ => alias(kw('grid'), 'grid'),
     part_keyword: $ => alias(kw('part'), 'part'),
     systempart_keyword: $ => alias(kw('systempart'), 'systempart'),
+    chartpart_keyword: $ => alias(kw('chartpart'), 'chartpart'),
     usercontrol_keyword: $ => alias(kw('usercontrol'), 'usercontrol'),
     dataset_keyword: $ => alias(kw('dataset'), 'dataset'),
     elements_keyword: $ => alias(kw('elements'), 'elements'),

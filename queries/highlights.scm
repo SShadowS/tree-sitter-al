@@ -123,6 +123,7 @@
   (grid_keyword)
   (part_keyword)
   (systempart_keyword)
+  (chartpart_keyword)
   (usercontrol_keyword)
   (dataset_keyword)
   (elements_keyword)

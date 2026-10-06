@@ -139,7 +139,7 @@ _BODY_ELEMENT = frozenset({
 # preproc_conditional_layout's own arm and preproc_conditional_layout_mixed's.
 _LAYOUT_ELEMENT = frozenset({
     "area_section", "group_section", "repeater_section", "cuegroup_section", "fixed_section",
-    "grid_section", "page_field", "part_section", "systempart_section", "usercontrol_section",
+    "grid_section", "page_field", "part_section", "systempart_section", "chartpart_section", "usercontrol_section",
     "label_section", "preproc_conditional_layout", "preproc_split_field",
     "addfirst_modification", "addlast_modification", "addafter_modification",
     "addbefore_modification", "modify_modification", "preproc_split_modify",

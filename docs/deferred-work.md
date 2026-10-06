@@ -1217,7 +1217,11 @@ in the link properties: 0 (`./tools/corpus-grep.sh -P -i -c '(SubPageLink|RunPag
 
 **Owner:** B7.
 
-## 31. `filter((1|2)&3)` ERRORs
+## 31. `filter((1|2)&3)` ERRORs — RESOLVED 2026-10-06
+
+**Resolved by `4c61c96`** (evidence `43b824a`, `tools/alc_probe/cases/deferred-31-32-34`). `filter_value` gains a recursive
+`filter_group` (`(` `filter_value` `)`), shared by the link and `where` hosts; unbalanced parentheses stay an ERROR, as alc
+rejects them (AL0104). The record below is kept as written.
 
 **Established:** 2026-10-05, B5b. alc ACCEPTS `RunPageLink = Amount = filter((1|2)&3);` (probe
 `decide-filter-parenthesized.al`). `filter_value` has no parentheses, so the grammar ERRORs; the rule
@@ -1228,7 +1232,11 @@ is shared with `where_clause`, so a fix covers both hosts. Production sites: 0
 
 **Owner:** unassigned.
 
-## 32. `chartpart` has no grammar rule
+## 32. `chartpart` has no grammar rule — RESOLVED 2026-10-06
+
+**Resolved by `4c61c96`.** `chartpart_section` (fields `name`, `source`) and `chartpart_keyword` join `_layout_element`
+beside `part`/`systempart`. alc rejects chartpart in a repeater (AL0376), a host rule the parser does not enforce, as for `part`.
+`chartpart` is reserved in alc (AL0104 as a name) but still parses as an identifier, unchanged. The record below is kept as written.
 
 **Established:** 2026-10-05, B5b. A bare `chartpart(C; "Sales Chart") { }` in a page layout is ERROR in
 the grammar (pre-existing, not a B5b regression). alc ACCEPTS it (probe in the B5b Task 6 session:
@@ -1276,7 +1284,10 @@ arm as transparent; fix only if a production shape needs it.
 
 **Owner:** unassigned.
 
-## 34. `where(B = const(-1))` ERRORs
+## 34. `where(B = const(-1))` ERRORs — RESOLVED 2026-10-06
+
+**Resolved by `4c61c96`.** `where_condition`'s const value is `_const_numeric`, as in a link's const, so `const(-1)`,
+`const(1.5)` and `const(1000L)` parse, a signed number as one `unary_expression`. The record below is kept as written.
 
 **Established:** 2026-10-05, found in the B5b Task 3 review; pre-existing. `where_condition`'s `const`
 takes no signed number, so `TableRelation = Cust."No." where(Amount = const(-1));` ERRORs on the `-1`.

@@ -10735,7 +10735,7 @@
                           },
                           {
                             "type": "SYMBOL",
-                            "name": "integer"
+                            "name": "_const_numeric"
                           },
                           {
                             "type": "SYMBOL",
@@ -10888,6 +10888,10 @@
             "value": ".."
           },
           {
+            "type": "SYMBOL",
+            "name": "filter_group"
+          },
+          {
             "type": "SEQ",
             "members": [
               {
@@ -10921,6 +10925,23 @@
           "value": "[<>=|&@*%]+"
         }
       }
+    },
+    "filter_group": {
+      "type": "SEQ",
+      "members": [
+        {
+          "type": "STRING",
+          "value": "("
+        },
+        {
+          "type": "SYMBOL",
+          "name": "filter_value"
+        },
+        {
+          "type": "STRING",
+          "value": ")"
+        }
+      ]
     },
     "sorting_value": {
       "type": "PREC",
@@ -17027,6 +17048,10 @@
         },
         {
           "type": "SYMBOL",
+          "name": "chartpart_section"
+        },
+        {
+          "type": "SYMBOL",
           "name": "usercontrol_section"
         },
         {
@@ -17402,6 +17427,47 @@
         {
           "type": "SYMBOL",
           "name": "part_keyword"
+        },
+        {
+          "type": "STRING",
+          "value": "("
+        },
+        {
+          "type": "FIELD",
+          "name": "name",
+          "content": {
+            "type": "SYMBOL",
+            "name": "_identifier_or_quoted"
+          }
+        },
+        {
+          "type": "STRING",
+          "value": ";"
+        },
+        {
+          "type": "FIELD",
+          "name": "source",
+          "content": {
+            "type": "SYMBOL",
+            "name": "_identifier_or_quoted"
+          }
+        },
+        {
+          "type": "STRING",
+          "value": ")"
+        },
+        {
+          "type": "SYMBOL",
+          "name": "_declaration_body_block"
+        }
+      ]
+    },
+    "chartpart_section": {
+      "type": "SEQ",
+      "members": [
+        {
+          "type": "SYMBOL",
+          "name": "chartpart_keyword"
         },
         {
           "type": "STRING",
@@ -30629,6 +30695,18 @@
       },
       "named": false,
       "value": "systempart"
+    },
+    "chartpart_keyword": {
+      "type": "ALIAS",
+      "content": {
+        "type": "TOKEN",
+        "content": {
+          "type": "PATTERN",
+          "value": "(?i)chartpart"
+        }
+      },
+      "named": false,
+      "value": "chartpart"
     },
     "usercontrol_keyword": {
       "type": "ALIAS",

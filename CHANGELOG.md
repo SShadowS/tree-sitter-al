@@ -203,6 +203,22 @@ public API — a change to node structure or field names is a **major** bump.
 
 ### Fixed
 
+- **Three valid link/where/layout forms that ERRORed now parse (deferred-work items 31, 32
+  and 34).** All three are accepted by alc 18.0.41, split and flat
+  (`tools/alc_probe/cases/deferred-31-32-34`, 41 probes); none occurs in the four
+  production corpora, whose trees are byte-identical (BC.History, DC, BC28.1, BCApps-29.0).
+  - `where(B = const(-1))`: `where_condition`'s `const` value takes `_const_numeric`, as a
+    link's `const` does since B5b, so `const(-1)`, `const(1.5)` and `const(1000L)` parse;
+    a signed number is one `unary_expression` value (item 34).
+  - `filter((1|2)&3)`: new `filter_group` node, `(` `filter_value` `)`, recursive, valid in
+    link and `where` filters alike; unbalanced parentheses stay an ERROR (item 31).
+  - `chartpart(C; "Sales Chart") { }`: new `chartpart_section` (fields `name`, `source`)
+    and `chartpart_keyword` in page layouts, beside `part`/`systempart` (item 32). Like
+    `part`, the parser does not enforce alc's repeater host rule (AL0376). Highlights,
+    folds and indents capture it.
+  New node types: `filter_group`, `chartpart_section`, `chartpart_keyword` (154 named
+  keywords: 152 rules + 2 external). STATE_COUNT 23,149 -> 23,186.
+
 - **A whole-value `#if` around a `CalcFormula` value parses (roadmap B8, deferred-work item
   16).** `CalcFormula = #if X sum(S.A) #else max(S.A) #endif;` was an ERROR with the `;` after
   `#endif`, in the arms, or mixed; alc accepts every shape (`#elif`, nested, `where()` arms, a

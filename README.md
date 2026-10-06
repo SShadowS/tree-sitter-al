@@ -19,7 +19,7 @@ Validated against **36,852 production AL files** from two independent codebases 
 | parser.c size | 32.1 MiB (33,643,658 bytes) |
 | grammar.js | 5,334 lines |
 | Named node types | 467 |
-| Named keywords | 153 (151 grammar rules + 2 external; queryable via highlights/tags) |
+| Named keywords | 154 (152 grammar rules + 2 external; queryable via highlights/tags) |
 | Scanner tokens | 9 (stateful, depth-tracking) |
 | Query files | 6 (highlights, locals, tags, indents, folds, textobjects) |
 
@@ -206,7 +206,7 @@ The grammar was rewritten from scratch in March 2026, achieving a **major reduct
 | States | 29,126 | **14,442** |
 | grammar.js | 8,500 lines | **5,303 lines** |
 | Tests | 1,225 | **1,615** |
-| Keywords | invisible in queries | **153 named nodes** |
+| Keywords | invisible in queries | **154 named nodes** |
 | Query files | 3 (partial) | **6 (comprehensive)** |
 
 ### Key design decisions
@@ -214,7 +214,7 @@ The grammar was rewritten from scratch in March 2026, achieving a **major reduct
 - **Stateful external scanner** — 9 scanner tokens handle property disambiguation, depth tracking (`#if`/`#endif` nesting), named `begin`/`end` keywords at every depth, and split-construct detection via lookahead.
 - **Parse structure, don't validate** — Accept any `Name = Value ;` as a property. Semantic validation belongs in linters/LSP servers, not the parser.
 - **Generic preprocessor** — One `preproc_conditional` rule + 20 dedicated rules for genuinely complex split constructs (begin/end, var/begin, brace-close across `#if`/`#else` branches).
-- **153 named keyword nodes** (151 grammar rules + 2 external scanner tokens) — All keywords including `begin`/`end` are named nodes, enabling proper syntax highlighting and code navigation queries. Every grammar keyword rule has a uniform shape: one anonymous child typed as the canonical lowercase spelling, whatever the source casing. Read a keyword's text from the node itself, never by descending into a child.
+- **154 named keyword nodes** (152 grammar rules + 2 external scanner tokens) — All keywords including `begin`/`end` are named nodes, enabling proper syntax highlighting and code navigation queries. Every grammar keyword rule has a uniform shape: one anonymous child typed as the canonical lowercase spelling, whatever the source casing. Read a keyword's text from the node itself, never by descending into a child.
 
 See [docs/v2-blog-post-notes.md](docs/v2-blog-post-notes.md) for the full rewrite narrative.
 

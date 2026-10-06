@@ -85,6 +85,27 @@ FIELD_INVARIANTS = [
             'unary_expression',
         }),
 
+    # where(A = const(-1)) -- the const value took no signed number, so `-1`
+    # ERRORed (deferred-work 34). Fixed by reusing _const_numeric: sign and
+    # magnitude are ONE unary_expression value, never `-` beside the number.
+    inv('where_condition', 'value', False, set(), 'FIXED',
+        "a signed const was an ERROR; it is now one unary_expression value",
+        types={
+            'biginteger_literal', 'boolean', 'database_reference', 'date_literal',
+            'datetime_literal', 'decimal', 'filter_value', 'identifier', 'integer',
+            'keyword_identifier', 'qualified_enum_value', 'quoted_identifier',
+            'string_literal', 'time_literal', 'unary_expression',
+        }),
+
+    # chartpart(Name; Source) -- no rule until deferred-work 32. Both header
+    # names are fielded alone, as in part_section / systempart_section.
+    inv('chartpart_section', 'name', False, set(), 'FIXED',
+        "chartpart had no rule; its header names are fielded alone",
+        types={'identifier', 'quoted_identifier'}),
+    inv('chartpart_section', 'source', False, set(), 'FIXED',
+        "chartpart had no rule; its header names are fielded alone",
+        types={'identifier', 'quoted_identifier'}),
+
     # Implementation = "IFace" = "Impl" -- one entry is also a complete
     # comparison, so property_expression parsed the single-entry form and
     # implementation_value only ever modelled the comma-separated one (issue

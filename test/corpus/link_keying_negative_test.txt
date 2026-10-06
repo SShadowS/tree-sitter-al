@@ -320,7 +320,7 @@ page 50100 P
                         value: (quoted_identifier)))))))))))))
 
 ================================================================================
-NEGATIVE decide-chartpart-subpagelink.al, alc reject(AL0171): ERROR at the chartpart control itself, which this grammar does not know (pre-existing, unchanged by B5b)
+NEGATIVE decide-chartpart-subpagelink.al, alc reject(AL0171): OVER-ACCEPTED: a clean chartpart tree since deferred-work 32 gave chartpart a rule (AL0171 is semantic)
 ================================================================================
 
 page 50100 P
@@ -348,15 +348,19 @@ page 50100 P
           (area_section
             (area_keyword)
             type: (content_keyword)
-            (ERROR
-              (identifier)
-              (identifier)
-              (quoted_identifier)
-              (identifier)
-              (quoted_identifier)
-              (field_keyword)
-              (quoted_identifier)
-              (ERROR))))))))
+            body: (layout_body
+              (chartpart_section
+                (chartpart_keyword)
+                name: (identifier)
+                source: (quoted_identifier)
+                body: (declaration_body
+                  (property
+                    name: (property_name)
+                    value: (link_value_list
+                      (link_value
+                        field: (quoted_identifier)
+                        (field_keyword)
+                        value: (quoted_identifier)))))))))))))
 
 ================================================================================
 NEGATIVE decide-const-datetime-nonzero.al, alc reject(AL0257): OVER-ACCEPTED: a clean link tree (AL0257 is a range error)
