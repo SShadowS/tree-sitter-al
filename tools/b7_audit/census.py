@@ -177,9 +177,11 @@ def _sibling_sym(node, name):
 def boundaries(g):
     rules = g["rules"]
     names, tail_m = _expr_names(rules), _tail_mechanisms(rules)
-    acc = {}
+    wrappers = names - {EXPR}          # already expanded into their hosts
+    acc = {}                           # (rule, slot, edge) -> [(expr path, mechanisms, required)]
     for rule, body in rules.items():
-        seen = set()
+        if rule in wrappers:
+            continue
         for path, n, anc in iter_nodes(body):
             if n["type"] != "SYMBOL" or n["name"] not in names:
                 continue
@@ -193,24 +195,23 @@ def boundaries(g):
             k = next((j for j, m in enumerate(sibs) if m is cur), None)
             nxt = sibs[k + 1] if k is not None and k + 1 < len(sibs) else None
             prv = sibs[k - 1] if k else None
-            edges = {}
-            if slot in seen and repeated:
-                edges["between"] = ((), False)
-            else:
-                edges["start"] = ((), False)
-                edges["end"] = ((), False)
-                if prv is not None and _sibling_sym(prv, PREFIX)[0]:
-                    edges["start"] = (("operand-prefix",), not _sibling_sym(prv, PREFIX)[1])
-            if nxt is not None and "end" in edges or nxt is not None and "between" in edges:
+            sep = (prv is not None and _unwrap(prv, "")[0]["type"] == "STRING"
+                   and _unwrap(prv, "")[0]["value"] in (",", ";"))
+            edges = {"between": ((), False)} if repeated and sep else                     {"start": ((), False), "end": ((), False)}
+            if "start" in edges and prv is not None:
+                found, opt = _sibling_sym(prv, PREFIX)
+                if found:
+                    edges["start"] = (("operand-prefix",), not opt)
+            if nxt is not None and tail_m:
                 found, opt = _sibling_sym(nxt, TAIL)
-                if found and tail_m:
+                if found:
                     edges["end" if "end" in edges else "between"] = (tail_m, not opt)
-            seen.add(slot)
             for e, (m, req) in edges.items():
-                key = (rule, slot, e)
-                if key in acc:           # same slot in several arms: union, required only if all are
-                    pm, preq = acc[key]
-                    acc[key] = (tuple(sorted(set(pm) | set(m))), preq and req)
-                else:
-                    acc[key] = (m, req)
-    return sorted((Boundary(r, s, e, m, q) for (r, s, e), (m, q) in acc.items()), key=key_of)
+                acc.setdefault((rule, slot, e), []).append((path, m, req))
+    out = []
+    for (r, s, e), arms in acc.items():
+        if len({(m, q) for _, m, q in arms}) == 1:     # arms agree: one row
+            out.append(Boundary(r, s, e, arms[0][1], arms[0][2]))
+        else:                                          # a union would hide an arm without a continuation
+            out += [Boundary(r, f"{s}@{p}", e, m, q) for p, m, q in arms]
+    return sorted(out, key=key_of)

@@ -77,3 +77,38 @@ def test_real_grammar_until_has_no_mechanism():
     b = bnd(grammar.load(Path("src/grammar.json")))
     hits = [k for k, (m, _) in b.items() if k[0] == "repeat_statement" and k[2] == "end"]
     assert hits and all(b[k][0] == () for k in hits)     # deferred item 39, shape 1
+
+
+def rows(g):
+    return {(b.rule, b.slot, b.edge): b for b in census.boundaries(g)}
+
+
+def test_between_by_separator_without_field():
+    b = bnd(grammar.load(MINI))
+    assert b[("lst", "1", "start")][0] == () and b[("lst", "1", "end")][0] == ()
+    assert b[("lst", "2.0.1", "between")][0] == ()
+
+
+def test_real_between_rows():
+    b = bnd(grammar.load(Path("src/grammar.json")))
+    for rule in ("subscript_expression", "list_literal"):
+        assert any(k[0] == rule and k[2] == "between" and m == () for k, (m, _) in b.items()), rule
+
+
+def test_wrappers_are_not_hosts_and_no_empty_slot():
+    for g in (grammar.load(MINI), grammar.load(Path("src/grammar.json"))):
+        ks = census.boundaries(g)
+        assert all(x.slot for x in ks)
+        assert not any(x.rule in ("_wrapper", "_field_source", "_list_element") for x in ks)
+
+
+def test_differing_arms_get_one_row_each():
+    b = bnd(grammar.load(MINI))
+    ends = {k: v for k, v in b.items() if k[0] == "arms" and k[2] == "end"}
+    assert len(ends) == 2 and all(k[1].startswith("cond@") for k in ends)
+    assert sorted(v[0] for v in ends.values()) == [(), ("tail", "tail-operator-only")]
+    assert ("arms", "cond", "start") in b            # arms agree on start: one row
+
+
+def test_choice_climb():
+    assert bnd(grammar.load(MINI))[("psplit", "0.0", "end")] == (("tail", "tail-operator-only"), True)
