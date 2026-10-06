@@ -1,0 +1,765 @@
+; B6 negatives: statements alc rejects, pinned as deliberate ERRORs (listed in
+; tools/deliberate-negatives.txt). alc accepts only assignments and method invocations as
+; statements ("Only assignment and method invocation can be used as a statement"); since B6
+; (spec docs/superpowers/specs/2026-10-06-expression-statement-narrowing-design.md) the
+; parser's _expression_statement is an invocation only, so each case ERRORs on the rejected
+; statement. Every case parsed CLEANLY before B6. The ERROR is the assertion.
+;
+; alc 18.0.41 codes, from tools/alc_probe/cases/expression-statement/:
+;   1;                      AL0104  reject-integer.al
+;   'abc';                  AL0104  reject-string.al
+;   1 + 2;                  AL0104  reject-additive.al
+;   + 3;                    AL0104  reject-unary-plus.al
+;   -Foo();                 AL0104  reject-unary-minus-call.al
+;   not Foo();              AL0104  reject-not-call.al
+;   (Foo());                AL0117  reject-parenthesized.al
+;   Rec.Get() = true;       AL0117  reject-comparison.al
+;   Arr[1];                 AL0117  reject-subscript.al
+;   Foo()[1];               not probed; subscript of a call, the same shape as Arr[1] (AL0117)
+;   Foo() #if + 2 #endif ;  X: AL0175 torn-call-plus.al (the tail tears off a call)
+;   exit(1) #if + 2 #endif; X: AL0104,AL0111 torn-exit-plus.al
+;   exit; (a + b);          a parenthesized statement, AL0117 per reject-parenthesized.al;
+;                           moved from exit_statement_spacing_test.txt, it still pins the
+;                           exit_statement as valueless (no return_value).
+;
+; The two torn cases recover wide: the ERROR holding the stray `+ 2` sits inside an outer
+; ERROR that takes the whole procedure, because in recovery the scanner declines every
+; external and `#endif` / `end` lex as fragments, as after a malformed directive line
+; (.claude/rules/scanner.md, "Error recovery after a malformed line is wide"). What is
+; asserted is the ERROR, not the recovery shape.
+;
+; The operator-word shapes (`and(C);`, `C := and;`, the torn `or (2 = 2)`) belong to the
+; reserved-word set and are added with it (B6 task 5).
+
+================================================================================
+B6 negative: integer statement
+================================================================================
+codeunit 50101 P {
+  procedure Main()
+  var Rec: Record T; X: Integer; Arr: array[3] of Integer; C: Boolean;
+  begin
+1;
+  end;
+}
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (procedure
+        (procedure_keyword)
+        name: (identifier)
+        (var_section
+          (var_keyword)
+          body: (var_body
+            (variable_declaration
+              name: (identifier)
+              type: (type_specification
+                (record_type
+                  (record_keyword)
+                  reference: (identifier))))
+            (variable_declaration
+              name: (identifier)
+              type: (type_specification
+                (basic_type)))
+            (variable_declaration
+              name: (identifier)
+              type: (type_specification
+                (array_type
+                  (array_keyword)
+                  sizes: (integer)
+                  (of_keyword)
+                  element_type: (type_specification
+                    (basic_type)))))
+            (variable_declaration
+              name: (identifier)
+              type: (type_specification
+                (basic_type)))))
+        body: (code_block
+          (begin_keyword)
+          (ERROR
+            (integer))
+          body: (statement_block
+            (empty_statement))
+          (end_keyword))))))
+
+================================================================================
+B6 negative: string statement
+================================================================================
+codeunit 50101 P {
+  procedure Main()
+  var Rec: Record T; X: Integer; Arr: array[3] of Integer; C: Boolean;
+  begin
+'abc';
+  end;
+}
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (procedure
+        (procedure_keyword)
+        name: (identifier)
+        (var_section
+          (var_keyword)
+          body: (var_body
+            (variable_declaration
+              name: (identifier)
+              type: (type_specification
+                (record_type
+                  (record_keyword)
+                  reference: (identifier))))
+            (variable_declaration
+              name: (identifier)
+              type: (type_specification
+                (basic_type)))
+            (variable_declaration
+              name: (identifier)
+              type: (type_specification
+                (array_type
+                  (array_keyword)
+                  sizes: (integer)
+                  (of_keyword)
+                  element_type: (type_specification
+                    (basic_type)))))
+            (variable_declaration
+              name: (identifier)
+              type: (type_specification
+                (basic_type)))))
+        body: (code_block
+          (begin_keyword)
+          (ERROR
+            (string_literal))
+          body: (statement_block
+            (empty_statement))
+          (end_keyword))))))
+
+================================================================================
+B6 negative: additive statement
+================================================================================
+codeunit 50101 P {
+  procedure Main()
+  var Rec: Record T; X: Integer; Arr: array[3] of Integer; C: Boolean;
+  begin
+1 + 2;
+  end;
+}
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (procedure
+        (procedure_keyword)
+        name: (identifier)
+        (var_section
+          (var_keyword)
+          body: (var_body
+            (variable_declaration
+              name: (identifier)
+              type: (type_specification
+                (record_type
+                  (record_keyword)
+                  reference: (identifier))))
+            (variable_declaration
+              name: (identifier)
+              type: (type_specification
+                (basic_type)))
+            (variable_declaration
+              name: (identifier)
+              type: (type_specification
+                (array_type
+                  (array_keyword)
+                  sizes: (integer)
+                  (of_keyword)
+                  element_type: (type_specification
+                    (basic_type)))))
+            (variable_declaration
+              name: (identifier)
+              type: (type_specification
+                (basic_type)))))
+        body: (code_block
+          (begin_keyword)
+          (ERROR
+            (additive_expression
+              left: (integer)
+              right: (integer)))
+          body: (statement_block
+            (empty_statement))
+          (end_keyword))))))
+
+================================================================================
+B6 negative: unary plus statement
+================================================================================
+codeunit 50101 P {
+  procedure Main()
+  var Rec: Record T; X: Integer; Arr: array[3] of Integer; C: Boolean;
+  begin
++ 3;
+  end;
+}
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (procedure
+        (procedure_keyword)
+        name: (identifier)
+        (var_section
+          (var_keyword)
+          body: (var_body
+            (variable_declaration
+              name: (identifier)
+              type: (type_specification
+                (record_type
+                  (record_keyword)
+                  reference: (identifier))))
+            (variable_declaration
+              name: (identifier)
+              type: (type_specification
+                (basic_type)))
+            (variable_declaration
+              name: (identifier)
+              type: (type_specification
+                (array_type
+                  (array_keyword)
+                  sizes: (integer)
+                  (of_keyword)
+                  element_type: (type_specification
+                    (basic_type)))))
+            (variable_declaration
+              name: (identifier)
+              type: (type_specification
+                (basic_type)))))
+        body: (code_block
+          (begin_keyword)
+          (ERROR
+            (unary_expression
+              operand: (integer)))
+          body: (statement_block
+            (empty_statement))
+          (end_keyword))))))
+
+================================================================================
+B6 negative: unary minus call statement
+================================================================================
+codeunit 50101 P {
+  procedure Main()
+  var Rec: Record T; X: Integer; Arr: array[3] of Integer; C: Boolean;
+  begin
+-Foo();
+  end;
+}
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (procedure
+        (procedure_keyword)
+        name: (identifier)
+        (var_section
+          (var_keyword)
+          body: (var_body
+            (variable_declaration
+              name: (identifier)
+              type: (type_specification
+                (record_type
+                  (record_keyword)
+                  reference: (identifier))))
+            (variable_declaration
+              name: (identifier)
+              type: (type_specification
+                (basic_type)))
+            (variable_declaration
+              name: (identifier)
+              type: (type_specification
+                (array_type
+                  (array_keyword)
+                  sizes: (integer)
+                  (of_keyword)
+                  element_type: (type_specification
+                    (basic_type)))))
+            (variable_declaration
+              name: (identifier)
+              type: (type_specification
+                (basic_type)))))
+        body: (code_block
+          (begin_keyword)
+          (ERROR
+            (unary_expression
+              operand: (call_expression
+                function: (identifier)
+                arguments: (argument_list))))
+          body: (statement_block
+            (empty_statement))
+          (end_keyword))))))
+
+================================================================================
+B6 negative: not call statement
+================================================================================
+codeunit 50101 P {
+  procedure Main()
+  var Rec: Record T; X: Integer; Arr: array[3] of Integer; C: Boolean;
+  begin
+not Foo();
+  end;
+}
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (procedure
+        (procedure_keyword)
+        name: (identifier)
+        (var_section
+          (var_keyword)
+          body: (var_body
+            (variable_declaration
+              name: (identifier)
+              type: (type_specification
+                (record_type
+                  (record_keyword)
+                  reference: (identifier))))
+            (variable_declaration
+              name: (identifier)
+              type: (type_specification
+                (basic_type)))
+            (variable_declaration
+              name: (identifier)
+              type: (type_specification
+                (array_type
+                  (array_keyword)
+                  sizes: (integer)
+                  (of_keyword)
+                  element_type: (type_specification
+                    (basic_type)))))
+            (variable_declaration
+              name: (identifier)
+              type: (type_specification
+                (basic_type)))))
+        body: (code_block
+          (begin_keyword)
+          (ERROR
+            (unary_expression
+              operand: (call_expression
+                function: (identifier)
+                arguments: (argument_list))))
+          body: (statement_block
+            (empty_statement))
+          (end_keyword))))))
+
+================================================================================
+B6 negative: parenthesized call statement
+================================================================================
+codeunit 50101 P {
+  procedure Main()
+  var Rec: Record T; X: Integer; Arr: array[3] of Integer; C: Boolean;
+  begin
+(Foo());
+  end;
+}
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (procedure
+        (procedure_keyword)
+        name: (identifier)
+        (var_section
+          (var_keyword)
+          body: (var_body
+            (variable_declaration
+              name: (identifier)
+              type: (type_specification
+                (record_type
+                  (record_keyword)
+                  reference: (identifier))))
+            (variable_declaration
+              name: (identifier)
+              type: (type_specification
+                (basic_type)))
+            (variable_declaration
+              name: (identifier)
+              type: (type_specification
+                (array_type
+                  (array_keyword)
+                  sizes: (integer)
+                  (of_keyword)
+                  element_type: (type_specification
+                    (basic_type)))))
+            (variable_declaration
+              name: (identifier)
+              type: (type_specification
+                (basic_type)))))
+        body: (code_block
+          (begin_keyword)
+          (ERROR
+            (parenthesized_expression
+              (call_expression
+                function: (identifier)
+                arguments: (argument_list))))
+          body: (statement_block
+            (empty_statement))
+          (end_keyword))))))
+
+================================================================================
+B6 negative: comparison statement
+================================================================================
+codeunit 50101 P {
+  procedure Main()
+  var Rec: Record T; X: Integer; Arr: array[3] of Integer; C: Boolean;
+  begin
+Rec.Get() = true;
+  end;
+}
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (procedure
+        (procedure_keyword)
+        name: (identifier)
+        (var_section
+          (var_keyword)
+          body: (var_body
+            (variable_declaration
+              name: (identifier)
+              type: (type_specification
+                (record_type
+                  (record_keyword)
+                  reference: (identifier))))
+            (variable_declaration
+              name: (identifier)
+              type: (type_specification
+                (basic_type)))
+            (variable_declaration
+              name: (identifier)
+              type: (type_specification
+                (array_type
+                  (array_keyword)
+                  sizes: (integer)
+                  (of_keyword)
+                  element_type: (type_specification
+                    (basic_type)))))
+            (variable_declaration
+              name: (identifier)
+              type: (type_specification
+                (basic_type)))))
+        body: (code_block
+          (begin_keyword)
+          (ERROR
+            (comparison_expression
+              left: (call_expression
+                function: (member_expression
+                  object: (identifier)
+                  member: (identifier))
+                arguments: (argument_list))
+              operator: (comparison_operator)
+              right: (boolean)))
+          body: (statement_block
+            (empty_statement))
+          (end_keyword))))))
+
+================================================================================
+B6 negative: subscript statement
+================================================================================
+codeunit 50101 P {
+  procedure Main()
+  var Rec: Record T; X: Integer; Arr: array[3] of Integer; C: Boolean;
+  begin
+Arr[1];
+  end;
+}
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (procedure
+        (procedure_keyword)
+        name: (identifier)
+        (var_section
+          (var_keyword)
+          body: (var_body
+            (variable_declaration
+              name: (identifier)
+              type: (type_specification
+                (record_type
+                  (record_keyword)
+                  reference: (identifier))))
+            (variable_declaration
+              name: (identifier)
+              type: (type_specification
+                (basic_type)))
+            (variable_declaration
+              name: (identifier)
+              type: (type_specification
+                (array_type
+                  (array_keyword)
+                  sizes: (integer)
+                  (of_keyword)
+                  element_type: (type_specification
+                    (basic_type)))))
+            (variable_declaration
+              name: (identifier)
+              type: (type_specification
+                (basic_type)))))
+        body: (code_block
+          (begin_keyword)
+          (ERROR
+            (subscript_expression
+              object: (identifier)
+              index: (integer)))
+          body: (statement_block
+            (empty_statement))
+          (end_keyword))))))
+
+================================================================================
+B6 negative: subscript of a call statement
+================================================================================
+codeunit 50101 P {
+  procedure Main()
+  var Rec: Record T; X: Integer; Arr: array[3] of Integer; C: Boolean;
+  begin
+Foo()[1];
+  end;
+}
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (procedure
+        (procedure_keyword)
+        name: (identifier)
+        (var_section
+          (var_keyword)
+          body: (var_body
+            (variable_declaration
+              name: (identifier)
+              type: (type_specification
+                (record_type
+                  (record_keyword)
+                  reference: (identifier))))
+            (variable_declaration
+              name: (identifier)
+              type: (type_specification
+                (basic_type)))
+            (variable_declaration
+              name: (identifier)
+              type: (type_specification
+                (array_type
+                  (array_keyword)
+                  sizes: (integer)
+                  (of_keyword)
+                  element_type: (type_specification
+                    (basic_type)))))
+            (variable_declaration
+              name: (identifier)
+              type: (type_specification
+                (basic_type)))))
+        body: (code_block
+          (begin_keyword)
+          (ERROR
+            (subscript_expression
+              object: (call_expression
+                function: (identifier)
+                arguments: (argument_list))
+              index: (integer)))
+          body: (statement_block
+            (empty_statement))
+          (end_keyword))))))
+
+================================================================================
+B6 negative: call torn by an arithmetic #if arm
+================================================================================
+codeunit 50101 P {
+  procedure Main()
+  var Rec: Record T; X: Integer; Arr: array[3] of Integer; C: Boolean;
+  begin
+Foo()
+#if A
+  + 2
+#endif
+  ;
+  end;
+}
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    (ERROR
+      (procedure_keyword)
+      name: (identifier)
+      (var_section
+        (var_keyword)
+        body: (var_body
+          (variable_declaration
+            name: (identifier)
+            type: (type_specification
+              (record_type
+                (record_keyword)
+                reference: (identifier))))
+          (variable_declaration
+            name: (identifier)
+            type: (type_specification
+              (basic_type)))
+          (variable_declaration
+            name: (identifier)
+            type: (type_specification
+              (array_type
+                (array_keyword)
+                sizes: (integer)
+                (of_keyword)
+                element_type: (type_specification
+                  (basic_type)))))
+          (variable_declaration
+            name: (identifier)
+            type: (type_specification
+              (basic_type)))))
+      (begin_keyword)
+      (call_expression
+        function: (identifier)
+        arguments: (argument_list))
+      (preproc_if
+        (preproc_open)
+        condition: (identifier))
+      (ERROR
+        (unary_expression
+          operand: (integer))
+        (UNEXPECTED 'i'))
+      (empty_statement)
+      (call_statement
+        function: (identifier)))))
+
+================================================================================
+B6 negative: exit value torn by an arithmetic #if arm
+================================================================================
+codeunit 50101 P {
+  procedure Main()
+  var Rec: Record T; X: Integer; Arr: array[3] of Integer; C: Boolean;
+  begin
+exit(1)
+#if A
+  + 2
+#endif
+  ;
+  end;
+}
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    (ERROR
+      (procedure_keyword)
+      name: (identifier)
+      (var_section
+        (var_keyword)
+        body: (var_body
+          (variable_declaration
+            name: (identifier)
+            type: (type_specification
+              (record_type
+                (record_keyword)
+                reference: (identifier))))
+          (variable_declaration
+            name: (identifier)
+            type: (type_specification
+              (basic_type)))
+          (variable_declaration
+            name: (identifier)
+            type: (type_specification
+              (array_type
+                (array_keyword)
+                sizes: (integer)
+                (of_keyword)
+                element_type: (type_specification
+                  (basic_type)))))
+          (variable_declaration
+            name: (identifier)
+            type: (type_specification
+              (basic_type)))))
+      (begin_keyword)
+      (exit_statement
+        (exit_keyword)
+        return_value: (integer))
+      (preproc_if
+        (preproc_open)
+        condition: (identifier))
+      (ERROR
+        (unary_expression
+          operand: (integer))
+        (UNEXPECTED 'i'))
+      (empty_statement)
+      (call_statement
+        function: (identifier)))))
+
+================================================================================
+bare exit does not swallow a following parenthesized-expression statement
+================================================================================
+codeunit 1 T { procedure X() begin exit; (a + b); end; }
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (procedure
+        (procedure_keyword)
+        name: (identifier)
+        body: (code_block
+          (begin_keyword)
+          body: (statement_block
+            (exit_statement
+              (exit_keyword))
+            (ERROR
+              (parenthesized_expression
+                (additive_expression
+                  left: (identifier)
+                  right: (identifier))))
+            (empty_statement))
+          (end_keyword))))))

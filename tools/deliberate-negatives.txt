@@ -127,3 +127,7 @@ property_value_run_negative_test.txt
 property_value_run_b13_gap_test.txt
 # deferred-work 31/32/34: unbalanced filter parentheses and const(+1), alc AL0104 (tools/alc_probe/cases/deferred-31-32-34).
 deferred_31_32_34_negative_test.txt
+# B6: invalid statements (alc AL0104 / AL0117); the ERROR is the assertion.
+expression_statement_negative_test.txt
+# B6: alc rejects this file (AL0104); the leftover is no longer a legal statement.
+verbatim_string_unterminated_test.txt
