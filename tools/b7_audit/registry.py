@@ -23,9 +23,10 @@ def load(path):
     rows = []
     with open(path, encoding="utf-8", newline="") as f:
         lines = [l.rstrip("\r\n") for l in f]
-    for i, line in enumerate(lines):
-        if not line.strip() or line.startswith("#") or line == HEADER:
-            continue
+    body = [(i, l) for i, l in enumerate(lines) if l.strip() and not l.startswith("#")]
+    if not body or body[0][1] != HEADER:
+        raise ValueError(f"{path}: missing or wrong header line")
+    for i, line in body[1:]:
         cols = line.split("\t")
         if len(cols) > 7:
             raise ValueError(f"{path}:{i + 1}: {len(cols)} columns")

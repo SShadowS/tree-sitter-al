@@ -15,20 +15,42 @@ def test_helper_reached_from_two_hosts():
     assert {"host_a", "host_b"} <= hosts
 
 
-def test_visible_target_is_own_host_and_cycles_terminate():
+def hosts(g, rule):
+    return {r.host for r in census.routes(g, rule)}
+
+
+def test_visible_target_climbs_to_callers_root_and_expression_stop():
     g = grammar.load(MINI)
-    assert [r.host for r in census.routes(g, "list")] == ["list"]
-    census.census(g)
+    assert hosts(g, "item") >= {"list", "hdr"}
+    assert hosts(g, "list") == {"list"}                       # root: no caller
+    g["rules"]["_expression"] = {"type": "CHOICE", "members": [{"type": "SYMBOL", "name": "lit"}]}
+    g["rules"]["lit"] = {"type": "STRING", "value": ","}
+    g["rules"]["in_expr"] = {"type": "SYMBOL", "name": "lit"}
+    assert hosts(g, "lit") == {"lit", "in_expr"}
+    census.census(g)                                          # cycles terminate
 
 
-def test_new_caller_fails_gate():
+def test_new_caller_fails_gate_visible_callee():
     g = grammar.load(MINI)
     rows = [registry.Row(k, r.host, "list-separator", "f", "x ⟨HOLE⟩", "", "") for k, r in census.census(g)]
-    assert registry.gate(census.census(g), rows) == ([], [], [])
-    # a visible callee is its own host; a new caller is seen through a hidden callee
-    g["rules"]["host_new"] = {"type": "SEQ", "members": [{"type": "STRING", "value": "n"}, {"type": "SYMBOL", "name": "_helper"}]}
-    missing, stale, invalid = registry.gate(census.census(g), rows)
+    g["rules"]["host_new"] = {"type": "SEQ", "members": [{"type": "STRING", "value": "n"}, {"type": "SYMBOL", "name": "list"}]}
+    missing, _, _ = registry.gate(census.census(g), rows)
     assert any(r.host == "host_new" for _, r in missing)
+
+
+def test_real_grammar_hosts():
+    g = grammar.load(Path("src/grammar.json"))
+    assert hosts(g, "field_list") >= {"key_declaration", "fieldgroup_declaration", "preproc_split_key"}
+    assert hosts(g, "parameter_list") >= {"procedure", "interface_procedure", "trigger_declaration", "event_declaration"}
+    assert hosts(g, "list_literal") >= {"list_literal", "in_expression"}
+
+
+def test_header_required(tmp_path):
+    import pytest
+    f = tmp_path / "r.tsv"
+    f.write_text("k" + chr(9) + "h" + chr(9) + "terminator", encoding="utf-8")
+    with pytest.raises(ValueError):
+        registry.load(f)
 
 
 def test_stale_row_fails_gate():

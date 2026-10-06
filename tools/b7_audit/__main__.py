@@ -40,8 +40,9 @@ def main(argv=None):
     p = argparse.ArgumentParser(prog="tools.b7_audit")
     sub = p.add_subparsers(dest="cmd", required=True)
     c = sub.add_parser("census")
-    c.add_argument("--check", action="store_true")
-    c.add_argument("--list", action="store_true")
+    m = c.add_mutually_exclusive_group()
+    m.add_argument("--check", action="store_true")
+    m.add_argument("--list", action="store_true")
     return cmd_census(p.parse_args(argv))
 
 
