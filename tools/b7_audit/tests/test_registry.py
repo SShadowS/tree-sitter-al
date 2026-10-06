@@ -92,7 +92,7 @@ def _mh():
 
 
 def _row(k, hosts, reason="same rules"):
-    return registry.Row(k, hosts, "list-separator", "f", "x ⟨HOLE⟩", "", reason)
+    return registry.Row(k, hosts, "list-separator", "f", "x ⟨HOLE⟩", "", reason, "a, b")
 
 
 def test_multi_host_row_covers_all_and_exposes_witness():
@@ -146,3 +146,17 @@ def test_cli_bad_header_and_missing_registry_exit_2(tmp_path, monkeypatch):
     assert m.main(["census", "--check"]) == 2
     monkeypatch.setattr(m, "REGISTRY", tmp_path / "absent.tsv")
     assert m.main(["census", "--check"]) == 2
+
+
+def test_templated_row_needs_plain():
+    p = [("k", census.Route("h", ("h",)))]
+    no_plain = registry.Row("k", "h", "terminator", "f", "x ⟨HOLE⟩", "", "", "")
+    assert registry.gate(p, [no_plain])[2]
+    assert not registry.gate(p, [registry.Row("k", "h", "terminator", "f", "x ⟨HOLE⟩", "", "", "y;")])[2]
+
+
+def test_load_plain_column(tmp_path):
+    f = tmp_path / "r.tsv"
+    f.write_text(registry.HEADER + "\nk\th\tterminator\tf\ta ⟨HOLE⟩\t\t\tI := 1;\\nJ := 2;\n", encoding="utf-8")
+    (r,) = registry.load(f)
+    assert registry.HEADER.endswith("\treason\tplain") and r.plain == "I := 1;\nJ := 2;"

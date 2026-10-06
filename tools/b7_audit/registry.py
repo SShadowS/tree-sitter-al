@@ -5,7 +5,7 @@ ROLES = {"list-separator", "edge-separator", "fixed-separator", "terminator", "q
          "continuation", "lexical", "na"}
 NEEDS_TEMPLATE = {"list-separator", "edge-separator", "fixed-separator", "terminator", "continuation"}
 HOLE = "⟨HOLE⟩"
-HEADER = "key\troute\trole\tfamily\ttemplate\tequiv\treason"
+HEADER = "key\troute\trole\tfamily\ttemplate\tequiv\treason\tplain"
 
 
 @dataclass(frozen=True)
@@ -17,6 +17,7 @@ class Row:
     template: str
     equiv: str
     reason: str
+    plain: str = ""          # the directive-free valid filling of the hole (required with a template)
 
     @property
     def hosts(self):
@@ -36,10 +37,11 @@ def load(path):
         raise ValueError(f"{path}: missing or wrong header line")
     for i, line in body[1:]:
         cols = line.split("\t")
-        if len(cols) > 7:
+        if len(cols) > 8:
             raise ValueError(f"{path}:{i + 1}: {len(cols)} columns")
-        cols += [""] * (7 - len(cols))
+        cols += [""] * (8 - len(cols))
         cols[4] = cols[4].replace("\\n", "\n")
+        cols[7] = cols[7].replace("\\n", "\n")
         rows.append(Row(*cols))
     return rows
 
@@ -54,6 +56,8 @@ def _problem(r):
             return f"template needs exactly one {HOLE}"
         if not r.family.strip():
             return "family required"
+        if not r.plain.strip():
+            return "plain filling required for a templated row"
     return None
 
 
