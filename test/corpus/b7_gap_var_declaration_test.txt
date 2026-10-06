@@ -1,0 +1,819 @@
+========================================================================
+B7a GAP: var-declaration / adjacent-compl (36 cells, verdict of the representative GAP); the parser ERRORs on configurations alc accepts; representative occ:variable_declaration:0.0.5@preproc_conditional_var#adjacent-compl
+========================================================================
+table 50100 T
+{
+    fields
+    {
+        field(1; K; Code[20]) { }
+        field(2; N; Integer) { }
+        field(3; B; Boolean) { }
+        field(9; O; Option) { OptionMembers = A,B,C; }
+    }
+    keys
+    {
+        key(PK; K) { Clustered = true; }
+    }
+}
+codeunit 50101 P
+{
+    var
+#if TPL2
+        
+Lbl: Label 'a'
+#if X
+;
+#endif
+#if not X
+;
+#endif
+
+#endif
+}
+------------------------------------------------------------------------
+
+(source_file
+  (table_declaration
+    (table_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (fields_section
+        (fields_keyword)
+        body: (fields_body
+          (field_declaration
+            (field_keyword)
+            id: (integer)
+            name: (identifier)
+            type: (type_specification
+              (code_type
+                (code_keyword)
+                length: (integer))))
+          (field_declaration
+            (field_keyword)
+            id: (integer)
+            name: (identifier)
+            type: (type_specification
+              (basic_type)))
+          (field_declaration
+            (field_keyword)
+            id: (integer)
+            name: (identifier)
+            type: (type_specification
+              (basic_type)))
+          (field_declaration
+            (field_keyword)
+            id: (integer)
+            name: (identifier)
+            type: (type_specification
+              (option_type
+                (option_keyword)))
+            body: (declaration_body
+              (property
+                name: (property_name)
+                value: (option_member_list
+                  (option_member
+                    (identifier))
+                  (option_member
+                    (identifier))
+                  (option_member
+                    (identifier))))))))
+      (keys_section
+        (keys_keyword)
+        body: (keys_body
+          (key_declaration
+            (key_keyword)
+            name: (identifier)
+            fields: (field_list
+              (identifier))
+            body: (declaration_body
+              (property
+                name: (property_name)
+                value: (boolean))))))))
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (var_section
+        (var_keyword)
+        body: (var_body
+          (preproc_conditional_var
+            (preproc_if
+              (preproc_open)
+              condition: (identifier))
+            (variable_declaration
+              name: (identifier)
+              type: (basic_type)
+              value: (string_literal)
+              (ERROR
+                (UNEXPECTED 'i')
+                (identifier)))
+            (preproc_endif
+              (preproc_close)))))
+      (preproc_conditional
+        (preproc_if
+          (preproc_open)
+          condition: (preproc_not_expression
+            (identifier)))
+        (empty_statement)
+        (preproc_endif
+          (preproc_close))))
+    (ERROR
+      (UNEXPECTED 'i'))))
+
+========================================================================
+B7a GAP: var-declaration / elif (36 cells, verdict of the representative GAP); the parser ERRORs on configurations alc accepts; representative occ:variable_declaration:0.0.5@preproc_conditional_var#elif
+========================================================================
+table 50100 T
+{
+    fields
+    {
+        field(1; K; Code[20]) { }
+        field(2; N; Integer) { }
+        field(3; B; Boolean) { }
+        field(9; O; Option) { OptionMembers = A,B,C; }
+    }
+    keys
+    {
+        key(PK; K) { Clustered = true; }
+    }
+}
+codeunit 50101 P
+{
+    var
+#if TPL2
+        
+Lbl: Label 'a'
+#if X
+;
+#elif Y
+;
+#else
+;
+#endif
+
+#endif
+}
+------------------------------------------------------------------------
+
+(source_file
+  (table_declaration
+    (table_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (fields_section
+        (fields_keyword)
+        body: (fields_body
+          (field_declaration
+            (field_keyword)
+            id: (integer)
+            name: (identifier)
+            type: (type_specification
+              (code_type
+                (code_keyword)
+                length: (integer))))
+          (field_declaration
+            (field_keyword)
+            id: (integer)
+            name: (identifier)
+            type: (type_specification
+              (basic_type)))
+          (field_declaration
+            (field_keyword)
+            id: (integer)
+            name: (identifier)
+            type: (type_specification
+              (basic_type)))
+          (field_declaration
+            (field_keyword)
+            id: (integer)
+            name: (identifier)
+            type: (type_specification
+              (option_type
+                (option_keyword)))
+            body: (declaration_body
+              (property
+                name: (property_name)
+                value: (option_member_list
+                  (option_member
+                    (identifier))
+                  (option_member
+                    (identifier))
+                  (option_member
+                    (identifier))))))))
+      (keys_section
+        (keys_keyword)
+        body: (keys_body
+          (key_declaration
+            (key_keyword)
+            name: (identifier)
+            fields: (field_list
+              (identifier))
+            body: (declaration_body
+              (property
+                name: (property_name)
+                value: (boolean))))))))
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (var_section
+        (var_keyword)))
+    (ERROR
+      (preproc_if
+        (preproc_open)
+        condition: (identifier))
+      (variable_declaration
+        name: (identifier)
+        type: (basic_type)
+        value: (string_literal)
+        (ERROR
+          (UNEXPECTED 'i')
+          (identifier)))
+      (preproc_elif
+        condition: (identifier))
+      (ERROR)
+      (preproc_else)
+      (UNEXPECTED 'i')
+      (UNEXPECTED 'i'))))
+
+========================================================================
+B7a GAP: var-declaration / empty (36 cells, verdict of the representative GAP); the parser ERRORs on configurations alc accepts; representative occ:variable_declaration:0.0.5@preproc_conditional_var#empty
+========================================================================
+table 50100 T
+{
+    fields
+    {
+        field(1; K; Code[20]) { }
+        field(2; N; Integer) { }
+        field(3; B; Boolean) { }
+        field(9; O; Option) { OptionMembers = A,B,C; }
+    }
+    keys
+    {
+        key(PK; K) { Clustered = true; }
+    }
+}
+codeunit 50101 P
+{
+    var
+#if TPL2
+        
+Lbl: Label 'a'
+#if X
+#endif
+;
+
+#endif
+}
+------------------------------------------------------------------------
+
+(source_file
+  (table_declaration
+    (table_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (fields_section
+        (fields_keyword)
+        body: (fields_body
+          (field_declaration
+            (field_keyword)
+            id: (integer)
+            name: (identifier)
+            type: (type_specification
+              (code_type
+                (code_keyword)
+                length: (integer))))
+          (field_declaration
+            (field_keyword)
+            id: (integer)
+            name: (identifier)
+            type: (type_specification
+              (basic_type)))
+          (field_declaration
+            (field_keyword)
+            id: (integer)
+            name: (identifier)
+            type: (type_specification
+              (basic_type)))
+          (field_declaration
+            (field_keyword)
+            id: (integer)
+            name: (identifier)
+            type: (type_specification
+              (option_type
+                (option_keyword)))
+            body: (declaration_body
+              (property
+                name: (property_name)
+                value: (option_member_list
+                  (option_member
+                    (identifier))
+                  (option_member
+                    (identifier))
+                  (option_member
+                    (identifier))))))))
+      (keys_section
+        (keys_keyword)
+        body: (keys_body
+          (key_declaration
+            (key_keyword)
+            name: (identifier)
+            fields: (field_list
+              (identifier))
+            body: (declaration_body
+              (property
+                name: (property_name)
+                value: (boolean))))))))
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (var_section
+        (var_keyword)
+        body: (var_body
+          (preproc_conditional_var
+            (preproc_if
+              (preproc_open)
+              condition: (identifier))
+            (variable_declaration
+              name: (identifier)
+              type: (basic_type)
+              value: (string_literal)
+              (ERROR
+                (UNEXPECTED 'i')
+                (identifier)
+                (UNEXPECTED 'i')))
+            (preproc_endif
+              (preproc_close))))))))
+
+========================================================================
+B7a GAP: var-declaration / first-replace (36 cells, verdict of the representative GAP); the parser ERRORs on configurations alc accepts; representative occ:variable_declaration:0.0.5@preproc_conditional_var#first-replace
+========================================================================
+table 50100 T
+{
+    fields
+    {
+        field(1; K; Code[20]) { }
+        field(2; N; Integer) { }
+        field(3; B; Boolean) { }
+        field(9; O; Option) { OptionMembers = A,B,C; }
+    }
+    keys
+    {
+        key(PK; K) { Clustered = true; }
+    }
+}
+codeunit 50101 P
+{
+    var
+#if TPL2
+        
+#if X
+Lbl: Label 'a'
+#else
+Lbl: Label 'a'
+#endif
+;
+
+#endif
+}
+------------------------------------------------------------------------
+
+(source_file
+  (table_declaration
+    (table_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (fields_section
+        (fields_keyword)
+        body: (fields_body
+          (field_declaration
+            (field_keyword)
+            id: (integer)
+            name: (identifier)
+            type: (type_specification
+              (code_type
+                (code_keyword)
+                length: (integer))))
+          (field_declaration
+            (field_keyword)
+            id: (integer)
+            name: (identifier)
+            type: (type_specification
+              (basic_type)))
+          (field_declaration
+            (field_keyword)
+            id: (integer)
+            name: (identifier)
+            type: (type_specification
+              (basic_type)))
+          (field_declaration
+            (field_keyword)
+            id: (integer)
+            name: (identifier)
+            type: (type_specification
+              (option_type
+                (option_keyword)))
+            body: (declaration_body
+              (property
+                name: (property_name)
+                value: (option_member_list
+                  (option_member
+                    (identifier))
+                  (option_member
+                    (identifier))
+                  (option_member
+                    (identifier))))))))
+      (keys_section
+        (keys_keyword)
+        body: (keys_body
+          (key_declaration
+            (key_keyword)
+            name: (identifier)
+            fields: (field_list
+              (identifier))
+            body: (declaration_body
+              (property
+                name: (property_name)
+                value: (boolean))))))))
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (var_section
+        (var_keyword)
+        body: (var_body
+          (preproc_conditional_var
+            (preproc_if
+              (preproc_open)
+              condition: (identifier))
+            (ERROR
+              (UNEXPECTED 'i')
+              (identifier)
+              (identifier)
+              (basic_type)
+              (string_literal))
+            (preproc_else)
+            (variable_declaration
+              name: (identifier)
+              type: (basic_type)
+              value: (string_literal)
+              (ERROR
+                (UNEXPECTED 'i')))
+            (preproc_endif
+              (preproc_close))))))))
+
+========================================================================
+B7a GAP: var-declaration / nested (36 cells, verdict of the representative GAP); the parser ERRORs on configurations alc accepts; representative occ:variable_declaration:0.0.5@preproc_conditional_var#nested
+========================================================================
+table 50100 T
+{
+    fields
+    {
+        field(1; K; Code[20]) { }
+        field(2; N; Integer) { }
+        field(3; B; Boolean) { }
+        field(9; O; Option) { OptionMembers = A,B,C; }
+    }
+    keys
+    {
+        key(PK; K) { Clustered = true; }
+    }
+}
+codeunit 50101 P
+{
+    var
+#if TPL2
+        
+Lbl: Label 'a'
+#if X
+#if Y
+;
+#else
+;
+#endif
+#else
+;
+#endif
+
+#endif
+}
+------------------------------------------------------------------------
+
+(source_file
+  (table_declaration
+    (table_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (fields_section
+        (fields_keyword)
+        body: (fields_body
+          (field_declaration
+            (field_keyword)
+            id: (integer)
+            name: (identifier)
+            type: (type_specification
+              (code_type
+                (code_keyword)
+                length: (integer))))
+          (field_declaration
+            (field_keyword)
+            id: (integer)
+            name: (identifier)
+            type: (type_specification
+              (basic_type)))
+          (field_declaration
+            (field_keyword)
+            id: (integer)
+            name: (identifier)
+            type: (type_specification
+              (basic_type)))
+          (field_declaration
+            (field_keyword)
+            id: (integer)
+            name: (identifier)
+            type: (type_specification
+              (option_type
+                (option_keyword)))
+            body: (declaration_body
+              (property
+                name: (property_name)
+                value: (option_member_list
+                  (option_member
+                    (identifier))
+                  (option_member
+                    (identifier))
+                  (option_member
+                    (identifier))))))))
+      (keys_section
+        (keys_keyword)
+        body: (keys_body
+          (key_declaration
+            (key_keyword)
+            name: (identifier)
+            fields: (field_list
+              (identifier))
+            body: (declaration_body
+              (property
+                name: (property_name)
+                value: (boolean))))))))
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (var_section
+        (var_keyword)))
+    (ERROR
+      (preproc_if
+        (preproc_open)
+        condition: (identifier))
+      (variable_declaration
+        name: (identifier)
+        type: (basic_type)
+        value: (string_literal)
+        (ERROR
+          (UNEXPECTED 'i')
+          (identifier)
+          (UNEXPECTED 'i')
+          (identifier)))
+      (preproc_else)
+      (UNEXPECTED 'i')
+      (preproc_else)
+      (UNEXPECTED 'i')
+      (UNEXPECTED 'i'))))
+
+========================================================================
+B7a GAP: var-declaration / sep-only (36 cells, verdict of the representative GAP); the parser ERRORs on configurations alc accepts; representative occ:variable_declaration:0.0.5@preproc_conditional_var#sep-only
+========================================================================
+table 50100 T
+{
+    fields
+    {
+        field(1; K; Code[20]) { }
+        field(2; N; Integer) { }
+        field(3; B; Boolean) { }
+        field(9; O; Option) { OptionMembers = A,B,C; }
+    }
+    keys
+    {
+        key(PK; K) { Clustered = true; }
+    }
+}
+codeunit 50101 P
+{
+    var
+#if TPL2
+        
+Lbl: Label 'a'
+#if X
+;
+#else
+;
+#endif
+
+#endif
+}
+------------------------------------------------------------------------
+
+(source_file
+  (table_declaration
+    (table_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (fields_section
+        (fields_keyword)
+        body: (fields_body
+          (field_declaration
+            (field_keyword)
+            id: (integer)
+            name: (identifier)
+            type: (type_specification
+              (code_type
+                (code_keyword)
+                length: (integer))))
+          (field_declaration
+            (field_keyword)
+            id: (integer)
+            name: (identifier)
+            type: (type_specification
+              (basic_type)))
+          (field_declaration
+            (field_keyword)
+            id: (integer)
+            name: (identifier)
+            type: (type_specification
+              (basic_type)))
+          (field_declaration
+            (field_keyword)
+            id: (integer)
+            name: (identifier)
+            type: (type_specification
+              (option_type
+                (option_keyword)))
+            body: (declaration_body
+              (property
+                name: (property_name)
+                value: (option_member_list
+                  (option_member
+                    (identifier))
+                  (option_member
+                    (identifier))
+                  (option_member
+                    (identifier))))))))
+      (keys_section
+        (keys_keyword)
+        body: (keys_body
+          (key_declaration
+            (key_keyword)
+            name: (identifier)
+            fields: (field_list
+              (identifier))
+            body: (declaration_body
+              (property
+                name: (property_name)
+                value: (boolean))))))))
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (var_section
+        (var_keyword)))
+    (ERROR
+      (preproc_if
+        (preproc_open)
+        condition: (identifier))
+      (variable_declaration
+        name: (identifier)
+        type: (basic_type)
+        value: (string_literal)
+        (ERROR
+          (UNEXPECTED 'i')
+          (identifier)))
+      (preproc_else)
+      (UNEXPECTED 'i')
+      (UNEXPECTED 'i'))))
+
+========================================================================
+B7a GAP: var-declaration / trail (36 cells, verdict of the representative MIXED); the parser ERRORs on configurations alc accepts; representative occ:variable_declaration:0.0.5@preproc_conditional_var#trail
+========================================================================
+table 50100 T
+{
+    fields
+    {
+        field(1; K; Code[20]) { }
+        field(2; N; Integer) { }
+        field(3; B; Boolean) { }
+        field(9; O; Option) { OptionMembers = A,B,C; }
+    }
+    keys
+    {
+        key(PK; K) { Clustered = true; }
+    }
+}
+codeunit 50101 P
+{
+    var
+#if TPL2
+        
+Lbl: Label 'a'
+#if X
+;
+#endif
+
+#endif
+}
+------------------------------------------------------------------------
+
+(source_file
+  (table_declaration
+    (table_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (fields_section
+        (fields_keyword)
+        body: (fields_body
+          (field_declaration
+            (field_keyword)
+            id: (integer)
+            name: (identifier)
+            type: (type_specification
+              (code_type
+                (code_keyword)
+                length: (integer))))
+          (field_declaration
+            (field_keyword)
+            id: (integer)
+            name: (identifier)
+            type: (type_specification
+              (basic_type)))
+          (field_declaration
+            (field_keyword)
+            id: (integer)
+            name: (identifier)
+            type: (type_specification
+              (basic_type)))
+          (field_declaration
+            (field_keyword)
+            id: (integer)
+            name: (identifier)
+            type: (type_specification
+              (option_type
+                (option_keyword)))
+            body: (declaration_body
+              (property
+                name: (property_name)
+                value: (option_member_list
+                  (option_member
+                    (identifier))
+                  (option_member
+                    (identifier))
+                  (option_member
+                    (identifier))))))))
+      (keys_section
+        (keys_keyword)
+        body: (keys_body
+          (key_declaration
+            (key_keyword)
+            name: (identifier)
+            fields: (field_list
+              (identifier))
+            body: (declaration_body
+              (property
+                name: (property_name)
+                value: (boolean))))))))
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (var_section
+        (var_keyword)
+        body: (var_body
+          (preproc_conditional_var
+            (preproc_if
+              (preproc_open)
+              condition: (identifier))
+            (variable_declaration
+              name: (identifier)
+              type: (basic_type)
+              value: (string_literal)
+              (ERROR
+                (UNEXPECTED 'i')
+                (identifier)))
+            (preproc_endif
+              (preproc_close))))))
+    (ERROR
+      (UNEXPECTED 'i'))))

@@ -1,0 +1,495 @@
+========================================================================
+B7a GAP: implements / empty (9 cells, verdict of the representative GAP); the parser ERRORs on configurations alc accepts; representative occ:implements_clause:2.0.0@codeunit_declaration#empty
+========================================================================
+interface IFoo
+{
+}
+
+interface IBar
+{
+}
+
+interface IBaz
+{
+}
+
+codeunit 50111 C2 implements 
+IFoo ,
+#if X
+#endif
+IBar
+
+{
+}
+------------------------------------------------------------------------
+
+(source_file
+  (interface_declaration
+    (interface_keyword)
+    object_name: (identifier))
+  (interface_declaration
+    (interface_keyword)
+    object_name: (identifier))
+  (interface_declaration
+    (interface_keyword)
+    object_name: (identifier))
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    (implements_clause
+      (implements_keyword)
+      interface: (identifier)
+      (ERROR
+        (UNEXPECTED 'i'))
+      interface: (identifier))
+    (ERROR
+      (UNEXPECTED 'i')
+      (identifier))))
+
+========================================================================
+B7a GAP: implements / empty-list (9 cells, verdict of the representative MIXED); the parser ERRORs on configurations alc accepts; representative occ:implements_clause:2.0.0@codeunit_declaration#empty-list
+========================================================================
+interface IFoo
+{
+}
+
+interface IBar
+{
+}
+
+interface IBaz
+{
+}
+
+codeunit 50111 C2 implements 
+#if X
+IFoo , IBar
+#endif
+
+{
+}
+------------------------------------------------------------------------
+
+(source_file
+  (interface_declaration
+    (interface_keyword)
+    object_name: (identifier))
+  (interface_declaration
+    (interface_keyword)
+    object_name: (identifier))
+  (interface_declaration
+    (interface_keyword)
+    object_name: (identifier))
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    (implements_clause
+      (implements_keyword)
+      (ERROR
+        (UNEXPECTED 'i')
+        (identifier))
+      interface: (identifier)
+      interface: (identifier))
+    (ERROR
+      (UNEXPECTED 'i'))))
+
+========================================================================
+B7a GAP: implements / holes-lead (9 cells, verdict of the representative MIXED); the parser ERRORs on configurations alc accepts; representative occ:implements_clause:2.0.0@codeunit_declaration#holes-lead
+========================================================================
+interface IFoo
+{
+}
+
+interface IBar
+{
+}
+
+interface IBaz
+{
+}
+
+codeunit 50111 C2 implements 
+#if X
+,
+#endif
+IFoo , IBar
+
+{
+}
+------------------------------------------------------------------------
+
+(source_file
+  (interface_declaration
+    (interface_keyword)
+    object_name: (identifier))
+  (interface_declaration
+    (interface_keyword)
+    object_name: (identifier))
+  (interface_declaration
+    (interface_keyword)
+    object_name: (identifier))
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    (implements_clause
+      (implements_keyword)
+      (ERROR
+        (UNEXPECTED 'i'))
+      interface: (identifier)
+      (ERROR
+        (UNEXPECTED 'i'))
+      interface: (identifier)
+      interface: (identifier))))
+
+========================================================================
+B7a GAP: implements / holes-mid (9 cells, verdict of the representative MIXED); the parser ERRORs on configurations alc accepts; representative occ:implements_clause:2.0.0@codeunit_declaration#holes-mid
+========================================================================
+interface IFoo
+{
+}
+
+interface IBar
+{
+}
+
+interface IBaz
+{
+}
+
+codeunit 50111 C2 implements 
+IFoo ,
+#if X
+,
+#endif
+IBar
+
+{
+}
+------------------------------------------------------------------------
+
+(source_file
+  (interface_declaration
+    (interface_keyword)
+    object_name: (identifier))
+  (interface_declaration
+    (interface_keyword)
+    object_name: (identifier))
+  (interface_declaration
+    (interface_keyword)
+    object_name: (identifier))
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    (implements_clause
+      (implements_keyword)
+      interface: (identifier)
+      (ERROR
+        (UNEXPECTED 'i'))
+      interface: (identifier)
+      (ERROR
+        (UNEXPECTED 'i'))
+      interface: (identifier))))
+
+========================================================================
+B7a GAP: implements / holes-trail (9 cells, verdict of the representative MIXED); the parser ERRORs on configurations alc accepts; representative occ:implements_clause:2.0.0@codeunit_declaration#holes-trail
+========================================================================
+interface IFoo
+{
+}
+
+interface IBar
+{
+}
+
+interface IBaz
+{
+}
+
+codeunit 50111 C2 implements 
+IFoo , IBar
+#if X
+,
+#endif
+
+{
+}
+------------------------------------------------------------------------
+
+(source_file
+  (interface_declaration
+    (interface_keyword)
+    object_name: (identifier))
+  (interface_declaration
+    (interface_keyword)
+    object_name: (identifier))
+  (interface_declaration
+    (interface_keyword)
+    object_name: (identifier))
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    (implements_clause
+      (implements_keyword)
+      interface: (identifier)
+      interface: (identifier))
+    (ERROR
+      (UNEXPECTED 'i')
+      (identifier)
+      (UNEXPECTED 'i'))))
+
+========================================================================
+B7a GAP: implements / lead-optional (9 cells, verdict of the representative GAP); the parser ERRORs on configurations alc accepts; representative occ:implements_clause:2.0.0@codeunit_declaration#lead-optional
+========================================================================
+interface IFoo
+{
+}
+
+interface IBar
+{
+}
+
+interface IBaz
+{
+}
+
+codeunit 50111 C2 implements 
+#if X
+IFoo ,
+#endif
+IBar
+
+{
+}
+------------------------------------------------------------------------
+
+(source_file
+  (interface_declaration
+    (interface_keyword)
+    object_name: (identifier))
+  (interface_declaration
+    (interface_keyword)
+    object_name: (identifier))
+  (interface_declaration
+    (interface_keyword)
+    object_name: (identifier))
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    (implements_clause
+      (implements_keyword)
+      (ERROR
+        (UNEXPECTED 'i')
+        (identifier))
+      interface: (identifier)
+      (ERROR
+        (UNEXPECTED 'i'))
+      interface: (identifier))))
+
+========================================================================
+B7a GAP: implements / one-elem (9 cells, verdict of the representative GAP); the parser ERRORs on configurations alc accepts; representative occ:implements_clause:2.0.0@codeunit_declaration#one-elem
+========================================================================
+interface IFoo
+{
+}
+
+interface IBar
+{
+}
+
+interface IBaz
+{
+}
+
+codeunit 50111 C2 implements 
+#if X
+IFoo , IBar
+#else
+IFoo
+#endif
+
+{
+}
+------------------------------------------------------------------------
+
+(source_file
+  (interface_declaration
+    (interface_keyword)
+    object_name: (identifier))
+  (interface_declaration
+    (interface_keyword)
+    object_name: (identifier))
+  (interface_declaration
+    (interface_keyword)
+    object_name: (identifier))
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    (implements_clause
+      (implements_keyword)
+      (ERROR
+        (UNEXPECTED 'i')
+        (identifier)
+        (identifier)
+        interface: (identifier)
+        (preproc_else))
+      interface: (identifier))
+    (ERROR
+      (UNEXPECTED 'i'))))
+
+========================================================================
+B7a GAP: implements / sep-before-end (9 cells, verdict of the representative GAP); the parser ERRORs on configurations alc accepts; representative occ:implements_clause:2.0.0@codeunit_declaration#sep-before-end
+========================================================================
+interface IFoo
+{
+}
+
+interface IBar
+{
+}
+
+interface IBaz
+{
+}
+
+codeunit 50111 C2 implements 
+IFoo
+#if X
+, IBar
+#endif
+
+{
+}
+------------------------------------------------------------------------
+
+(source_file
+  (interface_declaration
+    (interface_keyword)
+    object_name: (identifier))
+  (interface_declaration
+    (interface_keyword)
+    object_name: (identifier))
+  (interface_declaration
+    (interface_keyword)
+    object_name: (identifier))
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    (implements_clause
+      (implements_keyword)
+      interface: (identifier)
+      (ERROR
+        (UNEXPECTED 'i')
+        (identifier))
+      interface: (identifier))
+    (ERROR
+      (UNEXPECTED 'i'))))
+
+========================================================================
+B7a GAP: implements / sep-only (9 cells, verdict of the representative GAP); the parser ERRORs on configurations alc accepts; representative occ:implements_clause:2.0.0@codeunit_declaration#sep-only
+========================================================================
+interface IFoo
+{
+}
+
+interface IBar
+{
+}
+
+interface IBaz
+{
+}
+
+codeunit 50111 C2 implements 
+IFoo
+#if X
+,
+#else
+,
+#endif
+IBar
+
+{
+}
+------------------------------------------------------------------------
+
+(source_file
+  (interface_declaration
+    (interface_keyword)
+    object_name: (identifier))
+  (interface_declaration
+    (interface_keyword)
+    object_name: (identifier))
+  (interface_declaration
+    (interface_keyword)
+    object_name: (identifier))
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    (implements_clause
+      (implements_keyword)
+      interface: (identifier)
+      (ERROR
+        (UNEXPECTED 'i')
+        (identifier)
+        (preproc_else))
+      (ERROR
+        (UNEXPECTED 'i'))
+      interface: (identifier))))
+
+========================================================================
+B7a GAP: implements / trail (9 cells, verdict of the representative MIXED); the parser ERRORs on configurations alc accepts; representative occ:implements_clause:2.0.0@codeunit_declaration#trail
+========================================================================
+interface IFoo
+{
+}
+
+interface IBar
+{
+}
+
+interface IBaz
+{
+}
+
+codeunit 50111 C2 implements 
+IFoo ,
+#if X
+IBar
+#endif
+
+{
+}
+------------------------------------------------------------------------
+
+(source_file
+  (interface_declaration
+    (interface_keyword)
+    object_name: (identifier))
+  (interface_declaration
+    (interface_keyword)
+    object_name: (identifier))
+  (interface_declaration
+    (interface_keyword)
+    object_name: (identifier))
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    (implements_clause
+      (implements_keyword)
+      interface: (identifier)
+      (ERROR
+        (UNEXPECTED 'i'))
+      interface: (identifier))
+    (ERROR
+      (identifier)
+      (UNEXPECTED 'i'))))

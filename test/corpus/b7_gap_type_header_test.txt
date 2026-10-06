@@ -1,0 +1,311 @@
+========================================================================
+B7a GAP: type-header / adjacent-compl (3 cells, verdict of the representative GAP); the parser ERRORs on configurations alc accepts; representative occ:type_declaration:3@assembly_body#adjacent-compl
+========================================================================
+dotnet
+{
+    assembly(mscorlib)
+    {
+        type(
+System.Text.StringBuilder
+#if X
+;
+#endif
+#if not X
+;
+#endif
+SB
+) { }
+    }
+}
+------------------------------------------------------------------------
+
+(source_file
+  (dotnet_declaration
+    (dotnet_keyword)
+    body: (dotnet_body
+      (assembly_declaration
+        (assembly_keyword)
+        name: (dotnet_assembly_name)
+        body: (assembly_body
+          (type_declaration
+            (type_keyword)
+            dotnet_type: (dotnet_assembly_name)
+            (ERROR
+              (UNEXPECTED 'i')
+              (identifier))
+            (ERROR
+              (UNEXPECTED 'i')
+              (UNEXPECTED 'i')
+              (identifier)
+              (UNEXPECTED 'i'))
+            al_name: (identifier)))))))
+
+========================================================================
+B7a GAP: type-header / elif (3 cells, verdict of the representative GAP); the parser ERRORs on configurations alc accepts; representative occ:type_declaration:3@assembly_body#elif
+========================================================================
+dotnet
+{
+    assembly(mscorlib)
+    {
+        type(
+System.Text.StringBuilder
+#if X
+;
+#elif Y
+;
+#else
+;
+#endif
+SB
+) { }
+    }
+}
+------------------------------------------------------------------------
+
+(source_file
+  (dotnet_declaration
+    (dotnet_keyword)
+    body: (dotnet_body
+      (assembly_declaration
+        (assembly_keyword)
+        name: (dotnet_assembly_name)
+        body: (assembly_body
+          (type_declaration
+            (type_keyword)
+            dotnet_type: (dotnet_assembly_name)
+            (ERROR
+              (UNEXPECTED 'i')
+              (identifier)
+              (ERROR)
+              (identifier)
+              (preproc_else))
+            (ERROR
+              (UNEXPECTED 'i'))
+            al_name: (identifier)))))))
+
+========================================================================
+B7a GAP: type-header / empty (3 cells, verdict of the representative GAP); the parser ERRORs on configurations alc accepts; representative occ:type_declaration:3@assembly_body#empty
+========================================================================
+dotnet
+{
+    assembly(mscorlib)
+    {
+        type(
+System.Text.StringBuilder ;
+#if X
+#endif
+SB
+) { }
+    }
+}
+------------------------------------------------------------------------
+
+(source_file
+  (dotnet_declaration
+    (dotnet_keyword)
+    body: (dotnet_body
+      (assembly_declaration
+        (assembly_keyword)
+        name: (dotnet_assembly_name)
+        body: (assembly_body
+          (type_declaration
+            (type_keyword)
+            dotnet_type: (dotnet_assembly_name)
+            (ERROR
+              (UNEXPECTED 'i')
+              (identifier)
+              (UNEXPECTED 'i'))
+            al_name: (identifier)))))))
+
+========================================================================
+B7a GAP: type-header / first-replace (3 cells, verdict of the representative GAP); the parser ERRORs on configurations alc accepts; representative occ:type_declaration:3@assembly_body#first-replace
+========================================================================
+dotnet
+{
+    assembly(mscorlib)
+    {
+        type(
+#if X
+System.Text.StringBuilder
+#else
+System.Text.StringBuilder
+#endif
+; SB
+) { }
+    }
+}
+------------------------------------------------------------------------
+
+(source_file
+  (dotnet_declaration
+    (dotnet_keyword)
+    body: (dotnet_body
+      (assembly_declaration
+        (assembly_keyword)
+        name: (dotnet_assembly_name)
+        (ERROR
+          (type_keyword)
+          (UNEXPECTED 'i')
+          (identifier)
+          (identifier)
+          (preproc_else)
+          (identifier)
+          (UNEXPECTED 'i')
+          (identifier))))
+    (MISSING "}")))
+
+========================================================================
+B7a GAP: type-header / nested (3 cells, verdict of the representative GAP); the parser ERRORs on configurations alc accepts; representative occ:type_declaration:3@assembly_body#nested
+========================================================================
+dotnet
+{
+    assembly(mscorlib)
+    {
+        type(
+System.Text.StringBuilder
+#if X
+#if Y
+;
+#else
+;
+#endif
+#else
+;
+#endif
+SB
+) { }
+    }
+}
+------------------------------------------------------------------------
+
+(source_file
+  (dotnet_declaration
+    (dotnet_keyword)
+    body: (dotnet_body
+      (assembly_declaration
+        (assembly_keyword)
+        name: (dotnet_assembly_name)
+        body: (assembly_body
+          (type_declaration
+            (type_keyword)
+            dotnet_type: (dotnet_assembly_name)
+            (ERROR
+              (UNEXPECTED 'i')
+              (identifier)
+              (UNEXPECTED 'i')
+              (identifier)
+              (preproc_else)
+              (UNEXPECTED 'i')
+              (preproc_else))
+            (ERROR
+              (UNEXPECTED 'i'))
+            al_name: (identifier)))))))
+
+========================================================================
+B7a GAP: type-header / sep-before-end (3 cells, verdict of the representative GAP); the parser ERRORs on configurations alc accepts; representative occ:type_declaration:3@assembly_body#sep-before-end
+========================================================================
+dotnet
+{
+    assembly(mscorlib)
+    {
+        type(
+System.Text.StringBuilder
+#if X
+; SB
+#endif
+) { }
+    }
+}
+------------------------------------------------------------------------
+
+(source_file
+  (dotnet_declaration
+    (dotnet_keyword)
+    body: (dotnet_body
+      (assembly_declaration
+        (assembly_keyword)
+        name: (dotnet_assembly_name)
+        body: (assembly_body
+          (type_declaration
+            (type_keyword)
+            dotnet_type: (dotnet_assembly_name)
+            (ERROR
+              (UNEXPECTED 'i')
+              (identifier))
+            al_name: (identifier)
+            (ERROR
+              (UNEXPECTED 'i'))))))))
+
+========================================================================
+B7a GAP: type-header / sep-only (3 cells, verdict of the representative GAP); the parser ERRORs on configurations alc accepts; representative occ:type_declaration:3@assembly_body#sep-only
+========================================================================
+dotnet
+{
+    assembly(mscorlib)
+    {
+        type(
+System.Text.StringBuilder
+#if X
+;
+#else
+;
+#endif
+SB
+) { }
+    }
+}
+------------------------------------------------------------------------
+
+(source_file
+  (dotnet_declaration
+    (dotnet_keyword)
+    body: (dotnet_body
+      (assembly_declaration
+        (assembly_keyword)
+        name: (dotnet_assembly_name)
+        body: (assembly_body
+          (type_declaration
+            (type_keyword)
+            dotnet_type: (dotnet_assembly_name)
+            (ERROR
+              (UNEXPECTED 'i')
+              (identifier)
+              (preproc_else))
+            (ERROR
+              (UNEXPECTED 'i'))
+            al_name: (identifier)))))))
+
+========================================================================
+B7a GAP: type-header / trail (3 cells, verdict of the representative MIXED); the parser ERRORs on configurations alc accepts; representative occ:type_declaration:3@assembly_body#trail
+========================================================================
+dotnet
+{
+    assembly(mscorlib)
+    {
+        type(
+System.Text.StringBuilder ;
+#if X
+SB
+#endif
+) { }
+    }
+}
+------------------------------------------------------------------------
+
+(source_file
+  (dotnet_declaration
+    (dotnet_keyword)
+    body: (dotnet_body
+      (assembly_declaration
+        (assembly_keyword)
+        name: (dotnet_assembly_name)
+        body: (assembly_body
+          (type_declaration
+            (type_keyword)
+            dotnet_type: (dotnet_assembly_name)
+            (ERROR
+              (UNEXPECTED 'i'))
+            al_name: (identifier)
+            (ERROR
+              (identifier)
+              (UNEXPECTED 'i'))))))))

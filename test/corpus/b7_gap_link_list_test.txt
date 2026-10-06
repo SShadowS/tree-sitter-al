@@ -1,0 +1,4235 @@
+========================================================================
+B7a REJECTED/over-accepts(syntax): link-list / empty-list (3 cells, verdict of the representative MIXED); alc rejects with a syntax code (AL0104,AL0107,AL0292) but the parser is clean; representative occ:_link_value_run:0.1.0.0@link_value_list#empty-list+comments@SubPageLink
+========================================================================
+table 50100 T
+{
+    fields
+    {
+        field(1; K; Code[20]) { }
+        field(2; N; Integer) { }
+        field(3; B; Boolean) { }
+        field(9; O; Option) { OptionMembers = A,B,C; }
+    }
+    keys
+    {
+        key(PK; K) { Clustered = true; }
+    }
+}
+page 50102 PG
+{
+    SourceTable = T;
+    layout
+    {
+        area(Content)
+        {
+            field(N; Rec.N) { }
+            part(P1; PartPg)
+            {
+                SubPageLink = 
+#if X
+K = field(K) /* c */ , N = const(1) // c
+#endif
+;
+            }
+        }
+    }
+    var
+        I: Integer;
+        Ok: Boolean;
+}
+page 50104 PartPg
+{
+    PageType = ListPart;
+    SourceTable = T;
+    layout
+    {
+        area(Content)
+        {
+            repeater(G)
+            {
+                field(K; Rec.K) { }
+            }
+        }
+    }
+}
+------------------------------------------------------------------------
+
+(source_file
+  (table_declaration
+    (table_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (fields_section
+        (fields_keyword)
+        body: (fields_body
+          (field_declaration
+            (field_keyword)
+            id: (integer)
+            name: (identifier)
+            type: (type_specification
+              (code_type
+                (code_keyword)
+                length: (integer))))
+          (field_declaration
+            (field_keyword)
+            id: (integer)
+            name: (identifier)
+            type: (type_specification
+              (basic_type)))
+          (field_declaration
+            (field_keyword)
+            id: (integer)
+            name: (identifier)
+            type: (type_specification
+              (basic_type)))
+          (field_declaration
+            (field_keyword)
+            id: (integer)
+            name: (identifier)
+            type: (type_specification
+              (option_type
+                (option_keyword)))
+            body: (declaration_body
+              (property
+                name: (property_name)
+                value: (option_member_list
+                  (option_member
+                    (identifier))
+                  (option_member
+                    (identifier))
+                  (option_member
+                    (identifier))))))))
+      (keys_section
+        (keys_keyword)
+        body: (keys_body
+          (key_declaration
+            (key_keyword)
+            name: (identifier)
+            fields: (field_list
+              (identifier))
+            body: (declaration_body
+              (property
+                name: (property_name)
+                value: (boolean))))))))
+  (page_declaration
+    (page_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (property
+        name: (property_name)
+        value: (identifier))
+      (layout_section
+        (layout_keyword)
+        body: (layout_body
+          (area_section
+            (area_keyword)
+            type: (content_keyword)
+            body: (layout_body
+              (page_field
+                (field_keyword)
+                name: (identifier)
+                source: (member_expression
+                  object: (identifier)
+                  member: (identifier)))
+              (part_section
+                (part_keyword)
+                name: (identifier)
+                source: (identifier)
+                body: (declaration_body
+                  (property
+                    name: (property_name)
+                    value: (preproc_conditional_property_value
+                      (preproc_if
+                        (preproc_open)
+                        condition: (identifier))
+                      value: (link_value_list
+                        (link_value
+                          field: (identifier)
+                          (field_keyword)
+                          value: (identifier))
+                        (multiline_comment)
+                        (link_value
+                          field: (identifier)
+                          (const_keyword)
+                          value: (integer)))
+                      (comment)
+                      (preproc_endif
+                        (preproc_close))))))))))
+      (var_section
+        (var_keyword)
+        body: (var_body
+          (variable_declaration
+            name: (identifier)
+            type: (type_specification
+              (basic_type)))
+          (variable_declaration
+            name: (identifier)
+            type: (type_specification
+              (basic_type)))))))
+  (page_declaration
+    (page_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (property
+        name: (property_name)
+        value: (identifier))
+      (property
+        name: (property_name)
+        value: (identifier))
+      (layout_section
+        (layout_keyword)
+        body: (layout_body
+          (area_section
+            (area_keyword)
+            type: (content_keyword)
+            body: (layout_body
+              (repeater_section
+                (repeater_keyword)
+                name: (identifier)
+                body: (layout_container_body
+                  (page_field
+                    (field_keyword)
+                    name: (identifier)
+                    source: (member_expression
+                      object: (identifier)
+                      member: (identifier))))))))))))
+
+========================================================================
+B7a GAP: link-list / first-replace (15 cells, verdict of the representative GAP); the parser ERRORs on configurations alc accepts; representative occ:_link_value_branch:0.0@preproc_conditional_link_values#first-replace+comments@SubPageLink
+========================================================================
+table 50100 T
+{
+    fields
+    {
+        field(1; K; Code[20]) { }
+        field(2; N; Integer) { }
+        field(3; B; Boolean) { }
+        field(9; O; Option) { OptionMembers = A,B,C; }
+    }
+    keys
+    {
+        key(PK; K) { Clustered = true; }
+    }
+}
+page 50102 PG
+{
+    SourceTable = T;
+    layout
+    {
+        area(Content)
+        {
+            field(N; Rec.N) { }
+            part(P1; PartPg)
+            {
+                SubPageLink = K = field(K)
+#if TPL
+                    
+/* c */ , // c
+#if X
+N = const(1) // c
+#else
+"B" = const(true) // c
+#endif
+/* c */ , K = field(K) // c
+
+#endif
+                    ;
+            }
+        }
+    }
+    var
+        I: Integer;
+        Ok: Boolean;
+}
+page 50104 PartPg
+{
+    PageType = ListPart;
+    SourceTable = T;
+    layout
+    {
+        area(Content)
+        {
+            repeater(G)
+            {
+                field(K; Rec.K) { }
+            }
+        }
+    }
+}
+------------------------------------------------------------------------
+
+(source_file
+  (table_declaration
+    (table_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (fields_section
+        (fields_keyword)
+        body: (fields_body
+          (field_declaration
+            (field_keyword)
+            id: (integer)
+            name: (identifier)
+            type: (type_specification
+              (code_type
+                (code_keyword)
+                length: (integer))))
+          (field_declaration
+            (field_keyword)
+            id: (integer)
+            name: (identifier)
+            type: (type_specification
+              (basic_type)))
+          (field_declaration
+            (field_keyword)
+            id: (integer)
+            name: (identifier)
+            type: (type_specification
+              (basic_type)))
+          (field_declaration
+            (field_keyword)
+            id: (integer)
+            name: (identifier)
+            type: (type_specification
+              (option_type
+                (option_keyword)))
+            body: (declaration_body
+              (property
+                name: (property_name)
+                value: (option_member_list
+                  (option_member
+                    (identifier))
+                  (option_member
+                    (identifier))
+                  (option_member
+                    (identifier))))))))
+      (keys_section
+        (keys_keyword)
+        body: (keys_body
+          (key_declaration
+            (key_keyword)
+            name: (identifier)
+            fields: (field_list
+              (identifier))
+            body: (declaration_body
+              (property
+                name: (property_name)
+                value: (boolean))))))))
+  (page_declaration
+    (page_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (property
+        name: (property_name)
+        value: (identifier))
+      (layout_section
+        (layout_keyword)
+        body: (layout_body
+          (area_section
+            (area_keyword)
+            type: (content_keyword)
+            body: (layout_body
+              (page_field
+                (field_keyword)
+                name: (identifier)
+                source: (member_expression
+                  object: (identifier)
+                  member: (identifier)))
+              (part_section
+                (part_keyword)
+                name: (identifier)
+                source: (identifier)
+                body: (declaration_body
+                  (property
+                    name: (property_name)
+                    value: (link_value_list
+                      (link_value
+                        field: (identifier)
+                        (field_keyword)
+                        value: (identifier))
+                      (preproc_conditional_link_values
+                        (preproc_if
+                          (preproc_open)
+                          condition: (identifier))
+                        (multiline_comment)
+                        (comment)
+                        (preproc_conditional_link_values
+                          (preproc_if
+                            (preproc_open)
+                            condition: (identifier))
+                          (link_value
+                            field: (identifier)
+                            (const_keyword)
+                            value: (integer))
+                          (comment)
+                          (preproc_else)
+                          (link_value
+                            field: (quoted_identifier)
+                            (const_keyword)
+                            value: (boolean))
+                          (comment)
+                          (preproc_endif
+                            (preproc_close)))
+                        (multiline_comment)
+                        (ERROR)
+                        (link_value
+                          field: (identifier)
+                          (field_keyword)
+                          value: (identifier))
+                        (comment)
+                        (preproc_endif
+                          (preproc_close)))))))))))
+      (var_section
+        (var_keyword)
+        body: (var_body
+          (variable_declaration
+            name: (identifier)
+            type: (type_specification
+              (basic_type)))
+          (variable_declaration
+            name: (identifier)
+            type: (type_specification
+              (basic_type)))))))
+  (page_declaration
+    (page_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (property
+        name: (property_name)
+        value: (identifier))
+      (property
+        name: (property_name)
+        value: (identifier))
+      (layout_section
+        (layout_keyword)
+        body: (layout_body
+          (area_section
+            (area_keyword)
+            type: (content_keyword)
+            body: (layout_body
+              (repeater_section
+                (repeater_keyword)
+                name: (identifier)
+                body: (layout_container_body
+                  (page_field
+                    (field_keyword)
+                    name: (identifier)
+                    source: (member_expression
+                      object: (identifier)
+                      member: (identifier))))))))))))
+
+========================================================================
+B7a REJECTED/over-accepts(syntax): link-list / holes-mid (15 cells, verdict of the representative MIXED); alc rejects with a syntax code (AL0104,AL0107,AL0292) but the parser is clean; representative occ:_link_value_branch:0.0@preproc_conditional_link_values#holes-mid+comments@SubPageLink
+========================================================================
+table 50100 T
+{
+    fields
+    {
+        field(1; K; Code[20]) { }
+        field(2; N; Integer) { }
+        field(3; B; Boolean) { }
+        field(9; O; Option) { OptionMembers = A,B,C; }
+    }
+    keys
+    {
+        key(PK; K) { Clustered = true; }
+    }
+}
+page 50102 PG
+{
+    SourceTable = T;
+    layout
+    {
+        area(Content)
+        {
+            field(N; Rec.N) { }
+            part(P1; PartPg)
+            {
+                SubPageLink = K = field(K)
+#if TPL
+                    
+/* c */ , // c
+N = const(1) /* c */ , // c
+#if X
+/* c */ , // c
+#endif
+"B" = const(true) // c
+
+#endif
+                    ;
+            }
+        }
+    }
+    var
+        I: Integer;
+        Ok: Boolean;
+}
+page 50104 PartPg
+{
+    PageType = ListPart;
+    SourceTable = T;
+    layout
+    {
+        area(Content)
+        {
+            repeater(G)
+            {
+                field(K; Rec.K) { }
+            }
+        }
+    }
+}
+------------------------------------------------------------------------
+
+(source_file
+  (table_declaration
+    (table_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (fields_section
+        (fields_keyword)
+        body: (fields_body
+          (field_declaration
+            (field_keyword)
+            id: (integer)
+            name: (identifier)
+            type: (type_specification
+              (code_type
+                (code_keyword)
+                length: (integer))))
+          (field_declaration
+            (field_keyword)
+            id: (integer)
+            name: (identifier)
+            type: (type_specification
+              (basic_type)))
+          (field_declaration
+            (field_keyword)
+            id: (integer)
+            name: (identifier)
+            type: (type_specification
+              (basic_type)))
+          (field_declaration
+            (field_keyword)
+            id: (integer)
+            name: (identifier)
+            type: (type_specification
+              (option_type
+                (option_keyword)))
+            body: (declaration_body
+              (property
+                name: (property_name)
+                value: (option_member_list
+                  (option_member
+                    (identifier))
+                  (option_member
+                    (identifier))
+                  (option_member
+                    (identifier))))))))
+      (keys_section
+        (keys_keyword)
+        body: (keys_body
+          (key_declaration
+            (key_keyword)
+            name: (identifier)
+            fields: (field_list
+              (identifier))
+            body: (declaration_body
+              (property
+                name: (property_name)
+                value: (boolean))))))))
+  (page_declaration
+    (page_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (property
+        name: (property_name)
+        value: (identifier))
+      (layout_section
+        (layout_keyword)
+        body: (layout_body
+          (area_section
+            (area_keyword)
+            type: (content_keyword)
+            body: (layout_body
+              (page_field
+                (field_keyword)
+                name: (identifier)
+                source: (member_expression
+                  object: (identifier)
+                  member: (identifier)))
+              (part_section
+                (part_keyword)
+                name: (identifier)
+                source: (identifier)
+                body: (declaration_body
+                  (property
+                    name: (property_name)
+                    value: (link_value_list
+                      (link_value
+                        field: (identifier)
+                        (field_keyword)
+                        value: (identifier))
+                      (preproc_conditional_link_values
+                        (preproc_if
+                          (preproc_open)
+                          condition: (identifier))
+                        (multiline_comment)
+                        (comment)
+                        (link_value
+                          field: (identifier)
+                          (const_keyword)
+                          value: (integer))
+                        (multiline_comment)
+                        (comment)
+                        (preproc_conditional_link_values
+                          (preproc_if
+                            (preproc_open)
+                            condition: (identifier))
+                          (multiline_comment)
+                          (comment)
+                          (preproc_endif
+                            (preproc_close)))
+                        (link_value
+                          field: (quoted_identifier)
+                          (const_keyword)
+                          value: (boolean))
+                        (comment)
+                        (preproc_endif
+                          (preproc_close)))))))))))
+      (var_section
+        (var_keyword)
+        body: (var_body
+          (variable_declaration
+            name: (identifier)
+            type: (type_specification
+              (basic_type)))
+          (variable_declaration
+            name: (identifier)
+            type: (type_specification
+              (basic_type)))))))
+  (page_declaration
+    (page_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (property
+        name: (property_name)
+        value: (identifier))
+      (property
+        name: (property_name)
+        value: (identifier))
+      (layout_section
+        (layout_keyword)
+        body: (layout_body
+          (area_section
+            (area_keyword)
+            type: (content_keyword)
+            body: (layout_body
+              (repeater_section
+                (repeater_keyword)
+                name: (identifier)
+                body: (layout_container_body
+                  (page_field
+                    (field_keyword)
+                    name: (identifier)
+                    source: (member_expression
+                      object: (identifier)
+                      member: (identifier))))))))))))
+
+========================================================================
+B7a GAP: link-list / holes-trail (9 cells, verdict of the representative MIXED); the parser ERRORs on configurations alc accepts; representative occ:_link_value_run:0.1.0.0@preproc_conditional_link_values#holes-trail+comments@SubPageLink
+========================================================================
+table 50100 T
+{
+    fields
+    {
+        field(1; K; Code[20]) { }
+        field(2; N; Integer) { }
+        field(3; B; Boolean) { }
+        field(9; O; Option) { OptionMembers = A,B,C; }
+    }
+    keys
+    {
+        key(PK; K) { Clustered = true; }
+    }
+}
+page 50102 PG
+{
+    SourceTable = T;
+    layout
+    {
+        area(Content)
+        {
+            field(N; Rec.N) { }
+            part(P1; PartPg)
+            {
+                SubPageLink =
+#if TPL
+                    
+K = field(K) /* c */ , N = const(1) // c
+#if X
+/* c */ , // c
+#endif
+/* c */ , // c
+
+#endif
+                    B = const(true);
+            }
+        }
+    }
+    var
+        I: Integer;
+        Ok: Boolean;
+}
+page 50104 PartPg
+{
+    PageType = ListPart;
+    SourceTable = T;
+    layout
+    {
+        area(Content)
+        {
+            repeater(G)
+            {
+                field(K; Rec.K) { }
+            }
+        }
+    }
+}
+------------------------------------------------------------------------
+
+(source_file
+  (table_declaration
+    (table_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (fields_section
+        (fields_keyword)
+        body: (fields_body
+          (field_declaration
+            (field_keyword)
+            id: (integer)
+            name: (identifier)
+            type: (type_specification
+              (code_type
+                (code_keyword)
+                length: (integer))))
+          (field_declaration
+            (field_keyword)
+            id: (integer)
+            name: (identifier)
+            type: (type_specification
+              (basic_type)))
+          (field_declaration
+            (field_keyword)
+            id: (integer)
+            name: (identifier)
+            type: (type_specification
+              (basic_type)))
+          (field_declaration
+            (field_keyword)
+            id: (integer)
+            name: (identifier)
+            type: (type_specification
+              (option_type
+                (option_keyword)))
+            body: (declaration_body
+              (property
+                name: (property_name)
+                value: (option_member_list
+                  (option_member
+                    (identifier))
+                  (option_member
+                    (identifier))
+                  (option_member
+                    (identifier))))))))
+      (keys_section
+        (keys_keyword)
+        body: (keys_body
+          (key_declaration
+            (key_keyword)
+            name: (identifier)
+            fields: (field_list
+              (identifier))
+            body: (declaration_body
+              (property
+                name: (property_name)
+                value: (boolean))))))))
+  (page_declaration
+    (page_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (property
+        name: (property_name)
+        value: (identifier))
+      (layout_section
+        (layout_keyword)
+        body: (layout_body
+          (area_section
+            (area_keyword)
+            type: (content_keyword)
+            body: (layout_body
+              (page_field
+                (field_keyword)
+                name: (identifier)
+                source: (member_expression
+                  object: (identifier)
+                  member: (identifier)))
+              (part_section
+                (part_keyword)
+                name: (identifier)
+                source: (identifier)
+                body: (declaration_body
+                  (property
+                    name: (property_name)
+                    value: (link_value_list
+                      (preproc_conditional_link_values
+                        (preproc_if
+                          (preproc_open)
+                          condition: (identifier))
+                        (ERROR
+                          (link_value_list
+                            (link_value
+                              field: (identifier)
+                              (field_keyword)
+                              value: (identifier))
+                            (multiline_comment)
+                            (link_value
+                              field: (identifier)
+                              (const_keyword)
+                              value: (integer))
+                            (comment)
+                            (preproc_conditional_link_values
+                              (preproc_if
+                                (preproc_open)
+                                condition: (identifier))
+                              (multiline_comment)
+                              (comment)
+                              (preproc_endif
+                                (preproc_close)))))
+                        (multiline_comment)
+                        (comment)
+                        (preproc_endif
+                          (preproc_close)))
+                      (link_value
+                        field: (identifier)
+                        (const_keyword)
+                        value: (boolean))))))))))
+      (var_section
+        (var_keyword)
+        body: (var_body
+          (variable_declaration
+            name: (identifier)
+            type: (type_specification
+              (basic_type)))
+          (variable_declaration
+            name: (identifier)
+            type: (type_specification
+              (basic_type)))))))
+  (page_declaration
+    (page_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (property
+        name: (property_name)
+        value: (identifier))
+      (property
+        name: (property_name)
+        value: (identifier))
+      (layout_section
+        (layout_keyword)
+        body: (layout_body
+          (area_section
+            (area_keyword)
+            type: (content_keyword)
+            body: (layout_body
+              (repeater_section
+                (repeater_keyword)
+                name: (identifier)
+                body: (layout_container_body
+                  (page_field
+                    (field_keyword)
+                    name: (identifier)
+                    source: (member_expression
+                      object: (identifier)
+                      member: (identifier))))))))))))
+
+========================================================================
+B7a REJECTED/over-accepts(syntax): link-list / holes-trail (6 cells, verdict of the representative MIXED); alc rejects with a syntax code (AL0104,AL0107,AL0292) but the parser is clean; representative occ:_link_value_branch:0.0@preproc_conditional_link_values#holes-trail+comments@SubPageLink
+========================================================================
+table 50100 T
+{
+    fields
+    {
+        field(1; K; Code[20]) { }
+        field(2; N; Integer) { }
+        field(3; B; Boolean) { }
+        field(9; O; Option) { OptionMembers = A,B,C; }
+    }
+    keys
+    {
+        key(PK; K) { Clustered = true; }
+    }
+}
+page 50102 PG
+{
+    SourceTable = T;
+    layout
+    {
+        area(Content)
+        {
+            field(N; Rec.N) { }
+            part(P1; PartPg)
+            {
+                SubPageLink = K = field(K)
+#if TPL
+                    
+/* c */ , // c
+N = const(1) /* c */ , "B" = const(true) // c
+#if X
+/* c */ , // c
+#endif
+
+#endif
+                    ;
+            }
+        }
+    }
+    var
+        I: Integer;
+        Ok: Boolean;
+}
+page 50104 PartPg
+{
+    PageType = ListPart;
+    SourceTable = T;
+    layout
+    {
+        area(Content)
+        {
+            repeater(G)
+            {
+                field(K; Rec.K) { }
+            }
+        }
+    }
+}
+------------------------------------------------------------------------
+
+(source_file
+  (table_declaration
+    (table_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (fields_section
+        (fields_keyword)
+        body: (fields_body
+          (field_declaration
+            (field_keyword)
+            id: (integer)
+            name: (identifier)
+            type: (type_specification
+              (code_type
+                (code_keyword)
+                length: (integer))))
+          (field_declaration
+            (field_keyword)
+            id: (integer)
+            name: (identifier)
+            type: (type_specification
+              (basic_type)))
+          (field_declaration
+            (field_keyword)
+            id: (integer)
+            name: (identifier)
+            type: (type_specification
+              (basic_type)))
+          (field_declaration
+            (field_keyword)
+            id: (integer)
+            name: (identifier)
+            type: (type_specification
+              (option_type
+                (option_keyword)))
+            body: (declaration_body
+              (property
+                name: (property_name)
+                value: (option_member_list
+                  (option_member
+                    (identifier))
+                  (option_member
+                    (identifier))
+                  (option_member
+                    (identifier))))))))
+      (keys_section
+        (keys_keyword)
+        body: (keys_body
+          (key_declaration
+            (key_keyword)
+            name: (identifier)
+            fields: (field_list
+              (identifier))
+            body: (declaration_body
+              (property
+                name: (property_name)
+                value: (boolean))))))))
+  (page_declaration
+    (page_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (property
+        name: (property_name)
+        value: (identifier))
+      (layout_section
+        (layout_keyword)
+        body: (layout_body
+          (area_section
+            (area_keyword)
+            type: (content_keyword)
+            body: (layout_body
+              (page_field
+                (field_keyword)
+                name: (identifier)
+                source: (member_expression
+                  object: (identifier)
+                  member: (identifier)))
+              (part_section
+                (part_keyword)
+                name: (identifier)
+                source: (identifier)
+                body: (declaration_body
+                  (property
+                    name: (property_name)
+                    value: (link_value_list
+                      (link_value
+                        field: (identifier)
+                        (field_keyword)
+                        value: (identifier))
+                      (preproc_conditional_link_values
+                        (preproc_if
+                          (preproc_open)
+                          condition: (identifier))
+                        (multiline_comment)
+                        (comment)
+                        (link_value
+                          field: (identifier)
+                          (const_keyword)
+                          value: (integer))
+                        (multiline_comment)
+                        (link_value
+                          field: (quoted_identifier)
+                          (const_keyword)
+                          value: (boolean))
+                        (comment)
+                        (preproc_conditional_link_values
+                          (preproc_if
+                            (preproc_open)
+                            condition: (identifier))
+                          (multiline_comment)
+                          (comment)
+                          (preproc_endif
+                            (preproc_close)))
+                        (preproc_endif
+                          (preproc_close)))))))))))
+      (var_section
+        (var_keyword)
+        body: (var_body
+          (variable_declaration
+            name: (identifier)
+            type: (type_specification
+              (basic_type)))
+          (variable_declaration
+            name: (identifier)
+            type: (type_specification
+              (basic_type)))))))
+  (page_declaration
+    (page_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (property
+        name: (property_name)
+        value: (identifier))
+      (property
+        name: (property_name)
+        value: (identifier))
+      (layout_section
+        (layout_keyword)
+        body: (layout_body
+          (area_section
+            (area_keyword)
+            type: (content_keyword)
+            body: (layout_body
+              (repeater_section
+                (repeater_keyword)
+                name: (identifier)
+                body: (layout_container_body
+                  (page_field
+                    (field_keyword)
+                    name: (identifier)
+                    source: (member_expression
+                      object: (identifier)
+                      member: (identifier))))))))))))
+
+========================================================================
+B7a GAP: link-list / one-elem (9 cells, verdict of the representative GAP); the parser ERRORs on configurations alc accepts; representative occ:_link_value_run:0.1.0.0@preproc_conditional_link_values#one-elem+comments@SubPageLink
+========================================================================
+table 50100 T
+{
+    fields
+    {
+        field(1; K; Code[20]) { }
+        field(2; N; Integer) { }
+        field(3; B; Boolean) { }
+        field(9; O; Option) { OptionMembers = A,B,C; }
+    }
+    keys
+    {
+        key(PK; K) { Clustered = true; }
+    }
+}
+page 50102 PG
+{
+    SourceTable = T;
+    layout
+    {
+        area(Content)
+        {
+            field(N; Rec.N) { }
+            part(P1; PartPg)
+            {
+                SubPageLink =
+#if TPL
+                    
+#if X
+K = field(K) /* c */ , N = const(1) // c
+#else
+K = field(K) // c
+#endif
+/* c */ , // c
+
+#endif
+                    B = const(true);
+            }
+        }
+    }
+    var
+        I: Integer;
+        Ok: Boolean;
+}
+page 50104 PartPg
+{
+    PageType = ListPart;
+    SourceTable = T;
+    layout
+    {
+        area(Content)
+        {
+            repeater(G)
+            {
+                field(K; Rec.K) { }
+            }
+        }
+    }
+}
+------------------------------------------------------------------------
+
+(source_file
+  (table_declaration
+    (table_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (fields_section
+        (fields_keyword)
+        body: (fields_body
+          (field_declaration
+            (field_keyword)
+            id: (integer)
+            name: (identifier)
+            type: (type_specification
+              (code_type
+                (code_keyword)
+                length: (integer))))
+          (field_declaration
+            (field_keyword)
+            id: (integer)
+            name: (identifier)
+            type: (type_specification
+              (basic_type)))
+          (field_declaration
+            (field_keyword)
+            id: (integer)
+            name: (identifier)
+            type: (type_specification
+              (basic_type)))
+          (field_declaration
+            (field_keyword)
+            id: (integer)
+            name: (identifier)
+            type: (type_specification
+              (option_type
+                (option_keyword)))
+            body: (declaration_body
+              (property
+                name: (property_name)
+                value: (option_member_list
+                  (option_member
+                    (identifier))
+                  (option_member
+                    (identifier))
+                  (option_member
+                    (identifier))))))))
+      (keys_section
+        (keys_keyword)
+        body: (keys_body
+          (key_declaration
+            (key_keyword)
+            name: (identifier)
+            fields: (field_list
+              (identifier))
+            body: (declaration_body
+              (property
+                name: (property_name)
+                value: (boolean))))))))
+  (page_declaration
+    (page_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (property
+        name: (property_name)
+        value: (identifier))
+      (layout_section
+        (layout_keyword)
+        body: (layout_body
+          (area_section
+            (area_keyword)
+            type: (content_keyword)
+            body: (layout_body
+              (page_field
+                (field_keyword)
+                name: (identifier)
+                source: (member_expression
+                  object: (identifier)
+                  member: (identifier)))
+              (part_section
+                (part_keyword)
+                name: (identifier)
+                source: (identifier)
+                body: (declaration_body
+                  (property
+                    name: (property_name)
+                    value: (link_value_list
+                      (preproc_conditional_link_values
+                        (preproc_if
+                          (preproc_open)
+                          condition: (identifier))
+                        (ERROR
+                          (preproc_conditional_link_values
+                            (preproc_if
+                              (preproc_open)
+                              condition: (identifier))
+                            (link_value
+                              field: (identifier)
+                              (field_keyword)
+                              value: (identifier))
+                            (multiline_comment)
+                            (link_value
+                              field: (identifier)
+                              (const_keyword)
+                              value: (integer))
+                            (comment)
+                            (preproc_else)
+                            (link_value
+                              field: (identifier)
+                              (field_keyword)
+                              value: (identifier))
+                            (comment)
+                            (preproc_endif
+                              (preproc_close))))
+                        (multiline_comment)
+                        (comment)
+                        (preproc_endif
+                          (preproc_close)))
+                      (link_value
+                        field: (identifier)
+                        (const_keyword)
+                        value: (boolean))))))))))
+      (var_section
+        (var_keyword)
+        body: (var_body
+          (variable_declaration
+            name: (identifier)
+            type: (type_specification
+              (basic_type)))
+          (variable_declaration
+            name: (identifier)
+            type: (type_specification
+              (basic_type)))))))
+  (page_declaration
+    (page_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (property
+        name: (property_name)
+        value: (identifier))
+      (property
+        name: (property_name)
+        value: (identifier))
+      (layout_section
+        (layout_keyword)
+        body: (layout_body
+          (area_section
+            (area_keyword)
+            type: (content_keyword)
+            body: (layout_body
+              (repeater_section
+                (repeater_keyword)
+                name: (identifier)
+                body: (layout_container_body
+                  (page_field
+                    (field_keyword)
+                    name: (identifier)
+                    source: (member_expression
+                      object: (identifier)
+                      member: (identifier))))))))))))
+
+========================================================================
+B7a GAP: link-list / seed:g11-item1-link-comma-leading__comma_leading_link (1 cells, verdict of the representative GAP); the parser ERRORs on configurations alc accepts; representative seed:g11-item1-link-comma-leading__comma_leading_link
+========================================================================
+// host: link_value_list
+// valid: *
+// seed-source: tools/alc_probe/cases/g11-item1-link-comma-leading/comma_leading_link.al (verdicts measured by alc, as recorded in its expect lines)
+// source: docs/deferred-work.md item 1 (link reproducer)
+// The parser still ERRORs on this shape (deferred-work item 1); alc accepts it.
+// expect: * accept
+// source: docs/deferred-work.md item 1 (link_value_list, comma-leading shape), commit 44fd67c: alc accepts all four configurations (G11 review probe)
+table 50101 Q
+{
+    fields { field(1; B; Integer) { } field(2; D; Integer) { } field(3; F; Integer) { } }
+}
+page 50100 P
+{
+    SourceTable = T;
+    layout
+    {
+        area(Content)
+        {
+            part(L; S)
+            {
+                SubPageLink = B = field(A)
+#if X
+                    , D = field(C)
+#endif
+                    , F = field(E);
+            }
+        }
+    }
+}
+page 50101 S
+{
+    SourceTable = Q;
+    layout { area(Content) { field(B; Rec.B) { } } }
+}
+table 50100 T
+{
+    fields { field(1; A; Integer) { } field(2; C; Integer) { } field(3; E; Integer) { } }
+}
+------------------------------------------------------------------------
+
+(source_file
+  (comment)
+  (comment)
+  (comment)
+  (comment)
+  (comment)
+  (comment)
+  (comment)
+  (table_declaration
+    (table_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (fields_section
+        (fields_keyword)
+        body: (fields_body
+          (field_declaration
+            (field_keyword)
+            id: (integer)
+            name: (identifier)
+            type: (type_specification
+              (basic_type)))
+          (field_declaration
+            (field_keyword)
+            id: (integer)
+            name: (identifier)
+            type: (type_specification
+              (basic_type)))
+          (field_declaration
+            (field_keyword)
+            id: (integer)
+            name: (identifier)
+            type: (type_specification
+              (basic_type)))))))
+  (page_declaration
+    (page_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (property
+        name: (property_name)
+        value: (identifier))
+      (layout_section
+        (layout_keyword)
+        body: (layout_body
+          (area_section
+            (area_keyword)
+            type: (content_keyword)
+            body: (layout_body
+              (part_section
+                (part_keyword)
+                name: (identifier)
+                source: (identifier)
+                body: (declaration_body
+                  (property
+                    name: (property_name)
+                    value: (link_value_list
+                      (link_value
+                        field: (identifier)
+                        (field_keyword)
+                        value: (identifier))
+                      (preproc_conditional_link_values
+                        (preproc_if
+                          (preproc_open)
+                          condition: (identifier))
+                        (link_value
+                          field: (identifier)
+                          (field_keyword)
+                          value: (identifier))
+                        (preproc_endif
+                          (preproc_close)))
+                      (ERROR)
+                      (link_value
+                        field: (identifier)
+                        (field_keyword)
+                        value: (identifier))))))))))))
+  (page_declaration
+    (page_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (property
+        name: (property_name)
+        value: (identifier))
+      (layout_section
+        (layout_keyword)
+        body: (layout_body
+          (area_section
+            (area_keyword)
+            type: (content_keyword)
+            body: (layout_body
+              (page_field
+                (field_keyword)
+                name: (identifier)
+                source: (member_expression
+                  object: (identifier)
+                  member: (identifier)))))))))
+  (table_declaration
+    (table_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (fields_section
+        (fields_keyword)
+        body: (fields_body
+          (field_declaration
+            (field_keyword)
+            id: (integer)
+            name: (identifier)
+            type: (type_specification
+              (basic_type)))
+          (field_declaration
+            (field_keyword)
+            id: (integer)
+            name: (identifier)
+            type: (type_specification
+              (basic_type)))
+          (field_declaration
+            (field_keyword)
+            id: (integer)
+            name: (identifier)
+            type: (type_specification
+              (basic_type))))))))
+
+========================================================================
+B7a REJECTED/over-accepts(syntax): link-list / seed:link-keying__decide-trailing-comma (1 cells, verdict of the representative REJECTED/over-accepts); alc rejects with a syntax code (AL0104,AL0107,AL0292) but the parser is clean; representative seed:link-keying__decide-trailing-comma
+========================================================================
+// host: link_value_list
+// valid: none
+// seed-source: tools/alc_probe/cases/link-keying/decide-trailing-comma.al (verdict measured by alc, as recorded in its expect line; no #if in the shape)
+// source: docs/deferred-work.md item 30
+// DECIDE (trailing comma A = field(B),;; alc 18.0.41: reject(AL0104,AL0107,AL0292))
+// expect: * reject(AL0104,AL0107,AL0292)
+// source: docs/superpowers/specs/2026-10-05-link-keying-design.md section 5.1/5.2
+table 50101 Cust { fields { field(1; "No."; Code[20]) { } field(2; Name; Text[30]) { } field(3; Amount; Decimal) { } field(4; Flag; Boolean) { } field(5; Kind; Option) { OptionMembers = Open,Closed; } field(6; Posted; Date) { } field(7; At; Time) { } field(8; Stamp; DateTime) { } } }
+page 50102 CustCard { PageType = Card; SourceTable = Cust; layout { area(Content) { field(N; Rec."No.") { } } } }
+page 50103 CustList { PageType = ListPart; SourceTable = Cust; layout { area(Content) { repeater(R) { field(N; Rec."No.") { } } } } }
+page 50100 P
+{
+    SourceTable = Cust;
+    actions { area(Processing) { action(A) {
+        RunObject = page CustCard;
+        RunPageLink = "No." = field("No."),;
+    } } }
+}
+------------------------------------------------------------------------
+
+(source_file
+  (comment)
+  (comment)
+  (comment)
+  (comment)
+  (comment)
+  (comment)
+  (comment)
+  (table_declaration
+    (table_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (fields_section
+        (fields_keyword)
+        body: (fields_body
+          (field_declaration
+            (field_keyword)
+            id: (integer)
+            name: (quoted_identifier)
+            type: (type_specification
+              (code_type
+                (code_keyword)
+                length: (integer))))
+          (field_declaration
+            (field_keyword)
+            id: (integer)
+            name: (identifier)
+            type: (type_specification
+              (text_type
+                (text_keyword)
+                length: (integer))))
+          (field_declaration
+            (field_keyword)
+            id: (integer)
+            name: (identifier)
+            type: (type_specification
+              (basic_type)))
+          (field_declaration
+            (field_keyword)
+            id: (integer)
+            name: (identifier)
+            type: (type_specification
+              (basic_type)))
+          (field_declaration
+            (field_keyword)
+            id: (integer)
+            name: (identifier)
+            type: (type_specification
+              (option_type
+                (option_keyword)))
+            body: (declaration_body
+              (property
+                name: (property_name)
+                value: (option_member_list
+                  (option_member
+                    (identifier))
+                  (option_member
+                    (identifier))))))
+          (field_declaration
+            (field_keyword)
+            id: (integer)
+            name: (identifier)
+            type: (type_specification
+              (basic_type)))
+          (field_declaration
+            (field_keyword)
+            id: (integer)
+            name: (identifier)
+            type: (type_specification
+              (basic_type)))
+          (field_declaration
+            (field_keyword)
+            id: (integer)
+            name: (identifier)
+            type: (type_specification
+              (basic_type)))))))
+  (page_declaration
+    (page_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (property
+        name: (property_name)
+        value: (identifier))
+      (property
+        name: (property_name)
+        value: (identifier))
+      (layout_section
+        (layout_keyword)
+        body: (layout_body
+          (area_section
+            (area_keyword)
+            type: (content_keyword)
+            body: (layout_body
+              (page_field
+                (field_keyword)
+                name: (identifier)
+                source: (member_expression
+                  object: (identifier)
+                  member: (quoted_identifier)))))))))
+  (page_declaration
+    (page_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (property
+        name: (property_name)
+        value: (identifier))
+      (property
+        name: (property_name)
+        value: (identifier))
+      (layout_section
+        (layout_keyword)
+        body: (layout_body
+          (area_section
+            (area_keyword)
+            type: (content_keyword)
+            body: (layout_body
+              (repeater_section
+                (repeater_keyword)
+                name: (identifier)
+                body: (layout_container_body
+                  (page_field
+                    (field_keyword)
+                    name: (identifier)
+                    source: (member_expression
+                      object: (identifier)
+                      member: (quoted_identifier)))))))))))
+  (page_declaration
+    (page_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (property
+        name: (property_name)
+        value: (identifier))
+      (actions_section
+        (actions_keyword)
+        body: (action_body
+          (action_area_section
+            (area_keyword)
+            type: (processing_keyword)
+            body: (action_body
+              (action_declaration
+                (action_keyword)
+                name: (identifier)
+                body: (declaration_body
+                  (property
+                    name: (property_name)
+                    value: (object_reference_value
+                      (page_keyword)
+                      (identifier)))
+                  (property
+                    name: (property_name)
+                    value: (link_value_list
+                      (link_value
+                        field: (quoted_identifier)
+                        (field_keyword)
+                        value: (quoted_identifier)))))))))))))
+
+========================================================================
+B7a REJECTED/over-accepts(syntax): link-list / seed:link-keying__g11-page-part-empty-arm-beside-terminated (1 cells, verdict of the representative MIXED); alc rejects with a syntax code (AL0104,AL0107,AL0292) but the parser is clean; representative seed:link-keying__g11-page-part-empty-arm-beside-terminated
+========================================================================
+// host: link_value_list
+// valid: !X
+// seed-source: tools/alc_probe/cases/link-keying/g11-page-part-empty-arm-beside-terminated.al (verdicts measured by alc, as recorded in its expect lines)
+// Fixture link_keying_test.txt#G11 empty-arm-beside-terminated, page-part (probe g11-page-part-empty-arm-beside-terminated.al) is one property#0
+// G11 shape empty-arm-beside-terminated, delegate-valid pairs, page-part (B5b 5.1).
+// expect: * accept
+// expect: !X accept
+// expect: X reject(AL0104,AL0107,AL0292)
+// source: docs/superpowers/specs/2026-10-05-link-keying-design.md section 5.1/5.2
+table 50101 Cust { fields { field(1; "No."; Code[20]) { } field(2; Name; Text[30]) { } field(3; Amount; Decimal) { } field(4; Flag; Boolean) { } field(5; Kind; Option) { OptionMembers = Open,Closed; } field(6; Posted; Date) { } field(7; At; Time) { } field(8; Stamp; DateTime) { } } }
+page 50102 CustCard { PageType = Card; SourceTable = Cust; layout { area(Content) { field(N; Rec."No.") { } } } }
+page 50103 CustList { PageType = ListPart; SourceTable = Cust; layout { area(Content) { repeater(R) { field(N; Rec."No.") { } } } } }
+page 50100 P
+{
+    SourceTable = Cust;
+    layout { area(Content) { part(L; CustList) {
+        SubPageLink =
+#if X
+#else
+        Name = field(Name);
+#endif
+    } } }
+}
+------------------------------------------------------------------------
+
+(source_file
+  (comment)
+  (comment)
+  (comment)
+  (comment)
+  (comment)
+  (comment)
+  (comment)
+  (comment)
+  (comment)
+  (table_declaration
+    (table_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (fields_section
+        (fields_keyword)
+        body: (fields_body
+          (field_declaration
+            (field_keyword)
+            id: (integer)
+            name: (quoted_identifier)
+            type: (type_specification
+              (code_type
+                (code_keyword)
+                length: (integer))))
+          (field_declaration
+            (field_keyword)
+            id: (integer)
+            name: (identifier)
+            type: (type_specification
+              (text_type
+                (text_keyword)
+                length: (integer))))
+          (field_declaration
+            (field_keyword)
+            id: (integer)
+            name: (identifier)
+            type: (type_specification
+              (basic_type)))
+          (field_declaration
+            (field_keyword)
+            id: (integer)
+            name: (identifier)
+            type: (type_specification
+              (basic_type)))
+          (field_declaration
+            (field_keyword)
+            id: (integer)
+            name: (identifier)
+            type: (type_specification
+              (option_type
+                (option_keyword)))
+            body: (declaration_body
+              (property
+                name: (property_name)
+                value: (option_member_list
+                  (option_member
+                    (identifier))
+                  (option_member
+                    (identifier))))))
+          (field_declaration
+            (field_keyword)
+            id: (integer)
+            name: (identifier)
+            type: (type_specification
+              (basic_type)))
+          (field_declaration
+            (field_keyword)
+            id: (integer)
+            name: (identifier)
+            type: (type_specification
+              (basic_type)))
+          (field_declaration
+            (field_keyword)
+            id: (integer)
+            name: (identifier)
+            type: (type_specification
+              (basic_type)))))))
+  (page_declaration
+    (page_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (property
+        name: (property_name)
+        value: (identifier))
+      (property
+        name: (property_name)
+        value: (identifier))
+      (layout_section
+        (layout_keyword)
+        body: (layout_body
+          (area_section
+            (area_keyword)
+            type: (content_keyword)
+            body: (layout_body
+              (page_field
+                (field_keyword)
+                name: (identifier)
+                source: (member_expression
+                  object: (identifier)
+                  member: (quoted_identifier)))))))))
+  (page_declaration
+    (page_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (property
+        name: (property_name)
+        value: (identifier))
+      (property
+        name: (property_name)
+        value: (identifier))
+      (layout_section
+        (layout_keyword)
+        body: (layout_body
+          (area_section
+            (area_keyword)
+            type: (content_keyword)
+            body: (layout_body
+              (repeater_section
+                (repeater_keyword)
+                name: (identifier)
+                body: (layout_container_body
+                  (page_field
+                    (field_keyword)
+                    name: (identifier)
+                    source: (member_expression
+                      object: (identifier)
+                      member: (quoted_identifier)))))))))))
+  (page_declaration
+    (page_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (property
+        name: (property_name)
+        value: (identifier))
+      (layout_section
+        (layout_keyword)
+        body: (layout_body
+          (area_section
+            (area_keyword)
+            type: (content_keyword)
+            body: (layout_body
+              (part_section
+                (part_keyword)
+                name: (identifier)
+                source: (identifier)
+                body: (declaration_body
+                  (property
+                    name: (property_name)
+                    value: (preproc_conditional_property_value
+                      (preproc_if
+                        (preproc_open)
+                        condition: (identifier))
+                      (preproc_else)
+                      value: (link_value_list
+                        (link_value
+                          field: (identifier)
+                          (field_keyword)
+                          value: (identifier)))
+                      (preproc_endif
+                        (preproc_close)))))))))))))
+
+========================================================================
+B7a REJECTED/over-accepts(syntax): link-list / seed:link-keying__g11-page-part-empty-arms-elif (1 cells, verdict of the representative MIXED); alc rejects with a syntax code (AL0104,AL0107,AL0292) but the parser is clean; representative seed:link-keying__g11-page-part-empty-arms-elif
+========================================================================
+// host: link_value_list
+// valid: !X,!Y
+// seed-source: tools/alc_probe/cases/link-keying/g11-page-part-empty-arms-elif.al (verdicts measured by alc, as recorded in its expect lines)
+// Fixture link_keying_test.txt#G11 empty-arms-elif, page-part (probe g11-page-part-empty-arms-elif.al): two leading absent arms, one whole value#0
+// G11 shape empty-arms-elif (two leading absent arms, then a terminated #else arm), page-part (B5b Task 3).
+// expect: * reject(AL0104,AL0107,AL0292)
+// expect: !X !Y accept
+// source: recorded by B5b Task 3, 2026-10-05
+table 50101 Cust { fields { field(1; "No."; Code[20]) { } field(2; Name; Text[30]) { } field(3; Amount; Decimal) { } field(4; Flag; Boolean) { } field(5; Kind; Option) { OptionMembers = Open,Closed; } field(6; Posted; Date) { } field(7; At; Time) { } field(8; Stamp; DateTime) { } } }
+page 50102 CustCard { PageType = Card; SourceTable = Cust; layout { area(Content) { field(N; Rec."No.") { } } } }
+page 50103 CustList { PageType = ListPart; SourceTable = Cust; layout { area(Content) { repeater(R) { field(N; Rec."No.") { } } } } }
+page 50100 P
+{
+    SourceTable = Cust;
+    layout { area(Content) { part(L; CustList) {
+        SubPageLink =
+#if X
+#elif Y
+#else
+        Name = field(Name);
+#endif
+    } } }
+}
+------------------------------------------------------------------------
+
+(source_file
+  (comment)
+  (comment)
+  (comment)
+  (comment)
+  (comment)
+  (comment)
+  (comment)
+  (comment)
+  (table_declaration
+    (table_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (fields_section
+        (fields_keyword)
+        body: (fields_body
+          (field_declaration
+            (field_keyword)
+            id: (integer)
+            name: (quoted_identifier)
+            type: (type_specification
+              (code_type
+                (code_keyword)
+                length: (integer))))
+          (field_declaration
+            (field_keyword)
+            id: (integer)
+            name: (identifier)
+            type: (type_specification
+              (text_type
+                (text_keyword)
+                length: (integer))))
+          (field_declaration
+            (field_keyword)
+            id: (integer)
+            name: (identifier)
+            type: (type_specification
+              (basic_type)))
+          (field_declaration
+            (field_keyword)
+            id: (integer)
+            name: (identifier)
+            type: (type_specification
+              (basic_type)))
+          (field_declaration
+            (field_keyword)
+            id: (integer)
+            name: (identifier)
+            type: (type_specification
+              (option_type
+                (option_keyword)))
+            body: (declaration_body
+              (property
+                name: (property_name)
+                value: (option_member_list
+                  (option_member
+                    (identifier))
+                  (option_member
+                    (identifier))))))
+          (field_declaration
+            (field_keyword)
+            id: (integer)
+            name: (identifier)
+            type: (type_specification
+              (basic_type)))
+          (field_declaration
+            (field_keyword)
+            id: (integer)
+            name: (identifier)
+            type: (type_specification
+              (basic_type)))
+          (field_declaration
+            (field_keyword)
+            id: (integer)
+            name: (identifier)
+            type: (type_specification
+              (basic_type)))))))
+  (page_declaration
+    (page_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (property
+        name: (property_name)
+        value: (identifier))
+      (property
+        name: (property_name)
+        value: (identifier))
+      (layout_section
+        (layout_keyword)
+        body: (layout_body
+          (area_section
+            (area_keyword)
+            type: (content_keyword)
+            body: (layout_body
+              (page_field
+                (field_keyword)
+                name: (identifier)
+                source: (member_expression
+                  object: (identifier)
+                  member: (quoted_identifier)))))))))
+  (page_declaration
+    (page_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (property
+        name: (property_name)
+        value: (identifier))
+      (property
+        name: (property_name)
+        value: (identifier))
+      (layout_section
+        (layout_keyword)
+        body: (layout_body
+          (area_section
+            (area_keyword)
+            type: (content_keyword)
+            body: (layout_body
+              (repeater_section
+                (repeater_keyword)
+                name: (identifier)
+                body: (layout_container_body
+                  (page_field
+                    (field_keyword)
+                    name: (identifier)
+                    source: (member_expression
+                      object: (identifier)
+                      member: (quoted_identifier)))))))))))
+  (page_declaration
+    (page_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (property
+        name: (property_name)
+        value: (identifier))
+      (layout_section
+        (layout_keyword)
+        body: (layout_body
+          (area_section
+            (area_keyword)
+            type: (content_keyword)
+            body: (layout_body
+              (part_section
+                (part_keyword)
+                name: (identifier)
+                source: (identifier)
+                body: (declaration_body
+                  (property
+                    name: (property_name)
+                    value: (preproc_conditional_property_value
+                      (preproc_if
+                        (preproc_open)
+                        condition: (identifier))
+                      (preproc_elif
+                        condition: (identifier))
+                      (preproc_else)
+                      value: (link_value_list
+                        (link_value
+                          field: (identifier)
+                          (field_keyword)
+                          value: (identifier)))
+                      (preproc_endif
+                        (preproc_close)))))))))))))
+
+========================================================================
+B7a REJECTED/over-accepts(syntax): link-list / seed:link-keying__g11-page-part-independent-no-else (1 cells, verdict of the representative MIXED); alc rejects with a syntax code (AL0104,AL0107,AL0292) but the parser is clean; representative seed:link-keying__g11-page-part-independent-no-else
+========================================================================
+// host: link_value_list
+// valid: !X,Y; X,!Y; X,Y
+// seed-source: tools/alc_probe/cases/link-keying/g11-page-part-independent-no-else.al (verdicts measured by alc, as recorded in its expect lines)
+// Fixture link_keying_test.txt#G11 independent-no-else, page-part (probe g11-page-part-independent-no-else.al) is one property#0
+// G11 shape independent-no-else, delegate-valid pairs, page-part (B5b 5.1).
+// expect: * reject(AL0104,AL0107,AL0292)
+// expect: !X !Y reject(AL0104,AL0107,AL0292)
+// expect: !X Y accept
+// expect: X !Y accept
+// expect: X Y accept
+// source: docs/superpowers/specs/2026-10-05-link-keying-design.md section 5.1/5.2
+table 50101 Cust { fields { field(1; "No."; Code[20]) { } field(2; Name; Text[30]) { } field(3; Amount; Decimal) { } field(4; Flag; Boolean) { } field(5; Kind; Option) { OptionMembers = Open,Closed; } field(6; Posted; Date) { } field(7; At; Time) { } field(8; Stamp; DateTime) { } } }
+page 50102 CustCard { PageType = Card; SourceTable = Cust; layout { area(Content) { field(N; Rec."No.") { } } } }
+page 50103 CustList { PageType = ListPart; SourceTable = Cust; layout { area(Content) { repeater(R) { field(N; Rec."No.") { } } } } }
+page 50100 P
+{
+    SourceTable = Cust;
+    layout { area(Content) { part(L; CustList) {
+        SubPageLink =
+#if X
+        "No." = field("No.");
+#elif Y
+        Name = field(Name);
+#endif
+    } } }
+}
+------------------------------------------------------------------------
+
+(source_file
+  (comment)
+  (comment)
+  (comment)
+  (comment)
+  (comment)
+  (comment)
+  (comment)
+  (comment)
+  (comment)
+  (comment)
+  (comment)
+  (table_declaration
+    (table_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (fields_section
+        (fields_keyword)
+        body: (fields_body
+          (field_declaration
+            (field_keyword)
+            id: (integer)
+            name: (quoted_identifier)
+            type: (type_specification
+              (code_type
+                (code_keyword)
+                length: (integer))))
+          (field_declaration
+            (field_keyword)
+            id: (integer)
+            name: (identifier)
+            type: (type_specification
+              (text_type
+                (text_keyword)
+                length: (integer))))
+          (field_declaration
+            (field_keyword)
+            id: (integer)
+            name: (identifier)
+            type: (type_specification
+              (basic_type)))
+          (field_declaration
+            (field_keyword)
+            id: (integer)
+            name: (identifier)
+            type: (type_specification
+              (basic_type)))
+          (field_declaration
+            (field_keyword)
+            id: (integer)
+            name: (identifier)
+            type: (type_specification
+              (option_type
+                (option_keyword)))
+            body: (declaration_body
+              (property
+                name: (property_name)
+                value: (option_member_list
+                  (option_member
+                    (identifier))
+                  (option_member
+                    (identifier))))))
+          (field_declaration
+            (field_keyword)
+            id: (integer)
+            name: (identifier)
+            type: (type_specification
+              (basic_type)))
+          (field_declaration
+            (field_keyword)
+            id: (integer)
+            name: (identifier)
+            type: (type_specification
+              (basic_type)))
+          (field_declaration
+            (field_keyword)
+            id: (integer)
+            name: (identifier)
+            type: (type_specification
+              (basic_type)))))))
+  (page_declaration
+    (page_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (property
+        name: (property_name)
+        value: (identifier))
+      (property
+        name: (property_name)
+        value: (identifier))
+      (layout_section
+        (layout_keyword)
+        body: (layout_body
+          (area_section
+            (area_keyword)
+            type: (content_keyword)
+            body: (layout_body
+              (page_field
+                (field_keyword)
+                name: (identifier)
+                source: (member_expression
+                  object: (identifier)
+                  member: (quoted_identifier)))))))))
+  (page_declaration
+    (page_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (property
+        name: (property_name)
+        value: (identifier))
+      (property
+        name: (property_name)
+        value: (identifier))
+      (layout_section
+        (layout_keyword)
+        body: (layout_body
+          (area_section
+            (area_keyword)
+            type: (content_keyword)
+            body: (layout_body
+              (repeater_section
+                (repeater_keyword)
+                name: (identifier)
+                body: (layout_container_body
+                  (page_field
+                    (field_keyword)
+                    name: (identifier)
+                    source: (member_expression
+                      object: (identifier)
+                      member: (quoted_identifier)))))))))))
+  (page_declaration
+    (page_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (property
+        name: (property_name)
+        value: (identifier))
+      (layout_section
+        (layout_keyword)
+        body: (layout_body
+          (area_section
+            (area_keyword)
+            type: (content_keyword)
+            body: (layout_body
+              (part_section
+                (part_keyword)
+                name: (identifier)
+                source: (identifier)
+                body: (declaration_body
+                  (property
+                    name: (property_name)
+                    value: (preproc_conditional_property_value
+                      (preproc_if
+                        (preproc_open)
+                        condition: (identifier))
+                      value: (link_value_list
+                        (link_value
+                          field: (quoted_identifier)
+                          (field_keyword)
+                          value: (quoted_identifier)))
+                      (preproc_elif
+                        condition: (identifier))
+                      value: (link_value_list
+                        (link_value
+                          field: (identifier)
+                          (field_keyword)
+                          value: (identifier)))
+                      (preproc_endif
+                        (preproc_close)))))))))))))
+
+========================================================================
+B7a REJECTED/over-accepts(syntax): link-list / seed:link-keying__g11-query-dataitem-empty-arm-beside-terminated (1 cells, verdict of the representative MIXED); alc rejects with a syntax code (AL0104,AL0107,AL0124,AL0198) but the parser is clean; representative seed:link-keying__g11-query-dataitem-empty-arm-beside-terminated
+========================================================================
+// host: link_value_list
+// valid: !X
+// seed-source: tools/alc_probe/cases/link-keying/g11-query-dataitem-empty-arm-beside-terminated.al (verdicts measured by alc, as recorded in its expect lines)
+// Fixture link_keying_test.txt#G11 empty-arm-beside-terminated, query-dataitem (probe g11-query-dataitem-empty-arm-beside-terminated.al) is one property#0
+// G11 shape empty-arm-beside-terminated, delegate-valid pairs, query-dataitem (B5b 5.1).
+// expect: * accept
+// expect: !X accept
+// expect: X reject(AL0104,AL0107,AL0124,AL0198)
+// source: docs/superpowers/specs/2026-10-05-link-keying-design.md section 5.1/5.2
+table 50101 Cust { fields { field(1; "No."; Code[20]) { } field(2; Name; Text[30]) { } field(3; Amount; Decimal) { } field(4; Flag; Boolean) { } field(5; Kind; Option) { OptionMembers = Open,Closed; } field(6; Posted; Date) { } field(7; At; Time) { } field(8; Stamp; DateTime) { } } }
+page 50102 CustCard { PageType = Card; SourceTable = Cust; layout { area(Content) { field(N; Rec."No.") { } } } }
+page 50103 CustList { PageType = ListPart; SourceTable = Cust; layout { area(Content) { repeater(R) { field(N; Rec."No.") { } } } } }
+query 50150 Q
+{
+    elements { dataitem(C; Cust) { column(No; "No.") { } dataitem(D; Cust) {
+        DataItemLink =
+#if X
+#else
+        Name = C.Name;
+#endif
+        column(N2; Name) { }
+    } } }
+}
+------------------------------------------------------------------------
+
+(source_file
+  (comment)
+  (comment)
+  (comment)
+  (comment)
+  (comment)
+  (comment)
+  (comment)
+  (comment)
+  (comment)
+  (table_declaration
+    (table_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (fields_section
+        (fields_keyword)
+        body: (fields_body
+          (field_declaration
+            (field_keyword)
+            id: (integer)
+            name: (quoted_identifier)
+            type: (type_specification
+              (code_type
+                (code_keyword)
+                length: (integer))))
+          (field_declaration
+            (field_keyword)
+            id: (integer)
+            name: (identifier)
+            type: (type_specification
+              (text_type
+                (text_keyword)
+                length: (integer))))
+          (field_declaration
+            (field_keyword)
+            id: (integer)
+            name: (identifier)
+            type: (type_specification
+              (basic_type)))
+          (field_declaration
+            (field_keyword)
+            id: (integer)
+            name: (identifier)
+            type: (type_specification
+              (basic_type)))
+          (field_declaration
+            (field_keyword)
+            id: (integer)
+            name: (identifier)
+            type: (type_specification
+              (option_type
+                (option_keyword)))
+            body: (declaration_body
+              (property
+                name: (property_name)
+                value: (option_member_list
+                  (option_member
+                    (identifier))
+                  (option_member
+                    (identifier))))))
+          (field_declaration
+            (field_keyword)
+            id: (integer)
+            name: (identifier)
+            type: (type_specification
+              (basic_type)))
+          (field_declaration
+            (field_keyword)
+            id: (integer)
+            name: (identifier)
+            type: (type_specification
+              (basic_type)))
+          (field_declaration
+            (field_keyword)
+            id: (integer)
+            name: (identifier)
+            type: (type_specification
+              (basic_type)))))))
+  (page_declaration
+    (page_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (property
+        name: (property_name)
+        value: (identifier))
+      (property
+        name: (property_name)
+        value: (identifier))
+      (layout_section
+        (layout_keyword)
+        body: (layout_body
+          (area_section
+            (area_keyword)
+            type: (content_keyword)
+            body: (layout_body
+              (page_field
+                (field_keyword)
+                name: (identifier)
+                source: (member_expression
+                  object: (identifier)
+                  member: (quoted_identifier)))))))))
+  (page_declaration
+    (page_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (property
+        name: (property_name)
+        value: (identifier))
+      (property
+        name: (property_name)
+        value: (identifier))
+      (layout_section
+        (layout_keyword)
+        body: (layout_body
+          (area_section
+            (area_keyword)
+            type: (content_keyword)
+            body: (layout_body
+              (repeater_section
+                (repeater_keyword)
+                name: (identifier)
+                body: (layout_container_body
+                  (page_field
+                    (field_keyword)
+                    name: (identifier)
+                    source: (member_expression
+                      object: (identifier)
+                      member: (quoted_identifier)))))))))))
+  (query_declaration
+    (query_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (elements_section
+        (elements_keyword)
+        body: (elements_body
+          (query_dataitem
+            (dataitem_keyword)
+            name: (identifier)
+            table_name: (identifier)
+            body: (query_body
+              (query_column
+                (column_keyword)
+                name: (identifier)
+                field_name: (quoted_identifier))
+              (query_dataitem
+                (dataitem_keyword)
+                name: (identifier)
+                table_name: (identifier)
+                body: (query_body
+                  (property
+                    name: (property_name)
+                    value: (preproc_conditional_property_value
+                      (preproc_if
+                        (preproc_open)
+                        condition: (identifier))
+                      (preproc_else)
+                      value: (link_value_list
+                        (link_value
+                          field: (identifier)
+                          value: (identifier)
+                          value: (identifier)))
+                      (preproc_endif
+                        (preproc_close))))
+                  (query_column
+                    (column_keyword)
+                    name: (identifier)
+                    field_name: (identifier)))))))))))
+
+========================================================================
+B7a REJECTED/over-accepts(syntax): link-list / seed:link-keying__g11-query-dataitem-independent-no-else (1 cells, verdict of the representative MIXED); alc rejects with a syntax code (AL0104,AL0107,AL0124,AL0198) but the parser is clean; representative seed:link-keying__g11-query-dataitem-independent-no-else
+========================================================================
+// host: link_value_list
+// valid: !X,Y; X,!Y; X,Y
+// seed-source: tools/alc_probe/cases/link-keying/g11-query-dataitem-independent-no-else.al (verdicts measured by alc, as recorded in its expect lines)
+// Fixture link_keying_test.txt#G11 independent-no-else, query-dataitem (probe g11-query-dataitem-independent-no-else.al) is one property#0
+// G11 shape independent-no-else, delegate-valid pairs, query-dataitem (B5b 5.1).
+// expect: * reject(AL0104,AL0107,AL0124,AL0198)
+// expect: !X !Y reject(AL0104,AL0107,AL0124,AL0198)
+// expect: !X Y accept
+// expect: X !Y accept
+// expect: X Y accept
+// source: docs/superpowers/specs/2026-10-05-link-keying-design.md section 5.1/5.2
+table 50101 Cust { fields { field(1; "No."; Code[20]) { } field(2; Name; Text[30]) { } field(3; Amount; Decimal) { } field(4; Flag; Boolean) { } field(5; Kind; Option) { OptionMembers = Open,Closed; } field(6; Posted; Date) { } field(7; At; Time) { } field(8; Stamp; DateTime) { } } }
+page 50102 CustCard { PageType = Card; SourceTable = Cust; layout { area(Content) { field(N; Rec."No.") { } } } }
+page 50103 CustList { PageType = ListPart; SourceTable = Cust; layout { area(Content) { repeater(R) { field(N; Rec."No.") { } } } } }
+query 50150 Q
+{
+    elements { dataitem(C; Cust) { column(No; "No.") { } dataitem(D; Cust) {
+        DataItemLink =
+#if X
+        "No." = C."No.";
+#elif Y
+        Name = C.Name;
+#endif
+        column(N2; Name) { }
+    } } }
+}
+------------------------------------------------------------------------
+
+(source_file
+  (comment)
+  (comment)
+  (comment)
+  (comment)
+  (comment)
+  (comment)
+  (comment)
+  (comment)
+  (comment)
+  (comment)
+  (comment)
+  (table_declaration
+    (table_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (fields_section
+        (fields_keyword)
+        body: (fields_body
+          (field_declaration
+            (field_keyword)
+            id: (integer)
+            name: (quoted_identifier)
+            type: (type_specification
+              (code_type
+                (code_keyword)
+                length: (integer))))
+          (field_declaration
+            (field_keyword)
+            id: (integer)
+            name: (identifier)
+            type: (type_specification
+              (text_type
+                (text_keyword)
+                length: (integer))))
+          (field_declaration
+            (field_keyword)
+            id: (integer)
+            name: (identifier)
+            type: (type_specification
+              (basic_type)))
+          (field_declaration
+            (field_keyword)
+            id: (integer)
+            name: (identifier)
+            type: (type_specification
+              (basic_type)))
+          (field_declaration
+            (field_keyword)
+            id: (integer)
+            name: (identifier)
+            type: (type_specification
+              (option_type
+                (option_keyword)))
+            body: (declaration_body
+              (property
+                name: (property_name)
+                value: (option_member_list
+                  (option_member
+                    (identifier))
+                  (option_member
+                    (identifier))))))
+          (field_declaration
+            (field_keyword)
+            id: (integer)
+            name: (identifier)
+            type: (type_specification
+              (basic_type)))
+          (field_declaration
+            (field_keyword)
+            id: (integer)
+            name: (identifier)
+            type: (type_specification
+              (basic_type)))
+          (field_declaration
+            (field_keyword)
+            id: (integer)
+            name: (identifier)
+            type: (type_specification
+              (basic_type)))))))
+  (page_declaration
+    (page_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (property
+        name: (property_name)
+        value: (identifier))
+      (property
+        name: (property_name)
+        value: (identifier))
+      (layout_section
+        (layout_keyword)
+        body: (layout_body
+          (area_section
+            (area_keyword)
+            type: (content_keyword)
+            body: (layout_body
+              (page_field
+                (field_keyword)
+                name: (identifier)
+                source: (member_expression
+                  object: (identifier)
+                  member: (quoted_identifier)))))))))
+  (page_declaration
+    (page_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (property
+        name: (property_name)
+        value: (identifier))
+      (property
+        name: (property_name)
+        value: (identifier))
+      (layout_section
+        (layout_keyword)
+        body: (layout_body
+          (area_section
+            (area_keyword)
+            type: (content_keyword)
+            body: (layout_body
+              (repeater_section
+                (repeater_keyword)
+                name: (identifier)
+                body: (layout_container_body
+                  (page_field
+                    (field_keyword)
+                    name: (identifier)
+                    source: (member_expression
+                      object: (identifier)
+                      member: (quoted_identifier)))))))))))
+  (query_declaration
+    (query_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (elements_section
+        (elements_keyword)
+        body: (elements_body
+          (query_dataitem
+            (dataitem_keyword)
+            name: (identifier)
+            table_name: (identifier)
+            body: (query_body
+              (query_column
+                (column_keyword)
+                name: (identifier)
+                field_name: (quoted_identifier))
+              (query_dataitem
+                (dataitem_keyword)
+                name: (identifier)
+                table_name: (identifier)
+                body: (query_body
+                  (property
+                    name: (property_name)
+                    value: (preproc_conditional_property_value
+                      (preproc_if
+                        (preproc_open)
+                        condition: (identifier))
+                      value: (link_value_list
+                        (link_value
+                          field: (quoted_identifier)
+                          value: (identifier)
+                          value: (quoted_identifier)))
+                      (preproc_elif
+                        condition: (identifier))
+                      value: (link_value_list
+                        (link_value
+                          field: (identifier)
+                          value: (identifier)
+                          value: (identifier)))
+                      (preproc_endif
+                        (preproc_close))))
+                  (query_column
+                    (column_keyword)
+                    name: (identifier)
+                    field_name: (identifier)))))))))))
+
+========================================================================
+B7a REJECTED/over-accepts(syntax): link-list / seed:link-keying__g11-report-dataitem-empty-arm-beside-terminated (1 cells, verdict of the representative MIXED); alc rejects with a syntax code (AL0104) but the parser is clean; representative seed:link-keying__g11-report-dataitem-empty-arm-beside-terminated
+========================================================================
+// host: link_value_list
+// valid: !X
+// seed-source: tools/alc_probe/cases/link-keying/g11-report-dataitem-empty-arm-beside-terminated.al (verdicts measured by alc, as recorded in its expect lines)
+// Fixture link_keying_test.txt#G11 empty-arm-beside-terminated, report-dataitem (probe g11-report-dataitem-empty-arm-beside-terminated.al) is one property#0
+// G11 shape empty-arm-beside-terminated, delegate-valid pairs, report-dataitem (B5b 5.1).
+// expect: * accept
+// expect: !X accept
+// expect: X reject(AL0104)
+// source: docs/superpowers/specs/2026-10-05-link-keying-design.md section 5.1/5.2
+table 50101 Cust { fields { field(1; "No."; Code[20]) { } field(2; Name; Text[30]) { } field(3; Amount; Decimal) { } field(4; Flag; Boolean) { } field(5; Kind; Option) { OptionMembers = Open,Closed; } field(6; Posted; Date) { } field(7; At; Time) { } field(8; Stamp; DateTime) { } } }
+page 50102 CustCard { PageType = Card; SourceTable = Cust; layout { area(Content) { field(N; Rec."No.") { } } } }
+page 50103 CustList { PageType = ListPart; SourceTable = Cust; layout { area(Content) { repeater(R) { field(N; Rec."No.") { } } } } }
+report 50130 R
+{
+    dataset { dataitem(C; Cust) { } dataitem(D; Cust) {
+        DataItemLinkReference = C;
+        DataItemLink =
+#if X
+#else
+        Name = field(Name);
+#endif
+    } }
+}
+------------------------------------------------------------------------
+
+(source_file
+  (comment)
+  (comment)
+  (comment)
+  (comment)
+  (comment)
+  (comment)
+  (comment)
+  (comment)
+  (comment)
+  (table_declaration
+    (table_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (fields_section
+        (fields_keyword)
+        body: (fields_body
+          (field_declaration
+            (field_keyword)
+            id: (integer)
+            name: (quoted_identifier)
+            type: (type_specification
+              (code_type
+                (code_keyword)
+                length: (integer))))
+          (field_declaration
+            (field_keyword)
+            id: (integer)
+            name: (identifier)
+            type: (type_specification
+              (text_type
+                (text_keyword)
+                length: (integer))))
+          (field_declaration
+            (field_keyword)
+            id: (integer)
+            name: (identifier)
+            type: (type_specification
+              (basic_type)))
+          (field_declaration
+            (field_keyword)
+            id: (integer)
+            name: (identifier)
+            type: (type_specification
+              (basic_type)))
+          (field_declaration
+            (field_keyword)
+            id: (integer)
+            name: (identifier)
+            type: (type_specification
+              (option_type
+                (option_keyword)))
+            body: (declaration_body
+              (property
+                name: (property_name)
+                value: (option_member_list
+                  (option_member
+                    (identifier))
+                  (option_member
+                    (identifier))))))
+          (field_declaration
+            (field_keyword)
+            id: (integer)
+            name: (identifier)
+            type: (type_specification
+              (basic_type)))
+          (field_declaration
+            (field_keyword)
+            id: (integer)
+            name: (identifier)
+            type: (type_specification
+              (basic_type)))
+          (field_declaration
+            (field_keyword)
+            id: (integer)
+            name: (identifier)
+            type: (type_specification
+              (basic_type)))))))
+  (page_declaration
+    (page_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (property
+        name: (property_name)
+        value: (identifier))
+      (property
+        name: (property_name)
+        value: (identifier))
+      (layout_section
+        (layout_keyword)
+        body: (layout_body
+          (area_section
+            (area_keyword)
+            type: (content_keyword)
+            body: (layout_body
+              (page_field
+                (field_keyword)
+                name: (identifier)
+                source: (member_expression
+                  object: (identifier)
+                  member: (quoted_identifier)))))))))
+  (page_declaration
+    (page_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (property
+        name: (property_name)
+        value: (identifier))
+      (property
+        name: (property_name)
+        value: (identifier))
+      (layout_section
+        (layout_keyword)
+        body: (layout_body
+          (area_section
+            (area_keyword)
+            type: (content_keyword)
+            body: (layout_body
+              (repeater_section
+                (repeater_keyword)
+                name: (identifier)
+                body: (layout_container_body
+                  (page_field
+                    (field_keyword)
+                    name: (identifier)
+                    source: (member_expression
+                      object: (identifier)
+                      member: (quoted_identifier)))))))))))
+  (report_declaration
+    (report_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (dataset_section
+        (dataset_keyword)
+        body: (dataset_body
+          (report_dataitem
+            (dataitem_keyword)
+            name: (identifier)
+            table_name: (identifier))
+          (report_dataitem
+            (dataitem_keyword)
+            name: (identifier)
+            table_name: (identifier)
+            body: (report_body
+              (property
+                name: (property_name)
+                value: (identifier))
+              (property
+                name: (property_name)
+                value: (preproc_conditional_property_value
+                  (preproc_if
+                    (preproc_open)
+                    condition: (identifier))
+                  (preproc_else)
+                  value: (link_value_list
+                    (link_value
+                      field: (identifier)
+                      (field_keyword)
+                      value: (identifier)))
+                  (preproc_endif
+                    (preproc_close)))))))))))
+
+========================================================================
+B7a REJECTED/over-accepts(syntax): link-list / seed:link-keying__g11-report-dataitem-independent-no-else (1 cells, verdict of the representative MIXED); alc rejects with a syntax code (AL0104) but the parser is clean; representative seed:link-keying__g11-report-dataitem-independent-no-else
+========================================================================
+// host: link_value_list
+// valid: !X,Y; X,!Y; X,Y
+// seed-source: tools/alc_probe/cases/link-keying/g11-report-dataitem-independent-no-else.al (verdicts measured by alc, as recorded in its expect lines)
+// Fixture link_keying_test.txt#G11 independent-no-else, report-dataitem (probe g11-report-dataitem-independent-no-else.al) is one property#0
+// G11 shape independent-no-else, delegate-valid pairs, report-dataitem (B5b 5.1).
+// expect: * reject(AL0104)
+// expect: !X !Y reject(AL0104)
+// expect: !X Y accept
+// expect: X !Y accept
+// expect: X Y accept
+// source: docs/superpowers/specs/2026-10-05-link-keying-design.md section 5.1/5.2
+table 50101 Cust { fields { field(1; "No."; Code[20]) { } field(2; Name; Text[30]) { } field(3; Amount; Decimal) { } field(4; Flag; Boolean) { } field(5; Kind; Option) { OptionMembers = Open,Closed; } field(6; Posted; Date) { } field(7; At; Time) { } field(8; Stamp; DateTime) { } } }
+page 50102 CustCard { PageType = Card; SourceTable = Cust; layout { area(Content) { field(N; Rec."No.") { } } } }
+page 50103 CustList { PageType = ListPart; SourceTable = Cust; layout { area(Content) { repeater(R) { field(N; Rec."No.") { } } } } }
+report 50130 R
+{
+    dataset { dataitem(C; Cust) { } dataitem(D; Cust) {
+        DataItemLinkReference = C;
+        DataItemLink =
+#if X
+        "No." = field("No.");
+#elif Y
+        Name = field(Name);
+#endif
+    } }
+}
+------------------------------------------------------------------------
+
+(source_file
+  (comment)
+  (comment)
+  (comment)
+  (comment)
+  (comment)
+  (comment)
+  (comment)
+  (comment)
+  (comment)
+  (comment)
+  (comment)
+  (table_declaration
+    (table_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (fields_section
+        (fields_keyword)
+        body: (fields_body
+          (field_declaration
+            (field_keyword)
+            id: (integer)
+            name: (quoted_identifier)
+            type: (type_specification
+              (code_type
+                (code_keyword)
+                length: (integer))))
+          (field_declaration
+            (field_keyword)
+            id: (integer)
+            name: (identifier)
+            type: (type_specification
+              (text_type
+                (text_keyword)
+                length: (integer))))
+          (field_declaration
+            (field_keyword)
+            id: (integer)
+            name: (identifier)
+            type: (type_specification
+              (basic_type)))
+          (field_declaration
+            (field_keyword)
+            id: (integer)
+            name: (identifier)
+            type: (type_specification
+              (basic_type)))
+          (field_declaration
+            (field_keyword)
+            id: (integer)
+            name: (identifier)
+            type: (type_specification
+              (option_type
+                (option_keyword)))
+            body: (declaration_body
+              (property
+                name: (property_name)
+                value: (option_member_list
+                  (option_member
+                    (identifier))
+                  (option_member
+                    (identifier))))))
+          (field_declaration
+            (field_keyword)
+            id: (integer)
+            name: (identifier)
+            type: (type_specification
+              (basic_type)))
+          (field_declaration
+            (field_keyword)
+            id: (integer)
+            name: (identifier)
+            type: (type_specification
+              (basic_type)))
+          (field_declaration
+            (field_keyword)
+            id: (integer)
+            name: (identifier)
+            type: (type_specification
+              (basic_type)))))))
+  (page_declaration
+    (page_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (property
+        name: (property_name)
+        value: (identifier))
+      (property
+        name: (property_name)
+        value: (identifier))
+      (layout_section
+        (layout_keyword)
+        body: (layout_body
+          (area_section
+            (area_keyword)
+            type: (content_keyword)
+            body: (layout_body
+              (page_field
+                (field_keyword)
+                name: (identifier)
+                source: (member_expression
+                  object: (identifier)
+                  member: (quoted_identifier)))))))))
+  (page_declaration
+    (page_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (property
+        name: (property_name)
+        value: (identifier))
+      (property
+        name: (property_name)
+        value: (identifier))
+      (layout_section
+        (layout_keyword)
+        body: (layout_body
+          (area_section
+            (area_keyword)
+            type: (content_keyword)
+            body: (layout_body
+              (repeater_section
+                (repeater_keyword)
+                name: (identifier)
+                body: (layout_container_body
+                  (page_field
+                    (field_keyword)
+                    name: (identifier)
+                    source: (member_expression
+                      object: (identifier)
+                      member: (quoted_identifier)))))))))))
+  (report_declaration
+    (report_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (dataset_section
+        (dataset_keyword)
+        body: (dataset_body
+          (report_dataitem
+            (dataitem_keyword)
+            name: (identifier)
+            table_name: (identifier))
+          (report_dataitem
+            (dataitem_keyword)
+            name: (identifier)
+            table_name: (identifier)
+            body: (report_body
+              (property
+                name: (property_name)
+                value: (identifier))
+              (property
+                name: (property_name)
+                value: (preproc_conditional_property_value
+                  (preproc_if
+                    (preproc_open)
+                    condition: (identifier))
+                  value: (link_value_list
+                    (link_value
+                      field: (quoted_identifier)
+                      (field_keyword)
+                      value: (quoted_identifier)))
+                  (preproc_elif
+                    condition: (identifier))
+                  value: (link_value_list
+                    (link_value
+                      field: (identifier)
+                      (field_keyword)
+                      value: (identifier)))
+                  (preproc_endif
+                    (preproc_close)))))))))))
+
+========================================================================
+B7a REJECTED/over-accepts(syntax): link-list / seed:value-runs__all-empty-link (1 cells, verdict of the representative REJECTED/over-accepts); alc rejects with a syntax code (AL0104,AL0107,AL0292) but the parser is clean; representative seed:value-runs__all-empty-link
+========================================================================
+// host: link_value_list
+// valid: none
+// seed-source: tools/alc_probe/cases/value-runs/all-empty-link.al (verdicts measured by alc, as recorded in its expect lines)
+// B11: All-empty whole value, SubPageLink: `N = #if X #endif ;` (spec 4.1).
+// source: docs/superpowers/specs/2026-10-05-property-value-runs-design.md 5.1
+// expect: * reject(AL0104,AL0107,AL0292)
+table 50101 Cust { fields { field(1; "No."; Code[20]) { } field(2; Name; Text[30]) { } field(3; Amount; Decimal) { } field(4; Flag; Boolean) { } } }
+page 50103 CustList { PageType = ListPart; SourceTable = Cust; layout { area(Content) { repeater(R) { field(N; Rec."No.") { } } } } }
+interface IFoo { procedure Bar(); }
+codeunit 50104 FooImpl implements IFoo { procedure Bar() begin end; }
+codeunit 50107 FooImpl2 implements IFoo { procedure Bar() begin end; }
+page 50100 P { SourceTable = Cust; layout { area(Content) { part(L; CustList) {
+SubPageLink =
+#if X
+#endif
+;
+} } } }
+------------------------------------------------------------------------
+
+(source_file
+  (comment)
+  (comment)
+  (comment)
+  (comment)
+  (comment)
+  (comment)
+  (table_declaration
+    (table_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (fields_section
+        (fields_keyword)
+        body: (fields_body
+          (field_declaration
+            (field_keyword)
+            id: (integer)
+            name: (quoted_identifier)
+            type: (type_specification
+              (code_type
+                (code_keyword)
+                length: (integer))))
+          (field_declaration
+            (field_keyword)
+            id: (integer)
+            name: (identifier)
+            type: (type_specification
+              (text_type
+                (text_keyword)
+                length: (integer))))
+          (field_declaration
+            (field_keyword)
+            id: (integer)
+            name: (identifier)
+            type: (type_specification
+              (basic_type)))
+          (field_declaration
+            (field_keyword)
+            id: (integer)
+            name: (identifier)
+            type: (type_specification
+              (basic_type)))))))
+  (page_declaration
+    (page_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (property
+        name: (property_name)
+        value: (identifier))
+      (property
+        name: (property_name)
+        value: (identifier))
+      (layout_section
+        (layout_keyword)
+        body: (layout_body
+          (area_section
+            (area_keyword)
+            type: (content_keyword)
+            body: (layout_body
+              (repeater_section
+                (repeater_keyword)
+                name: (identifier)
+                body: (layout_container_body
+                  (page_field
+                    (field_keyword)
+                    name: (identifier)
+                    source: (member_expression
+                      object: (identifier)
+                      member: (quoted_identifier)))))))))))
+  (interface_declaration
+    (interface_keyword)
+    object_name: (identifier)
+    body: (interface_body
+      (interface_procedure
+        (procedure_keyword)
+        name: (identifier)
+        (interface_procedure_suffix))))
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    (implements_clause
+      (implements_keyword)
+      interface: (identifier))
+    body: (declaration_body
+      (procedure
+        (procedure_keyword)
+        name: (identifier)
+        body: (code_block
+          (begin_keyword)
+          (end_keyword)))))
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    (implements_clause
+      (implements_keyword)
+      interface: (identifier))
+    body: (declaration_body
+      (procedure
+        (procedure_keyword)
+        name: (identifier)
+        body: (code_block
+          (begin_keyword)
+          (end_keyword)))))
+  (page_declaration
+    (page_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (property
+        name: (property_name)
+        value: (identifier))
+      (layout_section
+        (layout_keyword)
+        body: (layout_body
+          (area_section
+            (area_keyword)
+            type: (content_keyword)
+            body: (layout_body
+              (part_section
+                (part_keyword)
+                name: (identifier)
+                source: (identifier)
+                body: (declaration_body
+                  (property
+                    name: (property_name)
+                    (preproc_conditional_property_value
+                      (preproc_if
+                        (preproc_open)
+                        condition: (identifier))
+                      (preproc_endif
+                        (preproc_close)))))))))))))
+
+========================================================================
+B7a GAP: link-list / seed:value-runs__bare-semi-arm-link (1 cells, verdict of the representative MIXED); the parser ERRORs on configurations alc accepts; representative seed:value-runs__bare-semi-arm-link
+========================================================================
+// host: link_value_list
+// valid: !X
+// seed-source: tools/alc_probe/cases/value-runs/bare-semi-arm-link.al (verdicts measured by alc, as recorded in its expect lines)
+// B11: Bare `;` arm, SubPageLink: `N = #if X ; #else v; #endif` (spec 3, Bare `;` arms).
+// source: docs/superpowers/specs/2026-10-05-property-value-runs-design.md 5.1
+// expect: * accept
+// expect: X reject(AL0104,AL0107,AL0292)
+table 50101 Cust { fields { field(1; "No."; Code[20]) { } field(2; Name; Text[30]) { } field(3; Amount; Decimal) { } field(4; Flag; Boolean) { } } }
+page 50103 CustList { PageType = ListPart; SourceTable = Cust; layout { area(Content) { repeater(R) { field(N; Rec."No.") { } } } } }
+interface IFoo { procedure Bar(); }
+codeunit 50104 FooImpl implements IFoo { procedure Bar() begin end; }
+codeunit 50107 FooImpl2 implements IFoo { procedure Bar() begin end; }
+page 50100 P { SourceTable = Cust; layout { area(Content) { part(L; CustList) {
+SubPageLink =
+#if X
+    ;
+#else
+    "No." = field("No.");
+#endif
+} } } }
+------------------------------------------------------------------------
+
+(source_file
+  (comment)
+  (comment)
+  (comment)
+  (comment)
+  (comment)
+  (comment)
+  (comment)
+  (table_declaration
+    (table_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (fields_section
+        (fields_keyword)
+        body: (fields_body
+          (field_declaration
+            (field_keyword)
+            id: (integer)
+            name: (quoted_identifier)
+            type: (type_specification
+              (code_type
+                (code_keyword)
+                length: (integer))))
+          (field_declaration
+            (field_keyword)
+            id: (integer)
+            name: (identifier)
+            type: (type_specification
+              (text_type
+                (text_keyword)
+                length: (integer))))
+          (field_declaration
+            (field_keyword)
+            id: (integer)
+            name: (identifier)
+            type: (type_specification
+              (basic_type)))
+          (field_declaration
+            (field_keyword)
+            id: (integer)
+            name: (identifier)
+            type: (type_specification
+              (basic_type)))))))
+  (page_declaration
+    (page_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (property
+        name: (property_name)
+        value: (identifier))
+      (property
+        name: (property_name)
+        value: (identifier))
+      (layout_section
+        (layout_keyword)
+        body: (layout_body
+          (area_section
+            (area_keyword)
+            type: (content_keyword)
+            body: (layout_body
+              (repeater_section
+                (repeater_keyword)
+                name: (identifier)
+                body: (layout_container_body
+                  (page_field
+                    (field_keyword)
+                    name: (identifier)
+                    source: (member_expression
+                      object: (identifier)
+                      member: (quoted_identifier)))))))))))
+  (interface_declaration
+    (interface_keyword)
+    object_name: (identifier)
+    body: (interface_body
+      (interface_procedure
+        (procedure_keyword)
+        name: (identifier)
+        (interface_procedure_suffix))))
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    (implements_clause
+      (implements_keyword)
+      interface: (identifier))
+    body: (declaration_body
+      (procedure
+        (procedure_keyword)
+        name: (identifier)
+        body: (code_block
+          (begin_keyword)
+          (end_keyword)))))
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    (implements_clause
+      (implements_keyword)
+      interface: (identifier))
+    body: (declaration_body
+      (procedure
+        (procedure_keyword)
+        name: (identifier)
+        body: (code_block
+          (begin_keyword)
+          (end_keyword)))))
+  (page_declaration
+    (page_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (property
+        name: (property_name)
+        value: (identifier))
+      (layout_section
+        (layout_keyword)
+        body: (layout_body
+          (area_section
+            (area_keyword)
+            type: (content_keyword)
+            body: (layout_body
+              (part_section
+                (part_keyword)
+                name: (identifier)
+                source: (identifier)
+                body: (declaration_body
+                  (property
+                    name: (property_name)
+                    value: (preproc_conditional_property_value
+                      (preproc_if
+                        (preproc_open)
+                        condition: (identifier))
+                      (ERROR)
+                      (preproc_else)
+                      value: (link_value_list
+                        (link_value
+                          field: (quoted_identifier)
+                          (field_keyword)
+                          value: (quoted_identifier)))
+                      (preproc_endif
+                        (preproc_close)))))))))))))
+
+========================================================================
+B7a REJECTED/over-accepts(syntax): link-list / seed:value-runs__link-entire-run-separators (1 cells, verdict of the representative MIXED); alc rejects with a syntax code (AL0104,AL0107,AL0124,AL0198,AL0224,AL0292) but the parser is clean; representative seed:value-runs__link-entire-run-separators
+========================================================================
+// host: link_value_list
+// valid: !W,!X,!Y,Z; !W,!X,Y,!Z
+// seed-source: tools/alc_probe/cases/value-runs/link-entire-run-separators.al (verdicts measured by alc, as recorded in its expect lines)
+// Fixture property_value_run_test.txt#B11: SubPageLink, entirely conditional run with leading and trailing separator groups (step 3, unchanged)#0
+// B11: SubPageLink entirely conditional run: missing, leading and trailing separators, nothing selected.
+// source: docs/superpowers/specs/2026-10-05-property-value-runs-design.md 5.1
+// expect: * accept
+// expect: !W !X !Y !Z reject(AL0104,AL0107,AL0292)
+// expect: !W !X Y Z reject(AL0104,AL0124,AL0224)
+// expect: !W X !Y !Z reject(AL0104,AL0107,AL0292)
+// expect: !W X !Y Z reject(AL0104,AL0107,AL0292)
+// expect: !W X Y !Z reject(AL0104,AL0107,AL0292)
+// expect: !W X Y Z reject(AL0104,AL0107,AL0224,AL0292)
+// expect: W !X !Y !Z reject(AL0104,AL0107,AL0292)
+// expect: W !X !Y Z reject(AL0104,AL0107,AL0292)
+// expect: W !X Y !Z reject(AL0104,AL0107,AL0292)
+// expect: W !X Y Z reject(AL0104,AL0124,AL0198,AL0224)
+// expect: W X !Y !Z reject(AL0104,AL0107,AL0292)
+// expect: W X !Y Z reject(AL0104,AL0107,AL0292)
+// expect: W X Y !Z reject(AL0104,AL0107,AL0292)
+// expect: W X Y Z reject(AL0104,AL0107,AL0198,AL0224,AL0292)
+table 50101 Cust { fields { field(1; "No."; Code[20]) { } field(2; Name; Text[30]) { } field(3; Amount; Decimal) { } field(4; Flag; Boolean) { } } }
+page 50103 CustList { PageType = ListPart; SourceTable = Cust; layout { area(Content) { repeater(R) { field(N; Rec."No.") { } } } } }
+interface IFoo { procedure Bar(); }
+codeunit 50104 FooImpl implements IFoo { procedure Bar() begin end; }
+codeunit 50107 FooImpl2 implements IFoo { procedure Bar() begin end; }
+page 50100 P { SourceTable = Cust; layout { area(Content) { part(L; CustList) {
+SubPageLink =
+#if X
+    ,
+#endif
+#if Y
+    "No." = field("No.")
+#endif
+#if Z
+    Name = field(Name)
+#endif
+#if W
+    ,
+#endif
+;
+} } } }
+------------------------------------------------------------------------
+
+(source_file
+  (comment)
+  (comment)
+  (comment)
+  (comment)
+  (comment)
+  (comment)
+  (comment)
+  (comment)
+  (comment)
+  (comment)
+  (comment)
+  (comment)
+  (comment)
+  (comment)
+  (comment)
+  (comment)
+  (comment)
+  (comment)
+  (comment)
+  (comment)
+  (comment)
+  (table_declaration
+    (table_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (fields_section
+        (fields_keyword)
+        body: (fields_body
+          (field_declaration
+            (field_keyword)
+            id: (integer)
+            name: (quoted_identifier)
+            type: (type_specification
+              (code_type
+                (code_keyword)
+                length: (integer))))
+          (field_declaration
+            (field_keyword)
+            id: (integer)
+            name: (identifier)
+            type: (type_specification
+              (text_type
+                (text_keyword)
+                length: (integer))))
+          (field_declaration
+            (field_keyword)
+            id: (integer)
+            name: (identifier)
+            type: (type_specification
+              (basic_type)))
+          (field_declaration
+            (field_keyword)
+            id: (integer)
+            name: (identifier)
+            type: (type_specification
+              (basic_type)))))))
+  (page_declaration
+    (page_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (property
+        name: (property_name)
+        value: (identifier))
+      (property
+        name: (property_name)
+        value: (identifier))
+      (layout_section
+        (layout_keyword)
+        body: (layout_body
+          (area_section
+            (area_keyword)
+            type: (content_keyword)
+            body: (layout_body
+              (repeater_section
+                (repeater_keyword)
+                name: (identifier)
+                body: (layout_container_body
+                  (page_field
+                    (field_keyword)
+                    name: (identifier)
+                    source: (member_expression
+                      object: (identifier)
+                      member: (quoted_identifier)))))))))))
+  (interface_declaration
+    (interface_keyword)
+    object_name: (identifier)
+    body: (interface_body
+      (interface_procedure
+        (procedure_keyword)
+        name: (identifier)
+        (interface_procedure_suffix))))
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    (implements_clause
+      (implements_keyword)
+      interface: (identifier))
+    body: (declaration_body
+      (procedure
+        (procedure_keyword)
+        name: (identifier)
+        body: (code_block
+          (begin_keyword)
+          (end_keyword)))))
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    (implements_clause
+      (implements_keyword)
+      interface: (identifier))
+    body: (declaration_body
+      (procedure
+        (procedure_keyword)
+        name: (identifier)
+        body: (code_block
+          (begin_keyword)
+          (end_keyword)))))
+  (page_declaration
+    (page_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (property
+        name: (property_name)
+        value: (identifier))
+      (layout_section
+        (layout_keyword)
+        body: (layout_body
+          (area_section
+            (area_keyword)
+            type: (content_keyword)
+            body: (layout_body
+              (part_section
+                (part_keyword)
+                name: (identifier)
+                source: (identifier)
+                body: (declaration_body
+                  (property
+                    name: (property_name)
+                    value: (link_value_list
+                      (preproc_conditional_link_values
+                        (preproc_if
+                          (preproc_open)
+                          condition: (identifier))
+                        (preproc_endif
+                          (preproc_close)))
+                      (preproc_conditional_link_values
+                        (preproc_if
+                          (preproc_open)
+                          condition: (identifier))
+                        (link_value
+                          field: (quoted_identifier)
+                          (field_keyword)
+                          value: (quoted_identifier))
+                        (preproc_endif
+                          (preproc_close)))
+                      (preproc_conditional_link_values
+                        (preproc_if
+                          (preproc_open)
+                          condition: (identifier))
+                        (link_value
+                          field: (identifier)
+                          (field_keyword)
+                          value: (identifier))
+                        (preproc_endif
+                          (preproc_close)))
+                      (preproc_conditional_link_values
+                        (preproc_if
+                          (preproc_open)
+                          condition: (identifier))
+                        (preproc_endif
+                          (preproc_close))))))))))))))
+
+========================================================================
+B7a REJECTED/over-accepts(syntax): link-list / seed:value-runs__link-nested-joining-comma (1 cells, verdict of the representative MIXED); alc rejects with a syntax code (AL0104,AL0124,AL0224) but the parser is clean; representative seed:value-runs__link-nested-joining-comma
+========================================================================
+// host: link_value_list
+// valid: !X,!Y; !X,Y; X,Y
+// seed-source: tools/alc_probe/cases/value-runs/link-nested-joining-comma.al (verdicts measured by alc, as recorded in its expect lines)
+// Fixture property_value_run_test.txt#B11: SubPageLink, a nested group carries the joining `,` (step 3, unchanged)#0
+// B11: SubPageLink, a nested group carrying the joining `,` (spec 9 round 4, finding 3).
+// source: docs/superpowers/specs/2026-10-05-property-value-runs-design.md 5.1
+// expect: * accept
+// expect: X !Y reject(AL0104,AL0124,AL0224)
+table 50101 Cust { fields { field(1; "No."; Code[20]) { } field(2; Name; Text[30]) { } field(3; Amount; Decimal) { } field(4; Flag; Boolean) { } } }
+page 50103 CustList { PageType = ListPart; SourceTable = Cust; layout { area(Content) { repeater(R) { field(N; Rec."No.") { } } } } }
+interface IFoo { procedure Bar(); }
+codeunit 50104 FooImpl implements IFoo { procedure Bar() begin end; }
+codeunit 50107 FooImpl2 implements IFoo { procedure Bar() begin end; }
+page 50100 P { SourceTable = Cust; layout { area(Content) { part(L; CustList) {
+SubPageLink =
+    "No." = field("No.")
+#if X
+#if Y
+    ,
+#endif
+    Name = field(Name)
+#endif
+;
+} } } }
+------------------------------------------------------------------------
+
+(source_file
+  (comment)
+  (comment)
+  (comment)
+  (comment)
+  (comment)
+  (comment)
+  (comment)
+  (comment)
+  (table_declaration
+    (table_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (fields_section
+        (fields_keyword)
+        body: (fields_body
+          (field_declaration
+            (field_keyword)
+            id: (integer)
+            name: (quoted_identifier)
+            type: (type_specification
+              (code_type
+                (code_keyword)
+                length: (integer))))
+          (field_declaration
+            (field_keyword)
+            id: (integer)
+            name: (identifier)
+            type: (type_specification
+              (text_type
+                (text_keyword)
+                length: (integer))))
+          (field_declaration
+            (field_keyword)
+            id: (integer)
+            name: (identifier)
+            type: (type_specification
+              (basic_type)))
+          (field_declaration
+            (field_keyword)
+            id: (integer)
+            name: (identifier)
+            type: (type_specification
+              (basic_type)))))))
+  (page_declaration
+    (page_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (property
+        name: (property_name)
+        value: (identifier))
+      (property
+        name: (property_name)
+        value: (identifier))
+      (layout_section
+        (layout_keyword)
+        body: (layout_body
+          (area_section
+            (area_keyword)
+            type: (content_keyword)
+            body: (layout_body
+              (repeater_section
+                (repeater_keyword)
+                name: (identifier)
+                body: (layout_container_body
+                  (page_field
+                    (field_keyword)
+                    name: (identifier)
+                    source: (member_expression
+                      object: (identifier)
+                      member: (quoted_identifier)))))))))))
+  (interface_declaration
+    (interface_keyword)
+    object_name: (identifier)
+    body: (interface_body
+      (interface_procedure
+        (procedure_keyword)
+        name: (identifier)
+        (interface_procedure_suffix))))
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    (implements_clause
+      (implements_keyword)
+      interface: (identifier))
+    body: (declaration_body
+      (procedure
+        (procedure_keyword)
+        name: (identifier)
+        body: (code_block
+          (begin_keyword)
+          (end_keyword)))))
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    (implements_clause
+      (implements_keyword)
+      interface: (identifier))
+    body: (declaration_body
+      (procedure
+        (procedure_keyword)
+        name: (identifier)
+        body: (code_block
+          (begin_keyword)
+          (end_keyword)))))
+  (page_declaration
+    (page_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (property
+        name: (property_name)
+        value: (identifier))
+      (layout_section
+        (layout_keyword)
+        body: (layout_body
+          (area_section
+            (area_keyword)
+            type: (content_keyword)
+            body: (layout_body
+              (part_section
+                (part_keyword)
+                name: (identifier)
+                source: (identifier)
+                body: (declaration_body
+                  (property
+                    name: (property_name)
+                    value: (link_value_list
+                      (link_value
+                        field: (quoted_identifier)
+                        (field_keyword)
+                        value: (quoted_identifier))
+                      (preproc_conditional_link_values
+                        (preproc_if
+                          (preproc_open)
+                          condition: (identifier))
+                        (preproc_conditional_link_values
+                          (preproc_if
+                            (preproc_open)
+                            condition: (identifier))
+                          (preproc_endif
+                            (preproc_close)))
+                        (link_value
+                          field: (identifier)
+                          (field_keyword)
+                          value: (identifier))
+                        (preproc_endif
+                          (preproc_close))))))))))))))
+
+========================================================================
+B7a GAP: link-list / trail (63 cells, verdict of the representative MIXED); the parser ERRORs on configurations alc accepts; representative occ:_link_arm_t:0.1@declaration_body#trail+comments@SubPageLink
+========================================================================
+table 50100 T
+{
+    fields
+    {
+        field(1; K; Code[20]) { }
+        field(2; N; Integer) { }
+        field(3; B; Boolean) { }
+        field(9; O; Option) { OptionMembers = A,B,C; }
+    }
+    keys
+    {
+        key(PK; K) { Clustered = true; }
+    }
+}
+page 50102 PG
+{
+    SourceTable = T;
+    layout
+    {
+        area(Content)
+        {
+            field(N; Rec.N) { }
+            part(P1; PartPg)
+            {
+                SubPageLink =
+#if TPL
+                    
+K = field(K) // c
+#if X
+/* c */ ; // c
+#endif
+
+#else
+                    N = field(N);
+#endif
+            }
+        }
+    }
+    var
+        I: Integer;
+        Ok: Boolean;
+}
+page 50104 PartPg
+{
+    PageType = ListPart;
+    SourceTable = T;
+    layout
+    {
+        area(Content)
+        {
+            repeater(G)
+            {
+                field(K; Rec.K) { }
+            }
+        }
+    }
+}
+------------------------------------------------------------------------
+
+(source_file
+  (table_declaration
+    (table_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (fields_section
+        (fields_keyword)
+        body: (fields_body
+          (field_declaration
+            (field_keyword)
+            id: (integer)
+            name: (identifier)
+            type: (type_specification
+              (code_type
+                (code_keyword)
+                length: (integer))))
+          (field_declaration
+            (field_keyword)
+            id: (integer)
+            name: (identifier)
+            type: (type_specification
+              (basic_type)))
+          (field_declaration
+            (field_keyword)
+            id: (integer)
+            name: (identifier)
+            type: (type_specification
+              (basic_type)))
+          (field_declaration
+            (field_keyword)
+            id: (integer)
+            name: (identifier)
+            type: (type_specification
+              (option_type
+                (option_keyword)))
+            body: (declaration_body
+              (property
+                name: (property_name)
+                value: (option_member_list
+                  (option_member
+                    (identifier))
+                  (option_member
+                    (identifier))
+                  (option_member
+                    (identifier))))))))
+      (keys_section
+        (keys_keyword)
+        body: (keys_body
+          (key_declaration
+            (key_keyword)
+            name: (identifier)
+            fields: (field_list
+              (identifier))
+            body: (declaration_body
+              (property
+                name: (property_name)
+                value: (boolean))))))))
+  (page_declaration
+    (page_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (property
+        name: (property_name)
+        value: (identifier))
+      (layout_section
+        (layout_keyword)
+        body: (layout_body
+          (area_section
+            (area_keyword)
+            type: (content_keyword)
+            body: (layout_body
+              (page_field
+                (field_keyword)
+                name: (identifier)
+                source: (member_expression
+                  object: (identifier)
+                  member: (identifier)))
+              (part_section
+                (part_keyword)
+                name: (identifier)
+                source: (identifier)
+                body: (declaration_body
+                  (property
+                    name: (property_name)
+                    (ERROR
+                      (preproc_conditional_property_value
+                        (preproc_if
+                          (preproc_open)
+                          condition: (identifier))
+                        value: (link_value_list
+                          (link_value
+                            field: (identifier)
+                            (field_keyword)
+                            value: (identifier))
+                          (comment)
+                          (preproc_conditional_link_values
+                            (preproc_if
+                              (preproc_open)
+                              condition: (identifier))
+                            (multiline_comment)
+                            (preproc_endif
+                              (MISSING preproc_close))))
+                        (comment)
+                        (preproc_endif
+                          (preproc_close)))
+                      (preproc_else))
+                    value: (link_value_list
+                      (link_value
+                        field: (identifier)
+                        (field_keyword)
+                        value: (identifier)))))
+                (ERROR
+                  (UNEXPECTED 'i')))))))
+      (var_section
+        (var_keyword)
+        body: (var_body
+          (variable_declaration
+            name: (identifier)
+            type: (type_specification
+              (basic_type)))
+          (variable_declaration
+            name: (identifier)
+            type: (type_specification
+              (basic_type)))))))
+  (page_declaration
+    (page_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (property
+        name: (property_name)
+        value: (identifier))
+      (property
+        name: (property_name)
+        value: (identifier))
+      (layout_section
+        (layout_keyword)
+        body: (layout_body
+          (area_section
+            (area_keyword)
+            type: (content_keyword)
+            body: (layout_body
+              (repeater_section
+                (repeater_keyword)
+                name: (identifier)
+                body: (layout_container_body
+                  (page_field
+                    (field_keyword)
+                    name: (identifier)
+                    source: (member_expression
+                      object: (identifier)
+                      member: (identifier))))))))))))
+
+========================================================================
+B7a REJECTED/over-accepts(syntax): link-list / trail (6 cells, verdict of the representative MIXED); alc rejects with a syntax code (AL0104,AL0107,AL0292) but the parser is clean; representative occ:_link_value_branch:0.0@preproc_conditional_link_values#trail+comments@SubPageLink
+========================================================================
+table 50100 T
+{
+    fields
+    {
+        field(1; K; Code[20]) { }
+        field(2; N; Integer) { }
+        field(3; B; Boolean) { }
+        field(9; O; Option) { OptionMembers = A,B,C; }
+    }
+    keys
+    {
+        key(PK; K) { Clustered = true; }
+    }
+}
+page 50102 PG
+{
+    SourceTable = T;
+    layout
+    {
+        area(Content)
+        {
+            field(N; Rec.N) { }
+            part(P1; PartPg)
+            {
+                SubPageLink = K = field(K)
+#if TPL
+                    
+/* c */ , // c
+N = const(1) /* c */ , // c
+#if X
+"B" = const(true) // c
+#endif
+
+#endif
+                    ;
+            }
+        }
+    }
+    var
+        I: Integer;
+        Ok: Boolean;
+}
+page 50104 PartPg
+{
+    PageType = ListPart;
+    SourceTable = T;
+    layout
+    {
+        area(Content)
+        {
+            repeater(G)
+            {
+                field(K; Rec.K) { }
+            }
+        }
+    }
+}
+------------------------------------------------------------------------
+
+(source_file
+  (table_declaration
+    (table_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (fields_section
+        (fields_keyword)
+        body: (fields_body
+          (field_declaration
+            (field_keyword)
+            id: (integer)
+            name: (identifier)
+            type: (type_specification
+              (code_type
+                (code_keyword)
+                length: (integer))))
+          (field_declaration
+            (field_keyword)
+            id: (integer)
+            name: (identifier)
+            type: (type_specification
+              (basic_type)))
+          (field_declaration
+            (field_keyword)
+            id: (integer)
+            name: (identifier)
+            type: (type_specification
+              (basic_type)))
+          (field_declaration
+            (field_keyword)
+            id: (integer)
+            name: (identifier)
+            type: (type_specification
+              (option_type
+                (option_keyword)))
+            body: (declaration_body
+              (property
+                name: (property_name)
+                value: (option_member_list
+                  (option_member
+                    (identifier))
+                  (option_member
+                    (identifier))
+                  (option_member
+                    (identifier))))))))
+      (keys_section
+        (keys_keyword)
+        body: (keys_body
+          (key_declaration
+            (key_keyword)
+            name: (identifier)
+            fields: (field_list
+              (identifier))
+            body: (declaration_body
+              (property
+                name: (property_name)
+                value: (boolean))))))))
+  (page_declaration
+    (page_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (property
+        name: (property_name)
+        value: (identifier))
+      (layout_section
+        (layout_keyword)
+        body: (layout_body
+          (area_section
+            (area_keyword)
+            type: (content_keyword)
+            body: (layout_body
+              (page_field
+                (field_keyword)
+                name: (identifier)
+                source: (member_expression
+                  object: (identifier)
+                  member: (identifier)))
+              (part_section
+                (part_keyword)
+                name: (identifier)
+                source: (identifier)
+                body: (declaration_body
+                  (property
+                    name: (property_name)
+                    value: (link_value_list
+                      (link_value
+                        field: (identifier)
+                        (field_keyword)
+                        value: (identifier))
+                      (preproc_conditional_link_values
+                        (preproc_if
+                          (preproc_open)
+                          condition: (identifier))
+                        (multiline_comment)
+                        (comment)
+                        (link_value
+                          field: (identifier)
+                          (const_keyword)
+                          value: (integer))
+                        (multiline_comment)
+                        (comment)
+                        (preproc_conditional_link_values
+                          (preproc_if
+                            (preproc_open)
+                            condition: (identifier))
+                          (link_value
+                            field: (quoted_identifier)
+                            (const_keyword)
+                            value: (boolean))
+                          (comment)
+                          (preproc_endif
+                            (preproc_close)))
+                        (preproc_endif
+                          (preproc_close)))))))))))
+      (var_section
+        (var_keyword)
+        body: (var_body
+          (variable_declaration
+            name: (identifier)
+            type: (type_specification
+              (basic_type)))
+          (variable_declaration
+            name: (identifier)
+            type: (type_specification
+              (basic_type)))))))
+  (page_declaration
+    (page_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (property
+        name: (property_name)
+        value: (identifier))
+      (property
+        name: (property_name)
+        value: (identifier))
+      (layout_section
+        (layout_keyword)
+        body: (layout_body
+          (area_section
+            (area_keyword)
+            type: (content_keyword)
+            body: (layout_body
+              (repeater_section
+                (repeater_keyword)
+                name: (identifier)
+                body: (layout_container_body
+                  (page_field
+                    (field_keyword)
+                    name: (identifier)
+                    source: (member_expression
+                      object: (identifier)
+                      member: (identifier))))))))))))

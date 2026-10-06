@@ -1,0 +1,273 @@
+========================================================================
+B7a GAP: value-header / adjacent-compl (3 cells, verdict of the representative GAP); the parser ERRORs on configurations alc accepts; representative occ:enum_value_declaration:3@declaration_body#adjacent-compl
+========================================================================
+enum 50108 En
+{
+    value(
+0
+#if X
+;
+#endif
+#if not X
+;
+#endif
+V0
+) { }
+}
+------------------------------------------------------------------------
+
+(source_file
+  (enum_declaration
+    (enum_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (enum_value_declaration
+        (value_keyword)
+        value_id: (integer)
+        (ERROR
+          (UNEXPECTED 'i')
+          (identifier))
+        (ERROR
+          (UNEXPECTED 'i')
+          (UNEXPECTED 'i')
+          (identifier)
+          (UNEXPECTED 'i'))
+        value_name: (identifier)))))
+
+========================================================================
+B7a GAP: value-header / elif (3 cells, verdict of the representative GAP); the parser ERRORs on configurations alc accepts; representative occ:enum_value_declaration:3@declaration_body#elif
+========================================================================
+enum 50108 En
+{
+    value(
+0
+#if X
+;
+#elif Y
+;
+#else
+;
+#endif
+V0
+) { }
+}
+------------------------------------------------------------------------
+
+(source_file
+  (enum_declaration
+    (enum_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (enum_value_declaration
+        (value_keyword)
+        value_id: (integer)
+        (ERROR
+          (UNEXPECTED 'i')
+          (identifier)
+          (ERROR)
+          (identifier)
+          (preproc_else))
+        (ERROR
+          (UNEXPECTED 'i'))
+        value_name: (identifier)))))
+
+========================================================================
+B7a GAP: value-header / empty (3 cells, verdict of the representative GAP); the parser ERRORs on configurations alc accepts; representative occ:enum_value_declaration:3@declaration_body#empty
+========================================================================
+enum 50108 En
+{
+    value(
+0 ;
+#if X
+#endif
+V0
+) { }
+}
+------------------------------------------------------------------------
+
+(source_file
+  (enum_declaration
+    (enum_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (enum_value_declaration
+        (value_keyword)
+        value_id: (integer)
+        (ERROR
+          (UNEXPECTED 'i')
+          (identifier)
+          (UNEXPECTED 'i'))
+        value_name: (identifier)))))
+
+========================================================================
+B7a GAP: value-header / first-replace (3 cells, verdict of the representative GAP); the parser ERRORs on configurations alc accepts; representative occ:enum_value_declaration:3@declaration_body#first-replace
+========================================================================
+enum 50108 En
+{
+    value(
+#if X
+0
+#else
+0
+#endif
+; V0
+) { }
+}
+------------------------------------------------------------------------
+
+(source_file
+  (enum_declaration
+    (enum_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (enum_value_declaration
+        (value_keyword)
+        (ERROR
+          (UNEXPECTED 'i')
+          (identifier)
+          (integer)
+          (preproc_else))
+        value_id: (integer)
+        (ERROR
+          (UNEXPECTED 'i'))
+        value_name: (identifier)))))
+
+========================================================================
+B7a GAP: value-header / nested (3 cells, verdict of the representative GAP); the parser ERRORs on configurations alc accepts; representative occ:enum_value_declaration:3@declaration_body#nested
+========================================================================
+enum 50108 En
+{
+    value(
+0
+#if X
+#if Y
+;
+#else
+;
+#endif
+#else
+;
+#endif
+V0
+) { }
+}
+------------------------------------------------------------------------
+
+(source_file
+  (enum_declaration
+    (enum_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (enum_value_declaration
+        (value_keyword)
+        value_id: (integer)
+        (ERROR
+          (UNEXPECTED 'i')
+          (identifier)
+          (UNEXPECTED 'i')
+          (identifier)
+          (preproc_else)
+          (UNEXPECTED 'i')
+          (preproc_else))
+        (ERROR
+          (UNEXPECTED 'i'))
+        value_name: (identifier)))))
+
+========================================================================
+B7a GAP: value-header / sep-before-end (3 cells, verdict of the representative MIXED); the parser ERRORs on configurations alc accepts; representative occ:enum_value_declaration:3@declaration_body#sep-before-end
+========================================================================
+enum 50108 En
+{
+    value(
+0
+#if X
+; V0
+#endif
+) { }
+}
+------------------------------------------------------------------------
+
+(source_file
+  (enum_declaration
+    (enum_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (enum_value_declaration
+        (value_keyword)
+        value_id: (integer)
+        (ERROR
+          (UNEXPECTED 'i')
+          (identifier))
+        value_name: (identifier)
+        (ERROR
+          (UNEXPECTED 'i'))))))
+
+========================================================================
+B7a GAP: value-header / sep-only (3 cells, verdict of the representative GAP); the parser ERRORs on configurations alc accepts; representative occ:enum_value_declaration:3@declaration_body#sep-only
+========================================================================
+enum 50108 En
+{
+    value(
+0
+#if X
+;
+#else
+;
+#endif
+V0
+) { }
+}
+------------------------------------------------------------------------
+
+(source_file
+  (enum_declaration
+    (enum_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (enum_value_declaration
+        (value_keyword)
+        value_id: (integer)
+        (ERROR
+          (UNEXPECTED 'i')
+          (identifier)
+          (preproc_else))
+        (ERROR
+          (UNEXPECTED 'i'))
+        value_name: (identifier)))))
+
+========================================================================
+B7a GAP: value-header / trail (3 cells, verdict of the representative MIXED); the parser ERRORs on configurations alc accepts; representative occ:enum_value_declaration:3@declaration_body#trail
+========================================================================
+enum 50108 En
+{
+    value(
+0 ;
+#if X
+V0
+#endif
+) { }
+}
+------------------------------------------------------------------------
+
+(source_file
+  (enum_declaration
+    (enum_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (enum_value_declaration
+        (value_keyword)
+        value_id: (integer)
+        (ERROR
+          (UNEXPECTED 'i'))
+        value_name: (identifier)
+        (ERROR
+          (identifier)
+          (UNEXPECTED 'i'))))))

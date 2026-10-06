@@ -1,0 +1,3760 @@
+========================================================================
+B7a GAP: ml-pairs / adjacent-compl (99 cells, verdict of the representative GAP); the parser ERRORs on configurations alc accepts; representative occ:_ml_arm_t:0.3@action_body#adjacent-compl
+========================================================================
+table 50100 T
+{
+    fields
+    {
+        field(1; K; Code[20]) { }
+        field(2; N; Integer) { }
+        field(3; B; Boolean) { }
+        field(9; O; Option) { OptionMembers = A,B,C; }
+    }
+    keys
+    {
+        key(PK; K) { Clustered = true; }
+    }
+}
+page 50102 PG
+{
+    SourceTable = T;
+    layout
+    {
+        area(Content)
+        {
+            field(N; Rec.N) { }
+        }
+    }
+    actions
+    {
+        area(Processing)
+        {
+            action(A1)
+            {
+                CaptionML =
+#if TPL
+                    
+ENU = 'a'
+#if X
+;
+#endif
+#if not X
+;
+#endif
+
+#else
+                    ENU = 'b';
+#endif
+                trigger OnAction()
+                begin
+                end;
+            }
+        }
+    }
+    var
+        I: Integer;
+        Ok: Boolean;
+}
+------------------------------------------------------------------------
+
+(source_file
+  (table_declaration
+    (table_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (fields_section
+        (fields_keyword)
+        body: (fields_body
+          (field_declaration
+            (field_keyword)
+            id: (integer)
+            name: (identifier)
+            type: (type_specification
+              (code_type
+                (code_keyword)
+                length: (integer))))
+          (field_declaration
+            (field_keyword)
+            id: (integer)
+            name: (identifier)
+            type: (type_specification
+              (basic_type)))
+          (field_declaration
+            (field_keyword)
+            id: (integer)
+            name: (identifier)
+            type: (type_specification
+              (basic_type)))
+          (field_declaration
+            (field_keyword)
+            id: (integer)
+            name: (identifier)
+            type: (type_specification
+              (option_type
+                (option_keyword)))
+            body: (declaration_body
+              (property
+                name: (property_name)
+                value: (option_member_list
+                  (option_member
+                    (identifier))
+                  (option_member
+                    (identifier))
+                  (option_member
+                    (identifier))))))))
+      (keys_section
+        (keys_keyword)
+        body: (keys_body
+          (key_declaration
+            (key_keyword)
+            name: (identifier)
+            fields: (field_list
+              (identifier))
+            body: (declaration_body
+              (property
+                name: (property_name)
+                value: (boolean))))))))
+  (page_declaration
+    (page_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (property
+        name: (property_name)
+        value: (identifier))
+      (layout_section
+        (layout_keyword)
+        body: (layout_body
+          (area_section
+            (area_keyword)
+            type: (content_keyword)
+            body: (layout_body
+              (page_field
+                (field_keyword)
+                name: (identifier)
+                source: (member_expression
+                  object: (identifier)
+                  member: (identifier)))))))
+      (actions_section
+        (actions_keyword)
+        body: (action_body
+          (action_area_section
+            (area_keyword)
+            type: (processing_keyword)
+            body: (action_body
+              (action_declaration
+                (action_keyword)
+                name: (identifier)
+                body: (declaration_body
+                  (property
+                    name: (property_name)
+                    value: (preproc_conditional_property_value
+                      (preproc_if
+                        (preproc_open)
+                        condition: (identifier))
+                      value: (ml_value_list
+                        (ml_value_pair
+                          language: (identifier)
+                          value: (string_literal)))
+                      (preproc_conditional_property_value
+                        (preproc_if
+                          (preproc_open)
+                          condition: (identifier))
+                        (preproc_endif
+                          (MISSING preproc_close)))
+                      (preproc_endif
+                        (preproc_close))))
+                  (preproc_conditional
+                    (preproc_if
+                      (preproc_open)
+                      condition: (preproc_not_expression
+                        (identifier)))
+                    (empty_statement)
+                    (preproc_endif
+                      (preproc_close)))
+                  (ERROR
+                    (preproc_else)
+                    (identifier)
+                    (string_literal))
+                  (empty_statement)
+                  (ERROR
+                    (UNEXPECTED 'i'))
+                  (trigger_declaration
+                    (trigger_keyword)
+                    name: (identifier)
+                    body: (code_block
+                      (begin_keyword)
+                      (end_keyword)))))))))
+      (var_section
+        (var_keyword)
+        body: (var_body
+          (variable_declaration
+            name: (identifier)
+            type: (type_specification
+              (basic_type)))
+          (variable_declaration
+            name: (identifier)
+            type: (type_specification
+              (basic_type))))))))
+
+========================================================================
+B7a GAP: ml-pairs / adjacent-indep (27 cells, verdict of the representative GAP); the parser ERRORs on configurations alc accepts; representative occ:ml_value_list:0.1.0.0@action_body#adjacent-indep
+========================================================================
+table 50100 T
+{
+    fields
+    {
+        field(1; K; Code[20]) { }
+        field(2; N; Integer) { }
+        field(3; B; Boolean) { }
+        field(9; O; Option) { OptionMembers = A,B,C; }
+    }
+    keys
+    {
+        key(PK; K) { Clustered = true; }
+    }
+}
+page 50102 PG
+{
+    SourceTable = T;
+    layout
+    {
+        area(Content)
+        {
+            field(N; Rec.N) { }
+        }
+    }
+    actions
+    {
+        area(Processing)
+        {
+            action(A1)
+            {
+                CaptionML =
+#if TPL
+                    
+ENU = 'a'
+#if X
+, DAN = 'b'
+#endif
+#if Y
+, DEU = 'c'
+#endif
+;
+#else
+                    ENU = 'c';
+#endif
+                trigger OnAction()
+                begin
+                end;
+            }
+        }
+    }
+    var
+        I: Integer;
+        Ok: Boolean;
+}
+------------------------------------------------------------------------
+
+(source_file
+  (table_declaration
+    (table_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (fields_section
+        (fields_keyword)
+        body: (fields_body
+          (field_declaration
+            (field_keyword)
+            id: (integer)
+            name: (identifier)
+            type: (type_specification
+              (code_type
+                (code_keyword)
+                length: (integer))))
+          (field_declaration
+            (field_keyword)
+            id: (integer)
+            name: (identifier)
+            type: (type_specification
+              (basic_type)))
+          (field_declaration
+            (field_keyword)
+            id: (integer)
+            name: (identifier)
+            type: (type_specification
+              (basic_type)))
+          (field_declaration
+            (field_keyword)
+            id: (integer)
+            name: (identifier)
+            type: (type_specification
+              (option_type
+                (option_keyword)))
+            body: (declaration_body
+              (property
+                name: (property_name)
+                value: (option_member_list
+                  (option_member
+                    (identifier))
+                  (option_member
+                    (identifier))
+                  (option_member
+                    (identifier))))))))
+      (keys_section
+        (keys_keyword)
+        body: (keys_body
+          (key_declaration
+            (key_keyword)
+            name: (identifier)
+            fields: (field_list
+              (identifier))
+            body: (declaration_body
+              (property
+                name: (property_name)
+                value: (boolean))))))))
+  (page_declaration
+    (page_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (property
+        name: (property_name)
+        value: (identifier))
+      (layout_section
+        (layout_keyword)
+        body: (layout_body
+          (area_section
+            (area_keyword)
+            type: (content_keyword)
+            body: (layout_body
+              (page_field
+                (field_keyword)
+                name: (identifier)
+                source: (member_expression
+                  object: (identifier)
+                  member: (identifier)))))))
+      (actions_section
+        (actions_keyword)
+        body: (action_body
+          (action_area_section
+            (area_keyword)
+            type: (processing_keyword)
+            body: (action_body
+              (action_declaration
+                (action_keyword)
+                name: (identifier)
+                body: (declaration_body
+                  (property
+                    name: (property_name)
+                    value: (preproc_conditional_property_value_sequence
+                      value: (preproc_conditional_property_value
+                        (preproc_if
+                          (preproc_open)
+                          condition: (identifier))
+                        (ERROR
+                          (ml_value_list
+                            (ml_value_pair
+                              language: (identifier)
+                              value: (string_literal)))
+                          (preproc_if
+                            (preproc_open)
+                            condition: (identifier)))
+                        value: (ml_value_list
+                          (ml_value_pair
+                            language: (identifier)
+                            value: (string_literal)))
+                        (preproc_endif
+                          (preproc_close)))
+                      value: (preproc_conditional_property_value
+                        (preproc_if
+                          (preproc_open)
+                          condition: (identifier))
+                        (ERROR)
+                        value: (ml_value_list
+                          (ml_value_pair
+                            language: (identifier)
+                            value: (string_literal)))
+                        (preproc_endif
+                          (preproc_close)))))
+                  (ERROR
+                    (preproc_else)
+                    (identifier)
+                    (string_literal))
+                  (empty_statement)
+                  (ERROR
+                    (UNEXPECTED 'i'))
+                  (trigger_declaration
+                    (trigger_keyword)
+                    name: (identifier)
+                    body: (code_block
+                      (begin_keyword)
+                      (end_keyword)))))))))
+      (var_section
+        (var_keyword)
+        body: (var_body
+          (variable_declaration
+            name: (identifier)
+            type: (type_specification
+              (basic_type)))
+          (variable_declaration
+            name: (identifier)
+            type: (type_specification
+              (basic_type))))))))
+
+========================================================================
+B7a GAP: ml-pairs / both-in-arm (27 cells, verdict of the representative GAP); the parser ERRORs on configurations alc accepts; representative occ:ml_value_list:0.1.0.0@action_body#both-in-arm
+========================================================================
+table 50100 T
+{
+    fields
+    {
+        field(1; K; Code[20]) { }
+        field(2; N; Integer) { }
+        field(3; B; Boolean) { }
+        field(9; O; Option) { OptionMembers = A,B,C; }
+    }
+    keys
+    {
+        key(PK; K) { Clustered = true; }
+    }
+}
+page 50102 PG
+{
+    SourceTable = T;
+    layout
+    {
+        area(Content)
+        {
+            field(N; Rec.N) { }
+        }
+    }
+    actions
+    {
+        area(Processing)
+        {
+            action(A1)
+            {
+                CaptionML =
+#if TPL
+                    
+ENU = 'a'
+#if X
+, DAN = 'b' ,
+#else
+,
+#endif
+DEU = 'c'
+;
+#else
+                    ENU = 'c';
+#endif
+                trigger OnAction()
+                begin
+                end;
+            }
+        }
+    }
+    var
+        I: Integer;
+        Ok: Boolean;
+}
+------------------------------------------------------------------------
+
+(source_file
+  (table_declaration
+    (table_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (fields_section
+        (fields_keyword)
+        body: (fields_body
+          (field_declaration
+            (field_keyword)
+            id: (integer)
+            name: (identifier)
+            type: (type_specification
+              (code_type
+                (code_keyword)
+                length: (integer))))
+          (field_declaration
+            (field_keyword)
+            id: (integer)
+            name: (identifier)
+            type: (type_specification
+              (basic_type)))
+          (field_declaration
+            (field_keyword)
+            id: (integer)
+            name: (identifier)
+            type: (type_specification
+              (basic_type)))
+          (field_declaration
+            (field_keyword)
+            id: (integer)
+            name: (identifier)
+            type: (type_specification
+              (option_type
+                (option_keyword)))
+            body: (declaration_body
+              (property
+                name: (property_name)
+                value: (option_member_list
+                  (option_member
+                    (identifier))
+                  (option_member
+                    (identifier))
+                  (option_member
+                    (identifier))))))))
+      (keys_section
+        (keys_keyword)
+        body: (keys_body
+          (key_declaration
+            (key_keyword)
+            name: (identifier)
+            fields: (field_list
+              (identifier))
+            body: (declaration_body
+              (property
+                name: (property_name)
+                value: (boolean))))))))
+  (page_declaration
+    (page_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (property
+        name: (property_name)
+        value: (identifier))
+      (layout_section
+        (layout_keyword)
+        body: (layout_body
+          (area_section
+            (area_keyword)
+            type: (content_keyword)
+            body: (layout_body
+              (page_field
+                (field_keyword)
+                name: (identifier)
+                source: (member_expression
+                  object: (identifier)
+                  member: (identifier)))))))
+      (actions_section
+        (actions_keyword)
+        body: (action_body
+          (action_area_section
+            (area_keyword)
+            type: (processing_keyword)
+            body: (action_body
+              (action_declaration
+                (action_keyword)
+                name: (identifier)
+                body: (declaration_body
+                  (property
+                    name: (property_name)
+                    value: (preproc_conditional_property_value
+                      (preproc_if
+                        (preproc_open)
+                        condition: (identifier))
+                      (ERROR
+                        (ml_value_list
+                          (ml_value_pair
+                            language: (identifier)
+                            value: (string_literal)))
+                        (preproc_if
+                          (preproc_open)
+                          condition: (identifier)))
+                      value: (ml_value_list
+                        (ml_value_pair
+                          language: (identifier)
+                          value: (string_literal))
+                        (ERROR
+                          (preproc_else)
+                          (UNEXPECTED 'i'))
+                        (ml_value_pair
+                          language: (identifier)
+                          value: (string_literal)))
+                      (preproc_else)
+                      value: (ml_value_list
+                        (ml_value_pair
+                          language: (identifier)
+                          value: (string_literal)))
+                      (preproc_endif
+                        (preproc_close))))
+                  (trigger_declaration
+                    (trigger_keyword)
+                    name: (identifier)
+                    body: (code_block
+                      (begin_keyword)
+                      (end_keyword)))))))))
+      (var_section
+        (var_keyword)
+        body: (var_body
+          (variable_declaration
+            name: (identifier)
+            type: (type_specification
+              (basic_type)))
+          (variable_declaration
+            name: (identifier)
+            type: (type_specification
+              (basic_type))))))))
+
+========================================================================
+B7a GAP: ml-pairs / count-differs (27 cells, verdict of the representative GAP); the parser ERRORs on configurations alc accepts; representative occ:ml_value_list:0.1.0.0@action_body#count-differs
+========================================================================
+table 50100 T
+{
+    fields
+    {
+        field(1; K; Code[20]) { }
+        field(2; N; Integer) { }
+        field(3; B; Boolean) { }
+        field(9; O; Option) { OptionMembers = A,B,C; }
+    }
+    keys
+    {
+        key(PK; K) { Clustered = true; }
+    }
+}
+page 50102 PG
+{
+    SourceTable = T;
+    layout
+    {
+        area(Content)
+        {
+            field(N; Rec.N) { }
+        }
+    }
+    actions
+    {
+        area(Processing)
+        {
+            action(A1)
+            {
+                CaptionML =
+#if TPL
+                    
+ENU = 'a'
+#if X
+, DAN = 'b' , DEU = 'c'
+#else
+, FRA = 'd'
+#endif
+;
+#else
+                    ENU = 'c';
+#endif
+                trigger OnAction()
+                begin
+                end;
+            }
+        }
+    }
+    var
+        I: Integer;
+        Ok: Boolean;
+}
+------------------------------------------------------------------------
+
+(source_file
+  (table_declaration
+    (table_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (fields_section
+        (fields_keyword)
+        body: (fields_body
+          (field_declaration
+            (field_keyword)
+            id: (integer)
+            name: (identifier)
+            type: (type_specification
+              (code_type
+                (code_keyword)
+                length: (integer))))
+          (field_declaration
+            (field_keyword)
+            id: (integer)
+            name: (identifier)
+            type: (type_specification
+              (basic_type)))
+          (field_declaration
+            (field_keyword)
+            id: (integer)
+            name: (identifier)
+            type: (type_specification
+              (basic_type)))
+          (field_declaration
+            (field_keyword)
+            id: (integer)
+            name: (identifier)
+            type: (type_specification
+              (option_type
+                (option_keyword)))
+            body: (declaration_body
+              (property
+                name: (property_name)
+                value: (option_member_list
+                  (option_member
+                    (identifier))
+                  (option_member
+                    (identifier))
+                  (option_member
+                    (identifier))))))))
+      (keys_section
+        (keys_keyword)
+        body: (keys_body
+          (key_declaration
+            (key_keyword)
+            name: (identifier)
+            fields: (field_list
+              (identifier))
+            body: (declaration_body
+              (property
+                name: (property_name)
+                value: (boolean))))))))
+  (page_declaration
+    (page_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (property
+        name: (property_name)
+        value: (identifier))
+      (layout_section
+        (layout_keyword)
+        body: (layout_body
+          (area_section
+            (area_keyword)
+            type: (content_keyword)
+            body: (layout_body
+              (page_field
+                (field_keyword)
+                name: (identifier)
+                source: (member_expression
+                  object: (identifier)
+                  member: (identifier)))))))
+      (actions_section
+        (actions_keyword)
+        body: (action_body
+          (action_area_section
+            (area_keyword)
+            type: (processing_keyword)
+            body: (action_body
+              (action_declaration
+                (action_keyword)
+                name: (identifier)
+                body: (declaration_body
+                  (property
+                    name: (property_name)
+                    value: (preproc_conditional_property_value
+                      (preproc_if
+                        (preproc_open)
+                        condition: (identifier))
+                      (ERROR
+                        (ml_value_list
+                          (ml_value_pair
+                            language: (identifier)
+                            value: (string_literal)))
+                        (preproc_if
+                          (preproc_open)
+                          condition: (identifier)))
+                      value: (ml_value_list
+                        (ml_value_pair
+                          language: (identifier)
+                          value: (string_literal))
+                        (ml_value_pair
+                          language: (identifier)
+                          value: (string_literal)))
+                      (preproc_else)
+                      (ERROR)
+                      value: (ml_value_list
+                        (ml_value_pair
+                          language: (identifier)
+                          value: (string_literal)))
+                      (preproc_endif
+                        (preproc_close))))
+                  (ERROR
+                    (preproc_else)
+                    (identifier)
+                    (string_literal))
+                  (empty_statement)
+                  (ERROR
+                    (UNEXPECTED 'i'))
+                  (trigger_declaration
+                    (trigger_keyword)
+                    name: (identifier)
+                    body: (code_block
+                      (begin_keyword)
+                      (end_keyword)))))))))
+      (var_section
+        (var_keyword)
+        body: (var_body
+          (variable_declaration
+            name: (identifier)
+            type: (type_specification
+              (basic_type)))
+          (variable_declaration
+            name: (identifier)
+            type: (type_specification
+              (basic_type))))))))
+
+========================================================================
+B7a GAP: ml-pairs / elif (99 cells, verdict of the representative GAP); the parser ERRORs on configurations alc accepts; representative occ:_ml_arm_t:0.3@action_body#elif
+========================================================================
+table 50100 T
+{
+    fields
+    {
+        field(1; K; Code[20]) { }
+        field(2; N; Integer) { }
+        field(3; B; Boolean) { }
+        field(9; O; Option) { OptionMembers = A,B,C; }
+    }
+    keys
+    {
+        key(PK; K) { Clustered = true; }
+    }
+}
+page 50102 PG
+{
+    SourceTable = T;
+    layout
+    {
+        area(Content)
+        {
+            field(N; Rec.N) { }
+        }
+    }
+    actions
+    {
+        area(Processing)
+        {
+            action(A1)
+            {
+                CaptionML =
+#if TPL
+                    
+ENU = 'a'
+#if X
+;
+#elif Y
+;
+#else
+;
+#endif
+
+#else
+                    ENU = 'b';
+#endif
+                trigger OnAction()
+                begin
+                end;
+            }
+        }
+    }
+    var
+        I: Integer;
+        Ok: Boolean;
+}
+------------------------------------------------------------------------
+
+(source_file
+  (table_declaration
+    (table_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (fields_section
+        (fields_keyword)
+        body: (fields_body
+          (field_declaration
+            (field_keyword)
+            id: (integer)
+            name: (identifier)
+            type: (type_specification
+              (code_type
+                (code_keyword)
+                length: (integer))))
+          (field_declaration
+            (field_keyword)
+            id: (integer)
+            name: (identifier)
+            type: (type_specification
+              (basic_type)))
+          (field_declaration
+            (field_keyword)
+            id: (integer)
+            name: (identifier)
+            type: (type_specification
+              (basic_type)))
+          (field_declaration
+            (field_keyword)
+            id: (integer)
+            name: (identifier)
+            type: (type_specification
+              (option_type
+                (option_keyword)))
+            body: (declaration_body
+              (property
+                name: (property_name)
+                value: (option_member_list
+                  (option_member
+                    (identifier))
+                  (option_member
+                    (identifier))
+                  (option_member
+                    (identifier))))))))
+      (keys_section
+        (keys_keyword)
+        body: (keys_body
+          (key_declaration
+            (key_keyword)
+            name: (identifier)
+            fields: (field_list
+              (identifier))
+            body: (declaration_body
+              (property
+                name: (property_name)
+                value: (boolean))))))))
+  (page_declaration
+    (page_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (property
+        name: (property_name)
+        value: (identifier))
+      (layout_section
+        (layout_keyword)
+        body: (layout_body
+          (area_section
+            (area_keyword)
+            type: (content_keyword)
+            body: (layout_body
+              (page_field
+                (field_keyword)
+                name: (identifier)
+                source: (member_expression
+                  object: (identifier)
+                  member: (identifier)))))))
+      (actions_section
+        (actions_keyword)
+        body: (action_body
+          (action_area_section
+            (area_keyword)
+            type: (processing_keyword)
+            body: (action_body
+              (action_declaration
+                (action_keyword)
+                name: (identifier)
+                body: (declaration_body
+                  (property
+                    name: (property_name)
+                    value: (preproc_conditional_property_value
+                      (preproc_if
+                        (preproc_open)
+                        condition: (identifier))
+                      value: (ml_value_list
+                        (ml_value_pair
+                          language: (identifier)
+                          value: (string_literal)))
+                      (preproc_conditional_property_value
+                        (preproc_if
+                          (preproc_open)
+                          condition: (identifier))
+                        (ERROR)
+                        (preproc_elif
+                          condition: (identifier))
+                        (preproc_endif
+                          (MISSING preproc_close)))
+                      (ERROR
+                        (preproc_else)
+                        (UNEXPECTED 'i'))
+                      (preproc_else)
+                      value: (ml_value_list
+                        (ml_value_pair
+                          language: (identifier)
+                          value: (string_literal)))
+                      (preproc_endif
+                        (preproc_close))))
+                  (trigger_declaration
+                    (trigger_keyword)
+                    name: (identifier)
+                    body: (code_block
+                      (begin_keyword)
+                      (end_keyword)))))))))
+      (var_section
+        (var_keyword)
+        body: (var_body
+          (variable_declaration
+            name: (identifier)
+            type: (type_specification
+              (basic_type)))
+          (variable_declaration
+            name: (identifier)
+            type: (type_specification
+              (basic_type))))))))
+
+========================================================================
+B7a GAP: ml-pairs / empty (27 cells, verdict of the representative GAP); the parser ERRORs on configurations alc accepts; representative occ:ml_value_list:0.1.0.0@action_body#empty
+========================================================================
+table 50100 T
+{
+    fields
+    {
+        field(1; K; Code[20]) { }
+        field(2; N; Integer) { }
+        field(3; B; Boolean) { }
+        field(9; O; Option) { OptionMembers = A,B,C; }
+    }
+    keys
+    {
+        key(PK; K) { Clustered = true; }
+    }
+}
+page 50102 PG
+{
+    SourceTable = T;
+    layout
+    {
+        area(Content)
+        {
+            field(N; Rec.N) { }
+        }
+    }
+    actions
+    {
+        area(Processing)
+        {
+            action(A1)
+            {
+                CaptionML =
+#if TPL
+                    
+ENU = 'a' ,
+#if X
+#endif
+DAN = 'b'
+;
+#else
+                    ENU = 'c';
+#endif
+                trigger OnAction()
+                begin
+                end;
+            }
+        }
+    }
+    var
+        I: Integer;
+        Ok: Boolean;
+}
+------------------------------------------------------------------------
+
+(source_file
+  (table_declaration
+    (table_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (fields_section
+        (fields_keyword)
+        body: (fields_body
+          (field_declaration
+            (field_keyword)
+            id: (integer)
+            name: (identifier)
+            type: (type_specification
+              (code_type
+                (code_keyword)
+                length: (integer))))
+          (field_declaration
+            (field_keyword)
+            id: (integer)
+            name: (identifier)
+            type: (type_specification
+              (basic_type)))
+          (field_declaration
+            (field_keyword)
+            id: (integer)
+            name: (identifier)
+            type: (type_specification
+              (basic_type)))
+          (field_declaration
+            (field_keyword)
+            id: (integer)
+            name: (identifier)
+            type: (type_specification
+              (option_type
+                (option_keyword)))
+            body: (declaration_body
+              (property
+                name: (property_name)
+                value: (option_member_list
+                  (option_member
+                    (identifier))
+                  (option_member
+                    (identifier))
+                  (option_member
+                    (identifier))))))))
+      (keys_section
+        (keys_keyword)
+        body: (keys_body
+          (key_declaration
+            (key_keyword)
+            name: (identifier)
+            fields: (field_list
+              (identifier))
+            body: (declaration_body
+              (property
+                name: (property_name)
+                value: (boolean))))))))
+  (page_declaration
+    (page_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (property
+        name: (property_name)
+        value: (identifier))
+      (layout_section
+        (layout_keyword)
+        body: (layout_body
+          (area_section
+            (area_keyword)
+            type: (content_keyword)
+            body: (layout_body
+              (page_field
+                (field_keyword)
+                name: (identifier)
+                source: (member_expression
+                  object: (identifier)
+                  member: (identifier)))))))
+      (actions_section
+        (actions_keyword)
+        body: (action_body
+          (action_area_section
+            (area_keyword)
+            type: (processing_keyword)
+            body: (action_body
+              (action_declaration
+                (action_keyword)
+                name: (identifier)
+                body: (declaration_body
+                  (property
+                    name: (property_name)
+                    value: (preproc_conditional_property_value
+                      (preproc_if
+                        (preproc_open)
+                        condition: (identifier))
+                      value: (ml_value_list
+                        (ml_value_pair
+                          language: (identifier)
+                          value: (string_literal))
+                        (ERROR
+                          (UNEXPECTED 'i')
+                          (identifier)
+                          (UNEXPECTED 'i'))
+                        (ml_value_pair
+                          language: (identifier)
+                          value: (string_literal)))
+                      (preproc_else)
+                      value: (ml_value_list
+                        (ml_value_pair
+                          language: (identifier)
+                          value: (string_literal)))
+                      (preproc_endif
+                        (preproc_close))))
+                  (trigger_declaration
+                    (trigger_keyword)
+                    name: (identifier)
+                    body: (code_block
+                      (begin_keyword)
+                      (end_keyword)))))))))
+      (var_section
+        (var_keyword)
+        body: (var_body
+          (variable_declaration
+            name: (identifier)
+            type: (type_specification
+              (basic_type)))
+          (variable_declaration
+            name: (identifier)
+            type: (type_specification
+              (basic_type))))))))
+
+========================================================================
+B7a GAP: ml-pairs / empty-list (3 cells, verdict of the representative GAP); the parser ERRORs on configurations alc accepts; representative occ:ml_value_list:0.1.0.0@variable_declaration#empty-list
+========================================================================
+table 50100 T
+{
+    fields
+    {
+        field(1; K; Code[20]) { }
+        field(2; N; Integer) { }
+        field(3; B; Boolean) { }
+        field(9; O; Option) { OptionMembers = A,B,C; }
+    }
+    keys
+    {
+        key(PK; K) { Clustered = true; }
+    }
+}
+codeunit 50101 P
+{
+    procedure Q(): Integer
+    var
+        R: Record T;
+        I: Integer;
+        Ok: Boolean;
+        L: List of [Integer];
+        Arr: array[3] of Integer;
+        Arr2: array[2, 2] of Integer;
+        Recs: array[2] of Record T;
+        TC: TextConst 
+#if X
+ENU = 'a' , DAN = 'b'
+#endif
+;
+    begin
+Bar();
+    end;
+
+    procedure Bar()
+    begin
+    end;
+
+    procedure Foo(A: Integer; B: Integer): Integer
+    begin
+        exit(A + B);
+    end;
+}
+------------------------------------------------------------------------
+
+(source_file
+  (table_declaration
+    (table_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (fields_section
+        (fields_keyword)
+        body: (fields_body
+          (field_declaration
+            (field_keyword)
+            id: (integer)
+            name: (identifier)
+            type: (type_specification
+              (code_type
+                (code_keyword)
+                length: (integer))))
+          (field_declaration
+            (field_keyword)
+            id: (integer)
+            name: (identifier)
+            type: (type_specification
+              (basic_type)))
+          (field_declaration
+            (field_keyword)
+            id: (integer)
+            name: (identifier)
+            type: (type_specification
+              (basic_type)))
+          (field_declaration
+            (field_keyword)
+            id: (integer)
+            name: (identifier)
+            type: (type_specification
+              (option_type
+                (option_keyword)))
+            body: (declaration_body
+              (property
+                name: (property_name)
+                value: (option_member_list
+                  (option_member
+                    (identifier))
+                  (option_member
+                    (identifier))
+                  (option_member
+                    (identifier))))))))
+      (keys_section
+        (keys_keyword)
+        body: (keys_body
+          (key_declaration
+            (key_keyword)
+            name: (identifier)
+            fields: (field_list
+              (identifier))
+            body: (declaration_body
+              (property
+                name: (property_name)
+                value: (boolean))))))))
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (procedure
+        (procedure_keyword)
+        name: (identifier)
+        return_type: (type_specification
+          (basic_type))
+        (var_section
+          (var_keyword)
+          body: (var_body
+            (variable_declaration
+              name: (identifier)
+              type: (type_specification
+                (record_type
+                  (record_keyword)
+                  reference: (identifier))))
+            (variable_declaration
+              name: (identifier)
+              type: (type_specification
+                (basic_type)))
+            (variable_declaration
+              name: (identifier)
+              type: (type_specification
+                (basic_type)))
+            (variable_declaration
+              name: (identifier)
+              type: (type_specification
+                (list_type
+                  (list_keyword)
+                  (of_keyword)
+                  element_type: (type_specification
+                    (basic_type)))))
+            (variable_declaration
+              name: (identifier)
+              type: (type_specification
+                (array_type
+                  (array_keyword)
+                  sizes: (integer)
+                  (of_keyword)
+                  element_type: (type_specification
+                    (basic_type)))))
+            (variable_declaration
+              name: (identifier)
+              type: (type_specification
+                (array_type
+                  (array_keyword)
+                  sizes: (integer)
+                  sizes: (integer)
+                  (of_keyword)
+                  element_type: (type_specification
+                    (basic_type)))))
+            (variable_declaration
+              name: (identifier)
+              type: (type_specification
+                (array_type
+                  (array_keyword)
+                  sizes: (integer)
+                  (of_keyword)
+                  element_type: (type_specification
+                    (record_type
+                      (record_keyword)
+                      reference: (identifier))))))
+            (variable_declaration
+              name: (identifier)
+              type: (basic_type)
+              (ERROR
+                (UNEXPECTED 'i')
+                (identifier))
+              (ml_value_list
+                (ml_value_pair
+                  language: (identifier)
+                  value: (string_literal))
+                (ml_value_pair
+                  language: (identifier)
+                  value: (string_literal)))
+              (ERROR
+                (UNEXPECTED 'i')))))
+        body: (code_block
+          (begin_keyword)
+          body: (statement_block
+            (call_expression
+              function: (identifier)
+              arguments: (argument_list)))
+          (end_keyword)))
+      (procedure
+        (procedure_keyword)
+        name: (identifier)
+        body: (code_block
+          (begin_keyword)
+          (end_keyword)))
+      (procedure
+        (procedure_keyword)
+        name: (identifier)
+        parameters: (parameter_list
+          (parameter
+            name: (identifier)
+            type: (type_specification
+              (basic_type)))
+          (parameter
+            name: (identifier)
+            type: (type_specification
+              (basic_type))))
+        return_type: (type_specification
+          (basic_type))
+        body: (code_block
+          (begin_keyword)
+          body: (statement_block
+            (exit_statement
+              (exit_keyword)
+              return_value: (additive_expression
+                left: (identifier)
+                right: (identifier))))
+          (end_keyword))))))
+
+========================================================================
+B7a GAP: ml-pairs / first-replace (27 cells, verdict of the representative GAP); the parser ERRORs on configurations alc accepts; representative occ:ml_value_list:0.1.0.0@action_body#first-replace
+========================================================================
+table 50100 T
+{
+    fields
+    {
+        field(1; K; Code[20]) { }
+        field(2; N; Integer) { }
+        field(3; B; Boolean) { }
+        field(9; O; Option) { OptionMembers = A,B,C; }
+    }
+    keys
+    {
+        key(PK; K) { Clustered = true; }
+    }
+}
+page 50102 PG
+{
+    SourceTable = T;
+    layout
+    {
+        area(Content)
+        {
+            field(N; Rec.N) { }
+        }
+    }
+    actions
+    {
+        area(Processing)
+        {
+            action(A1)
+            {
+                CaptionML =
+#if TPL
+                    
+#if X
+ENU = 'a'
+#else
+DAN = 'b'
+#endif
+, DEU = 'c'
+;
+#else
+                    ENU = 'c';
+#endif
+                trigger OnAction()
+                begin
+                end;
+            }
+        }
+    }
+    var
+        I: Integer;
+        Ok: Boolean;
+}
+------------------------------------------------------------------------
+
+(source_file
+  (table_declaration
+    (table_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (fields_section
+        (fields_keyword)
+        body: (fields_body
+          (field_declaration
+            (field_keyword)
+            id: (integer)
+            name: (identifier)
+            type: (type_specification
+              (code_type
+                (code_keyword)
+                length: (integer))))
+          (field_declaration
+            (field_keyword)
+            id: (integer)
+            name: (identifier)
+            type: (type_specification
+              (basic_type)))
+          (field_declaration
+            (field_keyword)
+            id: (integer)
+            name: (identifier)
+            type: (type_specification
+              (basic_type)))
+          (field_declaration
+            (field_keyword)
+            id: (integer)
+            name: (identifier)
+            type: (type_specification
+              (option_type
+                (option_keyword)))
+            body: (declaration_body
+              (property
+                name: (property_name)
+                value: (option_member_list
+                  (option_member
+                    (identifier))
+                  (option_member
+                    (identifier))
+                  (option_member
+                    (identifier))))))))
+      (keys_section
+        (keys_keyword)
+        body: (keys_body
+          (key_declaration
+            (key_keyword)
+            name: (identifier)
+            fields: (field_list
+              (identifier))
+            body: (declaration_body
+              (property
+                name: (property_name)
+                value: (boolean))))))))
+  (page_declaration
+    (page_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (property
+        name: (property_name)
+        value: (identifier))
+      (layout_section
+        (layout_keyword)
+        body: (layout_body
+          (area_section
+            (area_keyword)
+            type: (content_keyword)
+            body: (layout_body
+              (page_field
+                (field_keyword)
+                name: (identifier)
+                source: (member_expression
+                  object: (identifier)
+                  member: (identifier)))))))
+      (actions_section
+        (actions_keyword)
+        body: (action_body
+          (action_area_section
+            (area_keyword)
+            type: (processing_keyword)
+            body: (action_body
+              (action_declaration
+                (action_keyword)
+                name: (identifier)
+                body: (declaration_body
+                  (property
+                    name: (property_name)
+                    value: (preproc_conditional_property_value
+                      (preproc_if
+                        (preproc_open)
+                        condition: (identifier))
+                      (ERROR
+                        (preproc_conditional_property_value
+                          (preproc_if
+                            (preproc_open)
+                            condition: (identifier))
+                          value: (ml_value_list
+                            (ml_value_pair
+                              language: (identifier)
+                              value: (string_literal)))
+                          (preproc_else)
+                          value: (ml_value_list
+                            (ml_value_pair
+                              language: (identifier)
+                              value: (string_literal)))
+                          (preproc_endif
+                            (preproc_close))))
+                      value: (ml_value_list
+                        (ml_value_pair
+                          language: (identifier)
+                          value: (string_literal)))
+                      (preproc_else)
+                      value: (ml_value_list
+                        (ml_value_pair
+                          language: (identifier)
+                          value: (string_literal)))
+                      (preproc_endif
+                        (preproc_close))))
+                  (trigger_declaration
+                    (trigger_keyword)
+                    name: (identifier)
+                    body: (code_block
+                      (begin_keyword)
+                      (end_keyword)))))))))
+      (var_section
+        (var_keyword)
+        body: (var_body
+          (variable_declaration
+            name: (identifier)
+            type: (type_specification
+              (basic_type)))
+          (variable_declaration
+            name: (identifier)
+            type: (type_specification
+              (basic_type))))))))
+
+========================================================================
+B7a GAP: ml-pairs / holes-lead (27 cells, verdict of the representative MIXED); the parser ERRORs on configurations alc accepts; representative occ:ml_value_list:0.1.0.0@action_body#holes-lead
+========================================================================
+table 50100 T
+{
+    fields
+    {
+        field(1; K; Code[20]) { }
+        field(2; N; Integer) { }
+        field(3; B; Boolean) { }
+        field(9; O; Option) { OptionMembers = A,B,C; }
+    }
+    keys
+    {
+        key(PK; K) { Clustered = true; }
+    }
+}
+page 50102 PG
+{
+    SourceTable = T;
+    layout
+    {
+        area(Content)
+        {
+            field(N; Rec.N) { }
+        }
+    }
+    actions
+    {
+        area(Processing)
+        {
+            action(A1)
+            {
+                CaptionML =
+#if TPL
+                    
+#if X
+,
+#endif
+ENU = 'a' , DAN = 'b'
+;
+#else
+                    ENU = 'c';
+#endif
+                trigger OnAction()
+                begin
+                end;
+            }
+        }
+    }
+    var
+        I: Integer;
+        Ok: Boolean;
+}
+------------------------------------------------------------------------
+
+(source_file
+  (table_declaration
+    (table_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (fields_section
+        (fields_keyword)
+        body: (fields_body
+          (field_declaration
+            (field_keyword)
+            id: (integer)
+            name: (identifier)
+            type: (type_specification
+              (code_type
+                (code_keyword)
+                length: (integer))))
+          (field_declaration
+            (field_keyword)
+            id: (integer)
+            name: (identifier)
+            type: (type_specification
+              (basic_type)))
+          (field_declaration
+            (field_keyword)
+            id: (integer)
+            name: (identifier)
+            type: (type_specification
+              (basic_type)))
+          (field_declaration
+            (field_keyword)
+            id: (integer)
+            name: (identifier)
+            type: (type_specification
+              (option_type
+                (option_keyword)))
+            body: (declaration_body
+              (property
+                name: (property_name)
+                value: (option_member_list
+                  (option_member
+                    (identifier))
+                  (option_member
+                    (identifier))
+                  (option_member
+                    (identifier))))))))
+      (keys_section
+        (keys_keyword)
+        body: (keys_body
+          (key_declaration
+            (key_keyword)
+            name: (identifier)
+            fields: (field_list
+              (identifier))
+            body: (declaration_body
+              (property
+                name: (property_name)
+                value: (boolean))))))))
+  (page_declaration
+    (page_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (property
+        name: (property_name)
+        value: (identifier))
+      (layout_section
+        (layout_keyword)
+        body: (layout_body
+          (area_section
+            (area_keyword)
+            type: (content_keyword)
+            body: (layout_body
+              (page_field
+                (field_keyword)
+                name: (identifier)
+                source: (member_expression
+                  object: (identifier)
+                  member: (identifier)))))))
+      (actions_section
+        (actions_keyword)
+        body: (action_body
+          (action_area_section
+            (area_keyword)
+            type: (processing_keyword)
+            body: (action_body
+              (action_declaration
+                (action_keyword)
+                name: (identifier)
+                body: (declaration_body
+                  (property
+                    name: (property_name)
+                    value: (preproc_conditional_property_value
+                      (preproc_if
+                        (preproc_open)
+                        condition: (identifier))
+                      value: (preproc_conditional_property_value
+                        (preproc_if
+                          (preproc_open)
+                          condition: (identifier))
+                        (ERROR
+                          (UNEXPECTED 'i'))
+                        value: (ml_value_list
+                          (ml_value_pair
+                            language: (identifier)
+                            value: (string_literal))
+                          (ml_value_pair
+                            language: (identifier)
+                            value: (string_literal)))
+                        (preproc_else)
+                        value: (ml_value_list
+                          (ml_value_pair
+                            language: (identifier)
+                            value: (string_literal)))
+                        (preproc_endif
+                          (preproc_close)))
+                      (ERROR
+                        (identifier)
+                        (identifier)
+                        (identifier)
+                        (identifier))
+                      (preproc_endif
+                        (MISSING preproc_close))))))))))
+      (var_section
+        (var_keyword)
+        body: (var_body
+          (variable_declaration
+            name: (identifier)
+            type: (type_specification
+              (basic_type)))
+          (variable_declaration
+            name: (identifier)
+            type: (type_specification
+              (basic_type))))))))
+
+========================================================================
+B7a GAP: ml-pairs / holes-mid (27 cells, verdict of the representative MIXED); the parser ERRORs on configurations alc accepts; representative occ:ml_value_list:0.1.0.0@action_body#holes-mid
+========================================================================
+table 50100 T
+{
+    fields
+    {
+        field(1; K; Code[20]) { }
+        field(2; N; Integer) { }
+        field(3; B; Boolean) { }
+        field(9; O; Option) { OptionMembers = A,B,C; }
+    }
+    keys
+    {
+        key(PK; K) { Clustered = true; }
+    }
+}
+page 50102 PG
+{
+    SourceTable = T;
+    layout
+    {
+        area(Content)
+        {
+            field(N; Rec.N) { }
+        }
+    }
+    actions
+    {
+        area(Processing)
+        {
+            action(A1)
+            {
+                CaptionML =
+#if TPL
+                    
+ENU = 'a' ,
+#if X
+,
+#endif
+DAN = 'b'
+;
+#else
+                    ENU = 'c';
+#endif
+                trigger OnAction()
+                begin
+                end;
+            }
+        }
+    }
+    var
+        I: Integer;
+        Ok: Boolean;
+}
+------------------------------------------------------------------------
+
+(source_file
+  (table_declaration
+    (table_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (fields_section
+        (fields_keyword)
+        body: (fields_body
+          (field_declaration
+            (field_keyword)
+            id: (integer)
+            name: (identifier)
+            type: (type_specification
+              (code_type
+                (code_keyword)
+                length: (integer))))
+          (field_declaration
+            (field_keyword)
+            id: (integer)
+            name: (identifier)
+            type: (type_specification
+              (basic_type)))
+          (field_declaration
+            (field_keyword)
+            id: (integer)
+            name: (identifier)
+            type: (type_specification
+              (basic_type)))
+          (field_declaration
+            (field_keyword)
+            id: (integer)
+            name: (identifier)
+            type: (type_specification
+              (option_type
+                (option_keyword)))
+            body: (declaration_body
+              (property
+                name: (property_name)
+                value: (option_member_list
+                  (option_member
+                    (identifier))
+                  (option_member
+                    (identifier))
+                  (option_member
+                    (identifier))))))))
+      (keys_section
+        (keys_keyword)
+        body: (keys_body
+          (key_declaration
+            (key_keyword)
+            name: (identifier)
+            fields: (field_list
+              (identifier))
+            body: (declaration_body
+              (property
+                name: (property_name)
+                value: (boolean))))))))
+  (page_declaration
+    (page_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (property
+        name: (property_name)
+        value: (identifier))
+      (layout_section
+        (layout_keyword)
+        body: (layout_body
+          (area_section
+            (area_keyword)
+            type: (content_keyword)
+            body: (layout_body
+              (page_field
+                (field_keyword)
+                name: (identifier)
+                source: (member_expression
+                  object: (identifier)
+                  member: (identifier)))))))
+      (actions_section
+        (actions_keyword)
+        body: (action_body
+          (action_area_section
+            (area_keyword)
+            type: (processing_keyword)
+            body: (action_body
+              (action_declaration
+                (action_keyword)
+                name: (identifier)
+                body: (declaration_body
+                  (property
+                    name: (property_name)
+                    value: (preproc_conditional_property_value
+                      (preproc_if
+                        (preproc_open)
+                        condition: (identifier))
+                      value: (ml_value_list
+                        (ml_value_pair
+                          language: (identifier)
+                          value: (string_literal))
+                        (ERROR
+                          (UNEXPECTED 'i')
+                          (identifier)
+                          (UNEXPECTED 'i'))
+                        (ml_value_pair
+                          language: (identifier)
+                          value: (string_literal)))
+                      (preproc_else)
+                      value: (ml_value_list
+                        (ml_value_pair
+                          language: (identifier)
+                          value: (string_literal)))
+                      (preproc_endif
+                        (preproc_close))))
+                  (trigger_declaration
+                    (trigger_keyword)
+                    name: (identifier)
+                    body: (code_block
+                      (begin_keyword)
+                      (end_keyword)))))))))
+      (var_section
+        (var_keyword)
+        body: (var_body
+          (variable_declaration
+            name: (identifier)
+            type: (type_specification
+              (basic_type)))
+          (variable_declaration
+            name: (identifier)
+            type: (type_specification
+              (basic_type))))))))
+
+========================================================================
+B7a GAP: ml-pairs / holes-trail (27 cells, verdict of the representative MIXED); the parser ERRORs on configurations alc accepts; representative occ:ml_value_list:0.1.0.0@action_body#holes-trail
+========================================================================
+table 50100 T
+{
+    fields
+    {
+        field(1; K; Code[20]) { }
+        field(2; N; Integer) { }
+        field(3; B; Boolean) { }
+        field(9; O; Option) { OptionMembers = A,B,C; }
+    }
+    keys
+    {
+        key(PK; K) { Clustered = true; }
+    }
+}
+page 50102 PG
+{
+    SourceTable = T;
+    layout
+    {
+        area(Content)
+        {
+            field(N; Rec.N) { }
+        }
+    }
+    actions
+    {
+        area(Processing)
+        {
+            action(A1)
+            {
+                CaptionML =
+#if TPL
+                    
+ENU = 'a' , DAN = 'b'
+#if X
+,
+#endif
+;
+#else
+                    ENU = 'c';
+#endif
+                trigger OnAction()
+                begin
+                end;
+            }
+        }
+    }
+    var
+        I: Integer;
+        Ok: Boolean;
+}
+------------------------------------------------------------------------
+
+(source_file
+  (table_declaration
+    (table_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (fields_section
+        (fields_keyword)
+        body: (fields_body
+          (field_declaration
+            (field_keyword)
+            id: (integer)
+            name: (identifier)
+            type: (type_specification
+              (code_type
+                (code_keyword)
+                length: (integer))))
+          (field_declaration
+            (field_keyword)
+            id: (integer)
+            name: (identifier)
+            type: (type_specification
+              (basic_type)))
+          (field_declaration
+            (field_keyword)
+            id: (integer)
+            name: (identifier)
+            type: (type_specification
+              (basic_type)))
+          (field_declaration
+            (field_keyword)
+            id: (integer)
+            name: (identifier)
+            type: (type_specification
+              (option_type
+                (option_keyword)))
+            body: (declaration_body
+              (property
+                name: (property_name)
+                value: (option_member_list
+                  (option_member
+                    (identifier))
+                  (option_member
+                    (identifier))
+                  (option_member
+                    (identifier))))))))
+      (keys_section
+        (keys_keyword)
+        body: (keys_body
+          (key_declaration
+            (key_keyword)
+            name: (identifier)
+            fields: (field_list
+              (identifier))
+            body: (declaration_body
+              (property
+                name: (property_name)
+                value: (boolean))))))))
+  (page_declaration
+    (page_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (property
+        name: (property_name)
+        value: (identifier))
+      (layout_section
+        (layout_keyword)
+        body: (layout_body
+          (area_section
+            (area_keyword)
+            type: (content_keyword)
+            body: (layout_body
+              (page_field
+                (field_keyword)
+                name: (identifier)
+                source: (member_expression
+                  object: (identifier)
+                  member: (identifier)))))))
+      (actions_section
+        (actions_keyword)
+        body: (action_body
+          (action_area_section
+            (area_keyword)
+            type: (processing_keyword)
+            body: (action_body
+              (action_declaration
+                (action_keyword)
+                name: (identifier)
+                body: (declaration_body
+                  (property
+                    name: (property_name)
+                    value: (preproc_conditional_property_value
+                      (preproc_if
+                        (preproc_open)
+                        condition: (identifier))
+                      value: (ml_value_list
+                        (ml_value_pair
+                          language: (identifier)
+                          value: (string_literal))
+                        (ml_value_pair
+                          language: (identifier)
+                          value: (string_literal)))
+                      (ERROR
+                        (preproc_if
+                          (preproc_open)
+                          condition: (identifier))
+                        (UNEXPECTED 'i'))
+                      (preproc_else)
+                      value: (ml_value_list
+                        (ml_value_pair
+                          language: (identifier)
+                          value: (string_literal)))
+                      (preproc_endif
+                        (preproc_close))))
+                  (trigger_declaration
+                    (trigger_keyword)
+                    name: (identifier)
+                    body: (code_block
+                      (begin_keyword)
+                      (end_keyword)))))))))
+      (var_section
+        (var_keyword)
+        body: (var_body
+          (variable_declaration
+            name: (identifier)
+            type: (type_specification
+              (basic_type)))
+          (variable_declaration
+            name: (identifier)
+            type: (type_specification
+              (basic_type))))))))
+
+========================================================================
+B7a GAP: ml-pairs / lead-optional (27 cells, verdict of the representative GAP); the parser ERRORs on configurations alc accepts; representative occ:ml_value_list:0.1.0.0@action_body#lead-optional
+========================================================================
+table 50100 T
+{
+    fields
+    {
+        field(1; K; Code[20]) { }
+        field(2; N; Integer) { }
+        field(3; B; Boolean) { }
+        field(9; O; Option) { OptionMembers = A,B,C; }
+    }
+    keys
+    {
+        key(PK; K) { Clustered = true; }
+    }
+}
+page 50102 PG
+{
+    SourceTable = T;
+    layout
+    {
+        area(Content)
+        {
+            field(N; Rec.N) { }
+        }
+    }
+    actions
+    {
+        area(Processing)
+        {
+            action(A1)
+            {
+                CaptionML =
+#if TPL
+                    
+#if X
+ENU = 'a' ,
+#endif
+DAN = 'b'
+;
+#else
+                    ENU = 'c';
+#endif
+                trigger OnAction()
+                begin
+                end;
+            }
+        }
+    }
+    var
+        I: Integer;
+        Ok: Boolean;
+}
+------------------------------------------------------------------------
+
+(source_file
+  (table_declaration
+    (table_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (fields_section
+        (fields_keyword)
+        body: (fields_body
+          (field_declaration
+            (field_keyword)
+            id: (integer)
+            name: (identifier)
+            type: (type_specification
+              (code_type
+                (code_keyword)
+                length: (integer))))
+          (field_declaration
+            (field_keyword)
+            id: (integer)
+            name: (identifier)
+            type: (type_specification
+              (basic_type)))
+          (field_declaration
+            (field_keyword)
+            id: (integer)
+            name: (identifier)
+            type: (type_specification
+              (basic_type)))
+          (field_declaration
+            (field_keyword)
+            id: (integer)
+            name: (identifier)
+            type: (type_specification
+              (option_type
+                (option_keyword)))
+            body: (declaration_body
+              (property
+                name: (property_name)
+                value: (option_member_list
+                  (option_member
+                    (identifier))
+                  (option_member
+                    (identifier))
+                  (option_member
+                    (identifier))))))))
+      (keys_section
+        (keys_keyword)
+        body: (keys_body
+          (key_declaration
+            (key_keyword)
+            name: (identifier)
+            fields: (field_list
+              (identifier))
+            body: (declaration_body
+              (property
+                name: (property_name)
+                value: (boolean))))))))
+  (page_declaration
+    (page_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (property
+        name: (property_name)
+        value: (identifier))
+      (layout_section
+        (layout_keyword)
+        body: (layout_body
+          (area_section
+            (area_keyword)
+            type: (content_keyword)
+            body: (layout_body
+              (page_field
+                (field_keyword)
+                name: (identifier)
+                source: (member_expression
+                  object: (identifier)
+                  member: (identifier)))))))
+      (actions_section
+        (actions_keyword)
+        body: (action_body
+          (action_area_section
+            (area_keyword)
+            type: (processing_keyword)
+            body: (action_body
+              (action_declaration
+                (action_keyword)
+                name: (identifier)
+                body: (declaration_body
+                  (property
+                    name: (property_name)
+                    value: (preproc_conditional_property_value
+                      (preproc_if
+                        (preproc_open)
+                        condition: (identifier))
+                      value: (preproc_conditional_property_value
+                        (preproc_if
+                          (preproc_open)
+                          condition: (identifier))
+                        value: (ml_value_list
+                          (ml_value_pair
+                            language: (identifier)
+                            value: (string_literal))
+                          (ERROR
+                            (UNEXPECTED 'i'))
+                          (ml_value_pair
+                            language: (identifier)
+                            value: (string_literal)))
+                        (preproc_else)
+                        value: (ml_value_list
+                          (ml_value_pair
+                            language: (identifier)
+                            value: (string_literal)))
+                        (preproc_endif
+                          (preproc_close)))
+                      (ERROR
+                        (identifier)
+                        (identifier)
+                        (identifier)
+                        (identifier))
+                      (preproc_endif
+                        (MISSING preproc_close))))))))))
+      (var_section
+        (var_keyword)
+        body: (var_body
+          (variable_declaration
+            name: (identifier)
+            type: (type_specification
+              (basic_type)))
+          (variable_declaration
+            name: (identifier)
+            type: (type_specification
+              (basic_type))))))))
+
+========================================================================
+B7a GAP: ml-pairs / nested (99 cells, verdict of the representative GAP); the parser ERRORs on configurations alc accepts; representative occ:_ml_arm_t:0.3@action_body#nested
+========================================================================
+table 50100 T
+{
+    fields
+    {
+        field(1; K; Code[20]) { }
+        field(2; N; Integer) { }
+        field(3; B; Boolean) { }
+        field(9; O; Option) { OptionMembers = A,B,C; }
+    }
+    keys
+    {
+        key(PK; K) { Clustered = true; }
+    }
+}
+page 50102 PG
+{
+    SourceTable = T;
+    layout
+    {
+        area(Content)
+        {
+            field(N; Rec.N) { }
+        }
+    }
+    actions
+    {
+        area(Processing)
+        {
+            action(A1)
+            {
+                CaptionML =
+#if TPL
+                    
+ENU = 'a'
+#if X
+#if Y
+;
+#else
+;
+#endif
+#else
+;
+#endif
+
+#else
+                    ENU = 'b';
+#endif
+                trigger OnAction()
+                begin
+                end;
+            }
+        }
+    }
+    var
+        I: Integer;
+        Ok: Boolean;
+}
+------------------------------------------------------------------------
+
+(source_file
+  (table_declaration
+    (table_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (fields_section
+        (fields_keyword)
+        body: (fields_body
+          (field_declaration
+            (field_keyword)
+            id: (integer)
+            name: (identifier)
+            type: (type_specification
+              (code_type
+                (code_keyword)
+                length: (integer))))
+          (field_declaration
+            (field_keyword)
+            id: (integer)
+            name: (identifier)
+            type: (type_specification
+              (basic_type)))
+          (field_declaration
+            (field_keyword)
+            id: (integer)
+            name: (identifier)
+            type: (type_specification
+              (basic_type)))
+          (field_declaration
+            (field_keyword)
+            id: (integer)
+            name: (identifier)
+            type: (type_specification
+              (option_type
+                (option_keyword)))
+            body: (declaration_body
+              (property
+                name: (property_name)
+                value: (option_member_list
+                  (option_member
+                    (identifier))
+                  (option_member
+                    (identifier))
+                  (option_member
+                    (identifier))))))))
+      (keys_section
+        (keys_keyword)
+        body: (keys_body
+          (key_declaration
+            (key_keyword)
+            name: (identifier)
+            fields: (field_list
+              (identifier))
+            body: (declaration_body
+              (property
+                name: (property_name)
+                value: (boolean))))))))
+  (page_declaration
+    (page_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (property
+        name: (property_name)
+        value: (identifier))
+      (layout_section
+        (layout_keyword)
+        body: (layout_body
+          (area_section
+            (area_keyword)
+            type: (content_keyword)
+            body: (layout_body
+              (page_field
+                (field_keyword)
+                name: (identifier)
+                source: (member_expression
+                  object: (identifier)
+                  member: (identifier)))))))
+      (actions_section
+        (actions_keyword)
+        body: (action_body
+          (action_area_section
+            (area_keyword)
+            type: (processing_keyword)
+            body: (action_body
+              (action_declaration
+                (action_keyword)
+                name: (identifier)
+                body: (declaration_body
+                  (property
+                    name: (property_name)
+                    value: (preproc_conditional_property_value
+                      (preproc_if
+                        (preproc_open)
+                        condition: (identifier))
+                      (ERROR
+                        (ml_value_list
+                          (ml_value_pair
+                            language: (identifier)
+                            value: (string_literal)))
+                        (preproc_if
+                          (preproc_open)
+                          condition: (identifier))
+                        (preproc_if
+                          (preproc_open)
+                          condition: (identifier))
+                        (ERROR
+                          (preproc_else)
+                          (UNEXPECTED 'i')
+                          (preproc_else)
+                          (UNEXPECTED 'i'))
+                        (preproc_else))
+                      value: (ml_value_list
+                        (ml_value_pair
+                          language: (identifier)
+                          value: (string_literal)))
+                      (preproc_endif
+                        (preproc_close))))
+                  (trigger_declaration
+                    (trigger_keyword)
+                    name: (identifier)
+                    body: (code_block
+                      (begin_keyword)
+                      (end_keyword)))))))))
+      (var_section
+        (var_keyword)
+        body: (var_body
+          (variable_declaration
+            name: (identifier)
+            type: (type_specification
+              (basic_type)))
+          (variable_declaration
+            name: (identifier)
+            type: (type_specification
+              (basic_type))))))))
+
+========================================================================
+B7a GAP: ml-pairs / one-elem (3 cells, verdict of the representative GAP); the parser ERRORs on configurations alc accepts; representative occ:ml_value_list:0.1.0.0@variable_declaration#one-elem
+========================================================================
+table 50100 T
+{
+    fields
+    {
+        field(1; K; Code[20]) { }
+        field(2; N; Integer) { }
+        field(3; B; Boolean) { }
+        field(9; O; Option) { OptionMembers = A,B,C; }
+    }
+    keys
+    {
+        key(PK; K) { Clustered = true; }
+    }
+}
+codeunit 50101 P
+{
+    procedure Q(): Integer
+    var
+        R: Record T;
+        I: Integer;
+        Ok: Boolean;
+        L: List of [Integer];
+        Arr: array[3] of Integer;
+        Arr2: array[2, 2] of Integer;
+        Recs: array[2] of Record T;
+        TC: TextConst 
+#if X
+ENU = 'a' , DAN = 'b'
+#else
+ENU = 'a'
+#endif
+;
+    begin
+Bar();
+    end;
+
+    procedure Bar()
+    begin
+    end;
+
+    procedure Foo(A: Integer; B: Integer): Integer
+    begin
+        exit(A + B);
+    end;
+}
+------------------------------------------------------------------------
+
+(source_file
+  (table_declaration
+    (table_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (fields_section
+        (fields_keyword)
+        body: (fields_body
+          (field_declaration
+            (field_keyword)
+            id: (integer)
+            name: (identifier)
+            type: (type_specification
+              (code_type
+                (code_keyword)
+                length: (integer))))
+          (field_declaration
+            (field_keyword)
+            id: (integer)
+            name: (identifier)
+            type: (type_specification
+              (basic_type)))
+          (field_declaration
+            (field_keyword)
+            id: (integer)
+            name: (identifier)
+            type: (type_specification
+              (basic_type)))
+          (field_declaration
+            (field_keyword)
+            id: (integer)
+            name: (identifier)
+            type: (type_specification
+              (option_type
+                (option_keyword)))
+            body: (declaration_body
+              (property
+                name: (property_name)
+                value: (option_member_list
+                  (option_member
+                    (identifier))
+                  (option_member
+                    (identifier))
+                  (option_member
+                    (identifier))))))))
+      (keys_section
+        (keys_keyword)
+        body: (keys_body
+          (key_declaration
+            (key_keyword)
+            name: (identifier)
+            fields: (field_list
+              (identifier))
+            body: (declaration_body
+              (property
+                name: (property_name)
+                value: (boolean))))))))
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (procedure
+        (procedure_keyword)
+        name: (identifier)
+        return_type: (type_specification
+          (basic_type))
+        (var_section
+          (var_keyword)
+          body: (var_body
+            (variable_declaration
+              name: (identifier)
+              type: (type_specification
+                (record_type
+                  (record_keyword)
+                  reference: (identifier))))
+            (variable_declaration
+              name: (identifier)
+              type: (type_specification
+                (basic_type)))
+            (variable_declaration
+              name: (identifier)
+              type: (type_specification
+                (basic_type)))
+            (variable_declaration
+              name: (identifier)
+              type: (type_specification
+                (list_type
+                  (list_keyword)
+                  (of_keyword)
+                  element_type: (type_specification
+                    (basic_type)))))
+            (variable_declaration
+              name: (identifier)
+              type: (type_specification
+                (array_type
+                  (array_keyword)
+                  sizes: (integer)
+                  (of_keyword)
+                  element_type: (type_specification
+                    (basic_type)))))
+            (variable_declaration
+              name: (identifier)
+              type: (type_specification
+                (array_type
+                  (array_keyword)
+                  sizes: (integer)
+                  sizes: (integer)
+                  (of_keyword)
+                  element_type: (type_specification
+                    (basic_type)))))
+            (variable_declaration
+              name: (identifier)
+              type: (type_specification
+                (array_type
+                  (array_keyword)
+                  sizes: (integer)
+                  (of_keyword)
+                  element_type: (type_specification
+                    (record_type
+                      (record_keyword)
+                      reference: (identifier))))))
+            (variable_declaration
+              name: (identifier)
+              type: (basic_type)
+              (ERROR
+                (UNEXPECTED 'i')
+                (identifier)
+                (ml_value_list
+                  (ml_value_pair
+                    language: (identifier)
+                    value: (string_literal))
+                  (ml_value_pair
+                    language: (identifier)
+                    value: (string_literal)))
+                (preproc_else))
+              (ml_value_list
+                (ml_value_pair
+                  language: (identifier)
+                  value: (string_literal)))
+              (ERROR
+                (UNEXPECTED 'i')))))
+        body: (code_block
+          (begin_keyword)
+          body: (statement_block
+            (call_expression
+              function: (identifier)
+              arguments: (argument_list)))
+          (end_keyword)))
+      (procedure
+        (procedure_keyword)
+        name: (identifier)
+        body: (code_block
+          (begin_keyword)
+          (end_keyword)))
+      (procedure
+        (procedure_keyword)
+        name: (identifier)
+        parameters: (parameter_list
+          (parameter
+            name: (identifier)
+            type: (type_specification
+              (basic_type)))
+          (parameter
+            name: (identifier)
+            type: (type_specification
+              (basic_type))))
+        return_type: (type_specification
+          (basic_type))
+        body: (code_block
+          (begin_keyword)
+          body: (statement_block
+            (exit_statement
+              (exit_keyword)
+              return_value: (additive_expression
+                left: (identifier)
+                right: (identifier))))
+          (end_keyword))))))
+
+========================================================================
+B7a GAP: ml-pairs / sep-after (27 cells, verdict of the representative GAP); the parser ERRORs on configurations alc accepts; representative occ:ml_value_list:0.1.0.0@action_body#sep-after
+========================================================================
+table 50100 T
+{
+    fields
+    {
+        field(1; K; Code[20]) { }
+        field(2; N; Integer) { }
+        field(3; B; Boolean) { }
+        field(9; O; Option) { OptionMembers = A,B,C; }
+    }
+    keys
+    {
+        key(PK; K) { Clustered = true; }
+    }
+}
+page 50102 PG
+{
+    SourceTable = T;
+    layout
+    {
+        area(Content)
+        {
+            field(N; Rec.N) { }
+        }
+    }
+    actions
+    {
+        area(Processing)
+        {
+            action(A1)
+            {
+                CaptionML =
+#if TPL
+                    
+ENU = 'a' ,
+#if X
+DAN = 'b' ,
+#endif
+DEU = 'c'
+;
+#else
+                    ENU = 'c';
+#endif
+                trigger OnAction()
+                begin
+                end;
+            }
+        }
+    }
+    var
+        I: Integer;
+        Ok: Boolean;
+}
+------------------------------------------------------------------------
+
+(source_file
+  (table_declaration
+    (table_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (fields_section
+        (fields_keyword)
+        body: (fields_body
+          (field_declaration
+            (field_keyword)
+            id: (integer)
+            name: (identifier)
+            type: (type_specification
+              (code_type
+                (code_keyword)
+                length: (integer))))
+          (field_declaration
+            (field_keyword)
+            id: (integer)
+            name: (identifier)
+            type: (type_specification
+              (basic_type)))
+          (field_declaration
+            (field_keyword)
+            id: (integer)
+            name: (identifier)
+            type: (type_specification
+              (basic_type)))
+          (field_declaration
+            (field_keyword)
+            id: (integer)
+            name: (identifier)
+            type: (type_specification
+              (option_type
+                (option_keyword)))
+            body: (declaration_body
+              (property
+                name: (property_name)
+                value: (option_member_list
+                  (option_member
+                    (identifier))
+                  (option_member
+                    (identifier))
+                  (option_member
+                    (identifier))))))))
+      (keys_section
+        (keys_keyword)
+        body: (keys_body
+          (key_declaration
+            (key_keyword)
+            name: (identifier)
+            fields: (field_list
+              (identifier))
+            body: (declaration_body
+              (property
+                name: (property_name)
+                value: (boolean))))))))
+  (page_declaration
+    (page_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (property
+        name: (property_name)
+        value: (identifier))
+      (layout_section
+        (layout_keyword)
+        body: (layout_body
+          (area_section
+            (area_keyword)
+            type: (content_keyword)
+            body: (layout_body
+              (page_field
+                (field_keyword)
+                name: (identifier)
+                source: (member_expression
+                  object: (identifier)
+                  member: (identifier)))))))
+      (actions_section
+        (actions_keyword)
+        body: (action_body
+          (action_area_section
+            (area_keyword)
+            type: (processing_keyword)
+            body: (action_body
+              (action_declaration
+                (action_keyword)
+                name: (identifier)
+                body: (declaration_body
+                  (property
+                    name: (property_name)
+                    value: (preproc_conditional_property_value
+                      (preproc_if
+                        (preproc_open)
+                        condition: (identifier))
+                      value: (ml_value_list
+                        (ml_value_pair
+                          language: (identifier)
+                          value: (string_literal))
+                        (ERROR
+                          (UNEXPECTED 'i')
+                          (identifier))
+                        (ml_value_pair
+                          language: (identifier)
+                          value: (string_literal))
+                        (ERROR
+                          (UNEXPECTED 'i'))
+                        (ml_value_pair
+                          language: (identifier)
+                          value: (string_literal)))
+                      (preproc_else)
+                      value: (ml_value_list
+                        (ml_value_pair
+                          language: (identifier)
+                          value: (string_literal)))
+                      (preproc_endif
+                        (preproc_close))))
+                  (trigger_declaration
+                    (trigger_keyword)
+                    name: (identifier)
+                    body: (code_block
+                      (begin_keyword)
+                      (end_keyword)))))))))
+      (var_section
+        (var_keyword)
+        body: (var_body
+          (variable_declaration
+            name: (identifier)
+            type: (type_specification
+              (basic_type)))
+          (variable_declaration
+            name: (identifier)
+            type: (type_specification
+              (basic_type))))))))
+
+========================================================================
+B7a GAP: ml-pairs / sep-before (27 cells, verdict of the representative GAP); the parser ERRORs on configurations alc accepts; representative occ:ml_value_list:0.1.0.0@action_body#sep-before
+========================================================================
+table 50100 T
+{
+    fields
+    {
+        field(1; K; Code[20]) { }
+        field(2; N; Integer) { }
+        field(3; B; Boolean) { }
+        field(9; O; Option) { OptionMembers = A,B,C; }
+    }
+    keys
+    {
+        key(PK; K) { Clustered = true; }
+    }
+}
+page 50102 PG
+{
+    SourceTable = T;
+    layout
+    {
+        area(Content)
+        {
+            field(N; Rec.N) { }
+        }
+    }
+    actions
+    {
+        area(Processing)
+        {
+            action(A1)
+            {
+                CaptionML =
+#if TPL
+                    
+ENU = 'a'
+#if X
+, DAN = 'b'
+#endif
+, DEU = 'c'
+;
+#else
+                    ENU = 'c';
+#endif
+                trigger OnAction()
+                begin
+                end;
+            }
+        }
+    }
+    var
+        I: Integer;
+        Ok: Boolean;
+}
+------------------------------------------------------------------------
+
+(source_file
+  (table_declaration
+    (table_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (fields_section
+        (fields_keyword)
+        body: (fields_body
+          (field_declaration
+            (field_keyword)
+            id: (integer)
+            name: (identifier)
+            type: (type_specification
+              (code_type
+                (code_keyword)
+                length: (integer))))
+          (field_declaration
+            (field_keyword)
+            id: (integer)
+            name: (identifier)
+            type: (type_specification
+              (basic_type)))
+          (field_declaration
+            (field_keyword)
+            id: (integer)
+            name: (identifier)
+            type: (type_specification
+              (basic_type)))
+          (field_declaration
+            (field_keyword)
+            id: (integer)
+            name: (identifier)
+            type: (type_specification
+              (option_type
+                (option_keyword)))
+            body: (declaration_body
+              (property
+                name: (property_name)
+                value: (option_member_list
+                  (option_member
+                    (identifier))
+                  (option_member
+                    (identifier))
+                  (option_member
+                    (identifier))))))))
+      (keys_section
+        (keys_keyword)
+        body: (keys_body
+          (key_declaration
+            (key_keyword)
+            name: (identifier)
+            fields: (field_list
+              (identifier))
+            body: (declaration_body
+              (property
+                name: (property_name)
+                value: (boolean))))))))
+  (page_declaration
+    (page_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (property
+        name: (property_name)
+        value: (identifier))
+      (layout_section
+        (layout_keyword)
+        body: (layout_body
+          (area_section
+            (area_keyword)
+            type: (content_keyword)
+            body: (layout_body
+              (page_field
+                (field_keyword)
+                name: (identifier)
+                source: (member_expression
+                  object: (identifier)
+                  member: (identifier)))))))
+      (actions_section
+        (actions_keyword)
+        body: (action_body
+          (action_area_section
+            (area_keyword)
+            type: (processing_keyword)
+            body: (action_body
+              (action_declaration
+                (action_keyword)
+                name: (identifier)
+                body: (declaration_body
+                  (property
+                    name: (property_name)
+                    value: (preproc_conditional_property_value
+                      (preproc_if
+                        (preproc_open)
+                        condition: (identifier))
+                      (ERROR
+                        (ml_value_list
+                          (ml_value_pair
+                            language: (identifier)
+                            value: (string_literal)))
+                        (preproc_if
+                          (preproc_open)
+                          condition: (identifier)))
+                      value: (ml_value_list
+                        (ml_value_pair
+                          language: (identifier)
+                          value: (string_literal)))
+                      (preproc_endif
+                        (preproc_close)))
+                    (ERROR
+                      (identifier)
+                      (string_literal)))
+                  (ERROR
+                    (preproc_else)
+                    (identifier)
+                    (string_literal))
+                  (empty_statement)
+                  (ERROR
+                    (UNEXPECTED 'i'))
+                  (trigger_declaration
+                    (trigger_keyword)
+                    name: (identifier)
+                    body: (code_block
+                      (begin_keyword)
+                      (end_keyword)))))))))
+      (var_section
+        (var_keyword)
+        body: (var_body
+          (variable_declaration
+            name: (identifier)
+            type: (type_specification
+              (basic_type)))
+          (variable_declaration
+            name: (identifier)
+            type: (type_specification
+              (basic_type))))))))
+
+========================================================================
+B7a GAP: ml-pairs / sep-before-end (27 cells, verdict of the representative GAP); the parser ERRORs on configurations alc accepts; representative occ:ml_value_list:0.1.0.0@action_body#sep-before-end
+========================================================================
+table 50100 T
+{
+    fields
+    {
+        field(1; K; Code[20]) { }
+        field(2; N; Integer) { }
+        field(3; B; Boolean) { }
+        field(9; O; Option) { OptionMembers = A,B,C; }
+    }
+    keys
+    {
+        key(PK; K) { Clustered = true; }
+    }
+}
+page 50102 PG
+{
+    SourceTable = T;
+    layout
+    {
+        area(Content)
+        {
+            field(N; Rec.N) { }
+        }
+    }
+    actions
+    {
+        area(Processing)
+        {
+            action(A1)
+            {
+                CaptionML =
+#if TPL
+                    
+ENU = 'a'
+#if X
+, DAN = 'b'
+#endif
+;
+#else
+                    ENU = 'c';
+#endif
+                trigger OnAction()
+                begin
+                end;
+            }
+        }
+    }
+    var
+        I: Integer;
+        Ok: Boolean;
+}
+------------------------------------------------------------------------
+
+(source_file
+  (table_declaration
+    (table_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (fields_section
+        (fields_keyword)
+        body: (fields_body
+          (field_declaration
+            (field_keyword)
+            id: (integer)
+            name: (identifier)
+            type: (type_specification
+              (code_type
+                (code_keyword)
+                length: (integer))))
+          (field_declaration
+            (field_keyword)
+            id: (integer)
+            name: (identifier)
+            type: (type_specification
+              (basic_type)))
+          (field_declaration
+            (field_keyword)
+            id: (integer)
+            name: (identifier)
+            type: (type_specification
+              (basic_type)))
+          (field_declaration
+            (field_keyword)
+            id: (integer)
+            name: (identifier)
+            type: (type_specification
+              (option_type
+                (option_keyword)))
+            body: (declaration_body
+              (property
+                name: (property_name)
+                value: (option_member_list
+                  (option_member
+                    (identifier))
+                  (option_member
+                    (identifier))
+                  (option_member
+                    (identifier))))))))
+      (keys_section
+        (keys_keyword)
+        body: (keys_body
+          (key_declaration
+            (key_keyword)
+            name: (identifier)
+            fields: (field_list
+              (identifier))
+            body: (declaration_body
+              (property
+                name: (property_name)
+                value: (boolean))))))))
+  (page_declaration
+    (page_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (property
+        name: (property_name)
+        value: (identifier))
+      (layout_section
+        (layout_keyword)
+        body: (layout_body
+          (area_section
+            (area_keyword)
+            type: (content_keyword)
+            body: (layout_body
+              (page_field
+                (field_keyword)
+                name: (identifier)
+                source: (member_expression
+                  object: (identifier)
+                  member: (identifier)))))))
+      (actions_section
+        (actions_keyword)
+        body: (action_body
+          (action_area_section
+            (area_keyword)
+            type: (processing_keyword)
+            body: (action_body
+              (action_declaration
+                (action_keyword)
+                name: (identifier)
+                body: (declaration_body
+                  (property
+                    name: (property_name)
+                    value: (preproc_conditional_property_value
+                      (preproc_if
+                        (preproc_open)
+                        condition: (identifier))
+                      (ERROR
+                        (ml_value_list
+                          (ml_value_pair
+                            language: (identifier)
+                            value: (string_literal)))
+                        (preproc_if
+                          (preproc_open)
+                          condition: (identifier)))
+                      value: (ml_value_list
+                        (ml_value_pair
+                          language: (identifier)
+                          value: (string_literal)))
+                      (preproc_endif
+                        (preproc_close))))
+                  (ERROR
+                    (preproc_else)
+                    (identifier)
+                    (string_literal))
+                  (empty_statement)
+                  (ERROR
+                    (UNEXPECTED 'i'))
+                  (trigger_declaration
+                    (trigger_keyword)
+                    name: (identifier)
+                    body: (code_block
+                      (begin_keyword)
+                      (end_keyword)))))))))
+      (var_section
+        (var_keyword)
+        body: (var_body
+          (variable_declaration
+            name: (identifier)
+            type: (type_specification
+              (basic_type)))
+          (variable_declaration
+            name: (identifier)
+            type: (type_specification
+              (basic_type))))))))
+
+========================================================================
+B7a GAP: ml-pairs / sep-only (99 cells, verdict of the representative GAP); the parser ERRORs on configurations alc accepts; representative occ:_ml_arm_t:0.3@action_body#sep-only
+========================================================================
+table 50100 T
+{
+    fields
+    {
+        field(1; K; Code[20]) { }
+        field(2; N; Integer) { }
+        field(3; B; Boolean) { }
+        field(9; O; Option) { OptionMembers = A,B,C; }
+    }
+    keys
+    {
+        key(PK; K) { Clustered = true; }
+    }
+}
+page 50102 PG
+{
+    SourceTable = T;
+    layout
+    {
+        area(Content)
+        {
+            field(N; Rec.N) { }
+        }
+    }
+    actions
+    {
+        area(Processing)
+        {
+            action(A1)
+            {
+                CaptionML =
+#if TPL
+                    
+ENU = 'a'
+#if X
+;
+#else
+;
+#endif
+
+#else
+                    ENU = 'b';
+#endif
+                trigger OnAction()
+                begin
+                end;
+            }
+        }
+    }
+    var
+        I: Integer;
+        Ok: Boolean;
+}
+------------------------------------------------------------------------
+
+(source_file
+  (table_declaration
+    (table_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (fields_section
+        (fields_keyword)
+        body: (fields_body
+          (field_declaration
+            (field_keyword)
+            id: (integer)
+            name: (identifier)
+            type: (type_specification
+              (code_type
+                (code_keyword)
+                length: (integer))))
+          (field_declaration
+            (field_keyword)
+            id: (integer)
+            name: (identifier)
+            type: (type_specification
+              (basic_type)))
+          (field_declaration
+            (field_keyword)
+            id: (integer)
+            name: (identifier)
+            type: (type_specification
+              (basic_type)))
+          (field_declaration
+            (field_keyword)
+            id: (integer)
+            name: (identifier)
+            type: (type_specification
+              (option_type
+                (option_keyword)))
+            body: (declaration_body
+              (property
+                name: (property_name)
+                value: (option_member_list
+                  (option_member
+                    (identifier))
+                  (option_member
+                    (identifier))
+                  (option_member
+                    (identifier))))))))
+      (keys_section
+        (keys_keyword)
+        body: (keys_body
+          (key_declaration
+            (key_keyword)
+            name: (identifier)
+            fields: (field_list
+              (identifier))
+            body: (declaration_body
+              (property
+                name: (property_name)
+                value: (boolean))))))))
+  (page_declaration
+    (page_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (property
+        name: (property_name)
+        value: (identifier))
+      (layout_section
+        (layout_keyword)
+        body: (layout_body
+          (area_section
+            (area_keyword)
+            type: (content_keyword)
+            body: (layout_body
+              (page_field
+                (field_keyword)
+                name: (identifier)
+                source: (member_expression
+                  object: (identifier)
+                  member: (identifier)))))))
+      (actions_section
+        (actions_keyword)
+        body: (action_body
+          (action_area_section
+            (area_keyword)
+            type: (processing_keyword)
+            body: (action_body
+              (action_declaration
+                (action_keyword)
+                name: (identifier)
+                body: (declaration_body
+                  (property
+                    name: (property_name)
+                    value: (preproc_conditional_property_value
+                      (preproc_if
+                        (preproc_open)
+                        condition: (identifier))
+                      value: (ml_value_list
+                        (ml_value_pair
+                          language: (identifier)
+                          value: (string_literal)))
+                      (preproc_conditional_property_value
+                        (preproc_if
+                          (preproc_open)
+                          condition: (identifier))
+                        (ERROR)
+                        (preproc_else)
+                        (preproc_endif
+                          (MISSING preproc_close)))
+                      (preproc_endif
+                        (preproc_close)))
+                    (ERROR
+                      (preproc_else)
+                      (identifier)
+                      (string_literal)))
+                  (ERROR
+                    (UNEXPECTED 'i'))
+                  (trigger_declaration
+                    (trigger_keyword)
+                    name: (identifier)
+                    body: (code_block
+                      (begin_keyword)
+                      (end_keyword)))))))))
+      (var_section
+        (var_keyword)
+        body: (var_body
+          (variable_declaration
+            name: (identifier)
+            type: (type_specification
+              (basic_type)))
+          (variable_declaration
+            name: (identifier)
+            type: (type_specification
+              (basic_type))))))))
+
+========================================================================
+B7a GAP: ml-pairs / trail (99 cells, verdict of the representative MIXED); the parser ERRORs on configurations alc accepts; representative occ:_ml_arm_t:0.3@action_body#trail
+========================================================================
+table 50100 T
+{
+    fields
+    {
+        field(1; K; Code[20]) { }
+        field(2; N; Integer) { }
+        field(3; B; Boolean) { }
+        field(9; O; Option) { OptionMembers = A,B,C; }
+    }
+    keys
+    {
+        key(PK; K) { Clustered = true; }
+    }
+}
+page 50102 PG
+{
+    SourceTable = T;
+    layout
+    {
+        area(Content)
+        {
+            field(N; Rec.N) { }
+        }
+    }
+    actions
+    {
+        area(Processing)
+        {
+            action(A1)
+            {
+                CaptionML =
+#if TPL
+                    
+ENU = 'a'
+#if X
+;
+#endif
+
+#else
+                    ENU = 'b';
+#endif
+                trigger OnAction()
+                begin
+                end;
+            }
+        }
+    }
+    var
+        I: Integer;
+        Ok: Boolean;
+}
+------------------------------------------------------------------------
+
+(source_file
+  (table_declaration
+    (table_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (fields_section
+        (fields_keyword)
+        body: (fields_body
+          (field_declaration
+            (field_keyword)
+            id: (integer)
+            name: (identifier)
+            type: (type_specification
+              (code_type
+                (code_keyword)
+                length: (integer))))
+          (field_declaration
+            (field_keyword)
+            id: (integer)
+            name: (identifier)
+            type: (type_specification
+              (basic_type)))
+          (field_declaration
+            (field_keyword)
+            id: (integer)
+            name: (identifier)
+            type: (type_specification
+              (basic_type)))
+          (field_declaration
+            (field_keyword)
+            id: (integer)
+            name: (identifier)
+            type: (type_specification
+              (option_type
+                (option_keyword)))
+            body: (declaration_body
+              (property
+                name: (property_name)
+                value: (option_member_list
+                  (option_member
+                    (identifier))
+                  (option_member
+                    (identifier))
+                  (option_member
+                    (identifier))))))))
+      (keys_section
+        (keys_keyword)
+        body: (keys_body
+          (key_declaration
+            (key_keyword)
+            name: (identifier)
+            fields: (field_list
+              (identifier))
+            body: (declaration_body
+              (property
+                name: (property_name)
+                value: (boolean))))))))
+  (page_declaration
+    (page_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (property
+        name: (property_name)
+        value: (identifier))
+      (layout_section
+        (layout_keyword)
+        body: (layout_body
+          (area_section
+            (area_keyword)
+            type: (content_keyword)
+            body: (layout_body
+              (page_field
+                (field_keyword)
+                name: (identifier)
+                source: (member_expression
+                  object: (identifier)
+                  member: (identifier)))))))
+      (actions_section
+        (actions_keyword)
+        body: (action_body
+          (action_area_section
+            (area_keyword)
+            type: (processing_keyword)
+            body: (action_body
+              (action_declaration
+                (action_keyword)
+                name: (identifier)
+                body: (declaration_body
+                  (property
+                    name: (property_name)
+                    value: (preproc_conditional_property_value
+                      (preproc_if
+                        (preproc_open)
+                        condition: (identifier))
+                      value: (ml_value_list
+                        (ml_value_pair
+                          language: (identifier)
+                          value: (string_literal)))
+                      (preproc_conditional_property_value
+                        (preproc_if
+                          (preproc_open)
+                          condition: (identifier))
+                        (preproc_endif
+                          (MISSING preproc_close)))
+                      (preproc_endif
+                        (preproc_close)))
+                    (ERROR
+                      (preproc_else)
+                      (identifier)
+                      (string_literal)))
+                  (ERROR
+                    (UNEXPECTED 'i'))
+                  (trigger_declaration
+                    (trigger_keyword)
+                    name: (identifier)
+                    body: (code_block
+                      (begin_keyword)
+                      (end_keyword)))))))))
+      (var_section
+        (var_keyword)
+        body: (var_body
+          (variable_declaration
+            name: (identifier)
+            type: (type_specification
+              (basic_type)))
+          (variable_declaration
+            name: (identifier)
+            type: (type_specification
+              (basic_type))))))))

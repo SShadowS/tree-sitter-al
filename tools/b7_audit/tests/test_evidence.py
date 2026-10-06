@@ -254,3 +254,14 @@ def test_only_with_accept_tool_refuses_identity_merge(tmp_path):
     msgs = []
     assert evidence.run(only="var-names", accept_tool=True, out=out, al=str(exe), runner=ver, log=msgs.append) == 2
     assert "identity" in msgs[-1]
+
+
+def test_gz_evidence_is_deterministic(tmp_path):
+    header = {"alc": {"version": "v"}, "runtime": "15.0"}
+    recs = [{"cell": c, "config": "-", "z": 1} for c in ("b", "a")]
+    p1, p2 = tmp_path / "1.jsonl.gz", tmp_path / "sub-2.jsonl.gz"
+    evidence.write(recs, header, p1)
+    evidence.write(list(reversed(recs)), header, p2)
+    assert p1.read_bytes() == p2.read_bytes() and p1.read_bytes()[:2] == b"\x1f\x8b"
+    h, rs = evidence.read(p1)
+    assert h == header and [r["cell"] for r in rs] == ["a", "b"]

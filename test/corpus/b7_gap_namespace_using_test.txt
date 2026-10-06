@@ -1,0 +1,875 @@
+========================================================================
+B7a GAP: namespace-using / adjacent-compl (12 cells, verdict of the representative GAP); the parser ERRORs on configurations alc accepts; representative occ:namespace_declaration:2@preproc_conditional_object#adjacent-compl
+========================================================================
+#if TPL
+
+namespace Foo.Bar
+#if X
+;
+#endif
+#if not X
+;
+#endif
+
+#else
+namespace Foo.Bar;
+#endif
+
+table 50100 T
+{
+    fields
+    {
+        field(1; K; Code[20]) { }
+        field(2; N; Integer) { }
+        field(3; B; Boolean) { }
+        field(9; O; Option) { OptionMembers = A,B,C; }
+    }
+    keys
+    {
+        key(PK; K) { Clustered = true; }
+    }
+}
+
+codeunit 50101 P
+{
+}
+------------------------------------------------------------------------
+
+(source_file
+  (preproc_conditional_object
+    (preproc_if
+      (preproc_open)
+      condition: (identifier))
+    (namespace_declaration
+      (namespace_keyword)
+      name: (namespace_name
+        (identifier)
+        (identifier))
+      (ERROR
+        (UNEXPECTED 'i')
+        (identifier)))
+    (preproc_endif
+      (preproc_close)))
+  (preproc_conditional_object
+    (preproc_if
+      (preproc_open)
+      condition: (preproc_not_expression
+        (identifier)))
+    (ERROR
+      (UNEXPECTED 'i'))
+    (preproc_else)
+    (namespace_declaration
+      (namespace_keyword)
+      name: (namespace_name
+        (identifier)
+        (identifier)))
+    (preproc_endif
+      (preproc_close)))
+  (table_declaration
+    (table_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (fields_section
+        (fields_keyword)
+        body: (fields_body
+          (field_declaration
+            (field_keyword)
+            id: (integer)
+            name: (identifier)
+            type: (type_specification
+              (code_type
+                (code_keyword)
+                length: (integer))))
+          (field_declaration
+            (field_keyword)
+            id: (integer)
+            name: (identifier)
+            type: (type_specification
+              (basic_type)))
+          (field_declaration
+            (field_keyword)
+            id: (integer)
+            name: (identifier)
+            type: (type_specification
+              (basic_type)))
+          (field_declaration
+            (field_keyword)
+            id: (integer)
+            name: (identifier)
+            type: (type_specification
+              (option_type
+                (option_keyword)))
+            body: (declaration_body
+              (property
+                name: (property_name)
+                value: (option_member_list
+                  (option_member
+                    (identifier))
+                  (option_member
+                    (identifier))
+                  (option_member
+                    (identifier))))))))
+      (keys_section
+        (keys_keyword)
+        body: (keys_body
+          (key_declaration
+            (key_keyword)
+            name: (identifier)
+            fields: (field_list
+              (identifier))
+            body: (declaration_body
+              (property
+                name: (property_name)
+                value: (boolean))))))))
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)))
+
+========================================================================
+B7a GAP: namespace-using / elif (12 cells, verdict of the representative GAP); the parser ERRORs on configurations alc accepts; representative occ:namespace_declaration:2@preproc_conditional_object#elif
+========================================================================
+#if TPL
+
+namespace Foo.Bar
+#if X
+;
+#elif Y
+;
+#else
+;
+#endif
+
+#else
+namespace Foo.Bar;
+#endif
+
+table 50100 T
+{
+    fields
+    {
+        field(1; K; Code[20]) { }
+        field(2; N; Integer) { }
+        field(3; B; Boolean) { }
+        field(9; O; Option) { OptionMembers = A,B,C; }
+    }
+    keys
+    {
+        key(PK; K) { Clustered = true; }
+    }
+}
+
+codeunit 50101 P
+{
+}
+------------------------------------------------------------------------
+
+(source_file
+  (preproc_conditional_object
+    (preproc_if
+      (preproc_open)
+      condition: (identifier))
+    (namespace_declaration
+      (namespace_keyword)
+      name: (namespace_name
+        (identifier)
+        (identifier))
+      (ERROR
+        (UNEXPECTED 'i')
+        (identifier)))
+    (preproc_elif
+      condition: (identifier))
+    (ERROR
+      (preproc_else)
+      (UNEXPECTED 'i'))
+    (preproc_else)
+    (namespace_declaration
+      (namespace_keyword)
+      name: (namespace_name
+        (identifier)
+        (identifier)))
+    (preproc_endif
+      (preproc_close)))
+  (table_declaration
+    (table_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (fields_section
+        (fields_keyword)
+        body: (fields_body
+          (field_declaration
+            (field_keyword)
+            id: (integer)
+            name: (identifier)
+            type: (type_specification
+              (code_type
+                (code_keyword)
+                length: (integer))))
+          (field_declaration
+            (field_keyword)
+            id: (integer)
+            name: (identifier)
+            type: (type_specification
+              (basic_type)))
+          (field_declaration
+            (field_keyword)
+            id: (integer)
+            name: (identifier)
+            type: (type_specification
+              (basic_type)))
+          (field_declaration
+            (field_keyword)
+            id: (integer)
+            name: (identifier)
+            type: (type_specification
+              (option_type
+                (option_keyword)))
+            body: (declaration_body
+              (property
+                name: (property_name)
+                value: (option_member_list
+                  (option_member
+                    (identifier))
+                  (option_member
+                    (identifier))
+                  (option_member
+                    (identifier))))))))
+      (keys_section
+        (keys_keyword)
+        body: (keys_body
+          (key_declaration
+            (key_keyword)
+            name: (identifier)
+            fields: (field_list
+              (identifier))
+            body: (declaration_body
+              (property
+                name: (property_name)
+                value: (boolean))))))))
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)))
+
+========================================================================
+B7a GAP: namespace-using / empty (12 cells, verdict of the representative GAP); the parser ERRORs on configurations alc accepts; representative occ:namespace_declaration:2@preproc_conditional_object#empty
+========================================================================
+#if TPL
+
+namespace Foo.Bar
+#if X
+#endif
+;
+
+#else
+namespace Foo.Bar;
+#endif
+
+table 50100 T
+{
+    fields
+    {
+        field(1; K; Code[20]) { }
+        field(2; N; Integer) { }
+        field(3; B; Boolean) { }
+        field(9; O; Option) { OptionMembers = A,B,C; }
+    }
+    keys
+    {
+        key(PK; K) { Clustered = true; }
+    }
+}
+
+codeunit 50101 P
+{
+}
+------------------------------------------------------------------------
+
+(source_file
+  (preproc_conditional_object
+    (preproc_if
+      (preproc_open)
+      condition: (identifier))
+    (namespace_declaration
+      (namespace_keyword)
+      name: (namespace_name
+        (identifier)
+        (identifier))
+      (ERROR
+        (UNEXPECTED 'i')
+        (identifier)
+        (UNEXPECTED 'i')))
+    (preproc_else)
+    (namespace_declaration
+      (namespace_keyword)
+      name: (namespace_name
+        (identifier)
+        (identifier)))
+    (preproc_endif
+      (preproc_close)))
+  (table_declaration
+    (table_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (fields_section
+        (fields_keyword)
+        body: (fields_body
+          (field_declaration
+            (field_keyword)
+            id: (integer)
+            name: (identifier)
+            type: (type_specification
+              (code_type
+                (code_keyword)
+                length: (integer))))
+          (field_declaration
+            (field_keyword)
+            id: (integer)
+            name: (identifier)
+            type: (type_specification
+              (basic_type)))
+          (field_declaration
+            (field_keyword)
+            id: (integer)
+            name: (identifier)
+            type: (type_specification
+              (basic_type)))
+          (field_declaration
+            (field_keyword)
+            id: (integer)
+            name: (identifier)
+            type: (type_specification
+              (option_type
+                (option_keyword)))
+            body: (declaration_body
+              (property
+                name: (property_name)
+                value: (option_member_list
+                  (option_member
+                    (identifier))
+                  (option_member
+                    (identifier))
+                  (option_member
+                    (identifier))))))))
+      (keys_section
+        (keys_keyword)
+        body: (keys_body
+          (key_declaration
+            (key_keyword)
+            name: (identifier)
+            fields: (field_list
+              (identifier))
+            body: (declaration_body
+              (property
+                name: (property_name)
+                value: (boolean))))))))
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)))
+
+========================================================================
+B7a GAP: namespace-using / first-replace (12 cells, verdict of the representative GAP); the parser ERRORs on configurations alc accepts; representative occ:namespace_declaration:2@preproc_conditional_object#first-replace
+========================================================================
+#if TPL
+
+#if X
+namespace Foo.Bar
+#else
+namespace Foo.Bar
+#endif
+;
+
+#else
+namespace Foo.Bar;
+#endif
+
+table 50100 T
+{
+    fields
+    {
+        field(1; K; Code[20]) { }
+        field(2; N; Integer) { }
+        field(3; B; Boolean) { }
+        field(9; O; Option) { OptionMembers = A,B,C; }
+    }
+    keys
+    {
+        key(PK; K) { Clustered = true; }
+    }
+}
+
+codeunit 50101 P
+{
+}
+------------------------------------------------------------------------
+
+(source_file
+  (preproc_conditional_object
+    (preproc_if
+      (preproc_open)
+      condition: (identifier))
+    (preproc_conditional_object
+      (preproc_if
+        (preproc_open)
+        condition: (identifier))
+      (namespace_declaration
+        (namespace_keyword)
+        name: (namespace_name
+          (identifier)
+          (identifier))
+        (MISSING ";"))
+      (preproc_else)
+      (namespace_declaration
+        (namespace_keyword)
+        name: (namespace_name
+          (identifier)
+          (identifier))
+        (ERROR
+          (UNEXPECTED 'i')))
+      (preproc_endif
+        (MISSING preproc_close)))
+    (preproc_else)
+    (namespace_declaration
+      (namespace_keyword)
+      name: (namespace_name
+        (identifier)
+        (identifier)))
+    (preproc_endif
+      (preproc_close)))
+  (table_declaration
+    (table_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (fields_section
+        (fields_keyword)
+        body: (fields_body
+          (field_declaration
+            (field_keyword)
+            id: (integer)
+            name: (identifier)
+            type: (type_specification
+              (code_type
+                (code_keyword)
+                length: (integer))))
+          (field_declaration
+            (field_keyword)
+            id: (integer)
+            name: (identifier)
+            type: (type_specification
+              (basic_type)))
+          (field_declaration
+            (field_keyword)
+            id: (integer)
+            name: (identifier)
+            type: (type_specification
+              (basic_type)))
+          (field_declaration
+            (field_keyword)
+            id: (integer)
+            name: (identifier)
+            type: (type_specification
+              (option_type
+                (option_keyword)))
+            body: (declaration_body
+              (property
+                name: (property_name)
+                value: (option_member_list
+                  (option_member
+                    (identifier))
+                  (option_member
+                    (identifier))
+                  (option_member
+                    (identifier))))))))
+      (keys_section
+        (keys_keyword)
+        body: (keys_body
+          (key_declaration
+            (key_keyword)
+            name: (identifier)
+            fields: (field_list
+              (identifier))
+            body: (declaration_body
+              (property
+                name: (property_name)
+                value: (boolean))))))))
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)))
+
+========================================================================
+B7a GAP: namespace-using / nested (12 cells, verdict of the representative GAP); the parser ERRORs on configurations alc accepts; representative occ:namespace_declaration:2@preproc_conditional_object#nested
+========================================================================
+#if TPL
+
+namespace Foo.Bar
+#if X
+#if Y
+;
+#else
+;
+#endif
+#else
+;
+#endif
+
+#else
+namespace Foo.Bar;
+#endif
+
+table 50100 T
+{
+    fields
+    {
+        field(1; K; Code[20]) { }
+        field(2; N; Integer) { }
+        field(3; B; Boolean) { }
+        field(9; O; Option) { OptionMembers = A,B,C; }
+    }
+    keys
+    {
+        key(PK; K) { Clustered = true; }
+    }
+}
+
+codeunit 50101 P
+{
+}
+------------------------------------------------------------------------
+
+(source_file
+  (preproc_conditional_object
+    (preproc_if
+      (preproc_open)
+      condition: (identifier))
+    (namespace_declaration
+      (namespace_keyword)
+      name: (namespace_name
+        (identifier)
+        (identifier))
+      (ERROR
+        (UNEXPECTED 'i')
+        (identifier)
+        (UNEXPECTED 'i')
+        (identifier)))
+    (ERROR
+      (preproc_else)
+      (UNEXPECTED 'i')
+      (preproc_else)
+      (UNEXPECTED 'i'))
+    (preproc_else)
+    (namespace_declaration
+      (namespace_keyword)
+      name: (namespace_name
+        (identifier)
+        (identifier)))
+    (preproc_endif
+      (preproc_close)))
+  (table_declaration
+    (table_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (fields_section
+        (fields_keyword)
+        body: (fields_body
+          (field_declaration
+            (field_keyword)
+            id: (integer)
+            name: (identifier)
+            type: (type_specification
+              (code_type
+                (code_keyword)
+                length: (integer))))
+          (field_declaration
+            (field_keyword)
+            id: (integer)
+            name: (identifier)
+            type: (type_specification
+              (basic_type)))
+          (field_declaration
+            (field_keyword)
+            id: (integer)
+            name: (identifier)
+            type: (type_specification
+              (basic_type)))
+          (field_declaration
+            (field_keyword)
+            id: (integer)
+            name: (identifier)
+            type: (type_specification
+              (option_type
+                (option_keyword)))
+            body: (declaration_body
+              (property
+                name: (property_name)
+                value: (option_member_list
+                  (option_member
+                    (identifier))
+                  (option_member
+                    (identifier))
+                  (option_member
+                    (identifier))))))))
+      (keys_section
+        (keys_keyword)
+        body: (keys_body
+          (key_declaration
+            (key_keyword)
+            name: (identifier)
+            fields: (field_list
+              (identifier))
+            body: (declaration_body
+              (property
+                name: (property_name)
+                value: (boolean))))))))
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)))
+
+========================================================================
+B7a GAP: namespace-using / sep-only (12 cells, verdict of the representative GAP); the parser ERRORs on configurations alc accepts; representative occ:namespace_declaration:2@preproc_conditional_object#sep-only
+========================================================================
+#if TPL
+
+namespace Foo.Bar
+#if X
+;
+#else
+;
+#endif
+
+#else
+namespace Foo.Bar;
+#endif
+
+table 50100 T
+{
+    fields
+    {
+        field(1; K; Code[20]) { }
+        field(2; N; Integer) { }
+        field(3; B; Boolean) { }
+        field(9; O; Option) { OptionMembers = A,B,C; }
+    }
+    keys
+    {
+        key(PK; K) { Clustered = true; }
+    }
+}
+
+codeunit 50101 P
+{
+}
+------------------------------------------------------------------------
+
+(source_file
+  (preproc_conditional_object
+    (preproc_if
+      (preproc_open)
+      condition: (identifier))
+    (namespace_declaration
+      (namespace_keyword)
+      name: (namespace_name
+        (identifier)
+        (identifier))
+      (ERROR
+        (UNEXPECTED 'i')
+        (identifier)))
+    (ERROR
+      (preproc_else)
+      (UNEXPECTED 'i'))
+    (preproc_else)
+    (namespace_declaration
+      (namespace_keyword)
+      name: (namespace_name
+        (identifier)
+        (identifier)))
+    (preproc_endif
+      (preproc_close)))
+  (table_declaration
+    (table_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (fields_section
+        (fields_keyword)
+        body: (fields_body
+          (field_declaration
+            (field_keyword)
+            id: (integer)
+            name: (identifier)
+            type: (type_specification
+              (code_type
+                (code_keyword)
+                length: (integer))))
+          (field_declaration
+            (field_keyword)
+            id: (integer)
+            name: (identifier)
+            type: (type_specification
+              (basic_type)))
+          (field_declaration
+            (field_keyword)
+            id: (integer)
+            name: (identifier)
+            type: (type_specification
+              (basic_type)))
+          (field_declaration
+            (field_keyword)
+            id: (integer)
+            name: (identifier)
+            type: (type_specification
+              (option_type
+                (option_keyword)))
+            body: (declaration_body
+              (property
+                name: (property_name)
+                value: (option_member_list
+                  (option_member
+                    (identifier))
+                  (option_member
+                    (identifier))
+                  (option_member
+                    (identifier))))))))
+      (keys_section
+        (keys_keyword)
+        body: (keys_body
+          (key_declaration
+            (key_keyword)
+            name: (identifier)
+            fields: (field_list
+              (identifier))
+            body: (declaration_body
+              (property
+                name: (property_name)
+                value: (boolean))))))))
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)))
+
+========================================================================
+B7a GAP: namespace-using / trail (12 cells, verdict of the representative MIXED); the parser ERRORs on configurations alc accepts; representative occ:namespace_declaration:2@preproc_conditional_object#trail
+========================================================================
+#if TPL
+
+namespace Foo.Bar
+#if X
+;
+#endif
+
+#else
+namespace Foo.Bar;
+#endif
+
+table 50100 T
+{
+    fields
+    {
+        field(1; K; Code[20]) { }
+        field(2; N; Integer) { }
+        field(3; B; Boolean) { }
+        field(9; O; Option) { OptionMembers = A,B,C; }
+    }
+    keys
+    {
+        key(PK; K) { Clustered = true; }
+    }
+}
+
+codeunit 50101 P
+{
+}
+------------------------------------------------------------------------
+
+(source_file
+  (ERROR
+    (preproc_conditional_object
+      (preproc_if
+        (preproc_open)
+        condition: (identifier))
+      (namespace_declaration
+        (namespace_keyword)
+        name: (namespace_name
+          (identifier)
+          (identifier))
+        (ERROR
+          (UNEXPECTED 'i')
+          (identifier)))
+      (preproc_endif
+        (preproc_close)))
+    (preproc_else))
+  (namespace_declaration
+    (namespace_keyword)
+    name: (namespace_name
+      (identifier)
+      (identifier)))
+  (ERROR
+    (UNEXPECTED 'i'))
+  (table_declaration
+    (table_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (fields_section
+        (fields_keyword)
+        body: (fields_body
+          (field_declaration
+            (field_keyword)
+            id: (integer)
+            name: (identifier)
+            type: (type_specification
+              (code_type
+                (code_keyword)
+                length: (integer))))
+          (field_declaration
+            (field_keyword)
+            id: (integer)
+            name: (identifier)
+            type: (type_specification
+              (basic_type)))
+          (field_declaration
+            (field_keyword)
+            id: (integer)
+            name: (identifier)
+            type: (type_specification
+              (basic_type)))
+          (field_declaration
+            (field_keyword)
+            id: (integer)
+            name: (identifier)
+            type: (type_specification
+              (option_type
+                (option_keyword)))
+            body: (declaration_body
+              (property
+                name: (property_name)
+                value: (option_member_list
+                  (option_member
+                    (identifier))
+                  (option_member
+                    (identifier))
+                  (option_member
+                    (identifier))))))))
+      (keys_section
+        (keys_keyword)
+        body: (keys_body
+          (key_declaration
+            (key_keyword)
+            name: (identifier)
+            fields: (field_list
+              (identifier))
+            body: (declaration_body
+              (property
+                name: (property_name)
+                value: (boolean))))))))
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)))

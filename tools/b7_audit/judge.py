@@ -165,7 +165,7 @@ def _read(text):
 
 def _match(n, pat):
     typ, kids = pat
-    if n.type != typ:
+    if typ != "_" and n.type != typ:         # `_`: any node type (a class row spanning hosts)
         return False
     have = [(n.field_name_for_child(i), c) for i, c in enumerate(n.children) if c.is_named]
 
@@ -182,7 +182,7 @@ def _match(n, pat):
 
 def check_assertion(tree_root, assertion):
     """True when some node of the split tree matches the expected fragment (type, named children in
-    order, field labels where given)."""
+    order, field labels where given; the type `_` matches any node)."""
     pat = _read(assertion.expect)
     stack = [tree_root]
     while stack:

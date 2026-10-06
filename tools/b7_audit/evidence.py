@@ -18,6 +18,7 @@ Every other cell is `alc: "class-sampled"` and names its representative.
 alc work is deduplicated by exact (source, symbols) and cached on disk under .cache/b7_audit/alc,
 keyed with the runtime and the compiler identity, so a different compiler never reads the cache.
 """
+import gzip
 import hashlib
 import itertools
 import json
@@ -40,7 +41,7 @@ from tools.config_oracle import directives
 SYNTAX_CODES = frozenset({"AL0104", "AL0107", "AL0111", "AL0224", "AL0125"})
 HERE = Path(__file__).parent
 REPO = HERE.parent.parent
-EVIDENCE = HERE / "evidence.jsonl"
+EVIDENCE = HERE / "evidence.jsonl.gz"     # gzip, mtime 0: deterministic bytes (controller ruling)
 CACHE = REPO / ".cache" / "b7_audit" / "alc"
 ORACLE_ITEMS = REPO / ".cache" / "b7_audit" / "oracle-items.jsonl"   # verbatim items, never committed
 # A change to the project template (app.json, file layout, classification) invalidates the cache.
@@ -344,11 +345,17 @@ def write(records, header, path):
     lines = [json.dumps({"header": header}, sort_keys=True, ensure_ascii=False)]
     lines += [json.dumps(r, sort_keys=True, ensure_ascii=False)
               for r in sorted(records, key=lambda r: (r["cell"], r["config"]))]
-    Path(path).write_text("\n".join(lines) + "\n", encoding="utf-8", newline="\n")
+    data = ("\n".join(lines) + "\n").encode("utf-8")
+    if str(path).endswith(".gz"):
+        data = gzip.compress(data, compresslevel=9, mtime=0)    # no name, no timestamp in the header
+    Path(path).write_bytes(data)
 
 
 def read(path):
-    lines = Path(path).read_text(encoding="utf-8").splitlines()
+    data = Path(path).read_bytes()
+    if str(path).endswith(".gz"):
+        data = gzip.decompress(data)
+    lines = data.decode("utf-8").splitlines()
     return json.loads(lines[0])["header"], [json.loads(l) for l in lines[1:] if l]
 
 

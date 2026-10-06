@@ -1,0 +1,4634 @@
+========================================================================
+B7a GAP: ternary / adjacent-compl (3 cells, verdict of the representative GAP); the parser ERRORs on configurations alc accepts; representative occ:ternary_expression:0.3@ternary_expression#adjacent-compl
+========================================================================
+table 50100 T
+{
+    fields
+    {
+        field(1; K; Code[20]) { }
+        field(2; N; Integer) { }
+        field(3; B; Boolean) { }
+        field(9; O; Option) { OptionMembers = A,B,C; }
+    }
+    keys
+    {
+        key(PK; K) { Clustered = true; }
+    }
+}
+codeunit 50101 P
+{
+    procedure Q(): Integer
+    var
+        R: Record T;
+        I: Integer;
+        Ok: Boolean;
+        L: List of [Integer];
+        Arr: array[3] of Integer;
+        Arr2: array[2, 2] of Integer;
+        Recs: array[2] of Record T;
+    begin
+I := Ok ? 
+1
+#if X
+:
+#endif
+#if not X
+:
+#endif
+2
+;
+    end;
+
+    procedure Bar()
+    begin
+    end;
+
+    procedure Foo(A: Integer; B: Integer): Integer
+    begin
+        exit(A + B);
+    end;
+}
+------------------------------------------------------------------------
+
+(source_file
+  (table_declaration
+    (table_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (fields_section
+        (fields_keyword)
+        body: (fields_body
+          (field_declaration
+            (field_keyword)
+            id: (integer)
+            name: (identifier)
+            type: (type_specification
+              (code_type
+                (code_keyword)
+                length: (integer))))
+          (field_declaration
+            (field_keyword)
+            id: (integer)
+            name: (identifier)
+            type: (type_specification
+              (basic_type)))
+          (field_declaration
+            (field_keyword)
+            id: (integer)
+            name: (identifier)
+            type: (type_specification
+              (basic_type)))
+          (field_declaration
+            (field_keyword)
+            id: (integer)
+            name: (identifier)
+            type: (type_specification
+              (option_type
+                (option_keyword)))
+            body: (declaration_body
+              (property
+                name: (property_name)
+                value: (option_member_list
+                  (option_member
+                    (identifier))
+                  (option_member
+                    (identifier))
+                  (option_member
+                    (identifier))))))))
+      (keys_section
+        (keys_keyword)
+        body: (keys_body
+          (key_declaration
+            (key_keyword)
+            name: (identifier)
+            fields: (field_list
+              (identifier))
+            body: (declaration_body
+              (property
+                name: (property_name)
+                value: (boolean))))))))
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (procedure
+        (procedure_keyword)
+        name: (identifier)
+        return_type: (type_specification
+          (basic_type))
+        (var_section
+          (var_keyword)
+          body: (var_body
+            (variable_declaration
+              name: (identifier)
+              type: (type_specification
+                (record_type
+                  (record_keyword)
+                  reference: (identifier))))
+            (variable_declaration
+              name: (identifier)
+              type: (type_specification
+                (basic_type)))
+            (variable_declaration
+              name: (identifier)
+              type: (type_specification
+                (basic_type)))
+            (variable_declaration
+              name: (identifier)
+              type: (type_specification
+                (list_type
+                  (list_keyword)
+                  (of_keyword)
+                  element_type: (type_specification
+                    (basic_type)))))
+            (variable_declaration
+              name: (identifier)
+              type: (type_specification
+                (array_type
+                  (array_keyword)
+                  sizes: (integer)
+                  (of_keyword)
+                  element_type: (type_specification
+                    (basic_type)))))
+            (variable_declaration
+              name: (identifier)
+              type: (type_specification
+                (array_type
+                  (array_keyword)
+                  sizes: (integer)
+                  sizes: (integer)
+                  (of_keyword)
+                  element_type: (type_specification
+                    (basic_type)))))
+            (variable_declaration
+              name: (identifier)
+              type: (type_specification
+                (array_type
+                  (array_keyword)
+                  sizes: (integer)
+                  (of_keyword)
+                  element_type: (type_specification
+                    (record_type
+                      (record_keyword)
+                      reference: (identifier))))))))
+        body: (code_block
+          (begin_keyword)
+          body: (statement_block
+            (assignment_statement
+              left: (identifier)
+              operator: (assignment_operator)
+              right: (ternary_expression
+                condition: (identifier)
+                then_value: (integer)
+                (ERROR
+                  (UNEXPECTED 'i')
+                  (identifier))
+                (ERROR
+                  (UNEXPECTED 'i')
+                  (UNEXPECTED 'i'))
+                else_value: (unary_expression
+                  operand: (identifier))))
+            (ERROR
+              (UNEXPECTED 'i')
+              (if_keyword)
+              (integer))
+            (empty_statement))
+          (end_keyword)))
+      (procedure
+        (procedure_keyword)
+        name: (identifier)
+        body: (code_block
+          (begin_keyword)
+          (end_keyword)))
+      (procedure
+        (procedure_keyword)
+        name: (identifier)
+        parameters: (parameter_list
+          (parameter
+            name: (identifier)
+            type: (type_specification
+              (basic_type)))
+          (parameter
+            name: (identifier)
+            type: (type_specification
+              (basic_type))))
+        return_type: (type_specification
+          (basic_type))
+        body: (code_block
+          (begin_keyword)
+          body: (statement_block
+            (exit_statement
+              (exit_keyword)
+              return_value: (additive_expression
+                left: (identifier)
+                right: (identifier))))
+          (end_keyword))))))
+
+========================================================================
+B7a GAP: ternary / chain (2 cells, verdict of the representative GAP); the parser ERRORs on configurations alc accepts; representative bnd:ternary_expression:then_value:end@ternary_expression#chain/arithmetic
+========================================================================
+table 50100 T
+{
+    fields
+    {
+        field(1; K; Code[20]) { }
+        field(2; N; Integer) { }
+        field(3; B; Boolean) { }
+        field(9; O; Option) { OptionMembers = A,B,C; }
+    }
+    keys
+    {
+        key(PK; K) { Clustered = true; }
+    }
+}
+codeunit 50101 P
+{
+    procedure Q(): Integer
+    var
+        R: Record T;
+        I: Integer;
+        Ok: Boolean;
+        L: List of [Integer];
+        Arr: array[3] of Integer;
+        Arr2: array[2, 2] of Integer;
+        Recs: array[2] of Record T;
+    begin
+I := Ok ? 
+1 * 2
+#if X
++ 3
+#endif
+* 4
+ : 2;
+    end;
+
+    procedure Bar()
+    begin
+    end;
+
+    procedure Foo(A: Integer; B: Integer): Integer
+    begin
+        exit(A + B);
+    end;
+}
+------------------------------------------------------------------------
+
+(source_file
+  (table_declaration
+    (table_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (fields_section
+        (fields_keyword)
+        body: (fields_body
+          (field_declaration
+            (field_keyword)
+            id: (integer)
+            name: (identifier)
+            type: (type_specification
+              (code_type
+                (code_keyword)
+                length: (integer))))
+          (field_declaration
+            (field_keyword)
+            id: (integer)
+            name: (identifier)
+            type: (type_specification
+              (basic_type)))
+          (field_declaration
+            (field_keyword)
+            id: (integer)
+            name: (identifier)
+            type: (type_specification
+              (basic_type)))
+          (field_declaration
+            (field_keyword)
+            id: (integer)
+            name: (identifier)
+            type: (type_specification
+              (option_type
+                (option_keyword)))
+            body: (declaration_body
+              (property
+                name: (property_name)
+                value: (option_member_list
+                  (option_member
+                    (identifier))
+                  (option_member
+                    (identifier))
+                  (option_member
+                    (identifier))))))))
+      (keys_section
+        (keys_keyword)
+        body: (keys_body
+          (key_declaration
+            (key_keyword)
+            name: (identifier)
+            fields: (field_list
+              (identifier))
+            body: (declaration_body
+              (property
+                name: (property_name)
+                value: (boolean))))))))
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (procedure
+        (procedure_keyword)
+        name: (identifier)
+        return_type: (type_specification
+          (basic_type))
+        (var_section
+          (var_keyword)
+          body: (var_body
+            (variable_declaration
+              name: (identifier)
+              type: (type_specification
+                (record_type
+                  (record_keyword)
+                  reference: (identifier))))
+            (variable_declaration
+              name: (identifier)
+              type: (type_specification
+                (basic_type)))
+            (variable_declaration
+              name: (identifier)
+              type: (type_specification
+                (basic_type)))
+            (variable_declaration
+              name: (identifier)
+              type: (type_specification
+                (list_type
+                  (list_keyword)
+                  (of_keyword)
+                  element_type: (type_specification
+                    (basic_type)))))
+            (variable_declaration
+              name: (identifier)
+              type: (type_specification
+                (array_type
+                  (array_keyword)
+                  sizes: (integer)
+                  (of_keyword)
+                  element_type: (type_specification
+                    (basic_type)))))
+            (variable_declaration
+              name: (identifier)
+              type: (type_specification
+                (array_type
+                  (array_keyword)
+                  sizes: (integer)
+                  sizes: (integer)
+                  (of_keyword)
+                  element_type: (type_specification
+                    (basic_type)))))
+            (variable_declaration
+              name: (identifier)
+              type: (type_specification
+                (array_type
+                  (array_keyword)
+                  sizes: (integer)
+                  (of_keyword)
+                  element_type: (type_specification
+                    (record_type
+                      (record_keyword)
+                      reference: (identifier))))))))
+        body: (code_block
+          (begin_keyword)
+          body: (statement_block
+            (assignment_statement
+              left: (identifier)
+              operator: (assignment_operator)
+              right: (ternary_expression
+                condition: (identifier)
+                then_value: (additive_expression
+                  left: (multiplicative_expression
+                    left: (integer)
+                    right: (integer))
+                  (ERROR
+                    (UNEXPECTED 'i')
+                    (identifier))
+                  right: (multiplicative_expression
+                    left: (integer)
+                    (ERROR
+                      (UNEXPECTED 'i'))
+                    right: (integer)))
+                else_value: (integer))))
+          (end_keyword)))
+      (procedure
+        (procedure_keyword)
+        name: (identifier)
+        body: (code_block
+          (begin_keyword)
+          (end_keyword)))
+      (procedure
+        (procedure_keyword)
+        name: (identifier)
+        parameters: (parameter_list
+          (parameter
+            name: (identifier)
+            type: (type_specification
+              (basic_type)))
+          (parameter
+            name: (identifier)
+            type: (type_specification
+              (basic_type))))
+        return_type: (type_specification
+          (basic_type))
+        body: (code_block
+          (begin_keyword)
+          body: (statement_block
+            (exit_statement
+              (exit_keyword)
+              return_value: (additive_expression
+                left: (identifier)
+                right: (identifier))))
+          (end_keyword))))))
+
+========================================================================
+B7a GAP: ternary / consecutive (16 cells, verdict of the representative GAP); the parser ERRORs on configurations alc accepts; representative bnd:ternary_expression:condition:end@ternary_expression#consecutive/comparison
+========================================================================
+table 50100 T
+{
+    fields
+    {
+        field(1; K; Code[20]) { }
+        field(2; N; Integer) { }
+        field(3; B; Boolean) { }
+        field(9; O; Option) { OptionMembers = A,B,C; }
+    }
+    keys
+    {
+        key(PK; K) { Clustered = true; }
+    }
+}
+codeunit 50101 P
+{
+    procedure Q(): Integer
+    var
+        R: Record T;
+        I: Integer;
+        Ok: Boolean;
+        L: List of [Integer];
+        Arr: array[3] of Integer;
+        Arr2: array[2, 2] of Integer;
+        Recs: array[2] of Record T;
+    begin
+I := 
+Ok
+#if X
+= true
+#endif
+#if Y
+= false
+#endif
+ ? 1 : 2;
+    end;
+
+    procedure Bar()
+    begin
+    end;
+
+    procedure Foo(A: Integer; B: Integer): Integer
+    begin
+        exit(A + B);
+    end;
+}
+------------------------------------------------------------------------
+
+(source_file
+  (table_declaration
+    (table_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (fields_section
+        (fields_keyword)
+        body: (fields_body
+          (field_declaration
+            (field_keyword)
+            id: (integer)
+            name: (identifier)
+            type: (type_specification
+              (code_type
+                (code_keyword)
+                length: (integer))))
+          (field_declaration
+            (field_keyword)
+            id: (integer)
+            name: (identifier)
+            type: (type_specification
+              (basic_type)))
+          (field_declaration
+            (field_keyword)
+            id: (integer)
+            name: (identifier)
+            type: (type_specification
+              (basic_type)))
+          (field_declaration
+            (field_keyword)
+            id: (integer)
+            name: (identifier)
+            type: (type_specification
+              (option_type
+                (option_keyword)))
+            body: (declaration_body
+              (property
+                name: (property_name)
+                value: (option_member_list
+                  (option_member
+                    (identifier))
+                  (option_member
+                    (identifier))
+                  (option_member
+                    (identifier))))))))
+      (keys_section
+        (keys_keyword)
+        body: (keys_body
+          (key_declaration
+            (key_keyword)
+            name: (identifier)
+            fields: (field_list
+              (identifier))
+            body: (declaration_body
+              (property
+                name: (property_name)
+                value: (boolean))))))))
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    (ERROR
+      (procedure_keyword)
+      name: (identifier)
+      return_type: (type_specification
+        (basic_type))
+      (var_section
+        (var_keyword)
+        body: (var_body
+          (variable_declaration
+            name: (identifier)
+            type: (type_specification
+              (record_type
+                (record_keyword)
+                reference: (identifier))))
+          (variable_declaration
+            name: (identifier)
+            type: (type_specification
+              (basic_type)))
+          (variable_declaration
+            name: (identifier)
+            type: (type_specification
+              (basic_type)))
+          (variable_declaration
+            name: (identifier)
+            type: (type_specification
+              (list_type
+                (list_keyword)
+                (of_keyword)
+                element_type: (type_specification
+                  (basic_type)))))
+          (variable_declaration
+            name: (identifier)
+            type: (type_specification
+              (array_type
+                (array_keyword)
+                sizes: (integer)
+                (of_keyword)
+                element_type: (type_specification
+                  (basic_type)))))
+          (variable_declaration
+            name: (identifier)
+            type: (type_specification
+              (array_type
+                (array_keyword)
+                sizes: (integer)
+                sizes: (integer)
+                (of_keyword)
+                element_type: (type_specification
+                  (basic_type)))))
+          (variable_declaration
+            name: (identifier)
+            type: (type_specification
+              (array_type
+                (array_keyword)
+                sizes: (integer)
+                (of_keyword)
+                element_type: (type_specification
+                  (record_type
+                    (record_keyword)
+                    reference: (identifier))))))))
+      (begin_keyword)
+      (assignment_statement
+        left: (identifier)
+        operator: (assignment_operator)
+        right: (identifier)
+        (preproc_conditional_expression_tail
+          (preproc_if
+            (preproc_open)
+            condition: (identifier))
+          operator: (comparison_operator)
+          operand: (boolean)
+          (preproc_endif
+            (preproc_close))))
+      (preproc_if
+        (preproc_open)
+        condition: (identifier))
+      (ERROR
+        (filter_operator)
+        (boolean)
+        (UNEXPECTED 'i')
+        (if_keyword)
+        (ternary_expression
+          condition: (MISSING identifier)
+          then_value: (integer)
+          else_value: (integer)))
+      (empty_statement)
+      (call_statement
+        function: (identifier))
+      (identifier)
+      (call_expression
+        function: (identifier)
+        arguments: (argument_list))
+      (code_block
+        (begin_keyword)
+        (end_keyword))
+      (identifier)
+      (call_statement
+        function: (identifier)
+        (ERROR
+          (identifier)))
+      (identifier)
+      (ERROR)
+      (code_block
+        (begin_keyword)
+        body: (statement_block
+          (exit_statement
+            (exit_keyword)
+            return_value: (additive_expression
+              left: (identifier)
+              right: (identifier))))
+        (end_keyword)))))
+
+========================================================================
+B7a GAP: ternary / elif (3 cells, verdict of the representative GAP); the parser ERRORs on configurations alc accepts; representative occ:ternary_expression:0.3@ternary_expression#elif
+========================================================================
+table 50100 T
+{
+    fields
+    {
+        field(1; K; Code[20]) { }
+        field(2; N; Integer) { }
+        field(3; B; Boolean) { }
+        field(9; O; Option) { OptionMembers = A,B,C; }
+    }
+    keys
+    {
+        key(PK; K) { Clustered = true; }
+    }
+}
+codeunit 50101 P
+{
+    procedure Q(): Integer
+    var
+        R: Record T;
+        I: Integer;
+        Ok: Boolean;
+        L: List of [Integer];
+        Arr: array[3] of Integer;
+        Arr2: array[2, 2] of Integer;
+        Recs: array[2] of Record T;
+    begin
+I := Ok ? 
+1
+#if X
+:
+#elif Y
+:
+#else
+:
+#endif
+2
+;
+    end;
+
+    procedure Bar()
+    begin
+    end;
+
+    procedure Foo(A: Integer; B: Integer): Integer
+    begin
+        exit(A + B);
+    end;
+}
+------------------------------------------------------------------------
+
+(source_file
+  (table_declaration
+    (table_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (fields_section
+        (fields_keyword)
+        body: (fields_body
+          (field_declaration
+            (field_keyword)
+            id: (integer)
+            name: (identifier)
+            type: (type_specification
+              (code_type
+                (code_keyword)
+                length: (integer))))
+          (field_declaration
+            (field_keyword)
+            id: (integer)
+            name: (identifier)
+            type: (type_specification
+              (basic_type)))
+          (field_declaration
+            (field_keyword)
+            id: (integer)
+            name: (identifier)
+            type: (type_specification
+              (basic_type)))
+          (field_declaration
+            (field_keyword)
+            id: (integer)
+            name: (identifier)
+            type: (type_specification
+              (option_type
+                (option_keyword)))
+            body: (declaration_body
+              (property
+                name: (property_name)
+                value: (option_member_list
+                  (option_member
+                    (identifier))
+                  (option_member
+                    (identifier))
+                  (option_member
+                    (identifier))))))))
+      (keys_section
+        (keys_keyword)
+        body: (keys_body
+          (key_declaration
+            (key_keyword)
+            name: (identifier)
+            fields: (field_list
+              (identifier))
+            body: (declaration_body
+              (property
+                name: (property_name)
+                value: (boolean))))))))
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (procedure
+        (procedure_keyword)
+        name: (identifier)
+        return_type: (type_specification
+          (basic_type))
+        (var_section
+          (var_keyword)
+          body: (var_body
+            (variable_declaration
+              name: (identifier)
+              type: (type_specification
+                (record_type
+                  (record_keyword)
+                  reference: (identifier))))
+            (variable_declaration
+              name: (identifier)
+              type: (type_specification
+                (basic_type)))
+            (variable_declaration
+              name: (identifier)
+              type: (type_specification
+                (basic_type)))
+            (variable_declaration
+              name: (identifier)
+              type: (type_specification
+                (list_type
+                  (list_keyword)
+                  (of_keyword)
+                  element_type: (type_specification
+                    (basic_type)))))
+            (variable_declaration
+              name: (identifier)
+              type: (type_specification
+                (array_type
+                  (array_keyword)
+                  sizes: (integer)
+                  (of_keyword)
+                  element_type: (type_specification
+                    (basic_type)))))
+            (variable_declaration
+              name: (identifier)
+              type: (type_specification
+                (array_type
+                  (array_keyword)
+                  sizes: (integer)
+                  sizes: (integer)
+                  (of_keyword)
+                  element_type: (type_specification
+                    (basic_type)))))
+            (variable_declaration
+              name: (identifier)
+              type: (type_specification
+                (array_type
+                  (array_keyword)
+                  sizes: (integer)
+                  (of_keyword)
+                  element_type: (type_specification
+                    (record_type
+                      (record_keyword)
+                      reference: (identifier))))))))
+        body: (code_block
+          (begin_keyword)
+          body: (statement_block
+            (assignment_statement
+              left: (identifier)
+              operator: (assignment_operator)
+              right: (ternary_expression
+                condition: (identifier)
+                then_value: (integer)
+                (ERROR
+                  (UNEXPECTED 'i')
+                  (identifier)
+                  (ERROR)
+                  (identifier)
+                  (preproc_else))
+                (ERROR
+                  (UNEXPECTED 'i'))
+                else_value: (integer))))
+          (end_keyword)))
+      (procedure
+        (procedure_keyword)
+        name: (identifier)
+        body: (code_block
+          (begin_keyword)
+          (end_keyword)))
+      (procedure
+        (procedure_keyword)
+        name: (identifier)
+        parameters: (parameter_list
+          (parameter
+            name: (identifier)
+            type: (type_specification
+              (basic_type)))
+          (parameter
+            name: (identifier)
+            type: (type_specification
+              (basic_type))))
+        return_type: (type_specification
+          (basic_type))
+        body: (code_block
+          (begin_keyword)
+          body: (statement_block
+            (exit_statement
+              (exit_keyword)
+              return_value: (additive_expression
+                left: (identifier)
+                right: (identifier))))
+          (end_keyword))))))
+
+========================================================================
+B7a GAP: ternary / empty (3 cells, verdict of the representative GAP); the parser ERRORs on configurations alc accepts; representative occ:ternary_expression:0.3@ternary_expression#empty
+========================================================================
+table 50100 T
+{
+    fields
+    {
+        field(1; K; Code[20]) { }
+        field(2; N; Integer) { }
+        field(3; B; Boolean) { }
+        field(9; O; Option) { OptionMembers = A,B,C; }
+    }
+    keys
+    {
+        key(PK; K) { Clustered = true; }
+    }
+}
+codeunit 50101 P
+{
+    procedure Q(): Integer
+    var
+        R: Record T;
+        I: Integer;
+        Ok: Boolean;
+        L: List of [Integer];
+        Arr: array[3] of Integer;
+        Arr2: array[2, 2] of Integer;
+        Recs: array[2] of Record T;
+    begin
+I := Ok ? 
+1 :
+#if X
+#endif
+2
+;
+    end;
+
+    procedure Bar()
+    begin
+    end;
+
+    procedure Foo(A: Integer; B: Integer): Integer
+    begin
+        exit(A + B);
+    end;
+}
+------------------------------------------------------------------------
+
+(source_file
+  (table_declaration
+    (table_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (fields_section
+        (fields_keyword)
+        body: (fields_body
+          (field_declaration
+            (field_keyword)
+            id: (integer)
+            name: (identifier)
+            type: (type_specification
+              (code_type
+                (code_keyword)
+                length: (integer))))
+          (field_declaration
+            (field_keyword)
+            id: (integer)
+            name: (identifier)
+            type: (type_specification
+              (basic_type)))
+          (field_declaration
+            (field_keyword)
+            id: (integer)
+            name: (identifier)
+            type: (type_specification
+              (basic_type)))
+          (field_declaration
+            (field_keyword)
+            id: (integer)
+            name: (identifier)
+            type: (type_specification
+              (option_type
+                (option_keyword)))
+            body: (declaration_body
+              (property
+                name: (property_name)
+                value: (option_member_list
+                  (option_member
+                    (identifier))
+                  (option_member
+                    (identifier))
+                  (option_member
+                    (identifier))))))))
+      (keys_section
+        (keys_keyword)
+        body: (keys_body
+          (key_declaration
+            (key_keyword)
+            name: (identifier)
+            fields: (field_list
+              (identifier))
+            body: (declaration_body
+              (property
+                name: (property_name)
+                value: (boolean))))))))
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (procedure
+        (procedure_keyword)
+        name: (identifier)
+        return_type: (type_specification
+          (basic_type))
+        (var_section
+          (var_keyword)
+          body: (var_body
+            (variable_declaration
+              name: (identifier)
+              type: (type_specification
+                (record_type
+                  (record_keyword)
+                  reference: (identifier))))
+            (variable_declaration
+              name: (identifier)
+              type: (type_specification
+                (basic_type)))
+            (variable_declaration
+              name: (identifier)
+              type: (type_specification
+                (basic_type)))
+            (variable_declaration
+              name: (identifier)
+              type: (type_specification
+                (list_type
+                  (list_keyword)
+                  (of_keyword)
+                  element_type: (type_specification
+                    (basic_type)))))
+            (variable_declaration
+              name: (identifier)
+              type: (type_specification
+                (array_type
+                  (array_keyword)
+                  sizes: (integer)
+                  (of_keyword)
+                  element_type: (type_specification
+                    (basic_type)))))
+            (variable_declaration
+              name: (identifier)
+              type: (type_specification
+                (array_type
+                  (array_keyword)
+                  sizes: (integer)
+                  sizes: (integer)
+                  (of_keyword)
+                  element_type: (type_specification
+                    (basic_type)))))
+            (variable_declaration
+              name: (identifier)
+              type: (type_specification
+                (array_type
+                  (array_keyword)
+                  sizes: (integer)
+                  (of_keyword)
+                  element_type: (type_specification
+                    (record_type
+                      (record_keyword)
+                      reference: (identifier))))))))
+        body: (code_block
+          (begin_keyword)
+          body: (statement_block
+            (assignment_statement
+              left: (identifier)
+              operator: (assignment_operator)
+              right: (ternary_expression
+                condition: (identifier)
+                then_value: (integer)
+                (ERROR
+                  (UNEXPECTED 'i'))
+                else_value: (identifier))))
+          (preproc_split_block_close_after_endif
+            (preproc_endif
+              (preproc_close))
+            (ERROR
+              (integer))
+            (empty_statement)
+            (end_keyword))))
+      (procedure
+        (procedure_keyword)
+        name: (identifier)
+        body: (code_block
+          (begin_keyword)
+          (end_keyword)))
+      (procedure
+        (procedure_keyword)
+        name: (identifier)
+        parameters: (parameter_list
+          (parameter
+            name: (identifier)
+            type: (type_specification
+              (basic_type)))
+          (parameter
+            name: (identifier)
+            type: (type_specification
+              (basic_type))))
+        return_type: (type_specification
+          (basic_type))
+        body: (code_block
+          (begin_keyword)
+          body: (statement_block
+            (exit_statement
+              (exit_keyword)
+              return_value: (additive_expression
+                left: (identifier)
+                right: (identifier))))
+          (end_keyword))))))
+
+========================================================================
+B7a GAP: ternary / first (14 cells, verdict of the representative GAP); the parser ERRORs on configurations alc accepts; representative bnd:ternary_expression:condition:end@ternary_expression#first/comparison
+========================================================================
+table 50100 T
+{
+    fields
+    {
+        field(1; K; Code[20]) { }
+        field(2; N; Integer) { }
+        field(3; B; Boolean) { }
+        field(9; O; Option) { OptionMembers = A,B,C; }
+    }
+    keys
+    {
+        key(PK; K) { Clustered = true; }
+    }
+}
+codeunit 50101 P
+{
+    procedure Q(): Integer
+    var
+        R: Record T;
+        I: Integer;
+        Ok: Boolean;
+        L: List of [Integer];
+        Arr: array[3] of Integer;
+        Arr2: array[2, 2] of Integer;
+        Recs: array[2] of Record T;
+    begin
+I := 
+#if X
+Ok =
+#endif
+true
+ ? 1 : 2;
+    end;
+
+    procedure Bar()
+    begin
+    end;
+
+    procedure Foo(A: Integer; B: Integer): Integer
+    begin
+        exit(A + B);
+    end;
+}
+------------------------------------------------------------------------
+
+(source_file
+  (table_declaration
+    (table_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (fields_section
+        (fields_keyword)
+        body: (fields_body
+          (field_declaration
+            (field_keyword)
+            id: (integer)
+            name: (identifier)
+            type: (type_specification
+              (code_type
+                (code_keyword)
+                length: (integer))))
+          (field_declaration
+            (field_keyword)
+            id: (integer)
+            name: (identifier)
+            type: (type_specification
+              (basic_type)))
+          (field_declaration
+            (field_keyword)
+            id: (integer)
+            name: (identifier)
+            type: (type_specification
+              (basic_type)))
+          (field_declaration
+            (field_keyword)
+            id: (integer)
+            name: (identifier)
+            type: (type_specification
+              (option_type
+                (option_keyword)))
+            body: (declaration_body
+              (property
+                name: (property_name)
+                value: (option_member_list
+                  (option_member
+                    (identifier))
+                  (option_member
+                    (identifier))
+                  (option_member
+                    (identifier))))))))
+      (keys_section
+        (keys_keyword)
+        body: (keys_body
+          (key_declaration
+            (key_keyword)
+            name: (identifier)
+            fields: (field_list
+              (identifier))
+            body: (declaration_body
+              (property
+                name: (property_name)
+                value: (boolean))))))))
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (procedure
+        (procedure_keyword)
+        name: (identifier)
+        return_type: (type_specification
+          (basic_type))
+        (var_section
+          (var_keyword)
+          body: (var_body
+            (variable_declaration
+              name: (identifier)
+              type: (type_specification
+                (record_type
+                  (record_keyword)
+                  reference: (identifier))))
+            (variable_declaration
+              name: (identifier)
+              type: (type_specification
+                (basic_type)))
+            (variable_declaration
+              name: (identifier)
+              type: (type_specification
+                (basic_type)))
+            (variable_declaration
+              name: (identifier)
+              type: (type_specification
+                (list_type
+                  (list_keyword)
+                  (of_keyword)
+                  element_type: (type_specification
+                    (basic_type)))))
+            (variable_declaration
+              name: (identifier)
+              type: (type_specification
+                (array_type
+                  (array_keyword)
+                  sizes: (integer)
+                  (of_keyword)
+                  element_type: (type_specification
+                    (basic_type)))))
+            (variable_declaration
+              name: (identifier)
+              type: (type_specification
+                (array_type
+                  (array_keyword)
+                  sizes: (integer)
+                  sizes: (integer)
+                  (of_keyword)
+                  element_type: (type_specification
+                    (basic_type)))))
+            (variable_declaration
+              name: (identifier)
+              type: (type_specification
+                (array_type
+                  (array_keyword)
+                  sizes: (integer)
+                  (of_keyword)
+                  element_type: (type_specification
+                    (record_type
+                      (record_keyword)
+                      reference: (identifier))))))))
+        body: (code_block
+          (begin_keyword)
+          body: (statement_block
+            (assignment_statement
+              left: (identifier)
+              operator: (assignment_operator)
+              (ERROR
+                (UNEXPECTED 'i'))
+              right: (identifier))
+            (ERROR
+              (ternary_expression
+                condition: (comparison_expression
+                  left: (identifier)
+                  operator: (comparison_operator)
+                  (ERROR
+                    (UNEXPECTED 'i'))
+                  right: (boolean))
+                then_value: (integer)
+                else_value: (integer)))
+            (empty_statement))
+          (end_keyword)))
+      (procedure
+        (procedure_keyword)
+        name: (identifier)
+        body: (code_block
+          (begin_keyword)
+          (end_keyword)))
+      (procedure
+        (procedure_keyword)
+        name: (identifier)
+        parameters: (parameter_list
+          (parameter
+            name: (identifier)
+            type: (type_specification
+              (basic_type)))
+          (parameter
+            name: (identifier)
+            type: (type_specification
+              (basic_type))))
+        return_type: (type_specification
+          (basic_type))
+        body: (code_block
+          (begin_keyword)
+          body: (statement_block
+            (exit_statement
+              (exit_keyword)
+              return_value: (additive_expression
+                left: (identifier)
+                right: (identifier))))
+          (end_keyword))))))
+
+========================================================================
+B7a GAP: ternary / first-only (14 cells, verdict of the representative GAP); the parser ERRORs on configurations alc accepts; representative bnd:ternary_expression:condition:end@ternary_expression#first-only/comparison
+========================================================================
+table 50100 T
+{
+    fields
+    {
+        field(1; K; Code[20]) { }
+        field(2; N; Integer) { }
+        field(3; B; Boolean) { }
+        field(9; O; Option) { OptionMembers = A,B,C; }
+    }
+    keys
+    {
+        key(PK; K) { Clustered = true; }
+    }
+}
+codeunit 50101 P
+{
+    procedure Q(): Integer
+    var
+        R: Record T;
+        I: Integer;
+        Ok: Boolean;
+        L: List of [Integer];
+        Arr: array[3] of Integer;
+        Arr2: array[2, 2] of Integer;
+        Recs: array[2] of Record T;
+    begin
+I := 
+#if X
+Ok
+#else
+true
+#endif
+ ? 1 : 2;
+    end;
+
+    procedure Bar()
+    begin
+    end;
+
+    procedure Foo(A: Integer; B: Integer): Integer
+    begin
+        exit(A + B);
+    end;
+}
+------------------------------------------------------------------------
+
+(source_file
+  (table_declaration
+    (table_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (fields_section
+        (fields_keyword)
+        body: (fields_body
+          (field_declaration
+            (field_keyword)
+            id: (integer)
+            name: (identifier)
+            type: (type_specification
+              (code_type
+                (code_keyword)
+                length: (integer))))
+          (field_declaration
+            (field_keyword)
+            id: (integer)
+            name: (identifier)
+            type: (type_specification
+              (basic_type)))
+          (field_declaration
+            (field_keyword)
+            id: (integer)
+            name: (identifier)
+            type: (type_specification
+              (basic_type)))
+          (field_declaration
+            (field_keyword)
+            id: (integer)
+            name: (identifier)
+            type: (type_specification
+              (option_type
+                (option_keyword)))
+            body: (declaration_body
+              (property
+                name: (property_name)
+                value: (option_member_list
+                  (option_member
+                    (identifier))
+                  (option_member
+                    (identifier))
+                  (option_member
+                    (identifier))))))))
+      (keys_section
+        (keys_keyword)
+        body: (keys_body
+          (key_declaration
+            (key_keyword)
+            name: (identifier)
+            fields: (field_list
+              (identifier))
+            body: (declaration_body
+              (property
+                name: (property_name)
+                value: (boolean))))))))
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (procedure
+        (procedure_keyword)
+        name: (identifier)
+        return_type: (type_specification
+          (basic_type))
+        (var_section
+          (var_keyword)
+          body: (var_body
+            (variable_declaration
+              name: (identifier)
+              type: (type_specification
+                (record_type
+                  (record_keyword)
+                  reference: (identifier))))
+            (variable_declaration
+              name: (identifier)
+              type: (type_specification
+                (basic_type)))
+            (variable_declaration
+              name: (identifier)
+              type: (type_specification
+                (basic_type)))
+            (variable_declaration
+              name: (identifier)
+              type: (type_specification
+                (list_type
+                  (list_keyword)
+                  (of_keyword)
+                  element_type: (type_specification
+                    (basic_type)))))
+            (variable_declaration
+              name: (identifier)
+              type: (type_specification
+                (array_type
+                  (array_keyword)
+                  sizes: (integer)
+                  (of_keyword)
+                  element_type: (type_specification
+                    (basic_type)))))
+            (variable_declaration
+              name: (identifier)
+              type: (type_specification
+                (array_type
+                  (array_keyword)
+                  sizes: (integer)
+                  sizes: (integer)
+                  (of_keyword)
+                  element_type: (type_specification
+                    (basic_type)))))
+            (variable_declaration
+              name: (identifier)
+              type: (type_specification
+                (array_type
+                  (array_keyword)
+                  sizes: (integer)
+                  (of_keyword)
+                  element_type: (type_specification
+                    (record_type
+                      (record_keyword)
+                      reference: (identifier))))))))
+        body: (code_block
+          (begin_keyword)
+          body: (statement_block
+            (assignment_statement
+              left: (identifier)
+              operator: (assignment_operator)
+              (ERROR
+                (UNEXPECTED 'i'))
+              right: (identifier))
+            (identifier)
+            (ERROR
+              (preproc_else)
+              (boolean)
+              (UNEXPECTED 'i')
+              (if_keyword)
+              (ternary_expression
+                condition: (MISSING identifier)
+                then_value: (integer)
+                else_value: (integer)))
+            (empty_statement))
+          (end_keyword)))
+      (procedure
+        (procedure_keyword)
+        name: (identifier)
+        body: (code_block
+          (begin_keyword)
+          (end_keyword)))
+      (procedure
+        (procedure_keyword)
+        name: (identifier)
+        parameters: (parameter_list
+          (parameter
+            name: (identifier)
+            type: (type_specification
+              (basic_type)))
+          (parameter
+            name: (identifier)
+            type: (type_specification
+              (basic_type))))
+        return_type: (type_specification
+          (basic_type))
+        body: (code_block
+          (begin_keyword)
+          body: (statement_block
+            (exit_statement
+              (exit_keyword)
+              return_value: (additive_expression
+                left: (identifier)
+                right: (identifier))))
+          (end_keyword))))))
+
+========================================================================
+B7a GAP: ternary / first-replace (3 cells, verdict of the representative GAP); the parser ERRORs on configurations alc accepts; representative occ:ternary_expression:0.3@ternary_expression#first-replace
+========================================================================
+table 50100 T
+{
+    fields
+    {
+        field(1; K; Code[20]) { }
+        field(2; N; Integer) { }
+        field(3; B; Boolean) { }
+        field(9; O; Option) { OptionMembers = A,B,C; }
+    }
+    keys
+    {
+        key(PK; K) { Clustered = true; }
+    }
+}
+codeunit 50101 P
+{
+    procedure Q(): Integer
+    var
+        R: Record T;
+        I: Integer;
+        Ok: Boolean;
+        L: List of [Integer];
+        Arr: array[3] of Integer;
+        Arr2: array[2, 2] of Integer;
+        Recs: array[2] of Record T;
+    begin
+I := Ok ? 
+#if X
+1
+#else
+1
+#endif
+: 2
+;
+    end;
+
+    procedure Bar()
+    begin
+    end;
+
+    procedure Foo(A: Integer; B: Integer): Integer
+    begin
+        exit(A + B);
+    end;
+}
+------------------------------------------------------------------------
+
+(source_file
+  (table_declaration
+    (table_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (fields_section
+        (fields_keyword)
+        body: (fields_body
+          (field_declaration
+            (field_keyword)
+            id: (integer)
+            name: (identifier)
+            type: (type_specification
+              (code_type
+                (code_keyword)
+                length: (integer))))
+          (field_declaration
+            (field_keyword)
+            id: (integer)
+            name: (identifier)
+            type: (type_specification
+              (basic_type)))
+          (field_declaration
+            (field_keyword)
+            id: (integer)
+            name: (identifier)
+            type: (type_specification
+              (basic_type)))
+          (field_declaration
+            (field_keyword)
+            id: (integer)
+            name: (identifier)
+            type: (type_specification
+              (option_type
+                (option_keyword)))
+            body: (declaration_body
+              (property
+                name: (property_name)
+                value: (option_member_list
+                  (option_member
+                    (identifier))
+                  (option_member
+                    (identifier))
+                  (option_member
+                    (identifier))))))))
+      (keys_section
+        (keys_keyword)
+        body: (keys_body
+          (key_declaration
+            (key_keyword)
+            name: (identifier)
+            fields: (field_list
+              (identifier))
+            body: (declaration_body
+              (property
+                name: (property_name)
+                value: (boolean))))))))
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (procedure
+        (procedure_keyword)
+        name: (identifier)
+        return_type: (type_specification
+          (basic_type))
+        (var_section
+          (var_keyword)
+          body: (var_body
+            (variable_declaration
+              name: (identifier)
+              type: (type_specification
+                (record_type
+                  (record_keyword)
+                  reference: (identifier))))
+            (variable_declaration
+              name: (identifier)
+              type: (type_specification
+                (basic_type)))
+            (variable_declaration
+              name: (identifier)
+              type: (type_specification
+                (basic_type)))
+            (variable_declaration
+              name: (identifier)
+              type: (type_specification
+                (list_type
+                  (list_keyword)
+                  (of_keyword)
+                  element_type: (type_specification
+                    (basic_type)))))
+            (variable_declaration
+              name: (identifier)
+              type: (type_specification
+                (array_type
+                  (array_keyword)
+                  sizes: (integer)
+                  (of_keyword)
+                  element_type: (type_specification
+                    (basic_type)))))
+            (variable_declaration
+              name: (identifier)
+              type: (type_specification
+                (array_type
+                  (array_keyword)
+                  sizes: (integer)
+                  sizes: (integer)
+                  (of_keyword)
+                  element_type: (type_specification
+                    (basic_type)))))
+            (variable_declaration
+              name: (identifier)
+              type: (type_specification
+                (array_type
+                  (array_keyword)
+                  sizes: (integer)
+                  (of_keyword)
+                  element_type: (type_specification
+                    (record_type
+                      (record_keyword)
+                      reference: (identifier))))))))
+        body: (code_block
+          (begin_keyword)
+          body: (statement_block
+            (assignment_statement
+              left: (identifier)
+              operator: (assignment_operator)
+              right: (ternary_expression
+                condition: (identifier)
+                (ERROR
+                  (UNEXPECTED 'i')
+                  (identifier)
+                  (integer)
+                  (preproc_else))
+                then_value: (integer)
+                (ERROR
+                  (UNEXPECTED 'i'))
+                else_value: (integer))))
+          (end_keyword)))
+      (procedure
+        (procedure_keyword)
+        name: (identifier)
+        body: (code_block
+          (begin_keyword)
+          (end_keyword)))
+      (procedure
+        (procedure_keyword)
+        name: (identifier)
+        parameters: (parameter_list
+          (parameter
+            name: (identifier)
+            type: (type_specification
+              (basic_type)))
+          (parameter
+            name: (identifier)
+            type: (type_specification
+              (basic_type))))
+        return_type: (type_specification
+          (basic_type))
+        body: (code_block
+          (begin_keyword)
+          body: (statement_block
+            (exit_statement
+              (exit_keyword)
+              return_value: (additive_expression
+                left: (identifier)
+                right: (identifier))))
+          (end_keyword))))))
+
+========================================================================
+B7a GAP: ternary / nested (19 cells, verdict of the representative GAP); the parser ERRORs on configurations alc accepts; representative bnd:ternary_expression:condition:end@ternary_expression#nested/comparison
+========================================================================
+table 50100 T
+{
+    fields
+    {
+        field(1; K; Code[20]) { }
+        field(2; N; Integer) { }
+        field(3; B; Boolean) { }
+        field(9; O; Option) { OptionMembers = A,B,C; }
+    }
+    keys
+    {
+        key(PK; K) { Clustered = true; }
+    }
+}
+codeunit 50101 P
+{
+    procedure Q(): Integer
+    var
+        R: Record T;
+        I: Integer;
+        Ok: Boolean;
+        L: List of [Integer];
+        Arr: array[3] of Integer;
+        Arr2: array[2, 2] of Integer;
+        Recs: array[2] of Record T;
+    begin
+I := 
+Ok
+#if X
+= true
+#if Y
+= false
+#endif
+#endif
+ ? 1 : 2;
+    end;
+
+    procedure Bar()
+    begin
+    end;
+
+    procedure Foo(A: Integer; B: Integer): Integer
+    begin
+        exit(A + B);
+    end;
+}
+------------------------------------------------------------------------
+
+(source_file
+  (table_declaration
+    (table_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (fields_section
+        (fields_keyword)
+        body: (fields_body
+          (field_declaration
+            (field_keyword)
+            id: (integer)
+            name: (identifier)
+            type: (type_specification
+              (code_type
+                (code_keyword)
+                length: (integer))))
+          (field_declaration
+            (field_keyword)
+            id: (integer)
+            name: (identifier)
+            type: (type_specification
+              (basic_type)))
+          (field_declaration
+            (field_keyword)
+            id: (integer)
+            name: (identifier)
+            type: (type_specification
+              (basic_type)))
+          (field_declaration
+            (field_keyword)
+            id: (integer)
+            name: (identifier)
+            type: (type_specification
+              (option_type
+                (option_keyword)))
+            body: (declaration_body
+              (property
+                name: (property_name)
+                value: (option_member_list
+                  (option_member
+                    (identifier))
+                  (option_member
+                    (identifier))
+                  (option_member
+                    (identifier))))))))
+      (keys_section
+        (keys_keyword)
+        body: (keys_body
+          (key_declaration
+            (key_keyword)
+            name: (identifier)
+            fields: (field_list
+              (identifier))
+            body: (declaration_body
+              (property
+                name: (property_name)
+                value: (boolean))))))))
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (procedure
+        (procedure_keyword)
+        name: (identifier)
+        return_type: (type_specification
+          (basic_type))
+        (var_section
+          (var_keyword)
+          body: (var_body
+            (variable_declaration
+              name: (identifier)
+              type: (type_specification
+                (record_type
+                  (record_keyword)
+                  reference: (identifier))))
+            (variable_declaration
+              name: (identifier)
+              type: (type_specification
+                (basic_type)))
+            (variable_declaration
+              name: (identifier)
+              type: (type_specification
+                (basic_type)))
+            (variable_declaration
+              name: (identifier)
+              type: (type_specification
+                (list_type
+                  (list_keyword)
+                  (of_keyword)
+                  element_type: (type_specification
+                    (basic_type)))))
+            (variable_declaration
+              name: (identifier)
+              type: (type_specification
+                (array_type
+                  (array_keyword)
+                  sizes: (integer)
+                  (of_keyword)
+                  element_type: (type_specification
+                    (basic_type)))))
+            (variable_declaration
+              name: (identifier)
+              type: (type_specification
+                (array_type
+                  (array_keyword)
+                  sizes: (integer)
+                  sizes: (integer)
+                  (of_keyword)
+                  element_type: (type_specification
+                    (basic_type)))))
+            (variable_declaration
+              name: (identifier)
+              type: (type_specification
+                (array_type
+                  (array_keyword)
+                  sizes: (integer)
+                  (of_keyword)
+                  element_type: (type_specification
+                    (record_type
+                      (record_keyword)
+                      reference: (identifier))))))))
+        body: (code_block
+          (begin_keyword)
+          body: (statement_block
+            (assignment_statement
+              left: (identifier)
+              operator: (assignment_operator)
+              right: (identifier)
+              (preproc_conditional_expression_tail
+                (preproc_if
+                  (preproc_open)
+                  condition: (identifier))
+                operator: (comparison_operator)
+                operand: (comparison_expression
+                  left: (boolean)
+                  (ERROR
+                    (UNEXPECTED 'i')
+                    (identifier))
+                  operator: (comparison_operator)
+                  right: (boolean))
+                (preproc_endif
+                  (preproc_close)))))
+          (preproc_split_block_close_after_endif
+            (preproc_endif
+              (preproc_close))
+            (ERROR
+              (ternary_expression
+                condition: (MISSING identifier)
+                then_value: (integer)
+                else_value: (integer)))
+            (empty_statement)
+            (end_keyword))))
+      (procedure
+        (procedure_keyword)
+        name: (identifier)
+        body: (code_block
+          (begin_keyword)
+          (end_keyword)))
+      (procedure
+        (procedure_keyword)
+        name: (identifier)
+        parameters: (parameter_list
+          (parameter
+            name: (identifier)
+            type: (type_specification
+              (basic_type)))
+          (parameter
+            name: (identifier)
+            type: (type_specification
+              (basic_type))))
+        return_type: (type_specification
+          (basic_type))
+        body: (code_block
+          (begin_keyword)
+          body: (statement_block
+            (exit_statement
+              (exit_keyword)
+              return_value: (additive_expression
+                left: (identifier)
+                right: (identifier))))
+          (end_keyword))))))
+
+========================================================================
+B7a GAP: ternary / op-only (4 cells, verdict of the representative MIXED); the parser ERRORs on configurations alc accepts; representative bnd:ternary_expression:then_value:end@ternary_expression#op-only/arithmetic
+========================================================================
+table 50100 T
+{
+    fields
+    {
+        field(1; K; Code[20]) { }
+        field(2; N; Integer) { }
+        field(3; B; Boolean) { }
+        field(9; O; Option) { OptionMembers = A,B,C; }
+    }
+    keys
+    {
+        key(PK; K) { Clustered = true; }
+    }
+}
+codeunit 50101 P
+{
+    procedure Q(): Integer
+    var
+        R: Record T;
+        I: Integer;
+        Ok: Boolean;
+        L: List of [Integer];
+        Arr: array[3] of Integer;
+        Arr2: array[2, 2] of Integer;
+        Recs: array[2] of Record T;
+    begin
+I := Ok ? 
+1
+#if X
++
+#endif
+2
+ : 2;
+    end;
+
+    procedure Bar()
+    begin
+    end;
+
+    procedure Foo(A: Integer; B: Integer): Integer
+    begin
+        exit(A + B);
+    end;
+}
+------------------------------------------------------------------------
+
+(source_file
+  (table_declaration
+    (table_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (fields_section
+        (fields_keyword)
+        body: (fields_body
+          (field_declaration
+            (field_keyword)
+            id: (integer)
+            name: (identifier)
+            type: (type_specification
+              (code_type
+                (code_keyword)
+                length: (integer))))
+          (field_declaration
+            (field_keyword)
+            id: (integer)
+            name: (identifier)
+            type: (type_specification
+              (basic_type)))
+          (field_declaration
+            (field_keyword)
+            id: (integer)
+            name: (identifier)
+            type: (type_specification
+              (basic_type)))
+          (field_declaration
+            (field_keyword)
+            id: (integer)
+            name: (identifier)
+            type: (type_specification
+              (option_type
+                (option_keyword)))
+            body: (declaration_body
+              (property
+                name: (property_name)
+                value: (option_member_list
+                  (option_member
+                    (identifier))
+                  (option_member
+                    (identifier))
+                  (option_member
+                    (identifier))))))))
+      (keys_section
+        (keys_keyword)
+        body: (keys_body
+          (key_declaration
+            (key_keyword)
+            name: (identifier)
+            fields: (field_list
+              (identifier))
+            body: (declaration_body
+              (property
+                name: (property_name)
+                value: (boolean))))))))
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (procedure
+        (procedure_keyword)
+        name: (identifier)
+        return_type: (type_specification
+          (basic_type))
+        (var_section
+          (var_keyword)
+          body: (var_body
+            (variable_declaration
+              name: (identifier)
+              type: (type_specification
+                (record_type
+                  (record_keyword)
+                  reference: (identifier))))
+            (variable_declaration
+              name: (identifier)
+              type: (type_specification
+                (basic_type)))
+            (variable_declaration
+              name: (identifier)
+              type: (type_specification
+                (basic_type)))
+            (variable_declaration
+              name: (identifier)
+              type: (type_specification
+                (list_type
+                  (list_keyword)
+                  (of_keyword)
+                  element_type: (type_specification
+                    (basic_type)))))
+            (variable_declaration
+              name: (identifier)
+              type: (type_specification
+                (array_type
+                  (array_keyword)
+                  sizes: (integer)
+                  (of_keyword)
+                  element_type: (type_specification
+                    (basic_type)))))
+            (variable_declaration
+              name: (identifier)
+              type: (type_specification
+                (array_type
+                  (array_keyword)
+                  sizes: (integer)
+                  sizes: (integer)
+                  (of_keyword)
+                  element_type: (type_specification
+                    (basic_type)))))
+            (variable_declaration
+              name: (identifier)
+              type: (type_specification
+                (array_type
+                  (array_keyword)
+                  sizes: (integer)
+                  (of_keyword)
+                  element_type: (type_specification
+                    (record_type
+                      (record_keyword)
+                      reference: (identifier))))))))
+        body: (code_block
+          (begin_keyword)
+          body: (statement_block
+            (assignment_statement
+              left: (identifier)
+              operator: (assignment_operator)
+              right: (ternary_expression
+                condition: (identifier)
+                then_value: (additive_expression
+                  left: (integer)
+                  (ERROR
+                    (UNEXPECTED 'i')
+                    (identifier))
+                  (ERROR
+                    (UNEXPECTED 'i'))
+                  right: (integer))
+                else_value: (integer))))
+          (end_keyword)))
+      (procedure
+        (procedure_keyword)
+        name: (identifier)
+        body: (code_block
+          (begin_keyword)
+          (end_keyword)))
+      (procedure
+        (procedure_keyword)
+        name: (identifier)
+        parameters: (parameter_list
+          (parameter
+            name: (identifier)
+            type: (type_specification
+              (basic_type)))
+          (parameter
+            name: (identifier)
+            type: (type_specification
+              (basic_type))))
+        return_type: (type_specification
+          (basic_type))
+        body: (code_block
+          (begin_keyword)
+          body: (statement_block
+            (exit_statement
+              (exit_keyword)
+              return_value: (additive_expression
+                left: (identifier)
+                right: (identifier))))
+          (end_keyword))))))
+
+========================================================================
+B7a GAP: ternary / prefix (2 cells, verdict of the representative GAP); the parser ERRORs on configurations alc accepts; representative bnd:ternary_expression:condition:end@ternary_expression#prefix/membership
+========================================================================
+table 50100 T
+{
+    fields
+    {
+        field(1; K; Code[20]) { }
+        field(2; N; Integer) { }
+        field(3; B; Boolean) { }
+        field(9; O; Option) { OptionMembers = A,B,C; }
+    }
+    keys
+    {
+        key(PK; K) { Clustered = true; }
+    }
+}
+codeunit 50101 P
+{
+    procedure Q(): Integer
+    var
+        R: Record T;
+        I: Integer;
+        Ok: Boolean;
+        L: List of [Integer];
+        Arr: array[3] of Integer;
+        Arr2: array[2, 2] of Integer;
+        Recs: array[2] of Record T;
+    begin
+I := 
+Ok in
+#if X
+[true, false] in
+#endif
+[true]
+ ? 1 : 2;
+    end;
+
+    procedure Bar()
+    begin
+    end;
+
+    procedure Foo(A: Integer; B: Integer): Integer
+    begin
+        exit(A + B);
+    end;
+}
+------------------------------------------------------------------------
+
+(source_file
+  (table_declaration
+    (table_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (fields_section
+        (fields_keyword)
+        body: (fields_body
+          (field_declaration
+            (field_keyword)
+            id: (integer)
+            name: (identifier)
+            type: (type_specification
+              (code_type
+                (code_keyword)
+                length: (integer))))
+          (field_declaration
+            (field_keyword)
+            id: (integer)
+            name: (identifier)
+            type: (type_specification
+              (basic_type)))
+          (field_declaration
+            (field_keyword)
+            id: (integer)
+            name: (identifier)
+            type: (type_specification
+              (basic_type)))
+          (field_declaration
+            (field_keyword)
+            id: (integer)
+            name: (identifier)
+            type: (type_specification
+              (option_type
+                (option_keyword)))
+            body: (declaration_body
+              (property
+                name: (property_name)
+                value: (option_member_list
+                  (option_member
+                    (identifier))
+                  (option_member
+                    (identifier))
+                  (option_member
+                    (identifier))))))))
+      (keys_section
+        (keys_keyword)
+        body: (keys_body
+          (key_declaration
+            (key_keyword)
+            name: (identifier)
+            fields: (field_list
+              (identifier))
+            body: (declaration_body
+              (property
+                name: (property_name)
+                value: (boolean))))))))
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (procedure
+        (procedure_keyword)
+        name: (identifier)
+        return_type: (type_specification
+          (basic_type))
+        (var_section
+          (var_keyword)
+          body: (var_body
+            (variable_declaration
+              name: (identifier)
+              type: (type_specification
+                (record_type
+                  (record_keyword)
+                  reference: (identifier))))
+            (variable_declaration
+              name: (identifier)
+              type: (type_specification
+                (basic_type)))
+            (variable_declaration
+              name: (identifier)
+              type: (type_specification
+                (basic_type)))
+            (variable_declaration
+              name: (identifier)
+              type: (type_specification
+                (list_type
+                  (list_keyword)
+                  (of_keyword)
+                  element_type: (type_specification
+                    (basic_type)))))
+            (variable_declaration
+              name: (identifier)
+              type: (type_specification
+                (array_type
+                  (array_keyword)
+                  sizes: (integer)
+                  (of_keyword)
+                  element_type: (type_specification
+                    (basic_type)))))
+            (variable_declaration
+              name: (identifier)
+              type: (type_specification
+                (array_type
+                  (array_keyword)
+                  sizes: (integer)
+                  sizes: (integer)
+                  (of_keyword)
+                  element_type: (type_specification
+                    (basic_type)))))
+            (variable_declaration
+              name: (identifier)
+              type: (type_specification
+                (array_type
+                  (array_keyword)
+                  sizes: (integer)
+                  (of_keyword)
+                  element_type: (type_specification
+                    (record_type
+                      (record_keyword)
+                      reference: (identifier))))))))
+        body: (code_block
+          (begin_keyword)
+          body: (statement_block
+            (assignment_statement
+              left: (identifier)
+              operator: (assignment_operator)
+              right: (identifier))
+            (ERROR
+              (in_keyword)
+              (UNEXPECTED 'i')
+              (if_keyword)
+              (subscript_expression
+                object: (identifier)
+                index: (boolean)
+                (boolean))
+              (in_keyword)
+              (UNEXPECTED 'i')
+              (if_keyword)
+              (ternary_expression
+                condition: (list_literal
+                  (boolean))
+                then_value: (integer)
+                else_value: (integer)))
+            (empty_statement))
+          (end_keyword)))
+      (procedure
+        (procedure_keyword)
+        name: (identifier)
+        body: (code_block
+          (begin_keyword)
+          (end_keyword)))
+      (procedure
+        (procedure_keyword)
+        name: (identifier)
+        parameters: (parameter_list
+          (parameter
+            name: (identifier)
+            type: (type_specification
+              (basic_type)))
+          (parameter
+            name: (identifier)
+            type: (type_specification
+              (basic_type))))
+        return_type: (type_specification
+          (basic_type))
+        body: (code_block
+          (begin_keyword)
+          body: (statement_block
+            (exit_statement
+              (exit_keyword)
+              return_value: (additive_expression
+                left: (identifier)
+                right: (identifier))))
+          (end_keyword))))))
+
+========================================================================
+B7a GAP: ternary / sep-before-end (3 cells, verdict of the representative MIXED); the parser ERRORs on configurations alc accepts; representative occ:ternary_expression:0.3@ternary_expression#sep-before-end
+========================================================================
+table 50100 T
+{
+    fields
+    {
+        field(1; K; Code[20]) { }
+        field(2; N; Integer) { }
+        field(3; B; Boolean) { }
+        field(9; O; Option) { OptionMembers = A,B,C; }
+    }
+    keys
+    {
+        key(PK; K) { Clustered = true; }
+    }
+}
+codeunit 50101 P
+{
+    procedure Q(): Integer
+    var
+        R: Record T;
+        I: Integer;
+        Ok: Boolean;
+        L: List of [Integer];
+        Arr: array[3] of Integer;
+        Arr2: array[2, 2] of Integer;
+        Recs: array[2] of Record T;
+    begin
+I := Ok ? 
+1
+#if X
+: 2
+#endif
+;
+    end;
+
+    procedure Bar()
+    begin
+    end;
+
+    procedure Foo(A: Integer; B: Integer): Integer
+    begin
+        exit(A + B);
+    end;
+}
+------------------------------------------------------------------------
+
+(source_file
+  (table_declaration
+    (table_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (fields_section
+        (fields_keyword)
+        body: (fields_body
+          (field_declaration
+            (field_keyword)
+            id: (integer)
+            name: (identifier)
+            type: (type_specification
+              (code_type
+                (code_keyword)
+                length: (integer))))
+          (field_declaration
+            (field_keyword)
+            id: (integer)
+            name: (identifier)
+            type: (type_specification
+              (basic_type)))
+          (field_declaration
+            (field_keyword)
+            id: (integer)
+            name: (identifier)
+            type: (type_specification
+              (basic_type)))
+          (field_declaration
+            (field_keyword)
+            id: (integer)
+            name: (identifier)
+            type: (type_specification
+              (option_type
+                (option_keyword)))
+            body: (declaration_body
+              (property
+                name: (property_name)
+                value: (option_member_list
+                  (option_member
+                    (identifier))
+                  (option_member
+                    (identifier))
+                  (option_member
+                    (identifier))))))))
+      (keys_section
+        (keys_keyword)
+        body: (keys_body
+          (key_declaration
+            (key_keyword)
+            name: (identifier)
+            fields: (field_list
+              (identifier))
+            body: (declaration_body
+              (property
+                name: (property_name)
+                value: (boolean))))))))
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (procedure
+        (procedure_keyword)
+        name: (identifier)
+        return_type: (type_specification
+          (basic_type))
+        (var_section
+          (var_keyword)
+          body: (var_body
+            (variable_declaration
+              name: (identifier)
+              type: (type_specification
+                (record_type
+                  (record_keyword)
+                  reference: (identifier))))
+            (variable_declaration
+              name: (identifier)
+              type: (type_specification
+                (basic_type)))
+            (variable_declaration
+              name: (identifier)
+              type: (type_specification
+                (basic_type)))
+            (variable_declaration
+              name: (identifier)
+              type: (type_specification
+                (list_type
+                  (list_keyword)
+                  (of_keyword)
+                  element_type: (type_specification
+                    (basic_type)))))
+            (variable_declaration
+              name: (identifier)
+              type: (type_specification
+                (array_type
+                  (array_keyword)
+                  sizes: (integer)
+                  (of_keyword)
+                  element_type: (type_specification
+                    (basic_type)))))
+            (variable_declaration
+              name: (identifier)
+              type: (type_specification
+                (array_type
+                  (array_keyword)
+                  sizes: (integer)
+                  sizes: (integer)
+                  (of_keyword)
+                  element_type: (type_specification
+                    (basic_type)))))
+            (variable_declaration
+              name: (identifier)
+              type: (type_specification
+                (array_type
+                  (array_keyword)
+                  sizes: (integer)
+                  (of_keyword)
+                  element_type: (type_specification
+                    (record_type
+                      (record_keyword)
+                      reference: (identifier))))))))
+        body: (code_block
+          (begin_keyword)
+          body: (statement_block
+            (assignment_statement
+              left: (identifier)
+              operator: (assignment_operator)
+              right: (ternary_expression
+                condition: (identifier)
+                then_value: (integer)
+                (ERROR
+                  (UNEXPECTED 'i')
+                  (identifier))
+                else_value: (integer))))
+          (preproc_split_block_close_after_endif
+            (preproc_endif
+              (preproc_close))
+            (empty_statement)
+            (end_keyword))))
+      (procedure
+        (procedure_keyword)
+        name: (identifier)
+        body: (code_block
+          (begin_keyword)
+          (end_keyword)))
+      (procedure
+        (procedure_keyword)
+        name: (identifier)
+        parameters: (parameter_list
+          (parameter
+            name: (identifier)
+            type: (type_specification
+              (basic_type)))
+          (parameter
+            name: (identifier)
+            type: (type_specification
+              (basic_type))))
+        return_type: (type_specification
+          (basic_type))
+        body: (code_block
+          (begin_keyword)
+          body: (statement_block
+            (exit_statement
+              (exit_keyword)
+              return_value: (additive_expression
+                left: (identifier)
+                right: (identifier))))
+          (end_keyword))))))
+
+========================================================================
+B7a GAP: ternary / sep-only (3 cells, verdict of the representative GAP); the parser ERRORs on configurations alc accepts; representative occ:ternary_expression:0.3@ternary_expression#sep-only
+========================================================================
+table 50100 T
+{
+    fields
+    {
+        field(1; K; Code[20]) { }
+        field(2; N; Integer) { }
+        field(3; B; Boolean) { }
+        field(9; O; Option) { OptionMembers = A,B,C; }
+    }
+    keys
+    {
+        key(PK; K) { Clustered = true; }
+    }
+}
+codeunit 50101 P
+{
+    procedure Q(): Integer
+    var
+        R: Record T;
+        I: Integer;
+        Ok: Boolean;
+        L: List of [Integer];
+        Arr: array[3] of Integer;
+        Arr2: array[2, 2] of Integer;
+        Recs: array[2] of Record T;
+    begin
+I := Ok ? 
+1
+#if X
+:
+#else
+:
+#endif
+2
+;
+    end;
+
+    procedure Bar()
+    begin
+    end;
+
+    procedure Foo(A: Integer; B: Integer): Integer
+    begin
+        exit(A + B);
+    end;
+}
+------------------------------------------------------------------------
+
+(source_file
+  (table_declaration
+    (table_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (fields_section
+        (fields_keyword)
+        body: (fields_body
+          (field_declaration
+            (field_keyword)
+            id: (integer)
+            name: (identifier)
+            type: (type_specification
+              (code_type
+                (code_keyword)
+                length: (integer))))
+          (field_declaration
+            (field_keyword)
+            id: (integer)
+            name: (identifier)
+            type: (type_specification
+              (basic_type)))
+          (field_declaration
+            (field_keyword)
+            id: (integer)
+            name: (identifier)
+            type: (type_specification
+              (basic_type)))
+          (field_declaration
+            (field_keyword)
+            id: (integer)
+            name: (identifier)
+            type: (type_specification
+              (option_type
+                (option_keyword)))
+            body: (declaration_body
+              (property
+                name: (property_name)
+                value: (option_member_list
+                  (option_member
+                    (identifier))
+                  (option_member
+                    (identifier))
+                  (option_member
+                    (identifier))))))))
+      (keys_section
+        (keys_keyword)
+        body: (keys_body
+          (key_declaration
+            (key_keyword)
+            name: (identifier)
+            fields: (field_list
+              (identifier))
+            body: (declaration_body
+              (property
+                name: (property_name)
+                value: (boolean))))))))
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (procedure
+        (procedure_keyword)
+        name: (identifier)
+        return_type: (type_specification
+          (basic_type))
+        (var_section
+          (var_keyword)
+          body: (var_body
+            (variable_declaration
+              name: (identifier)
+              type: (type_specification
+                (record_type
+                  (record_keyword)
+                  reference: (identifier))))
+            (variable_declaration
+              name: (identifier)
+              type: (type_specification
+                (basic_type)))
+            (variable_declaration
+              name: (identifier)
+              type: (type_specification
+                (basic_type)))
+            (variable_declaration
+              name: (identifier)
+              type: (type_specification
+                (list_type
+                  (list_keyword)
+                  (of_keyword)
+                  element_type: (type_specification
+                    (basic_type)))))
+            (variable_declaration
+              name: (identifier)
+              type: (type_specification
+                (array_type
+                  (array_keyword)
+                  sizes: (integer)
+                  (of_keyword)
+                  element_type: (type_specification
+                    (basic_type)))))
+            (variable_declaration
+              name: (identifier)
+              type: (type_specification
+                (array_type
+                  (array_keyword)
+                  sizes: (integer)
+                  sizes: (integer)
+                  (of_keyword)
+                  element_type: (type_specification
+                    (basic_type)))))
+            (variable_declaration
+              name: (identifier)
+              type: (type_specification
+                (array_type
+                  (array_keyword)
+                  sizes: (integer)
+                  (of_keyword)
+                  element_type: (type_specification
+                    (record_type
+                      (record_keyword)
+                      reference: (identifier))))))))
+        body: (code_block
+          (begin_keyword)
+          body: (statement_block
+            (assignment_statement
+              left: (identifier)
+              operator: (assignment_operator)
+              right: (ternary_expression
+                condition: (identifier)
+                then_value: (integer)
+                (ERROR
+                  (UNEXPECTED 'i')
+                  (identifier)
+                  (preproc_else))
+                (ERROR
+                  (UNEXPECTED 'i'))
+                else_value: (integer))))
+          (end_keyword)))
+      (procedure
+        (procedure_keyword)
+        name: (identifier)
+        body: (code_block
+          (begin_keyword)
+          (end_keyword)))
+      (procedure
+        (procedure_keyword)
+        name: (identifier)
+        parameters: (parameter_list
+          (parameter
+            name: (identifier)
+            type: (type_specification
+              (basic_type)))
+          (parameter
+            name: (identifier)
+            type: (type_specification
+              (basic_type))))
+        return_type: (type_specification
+          (basic_type))
+        body: (code_block
+          (begin_keyword)
+          body: (statement_block
+            (exit_statement
+              (exit_keyword)
+              return_value: (additive_expression
+                left: (identifier)
+                right: (identifier))))
+          (end_keyword))))))
+
+========================================================================
+B7a GAP: ternary / signed (8 cells, verdict of the representative GAP); the parser ERRORs on configurations alc accepts; representative bnd:ternary_expression:else_value:end@ternary_expression#signed/arithmetic
+========================================================================
+table 50100 T
+{
+    fields
+    {
+        field(1; K; Code[20]) { }
+        field(2; N; Integer) { }
+        field(3; B; Boolean) { }
+        field(9; O; Option) { OptionMembers = A,B,C; }
+    }
+    keys
+    {
+        key(PK; K) { Clustered = true; }
+    }
+}
+codeunit 50101 P
+{
+    procedure Q(): Integer
+    var
+        R: Record T;
+        I: Integer;
+        Ok: Boolean;
+        L: List of [Integer];
+        Arr: array[3] of Integer;
+        Arr2: array[2, 2] of Integer;
+        Recs: array[2] of Record T;
+    begin
+I := Ok ? 1 : 
+2 +
+#if X
+-1
+#else
+2
+#endif
+;
+    end;
+
+    procedure Bar()
+    begin
+    end;
+
+    procedure Foo(A: Integer; B: Integer): Integer
+    begin
+        exit(A + B);
+    end;
+}
+------------------------------------------------------------------------
+
+(ERROR
+  (table_declaration
+    (table_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (fields_section
+        (fields_keyword)
+        body: (fields_body
+          (field_declaration
+            (field_keyword)
+            id: (integer)
+            name: (identifier)
+            type: (type_specification
+              (code_type
+                (code_keyword)
+                length: (integer))))
+          (field_declaration
+            (field_keyword)
+            id: (integer)
+            name: (identifier)
+            type: (type_specification
+              (basic_type)))
+          (field_declaration
+            (field_keyword)
+            id: (integer)
+            name: (identifier)
+            type: (type_specification
+              (basic_type)))
+          (field_declaration
+            (field_keyword)
+            id: (integer)
+            name: (identifier)
+            type: (type_specification
+              (option_type
+                (option_keyword)))
+            body: (declaration_body
+              (property
+                name: (property_name)
+                value: (option_member_list
+                  (option_member
+                    (identifier))
+                  (option_member
+                    (identifier))
+                  (option_member
+                    (identifier))))))))
+      (keys_section
+        (keys_keyword)
+        body: (keys_body
+          (key_declaration
+            (key_keyword)
+            name: (identifier)
+            fields: (field_list
+              (identifier))
+            body: (declaration_body
+              (property
+                name: (property_name)
+                value: (boolean))))))))
+  (codeunit_keyword)
+  (integer)
+  (identifier)
+  (procedure_keyword)
+  name: (identifier)
+  return_type: (type_specification
+    (basic_type))
+  (var_section
+    (var_keyword)
+    body: (var_body
+      (variable_declaration
+        name: (identifier)
+        type: (type_specification
+          (record_type
+            (record_keyword)
+            reference: (identifier))))
+      (variable_declaration
+        name: (identifier)
+        type: (type_specification
+          (basic_type)))
+      (variable_declaration
+        name: (identifier)
+        type: (type_specification
+          (basic_type)))
+      (variable_declaration
+        name: (identifier)
+        type: (type_specification
+          (list_type
+            (list_keyword)
+            (of_keyword)
+            element_type: (type_specification
+              (basic_type)))))
+      (variable_declaration
+        name: (identifier)
+        type: (type_specification
+          (array_type
+            (array_keyword)
+            sizes: (integer)
+            (of_keyword)
+            element_type: (type_specification
+              (basic_type)))))
+      (variable_declaration
+        name: (identifier)
+        type: (type_specification
+          (array_type
+            (array_keyword)
+            sizes: (integer)
+            sizes: (integer)
+            (of_keyword)
+            element_type: (type_specification
+              (basic_type)))))
+      (variable_declaration
+        name: (identifier)
+        type: (type_specification
+          (array_type
+            (array_keyword)
+            sizes: (integer)
+            (of_keyword)
+            element_type: (type_specification
+              (record_type
+                (record_keyword)
+                reference: (identifier))))))))
+  (begin_keyword)
+  (identifier)
+  (assignment_operator)
+  (identifier)
+  (integer)
+  (integer)
+  (preproc_if
+    (preproc_open)
+    condition: (identifier))
+  operand: (unary_expression
+    operand: (integer))
+  operator: (comparison_operator
+    (MISSING "="))
+  (preproc_else)
+  (ERROR
+    (integer)
+    (UNEXPECTED 'i')
+    (identifier)
+    (call_expression
+      function: (identifier)
+      arguments: (argument_list))
+    (identifier)
+    (identifier)
+    (call_expression
+      function: (identifier)
+      arguments: (argument_list
+        (ERROR
+          (identifier))
+        (identifier)
+        (ERROR)))
+    (identifier)
+    (call_expression
+      function: (identifier)
+      arguments: (argument_list
+        (additive_expression
+          left: (identifier)
+          right: (identifier)))))
+  (identifier))
+
+========================================================================
+B7a GAP: ternary / suffix (12 cells, verdict of the representative GAP); the parser ERRORs on configurations alc accepts; representative bnd:ternary_expression:condition:end@ternary_expression#suffix/comparison
+========================================================================
+table 50100 T
+{
+    fields
+    {
+        field(1; K; Code[20]) { }
+        field(2; N; Integer) { }
+        field(3; B; Boolean) { }
+        field(9; O; Option) { OptionMembers = A,B,C; }
+    }
+    keys
+    {
+        key(PK; K) { Clustered = true; }
+    }
+}
+codeunit 50101 P
+{
+    procedure Q(): Integer
+    var
+        R: Record T;
+        I: Integer;
+        Ok: Boolean;
+        L: List of [Integer];
+        Arr: array[3] of Integer;
+        Arr2: array[2, 2] of Integer;
+        Recs: array[2] of Record T;
+    begin
+I := 
+Ok
+#if X
+= true
+#endif
+ ? 1 : 2;
+    end;
+
+    procedure Bar()
+    begin
+    end;
+
+    procedure Foo(A: Integer; B: Integer): Integer
+    begin
+        exit(A + B);
+    end;
+}
+------------------------------------------------------------------------
+
+(source_file
+  (table_declaration
+    (table_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (fields_section
+        (fields_keyword)
+        body: (fields_body
+          (field_declaration
+            (field_keyword)
+            id: (integer)
+            name: (identifier)
+            type: (type_specification
+              (code_type
+                (code_keyword)
+                length: (integer))))
+          (field_declaration
+            (field_keyword)
+            id: (integer)
+            name: (identifier)
+            type: (type_specification
+              (basic_type)))
+          (field_declaration
+            (field_keyword)
+            id: (integer)
+            name: (identifier)
+            type: (type_specification
+              (basic_type)))
+          (field_declaration
+            (field_keyword)
+            id: (integer)
+            name: (identifier)
+            type: (type_specification
+              (option_type
+                (option_keyword)))
+            body: (declaration_body
+              (property
+                name: (property_name)
+                value: (option_member_list
+                  (option_member
+                    (identifier))
+                  (option_member
+                    (identifier))
+                  (option_member
+                    (identifier))))))))
+      (keys_section
+        (keys_keyword)
+        body: (keys_body
+          (key_declaration
+            (key_keyword)
+            name: (identifier)
+            fields: (field_list
+              (identifier))
+            body: (declaration_body
+              (property
+                name: (property_name)
+                value: (boolean))))))))
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (procedure
+        (procedure_keyword)
+        name: (identifier)
+        return_type: (type_specification
+          (basic_type))
+        (var_section
+          (var_keyword)
+          body: (var_body
+            (variable_declaration
+              name: (identifier)
+              type: (type_specification
+                (record_type
+                  (record_keyword)
+                  reference: (identifier))))
+            (variable_declaration
+              name: (identifier)
+              type: (type_specification
+                (basic_type)))
+            (variable_declaration
+              name: (identifier)
+              type: (type_specification
+                (basic_type)))
+            (variable_declaration
+              name: (identifier)
+              type: (type_specification
+                (list_type
+                  (list_keyword)
+                  (of_keyword)
+                  element_type: (type_specification
+                    (basic_type)))))
+            (variable_declaration
+              name: (identifier)
+              type: (type_specification
+                (array_type
+                  (array_keyword)
+                  sizes: (integer)
+                  (of_keyword)
+                  element_type: (type_specification
+                    (basic_type)))))
+            (variable_declaration
+              name: (identifier)
+              type: (type_specification
+                (array_type
+                  (array_keyword)
+                  sizes: (integer)
+                  sizes: (integer)
+                  (of_keyword)
+                  element_type: (type_specification
+                    (basic_type)))))
+            (variable_declaration
+              name: (identifier)
+              type: (type_specification
+                (array_type
+                  (array_keyword)
+                  sizes: (integer)
+                  (of_keyword)
+                  element_type: (type_specification
+                    (record_type
+                      (record_keyword)
+                      reference: (identifier))))))))
+        body: (code_block
+          (begin_keyword)
+          body: (statement_block
+            (assignment_statement
+              left: (identifier)
+              operator: (assignment_operator)
+              right: (identifier)
+              (preproc_conditional_expression_tail
+                (preproc_if
+                  (preproc_open)
+                  condition: (identifier))
+                operator: (comparison_operator)
+                operand: (boolean)
+                (preproc_endif
+                  (preproc_close))))
+            (ERROR
+              (ternary_expression
+                condition: (MISSING identifier)
+                then_value: (integer)
+                else_value: (integer)))
+            (empty_statement))
+          (end_keyword)))
+      (procedure
+        (procedure_keyword)
+        name: (identifier)
+        body: (code_block
+          (begin_keyword)
+          (end_keyword)))
+      (procedure
+        (procedure_keyword)
+        name: (identifier)
+        parameters: (parameter_list
+          (parameter
+            name: (identifier)
+            type: (type_specification
+              (basic_type)))
+          (parameter
+            name: (identifier)
+            type: (type_specification
+              (basic_type))))
+        return_type: (type_specification
+          (basic_type))
+        body: (code_block
+          (begin_keyword)
+          body: (statement_block
+            (exit_statement
+              (exit_keyword)
+              return_value: (additive_expression
+                left: (identifier)
+                right: (identifier))))
+          (end_keyword))))))
+
+========================================================================
+B7a GAP: ternary / suffix-else (10 cells, verdict of the representative GAP); the parser ERRORs on configurations alc accepts; representative bnd:ternary_expression:condition:end@ternary_expression#suffix-else/comparison
+========================================================================
+table 50100 T
+{
+    fields
+    {
+        field(1; K; Code[20]) { }
+        field(2; N; Integer) { }
+        field(3; B; Boolean) { }
+        field(9; O; Option) { OptionMembers = A,B,C; }
+    }
+    keys
+    {
+        key(PK; K) { Clustered = true; }
+    }
+}
+codeunit 50101 P
+{
+    procedure Q(): Integer
+    var
+        R: Record T;
+        I: Integer;
+        Ok: Boolean;
+        L: List of [Integer];
+        Arr: array[3] of Integer;
+        Arr2: array[2, 2] of Integer;
+        Recs: array[2] of Record T;
+    begin
+I := 
+Ok
+#if X
+= true
+#else
+<> false
+#endif
+ ? 1 : 2;
+    end;
+
+    procedure Bar()
+    begin
+    end;
+
+    procedure Foo(A: Integer; B: Integer): Integer
+    begin
+        exit(A + B);
+    end;
+}
+------------------------------------------------------------------------
+
+(source_file
+  (table_declaration
+    (table_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (fields_section
+        (fields_keyword)
+        body: (fields_body
+          (field_declaration
+            (field_keyword)
+            id: (integer)
+            name: (identifier)
+            type: (type_specification
+              (code_type
+                (code_keyword)
+                length: (integer))))
+          (field_declaration
+            (field_keyword)
+            id: (integer)
+            name: (identifier)
+            type: (type_specification
+              (basic_type)))
+          (field_declaration
+            (field_keyword)
+            id: (integer)
+            name: (identifier)
+            type: (type_specification
+              (basic_type)))
+          (field_declaration
+            (field_keyword)
+            id: (integer)
+            name: (identifier)
+            type: (type_specification
+              (option_type
+                (option_keyword)))
+            body: (declaration_body
+              (property
+                name: (property_name)
+                value: (option_member_list
+                  (option_member
+                    (identifier))
+                  (option_member
+                    (identifier))
+                  (option_member
+                    (identifier))))))))
+      (keys_section
+        (keys_keyword)
+        body: (keys_body
+          (key_declaration
+            (key_keyword)
+            name: (identifier)
+            fields: (field_list
+              (identifier))
+            body: (declaration_body
+              (property
+                name: (property_name)
+                value: (boolean))))))))
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (procedure
+        (procedure_keyword)
+        name: (identifier)
+        return_type: (type_specification
+          (basic_type))
+        (var_section
+          (var_keyword)
+          body: (var_body
+            (variable_declaration
+              name: (identifier)
+              type: (type_specification
+                (record_type
+                  (record_keyword)
+                  reference: (identifier))))
+            (variable_declaration
+              name: (identifier)
+              type: (type_specification
+                (basic_type)))
+            (variable_declaration
+              name: (identifier)
+              type: (type_specification
+                (basic_type)))
+            (variable_declaration
+              name: (identifier)
+              type: (type_specification
+                (list_type
+                  (list_keyword)
+                  (of_keyword)
+                  element_type: (type_specification
+                    (basic_type)))))
+            (variable_declaration
+              name: (identifier)
+              type: (type_specification
+                (array_type
+                  (array_keyword)
+                  sizes: (integer)
+                  (of_keyword)
+                  element_type: (type_specification
+                    (basic_type)))))
+            (variable_declaration
+              name: (identifier)
+              type: (type_specification
+                (array_type
+                  (array_keyword)
+                  sizes: (integer)
+                  sizes: (integer)
+                  (of_keyword)
+                  element_type: (type_specification
+                    (basic_type)))))
+            (variable_declaration
+              name: (identifier)
+              type: (type_specification
+                (array_type
+                  (array_keyword)
+                  sizes: (integer)
+                  (of_keyword)
+                  element_type: (type_specification
+                    (record_type
+                      (record_keyword)
+                      reference: (identifier))))))))
+        body: (code_block
+          (begin_keyword)
+          body: (statement_block
+            (assignment_statement
+              left: (identifier)
+              operator: (assignment_operator)
+              right: (identifier)
+              (preproc_conditional_expression_tail
+                (preproc_if
+                  (preproc_open)
+                  condition: (identifier))
+                operator: (comparison_operator)
+                operand: (boolean)
+                (preproc_else)
+                operator: (comparison_operator)
+                operand: (boolean)
+                (preproc_endif
+                  (preproc_close))))
+            (ERROR
+              (ternary_expression
+                condition: (MISSING identifier)
+                then_value: (integer)
+                else_value: (integer)))
+            (empty_statement))
+          (end_keyword)))
+      (procedure
+        (procedure_keyword)
+        name: (identifier)
+        body: (code_block
+          (begin_keyword)
+          (end_keyword)))
+      (procedure
+        (procedure_keyword)
+        name: (identifier)
+        parameters: (parameter_list
+          (parameter
+            name: (identifier)
+            type: (type_specification
+              (basic_type)))
+          (parameter
+            name: (identifier)
+            type: (type_specification
+              (basic_type))))
+        return_type: (type_specification
+          (basic_type))
+        body: (code_block
+          (begin_keyword)
+          body: (statement_block
+            (exit_statement
+              (exit_keyword)
+              return_value: (additive_expression
+                left: (identifier)
+                right: (identifier))))
+          (end_keyword))))))
+
+========================================================================
+B7a GAP: ternary / trail (3 cells, verdict of the representative MIXED); the parser ERRORs on configurations alc accepts; representative occ:ternary_expression:0.3@ternary_expression#trail
+========================================================================
+table 50100 T
+{
+    fields
+    {
+        field(1; K; Code[20]) { }
+        field(2; N; Integer) { }
+        field(3; B; Boolean) { }
+        field(9; O; Option) { OptionMembers = A,B,C; }
+    }
+    keys
+    {
+        key(PK; K) { Clustered = true; }
+    }
+}
+codeunit 50101 P
+{
+    procedure Q(): Integer
+    var
+        R: Record T;
+        I: Integer;
+        Ok: Boolean;
+        L: List of [Integer];
+        Arr: array[3] of Integer;
+        Arr2: array[2, 2] of Integer;
+        Recs: array[2] of Record T;
+    begin
+I := Ok ? 
+1 :
+#if X
+2
+#endif
+;
+    end;
+
+    procedure Bar()
+    begin
+    end;
+
+    procedure Foo(A: Integer; B: Integer): Integer
+    begin
+        exit(A + B);
+    end;
+}
+------------------------------------------------------------------------
+
+(source_file
+  (table_declaration
+    (table_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (fields_section
+        (fields_keyword)
+        body: (fields_body
+          (field_declaration
+            (field_keyword)
+            id: (integer)
+            name: (identifier)
+            type: (type_specification
+              (code_type
+                (code_keyword)
+                length: (integer))))
+          (field_declaration
+            (field_keyword)
+            id: (integer)
+            name: (identifier)
+            type: (type_specification
+              (basic_type)))
+          (field_declaration
+            (field_keyword)
+            id: (integer)
+            name: (identifier)
+            type: (type_specification
+              (basic_type)))
+          (field_declaration
+            (field_keyword)
+            id: (integer)
+            name: (identifier)
+            type: (type_specification
+              (option_type
+                (option_keyword)))
+            body: (declaration_body
+              (property
+                name: (property_name)
+                value: (option_member_list
+                  (option_member
+                    (identifier))
+                  (option_member
+                    (identifier))
+                  (option_member
+                    (identifier))))))))
+      (keys_section
+        (keys_keyword)
+        body: (keys_body
+          (key_declaration
+            (key_keyword)
+            name: (identifier)
+            fields: (field_list
+              (identifier))
+            body: (declaration_body
+              (property
+                name: (property_name)
+                value: (boolean))))))))
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (procedure
+        (procedure_keyword)
+        name: (identifier)
+        return_type: (type_specification
+          (basic_type))
+        (var_section
+          (var_keyword)
+          body: (var_body
+            (variable_declaration
+              name: (identifier)
+              type: (type_specification
+                (record_type
+                  (record_keyword)
+                  reference: (identifier))))
+            (variable_declaration
+              name: (identifier)
+              type: (type_specification
+                (basic_type)))
+            (variable_declaration
+              name: (identifier)
+              type: (type_specification
+                (basic_type)))
+            (variable_declaration
+              name: (identifier)
+              type: (type_specification
+                (list_type
+                  (list_keyword)
+                  (of_keyword)
+                  element_type: (type_specification
+                    (basic_type)))))
+            (variable_declaration
+              name: (identifier)
+              type: (type_specification
+                (array_type
+                  (array_keyword)
+                  sizes: (integer)
+                  (of_keyword)
+                  element_type: (type_specification
+                    (basic_type)))))
+            (variable_declaration
+              name: (identifier)
+              type: (type_specification
+                (array_type
+                  (array_keyword)
+                  sizes: (integer)
+                  sizes: (integer)
+                  (of_keyword)
+                  element_type: (type_specification
+                    (basic_type)))))
+            (variable_declaration
+              name: (identifier)
+              type: (type_specification
+                (array_type
+                  (array_keyword)
+                  sizes: (integer)
+                  (of_keyword)
+                  element_type: (type_specification
+                    (record_type
+                      (record_keyword)
+                      reference: (identifier))))))))
+        body: (code_block
+          (begin_keyword)
+          body: (statement_block
+            (assignment_statement
+              left: (identifier)
+              operator: (assignment_operator)
+              right: (ternary_expression
+                condition: (identifier)
+                then_value: (integer)
+                (ERROR
+                  (UNEXPECTED 'i'))
+                else_value: (identifier)))
+            (ERROR
+              (integer)
+              (UNEXPECTED 'i'))
+            (empty_statement))
+          (end_keyword)))
+      (procedure
+        (procedure_keyword)
+        name: (identifier)
+        body: (code_block
+          (begin_keyword)
+          (end_keyword)))
+      (procedure
+        (procedure_keyword)
+        name: (identifier)
+        parameters: (parameter_list
+          (parameter
+            name: (identifier)
+            type: (type_specification
+              (basic_type)))
+          (parameter
+            name: (identifier)
+            type: (type_specification
+              (basic_type))))
+        return_type: (type_specification
+          (basic_type))
+        body: (code_block
+          (begin_keyword)
+          body: (statement_block
+            (exit_statement
+              (exit_keyword)
+              return_value: (additive_expression
+                left: (identifier)
+                right: (identifier))))
+          (end_keyword))))))
+
+========================================================================
+B7a GAP: ternary / unary-minus (8 cells, verdict of the representative GAP); the parser ERRORs on configurations alc accepts; representative bnd:ternary_expression:else_value:end@ternary_expression#unary-minus/arithmetic
+========================================================================
+table 50100 T
+{
+    fields
+    {
+        field(1; K; Code[20]) { }
+        field(2; N; Integer) { }
+        field(3; B; Boolean) { }
+        field(9; O; Option) { OptionMembers = A,B,C; }
+    }
+    keys
+    {
+        key(PK; K) { Clustered = true; }
+    }
+}
+codeunit 50101 P
+{
+    procedure Q(): Integer
+    var
+        R: Record T;
+        I: Integer;
+        Ok: Boolean;
+        L: List of [Integer];
+        Arr: array[3] of Integer;
+        Arr2: array[2, 2] of Integer;
+        Recs: array[2] of Record T;
+    begin
+I := Ok ? 1 : 
+2 +
+#if X
+- 2
+#else
+3
+#endif
+;
+    end;
+
+    procedure Bar()
+    begin
+    end;
+
+    procedure Foo(A: Integer; B: Integer): Integer
+    begin
+        exit(A + B);
+    end;
+}
+------------------------------------------------------------------------
+
+(ERROR
+  (table_declaration
+    (table_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (fields_section
+        (fields_keyword)
+        body: (fields_body
+          (field_declaration
+            (field_keyword)
+            id: (integer)
+            name: (identifier)
+            type: (type_specification
+              (code_type
+                (code_keyword)
+                length: (integer))))
+          (field_declaration
+            (field_keyword)
+            id: (integer)
+            name: (identifier)
+            type: (type_specification
+              (basic_type)))
+          (field_declaration
+            (field_keyword)
+            id: (integer)
+            name: (identifier)
+            type: (type_specification
+              (basic_type)))
+          (field_declaration
+            (field_keyword)
+            id: (integer)
+            name: (identifier)
+            type: (type_specification
+              (option_type
+                (option_keyword)))
+            body: (declaration_body
+              (property
+                name: (property_name)
+                value: (option_member_list
+                  (option_member
+                    (identifier))
+                  (option_member
+                    (identifier))
+                  (option_member
+                    (identifier))))))))
+      (keys_section
+        (keys_keyword)
+        body: (keys_body
+          (key_declaration
+            (key_keyword)
+            name: (identifier)
+            fields: (field_list
+              (identifier))
+            body: (declaration_body
+              (property
+                name: (property_name)
+                value: (boolean))))))))
+  (codeunit_keyword)
+  (integer)
+  (identifier)
+  (procedure_keyword)
+  name: (identifier)
+  return_type: (type_specification
+    (basic_type))
+  (var_section
+    (var_keyword)
+    body: (var_body
+      (variable_declaration
+        name: (identifier)
+        type: (type_specification
+          (record_type
+            (record_keyword)
+            reference: (identifier))))
+      (variable_declaration
+        name: (identifier)
+        type: (type_specification
+          (basic_type)))
+      (variable_declaration
+        name: (identifier)
+        type: (type_specification
+          (basic_type)))
+      (variable_declaration
+        name: (identifier)
+        type: (type_specification
+          (list_type
+            (list_keyword)
+            (of_keyword)
+            element_type: (type_specification
+              (basic_type)))))
+      (variable_declaration
+        name: (identifier)
+        type: (type_specification
+          (array_type
+            (array_keyword)
+            sizes: (integer)
+            (of_keyword)
+            element_type: (type_specification
+              (basic_type)))))
+      (variable_declaration
+        name: (identifier)
+        type: (type_specification
+          (array_type
+            (array_keyword)
+            sizes: (integer)
+            sizes: (integer)
+            (of_keyword)
+            element_type: (type_specification
+              (basic_type)))))
+      (variable_declaration
+        name: (identifier)
+        type: (type_specification
+          (array_type
+            (array_keyword)
+            sizes: (integer)
+            (of_keyword)
+            element_type: (type_specification
+              (record_type
+                (record_keyword)
+                reference: (identifier))))))))
+  (begin_keyword)
+  (identifier)
+  (assignment_operator)
+  (identifier)
+  (integer)
+  (integer)
+  (preproc_if
+    (preproc_open)
+    condition: (identifier))
+  operand: (unary_expression
+    operand: (integer))
+  operator: (comparison_operator
+    (MISSING "="))
+  (preproc_else)
+  (ERROR
+    (integer)
+    (UNEXPECTED 'i')
+    (identifier)
+    (call_expression
+      function: (identifier)
+      arguments: (argument_list))
+    (identifier)
+    (identifier)
+    (call_expression
+      function: (identifier)
+      arguments: (argument_list
+        (ERROR
+          (identifier))
+        (identifier)
+        (ERROR)))
+    (identifier)
+    (call_expression
+      function: (identifier)
+      arguments: (argument_list
+        (additive_expression
+          left: (identifier)
+          right: (identifier)))))
+  (identifier))
+
+========================================================================
+B7a GAP: ternary / unary-not (6 cells, verdict of the representative GAP); the parser ERRORs on configurations alc accepts; representative bnd:ternary_expression:condition:end@ternary_expression#unary-not/comparison
+========================================================================
+table 50100 T
+{
+    fields
+    {
+        field(1; K; Code[20]) { }
+        field(2; N; Integer) { }
+        field(3; B; Boolean) { }
+        field(9; O; Option) { OptionMembers = A,B,C; }
+    }
+    keys
+    {
+        key(PK; K) { Clustered = true; }
+    }
+}
+codeunit 50101 P
+{
+    procedure Q(): Integer
+    var
+        R: Record T;
+        I: Integer;
+        Ok: Boolean;
+        L: List of [Integer];
+        Arr: array[3] of Integer;
+        Arr2: array[2, 2] of Integer;
+        Recs: array[2] of Record T;
+    begin
+I := 
+Ok =
+#if X
+not true
+#else
+false
+#endif
+ ? 1 : 2;
+    end;
+
+    procedure Bar()
+    begin
+    end;
+
+    procedure Foo(A: Integer; B: Integer): Integer
+    begin
+        exit(A + B);
+    end;
+}
+------------------------------------------------------------------------
+
+(source_file
+  (table_declaration
+    (table_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (fields_section
+        (fields_keyword)
+        body: (fields_body
+          (field_declaration
+            (field_keyword)
+            id: (integer)
+            name: (identifier)
+            type: (type_specification
+              (code_type
+                (code_keyword)
+                length: (integer))))
+          (field_declaration
+            (field_keyword)
+            id: (integer)
+            name: (identifier)
+            type: (type_specification
+              (basic_type)))
+          (field_declaration
+            (field_keyword)
+            id: (integer)
+            name: (identifier)
+            type: (type_specification
+              (basic_type)))
+          (field_declaration
+            (field_keyword)
+            id: (integer)
+            name: (identifier)
+            type: (type_specification
+              (option_type
+                (option_keyword)))
+            body: (declaration_body
+              (property
+                name: (property_name)
+                value: (option_member_list
+                  (option_member
+                    (identifier))
+                  (option_member
+                    (identifier))
+                  (option_member
+                    (identifier))))))))
+      (keys_section
+        (keys_keyword)
+        body: (keys_body
+          (key_declaration
+            (key_keyword)
+            name: (identifier)
+            fields: (field_list
+              (identifier))
+            body: (declaration_body
+              (property
+                name: (property_name)
+                value: (boolean))))))))
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    (ERROR
+      (procedure_keyword)
+      name: (identifier)
+      return_type: (type_specification
+        (basic_type))
+      (var_section
+        (var_keyword)
+        body: (var_body
+          (variable_declaration
+            name: (identifier)
+            type: (type_specification
+              (record_type
+                (record_keyword)
+                reference: (identifier))))
+          (variable_declaration
+            name: (identifier)
+            type: (type_specification
+              (basic_type)))
+          (variable_declaration
+            name: (identifier)
+            type: (type_specification
+              (basic_type)))
+          (variable_declaration
+            name: (identifier)
+            type: (type_specification
+              (list_type
+                (list_keyword)
+                (of_keyword)
+                element_type: (type_specification
+                  (basic_type)))))
+          (variable_declaration
+            name: (identifier)
+            type: (type_specification
+              (array_type
+                (array_keyword)
+                sizes: (integer)
+                (of_keyword)
+                element_type: (type_specification
+                  (basic_type)))))
+          (variable_declaration
+            name: (identifier)
+            type: (type_specification
+              (array_type
+                (array_keyword)
+                sizes: (integer)
+                sizes: (integer)
+                (of_keyword)
+                element_type: (type_specification
+                  (basic_type)))))
+          (variable_declaration
+            name: (identifier)
+            type: (type_specification
+              (array_type
+                (array_keyword)
+                sizes: (integer)
+                (of_keyword)
+                element_type: (type_specification
+                  (record_type
+                    (record_keyword)
+                    reference: (identifier))))))))
+      (begin_keyword)
+      (identifier)
+      (assignment_operator)
+      (identifier)
+      (comparison_operator)
+      (preproc_if
+        (preproc_open)
+        condition: (identifier))
+      operand: (unary_expression
+        operand: (boolean))
+      operator: (comparison_operator
+        (MISSING "="))
+      (preproc_else)
+      (additive_expression
+        left: (ternary_expression
+          condition: (boolean)
+          (ERROR
+            (UNEXPECTED 'i'))
+          then_value: (integer)
+          (ERROR
+            (integer)
+            (identifier)
+            (call_expression
+              function: (identifier)
+              arguments: (argument_list))
+            (identifier)
+            (identifier))
+          else_value: (call_expression
+            function: (identifier)
+            arguments: (argument_list
+              (ERROR
+                (identifier))
+              (identifier)
+              (ERROR))))
+        (ERROR
+          (identifier)
+          (identifier))
+        right: (identifier))
+      (identifier))))
+
+========================================================================
+B7a GAP: ternary / unary-paren (14 cells, verdict of the representative GAP); the parser ERRORs on configurations alc accepts; representative bnd:ternary_expression:condition:end@ternary_expression#unary-paren/comparison
+========================================================================
+table 50100 T
+{
+    fields
+    {
+        field(1; K; Code[20]) { }
+        field(2; N; Integer) { }
+        field(3; B; Boolean) { }
+        field(9; O; Option) { OptionMembers = A,B,C; }
+    }
+    keys
+    {
+        key(PK; K) { Clustered = true; }
+    }
+}
+codeunit 50101 P
+{
+    procedure Q(): Integer
+    var
+        R: Record T;
+        I: Integer;
+        Ok: Boolean;
+        L: List of [Integer];
+        Arr: array[3] of Integer;
+        Arr2: array[2, 2] of Integer;
+        Recs: array[2] of Record T;
+    begin
+I := 
+Ok =
+#if X
+( true = false )
+#else
+false
+#endif
+ ? 1 : 2;
+    end;
+
+    procedure Bar()
+    begin
+    end;
+
+    procedure Foo(A: Integer; B: Integer): Integer
+    begin
+        exit(A + B);
+    end;
+}
+------------------------------------------------------------------------
+
+(source_file
+  (table_declaration
+    (table_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (fields_section
+        (fields_keyword)
+        body: (fields_body
+          (field_declaration
+            (field_keyword)
+            id: (integer)
+            name: (identifier)
+            type: (type_specification
+              (code_type
+                (code_keyword)
+                length: (integer))))
+          (field_declaration
+            (field_keyword)
+            id: (integer)
+            name: (identifier)
+            type: (type_specification
+              (basic_type)))
+          (field_declaration
+            (field_keyword)
+            id: (integer)
+            name: (identifier)
+            type: (type_specification
+              (basic_type)))
+          (field_declaration
+            (field_keyword)
+            id: (integer)
+            name: (identifier)
+            type: (type_specification
+              (option_type
+                (option_keyword)))
+            body: (declaration_body
+              (property
+                name: (property_name)
+                value: (option_member_list
+                  (option_member
+                    (identifier))
+                  (option_member
+                    (identifier))
+                  (option_member
+                    (identifier))))))))
+      (keys_section
+        (keys_keyword)
+        body: (keys_body
+          (key_declaration
+            (key_keyword)
+            name: (identifier)
+            fields: (field_list
+              (identifier))
+            body: (declaration_body
+              (property
+                name: (property_name)
+                value: (boolean))))))))
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    (ERROR
+      (procedure_keyword)
+      name: (identifier)
+      return_type: (type_specification
+        (basic_type))
+      (var_section
+        (var_keyword)
+        body: (var_body
+          (variable_declaration
+            name: (identifier)
+            type: (type_specification
+              (record_type
+                (record_keyword)
+                reference: (identifier))))
+          (variable_declaration
+            name: (identifier)
+            type: (type_specification
+              (basic_type)))
+          (variable_declaration
+            name: (identifier)
+            type: (type_specification
+              (basic_type)))
+          (variable_declaration
+            name: (identifier)
+            type: (type_specification
+              (list_type
+                (list_keyword)
+                (of_keyword)
+                element_type: (type_specification
+                  (basic_type)))))
+          (variable_declaration
+            name: (identifier)
+            type: (type_specification
+              (array_type
+                (array_keyword)
+                sizes: (integer)
+                (of_keyword)
+                element_type: (type_specification
+                  (basic_type)))))
+          (variable_declaration
+            name: (identifier)
+            type: (type_specification
+              (array_type
+                (array_keyword)
+                sizes: (integer)
+                sizes: (integer)
+                (of_keyword)
+                element_type: (type_specification
+                  (basic_type)))))
+          (variable_declaration
+            name: (identifier)
+            type: (type_specification
+              (array_type
+                (array_keyword)
+                sizes: (integer)
+                (of_keyword)
+                element_type: (type_specification
+                  (record_type
+                    (record_keyword)
+                    reference: (identifier))))))))
+      (begin_keyword)
+      (identifier)
+      (assignment_operator)
+      (identifier)
+      (comparison_operator)
+      (preproc_if
+        (preproc_open)
+        condition: (identifier))
+      operand: (parenthesized_expression
+        (comparison_expression
+          left: (boolean)
+          operator: (comparison_operator)
+          right: (boolean)))
+      operator: (comparison_operator
+        (MISSING "="))
+      (preproc_else)
+      (additive_expression
+        left: (ternary_expression
+          condition: (boolean)
+          (ERROR
+            (UNEXPECTED 'i'))
+          then_value: (integer)
+          (ERROR
+            (integer)
+            (identifier)
+            (call_expression
+              function: (identifier)
+              arguments: (argument_list))
+            (identifier)
+            (identifier))
+          else_value: (call_expression
+            function: (identifier)
+            arguments: (argument_list
+              (ERROR
+                (identifier))
+              (identifier)
+              (ERROR))))
+        (ERROR
+          (identifier)
+          (identifier))
+        right: (identifier))
+      (identifier))))
+
+========================================================================
+B7a GAP: ternary / whole-operand (16 cells, verdict of the representative GAP); the parser ERRORs on configurations alc accepts; representative bnd:ternary_expression:condition:end@ternary_expression#whole-operand/comparison
+========================================================================
+table 50100 T
+{
+    fields
+    {
+        field(1; K; Code[20]) { }
+        field(2; N; Integer) { }
+        field(3; B; Boolean) { }
+        field(9; O; Option) { OptionMembers = A,B,C; }
+    }
+    keys
+    {
+        key(PK; K) { Clustered = true; }
+    }
+}
+codeunit 50101 P
+{
+    procedure Q(): Integer
+    var
+        R: Record T;
+        I: Integer;
+        Ok: Boolean;
+        L: List of [Integer];
+        Arr: array[3] of Integer;
+        Arr2: array[2, 2] of Integer;
+        Recs: array[2] of Record T;
+    begin
+I := 
+Ok =
+#if X
+true
+#else
+false
+#endif
+ ? 1 : 2;
+    end;
+
+    procedure Bar()
+    begin
+    end;
+
+    procedure Foo(A: Integer; B: Integer): Integer
+    begin
+        exit(A + B);
+    end;
+}
+------------------------------------------------------------------------
+
+(source_file
+  (table_declaration
+    (table_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (fields_section
+        (fields_keyword)
+        body: (fields_body
+          (field_declaration
+            (field_keyword)
+            id: (integer)
+            name: (identifier)
+            type: (type_specification
+              (code_type
+                (code_keyword)
+                length: (integer))))
+          (field_declaration
+            (field_keyword)
+            id: (integer)
+            name: (identifier)
+            type: (type_specification
+              (basic_type)))
+          (field_declaration
+            (field_keyword)
+            id: (integer)
+            name: (identifier)
+            type: (type_specification
+              (basic_type)))
+          (field_declaration
+            (field_keyword)
+            id: (integer)
+            name: (identifier)
+            type: (type_specification
+              (option_type
+                (option_keyword)))
+            body: (declaration_body
+              (property
+                name: (property_name)
+                value: (option_member_list
+                  (option_member
+                    (identifier))
+                  (option_member
+                    (identifier))
+                  (option_member
+                    (identifier))))))))
+      (keys_section
+        (keys_keyword)
+        body: (keys_body
+          (key_declaration
+            (key_keyword)
+            name: (identifier)
+            fields: (field_list
+              (identifier))
+            body: (declaration_body
+              (property
+                name: (property_name)
+                value: (boolean))))))))
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    (ERROR
+      (procedure_keyword)
+      name: (identifier)
+      return_type: (type_specification
+        (basic_type))
+      (var_section
+        (var_keyword)
+        body: (var_body
+          (variable_declaration
+            name: (identifier)
+            type: (type_specification
+              (record_type
+                (record_keyword)
+                reference: (identifier))))
+          (variable_declaration
+            name: (identifier)
+            type: (type_specification
+              (basic_type)))
+          (variable_declaration
+            name: (identifier)
+            type: (type_specification
+              (basic_type)))
+          (variable_declaration
+            name: (identifier)
+            type: (type_specification
+              (list_type
+                (list_keyword)
+                (of_keyword)
+                element_type: (type_specification
+                  (basic_type)))))
+          (variable_declaration
+            name: (identifier)
+            type: (type_specification
+              (array_type
+                (array_keyword)
+                sizes: (integer)
+                (of_keyword)
+                element_type: (type_specification
+                  (basic_type)))))
+          (variable_declaration
+            name: (identifier)
+            type: (type_specification
+              (array_type
+                (array_keyword)
+                sizes: (integer)
+                sizes: (integer)
+                (of_keyword)
+                element_type: (type_specification
+                  (basic_type)))))
+          (variable_declaration
+            name: (identifier)
+            type: (type_specification
+              (array_type
+                (array_keyword)
+                sizes: (integer)
+                (of_keyword)
+                element_type: (type_specification
+                  (record_type
+                    (record_keyword)
+                    reference: (identifier))))))))
+      (begin_keyword)
+      (identifier)
+      (assignment_operator)
+      (identifier)
+      (comparison_operator)
+      (preproc_if
+        (preproc_open)
+        condition: (identifier))
+      operand: (boolean)
+      operator: (comparison_operator
+        (MISSING "="))
+      (preproc_else)
+      (additive_expression
+        left: (ternary_expression
+          condition: (boolean)
+          (ERROR
+            (UNEXPECTED 'i'))
+          then_value: (integer)
+          (ERROR
+            (integer)
+            (identifier)
+            (call_expression
+              function: (identifier)
+              arguments: (argument_list))
+            (identifier)
+            (identifier))
+          else_value: (call_expression
+            function: (identifier)
+            arguments: (argument_list
+              (ERROR
+                (identifier))
+              (identifier)
+              (ERROR))))
+        (ERROR
+          (identifier)
+          (identifier))
+        right: (identifier))
+      (identifier))))

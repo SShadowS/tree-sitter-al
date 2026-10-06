@@ -1,0 +1,983 @@
+========================================================================
+B7a GAP: table-relation / adjacent-compl (30 cells, verdict of the representative GAP); the parser ERRORs on configurations alc accepts; representative occ:_table_relation_arm_t:0.3@declaration_body#adjacent-compl
+========================================================================
+table 50100 T
+{
+    fields
+    {
+        field(1; K; Code[20]) { }
+        field(2; N; Integer) { }
+        field(3; B; Boolean) { }
+        field(4; RK; Code[20])
+        {
+            TableRelation =
+#if TPL
+                
+T
+#if X
+;
+#endif
+#if not X
+;
+#endif
+
+#else
+                T.K;
+#endif
+        }
+        field(9; O; Option) { OptionMembers = A,B,C; }
+    }
+    keys
+    {
+        key(PK; K) { Clustered = true; }
+    }
+}
+------------------------------------------------------------------------
+
+(source_file
+  (table_declaration
+    (table_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (fields_section
+        (fields_keyword)
+        body: (fields_body
+          (field_declaration
+            (field_keyword)
+            id: (integer)
+            name: (identifier)
+            type: (type_specification
+              (code_type
+                (code_keyword)
+                length: (integer))))
+          (field_declaration
+            (field_keyword)
+            id: (integer)
+            name: (identifier)
+            type: (type_specification
+              (basic_type)))
+          (field_declaration
+            (field_keyword)
+            id: (integer)
+            name: (identifier)
+            type: (type_specification
+              (basic_type)))
+          (field_declaration
+            (field_keyword)
+            id: (integer)
+            name: (identifier)
+            type: (type_specification
+              (code_type
+                (code_keyword)
+                length: (integer)))
+            body: (declaration_body
+              (property
+                name: (property_name)
+                value: (preproc_conditional_property_value
+                  (preproc_if
+                    (preproc_open)
+                    condition: (identifier))
+                  value: (table_relation_value
+                    (table_relation_expression
+                      (simple_table_relation
+                        target: (qualified_name
+                          (identifier)))))
+                  (ERROR
+                    (preproc_if
+                      (preproc_open)
+                      condition: (identifier)))
+                  (preproc_endif
+                    (preproc_close))))
+              (preproc_conditional
+                (preproc_if
+                  (preproc_open)
+                  condition: (preproc_not_expression
+                    (identifier)))
+                (empty_statement)
+                (preproc_endif
+                  (preproc_close)))
+              (ERROR
+                (preproc_else)
+                (identifier)
+                (identifier))
+              (empty_statement))
+            (ERROR
+              (UNEXPECTED 'i')))
+          (field_declaration
+            (field_keyword)
+            id: (integer)
+            name: (identifier)
+            type: (type_specification
+              (option_type
+                (option_keyword)))
+            body: (declaration_body
+              (property
+                name: (property_name)
+                value: (option_member_list
+                  (option_member
+                    (identifier))
+                  (option_member
+                    (identifier))
+                  (option_member
+                    (identifier))))))))
+      (keys_section
+        (keys_keyword)
+        body: (keys_body
+          (key_declaration
+            (key_keyword)
+            name: (identifier)
+            fields: (field_list
+              (identifier))
+            body: (declaration_body
+              (property
+                name: (property_name)
+                value: (boolean)))))))))
+
+========================================================================
+B7a GAP: table-relation / elif (30 cells, verdict of the representative GAP); the parser ERRORs on configurations alc accepts; representative occ:_table_relation_arm_t:0.3@declaration_body#elif
+========================================================================
+table 50100 T
+{
+    fields
+    {
+        field(1; K; Code[20]) { }
+        field(2; N; Integer) { }
+        field(3; B; Boolean) { }
+        field(4; RK; Code[20])
+        {
+            TableRelation =
+#if TPL
+                
+T
+#if X
+;
+#elif Y
+;
+#else
+;
+#endif
+
+#else
+                T.K;
+#endif
+        }
+        field(9; O; Option) { OptionMembers = A,B,C; }
+    }
+    keys
+    {
+        key(PK; K) { Clustered = true; }
+    }
+}
+------------------------------------------------------------------------
+
+(source_file
+  (table_declaration
+    (table_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (fields_section
+        (fields_keyword)
+        body: (fields_body
+          (field_declaration
+            (field_keyword)
+            id: (integer)
+            name: (identifier)
+            type: (type_specification
+              (code_type
+                (code_keyword)
+                length: (integer))))
+          (field_declaration
+            (field_keyword)
+            id: (integer)
+            name: (identifier)
+            type: (type_specification
+              (basic_type)))
+          (field_declaration
+            (field_keyword)
+            id: (integer)
+            name: (identifier)
+            type: (type_specification
+              (basic_type)))
+          (field_declaration
+            (field_keyword)
+            id: (integer)
+            name: (identifier)
+            type: (type_specification
+              (code_type
+                (code_keyword)
+                length: (integer)))
+            body: (declaration_body
+              (property
+                name: (property_name)
+                value: (preproc_conditional_property_value
+                  (preproc_if
+                    (preproc_open)
+                    condition: (identifier))
+                  value: (table_relation_value
+                    (table_relation_expression
+                      (simple_table_relation
+                        target: (qualified_name
+                          (identifier))))
+                    (preproc_conditional_table_relation
+                      (preproc_if
+                        (preproc_open)
+                        condition: (identifier))
+                      (ERROR)
+                      (preproc_elif
+                        condition: (identifier))
+                      (ERROR)
+                      (preproc_else)
+                      (table_relation_expression
+                        (simple_table_relation
+                          target: (qualified_name
+                            (MISSING identifier))))
+                      (preproc_endif
+                        (preproc_close))))
+                  (preproc_else)
+                  value: (table_relation_value
+                    (table_relation_expression
+                      (simple_table_relation
+                        target: (qualified_name
+                          (identifier)
+                          (identifier)))))
+                  (preproc_endif
+                    (preproc_close)))
+                (MISSING ";"))))
+          (field_declaration
+            (field_keyword)
+            id: (integer)
+            name: (identifier)
+            type: (type_specification
+              (option_type
+                (option_keyword)))
+            body: (declaration_body
+              (property
+                name: (property_name)
+                value: (option_member_list
+                  (option_member
+                    (identifier))
+                  (option_member
+                    (identifier))
+                  (option_member
+                    (identifier))))))))
+      (keys_section
+        (keys_keyword)
+        body: (keys_body
+          (key_declaration
+            (key_keyword)
+            name: (identifier)
+            fields: (field_list
+              (identifier))
+            body: (declaration_body
+              (property
+                name: (property_name)
+                value: (boolean)))))))))
+
+========================================================================
+B7a GAP: table-relation / empty (3 cells, verdict of the representative GAP); the parser ERRORs on configurations alc accepts; representative occ:_table_relation_branch:1.0@preproc_conditional_table_relation#empty
+========================================================================
+table 50100 T
+{
+    fields
+    {
+        field(1; K; Code[20]) { }
+        field(2; N; Integer) { }
+        field(3; B; Boolean) { }
+        field(4; RK; Code[20])
+        {
+            TableRelation = if (B = const(true)) T else
+#if TPL
+                
+T.K
+#if X
+#endif
+;
+
+#else
+                T;
+#endif
+        }
+        field(9; O; Option) { OptionMembers = A,B,C; }
+    }
+    keys
+    {
+        key(PK; K) { Clustered = true; }
+    }
+}
+------------------------------------------------------------------------
+
+(source_file
+  (table_declaration
+    (table_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (fields_section
+        (fields_keyword)
+        body: (fields_body
+          (field_declaration
+            (field_keyword)
+            id: (integer)
+            name: (identifier)
+            type: (type_specification
+              (code_type
+                (code_keyword)
+                length: (integer))))
+          (field_declaration
+            (field_keyword)
+            id: (integer)
+            name: (identifier)
+            type: (type_specification
+              (basic_type)))
+          (field_declaration
+            (field_keyword)
+            id: (integer)
+            name: (identifier)
+            type: (type_specification
+              (basic_type)))
+          (field_declaration
+            (field_keyword)
+            id: (integer)
+            name: (identifier)
+            type: (type_specification
+              (code_type
+                (code_keyword)
+                length: (integer)))
+            body: (declaration_body
+              (property
+                name: (property_name)
+                value: (table_relation_value
+                  (table_relation_expression
+                    (if_table_relation
+                      (if_keyword)
+                      (where_conditions
+                        (where_condition
+                          field: (identifier)
+                          (const_keyword)
+                          value: (boolean)))
+                      then_relation: (simple_table_relation
+                        target: (qualified_name
+                          (identifier)))
+                      (else_keyword)
+                      else_relation: (table_relation_expression
+                        (preproc_conditional_table_relation
+                          (preproc_if
+                            (preproc_open)
+                            condition: (identifier))
+                          (ERROR
+                            (qualified_name
+                              (identifier)
+                              (identifier))
+                            (UNEXPECTED 'i'))
+                          (table_relation_expression
+                            (simple_table_relation
+                              target: (qualified_name
+                                (identifier))))
+                          (preproc_endif
+                            (preproc_close))))))))
+              (ERROR
+                (preproc_else)
+                (identifier))
+              (empty_statement))
+            (ERROR
+              (UNEXPECTED 'i')))
+          (field_declaration
+            (field_keyword)
+            id: (integer)
+            name: (identifier)
+            type: (type_specification
+              (option_type
+                (option_keyword)))
+            body: (declaration_body
+              (property
+                name: (property_name)
+                value: (option_member_list
+                  (option_member
+                    (identifier))
+                  (option_member
+                    (identifier))
+                  (option_member
+                    (identifier))))))))
+      (keys_section
+        (keys_keyword)
+        body: (keys_body
+          (key_declaration
+            (key_keyword)
+            name: (identifier)
+            fields: (field_list
+              (identifier))
+            body: (declaration_body
+              (property
+                name: (property_name)
+                value: (boolean)))))))))
+
+========================================================================
+B7a GAP: table-relation / nested (30 cells, verdict of the representative GAP); the parser ERRORs on configurations alc accepts; representative occ:_table_relation_arm_t:0.3@declaration_body#nested
+========================================================================
+table 50100 T
+{
+    fields
+    {
+        field(1; K; Code[20]) { }
+        field(2; N; Integer) { }
+        field(3; B; Boolean) { }
+        field(4; RK; Code[20])
+        {
+            TableRelation =
+#if TPL
+                
+T
+#if X
+#if Y
+;
+#else
+;
+#endif
+#else
+;
+#endif
+
+#else
+                T.K;
+#endif
+        }
+        field(9; O; Option) { OptionMembers = A,B,C; }
+    }
+    keys
+    {
+        key(PK; K) { Clustered = true; }
+    }
+}
+------------------------------------------------------------------------
+
+(source_file
+  (table_declaration
+    (table_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (fields_section
+        (fields_keyword)
+        body: (fields_body
+          (field_declaration
+            (field_keyword)
+            id: (integer)
+            name: (identifier)
+            type: (type_specification
+              (code_type
+                (code_keyword)
+                length: (integer))))
+          (field_declaration
+            (field_keyword)
+            id: (integer)
+            name: (identifier)
+            type: (type_specification
+              (basic_type)))
+          (field_declaration
+            (field_keyword)
+            id: (integer)
+            name: (identifier)
+            type: (type_specification
+              (basic_type)))
+          (field_declaration
+            (field_keyword)
+            id: (integer)
+            name: (identifier)
+            type: (type_specification
+              (code_type
+                (code_keyword)
+                length: (integer)))
+            body: (declaration_body
+              (property
+                name: (property_name)
+                value: (preproc_conditional_property_value
+                  (preproc_if
+                    (preproc_open)
+                    condition: (identifier))
+                  value: (table_relation_value
+                    (table_relation_expression
+                      (simple_table_relation
+                        target: (qualified_name
+                          (identifier))))
+                    (preproc_conditional_table_relation
+                      (preproc_if
+                        (preproc_open)
+                        condition: (identifier))
+                      (table_relation_expression
+                        (preproc_conditional_table_relation
+                          (preproc_if
+                            (preproc_open)
+                            condition: (identifier))
+                          (ERROR)
+                          (preproc_else)
+                          (table_relation_expression
+                            (simple_table_relation
+                              target: (qualified_name
+                                (MISSING identifier))))
+                          (preproc_endif
+                            (preproc_close))))
+                      (preproc_else)
+                      (table_relation_expression
+                        (simple_table_relation
+                          target: (qualified_name
+                            (MISSING identifier))))
+                      (preproc_endif
+                        (preproc_close))))
+                  (preproc_else)
+                  value: (table_relation_value
+                    (table_relation_expression
+                      (simple_table_relation
+                        target: (qualified_name
+                          (identifier)
+                          (identifier)))))
+                  (preproc_endif
+                    (preproc_close)))
+                (MISSING ";"))))
+          (field_declaration
+            (field_keyword)
+            id: (integer)
+            name: (identifier)
+            type: (type_specification
+              (option_type
+                (option_keyword)))
+            body: (declaration_body
+              (property
+                name: (property_name)
+                value: (option_member_list
+                  (option_member
+                    (identifier))
+                  (option_member
+                    (identifier))
+                  (option_member
+                    (identifier))))))))
+      (keys_section
+        (keys_keyword)
+        body: (keys_body
+          (key_declaration
+            (key_keyword)
+            name: (identifier)
+            fields: (field_list
+              (identifier))
+            body: (declaration_body
+              (property
+                name: (property_name)
+                value: (boolean)))))))))
+
+========================================================================
+B7a GAP: table-relation / seed:g11-item19-relation__neg_two_tables_after_else (1 cells, verdict of the representative MIXED); the parser ERRORs on configurations alc accepts; representative seed:g11-item19-relation__neg_two_tables_after_else
+========================================================================
+// host: table_relation_value
+// valid: !X
+// seed-source: tools/alc_probe/cases/g11-item19-relation/neg_two_tables_after_else.al (verdicts measured by alc, as recorded in its expect lines)
+// Negative control, active only with X defined.
+// expect: !X accept
+// expect: X reject(AL0104,AL0124)
+// source: commit 824fcf4 control (`else Resource Customer` REJECT, AL0104, AL0124): X defined
+// source: recorded by A2, 2026-09-29: X undefined (the arm is inactive, leaving a valid relation)
+table 50101 Item { fields { field(1; "No."; Code[20]) { } } }
+table 50102 Resource { fields { field(1; "No."; Code[20]) { } } }
+table 50103 Customer { fields { field(1; "No."; Code[20]) { } } }
+table 50100 T
+{
+    fields
+    {
+        field(1; Type; Option) { OptionMembers = Item, Resource; }
+        field(2; "No."; Code[20])
+        {
+            TableRelation = if (Type = const(Item)) Item
+#if X
+                else Resource Customer
+#endif
+                ;
+        }
+    }
+}
+------------------------------------------------------------------------
+
+(source_file
+  (comment)
+  (comment)
+  (comment)
+  (comment)
+  (comment)
+  (comment)
+  (comment)
+  (comment)
+  (table_declaration
+    (table_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (fields_section
+        (fields_keyword)
+        body: (fields_body
+          (field_declaration
+            (field_keyword)
+            id: (integer)
+            name: (quoted_identifier)
+            type: (type_specification
+              (code_type
+                (code_keyword)
+                length: (integer))))))))
+  (table_declaration
+    (table_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (fields_section
+        (fields_keyword)
+        body: (fields_body
+          (field_declaration
+            (field_keyword)
+            id: (integer)
+            name: (quoted_identifier)
+            type: (type_specification
+              (code_type
+                (code_keyword)
+                length: (integer))))))))
+  (table_declaration
+    (table_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (fields_section
+        (fields_keyword)
+        body: (fields_body
+          (field_declaration
+            (field_keyword)
+            id: (integer)
+            name: (quoted_identifier)
+            type: (type_specification
+              (code_type
+                (code_keyword)
+                length: (integer))))))))
+  (table_declaration
+    (table_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (fields_section
+        (fields_keyword)
+        body: (fields_body
+          (field_declaration
+            (field_keyword)
+            id: (integer)
+            name: (identifier)
+            type: (type_specification
+              (option_type
+                (option_keyword)))
+            body: (declaration_body
+              (property
+                name: (property_name)
+                value: (option_member_list
+                  (option_member
+                    (identifier))
+                  (option_member
+                    (identifier))))))
+          (field_declaration
+            (field_keyword)
+            id: (integer)
+            name: (quoted_identifier)
+            type: (type_specification
+              (code_type
+                (code_keyword)
+                length: (integer)))
+            body: (declaration_body
+              (property
+                name: (property_name)
+                value: (table_relation_value
+                  (table_relation_expression
+                    (if_table_relation
+                      (if_keyword)
+                      (where_conditions
+                        (where_condition
+                          field: (identifier)
+                          (const_keyword)
+                          value: (identifier)))
+                      then_relation: (simple_table_relation
+                        target: (qualified_name
+                          (identifier)))))
+                  (preproc_conditional_table_relation
+                    (preproc_if
+                      (preproc_open)
+                      condition: (identifier))
+                    (else_table_relation_fragment
+                      (else_keyword)
+                      (ERROR
+                        (identifier))
+                      else_relation: (table_relation_expression
+                        (simple_table_relation
+                          target: (qualified_name
+                            (identifier)))))
+                    (preproc_endif
+                      (preproc_close))))))))))))
+
+========================================================================
+B7a GAP: table-relation / sep-only (30 cells, verdict of the representative GAP); the parser ERRORs on configurations alc accepts; representative occ:_table_relation_arm_t:0.3@declaration_body#sep-only
+========================================================================
+table 50100 T
+{
+    fields
+    {
+        field(1; K; Code[20]) { }
+        field(2; N; Integer) { }
+        field(3; B; Boolean) { }
+        field(4; RK; Code[20])
+        {
+            TableRelation =
+#if TPL
+                
+T
+#if X
+;
+#else
+;
+#endif
+
+#else
+                T.K;
+#endif
+        }
+        field(9; O; Option) { OptionMembers = A,B,C; }
+    }
+    keys
+    {
+        key(PK; K) { Clustered = true; }
+    }
+}
+------------------------------------------------------------------------
+
+(source_file
+  (table_declaration
+    (table_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (fields_section
+        (fields_keyword)
+        body: (fields_body
+          (field_declaration
+            (field_keyword)
+            id: (integer)
+            name: (identifier)
+            type: (type_specification
+              (code_type
+                (code_keyword)
+                length: (integer))))
+          (field_declaration
+            (field_keyword)
+            id: (integer)
+            name: (identifier)
+            type: (type_specification
+              (basic_type)))
+          (field_declaration
+            (field_keyword)
+            id: (integer)
+            name: (identifier)
+            type: (type_specification
+              (basic_type)))
+          (field_declaration
+            (field_keyword)
+            id: (integer)
+            name: (identifier)
+            type: (type_specification
+              (code_type
+                (code_keyword)
+                length: (integer)))
+            body: (declaration_body
+              (property
+                name: (property_name)
+                value: (preproc_conditional_property_value
+                  (preproc_if
+                    (preproc_open)
+                    condition: (identifier))
+                  value: (table_relation_value
+                    (table_relation_expression
+                      (simple_table_relation
+                        target: (qualified_name
+                          (identifier))))
+                    (preproc_conditional_table_relation
+                      (preproc_if
+                        (preproc_open)
+                        condition: (identifier))
+                      (ERROR)
+                      (preproc_else)
+                      (table_relation_expression
+                        (simple_table_relation
+                          target: (qualified_name
+                            (MISSING identifier))))
+                      (preproc_endif
+                        (preproc_close))))
+                  (preproc_else)
+                  value: (table_relation_value
+                    (table_relation_expression
+                      (simple_table_relation
+                        target: (qualified_name
+                          (identifier)
+                          (identifier)))))
+                  (preproc_endif
+                    (preproc_close)))
+                (MISSING ";"))))
+          (field_declaration
+            (field_keyword)
+            id: (integer)
+            name: (identifier)
+            type: (type_specification
+              (option_type
+                (option_keyword)))
+            body: (declaration_body
+              (property
+                name: (property_name)
+                value: (option_member_list
+                  (option_member
+                    (identifier))
+                  (option_member
+                    (identifier))
+                  (option_member
+                    (identifier))))))))
+      (keys_section
+        (keys_keyword)
+        body: (keys_body
+          (key_declaration
+            (key_keyword)
+            name: (identifier)
+            fields: (field_list
+              (identifier))
+            body: (declaration_body
+              (property
+                name: (property_name)
+                value: (boolean)))))))))
+
+========================================================================
+B7a GAP: table-relation / trail (30 cells, verdict of the representative MIXED); the parser ERRORs on configurations alc accepts; representative occ:_table_relation_arm_t:0.3@declaration_body#trail
+========================================================================
+table 50100 T
+{
+    fields
+    {
+        field(1; K; Code[20]) { }
+        field(2; N; Integer) { }
+        field(3; B; Boolean) { }
+        field(4; RK; Code[20])
+        {
+            TableRelation =
+#if TPL
+                
+T
+#if X
+;
+#endif
+
+#else
+                T.K;
+#endif
+        }
+        field(9; O; Option) { OptionMembers = A,B,C; }
+    }
+    keys
+    {
+        key(PK; K) { Clustered = true; }
+    }
+}
+------------------------------------------------------------------------
+
+(source_file
+  (table_declaration
+    (table_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (fields_section
+        (fields_keyword)
+        body: (fields_body
+          (field_declaration
+            (field_keyword)
+            id: (integer)
+            name: (identifier)
+            type: (type_specification
+              (code_type
+                (code_keyword)
+                length: (integer))))
+          (field_declaration
+            (field_keyword)
+            id: (integer)
+            name: (identifier)
+            type: (type_specification
+              (basic_type)))
+          (field_declaration
+            (field_keyword)
+            id: (integer)
+            name: (identifier)
+            type: (type_specification
+              (basic_type)))
+          (field_declaration
+            (field_keyword)
+            id: (integer)
+            name: (identifier)
+            type: (type_specification
+              (code_type
+                (code_keyword)
+                length: (integer)))
+            body: (declaration_body
+              (property
+                name: (property_name)
+                value: (preproc_conditional_property_value
+                  (preproc_if
+                    (preproc_open)
+                    condition: (identifier))
+                  value: (table_relation_value
+                    (table_relation_expression
+                      (simple_table_relation
+                        target: (qualified_name
+                          (identifier))))
+                    (preproc_conditional_table_relation
+                      (preproc_if
+                        (preproc_open)
+                        condition: (identifier))
+                      (table_relation_expression
+                        (simple_table_relation
+                          target: (qualified_name
+                            (MISSING identifier))))
+                      (preproc_endif
+                        (preproc_close))))
+                  (preproc_else)
+                  value: (table_relation_value
+                    (table_relation_expression
+                      (simple_table_relation
+                        target: (qualified_name
+                          (identifier)
+                          (identifier)))))
+                  (preproc_endif
+                    (preproc_close)))
+                (MISSING ";"))))
+          (field_declaration
+            (field_keyword)
+            id: (integer)
+            name: (identifier)
+            type: (type_specification
+              (option_type
+                (option_keyword)))
+            body: (declaration_body
+              (property
+                name: (property_name)
+                value: (option_member_list
+                  (option_member
+                    (identifier))
+                  (option_member
+                    (identifier))
+                  (option_member
+                    (identifier))))))))
+      (keys_section
+        (keys_keyword)
+        body: (keys_body
+          (key_declaration
+            (key_keyword)
+            name: (identifier)
+            fields: (field_list
+              (identifier))
+            body: (declaration_body
+              (property
+                name: (property_name)
+                value: (boolean)))))))))

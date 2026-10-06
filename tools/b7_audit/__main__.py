@@ -1,6 +1,7 @@
 """python -m tools.b7_audit census [--check|--list]
    python -m tools.b7_audit report [--out PATH] [--evidence PATH]
-   python -m tools.b7_audit run [--only FAMILY|KEY|PLACEMENT] [--jobs N] [--check] [--accept-tool]"""
+   python -m tools.b7_audit run [--only FAMILY|KEY|PLACEMENT] [--jobs N] [--check] [--accept-tool]
+   python -m tools.b7_audit assert --cell ID"""
 import argparse
 import sys
 from pathlib import Path
@@ -38,6 +39,38 @@ def cmd_census(a):
     return 0
 
 
+def cmd_assert(cid):
+    """The split tree (corpus format, with fields), each configuration's flat text and the fingerprints
+    to paste into assertions.tsv (spec 7.3: the expect fragment is written by hand from these)."""
+    import hashlib
+    sys.path.insert(0, str(HERE.parent))
+    import snip
+    from tools.config_oracle import directives
+    from tools.query_coverage import loader
+    from . import evidence, judge, placements
+    e = next((x for x in evidence.universe() if x.cell.id == cid), None)
+    if e is None:
+        print(f"cannot run: no cell {cid!r}", file=sys.stderr)
+        return 2
+    src = e.cell.source.encode("utf-8")
+    parser = loader.make_parser(loader.load_language(loader.ensure_library(loader.REPO_ROOT)))
+    print("class\t" + "/".join(e.cls))
+    print("--- source")
+    print(e.cell.source)
+    for env in placements.assignments(e.cell.symbols):
+        flat = directives.resolve(src, env).masked.decode("utf-8")
+        print(f"--- flat {sorted(env)}")
+        print("\n".join(l for l in flat.splitlines() if l.strip()))
+    print("--- split tree")
+    print(snip.sexp(parser.parse(src)))
+    fp = judge.fingerprints(hashlib.sha256(src).hexdigest())
+    print("--- fingerprints (cell)")
+    print(",".join(fp))
+    print("--- fingerprints (class)")
+    print(",".join(("*",) + fp[1:]))
+    return 0
+
+
 def main(argv=None):
     p = argparse.ArgumentParser(prog="tools.b7_audit")
     sub = p.add_subparsers(dest="cmd", required=True)
@@ -50,6 +83,8 @@ def main(argv=None):
     r.add_argument("--jobs", type=int, default=6)
     r.add_argument("--check", action="store_true")
     r.add_argument("--accept-tool", action="store_true")
+    asr = sub.add_parser("assert", help="print what an assertion row needs: tree, flat readings, fingerprints")
+    asr.add_argument("--cell", required=True)
     rp = sub.add_parser("report")
     rp.add_argument("--out")
     rp.add_argument("--evidence")
@@ -62,6 +97,8 @@ def main(argv=None):
             print(f"cannot run: {e}", file=sys.stderr)
             return 2
         return 0
+    if a.cmd == "assert":
+        return cmd_assert(a.cell)
     if a.cmd == "run":
         from . import evidence
         try:

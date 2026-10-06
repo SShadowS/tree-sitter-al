@@ -1,0 +1,3696 @@
+========================================================================
+B7a GAP: sorting / adjacent-compl (18 cells, verdict of the representative GAP); the parser ERRORs on configurations alc accepts; representative occ:sorting_value:0.0.3.0.0@action_body#adjacent-compl
+========================================================================
+table 50100 T
+{
+    fields
+    {
+        field(1; K; Code[20]) { }
+        field(2; N; Integer) { }
+        field(3; B; Boolean) { }
+        field(9; O; Option) { OptionMembers = A,B,C; }
+    }
+    keys
+    {
+        key(PK; K) { Clustered = true; }
+    }
+}
+page 50102 PG
+{
+    SourceTable = T;
+    layout
+    {
+        area(Content)
+        {
+            field(N; Rec.N) { }
+        }
+    }
+    actions
+    {
+        area(Processing)
+        {
+            action(A1)
+            {
+                RunObject = page PG;
+                RunPageView =
+#if TPL
+                    sorting(
+K
+#if X
+, N
+#endif
+#if not X
+, "B"
+#endif
+);
+#else
+                    sorting(K);
+#endif
+                trigger OnAction()
+                begin
+                end;
+            }
+        }
+    }
+    var
+        I: Integer;
+        Ok: Boolean;
+}
+------------------------------------------------------------------------
+
+(source_file
+  (table_declaration
+    (table_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (fields_section
+        (fields_keyword)
+        body: (fields_body
+          (field_declaration
+            (field_keyword)
+            id: (integer)
+            name: (identifier)
+            type: (type_specification
+              (code_type
+                (code_keyword)
+                length: (integer))))
+          (field_declaration
+            (field_keyword)
+            id: (integer)
+            name: (identifier)
+            type: (type_specification
+              (basic_type)))
+          (field_declaration
+            (field_keyword)
+            id: (integer)
+            name: (identifier)
+            type: (type_specification
+              (basic_type)))
+          (field_declaration
+            (field_keyword)
+            id: (integer)
+            name: (identifier)
+            type: (type_specification
+              (option_type
+                (option_keyword)))
+            body: (declaration_body
+              (property
+                name: (property_name)
+                value: (option_member_list
+                  (option_member
+                    (identifier))
+                  (option_member
+                    (identifier))
+                  (option_member
+                    (identifier))))))))
+      (keys_section
+        (keys_keyword)
+        body: (keys_body
+          (key_declaration
+            (key_keyword)
+            name: (identifier)
+            fields: (field_list
+              (identifier))
+            body: (declaration_body
+              (property
+                name: (property_name)
+                value: (boolean))))))))
+  (page_declaration
+    (page_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (property
+        name: (property_name)
+        value: (identifier))
+      (layout_section
+        (layout_keyword)
+        body: (layout_body
+          (area_section
+            (area_keyword)
+            type: (content_keyword)
+            body: (layout_body
+              (page_field
+                (field_keyword)
+                name: (identifier)
+                source: (member_expression
+                  object: (identifier)
+                  member: (identifier)))))))
+      (actions_section
+        (actions_keyword)
+        body: (action_body
+          (action_area_section
+            (area_keyword)
+            type: (processing_keyword)
+            body: (action_body
+              (action_declaration
+                (action_keyword)
+                name: (identifier)
+                body: (declaration_body
+                  (property
+                    name: (property_name)
+                    value: (object_reference_value
+                      (page_keyword)
+                      (identifier)))
+                  (property
+                    name: (property_name)
+                    value: (preproc_conditional_property_value
+                      (preproc_if
+                        (preproc_open)
+                        condition: (identifier))
+                      value: (sorting_value
+                        (sorting_keyword)
+                        (identifier)
+                        (ERROR
+                          (UNEXPECTED 'i')
+                          (identifier))
+                        (identifier)
+                        (ERROR
+                          (UNEXPECTED 'i')
+                          (UNEXPECTED 'i')
+                          (identifier))
+                        (quoted_identifier)
+                        (ERROR
+                          (UNEXPECTED 'i')))
+                      (preproc_else)
+                      value: (sorting_value
+                        (sorting_keyword)
+                        (identifier))
+                      (preproc_endif
+                        (preproc_close))))
+                  (trigger_declaration
+                    (trigger_keyword)
+                    name: (identifier)
+                    body: (code_block
+                      (begin_keyword)
+                      (end_keyword)))))))))
+      (var_section
+        (var_keyword)
+        body: (var_body
+          (variable_declaration
+            name: (identifier)
+            type: (type_specification
+              (basic_type)))
+          (variable_declaration
+            name: (identifier)
+            type: (type_specification
+              (basic_type))))))))
+
+========================================================================
+B7a GAP: sorting / adjacent-indep (18 cells, verdict of the representative GAP); the parser ERRORs on configurations alc accepts; representative occ:sorting_value:0.0.3.0.0@action_body#adjacent-indep
+========================================================================
+table 50100 T
+{
+    fields
+    {
+        field(1; K; Code[20]) { }
+        field(2; N; Integer) { }
+        field(3; B; Boolean) { }
+        field(9; O; Option) { OptionMembers = A,B,C; }
+    }
+    keys
+    {
+        key(PK; K) { Clustered = true; }
+    }
+}
+page 50102 PG
+{
+    SourceTable = T;
+    layout
+    {
+        area(Content)
+        {
+            field(N; Rec.N) { }
+        }
+    }
+    actions
+    {
+        area(Processing)
+        {
+            action(A1)
+            {
+                RunObject = page PG;
+                RunPageView =
+#if TPL
+                    sorting(
+K
+#if X
+, N
+#endif
+#if Y
+, "B"
+#endif
+);
+#else
+                    sorting(K);
+#endif
+                trigger OnAction()
+                begin
+                end;
+            }
+        }
+    }
+    var
+        I: Integer;
+        Ok: Boolean;
+}
+------------------------------------------------------------------------
+
+(source_file
+  (table_declaration
+    (table_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (fields_section
+        (fields_keyword)
+        body: (fields_body
+          (field_declaration
+            (field_keyword)
+            id: (integer)
+            name: (identifier)
+            type: (type_specification
+              (code_type
+                (code_keyword)
+                length: (integer))))
+          (field_declaration
+            (field_keyword)
+            id: (integer)
+            name: (identifier)
+            type: (type_specification
+              (basic_type)))
+          (field_declaration
+            (field_keyword)
+            id: (integer)
+            name: (identifier)
+            type: (type_specification
+              (basic_type)))
+          (field_declaration
+            (field_keyword)
+            id: (integer)
+            name: (identifier)
+            type: (type_specification
+              (option_type
+                (option_keyword)))
+            body: (declaration_body
+              (property
+                name: (property_name)
+                value: (option_member_list
+                  (option_member
+                    (identifier))
+                  (option_member
+                    (identifier))
+                  (option_member
+                    (identifier))))))))
+      (keys_section
+        (keys_keyword)
+        body: (keys_body
+          (key_declaration
+            (key_keyword)
+            name: (identifier)
+            fields: (field_list
+              (identifier))
+            body: (declaration_body
+              (property
+                name: (property_name)
+                value: (boolean))))))))
+  (page_declaration
+    (page_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (property
+        name: (property_name)
+        value: (identifier))
+      (layout_section
+        (layout_keyword)
+        body: (layout_body
+          (area_section
+            (area_keyword)
+            type: (content_keyword)
+            body: (layout_body
+              (page_field
+                (field_keyword)
+                name: (identifier)
+                source: (member_expression
+                  object: (identifier)
+                  member: (identifier)))))))
+      (actions_section
+        (actions_keyword)
+        body: (action_body
+          (action_area_section
+            (area_keyword)
+            type: (processing_keyword)
+            body: (action_body
+              (action_declaration
+                (action_keyword)
+                name: (identifier)
+                body: (declaration_body
+                  (property
+                    name: (property_name)
+                    value: (object_reference_value
+                      (page_keyword)
+                      (identifier)))
+                  (property
+                    name: (property_name)
+                    value: (preproc_conditional_property_value
+                      (preproc_if
+                        (preproc_open)
+                        condition: (identifier))
+                      value: (sorting_value
+                        (sorting_keyword)
+                        (identifier)
+                        (ERROR
+                          (UNEXPECTED 'i')
+                          (identifier))
+                        (identifier)
+                        (ERROR
+                          (UNEXPECTED 'i')
+                          (UNEXPECTED 'i')
+                          (identifier))
+                        (quoted_identifier)
+                        (ERROR
+                          (UNEXPECTED 'i')))
+                      (preproc_else)
+                      value: (sorting_value
+                        (sorting_keyword)
+                        (identifier))
+                      (preproc_endif
+                        (preproc_close))))
+                  (trigger_declaration
+                    (trigger_keyword)
+                    name: (identifier)
+                    body: (code_block
+                      (begin_keyword)
+                      (end_keyword)))))))))
+      (var_section
+        (var_keyword)
+        body: (var_body
+          (variable_declaration
+            name: (identifier)
+            type: (type_specification
+              (basic_type)))
+          (variable_declaration
+            name: (identifier)
+            type: (type_specification
+              (basic_type))))))))
+
+========================================================================
+B7a GAP: sorting / both-in-arm (18 cells, verdict of the representative GAP); the parser ERRORs on configurations alc accepts; representative occ:sorting_value:0.0.3.0.0@action_body#both-in-arm
+========================================================================
+table 50100 T
+{
+    fields
+    {
+        field(1; K; Code[20]) { }
+        field(2; N; Integer) { }
+        field(3; B; Boolean) { }
+        field(9; O; Option) { OptionMembers = A,B,C; }
+    }
+    keys
+    {
+        key(PK; K) { Clustered = true; }
+    }
+}
+page 50102 PG
+{
+    SourceTable = T;
+    layout
+    {
+        area(Content)
+        {
+            field(N; Rec.N) { }
+        }
+    }
+    actions
+    {
+        area(Processing)
+        {
+            action(A1)
+            {
+                RunObject = page PG;
+                RunPageView =
+#if TPL
+                    sorting(
+K
+#if X
+, N ,
+#else
+,
+#endif
+"B"
+);
+#else
+                    sorting(K);
+#endif
+                trigger OnAction()
+                begin
+                end;
+            }
+        }
+    }
+    var
+        I: Integer;
+        Ok: Boolean;
+}
+------------------------------------------------------------------------
+
+(source_file
+  (table_declaration
+    (table_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (fields_section
+        (fields_keyword)
+        body: (fields_body
+          (field_declaration
+            (field_keyword)
+            id: (integer)
+            name: (identifier)
+            type: (type_specification
+              (code_type
+                (code_keyword)
+                length: (integer))))
+          (field_declaration
+            (field_keyword)
+            id: (integer)
+            name: (identifier)
+            type: (type_specification
+              (basic_type)))
+          (field_declaration
+            (field_keyword)
+            id: (integer)
+            name: (identifier)
+            type: (type_specification
+              (basic_type)))
+          (field_declaration
+            (field_keyword)
+            id: (integer)
+            name: (identifier)
+            type: (type_specification
+              (option_type
+                (option_keyword)))
+            body: (declaration_body
+              (property
+                name: (property_name)
+                value: (option_member_list
+                  (option_member
+                    (identifier))
+                  (option_member
+                    (identifier))
+                  (option_member
+                    (identifier))))))))
+      (keys_section
+        (keys_keyword)
+        body: (keys_body
+          (key_declaration
+            (key_keyword)
+            name: (identifier)
+            fields: (field_list
+              (identifier))
+            body: (declaration_body
+              (property
+                name: (property_name)
+                value: (boolean))))))))
+  (page_declaration
+    (page_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (property
+        name: (property_name)
+        value: (identifier))
+      (layout_section
+        (layout_keyword)
+        body: (layout_body
+          (area_section
+            (area_keyword)
+            type: (content_keyword)
+            body: (layout_body
+              (page_field
+                (field_keyword)
+                name: (identifier)
+                source: (member_expression
+                  object: (identifier)
+                  member: (identifier)))))))
+      (actions_section
+        (actions_keyword)
+        body: (action_body
+          (action_area_section
+            (area_keyword)
+            type: (processing_keyword)
+            body: (action_body
+              (action_declaration
+                (action_keyword)
+                name: (identifier)
+                body: (declaration_body
+                  (property
+                    name: (property_name)
+                    value: (object_reference_value
+                      (page_keyword)
+                      (identifier)))
+                  (property
+                    name: (property_name)
+                    value: (preproc_conditional_property_value
+                      (preproc_if
+                        (preproc_open)
+                        condition: (identifier))
+                      value: (sorting_value
+                        (sorting_keyword)
+                        (identifier)
+                        (ERROR
+                          (UNEXPECTED 'i')
+                          (identifier))
+                        (identifier)
+                        (ERROR
+                          (preproc_else)
+                          (UNEXPECTED 'i'))
+                        (quoted_identifier))
+                      (preproc_else)
+                      value: (sorting_value
+                        (sorting_keyword)
+                        (identifier))
+                      (preproc_endif
+                        (preproc_close))))
+                  (trigger_declaration
+                    (trigger_keyword)
+                    name: (identifier)
+                    body: (code_block
+                      (begin_keyword)
+                      (end_keyword)))))))))
+      (var_section
+        (var_keyword)
+        body: (var_body
+          (variable_declaration
+            name: (identifier)
+            type: (type_specification
+              (basic_type)))
+          (variable_declaration
+            name: (identifier)
+            type: (type_specification
+              (basic_type))))))))
+
+========================================================================
+B7a GAP: sorting / count-differs (18 cells, verdict of the representative GAP); the parser ERRORs on configurations alc accepts; representative occ:sorting_value:0.0.3.0.0@action_body#count-differs
+========================================================================
+table 50100 T
+{
+    fields
+    {
+        field(1; K; Code[20]) { }
+        field(2; N; Integer) { }
+        field(3; B; Boolean) { }
+        field(9; O; Option) { OptionMembers = A,B,C; }
+    }
+    keys
+    {
+        key(PK; K) { Clustered = true; }
+    }
+}
+page 50102 PG
+{
+    SourceTable = T;
+    layout
+    {
+        area(Content)
+        {
+            field(N; Rec.N) { }
+        }
+    }
+    actions
+    {
+        area(Processing)
+        {
+            action(A1)
+            {
+                RunObject = page PG;
+                RunPageView =
+#if TPL
+                    sorting(
+K
+#if X
+, N , "B"
+#else
+, "O"
+#endif
+);
+#else
+                    sorting(K);
+#endif
+                trigger OnAction()
+                begin
+                end;
+            }
+        }
+    }
+    var
+        I: Integer;
+        Ok: Boolean;
+}
+------------------------------------------------------------------------
+
+(source_file
+  (table_declaration
+    (table_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (fields_section
+        (fields_keyword)
+        body: (fields_body
+          (field_declaration
+            (field_keyword)
+            id: (integer)
+            name: (identifier)
+            type: (type_specification
+              (code_type
+                (code_keyword)
+                length: (integer))))
+          (field_declaration
+            (field_keyword)
+            id: (integer)
+            name: (identifier)
+            type: (type_specification
+              (basic_type)))
+          (field_declaration
+            (field_keyword)
+            id: (integer)
+            name: (identifier)
+            type: (type_specification
+              (basic_type)))
+          (field_declaration
+            (field_keyword)
+            id: (integer)
+            name: (identifier)
+            type: (type_specification
+              (option_type
+                (option_keyword)))
+            body: (declaration_body
+              (property
+                name: (property_name)
+                value: (option_member_list
+                  (option_member
+                    (identifier))
+                  (option_member
+                    (identifier))
+                  (option_member
+                    (identifier))))))))
+      (keys_section
+        (keys_keyword)
+        body: (keys_body
+          (key_declaration
+            (key_keyword)
+            name: (identifier)
+            fields: (field_list
+              (identifier))
+            body: (declaration_body
+              (property
+                name: (property_name)
+                value: (boolean))))))))
+  (page_declaration
+    (page_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (property
+        name: (property_name)
+        value: (identifier))
+      (layout_section
+        (layout_keyword)
+        body: (layout_body
+          (area_section
+            (area_keyword)
+            type: (content_keyword)
+            body: (layout_body
+              (page_field
+                (field_keyword)
+                name: (identifier)
+                source: (member_expression
+                  object: (identifier)
+                  member: (identifier)))))))
+      (actions_section
+        (actions_keyword)
+        body: (action_body
+          (action_area_section
+            (area_keyword)
+            type: (processing_keyword)
+            body: (action_body
+              (action_declaration
+                (action_keyword)
+                name: (identifier)
+                body: (declaration_body
+                  (property
+                    name: (property_name)
+                    value: (object_reference_value
+                      (page_keyword)
+                      (identifier)))
+                  (property
+                    name: (property_name)
+                    value: (preproc_conditional_property_value
+                      (preproc_if
+                        (preproc_open)
+                        condition: (identifier))
+                      value: (sorting_value
+                        (sorting_keyword)
+                        (identifier)
+                        (ERROR
+                          (UNEXPECTED 'i')
+                          (identifier))
+                        (identifier)
+                        (quoted_identifier)
+                        (MISSING ")"))
+                      (preproc_else)
+                      value: (option_member_list
+                        (option_member
+                          (quoted_identifier)))
+                      (preproc_endif
+                        (preproc_close)))
+                    (ERROR))
+                  (ERROR
+                    (preproc_else)
+                    (identifier))
+                  (empty_statement)
+                  (ERROR
+                    (UNEXPECTED 'i'))
+                  (trigger_declaration
+                    (trigger_keyword)
+                    name: (identifier)
+                    body: (code_block
+                      (begin_keyword)
+                      (end_keyword)))))))))
+      (var_section
+        (var_keyword)
+        body: (var_body
+          (variable_declaration
+            name: (identifier)
+            type: (type_specification
+              (basic_type)))
+          (variable_declaration
+            name: (identifier)
+            type: (type_specification
+              (basic_type))))))))
+
+========================================================================
+B7a GAP: sorting / elif (18 cells, verdict of the representative GAP); the parser ERRORs on configurations alc accepts; representative occ:sorting_value:0.0.3.0.0@action_body#elif
+========================================================================
+table 50100 T
+{
+    fields
+    {
+        field(1; K; Code[20]) { }
+        field(2; N; Integer) { }
+        field(3; B; Boolean) { }
+        field(9; O; Option) { OptionMembers = A,B,C; }
+    }
+    keys
+    {
+        key(PK; K) { Clustered = true; }
+    }
+}
+page 50102 PG
+{
+    SourceTable = T;
+    layout
+    {
+        area(Content)
+        {
+            field(N; Rec.N) { }
+        }
+    }
+    actions
+    {
+        area(Processing)
+        {
+            action(A1)
+            {
+                RunObject = page PG;
+                RunPageView =
+#if TPL
+                    sorting(
+K
+#if X
+, N
+#elif Y
+, "B"
+#endif
+, "O"
+);
+#else
+                    sorting(K);
+#endif
+                trigger OnAction()
+                begin
+                end;
+            }
+        }
+    }
+    var
+        I: Integer;
+        Ok: Boolean;
+}
+------------------------------------------------------------------------
+
+(source_file
+  (table_declaration
+    (table_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (fields_section
+        (fields_keyword)
+        body: (fields_body
+          (field_declaration
+            (field_keyword)
+            id: (integer)
+            name: (identifier)
+            type: (type_specification
+              (code_type
+                (code_keyword)
+                length: (integer))))
+          (field_declaration
+            (field_keyword)
+            id: (integer)
+            name: (identifier)
+            type: (type_specification
+              (basic_type)))
+          (field_declaration
+            (field_keyword)
+            id: (integer)
+            name: (identifier)
+            type: (type_specification
+              (basic_type)))
+          (field_declaration
+            (field_keyword)
+            id: (integer)
+            name: (identifier)
+            type: (type_specification
+              (option_type
+                (option_keyword)))
+            body: (declaration_body
+              (property
+                name: (property_name)
+                value: (option_member_list
+                  (option_member
+                    (identifier))
+                  (option_member
+                    (identifier))
+                  (option_member
+                    (identifier))))))))
+      (keys_section
+        (keys_keyword)
+        body: (keys_body
+          (key_declaration
+            (key_keyword)
+            name: (identifier)
+            fields: (field_list
+              (identifier))
+            body: (declaration_body
+              (property
+                name: (property_name)
+                value: (boolean))))))))
+  (page_declaration
+    (page_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (property
+        name: (property_name)
+        value: (identifier))
+      (layout_section
+        (layout_keyword)
+        body: (layout_body
+          (area_section
+            (area_keyword)
+            type: (content_keyword)
+            body: (layout_body
+              (page_field
+                (field_keyword)
+                name: (identifier)
+                source: (member_expression
+                  object: (identifier)
+                  member: (identifier)))))))
+      (actions_section
+        (actions_keyword)
+        body: (action_body
+          (action_area_section
+            (area_keyword)
+            type: (processing_keyword)
+            body: (action_body
+              (action_declaration
+                (action_keyword)
+                name: (identifier)
+                body: (declaration_body
+                  (property
+                    name: (property_name)
+                    value: (object_reference_value
+                      (page_keyword)
+                      (identifier)))
+                  (property
+                    name: (property_name)
+                    value: (preproc_conditional_property_value
+                      (preproc_if
+                        (preproc_open)
+                        condition: (identifier))
+                      value: (sorting_value
+                        (sorting_keyword)
+                        (identifier)
+                        (ERROR
+                          (UNEXPECTED 'i')
+                          (identifier))
+                        (identifier)
+                        (MISSING ")"))
+                      (preproc_elif
+                        condition: (identifier))
+                      value: (option_member_list
+                        (option_member
+                          (quoted_identifier)))
+                      (preproc_endif
+                        (preproc_close)))
+                    (ERROR
+                      (quoted_identifier)))
+                  (ERROR
+                    (preproc_else)
+                    (identifier))
+                  (empty_statement)
+                  (ERROR
+                    (UNEXPECTED 'i'))
+                  (trigger_declaration
+                    (trigger_keyword)
+                    name: (identifier)
+                    body: (code_block
+                      (begin_keyword)
+                      (end_keyword)))))))))
+      (var_section
+        (var_keyword)
+        body: (var_body
+          (variable_declaration
+            name: (identifier)
+            type: (type_specification
+              (basic_type)))
+          (variable_declaration
+            name: (identifier)
+            type: (type_specification
+              (basic_type))))))))
+
+========================================================================
+B7a GAP: sorting / empty (18 cells, verdict of the representative GAP); the parser ERRORs on configurations alc accepts; representative occ:sorting_value:0.0.3.0.0@action_body#empty
+========================================================================
+table 50100 T
+{
+    fields
+    {
+        field(1; K; Code[20]) { }
+        field(2; N; Integer) { }
+        field(3; B; Boolean) { }
+        field(9; O; Option) { OptionMembers = A,B,C; }
+    }
+    keys
+    {
+        key(PK; K) { Clustered = true; }
+    }
+}
+page 50102 PG
+{
+    SourceTable = T;
+    layout
+    {
+        area(Content)
+        {
+            field(N; Rec.N) { }
+        }
+    }
+    actions
+    {
+        area(Processing)
+        {
+            action(A1)
+            {
+                RunObject = page PG;
+                RunPageView =
+#if TPL
+                    sorting(
+K ,
+#if X
+#endif
+N
+);
+#else
+                    sorting(K);
+#endif
+                trigger OnAction()
+                begin
+                end;
+            }
+        }
+    }
+    var
+        I: Integer;
+        Ok: Boolean;
+}
+------------------------------------------------------------------------
+
+(source_file
+  (table_declaration
+    (table_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (fields_section
+        (fields_keyword)
+        body: (fields_body
+          (field_declaration
+            (field_keyword)
+            id: (integer)
+            name: (identifier)
+            type: (type_specification
+              (code_type
+                (code_keyword)
+                length: (integer))))
+          (field_declaration
+            (field_keyword)
+            id: (integer)
+            name: (identifier)
+            type: (type_specification
+              (basic_type)))
+          (field_declaration
+            (field_keyword)
+            id: (integer)
+            name: (identifier)
+            type: (type_specification
+              (basic_type)))
+          (field_declaration
+            (field_keyword)
+            id: (integer)
+            name: (identifier)
+            type: (type_specification
+              (option_type
+                (option_keyword)))
+            body: (declaration_body
+              (property
+                name: (property_name)
+                value: (option_member_list
+                  (option_member
+                    (identifier))
+                  (option_member
+                    (identifier))
+                  (option_member
+                    (identifier))))))))
+      (keys_section
+        (keys_keyword)
+        body: (keys_body
+          (key_declaration
+            (key_keyword)
+            name: (identifier)
+            fields: (field_list
+              (identifier))
+            body: (declaration_body
+              (property
+                name: (property_name)
+                value: (boolean))))))))
+  (page_declaration
+    (page_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (property
+        name: (property_name)
+        value: (identifier))
+      (layout_section
+        (layout_keyword)
+        body: (layout_body
+          (area_section
+            (area_keyword)
+            type: (content_keyword)
+            body: (layout_body
+              (page_field
+                (field_keyword)
+                name: (identifier)
+                source: (member_expression
+                  object: (identifier)
+                  member: (identifier)))))))
+      (actions_section
+        (actions_keyword)
+        body: (action_body
+          (action_area_section
+            (area_keyword)
+            type: (processing_keyword)
+            body: (action_body
+              (action_declaration
+                (action_keyword)
+                name: (identifier)
+                body: (declaration_body
+                  (property
+                    name: (property_name)
+                    value: (object_reference_value
+                      (page_keyword)
+                      (identifier)))
+                  (property
+                    name: (property_name)
+                    value: (preproc_conditional_property_value
+                      (preproc_if
+                        (preproc_open)
+                        condition: (identifier))
+                      value: (sorting_value
+                        (sorting_keyword)
+                        (identifier)
+                        (ERROR
+                          (UNEXPECTED 'i'))
+                        (identifier)
+                        (ERROR
+                          (UNEXPECTED 'i')
+                          (identifier)))
+                      (preproc_else)
+                      value: (sorting_value
+                        (sorting_keyword)
+                        (identifier))
+                      (preproc_endif
+                        (preproc_close))))
+                  (trigger_declaration
+                    (trigger_keyword)
+                    name: (identifier)
+                    body: (code_block
+                      (begin_keyword)
+                      (end_keyword)))))))))
+      (var_section
+        (var_keyword)
+        body: (var_body
+          (variable_declaration
+            name: (identifier)
+            type: (type_specification
+              (basic_type)))
+          (variable_declaration
+            name: (identifier)
+            type: (type_specification
+              (basic_type))))))))
+
+========================================================================
+B7a GAP: sorting / empty-list (18 cells, verdict of the representative GAP); the parser ERRORs on configurations alc accepts; representative occ:sorting_value:0.0.3.0.0@action_body#empty-list
+========================================================================
+table 50100 T
+{
+    fields
+    {
+        field(1; K; Code[20]) { }
+        field(2; N; Integer) { }
+        field(3; B; Boolean) { }
+        field(9; O; Option) { OptionMembers = A,B,C; }
+    }
+    keys
+    {
+        key(PK; K) { Clustered = true; }
+    }
+}
+page 50102 PG
+{
+    SourceTable = T;
+    layout
+    {
+        area(Content)
+        {
+            field(N; Rec.N) { }
+        }
+    }
+    actions
+    {
+        area(Processing)
+        {
+            action(A1)
+            {
+                RunObject = page PG;
+                RunPageView =
+#if TPL
+                    sorting(
+#if X
+K , N
+#endif
+);
+#else
+                    sorting(K);
+#endif
+                trigger OnAction()
+                begin
+                end;
+            }
+        }
+    }
+    var
+        I: Integer;
+        Ok: Boolean;
+}
+------------------------------------------------------------------------
+
+(source_file
+  (table_declaration
+    (table_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (fields_section
+        (fields_keyword)
+        body: (fields_body
+          (field_declaration
+            (field_keyword)
+            id: (integer)
+            name: (identifier)
+            type: (type_specification
+              (code_type
+                (code_keyword)
+                length: (integer))))
+          (field_declaration
+            (field_keyword)
+            id: (integer)
+            name: (identifier)
+            type: (type_specification
+              (basic_type)))
+          (field_declaration
+            (field_keyword)
+            id: (integer)
+            name: (identifier)
+            type: (type_specification
+              (basic_type)))
+          (field_declaration
+            (field_keyword)
+            id: (integer)
+            name: (identifier)
+            type: (type_specification
+              (option_type
+                (option_keyword)))
+            body: (declaration_body
+              (property
+                name: (property_name)
+                value: (option_member_list
+                  (option_member
+                    (identifier))
+                  (option_member
+                    (identifier))
+                  (option_member
+                    (identifier))))))))
+      (keys_section
+        (keys_keyword)
+        body: (keys_body
+          (key_declaration
+            (key_keyword)
+            name: (identifier)
+            fields: (field_list
+              (identifier))
+            body: (declaration_body
+              (property
+                name: (property_name)
+                value: (boolean))))))))
+  (page_declaration
+    (page_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (property
+        name: (property_name)
+        value: (identifier))
+      (layout_section
+        (layout_keyword)
+        body: (layout_body
+          (area_section
+            (area_keyword)
+            type: (content_keyword)
+            body: (layout_body
+              (page_field
+                (field_keyword)
+                name: (identifier)
+                source: (member_expression
+                  object: (identifier)
+                  member: (identifier)))))))
+      (actions_section
+        (actions_keyword)
+        body: (action_body
+          (action_area_section
+            (area_keyword)
+            type: (processing_keyword)
+            body: (action_body
+              (action_declaration
+                (action_keyword)
+                name: (identifier)
+                body: (declaration_body
+                  (property
+                    name: (property_name)
+                    value: (object_reference_value
+                      (page_keyword)
+                      (identifier)))
+                  (property
+                    name: (property_name)
+                    value: (preproc_conditional_property_value
+                      (preproc_if
+                        (preproc_open)
+                        condition: (identifier))
+                      value: (sorting_value
+                        (sorting_keyword)
+                        (ERROR
+                          (UNEXPECTED 'i')
+                          (identifier))
+                        (identifier)
+                        (identifier)
+                        (ERROR
+                          (UNEXPECTED 'i')))
+                      (preproc_else)
+                      value: (sorting_value
+                        (sorting_keyword)
+                        (identifier))
+                      (preproc_endif
+                        (preproc_close))))
+                  (trigger_declaration
+                    (trigger_keyword)
+                    name: (identifier)
+                    body: (code_block
+                      (begin_keyword)
+                      (end_keyword)))))))))
+      (var_section
+        (var_keyword)
+        body: (var_body
+          (variable_declaration
+            name: (identifier)
+            type: (type_specification
+              (basic_type)))
+          (variable_declaration
+            name: (identifier)
+            type: (type_specification
+              (basic_type))))))))
+
+========================================================================
+B7a GAP: sorting / first-replace (18 cells, verdict of the representative GAP); the parser ERRORs on configurations alc accepts; representative occ:sorting_value:0.0.3.0.0@action_body#first-replace
+========================================================================
+table 50100 T
+{
+    fields
+    {
+        field(1; K; Code[20]) { }
+        field(2; N; Integer) { }
+        field(3; B; Boolean) { }
+        field(9; O; Option) { OptionMembers = A,B,C; }
+    }
+    keys
+    {
+        key(PK; K) { Clustered = true; }
+    }
+}
+page 50102 PG
+{
+    SourceTable = T;
+    layout
+    {
+        area(Content)
+        {
+            field(N; Rec.N) { }
+        }
+    }
+    actions
+    {
+        area(Processing)
+        {
+            action(A1)
+            {
+                RunObject = page PG;
+                RunPageView =
+#if TPL
+                    sorting(
+#if X
+K
+#else
+N
+#endif
+, "B"
+);
+#else
+                    sorting(K);
+#endif
+                trigger OnAction()
+                begin
+                end;
+            }
+        }
+    }
+    var
+        I: Integer;
+        Ok: Boolean;
+}
+------------------------------------------------------------------------
+
+(source_file
+  (table_declaration
+    (table_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (fields_section
+        (fields_keyword)
+        body: (fields_body
+          (field_declaration
+            (field_keyword)
+            id: (integer)
+            name: (identifier)
+            type: (type_specification
+              (code_type
+                (code_keyword)
+                length: (integer))))
+          (field_declaration
+            (field_keyword)
+            id: (integer)
+            name: (identifier)
+            type: (type_specification
+              (basic_type)))
+          (field_declaration
+            (field_keyword)
+            id: (integer)
+            name: (identifier)
+            type: (type_specification
+              (basic_type)))
+          (field_declaration
+            (field_keyword)
+            id: (integer)
+            name: (identifier)
+            type: (type_specification
+              (option_type
+                (option_keyword)))
+            body: (declaration_body
+              (property
+                name: (property_name)
+                value: (option_member_list
+                  (option_member
+                    (identifier))
+                  (option_member
+                    (identifier))
+                  (option_member
+                    (identifier))))))))
+      (keys_section
+        (keys_keyword)
+        body: (keys_body
+          (key_declaration
+            (key_keyword)
+            name: (identifier)
+            fields: (field_list
+              (identifier))
+            body: (declaration_body
+              (property
+                name: (property_name)
+                value: (boolean))))))))
+  (page_declaration
+    (page_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (property
+        name: (property_name)
+        value: (identifier))
+      (layout_section
+        (layout_keyword)
+        body: (layout_body
+          (area_section
+            (area_keyword)
+            type: (content_keyword)
+            body: (layout_body
+              (page_field
+                (field_keyword)
+                name: (identifier)
+                source: (member_expression
+                  object: (identifier)
+                  member: (identifier)))))))
+      (actions_section
+        (actions_keyword)
+        body: (action_body
+          (action_area_section
+            (area_keyword)
+            type: (processing_keyword)
+            body: (action_body
+              (action_declaration
+                (action_keyword)
+                name: (identifier)
+                body: (declaration_body
+                  (property
+                    name: (property_name)
+                    value: (object_reference_value
+                      (page_keyword)
+                      (identifier)))
+                  (property
+                    name: (property_name)
+                    value: (preproc_conditional_property_value
+                      (preproc_if
+                        (preproc_open)
+                        condition: (identifier))
+                      value: (sorting_value
+                        (sorting_keyword)
+                        (ERROR
+                          (UNEXPECTED 'i')
+                          (identifier)
+                          (identifier)
+                          (preproc_else))
+                        (identifier)
+                        (ERROR
+                          (UNEXPECTED 'i'))
+                        (quoted_identifier))
+                      (preproc_else)
+                      value: (sorting_value
+                        (sorting_keyword)
+                        (identifier))
+                      (preproc_endif
+                        (preproc_close))))
+                  (trigger_declaration
+                    (trigger_keyword)
+                    name: (identifier)
+                    body: (code_block
+                      (begin_keyword)
+                      (end_keyword)))))))))
+      (var_section
+        (var_keyword)
+        body: (var_body
+          (variable_declaration
+            name: (identifier)
+            type: (type_specification
+              (basic_type)))
+          (variable_declaration
+            name: (identifier)
+            type: (type_specification
+              (basic_type))))))))
+
+========================================================================
+B7a GAP: sorting / holes-lead (18 cells, verdict of the representative MIXED); the parser ERRORs on configurations alc accepts; representative occ:sorting_value:0.0.3.0.0@action_body#holes-lead
+========================================================================
+table 50100 T
+{
+    fields
+    {
+        field(1; K; Code[20]) { }
+        field(2; N; Integer) { }
+        field(3; B; Boolean) { }
+        field(9; O; Option) { OptionMembers = A,B,C; }
+    }
+    keys
+    {
+        key(PK; K) { Clustered = true; }
+    }
+}
+page 50102 PG
+{
+    SourceTable = T;
+    layout
+    {
+        area(Content)
+        {
+            field(N; Rec.N) { }
+        }
+    }
+    actions
+    {
+        area(Processing)
+        {
+            action(A1)
+            {
+                RunObject = page PG;
+                RunPageView =
+#if TPL
+                    sorting(
+#if X
+,
+#endif
+K , N
+);
+#else
+                    sorting(K);
+#endif
+                trigger OnAction()
+                begin
+                end;
+            }
+        }
+    }
+    var
+        I: Integer;
+        Ok: Boolean;
+}
+------------------------------------------------------------------------
+
+(source_file
+  (table_declaration
+    (table_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (fields_section
+        (fields_keyword)
+        body: (fields_body
+          (field_declaration
+            (field_keyword)
+            id: (integer)
+            name: (identifier)
+            type: (type_specification
+              (code_type
+                (code_keyword)
+                length: (integer))))
+          (field_declaration
+            (field_keyword)
+            id: (integer)
+            name: (identifier)
+            type: (type_specification
+              (basic_type)))
+          (field_declaration
+            (field_keyword)
+            id: (integer)
+            name: (identifier)
+            type: (type_specification
+              (basic_type)))
+          (field_declaration
+            (field_keyword)
+            id: (integer)
+            name: (identifier)
+            type: (type_specification
+              (option_type
+                (option_keyword)))
+            body: (declaration_body
+              (property
+                name: (property_name)
+                value: (option_member_list
+                  (option_member
+                    (identifier))
+                  (option_member
+                    (identifier))
+                  (option_member
+                    (identifier))))))))
+      (keys_section
+        (keys_keyword)
+        body: (keys_body
+          (key_declaration
+            (key_keyword)
+            name: (identifier)
+            fields: (field_list
+              (identifier))
+            body: (declaration_body
+              (property
+                name: (property_name)
+                value: (boolean))))))))
+  (page_declaration
+    (page_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (property
+        name: (property_name)
+        value: (identifier))
+      (layout_section
+        (layout_keyword)
+        body: (layout_body
+          (area_section
+            (area_keyword)
+            type: (content_keyword)
+            body: (layout_body
+              (page_field
+                (field_keyword)
+                name: (identifier)
+                source: (member_expression
+                  object: (identifier)
+                  member: (identifier)))))))
+      (actions_section
+        (actions_keyword)
+        body: (action_body
+          (action_area_section
+            (area_keyword)
+            type: (processing_keyword)
+            body: (action_body
+              (action_declaration
+                (action_keyword)
+                name: (identifier)
+                body: (declaration_body
+                  (property
+                    name: (property_name)
+                    value: (object_reference_value
+                      (page_keyword)
+                      (identifier)))
+                  (property
+                    name: (property_name)
+                    value: (preproc_conditional_property_value
+                      (preproc_if
+                        (preproc_open)
+                        condition: (identifier))
+                      value: (sorting_value
+                        (sorting_keyword)
+                        (ERROR
+                          (UNEXPECTED 'i'))
+                        (identifier)
+                        (ERROR
+                          (UNEXPECTED 'i'))
+                        (identifier)
+                        (identifier))
+                      (preproc_else)
+                      value: (sorting_value
+                        (sorting_keyword)
+                        (identifier))
+                      (preproc_endif
+                        (preproc_close))))
+                  (trigger_declaration
+                    (trigger_keyword)
+                    name: (identifier)
+                    body: (code_block
+                      (begin_keyword)
+                      (end_keyword)))))))))
+      (var_section
+        (var_keyword)
+        body: (var_body
+          (variable_declaration
+            name: (identifier)
+            type: (type_specification
+              (basic_type)))
+          (variable_declaration
+            name: (identifier)
+            type: (type_specification
+              (basic_type))))))))
+
+========================================================================
+B7a GAP: sorting / holes-mid (18 cells, verdict of the representative MIXED); the parser ERRORs on configurations alc accepts; representative occ:sorting_value:0.0.3.0.0@action_body#holes-mid
+========================================================================
+table 50100 T
+{
+    fields
+    {
+        field(1; K; Code[20]) { }
+        field(2; N; Integer) { }
+        field(3; B; Boolean) { }
+        field(9; O; Option) { OptionMembers = A,B,C; }
+    }
+    keys
+    {
+        key(PK; K) { Clustered = true; }
+    }
+}
+page 50102 PG
+{
+    SourceTable = T;
+    layout
+    {
+        area(Content)
+        {
+            field(N; Rec.N) { }
+        }
+    }
+    actions
+    {
+        area(Processing)
+        {
+            action(A1)
+            {
+                RunObject = page PG;
+                RunPageView =
+#if TPL
+                    sorting(
+K ,
+#if X
+,
+#endif
+N
+);
+#else
+                    sorting(K);
+#endif
+                trigger OnAction()
+                begin
+                end;
+            }
+        }
+    }
+    var
+        I: Integer;
+        Ok: Boolean;
+}
+------------------------------------------------------------------------
+
+(source_file
+  (table_declaration
+    (table_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (fields_section
+        (fields_keyword)
+        body: (fields_body
+          (field_declaration
+            (field_keyword)
+            id: (integer)
+            name: (identifier)
+            type: (type_specification
+              (code_type
+                (code_keyword)
+                length: (integer))))
+          (field_declaration
+            (field_keyword)
+            id: (integer)
+            name: (identifier)
+            type: (type_specification
+              (basic_type)))
+          (field_declaration
+            (field_keyword)
+            id: (integer)
+            name: (identifier)
+            type: (type_specification
+              (basic_type)))
+          (field_declaration
+            (field_keyword)
+            id: (integer)
+            name: (identifier)
+            type: (type_specification
+              (option_type
+                (option_keyword)))
+            body: (declaration_body
+              (property
+                name: (property_name)
+                value: (option_member_list
+                  (option_member
+                    (identifier))
+                  (option_member
+                    (identifier))
+                  (option_member
+                    (identifier))))))))
+      (keys_section
+        (keys_keyword)
+        body: (keys_body
+          (key_declaration
+            (key_keyword)
+            name: (identifier)
+            fields: (field_list
+              (identifier))
+            body: (declaration_body
+              (property
+                name: (property_name)
+                value: (boolean))))))))
+  (page_declaration
+    (page_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (property
+        name: (property_name)
+        value: (identifier))
+      (layout_section
+        (layout_keyword)
+        body: (layout_body
+          (area_section
+            (area_keyword)
+            type: (content_keyword)
+            body: (layout_body
+              (page_field
+                (field_keyword)
+                name: (identifier)
+                source: (member_expression
+                  object: (identifier)
+                  member: (identifier)))))))
+      (actions_section
+        (actions_keyword)
+        body: (action_body
+          (action_area_section
+            (area_keyword)
+            type: (processing_keyword)
+            body: (action_body
+              (action_declaration
+                (action_keyword)
+                name: (identifier)
+                body: (declaration_body
+                  (property
+                    name: (property_name)
+                    value: (object_reference_value
+                      (page_keyword)
+                      (identifier)))
+                  (property
+                    name: (property_name)
+                    value: (preproc_conditional_property_value
+                      (preproc_if
+                        (preproc_open)
+                        condition: (identifier))
+                      value: (sorting_value
+                        (sorting_keyword)
+                        (identifier)
+                        (ERROR
+                          (UNEXPECTED 'i'))
+                        (identifier)
+                        (ERROR
+                          (UNEXPECTED 'i'))
+                        (identifier))
+                      (preproc_else)
+                      value: (sorting_value
+                        (sorting_keyword)
+                        (identifier))
+                      (preproc_endif
+                        (preproc_close))))
+                  (trigger_declaration
+                    (trigger_keyword)
+                    name: (identifier)
+                    body: (code_block
+                      (begin_keyword)
+                      (end_keyword)))))))))
+      (var_section
+        (var_keyword)
+        body: (var_body
+          (variable_declaration
+            name: (identifier)
+            type: (type_specification
+              (basic_type)))
+          (variable_declaration
+            name: (identifier)
+            type: (type_specification
+              (basic_type))))))))
+
+========================================================================
+B7a GAP: sorting / holes-trail (18 cells, verdict of the representative MIXED); the parser ERRORs on configurations alc accepts; representative occ:sorting_value:0.0.3.0.0@action_body#holes-trail
+========================================================================
+table 50100 T
+{
+    fields
+    {
+        field(1; K; Code[20]) { }
+        field(2; N; Integer) { }
+        field(3; B; Boolean) { }
+        field(9; O; Option) { OptionMembers = A,B,C; }
+    }
+    keys
+    {
+        key(PK; K) { Clustered = true; }
+    }
+}
+page 50102 PG
+{
+    SourceTable = T;
+    layout
+    {
+        area(Content)
+        {
+            field(N; Rec.N) { }
+        }
+    }
+    actions
+    {
+        area(Processing)
+        {
+            action(A1)
+            {
+                RunObject = page PG;
+                RunPageView =
+#if TPL
+                    sorting(
+K , N
+#if X
+,
+#endif
+);
+#else
+                    sorting(K);
+#endif
+                trigger OnAction()
+                begin
+                end;
+            }
+        }
+    }
+    var
+        I: Integer;
+        Ok: Boolean;
+}
+------------------------------------------------------------------------
+
+(source_file
+  (table_declaration
+    (table_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (fields_section
+        (fields_keyword)
+        body: (fields_body
+          (field_declaration
+            (field_keyword)
+            id: (integer)
+            name: (identifier)
+            type: (type_specification
+              (code_type
+                (code_keyword)
+                length: (integer))))
+          (field_declaration
+            (field_keyword)
+            id: (integer)
+            name: (identifier)
+            type: (type_specification
+              (basic_type)))
+          (field_declaration
+            (field_keyword)
+            id: (integer)
+            name: (identifier)
+            type: (type_specification
+              (basic_type)))
+          (field_declaration
+            (field_keyword)
+            id: (integer)
+            name: (identifier)
+            type: (type_specification
+              (option_type
+                (option_keyword)))
+            body: (declaration_body
+              (property
+                name: (property_name)
+                value: (option_member_list
+                  (option_member
+                    (identifier))
+                  (option_member
+                    (identifier))
+                  (option_member
+                    (identifier))))))))
+      (keys_section
+        (keys_keyword)
+        body: (keys_body
+          (key_declaration
+            (key_keyword)
+            name: (identifier)
+            fields: (field_list
+              (identifier))
+            body: (declaration_body
+              (property
+                name: (property_name)
+                value: (boolean))))))))
+  (page_declaration
+    (page_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (property
+        name: (property_name)
+        value: (identifier))
+      (layout_section
+        (layout_keyword)
+        body: (layout_body
+          (area_section
+            (area_keyword)
+            type: (content_keyword)
+            body: (layout_body
+              (page_field
+                (field_keyword)
+                name: (identifier)
+                source: (member_expression
+                  object: (identifier)
+                  member: (identifier)))))))
+      (actions_section
+        (actions_keyword)
+        body: (action_body
+          (action_area_section
+            (area_keyword)
+            type: (processing_keyword)
+            body: (action_body
+              (action_declaration
+                (action_keyword)
+                name: (identifier)
+                body: (declaration_body
+                  (property
+                    name: (property_name)
+                    value: (object_reference_value
+                      (page_keyword)
+                      (identifier)))
+                  (property
+                    name: (property_name)
+                    value: (preproc_conditional_property_value
+                      (preproc_if
+                        (preproc_open)
+                        condition: (identifier))
+                      value: (sorting_value
+                        (sorting_keyword)
+                        (identifier)
+                        (identifier)
+                        (ERROR
+                          (UNEXPECTED 'i')
+                          (identifier)
+                          (UNEXPECTED 'i')))
+                      (preproc_else)
+                      value: (sorting_value
+                        (sorting_keyword)
+                        (identifier))
+                      (preproc_endif
+                        (preproc_close))))
+                  (trigger_declaration
+                    (trigger_keyword)
+                    name: (identifier)
+                    body: (code_block
+                      (begin_keyword)
+                      (end_keyword)))))))))
+      (var_section
+        (var_keyword)
+        body: (var_body
+          (variable_declaration
+            name: (identifier)
+            type: (type_specification
+              (basic_type)))
+          (variable_declaration
+            name: (identifier)
+            type: (type_specification
+              (basic_type))))))))
+
+========================================================================
+B7a GAP: sorting / lead-optional (18 cells, verdict of the representative GAP); the parser ERRORs on configurations alc accepts; representative occ:sorting_value:0.0.3.0.0@action_body#lead-optional
+========================================================================
+table 50100 T
+{
+    fields
+    {
+        field(1; K; Code[20]) { }
+        field(2; N; Integer) { }
+        field(3; B; Boolean) { }
+        field(9; O; Option) { OptionMembers = A,B,C; }
+    }
+    keys
+    {
+        key(PK; K) { Clustered = true; }
+    }
+}
+page 50102 PG
+{
+    SourceTable = T;
+    layout
+    {
+        area(Content)
+        {
+            field(N; Rec.N) { }
+        }
+    }
+    actions
+    {
+        area(Processing)
+        {
+            action(A1)
+            {
+                RunObject = page PG;
+                RunPageView =
+#if TPL
+                    sorting(
+#if X
+K ,
+#endif
+N
+);
+#else
+                    sorting(K);
+#endif
+                trigger OnAction()
+                begin
+                end;
+            }
+        }
+    }
+    var
+        I: Integer;
+        Ok: Boolean;
+}
+------------------------------------------------------------------------
+
+(source_file
+  (table_declaration
+    (table_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (fields_section
+        (fields_keyword)
+        body: (fields_body
+          (field_declaration
+            (field_keyword)
+            id: (integer)
+            name: (identifier)
+            type: (type_specification
+              (code_type
+                (code_keyword)
+                length: (integer))))
+          (field_declaration
+            (field_keyword)
+            id: (integer)
+            name: (identifier)
+            type: (type_specification
+              (basic_type)))
+          (field_declaration
+            (field_keyword)
+            id: (integer)
+            name: (identifier)
+            type: (type_specification
+              (basic_type)))
+          (field_declaration
+            (field_keyword)
+            id: (integer)
+            name: (identifier)
+            type: (type_specification
+              (option_type
+                (option_keyword)))
+            body: (declaration_body
+              (property
+                name: (property_name)
+                value: (option_member_list
+                  (option_member
+                    (identifier))
+                  (option_member
+                    (identifier))
+                  (option_member
+                    (identifier))))))))
+      (keys_section
+        (keys_keyword)
+        body: (keys_body
+          (key_declaration
+            (key_keyword)
+            name: (identifier)
+            fields: (field_list
+              (identifier))
+            body: (declaration_body
+              (property
+                name: (property_name)
+                value: (boolean))))))))
+  (page_declaration
+    (page_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (property
+        name: (property_name)
+        value: (identifier))
+      (layout_section
+        (layout_keyword)
+        body: (layout_body
+          (area_section
+            (area_keyword)
+            type: (content_keyword)
+            body: (layout_body
+              (page_field
+                (field_keyword)
+                name: (identifier)
+                source: (member_expression
+                  object: (identifier)
+                  member: (identifier)))))))
+      (actions_section
+        (actions_keyword)
+        body: (action_body
+          (action_area_section
+            (area_keyword)
+            type: (processing_keyword)
+            body: (action_body
+              (action_declaration
+                (action_keyword)
+                name: (identifier)
+                body: (declaration_body
+                  (property
+                    name: (property_name)
+                    value: (object_reference_value
+                      (page_keyword)
+                      (identifier)))
+                  (property
+                    name: (property_name)
+                    value: (preproc_conditional_property_value
+                      (preproc_if
+                        (preproc_open)
+                        condition: (identifier))
+                      value: (sorting_value
+                        (sorting_keyword)
+                        (ERROR
+                          (UNEXPECTED 'i')
+                          (identifier))
+                        (identifier)
+                        (ERROR
+                          (UNEXPECTED 'i'))
+                        (identifier))
+                      (preproc_else)
+                      value: (sorting_value
+                        (sorting_keyword)
+                        (identifier))
+                      (preproc_endif
+                        (preproc_close))))
+                  (trigger_declaration
+                    (trigger_keyword)
+                    name: (identifier)
+                    body: (code_block
+                      (begin_keyword)
+                      (end_keyword)))))))))
+      (var_section
+        (var_keyword)
+        body: (var_body
+          (variable_declaration
+            name: (identifier)
+            type: (type_specification
+              (basic_type)))
+          (variable_declaration
+            name: (identifier)
+            type: (type_specification
+              (basic_type))))))))
+
+========================================================================
+B7a GAP: sorting / nested (18 cells, verdict of the representative GAP); the parser ERRORs on configurations alc accepts; representative occ:sorting_value:0.0.3.0.0@action_body#nested
+========================================================================
+table 50100 T
+{
+    fields
+    {
+        field(1; K; Code[20]) { }
+        field(2; N; Integer) { }
+        field(3; B; Boolean) { }
+        field(9; O; Option) { OptionMembers = A,B,C; }
+    }
+    keys
+    {
+        key(PK; K) { Clustered = true; }
+    }
+}
+page 50102 PG
+{
+    SourceTable = T;
+    layout
+    {
+        area(Content)
+        {
+            field(N; Rec.N) { }
+        }
+    }
+    actions
+    {
+        area(Processing)
+        {
+            action(A1)
+            {
+                RunObject = page PG;
+                RunPageView =
+#if TPL
+                    sorting(
+K
+#if X
+, N
+#if Y
+, "B"
+#endif
+#endif
+, "O"
+);
+#else
+                    sorting(K);
+#endif
+                trigger OnAction()
+                begin
+                end;
+            }
+        }
+    }
+    var
+        I: Integer;
+        Ok: Boolean;
+}
+------------------------------------------------------------------------
+
+(source_file
+  (table_declaration
+    (table_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (fields_section
+        (fields_keyword)
+        body: (fields_body
+          (field_declaration
+            (field_keyword)
+            id: (integer)
+            name: (identifier)
+            type: (type_specification
+              (code_type
+                (code_keyword)
+                length: (integer))))
+          (field_declaration
+            (field_keyword)
+            id: (integer)
+            name: (identifier)
+            type: (type_specification
+              (basic_type)))
+          (field_declaration
+            (field_keyword)
+            id: (integer)
+            name: (identifier)
+            type: (type_specification
+              (basic_type)))
+          (field_declaration
+            (field_keyword)
+            id: (integer)
+            name: (identifier)
+            type: (type_specification
+              (option_type
+                (option_keyword)))
+            body: (declaration_body
+              (property
+                name: (property_name)
+                value: (option_member_list
+                  (option_member
+                    (identifier))
+                  (option_member
+                    (identifier))
+                  (option_member
+                    (identifier))))))))
+      (keys_section
+        (keys_keyword)
+        body: (keys_body
+          (key_declaration
+            (key_keyword)
+            name: (identifier)
+            fields: (field_list
+              (identifier))
+            body: (declaration_body
+              (property
+                name: (property_name)
+                value: (boolean))))))))
+  (page_declaration
+    (page_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (property
+        name: (property_name)
+        value: (identifier))
+      (layout_section
+        (layout_keyword)
+        body: (layout_body
+          (area_section
+            (area_keyword)
+            type: (content_keyword)
+            body: (layout_body
+              (page_field
+                (field_keyword)
+                name: (identifier)
+                source: (member_expression
+                  object: (identifier)
+                  member: (identifier)))))))
+      (actions_section
+        (actions_keyword)
+        body: (action_body
+          (action_area_section
+            (area_keyword)
+            type: (processing_keyword)
+            body: (action_body
+              (action_declaration
+                (action_keyword)
+                name: (identifier)
+                body: (declaration_body
+                  (property
+                    name: (property_name)
+                    value: (object_reference_value
+                      (page_keyword)
+                      (identifier)))
+                  (property
+                    name: (property_name)
+                    value: (preproc_conditional_property_value
+                      (preproc_if
+                        (preproc_open)
+                        condition: (identifier))
+                      value: (sorting_value
+                        (sorting_keyword)
+                        (identifier)
+                        (ERROR
+                          (UNEXPECTED 'i')
+                          (identifier))
+                        (identifier)
+                        (ERROR
+                          (UNEXPECTED 'i')
+                          (identifier))
+                        (quoted_identifier)
+                        (ERROR
+                          (UNEXPECTED 'i')
+                          (UNEXPECTED 'i'))
+                        (quoted_identifier))
+                      (preproc_else)
+                      value: (sorting_value
+                        (sorting_keyword)
+                        (identifier))
+                      (preproc_endif
+                        (preproc_close))))
+                  (trigger_declaration
+                    (trigger_keyword)
+                    name: (identifier)
+                    body: (code_block
+                      (begin_keyword)
+                      (end_keyword)))))))))
+      (var_section
+        (var_keyword)
+        body: (var_body
+          (variable_declaration
+            name: (identifier)
+            type: (type_specification
+              (basic_type)))
+          (variable_declaration
+            name: (identifier)
+            type: (type_specification
+              (basic_type))))))))
+
+========================================================================
+B7a GAP: sorting / one-elem (18 cells, verdict of the representative GAP); the parser ERRORs on configurations alc accepts; representative occ:sorting_value:0.0.3.0.0@action_body#one-elem
+========================================================================
+table 50100 T
+{
+    fields
+    {
+        field(1; K; Code[20]) { }
+        field(2; N; Integer) { }
+        field(3; B; Boolean) { }
+        field(9; O; Option) { OptionMembers = A,B,C; }
+    }
+    keys
+    {
+        key(PK; K) { Clustered = true; }
+    }
+}
+page 50102 PG
+{
+    SourceTable = T;
+    layout
+    {
+        area(Content)
+        {
+            field(N; Rec.N) { }
+        }
+    }
+    actions
+    {
+        area(Processing)
+        {
+            action(A1)
+            {
+                RunObject = page PG;
+                RunPageView =
+#if TPL
+                    sorting(
+#if X
+K , N
+#else
+K
+#endif
+);
+#else
+                    sorting(K);
+#endif
+                trigger OnAction()
+                begin
+                end;
+            }
+        }
+    }
+    var
+        I: Integer;
+        Ok: Boolean;
+}
+------------------------------------------------------------------------
+
+(source_file
+  (table_declaration
+    (table_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (fields_section
+        (fields_keyword)
+        body: (fields_body
+          (field_declaration
+            (field_keyword)
+            id: (integer)
+            name: (identifier)
+            type: (type_specification
+              (code_type
+                (code_keyword)
+                length: (integer))))
+          (field_declaration
+            (field_keyword)
+            id: (integer)
+            name: (identifier)
+            type: (type_specification
+              (basic_type)))
+          (field_declaration
+            (field_keyword)
+            id: (integer)
+            name: (identifier)
+            type: (type_specification
+              (basic_type)))
+          (field_declaration
+            (field_keyword)
+            id: (integer)
+            name: (identifier)
+            type: (type_specification
+              (option_type
+                (option_keyword)))
+            body: (declaration_body
+              (property
+                name: (property_name)
+                value: (option_member_list
+                  (option_member
+                    (identifier))
+                  (option_member
+                    (identifier))
+                  (option_member
+                    (identifier))))))))
+      (keys_section
+        (keys_keyword)
+        body: (keys_body
+          (key_declaration
+            (key_keyword)
+            name: (identifier)
+            fields: (field_list
+              (identifier))
+            body: (declaration_body
+              (property
+                name: (property_name)
+                value: (boolean))))))))
+  (page_declaration
+    (page_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (property
+        name: (property_name)
+        value: (identifier))
+      (layout_section
+        (layout_keyword)
+        body: (layout_body
+          (area_section
+            (area_keyword)
+            type: (content_keyword)
+            body: (layout_body
+              (page_field
+                (field_keyword)
+                name: (identifier)
+                source: (member_expression
+                  object: (identifier)
+                  member: (identifier)))))))
+      (actions_section
+        (actions_keyword)
+        body: (action_body
+          (action_area_section
+            (area_keyword)
+            type: (processing_keyword)
+            body: (action_body
+              (action_declaration
+                (action_keyword)
+                name: (identifier)
+                body: (declaration_body
+                  (property
+                    name: (property_name)
+                    value: (object_reference_value
+                      (page_keyword)
+                      (identifier)))
+                  (property
+                    name: (property_name)
+                    value: (preproc_conditional_property_value
+                      (preproc_if
+                        (preproc_open)
+                        condition: (identifier))
+                      value: (sorting_value
+                        (sorting_keyword)
+                        (ERROR
+                          (UNEXPECTED 'i')
+                          (identifier))
+                        (identifier)
+                        (identifier)
+                        (MISSING ")"))
+                      (preproc_else)
+                      value: (identifier)
+                      (preproc_endif
+                        (preproc_close)))
+                    (ERROR))
+                  (ERROR
+                    (preproc_else)
+                    (identifier))
+                  (empty_statement)
+                  (ERROR
+                    (UNEXPECTED 'i'))
+                  (trigger_declaration
+                    (trigger_keyword)
+                    name: (identifier)
+                    body: (code_block
+                      (begin_keyword)
+                      (end_keyword)))))))))
+      (var_section
+        (var_keyword)
+        body: (var_body
+          (variable_declaration
+            name: (identifier)
+            type: (type_specification
+              (basic_type)))
+          (variable_declaration
+            name: (identifier)
+            type: (type_specification
+              (basic_type))))))))
+
+========================================================================
+B7a GAP: sorting / sep-after (18 cells, verdict of the representative GAP); the parser ERRORs on configurations alc accepts; representative occ:sorting_value:0.0.3.0.0@action_body#sep-after
+========================================================================
+table 50100 T
+{
+    fields
+    {
+        field(1; K; Code[20]) { }
+        field(2; N; Integer) { }
+        field(3; B; Boolean) { }
+        field(9; O; Option) { OptionMembers = A,B,C; }
+    }
+    keys
+    {
+        key(PK; K) { Clustered = true; }
+    }
+}
+page 50102 PG
+{
+    SourceTable = T;
+    layout
+    {
+        area(Content)
+        {
+            field(N; Rec.N) { }
+        }
+    }
+    actions
+    {
+        area(Processing)
+        {
+            action(A1)
+            {
+                RunObject = page PG;
+                RunPageView =
+#if TPL
+                    sorting(
+K ,
+#if X
+N ,
+#endif
+"B"
+);
+#else
+                    sorting(K);
+#endif
+                trigger OnAction()
+                begin
+                end;
+            }
+        }
+    }
+    var
+        I: Integer;
+        Ok: Boolean;
+}
+------------------------------------------------------------------------
+
+(source_file
+  (table_declaration
+    (table_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (fields_section
+        (fields_keyword)
+        body: (fields_body
+          (field_declaration
+            (field_keyword)
+            id: (integer)
+            name: (identifier)
+            type: (type_specification
+              (code_type
+                (code_keyword)
+                length: (integer))))
+          (field_declaration
+            (field_keyword)
+            id: (integer)
+            name: (identifier)
+            type: (type_specification
+              (basic_type)))
+          (field_declaration
+            (field_keyword)
+            id: (integer)
+            name: (identifier)
+            type: (type_specification
+              (basic_type)))
+          (field_declaration
+            (field_keyword)
+            id: (integer)
+            name: (identifier)
+            type: (type_specification
+              (option_type
+                (option_keyword)))
+            body: (declaration_body
+              (property
+                name: (property_name)
+                value: (option_member_list
+                  (option_member
+                    (identifier))
+                  (option_member
+                    (identifier))
+                  (option_member
+                    (identifier))))))))
+      (keys_section
+        (keys_keyword)
+        body: (keys_body
+          (key_declaration
+            (key_keyword)
+            name: (identifier)
+            fields: (field_list
+              (identifier))
+            body: (declaration_body
+              (property
+                name: (property_name)
+                value: (boolean))))))))
+  (page_declaration
+    (page_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (property
+        name: (property_name)
+        value: (identifier))
+      (layout_section
+        (layout_keyword)
+        body: (layout_body
+          (area_section
+            (area_keyword)
+            type: (content_keyword)
+            body: (layout_body
+              (page_field
+                (field_keyword)
+                name: (identifier)
+                source: (member_expression
+                  object: (identifier)
+                  member: (identifier)))))))
+      (actions_section
+        (actions_keyword)
+        body: (action_body
+          (action_area_section
+            (area_keyword)
+            type: (processing_keyword)
+            body: (action_body
+              (action_declaration
+                (action_keyword)
+                name: (identifier)
+                body: (declaration_body
+                  (property
+                    name: (property_name)
+                    value: (object_reference_value
+                      (page_keyword)
+                      (identifier)))
+                  (property
+                    name: (property_name)
+                    value: (preproc_conditional_property_value
+                      (preproc_if
+                        (preproc_open)
+                        condition: (identifier))
+                      value: (sorting_value
+                        (sorting_keyword)
+                        (identifier)
+                        (ERROR
+                          (UNEXPECTED 'i'))
+                        (identifier)
+                        (ERROR
+                          (identifier))
+                        (ERROR
+                          (UNEXPECTED 'i'))
+                        (quoted_identifier))
+                      (preproc_else)
+                      value: (sorting_value
+                        (sorting_keyword)
+                        (identifier))
+                      (preproc_endif
+                        (preproc_close))))
+                  (trigger_declaration
+                    (trigger_keyword)
+                    name: (identifier)
+                    body: (code_block
+                      (begin_keyword)
+                      (end_keyword)))))))))
+      (var_section
+        (var_keyword)
+        body: (var_body
+          (variable_declaration
+            name: (identifier)
+            type: (type_specification
+              (basic_type)))
+          (variable_declaration
+            name: (identifier)
+            type: (type_specification
+              (basic_type))))))))
+
+========================================================================
+B7a GAP: sorting / sep-before (18 cells, verdict of the representative GAP); the parser ERRORs on configurations alc accepts; representative occ:sorting_value:0.0.3.0.0@action_body#sep-before
+========================================================================
+table 50100 T
+{
+    fields
+    {
+        field(1; K; Code[20]) { }
+        field(2; N; Integer) { }
+        field(3; B; Boolean) { }
+        field(9; O; Option) { OptionMembers = A,B,C; }
+    }
+    keys
+    {
+        key(PK; K) { Clustered = true; }
+    }
+}
+page 50102 PG
+{
+    SourceTable = T;
+    layout
+    {
+        area(Content)
+        {
+            field(N; Rec.N) { }
+        }
+    }
+    actions
+    {
+        area(Processing)
+        {
+            action(A1)
+            {
+                RunObject = page PG;
+                RunPageView =
+#if TPL
+                    sorting(
+K
+#if X
+, N
+#endif
+, "B"
+);
+#else
+                    sorting(K);
+#endif
+                trigger OnAction()
+                begin
+                end;
+            }
+        }
+    }
+    var
+        I: Integer;
+        Ok: Boolean;
+}
+------------------------------------------------------------------------
+
+(source_file
+  (table_declaration
+    (table_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (fields_section
+        (fields_keyword)
+        body: (fields_body
+          (field_declaration
+            (field_keyword)
+            id: (integer)
+            name: (identifier)
+            type: (type_specification
+              (code_type
+                (code_keyword)
+                length: (integer))))
+          (field_declaration
+            (field_keyword)
+            id: (integer)
+            name: (identifier)
+            type: (type_specification
+              (basic_type)))
+          (field_declaration
+            (field_keyword)
+            id: (integer)
+            name: (identifier)
+            type: (type_specification
+              (basic_type)))
+          (field_declaration
+            (field_keyword)
+            id: (integer)
+            name: (identifier)
+            type: (type_specification
+              (option_type
+                (option_keyword)))
+            body: (declaration_body
+              (property
+                name: (property_name)
+                value: (option_member_list
+                  (option_member
+                    (identifier))
+                  (option_member
+                    (identifier))
+                  (option_member
+                    (identifier))))))))
+      (keys_section
+        (keys_keyword)
+        body: (keys_body
+          (key_declaration
+            (key_keyword)
+            name: (identifier)
+            fields: (field_list
+              (identifier))
+            body: (declaration_body
+              (property
+                name: (property_name)
+                value: (boolean))))))))
+  (page_declaration
+    (page_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (property
+        name: (property_name)
+        value: (identifier))
+      (layout_section
+        (layout_keyword)
+        body: (layout_body
+          (area_section
+            (area_keyword)
+            type: (content_keyword)
+            body: (layout_body
+              (page_field
+                (field_keyword)
+                name: (identifier)
+                source: (member_expression
+                  object: (identifier)
+                  member: (identifier)))))))
+      (actions_section
+        (actions_keyword)
+        body: (action_body
+          (action_area_section
+            (area_keyword)
+            type: (processing_keyword)
+            body: (action_body
+              (action_declaration
+                (action_keyword)
+                name: (identifier)
+                body: (declaration_body
+                  (property
+                    name: (property_name)
+                    value: (object_reference_value
+                      (page_keyword)
+                      (identifier)))
+                  (property
+                    name: (property_name)
+                    value: (preproc_conditional_property_value
+                      (preproc_if
+                        (preproc_open)
+                        condition: (identifier))
+                      value: (sorting_value
+                        (sorting_keyword)
+                        (identifier)
+                        (ERROR
+                          (UNEXPECTED 'i')
+                          (identifier))
+                        (identifier)
+                        (ERROR
+                          (UNEXPECTED 'i'))
+                        (quoted_identifier))
+                      (preproc_else)
+                      value: (sorting_value
+                        (sorting_keyword)
+                        (identifier))
+                      (preproc_endif
+                        (preproc_close))))
+                  (trigger_declaration
+                    (trigger_keyword)
+                    name: (identifier)
+                    body: (code_block
+                      (begin_keyword)
+                      (end_keyword)))))))))
+      (var_section
+        (var_keyword)
+        body: (var_body
+          (variable_declaration
+            name: (identifier)
+            type: (type_specification
+              (basic_type)))
+          (variable_declaration
+            name: (identifier)
+            type: (type_specification
+              (basic_type))))))))
+
+========================================================================
+B7a GAP: sorting / sep-before-end (18 cells, verdict of the representative GAP); the parser ERRORs on configurations alc accepts; representative occ:sorting_value:0.0.3.0.0@action_body#sep-before-end
+========================================================================
+table 50100 T
+{
+    fields
+    {
+        field(1; K; Code[20]) { }
+        field(2; N; Integer) { }
+        field(3; B; Boolean) { }
+        field(9; O; Option) { OptionMembers = A,B,C; }
+    }
+    keys
+    {
+        key(PK; K) { Clustered = true; }
+    }
+}
+page 50102 PG
+{
+    SourceTable = T;
+    layout
+    {
+        area(Content)
+        {
+            field(N; Rec.N) { }
+        }
+    }
+    actions
+    {
+        area(Processing)
+        {
+            action(A1)
+            {
+                RunObject = page PG;
+                RunPageView =
+#if TPL
+                    sorting(
+K
+#if X
+, N
+#endif
+);
+#else
+                    sorting(K);
+#endif
+                trigger OnAction()
+                begin
+                end;
+            }
+        }
+    }
+    var
+        I: Integer;
+        Ok: Boolean;
+}
+------------------------------------------------------------------------
+
+(source_file
+  (table_declaration
+    (table_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (fields_section
+        (fields_keyword)
+        body: (fields_body
+          (field_declaration
+            (field_keyword)
+            id: (integer)
+            name: (identifier)
+            type: (type_specification
+              (code_type
+                (code_keyword)
+                length: (integer))))
+          (field_declaration
+            (field_keyword)
+            id: (integer)
+            name: (identifier)
+            type: (type_specification
+              (basic_type)))
+          (field_declaration
+            (field_keyword)
+            id: (integer)
+            name: (identifier)
+            type: (type_specification
+              (basic_type)))
+          (field_declaration
+            (field_keyword)
+            id: (integer)
+            name: (identifier)
+            type: (type_specification
+              (option_type
+                (option_keyword)))
+            body: (declaration_body
+              (property
+                name: (property_name)
+                value: (option_member_list
+                  (option_member
+                    (identifier))
+                  (option_member
+                    (identifier))
+                  (option_member
+                    (identifier))))))))
+      (keys_section
+        (keys_keyword)
+        body: (keys_body
+          (key_declaration
+            (key_keyword)
+            name: (identifier)
+            fields: (field_list
+              (identifier))
+            body: (declaration_body
+              (property
+                name: (property_name)
+                value: (boolean))))))))
+  (page_declaration
+    (page_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (property
+        name: (property_name)
+        value: (identifier))
+      (layout_section
+        (layout_keyword)
+        body: (layout_body
+          (area_section
+            (area_keyword)
+            type: (content_keyword)
+            body: (layout_body
+              (page_field
+                (field_keyword)
+                name: (identifier)
+                source: (member_expression
+                  object: (identifier)
+                  member: (identifier)))))))
+      (actions_section
+        (actions_keyword)
+        body: (action_body
+          (action_area_section
+            (area_keyword)
+            type: (processing_keyword)
+            body: (action_body
+              (action_declaration
+                (action_keyword)
+                name: (identifier)
+                body: (declaration_body
+                  (property
+                    name: (property_name)
+                    value: (object_reference_value
+                      (page_keyword)
+                      (identifier)))
+                  (property
+                    name: (property_name)
+                    value: (preproc_conditional_property_value
+                      (preproc_if
+                        (preproc_open)
+                        condition: (identifier))
+                      value: (sorting_value
+                        (sorting_keyword)
+                        (identifier)
+                        (ERROR
+                          (UNEXPECTED 'i')
+                          (identifier))
+                        (identifier)
+                        (ERROR
+                          (UNEXPECTED 'i')))
+                      (preproc_else)
+                      value: (sorting_value
+                        (sorting_keyword)
+                        (identifier))
+                      (preproc_endif
+                        (preproc_close))))
+                  (trigger_declaration
+                    (trigger_keyword)
+                    name: (identifier)
+                    body: (code_block
+                      (begin_keyword)
+                      (end_keyword)))))))))
+      (var_section
+        (var_keyword)
+        body: (var_body
+          (variable_declaration
+            name: (identifier)
+            type: (type_specification
+              (basic_type)))
+          (variable_declaration
+            name: (identifier)
+            type: (type_specification
+              (basic_type))))))))
+
+========================================================================
+B7a GAP: sorting / sep-only (18 cells, verdict of the representative GAP); the parser ERRORs on configurations alc accepts; representative occ:sorting_value:0.0.3.0.0@action_body#sep-only
+========================================================================
+table 50100 T
+{
+    fields
+    {
+        field(1; K; Code[20]) { }
+        field(2; N; Integer) { }
+        field(3; B; Boolean) { }
+        field(9; O; Option) { OptionMembers = A,B,C; }
+    }
+    keys
+    {
+        key(PK; K) { Clustered = true; }
+    }
+}
+page 50102 PG
+{
+    SourceTable = T;
+    layout
+    {
+        area(Content)
+        {
+            field(N; Rec.N) { }
+        }
+    }
+    actions
+    {
+        area(Processing)
+        {
+            action(A1)
+            {
+                RunObject = page PG;
+                RunPageView =
+#if TPL
+                    sorting(
+K
+#if X
+,
+#else
+,
+#endif
+N
+);
+#else
+                    sorting(K);
+#endif
+                trigger OnAction()
+                begin
+                end;
+            }
+        }
+    }
+    var
+        I: Integer;
+        Ok: Boolean;
+}
+------------------------------------------------------------------------
+
+(source_file
+  (table_declaration
+    (table_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (fields_section
+        (fields_keyword)
+        body: (fields_body
+          (field_declaration
+            (field_keyword)
+            id: (integer)
+            name: (identifier)
+            type: (type_specification
+              (code_type
+                (code_keyword)
+                length: (integer))))
+          (field_declaration
+            (field_keyword)
+            id: (integer)
+            name: (identifier)
+            type: (type_specification
+              (basic_type)))
+          (field_declaration
+            (field_keyword)
+            id: (integer)
+            name: (identifier)
+            type: (type_specification
+              (basic_type)))
+          (field_declaration
+            (field_keyword)
+            id: (integer)
+            name: (identifier)
+            type: (type_specification
+              (option_type
+                (option_keyword)))
+            body: (declaration_body
+              (property
+                name: (property_name)
+                value: (option_member_list
+                  (option_member
+                    (identifier))
+                  (option_member
+                    (identifier))
+                  (option_member
+                    (identifier))))))))
+      (keys_section
+        (keys_keyword)
+        body: (keys_body
+          (key_declaration
+            (key_keyword)
+            name: (identifier)
+            fields: (field_list
+              (identifier))
+            body: (declaration_body
+              (property
+                name: (property_name)
+                value: (boolean))))))))
+  (page_declaration
+    (page_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (property
+        name: (property_name)
+        value: (identifier))
+      (layout_section
+        (layout_keyword)
+        body: (layout_body
+          (area_section
+            (area_keyword)
+            type: (content_keyword)
+            body: (layout_body
+              (page_field
+                (field_keyword)
+                name: (identifier)
+                source: (member_expression
+                  object: (identifier)
+                  member: (identifier)))))))
+      (actions_section
+        (actions_keyword)
+        body: (action_body
+          (action_area_section
+            (area_keyword)
+            type: (processing_keyword)
+            body: (action_body
+              (action_declaration
+                (action_keyword)
+                name: (identifier)
+                body: (declaration_body
+                  (property
+                    name: (property_name)
+                    value: (object_reference_value
+                      (page_keyword)
+                      (identifier)))
+                  (property
+                    name: (property_name)
+                    value: (preproc_conditional_property_value
+                      (preproc_if
+                        (preproc_open)
+                        condition: (identifier))
+                      value: (sorting_value
+                        (sorting_keyword)
+                        (identifier)
+                        (ERROR
+                          (UNEXPECTED 'i')
+                          (identifier)
+                          (preproc_else))
+                        (ERROR
+                          (UNEXPECTED 'i'))
+                        (identifier))
+                      (preproc_else)
+                      value: (sorting_value
+                        (sorting_keyword)
+                        (identifier))
+                      (preproc_endif
+                        (preproc_close))))
+                  (trigger_declaration
+                    (trigger_keyword)
+                    name: (identifier)
+                    body: (code_block
+                      (begin_keyword)
+                      (end_keyword)))))))))
+      (var_section
+        (var_keyword)
+        body: (var_body
+          (variable_declaration
+            name: (identifier)
+            type: (type_specification
+              (basic_type)))
+          (variable_declaration
+            name: (identifier)
+            type: (type_specification
+              (basic_type))))))))
+
+========================================================================
+B7a GAP: sorting / trail (18 cells, verdict of the representative MIXED); the parser ERRORs on configurations alc accepts; representative occ:sorting_value:0.0.3.0.0@action_body#trail
+========================================================================
+table 50100 T
+{
+    fields
+    {
+        field(1; K; Code[20]) { }
+        field(2; N; Integer) { }
+        field(3; B; Boolean) { }
+        field(9; O; Option) { OptionMembers = A,B,C; }
+    }
+    keys
+    {
+        key(PK; K) { Clustered = true; }
+    }
+}
+page 50102 PG
+{
+    SourceTable = T;
+    layout
+    {
+        area(Content)
+        {
+            field(N; Rec.N) { }
+        }
+    }
+    actions
+    {
+        area(Processing)
+        {
+            action(A1)
+            {
+                RunObject = page PG;
+                RunPageView =
+#if TPL
+                    sorting(
+K ,
+#if X
+N
+#endif
+);
+#else
+                    sorting(K);
+#endif
+                trigger OnAction()
+                begin
+                end;
+            }
+        }
+    }
+    var
+        I: Integer;
+        Ok: Boolean;
+}
+------------------------------------------------------------------------
+
+(source_file
+  (table_declaration
+    (table_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (fields_section
+        (fields_keyword)
+        body: (fields_body
+          (field_declaration
+            (field_keyword)
+            id: (integer)
+            name: (identifier)
+            type: (type_specification
+              (code_type
+                (code_keyword)
+                length: (integer))))
+          (field_declaration
+            (field_keyword)
+            id: (integer)
+            name: (identifier)
+            type: (type_specification
+              (basic_type)))
+          (field_declaration
+            (field_keyword)
+            id: (integer)
+            name: (identifier)
+            type: (type_specification
+              (basic_type)))
+          (field_declaration
+            (field_keyword)
+            id: (integer)
+            name: (identifier)
+            type: (type_specification
+              (option_type
+                (option_keyword)))
+            body: (declaration_body
+              (property
+                name: (property_name)
+                value: (option_member_list
+                  (option_member
+                    (identifier))
+                  (option_member
+                    (identifier))
+                  (option_member
+                    (identifier))))))))
+      (keys_section
+        (keys_keyword)
+        body: (keys_body
+          (key_declaration
+            (key_keyword)
+            name: (identifier)
+            fields: (field_list
+              (identifier))
+            body: (declaration_body
+              (property
+                name: (property_name)
+                value: (boolean))))))))
+  (page_declaration
+    (page_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (property
+        name: (property_name)
+        value: (identifier))
+      (layout_section
+        (layout_keyword)
+        body: (layout_body
+          (area_section
+            (area_keyword)
+            type: (content_keyword)
+            body: (layout_body
+              (page_field
+                (field_keyword)
+                name: (identifier)
+                source: (member_expression
+                  object: (identifier)
+                  member: (identifier)))))))
+      (actions_section
+        (actions_keyword)
+        body: (action_body
+          (action_area_section
+            (area_keyword)
+            type: (processing_keyword)
+            body: (action_body
+              (action_declaration
+                (action_keyword)
+                name: (identifier)
+                body: (declaration_body
+                  (property
+                    name: (property_name)
+                    value: (object_reference_value
+                      (page_keyword)
+                      (identifier)))
+                  (property
+                    name: (property_name)
+                    value: (preproc_conditional_property_value
+                      (preproc_if
+                        (preproc_open)
+                        condition: (identifier))
+                      value: (sorting_value
+                        (sorting_keyword)
+                        (identifier)
+                        (ERROR
+                          (UNEXPECTED 'i'))
+                        (identifier)
+                        (ERROR
+                          (identifier)
+                          (UNEXPECTED 'i')))
+                      (preproc_else)
+                      value: (sorting_value
+                        (sorting_keyword)
+                        (identifier))
+                      (preproc_endif
+                        (preproc_close))))
+                  (trigger_declaration
+                    (trigger_keyword)
+                    name: (identifier)
+                    body: (code_block
+                      (begin_keyword)
+                      (end_keyword)))))))))
+      (var_section
+        (var_keyword)
+        body: (var_body
+          (variable_declaration
+            name: (identifier)
+            type: (type_specification
+              (basic_type)))
+          (variable_declaration
+            name: (identifier)
+            type: (type_specification
+              (basic_type))))))))

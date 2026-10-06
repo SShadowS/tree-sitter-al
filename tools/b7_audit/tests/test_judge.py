@@ -203,7 +203,8 @@ def test_assertions_roundtrip(tmp_path):
                  "c\t(a (b))\t" + ",".join(judge.fingerprints(SHA)) + "\twhy\n", encoding="utf-8")
     [a] = judge.load_assertions(p)
     assert (a.cell_or_class, a.expect, a.fingerprints, a.reason) == ("c", "(a (b))", judge.fingerprints(SHA), "why")
-    assert judge.load_assertions(judge.HERE / "assertions.tsv") == []
+    committed = judge.load_assertions(judge.HERE / "assertions.tsv")      # the committed rows load
+    assert all(len(x.fingerprints) == 4 for x in committed)
 
 
 SRC = b"codeunit 50100 P { trigger OnRun() begin Foo(1, 2); end; }"
@@ -220,3 +221,40 @@ def test_assertion_mutation_can_fail(al_parser):
     assert judge.check_assertion(root, good)
     assert not judge.check_assertion(root, bad)
     assert not judge.check_assertion(root, wrong_type)
+
+
+def test_assertion_wildcard_type(al_parser):
+    root = al_parser.parse(SRC).root_node
+    a = judge.Assertion("c", "(_ function: (identifier) arguments: (argument_list (integer) (integer)))", (), "")
+    assert judge.check_assertion(root, a)
+    assert not judge.check_assertion(root, replace(a, expect="(_ function: (identifier) arguments: (argument_list (integer) (integer) (integer)))"))
+
+
+def _mutate(expect):
+    """One mutation that must break any fragment: the first field label renamed `bogus`, else the first
+    node type after the root renamed."""
+    import re as _re
+    m = _re.search(r"\b(\w+):", expect)
+    if m:
+        return expect[:m.start()] + "bogus:" + expect[m.end():]
+    m = _re.search(r"\((\w+)", expect[1:])
+    return expect[:m.start() + 1] + "(bogus_" + m.group(1) + expect[m.end() + 1:]
+
+
+def test_committed_assertion_rows_can_fail(al_parser):
+    """Spec 7.3 mutation check over the committed rows: every row that holds on (the first cell of) its cell or
+    class stops holding under one mutation, so no committed fragment is vacuous."""
+    from tools.b7_audit import evidence
+    rows = judge.load_assertions()
+    by_target = {}
+    for e in evidence.universe():
+        by_target.setdefault(e.cell.id, e)
+        by_target.setdefault("/".join(e.cls), e)
+    checked = 0
+    for a in rows:
+        root = al_parser.parse(by_target[a.cell_or_class].cell.source.encode("utf-8")).root_node
+        if not judge.check_assertion(root, a):
+            continue                    # a SILENT row: it fails already (tests/test_silent.py pins those)
+        assert not judge.check_assertion(root, replace(a, expect=_mutate(a.expect))), a.cell_or_class
+        checked += 1
+    assert checked > len(rows) // 2

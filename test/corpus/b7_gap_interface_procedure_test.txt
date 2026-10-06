@@ -1,0 +1,237 @@
+========================================================================
+B7a GAP: interface-procedure / adjacent-compl (3 cells, verdict of the representative GAP); the parser ERRORs on configurations alc accepts; representative occ:interface_procedure_suffix:2@interface_procedure#adjacent-compl
+========================================================================
+interface IQ
+{
+    
+procedure Z()
+#if X
+;
+#endif
+#if not X
+;
+#endif
+
+}
+------------------------------------------------------------------------
+
+(source_file
+  (interface_declaration
+    (interface_keyword)
+    object_name: (identifier)
+    body: (interface_body
+      (interface_procedure
+        (procedure_keyword)
+        name: (identifier)))
+    (ERROR
+      (preproc_if
+        (preproc_open)
+        condition: (identifier))
+      (UNEXPECTED 'i')
+      (UNEXPECTED 'i')
+      (identifier)
+      (UNEXPECTED 'i'))))
+
+========================================================================
+B7a GAP: interface-procedure / elif (3 cells, verdict of the representative GAP); the parser ERRORs on configurations alc accepts; representative occ:interface_procedure_suffix:2@interface_procedure#elif
+========================================================================
+interface IQ
+{
+    
+procedure Z()
+#if X
+;
+#elif Y
+;
+#else
+;
+#endif
+
+}
+------------------------------------------------------------------------
+
+(source_file
+  (interface_declaration
+    (interface_keyword)
+    object_name: (identifier)
+    body: (interface_body
+      (interface_procedure
+        (procedure_keyword)
+        name: (identifier)))
+    (ERROR
+      (preproc_if
+        (preproc_open)
+        condition: (identifier))
+      (ERROR)
+      (preproc_elif
+        condition: (identifier))
+      (ERROR)
+      (preproc_else)
+      (UNEXPECTED 'i'))))
+
+========================================================================
+B7a GAP: interface-procedure / empty (3 cells, verdict of the representative GAP); the parser ERRORs on configurations alc accepts; representative occ:interface_procedure_suffix:2@interface_procedure#empty
+========================================================================
+interface IQ
+{
+    
+procedure Z()
+#if X
+#endif
+;
+
+}
+------------------------------------------------------------------------
+
+(source_file
+  (interface_declaration
+    (interface_keyword)
+    object_name: (identifier)
+    body: (interface_body
+      (interface_procedure
+        (procedure_keyword)
+        name: (identifier)
+        (ERROR
+          (preproc_conditional_var_block
+            (preproc_if
+              (preproc_open)
+              condition: (identifier))
+            (preproc_endif
+              (preproc_close))))
+        (interface_procedure_suffix)))))
+
+========================================================================
+B7a GAP: interface-procedure / first-replace (9 cells, verdict of the representative GAP); the parser ERRORs on configurations alc accepts; representative occ:interface_procedure_suffix:0.1.0@interface_procedure#first-replace
+========================================================================
+interface IQ
+{
+    
+#if X
+procedure Z(): Integer
+#else
+procedure Z(): Integer
+#endif
+;
+
+}
+------------------------------------------------------------------------
+
+(source_file
+  (interface_declaration
+    (interface_keyword)
+    object_name: (identifier)
+    (ERROR
+      (preproc_if
+        (preproc_open)
+        condition: (identifier))
+      (procedure_keyword)
+      name: (identifier)
+      return_type: (type_specification
+        (basic_type))
+      (preproc_else)
+      (procedure_keyword)
+      name: (identifier)
+      return_type: (type_specification
+        (basic_type))
+      (preproc_endif
+        (preproc_close)))))
+
+========================================================================
+B7a GAP: interface-procedure / nested (3 cells, verdict of the representative GAP); the parser ERRORs on configurations alc accepts; representative occ:interface_procedure_suffix:2@interface_procedure#nested
+========================================================================
+interface IQ
+{
+    
+procedure Z()
+#if X
+#if Y
+;
+#else
+;
+#endif
+#else
+;
+#endif
+
+}
+------------------------------------------------------------------------
+
+(source_file
+  (interface_declaration
+    (interface_keyword)
+    object_name: (identifier)
+    body: (interface_body
+      (interface_procedure
+        (procedure_keyword)
+        name: (identifier)))
+    (ERROR
+      (preproc_if
+        (preproc_open)
+        condition: (identifier))
+      (ERROR
+        (UNEXPECTED 'i')
+        (identifier)
+        (preproc_else)
+        (UNEXPECTED 'i'))
+      (preproc_else)
+      (UNEXPECTED 'i'))))
+
+========================================================================
+B7a GAP: interface-procedure / sep-only (3 cells, verdict of the representative GAP); the parser ERRORs on configurations alc accepts; representative occ:interface_procedure_suffix:2@interface_procedure#sep-only
+========================================================================
+interface IQ
+{
+    
+procedure Z()
+#if X
+;
+#else
+;
+#endif
+
+}
+------------------------------------------------------------------------
+
+(source_file
+  (interface_declaration
+    (interface_keyword)
+    object_name: (identifier)
+    body: (interface_body
+      (interface_procedure
+        (procedure_keyword)
+        name: (identifier)))
+    (ERROR
+      (preproc_if
+        (preproc_open)
+        condition: (identifier))
+      (ERROR)
+      (preproc_else)
+      (UNEXPECTED 'i'))))
+
+========================================================================
+B7a GAP: interface-procedure / trail (3 cells, verdict of the representative GAP); the parser ERRORs on configurations alc accepts; representative occ:interface_procedure_suffix:2@interface_procedure#trail
+========================================================================
+interface IQ
+{
+    
+procedure Z()
+#if X
+;
+#endif
+
+}
+------------------------------------------------------------------------
+
+(source_file
+  (interface_declaration
+    (interface_keyword)
+    object_name: (identifier)
+    body: (interface_body
+      (interface_procedure
+        (procedure_keyword)
+        name: (identifier)))
+    (ERROR
+      (preproc_if
+        (preproc_open)
+        condition: (identifier))
+      (UNEXPECTED 'i'))))

@@ -164,3 +164,15 @@ def test_assertion_needs_the_measured_source(al_parser, tmp_path):
                       ({}, "not in the regenerated universe")):
         text = report.build(ev, reg, asr, sources=srcs, parser=al_parser)
         assert "| UNCHECKED | U | 1 |" in text and why in text.split("## UNCHECKED")[1]
+
+
+def test_groups_per_family_base_placement_kind():
+    def c(i, fam, pl, kind):
+        return {"id": i, "family": fam, "placement": pl, "kind": kind}
+    cells = [c("b", "f", "sep-after+comments", "GAP"), c("a", "f", "sep-after@X", "GAP"),
+             c("z", "f", "sep-after", "SILENT"), c("y", "g", "trail", None),
+             c("d", "f", "suffix/xor+not", "GAP"), c("c", "f", "suffix/arithmetic", "GAP")]
+    assert report.groups(cells) == {("f", "sep-after", "GAP"): ["a", "b"], ("f", "sep-after", "SILENT"): ["z"],
+                                    ("f", "suffix", "GAP"): ["c", "d"]}
+    assert report.slug("f", "seed:x:y", "GAP") == "f__seed-x-y__gap"
+    assert report.witness("f", "x", "SILENT").endswith("test_silent.py")
