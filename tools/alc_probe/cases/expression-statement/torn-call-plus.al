@@ -1,7 +1,8 @@
 // B6 (_expression_statement narrowing): torn call plus
+// Fixture expression_statement_negative_test.txt#B6 negative: call torn by an arithmetic %23if arm#0
 // source: recorded by B6 task 1, 2026-10-06; docs/deferred-work.md item 4
-// expect: X reject(AL0175)
-// expect: !X accept
+// expect: A reject(AL0175)
+// expect: !A accept
 table 50100 T { fields { field(1; K; Code[20]) { } field(2; Name; Text[30]) { } } }
 codeunit 50101 Probe
 {
@@ -12,7 +13,7 @@ codeunit 50101 Probe
     var Rec: Record T; X: Integer; Arr: array[3] of Integer; C: Boolean;
     begin
         Foo()
-#if X
+#if A
         + 2
 #endif
         ;

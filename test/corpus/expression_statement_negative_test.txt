@@ -15,7 +15,7 @@
 ;   (Foo());                AL0117  reject-parenthesized.al
 ;   Rec.Get() = true;       AL0117  reject-comparison.al
 ;   Arr[1];                 AL0117  reject-subscript.al
-;   Foo()[1];               not probed; subscript of a call, the same shape as Arr[1] (AL0117)
+;   Foo()[1];               AL0117  reject-call-subscript.al
 ;   Foo() #if A + 2 #endif ;  defined: AL0175 torn-call-plus.al (the tail tears off a call)
 ;   exit(1) #if A + 2 #endif; defined: AL0104,AL0111 torn-exit-plus.al
 ;   exit; (a + b);          a parenthesized statement, AL0117 per reject-parenthesized.al;
