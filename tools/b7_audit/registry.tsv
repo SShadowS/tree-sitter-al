@@ -1,3 +1,5 @@
 # Columns: key, route, role, family, template (\n = newline, exactly one HOLE), equiv, reason.
-# One row per (census key, host route). Task 4 fills it.
+# One row per census key and host group. The route column is an EXPLICIT comma-separated host list
+# (no wildcards); the FIRST host is the witness the template targets; more than one host requires a
+# reason giving the equivalence argument. Task 4 fills it.
 key	route	role	family	template	equiv	reason

@@ -18,6 +18,14 @@ class Row:
     equiv: str
     reason: str
 
+    @property
+    def hosts(self):
+        return tuple(h.strip() for h in self.route_host.split(",") if h.strip())
+
+    @property
+    def witness(self):
+        return self.hosts[0] if self.hosts else ""
+
 
 def load(path):
     rows = []
@@ -39,8 +47,8 @@ def load(path):
 def _problem(r):
     if r.role not in ROLES:
         return f"unknown role {r.role!r}"
-    if (r.role in ("na", "lexical") or r.equiv) and not r.reason.strip():
-        return "reason required (na, lexical or equiv)"
+    if (r.role in ("na", "lexical") or r.equiv or len(r.hosts) > 1) and not r.reason.strip():
+        return "reason required (na, lexical, equiv or multi-host)"
     if r.role in NEEDS_TEMPLATE:
         if r.template.count(HOLE) != 1:
             return f"template needs exactly one {HOLE}"
@@ -50,13 +58,23 @@ def _problem(r):
 
 
 def gate(pairs, rows):
-    """-> (missing: [(key, Route)], stale: [Row], invalid: [(Row, why)])"""
+    """A row's route column is an explicit comma-separated host list (first = witness).
+    -> (missing: [(key, Route)], stale: [Row], invalid: [(Row, why)])"""
     want = {(k, r.host) for k, r in pairs}
-    have = {}
+    cover = {}
     for r in rows:
-        have.setdefault((r.key, r.route_host), []).append(r)
-    missing = [(k, r) for k, r in pairs if (k, r.host) not in have]
-    stale = [r for r in rows if (r.key, r.route_host) not in want]
-    invalid = [(r, p) for r in rows if (r.key, r.route_host) in want and (p := _problem(r))]
-    invalid += [(rs[1], "duplicate row") for rs in have.values() if len(rs) > 1]
+        for h in r.hosts:
+            cover.setdefault((r.key, h), []).append(r)
+    missing = [(k, r) for k, r in pairs if (k, r.host) not in cover]
+    stale = [r for r in rows if not r.hosts or any((r.key, h) not in want for h in r.hosts)]
+    invalid, seen = [], set()
+    for r in rows:
+        if r in stale:
+            continue
+        p = _problem(r)
+        if p:
+            invalid.append((r, p))
+    for (k, h), rs in cover.items():
+        if len(rs) > 1 and (k, h) in want:
+            invalid.append((rs[1], f"duplicate cover of {h}"))
     return missing, stale, invalid

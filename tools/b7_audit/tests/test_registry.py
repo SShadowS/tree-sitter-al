@@ -81,3 +81,67 @@ def test_load_header_only_and_escapes(tmp_path):
     (r,) = registry.load(f)
     assert r.template == "a\n⟨HOLE⟩" and r.equiv == ""
     assert registry.load(Path(__file__).parent.parent / "registry.tsv") == []
+
+
+def _mh():
+    g = grammar.load(MINI)
+    pairs = census.census(g)
+    k = next(k for k, r in pairs if r.host == "caller")
+    return g, k
+
+
+def _row(k, hosts, reason="same rules"):
+    return registry.Row(k, hosts, "list-separator", "f", "x ⟨HOLE⟩", "", reason)
+
+
+def test_multi_host_row_covers_all_and_exposes_witness():
+    g = grammar.load(MINI)
+    pairs = census.census(g)
+    k, hs = next((k, [r.host for kk, r in pairs if kk == k]) for k, _ in pairs
+                 if len([r for kk, r in pairs if kk == k]) > 1)
+    row = _row(k, ",".join(hs))
+    assert row.hosts == tuple(hs) and row.witness == hs[0]
+    rest = [_row(kk, r.host) for kk, r in pairs if kk != k]
+    assert registry.gate(pairs, [row] + rest) == ([], [], [])
+
+
+def test_multi_host_without_reason_invalid():
+    g = grammar.load(MINI)
+    pairs = census.census(g)
+    k, hs = next((k, [r.host for kk, r in pairs if kk == k]) for k, _ in pairs
+                 if len([r for kk, r in pairs if kk == k]) > 1)
+    assert registry.gate(pairs, [_row(k, ",".join(hs), "")])[2]
+
+
+def test_new_caller_missing_despite_multi_host_row():
+    g = grammar.load(MINI)
+    for h in ("host_a", "host_b"):
+        g["rules"][h] = {"type": "SEQ", "members": [{"type": "STRING", "value": h}, {"type": "SYMBOL", "name": "_helper"}]}
+    pairs = census.census(g)
+    k = next(k for k, r in pairs if r.host == "host_a")
+    row = _row(k, "host_a,host_b")
+    g["rules"]["host_c"] = {"type": "SEQ", "members": [{"type": "STRING", "value": "c"}, {"type": "SYMBOL", "name": "_helper"}]}
+    missing, _, _ = registry.gate(census.census(g), [row])
+    assert any(r.host == "host_c" and kk == k for kk, r in missing)
+
+
+def test_listed_host_not_a_route_is_stale():
+    g, k = _mh()
+    _, stale, _ = registry.gate(census.census(g), [_row(k, "caller,nonexistent")])
+    assert stale
+
+
+def test_pair_covered_twice_invalid():
+    g, k = _mh()
+    _, _, invalid = registry.gate(census.census(g), [_row(k, "caller"), _row(k, "caller")])
+    assert invalid
+
+
+def test_cli_bad_header_and_missing_registry_exit_2(tmp_path, monkeypatch):
+    from tools.b7_audit import __main__ as m
+    bad = tmp_path / "r.tsv"
+    bad.write_text("k" + chr(9) + "h" + chr(9) + "terminator" + chr(10), encoding="utf-8")
+    monkeypatch.setattr(m, "REGISTRY", bad)
+    assert m.main(["census", "--check"]) == 2
+    monkeypatch.setattr(m, "REGISTRY", tmp_path / "absent.tsv")
+    assert m.main(["census", "--check"]) == 2
