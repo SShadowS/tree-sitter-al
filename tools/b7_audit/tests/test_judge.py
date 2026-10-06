@@ -6,6 +6,7 @@ from tools.b7_audit import judge
 from tools.b7_audit.registry import Row
 
 SHA = "c" * 64
+UNCHECKED_REP = judge.UNCHECKED_REP
 
 
 def rec(config="-", alc="ACCEPT", err=False, oracle="pass", reject_class=None, control="typed",
@@ -24,8 +25,8 @@ def rec(config="-", alc="ACCEPT", err=False, oracle="pass", reject_class=None, c
     return [r]
 
 
-def holds(sha=SHA, ok=True, fps=None):
-    return judge.Assertion("c", "(x)", fps or judge.fingerprints(sha), "r", holds=ok)
+def holds(sha=SHA, ok=True, fps=None, cell="c"):
+    return judge.Assertion(cell, "(x)", fps or judge.fingerprints(sha), "r", holds=ok)
 
 
 def test_gap():
@@ -37,9 +38,77 @@ def test_silent_from_oracle():
     assert judge.verdict(rec(oracle="representation-violation"), None).name == "SILENT"
 
 
-def test_unchecked_never_consistent():
-    assert judge.verdict(rec(oracle="cannot-validate"), None).name == "UNCHECKED"
-    assert judge.verdict(rec(oracle="cannot-validate"), holds()).name == "UNCHECKED"
+def cv(reasons=("one-reading",), **kw):
+    r = rec(oracle="cannot-validate", **kw)
+    r[0]["oracle"]["reasons"] = list(reasons)
+    return r
+
+
+def test_cannot_validate_no_assertion_unchecked():
+    assert judge.verdict(cv(), None).name == "UNCHECKED"
+
+
+def test_cannot_validate_closed_by_holding_assertion():
+    v = judge.verdict(cv(), holds())
+    assert (v.name, v.detail) == ("CONSISTENT", "assertion-closed: one-reading")
+
+
+def test_cannot_validate_failing_assertion_is_silent():
+    assert judge.verdict(cv(), holds(ok=False)).name == "SILENT"
+
+
+def test_cannot_validate_stale_assertion_unchecked():
+    assert judge.verdict(cv(), holds(fps=("old",) * 4)).name == "UNCHECKED"
+
+
+def test_directive_mismatch_is_silent():
+    assert judge.verdict(rec(oracle="directive-mismatch"), None).name == "SILENT"
+
+
+def test_mixed_with_gap_and_silent_accepted_configs():
+    recs = rec("X=0", alc="REJECT", reject_class="syntax") + rec("X=1", err=True)
+    assert judge.verdict(recs, None).detail == "X=0:REJECTED/syntax/over-accepts;X=1:GAP"
+    recs = rec("X=0", alc="REJECT", reject_class="syntax") + rec("X=1", oracle="discrepancy")
+    assert judge.verdict(recs, None).detail == "X=0:REJECTED/syntax/over-accepts;X=1:SILENT"
+
+
+def test_all_accepted_priority_order():
+    def mk(*pairs):
+        return [r for c, o, e in pairs for r in rec(c, oracle=o, err=e)]
+    a = holds()
+    assert judge.verdict(mk(("a", "pass", False), ("b", "cannot-validate", False)), a).name == "CONSISTENT"
+    assert judge.verdict(mk(("a", "pass", False), ("b", "cannot-validate", False)), None).name == "UNCHECKED"
+    assert judge.verdict(mk(("a", "pass", False), ("b", "discrepancy", False)), a).name == "SILENT"
+    assert judge.verdict(mk(("a", "discrepancy", False), ("b", "pass", True)), a).name == "GAP"
+
+
+def test_reject_class_none_is_unverified():
+    r = rec(alc="REJECT", reject_class=None)
+    assert judge.verdict(r, None).detail == "unverified/over-accepts"
+
+
+def test_representative_without_alc_is_vector_mismatch():
+    bad = rec(cell="rep")
+    bad[0]["alc_flat"] = None
+    v = judge.verdict(sampled(), holds(cell='s'), lookup={"rep": bad}.get)
+    assert (v.name, v.detail) == ("UNCHECKED", UNCHECKED_REP)
+
+
+def test_assertion_for_another_cell_rejected():
+    other = judge.Assertion("zzz", "(x)", judge.fingerprints(SHA), "r", holds=True)
+    with pytest.raises(ValueError):
+        judge.verdict(rec(), other)
+    assert judge.verdict(rec(), other, cls="zzz").name == "CONSISTENT"
+
+
+def test_load_assertions_keeps_quotes(tmp_path):
+    T, N = chr(9), chr(10)
+    fp = ','.join(judge.fingerprints(SHA))
+    p = tmp_path / 'a.tsv'
+    p.write_text(T.join(['cell_or_class', 'expect', 'fingerprints', 'reason']) + N +
+                 T.join(['c', '(a "x" (b))', fp, '"why"']) + N, encoding='utf-8')
+    [a] = judge.load_assertions(p)
+    assert a.expect == '(a "x" (b))' and a.reason == '"why"'
 
 
 def test_consistent_needs_assertion():
@@ -100,18 +169,18 @@ def sampled(cfgs=("-",)):
 
 def test_class_sampled_takes_representative_when_vector_matches():
     lookup = {"rep": rec(cell="rep")}.get
-    assert judge.verdict(sampled(), holds(), lookup=lookup).name == "CONSISTENT"
+    assert judge.verdict(sampled(), holds(cell='s'), lookup=lookup).name == "CONSISTENT"
     assert judge.verdict(sampled(), None, lookup=lookup).name == "UNCHECKED"
 
 
 def test_class_sampled_representative_vector_mismatch():
     lookup = {"rep": rec(cell="rep", alc="REJECT", reject_class="syntax", err=True)}.get
-    v = judge.verdict(sampled(), holds(), lookup=lookup)
+    v = judge.verdict(sampled(), holds(cell='s'), lookup=lookup)
     assert (v.name, v.detail) == ("UNCHECKED", "representative vector mismatch")
 
 
 def test_class_sampled_missing_representative_is_unchecked():
-    v = judge.verdict(sampled(), holds(), lookup={}.get)
+    v = judge.verdict(sampled(), holds(cell='s'), lookup={}.get)
     assert (v.name, v.detail) == ("UNCHECKED", "representative vector mismatch")
 
 
@@ -148,6 +217,6 @@ def test_assertion_mutation_can_fail(al_parser):
     bad = replace(good, expect=good.expect.replace("arguments:", "bogus:"))
     # and one with an element dropped from the middle of the order
     wrong_type = replace(good, expect="(call_expression (argument_list (string_literal)))")
-    assert judge.check_assertion(root, SRC.decode(), good)
-    assert not judge.check_assertion(root, SRC.decode(), bad)
-    assert not judge.check_assertion(root, SRC.decode(), wrong_type)
+    assert judge.check_assertion(root, good)
+    assert not judge.check_assertion(root, bad)
+    assert not judge.check_assertion(root, wrong_type)
