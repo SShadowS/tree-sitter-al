@@ -1,147 +1,250 @@
-# B7a: the separator and continuation audit (design)
+# B7a: the separator and continuation audit (design, rev 2)
 
-Roadmap row B7, first sub-project (user decision 2026-10-06: audit first, then one bounded fix per host
-family, ordered by this audit's matrix). Deferred-work items 1, 2, 30 and 39 feed it. Status: design,
-awaiting review.
+Roadmap row B7, first sub-project (user decision 2026-10-06: audit first, then one bounded fix per defect
+family, ordered by this audit). Deferred-work items 1, 2, 30, 37, 38 and 39 feed it. Status: design,
+awaiting review. Rev 2 adopts the gpt-6.1-sol review of rev 1 (all eight P1 and both P2 findings; see
+the end of this document for the mapping).
 
 ## 1. Why
 
 `812ace7` (4.0.0) made comma-separated lists a sequence of runs with `#if` groups between them, so an arm
 can supply the separator its neighbour lacks. An audit then listed 26 separator sites and six positions
-without a preprocessor host (deferred-work item 1). That list was never re-verified, item 2 showed that a
-rule existing is not the same as a shape being covered (`X, #if FOO Y #endif` parses, `X #if FOO , Y
-#endif` ERRORs), and B6 added two valid split shapes that are loud ERRORs because their hosts have no
-continuation (item 39). Fixing hosts from a stale hand list repeats the 4.0.0 mistake: the fix order,
-and which hosts exist at all, must come from a complete, reproducible measurement.
+without a preprocessor host (deferred-work item 1). That list was never re-verified. Item 2 showed that
+a rule existing is not the same as a shape being covered (`X, #if FOO Y #endif` parses, `X #if FOO , Y
+#endif` ERRORs). B6 left two valid split shapes as loud ERRORs because their hosts have no continuation
+(item 39). Fixing hosts from a stale hand list repeats the 4.0.0 mistake: which boundaries exist, which
+hosts reach them, and the fix order must come from a reproducible measurement.
 
-B7a measures. It changes no grammar rule.
+B7a measures and records. It changes no grammar rule, no `src/` file and no existing expected tree.
 
-## 2. Goals and non-goals
+## 2. What the audit can and cannot claim
 
-Goals:
-- A complete census of every separator site and every expression slot in the grammar, derived from
-  `src/grammar.json`, so completeness is checked, not asserted.
-- For each site, the `#if` placements that matter, each judged by alc (split and flat) and by the parser
-  (has_error and, for clean parses, the config oracle).
-- A generated, committed matrix that ranks the fix sub-projects (B7b onward).
-- A gate that fails when the grammar gains a site the registry does not classify.
-
-Non-goals: fixing any host (B7b+); deciding a host's tree shape; validating non-`#if` separator syntax
-beyond what item 30 (trailing comma) already raises.
+- **Completeness over the grammar** is checked mechanically: every structural punctuation occurrence and
+  every expression boundary in `src/grammar.json`, and every host route that reaches it, has a classified
+  registry row (section 3, 4). A new helper, caller or punctuation occurrence fails the gate.
+- **Completeness over the language** cannot come from the grammar alone. It is approximated by a seed
+  inventory (section 5) of shapes from the backlog, the compiler probes already committed, and the
+  production corpora.
+- **Correctness of a clean tree** is not proven by the oracle. A pass proves the split tree is
+  CONSISTENT with the flat parses under the oracle's checks; a defect shared by both is invisible. Every
+  cell the audit calls correct also carries an independent structural assertion (section 7.3).
 
 ## 3. Census
 
-`tools/b7_audit/census.py` reads `src/grammar.json` and emits two lists, each key stable across
-regenerations:
+`tools/b7_audit/census.py` reads `src/grammar.json` and emits three lists. It is pure (grammar.json in,
+lists out) and has unit tests on a hand-written mini grammar covering REPEAT, right recursion, helper
+SEQs repeated by a caller, `optional` separators outside a REPEAT, cycles, aliases and `inline`.
 
-- **Separator sites.** Every `STRING` `,` or `;` inside a `REPEAT`/`REPEAT1`, keyed `(rule, path)` where
-  `path` is the member-index path inside the rule. Measured 2026-10-06: 31 rules with a `,`, 3 with a
-  `;`. A hidden helper rule (`_link_value_run`) is reported with the visible rules that reach it, so the
-  registry can attach a template to the host a user writes.
-- **Expression slots.** Every `SYMBOL _expression` (directly or through one hidden rule), keyed
-  `(rule, field or path)`, marked `tail` when the same `SEQ` is followed by an optional
-  `preproc_conditional_expression_tail` (9 rules have one today: `assignment_statement`, `if_statement`,
-  `for_statement`, `while_statement`, `exit_statement`, `_argument_expression`, `subscript_expression`,
-  `list_literal`, `_property_value_with_split`).
+### 3.1 Boundary occurrences
 
-The census is pure (grammar.json in, two lists out) and has a unit test on a hand-written mini grammar.
+Every `STRING` among `,` `;` `..` `.` `::` `:` and every `CHOICE`/`optional` of them, at any nesting
+depth, outside atomic lexical constructs (`token`, `IMMEDIATE_TOKEN`, `PATTERN`), keyed
+`(rule, path)`. Each occurrence carries its structural context, computed through rule references with
+cycle detection: inside a REPEAT/REPEAT1, inside a right-recursive rule, inside a helper SEQ that a
+caller repeats, optional, or fixed. Lexical punctuation is listed as `lexical` and out of scope, never
+dropped.
 
-## 4. Registry
+### 3.2 Expression boundaries
 
-`tools/b7_audit/sites.tsv`, one row per census key:
+Every position where an `_expression` (directly, or through one hidden rule) begins or ends inside a
+host: keyed `(rule, field or path, edge)` with `edge` one of `start`, `end`, `between` (for repeated
+elements such as later subscript indices). Each records which continuation mechanisms are offered at
+that edge, read from the grammar: `preproc_conditional_expression_tail` (suffix, operator-led arms),
+its operator-only form, `preproc_operand_prefix` (prefix, operand-led arms after a dangling operator),
+and whether the mechanism is required or optional. The rev-1 claim "9 rules have a tail" is replaced by
+this per-edge table (e.g. `for_statement` has a tail after `end`, not `start`; `subscript_expression`
+after the first index only; `_property_value_with_split`'s tail is required).
+
+### 3.3 Host routes
+
+For every occurrence and boundary, the visible user-written hosts that reach it (`field_list` → keys,
+fieldgroups, fieldgroup modifications; `parameter_list` → procedures, interface procedures, triggers,
+ControlAddIn events; `ml_value_list` → keyed ML properties, TextConst declarations; `option_member_list`
+→ generic property values, Option types; the link union → its six property names). A route is the
+chain of rules from a host rule to the occurrence.
+
+## 4. Registry and its gate
+
+`tools/b7_audit/registry.tsv`, one row per (occurrence or boundary, host route):
 
 | column | meaning |
 |---|---|
-| `key` | the census key |
-| `class` | `separator`, `continuation`, `na`, or `same-as <key>` |
-| `template` | AL source with one `⟨HOLE⟩`, a self-contained object that compiles (`tools/alc_probe` rules: no Base App symbols) |
-| `elements` | the list elements (or the expression and operand) placed around the hole |
-| `reason` | required for `na` and `same-as`: why no probe is meaningful, or which row covers it |
+| `key`, `route` | from the census |
+| `role` | `list-separator`, `edge-separator` (leading, trailing, empty slot), `fixed-separator`, `terminator`, `qualifier` (`.`, `::`, `..`, `:`), `continuation`, `lexical`, `na` |
+| `family` | the defect family a fix would touch (section 8); several rows share one |
+| `template` | AL source with one `⟨HOLE⟩`, self-contained and compilable (no Base App symbols), typed for the slot (Boolean slots get Boolean operands, lvalue slots an lvalue) |
+| `equiv` | `same-as <row>` with an argument covering host context (same precedence, same scanner states, same conditional attachment), or empty |
+| `reason` | required for `na`, `lexical` and `equiv` |
 
-`na` is for sites where no `#if` placement can occur or no alc-valid input exists (e.g. a separator
-inside a token-level construct). Every `na` needs a reason a reviewer can check.
+Gate: `python -m tools.b7_audit census --check` (new validate-grammar.sh step and a CI step): exit 1 when
+a census occurrence, boundary or route has no row, or a row matches nothing (stale); exit 2 when
+grammar.json is missing. New callers are gated as well as new punctuation.
 
-The gate (`python -m tools.b7_audit census --check`, validate-grammar.sh new step, CI): exit 1 when a
-census key has no row or a row names no census key (stale); exit 2 when grammar.json is missing.
+## 5. Seed inventory
 
-## 5. Placements
+`tools/b7_audit/seeds/`, AL files each holding one shape that must be in the matrix, with its source:
 
-For a `separator` row with elements `A`, `B`, `C` and separator `s`:
+- deferred items 1, 2, 30, 39 reproducers verbatim (item 39's assignment keeps its `Foo();` after the
+  selected terminator, which is what makes ownership worth testing);
+- the B13 gap file `test/corpus/property_value_run_b13_gap_test.txt` and item 38's shape;
+- the committed alc cases that involve a separator or a continuation
+  (`tools/alc_probe/cases/{g11-*,link-keying,pair-list-keying,value-runs,expression-statement}`);
+- production shapes: every distinct `(host route, placement class)` pair found by a tree walk of the four
+  corpora (BC.History, DC, BC28.1, BCApps-29.0) where a `#if` group sits next to a separator or an
+  expression edge, with the count of sites.
 
-| id | shape (directives on their own lines) |
+A seed is a cell like any other (section 6.3) and cannot be dropped from the matrix.
+
+## 6. Placements
+
+Every expansion is written literally in `tools/b7_audit/placements.py`, each with its intended
+configuration-validity vector (which symbol assignments are meant to be valid AL), so a generated input
+that is invalid in every configuration by construction is a generator bug, not a verdict.
+
+### 6.1 Separator placements (elements `A B C D`, separator `s`)
+
+| id | shape (directives on own lines) | intended valid |
+|---|---|---|
+| `sep-after` | `A s #if X B s #endif C` | all |
+| `sep-before` | `A #if X s B #endif s C` | all |
+| `sep-before-end` | `A #if X s B #endif` | all |
+| `first-replace` | `#if X A #else B #endif s C` | all |
+| `lead-optional` | `#if X A s #endif B` | all |
+| `count-differs` | `A #if X s B s C #else s D #endif` | all |
+| `both-in-arm` | `A #if X s B s #else s #endif C` | all |
+| `sep-only` | `A #if X s #else s #endif B` | all |
+| `empty` | `A s #if X #endif B` | all |
+| `adjacent` | two groups in a row, independent (`X`, `Y`) and complementary (`X`, `not X`) | all |
+| `elif` | `sep-before` plus an `#elif Y s C` arm | all |
+| `nested` | `A #if X s B #if Y s C #endif #endif s D` (each nested arm owns its separator) | all |
+| `one-elem` / `empty-list` | the list reduced to one element / none inside an arm, where the host allows | per host |
+| `holes` | leading, consecutive, trailing separator (option members keep ordinals) | per host |
+| `trail` | `A s #if X B #endif` | X only, unless the host allows a trailing separator |
+| `comments` | each of the above with a `//` and a `/* */` comment at every boundary | as base |
+| `polarity` | each of the above with `#if not X` | as base |
+
+Element samples include a quoted identifier and a contextual keyword where the host allows, and an
+element that resembles a sibling property or declaration, to expose attachment ambiguity.
+
+### 6.2 Continuation placements
+
+Per boundary edge, per operator family (arithmetic `+ * div mod`, comparison `= <>`, logical
+`and or xor not`, membership/type `in is as`), with typed operands:
+
+| id | shape | intended valid |
+|---|---|---|
+| `suffix` | `E #if X op F #endif` | all |
+| `suffix-else` | `E #if X op F #else op2 G #endif` (different operators per arm) | all |
+| `op-only` | `E #if X op #endif F` | X only (as B3's `split-operator.al`) |
+| `prefix` | `E op #if X F op #endif G` (`preproc_operand_prefix`'s shape) | all |
+| `whole-operand` | `E op #if X F #else G #endif` | all |
+| `first` | `#if X E op #endif F` and a conditional only expression | all / per host |
+| `chain` | `E * F #if X + G #endif * H` and `E or F #if X and G #endif or H` (grouping discriminates) | all |
+| `consecutive` / `nested` | two continuation groups in a row; one inside another | all |
+| `unary-paren` | an arm opening `(`, `-`, `not` | per operator |
+| `semi-in-arms` | `E #if X op F; Foo(); #else ; #endif` | all, ONLY where the host is a statement whose expression may end the statement (assignment, call, exit with value); never an `if`/`while`/`for` header |
+| `signed` | operand a signed literal (`-1`), exposing the signed-literal one-reading refusal | per host |
+
+## 7. Judging a cell
+
+### 7.1 Evidence
+
+For each cell the runner records, per symbol assignment, a configuration vector:
+
+- alc split and flat verdicts with diagnostic codes (via `tools.alc_probe`, controls first; a `BROKEN`
+  project or an alc split/flat `MISMATCH` fails the run);
+- whether alc's rejection is syntax (AL0104/AL0107/AL0111/AL0224 class) or semantic (everything else),
+  from a typed flat control that compiles the same configuration's text with a known-valid element;
+- the parser's `has_error` on the split source, and whether ERROR/MISSING lies inside the cell's hole;
+- the oracle record per configuration from `tools.config_oracle.runner.check_input`: `pass`,
+  `discrepancy`, `representation-violation`, `directive-mismatch`, or `cannot-validate` with its reason
+  (unsupported type/host, one-reading, contract shape, accounting, unconsumed fragment, alternation).
+  An `internal-error` item fails the run; it is never a verdict and never reviewed by hand.
+
+### 7.2 Verdicts
+
+| verdict | condition |
 |---|---|
-| `sep-after` | `A s #if X B s #endif C` (separator before the arm's element) |
-| `sep-before` | `A #if X s B #endif s C` (separator inside the arm, leading) |
-| `lead` | `#if X A s #endif B` (the list opens inside an arm) |
-| `trail` | `A s #if X B #endif` (the list closes inside an arm) |
-| `empty` | `A s #if X #endif B` |
-| `else` | `A #if X s B #else s C #endif` |
-| `elif` | `sep-before` with an `#elif Y` arm |
-| `nested` | `sep-before` with the arm's element inside a nested `#if Y` |
+| `CONSISTENT` | alc accepts every configuration; parser clean; oracle `pass` for every configuration; structural assertion holds |
+| `GAP` | alc accepts every configuration; parser ERRORs |
+| `SILENT` | alc accepts every configuration; parser clean; oracle `discrepancy` or `representation-violation`, or the structural assertion fails |
+| `MIXED` | alc accepts some configurations and rejects others (split constructs such as B3's `op-only`); judged per accepted configuration as above, recorded with the vector |
+| `REJECTED` | alc rejects every configuration; sub-verdict `syntax` or `semantic` from the typed control; parser ERROR is `agrees`, parser clean is `over-accepts` (a syntax over-acceptance is a finding; a semantic one is out of scope by project policy) |
+| `UNCHECKED` | alc accepts; parser clean; oracle `cannot-validate` for some configuration and no structural assertion yet |
 
-For a `continuation` row with expression `E` and operand `F`, operator `op` (one arithmetic, one
-comparison, one keyword operator per slot):
+`UNCHECKED` is never folded into `CONSISTENT`. Each `UNCHECKED` cell is closed by a structural assertion
+(7.3) or stays listed as unchecked in the matrix with its refusal reason.
 
-| id | shape |
-|---|---|
-| `op-arm` | `E #if X op F #endif` |
-| `op-arm-else` | `E #if X op F #else op G #endif` |
-| `op-only` | `E #if X op #endif F` |
-| `semi-in-arms` | `E #if X op F; #else ; #endif` (statement hosts only) |
+### 7.3 Structural assertions
 
-Placements a host cannot take (`semi-in-arms` outside a statement) are not generated; the row records
-which were skipped and why.
+`tools/b7_audit/assertions.tsv`: per cell (or per placement class and family, when the shape is
+uniform), an expected-tree fragment written by hand from the flat reading of each configuration: which
+node owns each element, the separator and the continuation, with fields. A cell's assertion is checked
+against the split tree. Each assertion row carries fingerprints (sha256 of the cell source, of
+`src/parser.c`, of `src/scanner.c`, of the oracle package) so a grammar change re-opens it.
+A mutation check (rename a field to `bogus`, drop an element) proves each assertion class can fail.
 
-## 6. Judging a cell
+## 8. Outputs
 
-Each generated input is run three ways:
+- **Canonical evidence**: `tools/b7_audit/evidence.jsonl`, one sorted record per cell and configuration
+  (source hash, verdict inputs, diagnostic codes, oracle items), with execution metadata (alc
+  version and assembly hashes, runtime, corpus manifests with HEADs, parser hashes) in a separate
+  header record. Paths normalised, LF line ends.
+- **Matrix**: `docs/b7-separator-continuation-matrix.md`, generated deterministically by
+  `python -m tools.b7_audit report` from the committed evidence (byte-identical on any machine).
+  `python -m tools.b7_audit run --check` re-measures and fails when a verdict differs from the evidence;
+  it requires every corpus root present and refuses a different alc identity unless `--accept-tool`.
+- **Fixtures**: `GAP` and `REJECTED/over-accepts(syntax)` cells get a committed alc probe under
+  `tools/alc_probe/cases/b7-audit/` (`--check` clean) and a corpus fixture pinning today's tree
+  (deliberate negative for GAP, oracle `debt(B7)`; the over-acceptance fixture's header names the
+  defect). `SILENT` cells do NOT go into `test/corpus/`: the quick tier reads corpus sources and a
+  discrepancy cannot be classified. They go into `tools/b7_audit/tests/test_silent.py`, which asserts
+  each cell's current oracle finding and is flipped to require `pass` by the fix.
+- **Defect families**: cells deduplicated into families (one grammar cause, possibly many cells),
+  each with: the cells, the hosts, the observed defective production sites (from the seed tree walk,
+  not host prevalence), dependencies (e.g. the comma-leading link list depends on the link/property
+  ambiguity matrix, roadmap B7), and owner. Cells overlapping B12/B13 (deferred items 36, 37, 38) are
+  assigned there explicitly.
+- **Ranked fix list for B7b+**: by `SILENT` families first, then `GAP` and syntax `over-accepts`
+  families by defective production sites, then by dependency order; `UNCHECKED` listed separately,
+  never ranked as clean.
+- Deferred items 1 and 2 rewritten from the matrix; items 30 and 39 cross-referenced to their cells.
 
-1. **alc** via `tools.alc_probe` (every symbol assignment, split and flat; controls first; `BROKEN`
-   rows are template bugs and fail the run, never a verdict).
-2. **Parser** `has_error` on the split source.
-3. **Oracle** `tools.config_oracle.runner.check_input` on the split source, when the parser is clean.
+## 9. Gates
 
-Verdicts:
-
-| verdict | alc | parser | oracle |
-|---|---|---|---|
-| `OK` | accepts every configuration | clean | pass for every configuration |
-| `OK-NEG` | rejects some configuration | ERROR | — |
-| `GAP` | accepts every configuration | ERROR | — |
-| `SILENT` | accepts every configuration | clean | a discrepancy |
-| `REVIEW` | accepts every configuration | clean | cannot-validate for some configuration |
-| `OVER` | rejects some configuration | clean | — |
-
-`SILENT` is the worst class (a wrong tree with no ERROR); `REVIEW` rows get a hand check (the tree read against the flat reading of each configuration),
-recorded in `tools/b7_audit/review.tsv`, before the matrix is final. A split/flat
-disagreement inside alc is reported as `MISMATCH` and blocks the cell.
-
-## 7. Outputs
-
-- `docs/b7-separator-continuation-matrix.md`, generated by `python -m tools.b7_audit report`: one table
-  per class with the verdict of every placement, totals, the production impact of each host (sites from
-  `./tools/corpus-grep.sh`, recorded with the command), and the ranked fix list.
-- Generated inputs are not committed. Every `GAP`, `SILENT` and `OVER` cell gets a committed alc probe
-  under `tools/alc_probe/cases/b7-audit/` (`--check` clean) and a fixture pinning today's tree:
-  `GAP` in `test/corpus/b7_gap_<family>_test.txt` (deliberate negatives, oracle `debt(B7)`), `SILENT`
-  and `OVER` the same way with the defect named in the header, so B7b+ flips a pinned case.
-- Item 1 and item 2 rewritten from the matrix; item 30 and item 39 cross-referenced to their cells.
-- The ranked list: B7b+ order by (`SILENT` count, `GAP` count, production sites), with item 39's two
-  shapes placed by the same rule.
-
-## 8. Gates
-
-- `python -m tools.b7_audit census --check` exit 0 (and in validate-grammar.sh and CI).
-- `python -m tools.b7_audit run` reproduces the committed matrix byte-for-byte from a clean checkout
-  (no hand edits; each `REVIEW` hand check is a row in `tools/b7_audit/review.tsv`: cell id, verdict `OK` or `SILENT`, and the reason, which the report reads).
+- `census --check` exit 0 (validate-grammar.sh and CI).
+- `report` regenerates the committed matrix byte-for-byte from the committed evidence.
+- `run --check` exit 0 on the author's machine against the recorded alc identity and corpus manifests
+  (a slow gate; not in validate-grammar.sh quick mode).
 - alc_probe `--check` over the new cases clean; `tree-sitter test` total moves by exactly the cases
-  added; has_error sweep over corpus fixtures clean; oracle quick tier exit 0 with the new `debt(B7)`
+  added; has_error sweep over the corpus fixtures clean; oracle quick tier exit 0 with the new `debt(B7)`
   entries; `validate-grammar.sh --full` green.
 - No change to `grammar.js`, `src/`, or any existing expected tree.
 
-## 9. Cost
+## 10. Cost and shape of the run
 
-About 35 separator sites x 8 placements + about 40 expression slots x 4 placements is roughly 440
-inputs; at two configurations, split and flat, about 1,800 alc compiles. alc_probe runs a compile in
-about 1-2 s, so a full run is 30-60 minutes; `run --only <key>` re-runs one site. The census gate is
-instant.
+The parser and the oracle check every cell (seconds for the whole matrix). alc runs per cell and
+configuration, split and flat, with `tools.alc_probe`'s worker pool (default six), cached by
+(exact source, configuration, runtime, compiler identity). Rough size: about 2,800 compiles for the
+generic placements before the semicolon cells and the seeds, so a cold run is a few hours of
+compiler time; `run --only <family|row>` re-runs a slice, and the cache makes re-runs cheap. Proven
+equivalent rows (`equiv`) share cells but keep one host-parity witness each.
+
+## Rev 2 changes (gpt-6.1-sol review of rev 1)
+
+1. Census of all structural punctuation with roles and recursion/caller context; lexical punctuation
+   listed, not dropped; seed inventory for what the grammar cannot show (P1-1).
+2. Occurrence, boundary edge, host route and probe variant separated; per-edge continuation table
+   (P1-2).
+3. `OK-NEG`/`OVER` replaced by configuration vectors, `MIXED`, and syntax-vs-semantic `REJECTED` (P1-3).
+4. `SILENT` reproducers kept out of the quick-tier corpus in a dedicated pytest (P1-4).
+5. Continuation placements: prefix mechanism, whole operand, grouping chains, `in/is/as`, typed
+   templates, signed literals, `semi-in-arms` restricted and item 39's following statement kept (P1-5).
+6. Separator placements extended and written literally with validity vectors (P1-6).
+7. `OK` renamed `CONSISTENT`; refusals recorded by reason; internal errors fail; independent structural
+   assertions with fingerprints and a mutation check (P1-7).
+8. Ranking by deduplicated families, defective production sites and dependencies; `UNCHECKED` separate;
+   B12/B13 overlap assigned (P1-8).
+9. Committed canonical evidence; deterministic report; `run --check` against pinned tool identity and
+   corpus manifests (P2-9).
+10. Cost recomputed from the design (P2-10).
