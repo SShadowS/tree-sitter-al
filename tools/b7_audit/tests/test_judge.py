@@ -266,3 +266,20 @@ def test_assertion_exact_children(al_parser):
     assert judge.check_assertion(root, a)
     assert judge.check_assertion(root, replace(a, expect="(argument_list (integer))"))          # subsequence
     assert not judge.check_assertion(root, replace(a, expect="(argument_list! (integer))"))    # an extra child
+
+
+def test_assertion_exact_children_ignore_every_extra(al_parser):
+    a = judge.Assertion("c", "(argument_list! (integer) (integer))", (), "")
+    for src in (b"codeunit 50100 P { trigger OnRun() begin Foo(1 // c\n, 2); end; }",
+                b"codeunit 50100 P { trigger OnRun() begin Foo(1 /* c */, 2); end; }",
+                b"codeunit 50100 P { trigger OnRun() begin Foo(1,\n#pragma warning disable AL0001\n2); end; }"):
+        root = al_parser.parse(src).root_node
+        assert not root.has_error, src
+        assert judge.check_assertion(root, a), src
+    assert judge.EXTRAS >= {"comment", "multiline_comment", "pragma"}
+
+
+def test_exact_pattern_refuses_ellipsis():
+    with pytest.raises(ValueError, match="exact pattern"):
+        judge._read("(argument_list! (integer) ...)")
+    assert judge._read("(argument_list (integer) ...)") == ("argument_list", [(None, ("integer", []))])

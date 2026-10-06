@@ -14,6 +14,9 @@ HERE = Path(__file__).parent
 ASSERTIONS = HERE / "assertions.tsv"
 SILENT_ORACLE = frozenset({"discrepancy", "representation-violation", "directive-mismatch"})
 UNCHECKED_REP = "representative vector mismatch"
+# The named node types of grammar.js `extras` (keep in sync): they may sit between any two children.
+EXTRAS = frozenset({"comment", "multiline_comment", "pragma", "preproc_region", "preproc_endregion",
+                    "preproc_define", "preproc_undef"})
 
 
 @dataclass(frozen=True)
@@ -149,6 +152,9 @@ def _read(text):
         while toks[pos] != ")":
             t = toks[pos]
             if t == "...":
+                if typ.endswith("!"):
+                    raise ValueError(f"`...` inside the exact pattern ({typ} ...) in {text!r}: `!` means exactly "
+                                     f"these children, so nothing may be elided")
                 pos += 1
             elif t.endswith(":"):
                 field = t[:-1]
@@ -171,8 +177,8 @@ def _match(n, pat):
     if typ != "_" and n.type != typ:         # `_`: any node type (a class row spanning hosts)
         return False
     have = [(n.field_name_for_child(i), c) for i, c in enumerate(n.children) if c.is_named]
-    if exact:                                # comments are extras: they never count against `!`
-        have = [(f, c) for f, c in have if c.type != "comment"]
+    if exact:                                # extras never count against `!`
+        have = [(f, c) for f, c in have if c.type not in EXTRAS]
         if len(have) != len(kids):
             return False
 
