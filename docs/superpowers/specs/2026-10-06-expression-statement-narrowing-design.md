@@ -253,3 +253,29 @@ the work: it is measured, attributed to the edit that caused it, and put to the 
 CHANGELOG `### Fixed` entry (valid trees unchanged in four corpora; invalid statements and
 detached fragments now ERROR; reserved words in code); deferred-work item 4 RESOLVED; roadmap B6
 DONE; CLAUDE.md "Reserved-word sets" gains the third set.
+
+## Execution amendments (2026-10-06)
+
+- §4.1, `prec(-1)`: load-bearing beyond `begin X • -`. Without it GLR keeps `X` plus a `[1] := 2;`
+  list-literal statement instead of the subscript `X[1] := 2;` (statements need no separator and a
+  list literal can start one): 381 / 10 / 405 / 979 files change in BC.History / DC / BC28.1 /
+  BCApps (`docs/b6-audit.md`, Step 2). The precedence stays and the rule comment names both cases.
+- §4.3: a first option member shares its parse state with the generic property value's
+  `_expression`, so `code_names` reserved it (`OptionMembers = and,or,is;` ERRORed). alc accepts the
+  seven words as option members (`accept-option-member-operator-words.al`), so `option_member` has
+  seven `alias($._X_token, $.identifier)` arms. STATE_COUNT 23,211 -> 23,213.
+- §5.2: split case 5 (`B := A #if X + 1; Foo(); #else ; #endif`) and the repeat-until
+  keyword-operator tear are valid AL that B6 makes a loud ERROR. They are B7 gaps, pinned in
+  `test/corpus/expression_statement_b7_gap_test.txt` and the pytest `B7_GAP` list
+  (deferred-work item 39).
+- §5.2: the torn corpus negatives were restructured so every configuration is invalid (an `#else`
+  arm with another fragment), which lets the oracle classify them `negative`. The single-arm forms,
+  valid when the symbol is undefined, are pinned by the REJECT list of
+  `tools/config_oracle/tests/test_expression_statement.py`.
+- The anonymous `in` child of `in_keyword` now has `grammar_name` `identifier` (the `_in_token`
+  serves `in_keyword` and `option_member`'s alias). Metadata only: `node.type`, text and query
+  matching are unchanged. `tools.perf ab`'s tree check refuses to compare across this boundary, so
+  the perf runs used the masking wrapper in `docs/b6-audit.md`.
+- §7: alc rejects all three out-of-scope forms, `(Foo)();`, `(Foo())();` and `Foo()();`, with
+  AL0125 ("Method name expected after invocation operator '()'"), split and flat
+  (`tools/alc_probe/cases/expression-statement/oos-*.al`); no deferred item.
