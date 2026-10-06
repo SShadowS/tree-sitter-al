@@ -174,3 +174,83 @@ def test_diff_records():
     assert evidence.diff_records(old, new, {"a", "b", "c"}) == [
         "changed a - v: 1 -> 2", "missing b -", "new c -"]
     assert evidence.diff_records(old, new, {"a"}) == ["changed a - v: 1 -> 2"]
+
+
+# --- fix round 1 ----------------------------------------------------------------------------------
+def test_oracle_reduced_to_reasons(al_parser, tmp_path, monkeypatch):
+    from tools.config_oracle.runner import Record
+    items = ["multi-config-parse:error@303,error@306", "multi-config-parse:error@41", "zero-width-leaf@7"]
+    monkeypatch.setattr("tools.config_oracle.runner.check_input",
+                        lambda *a, **k: [Record("k", "X=0", "cannot-validate", items),
+                                         Record("k", "X=1", "pass", [])])
+    recs = evidence.measure(CELL, al_parser, alc(ACCEPT, tmp_path))
+    assert recs[0]["oracle"] == {"status": "cannot-validate", "reasons": ["multi-config-parse:error", "zero-width-leaf"]}
+    assert recs[1]["oracle"] == {"status": "pass", "reasons": []}
+
+
+def test_check_against_reduced_committed_is_clean():
+    fresh = {"cell": "a", "config": "-", "oracle": {"status": "pass", "items": ["x@1", "x@2"]}}
+    committed = {"cell": "a", "config": "-", "oracle": {"status": "pass", "reasons": ["x"]}}
+    assert evidence.diff_records([committed], [fresh], {"a"}) == []
+
+
+def test_no_project_dir_left(al_parser, tmp_path):
+    a = alc(lambda t, raw: (core.REJECT, ("AL0104",)) if "GARBAGE" in t else (core.ACCEPT, ()),
+            tmp_path, cache=tmp_path / "cache")
+    a.check_controls()
+    evidence.measure(CELL, al_parser, a)
+    assert list((tmp_path / "work").iterdir()) == []
+    owned = evidence.Alc(IDENT, runner=fake(ACCEPT))
+    owned.verdict("x")
+    wd = owned.workdir
+    owned.close()
+    assert not wd.exists()
+
+
+def test_oracle_assignment_mismatch_is_its_own_error(al_parser, tmp_path, monkeypatch):
+    from tools.config_oracle.runner import Record
+    monkeypatch.setattr("tools.config_oracle.runner.check_input",
+                        lambda *a, **k: [Record("k", "X=1", "pass", [])])
+    with pytest.raises(evidence.DiscoverMismatch):
+        evidence.measure(CELL, al_parser, alc(ACCEPT, tmp_path))
+
+
+def test_cache_key_covers_project_template(monkeypatch, tmp_path):
+    k1 = alc(ACCEPT, tmp_path).key("x", ())
+    monkeypatch.setattr(evidence, "CORE_SHA256", "other")
+    assert alc(ACCEPT, tmp_path).key("x", ()) != k1
+
+
+def test_cache_write_leaves_no_temp(al_parser, tmp_path):
+    evidence.measure(CELL, al_parser, alc(ACCEPT, tmp_path, cache=tmp_path / "cache"))
+    files = [p.name for p in (tmp_path / "cache").rglob("*") if p.is_file()]
+    assert files and all(f.endswith(".json") and len(f) == 69 for f in files)
+
+
+def test_corpus_manifest_and_warnings(tmp_path):
+    (tmp_path / "a").mkdir()
+    (tmp_path / "a" / "x.al").write_text("abc")
+    (tmp_path / "b.txt").write_text("no")
+    m = evidence.corpus_entry(tmp_path)
+    assert m["present"] and m["head"] is None and m["manifest"]["al_files"] == 1
+    (tmp_path / "y.al").write_text("d")
+    m2 = evidence.corpus_entry(tmp_path)
+    assert m2["manifest"]["sha256"] != m["manifest"]["sha256"]
+    assert evidence.corpus_warnings({"C": m}, {"C": m2}) == ["WARNING: corpus C changed since the evidence was taken"]
+    assert evidence.corpus_warnings({"C": m}, {"C": m}) == []
+
+
+def test_header_records_production_shapes_sha():
+    h = evidence.header(IDENT, "15.0", corpora={})
+    assert h["production_shapes_sha256"] == evidence._sha(evidence.seeds.SHAPES_JSON)
+
+
+def test_only_with_accept_tool_refuses_identity_merge(tmp_path):
+    exe = tmp_path / "al.exe"
+    exe.write_bytes(b"x")
+    out = tmp_path / "e.jsonl"
+    evidence.write([], {"alc": {"version": "old"}}, out)
+    ver = lambda args: subprocess.CompletedProcess(args, 0, "new 1.0\n", "")
+    msgs = []
+    assert evidence.run(only="var-names", accept_tool=True, out=out, al=str(exe), runner=ver, log=msgs.append) == 2
+    assert "identity" in msgs[-1]

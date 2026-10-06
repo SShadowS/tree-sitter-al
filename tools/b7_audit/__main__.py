@@ -54,7 +54,7 @@ def main(argv=None):
         from . import evidence
         try:
             return evidence.run(only=a.only, jobs=a.jobs, check=a.check, accept_tool=a.accept_tool)
-        except (evidence.ProbeBroken, evidence.OracleCrash, evidence.GeneratorBug) as e:
+        except (evidence.ProbeBroken, evidence.OracleCrash, evidence.GeneratorBug, evidence.DiscoverMismatch) as e:
             print(f"{type(e).__name__}: {e}", file=sys.stderr)
             return 2
     return cmd_census(a)

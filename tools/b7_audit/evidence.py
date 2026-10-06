@@ -21,6 +21,9 @@ keyed with the runtime and the compiler identity, so a different compiler never 
 import hashlib
 import itertools
 import json
+import os
+import re
+import shutil
 import subprocess
 import tempfile
 import threading
@@ -31,7 +34,6 @@ from pathlib import Path
 
 import tools.config_oracle.runner as oracle_runner
 from tools.alc_probe import core
-from tools.alc_probe.matrix import _differ
 from tools.b7_audit import placements, registry, seeds
 from tools.config_oracle import directives
 
@@ -40,6 +42,9 @@ HERE = Path(__file__).parent
 REPO = HERE.parent.parent
 EVIDENCE = HERE / "evidence.jsonl"
 CACHE = REPO / ".cache" / "b7_audit" / "alc"
+ORACLE_ITEMS = REPO / ".cache" / "b7_audit" / "oracle-items.jsonl"   # verbatim items, never committed
+# A change to the project template (app.json, file layout, classification) invalidates the cache.
+CORE_SHA256 = hashlib.sha256(Path(core.__file__).read_bytes()).hexdigest()
 
 
 class GeneratorBug(Exception):
@@ -52,6 +57,16 @@ class OracleCrash(Exception):
 
 class ProbeBroken(Exception):
     pass
+
+
+class DiscoverMismatch(Exception):
+    """The oracle's configurations (discover's free symbols) do not map one-to-one onto the
+    cell's assignments."""
+
+
+def _differ(split, flat):
+    # The split/flat MISMATCH rule of tools.alc_probe.matrix._differ (copied: that one is private).
+    return split.kind != flat.kind or (split.kind == core.REJECT and split.source_codes != flat.source_codes)
 
 
 # --- alc ------------------------------------------------------------------------------------------
@@ -74,13 +89,14 @@ class Alc:
         self.identity, self.runtime, self.runner = identity, runtime, runner
         self.al = identity.path or "al"
         self.cache_dir = Path(cache_dir) if cache_dir else None
+        self._owned = workdir is None
         self.workdir = Path(workdir) if workdir else Path(tempfile.mkdtemp(prefix="b7-alc-"))
         self._id = json.dumps(identity_dict(identity), sort_keys=True)
         self._mem, self._lock, self._n = {}, threading.Lock(), itertools.count()
         self.stats = {"requested": 0, "disk_hits": 0, "compiled": 0}
 
     def key(self, text, symbols):
-        blob = json.dumps([text, sorted(symbols), self.runtime, self._id])
+        blob = json.dumps([text, sorted(symbols), self.runtime, self._id, CORE_SHA256])
         return hashlib.sha256(blob.encode("utf-8")).hexdigest()
 
     def _path(self, k):
@@ -101,14 +117,27 @@ class Alc:
         with self._lock:
             n = next(self._n)
             self.stats["compiled"] += 1
-        v = core.compile_project(self.workdir / f"p{n:06d}", text, sorted(symbols), runtime=self.runtime,
-                                 al=self.al, runner=self.runner)
+        v = self._project(f"p{n:06d}", text, sorted(symbols))
         if self.cache_dir and v.kind != core.BROKEN:     # a broken project is never a cached verdict
             p = self._path(k)
             p.parent.mkdir(parents=True, exist_ok=True)
-            p.write_text(json.dumps({"kind": v.kind, "codes": list(v.codes), "source_codes": list(v.source_codes),
-                                     "detail": v.detail}), encoding="utf-8", newline="\n")
+            tmp = p.with_suffix(f".{threading.get_ident()}.tmp")
+            tmp.write_text(json.dumps({"kind": v.kind, "codes": list(v.codes), "source_codes": list(v.source_codes),
+                                       "detail": v.detail}), encoding="utf-8", newline="\n")
+            os.replace(tmp, p)
         return v
+
+    def _project(self, name, text, symbols=()):
+        """One compile in its own project directory, removed once the verdict is read."""
+        d = self.workdir / name
+        try:
+            return core.compile_project(d, text, symbols, runtime=self.runtime, al=self.al, runner=self.runner)
+        finally:
+            shutil.rmtree(d, ignore_errors=True)
+
+    def close(self):
+        if self._owned:
+            shutil.rmtree(self.workdir, ignore_errors=True)
 
     def prefetch(self, jobs_list, jobs=6):
         """Compile every distinct (text, symbols) not yet known, `jobs` at a time."""
@@ -131,8 +160,7 @@ class Alc:
     def check_controls(self):
         """Controls first: a valid program must ACCEPT and garbage must REJECT, uncached."""
         for want, src in ((core.ACCEPT, core.VALID_CONTROL), (core.REJECT, core.GARBAGE_CONTROL)):
-            v = core.compile_project(self.workdir / f"control-{want}", src, runtime=self.runtime, al=self.al,
-                                     runner=self.runner)
+            v = self._project(f"control-{want}", src)
             if v.kind != want:
                 raise ProbeBroken(f"control expected {want}, got {v.kind} {v.codes} {v.detail}")
 
@@ -184,10 +212,19 @@ def observe(cell, parser):
     for env in placements.assignments(cell.symbols):
         hits = [r for e, r in by_env if all((s in env) == want for s, want in e.items())]
         if len(hits) != 1:
-            raise GeneratorBug(f"{cell.id}: {len(hits)} oracle records for {sorted(env)} "
+            raise DiscoverMismatch(f"{cell.id}: {len(hits)} oracle records for {sorted(env)} "
                                f"({[r.config for r in records]})")
         oracle[env] = {"status": hits[0].status, "items": list(hits[0].items)}
     return Observation(root.has_error, any(_in_hole(n, cell.hole) for n in errs), oracle)
+
+
+def reduce_oracle(o):
+    """The committed form of an oracle record: its status and the sorted, deduplicated item prefixes
+    before the first `@offset` (offsets churn with every template edit; the verbatim items go to
+    ORACLE_ITEMS, uncommitted). Idempotent."""
+    if "reasons" in o:
+        return o
+    return {"status": o["status"], "reasons": sorted({re.split(r"@\d", i, maxsplit=1)[0] for i in o["items"]})}
 
 
 # --- measuring one cell ---------------------------------------------------------------------------
@@ -216,7 +253,8 @@ def measure(cell, parser, alc, sampled_by=None, observed=None):
         rec = {"cell": cell.id, "key": cell.key, "host": cell.host, "placement": cell.placement,
                "config": directives.config_id(env, free), "source_sha256": sha,
                "intended_valid": env in cell.intended_valid, "control": "none" if seed else "typed",
-               "parser_has_error": obs.has_error, "error_in_hole": obs.error_in_hole, "oracle": obs.oracle[env],
+               "parser_has_error": obs.has_error, "error_in_hole": obs.error_in_hole,
+               "oracle": reduce_oracle(obs.oracle[env]),
                "alc": "class-sampled" if sampled_by else "measured", "alc_split": None, "alc_flat": None,
                "alc_control": None, "reject_class": None}
         if sampled_by:
@@ -316,8 +354,10 @@ def read(path):
 
 def diff_records(old, new, cells):
     """Differences between committed and fresh records, restricted to `cells`."""
-    o = {(r["cell"], r["config"]): r for r in old if r["cell"] in cells}
-    n = {(r["cell"], r["config"]): r for r in new if r["cell"] in cells}
+    def norm(r):
+        return {**r, "oracle": reduce_oracle(r["oracle"])} if "oracle" in r else r
+    o = {(r["cell"], r["config"]): norm(r) for r in old if r["cell"] in cells}
+    n = {(r["cell"], r["config"]): norm(r) for r in new if r["cell"] in cells}
     out = []
     for k in sorted(set(o) | set(n)):
         if k not in n:
@@ -350,16 +390,36 @@ def corpus_roots():
     return {name: (REPO / p if ":" not in p else Path(p)) for name, p in seeds.ROOTS.items()}
 
 
-def header(identity, runtime):
+def corpus_entry(root):
+    """{present, head} for a root that is its own git toplevel; otherwise {present, head: None,
+    manifest: {al_files, sha256 of the sorted relative paths and sizes}}."""
+    root = Path(root)
+    if not root.is_dir():
+        return {"present": False, "head": None}
+    head = _git_head(root)
+    if head:
+        return {"present": True, "head": head}
+    files = sorted((p.relative_to(root).as_posix(), p.stat().st_size) for p in root.rglob("*.al") if p.is_file())
+    blob = "".join(f"{f}\t{n}\n" for f, n in files).encode("utf-8")
+    return {"present": True, "head": None, "manifest": {"al_files": len(files), "sha256": hashlib.sha256(blob).hexdigest()}}
+
+
+def corpus_warnings(old, new):
+    return [f"WARNING: corpus {n} changed since the evidence was taken"
+            for n in sorted(set(old) | set(new)) if old.get(n) != new.get(n)]
+
+
+def header(identity, runtime, corpora=None):
     oracle = hashlib.sha256()
     pkg = REPO / "tools" / "config_oracle"
     for p in sorted(pkg.rglob("*.py")):
         if "tests" not in p.relative_to(pkg).parts:
             oracle.update(p.relative_to(pkg).as_posix().encode() + b"\0" + p.read_bytes() + b"\0")
-    return {"alc": identity_dict(identity), "runtime": runtime,
-            "corpora": {n: {"present": r.is_dir(), "head": _git_head(r) if r.is_dir() else None}
-                        for n, r in corpus_roots().items()},
+    if corpora is None:
+        corpora = {n: corpus_entry(r) for n, r in corpus_roots().items()}
+    return {"alc": identity_dict(identity), "runtime": runtime, "corpora": corpora,
             "production_shapes": json.loads(seeds.SHAPES_JSON.read_text(encoding="utf-8")),
+            "production_shapes_sha256": _sha(seeds.SHAPES_JSON),
             "parser": {f"src/{f}": _sha(REPO / "src" / f) for f in ("parser.c", "scanner.c")},
             "oracle_sha256": oracle.hexdigest()}
 
@@ -378,27 +438,41 @@ def run(only=None, jobs=6, check=False, accept_tool=False, out=EVIDENCE, al="al"
         if missing or committed is None:
             log(f"cannot run: --check needs every corpus root and {out}; missing {missing or out}")
             return 2
-    if committed and committed[0]["alc"] != identity_dict(identity) and (check or only) and not accept_tool:
-        log("cannot run: alc identity differs from the committed evidence (pass --accept-tool)")
-        return 2
-    entries = select(universe(), only)
+    if committed and committed[0]["alc"] != identity_dict(identity):
+        if only and not check:
+            log("cannot run: --only would merge records of another alc identity under a new header; "
+                "re-run the whole matrix instead")
+            return 2
+        if check and not accept_tool:
+            log("cannot run: alc identity differs from the committed evidence (pass --accept-tool)")
+            return 2
+    every = universe()
+    entries = select(every, only)
     if not entries:
         log(f"cannot run: --only {only!r} matches no cell")
         return 2
     from tools.query_coverage import loader
     parser = loader.make_parser(loader.load_language(loader.ensure_library(loader.REPO_ROOT)))
     obs = {e.cell.id: observe(e.cell, parser) for e in entries}
+    ORACLE_ITEMS.parent.mkdir(parents=True, exist_ok=True)
+    with open(ORACLE_ITEMS, "w", encoding="utf-8", newline="\n") as f:     # last run's verbatim items
+        for cid, o in sorted(obs.items()):
+            for env, rec in sorted(o.oracle.items(), key=lambda kv: sorted(kv[0])):
+                f.write(json.dumps({"cell": cid, "env": sorted(env), **rec}, sort_keys=True) + "\n")
     t1 = time.time()
-    allreps = representatives((e.cell.id, e.cls) for e in universe())
+    allreps = representatives((e.cell.id, e.cls) for e in every)
     tier = tiers([TierInfo(e.cell.id, e.cls, obs[e.cell.id].clean,
                            len(e.cell.intended_valid) == len(placements.assignments(e.cell.symbols)),
                            e.role == "seed") for e in entries], allreps)
     alc = Alc(identity, cache_dir=cache_dir, runner=runner)
-    alc.check_controls()
-    measured = [e for e in entries if tier[e.cell.id] is None]
-    alc.prefetch([j for e in measured for j in alc_jobs(e.cell)], jobs=jobs)
-    t2 = time.time()
-    records = [r for e in entries for r in measure(e.cell, parser, alc, tier[e.cell.id], obs[e.cell.id])]
+    try:
+        alc.check_controls()
+        measured = [e for e in entries if tier[e.cell.id] is None]
+        alc.prefetch([j for e in measured for j in alc_jobs(e.cell)], jobs=jobs)
+        t2 = time.time()
+        records = [r for e in entries for r in measure(e.cell, parser, alc, tier[e.cell.id], obs[e.cell.id])]
+    finally:
+        alc.close()
     hdr = header(identity, alc.runtime)
     s = alc.stats
     log(f"{len(entries)} cells ({len(measured)} alc-measured, {len(entries) - len(measured)} class-sampled), "
@@ -407,6 +481,8 @@ def run(only=None, jobs=6, check=False, accept_tool=False, out=EVIDENCE, al="al"
         f"alc {t2 - t1:.1f}s, total {time.time() - t0:.1f}s")
     cells = {e.cell.id for e in entries}
     if check:
+        for w in corpus_warnings(committed[0].get("corpora", {}), hdr["corpora"]):
+            log(w)
         diffs = diff_records(committed[1], records, cells)
         for d in diffs:
             log(d)
