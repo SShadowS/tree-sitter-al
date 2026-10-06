@@ -517,7 +517,12 @@ module.exports = grammar({
     [$.preproc_pragma_only, $.preproc_conditional_var_block],
     [$._property_value, $.option_member],
     [$.caption_value, $.option_member],
-    [$.assignment_statement, $.assignment_expression],
+    // B6: narrowing _expression_statement exposes the decision at `x := e • #if`:
+    // continue the right-hand side (preproc_conditional_expression_tail) or end the
+    // assignment and open a preproc_conditional_statement. Only the arm content
+    // decides, so it stays a GLR fork; static precedence would commit first (see
+    // _expression_continuation's comment for what that did).
+    [$.assignment_statement],
     [$.preproc_conditional, $.preproc_conditional_layout],
     [$.preproc_conditional, $.preproc_conditional_layout, $.preproc_conditional_layout_mixed],
     [$.preproc_conditional, $.preproc_conditional_layout_mixed],
@@ -559,7 +564,6 @@ module.exports = grammar({
     [$.preproc_conditional_statement, $.preproc_conditional_case_patterns],
     [$.preproc_conditional_statement, $.preproc_split_case_branch, $.preproc_conditional_case_patterns],
     [$._open_branch, $.case_else_branch],
-    [$._single_pattern, $._expression],
     [$.preproc_split_open_statement, $._statement],
     [$._open_prefix, $.preproc_split_if_else_statement],
     [$.preproc_split_if_statement, $._open_prefix],
@@ -888,7 +892,6 @@ module.exports = grammar({
   // Trivial pass-through wrappers — macro-substituted to drop a layer of indirection.
   inline: $ => [
     $._field_source,
-    $._expression_statement,
   ],
 
   rules: {
@@ -5458,35 +5461,36 @@ module.exports = grammar({
       ';'
     )),
 
-    // KNOWN: this accepts ANY expression as a statement, and that is what makes
-    // an unhosted `#if` continuation tear SILENTLY rather than loudly. A
-    // fragment like `+ 3` after a grammatically complete construct reparses as
-    // a statement, so the host keeps a truncated expression and the rest floats
-    // off as unfielded siblings -- zero ERROR nodes, every byte covered.
-    // `1 + 2;` and `+ 3;` are not statements in AL; alc rejects both.
+    // A statement expression is an INVOCATION and nothing else (roadmap B6, spec
+    // docs/superpowers/specs/2026-10-06-expression-statement-narrowing-design.md).
+    // alc accepts only assignments and method invocations as statements: a literal,
+    // unary or operator-led statement is AL0104, and a comparison, parenthesised or
+    // subscript statement is AL0117 ("Only assignment and method invocation can be
+    // used as a statement"; tools/alc_probe/cases/expression-statement). `X;` and
+    // `Rec.Name;` are AL0117 too, but only symbols tell a variable from a procedure or
+    // a field from a method, so a bare name and a member stay accepted.
     //
-    // Narrowing it is the "fail-loud backstop": it attaches nothing, but it
-    // converts the whole class -- including positions nobody has enumerated --
-    // from silent to loud. Worth more than any individual host attachment.
+    // This is the fail-loud backstop: a fragment of an unhosted `#if` continuation
+    // (`Foo()` / `#if A` / `+ 2` / `#endif` / `;`) used to reparse as a statement, the
+    // host keeping a truncated expression and the rest floating off with no ERROR.
+    // Now it ERRORs. It attaches nothing: hosts with no continuation facility
+    // (`repeat ... until`, `foreach ... in`, `with`) still need B7.
     //
-    // TWO ATTEMPTS, both measured, both reverted:
-    //   1. choice(call_expression, member_expression)
-    //        -> BC.History 35.7%. Too narrow: the preproc-split rules carry
-    //           bare identifiers and literals as branch content.
-    //   2. + identifier, quoted_identifier, string_literal, verbatim_string,
-    //      wrapped in prec(20) with a declared [assignment_statement] conflict
-    //        -> generates, but BC.History 33.3%.
+    // NOT in `inline`, on purpose. Two earlier narrowings left it inlined, so its
+    // precedence and conflicts were macro-substituted into each host separately, and
+    // BC.History fell to 35.7% / 33.3%. De-inlined, the four corpora are byte-identical.
     //
-    // THE LEAD FOR WHOEVER PICKS THIS UP, found while reverting attempt 2:
-    // `_expression_statement` is listed in the `inline` array (see the top of
-    // this file), so it is MACRO-SUBSTITUTED at every use site. A `prec(20)` on
-    // it is therefore applied independently at each of the four consumers --
-    // including the preproc-split guard block at `repeat1(seq(prec(2,
-    // $._expression_statement), ';'))`, which already carries its own
-    // precedence. That interaction, not the allowlist, is the likely cause of
-    // both collapses. Removing it from `inline` first, so the precedence
-    // applies once, is the experiment neither attempt ran.
-    _expression_statement: $ => $._expression,
+    // prec(-1): at `begin X • -` the statement reduction and the `_expression` one
+    // compete; no statement can be followed by an operator, so the expression wins.
+    // The `_value_start_keyword_name` arm: `table`/`order` are live keyword tokens at
+    // statement start, so a parenless call to a procedure named `Order` arrives as one.
+    _expression_statement: $ => prec(-1, choice(
+      $.call_expression,
+      $.member_expression,
+      $.identifier,
+      $.quoted_identifier,
+      alias($._value_start_keyword_name, $.identifier),
+    )),
 
     empty_statement: $ => ';',
 
