@@ -80,7 +80,8 @@ def test_load_header_only_and_escapes(tmp_path):
     f.write_text("# c\n" + registry.HEADER + "\nk\th\tterminator\tf\ta\\n⟨HOLE⟩\t\t\n", encoding="utf-8")
     (r,) = registry.load(f)
     assert r.template == "a\n⟨HOLE⟩" and r.equiv == ""
-    assert registry.load(Path(__file__).parent.parent / "registry.tsv") == []
+    rows = registry.load(Path(__file__).parent.parent / "registry.tsv")   # populated by Task 4
+    assert rows and all(r.role in registry.ROLES for r in rows)
 
 
 def _mh():
