@@ -203,12 +203,63 @@
     {
      "type": "SYMBOL",
      "name": "cyc1"
+    },
+    {
+     "type": "SYMBOL",
+     "name": "fixed2"
     }
    ]
   },
   "item": {
    "type": "PATTERN",
    "value": "[a-z]+"
+  },
+  "fixed2": {
+   "type": "SEQ",
+   "members": [
+    {
+     "type": "SYMBOL",
+     "name": "item"
+    },
+    {
+     "type": "STRING",
+     "value": ";"
+    },
+    {
+     "type": "SYMBOL",
+     "name": "cyc1"
+    }
+   ]
+  },
+  "hrec": {
+   "type": "SEQ",
+   "members": [
+    {
+     "type": "SYMBOL",
+     "name": "item"
+    },
+    {
+     "type": "STRING",
+     "value": ","
+    },
+    {
+     "type": "SYMBOL",
+     "name": "_hr"
+    }
+   ]
+  },
+  "_hr": {
+   "type": "CHOICE",
+   "members": [
+    {
+     "type": "SYMBOL",
+     "name": "item"
+    },
+    {
+     "type": "SYMBOL",
+     "name": "hrec"
+    }
+   ]
   }
  },
  "inline": [
