@@ -1,4 +1,5 @@
 """python -m tools.b7_audit census [--check|--list]
+   python -m tools.b7_audit report [--out PATH] [--evidence PATH]
    python -m tools.b7_audit run [--only FAMILY|KEY|PLACEMENT] [--jobs N] [--check] [--accept-tool]"""
 import argparse
 import sys
@@ -49,7 +50,18 @@ def main(argv=None):
     r.add_argument("--jobs", type=int, default=6)
     r.add_argument("--check", action="store_true")
     r.add_argument("--accept-tool", action="store_true")
+    rp = sub.add_parser("report")
+    rp.add_argument("--out")
+    rp.add_argument("--evidence")
     a = p.parse_args(argv)
+    if a.cmd == "report":
+        from . import evidence, report
+        try:
+            report.write(a.out or report.DEFAULT_OUT, evidence_path=a.evidence or evidence.EVIDENCE)
+        except (OSError, ValueError, KeyError) as e:
+            print(f"cannot run: {e}", file=sys.stderr)
+            return 2
+        return 0
     if a.cmd == "run":
         from . import evidence
         try:
