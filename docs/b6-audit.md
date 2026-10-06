@@ -244,7 +244,7 @@ threshold.
 | 2 | 0.790 | 0.773 | 1.019 | 1.013-1.038 |
 | 3 | 0.794 | 0.774 | 1.014 | 0.991-1.045 |
 
-The new library is about 1.5-1.9% faster on DC. Three runs agree on the direction. The
+The new library is about 1.4-1.9% faster on DC. Three runs agree on the direction. The
 LARGE_STATE_COUNT +66 from Task 5 (7,382 to 7,448) does not show up as a slowdown here.
 
 Synthetic file (scratchpad, not committed): 5,000 copies of

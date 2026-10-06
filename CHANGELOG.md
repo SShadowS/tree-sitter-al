@@ -212,13 +212,15 @@ public API — a change to node structure or field names is a **major** bump.
   one; `tools/alc_probe/cases/expression-statement`). The rule is now a call, a member, a bare or
   quoted name, or `Order`/`Table` (a parenless call to a procedure of that name), and it is no
   longer inlined, which is what sank the two earlier attempts. `X;` and `Rec.Name;` stay accepted:
-  alc rejects them only when the name is a variable or a field (AL0117), which needs symbols.
+  alc rejects them only when the name is a variable or a field (AL0117), which needs symbols. A parenless keyword-identifier statement (`Session;`, `Codeunit;`, a
+  `keyword_identifier` statement before) now ERRORs too, and alc rejects it (AL0117,
+  `reject-bare-keyword-identifier.al`).
   A new contextual reserved set `code_names` makes `and`, `or`, `xor`, `div`, `mod`, `in` and
   `not` keywords in code: `and(C);` (AL0104) and `C := and;` (AL0224) now ERROR, and a torn
   keyword-operator continuation no longer reads as a call to a function named `and`. `is` and
   `as` are not in the set; declaring the words (`procedure and()`, `value(0; and)`, a field
   `div`, an option member) still parses. STATE_COUNT 23,186 -> 23,213. `tools.perf ab` over DC,
-  24 rounds, three runs on a busy machine, time old/new: 1.017, 1.019, 1.014 (new 1.5-1.9%
+  24 rounds, three runs on a busy machine, time old/new: 1.017, 1.019, 1.014 (new 1.4-1.9%
   faster; timed with the masking wrapper in `docs/b6-audit.md`, see below). Valid trees are
   byte-identical in BC.History, DC and BC28.1; in BCApps-29.0 two files that already hold an
   ERROR change their recovery (`docs/b6-audit.md`). The `prec(-1)` on the rule is load-bearing:

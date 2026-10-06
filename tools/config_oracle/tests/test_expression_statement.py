@@ -49,6 +49,10 @@ REJECT = [
     b"Foo()\n#if A\n  + 2\n#endif\n  ;",
     b"Foo()\n#if A\n  or (2 = 2)\n#endif\n  ;",
     b"exit(1)\n#if A\n  + 2\n#endif\n  ;",
+    b"Foo()\n#if A\n  xor C\n#endif\n  ;", b"Foo()\n#if A\n  div 2\n#endif\n  ;",
+    b"Foo()\n#if A\n  mod (2)\n#endif\n  ;", b"Foo()\n#if A\n  and C\n#endif\n  ;",
+    # alc AL0117; these were keyword_identifier statements before B6.
+    b"Session;", b"Codeunit;",
 ]
 
 # Valid AL in every configuration that B6 makes LOUD and B7 must parse (spec §7).
@@ -78,6 +82,9 @@ DECLARATIONS = [
     b"enum 50100 E { value(0; and) { } value(1; or) { } value(2; in) { } value(3; mod) { } }\n",
     b"table 50100 T { fields { field(1; div; Integer) { } field(2; K; Option) { OptionMembers = and,or,is; } } }\n",
     b"codeunit 50102 Q { procedure and(X: Boolean) begin end; var \"and\": Boolean; }\n",
+    b"codeunit 50103 R { procedure P(mod: Integer; var in: Boolean) begin end; }\n",
+    b"codeunit 50104 S { var and: Label 'x'; }\n",
+    b"page 50105 G { actions { area(Processing) { group(And) { } } } }\n",
 ]
 
 

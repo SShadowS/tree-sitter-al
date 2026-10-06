@@ -1,7 +1,7 @@
 ; B6 -> B7 gap: VALID AL that B6 makes a loud ERROR (listed in tools/deliberate-negatives.txt).
 ; Not invalid input. alc accepts both cases in every configuration: case 1 is
-; tools/alc_probe/cases/expression-statement/torn-until-and.al (X and !X accept); case 2 was
-; accepted in both configurations by the B6 Task 4 split probe. Before B6 each parsed CLEANLY
+; tools/alc_probe/cases/expression-statement/torn-until-and.al (X and !X accept); case 2 is
+; tools/alc_probe/cases/expression-statement/b7-gap-assign-semicolon-in-arms.al (accepted in both configurations). Before B6 each parsed CLEANLY
 ; and WRONG (case 1: the continuation read as a call to a function named `and`; case 2: `+ 1`
 ; as a unary statement). Since B6 the operator word is reserved in code and a statement is an
 ; invocation, so the fragment ERRORs instead. The hosts need a continuation facility that B6

@@ -1468,7 +1468,7 @@ since:
    `repeat ... until` has no continuation facility.
 2. An assignment continued with `;` inside every arm: `B := A` / `#if X` / `+ 1;` / `Foo();` / `#else` / `;` /
    `#endif`. Before B6 `+ 1` was a unary statement; a statement is now an invocation. alc accepted both configurations
-   (B6 Task 4 split probe, not committed). The assignment's tail takes only `;`-after-`#endif` arms.
+   (`tools/alc_probe/cases/expression-statement/b7-gap-assign-semicolon-in-arms.al`). The assignment's tail takes only `;`-after-`#endif` arms.
 
 Pinned in `test/corpus/expression_statement_b7_gap_test.txt` (listed in `tools/deliberate-negatives.txt`) and in the
 `B7_GAP` list of `tools/config_oracle/tests/test_expression_statement.py`; the oracle classifies both `debt(B7)`.

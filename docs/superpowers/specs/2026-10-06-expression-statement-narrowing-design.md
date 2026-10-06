@@ -279,3 +279,4 @@ DONE; CLAUDE.md "Reserved-word sets" gains the third set.
 - ยง7: alc rejects all three out-of-scope forms, `(Foo)();`, `(Foo())();` and `Foo()();`, with
   AL0125 ("Method name expected after invocation operator '()'"), split and flat
   (`tools/alc_probe/cases/expression-statement/oos-*.al`); no deferred item.
+- ง2.4 and ง3 decision 3 say BCApps differs in one file and the four corpora are byte-identical; after the reserved set BCApps differs in two files that already hold an ERROR (ERMPurchaseReportsIII, EDocumentServiceDE).
