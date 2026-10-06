@@ -63,17 +63,21 @@ def test_na_and_token_only_skips():
     assert "sep-only" in {c.placement for c in placements.cells_for(tok)}
 
 
-def test_link_name_variants():
+def test_link_name_variants_keep_value_grammar():
+    # query dataitem: DataItemLink (QueryDataItemLink) would keep a TableFilter value -> no variant
     rows = [r for r in registry.load(REGISTRY) if r.family == "link-list" and "DataItemTableFilter" in r.template]
     names = {c.placement.rsplit("@", 1)[1] for c in placements.cells_for(rows[0])}
-    assert names == {"DataItemLink", "DataItemTableFilter"}
+    assert names == {"DataItemTableFilter"}
+    why = "no witness container; covered by link-keying seeds (Task 6)"
+    assert ("@RunPageLink", why) in placements.skipped_for(rows[0])
+    assert ("@ColumnFilter", why) in placements.skipped_for(rows[0])
 
 
 def _hole(text, cell):
     return text.encode()[cell.hole[0]:cell.hole[1]].decode()
 
 
-def test_real_registry_cells_meet_their_vectors():
+def test_real_registry_generator_model_consistent():
     """Every cell over the real registry: the hole resolved alone is well-formed exactly when the
     placement assignment is intended valid; in the full source the hole reads the same or is wholly
     inactive (a template arm is off), and is active for at least one template assignment."""
@@ -94,10 +98,77 @@ def test_real_registry_cells_meet_their_vectors():
             seen_active = False
             for env in placements.assignments(c.symbols):
                 alone = resolve(hole_src.encode(), env & psyms).masked.decode()
-                assert placements.well_formed(c, alone) == (env in c.intended_valid), (c.id, sorted(env), alone)
+                assert placements.well_formed(c, alone, env) == (env in c.intended_valid), (c.id, sorted(env), alone)
                 full = _hole(flat(c, env), c)
                 if full.strip():
                     assert full == alone, (c.id, sorted(env))
                     seen_active = True
             assert seen_active, c.id
     assert per_role["continuation"] and per_role["terminator"] and per_role["list-separator"]
+
+
+CU = ("codeunit 50100 P {{ procedure Q() var I: Integer; Ok: Boolean; Intf: Interface IFoo; Intf2: Interface IFoo; "
+      "R: Record T; Recs: array[2] of Record T; begin {body} end; procedure Bar() begin end; }} "
+      "interface IFoo {{ }} table 50100 T {{ fields {{ field(1; K; Code[20]) {{ }} }} }}")
+
+
+def _cells(row):
+    return {c.placement: c for c in placements.cells_for(row)}
+
+
+def test_terminator_trail_optional_before_end_until_and_procedure_begin():
+    before_end = registry.Row("occ:s:0", "code_block", "terminator", "statement-terminator",
+                              CU.format(body="Bar();\nif Ok then begin ⟨HOLE⟩ end;"), "", "", "Bar();")
+    before_stmt = registry.Row("occ:s:1", "code_block", "terminator", "statement-terminator",
+                               CU.format(body="⟨HOLE⟩\nBar();"), "", "", "Bar();")
+    proc_tail = registry.Row("occ:p:0", "procedure", "terminator", "procedure-tail",
+                             "codeunit 50100 P { procedure Z()\n⟨HOLE⟩\n#pragma warning disable AA0021\nbegin end; }",
+                             "", "", ";")
+    assert _cells(before_end)["trail"].intended_valid == frozenset(placements.assignments(("X",)))
+    assert _cells(proc_tail)["trail"].intended_valid == frozenset(placements.assignments(("X",)))
+    assert _cells(before_stmt)["trail"].intended_valid == frozenset({frozenset({"X"})})
+    # template-dependent: `end` follows the hole only where TPL is defined (split-if-begin rows)
+    mixed = [c for r in registry.load(REGISTRY) if r.family == "split-if-begin" and r.role == "terminator"
+             for c in placements.cells_for(r) if c.placement == "trail"
+             and 0 < len([e for e in c.intended_valid if "X" not in e]) < len(placements.assignments(c.symbols)) // 2]
+    assert mixed
+
+
+def test_word_operators_and_interface_slot():
+    i = registry.Row("bnd:a:value:end", "assignment_statement", "continuation", "assignment",
+                     CU.format(body="I := ⟨HOLE⟩;"), "", "", "1")
+    b = registry.Row("bnd:a:value:end", "assignment_statement", "continuation", "assignment",
+                     CU.format(body="Ok := ⟨HOLE⟩;"), "", "", "Ok")
+    assert "suffix/word-arithmetic" in _cells(i) and "div" in _cells(i)["suffix/word-arithmetic"].source
+    assert "suffix/xor" in _cells(b) and "xor" in _cells(b)["suffix/xor"].source
+    rows = [r for r in registry.load(REGISTRY) if r.family == "type-test"]   # as_/is_expression left edges
+    assert len(rows) == 4 and all(placements.cells_for(r) for r in rows)
+    assert all(any("#if X\nas IFoo\n" in c.source for c in placements.cells_for(r)) for r in rows)
+
+
+def test_quoted_and_keyword_element_samples():
+    rows = registry.load(REGISTRY)
+    var = next(r for r in rows if r.family == "var-names" and r.role == "list-separator")
+    assert any('"X 6"' in c.source for c in placements.cells_for(var))
+    opt = next(r for r in rows if r.family == "option-members" and r.plain.strip() == "A,B,C")
+    assert any('"D E"' in c.source for c in placements.cells_for(opt))
+    assert "ml-pairs" in placements.NO_IDENTIFIER_SAMPLES
+
+
+def test_semi_in_arms_excluded_on_case_branch_witness():
+    rows = [r for r in registry.load(REGISTRY) if r.family == "assignment" and r.witness == "case_branch"
+            and ":right:" in r.key]                                        # the value, not the target
+    assert rows and all(not any(c.placement.startswith("semi-in-arms") for c in placements.cells_for(r)) for r in rows)
+    assert any(p == "semi-in-arms" and "case label" in why for p, why in placements.skipped_for(rows[0]))
+
+
+def test_one_elem_move_modification_seed_guard_and_operand_first_only():
+    rows = registry.load(REGISTRY)
+    mv = next(r for r in rows if r.family == "move-modification" and r.role == "list-separator")
+    assert "one-elem" not in _cells(mv) and any(p == "one-elem" for p, _ in placements.skipped_for(mv))
+    seed = placements.Cell("s", "k", "h", "seed", "x", (), frozenset({frozenset()}), (0, 1), None)
+    assert placements.well_formed(seed, "x") is None
+    rec = registry.Row("bnd:m:object:start", "member_expression", "continuation", "member-access",
+                       CU.format(body="⟨HOLE⟩.Init();"), "", "", "R")
+    c = _cells(rec)["first-only/operand"]
+    assert "Recs[1]" in c.source

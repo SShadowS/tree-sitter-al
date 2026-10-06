@@ -74,36 +74,53 @@ HOLES = {"option-members"}                       # empty members allowed: option
 TRAILING = HOLES                                 # a trailing separator is an empty member
 EMPTY_OK = {"arguments", "parameter-list", "list-literal", "attribute-arguments"}
 POSITIONAL_FIRST = {"caption-subfields", "label-attributes"}   # the caption text must stay first
+# one-elem's per-host vector: excluded where the template cannot show the reduced list is valid
+NO_ONE_ELEM = {"move-modification": "per-host validity of a reduced move list is not derivable from the template"}
 
 # Extra elements, used in order and only where the family can take them (distinct, valid).
 # Families absent here supply only the plain's own elements (fixed arity: arguments, subscript,
 # parameter-list, split-call, type/attribute arguments; or no proven-valid extra: implements,
 # implementation-list, order-by, move-modification).
 _INTS = [str(n) for n in range(21, 25)]          # 21.. clear of every template's case values
+# Pool order is priority: spec 6.1's samples first (a quoted identifier, a contextual keyword, an
+# element resembling a sibling property/declaration), then plain fillers.
 POOLS = {
     "case-patterns": _INTS, "list-literal": _INTS, "integer-list": _INTS, "array-dimensions": ["4", "5"],
-    "option-members": ["D", "E", "F", "G"],
-    "var-names": ["X3", "X4", "X5"],
+    "option-members": ['"D E"', "Value", "Caption", "D", "E"],
+    "var-names": ['"X 6"', "Value", "Caption", "X3", "X4"],
     "ml-pairs": ["ENU = 'a'", "DAN = 'b'", "DEU = 'c'", "FRA = 'd'"],
     "namespace-pairs": ["p = 'urn:a'", "q = 'urn:b'", "r = 'urn:c'", "t = 'urn:d'"],
     "caption-subfields": ["Locked = true", "Comment = 'c'", "MaxLength = 10"],
     "label-attributes": ["Locked = true", "Comment = 'c'", "MaxLength = 10"],
-    "link-list": ["K = field(K)", "N = const(1)", "B = const(true)", "O = const(A)"],
-    "where-filter": ["K = field(K)", "N = const(1)", "B = const(true)", "O = const(A)"],
-    "key-fields": ["K", "N", "B", "O"], "sorting": ["K", "N", "B", "O"],   # table T's four fields
-    "permissions": ["tabledata T = R", "tabledata T2 = R", "tabledata T3 = R", "codeunit P = X"],
+    "link-list": ['"B" = const(true)', "K = field(K)", "N = const(1)", "O = const(A)"],
+    "where-filter": ['"B" = const(true)', "K = field(K)", "N = const(1)", "O = const(A)"],
+    # table T's four fields, quoted (the plain keeps its unquoted ones)
+    "key-fields": ['"K"', '"N"', '"B"', '"O"'], "sorting": ['"K"', '"N"', '"B"', '"O"'],
+    "permissions": ['tabledata "T2" = R', "tabledata T = R", "tabledata T3 = R", "codeunit P = X"],
+}
+# Families that take no identifier sample (quoted / contextual keyword / sibling lookalike), and why.
+NO_IDENTIFIER_SAMPLES = {
+    "case-patterns": "Integer elements", "list-literal": "Integer elements",
+    "integer-list": "Integer elements", "array-dimensions": "Integer elements",
+    "ml-pairs": "keys are language codes", "namespace-pairs": "keys are XML namespace prefixes",
+    "caption-subfields": "subfield names are a fixed set", "label-attributes": "subfield names are a fixed set",
+    "arguments": "fixed arity: no extra element", "subscript": "fixed arity: no extra element",
+    "parameter-list": "fixed arity: no extra element", "split-call": "fixed arity: no extra element",
+    "attribute-arguments": "fixed arity: no extra element", "type-arguments": "fixed arity: no extra element",
+    "implements": "only the template's declared interfaces", "implementation-list": "only the template's declared interfaces",
+    "order-by": "only the template's query columns", "move-modification": "only the template's controls/actions",
 }
 
 
 def _ident(e):
-    """The name an element is keyed by (a duplicate key is invalid): `K = ...` -> K."""
-    m = re.match(r"\s*(?:tabledata|codeunit)?\s*([\w\"']+)", e)
-    return m.group(1).lower() if m else e
+    """The name an element is keyed by (a duplicate key is invalid): `K = ...` -> k, `"K"` -> k."""
+    m = re.match(r"\s*(?:tabledata|codeunit)?\s*(\"[^\"]*\"|[\w']+)", e)
+    return m.group(1).strip('"').lower() if m else e
 
 
 def _declares(template, element):
     """Permissions may only name objects the template declares."""
-    m = re.match(r"(tabledata|codeunit)\s+(\w+)", element)
+    m = re.match(r"(tabledata|codeunit)\s+\"?(\w+)\"?", element)
     if not m:
         return True
     kind = "table" if m.group(1) == "tabledata" else "codeunit"
@@ -117,7 +134,7 @@ def _extend(family, els, template):
             break
         if _ident(cand) in {_ident(e) for e in out} or not _declares(template, cand):
             continue
-        if family == "var-names" and re.search(rf"\b{cand}\b", template):
+        if family in ("var-names", "option-members") and re.search(rf"(?<!\w){re.escape(cand)}(?!\w)", template):
             continue
         out.append(cand)
     return out
@@ -167,19 +184,65 @@ CONT_SHAPES = [
 # shapes the family supports). The slot type is read from the row's plain expression (_slot_type).
 _ALL_BIN = {"suffix", "suffix-else", "op-only", "prefix", "whole-operand", "first", "first-only",
             "consecutive", "nested", "semi-in-arms"}
+_BOOL = ("true", "false", "Ok")
 OPERATORS = {
-    "Integer": {"arithmetic": ("+", "*", ("2", "3", "4"), _ALL_BIN | {"chain", "unary-paren", "unary-minus", "signed"})},
+    "Integer": {
+        "arithmetic": ("+", "*", ("2", "3", "4"), _ALL_BIN | {"chain", "unary-paren", "unary-minus", "signed"}),
+        # div and mod share a precedence level: no chain (it would not discriminate grouping)
+        "word-arithmetic": ("div", "mod", ("2", "3", "4"), _ALL_BIN | {"unary-paren", "unary-minus", "signed"}),
+    },
     "Text": {"arithmetic": ("+", None, ("'b'", "'c'", "'d'"), _ALL_BIN - {"suffix-else"})},
     "Boolean": {
-        "logical": ("and", "or", ("true", "false", "Ok"), _ALL_BIN | {"chain", "unary-paren", "unary-not"}),
-        "comparison": ("=", "<>", ("true", "false", "Ok"), _ALL_BIN | {"unary-paren", "unary-not"}),
+        "logical": ("and", "or", _BOOL, _ALL_BIN | {"chain", "unary-paren", "unary-not"}),
+        "xor": ("xor", "and", _BOOL, _ALL_BIN | {"unary-paren", "unary-not"}),
+        "comparison": ("=", "<>", _BOOL, _ALL_BIN | {"unary-paren", "unary-not"}),
         # a list operand alone would stand in the Boolean slot: no suffix-else, first, first-only
+        # and no op-only: without `in` the list reads as a subscript (`Ok [true]`), not a gap
         "membership": ("in", None, ("[true, false]", "[true]", "[false]"),
-                       _ALL_BIN - {"suffix-else", "first", "first-only"}),
+                       _ALL_BIN - {"suffix-else", "first", "first-only", "op-only"}),
+        # "type-test" is added per template: `Intf is IFoo` operands where it declares an interface
     },
+    # `as IFoo` keeps the Interface type; `is` would make it Boolean, so it lives in Boolean slots.
+    # The type name alone is no expression: no first, first-only, unary forms.
+    "Interface": {},                 # "type-test" built per template from the declared interface
 }
-FAMILIES = ("arithmetic", "comparison", "logical", "membership", "type-test")
+_TYPE_TEST_BOOL = _ALL_BIN | {"unary-paren", "unary-not"}
+_TYPE_TEST_AS = {"suffix", "op-only", "prefix", "whole-operand", "consecutive", "nested", "semi-in-arms"}
+FAMILIES = ("arithmetic", "word-arithmetic", "comparison", "logical", "xor", "membership", "type-test")
 STATEMENT_END_FAMILIES = {"assignment", "exit-value", "call"}   # item 39: the expression may end the statement
+# Case-branch witnesses: `Bar();` after the selected `;` would stand where a case label is expected.
+CASE_BRANCH_WITNESSES = {"case_branch", "preproc_split_case_branch", "preproc_split_case_end_branch",
+                         "preproc_split_case_extended"}
+
+
+def _declarations(template):
+    """{variable: declared type text} from `Name: Type;` declarations."""
+    return {m.group(1): m.group(2).strip() for m in re.finditer(r"\b(\w+)\s*:\s*([^;:=()]+?)\s*;", template)}
+
+
+def _interface(template, name=None):
+    """(variable, interface) for `name` (or the first) declared `Interface IFoo` in the template."""
+    for var, typ in _declarations(template).items():
+        m = re.fullmatch(r"(?i)interface\s+(\w+)", typ)
+        if m and (name is None or var == name):
+            return var, m.group(1)
+    return None
+
+
+def _second_operand(plain, template):
+    """Another operand of the plain variable's type: a variable declared with the same type, else
+    element 1 of an array of that type (`R: Record T` -> `Recs[1]`)."""
+    decl = _declarations(template)
+    typ = decl.get(plain)
+    if typ is None:
+        return None
+    for var, t in decl.items():
+        if var != plain and t.lower() == typ.lower():
+            return var
+    for var, t in decl.items():
+        if re.fullmatch(rf"(?i)array\s*\[\s*\d+\s*\]\s+of\s+{re.escape(typ)}", t):
+            return f"{var}[1]"
+    return None
 
 
 def _slot_type(plain, template):
@@ -192,7 +255,9 @@ def _slot_type(plain, template):
     if re.fullmatch(r"'[^']*'", p):
         return "Text"
     m = re.fullmatch(r"\w+", p) and re.search(rf"\b{p}\s*:\s*(Boolean|Integer|Text)\b", template)
-    return m.group(1) if m else None
+    if m:
+        return m.group(1)
+    return "Interface" if re.fullmatch(r"\w+", p) and _interface(template, p) else None
 
 
 # --- rendering ---------------------------------------------------------------------------------
@@ -225,10 +290,13 @@ def _pred(vector):
 
 
 def _intended(shape, vector, tsyms, polar=False):
+    """`vector` is a name, or (name, template assignments in which every placement assignment is
+    valid) -- the terminator `trail` where the template makes the `;` optional."""
+    vector, also = vector if isinstance(vector, tuple) else (vector, frozenset())
     psyms = [s for s in PLACEMENT_SYMBOLS if re.search(rf"^#(?:el)?if .*\b{s}\b", shape, re.M)]
     p = _pred(vector)
-    ok = [e for e in assignments(psyms) if p(e ^ {"X"} if polar else e)]
-    return psyms, frozenset(e | t for e in ok for t in assignments(tsyms))
+    ok = {e for e in assignments(psyms) if p(e ^ {"X"} if polar else e)}
+    return psyms, frozenset(e | t for e in assignments(psyms) for t in assignments(tsyms) if e in ok or t in also)
 
 
 # --- top-level splitting (strings, quoted identifiers, brackets, comments respected) ------------
@@ -293,7 +361,7 @@ def well_formed_list(text, sep, holes=False, empty=False, elements=None):
 
 _TOKEN = re.compile(r"\s*(?:(?P<num>\d+(?:\.\d+)?)|(?P<str>'(?:[^']|'')*')|(?P<id>\"[^\"]*\"|[A-Za-z_]\w*)"
                     r"|(?P<op><>|<=|>=|\.\.|[-+*/=<>()\[\],.]))")
-_BIN = {"+", "-", "*", "/", "=", "<>", "<", ">", "<=", ">=", "div", "mod", "and", "or", "xor", "in"}
+_BIN = {"+", "-", "*", "/", "=", "<>", "<", ">", "<=", ">=", "div", "mod", "and", "or", "xor", "in", "is", "as"}
 
 
 def well_formed_expr(text):
@@ -342,15 +410,33 @@ def well_formed_expr(text):
             return True
         if t in _BIN or t in (")", "]", ",", ".", ".."):
             return False
-        while i + 1 < len(toks) and toks[i] == "." and re.match(r"[\w\"]", toks[i + 1]):
-            i += 2
+        while i < len(toks):                       # name(.name | [expr, ...])*
+            if toks[i] == "." and i + 1 < len(toks) and re.match(r"[\w\"]", toks[i + 1]):
+                i += 2
+            elif toks[i] == "[":
+                i += 1
+                if not expr():
+                    return False
+                while i < len(toks) and toks[i] == ",":
+                    i += 1
+                    if not expr():
+                        return False
+                if i >= len(toks) or toks[i] != "]":
+                    return False
+                i += 1
+            else:
+                break
         return True
 
     return bool(toks) and expr() and i == len(toks)
 
 
-def well_formed(cell, text):
-    """The independent syntactic model of a cell's hole (`text` = one configuration's flat hole)."""
+def well_formed(cell, text, env=frozenset()):
+    """The independent syntactic model of a cell's hole (`text` = the flat hole of assignment `env`;
+    `env` matters only where the template decides whether a terminator is optional). None for a
+    cell without a model (seeds)."""
+    if not cell.check:                        # seed cells (Task 6) carry no model
+        return None
     kind, *a = cell.check
     if kind == "list":
         sep, lead, tail, holes, empty, elements = a
@@ -364,16 +450,16 @@ def well_formed(cell, text):
                 t = t.strip()
         return well_formed_list(t, sep, holes, empty, elements)
     if kind == "exact":                       # terminator / fixed separator: one constant reading
-        return _norm(strip_comments(text)) == _norm(a[0])
+        plain, elem, optional = a             # optional: template assignments where `;` may go
+        flat = _norm(strip_comments(text))
+        tenv = frozenset(env) - set(PLACEMENT_SYMBOLS)
+        return flat == _norm(plain) or (tenv in optional and flat == _norm(elem))
     if kind == "expr":
         return well_formed_expr(text)
     if kind == "expr-stmt":                   # semi-in-arms: expr CLOSER [Bar();]
-        closer = a[0].strip()
-        t = _norm(strip_comments(text))
-        for tail in (_norm(closer) + "Bar();", _norm(closer)):
-            if t.endswith(tail) and well_formed_expr(t[:-len(tail)]):
-                return True
-        return False
+        closer = r"\s*".join(re.escape(c) for c in _norm(a[0]))
+        m = re.fullmatch(rf"(.*?){closer}\s*(?:Bar\s*\(\s*\)\s*;\s*)?", strip_comments(text).strip(), re.S)
+        return bool(m) and well_formed_expr(m.group(1))
     raise ValueError(kind)
 
 
@@ -383,6 +469,7 @@ _PROPERTY_HOSTS = None
 
 
 def _host_kinds():
+    """{NAME_UPPER: {host_kind: value_kind}} from tools/alc_facts/property-hosts.tsv."""
     global _PROPERTY_HOSTS
     if _PROPERTY_HOSTS is None:
         from pathlib import Path
@@ -391,28 +478,42 @@ def _host_kinds():
         for line in path.read_text(encoding="utf-8").splitlines():
             if line.startswith("#") or not line.strip():
                 continue
-            name, kind = line.split("\t")[:2]
-            kinds.setdefault(name, set()).add(kind)
+            name, kind, value = line.split("\t")[:3]
+            kinds.setdefault(name, {})[kind] = value
         _PROPERTY_HOSTS = kinds
     return _PROPERTY_HOSTS
 
 
+# Controller ruling: these names need containers no registry row's template has.
+NO_WITNESS_LINK_NAMES = ("RunPageLink", "ColumnFilter")
+
+
 def _link_variants(row):
-    """[(suffix, template)] -- one per link name valid in the witness template's container."""
+    """-> ([(suffix, template)], skipped). One variant per link name valid in the witness template's
+    container AND parsed there with the same value grammar (delegate) as the template's own name,
+    so the template's value stays in that name's grammar."""
     if row.family != "link-list":
-        return [("", row.template)]
+        return [("", row.template)], []
     used = sorted(set(re.findall(rf"\b({'|'.join(LINK_NAMES)})\s*=", row.template)))
     if len(used) != 1:
-        return [("", row.template)]
+        return [("", row.template)], []
     kinds = _host_kinds()
     obj = re.search(r"^(page|report|query|xmlport)\s+\d+", row.template, re.M | re.I)
     prefix = {"page": "Page", "report": "Report", "query": "Query", "xmlport": "XmlPort"}[obj.group(1).lower()] if obj else ""
-    container = {k for k in kinds.get(used[0].upper(), set()) if k.startswith(prefix)}
-    out = []
+    own = {k: v for k, v in kinds.get(used[0].upper(), {}).items() if k.startswith(prefix)}
+    out, skipped = [], []
     for name in LINK_NAMES:
-        if container and container <= kinds.get(name.upper(), set()):
+        theirs = kinds.get(name.upper(), {})
+        if name in NO_WITNESS_LINK_NAMES and name != used[0]:
+            skipped.append((f"@{name}", "no witness container; covered by link-keying seeds (Task 6)"))
+        elif not own or any(k not in theirs for k in own):
+            skipped.append((f"@{name}", "not valid in the witness container"))
+        elif any(theirs[k] != v for k, v in own.items()):
+            skipped.append((f"@{name}", "value grammar differs: "
+                            + ", ".join(sorted({f"{v} vs {theirs[k]}" for k, v in own.items()}))))
+        else:
             out.append((f"@{name}", re.sub(rf"\b{used[0]}(\s*=)", rf"{name}\1", row.template)))
-    return out
+    return out, skipped
 
 
 # --- row -> cells ------------------------------------------------------------------------------
@@ -474,6 +575,9 @@ def _plan_list(row):
         if pid in MOVES_FIRST and fam in POSITIONAL_FIRST:
             skipped.append((pid, "first element is positional"))
             continue
+        if pid == "one-elem" and fam in NO_ONE_ELEM:
+            skipped.append((pid, NO_ONE_ELEM[fam]))
+            continue
         if pid == "empty-list" and (lead or tail):
             skipped.append((pid, "fragment with edge separators cannot be emptied"))
             continue
@@ -492,12 +596,13 @@ def _plan_exact(row):
             return [], [("*", "terminator plain does not end in ';'")]
         elem = plain[:-1].strip()
         slots, shapes = {"E": elem, "t": ";"}, TERM_SHAPES
+        optional = _optional_terminator(row, elem)
     else:
         sep = next((s for s in (";", ",", ":") if len(split_top(plain, s)) == 2), None)
         if sep is None:
             return [], [("*", "no single top-level separator in plain")]
         left, right = (p.strip() for p in split_top(plain, sep))
-        elem = left
+        elem, optional = left, frozenset()
         slots, shapes = {"L": left, "R": right, "s": sep}, FIXED_SHAPES
     for pid in _LIST_ONLY:
         skipped.append((pid, f"{row.role} site holds a fixed number of elements"
@@ -509,8 +614,37 @@ def _plan_exact(row):
         if pid in ("sep-before-end", "trail") and row.role == "fixed-separator" and not slots["R"]:
             skipped.append((pid, "no right element in the hole"))
             continue
-        _variants(pid, shape, vector, slots, ("exact", plain), specs)
+        if optional and pid == "trail":
+            vector = (vector, optional)       # also valid without X wherever the `;` is optional
+        _variants(pid, shape, vector, slots, ("exact", plain, elem, optional), specs)
     return specs, skipped
+
+
+_HEADER = re.compile(r"\b(?:procedure|trigger)\s+[\w\"]+\s*\(", re.I)    # a header on the last code line
+
+
+def _optional_terminator(row, elem):
+    """AL's `;` is optional before `end` (also `end else`) and `until`, and after a procedure or
+    trigger header before `begin`. Decided from the word that follows the hole in every template
+    configuration where the hole is active (directive and pragma lines skipped).
+    -> the template-symbol assignments in which the terminator is optional."""
+    from tools.config_oracle.directives import resolve
+    pre, post = row.template.split(HOLE)
+    filled = (pre + row.plain + post).encode()
+    a, b = len(pre.encode()), len((pre + row.plain).encode())
+    optional = set()
+    for env in assignments(_template_symbols(row.template)):
+        m = resolve(filled, env).masked
+        if not m[a:b].strip():
+            continue                          # hole inactive: never optional (cell not exercised)
+        after = "\n".join(l for l in strip_comments(m[b:].decode()).splitlines() if not l.lstrip().startswith("#"))
+        w = re.match(r"\s*(\w+)", after)
+        word = w.group(1).lower() if w else ""
+        before = strip_comments((m[:a].decode() + elem))
+        last = [l for l in before.splitlines() if l.strip() and not l.lstrip().startswith("#")]
+        if word in ("end", "until") or (word == "begin" and last and _HEADER.search(last[-1])):
+            optional.add(env)
+    return frozenset(optional)
 
 
 def _plan_cont(row):
@@ -522,18 +656,35 @@ def _plan_cont(row):
     closer = row.template[i:j + 1] if j >= 0 else ""
     stmt_end = (row.family in STATEMENT_END_FAMILIES and closer.strip() in (";", ");")
                 and "procedure Bar()" in row.template)
-    if not stmt_end:
-        skipped.append(("semi-in-arms", "host is not a statement whose expression may end it"
-                        if row.family not in STATEMENT_END_FAMILIES else "statement end or Bar() not in template"))
-    typ = _slot_type(row.plain, row.template)
+    if row.family not in STATEMENT_END_FAMILIES:
+        skipped.append(("semi-in-arms", "host is not a statement whose expression may end it"))
+    elif row.witness in CASE_BRANCH_WITNESSES:
+        stmt_end = False
+        skipped.append(("semi-in-arms", "Bar(); after the selected ';' stands where a case label is expected"))
+    elif not stmt_end:
+        skipped.append(("semi-in-arms", "statement end or Bar() not in template"))
+    plain = row.plain.strip()
+    typ = _slot_type(plain, row.template)
     if typ is None:
-        return [], skipped + [("*", f"slot type of plain {row.plain.strip()!r} not derivable; no operator family types it")]
-    fams = OPERATORS[typ]
+        skipped.append(("*", f"slot type of plain {plain!r} not derivable; no operator family types it"))
+        other = _second_operand(plain, row.template)
+        if other is None:
+            return [], skipped + [("first-only/operand", "no second operand of the slot's type declared")]
+        # operator-free: one alternative operand per arm
+        return [("first-only/operand", {p: s for p, s, _ in CONT_SHAPES}["first-only"], "all", {"E": plain, "F": other}, ("expr",),
+                 False, False)], skipped
+    fams = dict(OPERATORS[typ])
+    intf = _interface(row.template)
+    if typ == "Boolean" and intf:
+        fams["type-test"] = ("and", "or", tuple(f"{intf[0]} is {intf[1]}" for _ in range(3)), _TYPE_TEST_BOOL)
+    if typ == "Interface":
+        name = _interface(row.template, plain)[1]
+        fams["type-test"] = ("as", None, (name, name, name), _TYPE_TEST_AS)
     for fam in FAMILIES:
         if fam not in fams:
             skipped.append((f"*/{fam}", f"operands of {fam} do not type in a {typ} slot"))
     for fam, (op, op2, operands, supports) in fams.items():
-        slots = dict(E=row.plain.strip(), op=op, **dict(zip("FGH", operands)))
+        slots = dict(E=plain, op=op, **dict(zip("FGH", operands)))
         if op2:
             slots["op2"] = op2
         for pid, shape, vector in CONT_SHAPES:
@@ -548,13 +699,14 @@ def _plan_cont(row):
 
 
 def skipped_for(row):
-    return _plan(row)[1]
+    specs, skipped = _plan(row)
+    return skipped + (_link_variants(row)[1] if specs else [])
 
 
 def cells_for(row):
     specs, _ = _plan(row)
     out = []
-    for suffix, template in _link_variants(row) if specs else []:
+    for suffix, template in _link_variants(row)[0] if specs else []:
         tsyms = _template_symbols(template)
         pre, post = template.split(HOLE)
         for pid, shape, vector, slots, check, polar, comments in specs:
