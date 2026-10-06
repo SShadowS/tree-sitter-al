@@ -629,6 +629,8 @@ module.exports = grammar({
     // whose commas were optional could not be told apart from a single
     // expression mid-parse. Requiring the separator removes the ambiguity
     // outright, and tree-sitter now reports the declaration as unnecessary.
+    // It was declared again later, and B6's narrowing of `_expression_statement`
+    // made it unnecessary once more (2026-10-06), so the entry is absent.
     // Two `case_branch`/`preproc_split_case_branch` conflicts went the same way.
     //
     // The four-way [link_values, permissions, impl_values, table_relation]
@@ -5478,7 +5480,8 @@ module.exports = grammar({
     //
     // NOT in `inline`, on purpose. Two earlier narrowings left it inlined, so its
     // precedence and conflicts were macro-substituted into each host separately, and
-    // BC.History fell to 35.7% / 33.3%. De-inlined, the four corpora are byte-identical.
+    // BC.History fell to 35.7% / 33.3%. De-inlined, BC.History, DC and BC28.1 are
+    // byte-identical and BCApps differs only in one file that already holds an ERROR.
     //
     // prec(-1): at `begin X • -` the statement reduction and the `_expression` one
     // compete; no statement can be followed by an operator, so the expression wins.
