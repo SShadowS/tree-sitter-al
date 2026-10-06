@@ -85,7 +85,7 @@ SEPARATORS = {",", ";", "..", "::", ":"}
 OP_WORDS = ("and", "or", "xor")
 _LEAD_OP = re.compile(r"(?:\+|-|\*|/|<=|>=|<>|<|>|=)|(?:and|or|xor)\b", re.I)
 _TRAIL_OP = re.compile(r"(?:\+|-|\*|/|<|>|=)$|\b(?:and|or|xor)$", re.I)
-_EDGE_TYPES = {"+", "-", "*", "/", "<", ">", "<=", ">=", "<>", "=", "and", "or", "xor"}
+_EDGE_TYPES = {"+", "-", "*", "/", "<", ">", "<=", ">=", "<>", "and", "or", "xor"}   # no "=": a property's `=` is not an edge
 
 
 def _is_group(t):
@@ -112,6 +112,16 @@ def _edge(n):
                               or n.type.endswith("_expression"))
 
 
+_UNIT_HOSTS = ("preproc_conditional_statement", "preproc_fragmented_else_tail", "preproc_guarded_statement",
+               "preproc_conditional_permissions", "preproc_split_permissions_property")
+
+
+def _terminates(host):
+    """Hosts whose trailing `;` ends the last unit (Permissions' `;` ends the property, the list joins
+    with `,`); in link, impl-values, option-members, table-relation and where hosts it stays a separator."""
+    return host in _UNIT_HOSTS or (host.startswith("preproc_split_") and "statement" in host)         or host.startswith("preproc_split_procedure")
+
+
 def classify(node):
     """The placement class of a preproc group, or None when it is not next to a separator or
     expression edge. sep-before/sep-after/sep-both: a separator inside the group at its start/end;
@@ -121,7 +131,13 @@ def classify(node):
     kids = [c for c in node.children if not c.is_extra and c.type not in _DIRECTIVE_HEADS]
     lead = bool(kids) and kids[0].type in SEPARATORS
     trail = bool(kids) and kids[-1].type in SEPARATORS
+    # a `;` that ends the group's last unit (a statement, a permission list) ends it; it joins nothing
+    terminated = trail and kids[-1].type == ";" and _terminates(node.type)
+    if terminated:
+        trail = False
     prev, nxt = _near(node, "prev_sibling"), _near(node, "next_sibling")
+    if terminated and not lead:
+        return "terminated-unit"
     if lead and trail:
         return "sep-both"
     if lead:

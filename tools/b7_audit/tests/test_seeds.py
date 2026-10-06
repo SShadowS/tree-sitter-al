@@ -11,7 +11,7 @@ LINKS = ("SubPageLink", "RunPageLink", "LinkFields", "DataItemTableFilter", "Col
 def test_expand_valid_patterns():
     syms = ("X", "Y")
     f = frozenset
-    assert seeds.expand_valid("*", syms) == {f(), f("X"), f("Y"), f("XY")} or len(seeds.expand_valid("*", syms)) == 4
+    assert seeds.expand_valid("*", syms) == {f(), f({"X"}), f({"Y"}), f({"X", "Y"})}
     assert seeds.expand_valid("none", syms) == set()
     assert seeds.expand_valid("X", syms) == {f({"X"}), f({"X", "Y"})}
     assert seeds.expand_valid("X,!Y; !X,Y", syms) == {f({"X"}), f({"Y"})}
@@ -23,7 +23,7 @@ def test_load_cells_follow_the_ruling():
     cells = seeds.load()
     assert len(cells) > 200 and len({c.id for c in cells}) == len(cells)
     for c in cells:
-        assert isinstance(c, Cell) and c.key == f"seed:{c.id.split(':', 1)[1]}" or c.key.startswith("seed:")
+        assert isinstance(c, Cell) and c.key == c.id and c.id.startswith("seed:")
         assert c.placement.startswith("seed:") and c.plain is None and c.check == ()
         assert c.hole == (0, len(c.source.encode("utf-8"))) and c.host
         assert all(v <= frozenset(c.symbols) for v in c.intended_valid)
@@ -70,11 +70,39 @@ def test_production_walk_on_known_shapes(tmp_path, al_parser):
            "end; }\n")
     _write(tmp_path, "c.al", "codeunit 50102 P { }\n")           # no #if: skipped
     counts, ex = seeds.walk([tmp_path], parser=al_parser)
-    # a statement group ending in its `;` is a terminator-inside site (sep-after on the statement host)
+    # a statement group ending in its own `;` is a terminated unit, not a separator site
     assert counts == {("preproc_conditional_arguments", "sep-after"): 1,
-                      ("preproc_conditional_statement", "sep-after"): 1,
+                      ("preproc_conditional_statement", "terminated-unit"): 1,
                       ("preproc_operand_prefix", "prefix"): 1,
                       ("preproc_conditional_arguments", "sep-before"): 1,
                       ("preproc_conditional_arguments", "trail"): 1}, counts
     assert all(len(v) <= 3 and ":" in v[0] for v in ex.values())
     assert seeds.production_shapes([tmp_path], parser=al_parser) == counts
+
+
+def _counts(tmp_path, al_parser, body):
+    _write(tmp_path, "t.al", body)
+    return seeds.walk([tmp_path], parser=al_parser)[0]
+
+
+def test_permission_arm_semicolon_is_terminated_unit(tmp_path, al_parser):
+    src = ("permissionset 50100 PS { Permissions = tabledata T = R,\n#if X\ntabledata T2 = R;\n#endif\n}\n"
+           "table 50101 T { } table 50102 T2 { }\n")
+    c = _counts(tmp_path, al_parser, src)
+    assert ("preproc_conditional_permissions", "terminated-unit") in c, c
+    assert not any(k[1] == "sep-after" and "permission" in k[0] for k in c), c
+
+
+def test_semicolon_stays_a_separator_where_it_joins_values(tmp_path, al_parser):
+    src = ("page 50101 P { SourceTable = T; layout { area(Content) { part(L; S) { SubPageLink = B = field(A),\n"
+           "#if X\nD = field(C),\n#endif\nF = field(E); } } } }\n")
+    c = _counts(tmp_path, al_parser, src)
+    assert ("preproc_conditional_link_values", "sep-after") in c, c
+
+
+def test_property_equals_is_not_an_expression_edge():
+    class N:
+        def __init__(self, t):
+            self.type = t
+    assert not seeds._edge(N("="))
+    assert seeds._edge(N("+")) and seeds._edge(N("and")) and seeds._edge(N("additive_expression"))
