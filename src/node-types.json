@@ -3827,6 +3827,65 @@
     }
   },
   {
+    "type": "chartpart_keyword",
+    "named": true,
+    "fields": {}
+  },
+  {
+    "type": "chartpart_section",
+    "named": true,
+    "fields": {
+      "body": {
+        "multiple": false,
+        "required": false,
+        "types": [
+          {
+            "type": "declaration_body",
+            "named": true
+          }
+        ]
+      },
+      "name": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "identifier",
+            "named": true
+          },
+          {
+            "type": "quoted_identifier",
+            "named": true
+          }
+        ]
+      },
+      "source": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "identifier",
+            "named": true
+          },
+          {
+            "type": "quoted_identifier",
+            "named": true
+          }
+        ]
+      }
+    },
+    "children": {
+      "multiple": false,
+      "required": true,
+      "types": [
+        {
+          "type": "chartpart_keyword",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
     "type": "code_block",
     "named": true,
     "fields": {
@@ -5972,6 +6031,21 @@
     "fields": {}
   },
   {
+    "type": "filter_group",
+    "named": true,
+    "fields": {},
+    "children": {
+      "multiple": false,
+      "required": true,
+      "types": [
+        {
+          "type": "filter_value",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
     "type": "filter_keyword",
     "named": true,
     "fields": {}
@@ -6006,6 +6080,10 @@
         },
         {
           "type": "decimal",
+          "named": true
+        },
+        {
+          "type": "filter_group",
           "named": true
         },
         {
@@ -8859,6 +8937,10 @@
           "named": true
         },
         {
+          "type": "chartpart_section",
+          "named": true
+        },
+        {
           "type": "cuegroup_section",
           "named": true
         },
@@ -8975,6 +9057,10 @@
         },
         {
           "type": "attribute_item",
+          "named": true
+        },
+        {
+          "type": "chartpart_section",
           "named": true
         },
         {
@@ -12885,6 +12971,10 @@
           "named": true
         },
         {
+          "type": "chartpart_section",
+          "named": true
+        },
+        {
           "type": "cuegroup_section",
           "named": true
         },
@@ -13017,6 +13107,10 @@
         },
         {
           "type": "attribute_item",
+          "named": true
+        },
+        {
+          "type": "chartpart_section",
           "named": true
         },
         {
@@ -16319,6 +16413,10 @@
           "named": true
         },
         {
+          "type": "chartpart_section",
+          "named": true
+        },
+        {
           "type": "cuegroup_section",
           "named": true
         },
@@ -16431,6 +16529,10 @@
         },
         {
           "type": "area_section",
+          "named": true
+        },
+        {
+          "type": "chartpart_section",
           "named": true
         },
         {
@@ -28689,6 +28791,10 @@
         "required": false,
         "types": [
           {
+            "type": "biginteger_literal",
+            "named": true
+          },
+          {
             "type": "boolean",
             "named": true
           },
@@ -28702,6 +28808,10 @@
           },
           {
             "type": "datetime_literal",
+            "named": true
+          },
+          {
+            "type": "decimal",
             "named": true
           },
           {
@@ -28734,6 +28844,10 @@
           },
           {
             "type": "time_literal",
+            "named": true
+          },
+          {
+            "type": "unary_expression",
             "named": true
           }
         ]
@@ -30248,6 +30362,10 @@
   },
   {
     "type": "case",
+    "named": false
+  },
+  {
+    "type": "chartpart",
     "named": false
   },
   {

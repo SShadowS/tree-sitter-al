@@ -74,6 +74,7 @@
   (grid_section)
   (part_section)
   (systempart_section)
+  (chartpart_section)
   (usercontrol_section)
 ] @fold
 

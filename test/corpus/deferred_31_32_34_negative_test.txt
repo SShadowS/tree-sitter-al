@@ -1,0 +1,534 @@
+================================================================================
+31 negative: an unclosed filter group ERRORs (alc AL0104)
+================================================================================
+
+table 50101 Cust { fields { field(1; "No."; Code[20]) { } field(2; Name; Text[30]) { } field(3; Amount; Decimal) { } field(4; Flag; Boolean) { } field(5; Kind; Option) { OptionMembers = Open,Closed; } field(6; Posted; Date) { } field(7; At; Time) { } field(8; Stamp; DateTime) { } field(9; Big; BigInteger) { } } }
+page 50102 CustCard { PageType = Card; SourceTable = Cust; layout { area(Content) { field(N; Rec."No.") { } } } }
+page 50103 CustList { PageType = ListPart; SourceTable = Cust; layout { area(Content) { repeater(R) { field(N; Rec."No.") { } } } } }
+table 50106 T2 { fields { field(1; K; Code[20]) { TableRelation = Cust."No." where(Amount = filter((1|2&3)); } } }
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (table_declaration
+    (table_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (fields_section
+        (fields_keyword)
+        body: (fields_body
+          (field_declaration
+            (field_keyword)
+            id: (integer)
+            name: (quoted_identifier)
+            type: (type_specification
+              (code_type
+                (code_keyword)
+                length: (integer))))
+          (field_declaration
+            (field_keyword)
+            id: (integer)
+            name: (identifier)
+            type: (type_specification
+              (text_type
+                (text_keyword)
+                length: (integer))))
+          (field_declaration
+            (field_keyword)
+            id: (integer)
+            name: (identifier)
+            type: (type_specification
+              (basic_type)))
+          (field_declaration
+            (field_keyword)
+            id: (integer)
+            name: (identifier)
+            type: (type_specification
+              (basic_type)))
+          (field_declaration
+            (field_keyword)
+            id: (integer)
+            name: (identifier)
+            type: (type_specification
+              (option_type
+                (option_keyword)))
+            body: (declaration_body
+              (property
+                name: (property_name)
+                value: (option_member_list
+                  (option_member
+                    (identifier))
+                  (option_member
+                    (identifier))))))
+          (field_declaration
+            (field_keyword)
+            id: (integer)
+            name: (identifier)
+            type: (type_specification
+              (basic_type)))
+          (field_declaration
+            (field_keyword)
+            id: (integer)
+            name: (identifier)
+            type: (type_specification
+              (basic_type)))
+          (field_declaration
+            (field_keyword)
+            id: (integer)
+            name: (identifier)
+            type: (type_specification
+              (basic_type)))
+          (field_declaration
+            (field_keyword)
+            id: (integer)
+            name: (identifier)
+            type: (type_specification
+              (basic_type)))))))
+  (page_declaration
+    (page_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (property
+        name: (property_name)
+        value: (identifier))
+      (property
+        name: (property_name)
+        value: (identifier))
+      (layout_section
+        (layout_keyword)
+        body: (layout_body
+          (area_section
+            (area_keyword)
+            type: (content_keyword)
+            body: (layout_body
+              (page_field
+                (field_keyword)
+                name: (identifier)
+                source: (member_expression
+                  object: (identifier)
+                  member: (quoted_identifier)))))))))
+  (page_declaration
+    (page_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (property
+        name: (property_name)
+        value: (identifier))
+      (property
+        name: (property_name)
+        value: (identifier))
+      (layout_section
+        (layout_keyword)
+        body: (layout_body
+          (area_section
+            (area_keyword)
+            type: (content_keyword)
+            body: (layout_body
+              (repeater_section
+                (repeater_keyword)
+                name: (identifier)
+                body: (layout_container_body
+                  (page_field
+                    (field_keyword)
+                    name: (identifier)
+                    source: (member_expression
+                      object: (identifier)
+                      member: (quoted_identifier)))))))))))
+  (table_declaration
+    (table_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (fields_section
+        (fields_keyword)
+        body: (fields_body
+          (field_declaration
+            (field_keyword)
+            id: (integer)
+            name: (identifier)
+            type: (type_specification
+              (code_type
+                (code_keyword)
+                length: (integer)))
+            body: (declaration_body
+              (property
+                name: (property_name)
+                value: (table_relation_value
+                  (table_relation_expression
+                    (simple_table_relation
+                      target: (qualified_name
+                        (identifier)
+                        (quoted_identifier))
+                      (where_clause
+                        (where_keyword)
+                        (where_conditions
+                          (where_condition
+                            field: (identifier)
+                            (filter_keyword)
+                            value: (filter_value
+                              (filter_group
+                                (filter_value
+                                  (integer)
+                                  (filter_operator)
+                                  (integer)
+                                  (filter_operator)
+                                  (integer))))))
+                        (MISSING ")")))))))))))))
+
+================================================================================
+31 negative: an extra ) in a filter ERRORs (alc AL0104)
+================================================================================
+
+table 50101 Cust { fields { field(1; "No."; Code[20]) { } field(2; Name; Text[30]) { } field(3; Amount; Decimal) { } field(4; Flag; Boolean) { } field(5; Kind; Option) { OptionMembers = Open,Closed; } field(6; Posted; Date) { } field(7; At; Time) { } field(8; Stamp; DateTime) { } field(9; Big; BigInteger) { } } }
+page 50102 CustCard { PageType = Card; SourceTable = Cust; layout { area(Content) { field(N; Rec."No.") { } } } }
+page 50103 CustList { PageType = ListPart; SourceTable = Cust; layout { area(Content) { repeater(R) { field(N; Rec."No.") { } } } } }
+table 50106 T2 { fields { field(1; K; Code[20]) { TableRelation = Cust."No." where(Amount = filter((1|2))&3)); } } }
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (table_declaration
+    (table_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (fields_section
+        (fields_keyword)
+        body: (fields_body
+          (field_declaration
+            (field_keyword)
+            id: (integer)
+            name: (quoted_identifier)
+            type: (type_specification
+              (code_type
+                (code_keyword)
+                length: (integer))))
+          (field_declaration
+            (field_keyword)
+            id: (integer)
+            name: (identifier)
+            type: (type_specification
+              (text_type
+                (text_keyword)
+                length: (integer))))
+          (field_declaration
+            (field_keyword)
+            id: (integer)
+            name: (identifier)
+            type: (type_specification
+              (basic_type)))
+          (field_declaration
+            (field_keyword)
+            id: (integer)
+            name: (identifier)
+            type: (type_specification
+              (basic_type)))
+          (field_declaration
+            (field_keyword)
+            id: (integer)
+            name: (identifier)
+            type: (type_specification
+              (option_type
+                (option_keyword)))
+            body: (declaration_body
+              (property
+                name: (property_name)
+                value: (option_member_list
+                  (option_member
+                    (identifier))
+                  (option_member
+                    (identifier))))))
+          (field_declaration
+            (field_keyword)
+            id: (integer)
+            name: (identifier)
+            type: (type_specification
+              (basic_type)))
+          (field_declaration
+            (field_keyword)
+            id: (integer)
+            name: (identifier)
+            type: (type_specification
+              (basic_type)))
+          (field_declaration
+            (field_keyword)
+            id: (integer)
+            name: (identifier)
+            type: (type_specification
+              (basic_type)))
+          (field_declaration
+            (field_keyword)
+            id: (integer)
+            name: (identifier)
+            type: (type_specification
+              (basic_type)))))))
+  (page_declaration
+    (page_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (property
+        name: (property_name)
+        value: (identifier))
+      (property
+        name: (property_name)
+        value: (identifier))
+      (layout_section
+        (layout_keyword)
+        body: (layout_body
+          (area_section
+            (area_keyword)
+            type: (content_keyword)
+            body: (layout_body
+              (page_field
+                (field_keyword)
+                name: (identifier)
+                source: (member_expression
+                  object: (identifier)
+                  member: (quoted_identifier)))))))))
+  (page_declaration
+    (page_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (property
+        name: (property_name)
+        value: (identifier))
+      (property
+        name: (property_name)
+        value: (identifier))
+      (layout_section
+        (layout_keyword)
+        body: (layout_body
+          (area_section
+            (area_keyword)
+            type: (content_keyword)
+            body: (layout_body
+              (repeater_section
+                (repeater_keyword)
+                name: (identifier)
+                body: (layout_container_body
+                  (page_field
+                    (field_keyword)
+                    name: (identifier)
+                    source: (member_expression
+                      object: (identifier)
+                      member: (quoted_identifier)))))))))))
+  (table_declaration
+    (table_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (fields_section
+        (fields_keyword)
+        body: (fields_body
+          (field_declaration
+            (field_keyword)
+            id: (integer)
+            name: (identifier)
+            type: (type_specification
+              (code_type
+                (code_keyword)
+                length: (integer)))
+            body: (declaration_body
+              (property
+                name: (property_name)
+                value: (table_relation_value
+                  (table_relation_expression
+                    (simple_table_relation
+                      target: (qualified_name
+                        (identifier)
+                        (quoted_identifier))
+                      (where_clause
+                        (where_keyword)
+                        (where_conditions
+                          (where_condition
+                            field: (identifier)
+                            (filter_keyword)
+                            value: (filter_value
+                              (filter_group
+                                (filter_value
+                                  (integer)
+                                  (filter_operator)
+                                  (integer))))))
+                        (ERROR
+                          (filter_operator)
+                          (integer))))))
+                (ERROR)))))))))
+
+================================================================================
+34 negative: const(+1) ERRORs (alc AL0104)
+================================================================================
+
+table 50101 Cust { fields { field(1; "No."; Code[20]) { } field(2; Name; Text[30]) { } field(3; Amount; Decimal) { } field(4; Flag; Boolean) { } field(5; Kind; Option) { OptionMembers = Open,Closed; } field(6; Posted; Date) { } field(7; At; Time) { } field(8; Stamp; DateTime) { } field(9; Big; BigInteger) { } } }
+page 50102 CustCard { PageType = Card; SourceTable = Cust; layout { area(Content) { field(N; Rec."No.") { } } } }
+page 50103 CustList { PageType = ListPart; SourceTable = Cust; layout { area(Content) { repeater(R) { field(N; Rec."No.") { } } } } }
+table 50106 T2 { fields { field(1; K; Code[20]) { TableRelation = Cust."No." where(Amount = const(+1)); } } }
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (table_declaration
+    (table_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (fields_section
+        (fields_keyword)
+        body: (fields_body
+          (field_declaration
+            (field_keyword)
+            id: (integer)
+            name: (quoted_identifier)
+            type: (type_specification
+              (code_type
+                (code_keyword)
+                length: (integer))))
+          (field_declaration
+            (field_keyword)
+            id: (integer)
+            name: (identifier)
+            type: (type_specification
+              (text_type
+                (text_keyword)
+                length: (integer))))
+          (field_declaration
+            (field_keyword)
+            id: (integer)
+            name: (identifier)
+            type: (type_specification
+              (basic_type)))
+          (field_declaration
+            (field_keyword)
+            id: (integer)
+            name: (identifier)
+            type: (type_specification
+              (basic_type)))
+          (field_declaration
+            (field_keyword)
+            id: (integer)
+            name: (identifier)
+            type: (type_specification
+              (option_type
+                (option_keyword)))
+            body: (declaration_body
+              (property
+                name: (property_name)
+                value: (option_member_list
+                  (option_member
+                    (identifier))
+                  (option_member
+                    (identifier))))))
+          (field_declaration
+            (field_keyword)
+            id: (integer)
+            name: (identifier)
+            type: (type_specification
+              (basic_type)))
+          (field_declaration
+            (field_keyword)
+            id: (integer)
+            name: (identifier)
+            type: (type_specification
+              (basic_type)))
+          (field_declaration
+            (field_keyword)
+            id: (integer)
+            name: (identifier)
+            type: (type_specification
+              (basic_type)))
+          (field_declaration
+            (field_keyword)
+            id: (integer)
+            name: (identifier)
+            type: (type_specification
+              (basic_type)))))))
+  (page_declaration
+    (page_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (property
+        name: (property_name)
+        value: (identifier))
+      (property
+        name: (property_name)
+        value: (identifier))
+      (layout_section
+        (layout_keyword)
+        body: (layout_body
+          (area_section
+            (area_keyword)
+            type: (content_keyword)
+            body: (layout_body
+              (page_field
+                (field_keyword)
+                name: (identifier)
+                source: (member_expression
+                  object: (identifier)
+                  member: (quoted_identifier)))))))))
+  (page_declaration
+    (page_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (property
+        name: (property_name)
+        value: (identifier))
+      (property
+        name: (property_name)
+        value: (identifier))
+      (layout_section
+        (layout_keyword)
+        body: (layout_body
+          (area_section
+            (area_keyword)
+            type: (content_keyword)
+            body: (layout_body
+              (repeater_section
+                (repeater_keyword)
+                name: (identifier)
+                body: (layout_container_body
+                  (page_field
+                    (field_keyword)
+                    name: (identifier)
+                    source: (member_expression
+                      object: (identifier)
+                      member: (quoted_identifier)))))))))))
+  (table_declaration
+    (table_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (fields_section
+        (fields_keyword)
+        body: (fields_body
+          (field_declaration
+            (field_keyword)
+            id: (integer)
+            name: (identifier)
+            type: (type_specification
+              (code_type
+                (code_keyword)
+                length: (integer)))
+            body: (declaration_body
+              (property
+                name: (property_name)
+                value: (table_relation_value
+                  (table_relation_expression
+                    (simple_table_relation
+                      target: (qualified_name
+                        (identifier)
+                        (quoted_identifier))
+                      (where_clause
+                        (where_keyword)
+                        (where_conditions
+                          (where_condition
+                            field: (identifier)
+                            (const_keyword)
+                            (ERROR
+                              (unary_expression
+                                operand: (integer)))))))))))))))))
