@@ -1,5 +1,6 @@
 ========================================================================
 B7a GAP: implements / empty (9 cells, verdict of the representative GAP); the parser ERRORs on configurations alc accepts; representative occ:implements_clause:2.0.0@codeunit_declaration#empty
+:error
 ========================================================================
 interface IFoo
 {
@@ -22,33 +23,10 @@ IBar
 {
 }
 ------------------------------------------------------------------------
-
-(source_file
-  (interface_declaration
-    (interface_keyword)
-    object_name: (identifier))
-  (interface_declaration
-    (interface_keyword)
-    object_name: (identifier))
-  (interface_declaration
-    (interface_keyword)
-    object_name: (identifier))
-  (codeunit_declaration
-    (codeunit_keyword)
-    object_id: (integer)
-    object_name: (identifier)
-    (implements_clause
-      (implements_keyword)
-      interface: (identifier)
-      (ERROR
-        (UNEXPECTED 'i'))
-      interface: (identifier))
-    (ERROR
-      (UNEXPECTED 'i')
-      (identifier))))
 
 ========================================================================
 B7a GAP: implements / empty-list (9 cells, verdict of the representative MIXED); the parser ERRORs on configurations alc accepts; representative occ:implements_clause:2.0.0@codeunit_declaration#empty-list
+:error
 ========================================================================
 interface IFoo
 {
@@ -70,33 +48,10 @@ IFoo , IBar
 {
 }
 ------------------------------------------------------------------------
-
-(source_file
-  (interface_declaration
-    (interface_keyword)
-    object_name: (identifier))
-  (interface_declaration
-    (interface_keyword)
-    object_name: (identifier))
-  (interface_declaration
-    (interface_keyword)
-    object_name: (identifier))
-  (codeunit_declaration
-    (codeunit_keyword)
-    object_id: (integer)
-    object_name: (identifier)
-    (implements_clause
-      (implements_keyword)
-      (ERROR
-        (UNEXPECTED 'i')
-        (identifier))
-      interface: (identifier)
-      interface: (identifier))
-    (ERROR
-      (UNEXPECTED 'i'))))
 
 ========================================================================
 B7a GAP: implements / holes-lead (9 cells, verdict of the representative MIXED); the parser ERRORs on configurations alc accepts; representative occ:implements_clause:2.0.0@codeunit_declaration#holes-lead
+:error
 ========================================================================
 interface IFoo
 {
@@ -119,33 +74,10 @@ IFoo , IBar
 {
 }
 ------------------------------------------------------------------------
-
-(source_file
-  (interface_declaration
-    (interface_keyword)
-    object_name: (identifier))
-  (interface_declaration
-    (interface_keyword)
-    object_name: (identifier))
-  (interface_declaration
-    (interface_keyword)
-    object_name: (identifier))
-  (codeunit_declaration
-    (codeunit_keyword)
-    object_id: (integer)
-    object_name: (identifier)
-    (implements_clause
-      (implements_keyword)
-      (ERROR
-        (UNEXPECTED 'i'))
-      interface: (identifier)
-      (ERROR
-        (UNEXPECTED 'i'))
-      interface: (identifier)
-      interface: (identifier))))
 
 ========================================================================
 B7a GAP: implements / holes-mid (9 cells, verdict of the representative MIXED); the parser ERRORs on configurations alc accepts; representative occ:implements_clause:2.0.0@codeunit_declaration#holes-mid
+:error
 ========================================================================
 interface IFoo
 {
@@ -170,32 +102,9 @@ IBar
 }
 ------------------------------------------------------------------------
 
-(source_file
-  (interface_declaration
-    (interface_keyword)
-    object_name: (identifier))
-  (interface_declaration
-    (interface_keyword)
-    object_name: (identifier))
-  (interface_declaration
-    (interface_keyword)
-    object_name: (identifier))
-  (codeunit_declaration
-    (codeunit_keyword)
-    object_id: (integer)
-    object_name: (identifier)
-    (implements_clause
-      (implements_keyword)
-      interface: (identifier)
-      (ERROR
-        (UNEXPECTED 'i'))
-      interface: (identifier)
-      (ERROR
-        (UNEXPECTED 'i'))
-      interface: (identifier))))
-
 ========================================================================
 B7a GAP: implements / holes-trail (9 cells, verdict of the representative MIXED); the parser ERRORs on configurations alc accepts; representative occ:implements_clause:2.0.0@codeunit_declaration#holes-trail
+:error
 ========================================================================
 interface IFoo
 {
@@ -219,31 +128,9 @@ IFoo , IBar
 }
 ------------------------------------------------------------------------
 
-(source_file
-  (interface_declaration
-    (interface_keyword)
-    object_name: (identifier))
-  (interface_declaration
-    (interface_keyword)
-    object_name: (identifier))
-  (interface_declaration
-    (interface_keyword)
-    object_name: (identifier))
-  (codeunit_declaration
-    (codeunit_keyword)
-    object_id: (integer)
-    object_name: (identifier)
-    (implements_clause
-      (implements_keyword)
-      interface: (identifier)
-      interface: (identifier))
-    (ERROR
-      (UNEXPECTED 'i')
-      (identifier)
-      (UNEXPECTED 'i'))))
-
 ========================================================================
 B7a GAP: implements / lead-optional (9 cells, verdict of the representative GAP); the parser ERRORs on configurations alc accepts; representative occ:implements_clause:2.0.0@codeunit_declaration#lead-optional
+:error
 ========================================================================
 interface IFoo
 {
@@ -267,32 +154,9 @@ IBar
 }
 ------------------------------------------------------------------------
 
-(source_file
-  (interface_declaration
-    (interface_keyword)
-    object_name: (identifier))
-  (interface_declaration
-    (interface_keyword)
-    object_name: (identifier))
-  (interface_declaration
-    (interface_keyword)
-    object_name: (identifier))
-  (codeunit_declaration
-    (codeunit_keyword)
-    object_id: (integer)
-    object_name: (identifier)
-    (implements_clause
-      (implements_keyword)
-      (ERROR
-        (UNEXPECTED 'i')
-        (identifier))
-      interface: (identifier)
-      (ERROR
-        (UNEXPECTED 'i'))
-      interface: (identifier))))
-
 ========================================================================
 B7a GAP: implements / one-elem (9 cells, verdict of the representative GAP); the parser ERRORs on configurations alc accepts; representative occ:implements_clause:2.0.0@codeunit_declaration#one-elem
+:error
 ========================================================================
 interface IFoo
 {
@@ -317,34 +181,9 @@ IFoo
 }
 ------------------------------------------------------------------------
 
-(source_file
-  (interface_declaration
-    (interface_keyword)
-    object_name: (identifier))
-  (interface_declaration
-    (interface_keyword)
-    object_name: (identifier))
-  (interface_declaration
-    (interface_keyword)
-    object_name: (identifier))
-  (codeunit_declaration
-    (codeunit_keyword)
-    object_id: (integer)
-    object_name: (identifier)
-    (implements_clause
-      (implements_keyword)
-      (ERROR
-        (UNEXPECTED 'i')
-        (identifier)
-        (identifier)
-        interface: (identifier)
-        (preproc_else))
-      interface: (identifier))
-    (ERROR
-      (UNEXPECTED 'i'))))
-
 ========================================================================
 B7a GAP: implements / sep-before-end (9 cells, verdict of the representative GAP); the parser ERRORs on configurations alc accepts; representative occ:implements_clause:2.0.0@codeunit_declaration#sep-before-end
+:error
 ========================================================================
 interface IFoo
 {
@@ -368,32 +207,9 @@ IFoo
 }
 ------------------------------------------------------------------------
 
-(source_file
-  (interface_declaration
-    (interface_keyword)
-    object_name: (identifier))
-  (interface_declaration
-    (interface_keyword)
-    object_name: (identifier))
-  (interface_declaration
-    (interface_keyword)
-    object_name: (identifier))
-  (codeunit_declaration
-    (codeunit_keyword)
-    object_id: (integer)
-    object_name: (identifier)
-    (implements_clause
-      (implements_keyword)
-      interface: (identifier)
-      (ERROR
-        (UNEXPECTED 'i')
-        (identifier))
-      interface: (identifier))
-    (ERROR
-      (UNEXPECTED 'i'))))
-
 ========================================================================
 B7a GAP: implements / sep-only (9 cells, verdict of the representative GAP); the parser ERRORs on configurations alc accepts; representative occ:implements_clause:2.0.0@codeunit_declaration#sep-only
+:error
 ========================================================================
 interface IFoo
 {
@@ -420,33 +236,9 @@ IBar
 }
 ------------------------------------------------------------------------
 
-(source_file
-  (interface_declaration
-    (interface_keyword)
-    object_name: (identifier))
-  (interface_declaration
-    (interface_keyword)
-    object_name: (identifier))
-  (interface_declaration
-    (interface_keyword)
-    object_name: (identifier))
-  (codeunit_declaration
-    (codeunit_keyword)
-    object_id: (integer)
-    object_name: (identifier)
-    (implements_clause
-      (implements_keyword)
-      interface: (identifier)
-      (ERROR
-        (UNEXPECTED 'i')
-        (identifier)
-        (preproc_else))
-      (ERROR
-        (UNEXPECTED 'i'))
-      interface: (identifier))))
-
 ========================================================================
 B7a GAP: implements / trail (9 cells, verdict of the representative MIXED); the parser ERRORs on configurations alc accepts; representative occ:implements_clause:2.0.0@codeunit_declaration#trail
+:error
 ========================================================================
 interface IFoo
 {
@@ -469,27 +261,3 @@ IBar
 {
 }
 ------------------------------------------------------------------------
-
-(source_file
-  (interface_declaration
-    (interface_keyword)
-    object_name: (identifier))
-  (interface_declaration
-    (interface_keyword)
-    object_name: (identifier))
-  (interface_declaration
-    (interface_keyword)
-    object_name: (identifier))
-  (codeunit_declaration
-    (codeunit_keyword)
-    object_id: (integer)
-    object_name: (identifier)
-    (implements_clause
-      (implements_keyword)
-      interface: (identifier)
-      (ERROR
-        (UNEXPECTED 'i'))
-      interface: (identifier))
-    (ERROR
-      (identifier)
-      (UNEXPECTED 'i'))))

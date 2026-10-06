@@ -134,8 +134,9 @@ expression_statement_b7_gap_test.txt
 # B6: alc rejects this file (AL0104); the leftover is no longer a legal statement.
 verbatim_string_unterminated_test.txt
 # B7a Task 10 (2026-10-07): one witness per (family, base placement, defect kind) group of the
-# separator/continuation audit (docs/b7-separator-continuation-matrix.md). GAP cases pin today's ERROR
-# tree on input alc accepts in every case configuration it accepts; REJECTED/over-accepts cases pin a clean
+# separator/continuation audit (docs/b7-separator-continuation-matrix.md). GAP cases carry `:error`
+# (an error must exist; no recovery tree is pinned) on input alc accepts in the configurations it accepts;
+# REJECTED/over-accepts cases pin a clean
 # tree on input alc rejects with a syntax code. Each case names its group and representative cell; its
 # alc probe is tools/alc_probe/cases/b7-audit/<family>__<base>__<kind>.al.
 b7_gap_actionref_header_test.txt
@@ -156,7 +157,6 @@ b7_gap_expression_tail_test.txt
 b7_gap_field_header_test.txt
 b7_gap_fieldgroup_header_test.txt
 b7_gap_for_bounds_test.txt
-b7_gap_guarded_statement_test.txt
 b7_gap_if_condition_test.txt
 b7_gap_implementation_list_test.txt
 b7_gap_implements_test.txt

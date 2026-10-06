@@ -136,8 +136,9 @@ def verdict(records, assertion, lookup=None, current=None, cls=None):
 
 # --- structural assertions ------------------------------------------------------------------------
 def _read(text):
-    """Minimal s-expression reader: `(type [field:] (child ...) ... [...])` -> (type, [(field, node)])."""
-    toks = re.findall(r"\(|\)|\.\.\.|[\w]+:|[\w]+", text)
+    """Minimal s-expression reader: `(type [field:] (child ...) ... [...])` -> (type, [(field, node)]). A type written
+    `type!` keeps its `!`: the node's named children must be exactly the pattern children (no others)."""
+    toks = re.findall(r"\(|\)|\.\.\.|[\w]+:|[\w]+!?", text)
     pos = 0
 
     def node():
@@ -165,9 +166,15 @@ def _read(text):
 
 def _match(n, pat):
     typ, kids = pat
+    exact = typ.endswith("!")                # `type!`: no named child beyond the pattern's
+    typ = typ.rstrip("!")
     if typ != "_" and n.type != typ:         # `_`: any node type (a class row spanning hosts)
         return False
     have = [(n.field_name_for_child(i), c) for i, c in enumerate(n.children) if c.is_named]
+    if exact:                                # comments are extras: they never count against `!`
+        have = [(f, c) for f, c in have if c.type != "comment"]
+        if len(have) != len(kids):
+            return False
 
     def go(i, k):                       # pattern children match an in-order subsequence
         if k == len(kids):

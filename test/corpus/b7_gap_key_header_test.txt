@@ -1,5 +1,6 @@
 ========================================================================
 B7a GAP: key-header / adjacent-compl (3 cells, verdict of the representative GAP); the parser ERRORs on configurations alc accepts; representative occ:_key_header:3@key_declaration#adjacent-compl
+:error
 ========================================================================
 table 50100 T
 {
@@ -27,80 +28,9 @@ N
 }
 ------------------------------------------------------------------------
 
-(source_file
-  (table_declaration
-    (table_keyword)
-    object_id: (integer)
-    object_name: (identifier)
-    body: (declaration_body
-      (fields_section
-        (fields_keyword)
-        body: (fields_body
-          (field_declaration
-            (field_keyword)
-            id: (integer)
-            name: (identifier)
-            type: (type_specification
-              (code_type
-                (code_keyword)
-                length: (integer))))
-          (field_declaration
-            (field_keyword)
-            id: (integer)
-            name: (identifier)
-            type: (type_specification
-              (basic_type)))
-          (field_declaration
-            (field_keyword)
-            id: (integer)
-            name: (identifier)
-            type: (type_specification
-              (basic_type)))
-          (field_declaration
-            (field_keyword)
-            id: (integer)
-            name: (identifier)
-            type: (type_specification
-              (option_type
-                (option_keyword)))
-            body: (declaration_body
-              (property
-                name: (property_name)
-                value: (option_member_list
-                  (option_member
-                    (identifier))
-                  (option_member
-                    (identifier))
-                  (option_member
-                    (identifier))))))))
-      (keys_section
-        (keys_keyword)
-        body: (keys_body
-          (key_declaration
-            (key_keyword)
-            name: (identifier)
-            fields: (field_list
-              (identifier))
-            body: (declaration_body
-              (property
-                name: (property_name)
-                value: (boolean))))
-          (key_declaration
-            (key_keyword)
-            name: (identifier)
-            (ERROR
-              (UNEXPECTED 'i')
-              (identifier))
-            (ERROR
-              (UNEXPECTED 'i')
-              (UNEXPECTED 'i')
-              (identifier)
-              (UNEXPECTED 'i'))
-            fields: (field_list
-              (identifier))))))))
-
 ========================================================================
 B7a GAP: key-header / elif (3 cells, verdict of the representative GAP); the parser ERRORs on configurations alc accepts; representative occ:_key_header:3@key_declaration#elif
+:error
 ========================================================================
 table 50100 T
 {
@@ -129,80 +59,9 @@ N
 }
 ------------------------------------------------------------------------
 
-(source_file
-  (table_declaration
-    (table_keyword)
-    object_id: (integer)
-    object_name: (identifier)
-    body: (declaration_body
-      (fields_section
-        (fields_keyword)
-        body: (fields_body
-          (field_declaration
-            (field_keyword)
-            id: (integer)
-            name: (identifier)
-            type: (type_specification
-              (code_type
-                (code_keyword)
-                length: (integer))))
-          (field_declaration
-            (field_keyword)
-            id: (integer)
-            name: (identifier)
-            type: (type_specification
-              (basic_type)))
-          (field_declaration
-            (field_keyword)
-            id: (integer)
-            name: (identifier)
-            type: (type_specification
-              (basic_type)))
-          (field_declaration
-            (field_keyword)
-            id: (integer)
-            name: (identifier)
-            type: (type_specification
-              (option_type
-                (option_keyword)))
-            body: (declaration_body
-              (property
-                name: (property_name)
-                value: (option_member_list
-                  (option_member
-                    (identifier))
-                  (option_member
-                    (identifier))
-                  (option_member
-                    (identifier))))))))
-      (keys_section
-        (keys_keyword)
-        body: (keys_body
-          (key_declaration
-            (key_keyword)
-            name: (identifier)
-            fields: (field_list
-              (identifier))
-            body: (declaration_body
-              (property
-                name: (property_name)
-                value: (boolean))))
-          (key_declaration
-            (key_keyword)
-            name: (identifier)
-            (ERROR
-              (UNEXPECTED 'i')
-              (identifier)
-              (ERROR)
-              (identifier)
-              (preproc_else))
-            (ERROR
-              (UNEXPECTED 'i'))
-            fields: (field_list
-              (identifier))))))))
-
 ========================================================================
 B7a GAP: key-header / empty (3 cells, verdict of the representative GAP); the parser ERRORs on configurations alc accepts; representative occ:_key_header:3@key_declaration#empty
+:error
 ========================================================================
 table 50100 T
 {
@@ -226,76 +85,9 @@ N
 }
 ------------------------------------------------------------------------
 
-(source_file
-  (table_declaration
-    (table_keyword)
-    object_id: (integer)
-    object_name: (identifier)
-    body: (declaration_body
-      (fields_section
-        (fields_keyword)
-        body: (fields_body
-          (field_declaration
-            (field_keyword)
-            id: (integer)
-            name: (identifier)
-            type: (type_specification
-              (code_type
-                (code_keyword)
-                length: (integer))))
-          (field_declaration
-            (field_keyword)
-            id: (integer)
-            name: (identifier)
-            type: (type_specification
-              (basic_type)))
-          (field_declaration
-            (field_keyword)
-            id: (integer)
-            name: (identifier)
-            type: (type_specification
-              (basic_type)))
-          (field_declaration
-            (field_keyword)
-            id: (integer)
-            name: (identifier)
-            type: (type_specification
-              (option_type
-                (option_keyword)))
-            body: (declaration_body
-              (property
-                name: (property_name)
-                value: (option_member_list
-                  (option_member
-                    (identifier))
-                  (option_member
-                    (identifier))
-                  (option_member
-                    (identifier))))))))
-      (keys_section
-        (keys_keyword)
-        body: (keys_body
-          (key_declaration
-            (key_keyword)
-            name: (identifier)
-            fields: (field_list
-              (identifier))
-            body: (declaration_body
-              (property
-                name: (property_name)
-                value: (boolean))))
-          (key_declaration
-            (key_keyword)
-            name: (identifier)
-            (ERROR
-              (UNEXPECTED 'i')
-              (identifier)
-              (UNEXPECTED 'i'))
-            fields: (field_list
-              (identifier))))))))
-
 ========================================================================
 B7a GAP: key-header / first-replace (3 cells, verdict of the representative GAP); the parser ERRORs on configurations alc accepts; representative occ:_key_header:3@key_declaration#first-replace
+:error
 ========================================================================
 table 50100 T
 {
@@ -321,79 +113,9 @@ SK
 }
 ------------------------------------------------------------------------
 
-(source_file
-  (table_declaration
-    (table_keyword)
-    object_id: (integer)
-    object_name: (identifier)
-    body: (declaration_body
-      (fields_section
-        (fields_keyword)
-        body: (fields_body
-          (field_declaration
-            (field_keyword)
-            id: (integer)
-            name: (identifier)
-            type: (type_specification
-              (code_type
-                (code_keyword)
-                length: (integer))))
-          (field_declaration
-            (field_keyword)
-            id: (integer)
-            name: (identifier)
-            type: (type_specification
-              (basic_type)))
-          (field_declaration
-            (field_keyword)
-            id: (integer)
-            name: (identifier)
-            type: (type_specification
-              (basic_type)))
-          (field_declaration
-            (field_keyword)
-            id: (integer)
-            name: (identifier)
-            type: (type_specification
-              (option_type
-                (option_keyword)))
-            body: (declaration_body
-              (property
-                name: (property_name)
-                value: (option_member_list
-                  (option_member
-                    (identifier))
-                  (option_member
-                    (identifier))
-                  (option_member
-                    (identifier))))))))
-      (keys_section
-        (keys_keyword)
-        body: (keys_body
-          (key_declaration
-            (key_keyword)
-            name: (identifier)
-            fields: (field_list
-              (identifier))
-            body: (declaration_body
-              (property
-                name: (property_name)
-                value: (boolean))))
-          (key_declaration
-            (key_keyword)
-            (ERROR
-              (UNEXPECTED 'i')
-              (identifier)
-              (identifier)
-              (preproc_else))
-            name: (identifier)
-            (ERROR
-              (UNEXPECTED 'i'))
-            fields: (field_list
-              (identifier))))))))
-
 ========================================================================
 B7a GAP: key-header / nested (3 cells, verdict of the representative GAP); the parser ERRORs on configurations alc accepts; representative occ:_key_header:3@key_declaration#nested
+:error
 ========================================================================
 table 50100 T
 {
@@ -424,82 +146,9 @@ N
 }
 ------------------------------------------------------------------------
 
-(source_file
-  (table_declaration
-    (table_keyword)
-    object_id: (integer)
-    object_name: (identifier)
-    body: (declaration_body
-      (fields_section
-        (fields_keyword)
-        body: (fields_body
-          (field_declaration
-            (field_keyword)
-            id: (integer)
-            name: (identifier)
-            type: (type_specification
-              (code_type
-                (code_keyword)
-                length: (integer))))
-          (field_declaration
-            (field_keyword)
-            id: (integer)
-            name: (identifier)
-            type: (type_specification
-              (basic_type)))
-          (field_declaration
-            (field_keyword)
-            id: (integer)
-            name: (identifier)
-            type: (type_specification
-              (basic_type)))
-          (field_declaration
-            (field_keyword)
-            id: (integer)
-            name: (identifier)
-            type: (type_specification
-              (option_type
-                (option_keyword)))
-            body: (declaration_body
-              (property
-                name: (property_name)
-                value: (option_member_list
-                  (option_member
-                    (identifier))
-                  (option_member
-                    (identifier))
-                  (option_member
-                    (identifier))))))))
-      (keys_section
-        (keys_keyword)
-        body: (keys_body
-          (key_declaration
-            (key_keyword)
-            name: (identifier)
-            fields: (field_list
-              (identifier))
-            body: (declaration_body
-              (property
-                name: (property_name)
-                value: (boolean))))
-          (key_declaration
-            (key_keyword)
-            name: (identifier)
-            (ERROR
-              (UNEXPECTED 'i')
-              (identifier)
-              (UNEXPECTED 'i')
-              (identifier)
-              (preproc_else)
-              (UNEXPECTED 'i')
-              (preproc_else))
-            (ERROR
-              (UNEXPECTED 'i'))
-            fields: (field_list
-              (identifier))))))))
-
 ========================================================================
 B7a GAP: key-header / sep-before-end (3 cells, verdict of the representative MIXED); the parser ERRORs on configurations alc accepts; representative occ:_key_header:3@key_declaration#sep-before-end
+:error
 ========================================================================
 table 50100 T
 {
@@ -523,77 +172,9 @@ SK
 }
 ------------------------------------------------------------------------
 
-(source_file
-  (table_declaration
-    (table_keyword)
-    object_id: (integer)
-    object_name: (identifier)
-    body: (declaration_body
-      (fields_section
-        (fields_keyword)
-        body: (fields_body
-          (field_declaration
-            (field_keyword)
-            id: (integer)
-            name: (identifier)
-            type: (type_specification
-              (code_type
-                (code_keyword)
-                length: (integer))))
-          (field_declaration
-            (field_keyword)
-            id: (integer)
-            name: (identifier)
-            type: (type_specification
-              (basic_type)))
-          (field_declaration
-            (field_keyword)
-            id: (integer)
-            name: (identifier)
-            type: (type_specification
-              (basic_type)))
-          (field_declaration
-            (field_keyword)
-            id: (integer)
-            name: (identifier)
-            type: (type_specification
-              (option_type
-                (option_keyword)))
-            body: (declaration_body
-              (property
-                name: (property_name)
-                value: (option_member_list
-                  (option_member
-                    (identifier))
-                  (option_member
-                    (identifier))
-                  (option_member
-                    (identifier))))))))
-      (keys_section
-        (keys_keyword)
-        body: (keys_body
-          (key_declaration
-            (key_keyword)
-            name: (identifier)
-            fields: (field_list
-              (identifier))
-            body: (declaration_body
-              (property
-                name: (property_name)
-                value: (boolean))))
-          (key_declaration
-            (key_keyword)
-            name: (identifier)
-            (ERROR
-              (UNEXPECTED 'i')
-              (identifier))
-            fields: (field_list
-              (identifier))
-            (ERROR
-              (UNEXPECTED 'i'))))))))
-
 ========================================================================
 B7a GAP: key-header / sep-only (3 cells, verdict of the representative GAP); the parser ERRORs on configurations alc accepts; representative occ:_key_header:3@key_declaration#sep-only
+:error
 ========================================================================
 table 50100 T
 {
@@ -620,78 +201,9 @@ N
 }
 ------------------------------------------------------------------------
 
-(source_file
-  (table_declaration
-    (table_keyword)
-    object_id: (integer)
-    object_name: (identifier)
-    body: (declaration_body
-      (fields_section
-        (fields_keyword)
-        body: (fields_body
-          (field_declaration
-            (field_keyword)
-            id: (integer)
-            name: (identifier)
-            type: (type_specification
-              (code_type
-                (code_keyword)
-                length: (integer))))
-          (field_declaration
-            (field_keyword)
-            id: (integer)
-            name: (identifier)
-            type: (type_specification
-              (basic_type)))
-          (field_declaration
-            (field_keyword)
-            id: (integer)
-            name: (identifier)
-            type: (type_specification
-              (basic_type)))
-          (field_declaration
-            (field_keyword)
-            id: (integer)
-            name: (identifier)
-            type: (type_specification
-              (option_type
-                (option_keyword)))
-            body: (declaration_body
-              (property
-                name: (property_name)
-                value: (option_member_list
-                  (option_member
-                    (identifier))
-                  (option_member
-                    (identifier))
-                  (option_member
-                    (identifier))))))))
-      (keys_section
-        (keys_keyword)
-        body: (keys_body
-          (key_declaration
-            (key_keyword)
-            name: (identifier)
-            fields: (field_list
-              (identifier))
-            body: (declaration_body
-              (property
-                name: (property_name)
-                value: (boolean))))
-          (key_declaration
-            (key_keyword)
-            name: (identifier)
-            (ERROR
-              (UNEXPECTED 'i')
-              (identifier)
-              (preproc_else))
-            (ERROR
-              (UNEXPECTED 'i'))
-            fields: (field_list
-              (identifier))))))))
-
 ========================================================================
 B7a GAP: key-header / trail (3 cells, verdict of the representative MIXED); the parser ERRORs on configurations alc accepts; representative occ:_key_header:3@key_declaration#trail
+:error
 ========================================================================
 table 50100 T
 {
@@ -714,72 +226,3 @@ N
     }
 }
 ------------------------------------------------------------------------
-
-(source_file
-  (table_declaration
-    (table_keyword)
-    object_id: (integer)
-    object_name: (identifier)
-    body: (declaration_body
-      (fields_section
-        (fields_keyword)
-        body: (fields_body
-          (field_declaration
-            (field_keyword)
-            id: (integer)
-            name: (identifier)
-            type: (type_specification
-              (code_type
-                (code_keyword)
-                length: (integer))))
-          (field_declaration
-            (field_keyword)
-            id: (integer)
-            name: (identifier)
-            type: (type_specification
-              (basic_type)))
-          (field_declaration
-            (field_keyword)
-            id: (integer)
-            name: (identifier)
-            type: (type_specification
-              (basic_type)))
-          (field_declaration
-            (field_keyword)
-            id: (integer)
-            name: (identifier)
-            type: (type_specification
-              (option_type
-                (option_keyword)))
-            body: (declaration_body
-              (property
-                name: (property_name)
-                value: (option_member_list
-                  (option_member
-                    (identifier))
-                  (option_member
-                    (identifier))
-                  (option_member
-                    (identifier))))))))
-      (keys_section
-        (keys_keyword)
-        body: (keys_body
-          (key_declaration
-            (key_keyword)
-            name: (identifier)
-            fields: (field_list
-              (identifier))
-            body: (declaration_body
-              (property
-                name: (property_name)
-                value: (boolean))))
-          (key_declaration
-            (key_keyword)
-            name: (identifier)
-            (ERROR
-              (UNEXPECTED 'i'))
-            fields: (field_list
-              (identifier))
-            (ERROR
-              (identifier)
-              (UNEXPECTED 'i'))))))))

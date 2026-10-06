@@ -1,5 +1,5 @@
 // B7a Task 10 witness (REJECTED/over-accepts(syntax)): family integer-list, base placement holes-lead, 6 cells; representative occ:signed_integer_list:0.0.1.0.0@declaration_body#holes-lead
-// No corpus case: the oracle reports a discrepancy in a configuration alc rejects (the quick tier cannot classify one); the parser side is pinned by tools/b7_audit/tests/test_silent.py
+// No corpus case: the oracle reports a discrepancy in a configuration alc rejects; the parser side is pinned by tools/b7_audit/tests/test_silent.py
 // expect: !TPL !X accept
 // expect: !TPL X accept
 // expect: TPL !X reject(AL0456)

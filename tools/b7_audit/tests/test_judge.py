@@ -258,3 +258,11 @@ def test_committed_assertion_rows_can_fail(al_parser):
         assert not judge.check_assertion(root, replace(a, expect=_mutate(a.expect))), a.cell_or_class
         checked += 1
     assert checked > len(rows) // 2
+
+
+def test_assertion_exact_children(al_parser):
+    root = al_parser.parse(SRC).root_node
+    a = judge.Assertion("c", "(argument_list! (integer) (integer))", (), "")
+    assert judge.check_assertion(root, a)
+    assert judge.check_assertion(root, replace(a, expect="(argument_list (integer))"))          # subsequence
+    assert not judge.check_assertion(root, replace(a, expect="(argument_list! (integer))"))    # an extra child

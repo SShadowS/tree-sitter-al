@@ -1,5 +1,6 @@
 ========================================================================
 B7a GAP: type-header / adjacent-compl (3 cells, verdict of the representative GAP); the parser ERRORs on configurations alc accepts; representative occ:type_declaration:3@assembly_body#adjacent-compl
+:error
 ========================================================================
 dotnet
 {
@@ -19,29 +20,9 @@ SB
 }
 ------------------------------------------------------------------------
 
-(source_file
-  (dotnet_declaration
-    (dotnet_keyword)
-    body: (dotnet_body
-      (assembly_declaration
-        (assembly_keyword)
-        name: (dotnet_assembly_name)
-        body: (assembly_body
-          (type_declaration
-            (type_keyword)
-            dotnet_type: (dotnet_assembly_name)
-            (ERROR
-              (UNEXPECTED 'i')
-              (identifier))
-            (ERROR
-              (UNEXPECTED 'i')
-              (UNEXPECTED 'i')
-              (identifier)
-              (UNEXPECTED 'i'))
-            al_name: (identifier)))))))
-
 ========================================================================
 B7a GAP: type-header / elif (3 cells, verdict of the representative GAP); the parser ERRORs on configurations alc accepts; representative occ:type_declaration:3@assembly_body#elif
+:error
 ========================================================================
 dotnet
 {
@@ -62,29 +43,9 @@ SB
 }
 ------------------------------------------------------------------------
 
-(source_file
-  (dotnet_declaration
-    (dotnet_keyword)
-    body: (dotnet_body
-      (assembly_declaration
-        (assembly_keyword)
-        name: (dotnet_assembly_name)
-        body: (assembly_body
-          (type_declaration
-            (type_keyword)
-            dotnet_type: (dotnet_assembly_name)
-            (ERROR
-              (UNEXPECTED 'i')
-              (identifier)
-              (ERROR)
-              (identifier)
-              (preproc_else))
-            (ERROR
-              (UNEXPECTED 'i'))
-            al_name: (identifier)))))))
-
 ========================================================================
 B7a GAP: type-header / empty (3 cells, verdict of the representative GAP); the parser ERRORs on configurations alc accepts; representative occ:type_declaration:3@assembly_body#empty
+:error
 ========================================================================
 dotnet
 {
@@ -100,25 +61,9 @@ SB
 }
 ------------------------------------------------------------------------
 
-(source_file
-  (dotnet_declaration
-    (dotnet_keyword)
-    body: (dotnet_body
-      (assembly_declaration
-        (assembly_keyword)
-        name: (dotnet_assembly_name)
-        body: (assembly_body
-          (type_declaration
-            (type_keyword)
-            dotnet_type: (dotnet_assembly_name)
-            (ERROR
-              (UNEXPECTED 'i')
-              (identifier)
-              (UNEXPECTED 'i'))
-            al_name: (identifier)))))))
-
 ========================================================================
 B7a GAP: type-header / first-replace (3 cells, verdict of the representative GAP); the parser ERRORs on configurations alc accepts; representative occ:type_declaration:3@assembly_body#first-replace
+:error
 ========================================================================
 dotnet
 {
@@ -136,26 +81,9 @@ System.Text.StringBuilder
 }
 ------------------------------------------------------------------------
 
-(source_file
-  (dotnet_declaration
-    (dotnet_keyword)
-    body: (dotnet_body
-      (assembly_declaration
-        (assembly_keyword)
-        name: (dotnet_assembly_name)
-        (ERROR
-          (type_keyword)
-          (UNEXPECTED 'i')
-          (identifier)
-          (identifier)
-          (preproc_else)
-          (identifier)
-          (UNEXPECTED 'i')
-          (identifier))))
-    (MISSING "}")))
-
 ========================================================================
 B7a GAP: type-header / nested (3 cells, verdict of the representative GAP); the parser ERRORs on configurations alc accepts; representative occ:type_declaration:3@assembly_body#nested
+:error
 ========================================================================
 dotnet
 {
@@ -178,31 +106,9 @@ SB
 }
 ------------------------------------------------------------------------
 
-(source_file
-  (dotnet_declaration
-    (dotnet_keyword)
-    body: (dotnet_body
-      (assembly_declaration
-        (assembly_keyword)
-        name: (dotnet_assembly_name)
-        body: (assembly_body
-          (type_declaration
-            (type_keyword)
-            dotnet_type: (dotnet_assembly_name)
-            (ERROR
-              (UNEXPECTED 'i')
-              (identifier)
-              (UNEXPECTED 'i')
-              (identifier)
-              (preproc_else)
-              (UNEXPECTED 'i')
-              (preproc_else))
-            (ERROR
-              (UNEXPECTED 'i'))
-            al_name: (identifier)))))))
-
 ========================================================================
 B7a GAP: type-header / sep-before-end (3 cells, verdict of the representative GAP); the parser ERRORs on configurations alc accepts; representative occ:type_declaration:3@assembly_body#sep-before-end
+:error
 ========================================================================
 dotnet
 {
@@ -218,26 +124,9 @@ System.Text.StringBuilder
 }
 ------------------------------------------------------------------------
 
-(source_file
-  (dotnet_declaration
-    (dotnet_keyword)
-    body: (dotnet_body
-      (assembly_declaration
-        (assembly_keyword)
-        name: (dotnet_assembly_name)
-        body: (assembly_body
-          (type_declaration
-            (type_keyword)
-            dotnet_type: (dotnet_assembly_name)
-            (ERROR
-              (UNEXPECTED 'i')
-              (identifier))
-            al_name: (identifier)
-            (ERROR
-              (UNEXPECTED 'i'))))))))
-
 ========================================================================
 B7a GAP: type-header / sep-only (3 cells, verdict of the representative GAP); the parser ERRORs on configurations alc accepts; representative occ:type_declaration:3@assembly_body#sep-only
+:error
 ========================================================================
 dotnet
 {
@@ -256,27 +145,9 @@ SB
 }
 ------------------------------------------------------------------------
 
-(source_file
-  (dotnet_declaration
-    (dotnet_keyword)
-    body: (dotnet_body
-      (assembly_declaration
-        (assembly_keyword)
-        name: (dotnet_assembly_name)
-        body: (assembly_body
-          (type_declaration
-            (type_keyword)
-            dotnet_type: (dotnet_assembly_name)
-            (ERROR
-              (UNEXPECTED 'i')
-              (identifier)
-              (preproc_else))
-            (ERROR
-              (UNEXPECTED 'i'))
-            al_name: (identifier)))))))
-
 ========================================================================
 B7a GAP: type-header / trail (3 cells, verdict of the representative MIXED); the parser ERRORs on configurations alc accepts; representative occ:type_declaration:3@assembly_body#trail
+:error
 ========================================================================
 dotnet
 {
@@ -291,21 +162,3 @@ SB
     }
 }
 ------------------------------------------------------------------------
-
-(source_file
-  (dotnet_declaration
-    (dotnet_keyword)
-    body: (dotnet_body
-      (assembly_declaration
-        (assembly_keyword)
-        name: (dotnet_assembly_name)
-        body: (assembly_body
-          (type_declaration
-            (type_keyword)
-            dotnet_type: (dotnet_assembly_name)
-            (ERROR
-              (UNEXPECTED 'i'))
-            al_name: (identifier)
-            (ERROR
-              (identifier)
-              (UNEXPECTED 'i'))))))))
