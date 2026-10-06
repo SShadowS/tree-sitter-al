@@ -14,7 +14,7 @@ public API — a change to node structure or field names is a **major** bump.
   site of `grammar.js`, generates `#if` placements for each, judges 24,355 cells against `alc` and the config oracle, and
   writes `docs/b7-separator-continuation-matrix.md` with a ranked fix list for B7b+. Canonical evidence is
   `tools/b7_audit/evidence.jsonl.gz`; every defect group has a pinned witness (an alc probe under
-  `tools/alc_probe/cases/b7-audit/` and a `test/corpus/b7_gap_*_test.txt` case, or a SILENT test). `census --check` is gated by
+  `tools/alc_probe/cases/b7-audit/` and a `test/corpus/b7_gap_*_test.txt` case, or a SILENT test; GAP witnesses use `:error`, over-accepts witnesses are pinned as trees). `census --check` is gated by
   validate-grammar.sh Step 5g and CI; `run --check` (slow) stays manual.
 
 - **A classified traversal helper for `#if` code, in every binding (roadmap F0).**

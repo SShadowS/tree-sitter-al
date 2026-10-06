@@ -47,7 +47,7 @@ Totals: GAP 14,692, SILENT 1,362, MIXED 3,981, REJECTED/over-accepts 3, UNCHECKE
 The matrix `docs/b7-separator-continuation-matrix.md` is the record; the 4.0.0 six-site list below is superseded by it. In the matrix, by family
 (GAP unless noted; `sites` = production sites of the host shapes, 0 for all but a few):
 
-- `parameter-list` (the `;`-led form): GAP, 0 sites
+- `parameter-list` (the `;`-led form): GAP, 0 weighted sites (45 terminated-unit sites, unweighted)
 - `implements`: GAP, 0 sites
 - `option-members`: GAP, 6 sites, owner B13 (items 37, 38)
 - `link-list` (GAP, OVERACCEPT) and `link-list-comma-leading`: owner B12 / B7b+ with `link-property-ambiguity` as its
@@ -60,7 +60,7 @@ The matrix `docs/b7-separator-continuation-matrix.md` is the record; the 4.0.0 s
 The audit found far more than six: the largest families are SILENT `statement-terminator` and `split-if-begin`
 (Section 'Ranked fix list' of the matrix, proposed B7b+ order in the roadmap row B7). Every defect group has a pinned
 witness: an alc probe in `tools/alc_probe/cases/b7-audit/` and a `test/corpus/b7_gap_*_test.txt` case (GAP and
-over-accepts, `:error` attribute), or a `tools/b7_audit/tests/test_silent.py` case (SILENT).
+GAP witnesses use the corpus `:error` attribute, over-accepts witnesses are pinned as trees; 792 of the 854 cases carry `:error`), or a `tools/b7_audit/tests/test_silent.py` case (SILENT).
 
 **Next step:** B7b+ per the ranked list; each fix flips its group's witnesses. Re-run `run --only <family>` and `report`.
 
@@ -1540,19 +1540,16 @@ statement: `call_statement` takes only identifier and quoted-identifier tokens, 
 
 **Owner:** unassigned.
 
-## 41. A bare `(identifier)` statement parses clean in a `statement_block` (B7a, as_expression SILENT witness)
+## 41. An `as`/`is` continuation across `#if` arms is torn into separate statements silently (B7a)
 
-**Established:** 2026-10-07, B7a Task 10 (`tools/b7_audit/tests/test_silent.py`, group `type-test` / `consecutive`, cell
-`bnd:as_expression:left:end@as_expression#consecutive/type-test`). With `as` continued across two `#if` arms
-(`Intf2 := Intf #if X as IFoo #endif #if Y as IFoo #endif as IFoo;`) the parser reads the middle as separate
-statements, a bare `(identifier)` among them, with no ERROR; the oracle reports a discrepancy in `X=0,Y=0` (the reading
-differs from the flat text). That the tree holds a bare identifier statement is the over-acceptance: B6 narrowed
-`_expression_statement` to an invocation, and a bare name is the item 40 shape, which still accepts a name that is
-not a call. What alc says about a bare name statement was not probed separately (the cell's alc verdict is the whole file); run
-`python -m tools.alc_probe run` on `Intf;` before `end` first.
+**Established:** 2026-10-07, B7a Task 10 (`tools/b7_audit/tests/test_silent.py`, family `type-test`, group `consecutive`, cell
+`bnd:as_expression:left:end@as_expression#consecutive/type-test`; also `nested` and `suffix`). `Intf2 := Intf #if X as IFoo
+#endif #if Y as IFoo #endif as IFoo;` parses clean, but the arms are not a continuation of the assignment: the tree holds
+separate statements, and the oracle reports a discrepancy at `X=0,Y=0`. `as`/`is` have no continuation facility. The bare
+`(identifier)` statement in that tree is only the symptom: B6 accepts a bare identifier as a statement by design (spec
+`2026-10-06-expression-statement-narrowing-design.md` 3.1), so that part is not a defect. See also item 40.
 
-**Next step:** probe `Foo;` where `Foo` is a variable (not a procedure) against alc; decide with item 40 whether a bare
-name is a statement or an ERROR.
+**Next step:** B7b+ (matrix family `type-test`): give `as`/`is` a continuation tail, or make the tear an ERROR.
 
 **Owner:** unassigned.
 
