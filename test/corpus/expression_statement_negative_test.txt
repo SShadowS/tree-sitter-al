@@ -16,15 +16,21 @@
 ;   Rec.Get() = true;       AL0117  reject-comparison.al
 ;   Arr[1];                 AL0117  reject-subscript.al
 ;   Foo()[1];               AL0117  reject-call-subscript.al
-;   Foo() #if A + 2 #endif ;  defined: AL0175 torn-call-plus.al (the tail tears off a call)
-;   exit(1) #if A + 2 #endif; defined: AL0104,AL0111 torn-exit-plus.al
+;   Foo() #if A + 2 #else + 3 #endif ;           AL0175 both configurations, torn-call-plus-both-arms.al
+;   exit(1) #if A + 2 #else + 3 #endif ;         AL0104,AL0111 both, torn-exit-plus-both-arms.al
 ;   exit; (a + b);          a parenthesized statement, AL0117 per reject-parenthesized.al;
 ;                           moved from exit_statement_spacing_test.txt, it still pins the
 ;                           exit_statement as valueless (no return_value).
 ;   and(C); ... not(C);     AL0104  reject-stmt-start-{and,or,xor,div,mod,in,not}.al
 ;   and := true;            AL0104  reject-assign-to-and.al
 ;   C := and;               AL0224  reject-read-and-in-expression.al
-;   Foo() #if A or (2 = 2) #endif ;  defined: AL0117 torn-call-or.al
+;   Foo() #if A or (2 = 2) #else and (3 = 3) #endif ;  AL0117 both, torn-call-or-both-arms.al
+;
+; Each torn case has an invalid fragment in EVERY arm, so every configuration is invalid AL
+; and the config oracle can classify the case `negative` for all of them. The single-arm form
+; (`Foo() #if A + 2 #endif ;`, valid when A is undefined: torn-call-plus.al, torn-exit-plus.al,
+; torn-call-or.al) is pinned by the REJECT list of
+; tools/config_oracle/tests/test_expression_statement.py instead.
 ;
 ; The operator-word cases ERROR through the `code_names` reserved set (grammar.js
 ; `reserved:`): in code the seven words never lex as an identifier, so the word is a bare
@@ -36,7 +42,7 @@
 ; ERROR takes the whole procedure, because in recovery the scanner declines every external
 ; and `#endif` / `end` lex as fragments; .claude/rules/scanner.md, "Error recovery after a
 ; malformed line is wide"). When a grammar change moves it, re-check only that an ERROR
-; still covers the fragment.
+; still covers the fragments of both arms.
 
 ================================================================================
 B6 negative: integer statement
@@ -614,7 +620,7 @@ Foo()[1];
           (end_keyword))))))
 
 ================================================================================
-B6 negative: call torn by an arithmetic #if arm
+B6 negative: call torn by an arithmetic #if arm in every branch
 ================================================================================
 codeunit 50101 P {
   procedure Main()
@@ -623,6 +629,8 @@ codeunit 50101 P {
 Foo()
 #if A
   + 2
+#else
+  + 3
 #endif
   ;
   end;
@@ -672,6 +680,10 @@ Foo()
         condition: (identifier))
       (ERROR
         (unary_expression
+          operand: (integer)))
+      (preproc_else)
+      (ERROR
+        (unary_expression
           operand: (integer))
         (UNEXPECTED 'i'))
       (empty_statement)
@@ -679,7 +691,7 @@ Foo()
         function: (identifier)))))
 
 ================================================================================
-B6 negative: exit value torn by an arithmetic #if arm
+B6 negative: exit value torn by an arithmetic #if arm in every branch
 ================================================================================
 codeunit 50101 P {
   procedure Main()
@@ -688,6 +700,8 @@ codeunit 50101 P {
 exit(1)
 #if A
   + 2
+#else
+  + 3
 #endif
   ;
   end;
@@ -735,6 +749,10 @@ exit(1)
       (preproc_if
         (preproc_open)
         condition: (identifier))
+      (ERROR
+        (unary_expression
+          operand: (integer)))
+      (preproc_else)
       (ERROR
         (unary_expression
           operand: (integer))
@@ -1277,7 +1295,7 @@ C := and;
           (end_keyword))))))
 
 ================================================================================
-B6 negative: call torn by a keyword-operator #if arm
+B6 negative: call torn by a keyword-operator #if arm in every branch
 ================================================================================
 codeunit 50101 P {
   procedure Main()
@@ -1286,6 +1304,8 @@ codeunit 50101 P {
 Foo()
 #if A
   or (2 = 2)
+#else
+  and (3 = 3)
 #endif
   ;
   end;
@@ -1334,11 +1354,19 @@ Foo()
         (preproc_open)
         condition: (identifier))
       (ERROR
-        (parenthesized_expression
-          (comparison_expression
-            left: (integer)
-            operator: (comparison_operator)
-            right: (integer)))
+        (logical_expression
+          left: (parenthesized_expression
+            (comparison_expression
+              left: (integer)
+              operator: (comparison_operator)
+              right: (integer)))
+          (ERROR
+            (preproc_else))
+          right: (parenthesized_expression
+            (comparison_expression
+              left: (integer)
+              operator: (comparison_operator)
+              right: (integer))))
         (UNEXPECTED 'i')
         (if_keyword))
       (empty_statement)
