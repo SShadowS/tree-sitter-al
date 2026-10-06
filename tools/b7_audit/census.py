@@ -215,3 +215,45 @@ def boundaries(g):
         else:                                          # a union would hide an arm without a continuation
             out += [Boundary(r, f"{s}@{p}", e, m, q) for p, m, q in arms]
     return sorted(out, key=key_of)
+
+
+def _reverse_index(rules):
+    rev = {}
+    for name, body in rules.items():
+        for s in _symbols(body):
+            rev.setdefault(s, set()).add(name)
+    return rev
+
+
+def routes(g, target_rule):
+    """Visible hosts reaching target_rule through hidden/inline rules; shortest chain per host."""
+    rules, inline = g["rules"], g["inline"]
+    rev = _reverse_index(rules)
+
+    def hidden(r):
+        return r.startswith("_") or r in inline
+
+    if not hidden(target_rule):
+        return [Route(target_rule, (target_rule,))]
+    best, seen, queue = {}, {target_rule}, [(target_rule,)]
+    while queue:
+        nxt = []
+        for chain in queue:                      # chain is host-side first
+            r = chain[0]
+            if not hidden(r):
+                best.setdefault(r, chain)
+                continue
+            for p in sorted(rev.get(r, ())):
+                if p not in seen:
+                    seen.add(p)
+                    nxt.append((p,) + chain)
+        queue = nxt
+    return sorted((Route(h, c) for h, c in best.items()), key=lambda r: r.host)
+
+
+def census(g):
+    """Every (key, Route) pair for occurrences and boundaries."""
+    pairs = []
+    for x in list(occurrences(g)) + list(boundaries(g)):
+        pairs += [(key_of(x), r) for r in routes(g, x.rule)]
+    return sorted(pairs, key=lambda p: (p[0], p[1].host))
