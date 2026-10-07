@@ -1,0 +1,1068 @@
+========================================================================
+B7a GAP: where-filter / adjacent-compl (9 cells, verdict of the representative GAP); the parser ERRORs on configurations alc accepts; representative occ:_where_run:0.1.0.0@preproc_conditional_where#adjacent-compl
+:error
+========================================================================
+table 50100 T
+{
+    fields
+    {
+        field(1; K; Code[20]) { }
+        field(2; N; Integer) { }
+        field(3; B; Boolean) { }
+        field(4; C; Integer)
+        {
+            FieldClass = FlowField;
+            CalcFormula = count(T where(K = field(K),
+#if TPL
+                
+N = const(1)
+#if X
+, O = const(A)
+#endif
+#if not X
+, "B" = const(true)
+#endif
+,
+
+#endif
+                B = const(true)));
+        }
+        field(9; O; Option) { OptionMembers = A,B,C; }
+    }
+    keys
+    {
+        key(PK; K) { Clustered = true; }
+    }
+}
+------------------------------------------------------------------------
+
+========================================================================
+B7a GAP: where-filter / adjacent-indep (9 cells, verdict of the representative GAP); the parser ERRORs on configurations alc accepts; representative occ:_where_run:0.1.0.0@preproc_conditional_where#adjacent-indep
+:error
+========================================================================
+table 50100 T
+{
+    fields
+    {
+        field(1; K; Code[20]) { }
+        field(2; N; Integer) { }
+        field(3; B; Boolean) { }
+        field(4; C; Integer)
+        {
+            FieldClass = FlowField;
+            CalcFormula = count(T where(K = field(K),
+#if TPL
+                
+N = const(1)
+#if X
+, O = const(A)
+#endif
+#if Y
+, "B" = const(true)
+#endif
+,
+
+#endif
+                B = const(true)));
+        }
+        field(9; O; Option) { OptionMembers = A,B,C; }
+    }
+    keys
+    {
+        key(PK; K) { Clustered = true; }
+    }
+}
+------------------------------------------------------------------------
+
+========================================================================
+B7a GAP: where-filter / count-differs (9 cells, verdict of the representative GAP); the parser ERRORs on configurations alc accepts; representative occ:_where_run:0.1.0.0@preproc_conditional_where#count-differs
+:error
+========================================================================
+table 50100 T
+{
+    fields
+    {
+        field(1; K; Code[20]) { }
+        field(2; N; Integer) { }
+        field(3; B; Boolean) { }
+        field(4; C; Integer)
+        {
+            FieldClass = FlowField;
+            CalcFormula = count(T where(K = field(K),
+#if TPL
+                
+N = const(1)
+#if X
+, O = const(A) , "B" = const(true)
+#else
+, K = field(K)
+#endif
+,
+
+#endif
+                B = const(true)));
+        }
+        field(9; O; Option) { OptionMembers = A,B,C; }
+    }
+    keys
+    {
+        key(PK; K) { Clustered = true; }
+    }
+}
+------------------------------------------------------------------------
+
+========================================================================
+B7a GAP: where-filter / elif (15 cells, verdict of the representative GAP); the parser ERRORs on configurations alc accepts; representative occ:_where_branch:0.0@preproc_conditional_where#elif
+:error
+========================================================================
+table 50100 T
+{
+    fields
+    {
+        field(1; K; Code[20]) { }
+        field(2; N; Integer) { }
+        field(3; B; Boolean) { }
+        field(4; C; Integer)
+        {
+            FieldClass = FlowField;
+            CalcFormula = count(T where(K = field(K)
+#if TPL
+                
+,
+N = const(1)
+#if X
+, "B" = const(true)
+#elif Y
+, K = field(K)
+#endif
+, O = const(A)
+
+#endif
+                ));
+        }
+        field(9; O; Option) { OptionMembers = A,B,C; }
+    }
+    keys
+    {
+        key(PK; K) { Clustered = true; }
+    }
+}
+------------------------------------------------------------------------
+
+========================================================================
+B7a REJECTED/over-accepts(syntax): where-filter / empty-list (3 cells, verdict of the representative MIXED); alc rejects with a syntax code (AL0104,AL0107,AL0292) but the parser is clean; representative occ:_where_run:0.1.0.0@where_conditions#empty-list
+========================================================================
+table 50100 T
+{
+    fields
+    {
+        field(1; K; Code[20]) { }
+        field(2; N; Integer) { }
+        field(3; B; Boolean) { }
+        field(4; C; Integer)
+        {
+            FieldClass = FlowField;
+            CalcFormula = count(T where(
+#if X
+K = field(K) , N = const(1)
+#endif
+));
+        }
+        field(9; O; Option) { OptionMembers = A,B,C; }
+    }
+    keys
+    {
+        key(PK; K) { Clustered = true; }
+    }
+}
+------------------------------------------------------------------------
+
+(source_file
+  (table_declaration
+    (table_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (fields_section
+        (fields_keyword)
+        body: (fields_body
+          (field_declaration
+            (field_keyword)
+            id: (integer)
+            name: (identifier)
+            type: (type_specification
+              (code_type
+                (code_keyword)
+                length: (integer))))
+          (field_declaration
+            (field_keyword)
+            id: (integer)
+            name: (identifier)
+            type: (type_specification
+              (basic_type)))
+          (field_declaration
+            (field_keyword)
+            id: (integer)
+            name: (identifier)
+            type: (type_specification
+              (basic_type)))
+          (field_declaration
+            (field_keyword)
+            id: (integer)
+            name: (identifier)
+            type: (type_specification
+              (basic_type))
+            body: (declaration_body
+              (property
+                name: (property_name)
+                value: (identifier))
+              (property
+                name: (property_name)
+                value: (aggregate_formula
+                  function: (aggregate_function)
+                  target: (calc_field_reference
+                    (identifier))
+                  (where_clause
+                    (where_keyword)
+                    (where_conditions
+                      (preproc_conditional_where
+                        (preproc_if
+                          (preproc_open)
+                          condition: (identifier))
+                        (where_condition
+                          field: (identifier)
+                          (field_keyword)
+                          value: (identifier))
+                        (where_condition
+                          field: (identifier)
+                          (const_keyword)
+                          value: (integer))
+                        (preproc_endif
+                          (preproc_close)))))))))
+          (field_declaration
+            (field_keyword)
+            id: (integer)
+            name: (identifier)
+            type: (type_specification
+              (option_type
+                (option_keyword)))
+            body: (declaration_body
+              (property
+                name: (property_name)
+                value: (option_member_list
+                  (option_member
+                    (identifier))
+                  (option_member
+                    (identifier))
+                  (option_member
+                    (identifier))))))))
+      (keys_section
+        (keys_keyword)
+        body: (keys_body
+          (key_declaration
+            (key_keyword)
+            name: (identifier)
+            fields: (field_list
+              (identifier))
+            body: (declaration_body
+              (property
+                name: (property_name)
+                value: (boolean)))))))))
+
+========================================================================
+B7a GAP: where-filter / first-replace (15 cells, verdict of the representative GAP); the parser ERRORs on configurations alc accepts; representative occ:_where_branch:0.0@preproc_conditional_where#first-replace
+:error
+========================================================================
+table 50100 T
+{
+    fields
+    {
+        field(1; K; Code[20]) { }
+        field(2; N; Integer) { }
+        field(3; B; Boolean) { }
+        field(4; C; Integer)
+        {
+            FieldClass = FlowField;
+            CalcFormula = count(T where(K = field(K)
+#if TPL
+                
+,
+#if X
+N = const(1)
+#else
+"B" = const(true)
+#endif
+, K = field(K)
+
+#endif
+                ));
+        }
+        field(9; O; Option) { OptionMembers = A,B,C; }
+    }
+    keys
+    {
+        key(PK; K) { Clustered = true; }
+    }
+}
+------------------------------------------------------------------------
+
+========================================================================
+B7a REJECTED/over-accepts(syntax): where-filter / holes-lead (15 cells, verdict of the representative MIXED); alc rejects with a syntax code (AL0104,AL0107,AL0292) but the parser is clean; representative occ:_where_branch:0.0@preproc_conditional_where#holes-lead
+========================================================================
+table 50100 T
+{
+    fields
+    {
+        field(1; K; Code[20]) { }
+        field(2; N; Integer) { }
+        field(3; B; Boolean) { }
+        field(4; C; Integer)
+        {
+            FieldClass = FlowField;
+            CalcFormula = count(T where(K = field(K)
+#if TPL
+                
+,
+#if X
+,
+#endif
+N = const(1) , "B" = const(true)
+
+#endif
+                ));
+        }
+        field(9; O; Option) { OptionMembers = A,B,C; }
+    }
+    keys
+    {
+        key(PK; K) { Clustered = true; }
+    }
+}
+------------------------------------------------------------------------
+
+(source_file
+  (table_declaration
+    (table_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (fields_section
+        (fields_keyword)
+        body: (fields_body
+          (field_declaration
+            (field_keyword)
+            id: (integer)
+            name: (identifier)
+            type: (type_specification
+              (code_type
+                (code_keyword)
+                length: (integer))))
+          (field_declaration
+            (field_keyword)
+            id: (integer)
+            name: (identifier)
+            type: (type_specification
+              (basic_type)))
+          (field_declaration
+            (field_keyword)
+            id: (integer)
+            name: (identifier)
+            type: (type_specification
+              (basic_type)))
+          (field_declaration
+            (field_keyword)
+            id: (integer)
+            name: (identifier)
+            type: (type_specification
+              (basic_type))
+            body: (declaration_body
+              (property
+                name: (property_name)
+                value: (identifier))
+              (property
+                name: (property_name)
+                value: (aggregate_formula
+                  function: (aggregate_function)
+                  target: (calc_field_reference
+                    (identifier))
+                  (where_clause
+                    (where_keyword)
+                    (where_conditions
+                      (where_condition
+                        field: (identifier)
+                        (field_keyword)
+                        value: (identifier))
+                      (preproc_conditional_where
+                        (preproc_if
+                          (preproc_open)
+                          condition: (identifier))
+                        (preproc_conditional_where
+                          (preproc_if
+                            (preproc_open)
+                            condition: (identifier))
+                          (preproc_endif
+                            (preproc_close)))
+                        (where_condition
+                          field: (identifier)
+                          (const_keyword)
+                          value: (integer))
+                        (where_condition
+                          field: (quoted_identifier)
+                          (const_keyword)
+                          value: (boolean))
+                        (preproc_endif
+                          (preproc_close)))))))))
+          (field_declaration
+            (field_keyword)
+            id: (integer)
+            name: (identifier)
+            type: (type_specification
+              (option_type
+                (option_keyword)))
+            body: (declaration_body
+              (property
+                name: (property_name)
+                value: (option_member_list
+                  (option_member
+                    (identifier))
+                  (option_member
+                    (identifier))
+                  (option_member
+                    (identifier))))))))
+      (keys_section
+        (keys_keyword)
+        body: (keys_body
+          (key_declaration
+            (key_keyword)
+            name: (identifier)
+            fields: (field_list
+              (identifier))
+            body: (declaration_body
+              (property
+                name: (property_name)
+                value: (boolean)))))))))
+
+========================================================================
+B7a REJECTED/over-accepts(syntax): where-filter / holes-mid (15 cells, verdict of the representative MIXED); alc rejects with a syntax code (AL0104,AL0107,AL0292) but the parser is clean; representative occ:_where_branch:0.0@preproc_conditional_where#holes-mid
+========================================================================
+table 50100 T
+{
+    fields
+    {
+        field(1; K; Code[20]) { }
+        field(2; N; Integer) { }
+        field(3; B; Boolean) { }
+        field(4; C; Integer)
+        {
+            FieldClass = FlowField;
+            CalcFormula = count(T where(K = field(K)
+#if TPL
+                
+,
+N = const(1) ,
+#if X
+,
+#endif
+"B" = const(true)
+
+#endif
+                ));
+        }
+        field(9; O; Option) { OptionMembers = A,B,C; }
+    }
+    keys
+    {
+        key(PK; K) { Clustered = true; }
+    }
+}
+------------------------------------------------------------------------
+
+(source_file
+  (table_declaration
+    (table_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (fields_section
+        (fields_keyword)
+        body: (fields_body
+          (field_declaration
+            (field_keyword)
+            id: (integer)
+            name: (identifier)
+            type: (type_specification
+              (code_type
+                (code_keyword)
+                length: (integer))))
+          (field_declaration
+            (field_keyword)
+            id: (integer)
+            name: (identifier)
+            type: (type_specification
+              (basic_type)))
+          (field_declaration
+            (field_keyword)
+            id: (integer)
+            name: (identifier)
+            type: (type_specification
+              (basic_type)))
+          (field_declaration
+            (field_keyword)
+            id: (integer)
+            name: (identifier)
+            type: (type_specification
+              (basic_type))
+            body: (declaration_body
+              (property
+                name: (property_name)
+                value: (identifier))
+              (property
+                name: (property_name)
+                value: (aggregate_formula
+                  function: (aggregate_function)
+                  target: (calc_field_reference
+                    (identifier))
+                  (where_clause
+                    (where_keyword)
+                    (where_conditions
+                      (where_condition
+                        field: (identifier)
+                        (field_keyword)
+                        value: (identifier))
+                      (preproc_conditional_where
+                        (preproc_if
+                          (preproc_open)
+                          condition: (identifier))
+                        (where_condition
+                          field: (identifier)
+                          (const_keyword)
+                          value: (integer))
+                        (preproc_conditional_where
+                          (preproc_if
+                            (preproc_open)
+                            condition: (identifier))
+                          (preproc_endif
+                            (preproc_close)))
+                        (where_condition
+                          field: (quoted_identifier)
+                          (const_keyword)
+                          value: (boolean))
+                        (preproc_endif
+                          (preproc_close)))))))))
+          (field_declaration
+            (field_keyword)
+            id: (integer)
+            name: (identifier)
+            type: (type_specification
+              (option_type
+                (option_keyword)))
+            body: (declaration_body
+              (property
+                name: (property_name)
+                value: (option_member_list
+                  (option_member
+                    (identifier))
+                  (option_member
+                    (identifier))
+                  (option_member
+                    (identifier))))))))
+      (keys_section
+        (keys_keyword)
+        body: (keys_body
+          (key_declaration
+            (key_keyword)
+            name: (identifier)
+            fields: (field_list
+              (identifier))
+            body: (declaration_body
+              (property
+                name: (property_name)
+                value: (boolean)))))))))
+
+========================================================================
+B7a GAP: where-filter / holes-trail (9 cells, verdict of the representative MIXED); the parser ERRORs on configurations alc accepts; representative occ:_where_run:0.1.0.0@preproc_conditional_where#holes-trail
+:error
+========================================================================
+table 50100 T
+{
+    fields
+    {
+        field(1; K; Code[20]) { }
+        field(2; N; Integer) { }
+        field(3; B; Boolean) { }
+        field(4; C; Integer)
+        {
+            FieldClass = FlowField;
+            CalcFormula = count(T where(K = field(K),
+#if TPL
+                
+N = const(1) , O = const(A)
+#if X
+,
+#endif
+,
+
+#endif
+                B = const(true)));
+        }
+        field(9; O; Option) { OptionMembers = A,B,C; }
+    }
+    keys
+    {
+        key(PK; K) { Clustered = true; }
+    }
+}
+------------------------------------------------------------------------
+
+========================================================================
+B7a REJECTED/over-accepts(syntax): where-filter / holes-trail (6 cells, verdict of the representative MIXED); alc rejects with a syntax code (AL0104,AL0107,AL0292) but the parser is clean; representative occ:_where_branch:0.0@preproc_conditional_where#holes-trail
+========================================================================
+table 50100 T
+{
+    fields
+    {
+        field(1; K; Code[20]) { }
+        field(2; N; Integer) { }
+        field(3; B; Boolean) { }
+        field(4; C; Integer)
+        {
+            FieldClass = FlowField;
+            CalcFormula = count(T where(K = field(K)
+#if TPL
+                
+,
+N = const(1) , "B" = const(true)
+#if X
+,
+#endif
+
+#endif
+                ));
+        }
+        field(9; O; Option) { OptionMembers = A,B,C; }
+    }
+    keys
+    {
+        key(PK; K) { Clustered = true; }
+    }
+}
+------------------------------------------------------------------------
+
+(source_file
+  (table_declaration
+    (table_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (fields_section
+        (fields_keyword)
+        body: (fields_body
+          (field_declaration
+            (field_keyword)
+            id: (integer)
+            name: (identifier)
+            type: (type_specification
+              (code_type
+                (code_keyword)
+                length: (integer))))
+          (field_declaration
+            (field_keyword)
+            id: (integer)
+            name: (identifier)
+            type: (type_specification
+              (basic_type)))
+          (field_declaration
+            (field_keyword)
+            id: (integer)
+            name: (identifier)
+            type: (type_specification
+              (basic_type)))
+          (field_declaration
+            (field_keyword)
+            id: (integer)
+            name: (identifier)
+            type: (type_specification
+              (basic_type))
+            body: (declaration_body
+              (property
+                name: (property_name)
+                value: (identifier))
+              (property
+                name: (property_name)
+                value: (aggregate_formula
+                  function: (aggregate_function)
+                  target: (calc_field_reference
+                    (identifier))
+                  (where_clause
+                    (where_keyword)
+                    (where_conditions
+                      (where_condition
+                        field: (identifier)
+                        (field_keyword)
+                        value: (identifier))
+                      (preproc_conditional_where
+                        (preproc_if
+                          (preproc_open)
+                          condition: (identifier))
+                        (where_condition
+                          field: (identifier)
+                          (const_keyword)
+                          value: (integer))
+                        (where_condition
+                          field: (quoted_identifier)
+                          (const_keyword)
+                          value: (boolean))
+                        (preproc_conditional_where
+                          (preproc_if
+                            (preproc_open)
+                            condition: (identifier))
+                          (preproc_endif
+                            (preproc_close)))
+                        (preproc_endif
+                          (preproc_close)))))))))
+          (field_declaration
+            (field_keyword)
+            id: (integer)
+            name: (identifier)
+            type: (type_specification
+              (option_type
+                (option_keyword)))
+            body: (declaration_body
+              (property
+                name: (property_name)
+                value: (option_member_list
+                  (option_member
+                    (identifier))
+                  (option_member
+                    (identifier))
+                  (option_member
+                    (identifier))))))))
+      (keys_section
+        (keys_keyword)
+        body: (keys_body
+          (key_declaration
+            (key_keyword)
+            name: (identifier)
+            fields: (field_list
+              (identifier))
+            body: (declaration_body
+              (property
+                name: (property_name)
+                value: (boolean)))))))))
+
+========================================================================
+B7a GAP: where-filter / nested (15 cells, verdict of the representative GAP); the parser ERRORs on configurations alc accepts; representative occ:_where_branch:0.0@preproc_conditional_where#nested
+:error
+========================================================================
+table 50100 T
+{
+    fields
+    {
+        field(1; K; Code[20]) { }
+        field(2; N; Integer) { }
+        field(3; B; Boolean) { }
+        field(4; C; Integer)
+        {
+            FieldClass = FlowField;
+            CalcFormula = count(T where(K = field(K)
+#if TPL
+                
+,
+N = const(1)
+#if X
+, "B" = const(true)
+#if Y
+, K = field(K)
+#endif
+#endif
+, O = const(A)
+
+#endif
+                ));
+        }
+        field(9; O; Option) { OptionMembers = A,B,C; }
+    }
+    keys
+    {
+        key(PK; K) { Clustered = true; }
+    }
+}
+------------------------------------------------------------------------
+
+========================================================================
+B7a GAP: where-filter / one-elem (9 cells, verdict of the representative GAP); the parser ERRORs on configurations alc accepts; representative occ:_where_run:0.1.0.0@preproc_conditional_where#one-elem
+:error
+========================================================================
+table 50100 T
+{
+    fields
+    {
+        field(1; K; Code[20]) { }
+        field(2; N; Integer) { }
+        field(3; B; Boolean) { }
+        field(4; C; Integer)
+        {
+            FieldClass = FlowField;
+            CalcFormula = count(T where(K = field(K),
+#if TPL
+                
+#if X
+N = const(1) , O = const(A)
+#else
+N = const(1)
+#endif
+,
+
+#endif
+                B = const(true)));
+        }
+        field(9; O; Option) { OptionMembers = A,B,C; }
+    }
+    keys
+    {
+        key(PK; K) { Clustered = true; }
+    }
+}
+------------------------------------------------------------------------
+
+========================================================================
+B7a GAP: where-filter / sep-before (15 cells, verdict of the representative GAP); the parser ERRORs on configurations alc accepts; representative occ:_where_branch:0.0@preproc_conditional_where#sep-before
+:error
+========================================================================
+table 50100 T
+{
+    fields
+    {
+        field(1; K; Code[20]) { }
+        field(2; N; Integer) { }
+        field(3; B; Boolean) { }
+        field(4; C; Integer)
+        {
+            FieldClass = FlowField;
+            CalcFormula = count(T where(K = field(K)
+#if TPL
+                
+,
+N = const(1)
+#if X
+, "B" = const(true)
+#endif
+, K = field(K)
+
+#endif
+                ));
+        }
+        field(9; O; Option) { OptionMembers = A,B,C; }
+    }
+    keys
+    {
+        key(PK; K) { Clustered = true; }
+    }
+}
+------------------------------------------------------------------------
+
+========================================================================
+B7a GAP: where-filter / sep-before-end (9 cells, verdict of the representative GAP); the parser ERRORs on configurations alc accepts; representative occ:_where_run:0.1.0.0@preproc_conditional_where#sep-before-end
+:error
+========================================================================
+table 50100 T
+{
+    fields
+    {
+        field(1; K; Code[20]) { }
+        field(2; N; Integer) { }
+        field(3; B; Boolean) { }
+        field(4; C; Integer)
+        {
+            FieldClass = FlowField;
+            CalcFormula = count(T where(K = field(K),
+#if TPL
+                
+N = const(1)
+#if X
+, O = const(A)
+#endif
+,
+
+#endif
+                B = const(true)));
+        }
+        field(9; O; Option) { OptionMembers = A,B,C; }
+    }
+    keys
+    {
+        key(PK; K) { Clustered = true; }
+    }
+}
+------------------------------------------------------------------------
+
+========================================================================
+B7a GAP: where-filter / trail (9 cells, verdict of the representative MIXED); the parser ERRORs on configurations alc accepts; representative occ:_where_run:0.1.0.0@preproc_conditional_where#trail
+:error
+========================================================================
+table 50100 T
+{
+    fields
+    {
+        field(1; K; Code[20]) { }
+        field(2; N; Integer) { }
+        field(3; B; Boolean) { }
+        field(4; C; Integer)
+        {
+            FieldClass = FlowField;
+            CalcFormula = count(T where(K = field(K),
+#if TPL
+                
+N = const(1) ,
+#if X
+O = const(A)
+#endif
+,
+
+#endif
+                B = const(true)));
+        }
+        field(9; O; Option) { OptionMembers = A,B,C; }
+    }
+    keys
+    {
+        key(PK; K) { Clustered = true; }
+    }
+}
+------------------------------------------------------------------------
+
+========================================================================
+B7a REJECTED/over-accepts(syntax): where-filter / trail (6 cells, verdict of the representative MIXED); alc rejects with a syntax code (AL0104,AL0107,AL0292) but the parser is clean; representative occ:_where_branch:0.0@preproc_conditional_where#trail
+========================================================================
+table 50100 T
+{
+    fields
+    {
+        field(1; K; Code[20]) { }
+        field(2; N; Integer) { }
+        field(3; B; Boolean) { }
+        field(4; C; Integer)
+        {
+            FieldClass = FlowField;
+            CalcFormula = count(T where(K = field(K)
+#if TPL
+                
+,
+N = const(1) ,
+#if X
+"B" = const(true)
+#endif
+
+#endif
+                ));
+        }
+        field(9; O; Option) { OptionMembers = A,B,C; }
+    }
+    keys
+    {
+        key(PK; K) { Clustered = true; }
+    }
+}
+------------------------------------------------------------------------
+
+(source_file
+  (table_declaration
+    (table_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (fields_section
+        (fields_keyword)
+        body: (fields_body
+          (field_declaration
+            (field_keyword)
+            id: (integer)
+            name: (identifier)
+            type: (type_specification
+              (code_type
+                (code_keyword)
+                length: (integer))))
+          (field_declaration
+            (field_keyword)
+            id: (integer)
+            name: (identifier)
+            type: (type_specification
+              (basic_type)))
+          (field_declaration
+            (field_keyword)
+            id: (integer)
+            name: (identifier)
+            type: (type_specification
+              (basic_type)))
+          (field_declaration
+            (field_keyword)
+            id: (integer)
+            name: (identifier)
+            type: (type_specification
+              (basic_type))
+            body: (declaration_body
+              (property
+                name: (property_name)
+                value: (identifier))
+              (property
+                name: (property_name)
+                value: (aggregate_formula
+                  function: (aggregate_function)
+                  target: (calc_field_reference
+                    (identifier))
+                  (where_clause
+                    (where_keyword)
+                    (where_conditions
+                      (where_condition
+                        field: (identifier)
+                        (field_keyword)
+                        value: (identifier))
+                      (preproc_conditional_where
+                        (preproc_if
+                          (preproc_open)
+                          condition: (identifier))
+                        (where_condition
+                          field: (identifier)
+                          (const_keyword)
+                          value: (integer))
+                        (preproc_conditional_where
+                          (preproc_if
+                            (preproc_open)
+                            condition: (identifier))
+                          (where_condition
+                            field: (quoted_identifier)
+                            (const_keyword)
+                            value: (boolean))
+                          (preproc_endif
+                            (preproc_close)))
+                        (preproc_endif
+                          (preproc_close)))))))))
+          (field_declaration
+            (field_keyword)
+            id: (integer)
+            name: (identifier)
+            type: (type_specification
+              (option_type
+                (option_keyword)))
+            body: (declaration_body
+              (property
+                name: (property_name)
+                value: (option_member_list
+                  (option_member
+                    (identifier))
+                  (option_member
+                    (identifier))
+                  (option_member
+                    (identifier))))))))
+      (keys_section
+        (keys_keyword)
+        body: (keys_body
+          (key_declaration
+            (key_keyword)
+            name: (identifier)
+            fields: (field_list
+              (identifier))
+            body: (declaration_body
+              (property
+                name: (property_name)
+                value: (boolean)))))))))

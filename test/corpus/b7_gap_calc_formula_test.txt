@@ -1,0 +1,189 @@
+========================================================================
+B7a GAP: calc-formula / adjacent-compl (27 cells, verdict of the representative GAP); the parser ERRORs on configurations alc accepts; representative occ:_calc_formula_arm_t:0.3@declaration_body#adjacent-compl
+:error
+========================================================================
+table 50100 T
+{
+    fields
+    {
+        field(1; K; Code[20]) { }
+        field(2; N; Integer) { }
+        field(3; B; Boolean) { }
+        field(4; C; Integer)
+        {
+            FieldClass = FlowField;
+            CalcFormula =
+#if TPL
+                
+count(T)
+#if X
+;
+#endif
+#if not X
+;
+#endif
+
+#else
+                count(T where(K = field(K)));
+#endif
+        }
+        field(9; O; Option) { OptionMembers = A,B,C; }
+    }
+    keys
+    {
+        key(PK; K) { Clustered = true; }
+    }
+}
+------------------------------------------------------------------------
+
+========================================================================
+B7a GAP: calc-formula / elif (27 cells, verdict of the representative GAP); the parser ERRORs on configurations alc accepts; representative occ:_calc_formula_arm_t:0.3@declaration_body#elif
+:error
+========================================================================
+table 50100 T
+{
+    fields
+    {
+        field(1; K; Code[20]) { }
+        field(2; N; Integer) { }
+        field(3; B; Boolean) { }
+        field(4; C; Integer)
+        {
+            FieldClass = FlowField;
+            CalcFormula =
+#if TPL
+                
+count(T)
+#if X
+;
+#elif Y
+;
+#else
+;
+#endif
+
+#else
+                count(T where(K = field(K)));
+#endif
+        }
+        field(9; O; Option) { OptionMembers = A,B,C; }
+    }
+    keys
+    {
+        key(PK; K) { Clustered = true; }
+    }
+}
+------------------------------------------------------------------------
+
+========================================================================
+B7a GAP: calc-formula / nested (27 cells, verdict of the representative GAP); the parser ERRORs on configurations alc accepts; representative occ:_calc_formula_arm_t:0.3@declaration_body#nested
+:error
+========================================================================
+table 50100 T
+{
+    fields
+    {
+        field(1; K; Code[20]) { }
+        field(2; N; Integer) { }
+        field(3; B; Boolean) { }
+        field(4; C; Integer)
+        {
+            FieldClass = FlowField;
+            CalcFormula =
+#if TPL
+                
+count(T)
+#if X
+#if Y
+;
+#else
+;
+#endif
+#else
+;
+#endif
+
+#else
+                count(T where(K = field(K)));
+#endif
+        }
+        field(9; O; Option) { OptionMembers = A,B,C; }
+    }
+    keys
+    {
+        key(PK; K) { Clustered = true; }
+    }
+}
+------------------------------------------------------------------------
+
+========================================================================
+B7a GAP: calc-formula / sep-only (27 cells, verdict of the representative GAP); the parser ERRORs on configurations alc accepts; representative occ:_calc_formula_arm_t:0.3@declaration_body#sep-only
+:error
+========================================================================
+table 50100 T
+{
+    fields
+    {
+        field(1; K; Code[20]) { }
+        field(2; N; Integer) { }
+        field(3; B; Boolean) { }
+        field(4; C; Integer)
+        {
+            FieldClass = FlowField;
+            CalcFormula =
+#if TPL
+                
+count(T)
+#if X
+;
+#else
+;
+#endif
+
+#else
+                count(T where(K = field(K)));
+#endif
+        }
+        field(9; O; Option) { OptionMembers = A,B,C; }
+    }
+    keys
+    {
+        key(PK; K) { Clustered = true; }
+    }
+}
+------------------------------------------------------------------------
+
+========================================================================
+B7a GAP: calc-formula / trail (27 cells, verdict of the representative MIXED); the parser ERRORs on configurations alc accepts; representative occ:_calc_formula_arm_t:0.3@declaration_body#trail
+:error
+========================================================================
+table 50100 T
+{
+    fields
+    {
+        field(1; K; Code[20]) { }
+        field(2; N; Integer) { }
+        field(3; B; Boolean) { }
+        field(4; C; Integer)
+        {
+            FieldClass = FlowField;
+            CalcFormula =
+#if TPL
+                
+count(T)
+#if X
+;
+#endif
+
+#else
+                count(T where(K = field(K)));
+#endif
+        }
+        field(9; O; Option) { OptionMembers = A,B,C; }
+    }
+    keys
+    {
+        key(PK; K) { Clustered = true; }
+    }
+}
+------------------------------------------------------------------------

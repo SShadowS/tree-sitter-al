@@ -1,0 +1,878 @@
+========================================================================
+B7a GAP: caption-subfields / adjacent-compl (72 cells, verdict of the representative GAP); the parser ERRORs on configurations alc accepts; representative occ:caption_value:0.1.0.0.0.0@action_body#adjacent-compl
+:error
+========================================================================
+table 50100 T
+{
+    fields
+    {
+        field(1; K; Code[20]) { }
+        field(2; N; Integer) { }
+        field(3; B; Boolean) { }
+        field(9; O; Option) { OptionMembers = A,B,C; }
+    }
+    keys
+    {
+        key(PK; K) { Clustered = true; }
+    }
+}
+page 50102 PG
+{
+    SourceTable = T;
+    layout
+    {
+        area(Content)
+        {
+            field(N; Rec.N) { }
+        }
+    }
+    actions
+    {
+        area(Processing)
+        {
+            action(A1)
+            {
+                Caption =
+#if TPL
+                    
+'a'
+#if X
+, Locked = true
+#endif
+#if not X
+, MaxLength = 10
+#endif
+;
+#else
+                    'b';
+#endif
+                trigger OnAction()
+                begin
+                end;
+            }
+        }
+    }
+    var
+        I: Integer;
+        Ok: Boolean;
+}
+------------------------------------------------------------------------
+
+========================================================================
+B7a GAP: caption-subfields / adjacent-indep (72 cells, verdict of the representative GAP); the parser ERRORs on configurations alc accepts; representative occ:caption_value:0.1.0.0.0.0@action_body#adjacent-indep
+:error
+========================================================================
+table 50100 T
+{
+    fields
+    {
+        field(1; K; Code[20]) { }
+        field(2; N; Integer) { }
+        field(3; B; Boolean) { }
+        field(9; O; Option) { OptionMembers = A,B,C; }
+    }
+    keys
+    {
+        key(PK; K) { Clustered = true; }
+    }
+}
+page 50102 PG
+{
+    SourceTable = T;
+    layout
+    {
+        area(Content)
+        {
+            field(N; Rec.N) { }
+        }
+    }
+    actions
+    {
+        area(Processing)
+        {
+            action(A1)
+            {
+                Caption =
+#if TPL
+                    
+'a'
+#if X
+, Locked = true
+#endif
+#if Y
+, MaxLength = 10
+#endif
+;
+#else
+                    'b';
+#endif
+                trigger OnAction()
+                begin
+                end;
+            }
+        }
+    }
+    var
+        I: Integer;
+        Ok: Boolean;
+}
+------------------------------------------------------------------------
+
+========================================================================
+B7a GAP: caption-subfields / both-in-arm (72 cells, verdict of the representative GAP); the parser ERRORs on configurations alc accepts; representative occ:caption_value:0.1.0.0.0.0@action_body#both-in-arm
+:error
+========================================================================
+table 50100 T
+{
+    fields
+    {
+        field(1; K; Code[20]) { }
+        field(2; N; Integer) { }
+        field(3; B; Boolean) { }
+        field(9; O; Option) { OptionMembers = A,B,C; }
+    }
+    keys
+    {
+        key(PK; K) { Clustered = true; }
+    }
+}
+page 50102 PG
+{
+    SourceTable = T;
+    layout
+    {
+        area(Content)
+        {
+            field(N; Rec.N) { }
+        }
+    }
+    actions
+    {
+        area(Processing)
+        {
+            action(A1)
+            {
+                Caption =
+#if TPL
+                    
+'a'
+#if X
+, Locked = true ,
+#else
+,
+#endif
+MaxLength = 10
+;
+#else
+                    'b';
+#endif
+                trigger OnAction()
+                begin
+                end;
+            }
+        }
+    }
+    var
+        I: Integer;
+        Ok: Boolean;
+}
+------------------------------------------------------------------------
+
+========================================================================
+B7a GAP: caption-subfields / count-differs (72 cells, verdict of the representative GAP); the parser ERRORs on configurations alc accepts; representative occ:caption_value:0.1.0.0.0.0@action_body#count-differs
+:error
+========================================================================
+table 50100 T
+{
+    fields
+    {
+        field(1; K; Code[20]) { }
+        field(2; N; Integer) { }
+        field(3; B; Boolean) { }
+        field(9; O; Option) { OptionMembers = A,B,C; }
+    }
+    keys
+    {
+        key(PK; K) { Clustered = true; }
+    }
+}
+page 50102 PG
+{
+    SourceTable = T;
+    layout
+    {
+        area(Content)
+        {
+            field(N; Rec.N) { }
+        }
+    }
+    actions
+    {
+        area(Processing)
+        {
+            action(A1)
+            {
+                Caption =
+#if TPL
+                    
+'a'
+#if X
+, Locked = true , MaxLength = 10
+#else
+, Comment = 'c'
+#endif
+;
+#else
+                    'b';
+#endif
+                trigger OnAction()
+                begin
+                end;
+            }
+        }
+    }
+    var
+        I: Integer;
+        Ok: Boolean;
+}
+------------------------------------------------------------------------
+
+========================================================================
+B7a GAP: caption-subfields / elif (72 cells, verdict of the representative GAP); the parser ERRORs on configurations alc accepts; representative occ:caption_value:0.1.0.0.0.0@action_body#elif
+:error
+========================================================================
+table 50100 T
+{
+    fields
+    {
+        field(1; K; Code[20]) { }
+        field(2; N; Integer) { }
+        field(3; B; Boolean) { }
+        field(9; O; Option) { OptionMembers = A,B,C; }
+    }
+    keys
+    {
+        key(PK; K) { Clustered = true; }
+    }
+}
+page 50102 PG
+{
+    SourceTable = T;
+    layout
+    {
+        area(Content)
+        {
+            field(N; Rec.N) { }
+        }
+    }
+    actions
+    {
+        area(Processing)
+        {
+            action(A1)
+            {
+                Caption =
+#if TPL
+                    
+'a'
+#if X
+, Locked = true
+#elif Y
+, MaxLength = 10
+#endif
+, Comment = 'c'
+;
+#else
+                    'b';
+#endif
+                trigger OnAction()
+                begin
+                end;
+            }
+        }
+    }
+    var
+        I: Integer;
+        Ok: Boolean;
+}
+------------------------------------------------------------------------
+
+========================================================================
+B7a GAP: caption-subfields / empty (72 cells, verdict of the representative GAP); the parser ERRORs on configurations alc accepts; representative occ:caption_value:0.1.0.0.0.0@action_body#empty
+:error
+========================================================================
+table 50100 T
+{
+    fields
+    {
+        field(1; K; Code[20]) { }
+        field(2; N; Integer) { }
+        field(3; B; Boolean) { }
+        field(9; O; Option) { OptionMembers = A,B,C; }
+    }
+    keys
+    {
+        key(PK; K) { Clustered = true; }
+    }
+}
+page 50102 PG
+{
+    SourceTable = T;
+    layout
+    {
+        area(Content)
+        {
+            field(N; Rec.N) { }
+        }
+    }
+    actions
+    {
+        area(Processing)
+        {
+            action(A1)
+            {
+                Caption =
+#if TPL
+                    
+'a' ,
+#if X
+#endif
+Locked = true
+;
+#else
+                    'b';
+#endif
+                trigger OnAction()
+                begin
+                end;
+            }
+        }
+    }
+    var
+        I: Integer;
+        Ok: Boolean;
+}
+------------------------------------------------------------------------
+
+========================================================================
+B7a GAP: caption-subfields / holes-lead (72 cells, verdict of the representative MIXED); the parser ERRORs on configurations alc accepts; representative occ:caption_value:0.1.0.0.0.0@action_body#holes-lead
+:error
+========================================================================
+table 50100 T
+{
+    fields
+    {
+        field(1; K; Code[20]) { }
+        field(2; N; Integer) { }
+        field(3; B; Boolean) { }
+        field(9; O; Option) { OptionMembers = A,B,C; }
+    }
+    keys
+    {
+        key(PK; K) { Clustered = true; }
+    }
+}
+page 50102 PG
+{
+    SourceTable = T;
+    layout
+    {
+        area(Content)
+        {
+            field(N; Rec.N) { }
+        }
+    }
+    actions
+    {
+        area(Processing)
+        {
+            action(A1)
+            {
+                Caption =
+#if TPL
+                    
+#if X
+,
+#endif
+'a' , Locked = true
+;
+#else
+                    'b';
+#endif
+                trigger OnAction()
+                begin
+                end;
+            }
+        }
+    }
+    var
+        I: Integer;
+        Ok: Boolean;
+}
+------------------------------------------------------------------------
+
+========================================================================
+B7a GAP: caption-subfields / holes-mid (72 cells, verdict of the representative MIXED); the parser ERRORs on configurations alc accepts; representative occ:caption_value:0.1.0.0.0.0@action_body#holes-mid
+:error
+========================================================================
+table 50100 T
+{
+    fields
+    {
+        field(1; K; Code[20]) { }
+        field(2; N; Integer) { }
+        field(3; B; Boolean) { }
+        field(9; O; Option) { OptionMembers = A,B,C; }
+    }
+    keys
+    {
+        key(PK; K) { Clustered = true; }
+    }
+}
+page 50102 PG
+{
+    SourceTable = T;
+    layout
+    {
+        area(Content)
+        {
+            field(N; Rec.N) { }
+        }
+    }
+    actions
+    {
+        area(Processing)
+        {
+            action(A1)
+            {
+                Caption =
+#if TPL
+                    
+'a' ,
+#if X
+,
+#endif
+Locked = true
+;
+#else
+                    'b';
+#endif
+                trigger OnAction()
+                begin
+                end;
+            }
+        }
+    }
+    var
+        I: Integer;
+        Ok: Boolean;
+}
+------------------------------------------------------------------------
+
+========================================================================
+B7a GAP: caption-subfields / holes-trail (72 cells, verdict of the representative MIXED); the parser ERRORs on configurations alc accepts; representative occ:caption_value:0.1.0.0.0.0@action_body#holes-trail
+:error
+========================================================================
+table 50100 T
+{
+    fields
+    {
+        field(1; K; Code[20]) { }
+        field(2; N; Integer) { }
+        field(3; B; Boolean) { }
+        field(9; O; Option) { OptionMembers = A,B,C; }
+    }
+    keys
+    {
+        key(PK; K) { Clustered = true; }
+    }
+}
+page 50102 PG
+{
+    SourceTable = T;
+    layout
+    {
+        area(Content)
+        {
+            field(N; Rec.N) { }
+        }
+    }
+    actions
+    {
+        area(Processing)
+        {
+            action(A1)
+            {
+                Caption =
+#if TPL
+                    
+'a' , Locked = true
+#if X
+,
+#endif
+;
+#else
+                    'b';
+#endif
+                trigger OnAction()
+                begin
+                end;
+            }
+        }
+    }
+    var
+        I: Integer;
+        Ok: Boolean;
+}
+------------------------------------------------------------------------
+
+========================================================================
+B7a GAP: caption-subfields / nested (72 cells, verdict of the representative GAP); the parser ERRORs on configurations alc accepts; representative occ:caption_value:0.1.0.0.0.0@action_body#nested
+:error
+========================================================================
+table 50100 T
+{
+    fields
+    {
+        field(1; K; Code[20]) { }
+        field(2; N; Integer) { }
+        field(3; B; Boolean) { }
+        field(9; O; Option) { OptionMembers = A,B,C; }
+    }
+    keys
+    {
+        key(PK; K) { Clustered = true; }
+    }
+}
+page 50102 PG
+{
+    SourceTable = T;
+    layout
+    {
+        area(Content)
+        {
+            field(N; Rec.N) { }
+        }
+    }
+    actions
+    {
+        area(Processing)
+        {
+            action(A1)
+            {
+                Caption =
+#if TPL
+                    
+'a'
+#if X
+, Locked = true
+#if Y
+, MaxLength = 10
+#endif
+#endif
+, Comment = 'c'
+;
+#else
+                    'b';
+#endif
+                trigger OnAction()
+                begin
+                end;
+            }
+        }
+    }
+    var
+        I: Integer;
+        Ok: Boolean;
+}
+------------------------------------------------------------------------
+
+========================================================================
+B7a GAP: caption-subfields / sep-after (72 cells, verdict of the representative GAP); the parser ERRORs on configurations alc accepts; representative occ:caption_value:0.1.0.0.0.0@action_body#sep-after
+:error
+========================================================================
+table 50100 T
+{
+    fields
+    {
+        field(1; K; Code[20]) { }
+        field(2; N; Integer) { }
+        field(3; B; Boolean) { }
+        field(9; O; Option) { OptionMembers = A,B,C; }
+    }
+    keys
+    {
+        key(PK; K) { Clustered = true; }
+    }
+}
+page 50102 PG
+{
+    SourceTable = T;
+    layout
+    {
+        area(Content)
+        {
+            field(N; Rec.N) { }
+        }
+    }
+    actions
+    {
+        area(Processing)
+        {
+            action(A1)
+            {
+                Caption =
+#if TPL
+                    
+'a' ,
+#if X
+Locked = true ,
+#endif
+MaxLength = 10
+;
+#else
+                    'b';
+#endif
+                trigger OnAction()
+                begin
+                end;
+            }
+        }
+    }
+    var
+        I: Integer;
+        Ok: Boolean;
+}
+------------------------------------------------------------------------
+
+========================================================================
+B7a GAP: caption-subfields / sep-before (72 cells, verdict of the representative GAP); the parser ERRORs on configurations alc accepts; representative occ:caption_value:0.1.0.0.0.0@action_body#sep-before
+:error
+========================================================================
+table 50100 T
+{
+    fields
+    {
+        field(1; K; Code[20]) { }
+        field(2; N; Integer) { }
+        field(3; B; Boolean) { }
+        field(9; O; Option) { OptionMembers = A,B,C; }
+    }
+    keys
+    {
+        key(PK; K) { Clustered = true; }
+    }
+}
+page 50102 PG
+{
+    SourceTable = T;
+    layout
+    {
+        area(Content)
+        {
+            field(N; Rec.N) { }
+        }
+    }
+    actions
+    {
+        area(Processing)
+        {
+            action(A1)
+            {
+                Caption =
+#if TPL
+                    
+'a'
+#if X
+, Locked = true
+#endif
+, MaxLength = 10
+;
+#else
+                    'b';
+#endif
+                trigger OnAction()
+                begin
+                end;
+            }
+        }
+    }
+    var
+        I: Integer;
+        Ok: Boolean;
+}
+------------------------------------------------------------------------
+
+========================================================================
+B7a GAP: caption-subfields / sep-before-end (72 cells, verdict of the representative GAP); the parser ERRORs on configurations alc accepts; representative occ:caption_value:0.1.0.0.0.0@action_body#sep-before-end
+:error
+========================================================================
+table 50100 T
+{
+    fields
+    {
+        field(1; K; Code[20]) { }
+        field(2; N; Integer) { }
+        field(3; B; Boolean) { }
+        field(9; O; Option) { OptionMembers = A,B,C; }
+    }
+    keys
+    {
+        key(PK; K) { Clustered = true; }
+    }
+}
+page 50102 PG
+{
+    SourceTable = T;
+    layout
+    {
+        area(Content)
+        {
+            field(N; Rec.N) { }
+        }
+    }
+    actions
+    {
+        area(Processing)
+        {
+            action(A1)
+            {
+                Caption =
+#if TPL
+                    
+'a'
+#if X
+, Locked = true
+#endif
+;
+#else
+                    'b';
+#endif
+                trigger OnAction()
+                begin
+                end;
+            }
+        }
+    }
+    var
+        I: Integer;
+        Ok: Boolean;
+}
+------------------------------------------------------------------------
+
+========================================================================
+B7a GAP: caption-subfields / sep-only (72 cells, verdict of the representative GAP); the parser ERRORs on configurations alc accepts; representative occ:caption_value:0.1.0.0.0.0@action_body#sep-only
+:error
+========================================================================
+table 50100 T
+{
+    fields
+    {
+        field(1; K; Code[20]) { }
+        field(2; N; Integer) { }
+        field(3; B; Boolean) { }
+        field(9; O; Option) { OptionMembers = A,B,C; }
+    }
+    keys
+    {
+        key(PK; K) { Clustered = true; }
+    }
+}
+page 50102 PG
+{
+    SourceTable = T;
+    layout
+    {
+        area(Content)
+        {
+            field(N; Rec.N) { }
+        }
+    }
+    actions
+    {
+        area(Processing)
+        {
+            action(A1)
+            {
+                Caption =
+#if TPL
+                    
+'a'
+#if X
+,
+#else
+,
+#endif
+Locked = true
+;
+#else
+                    'b';
+#endif
+                trigger OnAction()
+                begin
+                end;
+            }
+        }
+    }
+    var
+        I: Integer;
+        Ok: Boolean;
+}
+------------------------------------------------------------------------
+
+========================================================================
+B7a GAP: caption-subfields / trail (72 cells, verdict of the representative GAP); the parser ERRORs on configurations alc accepts; representative occ:caption_value:0.1.0.0.0.0@action_body#trail
+:error
+========================================================================
+table 50100 T
+{
+    fields
+    {
+        field(1; K; Code[20]) { }
+        field(2; N; Integer) { }
+        field(3; B; Boolean) { }
+        field(9; O; Option) { OptionMembers = A,B,C; }
+    }
+    keys
+    {
+        key(PK; K) { Clustered = true; }
+    }
+}
+page 50102 PG
+{
+    SourceTable = T;
+    layout
+    {
+        area(Content)
+        {
+            field(N; Rec.N) { }
+        }
+    }
+    actions
+    {
+        area(Processing)
+        {
+            action(A1)
+            {
+                Caption =
+#if TPL
+                    
+'a' ,
+#if X
+Locked = true
+#endif
+;
+#else
+                    'b';
+#endif
+                trigger OnAction()
+                begin
+                end;
+            }
+        }
+    }
+    var
+        I: Integer;
+        Ok: Boolean;
+}
+------------------------------------------------------------------------

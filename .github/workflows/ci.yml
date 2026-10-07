@@ -171,6 +171,11 @@ jobs:
       - name: Tool unit tests
         run: python -m pytest tools/tests tools/alc_facts/tests -q
 
+      # tools/b7_audit (roadmap B7a): the matrix judge, report, assertion refresh and the
+      # SILENT witnesses (test_silent.py). Needs the library this job builds; no alc.
+      - name: B7 audit unit tests
+        run: python -m pytest tools/b7_audit/tests -q
+
       - name: Quick tier (census, self-tests, fixture differential)
         run: python -m tools.config_oracle run --tier quick
 
@@ -211,6 +216,9 @@ jobs:
 
       - name: Policy census (validate-grammar.sh Step 5f)
         run: python tools/traversal_census.py
+
+      - name: B7 audit census (validate-grammar.sh Step 5g)
+        run: python -m tools.b7_audit census --check
 
       - name: Walker, SplitInfo, witnesses, canaries, expected visits
         run: python -m pytest tests/traversal -q

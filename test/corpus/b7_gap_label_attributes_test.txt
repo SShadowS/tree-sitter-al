@@ -1,0 +1,652 @@
+========================================================================
+B7a GAP: label-attributes / adjacent-compl (24 cells, verdict of the representative GAP); the parser ERRORs on configurations alc accepts; representative occ:label_declaration:3.0.0@labels_body#adjacent-compl
+:error
+========================================================================
+table 50100 T
+{
+    fields
+    {
+        field(1; K; Code[20]) { }
+        field(2; N; Integer) { }
+        field(3; B; Boolean) { }
+        field(9; O; Option) { OptionMembers = A,B,C; }
+    }
+    keys
+    {
+        key(PK; K) { Clustered = true; }
+    }
+}
+report 50106 Rp
+{
+    ProcessingOnly = true;
+    dataset
+    {
+        dataitem(D; T) { }
+    }
+    labels
+    {
+        L1 = 
+'a'
+#if X
+, Locked = true
+#endif
+#if not X
+, Comment = 'c'
+#endif
+;
+    }
+}
+------------------------------------------------------------------------
+
+========================================================================
+B7a GAP: label-attributes / adjacent-indep (24 cells, verdict of the representative GAP); the parser ERRORs on configurations alc accepts; representative occ:label_declaration:3.0.0@labels_body#adjacent-indep
+:error
+========================================================================
+table 50100 T
+{
+    fields
+    {
+        field(1; K; Code[20]) { }
+        field(2; N; Integer) { }
+        field(3; B; Boolean) { }
+        field(9; O; Option) { OptionMembers = A,B,C; }
+    }
+    keys
+    {
+        key(PK; K) { Clustered = true; }
+    }
+}
+report 50106 Rp
+{
+    ProcessingOnly = true;
+    dataset
+    {
+        dataitem(D; T) { }
+    }
+    labels
+    {
+        L1 = 
+'a'
+#if X
+, Locked = true
+#endif
+#if Y
+, Comment = 'c'
+#endif
+;
+    }
+}
+------------------------------------------------------------------------
+
+========================================================================
+B7a GAP: label-attributes / both-in-arm (24 cells, verdict of the representative GAP); the parser ERRORs on configurations alc accepts; representative occ:label_declaration:3.0.0@labels_body#both-in-arm
+:error
+========================================================================
+table 50100 T
+{
+    fields
+    {
+        field(1; K; Code[20]) { }
+        field(2; N; Integer) { }
+        field(3; B; Boolean) { }
+        field(9; O; Option) { OptionMembers = A,B,C; }
+    }
+    keys
+    {
+        key(PK; K) { Clustered = true; }
+    }
+}
+report 50106 Rp
+{
+    ProcessingOnly = true;
+    dataset
+    {
+        dataitem(D; T) { }
+    }
+    labels
+    {
+        L1 = 
+'a'
+#if X
+, Locked = true ,
+#else
+,
+#endif
+Comment = 'c'
+;
+    }
+}
+------------------------------------------------------------------------
+
+========================================================================
+B7a GAP: label-attributes / count-differs (24 cells, verdict of the representative GAP); the parser ERRORs on configurations alc accepts; representative occ:label_declaration:3.0.0@labels_body#count-differs
+:error
+========================================================================
+table 50100 T
+{
+    fields
+    {
+        field(1; K; Code[20]) { }
+        field(2; N; Integer) { }
+        field(3; B; Boolean) { }
+        field(9; O; Option) { OptionMembers = A,B,C; }
+    }
+    keys
+    {
+        key(PK; K) { Clustered = true; }
+    }
+}
+report 50106 Rp
+{
+    ProcessingOnly = true;
+    dataset
+    {
+        dataitem(D; T) { }
+    }
+    labels
+    {
+        L1 = 
+'a'
+#if X
+, Locked = true , Comment = 'c'
+#else
+, MaxLength = 10
+#endif
+;
+    }
+}
+------------------------------------------------------------------------
+
+========================================================================
+B7a GAP: label-attributes / elif (24 cells, verdict of the representative GAP); the parser ERRORs on configurations alc accepts; representative occ:label_declaration:3.0.0@labels_body#elif
+:error
+========================================================================
+table 50100 T
+{
+    fields
+    {
+        field(1; K; Code[20]) { }
+        field(2; N; Integer) { }
+        field(3; B; Boolean) { }
+        field(9; O; Option) { OptionMembers = A,B,C; }
+    }
+    keys
+    {
+        key(PK; K) { Clustered = true; }
+    }
+}
+report 50106 Rp
+{
+    ProcessingOnly = true;
+    dataset
+    {
+        dataitem(D; T) { }
+    }
+    labels
+    {
+        L1 = 
+'a'
+#if X
+, Locked = true
+#elif Y
+, Comment = 'c'
+#endif
+, MaxLength = 10
+;
+    }
+}
+------------------------------------------------------------------------
+
+========================================================================
+B7a GAP: label-attributes / empty (24 cells, verdict of the representative GAP); the parser ERRORs on configurations alc accepts; representative occ:label_declaration:3.0.0@labels_body#empty
+:error
+========================================================================
+table 50100 T
+{
+    fields
+    {
+        field(1; K; Code[20]) { }
+        field(2; N; Integer) { }
+        field(3; B; Boolean) { }
+        field(9; O; Option) { OptionMembers = A,B,C; }
+    }
+    keys
+    {
+        key(PK; K) { Clustered = true; }
+    }
+}
+report 50106 Rp
+{
+    ProcessingOnly = true;
+    dataset
+    {
+        dataitem(D; T) { }
+    }
+    labels
+    {
+        L1 = 
+'a' ,
+#if X
+#endif
+Locked = true
+;
+    }
+}
+------------------------------------------------------------------------
+
+========================================================================
+B7a GAP: label-attributes / empty-list (24 cells, verdict of the representative MIXED); the parser ERRORs on configurations alc accepts; representative occ:label_declaration:3.0.0@labels_body#empty-list
+:error
+========================================================================
+table 50100 T
+{
+    fields
+    {
+        field(1; K; Code[20]) { }
+        field(2; N; Integer) { }
+        field(3; B; Boolean) { }
+        field(9; O; Option) { OptionMembers = A,B,C; }
+    }
+    keys
+    {
+        key(PK; K) { Clustered = true; }
+    }
+}
+report 50106 Rp
+{
+    ProcessingOnly = true;
+    dataset
+    {
+        dataitem(D; T) { }
+    }
+    labels
+    {
+        L1 = 
+#if X
+'a' , Locked = true
+#endif
+;
+    }
+}
+------------------------------------------------------------------------
+
+========================================================================
+B7a GAP: label-attributes / holes-lead (24 cells, verdict of the representative MIXED); the parser ERRORs on configurations alc accepts; representative occ:label_declaration:3.0.0@labels_body#holes-lead
+:error
+========================================================================
+table 50100 T
+{
+    fields
+    {
+        field(1; K; Code[20]) { }
+        field(2; N; Integer) { }
+        field(3; B; Boolean) { }
+        field(9; O; Option) { OptionMembers = A,B,C; }
+    }
+    keys
+    {
+        key(PK; K) { Clustered = true; }
+    }
+}
+report 50106 Rp
+{
+    ProcessingOnly = true;
+    dataset
+    {
+        dataitem(D; T) { }
+    }
+    labels
+    {
+        L1 = 
+#if X
+,
+#endif
+'a' , Locked = true
+;
+    }
+}
+------------------------------------------------------------------------
+
+========================================================================
+B7a GAP: label-attributes / holes-mid (24 cells, verdict of the representative MIXED); the parser ERRORs on configurations alc accepts; representative occ:label_declaration:3.0.0@labels_body#holes-mid
+:error
+========================================================================
+table 50100 T
+{
+    fields
+    {
+        field(1; K; Code[20]) { }
+        field(2; N; Integer) { }
+        field(3; B; Boolean) { }
+        field(9; O; Option) { OptionMembers = A,B,C; }
+    }
+    keys
+    {
+        key(PK; K) { Clustered = true; }
+    }
+}
+report 50106 Rp
+{
+    ProcessingOnly = true;
+    dataset
+    {
+        dataitem(D; T) { }
+    }
+    labels
+    {
+        L1 = 
+'a' ,
+#if X
+,
+#endif
+Locked = true
+;
+    }
+}
+------------------------------------------------------------------------
+
+========================================================================
+B7a GAP: label-attributes / holes-trail (24 cells, verdict of the representative MIXED); the parser ERRORs on configurations alc accepts; representative occ:label_declaration:3.0.0@labels_body#holes-trail
+:error
+========================================================================
+table 50100 T
+{
+    fields
+    {
+        field(1; K; Code[20]) { }
+        field(2; N; Integer) { }
+        field(3; B; Boolean) { }
+        field(9; O; Option) { OptionMembers = A,B,C; }
+    }
+    keys
+    {
+        key(PK; K) { Clustered = true; }
+    }
+}
+report 50106 Rp
+{
+    ProcessingOnly = true;
+    dataset
+    {
+        dataitem(D; T) { }
+    }
+    labels
+    {
+        L1 = 
+'a' , Locked = true
+#if X
+,
+#endif
+;
+    }
+}
+------------------------------------------------------------------------
+
+========================================================================
+B7a GAP: label-attributes / nested (24 cells, verdict of the representative GAP); the parser ERRORs on configurations alc accepts; representative occ:label_declaration:3.0.0@labels_body#nested
+:error
+========================================================================
+table 50100 T
+{
+    fields
+    {
+        field(1; K; Code[20]) { }
+        field(2; N; Integer) { }
+        field(3; B; Boolean) { }
+        field(9; O; Option) { OptionMembers = A,B,C; }
+    }
+    keys
+    {
+        key(PK; K) { Clustered = true; }
+    }
+}
+report 50106 Rp
+{
+    ProcessingOnly = true;
+    dataset
+    {
+        dataitem(D; T) { }
+    }
+    labels
+    {
+        L1 = 
+'a'
+#if X
+, Locked = true
+#if Y
+, Comment = 'c'
+#endif
+#endif
+, MaxLength = 10
+;
+    }
+}
+------------------------------------------------------------------------
+
+========================================================================
+B7a GAP: label-attributes / one-elem (24 cells, verdict of the representative GAP); the parser ERRORs on configurations alc accepts; representative occ:label_declaration:3.0.0@labels_body#one-elem
+:error
+========================================================================
+table 50100 T
+{
+    fields
+    {
+        field(1; K; Code[20]) { }
+        field(2; N; Integer) { }
+        field(3; B; Boolean) { }
+        field(9; O; Option) { OptionMembers = A,B,C; }
+    }
+    keys
+    {
+        key(PK; K) { Clustered = true; }
+    }
+}
+report 50106 Rp
+{
+    ProcessingOnly = true;
+    dataset
+    {
+        dataitem(D; T) { }
+    }
+    labels
+    {
+        L1 = 
+#if X
+'a' , Locked = true
+#else
+'a'
+#endif
+;
+    }
+}
+------------------------------------------------------------------------
+
+========================================================================
+B7a GAP: label-attributes / sep-after (24 cells, verdict of the representative GAP); the parser ERRORs on configurations alc accepts; representative occ:label_declaration:3.0.0@labels_body#sep-after
+:error
+========================================================================
+table 50100 T
+{
+    fields
+    {
+        field(1; K; Code[20]) { }
+        field(2; N; Integer) { }
+        field(3; B; Boolean) { }
+        field(9; O; Option) { OptionMembers = A,B,C; }
+    }
+    keys
+    {
+        key(PK; K) { Clustered = true; }
+    }
+}
+report 50106 Rp
+{
+    ProcessingOnly = true;
+    dataset
+    {
+        dataitem(D; T) { }
+    }
+    labels
+    {
+        L1 = 
+'a' ,
+#if X
+Locked = true ,
+#endif
+Comment = 'c'
+;
+    }
+}
+------------------------------------------------------------------------
+
+========================================================================
+B7a GAP: label-attributes / sep-before (24 cells, verdict of the representative GAP); the parser ERRORs on configurations alc accepts; representative occ:label_declaration:3.0.0@labels_body#sep-before
+:error
+========================================================================
+table 50100 T
+{
+    fields
+    {
+        field(1; K; Code[20]) { }
+        field(2; N; Integer) { }
+        field(3; B; Boolean) { }
+        field(9; O; Option) { OptionMembers = A,B,C; }
+    }
+    keys
+    {
+        key(PK; K) { Clustered = true; }
+    }
+}
+report 50106 Rp
+{
+    ProcessingOnly = true;
+    dataset
+    {
+        dataitem(D; T) { }
+    }
+    labels
+    {
+        L1 = 
+'a'
+#if X
+, Locked = true
+#endif
+, Comment = 'c'
+;
+    }
+}
+------------------------------------------------------------------------
+
+========================================================================
+B7a GAP: label-attributes / sep-before-end (24 cells, verdict of the representative GAP); the parser ERRORs on configurations alc accepts; representative occ:label_declaration:3.0.0@labels_body#sep-before-end
+:error
+========================================================================
+table 50100 T
+{
+    fields
+    {
+        field(1; K; Code[20]) { }
+        field(2; N; Integer) { }
+        field(3; B; Boolean) { }
+        field(9; O; Option) { OptionMembers = A,B,C; }
+    }
+    keys
+    {
+        key(PK; K) { Clustered = true; }
+    }
+}
+report 50106 Rp
+{
+    ProcessingOnly = true;
+    dataset
+    {
+        dataitem(D; T) { }
+    }
+    labels
+    {
+        L1 = 
+'a'
+#if X
+, Locked = true
+#endif
+;
+    }
+}
+------------------------------------------------------------------------
+
+========================================================================
+B7a GAP: label-attributes / sep-only (24 cells, verdict of the representative GAP); the parser ERRORs on configurations alc accepts; representative occ:label_declaration:3.0.0@labels_body#sep-only
+:error
+========================================================================
+table 50100 T
+{
+    fields
+    {
+        field(1; K; Code[20]) { }
+        field(2; N; Integer) { }
+        field(3; B; Boolean) { }
+        field(9; O; Option) { OptionMembers = A,B,C; }
+    }
+    keys
+    {
+        key(PK; K) { Clustered = true; }
+    }
+}
+report 50106 Rp
+{
+    ProcessingOnly = true;
+    dataset
+    {
+        dataitem(D; T) { }
+    }
+    labels
+    {
+        L1 = 
+'a'
+#if X
+,
+#else
+,
+#endif
+Locked = true
+;
+    }
+}
+------------------------------------------------------------------------
+
+========================================================================
+B7a GAP: label-attributes / trail (24 cells, verdict of the representative GAP); the parser ERRORs on configurations alc accepts; representative occ:label_declaration:3.0.0@labels_body#trail
+:error
+========================================================================
+table 50100 T
+{
+    fields
+    {
+        field(1; K; Code[20]) { }
+        field(2; N; Integer) { }
+        field(3; B; Boolean) { }
+        field(9; O; Option) { OptionMembers = A,B,C; }
+    }
+    keys
+    {
+        key(PK; K) { Clustered = true; }
+    }
+}
+report 50106 Rp
+{
+    ProcessingOnly = true;
+    dataset
+    {
+        dataitem(D; T) { }
+    }
+    labels
+    {
+        L1 = 
+'a' ,
+#if X
+Locked = true
+#endif
+;
+    }
+}
+------------------------------------------------------------------------

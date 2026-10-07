@@ -1,0 +1,240 @@
+========================================================================
+B7a GAP: var-declaration / adjacent-compl (36 cells, verdict of the representative GAP); the parser ERRORs on configurations alc accepts; representative occ:variable_declaration:0.0.5@preproc_conditional_var#adjacent-compl
+:error
+========================================================================
+table 50100 T
+{
+    fields
+    {
+        field(1; K; Code[20]) { }
+        field(2; N; Integer) { }
+        field(3; B; Boolean) { }
+        field(9; O; Option) { OptionMembers = A,B,C; }
+    }
+    keys
+    {
+        key(PK; K) { Clustered = true; }
+    }
+}
+codeunit 50101 P
+{
+    var
+#if TPL2
+        
+Lbl: Label 'a'
+#if X
+;
+#endif
+#if not X
+;
+#endif
+
+#endif
+}
+------------------------------------------------------------------------
+
+========================================================================
+B7a GAP: var-declaration / elif (36 cells, verdict of the representative GAP); the parser ERRORs on configurations alc accepts; representative occ:variable_declaration:0.0.5@preproc_conditional_var#elif
+:error
+========================================================================
+table 50100 T
+{
+    fields
+    {
+        field(1; K; Code[20]) { }
+        field(2; N; Integer) { }
+        field(3; B; Boolean) { }
+        field(9; O; Option) { OptionMembers = A,B,C; }
+    }
+    keys
+    {
+        key(PK; K) { Clustered = true; }
+    }
+}
+codeunit 50101 P
+{
+    var
+#if TPL2
+        
+Lbl: Label 'a'
+#if X
+;
+#elif Y
+;
+#else
+;
+#endif
+
+#endif
+}
+------------------------------------------------------------------------
+
+========================================================================
+B7a GAP: var-declaration / empty (36 cells, verdict of the representative GAP); the parser ERRORs on configurations alc accepts; representative occ:variable_declaration:0.0.5@preproc_conditional_var#empty
+:error
+========================================================================
+table 50100 T
+{
+    fields
+    {
+        field(1; K; Code[20]) { }
+        field(2; N; Integer) { }
+        field(3; B; Boolean) { }
+        field(9; O; Option) { OptionMembers = A,B,C; }
+    }
+    keys
+    {
+        key(PK; K) { Clustered = true; }
+    }
+}
+codeunit 50101 P
+{
+    var
+#if TPL2
+        
+Lbl: Label 'a'
+#if X
+#endif
+;
+
+#endif
+}
+------------------------------------------------------------------------
+
+========================================================================
+B7a GAP: var-declaration / first-replace (36 cells, verdict of the representative GAP); the parser ERRORs on configurations alc accepts; representative occ:variable_declaration:0.0.5@preproc_conditional_var#first-replace
+:error
+========================================================================
+table 50100 T
+{
+    fields
+    {
+        field(1; K; Code[20]) { }
+        field(2; N; Integer) { }
+        field(3; B; Boolean) { }
+        field(9; O; Option) { OptionMembers = A,B,C; }
+    }
+    keys
+    {
+        key(PK; K) { Clustered = true; }
+    }
+}
+codeunit 50101 P
+{
+    var
+#if TPL2
+        
+#if X
+Lbl: Label 'a'
+#else
+Lbl: Label 'a'
+#endif
+;
+
+#endif
+}
+------------------------------------------------------------------------
+
+========================================================================
+B7a GAP: var-declaration / nested (36 cells, verdict of the representative GAP); the parser ERRORs on configurations alc accepts; representative occ:variable_declaration:0.0.5@preproc_conditional_var#nested
+:error
+========================================================================
+table 50100 T
+{
+    fields
+    {
+        field(1; K; Code[20]) { }
+        field(2; N; Integer) { }
+        field(3; B; Boolean) { }
+        field(9; O; Option) { OptionMembers = A,B,C; }
+    }
+    keys
+    {
+        key(PK; K) { Clustered = true; }
+    }
+}
+codeunit 50101 P
+{
+    var
+#if TPL2
+        
+Lbl: Label 'a'
+#if X
+#if Y
+;
+#else
+;
+#endif
+#else
+;
+#endif
+
+#endif
+}
+------------------------------------------------------------------------
+
+========================================================================
+B7a GAP: var-declaration / sep-only (36 cells, verdict of the representative GAP); the parser ERRORs on configurations alc accepts; representative occ:variable_declaration:0.0.5@preproc_conditional_var#sep-only
+:error
+========================================================================
+table 50100 T
+{
+    fields
+    {
+        field(1; K; Code[20]) { }
+        field(2; N; Integer) { }
+        field(3; B; Boolean) { }
+        field(9; O; Option) { OptionMembers = A,B,C; }
+    }
+    keys
+    {
+        key(PK; K) { Clustered = true; }
+    }
+}
+codeunit 50101 P
+{
+    var
+#if TPL2
+        
+Lbl: Label 'a'
+#if X
+;
+#else
+;
+#endif
+
+#endif
+}
+------------------------------------------------------------------------
+
+========================================================================
+B7a GAP: var-declaration / trail (36 cells, verdict of the representative MIXED); the parser ERRORs on configurations alc accepts; representative occ:variable_declaration:0.0.5@preproc_conditional_var#trail
+:error
+========================================================================
+table 50100 T
+{
+    fields
+    {
+        field(1; K; Code[20]) { }
+        field(2; N; Integer) { }
+        field(3; B; Boolean) { }
+        field(9; O; Option) { OptionMembers = A,B,C; }
+    }
+    keys
+    {
+        key(PK; K) { Clustered = true; }
+    }
+}
+codeunit 50101 P
+{
+    var
+#if TPL2
+        
+Lbl: Label 'a'
+#if X
+;
+#endif
+
+#endif
+}
+------------------------------------------------------------------------

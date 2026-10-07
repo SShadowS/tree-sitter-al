@@ -1,0 +1,250 @@
+========================================================================
+B7a GAP: table-relation / adjacent-compl (30 cells, verdict of the representative GAP); the parser ERRORs on configurations alc accepts; representative occ:_table_relation_arm_t:0.3@declaration_body#adjacent-compl
+:error
+========================================================================
+table 50100 T
+{
+    fields
+    {
+        field(1; K; Code[20]) { }
+        field(2; N; Integer) { }
+        field(3; B; Boolean) { }
+        field(4; RK; Code[20])
+        {
+            TableRelation =
+#if TPL
+                
+T
+#if X
+;
+#endif
+#if not X
+;
+#endif
+
+#else
+                T.K;
+#endif
+        }
+        field(9; O; Option) { OptionMembers = A,B,C; }
+    }
+    keys
+    {
+        key(PK; K) { Clustered = true; }
+    }
+}
+------------------------------------------------------------------------
+
+========================================================================
+B7a GAP: table-relation / elif (30 cells, verdict of the representative GAP); the parser ERRORs on configurations alc accepts; representative occ:_table_relation_arm_t:0.3@declaration_body#elif
+:error
+========================================================================
+table 50100 T
+{
+    fields
+    {
+        field(1; K; Code[20]) { }
+        field(2; N; Integer) { }
+        field(3; B; Boolean) { }
+        field(4; RK; Code[20])
+        {
+            TableRelation =
+#if TPL
+                
+T
+#if X
+;
+#elif Y
+;
+#else
+;
+#endif
+
+#else
+                T.K;
+#endif
+        }
+        field(9; O; Option) { OptionMembers = A,B,C; }
+    }
+    keys
+    {
+        key(PK; K) { Clustered = true; }
+    }
+}
+------------------------------------------------------------------------
+
+========================================================================
+B7a GAP: table-relation / empty (3 cells, verdict of the representative GAP); the parser ERRORs on configurations alc accepts; representative occ:_table_relation_branch:1.0@preproc_conditional_table_relation#empty
+:error
+========================================================================
+table 50100 T
+{
+    fields
+    {
+        field(1; K; Code[20]) { }
+        field(2; N; Integer) { }
+        field(3; B; Boolean) { }
+        field(4; RK; Code[20])
+        {
+            TableRelation = if (B = const(true)) T else
+#if TPL
+                
+T.K
+#if X
+#endif
+;
+
+#else
+                T;
+#endif
+        }
+        field(9; O; Option) { OptionMembers = A,B,C; }
+    }
+    keys
+    {
+        key(PK; K) { Clustered = true; }
+    }
+}
+------------------------------------------------------------------------
+
+========================================================================
+B7a GAP: table-relation / nested (30 cells, verdict of the representative GAP); the parser ERRORs on configurations alc accepts; representative occ:_table_relation_arm_t:0.3@declaration_body#nested
+:error
+========================================================================
+table 50100 T
+{
+    fields
+    {
+        field(1; K; Code[20]) { }
+        field(2; N; Integer) { }
+        field(3; B; Boolean) { }
+        field(4; RK; Code[20])
+        {
+            TableRelation =
+#if TPL
+                
+T
+#if X
+#if Y
+;
+#else
+;
+#endif
+#else
+;
+#endif
+
+#else
+                T.K;
+#endif
+        }
+        field(9; O; Option) { OptionMembers = A,B,C; }
+    }
+    keys
+    {
+        key(PK; K) { Clustered = true; }
+    }
+}
+------------------------------------------------------------------------
+
+========================================================================
+B7a GAP: table-relation / seed:g11-item19-relation__neg_two_tables_after_else (1 cells, verdict of the representative MIXED); the parser ERRORs on configurations alc accepts; representative seed:g11-item19-relation__neg_two_tables_after_else
+:error
+========================================================================
+// host: table_relation_value
+// valid: !X
+// seed-source: tools/alc_probe/cases/g11-item19-relation/neg_two_tables_after_else.al (verdicts measured by alc, as recorded in its expect lines)
+// Negative control, active only with X defined.
+// expect: !X accept
+// expect: X reject(AL0104,AL0124)
+// source: commit 824fcf4 control (`else Resource Customer` REJECT, AL0104, AL0124): X defined
+// source: recorded by A2, 2026-09-29: X undefined (the arm is inactive, leaving a valid relation)
+table 50101 Item { fields { field(1; "No."; Code[20]) { } } }
+table 50102 Resource { fields { field(1; "No."; Code[20]) { } } }
+table 50103 Customer { fields { field(1; "No."; Code[20]) { } } }
+table 50100 T
+{
+    fields
+    {
+        field(1; Type; Option) { OptionMembers = Item, Resource; }
+        field(2; "No."; Code[20])
+        {
+            TableRelation = if (Type = const(Item)) Item
+#if X
+                else Resource Customer
+#endif
+                ;
+        }
+    }
+}
+------------------------------------------------------------------------
+
+========================================================================
+B7a GAP: table-relation / sep-only (30 cells, verdict of the representative GAP); the parser ERRORs on configurations alc accepts; representative occ:_table_relation_arm_t:0.3@declaration_body#sep-only
+:error
+========================================================================
+table 50100 T
+{
+    fields
+    {
+        field(1; K; Code[20]) { }
+        field(2; N; Integer) { }
+        field(3; B; Boolean) { }
+        field(4; RK; Code[20])
+        {
+            TableRelation =
+#if TPL
+                
+T
+#if X
+;
+#else
+;
+#endif
+
+#else
+                T.K;
+#endif
+        }
+        field(9; O; Option) { OptionMembers = A,B,C; }
+    }
+    keys
+    {
+        key(PK; K) { Clustered = true; }
+    }
+}
+------------------------------------------------------------------------
+
+========================================================================
+B7a GAP: table-relation / trail (30 cells, verdict of the representative MIXED); the parser ERRORs on configurations alc accepts; representative occ:_table_relation_arm_t:0.3@declaration_body#trail
+:error
+========================================================================
+table 50100 T
+{
+    fields
+    {
+        field(1; K; Code[20]) { }
+        field(2; N; Integer) { }
+        field(3; B; Boolean) { }
+        field(4; RK; Code[20])
+        {
+            TableRelation =
+#if TPL
+                
+T
+#if X
+;
+#endif
+
+#else
+                T.K;
+#endif
+        }
+        field(9; O; Option) { OptionMembers = A,B,C; }
+    }
+    keys
+    {
+        key(PK; K) { Clustered = true; }
+    }
+}
+------------------------------------------------------------------------

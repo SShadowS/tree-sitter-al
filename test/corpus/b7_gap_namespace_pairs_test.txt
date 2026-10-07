@@ -1,0 +1,792 @@
+========================================================================
+B7a GAP: namespace-pairs / adjacent-compl (36 cells, verdict of the representative GAP); the parser ERRORs on configurations alc accepts; representative occ:_namespaces_arm_t:0.3@declaration_body#adjacent-compl
+:error
+========================================================================
+table 50100 T
+{
+    fields
+    {
+        field(1; K; Code[20]) { }
+        field(2; N; Integer) { }
+        field(3; B; Boolean) { }
+        field(9; O; Option) { OptionMembers = A,B,C; }
+    }
+    keys
+    {
+        key(PK; K) { Clustered = true; }
+    }
+}
+xmlport 50107 Xp
+{
+    Namespaces =
+#if TPL
+        
+p = 'urn:a'
+#if X
+;
+#endif
+#if not X
+;
+#endif
+
+#else
+        p = 'urn:b';
+#endif
+    schema
+    {
+        textelement(Root)
+        {
+            tableelement(D; T)
+            {
+                fieldattribute(K; D.K) { }
+                fieldelement(N; D.N) { }
+            }
+        }
+    }
+}
+------------------------------------------------------------------------
+
+========================================================================
+B7a GAP: namespace-pairs / adjacent-indep (9 cells, verdict of the representative GAP); the parser ERRORs on configurations alc accepts; representative occ:namespace_value_list:0.1.0.0@declaration_body#adjacent-indep
+:error
+========================================================================
+table 50100 T
+{
+    fields
+    {
+        field(1; K; Code[20]) { }
+        field(2; N; Integer) { }
+        field(3; B; Boolean) { }
+        field(9; O; Option) { OptionMembers = A,B,C; }
+    }
+    keys
+    {
+        key(PK; K) { Clustered = true; }
+    }
+}
+xmlport 50107 Xp
+{
+    Namespaces =
+#if TPL
+        
+p = 'urn:a'
+#if X
+, q = 'urn:b'
+#endif
+#if Y
+, r = 'urn:c'
+#endif
+;
+#else
+        p = 'urn:c';
+#endif
+    schema
+    {
+        textelement(Root)
+        {
+            tableelement(D; T)
+            {
+                fieldattribute(K; D.K) { }
+                fieldelement(N; D.N) { }
+            }
+        }
+    }
+}
+------------------------------------------------------------------------
+
+========================================================================
+B7a GAP: namespace-pairs / both-in-arm (9 cells, verdict of the representative GAP); the parser ERRORs on configurations alc accepts; representative occ:namespace_value_list:0.1.0.0@declaration_body#both-in-arm
+:error
+========================================================================
+table 50100 T
+{
+    fields
+    {
+        field(1; K; Code[20]) { }
+        field(2; N; Integer) { }
+        field(3; B; Boolean) { }
+        field(9; O; Option) { OptionMembers = A,B,C; }
+    }
+    keys
+    {
+        key(PK; K) { Clustered = true; }
+    }
+}
+xmlport 50107 Xp
+{
+    Namespaces =
+#if TPL
+        
+p = 'urn:a'
+#if X
+, q = 'urn:b' ,
+#else
+,
+#endif
+r = 'urn:c'
+;
+#else
+        p = 'urn:c';
+#endif
+    schema
+    {
+        textelement(Root)
+        {
+            tableelement(D; T)
+            {
+                fieldattribute(K; D.K) { }
+                fieldelement(N; D.N) { }
+            }
+        }
+    }
+}
+------------------------------------------------------------------------
+
+========================================================================
+B7a GAP: namespace-pairs / count-differs (9 cells, verdict of the representative GAP); the parser ERRORs on configurations alc accepts; representative occ:namespace_value_list:0.1.0.0@declaration_body#count-differs
+:error
+========================================================================
+table 50100 T
+{
+    fields
+    {
+        field(1; K; Code[20]) { }
+        field(2; N; Integer) { }
+        field(3; B; Boolean) { }
+        field(9; O; Option) { OptionMembers = A,B,C; }
+    }
+    keys
+    {
+        key(PK; K) { Clustered = true; }
+    }
+}
+xmlport 50107 Xp
+{
+    Namespaces =
+#if TPL
+        
+p = 'urn:a'
+#if X
+, q = 'urn:b' , r = 'urn:c'
+#else
+, t = 'urn:d'
+#endif
+;
+#else
+        p = 'urn:c';
+#endif
+    schema
+    {
+        textelement(Root)
+        {
+            tableelement(D; T)
+            {
+                fieldattribute(K; D.K) { }
+                fieldelement(N; D.N) { }
+            }
+        }
+    }
+}
+------------------------------------------------------------------------
+
+========================================================================
+B7a GAP: namespace-pairs / elif (36 cells, verdict of the representative GAP); the parser ERRORs on configurations alc accepts; representative occ:_namespaces_arm_t:0.3@declaration_body#elif
+:error
+========================================================================
+table 50100 T
+{
+    fields
+    {
+        field(1; K; Code[20]) { }
+        field(2; N; Integer) { }
+        field(3; B; Boolean) { }
+        field(9; O; Option) { OptionMembers = A,B,C; }
+    }
+    keys
+    {
+        key(PK; K) { Clustered = true; }
+    }
+}
+xmlport 50107 Xp
+{
+    Namespaces =
+#if TPL
+        
+p = 'urn:a'
+#if X
+;
+#elif Y
+;
+#else
+;
+#endif
+
+#else
+        p = 'urn:b';
+#endif
+    schema
+    {
+        textelement(Root)
+        {
+            tableelement(D; T)
+            {
+                fieldattribute(K; D.K) { }
+                fieldelement(N; D.N) { }
+            }
+        }
+    }
+}
+------------------------------------------------------------------------
+
+========================================================================
+B7a GAP: namespace-pairs / empty (9 cells, verdict of the representative GAP); the parser ERRORs on configurations alc accepts; representative occ:namespace_value_list:0.1.0.0@declaration_body#empty
+:error
+========================================================================
+table 50100 T
+{
+    fields
+    {
+        field(1; K; Code[20]) { }
+        field(2; N; Integer) { }
+        field(3; B; Boolean) { }
+        field(9; O; Option) { OptionMembers = A,B,C; }
+    }
+    keys
+    {
+        key(PK; K) { Clustered = true; }
+    }
+}
+xmlport 50107 Xp
+{
+    Namespaces =
+#if TPL
+        
+p = 'urn:a' ,
+#if X
+#endif
+q = 'urn:b'
+;
+#else
+        p = 'urn:c';
+#endif
+    schema
+    {
+        textelement(Root)
+        {
+            tableelement(D; T)
+            {
+                fieldattribute(K; D.K) { }
+                fieldelement(N; D.N) { }
+            }
+        }
+    }
+}
+------------------------------------------------------------------------
+
+========================================================================
+B7a GAP: namespace-pairs / first-replace (9 cells, verdict of the representative GAP); the parser ERRORs on configurations alc accepts; representative occ:namespace_value_list:0.1.0.0@declaration_body#first-replace
+:error
+========================================================================
+table 50100 T
+{
+    fields
+    {
+        field(1; K; Code[20]) { }
+        field(2; N; Integer) { }
+        field(3; B; Boolean) { }
+        field(9; O; Option) { OptionMembers = A,B,C; }
+    }
+    keys
+    {
+        key(PK; K) { Clustered = true; }
+    }
+}
+xmlport 50107 Xp
+{
+    Namespaces =
+#if TPL
+        
+#if X
+p = 'urn:a'
+#else
+q = 'urn:b'
+#endif
+, r = 'urn:c'
+;
+#else
+        p = 'urn:c';
+#endif
+    schema
+    {
+        textelement(Root)
+        {
+            tableelement(D; T)
+            {
+                fieldattribute(K; D.K) { }
+                fieldelement(N; D.N) { }
+            }
+        }
+    }
+}
+------------------------------------------------------------------------
+
+========================================================================
+B7a GAP: namespace-pairs / holes-lead (9 cells, verdict of the representative MIXED); the parser ERRORs on configurations alc accepts; representative occ:namespace_value_list:0.1.0.0@declaration_body#holes-lead
+:error
+========================================================================
+table 50100 T
+{
+    fields
+    {
+        field(1; K; Code[20]) { }
+        field(2; N; Integer) { }
+        field(3; B; Boolean) { }
+        field(9; O; Option) { OptionMembers = A,B,C; }
+    }
+    keys
+    {
+        key(PK; K) { Clustered = true; }
+    }
+}
+xmlport 50107 Xp
+{
+    Namespaces =
+#if TPL
+        
+#if X
+,
+#endif
+p = 'urn:a' , q = 'urn:b'
+;
+#else
+        p = 'urn:c';
+#endif
+    schema
+    {
+        textelement(Root)
+        {
+            tableelement(D; T)
+            {
+                fieldattribute(K; D.K) { }
+                fieldelement(N; D.N) { }
+            }
+        }
+    }
+}
+------------------------------------------------------------------------
+
+========================================================================
+B7a GAP: namespace-pairs / holes-mid (9 cells, verdict of the representative MIXED); the parser ERRORs on configurations alc accepts; representative occ:namespace_value_list:0.1.0.0@declaration_body#holes-mid
+:error
+========================================================================
+table 50100 T
+{
+    fields
+    {
+        field(1; K; Code[20]) { }
+        field(2; N; Integer) { }
+        field(3; B; Boolean) { }
+        field(9; O; Option) { OptionMembers = A,B,C; }
+    }
+    keys
+    {
+        key(PK; K) { Clustered = true; }
+    }
+}
+xmlport 50107 Xp
+{
+    Namespaces =
+#if TPL
+        
+p = 'urn:a' ,
+#if X
+,
+#endif
+q = 'urn:b'
+;
+#else
+        p = 'urn:c';
+#endif
+    schema
+    {
+        textelement(Root)
+        {
+            tableelement(D; T)
+            {
+                fieldattribute(K; D.K) { }
+                fieldelement(N; D.N) { }
+            }
+        }
+    }
+}
+------------------------------------------------------------------------
+
+========================================================================
+B7a GAP: namespace-pairs / holes-trail (9 cells, verdict of the representative MIXED); the parser ERRORs on configurations alc accepts; representative occ:namespace_value_list:0.1.0.0@declaration_body#holes-trail
+:error
+========================================================================
+table 50100 T
+{
+    fields
+    {
+        field(1; K; Code[20]) { }
+        field(2; N; Integer) { }
+        field(3; B; Boolean) { }
+        field(9; O; Option) { OptionMembers = A,B,C; }
+    }
+    keys
+    {
+        key(PK; K) { Clustered = true; }
+    }
+}
+xmlport 50107 Xp
+{
+    Namespaces =
+#if TPL
+        
+p = 'urn:a' , q = 'urn:b'
+#if X
+,
+#endif
+;
+#else
+        p = 'urn:c';
+#endif
+    schema
+    {
+        textelement(Root)
+        {
+            tableelement(D; T)
+            {
+                fieldattribute(K; D.K) { }
+                fieldelement(N; D.N) { }
+            }
+        }
+    }
+}
+------------------------------------------------------------------------
+
+========================================================================
+B7a GAP: namespace-pairs / lead-optional (9 cells, verdict of the representative GAP); the parser ERRORs on configurations alc accepts; representative occ:namespace_value_list:0.1.0.0@declaration_body#lead-optional
+:error
+========================================================================
+table 50100 T
+{
+    fields
+    {
+        field(1; K; Code[20]) { }
+        field(2; N; Integer) { }
+        field(3; B; Boolean) { }
+        field(9; O; Option) { OptionMembers = A,B,C; }
+    }
+    keys
+    {
+        key(PK; K) { Clustered = true; }
+    }
+}
+xmlport 50107 Xp
+{
+    Namespaces =
+#if TPL
+        
+#if X
+p = 'urn:a' ,
+#endif
+q = 'urn:b'
+;
+#else
+        p = 'urn:c';
+#endif
+    schema
+    {
+        textelement(Root)
+        {
+            tableelement(D; T)
+            {
+                fieldattribute(K; D.K) { }
+                fieldelement(N; D.N) { }
+            }
+        }
+    }
+}
+------------------------------------------------------------------------
+
+========================================================================
+B7a GAP: namespace-pairs / nested (36 cells, verdict of the representative GAP); the parser ERRORs on configurations alc accepts; representative occ:_namespaces_arm_t:0.3@declaration_body#nested
+:error
+========================================================================
+table 50100 T
+{
+    fields
+    {
+        field(1; K; Code[20]) { }
+        field(2; N; Integer) { }
+        field(3; B; Boolean) { }
+        field(9; O; Option) { OptionMembers = A,B,C; }
+    }
+    keys
+    {
+        key(PK; K) { Clustered = true; }
+    }
+}
+xmlport 50107 Xp
+{
+    Namespaces =
+#if TPL
+        
+p = 'urn:a'
+#if X
+#if Y
+;
+#else
+;
+#endif
+#else
+;
+#endif
+
+#else
+        p = 'urn:b';
+#endif
+    schema
+    {
+        textelement(Root)
+        {
+            tableelement(D; T)
+            {
+                fieldattribute(K; D.K) { }
+                fieldelement(N; D.N) { }
+            }
+        }
+    }
+}
+------------------------------------------------------------------------
+
+========================================================================
+B7a GAP: namespace-pairs / sep-after (9 cells, verdict of the representative GAP); the parser ERRORs on configurations alc accepts; representative occ:namespace_value_list:0.1.0.0@declaration_body#sep-after
+:error
+========================================================================
+table 50100 T
+{
+    fields
+    {
+        field(1; K; Code[20]) { }
+        field(2; N; Integer) { }
+        field(3; B; Boolean) { }
+        field(9; O; Option) { OptionMembers = A,B,C; }
+    }
+    keys
+    {
+        key(PK; K) { Clustered = true; }
+    }
+}
+xmlport 50107 Xp
+{
+    Namespaces =
+#if TPL
+        
+p = 'urn:a' ,
+#if X
+q = 'urn:b' ,
+#endif
+r = 'urn:c'
+;
+#else
+        p = 'urn:c';
+#endif
+    schema
+    {
+        textelement(Root)
+        {
+            tableelement(D; T)
+            {
+                fieldattribute(K; D.K) { }
+                fieldelement(N; D.N) { }
+            }
+        }
+    }
+}
+------------------------------------------------------------------------
+
+========================================================================
+B7a GAP: namespace-pairs / sep-before (9 cells, verdict of the representative GAP); the parser ERRORs on configurations alc accepts; representative occ:namespace_value_list:0.1.0.0@declaration_body#sep-before
+:error
+========================================================================
+table 50100 T
+{
+    fields
+    {
+        field(1; K; Code[20]) { }
+        field(2; N; Integer) { }
+        field(3; B; Boolean) { }
+        field(9; O; Option) { OptionMembers = A,B,C; }
+    }
+    keys
+    {
+        key(PK; K) { Clustered = true; }
+    }
+}
+xmlport 50107 Xp
+{
+    Namespaces =
+#if TPL
+        
+p = 'urn:a'
+#if X
+, q = 'urn:b'
+#endif
+, r = 'urn:c'
+;
+#else
+        p = 'urn:c';
+#endif
+    schema
+    {
+        textelement(Root)
+        {
+            tableelement(D; T)
+            {
+                fieldattribute(K; D.K) { }
+                fieldelement(N; D.N) { }
+            }
+        }
+    }
+}
+------------------------------------------------------------------------
+
+========================================================================
+B7a GAP: namespace-pairs / sep-before-end (9 cells, verdict of the representative GAP); the parser ERRORs on configurations alc accepts; representative occ:namespace_value_list:0.1.0.0@declaration_body#sep-before-end
+:error
+========================================================================
+table 50100 T
+{
+    fields
+    {
+        field(1; K; Code[20]) { }
+        field(2; N; Integer) { }
+        field(3; B; Boolean) { }
+        field(9; O; Option) { OptionMembers = A,B,C; }
+    }
+    keys
+    {
+        key(PK; K) { Clustered = true; }
+    }
+}
+xmlport 50107 Xp
+{
+    Namespaces =
+#if TPL
+        
+p = 'urn:a'
+#if X
+, q = 'urn:b'
+#endif
+;
+#else
+        p = 'urn:c';
+#endif
+    schema
+    {
+        textelement(Root)
+        {
+            tableelement(D; T)
+            {
+                fieldattribute(K; D.K) { }
+                fieldelement(N; D.N) { }
+            }
+        }
+    }
+}
+------------------------------------------------------------------------
+
+========================================================================
+B7a GAP: namespace-pairs / sep-only (36 cells, verdict of the representative GAP); the parser ERRORs on configurations alc accepts; representative occ:_namespaces_arm_t:0.3@declaration_body#sep-only
+:error
+========================================================================
+table 50100 T
+{
+    fields
+    {
+        field(1; K; Code[20]) { }
+        field(2; N; Integer) { }
+        field(3; B; Boolean) { }
+        field(9; O; Option) { OptionMembers = A,B,C; }
+    }
+    keys
+    {
+        key(PK; K) { Clustered = true; }
+    }
+}
+xmlport 50107 Xp
+{
+    Namespaces =
+#if TPL
+        
+p = 'urn:a'
+#if X
+;
+#else
+;
+#endif
+
+#else
+        p = 'urn:b';
+#endif
+    schema
+    {
+        textelement(Root)
+        {
+            tableelement(D; T)
+            {
+                fieldattribute(K; D.K) { }
+                fieldelement(N; D.N) { }
+            }
+        }
+    }
+}
+------------------------------------------------------------------------
+
+========================================================================
+B7a GAP: namespace-pairs / trail (36 cells, verdict of the representative MIXED); the parser ERRORs on configurations alc accepts; representative occ:_namespaces_arm_t:0.3@declaration_body#trail
+:error
+========================================================================
+table 50100 T
+{
+    fields
+    {
+        field(1; K; Code[20]) { }
+        field(2; N; Integer) { }
+        field(3; B; Boolean) { }
+        field(9; O; Option) { OptionMembers = A,B,C; }
+    }
+    keys
+    {
+        key(PK; K) { Clustered = true; }
+    }
+}
+xmlport 50107 Xp
+{
+    Namespaces =
+#if TPL
+        
+p = 'urn:a'
+#if X
+;
+#endif
+
+#else
+        p = 'urn:b';
+#endif
+    schema
+    {
+        textelement(Root)
+        {
+            tableelement(D; T)
+            {
+                fieldattribute(K; D.K) { }
+                fieldelement(N; D.N) { }
+            }
+        }
+    }
+}
+------------------------------------------------------------------------

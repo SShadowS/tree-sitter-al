@@ -1,0 +1,543 @@
+========================================================================
+B7a GAP: attribute-arguments / empty (3 cells, verdict of the representative GAP); the parser ERRORs on configurations alc accepts; representative occ:attribute_argument_list:1.0.0@attribute_arguments#empty
+:error
+========================================================================
+table 50100 T
+{
+    fields
+    {
+        field(1; K; Code[20]) { }
+        field(2; N; Integer) { }
+        field(3; B; Boolean) { }
+        field(9; O; Option) { OptionMembers = A,B,C; }
+    }
+    keys
+    {
+        key(PK; K) { Clustered = true; }
+    }
+}
+codeunit 50101 P
+{
+    procedure Q(): Integer
+    var
+        R: Record T;
+        I: Integer;
+        Ok: Boolean;
+        L: List of [Integer];
+        Arr: array[3] of Integer;
+        Arr2: array[2, 2] of Integer;
+        Recs: array[2] of Record T;
+    begin
+Bar();
+    end;
+
+    procedure Bar()
+    begin
+    end;
+
+    procedure Foo(A: Integer; B: Integer): Integer
+    begin
+        exit(A + B);
+    end;
+
+    [IntegrationEvent(
+false ,
+#if X
+#endif
+false
+)]
+    procedure Z()
+    begin
+    end;
+}
+------------------------------------------------------------------------
+
+========================================================================
+B7a GAP: attribute-arguments / empty-list (3 cells, verdict of the representative MIXED); the parser ERRORs on configurations alc accepts; representative occ:attribute_argument_list:1.0.0@attribute_arguments#empty-list
+:error
+========================================================================
+table 50100 T
+{
+    fields
+    {
+        field(1; K; Code[20]) { }
+        field(2; N; Integer) { }
+        field(3; B; Boolean) { }
+        field(9; O; Option) { OptionMembers = A,B,C; }
+    }
+    keys
+    {
+        key(PK; K) { Clustered = true; }
+    }
+}
+codeunit 50101 P
+{
+    procedure Q(): Integer
+    var
+        R: Record T;
+        I: Integer;
+        Ok: Boolean;
+        L: List of [Integer];
+        Arr: array[3] of Integer;
+        Arr2: array[2, 2] of Integer;
+        Recs: array[2] of Record T;
+    begin
+Bar();
+    end;
+
+    procedure Bar()
+    begin
+    end;
+
+    procedure Foo(A: Integer; B: Integer): Integer
+    begin
+        exit(A + B);
+    end;
+
+    [IntegrationEvent(
+#if X
+false , false
+#endif
+)]
+    procedure Z()
+    begin
+    end;
+}
+------------------------------------------------------------------------
+
+========================================================================
+B7a GAP: attribute-arguments / holes-lead (3 cells, verdict of the representative MIXED); the parser ERRORs on configurations alc accepts; representative occ:attribute_argument_list:1.0.0@attribute_arguments#holes-lead
+:error
+========================================================================
+table 50100 T
+{
+    fields
+    {
+        field(1; K; Code[20]) { }
+        field(2; N; Integer) { }
+        field(3; B; Boolean) { }
+        field(9; O; Option) { OptionMembers = A,B,C; }
+    }
+    keys
+    {
+        key(PK; K) { Clustered = true; }
+    }
+}
+codeunit 50101 P
+{
+    procedure Q(): Integer
+    var
+        R: Record T;
+        I: Integer;
+        Ok: Boolean;
+        L: List of [Integer];
+        Arr: array[3] of Integer;
+        Arr2: array[2, 2] of Integer;
+        Recs: array[2] of Record T;
+    begin
+Bar();
+    end;
+
+    procedure Bar()
+    begin
+    end;
+
+    procedure Foo(A: Integer; B: Integer): Integer
+    begin
+        exit(A + B);
+    end;
+
+    [IntegrationEvent(
+#if X
+,
+#endif
+false , false
+)]
+    procedure Z()
+    begin
+    end;
+}
+------------------------------------------------------------------------
+
+========================================================================
+B7a GAP: attribute-arguments / holes-mid (3 cells, verdict of the representative MIXED); the parser ERRORs on configurations alc accepts; representative occ:attribute_argument_list:1.0.0@attribute_arguments#holes-mid
+:error
+========================================================================
+table 50100 T
+{
+    fields
+    {
+        field(1; K; Code[20]) { }
+        field(2; N; Integer) { }
+        field(3; B; Boolean) { }
+        field(9; O; Option) { OptionMembers = A,B,C; }
+    }
+    keys
+    {
+        key(PK; K) { Clustered = true; }
+    }
+}
+codeunit 50101 P
+{
+    procedure Q(): Integer
+    var
+        R: Record T;
+        I: Integer;
+        Ok: Boolean;
+        L: List of [Integer];
+        Arr: array[3] of Integer;
+        Arr2: array[2, 2] of Integer;
+        Recs: array[2] of Record T;
+    begin
+Bar();
+    end;
+
+    procedure Bar()
+    begin
+    end;
+
+    procedure Foo(A: Integer; B: Integer): Integer
+    begin
+        exit(A + B);
+    end;
+
+    [IntegrationEvent(
+false ,
+#if X
+,
+#endif
+false
+)]
+    procedure Z()
+    begin
+    end;
+}
+------------------------------------------------------------------------
+
+========================================================================
+B7a GAP: attribute-arguments / holes-trail (3 cells, verdict of the representative MIXED); the parser ERRORs on configurations alc accepts; representative occ:attribute_argument_list:1.0.0@attribute_arguments#holes-trail
+:error
+========================================================================
+table 50100 T
+{
+    fields
+    {
+        field(1; K; Code[20]) { }
+        field(2; N; Integer) { }
+        field(3; B; Boolean) { }
+        field(9; O; Option) { OptionMembers = A,B,C; }
+    }
+    keys
+    {
+        key(PK; K) { Clustered = true; }
+    }
+}
+codeunit 50101 P
+{
+    procedure Q(): Integer
+    var
+        R: Record T;
+        I: Integer;
+        Ok: Boolean;
+        L: List of [Integer];
+        Arr: array[3] of Integer;
+        Arr2: array[2, 2] of Integer;
+        Recs: array[2] of Record T;
+    begin
+Bar();
+    end;
+
+    procedure Bar()
+    begin
+    end;
+
+    procedure Foo(A: Integer; B: Integer): Integer
+    begin
+        exit(A + B);
+    end;
+
+    [IntegrationEvent(
+false , false
+#if X
+,
+#endif
+)]
+    procedure Z()
+    begin
+    end;
+}
+------------------------------------------------------------------------
+
+========================================================================
+B7a GAP: attribute-arguments / lead-optional (3 cells, verdict of the representative MIXED); the parser ERRORs on configurations alc accepts; representative occ:attribute_argument_list:1.0.0@attribute_arguments#lead-optional
+:error
+========================================================================
+table 50100 T
+{
+    fields
+    {
+        field(1; K; Code[20]) { }
+        field(2; N; Integer) { }
+        field(3; B; Boolean) { }
+        field(9; O; Option) { OptionMembers = A,B,C; }
+    }
+    keys
+    {
+        key(PK; K) { Clustered = true; }
+    }
+}
+codeunit 50101 P
+{
+    procedure Q(): Integer
+    var
+        R: Record T;
+        I: Integer;
+        Ok: Boolean;
+        L: List of [Integer];
+        Arr: array[3] of Integer;
+        Arr2: array[2, 2] of Integer;
+        Recs: array[2] of Record T;
+    begin
+Bar();
+    end;
+
+    procedure Bar()
+    begin
+    end;
+
+    procedure Foo(A: Integer; B: Integer): Integer
+    begin
+        exit(A + B);
+    end;
+
+    [IntegrationEvent(
+#if X
+false ,
+#endif
+false
+)]
+    procedure Z()
+    begin
+    end;
+}
+------------------------------------------------------------------------
+
+========================================================================
+B7a GAP: attribute-arguments / one-elem (3 cells, verdict of the representative MIXED); the parser ERRORs on configurations alc accepts; representative occ:attribute_argument_list:1.0.0@attribute_arguments#one-elem
+:error
+========================================================================
+table 50100 T
+{
+    fields
+    {
+        field(1; K; Code[20]) { }
+        field(2; N; Integer) { }
+        field(3; B; Boolean) { }
+        field(9; O; Option) { OptionMembers = A,B,C; }
+    }
+    keys
+    {
+        key(PK; K) { Clustered = true; }
+    }
+}
+codeunit 50101 P
+{
+    procedure Q(): Integer
+    var
+        R: Record T;
+        I: Integer;
+        Ok: Boolean;
+        L: List of [Integer];
+        Arr: array[3] of Integer;
+        Arr2: array[2, 2] of Integer;
+        Recs: array[2] of Record T;
+    begin
+Bar();
+    end;
+
+    procedure Bar()
+    begin
+    end;
+
+    procedure Foo(A: Integer; B: Integer): Integer
+    begin
+        exit(A + B);
+    end;
+
+    [IntegrationEvent(
+#if X
+false , false
+#else
+false
+#endif
+)]
+    procedure Z()
+    begin
+    end;
+}
+------------------------------------------------------------------------
+
+========================================================================
+B7a GAP: attribute-arguments / sep-before-end (3 cells, verdict of the representative MIXED); the parser ERRORs on configurations alc accepts; representative occ:attribute_argument_list:1.0.0@attribute_arguments#sep-before-end
+:error
+========================================================================
+table 50100 T
+{
+    fields
+    {
+        field(1; K; Code[20]) { }
+        field(2; N; Integer) { }
+        field(3; B; Boolean) { }
+        field(9; O; Option) { OptionMembers = A,B,C; }
+    }
+    keys
+    {
+        key(PK; K) { Clustered = true; }
+    }
+}
+codeunit 50101 P
+{
+    procedure Q(): Integer
+    var
+        R: Record T;
+        I: Integer;
+        Ok: Boolean;
+        L: List of [Integer];
+        Arr: array[3] of Integer;
+        Arr2: array[2, 2] of Integer;
+        Recs: array[2] of Record T;
+    begin
+Bar();
+    end;
+
+    procedure Bar()
+    begin
+    end;
+
+    procedure Foo(A: Integer; B: Integer): Integer
+    begin
+        exit(A + B);
+    end;
+
+    [IntegrationEvent(
+false
+#if X
+, false
+#endif
+)]
+    procedure Z()
+    begin
+    end;
+}
+------------------------------------------------------------------------
+
+========================================================================
+B7a GAP: attribute-arguments / sep-only (3 cells, verdict of the representative GAP); the parser ERRORs on configurations alc accepts; representative occ:attribute_argument_list:1.0.0@attribute_arguments#sep-only
+:error
+========================================================================
+table 50100 T
+{
+    fields
+    {
+        field(1; K; Code[20]) { }
+        field(2; N; Integer) { }
+        field(3; B; Boolean) { }
+        field(9; O; Option) { OptionMembers = A,B,C; }
+    }
+    keys
+    {
+        key(PK; K) { Clustered = true; }
+    }
+}
+codeunit 50101 P
+{
+    procedure Q(): Integer
+    var
+        R: Record T;
+        I: Integer;
+        Ok: Boolean;
+        L: List of [Integer];
+        Arr: array[3] of Integer;
+        Arr2: array[2, 2] of Integer;
+        Recs: array[2] of Record T;
+    begin
+Bar();
+    end;
+
+    procedure Bar()
+    begin
+    end;
+
+    procedure Foo(A: Integer; B: Integer): Integer
+    begin
+        exit(A + B);
+    end;
+
+    [IntegrationEvent(
+false
+#if X
+,
+#else
+,
+#endif
+false
+)]
+    procedure Z()
+    begin
+    end;
+}
+------------------------------------------------------------------------
+
+========================================================================
+B7a GAP: attribute-arguments / trail (3 cells, verdict of the representative MIXED); the parser ERRORs on configurations alc accepts; representative occ:attribute_argument_list:1.0.0@attribute_arguments#trail
+:error
+========================================================================
+table 50100 T
+{
+    fields
+    {
+        field(1; K; Code[20]) { }
+        field(2; N; Integer) { }
+        field(3; B; Boolean) { }
+        field(9; O; Option) { OptionMembers = A,B,C; }
+    }
+    keys
+    {
+        key(PK; K) { Clustered = true; }
+    }
+}
+codeunit 50101 P
+{
+    procedure Q(): Integer
+    var
+        R: Record T;
+        I: Integer;
+        Ok: Boolean;
+        L: List of [Integer];
+        Arr: array[3] of Integer;
+        Arr2: array[2, 2] of Integer;
+        Recs: array[2] of Record T;
+    begin
+Bar();
+    end;
+
+    procedure Bar()
+    begin
+    end;
+
+    procedure Foo(A: Integer; B: Integer): Integer
+    begin
+        exit(A + B);
+    end;
+
+    [IntegrationEvent(
+false ,
+#if X
+false
+#endif
+)]
+    procedure Z()
+    begin
+    end;
+}
+------------------------------------------------------------------------

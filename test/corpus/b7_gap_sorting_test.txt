@@ -1,0 +1,1127 @@
+========================================================================
+B7a GAP: sorting / adjacent-compl (18 cells, verdict of the representative GAP); the parser ERRORs on configurations alc accepts; representative occ:sorting_value:0.0.3.0.0@action_body#adjacent-compl
+:error
+========================================================================
+table 50100 T
+{
+    fields
+    {
+        field(1; K; Code[20]) { }
+        field(2; N; Integer) { }
+        field(3; B; Boolean) { }
+        field(9; O; Option) { OptionMembers = A,B,C; }
+    }
+    keys
+    {
+        key(PK; K) { Clustered = true; }
+    }
+}
+page 50102 PG
+{
+    SourceTable = T;
+    layout
+    {
+        area(Content)
+        {
+            field(N; Rec.N) { }
+        }
+    }
+    actions
+    {
+        area(Processing)
+        {
+            action(A1)
+            {
+                RunObject = page PG;
+                RunPageView =
+#if TPL
+                    sorting(
+K
+#if X
+, N
+#endif
+#if not X
+, "B"
+#endif
+);
+#else
+                    sorting(K);
+#endif
+                trigger OnAction()
+                begin
+                end;
+            }
+        }
+    }
+    var
+        I: Integer;
+        Ok: Boolean;
+}
+------------------------------------------------------------------------
+
+========================================================================
+B7a GAP: sorting / adjacent-indep (18 cells, verdict of the representative GAP); the parser ERRORs on configurations alc accepts; representative occ:sorting_value:0.0.3.0.0@action_body#adjacent-indep
+:error
+========================================================================
+table 50100 T
+{
+    fields
+    {
+        field(1; K; Code[20]) { }
+        field(2; N; Integer) { }
+        field(3; B; Boolean) { }
+        field(9; O; Option) { OptionMembers = A,B,C; }
+    }
+    keys
+    {
+        key(PK; K) { Clustered = true; }
+    }
+}
+page 50102 PG
+{
+    SourceTable = T;
+    layout
+    {
+        area(Content)
+        {
+            field(N; Rec.N) { }
+        }
+    }
+    actions
+    {
+        area(Processing)
+        {
+            action(A1)
+            {
+                RunObject = page PG;
+                RunPageView =
+#if TPL
+                    sorting(
+K
+#if X
+, N
+#endif
+#if Y
+, "B"
+#endif
+);
+#else
+                    sorting(K);
+#endif
+                trigger OnAction()
+                begin
+                end;
+            }
+        }
+    }
+    var
+        I: Integer;
+        Ok: Boolean;
+}
+------------------------------------------------------------------------
+
+========================================================================
+B7a GAP: sorting / both-in-arm (18 cells, verdict of the representative GAP); the parser ERRORs on configurations alc accepts; representative occ:sorting_value:0.0.3.0.0@action_body#both-in-arm
+:error
+========================================================================
+table 50100 T
+{
+    fields
+    {
+        field(1; K; Code[20]) { }
+        field(2; N; Integer) { }
+        field(3; B; Boolean) { }
+        field(9; O; Option) { OptionMembers = A,B,C; }
+    }
+    keys
+    {
+        key(PK; K) { Clustered = true; }
+    }
+}
+page 50102 PG
+{
+    SourceTable = T;
+    layout
+    {
+        area(Content)
+        {
+            field(N; Rec.N) { }
+        }
+    }
+    actions
+    {
+        area(Processing)
+        {
+            action(A1)
+            {
+                RunObject = page PG;
+                RunPageView =
+#if TPL
+                    sorting(
+K
+#if X
+, N ,
+#else
+,
+#endif
+"B"
+);
+#else
+                    sorting(K);
+#endif
+                trigger OnAction()
+                begin
+                end;
+            }
+        }
+    }
+    var
+        I: Integer;
+        Ok: Boolean;
+}
+------------------------------------------------------------------------
+
+========================================================================
+B7a GAP: sorting / count-differs (18 cells, verdict of the representative GAP); the parser ERRORs on configurations alc accepts; representative occ:sorting_value:0.0.3.0.0@action_body#count-differs
+:error
+========================================================================
+table 50100 T
+{
+    fields
+    {
+        field(1; K; Code[20]) { }
+        field(2; N; Integer) { }
+        field(3; B; Boolean) { }
+        field(9; O; Option) { OptionMembers = A,B,C; }
+    }
+    keys
+    {
+        key(PK; K) { Clustered = true; }
+    }
+}
+page 50102 PG
+{
+    SourceTable = T;
+    layout
+    {
+        area(Content)
+        {
+            field(N; Rec.N) { }
+        }
+    }
+    actions
+    {
+        area(Processing)
+        {
+            action(A1)
+            {
+                RunObject = page PG;
+                RunPageView =
+#if TPL
+                    sorting(
+K
+#if X
+, N , "B"
+#else
+, "O"
+#endif
+);
+#else
+                    sorting(K);
+#endif
+                trigger OnAction()
+                begin
+                end;
+            }
+        }
+    }
+    var
+        I: Integer;
+        Ok: Boolean;
+}
+------------------------------------------------------------------------
+
+========================================================================
+B7a GAP: sorting / elif (18 cells, verdict of the representative GAP); the parser ERRORs on configurations alc accepts; representative occ:sorting_value:0.0.3.0.0@action_body#elif
+:error
+========================================================================
+table 50100 T
+{
+    fields
+    {
+        field(1; K; Code[20]) { }
+        field(2; N; Integer) { }
+        field(3; B; Boolean) { }
+        field(9; O; Option) { OptionMembers = A,B,C; }
+    }
+    keys
+    {
+        key(PK; K) { Clustered = true; }
+    }
+}
+page 50102 PG
+{
+    SourceTable = T;
+    layout
+    {
+        area(Content)
+        {
+            field(N; Rec.N) { }
+        }
+    }
+    actions
+    {
+        area(Processing)
+        {
+            action(A1)
+            {
+                RunObject = page PG;
+                RunPageView =
+#if TPL
+                    sorting(
+K
+#if X
+, N
+#elif Y
+, "B"
+#endif
+, "O"
+);
+#else
+                    sorting(K);
+#endif
+                trigger OnAction()
+                begin
+                end;
+            }
+        }
+    }
+    var
+        I: Integer;
+        Ok: Boolean;
+}
+------------------------------------------------------------------------
+
+========================================================================
+B7a GAP: sorting / empty (18 cells, verdict of the representative GAP); the parser ERRORs on configurations alc accepts; representative occ:sorting_value:0.0.3.0.0@action_body#empty
+:error
+========================================================================
+table 50100 T
+{
+    fields
+    {
+        field(1; K; Code[20]) { }
+        field(2; N; Integer) { }
+        field(3; B; Boolean) { }
+        field(9; O; Option) { OptionMembers = A,B,C; }
+    }
+    keys
+    {
+        key(PK; K) { Clustered = true; }
+    }
+}
+page 50102 PG
+{
+    SourceTable = T;
+    layout
+    {
+        area(Content)
+        {
+            field(N; Rec.N) { }
+        }
+    }
+    actions
+    {
+        area(Processing)
+        {
+            action(A1)
+            {
+                RunObject = page PG;
+                RunPageView =
+#if TPL
+                    sorting(
+K ,
+#if X
+#endif
+N
+);
+#else
+                    sorting(K);
+#endif
+                trigger OnAction()
+                begin
+                end;
+            }
+        }
+    }
+    var
+        I: Integer;
+        Ok: Boolean;
+}
+------------------------------------------------------------------------
+
+========================================================================
+B7a GAP: sorting / empty-list (18 cells, verdict of the representative GAP); the parser ERRORs on configurations alc accepts; representative occ:sorting_value:0.0.3.0.0@action_body#empty-list
+:error
+========================================================================
+table 50100 T
+{
+    fields
+    {
+        field(1; K; Code[20]) { }
+        field(2; N; Integer) { }
+        field(3; B; Boolean) { }
+        field(9; O; Option) { OptionMembers = A,B,C; }
+    }
+    keys
+    {
+        key(PK; K) { Clustered = true; }
+    }
+}
+page 50102 PG
+{
+    SourceTable = T;
+    layout
+    {
+        area(Content)
+        {
+            field(N; Rec.N) { }
+        }
+    }
+    actions
+    {
+        area(Processing)
+        {
+            action(A1)
+            {
+                RunObject = page PG;
+                RunPageView =
+#if TPL
+                    sorting(
+#if X
+K , N
+#endif
+);
+#else
+                    sorting(K);
+#endif
+                trigger OnAction()
+                begin
+                end;
+            }
+        }
+    }
+    var
+        I: Integer;
+        Ok: Boolean;
+}
+------------------------------------------------------------------------
+
+========================================================================
+B7a GAP: sorting / first-replace (18 cells, verdict of the representative GAP); the parser ERRORs on configurations alc accepts; representative occ:sorting_value:0.0.3.0.0@action_body#first-replace
+:error
+========================================================================
+table 50100 T
+{
+    fields
+    {
+        field(1; K; Code[20]) { }
+        field(2; N; Integer) { }
+        field(3; B; Boolean) { }
+        field(9; O; Option) { OptionMembers = A,B,C; }
+    }
+    keys
+    {
+        key(PK; K) { Clustered = true; }
+    }
+}
+page 50102 PG
+{
+    SourceTable = T;
+    layout
+    {
+        area(Content)
+        {
+            field(N; Rec.N) { }
+        }
+    }
+    actions
+    {
+        area(Processing)
+        {
+            action(A1)
+            {
+                RunObject = page PG;
+                RunPageView =
+#if TPL
+                    sorting(
+#if X
+K
+#else
+N
+#endif
+, "B"
+);
+#else
+                    sorting(K);
+#endif
+                trigger OnAction()
+                begin
+                end;
+            }
+        }
+    }
+    var
+        I: Integer;
+        Ok: Boolean;
+}
+------------------------------------------------------------------------
+
+========================================================================
+B7a GAP: sorting / holes-lead (18 cells, verdict of the representative MIXED); the parser ERRORs on configurations alc accepts; representative occ:sorting_value:0.0.3.0.0@action_body#holes-lead
+:error
+========================================================================
+table 50100 T
+{
+    fields
+    {
+        field(1; K; Code[20]) { }
+        field(2; N; Integer) { }
+        field(3; B; Boolean) { }
+        field(9; O; Option) { OptionMembers = A,B,C; }
+    }
+    keys
+    {
+        key(PK; K) { Clustered = true; }
+    }
+}
+page 50102 PG
+{
+    SourceTable = T;
+    layout
+    {
+        area(Content)
+        {
+            field(N; Rec.N) { }
+        }
+    }
+    actions
+    {
+        area(Processing)
+        {
+            action(A1)
+            {
+                RunObject = page PG;
+                RunPageView =
+#if TPL
+                    sorting(
+#if X
+,
+#endif
+K , N
+);
+#else
+                    sorting(K);
+#endif
+                trigger OnAction()
+                begin
+                end;
+            }
+        }
+    }
+    var
+        I: Integer;
+        Ok: Boolean;
+}
+------------------------------------------------------------------------
+
+========================================================================
+B7a GAP: sorting / holes-mid (18 cells, verdict of the representative MIXED); the parser ERRORs on configurations alc accepts; representative occ:sorting_value:0.0.3.0.0@action_body#holes-mid
+:error
+========================================================================
+table 50100 T
+{
+    fields
+    {
+        field(1; K; Code[20]) { }
+        field(2; N; Integer) { }
+        field(3; B; Boolean) { }
+        field(9; O; Option) { OptionMembers = A,B,C; }
+    }
+    keys
+    {
+        key(PK; K) { Clustered = true; }
+    }
+}
+page 50102 PG
+{
+    SourceTable = T;
+    layout
+    {
+        area(Content)
+        {
+            field(N; Rec.N) { }
+        }
+    }
+    actions
+    {
+        area(Processing)
+        {
+            action(A1)
+            {
+                RunObject = page PG;
+                RunPageView =
+#if TPL
+                    sorting(
+K ,
+#if X
+,
+#endif
+N
+);
+#else
+                    sorting(K);
+#endif
+                trigger OnAction()
+                begin
+                end;
+            }
+        }
+    }
+    var
+        I: Integer;
+        Ok: Boolean;
+}
+------------------------------------------------------------------------
+
+========================================================================
+B7a GAP: sorting / holes-trail (18 cells, verdict of the representative MIXED); the parser ERRORs on configurations alc accepts; representative occ:sorting_value:0.0.3.0.0@action_body#holes-trail
+:error
+========================================================================
+table 50100 T
+{
+    fields
+    {
+        field(1; K; Code[20]) { }
+        field(2; N; Integer) { }
+        field(3; B; Boolean) { }
+        field(9; O; Option) { OptionMembers = A,B,C; }
+    }
+    keys
+    {
+        key(PK; K) { Clustered = true; }
+    }
+}
+page 50102 PG
+{
+    SourceTable = T;
+    layout
+    {
+        area(Content)
+        {
+            field(N; Rec.N) { }
+        }
+    }
+    actions
+    {
+        area(Processing)
+        {
+            action(A1)
+            {
+                RunObject = page PG;
+                RunPageView =
+#if TPL
+                    sorting(
+K , N
+#if X
+,
+#endif
+);
+#else
+                    sorting(K);
+#endif
+                trigger OnAction()
+                begin
+                end;
+            }
+        }
+    }
+    var
+        I: Integer;
+        Ok: Boolean;
+}
+------------------------------------------------------------------------
+
+========================================================================
+B7a GAP: sorting / lead-optional (18 cells, verdict of the representative GAP); the parser ERRORs on configurations alc accepts; representative occ:sorting_value:0.0.3.0.0@action_body#lead-optional
+:error
+========================================================================
+table 50100 T
+{
+    fields
+    {
+        field(1; K; Code[20]) { }
+        field(2; N; Integer) { }
+        field(3; B; Boolean) { }
+        field(9; O; Option) { OptionMembers = A,B,C; }
+    }
+    keys
+    {
+        key(PK; K) { Clustered = true; }
+    }
+}
+page 50102 PG
+{
+    SourceTable = T;
+    layout
+    {
+        area(Content)
+        {
+            field(N; Rec.N) { }
+        }
+    }
+    actions
+    {
+        area(Processing)
+        {
+            action(A1)
+            {
+                RunObject = page PG;
+                RunPageView =
+#if TPL
+                    sorting(
+#if X
+K ,
+#endif
+N
+);
+#else
+                    sorting(K);
+#endif
+                trigger OnAction()
+                begin
+                end;
+            }
+        }
+    }
+    var
+        I: Integer;
+        Ok: Boolean;
+}
+------------------------------------------------------------------------
+
+========================================================================
+B7a GAP: sorting / nested (18 cells, verdict of the representative GAP); the parser ERRORs on configurations alc accepts; representative occ:sorting_value:0.0.3.0.0@action_body#nested
+:error
+========================================================================
+table 50100 T
+{
+    fields
+    {
+        field(1; K; Code[20]) { }
+        field(2; N; Integer) { }
+        field(3; B; Boolean) { }
+        field(9; O; Option) { OptionMembers = A,B,C; }
+    }
+    keys
+    {
+        key(PK; K) { Clustered = true; }
+    }
+}
+page 50102 PG
+{
+    SourceTable = T;
+    layout
+    {
+        area(Content)
+        {
+            field(N; Rec.N) { }
+        }
+    }
+    actions
+    {
+        area(Processing)
+        {
+            action(A1)
+            {
+                RunObject = page PG;
+                RunPageView =
+#if TPL
+                    sorting(
+K
+#if X
+, N
+#if Y
+, "B"
+#endif
+#endif
+, "O"
+);
+#else
+                    sorting(K);
+#endif
+                trigger OnAction()
+                begin
+                end;
+            }
+        }
+    }
+    var
+        I: Integer;
+        Ok: Boolean;
+}
+------------------------------------------------------------------------
+
+========================================================================
+B7a GAP: sorting / one-elem (18 cells, verdict of the representative GAP); the parser ERRORs on configurations alc accepts; representative occ:sorting_value:0.0.3.0.0@action_body#one-elem
+:error
+========================================================================
+table 50100 T
+{
+    fields
+    {
+        field(1; K; Code[20]) { }
+        field(2; N; Integer) { }
+        field(3; B; Boolean) { }
+        field(9; O; Option) { OptionMembers = A,B,C; }
+    }
+    keys
+    {
+        key(PK; K) { Clustered = true; }
+    }
+}
+page 50102 PG
+{
+    SourceTable = T;
+    layout
+    {
+        area(Content)
+        {
+            field(N; Rec.N) { }
+        }
+    }
+    actions
+    {
+        area(Processing)
+        {
+            action(A1)
+            {
+                RunObject = page PG;
+                RunPageView =
+#if TPL
+                    sorting(
+#if X
+K , N
+#else
+K
+#endif
+);
+#else
+                    sorting(K);
+#endif
+                trigger OnAction()
+                begin
+                end;
+            }
+        }
+    }
+    var
+        I: Integer;
+        Ok: Boolean;
+}
+------------------------------------------------------------------------
+
+========================================================================
+B7a GAP: sorting / sep-after (18 cells, verdict of the representative GAP); the parser ERRORs on configurations alc accepts; representative occ:sorting_value:0.0.3.0.0@action_body#sep-after
+:error
+========================================================================
+table 50100 T
+{
+    fields
+    {
+        field(1; K; Code[20]) { }
+        field(2; N; Integer) { }
+        field(3; B; Boolean) { }
+        field(9; O; Option) { OptionMembers = A,B,C; }
+    }
+    keys
+    {
+        key(PK; K) { Clustered = true; }
+    }
+}
+page 50102 PG
+{
+    SourceTable = T;
+    layout
+    {
+        area(Content)
+        {
+            field(N; Rec.N) { }
+        }
+    }
+    actions
+    {
+        area(Processing)
+        {
+            action(A1)
+            {
+                RunObject = page PG;
+                RunPageView =
+#if TPL
+                    sorting(
+K ,
+#if X
+N ,
+#endif
+"B"
+);
+#else
+                    sorting(K);
+#endif
+                trigger OnAction()
+                begin
+                end;
+            }
+        }
+    }
+    var
+        I: Integer;
+        Ok: Boolean;
+}
+------------------------------------------------------------------------
+
+========================================================================
+B7a GAP: sorting / sep-before (18 cells, verdict of the representative GAP); the parser ERRORs on configurations alc accepts; representative occ:sorting_value:0.0.3.0.0@action_body#sep-before
+:error
+========================================================================
+table 50100 T
+{
+    fields
+    {
+        field(1; K; Code[20]) { }
+        field(2; N; Integer) { }
+        field(3; B; Boolean) { }
+        field(9; O; Option) { OptionMembers = A,B,C; }
+    }
+    keys
+    {
+        key(PK; K) { Clustered = true; }
+    }
+}
+page 50102 PG
+{
+    SourceTable = T;
+    layout
+    {
+        area(Content)
+        {
+            field(N; Rec.N) { }
+        }
+    }
+    actions
+    {
+        area(Processing)
+        {
+            action(A1)
+            {
+                RunObject = page PG;
+                RunPageView =
+#if TPL
+                    sorting(
+K
+#if X
+, N
+#endif
+, "B"
+);
+#else
+                    sorting(K);
+#endif
+                trigger OnAction()
+                begin
+                end;
+            }
+        }
+    }
+    var
+        I: Integer;
+        Ok: Boolean;
+}
+------------------------------------------------------------------------
+
+========================================================================
+B7a GAP: sorting / sep-before-end (18 cells, verdict of the representative GAP); the parser ERRORs on configurations alc accepts; representative occ:sorting_value:0.0.3.0.0@action_body#sep-before-end
+:error
+========================================================================
+table 50100 T
+{
+    fields
+    {
+        field(1; K; Code[20]) { }
+        field(2; N; Integer) { }
+        field(3; B; Boolean) { }
+        field(9; O; Option) { OptionMembers = A,B,C; }
+    }
+    keys
+    {
+        key(PK; K) { Clustered = true; }
+    }
+}
+page 50102 PG
+{
+    SourceTable = T;
+    layout
+    {
+        area(Content)
+        {
+            field(N; Rec.N) { }
+        }
+    }
+    actions
+    {
+        area(Processing)
+        {
+            action(A1)
+            {
+                RunObject = page PG;
+                RunPageView =
+#if TPL
+                    sorting(
+K
+#if X
+, N
+#endif
+);
+#else
+                    sorting(K);
+#endif
+                trigger OnAction()
+                begin
+                end;
+            }
+        }
+    }
+    var
+        I: Integer;
+        Ok: Boolean;
+}
+------------------------------------------------------------------------
+
+========================================================================
+B7a GAP: sorting / sep-only (18 cells, verdict of the representative GAP); the parser ERRORs on configurations alc accepts; representative occ:sorting_value:0.0.3.0.0@action_body#sep-only
+:error
+========================================================================
+table 50100 T
+{
+    fields
+    {
+        field(1; K; Code[20]) { }
+        field(2; N; Integer) { }
+        field(3; B; Boolean) { }
+        field(9; O; Option) { OptionMembers = A,B,C; }
+    }
+    keys
+    {
+        key(PK; K) { Clustered = true; }
+    }
+}
+page 50102 PG
+{
+    SourceTable = T;
+    layout
+    {
+        area(Content)
+        {
+            field(N; Rec.N) { }
+        }
+    }
+    actions
+    {
+        area(Processing)
+        {
+            action(A1)
+            {
+                RunObject = page PG;
+                RunPageView =
+#if TPL
+                    sorting(
+K
+#if X
+,
+#else
+,
+#endif
+N
+);
+#else
+                    sorting(K);
+#endif
+                trigger OnAction()
+                begin
+                end;
+            }
+        }
+    }
+    var
+        I: Integer;
+        Ok: Boolean;
+}
+------------------------------------------------------------------------
+
+========================================================================
+B7a GAP: sorting / trail (18 cells, verdict of the representative MIXED); the parser ERRORs on configurations alc accepts; representative occ:sorting_value:0.0.3.0.0@action_body#trail
+:error
+========================================================================
+table 50100 T
+{
+    fields
+    {
+        field(1; K; Code[20]) { }
+        field(2; N; Integer) { }
+        field(3; B; Boolean) { }
+        field(9; O; Option) { OptionMembers = A,B,C; }
+    }
+    keys
+    {
+        key(PK; K) { Clustered = true; }
+    }
+}
+page 50102 PG
+{
+    SourceTable = T;
+    layout
+    {
+        area(Content)
+        {
+            field(N; Rec.N) { }
+        }
+    }
+    actions
+    {
+        area(Processing)
+        {
+            action(A1)
+            {
+                RunObject = page PG;
+                RunPageView =
+#if TPL
+                    sorting(
+K ,
+#if X
+N
+#endif
+);
+#else
+                    sorting(K);
+#endif
+                trigger OnAction()
+                begin
+                end;
+            }
+        }
+    }
+    var
+        I: Integer;
+        Ok: Boolean;
+}
+------------------------------------------------------------------------

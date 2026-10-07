@@ -1,0 +1,358 @@
+========================================================================
+B7a GAP: fieldgroup-header / adjacent-compl (6 cells, verdict of the representative GAP); the parser ERRORs on configurations alc accepts; representative occ:addlast_fieldgroup_modification:3@fieldgroups_body#adjacent-compl
+:error
+========================================================================
+table 50100 T
+{
+    fields
+    {
+        field(1; K; Code[20]) { }
+        field(2; N; Integer) { }
+        field(3; B; Boolean) { }
+        field(9; O; Option) { OptionMembers = A,B,C; }
+    }
+    keys
+    {
+        key(PK; K) { Clustered = true; }
+    }
+    fieldgroups
+    {
+        fieldgroup(DropDown; K) { }
+    }
+}
+tableextension 50110 TE extends T
+{
+    fieldgroups
+    {
+        addlast(
+DropDown
+#if X
+;
+#endif
+#if not X
+;
+#endif
+N
+) { }
+    }
+}
+------------------------------------------------------------------------
+
+========================================================================
+B7a GAP: fieldgroup-header / elif (6 cells, verdict of the representative GAP); the parser ERRORs on configurations alc accepts; representative occ:addlast_fieldgroup_modification:3@fieldgroups_body#elif
+:error
+========================================================================
+table 50100 T
+{
+    fields
+    {
+        field(1; K; Code[20]) { }
+        field(2; N; Integer) { }
+        field(3; B; Boolean) { }
+        field(9; O; Option) { OptionMembers = A,B,C; }
+    }
+    keys
+    {
+        key(PK; K) { Clustered = true; }
+    }
+    fieldgroups
+    {
+        fieldgroup(DropDown; K) { }
+    }
+}
+tableextension 50110 TE extends T
+{
+    fieldgroups
+    {
+        addlast(
+DropDown
+#if X
+;
+#elif Y
+;
+#else
+;
+#endif
+N
+) { }
+    }
+}
+------------------------------------------------------------------------
+
+========================================================================
+B7a GAP: fieldgroup-header / empty (6 cells, verdict of the representative GAP); the parser ERRORs on configurations alc accepts; representative occ:addlast_fieldgroup_modification:3@fieldgroups_body#empty
+:error
+========================================================================
+table 50100 T
+{
+    fields
+    {
+        field(1; K; Code[20]) { }
+        field(2; N; Integer) { }
+        field(3; B; Boolean) { }
+        field(9; O; Option) { OptionMembers = A,B,C; }
+    }
+    keys
+    {
+        key(PK; K) { Clustered = true; }
+    }
+    fieldgroups
+    {
+        fieldgroup(DropDown; K) { }
+    }
+}
+tableextension 50110 TE extends T
+{
+    fieldgroups
+    {
+        addlast(
+DropDown ;
+#if X
+#endif
+N
+) { }
+    }
+}
+------------------------------------------------------------------------
+
+========================================================================
+B7a GAP: fieldgroup-header / first-replace (6 cells, verdict of the representative GAP); the parser ERRORs on configurations alc accepts; representative occ:addlast_fieldgroup_modification:3@fieldgroups_body#first-replace
+:error
+========================================================================
+table 50100 T
+{
+    fields
+    {
+        field(1; K; Code[20]) { }
+        field(2; N; Integer) { }
+        field(3; B; Boolean) { }
+        field(9; O; Option) { OptionMembers = A,B,C; }
+    }
+    keys
+    {
+        key(PK; K) { Clustered = true; }
+    }
+    fieldgroups
+    {
+        fieldgroup(DropDown; K) { }
+    }
+}
+tableextension 50110 TE extends T
+{
+    fieldgroups
+    {
+        addlast(
+#if X
+DropDown
+#else
+DropDown
+#endif
+; N
+) { }
+    }
+}
+------------------------------------------------------------------------
+
+========================================================================
+B7a GAP: fieldgroup-header / nested (6 cells, verdict of the representative GAP); the parser ERRORs on configurations alc accepts; representative occ:addlast_fieldgroup_modification:3@fieldgroups_body#nested
+:error
+========================================================================
+table 50100 T
+{
+    fields
+    {
+        field(1; K; Code[20]) { }
+        field(2; N; Integer) { }
+        field(3; B; Boolean) { }
+        field(9; O; Option) { OptionMembers = A,B,C; }
+    }
+    keys
+    {
+        key(PK; K) { Clustered = true; }
+    }
+    fieldgroups
+    {
+        fieldgroup(DropDown; K) { }
+    }
+}
+tableextension 50110 TE extends T
+{
+    fieldgroups
+    {
+        addlast(
+DropDown
+#if X
+#if Y
+;
+#else
+;
+#endif
+#else
+;
+#endif
+N
+) { }
+    }
+}
+------------------------------------------------------------------------
+
+========================================================================
+B7a REJECTED/over-accepts(syntax): fieldgroup-header / seed:task4-addfirst-fieldgroups (1 cells, verdict of the representative REJECTED/over-accepts); alc rejects with a syntax code (AL0104,AL0198) but the parser is clean; representative seed:task4-addfirst-fieldgroups
+========================================================================
+// host: fieldgroups_body
+// valid: none
+// source: B7a Task 4 incidental (`addfirst` in a tableextension fieldgroups section: alc AL0104 at Task 4 probe; the grammar over-accepts)
+table 50100 T { fields { field(1; N; Integer) { } } }
+tableextension 50101 TE extends T
+{
+    fieldgroups
+    {
+        addfirst(DropDown; N) { }
+    }
+}
+------------------------------------------------------------------------
+
+(source_file
+  (comment)
+  (comment)
+  (comment)
+  (table_declaration
+    (table_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (fields_section
+        (fields_keyword)
+        body: (fields_body
+          (field_declaration
+            (field_keyword)
+            id: (integer)
+            name: (identifier)
+            type: (type_specification
+              (basic_type)))))))
+  (tableextension_declaration
+    (tableextension_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    (extends_keyword)
+    base_object: (identifier)
+    body: (declaration_body
+      (fieldgroups_section
+        (fieldgroups_keyword)
+        body: (fieldgroups_body
+          (addfirst_fieldgroup_modification
+            (addfirst_keyword)
+            target: (identifier)
+            fields: (field_list
+              (identifier))))))))
+
+========================================================================
+B7a GAP: fieldgroup-header / sep-before-end (6 cells, verdict of the representative MIXED); the parser ERRORs on configurations alc accepts; representative occ:addlast_fieldgroup_modification:3@fieldgroups_body#sep-before-end
+:error
+========================================================================
+table 50100 T
+{
+    fields
+    {
+        field(1; K; Code[20]) { }
+        field(2; N; Integer) { }
+        field(3; B; Boolean) { }
+        field(9; O; Option) { OptionMembers = A,B,C; }
+    }
+    keys
+    {
+        key(PK; K) { Clustered = true; }
+    }
+    fieldgroups
+    {
+        fieldgroup(DropDown; K) { }
+    }
+}
+tableextension 50110 TE extends T
+{
+    fieldgroups
+    {
+        addlast(
+DropDown
+#if X
+; N
+#endif
+) { }
+    }
+}
+------------------------------------------------------------------------
+
+========================================================================
+B7a GAP: fieldgroup-header / sep-only (6 cells, verdict of the representative GAP); the parser ERRORs on configurations alc accepts; representative occ:addlast_fieldgroup_modification:3@fieldgroups_body#sep-only
+:error
+========================================================================
+table 50100 T
+{
+    fields
+    {
+        field(1; K; Code[20]) { }
+        field(2; N; Integer) { }
+        field(3; B; Boolean) { }
+        field(9; O; Option) { OptionMembers = A,B,C; }
+    }
+    keys
+    {
+        key(PK; K) { Clustered = true; }
+    }
+    fieldgroups
+    {
+        fieldgroup(DropDown; K) { }
+    }
+}
+tableextension 50110 TE extends T
+{
+    fieldgroups
+    {
+        addlast(
+DropDown
+#if X
+;
+#else
+;
+#endif
+N
+) { }
+    }
+}
+------------------------------------------------------------------------
+
+========================================================================
+B7a GAP: fieldgroup-header / trail (6 cells, verdict of the representative GAP); the parser ERRORs on configurations alc accepts; representative occ:addlast_fieldgroup_modification:3@fieldgroups_body#trail
+:error
+========================================================================
+table 50100 T
+{
+    fields
+    {
+        field(1; K; Code[20]) { }
+        field(2; N; Integer) { }
+        field(3; B; Boolean) { }
+        field(9; O; Option) { OptionMembers = A,B,C; }
+    }
+    keys
+    {
+        key(PK; K) { Clustered = true; }
+    }
+    fieldgroups
+    {
+        fieldgroup(DropDown; K) { }
+    }
+}
+tableextension 50110 TE extends T
+{
+    fieldgroups
+    {
+        addlast(
+DropDown ;
+#if X
+N
+#endif
+) { }
+    }
+}
+------------------------------------------------------------------------

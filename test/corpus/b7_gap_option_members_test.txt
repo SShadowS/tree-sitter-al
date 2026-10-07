@@ -1,0 +1,1068 @@
+========================================================================
+B7a GAP: option-members / adjacent-compl (81 cells, verdict of the representative GAP); the parser ERRORs on configurations alc accepts; representative occ:_option_member_list_empty_open:0.2.0.0.0@option_type#adjacent-compl
+:error
+========================================================================
+table 50100 T
+{
+    fields
+    {
+        field(1; K; Code[20]) { }
+        field(2; N; Integer) { }
+        field(3; B; Boolean) { }
+        field(9; O; Option) { OptionMembers = A,B,C; }
+    }
+    keys
+    {
+        key(PK; K) { Clustered = true; }
+    }
+}
+codeunit 50101 P
+{
+    procedure Q(): Integer
+    var
+        R: Record T;
+        I: Integer;
+        Ok: Boolean;
+        L: List of [Integer];
+        Arr: array[3] of Integer;
+        Arr2: array[2, 2] of Integer;
+        Recs: array[2] of Record T;
+        X: Option
+#if TPL
+#endif
+            
+A
+#if X
+, B
+#endif
+#if not X
+, C
+#endif
+;
+    begin
+Bar();
+    end;
+
+    procedure Bar()
+    begin
+    end;
+
+    procedure Foo(A: Integer; B: Integer): Integer
+    begin
+        exit(A + B);
+    end;
+}
+------------------------------------------------------------------------
+
+========================================================================
+B7a GAP: option-members / adjacent-indep (81 cells, verdict of the representative GAP); the parser ERRORs on configurations alc accepts; representative occ:_option_member_list_empty_open:0.2.0.0.0@option_type#adjacent-indep
+:error
+========================================================================
+table 50100 T
+{
+    fields
+    {
+        field(1; K; Code[20]) { }
+        field(2; N; Integer) { }
+        field(3; B; Boolean) { }
+        field(9; O; Option) { OptionMembers = A,B,C; }
+    }
+    keys
+    {
+        key(PK; K) { Clustered = true; }
+    }
+}
+codeunit 50101 P
+{
+    procedure Q(): Integer
+    var
+        R: Record T;
+        I: Integer;
+        Ok: Boolean;
+        L: List of [Integer];
+        Arr: array[3] of Integer;
+        Arr2: array[2, 2] of Integer;
+        Recs: array[2] of Record T;
+        X: Option
+#if TPL
+#endif
+            
+A
+#if X
+, B
+#endif
+#if Y
+, C
+#endif
+;
+    begin
+Bar();
+    end;
+
+    procedure Bar()
+    begin
+    end;
+
+    procedure Foo(A: Integer; B: Integer): Integer
+    begin
+        exit(A + B);
+    end;
+}
+------------------------------------------------------------------------
+
+========================================================================
+B7a GAP: option-members / both-in-arm (81 cells, verdict of the representative GAP); the parser ERRORs on configurations alc accepts; representative occ:_option_member_list_empty_open:0.2.0.0.0@option_type#both-in-arm
+:error
+========================================================================
+table 50100 T
+{
+    fields
+    {
+        field(1; K; Code[20]) { }
+        field(2; N; Integer) { }
+        field(3; B; Boolean) { }
+        field(9; O; Option) { OptionMembers = A,B,C; }
+    }
+    keys
+    {
+        key(PK; K) { Clustered = true; }
+    }
+}
+codeunit 50101 P
+{
+    procedure Q(): Integer
+    var
+        R: Record T;
+        I: Integer;
+        Ok: Boolean;
+        L: List of [Integer];
+        Arr: array[3] of Integer;
+        Arr2: array[2, 2] of Integer;
+        Recs: array[2] of Record T;
+        X: Option
+#if TPL
+#endif
+            
+A
+#if X
+, B ,
+#else
+,
+#endif
+C
+;
+    begin
+Bar();
+    end;
+
+    procedure Bar()
+    begin
+    end;
+
+    procedure Foo(A: Integer; B: Integer): Integer
+    begin
+        exit(A + B);
+    end;
+}
+------------------------------------------------------------------------
+
+========================================================================
+B7a GAP: option-members / count-differs (81 cells, verdict of the representative GAP); the parser ERRORs on configurations alc accepts; representative occ:_option_member_list_empty_open:0.2.0.0.0@option_type#count-differs
+:error
+========================================================================
+table 50100 T
+{
+    fields
+    {
+        field(1; K; Code[20]) { }
+        field(2; N; Integer) { }
+        field(3; B; Boolean) { }
+        field(9; O; Option) { OptionMembers = A,B,C; }
+    }
+    keys
+    {
+        key(PK; K) { Clustered = true; }
+    }
+}
+codeunit 50101 P
+{
+    procedure Q(): Integer
+    var
+        R: Record T;
+        I: Integer;
+        Ok: Boolean;
+        L: List of [Integer];
+        Arr: array[3] of Integer;
+        Arr2: array[2, 2] of Integer;
+        Recs: array[2] of Record T;
+        X: Option
+#if TPL
+#endif
+            
+A
+#if X
+, B , C
+#else
+, "D E"
+#endif
+;
+    begin
+Bar();
+    end;
+
+    procedure Bar()
+    begin
+    end;
+
+    procedure Foo(A: Integer; B: Integer): Integer
+    begin
+        exit(A + B);
+    end;
+}
+------------------------------------------------------------------------
+
+========================================================================
+B7a GAP: option-members / elif (81 cells, verdict of the representative GAP); the parser ERRORs on configurations alc accepts; representative occ:_option_member_list_empty_open:0.2.0.0.0@option_type#elif
+:error
+========================================================================
+table 50100 T
+{
+    fields
+    {
+        field(1; K; Code[20]) { }
+        field(2; N; Integer) { }
+        field(3; B; Boolean) { }
+        field(9; O; Option) { OptionMembers = A,B,C; }
+    }
+    keys
+    {
+        key(PK; K) { Clustered = true; }
+    }
+}
+codeunit 50101 P
+{
+    procedure Q(): Integer
+    var
+        R: Record T;
+        I: Integer;
+        Ok: Boolean;
+        L: List of [Integer];
+        Arr: array[3] of Integer;
+        Arr2: array[2, 2] of Integer;
+        Recs: array[2] of Record T;
+        X: Option
+#if TPL
+#endif
+            
+A
+#if X
+, B
+#elif Y
+, C
+#endif
+, "D E"
+;
+    begin
+Bar();
+    end;
+
+    procedure Bar()
+    begin
+    end;
+
+    procedure Foo(A: Integer; B: Integer): Integer
+    begin
+        exit(A + B);
+    end;
+}
+------------------------------------------------------------------------
+
+========================================================================
+B7a GAP: option-members / empty (24 cells, verdict of the representative GAP); the parser ERRORs on configurations alc accepts; representative occ:_option_members_branch_c:0.0@option_member_list#empty
+:error
+========================================================================
+table 50100 T
+{
+    fields
+    {
+        field(1; K; Code[20]) { }
+        field(2; N; Integer) { }
+        field(3; B; Boolean) { }
+        field(4; O2; Option)
+        {
+            OptionMembers =
+#if TPL
+            
+,
+A ,
+#if X
+#endif
+B
+,
+
+#endif
+#if not TPL
+            A,B,
+#endif
+            C;
+        }
+        field(9; O; Option) { OptionMembers = A,B,C; }
+    }
+    keys
+    {
+        key(PK; K) { Clustered = true; }
+    }
+}
+------------------------------------------------------------------------
+
+========================================================================
+B7a GAP: option-members / empty-list (18 cells, verdict of the representative GAP); the parser ERRORs on configurations alc accepts; representative occ:_option_member_list_empty_open:0.2.0.0.0@option_type#empty-list
+:error
+========================================================================
+table 50100 T
+{
+    fields
+    {
+        field(1; K; Code[20]) { }
+        field(2; N; Integer) { }
+        field(3; B; Boolean) { }
+        field(9; O; Option) { OptionMembers = A,B,C; }
+    }
+    keys
+    {
+        key(PK; K) { Clustered = true; }
+    }
+}
+codeunit 50101 P
+{
+    procedure Q(): Integer
+    var
+        R: Record T;
+        I: Integer;
+        Ok: Boolean;
+        L: List of [Integer];
+        Arr: array[3] of Integer;
+        Arr2: array[2, 2] of Integer;
+        Recs: array[2] of Record T;
+        X: Option
+#if TPL
+#endif
+            
+#if X
+A , B
+#endif
+;
+    begin
+Bar();
+    end;
+
+    procedure Bar()
+    begin
+    end;
+
+    procedure Foo(A: Integer; B: Integer): Integer
+    begin
+        exit(A + B);
+    end;
+}
+------------------------------------------------------------------------
+
+========================================================================
+B7a GAP: option-members / first-replace (81 cells, verdict of the representative GAP); the parser ERRORs on configurations alc accepts; representative occ:_option_member_list_empty_open:0.2.0.0.0@option_type#first-replace
+:error
+========================================================================
+table 50100 T
+{
+    fields
+    {
+        field(1; K; Code[20]) { }
+        field(2; N; Integer) { }
+        field(3; B; Boolean) { }
+        field(9; O; Option) { OptionMembers = A,B,C; }
+    }
+    keys
+    {
+        key(PK; K) { Clustered = true; }
+    }
+}
+codeunit 50101 P
+{
+    procedure Q(): Integer
+    var
+        R: Record T;
+        I: Integer;
+        Ok: Boolean;
+        L: List of [Integer];
+        Arr: array[3] of Integer;
+        Arr2: array[2, 2] of Integer;
+        Recs: array[2] of Record T;
+        X: Option
+#if TPL
+#endif
+            
+#if X
+A
+#else
+B
+#endif
+, C
+;
+    begin
+Bar();
+    end;
+
+    procedure Bar()
+    begin
+    end;
+
+    procedure Foo(A: Integer; B: Integer): Integer
+    begin
+        exit(A + B);
+    end;
+}
+------------------------------------------------------------------------
+
+========================================================================
+B7a GAP: option-members / holes-lead (30 cells, verdict of the representative GAP); the parser ERRORs on configurations alc accepts; representative occ:_option_member_list_empty_open:0.2.0.0.0@option_type#holes-lead
+:error
+========================================================================
+table 50100 T
+{
+    fields
+    {
+        field(1; K; Code[20]) { }
+        field(2; N; Integer) { }
+        field(3; B; Boolean) { }
+        field(9; O; Option) { OptionMembers = A,B,C; }
+    }
+    keys
+    {
+        key(PK; K) { Clustered = true; }
+    }
+}
+codeunit 50101 P
+{
+    procedure Q(): Integer
+    var
+        R: Record T;
+        I: Integer;
+        Ok: Boolean;
+        L: List of [Integer];
+        Arr: array[3] of Integer;
+        Arr2: array[2, 2] of Integer;
+        Recs: array[2] of Record T;
+        X: Option
+#if TPL
+#endif
+            
+#if X
+,
+#endif
+A , B
+;
+    begin
+Bar();
+    end;
+
+    procedure Bar()
+    begin
+    end;
+
+    procedure Foo(A: Integer; B: Integer): Integer
+    begin
+        exit(A + B);
+    end;
+}
+------------------------------------------------------------------------
+
+========================================================================
+B7a GAP: option-members / holes-mid (24 cells, verdict of the representative GAP); the parser ERRORs on configurations alc accepts; representative occ:_option_members_branch_c:0.0@option_member_list#holes-mid
+:error
+========================================================================
+table 50100 T
+{
+    fields
+    {
+        field(1; K; Code[20]) { }
+        field(2; N; Integer) { }
+        field(3; B; Boolean) { }
+        field(4; O2; Option)
+        {
+            OptionMembers =
+#if TPL
+            
+,
+A ,
+#if X
+,
+#endif
+B
+,
+
+#endif
+#if not TPL
+            A,B,
+#endif
+            C;
+        }
+        field(9; O; Option) { OptionMembers = A,B,C; }
+    }
+    keys
+    {
+        key(PK; K) { Clustered = true; }
+    }
+}
+------------------------------------------------------------------------
+
+========================================================================
+B7a GAP: option-members / holes-trail (81 cells, verdict of the representative GAP); the parser ERRORs on configurations alc accepts; representative occ:_option_member_list_empty_open:0.2.0.0.0@option_type#holes-trail
+:error
+========================================================================
+table 50100 T
+{
+    fields
+    {
+        field(1; K; Code[20]) { }
+        field(2; N; Integer) { }
+        field(3; B; Boolean) { }
+        field(9; O; Option) { OptionMembers = A,B,C; }
+    }
+    keys
+    {
+        key(PK; K) { Clustered = true; }
+    }
+}
+codeunit 50101 P
+{
+    procedure Q(): Integer
+    var
+        R: Record T;
+        I: Integer;
+        Ok: Boolean;
+        L: List of [Integer];
+        Arr: array[3] of Integer;
+        Arr2: array[2, 2] of Integer;
+        Recs: array[2] of Record T;
+        X: Option
+#if TPL
+#endif
+            
+A , B
+#if X
+,
+#endif
+;
+    begin
+Bar();
+    end;
+
+    procedure Bar()
+    begin
+    end;
+
+    procedure Foo(A: Integer; B: Integer): Integer
+    begin
+        exit(A + B);
+    end;
+}
+------------------------------------------------------------------------
+
+========================================================================
+B7a GAP: option-members / lead-optional (30 cells, verdict of the representative GAP); the parser ERRORs on configurations alc accepts; representative occ:_option_member_list_empty_open:0.2.0.0.0@option_type#lead-optional
+:error
+========================================================================
+table 50100 T
+{
+    fields
+    {
+        field(1; K; Code[20]) { }
+        field(2; N; Integer) { }
+        field(3; B; Boolean) { }
+        field(9; O; Option) { OptionMembers = A,B,C; }
+    }
+    keys
+    {
+        key(PK; K) { Clustered = true; }
+    }
+}
+codeunit 50101 P
+{
+    procedure Q(): Integer
+    var
+        R: Record T;
+        I: Integer;
+        Ok: Boolean;
+        L: List of [Integer];
+        Arr: array[3] of Integer;
+        Arr2: array[2, 2] of Integer;
+        Recs: array[2] of Record T;
+        X: Option
+#if TPL
+#endif
+            
+#if X
+A ,
+#endif
+B
+;
+    begin
+Bar();
+    end;
+
+    procedure Bar()
+    begin
+    end;
+
+    procedure Foo(A: Integer; B: Integer): Integer
+    begin
+        exit(A + B);
+    end;
+}
+------------------------------------------------------------------------
+
+========================================================================
+B7a GAP: option-members / nested (81 cells, verdict of the representative GAP); the parser ERRORs on configurations alc accepts; representative occ:_option_member_list_empty_open:0.2.0.0.0@option_type#nested
+:error
+========================================================================
+table 50100 T
+{
+    fields
+    {
+        field(1; K; Code[20]) { }
+        field(2; N; Integer) { }
+        field(3; B; Boolean) { }
+        field(9; O; Option) { OptionMembers = A,B,C; }
+    }
+    keys
+    {
+        key(PK; K) { Clustered = true; }
+    }
+}
+codeunit 50101 P
+{
+    procedure Q(): Integer
+    var
+        R: Record T;
+        I: Integer;
+        Ok: Boolean;
+        L: List of [Integer];
+        Arr: array[3] of Integer;
+        Arr2: array[2, 2] of Integer;
+        Recs: array[2] of Record T;
+        X: Option
+#if TPL
+#endif
+            
+A
+#if X
+, B
+#if Y
+, C
+#endif
+#endif
+, "D E"
+;
+    begin
+Bar();
+    end;
+
+    procedure Bar()
+    begin
+    end;
+
+    procedure Foo(A: Integer; B: Integer): Integer
+    begin
+        exit(A + B);
+    end;
+}
+------------------------------------------------------------------------
+
+========================================================================
+B7a GAP: option-members / one-elem (42 cells, verdict of the representative GAP); the parser ERRORs on configurations alc accepts; representative occ:_option_member_list_empty_open:0.2.0.0.0@option_type#one-elem
+:error
+========================================================================
+table 50100 T
+{
+    fields
+    {
+        field(1; K; Code[20]) { }
+        field(2; N; Integer) { }
+        field(3; B; Boolean) { }
+        field(9; O; Option) { OptionMembers = A,B,C; }
+    }
+    keys
+    {
+        key(PK; K) { Clustered = true; }
+    }
+}
+codeunit 50101 P
+{
+    procedure Q(): Integer
+    var
+        R: Record T;
+        I: Integer;
+        Ok: Boolean;
+        L: List of [Integer];
+        Arr: array[3] of Integer;
+        Arr2: array[2, 2] of Integer;
+        Recs: array[2] of Record T;
+        X: Option
+#if TPL
+#endif
+            
+#if X
+A , B
+#else
+A
+#endif
+;
+    begin
+Bar();
+    end;
+
+    procedure Bar()
+    begin
+    end;
+
+    procedure Foo(A: Integer; B: Integer): Integer
+    begin
+        exit(A + B);
+    end;
+}
+------------------------------------------------------------------------
+
+========================================================================
+B7a GAP: option-members / seed:item2-option-member-leading (1 cells, verdict of the representative GAP); the parser ERRORs on configurations alc accepts; representative seed:item2-option-member-leading
+:error
+========================================================================
+// host: option_member_list
+// valid: *
+// source: docs/deferred-work.md item 2 (the comma INSIDE the group: `X #if FOO , Y #endif`)
+table 50100 T
+{
+    fields
+    {
+        field(1; F; Option)
+        {
+            OptionMembers = X
+#if FOO
+                , Y
+#endif
+                ;
+        }
+    }
+}
+------------------------------------------------------------------------
+
+========================================================================
+B7a GAP: option-members / seed:value-runs__b13-optionmembers-comma-free (1 cells, verdict of the representative GAP); the parser ERRORs on configurations alc accepts; representative seed:value-runs__b13-optionmembers-comma-free
+:error
+========================================================================
+// host: option_member_list
+// valid: *
+// seed-source: tools/alc_probe/cases/value-runs/b13-optionmembers-comma-free.al (verdicts measured by alc, as recorded in its expect lines)
+// source: test/corpus/property_value_run_b13_gap_test.txt case 8
+// B11: B13 shape: comma-free OptionMembers alternatives, the `;` after the last #endif (controller ruling, Task 7).
+// source: docs/superpowers/specs/2026-10-05-property-value-runs-design.md 3.1 step 5
+// expect: * accept
+table 50101 Cust { fields { field(1; "No."; Code[20]) { } field(2; Name; Text[30]) { } field(3; Amount; Decimal) { } field(4; Flag; Boolean) { } } }
+page 50103 CustList { PageType = ListPart; SourceTable = Cust; layout { area(Content) { repeater(R) { field(N; Rec."No.") { } } } } }
+interface IFoo { procedure Bar(); }
+codeunit 50104 FooImpl implements IFoo { procedure Bar() begin end; }
+codeunit 50107 FooImpl2 implements IFoo { procedure Bar() begin end; }
+table 50100 T { fields { field(1; K; Option) {
+OptionMembers =
+#if X
+    A
+#endif
+#if not X
+    B
+#endif
+;
+} } }
+------------------------------------------------------------------------
+
+========================================================================
+B7a GAP: option-members / seed:value-runs__b13-optionmembers-trailing-after-comma (1 cells, verdict of the representative GAP); the parser ERRORs on configurations alc accepts; representative seed:value-runs__b13-optionmembers-trailing-after-comma
+:error
+========================================================================
+// host: option_member_list
+// valid: *
+// seed-source: tools/alc_probe/cases/value-runs/b13-optionmembers-trailing-after-comma.al (verdicts measured by alc, as recorded in its expect lines)
+// B11: B13 shape: an OptionMembers conditional member, then `, B;` outside the group (Task 9, deferred-work B13).
+// source: docs/deferred-work.md B13
+// expect: * accept
+table 50100 T { fields { field(1; K; Option) {
+OptionMembers =
+#if X
+    A
+#endif
+    , B;
+} } }
+------------------------------------------------------------------------
+
+========================================================================
+B7a GAP: option-members / seed:value-runs__bare-semi-arm-optionmembers (1 cells, verdict of the representative MIXED); the parser ERRORs on configurations alc accepts; representative seed:value-runs__bare-semi-arm-optionmembers
+:error
+========================================================================
+// host: option_member_list
+// valid: !X
+// seed-source: tools/alc_probe/cases/value-runs/bare-semi-arm-optionmembers.al (verdicts measured by alc, as recorded in its expect lines)
+// B11: Bare `;` arm, OptionMembers: `N = #if X ; #else v; #endif` (spec 3, Bare `;` arms).
+// source: docs/superpowers/specs/2026-10-05-property-value-runs-design.md 5.1
+// expect: * accept
+// expect: X reject(AL0153)
+table 50101 Cust { fields { field(1; "No."; Code[20]) { } field(2; Name; Text[30]) { } field(3; Amount; Decimal) { } field(4; Flag; Boolean) { } } }
+page 50103 CustList { PageType = ListPart; SourceTable = Cust; layout { area(Content) { repeater(R) { field(N; Rec."No.") { } } } } }
+interface IFoo { procedure Bar(); }
+codeunit 50104 FooImpl implements IFoo { procedure Bar() begin end; }
+codeunit 50107 FooImpl2 implements IFoo { procedure Bar() begin end; }
+table 50100 T { fields { field(1; K; Option) {
+OptionMembers =
+#if X
+    ;
+#else
+    A;
+#endif
+} } }
+------------------------------------------------------------------------
+
+========================================================================
+B7a GAP: option-members / sep-after (24 cells, verdict of the representative GAP); the parser ERRORs on configurations alc accepts; representative occ:_option_members_branch_c:0.0@option_member_list#sep-after
+:error
+========================================================================
+table 50100 T
+{
+    fields
+    {
+        field(1; K; Code[20]) { }
+        field(2; N; Integer) { }
+        field(3; B; Boolean) { }
+        field(4; O2; Option)
+        {
+            OptionMembers =
+#if TPL
+            
+,
+A ,
+#if X
+B ,
+#endif
+"D E"
+,
+
+#endif
+#if not TPL
+            A,B,
+#endif
+            C;
+        }
+        field(9; O; Option) { OptionMembers = A,B,C; }
+    }
+    keys
+    {
+        key(PK; K) { Clustered = true; }
+    }
+}
+------------------------------------------------------------------------
+
+========================================================================
+B7a GAP: option-members / sep-before (81 cells, verdict of the representative GAP); the parser ERRORs on configurations alc accepts; representative occ:_option_member_list_empty_open:0.2.0.0.0@option_type#sep-before
+:error
+========================================================================
+table 50100 T
+{
+    fields
+    {
+        field(1; K; Code[20]) { }
+        field(2; N; Integer) { }
+        field(3; B; Boolean) { }
+        field(9; O; Option) { OptionMembers = A,B,C; }
+    }
+    keys
+    {
+        key(PK; K) { Clustered = true; }
+    }
+}
+codeunit 50101 P
+{
+    procedure Q(): Integer
+    var
+        R: Record T;
+        I: Integer;
+        Ok: Boolean;
+        L: List of [Integer];
+        Arr: array[3] of Integer;
+        Arr2: array[2, 2] of Integer;
+        Recs: array[2] of Record T;
+        X: Option
+#if TPL
+#endif
+            
+A
+#if X
+, B
+#endif
+, C
+;
+    begin
+Bar();
+    end;
+
+    procedure Bar()
+    begin
+    end;
+
+    procedure Foo(A: Integer; B: Integer): Integer
+    begin
+        exit(A + B);
+    end;
+}
+------------------------------------------------------------------------
+
+========================================================================
+B7a GAP: option-members / sep-before-end (81 cells, verdict of the representative GAP); the parser ERRORs on configurations alc accepts; representative occ:_option_member_list_empty_open:0.2.0.0.0@option_type#sep-before-end
+:error
+========================================================================
+table 50100 T
+{
+    fields
+    {
+        field(1; K; Code[20]) { }
+        field(2; N; Integer) { }
+        field(3; B; Boolean) { }
+        field(9; O; Option) { OptionMembers = A,B,C; }
+    }
+    keys
+    {
+        key(PK; K) { Clustered = true; }
+    }
+}
+codeunit 50101 P
+{
+    procedure Q(): Integer
+    var
+        R: Record T;
+        I: Integer;
+        Ok: Boolean;
+        L: List of [Integer];
+        Arr: array[3] of Integer;
+        Arr2: array[2, 2] of Integer;
+        Recs: array[2] of Record T;
+        X: Option
+#if TPL
+#endif
+            
+A
+#if X
+, B
+#endif
+;
+    begin
+Bar();
+    end;
+
+    procedure Bar()
+    begin
+    end;
+
+    procedure Foo(A: Integer; B: Integer): Integer
+    begin
+        exit(A + B);
+    end;
+}
+------------------------------------------------------------------------
+
+========================================================================
+B7a GAP: option-members / sep-only (81 cells, verdict of the representative GAP); the parser ERRORs on configurations alc accepts; representative occ:_option_member_list_empty_open:0.2.0.0.0@option_type#sep-only
+:error
+========================================================================
+table 50100 T
+{
+    fields
+    {
+        field(1; K; Code[20]) { }
+        field(2; N; Integer) { }
+        field(3; B; Boolean) { }
+        field(9; O; Option) { OptionMembers = A,B,C; }
+    }
+    keys
+    {
+        key(PK; K) { Clustered = true; }
+    }
+}
+codeunit 50101 P
+{
+    procedure Q(): Integer
+    var
+        R: Record T;
+        I: Integer;
+        Ok: Boolean;
+        L: List of [Integer];
+        Arr: array[3] of Integer;
+        Arr2: array[2, 2] of Integer;
+        Recs: array[2] of Record T;
+        X: Option
+#if TPL
+#endif
+            
+A
+#if X
+,
+#else
+,
+#endif
+B
+;
+    begin
+Bar();
+    end;
+
+    procedure Bar()
+    begin
+    end;
+
+    procedure Foo(A: Integer; B: Integer): Integer
+    begin
+        exit(A + B);
+    end;
+}
+------------------------------------------------------------------------
+
+========================================================================
+B7a GAP: option-members / trail (24 cells, verdict of the representative GAP); the parser ERRORs on configurations alc accepts; representative occ:_option_members_branch_c:0.0@option_member_list#trail
+:error
+========================================================================
+table 50100 T
+{
+    fields
+    {
+        field(1; K; Code[20]) { }
+        field(2; N; Integer) { }
+        field(3; B; Boolean) { }
+        field(4; O2; Option)
+        {
+            OptionMembers =
+#if TPL
+            
+,
+A ,
+#if X
+B
+#endif
+,
+
+#endif
+#if not TPL
+            A,B,
+#endif
+            C;
+        }
+        field(9; O; Option) { OptionMembers = A,B,C; }
+    }
+    keys
+    {
+        key(PK; K) { Clustered = true; }
+    }
+}
+------------------------------------------------------------------------

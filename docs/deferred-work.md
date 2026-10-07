@@ -38,7 +38,42 @@ project's history — one of which reached a committed fixture before it was cau
 
 ---
 
-## 1. Six separator positions have no preprocessor host
+## 1. Separator positions without a preprocessor host: audited by B7a (2026-10-07)
+
+**Established:** B7a, a fresh audit (`python -m tools.b7_audit`, spec
+`docs/superpowers/specs/2026-10-06-b7a-separator-continuation-audit-design.md`): 24,355 cells over every separator,
+terminator and continuation site the grammar census finds, each judged against `alc` 18.0.41 and the config oracle.
+Totals: GAP 14,692, SILENT 1,362, MIXED 3,981, REJECTED/over-accepts 3, UNCHECKED 117, REJECTED 144, CONSISTENT 4,056.
+The matrix `docs/b7-separator-continuation-matrix.md` is the record; the 4.0.0 six-site list below is superseded by it. In the matrix, by family
+(GAP unless noted; `sites` = production sites (matching shapes): the production walk's (host, class) counts that match
+the family's defective placements, 0 for all but a few):
+
+- `parameter-list` (the `;`-led form): GAP, 0 weighted sites (45 terminated-unit sites, unweighted)
+- `implements`: GAP, 0 sites
+- `option-members`: GAP, 6 sites, owner B13 (items 37, 38)
+- `link-list` (GAP, OVERACCEPT) and `link-list-comma-leading`: owner B12 / B7b+ with `link-property-ambiguity` as its
+  dependency; the G11 reproducer is the seed `g11-item1-link-comma-leading__comma_leading_link`
+- `key-fields`: GAP, 0 sites
+- `ml-pairs`, `namespace-pairs`: GAP, 0 sites
+- `argument_list` stays RESOLVED for the shapes the old record pinned; the matrix still finds `arguments` GAP (1 site) and
+  SILENT at other placements
+
+The audit found far more than six: 15 SILENT families, the largest `empty-statement-ownership` (825 cells, an arm's lone
+`;` read as an `empty_statement` in a host the oracle cannot lower; ruling first, B7b decides who owns the `;`) and
+`statement-terminator` (303 cells), then GAP families led by `split-call` and `split-if-begin` (17 matching sites each)
+(Section 'Ranked fix list' of the matrix, proposed B7b+ order in the roadmap row B7). Every defect group has a pinned
+witness: an alc probe in `tools/alc_probe/cases/b7-audit/` and a `test/corpus/b7_gap_*_test.txt` case (GAP
+witnesses use the corpus `:error` attribute, syntax over-accepts witnesses are pinned as trees; 792 of the 854 cases
+carry `:error`), or a `tools/b7_audit/tests/test_silent.py` case (SILENT).
+
+**Next step:** B7b+ per the ranked list, starting with the `empty-statement-ownership` ruling; each fix flips its
+group's witnesses. After a grammar change run `assert --refresh`, a FULL `run` (warm cache: minutes; `run --only
+<family>` re-observes every cell but compiles only the slice, and exits 2 when the change moved a cell outside the
+slice into a tier that needs an uncached compile) and `report`.
+
+**Owner:** B7b+ (B12 / B13 for the families named above).
+
+### Old record, as written (4.0.0)
 
 **Established:** an audit that enumerated all 26 separator sites in `grammar.js`,
 mapped each to its owning rule, and probed the unhosted ones against `alc`. Done
@@ -67,6 +102,23 @@ scanner-classification design sketched during the release is an architecture
 upgrade, not a prerequisite.
 
 ## 2. A rule existing is not the same as the shape being covered
+
+**Established:** B7a (2026-10-07) turned this into a gate: every registry row whose template supports them is probed at
+BOTH comma placements and at every other placement of the §6.1 table (`lead-optional`, `holes-lead`, `holes-mid`,
+`holes-trail`, `trail`, `one-elem`, `empty-list`, ...). Not every host is probed at every placement: a placement is
+skipped where the template cannot form it (too few elements, a positional first element, a fixed arity, a token-only
+hole), qualifier rows get none, and the matrix section 'Not probed' lists each skipped row with its real reason
+(`placements.skipped_for`). A rule's existence is no longer read as coverage; a cell is CONSISTENT only with a holding
+assertion or an oracle pass.
+The matrix `docs/b7-separator-continuation-matrix.md` lists per (family, base placement) which placement is GAP, SILENT or CONSISTENT.
+`option-members` shows the original shape: `X, #if FOO Y #endif` versus `X #if FOO , Y #endif` are separate
+placements with separate verdicts.
+
+**Next step:** none separate; resolved into item 1 and the matrix.
+
+**Owner:** B7b+.
+
+### Old record, as written
 
 **Established:** by construction, during the same audit. This is the reason item 1
 says "shape" rather than "site".
@@ -1224,6 +1276,10 @@ in the link properties: 0 (`./tools/corpus-grep.sh -P -i -c '(SubPageLink|RunPag
 
 **Next step:** roadmap B7 (separator audit), with the comma-leading link list it already carries.
 
+**B7a cross-reference (2026-10-07):** the matrix cells are family `link-list`, OVERACCEPT, base placements `trail` (6 cells),
+`holes-trail` (6) and the seed `link-keying__decide-trailing-comma` (witness
+`tools/alc_probe/cases/b7-audit/link-list__seed-link-keying__decide-trailing-comma__overaccept.al`); owner B12.
+
 **Owner:** B7.
 
 ## 31. `filter((1|2)&3)` ERRORs — RESOLVED 2026-10-06
@@ -1477,6 +1533,11 @@ Production sites: 0 (tree-harness over the four corpora shows no valid tree chan
 **Next step:** B7 gives both hosts a continuation, moves the two cases to a positive fixture, and inverts
 `test_b7_gap_is_loud_not_silent` (has_error must become False).
 
+**B7a cross-reference (2026-10-07):** shape 1 is family `repeat-until` GAP (the `chain`, `consecutive`, `first`, `nested`,
+`op-only`, `suffix` ... groups, 864 cells, `sites` 293); shape 2 is family `assignment` GAP, base placement `semi-in-arms`
+(40 cells), with `op-only` OVERACCEPT beside it. Both are ranked in the matrix (#23 and #21/#22), witnesses in
+`test/corpus/b7_gap_repeat_until_test.txt` and `test/corpus/b7_gap_assignment_test.txt`.
+
 **Owner:** B7.
 
 ## 40. A bare parenless call has two shapes: `Bar;` and `Order;`
@@ -1487,6 +1548,43 @@ statement: `call_statement` takes only identifier and quoted-identifier tokens, 
 `_value_start_keyword_name`. Pinned in `test/corpus/expression_statement_test.txt` as current behaviour, not a contract.
 
 **Next step:** pick one shape for "a bare name as a statement" and route every arm to it.
+
+**Owner:** unassigned.
+
+## 41. An `as`/`is` continuation across `#if` arms is torn into separate statements silently (B7a)
+
+**Established:** 2026-10-07, B7a Task 10 (`tools/b7_audit/tests/test_silent.py`, family `type-test`, group `consecutive`, cell
+`bnd:as_expression:left:end@as_expression#consecutive/type-test`; also `nested` and `suffix`). `Intf2 := Intf #if X as IFoo
+#endif #if Y as IFoo #endif as IFoo;` parses clean, but the arms are not a continuation of the assignment: the tree holds
+separate statements, and the oracle reports a discrepancy at `X=0,Y=0`. `as`/`is` have no continuation facility. The bare
+`(identifier)` statement in that tree is only the symptom: B6 accepts a bare identifier as a statement by design (spec
+`2026-10-06-expression-statement-narrowing-design.md` 3.1), so that part is not a defect. See also item 40.
+
+**Next step:** B7b+ (matrix family `type-test`): give `as`/`is` a continuation tail, or make the tear an ERROR.
+
+**Owner:** unassigned.
+
+## 42. 117 UNCHECKED cells in the B7a matrix: generator imprecisions (audit debt)
+
+**Established:** 2026-10-07, B7a Task 10. The 117 cells all carry `representative vector mismatch`: alc disagreed with the
+generator's intended vector (the cell's class representative is not a valid instance of the intent), so the judge returns
+UNCHECKED before any assertion: `permissions` 96 (AL0393), `arguments` 12 (AL0135), `integer-list` 6 (AL0456),
+`statement-terminator` 3 (`;` before `end`). They are listed in the matrix section 'UNCHECKED' and never ranked, so none
+is a known defect and none is known clean.
+
+The 117 are where a larger generator imprecision blocks a verdict. In all, 3,091 cells carry
+`vector_mismatch` (alc's acceptance differs from the intended vector; matrix section 'Generator imprecisions'), all of
+them alc-measured: MIXED 2,564, GAP 261, REJECTED 128, CONSISTENT 78, SILENT 60. The 117 UNCHECKED above are not among
+them: they are class-sampled, carry no alc verdict of their own, and inherit their representative's mismatch. By base
+placement: `trail` 1,011, `empty-list` 264, `holes-lead` / `holes-mid` / `holes-trail` 261 each,
+`op-only` 248, `nested` 89, `consecutive` 49, `sep-before-end` 48, `whole-operand` 46, `lead-optional` 42, `elif` 42,
+then 20 placements under 40 each. By family the largest are `permissions` 360, `property-value` 326,
+`caption-subfields` 324, `ml-pairs` 183, `integer-list` 165. Verdicts use alc's actual acceptance, so these cells are
+judged correctly; the mismatch means the intended vector (the generator's validity model per placement, mostly the
+trailing-separator and holes rules) is wrong for that family, which only matters for class sampling.
+
+**Next step:** fix the four templates in `tools/b7_audit/registry.tsv` (a valid filling per vector), re-run
+`run --only permissions|arguments|integer-list|statement-terminator`, close the cells with assertions, `report`.
 
 **Owner:** unassigned.
 

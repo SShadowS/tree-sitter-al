@@ -1,0 +1,23 @@
+// host: link_value_list
+// valid: !X
+// seed-source: tools/alc_probe/cases/link-keying/g11-query-dataitem-empty-arm-beside-terminated.al (verdicts measured by alc, as recorded in its expect lines)
+// Fixture link_keying_test.txt#G11 empty-arm-beside-terminated, query-dataitem (probe g11-query-dataitem-empty-arm-beside-terminated.al) is one property#0
+// G11 shape empty-arm-beside-terminated, delegate-valid pairs, query-dataitem (B5b 5.1).
+// expect: * accept
+// expect: !X accept
+// expect: X reject(AL0104,AL0107,AL0124,AL0198)
+// source: docs/superpowers/specs/2026-10-05-link-keying-design.md section 5.1/5.2
+table 50101 Cust { fields { field(1; "No."; Code[20]) { } field(2; Name; Text[30]) { } field(3; Amount; Decimal) { } field(4; Flag; Boolean) { } field(5; Kind; Option) { OptionMembers = Open,Closed; } field(6; Posted; Date) { } field(7; At; Time) { } field(8; Stamp; DateTime) { } } }
+page 50102 CustCard { PageType = Card; SourceTable = Cust; layout { area(Content) { field(N; Rec."No.") { } } } }
+page 50103 CustList { PageType = ListPart; SourceTable = Cust; layout { area(Content) { repeater(R) { field(N; Rec."No.") { } } } } }
+query 50150 Q
+{
+    elements { dataitem(C; Cust) { column(No; "No.") { } dataitem(D; Cust) {
+        DataItemLink =
+#if X
+#else
+        Name = C.Name;
+#endif
+        column(N2; Name) { }
+    } } }
+}

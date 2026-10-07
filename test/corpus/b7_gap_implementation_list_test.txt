@@ -1,0 +1,499 @@
+========================================================================
+B7a GAP: implementation-list / first-replace (3 cells, verdict of the representative GAP); the parser ERRORs on configurations alc accepts; representative occ:_impl_value_run:0.1.0.0@implementation_value_list#first-replace
+:error
+========================================================================
+interface IFoo
+{
+}
+
+interface IBar
+{
+}
+
+interface IBaz
+{
+}
+
+codeunit 50103 Impl implements IFoo, IBar, IBaz
+{
+}
+
+enum 50108 En implements IFoo, IBar, IBaz
+{
+    DefaultImplementation = IFoo = Impl, IBar = Impl, IBaz = Impl;
+    value(0; V0)
+    {
+    Implementation = 
+#if X
+IFoo = Impl
+#else
+IBar = Impl
+#endif
+, IBaz = Impl
+;
+    }
+}
+------------------------------------------------------------------------
+
+========================================================================
+B7a REJECTED/over-accepts(syntax): implementation-list / holes-lead (15 cells, verdict of the representative MIXED); alc rejects with a syntax code (AL0107) but the parser is clean; representative occ:_impl_value_branch:0.0@implementation_value_list#holes-lead
+========================================================================
+interface IFoo
+{
+}
+
+interface IBar
+{
+}
+
+interface IBaz
+{
+}
+
+codeunit 50103 Impl implements IFoo, IBar, IBaz
+{
+}
+
+enum 50108 En implements IFoo, IBar, IBaz
+{
+    DefaultImplementation = IFoo = Impl, IBar = Impl, IBaz = Impl;
+    value(0; V0)
+    {
+    Implementation =
+#if TPL
+        IFoo = Impl,
+#else
+        
+#if X
+,
+#endif
+IFoo = Impl , IBar = Impl
+,
+
+#endif
+        IBaz = Impl;
+    }
+}
+------------------------------------------------------------------------
+
+(source_file
+  (interface_declaration
+    (interface_keyword)
+    object_name: (identifier))
+  (interface_declaration
+    (interface_keyword)
+    object_name: (identifier))
+  (interface_declaration
+    (interface_keyword)
+    object_name: (identifier))
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    (implements_clause
+      (implements_keyword)
+      interface: (identifier)
+      interface: (identifier)
+      interface: (identifier)))
+  (enum_declaration
+    (enum_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    (implements_clause
+      (implements_keyword)
+      interface: (identifier)
+      interface: (identifier)
+      interface: (identifier))
+    body: (declaration_body
+      (property
+        name: (property_name)
+        value: (implementation_value_list
+          (implementation_value
+            interface: (identifier)
+            implementation: (identifier))
+          (implementation_value
+            interface: (identifier)
+            implementation: (identifier))
+          (implementation_value
+            interface: (identifier)
+            implementation: (identifier))))
+      (enum_value_declaration
+        (value_keyword)
+        value_id: (integer)
+        value_name: (identifier)
+        body: (declaration_body
+          (property
+            name: (property_name)
+            value: (implementation_value_list
+              (preproc_conditional_impl_values
+                (preproc_if
+                  (preproc_open)
+                  condition: (identifier))
+                (implementation_value
+                  interface: (identifier)
+                  implementation: (identifier))
+                (preproc_else)
+                (preproc_conditional_impl_values
+                  (preproc_if
+                    (preproc_open)
+                    condition: (identifier))
+                  (preproc_endif
+                    (preproc_close)))
+                (implementation_value
+                  interface: (identifier)
+                  implementation: (identifier))
+                (implementation_value
+                  interface: (identifier)
+                  implementation: (identifier))
+                (preproc_endif
+                  (preproc_close)))
+              (implementation_value
+                interface: (identifier)
+                implementation: (identifier)))))))))
+
+========================================================================
+B7a REJECTED/over-accepts(syntax): implementation-list / holes-mid (15 cells, verdict of the representative MIXED); alc rejects with a syntax code (AL0107) but the parser is clean; representative occ:_impl_value_branch:0.0@implementation_value_list#holes-mid
+========================================================================
+interface IFoo
+{
+}
+
+interface IBar
+{
+}
+
+interface IBaz
+{
+}
+
+codeunit 50103 Impl implements IFoo, IBar, IBaz
+{
+}
+
+enum 50108 En implements IFoo, IBar, IBaz
+{
+    DefaultImplementation = IFoo = Impl, IBar = Impl, IBaz = Impl;
+    value(0; V0)
+    {
+    Implementation =
+#if TPL
+        IFoo = Impl,
+#else
+        
+IFoo = Impl ,
+#if X
+,
+#endif
+IBar = Impl
+,
+
+#endif
+        IBaz = Impl;
+    }
+}
+------------------------------------------------------------------------
+
+(source_file
+  (interface_declaration
+    (interface_keyword)
+    object_name: (identifier))
+  (interface_declaration
+    (interface_keyword)
+    object_name: (identifier))
+  (interface_declaration
+    (interface_keyword)
+    object_name: (identifier))
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    (implements_clause
+      (implements_keyword)
+      interface: (identifier)
+      interface: (identifier)
+      interface: (identifier)))
+  (enum_declaration
+    (enum_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    (implements_clause
+      (implements_keyword)
+      interface: (identifier)
+      interface: (identifier)
+      interface: (identifier))
+    body: (declaration_body
+      (property
+        name: (property_name)
+        value: (implementation_value_list
+          (implementation_value
+            interface: (identifier)
+            implementation: (identifier))
+          (implementation_value
+            interface: (identifier)
+            implementation: (identifier))
+          (implementation_value
+            interface: (identifier)
+            implementation: (identifier))))
+      (enum_value_declaration
+        (value_keyword)
+        value_id: (integer)
+        value_name: (identifier)
+        body: (declaration_body
+          (property
+            name: (property_name)
+            value: (implementation_value_list
+              (preproc_conditional_impl_values
+                (preproc_if
+                  (preproc_open)
+                  condition: (identifier))
+                (implementation_value
+                  interface: (identifier)
+                  implementation: (identifier))
+                (preproc_else)
+                (implementation_value
+                  interface: (identifier)
+                  implementation: (identifier))
+                (preproc_conditional_impl_values
+                  (preproc_if
+                    (preproc_open)
+                    condition: (identifier))
+                  (preproc_endif
+                    (preproc_close)))
+                (implementation_value
+                  interface: (identifier)
+                  implementation: (identifier))
+                (preproc_endif
+                  (preproc_close)))
+              (implementation_value
+                interface: (identifier)
+                implementation: (identifier)))))))))
+
+========================================================================
+B7a GAP: implementation-list / holes-trail (12 cells, verdict of the representative MIXED); the parser ERRORs on configurations alc accepts; representative occ:_impl_value_branch:0.0@implementation_value_list#holes-trail
+:error
+========================================================================
+interface IFoo
+{
+}
+
+interface IBar
+{
+}
+
+interface IBaz
+{
+}
+
+codeunit 50103 Impl implements IFoo, IBar, IBaz
+{
+}
+
+enum 50108 En implements IFoo, IBar, IBaz
+{
+    DefaultImplementation = IFoo = Impl, IBar = Impl, IBaz = Impl;
+    value(0; V0)
+    {
+    Implementation =
+#if TPL
+        IFoo = Impl,
+#else
+        
+IFoo = Impl , IBar = Impl
+#if X
+,
+#endif
+,
+
+#endif
+        IBaz = Impl;
+    }
+}
+------------------------------------------------------------------------
+
+========================================================================
+B7a GAP: implementation-list / one-elem (12 cells, verdict of the representative GAP); the parser ERRORs on configurations alc accepts; representative occ:_impl_value_branch:0.0@implementation_value_list#one-elem
+:error
+========================================================================
+interface IFoo
+{
+}
+
+interface IBar
+{
+}
+
+interface IBaz
+{
+}
+
+codeunit 50103 Impl implements IFoo, IBar, IBaz
+{
+}
+
+enum 50108 En implements IFoo, IBar, IBaz
+{
+    DefaultImplementation = IFoo = Impl, IBar = Impl, IBaz = Impl;
+    value(0; V0)
+    {
+    Implementation =
+#if TPL
+        IFoo = Impl,
+#else
+        
+#if X
+IFoo = Impl , IBar = Impl
+#else
+IFoo = Impl
+#endif
+,
+
+#endif
+        IBaz = Impl;
+    }
+}
+------------------------------------------------------------------------
+
+========================================================================
+B7a GAP: implementation-list / seed:task4-implementation-arm-comma-after-endif (1 cells, verdict of the representative MIXED); the parser ERRORs on configurations alc accepts; representative seed:task4-implementation-arm-comma-after-endif
+:error
+========================================================================
+// host: preproc_conditional_impl_values
+// valid: X
+// source: B7a Task 4 incidental (a `,`-led Implementation arm followed by `, X` after #endif; the parser ERRORs, alc accepted at Task 4 probe, re-measured by Task 6: valid only with X, the !X rejection is AL0596 a missing interface entry, semantic)
+interface IFoo { procedure Bar(); }
+interface IBar { procedure Bar(); }
+interface IBaz { procedure Bar(); }
+codeunit 50101 Impl implements IFoo, IBar, IBaz { procedure Bar() begin end; }
+table 50100 T { fields { field(1; K; Integer) { } } }
+enum 50102 E implements IFoo, IBar, IBaz
+{
+    value(0; V0)
+    {
+        Implementation = IFoo = Impl
+#if X
+            , IBar = Impl
+#endif
+            , IBaz = Impl;
+    }
+}
+------------------------------------------------------------------------
+
+========================================================================
+B7a GAP: implementation-list / sep-before (3 cells, verdict of the representative GAP); the parser ERRORs on configurations alc accepts; representative occ:_impl_value_run:0.1.0.0@implementation_value_list#sep-before
+:error
+========================================================================
+interface IFoo
+{
+}
+
+interface IBar
+{
+}
+
+interface IBaz
+{
+}
+
+codeunit 50103 Impl implements IFoo, IBar, IBaz
+{
+}
+
+enum 50108 En implements IFoo, IBar, IBaz
+{
+    DefaultImplementation = IFoo = Impl, IBar = Impl, IBaz = Impl;
+    value(0; V0)
+    {
+    Implementation = 
+IFoo = Impl
+#if X
+, IBar = Impl
+#endif
+, IBaz = Impl
+;
+    }
+}
+------------------------------------------------------------------------
+
+========================================================================
+B7a GAP: implementation-list / sep-before-end (12 cells, verdict of the representative GAP); the parser ERRORs on configurations alc accepts; representative occ:_impl_value_branch:0.0@implementation_value_list#sep-before-end
+:error
+========================================================================
+interface IFoo
+{
+}
+
+interface IBar
+{
+}
+
+interface IBaz
+{
+}
+
+codeunit 50103 Impl implements IFoo, IBar, IBaz
+{
+}
+
+enum 50108 En implements IFoo, IBar, IBaz
+{
+    DefaultImplementation = IFoo = Impl, IBar = Impl, IBaz = Impl;
+    value(0; V0)
+    {
+    Implementation =
+#if TPL
+        IFoo = Impl,
+#else
+        
+IFoo = Impl
+#if X
+, IBar = Impl
+#endif
+,
+
+#endif
+        IBaz = Impl;
+    }
+}
+------------------------------------------------------------------------
+
+========================================================================
+B7a GAP: implementation-list / trail (12 cells, verdict of the representative MIXED); the parser ERRORs on configurations alc accepts; representative occ:_impl_value_branch:0.0@implementation_value_list#trail
+:error
+========================================================================
+interface IFoo
+{
+}
+
+interface IBar
+{
+}
+
+interface IBaz
+{
+}
+
+codeunit 50103 Impl implements IFoo, IBar, IBaz
+{
+}
+
+enum 50108 En implements IFoo, IBar, IBaz
+{
+    DefaultImplementation = IFoo = Impl, IBar = Impl, IBaz = Impl;
+    value(0; V0)
+    {
+    Implementation =
+#if TPL
+        IFoo = Impl,
+#else
+        
+IFoo = Impl ,
+#if X
+IBar = Impl
+#endif
+,
+
+#endif
+        IBaz = Impl;
+    }
+}
+------------------------------------------------------------------------

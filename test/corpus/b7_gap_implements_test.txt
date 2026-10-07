@@ -1,0 +1,263 @@
+========================================================================
+B7a GAP: implements / empty (9 cells, verdict of the representative GAP); the parser ERRORs on configurations alc accepts; representative occ:implements_clause:2.0.0@codeunit_declaration#empty
+:error
+========================================================================
+interface IFoo
+{
+}
+
+interface IBar
+{
+}
+
+interface IBaz
+{
+}
+
+codeunit 50111 C2 implements 
+IFoo ,
+#if X
+#endif
+IBar
+
+{
+}
+------------------------------------------------------------------------
+
+========================================================================
+B7a GAP: implements / empty-list (9 cells, verdict of the representative MIXED); the parser ERRORs on configurations alc accepts; representative occ:implements_clause:2.0.0@codeunit_declaration#empty-list
+:error
+========================================================================
+interface IFoo
+{
+}
+
+interface IBar
+{
+}
+
+interface IBaz
+{
+}
+
+codeunit 50111 C2 implements 
+#if X
+IFoo , IBar
+#endif
+
+{
+}
+------------------------------------------------------------------------
+
+========================================================================
+B7a GAP: implements / holes-lead (9 cells, verdict of the representative MIXED); the parser ERRORs on configurations alc accepts; representative occ:implements_clause:2.0.0@codeunit_declaration#holes-lead
+:error
+========================================================================
+interface IFoo
+{
+}
+
+interface IBar
+{
+}
+
+interface IBaz
+{
+}
+
+codeunit 50111 C2 implements 
+#if X
+,
+#endif
+IFoo , IBar
+
+{
+}
+------------------------------------------------------------------------
+
+========================================================================
+B7a GAP: implements / holes-mid (9 cells, verdict of the representative MIXED); the parser ERRORs on configurations alc accepts; representative occ:implements_clause:2.0.0@codeunit_declaration#holes-mid
+:error
+========================================================================
+interface IFoo
+{
+}
+
+interface IBar
+{
+}
+
+interface IBaz
+{
+}
+
+codeunit 50111 C2 implements 
+IFoo ,
+#if X
+,
+#endif
+IBar
+
+{
+}
+------------------------------------------------------------------------
+
+========================================================================
+B7a GAP: implements / holes-trail (9 cells, verdict of the representative MIXED); the parser ERRORs on configurations alc accepts; representative occ:implements_clause:2.0.0@codeunit_declaration#holes-trail
+:error
+========================================================================
+interface IFoo
+{
+}
+
+interface IBar
+{
+}
+
+interface IBaz
+{
+}
+
+codeunit 50111 C2 implements 
+IFoo , IBar
+#if X
+,
+#endif
+
+{
+}
+------------------------------------------------------------------------
+
+========================================================================
+B7a GAP: implements / lead-optional (9 cells, verdict of the representative GAP); the parser ERRORs on configurations alc accepts; representative occ:implements_clause:2.0.0@codeunit_declaration#lead-optional
+:error
+========================================================================
+interface IFoo
+{
+}
+
+interface IBar
+{
+}
+
+interface IBaz
+{
+}
+
+codeunit 50111 C2 implements 
+#if X
+IFoo ,
+#endif
+IBar
+
+{
+}
+------------------------------------------------------------------------
+
+========================================================================
+B7a GAP: implements / one-elem (9 cells, verdict of the representative GAP); the parser ERRORs on configurations alc accepts; representative occ:implements_clause:2.0.0@codeunit_declaration#one-elem
+:error
+========================================================================
+interface IFoo
+{
+}
+
+interface IBar
+{
+}
+
+interface IBaz
+{
+}
+
+codeunit 50111 C2 implements 
+#if X
+IFoo , IBar
+#else
+IFoo
+#endif
+
+{
+}
+------------------------------------------------------------------------
+
+========================================================================
+B7a GAP: implements / sep-before-end (9 cells, verdict of the representative GAP); the parser ERRORs on configurations alc accepts; representative occ:implements_clause:2.0.0@codeunit_declaration#sep-before-end
+:error
+========================================================================
+interface IFoo
+{
+}
+
+interface IBar
+{
+}
+
+interface IBaz
+{
+}
+
+codeunit 50111 C2 implements 
+IFoo
+#if X
+, IBar
+#endif
+
+{
+}
+------------------------------------------------------------------------
+
+========================================================================
+B7a GAP: implements / sep-only (9 cells, verdict of the representative GAP); the parser ERRORs on configurations alc accepts; representative occ:implements_clause:2.0.0@codeunit_declaration#sep-only
+:error
+========================================================================
+interface IFoo
+{
+}
+
+interface IBar
+{
+}
+
+interface IBaz
+{
+}
+
+codeunit 50111 C2 implements 
+IFoo
+#if X
+,
+#else
+,
+#endif
+IBar
+
+{
+}
+------------------------------------------------------------------------
+
+========================================================================
+B7a GAP: implements / trail (9 cells, verdict of the representative MIXED); the parser ERRORs on configurations alc accepts; representative occ:implements_clause:2.0.0@codeunit_declaration#trail
+:error
+========================================================================
+interface IFoo
+{
+}
+
+interface IBar
+{
+}
+
+interface IBaz
+{
+}
+
+codeunit 50111 C2 implements 
+IFoo ,
+#if X
+IBar
+#endif
+
+{
+}
+------------------------------------------------------------------------

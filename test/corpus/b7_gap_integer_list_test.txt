@@ -1,0 +1,419 @@
+========================================================================
+B7a GAP: integer-list / adjacent-compl (6 cells, verdict of the representative MIXED); the parser ERRORs on configurations alc accepts; representative occ:signed_integer_list:0.0.1.0.0@declaration_body#adjacent-compl
+:error
+========================================================================
+table 50115 CT
+{
+    TableType = CRM;
+    ExternalName = 'ct';
+    fields
+    {
+        field(1; K; Code[20]) { ExternalName = 'k'; ExternalType = 'String'; }
+        field(2; O2; Option)
+        {
+            ExternalName = 'o';
+            ExternalType = 'Picklist';
+            OptionMembers = A,B,C;
+            OptionOrdinalValues =
+#if TPL
+                
+-1
+#if X
+, 0
+#endif
+#if not X
+, 1
+#endif
+;
+#else
+                1, 2, 3;
+#endif
+        }
+    }
+    keys
+    {
+        key(PK; K) { }
+    }
+}
+------------------------------------------------------------------------
+
+========================================================================
+B7a GAP: integer-list / adjacent-indep (9 cells, verdict of the representative MIXED); the parser ERRORs on configurations alc accepts; representative occ:signed_integer_list:0.0.1.0.0@declaration_body#adjacent-indep
+:error
+========================================================================
+table 50115 CT
+{
+    TableType = CRM;
+    ExternalName = 'ct';
+    fields
+    {
+        field(1; K; Code[20]) { ExternalName = 'k'; ExternalType = 'String'; }
+        field(2; O2; Option)
+        {
+            ExternalName = 'o';
+            ExternalType = 'Picklist';
+            OptionMembers = A,B,C;
+            OptionOrdinalValues =
+#if TPL
+                
+-1
+#if X
+, 0
+#endif
+#if Y
+, 1
+#endif
+;
+#else
+                1, 2, 3;
+#endif
+        }
+    }
+    keys
+    {
+        key(PK; K) { }
+    }
+}
+------------------------------------------------------------------------
+
+========================================================================
+B7a GAP: integer-list / both-in-arm (9 cells, verdict of the representative MIXED); the parser ERRORs on configurations alc accepts; representative occ:signed_integer_list:0.0.1.0.0@declaration_body#both-in-arm
+:error
+========================================================================
+table 50115 CT
+{
+    TableType = CRM;
+    ExternalName = 'ct';
+    fields
+    {
+        field(1; K; Code[20]) { ExternalName = 'k'; ExternalType = 'String'; }
+        field(2; O2; Option)
+        {
+            ExternalName = 'o';
+            ExternalType = 'Picklist';
+            OptionMembers = A,B,C;
+            OptionOrdinalValues =
+#if TPL
+                
+-1
+#if X
+, 0 ,
+#else
+,
+#endif
+1
+;
+#else
+                1, 2, 3;
+#endif
+        }
+    }
+    keys
+    {
+        key(PK; K) { }
+    }
+}
+------------------------------------------------------------------------
+
+========================================================================
+B7a GAP: integer-list / count-differs (9 cells, verdict of the representative MIXED); the parser ERRORs on configurations alc accepts; representative occ:signed_integer_list:0.0.1.0.0@declaration_body#count-differs
+:error
+========================================================================
+table 50115 CT
+{
+    TableType = CRM;
+    ExternalName = 'ct';
+    fields
+    {
+        field(1; K; Code[20]) { ExternalName = 'k'; ExternalType = 'String'; }
+        field(2; O2; Option)
+        {
+            ExternalName = 'o';
+            ExternalType = 'Picklist';
+            OptionMembers = A,B,C;
+            OptionOrdinalValues =
+#if TPL
+                
+-1
+#if X
+, 0 , 1
+#else
+, 21
+#endif
+;
+#else
+                1, 2, 3;
+#endif
+        }
+    }
+    keys
+    {
+        key(PK; K) { }
+    }
+}
+------------------------------------------------------------------------
+
+========================================================================
+B7a GAP: integer-list / elif (9 cells, verdict of the representative MIXED); the parser ERRORs on configurations alc accepts; representative occ:signed_integer_list:0.0.1.0.0@declaration_body#elif
+:error
+========================================================================
+table 50115 CT
+{
+    TableType = CRM;
+    ExternalName = 'ct';
+    fields
+    {
+        field(1; K; Code[20]) { ExternalName = 'k'; ExternalType = 'String'; }
+        field(2; O2; Option)
+        {
+            ExternalName = 'o';
+            ExternalType = 'Picklist';
+            OptionMembers = A,B,C;
+            OptionOrdinalValues =
+#if TPL
+                
+-1
+#if X
+, 0
+#elif Y
+, 1
+#endif
+, 21
+;
+#else
+                1, 2, 3;
+#endif
+        }
+    }
+    keys
+    {
+        key(PK; K) { }
+    }
+}
+------------------------------------------------------------------------
+
+========================================================================
+B7a GAP: integer-list / first-replace (6 cells, verdict of the representative MIXED); the parser ERRORs on configurations alc accepts; representative occ:signed_integer_list:0.0.1.0.0@declaration_body#first-replace
+:error
+========================================================================
+table 50115 CT
+{
+    TableType = CRM;
+    ExternalName = 'ct';
+    fields
+    {
+        field(1; K; Code[20]) { ExternalName = 'k'; ExternalType = 'String'; }
+        field(2; O2; Option)
+        {
+            ExternalName = 'o';
+            ExternalType = 'Picklist';
+            OptionMembers = A,B,C;
+            OptionOrdinalValues =
+#if TPL
+                
+#if X
+-1
+#else
+0
+#endif
+, 1
+;
+#else
+                1, 2, 3;
+#endif
+        }
+    }
+    keys
+    {
+        key(PK; K) { }
+    }
+}
+------------------------------------------------------------------------
+
+========================================================================
+B7a GAP: integer-list / holes-trail (6 cells, verdict of the representative MIXED); the parser ERRORs on configurations alc accepts; representative occ:signed_integer_list:0.0.1.0.0@declaration_body#holes-trail
+:error
+========================================================================
+table 50115 CT
+{
+    TableType = CRM;
+    ExternalName = 'ct';
+    fields
+    {
+        field(1; K; Code[20]) { ExternalName = 'k'; ExternalType = 'String'; }
+        field(2; O2; Option)
+        {
+            ExternalName = 'o';
+            ExternalType = 'Picklist';
+            OptionMembers = A,B,C;
+            OptionOrdinalValues =
+#if TPL
+                
+-1 , 0
+#if X
+,
+#endif
+;
+#else
+                1, 2, 3;
+#endif
+        }
+    }
+    keys
+    {
+        key(PK; K) { }
+    }
+}
+------------------------------------------------------------------------
+
+========================================================================
+B7a GAP: integer-list / nested (9 cells, verdict of the representative MIXED); the parser ERRORs on configurations alc accepts; representative occ:signed_integer_list:0.0.1.0.0@declaration_body#nested
+:error
+========================================================================
+table 50115 CT
+{
+    TableType = CRM;
+    ExternalName = 'ct';
+    fields
+    {
+        field(1; K; Code[20]) { ExternalName = 'k'; ExternalType = 'String'; }
+        field(2; O2; Option)
+        {
+            ExternalName = 'o';
+            ExternalType = 'Picklist';
+            OptionMembers = A,B,C;
+            OptionOrdinalValues =
+#if TPL
+                
+-1
+#if X
+, 0
+#if Y
+, 1
+#endif
+#endif
+, 21
+;
+#else
+                1, 2, 3;
+#endif
+        }
+    }
+    keys
+    {
+        key(PK; K) { }
+    }
+}
+------------------------------------------------------------------------
+
+========================================================================
+B7a GAP: integer-list / sep-before (9 cells, verdict of the representative MIXED); the parser ERRORs on configurations alc accepts; representative occ:signed_integer_list:0.0.1.0.0@declaration_body#sep-before
+:error
+========================================================================
+table 50115 CT
+{
+    TableType = CRM;
+    ExternalName = 'ct';
+    fields
+    {
+        field(1; K; Code[20]) { ExternalName = 'k'; ExternalType = 'String'; }
+        field(2; O2; Option)
+        {
+            ExternalName = 'o';
+            ExternalType = 'Picklist';
+            OptionMembers = A,B,C;
+            OptionOrdinalValues =
+#if TPL
+                
+-1
+#if X
+, 0
+#endif
+, 1
+;
+#else
+                1, 2, 3;
+#endif
+        }
+    }
+    keys
+    {
+        key(PK; K) { }
+    }
+}
+------------------------------------------------------------------------
+
+========================================================================
+B7a GAP: integer-list / sep-before-end (6 cells, verdict of the representative MIXED); the parser ERRORs on configurations alc accepts; representative occ:signed_integer_list:0.0.1.0.0@declaration_body#sep-before-end
+:error
+========================================================================
+table 50115 CT
+{
+    TableType = CRM;
+    ExternalName = 'ct';
+    fields
+    {
+        field(1; K; Code[20]) { ExternalName = 'k'; ExternalType = 'String'; }
+        field(2; O2; Option)
+        {
+            ExternalName = 'o';
+            ExternalType = 'Picklist';
+            OptionMembers = A,B,C;
+            OptionOrdinalValues =
+#if TPL
+                
+-1
+#if X
+, 0
+#endif
+;
+#else
+                1, 2, 3;
+#endif
+        }
+    }
+    keys
+    {
+        key(PK; K) { }
+    }
+}
+------------------------------------------------------------------------
+
+========================================================================
+B7a GAP: integer-list / sep-only (6 cells, verdict of the representative MIXED); the parser ERRORs on configurations alc accepts; representative occ:signed_integer_list:0.0.1.0.0@declaration_body#sep-only
+:error
+========================================================================
+table 50115 CT
+{
+    TableType = CRM;
+    ExternalName = 'ct';
+    fields
+    {
+        field(1; K; Code[20]) { ExternalName = 'k'; ExternalType = 'String'; }
+        field(2; O2; Option)
+        {
+            ExternalName = 'o';
+            ExternalType = 'Picklist';
+            OptionMembers = A,B,C;
+            OptionOrdinalValues =
+#if TPL
+                
+-1
+#if X
+,
+#else
+,
+#endif
+0
+;
+#else
+                1, 2, 3;
+#endif
+        }
+    }
+    keys
+    {
+        key(PK; K) { }
+    }
+}
+------------------------------------------------------------------------

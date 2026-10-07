@@ -1,0 +1,308 @@
+========================================================================
+B7a GAP: dataitem-header / adjacent-compl (6 cells, verdict of the representative GAP); the parser ERRORs on configurations alc accepts; representative occ:_report_dataitem_header:3@report_dataitem#adjacent-compl
+:error
+========================================================================
+table 50100 T
+{
+    fields
+    {
+        field(1; K; Code[20]) { }
+        field(2; N; Integer) { }
+        field(3; B; Boolean) { }
+        field(9; O; Option) { OptionMembers = A,B,C; }
+    }
+    keys
+    {
+        key(PK; K) { Clustered = true; }
+    }
+}
+report 50106 Rp
+{
+    ProcessingOnly = true;
+    dataset
+    {
+        dataitem(
+D
+#if X
+;
+#endif
+#if not X
+;
+#endif
+T
+)
+        {
+            column(K; K) { }
+        }
+    }
+}
+------------------------------------------------------------------------
+
+========================================================================
+B7a GAP: dataitem-header / elif (6 cells, verdict of the representative GAP); the parser ERRORs on configurations alc accepts; representative occ:_report_dataitem_header:3@report_dataitem#elif
+:error
+========================================================================
+table 50100 T
+{
+    fields
+    {
+        field(1; K; Code[20]) { }
+        field(2; N; Integer) { }
+        field(3; B; Boolean) { }
+        field(9; O; Option) { OptionMembers = A,B,C; }
+    }
+    keys
+    {
+        key(PK; K) { Clustered = true; }
+    }
+}
+report 50106 Rp
+{
+    ProcessingOnly = true;
+    dataset
+    {
+        dataitem(
+D
+#if X
+;
+#elif Y
+;
+#else
+;
+#endif
+T
+)
+        {
+            column(K; K) { }
+        }
+    }
+}
+------------------------------------------------------------------------
+
+========================================================================
+B7a GAP: dataitem-header / empty (6 cells, verdict of the representative GAP); the parser ERRORs on configurations alc accepts; representative occ:_report_dataitem_header:3@report_dataitem#empty
+:error
+========================================================================
+table 50100 T
+{
+    fields
+    {
+        field(1; K; Code[20]) { }
+        field(2; N; Integer) { }
+        field(3; B; Boolean) { }
+        field(9; O; Option) { OptionMembers = A,B,C; }
+    }
+    keys
+    {
+        key(PK; K) { Clustered = true; }
+    }
+}
+report 50106 Rp
+{
+    ProcessingOnly = true;
+    dataset
+    {
+        dataitem(
+D ;
+#if X
+#endif
+T
+)
+        {
+            column(K; K) { }
+        }
+    }
+}
+------------------------------------------------------------------------
+
+========================================================================
+B7a GAP: dataitem-header / first-replace (6 cells, verdict of the representative GAP); the parser ERRORs on configurations alc accepts; representative occ:_report_dataitem_header:3@report_dataitem#first-replace
+:error
+========================================================================
+table 50100 T
+{
+    fields
+    {
+        field(1; K; Code[20]) { }
+        field(2; N; Integer) { }
+        field(3; B; Boolean) { }
+        field(9; O; Option) { OptionMembers = A,B,C; }
+    }
+    keys
+    {
+        key(PK; K) { Clustered = true; }
+    }
+}
+report 50106 Rp
+{
+    ProcessingOnly = true;
+    dataset
+    {
+        dataitem(
+#if X
+D
+#else
+D
+#endif
+; T
+)
+        {
+            column(K; K) { }
+        }
+    }
+}
+------------------------------------------------------------------------
+
+========================================================================
+B7a GAP: dataitem-header / nested (6 cells, verdict of the representative GAP); the parser ERRORs on configurations alc accepts; representative occ:_report_dataitem_header:3@report_dataitem#nested
+:error
+========================================================================
+table 50100 T
+{
+    fields
+    {
+        field(1; K; Code[20]) { }
+        field(2; N; Integer) { }
+        field(3; B; Boolean) { }
+        field(9; O; Option) { OptionMembers = A,B,C; }
+    }
+    keys
+    {
+        key(PK; K) { Clustered = true; }
+    }
+}
+report 50106 Rp
+{
+    ProcessingOnly = true;
+    dataset
+    {
+        dataitem(
+D
+#if X
+#if Y
+;
+#else
+;
+#endif
+#else
+;
+#endif
+T
+)
+        {
+            column(K; K) { }
+        }
+    }
+}
+------------------------------------------------------------------------
+
+========================================================================
+B7a GAP: dataitem-header / sep-before-end (6 cells, verdict of the representative MIXED); the parser ERRORs on configurations alc accepts; representative occ:_report_dataitem_header:3@report_dataitem#sep-before-end
+:error
+========================================================================
+table 50100 T
+{
+    fields
+    {
+        field(1; K; Code[20]) { }
+        field(2; N; Integer) { }
+        field(3; B; Boolean) { }
+        field(9; O; Option) { OptionMembers = A,B,C; }
+    }
+    keys
+    {
+        key(PK; K) { Clustered = true; }
+    }
+}
+report 50106 Rp
+{
+    ProcessingOnly = true;
+    dataset
+    {
+        dataitem(
+D
+#if X
+; T
+#endif
+)
+        {
+            column(K; K) { }
+        }
+    }
+}
+------------------------------------------------------------------------
+
+========================================================================
+B7a GAP: dataitem-header / sep-only (6 cells, verdict of the representative GAP); the parser ERRORs on configurations alc accepts; representative occ:_report_dataitem_header:3@report_dataitem#sep-only
+:error
+========================================================================
+table 50100 T
+{
+    fields
+    {
+        field(1; K; Code[20]) { }
+        field(2; N; Integer) { }
+        field(3; B; Boolean) { }
+        field(9; O; Option) { OptionMembers = A,B,C; }
+    }
+    keys
+    {
+        key(PK; K) { Clustered = true; }
+    }
+}
+report 50106 Rp
+{
+    ProcessingOnly = true;
+    dataset
+    {
+        dataitem(
+D
+#if X
+;
+#else
+;
+#endif
+T
+)
+        {
+            column(K; K) { }
+        }
+    }
+}
+------------------------------------------------------------------------
+
+========================================================================
+B7a GAP: dataitem-header / trail (6 cells, verdict of the representative MIXED); the parser ERRORs on configurations alc accepts; representative occ:_report_dataitem_header:3@report_dataitem#trail
+:error
+========================================================================
+table 50100 T
+{
+    fields
+    {
+        field(1; K; Code[20]) { }
+        field(2; N; Integer) { }
+        field(3; B; Boolean) { }
+        field(9; O; Option) { OptionMembers = A,B,C; }
+    }
+    keys
+    {
+        key(PK; K) { Clustered = true; }
+    }
+}
+report 50106 Rp
+{
+    ProcessingOnly = true;
+    dataset
+    {
+        dataitem(
+D ;
+#if X
+T
+#endif
+)
+        {
+            column(K; K) { }
+        }
+    }
+}
+------------------------------------------------------------------------

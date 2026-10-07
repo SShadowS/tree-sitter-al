@@ -1,0 +1,164 @@
+========================================================================
+B7a GAP: type-header / adjacent-compl (3 cells, verdict of the representative GAP); the parser ERRORs on configurations alc accepts; representative occ:type_declaration:3@assembly_body#adjacent-compl
+:error
+========================================================================
+dotnet
+{
+    assembly(mscorlib)
+    {
+        type(
+System.Text.StringBuilder
+#if X
+;
+#endif
+#if not X
+;
+#endif
+SB
+) { }
+    }
+}
+------------------------------------------------------------------------
+
+========================================================================
+B7a GAP: type-header / elif (3 cells, verdict of the representative GAP); the parser ERRORs on configurations alc accepts; representative occ:type_declaration:3@assembly_body#elif
+:error
+========================================================================
+dotnet
+{
+    assembly(mscorlib)
+    {
+        type(
+System.Text.StringBuilder
+#if X
+;
+#elif Y
+;
+#else
+;
+#endif
+SB
+) { }
+    }
+}
+------------------------------------------------------------------------
+
+========================================================================
+B7a GAP: type-header / empty (3 cells, verdict of the representative GAP); the parser ERRORs on configurations alc accepts; representative occ:type_declaration:3@assembly_body#empty
+:error
+========================================================================
+dotnet
+{
+    assembly(mscorlib)
+    {
+        type(
+System.Text.StringBuilder ;
+#if X
+#endif
+SB
+) { }
+    }
+}
+------------------------------------------------------------------------
+
+========================================================================
+B7a GAP: type-header / first-replace (3 cells, verdict of the representative GAP); the parser ERRORs on configurations alc accepts; representative occ:type_declaration:3@assembly_body#first-replace
+:error
+========================================================================
+dotnet
+{
+    assembly(mscorlib)
+    {
+        type(
+#if X
+System.Text.StringBuilder
+#else
+System.Text.StringBuilder
+#endif
+; SB
+) { }
+    }
+}
+------------------------------------------------------------------------
+
+========================================================================
+B7a GAP: type-header / nested (3 cells, verdict of the representative GAP); the parser ERRORs on configurations alc accepts; representative occ:type_declaration:3@assembly_body#nested
+:error
+========================================================================
+dotnet
+{
+    assembly(mscorlib)
+    {
+        type(
+System.Text.StringBuilder
+#if X
+#if Y
+;
+#else
+;
+#endif
+#else
+;
+#endif
+SB
+) { }
+    }
+}
+------------------------------------------------------------------------
+
+========================================================================
+B7a GAP: type-header / sep-before-end (3 cells, verdict of the representative GAP); the parser ERRORs on configurations alc accepts; representative occ:type_declaration:3@assembly_body#sep-before-end
+:error
+========================================================================
+dotnet
+{
+    assembly(mscorlib)
+    {
+        type(
+System.Text.StringBuilder
+#if X
+; SB
+#endif
+) { }
+    }
+}
+------------------------------------------------------------------------
+
+========================================================================
+B7a GAP: type-header / sep-only (3 cells, verdict of the representative GAP); the parser ERRORs on configurations alc accepts; representative occ:type_declaration:3@assembly_body#sep-only
+:error
+========================================================================
+dotnet
+{
+    assembly(mscorlib)
+    {
+        type(
+System.Text.StringBuilder
+#if X
+;
+#else
+;
+#endif
+SB
+) { }
+    }
+}
+------------------------------------------------------------------------
+
+========================================================================
+B7a GAP: type-header / trail (3 cells, verdict of the representative MIXED); the parser ERRORs on configurations alc accepts; representative occ:type_declaration:3@assembly_body#trail
+:error
+========================================================================
+dotnet
+{
+    assembly(mscorlib)
+    {
+        type(
+System.Text.StringBuilder ;
+#if X
+SB
+#endif
+) { }
+    }
+}
+------------------------------------------------------------------------

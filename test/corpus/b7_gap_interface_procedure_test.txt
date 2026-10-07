@@ -1,0 +1,121 @@
+========================================================================
+B7a GAP: interface-procedure / adjacent-compl (3 cells, verdict of the representative GAP); the parser ERRORs on configurations alc accepts; representative occ:interface_procedure_suffix:2@interface_procedure#adjacent-compl
+:error
+========================================================================
+interface IQ
+{
+    
+procedure Z()
+#if X
+;
+#endif
+#if not X
+;
+#endif
+
+}
+------------------------------------------------------------------------
+
+========================================================================
+B7a GAP: interface-procedure / elif (3 cells, verdict of the representative GAP); the parser ERRORs on configurations alc accepts; representative occ:interface_procedure_suffix:2@interface_procedure#elif
+:error
+========================================================================
+interface IQ
+{
+    
+procedure Z()
+#if X
+;
+#elif Y
+;
+#else
+;
+#endif
+
+}
+------------------------------------------------------------------------
+
+========================================================================
+B7a GAP: interface-procedure / empty (3 cells, verdict of the representative GAP); the parser ERRORs on configurations alc accepts; representative occ:interface_procedure_suffix:2@interface_procedure#empty
+:error
+========================================================================
+interface IQ
+{
+    
+procedure Z()
+#if X
+#endif
+;
+
+}
+------------------------------------------------------------------------
+
+========================================================================
+B7a GAP: interface-procedure / first-replace (9 cells, verdict of the representative GAP); the parser ERRORs on configurations alc accepts; representative occ:interface_procedure_suffix:0.1.0@interface_procedure#first-replace
+:error
+========================================================================
+interface IQ
+{
+    
+#if X
+procedure Z(): Integer
+#else
+procedure Z(): Integer
+#endif
+;
+
+}
+------------------------------------------------------------------------
+
+========================================================================
+B7a GAP: interface-procedure / nested (3 cells, verdict of the representative GAP); the parser ERRORs on configurations alc accepts; representative occ:interface_procedure_suffix:2@interface_procedure#nested
+:error
+========================================================================
+interface IQ
+{
+    
+procedure Z()
+#if X
+#if Y
+;
+#else
+;
+#endif
+#else
+;
+#endif
+
+}
+------------------------------------------------------------------------
+
+========================================================================
+B7a GAP: interface-procedure / sep-only (3 cells, verdict of the representative GAP); the parser ERRORs on configurations alc accepts; representative occ:interface_procedure_suffix:2@interface_procedure#sep-only
+:error
+========================================================================
+interface IQ
+{
+    
+procedure Z()
+#if X
+;
+#else
+;
+#endif
+
+}
+------------------------------------------------------------------------
+
+========================================================================
+B7a GAP: interface-procedure / trail (3 cells, verdict of the representative GAP); the parser ERRORs on configurations alc accepts; representative occ:interface_procedure_suffix:2@interface_procedure#trail
+:error
+========================================================================
+interface IQ
+{
+    
+procedure Z()
+#if X
+;
+#endif
+
+}
+------------------------------------------------------------------------
