@@ -1,5 +1,5 @@
 // B7a Task 10 witness (GAP): family array-dimensions, base placement sep-before, 3 cells; representative occ:array_type:3.0.0@type_specification#sep-before
-// Fixture b7_gap_array_dimensions_test.txt#B7a GAP: array-dimensions / sep-before (3 cells, verdict of the representative GAP); the parser ERRORs on configurations alc accepts; representative occ:array_type:3.0.0@type_specification%23sep-before#0
+// Fixture strict_conditional_array_dimensions_test.txt#strict array: group with the separator before its dimension, then a dimension (sep-before)#0
 // expect: !X accept
 // expect: X accept
 // source: recorded by B7a Task 10, 2026-10-07: the alc split verdicts of cell occ:array_type:3.0.0@type_specification#sep-before in tools/b7_audit/evidence.jsonl.gz

@@ -559,6 +559,154 @@ static bool peek_directive_ci_skip_extras(TSLexer *lexer, const char *const *tar
   }
 }
 
+// Advance to the newline (not past it). Non-marking, like every helper below.
+static void skip_to_eol(TSLexer *lexer) {
+  while (lexer->lookahead != '\n' && !lexer->eof(lexer)) {
+    lexer->advance(lexer, false);
+  }
+}
+
+// The rest of an `#if`/`#elif` line inside the var-name lookahead: the
+// condition, skipped to the newline. Declines what alc rejects as directive
+// syntax whatever the configuration: a block comment or a second directive on
+// the line (AL0631) and an empty condition (AL0629). A dangling `and`/`or`/`not`
+// is not checked here; the '#' dispatch still claims that line as
+// MALFORMED_DIRECTIVE, so it ERRORs either way.
+static bool skip_condition_line(TSLexer *lexer) {
+  bool any = false;
+  while (lexer->lookahead != '\n' && !lexer->eof(lexer)) {
+    int32_t c = lexer->lookahead;
+    if (c == '#') return false;
+    if (c == '/') {
+      lexer->advance(lexer, false);
+      if (lexer->lookahead == '*') return false;
+      if (lexer->lookahead == '/') break;  // a trailing `//` comment
+      any = true;
+      continue;
+    }
+    if (!is_extra_space(c)) any = true;
+    lexer->advance(lexer, false);
+  }
+  skip_to_eol(lexer);
+  return any;
+}
+
+// The rest of an `#else`/`#endif` line: blank but for an optional `//` comment
+// (alc: AL0631 otherwise). Unlike line_rest_is_blank, never calls mark_end.
+static bool directive_rest_is_blank(TSLexer *lexer) {
+  while (lexer->lookahead != '\n' && is_extra_space(lexer->lookahead)) {
+    lexer->advance(lexer, false);
+  }
+  if (lexer->lookahead == '\n' || lexer->eof(lexer)) return true;
+  if (lexer->lookahead != '/') return false;
+  lexer->advance(lexer, false);
+  if (lexer->lookahead != '/') return false;
+  skip_to_eol(lexer);
+  return true;
+}
+
+// After a variable attribute (and any chained ones): does a variable
+// declaration's name list follow, ending at its shared ':'? (B7b-1 Task 12,
+// spec 5.2.) The list is a stream of names, commas and balanced
+// `#if`/`#elif`/`#else`/`#endif` lines, with comments and the transparent
+// directive extras anywhere:
+//
+//     [NonDebuggable] A #if X , B #endif : Integer;
+//     [NonDebuggable] #if X A #else B #endif , C: Integer;
+//
+// It declines at anything else -- `(`, `;`, `{`, `}`, `[`, EOF, the word
+// `procedure`, a `:` inside a group, an unbalanced or malformed directive, an
+// unterminated quoted name -- so a procedure attribute followed by a
+// conditional header (`[A] #if X procedure Q(...) #else ... #endif`) stays a
+// procedure attribute.
+//
+// Two declines are KNOWN GAPS, not alc-backed: alc accepts an attribute inside
+// a group (`[A] #if X [B] #endif C: T;`, probe b7b1/attr_in_group_var.al) and
+// whole declarations in a group's arms (`[A] #if X A: T; #else B: T; #endif`,
+// b7b1/colon_in_group.al), and both still ERROR. Pre-existing, owned by
+// deferred work, not B7b-1.
+//
+// Between two directive lines the old strict shape still holds: a name never
+// follows a name, a comma never follows a comma or starts the list, and `:`
+// never follows a comma. A directive line resets that (`A #if X , #endif B`,
+// a separator-only group, is a shape alc accepts; which configuration is valid
+// is the config oracle's question, not the scanner's). At least one name is
+// required somewhere: alc rejects an empty name list in every configuration.
+//
+// A local peek: the caller has called mark_end at the '[', every advance here
+// is non-marking (see skip_whitespace_nomark), every word is read whole with
+// read_word_ci, and the nesting count is a local -- ScannerState.depth is
+// never touched.
+enum VarNamePrev { VN_START, VN_NAME, VN_COMMA, VN_DIRECTIVE };
+
+static bool var_name_list_follows(TSLexer *lexer) {
+  uint32_t depth = 0;
+  enum VarNamePrev prev = VN_START;
+  bool saw_name = false;
+  while (true) {
+    if (!skip_whitespace_and_comments(lexer)) return false;
+    int32_t c = lexer->lookahead;
+    if (c == '"') {
+      if (prev == VN_NAME) return false;
+      lexer->advance(lexer, false);
+      // quoted_identifier: no newline inside, `""` is an escaped quote.
+      while (true) {
+        if (lexer->eof(lexer) || lexer->lookahead == '\n') return false;
+        if (lexer->lookahead == '"') {
+          lexer->advance(lexer, false);
+          if (lexer->lookahead != '"') break;
+        }
+        lexer->advance(lexer, false);
+      }
+      prev = VN_NAME;
+      saw_name = true;
+    } else if (is_identifier_start(c)) {
+      if (prev == VN_NAME) return false;
+      char word[16];
+      size_t len = 0;
+      if (read_word_ci(lexer, word, sizeof(word), &len) && strcmp(word, "procedure") == 0) {
+        return false;
+      }
+      prev = VN_NAME;
+      saw_name = true;
+    } else if (c == ',') {
+      if (prev == VN_START || prev == VN_COMMA) return false;
+      lexer->advance(lexer, false);
+      prev = VN_COMMA;
+    } else if (c == ':') {
+      return depth == 0 && saw_name && prev != VN_COMMA;
+    } else if (c == '#') {
+      lexer->advance(lexer, false);
+      while (lexer->lookahead == ' ' || lexer->lookahead == '\t') {
+        lexer->advance(lexer, false);
+      }
+      char word[16];
+      size_t len = 0;
+      bool truncated = !read_word_ci(lexer, word, sizeof(word), &len);
+      if (truncated) return false;
+      if (strcmp(word, "if") == 0) {
+        depth++;
+        if (!skip_condition_line(lexer)) return false;
+      } else if (strcmp(word, "elif") == 0) {
+        if (depth == 0 || !skip_condition_line(lexer)) return false;
+      } else if (strcmp(word, "else") == 0) {
+        if (depth == 0 || !directive_rest_is_blank(lexer)) return false;
+      } else if (strcmp(word, "endif") == 0) {
+        if (depth == 0 || !directive_rest_is_blank(lexer)) return false;
+        depth--;
+      } else if (word_in(TRANSPARENT_DIRECTIVES, word, false)) {
+        skip_to_eol(lexer);
+        continue;  // an extra: the alternation state is unchanged
+      } else {
+        return false;  // not a directive alc knows (AL0621)
+      }
+      prev = VN_DIRECTIVE;
+    } else {
+      return false;
+    }
+  }
+}
+
 bool tree_sitter_al_external_scanner_scan(
   void *payload,
   TSLexer *lexer,
@@ -893,43 +1041,12 @@ bool tree_sitter_al_external_scanner_scan(
         // (fall through to the identifier/quoted-identifier checks below)
       }
 
-      // Variable declaration pattern: name (',' name)* ':'  — where each name
-      // is a bare identifier or a quoted identifier, in ANY position. Handling
-      // quoted and bare names in one loop is what lets a quoted name lead a
-      // multi-name declaration; the previous split branches accepted a quoted
-      // name only when it was solo or in a later position.
-      if (lexer->lookahead == '"' || is_identifier_start(lexer->lookahead)) {
-        while (true) {
-          if (lexer->lookahead == '"') {
-            lexer->advance(lexer, false);
-            while (lexer->lookahead != 0 && lexer->lookahead != '"') {
-              lexer->advance(lexer, false);
-            }
-            if (lexer->lookahead != '"') return false;  // unterminated
-            lexer->advance(lexer, false);
-          } else if (is_identifier_start(lexer->lookahead)) {
-            while (is_identifier_char(lexer->lookahead)) {
-              lexer->advance(lexer, false);
-            }
-          } else {
-            return false;
-          }
-
-          // Skip whitespace and comments
-          if (!skip_whitespace_and_comments(lexer)) return false;
-          if (lexer->lookahead == ':') {
-            lexer->result_symbol = VAR_ATTRIBUTE_OPEN;
-            return true;
-          }
-          if (lexer->lookahead != ',') return false;
-
-          lexer->advance(lexer, false);  // past the ','
-          if (!skip_whitespace_and_comments(lexer)) return false;
-        }
-      }
-
-      // Not followed by variable declaration pattern — decline
-      return false;
+      // Variable declaration pattern: a name list, possibly with #if groups,
+      // ending at its ':' (see var_name_list_follows). Bare and quoted names
+      // are handled in one loop, in ANY position.
+      if (!var_name_list_follows(lexer)) return false;
+      lexer->result_symbol = VAR_ATTRIBUTE_OPEN;
+      return true;
     }
   }
 

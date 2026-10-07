@@ -1,0 +1,2172 @@
+; B7b-1 (spec docs/superpowers/specs/2026-10-07-b7b-1-strict-conditional-lists-design.md):
+; a #if group may stand anywhere in field_list, the comma list of a key, a fieldgroup, an addlast
+; modification and a split key header. Expected trees are HAND-WRITTEN from the flat reading (the
+; item list with each arm read as an alternative item run). field_list is unfielded: its raw items
+; and the items inside an arm of preproc_conditional_field_list_items carry no field. Separators are
+; anonymous. Comments sit in the smallest visible node holding tokens on both sides of them.
+; The first 19 cases are the shapes of the former test/corpus/b7_gap_key_fields_test.txt `:error`
+; witnesses, list text unchanged, on the route alc probed (addlast; tools/alc_probe/cases/b7-audit/
+; key-fields__*__{gap,overaccept}.al). The four "right after the fixed ;" cases are the empty and trail shapes
+; of the former b7_gap_fieldgroup_header_test.txt and b7_gap_key_header_test.txt (header text unchanged):
+; a group between the fixed `;` and the first item is the list's first element. A fifth, the fieldgroup
+; MIXED trail case, is the over-accept witness of fieldgroup-header / trail (B7b-1 Task 13). `MIXED` cases are accepted by alc in one configuration and rejected in the
+; other (manifest tools/b7_audit/b7b1-manifest.tsv): the split source parses, the invalid
+; configuration is the config oracle's to judge (spec section 3).
+; addlast's field list is optional: alc accepts `addlast(DropDown; )` (B7b-1 Task 2, route
+; key-fields / addlast_fieldgroup_modification, empty-interior); key and fieldgroup keep a required
+; list (AL0306, semantic). The addfirst case records a CLASSIFIED OVER-ACCEPTANCE, not a fix: alc has
+; no addfirst in fieldgroups at all (AL0104), and field_list is shared with addlast.
+
+================================================================================
+strict field_list: addlast, group with the separator before its item (sep-before-end)
+================================================================================
+
+tableextension 50110 TE extends T
+{
+    fieldgroups
+    {
+        addlast(DropDown; 
+N
+#if X
+, B
+#endif
+) { }
+    }
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (tableextension_declaration
+    (tableextension_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    (extends_keyword)
+    base_object: (identifier)
+    body: (declaration_body
+      (fieldgroups_section
+        (fieldgroups_keyword)
+        body: (fieldgroups_body
+          (addlast_fieldgroup_modification
+            (addlast_keyword)
+            target: (identifier)
+            fields: (field_list
+              (identifier)
+              (preproc_conditional_field_list_items
+                (preproc_if
+                  (preproc_open)
+                  condition: (identifier))
+                (identifier)
+                (preproc_endif
+                  (preproc_close))))))))))
+
+================================================================================
+strict field_list: addlast, group with the separator before its item, then an item (sep-before)
+================================================================================
+
+tableextension 50110 TE extends T
+{
+    fieldgroups
+    {
+        addlast(DropDown; 
+N
+#if X
+, B
+#endif
+, "K"
+) { }
+    }
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (tableextension_declaration
+    (tableextension_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    (extends_keyword)
+    base_object: (identifier)
+    body: (declaration_body
+      (fieldgroups_section
+        (fieldgroups_keyword)
+        body: (fieldgroups_body
+          (addlast_fieldgroup_modification
+            (addlast_keyword)
+            target: (identifier)
+            fields: (field_list
+              (identifier)
+              (preproc_conditional_field_list_items
+                (preproc_if
+                  (preproc_open)
+                  condition: (identifier))
+                (identifier)
+                (preproc_endif
+                  (preproc_close)))
+              (quoted_identifier))))))))
+
+================================================================================
+strict field_list: addlast, group with the separator after its item (sep-after)
+================================================================================
+
+tableextension 50110 TE extends T
+{
+    fieldgroups
+    {
+        addlast(DropDown; 
+N ,
+#if X
+B ,
+#endif
+"K"
+) { }
+    }
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (tableextension_declaration
+    (tableextension_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    (extends_keyword)
+    base_object: (identifier)
+    body: (declaration_body
+      (fieldgroups_section
+        (fieldgroups_keyword)
+        body: (fieldgroups_body
+          (addlast_fieldgroup_modification
+            (addlast_keyword)
+            target: (identifier)
+            fields: (field_list
+              (identifier)
+              (preproc_conditional_field_list_items
+                (preproc_if
+                  (preproc_open)
+                  condition: (identifier))
+                (identifier)
+                (preproc_endif
+                  (preproc_close)))
+              (quoted_identifier))))))))
+
+================================================================================
+strict field_list: addlast, separator-only arms between two raw items (sep-only)
+================================================================================
+
+tableextension 50110 TE extends T
+{
+    fieldgroups
+    {
+        addlast(DropDown; 
+N
+#if X
+,
+#else
+,
+#endif
+B
+) { }
+    }
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (tableextension_declaration
+    (tableextension_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    (extends_keyword)
+    base_object: (identifier)
+    body: (declaration_body
+      (fieldgroups_section
+        (fieldgroups_keyword)
+        body: (fieldgroups_body
+          (addlast_fieldgroup_modification
+            (addlast_keyword)
+            target: (identifier)
+            fields: (field_list
+              (identifier)
+              (preproc_conditional_field_list_items
+                (preproc_if
+                  (preproc_open)
+                  condition: (identifier))
+                (preproc_else)
+                (preproc_endif
+                  (preproc_close)))
+              (identifier))))))))
+
+================================================================================
+strict field_list: addlast, an arm holding both separators (both-in-arm)
+================================================================================
+
+tableextension 50110 TE extends T
+{
+    fieldgroups
+    {
+        addlast(DropDown; 
+N
+#if X
+, B ,
+#else
+,
+#endif
+"K"
+) { }
+    }
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (tableextension_declaration
+    (tableextension_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    (extends_keyword)
+    base_object: (identifier)
+    body: (declaration_body
+      (fieldgroups_section
+        (fieldgroups_keyword)
+        body: (fieldgroups_body
+          (addlast_fieldgroup_modification
+            (addlast_keyword)
+            target: (identifier)
+            fields: (field_list
+              (identifier)
+              (preproc_conditional_field_list_items
+                (preproc_if
+                  (preproc_open)
+                  condition: (identifier))
+                (identifier)
+                (preproc_else)
+                (preproc_endif
+                  (preproc_close)))
+              (quoted_identifier))))))))
+
+================================================================================
+strict field_list: addlast, group replacing the first item (first-replace)
+================================================================================
+
+tableextension 50110 TE extends T
+{
+    fieldgroups
+    {
+        addlast(DropDown; 
+#if X
+N
+#else
+B
+#endif
+, "K"
+) { }
+    }
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (tableextension_declaration
+    (tableextension_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    (extends_keyword)
+    base_object: (identifier)
+    body: (declaration_body
+      (fieldgroups_section
+        (fieldgroups_keyword)
+        body: (fieldgroups_body
+          (addlast_fieldgroup_modification
+            (addlast_keyword)
+            target: (identifier)
+            fields: (field_list
+              (preproc_conditional_field_list_items
+                (preproc_if
+                  (preproc_open)
+                  condition: (identifier))
+                (identifier)
+                (preproc_else)
+                (identifier)
+                (preproc_endif
+                  (preproc_close)))
+              (quoted_identifier))))))))
+
+================================================================================
+strict field_list: addlast, leading group whose arm ends with the separator (lead-optional)
+================================================================================
+
+tableextension 50110 TE extends T
+{
+    fieldgroups
+    {
+        addlast(DropDown; 
+#if X
+N ,
+#endif
+B
+) { }
+    }
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (tableextension_declaration
+    (tableextension_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    (extends_keyword)
+    base_object: (identifier)
+    body: (declaration_body
+      (fieldgroups_section
+        (fieldgroups_keyword)
+        body: (fieldgroups_body
+          (addlast_fieldgroup_modification
+            (addlast_keyword)
+            target: (identifier)
+            fields: (field_list
+              (preproc_conditional_field_list_items
+                (preproc_if
+                  (preproc_open)
+                  condition: (identifier))
+                (identifier)
+                (preproc_endif
+                  (preproc_close)))
+              (identifier))))))))
+
+================================================================================
+strict field_list: addlast, the whole list in the arms of one group (one-elem)
+================================================================================
+
+tableextension 50110 TE extends T
+{
+    fieldgroups
+    {
+        addlast(DropDown; 
+#if X
+N , B
+#else
+N
+#endif
+) { }
+    }
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (tableextension_declaration
+    (tableextension_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    (extends_keyword)
+    base_object: (identifier)
+    body: (declaration_body
+      (fieldgroups_section
+        (fieldgroups_keyword)
+        body: (fieldgroups_body
+          (addlast_fieldgroup_modification
+            (addlast_keyword)
+            target: (identifier)
+            fields: (field_list
+              (preproc_conditional_field_list_items
+                (preproc_if
+                  (preproc_open)
+                  condition: (identifier))
+                (identifier)
+                (identifier)
+                (preproc_else)
+                (identifier)
+                (preproc_endif
+                  (preproc_close))))))))))
+
+================================================================================
+strict field_list: addlast, nested group (nested)
+================================================================================
+
+tableextension 50110 TE extends T
+{
+    fieldgroups
+    {
+        addlast(DropDown; 
+N
+#if X
+, B
+#if Y
+, "K"
+#endif
+#endif
+, "O"
+) { }
+    }
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (tableextension_declaration
+    (tableextension_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    (extends_keyword)
+    base_object: (identifier)
+    body: (declaration_body
+      (fieldgroups_section
+        (fieldgroups_keyword)
+        body: (fieldgroups_body
+          (addlast_fieldgroup_modification
+            (addlast_keyword)
+            target: (identifier)
+            fields: (field_list
+              (identifier)
+              (preproc_conditional_field_list_items
+                (preproc_if
+                  (preproc_open)
+                  condition: (identifier))
+                (identifier)
+                (preproc_conditional_field_list_items
+                  (preproc_if
+                    (preproc_open)
+                    condition: (identifier))
+                  (quoted_identifier)
+                  (preproc_endif
+                    (preproc_close)))
+                (preproc_endif
+                  (preproc_close)))
+              (quoted_identifier))))))))
+
+================================================================================
+strict field_list: addlast, adjacent independent groups (adjacent-indep)
+================================================================================
+
+tableextension 50110 TE extends T
+{
+    fieldgroups
+    {
+        addlast(DropDown; 
+N
+#if X
+, B
+#endif
+#if Y
+, "K"
+#endif
+) { }
+    }
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (tableextension_declaration
+    (tableextension_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    (extends_keyword)
+    base_object: (identifier)
+    body: (declaration_body
+      (fieldgroups_section
+        (fieldgroups_keyword)
+        body: (fieldgroups_body
+          (addlast_fieldgroup_modification
+            (addlast_keyword)
+            target: (identifier)
+            fields: (field_list
+              (identifier)
+              (preproc_conditional_field_list_items
+                (preproc_if
+                  (preproc_open)
+                  condition: (identifier))
+                (identifier)
+                (preproc_endif
+                  (preproc_close)))
+              (preproc_conditional_field_list_items
+                (preproc_if
+                  (preproc_open)
+                  condition: (identifier))
+                (quoted_identifier)
+                (preproc_endif
+                  (preproc_close))))))))))
+
+================================================================================
+strict field_list: addlast, adjacent complementary groups with #if not (adjacent-compl)
+================================================================================
+
+tableextension 50110 TE extends T
+{
+    fieldgroups
+    {
+        addlast(DropDown; 
+N
+#if X
+, B
+#endif
+#if not X
+, "K"
+#endif
+) { }
+    }
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (tableextension_declaration
+    (tableextension_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    (extends_keyword)
+    base_object: (identifier)
+    body: (declaration_body
+      (fieldgroups_section
+        (fieldgroups_keyword)
+        body: (fieldgroups_body
+          (addlast_fieldgroup_modification
+            (addlast_keyword)
+            target: (identifier)
+            fields: (field_list
+              (identifier)
+              (preproc_conditional_field_list_items
+                (preproc_if
+                  (preproc_open)
+                  condition: (identifier))
+                (identifier)
+                (preproc_endif
+                  (preproc_close)))
+              (preproc_conditional_field_list_items
+                (preproc_if
+                  (preproc_open)
+                  condition: (preproc_not_expression
+                    (identifier)))
+                (quoted_identifier)
+                (preproc_endif
+                  (preproc_close))))))))))
+
+================================================================================
+strict field_list: addlast, empty group between separator and item (empty)
+================================================================================
+
+tableextension 50110 TE extends T
+{
+    fieldgroups
+    {
+        addlast(DropDown; 
+N ,
+#if X
+#endif
+B
+) { }
+    }
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (tableextension_declaration
+    (tableextension_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    (extends_keyword)
+    base_object: (identifier)
+    body: (declaration_body
+      (fieldgroups_section
+        (fieldgroups_keyword)
+        body: (fieldgroups_body
+          (addlast_fieldgroup_modification
+            (addlast_keyword)
+            target: (identifier)
+            fields: (field_list
+              (identifier)
+              (preproc_conditional_field_list_items
+                (preproc_if
+                  (preproc_open)
+                  condition: (identifier))
+                (preproc_endif
+                  (preproc_close)))
+              (identifier))))))))
+
+================================================================================
+strict field_list: addlast, #elif arm (elif)
+================================================================================
+
+tableextension 50110 TE extends T
+{
+    fieldgroups
+    {
+        addlast(DropDown; 
+N
+#if X
+, B
+#elif Y
+, "K"
+#endif
+, "O"
+) { }
+    }
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (tableextension_declaration
+    (tableextension_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    (extends_keyword)
+    base_object: (identifier)
+    body: (declaration_body
+      (fieldgroups_section
+        (fieldgroups_keyword)
+        body: (fieldgroups_body
+          (addlast_fieldgroup_modification
+            (addlast_keyword)
+            target: (identifier)
+            fields: (field_list
+              (identifier)
+              (preproc_conditional_field_list_items
+                (preproc_if
+                  (preproc_open)
+                  condition: (identifier))
+                (identifier)
+                (preproc_elif
+                  condition: (identifier))
+                (quoted_identifier)
+                (preproc_endif
+                  (preproc_close)))
+              (quoted_identifier))))))))
+
+================================================================================
+strict field_list: addlast, arms with different item counts (count-differs)
+================================================================================
+
+tableextension 50110 TE extends T
+{
+    fieldgroups
+    {
+        addlast(DropDown; 
+N
+#if X
+, B , "K"
+#else
+, "O"
+#endif
+) { }
+    }
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (tableextension_declaration
+    (tableextension_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    (extends_keyword)
+    base_object: (identifier)
+    body: (declaration_body
+      (fieldgroups_section
+        (fieldgroups_keyword)
+        body: (fieldgroups_body
+          (addlast_fieldgroup_modification
+            (addlast_keyword)
+            target: (identifier)
+            fields: (field_list
+              (identifier)
+              (preproc_conditional_field_list_items
+                (preproc_if
+                  (preproc_open)
+                  condition: (identifier))
+                (identifier)
+                (quoted_identifier)
+                (preproc_else)
+                (quoted_identifier)
+                (preproc_endif
+                  (preproc_close))))))))))
+
+================================================================================
+strict field_list: addlast, the whole list in one group, no #else (empty-list)
+================================================================================
+
+tableextension 50110 TE extends T
+{
+    fieldgroups
+    {
+        addlast(DropDown; 
+#if X
+N , B
+#endif
+) { }
+    }
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (tableextension_declaration
+    (tableextension_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    (extends_keyword)
+    base_object: (identifier)
+    body: (declaration_body
+      (fieldgroups_section
+        (fieldgroups_keyword)
+        body: (fieldgroups_body
+          (addlast_fieldgroup_modification
+            (addlast_keyword)
+            target: (identifier)
+            fields: (field_list
+              (preproc_conditional_field_list_items
+                (preproc_if
+                  (preproc_open)
+                  condition: (identifier))
+                (identifier)
+                (identifier)
+                (preproc_endif
+                  (preproc_close))))))))))
+
+================================================================================
+strict field_list MIXED: addlast, trailing group after the separator (trail)
+================================================================================
+
+tableextension 50110 TE extends T
+{
+    fieldgroups
+    {
+        addlast(DropDown; 
+N ,
+#if X
+B
+#endif
+) { }
+    }
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (tableextension_declaration
+    (tableextension_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    (extends_keyword)
+    base_object: (identifier)
+    body: (declaration_body
+      (fieldgroups_section
+        (fieldgroups_keyword)
+        body: (fieldgroups_body
+          (addlast_fieldgroup_modification
+            (addlast_keyword)
+            target: (identifier)
+            fields: (field_list
+              (identifier)
+              (preproc_conditional_field_list_items
+                (preproc_if
+                  (preproc_open)
+                  condition: (identifier))
+                (identifier)
+                (preproc_endif
+                  (preproc_close))))))))))
+
+================================================================================
+strict field_list MIXED: addlast, separator-only group before the first item (holes-lead)
+================================================================================
+
+tableextension 50110 TE extends T
+{
+    fieldgroups
+    {
+        addlast(DropDown; 
+#if X
+,
+#endif
+N , B
+) { }
+    }
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (tableextension_declaration
+    (tableextension_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    (extends_keyword)
+    base_object: (identifier)
+    body: (declaration_body
+      (fieldgroups_section
+        (fieldgroups_keyword)
+        body: (fieldgroups_body
+          (addlast_fieldgroup_modification
+            (addlast_keyword)
+            target: (identifier)
+            fields: (field_list
+              (preproc_conditional_field_list_items
+                (preproc_if
+                  (preproc_open)
+                  condition: (identifier))
+                (preproc_endif
+                  (preproc_close)))
+              (identifier)
+              (identifier))))))))
+
+================================================================================
+strict field_list MIXED: addlast, separator-only group after a separator (holes-mid)
+================================================================================
+
+tableextension 50110 TE extends T
+{
+    fieldgroups
+    {
+        addlast(DropDown; 
+N ,
+#if X
+,
+#endif
+B
+) { }
+    }
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (tableextension_declaration
+    (tableextension_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    (extends_keyword)
+    base_object: (identifier)
+    body: (declaration_body
+      (fieldgroups_section
+        (fieldgroups_keyword)
+        body: (fieldgroups_body
+          (addlast_fieldgroup_modification
+            (addlast_keyword)
+            target: (identifier)
+            fields: (field_list
+              (identifier)
+              (preproc_conditional_field_list_items
+                (preproc_if
+                  (preproc_open)
+                  condition: (identifier))
+                (preproc_endif
+                  (preproc_close)))
+              (identifier))))))))
+
+================================================================================
+strict field_list MIXED: addlast, separator-only group after the last item (holes-trail)
+================================================================================
+
+tableextension 50110 TE extends T
+{
+    fieldgroups
+    {
+        addlast(DropDown; 
+N , B
+#if X
+,
+#endif
+) { }
+    }
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (tableextension_declaration
+    (tableextension_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    (extends_keyword)
+    base_object: (identifier)
+    body: (declaration_body
+      (fieldgroups_section
+        (fieldgroups_keyword)
+        body: (fieldgroups_body
+          (addlast_fieldgroup_modification
+            (addlast_keyword)
+            target: (identifier)
+            fields: (field_list
+              (identifier)
+              (identifier)
+              (preproc_conditional_field_list_items
+                (preproc_if
+                  (preproc_open)
+                  condition: (identifier))
+                (preproc_endif
+                  (preproc_close))))))))))
+
+================================================================================
+strict field_list: addlast, empty group right after the fixed ; (fieldgroup-header empty)
+================================================================================
+
+tableextension 50110 TE extends T
+{
+    fieldgroups
+    {
+        addlast(
+DropDown ;
+#if X
+#endif
+N
+) { }
+    }
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (tableextension_declaration
+    (tableextension_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    (extends_keyword)
+    base_object: (identifier)
+    body: (declaration_body
+      (fieldgroups_section
+        (fieldgroups_keyword)
+        body: (fieldgroups_body
+          (addlast_fieldgroup_modification
+            (addlast_keyword)
+            target: (identifier)
+            fields: (field_list
+              (preproc_conditional_field_list_items
+                (preproc_if
+                  (preproc_open)
+                  condition: (identifier))
+                (preproc_endif
+                  (preproc_close)))
+              (identifier))))))))
+
+================================================================================
+strict field_list: addlast, the whole list in one group right after the fixed ; (fieldgroup-header trail)
+================================================================================
+
+tableextension 50110 TE extends T
+{
+    fieldgroups
+    {
+        addlast(
+DropDown ;
+#if X
+N
+#endif
+) { }
+    }
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (tableextension_declaration
+    (tableextension_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    (extends_keyword)
+    base_object: (identifier)
+    body: (declaration_body
+      (fieldgroups_section
+        (fieldgroups_keyword)
+        body: (fieldgroups_body
+          (addlast_fieldgroup_modification
+            (addlast_keyword)
+            target: (identifier)
+            fields: (field_list
+              (preproc_conditional_field_list_items
+                (preproc_if
+                  (preproc_open)
+                  condition: (identifier))
+                (identifier)
+                (preproc_endif
+                  (preproc_close))))))))))
+
+================================================================================
+strict field_list: key, empty group right after the fixed ; (key-header empty)
+================================================================================
+
+table 50100 T
+{
+    keys
+    {
+        key(
+SK ;
+#if X
+#endif
+N
+) { }
+    }
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (table_declaration
+    (table_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (keys_section
+        (keys_keyword)
+        body: (keys_body
+          (key_declaration
+            (key_keyword)
+            name: (identifier)
+            fields: (field_list
+              (preproc_conditional_field_list_items
+                (preproc_if
+                  (preproc_open)
+                  condition: (identifier))
+                (preproc_endif
+                  (preproc_close)))
+              (identifier))))))))
+
+================================================================================
+strict field_list MIXED: key, the whole list in one group right after the fixed ; (key-header trail)
+================================================================================
+
+table 50100 T
+{
+    keys
+    {
+        key(
+SK ;
+#if X
+N
+#endif
+) { }
+    }
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (table_declaration
+    (table_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (keys_section
+        (keys_keyword)
+        body: (keys_body
+          (key_declaration
+            (key_keyword)
+            name: (identifier)
+            fields: (field_list
+              (preproc_conditional_field_list_items
+                (preproc_if
+                  (preproc_open)
+                  condition: (identifier))
+                (identifier)
+                (preproc_endif
+                  (preproc_close))))))))))
+
+================================================================================
+strict field_list MIXED: fieldgroup, the first item in a group right after the fixed ; (fieldgroup-header trail)
+================================================================================
+
+table 50100 T
+{
+    fieldgroups
+    {
+        fieldgroup(
+Brick ;
+#if X
+K
+#endif
+, N) { }
+    }
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (table_declaration
+    (table_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (fieldgroups_section
+        (fieldgroups_keyword)
+        body: (fieldgroups_body
+          (fieldgroup_declaration
+            (fieldgroup_keyword)
+            name: (identifier)
+            fields: (field_list
+              (preproc_conditional_field_list_items
+                (preproc_if
+                  (preproc_open)
+                  condition: (identifier))
+                (identifier)
+                (preproc_endif
+                  (preproc_close)))
+              (identifier))))))))
+
+================================================================================
+strict field_list: key, group with the separator before its item (sep-before)
+================================================================================
+
+table 50100 T
+{
+    keys
+    {
+        key(PK; 
+K
+#if X
+, N
+#endif
+, B
+) { }
+    }
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (table_declaration
+    (table_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (keys_section
+        (keys_keyword)
+        body: (keys_body
+          (key_declaration
+            (key_keyword)
+            name: (identifier)
+            fields: (field_list
+              (identifier)
+              (preproc_conditional_field_list_items
+                (preproc_if
+                  (preproc_open)
+                  condition: (identifier))
+                (identifier)
+                (preproc_endif
+                  (preproc_close)))
+              (identifier))))))))
+
+================================================================================
+strict field_list: key, group with the separator after its item (sep-after)
+================================================================================
+
+table 50100 T
+{
+    keys
+    {
+        key(PK; 
+K ,
+#if X
+N ,
+#endif
+B
+) { }
+    }
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (table_declaration
+    (table_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (keys_section
+        (keys_keyword)
+        body: (keys_body
+          (key_declaration
+            (key_keyword)
+            name: (identifier)
+            fields: (field_list
+              (identifier)
+              (preproc_conditional_field_list_items
+                (preproc_if
+                  (preproc_open)
+                  condition: (identifier))
+                (identifier)
+                (preproc_endif
+                  (preproc_close)))
+              (identifier))))))))
+
+================================================================================
+strict field_list: key, separator-only arms (sep-only)
+================================================================================
+
+table 50100 T
+{
+    keys
+    {
+        key(PK; 
+K
+#if X
+,
+#else
+,
+#endif
+"No."
+) { }
+    }
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (table_declaration
+    (table_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (keys_section
+        (keys_keyword)
+        body: (keys_body
+          (key_declaration
+            (key_keyword)
+            name: (identifier)
+            fields: (field_list
+              (identifier)
+              (preproc_conditional_field_list_items
+                (preproc_if
+                  (preproc_open)
+                  condition: (identifier))
+                (preproc_else)
+                (preproc_endif
+                  (preproc_close)))
+              (quoted_identifier))))))))
+
+================================================================================
+strict field_list: key, group replacing the first item (first-replace)
+================================================================================
+
+table 50100 T
+{
+    keys
+    {
+        key(PK; 
+#if X
+K
+#else
+N
+#endif
+, B
+) { }
+    }
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (table_declaration
+    (table_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (keys_section
+        (keys_keyword)
+        body: (keys_body
+          (key_declaration
+            (key_keyword)
+            name: (identifier)
+            fields: (field_list
+              (preproc_conditional_field_list_items
+                (preproc_if
+                  (preproc_open)
+                  condition: (identifier))
+                (identifier)
+                (preproc_else)
+                (identifier)
+                (preproc_endif
+                  (preproc_close)))
+              (identifier))))))))
+
+================================================================================
+strict field_list: key, nested group in an #else arm
+================================================================================
+
+table 50100 T
+{
+    keys
+    {
+        key(PK; 
+K
+#if X
+, N
+#else
+, B
+#if Y
+, O
+#endif
+#endif
+) { }
+    }
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (table_declaration
+    (table_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (keys_section
+        (keys_keyword)
+        body: (keys_body
+          (key_declaration
+            (key_keyword)
+            name: (identifier)
+            fields: (field_list
+              (identifier)
+              (preproc_conditional_field_list_items
+                (preproc_if
+                  (preproc_open)
+                  condition: (identifier))
+                (identifier)
+                (preproc_else)
+                (identifier)
+                (preproc_conditional_field_list_items
+                  (preproc_if
+                    (preproc_open)
+                    condition: (identifier))
+                  (identifier)
+                  (preproc_endif
+                    (preproc_close)))
+                (preproc_endif
+                  (preproc_close))))))))))
+
+================================================================================
+strict field_list: key, adjacent complementary groups with #if not
+================================================================================
+
+table 50100 T
+{
+    keys
+    {
+        key(PK; 
+K ,
+#if X
+N
+#endif
+#if not X
+B
+#endif
+) { }
+    }
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (table_declaration
+    (table_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (keys_section
+        (keys_keyword)
+        body: (keys_body
+          (key_declaration
+            (key_keyword)
+            name: (identifier)
+            fields: (field_list
+              (identifier)
+              (preproc_conditional_field_list_items
+                (preproc_if
+                  (preproc_open)
+                  condition: (identifier))
+                (identifier)
+                (preproc_endif
+                  (preproc_close)))
+              (preproc_conditional_field_list_items
+                (preproc_if
+                  (preproc_open)
+                  condition: (preproc_not_expression
+                    (identifier)))
+                (identifier)
+                (preproc_endif
+                  (preproc_close))))))))))
+
+================================================================================
+strict field_list: key, empty #if arm
+================================================================================
+
+table 50100 T
+{
+    keys
+    {
+        key(PK; 
+K
+#if X
+#else
+, N
+#endif
+) { }
+    }
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (table_declaration
+    (table_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (keys_section
+        (keys_keyword)
+        body: (keys_body
+          (key_declaration
+            (key_keyword)
+            name: (identifier)
+            fields: (field_list
+              (identifier)
+              (preproc_conditional_field_list_items
+                (preproc_if
+                  (preproc_open)
+                  condition: (identifier))
+                (preproc_else)
+                (identifier)
+                (preproc_endif
+                  (preproc_close))))))))))
+
+================================================================================
+strict field_list: key, comments at every boundary
+================================================================================
+
+table 50100 T
+{
+    keys
+    {
+        key(PK; /* c0 */
+K // c1
+#if X // c2
+/* c3 */ , /* c4 */ N , // c5
+#else // c6
+, // c7
+#endif // c8
+/* c9 */ B /* c10 */
+) { }
+    }
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (table_declaration
+    (table_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (keys_section
+        (keys_keyword)
+        body: (keys_body
+          (key_declaration
+            (key_keyword)
+            name: (identifier)
+            (multiline_comment)
+            fields: (field_list
+              (identifier)
+              (comment)
+              (preproc_conditional_field_list_items
+                (preproc_if
+                  (preproc_open)
+                  condition: (identifier)
+                  (comment))
+                (multiline_comment)
+                (multiline_comment)
+                (identifier)
+                (comment)
+                (preproc_else)
+                (comment)
+                (comment)
+                (preproc_endif
+                  (preproc_close)))
+              (comment)
+              (multiline_comment)
+              (identifier))
+            (multiline_comment)))))))
+
+================================================================================
+strict field_list MIXED: key, the whole list in one group, no #else (empty-list)
+================================================================================
+
+table 50100 T
+{
+    keys
+    {
+        key(SK; 
+#if X
+N , B
+#endif
+) { }
+    }
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (table_declaration
+    (table_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (keys_section
+        (keys_keyword)
+        body: (keys_body
+          (key_declaration
+            (key_keyword)
+            name: (identifier)
+            fields: (field_list
+              (preproc_conditional_field_list_items
+                (preproc_if
+                  (preproc_open)
+                  condition: (identifier))
+                (identifier)
+                (identifier)
+                (preproc_endif
+                  (preproc_close))))))))))
+
+================================================================================
+strict field_list: fieldgroup, group with the separator before its item (sep-before-end)
+================================================================================
+
+table 50100 T
+{
+    fieldgroups
+    {
+        fieldgroup(DropDown; 
+K
+#if X
+, N
+#endif
+) { }
+    }
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (table_declaration
+    (table_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (fieldgroups_section
+        (fieldgroups_keyword)
+        body: (fieldgroups_body
+          (fieldgroup_declaration
+            (fieldgroup_keyword)
+            name: (identifier)
+            fields: (field_list
+              (identifier)
+              (preproc_conditional_field_list_items
+                (preproc_if
+                  (preproc_open)
+                  condition: (identifier))
+                (identifier)
+                (preproc_endif
+                  (preproc_close))))))))))
+
+================================================================================
+strict field_list: fieldgroup, group with the separator after its item (sep-after)
+================================================================================
+
+table 50100 T
+{
+    fieldgroups
+    {
+        fieldgroup(DropDown; 
+K ,
+#if X
+"No." ,
+#endif
+N
+) { }
+    }
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (table_declaration
+    (table_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (fieldgroups_section
+        (fieldgroups_keyword)
+        body: (fieldgroups_body
+          (fieldgroup_declaration
+            (fieldgroup_keyword)
+            name: (identifier)
+            fields: (field_list
+              (identifier)
+              (preproc_conditional_field_list_items
+                (preproc_if
+                  (preproc_open)
+                  condition: (identifier))
+                (quoted_identifier)
+                (preproc_endif
+                  (preproc_close)))
+              (identifier))))))))
+
+================================================================================
+strict field_list: fieldgroup, an arm holding both separators (both-in-arm)
+================================================================================
+
+table 50100 T
+{
+    fieldgroups
+    {
+        fieldgroup(DropDown; 
+K
+#if X
+, N ,
+#else
+,
+#endif
+B
+) { }
+    }
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (table_declaration
+    (table_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (fieldgroups_section
+        (fieldgroups_keyword)
+        body: (fieldgroups_body
+          (fieldgroup_declaration
+            (fieldgroup_keyword)
+            name: (identifier)
+            fields: (field_list
+              (identifier)
+              (preproc_conditional_field_list_items
+                (preproc_if
+                  (preproc_open)
+                  condition: (identifier))
+                (identifier)
+                (preproc_else)
+                (preproc_endif
+                  (preproc_close)))
+              (identifier))))))))
+
+================================================================================
+strict field_list: fieldgroup, leading group whose arm ends with the separator (lead-optional)
+================================================================================
+
+table 50100 T
+{
+    fieldgroups
+    {
+        fieldgroup(DropDown; 
+#if X
+K ,
+#endif
+N
+) { }
+    }
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (table_declaration
+    (table_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (fieldgroups_section
+        (fieldgroups_keyword)
+        body: (fieldgroups_body
+          (fieldgroup_declaration
+            (fieldgroup_keyword)
+            name: (identifier)
+            fields: (field_list
+              (preproc_conditional_field_list_items
+                (preproc_if
+                  (preproc_open)
+                  condition: (identifier))
+                (identifier)
+                (preproc_endif
+                  (preproc_close)))
+              (identifier))))))))
+
+================================================================================
+strict field_list: fieldgroup, #elif and #else arms
+================================================================================
+
+table 50100 T
+{
+    fieldgroups
+    {
+        fieldgroup(DropDown; 
+K
+#if X
+, N
+#elif Y
+, B
+#else
+, O
+#endif
+) { }
+    }
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (table_declaration
+    (table_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (fieldgroups_section
+        (fieldgroups_keyword)
+        body: (fieldgroups_body
+          (fieldgroup_declaration
+            (fieldgroup_keyword)
+            name: (identifier)
+            fields: (field_list
+              (identifier)
+              (preproc_conditional_field_list_items
+                (preproc_if
+                  (preproc_open)
+                  condition: (identifier))
+                (identifier)
+                (preproc_elif
+                  condition: (identifier))
+                (identifier)
+                (preproc_else)
+                (identifier)
+                (preproc_endif
+                  (preproc_close))))))))))
+
+================================================================================
+strict field_list: split key, group in the #if header's list (sep-before)
+================================================================================
+
+table 50100 T
+{
+    keys
+    {
+#if A
+        key(PK; K
+#if X
+, N
+#endif
+)
+#else
+        key(PK; K)
+#endif
+        {
+        }
+    }
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (table_declaration
+    (table_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (keys_section
+        (keys_keyword)
+        body: (keys_body
+          (preproc_split_key
+            (preproc_if
+              (preproc_open)
+              condition: (identifier))
+            (key_keyword)
+            name: (identifier)
+            fields: (field_list
+              (identifier)
+              (preproc_conditional_field_list_items
+                (preproc_if
+                  (preproc_open)
+                  condition: (identifier))
+                (identifier)
+                (preproc_endif
+                  (preproc_close))))
+            (preproc_else)
+            (key_keyword)
+            name: (identifier)
+            fields: (field_list
+              (identifier))
+            (preproc_endif
+              (preproc_close))))))))
+
+================================================================================
+strict field_list: split key, group in the #else header's list (sep-after)
+================================================================================
+
+table 50100 T
+{
+    keys
+    {
+#if A
+        key(PK; K)
+#else
+        key(PK; K ,
+#if X
+N ,
+#endif
+B)
+#endif
+        {
+        }
+    }
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (table_declaration
+    (table_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (keys_section
+        (keys_keyword)
+        body: (keys_body
+          (preproc_split_key
+            (preproc_if
+              (preproc_open)
+              condition: (identifier))
+            (key_keyword)
+            name: (identifier)
+            fields: (field_list
+              (identifier))
+            (preproc_else)
+            (key_keyword)
+            name: (identifier)
+            fields: (field_list
+              (identifier)
+              (preproc_conditional_field_list_items
+                (preproc_if
+                  (preproc_open)
+                  condition: (identifier))
+                (identifier)
+                (preproc_endif
+                  (preproc_close)))
+              (identifier))
+            (preproc_endif
+              (preproc_close))))))))
+
+================================================================================
+strict field_list preservation: key with quoted, escaped-quote and contextual-keyword items
+================================================================================
+
+table 50100 T
+{
+    keys
+    {
+        key(PK; 
+K, "No.", "A""B", Value, Table, Key, Field
+) { }
+    }
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (table_declaration
+    (table_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (keys_section
+        (keys_keyword)
+        body: (keys_body
+          (key_declaration
+            (key_keyword)
+            name: (identifier)
+            fields: (field_list
+              (identifier)
+              (quoted_identifier)
+              (quoted_identifier)
+              (identifier)
+              (identifier)
+              (identifier)
+              (identifier))))))))
+
+================================================================================
+strict field_list preservation: comments between plain items
+================================================================================
+
+table 50100 T
+{
+    fieldgroups
+    {
+        fieldgroup(DropDown; 
+K /* c1 */ , // c2
+N
+) { }
+    }
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (table_declaration
+    (table_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (fieldgroups_section
+        (fieldgroups_keyword)
+        body: (fieldgroups_body
+          (fieldgroup_declaration
+            (fieldgroup_keyword)
+            name: (identifier)
+            fields: (field_list
+              (identifier)
+              (multiline_comment)
+              (comment)
+              (identifier))))))))
+
+================================================================================
+strict field_list preservation: key wholly inside one arm of an enclosing conditional
+================================================================================
+
+table 50100 T
+{
+    keys
+    {
+#if X
+        key(PK; K, N) { }
+#else
+        key(PK; K) { }
+#endif
+    }
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (table_declaration
+    (table_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (keys_section
+        (keys_keyword)
+        body: (keys_body
+          (preproc_conditional_keys
+            (preproc_if
+              (preproc_open)
+              condition: (identifier))
+            (key_declaration
+              (key_keyword)
+              name: (identifier)
+              fields: (field_list
+                (identifier)
+                (identifier)))
+            (preproc_else)
+            (key_declaration
+              (key_keyword)
+              name: (identifier)
+              fields: (field_list
+                (identifier)))
+            (preproc_endif
+              (preproc_close))))))))
+
+================================================================================
+strict field_list preservation: key header in an enclosing whole-declaration #if (split key)
+================================================================================
+
+table 50100 T
+{
+    keys
+    {
+#if A
+        key(PK; K, N)
+#else
+        key(PK; "No.")
+#endif
+        {
+        }
+    }
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (table_declaration
+    (table_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (keys_section
+        (keys_keyword)
+        body: (keys_body
+          (preproc_split_key
+            (preproc_if
+              (preproc_open)
+              condition: (identifier))
+            (key_keyword)
+            name: (identifier)
+            fields: (field_list
+              (identifier)
+              (identifier))
+            (preproc_else)
+            (key_keyword)
+            name: (identifier)
+            fields: (field_list
+              (quoted_identifier))
+            (preproc_endif
+              (preproc_close))))))))
+
+================================================================================
+strict field_list preservation: fieldgroup wholly inside one arm of an enclosing conditional
+================================================================================
+
+table 50100 T
+{
+    fieldgroups
+    {
+#if X
+        fieldgroup(DropDown; K, N) { }
+#endif
+    }
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (table_declaration
+    (table_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (fieldgroups_section
+        (fieldgroups_keyword)
+        body: (fieldgroups_body
+          (preproc_conditional_fieldgroups
+            (preproc_if
+              (preproc_open)
+              condition: (identifier))
+            (fieldgroup_declaration
+              (fieldgroup_keyword)
+              name: (identifier)
+              fields: (field_list
+                (identifier)
+                (identifier)))
+            (preproc_endif
+              (preproc_close))))))))
+
+================================================================================
+strict field_list preservation: plain addlast list
+================================================================================
+
+tableextension 50110 TE extends T
+{
+    fieldgroups
+    {
+        addlast(DropDown; 
+N, "K"
+) { }
+    }
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (tableextension_declaration
+    (tableextension_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    (extends_keyword)
+    base_object: (identifier)
+    body: (declaration_body
+      (fieldgroups_section
+        (fieldgroups_keyword)
+        body: (fieldgroups_body
+          (addlast_fieldgroup_modification
+            (addlast_keyword)
+            target: (identifier)
+            fields: (field_list
+              (identifier)
+              (quoted_identifier))))))))
+
+================================================================================
+strict field_list: addlast with an empty field list (alc accepts, empty-interior)
+================================================================================
+
+tableextension 50110 TE extends T
+{
+    fieldgroups
+    {
+        addlast(DropDown; 
+
+) { }
+    }
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (tableextension_declaration
+    (tableextension_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    (extends_keyword)
+    base_object: (identifier)
+    body: (declaration_body
+      (fieldgroups_section
+        (fieldgroups_keyword)
+        body: (fieldgroups_body
+          (addlast_fieldgroup_modification
+            (addlast_keyword)
+            target: (identifier)))))))
+
+================================================================================
+strict field_list over-acceptance: addfirst with a group (alc has no addfirst in fieldgroups)
+================================================================================
+
+tableextension 50110 TE extends T
+{
+    fieldgroups
+    {
+        addfirst(DropDown; 
+N
+#if X
+, B
+#endif
+) { }
+    }
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (tableextension_declaration
+    (tableextension_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    (extends_keyword)
+    base_object: (identifier)
+    body: (declaration_body
+      (fieldgroups_section
+        (fieldgroups_keyword)
+        body: (fieldgroups_body
+          (addfirst_fieldgroup_modification
+            (addfirst_keyword)
+            target: (identifier)
+            fields: (field_list
+              (identifier)
+              (preproc_conditional_field_list_items
+                (preproc_if
+                  (preproc_open)
+                  condition: (identifier))
+                (identifier)
+                (preproc_endif
+                  (preproc_close))))))))))

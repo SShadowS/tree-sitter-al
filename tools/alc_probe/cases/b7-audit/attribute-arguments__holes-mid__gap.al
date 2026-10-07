@@ -1,5 +1,5 @@
 // B7a Task 10 witness (GAP): family attribute-arguments, base placement holes-mid, 3 cells; representative occ:attribute_argument_list:1.0.0@attribute_arguments#holes-mid
-// Fixture b7_gap_attribute_arguments_test.txt#B7a GAP: attribute-arguments / holes-mid (3 cells, verdict of the representative MIXED); the parser ERRORs on configurations alc accepts; representative occ:attribute_argument_list:1.0.0@attribute_arguments%23holes-mid#0
+// Fixture strict_conditional_attribute_args_test.txt#strict attribute arguments MIXED: separator-only group after a separator (holes-mid)#0
 // expect: !X accept
 // expect: X reject(AL0114)
 // source: recorded by B7a Task 10, 2026-10-07: the alc split verdicts of cell occ:attribute_argument_list:1.0.0@attribute_arguments#holes-mid in tools/b7_audit/evidence.jsonl.gz

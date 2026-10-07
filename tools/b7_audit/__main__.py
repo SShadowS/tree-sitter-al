@@ -1,7 +1,8 @@
 """python -m tools.b7_audit census [--check|--list]
    python -m tools.b7_audit report [--out PATH] [--evidence PATH]
    python -m tools.b7_audit run [--only FAMILY|KEY|PLACEMENT] [--jobs N] [--check] [--accept-tool]
-   python -m tools.b7_audit assert --cell ID | --refresh"""
+   python -m tools.b7_audit assert --cell ID | --refresh
+   python -m tools.b7_audit manifest --check [--manifest PATH] [--evidence PATH]"""
 import argparse
 import sys
 from pathlib import Path
@@ -84,6 +85,22 @@ def cmd_refresh():
     return 1 if problems else 0
 
 
+def cmd_manifest(a):
+    from . import manifest
+    try:
+        entries = manifest.load(a.manifest or manifest.MANIFEST)
+        records, verdicts = manifest.current(a.evidence)
+    except (OSError, ValueError, KeyError) as e:
+        print(f"cannot run: {e}", file=sys.stderr)
+        return 2
+    problems = manifest.check(entries, records, verdicts)
+    for p in problems:
+        print(p)
+    adm = [e for e in entries if e.disposition == "admitted"]
+    print(f"{len(entries)} entries ({len(adm)} admitted): {len(problems)} problems")
+    return 1 if problems else 0
+
+
 def main(argv=None):
     p = argparse.ArgumentParser(prog="tools.b7_audit")
     sub = p.add_subparsers(dest="cmd", required=True)
@@ -102,6 +119,10 @@ def main(argv=None):
     m.add_argument("--cell")
     m.add_argument("--refresh", action="store_true",
                    help="rewrite fingerprints of rows whose truth is unchanged; list flipped rows (exit 1)")
+    mf = sub.add_parser("manifest", help="--check: the B7b-1 route manifest against the committed evidence")
+    mf.add_argument("--check", action="store_true", required=True)
+    mf.add_argument("--manifest")
+    mf.add_argument("--evidence")
     rp = sub.add_parser("report")
     rp.add_argument("--out")
     rp.add_argument("--evidence")
@@ -114,6 +135,8 @@ def main(argv=None):
             print(f"cannot run: {e}", file=sys.stderr)
             return 2
         return 0
+    if a.cmd == "manifest":
+        return cmd_manifest(a)
     if a.cmd == "assert":
         return cmd_refresh() if a.refresh else cmd_assert(a.cell)
     if a.cmd == "run":

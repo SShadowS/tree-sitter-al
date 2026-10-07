@@ -41,6 +41,47 @@ public API — a change to node structure or field names is a **major** bump.
 
 ### Changed
 
+- **An `#if` group may stand anywhere in eight strict delimited lists (seven host conversions; roadmap B7b-1, spec
+  `docs/superpowers/specs/2026-10-07-b7b-1-strict-conditional-lists-design.md`). Breaking for node-API consumers
+  only through the field changes below; every production tree is byte-identical in all four corpora (full cursor-tree
+  parity, `python -m tools.perf parity`: BC.History 15,358 files, DC 1,352, BC28.1 16,928, BCApps-29.0 36,717).**
+  alc accepts a group before or after a separator, holding only a separator or both, replacing the first item, nested
+  and adjacent, e.g. `key(PK; A #if X , B #endif , C)`; the parser ERRORed. The lists: `implements`, key / fieldgroup /
+  `addlast` field lists, the `sorting( )` inner list, the `ascending( )` / `descending( )` inner list of an `OrderBy`
+  item, the move element list after the fixed `;`, array dimensions, attribute arguments and variable names (also after
+  a variable attribute). The outer `OrderBy` list, the move target and fixed `;`, type arguments and `addfirst` in
+  fieldgroups stay outside (B12, B7b-3, B7b-1g; alc rejects `addfirst` there).
+  - New node types, one per list, each holding its arm's items with the host's item field (`multiple`, not
+    `required`): `preproc_conditional_implements` (`interface`), `preproc_conditional_field_list_items`,
+    `preproc_conditional_sorting_fields`, `preproc_conditional_order_by_fields`, `preproc_conditional_move_elements`
+    (`element`), `preproc_conditional_array_dimensions` (`sizes`), `preproc_conditional_attribute_args`,
+    `preproc_conditional_var_names` (`name`). Unfielded lists stay unfielded.
+  - **Fields now optional** (`required: false`), because every item may sit in a group: `implements_clause.interface`,
+    `addlast_fieldgroup_modification.fields`, `element` on the four `move*_modification` nodes, `array_type.sizes`,
+    `variable_declaration.name`. A query on the host field does not see an item inside a group: field labels are
+    parent-child.
+  - `node-types.json` now reports the children of `field_list` and `attribute_argument_list` as `required: false`. That
+    is a generator artifact of the shared seam helpers; neither list can be empty.
+  - The grammar now accepts empty `sorting()`, `ascending()` / `descending()` and `addlast(X; )`, which alc accepts.
+  - Scanner: the `var_attribute_open` lookahead steps over a conditional name stream (`[NonDebuggable] A #if X , B
+    #endif : Integer;`) and reads an escaped `""` inside a quoted name.
+  - Grammar: `strictConditionalList` / `strictListBody` generate each list; the var-names group carries
+    `prec.dynamic(-1)` and 10 GLR conflicts (an empty group before a declaration may be a sibling conditional).
+    STATE_COUNT 23,213 -> 23,579 (+1.6%), SYMBOL_COUNT 1,217 -> 1,268, parser.c +1.6%; `tools.perf ab` over DC within
+    noise (0.988 / 1.003 / 1.014); a candidate-only scaling benchmark (`python -m tools.perf.strict_lists_scaling`)
+    shows linear growth in list length and nesting depth.
+  - Config oracle: a family-schema registry for these lists (`tools/config_oracle/lowering/conditional_lists.py`):
+    each group is validated on the split tree (parent, slot, region, arm containment, order) and each configuration's
+    reconstructed list must read `item (sep item)*`; an emptied list lowers by the flat grammar
+    (`optional-list-removed:<kind>`). Full tier over four corpora: 0 discrepancies. Groups under `preproc_split_key`
+    headers or in a `preproc_split_declaration` are cannot-validate in the oracle (`lowering:unsupported-type`,
+    classified `debt(C1)`), so the 0-discrepancy claim does not cover those routes.
+  - B7a audit: a frozen route manifest (`tools/b7_audit/b7b1-manifest.tsv`, `python -m tools.b7_audit manifest
+    --check`) gates the change: all 1,404 admitted cells reach their frozen verdict (GAP 14,692 -> 13,807, CONSISTENT
+    4,944 -> 5,829). A registry reason starting `ALC-MEASURED:` disables class sampling for that row (`evidence.py`).
+    `tools/b7_audit/strict_list_assertions.py` regenerates the assertion rows for those cells.
+  - Over-acceptances: some conditional forms invalid in every configuration now parse clean (deferred-work item 44).
+
 - **Config oracle: a lone `;` in an `#if` arm right after a statement is lowered as that statement's separator
   (roadmap B7b-0, no tree change).** By user ruling (Option A), `I := 1` / `#if X` / `;` / `#endif` keeps its tree: the
   `;` is its own `empty_statement` inside the conditional. A configuration that selects the arm reads `I := 1 ;`, so the

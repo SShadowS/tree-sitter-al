@@ -1,5 +1,5 @@
 // B7a Task 10 witness (GAP): family sorting, base placement trail, 18 cells; representative occ:sorting_value:0.0.3.0.0@action_body#trail
-// Fixture b7_gap_sorting_test.txt#B7a GAP: sorting / trail (18 cells, verdict of the representative MIXED); the parser ERRORs on configurations alc accepts; representative occ:sorting_value:0.0.3.0.0@action_body%23trail#0
+// Fixture strict_conditional_sorting_fields_test.txt#strict sorting MIXED: trailing group after the separator (trail)#0
 // expect: !TPL !X accept
 // expect: !TPL X accept
 // expect: TPL !X reject(AL0301)

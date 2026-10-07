@@ -1,5 +1,5 @@
 // B7a Task 10 witness (GAP): family array-dimensions, base placement first-replace, 3 cells; representative occ:array_type:3.0.0@type_specification#first-replace
-// Fixture b7_gap_array_dimensions_test.txt#B7a GAP: array-dimensions / first-replace (3 cells, verdict of the representative GAP); the parser ERRORs on configurations alc accepts; representative occ:array_type:3.0.0@type_specification%23first-replace#0
+// Fixture strict_conditional_array_dimensions_test.txt#strict array: group replacing the first dimension (first-replace)#0
 // expect: !X accept
 // expect: X accept
 // source: recorded by B7a Task 10, 2026-10-07: the alc split verdicts of cell occ:array_type:3.0.0@type_specification#first-replace in tools/b7_audit/evidence.jsonl.gz

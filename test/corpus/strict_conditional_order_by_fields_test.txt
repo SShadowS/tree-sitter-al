@@ -1,0 +1,1172 @@
+; B7b-1 (spec docs/superpowers/specs/2026-10-07-b7b-1-strict-conditional-lists-design.md):
+; a #if group may stand anywhere in the inner field list of one OrderBy item, inside
+; ascending( ... ) or descending( ... ). The outer comma list of order_by_items is property-value
+; routing and is NOT strict (excluded, spec section 2): a group between two items stays an ERROR,
+; pinned in strict_conditional_order_by_fields_negative_test.txt. Expected trees are HAND-WRITTEN
+; from the flat reading (the item list with each arm read as an alternative item run). The list is
+; unfielded: its raw items are unfielded children of order_by_item, items inside an arm unfielded
+; children of preproc_conditional_order_by_fields. Separators are anonymous. Comments sit in the
+; smallest visible node holding tokens on both sides of them.
+; The first 10 cases are the shapes of the former test/corpus/b7_gap_order_by_test.txt `:error`
+; witnesses, list text unchanged (query OrderBy, the probed route). `MIXED` cases are accepted by
+; alc in one configuration and rejected in the other: the split source parses, the invalid
+; configuration is the config oracle's to judge (spec section 3).
+; The interior may be empty: alc accepts `ascending()` (B7b-1 Task 2, empty-interior), so the
+; configuration X=0 of the empty-list shape is a valid flat text.
+
+================================================================================
+strict order-by: empty group between separator and item (empty)
+================================================================================
+
+query 50105 Qy
+{
+    OrderBy = ascending(
+K ,
+#if X
+#endif
+N
+);
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (query_declaration
+    (query_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (property
+        name: (property_name)
+        value: (order_by_list
+          (order_by_item
+            (ascending_keyword)
+            (identifier)
+            (preproc_conditional_order_by_fields
+              (preproc_if
+                (preproc_open)
+                condition: (identifier))
+              (preproc_endif
+                (preproc_close)))
+            (identifier)))))))
+
+================================================================================
+strict order-by: the whole list in one group, no #else (empty-list)
+================================================================================
+
+query 50105 Qy
+{
+    OrderBy = ascending(
+#if X
+K , N
+#endif
+);
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (query_declaration
+    (query_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (property
+        name: (property_name)
+        value: (order_by_list
+          (order_by_item
+            (ascending_keyword)
+            (preproc_conditional_order_by_fields
+              (preproc_if
+                (preproc_open)
+                condition: (identifier))
+              (identifier)
+              (identifier)
+              (preproc_endif
+                (preproc_close)))))))))
+
+================================================================================
+strict order-by MIXED: separator-only group before the first item (holes-lead)
+================================================================================
+
+query 50105 Qy
+{
+    OrderBy = ascending(
+#if X
+,
+#endif
+K , N
+);
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (query_declaration
+    (query_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (property
+        name: (property_name)
+        value: (order_by_list
+          (order_by_item
+            (ascending_keyword)
+            (preproc_conditional_order_by_fields
+              (preproc_if
+                (preproc_open)
+                condition: (identifier))
+              (preproc_endif
+                (preproc_close)))
+            (identifier)
+            (identifier)))))))
+
+================================================================================
+strict order-by MIXED: separator-only group after a separator (holes-mid)
+================================================================================
+
+query 50105 Qy
+{
+    OrderBy = ascending(
+K ,
+#if X
+,
+#endif
+N
+);
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (query_declaration
+    (query_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (property
+        name: (property_name)
+        value: (order_by_list
+          (order_by_item
+            (ascending_keyword)
+            (identifier)
+            (preproc_conditional_order_by_fields
+              (preproc_if
+                (preproc_open)
+                condition: (identifier))
+              (preproc_endif
+                (preproc_close)))
+            (identifier)))))))
+
+================================================================================
+strict order-by MIXED: separator-only group after the last item (holes-trail)
+================================================================================
+
+query 50105 Qy
+{
+    OrderBy = ascending(
+K , N
+#if X
+,
+#endif
+);
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (query_declaration
+    (query_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (property
+        name: (property_name)
+        value: (order_by_list
+          (order_by_item
+            (ascending_keyword)
+            (identifier)
+            (identifier)
+            (preproc_conditional_order_by_fields
+              (preproc_if
+                (preproc_open)
+                condition: (identifier))
+              (preproc_endif
+                (preproc_close)))))))))
+
+================================================================================
+strict order-by: leading group whose arm ends with the separator (lead-optional)
+================================================================================
+
+query 50105 Qy
+{
+    OrderBy = ascending(
+#if X
+K ,
+#endif
+N
+);
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (query_declaration
+    (query_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (property
+        name: (property_name)
+        value: (order_by_list
+          (order_by_item
+            (ascending_keyword)
+            (preproc_conditional_order_by_fields
+              (preproc_if
+                (preproc_open)
+                condition: (identifier))
+              (identifier)
+              (preproc_endif
+                (preproc_close)))
+            (identifier)))))))
+
+================================================================================
+strict order-by: the whole list in the arms of one group (one-elem)
+================================================================================
+
+query 50105 Qy
+{
+    OrderBy = ascending(
+#if X
+K , N
+#else
+K
+#endif
+);
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (query_declaration
+    (query_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (property
+        name: (property_name)
+        value: (order_by_list
+          (order_by_item
+            (ascending_keyword)
+            (preproc_conditional_order_by_fields
+              (preproc_if
+                (preproc_open)
+                condition: (identifier))
+              (identifier)
+              (identifier)
+              (preproc_else)
+              (identifier)
+              (preproc_endif
+                (preproc_close)))))))))
+
+================================================================================
+strict order-by: group with the separator before its item (sep-before-end)
+================================================================================
+
+query 50105 Qy
+{
+    OrderBy = ascending(
+K
+#if X
+, N
+#endif
+);
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (query_declaration
+    (query_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (property
+        name: (property_name)
+        value: (order_by_list
+          (order_by_item
+            (ascending_keyword)
+            (identifier)
+            (preproc_conditional_order_by_fields
+              (preproc_if
+                (preproc_open)
+                condition: (identifier))
+              (identifier)
+              (preproc_endif
+                (preproc_close)))))))))
+
+================================================================================
+strict order-by: separator-only arms between two raw items (sep-only)
+================================================================================
+
+query 50105 Qy
+{
+    OrderBy = ascending(
+K
+#if X
+,
+#else
+,
+#endif
+N
+);
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (query_declaration
+    (query_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (property
+        name: (property_name)
+        value: (order_by_list
+          (order_by_item
+            (ascending_keyword)
+            (identifier)
+            (preproc_conditional_order_by_fields
+              (preproc_if
+                (preproc_open)
+                condition: (identifier))
+              (preproc_else)
+              (preproc_endif
+                (preproc_close)))
+            (identifier)))))))
+
+================================================================================
+strict order-by MIXED: trailing group after the separator (trail)
+================================================================================
+
+query 50105 Qy
+{
+    OrderBy = ascending(
+K ,
+#if X
+N
+#endif
+);
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (query_declaration
+    (query_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (property
+        name: (property_name)
+        value: (order_by_list
+          (order_by_item
+            (ascending_keyword)
+            (identifier)
+            (preproc_conditional_order_by_fields
+              (preproc_if
+                (preproc_open)
+                condition: (identifier))
+              (identifier)
+              (preproc_endif
+                (preproc_close)))))))))
+
+================================================================================
+strict order-by: group with the separator before its item, then an item (sep-before)
+================================================================================
+
+query 50105 Qy
+{
+    OrderBy = ascending(
+K
+#if X
+, N
+#endif
+, "B"
+);
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (query_declaration
+    (query_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (property
+        name: (property_name)
+        value: (order_by_list
+          (order_by_item
+            (ascending_keyword)
+            (identifier)
+            (preproc_conditional_order_by_fields
+              (preproc_if
+                (preproc_open)
+                condition: (identifier))
+              (identifier)
+              (preproc_endif
+                (preproc_close)))
+            (quoted_identifier)))))))
+
+================================================================================
+strict order-by: group with the separator after its item (sep-after)
+================================================================================
+
+query 50105 Qy
+{
+    OrderBy = ascending(
+K ,
+#if X
+N ,
+#endif
+"B"
+);
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (query_declaration
+    (query_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (property
+        name: (property_name)
+        value: (order_by_list
+          (order_by_item
+            (ascending_keyword)
+            (identifier)
+            (preproc_conditional_order_by_fields
+              (preproc_if
+                (preproc_open)
+                condition: (identifier))
+              (identifier)
+              (preproc_endif
+                (preproc_close)))
+            (quoted_identifier)))))))
+
+================================================================================
+strict order-by: an arm holding both separators (both-in-arm)
+================================================================================
+
+query 50105 Qy
+{
+    OrderBy = ascending(
+K
+#if X
+, N ,
+#else
+,
+#endif
+"B"
+);
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (query_declaration
+    (query_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (property
+        name: (property_name)
+        value: (order_by_list
+          (order_by_item
+            (ascending_keyword)
+            (identifier)
+            (preproc_conditional_order_by_fields
+              (preproc_if
+                (preproc_open)
+                condition: (identifier))
+              (identifier)
+              (preproc_else)
+              (preproc_endif
+                (preproc_close)))
+            (quoted_identifier)))))))
+
+================================================================================
+strict order-by: group replacing the first item (first-replace)
+================================================================================
+
+query 50105 Qy
+{
+    OrderBy = ascending(
+#if X
+K
+#else
+N
+#endif
+, "B"
+);
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (query_declaration
+    (query_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (property
+        name: (property_name)
+        value: (order_by_list
+          (order_by_item
+            (ascending_keyword)
+            (preproc_conditional_order_by_fields
+              (preproc_if
+                (preproc_open)
+                condition: (identifier))
+              (identifier)
+              (preproc_else)
+              (identifier)
+              (preproc_endif
+                (preproc_close)))
+            (quoted_identifier)))))))
+
+================================================================================
+strict order-by: nested group (nested)
+================================================================================
+
+query 50105 Qy
+{
+    OrderBy = ascending(
+K
+#if X
+, N
+#if Y
+, "B"
+#endif
+#endif
+, "O"
+);
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (query_declaration
+    (query_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (property
+        name: (property_name)
+        value: (order_by_list
+          (order_by_item
+            (ascending_keyword)
+            (identifier)
+            (preproc_conditional_order_by_fields
+              (preproc_if
+                (preproc_open)
+                condition: (identifier))
+              (identifier)
+              (preproc_conditional_order_by_fields
+                (preproc_if
+                  (preproc_open)
+                  condition: (identifier))
+                (quoted_identifier)
+                (preproc_endif
+                  (preproc_close)))
+              (preproc_endif
+                (preproc_close)))
+            (quoted_identifier)))))))
+
+================================================================================
+strict order-by: adjacent independent groups (adjacent-indep)
+================================================================================
+
+query 50105 Qy
+{
+    OrderBy = ascending(
+K
+#if X
+, N
+#endif
+#if Y
+, "B"
+#endif
+);
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (query_declaration
+    (query_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (property
+        name: (property_name)
+        value: (order_by_list
+          (order_by_item
+            (ascending_keyword)
+            (identifier)
+            (preproc_conditional_order_by_fields
+              (preproc_if
+                (preproc_open)
+                condition: (identifier))
+              (identifier)
+              (preproc_endif
+                (preproc_close)))
+            (preproc_conditional_order_by_fields
+              (preproc_if
+                (preproc_open)
+                condition: (identifier))
+              (quoted_identifier)
+              (preproc_endif
+                (preproc_close)))))))))
+
+================================================================================
+strict order-by: adjacent complementary groups with #if not (adjacent-compl)
+================================================================================
+
+query 50105 Qy
+{
+    OrderBy = ascending(
+K
+#if X
+, N
+#endif
+#if not X
+, "B"
+#endif
+);
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (query_declaration
+    (query_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (property
+        name: (property_name)
+        value: (order_by_list
+          (order_by_item
+            (ascending_keyword)
+            (identifier)
+            (preproc_conditional_order_by_fields
+              (preproc_if
+                (preproc_open)
+                condition: (identifier))
+              (identifier)
+              (preproc_endif
+                (preproc_close)))
+            (preproc_conditional_order_by_fields
+              (preproc_if
+                (preproc_open)
+                condition: (preproc_not_expression
+                  (identifier)))
+              (quoted_identifier)
+              (preproc_endif
+                (preproc_close)))))))))
+
+================================================================================
+strict order-by: #elif arm (elif)
+================================================================================
+
+query 50105 Qy
+{
+    OrderBy = ascending(
+K
+#if X
+, N
+#elif Y
+, "B"
+#endif
+, "O"
+);
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (query_declaration
+    (query_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (property
+        name: (property_name)
+        value: (order_by_list
+          (order_by_item
+            (ascending_keyword)
+            (identifier)
+            (preproc_conditional_order_by_fields
+              (preproc_if
+                (preproc_open)
+                condition: (identifier))
+              (identifier)
+              (preproc_elif
+                condition: (identifier))
+              (quoted_identifier)
+              (preproc_endif
+                (preproc_close)))
+            (quoted_identifier)))))))
+
+================================================================================
+strict order-by: arms with different item counts (count-differs)
+================================================================================
+
+query 50105 Qy
+{
+    OrderBy = ascending(
+K
+#if X
+, N , "B"
+#else
+, "O"
+#endif
+);
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (query_declaration
+    (query_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (property
+        name: (property_name)
+        value: (order_by_list
+          (order_by_item
+            (ascending_keyword)
+            (identifier)
+            (preproc_conditional_order_by_fields
+              (preproc_if
+                (preproc_open)
+                condition: (identifier))
+              (identifier)
+              (quoted_identifier)
+              (preproc_else)
+              (quoted_identifier)
+              (preproc_endif
+                (preproc_close)))))))))
+
+================================================================================
+strict order-by: descending item with a group
+================================================================================
+
+query 50105 Qy
+{
+    OrderBy = descending(
+K
+#if X
+, N
+#endif
+);
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (query_declaration
+    (query_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (property
+        name: (property_name)
+        value: (order_by_list
+          (order_by_item
+            (descending_keyword)
+            (identifier)
+            (preproc_conditional_order_by_fields
+              (preproc_if
+                (preproc_open)
+                condition: (identifier))
+              (identifier)
+              (preproc_endif
+                (preproc_close)))))))))
+
+================================================================================
+strict order-by: group in the second item of the outer list
+================================================================================
+
+query 50105 Qy
+{
+    OrderBy = ascending(K), descending(
+N
+#if X
+, B
+#endif
+);
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (query_declaration
+    (query_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (property
+        name: (property_name)
+        value: (order_by_list
+          (order_by_item
+            (ascending_keyword)
+            (identifier))
+          (order_by_item
+            (descending_keyword)
+            (identifier)
+            (preproc_conditional_order_by_fields
+              (preproc_if
+                (preproc_open)
+                condition: (identifier))
+              (identifier)
+              (preproc_endif
+                (preproc_close)))))))))
+
+================================================================================
+strict order-by: comments at every boundary
+================================================================================
+
+query 50105 Qy
+{
+    OrderBy = ascending( /* c0 */
+K // c1
+#if X // c2
+/* c3 */ , /* c4 */ N , // c5
+#else // c6
+, // c7
+#endif // c8
+/* c9 */ B /* c10 */
+);
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (query_declaration
+    (query_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (property
+        name: (property_name)
+        value: (order_by_list
+          (order_by_item
+            (ascending_keyword)
+            (multiline_comment)
+            (identifier)
+            (comment)
+            (preproc_conditional_order_by_fields
+              (preproc_if
+                (preproc_open)
+                condition: (identifier)
+                (comment))
+              (multiline_comment)
+              (multiline_comment)
+              (identifier)
+              (comment)
+              (preproc_else)
+              (comment)
+              (comment)
+              (preproc_endif
+                (preproc_close)))
+            (comment)
+            (multiline_comment)
+            (identifier)
+            (multiline_comment)))))))
+
+================================================================================
+strict order-by: quoted, escaped-quote and contextual-keyword items inside the arms
+================================================================================
+
+query 50105 Qy
+{
+    OrderBy = ascending(
+#if X
+"A""B" , Value
+#else
+Table , Key , Field
+#endif
+);
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (query_declaration
+    (query_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (property
+        name: (property_name)
+        value: (order_by_list
+          (order_by_item
+            (ascending_keyword)
+            (preproc_conditional_order_by_fields
+              (preproc_if
+                (preproc_open)
+                condition: (identifier))
+              (quoted_identifier)
+              (identifier)
+              (preproc_else)
+              (identifier)
+              (identifier)
+              (identifier)
+              (preproc_endif
+                (preproc_close)))))))))
+
+================================================================================
+strict order-by: group inside an arm of a whole-value conditional
+================================================================================
+
+query 50105 Qy
+{
+    OrderBy =
+#if TPL
+        ascending(
+K
+#if X
+, N
+#endif
+);
+#else
+        ascending(K);
+#endif
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (query_declaration
+    (query_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (property
+        name: (property_name)
+        value: (preproc_conditional_property_value
+          (preproc_if
+            (preproc_open)
+            condition: (identifier))
+          value: (order_by_list
+            (order_by_item
+              (ascending_keyword)
+              (identifier)
+              (preproc_conditional_order_by_fields
+                (preproc_if
+                  (preproc_open)
+                  condition: (identifier))
+                (identifier)
+                (preproc_endif
+                  (preproc_close)))))
+          (preproc_else)
+          value: (order_by_list
+            (order_by_item
+              (ascending_keyword)
+              (identifier)))
+          (preproc_endif
+            (preproc_close)))))))
+
+================================================================================
+strict order-by: empty interior (alc accepts ascending(), empty-interior)
+================================================================================
+
+query 50105 Qy
+{
+    OrderBy = ascending();
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (query_declaration
+    (query_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (property
+        name: (property_name)
+        value: (order_by_list
+          (order_by_item
+            (ascending_keyword)))))))
+
+================================================================================
+strict order-by: empty interior followed by a further item
+================================================================================
+
+query 50105 Qy
+{
+    OrderBy = ascending(), descending(N);
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (query_declaration
+    (query_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (property
+        name: (property_name)
+        value: (order_by_list
+          (order_by_item
+            (ascending_keyword))
+          (order_by_item
+            (descending_keyword)
+            (identifier)))))))
+
+================================================================================
+strict order-by preservation: quoted, escaped-quote and contextual-keyword items
+================================================================================
+
+query 50105 Qy
+{
+    OrderBy = ascending(K, "No.", "A""B", Value, Table, Key, Field);
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (query_declaration
+    (query_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (property
+        name: (property_name)
+        value: (order_by_list
+          (order_by_item
+            (ascending_keyword)
+            (identifier)
+            (quoted_identifier)
+            (quoted_identifier)
+            (identifier)
+            (identifier)
+            (identifier)
+            (identifier)))))))
+
+================================================================================
+strict order-by preservation: comments between plain items and items
+================================================================================
+
+query 50105 Qy
+{
+    OrderBy = ascending(K /* c1 */ , // c2
+N), /* c3 */ descending(B);
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (query_declaration
+    (query_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (property
+        name: (property_name)
+        value: (order_by_list
+          (order_by_item
+            (ascending_keyword)
+            (identifier)
+            (multiline_comment)
+            (comment)
+            (identifier))
+          (multiline_comment)
+          (order_by_item
+            (descending_keyword)
+            (identifier)))))))
+
+================================================================================
+strict order-by preservation: the whole value wholly inside one arm of a whole-value conditional
+================================================================================
+
+query 50105 Qy
+{
+    OrderBy =
+#if X
+        ascending(K, N), descending(B);
+#else
+        ascending(K);
+#endif
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (query_declaration
+    (query_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (property
+        name: (property_name)
+        value: (preproc_conditional_property_value
+          (preproc_if
+            (preproc_open)
+            condition: (identifier))
+          value: (order_by_list
+            (order_by_item
+              (ascending_keyword)
+              (identifier)
+              (identifier))
+            (order_by_item
+              (descending_keyword)
+              (identifier)))
+          (preproc_else)
+          value: (order_by_list
+            (order_by_item
+              (ascending_keyword)
+              (identifier)))
+          (preproc_endif
+            (preproc_close)))))))
+
+================================================================================
+strict order-by preservation: the property inside an enclosing whole-declaration #if
+================================================================================
+
+query 50105 Qy
+{
+#if X
+    OrderBy = ascending(K, N);
+#endif
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (query_declaration
+    (query_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (preproc_conditional
+        (preproc_if
+          (preproc_open)
+          condition: (identifier))
+        (property
+          name: (property_name)
+          value: (order_by_list
+            (order_by_item
+              (ascending_keyword)
+              (identifier)
+              (identifier))))
+        (preproc_endif
+          (preproc_close))))))

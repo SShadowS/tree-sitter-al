@@ -1,5 +1,5 @@
 // B7a Task 10 witness (GAP): family attribute-arguments, base placement one-elem, 3 cells; representative occ:attribute_argument_list:1.0.0@attribute_arguments#one-elem
-// Fixture b7_gap_attribute_arguments_test.txt#B7a GAP: attribute-arguments / one-elem (3 cells, verdict of the representative MIXED); the parser ERRORs on configurations alc accepts; representative occ:attribute_argument_list:1.0.0@attribute_arguments%23one-elem#0
+// Fixture strict_conditional_attribute_args_test.txt#strict attribute arguments MIXED: the whole argument list in the arms of one group (one-elem)#0
 // expect: !X reject(AL0238)
 // expect: X accept
 // source: recorded by B7a Task 10, 2026-10-07: the alc split verdicts of cell occ:attribute_argument_list:1.0.0@attribute_arguments#one-elem in tools/b7_audit/evidence.jsonl.gz

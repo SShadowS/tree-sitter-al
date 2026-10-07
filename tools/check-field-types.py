@@ -21,6 +21,10 @@ Two things are asserted per row:
                  terminator that leaked in because the field spanned a whole
                  seq. `anon=set()` means "this field must be free of
                  punctuation".
+  * `required` - optionally, whether node-types.json must declare the field
+                 required (every node carries it) or not. `None` skips it.
+                 B7b-1 (spec 2026-10-07 section 4.1) makes host fields optional
+                 where every item can sit in a conditional group; this pins it.
   * `types`    - optionally, the exact set of ALL member type names. Used
                  where the set is small and stable; `None` skips it, so that
                  adding an unrelated new value type to a large choice does not
@@ -51,12 +55,13 @@ NODE_TYPES_PATH = Path(__file__).parent.parent / 'src' / 'node-types.json'
 
 Invariant = namedtuple(
     'Invariant',
-    'node field multiple types anon verdict why',
+    'node field multiple types anon verdict why required',
+    defaults=(None,),
 )
 
 
-def inv(node, field, multiple, anon, verdict, why, types=None):
-    return Invariant(node, field, multiple, types, anon, verdict, why)
+def inv(node, field, multiple, anon, verdict, why, types=None, required=None):
+    return Invariant(node, field, multiple, types, anon, verdict, why, required)
 
 
 FIELD_INVARIANTS = [
@@ -68,7 +73,7 @@ FIELD_INVARIANTS = [
     # rule by fielding each $.integer on its own.
     inv('array_type', 'sizes', True, set(), 'FIXED',
         "',' leaked from a seq-spanning field; each size now fielded alone",
-        types={'integer'}),
+        types={'integer'}, required=False),
 
     # DataItemLink dotted form: DataItem.FieldName. field('value', seq(id,
     # '.', id)) wraps the WHOLE dotted seq in one field, so the anonymous
@@ -310,13 +315,92 @@ FIELD_INVARIANTS = [
     # between them must never inherit either field.
     inv('namespace_pair', 'prefix', False, set(), 'FIXED',
         'one prefix name per Namespaces pair (B4)',
-        types={'identifier', 'quoted_identifier'}),
+        types={'identifier', 'quoted_identifier'}, required=True),
     inv('namespace_pair', 'uri', False, set(), 'FIXED',
         'one URI string per Namespaces pair (B4)',
-        types={'string_literal'}),
+        types={'string_literal'}, required=True),
     inv('ml_value_pair', 'language', False, set(), 'FIXED',
         'one language name per ML pair; pinned as it stood when B4 keyed the ML names',
         types={'identifier', 'quoted_identifier'}),
+
+    # -- the `required` dimension (B7b-1, spec 2026-10-07 section 4.1) ---------
+    # The two namespace_pair rows above pin a known required field; this row
+    # pins a known optional one: an empty `{ }` emits no body node (issue #19).
+    inv('page_declaration', 'body', False, set(), 'DELIBERATE',
+        'an empty `{ }` emits no declaration_body, so body is optional (issue #19)',
+        types={'declaration_body'}, required=False),
+
+    # -- B7b-1: strict conditional lists (spec 2026-10-07 section 4.1) ---------
+    # An item inside a #if arm is fielded on the group node with the host's item
+    # field name; the separator stays outside every field. Groups may be empty or
+    # hold only groups, so the group's field is never required, and the host's
+    # field is no longer required where every item can sit in a group.
+    inv('preproc_conditional_implements', 'interface', True, set(), 'FIXED',
+        'one interface per raw item in an arm; the , stays outside the field (B7b-1)',
+        types={'identifier', 'quoted_identifier'}, required=False),
+    inv('implements_clause', 'interface', True, set(), 'FIXED',
+        'raw interfaces outside a group; optional since every item can sit in a group (B7b-1)',
+        types={'identifier', 'quoted_identifier'}, required=False),
+    # field_list is UNFIELDED (spec 4.1): its items, raw or inside an arm of
+    # preproc_conditional_field_list_items, carry no field, so the group has no
+    # item row. What the change pins is the hosts' `fields` field: optional on
+    # addlast only (alc accepts `addlast(DropDown; )`, B7b-1 Task 6), still
+    # required where alc rejects an empty list (AL0306) and on addfirst.
+    inv('addlast_fieldgroup_modification', 'fields', False, set(), 'FIXED',
+        'one field_list, absent for the empty list alc accepts (B7b-1 Task 6)',
+        types={'field_list'}, required=False),
+    inv('key_declaration', 'fields', False, set(), 'FIXED',
+        'one field_list; an empty key list is AL0306, so the field stays required (B7b-1)',
+        types={'field_list'}, required=True),
+    inv('fieldgroup_declaration', 'fields', False, set(), 'FIXED',
+        'one field_list; an empty fieldgroup list is AL0306, so the field stays required (B7b-1)',
+        types={'field_list'}, required=True),
+    inv('addfirst_fieldgroup_modification', 'fields', False, set(), 'FIXED',
+        'one field_list; addfirst is not widened to an empty list (B7b-1)',
+        types={'field_list'}, required=True),
+    # move*: the element list after the fixed `;` (B7b-1 Task 8). The target and
+    # the fixed `;` stay outside the group, so `target` stays single and required.
+    inv('preproc_conditional_move_elements', 'element', True, set(), 'FIXED',
+        'one element per raw item in an arm; the , stays outside the field (B7b-1)',
+        types={'identifier', 'quoted_identifier'}, required=False),
+    *[inv(f'{m}_modification', 'element', True, set(), 'FIXED',
+          'raw elements outside a group; optional since every element can sit in a group (B7b-1)',
+          types={'identifier', 'quoted_identifier'}, required=False)
+      for m in ('moveafter', 'movebefore', 'movefirst', 'movelast')],
+    *[inv(f'{m}_modification', 'target', False, set(), 'FIXED',
+          'one target before the fixed ;, never inside a group (B7b-1 Task 8)',
+          types={'identifier', 'quoted_identifier'}, required=True)
+      for m in ('moveafter', 'movebefore', 'movefirst', 'movelast')],
+    # array[...] of T: the dimension list between [ and ] (B7b-1 Task 9). array_type.sizes
+    # (FIXED row above) is optional since every dimension can sit in a group.
+    inv('preproc_conditional_array_dimensions', 'sizes', True, set(), 'FIXED',
+        'one dimension per raw item in an arm; the , stays outside the field (B7b-1)',
+        types={'integer'}, required=False),
+    inv('array_type', 'element_type', False, set(), 'FIXED',
+        'one element type after `of`, never inside a group (B7b-1 Task 9)',
+        types={'type_specification'}, required=True),
+    # [Attr(a, b)] (B7b-1 Task 10): attribute_argument_list is UNFIELDED (spec 4.1), raw
+    # or inside an arm of preproc_conditional_attribute_args, so the group has no item row.
+    # What the change pins is the field above it: `arguments` stays one optional
+    # attribute_arguments (`[A]` has none; `[A()]` has one with no attribute_argument_list).
+    inv('attribute_content', 'arguments', False, set(), 'FIXED',
+        'one attribute_arguments, absent for `[A]`; the list inside stays unfielded (B7b-1 Task 10)',
+        types={'attribute_arguments'}, required=False),
+    inv('attribute_content', 'name', False, set(), 'FIXED',
+        'one attribute name before the arguments, never inside a group (B7b-1 Task 10)',
+        types={'identifier'}, required=True),
+    # A, B: T; (B7b-1 Task 11): the name list up to the `:`. variable_declaration.name is
+    # optional now since every name can sit in a group (`#if X A, B #endif : T;`); `type`
+    # stays one required node after the `:`, never inside a group.
+    inv('preproc_conditional_var_names', 'name', True, set(), 'FIXED',
+        'one name per raw item in an arm; the , stays outside the field (B7b-1)',
+        types={'identifier', 'quoted_identifier'}, required=False),
+    inv('variable_declaration', 'name', True, set(), 'FIXED',
+        'raw names outside a group; optional since every name can sit in a group (B7b-1 Task 11)',
+        types={'identifier', 'quoted_identifier'}, required=False),
+    inv('variable_declaration', 'type', False, set(), 'FIXED',
+        'one type after the `:`, never inside a group (B7b-1 Task 11)',
+        types={'basic_type', 'type_specification'}, required=True),
 ]
 
 
@@ -348,6 +432,9 @@ def check(node_types, want):
     actual_multiple = field.get('multiple')
     if actual_multiple != want.multiple:
         problems.append(f"multiple={actual_multiple!r}, expected {want.multiple!r}")
+
+    if want.required is not None and field.get('required') != want.required:
+        problems.append(f"required={field.get('required')!r}, expected {want.required!r}")
 
     members = field.get('types', [])
 

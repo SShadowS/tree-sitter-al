@@ -1,5 +1,5 @@
 // B7a Task 10 witness (GAP): family key-fields, base placement adjacent-indep, 12 cells; representative occ:field_list:1.0.0@addlast_fieldgroup_modification#adjacent-indep
-// Fixture b7_gap_key_fields_test.txt#B7a GAP: key-fields / adjacent-indep (12 cells, verdict of the representative GAP); the parser ERRORs on configurations alc accepts; representative occ:field_list:1.0.0@addlast_fieldgroup_modification%23adjacent-indep#0
+// Fixture strict_conditional_field_list_items_test.txt#strict field_list: addlast, adjacent independent groups (adjacent-indep)#0
 // expect: !X !Y accept
 // expect: !X Y accept
 // expect: X !Y accept

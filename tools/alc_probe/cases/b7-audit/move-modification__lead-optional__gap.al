@@ -1,5 +1,5 @@
 // B7a Task 10 witness (GAP): family move-modification, base placement lead-optional, 48 cells; representative occ:moveafter_modification:1.4.0.0@action_body#lead-optional
-// Fixture b7_gap_move_modification_test.txt#B7a GAP: move-modification / lead-optional (48 cells, verdict of the representative GAP); the parser ERRORs on configurations alc accepts; representative occ:moveafter_modification:1.4.0.0@action_body%23lead-optional#0
+// Fixture strict_conditional_move_elements_test.txt#strict move: leading group whose arm ends with the separator (lead-optional)#0
 // expect: !X accept
 // expect: X accept
 // source: recorded by B7a Task 10, 2026-10-07: the alc split verdicts of cell occ:moveafter_modification:1.4.0.0@action_body#lead-optional in tools/b7_audit/evidence.jsonl.gz

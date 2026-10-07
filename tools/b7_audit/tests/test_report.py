@@ -183,6 +183,10 @@ def test_groups_per_family_base_placement_kind():
                                     ("f", "suffix", "GAP"): ["c", "d"]}
     assert report.slug("f", "seed:x:y", "GAP") == "f__seed-x-y__gap"
     assert report.witness("f", "x", "SILENT").endswith("test_silent.py")
+    assert report.witness("no-such-family", "x", "GAP").endswith("test/corpus/b7_gap_no_such_family_test.txt")
+    # the probe's `// Fixture` line names the corpus file (B7b-1 moved shapes into strict_conditional_* fixtures)
+    assert report.witness("implements", "holes-lead", "OVERACCEPT").endswith(
+        "test/corpus/strict_conditional_implements_test.txt")
 
 
 def test_sites_count_only_matching_shapes():

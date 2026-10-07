@@ -1,5 +1,5 @@
 // B7a Task 10 witness (GAP): family key-header, base placement trail, 3 cells; representative occ:_key_header:3@key_declaration#trail
-// Fixture b7_gap_key_header_test.txt#B7a GAP: key-header / trail (3 cells, verdict of the representative MIXED); the parser ERRORs on configurations alc accepts; representative occ:_key_header:3@key_declaration%23trail#0
+// Fixture strict_conditional_field_list_items_test.txt#strict field_list MIXED: key, the whole list in one group right after the fixed ; (key-header trail)#0
 // expect: !X reject(AL0306)
 // expect: X accept
 // source: recorded by B7a Task 10, 2026-10-07: the alc split verdicts of cell occ:_key_header:3@key_declaration#trail in tools/b7_audit/evidence.jsonl.gz

@@ -1,5 +1,5 @@
 // B7a Task 10 witness (GAP): family array-dimensions, base placement elif, 3 cells; representative occ:array_type:3.0.0@type_specification#elif
-// Fixture b7_gap_array_dimensions_test.txt#B7a GAP: array-dimensions / elif (3 cells, verdict of the representative GAP); the parser ERRORs on configurations alc accepts; representative occ:array_type:3.0.0@type_specification%23elif#0
+// Fixture strict_conditional_array_dimensions_test.txt#strict array: %23elif arm (elif)#0
 // expect: !X !Y accept
 // expect: !X Y accept
 // expect: X !Y accept

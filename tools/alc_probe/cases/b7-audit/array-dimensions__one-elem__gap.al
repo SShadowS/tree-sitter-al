@@ -1,5 +1,5 @@
 // B7a Task 10 witness (GAP): family array-dimensions, base placement one-elem, 3 cells; representative occ:array_type:3.0.0@type_specification#one-elem
-// Fixture b7_gap_array_dimensions_test.txt#B7a GAP: array-dimensions / one-elem (3 cells, verdict of the representative GAP); the parser ERRORs on configurations alc accepts; representative occ:array_type:3.0.0@type_specification%23one-elem#0
+// Fixture strict_conditional_array_dimensions_test.txt#strict array: the whole dimension list in the arms of one group (one-elem)#0
 // expect: !X accept
 // expect: X accept
 // source: recorded by B7a Task 10, 2026-10-07: the alc split verdicts of cell occ:array_type:3.0.0@type_specification#one-elem in tools/b7_audit/evidence.jsonl.gz

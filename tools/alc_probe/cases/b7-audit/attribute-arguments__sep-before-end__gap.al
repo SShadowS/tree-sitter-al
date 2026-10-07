@@ -1,5 +1,5 @@
 // B7a Task 10 witness (GAP): family attribute-arguments, base placement sep-before-end, 3 cells; representative occ:attribute_argument_list:1.0.0@attribute_arguments#sep-before-end
-// Fixture b7_gap_attribute_arguments_test.txt#B7a GAP: attribute-arguments / sep-before-end (3 cells, verdict of the representative MIXED); the parser ERRORs on configurations alc accepts; representative occ:attribute_argument_list:1.0.0@attribute_arguments%23sep-before-end#0
+// Fixture strict_conditional_attribute_args_test.txt#strict attribute arguments MIXED: group with the separator before its argument (sep-before-end)#0
 // expect: !X reject(AL0238)
 // expect: X accept
 // source: recorded by B7a Task 10, 2026-10-07: the alc split verdicts of cell occ:attribute_argument_list:1.0.0@attribute_arguments#sep-before-end in tools/b7_audit/evidence.jsonl.gz

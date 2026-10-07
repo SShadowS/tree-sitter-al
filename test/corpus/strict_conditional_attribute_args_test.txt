@@ -1,0 +1,1922 @@
+; B7b-1 Task 10: #if groups in attribute argument lists `[Attr(a, b)]` (family attribute_args,
+; grammar.js strictConditionalList). The list is everything between `(` and `)` of attribute_arguments;
+; attribute_argument_list stays visible and unfielded, and attribute_arguments' `optional(...)` wrapper is
+; unchanged, so `[A()]` still has no attribute_argument_list.
+; The first 10 cases are the shapes of b7_gap_attribute_arguments_test.txt that now parse, argument text
+; unchanged. `MIXED` cases are accepted by alc in one configuration and rejected (semantically: argument
+; count / AL0238 class) in the other: the split source parses, the invalid configuration is the config
+; oracle's to judge (spec section 3). An emptied configuration flat-parses as `[A()]` (optional
+; wrapper, spec 4.2 case 2): the oracle lowers it with optional-list-removed:attribute_argument_list.
+; Trees are hand-written from the flat reading, never copied from parser output.
+
+================================================================================
+strict attribute arguments: empty group between a separator and an argument (empty)
+================================================================================
+
+codeunit 50100 C
+{
+    [IntegrationEvent(
+false ,
+#if X
+#endif
+false
+)]
+    procedure P()
+    begin
+    end;
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (attribute_item
+        attribute: (attribute_content
+          name: (identifier)
+          arguments: (attribute_arguments
+            (attribute_argument_list
+              (boolean)
+              (preproc_conditional_attribute_args
+                (preproc_if
+                  (preproc_open)
+                  condition: (identifier))
+                (preproc_endif
+                  (preproc_close)))
+              (boolean)))))
+      (procedure
+        (procedure_keyword)
+        name: (identifier)
+        body: (code_block
+          (begin_keyword)
+          (end_keyword))))))
+
+================================================================================
+strict attribute arguments MIXED: the whole argument list in one group, no #else (empty-list)
+================================================================================
+
+codeunit 50100 C
+{
+    [IntegrationEvent(
+#if X
+false , false
+#endif
+)]
+    procedure P()
+    begin
+    end;
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (attribute_item
+        attribute: (attribute_content
+          name: (identifier)
+          arguments: (attribute_arguments
+            (attribute_argument_list
+              (preproc_conditional_attribute_args
+                (preproc_if
+                  (preproc_open)
+                  condition: (identifier))
+                (boolean)
+                (boolean)
+                (preproc_endif
+                  (preproc_close)))))))
+      (procedure
+        (procedure_keyword)
+        name: (identifier)
+        body: (code_block
+          (begin_keyword)
+          (end_keyword))))))
+
+================================================================================
+strict attribute arguments MIXED: separator-only group before the first argument (holes-lead)
+================================================================================
+
+codeunit 50100 C
+{
+    [IntegrationEvent(
+#if X
+,
+#endif
+false , false
+)]
+    procedure P()
+    begin
+    end;
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (attribute_item
+        attribute: (attribute_content
+          name: (identifier)
+          arguments: (attribute_arguments
+            (attribute_argument_list
+              (preproc_conditional_attribute_args
+                (preproc_if
+                  (preproc_open)
+                  condition: (identifier))
+                (preproc_endif
+                  (preproc_close)))
+              (boolean)
+              (boolean)))))
+      (procedure
+        (procedure_keyword)
+        name: (identifier)
+        body: (code_block
+          (begin_keyword)
+          (end_keyword))))))
+
+================================================================================
+strict attribute arguments MIXED: separator-only group after a separator (holes-mid)
+================================================================================
+
+codeunit 50100 C
+{
+    [IntegrationEvent(
+false ,
+#if X
+,
+#endif
+false
+)]
+    procedure P()
+    begin
+    end;
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (attribute_item
+        attribute: (attribute_content
+          name: (identifier)
+          arguments: (attribute_arguments
+            (attribute_argument_list
+              (boolean)
+              (preproc_conditional_attribute_args
+                (preproc_if
+                  (preproc_open)
+                  condition: (identifier))
+                (preproc_endif
+                  (preproc_close)))
+              (boolean)))))
+      (procedure
+        (procedure_keyword)
+        name: (identifier)
+        body: (code_block
+          (begin_keyword)
+          (end_keyword))))))
+
+================================================================================
+strict attribute arguments MIXED: separator-only group after the last argument (holes-trail)
+================================================================================
+
+codeunit 50100 C
+{
+    [IntegrationEvent(
+false , false
+#if X
+,
+#endif
+)]
+    procedure P()
+    begin
+    end;
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (attribute_item
+        attribute: (attribute_content
+          name: (identifier)
+          arguments: (attribute_arguments
+            (attribute_argument_list
+              (boolean)
+              (boolean)
+              (preproc_conditional_attribute_args
+                (preproc_if
+                  (preproc_open)
+                  condition: (identifier))
+                (preproc_endif
+                  (preproc_close)))))))
+      (procedure
+        (procedure_keyword)
+        name: (identifier)
+        body: (code_block
+          (begin_keyword)
+          (end_keyword))))))
+
+================================================================================
+strict attribute arguments MIXED: leading group whose arm ends with the separator (lead-optional)
+================================================================================
+
+codeunit 50100 C
+{
+    [IntegrationEvent(
+#if X
+false ,
+#endif
+false
+)]
+    procedure P()
+    begin
+    end;
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (attribute_item
+        attribute: (attribute_content
+          name: (identifier)
+          arguments: (attribute_arguments
+            (attribute_argument_list
+              (preproc_conditional_attribute_args
+                (preproc_if
+                  (preproc_open)
+                  condition: (identifier))
+                (boolean)
+                (preproc_endif
+                  (preproc_close)))
+              (boolean)))))
+      (procedure
+        (procedure_keyword)
+        name: (identifier)
+        body: (code_block
+          (begin_keyword)
+          (end_keyword))))))
+
+================================================================================
+strict attribute arguments MIXED: the whole argument list in the arms of one group (one-elem)
+================================================================================
+
+codeunit 50100 C
+{
+    [IntegrationEvent(
+#if X
+false , false
+#else
+false
+#endif
+)]
+    procedure P()
+    begin
+    end;
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (attribute_item
+        attribute: (attribute_content
+          name: (identifier)
+          arguments: (attribute_arguments
+            (attribute_argument_list
+              (preproc_conditional_attribute_args
+                (preproc_if
+                  (preproc_open)
+                  condition: (identifier))
+                (boolean)
+                (boolean)
+                (preproc_else)
+                (boolean)
+                (preproc_endif
+                  (preproc_close)))))))
+      (procedure
+        (procedure_keyword)
+        name: (identifier)
+        body: (code_block
+          (begin_keyword)
+          (end_keyword))))))
+
+================================================================================
+strict attribute arguments MIXED: group with the separator before its argument (sep-before-end)
+================================================================================
+
+codeunit 50100 C
+{
+    [IntegrationEvent(
+false
+#if X
+, false
+#endif
+)]
+    procedure P()
+    begin
+    end;
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (attribute_item
+        attribute: (attribute_content
+          name: (identifier)
+          arguments: (attribute_arguments
+            (attribute_argument_list
+              (boolean)
+              (preproc_conditional_attribute_args
+                (preproc_if
+                  (preproc_open)
+                  condition: (identifier))
+                (boolean)
+                (preproc_endif
+                  (preproc_close)))))))
+      (procedure
+        (procedure_keyword)
+        name: (identifier)
+        body: (code_block
+          (begin_keyword)
+          (end_keyword))))))
+
+================================================================================
+strict attribute arguments: separator-only arms between two arguments (sep-only)
+================================================================================
+
+codeunit 50100 C
+{
+    [IntegrationEvent(
+false
+#if X
+,
+#else
+,
+#endif
+false
+)]
+    procedure P()
+    begin
+    end;
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (attribute_item
+        attribute: (attribute_content
+          name: (identifier)
+          arguments: (attribute_arguments
+            (attribute_argument_list
+              (boolean)
+              (preproc_conditional_attribute_args
+                (preproc_if
+                  (preproc_open)
+                  condition: (identifier))
+                (preproc_else)
+                (preproc_endif
+                  (preproc_close)))
+              (boolean)))))
+      (procedure
+        (procedure_keyword)
+        name: (identifier)
+        body: (code_block
+          (begin_keyword)
+          (end_keyword))))))
+
+================================================================================
+strict attribute arguments MIXED: group holding the last argument after a separator (trail)
+================================================================================
+
+codeunit 50100 C
+{
+    [IntegrationEvent(
+false ,
+#if X
+false
+#endif
+)]
+    procedure P()
+    begin
+    end;
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (attribute_item
+        attribute: (attribute_content
+          name: (identifier)
+          arguments: (attribute_arguments
+            (attribute_argument_list
+              (boolean)
+              (preproc_conditional_attribute_args
+                (preproc_if
+                  (preproc_open)
+                  condition: (identifier))
+                (boolean)
+                (preproc_endif
+                  (preproc_close)))))))
+      (procedure
+        (procedure_keyword)
+        name: (identifier)
+        body: (code_block
+          (begin_keyword)
+          (end_keyword))))))
+
+================================================================================
+strict attribute arguments: adjacent complementary groups with #if not (adjacent-compl)
+================================================================================
+
+codeunit 50100 C
+{
+    [Scope(
+'a'
+#if X
+, 'b'
+#endif
+#if not X
+, 'c'
+#endif
+)]
+    procedure P()
+    begin
+    end;
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (attribute_item
+        attribute: (attribute_content
+          name: (identifier)
+          arguments: (attribute_arguments
+            (attribute_argument_list
+              (string_literal)
+              (preproc_conditional_attribute_args
+                (preproc_if
+                  (preproc_open)
+                  condition: (identifier))
+                (string_literal)
+                (preproc_endif
+                  (preproc_close)))
+              (preproc_conditional_attribute_args
+                (preproc_if
+                  (preproc_open)
+                  condition: (preproc_not_expression
+                    (identifier)))
+                (string_literal)
+                (preproc_endif
+                  (preproc_close)))))))
+      (procedure
+        (procedure_keyword)
+        name: (identifier)
+        body: (code_block
+          (begin_keyword)
+          (end_keyword))))))
+
+================================================================================
+strict attribute arguments: adjacent independent groups (adjacent-indep)
+================================================================================
+
+codeunit 50100 C
+{
+    [Scope(
+'a'
+#if X
+, 'b'
+#endif
+#if Y
+, 'c'
+#endif
+)]
+    procedure P()
+    begin
+    end;
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (attribute_item
+        attribute: (attribute_content
+          name: (identifier)
+          arguments: (attribute_arguments
+            (attribute_argument_list
+              (string_literal)
+              (preproc_conditional_attribute_args
+                (preproc_if
+                  (preproc_open)
+                  condition: (identifier))
+                (string_literal)
+                (preproc_endif
+                  (preproc_close)))
+              (preproc_conditional_attribute_args
+                (preproc_if
+                  (preproc_open)
+                  condition: (identifier))
+                (string_literal)
+                (preproc_endif
+                  (preproc_close)))))))
+      (procedure
+        (procedure_keyword)
+        name: (identifier)
+        body: (code_block
+          (begin_keyword)
+          (end_keyword))))))
+
+================================================================================
+strict attribute arguments: an arm holding both separators (both-in-arm)
+================================================================================
+
+codeunit 50100 C
+{
+    [IntegrationEvent(
+false
+#if X
+, true ,
+#else
+,
+#endif
+false
+)]
+    procedure P()
+    begin
+    end;
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (attribute_item
+        attribute: (attribute_content
+          name: (identifier)
+          arguments: (attribute_arguments
+            (attribute_argument_list
+              (boolean)
+              (preproc_conditional_attribute_args
+                (preproc_if
+                  (preproc_open)
+                  condition: (identifier))
+                (boolean)
+                (preproc_else)
+                (preproc_endif
+                  (preproc_close)))
+              (boolean)))))
+      (procedure
+        (procedure_keyword)
+        name: (identifier)
+        body: (code_block
+          (begin_keyword)
+          (end_keyword))))))
+
+================================================================================
+strict attribute arguments: arms with different argument counts (count-differs)
+================================================================================
+
+codeunit 50100 C
+{
+    [Obsolete(
+'a'
+#if X
+, 'b' , 'c'
+#else
+, 'd'
+#endif
+)]
+    procedure P()
+    begin
+    end;
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (attribute_item
+        attribute: (attribute_content
+          name: (identifier)
+          arguments: (attribute_arguments
+            (attribute_argument_list
+              (string_literal)
+              (preproc_conditional_attribute_args
+                (preproc_if
+                  (preproc_open)
+                  condition: (identifier))
+                (string_literal)
+                (string_literal)
+                (preproc_else)
+                (string_literal)
+                (preproc_endif
+                  (preproc_close)))))))
+      (procedure
+        (procedure_keyword)
+        name: (identifier)
+        body: (code_block
+          (begin_keyword)
+          (end_keyword))))))
+
+================================================================================
+strict attribute arguments: #elif arm (elif)
+================================================================================
+
+codeunit 50100 C
+{
+    [Obsolete(
+'a'
+#if X
+, 'b'
+#elif Y
+, 'c'
+#endif
+, 'd'
+)]
+    procedure P()
+    begin
+    end;
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (attribute_item
+        attribute: (attribute_content
+          name: (identifier)
+          arguments: (attribute_arguments
+            (attribute_argument_list
+              (string_literal)
+              (preproc_conditional_attribute_args
+                (preproc_if
+                  (preproc_open)
+                  condition: (identifier))
+                (string_literal)
+                (preproc_elif
+                  condition: (identifier))
+                (string_literal)
+                (preproc_endif
+                  (preproc_close)))
+              (string_literal)))))
+      (procedure
+        (procedure_keyword)
+        name: (identifier)
+        body: (code_block
+          (begin_keyword)
+          (end_keyword))))))
+
+================================================================================
+strict attribute arguments: group replacing the first argument (first-replace)
+================================================================================
+
+codeunit 50100 C
+{
+    [IntegrationEvent(
+#if X
+true
+#else
+false
+#endif
+, false
+)]
+    procedure P()
+    begin
+    end;
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (attribute_item
+        attribute: (attribute_content
+          name: (identifier)
+          arguments: (attribute_arguments
+            (attribute_argument_list
+              (preproc_conditional_attribute_args
+                (preproc_if
+                  (preproc_open)
+                  condition: (identifier))
+                (boolean)
+                (preproc_else)
+                (boolean)
+                (preproc_endif
+                  (preproc_close)))
+              (boolean)))))
+      (procedure
+        (procedure_keyword)
+        name: (identifier)
+        body: (code_block
+          (begin_keyword)
+          (end_keyword))))))
+
+================================================================================
+strict attribute arguments: nested group (nested)
+================================================================================
+
+codeunit 50100 C
+{
+    [Obsolete(
+'a'
+#if X
+, 'b'
+#if Y
+, 'c'
+#endif
+#endif
+, 'd'
+)]
+    procedure P()
+    begin
+    end;
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (attribute_item
+        attribute: (attribute_content
+          name: (identifier)
+          arguments: (attribute_arguments
+            (attribute_argument_list
+              (string_literal)
+              (preproc_conditional_attribute_args
+                (preproc_if
+                  (preproc_open)
+                  condition: (identifier))
+                (string_literal)
+                (preproc_conditional_attribute_args
+                  (preproc_if
+                    (preproc_open)
+                    condition: (identifier))
+                  (string_literal)
+                  (preproc_endif
+                    (preproc_close)))
+                (preproc_endif
+                  (preproc_close)))
+              (string_literal)))))
+      (procedure
+        (procedure_keyword)
+        name: (identifier)
+        body: (code_block
+          (begin_keyword)
+          (end_keyword))))))
+
+================================================================================
+strict attribute arguments: group with the separator after its argument (sep-after)
+================================================================================
+
+codeunit 50100 C
+{
+    [IntegrationEvent(
+false ,
+#if X
+true ,
+#endif
+false
+)]
+    procedure P()
+    begin
+    end;
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (attribute_item
+        attribute: (attribute_content
+          name: (identifier)
+          arguments: (attribute_arguments
+            (attribute_argument_list
+              (boolean)
+              (preproc_conditional_attribute_args
+                (preproc_if
+                  (preproc_open)
+                  condition: (identifier))
+                (boolean)
+                (preproc_endif
+                  (preproc_close)))
+              (boolean)))))
+      (procedure
+        (procedure_keyword)
+        name: (identifier)
+        body: (code_block
+          (begin_keyword)
+          (end_keyword))))))
+
+================================================================================
+strict attribute arguments: group with the separator before its argument, then an argument (sep-before)
+================================================================================
+
+codeunit 50100 C
+{
+    [Obsolete(
+'a'
+#if X
+, 'b'
+#endif
+, 'c'
+)]
+    procedure P()
+    begin
+    end;
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (attribute_item
+        attribute: (attribute_content
+          name: (identifier)
+          arguments: (attribute_arguments
+            (attribute_argument_list
+              (string_literal)
+              (preproc_conditional_attribute_args
+                (preproc_if
+                  (preproc_open)
+                  condition: (identifier))
+                (string_literal)
+                (preproc_endif
+                  (preproc_close)))
+              (string_literal)))))
+      (procedure
+        (procedure_keyword)
+        name: (identifier)
+        body: (code_block
+          (begin_keyword)
+          (end_keyword))))))
+
+================================================================================
+strict attribute arguments: the only argument in a group, no #else
+================================================================================
+
+codeunit 50100 C
+{
+    [A(
+#if X
+1
+#endif
+)]
+    procedure P()
+    begin
+    end;
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (attribute_item
+        attribute: (attribute_content
+          name: (identifier)
+          arguments: (attribute_arguments
+            (attribute_argument_list
+              (preproc_conditional_attribute_args
+                (preproc_if
+                  (preproc_open)
+                  condition: (identifier))
+                (integer)
+                (preproc_endif
+                  (preproc_close)))))))
+      (procedure
+        (procedure_keyword)
+        name: (identifier)
+        body: (code_block
+          (begin_keyword)
+          (end_keyword))))))
+
+================================================================================
+strict attribute arguments: an empty group as the whole argument list
+================================================================================
+
+codeunit 50100 C
+{
+    [A(
+#if X
+#endif
+)]
+    procedure P()
+    begin
+    end;
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (attribute_item
+        attribute: (attribute_content
+          name: (identifier)
+          arguments: (attribute_arguments
+            (attribute_argument_list
+              (preproc_conditional_attribute_args
+                (preproc_if
+                  (preproc_open)
+                  condition: (identifier))
+                (preproc_endif
+                  (preproc_close)))))))
+      (procedure
+        (procedure_keyword)
+        name: (identifier)
+        body: (code_block
+          (begin_keyword)
+          (end_keyword))))))
+
+================================================================================
+strict attribute arguments: an empty #if arm before an #else arm
+================================================================================
+
+codeunit 50100 C
+{
+    [Scope('a'
+#if X
+#else
+, 'b'
+#endif
+)]
+    procedure P()
+    begin
+    end;
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (attribute_item
+        attribute: (attribute_content
+          name: (identifier)
+          arguments: (attribute_arguments
+            (attribute_argument_list
+              (string_literal)
+              (preproc_conditional_attribute_args
+                (preproc_if
+                  (preproc_open)
+                  condition: (identifier))
+                (preproc_else)
+                (string_literal)
+                (preproc_endif
+                  (preproc_close)))))))
+      (procedure
+        (procedure_keyword)
+        name: (identifier)
+        body: (code_block
+          (begin_keyword)
+          (end_keyword))))))
+
+================================================================================
+strict attribute arguments: first argument replaced with #if not and #else
+================================================================================
+
+codeunit 50100 C
+{
+    [Scope(
+#if not X
+'OnPrem'
+#else
+'Cloud'
+#endif
+)]
+    procedure P()
+    begin
+    end;
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (attribute_item
+        attribute: (attribute_content
+          name: (identifier)
+          arguments: (attribute_arguments
+            (attribute_argument_list
+              (preproc_conditional_attribute_args
+                (preproc_if
+                  (preproc_open)
+                  condition: (preproc_not_expression
+                    (identifier)))
+                (string_literal)
+                (preproc_else)
+                (string_literal)
+                (preproc_endif
+                  (preproc_close)))))))
+      (procedure
+        (procedure_keyword)
+        name: (identifier)
+        body: (code_block
+          (begin_keyword)
+          (end_keyword))))))
+
+================================================================================
+strict attribute arguments: comments at every boundary
+================================================================================
+
+codeunit 50100 C
+{
+    [IntegrationEvent(/* c0 */ false /* c1 */
+#if X // c2
+/* c3 */ , /* c4 */ true /* c5 */
+#else // c6
+, false
+#endif
+/* c7 */ , /* c8 */ false /* c9 */)]
+    procedure P()
+    begin
+    end;
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (attribute_item
+        attribute: (attribute_content
+          name: (identifier)
+          arguments: (attribute_arguments
+            (multiline_comment)
+            (attribute_argument_list
+              (boolean)
+              (multiline_comment)
+              (preproc_conditional_attribute_args
+                (preproc_if
+                  (preproc_open)
+                  condition: (identifier)
+                  (comment))
+                (multiline_comment)
+                (multiline_comment)
+                (boolean)
+                (multiline_comment)
+                (preproc_else)
+                (comment)
+                (boolean)
+                (preproc_endif
+                  (preproc_close)))
+              (multiline_comment)
+              (multiline_comment)
+              (boolean))
+            (multiline_comment))))
+      (procedure
+        (procedure_keyword)
+        name: (identifier)
+        body: (code_block
+          (begin_keyword)
+          (end_keyword))))))
+
+================================================================================
+strict attribute arguments: line comments inside the arms
+================================================================================
+
+codeunit 50100 C
+{
+    [IntegrationEvent(false // c0
+#if X
+, true // c1
+#endif
+// c2
+, false)]
+    procedure P()
+    begin
+    end;
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (attribute_item
+        attribute: (attribute_content
+          name: (identifier)
+          arguments: (attribute_arguments
+            (attribute_argument_list
+              (boolean)
+              (comment)
+              (preproc_conditional_attribute_args
+                (preproc_if
+                  (preproc_open)
+                  condition: (identifier))
+                (boolean)
+                (comment)
+                (preproc_endif
+                  (preproc_close)))
+              (comment)
+              (boolean)))))
+      (procedure
+        (procedure_keyword)
+        name: (identifier)
+        body: (code_block
+          (begin_keyword)
+          (end_keyword))))))
+
+================================================================================
+strict attribute arguments: every argument kind inside arms
+================================================================================
+
+codeunit 50100 C
+{
+    [Foo(1
+#if X
+, 'it''s' , "Sales ""Q"" Line" , SecurityFilter::Filtered
+#else
+, Codeunit::"Sales-Post" , Table , Order , Name
+#endif
+)]
+    procedure P()
+    begin
+    end;
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (attribute_item
+        attribute: (attribute_content
+          name: (identifier)
+          arguments: (attribute_arguments
+            (attribute_argument_list
+              (integer)
+              (preproc_conditional_attribute_args
+                (preproc_if
+                  (preproc_open)
+                  condition: (identifier))
+                (string_literal)
+                (quoted_identifier)
+                (qualified_enum_value
+                  enum_type: (identifier)
+                  value: (identifier))
+                (preproc_else)
+                (database_reference
+                  keyword: (object_type_keyword)
+                  table_name: (quoted_identifier))
+                (identifier)
+                (identifier)
+                (identifier)
+                (preproc_endif
+                  (preproc_close)))))))
+      (procedure
+        (procedure_keyword)
+        name: (identifier)
+        body: (code_block
+          (begin_keyword)
+          (end_keyword))))))
+
+================================================================================
+strict attribute arguments: event subscriber with a group holding the element argument
+================================================================================
+
+codeunit 50100 C
+{
+    [EventSubscriber(ObjectType::Codeunit, Codeunit::"Sales-Post", 'OnBeforePost',
+#if CLEAN24
+'',
+#else
+'No.',
+#endif
+false, false)]
+    procedure P()
+    begin
+    end;
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (attribute_item
+        attribute: (attribute_content
+          name: (identifier)
+          arguments: (attribute_arguments
+            (attribute_argument_list
+              (qualified_enum_value
+                enum_type: (identifier)
+                value: (identifier))
+              (database_reference
+                keyword: (object_type_keyword)
+                table_name: (quoted_identifier))
+              (string_literal)
+              (preproc_conditional_attribute_args
+                (preproc_if
+                  (preproc_open)
+                  condition: (identifier))
+                (string_literal)
+                (preproc_else)
+                (string_literal)
+                (preproc_endif
+                  (preproc_close)))
+              (boolean)
+              (boolean)))))
+      (procedure
+        (procedure_keyword)
+        name: (identifier)
+        body: (code_block
+          (begin_keyword)
+          (end_keyword))))))
+
+================================================================================
+strict attribute arguments: group in a global var-section attribute
+================================================================================
+
+codeunit 50100 C
+{
+    var
+        [SecurityFiltering(
+#if X
+SecurityFilter::Filtered
+#else
+SecurityFilter::Ignored
+#endif
+)]
+        R: Integer;
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (var_section
+        (var_keyword)
+        body: (var_body
+          (var_attribute_item
+            (var_attribute_open)
+            attribute: (attribute_content
+              name: (identifier)
+              arguments: (attribute_arguments
+                (attribute_argument_list
+                  (preproc_conditional_attribute_args
+                    (preproc_if
+                      (preproc_open)
+                      condition: (identifier))
+                    (qualified_enum_value
+                      enum_type: (identifier)
+                      value: (identifier))
+                    (preproc_else)
+                    (qualified_enum_value
+                      enum_type: (identifier)
+                      value: (identifier))
+                    (preproc_endif
+                      (preproc_close)))))))
+          (variable_declaration
+            name: (identifier)
+            type: (type_specification
+              (basic_type))))))))
+
+================================================================================
+strict attribute arguments: group in a procedure-local var-section attribute, multi-name declaration
+================================================================================
+
+codeunit 50100 C
+{
+    procedure P()
+    var
+        [A(1
+#if X
+, 2
+#endif
+)]
+        R, S: Integer;
+    begin
+    end;
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (procedure
+        (procedure_keyword)
+        name: (identifier)
+        (var_section
+          (var_keyword)
+          body: (var_body
+            (var_attribute_item
+              (var_attribute_open)
+              attribute: (attribute_content
+                name: (identifier)
+                arguments: (attribute_arguments
+                  (attribute_argument_list
+                    (integer)
+                    (preproc_conditional_attribute_args
+                      (preproc_if
+                        (preproc_open)
+                        condition: (identifier))
+                      (integer)
+                      (preproc_endif
+                        (preproc_close)))))))
+            (variable_declaration
+              name: (identifier)
+              name: (identifier)
+              type: (type_specification
+                (basic_type)))))
+        body: (code_block
+          (begin_keyword)
+          (end_keyword))))))
+
+================================================================================
+strict attribute arguments: groups in chained var-section attributes, `]` in a comment and a string
+================================================================================
+
+codeunit 50100 C
+{
+    var
+        [A(
+#if X // ] c
+1
+#endif
+)]
+        [B(2 /* ] */
+#if Y
+, ']'
+#endif
+)]
+        "R x", S: Integer;
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (var_section
+        (var_keyword)
+        body: (var_body
+          (var_attribute_item
+            (var_attribute_open)
+            attribute: (attribute_content
+              name: (identifier)
+              arguments: (attribute_arguments
+                (attribute_argument_list
+                  (preproc_conditional_attribute_args
+                    (preproc_if
+                      (preproc_open)
+                      condition: (identifier)
+                      (comment))
+                    (integer)
+                    (preproc_endif
+                      (preproc_close)))))))
+          (var_attribute_item
+            (var_attribute_open)
+            attribute: (attribute_content
+              name: (identifier)
+              arguments: (attribute_arguments
+                (attribute_argument_list
+                  (integer)
+                  (multiline_comment)
+                  (preproc_conditional_attribute_args
+                    (preproc_if
+                      (preproc_open)
+                      condition: (identifier))
+                    (string_literal)
+                    (preproc_endif
+                      (preproc_close)))))))
+          (variable_declaration
+            name: (quoted_identifier)
+            name: (identifier)
+            type: (type_specification
+              (basic_type))))))))
+
+================================================================================
+strict attribute arguments: group in a parameter attribute
+================================================================================
+
+codeunit 50100 C
+{
+    procedure P([A(1
+#if X
+, 2
+#endif
+)] V: Integer)
+    begin
+    end;
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (procedure
+        (procedure_keyword)
+        name: (identifier)
+        parameters: (parameter_list
+          (attribute_item
+            attribute: (attribute_content
+              name: (identifier)
+              arguments: (attribute_arguments
+                (attribute_argument_list
+                  (integer)
+                  (preproc_conditional_attribute_args
+                    (preproc_if
+                      (preproc_open)
+                      condition: (identifier))
+                    (integer)
+                    (preproc_endif
+                      (preproc_close)))))))
+          (parameter
+            name: (identifier)
+            type: (type_specification
+              (basic_type))))
+        body: (code_block
+          (begin_keyword)
+          (end_keyword))))))
+
+================================================================================
+strict attribute arguments: group in an attribute inside an enclosing #if
+================================================================================
+
+codeunit 50100 C
+{
+#if TPL
+    [Obsolete('a'
+#if X
+, 'b'
+#endif
+)]
+    procedure P()
+    begin
+    end;
+#endif
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (preproc_conditional
+        (preproc_if
+          (preproc_open)
+          condition: (identifier))
+        (attribute_item
+          attribute: (attribute_content
+            name: (identifier)
+            arguments: (attribute_arguments
+              (attribute_argument_list
+                (string_literal)
+                (preproc_conditional_attribute_args
+                  (preproc_if
+                    (preproc_open)
+                    condition: (identifier))
+                  (string_literal)
+                  (preproc_endif
+                    (preproc_close)))))))
+        (procedure
+          (procedure_keyword)
+          name: (identifier)
+          body: (code_block
+            (begin_keyword)
+            (end_keyword)))
+        (preproc_endif
+          (preproc_close))))))
+
+================================================================================
+strict attribute arguments: group in two stacked attributes
+================================================================================
+
+codeunit 50100 C
+{
+    [Scope(
+#if X
+'OnPrem'
+#endif
+)]
+    [IntegrationEvent(false
+#if Y
+, true
+#else
+, false
+#endif
+)]
+    procedure P()
+    begin
+    end;
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (attribute_item
+        attribute: (attribute_content
+          name: (identifier)
+          arguments: (attribute_arguments
+            (attribute_argument_list
+              (preproc_conditional_attribute_args
+                (preproc_if
+                  (preproc_open)
+                  condition: (identifier))
+                (string_literal)
+                (preproc_endif
+                  (preproc_close)))))))
+      (attribute_item
+        attribute: (attribute_content
+          name: (identifier)
+          arguments: (attribute_arguments
+            (attribute_argument_list
+              (boolean)
+              (preproc_conditional_attribute_args
+                (preproc_if
+                  (preproc_open)
+                  condition: (identifier))
+                (boolean)
+                (preproc_else)
+                (boolean)
+                (preproc_endif
+                  (preproc_close)))))))
+      (procedure
+        (procedure_keyword)
+        name: (identifier)
+        body: (code_block
+          (begin_keyword)
+          (end_keyword))))))
+
+================================================================================
+strict attribute arguments preservation: plain argument lists of every kind
+================================================================================
+
+codeunit 50100 C
+{
+    [Foo(1, true, 'it''s', "Sales ""Q"" Line", SecurityFilter::Filtered, Codeunit::"Sales-Post", Table, Order, Name)]
+    [A()]
+    [B]
+    procedure P()
+    begin
+    end;
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (attribute_item
+        attribute: (attribute_content
+          name: (identifier)
+          arguments: (attribute_arguments
+            (attribute_argument_list
+              (integer)
+              (boolean)
+              (string_literal)
+              (quoted_identifier)
+              (qualified_enum_value
+                enum_type: (identifier)
+                value: (identifier))
+              (database_reference
+                keyword: (object_type_keyword)
+                table_name: (quoted_identifier))
+              (identifier)
+              (identifier)
+              (identifier)))))
+      (attribute_item
+        attribute: (attribute_content
+          name: (identifier)
+          arguments: (attribute_arguments)))
+      (attribute_item
+        attribute: (attribute_content
+          name: (identifier)))
+      (procedure
+        (procedure_keyword)
+        name: (identifier)
+        body: (code_block
+          (begin_keyword)
+          (end_keyword))))))
+
+================================================================================
+strict attribute arguments preservation: comments between plain arguments
+================================================================================
+
+codeunit 50100 C
+{
+    [IntegrationEvent(false /* c0 */ , // c1
+ true)]
+    procedure P()
+    begin
+    end;
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (attribute_item
+        attribute: (attribute_content
+          name: (identifier)
+          arguments: (attribute_arguments
+            (attribute_argument_list
+              (boolean)
+              (multiline_comment)
+              (comment)
+              (boolean)))))
+      (procedure
+        (procedure_keyword)
+        name: (identifier)
+        body: (code_block
+          (begin_keyword)
+          (end_keyword))))))
+
+================================================================================
+strict attribute arguments preservation: comments before the first and after the last plain argument
+================================================================================
+
+codeunit 50100 C
+{
+    [IntegrationEvent(/* c0 */ false , true /* c1 */)]
+    procedure P()
+    begin
+    end;
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (attribute_item
+        attribute: (attribute_content
+          name: (identifier)
+          arguments: (attribute_arguments
+            (multiline_comment)
+            (attribute_argument_list
+              (boolean)
+              (boolean))
+            (multiline_comment))))
+      (procedure
+        (procedure_keyword)
+        name: (identifier)
+        body: (code_block
+          (begin_keyword)
+          (end_keyword))))))
+
+================================================================================
+strict attribute arguments preservation: attribute inside an enclosing #if
+================================================================================
+
+codeunit 50100 C
+{
+#if TPL
+    [Obsolete('a', 'b')]
+    procedure P()
+    begin
+    end;
+#endif
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (preproc_conditional
+        (preproc_if
+          (preproc_open)
+          condition: (identifier))
+        (attribute_item
+          attribute: (attribute_content
+            name: (identifier)
+            arguments: (attribute_arguments
+              (attribute_argument_list
+                (string_literal)
+                (string_literal)))))
+        (procedure
+          (procedure_keyword)
+          name: (identifier)
+          body: (code_block
+            (begin_keyword)
+            (end_keyword)))
+        (preproc_endif
+          (preproc_close))))))
+
+================================================================================
+strict attribute arguments preservation: the whole attribute in each arm of an enclosing #if
+================================================================================
+
+codeunit 50100 C
+{
+#if X
+    [Scope('OnPrem')]
+#else
+    [Scope('Cloud')]
+#endif
+    procedure P()
+    begin
+    end;
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (preproc_conditional
+        (preproc_if
+          (preproc_open)
+          condition: (identifier))
+        (attribute_item
+          attribute: (attribute_content
+            name: (identifier)
+            arguments: (attribute_arguments
+              (attribute_argument_list
+                (string_literal)))))
+        (preproc_else)
+        (attribute_item
+          attribute: (attribute_content
+            name: (identifier)
+            arguments: (attribute_arguments
+              (attribute_argument_list
+                (string_literal)))))
+        (preproc_endif
+          (preproc_close)))
+      (procedure
+        (procedure_keyword)
+        name: (identifier)
+        body: (code_block
+          (begin_keyword)
+          (end_keyword))))))
+
+================================================================================
+strict attribute arguments preservation: var-section attributes with arguments
+================================================================================
+
+codeunit 50100 C
+{
+    var
+        [SecurityFiltering(SecurityFilter::Filtered)]
+        R: Integer;
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (var_section
+        (var_keyword)
+        body: (var_body
+          (var_attribute_item
+            (var_attribute_open)
+            attribute: (attribute_content
+              name: (identifier)
+              arguments: (attribute_arguments
+                (attribute_argument_list
+                  (qualified_enum_value
+                    enum_type: (identifier)
+                    value: (identifier))))))
+          (variable_declaration
+            name: (identifier)
+            type: (type_specification
+              (basic_type))))))))

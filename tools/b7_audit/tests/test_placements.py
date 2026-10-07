@@ -148,7 +148,8 @@ def test_word_operators_and_interface_slot():
 
 def test_quoted_and_keyword_element_samples():
     rows = registry.load(REGISTRY)
-    var = next(r for r in rows if r.family == "var-names" and r.role == "list-separator")
+    var = next(r for r in rows if r.family == "var-names" and r.role == "list-separator"
+               and not r.equiv)   # an equiv row (B7b-1 arm separator) plans no cells
     assert any('"X 6"' in c.source for c in placements.cells_for(var))
     opt = next(r for r in rows if r.family == "option-members" and r.plain.strip() == "A,B,C")
     assert any('"D E"' in c.source for c in placements.cells_for(opt))
@@ -164,7 +165,8 @@ def test_semi_in_arms_excluded_on_case_branch_witness():
 
 def test_one_elem_move_modification_seed_guard_and_operand_first_only():
     rows = registry.load(REGISTRY)
-    mv = next(r for r in rows if r.family == "move-modification" and r.role == "list-separator")
+    mv = next(r for r in rows if r.family == "move-modification" and r.role == "list-separator"
+              and not r.equiv)   # an equiv row (B7b-1 arm separator) plans no cells
     assert "one-elem" not in _cells(mv) and any(p == "one-elem" for p, _ in placements.skipped_for(mv))
     seed = placements.Cell("s", "k", "h", "seed", "x", (), frozenset({frozenset()}), (0, 1), None)
     assert placements.well_formed(seed, "x") is None

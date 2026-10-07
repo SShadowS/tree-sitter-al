@@ -1,0 +1,2222 @@
+; B7b-1 Task 11: #if groups in variable-declaration name lists `A, B: T;` (family var_names,
+; grammar.js strictConditionalList). The list is the names up to the `:`; variable_declaration keeps its
+; `type` field, and the label and TextConst arms are unchanged. A name inside an arm is `name:` on
+; preproc_conditional_var_names, not on the declaration.
+; The first 19 cases are the shapes of b7_gap_var_names_test.txt that now parse, name text unchanged,
+; in their B7a route (inside `#if TPL2` of a var section, preproc_conditional_var). `MIXED` cases are
+; accepted by alc in one configuration and rejected (AL0104/AL0107/AL0198, syntax) in the other: the
+; split source parses, the invalid configuration is the config oracle's to judge (spec section 3).
+; An empty group directly before a declaration in a var section is not part of it: it stays a sibling
+; preproc_conditional_var (the tree it had before; dynamic precedence, grammar.js var_names).
+; That attachment depends on the context: only at var_body top level does a sibling reading exist.
+; Inside a preproc_conditional_var arm, in a split var section tail, and when the empty group is
+; nested in another group at top level, the empty group is a preproc_conditional_var_names on the
+; next declaration (each was an ERROR before Task 11). The "empty group context" cases pin all four.
+; Attributed declarations with groups belong to Task 12 (scanner).
+; Trees are hand-written from the flat reading, never copied from parser output.
+
+================================================================================
+strict var names: adjacent complementary groups (adjacent-compl)
+================================================================================
+
+codeunit 50101 P
+{
+    var
+#if TPL2
+X1
+#if X
+, X2
+#endif
+#if not X
+, "X 6"
+#endif
+: Integer;
+#endif
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (var_section
+        (var_keyword)
+        body: (var_body
+          (preproc_conditional_var
+            (preproc_if
+              (preproc_open)
+              condition: (identifier))
+            (variable_declaration
+              name: (identifier)
+              (preproc_conditional_var_names
+                (preproc_if
+                  (preproc_open)
+                  condition: (identifier))
+                name: (identifier)
+                (preproc_endif
+                  (preproc_close)))
+              (preproc_conditional_var_names
+                (preproc_if
+                  (preproc_open)
+                  condition: (preproc_not_expression
+                    (identifier)))
+                name: (quoted_identifier)
+                (preproc_endif
+                  (preproc_close)))
+              type: (type_specification
+                (basic_type)))
+            (preproc_endif
+              (preproc_close))))))))
+
+================================================================================
+strict var names: adjacent independent groups (adjacent-indep)
+================================================================================
+
+codeunit 50101 P
+{
+    var
+#if TPL2
+X1
+#if X
+, X2
+#endif
+#if Y
+, "X 6"
+#endif
+: Integer;
+#endif
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (var_section
+        (var_keyword)
+        body: (var_body
+          (preproc_conditional_var
+            (preproc_if
+              (preproc_open)
+              condition: (identifier))
+            (variable_declaration
+              name: (identifier)
+              (preproc_conditional_var_names
+                (preproc_if
+                  (preproc_open)
+                  condition: (identifier))
+                name: (identifier)
+                (preproc_endif
+                  (preproc_close)))
+              (preproc_conditional_var_names
+                (preproc_if
+                  (preproc_open)
+                  condition: (identifier))
+                name: (quoted_identifier)
+                (preproc_endif
+                  (preproc_close)))
+              type: (type_specification
+                (basic_type)))
+            (preproc_endif
+              (preproc_close))))))))
+
+================================================================================
+strict var names: an arm holding both separators (both-in-arm)
+================================================================================
+
+codeunit 50101 P
+{
+    var
+#if TPL2
+X1
+#if X
+, X2 ,
+#else
+,
+#endif
+"X 6"
+: Integer;
+#endif
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (var_section
+        (var_keyword)
+        body: (var_body
+          (preproc_conditional_var
+            (preproc_if
+              (preproc_open)
+              condition: (identifier))
+            (variable_declaration
+              name: (identifier)
+              (preproc_conditional_var_names
+                (preproc_if
+                  (preproc_open)
+                  condition: (identifier))
+                name: (identifier)
+                (preproc_else)
+                (preproc_endif
+                  (preproc_close)))
+              name: (quoted_identifier)
+              type: (type_specification
+                (basic_type)))
+            (preproc_endif
+              (preproc_close))))))))
+
+================================================================================
+strict var names: arms with different name counts (count-differs)
+================================================================================
+
+codeunit 50101 P
+{
+    var
+#if TPL2
+X1
+#if X
+, X2 , "X 6"
+#else
+, Value
+#endif
+: Integer;
+#endif
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (var_section
+        (var_keyword)
+        body: (var_body
+          (preproc_conditional_var
+            (preproc_if
+              (preproc_open)
+              condition: (identifier))
+            (variable_declaration
+              name: (identifier)
+              (preproc_conditional_var_names
+                (preproc_if
+                  (preproc_open)
+                  condition: (identifier))
+                name: (identifier)
+                name: (quoted_identifier)
+                (preproc_else)
+                name: (identifier)
+                (preproc_endif
+                  (preproc_close)))
+              type: (type_specification
+                (basic_type)))
+            (preproc_endif
+              (preproc_close))))))))
+
+================================================================================
+strict var names: #elif arm (elif)
+================================================================================
+
+codeunit 50101 P
+{
+    var
+#if TPL2
+X1
+#if X
+, X2
+#elif Y
+, "X 6"
+#endif
+, Value
+: Integer;
+#endif
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (var_section
+        (var_keyword)
+        body: (var_body
+          (preproc_conditional_var
+            (preproc_if
+              (preproc_open)
+              condition: (identifier))
+            (variable_declaration
+              name: (identifier)
+              (preproc_conditional_var_names
+                (preproc_if
+                  (preproc_open)
+                  condition: (identifier))
+                name: (identifier)
+                (preproc_elif
+                  condition: (identifier))
+                name: (quoted_identifier)
+                (preproc_endif
+                  (preproc_close)))
+              name: (identifier)
+              type: (type_specification
+                (basic_type)))
+            (preproc_endif
+              (preproc_close))))))))
+
+================================================================================
+strict var names: empty group between a separator and a name (empty)
+================================================================================
+
+codeunit 50101 P
+{
+    var
+#if TPL2
+X1 ,
+#if X
+#endif
+X2
+: Integer;
+#endif
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (var_section
+        (var_keyword)
+        body: (var_body
+          (preproc_conditional_var
+            (preproc_if
+              (preproc_open)
+              condition: (identifier))
+            (variable_declaration
+              name: (identifier)
+              (preproc_conditional_var_names
+                (preproc_if
+                  (preproc_open)
+                  condition: (identifier))
+                (preproc_endif
+                  (preproc_close)))
+              name: (identifier)
+              type: (type_specification
+                (basic_type)))
+            (preproc_endif
+              (preproc_close))))))))
+
+================================================================================
+strict var names MIXED: the whole name list in one group, no #else (empty-list)
+================================================================================
+
+codeunit 50101 P
+{
+    var
+#if TPL2
+#if X
+X1 , X2
+#endif
+: Integer;
+#endif
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (var_section
+        (var_keyword)
+        body: (var_body
+          (preproc_conditional_var
+            (preproc_if
+              (preproc_open)
+              condition: (identifier))
+            (variable_declaration
+              (preproc_conditional_var_names
+                (preproc_if
+                  (preproc_open)
+                  condition: (identifier))
+                name: (identifier)
+                name: (identifier)
+                (preproc_endif
+                  (preproc_close)))
+              type: (type_specification
+                (basic_type)))
+            (preproc_endif
+              (preproc_close))))))))
+
+================================================================================
+strict var names: group replacing the first name (first-replace)
+================================================================================
+
+codeunit 50101 P
+{
+    var
+#if TPL2
+#if X
+X1
+#else
+X2
+#endif
+, "X 6"
+: Integer;
+#endif
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (var_section
+        (var_keyword)
+        body: (var_body
+          (preproc_conditional_var
+            (preproc_if
+              (preproc_open)
+              condition: (identifier))
+            (variable_declaration
+              (preproc_conditional_var_names
+                (preproc_if
+                  (preproc_open)
+                  condition: (identifier))
+                name: (identifier)
+                (preproc_else)
+                name: (identifier)
+                (preproc_endif
+                  (preproc_close)))
+              name: (quoted_identifier)
+              type: (type_specification
+                (basic_type)))
+            (preproc_endif
+              (preproc_close))))))))
+
+================================================================================
+strict var names MIXED: separator-only group before the first name (holes-lead)
+================================================================================
+
+codeunit 50101 P
+{
+    var
+#if TPL2
+#if X
+,
+#endif
+X1 , X2
+: Integer;
+#endif
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (var_section
+        (var_keyword)
+        body: (var_body
+          (preproc_conditional_var
+            (preproc_if
+              (preproc_open)
+              condition: (identifier))
+            (variable_declaration
+              (preproc_conditional_var_names
+                (preproc_if
+                  (preproc_open)
+                  condition: (identifier))
+                (preproc_endif
+                  (preproc_close)))
+              name: (identifier)
+              name: (identifier)
+              type: (type_specification
+                (basic_type)))
+            (preproc_endif
+              (preproc_close))))))))
+
+================================================================================
+strict var names MIXED: separator-only group after a separator (holes-mid)
+================================================================================
+
+codeunit 50101 P
+{
+    var
+#if TPL2
+X1 ,
+#if X
+,
+#endif
+X2
+: Integer;
+#endif
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (var_section
+        (var_keyword)
+        body: (var_body
+          (preproc_conditional_var
+            (preproc_if
+              (preproc_open)
+              condition: (identifier))
+            (variable_declaration
+              name: (identifier)
+              (preproc_conditional_var_names
+                (preproc_if
+                  (preproc_open)
+                  condition: (identifier))
+                (preproc_endif
+                  (preproc_close)))
+              name: (identifier)
+              type: (type_specification
+                (basic_type)))
+            (preproc_endif
+              (preproc_close))))))))
+
+================================================================================
+strict var names MIXED: separator-only group after the last name (holes-trail)
+================================================================================
+
+codeunit 50101 P
+{
+    var
+#if TPL2
+X1 , X2
+#if X
+,
+#endif
+: Integer;
+#endif
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (var_section
+        (var_keyword)
+        body: (var_body
+          (preproc_conditional_var
+            (preproc_if
+              (preproc_open)
+              condition: (identifier))
+            (variable_declaration
+              name: (identifier)
+              name: (identifier)
+              (preproc_conditional_var_names
+                (preproc_if
+                  (preproc_open)
+                  condition: (identifier))
+                (preproc_endif
+                  (preproc_close)))
+              type: (type_specification
+                (basic_type)))
+            (preproc_endif
+              (preproc_close))))))))
+
+================================================================================
+strict var names: leading group whose arm ends with the separator (lead-optional)
+================================================================================
+
+codeunit 50101 P
+{
+    var
+#if TPL2
+#if X
+X1 ,
+#endif
+X2
+: Integer;
+#endif
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (var_section
+        (var_keyword)
+        body: (var_body
+          (preproc_conditional_var
+            (preproc_if
+              (preproc_open)
+              condition: (identifier))
+            (variable_declaration
+              (preproc_conditional_var_names
+                (preproc_if
+                  (preproc_open)
+                  condition: (identifier))
+                name: (identifier)
+                (preproc_endif
+                  (preproc_close)))
+              name: (identifier)
+              type: (type_specification
+                (basic_type)))
+            (preproc_endif
+              (preproc_close))))))))
+
+================================================================================
+strict var names: nested group (nested)
+================================================================================
+
+codeunit 50101 P
+{
+    var
+#if TPL2
+X1
+#if X
+, X2
+#if Y
+, "X 6"
+#endif
+#endif
+, Value
+: Integer;
+#endif
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (var_section
+        (var_keyword)
+        body: (var_body
+          (preproc_conditional_var
+            (preproc_if
+              (preproc_open)
+              condition: (identifier))
+            (variable_declaration
+              name: (identifier)
+              (preproc_conditional_var_names
+                (preproc_if
+                  (preproc_open)
+                  condition: (identifier))
+                name: (identifier)
+                (preproc_conditional_var_names
+                  (preproc_if
+                    (preproc_open)
+                    condition: (identifier))
+                  name: (quoted_identifier)
+                  (preproc_endif
+                    (preproc_close)))
+                (preproc_endif
+                  (preproc_close)))
+              name: (identifier)
+              type: (type_specification
+                (basic_type)))
+            (preproc_endif
+              (preproc_close))))))))
+
+================================================================================
+strict var names: the whole name list in the arms of one group (one-elem)
+================================================================================
+
+codeunit 50101 P
+{
+    var
+#if TPL2
+#if X
+X1 , X2
+#else
+X1
+#endif
+: Integer;
+#endif
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (var_section
+        (var_keyword)
+        body: (var_body
+          (preproc_conditional_var
+            (preproc_if
+              (preproc_open)
+              condition: (identifier))
+            (variable_declaration
+              (preproc_conditional_var_names
+                (preproc_if
+                  (preproc_open)
+                  condition: (identifier))
+                name: (identifier)
+                name: (identifier)
+                (preproc_else)
+                name: (identifier)
+                (preproc_endif
+                  (preproc_close)))
+              type: (type_specification
+                (basic_type)))
+            (preproc_endif
+              (preproc_close))))))))
+
+================================================================================
+strict var names: group with the separator after its name (sep-after)
+================================================================================
+
+codeunit 50101 P
+{
+    var
+#if TPL2
+X1 ,
+#if X
+X2 ,
+#endif
+"X 6"
+: Integer;
+#endif
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (var_section
+        (var_keyword)
+        body: (var_body
+          (preproc_conditional_var
+            (preproc_if
+              (preproc_open)
+              condition: (identifier))
+            (variable_declaration
+              name: (identifier)
+              (preproc_conditional_var_names
+                (preproc_if
+                  (preproc_open)
+                  condition: (identifier))
+                name: (identifier)
+                (preproc_endif
+                  (preproc_close)))
+              name: (quoted_identifier)
+              type: (type_specification
+                (basic_type)))
+            (preproc_endif
+              (preproc_close))))))))
+
+================================================================================
+strict var names: group with the separator before its name, then a name (sep-before)
+================================================================================
+
+codeunit 50101 P
+{
+    var
+#if TPL2
+X1
+#if X
+, X2
+#endif
+, "X 6"
+: Integer;
+#endif
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (var_section
+        (var_keyword)
+        body: (var_body
+          (preproc_conditional_var
+            (preproc_if
+              (preproc_open)
+              condition: (identifier))
+            (variable_declaration
+              name: (identifier)
+              (preproc_conditional_var_names
+                (preproc_if
+                  (preproc_open)
+                  condition: (identifier))
+                name: (identifier)
+                (preproc_endif
+                  (preproc_close)))
+              name: (quoted_identifier)
+              type: (type_specification
+                (basic_type)))
+            (preproc_endif
+              (preproc_close))))))))
+
+================================================================================
+strict var names: group with the separator before its name, last (sep-before-end)
+================================================================================
+
+codeunit 50101 P
+{
+    var
+#if TPL2
+X1
+#if X
+, X2
+#endif
+: Integer;
+#endif
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (var_section
+        (var_keyword)
+        body: (var_body
+          (preproc_conditional_var
+            (preproc_if
+              (preproc_open)
+              condition: (identifier))
+            (variable_declaration
+              name: (identifier)
+              (preproc_conditional_var_names
+                (preproc_if
+                  (preproc_open)
+                  condition: (identifier))
+                name: (identifier)
+                (preproc_endif
+                  (preproc_close)))
+              type: (type_specification
+                (basic_type)))
+            (preproc_endif
+              (preproc_close))))))))
+
+================================================================================
+strict var names: separator-only arms between two names (sep-only)
+================================================================================
+
+codeunit 50101 P
+{
+    var
+#if TPL2
+X1
+#if X
+,
+#else
+,
+#endif
+X2
+: Integer;
+#endif
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (var_section
+        (var_keyword)
+        body: (var_body
+          (preproc_conditional_var
+            (preproc_if
+              (preproc_open)
+              condition: (identifier))
+            (variable_declaration
+              name: (identifier)
+              (preproc_conditional_var_names
+                (preproc_if
+                  (preproc_open)
+                  condition: (identifier))
+                (preproc_else)
+                (preproc_endif
+                  (preproc_close)))
+              name: (identifier)
+              type: (type_specification
+                (basic_type)))
+            (preproc_endif
+              (preproc_close))))))))
+
+================================================================================
+strict var names MIXED: group holding the last name after a separator (trail)
+================================================================================
+
+codeunit 50101 P
+{
+    var
+#if TPL2
+X1 ,
+#if X
+X2
+#endif
+: Integer;
+#endif
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (var_section
+        (var_keyword)
+        body: (var_body
+          (preproc_conditional_var
+            (preproc_if
+              (preproc_open)
+              condition: (identifier))
+            (variable_declaration
+              name: (identifier)
+              (preproc_conditional_var_names
+                (preproc_if
+                  (preproc_open)
+                  condition: (identifier))
+                name: (identifier)
+                (preproc_endif
+                  (preproc_close)))
+              type: (type_specification
+                (basic_type)))
+            (preproc_endif
+              (preproc_close))))))))
+
+================================================================================
+strict var names: test_only_comma_conditional
+================================================================================
+
+codeunit 50101 P
+{
+    var
+        A
+#if X
+        , B
+#endif
+        : Integer;
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (var_section
+        (var_keyword)
+        body: (var_body
+          (variable_declaration
+            name: (identifier)
+            (preproc_conditional_var_names
+              (preproc_if
+                (preproc_open)
+                condition: (identifier))
+              name: (identifier)
+              (preproc_endif
+                (preproc_close)))
+            type: (type_specification
+              (basic_type))))))))
+
+================================================================================
+strict var names: group replacing the first name in a plain var section
+================================================================================
+
+codeunit 50101 P
+{
+    var
+#if X
+        A
+#else
+        B
+#endif
+        , C: Integer;
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (var_section
+        (var_keyword)
+        body: (var_body
+          (variable_declaration
+            (preproc_conditional_var_names
+              (preproc_if
+                (preproc_open)
+                condition: (identifier))
+              name: (identifier)
+              (preproc_else)
+              name: (identifier)
+              (preproc_endif
+                (preproc_close)))
+            name: (identifier)
+            type: (type_specification
+              (basic_type))))))))
+
+================================================================================
+strict var names: leading group ending with the separator in a plain var section
+================================================================================
+
+codeunit 50101 P
+{
+    var
+        A: Integer;
+#if X
+        B,
+#endif
+        C: Integer;
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (var_section
+        (var_keyword)
+        body: (var_body
+          (variable_declaration
+            name: (identifier)
+            type: (type_specification
+              (basic_type)))
+          (variable_declaration
+            (preproc_conditional_var_names
+              (preproc_if
+                (preproc_open)
+                condition: (identifier))
+              name: (identifier)
+              (preproc_endif
+                (preproc_close)))
+            name: (identifier)
+            type: (type_specification
+              (basic_type))))))))
+
+================================================================================
+strict var names: the whole name list in the arms of one group in a plain var section
+================================================================================
+
+codeunit 50101 P
+{
+    var
+#if X
+        A, B
+#else
+        C
+#endif
+        : Integer;
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (var_section
+        (var_keyword)
+        body: (var_body
+          (variable_declaration
+            (preproc_conditional_var_names
+              (preproc_if
+                (preproc_open)
+                condition: (identifier))
+              name: (identifier)
+              name: (identifier)
+              (preproc_else)
+              name: (identifier)
+              (preproc_endif
+                (preproc_close)))
+            type: (type_specification
+              (basic_type))))))))
+
+================================================================================
+strict var names: leading group whose only arm content is a nested group, in a plain var section
+================================================================================
+
+codeunit 50101 P
+{
+    var
+#if X
+#if Y
+        A,
+#endif
+#endif
+        B: Integer;
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (var_section
+        (var_keyword)
+        body: (var_body
+          (variable_declaration
+            (preproc_conditional_var_names
+              (preproc_if
+                (preproc_open)
+                condition: (identifier))
+              (preproc_conditional_var_names
+                (preproc_if
+                  (preproc_open)
+                  condition: (identifier))
+                name: (identifier)
+                (preproc_endif
+                  (preproc_close)))
+              (preproc_endif
+                (preproc_close)))
+            name: (identifier)
+            type: (type_specification
+              (basic_type))))))))
+
+================================================================================
+strict var names: nested leading group in a plain var section
+================================================================================
+
+codeunit 50101 P
+{
+    var
+#if X
+#if Y
+        A,
+#endif
+        B,
+#endif
+        C: Integer;
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (var_section
+        (var_keyword)
+        body: (var_body
+          (variable_declaration
+            (preproc_conditional_var_names
+              (preproc_if
+                (preproc_open)
+                condition: (identifier))
+              (preproc_conditional_var_names
+                (preproc_if
+                  (preproc_open)
+                  condition: (identifier))
+                name: (identifier)
+                (preproc_endif
+                  (preproc_close)))
+              name: (identifier)
+              (preproc_endif
+                (preproc_close)))
+            name: (identifier)
+            type: (type_specification
+              (basic_type))))))))
+
+================================================================================
+strict var names: leading group with an empty #if arm
+================================================================================
+
+codeunit 50101 P
+{
+    var
+#if X
+#else
+        A,
+#endif
+        B: Integer;
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (var_section
+        (var_keyword)
+        body: (var_body
+          (variable_declaration
+            (preproc_conditional_var_names
+              (preproc_if
+                (preproc_open)
+                condition: (identifier))
+              (preproc_else)
+              name: (identifier)
+              (preproc_endif
+                (preproc_close)))
+            name: (identifier)
+            type: (type_specification
+              (basic_type))))))))
+
+================================================================================
+strict var names: an empty #if arm before an #else arm, mid-list
+================================================================================
+
+codeunit 50101 P
+{
+    var
+        A
+#if X
+#else
+        , B
+#endif
+        : Integer;
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (var_section
+        (var_keyword)
+        body: (var_body
+          (variable_declaration
+            name: (identifier)
+            (preproc_conditional_var_names
+              (preproc_if
+                (preproc_open)
+                condition: (identifier))
+              (preproc_else)
+              name: (identifier)
+              (preproc_endif
+                (preproc_close)))
+            type: (type_specification
+              (basic_type))))))))
+
+================================================================================
+strict var names: first name replaced with #if not and #else
+================================================================================
+
+codeunit 50101 P
+{
+    var
+#if not X
+        A
+#else
+        B
+#endif
+        : Integer;
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (var_section
+        (var_keyword)
+        body: (var_body
+          (variable_declaration
+            (preproc_conditional_var_names
+              (preproc_if
+                (preproc_open)
+                condition: (preproc_not_expression
+                  (identifier)))
+              name: (identifier)
+              (preproc_else)
+              name: (identifier)
+              (preproc_endif
+                (preproc_close)))
+            type: (type_specification
+              (basic_type))))))))
+
+================================================================================
+strict var names: #elif arm holding a separator-led run
+================================================================================
+
+codeunit 50101 P
+{
+    var
+        A
+#if X
+        , B
+#elif Y
+        , C, D
+#else
+#endif
+        : Integer;
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (var_section
+        (var_keyword)
+        body: (var_body
+          (variable_declaration
+            name: (identifier)
+            (preproc_conditional_var_names
+              (preproc_if
+                (preproc_open)
+                condition: (identifier))
+              name: (identifier)
+              (preproc_elif
+                condition: (identifier))
+              name: (identifier)
+              name: (identifier)
+              (preproc_else)
+              (preproc_endif
+                (preproc_close)))
+            type: (type_specification
+              (basic_type))))))))
+
+================================================================================
+strict var names: comments at every boundary
+================================================================================
+
+codeunit 50101 P
+{
+    var
+        /* c0 */ A /* c1 */
+#if X // c2
+        /* c3 */ , /* c4 */ B /* c5 */
+#else // c6
+        , C
+#endif
+        /* c7 */ , /* c8 */ D /* c9 */ : Integer;
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (var_section
+        (var_keyword)
+        (multiline_comment)
+        body: (var_body
+          (variable_declaration
+            name: (identifier)
+            (multiline_comment)
+            (preproc_conditional_var_names
+              (preproc_if
+                (preproc_open)
+                condition: (identifier)
+                (comment))
+              (multiline_comment)
+              (multiline_comment)
+              name: (identifier)
+              (multiline_comment)
+              (preproc_else)
+              (comment)
+              name: (identifier)
+              (preproc_endif
+                (preproc_close)))
+            (multiline_comment)
+            (multiline_comment)
+            name: (identifier)
+            (multiline_comment)
+            type: (type_specification
+              (basic_type))))))))
+
+================================================================================
+strict var names: line comments inside and after the arms
+================================================================================
+
+codeunit 50101 P
+{
+    var
+        A // c0
+#if X
+        , B // c1
+#endif
+        // c2
+        , C: Integer;
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (var_section
+        (var_keyword)
+        body: (var_body
+          (variable_declaration
+            name: (identifier)
+            (comment)
+            (preproc_conditional_var_names
+              (preproc_if
+                (preproc_open)
+                condition: (identifier))
+              name: (identifier)
+              (comment)
+              (preproc_endif
+                (preproc_close)))
+            (comment)
+            name: (identifier)
+            type: (type_specification
+              (basic_type))))))))
+
+================================================================================
+strict var names: quoted names with escaped quotes and contextual names in arms
+================================================================================
+
+codeunit 50101 P
+{
+    var
+        "X""Y"
+#if X
+        , "P"":,Q", Value, Table
+#else
+        , Field
+#endif
+        , Z: Integer;
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (var_section
+        (var_keyword)
+        body: (var_body
+          (variable_declaration
+            name: (quoted_identifier)
+            (preproc_conditional_var_names
+              (preproc_if
+                (preproc_open)
+                condition: (identifier))
+              name: (quoted_identifier)
+              name: (identifier)
+              name: (identifier)
+              (preproc_else)
+              name: (identifier)
+              (preproc_endif
+                (preproc_close)))
+            name: (identifier)
+            type: (type_specification
+              (basic_type))))))))
+
+================================================================================
+strict var names: group in a procedure-local var section
+================================================================================
+
+codeunit 50101 P
+{
+    procedure Q()
+    var
+        C
+#if X
+        , D
+#endif
+        : Integer;
+    begin
+    end;
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (procedure
+        (procedure_keyword)
+        name: (identifier)
+        (var_section
+          (var_keyword)
+          body: (var_body
+            (variable_declaration
+              name: (identifier)
+              (preproc_conditional_var_names
+                (preproc_if
+                  (preproc_open)
+                  condition: (identifier))
+                name: (identifier)
+                (preproc_endif
+                  (preproc_close)))
+              type: (type_specification
+                (basic_type)))))
+        body: (code_block
+          (begin_keyword)
+          (end_keyword))))))
+
+================================================================================
+strict var names: group in a declaration continuing a var section across #if (split var section tail)
+================================================================================
+
+codeunit 50101 P
+{
+    var
+        A0: Integer;
+#if TPL2
+        A1: Integer;
+#if X
+        X1
+#else
+        X2
+#endif
+        , X3: Integer;
+
+    procedure P2()
+    begin
+    end;
+#endif
+
+    procedure P3()
+    begin
+    end;
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (var_section
+        (var_keyword)
+        body: (var_body
+          (variable_declaration
+            name: (identifier)
+            type: (type_specification
+              (basic_type)))))
+      (preproc_split_var_section_tail
+        (preproc_if
+          (preproc_open)
+          condition: (identifier))
+        variables: (var_body
+          (variable_declaration
+            name: (identifier)
+            type: (type_specification
+              (basic_type)))
+          (variable_declaration
+            (preproc_conditional_var_names
+              (preproc_if
+                (preproc_open)
+                condition: (identifier))
+              name: (identifier)
+              (preproc_else)
+              name: (identifier)
+              (preproc_endif
+                (preproc_close)))
+            name: (identifier)
+            type: (type_specification
+              (basic_type))))
+        (procedure
+          (procedure_keyword)
+          name: (identifier)
+          body: (code_block
+            (begin_keyword)
+            (end_keyword)))
+        (preproc_endif
+          (preproc_close)))
+      (procedure
+        (procedure_keyword)
+        name: (identifier)
+        body: (code_block
+          (begin_keyword)
+          (end_keyword))))))
+
+================================================================================
+strict var names: separator-led group in a split var section tail
+================================================================================
+
+codeunit 50101 P
+{
+    var
+        A0: Integer;
+#if TPL2
+        A1
+#if X
+        , A2
+#endif
+        : Integer;
+
+    procedure P2()
+    begin
+    end;
+#endif
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (var_section
+        (var_keyword)
+        body: (var_body
+          (variable_declaration
+            name: (identifier)
+            type: (type_specification
+              (basic_type)))))
+      (preproc_split_var_section_tail
+        (preproc_if
+          (preproc_open)
+          condition: (identifier))
+        variables: (var_body
+          (variable_declaration
+            name: (identifier)
+            (preproc_conditional_var_names
+              (preproc_if
+                (preproc_open)
+                condition: (identifier))
+              name: (identifier)
+              (preproc_endif
+                (preproc_close)))
+            type: (type_specification
+              (basic_type))))
+        (procedure
+          (procedure_keyword)
+          name: (identifier)
+          body: (code_block
+            (begin_keyword)
+            (end_keyword)))
+        (preproc_endif
+          (preproc_close))))))
+
+================================================================================
+strict var names: group in a declaration with an array type
+================================================================================
+
+codeunit 50101 P
+{
+    var
+        A
+#if X
+        , B
+#endif
+        : array[2] of Integer;
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (var_section
+        (var_keyword)
+        body: (var_body
+          (variable_declaration
+            name: (identifier)
+            (preproc_conditional_var_names
+              (preproc_if
+                (preproc_open)
+                condition: (identifier))
+              name: (identifier)
+              (preproc_endif
+                (preproc_close)))
+            type: (type_specification
+              (array_type
+                (array_keyword)
+                sizes: (integer)
+                (of_keyword)
+                element_type: (type_specification
+                  (basic_type))))))))))
+
+================================================================================
+strict var names preservation: single, multi-name, quoted and contextual declarations
+================================================================================
+
+codeunit 50101 P
+{
+    var
+        A: Integer;
+        B, C, D: Integer;
+        "Q ""x""", "": Integer;
+        Value, Field, Table: Integer;
+        Key: Boolean;
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (var_section
+        (var_keyword)
+        body: (var_body
+          (variable_declaration
+            name: (identifier)
+            type: (type_specification
+              (basic_type)))
+          (variable_declaration
+            name: (identifier)
+            name: (identifier)
+            name: (identifier)
+            type: (type_specification
+              (basic_type)))
+          (variable_declaration
+            name: (quoted_identifier)
+            name: (quoted_identifier)
+            type: (type_specification
+              (basic_type)))
+          (variable_declaration
+            name: (identifier)
+            name: (identifier)
+            name: (identifier)
+            type: (type_specification
+              (basic_type)))
+          (variable_declaration
+            name: (identifier)
+            type: (type_specification
+              (basic_type))))))))
+
+================================================================================
+strict var names preservation: label and TextConst declarations
+================================================================================
+
+codeunit 50101 P
+{
+    var
+        L: Label 'a', Locked = true, Comment = 'c';
+        M: Label 'b';
+        T: TextConst ENU = 'a', DAN = 'b';
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (var_section
+        (var_keyword)
+        body: (var_body
+          (variable_declaration
+            name: (identifier)
+            type: (basic_type)
+            value: (string_literal)
+            (label_attribute
+              name: (identifier)
+              value: (boolean))
+            (label_attribute
+              name: (identifier)
+              value: (string_literal)))
+          (variable_declaration
+            name: (identifier)
+            type: (basic_type)
+            value: (string_literal))
+          (variable_declaration
+            name: (identifier)
+            type: (basic_type)
+            (ml_value_list
+              (ml_value_pair
+                language: (identifier)
+                value: (string_literal))
+              (ml_value_pair
+                language: (identifier)
+                value: (string_literal)))))))))
+
+================================================================================
+strict var names preservation: attributed declarations without groups
+================================================================================
+
+codeunit 50101 P
+{
+    var
+        [NonDebuggable]
+        A, B: Integer;
+        [NonDebuggable]
+        C: Integer;
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (var_section
+        (var_keyword)
+        body: (var_body
+          (var_attribute_item
+            (var_attribute_open)
+            attribute: (attribute_content
+              name: (identifier)))
+          (variable_declaration
+            name: (identifier)
+            name: (identifier)
+            type: (type_specification
+              (basic_type)))
+          (var_attribute_item
+            (var_attribute_open)
+            attribute: (attribute_content
+              name: (identifier)))
+          (variable_declaration
+            name: (identifier)
+            type: (type_specification
+              (basic_type))))))))
+
+================================================================================
+strict var names preservation: comments between plain names
+================================================================================
+
+codeunit 50101 P
+{
+    var
+        /* c9 */ A /* c0 */ , // c1
+        B /* c2 */ : Integer;
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (var_section
+        (var_keyword)
+        (multiline_comment)
+        body: (var_body
+          (variable_declaration
+            name: (identifier)
+            (multiline_comment)
+            (comment)
+            name: (identifier)
+            (multiline_comment)
+            type: (type_specification
+              (basic_type))))))))
+
+================================================================================
+strict var names preservation: an empty group before a declaration stays a sibling preproc_conditional_var
+================================================================================
+
+codeunit 50101 P
+{
+    var
+        A: Integer;
+#if X
+#endif
+        B: Integer;
+#if X
+#else
+#endif
+        C, D: Integer;
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (var_section
+        (var_keyword)
+        body: (var_body
+          (variable_declaration
+            name: (identifier)
+            type: (type_specification
+              (basic_type)))
+          (preproc_conditional_var
+            (preproc_if
+              (preproc_open)
+              condition: (identifier))
+            (preproc_endif
+              (preproc_close)))
+          (variable_declaration
+            name: (identifier)
+            type: (type_specification
+              (basic_type)))
+          (preproc_conditional_var
+            (preproc_if
+              (preproc_open)
+              condition: (identifier))
+            (preproc_else)
+            (preproc_endif
+              (preproc_close)))
+          (variable_declaration
+            name: (identifier)
+            name: (identifier)
+            type: (type_specification
+              (basic_type))))))))
+
+================================================================================
+strict var names preservation: empty group context, var_body top level: a sibling preproc_conditional_var
+================================================================================
+
+codeunit 50101 P
+{
+    var
+#if X
+#elif Y
+#endif
+        A: Integer;
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (var_section
+        (var_keyword)
+        body: (var_body
+          (preproc_conditional_var
+            (preproc_if
+              (preproc_open)
+              condition: (identifier))
+            (preproc_elif
+              condition: (identifier))
+            (preproc_endif
+              (preproc_close)))
+          (variable_declaration
+            name: (identifier)
+            type: (type_specification
+              (basic_type))))))))
+
+================================================================================
+strict var names: empty group context, inside a preproc_conditional_var arm: the next declaration's group
+================================================================================
+
+codeunit 50101 P
+{
+    var
+#if A
+#if X
+#endif
+        B: Integer;
+#endif
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (var_section
+        (var_keyword)
+        body: (var_body
+          (preproc_conditional_var
+            (preproc_if
+              (preproc_open)
+              condition: (identifier))
+            (variable_declaration
+              (preproc_conditional_var_names
+                (preproc_if
+                  (preproc_open)
+                  condition: (identifier))
+                (preproc_endif
+                  (preproc_close)))
+              name: (identifier)
+              type: (type_specification
+                (basic_type)))
+            (preproc_endif
+              (preproc_close))))))))
+
+================================================================================
+strict var names: empty group context, in a split var section tail: the next declaration's group
+================================================================================
+
+codeunit 50101 P
+{
+    var
+        A0: Integer;
+#if TPL2
+        A1: Integer;
+#if X
+#endif
+        A2: Integer;
+
+    procedure P2()
+    begin
+    end;
+#endif
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (var_section
+        (var_keyword)
+        body: (var_body
+          (variable_declaration
+            name: (identifier)
+            type: (type_specification
+              (basic_type)))))
+      (preproc_split_var_section_tail
+        (preproc_if
+          (preproc_open)
+          condition: (identifier))
+        variables: (var_body
+          (variable_declaration
+            name: (identifier)
+            type: (type_specification
+              (basic_type)))
+          (variable_declaration
+            (preproc_conditional_var_names
+              (preproc_if
+                (preproc_open)
+                condition: (identifier))
+              (preproc_endif
+                (preproc_close)))
+            name: (identifier)
+            type: (type_specification
+              (basic_type))))
+        (procedure
+          (procedure_keyword)
+          name: (identifier)
+          body: (code_block
+            (begin_keyword)
+            (end_keyword)))
+        (preproc_endif
+          (preproc_close))))))
+
+================================================================================
+strict var names: empty group context, nested in a group at top level: the next declaration's group
+================================================================================
+
+codeunit 50101 P
+{
+    var
+#if X
+#if Y
+#endif
+#endif
+        A: Integer;
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (var_section
+        (var_keyword)
+        body: (var_body
+          (variable_declaration
+            (preproc_conditional_var_names
+              (preproc_if
+                (preproc_open)
+                condition: (identifier))
+              (preproc_conditional_var_names
+                (preproc_if
+                  (preproc_open)
+                  condition: (identifier))
+                (preproc_endif
+                  (preproc_close)))
+              (preproc_endif
+                (preproc_close)))
+            name: (identifier)
+            type: (type_specification
+              (basic_type))))))))
+
+================================================================================
+strict var names preservation: whole declarations in each arm of an enclosing #if
+================================================================================
+
+codeunit 50101 P
+{
+    var
+#if X
+        A, B: Integer;
+#else
+        A: Integer;
+#endif
+        C: Integer;
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (var_section
+        (var_keyword)
+        body: (var_body
+          (preproc_conditional_var
+            (preproc_if
+              (preproc_open)
+              condition: (identifier))
+            (variable_declaration
+              name: (identifier)
+              name: (identifier)
+              type: (type_specification
+                (basic_type)))
+            (preproc_else)
+            (variable_declaration
+              name: (identifier)
+              type: (type_specification
+                (basic_type)))
+            (preproc_endif
+              (preproc_close)))
+          (variable_declaration
+            name: (identifier)
+            type: (type_specification
+              (basic_type))))))))
+
+================================================================================
+strict var names preservation: multi-name declaration in a split var section tail
+================================================================================
+
+codeunit 50101 P
+{
+    var
+        A0: Integer;
+#if TPL2
+        A1, A2: Integer;
+
+    procedure P2()
+    begin
+    end;
+#endif
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (var_section
+        (var_keyword)
+        body: (var_body
+          (variable_declaration
+            name: (identifier)
+            type: (type_specification
+              (basic_type)))))
+      (preproc_split_var_section_tail
+        (preproc_if
+          (preproc_open)
+          condition: (identifier))
+        variables: (var_body
+          (variable_declaration
+            name: (identifier)
+            name: (identifier)
+            type: (type_specification
+              (basic_type))))
+        (procedure
+          (procedure_keyword)
+          name: (identifier)
+          body: (code_block
+            (begin_keyword)
+            (end_keyword)))
+        (preproc_endif
+          (preproc_close))))))

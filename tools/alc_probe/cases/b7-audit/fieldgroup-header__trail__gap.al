@@ -1,5 +1,5 @@
 // B7a Task 10 witness (GAP): family fieldgroup-header, base placement trail, 6 cells; representative occ:addlast_fieldgroup_modification:3@fieldgroups_body#trail
-// Fixture b7_gap_fieldgroup_header_test.txt#B7a GAP: fieldgroup-header / trail (6 cells, verdict of the representative GAP); the parser ERRORs on configurations alc accepts; representative occ:addlast_fieldgroup_modification:3@fieldgroups_body%23trail#0
+// Fixture strict_conditional_field_list_items_test.txt#strict field_list: addlast, the whole list in one group right after the fixed ; (fieldgroup-header trail)#0
 // expect: !X accept
 // expect: X accept
 // source: recorded by B7a Task 10, 2026-10-07: the alc split verdicts of cell occ:addlast_fieldgroup_modification:3@fieldgroups_body#trail in tools/b7_audit/evidence.jsonl.gz

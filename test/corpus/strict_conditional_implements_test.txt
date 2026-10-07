@@ -1,0 +1,929 @@
+; B7b-1 (spec docs/superpowers/specs/2026-10-07-b7b-1-strict-conditional-lists-design.md):
+; a #if group may stand anywhere in implements_clause's interface list. Expected trees are
+; HAND-WRITTEN from the flat reading (the item list with each arm read as an alternative item
+; run): every raw interface is fielded `interface`, on implements_clause when it sits outside a
+; group and on preproc_conditional_implements when it sits in an arm. Separators are anonymous.
+; Comments sit in the smallest visible node holding tokens on both sides of them.
+; The `MIXED` cases are the B7a witnesses alc accepts in one configuration and rejects in the
+; other (manifest tools/b7_audit/b7b1-manifest.tsv): the split source parses, the invalid
+; configuration is the config oracle's to judge (spec section 3). They replace the `:error`
+; cases of the former test/corpus/b7_gap_implements_test.txt, whose shapes all live here now.
+
+================================================================================
+strict implements: group with the separator before its item (sep-before-end)
+================================================================================
+
+codeunit 50100 C implements IFoo
+#if X
+, IBar
+#endif
+{
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    (implements_clause
+      (implements_keyword)
+      interface: (identifier)
+      (preproc_conditional_implements
+        (preproc_if
+          (preproc_open)
+          condition: (identifier))
+        interface: (identifier)
+        (preproc_endif
+          (preproc_close))))))
+
+================================================================================
+strict implements: group with the separator after its item
+================================================================================
+
+codeunit 50100 C implements IFoo,
+#if X
+IBar,
+#endif
+IBaz
+{
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    (implements_clause
+      (implements_keyword)
+      interface: (identifier)
+      (preproc_conditional_implements
+        (preproc_if
+          (preproc_open)
+          condition: (identifier))
+        interface: (identifier)
+        (preproc_endif
+          (preproc_close)))
+      interface: (identifier))))
+
+================================================================================
+strict implements: separator-only arms between two raw items (sep-only)
+================================================================================
+
+codeunit 50100 C implements IFoo
+#if X
+,
+#else
+,
+#endif
+IBar
+{
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    (implements_clause
+      (implements_keyword)
+      interface: (identifier)
+      (preproc_conditional_implements
+        (preproc_if
+          (preproc_open)
+          condition: (identifier))
+        (preproc_else)
+        (preproc_endif
+          (preproc_close)))
+      interface: (identifier))))
+
+================================================================================
+strict implements: an arm holding both separators
+================================================================================
+
+codeunit 50100 C implements IFoo
+#if X
+, IBar ,
+#else
+,
+#endif
+IBaz
+{
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    (implements_clause
+      (implements_keyword)
+      interface: (identifier)
+      (preproc_conditional_implements
+        (preproc_if
+          (preproc_open)
+          condition: (identifier))
+        interface: (identifier)
+        (preproc_else)
+        (preproc_endif
+          (preproc_close)))
+      interface: (identifier))))
+
+================================================================================
+strict implements: group replacing the first item
+================================================================================
+
+codeunit 50100 C implements
+#if X
+IFoo
+#else
+IBar
+#endif
+, IBaz
+{
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    (implements_clause
+      (implements_keyword)
+      (preproc_conditional_implements
+        (preproc_if
+          (preproc_open)
+          condition: (identifier))
+        interface: (identifier)
+        (preproc_else)
+        interface: (identifier)
+        (preproc_endif
+          (preproc_close)))
+      interface: (identifier))))
+
+================================================================================
+strict implements: leading group whose arm ends with the separator (lead-optional)
+================================================================================
+
+codeunit 50100 C implements
+#if X
+IFoo ,
+#endif
+IBar
+{
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    (implements_clause
+      (implements_keyword)
+      (preproc_conditional_implements
+        (preproc_if
+          (preproc_open)
+          condition: (identifier))
+        interface: (identifier)
+        (preproc_endif
+          (preproc_close)))
+      interface: (identifier))))
+
+================================================================================
+strict implements MIXED: trailing group after the separator (trail)
+================================================================================
+
+codeunit 50111 C2 implements IFoo ,
+#if X
+IBar
+#endif
+{
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    (implements_clause
+      (implements_keyword)
+      interface: (identifier)
+      (preproc_conditional_implements
+        (preproc_if
+          (preproc_open)
+          condition: (identifier))
+        interface: (identifier)
+        (preproc_endif
+          (preproc_close))))))
+
+================================================================================
+strict implements: the whole list in the arms of one group (one-elem)
+================================================================================
+
+codeunit 50100 C implements
+#if X
+IFoo , IBar
+#else
+IFoo
+#endif
+{
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    (implements_clause
+      (implements_keyword)
+      (preproc_conditional_implements
+        (preproc_if
+          (preproc_open)
+          condition: (identifier))
+        interface: (identifier)
+        interface: (identifier)
+        (preproc_else)
+        interface: (identifier)
+        (preproc_endif
+          (preproc_close))))))
+
+================================================================================
+strict implements: nested group
+================================================================================
+
+codeunit 50100 C implements IFoo
+#if X
+, IBar
+#if Y
+, IBaz
+#endif
+#endif
+{
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    (implements_clause
+      (implements_keyword)
+      interface: (identifier)
+      (preproc_conditional_implements
+        (preproc_if
+          (preproc_open)
+          condition: (identifier))
+        interface: (identifier)
+        (preproc_conditional_implements
+          (preproc_if
+            (preproc_open)
+            condition: (identifier))
+          interface: (identifier)
+          (preproc_endif
+            (preproc_close)))
+        (preproc_endif
+          (preproc_close))))))
+
+================================================================================
+strict implements: adjacent independent groups
+================================================================================
+
+codeunit 50100 C implements IFoo
+#if X
+, IBar
+#endif
+#if Y
+, IBaz
+#endif
+{
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    (implements_clause
+      (implements_keyword)
+      interface: (identifier)
+      (preproc_conditional_implements
+        (preproc_if
+          (preproc_open)
+          condition: (identifier))
+        interface: (identifier)
+        (preproc_endif
+          (preproc_close)))
+      (preproc_conditional_implements
+        (preproc_if
+          (preproc_open)
+          condition: (identifier))
+        interface: (identifier)
+        (preproc_endif
+          (preproc_close))))))
+
+================================================================================
+strict implements: adjacent complementary groups with #if not
+================================================================================
+
+codeunit 50100 C implements IFoo,
+#if X
+IBar
+#endif
+#if not X
+IBaz
+#endif
+{
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    (implements_clause
+      (implements_keyword)
+      interface: (identifier)
+      (preproc_conditional_implements
+        (preproc_if
+          (preproc_open)
+          condition: (identifier))
+        interface: (identifier)
+        (preproc_endif
+          (preproc_close)))
+      (preproc_conditional_implements
+        (preproc_if
+          (preproc_open)
+          condition: (preproc_not_expression
+            (identifier)))
+        interface: (identifier)
+        (preproc_endif
+          (preproc_close))))))
+
+================================================================================
+strict implements: empty #if arm
+================================================================================
+
+codeunit 50100 C implements IFoo
+#if X
+#else
+, IBar
+#endif
+{
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    (implements_clause
+      (implements_keyword)
+      interface: (identifier)
+      (preproc_conditional_implements
+        (preproc_if
+          (preproc_open)
+          condition: (identifier))
+        (preproc_else)
+        interface: (identifier)
+        (preproc_endif
+          (preproc_close))))))
+
+================================================================================
+strict implements: empty group between separator and item (empty)
+================================================================================
+
+codeunit 50100 C implements IFoo ,
+#if X
+#endif
+IBar
+{
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    (implements_clause
+      (implements_keyword)
+      interface: (identifier)
+      (preproc_conditional_implements
+        (preproc_if
+          (preproc_open)
+          condition: (identifier))
+        (preproc_endif
+          (preproc_close)))
+      interface: (identifier))))
+
+================================================================================
+strict implements: #elif arm
+================================================================================
+
+codeunit 50100 C implements IFoo
+#if X
+, IBar
+#elif Y
+, IBaz
+#else
+, IQux
+#endif
+{
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    (implements_clause
+      (implements_keyword)
+      interface: (identifier)
+      (preproc_conditional_implements
+        (preproc_if
+          (preproc_open)
+          condition: (identifier))
+        interface: (identifier)
+        (preproc_elif
+          condition: (identifier))
+        interface: (identifier)
+        (preproc_else)
+        interface: (identifier)
+        (preproc_endif
+          (preproc_close))))))
+
+================================================================================
+strict implements: comments at every boundary
+================================================================================
+
+codeunit 50100 C implements IFoo // c1
+#if X // c2
+/* c3 */ , /* c4 */ IBar , // c5
+#else // c6
+, // c7
+#endif // c8
+/* c9 */ IBaz
+{
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    (implements_clause
+      (implements_keyword)
+      interface: (identifier)
+      (comment)
+      (preproc_conditional_implements
+        (preproc_if
+          (preproc_open)
+          condition: (identifier)
+          (comment))
+        (multiline_comment)
+        (multiline_comment)
+        interface: (identifier)
+        (comment)
+        (preproc_else)
+        (comment)
+        (comment)
+        (preproc_endif
+          (preproc_close)))
+      (comment)
+      (multiline_comment)
+      interface: (identifier))))
+
+================================================================================
+strict implements: enum host
+================================================================================
+
+enum 50100 E implements IFoo
+#if X
+, IBar
+#else
+, IBaz
+#endif
+{
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (enum_declaration
+    (enum_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    (implements_clause
+      (implements_keyword)
+      interface: (identifier)
+      (preproc_conditional_implements
+        (preproc_if
+          (preproc_open)
+          condition: (identifier))
+        interface: (identifier)
+        (preproc_else)
+        interface: (identifier)
+        (preproc_endif
+          (preproc_close))))))
+
+================================================================================
+strict implements: enum host, separator after the item in the arm
+================================================================================
+
+enum 50100 E implements IFoo,
+#if X
+IBar,
+#endif
+IBaz
+{
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (enum_declaration
+    (enum_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    (implements_clause
+      (implements_keyword)
+      interface: (identifier)
+      (preproc_conditional_implements
+        (preproc_if
+          (preproc_open)
+          condition: (identifier))
+        interface: (identifier)
+        (preproc_endif
+          (preproc_close)))
+      interface: (identifier))))
+
+================================================================================
+strict implements: group inside an arm of a split declaration header
+================================================================================
+
+#if A
+codeunit 50100 C implements IFoo
+#if X
+, IBar
+#endif
+#else
+codeunit 50100 C
+#endif
+{
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (preproc_split_declaration
+    (preproc_if
+      (preproc_open)
+      condition: (identifier))
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    (implements_clause
+      (implements_keyword)
+      interface: (identifier)
+      (preproc_conditional_implements
+        (preproc_if
+          (preproc_open)
+          condition: (identifier))
+        interface: (identifier)
+        (preproc_endif
+          (preproc_close))))
+    (preproc_else)
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    (preproc_endif
+      (preproc_close))))
+
+================================================================================
+strict implements: split declaration header, separator after the item in the arm
+================================================================================
+
+#if A
+codeunit 50100 C implements IFoo,
+#if X
+IBar,
+#endif
+IBaz
+#else
+codeunit 50100 C
+#endif
+{
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (preproc_split_declaration
+    (preproc_if
+      (preproc_open)
+      condition: (identifier))
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    (implements_clause
+      (implements_keyword)
+      interface: (identifier)
+      (preproc_conditional_implements
+        (preproc_if
+          (preproc_open)
+          condition: (identifier))
+        interface: (identifier)
+        (preproc_endif
+          (preproc_close)))
+      interface: (identifier))
+    (preproc_else)
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    (preproc_endif
+      (preproc_close))))
+
+================================================================================
+strict implements preservation: plain list
+================================================================================
+
+codeunit 50100 C implements IFoo, IBar, IBaz
+{
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    (implements_clause
+      (implements_keyword)
+      interface: (identifier)
+      interface: (identifier)
+      interface: (identifier))))
+
+================================================================================
+strict implements preservation: quoted, escaped-quote and contextual-keyword items
+================================================================================
+
+enum 50100 E implements "I ""Q"" Foo", Version, Table, "Bar"
+{
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (enum_declaration
+    (enum_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    (implements_clause
+      (implements_keyword)
+      interface: (quoted_identifier)
+      interface: (identifier)
+      interface: (identifier)
+      interface: (quoted_identifier))))
+
+================================================================================
+strict implements preservation: comments between plain items
+================================================================================
+
+codeunit 50100 C implements /* a */ IFoo /* b */ , // c
+IBar
+{
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    (implements_clause
+      (implements_keyword)
+      (multiline_comment)
+      interface: (identifier)
+      (multiline_comment)
+      (comment)
+      interface: (identifier))))
+
+================================================================================
+strict implements preservation: host in an enclosing whole-declaration #if
+================================================================================
+
+#if not A
+codeunit 50100 C implements IFoo, "IBar"
+#elif B
+codeunit 50100 C implements IFoo
+#else
+codeunit 50100 C
+#endif
+{
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (preproc_split_declaration
+    (preproc_if
+      (preproc_open)
+      condition: (preproc_not_expression
+        (identifier)))
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    (implements_clause
+      (implements_keyword)
+      interface: (identifier)
+      interface: (quoted_identifier))
+    (preproc_elif
+      condition: (identifier))
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    (implements_clause
+      (implements_keyword)
+      interface: (identifier))
+    (preproc_else)
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    (preproc_endif
+      (preproc_close))))
+
+================================================================================
+strict implements preservation: host wholly inside one arm of an enclosing conditional
+================================================================================
+
+#if X
+codeunit 50100 C implements IFoo, IBar
+{
+}
+#endif
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (preproc_conditional_object
+    (preproc_if
+      (preproc_open)
+      condition: (identifier))
+    (codeunit_declaration
+      (codeunit_keyword)
+      object_id: (integer)
+      object_name: (identifier)
+      (implements_clause
+        (implements_keyword)
+        interface: (identifier)
+        interface: (identifier)))
+    (preproc_endif
+      (preproc_close))))
+
+================================================================================
+strict implements MIXED: the whole list in one group, no #else (empty-list)
+================================================================================
+
+codeunit 50111 C2 implements
+#if X
+IFoo , IBar
+#endif
+{
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    (implements_clause
+      (implements_keyword)
+      (preproc_conditional_implements
+        (preproc_if
+          (preproc_open)
+          condition: (identifier))
+        interface: (identifier)
+        interface: (identifier)
+        (preproc_endif
+          (preproc_close))))))
+
+================================================================================
+strict implements MIXED: separator-only group before the first item (holes-lead)
+================================================================================
+
+codeunit 50111 C2 implements
+#if X
+,
+#endif
+IFoo , IBar
+{
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    (implements_clause
+      (implements_keyword)
+      (preproc_conditional_implements
+        (preproc_if
+          (preproc_open)
+          condition: (identifier))
+        (preproc_endif
+          (preproc_close)))
+      interface: (identifier)
+      interface: (identifier))))
+
+================================================================================
+strict implements MIXED: separator-only group after a separator (holes-mid)
+================================================================================
+
+codeunit 50111 C2 implements IFoo ,
+#if X
+,
+#endif
+IBar
+{
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    (implements_clause
+      (implements_keyword)
+      interface: (identifier)
+      (preproc_conditional_implements
+        (preproc_if
+          (preproc_open)
+          condition: (identifier))
+        (preproc_endif
+          (preproc_close)))
+      interface: (identifier))))
+
+================================================================================
+strict implements MIXED: separator-only group after the last item (holes-trail)
+================================================================================
+
+codeunit 50111 C2 implements IFoo , IBar
+#if X
+,
+#endif
+{
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    (implements_clause
+      (implements_keyword)
+      interface: (identifier)
+      interface: (identifier)
+      (preproc_conditional_implements
+        (preproc_if
+          (preproc_open)
+          condition: (identifier))
+        (preproc_endif
+          (preproc_close))))))

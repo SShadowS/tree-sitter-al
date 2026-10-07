@@ -8,6 +8,7 @@ from __future__ import annotations
 
 from tools.config_oracle import contracts
 from tools.config_oracle.compare import Discrepancy
+from tools.config_oracle.lowering import conditional_lists
 from tools.config_oracle.lowering.engine import LoweringError
 from tools.config_oracle.lowering.select import split_arms
 
@@ -42,4 +43,8 @@ def check(root):
                                     f"{n.kind}@{n.start}", err.detail or err.kind))
         for c in reversed(n.children):
             stack.append((c, n.kind))
+    # B7b-1 strict conditional lists, spec 2026-10-07 section 6.1 (pre-selection attachment).
+    for p in conditional_lists.validate_split(root):
+        path, _, what = p.partition(": ")
+        out.append(Discrepancy("representation", "strict-list", path, what))
     return out

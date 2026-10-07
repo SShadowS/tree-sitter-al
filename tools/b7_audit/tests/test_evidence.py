@@ -156,6 +156,19 @@ def test_tier_selection():
                                            "seed:a": None, "c5": None}
 
 
+def test_alc_measured_row_is_never_class_sampled():
+    """B7b-1 Task 13: the enum implements row's template names the interfaces in DefaultImplementation."""
+    cls = ("list-separator", "implements", "one-elem")
+    infos = [evidence.TierInfo("a", cls, True, True, False),
+             evidence.TierInfo("b", cls, True, True, False, measure=True),
+             evidence.TierInfo("c", cls, True, True, False)]
+    reps = evidence.representatives((i.id, i.cls) for i in infos)
+    assert evidence.tiers(infos, reps) == {"a": None, "b": None, "c": "a"}
+    marked = [e for e in evidence.universe() if e.measure]
+    assert marked and {e.cell.key for e in marked} == {"occ:implements_clause:2.0.0"}
+    assert {e.cell.host for e in marked} == {"enum_declaration"}
+
+
 def test_records_sorted_and_deterministic(tmp_path):
     header = {"alc": {"version": "v"}, "runtime": "15.0"}
     recs = [{"cell": c, "config": k, "z": 1, "a": [2]} for c in ("b", "a", "c") for k in ("X=1", "X=0")]

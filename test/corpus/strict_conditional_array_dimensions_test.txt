@@ -1,0 +1,1497 @@
+; B7b-1 Task 9: #if groups in the dimension list of array[...] of T (family array_dimensions,
+; grammar.js strictConditionalList). The list is everything between `[` and `]`; each dimension stays
+; `sizes:` (on the group node when it sits inside an arm).
+; The first 19 cases are the shapes of b7_gap_array_dimensions_test.txt that now parse, dimension text
+; unchanged. `MIXED` cases are accepted by alc in one configuration and rejected in the other (AL0367
+; empty dimension list, AL0301/AL0107 separators): the split source parses, the invalid configuration
+; is the config oracle's to judge (spec section 3).
+; An emptied dimension list stays a flat-grammar error: alc rejects it (AL0367, B7b-1 Task 2,
+; empty-semantic-rejected), so `sizes` is never optional in the flat reading.
+; Trees are hand-written from the flat reading, never copied from parser output.
+
+================================================================================
+strict array: adjacent complementary groups with #if not (adjacent-compl)
+================================================================================
+
+codeunit 50100 C
+{
+    var
+        A: array[
+2
+#if X
+, 3
+#endif
+#if not X
+, 4
+#endif
+] of Integer;
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (var_section
+        (var_keyword)
+        body: (var_body
+          (variable_declaration
+            name: (identifier)
+            type: (type_specification
+              (array_type
+                (array_keyword)
+                sizes: (integer)
+                (preproc_conditional_array_dimensions
+                  (preproc_if
+                    (preproc_open)
+                    condition: (identifier))
+                  sizes: (integer)
+                  (preproc_endif
+                    (preproc_close)))
+                (preproc_conditional_array_dimensions
+                  (preproc_if
+                    (preproc_open)
+                    condition: (preproc_not_expression
+                      (identifier)))
+                  sizes: (integer)
+                  (preproc_endif
+                    (preproc_close)))
+                (of_keyword)
+                element_type: (type_specification
+                  (basic_type))))))))))
+
+================================================================================
+strict array: adjacent independent groups (adjacent-indep)
+================================================================================
+
+codeunit 50100 C
+{
+    var
+        A: array[
+2
+#if X
+, 3
+#endif
+#if Y
+, 4
+#endif
+] of Integer;
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (var_section
+        (var_keyword)
+        body: (var_body
+          (variable_declaration
+            name: (identifier)
+            type: (type_specification
+              (array_type
+                (array_keyword)
+                sizes: (integer)
+                (preproc_conditional_array_dimensions
+                  (preproc_if
+                    (preproc_open)
+                    condition: (identifier))
+                  sizes: (integer)
+                  (preproc_endif
+                    (preproc_close)))
+                (preproc_conditional_array_dimensions
+                  (preproc_if
+                    (preproc_open)
+                    condition: (identifier))
+                  sizes: (integer)
+                  (preproc_endif
+                    (preproc_close)))
+                (of_keyword)
+                element_type: (type_specification
+                  (basic_type))))))))))
+
+================================================================================
+strict array: an arm holding both separators (both-in-arm)
+================================================================================
+
+codeunit 50100 C
+{
+    var
+        A: array[
+2
+#if X
+, 3 ,
+#else
+,
+#endif
+4
+] of Integer;
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (var_section
+        (var_keyword)
+        body: (var_body
+          (variable_declaration
+            name: (identifier)
+            type: (type_specification
+              (array_type
+                (array_keyword)
+                sizes: (integer)
+                (preproc_conditional_array_dimensions
+                  (preproc_if
+                    (preproc_open)
+                    condition: (identifier))
+                  sizes: (integer)
+                  (preproc_else)
+                  (preproc_endif
+                    (preproc_close)))
+                sizes: (integer)
+                (of_keyword)
+                element_type: (type_specification
+                  (basic_type))))))))))
+
+================================================================================
+strict array: arms with different dimension counts (count-differs)
+================================================================================
+
+codeunit 50100 C
+{
+    var
+        A: array[
+2
+#if X
+, 3 , 4
+#else
+, 5
+#endif
+] of Integer;
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (var_section
+        (var_keyword)
+        body: (var_body
+          (variable_declaration
+            name: (identifier)
+            type: (type_specification
+              (array_type
+                (array_keyword)
+                sizes: (integer)
+                (preproc_conditional_array_dimensions
+                  (preproc_if
+                    (preproc_open)
+                    condition: (identifier))
+                  sizes: (integer)
+                  sizes: (integer)
+                  (preproc_else)
+                  sizes: (integer)
+                  (preproc_endif
+                    (preproc_close)))
+                (of_keyword)
+                element_type: (type_specification
+                  (basic_type))))))))))
+
+================================================================================
+strict array: #elif arm (elif)
+================================================================================
+
+codeunit 50100 C
+{
+    var
+        A: array[
+2
+#if X
+, 3
+#elif Y
+, 4
+#endif
+, 5
+] of Integer;
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (var_section
+        (var_keyword)
+        body: (var_body
+          (variable_declaration
+            name: (identifier)
+            type: (type_specification
+              (array_type
+                (array_keyword)
+                sizes: (integer)
+                (preproc_conditional_array_dimensions
+                  (preproc_if
+                    (preproc_open)
+                    condition: (identifier))
+                  sizes: (integer)
+                  (preproc_elif
+                    condition: (identifier))
+                  sizes: (integer)
+                  (preproc_endif
+                    (preproc_close)))
+                sizes: (integer)
+                (of_keyword)
+                element_type: (type_specification
+                  (basic_type))))))))))
+
+================================================================================
+strict array: empty group between a separator and a dimension (empty)
+================================================================================
+
+codeunit 50100 C
+{
+    var
+        A: array[
+2 ,
+#if X
+#endif
+3
+] of Integer;
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (var_section
+        (var_keyword)
+        body: (var_body
+          (variable_declaration
+            name: (identifier)
+            type: (type_specification
+              (array_type
+                (array_keyword)
+                sizes: (integer)
+                (preproc_conditional_array_dimensions
+                  (preproc_if
+                    (preproc_open)
+                    condition: (identifier))
+                  (preproc_endif
+                    (preproc_close)))
+                sizes: (integer)
+                (of_keyword)
+                element_type: (type_specification
+                  (basic_type))))))))))
+
+================================================================================
+strict array MIXED: the whole dimension list in one group, no #else (empty-list)
+================================================================================
+
+codeunit 50100 C
+{
+    var
+        A: array[
+#if X
+2 , 3
+#endif
+] of Integer;
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (var_section
+        (var_keyword)
+        body: (var_body
+          (variable_declaration
+            name: (identifier)
+            type: (type_specification
+              (array_type
+                (array_keyword)
+                (preproc_conditional_array_dimensions
+                  (preproc_if
+                    (preproc_open)
+                    condition: (identifier))
+                  sizes: (integer)
+                  sizes: (integer)
+                  (preproc_endif
+                    (preproc_close)))
+                (of_keyword)
+                element_type: (type_specification
+                  (basic_type))))))))))
+
+================================================================================
+strict array: group replacing the first dimension (first-replace)
+================================================================================
+
+codeunit 50100 C
+{
+    var
+        A: array[
+#if X
+2
+#else
+3
+#endif
+, 4
+] of Integer;
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (var_section
+        (var_keyword)
+        body: (var_body
+          (variable_declaration
+            name: (identifier)
+            type: (type_specification
+              (array_type
+                (array_keyword)
+                (preproc_conditional_array_dimensions
+                  (preproc_if
+                    (preproc_open)
+                    condition: (identifier))
+                  sizes: (integer)
+                  (preproc_else)
+                  sizes: (integer)
+                  (preproc_endif
+                    (preproc_close)))
+                sizes: (integer)
+                (of_keyword)
+                element_type: (type_specification
+                  (basic_type))))))))))
+
+================================================================================
+strict array MIXED: separator-only group before the first dimension (holes-lead)
+================================================================================
+
+codeunit 50100 C
+{
+    var
+        A: array[
+#if X
+,
+#endif
+2 , 3
+] of Integer;
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (var_section
+        (var_keyword)
+        body: (var_body
+          (variable_declaration
+            name: (identifier)
+            type: (type_specification
+              (array_type
+                (array_keyword)
+                (preproc_conditional_array_dimensions
+                  (preproc_if
+                    (preproc_open)
+                    condition: (identifier))
+                  (preproc_endif
+                    (preproc_close)))
+                sizes: (integer)
+                sizes: (integer)
+                (of_keyword)
+                element_type: (type_specification
+                  (basic_type))))))))))
+
+================================================================================
+strict array MIXED: separator-only group after a separator (holes-mid)
+================================================================================
+
+codeunit 50100 C
+{
+    var
+        A: array[
+2 ,
+#if X
+,
+#endif
+3
+] of Integer;
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (var_section
+        (var_keyword)
+        body: (var_body
+          (variable_declaration
+            name: (identifier)
+            type: (type_specification
+              (array_type
+                (array_keyword)
+                sizes: (integer)
+                (preproc_conditional_array_dimensions
+                  (preproc_if
+                    (preproc_open)
+                    condition: (identifier))
+                  (preproc_endif
+                    (preproc_close)))
+                sizes: (integer)
+                (of_keyword)
+                element_type: (type_specification
+                  (basic_type))))))))))
+
+================================================================================
+strict array MIXED: separator-only group after the last dimension (holes-trail)
+================================================================================
+
+codeunit 50100 C
+{
+    var
+        A: array[
+2 , 3
+#if X
+,
+#endif
+] of Integer;
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (var_section
+        (var_keyword)
+        body: (var_body
+          (variable_declaration
+            name: (identifier)
+            type: (type_specification
+              (array_type
+                (array_keyword)
+                sizes: (integer)
+                sizes: (integer)
+                (preproc_conditional_array_dimensions
+                  (preproc_if
+                    (preproc_open)
+                    condition: (identifier))
+                  (preproc_endif
+                    (preproc_close)))
+                (of_keyword)
+                element_type: (type_specification
+                  (basic_type))))))))))
+
+================================================================================
+strict array: leading group whose arm ends with the separator (lead-optional)
+================================================================================
+
+codeunit 50100 C
+{
+    var
+        A: array[
+#if X
+2 ,
+#endif
+3
+] of Integer;
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (var_section
+        (var_keyword)
+        body: (var_body
+          (variable_declaration
+            name: (identifier)
+            type: (type_specification
+              (array_type
+                (array_keyword)
+                (preproc_conditional_array_dimensions
+                  (preproc_if
+                    (preproc_open)
+                    condition: (identifier))
+                  sizes: (integer)
+                  (preproc_endif
+                    (preproc_close)))
+                sizes: (integer)
+                (of_keyword)
+                element_type: (type_specification
+                  (basic_type))))))))))
+
+================================================================================
+strict array: nested group (nested)
+================================================================================
+
+codeunit 50100 C
+{
+    var
+        A: array[
+2
+#if X
+, 3
+#if Y
+, 4
+#endif
+#endif
+, 5
+] of Integer;
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (var_section
+        (var_keyword)
+        body: (var_body
+          (variable_declaration
+            name: (identifier)
+            type: (type_specification
+              (array_type
+                (array_keyword)
+                sizes: (integer)
+                (preproc_conditional_array_dimensions
+                  (preproc_if
+                    (preproc_open)
+                    condition: (identifier))
+                  sizes: (integer)
+                  (preproc_conditional_array_dimensions
+                    (preproc_if
+                      (preproc_open)
+                      condition: (identifier))
+                    sizes: (integer)
+                    (preproc_endif
+                      (preproc_close)))
+                  (preproc_endif
+                    (preproc_close)))
+                sizes: (integer)
+                (of_keyword)
+                element_type: (type_specification
+                  (basic_type))))))))))
+
+================================================================================
+strict array: the whole dimension list in the arms of one group (one-elem)
+================================================================================
+
+codeunit 50100 C
+{
+    var
+        A: array[
+#if X
+2 , 3
+#else
+2
+#endif
+] of Integer;
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (var_section
+        (var_keyword)
+        body: (var_body
+          (variable_declaration
+            name: (identifier)
+            type: (type_specification
+              (array_type
+                (array_keyword)
+                (preproc_conditional_array_dimensions
+                  (preproc_if
+                    (preproc_open)
+                    condition: (identifier))
+                  sizes: (integer)
+                  sizes: (integer)
+                  (preproc_else)
+                  sizes: (integer)
+                  (preproc_endif
+                    (preproc_close)))
+                (of_keyword)
+                element_type: (type_specification
+                  (basic_type))))))))))
+
+================================================================================
+strict array: group with the separator after its dimension (sep-after)
+================================================================================
+
+codeunit 50100 C
+{
+    var
+        A: array[
+2 ,
+#if X
+3 ,
+#endif
+4
+] of Integer;
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (var_section
+        (var_keyword)
+        body: (var_body
+          (variable_declaration
+            name: (identifier)
+            type: (type_specification
+              (array_type
+                (array_keyword)
+                sizes: (integer)
+                (preproc_conditional_array_dimensions
+                  (preproc_if
+                    (preproc_open)
+                    condition: (identifier))
+                  sizes: (integer)
+                  (preproc_endif
+                    (preproc_close)))
+                sizes: (integer)
+                (of_keyword)
+                element_type: (type_specification
+                  (basic_type))))))))))
+
+================================================================================
+strict array: group with the separator before its dimension, then a dimension (sep-before)
+================================================================================
+
+codeunit 50100 C
+{
+    var
+        A: array[
+2
+#if X
+, 3
+#endif
+, 4
+] of Integer;
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (var_section
+        (var_keyword)
+        body: (var_body
+          (variable_declaration
+            name: (identifier)
+            type: (type_specification
+              (array_type
+                (array_keyword)
+                sizes: (integer)
+                (preproc_conditional_array_dimensions
+                  (preproc_if
+                    (preproc_open)
+                    condition: (identifier))
+                  sizes: (integer)
+                  (preproc_endif
+                    (preproc_close)))
+                sizes: (integer)
+                (of_keyword)
+                element_type: (type_specification
+                  (basic_type))))))))))
+
+================================================================================
+strict array: group with the separator before its dimension (sep-before-end)
+================================================================================
+
+codeunit 50100 C
+{
+    var
+        A: array[
+2
+#if X
+, 3
+#endif
+] of Integer;
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (var_section
+        (var_keyword)
+        body: (var_body
+          (variable_declaration
+            name: (identifier)
+            type: (type_specification
+              (array_type
+                (array_keyword)
+                sizes: (integer)
+                (preproc_conditional_array_dimensions
+                  (preproc_if
+                    (preproc_open)
+                    condition: (identifier))
+                  sizes: (integer)
+                  (preproc_endif
+                    (preproc_close)))
+                (of_keyword)
+                element_type: (type_specification
+                  (basic_type))))))))))
+
+================================================================================
+strict array: separator-only arms between two dimensions (sep-only)
+================================================================================
+
+codeunit 50100 C
+{
+    var
+        A: array[
+2
+#if X
+,
+#else
+,
+#endif
+3
+] of Integer;
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (var_section
+        (var_keyword)
+        body: (var_body
+          (variable_declaration
+            name: (identifier)
+            type: (type_specification
+              (array_type
+                (array_keyword)
+                sizes: (integer)
+                (preproc_conditional_array_dimensions
+                  (preproc_if
+                    (preproc_open)
+                    condition: (identifier))
+                  (preproc_else)
+                  (preproc_endif
+                    (preproc_close)))
+                sizes: (integer)
+                (of_keyword)
+                element_type: (type_specification
+                  (basic_type))))))))))
+
+================================================================================
+strict array MIXED: group holding the last dimension after a separator (trail)
+================================================================================
+
+codeunit 50100 C
+{
+    var
+        A: array[
+2 ,
+#if X
+3
+#endif
+] of Integer;
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (var_section
+        (var_keyword)
+        body: (var_body
+          (variable_declaration
+            name: (identifier)
+            type: (type_specification
+              (array_type
+                (array_keyword)
+                sizes: (integer)
+                (preproc_conditional_array_dimensions
+                  (preproc_if
+                    (preproc_open)
+                    condition: (identifier))
+                  sizes: (integer)
+                  (preproc_endif
+                    (preproc_close)))
+                (of_keyword)
+                element_type: (type_specification
+                  (basic_type))))))))))
+
+================================================================================
+strict array: an empty #if arm before an #else arm
+================================================================================
+
+codeunit 50100 C
+{
+    var
+        A: array[2
+#if X
+#else
+, 3
+#endif
+] of Integer;
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (var_section
+        (var_keyword)
+        body: (var_body
+          (variable_declaration
+            name: (identifier)
+            type: (type_specification
+              (array_type
+                (array_keyword)
+                sizes: (integer)
+                (preproc_conditional_array_dimensions
+                  (preproc_if
+                    (preproc_open)
+                    condition: (identifier))
+                  (preproc_else)
+                  sizes: (integer)
+                  (preproc_endif
+                    (preproc_close)))
+                (of_keyword)
+                element_type: (type_specification
+                  (basic_type))))))))))
+
+================================================================================
+strict array: group on one line after the opening bracket, first dimension replaced with #if not
+================================================================================
+
+codeunit 50100 C
+{
+    var
+        A: array[
+#if not X
+10
+#else
+20
+#endif
+] of Integer;
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (var_section
+        (var_keyword)
+        body: (var_body
+          (variable_declaration
+            name: (identifier)
+            type: (type_specification
+              (array_type
+                (array_keyword)
+                (preproc_conditional_array_dimensions
+                  (preproc_if
+                    (preproc_open)
+                    condition: (preproc_not_expression
+                      (identifier)))
+                  sizes: (integer)
+                  (preproc_else)
+                  sizes: (integer)
+                  (preproc_endif
+                    (preproc_close)))
+                (of_keyword)
+                element_type: (type_specification
+                  (basic_type))))))))))
+
+================================================================================
+strict array: comments at every boundary
+================================================================================
+
+codeunit 50100 C
+{
+    var
+        A: array[/* c0 */ 2 /* c1 */
+#if X // c2
+/* c3 */ , /* c4 */ 3 /* c5 */
+#else // c6
+, 4
+#endif
+/* c7 */ , /* c8 */ 5 /* c9 */] of Integer;
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (var_section
+        (var_keyword)
+        body: (var_body
+          (variable_declaration
+            name: (identifier)
+            type: (type_specification
+              (array_type
+                (array_keyword)
+                (multiline_comment)
+                sizes: (integer)
+                (multiline_comment)
+                (preproc_conditional_array_dimensions
+                  (preproc_if
+                    (preproc_open)
+                    condition: (identifier)
+                    (comment))
+                  (multiline_comment)
+                  (multiline_comment)
+                  sizes: (integer)
+                  (multiline_comment)
+                  (preproc_else)
+                  (comment)
+                  sizes: (integer)
+                  (preproc_endif
+                    (preproc_close)))
+                (multiline_comment)
+                (multiline_comment)
+                sizes: (integer)
+                (multiline_comment)
+                (of_keyword)
+                element_type: (type_specification
+                  (basic_type))))))))))
+
+================================================================================
+strict array: line comments inside the arms
+================================================================================
+
+codeunit 50100 C
+{
+    var
+        A: array[2 // c0
+#if X
+, 3 // c1
+#endif
+// c2
+, 4] of Integer;
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (var_section
+        (var_keyword)
+        body: (var_body
+          (variable_declaration
+            name: (identifier)
+            type: (type_specification
+              (array_type
+                (array_keyword)
+                sizes: (integer)
+                (comment)
+                (preproc_conditional_array_dimensions
+                  (preproc_if
+                    (preproc_open)
+                    condition: (identifier))
+                  sizes: (integer)
+                  (comment)
+                  (preproc_endif
+                    (preproc_close)))
+                (comment)
+                sizes: (integer)
+                (of_keyword)
+                element_type: (type_specification
+                  (basic_type))))))))))
+
+================================================================================
+strict array: group in an array of Text with its own length bracket
+================================================================================
+
+codeunit 50100 C
+{
+    var
+        A: array[2
+#if X
+, 3
+#endif
+] of Text[30];
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (var_section
+        (var_keyword)
+        body: (var_body
+          (variable_declaration
+            name: (identifier)
+            type: (type_specification
+              (array_type
+                (array_keyword)
+                sizes: (integer)
+                (preproc_conditional_array_dimensions
+                  (preproc_if
+                    (preproc_open)
+                    condition: (identifier))
+                  sizes: (integer)
+                  (preproc_endif
+                    (preproc_close)))
+                (of_keyword)
+                element_type: (type_specification
+                  (text_type
+                    (text_keyword)
+                    length: (integer)))))))))))
+
+================================================================================
+strict array: group in an array of Record
+================================================================================
+
+codeunit 50100 C
+{
+    var
+        A: array[
+#if X
+2
+#else
+3
+#endif
+] of Record T;
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (var_section
+        (var_keyword)
+        body: (var_body
+          (variable_declaration
+            name: (identifier)
+            type: (type_specification
+              (array_type
+                (array_keyword)
+                (preproc_conditional_array_dimensions
+                  (preproc_if
+                    (preproc_open)
+                    condition: (identifier))
+                  sizes: (integer)
+                  (preproc_else)
+                  sizes: (integer)
+                  (preproc_endif
+                    (preproc_close)))
+                (of_keyword)
+                element_type: (type_specification
+                  (record_type
+                    (record_keyword)
+                    reference: (identifier)))))))))))
+
+================================================================================
+strict array: group in a parameter type and a local variable type
+================================================================================
+
+codeunit 50100 C
+{
+    procedure P(A: array[2
+#if X
+, 3
+#endif
+] of Integer)
+    var
+        B: array[
+#if X
+4 ,
+#endif
+5] of Integer;
+    begin
+    end;
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (procedure
+        (procedure_keyword)
+        name: (identifier)
+        parameters: (parameter_list
+          (parameter
+            name: (identifier)
+            type: (type_specification
+              (array_type
+                (array_keyword)
+                sizes: (integer)
+                (preproc_conditional_array_dimensions
+                  (preproc_if
+                    (preproc_open)
+                    condition: (identifier))
+                  sizes: (integer)
+                  (preproc_endif
+                    (preproc_close)))
+                (of_keyword)
+                element_type: (type_specification
+                  (basic_type))))))
+        (var_section
+          (var_keyword)
+          body: (var_body
+            (variable_declaration
+              name: (identifier)
+              type: (type_specification
+                (array_type
+                  (array_keyword)
+                  (preproc_conditional_array_dimensions
+                    (preproc_if
+                      (preproc_open)
+                      condition: (identifier))
+                    sizes: (integer)
+                    (preproc_endif
+                      (preproc_close)))
+                  sizes: (integer)
+                  (of_keyword)
+                  element_type: (type_specification
+                    (basic_type)))))))
+        body: (code_block
+          (begin_keyword)
+          (end_keyword))))))
+
+================================================================================
+strict array: group in an array declaration inside an enclosing #if (preproc_conditional_var)
+================================================================================
+
+codeunit 50100 C
+{
+    var
+        I: Integer;
+#if TPL
+        A: array[2
+#if X
+, 3
+#endif
+] of Integer;
+#endif
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (var_section
+        (var_keyword)
+        body: (var_body
+          (variable_declaration
+            name: (identifier)
+            type: (type_specification
+              (basic_type)))
+          (preproc_conditional_var
+            (preproc_if
+              (preproc_open)
+              condition: (identifier))
+            (variable_declaration
+              name: (identifier)
+              type: (type_specification
+                (array_type
+                  (array_keyword)
+                  sizes: (integer)
+                  (preproc_conditional_array_dimensions
+                    (preproc_if
+                      (preproc_open)
+                      condition: (identifier))
+                    sizes: (integer)
+                    (preproc_endif
+                      (preproc_close)))
+                  (of_keyword)
+                  element_type: (type_specification
+                    (basic_type)))))
+            (preproc_endif
+              (preproc_close))))))))
+
+================================================================================
+strict array preservation: one, two and three dimensions
+================================================================================
+
+codeunit 50100 C
+{
+    var
+        A: array[10] of Integer;
+        B: array[2, 3] of Integer;
+        D: array[2,3,4] of Text[20];
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (var_section
+        (var_keyword)
+        body: (var_body
+          (variable_declaration
+            name: (identifier)
+            type: (type_specification
+              (array_type
+                (array_keyword)
+                sizes: (integer)
+                (of_keyword)
+                element_type: (type_specification
+                  (basic_type)))))
+          (variable_declaration
+            name: (identifier)
+            type: (type_specification
+              (array_type
+                (array_keyword)
+                sizes: (integer)
+                sizes: (integer)
+                (of_keyword)
+                element_type: (type_specification
+                  (basic_type)))))
+          (variable_declaration
+            name: (identifier)
+            type: (type_specification
+              (array_type
+                (array_keyword)
+                sizes: (integer)
+                sizes: (integer)
+                sizes: (integer)
+                (of_keyword)
+                element_type: (type_specification
+                  (text_type
+                    (text_keyword)
+                    length: (integer)))))))))))
+
+================================================================================
+strict array preservation: comments between plain dimensions
+================================================================================
+
+codeunit 50100 C
+{
+    var
+        A: array[2 /* c0 */ , // c1
+ 3] of Integer;
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (var_section
+        (var_keyword)
+        body: (var_body
+          (variable_declaration
+            name: (identifier)
+            type: (type_specification
+              (array_type
+                (array_keyword)
+                sizes: (integer)
+                (multiline_comment)
+                (comment)
+                sizes: (integer)
+                (of_keyword)
+                element_type: (type_specification
+                  (basic_type))))))))))
+
+================================================================================
+strict array preservation: array declaration inside an enclosing #if
+================================================================================
+
+codeunit 50100 C
+{
+    var
+        I: Integer;
+#if TPL
+        A: array[2, 3] of Integer;
+#endif
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (var_section
+        (var_keyword)
+        body: (var_body
+          (variable_declaration
+            name: (identifier)
+            type: (type_specification
+              (basic_type)))
+          (preproc_conditional_var
+            (preproc_if
+              (preproc_open)
+              condition: (identifier))
+            (variable_declaration
+              name: (identifier)
+              type: (type_specification
+                (array_type
+                  (array_keyword)
+                  sizes: (integer)
+                  sizes: (integer)
+                  (of_keyword)
+                  element_type: (type_specification
+                    (basic_type)))))
+            (preproc_endif
+              (preproc_close))))))))
+
+================================================================================
+strict array preservation: the whole declaration in each arm of an enclosing #if
+================================================================================
+
+codeunit 50100 C
+{
+    var
+        I: Integer;
+#if X
+        A: array[2, 3] of Integer;
+#else
+        A: array[2] of Integer;
+#endif
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (var_section
+        (var_keyword)
+        body: (var_body
+          (variable_declaration
+            name: (identifier)
+            type: (type_specification
+              (basic_type)))
+          (preproc_conditional_var
+            (preproc_if
+              (preproc_open)
+              condition: (identifier))
+            (variable_declaration
+              name: (identifier)
+              type: (type_specification
+                (array_type
+                  (array_keyword)
+                  sizes: (integer)
+                  sizes: (integer)
+                  (of_keyword)
+                  element_type: (type_specification
+                    (basic_type)))))
+            (preproc_else)
+            (variable_declaration
+              name: (identifier)
+              type: (type_specification
+                (array_type
+                  (array_keyword)
+                  sizes: (integer)
+                  (of_keyword)
+                  element_type: (type_specification
+                    (basic_type)))))
+            (preproc_endif
+              (preproc_close))))))))

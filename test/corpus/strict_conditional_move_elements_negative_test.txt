@@ -1,0 +1,50 @@
+; B7b-1 Task 8 negatives: a group in the move TARGET slot, or one supplying the fixed `;`, lies
+; outside the strict element list (spec rev 2: the fixed `;` and the target stay outside the group;
+; manifest: excluded, fixed-header slot/separator, B7b-3) and stays ERROR.
+
+================================================================================
+move target group stays ERROR
+:error
+================================================================================
+
+pageextension 50113 PE extends PG
+{
+    actions
+    {
+        moveafter(
+#if X
+A1
+#else
+A2
+#endif
+; A3
+)
+    }
+}
+
+--------------------------------------------------------------------------------
+
+(source_file)
+
+================================================================================
+move fixed separator group stays ERROR
+:error
+================================================================================
+
+pageextension 50113 PE extends PG
+{
+    actions
+    {
+        moveafter(A1
+#if X
+;
+#else
+;
+#endif
+A2)
+    }
+}
+
+--------------------------------------------------------------------------------
+
+(source_file)

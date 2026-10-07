@@ -1,5 +1,5 @@
 // B7a Task 10 witness (GAP): family sorting, base placement sep-before, 18 cells; representative occ:sorting_value:0.0.3.0.0@action_body#sep-before
-// Fixture b7_gap_sorting_test.txt#B7a GAP: sorting / sep-before (18 cells, verdict of the representative GAP); the parser ERRORs on configurations alc accepts; representative occ:sorting_value:0.0.3.0.0@action_body%23sep-before#0
+// Fixture strict_conditional_sorting_fields_test.txt#strict sorting: group with the separator before its item, then an item (sep-before)#0
 // expect: !TPL !X accept
 // expect: !TPL X accept
 // expect: TPL !X accept

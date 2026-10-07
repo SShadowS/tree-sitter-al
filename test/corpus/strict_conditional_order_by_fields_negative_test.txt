@@ -1,0 +1,39 @@
+; B7b-1: the outer comma list of OrderBy items (order_by_list) is property-value routing, excluded
+; from the strict inner-list change (spec docs/superpowers/specs/2026-10-07-b7b-1-strict-conditional-lists-design.md
+; section 2, manifest rows occ:order_by_list:0.1.0.0, owner B12). Only the list INSIDE
+; ascending( ... ) / descending( ... ) takes a #if group (strict_conditional_order_by_fields_test.txt);
+; a group between two order_by_items must stay an ERROR.
+
+================================================================================
+order-by negative: group with the separator between two order_by_items stays ERROR
+:error
+================================================================================
+
+query 50105 Qy
+{
+    OrderBy = ascending(K)
+#if X
+, descending(N)
+#endif
+;
+}
+
+--------------------------------------------------------------------------------
+
+================================================================================
+order-by negative: separator-only group between two order_by_items stays ERROR
+:error
+================================================================================
+
+query 50105 Qy
+{
+    OrderBy = ascending(K)
+#if X
+,
+#else
+,
+#endif
+descending(N);
+}
+
+--------------------------------------------------------------------------------

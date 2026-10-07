@@ -1,0 +1,1842 @@
+; B7b-1 (spec docs/superpowers/specs/2026-10-07-b7b-1-strict-conditional-lists-design.md):
+; a #if group may stand anywhere in the inner field list of sorting( ... ) in a view value
+; (SourceTableView, RunPageView, DataItemTableView). Only the list inside the parentheses is
+; strict: the order( ) and where( ) suffixes are untouched. Expected trees are HAND-WRITTEN from
+; the flat reading (the item list with each arm read as an alternative item run). The list is
+; unfielded: its raw items are unfielded children of sorting_value, items inside an arm unfielded
+; children of preproc_conditional_sorting_fields. Separators are anonymous. Comments sit in the
+; smallest visible node holding tokens on both sides of them.
+; The first 19 cases are the shapes of the former test/corpus/b7_gap_sorting_test.txt `:error`
+; witnesses, list text unchanged, on their probed route: an action's RunPageView whose whole value
+; is a `#if TPL` group (tools/alc_probe/cases/b7-audit/sorting__*__{gap,overaccept}.al). The later cases use the
+; property route (SourceTableView); alc accepts every route alike (tools/b7_audit/b7b1-manifest.tsv).
+; `MIXED` cases are accepted by alc in some configurations and rejected in another: the split
+; source parses, the invalid configuration is the config oracle's to judge (spec section 3).
+; The interior may be empty: alc accepts `sorting()` on all six routes (B7b-1 Task 2,
+; empty-interior), so the configuration X=0 of the empty-list shape is a valid flat text.
+
+================================================================================
+strict sorting: group with the separator before its item (sep-before-end)
+================================================================================
+
+page 50102 PG
+{
+    actions
+    {
+        area(Processing)
+        {
+            action(A1)
+            {
+                RunPageView =
+#if TPL
+                    sorting(
+K
+#if X
+, N
+#endif
+);
+#else
+                    sorting(K);
+#endif
+            }
+        }
+    }
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (page_declaration
+    (page_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (actions_section
+        (actions_keyword)
+        body: (action_body
+          (action_area_section
+            (area_keyword)
+            type: (processing_keyword)
+            body: (action_body
+              (action_declaration
+                (action_keyword)
+                name: (identifier)
+                body: (declaration_body
+                  (property
+                    name: (property_name)
+                    value: (preproc_conditional_property_value
+                      (preproc_if
+                        (preproc_open)
+                        condition: (identifier))
+                      value: (sorting_value
+                        (sorting_keyword)
+                        (identifier)
+                        (preproc_conditional_sorting_fields
+                          (preproc_if
+                            (preproc_open)
+                            condition: (identifier))
+                          (identifier)
+                          (preproc_endif
+                            (preproc_close))))
+                      (preproc_else)
+                      value: (sorting_value
+                        (sorting_keyword)
+                        (identifier))
+                      (preproc_endif
+                        (preproc_close)))))))))))))
+
+================================================================================
+strict sorting: group with the separator before its item, then an item (sep-before)
+================================================================================
+
+page 50102 PG
+{
+    actions
+    {
+        area(Processing)
+        {
+            action(A1)
+            {
+                RunPageView =
+#if TPL
+                    sorting(
+K
+#if X
+, N
+#endif
+, "B"
+);
+#else
+                    sorting(K);
+#endif
+            }
+        }
+    }
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (page_declaration
+    (page_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (actions_section
+        (actions_keyword)
+        body: (action_body
+          (action_area_section
+            (area_keyword)
+            type: (processing_keyword)
+            body: (action_body
+              (action_declaration
+                (action_keyword)
+                name: (identifier)
+                body: (declaration_body
+                  (property
+                    name: (property_name)
+                    value: (preproc_conditional_property_value
+                      (preproc_if
+                        (preproc_open)
+                        condition: (identifier))
+                      value: (sorting_value
+                        (sorting_keyword)
+                        (identifier)
+                        (preproc_conditional_sorting_fields
+                          (preproc_if
+                            (preproc_open)
+                            condition: (identifier))
+                          (identifier)
+                          (preproc_endif
+                            (preproc_close)))
+                        (quoted_identifier))
+                      (preproc_else)
+                      value: (sorting_value
+                        (sorting_keyword)
+                        (identifier))
+                      (preproc_endif
+                        (preproc_close)))))))))))))
+
+================================================================================
+strict sorting: group with the separator after its item (sep-after)
+================================================================================
+
+page 50102 PG
+{
+    actions
+    {
+        area(Processing)
+        {
+            action(A1)
+            {
+                RunPageView =
+#if TPL
+                    sorting(
+K ,
+#if X
+N ,
+#endif
+"B"
+);
+#else
+                    sorting(K);
+#endif
+            }
+        }
+    }
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (page_declaration
+    (page_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (actions_section
+        (actions_keyword)
+        body: (action_body
+          (action_area_section
+            (area_keyword)
+            type: (processing_keyword)
+            body: (action_body
+              (action_declaration
+                (action_keyword)
+                name: (identifier)
+                body: (declaration_body
+                  (property
+                    name: (property_name)
+                    value: (preproc_conditional_property_value
+                      (preproc_if
+                        (preproc_open)
+                        condition: (identifier))
+                      value: (sorting_value
+                        (sorting_keyword)
+                        (identifier)
+                        (preproc_conditional_sorting_fields
+                          (preproc_if
+                            (preproc_open)
+                            condition: (identifier))
+                          (identifier)
+                          (preproc_endif
+                            (preproc_close)))
+                        (quoted_identifier))
+                      (preproc_else)
+                      value: (sorting_value
+                        (sorting_keyword)
+                        (identifier))
+                      (preproc_endif
+                        (preproc_close)))))))))))))
+
+================================================================================
+strict sorting: separator-only arms between two raw items (sep-only)
+================================================================================
+
+page 50102 PG
+{
+    actions
+    {
+        area(Processing)
+        {
+            action(A1)
+            {
+                RunPageView =
+#if TPL
+                    sorting(
+K
+#if X
+,
+#else
+,
+#endif
+N
+);
+#else
+                    sorting(K);
+#endif
+            }
+        }
+    }
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (page_declaration
+    (page_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (actions_section
+        (actions_keyword)
+        body: (action_body
+          (action_area_section
+            (area_keyword)
+            type: (processing_keyword)
+            body: (action_body
+              (action_declaration
+                (action_keyword)
+                name: (identifier)
+                body: (declaration_body
+                  (property
+                    name: (property_name)
+                    value: (preproc_conditional_property_value
+                      (preproc_if
+                        (preproc_open)
+                        condition: (identifier))
+                      value: (sorting_value
+                        (sorting_keyword)
+                        (identifier)
+                        (preproc_conditional_sorting_fields
+                          (preproc_if
+                            (preproc_open)
+                            condition: (identifier))
+                          (preproc_else)
+                          (preproc_endif
+                            (preproc_close)))
+                        (identifier))
+                      (preproc_else)
+                      value: (sorting_value
+                        (sorting_keyword)
+                        (identifier))
+                      (preproc_endif
+                        (preproc_close)))))))))))))
+
+================================================================================
+strict sorting: an arm holding both separators (both-in-arm)
+================================================================================
+
+page 50102 PG
+{
+    actions
+    {
+        area(Processing)
+        {
+            action(A1)
+            {
+                RunPageView =
+#if TPL
+                    sorting(
+K
+#if X
+, N ,
+#else
+,
+#endif
+"B"
+);
+#else
+                    sorting(K);
+#endif
+            }
+        }
+    }
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (page_declaration
+    (page_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (actions_section
+        (actions_keyword)
+        body: (action_body
+          (action_area_section
+            (area_keyword)
+            type: (processing_keyword)
+            body: (action_body
+              (action_declaration
+                (action_keyword)
+                name: (identifier)
+                body: (declaration_body
+                  (property
+                    name: (property_name)
+                    value: (preproc_conditional_property_value
+                      (preproc_if
+                        (preproc_open)
+                        condition: (identifier))
+                      value: (sorting_value
+                        (sorting_keyword)
+                        (identifier)
+                        (preproc_conditional_sorting_fields
+                          (preproc_if
+                            (preproc_open)
+                            condition: (identifier))
+                          (identifier)
+                          (preproc_else)
+                          (preproc_endif
+                            (preproc_close)))
+                        (quoted_identifier))
+                      (preproc_else)
+                      value: (sorting_value
+                        (sorting_keyword)
+                        (identifier))
+                      (preproc_endif
+                        (preproc_close)))))))))))))
+
+================================================================================
+strict sorting: group replacing the first item (first-replace)
+================================================================================
+
+page 50102 PG
+{
+    actions
+    {
+        area(Processing)
+        {
+            action(A1)
+            {
+                RunPageView =
+#if TPL
+                    sorting(
+#if X
+K
+#else
+N
+#endif
+, "B"
+);
+#else
+                    sorting(K);
+#endif
+            }
+        }
+    }
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (page_declaration
+    (page_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (actions_section
+        (actions_keyword)
+        body: (action_body
+          (action_area_section
+            (area_keyword)
+            type: (processing_keyword)
+            body: (action_body
+              (action_declaration
+                (action_keyword)
+                name: (identifier)
+                body: (declaration_body
+                  (property
+                    name: (property_name)
+                    value: (preproc_conditional_property_value
+                      (preproc_if
+                        (preproc_open)
+                        condition: (identifier))
+                      value: (sorting_value
+                        (sorting_keyword)
+                        (preproc_conditional_sorting_fields
+                          (preproc_if
+                            (preproc_open)
+                            condition: (identifier))
+                          (identifier)
+                          (preproc_else)
+                          (identifier)
+                          (preproc_endif
+                            (preproc_close)))
+                        (quoted_identifier))
+                      (preproc_else)
+                      value: (sorting_value
+                        (sorting_keyword)
+                        (identifier))
+                      (preproc_endif
+                        (preproc_close)))))))))))))
+
+================================================================================
+strict sorting: leading group whose arm ends with the separator (lead-optional)
+================================================================================
+
+page 50102 PG
+{
+    actions
+    {
+        area(Processing)
+        {
+            action(A1)
+            {
+                RunPageView =
+#if TPL
+                    sorting(
+#if X
+K ,
+#endif
+N
+);
+#else
+                    sorting(K);
+#endif
+            }
+        }
+    }
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (page_declaration
+    (page_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (actions_section
+        (actions_keyword)
+        body: (action_body
+          (action_area_section
+            (area_keyword)
+            type: (processing_keyword)
+            body: (action_body
+              (action_declaration
+                (action_keyword)
+                name: (identifier)
+                body: (declaration_body
+                  (property
+                    name: (property_name)
+                    value: (preproc_conditional_property_value
+                      (preproc_if
+                        (preproc_open)
+                        condition: (identifier))
+                      value: (sorting_value
+                        (sorting_keyword)
+                        (preproc_conditional_sorting_fields
+                          (preproc_if
+                            (preproc_open)
+                            condition: (identifier))
+                          (identifier)
+                          (preproc_endif
+                            (preproc_close)))
+                        (identifier))
+                      (preproc_else)
+                      value: (sorting_value
+                        (sorting_keyword)
+                        (identifier))
+                      (preproc_endif
+                        (preproc_close)))))))))))))
+
+================================================================================
+strict sorting: the whole list in the arms of one group (one-elem)
+================================================================================
+
+page 50102 PG
+{
+    actions
+    {
+        area(Processing)
+        {
+            action(A1)
+            {
+                RunPageView =
+#if TPL
+                    sorting(
+#if X
+K , N
+#else
+K
+#endif
+);
+#else
+                    sorting(K);
+#endif
+            }
+        }
+    }
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (page_declaration
+    (page_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (actions_section
+        (actions_keyword)
+        body: (action_body
+          (action_area_section
+            (area_keyword)
+            type: (processing_keyword)
+            body: (action_body
+              (action_declaration
+                (action_keyword)
+                name: (identifier)
+                body: (declaration_body
+                  (property
+                    name: (property_name)
+                    value: (preproc_conditional_property_value
+                      (preproc_if
+                        (preproc_open)
+                        condition: (identifier))
+                      value: (sorting_value
+                        (sorting_keyword)
+                        (preproc_conditional_sorting_fields
+                          (preproc_if
+                            (preproc_open)
+                            condition: (identifier))
+                          (identifier)
+                          (identifier)
+                          (preproc_else)
+                          (identifier)
+                          (preproc_endif
+                            (preproc_close))))
+                      (preproc_else)
+                      value: (sorting_value
+                        (sorting_keyword)
+                        (identifier))
+                      (preproc_endif
+                        (preproc_close)))))))))))))
+
+================================================================================
+strict sorting: nested group (nested)
+================================================================================
+
+page 50102 PG
+{
+    actions
+    {
+        area(Processing)
+        {
+            action(A1)
+            {
+                RunPageView =
+#if TPL
+                    sorting(
+K
+#if X
+, N
+#if Y
+, "B"
+#endif
+#endif
+, "O"
+);
+#else
+                    sorting(K);
+#endif
+            }
+        }
+    }
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (page_declaration
+    (page_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (actions_section
+        (actions_keyword)
+        body: (action_body
+          (action_area_section
+            (area_keyword)
+            type: (processing_keyword)
+            body: (action_body
+              (action_declaration
+                (action_keyword)
+                name: (identifier)
+                body: (declaration_body
+                  (property
+                    name: (property_name)
+                    value: (preproc_conditional_property_value
+                      (preproc_if
+                        (preproc_open)
+                        condition: (identifier))
+                      value: (sorting_value
+                        (sorting_keyword)
+                        (identifier)
+                        (preproc_conditional_sorting_fields
+                          (preproc_if
+                            (preproc_open)
+                            condition: (identifier))
+                          (identifier)
+                          (preproc_conditional_sorting_fields
+                            (preproc_if
+                              (preproc_open)
+                              condition: (identifier))
+                            (quoted_identifier)
+                            (preproc_endif
+                              (preproc_close)))
+                          (preproc_endif
+                            (preproc_close)))
+                        (quoted_identifier))
+                      (preproc_else)
+                      value: (sorting_value
+                        (sorting_keyword)
+                        (identifier))
+                      (preproc_endif
+                        (preproc_close)))))))))))))
+
+================================================================================
+strict sorting: adjacent independent groups (adjacent-indep)
+================================================================================
+
+page 50102 PG
+{
+    actions
+    {
+        area(Processing)
+        {
+            action(A1)
+            {
+                RunPageView =
+#if TPL
+                    sorting(
+K
+#if X
+, N
+#endif
+#if Y
+, "B"
+#endif
+);
+#else
+                    sorting(K);
+#endif
+            }
+        }
+    }
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (page_declaration
+    (page_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (actions_section
+        (actions_keyword)
+        body: (action_body
+          (action_area_section
+            (area_keyword)
+            type: (processing_keyword)
+            body: (action_body
+              (action_declaration
+                (action_keyword)
+                name: (identifier)
+                body: (declaration_body
+                  (property
+                    name: (property_name)
+                    value: (preproc_conditional_property_value
+                      (preproc_if
+                        (preproc_open)
+                        condition: (identifier))
+                      value: (sorting_value
+                        (sorting_keyword)
+                        (identifier)
+                        (preproc_conditional_sorting_fields
+                          (preproc_if
+                            (preproc_open)
+                            condition: (identifier))
+                          (identifier)
+                          (preproc_endif
+                            (preproc_close)))
+                        (preproc_conditional_sorting_fields
+                          (preproc_if
+                            (preproc_open)
+                            condition: (identifier))
+                          (quoted_identifier)
+                          (preproc_endif
+                            (preproc_close))))
+                      (preproc_else)
+                      value: (sorting_value
+                        (sorting_keyword)
+                        (identifier))
+                      (preproc_endif
+                        (preproc_close)))))))))))))
+
+================================================================================
+strict sorting: adjacent complementary groups with #if not (adjacent-compl)
+================================================================================
+
+page 50102 PG
+{
+    actions
+    {
+        area(Processing)
+        {
+            action(A1)
+            {
+                RunPageView =
+#if TPL
+                    sorting(
+K
+#if X
+, N
+#endif
+#if not X
+, "B"
+#endif
+);
+#else
+                    sorting(K);
+#endif
+            }
+        }
+    }
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (page_declaration
+    (page_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (actions_section
+        (actions_keyword)
+        body: (action_body
+          (action_area_section
+            (area_keyword)
+            type: (processing_keyword)
+            body: (action_body
+              (action_declaration
+                (action_keyword)
+                name: (identifier)
+                body: (declaration_body
+                  (property
+                    name: (property_name)
+                    value: (preproc_conditional_property_value
+                      (preproc_if
+                        (preproc_open)
+                        condition: (identifier))
+                      value: (sorting_value
+                        (sorting_keyword)
+                        (identifier)
+                        (preproc_conditional_sorting_fields
+                          (preproc_if
+                            (preproc_open)
+                            condition: (identifier))
+                          (identifier)
+                          (preproc_endif
+                            (preproc_close)))
+                        (preproc_conditional_sorting_fields
+                          (preproc_if
+                            (preproc_open)
+                            condition: (preproc_not_expression
+                              (identifier)))
+                          (quoted_identifier)
+                          (preproc_endif
+                            (preproc_close))))
+                      (preproc_else)
+                      value: (sorting_value
+                        (sorting_keyword)
+                        (identifier))
+                      (preproc_endif
+                        (preproc_close)))))))))))))
+
+================================================================================
+strict sorting: empty group between separator and item (empty)
+================================================================================
+
+page 50102 PG
+{
+    actions
+    {
+        area(Processing)
+        {
+            action(A1)
+            {
+                RunPageView =
+#if TPL
+                    sorting(
+K ,
+#if X
+#endif
+N
+);
+#else
+                    sorting(K);
+#endif
+            }
+        }
+    }
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (page_declaration
+    (page_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (actions_section
+        (actions_keyword)
+        body: (action_body
+          (action_area_section
+            (area_keyword)
+            type: (processing_keyword)
+            body: (action_body
+              (action_declaration
+                (action_keyword)
+                name: (identifier)
+                body: (declaration_body
+                  (property
+                    name: (property_name)
+                    value: (preproc_conditional_property_value
+                      (preproc_if
+                        (preproc_open)
+                        condition: (identifier))
+                      value: (sorting_value
+                        (sorting_keyword)
+                        (identifier)
+                        (preproc_conditional_sorting_fields
+                          (preproc_if
+                            (preproc_open)
+                            condition: (identifier))
+                          (preproc_endif
+                            (preproc_close)))
+                        (identifier))
+                      (preproc_else)
+                      value: (sorting_value
+                        (sorting_keyword)
+                        (identifier))
+                      (preproc_endif
+                        (preproc_close)))))))))))))
+
+================================================================================
+strict sorting: #elif arm (elif)
+================================================================================
+
+page 50102 PG
+{
+    actions
+    {
+        area(Processing)
+        {
+            action(A1)
+            {
+                RunPageView =
+#if TPL
+                    sorting(
+K
+#if X
+, N
+#elif Y
+, "B"
+#endif
+, "O"
+);
+#else
+                    sorting(K);
+#endif
+            }
+        }
+    }
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (page_declaration
+    (page_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (actions_section
+        (actions_keyword)
+        body: (action_body
+          (action_area_section
+            (area_keyword)
+            type: (processing_keyword)
+            body: (action_body
+              (action_declaration
+                (action_keyword)
+                name: (identifier)
+                body: (declaration_body
+                  (property
+                    name: (property_name)
+                    value: (preproc_conditional_property_value
+                      (preproc_if
+                        (preproc_open)
+                        condition: (identifier))
+                      value: (sorting_value
+                        (sorting_keyword)
+                        (identifier)
+                        (preproc_conditional_sorting_fields
+                          (preproc_if
+                            (preproc_open)
+                            condition: (identifier))
+                          (identifier)
+                          (preproc_elif
+                            condition: (identifier))
+                          (quoted_identifier)
+                          (preproc_endif
+                            (preproc_close)))
+                        (quoted_identifier))
+                      (preproc_else)
+                      value: (sorting_value
+                        (sorting_keyword)
+                        (identifier))
+                      (preproc_endif
+                        (preproc_close)))))))))))))
+
+================================================================================
+strict sorting: arms with different item counts (count-differs)
+================================================================================
+
+page 50102 PG
+{
+    actions
+    {
+        area(Processing)
+        {
+            action(A1)
+            {
+                RunPageView =
+#if TPL
+                    sorting(
+K
+#if X
+, N , "B"
+#else
+, "O"
+#endif
+);
+#else
+                    sorting(K);
+#endif
+            }
+        }
+    }
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (page_declaration
+    (page_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (actions_section
+        (actions_keyword)
+        body: (action_body
+          (action_area_section
+            (area_keyword)
+            type: (processing_keyword)
+            body: (action_body
+              (action_declaration
+                (action_keyword)
+                name: (identifier)
+                body: (declaration_body
+                  (property
+                    name: (property_name)
+                    value: (preproc_conditional_property_value
+                      (preproc_if
+                        (preproc_open)
+                        condition: (identifier))
+                      value: (sorting_value
+                        (sorting_keyword)
+                        (identifier)
+                        (preproc_conditional_sorting_fields
+                          (preproc_if
+                            (preproc_open)
+                            condition: (identifier))
+                          (identifier)
+                          (quoted_identifier)
+                          (preproc_else)
+                          (quoted_identifier)
+                          (preproc_endif
+                            (preproc_close))))
+                      (preproc_else)
+                      value: (sorting_value
+                        (sorting_keyword)
+                        (identifier))
+                      (preproc_endif
+                        (preproc_close)))))))))))))
+
+================================================================================
+strict sorting: the whole list in one group, no #else (empty-list)
+================================================================================
+
+page 50102 PG
+{
+    actions
+    {
+        area(Processing)
+        {
+            action(A1)
+            {
+                RunPageView =
+#if TPL
+                    sorting(
+#if X
+K , N
+#endif
+);
+#else
+                    sorting(K);
+#endif
+            }
+        }
+    }
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (page_declaration
+    (page_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (actions_section
+        (actions_keyword)
+        body: (action_body
+          (action_area_section
+            (area_keyword)
+            type: (processing_keyword)
+            body: (action_body
+              (action_declaration
+                (action_keyword)
+                name: (identifier)
+                body: (declaration_body
+                  (property
+                    name: (property_name)
+                    value: (preproc_conditional_property_value
+                      (preproc_if
+                        (preproc_open)
+                        condition: (identifier))
+                      value: (sorting_value
+                        (sorting_keyword)
+                        (preproc_conditional_sorting_fields
+                          (preproc_if
+                            (preproc_open)
+                            condition: (identifier))
+                          (identifier)
+                          (identifier)
+                          (preproc_endif
+                            (preproc_close))))
+                      (preproc_else)
+                      value: (sorting_value
+                        (sorting_keyword)
+                        (identifier))
+                      (preproc_endif
+                        (preproc_close)))))))))))))
+
+================================================================================
+strict sorting MIXED: trailing group after the separator (trail)
+================================================================================
+
+page 50102 PG
+{
+    actions
+    {
+        area(Processing)
+        {
+            action(A1)
+            {
+                RunPageView =
+#if TPL
+                    sorting(
+K ,
+#if X
+N
+#endif
+);
+#else
+                    sorting(K);
+#endif
+            }
+        }
+    }
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (page_declaration
+    (page_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (actions_section
+        (actions_keyword)
+        body: (action_body
+          (action_area_section
+            (area_keyword)
+            type: (processing_keyword)
+            body: (action_body
+              (action_declaration
+                (action_keyword)
+                name: (identifier)
+                body: (declaration_body
+                  (property
+                    name: (property_name)
+                    value: (preproc_conditional_property_value
+                      (preproc_if
+                        (preproc_open)
+                        condition: (identifier))
+                      value: (sorting_value
+                        (sorting_keyword)
+                        (identifier)
+                        (preproc_conditional_sorting_fields
+                          (preproc_if
+                            (preproc_open)
+                            condition: (identifier))
+                          (identifier)
+                          (preproc_endif
+                            (preproc_close))))
+                      (preproc_else)
+                      value: (sorting_value
+                        (sorting_keyword)
+                        (identifier))
+                      (preproc_endif
+                        (preproc_close)))))))))))))
+
+================================================================================
+strict sorting MIXED: separator-only group before the first item (holes-lead)
+================================================================================
+
+page 50102 PG
+{
+    actions
+    {
+        area(Processing)
+        {
+            action(A1)
+            {
+                RunPageView =
+#if TPL
+                    sorting(
+#if X
+,
+#endif
+K , N
+);
+#else
+                    sorting(K);
+#endif
+            }
+        }
+    }
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (page_declaration
+    (page_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (actions_section
+        (actions_keyword)
+        body: (action_body
+          (action_area_section
+            (area_keyword)
+            type: (processing_keyword)
+            body: (action_body
+              (action_declaration
+                (action_keyword)
+                name: (identifier)
+                body: (declaration_body
+                  (property
+                    name: (property_name)
+                    value: (preproc_conditional_property_value
+                      (preproc_if
+                        (preproc_open)
+                        condition: (identifier))
+                      value: (sorting_value
+                        (sorting_keyword)
+                        (preproc_conditional_sorting_fields
+                          (preproc_if
+                            (preproc_open)
+                            condition: (identifier))
+                          (preproc_endif
+                            (preproc_close)))
+                        (identifier)
+                        (identifier))
+                      (preproc_else)
+                      value: (sorting_value
+                        (sorting_keyword)
+                        (identifier))
+                      (preproc_endif
+                        (preproc_close)))))))))))))
+
+================================================================================
+strict sorting MIXED: separator-only group after a separator (holes-mid)
+================================================================================
+
+page 50102 PG
+{
+    actions
+    {
+        area(Processing)
+        {
+            action(A1)
+            {
+                RunPageView =
+#if TPL
+                    sorting(
+K ,
+#if X
+,
+#endif
+N
+);
+#else
+                    sorting(K);
+#endif
+            }
+        }
+    }
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (page_declaration
+    (page_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (actions_section
+        (actions_keyword)
+        body: (action_body
+          (action_area_section
+            (area_keyword)
+            type: (processing_keyword)
+            body: (action_body
+              (action_declaration
+                (action_keyword)
+                name: (identifier)
+                body: (declaration_body
+                  (property
+                    name: (property_name)
+                    value: (preproc_conditional_property_value
+                      (preproc_if
+                        (preproc_open)
+                        condition: (identifier))
+                      value: (sorting_value
+                        (sorting_keyword)
+                        (identifier)
+                        (preproc_conditional_sorting_fields
+                          (preproc_if
+                            (preproc_open)
+                            condition: (identifier))
+                          (preproc_endif
+                            (preproc_close)))
+                        (identifier))
+                      (preproc_else)
+                      value: (sorting_value
+                        (sorting_keyword)
+                        (identifier))
+                      (preproc_endif
+                        (preproc_close)))))))))))))
+
+================================================================================
+strict sorting MIXED: separator-only group after the last item (holes-trail)
+================================================================================
+
+page 50102 PG
+{
+    actions
+    {
+        area(Processing)
+        {
+            action(A1)
+            {
+                RunPageView =
+#if TPL
+                    sorting(
+K , N
+#if X
+,
+#endif
+);
+#else
+                    sorting(K);
+#endif
+            }
+        }
+    }
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (page_declaration
+    (page_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (actions_section
+        (actions_keyword)
+        body: (action_body
+          (action_area_section
+            (area_keyword)
+            type: (processing_keyword)
+            body: (action_body
+              (action_declaration
+                (action_keyword)
+                name: (identifier)
+                body: (declaration_body
+                  (property
+                    name: (property_name)
+                    value: (preproc_conditional_property_value
+                      (preproc_if
+                        (preproc_open)
+                        condition: (identifier))
+                      value: (sorting_value
+                        (sorting_keyword)
+                        (identifier)
+                        (identifier)
+                        (preproc_conditional_sorting_fields
+                          (preproc_if
+                            (preproc_open)
+                            condition: (identifier))
+                          (preproc_endif
+                            (preproc_close))))
+                      (preproc_else)
+                      value: (sorting_value
+                        (sorting_keyword)
+                        (identifier))
+                      (preproc_endif
+                        (preproc_close)))))))))))))
+
+================================================================================
+strict sorting: whole list in one group, where suffix intact
+================================================================================
+
+page 50102 PG
+{
+    SourceTableView = sorting(
+#if X
+K , N
+#endif
+) where(B = const(true));
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (page_declaration
+    (page_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (property
+        name: (property_name)
+        value: (sorting_value
+          (sorting_keyword)
+          (preproc_conditional_sorting_fields
+            (preproc_if
+              (preproc_open)
+              condition: (identifier))
+            (identifier)
+            (identifier)
+            (preproc_endif
+              (preproc_close)))
+          (where_clause
+            (where_keyword)
+            (where_conditions
+              (where_condition
+                field: (identifier)
+                (const_keyword)
+                value: (boolean)))))))))
+
+================================================================================
+strict sorting: group in the list, order and where suffixes intact
+================================================================================
+
+page 50102 PG
+{
+    SourceTableView = sorting(
+K
+#if X
+, N
+#endif
+) order(descending) where(B = const(true));
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (page_declaration
+    (page_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (property
+        name: (property_name)
+        value: (sorting_value
+          (sorting_keyword)
+          (identifier)
+          (preproc_conditional_sorting_fields
+            (preproc_if
+              (preproc_open)
+              condition: (identifier))
+            (identifier)
+            (preproc_endif
+              (preproc_close)))
+          (order_keyword)
+          (descending_keyword)
+          (where_clause
+            (where_keyword)
+            (where_conditions
+              (where_condition
+                field: (identifier)
+                (const_keyword)
+                value: (boolean)))))))))
+
+================================================================================
+strict sorting: comments at every boundary
+================================================================================
+
+page 50102 PG
+{
+    SourceTableView = sorting( /* c0 */
+K // c1
+#if X // c2
+/* c3 */ , /* c4 */ N , // c5
+#else // c6
+, // c7
+#endif // c8
+/* c9 */ B /* c10 */
+);
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (page_declaration
+    (page_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (property
+        name: (property_name)
+        value: (sorting_value
+          (sorting_keyword)
+          (multiline_comment)
+          (identifier)
+          (comment)
+          (preproc_conditional_sorting_fields
+            (preproc_if
+              (preproc_open)
+              condition: (identifier)
+              (comment))
+            (multiline_comment)
+            (multiline_comment)
+            (identifier)
+            (comment)
+            (preproc_else)
+            (comment)
+            (comment)
+            (preproc_endif
+              (preproc_close)))
+          (comment)
+          (multiline_comment)
+          (identifier)
+          (multiline_comment))))))
+
+================================================================================
+strict sorting: quoted, escaped-quote and contextual-keyword items inside the arms
+================================================================================
+
+page 50102 PG
+{
+    SourceTableView = sorting(
+#if X
+"A""B" , Value
+#else
+Table , Key , Field
+#endif
+);
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (page_declaration
+    (page_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (property
+        name: (property_name)
+        value: (sorting_value
+          (sorting_keyword)
+          (preproc_conditional_sorting_fields
+            (preproc_if
+              (preproc_open)
+              condition: (identifier))
+            (quoted_identifier)
+            (identifier)
+            (preproc_else)
+            (identifier)
+            (identifier)
+            (identifier)
+            (preproc_endif
+              (preproc_close))))))))
+
+================================================================================
+strict sorting: group inside an arm of a whole-value conditional
+================================================================================
+
+page 50102 PG
+{
+    SourceTableView =
+#if TPL
+        sorting(
+K
+#if X
+, N
+#endif
+);
+#else
+        sorting(K);
+#endif
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (page_declaration
+    (page_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (property
+        name: (property_name)
+        value: (preproc_conditional_property_value
+          (preproc_if
+            (preproc_open)
+            condition: (identifier))
+          value: (sorting_value
+            (sorting_keyword)
+            (identifier)
+            (preproc_conditional_sorting_fields
+              (preproc_if
+                (preproc_open)
+                condition: (identifier))
+              (identifier)
+              (preproc_endif
+                (preproc_close))))
+          (preproc_else)
+          value: (sorting_value
+            (sorting_keyword)
+            (identifier))
+          (preproc_endif
+            (preproc_close)))))))
+
+================================================================================
+strict sorting: empty interior (alc accepts sorting(), empty-interior)
+================================================================================
+
+page 50102 PG
+{
+    SourceTableView = sorting();
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (page_declaration
+    (page_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (property
+        name: (property_name)
+        value: (sorting_value
+          (sorting_keyword))))))
+
+================================================================================
+strict sorting preservation: quoted, escaped-quote and contextual-keyword items
+================================================================================
+
+page 50102 PG
+{
+    SourceTableView = sorting(K, "No.", "A""B", Value, Table, Key, Field);
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (page_declaration
+    (page_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (property
+        name: (property_name)
+        value: (sorting_value
+          (sorting_keyword)
+          (identifier)
+          (quoted_identifier)
+          (quoted_identifier)
+          (identifier)
+          (identifier)
+          (identifier)
+          (identifier))))))
+
+================================================================================
+strict sorting preservation: comments between plain items
+================================================================================
+
+page 50102 PG
+{
+    SourceTableView = sorting(K /* c1 */ , // c2
+N);
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (page_declaration
+    (page_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (property
+        name: (property_name)
+        value: (sorting_value
+          (sorting_keyword)
+          (identifier)
+          (multiline_comment)
+          (comment)
+          (identifier))))))
+
+================================================================================
+strict sorting preservation: order and where suffixes
+================================================================================
+
+page 50102 PG
+{
+    SourceTableView = sorting(K, N) order(ascending) where(B = const(true));
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (page_declaration
+    (page_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (property
+        name: (property_name)
+        value: (sorting_value
+          (sorting_keyword)
+          (identifier)
+          (identifier)
+          (order_keyword)
+          (ascending_keyword)
+          (where_clause
+            (where_keyword)
+            (where_conditions
+              (where_condition
+                field: (identifier)
+                (const_keyword)
+                value: (boolean)))))))))
+
+================================================================================
+strict sorting preservation: order-only view
+================================================================================
+
+page 50102 PG
+{
+    SourceTableView = order(descending);
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (page_declaration
+    (page_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (property
+        name: (property_name)
+        value: (sorting_value
+          (order_keyword)
+          (descending_keyword))))))
+
+================================================================================
+strict sorting preservation: the whole list wholly inside one arm of a whole-value conditional
+================================================================================
+
+page 50102 PG
+{
+    SourceTableView =
+#if X
+        sorting(K, N);
+#else
+        sorting(K);
+#endif
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (page_declaration
+    (page_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (property
+        name: (property_name)
+        value: (preproc_conditional_property_value
+          (preproc_if
+            (preproc_open)
+            condition: (identifier))
+          value: (sorting_value
+            (sorting_keyword)
+            (identifier)
+            (identifier))
+          (preproc_else)
+          value: (sorting_value
+            (sorting_keyword)
+            (identifier))
+          (preproc_endif
+            (preproc_close)))))))
+
+================================================================================
+strict sorting preservation: the property inside an enclosing whole-declaration #if
+================================================================================
+
+page 50102 PG
+{
+#if X
+    SourceTableView = sorting(K, N);
+#endif
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (page_declaration
+    (page_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (preproc_conditional
+        (preproc_if
+          (preproc_open)
+          condition: (identifier))
+        (property
+          name: (property_name)
+          value: (sorting_value
+            (sorting_keyword)
+            (identifier)
+            (identifier)))
+        (preproc_endif
+          (preproc_close))))))

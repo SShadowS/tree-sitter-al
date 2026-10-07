@@ -1,5 +1,5 @@
 // B7a Task 10 witness (GAP): family sorting, base placement first-replace, 18 cells; representative occ:sorting_value:0.0.3.0.0@action_body#first-replace
-// Fixture b7_gap_sorting_test.txt#B7a GAP: sorting / first-replace (18 cells, verdict of the representative GAP); the parser ERRORs on configurations alc accepts; representative occ:sorting_value:0.0.3.0.0@action_body%23first-replace#0
+// Fixture strict_conditional_sorting_fields_test.txt#strict sorting: group replacing the first item (first-replace)#0
 // expect: !TPL !X accept
 // expect: !TPL X accept
 // expect: TPL !X accept

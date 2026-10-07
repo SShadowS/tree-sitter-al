@@ -1,5 +1,5 @@
 // B7a Task 10 witness (GAP): family var-names, base placement first-replace, 9 cells; representative occ:variable_declaration:2.0.1.0.0@preproc_conditional_var#first-replace
-// Fixture b7_gap_var_names_test.txt#B7a GAP: var-names / first-replace (9 cells, verdict of the representative GAP); the parser ERRORs on configurations alc accepts; representative occ:variable_declaration:2.0.1.0.0@preproc_conditional_var%23first-replace#0
+// Fixture strict_conditional_var_names_test.txt#strict var names: group replacing the first name (first-replace)#0
 // expect: !TPL2 !X accept
 // expect: !TPL2 X accept
 // expect: TPL2 !X accept

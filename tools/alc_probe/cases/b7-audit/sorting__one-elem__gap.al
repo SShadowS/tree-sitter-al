@@ -1,5 +1,5 @@
 // B7a Task 10 witness (GAP): family sorting, base placement one-elem, 18 cells; representative occ:sorting_value:0.0.3.0.0@action_body#one-elem
-// Fixture b7_gap_sorting_test.txt#B7a GAP: sorting / one-elem (18 cells, verdict of the representative GAP); the parser ERRORs on configurations alc accepts; representative occ:sorting_value:0.0.3.0.0@action_body%23one-elem#0
+// Fixture strict_conditional_sorting_fields_test.txt#strict sorting: the whole list in the arms of one group (one-elem)#0
 // expect: !TPL !X accept
 // expect: !TPL X accept
 // expect: TPL !X accept

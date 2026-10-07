@@ -88,15 +88,71 @@ function modifyHeader($) {
   return seq($.modify_keyword, '(', field('target', $._identifier_or_quoted), ')');
 }
 
+// B7b-1: the element list after the fixed `;` accepts #if groups at any separator
+// (strictListBody, family move_elements); the target and the fixed `;` stay outside
+// it, so a group there is still an ERROR (B7b-3). An element inside an arm is
+// `element:` on preproc_conditional_move_elements, so `element` is no longer
+// required on the four move rules (a list may consist of groups only).
 function moveArgs($) {
   return seq(
     '(',
     field('target', $._identifier_or_quoted),
     ';',
-    field('element', $._identifier_or_quoted),
-    repeat(seq(',', field('element', $._identifier_or_quoted))),
+    ...strictListBody($, 'move_elements', ','),
     ')',
   );
+}
+
+// One hidden seam unit per strict delimited list (B7b-1 spec
+// docs/superpowers/specs/2026-10-07-b7b-1-strict-conditional-lists-design.md §3):
+// a `#if` group may stand anywhere in the list -- before or after a separator,
+// holding only a separator, holding both, replacing the first item, nested,
+// adjacent to another group. `atom` is a function ($) => rule for ONE raw item,
+// fielded as the host fields its items (fields propagate through the hidden
+// helpers to the host, or to preproc_conditional_<family> inside an arm).
+// Spread into `rules`: `...strictConditionalList('<family>', $ => <atom>, '<sep>')`,
+// and write the list itself in the host with strictListBody($, '<family>', '<sep>')
+// in place of the old `item, repeat(seq(sep, item))`; the host keeps its delimiters.
+//   (body) item-or-group runs joined by separators -- the spec's _F_list
+//   _e     a raw item with an optional trailing group, or a group alone
+//   _t     a group followed by an optional further _e (A G B, G G, G B)
+//   _b     an arm body: a leading separator and an optional run, or a run
+//   _r     a run inside an arm, with an optional trailing separator
+// No helper matches empty, so there is no empty-derivation ambiguity; a
+// trailing separator inside an arm is shifted first and the next token (an item
+// or a directive) decides, with no competing partial-prefix run.
+//
+// Why the list body is inlined into the host instead of being a hidden _F_list
+// rule (Task 4 spike refinement): the B7a audit keys a separator by the rule and
+// member path it sits at (`occ:implements_clause:2.0.0`) and by that rule's
+// visible callers (its routes). Inlined, the host's own separator keeps its key
+// and routes, so the frozen manifest's cell ids stay valid; a hidden _F_list
+// would move it to `occ:_F_list:1.0.0` with the host as its only route. The
+// language and the tree are the same either way: _F_list was hidden.
+// `groupDynamic` (optional): a dynamic precedence for the visible group, for a
+// host where a group can also be read as a neighbouring conditional and both
+// readings complete (var_names); 0 leaves the group rule unwrapped.
+function strictConditionalList(family, atom, sep, groupDynamic = 0) {
+  const E = `_${family}_e`, T = `_${family}_t`,
+        G = `preproc_conditional_${family}`, B = `_${family}_b`, R = `_${family}_r`;
+  const group = $ => seq(
+    $.preproc_if, optional($[B]),
+    repeat(seq($.preproc_elif, optional($[B]))),
+    optional(seq($.preproc_else, optional($[B]))),
+    $.preproc_endif);
+  return {
+    [E]: $ => choice(seq(atom($), optional($[T])), $[T]),
+    [T]: $ => seq($[G], optional($[E])),
+    [G]: groupDynamic ? $ => prec.dynamic(groupDynamic, group($)) : group,
+    [B]: $ => choice(seq(sep, optional($[R])), $[R]),
+    [R]: $ => seq($[E], repeat(seq(sep, $[E])), optional(sep)),
+  };
+}
+
+// The spec's `_F_list` body, written into the host (see strictConditionalList).
+function strictListBody($, family, sep) {
+  const E = `_${family}_e`;
+  return [$[E], repeat(seq(sep, $[E]))];
 }
 
 function fieldedStatement($, name) {
@@ -521,6 +577,32 @@ module.exports = grammar({
   ],
 
   conflicts: $ => [
+    // B7b-1 var_names (Task 11): a variable declaration may now START with a #if
+    // group (`#if X A #else B #endif , C: T;`, preproc_conditional_var_names), so
+    // at a declaration start the same `#if` also opens the conditional of the
+    // enclosing context. Reading 1: the context's own conditional
+    // (preproc_conditional_var in a var_body; in a preproc_split_var_section_tail,
+    // whose declarations are followed by body elements, the body-level kinds
+    // below; the layout and actions sets are reached by a split var section
+    // tail inside interface layout/actions bodies). Reading 2: the name group of the next declaration. Only the arm
+    // content tells them apart (names and commas vs declarations or body
+    // elements), and a run of empty arms (`#if A`, `#elif B`, `#endif`) reduces
+    // before any content is seen, so LR(1) cannot choose: GLR explores both and
+    // the content settles it. Where both readings complete -- an empty group
+    // directly before a declaration in a var_body -- the group's dynamic
+    // precedence (-1, strictConditionalList's groupDynamic) keeps the sibling
+    // preproc_conditional_var, the tree that input had before. The generator
+    // requires each set exactly as listed (one per enclosing body kind).
+    [$.preproc_conditional_var, $.preproc_conditional_var_names],
+    [$.preproc_conditional_var_names, $.preproc_conditional],
+    [$.preproc_conditional_var_names, $.preproc_conditional, $.preproc_conditional_actions],
+    [$.preproc_conditional_var_names, $.preproc_conditional_actions],
+    [$.preproc_conditional_var_names, $.preproc_conditional, $.preproc_conditional_layout],
+    [$.preproc_conditional_var_names, $.preproc_conditional_layout],
+    [$.preproc_conditional_controladdin, $.preproc_conditional_var_names, $.preproc_conditional],
+    [$.preproc_conditional_report, $.preproc_conditional_var_names, $.preproc_conditional],
+    [$.preproc_conditional_xmlport, $.preproc_conditional_var_names, $.preproc_conditional],
+    [$.preproc_conditional_query, $.preproc_conditional_var_names, $.preproc_conditional],
     // An empty #if/#endif (pragma-only, pragmas are extras) after a bodiless
     // field can attach either field-internally (preproc_pragma_only, then `{`
     // body) or at section level (preproc_conditional_fields). GLR explores both;
@@ -1150,11 +1232,15 @@ module.exports = grammar({
 
     // --- Implements clause ---
 
+    // B7b-1: the interface list accepts #if groups at any separator. A raw
+    // interface outside a group is `interface:` here; one inside an arm is
+    // `interface:` on preproc_conditional_implements, so `interface` is no
+    // longer required on this node (a list may consist of groups only).
     implements_clause: $ => seq(
       $.implements_keyword,
-      field('interface', $._identifier_or_quoted),
-      repeat(seq(',', field('interface', $._identifier_or_quoted)))
+      ...strictListBody($, 'implements', ','),
     ),
+    ...strictConditionalList('implements', $ => field('interface', $._identifier_or_quoted), ','),
 
     // =====================================================================
     // Body elements — all sections/declarations that can appear in object bodies
@@ -2219,12 +2305,14 @@ module.exports = grammar({
 
     // --- Sorting/SourceTableView value ---
     // sorting("Starting Date") order(ascending) where("Status" = const(Active))
+    // B7b-1: the field list inside sorting( ... ) is strict -- a #if group may
+    // stand at any separator (preproc_conditional_sorting_fields); the order( )
+    // and where( ) suffixes are not part of it. Items stay unfielded children.
     sorting_value: $ => prec(5, choice(
       seq(
         $.sorting_keyword,
         '(',
-        $._identifier_or_quoted,
-        repeat(seq(',', $._identifier_or_quoted)),
+        ...strictListBody($, 'sorting_fields', ','),
         ')',
         optional($._order_clause),
         optional($.where_clause),
@@ -2242,7 +2330,19 @@ module.exports = grammar({
         $._order_clause,
         optional($.where_clause),
       )),
+      // `sorting()`: alc accepts the empty interior on every view route (B7b-1
+      // Task 2, empty-interior), so an emptied configuration is valid flat text.
+      // Its own arm, after the others, so the list separator keeps its B7a
+      // census key occ:sorting_value:0.0.3.0.0.
+      seq(
+        $.sorting_keyword,
+        '(',
+        ')',
+        optional($._order_clause),
+        optional($.where_clause),
+      ),
     )),
+    ...strictConditionalList('sorting_fields', $ => $._identifier_or_quoted, ','),
 
     _order_clause: $ => seq(
       $.order_keyword,
@@ -2548,16 +2648,32 @@ module.exports = grammar({
 
     // --- OrderBy value list ---
     // ascending("No.", Name)
+    // The outer comma list is property-value routing and stays NOT strict
+    // (B7b-1 spec section 2): a #if group between two items is an ERROR.
+    // An item may have an empty interior, `ascending()` (alc accepts it, B7b-1
+    // Task 2, empty-interior): _order_by_item_empty, aliased to order_by_item.
+    // It is a separate rule rather than an arm of order_by_item so that both
+    // separators keep their B7a census keys (occ:order_by_item:3.0.0,
+    // occ:order_by_list:0.1.0.0).
     order_by_list: $ => prec.left(5, seq(
-      $.order_by_item,
-      repeat(seq(',', $.order_by_item))
+      choice($.order_by_item, alias($._order_by_item_empty, $.order_by_item)),
+      repeat(seq(',', choice($.order_by_item, alias($._order_by_item_empty, $.order_by_item))))
     )),
 
+    // B7b-1: the field list inside ascending( ... ) / descending( ... ) is
+    // strict -- a #if group may stand at any separator
+    // (preproc_conditional_order_by_fields). Items stay unfielded children.
     order_by_item: $ => seq(
       choice($.ascending_keyword, $.descending_keyword),
       '(',
-      $._identifier_or_quoted,
-      repeat(seq(',', $._identifier_or_quoted)),
+      ...strictListBody($, 'order_by_fields', ','),
+      ')'
+    ),
+    ...strictConditionalList('order_by_fields', $ => $._identifier_or_quoted, ','),
+
+    _order_by_item_empty: $ => seq(
+      choice($.ascending_keyword, $.descending_keyword),
+      '(',
       ')'
     ),
 
@@ -2953,11 +3069,15 @@ module.exports = grammar({
       optional($._declaration_body_block),
     ),
 
-    // Comma-separated list of field names
+    // Comma-separated list of field names (keys, fieldgroups, addlast/addfirst,
+    // split key headers). B7b-1: a #if group may stand at any separator. The
+    // list stays unfielded: raw items outside a group are unfielded children
+    // here, items inside an arm unfielded children of
+    // preproc_conditional_field_list_items.
     field_list: $ => seq(
-      $._identifier_or_quoted,
-      repeat(seq(',', $._identifier_or_quoted))
+      ...strictListBody($, 'field_list_items', ','),
     ),
+    ...strictConditionalList('field_list_items', $ => $._identifier_or_quoted, ','),
 
     // --- Fieldgroups section ---
     // fieldgroups { fieldgroup(DropDown; "No.", Name) { } }
@@ -2975,9 +3095,12 @@ module.exports = grammar({
       $.addfirst_fieldgroup_modification,
     )),
 
+    // The field list is optional here only: alc accepts `addlast(DropDown; )`
+    // (B7b-1 Task 2, route key-fields / addlast_fieldgroup_modification,
+    // empty-interior), while an empty key or fieldgroup list is AL0306.
     addlast_fieldgroup_modification: $ => seq(
       $.addlast_keyword, '(', field('target', $._identifier_or_quoted), ';',
-      field('fields', $.field_list), ')',
+      optional(field('fields', $.field_list)), ')',
       optional(seq('{', '}'))
     ),
 
@@ -3107,15 +3230,22 @@ module.exports = grammar({
     // comma-separated seq in one field puts the anonymous ',' inside the field,
     // so children_by_field_name('sizes') yields 10, ',', 20 — the same shape
     // that made the owned-IR lowerer panic on case patterns.
+    //
+    // B7b-1: the dimension list between `[` and `]` accepts #if groups at any
+    // separator (strictListBody, family array_dimensions). A dimension inside an
+    // arm is `sizes:` on preproc_conditional_array_dimensions, so `sizes` is no
+    // longer required here (a list may consist of groups only). An emptied list
+    // stays a flat-grammar error (alc AL0367).
     array_type: $ => seq(
       prec(1, $.array_keyword),
       '[',
-      field('sizes', $.integer),
-      repeat(seq(',', field('sizes', $.integer))),
+      ...strictListBody($, 'array_dimensions', ','),
       ']',
       $.of_keyword,
       field('element_type', $.type_specification)
     ),
+
+    ...strictConditionalList('array_dimensions', $ => field('sizes', $.integer), ','),
 
     // List of [Integer]
     list_type: $ => seq(
@@ -3615,6 +3745,8 @@ module.exports = grammar({
     moveafter_modification: $ => seq($.moveafter_keyword, moveArgs($)),
 
     movebefore_modification: $ => seq($.movebefore_keyword, moveArgs($)),
+
+    ...strictConditionalList('move_elements', $ => field('element', $._identifier_or_quoted), ','),
 
     // =====================================================================
     // Actions structure
@@ -4765,10 +4897,19 @@ module.exports = grammar({
         $.ml_value_list,
         ';'
       )),
-      // Multi-name variable: Name1, Name2, Name3 : Type;
+      // Name list: Name1, Name2, Name3 : Type; -- B7b-1 (family var_names): a #if
+      // group may stand anywhere in the names (strictListBody), so a declaration
+      // whose only comma is conditional (`A #if X , B #endif : T;`) or whose
+      // names all sit in groups parses here. A name inside an arm is `name:` on
+      // preproc_conditional_var_names, so `name` is not required on the node.
+      // The list body is inlined (no hidden list rule) so its separator keeps
+      // its B7a census key occ:variable_declaration:2.0.1.0.0. This arm also
+      // derives a plain single name, but the regular arm below keeps that input:
+      // its `:` shift (prec 1, like the label and TextConst arms' 5 and 4)
+      // outranks the reduction of the lone name to `_var_names_e` (prec 0), so
+      // `A: T;` keeps its tree and the regular arm's census keys stay live.
       prec(3, seq(
-        field('name', $._identifier_or_quoted),
-        repeat1(seq(',', field('name', $._identifier_or_quoted))),
+        ...strictListBody($, 'var_names', ','),
         ':',
         field('type', $.type_specification),
         ';'
@@ -4781,6 +4922,10 @@ module.exports = grammar({
         ';'
       )),
     ),
+
+    // groupDynamic -1: see the B7b-1 var_names conflicts (an empty group before a
+    // declaration in a var_body stays a sibling preproc_conditional_var).
+    ...strictConditionalList('var_names', $ => field('name', $._identifier_or_quoted), ',', -1),
 
     label_attribute: $ => seq(
       field('name', $.identifier),
@@ -4809,10 +4954,16 @@ module.exports = grammar({
       ')'
     ),
 
+    // B7b-1: the argument list accepts #if groups at any separator
+    // (strictListBody, family attribute_args). attribute_argument_list stays
+    // visible and unfielded and owns only the list; attribute_arguments keeps
+    // `(`, `)` and its optional() wrapper, so an emptied configuration reads as
+    // `[A()]` with no attribute_argument_list (spec 4.2 case 2).
     attribute_argument_list: $ => seq(
-      $._attribute_argument,
-      repeat(seq(',', $._attribute_argument)),
+      ...strictListBody($, 'attribute_args', ','),
     ),
+
+    ...strictConditionalList('attribute_args', $ => $._attribute_argument, ','),
 
     _attribute_argument: $ => choice(
       $.boolean,

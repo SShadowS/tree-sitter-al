@@ -1,5 +1,5 @@
 // B7a Task 10 witness (GAP): family sorting, base placement adjacent-compl, 18 cells; representative occ:sorting_value:0.0.3.0.0@action_body#adjacent-compl
-// Fixture b7_gap_sorting_test.txt#B7a GAP: sorting / adjacent-compl (18 cells, verdict of the representative GAP); the parser ERRORs on configurations alc accepts; representative occ:sorting_value:0.0.3.0.0@action_body%23adjacent-compl#0
+// Fixture strict_conditional_sorting_fields_test.txt#strict sorting: adjacent complementary groups with %23if not (adjacent-compl)#0
 // expect: !TPL !X accept
 // expect: !TPL X accept
 // expect: TPL !X accept

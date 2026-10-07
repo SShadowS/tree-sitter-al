@@ -14,6 +14,7 @@ The scanner maintains a `ScannerState` holding a `depth` counter tracking `#if`/
 |-------|---------|-------------|
 | `PROPERTY_NAME` | `identifier` followed by `=` (not `:=`) — property/variable disambiguation | none |
 | `CONTINUE_AS_IDENTIFIER` | `continue` followed by `:=` `(` `.` `[` `::` `+=` `-=` `*=` `/=` — used as a name, not the statement | none |
+| `VAR_ATTRIBUTE_OPEN` | the `[` of a variable attribute (one character, `mark_end` right after it): the lookahead scans past the attribute and any chained `[...]`, then requires a variable name list ending at its `:` (`var_name_list_follows`, below); otherwise declines and the `[` is a procedure `attribute_item` | none |
 | `PREPROC_OPEN` | `#if` — with string literal fallback in grammar | depth++ |
 | `PREPROC_CLOSE` | `#endif` — with string literal fallback in grammar | depth-- |
 | `BEGIN_KEYWORD` | `begin` at any depth — named node for queries | none |
@@ -33,6 +34,8 @@ The scanner maintains a `ScannerState` holding a `depth` counter tracking `#if`/
 **Scan function order:** error recovery guard → DIRECTIVE_EOL → NEGATIVE_INTEGER/DECIMAL → the `#` dispatch (PREPROC_OPEN / PREPROC_CLOSE / MALFORMED_DIRECTIVE; runs whatever is valid) → VAR_ATTRIBUTE_OPEN → identifier dispatch (`BEGIN_KEYWORD` | `PREPROC_SPLIT_BEGIN` | `END_KEYWORD` | `PREPROC_SPLIT_END` | `CALC_FORMULA_PROPERTY_NAME` / `ML_PROPERTY_NAME` / `NAMESPACES_PROPERTY_NAME` / `TABLE_RELATION_PROPERTY_NAME` / `LINK_PROPERTY_NAME` / `PROPERTY_NAME` | `CONTINUE_AS_IDENTIFIER`)
 
 `VAR_ATTRIBUTE_OPEN` runs **before** the identifier tokens, not after — it did not until 4.0.0, and the old order is why a leading `b` was absorbed into a following `[`, producing a two-column `[` token whose text was `b[`.
+
+**`var_name_list_follows` (B7b-1 Task 12) is `VAR_ATTRIBUTE_OPEN`'s recognizer.** After the attribute and any chained ones it reads a conditional stream of names (bare or quoted), commas and `#if`/`#elif`/`#else`/`#endif` lines, with whitespace, comments and the transparent directive extras anywhere, and accepts only at a `:` reached at local depth 0 with at least one name seen and no comma just before it. Between two directive lines the strict shape holds (a name never follows a name, a comma never starts the list or follows a comma); a directive line resets it. It declines at anything else: `(`, `;`, `{`, `}`, `[`, EOF, the word `procedure`, a `:` inside a group, an unterminated quoted name, an unbalanced or malformed directive, so a procedure attribute before a conditional header stays a procedure attribute. It parses directive lines itself: `#if`/`#elif` through `skip_condition_line`, which declines on a block comment or a second `#` on the line (AL0631) and on an empty condition (AL0629), and leaves a dangling `and`/`or`/`not` to the `#` dispatch's `MALFORMED_DIRECTIVE`; `#else`/`#endif` through `directive_rest_is_blank` (blank but for a `//` comment, AL0631 otherwise); `#elif`/`#else`/`#endif` with no open `#if` and any word that is not a directive (AL0621) decline. The nesting count is a local `uint32_t`; `ScannerState.depth` is never touched, and every advance is non-marking (the caller called `mark_end` at the `[`). Words go through `read_word_ci` into a 16-byte buffer: a truncated NAME is tolerated (it is still a name; only an untruncated word is compared with `procedure`), a truncated DIRECTIVE word declines. Some declines are on input alc accepts, pre-existing gaps recorded as `docs/deferred-work.md` item 45 (whole declarations in a group's arms, an attribute inside a group, an attribute alone in a group with the name after `#endif`, an attribute after a directive line); they ERROR.
 
 ## Single-Read Identifier Dispatch
 
@@ -75,6 +78,7 @@ Every lookahead must step over everything `grammar.js` declares as `extras` — 
 - `skip_comment` — consumes a `//` or `/* */` comment. Consumes the leading `/` either way; returns false for a bare `/` so callers that can't tolerate one decline.
 - `skip_whitespace_and_comments` — whitespace plus comments.
 - `peek_directive_ci_skip_extras(lexer, targets)` — skips whitespace, comments and transparent directive lines, then tests whether the next `#` directive is one of `targets` (bare words, no `#`). `TRANSPARENT_DIRECTIVES` = `pragma`, `region`, `endregion`, `define`, `undef`. **Keep it in sync with the `extras` array.**
+- A fourth site: `var_name_list_follows` parses directive lines itself and skips a transparent one with `word_in(TRANSPARENT_DIRECTIVES, ...)`; it too must stay in sync with `extras`.
 
 **Nothing in this scanner matches a keyword against the live lexer. Do not reintroduce anything that does.** Every word — directive names, `begin`/`end`/`continue`, and both split lookaheads — is read ONCE into a buffer via `read_word_ci` and then compared whole.
 

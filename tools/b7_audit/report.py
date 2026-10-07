@@ -252,9 +252,13 @@ def witness(family, base, kind):
         return "tools/b7_audit/tests/test_silent.py"
     probe = f"tools/alc_probe/cases/b7-audit/{slug(family, base, kind)}.al"
     p = HERE.parent.parent / probe
-    if p.is_file() and "// No corpus case" in p.read_text(encoding="utf-8"):
+    text = p.read_text(encoding="utf-8") if p.is_file() else ""
+    if "// No corpus case" in text:
         return f"{probe}, tools/b7_audit/tests/test_silent.py"
-    return f"{probe}, test/corpus/b7_gap_{family.replace('-', '_')}_test.txt"
+    # The probe names its corpus case (`// Fixture <file>#<case>#<n>`): B7b-1 moved the over-accepted shapes of its
+    # admitted routes into strict_conditional_* fixtures, so the file is read from the probe, not assumed.
+    named = [l[len("// Fixture "):].split("#", 1)[0] for l in text.splitlines() if l.startswith("// Fixture ")]
+    return f"{probe}, test/corpus/{named[0] if named else 'b7_gap_' + family.replace('-', '_') + '_test.txt'}"
 
 
 def rank(families, deps=None):
@@ -392,9 +396,15 @@ def render(a, header):
     return "\n".join(out) + "\n"
 
 
-def build(evidence_path=evidence.EVIDENCE, registry_path=HERE / "registry.tsv",
-          assertions_path=judge.ASSERTIONS, sources=None, parser=None):
-    """sources {cell id: source bytes} and parser are injectable for tests; by default the sources are
+def build(*a, **kw):
+    """The rendered report; arguments as for `analysed`."""
+    analysis, header = analysed(*a, **kw)
+    return render(analysis, header)
+
+
+def analysed(evidence_path=evidence.EVIDENCE, registry_path=HERE / "registry.tsv",
+             assertions_path=judge.ASSERTIONS, sources=None, parser=None):
+    """-> (analyse result, evidence header): every cell's current verdict. sources {cell id: source bytes} and parser are injectable for tests; by default the sources are
     regenerated from the registry and seeds, and the parser is the repo's, both only when a fresh
     assertion row needs them."""
     header, records = evidence.read(evidence_path)
@@ -425,7 +435,7 @@ def build(evidence_path=evidence.EVIDENCE, registry_path=HERE / "registry.tsv",
     def classify(cid, sha):
         t = tree(cid, sha)
         return t if isinstance(t, str) else cell_shape(*t)
-    return render(analyse(records, header, rows, judge.load_assertions(assertions_path), check, classify), header)
+    return analyse(records, header, rows, judge.load_assertions(assertions_path), check, classify), header
 
 
 def write(path=DEFAULT_OUT, **kw):

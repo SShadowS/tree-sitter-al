@@ -382,7 +382,16 @@ def _lower_ordinary(node, ctx) -> Lowered:
             f._from_last = (i == last_index)
         frags.extend(bind_previous(kids, r, c))
     new = Node(node.kind, node.named, node.field, node.start, node.end, kids)
-    if any(c.kind in LIST_RUN_TYPES for c in node.children):
+    fam = conditional_lists.HOST_FAMILY.get(node.kind)
+    if fam is not None and any(c.kind == fam.group for c in node.children):
+        # A strict-list host (B7b-1): its own complete-region validator and empty policy.
+        new.children = conditional_lists.lower_region(node, new.children, fam)
+        if not new.children:
+            if frags:
+                raise LoweringError("unconsumed-fragment", node, "fragment out of an emptied list")
+            ctx.normalised.append(f"optional-list-removed:{node.kind}@{node.start}")
+            return Lowered([], frags)
+    elif any(c.kind in LIST_RUN_TYPES for c in node.children):
         if new.kind == "option_member_list":
             _check_option_holes(new)
         else:
@@ -599,6 +608,11 @@ def _lower_tree(root, extras, resolution):
     acc.check_emitted(low)
     kept = [e for e in extras if resolution.active[e.start]]
     return low, kept, list(ctx.normalised)
+
+
+# At the bottom: conditional_lists imports this module's names, and _lower_ordinary reads
+# conditional_lists only at call time, so the cycle is safe in either import order.
+from tools.config_oracle.lowering import conditional_lists  # noqa: E402
 
 
 def lower_tree(root, extras, resolution):

@@ -1,5 +1,5 @@
 // B7a Task 10 witness (GAP): family move-modification, base placement holes-trail, 48 cells; representative occ:moveafter_modification:1.4.0.0@action_body#holes-trail
-// Fixture b7_gap_move_modification_test.txt#B7a GAP: move-modification / holes-trail (48 cells, verdict of the representative MIXED); the parser ERRORs on configurations alc accepts; representative occ:moveafter_modification:1.4.0.0@action_body%23holes-trail#0
+// Fixture strict_conditional_move_elements_test.txt#strict move MIXED: separator-only group after the last element (holes-trail)#0
 // expect: !X accept
 // expect: X reject(AL0301)
 // source: recorded by B7a Task 10, 2026-10-07: the alc split verdicts of cell occ:moveafter_modification:1.4.0.0@action_body#holes-trail in tools/b7_audit/evidence.jsonl.gz

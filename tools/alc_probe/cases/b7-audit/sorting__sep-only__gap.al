@@ -1,5 +1,5 @@
 // B7a Task 10 witness (GAP): family sorting, base placement sep-only, 18 cells; representative occ:sorting_value:0.0.3.0.0@action_body#sep-only
-// Fixture b7_gap_sorting_test.txt#B7a GAP: sorting / sep-only (18 cells, verdict of the representative GAP); the parser ERRORs on configurations alc accepts; representative occ:sorting_value:0.0.3.0.0@action_body%23sep-only#0
+// Fixture strict_conditional_sorting_fields_test.txt#strict sorting: separator-only arms between two raw items (sep-only)#0
 // expect: !TPL !X accept
 // expect: !TPL X accept
 // expect: TPL !X accept

@@ -1,5 +1,5 @@
 // B7a Task 10 witness (GAP): family array-dimensions, base placement holes-trail, 3 cells; representative occ:array_type:3.0.0@type_specification#holes-trail
-// Fixture b7_gap_array_dimensions_test.txt#B7a GAP: array-dimensions / holes-trail (3 cells, verdict of the representative MIXED); the parser ERRORs on configurations alc accepts; representative occ:array_type:3.0.0@type_specification%23holes-trail#0
+// Fixture strict_conditional_array_dimensions_test.txt#strict array MIXED: separator-only group after the last dimension (holes-trail)#0
 // expect: !X accept
 // expect: X reject(AL0301)
 // source: recorded by B7a Task 10, 2026-10-07: the alc split verdicts of cell occ:array_type:3.0.0@type_specification#holes-trail in tools/b7_audit/evidence.jsonl.gz

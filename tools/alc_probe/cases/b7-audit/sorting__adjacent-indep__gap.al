@@ -1,5 +1,5 @@
 // B7a Task 10 witness (GAP): family sorting, base placement adjacent-indep, 18 cells; representative occ:sorting_value:0.0.3.0.0@action_body#adjacent-indep
-// Fixture b7_gap_sorting_test.txt#B7a GAP: sorting / adjacent-indep (18 cells, verdict of the representative GAP); the parser ERRORs on configurations alc accepts; representative occ:sorting_value:0.0.3.0.0@action_body%23adjacent-indep#0
+// Fixture strict_conditional_sorting_fields_test.txt#strict sorting: adjacent independent groups (adjacent-indep)#0
 // expect: !TPL !X !Y accept
 // expect: !TPL !X Y accept
 // expect: !TPL X !Y accept

@@ -12,7 +12,8 @@ Seeds have no template, so no control (`control: "none"`): their class comes fro
 
 Tiered alc (controller ruling): parser and oracle run on every cell; alc runs on a cell when it is
 a seed, its parser/oracle outcome is not clean+pass, its intended vector excludes an assignment,
-or it is its (role, family, placement) class's representative (lexicographically first id).
+its registry row's reason starts `ALC-MEASURED:`, or it is its (role, family, placement) class's
+representative (lexicographically first id).
 Every other cell is `alc: "class-sampled"` and names its representative.
 
 alc work is deduplicated by exact (source, symbols) and cached on disk under .cache/b7_audit/alc,
@@ -303,6 +304,13 @@ class TierInfo:
     clean: bool           # parser clean and oracle pass in every configuration
     all_valid: bool       # the intended vector holds every assignment
     seed: bool
+    measure: bool = False  # its registry row is marked ALC_MEASURED: never class-sampled
+
+
+# A registry row whose reason starts with this is alc-measured cell by cell: its template carries a semantic
+# dependency on the hole (enum `DefaultImplementation` names the implemented interfaces), so a configuration the
+# intended vector calls valid can still be rejected (AL0595), and a representative on another host would hide that.
+ALC_MEASURED = "ALC-MEASURED:"
 
 
 def representatives(pairs):
@@ -316,7 +324,7 @@ def representatives(pairs):
 
 def tiers(infos, reps):
     """-> {id: None (alc measures it) | representative id (class-sampled)}."""
-    return {i.id: None if (i.seed or not i.clean or not i.all_valid or reps[i.cls] == i.id) else reps[i.cls]
+    return {i.id: None if (i.seed or i.measure or not i.clean or not i.all_valid or reps[i.cls] == i.id) else reps[i.cls]
             for i in infos}
 
 
@@ -326,6 +334,7 @@ class Entry:
     cell: placements.Cell
     role: str
     family: str
+    measure: bool = False      # the row's reason starts with ALC_MEASURED
 
     @property
     def cls(self):
@@ -333,7 +342,8 @@ class Entry:
 
 
 def universe(registry_path=HERE / "registry.tsv", seed_root=seeds.SEEDS):
-    out = [Entry(c, r.role, r.family) for r in registry.load(registry_path) for c in placements.cells_for(r)]
+    out = [Entry(c, r.role, r.family, r.reason.startswith(ALC_MEASURED))
+           for r in registry.load(registry_path) for c in placements.cells_for(r)]
     out += [Entry(c, "seed", "seed") for c in seeds.load(seed_root)]
     ids = [e.cell.id for e in out]
     if len(set(ids)) != len(ids):
@@ -490,7 +500,7 @@ def run(only=None, jobs=6, check=False, accept_tool=False, out=EVIDENCE, al="al"
     allreps = representatives((e.cell.id, e.cls) for e in every)
     tier = tiers([TierInfo(e.cell.id, e.cls, obs[e.cell.id].clean,
                            len(e.cell.intended_valid) == len(placements.assignments(e.cell.symbols)),
-                           e.role == "seed") for e in entries], allreps)
+                           e.role == "seed", e.measure) for e in entries], allreps)
     alc = Alc(identity, cache_dir=cache_dir, runner=runner)
     try:
         alc.check_controls()

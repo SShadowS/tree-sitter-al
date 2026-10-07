@@ -1,5 +1,5 @@
 // B7a Task 10 witness (GAP): family key-header, base placement empty, 3 cells; representative occ:_key_header:3@key_declaration#empty
-// Fixture b7_gap_key_header_test.txt#B7a GAP: key-header / empty (3 cells, verdict of the representative GAP); the parser ERRORs on configurations alc accepts; representative occ:_key_header:3@key_declaration%23empty#0
+// Fixture strict_conditional_field_list_items_test.txt#strict field_list: key, empty group right after the fixed ; (key-header empty)#0
 // expect: !X accept
 // expect: X accept
 // source: recorded by B7a Task 10, 2026-10-07: the alc split verdicts of cell occ:_key_header:3@key_declaration#empty in tools/b7_audit/evidence.jsonl.gz

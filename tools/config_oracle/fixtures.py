@@ -151,16 +151,18 @@ def extract(root: Path) -> list:
 # a debt entry's owner is the one that removes it. A production entry also names the
 # milestone it goes by: a sub-project id, or M3/M4/M5 (the oracle milestones C1/C2/C3 run).
 ROADMAP = frozenset({*(f"A{i}" for i in range(1, 8)), *(f"B{i}" for i in range(1, 14)),
-                     "C1", "C2", "C3", "D1", "D2", "E1", "E2", "E3", "F1"})
+                     "C1", "C2", "C3", "D1", "D2", "E1", "E2", "E3", "F1",
+                     # B7b sub-projects (docs/deferred-work.md item 46)
+                     "B7b-1", *(f"B7b-1{c}" for c in "bcdefg"), "B7b-2", "B7b-3"})
 MILESTONES = ROADMAP | {"M3", "M4", "M5"}
 
 # kind -> (category pattern, categories that claim alc rejects the input, the probe's
 # line naming the input it stands for). The two files share everything else.
 _KINDS = {
-    "fixture": (re.compile(r"(?P<cat>negative|invalid-config|debt\((?P<owner>[A-Za-z0-9]+)\)):"),
+    "fixture": (re.compile(r"(?P<cat>negative|invalid-config|debt\((?P<owner>[A-Za-z0-9-]+)\)):"),
                 ("negative", "invalid-config"), "// Fixture "),
     "production": (re.compile(r"(?P<cat>invalid-source|other|"
-                              r"debt\((?P<owner>[A-Za-z0-9]+), (?P<milestone>[A-Za-z0-9]+)\)):"),
+                              r"debt\((?P<owner>[A-Za-z0-9-]+), (?P<milestone>[A-Za-z0-9]+)\)):"),
                    ("invalid-source",), "// Source "),
 }
 # A production `lowering:` prefix names at least the refusal kind and the node type, and

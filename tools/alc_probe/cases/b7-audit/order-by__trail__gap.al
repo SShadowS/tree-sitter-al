@@ -1,8 +1,10 @@
-// B7a Task 10 witness (GAP): family order-by, base placement trail, 12 cells; representative occ:order_by_item:3.0.0@order_by_list#trail
-// Fixture b7_gap_order_by_test.txt#B7a GAP: order-by / trail (12 cells, verdict of the representative MIXED); the parser ERRORs on configurations alc accepts; representative occ:order_by_item:3.0.0@order_by_list%23trail#0
-// expect: !X reject(AL0301)
-// expect: X accept
-// source: recorded by B7a Task 10, 2026-10-07: the alc split verdicts of cell occ:order_by_item:3.0.0@order_by_list#trail in tools/b7_audit/evidence.jsonl.gz
+// B7b-1 Task 13 witness (GAP): family order-by, base placement trail, 9 cells; representative occ:order_by_list:0.1.0.0@declaration_body#trail
+// Fixture b7_gap_order_by_test.txt#B7a GAP: order-by / trail (9 cells, verdict of the representative MIXED); the parser ERRORs on configurations alc accepts; representative occ:order_by_list:0.1.0.0@declaration_body%23trail#0
+// expect: !TPL !X accept
+// expect: !TPL X accept
+// expect: TPL !X reject(AL0301)
+// expect: TPL X accept
+// source: recorded by B7b-1 Task 13, 2026-10-07: the alc split verdicts of cell occ:order_by_list:0.1.0.0@declaration_body#trail in tools/b7_audit/evidence.jsonl.gz
 table 50100 T
 {
     fields
@@ -19,12 +21,17 @@ table 50100 T
 }
 query 50105 Qy
 {
-    OrderBy = ascending(
-K ,
+    OrderBy =
+#if TPL
+        
+ascending(K) ,
 #if X
-N
+descending(N)
 #endif
-);
+;
+#else
+        ascending(K);
+#endif
     elements
     {
         dataitem(D; T)

@@ -122,6 +122,12 @@ link_keying_negative_test.txt
 # Their core is required; alc rejects both in every configuration (AL0107; AL0104/AL0107/
 # AL0176), tools/alc_probe/cases/value-runs/all-empty-{tablerelation,calcformula}.al.
 property_value_run_negative_test.txt
+# B7b-1 Task 7: the outer comma list of OrderBy items is property-value routing, excluded from the
+# strict inner-list change (spec section 2, owner B12): a #if group between two order_by_items stays an ERROR.
+strict_conditional_order_by_fields_negative_test.txt
+# B7b-1 Task 8: a #if group in the move TARGET slot or supplying the fixed `;` lies outside the
+# strict element list (spec rev 2; manifest: excluded, fixed-header slot/separator, owner B7b-3): stays an ERROR.
+strict_conditional_move_elements_negative_test.txt
 # B11: valid AL whose run-of-#if structure is deferred to roadmap B13 (spec §3.1 step 5).
 # Not invalid input. Cases leave this file as B13 gives them structure.
 property_value_run_b13_gap_test.txt
@@ -141,9 +147,7 @@ verbatim_string_unterminated_test.txt
 # alc probe is tools/alc_probe/cases/b7-audit/<family>__<base>__<kind>.al.
 b7_gap_actionref_header_test.txt
 b7_gap_arguments_test.txt
-b7_gap_array_dimensions_test.txt
 b7_gap_assignment_test.txt
-b7_gap_attribute_arguments_test.txt
 b7_gap_binary_operand_test.txt
 b7_gap_calc_formula_test.txt
 b7_gap_caption_subfields_test.txt
@@ -159,11 +163,9 @@ b7_gap_fieldgroup_header_test.txt
 b7_gap_for_bounds_test.txt
 b7_gap_if_condition_test.txt
 b7_gap_implementation_list_test.txt
-b7_gap_implements_test.txt
 b7_gap_in_operand_test.txt
 b7_gap_integer_list_test.txt
 b7_gap_interface_procedure_test.txt
-b7_gap_key_fields_test.txt
 b7_gap_key_header_test.txt
 b7_gap_label_attributes_test.txt
 b7_gap_label_declaration_test.txt
@@ -188,7 +190,6 @@ b7_gap_property_terminator_test.txt
 b7_gap_property_value_test.txt
 b7_gap_range_test.txt
 b7_gap_repeat_until_test.txt
-b7_gap_sorting_test.txt
 b7_gap_split_call_test.txt
 b7_gap_split_code_block_test.txt
 b7_gap_split_complete_body_test.txt
@@ -205,7 +206,6 @@ b7_gap_unary_operand_test.txt
 b7_gap_unassigned_test.txt
 b7_gap_value_header_test.txt
 b7_gap_var_declaration_test.txt
-b7_gap_var_names_test.txt
 b7_gap_where_filter_test.txt
 b7_gap_while_condition_test.txt
 b7_gap_with_test.txt

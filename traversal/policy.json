@@ -72,6 +72,24 @@
       },
       "reason": "Registry branch-select: arms are alternatives in one host slot."
     },
+    "preproc_conditional_array_dimensions": {
+      "class": "branch-container",
+      "arm_boundary": "own-directives",
+      "hosts": {
+        "array_type:<children>": "strict-list",
+        "preproc_conditional_array_dimensions:<children>": "strict-list"
+      },
+      "reason": "B7b-1 strict list: arms are alternative runs of dimensions and separators in the dimension list of array[...] of T (between [ and ]); registry branch-select with host policy strict-list (config_oracle conditional_lists)."
+    },
+    "preproc_conditional_attribute_args": {
+      "class": "branch-container",
+      "arm_boundary": "own-directives",
+      "hosts": {
+        "attribute_argument_list:<children>": "strict-list",
+        "preproc_conditional_attribute_args:<children>": "strict-list"
+      },
+      "reason": "B7b-1 strict list: arms are alternative runs of arguments and separators in the argument list of [Attr(...)] (attribute_argument_list, between ( and )); registry branch-select with host policy strict-list (config_oracle conditional_lists)."
+    },
     "preproc_conditional_case": {
       "class": "branch-container",
       "arm_boundary": "own-directives",
@@ -114,6 +132,15 @@
       "arm_boundary": "own-directives",
       "reason": "Exception (spec 6.1): an assembler whose continuation comes after #endif; the tail extends the expression BEFORE it, so its arms are not complete expressions."
     },
+    "preproc_conditional_field_list_items": {
+      "class": "branch-container",
+      "arm_boundary": "own-directives",
+      "hosts": {
+        "field_list:<children>": "strict-list",
+        "preproc_conditional_field_list_items:<children>": "strict-list"
+      },
+      "reason": "B7b-1 strict list: arms are alternative runs of field names and separators in one key/fieldgroup field list; registry branch-select with host policy strict-list (config_oracle conditional_lists)."
+    },
     "preproc_conditional_fieldgroups": {
       "class": "branch-container",
       "arm_boundary": "own-directives",
@@ -141,6 +168,15 @@
         "preproc_conditional_impl_values:<children>": "list-run"
       },
       "reason": "Arms are alternative runs of implementation values in one list; registry unsupported (milestone 3), classified here by hand."
+    },
+    "preproc_conditional_implements": {
+      "class": "branch-container",
+      "arm_boundary": "own-directives",
+      "hosts": {
+        "implements_clause:<children>": "strict-list",
+        "preproc_conditional_implements:<children>": "strict-list"
+      },
+      "reason": "B7b-1 strict list: arms are alternative runs of interfaces and separators in one interface list; registry branch-select with host policy strict-list (config_oracle conditional_lists, B7b-1 Task 5)."
     },
     "preproc_conditional_keys": {
       "class": "branch-container",
@@ -198,6 +234,18 @@
       },
       "reason": "Registry branch-select: arms are alternatives in one host slot."
     },
+    "preproc_conditional_move_elements": {
+      "class": "branch-container",
+      "arm_boundary": "own-directives",
+      "hosts": {
+        "moveafter_modification:<children>": "strict-list",
+        "movebefore_modification:<children>": "strict-list",
+        "movefirst_modification:<children>": "strict-list",
+        "movelast_modification:<children>": "strict-list",
+        "preproc_conditional_move_elements:<children>": "strict-list"
+      },
+      "reason": "B7b-1 strict list: arms are alternative runs of elements and separators in the element list after a move*'s fixed `;` (the target and the `;` stay outside); registry branch-select with host policy strict-list (config_oracle conditional_lists)."
+    },
     "preproc_conditional_object": {
       "class": "branch-container",
       "arm_boundary": "own-directives",
@@ -214,6 +262,15 @@
         "option_member_list:<children>": "list-run"
       },
       "reason": "Registry branch-select: arms are alternatives in one host slot."
+    },
+    "preproc_conditional_order_by_fields": {
+      "class": "branch-container",
+      "arm_boundary": "own-directives",
+      "hosts": {
+        "order_by_item:<children>": "strict-list",
+        "preproc_conditional_order_by_fields:<children>": "strict-list"
+      },
+      "reason": "B7b-1 strict list: arms are alternative runs of field names and separators inside one ascending( )/descending( ) item; registry branch-select with host policy strict-list (config_oracle conditional_lists)."
     },
     "preproc_conditional_permissions": {
       "class": "branch-container",
@@ -259,6 +316,15 @@
         "report_body:<children>": "splice-repeat"
       },
       "reason": "Registry branch-select: arms are alternatives in one host slot."
+    },
+    "preproc_conditional_sorting_fields": {
+      "class": "branch-container",
+      "arm_boundary": "own-directives",
+      "hosts": {
+        "sorting_value:<children>": "strict-list",
+        "preproc_conditional_sorting_fields:<children>": "strict-list"
+      },
+      "reason": "B7b-1 strict list: arms are alternative runs of field names and separators inside sorting( ) of a view value; registry branch-select with host policy strict-list (config_oracle conditional_lists)."
     },
     "preproc_conditional_statement": {
       "class": "branch-container",
@@ -310,6 +376,15 @@
         "var_body:<children>": "splice-repeat"
       },
       "reason": "Registry branch-select: arms are alternatives in one host slot."
+    },
+    "preproc_conditional_var_names": {
+      "class": "branch-container",
+      "arm_boundary": "own-directives",
+      "hosts": {
+        "variable_declaration:<children>": "strict-list",
+        "preproc_conditional_var_names:<children>": "strict-list"
+      },
+      "reason": "B7b-1 strict list: arms are alternative runs of names and separators in the name list of a variable declaration (up to its `:`); registry branch-select with host policy strict-list (config_oracle conditional_lists)."
     },
     "preproc_conditional_var_block": {
       "class": "branch-container",

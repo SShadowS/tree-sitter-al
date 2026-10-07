@@ -1,5 +1,5 @@
 // B7a Task 10 witness (GAP): family var-names, base placement empty, 9 cells; representative occ:variable_declaration:2.0.1.0.0@preproc_conditional_var#empty
-// Fixture b7_gap_var_names_test.txt#B7a GAP: var-names / empty (9 cells, verdict of the representative GAP); the parser ERRORs on configurations alc accepts; representative occ:variable_declaration:2.0.1.0.0@preproc_conditional_var%23empty#0
+// Fixture strict_conditional_var_names_test.txt#strict var names: empty group between a separator and a name (empty)#0
 // expect: !TPL2 !X accept
 // expect: !TPL2 X accept
 // expect: TPL2 !X accept

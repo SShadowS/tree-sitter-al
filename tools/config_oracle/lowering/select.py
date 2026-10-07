@@ -57,6 +57,10 @@ def branch_select(node, ctx) -> Lowered:
     `]`) wherever they appear and one trailing `;` (`engine._check_alternation`).
     Anything else is `list-separator`.
 
+    **strict-list** (B7b-1). As list-run, the chosen arm's items and separators splice
+    into the host in order, but nothing is hoisted, and the host's complete list region is
+    validated by lowering/conditional_lists.lower_region, not by `_check_alternation`.
+
     One more named rewrite belongs to the list-run of
     `preproc_conditional_option_members`: **option-member-list-unwrap** (G11).
     A #if may open an option-member list (`OptionMembers = #if X A, #endif B;`),
@@ -69,7 +73,7 @@ def branch_select(node, ctx) -> Lowered:
     """
     entry = contracts.REGISTRY[node.kind]
     policy = ctx.policy(entry, node)
-    if policy not in ("splice-repeat", "single-slot", "optional-slot", "list-run"):
+    if policy not in ("splice-repeat", "single-slot", "optional-slot", "list-run", "strict-list"):
         raise LoweringError("policy", node, f"branch-select cannot apply policy {policy!r}")
     arms, endif = split_arms(node)
     choice = chosen_arm(node, arms, ctx)
@@ -89,6 +93,10 @@ def branch_select(node, ctx) -> Lowered:
             for c in content:
                 ctx.accounting.mark(c, "inactive-arm")
     ctx.accounting.mark(endif, "directive")
+    if policy == "strict-list":
+        # B7b-1 strict list (lowering/conditional_lists.py): the arm's items and separators
+        # splice in order; the HOST checks the complete region, never this fragment.
+        out.nodes = _splice_arm(out.nodes)
     if policy == "list-run":
         out.nodes = _splice_arm(out.nodes)
         if HOIST_TERMINATOR and out.nodes and out.nodes[-1].kind == ";" and not out.nodes[-1].children:

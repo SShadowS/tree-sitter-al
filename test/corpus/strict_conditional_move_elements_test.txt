@@ -1,0 +1,1470 @@
+; B7b-1 Task 8: #if groups in the element list of moveafter/movebefore/movefirst/movelast
+; (family move_elements, grammar.js strictConditionalList). The list is the part AFTER the fixed `;`:
+; the target and the fixed `;` stay outside it, so a group there is B7b-3 territory and stays ERROR
+; (strict_conditional_move_elements_negative_test.txt and the remaining b7_gap_move_modification cases).
+; The first 7 cases are the shapes of b7_gap_move_modification_test.txt that now parse, list text
+; unchanged, on the probed route (actions, moveafter). `MIXED` cases are accepted by alc in one
+; configuration and rejected in the other (AL0319 empty list, AL0107/AL0301 separators): the split
+; source parses, the invalid configuration is the config oracle's to judge (spec section 3).
+; An emptied element list stays a flat-grammar error: alc rejects it (AL0319, B7b-1 Task 2,
+; empty-semantic-rejected), so `element` is never optional in the flat reading.
+; Trees are hand-written from the flat reading, never copied from parser output.
+
+================================================================================
+strict move: empty group right after the fixed separator (empty, fixed-separator cell)
+================================================================================
+
+pageextension 50113 PE extends PG
+{
+    actions
+    {
+        moveafter(
+A1 ;
+#if X
+#endif
+A2
+)
+    }
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (pageextension_declaration
+    (pageextension_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    (extends_keyword)
+    base_object: (identifier)
+    body: (declaration_body
+      (actions_section
+        (actions_keyword)
+        body: (action_body
+          (moveafter_modification
+            (moveafter_keyword)
+            target: (identifier)
+            (preproc_conditional_move_elements
+              (preproc_if
+                (preproc_open)
+                condition: (identifier))
+              (preproc_endif
+                (preproc_close)))
+            element: (identifier)))))))
+
+================================================================================
+strict move MIXED: the whole element list in one group, no #else (empty-list)
+================================================================================
+
+pageextension 50113 PE extends PG
+{
+    actions
+    {
+        moveafter(A1;
+#if X
+A2 , A3
+#endif
+)
+    }
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (pageextension_declaration
+    (pageextension_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    (extends_keyword)
+    base_object: (identifier)
+    body: (declaration_body
+      (actions_section
+        (actions_keyword)
+        body: (action_body
+          (moveafter_modification
+            (moveafter_keyword)
+            target: (identifier)
+            (preproc_conditional_move_elements
+              (preproc_if
+                (preproc_open)
+                condition: (identifier))
+              element: (identifier)
+              element: (identifier)
+              (preproc_endif
+                (preproc_close)))))))))
+
+================================================================================
+strict move MIXED: separator-only group before the first element (holes-lead)
+================================================================================
+
+pageextension 50113 PE extends PG
+{
+    actions
+    {
+        moveafter(A1;
+#if X
+,
+#endif
+A2 , A3)
+    }
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (pageextension_declaration
+    (pageextension_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    (extends_keyword)
+    base_object: (identifier)
+    body: (declaration_body
+      (actions_section
+        (actions_keyword)
+        body: (action_body
+          (moveafter_modification
+            (moveafter_keyword)
+            target: (identifier)
+            (preproc_conditional_move_elements
+              (preproc_if
+                (preproc_open)
+                condition: (identifier))
+              (preproc_endif
+                (preproc_close)))
+            element: (identifier)
+            element: (identifier)))))))
+
+================================================================================
+strict move MIXED: separator-only group after a separator (holes-mid)
+================================================================================
+
+pageextension 50113 PE extends PG
+{
+    actions
+    {
+        moveafter(A1; A2 ,
+#if X
+,
+#endif
+A3)
+    }
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (pageextension_declaration
+    (pageextension_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    (extends_keyword)
+    base_object: (identifier)
+    body: (declaration_body
+      (actions_section
+        (actions_keyword)
+        body: (action_body
+          (moveafter_modification
+            (moveafter_keyword)
+            target: (identifier)
+            element: (identifier)
+            (preproc_conditional_move_elements
+              (preproc_if
+                (preproc_open)
+                condition: (identifier))
+              (preproc_endif
+                (preproc_close)))
+            element: (identifier)))))))
+
+================================================================================
+strict move MIXED: separator-only group after the last element (holes-trail)
+================================================================================
+
+pageextension 50113 PE extends PG
+{
+    actions
+    {
+        moveafter(A1; A2 , A3
+#if X
+,
+#endif
+)
+    }
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (pageextension_declaration
+    (pageextension_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    (extends_keyword)
+    base_object: (identifier)
+    body: (declaration_body
+      (actions_section
+        (actions_keyword)
+        body: (action_body
+          (moveafter_modification
+            (moveafter_keyword)
+            target: (identifier)
+            element: (identifier)
+            element: (identifier)
+            (preproc_conditional_move_elements
+              (preproc_if
+                (preproc_open)
+                condition: (identifier))
+              (preproc_endif
+                (preproc_close)))))))))
+
+================================================================================
+strict move: leading group whose arm ends with the separator (lead-optional)
+================================================================================
+
+pageextension 50113 PE extends PG
+{
+    actions
+    {
+        moveafter(A1;
+#if X
+A2 ,
+#endif
+A3)
+    }
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (pageextension_declaration
+    (pageextension_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    (extends_keyword)
+    base_object: (identifier)
+    body: (declaration_body
+      (actions_section
+        (actions_keyword)
+        body: (action_body
+          (moveafter_modification
+            (moveafter_keyword)
+            target: (identifier)
+            (preproc_conditional_move_elements
+              (preproc_if
+                (preproc_open)
+                condition: (identifier))
+              element: (identifier)
+              (preproc_endif
+                (preproc_close)))
+            element: (identifier)))))))
+
+================================================================================
+strict move MIXED: group holding the only element right after the fixed separator (trail, fixed-separator cell)
+================================================================================
+
+pageextension 50113 PE extends PG
+{
+    actions
+    {
+        moveafter(
+A1 ;
+#if X
+A2
+#endif
+)
+    }
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (pageextension_declaration
+    (pageextension_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    (extends_keyword)
+    base_object: (identifier)
+    body: (declaration_body
+      (actions_section
+        (actions_keyword)
+        body: (action_body
+          (moveafter_modification
+            (moveafter_keyword)
+            target: (identifier)
+            (preproc_conditional_move_elements
+              (preproc_if
+                (preproc_open)
+                condition: (identifier))
+              element: (identifier)
+              (preproc_endif
+                (preproc_close)))))))))
+
+================================================================================
+strict move: group with the separator before its element (sep-before-end)
+================================================================================
+
+pageextension 50113 PE extends PG
+{
+    actions
+    {
+        moveafter(A1; A2
+#if X
+, A3
+#endif
+)
+    }
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (pageextension_declaration
+    (pageextension_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    (extends_keyword)
+    base_object: (identifier)
+    body: (declaration_body
+      (actions_section
+        (actions_keyword)
+        body: (action_body
+          (moveafter_modification
+            (moveafter_keyword)
+            target: (identifier)
+            element: (identifier)
+            (preproc_conditional_move_elements
+              (preproc_if
+                (preproc_open)
+                condition: (identifier))
+              element: (identifier)
+              (preproc_endif
+                (preproc_close)))))))))
+
+================================================================================
+strict move: group with the separator before its element, then an element (sep-before)
+================================================================================
+
+pageextension 50113 PE extends PG
+{
+    actions
+    {
+        moveafter(A1; A2
+#if X
+, A3
+#endif
+, A4)
+    }
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (pageextension_declaration
+    (pageextension_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    (extends_keyword)
+    base_object: (identifier)
+    body: (declaration_body
+      (actions_section
+        (actions_keyword)
+        body: (action_body
+          (moveafter_modification
+            (moveafter_keyword)
+            target: (identifier)
+            element: (identifier)
+            (preproc_conditional_move_elements
+              (preproc_if
+                (preproc_open)
+                condition: (identifier))
+              element: (identifier)
+              (preproc_endif
+                (preproc_close)))
+            element: (identifier)))))))
+
+================================================================================
+strict move: group with the separator after its element (sep-after)
+================================================================================
+
+pageextension 50113 PE extends PG
+{
+    actions
+    {
+        moveafter(A1; A2 ,
+#if X
+A3 ,
+#endif
+A4)
+    }
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (pageextension_declaration
+    (pageextension_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    (extends_keyword)
+    base_object: (identifier)
+    body: (declaration_body
+      (actions_section
+        (actions_keyword)
+        body: (action_body
+          (moveafter_modification
+            (moveafter_keyword)
+            target: (identifier)
+            element: (identifier)
+            (preproc_conditional_move_elements
+              (preproc_if
+                (preproc_open)
+                condition: (identifier))
+              element: (identifier)
+              (preproc_endif
+                (preproc_close)))
+            element: (identifier)))))))
+
+================================================================================
+strict move: separator-only arms between two elements (sep-only)
+================================================================================
+
+pageextension 50113 PE extends PG
+{
+    actions
+    {
+        moveafter(A1; A2
+#if X
+,
+#else
+,
+#endif
+A3)
+    }
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (pageextension_declaration
+    (pageextension_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    (extends_keyword)
+    base_object: (identifier)
+    body: (declaration_body
+      (actions_section
+        (actions_keyword)
+        body: (action_body
+          (moveafter_modification
+            (moveafter_keyword)
+            target: (identifier)
+            element: (identifier)
+            (preproc_conditional_move_elements
+              (preproc_if
+                (preproc_open)
+                condition: (identifier))
+              (preproc_else)
+              (preproc_endif
+                (preproc_close)))
+            element: (identifier)))))))
+
+================================================================================
+strict move: an arm holding both separators (both-in-arm)
+================================================================================
+
+pageextension 50113 PE extends PG
+{
+    actions
+    {
+        moveafter(A1; A2
+#if X
+, A3 ,
+#else
+,
+#endif
+A4)
+    }
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (pageextension_declaration
+    (pageextension_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    (extends_keyword)
+    base_object: (identifier)
+    body: (declaration_body
+      (actions_section
+        (actions_keyword)
+        body: (action_body
+          (moveafter_modification
+            (moveafter_keyword)
+            target: (identifier)
+            element: (identifier)
+            (preproc_conditional_move_elements
+              (preproc_if
+                (preproc_open)
+                condition: (identifier))
+              element: (identifier)
+              (preproc_else)
+              (preproc_endif
+                (preproc_close)))
+            element: (identifier)))))))
+
+================================================================================
+strict move: group replacing the first element (first-replace)
+================================================================================
+
+pageextension 50113 PE extends PG
+{
+    actions
+    {
+        moveafter(A1;
+#if X
+A2
+#else
+A3
+#endif
+, A4)
+    }
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (pageextension_declaration
+    (pageextension_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    (extends_keyword)
+    base_object: (identifier)
+    body: (declaration_body
+      (actions_section
+        (actions_keyword)
+        body: (action_body
+          (moveafter_modification
+            (moveafter_keyword)
+            target: (identifier)
+            (preproc_conditional_move_elements
+              (preproc_if
+                (preproc_open)
+                condition: (identifier))
+              element: (identifier)
+              (preproc_else)
+              element: (identifier)
+              (preproc_endif
+                (preproc_close)))
+            element: (identifier)))))))
+
+================================================================================
+strict move: nested group (nested)
+================================================================================
+
+pageextension 50113 PE extends PG
+{
+    actions
+    {
+        moveafter(A1; A2
+#if X
+, A3
+#if Y
+, A4
+#endif
+#endif
+, A5)
+    }
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (pageextension_declaration
+    (pageextension_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    (extends_keyword)
+    base_object: (identifier)
+    body: (declaration_body
+      (actions_section
+        (actions_keyword)
+        body: (action_body
+          (moveafter_modification
+            (moveafter_keyword)
+            target: (identifier)
+            element: (identifier)
+            (preproc_conditional_move_elements
+              (preproc_if
+                (preproc_open)
+                condition: (identifier))
+              element: (identifier)
+              (preproc_conditional_move_elements
+                (preproc_if
+                  (preproc_open)
+                  condition: (identifier))
+                element: (identifier)
+                (preproc_endif
+                  (preproc_close)))
+              (preproc_endif
+                (preproc_close)))
+            element: (identifier)))))))
+
+================================================================================
+strict move: adjacent independent groups (adjacent-indep)
+================================================================================
+
+pageextension 50113 PE extends PG
+{
+    actions
+    {
+        moveafter(A1; A2
+#if X
+, A3
+#endif
+#if Y
+, A4
+#endif
+)
+    }
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (pageextension_declaration
+    (pageextension_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    (extends_keyword)
+    base_object: (identifier)
+    body: (declaration_body
+      (actions_section
+        (actions_keyword)
+        body: (action_body
+          (moveafter_modification
+            (moveafter_keyword)
+            target: (identifier)
+            element: (identifier)
+            (preproc_conditional_move_elements
+              (preproc_if
+                (preproc_open)
+                condition: (identifier))
+              element: (identifier)
+              (preproc_endif
+                (preproc_close)))
+            (preproc_conditional_move_elements
+              (preproc_if
+                (preproc_open)
+                condition: (identifier))
+              element: (identifier)
+              (preproc_endif
+                (preproc_close)))))))))
+
+================================================================================
+strict move: adjacent complementary groups with #if not (adjacent-compl)
+================================================================================
+
+pageextension 50113 PE extends PG
+{
+    actions
+    {
+        moveafter(A1; A2
+#if X
+, A3
+#endif
+#if not X
+, A4
+#endif
+)
+    }
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (pageextension_declaration
+    (pageextension_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    (extends_keyword)
+    base_object: (identifier)
+    body: (declaration_body
+      (actions_section
+        (actions_keyword)
+        body: (action_body
+          (moveafter_modification
+            (moveafter_keyword)
+            target: (identifier)
+            element: (identifier)
+            (preproc_conditional_move_elements
+              (preproc_if
+                (preproc_open)
+                condition: (identifier))
+              element: (identifier)
+              (preproc_endif
+                (preproc_close)))
+            (preproc_conditional_move_elements
+              (preproc_if
+                (preproc_open)
+                condition: (preproc_not_expression
+                  (identifier)))
+              element: (identifier)
+              (preproc_endif
+                (preproc_close)))))))))
+
+================================================================================
+strict move: empty group between a separator and an element (empty)
+================================================================================
+
+pageextension 50113 PE extends PG
+{
+    actions
+    {
+        moveafter(A1; A2 ,
+#if X
+#endif
+A3)
+    }
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (pageextension_declaration
+    (pageextension_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    (extends_keyword)
+    base_object: (identifier)
+    body: (declaration_body
+      (actions_section
+        (actions_keyword)
+        body: (action_body
+          (moveafter_modification
+            (moveafter_keyword)
+            target: (identifier)
+            element: (identifier)
+            (preproc_conditional_move_elements
+              (preproc_if
+                (preproc_open)
+                condition: (identifier))
+              (preproc_endif
+                (preproc_close)))
+            element: (identifier)))))))
+
+================================================================================
+strict move: #elif arm (elif)
+================================================================================
+
+pageextension 50113 PE extends PG
+{
+    actions
+    {
+        moveafter(A1; A2
+#if X
+, A3
+#elif Y
+, A4
+#endif
+, A5)
+    }
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (pageextension_declaration
+    (pageextension_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    (extends_keyword)
+    base_object: (identifier)
+    body: (declaration_body
+      (actions_section
+        (actions_keyword)
+        body: (action_body
+          (moveafter_modification
+            (moveafter_keyword)
+            target: (identifier)
+            element: (identifier)
+            (preproc_conditional_move_elements
+              (preproc_if
+                (preproc_open)
+                condition: (identifier))
+              element: (identifier)
+              (preproc_elif
+                condition: (identifier))
+              element: (identifier)
+              (preproc_endif
+                (preproc_close)))
+            element: (identifier)))))))
+
+================================================================================
+strict move: arms with different element counts (count-differs)
+================================================================================
+
+pageextension 50113 PE extends PG
+{
+    actions
+    {
+        moveafter(A1; A2
+#if X
+, A3 , A4
+#else
+, A5
+#endif
+)
+    }
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (pageextension_declaration
+    (pageextension_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    (extends_keyword)
+    base_object: (identifier)
+    body: (declaration_body
+      (actions_section
+        (actions_keyword)
+        body: (action_body
+          (moveafter_modification
+            (moveafter_keyword)
+            target: (identifier)
+            element: (identifier)
+            (preproc_conditional_move_elements
+              (preproc_if
+                (preproc_open)
+                condition: (identifier))
+              element: (identifier)
+              element: (identifier)
+              (preproc_else)
+              element: (identifier)
+              (preproc_endif
+                (preproc_close)))))))))
+
+================================================================================
+strict move: the whole element list in the arms of one group (one-elem)
+================================================================================
+
+pageextension 50113 PE extends PG
+{
+    actions
+    {
+        moveafter(A1;
+#if X
+A2 , A3
+#else
+A2
+#endif
+)
+    }
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (pageextension_declaration
+    (pageextension_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    (extends_keyword)
+    base_object: (identifier)
+    body: (declaration_body
+      (actions_section
+        (actions_keyword)
+        body: (action_body
+          (moveafter_modification
+            (moveafter_keyword)
+            target: (identifier)
+            (preproc_conditional_move_elements
+              (preproc_if
+                (preproc_open)
+                condition: (identifier))
+              element: (identifier)
+              element: (identifier)
+              (preproc_else)
+              element: (identifier)
+              (preproc_endif
+                (preproc_close)))))))))
+
+================================================================================
+strict move: an empty #if arm before an #else arm
+================================================================================
+
+pageextension 50113 PE extends PG
+{
+    actions
+    {
+        moveafter(A1; A2
+#if X
+#else
+, A3
+#endif
+)
+    }
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (pageextension_declaration
+    (pageextension_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    (extends_keyword)
+    base_object: (identifier)
+    body: (declaration_body
+      (actions_section
+        (actions_keyword)
+        body: (action_body
+          (moveafter_modification
+            (moveafter_keyword)
+            target: (identifier)
+            element: (identifier)
+            (preproc_conditional_move_elements
+              (preproc_if
+                (preproc_open)
+                condition: (identifier))
+              (preproc_else)
+              element: (identifier)
+              (preproc_endif
+                (preproc_close)))))))))
+
+================================================================================
+strict move: comments at every boundary
+================================================================================
+
+pageextension 50113 PE extends PG
+{
+    actions
+    {
+        moveafter(/* c0 */ A1 /* c1 */ ; /* c2 */ A2 /* c3 */
+#if X // c4
+/* c5 */ , /* c6 */ A3 /* c7 */
+#else // c8
+, A4
+#endif
+/* c9 */ , /* c10 */ A5 /* c11 */)
+    }
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (pageextension_declaration
+    (pageextension_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    (extends_keyword)
+    base_object: (identifier)
+    body: (declaration_body
+      (actions_section
+        (actions_keyword)
+        body: (action_body
+          (moveafter_modification
+            (moveafter_keyword)
+            (multiline_comment)
+            target: (identifier)
+            (multiline_comment)
+            (multiline_comment)
+            element: (identifier)
+            (multiline_comment)
+            (preproc_conditional_move_elements
+              (preproc_if
+                (preproc_open)
+                condition: (identifier)
+                (comment))
+              (multiline_comment)
+              (multiline_comment)
+              element: (identifier)
+              (multiline_comment)
+              (preproc_else)
+              (comment)
+              element: (identifier)
+              (preproc_endif
+                (preproc_close)))
+            (multiline_comment)
+            (multiline_comment)
+            element: (identifier)
+            (multiline_comment)))))))
+
+================================================================================
+strict move: quoted, escaped and contextual elements inside the arms
+================================================================================
+
+pageextension 50113 PE extends PG
+{
+    actions
+    {
+        moveafter("A 1";
+#if X
+"A ""2""" , Value
+#else
+Table , Key
+#endif
+, Field)
+    }
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (pageextension_declaration
+    (pageextension_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    (extends_keyword)
+    base_object: (identifier)
+    body: (declaration_body
+      (actions_section
+        (actions_keyword)
+        body: (action_body
+          (moveafter_modification
+            (moveafter_keyword)
+            target: (quoted_identifier)
+            (preproc_conditional_move_elements
+              (preproc_if
+                (preproc_open)
+                condition: (identifier))
+              element: (quoted_identifier)
+              element: (identifier)
+              (preproc_else)
+              element: (identifier)
+              element: (identifier)
+              (preproc_endif
+                (preproc_close)))
+            element: (identifier)))))))
+
+================================================================================
+strict move: movefirst in layout, leading group whose arm ends with the separator
+================================================================================
+
+pageextension 50113 PE extends PG
+{
+    layout
+    {
+        movefirst(Content;
+#if X
+"No." ,
+#endif
+Name)
+    }
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (pageextension_declaration
+    (pageextension_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    (extends_keyword)
+    base_object: (identifier)
+    body: (declaration_body
+      (layout_section
+        (layout_keyword)
+        body: (layout_body
+          (movefirst_modification
+            (movefirst_keyword)
+            target: (identifier)
+            (preproc_conditional_move_elements
+              (preproc_if
+                (preproc_open)
+                condition: (identifier))
+              element: (quoted_identifier)
+              (preproc_endif
+                (preproc_close)))
+            element: (identifier)))))))
+
+================================================================================
+strict move: movelast in layout, group with the separator before its element
+================================================================================
+
+pageextension 50113 PE extends PG
+{
+    layout
+    {
+        movelast(Content; Name
+#if X
+, City
+#endif
+)
+    }
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (pageextension_declaration
+    (pageextension_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    (extends_keyword)
+    base_object: (identifier)
+    body: (declaration_body
+      (layout_section
+        (layout_keyword)
+        body: (layout_body
+          (movelast_modification
+            (movelast_keyword)
+            target: (identifier)
+            element: (identifier)
+            (preproc_conditional_move_elements
+              (preproc_if
+                (preproc_open)
+                condition: (identifier))
+              element: (identifier)
+              (preproc_endif
+                (preproc_close)))))))))
+
+================================================================================
+strict move: movebefore in actions, separator-only arms
+================================================================================
+
+pageextension 50113 PE extends PG
+{
+    actions
+    {
+        movebefore(A1; A2
+#if X
+,
+#else
+,
+#endif
+A3)
+    }
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (pageextension_declaration
+    (pageextension_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    (extends_keyword)
+    base_object: (identifier)
+    body: (declaration_body
+      (actions_section
+        (actions_keyword)
+        body: (action_body
+          (movebefore_modification
+            (movebefore_keyword)
+            target: (identifier)
+            element: (identifier)
+            (preproc_conditional_move_elements
+              (preproc_if
+                (preproc_open)
+                condition: (identifier))
+              (preproc_else)
+              (preproc_endif
+                (preproc_close)))
+            element: (identifier)))))))
+
+================================================================================
+strict move: group inside a move in an arm of an enclosing #if (preproc_conditional_actions)
+================================================================================
+
+pageextension 50113 PE extends PG
+{
+    actions
+    {
+#if TPL
+        moveafter(A1; A2
+#if X
+, A3
+#endif
+)
+#endif
+    }
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (pageextension_declaration
+    (pageextension_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    (extends_keyword)
+    base_object: (identifier)
+    body: (declaration_body
+      (actions_section
+        (actions_keyword)
+        body: (action_body
+          (preproc_conditional_actions
+            (preproc_if
+              (preproc_open)
+              condition: (identifier))
+            (moveafter_modification
+              (moveafter_keyword)
+              target: (identifier)
+              element: (identifier)
+              (preproc_conditional_move_elements
+                (preproc_if
+                  (preproc_open)
+                  condition: (identifier))
+                element: (identifier)
+                (preproc_endif
+                  (preproc_close))))
+            (preproc_endif
+              (preproc_close))))))))
+
+================================================================================
+strict move: group inside a move in an arm of an enclosing #if (preproc_conditional_layout)
+================================================================================
+
+pageextension 50113 PE extends PG
+{
+    layout
+    {
+#if TPL
+        movelast(Content; Name
+#if X
+, City
+#endif
+)
+#else
+        movelast(Content; Name)
+#endif
+    }
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (pageextension_declaration
+    (pageextension_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    (extends_keyword)
+    base_object: (identifier)
+    body: (declaration_body
+      (layout_section
+        (layout_keyword)
+        body: (layout_body
+          (preproc_conditional_layout
+            (preproc_if
+              (preproc_open)
+              condition: (identifier))
+            (movelast_modification
+              (movelast_keyword)
+              target: (identifier)
+              element: (identifier)
+              (preproc_conditional_move_elements
+                (preproc_if
+                  (preproc_open)
+                  condition: (identifier))
+                element: (identifier)
+                (preproc_endif
+                  (preproc_close))))
+            (preproc_else)
+            (movelast_modification
+              (movelast_keyword)
+              target: (identifier)
+              element: (identifier))
+            (preproc_endif
+              (preproc_close))))))))
+
+================================================================================
+strict move preservation: plain element lists on all four hosts
+================================================================================
+
+pageextension 50113 PE extends PG
+{
+    layout
+    {
+        moveafter("Address 2"; City, CountyGroup)
+        movefirst(General; "No.", Name)
+        movelast(General; Blocked)
+        movebefore(Name; "Name 2", Address)
+    }
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (pageextension_declaration
+    (pageextension_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    (extends_keyword)
+    base_object: (identifier)
+    body: (declaration_body
+      (layout_section
+        (layout_keyword)
+        body: (layout_body
+          (moveafter_modification
+            (moveafter_keyword)
+            target: (quoted_identifier)
+            element: (identifier)
+            element: (identifier))
+          (movefirst_modification
+            (movefirst_keyword)
+            target: (identifier)
+            element: (quoted_identifier)
+            element: (identifier))
+          (movelast_modification
+            (movelast_keyword)
+            target: (identifier)
+            element: (identifier))
+          (movebefore_modification
+            (movebefore_keyword)
+            target: (identifier)
+            element: (quoted_identifier)
+            element: (identifier)))))))
+
+================================================================================
+strict move preservation: quoted, escaped and contextual elements
+================================================================================
+
+pageextension 50113 PE extends PG
+{
+    actions
+    {
+        moveafter("A ""1"""; "A 2", Value, Table, Key, Field)
+    }
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (pageextension_declaration
+    (pageextension_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    (extends_keyword)
+    base_object: (identifier)
+    body: (declaration_body
+      (actions_section
+        (actions_keyword)
+        body: (action_body
+          (moveafter_modification
+            (moveafter_keyword)
+            target: (quoted_identifier)
+            element: (quoted_identifier)
+            element: (identifier)
+            element: (identifier)
+            element: (identifier)
+            element: (identifier)))))))
+
+================================================================================
+strict move preservation: comments between plain elements
+================================================================================
+
+pageextension 50113 PE extends PG
+{
+    actions
+    {
+        moveafter(A1; A2 /* c0 */ , // c1
+ A3)
+    }
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (pageextension_declaration
+    (pageextension_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    (extends_keyword)
+    base_object: (identifier)
+    body: (declaration_body
+      (actions_section
+        (actions_keyword)
+        body: (action_body
+          (moveafter_modification
+            (moveafter_keyword)
+            target: (identifier)
+            element: (identifier)
+            (multiline_comment)
+            (comment)
+            element: (identifier)))))))
+
+================================================================================
+strict move preservation: move inside an enclosing #if
+================================================================================
+
+pageextension 50113 PE extends PG
+{
+    actions
+    {
+#if TPL
+        moveafter(A1; A2, A3)
+#endif
+    }
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (pageextension_declaration
+    (pageextension_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    (extends_keyword)
+    base_object: (identifier)
+    body: (declaration_body
+      (actions_section
+        (actions_keyword)
+        body: (action_body
+          (preproc_conditional_actions
+            (preproc_if
+              (preproc_open)
+              condition: (identifier))
+            (moveafter_modification
+              (moveafter_keyword)
+              target: (identifier)
+              element: (identifier)
+              element: (identifier))
+            (preproc_endif
+              (preproc_close))))))))
+
+================================================================================
+strict move preservation: the whole move in each arm of an enclosing #if
+================================================================================
+
+pageextension 50113 PE extends PG
+{
+    actions
+    {
+#if X
+        moveafter(A1; A2, A3)
+#else
+        moveafter(A1; A2)
+#endif
+    }
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (pageextension_declaration
+    (pageextension_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    (extends_keyword)
+    base_object: (identifier)
+    body: (declaration_body
+      (actions_section
+        (actions_keyword)
+        body: (action_body
+          (preproc_conditional_actions
+            (preproc_if
+              (preproc_open)
+              condition: (identifier))
+            (moveafter_modification
+              (moveafter_keyword)
+              target: (identifier)
+              element: (identifier)
+              element: (identifier))
+            (preproc_else)
+            (moveafter_modification
+              (moveafter_keyword)
+              target: (identifier)
+              element: (identifier))
+            (preproc_endif
+              (preproc_close))))))))

@@ -197,6 +197,13 @@ def test_classes_require_a_cannot_validate_reason_prefix(tmp_path):
             _classes(tmp_path, f"c.txt#A#0\t*\t{bad}\treason")
 
 
+def test_classes_accept_a_hyphenated_b7b_owner(tmp_path):
+    ok = _classes(tmp_path, "c.txt#A#0\t*\tcannot-validate:resolver\tdebt(B7b-3): the fixed `;` of a move")
+    assert ok[("c.txt#A#0", "*")][1].startswith("debt(B7b-3)")
+    with pytest.raises(ValueError, match="not a roadmap sub-project"):
+        _classes(tmp_path, "c.txt#A#0\t*\tcannot-validate:resolver\tdebt(B7b-9): no such sub-project")
+
+
 def test_classes_require_a_reason(tmp_path):
     with pytest.raises(ValueError):
         _classes(tmp_path, "c.txt#A#0\t*\tcannot-validate:resolver\t ")

@@ -1,0 +1,1331 @@
+; B7b-1 Task 12: #if groups in the name list of an ATTRIBUTED variable declaration. The `[` of a variable
+; attribute is the external token var_attribute_open, decided by a scanner lookahead from the `[` to the
+; declaration's `:` (src/scanner.c var_name_list_follows). Each case pins which node owns the `[`:
+; var_attribute_item for a declaration, attribute_item for a procedure. The shapes are the ones alc accepts
+; syntactically (B7b-1 Task 2, probes tools/alc_probe/cases/b7b1/vn__* and pa__*); `MIXED` cases are
+; accepted by alc in one configuration and rejected (AL0104/AL0107, syntax of the selected text) in the
+; other. The procedure counterparts keep the trees they had before Task 12.
+; Trees are hand-written from the flat reading, never copied from parser output.
+
+================================================================================
+strict var names attr: group holding a leading separator and a name (sep-lead)
+================================================================================
+
+codeunit 50101 P
+{
+    var
+        [NonDebuggable]
+        A
+#if X
+        , B
+#endif
+        : Integer;
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (var_section
+        (var_keyword)
+        body: (var_body
+          (var_attribute_item
+            (var_attribute_open)
+            attribute: (attribute_content
+              name: (identifier)))
+          (variable_declaration
+            name: (identifier)
+            (preproc_conditional_var_names
+              (preproc_if
+                (preproc_open)
+                condition: (identifier))
+              name: (identifier)
+              (preproc_endif
+                (preproc_close)))
+            type: (type_specification
+              (basic_type))))))))
+
+================================================================================
+strict var names attr: group holding a name and a trailing separator (sep-trail)
+================================================================================
+
+codeunit 50101 P
+{
+    var
+        [NonDebuggable]
+        A,
+#if X
+        B,
+#endif
+        C: Integer;
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (var_section
+        (var_keyword)
+        body: (var_body
+          (var_attribute_item
+            (var_attribute_open)
+            attribute: (attribute_content
+              name: (identifier)))
+          (variable_declaration
+            name: (identifier)
+            (preproc_conditional_var_names
+              (preproc_if
+                (preproc_open)
+                condition: (identifier))
+              name: (identifier)
+              (preproc_endif
+                (preproc_close)))
+            name: (identifier)
+            type: (type_specification
+              (basic_type))))))))
+
+================================================================================
+strict var names attr: last name chosen by #if/#else (name-alt)
+================================================================================
+
+codeunit 50101 P
+{
+    var
+        [NonDebuggable]
+        A,
+#if X
+        B
+#else
+        C
+#endif
+        : Integer;
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (var_section
+        (var_keyword)
+        body: (var_body
+          (var_attribute_item
+            (var_attribute_open)
+            attribute: (attribute_content
+              name: (identifier)))
+          (variable_declaration
+            name: (identifier)
+            (preproc_conditional_var_names
+              (preproc_if
+                (preproc_open)
+                condition: (identifier))
+              name: (identifier)
+              (preproc_else)
+              name: (identifier)
+              (preproc_endif
+                (preproc_close)))
+            type: (type_specification
+              (basic_type))))))))
+
+================================================================================
+strict var names attr: separator-only group, MIXED (sep-only)
+================================================================================
+
+codeunit 50101 P
+{
+    var
+        [NonDebuggable]
+        A
+#if X
+        ,
+#endif
+        B: Integer;
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (var_section
+        (var_keyword)
+        body: (var_body
+          (var_attribute_item
+            (var_attribute_open)
+            attribute: (attribute_content
+              name: (identifier)))
+          (variable_declaration
+            name: (identifier)
+            (preproc_conditional_var_names
+              (preproc_if
+                (preproc_open)
+                condition: (identifier))
+              (preproc_endif
+                (preproc_close)))
+            name: (identifier)
+            type: (type_specification
+              (basic_type))))))))
+
+================================================================================
+strict var names attr: group after the attribute replaces the first name (first-replace)
+================================================================================
+
+codeunit 50101 P
+{
+    var
+        [NonDebuggable]
+#if X
+        A
+#else
+        B
+#endif
+        , C: Integer;
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (var_section
+        (var_keyword)
+        body: (var_body
+          (var_attribute_item
+            (var_attribute_open)
+            attribute: (attribute_content
+              name: (identifier)))
+          (variable_declaration
+            (preproc_conditional_var_names
+              (preproc_if
+                (preproc_open)
+                condition: (identifier))
+              name: (identifier)
+              (preproc_else)
+              name: (identifier)
+              (preproc_endif
+                (preproc_close)))
+            name: (identifier)
+            type: (type_specification
+              (basic_type))))))))
+
+================================================================================
+strict var names attr: group after the attribute holds the first name and its separator (first-group-sep)
+================================================================================
+
+codeunit 50101 P
+{
+    var
+        [NonDebuggable]
+#if X
+        A,
+#endif
+        B: Integer;
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (var_section
+        (var_keyword)
+        body: (var_body
+          (var_attribute_item
+            (var_attribute_open)
+            attribute: (attribute_content
+              name: (identifier)))
+          (variable_declaration
+            (preproc_conditional_var_names
+              (preproc_if
+                (preproc_open)
+                condition: (identifier))
+              name: (identifier)
+              (preproc_endif
+                (preproc_close)))
+            name: (identifier)
+            type: (type_specification
+              (basic_type))))))))
+
+================================================================================
+strict var names attr: nested groups (nested)
+================================================================================
+
+codeunit 50101 P
+{
+    var
+        [NonDebuggable]
+        A,
+#if X
+        B,
+#if Y
+        C,
+#endif
+#endif
+        D: Integer;
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (var_section
+        (var_keyword)
+        body: (var_body
+          (var_attribute_item
+            (var_attribute_open)
+            attribute: (attribute_content
+              name: (identifier)))
+          (variable_declaration
+            name: (identifier)
+            (preproc_conditional_var_names
+              (preproc_if
+                (preproc_open)
+                condition: (identifier))
+              name: (identifier)
+              (preproc_conditional_var_names
+                (preproc_if
+                  (preproc_open)
+                  condition: (identifier))
+                name: (identifier)
+                (preproc_endif
+                  (preproc_close)))
+              (preproc_endif
+                (preproc_close)))
+            name: (identifier)
+            type: (type_specification
+              (basic_type))))))))
+
+================================================================================
+strict var names attr: #if/#elif/#else choosing the last name (elif)
+================================================================================
+
+codeunit 50101 P
+{
+    var
+        [NonDebuggable]
+        A,
+#if X
+        B
+#elif Y
+        C
+#else
+        D
+#endif
+        : Integer;
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (var_section
+        (var_keyword)
+        body: (var_body
+          (var_attribute_item
+            (var_attribute_open)
+            attribute: (attribute_content
+              name: (identifier)))
+          (variable_declaration
+            name: (identifier)
+            (preproc_conditional_var_names
+              (preproc_if
+                (preproc_open)
+                condition: (identifier))
+              name: (identifier)
+              (preproc_elif
+                condition: (identifier))
+              name: (identifier)
+              (preproc_else)
+              name: (identifier)
+              (preproc_endif
+                (preproc_close)))
+            type: (type_specification
+              (basic_type))))))))
+
+================================================================================
+strict var names attr: two adjacent groups (adjacent)
+================================================================================
+
+codeunit 50101 P
+{
+    var
+        [NonDebuggable]
+        A
+#if X
+        , B
+#endif
+#if Y
+        , C
+#endif
+        : Integer;
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (var_section
+        (var_keyword)
+        body: (var_body
+          (var_attribute_item
+            (var_attribute_open)
+            attribute: (attribute_content
+              name: (identifier)))
+          (variable_declaration
+            name: (identifier)
+            (preproc_conditional_var_names
+              (preproc_if
+                (preproc_open)
+                condition: (identifier))
+              name: (identifier)
+              (preproc_endif
+                (preproc_close)))
+            (preproc_conditional_var_names
+              (preproc_if
+                (preproc_open)
+                condition: (identifier))
+              name: (identifier)
+              (preproc_endif
+                (preproc_close)))
+            type: (type_specification
+              (basic_type))))))))
+
+================================================================================
+strict var names attr: escaped-quote names in and around the group (escaped-quote)
+================================================================================
+
+codeunit 50101 P
+{
+    var
+        [NonDebuggable]
+        "X""Y"
+#if X
+        , "P"":,Q"
+#endif
+        , Z: Text;
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (var_section
+        (var_keyword)
+        body: (var_body
+          (var_attribute_item
+            (var_attribute_open)
+            attribute: (attribute_content
+              name: (identifier)))
+          (variable_declaration
+            name: (quoted_identifier)
+            (preproc_conditional_var_names
+              (preproc_if
+                (preproc_open)
+                condition: (identifier))
+              name: (quoted_identifier)
+              (preproc_endif
+                (preproc_close)))
+            name: (identifier)
+            type: (type_specification
+              (text_type
+                (text_keyword)))))))))
+
+================================================================================
+strict var names attr: Unicode and contextual names in the group (unicode-contextual)
+================================================================================
+
+codeunit 50101 P
+{
+    var
+        [NonDebuggable]
+        Æble
+#if X
+        , Value, Table, Field
+#endif
+        , Ørn: Text;
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (var_section
+        (var_keyword)
+        body: (var_body
+          (var_attribute_item
+            (var_attribute_open)
+            attribute: (attribute_content
+              name: (identifier)))
+          (variable_declaration
+            name: (identifier)
+            (preproc_conditional_var_names
+              (preproc_if
+                (preproc_open)
+                condition: (identifier))
+              name: (identifier)
+              name: (identifier)
+              name: (identifier)
+              (preproc_endif
+                (preproc_close)))
+            name: (identifier)
+            type: (type_specification
+              (text_type
+                (text_keyword)))))))))
+
+================================================================================
+strict var names attr: Key as a non-first name in the group, MIXED (contextual-key)
+================================================================================
+
+codeunit 50101 P
+{
+    var
+        [NonDebuggable]
+        Z
+#if X
+        , Key
+#endif
+        : Text;
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (var_section
+        (var_keyword)
+        body: (var_body
+          (var_attribute_item
+            (var_attribute_open)
+            attribute: (attribute_content
+              name: (identifier)))
+          (variable_declaration
+            name: (identifier)
+            (preproc_conditional_var_names
+              (preproc_if
+                (preproc_open)
+                condition: (identifier))
+              name: (identifier)
+              (preproc_endif
+                (preproc_close)))
+            type: (type_specification
+              (text_type
+                (text_keyword)))))))))
+
+================================================================================
+strict var names attr: directive text inside a quoted name (directive-in-quotes)
+================================================================================
+
+codeunit 50101 P
+{
+    var
+        [NonDebuggable]
+        A, "#if X", B
+#if Y
+        , C
+#endif
+        : Integer;
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (var_section
+        (var_keyword)
+        body: (var_body
+          (var_attribute_item
+            (var_attribute_open)
+            attribute: (attribute_content
+              name: (identifier)))
+          (variable_declaration
+            name: (identifier)
+            name: (quoted_identifier)
+            name: (identifier)
+            (preproc_conditional_var_names
+              (preproc_if
+                (preproc_open)
+                condition: (identifier))
+              name: (identifier)
+              (preproc_endif
+                (preproc_close)))
+            type: (type_specification
+              (basic_type))))))))
+
+================================================================================
+strict var names attr: directive line inside a block comment (directive-in-comment)
+================================================================================
+
+codeunit 50101 P
+{
+    var
+        [NonDebuggable]
+        A, /*
+#if X
+        */ B
+#if Y
+        , C
+#endif
+        : Integer;
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (var_section
+        (var_keyword)
+        body: (var_body
+          (var_attribute_item
+            (var_attribute_open)
+            attribute: (attribute_content
+              name: (identifier)))
+          (variable_declaration
+            name: (identifier)
+            (multiline_comment)
+            name: (identifier)
+            (preproc_conditional_var_names
+              (preproc_if
+                (preproc_open)
+                condition: (identifier))
+              name: (identifier)
+              (preproc_endif
+                (preproc_close)))
+            type: (type_specification
+              (basic_type))))))))
+
+================================================================================
+strict var names attr: attributed local declaration with a group (local)
+================================================================================
+
+codeunit 50101 P
+{
+    procedure Q()
+    var
+        [NonDebuggable]
+        C
+#if X
+        , D
+#endif
+        : Integer;
+    begin
+    end;
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (procedure
+        (procedure_keyword)
+        name: (identifier)
+        (var_section
+          (var_keyword)
+          body: (var_body
+            (var_attribute_item
+              (var_attribute_open)
+              attribute: (attribute_content
+                name: (identifier)))
+            (variable_declaration
+              name: (identifier)
+              (preproc_conditional_var_names
+                (preproc_if
+                  (preproc_open)
+                  condition: (identifier))
+                name: (identifier)
+                (preproc_endif
+                  (preproc_close)))
+              type: (type_specification
+                (basic_type)))))
+        body: (code_block
+          (begin_keyword)
+          (end_keyword))))))
+
+================================================================================
+strict var names attr: chained attributes before a group
+================================================================================
+
+codeunit 50101 P
+{
+    var
+        [NonDebuggable]
+        [Obsolete('x', '1.0')]
+        A
+#if X
+        , B
+#endif
+        : Integer;
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (var_section
+        (var_keyword)
+        body: (var_body
+          (var_attribute_item
+            (var_attribute_open)
+            attribute: (attribute_content
+              name: (identifier)))
+          (var_attribute_item
+            (var_attribute_open)
+            attribute: (attribute_content
+              name: (identifier)
+              arguments: (attribute_arguments
+                (attribute_argument_list
+                  (string_literal)
+                  (string_literal)))))
+          (variable_declaration
+            name: (identifier)
+            (preproc_conditional_var_names
+              (preproc_if
+                (preproc_open)
+                condition: (identifier))
+              name: (identifier)
+              (preproc_endif
+                (preproc_close)))
+            type: (type_specification
+              (basic_type))))))))
+
+================================================================================
+strict var names attr: comments and pragma around the group
+================================================================================
+
+codeunit 50101 P
+{
+    var
+        [NonDebuggable] // c0
+#pragma warning disable AL0432
+#if X // c1
+        A, /* c2 */
+#else // c3
+        B,
+#endif // c4
+        C: Integer;
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (var_section
+        (var_keyword)
+        body: (var_body
+          (var_attribute_item
+            (var_attribute_open)
+            attribute: (attribute_content
+              name: (identifier)))
+          (comment)
+          (pragma)
+          (variable_declaration
+            (preproc_conditional_var_names
+              (preproc_if
+                (preproc_open)
+                condition: (identifier)
+                (comment))
+              name: (identifier)
+              (multiline_comment)
+              (preproc_else)
+              (comment)
+              name: (identifier)
+              (preproc_endif
+                (preproc_close)))
+            (comment)
+            name: (identifier)
+            type: (type_specification
+              (basic_type))))))))
+
+================================================================================
+strict var names attr: negated condition and parenthesised condition
+================================================================================
+
+codeunit 50101 P
+{
+    var
+        [NonDebuggable]
+        A
+#if not X
+        , B
+#endif
+#if (X or Y) and not Z
+        , C
+#endif
+        : Integer;
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (var_section
+        (var_keyword)
+        body: (var_body
+          (var_attribute_item
+            (var_attribute_open)
+            attribute: (attribute_content
+              name: (identifier)))
+          (variable_declaration
+            name: (identifier)
+            (preproc_conditional_var_names
+              (preproc_if
+                (preproc_open)
+                condition: (preproc_not_expression
+                  (identifier)))
+              name: (identifier)
+              (preproc_endif
+                (preproc_close)))
+            (preproc_conditional_var_names
+              (preproc_if
+                (preproc_open)
+                condition: (preproc_and_expression
+                  (preproc_parenthesized_expression
+                    (preproc_or_expression
+                      (identifier)
+                      (identifier)))
+                  (preproc_not_expression
+                    (identifier))))
+              name: (identifier)
+              (preproc_endif
+                (preproc_close)))
+            type: (type_specification
+              (basic_type))))))))
+
+================================================================================
+strict var names attr: escaped quote name without a group (test_attribute_escaped_quote_name)
+================================================================================
+
+codeunit 50101 P
+{
+    var
+        [A]
+        "X""Y", Z: Integer;
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (var_section
+        (var_keyword)
+        body: (var_body
+          (var_attribute_item
+            (var_attribute_open)
+            attribute: (attribute_content
+              name: (identifier)))
+          (variable_declaration
+            name: (quoted_identifier)
+            name: (identifier)
+            type: (type_specification
+              (basic_type))))))))
+
+================================================================================
+strict var names attr preservation: procedure after the attribute (pa control)
+================================================================================
+
+codeunit 50101 P
+{
+    var
+        G: Integer;
+
+    [NonDebuggable]
+    procedure Q()
+    begin
+    end;
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (var_section
+        (var_keyword)
+        body: (var_body
+          (variable_declaration
+            name: (identifier)
+            type: (type_specification
+              (basic_type)))))
+      (attribute_item
+        attribute: (attribute_content
+          name: (identifier)))
+      (procedure
+        (procedure_keyword)
+        name: (identifier)
+        body: (code_block
+          (begin_keyword)
+          (end_keyword))))))
+
+================================================================================
+strict var names attr preservation: empty group before the procedure (pa empty-group)
+================================================================================
+
+codeunit 50101 P
+{
+    var
+        G: Integer;
+
+    [NonDebuggable]
+#if X
+#endif
+    procedure Q()
+    begin
+    end;
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (var_section
+        (var_keyword)
+        body: (var_body
+          (variable_declaration
+            name: (identifier)
+            type: (type_specification
+              (basic_type)))))
+      (attribute_item
+        attribute: (attribute_content
+          name: (identifier)))
+      (preproc_conditional
+        (preproc_if
+          (preproc_open)
+          condition: (identifier))
+        (preproc_endif
+          (preproc_close)))
+      (procedure
+        (procedure_keyword)
+        name: (identifier)
+        body: (code_block
+          (begin_keyword)
+          (end_keyword))))))
+
+================================================================================
+strict var names attr preservation: two adjacent empty groups (pa adjacent)
+================================================================================
+
+codeunit 50101 P
+{
+    var
+        G: Integer;
+
+    [NonDebuggable]
+#if X
+#endif
+#if Y
+#endif
+    procedure Q()
+    begin
+    end;
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (var_section
+        (var_keyword)
+        body: (var_body
+          (variable_declaration
+            name: (identifier)
+            type: (type_specification
+              (basic_type)))))
+      (attribute_item
+        attribute: (attribute_content
+          name: (identifier)))
+      (preproc_conditional
+        (preproc_if
+          (preproc_open)
+          condition: (identifier))
+        (preproc_endif
+          (preproc_close)))
+      (preproc_conditional
+        (preproc_if
+          (preproc_open)
+          condition: (identifier))
+        (preproc_endif
+          (preproc_close)))
+      (procedure
+        (procedure_keyword)
+        name: (identifier)
+        body: (code_block
+          (begin_keyword)
+          (end_keyword))))))
+
+================================================================================
+strict var names attr preservation: second attribute inside a group (pa attr-in-group)
+================================================================================
+
+codeunit 50101 P
+{
+    var
+        G: Integer;
+
+    [NonDebuggable]
+#if X
+    [Obsolete('x', '1.0')]
+#endif
+    procedure Q()
+    begin
+    end;
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (var_section
+        (var_keyword)
+        body: (var_body
+          (variable_declaration
+            name: (identifier)
+            type: (type_specification
+              (basic_type)))))
+      (attribute_item
+        attribute: (attribute_content
+          name: (identifier)))
+      (preproc_conditional
+        (preproc_if
+          (preproc_open)
+          condition: (identifier))
+        (attribute_item
+          attribute: (attribute_content
+            name: (identifier)
+            arguments: (attribute_arguments
+              (attribute_argument_list
+                (string_literal)
+                (string_literal)))))
+        (preproc_endif
+          (preproc_close)))
+      (procedure
+        (procedure_keyword)
+        name: (identifier)
+        body: (code_block
+          (begin_keyword)
+          (end_keyword))))))
+
+================================================================================
+strict var names attr preservation: procedure header chosen by a group (pa first-replace)
+================================================================================
+
+codeunit 50101 P
+{
+    var
+        G: Integer;
+
+    [NonDebuggable]
+#if X
+    procedure Q(A: Integer; B: Integer)
+#else
+    procedure Q()
+#endif
+    begin
+    end;
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (var_section
+        (var_keyword)
+        body: (var_body
+          (variable_declaration
+            name: (identifier)
+            type: (type_specification
+              (basic_type)))))
+      (attribute_item
+        attribute: (attribute_content
+          name: (identifier)))
+      (preproc_split_procedure
+        (preproc_if
+          (preproc_open)
+          condition: (identifier))
+        (procedure_keyword)
+        name: (identifier)
+        parameters: (parameter_list
+          (parameter
+            name: (identifier)
+            type: (type_specification
+              (basic_type)))
+          (parameter
+            name: (identifier)
+            type: (type_specification
+              (basic_type))))
+        (preproc_else)
+        (procedure_keyword)
+        name: (identifier)
+        (preproc_endif
+          (preproc_close))
+        body: (code_block
+          (begin_keyword)
+          (end_keyword))))))
+
+================================================================================
+strict var names attr preservation: #if/#elif/#else headers with access modifiers (pa elif)
+================================================================================
+
+codeunit 50101 P
+{
+    var
+        G: Integer;
+
+    [NonDebuggable]
+#if X
+    procedure Q()
+#elif Y
+    local procedure Q()
+#else
+    internal procedure Q()
+#endif
+    begin
+    end;
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (var_section
+        (var_keyword)
+        body: (var_body
+          (variable_declaration
+            name: (identifier)
+            type: (type_specification
+              (basic_type)))))
+      (attribute_item
+        attribute: (attribute_content
+          name: (identifier)))
+      (preproc_split_procedure
+        (preproc_if
+          (preproc_open)
+          condition: (identifier))
+        (procedure_keyword)
+        name: (identifier)
+        (preproc_elif
+          condition: (identifier))
+        modifier: (procedure_modifier
+          (local_keyword))
+        (procedure_keyword)
+        name: (identifier)
+        (preproc_else)
+        modifier: (procedure_modifier
+          (internal_keyword))
+        (procedure_keyword)
+        name: (identifier)
+        (preproc_endif
+          (preproc_close))
+        body: (code_block
+          (begin_keyword)
+          (end_keyword))))))
+
+================================================================================
+strict var names attr preservation: headers with `;`, `:` and a bracketed `,` (pa names-commas)
+================================================================================
+
+codeunit 50101 P
+{
+    var
+        G: Integer;
+
+    [NonDebuggable]
+#if X
+    procedure Q(A: Integer; D: Dictionary of [Integer, Text])
+#else
+    procedure Q(A: Integer; B: Text)
+#endif
+    begin
+    end;
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (var_section
+        (var_keyword)
+        body: (var_body
+          (variable_declaration
+            name: (identifier)
+            type: (type_specification
+              (basic_type)))))
+      (attribute_item
+        attribute: (attribute_content
+          name: (identifier)))
+      (preproc_split_procedure
+        (preproc_if
+          (preproc_open)
+          condition: (identifier))
+        (procedure_keyword)
+        name: (identifier)
+        parameters: (parameter_list
+          (parameter
+            name: (identifier)
+            type: (type_specification
+              (basic_type)))
+          (parameter
+            name: (identifier)
+            type: (type_specification
+              (dictionary_type
+                (dictionary_keyword)
+                (of_keyword)
+                key_type: (type_specification
+                  (basic_type))
+                value_type: (type_specification
+                  (text_type
+                    (text_keyword)))))))
+        (preproc_else)
+        (procedure_keyword)
+        name: (identifier)
+        parameters: (parameter_list
+          (parameter
+            name: (identifier)
+            type: (type_specification
+              (basic_type)))
+          (parameter
+            name: (identifier)
+            type: (type_specification
+              (text_type
+                (text_keyword)))))
+        (preproc_endif
+          (preproc_close))
+        body: (code_block
+          (begin_keyword)
+          (end_keyword))))))
+
+================================================================================
+strict var names attr: an empty group after the attribute stays a sibling preproc_conditional_var (empty-sibling)
+================================================================================
+
+codeunit 50101 P
+{
+    var
+        [NonDebuggable]
+#if X
+#endif
+        A: Integer;
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (var_section
+        (var_keyword)
+        body: (var_body
+          (var_attribute_item
+            (var_attribute_open)
+            attribute: (attribute_content
+              name: (identifier)))
+          (preproc_conditional_var
+            (preproc_if
+              (preproc_open)
+              condition: (identifier))
+            (preproc_endif
+              (preproc_close)))
+          (variable_declaration
+            name: (identifier)
+            type: (type_specification
+              (basic_type))))))))

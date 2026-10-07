@@ -1,5 +1,5 @@
 // B7a Task 10 witness (GAP): family array-dimensions, base placement nested, 3 cells; representative occ:array_type:3.0.0@type_specification#nested
-// Fixture b7_gap_array_dimensions_test.txt#B7a GAP: array-dimensions / nested (3 cells, verdict of the representative GAP); the parser ERRORs on configurations alc accepts; representative occ:array_type:3.0.0@type_specification%23nested#0
+// Fixture strict_conditional_array_dimensions_test.txt#strict array: nested group (nested)#0
 // expect: !X !Y accept
 // expect: !X Y accept
 // expect: X !Y accept

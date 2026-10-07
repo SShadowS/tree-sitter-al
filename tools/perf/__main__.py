@@ -3,6 +3,7 @@
    python -m tools.perf wasm|incremental [--corpus LABEL ...] [--out DIR]
    python -m tools.perf build [--out DIR]
    python -m tools.perf oracle [--corpus LABEL ...] [--no-full] [--out DIR]
+   python -m tools.perf parity --lib-a A.dll --lib-b B.dll [--corpus all|LABEL ...]   # tree-only, exit 0/1/2
    python -m tools.perf compare OLD.json NEW.json
    python -m tools.perf merge BASE.json NEW.json      # replace BASE's groups with NEW's
    python -m tools.perf render RESULT.json [--doc PATH]
@@ -126,6 +127,11 @@ def main(argv=None):
     ab.add_argument("--corpus", action="append", choices=common.LABELS)
     ab.add_argument("--rounds", type=int, default=8)
     ab.add_argument("--out")
+    par = sub.add_parser("parity", help="tree-only parity of two libraries over whole corpora")
+    par.add_argument("--lib-a", required=True)
+    par.add_argument("--lib-b", required=True)
+    par.add_argument("--corpus", action="append", choices=("all", *common.LABELS))
+    par.add_argument("--workers", type=int)
     c = sub.add_parser("compare")
     c.add_argument("old")
     c.add_argument("new")
@@ -165,6 +171,9 @@ def main(argv=None):
         procs.build_inner(args.out)
         return 0
 
+    if args.cmd == "parity":
+        from tools.perf import parity
+        return parity.main(args.lib_a, args.lib_b, args.corpus, args.workers)
     if args.cmd == "ab":
         labels = tuple(args.corpus or ("dc",))
         result = measure(("ab",), labels, ab_args=(args.lib_a, args.lib_b, args.rounds))

@@ -408,6 +408,56 @@ register("preproc_split_modify", "unsupported")
 # BC 29 family D: only the #if-taken configuration is valid AL, so lowering the
 # other configuration must report cannot-validate, never a discrepancy. milestone 3.
 register("preproc_split_table_field_open", "unsupported")
+# --- B7b-1 strict conditional lists (spec 2026-10-07 section 6). The family schemas live in
+# lowering/conditional_lists.py (FAMILIES): there the host's complete list region is
+# validated after selection, and the multi-configuration tree before it. Each group is an
+# ordinary branch-select under policy strict-list (items and separators splice in order);
+# hosts and arm are the family's, test_conditional_lists checks that they agree.
+register("preproc_conditional_implements", "branch-select", _LIST_RUN,
+         hosts={"implements_clause:<children>": "strict-list",
+                "preproc_conditional_implements:<children>": "strict-list"},
+         # strictConditionalList('implements', field('interface', _identifier_or_quoted), ',').
+         arm={"identifier", "quoted_identifier", ",", "preproc_conditional_implements"})
+register("preproc_conditional_field_list_items", "branch-select", _LIST_RUN,
+         hosts={"field_list:<children>": "strict-list",
+                "preproc_conditional_field_list_items:<children>": "strict-list"},
+         # strictConditionalList('field_list_items', _identifier_or_quoted, ','): unfielded items.
+         arm={"identifier", "quoted_identifier", ",", "preproc_conditional_field_list_items"})
+register("preproc_conditional_sorting_fields", "branch-select", _LIST_RUN,
+         hosts={"sorting_value:<children>": "strict-list",
+                "preproc_conditional_sorting_fields:<children>": "strict-list"},
+         # strictConditionalList('sorting_fields', _identifier_or_quoted, ','): unfielded items.
+         arm={"identifier", "quoted_identifier", ",", "preproc_conditional_sorting_fields"})
+register("preproc_conditional_order_by_fields", "branch-select", _LIST_RUN,
+         hosts={"order_by_item:<children>": "strict-list",
+                "preproc_conditional_order_by_fields:<children>": "strict-list"},
+         # strictConditionalList('order_by_fields', _identifier_or_quoted, ','): unfielded items.
+         arm={"identifier", "quoted_identifier", ",", "preproc_conditional_order_by_fields"})
+register("preproc_conditional_move_elements", "branch-select", _LIST_RUN,
+         hosts={"moveafter_modification:<children>": "strict-list",
+                "movebefore_modification:<children>": "strict-list",
+                "movefirst_modification:<children>": "strict-list",
+                "movelast_modification:<children>": "strict-list",
+                "preproc_conditional_move_elements:<children>": "strict-list"},
+         # strictConditionalList('move_elements', field('element', _identifier_or_quoted), ',').
+         arm={"identifier", "quoted_identifier", ",", "preproc_conditional_move_elements"})
+register("preproc_conditional_array_dimensions", "branch-select", _LIST_RUN,
+         hosts={"array_type:<children>": "strict-list",
+                "preproc_conditional_array_dimensions:<children>": "strict-list"},
+         # strictConditionalList('array_dimensions', field('sizes', integer), ',').
+         arm={"integer", ",", "preproc_conditional_array_dimensions"})
+register("preproc_conditional_attribute_args", "branch-select", _LIST_RUN,
+         hosts={"attribute_argument_list:<children>": "strict-list",
+                "preproc_conditional_attribute_args:<children>": "strict-list"},
+         # strictConditionalList('attribute_args', _attribute_argument, ','), unfielded.
+         arm={"boolean", "integer", "string_literal", "identifier", "quoted_identifier",
+              "qualified_enum_value", "database_reference", "member_expression", ",",
+              "preproc_conditional_attribute_args"})
+register("preproc_conditional_var_names", "branch-select", _LIST_RUN,
+         hosts={"variable_declaration:<children>": "strict-list",
+                "preproc_conditional_var_names:<children>": "strict-list"},
+         # strictConditionalList('var_names', field('name', _identifier_or_quoted), ',').
+         arm={"identifier", "quoted_identifier", ",", "preproc_conditional_var_names"})
 # --- Task 9: one-reading contracts (spec P4). The tree shows ONE configuration's
 # nesting (`reading`); every other configuration reports lowering:one-reading.
 _ASM = "tools.config_oracle.lowering.assemblers."

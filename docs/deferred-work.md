@@ -82,7 +82,29 @@ host (over-weighted; the matrix notes it).
 **B7b order:** B7b-1 list separators, B7b-2 expression continuations, B7b-3 terminators; property-value runs stay with
 B12/B13.
 
-**Next step:** B7b-1 per the ranked list; each fix flips its group's witnesses. After a grammar change run `assert --refresh`, a FULL `run` (warm cache: minutes; `run --only
+**B7b-1 DONE (2026-10-07, spec `docs/superpowers/specs/2026-10-07-b7b-1-strict-conditional-lists-design.md`):** eight
+strict lists (seven host conversions) take an `#if` group at any separator (`implements`, key / fieldgroup / `addlast` field lists, the `sorting`
+and `OrderBy`-item inner lists, move elements after the fixed `;`, array dimensions, attribute arguments, variable names,
+also attributed). The frozen manifest `tools/b7_audit/b7b1-manifest.tsv` gates it (`manifest --check` 0 problems): all
+1,404 admitted cells reach their verdict (867 CONSISTENT, 537 MIXED with alc-rejected configurations as over-accepts),
+164 excluded and 24 deferred cells unchanged. Totals after B7b-1: GAP 13,807, SILENT 468, MIXED 3,981,
+REJECTED/over-accepts 3, UNCHECKED 123, REJECTED 144, CONSISTENT 5,829. Families `implements`, `key-fields`, `sorting`,
+`array-dimensions`, `attribute-arguments` and `var-names` have no GAP group left; `order-by` keeps the outer list (B12,
+item 36) and `move-modification` the fixed `;` and target cells (B7b-3, item 46). What stays: over-acceptances (item 44),
+four pre-existing attribute/group gaps (item 45), the remaining list families B7b-1b..g (item 46). Two notes on the
+fixed hosts:
+- **An empty group before a declaration attaches by context.** At `var_body` top level, with or without a preceding
+  attribute, `#if X` / `#endif` / `A: Integer;` gives a sibling `preproc_conditional_var` and a plain declaration; inside a
+  `preproc_conditional_var` arm, in a split var section tail, or nested in a group at top level the empty group is the
+  next declaration's leading `preproc_conditional_var_names`. Both readings are clean, `prec.dynamic(-1)` on the
+  var-names group chooses; pinned by `test/corpus/strict_conditional_var_names_test.txt` (Task 11 fix round),
+  `test/corpus/strict_conditional_var_names_attr_test.txt` (the attributed top-level case) and by the incremental tests
+  in `tools/config_oracle/tests/test_strict_lists_incremental.py`.
+- **Attribute arguments: 9 of the 19 placements have no manifest cell** (sep-before, nested and others the B7a generator
+  does not produce for this host). `test/corpus/strict_conditional_attribute_args_test.txt` cases 11-19 cover them; no
+  audit cell gates them.
+
+**Next step:** B7b-1b..g per item 46, then B7b-2; each fix flips its group's witnesses. After a grammar change run `assert --refresh`, a FULL `run` (warm cache: minutes; `run --only
 <family>` re-observes every cell but compiles only the slice, and exits 2 when the change moved a cell outside the
 slice into a tier that needs an uncached compile) and `report`.
 
@@ -1466,6 +1488,13 @@ Ruling-1 configurations (a terminated group, an empty block, then `;`) are `inva
 - **A multi-configuration tree.** One tree per configuration, or a tree holding every boundary. That is roadmap F1 (the
   representation decision, A7), not a grammar change.
 
+**The outer `OrderBy` list (B7b-1, 2026-10-07)** belongs here too: a group between two `order_by_item`s
+(`OrderBy = ascending(K) #if X , descending(N) #endif ;`) is property-value routing, so B7b-1 excluded it (manifest route
+`occ:order_by_list:0.1.0.0`, 90 excluded cells, owner B12) and only the lists inside `ascending( )` / `descending( )` take
+groups. It stays an ERROR: `test/corpus/b7_gap_order_by_test.txt` (8 `:error` cases, alc probes
+`tools/alc_probe/cases/b7-audit/order-by__<base>__gap.al`) and `test/corpus/strict_conditional_order_by_fields_negative_test.txt`
+(2 `:error` cases, debt(B12) rows in `fixture-classes.tsv`).
+
 **Next step:** decide with F1. Until then the sequence is a one-reading construct and the refusals stay classified.
 
 **Owner:** unassigned.
@@ -1615,6 +1644,91 @@ Same review, same tool: `case I of 1: I := 1` followed by a lone-`;` arm (`#if X
 has errors in the split tree (`has_error`); the B7a statement-terminator case-branch cells are GAP for this reason.
 
 **Owner:** unassigned.
+
+## 44. B7b-1 over-acceptances: conditional list forms invalid in every configuration parse clean
+
+**Established:** 2026-10-07, B7b-1 Tasks 4-12 (reviews and reports), each form re-measured in Task 14 with py-tree-sitter:
+`has_error` True on main (250898c), False on the branch. A strict list's seam helpers (spec section 3) let a group stand
+at any separator but do not track separators per arm, so a group whose arms supply no separator, or one too many, still
+parses. Every configuration's flat text fails to parse, so the oracle reports each configuration as `reference-error`
+(never a discrepancy). By controller ruling (Task 6) spec section 3's regression clause scopes to the manifest cells it
+names, so these are classified over-acceptances, not regressions. alc was not run on them except where noted; each is an
+alc syntax error by the same rule as its flat configurations.
+
+| host | forms |
+|---|---|
+| `implements` | `implements IFoo #if X IBar #endif`, `IFoo #if X IBar #else IBaz #endif`, `IFoo , #if X , IBar #endif`, `IFoo , #if X #endif`, `implements #if X #endif` |
+| field list | `key(PK; A #if X B #else C #endif)`, `key(PK; A, #if X , #else , #endif B)` |
+| sorting / order-by | `sorting(K #if X N #endif)`, `sorting(K #if X N #else B #endif)`, `sorting(K , #if X , N #endif)`, `ascending(K #if X N #endif)` |
+| move | `moveafter(A1; A2 #if X A3 #endif)`, `moveafter(A1; A2 #if X A3 #else A4 #endif)`, `moveafter(A1; A2 , #if X , A3 #endif)`, `moveafter(A1; A2 , #if X #endif)`, `moveafter(A1; #if X #endif)` (empty list, AL0319 semantic) |
+| array | `array[2 #if X 3 #endif]`, `array[2 #if X 3 #else 4 #endif]`, `array[2 , #if X , 3 #endif]`, `array[2 , #if X #endif]`, `array[#if X #endif]`, `array[#if X #else #endif]` (empty, AL0367 semantic) |
+| attribute args | `[A(1 #if X 2 #else 3 #endif)]`, `[A(1 #if X 2 #endif #if not X 3 #endif)]`, `[A(1 , #if X , 2 #endif)]`, `[A(1 , #if X #endif)]`, `[A(#if X , #else , #endif 1)]`, `[A(1 , #if X , #else , #endif 2)]` |
+| var names | `A #if X B #else C #endif : Integer;`, `A #if X B #endif #if not X C #endif : Integer;`, `A , #if X , B #endif : Integer;`, `A , #if X #endif : Integer;`, `#if X , #else , #endif A: Integer;`, `A , #if X , #else , #endif B: Integer;`, `#if X #else #endif : Integer;` (no name at all; alc AL0104/AL0198) |
+| attributed var names | the first six var-name forms after `[NonDebuggable]`; the no-name form stays an ERROR there (the scanner's recognizer needs a name) |
+
+Every directive stands on its own line in the measured inputs. Related, pre-existing or widened by the shared rules:
+- `addfirst(DropDown; N #if X , B #endif) { }` in tableextension fieldgroups parses clean (it ERRORed on main). alc
+  rejects every `addfirst` there, even without a group (AL0104, B7b-1 Task 2), so the shared `field_list` change widened
+  an existing over-acceptance; recorded in the manifest route row `route:occ:field_list:1.0.0@addfirst_fieldgroup_modification`
+  and pinned by case 47 of `test/corpus/strict_conditional_field_list_items_test.txt`.
+- `member_expression` attribute arguments are accepted, as before; alc rejects them (AL0242, B7a evidence).
+- `Z, Key: Text;` (`Key` as a non-first variable name): alc AL0104/AL0105/AL0107 (Task 2), the parser accepts it, on
+  main too; also after an attribute.
+
+**Next step:** only if a consumer needs it: per-arm separator tracking (each arm records whether it starts or ends with a
+separator) would make the forms ERROR, at a cost the spec chose not to pay. Until then the oracle keeps them visible.
+
+**Owner:** unassigned.
+
+## 45. Four variable-attribute shapes with a group ERROR; alc accepts them (pre-existing)
+
+**Established:** 2026-10-07, B7b-1 Task 12 review; probes committed in the Task 12 fix round, each `expect: * accept`
+(alc accepts every configuration), each `has_error` True on main and on the branch (Task 14). The scanner's
+`var_attribute_open` lookahead reads a conditional NAME stream ending at `:`; these shapes put something else in the group:
+
+- `tools/alc_probe/cases/b7b1/colon_in_group.al`: `[NonDebuggable]` then whole declarations in the arms
+  (`#if X` / `A: Integer;` / `#else` / `B: Integer;` / `#endif`); the lookahead declines at the `:` inside the group.
+- `tools/alc_probe/cases/b7b1/attr_in_group_var.al`: a second attribute inside a group before the name; declines at `[`.
+- `tools/alc_probe/cases/b7b1/attr_endif_name.al`: an attribute alone in a group, the name after `#endif`; the
+  attribute's lookahead meets `#endif` with no `#if`.
+- `tools/alc_probe/cases/b7b1/attr_after_directive_line.al`: an attribute, an empty group, then a second attribute
+  before the name; the first attribute's lookahead passes the group and declines at the second `[` (B7b-1 final review
+  M4, alc accepts both configurations).
+- `tools/alc_probe/cases/b7b1/pa__nested.al`: the procedure-attribute counterpart, a nested `#if` choosing the procedure
+  header after `[NonDebuggable]`.
+
+`tools/config_oracle/tests/test_var_attribute_scanner.py` pins the colon-in-group shape only as the recognizer's
+contract (no `var_attribute_open`, set `ACCEPTED`), never that the input errors.
+
+**Next step:** decide whether the attribute lookahead may accept a whole-declaration group (the attribute then belongs to
+every arm's first declaration), and give attributes inside groups a grammar home; alc first for each.
+
+**Owner:** unassigned (B7b-1d is the nearest sub-project).
+
+## 46. The remaining list families: B7b-1b..g, and the move fixed `;` (B7b-3)
+
+**Established:** B7b-1 spec section 2 (2026-10-07) and the B7a matrix after B7b-1. Each family keeps its GAP witnesses
+(`:error`) until its sub-project converts it; cell counts are matrix cells, production sites 0 unless noted.
+
+| owner | family (matrix) | cells | witnesses |
+|---|---|---|---|
+| B7b-1b | `parameter-list` (the `;`-led form, attribute bundles, empty list) | GAP 90 | `test/corpus/b7_gap_parameter_list_test.txt` (10) |
+| B7b-1c | `ml-pairs`, `namespace-pairs` (pair interiors), `list-literal` (whole-value ownership table first) | GAP 825, 288, 388; list-literal OVERACCEPT 4 | `b7_gap_ml_pairs_test.txt` (19), `b7_gap_namespace_pairs_test.txt` (17), `b7_gap_list_literal_test.txt` (31) |
+| B7b-1d | `label-attributes` (report-label and label-variable attribute tails), `caption-subfields` (heterogeneous tails, unwrap) | GAP 408, 1,080 | `b7_gap_label_attributes_test.txt` (17), `b7_gap_caption_subfields_test.txt` (15) |
+| B7b-1e | `option-members` (holes, witness policy; B13 overlap, matrix owner B13, items 37/38) | GAP 1,111 | `b7_gap_option_members_test.txt` (23) |
+| B7b-1f | `permissions`, `link-list` (B12 overlap), `link-list-comma-leading` (dependency `link-property-ambiguity`) | GAP 355 / 98 / 297; OVERACCEPT 69 / 41 / 15 | `b7_gap_permissions_test.txt` (17), `b7_gap_link_list_test.txt` (21), `b7_gap_link_list_comma_leading_test.txt` (9) |
+| B7b-1g | `type-arguments`: `Dictionary of [K, V]` / `List of [T]` are fixed-arity positional slots (`key_type`, `value_type`), not a list; needs a fixed-arity slot adapter | GAP 24, all 24 manifest cells `deferred`, cardinality `unknown` (not probed by alc) | `b7_gap_type_arguments_test.txt` (8) |
+| B7b-3 | `move-modification`: a group that supplies or replaces the fixed `;` or the target (72 manifest cells `excluded`, fixed-header separator/slot) | GAP 72 | `b7_gap_move_modification_test.txt` (6), `strict_conditional_move_elements_negative_test.txt` (2, `debt(B7b-3)` rows; the loader admits the B7b ids since the final review) |
+
+All witness files are under `test/corpus/` and listed in `tools/deliberate-negatives.txt`. Also outside B7b-1 and
+unassigned within B7b: the header families `key-header` (GAP 18, `b7_gap_key_header_test.txt`) and `fieldgroup-header`
+(GAP 36, OVERACCEPT 4 incl. the new trail group `fieldgroup(Brick ; , N)`, `b7_gap_fieldgroup_header_test.txt`). The outer
+`OrderBy` list is B12 (item 36).
+
+**Next step:** one sub-project per row, each with its own spec, manifest and gates, using the B7b-1 generator where the
+list is homogeneous (CLAUDE.md, "Strict conditional lists (B7b-1)").
+
+**Owner:** as listed.
 
 ## Longer-lived proposals, tracked separately
 

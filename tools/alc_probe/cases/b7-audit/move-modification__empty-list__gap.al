@@ -1,5 +1,5 @@
 // B7a Task 10 witness (GAP): family move-modification, base placement empty-list, 48 cells; representative occ:moveafter_modification:1.4.0.0@action_body#empty-list
-// Fixture b7_gap_move_modification_test.txt#B7a GAP: move-modification / empty-list (48 cells, verdict of the representative MIXED); the parser ERRORs on configurations alc accepts; representative occ:moveafter_modification:1.4.0.0@action_body%23empty-list#0
+// Fixture strict_conditional_move_elements_test.txt#strict move MIXED: the whole element list in one group, no %23else (empty-list)#0
 // expect: !X reject(AL0319)
 // expect: X accept
 // source: recorded by B7a Task 10, 2026-10-07: the alc split verdicts of cell occ:moveafter_modification:1.4.0.0@action_body#empty-list in tools/b7_audit/evidence.jsonl.gz

@@ -1,5 +1,5 @@
 // B7a Task 10 witness (GAP): family attribute-arguments, base placement empty, 3 cells; representative occ:attribute_argument_list:1.0.0@attribute_arguments#empty
-// Fixture b7_gap_attribute_arguments_test.txt#B7a GAP: attribute-arguments / empty (3 cells, verdict of the representative GAP); the parser ERRORs on configurations alc accepts; representative occ:attribute_argument_list:1.0.0@attribute_arguments%23empty#0
+// Fixture strict_conditional_attribute_args_test.txt#strict attribute arguments: empty group between a separator and an argument (empty)#0
 // expect: !X accept
 // expect: X accept
 // source: recorded by B7a Task 10, 2026-10-07: the alc split verdicts of cell occ:attribute_argument_list:1.0.0@attribute_arguments#empty in tools/b7_audit/evidence.jsonl.gz
