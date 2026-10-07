@@ -6,9 +6,10 @@ Rules that are load-bearing:
     leaves accounted `kept` are emitted;
   * a fragment may only pass up through a node when the child it came from is
     that node's last original child, and must be consumed by a named consumer;
-  * the only normalisation is removing an EMPTY_REMOVABLE container that
-    lowering emptied. (Unwrapping a continued property value is not one: it is
-    a named rewrite of contract expression-continuation, see ExpressionContinuation.)
+  * the normalisations are removing an EMPTY_REMOVABLE container that lowering
+    emptied, and arm-terminator (absorb_arm_terminators). (Unwrapping a continued
+    property value is not one: it is a named rewrite of contract
+    expression-continuation, see ExpressionContinuation.)
 
 Lowering only selects and relabels. It never sees the reference parse (this
 package imports nothing from reference.py, tree_sitter, or the loader).
@@ -227,6 +228,35 @@ OPTION_MEMBER_BARE_KINDS = frozenset({
 _OPTION_COND = "preproc_conditional_option_members"
 
 
+# Normalisation **arm-terminator** (B7b-0, user ruling Option A, 2026-10-07). The tree keeps a
+# statement's `;` that sits alone in an #if arm (`I := 1` / `#if X` / `;` / `#endif`) as its own
+# empty_statement inside the conditional. A configuration that selects that arm reads `I := 1 ;`,
+# whose `;` is the statement's separator: a bare `;` child of the statement host right after the
+# statement, which is what a Terminator anchored to the statement lands as. select.branch_select
+# marks the lowered empty_statement of a preproc_conditional_statement arm that holds nothing else
+# (extras are not in the IR) with ARM_SEMI; the mark survives splicing through enclosing arms, so
+# the decision is taken where the statement run is whole: absorb_arm_terminators, called by every
+# builder of a statement run (statement hosts, a code_block's completed body, an else block).
+ARM_SEMI = "_arm_semi"
+
+
+def absorb_arm_terminators(kids, ctx):
+    """A marked empty_statement directly after a statement (a named node other than an
+    empty_statement) is replaced by its `;`, the Terminator placement: right after its anchor.
+    After a `;`, at the start of the run, or after an empty_statement it stays: the flat reading
+    there is a standalone `;` (`I := 1; ;`). Done in one pass, so a later lone-`;` group sees the
+    statement already terminated. Each rewrite is noted `arm-terminator@<offset of the ;>`."""
+    out = []
+    for n in kids:
+        if getattr(n, ARM_SEMI, False) and out and out[-1].named and out[-1].kind != "empty_statement":
+            semi = n.children[0]
+            ctx.normalised.append(f"arm-terminator@{semi.start}")
+            out.append(semi)
+        else:
+            out.append(n)
+    return out
+
+
 def bind_previous(kids, r, c):
     """Append `r.nodes` to `kids`, apply every ToPrevious fragment of `r` to its
     target sibling in `kids`, and return the other fragments."""
@@ -361,6 +391,13 @@ def _lower_ordinary(node, ctx) -> Lowered:
     # core, at a `;`-inside site) is a selected arm's `;`.
     selected_terminator = any(isinstance(f, Terminator) and getattr(f, "_from_last", False) for f in frags)
     frags = _consume(new, frags)
+    if node.kind in STATEMENT_HOSTS:
+        new.children = absorb_arm_terminators(new.children, ctx)
+    elif node.kind == "code_block":
+        # a BlockCompletion may have appended a statement run to the block's body
+        body = next((c for c in new.children if c.field == "body" and c.kind == "statement_block"), None)
+        if body is not None:
+            body.children = absorb_arm_terminators(body.children, ctx)
     if node.kind == "property":
         _check_site_boundary(node, new, ctx, selected_terminator)
     for f in frags:

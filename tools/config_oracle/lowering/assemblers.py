@@ -11,6 +11,7 @@ from tools.config_oracle.lowering import expression
 from tools.config_oracle.lowering.engine import (BlockCompletion, ElseAttachment, ExpressionContinuation,
                                                  Following, Lowered, LoweringError, RelationContinuation,
                                                  SiblingsAfter, Terminator, VarTailMerge, _span_from_children,
+                                                 absorb_arm_terminators,
                                                  lower)
 from tools.config_oracle.lowering.select import chosen_arm, reading_active, split_arms
 
@@ -88,12 +89,14 @@ def split_code_block_end(node, ctx) -> Lowered:
     inner = _lower_all(arm[first + 3:second], ctx, "statement_block")
     end2 = _lower_all([arm[second]], ctx, "code_block")[0]
     return Lowered([], [BlockCompletion(None, lead, end1),
-                        ElseAttachment(None, else_kw, _else_block(begin, inner, end2))]
+                        ElseAttachment(None, else_kw, _else_block(begin, inner, end2, ctx))]
                    + _terminator(arm[second + 1:], node, ctx, "shape B"))
 
 
-def _else_block(begin, inner, end):
-    """A NEW `code_block(begin [body: statement_block(inner)] end)`, field `else_branch`."""
+def _else_block(begin, inner, end, ctx):
+    """A NEW `code_block(begin [body: statement_block(inner)] end)`, field `else_branch`. The
+    statement run gets normalisation arm-terminator (engine.absorb_arm_terminators)."""
+    inner = absorb_arm_terminators(inner, ctx)
     kids = [begin]
     if inner:
         kids.append(_span_from_children(Node("statement_block", True, "body", 0, 0, inner)))
@@ -141,7 +144,7 @@ def else_begin_over_endif(node, ctx) -> Lowered:
     end1, else_kw, begin = _lower_all(arm[:3], ctx, "code_block")
     inner = _lower_all(arm[3:], ctx, "statement_block") + stmts
     return Lowered([], [BlockCompletion(None, [], end1),
-                        ElseAttachment(None, else_kw, _else_block(begin, inner, end))])
+                        ElseAttachment(None, else_kw, _else_block(begin, inner, end, ctx))])
 
 
 def split_procedure(node, ctx) -> Lowered:

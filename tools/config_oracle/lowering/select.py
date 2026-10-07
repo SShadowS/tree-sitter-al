@@ -3,7 +3,7 @@ from __future__ import annotations
 
 from tools.config_oracle import contracts
 from tools.config_oracle.ir import Node
-from tools.config_oracle.lowering.engine import Lowered, LoweringError, Terminator, bind_previous, lower
+from tools.config_oracle.lowering.engine import ARM_SEMI, Lowered, LoweringError, Terminator, bind_previous, lower
 
 DIRECTIVES = ("preproc_if", "preproc_elif", "preproc_else")
 
@@ -82,6 +82,9 @@ def branch_select(node, ctx) -> Lowered:
                     raise LoweringError("arm-content", c, f"{c.kind} not declared for {node.kind}")
                 r = lower(c, ctx.child(node.kind, c.field or "<children>"))
                 out.frags.extend(bind_previous(out.nodes, r, c))
+            if node.kind == "preproc_conditional_statement" and [c.kind for c in content] == ["empty_statement"] \
+                    and len(out.nodes) == 1 and not out.frags:
+                setattr(out.nodes[0], ARM_SEMI, True)   # normalisation arm-terminator (engine.ARM_SEMI)
         else:
             for c in content:
                 ctx.accounting.mark(c, "inactive-arm")
