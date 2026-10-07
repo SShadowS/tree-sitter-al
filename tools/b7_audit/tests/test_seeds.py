@@ -106,3 +106,13 @@ def test_property_equals_is_not_an_expression_edge():
             self.type = t
     assert not seeds._edge(N("="))
     assert seeds._edge(N("+")) and seeds._edge(N("and")) and seeds._edge(N("additive_expression"))
+
+
+def test_split_host_end_semicolon_is_terminated_unit(tmp_path, al_parser):
+    """Task 6 deferred minor: `end;` closing a split `begin` ends a statement (BC.History CustContUpdate.Codeunit.al),
+    not a separator site."""
+    src = ("codeunit 50100 P { procedure Q() begin\nif A then\n#if X\nbegin\n#endif\nx := 1;\n#if X\nend;\n#endif\n"
+           "y := 2;\nend; }\n")
+    c = _counts(tmp_path, al_parser, src)
+    assert c == {("preproc_split_code_block_over_endif", "terminated-unit"): 1}, c
+    assert seeds._terminates("preproc_split_if_then_begin") and not seeds._terminates("preproc_split_field")

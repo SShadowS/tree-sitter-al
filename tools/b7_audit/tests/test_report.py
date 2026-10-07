@@ -8,7 +8,7 @@ from tools.b7_audit.registry import Row
 SHA = "c" * 64
 
 
-def cell(cid, host, placement="p1", alc="ACCEPT", err=False, oracle="pass", key=None, reject_class=None):
+def cell(cid, host, placement="sep-after", alc="ACCEPT", err=False, oracle="pass", key=None, reject_class=None):
     """Real-shape evidence records of one cell (one configuration)."""
     codes = {"syntax": ["AL0104"], "semantic": ["AL0175"]}.get(reject_class, [])
     return [{"cell": cid, "key": key or cid.split("@")[0], "host": host, "placement": placement,
@@ -61,7 +61,7 @@ def test_report_deterministic(tmp_path):
 
 
 def test_families_dedupe():
-    recs = cell("k1@hA#p1", "hA", err=True) + cell("k1@hA#p2", "hA", placement="p2", err=True)
+    recs = cell("k1@hA#p1", "hA", err=True) + cell("k1@hA#p2", "hA", placement="trail", err=True)
     a, _ = build(recs)
     assert list(a["families"]) == [("fa", "GAP")]
     assert a["families"][("fa", "GAP")]["cells"] == ["k1@hA#p1", "k1@hA#p2"]
@@ -77,7 +77,7 @@ def test_unchecked_listed_separately():
 
 
 def test_rank_order():
-    recs = cell("k1@hA#p1", "hA", err=True) + cell("k1@hA#p2", "hA", placement="p2", err=True) + \
+    recs = cell("k1@hA#p1", "hA", err=True) + cell("k1@hA#p2", "hA", placement="trail", err=True) + \
         cell("k2@hB#p1", "hB", err=True) + cell("k3@hC#p1", "hC", oracle="discrepancy")
     a, _ = build(recs)
     assert report.rank(a["families"]) == [("fc", "SILENT"), ("fb", "GAP"), ("fa", "GAP")]   # silent first; 50 > 5 sites
@@ -136,7 +136,8 @@ def test_assertion_closes_and_fails_cell(al_parser, tmp_path):
     def asr(expect, fp=None):
         p = tmp_path / "a.tsv"
         fp = fp or ",".join(judge.fingerprints(sha))
-        p.write_text(f"cell_or_class\texpect\tfingerprints\treason\nk1@hA#p1\t{expect}\t{fp}\tr\n", encoding="utf-8")
+        p.write_text(f"cell_or_class\texpect\tfingerprints\treason\tholds\nk1@hA#p1\t{expect}\t{fp}\tr\ttrue\n",
+                     encoding="utf-8")
         return p
 
     src_map = {"k1@hA#p1": src}
@@ -158,8 +159,8 @@ def test_assertion_needs_the_measured_source(al_parser, tmp_path):
     reg = tmp_path / "r.tsv"
     reg.write_text(registry.HEADER + "\nk1\thA\tlist-separator\tfa\tx \u27e8HOLE\u27e9\t\t\tp\n", encoding="utf-8")
     asr = tmp_path / "a.tsv"
-    asr.write_text("cell_or_class\texpect\tfingerprints\treason\nk1@hA#p1\t(call_expression)\t"
-                   + ",".join(judge.fingerprints(sha)) + "\tr\n", encoding="utf-8")
+    asr.write_text("cell_or_class\texpect\tfingerprints\treason\tholds\nk1@hA#p1\t(call_expression)\t"
+                   + ",".join(judge.fingerprints(sha)) + "\tr\ttrue\n", encoding="utf-8")
     for srcs, why in (({"k1@hA#p1": src + b" "}, "source changed since evidence"),
                       ({}, "not in the regenerated universe")):
         text = report.build(ev, reg, asr, sources=srcs, parser=al_parser)
@@ -176,3 +177,37 @@ def test_groups_per_family_base_placement_kind():
                                     ("f", "suffix", "GAP"): ["c", "d"]}
     assert report.slug("f", "seed:x:y", "GAP") == "f__seed-x-y__gap"
     assert report.witness("f", "x", "SILENT").endswith("test_silent.py")
+
+
+def test_sites_count_only_matching_shapes():
+    """A family's sites are the production (host, class) counts matching its defective cells' placements: hB's 50
+    sep-after sites count for a sep-after cell (and for list lead-optional, whose arm ends with the separator), not
+    for a trail cell; a seed matches nothing."""
+    for placement, sites in (("sep-after", 50), ("lead-optional+comments", 50), ("trail", 0), ("sep-before", 0)):
+        a, text = build(cell(f"k2@hB#{placement}", "hB", placement=placement, err=True))
+        assert a["families"][("fb", "GAP")]["sites"] == sites, placement
+    assert "| fb | GAP | 1 | hB | 50 | hB/sep-after | 9000 |" in build(cell("k2@hB#x", "hB", err=True))[1]
+    assert report.walk_classes("terminator", "trail+not") == ("sep-both", "sep-before")
+    assert report.walk_classes("continuation", "suffix/xor+comments") == ("suffix",)
+    assert report.walk_classes("seed", "seed:x") == ()
+
+
+def test_empty_statement_ruling_rows_form_their_own_family():
+    """A SILENT cell whose failing assertion row is an empty_statement ruling row leaves its registry family for
+    `empty-statement-ownership`, ranked in the SILENT tier with its ruling-first note; another failing row does not."""
+    recs = cell("k1@hA#p1", "hA", oracle="cannot-validate") + cell("k2@hB#p1", "hB", oracle="cannot-validate")
+    rows = [judge.Assertion("k1@hA#p1", "(x)", judge.fingerprints(SHA), report.EMPTY_RULING + ": lone `;`"),
+            judge.Assertion("k2@hB#p1", "(x)", judge.fingerprints(SHA), "SILENT: other")]
+    a = report.analyse(recs, HEADER, ROWS, rows, check=lambda *_: False)
+    assert sorted(a["families"]) == [(report.EMPTY_OWNERSHIP, "SILENT"), ("fb", "SILENT")]
+    assert a["families"][(report.EMPTY_OWNERSHIP, "SILENT")]["note"].startswith("ruling first")
+    text = report.render(a, HEADER)
+    ranked = text.split("## Ranked fix list")[1].split("## UNCHECKED")[0]
+    assert "| empty-statement-ownership | SILENT |" in ranked and "ruling first" in ranked
+
+
+def test_not_probed_prints_the_real_skip_reason():
+    """A registry row without evidence shows placements.skipped_for's reason, not a generic line."""
+    _, text = build(cell("k1@hA#p1", "hA", err=True))
+    probed = text.split("## Not probed")[1]
+    assert "no top-level separator in plain" in probed and "no evidence record for this row" not in probed

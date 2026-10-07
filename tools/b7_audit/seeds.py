@@ -116,10 +116,21 @@ _UNIT_HOSTS = ("preproc_conditional_statement", "preproc_fragmented_else_tail", 
                "preproc_conditional_permissions", "preproc_split_permissions_property")
 
 
+# Split hosts whose arms hold statements, so a `;` at a group's end ends a statement (`end;` closing a split
+# `begin`, BC.History CustContUpdate.Codeunit.al:144). The other split hosts (field, key, declaration, report
+# dataitem header, ...) join values with `;`. A split node spans past its `#endif`, so its last child is the `;` of
+# the statement it completes (CRMSetupDefaults.Codeunit.al:2257: a case branch whose `#if` arm holds one pattern
+# and `,`; the node ends at the branch's `exit(...);`). Task 6 deferred minor: 58 such sites were counted sep-after.
+_SPLIT_STATEMENT_PREFIXES = ("preproc_split_procedure", "preproc_split_if_", "preproc_split_case_",
+                             "preproc_split_code_block_", "preproc_split_block_", "preproc_split_else_begin",
+                             "preproc_split_complete_body")
+
+
 def _terminates(host):
     """Hosts whose trailing `;` ends the last unit (Permissions' `;` ends the property, the list joins
     with `,`); in link, impl-values, option-members, table-relation and where hosts it stays a separator."""
-    return host in _UNIT_HOSTS or (host.startswith("preproc_split_") and "statement" in host)         or host.startswith("preproc_split_procedure")
+    return (host in _UNIT_HOSTS or (host.startswith("preproc_split_") and "statement" in host)
+            or host.startswith(_SPLIT_STATEMENT_PREFIXES))
 
 
 def classify(node):

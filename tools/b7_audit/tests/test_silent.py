@@ -27,6 +27,11 @@ SILENT = [
     ("bnd:additive_expression:left:end@case_branch#first-only/arithmetic", "assertion"),  # binary-operand / first-only, 16 cells
     ("bnd:additive_expression:left:end@case_branch#nested/arithmetic", "assertion"),  # binary-operand / nested, 22 cells
     ("bnd:additive_expression:left:end@case_branch#suffix/arithmetic", "assertion"),  # binary-operand / suffix, 22 cells
+    ("occ:_else_begin_block:4.0@preproc_split_if_then_begin_else_shared#adjacent-compl", "assertion"),  # empty-statement-ownership / adjacent-compl, 168 cells
+    ("occ:_else_begin_block:4.0@preproc_split_if_then_begin_else_shared#elif", "assertion"),  # empty-statement-ownership / elif, 168 cells
+    ("occ:_else_begin_block:4.0@preproc_split_if_then_begin_else_shared#nested", "assertion"),  # empty-statement-ownership / nested, 168 cells
+    ("occ:_else_begin_block:4.0@preproc_split_if_then_begin_else_shared#sep-only", "assertion"),  # empty-statement-ownership / sep-only, 168 cells
+    ("occ:_else_begin_block:4.0@preproc_split_if_then_begin_else_shared#trail", "assertion"),  # empty-statement-ownership / trail, 153 cells
     ("occ:event_declaration:0.5.0@controladdin_body#adjacent-compl", "oracle:X=0:discrepancy"),  # event-declaration / adjacent-compl, 6 cells
     ("occ:event_declaration:0.5.0@controladdin_body#elif", "oracle:X=0,Y=0:discrepancy"),  # event-declaration / elif, 6 cells
     ("occ:event_declaration:0.5.0@controladdin_body#empty", "oracle:X=0:discrepancy"),  # event-declaration / empty, 6 cells
@@ -37,11 +42,6 @@ SILENT = [
     ("bnd:preproc_conditional_expression_tail:operand:end@argument_list#chain/arithmetic", "assertion"),  # expression-tail / chain, 1 cells
     ("bnd:preproc_conditional_expression_tail:operand:end@argument_list#suffix/arithmetic", "assertion"),  # expression-tail / suffix, 2 cells
     ("bnd:preproc_conditional_expression_tail:operand:end@argument_list#suffix-else/arithmetic", "assertion"),  # expression-tail / suffix-else, 2 cells
-    ("occ:_preproc_guard_block:0.0.1@preproc_guarded_statement#adjacent-compl", "assertion"),  # guarded-statement / adjacent-compl, 3 cells
-    ("occ:_preproc_guard_block:0.0.1@preproc_guarded_statement#elif", "assertion"),  # guarded-statement / elif, 3 cells
-    ("occ:_preproc_guard_block:0.0.1@preproc_guarded_statement#nested", "assertion"),  # guarded-statement / nested, 3 cells
-    ("occ:_preproc_guard_block:0.0.1@preproc_guarded_statement#sep-only", "assertion"),  # guarded-statement / sep-only, 3 cells
-    ("occ:_preproc_guard_block:0.0.1@preproc_guarded_statement#trail", "assertion"),  # guarded-statement / trail, 3 cells
     ("occ:signed_integer_list:0.0.1.0.0@declaration_body#sep-after", "oracle:TPL=1,X=1:discrepancy"),  # integer-list / sep-after, 9 cells
     ("occ:interface_procedure_suffix:0.1.0@interface_procedure#adjacent-compl", "oracle:X=0:discrepancy"),  # interface-procedure / adjacent-compl, 6 cells
     ("occ:interface_procedure_suffix:0.1.0@interface_procedure#elif", "oracle:X=0,Y=0:discrepancy"),  # interface-procedure / elif, 6 cells
@@ -49,15 +49,11 @@ SILENT = [
     ("occ:interface_procedure_suffix:0.1.0@interface_procedure#nested", "oracle:X=0,Y=0:discrepancy"),  # interface-procedure / nested, 6 cells
     ("occ:interface_procedure_suffix:0.1.0@interface_procedure#sep-only", "oracle:X=0:discrepancy"),  # interface-procedure / sep-only, 6 cells
     ("occ:interface_procedure_suffix:0.1.0@interface_procedure#trail", "oracle:X=1:discrepancy"),  # interface-procedure / trail, 6 cells
-    ("occ:preproc_split_procedure_preamble:0.6.0@declaration_body#adjacent-compl", "assertion"),  # procedure-header / adjacent-compl, 9 cells
-    ("occ:preproc_split_procedure_preamble:0.6.0@declaration_body#elif", "assertion"),  # procedure-header / elif, 9 cells
-    ("occ:preproc_split_procedure_preamble:0.6.0@declaration_body#nested", "assertion"),  # procedure-header / nested, 9 cells
-    ("occ:preproc_split_procedure_preamble:0.6.0@declaration_body#sep-only", "assertion"),  # procedure-header / sep-only, 9 cells
-    ("occ:_routine_regular_body:0.2.0@preproc_split_procedure#adjacent-compl", "oracle:TPL2=0,X=0:discrepancy"),  # procedure-tail / adjacent-compl, 12 cells
-    ("occ:_routine_regular_body:0.2.0@preproc_split_procedure#elif", "oracle:TPL2=0,X=0,Y=0:discrepancy"),  # procedure-tail / elif, 12 cells
+    ("occ:_routine_regular_body:0.2.0@preproc_split_procedure#adjacent-compl", "oracle:TPL2=0,X=0:discrepancy"),  # procedure-tail / adjacent-compl, 6 cells
+    ("occ:_routine_regular_body:0.2.0@preproc_split_procedure#elif", "oracle:TPL2=0,X=0,Y=0:discrepancy"),  # procedure-tail / elif, 6 cells
     ("occ:_routine_regular_body:0.2.0@preproc_split_procedure#empty", "oracle:TPL2=0,X=0:discrepancy"),  # procedure-tail / empty, 6 cells
-    ("occ:_routine_regular_body:0.2.0@preproc_split_procedure#nested", "oracle:TPL2=0,X=0,Y=0:discrepancy"),  # procedure-tail / nested, 12 cells
-    ("occ:_routine_regular_body:0.2.0@preproc_split_procedure#sep-only", "oracle:TPL2=0,X=0:discrepancy"),  # procedure-tail / sep-only, 12 cells
+    ("occ:_routine_regular_body:0.2.0@preproc_split_procedure#nested", "oracle:TPL2=0,X=0,Y=0:discrepancy"),  # procedure-tail / nested, 6 cells
+    ("occ:_routine_regular_body:0.2.0@preproc_split_procedure#sep-only", "oracle:TPL2=0,X=0:discrepancy"),  # procedure-tail / sep-only, 6 cells
     ("occ:_routine_regular_body:0.2.0@preproc_split_procedure#trail", "oracle:TPL2=0,X=1:discrepancy"),  # procedure-tail / trail, 6 cells
     ("seed:value-runs__boundary-complementary-three", "assertion"),  # property-value / seed:value-runs__boundary-complementary-three, 1 cells
     ("seed:value-runs__boundary-visible-caption", "assertion"),  # property-value / seed:value-runs__boundary-visible-caption, 1 cells
@@ -67,23 +63,18 @@ SILENT = [
     ("bnd:range_expression:right:end@range_expression#op-only/arithmetic", "oracle:X=1:discrepancy"),  # range / op-only, 4 cells
     ("bnd:range_expression:right:end@case_branch#suffix/arithmetic", "assertion"),  # range / suffix, 8 cells
     ("bnd:range_expression:right:end@range_expression#suffix-else/arithmetic", "oracle:X=0:discrepancy"),  # range / suffix-else, 4 cells
-    ("occ:_else_begin_block:4.0@preproc_split_if_then_begin_else_shared#adjacent-compl", "assertion"),  # split-code-block / adjacent-compl, 18 cells
-    ("occ:_else_begin_block:4.0@preproc_split_if_then_begin_else_shared#elif", "assertion"),  # split-code-block / elif, 18 cells
-    ("occ:_else_begin_block:4.0@preproc_split_if_then_begin_else_shared#nested", "assertion"),  # split-code-block / nested, 18 cells
-    ("occ:_else_begin_block:4.0@preproc_split_if_then_begin_else_shared#sep-only", "assertion"),  # split-code-block / sep-only, 18 cells
-    ("occ:_else_begin_block:4.0@preproc_split_if_then_begin_else_shared#trail", "assertion"),  # split-code-block / trail, 18 cells
-    ("occ:preproc_split_if_begin_asymmetric:0.3.0@asserterror_statement#adjacent-compl", "assertion"),  # split-if-begin / adjacent-compl, 84 cells
-    ("occ:preproc_split_if_begin_asymmetric:0.3.0@asserterror_statement#elif", "assertion"),  # split-if-begin / elif, 84 cells
-    ("occ:preproc_split_if_begin_asymmetric:0.3.0@asserterror_statement#nested", "assertion"),  # split-if-begin / nested, 84 cells
-    ("occ:preproc_split_if_begin_asymmetric:0.3.0@asserterror_statement#sep-only", "assertion"),  # split-if-begin / sep-only, 84 cells
-    ("occ:preproc_split_if_begin_asymmetric:0.3.0@asserterror_statement#trail", "assertion"),  # split-if-begin / trail, 84 cells
-    ("occ:_statement:0.2.1.0@preproc_conditional_statement#adjacent-compl", "oracle:TPL2=1,X=0:discrepancy"),  # statement-terminator / adjacent-compl, 111 cells
-    ("occ:_statement:0.2.1.0@preproc_conditional_statement#elif", "oracle:TPL2=1,X=0,Y=0:discrepancy"),  # statement-terminator / elif, 93 cells
+    ("occ:preproc_split_else_begin_over_endif:0.3.0.0.0@code_block#adjacent-compl", "oracle:TPL=0,X=0:discrepancy"),  # split-code-block / adjacent-compl, 3 cells
+    ("occ:preproc_split_else_begin_over_endif:0.3.0.0.0@code_block#elif", "oracle:TPL=0,X=0,Y=0:discrepancy"),  # split-code-block / elif, 3 cells
+    ("occ:preproc_split_else_begin_over_endif:0.3.0.0.0@code_block#nested", "oracle:TPL=0,X=0,Y=0:discrepancy"),  # split-code-block / nested, 3 cells
+    ("occ:preproc_split_else_begin_over_endif:0.3.0.0.0@code_block#sep-only", "oracle:TPL=0,X=0:discrepancy"),  # split-code-block / sep-only, 3 cells
+    ("occ:preproc_split_else_begin_over_endif:0.3.0.0.0@code_block#trail", "oracle:TPL=0,X=1:discrepancy"),  # split-code-block / trail, 3 cells
+    ("occ:_statement:0.2.1.0@preproc_conditional_statement#adjacent-compl", "oracle:TPL2=1,X=0:discrepancy"),  # statement-terminator / adjacent-compl, 60 cells
+    ("occ:_statement:0.2.1.0@preproc_conditional_statement#elif", "oracle:TPL2=1,X=0,Y=0:discrepancy"),  # statement-terminator / elif, 42 cells
     ("occ:call_statement:0.1@if_statement#empty", "oracle:X=0:discrepancy"),  # statement-terminator / empty, 45 cells
     ("occ:call_statement:0.1@case_branch#first-replace", "oracle:X=0:discrepancy"),  # statement-terminator / first-replace, 30 cells
-    ("occ:_statement:0.2.1.0@preproc_conditional_statement#nested", "oracle:TPL2=1,X=0,Y=0:discrepancy"),  # statement-terminator / nested, 93 cells
-    ("occ:_statement:0.2.1.0@preproc_conditional_statement#sep-only", "oracle:TPL2=1,X=0:discrepancy"),  # statement-terminator / sep-only, 93 cells
-    ("occ:_statement:0.2.1.0@preproc_conditional_statement#trail", "oracle:TPL2=1,X=1:discrepancy"),  # statement-terminator / trail, 93 cells
+    ("occ:_statement:0.2.1.0@preproc_conditional_statement#nested", "oracle:TPL2=1,X=0,Y=0:discrepancy"),  # statement-terminator / nested, 42 cells
+    ("occ:_statement:0.2.1.0@preproc_conditional_statement#sep-only", "oracle:TPL2=1,X=0:discrepancy"),  # statement-terminator / sep-only, 42 cells
+    ("occ:_statement:0.2.1.0@preproc_conditional_statement#trail", "oracle:TPL2=1,X=1:discrepancy"),  # statement-terminator / trail, 42 cells
     ("bnd:ternary_expression:condition:end@ternary_expression#chain/logical", "oracle:X=0:discrepancy"),  # ternary / chain, 4 cells
     ("bnd:ternary_expression:condition:end@ternary_expression#op-only/comparison", "oracle:X=1:discrepancy"),  # ternary / op-only, 10 cells
     ("bnd:ternary_expression:else_value:end@ternary_expression#suffix/arithmetic", "oracle:X=1:discrepancy"),  # ternary / suffix, 4 cells
