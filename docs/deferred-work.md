@@ -45,7 +45,8 @@ project's history — one of which reached a committed fixture before it was cau
 terminator and continuation site the grammar census finds, each judged against `alc` 18.0.41 and the config oracle.
 Totals: GAP 14,692, SILENT 1,362, MIXED 3,981, REJECTED/over-accepts 3, UNCHECKED 117, REJECTED 144, CONSISTENT 4,056.
 The matrix `docs/b7-separator-continuation-matrix.md` is the record; the 4.0.0 six-site list below is superseded by it. In the matrix, by family
-(GAP unless noted; `sites` = production sites of the host shapes, 0 for all but a few):
+(GAP unless noted; `sites` = production sites (matching shapes): the production walk's (host, class) counts that match
+the family's defective placements, 0 for all but a few):
 
 - `parameter-list` (the `;`-led form): GAP, 0 weighted sites (45 terminated-unit sites, unweighted)
 - `implements`: GAP, 0 sites
@@ -57,12 +58,18 @@ The matrix `docs/b7-separator-continuation-matrix.md` is the record; the 4.0.0 s
 - `argument_list` stays RESOLVED for the shapes the old record pinned; the matrix still finds `arguments` GAP (1 site) and
   SILENT at other placements
 
-The audit found far more than six: the largest families are SILENT `statement-terminator` and `split-if-begin`
+The audit found far more than six: 15 SILENT families, the largest `empty-statement-ownership` (825 cells, an arm's lone
+`;` read as an `empty_statement` in a host the oracle cannot lower; ruling first, B7b decides who owns the `;`) and
+`statement-terminator` (303 cells), then GAP families led by `split-call` and `split-if-begin` (17 matching sites each)
 (Section 'Ranked fix list' of the matrix, proposed B7b+ order in the roadmap row B7). Every defect group has a pinned
-witness: an alc probe in `tools/alc_probe/cases/b7-audit/` and a `test/corpus/b7_gap_*_test.txt` case (GAP and
-GAP witnesses use the corpus `:error` attribute, over-accepts witnesses are pinned as trees; 792 of the 854 cases carry `:error`), or a `tools/b7_audit/tests/test_silent.py` case (SILENT).
+witness: an alc probe in `tools/alc_probe/cases/b7-audit/` and a `test/corpus/b7_gap_*_test.txt` case (GAP
+witnesses use the corpus `:error` attribute, syntax over-accepts witnesses are pinned as trees; 792 of the 854 cases
+carry `:error`), or a `tools/b7_audit/tests/test_silent.py` case (SILENT).
 
-**Next step:** B7b+ per the ranked list; each fix flips its group's witnesses. Re-run `run --only <family>` and `report`.
+**Next step:** B7b+ per the ranked list, starting with the `empty-statement-ownership` ruling; each fix flips its
+group's witnesses. After a grammar change run `assert --refresh`, a FULL `run` (warm cache: minutes; `run --only
+<family>` re-observes every cell but compiles only the slice, and exits 2 when the change moved a cell outside the
+slice into a tier that needs an uncached compile) and `report`.
 
 **Owner:** B7b+ (B12 / B13 for the families named above).
 
@@ -96,9 +103,13 @@ upgrade, not a prerequisite.
 
 ## 2. A rule existing is not the same as the shape being covered
 
-**Established:** B7a (2026-10-07) turned this into a gate: every host is probed at BOTH comma placements and every
-other placement of the §6.1 table (`lead-optional`, `holes-lead`, `holes-mid`, `holes-trail`, `trail`, `one-elem`, `empty-list`, ...).
-A rule's existence is no longer read as coverage; a cell is CONSISTENT only with a holding assertion or an oracle pass.
+**Established:** B7a (2026-10-07) turned this into a gate: every registry row whose template supports them is probed at
+BOTH comma placements and at every other placement of the §6.1 table (`lead-optional`, `holes-lead`, `holes-mid`,
+`holes-trail`, `trail`, `one-elem`, `empty-list`, ...). Not every host is probed at every placement: a placement is
+skipped where the template cannot form it (too few elements, a positional first element, a fixed arity, a token-only
+hole), qualifier rows get none, and the matrix section 'Not probed' lists each skipped row with its real reason
+(`placements.skipped_for`). A rule's existence is no longer read as coverage; a cell is CONSISTENT only with a holding
+assertion or an oracle pass.
 The matrix `docs/b7-separator-continuation-matrix.md` lists per (family, base placement) which placement is GAP, SILENT or CONSISTENT.
 `option-members` shows the original shape: `X, #if FOO Y #endif` versus `X #if FOO , Y #endif` are separate
 placements with separate verdicts.
@@ -1560,6 +1571,17 @@ generator's intended vector (the cell's class representative is not a valid inst
 UNCHECKED before any assertion: `permissions` 96 (AL0393), `arguments` 12 (AL0135), `integer-list` 6 (AL0456),
 `statement-terminator` 3 (`;` before `end`). They are listed in the matrix section 'UNCHECKED' and never ranked, so none
 is a known defect and none is known clean.
+
+The 117 are where a larger generator imprecision blocks a verdict. In all, 3,091 cells carry
+`vector_mismatch` (alc's acceptance differs from the intended vector; matrix section 'Generator imprecisions'), all of
+them alc-measured: MIXED 2,564, GAP 261, REJECTED 128, CONSISTENT 78, SILENT 60. The 117 UNCHECKED above are not among
+them: they are class-sampled, carry no alc verdict of their own, and inherit their representative's mismatch. By base
+placement: `trail` 1,011, `empty-list` 264, `holes-lead` / `holes-mid` / `holes-trail` 261 each,
+`op-only` 248, `nested` 89, `consecutive` 49, `sep-before-end` 48, `whole-operand` 46, `lead-optional` 42, `elif` 42,
+then 20 placements under 40 each. By family the largest are `permissions` 360, `property-value` 326,
+`caption-subfields` 324, `ml-pairs` 183, `integer-list` 165. Verdicts use alc's actual acceptance, so these cells are
+judged correctly; the mismatch means the intended vector (the generator's validity model per placement, mostly the
+trailing-separator and holes rules) is wrong for that family, which only matters for class sampling.
 
 **Next step:** fix the four templates in `tools/b7_audit/registry.tsv` (a valid filling per vector), re-run
 `run --only permissions|arguments|integer-list|statement-terminator`, close the cells with assertions, `report`.

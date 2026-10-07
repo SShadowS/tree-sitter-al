@@ -230,6 +230,54 @@ generic placements before the semicolon cells and the seeds, so a cold run is a 
 compiler time; `run --only <family|row>` re-runs a slice, and the cache makes re-runs cheap. Proven
 equivalent rows (`equiv`) share cells but keep one host-parity witness each.
 
+## Execution amendments (2026-10-07)
+
+Rulings taken while building and running the audit that change the design above. Each is recorded in the
+B7a ledger (`.superpowers/sdd/2026-10-06-b7a-separator-continuation-audit/progress.md`); the code is the
+reference.
+
+1. **Evidence is `tools/b7_audit/evidence.jsonl.gz`** (gzip, mtime 0, byte-deterministic), not the plain
+   `.jsonl` of §8; records keep the oracle status and the sorted item reason prefixes (text before
+   `@offset`), the verbatim items stay in the uncommitted `.cache/b7_audit/oracle-items.jsonl`.
+2. **Tiered alc, class-sampled cells** (§7.1, §10): the parser and the oracle check every cell; alc
+   compiles a cell only when it is a seed, its parser/oracle outcome is not clean+pass, its intended
+   vector excludes an assignment, or it is its (role, family, placement) class's representative. Every
+   other cell is `class-sampled` and is judged through its representative, `UNCHECKED` (`representative
+   vector mismatch`) when the representative's alc acceptance differs from the intended vector.
+   `run --only X` re-observes parser and oracle for EVERY cell and compiles only the slice; the other
+   measured cells read the alc cache (a miss is exit 2).
+3. **Group witnesses** (§8 Fixtures): one alc probe, corpus case or SILENT test per (family, base
+   placement, verdict) group, made from its lexicographically first cell, not one per cell; the base
+   placement drops `+comments`, `+not`, `@Name` and the operator class.
+4. **`:error` GAP witnesses**: the GAP corpus cases use tree-sitter's `:error` attribute (an error exists,
+   no recovery tree pinned); syntax over-accepts witnesses stay pinned as trees.
+5. **`empty_statement`**: an arm's lone `;` read as an `empty_statement` is CONSISTENT only where the
+   oracle normalises it (a top-level `statement_block`); in nested and split hosts the cell is SILENT,
+   and the report files those SILENT cells under their own family `empty-statement-ownership`, ranked in
+   the SILENT tier with "ruling first": B7b decides who owns the `;` before it is a fix.
+6. **Assertions close cannot-validate cells** (§7.2, §7.3): a fresh holding assertion turns an oracle
+   `cannot-validate` into CONSISTENT with detail `assertion-closed: <refusal reasons>`; a failing one is
+   SILENT. Each row also records `holds`, its truth at its fingerprints, so `assert --refresh` can
+   re-fingerprint unchanged rows after a parser or oracle change and list flipped ones. The committed
+   matrix is valid only at the recorded hashes.
+7. **Link names**: `RunPageLink` and `ColumnFilter` have no registry container (page action, query
+   column); they are covered by the committed link-keying alc cases as seeds, and the generated link
+   variants cover only names sharing the witness template's value grammar.
+8. **Qualifier rows** (`.`, `::`, `..`, `:`) generate no placements (§6 defines none); the matrix lists
+   them under "Not probed". Every other registry row without evidence is listed there with its real
+   skip reasons (`placements.skipped_for`); not every host is probed at every placement.
+9. **Multi-host registry rows**: the `route` column may hold an explicit host list; the first host is the
+   witness the template targets, and the row's reason argues why the others reach the key through the
+   same rules or scanner states.
+10. **The `plain` column**: the registry carries the directive-free valid filling of each hole, compiled
+    ACCEPT and parsed clean; it is the typed control of §7.1. A row with no parseable template is a
+    `TEMPLATE-GAP:` row, one template-level GAP.
+11. **Sites** (§8 Defect families, ranking): a family's sites are the production walk's class-matched
+    counts: the (host, class) pairs of `production_shapes.json` that match a (host, class) pair of the
+    family's defective cells, the class read off the placement shape (`report.SHAPE_CLASSES`).
+    `terminated-unit` sites are shown per host, never weighted; a `;` closing a split statement host
+    (58 sites, `seeds._terminates`) is a terminated unit, not `sep-after`.
+
 ## Rev 2 changes (gpt-6.1-sol review of rev 1)
 
 1. Census of all structural punctuation with roles and recursion/caller context; lexical punctuation
