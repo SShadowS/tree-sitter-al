@@ -255,6 +255,8 @@ reference.
    oracle normalises it (a top-level `statement_block`); in nested and split hosts the cell is SILENT,
    and the report files those SILENT cells under their own family `empty-statement-ownership`, ranked in
    the SILENT tier with "ruling first": B7b decides who owns the `;` before it is a fix.
+   **Superseded 2026-10-07 by the user ruling (Option A, B7b-0):** the arm's `;` is its own `empty_statement` in every
+   host; the oracle lowers it as the preceding statement's separator (`arm-terminator`) and the family is gone.
 6. **Assertions close cannot-validate cells** (§7.2, §7.3): a fresh holding assertion turns an oracle
    `cannot-validate` into CONSISTENT with detail `assertion-closed: <refusal reasons>`; a failing one is
    SILENT. Each row also records `holds`, its truth at its fingerprints, so `assert --refresh` can

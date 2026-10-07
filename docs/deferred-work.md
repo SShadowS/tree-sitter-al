@@ -66,8 +66,23 @@ witness: an alc probe in `tools/alc_probe/cases/b7-audit/` and a `test/corpus/b7
 witnesses use the corpus `:error` attribute, syntax over-accepts witnesses are pinned as trees; 792 of the 854 cases
 carry `:error`), or a `tools/b7_audit/tests/test_silent.py` case (SILENT).
 
-**Next step:** B7b+ per the ranked list, starting with the `empty-statement-ownership` ruling; each fix flips its
-group's witnesses. After a grammar change run `assert --refresh`, a FULL `run` (warm cache: minutes; `run --only
+**Ruling (user, Option A, 2026-10-07) and B7b-0:** a statement's `;` alone in an `#if` arm (`I := 1` / `#if X` / `;` /
+`#endif`) is its own `empty_statement` inside the conditional; today's tree is correct. B7b-0 made the oracle agree in
+every statement run (normalisation `arm-terminator`: the selected arm's `;` is lowered as the preceding statement's
+separator; no tree change) and rewrote the 825 ruling rows of `assertions.tsv` to accept the arm's `empty_statement`.
+The `empty-statement-ownership` family is gone (789 cells CONSISTENT, 36 MIXED now ranked by their over-acceptance in
+`split-if-begin` / `guarded-statement`); `split-code-block` SILENT is gone too; `statement-terminator` SILENT keeps 213
+cells (if/while/case hosts, where a bare call `Bar` owns its `;` in the flat reading). Totals after B7b-0: GAP 14,692,
+SILENT 468, MIXED 3,981, REJECTED/over-accepts 3, UNCHECKED 123, REJECTED 144, CONSISTENT 4,944. The sites column now
+classifies each defective cell's own split tree with the production walk's classifier (`report.cell_shape`); 18,157
+defective cells yield no class and are listed, not weighted: 17,758 `error-recovered tree` (controller ruling: a split
+tree with an error is never matched) and 399 `no class`. Template GAP entries still match every weighted class of their
+host (over-weighted; the matrix notes it).
+
+**B7b order:** B7b-1 list separators, B7b-2 expression continuations, B7b-3 terminators; property-value runs stay with
+B12/B13.
+
+**Next step:** B7b-1 per the ranked list; each fix flips its group's witnesses. After a grammar change run `assert --refresh`, a FULL `run` (warm cache: minutes; `run --only
 <family>` re-observes every cell but compiles only the slice, and exits 2 when the change moved a cell outside the
 slice into a tier that needs an uncached compile) and `report`.
 
@@ -1585,6 +1600,19 @@ trailing-separator and holes rules) is wrong for that family, which only matters
 
 **Next step:** fix the four templates in `tools/b7_audit/registry.tsv` (a valid filling per vector), re-run
 `run --only permissions|arguments|integer-list|statement-terminator`, close the cells with assertions, `report`.
+
+**Owner:** unassigned.
+
+## 43. `; else` after a statement parses clean with `else` as an identifier statement (silent over-acceptance)
+
+**Established:** 2026-10-07, B7b-0 review, observed with `tree-sitter parse` (not caused by B7b-0, no grammar change
+there). Flat `if C then I := 1 ; else I := 2;` parses with no ERROR: the `if_statement` ends at `I := 1`, then the
+statement block holds a bare `(identifier)` statement for `else` and an `assignment_statement` for `I := 2`. alc rejects
+`; else` (a `;` before `else` ends the `if`). Likely B6 territory: `else` is not reserved in code; the reserved set
+`code_names` covers only the operator words.
+
+Same review, same tool: `case I of 1: I := 1` followed by a lone-`;` arm (`#if X` / `;` / `#endif`) and then `2: ...`
+has errors in the split tree (`has_error`); the B7a statement-terminator case-branch cells are GAP for this reason.
 
 **Owner:** unassigned.
 
