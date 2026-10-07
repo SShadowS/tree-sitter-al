@@ -105,8 +105,8 @@ def test_load_assertions_keeps_quotes(tmp_path):
     T, N = chr(9), chr(10)
     fp = ','.join(judge.fingerprints(SHA))
     p = tmp_path / 'a.tsv'
-    p.write_text(T.join(['cell_or_class', 'expect', 'fingerprints', 'reason']) + N +
-                 T.join(['c', '(a "x" (b))', fp, '"why"']) + N, encoding='utf-8')
+    p.write_text(T.join(['cell_or_class', 'expect', 'fingerprints', 'reason', 'holds']) + N +
+                 T.join(['c', '(a "x" (b))', fp, '"why"', 'true']) + N, encoding='utf-8')
     [a] = judge.load_assertions(p)
     assert a.expect == '(a "x" (b))' and a.reason == '"why"'
 
@@ -199,10 +199,11 @@ def test_template_gap():
 
 def test_assertions_roundtrip(tmp_path):
     p = tmp_path / "a.tsv"
-    p.write_text("# c\ncell_or_class\texpect\tfingerprints\treason\n"
-                 "c\t(a (b))\t" + ",".join(judge.fingerprints(SHA)) + "\twhy\n", encoding="utf-8")
+    p.write_text("# c\ncell_or_class\texpect\tfingerprints\treason\tholds\n"
+                 "c\t(a (b))\t" + ",".join(judge.fingerprints(SHA)) + "\twhy\tfalse\n", encoding="utf-8")
     [a] = judge.load_assertions(p)
-    assert (a.cell_or_class, a.expect, a.fingerprints, a.reason) == ("c", "(a (b))", judge.fingerprints(SHA), "why")
+    assert (a.cell_or_class, a.expect, a.fingerprints, a.reason, a.recorded) == \
+        ("c", "(a (b))", judge.fingerprints(SHA), "why", "false")
     committed = judge.load_assertions(judge.HERE / "assertions.tsv")      # the committed rows load
     assert all(len(x.fingerprints) == 4 for x in committed)
 
@@ -283,3 +284,37 @@ def test_exact_pattern_refuses_ellipsis():
     with pytest.raises(ValueError, match="exact pattern"):
         judge._read("(argument_list! (integer) ...)")
     assert judge._read("(argument_list (integer) ...)") == ("argument_list", [(None, ("integer", []))])
+
+
+def test_refresh_rewrites_unchanged_and_lists_flipped(al_parser, tmp_path):
+    """A synthetic parser change (an old parser.c/scanner.c/oracle hash in every row): rows whose truth is unchanged
+    get the current fingerprints; a flipped row and a row whose cell source changed keep theirs and are listed."""
+    import hashlib
+    from tools.b7_audit.evidence import Entry
+    from tools.b7_audit.placements import Cell
+
+    def entry(cid, src, placement="p"):
+        return Entry(Cell(cid, "k", "h", placement, src, (), frozenset(), (0, 0), None), "list-separator", "f")
+    one = "codeunit 50100 P { trigger OnRun() begin Foo(1); end; }"
+    two = "codeunit 50100 P { trigger OnRun() begin Foo(1, 2); end; }"
+    ents = [entry("a", one), entry("b", one), entry("c", two), entry("d", two, "q"), entry("e", one, "q")]
+    sha = {e.cell.id: hashlib.sha256(e.cell.source.encode()).hexdigest() for e in ents}
+    old, new = ("0" * 64, "1" * 64, "2" * 64), ("3" * 64, "4" * 64, "5" * 64)
+    pat = "(argument_list! (integer))"
+    rows = [("a", sha["a"], "true"),                  # holds, recorded holding: refreshed
+            ("b", sha["b"], "false"),                 # holds, recorded failing: flipped
+            ("c", "f" * 64, "false"),                 # its cell source changed since the row was written
+            ("list-separator/f/q", "*", "mixed:1/2"),  # class row over d (fails) and e (holds): refreshed
+            ("list-separator/f/p", "*", "true")]      # a, b, c have cell rows: covers nothing now
+    T = "\t"
+    p = tmp_path / "a.tsv"
+    p.write_text("# comment kept\n" + T.join(judge.HEAD) + "\n" +
+                 "".join(T.join([c, pat, ",".join((s,) + old), "why", h]) + "\n" for c, s, h in rows),
+                 encoding="utf-8")
+    n, problems = judge.refresh(p, ents, lambda b: al_parser.parse(b).root_node, base=new)
+    assert n == 2
+    assert problems == ["flipped false -> true\tb", "source changed\tc", "flipped true -> none\tlist-separator/f/p"]
+    got = {a.cell_or_class: a.fingerprints for a in judge.load_assertions(p)}
+    assert got["a"] == (sha["a"],) + new and got["list-separator/f/q"] == ("*",) + new
+    assert got["b"] == (sha["b"],) + old and got["c"] == ("f" * 64,) + old
+    assert p.read_text(encoding="utf-8").startswith("# comment kept\n")

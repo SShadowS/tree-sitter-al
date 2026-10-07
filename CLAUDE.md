@@ -61,8 +61,12 @@ python tests/traversal/regen_expected.py      # a -u: review every hunk of the d
 
 # Separator/continuation audit (B7a, docs/b7-separator-continuation-matrix.md) -- validate-grammar.sh Step 5g is the census
 python -m tools.b7_audit census --check       # exit 0 clean: registry covers every separator/continuation site of the grammar; no parser, no alc
-./tools/ts-lock.sh python -m tools.b7_audit run [--only X] [--check]  # evidence vs alc and the oracle; full ~3 h, --check replays from .cache/b7_audit; NOT in validate
+./tools/ts-lock.sh python -m tools.b7_audit run [--only X] [--check]  # evidence vs alc and the oracle; full ~3 h cold, minutes warm; --only X re-observes every cell, compiles only X; --check replays from .cache/b7_audit; NOT in validate
 python -m tools.b7_audit report               # regenerate the matrix from evidence.jsonl.gz; must be byte-identical to the committed file
+./tools/ts-lock.sh python -m tools.b7_audit assert --refresh  # re-fingerprint assertions.tsv; exit 1 lists rows whose truth flipped
+./tools/ts-lock.sh python -m pytest tools/b7_audit/tests -q   # validate-grammar.sh Step 5h, CI config-oracle job (SILENT witnesses)
+# After ANY change to src/parser.c, src/scanner.c or tools/config_oracle: `assert --refresh`, a full `run`, then `report`.
+# The committed matrix is valid only at the parser/oracle hashes its evidence header and assertions.tsv record.
 
 # Perf baselines (docs/performance-baselines.md): baseline ~35 min; one group: native [--cc zig]|wasm|incremental|build|oracle; merge BASE NEW
 python -m tools.perf ab --lib-a OLD.dll --lib-b NEW.dll --corpus dc   # speed DECISIONS: same session, pinned, ABBA; baselines/compare are context (sessions drift ~30%)

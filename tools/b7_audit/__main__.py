@@ -1,7 +1,7 @@
 """python -m tools.b7_audit census [--check|--list]
    python -m tools.b7_audit report [--out PATH] [--evidence PATH]
    python -m tools.b7_audit run [--only FAMILY|KEY|PLACEMENT] [--jobs N] [--check] [--accept-tool]
-   python -m tools.b7_audit assert --cell ID"""
+   python -m tools.b7_audit assert --cell ID | --refresh"""
 import argparse
 import sys
 from pathlib import Path
@@ -71,6 +71,19 @@ def cmd_assert(cid):
     return 0
 
 
+def cmd_refresh():
+    """Re-evaluate every assertion row on the current parser; rewrite the fingerprints of unchanged rows, list the
+    flipped ones (exit 1). The matrix stays valid only at the recorded hashes: follow with a full `run` and `report`."""
+    from tools.query_coverage import loader
+    from . import evidence, judge
+    parser = loader.make_parser(loader.load_language(loader.ensure_library(loader.REPO_ROOT)))
+    n, problems = judge.refresh(judge.ASSERTIONS, evidence.universe(), lambda b: parser.parse(b).root_node)
+    for p in problems:
+        print(p)
+    print(f"{n} rows refreshed, {len(problems)} flipped or changed (left as they were)")
+    return 1 if problems else 0
+
+
 def main(argv=None):
     p = argparse.ArgumentParser(prog="tools.b7_audit")
     sub = p.add_subparsers(dest="cmd", required=True)
@@ -83,8 +96,12 @@ def main(argv=None):
     r.add_argument("--jobs", type=int, default=6)
     r.add_argument("--check", action="store_true")
     r.add_argument("--accept-tool", action="store_true")
-    asr = sub.add_parser("assert", help="print what an assertion row needs: tree, flat readings, fingerprints")
-    asr.add_argument("--cell", required=True)
+    asr = sub.add_parser("assert", help="--cell: what an assertion row needs (tree, flat readings, "
+                         "fingerprints); --refresh: re-fingerprint every row after a parser/oracle change")
+    m = asr.add_mutually_exclusive_group(required=True)
+    m.add_argument("--cell")
+    m.add_argument("--refresh", action="store_true",
+                   help="rewrite fingerprints of rows whose truth is unchanged; list flipped rows (exit 1)")
     rp = sub.add_parser("report")
     rp.add_argument("--out")
     rp.add_argument("--evidence")
@@ -98,7 +115,7 @@ def main(argv=None):
             return 2
         return 0
     if a.cmd == "assert":
-        return cmd_assert(a.cell)
+        return cmd_refresh() if a.refresh else cmd_assert(a.cell)
     if a.cmd == "run":
         from . import evidence
         try:

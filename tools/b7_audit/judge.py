@@ -4,7 +4,9 @@ A record is what `evidence.measure` writes. Verdicts use alc's ACTUAL acceptance
 intended vector only drives the class-sampled rule and the `vector_mismatch` flag.
 """
 import csv
+import hashlib
 import re
+from collections import defaultdict
 from dataclasses import dataclass
 from pathlib import Path
 
@@ -33,6 +35,7 @@ class Assertion:
     fingerprints: tuple      # (cell source, src/parser.c, src/scanner.c, oracle package) sha256
     reason: str
     holds: object = None     # set by the caller from check_assertion(); None = not evaluated
+    recorded: str = ""       # the row's truth at its fingerprints: true / false / mixed:N/M (class row) / none
 
 
 # --- fingerprints and loading ---------------------------------------------------------------------
@@ -51,11 +54,73 @@ def _fresh(a, cell_sha, current):
     return want[1:] == cur[1:] and want[0] in ("*", cur[0])
 
 
+HEAD = ["cell_or_class", "expect", "fingerprints", "reason", "holds"]
+
+
 def load_assertions(path=ASSERTIONS):
     lines = [l for l in Path(path).read_text(encoding="utf-8").splitlines() if l.strip() and not l.startswith("#")]
     rows = list(csv.reader(lines, delimiter="\t", quoting=csv.QUOTE_NONE))
-    assert rows[0] == ["cell_or_class", "expect", "fingerprints", "reason"], rows[0]
-    return [Assertion(c, e, tuple(f.split(",")), r) for c, e, f, r in rows[1:]]
+    assert rows[0] == HEAD, rows[0]
+    return [Assertion(c, e, tuple(f.split(",")), r, recorded=h) for c, e, f, r, h in rows[1:]]
+
+
+def evaluate(assertions, entries, parse):
+    """-> the truth of each row on the current parser, in row order. A cell row is judged on its cell's tree; a
+    class row on every cell of its class that has no cell row of its own (report.analyse's rule): `true` / `false`
+    when they agree, `mixed:<holding>/<cells>` when they do not, `none` when the row covers no cell. parse(bytes) -> root node."""
+    by_id = {e.cell.id: e for e in entries}
+    own = {a.cell_or_class for a in assertions if a.cell_or_class in by_id}
+    members = defaultdict(list)
+    for e in entries:
+        if e.cell.id not in own:
+            members["/".join(e.cls)].append(e.cell.id)
+    todo = defaultdict(list)                              # cell id -> rows judged on its tree
+    for i, a in enumerate(assertions):
+        for cid in ([a.cell_or_class] if a.cell_or_class in by_id else members.get(a.cell_or_class, [])):
+            todo[cid].append(i)
+    seen = defaultdict(list)
+    for cid, idx in todo.items():
+        root = parse(by_id[cid].cell.source.encode("utf-8"))
+        for i in idx:
+            seen[i].append(check_assertion(root, assertions[i]))
+
+    def truth(v):
+        if not v:
+            return "none"
+        return "true" if all(v) else "false" if not any(v) else f"mixed:{sum(v)}/{len(v)}"
+    return [truth(seen[i]) for i in range(len(assertions))]
+
+
+def refresh(path, entries, parse, base=None):
+    """`assert --refresh`: re-evaluate every row on the current parser; a row whose truth equals its recorded
+    `holds` gets the current fingerprints (cell source, parser.c, scanner.c, oracle), a row whose truth flipped or
+    whose cell source changed is listed and left alone. -> (rewritten, [problem lines]); the file is rewritten in
+    place (comments and row order kept)."""
+    rows = load_assertions(path)
+    base = tuple(base) if base is not None else fingerprints("")[1:]
+    by_id = {e.cell.id: e for e in entries}
+    truth = evaluate(rows, entries, parse)
+    new_fp, problems = {}, []
+    for i, (a, t) in enumerate(zip(rows, truth)):
+        cell = a.cell_or_class in by_id
+        sha = hashlib.sha256(by_id[a.cell_or_class].cell.source.encode("utf-8")).hexdigest() if cell else "*"
+        if cell and a.fingerprints[0] != sha:
+            problems.append(f"source changed\t{a.cell_or_class}")
+        elif t != a.recorded:
+            problems.append(f"flipped {a.recorded} -> {t}\t{a.cell_or_class}")
+        else:
+            new_fp[i] = ",".join((sha,) + base)
+    out, i = [], -2                       # -1 is the column header, 0.. the rows
+    for line in Path(path).read_text(encoding="utf-8").splitlines():
+        if line.strip() and not line.startswith("#"):
+            i += 1
+            if i in new_fp:
+                f = line.split("\t")
+                f[2] = new_fp[i]
+                line = "\t".join(f)
+        out.append(line)
+    Path(path).write_text("\n".join(out) + "\n", encoding="utf-8", newline="\n")
+    return len(new_fp), problems
 
 
 def template_gap(row):
