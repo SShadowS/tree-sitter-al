@@ -140,17 +140,29 @@ class Alc:
         if self._owned:
             shutil.rmtree(self.workdir, ignore_errors=True)
 
-    def prefetch(self, jobs_list, jobs=6):
-        """Compile every distinct (text, symbols) not yet known, `jobs` at a time."""
+    def prefetch(self, jobs_list, jobs=6, cache_only=False):
+        """Compile every distinct (text, symbols) not yet known, `jobs` at a time. cache_only: read the disk
+        cache, compile nothing; -> the number of (text, symbols) the cache does not hold."""
         todo = {}
         for text, symbols in jobs_list:
             self.stats["requested"] += 1
             k = self.key(text, symbols)
             if k not in self._mem:
                 todo.setdefault(k, (text, symbols))
+        if cache_only:
+            missing = 0
+            for k in todo:
+                v = self._load(k)
+                if v is None:
+                    missing += 1
+                else:
+                    self.stats["disk_hits"] += 1
+                    self._mem[k] = v
+            return missing
         with ThreadPoolExecutor(max_workers=max(1, jobs)) as pool:
             for k, v in zip(todo, pool.map(lambda kv: self._compile(kv[0], *kv[1]), todo.items())):
                 self._mem[k] = v
+        return 0
 
     def verdict(self, text, symbols=()):
         k = self.key(text, symbols)
@@ -331,7 +343,8 @@ def universe(registry_path=HERE / "registry.tsv", seed_root=seeds.SEEDS):
 
 def select(entries, only):
     """The --only slice (family, key or placement, exact) plus the representative of each of its
-    classes, so a class-sampled cell's representative is always measured in the same run."""
+    classes, so a class-sampled cell's representative is always measured in the same run. The slice
+    decides only what alc compiles: the parser and the oracle re-observe every cell (run)."""
     if not only:
         return list(entries)
     picked = [e for e in entries if only in (e.family, e.cell.key, e.cell.placement)]
@@ -458,10 +471,13 @@ def run(only=None, jobs=6, check=False, accept_tool=False, out=EVIDENCE, al="al"
             log("cannot run: alc identity differs from the committed evidence (pass --accept-tool)")
             return 2
     every = universe()
-    entries = select(every, only)
-    if not entries:
+    picked = {e.cell.id for e in select(every, only)} if only else None
+    if picked is not None and not picked:
         log(f"cannot run: --only {only!r} matches no cell")
         return 2
+    # Parser and oracle re-observe EVERY cell (seconds), so no record keeps a stale parser/oracle result under the
+    # new header; --only narrows only what alc compiles, the rest of the measured cells read the alc cache.
+    entries = every
     from tools.query_coverage import loader
     parser = loader.make_parser(loader.load_language(loader.ensure_library(loader.REPO_ROOT)))
     obs = {e.cell.id: observe(e.cell, parser) for e in entries}
@@ -479,7 +495,14 @@ def run(only=None, jobs=6, check=False, accept_tool=False, out=EVIDENCE, al="al"
     try:
         alc.check_controls()
         measured = [e for e in entries if tier[e.cell.id] is None]
-        alc.prefetch([j for e in measured for j in alc_jobs(e.cell)], jobs=jobs)
+        alc.prefetch([j for e in measured if picked is None or e.cell.id in picked for j in alc_jobs(e.cell)],
+                     jobs=jobs)
+        rest = [j for e in measured if picked is not None and e.cell.id not in picked for j in alc_jobs(e.cell)]
+        missing = alc.prefetch(rest, cache_only=True)
+        if missing:
+            log(f"cannot run: --only {only!r}: {missing} compiles of cells outside the slice are not in the alc cache "
+                "(their parser/oracle outcome changed tier); run the whole matrix")
+            return 2
         t2 = time.time()
         records = [r for e in entries for r in measure(e.cell, parser, alc, tier[e.cell.id], obs[e.cell.id])]
     finally:
@@ -499,8 +522,6 @@ def run(only=None, jobs=6, check=False, accept_tool=False, out=EVIDENCE, al="al"
             log(d)
         log(f"{len(diffs)} differences")
         return 1 if diffs else 0
-    if only and committed:
-        records += [r for r in committed[1] if r["cell"] not in cells]
     write(records, hdr, out)
     log(f"wrote {Path(out).relative_to(REPO).as_posix() if Path(out).is_relative_to(REPO) else out}")
     return 0

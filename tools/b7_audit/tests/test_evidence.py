@@ -265,3 +265,41 @@ def test_gz_evidence_is_deterministic(tmp_path):
     assert p1.read_bytes() == p2.read_bytes() and p1.read_bytes()[:2] == b"\x1f\x8b"
     h, rs = evidence.read(p1)
     assert h == header and [r["cell"] for r in rs] == ["a", "b"]
+
+
+def test_only_reobserves_every_cell_and_compiles_only_the_slice(tmp_path, monkeypatch):
+    """`run --only` re-runs parser and oracle over EVERY cell (a stale committed parser_has_error outside the slice is
+    replaced), compiles only the slice, and reads the alc cache for the rest; a cache miss outside the slice is exit 2."""
+    other = Cell(**{**CELL.__dict__, "id": "k2@h#sep-only", "key": "k2", "source": SRC.replace("Foo", "Bar")})
+    monkeypatch.setattr(evidence, "universe", lambda: [evidence.Entry(CELL, "list-separator", "fa"),
+                                                       evidence.Entry(other, "list-separator", "fb")])
+    monkeypatch.setattr(evidence, "corpus_roots", lambda: {})
+    monkeypatch.setattr(evidence, "ORACLE_ITEMS", tmp_path / "items.jsonl")
+    exe = tmp_path / "al.exe"
+    exe.write_bytes(b"x")
+
+    def runner():
+        compile_ = fake(lambda t, raw: (core.REJECT, ("AL0104",)) if core.GARBAGE in raw else (core.ACCEPT, ()))
+
+        def run(args):
+            if args[-1] == "--version":
+                return subprocess.CompletedProcess(args, 0, "fake 1.0\n", "")
+            run.calls += 1
+            return compile_(args)
+        run.calls = 0
+        return run
+    out, cache = tmp_path / "e.jsonl", tmp_path / "cache"
+    go = lambda r, c, **kw: evidence.run(out=out, al=str(exe), runner=r, cache_dir=c, log=lambda m: None, **kw)
+    assert go(runner(), cache) == 0
+    header, recs = evidence.read(out)
+    for r in recs:
+        if r["cell"] == other.id:
+            r["parser_has_error"] = True                  # what a stale record from an older parser looks like
+    evidence.write(recs, header, out)
+    cold = runner()
+    assert go(cold, tmp_path / "empty", only="fa") == 2 and cold.calls > 2     # slice compiled, the rest missed
+    warm = runner()
+    assert go(warm, cache, only="fa") == 0 and warm.calls == 2                 # the two uncached controls only
+    _, recs = evidence.read(out)
+    assert {r["cell"] for r in recs} == {CELL.id, other.id}
+    assert all(r["parser_has_error"] is False for r in recs)
