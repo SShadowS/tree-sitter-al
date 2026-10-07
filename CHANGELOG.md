@@ -41,6 +41,17 @@ public API — a change to node structure or field names is a **major** bump.
 
 ### Changed
 
+- **Config oracle: a lone `;` in an `#if` arm right after a statement is lowered as that statement's separator
+  (roadmap B7b-0, no tree change).** By user ruling (Option A), `I := 1` / `#if X` / `;` / `#endif` keeps its tree: the
+  `;` is its own `empty_statement` inside the conditional. A configuration that selects the arm reads `I := 1 ;`, so the
+  oracle now lowers that `;` as the preceding statement's terminator (named normalisation `arm-terminator`, noted
+  `normalised:arm-terminator@<offset>`) in every statement run: a `statement_block` at any depth, a conditional
+  statement's arm, a split if's completed block and else block. With no statement right before it (start of the run,
+  after a `;` or an `empty_statement`) it stays an `empty_statement`. Before, every such configuration was an oracle
+  discrepancy. The B7a matrix is regenerated; its production-weighting column now classifies each defective cell's own
+  split tree with the production walk's classifier (`report.cell_shape`) instead of a placement table, and lists the
+  cells that yield no class.
+
 - **A property value may be a run of `#if` groups (roadmap B11, deferred-work items 33 and 35).
   Breaking for tree consumers only at the shapes listed below; every previously correct
   production tree is byte-identical in all four corpora (BC.History 15,358 files, DC 1,352,
