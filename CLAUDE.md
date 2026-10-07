@@ -4,7 +4,7 @@ GOAL: A parser which parses AL code CORRECT, not just without errors. That is th
 
 This file provides guidance to Claude Code (claude.ai/code) when working with this tree-sitter parser for the AL (Application Language) programming language used in Microsoft Dynamics 365 Business Central.
 
-**Current Status**: 100% production file success rate (15,358/15,358 files), 3,304 tests passing, 0 errors (measured 2026-10-07, B7b-1)
+**Current Status**: 100% production file success rate (15,358/15,358 files), 3,305 tests passing, 0 errors (measured 2026-10-07 on main after the B7b-1 merge)
 
 ## Git Commit Guidelines
 
@@ -451,13 +451,13 @@ a "the delta is exactly what I added" check, which therefore could not fail.
 | SYMBOL_COUNT | 1,268 | B7b-1 (2026-10-07) |
 | STATE_COUNT | 23,579 (LARGE_STATE_COUNT 7,521) | B7b-1 (2026-10-07) |
 | grammar.js lines | 7,549 | B7b-1 (2026-10-07) |
-| Tests | 3,304 | B7b-1 (2026-10-07) |
+| Tests | 3,305 | B7b-1, main (2026-10-07) |
 | Production success | 100% (0 ERROR and 0 MISSING nodes over 15,358 files) | 4.0.0 |
 | Named keywords | 153 (151 rules + 2 external), uniform shape | 4.0.0 |
 | Query files | 6 (highlights, locals, tags, indents, folds, textobjects) | 4.0.0 |
 
-The 4.0.0 rows were measured on the merged tree, not carried from a branch; the B7b-1 rows on branch
-`feat/b7b-1-strict-lists` at its last grammar commit (re-measure after the merge).
+The 4.0.0 rows were measured on the merged tree, not carried from a branch; the B7b-1 rows were re-measured
+on main after the squash merge of `feat/b7b-1-strict-lists` (d6d946a).
 Three different test counts (1,562 / 1,574 / 1,580) circulated during 4.0.0 and
 two were arithmetic from a stale copy of this table. Re-measure; do not recall.
 
