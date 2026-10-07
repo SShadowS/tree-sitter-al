@@ -14,8 +14,9 @@ per-configuration kind).
 Production sites (matching shapes) = the production walk's (host, class) counts that match a (group type, class)
 pair of the family's defective cells, each read off the cell's OWN split tree by cell_shape (the conditional group
 spanning its placement offset, classified by seeds.classify, the walk's own classifier). A defective cell with no
-such pair is listed as unclassified, never silently zeroed. A template GAP has no source of its own and matches
-every weighted class of its host. `terminated-unit` shapes are shown per host, never weighted. For this the report
+such pair is listed as unclassified, never silently zeroed; a split tree with an error is always unclassified
+(`error-recovered tree`). A template GAP has no source of its own and matches every weighted class of its host
+(over-weighted relative to per-cell families; the matrix says so). `terminated-unit` shapes are shown per host, never weighted. For this the report
 also parses every defective cell's source (parser only; the evidence's parser hash pins the trees).
 Ranking (spec 8): SILENT first; then GAP and OVERACCEPT by matching production sites; ties by name. A
 family blocked by an external dependency goes to the end of its tier, and a family always follows the
@@ -45,11 +46,17 @@ TIER = {"SILENT": 0, "GAP": 1, "OVERACCEPT": 1}
 NOT_PROBED = {"qualifier", "na", "lexical"}
 NOTES = {}
 
+ERROR_RECOVERED = "error-recovered tree"
+
+
 def cell_shape(root, src, hole=None):
     """-> (group type, class) for a cell's OWN split tree: the innermost conditional group (seeds._is_group) that
     spans the cell's placement offset, the first `#if` line in its hole (the whole source for a seed), classified by
-    seeds.classify, the production walk's classifier. None when no group spans it (an `#if` inside an ERROR, no
-    `#if` in the hole) or the walk gives that group no class."""
+    seeds.classify, the production walk's classifier. ERROR_RECOVERED when the split tree has an error anywhere
+    (controller ruling, B7b-0 fix round 1: an error-recovered tree is never matched against production shapes).
+    None when no group spans it (no `#if` in the hole) or the walk gives that group no class."""
+    if root.has_error:
+        return ERROR_RECOVERED
     lo, hi = hole or (0, len(src))
     m = re.search(rb"(?m)^[ \t]*(#if)\b", src[lo:hi])
     if m is None:
@@ -199,12 +206,13 @@ def analyse(records, header, rows, assertions=(), check=None, classify=None):
         if c["kind"] is None:
             continue
         f = fams.setdefault((c["family"], c["kind"]), {"cells": [], "hosts": set(), "seeds": [], "shapes": set(),
-                                                         "unclassified": []})
+                                                         "unclassified": [], "why": defaultdict(int)})
         f["cells"].append(c["id"])
         f["hosts"].add(c["host"])
         f["shapes"].update(c["shapes"])
         if c["unclassified"] is not None:
             f["unclassified"].append(c["id"])
+            f["why"][c["unclassified"]] += 1
         if c["seed"]:
             f["seeds"].append(c["id"])
     for (name, kind), f in fams.items():
@@ -332,12 +340,17 @@ def render(a, header):
                     ", ".join(f"{h}/{c}" for h, c in f["shapes"]) or "-", f["unweighted"],
                     ", ".join(f["deps"]) or "-", f["owner"] + (f" ({f['note']})" if f["note"] else ""), f["cells"][0])
                    for (n, k), f in sorted(fams.items())])
-    uncl = [(n, k, f["unclassified"]) for (n, k), f in sorted(fams.items()) if f["unclassified"]]
-    out += ["", f"Unclassified defective cells: {sum(len(u) for _, _, u in uncl)} (their own tree gives no (group "
-            "type, class): no conditional group spans the placement offset, or `seeds.classify` gives none; they "
+    uncl = [(n, k, f["unclassified"], f["why"]) for (n, k), f in sorted(fams.items()) if f["unclassified"]]
+    out += ["", "Template GAP entries (`template:<key>@<host>`, a whole template that does not parse) have no single "
+            "source, so they match every weighted class of their host: their sites are an upper bound and are "
+            "over-weighted relative to the per-cell families.", ""]
+    out += ["", f"Unclassified defective cells: {sum(len(u) for _, _, u, _ in uncl)} (their own tree gives no (group "
+            f"type, class): `{ERROR_RECOVERED}` = the split tree has an error (never matched, controller ruling); "
+            "`no class` = no conditional group spans the placement offset, or `seeds.classify` gives none; they "
             "add no production sites). Per family, with the first cell ids:", ""]
-    out += _table(["family", "kind", "unclassified cells", "first cells"],
-                  [(n, k, len(u), ", ".join(u[:3])) for n, k, u in uncl]) if uncl else ["none"]
+    out += _table(["family", "kind", "unclassified cells", "reasons", "first cells"],
+                  [(n, k, len(u), "; ".join(f"{r} {w[r]}" for r in sorted(w)), ", ".join(u[:3]))
+                   for n, k, u, w in uncl]) if uncl else ["none"]
     out += ["", "## Defect groups and their witnesses", "",
             "One group per (family, base placement, kind); its representative is its lexicographically first "
             "cell, and the group's alc probe, corpus case or SILENT test is made from that cell alone.", ""]

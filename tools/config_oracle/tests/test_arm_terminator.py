@@ -35,7 +35,7 @@ SPLIT_IF = (b"codeunit 1 T\n{\n    procedure P(C: Boolean)\n    begin\n        i
 SPLIT_IF_TAIL = (b"codeunit 1 T\n{\n    procedure P(C: Boolean)\n    begin\n        if C then begin\n            A()\n"
                  b"#if X\n        end else begin\n            B();\n#endif\n#if Z\n            ;\n#endif\n        end;\n"
                  b"    end;\n}\n")
-ELSE_ARMS =src("        I := 1\n#if X\n        ;\n#else\n        ;\n#endif\n        I := 2;")
+ELSE_ARMS = src("        I := 1\n#if X\n        ;\n#else\n        ;\n#endif\n        I := 2;")
 COMMENTS = src("        I := 1\n#if X\n        // c\n        ; // d\n#else\n        /* e */ ;\n#endif\n        I := 2;")
 NO_STATEMENT = src("#if X\n        ;\n#endif\n        I := 2;")
 AFTER_SEPARATOR = src("        I := 1;\n#if X\n        ;\n#endif\n        I := 2;")

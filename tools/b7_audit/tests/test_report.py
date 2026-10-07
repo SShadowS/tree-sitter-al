@@ -202,7 +202,7 @@ def test_unclassified_cell_is_listed_not_zeroed():
     a, text = build(recs, classify=lambda cid, sha: None if cid.startswith("k2") else ("hA", "sep-after"))
     assert a["families"][("fb", "GAP")]["sites"] == 0 and a["families"][("fb", "GAP")]["unclassified"] == ["k2@hB#p"]
     fams = text.split("## Families")[1].split("## Defect groups")[0]
-    assert "Unclassified defective cells: 1" in fams and "| fb | GAP | 1 | k2@hB#p |" in fams
+    assert "Unclassified defective cells: 1" in fams and "| fb | GAP | 1 | no class 1 | k2@hB#p |" in fams
     assert "k1@hA#p" not in fams.split("Unclassified defective cells")[1]
 
 
@@ -213,9 +213,30 @@ def test_cell_shape_reads_the_cells_own_tree(al_parser):
     cid = "occ:call_statement:0.1@case_branch#first-replace"
     e = next(x for x in evidence.universe() if x.cell.id == cid)
     src = e.cell.source.encode("utf-8")
-    assert report.cell_shape(al_parser.parse(src).root_node, src, e.cell.hole) ==         ("preproc_conditional_statement", "trail")
+    assert report.cell_shape(al_parser.parse(src).root_node, src, e.cell.hole) == \
+        ("preproc_conditional_statement", "trail")
     plain = b"codeunit 50100 P { trigger OnRun() begin Foo(1); end; }"
     assert report.cell_shape(al_parser.parse(plain).root_node, plain, (0, len(plain))) is None
+
+
+def test_cell_shape_refuses_an_error_recovered_tree(al_parser):
+    """Controller ruling (B7b-0 fix round 1): a split tree with has_error is unclassified, reason
+    `error-recovered tree`, even where the group at the placement offset is itself clean."""
+    clean = b"codeunit 50100 P\n{\n    trigger OnRun()\n    begin\n        Foo(1)\n#if X\n        ;\n#endif\n    end;\n}\n"
+    broken = clean.replace(b"    end;\n}", b"        Foo(1 +;\n    end;\n}")
+    assert broken != clean
+    assert report.cell_shape(al_parser.parse(clean).root_node, clean) == ("preproc_conditional_statement", "other")
+    root = al_parser.parse(broken).root_node
+    assert root.has_error
+    assert report.cell_shape(root, broken) == report.ERROR_RECOVERED == "error-recovered tree"
+
+
+def test_unclassified_reasons_are_shown():
+    recs = cell("k2@hB#p", "hB", err=True) + cell("k2@hB#q", "hB", placement="q", err=True)
+    a, text = build(recs, classify=lambda cid, sha: report.ERROR_RECOVERED if cid.endswith("p") else None)
+    assert a["families"][("fb", "GAP")]["unclassified"] == ["k2@hB#p", "k2@hB#q"]
+    fams = text.split("## Families")[1].split("## Defect groups")[0]
+    assert "| fb | GAP | 2 | error-recovered tree 1; no class 1 | k2@hB#p, k2@hB#q |" in fams
 
 
 def test_not_probed_prints_the_real_skip_reason():

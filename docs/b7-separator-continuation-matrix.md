@@ -3578,19 +3578,19 @@ Production sites (matching shapes): the production walk's (host, class) counts t
 | family | kind | cells | hosts | production sites (matching shapes) | matching shapes | terminated-unit sites (unweighted) | dependencies | owner | representative |
 |---|---|---|---|---|---|---|---|---|---|
 | actionref-header | GAP | 24 | action_body | 0 | - | 0 | - | B7b+ | occ:actionref_declaration:3@action_body#adjacent-compl |
-| arguments | GAP | 89 | argument_list, preproc_conditional_arguments | 1 | preproc_conditional_arguments/sep-after | 0 | - | B7b+ | bnd:_argument_expression:0:end@argument_list#consecutive/word-arithmetic |
+| arguments | GAP | 89 | argument_list, preproc_conditional_arguments | 0 | - | 0 | - | B7b+ | bnd:_argument_expression:0:end@argument_list#consecutive/word-arithmetic |
 | arguments | OVERACCEPT | 14 | argument_list, preproc_conditional_arguments | 0 | - | 0 | - | B7b+ | bnd:_argument_expression:0:end@argument_list#op-only/arithmetic |
 | arguments | SILENT | 4 | argument_list | 0 | - | 0 | - | B7b+ | bnd:_argument_expression:0:end@argument_list#consecutive/arithmetic |
 | array-dimensions | GAP | 57 | type_specification | 0 | - | 0 | - | B7b+ | occ:array_type:3.0.0@type_specification#adjacent-compl |
 | assignment | GAP | 424 | asserterror_statement, case_branch, if_statement, preproc_conditional_statement, preproc_fragmented_else_tail, preproc_guarded_statement, preproc_split_block_close_after_endif, preproc_split_block_end_in_else, preproc_split_case_branch, preproc_split_case_end_branch, preproc_split_case_extended, preproc_split_code_block_end, preproc_split_code_block_over_endif, preproc_split_else_begin_over_endif, preproc_split_if_begin_asymmetric, preproc_split_if_begin_else, preproc_split_if_else_statement, preproc_split_if_statement, preproc_split_if_then_begin, preproc_split_if_then_begin_else_shared, preproc_split_open_statement, statement_block, while_statement | 0 | - | 2703 | - | B7b+ | bnd:assignment_statement:right:end@asserterror_statement#consecutive/arithmetic |
 | assignment | OVERACCEPT | 48 | asserterror_statement, case_branch, if_statement, preproc_conditional_statement, preproc_fragmented_else_tail, preproc_guarded_statement, preproc_split_block_close_after_endif, preproc_split_block_end_in_else, preproc_split_case_branch, preproc_split_case_end_branch, preproc_split_case_extended, preproc_split_code_block_end, preproc_split_code_block_over_endif, preproc_split_else_begin_over_endif, preproc_split_if_begin_asymmetric, preproc_split_if_begin_else, preproc_split_if_else_statement, preproc_split_if_statement, preproc_split_if_then_begin, preproc_split_if_then_begin_else_shared, preproc_split_open_statement, statement_block, while_statement | 0 | - | 2703 | - | B7b+ | bnd:assignment_statement:right:end@asserterror_statement#op-only/arithmetic |
 | attribute-arguments | GAP | 30 | attribute_arguments | 0 | - | 0 | - | B7b+ | occ:attribute_argument_list:1.0.0@attribute_arguments#empty |
-| binary-operand | GAP | 1853 | additive_expression, case_branch, comparison_expression, logical_expression, multiplicative_expression, preproc_conditional_case_patterns, preproc_split_case_branch, preproc_split_case_extended, preproc_split_case_statement_end, property_expression | 2 | preproc_conditional_case_patterns/sep-after | 1 | - | B7b+ | bnd:additive_expression:left:end@additive_expression#consecutive/arithmetic |
+| binary-operand | GAP | 1853 | additive_expression, case_branch, comparison_expression, logical_expression, multiplicative_expression, preproc_conditional_case_patterns, preproc_split_case_branch, preproc_split_case_extended, preproc_split_case_statement_end, property_expression | 0 | - | 1 | - | B7b+ | bnd:additive_expression:left:end@additive_expression#consecutive/arithmetic |
 | binary-operand | OVERACCEPT | 54 | additive_expression, comparison_expression, logical_expression, multiplicative_expression, property_expression | 0 | - | 0 | - | B7b+ | bnd:additive_expression:left:end@additive_expression#op-only/arithmetic |
 | binary-operand | SILENT | 82 | case_branch, preproc_conditional_case_patterns, preproc_split_case_branch, preproc_split_case_extended, preproc_split_case_statement_end | 0 | - | 1 | - | B7b+ | bnd:additive_expression:left:end@case_branch#consecutive/arithmetic |
 | calc-formula | GAP | 135 | declaration_body, preproc_conditional, property | 0 | - | 0 | - | B7b+ | occ:_calc_formula_arm_t:0.3@declaration_body#adjacent-compl |
-| caption-subfields | GAP | 1080 | action_body, declaration_body, preproc_conditional, preproc_conditional_actions, preproc_conditional_layout_mixed, preproc_conditional_report, preproc_conditional_xmlport, property | 6 | preproc_conditional_option_members/sep-after | 0 | - | B7b+ | occ:caption_value:0.1.0.0.0.0@action_body#adjacent-compl |
-| case-branch | GAP | 216 | case_body, case_branch, preproc_conditional_case, preproc_split_case_extended, preproc_split_case_statement_end, statement_block | 147 | preproc_conditional_statement/trail | 0 | - | B7b+ | occ:case_branch:0.1@case_body#adjacent-compl |
+| caption-subfields | GAP | 1080 | action_body, declaration_body, preproc_conditional, preproc_conditional_actions, preproc_conditional_layout_mixed, preproc_conditional_report, preproc_conditional_xmlport, property | 0 | - | 0 | - | B7b+ | occ:caption_value:0.1.0.0.0.0@action_body#adjacent-compl |
+| case-branch | GAP | 216 | case_body, case_branch, preproc_conditional_case, preproc_split_case_extended, preproc_split_case_statement_end, statement_block | 0 | - | 0 | - | B7b+ | occ:case_branch:0.1@case_body#adjacent-compl |
 | case-expression | GAP | 92 | statement_block | 0 | - | 0 | - | B7b+ | bnd:case_statement:expression:end@statement_block#chain/arithmetic |
 | case-patterns | GAP | 273 | case_branch, preproc_conditional_case_patterns, preproc_split_case_branch, preproc_split_case_extended, preproc_split_case_statement_end | 0 | - | 1 | - | B7b+ | occ:_case_pattern_branch:0.0@preproc_conditional_case_patterns#elif |
 | case-patterns | OVERACCEPT | 102 | case_branch, preproc_conditional_case_patterns, preproc_split_case_branch, preproc_split_case_extended, preproc_split_case_statement_end | 0 | - | 1 | - | B7b+ | occ:_case_pattern_branch:0.0@preproc_conditional_case_patterns#holes-lead |
@@ -3613,9 +3613,9 @@ Production sites (matching shapes): the production walk's (host, class) counts t
 | implementation-list | GAP | 55 | implementation_value_list, preproc_conditional_impl_values | 0 | - | 0 | - | B7b+ | occ:_impl_value_branch:0.0@implementation_value_list#holes-trail |
 | implementation-list | OVERACCEPT | 30 | implementation_value_list, preproc_conditional_impl_values | 0 | - | 0 | - | B7b+ | occ:_impl_value_branch:0.0@implementation_value_list#holes-lead |
 | implements | GAP | 90 | codeunit_declaration, enum_declaration, preproc_split_declaration | 0 | - | 0 | - | B7b+ | occ:implements_clause:2.0.0@codeunit_declaration#empty |
-| in-operand | GAP | 270 | case_branch, in_expression, preproc_conditional_case_patterns, preproc_split_case_branch, preproc_split_case_extended, preproc_split_case_statement_end | 2 | preproc_conditional_case_patterns/sep-after | 1 | - | B7b+ | bnd:in_expression:left:end@case_branch#chain/arithmetic |
+| in-operand | GAP | 270 | case_branch, in_expression, preproc_conditional_case_patterns, preproc_split_case_branch, preproc_split_case_extended, preproc_split_case_statement_end | 0 | - | 1 | - | B7b+ | bnd:in_expression:left:end@case_branch#chain/arithmetic |
 | in-operand | OVERACCEPT | 4 | in_expression | 0 | - | 0 | - | B7b+ | bnd:in_expression:left:end@in_expression#op-only/arithmetic |
-| integer-list | GAP | 84 | declaration_body, preproc_conditional, property | 6 | preproc_conditional_option_members/sep-after | 0 | - | B7b+ | occ:signed_integer_list:0.0.1.0.0@declaration_body#adjacent-compl |
+| integer-list | GAP | 84 | declaration_body, preproc_conditional, property | 0 | - | 0 | - | B7b+ | occ:signed_integer_list:0.0.1.0.0@declaration_body#adjacent-compl |
 | integer-list | OVERACCEPT | 12 | declaration_body, preproc_conditional | 0 | - | 0 | - | B7b+ | occ:signed_integer_list:0.0.1.0.0@declaration_body#holes-lead |
 | integer-list | SILENT | 9 | declaration_body, preproc_conditional, property | 6 | preproc_conditional_option_members/sep-after | 0 | - | B7b+ | occ:signed_integer_list:0.0.1.0.0@declaration_body#sep-after |
 | interface-procedure | GAP | 27 | interface_procedure | 0 | - | 0 | - | B7b+ | occ:interface_procedure_suffix:0.1.0@interface_procedure#first-replace |
@@ -3636,45 +3636,45 @@ Production sites (matching shapes): the production walk's (host, class) counts t
 | move-modification | GAP | 528 | action_body, layout_body, preproc_conditional_actions, preproc_conditional_layout | 0 | - | 0 | - | B7b+ | occ:moveafter_modification:1.2@action_body#adjacent-compl |
 | namespace-pairs | GAP | 288 | declaration_body, preproc_conditional, property | 0 | - | 0 | - | B7b+ | occ:_namespaces_arm_t:0.3@declaration_body#adjacent-compl |
 | namespace-using | GAP | 84 | preproc_conditional_object, source_file | 0 | - | 0 | - | B7b+ | occ:namespace_declaration:2@preproc_conditional_object#adjacent-compl |
-| operand-prefix | GAP | 46 | preproc_operand_prefix | 3 | preproc_operand_prefix/prefix | 0 | - | B7b+ | bnd:_dangling_operand:operand:end@preproc_operand_prefix#chain/arithmetic |
-| option-members | GAP | 1111 | declaration_body, option_member_list, option_type, preproc_conditional, preproc_conditional_option_members, property | 6 | preproc_conditional_option_members/sep-after | 0 | - | B13 | occ:_option_member_list_empty_open:0.2.0.0.0@option_type#adjacent-compl |
-| order-by | GAP | 102 | declaration_body, order_by_list, preproc_conditional, property | 6 | preproc_conditional_option_members/sep-after | 0 | - | B7b+ | occ:order_by_item:3.0.0@order_by_list#empty |
+| operand-prefix | GAP | 46 | preproc_operand_prefix | 0 | - | 0 | - | B7b+ | bnd:_dangling_operand:operand:end@preproc_operand_prefix#chain/arithmetic |
+| option-members | GAP | 1111 | declaration_body, option_member_list, option_type, preproc_conditional, preproc_conditional_option_members, property | 0 | - | 0 | - | B13 | occ:_option_member_list_empty_open:0.2.0.0.0@option_type#adjacent-compl |
+| order-by | GAP | 102 | declaration_body, order_by_list, preproc_conditional, property | 0 | - | 0 | - | B7b+ | occ:order_by_item:3.0.0@order_by_list#empty |
 | parameter-list | GAP | 90 | preproc_split_procedure, preproc_split_procedure_preamble, procedure | 0 | - | 45 | - | B7b+ | occ:parameter_list:2.0.0@preproc_split_procedure#empty |
 | parenthesized | GAP | 46 | parenthesized_expression | 0 | - | 0 | - | B7b+ | bnd:parenthesized_expression:1:end@parenthesized_expression#chain/arithmetic |
 | permissions | GAP | 355 | declaration_body, permissions_property, preproc_conditional, preproc_conditional_permissions, preproc_split_permissions_property, tabledata_permission_list | 0 | - | 2 | - | B7b+ | occ:_permission_branch:0.0@preproc_conditional_permissions#elif |
 | permissions | OVERACCEPT | 69 | permissions_property, preproc_conditional_permissions, preproc_split_permissions_property, tabledata_permission_list | 0 | - | 2 | - | B7b+ | occ:_permission_branch:0.0@preproc_conditional_permissions#count-differs |
 | procedure-header | GAP | 51 | declaration_body, preproc_conditional, preproc_split_procedure, preproc_split_procedure_preamble, preproc_split_var_section_tail | 0 | - | 45 | - | B7b+ | occ:_procedure_header:3.0.0.1.0@preproc_split_procedure#adjacent-compl |
 | procedure-header | OVERACCEPT | 9 | declaration_body, preproc_conditional, preproc_split_var_section_tail | 0 | - | 0 | - | B7b+ | occ:preproc_split_procedure_preamble:0.6.0@declaration_body#trail |
-| procedure-tail | GAP | 120 | preproc_split_procedure, procedure | 147 | preproc_conditional_statement/trail | 45 | - | B7b+ | occ:_procedure_regular_tail:0.0.0@preproc_split_procedure#adjacent-compl |
+| procedure-tail | GAP | 120 | preproc_split_procedure, procedure | 0 | - | 45 | - | B7b+ | occ:_procedure_regular_tail:0.0.0@preproc_split_procedure#adjacent-compl |
 | procedure-tail | OVERACCEPT | 6 | preproc_split_procedure, procedure | 0 | - | 45 | - | B7b+ | occ:preproc_split_procedure_body:0.4.0@preproc_split_procedure#trail |
 | procedure-tail | SILENT | 36 | preproc_split_procedure, procedure | 0 | - | 45 | - | B7b+ | occ:_routine_regular_body:0.2.0@preproc_split_procedure#adjacent-compl |
-| property-terminator | GAP | 825 | declaration_body, preproc_conditional, preproc_conditional_actions, preproc_conditional_controladdin, preproc_conditional_layout_mixed, preproc_conditional_query, preproc_conditional_report, preproc_conditional_xmlport | 2 | preproc_conditional_table_relation/sep-after | 0 | - | B7b+ | occ:property:0.3@declaration_body#adjacent-compl |
-| property-value | GAP | 877 | action_body, declaration_body, implementation_value, ml_value_list, namespace_value_list, preproc_conditional, preproc_conditional_actions, preproc_conditional_controladdin, preproc_conditional_layout_mixed, preproc_conditional_query, preproc_conditional_report, preproc_conditional_xmlport, property, table_relation_value | 6 | preproc_conditional_option_members/sep-after | 0 | - | B13 | bnd:_property_value_with_split:0.0:end@action_body#consecutive/comparison |
+| property-terminator | GAP | 825 | declaration_body, preproc_conditional, preproc_conditional_actions, preproc_conditional_controladdin, preproc_conditional_layout_mixed, preproc_conditional_query, preproc_conditional_report, preproc_conditional_xmlport | 0 | - | 0 | - | B7b+ | occ:property:0.3@declaration_body#adjacent-compl |
+| property-value | GAP | 877 | action_body, declaration_body, implementation_value, ml_value_list, namespace_value_list, preproc_conditional, preproc_conditional_actions, preproc_conditional_controladdin, preproc_conditional_layout_mixed, preproc_conditional_query, preproc_conditional_report, preproc_conditional_xmlport, property, table_relation_value | 0 | - | 0 | - | B13 | bnd:_property_value_with_split:0.0:end@action_body#consecutive/comparison |
 | property-value | OVERACCEPT | 81 | action_body, declaration_body, implementation_value, ml_value_list, preproc_conditional, preproc_conditional_actions, preproc_conditional_controladdin, preproc_conditional_layout_mixed, preproc_conditional_report, preproc_conditional_xmlport, property | 3 | preproc_operand_prefix/prefix | 0 | - | B12 | bnd:_property_value_with_split:0.0:end@action_body#op-only/comparison |
 | property-value | SILENT | 2 | property | 0 | - | 0 | - | B12 | seed:value-runs__boundary-complementary-three |
-| range | GAP | 411 | case_branch, preproc_conditional_case_patterns, preproc_split_case_branch, preproc_split_case_extended, preproc_split_case_statement_end, range_expression | 2 | preproc_conditional_case_patterns/sep-after | 1 | - | B7b+ | bnd:range_expression:left:end@case_branch#chain/arithmetic |
+| range | GAP | 411 | case_branch, preproc_conditional_case_patterns, preproc_split_case_branch, preproc_split_case_extended, preproc_split_case_statement_end, range_expression | 0 | - | 1 | - | B7b+ | bnd:range_expression:left:end@case_branch#chain/arithmetic |
 | range | SILENT | 26 | case_branch, preproc_split_case_branch, preproc_split_case_extended, preproc_split_case_statement_end, range_expression | 0 | - | 1 | - | B7b+ | bnd:range_expression:right:end@case_branch#consecutive/arithmetic |
-| repeat-until | GAP | 864 | asserterror_statement, case_branch, if_statement, preproc_conditional_statement, preproc_fragmented_else_tail, preproc_guarded_statement, preproc_split_block_close_after_endif, preproc_split_block_end_in_else, preproc_split_case_branch, preproc_split_case_end_branch, preproc_split_case_extended, preproc_split_code_block_end, preproc_split_code_block_over_endif, preproc_split_else_begin_over_endif, preproc_split_if_begin_asymmetric, preproc_split_if_begin_else, preproc_split_if_else_statement, preproc_split_if_statement, preproc_split_if_then_begin, preproc_split_if_then_begin_else_shared, preproc_split_open_statement, statement_block, while_statement | 147 | preproc_conditional_statement/trail | 2703 | - | B7b+ | bnd:repeat_statement:condition:end@asserterror_statement#chain/logical |
+| repeat-until | GAP | 864 | asserterror_statement, case_branch, if_statement, preproc_conditional_statement, preproc_fragmented_else_tail, preproc_guarded_statement, preproc_split_block_close_after_endif, preproc_split_block_end_in_else, preproc_split_case_branch, preproc_split_case_end_branch, preproc_split_case_extended, preproc_split_code_block_end, preproc_split_code_block_over_endif, preproc_split_else_begin_over_endif, preproc_split_if_begin_asymmetric, preproc_split_if_begin_else, preproc_split_if_else_statement, preproc_split_if_statement, preproc_split_if_then_begin, preproc_split_if_then_begin_else_shared, preproc_split_open_statement, statement_block, while_statement | 0 | - | 2703 | - | B7b+ | bnd:repeat_statement:condition:end@asserterror_statement#chain/logical |
 | sorting | GAP | 342 | action_body, declaration_body, preproc_conditional, preproc_conditional_report, preproc_conditional_xmlport, property | 0 | - | 0 | - | B7b+ | occ:sorting_value:0.0.3.0.0@action_body#adjacent-compl |
-| split-call | GAP | 649 | asserterror_statement, case_branch, if_statement, preproc_conditional_statement, preproc_fragmented_else_tail, preproc_guarded_statement, preproc_split_block_close_after_endif, preproc_split_block_end_in_else, preproc_split_call_statement, preproc_split_case_branch, preproc_split_case_end_branch, preproc_split_case_extended, preproc_split_code_block_end, preproc_split_code_block_over_endif, preproc_split_else_begin_over_endif, preproc_split_if_begin_asymmetric, preproc_split_if_begin_else, preproc_split_if_else_statement, preproc_split_if_statement, preproc_split_if_then_begin, preproc_split_if_then_begin_else_shared, preproc_split_open_statement, statement_block, while_statement | 148 | preproc_conditional_arguments/sep-after, preproc_conditional_statement/trail | 2703 | - | B7b+ | bnd:_expression_list:0:end@preproc_split_call_statement#chain/arithmetic |
-| split-code-block | GAP | 72 | preproc_fragmented_else_tail, preproc_split_code_block_end, preproc_split_code_block_over_endif, preproc_split_if_begin_else, preproc_split_if_then_begin, preproc_split_if_then_begin_else_shared | 147 | preproc_conditional_statement/trail | 82 | - | B7b+ | occ:_else_begin_block:4.0@preproc_split_code_block_end#adjacent-compl |
+| split-call | GAP | 649 | asserterror_statement, case_branch, if_statement, preproc_conditional_statement, preproc_fragmented_else_tail, preproc_guarded_statement, preproc_split_block_close_after_endif, preproc_split_block_end_in_else, preproc_split_call_statement, preproc_split_case_branch, preproc_split_case_end_branch, preproc_split_case_extended, preproc_split_code_block_end, preproc_split_code_block_over_endif, preproc_split_else_begin_over_endif, preproc_split_if_begin_asymmetric, preproc_split_if_begin_else, preproc_split_if_else_statement, preproc_split_if_statement, preproc_split_if_then_begin, preproc_split_if_then_begin_else_shared, preproc_split_open_statement, statement_block, while_statement | 0 | - | 2703 | - | B7b+ | bnd:_expression_list:0:end@preproc_split_call_statement#chain/arithmetic |
+| split-code-block | GAP | 72 | preproc_fragmented_else_tail, preproc_split_code_block_end, preproc_split_code_block_over_endif, preproc_split_if_begin_else, preproc_split_if_then_begin, preproc_split_if_then_begin_else_shared | 0 | - | 82 | - | B7b+ | occ:_else_begin_block:4.0@preproc_split_code_block_end#adjacent-compl |
 | split-complete-body | GAP | 21 | preproc_split_complete_body | 0 | - | 0 | - | B7b+ | occ:_preproc_branch_body:4.0@preproc_split_complete_body#adjacent-compl |
-| split-if-begin | GAP | 693 | asserterror_statement, case_branch, if_statement, preproc_conditional_statement, preproc_fragmented_else_tail, preproc_guarded_statement, preproc_split_block_close_after_endif, preproc_split_block_end_in_else, preproc_split_case_branch, preproc_split_case_end_branch, preproc_split_case_extended, preproc_split_code_block_end, preproc_split_code_block_over_endif, preproc_split_else_begin_over_endif, preproc_split_if_begin_asymmetric, preproc_split_if_begin_else, preproc_split_if_else_statement, preproc_split_if_statement, preproc_split_if_then_begin, preproc_split_if_then_begin_else_shared, preproc_split_open_statement, statement_block, while_statement | 147 | preproc_conditional_statement/trail | 2703 | - | B7b+ | occ:preproc_split_if_begin_asymmetric:0.3.0@asserterror_statement#first-replace |
+| split-if-begin | GAP | 693 | asserterror_statement, case_branch, if_statement, preproc_conditional_statement, preproc_fragmented_else_tail, preproc_guarded_statement, preproc_split_block_close_after_endif, preproc_split_block_end_in_else, preproc_split_case_branch, preproc_split_case_end_branch, preproc_split_case_extended, preproc_split_code_block_end, preproc_split_code_block_over_endif, preproc_split_else_begin_over_endif, preproc_split_if_begin_asymmetric, preproc_split_if_begin_else, preproc_split_if_else_statement, preproc_split_if_statement, preproc_split_if_then_begin, preproc_split_if_then_begin_else_shared, preproc_split_open_statement, statement_block, while_statement | 0 | - | 2703 | - | B7b+ | occ:preproc_split_if_begin_asymmetric:0.3.0@asserterror_statement#first-replace |
 | split-if-begin | OVERACCEPT | 36 | asserterror_statement, if_statement, preproc_fragmented_else_tail, preproc_guarded_statement, preproc_split_code_block_over_endif, preproc_split_if_begin_else, preproc_split_if_else_statement, preproc_split_if_statement, preproc_split_if_then_begin, preproc_split_open_statement, statement_block, while_statement | 0 | - | 82 | - | B7b+ | occ:preproc_split_if_begin_asymmetric:0.3.0@asserterror_statement#trail |
-| split-if-condition | GAP | 360 | preproc_guarded_statement, preproc_split_if_begin_asymmetric, preproc_split_if_else_statement, statement_block | 17 | preproc_split_if_else_statement/lead-optional, preproc_split_if_statement/lead-optional | 0 | - | B7b+ | bnd:_preproc_if_header:condition:end@preproc_guarded_statement#chain/logical |
-| statement-terminator | GAP | 84 | case_branch, preproc_split_case_branch, preproc_split_case_end_branch, preproc_split_case_extended | 147 | preproc_conditional_statement/trail | 1 | - | B7b+ | occ:call_statement:0.1@case_branch#adjacent-compl |
+| split-if-condition | GAP | 360 | preproc_guarded_statement, preproc_split_if_begin_asymmetric, preproc_split_if_else_statement, statement_block | 0 | - | 0 | - | B7b+ | bnd:_preproc_if_header:condition:end@preproc_guarded_statement#chain/logical |
+| statement-terminator | GAP | 84 | case_branch, preproc_split_case_branch, preproc_split_case_end_branch, preproc_split_case_extended | 0 | - | 1 | - | B7b+ | occ:call_statement:0.1@case_branch#adjacent-compl |
 | statement-terminator | OVERACCEPT | 33 | case_branch, if_statement, preproc_guarded_statement, preproc_split_case_branch, preproc_split_case_end_branch, preproc_split_case_extended, preproc_split_if_begin_else, preproc_split_if_else_statement, preproc_split_if_statement, preproc_split_open_statement, while_statement | 147 | preproc_conditional_statement/trail | 5 | - | B7b+ | occ:empty_statement:@case_branch#trail |
 | statement-terminator | SILENT | 213 | case_branch, if_statement, preproc_conditional_statement, preproc_guarded_statement, preproc_split_block_close_after_endif, preproc_split_block_end_in_else, preproc_split_case_end_branch, preproc_split_code_block_end, preproc_split_else_begin_over_endif, preproc_split_if_else_statement, preproc_split_if_statement, preproc_split_open_statement, statement_block, while_statement | 147 | preproc_conditional_statement/trail | 2621 | - | B7b+ | occ:call_statement:0.1@case_branch#first-replace |
-| subscript | GAP | 265 | case_branch, preproc_conditional_case_patterns, preproc_split_case_branch, preproc_split_case_extended, preproc_split_case_statement_end, qualified_enum_value, subscript_expression | 2 | preproc_conditional_case_patterns/sep-after | 1 | - | B7b+ | bnd:subscript_expression:0.4.0.1:between@subscript_expression#chain/arithmetic |
+| subscript | GAP | 265 | case_branch, preproc_conditional_case_patterns, preproc_split_case_branch, preproc_split_case_extended, preproc_split_case_statement_end, qualified_enum_value, subscript_expression | 0 | - | 1 | - | B7b+ | bnd:subscript_expression:0.4.0.1:between@subscript_expression#chain/arithmetic |
 | subscript | OVERACCEPT | 4 | subscript_expression | 0 | - | 0 | - | B7b+ | bnd:subscript_expression:index:end@subscript_expression#op-only/arithmetic |
-| table-relation | GAP | 154 | declaration_body, preproc_conditional, preproc_conditional_table_relation, property, table_relation_value | 2 | preproc_conditional_table_relation/sep-after | 0 | - | B7b+ | occ:_table_relation_arm_t:0.3@declaration_body#adjacent-compl |
+| table-relation | GAP | 154 | declaration_body, preproc_conditional, preproc_conditional_table_relation, property, table_relation_value | 0 | - | 0 | - | B7b+ | occ:_table_relation_arm_t:0.3@declaration_body#adjacent-compl |
 | ternary | GAP | 166 | ternary_expression | 0 | - | 0 | - | B7b+ | bnd:ternary_expression:condition:end@ternary_expression#consecutive/comparison |
 | ternary | SILENT | 22 | ternary_expression | 0 | - | 0 | - | B7b+ | bnd:ternary_expression:condition:end@ternary_expression#chain/logical |
 | type-arguments | GAP | 24 | type_specification | 0 | - | 0 | - | B7b+ | occ:dictionary_type:4@type_specification#adjacent-compl |
 | type-header | GAP | 24 | assembly_body | 0 | - | 0 | - | B7b+ | occ:type_declaration:3@assembly_body#adjacent-compl |
 | type-test | GAP | 12 | as_expression, is_expression | 0 | - | 0 | - | B7b+ | bnd:as_expression:left:end@as_expression#op-only/type-test |
 | type-test | SILENT | 12 | as_expression, is_expression | 0 | - | 0 | - | B7b+ | bnd:as_expression:left:end@as_expression#consecutive/type-test |
-| unary-operand | GAP | 159 | case_branch, preproc_conditional_case_patterns, preproc_split_case_branch, preproc_split_case_extended, preproc_split_case_statement_end, property_expression, unary_expression | 2 | preproc_conditional_case_patterns/sep-after | 1 | - | B7b+ | bnd:unary_expression:operand:end@case_branch#chain/arithmetic |
+| unary-operand | GAP | 159 | case_branch, preproc_conditional_case_patterns, preproc_split_case_branch, preproc_split_case_extended, preproc_split_case_statement_end, property_expression, unary_expression | 0 | - | 1 | - | B7b+ | bnd:unary_expression:operand:end@case_branch#chain/arithmetic |
 | unary-operand | OVERACCEPT | 7 | property_expression, unary_expression | 0 | - | 0 | - | B7b+ | bnd:unary_expression:operand:end@property_expression#op-only/comparison |
 | unary-operand | SILENT | 12 | case_branch, preproc_split_case_branch, preproc_split_case_extended, preproc_split_case_statement_end | 0 | - | 1 | - | B7b+ | bnd:unary_expression:operand:end@case_branch#consecutive/arithmetic |
 | unassigned | GAP | 4 | expression-statement, repeat_statement | 0 | - | 0 | - | B7b+ | seed:expression-statement__torn-call-or |
@@ -3687,99 +3687,103 @@ Production sites (matching shapes): the production walk's (host, class) counts t
 | while-condition | OVERACCEPT | 6 | statement_block | 0 | - | 0 | - | B7b+ | bnd:while_statement:condition:end@statement_block#op-only/comparison |
 | with | GAP | 2 | statement_block | 0 | - | 0 | - | B7b+ | bnd:with_statement:record:end@statement_block#first-only/operand |
 
-Unclassified defective cells: 9864 (their own tree gives no (group type, class): no conditional group spans the placement offset, or `seeds.classify` gives none; they add no production sites). Per family, with the first cell ids:
+Template GAP entries (`template:<key>@<host>`, a whole template that does not parse) have no single source, so they match every weighted class of their host: their sites are an upper bound and are over-weighted relative to the per-cell families.
 
-| family | kind | unclassified cells | first cells |
-|---|---|---|---|
-| actionref-header | GAP | 24 | occ:actionref_declaration:3@action_body#adjacent-compl, occ:actionref_declaration:3@action_body#adjacent-compl+comments, occ:actionref_declaration:3@action_body#adjacent-compl+not |
-| arguments | GAP | 41 | bnd:_argument_expression:0:end@argument_list#consecutive/word-arithmetic, bnd:_argument_expression:0:end@argument_list#first/arithmetic, bnd:_argument_expression:0:end@argument_list#first/word-arithmetic |
-| arguments | OVERACCEPT | 2 | bnd:_argument_expression:0:end@preproc_conditional_arguments#op-only/word-arithmetic, bnd:_argument_expression:0:start@preproc_conditional_arguments#op-only/word-arithmetic |
-| array-dimensions | GAP | 57 | occ:array_type:3.0.0@type_specification#adjacent-compl, occ:array_type:3.0.0@type_specification#adjacent-compl+comments, occ:array_type:3.0.0@type_specification#adjacent-compl+not |
-| assignment | GAP | 282 | bnd:assignment_statement:right:end@asserterror_statement#consecutive/word-arithmetic, bnd:assignment_statement:right:end@asserterror_statement#first-only/arithmetic, bnd:assignment_statement:right:end@asserterror_statement#first-only/word-arithmetic |
-| assignment | OVERACCEPT | 24 | bnd:assignment_statement:right:end@asserterror_statement#op-only/word-arithmetic, bnd:assignment_statement:right:end@case_branch#op-only/word-arithmetic, bnd:assignment_statement:right:end@if_statement#op-only/word-arithmetic |
-| attribute-arguments | GAP | 30 | occ:attribute_argument_list:1.0.0@attribute_arguments#empty, occ:attribute_argument_list:1.0.0@attribute_arguments#empty+comments, occ:attribute_argument_list:1.0.0@attribute_arguments#empty+not |
-| binary-operand | GAP | 966 | bnd:additive_expression:left:end@additive_expression#consecutive/word-arithmetic, bnd:additive_expression:left:end@additive_expression#first-only/arithmetic, bnd:additive_expression:left:end@additive_expression#first-only/word-arithmetic |
-| binary-operand | OVERACCEPT | 8 | bnd:additive_expression:left:end@additive_expression#op-only/word-arithmetic, bnd:additive_expression:left:start@additive_expression#op-only/word-arithmetic, bnd:comparison_expression:left:end@comparison_expression#op-only/word-arithmetic |
-| caption-subfields | GAP | 531 | occ:caption_value:0.1.0.0.0.0@action_body#adjacent-compl, occ:caption_value:0.1.0.0.0.0@action_body#adjacent-compl+comments, occ:caption_value:0.1.0.0.0.0@action_body#adjacent-compl+not |
-| case-branch | GAP | 99 | occ:case_branch:0.1@case_body#adjacent-compl+comments, occ:case_branch:0.1@case_body#nested, occ:case_branch:0.1@case_body#nested+comments |
-| case-expression | GAP | 92 | bnd:case_statement:expression:end@statement_block#chain/arithmetic, bnd:case_statement:expression:end@statement_block#consecutive/arithmetic, bnd:case_statement:expression:end@statement_block#consecutive/word-arithmetic |
-| case-patterns | GAP | 36 | occ:_case_pattern_run:0.1.0.0@preproc_conditional_case_patterns#first-replace, occ:_case_pattern_run:0.1.0.0@preproc_conditional_case_patterns#first-replace+comments, occ:_case_pattern_run:0.1.0.0@preproc_conditional_case_patterns#first-replace+not |
-| column-header | GAP | 120 | occ:query_column:2.0.1@query_body#adjacent-compl, occ:query_column:2.0.1@query_body#adjacent-compl+comments, occ:query_column:2.0.1@query_body#adjacent-compl+not |
-| dataitem-header | GAP | 48 | occ:_report_dataitem_header:3@report_dataitem#adjacent-compl, occ:_report_dataitem_header:3@report_dataitem#adjacent-compl+comments, occ:_report_dataitem_header:3@report_dataitem#adjacent-compl+not |
-| event-declaration | SILENT | 42 | occ:event_declaration:0.5.0@controladdin_body#adjacent-compl, occ:event_declaration:0.5.0@controladdin_body#adjacent-compl+comments, occ:event_declaration:0.5.0@controladdin_body#adjacent-compl+not |
-| exit-value | GAP | 30 | bnd:exit_statement:return_value:end@statement_block#consecutive/word-arithmetic, bnd:exit_statement:return_value:end@statement_block#first-only/arithmetic, bnd:exit_statement:return_value:end@statement_block#first-only/word-arithmetic |
-| exit-value | OVERACCEPT | 2 | bnd:exit_statement:return_value:end@statement_block#op-only/word-arithmetic, bnd:exit_statement:return_value:start@statement_block#op-only/word-arithmetic |
-| expression-tail | GAP | 212 | bnd:_expression_continuation:operand:end@preproc_conditional_expression_tail#chain/arithmetic, bnd:_expression_continuation:operand:end@preproc_conditional_expression_tail#consecutive/arithmetic, bnd:_expression_continuation:operand:end@preproc_conditional_expression_tail#consecutive/word-arithmetic |
-| field-header | GAP | 72 | occ:_field_header:3@preproc_split_field#adjacent-compl, occ:_field_header:3@preproc_split_field#adjacent-compl+comments, occ:_field_header:3@preproc_split_field#adjacent-compl+not |
-| fieldgroup-header | GAP | 48 | occ:addlast_fieldgroup_modification:3@fieldgroups_body#adjacent-compl, occ:addlast_fieldgroup_modification:3@fieldgroups_body#adjacent-compl+comments, occ:addlast_fieldgroup_modification:3@fieldgroups_body#adjacent-compl+not |
-| fieldgroup-header | OVERACCEPT | 1 | seed:task4-addfirst-fieldgroups |
-| for-bounds | GAP | 74 | bnd:for_statement:end:end@statement_block#consecutive/word-arithmetic, bnd:for_statement:end:end@statement_block#first-only/arithmetic, bnd:for_statement:end:end@statement_block#first-only/word-arithmetic |
-| for-bounds | OVERACCEPT | 2 | bnd:for_statement:end:end@statement_block#op-only/word-arithmetic, bnd:for_statement:end:start@statement_block#op-only/word-arithmetic |
-| if-condition | GAP | 80 | bnd:_if_statement_no_else:condition:end@case_branch#consecutive/membership, bnd:_if_statement_no_else:condition:end@case_branch#first-only/comparison, bnd:_if_statement_no_else:condition:end@case_branch#first-only/logical |
-| implementation-list | GAP | 15 | occ:_impl_value_branch:0.0@implementation_value_list#one-elem, occ:_impl_value_branch:0.0@implementation_value_list#one-elem+comments, occ:_impl_value_branch:0.0@implementation_value_list#one-elem+not |
-| implements | GAP | 90 | occ:implements_clause:2.0.0@codeunit_declaration#empty, occ:implements_clause:2.0.0@codeunit_declaration#empty+comments, occ:implements_clause:2.0.0@codeunit_declaration#empty+not |
-| in-operand | GAP | 124 | bnd:in_expression:left:end@case_branch#consecutive/word-arithmetic, bnd:in_expression:left:end@case_branch#first/arithmetic, bnd:in_expression:left:end@case_branch#first/word-arithmetic |
-| in-operand | OVERACCEPT | 2 | bnd:in_expression:left:end@in_expression#op-only/word-arithmetic, bnd:in_expression:left:start@in_expression#op-only/word-arithmetic |
-| integer-list | GAP | 18 | occ:signed_integer_list:0.0.1.0.0@property#adjacent-indep, occ:signed_integer_list:0.0.1.0.0@property#adjacent-indep+comments, occ:signed_integer_list:0.0.1.0.0@property#adjacent-indep+not |
-| interface-procedure | GAP | 27 | occ:interface_procedure_suffix:0.1.0@interface_procedure#first-replace, occ:interface_procedure_suffix:0.1.0@interface_procedure#first-replace+comments, occ:interface_procedure_suffix:0.1.0@interface_procedure#first-replace+not |
-| interface-procedure | SILENT | 36 | occ:interface_procedure_suffix:0.1.0@interface_procedure#adjacent-compl, occ:interface_procedure_suffix:0.1.0@interface_procedure#adjacent-compl+comments, occ:interface_procedure_suffix:0.1.0@interface_procedure#adjacent-compl+not |
-| key-fields | GAP | 228 | occ:field_list:1.0.0@addlast_fieldgroup_modification#adjacent-compl, occ:field_list:1.0.0@addlast_fieldgroup_modification#adjacent-compl+comments, occ:field_list:1.0.0@addlast_fieldgroup_modification#adjacent-compl+not |
-| key-header | GAP | 24 | occ:_key_header:3@key_declaration#adjacent-compl, occ:_key_header:3@key_declaration#adjacent-compl+comments, occ:_key_header:3@key_declaration#adjacent-compl+not |
-| label-attributes | GAP | 408 | occ:label_declaration:3.0.0@labels_body#adjacent-compl, occ:label_declaration:3.0.0@labels_body#adjacent-compl+comments, occ:label_declaration:3.0.0@labels_body#adjacent-compl+not |
-| label-declaration | GAP | 42 | occ:label_declaration:4@labels_body#adjacent-compl, occ:label_declaration:4@labels_body#adjacent-compl+comments, occ:label_declaration:4@labels_body#adjacent-compl+not |
-| layout-header | GAP | 120 | occ:chartpart_section:3@layout_body#adjacent-compl, occ:chartpart_section:3@layout_body#adjacent-compl+comments, occ:chartpart_section:3@layout_body#adjacent-compl+not |
-| link-list | GAP | 75 | occ:_link_arm_t:0.1@declaration_body#trail+comments@SubPageLink, occ:_link_arm_t:0.1@declaration_body#trail+not@SubPageLink, occ:_link_arm_t:0.1@declaration_body#trail@SubPageLink |
-| link-list | OVERACCEPT | 2 | seed:link-keying__decide-trailing-comma, seed:value-runs__link-nested-joining-comma |
-| link-list-comma-leading | GAP | 162 | occ:_link_arm_t:0.1@declaration_body#adjacent-compl+comments@SubPageLink, occ:_link_arm_t:0.1@declaration_body#adjacent-compl+not@SubPageLink, occ:_link_arm_t:0.1@declaration_body#adjacent-compl@SubPageLink |
-| list-literal | GAP | 169 | bnd:list_literal:1.0.0:end@list_literal#consecutive/word-arithmetic, bnd:list_literal:1.0.0:end@list_literal#first-only/arithmetic, bnd:list_literal:1.0.0:end@list_literal#first-only/word-arithmetic |
-| member-access | GAP | 54 | bnd:member_expression:object:end@asserterror_statement#first-only/operand, bnd:member_expression:object:end@call_expression#first-only/operand, bnd:member_expression:object:end@case_branch#first-only/operand |
-| ml-pairs | GAP | 141 | occ:ml_value_list:0.1.0.0@action_body#adjacent-compl, occ:ml_value_list:0.1.0.0@action_body#adjacent-compl+comments, occ:ml_value_list:0.1.0.0@action_body#adjacent-compl+not |
-| move-modification | GAP | 528 | occ:moveafter_modification:1.2@action_body#adjacent-compl, occ:moveafter_modification:1.2@action_body#adjacent-compl+comments, occ:moveafter_modification:1.2@action_body#adjacent-compl+not |
-| namespace-pairs | GAP | 60 | occ:namespace_value_list:0.1.0.0@declaration_body#adjacent-compl, occ:namespace_value_list:0.1.0.0@declaration_body#adjacent-compl+comments, occ:namespace_value_list:0.1.0.0@declaration_body#adjacent-compl+not |
-| namespace-using | GAP | 84 | occ:namespace_declaration:2@preproc_conditional_object#adjacent-compl, occ:namespace_declaration:2@preproc_conditional_object#adjacent-compl+comments, occ:namespace_declaration:2@preproc_conditional_object#adjacent-compl+not |
-| operand-prefix | GAP | 8 | bnd:_dangling_operand:operand:end@preproc_operand_prefix#consecutive/arithmetic, bnd:_dangling_operand:operand:end@preproc_operand_prefix#consecutive/word-arithmetic, bnd:_dangling_operand:operand:end@preproc_operand_prefix#nested/arithmetic |
-| option-members | GAP | 550 | occ:_option_member_list_empty_open:0.2.0.0.0@option_type#adjacent-compl, occ:_option_member_list_empty_open:0.2.0.0.0@option_type#adjacent-compl+comments, occ:_option_member_list_empty_open:0.2.0.0.0@option_type#adjacent-compl+not |
-| order-by | GAP | 57 | occ:order_by_item:3.0.0@order_by_list#empty, occ:order_by_item:3.0.0@order_by_list#empty+comments, occ:order_by_item:3.0.0@order_by_list#empty+not |
-| parameter-list | GAP | 36 | occ:parameter_list:2.0.0@preproc_split_procedure#holes-lead, occ:parameter_list:2.0.0@preproc_split_procedure#holes-lead+comments, occ:parameter_list:2.0.0@preproc_split_procedure#holes-lead+not |
-| parenthesized | GAP | 46 | bnd:parenthesized_expression:1:end@parenthesized_expression#chain/arithmetic, bnd:parenthesized_expression:1:end@parenthesized_expression#consecutive/arithmetic, bnd:parenthesized_expression:1:end@parenthesized_expression#consecutive/word-arithmetic |
-| permissions | GAP | 122 | occ:_permission_branch:0.0@tabledata_permission_list#first-replace, occ:_permission_branch:0.0@tabledata_permission_list#first-replace+comments, occ:_permission_branch:0.0@tabledata_permission_list#first-replace+not |
-| procedure-header | GAP | 34 | occ:_procedure_header:3.0.0.1.0@preproc_split_procedure#adjacent-compl+comments, occ:_procedure_header:3.0.0.1.0@preproc_split_procedure#empty, occ:_procedure_header:3.0.0.1.0@preproc_split_procedure#empty+comments |
-| procedure-header | OVERACCEPT | 9 | occ:preproc_split_procedure_preamble:0.6.0@declaration_body#trail, occ:preproc_split_procedure_preamble:0.6.0@declaration_body#trail+comments, occ:preproc_split_procedure_preamble:0.6.0@declaration_body#trail+not |
-| procedure-tail | GAP | 114 | occ:_procedure_regular_tail:0.0.0@preproc_split_procedure#adjacent-compl, occ:_procedure_regular_tail:0.0.0@preproc_split_procedure#adjacent-compl+comments, occ:_procedure_regular_tail:0.0.0@preproc_split_procedure#adjacent-compl+not |
-| procedure-tail | OVERACCEPT | 6 | occ:preproc_split_procedure_body:0.4.0@preproc_split_procedure#trail, occ:preproc_split_procedure_body:0.4.0@preproc_split_procedure#trail+comments, occ:preproc_split_procedure_body:0.4.0@preproc_split_procedure#trail+not |
-| procedure-tail | SILENT | 36 | occ:_routine_regular_body:0.2.0@preproc_split_procedure#adjacent-compl, occ:_routine_regular_body:0.2.0@preproc_split_procedure#adjacent-compl+comments, occ:_routine_regular_body:0.2.0@preproc_split_procedure#adjacent-compl+not |
-| property-terminator | GAP | 541 | occ:property:0.3@declaration_body#adjacent-compl, occ:property:0.3@declaration_body#adjacent-compl+comments, occ:property:0.3@declaration_body#adjacent-compl+not |
-| property-value | GAP | 415 | bnd:_property_value_with_split:0.0:end@action_body#unary-not/comparison, bnd:_property_value_with_split:0.0:end@action_body#unary-not/logical, bnd:_property_value_with_split:0.0:end@action_body#unary-not/xor |
-| property-value | OVERACCEPT | 3 | seed:value-runs__calcformula-after-t-suffix-empty, seed:value-runs__captionml-after-t-suffix-empty, seed:value-runs__tooltipml-after-t-action-area |
-| range | GAP | 218 | bnd:range_expression:left:end@case_branch#consecutive/word-arithmetic, bnd:range_expression:left:end@case_branch#first/arithmetic, bnd:range_expression:left:end@case_branch#first/word-arithmetic |
-| repeat-until | GAP | 663 | bnd:repeat_statement:condition:end@asserterror_statement#chain/logical, bnd:repeat_statement:condition:end@asserterror_statement#consecutive/comparison, bnd:repeat_statement:condition:end@asserterror_statement#consecutive/logical |
-| sorting | GAP | 57 | occ:sorting_value:0.0.3.0.0@property#adjacent-compl, occ:sorting_value:0.0.3.0.0@property#adjacent-compl+comments, occ:sorting_value:0.0.3.0.0@property#adjacent-compl+not |
-| split-call | GAP | 101 | bnd:_expression_list:0:end@preproc_split_call_statement#signed/arithmetic, bnd:_expression_list:0:end@preproc_split_call_statement#signed/word-arithmetic, bnd:_expression_list:0:end@preproc_split_call_statement#unary-minus/arithmetic |
-| split-code-block | GAP | 48 | occ:_else_begin_block:4.0@preproc_split_code_block_end#adjacent-compl, occ:_else_begin_block:4.0@preproc_split_code_block_end#adjacent-compl+comments, occ:_else_begin_block:4.0@preproc_split_code_block_end#adjacent-compl+not |
-| split-complete-body | GAP | 18 | occ:_preproc_branch_body:4.0@preproc_split_complete_body#adjacent-compl, occ:_preproc_branch_body:4.0@preproc_split_complete_body#adjacent-compl+comments, occ:_preproc_branch_body:4.0@preproc_split_complete_body#adjacent-compl+not |
-| split-if-begin | GAP | 129 | occ:preproc_split_if_begin_asymmetric:0.3.0@case_branch#adjacent-compl, occ:preproc_split_if_begin_asymmetric:0.3.0@case_branch#adjacent-compl+comments, occ:preproc_split_if_begin_asymmetric:0.3.0@case_branch#adjacent-compl+not |
-| split-if-begin | OVERACCEPT | 36 | occ:preproc_split_if_begin_asymmetric:0.3.0@asserterror_statement#trail, occ:preproc_split_if_begin_asymmetric:0.3.0@asserterror_statement#trail+comments, occ:preproc_split_if_begin_asymmetric:0.3.0@asserterror_statement#trail+not |
-| split-if-condition | GAP | 52 | bnd:_preproc_if_header:condition:end@preproc_guarded_statement#consecutive/membership, bnd:_preproc_if_header:condition:end@preproc_guarded_statement#nested/membership, bnd:_preproc_if_header:condition:start@preproc_guarded_statement#consecutive/membership |
-| statement-terminator | GAP | 75 | occ:call_statement:0.1@case_branch#adjacent-compl, occ:call_statement:0.1@case_branch#adjacent-compl+comments, occ:call_statement:0.1@case_branch#adjacent-compl+not |
-| statement-terminator | OVERACCEPT | 27 | occ:empty_statement:@if_statement#trail, occ:empty_statement:@if_statement#trail+comments, occ:empty_statement:@if_statement#trail+not |
-| statement-terminator | SILENT | 144 | occ:call_statement:0.1@if_statement#adjacent-compl, occ:call_statement:0.1@if_statement#adjacent-compl+comments, occ:call_statement:0.1@if_statement#adjacent-compl+not |
-| subscript | GAP | 173 | bnd:subscript_expression:0.4.0.1:between@subscript_expression#chain/arithmetic, bnd:subscript_expression:0.4.0.1:between@subscript_expression#consecutive/arithmetic, bnd:subscript_expression:0.4.0.1:between@subscript_expression#consecutive/word-arithmetic |
-| subscript | OVERACCEPT | 2 | bnd:subscript_expression:index:end@subscript_expression#op-only/word-arithmetic, bnd:subscript_expression:index:start@subscript_expression#op-only/word-arithmetic |
-| table-relation | GAP | 3 | occ:_table_relation_branch:1.0@preproc_conditional_table_relation#empty, occ:_table_relation_branch:1.0@preproc_conditional_table_relation#empty+comments, occ:_table_relation_branch:1.0@preproc_conditional_table_relation#empty+not |
-| ternary | GAP | 136 | bnd:ternary_expression:condition:end@ternary_expression#consecutive/membership, bnd:ternary_expression:condition:end@ternary_expression#first-only/comparison, bnd:ternary_expression:condition:end@ternary_expression#first-only/logical |
-| type-arguments | GAP | 24 | occ:dictionary_type:4@type_specification#adjacent-compl, occ:dictionary_type:4@type_specification#adjacent-compl+comments, occ:dictionary_type:4@type_specification#adjacent-compl+not |
-| type-header | GAP | 24 | occ:type_declaration:3@assembly_body#adjacent-compl, occ:type_declaration:3@assembly_body#adjacent-compl+comments, occ:type_declaration:3@assembly_body#adjacent-compl+not |
-| type-test | GAP | 12 | bnd:as_expression:left:end@as_expression#op-only/type-test, bnd:as_expression:left:end@as_expression#prefix/type-test, bnd:as_expression:left:end@as_expression#whole-operand/type-test |
-| type-test | SILENT | 12 | bnd:as_expression:left:end@as_expression#consecutive/type-test, bnd:as_expression:left:end@as_expression#nested/type-test, bnd:as_expression:left:end@as_expression#suffix/type-test |
-| unary-operand | GAP | 84 | bnd:unary_expression:operand:end@case_branch#first-only/arithmetic, bnd:unary_expression:operand:end@case_branch#first-only/word-arithmetic, bnd:unary_expression:operand:end@case_branch#first/arithmetic |
-| unassigned | GAP | 4 | seed:expression-statement__torn-call-or, seed:expression-statement__torn-call-plus, seed:expression-statement__torn-exit-plus |
-| value-header | GAP | 24 | occ:enum_value_declaration:3@declaration_body#adjacent-compl, occ:enum_value_declaration:3@declaration_body#adjacent-compl+comments, occ:enum_value_declaration:3@declaration_body#adjacent-compl+not |
-| var-declaration | GAP | 252 | occ:variable_declaration:0.0.5@preproc_conditional_var#adjacent-compl, occ:variable_declaration:0.0.5@preproc_conditional_var#adjacent-compl+comments, occ:variable_declaration:0.0.5@preproc_conditional_var#adjacent-compl+not |
-| var-names | GAP | 171 | occ:variable_declaration:2.0.1.0.0@preproc_conditional_var#adjacent-compl, occ:variable_declaration:2.0.1.0.0@preproc_conditional_var#adjacent-compl+comments, occ:variable_declaration:2.0.1.0.0@preproc_conditional_var#adjacent-compl+not |
-| where-filter | GAP | 21 | occ:_where_run:0.1.0.0@preproc_conditional_where#first-replace, occ:_where_run:0.1.0.0@preproc_conditional_where#first-replace+comments, occ:_where_run:0.1.0.0@preproc_conditional_where#first-replace+not |
-| where-filter | OVERACCEPT | 3 | occ:_where_run:0.1.0.0@where_conditions#empty-list, occ:_where_run:0.1.0.0@where_conditions#empty-list+comments, occ:_where_run:0.1.0.0@where_conditions#empty-list+not |
-| while-condition | GAP | 40 | bnd:while_statement:condition:end@statement_block#consecutive/membership, bnd:while_statement:condition:end@statement_block#first-only/comparison, bnd:while_statement:condition:end@statement_block#first-only/logical |
-| with | GAP | 2 | bnd:with_statement:record:end@statement_block#first-only/operand, bnd:with_statement:record:start@statement_block#first-only/operand |
+
+Unclassified defective cells: 18157 (their own tree gives no (group type, class): `error-recovered tree` = the split tree has an error (never matched, controller ruling); `no class` = no conditional group spans the placement offset, or `seeds.classify` gives none; they add no production sites). Per family, with the first cell ids:
+
+| family | kind | unclassified cells | reasons | first cells |
+|---|---|---|---|---|
+| actionref-header | GAP | 24 | error-recovered tree 24 | occ:actionref_declaration:3@action_body#adjacent-compl, occ:actionref_declaration:3@action_body#adjacent-compl+comments, occ:actionref_declaration:3@action_body#adjacent-compl+not |
+| arguments | GAP | 89 | error-recovered tree 89 | bnd:_argument_expression:0:end@argument_list#consecutive/word-arithmetic, bnd:_argument_expression:0:end@argument_list#first/arithmetic, bnd:_argument_expression:0:end@argument_list#first/word-arithmetic |
+| arguments | OVERACCEPT | 2 | no class 2 | bnd:_argument_expression:0:end@preproc_conditional_arguments#op-only/word-arithmetic, bnd:_argument_expression:0:start@preproc_conditional_arguments#op-only/word-arithmetic |
+| array-dimensions | GAP | 57 | error-recovered tree 57 | occ:array_type:3.0.0@type_specification#adjacent-compl, occ:array_type:3.0.0@type_specification#adjacent-compl+comments, occ:array_type:3.0.0@type_specification#adjacent-compl+not |
+| assignment | GAP | 424 | error-recovered tree 424 | bnd:assignment_statement:right:end@asserterror_statement#consecutive/arithmetic, bnd:assignment_statement:right:end@asserterror_statement#consecutive/word-arithmetic, bnd:assignment_statement:right:end@asserterror_statement#first-only/arithmetic |
+| assignment | OVERACCEPT | 24 | no class 24 | bnd:assignment_statement:right:end@asserterror_statement#op-only/word-arithmetic, bnd:assignment_statement:right:end@case_branch#op-only/word-arithmetic, bnd:assignment_statement:right:end@if_statement#op-only/word-arithmetic |
+| attribute-arguments | GAP | 30 | error-recovered tree 30 | occ:attribute_argument_list:1.0.0@attribute_arguments#empty, occ:attribute_argument_list:1.0.0@attribute_arguments#empty+comments, occ:attribute_argument_list:1.0.0@attribute_arguments#empty+not |
+| binary-operand | GAP | 1853 | error-recovered tree 1853 | bnd:additive_expression:left:end@additive_expression#consecutive/arithmetic, bnd:additive_expression:left:end@additive_expression#consecutive/word-arithmetic, bnd:additive_expression:left:end@additive_expression#first-only/arithmetic |
+| binary-operand | OVERACCEPT | 8 | no class 8 | bnd:additive_expression:left:end@additive_expression#op-only/word-arithmetic, bnd:additive_expression:left:start@additive_expression#op-only/word-arithmetic, bnd:comparison_expression:left:end@comparison_expression#op-only/word-arithmetic |
+| calc-formula | GAP | 135 | error-recovered tree 135 | occ:_calc_formula_arm_t:0.3@declaration_body#adjacent-compl, occ:_calc_formula_arm_t:0.3@declaration_body#adjacent-compl+comments, occ:_calc_formula_arm_t:0.3@declaration_body#adjacent-compl+not |
+| caption-subfields | GAP | 1080 | error-recovered tree 1080 | occ:caption_value:0.1.0.0.0.0@action_body#adjacent-compl, occ:caption_value:0.1.0.0.0.0@action_body#adjacent-compl+comments, occ:caption_value:0.1.0.0.0.0@action_body#adjacent-compl+not |
+| case-branch | GAP | 216 | error-recovered tree 216 | occ:case_branch:0.1@case_body#adjacent-compl, occ:case_branch:0.1@case_body#adjacent-compl+comments, occ:case_branch:0.1@case_body#adjacent-compl+not |
+| case-expression | GAP | 92 | error-recovered tree 92 | bnd:case_statement:expression:end@statement_block#chain/arithmetic, bnd:case_statement:expression:end@statement_block#consecutive/arithmetic, bnd:case_statement:expression:end@statement_block#consecutive/word-arithmetic |
+| case-patterns | GAP | 273 | error-recovered tree 273 | occ:_case_pattern_branch:0.0@preproc_conditional_case_patterns#elif, occ:_case_pattern_branch:0.0@preproc_conditional_case_patterns#elif+comments, occ:_case_pattern_branch:0.0@preproc_conditional_case_patterns#elif+not |
+| column-header | GAP | 120 | error-recovered tree 120 | occ:query_column:2.0.1@query_body#adjacent-compl, occ:query_column:2.0.1@query_body#adjacent-compl+comments, occ:query_column:2.0.1@query_body#adjacent-compl+not |
+| dataitem-header | GAP | 48 | error-recovered tree 48 | occ:_report_dataitem_header:3@report_dataitem#adjacent-compl, occ:_report_dataitem_header:3@report_dataitem#adjacent-compl+comments, occ:_report_dataitem_header:3@report_dataitem#adjacent-compl+not |
+| event-declaration | SILENT | 42 | no class 42 | occ:event_declaration:0.5.0@controladdin_body#adjacent-compl, occ:event_declaration:0.5.0@controladdin_body#adjacent-compl+comments, occ:event_declaration:0.5.0@controladdin_body#adjacent-compl+not |
+| exit-value | GAP | 36 | error-recovered tree 36 | bnd:exit_statement:return_value:end@statement_block#consecutive/arithmetic, bnd:exit_statement:return_value:end@statement_block#consecutive/word-arithmetic, bnd:exit_statement:return_value:end@statement_block#first-only/arithmetic |
+| exit-value | OVERACCEPT | 2 | no class 2 | bnd:exit_statement:return_value:end@statement_block#op-only/word-arithmetic, bnd:exit_statement:return_value:start@statement_block#op-only/word-arithmetic |
+| expression-tail | GAP | 512 | error-recovered tree 512 | bnd:_expression_continuation:operand:end@preproc_conditional_expression_tail#chain/arithmetic, bnd:_expression_continuation:operand:end@preproc_conditional_expression_tail#consecutive/arithmetic, bnd:_expression_continuation:operand:end@preproc_conditional_expression_tail#consecutive/word-arithmetic |
+| field-header | GAP | 72 | error-recovered tree 72 | occ:_field_header:3@preproc_split_field#adjacent-compl, occ:_field_header:3@preproc_split_field#adjacent-compl+comments, occ:_field_header:3@preproc_split_field#adjacent-compl+not |
+| fieldgroup-header | GAP | 48 | error-recovered tree 48 | occ:addlast_fieldgroup_modification:3@fieldgroups_body#adjacent-compl, occ:addlast_fieldgroup_modification:3@fieldgroups_body#adjacent-compl+comments, occ:addlast_fieldgroup_modification:3@fieldgroups_body#adjacent-compl+not |
+| fieldgroup-header | OVERACCEPT | 1 | no class 1 | seed:task4-addfirst-fieldgroups |
+| for-bounds | GAP | 78 | error-recovered tree 78 | bnd:for_statement:end:end@statement_block#consecutive/arithmetic, bnd:for_statement:end:end@statement_block#consecutive/word-arithmetic, bnd:for_statement:end:end@statement_block#first-only/arithmetic |
+| for-bounds | OVERACCEPT | 2 | no class 2 | bnd:for_statement:end:end@statement_block#op-only/word-arithmetic, bnd:for_statement:end:start@statement_block#op-only/word-arithmetic |
+| if-condition | GAP | 104 | error-recovered tree 104 | bnd:_if_statement_no_else:condition:end@case_branch#consecutive/comparison, bnd:_if_statement_no_else:condition:end@case_branch#consecutive/logical, bnd:_if_statement_no_else:condition:end@case_branch#consecutive/membership |
+| implementation-list | GAP | 55 | error-recovered tree 55 | occ:_impl_value_branch:0.0@implementation_value_list#holes-trail, occ:_impl_value_branch:0.0@implementation_value_list#holes-trail+comments, occ:_impl_value_branch:0.0@implementation_value_list#holes-trail+not |
+| implements | GAP | 90 | error-recovered tree 90 | occ:implements_clause:2.0.0@codeunit_declaration#empty, occ:implements_clause:2.0.0@codeunit_declaration#empty+comments, occ:implements_clause:2.0.0@codeunit_declaration#empty+not |
+| in-operand | GAP | 270 | error-recovered tree 270 | bnd:in_expression:left:end@case_branch#chain/arithmetic, bnd:in_expression:left:end@case_branch#consecutive/arithmetic, bnd:in_expression:left:end@case_branch#consecutive/word-arithmetic |
+| in-operand | OVERACCEPT | 2 | no class 2 | bnd:in_expression:left:end@in_expression#op-only/word-arithmetic, bnd:in_expression:left:start@in_expression#op-only/word-arithmetic |
+| integer-list | GAP | 84 | error-recovered tree 84 | occ:signed_integer_list:0.0.1.0.0@declaration_body#adjacent-compl, occ:signed_integer_list:0.0.1.0.0@declaration_body#adjacent-compl+comments, occ:signed_integer_list:0.0.1.0.0@declaration_body#adjacent-compl+not |
+| interface-procedure | GAP | 27 | error-recovered tree 27 | occ:interface_procedure_suffix:0.1.0@interface_procedure#first-replace, occ:interface_procedure_suffix:0.1.0@interface_procedure#first-replace+comments, occ:interface_procedure_suffix:0.1.0@interface_procedure#first-replace+not |
+| interface-procedure | SILENT | 36 | no class 36 | occ:interface_procedure_suffix:0.1.0@interface_procedure#adjacent-compl, occ:interface_procedure_suffix:0.1.0@interface_procedure#adjacent-compl+comments, occ:interface_procedure_suffix:0.1.0@interface_procedure#adjacent-compl+not |
+| key-fields | GAP | 228 | error-recovered tree 228 | occ:field_list:1.0.0@addlast_fieldgroup_modification#adjacent-compl, occ:field_list:1.0.0@addlast_fieldgroup_modification#adjacent-compl+comments, occ:field_list:1.0.0@addlast_fieldgroup_modification#adjacent-compl+not |
+| key-header | GAP | 24 | error-recovered tree 24 | occ:_key_header:3@key_declaration#adjacent-compl, occ:_key_header:3@key_declaration#adjacent-compl+comments, occ:_key_header:3@key_declaration#adjacent-compl+not |
+| label-attributes | GAP | 408 | error-recovered tree 408 | occ:label_declaration:3.0.0@labels_body#adjacent-compl, occ:label_declaration:3.0.0@labels_body#adjacent-compl+comments, occ:label_declaration:3.0.0@labels_body#adjacent-compl+not |
+| label-declaration | GAP | 42 | error-recovered tree 42 | occ:label_declaration:4@labels_body#adjacent-compl, occ:label_declaration:4@labels_body#adjacent-compl+comments, occ:label_declaration:4@labels_body#adjacent-compl+not |
+| layout-header | GAP | 120 | error-recovered tree 120 | occ:chartpart_section:3@layout_body#adjacent-compl, occ:chartpart_section:3@layout_body#adjacent-compl+comments, occ:chartpart_section:3@layout_body#adjacent-compl+not |
+| link-list | GAP | 98 | error-recovered tree 98 | occ:_link_arm_t:0.1@declaration_body#trail+comments@SubPageLink, occ:_link_arm_t:0.1@declaration_body#trail+not@SubPageLink, occ:_link_arm_t:0.1@declaration_body#trail@SubPageLink |
+| link-list | OVERACCEPT | 2 | no class 2 | seed:link-keying__decide-trailing-comma, seed:value-runs__link-nested-joining-comma |
+| link-list-comma-leading | GAP | 297 | error-recovered tree 297 | occ:_link_arm_t:0.1@declaration_body#adjacent-compl+comments@SubPageLink, occ:_link_arm_t:0.1@declaration_body#adjacent-compl+not@SubPageLink, occ:_link_arm_t:0.1@declaration_body#adjacent-compl@SubPageLink |
+| list-literal | GAP | 388 | error-recovered tree 388 | bnd:list_literal:1.0.0:end@list_literal#consecutive/arithmetic, bnd:list_literal:1.0.0:end@list_literal#consecutive/word-arithmetic, bnd:list_literal:1.0.0:end@list_literal#first-only/arithmetic |
+| member-access | GAP | 60 | error-recovered tree 60 | bnd:member_expression:object:end@asserterror_statement#first-only/operand, bnd:member_expression:object:end@call_expression#first-only/operand, bnd:member_expression:object:end@case_branch#first-only/operand |
+| ml-pairs | GAP | 825 | error-recovered tree 825 | occ:_ml_arm_t:0.3@action_body#adjacent-compl, occ:_ml_arm_t:0.3@action_body#adjacent-compl+comments, occ:_ml_arm_t:0.3@action_body#adjacent-compl+not |
+| move-modification | GAP | 528 | error-recovered tree 528 | occ:moveafter_modification:1.2@action_body#adjacent-compl, occ:moveafter_modification:1.2@action_body#adjacent-compl+comments, occ:moveafter_modification:1.2@action_body#adjacent-compl+not |
+| namespace-pairs | GAP | 288 | error-recovered tree 288 | occ:_namespaces_arm_t:0.3@declaration_body#adjacent-compl, occ:_namespaces_arm_t:0.3@declaration_body#adjacent-compl+comments, occ:_namespaces_arm_t:0.3@declaration_body#adjacent-compl+not |
+| namespace-using | GAP | 84 | error-recovered tree 84 | occ:namespace_declaration:2@preproc_conditional_object#adjacent-compl, occ:namespace_declaration:2@preproc_conditional_object#adjacent-compl+comments, occ:namespace_declaration:2@preproc_conditional_object#adjacent-compl+not |
+| operand-prefix | GAP | 46 | error-recovered tree 46 | bnd:_dangling_operand:operand:end@preproc_operand_prefix#chain/arithmetic, bnd:_dangling_operand:operand:end@preproc_operand_prefix#consecutive/arithmetic, bnd:_dangling_operand:operand:end@preproc_operand_prefix#consecutive/word-arithmetic |
+| option-members | GAP | 1111 | error-recovered tree 1111 | occ:_option_member_list_empty_open:0.2.0.0.0@option_type#adjacent-compl, occ:_option_member_list_empty_open:0.2.0.0.0@option_type#adjacent-compl+comments, occ:_option_member_list_empty_open:0.2.0.0.0@option_type#adjacent-compl+not |
+| order-by | GAP | 102 | error-recovered tree 102 | occ:order_by_item:3.0.0@order_by_list#empty, occ:order_by_item:3.0.0@order_by_list#empty+comments, occ:order_by_item:3.0.0@order_by_list#empty+not |
+| parameter-list | GAP | 90 | error-recovered tree 90 | occ:parameter_list:2.0.0@preproc_split_procedure#empty, occ:parameter_list:2.0.0@preproc_split_procedure#empty+comments, occ:parameter_list:2.0.0@preproc_split_procedure#empty+not |
+| parenthesized | GAP | 46 | error-recovered tree 46 | bnd:parenthesized_expression:1:end@parenthesized_expression#chain/arithmetic, bnd:parenthesized_expression:1:end@parenthesized_expression#consecutive/arithmetic, bnd:parenthesized_expression:1:end@parenthesized_expression#consecutive/word-arithmetic |
+| permissions | GAP | 355 | error-recovered tree 355 | occ:_permission_branch:0.0@preproc_conditional_permissions#elif, occ:_permission_branch:0.0@preproc_conditional_permissions#elif+comments, occ:_permission_branch:0.0@preproc_conditional_permissions#elif+not |
+| procedure-header | GAP | 51 | error-recovered tree 51 | occ:_procedure_header:3.0.0.1.0@preproc_split_procedure#adjacent-compl, occ:_procedure_header:3.0.0.1.0@preproc_split_procedure#adjacent-compl+comments, occ:_procedure_header:3.0.0.1.0@preproc_split_procedure#adjacent-compl+not |
+| procedure-header | OVERACCEPT | 9 | no class 9 | occ:preproc_split_procedure_preamble:0.6.0@declaration_body#trail, occ:preproc_split_procedure_preamble:0.6.0@declaration_body#trail+comments, occ:preproc_split_procedure_preamble:0.6.0@declaration_body#trail+not |
+| procedure-tail | GAP | 120 | error-recovered tree 120 | occ:_procedure_regular_tail:0.0.0@preproc_split_procedure#adjacent-compl, occ:_procedure_regular_tail:0.0.0@preproc_split_procedure#adjacent-compl+comments, occ:_procedure_regular_tail:0.0.0@preproc_split_procedure#adjacent-compl+not |
+| procedure-tail | OVERACCEPT | 6 | no class 6 | occ:preproc_split_procedure_body:0.4.0@preproc_split_procedure#trail, occ:preproc_split_procedure_body:0.4.0@preproc_split_procedure#trail+comments, occ:preproc_split_procedure_body:0.4.0@preproc_split_procedure#trail+not |
+| procedure-tail | SILENT | 36 | no class 36 | occ:_routine_regular_body:0.2.0@preproc_split_procedure#adjacent-compl, occ:_routine_regular_body:0.2.0@preproc_split_procedure#adjacent-compl+comments, occ:_routine_regular_body:0.2.0@preproc_split_procedure#adjacent-compl+not |
+| property-terminator | GAP | 825 | error-recovered tree 825 | occ:property:0.3@declaration_body#adjacent-compl, occ:property:0.3@declaration_body#adjacent-compl+comments, occ:property:0.3@declaration_body#adjacent-compl+not |
+| property-value | GAP | 877 | error-recovered tree 877 | bnd:_property_value_with_split:0.0:end@action_body#consecutive/comparison, bnd:_property_value_with_split:0.0:end@action_body#consecutive/logical, bnd:_property_value_with_split:0.0:end@action_body#consecutive/membership |
+| property-value | OVERACCEPT | 3 | no class 3 | seed:value-runs__calcformula-after-t-suffix-empty, seed:value-runs__captionml-after-t-suffix-empty, seed:value-runs__tooltipml-after-t-action-area |
+| range | GAP | 411 | error-recovered tree 411 | bnd:range_expression:left:end@case_branch#chain/arithmetic, bnd:range_expression:left:end@case_branch#consecutive/arithmetic, bnd:range_expression:left:end@case_branch#consecutive/word-arithmetic |
+| repeat-until | GAP | 864 | error-recovered tree 864 | bnd:repeat_statement:condition:end@asserterror_statement#chain/logical, bnd:repeat_statement:condition:end@asserterror_statement#consecutive/comparison, bnd:repeat_statement:condition:end@asserterror_statement#consecutive/logical |
+| sorting | GAP | 342 | error-recovered tree 342 | occ:sorting_value:0.0.3.0.0@action_body#adjacent-compl, occ:sorting_value:0.0.3.0.0@action_body#adjacent-compl+comments, occ:sorting_value:0.0.3.0.0@action_body#adjacent-compl+not |
+| split-call | GAP | 649 | error-recovered tree 649 | bnd:_expression_list:0:end@preproc_split_call_statement#chain/arithmetic, bnd:_expression_list:0:end@preproc_split_call_statement#consecutive/arithmetic, bnd:_expression_list:0:end@preproc_split_call_statement#consecutive/word-arithmetic |
+| split-code-block | GAP | 72 | error-recovered tree 72 | occ:_else_begin_block:4.0@preproc_split_code_block_end#adjacent-compl, occ:_else_begin_block:4.0@preproc_split_code_block_end#adjacent-compl+comments, occ:_else_begin_block:4.0@preproc_split_code_block_end#adjacent-compl+not |
+| split-complete-body | GAP | 21 | error-recovered tree 21 | occ:_preproc_branch_body:4.0@preproc_split_complete_body#adjacent-compl, occ:_preproc_branch_body:4.0@preproc_split_complete_body#adjacent-compl+comments, occ:_preproc_branch_body:4.0@preproc_split_complete_body#adjacent-compl+not |
+| split-if-begin | GAP | 693 | error-recovered tree 693 | occ:preproc_split_if_begin_asymmetric:0.3.0@asserterror_statement#first-replace, occ:preproc_split_if_begin_asymmetric:0.3.0@asserterror_statement#first-replace+comments, occ:preproc_split_if_begin_asymmetric:0.3.0@asserterror_statement#first-replace+not |
+| split-if-begin | OVERACCEPT | 36 | no class 36 | occ:preproc_split_if_begin_asymmetric:0.3.0@asserterror_statement#trail, occ:preproc_split_if_begin_asymmetric:0.3.0@asserterror_statement#trail+comments, occ:preproc_split_if_begin_asymmetric:0.3.0@asserterror_statement#trail+not |
+| split-if-condition | GAP | 360 | error-recovered tree 360 | bnd:_preproc_if_header:condition:end@preproc_guarded_statement#chain/logical, bnd:_preproc_if_header:condition:end@preproc_guarded_statement#consecutive/comparison, bnd:_preproc_if_header:condition:end@preproc_guarded_statement#consecutive/logical |
+| statement-terminator | GAP | 84 | error-recovered tree 84 | occ:call_statement:0.1@case_branch#adjacent-compl, occ:call_statement:0.1@case_branch#adjacent-compl+comments, occ:call_statement:0.1@case_branch#adjacent-compl+not |
+| statement-terminator | OVERACCEPT | 27 | no class 27 | occ:empty_statement:@if_statement#trail, occ:empty_statement:@if_statement#trail+comments, occ:empty_statement:@if_statement#trail+not |
+| statement-terminator | SILENT | 144 | no class 144 | occ:call_statement:0.1@if_statement#adjacent-compl, occ:call_statement:0.1@if_statement#adjacent-compl+comments, occ:call_statement:0.1@if_statement#adjacent-compl+not |
+| subscript | GAP | 265 | error-recovered tree 265 | bnd:subscript_expression:0.4.0.1:between@subscript_expression#chain/arithmetic, bnd:subscript_expression:0.4.0.1:between@subscript_expression#consecutive/arithmetic, bnd:subscript_expression:0.4.0.1:between@subscript_expression#consecutive/word-arithmetic |
+| subscript | OVERACCEPT | 2 | no class 2 | bnd:subscript_expression:index:end@subscript_expression#op-only/word-arithmetic, bnd:subscript_expression:index:start@subscript_expression#op-only/word-arithmetic |
+| table-relation | GAP | 154 | error-recovered tree 154 | occ:_table_relation_arm_t:0.3@declaration_body#adjacent-compl, occ:_table_relation_arm_t:0.3@declaration_body#adjacent-compl+comments, occ:_table_relation_arm_t:0.3@declaration_body#adjacent-compl+not |
+| ternary | GAP | 166 | error-recovered tree 166 | bnd:ternary_expression:condition:end@ternary_expression#consecutive/comparison, bnd:ternary_expression:condition:end@ternary_expression#consecutive/logical, bnd:ternary_expression:condition:end@ternary_expression#consecutive/membership |
+| type-arguments | GAP | 24 | error-recovered tree 24 | occ:dictionary_type:4@type_specification#adjacent-compl, occ:dictionary_type:4@type_specification#adjacent-compl+comments, occ:dictionary_type:4@type_specification#adjacent-compl+not |
+| type-header | GAP | 24 | error-recovered tree 24 | occ:type_declaration:3@assembly_body#adjacent-compl, occ:type_declaration:3@assembly_body#adjacent-compl+comments, occ:type_declaration:3@assembly_body#adjacent-compl+not |
+| type-test | GAP | 12 | error-recovered tree 12 | bnd:as_expression:left:end@as_expression#op-only/type-test, bnd:as_expression:left:end@as_expression#prefix/type-test, bnd:as_expression:left:end@as_expression#whole-operand/type-test |
+| type-test | SILENT | 12 | no class 12 | bnd:as_expression:left:end@as_expression#consecutive/type-test, bnd:as_expression:left:end@as_expression#nested/type-test, bnd:as_expression:left:end@as_expression#suffix/type-test |
+| unary-operand | GAP | 159 | error-recovered tree 159 | bnd:unary_expression:operand:end@case_branch#chain/arithmetic, bnd:unary_expression:operand:end@case_branch#consecutive/word-arithmetic, bnd:unary_expression:operand:end@case_branch#first-only/arithmetic |
+| unassigned | GAP | 4 | error-recovered tree 4 | seed:expression-statement__torn-call-or, seed:expression-statement__torn-call-plus, seed:expression-statement__torn-exit-plus |
+| value-header | GAP | 24 | error-recovered tree 24 | occ:enum_value_declaration:3@declaration_body#adjacent-compl, occ:enum_value_declaration:3@declaration_body#adjacent-compl+comments, occ:enum_value_declaration:3@declaration_body#adjacent-compl+not |
+| var-declaration | GAP | 252 | error-recovered tree 252 | occ:variable_declaration:0.0.5@preproc_conditional_var#adjacent-compl, occ:variable_declaration:0.0.5@preproc_conditional_var#adjacent-compl+comments, occ:variable_declaration:0.0.5@preproc_conditional_var#adjacent-compl+not |
+| var-names | GAP | 171 | error-recovered tree 171 | occ:variable_declaration:2.0.1.0.0@preproc_conditional_var#adjacent-compl, occ:variable_declaration:2.0.1.0.0@preproc_conditional_var#adjacent-compl+comments, occ:variable_declaration:2.0.1.0.0@preproc_conditional_var#adjacent-compl+not |
+| where-filter | GAP | 123 | error-recovered tree 123 | occ:_where_branch:0.0@preproc_conditional_where#elif, occ:_where_branch:0.0@preproc_conditional_where#elif+comments, occ:_where_branch:0.0@preproc_conditional_where#elif+not |
+| where-filter | OVERACCEPT | 3 | no class 3 | occ:_where_run:0.1.0.0@where_conditions#empty-list, occ:_where_run:0.1.0.0@where_conditions#empty-list+comments, occ:_where_run:0.1.0.0@where_conditions#empty-list+not |
+| while-condition | GAP | 52 | error-recovered tree 52 | bnd:while_statement:condition:end@statement_block#consecutive/comparison, bnd:while_statement:condition:end@statement_block#consecutive/logical, bnd:while_statement:condition:end@statement_block#consecutive/membership |
+| with | GAP | 2 | error-recovered tree 2 | bnd:with_statement:record:end@statement_block#first-only/operand, bnd:with_statement:record:start@statement_block#first-only/operand |
 
 ## Defect groups and their witnesses
 
@@ -4720,90 +4724,90 @@ SILENT families first, then GAP and syntax over-accepting families by production
 | 11 | ternary | SILENT | 0 | - | B7b+ | - |
 | 12 | type-test | SILENT | 0 | - | B7b+ | - |
 | 13 | unary-operand | SILENT | 0 | - | B7b+ | - |
-| 14 | split-call | GAP | 148 | - | B7b+ | - |
-| 15 | case-branch | GAP | 147 | - | B7b+ | - |
-| 16 | procedure-tail | GAP | 147 | - | B7b+ | - |
-| 17 | repeat-until | GAP | 147 | - | B7b+ | - |
-| 18 | split-code-block | GAP | 147 | - | B7b+ | - |
-| 19 | split-if-begin | GAP | 147 | - | B7b+ | - |
-| 20 | statement-terminator | GAP | 147 | - | B7b+ | - |
-| 21 | statement-terminator | OVERACCEPT | 147 | - | B7b+ | - |
-| 22 | split-if-condition | GAP | 17 | - | B7b+ | - |
-| 23 | caption-subfields | GAP | 6 | - | B7b+ | - |
-| 24 | integer-list | GAP | 6 | - | B7b+ | - |
-| 25 | option-members | GAP | 6 | - | B13 | - |
-| 26 | order-by | GAP | 6 | - | B7b+ | - |
-| 27 | property-value | GAP | 6 | - | B13 | - |
-| 28 | operand-prefix | GAP | 3 | - | B7b+ | - |
-| 29 | property-value | OVERACCEPT | 3 | - | B12 | - |
-| 30 | binary-operand | GAP | 2 | - | B7b+ | - |
-| 31 | in-operand | GAP | 2 | - | B7b+ | - |
-| 32 | property-terminator | GAP | 2 | - | B7b+ | - |
-| 33 | range | GAP | 2 | - | B7b+ | - |
-| 34 | subscript | GAP | 2 | - | B7b+ | - |
-| 35 | table-relation | GAP | 2 | - | B7b+ | - |
-| 36 | unary-operand | GAP | 2 | - | B7b+ | - |
-| 37 | arguments | GAP | 1 | - | B7b+ | - |
-| 38 | actionref-header | GAP | 0 | - | B7b+ | - |
-| 39 | arguments | OVERACCEPT | 0 | - | B7b+ | - |
-| 40 | array-dimensions | GAP | 0 | - | B7b+ | - |
-| 41 | assignment | GAP | 0 | - | B7b+ | - |
-| 42 | assignment | OVERACCEPT | 0 | - | B7b+ | - |
-| 43 | attribute-arguments | GAP | 0 | - | B7b+ | - |
-| 44 | binary-operand | OVERACCEPT | 0 | - | B7b+ | - |
-| 45 | calc-formula | GAP | 0 | - | B7b+ | - |
-| 46 | case-expression | GAP | 0 | - | B7b+ | - |
-| 47 | case-patterns | GAP | 0 | - | B7b+ | - |
-| 48 | case-patterns | OVERACCEPT | 0 | - | B7b+ | - |
-| 49 | column-header | GAP | 0 | - | B7b+ | - |
-| 50 | dataitem-header | GAP | 0 | - | B7b+ | - |
-| 51 | exit-value | GAP | 0 | - | B7b+ | - |
-| 52 | exit-value | OVERACCEPT | 0 | - | B7b+ | - |
-| 53 | expression-tail | GAP | 0 | - | B7b+ | - |
-| 54 | expression-tail | OVERACCEPT | 0 | - | B7b+ | - |
-| 55 | field-header | GAP | 0 | - | B7b+ | - |
-| 56 | fieldgroup-header | GAP | 0 | - | B7b+ | - |
-| 57 | fieldgroup-header | OVERACCEPT | 0 | - | B7b+ | - |
-| 58 | for-bounds | GAP | 0 | - | B7b+ | - |
-| 59 | for-bounds | OVERACCEPT | 0 | - | B7b+ | - |
-| 60 | guarded-statement | OVERACCEPT | 0 | - | B7b+ | - |
-| 61 | if-condition | GAP | 0 | - | B7b+ | - |
-| 62 | if-condition | OVERACCEPT | 0 | - | B7b+ | - |
-| 63 | implementation-list | GAP | 0 | - | B7b+ | - |
-| 64 | implementation-list | OVERACCEPT | 0 | - | B7b+ | - |
-| 65 | implements | GAP | 0 | - | B7b+ | - |
-| 66 | in-operand | OVERACCEPT | 0 | - | B7b+ | - |
-| 67 | integer-list | OVERACCEPT | 0 | - | B7b+ | - |
-| 68 | interface-procedure | GAP | 0 | - | B7b+ | - |
-| 69 | key-fields | GAP | 0 | - | B7b+ | - |
-| 70 | key-header | GAP | 0 | - | B7b+ | - |
-| 71 | label-attributes | GAP | 0 | - | B7b+ | - |
-| 72 | label-declaration | GAP | 0 | - | B7b+ | - |
-| 73 | layout-header | GAP | 0 | - | B7b+ | - |
-| 74 | link-list | GAP | 0 | - | B12 | - |
-| 75 | link-list | OVERACCEPT | 0 | - | B12 | - |
-| 76 | list-literal | GAP | 0 | - | B7b+ | - |
-| 77 | list-literal | OVERACCEPT | 0 | - | B7b+ | - |
-| 78 | member-access | GAP | 0 | - | B7b+ | - |
-| 79 | ml-pairs | GAP | 0 | - | B7b+ | - |
-| 80 | move-modification | GAP | 0 | - | B7b+ | - |
-| 81 | namespace-pairs | GAP | 0 | - | B7b+ | - |
-| 82 | namespace-using | GAP | 0 | - | B7b+ | - |
-| 83 | parameter-list | GAP | 0 | - | B7b+ | - |
-| 84 | parenthesized | GAP | 0 | - | B7b+ | - |
-| 85 | permissions | GAP | 0 | - | B7b+ | - |
-| 86 | permissions | OVERACCEPT | 0 | - | B7b+ | - |
-| 87 | procedure-header | GAP | 0 | - | B7b+ | - |
-| 88 | procedure-header | OVERACCEPT | 0 | - | B7b+ | - |
-| 89 | procedure-tail | OVERACCEPT | 0 | - | B7b+ | - |
-| 90 | sorting | GAP | 0 | - | B7b+ | - |
-| 91 | split-complete-body | GAP | 0 | - | B7b+ | - |
-| 92 | split-if-begin | OVERACCEPT | 0 | - | B7b+ | - |
-| 93 | subscript | OVERACCEPT | 0 | - | B7b+ | - |
-| 94 | ternary | GAP | 0 | - | B7b+ | - |
-| 95 | type-arguments | GAP | 0 | - | B7b+ | - |
-| 96 | type-header | GAP | 0 | - | B7b+ | - |
-| 97 | type-test | GAP | 0 | - | B7b+ | - |
+| 14 | statement-terminator | OVERACCEPT | 147 | - | B7b+ | - |
+| 15 | property-value | OVERACCEPT | 3 | - | B12 | - |
+| 16 | actionref-header | GAP | 0 | - | B7b+ | - |
+| 17 | arguments | GAP | 0 | - | B7b+ | - |
+| 18 | arguments | OVERACCEPT | 0 | - | B7b+ | - |
+| 19 | array-dimensions | GAP | 0 | - | B7b+ | - |
+| 20 | assignment | GAP | 0 | - | B7b+ | - |
+| 21 | assignment | OVERACCEPT | 0 | - | B7b+ | - |
+| 22 | attribute-arguments | GAP | 0 | - | B7b+ | - |
+| 23 | binary-operand | GAP | 0 | - | B7b+ | - |
+| 24 | binary-operand | OVERACCEPT | 0 | - | B7b+ | - |
+| 25 | calc-formula | GAP | 0 | - | B7b+ | - |
+| 26 | caption-subfields | GAP | 0 | - | B7b+ | - |
+| 27 | case-branch | GAP | 0 | - | B7b+ | - |
+| 28 | case-expression | GAP | 0 | - | B7b+ | - |
+| 29 | case-patterns | GAP | 0 | - | B7b+ | - |
+| 30 | case-patterns | OVERACCEPT | 0 | - | B7b+ | - |
+| 31 | column-header | GAP | 0 | - | B7b+ | - |
+| 32 | dataitem-header | GAP | 0 | - | B7b+ | - |
+| 33 | exit-value | GAP | 0 | - | B7b+ | - |
+| 34 | exit-value | OVERACCEPT | 0 | - | B7b+ | - |
+| 35 | expression-tail | GAP | 0 | - | B7b+ | - |
+| 36 | expression-tail | OVERACCEPT | 0 | - | B7b+ | - |
+| 37 | field-header | GAP | 0 | - | B7b+ | - |
+| 38 | fieldgroup-header | GAP | 0 | - | B7b+ | - |
+| 39 | fieldgroup-header | OVERACCEPT | 0 | - | B7b+ | - |
+| 40 | for-bounds | GAP | 0 | - | B7b+ | - |
+| 41 | for-bounds | OVERACCEPT | 0 | - | B7b+ | - |
+| 42 | guarded-statement | OVERACCEPT | 0 | - | B7b+ | - |
+| 43 | if-condition | GAP | 0 | - | B7b+ | - |
+| 44 | if-condition | OVERACCEPT | 0 | - | B7b+ | - |
+| 45 | implementation-list | GAP | 0 | - | B7b+ | - |
+| 46 | implementation-list | OVERACCEPT | 0 | - | B7b+ | - |
+| 47 | implements | GAP | 0 | - | B7b+ | - |
+| 48 | in-operand | GAP | 0 | - | B7b+ | - |
+| 49 | in-operand | OVERACCEPT | 0 | - | B7b+ | - |
+| 50 | integer-list | GAP | 0 | - | B7b+ | - |
+| 51 | integer-list | OVERACCEPT | 0 | - | B7b+ | - |
+| 52 | interface-procedure | GAP | 0 | - | B7b+ | - |
+| 53 | key-fields | GAP | 0 | - | B7b+ | - |
+| 54 | key-header | GAP | 0 | - | B7b+ | - |
+| 55 | label-attributes | GAP | 0 | - | B7b+ | - |
+| 56 | label-declaration | GAP | 0 | - | B7b+ | - |
+| 57 | layout-header | GAP | 0 | - | B7b+ | - |
+| 58 | link-list | GAP | 0 | - | B12 | - |
+| 59 | link-list | OVERACCEPT | 0 | - | B12 | - |
+| 60 | list-literal | GAP | 0 | - | B7b+ | - |
+| 61 | list-literal | OVERACCEPT | 0 | - | B7b+ | - |
+| 62 | member-access | GAP | 0 | - | B7b+ | - |
+| 63 | ml-pairs | GAP | 0 | - | B7b+ | - |
+| 64 | move-modification | GAP | 0 | - | B7b+ | - |
+| 65 | namespace-pairs | GAP | 0 | - | B7b+ | - |
+| 66 | namespace-using | GAP | 0 | - | B7b+ | - |
+| 67 | operand-prefix | GAP | 0 | - | B7b+ | - |
+| 68 | option-members | GAP | 0 | - | B13 | - |
+| 69 | order-by | GAP | 0 | - | B7b+ | - |
+| 70 | parameter-list | GAP | 0 | - | B7b+ | - |
+| 71 | parenthesized | GAP | 0 | - | B7b+ | - |
+| 72 | permissions | GAP | 0 | - | B7b+ | - |
+| 73 | permissions | OVERACCEPT | 0 | - | B7b+ | - |
+| 74 | procedure-header | GAP | 0 | - | B7b+ | - |
+| 75 | procedure-header | OVERACCEPT | 0 | - | B7b+ | - |
+| 76 | procedure-tail | GAP | 0 | - | B7b+ | - |
+| 77 | procedure-tail | OVERACCEPT | 0 | - | B7b+ | - |
+| 78 | property-terminator | GAP | 0 | - | B7b+ | - |
+| 79 | property-value | GAP | 0 | - | B13 | - |
+| 80 | range | GAP | 0 | - | B7b+ | - |
+| 81 | repeat-until | GAP | 0 | - | B7b+ | - |
+| 82 | sorting | GAP | 0 | - | B7b+ | - |
+| 83 | split-call | GAP | 0 | - | B7b+ | - |
+| 84 | split-code-block | GAP | 0 | - | B7b+ | - |
+| 85 | split-complete-body | GAP | 0 | - | B7b+ | - |
+| 86 | split-if-begin | GAP | 0 | - | B7b+ | - |
+| 87 | split-if-begin | OVERACCEPT | 0 | - | B7b+ | - |
+| 88 | split-if-condition | GAP | 0 | - | B7b+ | - |
+| 89 | statement-terminator | GAP | 0 | - | B7b+ | - |
+| 90 | subscript | GAP | 0 | - | B7b+ | - |
+| 91 | subscript | OVERACCEPT | 0 | - | B7b+ | - |
+| 92 | table-relation | GAP | 0 | - | B7b+ | - |
+| 93 | ternary | GAP | 0 | - | B7b+ | - |
+| 94 | type-arguments | GAP | 0 | - | B7b+ | - |
+| 95 | type-header | GAP | 0 | - | B7b+ | - |
+| 96 | type-test | GAP | 0 | - | B7b+ | - |
+| 97 | unary-operand | GAP | 0 | - | B7b+ | - |
 | 98 | unary-operand | OVERACCEPT | 0 | - | B7b+ | - |
 | 99 | unassigned | GAP | 0 | - | B7b+ | - |
 | 100 | value-header | GAP | 0 | - | B7b+ | - |
