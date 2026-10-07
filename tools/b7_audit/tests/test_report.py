@@ -33,8 +33,14 @@ ROWS = [row("k1", "hA", "fa"), row("k2", "hB", "fb"), row("k3", "hC", "fc"), row
         row("q", "hQ", "fq", role="qualifier", reason="not a separator")]
 
 
-def build(records, rows=ROWS, deps=None):
-    a = report.analyse(records, HEADER, rows)
+def own_tree(records):
+    """A stand-in for the cell's own split tree: its group is the evidence host, its class the placement shape."""
+    m = {r["cell"]: (r["host"], report.shape_id(r["placement"])) for r in records}
+    return lambda cid, sha: m.get(cid)
+
+
+def build(records, rows=ROWS, deps=None, classify=None):
+    a = report.analyse(records, HEADER, rows, classify=classify or own_tree(records))
     return a, report.render(a, HEADER)
 
 
@@ -114,7 +120,7 @@ def test_qualifier_not_probed_and_seed_and_blocked():
 
 def test_external_dependency_sorts_to_tier_end():
     recs = cell("k1@hA#p1", "hA", err=True) + cell("k2@hB#p1", "hB", err=True)
-    a = report.analyse(recs, HEADER, ROWS)
+    a = report.analyse(recs, HEADER, ROWS, classify=own_tree(recs))
     assert report.rank(a["families"]) == [("fb", "GAP"), ("fa", "GAP")]                      # sites 50 > 5
     assert report.rank(a["families"], {"fb": ("elsewhere",)}) == [("fa", "GAP"), ("fb", "GAP")]
 
@@ -180,30 +186,36 @@ def test_groups_per_family_base_placement_kind():
 
 
 def test_sites_count_only_matching_shapes():
-    """A family's sites are the production (host, class) counts matching its defective cells' placements: hB's 50
-    sep-after sites count for a sep-after cell (and for list lead-optional, whose arm ends with the separator), not
-    for a trail cell; a seed matches nothing."""
-    for placement, sites in (("sep-after", 50), ("lead-optional+comments", 50), ("trail", 0), ("sep-before", 0)):
-        a, text = build(cell(f"k2@hB#{placement}", "hB", placement=placement, err=True))
-        assert a["families"][("fb", "GAP")]["sites"] == sites, placement
+    """A family's sites are the production (group type, class) counts matching the (group type, class) its defective
+    cells' OWN split trees give (report.cell_shape): hB's 50 sep-after sites count for a cell whose group is an hB
+    sep-after, not for an hB trail; the group type, not the registry host, is the key."""
+    recs = cell("k2@hB#p", "hB", err=True)
+    for got, sites in ((("hB", "sep-after"), 50), (("hB", "trail"), 0), (("hA", "sep-after"), 5)):
+        a, _ = build(recs, classify=lambda cid, sha: got)
+        assert a["families"][("fb", "GAP")]["sites"] == sites, got
     assert "| fb | GAP | 1 | hB | 50 | hB/sep-after | 9000 |" in build(cell("k2@hB#x", "hB", err=True))[1]
-    assert report.walk_classes("terminator", "trail+not") == ("sep-both", "sep-before")
-    assert report.walk_classes("continuation", "suffix/xor+comments") == ("suffix",)
-    assert report.walk_classes("seed", "seed:x") == ()
 
 
-def test_empty_statement_ruling_rows_form_their_own_family():
-    """A SILENT cell whose failing assertion row is an empty_statement ruling row leaves its registry family for
-    `empty-statement-ownership`, ranked in the SILENT tier with its ruling-first note; another failing row does not."""
-    recs = cell("k1@hA#p1", "hA", oracle="cannot-validate") + cell("k2@hB#p1", "hB", oracle="cannot-validate")
-    rows = [judge.Assertion("k1@hA#p1", "(x)", judge.fingerprints(SHA), report.EMPTY_RULING + ": lone `;`"),
-            judge.Assertion("k2@hB#p1", "(x)", judge.fingerprints(SHA), "SILENT: other")]
-    a = report.analyse(recs, HEADER, ROWS, rows, check=lambda *_: False)
-    assert sorted(a["families"]) == [(report.EMPTY_OWNERSHIP, "SILENT"), ("fb", "SILENT")]
-    assert a["families"][(report.EMPTY_OWNERSHIP, "SILENT")]["note"].startswith("ruling first")
-    text = report.render(a, HEADER)
-    ranked = text.split("## Ranked fix list")[1].split("## UNCHECKED")[0]
-    assert "| empty-statement-ownership | SILENT |" in ranked and "ruling first" in ranked
+def test_unclassified_cell_is_listed_not_zeroed():
+    """A defective cell whose own tree gives no class is named in the families section's unclassified line."""
+    recs = cell("k2@hB#p", "hB", err=True) + cell("k1@hA#p", "hA", oracle="discrepancy")
+    a, text = build(recs, classify=lambda cid, sha: None if cid.startswith("k2") else ("hA", "sep-after"))
+    assert a["families"][("fb", "GAP")]["sites"] == 0 and a["families"][("fb", "GAP")]["unclassified"] == ["k2@hB#p"]
+    fams = text.split("## Families")[1].split("## Defect groups")[0]
+    assert "Unclassified defective cells: 1" in fams and "| fb | GAP | 1 | k2@hB#p |" in fams
+    assert "k1@hA#p" not in fams.split("Unclassified defective cells")[1]
+
+
+def test_cell_shape_reads_the_cells_own_tree(al_parser):
+    """The B7a reviewer's counterexample: the placement `1: #if X Bar #else Bar #endif ;` in a case branch is a
+    preproc_conditional_statement group whose previous sibling is the branch's `:`, which seeds.classify (the
+    production walk's classifier) calls trail; the old placement table could not say so."""
+    cid = "occ:call_statement:0.1@case_branch#first-replace"
+    e = next(x for x in evidence.universe() if x.cell.id == cid)
+    src = e.cell.source.encode("utf-8")
+    assert report.cell_shape(al_parser.parse(src).root_node, src, e.cell.hole) ==         ("preproc_conditional_statement", "trail")
+    plain = b"codeunit 50100 P { trigger OnRun() begin Foo(1); end; }"
+    assert report.cell_shape(al_parser.parse(plain).root_node, plain, (0, len(plain))) is None
 
 
 def test_not_probed_prints_the_real_skip_reason():

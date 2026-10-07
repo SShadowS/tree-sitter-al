@@ -10,12 +10,13 @@ timestamps, so it is byte-identical for the same inputs in any record order.
 
 Family = (registry family, defect kind); two cells with the same family and the same kind are ONE row.
 Defect kinds: GAP, SILENT, OVERACCEPT (REJECTED syntax/over-accepts; a MIXED cell contributes its worst
-per-configuration kind). A SILENT cell whose assertion row is one of the empty_statement ruling rows (reason
-`SILENT (ruling, fix round 1)`: an arm's lone `;` read as an `empty_statement` in a host the oracle cannot lower)
-goes to the family `empty-statement-ownership`, whatever its registry family: B7b decides `;` ownership first.
-Production sites (matching shapes) = the production walk's (host, class) counts that match a (host, class) pair
-of the family's defective cells, the class read off the cell's placement shape (SHAPE_CLASSES); `terminated-unit`
-shapes are shown per host, never weighted.
+per-configuration kind).
+Production sites (matching shapes) = the production walk's (host, class) counts that match a (group type, class)
+pair of the family's defective cells, each read off the cell's OWN split tree by cell_shape (the conditional group
+spanning its placement offset, classified by seeds.classify, the walk's own classifier). A defective cell with no
+such pair is listed as unclassified, never silently zeroed. A template GAP has no source of its own and matches
+every weighted class of its host. `terminated-unit` shapes are shown per host, never weighted. For this the report
+also parses every defective cell's source (parser only; the evidence's parser hash pins the trees).
 Ranking (spec 8): SILENT first; then GAP and OVERACCEPT by matching production sites; ties by name. A
 family blocked by an external dependency goes to the end of its tier, and a family always follows the
 in-list families it depends on.
@@ -25,10 +26,11 @@ member seed is a `value-runs__` seed or the family is `property-value` (item 36)
 import dataclasses
 import hashlib
 import json
+import re
 from collections import defaultdict
 from pathlib import Path
 
-from tools.b7_audit import evidence, judge, placements, registry
+from tools.b7_audit import evidence, judge, placements, registry, seeds
 
 HERE = Path(__file__).parent
 DEFAULT_OUT = HERE.parent.parent / "docs" / "b7-separator-continuation-matrix.md"
@@ -41,48 +43,22 @@ ABBREV = {"GAP": "G", "SILENT": "S", "MIXED": "M", "REJECTED/over-accepts": "R!"
           "REJECTED": "R", "CONSISTENT": "C"}
 TIER = {"SILENT": 0, "GAP": 1, "OVERACCEPT": 1}
 NOT_PROBED = {"qualifier", "na", "lexical"}
-EMPTY_OWNERSHIP = "empty-statement-ownership"
-EMPTY_RULING = "SILENT (ruling, fix round 1)"     # the reason of every empty_statement ruling row in assertions.tsv
-NOTES = {EMPTY_OWNERSHIP: "ruling first: B7b decides who owns an arm's lone `;` (empty_statement or the host) "
-                          "before any fix"}
+NOTES = {}
 
-# Placement shape -> the classes the production walk (seeds.classify) gives a group of that shape, per role.
-# seeds.classify looks at the group's own first and last children and its neighbours: sep-before / sep-after /
-# sep-both = a separator inside the group at its start / end / both; suffix / prefix = an operator inside at its
-# start / end; trail / lead-optional = no separator inside, one beside it before / after; other = only an expression
-# edge beside it; terminated-unit = a `;` that ends the group's last statement (never weighted). Read off the shape
-# strings in placements.py: e.g. list `lead-optional` (`#if X A s #endif B`) ends its arm with the separator, so the
-# walk calls it sep-after; terminator `trail` (`E #if X ; #endif`) is a lone `;` group, sep-both, or sep-before in a
-# statement host (seeds._terminates clears the trailing `;`). A seed has no entry and matches no production shape;
-# a template GAP matches every weighted class of its host. A cell's host is its registry witness, so only hosts
-# that are preproc group types (what the walk counts) can match at all.
-_SEP_BEFORE = ("sep-before",)
-_LONE_SEP = ("sep-both", "sep-before")
-_LIST_CLASSES = {
-    "sep-after": ("sep-after",), "lead-optional": ("sep-after",), "sep-before": _SEP_BEFORE,
-    "sep-before-end": _SEP_BEFORE, "count-differs": _SEP_BEFORE, "adjacent-indep": _SEP_BEFORE,
-    "adjacent-compl": _SEP_BEFORE, "elif": _SEP_BEFORE, "nested": _SEP_BEFORE,
-    "both-in-arm": ("sep-both",), "sep-only": ("sep-both",), "holes-lead": ("sep-both",),
-    "holes-mid": ("sep-both",), "holes-trail": ("sep-both",), "first-replace": ("lead-optional",),
-    "empty": ("trail",), "trail": ("trail",), "one-elem": ("other",), "empty-list": ("other",)}
-SHAPE_CLASSES = {
-    "list-separator": _LIST_CLASSES,
-    "edge-separator": _LIST_CLASSES,
-    "terminator": {"first-replace": ("lead-optional",), "empty": ("lead-optional",), "sep-only": _LONE_SEP,
-                   "adjacent-compl": _LONE_SEP, "elif": _LONE_SEP, "nested": _LONE_SEP, "trail": _LONE_SEP},
-    "fixed-separator": {"first-replace": ("lead-optional",), "empty": ("trail",), "sep-only": ("sep-both",),
-                        "adjacent-compl": ("sep-both",), "elif": ("sep-both",), "nested": ("sep-both",),
-                        "sep-before-end": _SEP_BEFORE, "trail": ("trail",)},
-    "continuation": {**dict.fromkeys(("suffix", "suffix-else", "op-only", "chain", "consecutive", "nested",
-                                      "semi-in-arms", "unary-minus", "signed"), ("suffix",)),
-                     "prefix": ("prefix",), "first": ("prefix",),
-                     **dict.fromkeys(("whole-operand", "first-only", "unary-paren", "unary-not"), ("other",))},
-}
-
-
-def walk_classes(role, placement):
-    """The production-walk classes a cell's placement matches (SHAPE_CLASSES); () for a seed."""
-    return SHAPE_CLASSES.get(role, {}).get(shape_id(placement).split("/")[0], ())
+def cell_shape(root, src, hole=None):
+    """-> (group type, class) for a cell's OWN split tree: the innermost conditional group (seeds._is_group) that
+    spans the cell's placement offset, the first `#if` line in its hole (the whole source for a seed), classified by
+    seeds.classify, the production walk's classifier. None when no group spans it (an `#if` inside an ERROR, no
+    `#if` in the hole) or the walk gives that group no class."""
+    lo, hi = hole or (0, len(src))
+    m = re.search(rb"(?m)^[ \t]*(#if)\b", src[lo:hi])
+    if m is None:
+        return None
+    n = root.descendant_for_byte_range(lo + m.start(1), lo + m.start(1) + 1)
+    while n is not None and not (n.is_named and seeds._is_group(n.type)):
+        n = n.parent
+    cls = seeds.classify(n) if n is not None else None
+    return (n.type, cls) if cls else None
 
 
 # Shapes of placements.LIST_SHAPES whose #if arm OPENS with the separator (checked against the shape
@@ -153,10 +129,13 @@ def owner_of(family, seeds):
     return "B7b+"
 
 
-def analyse(records, header, rows, assertions=(), check=None):
+def analyse(records, header, rows, assertions=(), check=None, classify=None):
     """-> {cells, families, rows, records} for the renderer.
     check(cell id, assertion, source sha) -> bool, or a str when the cell's source cannot be tied to the
-    evidence (the cell then stays UNCHECKED); it is called only for a cell whose assertion row is fresh (see the module docstring)."""
+    evidence (the cell then stays UNCHECKED); it is called only for a cell whose assertion row is fresh (see the module docstring).
+    classify(cell id, source sha) -> the (group type, class) of the cell's own tree (cell_shape), None, or a str (why
+    the source is not there); called for every defective cell. Without a classifier every defective cell is
+    unclassified."""
     by_cell = defaultdict(list)
     for r in records:
         by_cell[r["cell"]].append(r)
@@ -196,12 +175,14 @@ def analyse(records, header, rows, assertions=(), check=None):
                 a = dataclasses.replace(a, holds=res)
         v = judge.verdict(recs, a, lookup=by_cell.get, cls=clskey, current=cur if a is not None else None)
         fam = seed_family(cid, r0["host"], host_families) if seed else subfamily(cls[1], r0["placement"])
-        if defect_kind(v) == "SILENT" and a is not None and a.reason.startswith(EMPTY_RULING):
-            fam = EMPTY_OWNERSHIP
+        shape = None
+        if defect_kind(v) is not None:
+            shape = classify(cid, r0["source_sha256"]) if classify is not None else "no classifier"
         cells.append({"id": cid, "key": r0["key"], "host": r0["host"], "placement": r0["placement"],
                       "role": cls[0], "family": fam, "v": v, "shown": display(v), "seed": seed,
                       "measured": r0["alc"] == "measured", "kind": defect_kind(v), "note": note,
-                      "classes": () if seed else walk_classes(cls[0], r0["placement"])})
+                      "shapes": (shape,) if isinstance(shape, tuple) else (),
+                      "unclassified": None if isinstance(shape, tuple) else shape or "no class"})
     weights, unweighted = defaultdict(int), defaultdict(int)
     for s in header.get("production_shapes", {}).get("shapes", []):
         if s["class"] in UNWEIGHTED:
@@ -212,19 +193,23 @@ def analyse(records, header, rows, assertions=(), check=None):
         cells.append({"id": f"template:{k}@{h}", "key": k, "host": h, "placement": "template",
                       "role": r.role, "family": subfamily(r.family, ""), "v": judge.template_gap(r),
                       "shown": "GAP", "seed": False, "measured": False, "kind": "GAP", "note": "",
-                      "classes": tuple(sorted(c for hh, c in weights if hh == h))})
+                      "shapes": tuple(sorted(hk for hk in weights if hk[0] == h)), "unclassified": None})
     fams = {}
     for c in cells:
         if c["kind"] is None:
             continue
-        f = fams.setdefault((c["family"], c["kind"]), {"cells": [], "hosts": set(), "seeds": [], "shapes": set()})
+        f = fams.setdefault((c["family"], c["kind"]), {"cells": [], "hosts": set(), "seeds": [], "shapes": set(),
+                                                         "unclassified": []})
         f["cells"].append(c["id"])
         f["hosts"].add(c["host"])
-        f["shapes"].update((c["host"], k) for k in c["classes"])
+        f["shapes"].update(c["shapes"])
+        if c["unclassified"] is not None:
+            f["unclassified"].append(c["id"])
         if c["seed"]:
             f["seeds"].append(c["id"])
     for (name, kind), f in fams.items():
         f["cells"].sort()
+        f["unclassified"].sort()
         f["hosts"] = sorted(f["hosts"])
         f["sites"] = sum(weights[hk] for hk in f["shapes"])
         f["shapes"] = sorted(hk for hk in f["shapes"] if weights[hk])
@@ -337,15 +322,22 @@ def render(a, header):
     out += ["", "## Families", ""]
     fams = a["families"]
     out += ["Production sites (matching shapes): the production walk's (host, class) counts that match a (host, "
-            "class) pair of the family's defective cells (`report.SHAPE_CLASSES` maps a placement to the walk's "
-            "classes); the matching pairs are listed. A family's cell ids are in the evidence; its defect groups "
-            "below name one representative each.", ""]
+            "class) pair of the family's defective cells, each read off the cell's own split tree (`report.cell_shape`: "
+            "the conditional group spanning its placement offset, classified by `seeds.classify`, the walk's own "
+            "classifier; a template GAP matches every weighted class of its host); the matching pairs are listed. A "
+            "family's cell ids are in the evidence; its defect groups below name one representative each.", ""]
     out += _table(["family", "kind", "cells", "hosts", "production sites (matching shapes)", "matching shapes",
                    "terminated-unit sites (unweighted)", "dependencies", "owner", "representative"],
                   [(n, k, len(f["cells"]), ", ".join(f["hosts"]), f["sites"],
                     ", ".join(f"{h}/{c}" for h, c in f["shapes"]) or "-", f["unweighted"],
                     ", ".join(f["deps"]) or "-", f["owner"] + (f" ({f['note']})" if f["note"] else ""), f["cells"][0])
                    for (n, k), f in sorted(fams.items())])
+    uncl = [(n, k, f["unclassified"]) for (n, k), f in sorted(fams.items()) if f["unclassified"]]
+    out += ["", f"Unclassified defective cells: {sum(len(u) for _, _, u in uncl)} (their own tree gives no (group "
+            "type, class): no conditional group spans the placement offset, or `seeds.classify` gives none; they "
+            "add no production sites). Per family, with the first cell ids:", ""]
+    out += _table(["family", "kind", "unclassified cells", "first cells"],
+                  [(n, k, len(u), ", ".join(u[:3])) for n, k, u in uncl]) if uncl else ["none"]
     out += ["", "## Defect groups and their witnesses", "",
             "One group per (family, base placement, kind); its representative is its lexicographically first "
             "cell, and the group's alc probe, corpus case or SILENT test is made from that cell alone.", ""]
@@ -356,9 +348,7 @@ def render(a, header):
             "(deferred items 37, 38); B12 when a member seed is a `value-runs__` seed or the family is "
             "`property-value` (item 36); otherwise B7b+.", "", "## Ranked fix list (B7b+)", "",
             "SILENT families first, then GAP and syntax over-accepting families by production sites (matching "
-            "shapes), then dependency order. UNCHECKED cells are never ranked. `empty-statement-ownership` is "
-            "ranked with the SILENT families but needs a ruling first: B7b decides who owns an arm's lone `;` "
-            "before it is a fix.", ""]
+            "shapes), then dependency order. UNCHECKED cells are never ranked.", ""]
     out += _table(["#", "family", "kind", "production sites (matching shapes)", "dependencies", "owner", "note"],
                   [(i, n, k, fams[(n, k)]["sites"], ", ".join(fams[(n, k)]["deps"]) or "-",
                     fams[(n, k)]["owner"], fams[(n, k)]["note"] or "-") for i, (n, k) in enumerate(rank(fams), 1)])
@@ -395,20 +385,31 @@ def build(evidence_path=evidence.EVIDENCE, registry_path=HERE / "registry.tsv",
     rows = registry.load(registry_path)
     state = {}
 
-    def check(cid, a, sha):
+    def tree(cid, sha):
+        """-> (root, source, hole), or a str when the cell's source cannot be tied to the evidence."""
         if "parser" not in state:
             from tools.query_coverage import loader
             state["parser"] = parser or loader.make_parser(
                 loader.load_language(loader.ensure_library(loader.REPO_ROOT)))
+            cells = {} if sources is not None else {e.cell.id: e.cell for e in evidence.universe(registry_path)}
             state["sources"] = sources if sources is not None else {
-                e.cell.id: e.cell.source.encode("utf-8") for e in evidence.universe(registry_path)}
+                i: c.source.encode("utf-8") for i, c in cells.items()}
+            state["holes"] = {i: c.hole for i, c in cells.items()}
         src = state["sources"].get(cid)
         if src is None:
             return "cell not in the regenerated universe"
         if hashlib.sha256(src).hexdigest() != sha:
             return "source changed since evidence"
-        return judge.check_assertion(state["parser"].parse(src).root_node, a)
-    return render(analyse(records, header, rows, judge.load_assertions(assertions_path), check), header)
+        return state["parser"].parse(src).root_node, src, state["holes"].get(cid)
+
+    def check(cid, a, sha):
+        t = tree(cid, sha)
+        return t if isinstance(t, str) else judge.check_assertion(t[0], a)
+
+    def classify(cid, sha):
+        t = tree(cid, sha)
+        return t if isinstance(t, str) else cell_shape(*t)
+    return render(analyse(records, header, rows, judge.load_assertions(assertions_path), check, classify), header)
 
 
 def write(path=DEFAULT_OUT, **kw):
