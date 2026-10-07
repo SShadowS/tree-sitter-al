@@ -74,8 +74,10 @@ The `empty-statement-ownership` family is gone (789 cells CONSISTENT, 36 MIXED n
 `split-if-begin` / `guarded-statement`); `split-code-block` SILENT is gone too; `statement-terminator` SILENT keeps 213
 cells (if/while/case hosts, where a bare call `Bar` owns its `;` in the flat reading). Totals after B7b-0: GAP 14,692,
 SILENT 468, MIXED 3,981, REJECTED/over-accepts 3, UNCHECKED 123, REJECTED 144, CONSISTENT 4,944. The sites column now
-classifies each defective cell's own split tree with the production walk's classifier (`report.cell_shape`); 9,864
-defective cells yield no class (mostly GAP cells whose placement `#if` sits in an ERROR) and are listed, not weighted.
+classifies each defective cell's own split tree with the production walk's classifier (`report.cell_shape`); 18,157
+defective cells yield no class and are listed, not weighted: 17,758 `error-recovered tree` (controller ruling: a split
+tree with an error is never matched) and 399 `no class`. Template GAP entries still match every weighted class of their
+host (over-weighted; the matrix notes it).
 
 **B7b order:** B7b-1 list separators, B7b-2 expression continuations, B7b-3 terminators; property-value runs stay with
 B12/B13.
@@ -1598,6 +1600,19 @@ trailing-separator and holes rules) is wrong for that family, which only matters
 
 **Next step:** fix the four templates in `tools/b7_audit/registry.tsv` (a valid filling per vector), re-run
 `run --only permissions|arguments|integer-list|statement-terminator`, close the cells with assertions, `report`.
+
+## 43. `; else` after a statement parses clean with `else` as an identifier statement (silent over-acceptance)
+
+**Established:** 2026-10-07, B7b-0 review, observed with `tree-sitter parse` (not caused by B7b-0, no grammar change
+there). Flat `if C then I := 1 ; else I := 2;` parses with no ERROR: the `if_statement` ends at `I := 1`, then the
+statement block holds a bare `(identifier)` statement for `else` and an `assignment_statement` for `I := 2`. alc rejects
+`; else` (a `;` before `else` ends the `if`). Likely B6 territory: `else` is not reserved in code; the reserved set
+`code_names` covers only the operator words.
+
+Same review, same tool: `case I of 1: I := 1` followed by a lone-`;` arm (`#if X` / `;` / `#endif`) and then `2: ...`
+has errors in the split tree (`has_error`); the B7a statement-terminator case-branch cells are GAP for this reason.
+
+**Owner:** unassigned.
 
 **Owner:** unassigned.
 

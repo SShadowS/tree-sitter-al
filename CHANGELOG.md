@@ -50,7 +50,7 @@ public API — a change to node structure or field names is a **major** bump.
   after a `;` or an `empty_statement`) it stays an `empty_statement`. Before, every such configuration was an oracle
   discrepancy. The B7a matrix is regenerated; its production-weighting column now classifies each defective cell's own
   split tree with the production walk's classifier (`report.cell_shape`) instead of a placement table, and lists the
-  cells that yield no class.
+  cells that yield no class (18,157, of which 17,758 have an error-recovered split tree, which is never matched).
 
 - **A property value may be a run of `#if` groups (roadmap B11, deferred-work items 33 and 35).
   Breaking for tree consumers only at the shapes listed below; every previously correct
