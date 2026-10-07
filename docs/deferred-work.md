@@ -1601,6 +1601,8 @@ trailing-separator and holes rules) is wrong for that family, which only matters
 **Next step:** fix the four templates in `tools/b7_audit/registry.tsv` (a valid filling per vector), re-run
 `run --only permissions|arguments|integer-list|statement-terminator`, close the cells with assertions, `report`.
 
+**Owner:** unassigned.
+
 ## 43. `; else` after a statement parses clean with `else` as an identifier statement (silent over-acceptance)
 
 **Established:** 2026-10-07, B7b-0 review, observed with `tree-sitter parse` (not caused by B7b-0, no grammar change
@@ -1611,8 +1613,6 @@ statement block holds a bare `(identifier)` statement for `else` and an `assignm
 
 Same review, same tool: `case I of 1: I := 1` followed by a lone-`;` arm (`#if X` / `;` / `#endif`) and then `2: ...`
 has errors in the split tree (`has_error`); the B7a statement-terminator case-branch cells are GAP for this reason.
-
-**Owner:** unassigned.
 
 **Owner:** unassigned.
 

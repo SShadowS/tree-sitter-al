@@ -347,7 +347,10 @@ def render(a, header):
     out += ["", f"Unclassified defective cells: {sum(len(u) for _, _, u, _ in uncl)} (their own tree gives no (group "
             f"type, class): `{ERROR_RECOVERED}` = the split tree has an error (never matched, controller ruling); "
             "`no class` = no conditional group spans the placement offset, or `seeds.classify` gives none; they "
-            "add no production sites). Per family, with the first cell ids:", ""]
+            "add no production sites). GAP families have 0 production sites by construction: a GAP cell's split tree "
+            "always has an error, error-recovered trees are never matched, and production parses with 0 errors, so "
+            "\"0 sites\" for a GAP family means not measurable this way, not no production exposure. Per family, "
+            "with the first cell ids:", ""]
     out += _table(["family", "kind", "unclassified cells", "reasons", "first cells"],
                   [(n, k, len(u), "; ".join(f"{r} {w[r]}" for r in sorted(w)), ", ".join(u[:3]))
                    for n, k, u, w in uncl]) if uncl else ["none"]

@@ -3690,7 +3690,7 @@ Production sites (matching shapes): the production walk's (host, class) counts t
 Template GAP entries (`template:<key>@<host>`, a whole template that does not parse) have no single source, so they match every weighted class of their host: their sites are an upper bound and are over-weighted relative to the per-cell families.
 
 
-Unclassified defective cells: 18157 (their own tree gives no (group type, class): `error-recovered tree` = the split tree has an error (never matched, controller ruling); `no class` = no conditional group spans the placement offset, or `seeds.classify` gives none; they add no production sites). Per family, with the first cell ids:
+Unclassified defective cells: 18157 (their own tree gives no (group type, class): `error-recovered tree` = the split tree has an error (never matched, controller ruling); `no class` = no conditional group spans the placement offset, or `seeds.classify` gives none; they add no production sites). GAP families have 0 production sites by construction: a GAP cell's split tree always has an error, error-recovered trees are never matched, and production parses with 0 errors, so "0 sites" for a GAP family means not measurable this way, not no production exposure. Per family, with the first cell ids:
 
 | family | kind | unclassified cells | reasons | first cells |
 |---|---|---|---|---|
