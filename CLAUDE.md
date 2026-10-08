@@ -4,7 +4,7 @@ GOAL: A parser which parses AL code CORRECT, not just without errors. That is th
 
 This file provides guidance to Claude Code (claude.ai/code) when working with this tree-sitter parser for the AL (Application Language) programming language used in Microsoft Dynamics 365 Business Central.
 
-**Current Status**: 100% production file success rate (15,358/15,358 files), 3,421 tests passing, 0 errors (measured 2026-10-08 on branch `feat/b7b-3-terminators`, B7b-3)
+**Current Status**: 100% production file success rate (15,358/15,358 files), 3,429 tests passing, 0 errors (measured 2026-10-08 on main after the B7b-3 merge)
 
 ## Git Commit Guidelines
 
@@ -182,7 +182,7 @@ once. The only view is `git ls-files -s`; the fix is `git update-index --chmod=+
 **Core Files:**
 - `grammar.js` - Main grammar definition (~7,600 lines; exact count in Parser Metrics). Never edit `src/parser.c` (auto-generated)
 - `src/scanner.c` - External scanner for property disambiguation and preprocessor patterns
-- `test/corpus/` - Test suite with AL code and expected parse trees (729 files, 3,421 cases, measured after B7b-3)
+- `test/corpus/` - Test suite with AL code and expected parse trees (729 files, 3,429 cases, measured on main after B7b-3)
 - `queries/` - 6 query files (highlights, locals, tags, indents, folds, textobjects)
 
 **Key Design Principles (V2 architecture):**
@@ -454,13 +454,13 @@ a "the delta is exactly what I added" check, which therefore could not fail.
 | SYMBOL_COUNT | 1,279 | B7b-3 (2026-10-08) |
 | STATE_COUNT | 23,737 (LARGE_STATE_COUNT 7,482) | B7b-3 (2026-10-08) |
 | grammar.js lines | 7,614 | B7b-3 (2026-10-08) |
-| Tests | 3,421 | B7b-3 (2026-10-08) |
+| Tests | 3,429 | B7b-3, main (2026-10-08) |
 | Production success | 100% (0 ERROR and 0 MISSING nodes over 15,358 files) | 4.0.0 |
 | Named keywords | 153 (151 rules + 2 external), uniform shape | 4.0.0 |
 | Query files | 6 (highlights, locals, tags, indents, folds, textobjects) | 4.0.0 |
 
-The 4.0.0 rows were measured on the merged tree, not carried from a branch; the B7b-3 rows on branch
-`feat/b7b-3-terminators` at its last grammar commit (re-measure after the merge).
+The 4.0.0 rows were measured on the merged tree, not carried from a branch; the B7b-3 rows were re-measured
+on main after the squash merge of `feat/b7b-3-terminators` (6104f00).
 Three different test counts (1,562 / 1,574 / 1,580) circulated during 4.0.0 and
 two were arithmetic from a stale copy of this table. Re-measure; do not recall.
 
