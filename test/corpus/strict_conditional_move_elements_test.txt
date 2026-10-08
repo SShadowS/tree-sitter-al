@@ -1,8 +1,8 @@
 ; B7b-1 Task 8: #if groups in the element list of moveafter/movebefore/movefirst/movelast
-; (family move_elements, grammar.js strictConditionalList). The list is the part AFTER the fixed `;`:
-; the target and the fixed `;` stay outside it, so a group there is B7b-3 territory and stays ERROR
-; (strict_conditional_move_elements_negative_test.txt and the remaining b7_gap_move_modification cases).
-; The first 7 cases are the shapes of b7_gap_move_modification_test.txt that now parse, list text
+; (family move_elements, grammar.js strictConditionalList). The list is the part AFTER the fixed `;`
+; (route 1); a group in the target slot or supplying the fixed `;` is B7b-3's move header (routes 2-3,
+; preproc_conditional_move_args, b7b3_move_args_test.txt).
+; The first 7 cases are the shapes of the former b7_gap_move_modification_test.txt that parse here, list text
 ; unchanged, on the probed route (actions, moveafter). `MIXED` cases are accepted by alc in one
 ; configuration and rejected in the other (AL0319 empty list, AL0107/AL0301 separators): the split
 ; source parses, the invalid configuration is the config oracle's to judge (spec section 3).

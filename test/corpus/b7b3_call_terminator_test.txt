@@ -1,0 +1,1522 @@
+================================================================================
+B7b-3 dangling else: if A then if B then S else S, five bodies
+================================================================================
+codeunit 1 P
+{
+    procedure M()
+    begin
+if A then if B then Foo else Bar;
+if A then if B then X := 1 else X := 2;
+if A then if B then begin Foo end else begin Bar end;
+if A then if B then while C do Foo else while C do Bar;
+if A then if B then asserterror Foo else asserterror Bar;
+    end;
+}
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (procedure
+        (procedure_keyword)
+        name: (identifier)
+        body: (code_block
+          (begin_keyword)
+          body: (statement_block
+            (if_statement
+              (if_keyword)
+              condition: (identifier)
+              (then_keyword)
+              then_branch: (if_statement
+                (if_keyword)
+                condition: (identifier)
+                (then_keyword)
+                then_branch: (call_statement
+                  function: (identifier))
+                (else_keyword)
+                else_branch: (call_statement
+                  function: (identifier))))
+            (if_statement
+              (if_keyword)
+              condition: (identifier)
+              (then_keyword)
+              then_branch: (if_statement
+                (if_keyword)
+                condition: (identifier)
+                (then_keyword)
+                then_branch: (assignment_statement
+                  left: (identifier)
+                  operator: (assignment_operator)
+                  right: (integer))
+                (else_keyword)
+                else_branch: (assignment_statement
+                  left: (identifier)
+                  operator: (assignment_operator)
+                  right: (integer))))
+            (if_statement
+              (if_keyword)
+              condition: (identifier)
+              (then_keyword)
+              then_branch: (if_statement
+                (if_keyword)
+                condition: (identifier)
+                (then_keyword)
+                then_branch: (code_block
+                  (begin_keyword)
+                  body: (statement_block
+                    (call_statement
+                      function: (identifier)))
+                  (end_keyword))
+                (else_keyword)
+                else_branch: (code_block
+                  (begin_keyword)
+                  body: (statement_block
+                    (call_statement
+                      function: (identifier)))
+                  (end_keyword))))
+            (if_statement
+              (if_keyword)
+              condition: (identifier)
+              (then_keyword)
+              then_branch: (if_statement
+                (if_keyword)
+                condition: (identifier)
+                (then_keyword)
+                then_branch: (while_statement
+                  (while_keyword)
+                  condition: (identifier)
+                  (do_keyword)
+                  body: (call_statement
+                    function: (identifier)))
+                (else_keyword)
+                else_branch: (while_statement
+                  (while_keyword)
+                  condition: (identifier)
+                  (do_keyword)
+                  body: (call_statement
+                    function: (identifier)))))
+            (if_statement
+              (if_keyword)
+              condition: (identifier)
+              (then_keyword)
+              then_branch: (if_statement
+                (if_keyword)
+                condition: (identifier)
+                (then_keyword)
+                then_branch: (asserterror_statement
+                  (asserterror_keyword)
+                  body: (call_statement
+                    function: (identifier)))
+                (else_keyword)
+                else_branch: (asserterror_statement
+                  (asserterror_keyword)
+                  body: (call_statement
+                    function: (identifier))))))
+          (end_keyword))))))
+
+================================================================================
+B7b-3 dangling else: case 1: if C then S; else S, five bodies (the else is the case's)
+================================================================================
+codeunit 1 P
+{
+    procedure M()
+    begin
+case I of
+1: if C then Foo; else Bar;
+end;
+case I of
+1: if C then X := 1; else X := 2;
+end;
+case I of
+1: if C then begin Foo end; else begin Bar end;
+end;
+case I of
+1: if C then while C do Foo; else while C do Bar;
+end;
+case I of
+1: if C then asserterror Foo; else asserterror Bar;
+end;
+    end;
+}
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (procedure
+        (procedure_keyword)
+        name: (identifier)
+        body: (code_block
+          (begin_keyword)
+          body: (statement_block
+            (case_statement
+              (case_keyword)
+              expression: (identifier)
+              (of_keyword)
+              body: (case_body
+                (case_branch
+                  pattern: (integer)
+                  body: (if_statement
+                    (if_keyword)
+                    condition: (identifier)
+                    (then_keyword)
+                    then_branch: (call_statement
+                      function: (identifier)))))
+              (case_else_branch
+                (else_keyword)
+                body: (statement_block
+                  (call_statement
+                    function: (identifier))))
+              (end_keyword))
+            (case_statement
+              (case_keyword)
+              expression: (identifier)
+              (of_keyword)
+              body: (case_body
+                (case_branch
+                  pattern: (integer)
+                  body: (if_statement
+                    (if_keyword)
+                    condition: (identifier)
+                    (then_keyword)
+                    then_branch: (assignment_statement
+                      left: (identifier)
+                      operator: (assignment_operator)
+                      right: (integer)))))
+              (case_else_branch
+                (else_keyword)
+                body: (statement_block
+                  (assignment_statement
+                    left: (identifier)
+                    operator: (assignment_operator)
+                    right: (integer))))
+              (end_keyword))
+            (case_statement
+              (case_keyword)
+              expression: (identifier)
+              (of_keyword)
+              body: (case_body
+                (case_branch
+                  pattern: (integer)
+                  body: (if_statement
+                    (if_keyword)
+                    condition: (identifier)
+                    (then_keyword)
+                    then_branch: (code_block
+                      (begin_keyword)
+                      body: (statement_block
+                        (call_statement
+                          function: (identifier)))
+                      (end_keyword)))))
+              (case_else_branch
+                (else_keyword)
+                body: (statement_block
+                  (code_block
+                    (begin_keyword)
+                    body: (statement_block
+                      (call_statement
+                        function: (identifier)))
+                    (end_keyword))))
+              (end_keyword))
+            (case_statement
+              (case_keyword)
+              expression: (identifier)
+              (of_keyword)
+              body: (case_body
+                (case_branch
+                  pattern: (integer)
+                  body: (if_statement
+                    (if_keyword)
+                    condition: (identifier)
+                    (then_keyword)
+                    then_branch: (while_statement
+                      (while_keyword)
+                      condition: (identifier)
+                      (do_keyword)
+                      body: (call_statement
+                        function: (identifier))))))
+              (case_else_branch
+                (else_keyword)
+                body: (statement_block
+                  (while_statement
+                    (while_keyword)
+                    condition: (identifier)
+                    (do_keyword)
+                    body: (call_statement
+                      function: (identifier)))))
+              (end_keyword))
+            (case_statement
+              (case_keyword)
+              expression: (identifier)
+              (of_keyword)
+              body: (case_body
+                (case_branch
+                  pattern: (integer)
+                  body: (if_statement
+                    (if_keyword)
+                    condition: (identifier)
+                    (then_keyword)
+                    then_branch: (asserterror_statement
+                      (asserterror_keyword)
+                      body: (call_statement
+                        function: (identifier))))))
+              (case_else_branch
+                (else_keyword)
+                body: (statement_block
+                  (asserterror_statement
+                    (asserterror_keyword)
+                    body: (call_statement
+                      function: (identifier)))))
+              (end_keyword)))
+          (end_keyword))))))
+
+================================================================================
+B7b-3 dangling else: case 1: if C then S else S; else S, five bodies
+================================================================================
+codeunit 1 P
+{
+    procedure M()
+    begin
+case I of
+1: if C then Foo else Bar; else Baz;
+end;
+case I of
+1: if C then X := 1 else X := 2; else X := 3;
+end;
+case I of
+1: if C then begin Foo end else begin Bar end; else begin Baz end;
+end;
+case I of
+1: if C then while C do Foo else while C do Bar; else while C do Baz;
+end;
+case I of
+1: if C then asserterror Foo else asserterror Bar; else asserterror Baz;
+end;
+    end;
+}
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (procedure
+        (procedure_keyword)
+        name: (identifier)
+        body: (code_block
+          (begin_keyword)
+          body: (statement_block
+            (case_statement
+              (case_keyword)
+              expression: (identifier)
+              (of_keyword)
+              body: (case_body
+                (case_branch
+                  pattern: (integer)
+                  body: (if_statement
+                    (if_keyword)
+                    condition: (identifier)
+                    (then_keyword)
+                    then_branch: (call_statement
+                      function: (identifier))
+                    (else_keyword)
+                    else_branch: (call_statement
+                      function: (identifier)))))
+              (case_else_branch
+                (else_keyword)
+                body: (statement_block
+                  (call_statement
+                    function: (identifier))))
+              (end_keyword))
+            (case_statement
+              (case_keyword)
+              expression: (identifier)
+              (of_keyword)
+              body: (case_body
+                (case_branch
+                  pattern: (integer)
+                  body: (if_statement
+                    (if_keyword)
+                    condition: (identifier)
+                    (then_keyword)
+                    then_branch: (assignment_statement
+                      left: (identifier)
+                      operator: (assignment_operator)
+                      right: (integer))
+                    (else_keyword)
+                    else_branch: (assignment_statement
+                      left: (identifier)
+                      operator: (assignment_operator)
+                      right: (integer)))))
+              (case_else_branch
+                (else_keyword)
+                body: (statement_block
+                  (assignment_statement
+                    left: (identifier)
+                    operator: (assignment_operator)
+                    right: (integer))))
+              (end_keyword))
+            (case_statement
+              (case_keyword)
+              expression: (identifier)
+              (of_keyword)
+              body: (case_body
+                (case_branch
+                  pattern: (integer)
+                  body: (if_statement
+                    (if_keyword)
+                    condition: (identifier)
+                    (then_keyword)
+                    then_branch: (code_block
+                      (begin_keyword)
+                      body: (statement_block
+                        (call_statement
+                          function: (identifier)))
+                      (end_keyword))
+                    (else_keyword)
+                    else_branch: (code_block
+                      (begin_keyword)
+                      body: (statement_block
+                        (call_statement
+                          function: (identifier)))
+                      (end_keyword)))))
+              (case_else_branch
+                (else_keyword)
+                body: (statement_block
+                  (code_block
+                    (begin_keyword)
+                    body: (statement_block
+                      (call_statement
+                        function: (identifier)))
+                    (end_keyword))))
+              (end_keyword))
+            (case_statement
+              (case_keyword)
+              expression: (identifier)
+              (of_keyword)
+              body: (case_body
+                (case_branch
+                  pattern: (integer)
+                  body: (if_statement
+                    (if_keyword)
+                    condition: (identifier)
+                    (then_keyword)
+                    then_branch: (while_statement
+                      (while_keyword)
+                      condition: (identifier)
+                      (do_keyword)
+                      body: (call_statement
+                        function: (identifier)))
+                    (else_keyword)
+                    else_branch: (while_statement
+                      (while_keyword)
+                      condition: (identifier)
+                      (do_keyword)
+                      body: (call_statement
+                        function: (identifier))))))
+              (case_else_branch
+                (else_keyword)
+                body: (statement_block
+                  (while_statement
+                    (while_keyword)
+                    condition: (identifier)
+                    (do_keyword)
+                    body: (call_statement
+                      function: (identifier)))))
+              (end_keyword))
+            (case_statement
+              (case_keyword)
+              expression: (identifier)
+              (of_keyword)
+              body: (case_body
+                (case_branch
+                  pattern: (integer)
+                  body: (if_statement
+                    (if_keyword)
+                    condition: (identifier)
+                    (then_keyword)
+                    then_branch: (asserterror_statement
+                      (asserterror_keyword)
+                      body: (call_statement
+                        function: (identifier)))
+                    (else_keyword)
+                    else_branch: (asserterror_statement
+                      (asserterror_keyword)
+                      body: (call_statement
+                        function: (identifier))))))
+              (case_else_branch
+                (else_keyword)
+                body: (statement_block
+                  (asserterror_statement
+                    (asserterror_keyword)
+                    body: (call_statement
+                      function: (identifier)))))
+              (end_keyword)))
+          (end_keyword))))))
+
+================================================================================
+B7b-3 call: repeat Bar until C
+================================================================================
+codeunit 1 P
+{
+    procedure M()
+    begin
+repeat Bar until C;
+    end;
+}
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (procedure
+        (procedure_keyword)
+        name: (identifier)
+        body: (code_block
+          (begin_keyword)
+          body: (statement_block
+            (repeat_statement
+              (repeat_keyword)
+              body: (statement_block
+                (call_statement
+                  function: (identifier)))
+              (until_keyword)
+              condition: (identifier)))
+          (end_keyword))))))
+
+================================================================================
+B7b-3 call: Bar before end, no semicolon
+================================================================================
+codeunit 1 P
+{
+    procedure M()
+    begin
+Bar
+    end;
+}
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (procedure
+        (procedure_keyword)
+        name: (identifier)
+        body: (code_block
+          (begin_keyword)
+          body: (statement_block
+            (call_statement
+              function: (identifier)))
+          (end_keyword))))))
+
+================================================================================
+B7b-3 call: Bar before else
+================================================================================
+codeunit 1 P
+{
+    procedure M()
+    begin
+if C then Bar else Baz;
+    end;
+}
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (procedure
+        (procedure_keyword)
+        name: (identifier)
+        body: (code_block
+          (begin_keyword)
+          body: (statement_block
+            (if_statement
+              (if_keyword)
+              condition: (identifier)
+              (then_keyword)
+              then_branch: (call_statement
+                function: (identifier))
+              (else_keyword)
+              else_branch: (call_statement
+                function: (identifier))))
+          (end_keyword))))))
+
+================================================================================
+B7b-3 call: Order;
+================================================================================
+codeunit 1 P
+{
+    procedure M()
+    begin
+Order;
+    end;
+}
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (procedure
+        (procedure_keyword)
+        name: (identifier)
+        body: (code_block
+          (begin_keyword)
+          body: (statement_block
+            (call_statement
+              function: (identifier)))
+          (end_keyword))))))
+
+================================================================================
+B7b-3 call: Table;
+================================================================================
+codeunit 1 P
+{
+    procedure M()
+    begin
+Table;
+    end;
+}
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (procedure
+        (procedure_keyword)
+        name: (identifier)
+        body: (code_block
+          (begin_keyword)
+          body: (statement_block
+            (call_statement
+              function: (identifier)))
+          (end_keyword))))))
+
+================================================================================
+B7b-3 call: quoted name
+================================================================================
+codeunit 1 P
+{
+    procedure M()
+    begin
+"My Proc";
+    end;
+}
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (procedure
+        (procedure_keyword)
+        name: (identifier)
+        body: (code_block
+          (begin_keyword)
+          body: (statement_block
+            (call_statement
+              function: (quoted_identifier)))
+          (end_keyword))))))
+
+================================================================================
+B7b-3 call: parenless guard call
+================================================================================
+codeunit 1 P
+{
+    procedure M()
+    begin
+#if A
+Foo;
+if C then
+#endif
+Bar;
+    end;
+}
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (procedure
+        (procedure_keyword)
+        name: (identifier)
+        body: (code_block
+          (begin_keyword)
+          body: (statement_block
+            (preproc_guarded_statement
+              (preproc_if
+                (preproc_open)
+                condition: (identifier))
+              (call_statement
+                function: (identifier))
+              (if_keyword)
+              condition: (identifier)
+              (then_keyword)
+              (preproc_endif
+                (preproc_close))
+              then_branch: (call_statement
+                function: (identifier))))
+          (end_keyword))))))
+
+================================================================================
+B7b-3 call boundaries: assignment, compound, member, parenful, subscript
+================================================================================
+codeunit 1 P
+{
+    procedure M()
+    begin
+Bar := 1;
+Bar += 1;
+Bar.Baz;
+Bar(1);
+Bar[1] := 2;
+    end;
+}
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (procedure
+        (procedure_keyword)
+        name: (identifier)
+        body: (code_block
+          (begin_keyword)
+          body: (statement_block
+            (assignment_statement
+              left: (identifier)
+              operator: (assignment_operator)
+              right: (integer))
+            (assignment_statement
+              left: (identifier)
+              operator: (assignment_operator)
+              right: (integer))
+            (member_expression
+              object: (identifier)
+              member: (identifier))
+            (call_expression
+              function: (identifier)
+              arguments: (argument_list
+                (integer)))
+            (assignment_statement
+              left: (subscript_expression
+                object: (identifier)
+                index: (integer))
+              operator: (assignment_operator)
+              right: (integer)))
+          (end_keyword))))))
+
+================================================================================
+B7b-3 continue stays a statement; Continue( and Continue. stay calls
+================================================================================
+codeunit 1 P
+{
+    procedure M()
+    begin
+while C do begin
+continue;
+end;
+while C do begin
+continue
+end;
+repeat continue until C;
+while C do begin
+continue
+#if X
+;
+#endif
+end;
+Continue(1);
+Continue.Run();
+    end;
+}
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (procedure
+        (procedure_keyword)
+        name: (identifier)
+        body: (code_block
+          (begin_keyword)
+          body: (statement_block
+            (while_statement
+              (while_keyword)
+              condition: (identifier)
+              (do_keyword)
+              body: (code_block
+                (begin_keyword)
+                body: (statement_block
+                  (continue_statement
+                    (continue_keyword)))
+                (end_keyword)))
+            (while_statement
+              (while_keyword)
+              condition: (identifier)
+              (do_keyword)
+              body: (code_block
+                (begin_keyword)
+                body: (statement_block
+                  (continue_statement
+                    (continue_keyword)))
+                (end_keyword)))
+            (repeat_statement
+              (repeat_keyword)
+              body: (statement_block
+                (continue_statement
+                  (continue_keyword)))
+              (until_keyword)
+              condition: (identifier))
+            (while_statement
+              (while_keyword)
+              condition: (identifier)
+              (do_keyword)
+              body: (code_block
+                (begin_keyword)
+                body: (statement_block
+                  (continue_statement
+                    (continue_keyword))
+                  (preproc_conditional_statement
+                    (preproc_if
+                      (preproc_open)
+                      condition: (identifier))
+                    (empty_statement)
+                    (preproc_endif
+                      (preproc_close))))
+                (end_keyword)))
+            (call_expression
+              function: (identifier)
+              arguments: (argument_list
+                (integer)))
+            (call_expression
+              function: (member_expression
+                object: (identifier)
+                member: (identifier))
+              arguments: (argument_list)))
+          (end_keyword))))))
+
+================================================================================
+B7b-3 split call in a then-branch, else right after the closing paren
+================================================================================
+codeunit 1 P
+{
+    procedure M()
+    begin
+if C then
+#if X
+Foo(1,
+#else
+Foo(2,
+#endif
+3) else Bar;
+    end;
+}
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (procedure
+        (procedure_keyword)
+        name: (identifier)
+        body: (code_block
+          (begin_keyword)
+          body: (statement_block
+            (if_statement
+              (if_keyword)
+              condition: (identifier)
+              (then_keyword)
+              then_branch: (preproc_split_call_statement
+                (preproc_if
+                  (preproc_open)
+                  condition: (identifier))
+                (identifier)
+                (integer)
+                (preproc_else)
+                (identifier)
+                (integer)
+                (preproc_endif
+                  (preproc_close))
+                (integer))
+              (else_keyword)
+              else_branch: (call_statement
+                function: (identifier))))
+          (end_keyword))))))
+
+================================================================================
+B7b-3 split call in an else-branch
+================================================================================
+codeunit 1 P
+{
+    procedure M()
+    begin
+if C then Bar else
+#if X
+Foo(1,
+#else
+Foo(2,
+#endif
+3);
+    end;
+}
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (procedure
+        (procedure_keyword)
+        name: (identifier)
+        body: (code_block
+          (begin_keyword)
+          body: (statement_block
+            (if_statement
+              (if_keyword)
+              condition: (identifier)
+              (then_keyword)
+              then_branch: (call_statement
+                function: (identifier))
+              (else_keyword)
+              else_branch: (preproc_split_call_statement
+                (preproc_if
+                  (preproc_open)
+                  condition: (identifier))
+                (identifier)
+                (integer)
+                (preproc_else)
+                (identifier)
+                (integer)
+                (preproc_endif
+                  (preproc_close))
+                (integer))))
+          (end_keyword))))))
+
+================================================================================
+B7b-3 split call as a loop body
+================================================================================
+codeunit 1 P
+{
+    procedure M()
+    begin
+while C do
+#if X
+Foo(1,
+#else
+Foo(2,
+#endif
+3);
+    end;
+}
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (procedure
+        (procedure_keyword)
+        name: (identifier)
+        body: (code_block
+          (begin_keyword)
+          body: (statement_block
+            (while_statement
+              (while_keyword)
+              condition: (identifier)
+              (do_keyword)
+              body: (preproc_split_call_statement
+                (preproc_if
+                  (preproc_open)
+                  condition: (identifier))
+                (identifier)
+                (integer)
+                (preproc_else)
+                (identifier)
+                (integer)
+                (preproc_endif
+                  (preproc_close))
+                (integer))))
+          (end_keyword))))))
+
+================================================================================
+B7b-3 split call in a case branch: semicolon before the case else, and else right after the paren
+================================================================================
+codeunit 1 P
+{
+    procedure M()
+    begin
+case I of
+1: if C then
+#if X
+Foo(1,
+#else
+Foo(2,
+#endif
+3); else Bar;
+end;
+case I of
+1: if C then
+#if X
+Foo(1,
+#else
+Foo(2,
+#endif
+3) else Bar;
+end;
+    end;
+}
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (procedure
+        (procedure_keyword)
+        name: (identifier)
+        body: (code_block
+          (begin_keyword)
+          body: (statement_block
+            (case_statement
+              (case_keyword)
+              expression: (identifier)
+              (of_keyword)
+              body: (case_body
+                (case_branch
+                  pattern: (integer)
+                  body: (if_statement
+                    (if_keyword)
+                    condition: (identifier)
+                    (then_keyword)
+                    then_branch: (preproc_split_call_statement
+                      (preproc_if
+                        (preproc_open)
+                        condition: (identifier))
+                      (identifier)
+                      (integer)
+                      (preproc_else)
+                      (identifier)
+                      (integer)
+                      (preproc_endif
+                        (preproc_close))
+                      (integer)))))
+              (case_else_branch
+                (else_keyword)
+                body: (statement_block
+                  (call_statement
+                    function: (identifier))))
+              (end_keyword))
+            (case_statement
+              (case_keyword)
+              expression: (identifier)
+              (of_keyword)
+              body: (case_body
+                (case_branch
+                  pattern: (integer)
+                  body: (if_statement
+                    (if_keyword)
+                    condition: (identifier)
+                    (then_keyword)
+                    then_branch: (preproc_split_call_statement
+                      (preproc_if
+                        (preproc_open)
+                        condition: (identifier))
+                      (identifier)
+                      (integer)
+                      (preproc_else)
+                      (identifier)
+                      (integer)
+                      (preproc_endif
+                        (preproc_close))
+                      (integer))
+                    (else_keyword)
+                    else_branch: (call_statement
+                      function: (identifier)))))
+              (end_keyword)))
+          (end_keyword))))))
+
+================================================================================
+B7b-3 call alone in an arm
+================================================================================
+codeunit 1 P
+{
+    procedure M()
+    begin
+begin
+#if X
+Bar
+#endif
+end;
+    end;
+}
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (procedure
+        (procedure_keyword)
+        name: (identifier)
+        body: (code_block
+          (begin_keyword)
+          body: (statement_block
+            (code_block
+              (begin_keyword)
+              body: (statement_block
+                (preproc_conditional_statement
+                  (preproc_if
+                    (preproc_open)
+                    condition: (identifier))
+                  (call_statement
+                    function: (identifier))
+                  (preproc_endif
+                    (preproc_close))))
+              (end_keyword)))
+          (end_keyword))))))
+
+================================================================================
+B7b-3 call terminator in an arm
+================================================================================
+codeunit 1 P
+{
+    procedure M()
+    begin
+if Ok then Bar
+#if X
+;
+#endif
+    end;
+}
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (procedure
+        (procedure_keyword)
+        name: (identifier)
+        body: (code_block
+          (begin_keyword)
+          body: (statement_block
+            (if_statement
+              (if_keyword)
+              condition: (identifier)
+              (then_keyword)
+              then_branch: (call_statement
+                function: (identifier)))
+            (preproc_conditional_statement
+              (preproc_if
+                (preproc_open)
+                condition: (identifier))
+              (empty_statement)
+              (preproc_endif
+                (preproc_close))))
+          (end_keyword))))))
+
+================================================================================
+B7b-3 call before an empty group
+================================================================================
+codeunit 1 P
+{
+    procedure M()
+    begin
+if Ok then Bar
+#if X
+#endif
+;
+    end;
+}
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (procedure
+        (procedure_keyword)
+        name: (identifier)
+        body: (code_block
+          (begin_keyword)
+          body: (statement_block
+            (if_statement
+              (if_keyword)
+              condition: (identifier)
+              (then_keyword)
+              then_branch: (call_statement
+                function: (identifier)))
+            (preproc_conditional_statement
+              (preproc_if
+                (preproc_open)
+                condition: (identifier))
+              (preproc_endif
+                (preproc_close))))
+          (end_keyword))))))
+
+================================================================================
+B7b-3 call terminator with a line comment
+================================================================================
+codeunit 1 P
+{
+    procedure M()
+    begin
+Bar // c
+;
+    end;
+}
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (procedure
+        (procedure_keyword)
+        name: (identifier)
+        body: (code_block
+          (begin_keyword)
+          body: (statement_block
+            (call_statement
+              function: (identifier))
+            (comment))
+          (end_keyword))))))
+
+================================================================================
+B7b-3 call terminator with a block comment
+================================================================================
+codeunit 1 P
+{
+    procedure M()
+    begin
+Bar /* c */ ;
+    end;
+}
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (procedure
+        (procedure_keyword)
+        name: (identifier)
+        body: (code_block
+          (begin_keyword)
+          body: (statement_block
+            (call_statement
+              function: (identifier))
+            (multiline_comment))
+          (end_keyword))))))
+
+================================================================================
+B7b-3 call as a case branch body
+================================================================================
+codeunit 1 P
+{
+    procedure M()
+    begin
+case I of
+1: Bar;
+end;
+    end;
+}
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (procedure
+        (procedure_keyword)
+        name: (identifier)
+        body: (code_block
+          (begin_keyword)
+          body: (statement_block
+            (case_statement
+              (case_keyword)
+              expression: (identifier)
+              (of_keyword)
+              body: (case_body
+                (case_branch
+                  pattern: (integer)
+                  body: (call_statement
+                    function: (identifier))))
+              (end_keyword)))
+          (end_keyword))))))
+
+================================================================================
+B7b-3 split call under asserterror, its semicolon from complementary groups (B7a split-call adjacent-compl)
+================================================================================
+codeunit 1 P
+{
+    procedure M()
+    begin
+asserterror
+#if TPL
+Foo(1,
+#else
+Foo(2,
+#endif
+3)
+#if X
+;
+#endif
+#if not X
+;
+#endif
+    end;
+}
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (procedure
+        (procedure_keyword)
+        name: (identifier)
+        body: (code_block
+          (begin_keyword)
+          body: (statement_block
+            (asserterror_statement
+              (asserterror_keyword)
+              body: (preproc_split_call_statement
+                (preproc_if
+                  (preproc_open)
+                  condition: (identifier))
+                (identifier)
+                (integer)
+                (preproc_else)
+                (identifier)
+                (integer)
+                (preproc_endif
+                  (preproc_close))
+                (integer)))
+            (preproc_conditional_statement
+              (preproc_if
+                (preproc_open)
+                condition: (identifier))
+              (empty_statement)
+              (preproc_endif
+                (preproc_close)))
+            (preproc_conditional_statement
+              (preproc_if
+                (preproc_open)
+                condition: (preproc_not_expression
+                  (identifier)))
+              (empty_statement)
+              (preproc_endif
+                (preproc_close))))
+          (end_keyword))))))
+
+================================================================================
+B7b-3 split call under asserterror, its semicolon from an #elif chain (B7a split-call elif)
+================================================================================
+codeunit 1 P
+{
+    procedure M()
+    begin
+asserterror
+#if TPL
+Foo(1,
+#else
+Foo(2,
+#endif
+3)
+#if X
+;
+#elif Y
+;
+#else
+;
+#endif
+    end;
+}
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (procedure
+        (procedure_keyword)
+        name: (identifier)
+        body: (code_block
+          (begin_keyword)
+          body: (statement_block
+            (asserterror_statement
+              (asserterror_keyword)
+              body: (preproc_split_call_statement
+                (preproc_if
+                  (preproc_open)
+                  condition: (identifier))
+                (identifier)
+                (integer)
+                (preproc_else)
+                (identifier)
+                (integer)
+                (preproc_endif
+                  (preproc_close))
+                (integer)))
+            (preproc_conditional_statement
+              (preproc_if
+                (preproc_open)
+                condition: (identifier))
+              (empty_statement)
+              (preproc_elif
+                condition: (identifier))
+              (empty_statement)
+              (preproc_else)
+              (empty_statement)
+              (preproc_endif
+                (preproc_close))))
+          (end_keyword))))))
+
+================================================================================
+B7b-3 split call terminator with a line comment (E2)
+================================================================================
+codeunit 1 P
+{
+    procedure M()
+    begin
+#if X
+Foo(1,
+#else
+Foo(2,
+#endif
+3) // c
+;
+    end;
+}
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (procedure
+        (procedure_keyword)
+        name: (identifier)
+        body: (code_block
+          (begin_keyword)
+          body: (statement_block
+            (preproc_split_call_statement
+              (preproc_if
+                (preproc_open)
+                condition: (identifier))
+              (identifier)
+              (integer)
+              (preproc_else)
+              (identifier)
+              (integer)
+              (preproc_endif
+                (preproc_close))
+              (integer))
+            (comment))
+          (end_keyword))))))
+
+================================================================================
+B7b-3 split call terminator with a block comment (E2)
+================================================================================
+codeunit 1 P
+{
+    procedure M()
+    begin
+#if X
+Foo(1,
+#else
+Foo(2,
+#endif
+3) /* c */ ;
+    end;
+}
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (procedure
+        (procedure_keyword)
+        name: (identifier)
+        body: (code_block
+          (begin_keyword)
+          body: (statement_block
+            (preproc_split_call_statement
+              (preproc_if
+                (preproc_open)
+                condition: (identifier))
+              (identifier)
+              (integer)
+              (preproc_else)
+              (identifier)
+              (integer)
+              (preproc_endif
+                (preproc_close))
+              (integer))
+            (multiline_comment))
+          (end_keyword))))))

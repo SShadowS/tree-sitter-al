@@ -54,8 +54,8 @@ def _chunk(job):
     return ab.trees_identical(pa, pb, files)
 
 
-def run(lib_a, lib_b, labels, workers=None, roots=None, chunk_fn=_chunk):
-    """-> ({label: (files, [differing])}); raises FileNotFoundError for a missing lib/corpus, ParityError for an empty corpus or a worker failure."""
+def run(lib_a, lib_b, labels, workers=None, roots=None, chunk_fn=_chunk, pool=False):
+    """-> ({label: (files, [differing])}); `pool`: run a non-default, picklable chunk_fn in the worker pool too; raises FileNotFoundError for a missing lib/corpus, ParityError for an empty corpus or a worker failure."""
     roots = roots or common.oracle.CORPORA
     for p in (lib_a, lib_b):
         if not Path(p).is_file():
@@ -73,7 +73,7 @@ def run(lib_a, lib_b, labels, workers=None, roots=None, chunk_fn=_chunk):
                  for i in range(0, len(rels), CHUNK)]
     workers = workers or common.DEFAULT_WORKERS
     out = {l: (counts[l], []) for l in labels}
-    ex = cf.ProcessPoolExecutor(workers) if workers > 1 and chunk_fn is _chunk else None
+    ex = cf.ProcessPoolExecutor(workers) if workers > 1 and (chunk_fn is _chunk or pool) else None
     try:
         results = ex.map(chunk_fn, jobs) if ex else map(chunk_fn, jobs)
         it = iter(results)

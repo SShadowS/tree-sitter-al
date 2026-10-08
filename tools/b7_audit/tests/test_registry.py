@@ -160,3 +160,94 @@ def test_load_plain_column(tmp_path):
     f.write_text(registry.HEADER + "\nk\th\tterminator\tf\ta ⟨HOLE⟩\t\t\tI := 1;\\nJ := 2;\n", encoding="utf-8")
     (r,) = registry.load(f)
     assert registry.HEADER.endswith("\treason\tplain") and r.plain == "I := 1;\nJ := 2;"
+
+
+# --- key aliases (B7b-3 Task 4 ruling) ------------------------------------------------------------
+def _alias_world():
+    """The live key `occ:new:0` has host `h1` in the grammar; `occ:old:0` is gone but its rows cover h1 and h2."""
+    pairs = [("occ:new:0", census.Route("h1", ("h1",)))]
+    old = [registry.Row("occ:old:0", "h1", "terminator", "fam", "x ⟨HOLE⟩", "", "", "x;"),
+           registry.Row("occ:old:0", "h2", "terminator", "fam", "x ⟨HOLE⟩", "", "", "x;")]
+    live = [registry.Row("occ:new:0", "h1", "terminator", "fam", "x ⟨HOLE⟩", "occ:old:0", "moved", "x;")]
+    return pairs, old + live
+
+
+def _alias(**kw):
+    a = dict(retired="occ:old:0", live="occ:new:0", role="terminator", family="fam", reason="moved", commit="abc")
+    a.update(kw)
+    return registry.Alias(**a)
+
+
+def test_valid_alias_keeps_retired_rows():
+    pairs, rows = _alias_world()
+    assert registry.gate(pairs, rows, [_alias()]) == ([], [], [])
+
+
+def test_unaliased_retired_key_is_stale():
+    pairs, rows = _alias_world()
+    _, stale, _ = registry.gate(pairs, rows)
+    assert {r.route_host for r in stale} == {"h1", "h2"}
+
+
+def test_alias_to_a_missing_live_key_fails():
+    pairs, rows = _alias_world()
+    _, stale, invalid = registry.gate(pairs, rows, [_alias(live="occ:nowhere:0")])
+    assert stale and any("not in the grammar" in why for _, why in invalid)
+
+
+def test_alias_role_or_family_mismatch_fails():
+    pairs, rows = _alias_world()
+    for bad in (_alias(role="list-separator"), _alias(family="other")):
+        _, stale, invalid = registry.gate(pairs, rows, [bad])
+        assert stale and any("role/family" in why for _, why in invalid)
+    live_role = [r if r.route_host != "h1" or r.equiv == "" else
+                 registry.Row(r.key, r.route_host, "fixed-separator", r.family, r.template, r.equiv, r.reason, r.plain)
+                 for r in rows]
+    _, stale, invalid = registry.gate(pairs, live_role, [_alias()])
+    assert stale and any("no registry row with role" in why for _, why in invalid)
+
+
+def test_alias_with_na_rows_on_both_sides_passes():
+    """B7b-3 Task 8: a key with `na` hosts aliases with its na rows; na is exempt from the role check only."""
+    pairs, rows = _alias_world()
+    pairs = pairs + [("occ:new:0", census.Route("h2", ("h2",)))]
+    rows = ([r if r.route_host != "h2" else
+             registry.Row(r.key, r.route_host, "na", r.family, "", "", "no valid AL here", "") for r in rows]
+            + [registry.Row("occ:new:0", "h2", "na", "fam", "", "occ:old:0", "no valid AL here", "")])
+    assert registry.gate(pairs, rows, [_alias()]) == ([], [], [])
+    only_na = [r for r in rows if not (r.key == "occ:new:0" and r.role == "terminator")]
+    _, stale, invalid = registry.gate(pairs, only_na, [_alias()])
+    assert stale and any("no registry row with role" in why for _, why in invalid)
+
+
+def test_alias_whose_retired_rows_are_all_na_fails():
+    """B7b-3 Task 10 carry: the retired side, like the live side, needs one row with the alias's role."""
+    pairs, rows = _alias_world()
+    rows = [r if r.key != "occ:old:0" else
+            registry.Row(r.key, r.route_host, "na", r.family, "", "", "no valid AL here", "") for r in rows]
+    _, stale, invalid = registry.gate(pairs, rows, [_alias()])
+    assert stale and any("occ:old:0 has no registry row with role" in why for _, why in invalid)
+
+
+def test_alias_whose_live_rows_cover_a_new_host_fails():
+    pairs, rows = _alias_world()
+    pairs = pairs + [("occ:new:0", census.Route("h3", ("h3",)))]
+    rows = rows + [registry.Row("occ:new:0", "h3", "terminator", "fam", "x ⟨HOLE⟩", "occ:old:0", "moved", "x;")]
+    _, stale, invalid = registry.gate(pairs, rows, [_alias()])
+    assert stale and any("never covered" in why for _, why in invalid)
+
+
+def test_alias_for_a_key_still_in_the_grammar_fails():
+    pairs, rows = _alias_world()
+    pairs = pairs + [("occ:old:0", census.Route("h1", ("h1",)))]
+    _, _, invalid = registry.gate(pairs, rows, [_alias()])
+    assert any("still in the grammar" in why for _, why in invalid)
+
+
+def test_real_registry_with_aliases_passes_census():
+    g = grammar.load(Path("src/grammar.json"))
+    here = Path(__file__).parent.parent
+    rows, aliases = registry.load(here / "registry.tsv"), registry.load_aliases(here / "key-aliases.tsv")
+    assert aliases
+    assert registry.gate(census.census(g), rows, aliases) == ([], [], [])
+    assert registry.gate(census.census(g), rows)[1], "without the aliases the retired rows are stale"

@@ -1,5 +1,5 @@
 // B7a Task 10 witness (GAP): family split-call, base placement elif, 69 cells; representative occ:preproc_split_call_statement:0.7@asserterror_statement#elif
-// Fixture b7_gap_split_call_test.txt#B7a GAP: split-call / elif (69 cells, verdict of the representative GAP); the parser ERRORs on configurations alc accepts; representative occ:preproc_split_call_statement:0.7@asserterror_statement%23elif#0
+// Fixture b7b3_call_terminator_test.txt#B7b-3 split call under asserterror, its semicolon from an %23elif chain (B7a split-call elif)#0
 // expect: !TPL !X !Y accept
 // expect: !TPL !X Y accept
 // expect: !TPL X !Y accept

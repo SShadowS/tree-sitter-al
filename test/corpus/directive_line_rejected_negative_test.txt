@@ -69,7 +69,8 @@ codeunit 50100 P
         arguments: (argument_list
           (string_literal)))
       (ERROR)
-      (identifier))))
+      (call_statement
+        function: (identifier)))))
 
 ================================================================================
 NEGATIVE: #elsex -- a prefix of #else (AL0621)

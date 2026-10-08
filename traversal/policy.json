@@ -94,9 +94,14 @@
       "class": "branch-container",
       "arm_boundary": "own-directives",
       "hosts": {
-        "case_body:<children>": "splice-repeat"
+        "case_body:<children>": "splice-repeat",
+        "case_branch:<children>": "decoration",
+        "preproc_conditional_case:<children>": "splice-repeat",
+        "preproc_split_case_branch:<children>": "decoration",
+        "preproc_split_case_extended:<children>": "decoration",
+        "preproc_split_case_end_branch:<children>": "decoration"
       },
-      "reason": "Registry branch-select: arms are alternatives in one host slot."
+      "reason": "Registry branch-select, one context-dispatched handler (B7b-3 spec 6.2): arms are alternatives in case_body or a nested group (case_branch, a branch's `;` as empty_statement, a nested group); directly before a branch's own `;` in its four hosts it is a directive-only decoration, deleted by selection."
     },
     "preproc_conditional_case_patterns": {
       "class": "branch-container",
@@ -246,6 +251,18 @@
       },
       "reason": "B7b-1 strict list: arms are alternative runs of elements and separators in the element list after a move*'s fixed `;` (the target and the `;` stay outside); registry branch-select with host policy strict-list (config_oracle conditional_lists)."
     },
+    "preproc_conditional_move_args": {
+      "class": "branch-container",
+      "arm_boundary": "own-directives",
+      "hosts": {
+        "moveafter_modification:<children>": "strict-list",
+        "movebefore_modification:<children>": "strict-list",
+        "movefirst_modification:<children>": "strict-list",
+        "movelast_modification:<children>": "strict-list",
+        "preproc_conditional_move_args:<children>": "strict-list"
+      },
+      "reason": "B7b-3 Task 8 move header (spec 5.1 routes 2-3): arms are alternative runs of names and `;`/`,` separators that may replace the target, supply the fixed `;` or span header and elements; registry branch-select with host policy strict-list; the host's route, interior shape and configured roles are config_oracle lowering/move_args (spec 6.3)."
+    },
     "preproc_conditional_object": {
       "class": "branch-container",
       "arm_boundary": "own-directives",
@@ -331,7 +348,7 @@
       "arm_boundary": "own-directives",
       "hosts": {
         "asserterror_statement:body": "optional-slot",
-        "case_branch:body": "single-slot",
+        "case_branch:body": "optional-slot",
         "for_statement:body": "single-slot",
         "foreach_statement:body": "single-slot",
         "if_statement:else_branch": "single-slot",

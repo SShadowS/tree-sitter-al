@@ -1,0 +1,485 @@
+; B7b-3 Task 6: the B7a split-if-begin GAP witnesses (case_branch host) that the case-separator change
+; repaired, converted to REPRESENTATION fixtures (controller ruling, Task 6). For every case below:
+; alc accepts every configuration (tools/alc_probe/cases/b7-audit/split-if-begin__<placement>__gap.al);
+; the flat `;` sits inside the asym body (preproc_split_if_begin_asymmetric owns optional(';'));
+; lowering follows the flat grammar (Task 7); !TPL makes the asym `end` the case's end, a one-reading
+; boundary. The split tree pins spec 4.1: a sibling preproc_conditional_case with empty_statement arms,
+; and for `empty` a decoration before the branch's own `;`.
+
+================================================================================
+B7b-3 case separator after a split if-begin body (B7a split-if-begin adjacent-compl; representation fixture, see header)
+================================================================================
+codeunit 1 P
+{
+    procedure M()
+    begin
+case I of
+1:
+#if TPL
+if Ok then begin
+#endif
+Bar();
+end
+#if X
+;
+#endif
+#if not X
+;
+#endif
+end;
+#if TPL
+    end;
+#endif
+}
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (procedure
+        (procedure_keyword)
+        name: (identifier)
+        body: (code_block
+          (begin_keyword)
+          body: (statement_block
+            (case_statement
+              (case_keyword)
+              expression: (identifier)
+              (of_keyword)
+              body: (case_body
+                (case_branch
+                  pattern: (integer)
+                  body: (preproc_split_if_begin_asymmetric
+                    (preproc_if
+                      (preproc_open)
+                      condition: (identifier))
+                    (if_keyword)
+                    condition: (identifier)
+                    (then_keyword)
+                    (preproc_split_begin)
+                    (preproc_endif
+                      (preproc_close))
+                    (call_expression
+                      function: (identifier)
+                      arguments: (argument_list))
+                    (end_keyword)))
+                (preproc_conditional_case
+                  (preproc_if
+                    (preproc_open)
+                    condition: (identifier))
+                  (empty_statement)
+                  (preproc_endif
+                    (preproc_close)))
+                (preproc_conditional_case
+                  (preproc_if
+                    (preproc_open)
+                    condition: (preproc_not_expression
+                      (identifier)))
+                  (empty_statement)
+                  (preproc_endif
+                    (preproc_close))))
+              (end_keyword)))
+          (preproc_split_code_block_end
+            (preproc_if
+              (preproc_open)
+              condition: (identifier))
+            (preproc_split_end)
+            (preproc_endif
+              (preproc_close))))))))
+
+================================================================================
+B7b-3 case separator after a split if-begin body (B7a split-if-begin elif; representation fixture, see header)
+================================================================================
+codeunit 1 P
+{
+    procedure M()
+    begin
+case I of
+1:
+#if TPL
+if Ok then begin
+#endif
+Bar();
+end
+#if X
+;
+#elif Y
+;
+#else
+;
+#endif
+end;
+#if TPL
+    end;
+#endif
+}
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (procedure
+        (procedure_keyword)
+        name: (identifier)
+        body: (code_block
+          (begin_keyword)
+          body: (statement_block
+            (case_statement
+              (case_keyword)
+              expression: (identifier)
+              (of_keyword)
+              body: (case_body
+                (case_branch
+                  pattern: (integer)
+                  body: (preproc_split_if_begin_asymmetric
+                    (preproc_if
+                      (preproc_open)
+                      condition: (identifier))
+                    (if_keyword)
+                    condition: (identifier)
+                    (then_keyword)
+                    (preproc_split_begin)
+                    (preproc_endif
+                      (preproc_close))
+                    (call_expression
+                      function: (identifier)
+                      arguments: (argument_list))
+                    (end_keyword)))
+                (preproc_conditional_case
+                  (preproc_if
+                    (preproc_open)
+                    condition: (identifier))
+                  (empty_statement)
+                  (preproc_elif
+                    condition: (identifier))
+                  (empty_statement)
+                  (preproc_else)
+                  (empty_statement)
+                  (preproc_endif
+                    (preproc_close))))
+              (end_keyword)))
+          (preproc_split_code_block_end
+            (preproc_if
+              (preproc_open)
+              condition: (identifier))
+            (preproc_split_end)
+            (preproc_endif
+              (preproc_close))))))))
+
+================================================================================
+B7b-3 case separator after a split if-begin body (B7a split-if-begin empty; representation fixture, see header)
+================================================================================
+codeunit 1 P
+{
+    procedure M()
+    begin
+case I of
+1:
+#if TPL
+if Ok then begin
+#endif
+Bar();
+end
+#if X
+#endif
+;
+end;
+#if TPL
+    end;
+#endif
+}
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (procedure
+        (procedure_keyword)
+        name: (identifier)
+        body: (code_block
+          (begin_keyword)
+          body: (statement_block
+            (case_statement
+              (case_keyword)
+              expression: (identifier)
+              (of_keyword)
+              body: (case_body
+                (case_branch
+                  pattern: (integer)
+                  body: (preproc_split_if_begin_asymmetric
+                    (preproc_if
+                      (preproc_open)
+                      condition: (identifier))
+                    (if_keyword)
+                    condition: (identifier)
+                    (then_keyword)
+                    (preproc_split_begin)
+                    (preproc_endif
+                      (preproc_close))
+                    (call_expression
+                      function: (identifier)
+                      arguments: (argument_list))
+                    (end_keyword))
+                  (preproc_conditional_case
+                    (preproc_if
+                      (preproc_open)
+                      condition: (identifier))
+                    (preproc_endif
+                      (preproc_close)))))
+              (end_keyword)))
+          (preproc_split_code_block_end
+            (preproc_if
+              (preproc_open)
+              condition: (identifier))
+            (preproc_split_end)
+            (preproc_endif
+              (preproc_close))))))))
+
+================================================================================
+B7b-3 case separator after a split if-begin body (B7a split-if-begin nested; representation fixture, see header)
+================================================================================
+codeunit 1 P
+{
+    procedure M()
+    begin
+case I of
+1:
+#if TPL
+if Ok then begin
+#endif
+Bar();
+end
+#if X
+#if Y
+;
+#else
+;
+#endif
+#else
+;
+#endif
+end;
+#if TPL
+    end;
+#endif
+}
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (procedure
+        (procedure_keyword)
+        name: (identifier)
+        body: (code_block
+          (begin_keyword)
+          body: (statement_block
+            (case_statement
+              (case_keyword)
+              expression: (identifier)
+              (of_keyword)
+              body: (case_body
+                (case_branch
+                  pattern: (integer)
+                  body: (preproc_split_if_begin_asymmetric
+                    (preproc_if
+                      (preproc_open)
+                      condition: (identifier))
+                    (if_keyword)
+                    condition: (identifier)
+                    (then_keyword)
+                    (preproc_split_begin)
+                    (preproc_endif
+                      (preproc_close))
+                    (call_expression
+                      function: (identifier)
+                      arguments: (argument_list))
+                    (end_keyword)))
+                (preproc_conditional_case
+                  (preproc_if
+                    (preproc_open)
+                    condition: (identifier))
+                  (preproc_conditional_case
+                    (preproc_if
+                      (preproc_open)
+                      condition: (identifier))
+                    (empty_statement)
+                    (preproc_else)
+                    (empty_statement)
+                    (preproc_endif
+                      (preproc_close)))
+                  (preproc_else)
+                  (empty_statement)
+                  (preproc_endif
+                    (preproc_close))))
+              (end_keyword)))
+          (preproc_split_code_block_end
+            (preproc_if
+              (preproc_open)
+              condition: (identifier))
+            (preproc_split_end)
+            (preproc_endif
+              (preproc_close))))))))
+
+================================================================================
+B7b-3 case separator after a split if-begin body (B7a split-if-begin sep-only; representation fixture, see header)
+================================================================================
+codeunit 1 P
+{
+    procedure M()
+    begin
+case I of
+1:
+#if TPL
+if Ok then begin
+#endif
+Bar();
+end
+#if X
+;
+#else
+;
+#endif
+end;
+#if TPL
+    end;
+#endif
+}
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (procedure
+        (procedure_keyword)
+        name: (identifier)
+        body: (code_block
+          (begin_keyword)
+          body: (statement_block
+            (case_statement
+              (case_keyword)
+              expression: (identifier)
+              (of_keyword)
+              body: (case_body
+                (case_branch
+                  pattern: (integer)
+                  body: (preproc_split_if_begin_asymmetric
+                    (preproc_if
+                      (preproc_open)
+                      condition: (identifier))
+                    (if_keyword)
+                    condition: (identifier)
+                    (then_keyword)
+                    (preproc_split_begin)
+                    (preproc_endif
+                      (preproc_close))
+                    (call_expression
+                      function: (identifier)
+                      arguments: (argument_list))
+                    (end_keyword)))
+                (preproc_conditional_case
+                  (preproc_if
+                    (preproc_open)
+                    condition: (identifier))
+                  (empty_statement)
+                  (preproc_else)
+                  (empty_statement)
+                  (preproc_endif
+                    (preproc_close))))
+              (end_keyword)))
+          (preproc_split_code_block_end
+            (preproc_if
+              (preproc_open)
+              condition: (identifier))
+            (preproc_split_end)
+            (preproc_endif
+              (preproc_close))))))))
+
+================================================================================
+B7b-3 case separator after a split if-begin body (B7a split-if-begin trail; representation fixture, see header)
+================================================================================
+codeunit 1 P
+{
+    procedure M()
+    begin
+case I of
+1:
+#if TPL
+if Ok then begin
+#endif
+Bar();
+end
+#if X
+;
+#endif
+end;
+#if TPL
+    end;
+#endif
+}
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (procedure
+        (procedure_keyword)
+        name: (identifier)
+        body: (code_block
+          (begin_keyword)
+          body: (statement_block
+            (case_statement
+              (case_keyword)
+              expression: (identifier)
+              (of_keyword)
+              body: (case_body
+                (case_branch
+                  pattern: (integer)
+                  body: (preproc_split_if_begin_asymmetric
+                    (preproc_if
+                      (preproc_open)
+                      condition: (identifier))
+                    (if_keyword)
+                    condition: (identifier)
+                    (then_keyword)
+                    (preproc_split_begin)
+                    (preproc_endif
+                      (preproc_close))
+                    (call_expression
+                      function: (identifier)
+                      arguments: (argument_list))
+                    (end_keyword)))
+                (preproc_conditional_case
+                  (preproc_if
+                    (preproc_open)
+                    condition: (identifier))
+                  (empty_statement)
+                  (preproc_endif
+                    (preproc_close))))
+              (end_keyword)))
+          (preproc_split_code_block_end
+            (preproc_if
+              (preproc_open)
+              condition: (identifier))
+            (preproc_split_end)
+            (preproc_endif
+              (preproc_close))))))))
+

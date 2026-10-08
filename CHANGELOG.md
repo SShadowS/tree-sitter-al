@@ -41,6 +41,103 @@ public API — a change to node structure or field names is a **major** bump.
 
 ### Changed
 
+- **Statement terminators, case-branch separators and the move header accept `#if` groups; a parenless call has one
+  shape (roadmap B7b-3, spec `docs/superpowers/specs/2026-10-08-b7b-3-statement-terminators-design.md` rev 3 with
+  execution amendments). Breaking for tree consumers: `call_statement` no longer contains its `;`, and bare names in
+  statement position become `call_statement`.** Production delta against main (`python -m tools.perf delta`, every
+  node, field and span compared, each change explained by a named edit class): BC.History 0 files changed, BC28.1 0;
+  DC 384 files (2,951 calls lose their `;`, 29 bare names become calls); BCApps-29.0 20 files (360 calls lose their
+  `;`), plus one file that already ERRORed and only recovers differently (`ERMPurchaseReportsIII.Codeunit.al`,
+  listed in `tools/perf/delta-reviewed.tsv`).
+
+  **Migration.**
+  - *A call's `;` belongs to the enclosing statement route.* Before, `Bar;` was
+    `(call_statement function: (identifier) ";")`; now the `call_statement` ends at the name and the `;` is the next
+    child of its host (`statement_block`, `case_branch`, ...), as for every other statement:
+    ```
+    Bar;   before: (statement_block (call_statement function: (identifier) ";"))     the call's last child
+           now:    (statement_block (call_statement function: (identifier)) ";")     the host's next child
+    ```
+    A query or walker that took a call's end byte as the end of the statement must use the host's `;`.
+  - *Every bare name in statement position is a `call_statement`.* Before, only `Name;` was; `Bar` before
+    `end` / `else` / `until`, `Order;` and `Table;` were a bare `(identifier)` (deferred item 40, now closed):
+    ```
+    if Ok then Baz end   before: then_branch: (identifier)
+                         now:    then_branch: (call_statement function: (identifier))
+    Order;               before: (identifier)    now: (call_statement function: (identifier))
+    ```
+    `identifier` and `quoted_identifier` are gone from every statement slot in `node-types.json`
+    (`statement_block` children, `then_branch`, `else_branch`, loop and case `body`, the split-construct hosts);
+    `asserterror_statement.body` and `preproc_guarded_statement` gain `call_statement`.
+  - *Error trees.* In a file that already has an ERROR, a name the parser recovers in statement position may now be a
+    `call_statement` where it was an `identifier`, and `highlights.scm` captures it as `@function.call`. A misplaced
+    `else` after a terminated statement (`if C then Bar; else Baz;`, which alc rejects with AL0110) still parses
+    clean, and the `else` is now `(call_statement function: (identifier))` (deferred item 43, pinned in
+    `test/corpus/b7b3_orphan_else_overaccept_test.txt`). The same `else`-as-call shape also occurs, with no ERROR, on
+    VALID split input: `if C then Bar #if X ; #endif else Baz;` (each directive on its own line) is accepted by alc at
+    X=0, where the `else` belongs to the if; the oracle reports the discrepancy (item 43).
+  - *`preproc_split_call_statement` ends at its `)`*; its `;` is the host's, like a call's.
+  - *Case branches.* A `preproc_conditional_case` arm may hold `empty_statement` (a lone `;`, the separator of the branch
+    before it in that configuration) and nested `preproc_conditional_case`, beside `case_branch`:
+    `1: I := 2 #if X ; #endif 2: Bar;` was an ERROR and is now `case_branch`, `preproc_conditional_case(preproc_if,
+    empty_statement, preproc_endif)`, `case_branch`. A directive-only group between a branch body and the branch's own
+    `;` is a child of the branch, unfielded, before the `;`: `1: Foo() #if X #endif ;` gives
+    `(case_branch pattern: ... body: (call_expression ...) (preproc_conditional_case ...) ";")`. This holds in
+    `case_branch`, `preproc_split_case_branch`, `preproc_split_case_extended` and `preproc_split_case_end_branch`
+    (each gains a `preproc_conditional_case` child type). Exception: in `1: asserterror #if X #endif ;` the empty group
+    is the `asserterror_statement`'s `body` (a `preproc_conditional_statement`). `preproc_split_case_extended` arms take the same items as a case group's
+    arms (`empty_statement`, nested groups).
+  - *Move header.* `moveafter` / `movebefore` / `movefirst` / `movelast` take a group where the target or the fixed `;`
+    stands. Three routes: route 1 (`T; A, B` with groups among the elements) is B7b-1's, unchanged; route 2 (`T` then a
+    group) and route 3 (a group first) use the new node `preproc_conditional_move_args`, with `;` or `,` anywhere in its
+    arms. Roles are fielded only where they are structurally known: route 2's first name is `target`; every other name
+    on routes 2-3, inside or outside a group, is unfielded, because whether it is the target or an element can depend
+    on the configuration (spec 5.3). `target` is therefore `required: false` on all four nodes.
+    ```
+    moveafter(T #if X ; A #endif , B)   before: ERROR   (schematic: each directive on its own line)
+    now: (moveafter_modification target: (identifier)
+           (preproc_conditional_move_args (preproc_if ...) ";" (identifier) (preproc_endif ...)) "," (identifier))
+    ```
+    Flat `moveafter(T;)`, `(T, B)`, `(T; B; C)`, `(T)` and `()` still ERROR.
+
+  **Queries.** `highlights.scm` captures `(call_statement function: (identifier))` and the quoted form as
+  `@function.call`; `tags.scm` emits `@reference.call` for both. Parenless calls were captured by neither.
+
+  **Over-acceptances and debt.** The parser does not track separators per arm, so some case and move forms invalid in
+  every configuration parse clean; each is pinned and classified (deferred-work item 44). Deferred: items 47 (six case
+  shapes alc accepts that still ERROR), 48 (a `;` next to an empty statement group whose split tree is wrong in every
+  configuration; 18 manifest cells), 49 (manifest cells deferred because the oracle cannot lower their host, C1/B12), 50
+  (a `;` group beside a split case's end branch has no slot, 18 cells).
+
+  **Config oracle.** Case runs: every `empty_statement` directly in a case group arm is marked; after selection a marked
+  `;` is appended to the immediately preceding unterminated branch, outside `body` (rewrite `case-terminator-attach`),
+  or into a preceding body that owns an optional `;` it lacks; decorations are validated as directive-only in every arm,
+  then deleted. `1: if C then Foo #if X ; #endif else Bar;` reads the `else` as the case's or the if's depending on X;
+  the configuration the tree does not show is refused as `lowering:one-reading` (debt B12). Statement runs: rewrites
+  `empty-body-terminator` (a body that selection removed takes the next `;` as `body: empty_statement`, as flat
+  `if C then ;` reads), `filled-terminator` and `orphan-terminator`. Move: one adapter (`lowering/move_args.py`) validates
+  routes 1-3 for every move modification, flattens both group types and requires `name ; name (, name)*` per
+  configuration before it assigns `target` / `element`. Full tier over the four corpora: 0 discrepancies.
+
+  **Gates and tools.** `python -m tools.perf delta` (structural production delta with edit classes E1 call-terminator-out,
+  E2 split-call-terminator-out, E3 bare-name-wrap; exit 1 on any unexplained change); `tools/perf/ab_accept.py` (both
+  `ab` runs' median >= 0.97, same libraries, >= 24 rounds); manifests declare their family universe in a `# families:`
+  header and are checked with `python -m tools.b7_audit manifest --check --manifest PATH`
+  (`tools/b7_audit/b7b3-manifest.tsv`: families `statement-terminator`, `move-modification`, `case-branch`, `split-call`;
+  2,699 cells, 1,251 admitted, 0 problems; the B7b-1 manifest stays at 0 with its 72
+  move cells transferred); `tools/b7_audit/key-aliases.tsv` maps a census key whose rule path moved to its live key, so
+  frozen cell ids stay valid; `tools/perf/strict_lists_scaling.py` gains case and move series, each input run in a
+  killable worker with a 10 s ceiling. B7a matrix: GAP 13,807 -> 13,081, SILENT 468 -> 396, CONSISTENT 5,829 -> 6,627,
+  UNCHECKED 123 -> 123. The 495 repaired cells that had no structural assertion (399
+  `preproc_split_call_statement` cells, which now parse but which the oracle does not lower, spec 3.3, C1; 96 case-branch
+  cells, 54 of them in split-case wrappers the oracle does not lower either) are gated by assertion rows that fail on main
+  and hold on the branch. Family `statement-terminator`: GAP 84 -> 18, SILENT 213 -> 30; `move-modification` GAP 72 -> 0.
+
+  **Cost.** STATE_COUNT 23,579 -> 23,737 (+0.67%), SYMBOL_COUNT 1,268 -> 1,279, GLR conflicts 224 -> 230 (case
+  decorations), parser.c 53,778,268 -> 53,974,023 bytes, `tree-sitter-al.wasm` 20,986,384 -> 21,073,645 bytes.
+  `tools.perf ab` over BC.History (trees identical), 24 rounds, two runs, time main / time branch: 0.996 (CI 0.995-1.000) and 0.996 (CI 0.991-0.999), on a busy machine (outside CPU
+  mean 6.1 cores); accepted by `ab_accept.py` (threshold 0.97).
+
 - **An `#if` group may stand anywhere in eight strict delimited lists (seven host conversions; roadmap B7b-1, spec
   `docs/superpowers/specs/2026-10-07-b7b-1-strict-conditional-lists-design.md`). Breaking for node-API consumers
   only through the field changes below; every production tree is byte-identical in all four corpora (full cursor-tree

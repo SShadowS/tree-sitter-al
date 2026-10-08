@@ -55,7 +55,12 @@ _STATEMENT_HOSTS = {
     "preproc_conditional_statement:<children>": "splice-repeat",
     # asserterror_statement: `optional(field('body', $._statement_inner))` (grammar.js:4694).
     # Every other statement field is a bare fieldedStatement (grammar.js:70-76, 4286-4304): mandatory.
-    "asserterror_statement:body": "optional-slot", "case_branch:body": "single-slot",
+    "asserterror_statement:body": "optional-slot",
+    # case_branch:body is mandatory, but selection may remove the whole body (an empty
+    # `#if` group as the body, `1: #if X #endif ;`). Then the branch's own `;` IS the body
+    # (flat `1: ;` = body: empty_statement): named rewrite empty-body-terminator,
+    # case_terminators.empty_body, which refuses a removed body with no `;` to take its place.
+    "case_branch:body": "optional-slot",
     "for_statement:body": "single-slot", "foreach_statement:body": "single-slot",
     "if_statement:else_branch": "single-slot", "if_statement:then_branch": "single-slot",
     "while_statement:body": "single-slot", "with_statement:body": "single-slot",
@@ -280,14 +285,23 @@ register("preproc_conditional_var", "branch-select", "tools.config_oracle.loweri
          arm={"variable_declaration", "var_attribute_item"})
 
 # --- branch-select, part C (Task 6): case, labels, query, xmlport, controladdin.
-register("preproc_conditional_case", "branch-select", "tools.config_oracle.lowering.select.branch_select",
-         hosts={"case_body:<children>": "splice-repeat"},
-         # own rule (grammar.js:4727-4734): repeat($.case_branch) then optional
-         # ($.case_else_branch), no self-nesting. The task-5 brief described this
-         # arm as holding a nested preproc_conditional_case; the rule itself has
-         # no such reference (only preproc_split_case_branch nests, one level
-         # down, inside case_branch's own choice) -- read from grammar.js, not
-         # the brief.
+register("preproc_conditional_case", "branch-select", "tools.config_oracle.lowering.case_terminators.case_group",
+         # B7b-3 (spec 6.2): ONE context-dispatched handler. Under case_body or a group arm
+         # (recursive host) it is the ordinary branch-select; directly under one of the four
+         # decoration hosts (spec 4.2.2 plus preproc_split_case_end_branch, Task 6 fix round 1),
+         # before the host's own `;`, it is a directive-only decoration, validated in every arm
+         # and deleted (case_terminators.DECORATION_HOSTS). Decoration-in-decoration never
+         # reaches the registry: the decoration handler walks its nested groups itself.
+         hosts={"case_body:<children>": "splice-repeat",
+                "preproc_conditional_case:<children>": "splice-repeat",
+                "case_branch:<children>": "decoration",
+                "preproc_split_case_branch:<children>": "decoration",
+                "preproc_split_case_extended:<children>": "decoration",
+                "preproc_split_case_end_branch:<children>": "decoration"},
+         # own rule (grammar.js preproc_conditional_case): each arm a repeat of _case_group_item =
+         # case_branch | empty_statement (a branch's `;`, marked CASE_SEMI by branch_select and
+         # attached by case_terminators.attach) | a nested preproc_conditional_case, then an
+         # optional case_else_branch.
          #
          # case_else_branch is declared here (grammar-true) but deliberately
          # EXCLUDED from the arm. It is one of case_body's repeat1 members only
@@ -305,8 +319,9 @@ register("preproc_conditional_case", "branch-select", "tools.config_oracle.lower
          # new Fragment kind that survives a NON-last original child (case_body
          # is not case_statement's last child; end_keyword is), which none of
          # engine.py's four Fragment types do today. Left unsupported
-         # (arm-content -> cannot-validate) rather than papered over; milestone 3.
-         arm={"case_branch"})
+         # (arm-content -> cannot-validate) rather than papered over; out of
+         # B7b-3's scope (spec 6.2), still cannot-validate debt.
+         arm={"case_branch", "empty_statement", "preproc_conditional_case"})
 register("preproc_conditional_labels", "branch-select", "tools.config_oracle.lowering.select.branch_select",
          hosts={"labels_body:<children>": "splice-repeat"},
          # own rule (grammar.js:2072-2078): label_declaration only, no self-nesting.
@@ -441,6 +456,17 @@ register("preproc_conditional_move_elements", "branch-select", _LIST_RUN,
                 "preproc_conditional_move_elements:<children>": "strict-list"},
          # strictConditionalList('move_elements', field('element', _identifier_or_quoted), ',').
          arm={"identifier", "quoted_identifier", ",", "preproc_conditional_move_elements"})
+# B7b-3: the move HEADER group, routes 2-3 of spec 5.1
+# (strictConditionalList('move_args', _identifier_or_quoted, choice(';', ',')), unfielded).
+# Its arm's names and separators splice in order (strict-list); the host's route, interior
+# shape and configured roles are lowering/move_args.py's (spec 6.3).
+register("preproc_conditional_move_args", "branch-select", _LIST_RUN,
+         hosts={"moveafter_modification:<children>": "strict-list",
+                "movebefore_modification:<children>": "strict-list",
+                "movefirst_modification:<children>": "strict-list",
+                "movelast_modification:<children>": "strict-list",
+                "preproc_conditional_move_args:<children>": "strict-list"},
+         arm={"identifier", "quoted_identifier", ";", ",", "preproc_conditional_move_args"})
 register("preproc_conditional_array_dimensions", "branch-select", _LIST_RUN,
          hosts={"array_type:<children>": "strict-list",
                 "preproc_conditional_array_dimensions:<children>": "strict-list"},

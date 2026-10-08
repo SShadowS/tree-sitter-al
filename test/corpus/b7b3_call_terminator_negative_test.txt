@@ -1,0 +1,30 @@
+; B7b-3 Task 4 (spec 3.1, 3.6): an operator word after a bare name is not a parenless call.
+; `code_names` still reserves the operator words in statement position after call_statement
+; stopped owning its `;` (alc: AL0104 at a statement start, AL0224 read in an expression).
+; DELIBERATE NEGATIVE: the ERROR is the assertion (`:error`, no recovery tree pinned).
+
+================================================================================
+B7b-3 call boundary: an operator word after a name is not a call (and)
+:error
+================================================================================
+codeunit 1 P
+{
+    procedure M()
+    begin
+Bar and;
+    end;
+}
+--------------------------------------------------------------------------------
+
+================================================================================
+B7b-3 call boundary: an operator word after a name is not a call (mod)
+:error
+================================================================================
+codeunit 1 P
+{
+    procedure M()
+    begin
+Bar mod;
+    end;
+}
+--------------------------------------------------------------------------------

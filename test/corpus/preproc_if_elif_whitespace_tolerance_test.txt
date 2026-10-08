@@ -476,7 +476,8 @@ codeunit 50000 "If Test"
         function: (identifier)
         arguments: (argument_list))
       (ERROR)
-      (identifier))))
+      (call_statement
+        function: (identifier)))))
 
 ================================================================================
 NEGATIVE: `#ifendif` must NOT be recognized as `#endif` either — same prefix
@@ -513,7 +514,8 @@ codeunit 50000 "If Test"
         function: (identifier)
         arguments: (argument_list))
       (ERROR)
-      (identifier))))
+      (call_statement
+        function: (identifier)))))
 
 ================================================================================
 CONTROL for the two cases above: `#xendif` was ALWAYS an honest error, because
@@ -551,4 +553,5 @@ codeunit 50000 "If Test"
         function: (identifier)
         arguments: (argument_list))
       (ERROR)
-      (identifier))))
+      (call_statement
+        function: (identifier)))))

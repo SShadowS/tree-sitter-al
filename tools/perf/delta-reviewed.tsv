@@ -1,0 +1,5 @@
+# Files whose trees changed between the delta libraries under error recovery only, reviewed one by one
+# (B7b-3 Task 4 ruling; spec 7.2: a change in a file with errors "fails the gate and is reviewed individually").
+# tools.perf delta admits a listed file only while its source still has this sha256 AND its old or new tree has an error.
+corpus	path	sha256	reason
+bcapps-29.0	src/Layers/APAC/Tests/SINGLESERVER/ERMPurchaseReportsIII.Codeunit.al	cb8a59d41e4ebd41a80cb87d7c81748eb3ee13fdec2efd4a7bfa045c6bd37f7e	Broken source (the procedure body ending at line 2201 has no end; before the local procedure on line 2202), errors on main and on the branch; every change is recovery: B7b-3 Task 4 makes recovered bare names call_statement (+144/-56 call_statement nodes) and ERROR/; nodes a call_statement used to swallow now sit beside it. Reviewed 2026-10-08.

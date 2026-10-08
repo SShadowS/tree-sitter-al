@@ -1,0 +1,611 @@
+; B7b-3 Task 8 (spec 5.1-5.4): #if groups in the move HEADER of moveafter/movebefore/movefirst/
+; movelast. Route 1 (`name ;`, flat / B7b-1) keeps preproc_conditional_move_elements and its
+; target/element fields; route 2 (`name #if`) keeps `target` on its first raw name only; route 3
+; (`#if`) has no target field. Every other name on routes 2-3 is unfielded (its role depends on the
+; configuration, spec 5.3). The group is preproc_conditional_move_args, separators `;` or `,`.
+; Shapes from tools/alc_probe/cases/b7b3/move/ (verdicts there; MIXED = rejected in some
+; configuration, judged by the config oracle). OVERACCEPT cases are invalid in every configuration,
+; classified (spec 5.4). Trees hand-written from the intended structure.
+
+================================================================================
+b7b3 move route 2: adjacent complementary `;` groups (adjacent-compl)
+================================================================================
+
+pageextension 50113 PE extends PG
+{
+    actions
+    {
+        moveafter(
+A1
+#if X
+;
+#endif
+#if not X
+;
+#endif
+A2
+)
+    }
+}
+
+--------------------------------------------------------------------------------
+
+(source_file (pageextension_declaration (pageextension_keyword) object_id: (integer) object_name: (identifier) (extends_keyword) base_object: (identifier) body: (declaration_body (actions_section (actions_keyword) body: (action_body (moveafter_modification (moveafter_keyword) target: (identifier) (preproc_conditional_move_args (preproc_if (preproc_open) condition: (identifier)) (preproc_endif (preproc_close))) (preproc_conditional_move_args (preproc_if (preproc_open) condition: (preproc_not_expression (identifier))) (preproc_endif (preproc_close))) (identifier)))))))
+
+================================================================================
+b7b3 move route 2: `;` in every elif arm (elif)
+================================================================================
+
+pageextension 50113 PE extends PG
+{
+    actions
+    {
+        moveafter(
+A1
+#if X
+;
+#elif Y
+;
+#else
+;
+#endif
+A2
+)
+    }
+}
+
+--------------------------------------------------------------------------------
+
+(source_file (pageextension_declaration (pageextension_keyword) object_id: (integer) object_name: (identifier) (extends_keyword) base_object: (identifier) body: (declaration_body (actions_section (actions_keyword) body: (action_body (moveafter_modification (moveafter_keyword) target: (identifier) (preproc_conditional_move_args (preproc_if (preproc_open) condition: (identifier)) (preproc_elif condition: (identifier)) (preproc_else) (preproc_endif (preproc_close))) (identifier)))))))
+
+================================================================================
+b7b3 move route 3: group replaces the target (first-replace)
+================================================================================
+
+pageextension 50113 PE extends PG
+{
+    actions
+    {
+        moveafter(
+#if X
+A1
+#else
+A1
+#endif
+; A2
+)
+    }
+}
+
+--------------------------------------------------------------------------------
+
+(source_file (pageextension_declaration (pageextension_keyword) object_id: (integer) object_name: (identifier) (extends_keyword) base_object: (identifier) body: (declaration_body (actions_section (actions_keyword) body: (action_body (moveafter_modification (moveafter_keyword) (preproc_conditional_move_args (preproc_if (preproc_open) condition: (identifier)) (identifier) (preproc_else) (identifier) (preproc_endif (preproc_close))) (identifier)))))))
+
+================================================================================
+b7b3 move route 2: nested `;` groups (nested)
+================================================================================
+
+pageextension 50113 PE extends PG
+{
+    actions
+    {
+        moveafter(
+A1
+#if X
+#if Y
+;
+#else
+;
+#endif
+#else
+;
+#endif
+A2
+)
+    }
+}
+
+--------------------------------------------------------------------------------
+
+(source_file (pageextension_declaration (pageextension_keyword) object_id: (integer) object_name: (identifier) (extends_keyword) base_object: (identifier) body: (declaration_body (actions_section (actions_keyword) body: (action_body (moveafter_modification (moveafter_keyword) target: (identifier) (preproc_conditional_move_args (preproc_if (preproc_open) condition: (identifier)) (preproc_conditional_move_args (preproc_if (preproc_open) condition: (identifier)) (preproc_else) (preproc_endif (preproc_close))) (preproc_else) (preproc_endif (preproc_close))) (identifier)))))))
+
+================================================================================
+b7b3 move route 2 MIXED: `;` and the only element in one group (sep-before-end)
+================================================================================
+
+pageextension 50113 PE extends PG
+{
+    actions
+    {
+        moveafter(
+A1
+#if X
+; A2
+#endif
+)
+    }
+}
+
+--------------------------------------------------------------------------------
+
+(source_file (pageextension_declaration (pageextension_keyword) object_id: (integer) object_name: (identifier) (extends_keyword) base_object: (identifier) body: (declaration_body (actions_section (actions_keyword) body: (action_body (moveafter_modification (moveafter_keyword) target: (identifier) (preproc_conditional_move_args (preproc_if (preproc_open) condition: (identifier)) (identifier) (preproc_endif (preproc_close)))))))))
+
+================================================================================
+b7b3 move route 2: `;`-only arms (sep-only)
+================================================================================
+
+pageextension 50113 PE extends PG
+{
+    actions
+    {
+        moveafter(
+A1
+#if X
+;
+#else
+;
+#endif
+A2
+)
+    }
+}
+
+--------------------------------------------------------------------------------
+
+(source_file (pageextension_declaration (pageextension_keyword) object_id: (integer) object_name: (identifier) (extends_keyword) base_object: (identifier) body: (declaration_body (actions_section (actions_keyword) body: (action_body (moveafter_modification (moveafter_keyword) target: (identifier) (preproc_conditional_move_args (preproc_if (preproc_open) condition: (identifier)) (preproc_else) (preproc_endif (preproc_close))) (identifier)))))))
+
+================================================================================
+b7b3 move route 3: spanning group, header and elements in every arm (spanning)
+================================================================================
+
+pageextension 50113 PE extends PG
+{
+    actions
+    {
+        moveafter(
+#if X
+A1; A3
+#else
+A2; A4
+#endif
+)
+    }
+}
+
+--------------------------------------------------------------------------------
+
+(source_file (pageextension_declaration (pageextension_keyword) object_id: (integer) object_name: (identifier) (extends_keyword) base_object: (identifier) body: (declaration_body (actions_section (actions_keyword) body: (action_body (moveafter_modification (moveafter_keyword) (preproc_conditional_move_args (preproc_if (preproc_open) condition: (identifier)) (identifier) (identifier) (preproc_else) (identifier) (identifier) (preproc_endif (preproc_close)))))))))
+
+================================================================================
+b7b3 move route 2 MIXED: comma continuation after the group (comma-after-route2)
+================================================================================
+
+pageextension 50113 PE extends PG
+{
+    actions
+    {
+        moveafter(
+A1
+#if X
+; A2
+#endif
+, A3
+)
+    }
+}
+
+--------------------------------------------------------------------------------
+
+(source_file (pageextension_declaration (pageextension_keyword) object_id: (integer) object_name: (identifier) (extends_keyword) base_object: (identifier) body: (declaration_body (actions_section (actions_keyword) body: (action_body (moveafter_modification (moveafter_keyword) target: (identifier) (preproc_conditional_move_args (preproc_if (preproc_open) condition: (identifier)) (identifier) (preproc_endif (preproc_close))) (identifier)))))))
+
+================================================================================
+b7b3 move route 3 MIXED: comma continuation after a spanning group (comma-after-route3)
+================================================================================
+
+pageextension 50113 PE extends PG
+{
+    actions
+    {
+        moveafter(
+#if X
+A1; A2
+#endif
+, A3
+)
+    }
+}
+
+--------------------------------------------------------------------------------
+
+(source_file (pageextension_declaration (pageextension_keyword) object_id: (integer) object_name: (identifier) (extends_keyword) base_object: (identifier) body: (declaration_body (actions_section (actions_keyword) body: (action_body (moveafter_modification (moveafter_keyword) (preproc_conditional_move_args (preproc_if (preproc_open) condition: (identifier)) (identifier) (identifier) (preproc_endif (preproc_close))) (identifier)))))))
+
+================================================================================
+b7b3 move route 3: G(T; A,) B, trailing comma inside the group
+================================================================================
+
+pageextension 50113 PE extends PG
+{
+    actions
+    {
+        moveafter(
+#if X
+A1; A2,
+#else
+A1;
+#endif
+A3
+)
+    }
+}
+
+--------------------------------------------------------------------------------
+
+(source_file (pageextension_declaration (pageextension_keyword) object_id: (integer) object_name: (identifier) (extends_keyword) base_object: (identifier) body: (declaration_body (actions_section (actions_keyword) body: (action_body (moveafter_modification (moveafter_keyword) (preproc_conditional_move_args (preproc_if (preproc_open) condition: (identifier)) (identifier) (identifier) (preproc_else) (identifier) (preproc_endif (preproc_close))) (identifier)))))))
+
+================================================================================
+b7b3 move route 2: T G(;) A G(, B)
+================================================================================
+
+pageextension 50113 PE extends PG
+{
+    actions
+    {
+        moveafter(
+A1
+#if X
+;
+#else
+;
+#endif
+A2
+#if Y
+, A3
+#endif
+)
+    }
+}
+
+--------------------------------------------------------------------------------
+
+(source_file (pageextension_declaration (pageextension_keyword) object_id: (integer) object_name: (identifier) (extends_keyword) base_object: (identifier) body: (declaration_body (actions_section (actions_keyword) body: (action_body (moveafter_modification (moveafter_keyword) target: (identifier) (preproc_conditional_move_args (preproc_if (preproc_open) condition: (identifier)) (preproc_else) (preproc_endif (preproc_close))) (identifier) (preproc_conditional_move_args (preproc_if (preproc_open) condition: (identifier)) (identifier) (preproc_endif (preproc_close)))))))))
+
+================================================================================
+b7b3 move route 2: T G(; A,) B
+================================================================================
+
+pageextension 50113 PE extends PG
+{
+    actions
+    {
+        moveafter(
+A1
+#if X
+; A2,
+#else
+;
+#endif
+A3
+)
+    }
+}
+
+--------------------------------------------------------------------------------
+
+(source_file (pageextension_declaration (pageextension_keyword) object_id: (integer) object_name: (identifier) (extends_keyword) base_object: (identifier) body: (declaration_body (actions_section (actions_keyword) body: (action_body (moveafter_modification (moveafter_keyword) target: (identifier) (preproc_conditional_move_args (preproc_if (preproc_open) condition: (identifier)) (identifier) (preproc_else) (preproc_endif (preproc_close))) (identifier)))))))
+
+================================================================================
+b7b3 move route 3: nested group and elif arms holding header and elements
+================================================================================
+
+pageextension 50113 PE extends PG
+{
+    actions
+    {
+        moveafter(
+#if X
+A1;
+#if Y
+A2
+#else
+A3
+#endif
+#elif Z
+A4; A5
+#else
+A6; A7
+#endif
+)
+    }
+}
+
+--------------------------------------------------------------------------------
+
+(source_file (pageextension_declaration (pageextension_keyword) object_id: (integer) object_name: (identifier) (extends_keyword) base_object: (identifier) body: (declaration_body (actions_section (actions_keyword) body: (action_body (moveafter_modification (moveafter_keyword) (preproc_conditional_move_args (preproc_if (preproc_open) condition: (identifier)) (identifier) (preproc_conditional_move_args (preproc_if (preproc_open) condition: (identifier)) (identifier) (preproc_else) (identifier) (preproc_endif (preproc_close))) (preproc_elif condition: (identifier)) (identifier) (identifier) (preproc_else) (identifier) (identifier) (preproc_endif (preproc_close)))))))))
+
+================================================================================
+b7b3 move route 3: spec 5.3 cross-group roles, every name unfielded (cross-group-roles)
+================================================================================
+
+pageextension 50113 PE extends PG
+{
+    actions
+    {
+        moveafter(
+#if X
+A1;
+#endif
+#if Y
+A2
+#else
+A3
+#endif
+#if not X
+; A4
+#endif
+)
+    }
+}
+
+--------------------------------------------------------------------------------
+
+(source_file (pageextension_declaration (pageextension_keyword) object_id: (integer) object_name: (identifier) (extends_keyword) base_object: (identifier) body: (declaration_body (actions_section (actions_keyword) body: (action_body (moveafter_modification (moveafter_keyword) (preproc_conditional_move_args (preproc_if (preproc_open) condition: (identifier)) (identifier) (preproc_endif (preproc_close))) (preproc_conditional_move_args (preproc_if (preproc_open) condition: (identifier)) (identifier) (preproc_else) (identifier) (preproc_endif (preproc_close))) (preproc_conditional_move_args (preproc_if (preproc_open) condition: (preproc_not_expression (identifier))) (identifier) (preproc_endif (preproc_close)))))))))
+
+================================================================================
+b7b3 move route 2 MIXED: quoted target, block comment before the `;` in the group (Review Focus 5)
+================================================================================
+
+pageextension 50113 PE extends PG
+{
+    actions
+    {
+        moveafter(
+"A B"
+#if X
+/* c */ ;
+#endif
+C
+)
+    }
+}
+
+--------------------------------------------------------------------------------
+
+(source_file (pageextension_declaration (pageextension_keyword) object_id: (integer) object_name: (identifier) (extends_keyword) base_object: (identifier) body: (declaration_body (actions_section (actions_keyword) body: (action_body (moveafter_modification (moveafter_keyword) target: (quoted_identifier) (preproc_conditional_move_args (preproc_if (preproc_open) condition: (identifier)) (multiline_comment) (preproc_endif (preproc_close))) (identifier)))))))
+
+================================================================================
+b7b3 move route 2: empty group before the fixed `;` (empty-before-semi)
+================================================================================
+
+pageextension 50113 PE extends PG
+{
+    actions
+    {
+        moveafter(
+A1
+#if Y
+#endif
+; A2
+)
+    }
+}
+
+--------------------------------------------------------------------------------
+
+(source_file (pageextension_declaration (pageextension_keyword) object_id: (integer) object_name: (identifier) (extends_keyword) base_object: (identifier) body: (declaration_body (actions_section (actions_keyword) body: (action_body (moveafter_modification (moveafter_keyword) target: (identifier) (preproc_conditional_move_args (preproc_if (preproc_open) condition: (identifier)) (preproc_endif (preproc_close))) (identifier)))))))
+
+================================================================================
+b7b3 move route 3 MIXED: target-only group next to an empty group (target-only-group-next-to-empty)
+================================================================================
+
+pageextension 50113 PE extends PG
+{
+    actions
+    {
+        moveafter(
+#if X
+A1
+#endif
+#if Y
+#endif
+; A2
+)
+    }
+}
+
+--------------------------------------------------------------------------------
+
+(source_file (pageextension_declaration (pageextension_keyword) object_id: (integer) object_name: (identifier) (extends_keyword) base_object: (identifier) body: (declaration_body (actions_section (actions_keyword) body: (action_body (moveafter_modification (moveafter_keyword) (preproc_conditional_move_args (preproc_if (preproc_open) condition: (identifier)) (identifier) (preproc_endif (preproc_close))) (preproc_conditional_move_args (preproc_if (preproc_open) condition: (identifier)) (preproc_endif (preproc_close))) (identifier)))))))
+
+================================================================================
+b7b3 move route 2 MIXED: `;`-only group next to an empty group (semi-only-group-next-to-empty)
+================================================================================
+
+pageextension 50113 PE extends PG
+{
+    actions
+    {
+        moveafter(
+A1
+#if X
+;
+#endif
+#if Y
+#endif
+A2
+)
+    }
+}
+
+--------------------------------------------------------------------------------
+
+(source_file (pageextension_declaration (pageextension_keyword) object_id: (integer) object_name: (identifier) (extends_keyword) base_object: (identifier) body: (declaration_body (actions_section (actions_keyword) body: (action_body (moveafter_modification (moveafter_keyword) target: (identifier) (preproc_conditional_move_args (preproc_if (preproc_open) condition: (identifier)) (preproc_endif (preproc_close))) (preproc_conditional_move_args (preproc_if (preproc_open) condition: (identifier)) (preproc_endif (preproc_close))) (identifier)))))))
+
+================================================================================
+b7b3 move route 2 MIXED: independent groups (independent-groups)
+================================================================================
+
+pageextension 50113 PE extends PG
+{
+    actions
+    {
+        moveafter(
+A1
+#if X
+;
+#endif
+#if Y
+A2
+#endif
+)
+    }
+}
+
+--------------------------------------------------------------------------------
+
+(source_file (pageextension_declaration (pageextension_keyword) object_id: (integer) object_name: (identifier) (extends_keyword) base_object: (identifier) body: (declaration_body (actions_section (actions_keyword) body: (action_body (moveafter_modification (moveafter_keyword) target: (identifier) (preproc_conditional_move_args (preproc_if (preproc_open) condition: (identifier)) (preproc_endif (preproc_close))) (preproc_conditional_move_args (preproc_if (preproc_open) condition: (identifier)) (identifier) (preproc_endif (preproc_close)))))))))
+
+================================================================================
+b7b3 move route 3 MIXED: group holding target, `;` and element (group-two-targets-semi)
+================================================================================
+
+pageextension 50113 PE extends PG
+{
+    actions
+    {
+        moveafter(
+#if X
+A1 ; A2
+#endif
+, A3
+)
+    }
+}
+
+--------------------------------------------------------------------------------
+
+(source_file (pageextension_declaration (pageextension_keyword) object_id: (integer) object_name: (identifier) (extends_keyword) base_object: (identifier) body: (declaration_body (actions_section (actions_keyword) body: (action_body (moveafter_modification (moveafter_keyword) (preproc_conditional_move_args (preproc_if (preproc_open) condition: (identifier)) (identifier) (identifier) (preproc_endif (preproc_close))) (identifier)))))))
+
+================================================================================
+b7b3 move route 2 MIXED: contextual name as target (contextual-target)
+================================================================================
+
+pageextension 50113 PE extends PG
+{
+    actions
+    {
+        moveafter(
+Value
+#if X
+;
+#endif
+"My Action"
+)
+    }
+}
+
+--------------------------------------------------------------------------------
+
+(source_file (pageextension_declaration (pageextension_keyword) object_id: (integer) object_name: (identifier) (extends_keyword) base_object: (identifier) body: (declaration_body (actions_section (actions_keyword) body: (action_body (moveafter_modification (moveafter_keyword) target: (identifier) (preproc_conditional_move_args (preproc_if (preproc_open) condition: (identifier)) (preproc_endif (preproc_close))) (quoted_identifier)))))))
+
+================================================================================
+b7b3 move route 2 MIXED: quoted target, contextual element (quoted-contextual)
+================================================================================
+
+pageextension 50113 PE extends PG
+{
+    actions
+    {
+        moveafter(
+"My Action"
+#if X
+;
+#endif
+Value
+)
+    }
+}
+
+--------------------------------------------------------------------------------
+
+(source_file (pageextension_declaration (pageextension_keyword) object_id: (integer) object_name: (identifier) (extends_keyword) base_object: (identifier) body: (declaration_body (actions_section (actions_keyword) body: (action_body (moveafter_modification (moveafter_keyword) target: (quoted_identifier) (preproc_conditional_move_args (preproc_if (preproc_open) condition: (identifier)) (preproc_endif (preproc_close))) (identifier)))))))
+
+================================================================================
+b7b3 move routes 2 and 3 on movefirst, movelast, movebefore
+================================================================================
+
+pageextension 50113 PE extends PG
+{
+    actions
+    {
+        movefirst(
+#if X
+A1
+#else
+A2
+#endif
+; A3
+)
+        movelast(
+A1
+#if X
+;
+#else
+;
+#endif
+A2
+)
+        movebefore(
+#if X
+A1; A2
+#else
+A3; A4
+#endif
+)
+    }
+}
+
+--------------------------------------------------------------------------------
+
+(source_file (pageextension_declaration (pageextension_keyword) object_id: (integer) object_name: (identifier) (extends_keyword) base_object: (identifier) body: (declaration_body (actions_section (actions_keyword) body: (action_body (movefirst_modification (movefirst_keyword) (preproc_conditional_move_args (preproc_if (preproc_open) condition: (identifier)) (identifier) (preproc_else) (identifier) (preproc_endif (preproc_close))) (identifier)) (movelast_modification (movelast_keyword) target: (identifier) (preproc_conditional_move_args (preproc_if (preproc_open) condition: (identifier)) (preproc_else) (preproc_endif (preproc_close))) (identifier)) (movebefore_modification (movebefore_keyword) (preproc_conditional_move_args (preproc_if (preproc_open) condition: (identifier)) (identifier) (identifier) (preproc_else) (identifier) (identifier) (preproc_endif (preproc_close)))))))))
+
+================================================================================
+b7b3 move OVERACCEPT (spec 5.4): a comma where the `;` belongs (over-comma-for-semi)
+================================================================================
+
+pageextension 50113 PE extends PG
+{
+    actions
+    {
+        moveafter(
+A1
+#if X
+, A2
+#endif
+)
+    }
+}
+
+--------------------------------------------------------------------------------
+
+(source_file (pageextension_declaration (pageextension_keyword) object_id: (integer) object_name: (identifier) (extends_keyword) base_object: (identifier) body: (declaration_body (actions_section (actions_keyword) body: (action_body (moveafter_modification (moveafter_keyword) target: (identifier) (preproc_conditional_move_args (preproc_if (preproc_open) condition: (identifier)) (identifier) (preproc_endif (preproc_close)))))))))
+
+================================================================================
+b7b3 move OVERACCEPT (spec 5.4): two targets in one group (group-two-targets)
+================================================================================
+
+pageextension 50113 PE extends PG
+{
+    actions
+    {
+        moveafter(
+#if X
+A1 , A2
+#endif
+; A3
+)
+    }
+}
+
+--------------------------------------------------------------------------------
+
+(source_file (pageextension_declaration (pageextension_keyword) object_id: (integer) object_name: (identifier) (extends_keyword) base_object: (identifier) body: (declaration_body (actions_section (actions_keyword) body: (action_body (moveafter_modification (moveafter_keyword) (preproc_conditional_move_args (preproc_if (preproc_open) condition: (identifier)) (identifier) (identifier) (preproc_endif (preproc_close))) (identifier)))))))

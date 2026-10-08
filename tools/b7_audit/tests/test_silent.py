@@ -4,6 +4,7 @@ id) per (family, base placement) SILENT group of docs/b7-separator-continuation-
 alc accepts the configurations in question and the parser is clean, but the tree is wrong. Each case asserts the
 representative's CURRENT defect, so the grammar change that removes it makes the case fail:
   - "oracle:<config>:<status>": the config oracle reports that discrepancy for that configuration;
+  - "refusal:<kind>": a witness flipped to its spec 6.4 named refusal (every configuration refused with <kind>);
   - "assertion": its row in tools/b7_audit/assertions.tsv (the cell row, else its class row; the first row of a
     duplicated key wins, as in report.py) does not hold.
 The fix flips the case to require oracle `pass` and a holding assertion. SILENT inputs never go into test/corpus/:
@@ -58,13 +59,22 @@ SILENT = [
     ("bnd:range_expression:right:end@range_expression#op-only/arithmetic", "oracle:X=1:discrepancy"),  # range / op-only, 4 cells
     ("bnd:range_expression:right:end@case_branch#suffix/arithmetic", "assertion"),  # range / suffix, 8 cells
     ("bnd:range_expression:right:end@range_expression#suffix-else/arithmetic", "oracle:X=0:discrepancy"),  # range / suffix-else, 4 cells
-    ("occ:call_statement:0.1@if_statement#adjacent-compl", "oracle:X=0:discrepancy"),  # statement-terminator / adjacent-compl, 42 cells
-    ("occ:call_statement:0.1@if_statement#elif", "oracle:X=0,Y=0:discrepancy"),  # statement-terminator / elif, 24 cells
-    ("occ:call_statement:0.1@if_statement#empty", "oracle:X=0:discrepancy"),  # statement-terminator / empty, 45 cells
-    ("occ:call_statement:0.1@case_branch#first-replace", "oracle:X=0:discrepancy"),  # statement-terminator / first-replace, 30 cells
-    ("occ:call_statement:0.1@if_statement#nested", "oracle:X=0,Y=0:discrepancy"),  # statement-terminator / nested, 24 cells
-    ("occ:call_statement:0.1@if_statement#sep-only", "oracle:X=0:discrepancy"),  # statement-terminator / sep-only, 24 cells
-    ("occ:call_statement:0.1@if_statement#trail", "oracle:X=1:discrepancy"),  # statement-terminator / trail, 24 cells
+    ("occ:call_statement:0.1@if_statement#adjacent-compl", "oracle:X=0:pass"),  # statement-terminator / adjacent-compl, 42 cells
+    ("occ:call_statement:0.1@if_statement#elif", "oracle:X=0,Y=0:pass"),  # statement-terminator / elif, 24 cells
+    ("occ:call_statement:0.1@if_statement#empty", "oracle:X=0:pass"),  # statement-terminator / empty, 45 cells
+    ("occ:call_statement:0.1@case_branch#first-replace", "oracle:X=0:pass"),  # statement-terminator / first-replace, 30 cells
+    ("occ:call_statement:0.1@if_statement#nested", "oracle:X=0,Y=0:pass"),  # statement-terminator / nested, 24 cells
+    ("occ:call_statement:0.1@if_statement#sep-only", "oracle:X=0:pass"),  # statement-terminator / sep-only, 24 cells
+    ("occ:call_statement:0.1@if_statement#trail", "oracle:X=1:pass"),  # statement-terminator / trail, 24 cells
+    ("occ:empty_statement:@if_statement#adjacent-compl", "oracle:X=0:pass"),  # statement-terminator / adjacent-compl (old rep), B7b-3 Task 10
+    ("occ:empty_statement:@preproc_conditional_statement#empty", "oracle:TPL2=1,X=0:discrepancy"),  # statement-terminator / empty, 18 cells (deferred B7)
+    ("occ:empty_statement:@preproc_guarded_statement#adjacent-compl", "refusal:lowering:unsupported-type"),  # statement-terminator / adjacent-compl, 12 cells
+    ("occ:preproc_split_if_begin_asymmetric:0.3.0@case_branch#adjacent-compl", "assertion"),  # split-if-begin / adjacent-compl, 18 cells
+    ("occ:preproc_split_if_begin_asymmetric:0.3.0@case_branch#elif", "assertion"),  # split-if-begin / elif, 18 cells
+    ("occ:preproc_split_if_begin_asymmetric:0.3.0@case_branch#empty", "assertion"),  # split-if-begin / empty, 21 cells
+    ("occ:preproc_split_if_begin_asymmetric:0.3.0@case_branch#nested", "assertion"),  # split-if-begin / nested, 18 cells
+    ("occ:preproc_split_if_begin_asymmetric:0.3.0@case_branch#sep-only", "assertion"),  # split-if-begin / sep-only, 18 cells
+    ("occ:preproc_split_if_begin_asymmetric:0.3.0@case_branch#trail", "assertion"),  # split-if-begin / trail, 18 cells
     ("bnd:ternary_expression:condition:end@ternary_expression#chain/logical", "oracle:X=0:discrepancy"),  # ternary / chain, 4 cells
     ("bnd:ternary_expression:condition:end@ternary_expression#op-only/comparison", "oracle:X=1:discrepancy"),  # ternary / op-only, 10 cells
     ("bnd:ternary_expression:else_value:end@ternary_expression#suffix/arithmetic", "oracle:X=1:discrepancy"),  # ternary / suffix, 4 cells
@@ -83,6 +93,20 @@ SILENT = [
 # UNCHECKED, representative vector mismatch). The statement-terminator groups' old representatives
 # (occ:_statement:0.2.1.0@preproc_conditional_statement#*) are CONSISTENT; the groups remain with if_statement
 # representatives, whose discrepancy is the bare-call shape (`then Bar` + `;`: flat call_statement owns the `;`).
+# B7b-3 Task 4: call_statement owns no `;` any more, so the seven statement-terminator witnesses (the six
+# if_statement ones and case_branch#first-replace, whose group replaces the call and leaves the `;` to the branch)
+# now pass in every configuration and are flipped to `pass`.
+# B7b-3 Task 10: the oracle's empty-body-terminator rewrite (engine.absorb_arm_terminators) makes the old
+# adjacent-compl rep empty_statement@if_statement#adjacent-compl pass (flipped to `pass`). The empty group
+# (rep @preproc_conditional_statement#empty, 18 cells) stays SILENT: a `;` after empty group(s) is a bare `;` in a
+# split tree where EVERY configuration reads an empty_statement; the fix-round-1 ruling defers it to B7 as a grammar
+# item (a decoration-aware `_statement` terminator), and the narrowed orphan-terminator must not mask it, so the
+# witness pins the discrepancy. The adjacent-compl group stays SILENT on 12 cells deferred
+# to C1 (b7b3-manifest.tsv), represented by preproc_guarded_statement, which spec 6.4 names as a representation host:
+# that witness flips to its named refusal, `refusal:<kind>` (every configuration refused with that kind).
+# The six split-if-begin groups (case_branch host, SILENT since B7b-3 Task 6) are outside B7b-3's two families: their
+# split tree is pinned by representation fixtures (Task 6 ruling) and the oracle refuses the asymmetric host
+# (unsupported-type, C1); the witnesses pin the current class-assertion defect.
 
 OVERACCEPT_NO_CORPUS = [
     "occ:signed_integer_list:0.0.1.0.0@declaration_body#holes-lead",   # integer-list / holes-lead, 6 cells
@@ -119,9 +143,17 @@ def test_silent_witness(al_parser, assertion_rows, cid, finding):
         a = _assertion(assertion_rows, entry)
         assert a is not None, "no assertion row"
         assert not judge.check_assertion(root, a), "the assertion now holds: flip this case"
+    elif finding.startswith("refusal:"):    # flipped to a spec 6.4 named refusal: every configuration refused so
+        kind = finding[len("refusal:"):]
+        recs = oracle_runner.check_input(al_parser, cid, src)
+        assert recs and all(r.status == "cannot-validate" and any(i.startswith(kind + ":") for i in r.items)
+                            for r in recs), f"oracle says {[(r.config, r.status, r.items) for r in recs]}"
     else:
         _, config, status = finding.split(":")
         got = {r.config: r.status for r in oracle_runner.check_input(al_parser, cid, src)}
+        if status == "pass":    # a flipped (fixed) witness: every configuration passes
+            assert got and set(got.values()) == {"pass"}, f"oracle says {got}: the fix regressed"
+            return
         assert got.get(config) == status, f"oracle now says {got.get(config)} for {config}: flip this case"
 
 
@@ -142,3 +174,13 @@ def test_anchored_tail_fragment_sees_the_wrong_level(al_parser, assertion_rows):
     loose = judge.Assertion(TERNARY, "(_ (_) (preproc_conditional_expression_tail (preproc_if) operand: (_) "
                                      "(preproc_endif)))", (), "")
     assert judge.check_assertion(root, loose)
+
+
+def test_every_matrix_silent_group_has_a_witness():
+    """B7b-3 Task 10: the list follows the committed matrix: each SILENT defect group's representative is pinned."""
+    from pathlib import Path
+    text = (Path(__file__).resolve().parents[3] / "docs/b7-separator-continuation-matrix.md").read_text(encoding="utf-8")
+    groups = text.split("## Defect groups and their witnesses", 1)[1].split("\n## ", 1)[0]
+    reps = {c.strip(" `") for line in groups.splitlines() if line.startswith("|")
+            for cols in [line.split("|")] if len(cols) > 6 and cols[3].strip() == "SILENT" for c in [cols[5]]}
+    assert reps and reps <= {c for c, _ in SILENT}

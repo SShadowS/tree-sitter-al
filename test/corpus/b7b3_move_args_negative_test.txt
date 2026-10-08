@@ -1,0 +1,88 @@
+; B7b-3 Task 8 (spec 5.1): the flat move header stays strict. The mixed separator and any
+; missing content are reachable only after a #if group, so these flat forms keep ERRORing.
+; alc: tools/alc_probe/cases/b7b3/move/flat-*.al.
+
+================================================================================
+b7b3 move flat: target and `;` with no element. Parser policy, B7b-1 spec 4.2 case 4 (empty rejected semantically only = same parse policy as syntax rejection); alc: AL0319 semantic
+:error
+================================================================================
+
+pageextension 50113 PE extends PG
+{
+    actions
+    {
+        moveafter(A1;)
+    }
+}
+
+--------------------------------------------------------------------------------
+
+(source_file)
+
+================================================================================
+b7b3 move flat: comma where the fixed `;` belongs (alc AL0104,AL0107)
+:error
+================================================================================
+
+pageextension 50113 PE extends PG
+{
+    actions
+    {
+        moveafter(A1, A2)
+    }
+}
+
+--------------------------------------------------------------------------------
+
+(source_file)
+
+================================================================================
+b7b3 move flat: two `;` separators (alc AL0104,AL0198)
+:error
+================================================================================
+
+pageextension 50113 PE extends PG
+{
+    actions
+    {
+        moveafter(A1; A2; A3)
+    }
+}
+
+--------------------------------------------------------------------------------
+
+(source_file)
+
+================================================================================
+b7b3 move flat: target only (alc AL0104)
+:error
+================================================================================
+
+pageextension 50113 PE extends PG
+{
+    actions
+    {
+        moveafter(A1)
+    }
+}
+
+--------------------------------------------------------------------------------
+
+(source_file)
+
+================================================================================
+b7b3 move flat: empty argument list (alc AL0104,AL0107)
+:error
+================================================================================
+
+pageextension 50113 PE extends PG
+{
+    actions
+    {
+        moveafter()
+    }
+}
+
+--------------------------------------------------------------------------------
+
+(source_file)

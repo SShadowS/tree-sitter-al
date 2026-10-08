@@ -119,11 +119,122 @@ def _lower(parser, src, env):
     return lower_tree(root, extras, resolve(src, frozenset(env)))
 
 
-def test_mandatory_single_slot_with_empty_arm_is_policy(al_parser):
+EMPTY_THEN_NO_SEMI = b"codeunit 1 T { trigger OnRun() begin if c then\n#if A\n x := 1\n#endif\n end; }"
+EMPTY_ELSE_IN_IF = b"codeunit 1 T { trigger OnRun() begin if c then\n#if A\n x := 1\n#endif\n else x := 2; end; }"
+
+
+@pytest.mark.parametrize("src", [EMPTY_THEN_NO_SEMI, EMPTY_ELSE_IN_IF])
+def test_mandatory_single_slot_with_empty_arm_is_policy(al_parser, src):
+    """No `;` right after the emptied body (end of block, or an else after it): still the
+    single-slot policy refusal, on the group, as before the empty-body-terminator rewrite."""
     with pytest.raises(LoweringError) as err:
+        _lower(al_parser, src, [])
+    assert err.value.kind == "policy" and err.value.node.kind == "preproc_conditional_statement"
+    assert err.value.detail == "0 nodes into a single-slot"
+    _lower(al_parser, src, ["A"])                 # one node: fine
+
+
+def test_emptied_statement_body_takes_the_next_semicolon(al_parser):
+    """B7b-3 Task 10: flat `if c then ;` is then_branch: empty_statement; the `;` after the
+    emptied group becomes that body (empty-body-terminator), and the oracle passes both ways."""
+    low, _, notes = _lower(al_parser, EMPTY_THEN, [])
+    off = EMPTY_THEN.rindex(b";", 0, EMPTY_THEN.index(b"end;"))
+    assert notes == [f"empty-body-terminator@{off}"]
+    for env, ds in run_all(al_parser, EMPTY_THEN).items():
+        assert ds == [], (env, ds)
+
+
+def test_empty_body_mutation_is_caught(al_parser, monkeypatch):
+    from tools.config_oracle.lowering import select
+    monkeypatch.setattr(select, "EMPTY_BODIES", False)
+    with pytest.raises(LoweringError):
         _lower(al_parser, EMPTY_THEN, [])
-    assert err.value.kind == "policy"
-    _lower(al_parser, EMPTY_THEN, ["A"])          # one node: fine
+
+
+ORPHAN = b"codeunit 1 T { trigger OnRun() begin\n#if A\n x := 1\n#endif\n ; end; }"
+NESTED_THEN = b"codeunit 1 T { trigger OnRun() begin if c then if d then\n#if A\n x := 1\n#endif\n ; y := 2; end; }"
+# Split trees that read a bare `;` where EVERY configuration reads an empty_statement (fix round 1,
+# review C1): orphan-terminator must not normalise them; the oracle reports the discrepancy.
+NOT_ORPHANS = [
+    b"codeunit 1 T { trigger OnRun() begin\n#if X\n#endif\n ; end; }",
+    b"codeunit 1 T { trigger OnRun() begin repeat\n#if A\n x := 1;\n#endif\n ; until c; end; }",
+    b"codeunit 1 T { trigger OnRun() begin x := 1;\n#if A\n ;\n#endif\n ; end; }",
+    b"codeunit 1 T { trigger OnRun() begin x := 1;\n#if A\n#endif\n ; ; end; }",
+]
+
+
+def _semi_before_end(src):
+    return src.rindex(b";", 0, src.index(b"end;"))
+
+
+def test_orphan_semicolon_is_an_empty_statement(al_parser):
+    """`begin #if A x := 1 #endif ; end`: A on, the `;` is x's separator; A off, flat `begin ; end`
+    reads it as an empty_statement (orphan-terminator: the reading depends on the configuration)."""
+    low, _, notes = _lower(al_parser, ORPHAN, [])
+    assert notes == [f"orphan-terminator@{_semi_before_end(ORPHAN)}"]
+    for env, ds in run_all(al_parser, ORPHAN).items():
+        assert ds == [], (env, ds)
+
+
+def test_orphan_mutation_is_caught(al_parser, monkeypatch):
+    from tools.config_oracle.lowering import engine
+    monkeypatch.setattr(engine, "ORPHANS", False)
+    _, _, notes = _lower(al_parser, ORPHAN, [])
+    assert notes == []
+    assert any(ds for ds in run_all(al_parser, ORPHAN).values())
+
+
+@pytest.mark.parametrize("src", NOT_ORPHANS)
+def test_configuration_independent_orphan_is_not_normalised(al_parser, src):
+    results = run_all(al_parser, src)
+    assert results and all(ds for ds in results.values()), results    # wrong in EVERY configuration
+    for env in results:
+        res = resolve(src, env)
+        root, extras, _ = ir.from_tree(al_parser.parse(src))
+        _, _, notes = lower_tree(root, extras, res)
+        assert not any(n.startswith("orphan-terminator@") for n in notes), (env, notes)
+
+
+FILLED_THEN_SEMI = [
+    b"codeunit 1 T { trigger OnRun() begin if c then\n#if A\n x := 1\n#endif\n ; ; end; }",
+    b"codeunit 1 T { trigger OnRun() begin while c do\n#if A\n x := 1\n#endif\n ; ; end; }",
+    b"codeunit 1 T { trigger OnRun() begin if c then\n#if A\n x := 1\n#endif\n ; ; y := 2; end; }",
+    b"codeunit 1 T { trigger OnRun() begin if c then\n#if A\n x := 1\n#endif\n ; y := 2; end; }",
+]
+
+
+@pytest.mark.parametrize("src", FILLED_THEN_SEMI)
+def test_a_filled_body_keeps_its_own_terminator(al_parser, src):
+    """Review I1: flat `if c then ; ;` gives the second `;` to the if as its bare terminator; the
+    split tree's empty_statement after the filled statement becomes that `;` (filled-terminator)."""
+    for env, ds in run_all(al_parser, src).items():
+        assert ds == [], (env, ds)
+
+
+def test_two_emptied_bodies_are_refused_not_dropped(al_parser):
+    """Review I2: then AND else emptied: one `;` cannot fill both; refused on the first group."""
+    src = b"codeunit 1 T { trigger OnRun() begin if c then\n#if A\n x := 1\n#endif\n else\n#if B\n y := 1\n#endif\n ; end; }"
+    with pytest.raises(LoweringError) as err:
+        _lower(al_parser, src, [])
+    first = src.index(b"#if A")
+    assert err.value.kind == "policy" and err.value.node.kind == "preproc_conditional_statement"
+    assert err.value.node.start == first and err.value.detail == "0 nodes into a single-slot"
+    _lower(al_parser, src, ["A", "B"])
+
+
+def test_emptied_body_inside_a_case_branch_is_refused(al_parser):
+    """Review M3: in a case branch the `;` is the branch's own, not a statement run's: the
+    pending body is never filled and the policy refusal stands."""
+    src = b"codeunit 1 T { trigger OnRun() begin case I of 1: if c then\n#if A\n x := 1\n#endif\n ; end; end; }"
+    with pytest.raises(LoweringError) as err:
+        _lower(al_parser, src, [])
+    assert err.value.kind == "policy" and err.value.detail == "0 nodes into a single-slot"
+    _lower(al_parser, src, ["A"])
+
+
+def test_nested_emptied_body_at_the_tail_is_filled(al_parser):
+    for env, ds in run_all(al_parser, NESTED_THEN).items():
+        assert ds == [], (env, ds)
 
 
 @pytest.mark.parametrize("src", [VAR_BLOCK, EMPTY_ASSERTERROR])
@@ -249,3 +360,20 @@ def test_reading_active_reports_whether_the_if_arm_is_taken(al_parser, monkeypat
     lower_tree(root, extras, resolve(STMT, frozenset({"A"})))   # #if arm taken
     lower_tree(root, extras, resolve(STMT, frozenset()))        # #else arm taken
     assert seen == [True, False]
+
+
+# Deferred-work item 43 (final review I2): a parenless call or an assignment whose `;` sits in a
+# group, followed by `else`. alc accepts only X=0 (`if C then Bar else Baz;`; X=1 is AL0110, Phase 0
+# probe tools/alc_probe/cases/b7b3/calls/bar-group-else-semi.al). The split tree ends the if at the
+# body and reads `else` as a call_statement, wrong in the one valid configuration. The oracle must
+# keep reporting that as a discrepancy, so no later rewrite can launder it.
+ELSE_AFTER_SEMI_GROUP = [
+    b"codeunit 1 T { trigger OnRun() begin if C then Bar\n#if X\n;\n#endif\nelse Baz; end; }",
+    b"codeunit 1 T { trigger OnRun() begin if C then I := 1\n#if X\n;\n#endif\nelse I := 2; end; }",
+]
+
+
+@pytest.mark.parametrize("src", ELSE_AFTER_SEMI_GROUP)
+def test_else_after_a_semicolon_group_stays_a_discrepancy(al_parser, src):
+    results = run_all(al_parser, src)
+    assert results[frozenset()], results    # X=0: alc's only accepted configuration

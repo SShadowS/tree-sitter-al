@@ -1,5 +1,5 @@
 // B7a Task 10 witness (GAP): family move-modification, base placement first-replace, 12 cells; representative occ:moveafter_modification:1.2@action_body#first-replace
-// Fixture b7_gap_move_modification_test.txt#B7a GAP: move-modification / first-replace (12 cells, verdict of the representative GAP); the parser ERRORs on configurations alc accepts; representative occ:moveafter_modification:1.2@action_body%23first-replace#0
+// Fixture b7b3_move_args_test.txt#b7b3 move route 3: group replaces the target (first-replace)#0
 // expect: !X accept
 // expect: X accept
 // source: recorded by B7a Task 10, 2026-10-07: the alc split verdicts of cell occ:moveafter_modification:1.2@action_body#first-replace in tools/b7_audit/evidence.jsonl.gz

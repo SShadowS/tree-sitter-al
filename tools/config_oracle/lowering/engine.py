@@ -7,7 +7,9 @@ Rules that are load-bearing:
   * a fragment may only pass up through a node when the child it came from is
     that node's last original child, and must be consumed by a named consumer;
   * the normalisations are removing an EMPTY_REMOVABLE container that lowering
-    emptied, and arm-terminator (absorb_arm_terminators). (Unwrapping a continued
+    emptied, arm-terminator, empty-body-terminator and orphan-terminator
+    (absorb_arm_terminators, statement runs; B7b-3 Task 10 added the last two) and
+    case-terminator-attach (case_terminators.attach, case bodies). (Unwrapping a continued
     property value is not one: it is a named rewrite of contract
     expression-continuation, see ExpressionContinuation.)
 
@@ -241,20 +243,163 @@ ARM_SEMI = "_arm_semi"
 
 
 def absorb_arm_terminators(kids, ctx):
-    """A marked empty_statement directly after a statement (a named node other than an
-    empty_statement) is replaced by its `;`, the Terminator placement: right after its anchor.
-    After a `;`, at the start of the run, or after an empty_statement it stays: the flat reading
-    there is a standalone `;` (`I := 1; ;`). Done in one pass, so a later lone-`;` group sees the
-    statement already terminated. Each rewrite is noted `arm-terminator@<offset of the ;>`."""
-    out = []
+    """One pass over a whole statement run, three rewrites, each where the flat grammar reads it:
+
+    * **empty-body-terminator** (statement hosts, B7b-3 Task 10): a statement whose single-slot
+      body selection removed (PENDING_BODY, see _mark_pending_body) at the END of the previous
+      item takes the next `;` -- bare or a marked lone-`;` arm -- as `body: empty_statement`
+      (flat `if C then ;`). Noted `empty-body-terminator@<offset>`.
+      After a filled body, an unmarked empty_statement directly after the statement is its bare
+      `;` (flat `if C then ; ;` gives the second `;` to the if). Noted `filled-terminator@<offset>`.
+    * **arm-terminator**: a marked empty_statement directly after a statement (a named node other
+      than an empty_statement) is replaced by its `;`, the Terminator placement: right after its
+      anchor. After a `;`, at the start of the run, or after an empty_statement it stays: the flat
+      reading there is a standalone `;` (`I := 1; ;`). Noted `arm-terminator@<offset of the ;>`.
+    * **orphan-terminator** (B7b-3 Task 10, narrowed in fix round 1): the dual, ONLY where the
+      split tree's reading of the `;` depends on the configuration. A bare `;` left where no
+      statement precedes it (run start, after a `;` or an empty_statement) is an empty_statement,
+      as the flat grammar reads it, when its original preceding sibling is a group with an arm
+      that ENDS in a statement without its own `;` (`#if A x := 1 #endif ;`: A=1 the `;` is the
+      separator, A=0 an empty statement; no single tree holds both). Those `;` offsets are found
+      on the ORIGINAL tree (orphan_candidates) before lowering. A `;` after an empty group or a
+      group of terminated statements (`begin #if X #endif ; end`, `#if A x := 1; #endif ;`) is a
+      bare `;` in a tree where every configuration reads an empty_statement: that split tree is
+      wrong, and it is left to fail (deferred, a grammar item), never normalised.
+      This test is STRICTER than the rule it implements ("a group leaves a statement without
+      its own `;` in some configuration"): it looks only at the `;`'s immediate preceding
+      sibling and at each arm's LAST item. `#if A x := 1 #if B #endif #endif ;` (the arm ends in
+      an empty nested group) and `#if A x := 1 #endif #if B #endif ;` (an empty group sits
+      between) satisfy the rule but not the test, so they are not normalised and give a
+      discrepancy at A=0. So do `x := 1 #if A ; #endif ;` and `if C then Bar #if X ; #endif ;`:
+      the group follows an UNTERMINATED statement and its arm's last item is the lone `;`, so the
+      arm does not end unterminated; at A=1 / X=1 the outer `;` is a flat empty_statement and the
+      test misses it. All four fail loud, never mask (0 production sites; deferred-work item 48).
+      Noted `orphan-terminator@<offset>`.
+
+    Done in one pass, so a later `;` sees the statement already terminated."""
+    out, filled = [], None
     for n in kids:
-        if getattr(n, ARM_SEMI, False) and out and out[-1].named and out[-1].kind != "empty_statement":
-            semi = n.children[0]
+        marked = getattr(n, ARM_SEMI, False)
+        semi = n.children[0] if marked else n if _bare_semi(n) else None
+        owner = _pending_tail(out[-1]) if semi is not None and out else None
+        if (filled is not None and out and out[-1] is filled and not marked
+                and n.kind == "empty_statement" and n.field is None and len(n.children) == 1):
+            ctx.normalised.append(f"filled-terminator@{n.children[0].start}")
+            out.append(n.children[0])
+        elif owner is not None:
+            _fill_pending_body(out[-1], owner, semi)
+            ctx.normalised.append(f"empty-body-terminator@{semi.start}")
+            filled = out[-1]
+            continue
+        elif marked and out and out[-1].named and out[-1].kind != "empty_statement":
             ctx.normalised.append(f"arm-terminator@{semi.start}")
             out.append(semi)
+        elif (ORPHANS and not marked and semi is not None and semi.start in getattr(ctx, "orphan_ok", ())
+              and (not out or not out[-1].named or out[-1].kind == "empty_statement")):
+            ctx.normalised.append(f"orphan-terminator@{semi.start}")
+            out.append(Node("empty_statement", True, None, semi.start, semi.end, [semi]))
         else:
             out.append(n)
+        filled = None
     return out
+
+
+ORPHANS = True   # mutation switch for the orphan-terminator tests
+
+
+def _ends_unterminated(group):
+    """True when some arm of the statement group ends in a statement without its own `;`
+    (recursively through a nested group that ends an arm)."""
+    from tools.config_oracle.lowering.select import split_arms
+    try:
+        arms, _ = split_arms(group)
+    except LoweringError:     # a malformed group: selection refuses it when (if) it is reached
+        return False
+    for _, content in arms:
+        last = content[-1] if content else None
+        if last is None:
+            continue
+        if last.kind == "preproc_conditional_statement":
+            if _ends_unterminated(last):
+                return True
+        elif last.named and last.kind != "empty_statement":
+            return True
+    return False
+
+
+def orphan_candidates(root):
+    """Offsets of the bare `;` whose original preceding sibling is a statement group with an arm
+    ending in an unterminated statement: the only `;` orphan-terminator may rewrite."""
+    out, stack = set(), [root]
+    while stack:
+        n = stack.pop()
+        for prev, c in zip(n.children, n.children[1:]):
+            if _bare_semi(c) and prev.kind == "preproc_conditional_statement" and _ends_unterminated(prev):
+                out.add(c.start)
+        stack.extend(n.children)
+    return frozenset(out)
+
+
+# Statement bodies (single-slot) that selection may remove WHOLE: an `#if` group that lowers to
+# nothing as the body (`if C then #if X #endif ;`). select.branch_select lets such a group lower
+# to 0 nodes, _mark_pending_body records it on the statement, absorb_arm_terminators fills it
+# from the next `;`, and _lower_tree refuses one still pending, exactly as select refused it
+# before (policy, same node and detail), so existing classifications keep matching.
+EMPTY_BODY_SLOTS = frozenset({("if_statement", "then_branch"), ("if_statement", "else_branch"),
+                              ("while_statement", "body"), ("for_statement", "body"),
+                              ("foreach_statement", "body"), ("with_statement", "body")})
+_BODY_SLOT_FIELDS = frozenset(f for _, f in EMPTY_BODY_SLOTS)
+PENDING_BODY = "_pending_body"
+
+
+def _bare_semi(n):
+    return n.kind == ";" and not n.children and n.field is None
+
+
+def _mark_pending_body(orig, new):
+    """Record the one emptied body. Two emptied slots (an if whose then AND else groups both
+    lower to nothing) are refused at the first one, with the pre-rewrite policy refusal: one
+    `;` can fill at most one, and dropping the other would lose a field silently."""
+    for c in orig.children:
+        if (c.kind == "preproc_conditional_statement" and (orig.kind, c.field) in EMPTY_BODY_SLOTS
+                and not any(k.field == c.field for k in new.children)):
+            first = getattr(new, PENDING_BODY, None)
+            if first is not None:
+                raise LoweringError("policy", first, "0 nodes into a single-slot")
+            setattr(new, PENDING_BODY, c)
+
+
+def _pending_tail(item):
+    """The statement at the very END of `item` (down its trailing body chain) whose body is
+    pending, or None. A pending body is at the end only when nothing fielded follows it."""
+    while item is not None and item.children:
+        if getattr(item, PENDING_BODY, None) is not None and item.children[-1].field is None:
+            return item
+        last = item.children[-1]
+        item = last if last.field in _BODY_SLOT_FIELDS else None
+    return None
+
+
+def _fill_pending_body(top, owner, semi):
+    group = getattr(owner, PENDING_BODY)
+    owner.children = owner.children + [Node("empty_statement", True, group.field, semi.start, semi.end, [semi])]
+    delattr(owner, PENDING_BODY)
+    path, n = [], top        # spans grow at the tail: recompute owner .. top, innermost first
+    while n is not owner:
+        path.append(n)
+        n = n.children[-1]
+    for n in [owner] + path[::-1]:
+        _span_from_children(n)
+
+
+def _refuse_pending(node):
+    stack = [node]
+    while stack:
+        n = stack.pop()
+        group = getattr(n, PENDING_BODY, None)
+        if group is not None:
+            raise LoweringError("policy", group, "0 nodes into a single-slot")
+        stack.extend(n.children)
 
 
 def bind_previous(kids, r, c):
@@ -319,9 +464,10 @@ class Ctx:
     parent_kind: str | None = None
     slot: str | None = None
     normalised: list = field(default_factory=list)
+    orphan_ok: frozenset = frozenset()     # orphan_candidates of the original tree
 
     def child(self, parent_kind, slot):
-        return Ctx(self.resolution, self.accounting, parent_kind, slot, self.normalised)
+        return Ctx(self.resolution, self.accounting, parent_kind, slot, self.normalised, self.orphan_ok)
 
     def host(self):
         """`host <parent>:<slot>`: the refusal detail that keys a classification to where
@@ -383,7 +529,11 @@ def _lower_ordinary(node, ctx) -> Lowered:
         frags.extend(bind_previous(kids, r, c))
     new = Node(node.kind, node.named, node.field, node.start, node.end, kids)
     fam = conditional_lists.HOST_FAMILY.get(node.kind)
-    if fam is not None and any(c.kind == fam.group for c in node.children):
+    if move_args.dispatches(node):
+        # B7b-3 spec 6.3: EVERY move host, group or not, through the one move-interior adapter
+        # (routes 1-3), before the strict-list hook (it supersedes move_elements' lower_region).
+        new.children = move_args.lower(node, new.children, ctx)
+    elif fam is not None and any(c.kind == fam.group for c in node.children):
         # A strict-list host (B7b-1): its own complete-region validator and empty policy.
         new.children = conditional_lists.lower_region(node, new.children, fam)
         if not new.children:
@@ -400,8 +550,15 @@ def _lower_ordinary(node, ctx) -> Lowered:
     # core, at a `;`-inside site) is a selected arm's `;`.
     selected_terminator = any(isinstance(f, Terminator) and getattr(f, "_from_last", False) for f in frags)
     frags = _consume(new, frags)
-    if node.kind in STATEMENT_HOSTS:
+    if (node.kind, "then_branch") in EMPTY_BODY_SLOTS or (node.kind, "body") in EMPTY_BODY_SLOTS:
+        _mark_pending_body(node, new)
+    if node.kind == "statement_block":
         new.children = absorb_arm_terminators(new.children, ctx)
+    elif node.kind == "case_branch":
+        case_terminators.empty_body(node, new, ctx)
+    elif node.kind == "case_body":
+        # case-terminator (B7b-3 spec 6.2): a case run's `;` groups, never ARM_SEMI.
+        new.children = case_terminators.attach(new.children, ctx)
     elif node.kind == "code_block":
         # a BlockCompletion may have appended a statement run to the block's body
         body = next((c for c in new.children if c.field == "body" and c.kind == "statement_block"), None)
@@ -409,6 +566,8 @@ def _lower_ordinary(node, ctx) -> Lowered:
             body.children = absorb_arm_terminators(body.children, ctx)
     if node.kind == "property":
         _check_site_boundary(node, new, ctx, selected_terminator)
+    elif node.kind == "case_statement":
+        case_terminators.check_else_ownership(new, ctx)
     for f in frags:
         if not getattr(f, "_from_last", False):
             raise LoweringError("unconsumed-fragment", node, f"{type(f).__name__} not from the last child")
@@ -599,11 +758,12 @@ def _consume(new, frags):
 
 def _lower_tree(root, extras, resolution):
     acc = Accounting(resolution)
-    ctx = Ctx(resolution, acc)
+    ctx = Ctx(resolution, acc, orphan_ok=orphan_candidates(root))
     out = lower(root, ctx)
     if out.frags:
         raise LoweringError("unconsumed-fragment", root, ", ".join(type(f).__name__ for f in out.frags))
     low = out.nodes[0] if out.nodes else Node(root.kind, root.named, None, 0, 0, [])
+    _refuse_pending(low)
     acc.check_complete(root)
     acc.check_emitted(low)
     kept = [e for e in extras if resolution.active[e.start]]
@@ -612,7 +772,7 @@ def _lower_tree(root, extras, resolution):
 
 # At the bottom: conditional_lists imports this module's names, and _lower_ordinary reads
 # conditional_lists only at call time, so the cycle is safe in either import order.
-from tools.config_oracle.lowering import conditional_lists  # noqa: E402
+from tools.config_oracle.lowering import case_terminators, conditional_lists, move_args  # noqa: E402
 
 
 def lower_tree(root, extras, resolution):

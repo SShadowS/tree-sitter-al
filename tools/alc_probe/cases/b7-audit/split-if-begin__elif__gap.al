@@ -1,5 +1,5 @@
 // B7a Task 10 witness (GAP): family split-if-begin, base placement elif, 87 cells; representative occ:preproc_split_if_begin_asymmetric:0.3.0@case_branch#elif
-// Fixture b7_gap_split_if_begin_test.txt#B7a GAP: split-if-begin / elif (87 cells, verdict of the representative GAP); the parser ERRORs on configurations alc accepts; representative occ:preproc_split_if_begin_asymmetric:0.3.0@case_branch%23elif#0
+// Fixture b7b3_case_separator_split_if_begin_test.txt#B7b-3 case separator after a split if-begin body (B7a split-if-begin elif; representation fixture, see header)#0
 // expect: !TPL !X !Y accept
 // expect: !TPL !X Y accept
 // expect: !TPL X !Y accept

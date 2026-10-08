@@ -1,0 +1,113 @@
+; B7b-3 Task 4, deferred item 43: a KNOWN OVER-ACCEPTANCE, pinned so a change to it is seen. alc rejects all three
+; inputs (AL0110; tools/alc_probe/cases/b7b3/calls/{bar,assign}-semi-else-rejected.al, bar-newline-else-rejected.al), but
+; the parser reads the orphan `else` as a parenless call to a procedure named `else`, so highlights.scm captures it as
+; @function.call and tags.scm emits a call named `else`. Reserving `else` in `code_names` (fix round 1) made these
+; ERROR but also turned 6 alc-accepted B7a cells (split code blocks whose `end else` the parser misreads) from clean to
+; ERROR, so it was reverted by ruling; the fix is open in docs/deferred-work.md item 43.
+
+================================================================================
+B7b-3 orphan else after a call and its semicolon (alc AL0110; over-accepted)
+================================================================================
+codeunit 1 P
+{
+    procedure M()
+    begin
+if C then Bar; else Baz;
+    end;
+}
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (procedure
+        (procedure_keyword)
+        name: (identifier)
+        body: (code_block
+          (begin_keyword)
+          body: (statement_block
+            (if_statement
+              (if_keyword)
+              condition: (identifier)
+              (then_keyword)
+              then_branch: (call_statement
+                function: (identifier)))
+            (call_statement
+              function: (identifier))
+            (call_statement
+              function: (identifier)))
+          (end_keyword))))))
+
+================================================================================
+B7b-3 orphan else after an assignment and its semicolon (alc AL0110; over-accepted)
+================================================================================
+codeunit 1 P
+{
+    procedure M()
+    begin
+if C then X := 1; else X := 2;
+    end;
+}
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (procedure
+        (procedure_keyword)
+        name: (identifier)
+        body: (code_block
+          (begin_keyword)
+          body: (statement_block
+            (if_statement
+              (if_keyword)
+              condition: (identifier)
+              (then_keyword)
+              then_branch: (assignment_statement
+                left: (identifier)
+                operator: (assignment_operator)
+                right: (integer)))
+            (call_statement
+              function: (identifier))
+            (assignment_statement
+              left: (identifier)
+              operator: (assignment_operator)
+              right: (integer)))
+          (end_keyword))))))
+
+================================================================================
+B7b-3 orphan else on the line after a bare call (alc rejects; over-accepted)
+================================================================================
+codeunit 1 P
+{
+    procedure M()
+    begin
+Bar
+else
+    end;
+}
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (procedure
+        (procedure_keyword)
+        name: (identifier)
+        body: (code_block
+          (begin_keyword)
+          body: (statement_block
+            (call_statement
+              function: (identifier))
+            (call_statement
+              function: (identifier)))
+          (end_keyword))))))

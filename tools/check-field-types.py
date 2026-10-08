@@ -358,8 +358,12 @@ FIELD_INVARIANTS = [
     inv('addfirst_fieldgroup_modification', 'fields', False, set(), 'FIXED',
         'one field_list; addfirst is not widened to an empty list (B7b-1)',
         types={'field_list'}, required=True),
-    # move*: the element list after the fixed `;` (B7b-1 Task 8). The target and
-    # the fixed `;` stay outside the group, so `target` stays single and required.
+    # move*: the element list after the fixed `;` (B7b-1 Task 8). B7b-3 Task 8
+    # (spec 5.2): a header group (routes 2-3, preproc_conditional_move_args) may
+    # replace the target, so `target` stays single but is optional: route 1 and
+    # route 2 field one raw target, route 3 none. Route-specific absence (no
+    # `element` on routes 2-3, `target` only on route 2's first name) is checked
+    # per instance (fixtures, test_move_args_incremental.py, the oracle).
     inv('preproc_conditional_move_elements', 'element', True, set(), 'FIXED',
         'one element per raw item in an arm; the , stays outside the field (B7b-1)',
         types={'identifier', 'quoted_identifier'}, required=False),
@@ -368,8 +372,8 @@ FIELD_INVARIANTS = [
           types={'identifier', 'quoted_identifier'}, required=False)
       for m in ('moveafter', 'movebefore', 'movefirst', 'movelast')],
     *[inv(f'{m}_modification', 'target', False, set(), 'FIXED',
-          'one target before the fixed ;, never inside a group (B7b-1 Task 8)',
-          types={'identifier', 'quoted_identifier'}, required=True)
+          'one raw target on routes 1-2, none on route 3, never inside a group (B7b-3 spec 5.2)',
+          types={'identifier', 'quoted_identifier'}, required=False)
       for m in ('moveafter', 'movebefore', 'movefirst', 'movelast')],
     # array[...] of T: the dimension list between [ and ] (B7b-1 Task 9). array_type.sizes
     # (FIXED row above) is optional since every dimension can sit in a group.
@@ -401,6 +405,23 @@ FIELD_INVARIANTS = [
     inv('variable_declaration', 'type', False, set(), 'FIXED',
         'one type after the `:`, never inside a group (B7b-1 Task 11)',
         types={'basic_type', 'type_specification'}, required=True),
+    # A parenless call is a bare name in statement position (B7b-3 spec 3.1): one
+    # callee, always present; the `;` belongs to the host route, never to the field.
+    inv('call_statement', 'function', False, set(), 'FIXED',
+        'one callee name; the call owns no ; (B7b-3)',
+        types={'identifier', 'quoted_identifier'}, required=True),
+    # B7b-3 Task 6 (spec 4.1-4.2): a case group's arm holds branches, a lone `;` as
+    # empty_statement (the `;` of the preceding branch in that configuration) and nested
+    # groups; the decoration before a branch's own `;` is an UNFIELDED child of the branch,
+    # so case_branch gains no field and its children are exactly these two.
+    inv('preproc_conditional_case', '<children>', True, set(), 'FIXED',
+        'arm items: branches, empty_statement (an arm `;`), nested groups, the case else (B7b-3)',
+        types={'case_branch', 'case_else_branch', 'empty_statement', 'preproc_conditional_case',
+               'preproc_if', 'preproc_elif', 'preproc_else', 'preproc_endif'}, required=True),
+    inv('case_branch', '<children>', True, set(), 'FIXED',
+        'unfielded: the split branch, pattern groups, and the decoration before the own `;` (B7b-3); fields stay pattern+body',
+        types={'preproc_split_case_branch', 'preproc_conditional_case_patterns', 'preproc_conditional_case'},
+        required=False),
 ]
 
 
@@ -423,7 +444,8 @@ def check(node_types, want):
     if node is None:
         return f"node type '{want.node}' not found in node-types.json"
 
-    field = node.get('fields', {}).get(want.field)
+    # '<children>' checks the node's unfielded children the same way as a field.
+    field = node.get('children') if want.field == '<children>' else node.get('fields', {}).get(want.field)
     if field is None:
         return f"'{want.node}' has no field '{want.field}'"
 

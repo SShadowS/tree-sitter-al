@@ -63,10 +63,13 @@ function namespacedRefFielded($, name) {
 // makes `if C then A; else B;` structurally impossible to read as one
 // if_statement -- see the note on if_statement.
 //
-// `call_statement` is listed separately because it owns its ';' internally, and
-// `empty_statement` IS a ';'. Both are still reachable in branch position
-// (`while C do ;`, `case 1: Foo;`), but neither is reachable from
-// `_statement_inner` any more, so the then-branch of an if can bar them.
+// The ';' is owned by the host ROUTE, never by the statement (B7b-3): the
+// `_statement` wrapper, `case_branch`, or the guard sequence of
+// `_preproc_guard_block`. A parenless call (`call_statement`) is a bare name in
+// statement position and is reached through `_statement_inner` like any other
+// statement. `empty_statement` IS a ';' and is listed separately: it is
+// reachable in branch position (`while C do ;`) but not from
+// `_statement_inner`, so the then-branch of an if can bar it.
 // `( target ; element {, element} )` -- the argument list of every move*
 // modification. A LIST of elements is legal (alc, runtime 15.0) and first
 // appears in BC 29: `moveafter("Address 2"; City, CountyGroup)`. A helper, not
@@ -89,18 +92,26 @@ function modifyHeader($) {
 }
 
 // B7b-1: the element list after the fixed `;` accepts #if groups at any separator
-// (strictListBody, family move_elements); the target and the fixed `;` stay outside
-// it, so a group there is still an ERROR (B7b-3). An element inside an arm is
-// `element:` on preproc_conditional_move_elements, so `element` is no longer
-// required on the four move rules (a list may consist of groups only).
+// (strictListBody, family move_elements). An element inside an arm is `element:` on
+// preproc_conditional_move_elements, so `element` is not required on the four move rules.
+// B7b-3 spec 5.1: a group may also replace the target, supply the fixed `;`, or span
+// header and elements (family move_args, separator `;` or `,`). Three routes, disjoint at
+// their first tokens: 1 `name ;` (flat / B7b-1, unchanged), 2 `name #if`, 3 `#if`. The
+// mixed separator and any missing content are reachable only after a group, so the flat
+// grammar stays strict; which separator stands where is per-configuration validation
+// (config oracle). Fields (spec 5.2): route 2's first raw name keeps `target`; every other
+// name on routes 2-3 is unfielded (its role depends on the configuration, spec 5.3), so
+// `target` is not required on the host.
 function moveArgs($) {
-  return seq(
-    '(',
-    field('target', $._identifier_or_quoted),
-    ';',
-    ...strictListBody($, 'move_elements', ','),
-    ')',
-  );
+  const sep = choice(';', ',');
+  return seq('(', choice(
+    // 1. Flat / B7b-1 route, unchanged: the element region stays required.
+    seq(field('target', $._identifier_or_quoted), ';', ...strictListBody($, 'move_elements', ',')),
+    // 2. A raw target, then a group (the witness), then any further run.
+    seq(field('target', $._identifier_or_quoted), $._move_args_t, repeat(seq(sep, $._move_args_e))),
+    // 3. A group first (spanning or replacing the target), then any further run.
+    seq($._move_args_t, repeat(seq(sep, $._move_args_e))),
+  ), ')');
 }
 
 // One hidden seam unit per strict delimited list (B7b-1 spec
@@ -155,9 +166,11 @@ function strictListBody($, family, sep) {
   return [$[E], repeat(seq(sep, $[E]))];
 }
 
+// B7b-3 spec 4.2.2: the decoration before a case branch's own `;`.
+function caseEmptyGroup($) { return alias($._case_empty_group, $.preproc_conditional_case); }
+
 function fieldedStatement($, name) {
   return choice(
-    field(name, $.call_statement),
     field(name, $.empty_statement),
     field(name, $._statement_inner),
   );
@@ -660,9 +673,8 @@ module.exports = grammar({
     // patterns or statements, and a case-else, so patterns and expressions meet;
     // everywhere else it overlaps the fixed-shape split rules, which win by
     // prec.dynamic when both complete. GLR decides all of these past the
-    // condition.
-    [$.preproc_conditional_statement, $.preproc_conditional_case_patterns],
-    [$.preproc_conditional_statement, $.preproc_split_case_branch, $.preproc_conditional_case_patterns],
+    // condition. (The patterns/statement entries that stood here are covered by
+    // the B7b-3 entries at the end of this list, which generate required.)
     [$._open_branch, $.case_else_branch],
     [$.preproc_split_open_statement, $._statement],
     [$._open_prefix, $.preproc_split_if_else_statement],
@@ -989,6 +1001,37 @@ module.exports = grammar({
     // branch's BODY (_case_body_branch) or an ordinary statement of the run
     // that follows the case. Nothing before the `end` distinguishes them.
     [$._statement, $._case_body_branch],
+    // B7b-3 spec 4.1: in case_body an arm's lone `;` is the case group's
+    // empty_statement (preproc_conditional_case) or a statement of
+    // preproc_split_open_statement's branch, which must end in an open prefix.
+    // Only what follows the run (`#endif` vs `if E then`) decides it.
+    [$._statement, $._case_group_item],
+    // B7b-3 spec 4.2.1: a `#if` inside a case group's arm opens a nested
+    // preproc_conditional_case, a split branch's pattern group, or (when the
+    // outer `#if` is preproc_split_open_statement's) a statement conditional;
+    // with an empty first arm all four read `#if … #elif` alike.
+    [$.preproc_conditional_statement, $.preproc_conditional_case, $.preproc_split_case_branch, $.preproc_conditional_case_patterns],
+    // Same prefix, completed: `#if #if #endif ;` -- the inner empty group is a
+    // nested preproc_conditional_case of a case arm, or a statement of
+    // preproc_split_open_statement's branch.
+    [$.preproc_conditional_statement, $.preproc_conditional_case],
+    // ... or a split branch's empty pattern group (`#if #endif 1:` in an arm).
+    [$.preproc_conditional_case, $.preproc_conditional_case_patterns],
+    // B7b-3 spec 4.2.2: after a branch body an empty `#if … #endif` is a
+    // decoration (a `;` of this branch follows) or a sibling
+    // preproc_conditional_case (no `;` follows). Only the token after
+    // `#endif` decides, so GLR keeps both; prec.right would shift every empty
+    // group and ERROR on `1: X #if A #endif 2: Y;`.
+    [$.case_branch],
+    // One level deeper (`#if #if #if #endif #elif` in case_body): the
+    // innermost empty group is a nested preproc_conditional_case, a pattern
+    // group, or a statement conditional of preproc_split_open_statement.
+    [$.preproc_conditional_statement, $.preproc_conditional_case, $.preproc_conditional_case_patterns],
+    // The [$.case_branch] decision in the two split hosts: an empty group after
+    // the shared body is a decoration (the host's `;` follows) or a sibling
+    // preproc_conditional_case (it does not).
+    [$.preproc_split_case_branch],
+    [$.preproc_split_case_extended],
   ],
 
   // Trivial pass-through wrappers — macro-substituted to drop a layer of indirection.
@@ -3747,6 +3790,7 @@ module.exports = grammar({
     movebefore_modification: $ => seq($.movebefore_keyword, moveArgs($)),
 
     ...strictConditionalList('move_elements', $ => field('element', $._identifier_or_quoted), ','),
+    ...strictConditionalList('move_args', $ => $._identifier_or_quoted, choice(';', ',')),
 
     // =====================================================================
     // Actions structure
@@ -5386,7 +5430,8 @@ module.exports = grammar({
       // Shared remaining arguments
       optional($._expression_list),
       ')',
-      ';'
+      // No ';': like every statement, its terminator is owned by the host
+      // route (`_statement` or the case branch), B7b-3 spec 3.3.
     )),
 
     // Call prefix inside a preproc branch: func(arg1, arg2,
@@ -5600,15 +5645,10 @@ module.exports = grammar({
       // must TERMINATE the if (alc AL0110), so the then-branch reaches
       // `empty_statement` only through the arm that bars a following `else`.
       $.empty_statement,
-      // A parenless no-arg call (`Initialize;`) — a bare identifier in statement
-      // position that OWNS its terminating `;`. Owning the `;` is what makes a real
-      // parenless call structurally distinct from tree-sitter ERROR-recovery debris
-      // (a bare identifier rescued after a syntax error has no terminator and stays a
-      // raw identifier, never reducing to `call_statement`). The engine lowers a
-      // `call_statement` to a parenless call edge; a bare identifier is treated as
-      // recovery debris / a value statement and is NOT a call. Higher precedence than
-      // the `_expression_statement` branch so `Foo;` deterministically reduces here.
-      $.call_statement,
+      // Every other statement, a parenless call included, leaves its ';' to this
+      // wrapper (B7b-3: `call_statement` no longer owns one, so `Bar;`, `Bar`
+      // before `end`/`else`/`until`, and `Bar` with its ';' in an `#if` arm all
+      // give the same call_statement).
       seq($._statement_inner, optional(';'))
     )),
 
@@ -5644,15 +5684,28 @@ module.exports = grammar({
           $.preproc_split_code_block_over_endif,
     ),
 
-    // Parenless no-arg call statement (`Initialize;`). Requires the `;` terminator —
-    // see the note in `_statement`. Only a bare identifier / quoted identifier is a
-    // parenless call here; `Foo()` stays a `call_expression` and `Rec.Find;` stays a
-    // `member_expression` (unchanged), so this adds no blast to parenful calls or
-    // record operations. prec(13) > call_expression's prec(12) so the reduction wins.
-    call_statement: $ => prec(13, seq(
-      field('function', choice($.identifier, $.quoted_identifier)),
-      ';'
-    )),
+    // Parenless no-arg call (`Initialize`): a bare name in statement position
+    // (B7b-3 spec 3.1). It owns no ';' (the host route does); its prec(-1) is
+    // `_expression_statement`'s (see below), and it is reached only through
+    // `_expression_statement`, whose `code_names` reserved set it inherits. `Foo()` stays a
+    // `call_expression` and `Rec.Find;` a `member_expression`. The third arm:
+    // `table`/`order` are live keyword tokens at statement start, so a parenless
+    // call to a procedure named `Order` arrives as one (deferred item 40).
+    // Accepted trade-off: an identifier rescued by error recovery in statement
+    // position may now become a call_statement; it sits in a tree with errors.
+    //
+    // prec(-1) is `_expression_statement`'s, moved down to the reduction that now
+    // competes with `_expression` (`begin X • -`, `X • [`): before B7b-3 that
+    // reduction was `identifier -> _expression_statement` and carried the -1; now
+    // it is `identifier -> call_statement`, and without it generate reports an
+    // unresolved conflict between `call_statement` and `_expression`. A declared
+    // conflict instead would re-open the GLR fork B6 measured (`X[1] := 2;` read as
+    // `X` plus a list-literal statement).
+    call_statement: $ => prec(-1, field('function', choice(
+      $.identifier,
+      $.quoted_identifier,
+      alias($._value_start_keyword_name, $.identifier),   // Order / Table (deferred item 40)
+    ))),
 
     // A statement expression is an INVOCATION and nothing else (roadmap B6, spec
     // docs/superpowers/specs/2026-10-06-expression-statement-narrowing-design.md).
@@ -5680,14 +5733,12 @@ module.exports = grammar({
     // list literal can start one, so at `X • [` GLR otherwise keeps `X` plus a
     // `[1] := 2;` statement instead of `X[1] := 2;`. Measured without it (docs/b6-audit.md):
     // 381 / 10 / 405 / 979 files change in BC.History / DC / BC28.1 / BCApps.
-    // The `_value_start_keyword_name` arm: `table`/`order` are live keyword tokens at
-    // statement start, so a parenless call to a procedure named `Order` arrives as one.
+    // A bare name is a `call_statement` (B7b-3), which carries the
+    // `_value_start_keyword_name` arm.
     _expression_statement: $ => prec(-1, reserved('code_names', choice(
       $.call_expression,
       $.member_expression,
-      $.identifier,
-      $.quoted_identifier,
-      alias($._value_start_keyword_name, $.identifier),
+      $.call_statement,
     ))),
 
     empty_statement: $ => ';',
@@ -5887,23 +5938,18 @@ module.exports = grammar({
     // Pinned by "A ';' before the else gives it to the CASE" in
     // test/corpus/dangling_else_case_branch_test.txt, which passes with the
     // dynamic precedences removed entirely.
-    // Two then-branch forms are still SELF-TERMINATING after the restructure,
-    // and they get the same treatment the others got by having their terminator
-    // moved out: an `else` may not follow them.
+    // Every then-branch statement leaves its ';' to the host route (`_statement`
+    // or `case_branch`), a parenless call included since B7b-3, so none of them
+    // can carry a ';' to an `else`. One then-branch form is still
+    // SELF-TERMINATING and gets a separate arm with no `else` after it:
     //
-    //   * `call_statement` owns its ';' internally (`if C then Foo; else …`).
-    //     Dropping it from the then-branch entirely is not an option — the node
-    //     would degrade to a bare `identifier`, which the engine reads as
-    //     recovery debris rather than a call.
     //   * `empty_statement` IS a ';' (`if C then ; else …`). Real site, and the
     //     last of the 25 census hits: Manufacturing/Document/
     //     CopyProductionOrderDocument.Report.al:79, where four `StatusType::`
     //     case branches each end `then ;` and the `else` is plainly the case's.
     //
-    // So they are separate arms here with no `else` after them, and the else
-    // hangs off the two forms that cannot hold a ';'. That exclusion holds only
-    // because `_statement_inner` no longer contains `empty_statement` — it is
-    // otherwise trivially routed around.
+    // That exclusion holds only because `_statement_inner` no longer contains
+    // `empty_statement` — it is otherwise trivially routed around.
     //
     // The open pair is written out here rather than factored into a hidden
     // rule: a hidden rule carrying `field('then_branch', …)` cannot surface in
@@ -5929,7 +5975,6 @@ module.exports = grammar({
           field('then_branch', $._statement_inner),
           optional(prec.dynamic(30, seq($.else_keyword, $._else_branch))),
         ),
-        field('then_branch', $.call_statement),
         field('then_branch', $.empty_statement),
       ),
     ))),
@@ -6057,7 +6102,8 @@ module.exports = grammar({
     // it with a declared conflict.
     preproc_split_case_end_branch: $ => seq(
       $._case_body_branch,
-      optional(';'),
+      // B7b-3 Task 6 fix round 1: the fourth decoration host (spec 4.2.2).
+      optional(seq(repeat(caseEmptyGroup($)), ';')),
       $.end_keyword,
       ';',
       field('following', $.statement_block),
@@ -6129,12 +6175,28 @@ module.exports = grammar({
 
 
     // Preprocessor conditionals inside case statements
+    // An arm holds branches, a lone `;` (empty_statement: the `;` of the
+    // preceding branch in that configuration, B7b-3 spec 4.1) and nested
+    // groups, plus the optional case else.
     preproc_conditional_case: $ => seq(
       $.preproc_if,
-      repeat($.case_branch),
+      repeat($._case_group_item),
       optional($.case_else_branch),
-      repeat(seq($.preproc_elif, repeat($.case_branch), optional($.case_else_branch))),
-      optional(seq($.preproc_else, repeat($.case_branch), optional($.case_else_branch))),
+      repeat(seq($.preproc_elif, repeat($._case_group_item), optional($.case_else_branch))),
+      optional(seq($.preproc_else, repeat($._case_group_item), optional($.case_else_branch))),
+      $.preproc_endif,
+    ),
+
+    _case_group_item: $ => choice($.case_branch, $.empty_statement, $.preproc_conditional_case),
+
+    // Decoration (B7b-3 spec 4.2.2): a directive-only group between a branch
+    // body and that branch's own `;`. Every occurrence goes through
+    // caseEmptyGroup(), so nested groups stay distinct visible nodes.
+    _case_empty_group: $ => seq(
+      $.preproc_if,
+      repeat(caseEmptyGroup($)),
+      repeat(seq($.preproc_elif, repeat(caseEmptyGroup($)))),
+      optional(seq($.preproc_else, repeat(caseEmptyGroup($)))),
       $.preproc_endif,
     ),
 
@@ -6149,7 +6211,7 @@ module.exports = grammar({
         $._case_pattern,
         ':',
         $._case_body_branch,
-        optional(';'),
+        optional(seq(repeat(caseEmptyGroup($)), ';')),
       ),
       // Preprocessor-split case branch: #if wraps extra patterns before the main pattern
       // #if COND  pattern1,  #endif  pattern2: body;
@@ -6167,32 +6229,35 @@ module.exports = grammar({
       $._case_pattern,
       ':',
       $._case_body_branch,
-      optional(';'),
+      optional(seq(repeat(caseEmptyGroup($)), ';')),
     )),
 
     // Extended case split: #if adds complete branches + provides header for next shared branch
     // Example: #if DOSMTP  1: begin DoSMTP(); end;  2:  #else  2, 1:  #endif  begin DoEmail(); end;
+    // B7b-3 Task 6: the arms take preproc_conditional_case's arm items, so a `;` group or a
+    // nested group may stand among the extra branches (spec 4.3), and the two rules share one
+    // repeat after `#if` instead of needing a declared conflict between them.
     preproc_split_case_extended: $ => prec(25, seq(
       $.preproc_if,
-      repeat($.case_branch),  // zero or more complete extra branches
+      repeat($._case_group_item),  // complete extra branches, `;` items, nested groups (B7b-3 spec 4.3)
       $._case_pattern,        // header-only for the next branch
       ':',
       repeat(seq(
         $.preproc_elif,
-        repeat($.case_branch),
+        repeat($._case_group_item),
         $._case_pattern,
         ':',
       )),
       optional(seq(
         $.preproc_else,
-        repeat($.case_branch),
+        repeat($._case_group_item),
         $._case_pattern,
         ':',
       )),
       $.preproc_endif,
       // Shared body for the split branch
       $._case_body_branch,
-      optional(';'),
+      optional(seq(repeat(caseEmptyGroup($)), ';')),
     )),
 
     // Case pattern list: supports preprocessor conditionals interleaved with
@@ -6390,13 +6455,13 @@ module.exports = grammar({
     // and `asserterror if …` / `exit` / `case` attach instead of floating off
     // as siblings (issue #28).
     //
-    // `_statement_inner`, not fieldedStatement(): call_statement and
-    // empty_statement own their ';', and an asserterror in a then-branch
-    // reaches if_statement through `_statement_inner`, the arm that allows an
-    // else. A self-terminating body would let `if C then asserterror Foo; else`
-    // bind the else, which alc rejects (AL0110). So `asserterror Foo;` keeps a
-    // bare identifier body and `asserterror;` has no body, the ';' staying
-    // with the enclosing statement as it does everywhere else.
+    // `_statement_inner`, not fieldedStatement(): empty_statement IS a ';', and
+    // an asserterror in a then-branch reaches if_statement through
+    // `_statement_inner`, the arm that allows an else. A self-terminating body
+    // would let `if C then asserterror ; else` bind the else, which alc rejects
+    // (AL0110). So `asserterror Foo;` has a call_statement body and
+    // `asserterror;` has no body, the ';' staying with the enclosing statement
+    // as it does everywhere else.
     asserterror_statement: $ => prec.right(14, seq(
       $.asserterror_keyword,
       optional(field('body', $._statement_inner)),

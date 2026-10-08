@@ -125,9 +125,6 @@ property_value_run_negative_test.txt
 # B7b-1 Task 7: the outer comma list of OrderBy items is property-value routing, excluded from the
 # strict inner-list change (spec section 2, owner B12): a #if group between two order_by_items stays an ERROR.
 strict_conditional_order_by_fields_negative_test.txt
-# B7b-1 Task 8: a #if group in the move TARGET slot or supplying the fixed `;` lies outside the
-# strict element list (spec rev 2; manifest: excluded, fixed-header slot/separator, owner B7b-3): stays an ERROR.
-strict_conditional_move_elements_negative_test.txt
 # B11: valid AL whose run-of-#if structure is deferred to roadmap B13 (spec §3.1 step 5).
 # Not invalid input. Cases leave this file as B13 gives them structure.
 property_value_run_b13_gap_test.txt
@@ -139,6 +136,14 @@ expression_statement_negative_test.txt
 expression_statement_b7_gap_test.txt
 # B6: alc rejects this file (AL0104); the leftover is no longer a legal statement.
 verbatim_string_unterminated_test.txt
+# B7b-3: an operator word after a bare name is not a parenless call (alc AL0104 / AL0224).
+b7b3_call_terminator_negative_test.txt
+# B7b-3 Task 6: case-branch separators alc rejects (a bare or doubled `;`), plus three pinned gaps
+# alc accepts that still ERROR (see the file's header and task-6-report.md).
+b7b3_case_separator_negative_test.txt
+# B7b-3 Task 8: the flat move header stays strict (spec 5.1): `T;` (parser policy, alc AL0319 semantic),
+# `T, B`, `T; B; C`, `T`, `()` (alc AL0104/AL0107/AL0198, tools/alc_probe/cases/b7b3/move/flat-*.al).
+b7b3_move_args_negative_test.txt
 # B7a Task 10 (2026-10-07): one witness per (family, base placement, defect kind) group of the
 # separator/continuation audit (docs/b7-separator-continuation-matrix.md). GAP cases carry `:error`
 # (an error must exist; no recovery tree is pinned) on input alc accepts in the configurations it accepts;
@@ -175,7 +180,6 @@ b7_gap_link_list_test.txt
 b7_gap_list_literal_test.txt
 b7_gap_member_access_test.txt
 b7_gap_ml_pairs_test.txt
-b7_gap_move_modification_test.txt
 b7_gap_namespace_pairs_test.txt
 b7_gap_namespace_using_test.txt
 b7_gap_operand_prefix_test.txt
@@ -195,7 +199,6 @@ b7_gap_split_code_block_test.txt
 b7_gap_split_complete_body_test.txt
 b7_gap_split_if_begin_test.txt
 b7_gap_split_if_condition_test.txt
-b7_gap_statement_terminator_test.txt
 b7_gap_subscript_test.txt
 b7_gap_table_relation_test.txt
 b7_gap_ternary_test.txt

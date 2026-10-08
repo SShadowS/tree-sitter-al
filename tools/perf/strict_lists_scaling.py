@@ -7,6 +7,9 @@ the branch library alone: per strict conditional list family it generates synthe
   * list length: a list of N items, each after the first in its own `#if X ... #endif` group, N = 10 ... 10,240;
   * nesting depth: 200 nests of depth D (`#if X , b #if X , b ... #endif ... #endif`) in one list, D = 1 ... 20;
 and, for var names, the empty-group run before a declaration that forks GLR (Task 11 review), N = 10 ... 10,240.
+B7b-3 (spec 2026-10-08 section 8.2) adds case-group series (lone `;` groups, nested empty decorations, mixed arms)
+and move-group series (spanning, nested) on the same grid and criteria; each of their inputs runs in its own
+killable worker process with a WORKER_SECONDS = 10 ceiling, and the worker's peak is held to PEAK_LIMIT too.
 Every input must parse without an error. Pass criteria, per series:
   * near-linear time: the time ratio per doubling (x = N or D) stays under RATIO_LIMIT = 2.5, measured two ways:
     fitted, 2 ** (least-squares slope of log2 t over log2 x, every point), and at the LAST doubling step, the largest
@@ -82,6 +85,121 @@ def series():
     return out
 
 
+# --- B7b-3 (spec 2026-10-08 section 8.2): case groups and move groups, same grid and limits ----------------------
+# Each input of these series runs in its own killable worker process with a WORKER_SECONDS ceiling.
+WORKER_SECONDS = 10
+CASE_HOST = b"codeunit 50100 C\n{\n    procedure M()\n    begin\ncase I of\n%send;\n    end;\n}\n"
+MOVE_HOST = b"pageextension 50113 PE extends PG\n{\n    actions\n    {\n%s    }\n}\n"
+
+
+def _nest(d, inner, arm_else=None):
+    """d nested `#if X` groups around `inner`; with arm_else every level also gets an `#else` arm holding it."""
+    if d == 0:
+        return inner
+    return (b"#if X\n" + _nest(d - 1, inner, arm_else) + (b"#else\n" + arm_else if arm_else is not None else b"")
+            + b"#endif\n")
+
+
+def case_lone_semi(n):
+    """n branches, each but the last followed by a lone-`;` group (spec 4.1: the group's `;` is the separator)."""
+    return CASE_HOST % (b"".join(b"%d: Bar\n#if X\n;\n#endif\n" % i for i in range(1, n)) + b"%d: Bar;\n" % n)
+
+
+def case_lone_semi_nested(d):
+    """DEPTH_COPIES branches separated by `;` groups nested d deep, every level with a `;` #else arm."""
+    sep = _nest(d, b";\n", b";\n")
+    return CASE_HOST % (b"".join(b"%d: Bar\n" % i + sep for i in range(1, DEPTH_COPIES)) + b"%d: Bar;\n" % DEPTH_COPIES)
+
+
+def case_decoration(n):
+    """n branches, each with an empty group between its body and its own `;` (decoration, spec 4.2.2)."""
+    return CASE_HOST % b"".join(b"%d: Bar\n#if X\n#endif\n;\n" % i for i in range(1, n + 1))
+
+
+def case_decoration_nested(d):
+    """DEPTH_COPIES branches, each with an empty decoration nested d deep before its `;`."""
+    return CASE_HOST % b"".join(b"%d: Bar\n" % i + _nest(d, b"") + b";\n" for i in range(1, DEPTH_COPIES + 1))
+
+
+def case_mixed_arms(n):
+    """n groups whose arms each hold a `;` and a branch (Phase 0 group-semi-and-branch-else), after one branch; each
+    group's `;` closes the branch before it, and the last group's branch ends the run unterminated."""
+    return CASE_HOST % (b"0: Bar\n" + b"".join(b"#if X\n;\n%d: Bar\n#else\n;\n%d: Foo\n#endif\n" % (i, i)
+                                                for i in range(1, n + 1)))
+
+
+def move_spanning(n):
+    """One move whose route-3 group spans the header: target, `;` and n elements in every arm."""
+    els = b", ".join(b"A%d" % i for i in range(1, n + 1))
+    return MOVE_HOST % (b"        moveafter(\n#if X\nA0; " + els + b"\n#else\nB0; " + els + b"\n#endif\n)\n")
+
+
+def move_nested(d):
+    """DEPTH_COPIES moves, each taking its `;` from route-2 groups nested d deep, every level with a `;` #else arm."""
+    one = b"        moveafter(\nA0\n" + _nest(d, b";\n", b";\n") + b"A1\n)\n"
+    return MOVE_HOST % (one * DEPTH_COPIES)
+
+
+def b7b3_series():
+    """-> [(family, axis, [x], source(x))], each input measured in a worker (measure_isolated)."""
+    return [("case-lone-semi", "length", LENGTHS, case_lone_semi),
+            ("case-lone-semi", "depth", DEPTHS, case_lone_semi_nested),
+            ("case-decoration", "length", LENGTHS, case_decoration),
+            ("case-decoration", "depth", DEPTHS, case_decoration_nested),
+            ("case-mixed-arms", "length", LENGTHS, case_mixed_arms),
+            ("move-spanning", "length", LENGTHS, move_spanning),
+            ("move-nested", "depth", DEPTHS, move_nested)]
+
+
+def _worker(lib, src, out):
+    """One input in a fresh process: measure()'s timing protocol, the RSS growth with the tree alive, the peak."""
+    try:
+        sys.path.insert(0, str(Path(__file__).resolve().parents[2]))
+        from tools.query_coverage import loader
+        parser = loader.make_parser(loader.load_language(Path(lib)))
+        base = _rss()
+        t0 = time.perf_counter()
+        tree = parser.parse(src)
+        k = max(1, int(BATCH_SECONDS / max(time.perf_counter() - t0, 1e-6)))
+        best = None
+        for _ in range(REPEATS):
+            t0 = time.perf_counter()
+            for _ in range(k):
+                tree = parser.parse(src)
+            dt = (time.perf_counter() - t0) / k
+            best = dt if best is None else min(best, dt)
+        out.put(("ok", best, tree.root_node.has_error, _rss() - base, _peak()))
+    except BaseException as e:      # reported as the series' error, never a pass
+        out.put(("fail", repr(e)))
+
+
+def measure_isolated(lib, xs, make, ceiling=WORKER_SECONDS, target=None):
+    """-> ([(x, bytes, seconds)], max RSS growth, error x or None, max worker peak). An input that has an error,
+    crashes or outlives `ceiling` seconds (its worker is killed) ends the series at that x."""
+    import multiprocessing as mp
+    import queue
+    ctx = mp.get_context("spawn")
+    rows, grown, peak = [], 0, 0
+    for x in xs:
+        src = make(x)
+        q = ctx.Queue()
+        p = ctx.Process(target=target or _worker, args=(str(lib), src, q), daemon=True)
+        p.start()
+        try:
+            res = q.get(timeout=ceiling)
+        except queue.Empty:
+            res = ("timeout",)
+        p.join(1)
+        if p.is_alive():
+            p.kill()
+            p.join()
+        if res[0] != "ok" or res[2]:
+            return rows, grown, x, peak
+        rows.append((x, len(src), res[1]))
+        grown, peak = max(grown, res[3]), max(peak, res[4])
+    return rows, grown, None, peak
+
+
 def _rss():
     import psutil
     return psutil.Process().memory_info().rss
@@ -144,6 +262,18 @@ def run(lib, quick=False):
         worst = max((r for _, r in rs), default=0.0)
         fit, last = fitted(rows), (rs[-1][1] if rs else 0.0)
         passed = err is None and fit < RATIO_LIMIT and last < RATIO_LIMIT and grown < MEMORY_LIMIT
+        ok &= passed
+        results.append({"family": family, "axis": axis, "rows": rows, "ratios": rs, "worst": worst, "fit": fit, "last": last,
+                        "grown": grown, "error_at": err, "pass": passed})
+    for family, axis, xs, make in b7b3_series():
+        if quick and axis != "depth":
+            xs = [x for x in xs if x <= 1280]
+        rows, grown, err, wpeak = measure_isolated(lib, xs, make)
+        rs = ratios(rows)
+        worst = max((r for _, r in rs), default=0.0)
+        fit, last = fitted(rows), (rs[-1][1] if rs else 0.0)
+        passed = (err is None and fit < RATIO_LIMIT and last < RATIO_LIMIT and grown < MEMORY_LIMIT
+                  and wpeak < PEAK_LIMIT)
         ok &= passed
         results.append({"family": family, "axis": axis, "rows": rows, "ratios": rs, "worst": worst, "fit": fit, "last": last,
                         "grown": grown, "error_at": err, "pass": passed})

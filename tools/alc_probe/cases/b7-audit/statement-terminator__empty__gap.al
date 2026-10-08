@@ -1,5 +1,5 @@
 // B7a Task 10 witness (GAP): family statement-terminator, base placement empty, 12 cells; representative occ:call_statement:0.1@case_branch#empty
-// Fixture b7_gap_statement_terminator_test.txt#B7a GAP: statement-terminator / empty (12 cells, verdict of the representative GAP); the parser ERRORs on configurations alc accepts; representative occ:call_statement:0.1@case_branch%23empty#0
+// Fixture b7b3_case_separator_test.txt#B7b-3 case decoration: empty group between the body and its semicolon (Phase 0 empty-group-before-semi; B7a statement-terminator empty)#0
 // expect: !X accept
 // expect: X accept
 // source: recorded by B7a Task 10, 2026-10-07: the alc split verdicts of cell occ:call_statement:0.1@case_branch#empty in tools/b7_audit/evidence.jsonl.gz

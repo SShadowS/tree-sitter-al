@@ -1,0 +1,75 @@
+// B7b-3 Task 6 fix round 1 probe case/overaccept-semi-group-after-terminated: invalid in every configuration; the grammar over-accepts it
+// Fixture b7b3_case_separator_negative_test.txt#B7b-3 case known over-acceptance: a `;` group after a terminated branch, `;` in every arm (invalid in every configuration, alc AL0104,AL0111,AL0224; classified over-acceptance, deferred-work item 44 precedent)#0
+// expect: * reject(AL0104,AL0111,AL0224)
+// source: B7b-3 Task 6 fix round 1, 2026-10-08
+table 50100 T
+{
+    fields
+    {
+        field(1; K; Code[20]) { }
+        field(2; N; Integer) { }
+        field(3; B; Boolean) { }
+        field(9; O; Option) { OptionMembers = A,B,C; }
+    }
+    keys
+    {
+        key(PK; K) { Clustered = true; }
+    }
+}
+codeunit 50101 P
+{
+    procedure Q(): Integer
+    var
+        R: Record T;
+        I: Integer;
+        C: Boolean;
+        Ok: Boolean;
+    begin
+        case I of
+        1: A;
+#if X
+        ;
+#else
+        ;
+#endif
+        2: B;
+        end;
+    end;
+
+    procedure Continue()
+    begin
+    end;
+
+    procedure A()
+    begin
+    end;
+
+    procedure B()
+    begin
+    end;
+
+    procedure Bar()
+    begin
+    end;
+
+    procedure Baz()
+    begin
+    end;
+
+    procedure Order()
+    begin
+    end;
+
+    procedure Table()
+    begin
+    end;
+
+    procedure "My Proc"()
+    begin
+    end;
+
+    procedure Foo(A: Integer; B: Integer): Integer
+    begin
+        exit(A + B);
+    end;
+}

@@ -248,3 +248,14 @@ def test_not_probed_prints_the_real_skip_reason():
     _, text = build(cell("k1@hA#p1", "hA", err=True))
     probed = text.split("## Not probed")[1]
     assert "no top-level separator in plain" in probed and "no evidence record for this row" not in probed
+
+
+def test_committed_matrix_witnesses_exist():
+    """B7b-3 Task 10: every witness column of the committed matrix points at a file that exists (a defect group whose
+    kind changed, e.g. GAP -> OVERACCEPT, renames its probe slug; the probe must follow)."""
+    import re
+    root = Path(__file__).resolve().parents[3]
+    text = (root / "docs/b7-separator-continuation-matrix.md").read_text(encoding="utf-8")
+    cited = set(re.findall(r"(tools/alc_probe/cases/b7-audit/[\w\-]+\.al|test/corpus/[\w\-]+\.txt"
+                           r"|tools/b7_audit/tests/\w+\.py)", text))
+    assert cited and sorted(p for p in cited if not (root / p).is_file()) == []

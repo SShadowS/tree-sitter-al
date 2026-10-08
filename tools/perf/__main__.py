@@ -4,6 +4,7 @@
    python -m tools.perf build [--out DIR]
    python -m tools.perf oracle [--corpus LABEL ...] [--no-full] [--out DIR]
    python -m tools.perf parity --lib-a A.dll --lib-b B.dll [--corpus all|LABEL ...]   # tree-only, exit 0/1/2
+   python -m tools.perf delta --lib-a A.dll --lib-b B.dll [--corpus all|LABEL ...] [--out OUT.json]  # B7b-3 E1-E3, exit 0/1/2
    python -m tools.perf compare OLD.json NEW.json
    python -m tools.perf merge BASE.json NEW.json      # replace BASE's groups with NEW's
    python -m tools.perf render RESULT.json [--doc PATH]
@@ -132,6 +133,12 @@ def main(argv=None):
     par.add_argument("--lib-b", required=True)
     par.add_argument("--corpus", action="append", choices=("all", *common.LABELS))
     par.add_argument("--workers", type=int)
+    dl = sub.add_parser("delta", help="explain every tree change between two libraries by the B7b-3 edits E1-E3")
+    dl.add_argument("--lib-a", required=True)
+    dl.add_argument("--lib-b", required=True)
+    dl.add_argument("--corpus", action="append", choices=("all", *common.LABELS))
+    dl.add_argument("--workers", type=int)
+    dl.add_argument("--out")
     c = sub.add_parser("compare")
     c.add_argument("old")
     c.add_argument("new")
@@ -174,6 +181,9 @@ def main(argv=None):
     if args.cmd == "parity":
         from tools.perf import parity
         return parity.main(args.lib_a, args.lib_b, args.corpus, args.workers)
+    if args.cmd == "delta":
+        from tools.perf import delta
+        return delta.main(args.lib_a, args.lib_b, args.corpus, args.workers, args.out)
     if args.cmd == "ab":
         labels = tuple(args.corpus or ("dc",))
         result = measure(("ab",), labels, ab_args=(args.lib_a, args.lib_b, args.rounds))

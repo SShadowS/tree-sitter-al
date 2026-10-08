@@ -96,7 +96,11 @@ def test_statement_slot_optionality():
     for owner in ("preproc_conditional_statement", "preproc_split_case_statement_end"):
         hosts = contracts.REGISTRY[owner].hosts
         assert hosts["asserterror_statement:body"] == "optional-slot"
-        for slot in ("if_statement:then_branch", "if_statement:else_branch", "case_branch:body",
+        # case_branch:body is mandatory in the grammar, but selection may remove the whole body; the
+        # branch's own `;` then becomes it (named rewrite empty-body-terminator, B7b-3 Task 7 ruling 1),
+        # and a branch left with no body is refused by case_terminators.attach.
+        assert hosts["case_branch:body"] == "optional-slot"
+        for slot in ("if_statement:then_branch", "if_statement:else_branch",
                      "for_statement:body", "while_statement:body"):
             assert hosts[slot] == "single-slot", slot
 

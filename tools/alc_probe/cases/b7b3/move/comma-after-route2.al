@@ -1,8 +1,8 @@
-// B7a Task 10 witness (GAP): family move-modification, base placement sep-before-end, 60 cells; representative occ:moveafter_modification:1.2@action_body#sep-before-end
-// Fixture b7_gap_move_modification_test.txt#B7a GAP: move-modification / sep-before-end (60 cells, verdict of the representative MIXED); the parser ERRORs on configurations alc accepts; representative occ:moveafter_modification:1.2@action_body%23sep-before-end#0
-// expect: !X reject(AL0104)
+// B7b-3 Phase 0 probe move/comma-after-route2
+// Fixture b7b3_move_args_test.txt#b7b3 move route 2 MIXED: comma continuation after the group (comma-after-route2)#0
+// expect: !X reject(AL0104,AL0107)
 // expect: X accept
-// source: recorded by B7a Task 10, 2026-10-07: the alc split verdicts of cell occ:moveafter_modification:1.2@action_body#sep-before-end in tools/b7_audit/evidence.jsonl.gz
+// source: B7b-3 Phase 0, 2026-10-08
 table 50100 T
 {
     fields
@@ -36,6 +36,9 @@ page 50102 PG
             action(A1) { trigger OnAction() begin end; }
             action(A2) { trigger OnAction() begin end; }
             action(A3) { trigger OnAction() begin end; }
+            action(A4) { trigger OnAction() begin end; }
+            action("My Action") { trigger OnAction() begin end; }
+            action(Value) { trigger OnAction() begin end; }
         }
     }
 }
@@ -48,6 +51,7 @@ A1
 #if X
 ; A2
 #endif
+, A3
 )
     }
 }

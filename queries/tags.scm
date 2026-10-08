@@ -316,6 +316,13 @@
 (call_expression
   function: (identifier) @name) @reference.call
 
+; Parenless calls (B7b-3)
+(call_statement
+  function: [
+    (identifier)
+    (quoted_identifier)
+  ] @name) @reference.call
+
 ; Method calls on objects
 (call_expression
   function: (member_expression

@@ -4,9 +4,9 @@
 ; docs/superpowers/specs/2026-10-06-expression-statement-narrowing-design.md §5.2; alc evidence
 ; tools/alc_probe/cases/expression-statement/accept-*.al.
 ;
-; Current behaviour, not a contract: `Bar;` gives a `call_statement`, while `Bar` before `end`
-; and `Order;` give a bare `identifier`. That two-shape split predates B6 and is pinned here
-; only so a change to it is seen.
+; Since B7b-3 (deferred item 40 closed): a parenless call has one shape. `Bar;`, `Bar` before
+; `end` or `else`, `Order;`, `Table` and a quoted name all give `call_statement` with
+; `function:`; the `;` belongs to the host route, not to the call.
 
 ================================================================================
 B6 statement: call
@@ -225,7 +225,7 @@ Bar
         body: (code_block
           (begin_keyword)
           body: (statement_block
-            (identifier))
+            (call_statement function: (identifier)))
           (end_keyword))))))
 
 ================================================================================
@@ -282,7 +282,7 @@ if C then Bar else Foo();
               (if_keyword)
               condition: (identifier)
               (then_keyword)
-              then_branch: (identifier)
+              then_branch: (call_statement function: (identifier))
               (else_keyword)
               else_branch: (call_expression
                 function: (identifier)
@@ -393,7 +393,7 @@ codeunit 50101 P {
         body: (code_block
           (begin_keyword)
           body: (statement_block
-            (quoted_identifier))
+            (call_statement function: (quoted_identifier)))
           (end_keyword))))))
 
 ================================================================================
@@ -446,7 +446,7 @@ Order;
         body: (code_block
           (begin_keyword)
           body: (statement_block
-            (identifier))
+            (call_statement function: (identifier)))
           (end_keyword))))))
 
 ================================================================================
@@ -499,7 +499,7 @@ Table
         body: (code_block
           (begin_keyword)
           body: (statement_block
-            (identifier))
+            (call_statement function: (identifier)))
           (end_keyword))))))
 
 ================================================================================
@@ -556,9 +556,9 @@ if C then Order else Table;
               (if_keyword)
               condition: (identifier)
               (then_keyword)
-              then_branch: (identifier)
+              then_branch: (call_statement function: (identifier))
               (else_keyword)
-              else_branch: (identifier)))
+              else_branch: (call_statement function: (identifier))))
           (end_keyword))))))
 
 ================================================================================
@@ -1348,7 +1348,7 @@ if C then "My Proc" else Foo();
               (if_keyword)
               condition: (identifier)
               (then_keyword)
-              then_branch: (quoted_identifier)
+              then_branch: (call_statement function: (quoted_identifier))
               (else_keyword)
               else_branch: (call_expression
                 function: (identifier)

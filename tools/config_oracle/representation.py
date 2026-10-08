@@ -8,7 +8,7 @@ from __future__ import annotations
 
 from tools.config_oracle import contracts
 from tools.config_oracle.compare import Discrepancy
-from tools.config_oracle.lowering import conditional_lists
+from tools.config_oracle.lowering import conditional_lists, move_args
 from tools.config_oracle.lowering.engine import LoweringError
 from tools.config_oracle.lowering.select import split_arms
 
@@ -47,4 +47,8 @@ def check(root):
     for p in conditional_lists.validate_split(root):
         path, _, what = p.partition(": ")
         out.append(Discrepancy("representation", "strict-list", path, what))
+    # B7b-3 move header, spec 2026-10-08 section 6.3 (pre-selection: route, types, fields, groups).
+    for p in move_args.validate_split(root):
+        path, _, what = p.partition(": ")
+        out.append(Discrepancy("representation", "move-header", path, what))
     return out

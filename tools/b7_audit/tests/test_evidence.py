@@ -165,8 +165,14 @@ def test_alc_measured_row_is_never_class_sampled():
     reps = evidence.representatives((i.id, i.cls) for i in infos)
     assert evidence.tiers(infos, reps) == {"a": None, "b": None, "c": "a"}
     marked = [e for e in evidence.universe() if e.measure]
-    assert marked and {e.cell.key for e in marked} == {"occ:implements_clause:2.0.0"}
-    assert {e.cell.host for e in marked} == {"enum_declaration"}
+    # B7b-3 Task 7 (controller ruling): the case-branch call row joins it; its cells are oracle-clean once
+    # the case-group `;` lowers, and the statement-terminator representative's vector is not theirs.
+    # B7b-3 Task 10: the if_statement, statement_block and while-group call rows join it for the same reason (their
+    # trail cells: a parenless call before `end` needs no `;`).
+    assert marked and {(e.cell.key, e.cell.host) for e in marked} == {
+        ("occ:implements_clause:2.0.0", "enum_declaration"), ("occ:call_statement:0.1", "case_branch"),
+        ("occ:call_statement:0.1", "if_statement"), ("occ:call_statement:0.1", "statement_block"),
+        ("occ:call_statement:0.1", "while_statement")}
 
 
 def test_records_sorted_and_deterministic(tmp_path):

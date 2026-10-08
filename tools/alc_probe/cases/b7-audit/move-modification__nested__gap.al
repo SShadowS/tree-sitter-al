@@ -1,5 +1,5 @@
 // B7a Task 10 witness (GAP): family move-modification, base placement nested, 12 cells; representative occ:moveafter_modification:1.2@action_body#nested
-// Fixture b7_gap_move_modification_test.txt#B7a GAP: move-modification / nested (12 cells, verdict of the representative GAP); the parser ERRORs on configurations alc accepts; representative occ:moveafter_modification:1.2@action_body%23nested#0
+// Fixture b7b3_move_args_test.txt#b7b3 move route 2: nested `;` groups (nested)#0
 // expect: !X !Y accept
 // expect: !X Y accept
 // expect: X !Y accept

@@ -750,6 +750,13 @@
 (call_expression
   function: (identifier) @function.call)
 
+; Parenless calls (B7b-3): a bare name in statement position
+(call_statement
+  function: (identifier) @function.call)
+
+(call_statement
+  function: (quoted_identifier) @function.call)
+
 ; Method calls on objects
 (call_expression
   function: (member_expression

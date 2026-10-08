@@ -1,8 +1,7 @@
-// B7a Task 10 witness (GAP): family case-branch, base placement trail, 21 cells; representative occ:case_branch:0.3.0@case_body#trail
-// Fixture b7_gap_case_branch_test.txt#B7a GAP: case-branch / trail (21 cells, verdict of the representative MIXED); the parser ERRORs on configurations alc accepts; representative occ:case_branch:0.3.0@case_body%23trail#0
-// expect: !X reject(AL0111)
-// expect: X accept
-// source: recorded by B7a Task 10, 2026-10-07: the alc split verdicts of cell occ:case_branch:0.3.0@case_body#trail in tools/b7_audit/evidence.jsonl.gz
+// B7b-3 Task 10 witness (GAP): family case-branch, base placement trail, 6 cells; representative occ:preproc_split_case_end_branch:1.0@preproc_split_case_statement_end#trail (deferred B7 in b7b3-manifest.tsv: the split case end branch has no slot for a `;` beside it)
+// Fixture b7_gap_case_branch_test.txt#B7a GAP: case-branch / trail (6 cells, verdict of the representative GAP, deferred B7: no slot for a `;` beside the end branch); the parser ERRORs on configurations alc accepts; representative occ:preproc_split_case_end_branch:1.0@preproc_split_case_statement_end#trail#0
+// expect: * accept
+// source: recorded by B7a, re-read by B7b-3 Task 10, 2026-10-08: the alc split verdicts of cell occ:preproc_split_case_end_branch:1.0@preproc_split_case_statement_end#trail in tools/b7_audit/evidence.jsonl.gz
 table 50100 T
 {
     fields
@@ -31,15 +30,24 @@ codeunit 50101 P
     begin
 case I of
 1:
+Bar();
+2:
+#if TPL
 
 Bar()
 #if X
 ;
 #endif
 
-2:
-Bar();
 end;
+I := 1;
+#else
+begin
+Bar();
+end
+end;
+I := 2;
+#endif
     end;
 
     procedure Bar()

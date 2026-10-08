@@ -1584,16 +1584,22 @@ Production sites: 0 (tree-harness over the four corpora shows no valid tree chan
 
 **Owner:** B7.
 
-## 40. A bare parenless call has two shapes: `Bar;` and `Order;`
+## 40. A bare parenless call has two shapes: `Bar;` and `Order;` — RESOLVED 2026-10-08
 
 **Established:** 2026-10-06, B6 Task 4; pre-existing, not changed by B6. `Bar;` parses as
 `(call_statement function: (identifier))`, but `Bar` before `end` (no `;`) and `Order;` give a bare `(identifier)`
 statement: `call_statement` takes only identifier and quoted-identifier tokens, and `Order` arrives through
 `_value_start_keyword_name`. Pinned in `test/corpus/expression_statement_test.txt` as current behaviour, not a contract.
 
-**Next step:** pick one shape for "a bare name as a statement" and route every arm to it.
+**Resolved 2026-10-08, B7b-3 (`3955dbf`).** `call_statement` no longer owns its `;` and takes `identifier`,
+`quoted_identifier` and `Order`/`Table` (`alias($._value_start_keyword_name, $.identifier)`), so `Bar;`, `Bar` before
+`end` / `else` / `until`, `"My Proc";`, `Order;` and `Table;` all give `(call_statement function: ...)`; the `;` is the
+enclosing host route's. The item-40 pin in `test/corpus/expression_statement_test.txt` flipped (7 cases), and
+`test/corpus/b7b3_call_terminator_test.txt` pins the shape with hand-written fields. Production: 29 bare names in DC
+became calls (`tools.perf delta`, class E3), BC.History, BC28.1 and BCApps-29.0 had none outside an already-erroring file.
+Spec `docs/superpowers/specs/2026-10-08-b7b-3-statement-terminators-design.md` section 3.
 
-**Owner:** unassigned.
+**Owner:** B7b-3 (done).
 
 ## 41. An `as`/`is` continuation across `#if` arms is torn into separate statements silently (B7a)
 
@@ -1640,8 +1646,36 @@ statement block holds a bare `(identifier)` statement for `else` and an `assignm
 `; else` (a `;` before `else` ends the `if`). Likely B6 territory: `else` is not reserved in code; the reserved set
 `code_names` covers only the operator words.
 
+**Update 2026-10-08 (B7b-3 Task 4).** Since `call_statement` stopped owning its `;`, the orphan `else` is no longer a
+bare `identifier` but `(call_statement function: (identifier))`, so `highlights.scm` captures it as `@function.call` and
+`tags.scm` emits a call named `else`. Inputs (alc AL0110, `tools/alc_probe/cases/b7b3/calls/{bar,assign}-semi-else-rejected.al`,
+`bar-newline-else-rejected.al`): `if C then Bar; else Baz;`, `if C then X := 1; else X := 2;`, `Bar` newline `else`.
+Pinned as they parse today in `test/corpus/b7b3_orphan_else_overaccept_test.txt`.
+**Tried and reverted (fix round 1):** adding `$._else_token` to the `code_names` reserved set. It generates (+0 states),
+makes all three ERROR and changes no production tree (`tools.perf delta`, four corpora, 0 files), but 6 alc-accepted B7a
+cells go from clean to ERROR: `occ:preproc_split_if_then_begin:0.5.0.0@preproc_split_code_block_end#first-replace`
+and `occ:preproc_split_if_then_begin_else_shared:0.15.0.0@...#first-replace` (+comments, +not), where the parser
+already misreads a split block's `end` and `end else` as parenless calls (a silent wrong tree today). The ruling admits
+the reservation only if no valid tree changes, so the shape is pinned instead. The real fix needs those split-block
+hosts to read `end else` before `else` can be reserved.
+
 Same review, same tool: `case I of 1: I := 1` followed by a lone-`;` arm (`#if X` / `;` / `#endif`) and then `2: ...`
-has errors in the split tree (`has_error`); the B7a statement-terminator case-branch cells are GAP for this reason.
+had errors in the split tree (`has_error`); the B7a statement-terminator case-branch cells were GAP for this reason.
+**Fixed in B7b-3 (`e085ac8`):** a `preproc_conditional_case` arm may hold an `empty_statement`, and the oracle attaches
+the selected `;` to the preceding branch (`case-terminator-attach`); `test/corpus/b7b3_case_separator_test.txt`.
+The orphan `else` itself stays open (owner: the B12 split-block work, see above).
+
+**Update 2026-10-08 (B7b-3 final review I2): a VALID split input gives the same wrong tree.**
+`if C then Bar #if X ; #endif else Baz;` and its assignment twin `if C then I := 1 #if X ; #endif else I := 2;`
+(each directive on its own line). alc accepts X=0 (`if C then Bar else Baz;`) and rejects X=1 with AL0110 (Phase 0
+probe `tools/alc_probe/cases/b7b3/calls/bar-group-else-semi.al`). The split tree has no ERROR: the `if_statement` ends at
+`Bar`, the group holds an `empty_statement`, and `else` and `Baz` follow as two `call_statement`s, so in the one
+configuration alc accepts the `else` is read as a call instead of the if's else. On main `else` was a bare
+`(identifier)`; since B7b-3 it is a `call_statement`, captured as `@function.call` and tagged as a call named `else`.
+The config oracle reports a discrepancy at X=0 (not laundered); `test_else_after_a_semicolon_group_stays_a_discrepancy`
+in `tools/config_oracle/tests/test_lowering_select.py` pins that, so no later rewrite can normalise it. 0 production sites.
+The grammar fix belongs with the B12 split-block / `else` work above (the `else` must stay the if's when the `;` that
+would end the if is in a group).
 
 **Owner:** unassigned.
 
@@ -1675,6 +1709,25 @@ Every directive stands on its own line in the measured inputs. Related, pre-exis
 - `Z, Key: Text;` (`Key` as a non-first variable name): alc AL0104/AL0105/AL0107 (Task 2), the parser accepts it, on
   main too; also after an attribute.
 
+**B7b-3 additions (2026-10-08, Task 6 fix round 1, `39cfe92`).** The case-separator rules (B7b-3 spec 4.2.4) have the same
+property: an arm of `preproc_conditional_case` may hold `empty_statement`s, and nothing checks that a `;` follows an
+unterminated branch in every configuration. Five shapes invalid in every configuration (alc AL0104 and AL0224, all but
+one also AL0111) now parse clean; each is pinned with its CLI tree in `test/corpus/b7b3_case_separator_negative_test.txt`,
+has an alc probe `tools/alc_probe/cases/b7b3/case/overaccept-*.al` and a `negative` row in `fixture-classes.tsv`:
+
+| probe | shape |
+|---|---|
+| `overaccept-leading-semi-group` | `case I of #if X ; #else ; #endif 1: B; end;` (a `;` group at the start of the case run) |
+| `overaccept-leading-semi-ext-arm` | `case I of #if X ; 1: #else ; 2: #endif B; end;` (a `;` opening every arm of a `preproc_split_case_extended`; its arms take the case group items since B7b-3) |
+| `overaccept-leading-semi-then-branch-arms` | `case I of #if X ; 1: B; #else ; 2: B; #endif end;` |
+| `overaccept-semi-group-after-terminated` | `1: A; #if X ; #else ; #endif 2: B;` (a `;` group after a terminated branch) |
+| `overaccept-semi-after-terminated-in-arm` | `#if X 1: A; ; #else 1: A; ; #endif` (a terminated branch then `;` in every arm) |
+
+Unchanged from main: flat `1: ;;` is accepted (the body is the first `;`, the branch owns the second). On the move header,
+spec 5.4's two classified routes-2-3 over-acceptances (`moveafter(T #if X , A #endif)`, a `,` where the `;` belongs, and a
+group holding two targets) are pinned in `test/corpus/b7b3_move_args_test.txt` with probes
+`tools/alc_probe/cases/b7b3/move/over-comma-for-semi.al` and `group-two-targets.al`.
+
 **Next step:** only if a consumer needs it: per-arm separator tracking (each arm records whether it starts or ends with a
 separator) would make the forms ERROR, at a cost the spec chose not to pay. Until then the oracle keeps them visible.
 
@@ -1705,7 +1758,7 @@ every arm's first declaration), and give attributes inside groups a grammar home
 
 **Owner:** unassigned (B7b-1d is the nearest sub-project).
 
-## 46. The remaining list families: B7b-1b..g, and the move fixed `;` (B7b-3)
+## 46. The remaining list families: B7b-1b..g (the move fixed `;` is done, B7b-3)
 
 **Established:** B7b-1 spec section 2 (2026-10-07) and the B7a matrix after B7b-1. Each family keeps its GAP witnesses
 (`:error`) until its sub-project converts it; cell counts are matrix cells, production sites 0 unless noted.
@@ -1718,7 +1771,7 @@ every arm's first declaration), and give attributes inside groups a grammar home
 | B7b-1e | `option-members` (holes, witness policy; B13 overlap, matrix owner B13, items 37/38) | GAP 1,111 | `b7_gap_option_members_test.txt` (23) |
 | B7b-1f | `permissions`, `link-list` (B12 overlap), `link-list-comma-leading` (dependency `link-property-ambiguity`) | GAP 355 / 98 / 297; OVERACCEPT 69 / 41 / 15 | `b7_gap_permissions_test.txt` (17), `b7_gap_link_list_test.txt` (21), `b7_gap_link_list_comma_leading_test.txt` (9) |
 | B7b-1g | `type-arguments`: `Dictionary of [K, V]` / `List of [T]` are fixed-arity positional slots (`key_type`, `value_type`), not a list; needs a fixed-arity slot adapter | GAP 24, all 24 manifest cells `deferred`, cardinality `unknown` (not probed by alc) | `b7_gap_type_arguments_test.txt` (8) |
-| B7b-3 | `move-modification`: a group that supplies or replaces the fixed `;` or the target (72 manifest cells `excluded`, fixed-header separator/slot) | GAP 72 | `b7_gap_move_modification_test.txt` (6), `strict_conditional_move_elements_negative_test.txt` (2, `debt(B7b-3)` rows; the loader admits the B7b ids since the final review) |
+| B7b-3 (**DONE 2026-10-08**, `28dfdbc`, `a576506`) | `move-modification`: a group that supplies or replaces the fixed `;` or the target. Routes 2-3 and `preproc_conditional_move_args`; the 72 cells are the B7b-1 manifest's transfer set, admitted and passing in `tools/b7_audit/b7b3-manifest.tsv`. B7b-3 also did the `statement-terminator` family (parenless calls, case-branch separators), which was never a B7b-1 row | GAP 72 -> 0 | removed: `b7_gap_move_modification_test.txt` (6) and `strict_conditional_move_elements_negative_test.txt` (2) became positive cases in `b7b3_move_args_test.txt`; flat negatives in `b7b3_move_args_negative_test.txt` |
 
 All witness files are under `test/corpus/` and listed in `tools/deliberate-negatives.txt`. Also outside B7b-1 and
 unassigned within B7b: the header families `key-header` (GAP 18, `b7_gap_key_header_test.txt`) and `fieldgroup-header`
@@ -1729,6 +1782,134 @@ unassigned within B7b: the header families `key-header` (GAP 18, `b7_gap_key_hea
 list is homogeneous (CLAUDE.md, "Strict conditional lists (B7b-1)").
 
 **Owner:** as listed.
+
+## 47. Six case shapes alc accepts still ERROR (B7b-3)
+
+**Established:** 2026-10-08, B7b-3 Task 6 (`e085ac8`, `task-6-report.md`). The case-separator rules (spec 4.2) take a `;`
+from a group only as an arm item or before a branch's own `;`; these three put the `;` where neither rule reaches. Each
+is an `:error` case in `test/corpus/b7b3_case_separator_negative_test.txt` (title `B7b-3 case known gap: ...`) with a
+`debt(B7)` row in `tools/config_oracle/fixture-classes.tsv`:
+
+1. `1: Bar; #if X 2: Baz #endif ;`: the group's last branch takes its `;` after `#endif` (alc accepts X; probe
+   `tools/alc_probe/cases/b7b3/case/group-branch-then-semi.al`).
+2. `1: Bar #if X ; 2: Baz #endif ;`: the `;` after `#endif` closes whichever branch the configuration ends with (alc
+   accepts both configurations; `group-semi-then-branch-closing.al`).
+3. An empty group before the header of a `preproc_split_case_extended`: `#if X 1: A; #if Y #endif 2: #else 2: #endif B;`
+   (ERRORs on main too; `ext-header-after-empty-group.al`).
+
+Three more from the B7b-3 final review (M1), same file and title prefix, each with an alc probe whose verdicts were
+measured with `tools.alc_probe` (each directive on its own line in the real input):
+
+4. `1: Bar #if X ; #endif ; 2: Baz;`: X=0 is `1: Bar ; 2: Baz;` (alc accepts; X=1 AL0104/AL0111/AL0224); the bare `;`
+   after a `;` group has no slot and ERRORs (`semi-group-then-semi.al`).
+5. `1: Bar #if X ; #endif #if Y #endif ;` before `end`: X=0 accepted (X=1 AL0104/AL0224); same missing slot, with an
+   empty group between (`semi-group-empty-group-semi.al`).
+6. `1: Bar #if X #endif #if Y ; #endif 2: Baz;`: Y=1 is `1: Bar; 2: Baz;` (alc accepts; Y=0 AL0111); the empty group is
+   taken as the next branch's pattern group and the `;` group breaks it, so spec 4.2.2's "empty groups after a branch
+   with no `;` following stay sibling nodes" does not hold when a `;` group follows (`empty-group-then-semi-group.al`).
+
+Shapes 1 and 2 need a `;` after `#endif` that belongs to a branch inside the group, a configuration-dependent owner
+(B12-like); shape 3 needs a decoration before a split header; shapes 4 and 5 need a `;` after a `;` group read as an
+empty statement only where the group supplied the separator (the case analogue of item 48); shape 6 needs an empty group
+before a `;` group to stay a decoration. All visible ERRORs, 0 production sites.
+
+**Next step:** decide per shape whether a split tree can hold it without a one-reading guess; alc first.
+
+**Owner:** B7.
+
+## 48. A configuration-independent orphan `;` around empty groups (B7b-3, grammar)
+
+**Established:** 2026-10-08, B7b-3 Task 10 review (C1) and fix round (`cca9985`, `07d1e9c`). Two split-tree shapes are
+wrong in EVERY configuration, and the oracle must not normalise them:
+
+1. A `;` before a group: `x := 1; #if A ; #endif ;`. The arm's lone `;` is an `empty_statement` inside the group; the
+   outer `;` stays a bare `;` of the block, where every configuration reads an `empty_statement` for it.
+2. An empty group before a `;`: `begin #if X #endif ; end`, `x := 1; #if A #endif ; ;`, `#if TPL2 #if X #endif ; #endif`.
+   The empty group takes the statement slot and the `;` is a bare terminator; every configuration reads an
+   `empty_statement`.
+
+The oracle reports these as discrepancies (visible SILENT cells). An earlier, broader `orphan-terminator` rewrite
+normalised them into agreement in every configuration and was narrowed (review C1): it now fires only on a bare `;`
+whose original preceding sibling is a `preproc_conditional_statement` with an arm ending in a statement without its own
+`;` (`engine.orphan_candidates`). That test is narrower than its rule ("a group leaves a statement without its own `;`
+in some configuration"): `#if A x := 1 #if B #endif #endif ;` and `#if A x := 1 #endif #if B #endif ;` satisfy the rule
+but not the test and give a discrepancy at A=0. Two more natural shapes miss it the same way (final review M2):
+`x := 1 #if A ; #endif ;` and `if C then Bar #if X ; #endif ;`. The group follows an UNTERMINATED statement and its arm's
+last item is the lone `;`, so `_ends_unterminated` (which reads each arm's last item) says no; at A=1 / X=1 the flat
+text `x := 1; ;` is valid and the outer `;` an empty statement, and the oracle reports a false discrepancy. All four
+fail loud, never mask; 0 production sites (the engine.py docstring lists them). The rewrite was deliberately not
+widened.
+
+Cells: 18, `deferred`, owner B7, in `tools/b7_audit/b7b3-manifest.tsv`: `occ:empty_statement:@{preproc_conditional_statement,
+preproc_split_code_block_end, preproc_split_else_begin_over_endif, statement_block}#empty*` (12) and
+`occ:empty_statement:@preproc_split_block_{close_after_endif,end_in_else}#empty*` (6, previously deferred B12). Matrix
+group `statement-terminator / empty`, SILENT 18, witness in `tools/b7_audit/tests/test_silent.py`
+(`test_configuration_independent_orphan_is_not_normalised` in `tools/config_oracle/tests/test_lowering_select.py` pins
+the review's inputs).
+
+**Next step:** a decoration-aware `_statement` terminator in the grammar (an empty group before a `;` is a decoration,
+not a statement), as B7b-3 did for case branches. It touches `_statement`, so every statement; measure conflicts and
+states first.
+
+**Owner:** B7.
+
+## 49. B7b-3 manifest cells deferred by host limitation (C1, B12, B7a)
+
+**Established:** 2026-10-08, B7b-3 Task 2 (`7a42b3a`, variant-test ruling): a cell whose oracle refusal is the same with
+the B7b-3 mechanism taken out (a parenless call replaced by `Bar()`, or the preceding statement by an assignment) is a
+limitation of its host, not of B7b-3, and is `deferred` to the host's owner. Measured from
+`tools/b7_audit/b7b3-manifest.tsv` at the end of B7b-3, after the final fix wave added families `case-branch` and
+`split-call` to its scope (2,699 entries, 1,251 admitted, 1,448 deferred, `manifest --check` 0 problems):
+
+| owner | cells | verdicts | what |
+|---|---|---|---|
+| C1 | 964 | CONSISTENT 937, MIXED 15, SILENT 12 | hosts the oracle cannot lower (`lowering:unsupported-type`, `lowering:empty-node`): `preproc_guarded_statement`, `preproc_split_if_statement`, `preproc_split_if_else_statement`, `preproc_split_open_statement`, `preproc_split_if_begin_asymmetric`, `preproc_split_if_begin_else`, `preproc_split_if_then_begin`, `preproc_split_if_then_begin_else_shared`, `preproc_split_code_block_over_endif`, `preproc_fragmented_else_tail`, `preproc_conditional_controladdin`; and 409 `split-call` cells, `preproc_split_call_statement` (spec 3.3), 399 of them repaired by B7b-3 and closed by assertion rows (final fix wave) |
+| B12 | 72 | CONSISTENT 72 | `preproc_split_block_{close_after_endif,end_in_else}`: pass at TPL2=0, `lowering:one-reading` at TPL2=1 |
+| B7 | 66 | SILENT 18, GAP 48 | items 48 and 50 (50: 18 `statement-terminator` cells and 30 `case-branch` cells of the same end-branch shape) |
+| B7b+ | 340 | GAP 297, MIXED 43 | pre-existing parse gaps in `case-branch` (90) and `split-call` (250) shapes B7b-3 does not touch (B7a matrix route owner) |
+| B7a | 6 | UNCHECKED 6 | `statement_block#trail`: representative vector mismatch (item 42) |
+
+Most C1 cells are CONSISTENT through assertion rows; their configured validation waits for C1. The 60 SILENT cells
+Task 2 deferred are now: 42 `occ:call_statement:0.1@preproc_split_block_*` cells repaired by the call change and
+re-recorded `admitted` (`326a6d4`, pass at TPL2=0, one-reading at TPL2=1); 6 split-block `#empty` cells moved to item 48
+(`07d1e9c`); 12 still SILENT, `occ:empty_statement:@{preproc_guarded_statement, preproc_split_if_else_statement,
+preproc_split_if_statement, preproc_split_open_statement}#adjacent-compl*` (C1; matrix group `statement-terminator /
+adjacent-compl` SILENT 12, its witness refused with the named `lowering:unsupported-type`).
+
+Related, outside the two B7b-3 families: the six split-if-begin groups inside case branches parse since B7b-3 Task 6
+and are SILENT (matrix family `split-if-begin` SILENT 111 cells): `preproc_split_if_begin_asymmetric` is not lowered by the oracle
+(C1), and in one configuration its `end` is the case's (a one-reading boundary, B12). Pinned as representation fixtures
+in `test/corpus/b7b3_case_separator_split_if_begin_test.txt`, witnesses in `test_silent.py`.
+
+**Next step:** C1 (lowering for the split hosts) and B12 (one-reading boundaries); re-run `manifest --check` after
+either and re-record the cells that pass.
+
+**Owner:** C1, B12, B7a as listed.
+
+## 50. A `;` group beside a split case's end branch has no slot (B7b-3)
+
+**Established:** 2026-10-08, B7b-3 Task 6 fix round 1 / Task 7 (`ede9509`). `preproc_split_case_end_branch` became the
+fourth decoration host (spec 4.2.2 amendment 6): an empty group before its own `;` is a decoration. A group that holds a
+`;` beside the end branch, before the case's `end`, has no host slot and ERRORs; alc accepts the configurations. Cells:
+18, `deferred`, owner B7 (`occ:call_statement:0.1@preproc_split_case_end_branch#*` 15, `occ:empty_statement:@preproc_split_case_end_branch#*`
+3); matrix family `statement-terminator` GAP 18 (adjacent-compl 6, elif 3, nested 3, sep-only 3, trail 3).
+
+The same shape appears under the `case-branch` family's own keys:
+`occ:preproc_split_case_end_branch:{1.0,3}@preproc_split_case_statement_end#{adjacent-compl,elif,nested,sep-only,trail}*`
+(30 cells, GAP, deferred B7 in the B7b-3 manifest since the final fix wave scoped that family; witness
+`b7_gap_case_branch_test.txt`, case-branch / trail).
+
+**Witnesses (final fix wave, review M4):** one `:error` case per placement (adjacent-compl, elif, nested, sep-only,
+trail), each the group's representative `occ:call_statement:0.1@preproc_split_case_end_branch#<placement>` cell, in
+`test/corpus/b7_gap_case_branch_test.txt` (title `B7a GAP: statement-terminator / <placement> ...`, a deliberate negative
+already listed in `tools/deliberate-negatives.txt`, classified `debt(B7)` in `tools/config_oracle/fixture-classes.tsv`);
+the matrix-witness probes `tools/alc_probe/cases/b7-audit/statement-terminator__<placement>__gap.al` now carry that cell,
+its recorded alc split verdicts and a `// Fixture` line naming the case.
+
+**Next step:** a slot for a `;` group in `preproc_split_case_end_branch` (or in `preproc_split_case_statement_end`), alc
+first.
+
+**Owner:** B7.
 
 ## Longer-lived proposals, tracked separately
 

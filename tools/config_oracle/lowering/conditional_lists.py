@@ -161,9 +161,12 @@ FAMILIES: dict[str, Family] = {f.name: f for f in (
     # (manifest `empty-interior`), parsed flat as an order_by_item with an empty interior.
     Family("order_by_fields", frozenset({"order_by_item"}), paren_after("ascending_keyword", "descending_keyword"),
            frozenset({"identifier", "quoted_identifier"}), ",", None, "empty-interior"),
-    # moveafter/movebefore/movefirst/movelast (grammar.js moveArgs): only the element list
-    # after the fixed `;`; the target and the `;` lie outside (spec rev 2, a group there is
-    # B7b-3). Items fielded `element`. alc rejects an empty element list semantically
+    # moveafter/movebefore/movefirst/movelast (grammar.js moveArgs route 1): only the element
+    # list after the fixed `;`; the target and the `;` lie outside. Items fielded `element`.
+    # B7b-3 (spec 2026-10-08 6.3): this entry now serves validate_split only (the route-1
+    # element groups, before selection). After selection EVERY move host is lowered by
+    # lowering/move_args.py (all three routes), which engine dispatches before lower_region,
+    # so lower_region never runs for these hosts. alc rejects an empty element list semantically
     # (AL0319, manifest `empty-semantic-rejected` on every move route) and the flat grammar
     # requires an element, so an emptied configuration is a reference-error.
     Family("move_elements", frozenset({"moveafter_modification", "movebefore_modification",
@@ -267,9 +270,13 @@ def _check_group(n, parent, hosts, fam):
     if host is None:
         yield f"no enclosing {fam.name} host"
     else:
-        lo, hi = fam.region(host)
-        if not (lo <= n.start and n.end <= hi):
-            yield f"outside the list region of {host.kind}@{host.start}"
+        try:
+            lo, hi = fam.region(host)
+        except LoweringError as err:     # e.g. a move host with no direct `;` (routes 2-3)
+            yield f"no list region in {host.kind}@{host.start}: {err.detail}"
+        else:
+            if not (lo <= n.start and n.end <= hi):
+                yield f"outside the list region of {host.kind}@{host.start}"
     if parent is not None and parent.kind == fam.group:
         i = next(k for k, c in enumerate(parent.children) if c is n)
         prev = next((c for c in reversed(parent.children[:i]) if c.kind in DIRECTIVES), None)

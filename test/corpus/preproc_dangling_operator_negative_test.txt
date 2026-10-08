@@ -51,7 +51,8 @@ BAR
           (begin_keyword)
           (ERROR)
           body: (statement_block
-            (identifier)
+            (call_statement
+              function: (identifier))
             (assignment_statement
               left: (identifier)
               operator: (assignment_operator)
@@ -100,7 +101,8 @@ BAR
           (begin_keyword)
           (ERROR)
           body: (statement_block
-            (identifier)
+            (call_statement
+              function: (identifier))
             (assignment_statement
               left: (identifier)
               operator: (assignment_operator)
@@ -149,7 +151,8 @@ FOO
           (begin_keyword)
           (ERROR)
           body: (statement_block
-            (identifier)
+            (call_statement
+              function: (identifier))
             (assignment_statement
               left: (identifier)
               operator: (assignment_operator)
@@ -198,7 +201,8 @@ BAR
           (begin_keyword)
           (ERROR)
           body: (statement_block
-            (identifier)
+            (call_statement
+              function: (identifier))
             (assignment_statement
               left: (identifier)
               operator: (assignment_operator)
@@ -247,7 +251,8 @@ BAR)
           (begin_keyword)
           (ERROR)
           body: (statement_block
-            (identifier)
+            (call_statement
+              function: (identifier))
             (ERROR)
             (assignment_statement
               left: (identifier)
@@ -354,7 +359,8 @@ BAR
                 operator: (assignment_operator)
                 right: (integer))
               (ERROR)
-              (identifier)
+              (call_statement
+                function: (identifier))
               (assignment_statement
                 left: (identifier)
                 operator: (assignment_operator)
@@ -407,7 +413,8 @@ FOO
           (begin_keyword)
           (ERROR)
           body: (statement_block
-            (identifier)
+            (call_statement
+              function: (identifier))
             (assignment_statement
               left: (identifier)
               operator: (assignment_operator)
@@ -456,7 +463,8 @@ FOO
           (begin_keyword)
           (ERROR)
           body: (statement_block
-            (identifier)
+            (call_statement
+              function: (identifier))
             (assignment_statement
               left: (identifier)
               operator: (assignment_operator)
@@ -505,7 +513,8 @@ FOO
           (begin_keyword)
           (ERROR)
           body: (statement_block
-            (identifier)
+            (call_statement
+              function: (identifier))
             (assignment_statement
               left: (identifier)
               operator: (assignment_operator)
@@ -564,7 +573,8 @@ FOO
                 operator: (assignment_operator)
                 right: (integer))
               (ERROR)
-              (identifier)
+              (call_statement
+                function: (identifier))
               (assignment_statement
                 left: (identifier)
                 operator: (assignment_operator)

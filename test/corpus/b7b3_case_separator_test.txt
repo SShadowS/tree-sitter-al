@@ -1,0 +1,3478 @@
+================================================================================
+B7b-3 case separators: assign body, two semicolon groups before the next branch (Phase 0 assign__before-branch)
+================================================================================
+codeunit 1 P
+{
+    procedure M()
+    begin
+case I of
+1: Ok := true
+#if S1
+;
+#endif
+#if S2
+;
+#endif
+2: Ok := false;
+end;
+    end;
+}
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (procedure
+        (procedure_keyword)
+        name: (identifier)
+        body: (code_block
+          (begin_keyword)
+          body: (statement_block
+            (case_statement
+              (case_keyword)
+              expression: (identifier)
+              (of_keyword)
+              body: (case_body
+                (case_branch
+                  pattern: (integer)
+                  body: (assignment_statement
+                    left: (identifier)
+                    operator: (assignment_operator)
+                    right: (boolean)))
+                (preproc_conditional_case
+                  (preproc_if
+                    (preproc_open)
+                    condition: (identifier))
+                  (empty_statement)
+                  (preproc_endif
+                    (preproc_close)))
+                (preproc_conditional_case
+                  (preproc_if
+                    (preproc_open)
+                    condition: (identifier))
+                  (empty_statement)
+                  (preproc_endif
+                    (preproc_close)))
+                (case_branch
+                  pattern: (integer)
+                  body: (assignment_statement
+                    left: (identifier)
+                    operator: (assignment_operator)
+                    right: (boolean))))
+              (end_keyword)))
+          (end_keyword))))))
+
+================================================================================
+B7b-3 case separators: assign body, two semicolon groups before the case else (Phase 0 assign__before-else)
+================================================================================
+codeunit 1 P
+{
+    procedure M()
+    begin
+case I of
+1: Ok := true
+#if S1
+;
+#endif
+#if S2
+;
+#endif
+else
+Ok := false;
+end;
+    end;
+}
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (procedure
+        (procedure_keyword)
+        name: (identifier)
+        body: (code_block
+          (begin_keyword)
+          body: (statement_block
+            (case_statement
+              (case_keyword)
+              expression: (identifier)
+              (of_keyword)
+              body: (case_body
+                (case_branch
+                  pattern: (integer)
+                  body: (assignment_statement
+                    left: (identifier)
+                    operator: (assignment_operator)
+                    right: (boolean)))
+                (preproc_conditional_case
+                  (preproc_if
+                    (preproc_open)
+                    condition: (identifier))
+                  (empty_statement)
+                  (preproc_endif
+                    (preproc_close)))
+                (preproc_conditional_case
+                  (preproc_if
+                    (preproc_open)
+                    condition: (identifier))
+                  (empty_statement)
+                  (preproc_endif
+                    (preproc_close))))
+              (case_else_branch
+                (else_keyword)
+                body: (statement_block
+                  (assignment_statement
+                    left: (identifier)
+                    operator: (assignment_operator)
+                    right: (boolean))))
+              (end_keyword)))
+          (end_keyword))))))
+
+================================================================================
+B7b-3 case separators: assign body, two semicolon groups before end (Phase 0 assign__before-end)
+================================================================================
+codeunit 1 P
+{
+    procedure M()
+    begin
+case I of
+1: Ok := true
+#if S1
+;
+#endif
+#if S2
+;
+#endif
+end;
+    end;
+}
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (procedure
+        (procedure_keyword)
+        name: (identifier)
+        body: (code_block
+          (begin_keyword)
+          body: (statement_block
+            (case_statement
+              (case_keyword)
+              expression: (identifier)
+              (of_keyword)
+              body: (case_body
+                (case_branch
+                  pattern: (integer)
+                  body: (assignment_statement
+                    left: (identifier)
+                    operator: (assignment_operator)
+                    right: (boolean)))
+                (preproc_conditional_case
+                  (preproc_if
+                    (preproc_open)
+                    condition: (identifier))
+                  (empty_statement)
+                  (preproc_endif
+                    (preproc_close)))
+                (preproc_conditional_case
+                  (preproc_if
+                    (preproc_open)
+                    condition: (identifier))
+                  (empty_statement)
+                  (preproc_endif
+                    (preproc_close))))
+              (end_keyword)))
+          (end_keyword))))))
+
+================================================================================
+B7b-3 case separators: parenless body, two semicolon groups before the next branch (Phase 0 parenless__before-branch)
+================================================================================
+codeunit 1 P
+{
+    procedure M()
+    begin
+case I of
+1: Bar
+#if S1
+;
+#endif
+#if S2
+;
+#endif
+2: Baz;
+end;
+    end;
+}
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (procedure
+        (procedure_keyword)
+        name: (identifier)
+        body: (code_block
+          (begin_keyword)
+          body: (statement_block
+            (case_statement
+              (case_keyword)
+              expression: (identifier)
+              (of_keyword)
+              body: (case_body
+                (case_branch
+                  pattern: (integer)
+                  body: (call_statement
+                    function: (identifier)))
+                (preproc_conditional_case
+                  (preproc_if
+                    (preproc_open)
+                    condition: (identifier))
+                  (empty_statement)
+                  (preproc_endif
+                    (preproc_close)))
+                (preproc_conditional_case
+                  (preproc_if
+                    (preproc_open)
+                    condition: (identifier))
+                  (empty_statement)
+                  (preproc_endif
+                    (preproc_close)))
+                (case_branch
+                  pattern: (integer)
+                  body: (call_statement
+                    function: (identifier))))
+              (end_keyword)))
+          (end_keyword))))))
+
+================================================================================
+B7b-3 case separators: parenless body, two semicolon groups before the case else (Phase 0 parenless__before-else)
+================================================================================
+codeunit 1 P
+{
+    procedure M()
+    begin
+case I of
+1: Bar
+#if S1
+;
+#endif
+#if S2
+;
+#endif
+else
+Baz;
+end;
+    end;
+}
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (procedure
+        (procedure_keyword)
+        name: (identifier)
+        body: (code_block
+          (begin_keyword)
+          body: (statement_block
+            (case_statement
+              (case_keyword)
+              expression: (identifier)
+              (of_keyword)
+              body: (case_body
+                (case_branch
+                  pattern: (integer)
+                  body: (call_statement
+                    function: (identifier)))
+                (preproc_conditional_case
+                  (preproc_if
+                    (preproc_open)
+                    condition: (identifier))
+                  (empty_statement)
+                  (preproc_endif
+                    (preproc_close)))
+                (preproc_conditional_case
+                  (preproc_if
+                    (preproc_open)
+                    condition: (identifier))
+                  (empty_statement)
+                  (preproc_endif
+                    (preproc_close))))
+              (case_else_branch
+                (else_keyword)
+                body: (statement_block
+                  (call_statement
+                    function: (identifier))))
+              (end_keyword)))
+          (end_keyword))))))
+
+================================================================================
+B7b-3 case separators: parenless body, two semicolon groups before end (Phase 0 parenless__before-end)
+================================================================================
+codeunit 1 P
+{
+    procedure M()
+    begin
+case I of
+1: Bar
+#if S1
+;
+#endif
+#if S2
+;
+#endif
+end;
+    end;
+}
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (procedure
+        (procedure_keyword)
+        name: (identifier)
+        body: (code_block
+          (begin_keyword)
+          body: (statement_block
+            (case_statement
+              (case_keyword)
+              expression: (identifier)
+              (of_keyword)
+              body: (case_body
+                (case_branch
+                  pattern: (integer)
+                  body: (call_statement
+                    function: (identifier)))
+                (preproc_conditional_case
+                  (preproc_if
+                    (preproc_open)
+                    condition: (identifier))
+                  (empty_statement)
+                  (preproc_endif
+                    (preproc_close)))
+                (preproc_conditional_case
+                  (preproc_if
+                    (preproc_open)
+                    condition: (identifier))
+                  (empty_statement)
+                  (preproc_endif
+                    (preproc_close))))
+              (end_keyword)))
+          (end_keyword))))))
+
+================================================================================
+B7b-3 case separators: parenful body, two semicolon groups before the next branch (Phase 0 parenful__before-branch)
+================================================================================
+codeunit 1 P
+{
+    procedure M()
+    begin
+case I of
+1: Bar()
+#if S1
+;
+#endif
+#if S2
+;
+#endif
+2: Baz();
+end;
+    end;
+}
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (procedure
+        (procedure_keyword)
+        name: (identifier)
+        body: (code_block
+          (begin_keyword)
+          body: (statement_block
+            (case_statement
+              (case_keyword)
+              expression: (identifier)
+              (of_keyword)
+              body: (case_body
+                (case_branch
+                  pattern: (integer)
+                  body: (call_expression
+                    function: (identifier)
+                    arguments: (argument_list)))
+                (preproc_conditional_case
+                  (preproc_if
+                    (preproc_open)
+                    condition: (identifier))
+                  (empty_statement)
+                  (preproc_endif
+                    (preproc_close)))
+                (preproc_conditional_case
+                  (preproc_if
+                    (preproc_open)
+                    condition: (identifier))
+                  (empty_statement)
+                  (preproc_endif
+                    (preproc_close)))
+                (case_branch
+                  pattern: (integer)
+                  body: (call_expression
+                    function: (identifier)
+                    arguments: (argument_list))))
+              (end_keyword)))
+          (end_keyword))))))
+
+================================================================================
+B7b-3 case separators: parenful body, two semicolon groups before the case else (Phase 0 parenful__before-else)
+================================================================================
+codeunit 1 P
+{
+    procedure M()
+    begin
+case I of
+1: Bar()
+#if S1
+;
+#endif
+#if S2
+;
+#endif
+else
+Baz();
+end;
+    end;
+}
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (procedure
+        (procedure_keyword)
+        name: (identifier)
+        body: (code_block
+          (begin_keyword)
+          body: (statement_block
+            (case_statement
+              (case_keyword)
+              expression: (identifier)
+              (of_keyword)
+              body: (case_body
+                (case_branch
+                  pattern: (integer)
+                  body: (call_expression
+                    function: (identifier)
+                    arguments: (argument_list)))
+                (preproc_conditional_case
+                  (preproc_if
+                    (preproc_open)
+                    condition: (identifier))
+                  (empty_statement)
+                  (preproc_endif
+                    (preproc_close)))
+                (preproc_conditional_case
+                  (preproc_if
+                    (preproc_open)
+                    condition: (identifier))
+                  (empty_statement)
+                  (preproc_endif
+                    (preproc_close))))
+              (case_else_branch
+                (else_keyword)
+                body: (statement_block
+                  (call_expression
+                    function: (identifier)
+                    arguments: (argument_list))))
+              (end_keyword)))
+          (end_keyword))))))
+
+================================================================================
+B7b-3 case separators: parenful body, two semicolon groups before end (Phase 0 parenful__before-end)
+================================================================================
+codeunit 1 P
+{
+    procedure M()
+    begin
+case I of
+1: Bar()
+#if S1
+;
+#endif
+#if S2
+;
+#endif
+end;
+    end;
+}
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (procedure
+        (procedure_keyword)
+        name: (identifier)
+        body: (code_block
+          (begin_keyword)
+          body: (statement_block
+            (case_statement
+              (case_keyword)
+              expression: (identifier)
+              (of_keyword)
+              body: (case_body
+                (case_branch
+                  pattern: (integer)
+                  body: (call_expression
+                    function: (identifier)
+                    arguments: (argument_list)))
+                (preproc_conditional_case
+                  (preproc_if
+                    (preproc_open)
+                    condition: (identifier))
+                  (empty_statement)
+                  (preproc_endif
+                    (preproc_close)))
+                (preproc_conditional_case
+                  (preproc_if
+                    (preproc_open)
+                    condition: (identifier))
+                  (empty_statement)
+                  (preproc_endif
+                    (preproc_close))))
+              (end_keyword)))
+          (end_keyword))))))
+
+================================================================================
+B7b-3 case separators: block body, two semicolon groups before the next branch (Phase 0 block__before-branch)
+================================================================================
+codeunit 1 P
+{
+    procedure M()
+    begin
+case I of
+1: begin end
+#if S1
+;
+#endif
+#if S2
+;
+#endif
+2: begin end;
+end;
+    end;
+}
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (procedure
+        (procedure_keyword)
+        name: (identifier)
+        body: (code_block
+          (begin_keyword)
+          body: (statement_block
+            (case_statement
+              (case_keyword)
+              expression: (identifier)
+              (of_keyword)
+              body: (case_body
+                (case_branch
+                  pattern: (integer)
+                  body: (code_block
+                    (begin_keyword)
+                    (end_keyword)))
+                (preproc_conditional_case
+                  (preproc_if
+                    (preproc_open)
+                    condition: (identifier))
+                  (empty_statement)
+                  (preproc_endif
+                    (preproc_close)))
+                (preproc_conditional_case
+                  (preproc_if
+                    (preproc_open)
+                    condition: (identifier))
+                  (empty_statement)
+                  (preproc_endif
+                    (preproc_close)))
+                (case_branch
+                  pattern: (integer)
+                  body: (code_block
+                    (begin_keyword)
+                    (end_keyword))))
+              (end_keyword)))
+          (end_keyword))))))
+
+================================================================================
+B7b-3 case separators: block body, two semicolon groups before the case else (Phase 0 block__before-else)
+================================================================================
+codeunit 1 P
+{
+    procedure M()
+    begin
+case I of
+1: begin end
+#if S1
+;
+#endif
+#if S2
+;
+#endif
+else
+begin end;
+end;
+    end;
+}
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (procedure
+        (procedure_keyword)
+        name: (identifier)
+        body: (code_block
+          (begin_keyword)
+          body: (statement_block
+            (case_statement
+              (case_keyword)
+              expression: (identifier)
+              (of_keyword)
+              body: (case_body
+                (case_branch
+                  pattern: (integer)
+                  body: (code_block
+                    (begin_keyword)
+                    (end_keyword)))
+                (preproc_conditional_case
+                  (preproc_if
+                    (preproc_open)
+                    condition: (identifier))
+                  (empty_statement)
+                  (preproc_endif
+                    (preproc_close)))
+                (preproc_conditional_case
+                  (preproc_if
+                    (preproc_open)
+                    condition: (identifier))
+                  (empty_statement)
+                  (preproc_endif
+                    (preproc_close))))
+              (case_else_branch
+                (else_keyword)
+                body: (statement_block
+                  (code_block
+                    (begin_keyword)
+                    (end_keyword))))
+              (end_keyword)))
+          (end_keyword))))))
+
+================================================================================
+B7b-3 case separators: block body, two semicolon groups before end (Phase 0 block__before-end)
+================================================================================
+codeunit 1 P
+{
+    procedure M()
+    begin
+case I of
+1: begin end
+#if S1
+;
+#endif
+#if S2
+;
+#endif
+end;
+    end;
+}
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (procedure
+        (procedure_keyword)
+        name: (identifier)
+        body: (code_block
+          (begin_keyword)
+          body: (statement_block
+            (case_statement
+              (case_keyword)
+              expression: (identifier)
+              (of_keyword)
+              body: (case_body
+                (case_branch
+                  pattern: (integer)
+                  body: (code_block
+                    (begin_keyword)
+                    (end_keyword)))
+                (preproc_conditional_case
+                  (preproc_if
+                    (preproc_open)
+                    condition: (identifier))
+                  (empty_statement)
+                  (preproc_endif
+                    (preproc_close)))
+                (preproc_conditional_case
+                  (preproc_if
+                    (preproc_open)
+                    condition: (identifier))
+                  (empty_statement)
+                  (preproc_endif
+                    (preproc_close))))
+              (end_keyword)))
+          (end_keyword))))))
+
+================================================================================
+B7b-3 case separators: nestedif body, two semicolon groups before the next branch (Phase 0 nestedif__before-branch)
+================================================================================
+codeunit 1 P
+{
+    procedure M()
+    begin
+case I of
+1: if C then Bar
+#if S1
+;
+#endif
+#if S2
+;
+#endif
+2: if C then Baz;
+end;
+    end;
+}
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (procedure
+        (procedure_keyword)
+        name: (identifier)
+        body: (code_block
+          (begin_keyword)
+          body: (statement_block
+            (case_statement
+              (case_keyword)
+              expression: (identifier)
+              (of_keyword)
+              body: (case_body
+                (case_branch
+                  pattern: (integer)
+                  body: (if_statement
+                    (if_keyword)
+                    condition: (identifier)
+                    (then_keyword)
+                    then_branch: (call_statement
+                      function: (identifier))))
+                (preproc_conditional_case
+                  (preproc_if
+                    (preproc_open)
+                    condition: (identifier))
+                  (empty_statement)
+                  (preproc_endif
+                    (preproc_close)))
+                (preproc_conditional_case
+                  (preproc_if
+                    (preproc_open)
+                    condition: (identifier))
+                  (empty_statement)
+                  (preproc_endif
+                    (preproc_close)))
+                (case_branch
+                  pattern: (integer)
+                  body: (if_statement
+                    (if_keyword)
+                    condition: (identifier)
+                    (then_keyword)
+                    then_branch: (call_statement
+                      function: (identifier)))))
+              (end_keyword)))
+          (end_keyword))))))
+
+================================================================================
+B7b-3 case separators: nestedif body, two semicolon groups before the case else (Phase 0 nestedif__before-else)
+================================================================================
+codeunit 1 P
+{
+    procedure M()
+    begin
+case I of
+1: if C then Bar
+#if S1
+;
+#endif
+#if S2
+;
+#endif
+else
+if C then Baz;
+end;
+    end;
+}
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (procedure
+        (procedure_keyword)
+        name: (identifier)
+        body: (code_block
+          (begin_keyword)
+          body: (statement_block
+            (case_statement
+              (case_keyword)
+              expression: (identifier)
+              (of_keyword)
+              body: (case_body
+                (case_branch
+                  pattern: (integer)
+                  body: (if_statement
+                    (if_keyword)
+                    condition: (identifier)
+                    (then_keyword)
+                    then_branch: (call_statement
+                      function: (identifier))))
+                (preproc_conditional_case
+                  (preproc_if
+                    (preproc_open)
+                    condition: (identifier))
+                  (empty_statement)
+                  (preproc_endif
+                    (preproc_close)))
+                (preproc_conditional_case
+                  (preproc_if
+                    (preproc_open)
+                    condition: (identifier))
+                  (empty_statement)
+                  (preproc_endif
+                    (preproc_close))))
+              (case_else_branch
+                (else_keyword)
+                body: (statement_block
+                  (if_statement
+                    (if_keyword)
+                    condition: (identifier)
+                    (then_keyword)
+                    then_branch: (call_statement
+                      function: (identifier)))))
+              (end_keyword)))
+          (end_keyword))))))
+
+================================================================================
+B7b-3 case separators: nestedif body, two semicolon groups before end (Phase 0 nestedif__before-end)
+================================================================================
+codeunit 1 P
+{
+    procedure M()
+    begin
+case I of
+1: if C then Bar
+#if S1
+;
+#endif
+#if S2
+;
+#endif
+end;
+    end;
+}
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (procedure
+        (procedure_keyword)
+        name: (identifier)
+        body: (code_block
+          (begin_keyword)
+          body: (statement_block
+            (case_statement
+              (case_keyword)
+              expression: (identifier)
+              (of_keyword)
+              body: (case_body
+                (case_branch
+                  pattern: (integer)
+                  body: (if_statement
+                    (if_keyword)
+                    condition: (identifier)
+                    (then_keyword)
+                    then_branch: (call_statement
+                      function: (identifier))))
+                (preproc_conditional_case
+                  (preproc_if
+                    (preproc_open)
+                    condition: (identifier))
+                  (empty_statement)
+                  (preproc_endif
+                    (preproc_close)))
+                (preproc_conditional_case
+                  (preproc_if
+                    (preproc_open)
+                    condition: (identifier))
+                  (empty_statement)
+                  (preproc_endif
+                    (preproc_close))))
+              (end_keyword)))
+          (end_keyword))))))
+
+================================================================================
+B7b-3 case separators: asserterror body, two semicolon groups before the next branch (Phase 0 asserterror__before-branch)
+================================================================================
+codeunit 1 P
+{
+    procedure M()
+    begin
+case I of
+1: asserterror Bar()
+#if S1
+;
+#endif
+#if S2
+;
+#endif
+2: asserterror Baz();
+end;
+    end;
+}
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (procedure
+        (procedure_keyword)
+        name: (identifier)
+        body: (code_block
+          (begin_keyword)
+          body: (statement_block
+            (case_statement
+              (case_keyword)
+              expression: (identifier)
+              (of_keyword)
+              body: (case_body
+                (case_branch
+                  pattern: (integer)
+                  body: (asserterror_statement
+                    (asserterror_keyword)
+                    body: (call_expression
+                      function: (identifier)
+                      arguments: (argument_list))))
+                (preproc_conditional_case
+                  (preproc_if
+                    (preproc_open)
+                    condition: (identifier))
+                  (empty_statement)
+                  (preproc_endif
+                    (preproc_close)))
+                (preproc_conditional_case
+                  (preproc_if
+                    (preproc_open)
+                    condition: (identifier))
+                  (empty_statement)
+                  (preproc_endif
+                    (preproc_close)))
+                (case_branch
+                  pattern: (integer)
+                  body: (asserterror_statement
+                    (asserterror_keyword)
+                    body: (call_expression
+                      function: (identifier)
+                      arguments: (argument_list)))))
+              (end_keyword)))
+          (end_keyword))))))
+
+================================================================================
+B7b-3 case separators: asserterror body, two semicolon groups before the case else (Phase 0 asserterror__before-else)
+================================================================================
+codeunit 1 P
+{
+    procedure M()
+    begin
+case I of
+1: asserterror Bar()
+#if S1
+;
+#endif
+#if S2
+;
+#endif
+else
+asserterror Baz();
+end;
+    end;
+}
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (procedure
+        (procedure_keyword)
+        name: (identifier)
+        body: (code_block
+          (begin_keyword)
+          body: (statement_block
+            (case_statement
+              (case_keyword)
+              expression: (identifier)
+              (of_keyword)
+              body: (case_body
+                (case_branch
+                  pattern: (integer)
+                  body: (asserterror_statement
+                    (asserterror_keyword)
+                    body: (call_expression
+                      function: (identifier)
+                      arguments: (argument_list))))
+                (preproc_conditional_case
+                  (preproc_if
+                    (preproc_open)
+                    condition: (identifier))
+                  (empty_statement)
+                  (preproc_endif
+                    (preproc_close)))
+                (preproc_conditional_case
+                  (preproc_if
+                    (preproc_open)
+                    condition: (identifier))
+                  (empty_statement)
+                  (preproc_endif
+                    (preproc_close))))
+              (case_else_branch
+                (else_keyword)
+                body: (statement_block
+                  (asserterror_statement
+                    (asserterror_keyword)
+                    body: (call_expression
+                      function: (identifier)
+                      arguments: (argument_list)))))
+              (end_keyword)))
+          (end_keyword))))))
+
+================================================================================
+B7b-3 case separators: asserterror body, two semicolon groups before end (Phase 0 asserterror__before-end)
+================================================================================
+codeunit 1 P
+{
+    procedure M()
+    begin
+case I of
+1: asserterror Bar()
+#if S1
+;
+#endif
+#if S2
+;
+#endif
+end;
+    end;
+}
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (procedure
+        (procedure_keyword)
+        name: (identifier)
+        body: (code_block
+          (begin_keyword)
+          body: (statement_block
+            (case_statement
+              (case_keyword)
+              expression: (identifier)
+              (of_keyword)
+              body: (case_body
+                (case_branch
+                  pattern: (integer)
+                  body: (asserterror_statement
+                    (asserterror_keyword)
+                    body: (call_expression
+                      function: (identifier)
+                      arguments: (argument_list))))
+                (preproc_conditional_case
+                  (preproc_if
+                    (preproc_open)
+                    condition: (identifier))
+                  (empty_statement)
+                  (preproc_endif
+                    (preproc_close)))
+                (preproc_conditional_case
+                  (preproc_if
+                    (preproc_open)
+                    condition: (identifier))
+                  (empty_statement)
+                  (preproc_endif
+                    (preproc_close))))
+              (end_keyword)))
+          (end_keyword))))))
+
+================================================================================
+B7b-3 case separators: complementary semicolon groups (Phase 0 adjacent-compl; B7a statement-terminator adjacent-compl)
+================================================================================
+codeunit 1 P
+{
+    procedure M()
+    begin
+case I of
+1: Bar
+#if X
+;
+#endif
+#if not X
+;
+#endif
+end;
+    end;
+}
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (procedure
+        (procedure_keyword)
+        name: (identifier)
+        body: (code_block
+          (begin_keyword)
+          body: (statement_block
+            (case_statement
+              (case_keyword)
+              expression: (identifier)
+              (of_keyword)
+              body: (case_body
+                (case_branch
+                  pattern: (integer)
+                  body: (call_statement
+                    function: (identifier)))
+                (preproc_conditional_case
+                  (preproc_if
+                    (preproc_open)
+                    condition: (identifier))
+                  (empty_statement)
+                  (preproc_endif
+                    (preproc_close)))
+                (preproc_conditional_case
+                  (preproc_if
+                    (preproc_open)
+                    condition: (preproc_not_expression
+                      (identifier)))
+                  (empty_statement)
+                  (preproc_endif
+                    (preproc_close))))
+              (end_keyword)))
+          (end_keyword))))))
+
+================================================================================
+B7b-3 case separators: semicolon from an elif chain (B7a statement-terminator elif)
+================================================================================
+codeunit 1 P
+{
+    procedure M()
+    begin
+case I of
+1: Bar
+#if X
+;
+#elif Y
+;
+#else
+;
+#endif
+end;
+    end;
+}
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (procedure
+        (procedure_keyword)
+        name: (identifier)
+        body: (code_block
+          (begin_keyword)
+          body: (statement_block
+            (case_statement
+              (case_keyword)
+              expression: (identifier)
+              (of_keyword)
+              body: (case_body
+                (case_branch
+                  pattern: (integer)
+                  body: (call_statement
+                    function: (identifier)))
+                (preproc_conditional_case
+                  (preproc_if
+                    (preproc_open)
+                    condition: (identifier))
+                  (empty_statement)
+                  (preproc_elif
+                    condition: (identifier))
+                  (empty_statement)
+                  (preproc_else)
+                  (empty_statement)
+                  (preproc_endif
+                    (preproc_close))))
+              (end_keyword)))
+          (end_keyword))))))
+
+================================================================================
+B7b-3 case separators: semicolon from #if/#else (B7a statement-terminator sep-only)
+================================================================================
+codeunit 1 P
+{
+    procedure M()
+    begin
+case I of
+1: Bar
+#if X
+;
+#else
+;
+#endif
+end;
+    end;
+}
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (procedure
+        (procedure_keyword)
+        name: (identifier)
+        body: (code_block
+          (begin_keyword)
+          body: (statement_block
+            (case_statement
+              (case_keyword)
+              expression: (identifier)
+              (of_keyword)
+              body: (case_body
+                (case_branch
+                  pattern: (integer)
+                  body: (call_statement
+                    function: (identifier)))
+                (preproc_conditional_case
+                  (preproc_if
+                    (preproc_open)
+                    condition: (identifier))
+                  (empty_statement)
+                  (preproc_else)
+                  (empty_statement)
+                  (preproc_endif
+                    (preproc_close))))
+              (end_keyword)))
+          (end_keyword))))))
+
+================================================================================
+B7b-3 case separators: lone semicolon group after an unterminated branch before end (Phase 0 lone-group-after-unterminated-end; B7a statement-terminator trail)
+================================================================================
+codeunit 1 P
+{
+    procedure M()
+    begin
+case I of
+1: Bar
+#if X
+;
+#endif
+end;
+    end;
+}
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (procedure
+        (procedure_keyword)
+        name: (identifier)
+        body: (code_block
+          (begin_keyword)
+          body: (statement_block
+            (case_statement
+              (case_keyword)
+              expression: (identifier)
+              (of_keyword)
+              body: (case_body
+                (case_branch
+                  pattern: (integer)
+                  body: (call_statement
+                    function: (identifier)))
+                (preproc_conditional_case
+                  (preproc_if
+                    (preproc_open)
+                    condition: (identifier))
+                  (empty_statement)
+                  (preproc_endif
+                    (preproc_close))))
+              (end_keyword)))
+          (end_keyword))))))
+
+================================================================================
+B7b-3 case separators: lone semicolon group after an unterminated branch before a branch (Phase 0 lone-group-after-unterminated; B7a case-branch trail)
+================================================================================
+codeunit 1 P
+{
+    procedure M()
+    begin
+case I of
+1: Bar()
+#if X
+;
+#endif
+2: Bar();
+end;
+    end;
+}
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (procedure
+        (procedure_keyword)
+        name: (identifier)
+        body: (code_block
+          (begin_keyword)
+          body: (statement_block
+            (case_statement
+              (case_keyword)
+              expression: (identifier)
+              (of_keyword)
+              body: (case_body
+                (case_branch
+                  pattern: (integer)
+                  body: (call_expression
+                    function: (identifier)
+                    arguments: (argument_list)))
+                (preproc_conditional_case
+                  (preproc_if
+                    (preproc_open)
+                    condition: (identifier))
+                  (empty_statement)
+                  (preproc_endif
+                    (preproc_close)))
+                (case_branch
+                  pattern: (integer)
+                  body: (call_expression
+                    function: (identifier)
+                    arguments: (argument_list))))
+              (end_keyword)))
+          (end_keyword))))))
+
+================================================================================
+B7b-3 case separators: lone semicolon group after a terminated branch (Phase 0 lone-group-after-terminated; the X configuration is ;; and rejected)
+================================================================================
+codeunit 1 P
+{
+    procedure M()
+    begin
+case I of
+1: Bar;
+#if X
+;
+#endif
+2: Baz;
+end;
+    end;
+}
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (procedure
+        (procedure_keyword)
+        name: (identifier)
+        body: (code_block
+          (begin_keyword)
+          body: (statement_block
+            (case_statement
+              (case_keyword)
+              expression: (identifier)
+              (of_keyword)
+              body: (case_body
+                (case_branch
+                  pattern: (integer)
+                  body: (call_statement
+                    function: (identifier)))
+                (preproc_conditional_case
+                  (preproc_if
+                    (preproc_open)
+                    condition: (identifier))
+                  (empty_statement)
+                  (preproc_endif
+                    (preproc_close)))
+                (case_branch
+                  pattern: (integer)
+                  body: (call_statement
+                    function: (identifier))))
+              (end_keyword)))
+          (end_keyword))))))
+
+================================================================================
+B7b-3 case separators: two independent semicolon groups (Phase 0 independent)
+================================================================================
+codeunit 1 P
+{
+    procedure M()
+    begin
+case I of
+1: Bar
+#if X
+;
+#endif
+#if Y
+;
+#endif
+2: Baz;
+end;
+    end;
+}
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (procedure
+        (procedure_keyword)
+        name: (identifier)
+        body: (code_block
+          (begin_keyword)
+          body: (statement_block
+            (case_statement
+              (case_keyword)
+              expression: (identifier)
+              (of_keyword)
+              body: (case_body
+                (case_branch
+                  pattern: (integer)
+                  body: (call_statement
+                    function: (identifier)))
+                (preproc_conditional_case
+                  (preproc_if
+                    (preproc_open)
+                    condition: (identifier))
+                  (empty_statement)
+                  (preproc_endif
+                    (preproc_close)))
+                (preproc_conditional_case
+                  (preproc_if
+                    (preproc_open)
+                    condition: (identifier))
+                  (empty_statement)
+                  (preproc_endif
+                    (preproc_close)))
+                (case_branch
+                  pattern: (integer)
+                  body: (call_statement
+                    function: (identifier))))
+              (end_keyword)))
+          (end_keyword))))))
+
+================================================================================
+B7b-3 case separators: nested semicolon groups (Phase 0 nested-groups)
+================================================================================
+codeunit 1 P
+{
+    procedure M()
+    begin
+case I of
+1: Bar
+#if X
+#if Y
+;
+#endif
+#endif
+end;
+    end;
+}
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (procedure
+        (procedure_keyword)
+        name: (identifier)
+        body: (code_block
+          (begin_keyword)
+          body: (statement_block
+            (case_statement
+              (case_keyword)
+              expression: (identifier)
+              (of_keyword)
+              body: (case_body
+                (case_branch
+                  pattern: (integer)
+                  body: (call_statement
+                    function: (identifier)))
+                (preproc_conditional_case
+                  (preproc_if
+                    (preproc_open)
+                    condition: (identifier))
+                  (preproc_conditional_case
+                    (preproc_if
+                      (preproc_open)
+                      condition: (identifier))
+                    (empty_statement)
+                    (preproc_endif
+                      (preproc_close)))
+                  (preproc_endif
+                    (preproc_close))))
+              (end_keyword)))
+          (end_keyword))))))
+
+================================================================================
+B7b-3 case separators: nested semicolon groups with #else (Phase 0 nested-groups-else; B7a statement-terminator nested)
+================================================================================
+codeunit 1 P
+{
+    procedure M()
+    begin
+case I of
+1: Bar
+#if X
+#if Y
+;
+#else
+;
+#endif
+#else
+;
+#endif
+end;
+    end;
+}
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (procedure
+        (procedure_keyword)
+        name: (identifier)
+        body: (code_block
+          (begin_keyword)
+          body: (statement_block
+            (case_statement
+              (case_keyword)
+              expression: (identifier)
+              (of_keyword)
+              body: (case_body
+                (case_branch
+                  pattern: (integer)
+                  body: (call_statement
+                    function: (identifier)))
+                (preproc_conditional_case
+                  (preproc_if
+                    (preproc_open)
+                    condition: (identifier))
+                  (preproc_conditional_case
+                    (preproc_if
+                      (preproc_open)
+                      condition: (identifier))
+                    (empty_statement)
+                    (preproc_else)
+                    (empty_statement)
+                    (preproc_endif
+                      (preproc_close)))
+                  (preproc_else)
+                  (empty_statement)
+                  (preproc_endif
+                    (preproc_close))))
+              (end_keyword)))
+          (end_keyword))))))
+
+================================================================================
+B7b-3 case separators: a group holding a semicolon and a branch (Phase 0 group-semi-and-branch)
+================================================================================
+codeunit 1 P
+{
+    procedure M()
+    begin
+case I of
+1: Bar
+#if X
+;
+2: Baz;
+#endif
+end;
+    end;
+}
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (procedure
+        (procedure_keyword)
+        name: (identifier)
+        body: (code_block
+          (begin_keyword)
+          body: (statement_block
+            (case_statement
+              (case_keyword)
+              expression: (identifier)
+              (of_keyword)
+              body: (case_body
+                (case_branch
+                  pattern: (integer)
+                  body: (call_statement
+                    function: (identifier)))
+                (preproc_conditional_case
+                  (preproc_if
+                    (preproc_open)
+                    condition: (identifier))
+                  (empty_statement)
+                  (case_branch
+                    pattern: (integer)
+                    body: (call_statement
+                      function: (identifier)))
+                  (preproc_endif
+                    (preproc_close))))
+              (end_keyword)))
+          (end_keyword))))))
+
+================================================================================
+B7b-3 case separators: semicolon and branch in both arms (Phase 0 group-semi-and-branch-else)
+================================================================================
+codeunit 1 P
+{
+    procedure M()
+    begin
+case I of
+1: Bar
+#if X
+;
+2: Baz;
+#else
+;
+3: Baz;
+#endif
+end;
+    end;
+}
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (procedure
+        (procedure_keyword)
+        name: (identifier)
+        body: (code_block
+          (begin_keyword)
+          body: (statement_block
+            (case_statement
+              (case_keyword)
+              expression: (identifier)
+              (of_keyword)
+              body: (case_body
+                (case_branch
+                  pattern: (integer)
+                  body: (call_statement
+                    function: (identifier)))
+                (preproc_conditional_case
+                  (preproc_if
+                    (preproc_open)
+                    condition: (identifier))
+                  (empty_statement)
+                  (case_branch
+                    pattern: (integer)
+                    body: (call_statement
+                      function: (identifier)))
+                  (preproc_else)
+                  (empty_statement)
+                  (case_branch
+                    pattern: (integer)
+                    body: (call_statement
+                      function: (identifier)))
+                  (preproc_endif
+                    (preproc_close))))
+              (end_keyword)))
+          (end_keyword))))))
+
+================================================================================
+B7b-3 case separators: a group of complete branches (Phase 0 group-branches-only)
+================================================================================
+codeunit 1 P
+{
+    procedure M()
+    begin
+case I of
+1: Bar;
+#if X
+2: Baz;
+3: Bar;
+#endif
+end;
+    end;
+}
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (procedure
+        (procedure_keyword)
+        name: (identifier)
+        body: (code_block
+          (begin_keyword)
+          body: (statement_block
+            (case_statement
+              (case_keyword)
+              expression: (identifier)
+              (of_keyword)
+              body: (case_body
+                (case_branch
+                  pattern: (integer)
+                  body: (call_statement
+                    function: (identifier)))
+                (preproc_conditional_case
+                  (preproc_if
+                    (preproc_open)
+                    condition: (identifier))
+                  (case_branch
+                    pattern: (integer)
+                    body: (call_statement
+                      function: (identifier)))
+                  (case_branch
+                    pattern: (integer)
+                    body: (call_statement
+                      function: (identifier)))
+                  (preproc_endif
+                    (preproc_close))))
+              (end_keyword)))
+          (end_keyword))))))
+
+================================================================================
+B7b-3 case separators: empty branch body (Phase 0 branch-empty-semi)
+================================================================================
+codeunit 1 P
+{
+    procedure M()
+    begin
+case I of
+1: ;
+end;
+    end;
+}
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (procedure
+        (procedure_keyword)
+        name: (identifier)
+        body: (code_block
+          (begin_keyword)
+          body: (statement_block
+            (case_statement
+              (case_keyword)
+              expression: (identifier)
+              (of_keyword)
+              body: (case_body
+                (case_branch
+                  pattern: (integer)
+                  body: (empty_statement)))
+              (end_keyword)))
+          (end_keyword))))))
+
+================================================================================
+B7b-3 case decoration: empty group between the body and its semicolon (Phase 0 empty-group-before-semi; B7a statement-terminator empty)
+================================================================================
+codeunit 1 P
+{
+    procedure M()
+    begin
+case I of
+1: Bar
+#if X
+#endif
+;
+end;
+    end;
+}
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (procedure
+        (procedure_keyword)
+        name: (identifier)
+        body: (code_block
+          (begin_keyword)
+          body: (statement_block
+            (case_statement
+              (case_keyword)
+              expression: (identifier)
+              (of_keyword)
+              body: (case_body
+                (case_branch
+                  pattern: (integer)
+                  body: (call_statement
+                    function: (identifier))
+                  (preproc_conditional_case
+                    (preproc_if
+                      (preproc_open)
+                      condition: (identifier))
+                    (preproc_endif
+                      (preproc_close)))))
+              (end_keyword)))
+          (end_keyword))))))
+
+================================================================================
+B7b-3 case decoration: empty #if/#else group before the semicolon, then a branch (Phase 0 empty-group-before-semi-else)
+================================================================================
+codeunit 1 P
+{
+    procedure M()
+    begin
+case I of
+1: Bar
+#if X
+#else
+#endif
+;
+2: Baz;
+end;
+    end;
+}
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (procedure
+        (procedure_keyword)
+        name: (identifier)
+        body: (code_block
+          (begin_keyword)
+          body: (statement_block
+            (case_statement
+              (case_keyword)
+              expression: (identifier)
+              (of_keyword)
+              body: (case_body
+                (case_branch
+                  pattern: (integer)
+                  body: (call_statement
+                    function: (identifier))
+                  (preproc_conditional_case
+                    (preproc_if
+                      (preproc_open)
+                      condition: (identifier))
+                    (preproc_else)
+                    (preproc_endif
+                      (preproc_close))))
+                (case_branch
+                  pattern: (integer)
+                  body: (call_statement
+                    function: (identifier))))
+              (end_keyword)))
+          (end_keyword))))))
+
+================================================================================
+B7b-3 case decoration: nested empty groups are distinct outer and inner nodes (Phase 0 nested-empty-group-before-semi)
+================================================================================
+codeunit 1 P
+{
+    procedure M()
+    begin
+case I of
+1: Bar
+#if X
+#if Y
+#endif
+#endif
+;
+end;
+    end;
+}
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (procedure
+        (procedure_keyword)
+        name: (identifier)
+        body: (code_block
+          (begin_keyword)
+          body: (statement_block
+            (case_statement
+              (case_keyword)
+              expression: (identifier)
+              (of_keyword)
+              body: (case_body
+                (case_branch
+                  pattern: (integer)
+                  body: (call_statement
+                    function: (identifier))
+                  (preproc_conditional_case
+                    (preproc_if
+                      (preproc_open)
+                      condition: (identifier))
+                    (preproc_conditional_case
+                      (preproc_if
+                        (preproc_open)
+                        condition: (identifier))
+                      (preproc_endif
+                        (preproc_close)))
+                    (preproc_endif
+                      (preproc_close)))))
+              (end_keyword)))
+          (end_keyword))))))
+
+================================================================================
+B7b-3 case decoration: two adjacent empty groups before one semicolon
+================================================================================
+codeunit 1 P
+{
+    procedure M()
+    begin
+case I of
+1: Bar
+#if X
+#endif
+#if Y
+#elif Z
+#endif
+;
+end;
+    end;
+}
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (procedure
+        (procedure_keyword)
+        name: (identifier)
+        body: (code_block
+          (begin_keyword)
+          body: (statement_block
+            (case_statement
+              (case_keyword)
+              expression: (identifier)
+              (of_keyword)
+              body: (case_body
+                (case_branch
+                  pattern: (integer)
+                  body: (call_statement
+                    function: (identifier))
+                  (preproc_conditional_case
+                    (preproc_if
+                      (preproc_open)
+                      condition: (identifier))
+                    (preproc_endif
+                      (preproc_close)))
+                  (preproc_conditional_case
+                    (preproc_if
+                      (preproc_open)
+                      condition: (identifier))
+                    (preproc_elif
+                      condition: (identifier))
+                    (preproc_endif
+                      (preproc_close)))))
+              (end_keyword)))
+          (end_keyword))))))
+
+================================================================================
+B7b-3 case decoration: inside a case group's arm the decoration stays in the branch, not a sibling group plus an arm semicolon
+================================================================================
+codeunit 1 P
+{
+    procedure M()
+    begin
+case I of
+#if A
+1: Bar
+#if X
+#endif
+;
+2: Bar;
+#endif
+end;
+    end;
+}
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (procedure
+        (procedure_keyword)
+        name: (identifier)
+        body: (code_block
+          (begin_keyword)
+          body: (statement_block
+            (case_statement
+              (case_keyword)
+              expression: (identifier)
+              (of_keyword)
+              body: (case_body
+                (preproc_conditional_case
+                  (preproc_if
+                    (preproc_open)
+                    condition: (identifier))
+                  (case_branch
+                    pattern: (integer)
+                    body: (call_statement
+                      function: (identifier))
+                    (preproc_conditional_case
+                      (preproc_if
+                        (preproc_open)
+                        condition: (identifier))
+                      (preproc_endif
+                        (preproc_close))))
+                  (case_branch
+                    pattern: (integer)
+                    body: (call_statement
+                      function: (identifier)))
+                  (preproc_endif
+                    (preproc_close))))
+              (end_keyword)))
+          (end_keyword))))))
+
+================================================================================
+B7b-3 case decoration: an empty group with no semicolon after it stays a sibling group
+================================================================================
+codeunit 1 P
+{
+    procedure M()
+    begin
+case I of
+1: Bar
+#if X
+#endif
+end;
+    end;
+}
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (procedure
+        (procedure_keyword)
+        name: (identifier)
+        body: (code_block
+          (begin_keyword)
+          body: (statement_block
+            (case_statement
+              (case_keyword)
+              expression: (identifier)
+              (of_keyword)
+              body: (case_body
+                (case_branch
+                  pattern: (integer)
+                  body: (call_statement
+                    function: (identifier)))
+                (preproc_conditional_case
+                  (preproc_if
+                    (preproc_open)
+                    condition: (identifier))
+                  (preproc_endif
+                    (preproc_close))))
+              (end_keyword)))
+          (end_keyword))))))
+
+================================================================================
+B7b-3 case decoration: an empty group before a branch is that branch's pattern group (unchanged from main)
+================================================================================
+codeunit 1 P
+{
+    procedure M()
+    begin
+case I of
+1: Bar;
+#if X
+#endif
+2: Baz;
+end;
+    end;
+}
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (procedure
+        (procedure_keyword)
+        name: (identifier)
+        body: (code_block
+          (begin_keyword)
+          body: (statement_block
+            (case_statement
+              (case_keyword)
+              expression: (identifier)
+              (of_keyword)
+              body: (case_body
+                (case_branch
+                  pattern: (integer)
+                  body: (call_statement
+                    function: (identifier)))
+                (case_branch
+                  (preproc_split_case_branch
+                    (preproc_if
+                      (preproc_open)
+                      condition: (identifier))
+                    (preproc_endif
+                      (preproc_close))
+                    pattern: (integer)
+                    body: (call_statement
+                      function: (identifier)))))
+              (end_keyword)))
+          (end_keyword))))))
+
+================================================================================
+B7b-3 case decoration: in preproc_split_case_branch
+================================================================================
+codeunit 1 P
+{
+    procedure M()
+    begin
+case I of
+#if X
+1,
+#endif
+2: Bar
+#if Y
+#endif
+;
+end;
+    end;
+}
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (procedure
+        (procedure_keyword)
+        name: (identifier)
+        body: (code_block
+          (begin_keyword)
+          body: (statement_block
+            (case_statement
+              (case_keyword)
+              expression: (identifier)
+              (of_keyword)
+              body: (case_body
+                (case_branch
+                  (preproc_split_case_branch
+                    (preproc_if
+                      (preproc_open)
+                      condition: (identifier))
+                    pattern: (integer)
+                    (preproc_endif
+                      (preproc_close))
+                    pattern: (integer)
+                    body: (call_statement
+                      function: (identifier))
+                    (preproc_conditional_case
+                      (preproc_if
+                        (preproc_open)
+                        condition: (identifier))
+                      (preproc_endif
+                        (preproc_close))))))
+              (end_keyword)))
+          (end_keyword))))))
+
+================================================================================
+B7b-3 case decoration: in preproc_split_case_extended
+================================================================================
+codeunit 1 P
+{
+    procedure M()
+    begin
+case I of
+#if X
+1: Bar;
+2:
+#else
+3:
+#endif
+Baz
+#if Y
+#endif
+;
+end;
+    end;
+}
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (procedure
+        (procedure_keyword)
+        name: (identifier)
+        body: (code_block
+          (begin_keyword)
+          body: (statement_block
+            (case_statement
+              (case_keyword)
+              expression: (identifier)
+              (of_keyword)
+              body: (case_body
+                (preproc_split_case_extended
+                  (preproc_if
+                    (preproc_open)
+                    condition: (identifier))
+                  (case_branch
+                    pattern: (integer)
+                    body: (call_statement
+                      function: (identifier)))
+                  pattern: (integer)
+                  (preproc_else)
+                  pattern: (integer)
+                  (preproc_endif
+                    (preproc_close))
+                  body: (call_statement
+                    function: (identifier))
+                  (preproc_conditional_case
+                    (preproc_if
+                      (preproc_open)
+                      condition: (identifier))
+                    (preproc_endif
+                      (preproc_close)))))
+              (end_keyword)))
+          (end_keyword))))))
+
+================================================================================
+B7b-3 case: an empty group after a bodyless asserterror is its BODY, not a decoration (spec 4.3 execution amendment)
+================================================================================
+codeunit 1 P
+{
+    procedure M()
+    begin
+case I of
+1: asserterror
+#if X
+#endif
+;
+end;
+    end;
+}
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (procedure
+        (procedure_keyword)
+        name: (identifier)
+        body: (code_block
+          (begin_keyword)
+          body: (statement_block
+            (case_statement
+              (case_keyword)
+              expression: (identifier)
+              (of_keyword)
+              body: (case_body
+                (case_branch
+                  pattern: (integer)
+                  body: (asserterror_statement
+                    (asserterror_keyword)
+                    body: (preproc_conditional_statement
+                      (preproc_if
+                        (preproc_open)
+                        condition: (identifier))
+                      (preproc_endif
+                        (preproc_close))))))
+              (end_keyword)))
+          (end_keyword))))))
+
+================================================================================
+B7b-3 case 4.3: group of complete branches before a shared branch
+================================================================================
+codeunit 1 P
+{
+    procedure M()
+    begin
+case I of
+#if X
+1: A;
+2: B;
+#endif
+3: Bar;
+end;
+    end;
+}
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (procedure
+        (procedure_keyword)
+        name: (identifier)
+        body: (code_block
+          (begin_keyword)
+          body: (statement_block
+            (case_statement
+              (case_keyword)
+              expression: (identifier)
+              (of_keyword)
+              body: (case_body
+                (preproc_conditional_case
+                  (preproc_if
+                    (preproc_open)
+                    condition: (identifier))
+                  (case_branch
+                    pattern: (integer)
+                    body: (call_statement
+                      function: (identifier)))
+                  (case_branch
+                    pattern: (integer)
+                    body: (call_statement
+                      function: (identifier)))
+                  (preproc_endif
+                    (preproc_close)))
+                (case_branch
+                  pattern: (integer)
+                  body: (call_statement
+                    function: (identifier))))
+              (end_keyword)))
+          (end_keyword))))))
+
+================================================================================
+B7b-3 case 4.3: group of complete branches with a nested empty group (it opens the next branch's patterns, as on main)
+================================================================================
+codeunit 1 P
+{
+    procedure M()
+    begin
+case I of
+#if X
+1: A;
+#if Y
+#endif
+2: B;
+#endif
+3: Bar;
+end;
+    end;
+}
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (procedure
+        (procedure_keyword)
+        name: (identifier)
+        body: (code_block
+          (begin_keyword)
+          body: (statement_block
+            (case_statement
+              (case_keyword)
+              expression: (identifier)
+              (of_keyword)
+              body: (case_body
+                (preproc_conditional_case
+                  (preproc_if
+                    (preproc_open)
+                    condition: (identifier))
+                  (case_branch
+                    pattern: (integer)
+                    body: (call_statement
+                      function: (identifier)))
+                  (case_branch
+                    (preproc_split_case_branch
+                      (preproc_if
+                        (preproc_open)
+                        condition: (identifier))
+                      (preproc_endif
+                        (preproc_close))
+                      pattern: (integer)
+                      body: (call_statement
+                        function: (identifier))))
+                  (preproc_endif
+                    (preproc_close)))
+                (case_branch
+                  pattern: (integer)
+                  body: (call_statement
+                    function: (identifier))))
+              (end_keyword)))
+          (end_keyword))))))
+
+================================================================================
+B7b-3 case 4.3: group of complete branches after a semicolon group
+================================================================================
+codeunit 1 P
+{
+    procedure M()
+    begin
+case I of
+0: Z
+#if Y
+;
+#else
+;
+#endif
+#if X
+1: A;
+2: B;
+#endif
+3: Bar;
+end;
+    end;
+}
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (procedure
+        (procedure_keyword)
+        name: (identifier)
+        body: (code_block
+          (begin_keyword)
+          body: (statement_block
+            (case_statement
+              (case_keyword)
+              expression: (identifier)
+              (of_keyword)
+              body: (case_body
+                (case_branch
+                  pattern: (integer)
+                  body: (call_statement
+                    function: (identifier)))
+                (preproc_conditional_case
+                  (preproc_if
+                    (preproc_open)
+                    condition: (identifier))
+                  (empty_statement)
+                  (preproc_else)
+                  (empty_statement)
+                  (preproc_endif
+                    (preproc_close)))
+                (preproc_conditional_case
+                  (preproc_if
+                    (preproc_open)
+                    condition: (identifier))
+                  (case_branch
+                    pattern: (integer)
+                    body: (call_statement
+                      function: (identifier)))
+                  (case_branch
+                    pattern: (integer)
+                    body: (call_statement
+                      function: (identifier)))
+                  (preproc_endif
+                    (preproc_close)))
+                (case_branch
+                  pattern: (integer)
+                  body: (call_statement
+                    function: (identifier))))
+              (end_keyword)))
+          (end_keyword))))))
+
+================================================================================
+B7b-3 case 4.3: group of patterns only before the shared pattern (preproc_split_case_branch)
+================================================================================
+codeunit 1 P
+{
+    procedure M()
+    begin
+case I of
+#if X
+1,
+#endif
+2: A;
+end;
+    end;
+}
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (procedure
+        (procedure_keyword)
+        name: (identifier)
+        body: (code_block
+          (begin_keyword)
+          body: (statement_block
+            (case_statement
+              (case_keyword)
+              expression: (identifier)
+              (of_keyword)
+              body: (case_body
+                (case_branch
+                  (preproc_split_case_branch
+                    (preproc_if
+                      (preproc_open)
+                      condition: (identifier))
+                    pattern: (integer)
+                    (preproc_endif
+                      (preproc_close))
+                    pattern: (integer)
+                    body: (call_statement
+                      function: (identifier)))))
+              (end_keyword)))
+          (end_keyword))))))
+
+================================================================================
+B7b-3 case 4.3: pattern group with a nested empty group
+================================================================================
+codeunit 1 P
+{
+    procedure M()
+    begin
+case I of
+#if X
+1,
+#if Y
+#endif
+#endif
+2: A;
+end;
+    end;
+}
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (procedure
+        (procedure_keyword)
+        name: (identifier)
+        body: (code_block
+          (begin_keyword)
+          body: (statement_block
+            (case_statement
+              (case_keyword)
+              expression: (identifier)
+              (of_keyword)
+              body: (case_body
+                (case_branch
+                  (preproc_split_case_branch
+                    (preproc_if
+                      (preproc_open)
+                      condition: (identifier))
+                    pattern: (integer)
+                    (preproc_conditional_case_patterns
+                      (preproc_if
+                        (preproc_open)
+                        condition: (identifier))
+                      (preproc_endif
+                        (preproc_close)))
+                    (preproc_endif
+                      (preproc_close))
+                    pattern: (integer)
+                    body: (call_statement
+                      function: (identifier)))))
+              (end_keyword)))
+          (end_keyword))))))
+
+================================================================================
+B7b-3 case 4.3: pattern group after a semicolon group
+================================================================================
+codeunit 1 P
+{
+    procedure M()
+    begin
+case I of
+0: Z
+#if Y
+;
+#else
+;
+#endif
+#if X
+1,
+#endif
+2: A;
+end;
+    end;
+}
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (procedure
+        (procedure_keyword)
+        name: (identifier)
+        body: (code_block
+          (begin_keyword)
+          body: (statement_block
+            (case_statement
+              (case_keyword)
+              expression: (identifier)
+              (of_keyword)
+              body: (case_body
+                (case_branch
+                  pattern: (integer)
+                  body: (call_statement
+                    function: (identifier)))
+                (preproc_conditional_case
+                  (preproc_if
+                    (preproc_open)
+                    condition: (identifier))
+                  (empty_statement)
+                  (preproc_else)
+                  (empty_statement)
+                  (preproc_endif
+                    (preproc_close)))
+                (case_branch
+                  (preproc_split_case_branch
+                    (preproc_if
+                      (preproc_open)
+                      condition: (identifier))
+                    pattern: (integer)
+                    (preproc_endif
+                      (preproc_close))
+                    pattern: (integer)
+                    body: (call_statement
+                      function: (identifier)))))
+              (end_keyword)))
+          (end_keyword))))))
+
+================================================================================
+B7b-3 case 4.3: group ending in a header before a shared body (preproc_split_case_extended)
+================================================================================
+codeunit 1 P
+{
+    procedure M()
+    begin
+case I of
+#if X
+1: A;
+2:
+#else
+2:
+#endif
+B;
+end;
+    end;
+}
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (procedure
+        (procedure_keyword)
+        name: (identifier)
+        body: (code_block
+          (begin_keyword)
+          body: (statement_block
+            (case_statement
+              (case_keyword)
+              expression: (identifier)
+              (of_keyword)
+              body: (case_body
+                (preproc_split_case_extended
+                  (preproc_if
+                    (preproc_open)
+                    condition: (identifier))
+                  (case_branch
+                    pattern: (integer)
+                    body: (call_statement
+                      function: (identifier)))
+                  pattern: (integer)
+                  (preproc_else)
+                  pattern: (integer)
+                  (preproc_endif
+                    (preproc_close))
+                  body: (call_statement
+                    function: (identifier))))
+              (end_keyword)))
+          (end_keyword))))))
+
+================================================================================
+B7b-3 case 4.3: header group whose arm ends a branch with a semicolon group
+================================================================================
+codeunit 1 P
+{
+    procedure M()
+    begin
+case I of
+#if X
+1: A
+#if Y
+;
+#else
+;
+#endif
+2:
+#else
+2:
+#endif
+B;
+end;
+    end;
+}
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (procedure
+        (procedure_keyword)
+        name: (identifier)
+        body: (code_block
+          (begin_keyword)
+          body: (statement_block
+            (case_statement
+              (case_keyword)
+              expression: (identifier)
+              (of_keyword)
+              body: (case_body
+                (preproc_split_case_extended
+                  (preproc_if
+                    (preproc_open)
+                    condition: (identifier))
+                  (case_branch
+                    pattern: (integer)
+                    body: (call_statement
+                      function: (identifier)))
+                  (preproc_conditional_case
+                    (preproc_if
+                      (preproc_open)
+                      condition: (identifier))
+                    (empty_statement)
+                    (preproc_else)
+                    (empty_statement)
+                    (preproc_endif
+                      (preproc_close)))
+                  pattern: (integer)
+                  (preproc_else)
+                  pattern: (integer)
+                  (preproc_endif
+                    (preproc_close))
+                  body: (call_statement
+                    function: (identifier))))
+              (end_keyword)))
+          (end_keyword))))))
+
+================================================================================
+B7b-3 case 4.3: header group after a semicolon group
+================================================================================
+codeunit 1 P
+{
+    procedure M()
+    begin
+case I of
+0: Z
+#if Y
+;
+#else
+;
+#endif
+#if X
+1: A;
+2:
+#else
+2:
+#endif
+B;
+end;
+    end;
+}
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (procedure
+        (procedure_keyword)
+        name: (identifier)
+        body: (code_block
+          (begin_keyword)
+          body: (statement_block
+            (case_statement
+              (case_keyword)
+              expression: (identifier)
+              (of_keyword)
+              body: (case_body
+                (case_branch
+                  pattern: (integer)
+                  body: (call_statement
+                    function: (identifier)))
+                (preproc_conditional_case
+                  (preproc_if
+                    (preproc_open)
+                    condition: (identifier))
+                  (empty_statement)
+                  (preproc_else)
+                  (empty_statement)
+                  (preproc_endif
+                    (preproc_close)))
+                (preproc_split_case_extended
+                  (preproc_if
+                    (preproc_open)
+                    condition: (identifier))
+                  (case_branch
+                    pattern: (integer)
+                    body: (call_statement
+                      function: (identifier)))
+                  pattern: (integer)
+                  (preproc_else)
+                  pattern: (integer)
+                  (preproc_endif
+                    (preproc_close))
+                  body: (call_statement
+                    function: (identifier))))
+              (end_keyword)))
+          (end_keyword))))))
+
+================================================================================
+B7b-3 case conflict winner: an empty nested group then #elif in an arm (nested preproc_conditional_case)
+================================================================================
+codeunit 1 P
+{
+    procedure M()
+    begin
+case I of
+1: Bar
+#if X
+#if Y
+#elif Z
+;
+#endif
+#endif
+end;
+    end;
+}
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (procedure
+        (procedure_keyword)
+        name: (identifier)
+        body: (code_block
+          (begin_keyword)
+          body: (statement_block
+            (case_statement
+              (case_keyword)
+              expression: (identifier)
+              (of_keyword)
+              body: (case_body
+                (case_branch
+                  pattern: (integer)
+                  body: (call_statement
+                    function: (identifier)))
+                (preproc_conditional_case
+                  (preproc_if
+                    (preproc_open)
+                    condition: (identifier))
+                  (preproc_conditional_case
+                    (preproc_if
+                      (preproc_open)
+                      condition: (identifier))
+                    (preproc_elif
+                      condition: (identifier))
+                    (empty_statement)
+                    (preproc_endif
+                      (preproc_close)))
+                  (preproc_endif
+                    (preproc_close))))
+              (end_keyword)))
+          (end_keyword))))))
+
+================================================================================
+B7b-3 case conflict winner: an empty nested group then a semicolon in an arm (group item, then the arm's empty_statement)
+================================================================================
+codeunit 1 P
+{
+    procedure M()
+    begin
+case I of
+1: Bar
+#if X
+#if Y
+#endif
+;
+#endif
+end;
+    end;
+}
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (procedure
+        (procedure_keyword)
+        name: (identifier)
+        body: (code_block
+          (begin_keyword)
+          body: (statement_block
+            (case_statement
+              (case_keyword)
+              expression: (identifier)
+              (of_keyword)
+              body: (case_body
+                (case_branch
+                  pattern: (integer)
+                  body: (call_statement
+                    function: (identifier)))
+                (preproc_conditional_case
+                  (preproc_if
+                    (preproc_open)
+                    condition: (identifier))
+                  (preproc_conditional_case
+                    (preproc_if
+                      (preproc_open)
+                      condition: (identifier))
+                    (preproc_endif
+                      (preproc_close)))
+                  (empty_statement)
+                  (preproc_endif
+                    (preproc_close))))
+              (end_keyword)))
+          (end_keyword))))))
+
+================================================================================
+B7b-3 case conflict winner: an empty group two levels down, then #elif (nested preproc_conditional_case)
+================================================================================
+codeunit 1 P
+{
+    procedure M()
+    begin
+case I of
+1: Bar
+#if X
+#if Y
+#if Z
+#endif
+#elif W
+;
+#endif
+#endif
+end;
+    end;
+}
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (procedure
+        (procedure_keyword)
+        name: (identifier)
+        body: (code_block
+          (begin_keyword)
+          body: (statement_block
+            (case_statement
+              (case_keyword)
+              expression: (identifier)
+              (of_keyword)
+              body: (case_body
+                (case_branch
+                  pattern: (integer)
+                  body: (call_statement
+                    function: (identifier)))
+                (preproc_conditional_case
+                  (preproc_if
+                    (preproc_open)
+                    condition: (identifier))
+                  (preproc_conditional_case
+                    (preproc_if
+                      (preproc_open)
+                      condition: (identifier))
+                    (preproc_conditional_case
+                      (preproc_if
+                        (preproc_open)
+                        condition: (identifier))
+                      (preproc_endif
+                        (preproc_close)))
+                    (preproc_elif
+                      condition: (identifier))
+                    (empty_statement)
+                    (preproc_endif
+                      (preproc_close)))
+                  (preproc_endif
+                    (preproc_close))))
+              (end_keyword)))
+          (end_keyword))))))
+
+================================================================================
+B7b-3 case conflict winner: an empty group after a preproc_split_case_branch with no semicolon stays a sibling
+================================================================================
+codeunit 1 P
+{
+    procedure M()
+    begin
+case I of
+#if X
+1,
+#endif
+2: Bar
+#if Y
+#endif
+end;
+    end;
+}
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (procedure
+        (procedure_keyword)
+        name: (identifier)
+        body: (code_block
+          (begin_keyword)
+          body: (statement_block
+            (case_statement
+              (case_keyword)
+              expression: (identifier)
+              (of_keyword)
+              body: (case_body
+                (case_branch
+                  (preproc_split_case_branch
+                    (preproc_if
+                      (preproc_open)
+                      condition: (identifier))
+                    pattern: (integer)
+                    (preproc_endif
+                      (preproc_close))
+                    pattern: (integer)
+                    body: (call_statement
+                      function: (identifier))))
+                (preproc_conditional_case
+                  (preproc_if
+                    (preproc_open)
+                    condition: (identifier))
+                  (preproc_endif
+                    (preproc_close))))
+              (end_keyword)))
+          (end_keyword))))))
+
+================================================================================
+B7b-3 case conflict winner: an empty group after a preproc_split_case_extended with no semicolon stays a sibling
+================================================================================
+codeunit 1 P
+{
+    procedure M()
+    begin
+case I of
+#if X
+1: A;
+2:
+#else
+2:
+#endif
+B
+#if Y
+#endif
+end;
+    end;
+}
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (procedure
+        (procedure_keyword)
+        name: (identifier)
+        body: (code_block
+          (begin_keyword)
+          body: (statement_block
+            (case_statement
+              (case_keyword)
+              expression: (identifier)
+              (of_keyword)
+              body: (case_body
+                (preproc_split_case_extended
+                  (preproc_if
+                    (preproc_open)
+                    condition: (identifier))
+                  (case_branch
+                    pattern: (integer)
+                    body: (call_statement
+                      function: (identifier)))
+                  pattern: (integer)
+                  (preproc_else)
+                  pattern: (integer)
+                  (preproc_endif
+                    (preproc_close))
+                  body: (call_statement
+                    function: (identifier)))
+                (preproc_conditional_case
+                  (preproc_if
+                    (preproc_open)
+                    condition: (identifier))
+                  (preproc_endif
+                    (preproc_close))))
+              (end_keyword)))
+          (end_keyword))))))
+
+================================================================================
+B7b-3 case decoration: in preproc_split_case_end_branch, before the final branch's own semicolon
+================================================================================
+codeunit 1 P
+{
+    procedure M()
+    begin
+case I of
+1: Bar;
+2:
+#if X
+Baz
+#if Y
+#endif
+;
+end;
+Bar;
+#else
+Baz;
+end;
+Baz;
+#endif
+    end;
+}
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (procedure
+        (procedure_keyword)
+        name: (identifier)
+        body: (code_block
+          (begin_keyword)
+          body: (statement_block
+            (preproc_split_case_statement_end
+              (case_keyword)
+              expression: (identifier)
+              (of_keyword)
+              body: (case_body
+                (case_branch
+                  pattern: (integer)
+                  body: (call_statement
+                    function: (identifier))))
+              pattern: (integer)
+              (preproc_if
+                (preproc_open)
+                condition: (identifier))
+              (preproc_split_case_end_branch
+                body: (call_statement
+                  function: (identifier))
+                (preproc_conditional_case
+                  (preproc_if
+                    (preproc_open)
+                    condition: (identifier))
+                  (preproc_endif
+                    (preproc_close)))
+                (end_keyword)
+                following: (statement_block
+                  (call_statement
+                    function: (identifier))))
+              (preproc_else)
+              (preproc_split_case_end_branch
+                body: (call_statement
+                  function: (identifier))
+                (end_keyword)
+                following: (statement_block
+                  (call_statement
+                    function: (identifier))))
+              (preproc_endif
+                (preproc_close))))
+          (end_keyword))))))
+
+================================================================================
+B7b-3 case 4.4: else after a semicolon group goes to the case (the X reading; the !X reading is refused as lowering:one-reading)
+================================================================================
+codeunit 1 P
+{
+    procedure M()
+    begin
+case I of
+1: if C then Baz
+#if X
+;
+#endif
+else Bar;
+end;
+    end;
+}
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (procedure
+        (procedure_keyword)
+        name: (identifier)
+        body: (code_block
+          (begin_keyword)
+          body: (statement_block
+            (case_statement
+              (case_keyword)
+              expression: (identifier)
+              (of_keyword)
+              body: (case_body
+                (case_branch
+                  pattern: (integer)
+                  body: (if_statement
+                    (if_keyword)
+                    condition: (identifier)
+                    (then_keyword)
+                    then_branch: (call_statement
+                      function: (identifier))))
+                (preproc_conditional_case
+                  (preproc_if
+                    (preproc_open)
+                    condition: (identifier))
+                  (empty_statement)
+                  (preproc_endif
+                    (preproc_close))))
+              (case_else_branch
+                (else_keyword)
+                body: (statement_block
+                  (call_statement
+                    function: (identifier))))
+              (end_keyword)))
+          (end_keyword))))))
+
+================================================================================
+B7b-3 case: Review Focus 3, a call then a semicolon group then the case else
+================================================================================
+codeunit 1 P
+{
+    procedure M()
+    begin
+case I of
+1: X
+#if A
+;
+#endif
+else Y;
+end;
+    end;
+}
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (procedure
+        (procedure_keyword)
+        name: (identifier)
+        body: (code_block
+          (begin_keyword)
+          body: (statement_block
+            (case_statement
+              (case_keyword)
+              expression: (identifier)
+              (of_keyword)
+              body: (case_body
+                (case_branch
+                  pattern: (integer)
+                  body: (call_statement
+                    function: (identifier)))
+                (preproc_conditional_case
+                  (preproc_if
+                    (preproc_open)
+                    condition: (identifier))
+                  (empty_statement)
+                  (preproc_endif
+                    (preproc_close))))
+              (case_else_branch
+                (else_keyword)
+                body: (statement_block
+                  (call_statement
+                    function: (identifier))))
+              (end_keyword)))
+          (end_keyword))))))
+

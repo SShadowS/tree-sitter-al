@@ -1,5 +1,5 @@
 // B7a Task 10 witness (GAP): family split-call, base placement adjacent-compl, 69 cells; representative occ:preproc_split_call_statement:0.7@asserterror_statement#adjacent-compl
-// Fixture b7_gap_split_call_test.txt#B7a GAP: split-call / adjacent-compl (69 cells, verdict of the representative GAP); the parser ERRORs on configurations alc accepts; representative occ:preproc_split_call_statement:0.7@asserterror_statement%23adjacent-compl#0
+// Fixture b7b3_call_terminator_test.txt#B7b-3 split call under asserterror, its semicolon from complementary groups (B7a split-call adjacent-compl)#0
 // expect: !TPL !X accept
 // expect: !TPL X accept
 // expect: TPL !X accept

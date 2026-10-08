@@ -30,7 +30,8 @@ def test_clean_snippet_exits_0():
 def test_error_snippet_exits_1_with_snippet_position():
     code, out = run(r"x := 1;\nx := ;")
     assert code == 1
-    assert re.search(r"^ERROR\t2:3-2:5\t", out, re.M), out
+    # B7b-3: recovery now inserts the missing operand instead of an ERROR over `:=`
+    assert re.search(r"^MISSING\t2:5-2:5\tidentifier$", out, re.M), out
 
 
 def test_missing_is_listed():
@@ -53,10 +54,11 @@ def test_piped_output_is_utf8():
 
 
 def test_stdin_is_utf8_and_columns_are_bytes():
-    """stdin was decoded as cp1252, which put the ERROR 2 columns late (1:16)."""
+    """stdin was decoded as cp1252, which put the error position 2 columns late. Since B7b-3 the
+    error is a MISSING operand at byte column 16 (character column 15)."""
     code, out = run("-", stdin="x := 'æ'; y := ;".encode("utf-8"))
     assert code == 1
-    assert re.search(r"^ERROR\t1:14-1:16\t", out, re.M), out
+    assert re.search(r"^MISSING\t1:16-1:16\tidentifier$", out, re.M), out   # 1:15 if columns were characters
 
 
 def test_file_is_read_as_bytes_with_no_cr_translation(tmp_path):
@@ -66,7 +68,7 @@ def test_file_is_read_as_bytes_with_no_cr_translation(tmp_path):
     f.write_bytes(b"\xef\xbb\xbfx := 1;\rx := ;")
     code, out = run("-f", str(f))
     assert code == 1
-    assert re.search(r"^ERROR\t1:11-1:13\t", out, re.M), out
+    assert re.search(r"^MISSING\t1:13-1:13\tidentifier$", out, re.M), out   # line 1: the CR is no line break
 
 
 PARSER = None

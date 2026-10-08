@@ -80,7 +80,7 @@ def main(argv=None):
     if a.header_ids:
         todo = [(cid, None) for cid in a.header_ids.read_text(encoding="utf-8").split()]
     else:
-        todo = [(m.cell_id, m.family) for m in manifest.load() if m.disposition == "admitted"]
+        todo = [(m.cell_id, m.family) for m in manifest.load()[1] if m.disposition == "admitted"]
     bad = 0
     for cid, family in todo:
         c = by_id[cid].cell

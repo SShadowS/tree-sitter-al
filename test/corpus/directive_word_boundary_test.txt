@@ -70,16 +70,18 @@ codeunit 1 T
                       (preproc_open)
                       condition: (preproc_not_expression
                         (identifier)))
-                    (call_statement
-                      function: (identifier))
-                    (ERROR)
+                    (ERROR
+                      (call_statement
+                        function: (identifier)))
                     (preproc_else)
                     (assignment_statement
                       left: (identifier)
                       operator: (assignment_operator)
                       right: (integer))
-                    (identifier)
-                    (identifier)
+                    (call_statement
+                      function: (identifier))
+                    (call_statement
+                      function: (identifier))
                     (code_block
                       (begin_keyword)
                       body: (statement_block
@@ -153,16 +155,18 @@ codeunit 1 T
                       (preproc_open)
                       condition: (preproc_not_expression
                         (identifier)))
-                    (call_statement
-                      function: (identifier))
-                    (ERROR)
+                    (ERROR
+                      (call_statement
+                        function: (identifier)))
                     (preproc_else)
                     (assignment_statement
                       left: (identifier)
                       operator: (assignment_operator)
                       right: (integer))
-                    (identifier)
-                    (identifier)
+                    (call_statement
+                      function: (identifier))
+                    (call_statement
+                      function: (identifier))
                     (code_block
                       (begin_keyword)
                       body: (statement_block
@@ -239,16 +243,18 @@ codeunit 1 T
                       (preproc_open)
                       condition: (preproc_not_expression
                         (identifier)))
-                    (call_statement
-                      function: (identifier))
-                    (ERROR)
+                    (ERROR
+                      (call_statement
+                        function: (identifier)))
                     (preproc_else)
                     (assignment_statement
                       left: (identifier)
                       operator: (assignment_operator)
                       right: (integer))
-                    (identifier)
-                    (identifier)
+                    (call_statement
+                      function: (identifier))
+                    (call_statement
+                      function: (identifier))
                     (code_block
                       (begin_keyword)
                       body: (statement_block
@@ -322,16 +328,18 @@ codeunit 1 T
                       (preproc_open)
                       condition: (preproc_not_expression
                         (identifier)))
-                    (call_statement
-                      function: (identifier))
-                    (ERROR)
+                    (ERROR
+                      (call_statement
+                        function: (identifier)))
                     (preproc_else)
                     (assignment_statement
                       left: (identifier)
                       operator: (assignment_operator)
                       right: (integer))
-                    (identifier)
-                    (identifier)
+                    (call_statement
+                      function: (identifier))
+                    (call_statement
+                      function: (identifier))
                     (code_block
                       (begin_keyword)
                       body: (statement_block
@@ -414,15 +422,19 @@ codeunit 1 T
               (preproc_open)
               condition: (preproc_not_expression
                 (identifier)))
+            (ERROR
+              (call_statement
+                function: (identifier))
+              (ERROR)
+              (assignment_expression
+                left: (identifier)
+                operator: (assignment_operator)
+                right: (integer)))
+            (empty_statement)
             (call_statement
               function: (identifier))
-            (ERROR)
-            (assignment_statement
-              left: (identifier)
-              operator: (assignment_operator)
-              right: (integer))
-            (identifier)
-            (identifier)
+            (call_statement
+              function: (identifier))
             (code_block
               (begin_keyword)
               body: (statement_block
@@ -501,15 +513,19 @@ codeunit 1 T
                       (preproc_open)
                       condition: (preproc_not_expression
                         (identifier)))
+                    (ERROR
+                      (call_statement
+                        function: (identifier))
+                      (ERROR)
+                      (assignment_expression
+                        left: (identifier)
+                        operator: (assignment_operator)
+                        right: (integer)))
+                    (empty_statement)
                     (call_statement
                       function: (identifier))
-                    (ERROR)
-                    (assignment_statement
-                      left: (identifier)
-                      operator: (assignment_operator)
-                      right: (integer))
-                    (identifier)
-                    (identifier)
+                    (call_statement
+                      function: (identifier))
                     (code_block
                       (begin_keyword)
                       body: (statement_block

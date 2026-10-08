@@ -2,7 +2,7 @@
    python -m tools.b7_audit report [--out PATH] [--evidence PATH]
    python -m tools.b7_audit run [--only FAMILY|KEY|PLACEMENT] [--jobs N] [--check] [--accept-tool]
    python -m tools.b7_audit assert --cell ID | --refresh
-   python -m tools.b7_audit manifest --check [--manifest PATH] [--evidence PATH]"""
+   python -m tools.b7_audit manifest --check [--manifest PATH] [--evidence PATH] [--no-oracle]"""
 import argparse
 import sys
 from pathlib import Path
@@ -12,12 +12,14 @@ from . import census, grammar, registry
 HERE = Path(__file__).parent
 GRAMMAR = HERE.parent.parent / "src" / "grammar.json"
 REGISTRY = HERE / "registry.tsv"
+KEY_ALIASES = HERE / "key-aliases.tsv"
 
 
 def cmd_census(a):
     try:
         g = grammar.load(GRAMMAR)
         rows = registry.load(REGISTRY) if a.check else []
+        aliases = registry.load_aliases(KEY_ALIASES) if a.check else []
     except (OSError, ValueError, KeyError) as e:
         print(f"cannot run: {e}", file=sys.stderr)
         return 2
@@ -27,7 +29,7 @@ def cmd_census(a):
             print(f"{k}\t{r.host}\t{' > '.join(r.chain)}")
         return 0
     if a.check:
-        missing, stale, invalid = registry.gate(pairs, rows)
+        missing, stale, invalid = registry.gate(pairs, rows, aliases)
         for k, r in missing:
             print(f"missing\t{k}\t{r.host}")
         for r in stale:
@@ -86,18 +88,27 @@ def cmd_refresh():
 
 
 def cmd_manifest(a):
-    from . import manifest
+    """Check one manifest against its own scope. The B7b-1 manifest's transfer cells (manifest.TRANSFER_B7B3) are
+    exempt from its verdict comparison while they are in the B7b-3 manifest and pass there. A manifest with an
+    expected_oracle column runs the config oracle on each such cell (--no-oracle skips that comparison only)."""
+    from . import evidence, manifest
+    path = Path(a.manifest) if a.manifest else manifest.MANIFEST
     try:
-        entries = manifest.load(a.manifest or manifest.MANIFEST)
+        scope, entries = manifest.load(path)
         records, verdicts = manifest.current(a.evidence)
-    except (OSError, ValueError, KeyError) as e:
+        transfer = manifest.transfer_for(path, entries, records, verdicts)
+        want = {e.cell_id for e in entries if e.expected_oracle}
+        oracle = manifest.fresh_oracle(want).get if want and not a.no_oracle else None
+    except (OSError, ValueError, KeyError, evidence.OracleCrash, evidence.DiscoverMismatch) as e:
         print(f"cannot run: {e}", file=sys.stderr)
         return 2
-    problems = manifest.check(entries, records, verdicts)
+    problems = manifest.check(scope, entries, records, verdicts, transfer=transfer, oracle=oracle)
     for p in problems:
         print(p)
     adm = [e for e in entries if e.disposition == "admitted"]
-    print(f"{len(entries)} entries ({len(adm)} admitted): {len(problems)} problems")
+    extra = f", {len(transfer)} transferred" if transfer else ""
+    extra += ", oracle not run" if want and oracle is None else ""
+    print(f"{len(entries)} entries ({len(adm)} admitted{extra}): {len(problems)} problems")
     return 1 if problems else 0
 
 
@@ -119,9 +130,12 @@ def main(argv=None):
     m.add_argument("--cell")
     m.add_argument("--refresh", action="store_true",
                    help="rewrite fingerprints of rows whose truth is unchanged; list flipped rows (exit 1)")
-    mf = sub.add_parser("manifest", help="--check: the B7b-1 route manifest against the committed evidence")
+    mf = sub.add_parser("manifest", help="--check: a route manifest (default the B7b-1 one) against the committed "
+                        "evidence, within the families its `# families:` header declares")
     mf.add_argument("--check", action="store_true", required=True)
     mf.add_argument("--manifest")
+    mf.add_argument("--no-oracle", action="store_true",
+                    help="skip the fresh config oracle run behind the expected_oracle column")
     mf.add_argument("--evidence")
     rp = sub.add_parser("report")
     rp.add_argument("--out")

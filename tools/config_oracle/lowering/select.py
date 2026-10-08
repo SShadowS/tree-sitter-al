@@ -3,11 +3,13 @@ from __future__ import annotations
 
 from tools.config_oracle import contracts
 from tools.config_oracle.ir import Node
-from tools.config_oracle.lowering.engine import ARM_SEMI, Lowered, LoweringError, Terminator, bind_previous, lower
+from tools.config_oracle.lowering.case_terminators import CASE_SEMI
+from tools.config_oracle.lowering.engine import ARM_SEMI, EMPTY_BODY_SLOTS, Lowered, LoweringError, Terminator, bind_previous, lower
 
 DIRECTIVES = ("preproc_if", "preproc_elif", "preproc_else")
 
 HOIST_TERMINATOR = True   # mutation switch for the terminator-hoist contract test
+EMPTY_BODIES = True       # mutation switch for the statement empty-body-terminator test
 
 
 def _splice_arm(items):
@@ -85,6 +87,11 @@ def branch_select(node, ctx) -> Lowered:
                 if entry.arm is not None and c.kind not in entry.arm:
                     raise LoweringError("arm-content", c, f"{c.kind} not declared for {node.kind}")
                 r = lower(c, ctx.child(node.kind, c.field or "<children>"))
+                if node.kind == "preproc_conditional_case" and c.kind == "empty_statement":
+                    # case-terminator (spec 6.2): every direct-arm `;` of a case group, mixed
+                    # arms included; the mark rides the node through enclosing arms.
+                    for n in r.nodes:
+                        setattr(n, CASE_SEMI, True)
                 out.frags.extend(bind_previous(out.nodes, r, c))
             if node.kind == "preproc_conditional_statement" and [c.kind for c in content] == ["empty_statement"] \
                     and len(out.nodes) == 1 and not out.frags:
@@ -112,8 +119,14 @@ def branch_select(node, ctx) -> Lowered:
                 and out.nodes[1].kind == ";" and not out.nodes[1].children:
             stmt, semi = out.nodes
             out = Lowered([stmt], [Terminator(stmt, semi)])
-        # single-slot: exactly one node; optional-slot: at most one (spec section 3).
+        # single-slot: exactly one node; optional-slot: at most one (spec section 3). A statement
+        # body (engine.EMPTY_BODY_SLOTS) may lower to nothing: the statement's body is then pending
+        # and engine.absorb_arm_terminators fills it from the next `;` (empty-body-terminator), or
+        # engine._lower_tree refuses it with this same policy error.
         allowed = (1,) if policy == "single-slot" else (0, 1)
+        if (not out.nodes and not out.frags and EMPTY_BODIES and node.kind == "preproc_conditional_statement"
+                and (ctx.parent_kind, node.field) in EMPTY_BODY_SLOTS):
+            allowed = (0,)
         if len(out.nodes) not in allowed:
             raise LoweringError("policy", node, f"{len(out.nodes)} nodes into a {policy}")
         for n in out.nodes:
