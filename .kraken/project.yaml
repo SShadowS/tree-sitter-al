@@ -1,0 +1,36 @@
+schema: 1
+name: tsal
+repo: https://github.com/SShadowS/tree-sitter-al.git
+image: .kraken/Dockerfile
+ssh_port: 2211 # server1's sshPorts range 2210-2299
+mem_limit: 24g # generate on this grammar and the full oracle tier are memory-hungry; no sidecars
+agents:
+  - name: main
+    branch: feat/b7b-2-continuations
+    model: opus
+    session_name: tsal-main
+    start:
+      # the owner drives: CLAUDE.local.md points the agent at the B7b-2 handover
+      - "Run `kraken tentacle ack` and report its output in one line. Do nothing else."
+setup:
+  - bash scripts/kraken-setup.sh
+env:
+  # tools/config_oracle and tools/corpus-grep.sh read these; tools/b7_audit/seeds.py hard-codes
+  # H:/Git/..., which setup answers with a gitignored `H:` symlink tree in the checkout
+  AL_BC28_ROOT: /work/src/BC28.1
+  AL_BCAPPS29_ROOT: /work/src/BCApps-29.0
+secret_files:
+  # pi (reviewer models, openai-codex) and serena
+  - { from: mcp.json, to: .mcp.json }
+  # the owner's gitignored Claude setup, Linux-adapted: settings, and a tar kraken-setup.sh unpacks
+  # (this checkout's untracked agents, commands, skills; the user CLAUDE.md and skills)
+  - { from: claude-settings.local.json, to: .claude/settings.local.json }
+  - { from: claude.tar, to: .claude/kraken-claude.tar }
+  # the pointer to the current handover under .superpowers/sdd (gitignored, copied as data)
+  - { from: CLAUDE.local.md, to: CLAUDE.local.md }
+reaper:
+  grace_minutes: 10
+  disposable: []
+  protect: []
+needs: {}
+permissions: requested
