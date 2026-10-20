@@ -11,12 +11,13 @@ ARG TREE_SITTER_VERSION=0.27.0
 RUN curl -fsSL https://github.com/tree-sitter/tree-sitter/releases/download/v$TREE_SITTER_VERSION/tree-sitter-linux-x64.gz \
       | gunzip > /usr/local/bin/tree-sitter && chmod +x /usr/local/bin/tree-sitter && tree-sitter --version
 # Python 3.13 as CI pins it, in a venv on PATH, so `python -m tools...` finds the requirements;
-# uv also gives uvx for serena
+# uv also gives uvx for serena. A throwaway HOME: the base's HOME is /home/dev, and uv's receipt and
+# cache there would be root-owned, so the fresh config and cache volumes would be too.
 ENV UV_INSTALL_DIR=/usr/local/bin UV_PYTHON_INSTALL_DIR=/opt/uv-python
-RUN curl -fsSL https://astral.sh/uv/install.sh | sh \
+RUN export HOME=/tmp/build-home UV_NO_CACHE=1 && curl -fsSL https://astral.sh/uv/install.sh | sh \
     && uv venv --python 3.13 /opt/venv \
     && curl -fsSL https://raw.githubusercontent.com/SShadowS/tree-sitter-al/main/tools/query_coverage/requirements.txt -o /tmp/req.txt \
-    && uv pip install --python /opt/venv/bin/python -r /tmp/req.txt && rm /tmp/req.txt
+    && uv pip install --python /opt/venv/bin/python -r /tmp/req.txt && rm -rf /tmp/req.txt /tmp/build-home
 ENV PATH=/opt/venv/bin:$PATH
 # Rust for `cargo test --features traversal` (no rust-toolchain.toml: stable)
 ENV RUSTUP_HOME=/opt/rustup
@@ -42,5 +43,6 @@ RUN printf '%s\n' 'export PATH=/opt/venv/bin:/opt/cargo/bin:/opt/dotnet:/opt/al-
       'export DOTNET_ROOT=/opt/dotnet' 'export RUSTUP_HOME=/opt/rustup' 'export DOTNET_CLI_TELEMETRY_OPTOUT=1' \
       'export UV_PYTHON_INSTALL_DIR=/opt/uv-python' 'export PI_CODING_AGENT_DIR=/home/dev/.config/pi' \
       > /etc/profile.d/tsal-tools.sh \
-    && chown -R dev:dev /opt/rustup /opt/cargo /opt/venv
+    && chown -R dev:dev /opt/rustup /opt/cargo /opt/venv \
+    && { ! find /home/dev ! -user dev | grep .; } # fresh volumes copy this tree's owners
 # ends as root: the base entrypoint drops to dev
