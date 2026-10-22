@@ -1,5 +1,5 @@
 // B7a Task 10 witness (GAP): family while-condition, base placement prefix, 2 cells; representative bnd:while_statement:condition:end@statement_block#prefix/membership
-// Fixture b7_gap_while_condition_test.txt#B7a GAP: while-condition / prefix (2 cells, verdict of the representative GAP); the parser ERRORs on configurations alc accepts; representative bnd:while_statement:condition:end@statement_block%23prefix/membership#0
+// Fixture b7b2_while_condition_test.txt#B7b-2 while-condition / prefix (membership): moved from b7_gap_while_condition_test.txt#0
 // expect: !X accept
 // expect: X accept
 // source: recorded by B7a Task 10, 2026-10-07: the alc split verdicts of cell bnd:while_statement:condition:end@statement_block#prefix/membership in tools/b7_audit/evidence.jsonl.gz

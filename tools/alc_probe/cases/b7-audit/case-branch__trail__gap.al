@@ -1,5 +1,5 @@
 // B7b-3 Task 10 witness (GAP): family case-branch, base placement trail, 6 cells; representative occ:preproc_split_case_end_branch:1.0@preproc_split_case_statement_end#trail (deferred B7 in b7b3-manifest.tsv: the split case end branch has no slot for a `;` beside it)
-// Fixture b7_gap_case_branch_test.txt#B7a GAP: case-branch / trail (6 cells, verdict of the representative GAP, deferred B7: no slot for a `;` beside the end branch); the parser ERRORs on configurations alc accepts; representative occ:preproc_split_case_end_branch:1.0@preproc_split_case_statement_end#trail#0
+// Fixture b7_gap_case_branch_test.txt#B7a GAP: case-branch / trail (6 cells, verdict of the representative GAP, deferred B7: no slot for a `;` beside the end branch); the parser ERRORs on configurations alc accepts; representative occ:preproc_split_case_end_branch:1.0@preproc_split_case_statement_end%23trail#0
 // expect: * accept
 // source: recorded by B7a, re-read by B7b-3 Task 10, 2026-10-08: the alc split verdicts of cell occ:preproc_split_case_end_branch:1.0@preproc_split_case_statement_end#trail in tools/b7_audit/evidence.jsonl.gz
 table 50100 T

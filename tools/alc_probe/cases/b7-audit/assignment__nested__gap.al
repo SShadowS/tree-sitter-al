@@ -1,5 +1,5 @@
 // B7a Task 10 witness (GAP): family assignment, base placement nested, 48 cells; representative bnd:assignment_statement:right:end@asserterror_statement#nested/arithmetic
-// Fixture b7_gap_assignment_test.txt#B7a GAP: assignment / nested (48 cells, verdict of the representative GAP); the parser ERRORs on configurations alc accepts; representative bnd:assignment_statement:right:end@asserterror_statement%23nested/arithmetic#0
+// Fixture b7b2_assignment_test.txt#B7b-2 assignment / nested: moved from b7_gap_assignment_test.txt#0
 // expect: !X !Y accept
 // expect: !X Y accept
 // expect: X !Y accept

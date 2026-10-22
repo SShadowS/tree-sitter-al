@@ -1,5 +1,5 @@
 // B7a Task 10 witness (GAP): family split-if-condition, base placement whole-operand, 40 cells; representative bnd:_preproc_if_header:condition:end@preproc_guarded_statement#whole-operand/comparison
-// Fixture b7_gap_split_if_condition_test.txt#B7a GAP: split-if-condition / whole-operand (40 cells, verdict of the representative GAP); the parser ERRORs on configurations alc accepts; representative bnd:_preproc_if_header:condition:end@preproc_guarded_statement%23whole-operand/comparison#0
+// Fixture b7b2_split_if_condition_test.txt#B7b-2 split-if-condition / whole-operand: moved from b7_gap_split_if_condition_test.txt#0
 // expect: !TPL !X accept
 // expect: !TPL X accept
 // expect: TPL !X accept

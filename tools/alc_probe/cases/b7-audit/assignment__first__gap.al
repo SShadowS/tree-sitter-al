@@ -1,5 +1,5 @@
 // B7a Task 10 witness (GAP): family assignment, base placement first, 48 cells; representative bnd:assignment_statement:right:end@asserterror_statement#first/arithmetic
-// Fixture b7_gap_assignment_test.txt#B7a GAP: assignment / first (48 cells, verdict of the representative GAP); the parser ERRORs on configurations alc accepts; representative bnd:assignment_statement:right:end@asserterror_statement%23first/arithmetic#0
+// Fixture b7b2_assignment_test.txt#B7b-2 assignment / first: moved from b7_gap_assignment_test.txt#0
 // expect: !X accept
 // expect: X accept
 // source: recorded by B7a Task 10, 2026-10-07: the alc split verdicts of cell bnd:assignment_statement:right:end@asserterror_statement#first/arithmetic in tools/b7_audit/evidence.jsonl.gz

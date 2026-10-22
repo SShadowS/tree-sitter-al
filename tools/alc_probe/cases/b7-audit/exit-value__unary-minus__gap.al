@@ -1,5 +1,5 @@
 // B7a Task 10 witness (GAP): family exit-value, base placement unary-minus, 4 cells; representative bnd:exit_statement:return_value:end@statement_block#unary-minus/arithmetic
-// Fixture b7_gap_exit_value_test.txt#B7a GAP: exit-value / unary-minus (4 cells, verdict of the representative GAP); the parser ERRORs on configurations alc accepts; representative bnd:exit_statement:return_value:end@statement_block%23unary-minus/arithmetic#0
+// Fixture b7b2_exit_value_test.txt#B7b-2 exit-value / unary-minus: moved from b7_gap_exit_value_test.txt#0
 // expect: !X accept
 // expect: X accept
 // source: recorded by B7a Task 10, 2026-10-07: the alc split verdicts of cell bnd:exit_statement:return_value:end@statement_block#unary-minus/arithmetic in tools/b7_audit/evidence.jsonl.gz

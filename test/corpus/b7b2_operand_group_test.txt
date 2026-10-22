@@ -1,0 +1,1191 @@
+================================================================================
+B7b-2 operand group: whole operand
+--
+Spec 6.1: a group where one operand stands. The group is the binary's
+`right` and each arm's operand is `operand` (multiple). alc:
+tools/alc_probe/cases/b7b-2/operand_groups (B7a whole-operand cells).
+================================================================================
+codeunit 50100 P
+{
+    procedure Q()
+    begin
+        I := 1 +
+#if X
+            2
+#else
+            3
+#endif
+            ;
+    end;
+}
+--------------------------------------------------------------------------------
+
+(source_file (codeunit_declaration (codeunit_keyword) object_id: (integer) object_name: (identifier) body:
+(declaration_body (procedure (procedure_keyword) name: (identifier) body: (code_block (begin_keyword) body:
+(statement_block (assignment_statement left: (identifier) operator: (assignment_operator) right:
+(additive_expression left: (integer) right: (preproc_conditional_operand (preproc_if (preproc_open) condition:
+(identifier)) operand: (integer) (preproc_else) operand: (integer) (preproc_endif (preproc_close))))))
+(end_keyword))))))
+
+
+================================================================================
+B7b-2 operand group: operand group with elif
+--
+Review Focus 2: every arm, #elif included, fields `operand`.
+================================================================================
+codeunit 50100 P
+{
+    procedure Q()
+    begin
+        I := 1 +
+#if X
+            2
+#elif Y
+            3
+#else
+            4
+#endif
+            ;
+    end;
+}
+--------------------------------------------------------------------------------
+
+(source_file (codeunit_declaration (codeunit_keyword) object_id: (integer) object_name: (identifier) body:
+(declaration_body (procedure (procedure_keyword) name: (identifier) body: (code_block (begin_keyword) body:
+(statement_block (assignment_statement left: (identifier) operator: (assignment_operator) right:
+(additive_expression left: (integer) right: (preproc_conditional_operand (preproc_if (preproc_open) condition:
+(identifier)) operand: (integer) (preproc_elif condition: (identifier)) operand: (integer) (preproc_else) operand:
+(integer) (preproc_endif (preproc_close)))))) (end_keyword))))))
+
+
+================================================================================
+B7b-2 operand group: first-only, then an operator
+--
+Spec 6.3 placement A: the group as the left of `+` at the assignment
+root (static precedence; spec 5.4 rows 6a/7 for the list positions).
+alc: operand_groups/leading-then-op.al.
+================================================================================
+codeunit 50100 P
+{
+    procedure Q()
+    begin
+        I :=
+#if X
+            1
+#else
+            2
+#endif
+            + 3;
+    end;
+}
+--------------------------------------------------------------------------------
+
+(source_file (codeunit_declaration (codeunit_keyword) object_id: (integer) object_name: (identifier) body:
+(declaration_body (procedure (procedure_keyword) name: (identifier) body: (code_block (begin_keyword) body:
+(statement_block (assignment_statement left: (identifier) operator: (assignment_operator) right:
+(additive_expression left: (preproc_conditional_operand (preproc_if (preproc_open) condition: (identifier)) operand:
+(integer) (preproc_else) operand: (integer) (preproc_endif (preproc_close))) right: (integer)))) (end_keyword))))))
+
+
+================================================================================
+B7b-2 operand group: first: a leading operand prefix at the root
+--
+Spec 6.3 `first`: the prefix is an unfielded child of the host before the
+root's operand `right` (spec 3.1 root-to-leading-prefix edge). B7a first
+cells (e.g. binary-operand / first).
+================================================================================
+codeunit 50100 P
+{
+    procedure Q()
+    begin
+        I :=
+#if X
+            2 +
+#endif
+            2 + 1;
+    end;
+}
+--------------------------------------------------------------------------------
+
+(source_file (codeunit_declaration (codeunit_keyword) object_id: (integer) object_name: (identifier) body:
+(declaration_body (procedure (procedure_keyword) name: (identifier) body: (code_block (begin_keyword) body:
+(statement_block (assignment_statement left: (identifier) operator: (assignment_operator) (preproc_operand_prefix
+(preproc_if (preproc_open) condition: (identifier)) operand: (integer) (preproc_endif (preproc_close))) right:
+(additive_expression left: (integer) right: (integer)))) (end_keyword))))))
+
+
+================================================================================
+B7b-2 operand group: consecutive leading prefixes
+--
+Spec 6.3: `preproc_operand_prefix+` at a root (alc accepts every
+configuration: tools/alc_probe/cases/b7b-2/prefixes/consecutive-leading.al).
+================================================================================
+codeunit 50100 P
+{
+    procedure Q()
+    begin
+        I :=
+#if X
+            I +
+#endif
+#if Y
+            J *
+#endif
+            3;
+    end;
+}
+--------------------------------------------------------------------------------
+
+(source_file (codeunit_declaration (codeunit_keyword) object_id: (integer) object_name: (identifier) body:
+(declaration_body (procedure (procedure_keyword) name: (identifier) body: (code_block (begin_keyword) body:
+(statement_block (assignment_statement left: (identifier) operator: (assignment_operator) (preproc_operand_prefix
+(preproc_if (preproc_open) condition: (identifier)) operand: (identifier) (preproc_endif (preproc_close)))
+(preproc_operand_prefix (preproc_if (preproc_open) condition: (identifier)) operand: (identifier) (preproc_endif
+(preproc_close))) right: (integer))) (end_keyword))))))
+
+
+================================================================================
+B7b-2 operand group: consecutive prefixes after a binary operator
+--
+Spec 6.3: two prefixes between `+` and `right` (alc:
+prefixes/consecutive.al).
+================================================================================
+codeunit 50100 P
+{
+    procedure Q()
+    begin
+        I := I +
+#if X
+            J +
+#endif
+#if Y
+            3 *
+#endif
+            4;
+    end;
+}
+--------------------------------------------------------------------------------
+
+(source_file (codeunit_declaration (codeunit_keyword) object_id: (integer) object_name: (identifier) body:
+(declaration_body (procedure (procedure_keyword) name: (identifier) body: (code_block (begin_keyword) body:
+(statement_block (assignment_statement left: (identifier) operator: (assignment_operator) right:
+(additive_expression left: (identifier) (preproc_operand_prefix (preproc_if (preproc_open) condition: (identifier))
+operand: (identifier) (preproc_endif (preproc_close))) (preproc_operand_prefix (preproc_if (preproc_open) condition:
+(identifier)) operand: (integer) (preproc_endif (preproc_close))) right: (integer)))) (end_keyword))))))
+
+
+================================================================================
+B7b-2 operand group: unary-paren arm
+--
+A parenthesized arm (B7a unary-paren cells). `2 + g + 1` associates left,
+`(2 + g) + 1`: the group is a plain operand grouped by static precedence
+(execution amendments Task 10 fix round 2).
+================================================================================
+codeunit 50100 P
+{
+    procedure Q()
+    begin
+        I := 2 +
+#if X
+            (2 + 3)
+#else
+            3
+#endif
+            + 1;
+    end;
+}
+--------------------------------------------------------------------------------
+
+(source_file (codeunit_declaration (codeunit_keyword) object_id: (integer) object_name: (identifier) body:
+(declaration_body (procedure (procedure_keyword) name: (identifier) body: (code_block (begin_keyword) body:
+(statement_block (assignment_statement left: (identifier) operator: (assignment_operator) right:
+(additive_expression left: (additive_expression left: (integer) right: (preproc_conditional_operand (preproc_if
+(preproc_open) condition: (identifier)) operand: (parenthesized_expression (additive_expression left: (integer)
+right: (integer))) (preproc_else) operand: (integer) (preproc_endif (preproc_close)))) right: (integer))))
+(end_keyword))))))
+
+
+================================================================================
+B7b-2 operand group: unary-minus arm
+--
+A unary arm (B7a unary-minus cells): `operand: (unary_expression ...)`.
+================================================================================
+codeunit 50100 P
+{
+    procedure Q()
+    begin
+        I := 2 +
+#if X
+            - 2
+#else
+            3
+#endif
+            + 1;
+    end;
+}
+--------------------------------------------------------------------------------
+
+(source_file (codeunit_declaration (codeunit_keyword) object_id: (integer) object_name: (identifier) body:
+(declaration_body (procedure (procedure_keyword) name: (identifier) body: (code_block (begin_keyword) body:
+(statement_block (assignment_statement left: (identifier) operator: (assignment_operator) right:
+(additive_expression left: (additive_expression left: (integer) right: (preproc_conditional_operand (preproc_if
+(preproc_open) condition: (identifier)) operand: (unary_expression operand: (integer)) (preproc_else) operand:
+(integer) (preproc_endif (preproc_close)))) right: (integer)))) (end_keyword))))))
+
+
+================================================================================
+B7b-2 operand group: unary-not arm
+--
+B7a unary-not cells: `Ok = #if X not true #else false #endif and Ok`.
+================================================================================
+codeunit 50100 P
+{
+    procedure Q()
+    begin
+        Ok := Ok =
+#if X
+            not true
+#else
+            false
+#endif
+            and Ok;
+    end;
+}
+--------------------------------------------------------------------------------
+
+(source_file (codeunit_declaration (codeunit_keyword) object_id: (integer) object_name: (identifier) body:
+(declaration_body (procedure (procedure_keyword) name: (identifier) body: (code_block (begin_keyword) body:
+(statement_block (assignment_statement left: (identifier) operator: (assignment_operator) right:
+(comparison_expression left: (identifier) operator: (comparison_operator) right: (logical_expression left:
+(preproc_conditional_operand (preproc_if (preproc_open) condition: (identifier)) operand: (unary_expression operand:
+(boolean)) (preproc_else) operand: (boolean) (preproc_endif (preproc_close))) right: (identifier)))))
+(end_keyword))))))
+
+
+================================================================================
+B7b-2 operand group: signed arm
+--
+B7a signed cells: `-1` in code is a unary minus (the signed literal is a
+property-value token only).
+================================================================================
+codeunit 50100 P
+{
+    procedure Q()
+    begin
+        I := 2 +
+#if X
+            -1
+#else
+            2
+#endif
+            + 1;
+    end;
+}
+--------------------------------------------------------------------------------
+
+(source_file (codeunit_declaration (codeunit_keyword) object_id: (integer) object_name: (identifier) body:
+(declaration_body (procedure (procedure_keyword) name: (identifier) body: (code_block (begin_keyword) body:
+(statement_block (assignment_statement left: (identifier) operator: (assignment_operator) right:
+(additive_expression left: (additive_expression left: (integer) right: (preproc_conditional_operand (preproc_if
+(preproc_open) condition: (identifier)) operand: (unary_expression operand: (integer)) (preproc_else) operand:
+(integer) (preproc_endif (preproc_close)))) right: (integer)))) (end_keyword))))))
+
+
+================================================================================
+B7b-2 operand group: member object: a receiver group of atoms
+--
+Spec 3.4 receiver restriction: the object is the receiver variant (same
+visible type), arms are postfix-safe atoms. alc: operand_groups/member-object.al.
+================================================================================
+codeunit 50100 P
+{
+    procedure Q()
+    begin
+        I :=
+#if X
+            T1
+#else
+            T2
+#endif
+            .IndexOf('a');
+    end;
+}
+--------------------------------------------------------------------------------
+
+(source_file (codeunit_declaration (codeunit_keyword) object_id: (integer) object_name: (identifier) body:
+(declaration_body (procedure (procedure_keyword) name: (identifier) body: (code_block (begin_keyword) body:
+(statement_block (assignment_statement left: (identifier) operator: (assignment_operator) right: (call_expression
+function: (member_expression object: (preproc_conditional_operand (preproc_if (preproc_open) condition:
+(identifier)) operand: (identifier) (preproc_else) operand: (identifier) (preproc_endif (preproc_close))) member:
+(identifier)) arguments: (argument_list (string_literal))))) (end_keyword))))))
+
+
+================================================================================
+B7b-2 operand group: with record
+--
+`with_statement.record` (a region root): the group stands as the record
+(B7a with / first-only).
+================================================================================
+codeunit 50100 P
+{
+    procedure Q()
+    begin
+        with
+#if X
+            R
+#else
+            Recs[1]
+#endif
+            do
+            Bar();
+    end;
+}
+--------------------------------------------------------------------------------
+
+(source_file (codeunit_declaration (codeunit_keyword) object_id: (integer) object_name: (identifier) body:
+(declaration_body (procedure (procedure_keyword) name: (identifier) body: (code_block (begin_keyword) body:
+(statement_block (with_statement (with_keyword) record: (preproc_conditional_operand (preproc_if (preproc_open)
+condition: (identifier)) operand: (identifier) (preproc_else) operand: (subscript_expression object: (identifier)
+index: (integer)) (preproc_endif (preproc_close))) (do_keyword) body: (call_expression function: (identifier)
+arguments: (argument_list)))) (end_keyword))))))
+
+
+================================================================================
+B7b-2 operand group: typed right of in
+--
+Spec 6.2: the group is `in_expression.right`, its arms list literals (the
+general group, whose arms are list literals for valid input; an aliased
+list-literal group passes the state limit, execution amendments Task 10).
+alc: typed_rights/in-list.al.
+================================================================================
+codeunit 50100 P
+{
+    procedure Q()
+    begin
+        B := I in
+#if X
+            [1, 2]
+#else
+            [3]
+#endif
+            ;
+    end;
+}
+--------------------------------------------------------------------------------
+
+(source_file (codeunit_declaration (codeunit_keyword) object_id: (integer) object_name: (identifier) body:
+(declaration_body (procedure (procedure_keyword) name: (identifier) body: (code_block (begin_keyword) body:
+(statement_block (assignment_statement left: (identifier) operator: (assignment_operator) right: (in_expression
+left: (identifier) operator: (in_keyword) right: (preproc_conditional_operand (preproc_if (preproc_open) condition:
+(identifier)) operand: (list_literal (integer) (integer)) (preproc_else) operand: (list_literal (integer))
+(preproc_endif (preproc_close)))))) (end_keyword))))))
+
+
+================================================================================
+B7b-2 operand group: OVERACCEPT in's right takes a non-list arm (item 58)
+--
+KNOWN OVER-ACCEPTANCE, not the intended grammar: `in_expression.right` is the
+GENERAL operand group (a cost decision, execution amendments Task 10), so the
+#else arm `3` parses clean as `operand: (integer)`. alc rejects X=0 (AL0104)
+and accepts X=1: tools/alc_probe/cases/b7b-2/typed_rights/in-non-list-arm.al;
+fixture-classes.tsv classifies X=0 invalid-config. docs/deferred-work.md item
+58: when `in` gets a list-only typed right this case must ERROR at X=0's arm.
+Tree from the CLI.
+================================================================================
+codeunit 50100 P
+{
+    procedure Q()
+    begin
+        B := I in
+#if X
+            [1, 2]
+#else
+            3
+#endif
+            ;
+    end;
+}
+--------------------------------------------------------------------------------
+
+(source_file (codeunit_declaration (codeunit_keyword) object_id: (integer) object_name: (identifier) body:
+(declaration_body (procedure (procedure_keyword) name: (identifier) body: (code_block (begin_keyword) body:
+(statement_block (assignment_statement left: (identifier) operator: (assignment_operator) right: (in_expression
+left: (identifier) operator: (in_keyword) right: (preproc_conditional_operand (preproc_if (preproc_open) condition:
+(identifier)) operand: (list_literal (integer) (integer)) (preproc_else) operand: (integer)
+(preproc_endif (preproc_close)))))) (end_keyword))))))
+
+
+================================================================================
+B7b-2 operand group: typed right of as and is
+--
+Spec 6.2: the typed variant (`_type_right`, aliased preproc_conditional_operand),
+each arm `operand: (type_specification ...)`. alc: typed_rights/as.al, is.al.
+================================================================================
+codeunit 50100 P
+{
+    procedure Q()
+    begin
+        V := F as
+#if X
+            IFoo
+#else
+            IBar
+#endif
+            ;
+        B := F is
+#if X
+            IFoo
+#else
+            IBar
+#endif
+            ;
+    end;
+}
+--------------------------------------------------------------------------------
+
+(source_file (codeunit_declaration (codeunit_keyword) object_id: (integer) object_name: (identifier) body:
+(declaration_body (procedure (procedure_keyword) name: (identifier) body: (code_block (begin_keyword) body:
+(statement_block (assignment_statement left: (identifier) operator: (assignment_operator) right: (as_expression
+left: (identifier) operator: (as_keyword) right: (preproc_conditional_operand (preproc_if (preproc_open) condition:
+(identifier)) operand: (type_specification (identifier)) (preproc_else) operand: (type_specification (identifier))
+(preproc_endif (preproc_close))))) (assignment_statement left: (identifier) operator: (assignment_operator) right:
+(is_expression left: (identifier) operator: (is_keyword) right: (preproc_conditional_operand (preproc_if
+(preproc_open) condition: (identifier)) operand: (type_specification (identifier)) (preproc_else) operand:
+(type_specification (identifier)) (preproc_endif (preproc_close)))))) (end_keyword))))))
+
+
+================================================================================
+B7b-2 operand group: a group followed by a tail
+--
+The group is the binary's right; the tail after it is the root's (spec
+5.1, the region's tail). alc: operand_groups/then-tail.al.
+================================================================================
+codeunit 50100 P
+{
+    procedure Q()
+    begin
+        I := 1 +
+#if X
+            2
+#else
+            3
+#endif
+#if Y
+            * 4
+#endif
+            ;
+    end;
+}
+--------------------------------------------------------------------------------
+
+(source_file (codeunit_declaration (codeunit_keyword) object_id: (integer) object_name: (identifier) body:
+(declaration_body (procedure (procedure_keyword) name: (identifier) body: (code_block (begin_keyword) body:
+(statement_block (assignment_statement left: (identifier) operator: (assignment_operator) right:
+(additive_expression left: (integer) right: (preproc_conditional_operand (preproc_if (preproc_open) condition:
+(identifier)) operand: (integer) (preproc_else) operand: (integer) (preproc_endif (preproc_close))))
+(preproc_conditional_expression_tail (preproc_if (preproc_open) condition: (identifier)) operand: (integer)
+(preproc_endif (preproc_close))))) (end_keyword))))))
+
+
+================================================================================
+B7b-2 operand group: nested operand groups
+--
+A group as the first operand of an arm (spec 6.1 arms take
+`_continuation_operand`). alc: operand_groups/nested.al.
+================================================================================
+codeunit 50100 P
+{
+    procedure Q()
+    begin
+        I := 1 +
+#if X
+#if Y
+            2
+#else
+            3
+#endif
+#else
+            4
+#endif
+            ;
+    end;
+}
+--------------------------------------------------------------------------------
+
+(source_file (codeunit_declaration (codeunit_keyword) object_id: (integer) object_name: (identifier) body:
+(declaration_body (procedure (procedure_keyword) name: (identifier) body: (code_block (begin_keyword) body:
+(statement_block (assignment_statement left: (identifier) operator: (assignment_operator) right:
+(additive_expression left: (integer) right: (preproc_conditional_operand (preproc_if (preproc_open) condition:
+(identifier)) operand: (preproc_conditional_operand (preproc_if (preproc_open) condition: (identifier)) operand:
+(integer) (preproc_else) operand: (integer) (preproc_endif (preproc_close))) (preproc_else) operand: (integer)
+(preproc_endif (preproc_close)))))) (end_keyword))))))
+
+
+================================================================================
+B7b-2 operand group: arm with a continuation and arm with a tail
+--
+An arm's operand may be binary (`2 * J`); an arm may carry tail items (a
+nested tail, siblings in the arm). alc: operand_groups/arm-continuation.al,
+arm-with-tail.al.
+================================================================================
+codeunit 50100 P
+{
+    procedure Q()
+    begin
+        I := 1 +
+#if X
+            2 * J
+#else
+            3
+#endif
+            ;
+        I := 1 +
+#if X
+            J
+#if Y
+            + 5
+#endif
+#else
+            3
+#endif
+            ;
+    end;
+}
+--------------------------------------------------------------------------------
+
+(source_file (codeunit_declaration (codeunit_keyword) object_id: (integer) object_name: (identifier) body:
+(declaration_body (procedure (procedure_keyword) name: (identifier) body: (code_block (begin_keyword) body:
+(statement_block (assignment_statement left: (identifier) operator: (assignment_operator) right:
+(additive_expression left: (integer) right: (preproc_conditional_operand (preproc_if (preproc_open) condition:
+(identifier)) operand: (multiplicative_expression left: (integer) right: (identifier)) (preproc_else) operand:
+(integer) (preproc_endif (preproc_close))))) (assignment_statement left: (identifier) operator:
+(assignment_operator) right: (additive_expression left: (integer) right: (preproc_conditional_operand (preproc_if
+(preproc_open) condition: (identifier)) operand: (identifier) (preproc_conditional_expression_tail (preproc_if
+(preproc_open) condition: (identifier)) operand: (integer) (preproc_endif (preproc_close))) (preproc_else) operand:
+(integer) (preproc_endif (preproc_close)))))) (end_keyword))))))
+
+
+================================================================================
+B7b-2 operand group: spec 4.3 witness 2 * group
+--
+`2 * #if X 3 + 4 #else 5 #endif` is `(2*3)+4` at X: transparent (spec 3),
+the tree says `multiplicative right: (group)`, no grouping claim. Losing
+reading: none derivable (the arm cannot leave the group). alc:
+grouping/mul-group.al.
+================================================================================
+codeunit 50100 P
+{
+    procedure Q()
+    begin
+        I := 2 *
+#if X
+            3 + 4
+#else
+            5
+#endif
+            ;
+    end;
+}
+--------------------------------------------------------------------------------
+
+(source_file (codeunit_declaration (codeunit_keyword) object_id: (integer) object_name: (identifier) body:
+(declaration_body (procedure (procedure_keyword) name: (identifier) body: (code_block (begin_keyword) body:
+(statement_block (assignment_statement left: (identifier) operator: (assignment_operator) right:
+(multiplicative_expression left: (integer) right: (preproc_conditional_operand (preproc_if (preproc_open) condition:
+(identifier)) operand: (additive_expression left: (integer) right: (integer)) (preproc_else) operand: (integer)
+(preproc_endif (preproc_close)))))) (end_keyword))))))
+
+
+================================================================================
+B7b-2 operand group: spec 4.3 witness unary minus group
+--
+`- #if X A + B #else C #endif` = `(-A)+B` at X: unary operand is the group.
+alc: grouping/neg-group.al.
+================================================================================
+codeunit 50100 P
+{
+    procedure Q()
+    begin
+        I := -
+#if X
+            A + B
+#else
+            C
+#endif
+            ;
+    end;
+}
+--------------------------------------------------------------------------------
+
+(source_file (codeunit_declaration (codeunit_keyword) object_id: (integer) object_name: (identifier) body:
+(declaration_body (procedure (procedure_keyword) name: (identifier) body: (code_block (begin_keyword) body:
+(statement_block (assignment_statement left: (identifier) operator: (assignment_operator) right: (unary_expression
+operand: (preproc_conditional_operand (preproc_if (preproc_open) condition: (identifier)) operand:
+(additive_expression left: (identifier) right: (identifier)) (preproc_else) operand: (identifier) (preproc_endif
+(preproc_close)))))) (end_keyword))))))
+
+
+================================================================================
+B7b-2 operand group: spec 4.3 witness true and group
+--
+`true and #if X A = C #else D #endif` = `(true and A) = C` at X. alc:
+grouping/and-eq-group.al.
+================================================================================
+codeunit 50100 P
+{
+    procedure Q()
+    begin
+        Ok := true and
+#if X
+            A = C
+#else
+            D
+#endif
+            ;
+    end;
+}
+--------------------------------------------------------------------------------
+
+(source_file (codeunit_declaration (codeunit_keyword) object_id: (integer) object_name: (identifier) body:
+(declaration_body (procedure (procedure_keyword) name: (identifier) body: (code_block (begin_keyword) body:
+(statement_block (assignment_statement left: (identifier) operator: (assignment_operator) right: (logical_expression
+left: (boolean) right: (preproc_conditional_operand (preproc_if (preproc_open) condition: (identifier)) operand:
+(comparison_expression left: (identifier) operator: (comparison_operator) right: (identifier)) (preproc_else)
+operand: (identifier) (preproc_endif (preproc_close)))))) (end_keyword))))))
+
+
+================================================================================
+B7b-2 operand group: spec 4.3 witness not group
+--
+`not #if X not A #else A #endif` = `not (not A)` at X. alc:
+grouping/not-not-group.al.
+================================================================================
+codeunit 50100 P
+{
+    procedure Q()
+    begin
+        Ok := not
+#if X
+            not A
+#else
+            A
+#endif
+            ;
+    end;
+}
+--------------------------------------------------------------------------------
+
+(source_file (codeunit_declaration (codeunit_keyword) object_id: (integer) object_name: (identifier) body:
+(declaration_body (procedure (procedure_keyword) name: (identifier) body: (code_block (begin_keyword) body:
+(statement_block (assignment_statement left: (identifier) operator: (assignment_operator) right: (unary_expression
+operand: (preproc_conditional_operand (preproc_if (preproc_open) condition: (identifier)) operand: (unary_expression
+operand: (identifier)) (preproc_else) operand: (identifier) (preproc_endif (preproc_close)))))) (end_keyword))))))
+
+
+================================================================================
+B7b-2 operand group: a prefix after a unary operator
+--
+Spec 6.3: `- #if X J + #endif 1`, the prefix an unfielded child of the
+unary node (alc: prefixes/unary-operand.al).
+================================================================================
+codeunit 50100 P
+{
+    procedure Q()
+    begin
+        I := -
+#if X
+            J +
+#endif
+            1;
+    end;
+}
+--------------------------------------------------------------------------------
+
+(source_file (codeunit_declaration (codeunit_keyword) object_id: (integer) object_name: (identifier) body:
+(declaration_body (procedure (procedure_keyword) name: (identifier) body: (code_block (begin_keyword) body:
+(statement_block (assignment_statement left: (identifier) operator: (assignment_operator) right: (unary_expression
+(preproc_operand_prefix (preproc_if (preproc_open) condition: (identifier)) operand: (identifier) (preproc_endif
+(preproc_close))) operand: (integer)))) (end_keyword))))))
+
+
+================================================================================
+B7b-2 operand group: a leading prefix on a continuation operand
+--
+`1 #if T + #if X 2 + #endif 2 #endif`: a prefix between a tail item's
+operator and operand (B7a expression-tail / first).
+================================================================================
+codeunit 50100 P
+{
+    procedure Q()
+    begin
+        I := 1
+#if T
+            +
+#if X
+            2 +
+#endif
+            2
+#endif
+            ;
+    end;
+}
+--------------------------------------------------------------------------------
+
+(source_file (codeunit_declaration (codeunit_keyword) object_id: (integer) object_name: (identifier) body:
+(declaration_body (procedure (procedure_keyword) name: (identifier) body: (code_block (begin_keyword) body:
+(statement_block (assignment_statement left: (identifier) operator: (assignment_operator) right: (integer)
+(preproc_conditional_expression_tail (preproc_if (preproc_open) condition: (identifier)) (preproc_operand_prefix
+(preproc_if (preproc_open) condition: (identifier)) operand: (integer) (preproc_endif (preproc_close))) operand:
+(integer) (preproc_endif (preproc_close))))) (end_keyword))))))
+
+
+================================================================================
+B7b-2 operand group: prefix arm: a chain after a nested tail
+--
+The Phase C operand-prefix chain witness: `3 * 2 #if X + 3 #endif * 4 +`
+inside a prefix arm; the arm's items after the nested tail are its own
+(`_dangling_tail_item`), the last operator dangles.
+================================================================================
+codeunit 50100 P
+{
+    procedure Q()
+    begin
+        I := 1 +
+#if T
+            3 * 2
+#if X
+            + 3
+#endif
+            * 4 +
+#endif
+            2;
+    end;
+}
+--------------------------------------------------------------------------------
+
+(source_file (codeunit_declaration (codeunit_keyword) object_id: (integer) object_name: (identifier) body:
+(declaration_body (procedure (procedure_keyword) name: (identifier) body: (code_block (begin_keyword) body:
+(statement_block (assignment_statement left: (identifier) operator: (assignment_operator) right:
+(additive_expression left: (integer) (preproc_operand_prefix (preproc_if (preproc_open) condition: (identifier))
+operand: (multiplicative_expression left: (integer) right: (integer)) (preproc_conditional_expression_tail
+(preproc_if (preproc_open) condition: (identifier)) operand: (integer) (preproc_endif (preproc_close))) operand:
+(integer) (preproc_endif (preproc_close))) right: (integer)))) (end_keyword))))))
+
+
+================================================================================
+B7b-2 operand group: prefix arm: an operator-only nested tail
+--
+The op-only witness: `3 #if X + #endif 2 +` inside a prefix arm (a B3
+form whose operand is followed by the dangling operator).
+================================================================================
+codeunit 50100 P
+{
+    procedure Q()
+    begin
+        I := 1 +
+#if T
+            3
+#if X
+            +
+#endif
+            2 +
+#endif
+            2;
+    end;
+}
+--------------------------------------------------------------------------------
+
+(source_file (codeunit_declaration (codeunit_keyword) object_id: (integer) object_name: (identifier) body:
+(declaration_body (procedure (procedure_keyword) name: (identifier) body: (code_block (begin_keyword) body:
+(statement_block (assignment_statement left: (identifier) operator: (assignment_operator) right:
+(additive_expression left: (integer) (preproc_operand_prefix (preproc_if (preproc_open) condition: (identifier))
+operand: (integer) (preproc_conditional_expression_tail (preproc_if (preproc_open) condition: (identifier))
+(preproc_endif (preproc_close)) operand: (integer)) (preproc_endif (preproc_close))) right: (integer))))
+(end_keyword))))))
+
+
+================================================================================
+B7b-2 operand group: prefix arm: an operand group before the dangling operator
+--
+`3 + #if X 2 #else 3 #endif +` inside a prefix arm (B7a operand-prefix /
+whole-operand): the group is the arm binary's right.
+================================================================================
+codeunit 50100 P
+{
+    procedure Q()
+    begin
+        I := 1 +
+#if T
+            3 +
+#if X
+            2
+#else
+            3
+#endif
+            +
+#endif
+            2;
+    end;
+}
+--------------------------------------------------------------------------------
+
+(source_file (codeunit_declaration (codeunit_keyword) object_id: (integer) object_name: (identifier) body:
+(declaration_body (procedure (procedure_keyword) name: (identifier) body: (code_block (begin_keyword) body:
+(statement_block (assignment_statement left: (identifier) operator: (assignment_operator) right:
+(additive_expression left: (integer) (preproc_operand_prefix (preproc_if (preproc_open) condition: (identifier))
+operand: (additive_expression left: (integer) right: (preproc_conditional_operand (preproc_if (preproc_open)
+condition: (identifier)) operand: (integer) (preproc_else) operand: (integer) (preproc_endif (preproc_close))))
+(preproc_endif (preproc_close))) right: (integer)))) (end_keyword))))))
+
+
+================================================================================
+B7b-2 operand group: prefix arm opening with a prefix
+--
+B7a operand-prefix / first: an arm whose operand starts with its own
+prefix.
+================================================================================
+codeunit 50100 P
+{
+    procedure Q()
+    begin
+        I := 1 +
+#if T
+#if X
+            3 +
+#endif
+            2 +
+#endif
+            2;
+    end;
+}
+--------------------------------------------------------------------------------
+
+(source_file (codeunit_declaration (codeunit_keyword) object_id: (integer) object_name: (identifier) body:
+(declaration_body (procedure (procedure_keyword) name: (identifier) body: (code_block (begin_keyword) body:
+(statement_block (assignment_statement left: (identifier) operator: (assignment_operator) right:
+(additive_expression left: (integer) (preproc_operand_prefix (preproc_if (preproc_open) condition: (identifier))
+(preproc_operand_prefix (preproc_if (preproc_open) condition: (identifier)) operand: (integer) (preproc_endif
+(preproc_close))) operand: (integer) (preproc_endif (preproc_close))) right: (integer)))) (end_keyword))))))
+
+
+================================================================================
+B7b-2 operand group: a leading prefix at a case pattern
+--
+Spec 6.3/6.5: a pattern may open with prefixes, unfielded children of
+the branch (B7a binary-operand / first at case hosts).
+================================================================================
+codeunit 50100 P
+{
+    procedure Q()
+    begin
+        case Ok of
+#if X
+            Ok and
+#endif
+            true and Ok:
+                Bar();
+        end;
+    end;
+}
+--------------------------------------------------------------------------------
+
+(source_file (codeunit_declaration (codeunit_keyword) object_id: (integer) object_name: (identifier) body:
+(declaration_body (procedure (procedure_keyword) name: (identifier) body: (code_block (begin_keyword) body:
+(statement_block (case_statement (case_keyword) expression: (identifier) (of_keyword) body: (case_body (case_branch
+(preproc_operand_prefix (preproc_if (preproc_open) condition: (identifier)) operand: (identifier) (preproc_endif
+(preproc_close))) pattern: (logical_expression left: (boolean) right: (identifier)) body: (call_expression function:
+(identifier) arguments: (argument_list)))) (end_keyword))) (end_keyword))))))
+
+
+================================================================================
+B7b-2 operand group: a leading prefix at a ternary condition
+--
+`_ternary_condition`'s leading arm: the prefix is inside the ternary,
+before its `condition` (B7a ternary / first).
+================================================================================
+codeunit 50100 P
+{
+    procedure Q()
+    begin
+        I :=
+#if X
+            Ok =
+#endif
+            true ? 1 : 2;
+    end;
+}
+--------------------------------------------------------------------------------
+
+(source_file (codeunit_declaration (codeunit_keyword) object_id: (integer) object_name: (identifier) body:
+(declaration_body (procedure (procedure_keyword) name: (identifier) body: (code_block (begin_keyword) body:
+(statement_block (assignment_statement left: (identifier) operator: (assignment_operator) right: (ternary_expression
+(preproc_operand_prefix (preproc_if (preproc_open) condition: (identifier)) operand: (identifier) operator:
+(comparison_operator) (preproc_endif (preproc_close))) condition: (boolean) then_value: (integer) else_value:
+(integer)))) (end_keyword))))))
+
+
+================================================================================
+B7b-2 operand group: a leading prefix at a range end
+--
+`_range_right`'s leading arm (B7a range / first).
+================================================================================
+codeunit 50100 P
+{
+    procedure Q()
+    begin
+        B := I in [1 ..
+#if X
+            2 +
+#endif
+            3];
+    end;
+}
+--------------------------------------------------------------------------------
+
+(source_file (codeunit_declaration (codeunit_keyword) object_id: (integer) object_name: (identifier) body:
+(declaration_body (procedure (procedure_keyword) name: (identifier) body: (code_block (begin_keyword) body:
+(statement_block (assignment_statement left: (identifier) operator: (assignment_operator) right: (in_expression
+left: (identifier) operator: (in_keyword) right: (list_literal (range_expression left: (integer)
+(preproc_operand_prefix (preproc_if (preproc_open) condition: (identifier)) operand: (integer) (preproc_endif
+(preproc_close))) right: (integer)))))) (end_keyword))))))
+
+
+================================================================================
+B7b-2 operand group: operator-only form with a keyword operator
+--
+deferred-work item 51 shape 1 and the type-test op-only witness: the B3
+form with `as` / `in`, its operand typed after #endif. alc:
+keyword_ops/in-operator-only.al.
+================================================================================
+codeunit 50100 P
+{
+    procedure Q()
+    begin
+        I2 := I
+#if X
+            as
+#endif
+            IFoo as IFoo;
+        B := Ok
+#if X
+            in
+#else
+            in
+#endif
+            [true];
+    end;
+}
+--------------------------------------------------------------------------------
+
+(source_file (codeunit_declaration (codeunit_keyword) object_id: (integer) object_name: (identifier) body:
+(declaration_body (procedure (procedure_keyword) name: (identifier) body: (code_block (begin_keyword) body:
+(statement_block (assignment_statement left: (identifier) operator: (assignment_operator) right: (identifier)
+(preproc_conditional_expression_tail (preproc_if (preproc_open) condition: (identifier)) operator: (as_keyword)
+(preproc_endif (preproc_close)) operand: (type_specification (identifier)) operator: (as_keyword) operand:
+(type_specification (identifier)))) (assignment_statement left: (identifier) operator: (assignment_operator) right:
+(identifier) (preproc_conditional_expression_tail (preproc_if (preproc_open) condition: (identifier)) operator:
+(in_keyword) (preproc_else) operator: (in_keyword) (preproc_endif (preproc_close)) operand: (list_literal
+(boolean))))) (end_keyword))))))
+
+
+================================================================================
+B7b-2 operand group: receiver groups as assignment targets
+--
+Spec 6.3: at a statement start a group followed by `:=` or a postfix is
+an operand group (the receiver variant), `_assign_target` /
+`_postfix_operand`.
+================================================================================
+codeunit 50100 P
+{
+    procedure Q()
+    begin
+#if X
+        A
+#else
+        B
+#endif
+        := 1;
+#if X
+        Arr
+#else
+        Arr2
+#endif
+        [1] := 2;
+    end;
+}
+--------------------------------------------------------------------------------
+
+(source_file (codeunit_declaration (codeunit_keyword) object_id: (integer) object_name: (identifier) body:
+(declaration_body (procedure (procedure_keyword) name: (identifier) body: (code_block (begin_keyword) body:
+(statement_block (assignment_statement left: (preproc_conditional_operand (preproc_if (preproc_open) condition:
+(identifier)) operand: (identifier) (preproc_else) operand: (identifier) (preproc_endif (preproc_close))) operator:
+(assignment_operator) right: (integer)) (assignment_statement left: (subscript_expression object:
+(preproc_conditional_operand (preproc_if (preproc_open) condition: (identifier)) operand: (identifier)
+(preproc_else) operand: (identifier) (preproc_endif (preproc_close))) index: (integer)) operator:
+(assignment_operator) right: (integer))) (end_keyword))))))
+
+
+================================================================================
+B7b-2 operand group: list-elements group: each element is a region root
+--
+Task 9 carry: an element inside preproc_conditional_list_elements carries
+its tail (`[1 #if T , 2 #if X + 2 #endif #endif]`).
+================================================================================
+codeunit 50100 P
+{
+    procedure Q()
+    begin
+        Ok := I in [1
+#if T
+            , 2
+#if X
+            + 2
+#endif
+#endif
+            ];
+    end;
+}
+--------------------------------------------------------------------------------
+
+(source_file (codeunit_declaration (codeunit_keyword) object_id: (integer) object_name: (identifier) body:
+(declaration_body (procedure (procedure_keyword) name: (identifier) body: (code_block (begin_keyword) body:
+(statement_block (assignment_statement left: (identifier) operator: (assignment_operator) right: (in_expression
+left: (identifier) operator: (in_keyword) right: (list_literal (integer) (preproc_conditional_list_elements
+(preproc_if (preproc_open) condition: (identifier)) (integer) (preproc_conditional_expression_tail (preproc_if
+(preproc_open) condition: (identifier)) operand: (integer) (preproc_endif (preproc_close))) (preproc_endif
+(preproc_close))))))) (end_keyword))))))
+
+
+================================================================================
+B7b-2 operand group: a leading prefix at a property value
+--
+property_expression's leading arm: `Visible = #if X Ok and #endif true
+and Ok;` (B7a binary-operand / first at the property_expression host).
+================================================================================
+page 50100 P
+{
+    layout
+    {
+        area(Content)
+        {
+            field(F; Rec.F)
+            {
+                Visible =
+#if X
+                    Ok and
+#endif
+                    true and Ok;
+            }
+        }
+    }
+}
+--------------------------------------------------------------------------------
+
+(source_file (page_declaration (page_keyword) object_id: (integer) object_name: (identifier) body: (declaration_body
+(layout_section (layout_keyword) body: (layout_body (area_section (area_keyword) type: (content_keyword) body:
+(layout_body (page_field (field_keyword) name: (identifier) source: (member_expression object: (identifier) member:
+(identifier)) body: (declaration_body (property name: (property_name) value: (property_expression
+(preproc_operand_prefix (preproc_if (preproc_open) condition: (identifier)) operand: (identifier) (preproc_endif
+(preproc_close))) (logical_expression left: (boolean) right: (identifier)))))))))))))
+
+
+================================================================================
+B7b-2 operand group: a group as a binary left in a property value
+--
+Placement A in a property expression; the whole-value #if (B11) dies at
+`and`.
+================================================================================
+page 50100 P
+{
+    layout
+    {
+        area(Content)
+        {
+            field(F; Rec.F)
+            {
+                Visible =
+#if X
+                    A
+#else
+                    B
+#endif
+                    and C;
+            }
+        }
+    }
+}
+--------------------------------------------------------------------------------
+
+(source_file (page_declaration (page_keyword) object_id: (integer) object_name: (identifier) body: (declaration_body
+(layout_section (layout_keyword) body: (layout_body (area_section (area_keyword) type: (content_keyword) body:
+(layout_body (page_field (field_keyword) name: (identifier) source: (member_expression object: (identifier) member:
+(identifier)) body: (declaration_body (property name: (property_name) value: (property_expression
+(logical_expression left: (preproc_conditional_operand (preproc_if (preproc_open) condition: (identifier)) operand:
+(identifier) (preproc_else) operand: (identifier) (preproc_endif (preproc_close))) right: (identifier)))))))))))))
+
+
+================================================================================
+B7b-2 operand group: a prefix arm ending in in
+--
+deferred-work item 51 shape 2: `in` may be a prefix arm's dangling
+operator; the list after #endif is the logical's right. alc:
+keyword_ops/in-ends-generic-prefix.al.
+================================================================================
+codeunit 50100 P
+{
+    procedure Q()
+    begin
+        B := Ok and
+#if X
+            I in
+#else
+            J in
+#endif
+            [1];
+    end;
+}
+--------------------------------------------------------------------------------
+
+(source_file (codeunit_declaration (codeunit_keyword) object_id: (integer) object_name: (identifier) body:
+(declaration_body (procedure (procedure_keyword) name: (identifier) body: (code_block (begin_keyword) body:
+(statement_block (assignment_statement left: (identifier) operator: (assignment_operator) right: (logical_expression
+left: (identifier) (preproc_operand_prefix (preproc_if (preproc_open) condition: (identifier)) operand: (identifier)
+operator: (in_keyword) (preproc_else) operand: (identifier) operator: (in_keyword) (preproc_endif (preproc_close)))
+right: (list_literal (integer))))) (end_keyword))))))
+
+================================================================================
+B7b-2 operand group: call function: a receiver group as the callee
+--
+Spec 3.4 names the call function as a receiver position (Task 10 fix round 1,
+review M4): the receiver group (postfix-safe atom arms) is the callee, in an
+expression and at a statement start. alc: operand_groups/call-function.al.
+================================================================================
+codeunit 50100 P
+{
+    procedure Q()
+    begin
+        I :=
+#if X
+            Foo
+#else
+            Bar
+#endif
+            (1);
+#if X
+        Foo
+#else
+        Bar
+#endif
+        (2);
+    end;
+}
+--------------------------------------------------------------------------------
+
+(source_file (codeunit_declaration (codeunit_keyword) object_id: (integer) object_name: (identifier) body:
+(declaration_body (procedure (procedure_keyword) name: (identifier) body: (code_block (begin_keyword) body:
+(statement_block (assignment_statement left: (identifier) operator: (assignment_operator) right: (call_expression
+function: (preproc_conditional_operand (preproc_if (preproc_open) condition: (identifier)) operand: (identifier)
+(preproc_else) operand: (identifier) (preproc_endif (preproc_close))) arguments: (argument_list (integer))))
+(call_expression function: (preproc_conditional_operand (preproc_if (preproc_open) condition: (identifier)) operand:
+(identifier) (preproc_else) operand: (identifier) (preproc_endif (preproc_close))) arguments: (argument_list
+(integer)))) (end_keyword))))))

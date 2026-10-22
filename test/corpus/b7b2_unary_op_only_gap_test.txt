@@ -1,0 +1,100 @@
+================================================================================
+B7b-2 unary-op-only gap: a leading group whose arm is only unary minus
+:error
+--
+DELIBERATE NEGATIVE (gap witness, listed in tools/deliberate-negatives.txt): valid
+AL the parser ERRORs on, on main and on the branch. The group's only arm content
+is a unary operator, applied to the operand after #endif (X=1 `I := -1;`). No
+B7a placement generates this shape (tools/b7_audit/placements.py), so no matrix
+cell covers it. alc accepts every configuration:
+tools/alc_probe/cases/b7b-2/prefixes/unary-operator-only.al. docs/deferred-work.md
+item 61. The ERROR is the assertion.
+================================================================================
+codeunit 50100 P
+{
+    procedure Q()
+    begin
+        I :=
+#if X
+        -
+#endif
+        1;
+    end;
+}
+--------------------------------------------------------------------------------
+
+================================================================================
+B7b-2 unary-op-only gap: a group after a binary operator whose arm is only not
+:error
+--
+DELIBERATE NEGATIVE (gap witness): X=1 `B := Ok and not Ok;`. alc accepts every
+configuration: tools/alc_probe/cases/b7b-2/prefixes/unary-operator-only.al.
+docs/deferred-work.md item 61.
+================================================================================
+codeunit 50100 P
+{
+    procedure Q()
+    begin
+        B := Ok and
+#if X
+        not
+#endif
+        Ok;
+    end;
+}
+--------------------------------------------------------------------------------
+
+================================================================================
+B7b-2 unary-op-only gap: an if condition opened by a group whose arm is only not
+:error
+--
+DELIBERATE NEGATIVE (gap witness): X=1 `if not Ok then;`. alc accepts every
+configuration: tools/alc_probe/cases/b7b-2/prefixes/unary-operator-only.al.
+docs/deferred-work.md item 61.
+================================================================================
+codeunit 50100 P
+{
+    procedure Q()
+    begin
+        if
+#if X
+        not
+#endif
+        Ok then;
+    end;
+}
+--------------------------------------------------------------------------------
+
+================================================================================
+B7b-2 property-value gap: a leading prefix and a tail in one property value
+:error
+--
+DELIBERATE NEGATIVE (gap witness; this file is listed in
+tools/deliberate-negatives.txt): valid AL the parser ERRORs on over the tail.
+`property_expression`'s leading-prefix arm has no optional tail (unlike
+`leadingPrefixed`); the prefix alone and the tail alone both parse. alc accepts
+every configuration: tools/alc_probe/cases/b7b-2/prefixes/property-prefix-then-tail.al.
+docs/deferred-work.md item 62. The ERROR is the assertion.
+================================================================================
+page 50102 PG
+{
+    actions
+    {
+        area(Processing)
+        {
+            action(A1)
+            {
+                Visible =
+#if X
+                    Ok and
+#endif
+                    Ok
+#if Y
+                    or Ok
+#endif
+                    ;
+            }
+        }
+    }
+}
+--------------------------------------------------------------------------------

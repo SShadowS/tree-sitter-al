@@ -79,6 +79,11 @@ defective cells yield no class and are listed, not weighted: 17,758 `error-recov
 tree with an error is never matched) and 399 `no class`. Template GAP entries still match every weighted class of their
 host (over-weighted; the matrix notes it).
 
+**Evidence alc identity (B7b-2 Task 6, 2026-10-20):** `tools/b7_audit/evidence.jsonl.gz` was re-measured on Linux, so
+its header records the Linux alc launcher sha256 (`d68b7d21...`; same alc 18.0.41 and CodeAnalysis dlls, every verdict
+identical to the Windows run). On Windows `run --only` therefore refuses (another alc identity) and `run --check`
+needs `--accept-tool`; a full `run` re-records the Windows identity.
+
 **B7b order:** B7b-1 list separators, B7b-2 expression continuations, B7b-3 terminators; property-value runs stay with
 B12/B13.
 
@@ -1557,7 +1562,13 @@ identical tree, controller A/B) and the text is invalid AL in every configuratio
 
 **Owner:** unassigned.
 
-## 39. Two valid split shapes that B6 made a loud ERROR (roadmap B7)
+## 39. Two valid split shapes that B6 made a loud ERROR (roadmap B7) — shape 1 RESOLVED 2026-10-21 (B7b-2)
+
+**Shape 1 resolved by B7b-2 (Phase B, `repeat_statement.condition` is a region root).** The case is now the positive
+fixture "B7b-2 repeat-until / item 39 shape 1" in `test/corpus/b7b2_repeat_until_test.txt`, and the `B7_GAP` list of
+`tools/config_oracle/tests/test_expression_statement.py` keeps only shape 2. **Shape 2 stays open**, owner B7
+terminators (with items 47 and 48): B7b-2 spec section 9 excludes `;` inside continuation arms (RC7; 45 `semi-in-arms`
+rows excluded in `tools/b7_audit/b7b2-manifest.tsv`, owner B7). The text below is the original record.
 
 **Established:** 2026-10-06, B6. Both are valid AL in every configuration, parsed clean and wrong before B6, and ERROR
 since:
@@ -1580,7 +1591,10 @@ Production sites: 0 (tree-harness over the four corpora shows no valid tree chan
 **B7a cross-reference (2026-10-07):** shape 1 is family `repeat-until` GAP (the `chain`, `consecutive`, `first`, `nested`,
 `op-only`, `suffix` ... groups, 864 cells, `sites` 293); shape 2 is family `assignment` GAP, base placement `semi-in-arms`
 (40 cells), with `op-only` OVERACCEPT beside it. Both are ranked in the matrix (#23 and #21/#22), witnesses in
-`test/corpus/b7_gap_repeat_until_test.txt` and `test/corpus/b7_gap_assignment_test.txt`.
+`test/corpus/b7_gap_repeat_until_test.txt` and `test/corpus/b7_gap_assignment_test.txt`. (2026-10-21: the
+repeat-until witnesses moved to the positive fixtures of `test/corpus/b7b2_repeat_until_test.txt` and
+`b7_gap_repeat_until_test.txt` was deleted in B7b-2 Task 12; the shape 2 witness is still in
+`test/corpus/b7_gap_assignment_test.txt`, case "B7a GAP: assignment / semi-in-arms".)
 
 **Owner:** B7.
 
@@ -1601,7 +1615,14 @@ Spec `docs/superpowers/specs/2026-10-08-b7b-3-statement-terminators-design.md` s
 
 **Owner:** B7b-3 (done).
 
-## 41. An `as`/`is` continuation across `#if` arms is torn into separate statements silently (B7a)
+## 41. An `as`/`is` continuation across `#if` arms is torn into separate statements silently (B7a) — RESOLVED 2026-10-21 (B7b-2)
+
+**Resolved by B7b-2 Phase A (RC4).** `in`/`is`/`as` are typed arms of `_expression_continuation`
+(`operator: (as_keyword)`, `operand: (type_specification)`), and the assignment root's tail production
+(`prec.dynamic(11)`) beats the torn statement group. Pinned by "B7b-2 tie-break row 2: tail with as beats a statement
+group of parenless calls" (`test/corpus/b7b2_tie_break_test.txt`, losing-tree mutation recorded in the spec's Task 4
+amendment) and by the three SILENT witnesses of `tools/b7_audit/tests/test_silent.py` (`consecutive`, `nested`,
+`suffix`), now inverted to `tree`. The oracle passes every configuration. The text below is the original record.
 
 **Established:** 2026-10-07, B7a Task 10 (`tools/b7_audit/tests/test_silent.py`, family `type-test`, group `consecutive`, cell
 `bnd:as_expression:left:end@as_expression#consecutive/type-test`; also `nested` and `suffix`). `Intf2 := Intf #if X as IFoo
@@ -1610,9 +1631,9 @@ separate statements, and the oracle reports a discrepancy at `X=0,Y=0`. `as`/`is
 `(identifier)` statement in that tree is only the symptom: B6 accepts a bare identifier as a statement by design (spec
 `2026-10-06-expression-statement-narrowing-design.md` 3.1), so that part is not a defect. See also item 40.
 
-**Next step:** B7b+ (matrix family `type-test`): give `as`/`is` a continuation tail, or make the tear an ERROR.
+**Next step:** none (resolved above).
 
-**Owner:** unassigned.
+**Owner:** none open.
 
 ## 42. 117 UNCHECKED cells in the B7a matrix: generator imprecisions (audit debt)
 
@@ -1727,6 +1748,22 @@ Unchanged from main: flat `1: ;;` is accepted (the body is the first `;`, the br
 spec 5.4's two classified routes-2-3 over-acceptances (`moveafter(T #if X , A #endif)`, a `,` where the `;` belongs, and a
 group holding two targets) are pinned in `test/corpus/b7b3_move_args_test.txt` with probes
 `tools/alc_probe/cases/b7b3/move/over-comma-for-semi.al` and `group-two-targets.al`.
+
+**B7b-2 additions (2026-10-21, Tasks 2 and 12).** Two classes of the same kind: one split tree for configurations alc
+accepts and configurations it rejects, so a parser that refused them would refuse the valid configuration too.
+- **`op-only`, 157 cells (RC8).** `E #if X op #endif F` is invalid AL at X=0 (alc AL0104); classified, not fixed, by
+  B7b-2 spec section 9. The 157 cells are `excluded`, owner `classified`, by cell id in
+  `tools/b7_audit/b7b2-manifest.tsv` (the already-clean OVERACCEPT cells; an `op-only` GAP was in scope and is fixed).
+- **An operand group with no `#else` arm, 36 cells in 6 matrix OVERACCEPT groups.** Since Phase C an operand group
+  may stand where an operand is required, and it parses whether or not an arm is active, so `#if X K #endif` alone in
+  an operand position leaves an empty operand at X=0, which alc rejects (AL0104/AL0224): `column(K ; #if X K #endif)`,
+  `[1, #if X 2 #endif]`, `Ok ? 1 : #if X 2 #endif`. Witnesses (probe = `tools/alc_probe/cases/b7-audit/<g>__trail__overaccept.al`,
+  `alc_probe --check` 0 mismatch): `column-header` 9 cells, `field-header` 3, `layout-header` 3, `list-literal` 15,
+  `split-call` 3, `ternary` 3. The matrix verdict of the rejected configuration is `REJECTED/syntax/over-accepts`;
+  the manifest's `expected_oracle` lists only the accepted configurations, and none is a discrepancy.
+  These are B7b+ / B7b-1c cells (`b7b2-manifest.tsv`, re-recorded GAP -> UNCHECKED or MIXED:REJECTED,UNCHECKED in
+  Task 12). Fixing them would mean an arm-presence check per configuration (a group that may be empty must not fill a
+  required operand), which a CFG cannot express without duplicating every operand position.
 
 **Next step:** only if a consumer needs it: per-arm separator tracking (each arm records whether it starts or ends with a
 separator) would make the forms ERROR, at a cost the spec chose not to pay. Until then the oracle keeps them visible.
@@ -1910,6 +1947,338 @@ its recorded alc split verdicts and a `// Fixture` line naming the case.
 first.
 
 **Owner:** B7.
+
+## 51. Three `in`/`is`/`as` continuation shapes alc accepts still ERROR (B7b-2 Phase A scope)
+
+**Established:** 2026-10-20, B7b-2 Task 4 (spec execution amendments, Task 4 item 6) and its fix round 1. B7b-2 Phase
+A makes `in`/`is`/`as` typed arms of `_expression_continuation` (the right side is a list or a type, not an
+`_expression`) and adds typed operand prefixes whose arms are exactly `list in` / `Type is|as`. The untyped
+`_continuation_operator` set, used by the B3 operator-only form and the generic prefix arm, has no keyword operator.
+Three shapes alc accepts in every configuration therefore ERROR:
+- operator-only `in`: `B := Ok #if X in #else in #endif [true];` (`tools/alc_probe/cases/b7b-2/keyword_ops/in-operator-only.al`);
+- a generic prefix arm ending in a keyword operator: `B := Ok and #if X I in #else J in #endif [1];`
+  (`in-ends-generic-prefix.al`);
+- a typed prefix arm with a continuation before its keyword: `B := Ok in #if X [true] and Ok in #endif [false];`
+  (`in-prefix-with-continuation.al`).
+
+No B7a cell covers them (the A-owned `prefix/membership` cells are all the `[list] in` shape). Witnesses: the three
+`:error` cases of `test/corpus/b7b2_scope_gap_test.txt` (a deliberate negative).
+
+**Update 2026-10-21 (B7b-2 Task 10):** shapes 1 and 2 now parse (the B3 form's `_typed_operator_arms`, and
+`_dangling_operand`'s `repeat(_dangling_tail_item)`); they are positive cases in `test/corpus/b7b2_operand_group_test.txt`.
+Shape 3 is still the one `:error` case of `b7b2_scope_gap_test.txt`: the `in` shift's static precedence (5) beats the
+`and` reduce (4) before any dynamic precedence applies; a change was measured and reverted (spec execution amendments,
+Task 10, "Item 51"). Owner now: a B7b-2 follow-up.
+
+**Next step:** shape 3 only: let a typed prefix arm's continuation reduce before its dangling `in` (the arm's last
+binary binds looser than the keyword operator), without the measured-and-reverted precedence change of Task 10. The
+operand prefixes of spec 6.3 landed in Phase C.
+
+**Owner:** B7b-2-followup.
+
+## 52. N consecutive `#if` groups at a root after which a host group can start parse in quadratic time (assignment, argument, repeat-until, range left, list element, split-call argument, ternary condition, Phase C `mixed`; B7b-2, known limit)
+
+**Established:** 2026-10-20, B7b-2 Task 4 review (Important 1) and fix round 1, measured on f6182928 with
+`tools.perf.strict_lists_scaling.measure` (fastest of 5 timed batches; N = 10 ... 1,280, each group `#if X + i #endif`):
+
+| series | N=160 | N=320 | N=640 | N=1,280 | fitted / last ratio per doubling |
+|---|---|---|---|---|---|
+| root `r := 1 <N groups>;` | 2.23 ms | 7.44 ms | 27.5 ms | 105 ms | 2.98 / 3.82 |
+| argument `Foo(1 <N groups>, 2)` | 2.38 ms | 7.87 ms | 28.1 ms | 108 ms | 2.90 / 3.85 |
+| root, `+ 1` between groups | 4.01 ms | 14.5 ms | 54.8 ms | 215 ms | 3.21 / 3.93 |
+
+Spec 8.5's limit is 2.5 per doubling. The reviewer measured the same (~3.4-4x root, ~3.2-3.5x argument). Linear
+controls (ratio ~2.0): the same N groups as siblings inside one arm (2.70 ms at 1,280), N nested groups (2.61 ms), a
+root tail followed by N plain continuations (0.98 ms), and the same N consecutive groups at the `exit` (2.11 ms) and
+`if` condition (2.16 ms) roots.
+
+**Cause (measured, not traced):** the consecutive step is right-recursive (spec 5.1 amendment: a consecutive group is
+the last child of the group before it), so at group k the k-1 earlier tails are still open on the stack; at every
+`#endif • #if` the declared fork `[preproc_conditional_expression_tail]` keeps a second version in which all open tails
+end and the host's own group starts (a statement group after an assignment, an argument group in an argument list).
+That version reduces the whole open chain, O(k) per group, O(N²) in total. The `exit` and `if` roots are linear
+because no host group can start there. Any tree with the approved nested shape keeps the open chain, so the cost is
+inherent to the shape plus that fork. Two linear alternatives were prototyped in fix round 1 and not taken: the
+consecutive groups as siblings inside the first tail (-14 states, changes 2 fixtures: N >= 3 groups and a trail after
+a consecutive group), and siblings at the host (`repeat1(tail)`, -51 states, 4 more declared conflicts, changes 16
+fixtures).
+
+**Evidence that it does not matter in practice:** the longest back-to-back `#if` run in all four corpora (BC.History,
+DC, BC28.1, BCApps-29.0) is 3, and 1-2 in expression contexts; the four corpora hold no tails at all today.
+
+**Decision (user, 2026-10-20):** not fixed; a measured known limit. Plan Task 6 adds the `root_tails` and
+`argument_tails` scaling series and classifies these shapes as an explicit exception, not a failure.
+
+**Phase B roots that joined the exception (B7b-2 Task 9, 2026-10-21):** `root_slots/repeat_until`,
+`root_slots/range_left`, `root_slots/list_element`, `root_slots/split_call_argument` and
+`ternary_condition_consecutive` (one ternary condition with N consecutive groups, a Phase A root). Measured with
+`tools/perf/strict_lists_scaling.py` on the Phase B library (39d377a5), fitted / last ratio per doubling: 3.21 / 3.68,
+3.37 / 4.04, 3.35 / 4.03, 3.05 / 4.01, 3.22 / 3.98 (each timed out at 5,120 or 10,240). Evidence for the same cause:
+a reduction census at N = 40 (py-tree-sitter logger, counting `reduce sym:`) shows `preproc_conditional_expression_tail`
+reduced 820 = 40·41/2 times, the open chain reduced again at every group, plus one host-level reduction per group,
+the version in which the tails end and a host group starts: `repeat_statement` 41 / `statement_block` 42 (a
+statement group after `until C`), `preproc_conditional_arguments` 40 (an argument group, as `argument_tails`),
+`_region_root_list_element` 40 / 39 (`list_literal`'s `preproc_conditional_list_elements` after an element; for
+range left `1 <tails>` is also a whole element until `..`), `assignment_statement` 41 (a statement group after
+`x := C <tails>` before `?`). The reference `root_tails` shows 820 and `assignment_statement` 41. The nine other
+Phase B roots (case expression, split case end, ternary then, parenthesized, for start, subscript 2nd index, with
+record, foreach iterable, split-if head) are linear (fitted 1.87-1.97) and pass; `case_expression`'s census has one
+tail reduction per group and a single version.
+
+**Phase C series that joined the exception (B7b-2 Task 12, 2026-10-21):** `mixed`, `r := 1` followed by N parts
+`+ #if X i * #endif #if X i #else i #endif #if X - i #endif` (a prefix, an operand group and a tail each). The tail
+of part k is not closed by the `+` after it: the rest of the expression continues inside it after its `#endif`
+(spec 5.1), so the N tails form the same open right-nested chain as N consecutive groups. Census (CLI
+`parse --debug=normal`, counting `reduce sym:`): `preproc_conditional_expression_tail` 820 at N = 40 and 3,240 at
+N = 80 (N·(N+1)/2), `assignment_statement` 41 / 81, while the prefixes and operand groups reduce once each (40 / 80)
+and at most 4 versions are alive; the reference `root_tails` at N = 40 shows 820 and 41. Timed out at 5,120 (fitted /
+last 2.88 / 3.47, a loaded machine). The `operand_groups` (N groups joined by `+`, no tails) and
+`nested_operand_groups` series are linear and pass.
+
+**The exception set, checked against the code (B7b-2 Task 13, 2026-10-21).** `SCALING_EXCEPTIONS` in
+`tools/perf/strict_lists_scaling.py` names 8 length series for this item (`argument_tails`, `root_tails`,
+`root_slots/repeat_until`, `root_slots/range_left`, `root_slots/list_element`, `root_slots/split_call_argument`,
+`ternary_condition_consecutive`, `mixed`), the 8 roots of this item's title, and 1 for item 53 (`ternary_parts`).
+
+**The gate is noisy under host load.** Each non-excepted series is judged by its fitted ratio and its LAST doubling
+step. On the shared Linux host (load 4-65) Task 12's run exited 1 in 5 of 5 runs and its review's re-runs gave exit 1,
+1, 0: each failure was a last step just over 2.5 on a series that passed in the other runs, with a fitted ratio of
+1.90-2.19 (fieldgroup-fields depth, addlast-fields depth, case-decoration, with_record, move-spanning,
+case_expression, ternary_then, nested_operand_groups). Ruling (B7b-2 controller): a series is noise only if it passes
+on a re-run AND its fitted ratio is under the limit; the gate's code is unchanged. Re-run on an idle host before
+reading an exit 1 as a regression.
+
+**Owner:** none open; revisit if real code shows long consecutive runs.
+
+## 53. A tail on a nested ternary's condition parses a ternary chain in quadratic time (B7b-2, known limit)
+
+**Established:** 2026-10-21, B7b-2 Task 9 (scaling series `ternary_parts`), measured on 39d377a5.
+
+`ternary_parts` is an else-chained ternary of N parts, a tail on every condition and then value
+(`x := C1 #if X and D1 #endif ? 1 #if X + 1 #endif : C2 ... : 0;`): fitted / last ratio per doubling 3.18 / 4.03,
+838 ms at N = 2,560, timeout (10 s) at 5,120. Spec 8.5's limit is 2.5. Controls on the same library, ms at
+N = 160 / 320 / 640 / 1,280:
+
+| input | 160 | 320 | 640 | 1,280 |
+|---|---|---|---|---|
+| plain chain `C ? 1 : ...` | 0.2 | 0.4 | 0.8 | 1.7 |
+| then-value tails only | 0.5 | 1.0 | 2.1 | 4.4 |
+| condition tails only | 4.0 | 14.1 | 54.5 | 207.6 |
+| condition tails, condition parenthesized `(C #if X and D #endif) ? 1 :` | 0.6 | 1.2 | 2.6 | 5.2 |
+| N separate statements, each with a condition tail | 1.0 | 2.0 | 4.0 | 8.1 |
+
+The quadratic term needs a tail on a NESTED ternary's condition; each part has one group, so this is not item 52's
+consecutive-group shape. A reduction census at N = 40 shows `_ternary_else` and `ternary_expression` reduced 820 =
+40·41/2 times each and no host group reduced.
+
+**Suspected cause (not traced):** at `: Ck #if X and D #endif` the tail can belong to the outer ternary's else root
+(`_ternary_else`) or to the inner ternary's condition (`_ternary_condition`); the else-root version reduces the whole
+open, right-recursive ternary chain, O(k) per part.
+
+**Origin:** Phase A (Task 4's `_ternary_condition` / `_ternary_else` roots): the Phase A library gives 4.4 / 15.6 /
+59.4 / 234.2 ms for the condition-tails control; on main these inputs ERROR.
+
+**Evidence that it does not matter in practice:** the four corpora (BC.History, DC, BC28.1, BCApps-29.0) hold no
+real chained ternary: every `? .. : .. ?` match of `tools/corpus-grep.sh -P '\?[^;?]*:[^;?]*\?'` (44 lines, 26
+files) is inside a Label string or a `///` comment.
+
+**Decision (coordinator ruling, 2026-10-21, on the user's decision for item 52's class):** not fixed; a measured
+known limit. `ternary_parts` is in `SCALING_EXCEPTIONS` (waives the limits and the timeout, never a parse error).
+
+**Owner:** none open; revisit if real code shows chained ternaries with conditional condition tails.
+
+## 54. B7b-2 costs about 4% parse time on DC (speed pass, roadmap D1/D2)
+
+**Established:** 2026-10-21, B7b-2 Task 12, `python -m tools.perf ab` (24 rounds, ABBA, pinned, same session),
+A = main at the B7b-3 merge, B = the final B7b-2 library. Median `ratio_a_over_b` (time A / time B):
+
+| corpus | runs | gate (>= 0.97) |
+|---|---|---|
+| bc-history | 0.997, 0.981 (`tools/perf/ab_accept.py` exit 0 on both) | pass |
+| dc | 0.964, 0.957, 0.963 | below |
+
+The cost accumulated over the phases (Phase A 0.979 against main on DC; Phase C 0.98-0.99 against Phase B; Phase B
+library against final on DC 0.990). Grammar size: STATE_COUNT 23,737 -> 28,742, LARGE_STATE_COUNT 7,482 -> 10,562,
+parser.c 51.5 -> 65.5 MiB, declared conflicts 230 -> 272. Production trees are unchanged (`tools.perf delta` 0
+files in BC.History, DC and BC28.1), so the cost is in parse-table size and GLR forks, not in different trees.
+Recorded in `docs/performance-baselines.md` (B7b-2 section).
+
+**Decision (user, 2026-10-21):** "Accept, record it": DC is report-only (spec 8.5 lists it as "also").
+
+**Next step:** a speed pass under roadmap D1 (state reduction, `docs/state-reduction-method.md`) and D2
+(performance). Candidates measured during B7b-2: the hidden-root factoring (Task 7 departure 1, -2,348 STATE against
+inlining) shows where shared hidden units pay; the `[preproc_conditional_expression_tail]` fork of item 52 is kept
+alive at every `#endif • #if`. Measure with `tools.perf ab` against main, never against a baseline file.
+
+**Owner:** roadmap D1/D2.
+
+## 55. The oracle does not check grouping inside an expression region (B7b-2 contract)
+
+**Established:** 2026-10-21, B7b-2 Task 11 review (minor M1), by design of spec 3.2. Inside a region that contains
+a group, the nesting of binary and unary nodes is not a grouping claim (`docs/expression-regions.md`), so the region
+assembler (`tools/config_oracle/lowering/regions.py`) flattens the region, splices the active arm and regroups by the
+ladder before it compares. A hand-built WRONG tree with the same atoms and operators therefore passes: the review's
+witness W2, `(a+g)*b` where the flat reading is `a+(g*b)`, passes every configuration. The oracle still catches a
+missing or extra atom, a torn arm and a non-alternating list (Task 11 fix rounds 1-2).
+
+**What guards grouping instead:** the ladder fixtures `test/corpus/b7b2_ladder_matrix_test.txt` (21 cases, 66
+statements: every level against itself and its neighbours, the group first, middle and last) and
+`test/corpus/b7b2_ladder_positions_test.txt` (10 cases, 104 items: every expression position), whose expected trees
+come from an operator-precedence generator, not from parser output; and the B7a structural assertions
+(`tools/b7_audit/assertions.tsv`).
+
+**Next step:** only if a consumer starts relying on the nesting inside a region: the contract would have to change
+first (spec 3.3: a flat region node changes the 3 production prefix trees).
+
+**Owner:** none open (contract).
+
+## 56. Case-pattern slot continuations (B7b-2 RC6)
+
+**Established:** 2026-10-20, B7b-2 spec 1.1 and section 9. A group continuing a case pattern itself
+(`case i of 1 #if X + 1 #endif : ...`) reads `+1` as a second, comma-less pattern of a
+`preproc_conditional_case_patterns` arm: about 2,230 cells (2,124 GAP, 106 SILENT), 958 of them in B7b-2's families
+(`excluded`, owner `B7b-1h`, in `tools/b7_audit/b7b2-manifest.tsv`; the rest are the `case-patterns` family's own
+cells). The case hosts reached through shared rules (spec 6.5) are in scope and fixed; only the pattern slot is not.
+
+**Prerequisite:** separator tracking for case-pattern groups (the comma-less arm reading must lose or go), and C1
+lowering of the split case hosts.
+
+**Owner:** B7b-1h, then a B7b-2 follow-up.
+
+## 57. The three crossing forms of B7b-2 spec 3.4 still ERROR
+
+**Established:** 2026-10-20, B7b-2 spec 3.4; witnesses written in Task 10. A group that crosses a boundary of the
+transparent-region contract cannot be represented by it, so the grammar refuses it:
+- **receiver crossing**: `#if X a + b #else c #endif .Trim()` (X: `a + b.Trim()`), alc
+  `tools/alc_probe/cases/b7b-2/crossing/receiver.al`;
+- **ternary crossing**: a `?`/`:` inside a tail, prefix or operand-group arm, alc `ternary-leading.al`,
+  `ternary-operand.al`, `ternary-tail.al`;
+- **list spanning**: one group that continues an expression and supplies further items, `Foo(1 #if X + 2, 3 #endif)`,
+  alc `list-spanning-call.al`, `list-spanning-literal.al`. In an argument list it is NOT an ERROR: the existing
+  argument group reads it as a comma-less `+2` argument, a pre-existing wrong tree that the oracle refuses
+  (list-separator) and the fixture pins as KNOWN WRONG.
+
+alc accepts every configuration of each. Witnesses: `test/corpus/b7b2_crossing_gap_test.txt` (5 `:error` cases plus
+the pinned wrong argument-list tree; a deliberate negative), three `route:b7b2-crossing-*` rows `excluded`, owner
+`B7b-2-followup`, in `tools/b7_audit/b7b2-manifest.tsv`. Production sites: 0.
+
+**Update 2026-10-21 (B7b-2 final review, Minor 4):** two more members, both alc-accepted in every configuration.
+- **List spanning across an `#else`**: `Foo(1 #if X + 2 #else , 3 #endif)` (X=1 `Foo(1 + 2)`, X=0 `Foo(1, 3)`) parses
+  CLEAN and WRONG: `(preproc_conditional_arguments (preproc_if ...) (unary_expression operand: (integer))
+  (preproc_else) (integer) (preproc_endif ...))`, a comma-less `+2` argument. Pre-existing, identical on main. The
+  oracle reports X=1 as a discrepancy, so it cannot be a corpus case; it is pinned as a SILENT input
+  (`SILENT_INPUTS` in `tools/b7_audit/tests/test_silent.py`, `oracle:X=1:discrepancy`). alc:
+  `tools/alc_probe/cases/b7b-2/crossing/list-spanning-else-call.al`.
+- **A tail before a postfix** (a receiver crossing): `T2 := T1 #if X + T2 #endif .ToUpper();` (X=1
+  `T1 + T2.ToUpper()`) ERRORs at the `.`. Witness: the `:error` case "receiver crossing, a tail before a postfix" of
+  `b7b2_crossing_gap_test.txt`. alc: `tools/alc_probe/cases/b7b-2/crossing/tail-then-postfix.al`.
+
+**Next step:** a representation that can say "a group crosses this boundary" (spec 9); the contract of
+`docs/expression-regions.md` cannot.
+
+**Owner:** a B7b-2 follow-up.
+
+## 58. `in`'s right accepts an operand group with a non-list arm (over-acceptance, B7b-2)
+
+**Established:** 2026-10-21, B7b-2 Task 10 (user decision on cost) and Task 13 (alc). `is`/`as` take a typed right
+(`_type_right`: the group's arms are `type_specification`), but `in_expression.right` is
+`choice(list_literal, preproc_conditional_operand)`, the GENERAL operand group, because the aliased list-literal group
+measured 28,951 STATE against the 28,770 ceiling. So `b := i in #if X [1, 2] #else 3 #endif;` parses clean with
+`operand: (integer)` in the else arm; alc rejects X=0 (AL0104) and accepts X=1
+(`tools/alc_probe/cases/b7b-2/typed_rights/in-non-list-arm.al`, `--check` 0 mismatch). Valid input has list arms only,
+so no valid tree is wrong. Pinned (final review fix round) by the field-labelled corpus case "OVERACCEPT in's right
+takes a non-list arm (item 58)" in `test/corpus/b7b2_operand_group_test.txt`, tree from the CLI, its X=0
+configuration classified `invalid-config` in `tools/config_oracle/fixture-classes.tsv` with the probe as evidence.
+The fix makes that case ERROR.
+
+**Next step:** the aliased typed variant (`_in_right` with `list_literal` arms, like `_type_right`) once a state
+reduction (item 54) leaves room for it (Task 10 measured that variant at 28,951 STATE; the branch is at 28,742).
+
+**Owner:** roadmap D1 / a B7b-2 follow-up.
+
+## 59. The traversal helper does not expose expression regions
+
+**Established:** 2026-10-20, B7b-2 spec 3.3 and section 9. `docs/traversal.md`'s helper walks the CST; a consumer
+that wants an expression's meaning per configuration must apply the region contract of `docs/expression-regions.md`
+itself (find the region, splice the active arm, regroup by the ladder). The oracle's region assembler
+(`tools/config_oracle/lowering/regions.py`) is the reference implementation, not a public API.
+
+**Next step:** a region API (region root, its atoms and operators, the arm per configuration) in the traversal helper.
+
+**Owner:** roadmap F (traversal).
+
+## 60. 231 property-value cells parse since B7b-2 but sit in no manifest; 177 have no tree assertion (B12)
+
+**Established:** 2026-10-21, B7b-2 Task 12 (and its review, minor 1). Phase C's operand groups and leading prefixes
+also reach the property route, so 231 B7a cells of B12's families went from ERROR to clean: `property-value` 216,
+`column-header` 9, `field-header` 3, `layout-header` 3. Their families are outside all three manifest scopes
+(`b7b1-`, `b7b2-`, `b7b3-manifest.tsv`), so no manifest row freezes their verdict or oracle outcome. 54 of them are
+covered by the widened `continuation/property-value/first/*` assertion rows (they were SILENT on the old pattern,
+CONSISTENT on the widened one); the other 177 are UNCHECKED in the matrix (B12 has no assertion rows).
+
+**How to give them frozen expectations** (follow-up for the B12 owner):
+1. a scoped manifest `tools/b7_audit/b12-manifest.tsv` with a `# families: property-value,column-header,field-header,layout-header`
+   header, one row per cell at its current verdict and oracle outcome (`deferred`, owner `B12`), recorded with
+   `python -m tools.b7_audit manifest --rerecord --manifest tools/b7_audit/b12-manifest.tsv --cells ...` and checked
+   with `--check` (add it to validate Step 5g beside the other three);
+2. assertion rows for the 177: class rows (`continuation/<family>/<placement>`) or cell rows in
+   `tools/b7_audit/assertions.tsv`, written from the contract (the group or prefix beside the property value it
+   continues), proven to fail on main's tree by pattern, then `assert --refresh` (0 flips) and a matrix `report`.
+
+**Owner:** B12 (item 36).
+
+## 61. A group whose arm is only a unary operator ERRORs; alc accepts it (pre-existing, B7b-2 scope)
+
+**Established:** 2026-10-21, B7b-2 final whole-branch review (Important 1). An `#if` group whose only arm content is
+a unary operator, applied to the operand after `#endif`, ERRORs on main and on the branch:
+- `I := #if X - #endif 1;` (a leading group; X=1 `I := -1;`): the group reads as an operand group whose arm is a
+  `unary_expression` with an ERROR where its operand should be;
+- `B := Ok and #if X not #endif Ok;` (after a binary operator): the same shape at the `right`;
+- `if #if X not #endif Ok then;` (a statement's condition): the `if` and the group become an ERROR.
+
+alc accepts all four configurations of the first two and both of the third
+(`tools/alc_probe/cases/b7b-2/prefixes/unary-operator-only.al`, `--check` 0 mismatch, 8 assignments). Loud (ERROR),
+0 production sites.
+
+**Mechanism.** Neither an operand prefix nor an operand group can hold it: a prefix arm is `operand operator`
+(`_dangling_operand` requires a `field('operand', ...)` before its operator), and an operand group's arm is a whole
+operand, so a unary arm needs its operand inside the arm. A unary-only arm is a third arm shape, "an operator that
+binds to the operand after `#endif`". And the audit never generates it: the B7a placement generator's
+unary placements (`unary-paren`, `unary-minus`, `unary-not` in `CONT_SHAPES`, `tools/b7_audit/placements.py:177-179`)
+all put the operand inside the arm, and none is unary-operator-only, so no matrix
+cell, manifest row or SILENT/GAP witness covered the shape, and "every in-scope cell parses" was silent about it.
+
+**Witnesses:** the three `:error` cases of `test/corpus/b7b2_unary_op_only_gap_test.txt` (a deliberate negative,
+`tools/deliberate-negatives.txt`; classified `debt(B7b-2)` in `tools/config_oracle/fixture-classes.tsv`).
+
+**Next step:** a unary-operator-only arm in the prefix (`_dangling_operand` with an operator and no operand, its
+operator a unary), measured against the state ceiling; then a B7a placement `unary-op-only` so the matrix covers the
+shape, with manifest rows and assertions.
+
+**Owner:** B7b-2-followup.
+
+## 62. A property value with a leading prefix and a tail ERRORs; alc accepts it (B7b-2 Phase C, B12 route)
+
+**Established:** 2026-10-22, B7b-2 final scoped re-review. In an action,
+`Visible = #if X Ok and #endif Ok #if Y or Ok #endif;` (each directive on its own line) parses with an ERROR over
+the tail. The prefix alone (`Visible = #if X Ok and #endif Ok;`) and the tail alone (`Visible = Ok #if Y or Ok
+#endif;`) both parse. alc accepts all four configurations, split and flat
+(`tools/alc_probe/cases/b7b-2/prefixes/property-prefix-then-tail.al`, `--check` 0 mismatch; use an action's
+`Visible`, since a page field's `Editable` rejects a binary value outright). Loud (ERROR), 0 production sites.
+
+**Cause.** `property_expression`'s leading-prefix arm (`grammar.js`, the last alternative of `property_expression`)
+is `seq(repeat1($.preproc_operand_prefix), $._continuation_operand)` with no `optional($.preproc_conditional_expression_tail)`,
+unlike `leadingPrefixed` at the region roots. A value that starts with a prefix therefore has no tail slot, and the
+B11 value-run route that takes a plain value's tail does not start after a prefixed one.
+
+**Witness:** the `:error` case "B7b-2 property-value gap: a leading prefix and a tail in one property value" of
+`test/corpus/b7b2_unary_op_only_gap_test.txt` (a deliberate negative), classified `debt(B12)` in
+`tools/config_oracle/fixture-classes.tsv`.
+
+**Likely fix:** `optional($.preproc_conditional_expression_tail)` on that arm, as in `leadingPrefixed`; measure the
+state cost and the B11 precedence audit (`docs/b11-precedence-audit.md`), then flip the witness to a positive case.
+
+**Owner:** B12.
 
 ## Longer-lived proposals, tracked separately
 

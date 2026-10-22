@@ -221,3 +221,47 @@ table 50100 T
               (property
                 name: (property_name)
                 value: (decimal)))))))))
+
+================================================================================
+A spaced minus before a literal in a property value is a unary expression
+--
+`- 1` is no NEGATIVE_INTEGER (the scanner wants the digit right after the minus), so the value is
+main's property_expression over a unary_expression. B7b-2 Task 10 fix round 3 gave the signed
+option-member reading the same dynamic precedence (-2) as the unary, so the two readings tie and
+GLR order decides; this pins the unary one (Task 10 re-review 3). Tree from the CLI.
+================================================================================
+
+table 50000 T
+{
+    fields
+    {
+        field(1; A; Integer)
+        {
+            MinValue = - 1;
+        }
+    }
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (table_declaration
+    (table_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (fields_section
+        (fields_keyword)
+        body: (fields_body
+          (field_declaration
+            (field_keyword)
+            id: (integer)
+            name: (identifier)
+            type: (type_specification
+              (basic_type))
+            body: (declaration_body
+              (property
+                name: (property_name)
+                value: (property_expression
+                  (unary_expression
+                    operand: (integer)))))))))))

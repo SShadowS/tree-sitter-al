@@ -1,5 +1,5 @@
 // B7a Task 10 witness (GAP): family arguments, base placement first-only, 4 cells; representative bnd:_argument_expression:0:end@preproc_conditional_arguments#first-only/arithmetic
-// Fixture b7_gap_arguments_test.txt#B7a GAP: arguments / first-only (4 cells, verdict of the representative GAP); the parser ERRORs on configurations alc accepts; representative bnd:_argument_expression:0:end@preproc_conditional_arguments%23first-only/arithmetic#0
+// Fixture b7b2_arguments_test.txt#B7b-2 arguments / first-only: moved from b7_gap_arguments_test.txt#0
 // expect: !TPL !X accept
 // expect: !TPL X accept
 // expect: TPL !X accept

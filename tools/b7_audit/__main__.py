@@ -2,7 +2,10 @@
    python -m tools.b7_audit report [--out PATH] [--evidence PATH]
    python -m tools.b7_audit run [--only FAMILY|KEY|PLACEMENT] [--jobs N] [--check] [--accept-tool]
    python -m tools.b7_audit assert --cell ID | --refresh
-   python -m tools.b7_audit manifest --check [--manifest PATH] [--evidence PATH] [--no-oracle]"""
+   python -m tools.b7_audit manifest --check [--manifest PATH] [--evidence PATH] [--no-oracle] [--final PREFIX]
+                                     [--require-oracle]
+   python -m tools.b7_audit manifest --rerecord --manifest PATH --cells ID,... [--evidence PATH] [--no-oracle]
+   python -m tools.b7_audit manifest --admit --manifest PATH --owner B7b-2/B [--new-owner B7b-2] [--evidence PATH]"""
 import argparse
 import sys
 from pathlib import Path
@@ -87,11 +90,61 @@ def cmd_refresh():
     return 1 if problems else 0
 
 
+def cmd_rerecord(a):
+    """Re-record the named rows of one manifest at their current verdict and oracle outcome; print what changed."""
+    from . import evidence, manifest
+    cells = [c for c in (a.cells or "").split(",") if c]
+    if not a.manifest or not cells:
+        print("cannot run: --rerecord needs --manifest and --cells <id,...>", file=sys.stderr)
+        return 2
+    try:
+        records, verdicts = manifest.current(a.evidence)
+        oracle = None if a.no_oracle else manifest.fresh_oracle(set(cells)).get
+        changed = manifest.rerecord(a.manifest, cells, records, verdicts, oracle=oracle)
+    except (OSError, ValueError, KeyError, evidence.OracleCrash, evidence.DiscoverMismatch) as e:
+        print(f"cannot run: {e}", file=sys.stderr)
+        return 2
+    for c in changed:
+        print(c)
+    print(f"{len(cells)} cells named: {len(changed)} columns changed")
+    return 0
+
+
+def cmd_admit(a):
+    """Admit the rows of one manifest that owner --owner holds and that reach their target now; print what changed
+    and every row left deferred with the reason."""
+    from . import evidence, manifest
+    if not a.manifest or not a.owner:
+        print("cannot run: --admit needs --manifest and --owner <phase owner>", file=sys.stderr)
+        return 2
+    try:
+        _, entries = manifest.load(a.manifest)
+        cells = {e.cell_id for e in entries if e.owner == a.owner and e.disposition != "admitted"
+                 and not e.cell_id.startswith("route:")}             # admit skips route: rows unlisted
+        records, verdicts = manifest.current(a.evidence)
+        changed, kept = manifest.admit(a.manifest, a.owner, records, verdicts, manifest.fresh_oracle(cells).get,
+                                       new_owner=a.new_owner)
+    except (OSError, ValueError, KeyError, evidence.OracleCrash, evidence.DiscoverMismatch) as e:
+        print(f"cannot run: {e}", file=sys.stderr)
+        return 2
+    for c in changed:
+        print(c)
+    for k in kept:
+        print(f"kept\t{k}")
+    print(f"{len(cells)} rows owned by {a.owner}: {len(cells) - len(kept)} admitted, {len(kept)} kept")
+    return 0
+
+
 def cmd_manifest(a):
     """Check one manifest against its own scope. The B7b-1 manifest's transfer cells (manifest.TRANSFER_B7B3) are
     exempt from its verdict comparison while they are in the B7b-3 manifest and pass there. A manifest with an
-    expected_oracle column runs the config oracle on each such cell (--no-oracle skips that comparison only)."""
+    expected_oracle column runs the config oracle on each such cell (--no-oracle skips that comparison only).
+    --final PREFIX fails every row a phase owner still holds; --require-oracle every admitted row without an oracle."""
     from . import evidence, manifest
+    if a.rerecord:
+        return cmd_rerecord(a)
+    if a.admit:
+        return cmd_admit(a)
     path = Path(a.manifest) if a.manifest else manifest.MANIFEST
     try:
         scope, entries = manifest.load(path)
@@ -102,7 +155,8 @@ def cmd_manifest(a):
     except (OSError, ValueError, KeyError, evidence.OracleCrash, evidence.DiscoverMismatch) as e:
         print(f"cannot run: {e}", file=sys.stderr)
         return 2
-    problems = manifest.check(scope, entries, records, verdicts, transfer=transfer, oracle=oracle)
+    problems = manifest.check(scope, entries, records, verdicts, transfer=transfer, oracle=oracle,
+                              final_owner_prefix=a.final, require_oracle=a.require_oracle)
     for p in problems:
         print(p)
     adm = [e for e in entries if e.disposition == "admitted"]
@@ -112,7 +166,7 @@ def cmd_manifest(a):
     return 1 if problems else 0
 
 
-def main(argv=None):
+def parser():
     p = argparse.ArgumentParser(prog="tools.b7_audit")
     sub = p.add_subparsers(dest="cmd", required=True)
     c = sub.add_parser("census")
@@ -132,15 +186,29 @@ def main(argv=None):
                    help="rewrite fingerprints of rows whose truth is unchanged; list flipped rows (exit 1)")
     mf = sub.add_parser("manifest", help="--check: a route manifest (default the B7b-1 one) against the committed "
                         "evidence, within the families its `# families:` header declares")
-    mf.add_argument("--check", action="store_true", required=True)
+    mode = mf.add_mutually_exclusive_group(required=True)
+    mode.add_argument("--check", action="store_true")
+    mode.add_argument("--rerecord", action="store_true",
+                      help="re-record the --cells rows of --manifest at their current verdict and oracle outcome")
+    mode.add_argument("--admit", action="store_true",
+                      help="admit the --owner rows of --manifest that reach their target verdict and oracle outcome")
     mf.add_argument("--manifest")
+    mf.add_argument("--owner", help="--admit: the phase owner whose rows are admitted (e.g. B7b-2/B)")
+    mf.add_argument("--new-owner", default="B7b-2", help="--admit: the owner an admitted row is written with")
+    mf.add_argument("--cells", help="--rerecord: comma-separated cell ids")
+    mf.add_argument("--final", metavar="PREFIX", help="--check: fail every row whose owner starts with PREFIX")
+    mf.add_argument("--require-oracle", action="store_true", help="--check: fail admitted rows with no expected_oracle")
     mf.add_argument("--no-oracle", action="store_true",
                     help="skip the fresh config oracle run behind the expected_oracle column")
     mf.add_argument("--evidence")
     rp = sub.add_parser("report")
     rp.add_argument("--out")
     rp.add_argument("--evidence")
-    a = p.parse_args(argv)
+    return p
+
+
+def main(argv=None):
+    a = parser().parse_args(argv)
     if a.cmd == "report":
         from . import evidence, report
         try:

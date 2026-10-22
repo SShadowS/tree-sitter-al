@@ -4,7 +4,8 @@ from __future__ import annotations
 from tools.config_oracle import contracts
 from tools.config_oracle.ir import Node
 from tools.config_oracle.lowering.case_terminators import CASE_SEMI
-from tools.config_oracle.lowering.engine import ARM_SEMI, EMPTY_BODY_SLOTS, Lowered, LoweringError, Terminator, bind_previous, lower
+from tools.config_oracle.lowering.engine import (ARM_SEMI, EMPTY_BODY_SLOTS, LIST_SPAN, Lowered, LoweringError,
+                                                 Terminator, bind_previous, lower, lower_items)
 
 DIRECTIVES = ("preproc_if", "preproc_elif", "preproc_else")
 
@@ -86,13 +87,17 @@ def branch_select(node, ctx) -> Lowered:
             for c in content:
                 if entry.arm is not None and c.kind not in entry.arm:
                     raise LoweringError("arm-content", c, f"{c.kind} not declared for {node.kind}")
-                r = lower(c, ctx.child(node.kind, c.field or "<children>"))
+            # `lower` read at call time: this module's name is a test seam (test_lowering_select)
+            for _, c, r in lower_items(content, ctx, node.kind, lambda c, cx: lower(c, cx)):
                 if node.kind == "preproc_conditional_case" and c.kind == "empty_statement":
                     # case-terminator (spec 6.2): every direct-arm `;` of a case group, mixed
                     # arms included; the mark rides the node through enclosing arms.
                     for n in r.nodes:
                         setattr(n, CASE_SEMI, True)
                 out.frags.extend(bind_previous(out.nodes, r, c))
+            if (policy == "list-run" and out.nodes and content and content[0].kind != ","
+                    and any(c.kind == "," for c in content)):
+                setattr(out.nodes[0], LIST_SPAN, True)   # spec 3.4 list spanning (engine._check_alternation)
             if node.kind == "preproc_conditional_statement" and [c.kind for c in content] == ["empty_statement"] \
                     and len(out.nodes) == 1 and not out.frags:
                 setattr(out.nodes[0], ARM_SEMI, True)   # normalisation arm-terminator (engine.ARM_SEMI)

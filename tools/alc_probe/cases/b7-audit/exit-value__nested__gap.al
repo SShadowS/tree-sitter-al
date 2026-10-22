@@ -1,5 +1,5 @@
 // B7a Task 10 witness (GAP): family exit-value, base placement nested, 4 cells; representative bnd:exit_statement:return_value:end@statement_block#nested/arithmetic
-// Fixture b7_gap_exit_value_test.txt#B7a GAP: exit-value / nested (4 cells, verdict of the representative GAP); the parser ERRORs on configurations alc accepts; representative bnd:exit_statement:return_value:end@statement_block%23nested/arithmetic#0
+// Fixture b7b2_exit_value_test.txt#B7b-2 exit-value / nested: moved from b7_gap_exit_value_test.txt#0
 // expect: !X !Y accept
 // expect: !X Y accept
 // expect: X !Y accept

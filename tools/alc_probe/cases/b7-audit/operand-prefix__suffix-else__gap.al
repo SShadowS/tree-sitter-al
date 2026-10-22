@@ -1,5 +1,5 @@
 // B7a Task 10 witness (GAP): family operand-prefix, base placement suffix-else, 4 cells; representative bnd:_dangling_operand:operand:end@preproc_operand_prefix#suffix-else/arithmetic
-// Fixture b7_gap_operand_prefix_test.txt#B7a GAP: operand-prefix / suffix-else (4 cells, verdict of the representative GAP); the parser ERRORs on configurations alc accepts; representative bnd:_dangling_operand:operand:end@preproc_operand_prefix%23suffix-else/arithmetic#0
+// Fixture b7b2_operand_prefix_test.txt#B7b-2 operand-prefix / suffix-else group in a prefix arm: moved from b7_gap_operand_prefix_test.txt#0
 // expect: !TPL !X accept
 // expect: !TPL X accept
 // expect: TPL !X accept

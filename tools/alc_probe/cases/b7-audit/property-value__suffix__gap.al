@@ -1,5 +1,5 @@
 // B7a Task 10 witness (GAP): family property-value, base placement suffix, 18 cells; representative bnd:_property_value_with_split:0.0:end@action_body#suffix/membership
-// Fixture b7_gap_property_value_test.txt#B7a GAP: property-value / suffix (18 cells, verdict of the representative GAP); the parser ERRORs on configurations alc accepts; representative bnd:_property_value_with_split:0.0:end@action_body%23suffix/membership#0
+// Fixture b7b2_property_value_test.txt#B7b-2 property-value / suffix (membership) in a whole-value arm: moved from b7_gap_property_value_test.txt#0
 // expect: !TPL !X accept
 // expect: !TPL X accept
 // expect: TPL !X accept

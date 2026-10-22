@@ -1,5 +1,5 @@
 // B7a Task 10 witness (GAP): family binary-operand, base placement consecutive, 189 cells; representative bnd:additive_expression:left:end@additive_expression#consecutive/arithmetic
-// Fixture b7_gap_binary_operand_test.txt#B7a GAP: binary-operand / consecutive (189 cells, verdict of the representative GAP); the parser ERRORs on configurations alc accepts; representative bnd:additive_expression:left:end@additive_expression%23consecutive/arithmetic#0
+// Fixture b7b2_binary_operand_test.txt#B7b-2 binary-operand / consecutive: moved from b7_gap_binary_operand_test.txt#0
 // expect: !X !Y accept
 // expect: !X Y accept
 // expect: X !Y accept

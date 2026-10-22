@@ -273,3 +273,202 @@ def test_transfer_for_cli_wiring(tmp_path):
     # the B7b-3 manifest itself never exempts, and a missing B7b-3 file exempts nothing
     assert manifest.transfer_for(b3, [excl], recs, verd, b3, ok) == frozenset()
     assert manifest.transfer_for(b1, [excl], recs, verd, tmp_path / "none.tsv", ok) == frozenset()
+
+
+# --- B7b-2 (spec 2026-10-20 section 8.4): final mode, require-oracle, rerecord -----------------------------------
+def _owned(owner, disp="deferred", exp="CONSISTENT"):
+    import dataclasses
+    return dataclasses.replace(entry(disp=disp, exp=exp), owner=owner)
+
+
+def test_final_rejects_phase_owner():
+    e = _owned("B7b-2/B")
+    assert manifest.check(SCOPE, [e], RECS, VERD) == []                      # not final: a phase owner is fine
+    p = manifest.check(SCOPE, [e], RECS, VERD, final_owner_prefix="B7b-2/")
+    assert len(p) == 1 and p[0].startswith("final\tc1"), p
+    # the finished owner and other owners pass the final check
+    assert manifest.check(SCOPE, [_owned("B7b-2", disp="admitted")], RECS, VERD, final_owner_prefix="B7b-2/") == []
+    assert manifest.check(SCOPE, [_owned("B7b-1h", disp="excluded")], RECS, VERD, final_owner_prefix="B7b-2/") == []
+    # a pseudo route entry is no exception
+    p = manifest.check(SCOPE, [manifest.Entry("route:x", "key-fields", "h", "p", "deferred", "why", "B7b-2/C",
+                                              "unknown", "", "n/a")], [], {}, final_owner_prefix="B7b-2/")
+    assert [x.split("\t")[:2] for x in p] == [["final", "route:x"]]
+
+
+def test_require_oracle_on_admitted():
+    import dataclasses
+    p = manifest.check(SCOPE, [entry()], RECS, VERD, require_oracle=True)
+    assert len(p) == 1 and p[0].startswith("require-oracle\tc1"), p
+    assert manifest.check(SCOPE, [entry()], RECS, VERD) == []                 # off by default
+    assert manifest.check(SCOPE, [_oentry()], RECS, VERD, require_oracle=True) == []
+    # only admitted rows need it
+    assert manifest.check(SCOPE, [dataclasses.replace(entry(disp="deferred"))], RECS, VERD, require_oracle=True) == []
+
+
+_PREFACE = "# a reviewed preface line\n"
+
+
+def _rr_file(tmp_path, rows, oracle_col=True):
+    head = HEAD + ("\texpected_oracle" if oracle_col else "")
+    body = "".join("\t".join(r) + "\n" for r in rows)
+    p = tmp_path / "other.tsv"
+    p.write_text(f"# families: key-fields\n{_PREFACE}{head}\n{body}", encoding="utf-8")
+    return p
+
+
+def _row(cid, disp="deferred", exp="GAP", vec="X=0:A;X=1:A", eo="X=0:discrepancy,X=1:discrepancy"):
+    return [cid, "key-fields", "h", "p", disp, "" if disp == "admitted" else "why", "C1", "unknown", vec, exp, eo]
+
+
+def _rr_recs(*cids):
+    return [rec(c, cfg) for c in cids for cfg in ("X=0", "X=1")]
+
+
+def test_rerecord_changes_only_named_cells(tmp_path):
+    p = _rr_file(tmp_path, [_row("c1"), _row("c2")])
+    before = p.read_text(encoding="utf-8").splitlines()
+    verd = {"c1": ("key-fields", "CONSISTENT"), "c2": ("key-fields", "CONSISTENT")}
+    orc = {"c1": {"X=0": "pass", "X=1": "pass"}, "c2": {"X=0": "pass", "X=1": "pass"}}.get
+    changed = manifest.rerecord(p, ["c1"], _rr_recs("c1", "c2"), verd, oracle=orc)
+    after = p.read_text(encoding="utf-8").splitlines()
+    assert [l.split("\t")[0] for l in changed] == ["c1", "c1"], changed
+    assert any("GAP -> CONSISTENT" in l for l in changed) and any("X=0:pass,X=1:pass" in l for l in changed)
+    diff = [(a, b) for a, b in zip(before, after) if a != b]
+    assert len(before) == len(after) and len(diff) == 1 and diff[0][0].startswith("c1\t"), diff
+    assert after[1] == _PREFACE.rstrip("\n")                                   # comments survive
+    scope, entries = manifest.load(p)
+    c1 = next(e for e in entries if e.cell_id == "c1")
+    assert (c1.expected_verdict, c1.expected_oracle) == ("CONSISTENT", "X=0:pass,X=1:pass")
+    p2 = manifest.check(scope, entries, _rr_recs("c1", "c2"), verd, oracle=orc)
+    assert {x.split("\t")[1] for x in p2} == {"c2"} and len(p2) == 3, p2       # c1 is clean, c2 still flagged
+    # an unchanged cell is named and reported as nothing
+    assert manifest.rerecord(p, ["c1"], _rr_recs("c1", "c2"), verd, oracle=orc) == []
+
+
+def test_rerecord_keeps_identity_and_vector(tmp_path):
+    p = _rr_file(tmp_path, [_row("c1", vec="X=0:A;X=1:R")])                    # frozen vector disagrees with evidence
+    verd = {"c1": ("key-fields", "CONSISTENT")}
+    manifest.rerecord(p, ["c1"], _rr_recs("c1"), verd)                         # no oracle: expected_oracle kept
+    scope, [e] = manifest.load(p)
+    assert (e.family, e.route_host, e.placement, e.disposition, e.reason, e.owner, e.cardinality, e.frozen_vector,
+            e.expected_oracle) == ("key-fields", "h", "p", "deferred", "why", "C1", "unknown", "X=0:A;X=1:R",
+                                   "X=0:discrepancy,X=1:discrepancy")
+    assert e.expected_verdict == "CONSISTENT"
+    p2 = manifest.check(scope, [e], _rr_recs("c1"), verd)
+    assert [x.split("\t")[0] for x in p2] == ["vector"], p2                   # the vector check still bites
+
+
+def test_rerecord_admitted_keeps_target_updates_oracle(tmp_path):
+    p = _rr_file(tmp_path, [_row("c1", disp="admitted", exp="CONSISTENT")])
+    verd = {"c1": ("key-fields", "CONSISTENT:assertion-closed: x")}
+    changed = manifest.rerecord(p, ["c1"], _rr_recs("c1"), verd, oracle={"c1": {"X=0": "pass", "X=1": "pass"}}.get)
+    _, [e] = manifest.load(p)
+    assert e.expected_verdict == "CONSISTENT" and e.expected_oracle == "X=0:pass,X=1:pass"
+    assert len(changed) == 1 and "expected_oracle" in changed[0]
+
+
+def test_rerecord_refuses_unknown_cell(tmp_path):
+    p = _rr_file(tmp_path, [_row("c1")])
+    text = p.read_text(encoding="utf-8")
+    verd = {"c1": ("key-fields", "CONSISTENT")}
+    with pytest.raises(ValueError, match="c9"):
+        manifest.rerecord(p, ["c1", "c9"], _rr_recs("c1"), verd)              # not a row of the manifest
+    with pytest.raises(ValueError, match="c1"):
+        manifest.rerecord(p, ["c1"], [], {})                                    # no current evidence for it
+    with pytest.raises(ValueError, match="c1"):
+        manifest.rerecord(p, ["c1"], _rr_recs("c1"), verd, oracle={}.get)      # oracle has no source for it
+    assert p.read_text(encoding="utf-8") == text                               # nothing written on refusal
+
+
+def _admit_row(cid, owner="B7b-2/B"):
+    r = _row(cid)
+    r[6] = owner
+    return r
+
+
+def test_admit_admits_only_owned_rows_at_target(tmp_path):
+    """Fix round 1 (Task 9 review): each guard keeps exactly its own row, and every row reaching a guard passes every
+    earlier one (c2 has an all-pass oracle, so only the verdict guard keeps it)."""
+    done = _row("c8", disp="admitted", exp="GAP")                               # already admitted, by phase B
+    done[6] = "B7b-2/B"
+    stale = _row("c9", vec="X=0:A;X=1:R")                                      # c9: frozen vector != evidence
+    stale[6] = "B7b-2/B"
+    p = _rr_file(tmp_path, [_admit_row("c1"), _admit_row("c2"), _admit_row("c3", owner="B7b-2/C"),
+                            _admit_row("c4"), _admit_row("c5"), _admit_row("c6"), _admit_row("c7"), done,
+                            _admit_row("route:r1"), stale])
+    before = p.read_text(encoding="utf-8").splitlines()
+    cells = ("c1", "c2", "c3", "c4", "c5", "c6", "c8", "route:r1", "c9")      # c7: no evidence at all
+    verd = {c: ("key-fields", "CONSISTENT") for c in cells}
+    verd["c2"] = ("key-fields", "UNCHECKED")                                     # not at its target
+    verd["c4"] = ("key-fields", "CONSISTENT:assertion-closed: lowering:unsupported-type")
+    allpass = {"X=0": "pass", "X=1": "pass"}
+    orc = {"c1": allpass, "c2": allpass, "c3": allpass, "c4": {"X=0": "pass", "X=1": "lowering:unsupported-type"},
+           "c5": {"X=0": "pass", "X=1": "discrepancy"}, "c7": allpass, "c8": allpass, "route:r1": allpass,
+           "c9": allpass}.get                                                    # c6: the oracle has no source
+    changed, kept = manifest.admit(p, "B7b-2/B", _rr_recs(*cells), verd, orc)
+    scope, entries = manifest.load(p)
+    by = {e.cell_id: e for e in entries}
+    assert (by["c1"].disposition, by["c1"].owner, by["c1"].reason, by["c1"].expected_verdict,
+            by["c1"].expected_oracle) == ("admitted", "B7b-2", "", "CONSISTENT", "X=0:pass,X=1:pass")
+    assert (by["c4"].disposition, by["c4"].reason, by["c4"].expected_oracle) == (
+        "admitted", "C1: the split host's oracle refusal, assertion-closed in 1 configuration(s)",
+        "X=0:pass,X=1:lowering:unsupported-type")
+    assert {k.split("\t")[0]: k.split("\t")[1] for k in kept} == {
+        "c2": "verdict UNCHECKED is not the target CONSISTENT",
+        "c5": "oracle outcome discrepancy is neither pass nor a closed refusal",
+        "c6": "the oracle has no source",
+        "c7": "no current evidence",
+        "c9": "identity or vector ('key-fields', 'h', 'p', 'X=0:A;X=1:R') != evidence "
+              "('key-fields', 'h', 'p', 'X=0:A;X=1:A')"}, kept
+    assert {c.split("\t")[0] for c in changed} == {"c1", "c4"}                  # not c3 (owner), c8, route:r1
+    after = p.read_text(encoding="utf-8").splitlines()
+    assert [a for a, b in zip(before, after) if a != b] == [before[3], before[6]]   # only the c1 and c4 lines
+    assert manifest.check(scope, [by["c1"], by["c4"]], _rr_recs("c1", "c4"), {c: verd[c] for c in ("c1", "c4")},
+                          oracle=orc, require_oracle=True) == []                 # admitted rows check clean
+    assert manifest.admit(p, "B7b-2/B", _rr_recs(*cells), verd, orc)[0] == []  # idempotent
+
+
+def test_admit_mixed_target_and_refusals(tmp_path):
+    mixed = _row("c1", vec="X=0:R;X=1:A")                                      # alc rejects X=0
+    mixed[6] = "X"
+    p = _rr_file(tmp_path, [mixed, _admit_row("c2", owner="X")])
+    recs = [{**rec("c1", "X=0", ok=False), "reject_class": None, "control": "none"}, rec("c1", "X=1"),
+            rec("c2", "X=0"), rec("c2", "X=1")]
+    verd = {"c1": ("key-fields", "MIXED:X=0:REJECTED/unverified/over-accepts;X=1:CONSISTENT"),
+            "c2": ("key-fields", "CONSISTENT")}
+    # c1's alc-REJECTED X=0 is cannot-validate: only the accepted configurations are judged (and recorded)
+    orc = {"c1": {"X=0": "cannot-validate", "X=1": "pass"}, "c2": {"X=0": "lowering:one-reading", "X=1": "pass"}}.get
+    changed, kept = manifest.admit(p, "X", recs, verd, orc, new_owner="Y")
+    _, entries = manifest.load(p)
+    by = {e.cell_id: e for e in entries}
+    assert kept == [] and by["c1"].owner == by["c2"].owner == "Y"
+    assert by["c1"].expected_verdict == manifest.target([r for r in recs if r["cell"] == "c1"])
+    assert by["c1"].expected_oracle == "X=1:pass"                                # only the alc-accepted configuration
+    assert by["c2"].reason == "B12 host limitation (one-reading), assertion-closed in 1 configuration(s)"
+
+
+def test_admit_refuses_a_manifest_without_oracle_column(tmp_path):
+    p = _rr_file(tmp_path, [_admit_row("c1")[:-1]], oracle_col=False)
+    text = p.read_text(encoding="utf-8")
+    with pytest.raises(ValueError, match="expected_oracle"):
+        manifest.admit(p, "B7b-2/B", _rr_recs("c1"), {"c1": ("key-fields", "CONSISTENT")}, {}.get)
+    assert p.read_text(encoding="utf-8") == text
+
+
+def test_cli_admit_flags():
+    from tools.b7_audit import __main__ as cli
+    a = cli.parser().parse_args(["manifest", "--admit", "--manifest", "m.tsv", "--owner", "B7b-2/B"])
+    assert a.admit and a.owner == "B7b-2/B" and a.new_owner == "B7b-2"
+    assert cli.main(["manifest", "--admit", "--manifest", "m.tsv"]) == 2         # --owner is required
+
+
+def test_cli_final_and_rerecord_flags():
+    from tools.b7_audit import __main__ as cli
+    a = cli.parser().parse_args(["manifest", "--check", "--manifest", "m.tsv", "--final", "B7b-2/",
+                                 "--require-oracle"])
+    assert (a.final, a.require_oracle, a.check) == ("B7b-2/", True, True)
+    a = cli.parser().parse_args(["manifest", "--rerecord", "--manifest", "m.tsv", "--cells", "a,b"])
+    assert a.rerecord and a.cells == "a,b"
+    with pytest.raises(SystemExit):
+        cli.parser().parse_args(["manifest", "--check", "--rerecord", "--manifest", "m.tsv"])
+    assert cli.main(["manifest", "--rerecord", "--manifest", "m.tsv"]) == 2     # --cells is required

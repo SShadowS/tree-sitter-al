@@ -1,5 +1,5 @@
 // B7a Task 10 witness (GAP): family ternary, base placement trail, 3 cells; representative occ:ternary_expression:0.3@ternary_expression#trail
-// Fixture b7_gap_ternary_test.txt#B7a GAP: ternary / trail (3 cells, verdict of the representative MIXED); the parser ERRORs on configurations alc accepts; representative occ:ternary_expression:0.3@ternary_expression%23trail#0
+// Fixture b7b2_ternary_test.txt#B7b-2 ternary / trail: moved from b7_gap_ternary_test.txt#0
 // expect: !X reject(AL0224)
 // expect: X accept
 // source: recorded by B7a Task 10, 2026-10-07: the alc split verdicts of cell occ:ternary_expression:0.3@ternary_expression#trail in tools/b7_audit/evidence.jsonl.gz

@@ -1,5 +1,5 @@
 // B7a Task 10 witness (GAP): family expression-tail, base placement suffix, 50 cells; representative bnd:_expression_continuation:operand:end@preproc_conditional_expression_tail#suffix/arithmetic
-// Fixture b7_gap_expression_tail_test.txt#B7a GAP: expression-tail / suffix (50 cells, verdict of the representative GAP); the parser ERRORs on configurations alc accepts; representative bnd:_expression_continuation:operand:end@preproc_conditional_expression_tail%23suffix/arithmetic#0
+// Fixture b7b2_expression_tail_test.txt#B7b-2 expression-tail / suffix in an arm: moved from b7_gap_expression_tail_test.txt#0
 // expect: !TPL !X accept
 // expect: !TPL X accept
 // expect: TPL !X accept

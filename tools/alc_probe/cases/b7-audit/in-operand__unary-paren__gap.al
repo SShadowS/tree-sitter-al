@@ -1,5 +1,5 @@
 // B7a Task 10 witness (GAP): family in-operand, base placement unary-paren, 24 cells; representative bnd:in_expression:left:end@case_branch#unary-paren/arithmetic
-// Fixture b7_gap_in_operand_test.txt#B7a GAP: in-operand / unary-paren (24 cells, verdict of the representative GAP); the parser ERRORs on configurations alc accepts; representative bnd:in_expression:left:end@case_branch%23unary-paren/arithmetic#0
+// Fixture b7b2_in_operand_test.txt#B7b-2 in-operand / unary-paren: moved from b7_gap_in_operand_test.txt#0
 // expect: !X accept
 // expect: X accept
 // source: recorded by B7a Task 10, 2026-10-07: the alc split verdicts of cell bnd:in_expression:left:end@case_branch#unary-paren/arithmetic in tools/b7_audit/evidence.jsonl.gz

@@ -1,5 +1,5 @@
 // B7a Task 10 witness (GAP): family while-condition, base placement consecutive, 8 cells; representative bnd:while_statement:condition:end@statement_block#consecutive/comparison
-// Fixture b7_gap_while_condition_test.txt#B7a GAP: while-condition / consecutive (8 cells, verdict of the representative GAP); the parser ERRORs on configurations alc accepts; representative bnd:while_statement:condition:end@statement_block%23consecutive/comparison#0
+// Fixture b7b2_while_condition_test.txt#B7b-2 while-condition / consecutive (comparison): moved from b7_gap_while_condition_test.txt#0
 // expect: !X !Y accept
 // expect: !X Y accept
 // expect: X !Y accept

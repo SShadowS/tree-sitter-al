@@ -1,0 +1,594 @@
+================================================================================
+B7b-2 list-literal / consecutive: moved from b7_gap_list_literal_test.txt
+--
+B7a GAP representative bnd:list_literal:1.0.0:end@list_literal#consecutive/arithmetic
+(untrimmed witness: tools/alc_probe/cases/b7-audit/list-literal__consecutive__gap.al)
+(owner B7b-2/A); alc accepts every configuration (untrimmed witness above, alc_probe --check 2026-10-21). Source
+trimmed: the generator's table, var section and helper procedures are
+removed, the statement and its host are verbatim. The first element is the
+tail-bearing root (spec 5.2 root rule).
+================================================================================
+codeunit 50101 P
+{
+    procedure Q()
+    begin
+Ok := I in [
+1
+#if X
++ 2
+#endif
+#if Y
++ 3
+#endif
+, 2];
+    end;
+}
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (procedure
+        (procedure_keyword)
+        name: (identifier)
+        body: (code_block
+          (begin_keyword)
+          body: (statement_block
+            (assignment_statement
+              left: (identifier)
+              operator: (assignment_operator)
+              right: (in_expression
+                left: (identifier)
+                operator: (in_keyword)
+                right: (list_literal
+                  (integer)
+                  (preproc_conditional_expression_tail
+                    (preproc_if
+                      (preproc_open)
+                      condition: (identifier))
+                    operand: (integer)
+                    (preproc_endif
+                      (preproc_close))
+                    (preproc_conditional_expression_tail
+                      (preproc_if
+                        (preproc_open)
+                        condition: (identifier))
+                      operand: (integer)
+                      (preproc_endif
+                        (preproc_close))))
+                  (integer)))))
+          (end_keyword))))))
+
+================================================================================
+B7b-2 list-literal / nested: moved from b7_gap_list_literal_test.txt
+--
+B7a GAP representative bnd:list_literal:1.0.0:end@list_literal#nested/arithmetic
+(untrimmed witness: tools/alc_probe/cases/b7-audit/list-literal__nested__gap.al, alc_probe --check 2026-10-21)
+(owner B7b-2/A). Source trimmed as above.
+================================================================================
+codeunit 50101 P
+{
+    procedure Q()
+    begin
+Ok := I in [
+1
+#if X
++ 2
+#if Y
++ 3
+#endif
+#endif
+, 2];
+    end;
+}
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (procedure
+        (procedure_keyword)
+        name: (identifier)
+        body: (code_block
+          (begin_keyword)
+          body: (statement_block
+            (assignment_statement
+              left: (identifier)
+              operator: (assignment_operator)
+              right: (in_expression
+                left: (identifier)
+                operator: (in_keyword)
+                right: (list_literal
+                  (integer)
+                  (preproc_conditional_expression_tail
+                    (preproc_if
+                      (preproc_open)
+                      condition: (identifier))
+                    operand: (integer)
+                    (preproc_conditional_expression_tail
+                      (preproc_if
+                        (preproc_open)
+                        condition: (identifier))
+                      operand: (integer)
+                      (preproc_endif
+                        (preproc_close)))
+                    (preproc_endif
+                      (preproc_close)))
+                  (integer)))))
+          (end_keyword))))))
+
+================================================================================
+B7b-2 list-literal / chain: moved from b7_gap_list_literal_test.txt
+--
+B7a GAP representative bnd:list_literal:1.0.2.0.1:between@list_literal#chain/arithmetic
+(untrimmed witness: tools/alc_probe/cases/b7-audit/list-literal__chain__gap.al)
+(owner B7b-2/B; the key is retired to bnd:list_literal:1.0.1.0.1:between,
+tools/b7_audit/key-aliases.tsv); alc accepts every configuration (untrimmed
+witness above, alc_probe --check 2026-10-21). Source trimmed: the generator's table, var section and helper
+procedures are removed, the statement and its host are verbatim.
+================================================================================
+codeunit 50101 P
+{
+    procedure Q()
+    begin
+Ok := I in [1,
+2 * 2
+#if X
++ 3
+#endif
+* 4
+];
+    end;
+}
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (procedure
+        (procedure_keyword)
+        name: (identifier)
+        body: (code_block
+          (begin_keyword)
+          body: (statement_block
+            (assignment_statement
+              left: (identifier)
+              operator: (assignment_operator)
+              right: (in_expression
+                left: (identifier)
+                operator: (in_keyword)
+                right: (list_literal
+                  (integer)
+                  (multiplicative_expression
+                    left: (integer)
+                    right: (integer))
+                  (preproc_conditional_expression_tail
+                    (preproc_if
+                      (preproc_open)
+                      condition: (identifier))
+                    operand: (integer)
+                    (preproc_endif
+                      (preproc_close))
+                    operand: (integer))))))
+          (end_keyword))))))
+
+================================================================================
+B7b-2 list-literal / op-only: moved from b7_gap_list_literal_test.txt
+--
+B7a GAP representative bnd:list_literal:1.0.2.0.1:between@list_literal#op-only/arithmetic
+(untrimmed witness: tools/alc_probe/cases/b7-audit/list-literal__op-only__gap.al, --check 2026-10-21)
+(owner B7b-2/B); op-only: alc rejects X=0 (RC8 over-acceptance, spec 9), the
+X=1 configuration is valid and parses; one tree for both. Source trimmed: the
+generator's table, var section and helper procedures are removed, the
+statement and its host are verbatim.
+================================================================================
+codeunit 50101 P
+{
+    procedure Q()
+    begin
+Ok := I in [1,
+2
+#if X
++
+#endif
+2
+];
+    end;
+}
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (procedure
+        (procedure_keyword)
+        name: (identifier)
+        body: (code_block
+          (begin_keyword)
+          body: (statement_block
+            (assignment_statement
+              left: (identifier)
+              operator: (assignment_operator)
+              right: (in_expression
+                left: (identifier)
+                operator: (in_keyword)
+                right: (list_literal
+                  (integer)
+                  (integer)
+                  (preproc_conditional_expression_tail
+                    (preproc_if
+                      (preproc_open)
+                      condition: (identifier))
+                    (preproc_endif
+                      (preproc_close))
+                    operand: (integer))))))
+          (end_keyword))))))
+
+================================================================================
+B7b-2 list-literal / suffix: moved from b7_gap_list_literal_test.txt
+--
+B7a GAP representative bnd:list_literal:1.0.2.0.1:between@list_literal#suffix/arithmetic
+(untrimmed witness: tools/alc_probe/cases/b7-audit/list-literal__suffix__gap.al)
+(owner B7b-2/B); alc accepts every configuration (untrimmed witness above, alc_probe --check 2026-10-21). Source
+trimmed: the generator's table, var section and helper procedures are removed,
+the statement and its host are verbatim.
+================================================================================
+codeunit 50101 P
+{
+    procedure Q()
+    begin
+Ok := I in [1,
+2
+#if X
++ 2
+#endif
+];
+    end;
+}
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (procedure
+        (procedure_keyword)
+        name: (identifier)
+        body: (code_block
+          (begin_keyword)
+          body: (statement_block
+            (assignment_statement
+              left: (identifier)
+              operator: (assignment_operator)
+              right: (in_expression
+                left: (identifier)
+                operator: (in_keyword)
+                right: (list_literal
+                  (integer)
+                  (integer)
+                  (preproc_conditional_expression_tail
+                    (preproc_if
+                      (preproc_open)
+                      condition: (identifier))
+                    operand: (integer)
+                    (preproc_endif
+                      (preproc_close)))))))
+          (end_keyword))))))
+
+================================================================================
+B7b-2 list-literal / suffix-else: moved from b7_gap_list_literal_test.txt
+--
+B7a GAP representative bnd:list_literal:1.0.2.0.1:between@list_literal#suffix-else/arithmetic
+(untrimmed witness: tools/alc_probe/cases/b7-audit/list-literal__suffix-else__gap.al)
+(owner B7b-2/B); alc accepts every configuration (untrimmed witness above, alc_probe --check 2026-10-21). Source
+trimmed: the generator's table, var section and helper procedures are removed,
+the statement and its host are verbatim.
+================================================================================
+codeunit 50101 P
+{
+    procedure Q()
+    begin
+Ok := I in [1,
+2
+#if X
++ 2
+#else
+* 3
+#endif
+];
+    end;
+}
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (procedure
+        (procedure_keyword)
+        name: (identifier)
+        body: (code_block
+          (begin_keyword)
+          body: (statement_block
+            (assignment_statement
+              left: (identifier)
+              operator: (assignment_operator)
+              right: (in_expression
+                left: (identifier)
+                operator: (in_keyword)
+                right: (list_literal
+                  (integer)
+                  (integer)
+                  (preproc_conditional_expression_tail
+                    (preproc_if
+                      (preproc_open)
+                      condition: (identifier))
+                    operand: (integer)
+                    (preproc_else)
+                    operand: (integer)
+                    (preproc_endif
+                      (preproc_close)))))))
+          (end_keyword))))))
+
+================================================================================
+B7b-2 list-literal / first: moved from b7_gap_list_literal_test.txt
+--
+B7a GAP representative bnd:list_literal:1.0.0:end@list_literal#first/arithmetic
+(untrimmed witness: tools/alc_probe/cases/b7-audit/list-literal__first__gap.al)
+(manifest row: deferred, owner B7b-2/C). Parses since B7b-2 Phase C (Task 10).
+Source trimmed: the generator's table, var section and helpers are removed.
+================================================================================
+codeunit 50101 P
+{
+    procedure Q()
+    begin
+Ok := I in [
+#if X
+1 +
+#endif
+2
+, 2];
+    end;
+}
+--------------------------------------------------------------------------------
+
+(source_file (codeunit_declaration (codeunit_keyword) object_id: (integer) object_name: (identifier) body:
+(declaration_body (procedure (procedure_keyword) name: (identifier) body: (code_block (begin_keyword) body:
+(statement_block (assignment_statement left: (identifier) operator: (assignment_operator) right: (in_expression
+left: (identifier) operator: (in_keyword) right: (list_literal (preproc_operand_prefix (preproc_if (preproc_open)
+condition: (identifier)) operand: (integer) (preproc_endif (preproc_close))) (integer) (integer)))))
+(end_keyword))))))
+
+================================================================================
+B7b-2 list-literal / first-only: moved from b7_gap_list_literal_test.txt
+--
+B7a GAP representative bnd:list_literal:1.0.0:end@list_literal#first-only/arithmetic
+(untrimmed witness: tools/alc_probe/cases/b7-audit/list-literal__first-only__gap.al)
+(manifest row: deferred, owner B7b-2/C). Parses since B7b-2 Phase C (Task 10).
+Source trimmed: the generator's table, var section and helpers are removed.
+================================================================================
+codeunit 50101 P
+{
+    procedure Q()
+    begin
+Ok := I in [
+#if X
+1
+#else
+2
+#endif
+, 2];
+    end;
+}
+--------------------------------------------------------------------------------
+
+(source_file (codeunit_declaration (codeunit_keyword) object_id: (integer) object_name: (identifier) body:
+(declaration_body (procedure (procedure_keyword) name: (identifier) body: (code_block (begin_keyword) body:
+(statement_block (assignment_statement left: (identifier) operator: (assignment_operator) right: (in_expression
+left: (identifier) operator: (in_keyword) right: (list_literal (preproc_conditional_operand (preproc_if
+(preproc_open) condition: (identifier)) operand: (integer) (preproc_else) operand: (integer) (preproc_endif
+(preproc_close))) (integer))))) (end_keyword))))))
+
+================================================================================
+B7b-2 list-literal / first-replace: moved from b7_gap_list_literal_test.txt
+--
+B7a GAP representative occ:list_literal:1.0.2.0.0@in_expression#first-replace
+(untrimmed witness: tools/alc_probe/cases/b7-audit/list-literal__first-replace__gap.al)
+(manifest row: excluded, owner B7b-1c). A list-separator cell outside B7b-2's
+scope that parses since Phase C (Task 10): the first element is an operand group
+(a list-elements group cannot open a list), the only derivation.
+Source trimmed: the generator's table, var section and helpers are removed.
+================================================================================
+codeunit 50101 P
+{
+    procedure Q()
+    begin
+Ok := I in [
+#if X
+1
+#else
+2
+#endif
+, 21
+];
+    end;
+}
+--------------------------------------------------------------------------------
+
+(source_file (codeunit_declaration (codeunit_keyword) object_id: (integer) object_name: (identifier) body:
+(declaration_body (procedure (procedure_keyword) name: (identifier) body: (code_block (begin_keyword) body:
+(statement_block (assignment_statement left: (identifier) operator: (assignment_operator) right: (in_expression
+left: (identifier) operator: (in_keyword) right: (list_literal (preproc_conditional_operand (preproc_if
+(preproc_open) condition: (identifier)) operand: (integer) (preproc_else) operand: (integer) (preproc_endif
+(preproc_close))) (integer))))) (end_keyword))))))
+
+================================================================================
+B7b-2 list-literal / signed: moved from b7_gap_list_literal_test.txt
+--
+B7a GAP representative bnd:list_literal:1.0.0:end@list_literal#signed/arithmetic
+(untrimmed witness: tools/alc_probe/cases/b7-audit/list-literal__signed__gap.al)
+(manifest row: deferred, owner B7b-2/C). Parses since B7b-2 Phase C (Task 10).
+Source trimmed: the generator's table, var section and helpers are removed.
+================================================================================
+codeunit 50101 P
+{
+    procedure Q()
+    begin
+Ok := I in [
+1 +
+#if X
+-1
+#else
+2
+#endif
+, 2];
+    end;
+}
+--------------------------------------------------------------------------------
+
+(source_file (codeunit_declaration (codeunit_keyword) object_id: (integer) object_name: (identifier) body:
+(declaration_body (procedure (procedure_keyword) name: (identifier) body: (code_block (begin_keyword) body:
+(statement_block (assignment_statement left: (identifier) operator: (assignment_operator) right: (in_expression
+left: (identifier) operator: (in_keyword) right: (list_literal (additive_expression left: (integer) right:
+(preproc_conditional_operand (preproc_if (preproc_open) condition: (identifier)) operand: (unary_expression operand:
+(integer)) (preproc_else) operand: (integer) (preproc_endif (preproc_close)))) (integer))))) (end_keyword))))))
+
+================================================================================
+B7b-2 list-literal / trail: moved from b7_gap_list_literal_test.txt
+--
+B7a MIXED representative occ:list_literal:1.0.2.0.0@in_expression#trail
+(untrimmed witness: tools/alc_probe/cases/b7-audit/list-literal__trail__gap.al)
+(manifest row: excluded, owner B7b-1c). A list-separator cell outside B7b-2's
+scope that parses since Phase C (Task 10): the second element is a one-arm
+operand group, the only derivation; X=0 (`[1, ]`) is rejected by alc.
+Source trimmed: the generator's table, var section and helpers are removed.
+================================================================================
+codeunit 50101 P
+{
+    procedure Q()
+    begin
+Ok := I in [
+1 ,
+#if X
+2
+#endif
+];
+    end;
+}
+--------------------------------------------------------------------------------
+
+(source_file (codeunit_declaration (codeunit_keyword) object_id: (integer) object_name: (identifier) body:
+(declaration_body (procedure (procedure_keyword) name: (identifier) body: (code_block (begin_keyword) body:
+(statement_block (assignment_statement left: (identifier) operator: (assignment_operator) right: (in_expression
+left: (identifier) operator: (in_keyword) right: (list_literal (integer) (preproc_conditional_operand (preproc_if
+(preproc_open) condition: (identifier)) operand: (integer) (preproc_endif (preproc_close))))))) (end_keyword))))))
+
+================================================================================
+B7b-2 list-literal / unary-minus: moved from b7_gap_list_literal_test.txt
+--
+B7a GAP representative bnd:list_literal:1.0.0:end@list_literal#unary-minus/arithmetic
+(untrimmed witness: tools/alc_probe/cases/b7-audit/list-literal__unary-minus__gap.al)
+(manifest row: deferred, owner B7b-2/C). Parses since B7b-2 Phase C (Task 10).
+Source trimmed: the generator's table, var section and helpers are removed.
+================================================================================
+codeunit 50101 P
+{
+    procedure Q()
+    begin
+Ok := I in [
+1 +
+#if X
+- 2
+#else
+3
+#endif
+, 2];
+    end;
+}
+--------------------------------------------------------------------------------
+
+(source_file (codeunit_declaration (codeunit_keyword) object_id: (integer) object_name: (identifier) body:
+(declaration_body (procedure (procedure_keyword) name: (identifier) body: (code_block (begin_keyword) body:
+(statement_block (assignment_statement left: (identifier) operator: (assignment_operator) right: (in_expression
+left: (identifier) operator: (in_keyword) right: (list_literal (additive_expression left: (integer) right:
+(preproc_conditional_operand (preproc_if (preproc_open) condition: (identifier)) operand: (unary_expression operand:
+(integer)) (preproc_else) operand: (integer) (preproc_endif (preproc_close)))) (integer))))) (end_keyword))))))
+
+================================================================================
+B7b-2 list-literal / unary-paren: moved from b7_gap_list_literal_test.txt
+--
+B7a GAP representative bnd:list_literal:1.0.0:end@list_literal#unary-paren/arithmetic
+(untrimmed witness: tools/alc_probe/cases/b7-audit/list-literal__unary-paren__gap.al)
+(manifest row: deferred, owner B7b-2/C). Parses since B7b-2 Phase C (Task 10).
+Source trimmed: the generator's table, var section and helpers are removed.
+================================================================================
+codeunit 50101 P
+{
+    procedure Q()
+    begin
+Ok := I in [
+1 +
+#if X
+( 2 + 3 )
+#else
+3
+#endif
+, 2];
+    end;
+}
+--------------------------------------------------------------------------------
+
+(source_file (codeunit_declaration (codeunit_keyword) object_id: (integer) object_name: (identifier) body:
+(declaration_body (procedure (procedure_keyword) name: (identifier) body: (code_block (begin_keyword) body:
+(statement_block (assignment_statement left: (identifier) operator: (assignment_operator) right: (in_expression
+left: (identifier) operator: (in_keyword) right: (list_literal (additive_expression left: (integer) right:
+(preproc_conditional_operand (preproc_if (preproc_open) condition: (identifier)) operand: (parenthesized_expression
+(additive_expression left: (integer) right: (integer))) (preproc_else) operand: (integer) (preproc_endif
+(preproc_close)))) (integer))))) (end_keyword))))))
+
+================================================================================
+B7b-2 list-literal / whole-operand: moved from b7_gap_list_literal_test.txt
+--
+B7a GAP representative bnd:list_literal:1.0.0:end@list_literal#whole-operand/arithmetic
+(untrimmed witness: tools/alc_probe/cases/b7-audit/list-literal__whole-operand__gap.al)
+(manifest row: deferred, owner B7b-2/C). Parses since B7b-2 Phase C (Task 10).
+Source trimmed: the generator's table, var section and helpers are removed.
+================================================================================
+codeunit 50101 P
+{
+    procedure Q()
+    begin
+Ok := I in [
+1 +
+#if X
+2
+#else
+3
+#endif
+, 2];
+    end;
+}
+--------------------------------------------------------------------------------
+
+(source_file (codeunit_declaration (codeunit_keyword) object_id: (integer) object_name: (identifier) body:
+(declaration_body (procedure (procedure_keyword) name: (identifier) body: (code_block (begin_keyword) body:
+(statement_block (assignment_statement left: (identifier) operator: (assignment_operator) right: (in_expression
+left: (identifier) operator: (in_keyword) right: (list_literal (additive_expression left: (integer) right:
+(preproc_conditional_operand (preproc_if (preproc_open) condition: (identifier)) operand: (integer) (preproc_else)
+operand: (integer) (preproc_endif (preproc_close)))) (integer))))) (end_keyword))))))

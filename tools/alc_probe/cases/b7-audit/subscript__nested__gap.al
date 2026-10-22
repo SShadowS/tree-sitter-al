@@ -1,5 +1,5 @@
 // B7a Task 10 witness (GAP): family subscript, base placement nested, 6 cells; representative bnd:subscript_expression:0.4.0.1:between@subscript_expression#nested/arithmetic
-// Fixture b7_gap_subscript_test.txt#B7a GAP: subscript / nested (6 cells, verdict of the representative GAP); the parser ERRORs on configurations alc accepts; representative bnd:subscript_expression:0.4.0.1:between@subscript_expression%23nested/arithmetic#0
+// Fixture b7b2_subscript_test.txt#B7b-2 subscript / nested: moved from b7_gap_subscript_test.txt#0
 // expect: !X !Y accept
 // expect: !X Y accept
 // expect: X !Y accept

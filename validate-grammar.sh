@@ -169,8 +169,8 @@ else
             echo "$CASE_CENSUS" | grep '^SKIPPED' | sed 's/^SKIPPED\t/    /' | sed 's/\t/ — /g'
             # This is NOT a counter bug. `:skip` is a real tree-sitter feature and
             # the arithmetic below is correct without it. It fails here because
-            # CLAUDE.md's "no known limitations" rule forbids disabling a test
-            # instead of fixing what it caught. Delete the `:skip`, do not teach
+            # CLAUDE.md's "Known limits are recorded, not denied" section forbids
+            # disabling a test instead of fixing what it caught. Delete the `:skip`, do not teach
             # this step to tolerate it.
             echo -e "${YELLOW}CLAUDE.md forbids disabling tests — fix the underlying issue instead.${NC}"
         fi

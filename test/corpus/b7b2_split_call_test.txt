@@ -1,0 +1,634 @@
+================================================================================
+B7b-2 split-call / chain: moved from b7_gap_split_call_test.txt
+--
+B7a GAP representative bnd:_expression_list:0:end@preproc_split_call_statement#chain/arithmetic
+(untrimmed witness: tools/alc_probe/cases/b7-audit/split-call__chain__gap.al)
+(owner B7b-2/B; C1, oracle-blind host, closed by assertion rows); alc accepts
+every configuration (untrimmed witness above, alc_probe --check 2026-10-21). Source trimmed: the generator's table, var
+section and helper procedures are removed, the statement and its host are
+verbatim.
+================================================================================
+codeunit 50101 P
+{
+    procedure Q()
+    begin
+#if TPL
+Foo(1,
+#else
+Foo(2,
+#endif
+3 * 2
+#if X
++ 3
+#endif
+* 4
+);
+    end;
+}
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (procedure
+        (procedure_keyword)
+        name: (identifier)
+        body: (code_block
+          (begin_keyword)
+          body: (statement_block
+            (preproc_split_call_statement
+              (preproc_if
+                (preproc_open)
+                condition: (identifier))
+              (identifier)
+              (integer)
+              (preproc_else)
+              (identifier)
+              (integer)
+              (preproc_endif
+                (preproc_close))
+              (multiplicative_expression
+                left: (integer)
+                right: (integer))
+              (preproc_conditional_expression_tail
+                (preproc_if
+                  (preproc_open)
+                  condition: (identifier))
+                operand: (integer)
+                (preproc_endif
+                  (preproc_close))
+                operand: (integer))))
+          (end_keyword))))))
+
+================================================================================
+B7b-2 split-call / consecutive: moved from b7_gap_split_call_test.txt
+--
+B7a GAP representative bnd:_expression_list:0:end@preproc_split_call_statement#consecutive/arithmetic
+(untrimmed witness: tools/alc_probe/cases/b7-audit/split-call__consecutive__gap.al)
+(owner B7b-2/B; C1 host); alc accepts every configuration (untrimmed witness above, alc_probe --check 2026-10-21).
+Source trimmed: the generator's table, var section and helper procedures are
+removed, the statement and its host are verbatim.
+================================================================================
+codeunit 50101 P
+{
+    procedure Q()
+    begin
+#if TPL
+Foo(1,
+#else
+Foo(2,
+#endif
+3
+#if X
++ 2
+#endif
+#if Y
++ 3
+#endif
+);
+    end;
+}
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (procedure
+        (procedure_keyword)
+        name: (identifier)
+        body: (code_block
+          (begin_keyword)
+          body: (statement_block
+            (preproc_split_call_statement
+              (preproc_if
+                (preproc_open)
+                condition: (identifier))
+              (identifier)
+              (integer)
+              (preproc_else)
+              (identifier)
+              (integer)
+              (preproc_endif
+                (preproc_close))
+              (integer)
+              (preproc_conditional_expression_tail
+                (preproc_if
+                  (preproc_open)
+                  condition: (identifier))
+                operand: (integer)
+                (preproc_endif
+                  (preproc_close))
+                (preproc_conditional_expression_tail
+                  (preproc_if
+                    (preproc_open)
+                    condition: (identifier))
+                  operand: (integer)
+                  (preproc_endif
+                    (preproc_close))))))
+          (end_keyword))))))
+
+================================================================================
+B7b-2 split-call / nested: moved from b7_gap_split_call_test.txt
+--
+B7a GAP representative bnd:_expression_list:0:end@preproc_split_call_statement#nested/arithmetic
+(untrimmed witness: tools/alc_probe/cases/b7-audit/split-call__nested__gap.al)
+(owner B7b-2/B; C1 host); alc accepts every configuration (untrimmed witness above, alc_probe --check 2026-10-21).
+Source trimmed: the generator's table, var section and helper procedures are
+removed, the statement and its host are verbatim.
+================================================================================
+codeunit 50101 P
+{
+    procedure Q()
+    begin
+#if TPL
+Foo(1,
+#else
+Foo(2,
+#endif
+3
+#if X
++ 2
+#if Y
++ 3
+#endif
+#endif
+);
+    end;
+}
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (procedure
+        (procedure_keyword)
+        name: (identifier)
+        body: (code_block
+          (begin_keyword)
+          body: (statement_block
+            (preproc_split_call_statement
+              (preproc_if
+                (preproc_open)
+                condition: (identifier))
+              (identifier)
+              (integer)
+              (preproc_else)
+              (identifier)
+              (integer)
+              (preproc_endif
+                (preproc_close))
+              (integer)
+              (preproc_conditional_expression_tail
+                (preproc_if
+                  (preproc_open)
+                  condition: (identifier))
+                operand: (integer)
+                (preproc_conditional_expression_tail
+                  (preproc_if
+                    (preproc_open)
+                    condition: (identifier))
+                  operand: (integer)
+                  (preproc_endif
+                    (preproc_close)))
+                (preproc_endif
+                  (preproc_close)))))
+          (end_keyword))))))
+
+================================================================================
+B7b-2 split-call / op-only: moved from b7_gap_split_call_test.txt
+--
+B7a GAP representative bnd:_expression_list:0:end@preproc_split_call_statement#op-only/arithmetic
+(untrimmed witness: tools/alc_probe/cases/b7-audit/split-call__op-only__gap.al, --check 2026-10-21)
+(owner B7b-2/B; C1 host); op-only: alc rejects X=0 (RC8 over-acceptance, spec
+9), the X=1 configurations are valid and parse; one tree for both. Source
+trimmed: the generator's table, var section and helper procedures are removed,
+the statement and its host are verbatim.
+================================================================================
+codeunit 50101 P
+{
+    procedure Q()
+    begin
+#if TPL
+Foo(1,
+#else
+Foo(2,
+#endif
+3
+#if X
++
+#endif
+2
+);
+    end;
+}
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (procedure
+        (procedure_keyword)
+        name: (identifier)
+        body: (code_block
+          (begin_keyword)
+          body: (statement_block
+            (preproc_split_call_statement
+              (preproc_if
+                (preproc_open)
+                condition: (identifier))
+              (identifier)
+              (integer)
+              (preproc_else)
+              (identifier)
+              (integer)
+              (preproc_endif
+                (preproc_close))
+              (integer)
+              (preproc_conditional_expression_tail
+                (preproc_if
+                  (preproc_open)
+                  condition: (identifier))
+                (preproc_endif
+                  (preproc_close))
+                operand: (integer))))
+          (end_keyword))))))
+
+================================================================================
+B7b-2 split-call / suffix: moved from b7_gap_split_call_test.txt
+--
+B7a GAP representative bnd:_expression_list:0:end@preproc_split_call_statement#suffix/arithmetic
+(untrimmed witness: tools/alc_probe/cases/b7-audit/split-call__suffix__gap.al)
+(owner B7b-2/B; C1 host); alc accepts every configuration (untrimmed witness above, alc_probe --check 2026-10-21).
+Source trimmed: the generator's table, var section and helper procedures are
+removed, the statement and its host are verbatim.
+================================================================================
+codeunit 50101 P
+{
+    procedure Q()
+    begin
+#if TPL
+Foo(1,
+#else
+Foo(2,
+#endif
+3
+#if X
++ 2
+#endif
+);
+    end;
+}
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (procedure
+        (procedure_keyword)
+        name: (identifier)
+        body: (code_block
+          (begin_keyword)
+          body: (statement_block
+            (preproc_split_call_statement
+              (preproc_if
+                (preproc_open)
+                condition: (identifier))
+              (identifier)
+              (integer)
+              (preproc_else)
+              (identifier)
+              (integer)
+              (preproc_endif
+                (preproc_close))
+              (integer)
+              (preproc_conditional_expression_tail
+                (preproc_if
+                  (preproc_open)
+                  condition: (identifier))
+                operand: (integer)
+                (preproc_endif
+                  (preproc_close)))))
+          (end_keyword))))))
+
+================================================================================
+B7b-2 split-call / suffix-else: moved from b7_gap_split_call_test.txt
+--
+B7a GAP representative bnd:_expression_list:0:end@preproc_split_call_statement#suffix-else/arithmetic
+(untrimmed witness: tools/alc_probe/cases/b7-audit/split-call__suffix-else__gap.al)
+(owner B7b-2/B; C1 host); alc accepts every configuration (untrimmed witness above, alc_probe --check 2026-10-21).
+Source trimmed: the generator's table, var section and helper procedures are
+removed, the statement and its host are verbatim.
+================================================================================
+codeunit 50101 P
+{
+    procedure Q()
+    begin
+#if TPL
+Foo(1,
+#else
+Foo(2,
+#endif
+3
+#if X
++ 2
+#else
+* 3
+#endif
+);
+    end;
+}
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (procedure
+        (procedure_keyword)
+        name: (identifier)
+        body: (code_block
+          (begin_keyword)
+          body: (statement_block
+            (preproc_split_call_statement
+              (preproc_if
+                (preproc_open)
+                condition: (identifier))
+              (identifier)
+              (integer)
+              (preproc_else)
+              (identifier)
+              (integer)
+              (preproc_endif
+                (preproc_close))
+              (integer)
+              (preproc_conditional_expression_tail
+                (preproc_if
+                  (preproc_open)
+                  condition: (identifier))
+                operand: (integer)
+                (preproc_else)
+                operand: (integer)
+                (preproc_endif
+                  (preproc_close)))))
+          (end_keyword))))))
+
+================================================================================
+B7b-2 split-call / first: moved from b7_gap_split_call_test.txt
+--
+B7a GAP representative bnd:_expression_list:0:end@preproc_split_call_statement#first/arithmetic
+(untrimmed witness: tools/alc_probe/cases/b7-audit/split-call__first__gap.al)
+(manifest row: deferred, owner B7b-2/C). Parses since B7b-2 Phase C (Task 10).
+Source trimmed: the generator's table, var section and helpers are removed.
+================================================================================
+codeunit 50101 P
+{
+    procedure Q()
+    begin
+#if TPL
+Foo(1,
+#else
+Foo(2,
+#endif
+#if X
+3 +
+#endif
+2
+);
+    end;
+}
+--------------------------------------------------------------------------------
+
+(source_file (codeunit_declaration (codeunit_keyword) object_id: (integer) object_name: (identifier) body:
+(declaration_body (procedure (procedure_keyword) name: (identifier) body: (code_block (begin_keyword) body:
+(statement_block (preproc_split_call_statement (preproc_if (preproc_open) condition: (identifier)) (identifier)
+(integer) (preproc_else) (identifier) (integer) (preproc_endif (preproc_close)) (preproc_operand_prefix (preproc_if
+(preproc_open) condition: (identifier)) operand: (integer) (preproc_endif (preproc_close))) (integer)))
+(end_keyword))))))
+
+================================================================================
+B7b-2 split-call / first-only: moved from b7_gap_split_call_test.txt
+--
+B7a GAP representative bnd:_expression_list:0:end@preproc_split_call_statement#first-only/arithmetic
+(untrimmed witness: tools/alc_probe/cases/b7-audit/split-call__first-only__gap.al)
+(manifest row: deferred, owner B7b-2/C). Parses since B7b-2 Phase C (Task 10).
+Source trimmed: the generator's table, var section and helpers are removed.
+================================================================================
+codeunit 50101 P
+{
+    procedure Q()
+    begin
+#if TPL
+Foo(1,
+#else
+Foo(2,
+#endif
+#if X
+3
+#else
+2
+#endif
+);
+    end;
+}
+--------------------------------------------------------------------------------
+
+(source_file (codeunit_declaration (codeunit_keyword) object_id: (integer) object_name: (identifier) body:
+(declaration_body (procedure (procedure_keyword) name: (identifier) body: (code_block (begin_keyword) body:
+(statement_block (preproc_split_call_statement (preproc_if (preproc_open) condition: (identifier)) (identifier)
+(integer) (preproc_else) (identifier) (integer) (preproc_endif (preproc_close)) (preproc_conditional_operand
+(preproc_if (preproc_open) condition: (identifier)) operand: (integer) (preproc_else) operand: (integer)
+(preproc_endif (preproc_close))))) (end_keyword))))))
+
+================================================================================
+B7b-2 split-call / signed: moved from b7_gap_split_call_test.txt
+--
+B7a GAP representative bnd:_expression_list:0:end@preproc_split_call_statement#signed/arithmetic
+(untrimmed witness: tools/alc_probe/cases/b7-audit/split-call__signed__gap.al)
+(manifest row: deferred, owner B7b-2/C). Parses since B7b-2 Phase C (Task 10).
+Source trimmed: the generator's table, var section and helpers are removed.
+================================================================================
+codeunit 50101 P
+{
+    procedure Q()
+    begin
+#if TPL
+Foo(1,
+#else
+Foo(2,
+#endif
+3 +
+#if X
+-1
+#else
+2
+#endif
+);
+    end;
+}
+--------------------------------------------------------------------------------
+
+(source_file (codeunit_declaration (codeunit_keyword) object_id: (integer) object_name: (identifier) body:
+(declaration_body (procedure (procedure_keyword) name: (identifier) body: (code_block (begin_keyword) body:
+(statement_block (preproc_split_call_statement (preproc_if (preproc_open) condition: (identifier)) (identifier)
+(integer) (preproc_else) (identifier) (integer) (preproc_endif (preproc_close)) (additive_expression left: (integer)
+right: (preproc_conditional_operand (preproc_if (preproc_open) condition: (identifier)) operand: (unary_expression
+operand: (integer)) (preproc_else) operand: (integer) (preproc_endif (preproc_close)))))) (end_keyword))))))
+
+================================================================================
+B7b-2 split-call / trail: moved from b7_gap_split_call_test.txt
+--
+B7a MIXED representative occ:_expression_list:1.0.0@preproc_split_call_statement#trail
+(untrimmed witness: tools/alc_probe/cases/b7-audit/split-call__trail__gap.al)
+(manifest row: excluded, owner B7b+). A separator cell outside B7b-2's scope that
+parses since Phase C (Task 10): the last argument is a one-arm operand group, the
+only derivation; X=0 (`R.SetRange(K, 'a', )`) is rejected by alc.
+Source trimmed: the generator's table, var section and helpers are removed.
+================================================================================
+codeunit 50101 P
+{
+    procedure Q()
+    begin
+#if TPL
+R.SetRange(K,
+#else
+R.SetRange(K,
+#endif
+'a' ,
+#if X
+'b'
+#endif
+);
+    end;
+}
+--------------------------------------------------------------------------------
+
+(source_file (codeunit_declaration (codeunit_keyword) object_id: (integer) object_name: (identifier) body:
+(declaration_body (procedure (procedure_keyword) name: (identifier) body: (code_block (begin_keyword) body:
+(statement_block (preproc_split_call_statement (preproc_if (preproc_open) condition: (identifier))
+(member_expression object: (identifier) member: (identifier)) (identifier) (preproc_else) (member_expression object:
+(identifier) member: (identifier)) (identifier) (preproc_endif (preproc_close)) (string_literal)
+(preproc_conditional_operand (preproc_if (preproc_open) condition: (identifier)) operand: (string_literal)
+(preproc_endif (preproc_close))))) (end_keyword))))))
+
+================================================================================
+B7b-2 split-call / unary-minus: moved from b7_gap_split_call_test.txt
+--
+B7a GAP representative bnd:_expression_list:0:end@preproc_split_call_statement#unary-minus/arithmetic
+(untrimmed witness: tools/alc_probe/cases/b7-audit/split-call__unary-minus__gap.al)
+(manifest row: deferred, owner B7b-2/C). Parses since B7b-2 Phase C (Task 10).
+Source trimmed: the generator's table, var section and helpers are removed.
+================================================================================
+codeunit 50101 P
+{
+    procedure Q()
+    begin
+#if TPL
+Foo(1,
+#else
+Foo(2,
+#endif
+3 +
+#if X
+- 2
+#else
+3
+#endif
+);
+    end;
+}
+--------------------------------------------------------------------------------
+
+(source_file (codeunit_declaration (codeunit_keyword) object_id: (integer) object_name: (identifier) body:
+(declaration_body (procedure (procedure_keyword) name: (identifier) body: (code_block (begin_keyword) body:
+(statement_block (preproc_split_call_statement (preproc_if (preproc_open) condition: (identifier)) (identifier)
+(integer) (preproc_else) (identifier) (integer) (preproc_endif (preproc_close)) (additive_expression left: (integer)
+right: (preproc_conditional_operand (preproc_if (preproc_open) condition: (identifier)) operand: (unary_expression
+operand: (integer)) (preproc_else) operand: (integer) (preproc_endif (preproc_close)))))) (end_keyword))))))
+
+================================================================================
+B7b-2 split-call / unary-paren: moved from b7_gap_split_call_test.txt
+--
+B7a GAP representative bnd:_expression_list:0:end@preproc_split_call_statement#unary-paren/arithmetic
+(untrimmed witness: tools/alc_probe/cases/b7-audit/split-call__unary-paren__gap.al)
+(manifest row: deferred, owner B7b-2/C). Parses since B7b-2 Phase C (Task 10).
+Source trimmed: the generator's table, var section and helpers are removed.
+================================================================================
+codeunit 50101 P
+{
+    procedure Q()
+    begin
+#if TPL
+Foo(1,
+#else
+Foo(2,
+#endif
+3 +
+#if X
+( 2 + 3 )
+#else
+3
+#endif
+);
+    end;
+}
+--------------------------------------------------------------------------------
+
+(source_file (codeunit_declaration (codeunit_keyword) object_id: (integer) object_name: (identifier) body:
+(declaration_body (procedure (procedure_keyword) name: (identifier) body: (code_block (begin_keyword) body:
+(statement_block (preproc_split_call_statement (preproc_if (preproc_open) condition: (identifier)) (identifier)
+(integer) (preproc_else) (identifier) (integer) (preproc_endif (preproc_close)) (additive_expression left: (integer)
+right: (preproc_conditional_operand (preproc_if (preproc_open) condition: (identifier)) operand:
+(parenthesized_expression (additive_expression left: (integer) right: (integer))) (preproc_else) operand: (integer)
+(preproc_endif (preproc_close)))))) (end_keyword))))))
+
+================================================================================
+B7b-2 split-call / whole-operand: moved from b7_gap_split_call_test.txt
+--
+B7a GAP representative bnd:_expression_list:0:end@preproc_split_call_statement#whole-operand/arithmetic
+(untrimmed witness: tools/alc_probe/cases/b7-audit/split-call__whole-operand__gap.al)
+(manifest row: deferred, owner B7b-2/C). Parses since B7b-2 Phase C (Task 10).
+Source trimmed: the generator's table, var section and helpers are removed.
+================================================================================
+codeunit 50101 P
+{
+    procedure Q()
+    begin
+#if TPL
+Foo(1,
+#else
+Foo(2,
+#endif
+3 +
+#if X
+2
+#else
+3
+#endif
+);
+    end;
+}
+--------------------------------------------------------------------------------
+
+(source_file (codeunit_declaration (codeunit_keyword) object_id: (integer) object_name: (identifier) body:
+(declaration_body (procedure (procedure_keyword) name: (identifier) body: (code_block (begin_keyword) body:
+(statement_block (preproc_split_call_statement (preproc_if (preproc_open) condition: (identifier)) (identifier)
+(integer) (preproc_else) (identifier) (integer) (preproc_endif (preproc_close)) (additive_expression left: (integer)
+right: (preproc_conditional_operand (preproc_if (preproc_open) condition: (identifier)) operand: (integer)
+(preproc_else) operand: (integer) (preproc_endif (preproc_close)))))) (end_keyword))))))

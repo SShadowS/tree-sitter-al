@@ -1,0 +1,517 @@
+================================================================================
+B7b-2 property-value / consecutive in a whole-value arm: moved from b7_gap_property_value_test.txt
+--
+B7a GAP representative bnd:_property_value_with_split:0.0:end@action_body#consecutive/comparison
+Untrimmed witness: tools/alc_probe/cases/b7-audit/property-value__consecutive__gap.al.
+(manifest: not in b7b2, property values are B12's). The property route itself
+is unchanged (spec 5.1); its tail is the shared recursive tail rule, so the
+consecutive group nests as at every root. alc accepts every configuration
+(B7a evidence). Source trimmed: the generator's table, layout, SourceTable and
+var section are removed, the action and its property are verbatim.
+================================================================================
+page 50102 PG
+{
+    actions
+    {
+        area(Processing)
+        {
+            action(A1)
+            {
+                Visible =
+#if TPL
+
+Ok
+#if X
+= true
+#endif
+#if Y
+= false
+#endif
+;
+#else
+                    Ok;
+#endif
+                trigger OnAction()
+                begin
+                end;
+            }
+        }
+    }
+}
+--------------------------------------------------------------------------------
+
+(source_file
+  (page_declaration
+    (page_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (actions_section
+        (actions_keyword)
+        body: (action_body
+          (action_area_section
+            (area_keyword)
+            type: (processing_keyword)
+            body: (action_body
+              (action_declaration
+                (action_keyword)
+                name: (identifier)
+                body: (declaration_body
+                  (property
+                    name: (property_name)
+                    value: (preproc_conditional_property_value
+                      (preproc_if
+                        (preproc_open)
+                        condition: (identifier))
+                      value: (property_expression
+                        (identifier)
+                        (preproc_conditional_expression_tail
+                          (preproc_if
+                            (preproc_open)
+                            condition: (identifier))
+                          operator: (comparison_operator)
+                          operand: (boolean)
+                          (preproc_endif
+                            (preproc_close))
+                          (preproc_conditional_expression_tail
+                            (preproc_if
+                              (preproc_open)
+                              condition: (identifier))
+                            operator: (comparison_operator)
+                            operand: (boolean)
+                            (preproc_endif
+                              (preproc_close)))))
+                      (preproc_else)
+                      value: (identifier)
+                      (preproc_endif
+                        (preproc_close))))
+                  (trigger_declaration
+                    (trigger_keyword)
+                    name: (identifier)
+                    body: (code_block
+                      (begin_keyword)
+                      (end_keyword))))))))))))
+
+================================================================================
+B7b-2 property-value / nested in a whole-value arm: moved from b7_gap_property_value_test.txt
+--
+B7a GAP representative bnd:_property_value_with_split:0.0:end@action_body#nested/comparison
+(not in b7b2, B12). Source trimmed as above.
+================================================================================
+page 50102 PG
+{
+    actions
+    {
+        area(Processing)
+        {
+            action(A1)
+            {
+                Visible =
+#if TPL
+
+Ok
+#if X
+= true
+#if Y
+= false
+#endif
+#endif
+;
+#else
+                    Ok;
+#endif
+                trigger OnAction()
+                begin
+                end;
+            }
+        }
+    }
+}
+--------------------------------------------------------------------------------
+
+(source_file
+  (page_declaration
+    (page_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (actions_section
+        (actions_keyword)
+        body: (action_body
+          (action_area_section
+            (area_keyword)
+            type: (processing_keyword)
+            body: (action_body
+              (action_declaration
+                (action_keyword)
+                name: (identifier)
+                body: (declaration_body
+                  (property
+                    name: (property_name)
+                    value: (preproc_conditional_property_value
+                      (preproc_if
+                        (preproc_open)
+                        condition: (identifier))
+                      value: (property_expression
+                        (identifier)
+                        (preproc_conditional_expression_tail
+                          (preproc_if
+                            (preproc_open)
+                            condition: (identifier))
+                          operator: (comparison_operator)
+                          operand: (boolean)
+                          (preproc_conditional_expression_tail
+                            (preproc_if
+                              (preproc_open)
+                              condition: (identifier))
+                            operator: (comparison_operator)
+                            operand: (boolean)
+                            (preproc_endif
+                              (preproc_close)))
+                          (preproc_endif
+                            (preproc_close))))
+                      (preproc_else)
+                      value: (identifier)
+                      (preproc_endif
+                        (preproc_close))))
+                  (trigger_declaration
+                    (trigger_keyword)
+                    name: (identifier)
+                    body: (code_block
+                      (begin_keyword)
+                      (end_keyword))))))))))))
+
+================================================================================
+B7b-2 property-value / suffix (membership) in a whole-value arm: moved from b7_gap_property_value_test.txt
+--
+B7a GAP representative bnd:_property_value_with_split:0.0:end@action_body#suffix/membership
+(not in b7b2, B12). `in` continues the tail with its list (spec 5.3). Source
+trimmed as above.
+================================================================================
+page 50102 PG
+{
+    actions
+    {
+        area(Processing)
+        {
+            action(A1)
+            {
+                Visible =
+#if TPL
+
+Ok
+#if X
+in [true, false]
+#endif
+;
+#else
+                    Ok;
+#endif
+                trigger OnAction()
+                begin
+                end;
+            }
+        }
+    }
+}
+--------------------------------------------------------------------------------
+
+(source_file
+  (page_declaration
+    (page_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (actions_section
+        (actions_keyword)
+        body: (action_body
+          (action_area_section
+            (area_keyword)
+            type: (processing_keyword)
+            body: (action_body
+              (action_declaration
+                (action_keyword)
+                name: (identifier)
+                body: (declaration_body
+                  (property
+                    name: (property_name)
+                    value: (preproc_conditional_property_value
+                      (preproc_if
+                        (preproc_open)
+                        condition: (identifier))
+                      value: (property_expression
+                        (identifier)
+                        (preproc_conditional_expression_tail
+                          (preproc_if
+                            (preproc_open)
+                            condition: (identifier))
+                          operator: (in_keyword)
+                          operand: (list_literal
+                            (boolean)
+                            (boolean))
+                          (preproc_endif
+                            (preproc_close))))
+                      (preproc_else)
+                      value: (identifier)
+                      (preproc_endif
+                        (preproc_close))))
+                  (trigger_declaration
+                    (trigger_keyword)
+                    name: (identifier)
+                    body: (code_block
+                      (begin_keyword)
+                      (end_keyword))))))))))))
+
+================================================================================
+B7b-2 property-value / first: moved from b7_gap_property_value_test.txt
+--
+B7a GAP representative bnd:_property_value_with_split:0.0:end@action_body#first/comparison
+(untrimmed witness: tools/alc_probe/cases/b7-audit/property-value__first__gap.al)
+(not a B7b-2 manifest row: the property-value family is B12's). Parses since
+B7b-2 Phase C (Task 10): property_expression's leading-prefix arm inside the
+whole-value #if arm.
+Source trimmed: the generator's table is removed.
+================================================================================
+page 50102 PG
+{
+    SourceTable = T;
+    layout
+    {
+        area(Content)
+        {
+            field(N; Rec.N) { }
+        }
+    }
+    actions
+    {
+        area(Processing)
+        {
+            action(A1)
+            {
+                Visible =
+#if TPL
+#if X
+Ok =
+#endif
+true
+;
+#else
+                    Ok;
+#endif
+                trigger OnAction()
+                begin
+                end;
+            }
+        }
+    }
+    var
+        I: Integer;
+        Ok: Boolean;
+}
+--------------------------------------------------------------------------------
+
+(source_file (page_declaration (page_keyword) object_id: (integer) object_name: (identifier) body: (declaration_body
+(property name: (property_name) value: (identifier)) (layout_section (layout_keyword) body: (layout_body
+(area_section (area_keyword) type: (content_keyword) body: (layout_body (page_field (field_keyword) name:
+(identifier) source: (member_expression object: (identifier) member: (identifier))))))) (actions_section
+(actions_keyword) body: (action_body (action_area_section (area_keyword) type: (processing_keyword) body:
+(action_body (action_declaration (action_keyword) name: (identifier) body: (declaration_body (property name:
+(property_name) value: (preproc_conditional_property_value (preproc_if (preproc_open) condition: (identifier))
+value: (property_expression (preproc_operand_prefix (preproc_if (preproc_open) condition: (identifier)) operand:
+(identifier) operator: (comparison_operator) (preproc_endif (preproc_close))) (boolean)) (preproc_else) value:
+(identifier) (preproc_endif (preproc_close)))) (trigger_declaration (trigger_keyword) name: (identifier) body:
+(code_block (begin_keyword) (end_keyword))))))))) (var_section (var_keyword) body: (var_body (variable_declaration
+name: (identifier) type: (type_specification (basic_type))) (variable_declaration name: (identifier) type:
+(type_specification (basic_type))))))))
+
+================================================================================
+B7b-2 property-value / unary-not: moved from b7_gap_property_value_test.txt
+--
+B7a GAP representative bnd:_property_value_with_split:0.0:end@action_body#unary-not/comparison
+(untrimmed witness: tools/alc_probe/cases/b7-audit/property-value__unary-not__gap.al)
+(not a B7b-2 manifest row: the property-value family is B12's). Parses since
+B7b-2 Phase C (Task 10): an operand group inside the arm's expression.
+Source trimmed: the generator's table is removed.
+================================================================================
+page 50102 PG
+{
+    SourceTable = T;
+    layout
+    {
+        area(Content)
+        {
+            field(N; Rec.N) { }
+        }
+    }
+    actions
+    {
+        area(Processing)
+        {
+            action(A1)
+            {
+                Visible =
+#if TPL
+Ok =
+#if X
+not true
+#else
+false
+#endif
+;
+#else
+                    Ok;
+#endif
+                trigger OnAction()
+                begin
+                end;
+            }
+        }
+    }
+    var
+        I: Integer;
+        Ok: Boolean;
+}
+--------------------------------------------------------------------------------
+
+(source_file (page_declaration (page_keyword) object_id: (integer) object_name: (identifier) body: (declaration_body
+(property name: (property_name) value: (identifier)) (layout_section (layout_keyword) body: (layout_body
+(area_section (area_keyword) type: (content_keyword) body: (layout_body (page_field (field_keyword) name:
+(identifier) source: (member_expression object: (identifier) member: (identifier))))))) (actions_section
+(actions_keyword) body: (action_body (action_area_section (area_keyword) type: (processing_keyword) body:
+(action_body (action_declaration (action_keyword) name: (identifier) body: (declaration_body (property name:
+(property_name) value: (preproc_conditional_property_value (preproc_if (preproc_open) condition: (identifier))
+value: (property_expression (comparison_expression left: (identifier) operator: (comparison_operator) right:
+(preproc_conditional_operand (preproc_if (preproc_open) condition: (identifier)) operand: (unary_expression operand:
+(boolean)) (preproc_else) operand: (boolean) (preproc_endif (preproc_close))))) (preproc_else) value: (identifier)
+(preproc_endif (preproc_close)))) (trigger_declaration (trigger_keyword) name: (identifier) body: (code_block
+(begin_keyword) (end_keyword))))))))) (var_section (var_keyword) body: (var_body (variable_declaration name:
+(identifier) type: (type_specification (basic_type))) (variable_declaration name: (identifier) type:
+(type_specification (basic_type))))))))
+
+================================================================================
+B7b-2 property-value / unary-paren: moved from b7_gap_property_value_test.txt
+--
+B7a GAP representative bnd:_property_value_with_split:0.0:end@action_body#unary-paren/comparison
+(untrimmed witness: tools/alc_probe/cases/b7-audit/property-value__unary-paren__gap.al)
+(not a B7b-2 manifest row: the property-value family is B12's). Parses since
+B7b-2 Phase C (Task 10): an operand group inside the arm's expression.
+Source trimmed: the generator's table is removed.
+================================================================================
+page 50102 PG
+{
+    SourceTable = T;
+    layout
+    {
+        area(Content)
+        {
+            field(N; Rec.N) { }
+        }
+    }
+    actions
+    {
+        area(Processing)
+        {
+            action(A1)
+            {
+                Visible =
+#if TPL
+Ok =
+#if X
+( true = false )
+#else
+false
+#endif
+;
+#else
+                    Ok;
+#endif
+                trigger OnAction()
+                begin
+                end;
+            }
+        }
+    }
+    var
+        I: Integer;
+        Ok: Boolean;
+}
+--------------------------------------------------------------------------------
+
+(source_file (page_declaration (page_keyword) object_id: (integer) object_name: (identifier) body: (declaration_body
+(property name: (property_name) value: (identifier)) (layout_section (layout_keyword) body: (layout_body
+(area_section (area_keyword) type: (content_keyword) body: (layout_body (page_field (field_keyword) name:
+(identifier) source: (member_expression object: (identifier) member: (identifier))))))) (actions_section
+(actions_keyword) body: (action_body (action_area_section (area_keyword) type: (processing_keyword) body:
+(action_body (action_declaration (action_keyword) name: (identifier) body: (declaration_body (property name:
+(property_name) value: (preproc_conditional_property_value (preproc_if (preproc_open) condition: (identifier))
+value: (property_expression (comparison_expression left: (identifier) operator: (comparison_operator) right:
+(preproc_conditional_operand (preproc_if (preproc_open) condition: (identifier)) operand: (parenthesized_expression
+(comparison_expression left: (boolean) operator: (comparison_operator) right: (boolean))) (preproc_else) operand:
+(boolean) (preproc_endif (preproc_close))))) (preproc_else) value: (identifier) (preproc_endif (preproc_close))))
+(trigger_declaration (trigger_keyword) name: (identifier) body: (code_block (begin_keyword) (end_keyword)))))))))
+(var_section (var_keyword) body: (var_body (variable_declaration name: (identifier) type: (type_specification
+(basic_type))) (variable_declaration name: (identifier) type: (type_specification (basic_type))))))))
+
+================================================================================
+B7b-2 property-value / whole-operand: moved from b7_gap_property_value_test.txt
+--
+B7a GAP representative bnd:_property_value_with_split:0.0:end@action_body#whole-operand/comparison
+(untrimmed witness: tools/alc_probe/cases/b7-audit/property-value__whole-operand__gap.al)
+(not a B7b-2 manifest row: the property-value family is B12's). Parses since
+B7b-2 Phase C (Task 10): an operand group inside the arm's expression.
+Source trimmed: the generator's table is removed.
+================================================================================
+page 50102 PG
+{
+    SourceTable = T;
+    layout
+    {
+        area(Content)
+        {
+            field(N; Rec.N) { }
+        }
+    }
+    actions
+    {
+        area(Processing)
+        {
+            action(A1)
+            {
+                Visible =
+#if TPL
+Ok =
+#if X
+true
+#else
+false
+#endif
+;
+#else
+                    Ok;
+#endif
+                trigger OnAction()
+                begin
+                end;
+            }
+        }
+    }
+    var
+        I: Integer;
+        Ok: Boolean;
+}
+--------------------------------------------------------------------------------
+
+(source_file (page_declaration (page_keyword) object_id: (integer) object_name: (identifier) body: (declaration_body
+(property name: (property_name) value: (identifier)) (layout_section (layout_keyword) body: (layout_body
+(area_section (area_keyword) type: (content_keyword) body: (layout_body (page_field (field_keyword) name:
+(identifier) source: (member_expression object: (identifier) member: (identifier))))))) (actions_section
+(actions_keyword) body: (action_body (action_area_section (area_keyword) type: (processing_keyword) body:
+(action_body (action_declaration (action_keyword) name: (identifier) body: (declaration_body (property name:
+(property_name) value: (preproc_conditional_property_value (preproc_if (preproc_open) condition: (identifier))
+value: (property_expression (comparison_expression left: (identifier) operator: (comparison_operator) right:
+(preproc_conditional_operand (preproc_if (preproc_open) condition: (identifier)) operand: (boolean) (preproc_else)
+operand: (boolean) (preproc_endif (preproc_close))))) (preproc_else) value: (identifier) (preproc_endif
+(preproc_close)))) (trigger_declaration (trigger_keyword) name: (identifier) body: (code_block (begin_keyword)
+(end_keyword))))))))) (var_section (var_keyword) body: (var_body (variable_declaration name: (identifier) type:
+(type_specification (basic_type))) (variable_declaration name: (identifier) type: (type_specification
+(basic_type))))))))

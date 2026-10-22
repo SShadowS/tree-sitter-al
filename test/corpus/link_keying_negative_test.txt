@@ -661,9 +661,8 @@ page 50100 P
                       (link_value
                         field: (identifier)
                         (const_keyword)
-                        (ERROR
-                          (unary_expression
-                            operand: (integer)))))))))))))))
+                        (ERROR)
+                        value: (integer)))))))))))))
 
 ================================================================================
 NEGATIVE decide-const-plus-decimal.al, alc reject(AL0104): ERROR inside the value (no unary + in const)
@@ -711,9 +710,8 @@ page 50100 P
                       (link_value
                         field: (identifier)
                         (const_keyword)
-                        (ERROR
-                          (unary_expression
-                            operand: (decimal)))))))))))))))
+                        (ERROR)
+                        value: (decimal)))))))))))))
 
 ================================================================================
 NEGATIVE decide-const-negative-date.al, alc reject(AL0104,AL0434): ERROR inside the value (no signed date in const)
@@ -761,6 +759,7 @@ page 50100 P
                       (link_value
                         field: (identifier)
                         (const_keyword)
+                        value: (unary_expression
+                          operand: (integer))
                         (ERROR
-                          (unary_expression
-                            operand: (date_literal)))))))))))))))
+                          (identifier))))))))))))))

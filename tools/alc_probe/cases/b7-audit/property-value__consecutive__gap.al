@@ -1,5 +1,5 @@
 // B7a Task 10 witness (GAP): family property-value, base placement consecutive, 72 cells; representative bnd:_property_value_with_split:0.0:end@action_body#consecutive/comparison
-// Fixture b7_gap_property_value_test.txt#B7a GAP: property-value / consecutive (72 cells, verdict of the representative GAP); the parser ERRORs on configurations alc accepts; representative bnd:_property_value_with_split:0.0:end@action_body%23consecutive/comparison#0
+// Fixture b7b2_property_value_test.txt#B7b-2 property-value / consecutive in a whole-value arm: moved from b7_gap_property_value_test.txt#0
 // expect: !TPL !X !Y accept
 // expect: !TPL !X Y accept
 // expect: !TPL X !Y accept

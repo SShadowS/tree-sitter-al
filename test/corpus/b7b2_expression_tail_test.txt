@@ -1,0 +1,745 @@
+================================================================================
+B7b-2 expression-tail / chain: moved from b7_gap_expression_tail_test.txt
+--
+B7a GAP representative bnd:_expression_continuation:operand:end@preproc_conditional_expression_tail#chain/arithmetic
+Untrimmed witness: tools/alc_probe/cases/b7-audit/expression-tail__chain__gap.al.
+(owner B7b-2/B, fixed in Phase A: a nested group in a tail arm, spec 5.1); alc
+accepts every configuration (B7a evidence). Source trimmed: the generator's
+table, var section and helper procedures are removed, the statement and its
+host are verbatim. `* 4` after the inner #endif is an item of the TPL arm.
+================================================================================
+codeunit 50101 P
+{
+    procedure Q()
+    begin
+I := 1
+#if TPL
++
+2 * 2
+#if X
++ 3
+#endif
+* 4
+
+#endif
+;
+    end;
+}
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (procedure
+        (procedure_keyword)
+        name: (identifier)
+        body: (code_block
+          (begin_keyword)
+          body: (statement_block
+            (assignment_statement
+              left: (identifier)
+              operator: (assignment_operator)
+              right: (integer)
+              (preproc_conditional_expression_tail
+                (preproc_if
+                  (preproc_open)
+                  condition: (identifier))
+                operand: (multiplicative_expression
+                  left: (integer)
+                  right: (integer))
+                (preproc_conditional_expression_tail
+                  (preproc_if
+                    (preproc_open)
+                    condition: (identifier))
+                  operand: (integer)
+                  (preproc_endif
+                    (preproc_close)))
+                operand: (integer)
+                (preproc_endif
+                  (preproc_close)))))
+          (end_keyword))))))
+
+================================================================================
+B7b-2 expression-tail / consecutive in an arm: moved from b7_gap_expression_tail_test.txt
+--
+B7a GAP representative bnd:_expression_continuation:operand:end@preproc_conditional_expression_tail#consecutive/arithmetic
+(owner B7b-2/B, fixed in Phase A). Source trimmed as above. Inside an arm two
+groups are siblings.
+================================================================================
+codeunit 50101 P
+{
+    procedure Q()
+    begin
+I := 1
+#if TPL
++
+2
+#if X
++ 2
+#endif
+#if Y
++ 3
+#endif
+
+#endif
+;
+    end;
+}
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (procedure
+        (procedure_keyword)
+        name: (identifier)
+        body: (code_block
+          (begin_keyword)
+          body: (statement_block
+            (assignment_statement
+              left: (identifier)
+              operator: (assignment_operator)
+              right: (integer)
+              (preproc_conditional_expression_tail
+                (preproc_if
+                  (preproc_open)
+                  condition: (identifier))
+                operand: (integer)
+                (preproc_conditional_expression_tail
+                  (preproc_if
+                    (preproc_open)
+                    condition: (identifier))
+                  operand: (integer)
+                  (preproc_endif
+                    (preproc_close)))
+                (preproc_conditional_expression_tail
+                  (preproc_if
+                    (preproc_open)
+                    condition: (identifier))
+                  operand: (integer)
+                  (preproc_endif
+                    (preproc_close)))
+                (preproc_endif
+                  (preproc_close)))))
+          (end_keyword))))))
+
+================================================================================
+B7b-2 expression-tail / nested two levels: moved from b7_gap_expression_tail_test.txt
+--
+B7a GAP representative bnd:_expression_continuation:operand:end@preproc_conditional_expression_tail#nested/arithmetic
+(owner B7b-2/B, fixed in Phase A). Source trimmed as above.
+================================================================================
+codeunit 50101 P
+{
+    procedure Q()
+    begin
+I := 1
+#if TPL
++
+2
+#if X
++ 2
+#if Y
++ 3
+#endif
+#endif
+
+#endif
+;
+    end;
+}
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (procedure
+        (procedure_keyword)
+        name: (identifier)
+        body: (code_block
+          (begin_keyword)
+          body: (statement_block
+            (assignment_statement
+              left: (identifier)
+              operator: (assignment_operator)
+              right: (integer)
+              (preproc_conditional_expression_tail
+                (preproc_if
+                  (preproc_open)
+                  condition: (identifier))
+                operand: (integer)
+                (preproc_conditional_expression_tail
+                  (preproc_if
+                    (preproc_open)
+                    condition: (identifier))
+                  operand: (integer)
+                  (preproc_conditional_expression_tail
+                    (preproc_if
+                      (preproc_open)
+                      condition: (identifier))
+                    operand: (integer)
+                    (preproc_endif
+                      (preproc_close)))
+                  (preproc_endif
+                    (preproc_close)))
+                (preproc_endif
+                  (preproc_close)))))
+          (end_keyword))))))
+
+================================================================================
+B7b-2 expression-tail / op-only nested in an arm: moved from b7_gap_expression_tail_test.txt
+--
+B7a MIXED representative bnd:_expression_continuation:operand:end@preproc_conditional_expression_tail#op-only/arithmetic
+(owner B7b-2/B, fixed in Phase A). alc accepts TPL=0 and TPL=1,X=1 and rejects
+TPL=1,X=0 (`1 + 2 2`, the RC8 op-only over-acceptance: one tree for both).
+Source trimmed as above. The nested group is the B3 operator-only form.
+================================================================================
+codeunit 50101 P
+{
+    procedure Q()
+    begin
+I := 1
+#if TPL
++
+2
+#if X
++
+#endif
+2
+
+#endif
+;
+    end;
+}
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (procedure
+        (procedure_keyword)
+        name: (identifier)
+        body: (code_block
+          (begin_keyword)
+          body: (statement_block
+            (assignment_statement
+              left: (identifier)
+              operator: (assignment_operator)
+              right: (integer)
+              (preproc_conditional_expression_tail
+                (preproc_if
+                  (preproc_open)
+                  condition: (identifier))
+                operand: (integer)
+                (preproc_conditional_expression_tail
+                  (preproc_if
+                    (preproc_open)
+                    condition: (identifier))
+                  (preproc_endif
+                    (preproc_close))
+                  operand: (integer))
+                (preproc_endif
+                  (preproc_close)))))
+          (end_keyword))))))
+
+================================================================================
+B7b-2 expression-tail / prefix (membership) in a property value: moved from b7_gap_expression_tail_test.txt
+--
+B7a GAP representative bnd:preproc_conditional_expression_tail:operand:end@action_body#prefix/membership
+Untrimmed witness: tools/alc_probe/cases/b7-audit/expression-tail__prefix__gap.al.
+(owner B7b-2/A); alc accepts every configuration (B7a evidence). The typed `in`
+prefix (spec 5.3, 6.2) inside the operand of a property-route tail. Source
+trimmed: the generator's table, layout, SourceTable and var section are
+removed, the action and its property are verbatim.
+================================================================================
+page 50102 PG
+{
+    actions
+    {
+        area(Processing)
+        {
+            action(A1)
+            {
+                Visible =
+#if TPL3
+                    Ok
+#if TPL
+and
+Ok in
+#if X
+[true, false] in
+#endif
+[true]
+
+#endif
+                    ;
+#else
+                    Ok;
+#endif
+                trigger OnAction()
+                begin
+                end;
+            }
+        }
+    }
+}
+--------------------------------------------------------------------------------
+
+(source_file
+  (page_declaration
+    (page_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (actions_section
+        (actions_keyword)
+        body: (action_body
+          (action_area_section
+            (area_keyword)
+            type: (processing_keyword)
+            body: (action_body
+              (action_declaration
+                (action_keyword)
+                name: (identifier)
+                body: (declaration_body
+                  (property
+                    name: (property_name)
+                    value: (preproc_conditional_property_value
+                      (preproc_if
+                        (preproc_open)
+                        condition: (identifier))
+                      value: (property_expression
+                        (identifier)
+                        (preproc_conditional_expression_tail
+                          (preproc_if
+                            (preproc_open)
+                            condition: (identifier))
+                          operand: (in_expression
+                            left: (identifier)
+                            operator: (in_keyword)
+                            (preproc_operand_prefix
+                              (preproc_if
+                                (preproc_open)
+                                condition: (identifier))
+                              operand: (list_literal
+                                (boolean)
+                                (boolean))
+                              operator: (in_keyword)
+                              (preproc_endif
+                                (preproc_close)))
+                            right: (list_literal
+                              (boolean)))
+                          (preproc_endif
+                            (preproc_close))))
+                      (preproc_else)
+                      value: (identifier)
+                      (preproc_endif
+                        (preproc_close))))
+                  (trigger_declaration
+                    (trigger_keyword)
+                    name: (identifier)
+                    body: (code_block
+                      (begin_keyword)
+                      (end_keyword))))))))))))
+
+================================================================================
+B7b-2 expression-tail / suffix in an arm: moved from b7_gap_expression_tail_test.txt
+--
+B7a GAP representative bnd:_expression_continuation:operand:end@preproc_conditional_expression_tail#suffix/arithmetic
+(owner B7b-2/B, fixed in Phase A). Source trimmed as for the codeunit cases.
+================================================================================
+codeunit 50101 P
+{
+    procedure Q()
+    begin
+I := 1
+#if TPL
++
+2
+#if X
++ 2
+#endif
+
+#endif
+;
+    end;
+}
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (procedure
+        (procedure_keyword)
+        name: (identifier)
+        body: (code_block
+          (begin_keyword)
+          body: (statement_block
+            (assignment_statement
+              left: (identifier)
+              operator: (assignment_operator)
+              right: (integer)
+              (preproc_conditional_expression_tail
+                (preproc_if
+                  (preproc_open)
+                  condition: (identifier))
+                operand: (integer)
+                (preproc_conditional_expression_tail
+                  (preproc_if
+                    (preproc_open)
+                    condition: (identifier))
+                  operand: (integer)
+                  (preproc_endif
+                    (preproc_close)))
+                (preproc_endif
+                  (preproc_close)))))
+          (end_keyword))))))
+
+================================================================================
+B7b-2 expression-tail / suffix-else in an arm: moved from b7_gap_expression_tail_test.txt
+--
+B7a GAP representative bnd:_expression_continuation:operand:end@preproc_conditional_expression_tail#suffix-else/arithmetic
+(owner B7b-2/B, fixed in Phase A). Source trimmed as for the codeunit cases.
+================================================================================
+codeunit 50101 P
+{
+    procedure Q()
+    begin
+I := 1
+#if TPL
++
+2
+#if X
++ 2
+#else
+* 3
+#endif
+
+#endif
+;
+    end;
+}
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (procedure
+        (procedure_keyword)
+        name: (identifier)
+        body: (code_block
+          (begin_keyword)
+          body: (statement_block
+            (assignment_statement
+              left: (identifier)
+              operator: (assignment_operator)
+              right: (integer)
+              (preproc_conditional_expression_tail
+                (preproc_if
+                  (preproc_open)
+                  condition: (identifier))
+                operand: (integer)
+                (preproc_conditional_expression_tail
+                  (preproc_if
+                    (preproc_open)
+                    condition: (identifier))
+                  operand: (integer)
+                  (preproc_else)
+                  operand: (integer)
+                  (preproc_endif
+                    (preproc_close)))
+                (preproc_endif
+                  (preproc_close)))))
+          (end_keyword))))))
+
+================================================================================
+B7b-2 expression-tail / first: moved from b7_gap_expression_tail_test.txt
+--
+B7a GAP representative bnd:_expression_continuation:operand:end@preproc_conditional_expression_tail#first/arithmetic
+(untrimmed witness: tools/alc_probe/cases/b7-audit/expression-tail__first__gap.al)
+(manifest row: deferred, owner B7b-2/C). Parses since B7b-2 Phase C (Task 10).
+Source trimmed: the generator's table, var section and helpers are removed.
+================================================================================
+codeunit 50101 P
+{
+    procedure Q()
+    begin
+I := 1
+#if TPL
++
+#if X
+2 +
+#endif
+2
+#endif
+;
+    end;
+}
+--------------------------------------------------------------------------------
+
+(source_file (codeunit_declaration (codeunit_keyword) object_id: (integer) object_name: (identifier) body:
+(declaration_body (procedure (procedure_keyword) name: (identifier) body: (code_block (begin_keyword) body:
+(statement_block (assignment_statement left: (identifier) operator: (assignment_operator) right: (integer)
+(preproc_conditional_expression_tail (preproc_if (preproc_open) condition: (identifier)) (preproc_operand_prefix
+(preproc_if (preproc_open) condition: (identifier)) operand: (integer) (preproc_endif (preproc_close))) operand:
+(integer) (preproc_endif (preproc_close))))) (end_keyword))))))
+
+================================================================================
+B7b-2 expression-tail / first-only: moved from b7_gap_expression_tail_test.txt
+--
+B7a GAP representative bnd:_expression_continuation:operand:end@preproc_conditional_expression_tail#first-only/arithmetic
+(untrimmed witness: tools/alc_probe/cases/b7-audit/expression-tail__first-only__gap.al)
+(manifest row: deferred, owner B7b-2/C). Parses since B7b-2 Phase C (Task 10).
+Source trimmed: the generator's table, var section and helpers are removed.
+================================================================================
+codeunit 50101 P
+{
+    procedure Q()
+    begin
+I := 1
+#if TPL
++
+#if X
+2
+#else
+2
+#endif
+#endif
+;
+    end;
+}
+--------------------------------------------------------------------------------
+
+(source_file (codeunit_declaration (codeunit_keyword) object_id: (integer) object_name: (identifier) body:
+(declaration_body (procedure (procedure_keyword) name: (identifier) body: (code_block (begin_keyword) body:
+(statement_block (assignment_statement left: (identifier) operator: (assignment_operator) right: (integer)
+(preproc_conditional_expression_tail (preproc_if (preproc_open) condition: (identifier)) operand:
+(preproc_conditional_operand (preproc_if (preproc_open) condition: (identifier)) operand: (integer) (preproc_else)
+operand: (integer) (preproc_endif (preproc_close))) (preproc_endif (preproc_close))))) (end_keyword))))))
+
+================================================================================
+B7b-2 expression-tail / signed: moved from b7_gap_expression_tail_test.txt
+--
+B7a GAP representative bnd:_expression_continuation:operand:end@preproc_conditional_expression_tail#signed/arithmetic
+(untrimmed witness: tools/alc_probe/cases/b7-audit/expression-tail__signed__gap.al)
+(manifest row: deferred, owner B7b-2/C). Parses since B7b-2 Phase C (Task 10).
+Source trimmed: the generator's table, var section and helpers are removed.
+================================================================================
+codeunit 50101 P
+{
+    procedure Q()
+    begin
+I := 1
+#if TPL
++
+2 +
+#if X
+-1
+#else
+2
+#endif
+#endif
+;
+    end;
+}
+--------------------------------------------------------------------------------
+
+(source_file (codeunit_declaration (codeunit_keyword) object_id: (integer) object_name: (identifier) body:
+(declaration_body (procedure (procedure_keyword) name: (identifier) body: (code_block (begin_keyword) body:
+(statement_block (assignment_statement left: (identifier) operator: (assignment_operator) right: (integer)
+(preproc_conditional_expression_tail (preproc_if (preproc_open) condition: (identifier)) operand:
+(additive_expression left: (integer) right: (preproc_conditional_operand (preproc_if (preproc_open) condition:
+(identifier)) operand: (unary_expression operand: (integer)) (preproc_else) operand: (integer) (preproc_endif
+(preproc_close)))) (preproc_endif (preproc_close))))) (end_keyword))))))
+
+================================================================================
+B7b-2 expression-tail / unary-minus: moved from b7_gap_expression_tail_test.txt
+--
+B7a GAP representative bnd:_expression_continuation:operand:end@preproc_conditional_expression_tail#unary-minus/arithmetic
+(untrimmed witness: tools/alc_probe/cases/b7-audit/expression-tail__unary-minus__gap.al)
+(manifest row: deferred, owner B7b-2/C). Parses since B7b-2 Phase C (Task 10).
+Source trimmed: the generator's table, var section and helpers are removed.
+================================================================================
+codeunit 50101 P
+{
+    procedure Q()
+    begin
+I := 1
+#if TPL
++
+2 +
+#if X
+- 2
+#else
+3
+#endif
+#endif
+;
+    end;
+}
+--------------------------------------------------------------------------------
+
+(source_file (codeunit_declaration (codeunit_keyword) object_id: (integer) object_name: (identifier) body:
+(declaration_body (procedure (procedure_keyword) name: (identifier) body: (code_block (begin_keyword) body:
+(statement_block (assignment_statement left: (identifier) operator: (assignment_operator) right: (integer)
+(preproc_conditional_expression_tail (preproc_if (preproc_open) condition: (identifier)) operand:
+(additive_expression left: (integer) right: (preproc_conditional_operand (preproc_if (preproc_open) condition:
+(identifier)) operand: (unary_expression operand: (integer)) (preproc_else) operand: (integer) (preproc_endif
+(preproc_close)))) (preproc_endif (preproc_close))))) (end_keyword))))))
+
+================================================================================
+B7b-2 expression-tail / unary-not: moved from b7_gap_expression_tail_test.txt
+--
+B7a GAP representative bnd:preproc_conditional_expression_tail:operand:end@action_body#unary-not/comparison
+(untrimmed witness: tools/alc_probe/cases/b7-audit/expression-tail__unary-not__gap.al)
+(manifest row: deferred, owner B7b-2/C). Parses since B7b-2 Phase C (Task 10).
+Source trimmed: the generator's table is removed.
+================================================================================
+page 50102 PG
+{
+    SourceTable = T;
+    layout
+    {
+        area(Content)
+        {
+            field(N; Rec.N) { }
+        }
+    }
+    actions
+    {
+        area(Processing)
+        {
+            action(A1)
+            {
+                Visible =
+#if TPL3
+                    Ok
+#if TPL
+and
+Ok =
+#if X
+not true
+#else
+false
+#endif
+#endif
+                    ;
+#else
+                    Ok;
+#endif
+                trigger OnAction()
+                begin
+                end;
+            }
+        }
+    }
+    var
+        I: Integer;
+        Ok: Boolean;
+}
+--------------------------------------------------------------------------------
+
+(source_file (page_declaration (page_keyword) object_id: (integer) object_name: (identifier) body: (declaration_body
+(property name: (property_name) value: (identifier)) (layout_section (layout_keyword) body: (layout_body
+(area_section (area_keyword) type: (content_keyword) body: (layout_body (page_field (field_keyword) name:
+(identifier) source: (member_expression object: (identifier) member: (identifier))))))) (actions_section
+(actions_keyword) body: (action_body (action_area_section (area_keyword) type: (processing_keyword) body:
+(action_body (action_declaration (action_keyword) name: (identifier) body: (declaration_body (property name:
+(property_name) value: (preproc_conditional_property_value (preproc_if (preproc_open) condition: (identifier))
+value: (property_expression (identifier) (preproc_conditional_expression_tail (preproc_if (preproc_open) condition:
+(identifier)) operand: (comparison_expression left: (identifier) operator: (comparison_operator) right:
+(preproc_conditional_operand (preproc_if (preproc_open) condition: (identifier)) operand: (unary_expression operand:
+(boolean)) (preproc_else) operand: (boolean) (preproc_endif (preproc_close)))) (preproc_endif (preproc_close))))
+(preproc_else) value: (identifier) (preproc_endif (preproc_close)))) (trigger_declaration (trigger_keyword) name:
+(identifier) body: (code_block (begin_keyword) (end_keyword))))))))) (var_section (var_keyword) body: (var_body
+(variable_declaration name: (identifier) type: (type_specification (basic_type))) (variable_declaration name:
+(identifier) type: (type_specification (basic_type))))))))
+
+================================================================================
+B7b-2 expression-tail / unary-paren: moved from b7_gap_expression_tail_test.txt
+--
+B7a GAP representative bnd:_expression_continuation:operand:end@preproc_conditional_expression_tail#unary-paren/arithmetic
+(untrimmed witness: tools/alc_probe/cases/b7-audit/expression-tail__unary-paren__gap.al)
+(manifest row: deferred, owner B7b-2/C). Parses since B7b-2 Phase C (Task 10).
+Source trimmed: the generator's table, var section and helpers are removed.
+================================================================================
+codeunit 50101 P
+{
+    procedure Q()
+    begin
+I := 1
+#if TPL
++
+2 +
+#if X
+( 2 + 3 )
+#else
+3
+#endif
+#endif
+;
+    end;
+}
+--------------------------------------------------------------------------------
+
+(source_file (codeunit_declaration (codeunit_keyword) object_id: (integer) object_name: (identifier) body:
+(declaration_body (procedure (procedure_keyword) name: (identifier) body: (code_block (begin_keyword) body:
+(statement_block (assignment_statement left: (identifier) operator: (assignment_operator) right: (integer)
+(preproc_conditional_expression_tail (preproc_if (preproc_open) condition: (identifier)) operand:
+(additive_expression left: (integer) right: (preproc_conditional_operand (preproc_if (preproc_open) condition:
+(identifier)) operand: (parenthesized_expression (additive_expression left: (integer) right: (integer)))
+(preproc_else) operand: (integer) (preproc_endif (preproc_close)))) (preproc_endif (preproc_close)))))
+(end_keyword))))))
+
+================================================================================
+B7b-2 expression-tail / whole-operand: moved from b7_gap_expression_tail_test.txt
+--
+B7a GAP representative bnd:_expression_continuation:operand:end@preproc_conditional_expression_tail#whole-operand/arithmetic
+(untrimmed witness: tools/alc_probe/cases/b7-audit/expression-tail__whole-operand__gap.al)
+(manifest row: deferred, owner B7b-2/C). Parses since B7b-2 Phase C (Task 10).
+Source trimmed: the generator's table, var section and helpers are removed.
+================================================================================
+codeunit 50101 P
+{
+    procedure Q()
+    begin
+I := 1
+#if TPL
++
+2 +
+#if X
+2
+#else
+3
+#endif
+#endif
+;
+    end;
+}
+--------------------------------------------------------------------------------
+
+(source_file (codeunit_declaration (codeunit_keyword) object_id: (integer) object_name: (identifier) body:
+(declaration_body (procedure (procedure_keyword) name: (identifier) body: (code_block (begin_keyword) body:
+(statement_block (assignment_statement left: (identifier) operator: (assignment_operator) right: (integer)
+(preproc_conditional_expression_tail (preproc_if (preproc_open) condition: (identifier)) operand:
+(additive_expression left: (integer) right: (preproc_conditional_operand (preproc_if (preproc_open) condition:
+(identifier)) operand: (integer) (preproc_else) operand: (integer) (preproc_endif (preproc_close)))) (preproc_endif
+(preproc_close))))) (end_keyword))))))

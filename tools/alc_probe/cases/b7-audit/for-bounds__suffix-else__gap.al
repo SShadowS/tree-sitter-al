@@ -1,5 +1,5 @@
 // B7a Task 10 witness (GAP): family for-bounds, base placement suffix-else, 4 cells; representative bnd:for_statement:start:end@statement_block#suffix-else/arithmetic
-// Fixture b7_gap_for_bounds_test.txt#B7a GAP: for-bounds / suffix-else (4 cells, verdict of the representative GAP); the parser ERRORs on configurations alc accepts; representative bnd:for_statement:start:end@statement_block%23suffix-else/arithmetic#0
+// Fixture b7b2_for_bounds_test.txt#B7b-2 for-bounds / suffix-else in the start: moved from b7_gap_for_bounds_test.txt#0
 // expect: !X accept
 // expect: X accept
 // source: recorded by B7a Task 10, 2026-10-07: the alc split verdicts of cell bnd:for_statement:start:end@statement_block#suffix-else/arithmetic in tools/b7_audit/evidence.jsonl.gz

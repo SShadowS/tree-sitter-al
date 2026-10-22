@@ -1,5 +1,5 @@
 // B7a Task 10 witness (GAP): family split-call, base placement nested, 79 cells; representative bnd:_expression_list:0:end@preproc_split_call_statement#nested/arithmetic
-// Fixture b7_gap_split_call_test.txt#B7a GAP: split-call / nested (79 cells, verdict of the representative GAP); the parser ERRORs on configurations alc accepts; representative bnd:_expression_list:0:end@preproc_split_call_statement%23nested/arithmetic#0
+// Fixture b7b2_split_call_test.txt#B7b-2 split-call / nested: moved from b7_gap_split_call_test.txt#0
 // expect: !TPL !X !Y accept
 // expect: !TPL !X Y accept
 // expect: !TPL X !Y accept

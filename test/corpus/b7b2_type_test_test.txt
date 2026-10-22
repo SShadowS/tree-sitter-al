@@ -1,0 +1,126 @@
+================================================================================
+B7b-2 type-test / prefix: moved from b7_gap_type_test_test.txt
+--
+B7a GAP representative bnd:as_expression:left:end@as_expression#prefix/type-test
+Untrimmed witness: tools/alc_probe/cases/b7-audit/type-test__prefix__gap.al.
+(owner B7b-2/A); alc accepts every configuration (B7a evidence;
+tools/alc_probe/cases/b7b-2/keyword_ops/as-prefix.al is the same prefix). The
+typed `as` prefix (spec 5.3, 6.2) holds a type and a keyword operator; the
+outer `as IFoo` is the left-associative chain. Source trimmed: the generator's
+table, var section and helper procedures are removed, the statement and its
+host are verbatim.
+================================================================================
+codeunit 50101 P
+{
+    procedure Q()
+    begin
+Intf2 :=
+Intf as
+#if X
+IFoo as
+#endif
+IFoo
+ as IFoo;
+    end;
+}
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (procedure
+        (procedure_keyword)
+        name: (identifier)
+        body: (code_block
+          (begin_keyword)
+          body: (statement_block
+            (assignment_statement
+              left: (identifier)
+              operator: (assignment_operator)
+              right: (as_expression
+                left: (as_expression
+                  left: (identifier)
+                  operator: (as_keyword)
+                  (preproc_operand_prefix
+                    (preproc_if
+                      (preproc_open)
+                      condition: (identifier))
+                    operand: (type_specification
+                      (identifier))
+                    operator: (as_keyword)
+                    (preproc_endif
+                      (preproc_close)))
+                  right: (type_specification
+                    (identifier)))
+                operator: (as_keyword)
+                right: (type_specification
+                  (identifier)))))
+          (end_keyword))))))
+
+================================================================================
+B7b-2 type-test / op-only: moved from b7_gap_type_test_test.txt
+--
+B7a MIXED representative bnd:as_expression:left:end@as_expression#op-only/type-test
+(untrimmed witness: tools/alc_probe/cases/b7-audit/type-test__op-only__gap.al)
+(manifest row: deferred, owner B7b-2/C). Parses since B7b-2 Phase C (Task 10):
+the B3 operator-only form with a keyword operator (`_typed_operator_arms`).
+op-only: alc rejects X=0 (RC8 over-acceptance, spec 9); one tree for both.
+Source trimmed: the generator's table, var section and helpers are removed.
+================================================================================
+codeunit 50101 P
+{
+    procedure Q()
+    begin
+Intf2 :=
+Intf
+#if X
+as
+#endif
+IFoo
+ as IFoo;
+    end;
+}
+--------------------------------------------------------------------------------
+
+(source_file (codeunit_declaration (codeunit_keyword) object_id: (integer) object_name: (identifier) body:
+(declaration_body (procedure (procedure_keyword) name: (identifier) body: (code_block (begin_keyword) body:
+(statement_block (assignment_statement left: (identifier) operator: (assignment_operator) right: (identifier)
+(preproc_conditional_expression_tail (preproc_if (preproc_open) condition: (identifier)) operator: (as_keyword)
+(preproc_endif (preproc_close)) operand: (type_specification (identifier)) operator: (as_keyword) operand:
+(type_specification (identifier))))) (end_keyword))))))
+
+================================================================================
+B7b-2 type-test / whole-operand: moved from b7_gap_type_test_test.txt
+--
+B7a GAP representative bnd:as_expression:left:end@as_expression#whole-operand/type-test
+(untrimmed witness: tools/alc_probe/cases/b7-audit/type-test__whole-operand__gap.al)
+(manifest row: deferred, owner B7b-2/C). Parses since B7b-2 Phase C (Task 10):
+the typed right is the typed operand group (`_type_right`, spec 6.2).
+Source trimmed: the generator's table, var section and helpers are removed.
+================================================================================
+codeunit 50101 P
+{
+    procedure Q()
+    begin
+Intf2 :=
+Intf as
+#if X
+IFoo
+#else
+IFoo
+#endif
+ as IFoo;
+    end;
+}
+--------------------------------------------------------------------------------
+
+(source_file (codeunit_declaration (codeunit_keyword) object_id: (integer) object_name: (identifier) body:
+(declaration_body (procedure (procedure_keyword) name: (identifier) body: (code_block (begin_keyword) body:
+(statement_block (assignment_statement left: (identifier) operator: (assignment_operator) right: (as_expression
+left: (as_expression left: (identifier) operator: (as_keyword) right: (preproc_conditional_operand (preproc_if
+(preproc_open) condition: (identifier)) operand: (type_specification (identifier)) (preproc_else) operand:
+(type_specification (identifier)) (preproc_endif (preproc_close)))) operator: (as_keyword) right:
+(type_specification (identifier))))) (end_keyword))))))

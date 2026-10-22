@@ -11,7 +11,7 @@ Rules that are load-bearing:
     (absorb_arm_terminators, statement runs; B7b-3 Task 10 added the last two) and
     case-terminator-attach (case_terminators.attach, case bodies). (Unwrapping a continued
     property value is not one: it is a named rewrite of contract
-    expression-continuation, see ExpressionContinuation.)
+    expression-continuation, see regions.assemble_with_tail.)
 
 Lowering only selects and relabels. It never sees the reference parse (this
 package imports nothing from reference.py, tree_sitter, or the loader).
@@ -24,7 +24,6 @@ from dataclasses import dataclass, field
 from tools.config_oracle import contracts
 from tools.config_oracle.compare import _run_with_deep_stack
 from tools.config_oracle.ir import Node, recompute_span
-from tools.config_oracle.lowering import expression
 
 # Content-only containers the grammar wraps in optional(field(...)) (spec section 2).
 EMPTY_REMOVABLE = {
@@ -138,47 +137,6 @@ class ToPrevious(Frag):
 
 
 @dataclass
-class ExpressionContinuation(ToPrevious):
-    """Contract **expression-continuation** (produced by assemblers.expression_tail).
-    The preceding sibling expression and every pair's operand are flattened, the
-    `(operator, operand)` pairs appended in order, and the whole recomposed by the
-    precedence table (expression.compose), keeping the preceding sibling's field.
-    That regrouping is the named rewrite; no pairs leave the sibling untouched.
-
-    Second named rewrite, **property-expression-unwrap**: a property value
-    continued by a tail is `property_expression(expr, tail)` (grammar.js
-    `_property_value`, finding G5), because flat `MinValue = 1 + 2;` wraps a
-    binary value. Flat `MinValue = 1;` does not wrap a simple one, so when the
-    lowered property_expression's only child is not one of its member kinds
-    (PROPERTY_EXPRESSION_KINDS) the wrapper is replaced by that child, which
-    takes the wrapper's field (`value`). Applied by engine._lower_ordinary, only
-    to a property_expression that held a tail.
-
-    One configuration class is **one-reading** (grammar finding G7, split form):
-    a signed literal continued by a tail, `MinValue = -1 #if X + 2 #endif ;`. The
-    scanner emits `-1` as one literal before `#`, which is the tail-inactive
-    configuration's flat reading; where a pair is live the flat parse reads unary
-    minus, a different tokenisation no tree can also hold. `masked` is that
-    configuration's text, read only for the literal's first byte."""
-    pairs: list = field(default_factory=list)
-    masked: bytes = b""
-
-    def apply(self, prev):
-        if not self.pairs:
-            return prev
-        if (not prev.children and prev.kind in ("integer", "decimal")
-                and self.masked[prev.start:prev.start + 1] == b"-"):
-            raise LoweringError("one-reading", prev, "signed literal continued by a live tail")
-        try:
-            flat = expression.flatten(prev)
-            for op, operand in self.pairs:
-                flat += [op] + expression.flatten(operand)
-        except ValueError as e:
-            raise LoweringError("contract-shape", prev, str(e)) from None
-        return expression.compose(flat, prev.field)
-
-
-@dataclass
 class VarTailMerge(ToPrevious):
     """Contract **var-tail-merge** (produced by assemblers.split_var_section_tail).
     The preceding lowered sibling must be a `var_section` (grammar.js comment on
@@ -207,13 +165,20 @@ class VarTailMerge(ToPrevious):
         return _span_from_children(prev.copy(children=kids))
 
 
+# Named rewrite **property-expression-unwrap** (contract expression-continuation,
+# regions.assemble_with_tail): a property value continued by a tail is
+# `property_expression(expr, tail)` (grammar.js `_property_value`, finding G5), because flat
+# `MinValue = 1 + 2;` wraps a binary value. Flat `MinValue = 1;` does not wrap a simple one,
+# so when the lowered property_expression's only child is not one of its member kinds the
+# wrapper is replaced by that child, which takes the wrapper's field (`value`). Applied by
+# _lower_ordinary, only to a property_expression that held a group as a child: a tail, a
+# leading prefix or an operand group (B7b-2 Phase C).
 # property_expression's own members (grammar.js property_expression), hand-written.
 PROPERTY_EXPRESSION_KINDS = frozenset({
     "call_expression", "member_expression", "qualified_enum_value", "database_reference",
     "unary_expression", "additive_expression", "multiplicative_expression", "comparison_expression",
     "logical_expression", "ternary_expression", "parenthesized_expression", "subscript_expression",
 })
-_TAIL = "preproc_conditional_expression_tail"
 
 # Named rewrite **option-member-list-unwrap** (G11). An option-member list may
 # be opened by a #if (`OptionMembers = #if X A, #endif B;`), so a configuration
@@ -497,23 +462,43 @@ def lower(node, ctx) -> Lowered:
         if entry.kind == "unsupported" or entry.handler is None:
             raise LoweringError("unsupported-type", node, ctx.host())
         return contracts.resolve_handler(entry)(node, ctx)
-    if node.kind in expression.BINARY_KINDS and _has_prefix(node, ctx):
-        # The binary hook: a chain holding a prefix is lowered whole, from its
-        # top node (contract operand-prefix, assemblers.operand_prefix).
-        return contracts.resolve_handler(contracts.REGISTRY[expression.PREFIX])(node, ctx)
+    if (node.kind in regions.NODES and not regions.region_edge(ctx.parent_kind, node.kind, node.field)
+            and regions.has_group(node)):
+        # Root dispatch (B7b-2 spec 7 step 1): a region root holding a group is assembled
+        # whole, once. A node reached by a region edge belongs to its root's invocation.
+        return regions.assemble(node, ctx)
     return _lower_ordinary(node, ctx)
 
 
-def _has_prefix(node, ctx):
-    """True for the TOP node of a binary chain holding a preproc_operand_prefix.
-    An inner node (a binary parent's left/right) was the top's to lower, so the
-    chain is walked once, not once per level."""
-    if ctx.parent_kind in expression.BINARY_KINDS and ctx.slot in ("left", "right"):
-        return False
-    try:
-        return any(n.kind == expression.PREFIX for _, n in expression.chain(node))
-    except ValueError:
-        return False   # not a plain chain: _lower_ordinary lowers it, and any prefix in it refuses
+def lower_items(children, ctx, host_kind, lower_one=None):
+    """(index of the last child consumed, first child, Lowered) for each item of a host's
+    children. A named child followed by a root tail is ONE item: the region assembler lowers
+    the expression and its tail in one invocation (B7b-2 spec 7 step 1); so are leading
+    prefixes, the expression after them and its tail (spec 6.3). Every other child is
+    lowered by `lower_one` (default `lower`)."""
+    lower_one = lower_one or lower
+    i = 0
+    while i < len(children):
+        c = children[i]
+        cctx = ctx.child(host_kind, c.field or "<children>")
+        j = i
+        while regions.LEADING_PREFIXES and j < len(children) and children[j].kind == regions.PREFIX:
+            j += 1
+        if (j > i and j < len(children) and children[j].named
+                and children[j].kind not in (regions.TAIL, regions.PREFIX)):
+            # leading prefixes (spec 6.3): prefix+ expr [tail], one item owned by the root
+            e = children[j]
+            tail = children[j + 1] if j + 1 < len(children) and children[j + 1].kind == regions.TAIL else None
+            yield j + (tail is not None), c, regions.assemble_with_tail(
+                e, tail, ctx.child(host_kind, e.field or "<children>"), ctx.child(host_kind, "<children>"),
+                prefixes=children[i:j])
+            i = j + 1 + (tail is not None)
+        elif c.named and i + 1 < len(children) and children[i + 1].kind == regions.TAIL:
+            yield i + 1, c, regions.assemble_with_tail(c, children[i + 1], cctx, ctx.child(host_kind, "<children>"))
+            i += 2
+        else:
+            yield i, c, lower_one(c, cctx)
+            i += 1
 
 
 def _lower_ordinary(node, ctx) -> Lowered:
@@ -522,8 +507,7 @@ def _lower_ordinary(node, ctx) -> Lowered:
         return Lowered([node.copy(children=[])])
     kids, frags = [], []
     last_index = len(node.children) - 1
-    for i, c in enumerate(node.children):
-        r = lower(c, ctx.child(node.kind, c.field or "<children>"))
+    for i, c, r in lower_items(node.children, ctx, node.kind):
         for f in r.frags:
             f._from_last = (i == last_index)
         frags.extend(bind_previous(kids, r, c))
@@ -541,7 +525,9 @@ def _lower_ordinary(node, ctx) -> Lowered:
                 raise LoweringError("unconsumed-fragment", node, "fragment out of an emptied list")
             ctx.normalised.append(f"optional-list-removed:{node.kind}@{node.start}")
             return Lowered([], frags)
-    elif any(c.kind in LIST_RUN_TYPES for c in node.children):
+    elif any(c.kind in LIST_RUN_TYPES or (c.kind == regions.OPERAND_GROUP and node.kind in EXPRESSION_LISTS)
+             for c in node.children):
+        # an operand group item may contribute no item (regions.EMPTY_LIST_ITEM): check the list
         if new.kind == "option_member_list":
             _check_option_holes(new)
         else:
@@ -588,7 +574,7 @@ def _lower_ordinary(node, ctx) -> Lowered:
             ctx.normalised.append(f"list-value-empty:{node.kind}@{node.start}")
             return Lowered([], frags)
         raise LoweringError("empty-node", node)
-    if (node.kind == "property_expression" and any(c.kind == _TAIL for c in node.children)
+    if (node.kind == "property_expression" and any(c.kind in regions.GROUPS for c in node.children)
             and len(kids) == 1 and kids[0].kind not in PROPERTY_EXPRESSION_KINDS):
         ctx.normalised.append(f"property-expression-unwrap@{node.start}")
         return Lowered([kids[0].copy(field=node.field)], frags)
@@ -636,6 +622,19 @@ def _check_option_holes(new):
         prev_item = not is_sep
 
 
+# B7b-2 (Task 10 finding): in an expression list, an item directly followed by another item
+# is a tree claiming a list boundary where the configuration has no separator. The flat
+# text then continues the first item's expression (an argument list or list literal of a
+# clean parse always alternates), so the lowered list is left to the comparison: a
+# discrepancy, never a refusal. Exception, spec 3.4 list spanning (deferred): the second item
+# opens a group arm that also supplies a separator (`Foo(1 #if X + 2, 3 #endif)`); that
+# pinned wrong tree keeps its refusal. select.branch_select sets LIST_SPAN on such an arm's
+# first lowered node.
+ADJACENT_DISCREPANCY = True   # mutation switch for test_regions.test_silent_wrong_tree_is_a_discrepancy
+EXPRESSION_LISTS = frozenset({"argument_list", "list_literal"})
+LIST_SPAN = "_list_span"
+
+
 def _check_alternation(new):
     seq = [c for c in new.children if c.kind not in _BRACKETS]
     # A single trailing `;` is not an item: whether it belongs here (terminator
@@ -646,6 +645,12 @@ def _check_alternation(new):
     for c in seq:
         is_sep = c.kind == "," and not c.children
         if is_sep == want_item:
+            if not is_sep and new.kind in EXPRESSION_LISTS:
+                if getattr(c, LIST_SPAN, False):
+                    raise LoweringError("list-separator", new, "list spanning (spec 3.4): an item group "
+                                        "that continues the item before it and supplies a separator")
+                if ADJACENT_DISCREPANCY:
+                    continue    # owed to the comparison; the rest of the list is still checked
             raise LoweringError("list-separator", new, "list does not alternate item, separator")
         want_item = not want_item
     if seq and want_item:
@@ -772,7 +777,7 @@ def _lower_tree(root, extras, resolution):
 
 # At the bottom: conditional_lists imports this module's names, and _lower_ordinary reads
 # conditional_lists only at call time, so the cycle is safe in either import order.
-from tools.config_oracle.lowering import case_terminators, conditional_lists, move_args  # noqa: E402
+from tools.config_oracle.lowering import case_terminators, conditional_lists, move_args, regions  # noqa: E402
 
 
 def lower_tree(root, extras, resolution):

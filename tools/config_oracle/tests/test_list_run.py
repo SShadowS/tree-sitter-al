@@ -39,7 +39,11 @@ def test_dropped_separator_trips_list_separator(al_parser, monkeypatch):
     def drop_commas(items):
         return [c for c in real(items) if c.kind != ","]
     monkeypatch.setattr(select, "_splice_arm", drop_commas)
-    assert witness.statuses_with(al_parser, ARGS_LEAD, "lowering:list-separator")
+    assert witness.statuses_with(al_parser, PERMS_INTERNAL, "lowering:list-separator")
+    # An expression list (B7b-2 Task 11) does not refuse two adjacent items (the comparison
+    # would report them); the dropped comma's leaf is then caught by the accounting.
+    v = witness.verdicts(al_parser, ARGS_LEAD)
+    assert v["X=1"][0] == "cannot-validate" and v["X=1"][1][0].startswith("lowering:accounting"), v
 
 
 def test_terminator_left_in_list_trips_structure(al_parser, monkeypatch):

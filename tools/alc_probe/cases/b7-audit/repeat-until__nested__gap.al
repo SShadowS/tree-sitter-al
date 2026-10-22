@@ -1,5 +1,5 @@
 // B7a Task 10 witness (GAP): family repeat-until, base placement nested, 96 cells; representative bnd:repeat_statement:condition:end@asserterror_statement#nested/comparison
-// Fixture b7_gap_repeat_until_test.txt#B7a GAP: repeat-until / nested (96 cells, verdict of the representative GAP); the parser ERRORs on configurations alc accepts; representative bnd:repeat_statement:condition:end@asserterror_statement%23nested/comparison#0
+// Fixture b7b2_repeat_until_test.txt#B7b-2 repeat-until / nested: moved from b7_gap_repeat_until_test.txt#0
 // expect: !X !Y accept
 // expect: !X Y accept
 // expect: X !Y accept

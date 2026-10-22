@@ -1,5 +1,5 @@
 // B7a Task 10 witness (GAP): family ternary, base placement unary-paren, 14 cells; representative bnd:ternary_expression:condition:end@ternary_expression#unary-paren/comparison
-// Fixture b7_gap_ternary_test.txt#B7a GAP: ternary / unary-paren (14 cells, verdict of the representative GAP); the parser ERRORs on configurations alc accepts; representative bnd:ternary_expression:condition:end@ternary_expression%23unary-paren/comparison#0
+// Fixture b7b2_ternary_test.txt#B7b-2 ternary / unary-paren: moved from b7_gap_ternary_test.txt#0
 // expect: !X accept
 // expect: X accept
 // source: recorded by B7a Task 10, 2026-10-07: the alc split verdicts of cell bnd:ternary_expression:condition:end@ternary_expression#unary-paren/comparison in tools/b7_audit/evidence.jsonl.gz

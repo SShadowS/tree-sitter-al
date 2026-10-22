@@ -1,5 +1,5 @@
 // B7a Task 10 witness (GAP): family property-value, base placement nested, 162 cells; representative bnd:_property_value_with_split:0.0:end@action_body#nested/comparison
-// Fixture b7_gap_property_value_test.txt#B7a GAP: property-value / nested (162 cells, verdict of the representative GAP); the parser ERRORs on configurations alc accepts; representative bnd:_property_value_with_split:0.0:end@action_body%23nested/comparison#0
+// Fixture b7b2_property_value_test.txt#B7b-2 property-value / nested in a whole-value arm: moved from b7_gap_property_value_test.txt#0
 // expect: !TPL !X !Y accept
 // expect: !TPL !X Y accept
 // expect: !TPL X !Y accept

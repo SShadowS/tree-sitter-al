@@ -1,5 +1,5 @@
 // B7a Task 10 witness (GAP): family operand-prefix, base placement consecutive, 4 cells; representative bnd:_dangling_operand:operand:end@preproc_operand_prefix#consecutive/arithmetic
-// Fixture b7_gap_operand_prefix_test.txt#B7a GAP: operand-prefix / consecutive (4 cells, verdict of the representative GAP); the parser ERRORs on configurations alc accepts; representative bnd:_dangling_operand:operand:end@preproc_operand_prefix%23consecutive/arithmetic#0
+// Fixture b7b2_operand_prefix_test.txt#B7b-2 operand-prefix / consecutive groups in a prefix arm: moved from b7_gap_operand_prefix_test.txt#0
 // expect: !TPL !X !Y accept
 // expect: !TPL !X Y accept
 // expect: !TPL X !Y accept

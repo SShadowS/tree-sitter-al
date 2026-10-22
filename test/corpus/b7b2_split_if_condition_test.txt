@@ -1,0 +1,670 @@
+================================================================================
+B7b-2 split-if-condition / prefix (membership): moved from b7_gap_split_if_condition_test.txt
+--
+B7a GAP representative bnd:_preproc_if_header:condition:end@preproc_guarded_statement#prefix/membership
+(untrimmed witness: tools/alc_probe/cases/b7-audit/split-if-condition__prefix__gap.al)
+(owner B7b-2/A); alc accepts every configuration (untrimmed witness above, alc_probe --check 2026-10-21). The typed
+`in` prefix (spec 5.3, 6.2) inside the split if header's condition; the split
+host itself is unchanged (C1). Source trimmed: the generator's table, var
+section and helper procedures are removed, the statements and their host are
+verbatim.
+================================================================================
+codeunit 50101 P
+{
+    procedure Q()
+    begin
+#if TPL
+Bar();
+if
+Ok in
+#if X
+[true, false] in
+#endif
+[true]
+ then
+#endif
+Bar();
+    end;
+}
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (procedure
+        (procedure_keyword)
+        name: (identifier)
+        body: (code_block
+          (begin_keyword)
+          body: (statement_block
+            (preproc_guarded_statement
+              (preproc_if
+                (preproc_open)
+                condition: (identifier))
+              (call_expression
+                function: (identifier)
+                arguments: (argument_list))
+              (if_keyword)
+              condition: (in_expression
+                left: (identifier)
+                operator: (in_keyword)
+                (preproc_operand_prefix
+                  (preproc_if
+                    (preproc_open)
+                    condition: (identifier))
+                  operand: (list_literal
+                    (boolean)
+                    (boolean))
+                  operator: (in_keyword)
+                  (preproc_endif
+                    (preproc_close)))
+                right: (list_literal
+                  (boolean)))
+              (then_keyword)
+              (preproc_endif
+                (preproc_close))
+              then_branch: (call_expression
+                function: (identifier)
+                arguments: (argument_list))))
+          (end_keyword))))))
+
+================================================================================
+B7b-2 split-if-condition / chain: moved from b7_gap_split_if_condition_test.txt
+--
+B7a GAP representative bnd:_preproc_if_header:condition:end@preproc_guarded_statement#chain/logical
+(untrimmed witness: tools/alc_probe/cases/b7-audit/split-if-condition__chain__gap.al)
+(owner B7b-2/B; C1, oracle-blind host, closed by assertion rows); alc accepts
+every configuration (untrimmed witness above, alc_probe --check 2026-10-21). Source trimmed: the generator's table, var
+section and helper procedures are removed, the statement and its host are
+verbatim.
+================================================================================
+codeunit 50101 P
+{
+    procedure Q()
+    begin
+#if TPL
+Bar();
+if
+Ok or true
+#if X
+and false
+#endif
+or Ok
+ then
+#endif
+Bar();
+    end;
+}
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (procedure
+        (procedure_keyword)
+        name: (identifier)
+        body: (code_block
+          (begin_keyword)
+          body: (statement_block
+            (preproc_guarded_statement
+              (preproc_if
+                (preproc_open)
+                condition: (identifier))
+              (call_expression
+                function: (identifier)
+                arguments: (argument_list))
+              (if_keyword)
+              condition: (logical_expression
+                left: (identifier)
+                right: (boolean))
+              (preproc_conditional_expression_tail
+                (preproc_if
+                  (preproc_open)
+                  condition: (identifier))
+                operand: (boolean)
+                (preproc_endif
+                  (preproc_close))
+                operand: (identifier))
+              (then_keyword)
+              (preproc_endif
+                (preproc_close))
+              then_branch: (call_expression
+                function: (identifier)
+                arguments: (argument_list))))
+          (end_keyword))))))
+
+================================================================================
+B7b-2 split-if-condition / consecutive: moved from b7_gap_split_if_condition_test.txt
+--
+B7a GAP representative bnd:_preproc_if_header:condition:end@preproc_guarded_statement#consecutive/comparison
+(untrimmed witness: tools/alc_probe/cases/b7-audit/split-if-condition__consecutive__gap.al)
+(owner B7b-2/B; C1 host); alc accepts every configuration (untrimmed witness above, alc_probe --check 2026-10-21).
+Source trimmed: the generator's table, var section and helper procedures are
+removed, the statement and its host are verbatim.
+================================================================================
+codeunit 50101 P
+{
+    procedure Q()
+    begin
+#if TPL
+Bar();
+if
+Ok
+#if X
+= true
+#endif
+#if Y
+= false
+#endif
+ then
+#endif
+Bar();
+    end;
+}
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (procedure
+        (procedure_keyword)
+        name: (identifier)
+        body: (code_block
+          (begin_keyword)
+          body: (statement_block
+            (preproc_guarded_statement
+              (preproc_if
+                (preproc_open)
+                condition: (identifier))
+              (call_expression
+                function: (identifier)
+                arguments: (argument_list))
+              (if_keyword)
+              condition: (identifier)
+              (preproc_conditional_expression_tail
+                (preproc_if
+                  (preproc_open)
+                  condition: (identifier))
+                operator: (comparison_operator)
+                operand: (boolean)
+                (preproc_endif
+                  (preproc_close))
+                (preproc_conditional_expression_tail
+                  (preproc_if
+                    (preproc_open)
+                    condition: (identifier))
+                  operator: (comparison_operator)
+                  operand: (boolean)
+                  (preproc_endif
+                    (preproc_close))))
+              (then_keyword)
+              (preproc_endif
+                (preproc_close))
+              then_branch: (call_expression
+                function: (identifier)
+                arguments: (argument_list))))
+          (end_keyword))))))
+
+================================================================================
+B7b-2 split-if-condition / nested: moved from b7_gap_split_if_condition_test.txt
+--
+B7a GAP representative bnd:_preproc_if_header:condition:end@preproc_guarded_statement#nested/comparison
+(untrimmed witness: tools/alc_probe/cases/b7-audit/split-if-condition__nested__gap.al)
+(owner B7b-2/B; C1 host); alc accepts every configuration (untrimmed witness above, alc_probe --check 2026-10-21).
+Source trimmed: the generator's table, var section and helper procedures are
+removed, the statement and its host are verbatim.
+================================================================================
+codeunit 50101 P
+{
+    procedure Q()
+    begin
+#if TPL
+Bar();
+if
+Ok
+#if X
+= true
+#if Y
+= false
+#endif
+#endif
+ then
+#endif
+Bar();
+    end;
+}
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (procedure
+        (procedure_keyword)
+        name: (identifier)
+        body: (code_block
+          (begin_keyword)
+          body: (statement_block
+            (preproc_guarded_statement
+              (preproc_if
+                (preproc_open)
+                condition: (identifier))
+              (call_expression
+                function: (identifier)
+                arguments: (argument_list))
+              (if_keyword)
+              condition: (identifier)
+              (preproc_conditional_expression_tail
+                (preproc_if
+                  (preproc_open)
+                  condition: (identifier))
+                operator: (comparison_operator)
+                operand: (boolean)
+                (preproc_conditional_expression_tail
+                  (preproc_if
+                    (preproc_open)
+                    condition: (identifier))
+                  operator: (comparison_operator)
+                  operand: (boolean)
+                  (preproc_endif
+                    (preproc_close)))
+                (preproc_endif
+                  (preproc_close)))
+              (then_keyword)
+              (preproc_endif
+                (preproc_close))
+              then_branch: (call_expression
+                function: (identifier)
+                arguments: (argument_list))))
+          (end_keyword))))))
+
+================================================================================
+B7b-2 split-if-condition / op-only: moved from b7_gap_split_if_condition_test.txt
+--
+B7a GAP representative bnd:_preproc_if_header:condition:end@preproc_guarded_statement#op-only/comparison
+(untrimmed witness: tools/alc_probe/cases/b7-audit/split-if-condition__op-only__gap.al, --check 2026-10-21)
+(owner B7b-2/B; C1 host); op-only: alc rejects X=0 (RC8 over-acceptance,
+spec 9), the X=1 configurations are valid and parse; one tree for both.
+Source trimmed: the generator's table, var section and helper procedures are
+removed, the statement and its host are verbatim.
+================================================================================
+codeunit 50101 P
+{
+    procedure Q()
+    begin
+#if TPL
+Bar();
+if
+Ok
+#if X
+=
+#endif
+true
+ then
+#endif
+Bar();
+    end;
+}
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (procedure
+        (procedure_keyword)
+        name: (identifier)
+        body: (code_block
+          (begin_keyword)
+          body: (statement_block
+            (preproc_guarded_statement
+              (preproc_if
+                (preproc_open)
+                condition: (identifier))
+              (call_expression
+                function: (identifier)
+                arguments: (argument_list))
+              (if_keyword)
+              condition: (identifier)
+              (preproc_conditional_expression_tail
+                (preproc_if
+                  (preproc_open)
+                  condition: (identifier))
+                operator: (comparison_operator)
+                (preproc_endif
+                  (preproc_close))
+                operand: (boolean))
+              (then_keyword)
+              (preproc_endif
+                (preproc_close))
+              then_branch: (call_expression
+                function: (identifier)
+                arguments: (argument_list))))
+          (end_keyword))))))
+
+================================================================================
+B7b-2 split-if-condition / suffix: moved from b7_gap_split_if_condition_test.txt
+--
+B7a GAP representative bnd:_preproc_if_header:condition:end@preproc_guarded_statement#suffix/comparison
+(untrimmed witness: tools/alc_probe/cases/b7-audit/split-if-condition__suffix__gap.al)
+(owner B7b-2/B; C1 host); alc accepts every configuration (untrimmed witness above, alc_probe --check 2026-10-21).
+Source trimmed: the generator's table, var section and helper procedures are
+removed, the statement and its host are verbatim.
+================================================================================
+codeunit 50101 P
+{
+    procedure Q()
+    begin
+#if TPL
+Bar();
+if
+Ok
+#if X
+= true
+#endif
+ then
+#endif
+Bar();
+    end;
+}
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (procedure
+        (procedure_keyword)
+        name: (identifier)
+        body: (code_block
+          (begin_keyword)
+          body: (statement_block
+            (preproc_guarded_statement
+              (preproc_if
+                (preproc_open)
+                condition: (identifier))
+              (call_expression
+                function: (identifier)
+                arguments: (argument_list))
+              (if_keyword)
+              condition: (identifier)
+              (preproc_conditional_expression_tail
+                (preproc_if
+                  (preproc_open)
+                  condition: (identifier))
+                operator: (comparison_operator)
+                operand: (boolean)
+                (preproc_endif
+                  (preproc_close)))
+              (then_keyword)
+              (preproc_endif
+                (preproc_close))
+              then_branch: (call_expression
+                function: (identifier)
+                arguments: (argument_list))))
+          (end_keyword))))))
+
+================================================================================
+B7b-2 split-if-condition / suffix-else: moved from b7_gap_split_if_condition_test.txt
+--
+B7a GAP representative bnd:_preproc_if_header:condition:end@preproc_guarded_statement#suffix-else/comparison
+(untrimmed witness: tools/alc_probe/cases/b7-audit/split-if-condition__suffix-else__gap.al)
+(owner B7b-2/B; C1 host); alc accepts every configuration (untrimmed witness above, alc_probe --check 2026-10-21).
+Source trimmed: the generator's table, var section and helper procedures are
+removed, the statement and its host are verbatim.
+================================================================================
+codeunit 50101 P
+{
+    procedure Q()
+    begin
+#if TPL
+Bar();
+if
+Ok
+#if X
+= true
+#else
+<> false
+#endif
+ then
+#endif
+Bar();
+    end;
+}
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (procedure
+        (procedure_keyword)
+        name: (identifier)
+        body: (code_block
+          (begin_keyword)
+          body: (statement_block
+            (preproc_guarded_statement
+              (preproc_if
+                (preproc_open)
+                condition: (identifier))
+              (call_expression
+                function: (identifier)
+                arguments: (argument_list))
+              (if_keyword)
+              condition: (identifier)
+              (preproc_conditional_expression_tail
+                (preproc_if
+                  (preproc_open)
+                  condition: (identifier))
+                operator: (comparison_operator)
+                operand: (boolean)
+                (preproc_else)
+                operator: (comparison_operator)
+                operand: (boolean)
+                (preproc_endif
+                  (preproc_close)))
+              (then_keyword)
+              (preproc_endif
+                (preproc_close))
+              then_branch: (call_expression
+                function: (identifier)
+                arguments: (argument_list))))
+          (end_keyword))))))
+
+================================================================================
+B7b-2 split-if-condition / first: moved from b7_gap_split_if_condition_test.txt
+--
+B7a GAP representative bnd:_preproc_if_header:condition:end@preproc_guarded_statement#first/comparison
+(untrimmed witness: tools/alc_probe/cases/b7-audit/split-if-condition__first__gap.al)
+(manifest row: deferred, owner B7b-2/C). Parses since B7b-2 Phase C (Task 10).
+Source trimmed: the generator's table, var section and helpers are removed.
+================================================================================
+codeunit 50101 P
+{
+    procedure Q()
+    begin
+#if TPL
+Bar();
+if
+#if X
+Ok =
+#endif
+true
+ then
+#endif
+Bar();
+    end;
+}
+--------------------------------------------------------------------------------
+
+(source_file (codeunit_declaration (codeunit_keyword) object_id: (integer) object_name: (identifier) body:
+(declaration_body (procedure (procedure_keyword) name: (identifier) body: (code_block (begin_keyword) body:
+(statement_block (preproc_guarded_statement (preproc_if (preproc_open) condition: (identifier)) (call_expression
+function: (identifier) arguments: (argument_list)) (if_keyword) (preproc_operand_prefix (preproc_if (preproc_open)
+condition: (identifier)) operand: (identifier) operator: (comparison_operator) (preproc_endif (preproc_close)))
+condition: (boolean) (then_keyword) (preproc_endif (preproc_close)) then_branch: (call_expression function:
+(identifier) arguments: (argument_list)))) (end_keyword))))))
+
+================================================================================
+B7b-2 split-if-condition / first-only: moved from b7_gap_split_if_condition_test.txt
+--
+B7a GAP representative bnd:_preproc_if_header:condition:end@preproc_guarded_statement#first-only/comparison
+(untrimmed witness: tools/alc_probe/cases/b7-audit/split-if-condition__first-only__gap.al)
+(manifest row: deferred, owner B7b-2/C). Parses since B7b-2 Phase C (Task 10).
+Source trimmed: the generator's table, var section and helpers are removed.
+================================================================================
+codeunit 50101 P
+{
+    procedure Q()
+    begin
+#if TPL
+Bar();
+if
+#if X
+Ok
+#else
+true
+#endif
+ then
+#endif
+Bar();
+    end;
+}
+--------------------------------------------------------------------------------
+
+(source_file (codeunit_declaration (codeunit_keyword) object_id: (integer) object_name: (identifier) body:
+(declaration_body (procedure (procedure_keyword) name: (identifier) body: (code_block (begin_keyword) body:
+(statement_block (preproc_guarded_statement (preproc_if (preproc_open) condition: (identifier)) (call_expression
+function: (identifier) arguments: (argument_list)) (if_keyword) condition: (preproc_conditional_operand (preproc_if
+(preproc_open) condition: (identifier)) operand: (identifier) (preproc_else) operand: (boolean) (preproc_endif
+(preproc_close))) (then_keyword) (preproc_endif (preproc_close)) then_branch: (call_expression function:
+(identifier) arguments: (argument_list)))) (end_keyword))))))
+
+================================================================================
+B7b-2 split-if-condition / unary-not: moved from b7_gap_split_if_condition_test.txt
+--
+B7a GAP representative bnd:_preproc_if_header:condition:end@preproc_guarded_statement#unary-not/comparison
+(untrimmed witness: tools/alc_probe/cases/b7-audit/split-if-condition__unary-not__gap.al)
+(manifest row: deferred, owner B7b-2/C). Parses since B7b-2 Phase C (Task 10).
+Source trimmed: the generator's table, var section and helpers are removed.
+================================================================================
+codeunit 50101 P
+{
+    procedure Q()
+    begin
+#if TPL
+Bar();
+if
+Ok =
+#if X
+not true
+#else
+false
+#endif
+ then
+#endif
+Bar();
+    end;
+}
+--------------------------------------------------------------------------------
+
+(source_file (codeunit_declaration (codeunit_keyword) object_id: (integer) object_name: (identifier) body:
+(declaration_body (procedure (procedure_keyword) name: (identifier) body: (code_block (begin_keyword) body:
+(statement_block (preproc_guarded_statement (preproc_if (preproc_open) condition: (identifier)) (call_expression
+function: (identifier) arguments: (argument_list)) (if_keyword) condition: (comparison_expression left: (identifier)
+operator: (comparison_operator) right: (preproc_conditional_operand (preproc_if (preproc_open) condition:
+(identifier)) operand: (unary_expression operand: (boolean)) (preproc_else) operand: (boolean) (preproc_endif
+(preproc_close)))) (then_keyword) (preproc_endif (preproc_close)) then_branch: (call_expression function:
+(identifier) arguments: (argument_list)))) (end_keyword))))))
+
+================================================================================
+B7b-2 split-if-condition / unary-paren: moved from b7_gap_split_if_condition_test.txt
+--
+B7a GAP representative bnd:_preproc_if_header:condition:end@preproc_guarded_statement#unary-paren/comparison
+(untrimmed witness: tools/alc_probe/cases/b7-audit/split-if-condition__unary-paren__gap.al)
+(manifest row: deferred, owner B7b-2/C). Parses since B7b-2 Phase C (Task 10).
+Source trimmed: the generator's table, var section and helpers are removed.
+================================================================================
+codeunit 50101 P
+{
+    procedure Q()
+    begin
+#if TPL
+Bar();
+if
+Ok =
+#if X
+( true = false )
+#else
+false
+#endif
+ then
+#endif
+Bar();
+    end;
+}
+--------------------------------------------------------------------------------
+
+(source_file (codeunit_declaration (codeunit_keyword) object_id: (integer) object_name: (identifier) body:
+(declaration_body (procedure (procedure_keyword) name: (identifier) body: (code_block (begin_keyword) body:
+(statement_block (preproc_guarded_statement (preproc_if (preproc_open) condition: (identifier)) (call_expression
+function: (identifier) arguments: (argument_list)) (if_keyword) condition: (comparison_expression left: (identifier)
+operator: (comparison_operator) right: (preproc_conditional_operand (preproc_if (preproc_open) condition:
+(identifier)) operand: (parenthesized_expression (comparison_expression left: (boolean) operator:
+(comparison_operator) right: (boolean))) (preproc_else) operand: (boolean) (preproc_endif (preproc_close))))
+(then_keyword) (preproc_endif (preproc_close)) then_branch: (call_expression function: (identifier) arguments:
+(argument_list)))) (end_keyword))))))
+
+================================================================================
+B7b-2 split-if-condition / whole-operand: moved from b7_gap_split_if_condition_test.txt
+--
+B7a GAP representative bnd:_preproc_if_header:condition:end@preproc_guarded_statement#whole-operand/comparison
+(untrimmed witness: tools/alc_probe/cases/b7-audit/split-if-condition__whole-operand__gap.al)
+(manifest row: deferred, owner B7b-2/C). Parses since B7b-2 Phase C (Task 10).
+Source trimmed: the generator's table, var section and helpers are removed.
+================================================================================
+codeunit 50101 P
+{
+    procedure Q()
+    begin
+#if TPL
+Bar();
+if
+Ok =
+#if X
+true
+#else
+false
+#endif
+ then
+#endif
+Bar();
+    end;
+}
+--------------------------------------------------------------------------------
+
+(source_file (codeunit_declaration (codeunit_keyword) object_id: (integer) object_name: (identifier) body:
+(declaration_body (procedure (procedure_keyword) name: (identifier) body: (code_block (begin_keyword) body:
+(statement_block (preproc_guarded_statement (preproc_if (preproc_open) condition: (identifier)) (call_expression
+function: (identifier) arguments: (argument_list)) (if_keyword) condition: (comparison_expression left: (identifier)
+operator: (comparison_operator) right: (preproc_conditional_operand (preproc_if (preproc_open) condition:
+(identifier)) operand: (boolean) (preproc_else) operand: (boolean) (preproc_endif (preproc_close)))) (then_keyword)
+(preproc_endif (preproc_close)) then_branch: (call_expression function: (identifier) arguments: (argument_list))))
+(end_keyword))))))

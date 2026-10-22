@@ -166,6 +166,41 @@ function strictListBody($, family, sep) {
   return [$[E], repeat(seq(sep, $[E]))];
 }
 
+// B7b-2 spec 5.1 (execution amendments: the root rule): an expression slot that is a
+// region root, i.e. may be followed by a preproc_conditional_expression_tail.
+// `choice(f(expr), prec.dynamic(dyn, seq(f(_continuation_operand), tail)))`: the
+// tail-bearing arm takes `_continuation_operand` (removal, spec 5.2), so a root whose
+// expression is a ternary or a range has no tail of its own and the tail attaches to
+// the inner else / range-right root. `fieldName` fields both arms (null: unfielded);
+// `dyn` is the tail arm's dynamic precedence (1; 11 inside assignment's 10, where a
+// nested prec.dynamic keeps the larger absolute value). Used inline at the assignment
+// root, otherwise as the body of a hidden `_region_root*` rule (see there, and the
+// census.py note on how the B7a census keeps the hosts' slot keys).
+//
+// B7b-2 Phase C (spec 6.3 `first`): a third arm, LEADING operand prefixes before
+// the region's operand, `x := #if X 2 + #endif 2 + 1;`. The prefixes are
+// unfielded children of the host (spec 3.1: a root-to-leading-prefix edge); the
+// operand after them is a `_continuation_operand` (no ternary or range: a prefix
+// cannot cross into a ternary's condition, which has its own leading arm).
+function contSlot($, expr, fieldName = null, dyn = 1) {
+  const f = r => (fieldName ? field(fieldName, r) : r);
+  return choice(
+    f(expr),
+    prec.dynamic(dyn, seq(f($._continuation_operand), $.preproc_conditional_expression_tail)),
+    leadingPrefixed($, f),
+  );
+}
+
+// The leading-prefix arm of a region root (contSlot, _ternary_condition,
+// _ternary_else, _range_right): prefixes, the operand, an optional tail.
+function leadingPrefixed($, f) {
+  return seq(
+    repeat1($.preproc_operand_prefix),
+    f($._continuation_operand),
+    optional($.preproc_conditional_expression_tail),
+  );
+}
+
 // B7b-3 spec 4.2.2: the decoration before a case branch's own `;`.
 function caseEmptyGroup($) { return alias($._case_empty_group, $.preproc_conditional_case); }
 
@@ -590,6 +625,80 @@ module.exports = grammar({
   ],
 
   conflicts: $ => [
+    // B7b-2 Phase A (spec execution amendments, Task 3 conflict delta and Task 4).
+    // `#if` after a root tail's #endif: a consecutive tail (the last child of
+    // the tail before it) vs the host's own groups that follow.
+    [$.preproc_conditional_expression_tail],
+    // Root fork `e • #if`: the root's tail-bearing production
+    // (`_continuation_operand` + tail) vs a plain `_expression` followed by
+    // the host's own group (preproc_conditional_arguments, _statement) vs a
+    // ternary-condition tail. The argument and assignment entries supersede
+    // the old `[_argument_expression]` and `[assignment_statement]`.
+    [$._expression, $._ternary_condition],
+    [$._expression, $._ternary_condition, $._argument_expression],
+    [$.assignment_statement, $._expression, $._ternary_condition],
+    [$._expression, $._range_right, $._ternary_condition],
+    [$._expression, $._ternary_condition, $._ternary_else],
+    // B7b-2 Phase B (Task 7): the same fork at the region roots contSlot adds.
+    [$._expression, $._ternary_condition, $._region_root_left, $._region_root_list_element],
+    [$._expression, $._ternary_condition, $._region_root_condition],
+    [$._region_root, $._argument_expression],
+    [$._expression, $._ternary_condition, $._region_root, $._argument_expression],
+    // A case pattern followed by a pattern group vs the same atom as a
+    // ternary condition with a tail (a range's left is `_expression`).
+    [$._single_pattern, $._continuation_operand],
+    // The same inside a case group arm, where the atom may also be a statement.
+    [$.call_statement, $._single_pattern, $._continuation_operand],
+    [$._expression_statement, $._single_pattern, $._continuation_operand],
+    // B7b-2 Phase C (spec 6, execution amendments Task 3 conflict delta).
+    // Each is demanded by generate; the symbol sequence is in the amendment.
+    [$._case_pattern_run],
+    [$._postfix_operand, $._continuation_operand],
+    [$._property_value, $.option_member, $._postfix_operand, $._continuation_operand],
+    [$.property_expression, $._postfix_operand, $._continuation_operand],
+    [$.call_statement, $._postfix_operand],
+    [$._expression_statement, $._postfix_operand],
+    [$.preproc_conditional_expression_tail, $._nested_tail],
+    [$._attribute_argument, $._postfix_operand],
+    [$._attribute_argument, $._literal_value],
+    [$._operand_arm, $._expression],
+    [$._assign_target, $._continuation_operand],
+    [$._postfix_operand, $._single_pattern, $._continuation_operand],
+    [$.call_statement, $._postfix_operand, $._single_pattern, $._continuation_operand],
+    [$._expression_statement, $._postfix_operand, $._single_pattern, $._continuation_operand],
+    [$.call_statement, $._single_pattern],
+    [$._expression_statement, $._single_pattern],
+    // A binary property value before `#if`: property_expression (a B11 arm
+    // value) vs `_continuation_operand` (an operand-group arm or a tail root).
+    [$.property_expression, $._continuation_operand],
+    // Leading prefixes (spec 6.3): after `prefix+ _continuation_operand • #if`
+    // the root's own tail vs a ternary-condition tail (the root fork of Phase A,
+    // reached through the leading arm), at each root kind; and an operand
+    // group arm or prefix arm opening with prefixes vs a list item.
+    [$._ternary_condition, $._ternary_else],
+    [$._ternary_condition, $._argument_expression, $._region_root],
+    [$._range_right, $._ternary_condition],
+    [$._operand_arm, $._argument_expression],
+    [$._ternary_condition, $._region_root_condition],
+    [$.assignment_statement, $._ternary_condition],
+    [$._ternary_condition, $._argument_expression],
+    [$._ternary_condition, $._region_root_left, $._region_root_list_element],
+    [$._operand_arm, $._dangling_operand, $._expression, $._ternary_condition],
+    // A prefixed case pattern (`_prefixed_pattern`) vs the same atom as an
+    // operand before a group (a tail, a pattern group).
+    [$._prefixed_pattern, $._continuation_operand],
+    // A prefixed property value (property_expression's leading arm) before
+    // `#if`, vs a ternary-condition tail; inside a whole-value arm, vs an
+    // operand-group or prefix arm.
+    [$.property_expression, $._ternary_condition],
+    [$.property_expression, $._operand_arm],
+    [$.property_expression, $._operand_arm, $._dangling_operand, $._ternary_condition],
+    // A nested tail in an arm that is an operand-group arm or a prefix arm
+    // until the arm's end shows a dangling operator.
+    [$._tail_item, $._dangling_tail_item],
+    // A typed right that is an operand group: `in #if X [1] • in` (typed
+    // prefix arm) vs `[1] in ...` inside a general arm.
+    [$._in_dangling_operand, $._continuation_operand],
     // B7b-1 var_names (Task 11): a variable declaration may now START with a #if
     // group (`#if X A #else B #endif , C: T;`, preproc_conditional_var_names), so
     // at a declaration start the same `#if` also opens the conditional of the
@@ -634,22 +743,18 @@ module.exports = grammar({
     // continue the right-hand side (preproc_conditional_expression_tail) or end the
     // assignment and open a preproc_conditional_statement. Only the arm content
     // decides, so it stays a GLR fork; static precedence would commit first (see
-    // _expression_continuation's comment for what that did).
-    [$.assignment_statement],
+    // _expression_continuation's comment for what that did). Since B7b-2 the
+    // fork is `[assignment_statement, _expression]` (top of this array).
     [$.preproc_conditional, $.preproc_conditional_layout],
     [$.preproc_conditional, $.preproc_conditional_layout, $.preproc_conditional_layout_mixed],
     [$.preproc_conditional, $.preproc_conditional_layout_mixed],
     [$.preproc_conditional_layout, $.preproc_conditional_layout_mixed],
     [$.preproc_conditional, $.preproc_conditional_actions],
-    // A `#if` after an argument expression can open an expression CONTINUATION
-    // (`f(1 #if X + 2 #endif )`) or a statement-level conditional that merely
-    // follows. The discriminator is past the condition, so GLR must explore both.
-    [$._preproc_call_prefix, $._argument_expression],
     // After an argument, a `#if` either CONTINUES it (preproc_conditional_expression_tail,
     // branches open with an operator) or supplies further arguments
     // (preproc_conditional_arguments, branches open with `,` or an argument).
-    // Decided past the condition, so GLR explores both.
-    [$._argument_expression],
+    // Decided past the condition, so GLR explores both. Since B7b-2 the fork is
+    // `[_expression, _argument_expression]` (top of this array).
     // A bodiless key header before a directive: a complete key_declaration, or
     // the header half of a preproc_split_key. Only the `{` after #endif decides.
     [$.preproc_split_key, $.key_declaration],
@@ -691,7 +796,7 @@ module.exports = grammar({
      $.preproc_split_if_then_begin_else_shared, $.preproc_split_if_begin_else,
      $._preproc_end_branch, $._open_branch, $.preproc_split_else_begin_over_endif],
     [$.filter_value, $._literal_value],
-    [$.filter_value, $._expression],
+    [$.filter_value, $._continuation_operand],
     [$._body_element, $._action_element],
     [$._body_element, $._layout_element],
     [$.modify_modification, $.modify_action_modification],
@@ -730,9 +835,9 @@ module.exports = grammar({
     // value-start heads do not use _identifier_or_quoted. B5b: link_value left
     // the generic value start (it is keyed), and tree-sitter then reported
     // [_implementation_head, _plain_name] unnecessary, so it is gone.
-    [$._expression, $._plain_name],
+    [$._continuation_operand, $._plain_name],
     [$._plain_name, $._identifier_or_quoted],
-    [$._implementation_head, $._expression, $._plain_name],
+    [$._implementation_head, $._continuation_operand, $._plain_name],
     // [preproc_conditional_link_values, preproc_conditional_permissions] stood here
     // (a link value starting with `table` against `table X = RIMD`). Gone in B5b: a
     // link list is reachable only under a keyed link name, a permission list never is.
@@ -772,7 +877,7 @@ module.exports = grammar({
     [$._property_value, $._property_value_with_split],
     [$._property_value, $._property_value_with_split, $.option_member],
     [$._property_value, $._literal_value],
-    [$._property_value, $.option_member, $._expression],
+    [$._property_value, $.option_member, $._continuation_operand],
     [$._property_value, $.option_member, $._literal_value],
     // B11: a `#if` at a value site, or nested in a slot, is a directive-only empty group
     // (_empty_value_conditional, a decoration) until some arm holds a value or a `;`;
@@ -2057,20 +2162,34 @@ module.exports = grammar({
       $.preproc_conditional_expression_tail
     ),
 
-    property_expression: $ => prec(-2, choice(
-      $.call_expression,
-      $.member_expression,
-      $.qualified_enum_value,
-      $.database_reference,
-      $.unary_expression,
+    // B7b-2 Phase C (execution amendments Task 10): the four binary rules are
+    // outside the prec(-2). In a whole-value #if arm (`Visible = #if X A and B
+    // #else C #endif ;`) `A and B • #else` reduces to property_expression (the
+    // B11 arm) or to `_continuation_operand` (an operand-group arm); at -2 the
+    // operand group won statically and died at `;`, so the value ERRORed. At 0
+    // the two are a declared fork ([property_expression,
+    // _continuation_operand]) and the reading that completes wins. Four
+    // corpora byte-identical.
+    property_expression: $ => choice(
+      prec(-2, choice(
+        $.call_expression,
+        $.member_expression,
+        $.qualified_enum_value,
+        $.database_reference,
+        $.unary_expression,
+        $.ternary_expression,         // DataCaptionExpression = Cond ? A : B
+        $.parenthesized_expression,
+        $.subscript_expression,
+      )),
       $.additive_expression,
       $.multiplicative_expression,
       $.comparison_expression,
       $.logical_expression,
-      $.ternary_expression,         // DataCaptionExpression = Cond ? A : B
-      $.parenthesized_expression,
-      $.subscript_expression,
-    )),
+      // B7b-2 Phase C (spec 6.3 `first`): leading operand prefixes at a value
+      // start, `Visible = #if X Ok and #endif true and Ok;`, unfielded beside
+      // the value's expression as at a region root.
+      seq(repeat1($.preproc_operand_prefix), $._continuation_operand),
+    ),
 
     // The two spellings are hidden token rules rather than inline kw() so that
     // the `reserved` block at the top can name them. `boolean` is still a
@@ -2945,8 +3064,12 @@ module.exports = grammar({
       $.quoted_identifier,
       $.string_literal,
       $.integer,             // Numeric option members (ValuesAllowed = 0, None, Partial)
-      alias($._negative_integer, $.integer),  // `-1` as one signed literal (issue #23)
-      seq('-', $.integer),   // `- 1` with whitespace, as before
+      // A signed member loses every GLR fork (prec.dynamic(-2), like
+      // unary_expression): after an operand group, `G - 1` / `G -1` is the
+      // additive (group -1) and not a comma-less group-then-member reading
+      // (0 - 2) (B7b-2 Task 10 fix round 3). Unforked parses ignore it.
+      prec.dynamic(-2, alias($._negative_integer, $.integer)),  // `-1` as one signed literal (issue #23)
+      prec.dynamic(-2, seq('-', $.integer)),   // `- 1` with whitespace, as before
       $.keyword_identifier,  // System, Action, etc.
       // Not keyword_as_identifier: option_member heads a value (see
       // _plain_name). Only the two words whose tokens are live there anyway.
@@ -5175,7 +5298,7 @@ module.exports = grammar({
     // If-then header (condition only, no body) — used in preproc split if statements
     _preproc_if_header: $ => seq(
       $.if_keyword,
-      field('condition', $._expression),
+      $._region_root_condition,
       $.then_keyword,
     ),
 
@@ -5277,7 +5400,7 @@ module.exports = grammar({
     // Ends at the hard `else`, so it is a complete unit, not an open prefix.
     _preproc_if_then_else_head: $ => seq(
       $.if_keyword,
-      field('condition', $._expression),
+      $._region_root_condition,
       $.then_keyword,
       $._then_branch,
       $.else_keyword,
@@ -5304,7 +5427,7 @@ module.exports = grammar({
       $.preproc_if,
       repeat($._statement),           // allow preamble statements before if
       $.if_keyword,
-      field('condition', $._expression),
+      $._region_root_condition,
       $.then_keyword,
       $._preproc_begin_body_to_endif,
     ),
@@ -5371,14 +5494,14 @@ module.exports = grammar({
       $.preproc_if,
       repeat($._statement),
       $.if_keyword,
-      field('condition', $._expression),
+      $._region_root_condition,
       $.then_keyword,
       $.begin_keyword,
       repeat($._statement),
       $.preproc_else,
       repeat($._statement),
       $.if_keyword,
-      field('condition', $._expression),
+      $._region_root_condition,
       $.then_keyword,
       // Was `$.preproc_split_begin, $.preproc_endif` — so the #else branch could
       // open the block but contribute NOTHING to it. Real code contributes:
@@ -5403,14 +5526,14 @@ module.exports = grammar({
       $.preproc_if,
       repeat($._statement),              // optional preamble in #if branch
       $.if_keyword,
-      field('condition', $._expression),
+      $._region_root_condition,
       $.then_keyword,
       $.begin_keyword,
       repeat($._statement),              // extra stmts in #if branch after begin
       $.preproc_else,
       repeat($._statement),              // optional preamble in #else branch
       $.if_keyword,
-      field('condition', $._expression),
+      $._region_root_condition,
       $.then_keyword,
       $.preproc_endif,
       repeat($._statement),              // shared statements after #endif
@@ -5445,8 +5568,9 @@ module.exports = grammar({
         $.subscript_expression,
       ),
       '(',
-      $._expression,
-      repeat(seq(',', $._expression)),
+      // B7b-2 Phase B: every argument is a region root (split-call, spec 5.1).
+      $._region_root,
+      repeat(seq(',', $._region_root)),
       ','  // trailing comma leads into shared args
     ),
 
@@ -5685,8 +5809,8 @@ module.exports = grammar({
     ),
 
     // Parenless no-arg call (`Initialize`): a bare name in statement position
-    // (B7b-3 spec 3.1). It owns no ';' (the host route does); its prec(-1) is
-    // `_expression_statement`'s (see below), and it is reached only through
+    // (B7b-3 spec 3.1). It owns no ';' (the host route does) and carries no
+    // precedence since B7b-2 (below); it is reached only through
     // `_expression_statement`, whose `code_names` reserved set it inherits. `Foo()` stays a
     // `call_expression` and `Rec.Find;` a `member_expression`. The third arm:
     // `table`/`order` are live keyword tokens at statement start, so a parenless
@@ -5694,18 +5818,28 @@ module.exports = grammar({
     // Accepted trade-off: an identifier rescued by error recovery in statement
     // position may now become a call_statement; it sits in a tree with errors.
     //
-    // prec(-1) is `_expression_statement`'s, moved down to the reduction that now
-    // competes with `_expression` (`begin X • -`, `X • [`): before B7b-3 that
-    // reduction was `identifier -> _expression_statement` and carried the -1; now
-    // it is `identifier -> call_statement`, and without it generate reports an
+    // Before B7b-2: a prec(-1) here was `_expression_statement`'s, moved down to the
+    // reduction that competed with `_expression` (`begin X • -`, `X • [`): before B7b-3 that
+    // reduction was `identifier -> _expression_statement` and carried the -1; then
+    // it was `identifier -> call_statement`, and without it generate reported an
     // unresolved conflict between `call_statement` and `_expression`. A declared
     // conflict instead would re-open the GLR fork B6 measured (`X[1] := 2;` read as
     // `X` plus a list-literal statement).
-    call_statement: $ => prec(-1, field('function', choice(
+    //
+    // B7b-2 Phase C (spec execution amendments, Task 3 item 3, user-approved
+    // deviation): no prec(-1) any more. At a statement start `#if X Foo #endif`
+    // the -1 lost statically to an operand-group arm's reduction (0), so every
+    // bare call alone in a statement-group arm ERRORed. Its competitors are
+    // removed instead: `assignment_statement.left` is `_assign_target` and
+    // `member_expression`/`subscript_expression.object` are `_postfix_operand`,
+    // so no statement starts with `[`, `-`, a literal or a binary, and
+    // `X • [` / `X • -` have no second statement reading. Declared:
+    // [call_statement, _postfix_operand] and its case-pattern supersets.
+    call_statement: $ => field('function', choice(
       $.identifier,
       $.quoted_identifier,
       alias($._value_start_keyword_name, $.identifier),   // Order / Table (deferred item 40)
-    ))),
+    )),
 
     // A statement expression is an INVOCATION and nothing else (roadmap B6, spec
     // docs/superpowers/specs/2026-10-06-expression-statement-narrowing-design.md).
@@ -5727,29 +5861,96 @@ module.exports = grammar({
     // BC.History fell to 35.7% / 33.3%. De-inlined, BC.History, DC and BC28.1 are
     // byte-identical and BCApps differs only in two files that already hold an ERROR.
     //
-    // prec(-1): at `begin X • -` the statement reduction and the `_expression` one
-    // compete; no statement can be followed by an operator, so the expression wins.
-    // It also keeps a subscript target together. Statements need no separator and a
-    // list literal can start one, so at `X • [` GLR otherwise keeps `X` plus a
-    // `[1] := 2;` statement instead of `X[1] := 2;`. Measured without it (docs/b6-audit.md):
-    // 381 / 10 / 405 / 979 files change in BC.History / DC / BC28.1 / BCApps.
+    // Before B7b-2, a prec(-1) here decided `begin X • -`, where the statement
+    // reduction and the `_expression` one competed; no statement can be followed by
+    // an operator, so the expression won. It also kept a subscript target together:
+    // statements need no separator and a list literal could start one, so at `X • [`
+    // GLR otherwise kept `X` plus a `[1] := 2;` statement instead of `X[1] := 2;`.
+    // Measured without it then (docs/b6-audit.md): 381 / 10 / 405 / 979 files changed
+    // in BC.History / DC / BC28.1 / BCApps.
     // A bare name is a `call_statement` (B7b-3), which carries the
     // `_value_start_keyword_name` arm.
-    _expression_statement: $ => prec(-1, reserved('code_names', choice(
+    //
+    // B7b-2 Phase C: prec(-1) removed with call_statement's (see there).
+    _expression_statement: $ => reserved('code_names', choice(
       $.call_expression,
       $.member_expression,
       $.call_statement,
-    ))),
+    )),
+
+    // B7b-2 Phase C (spec 3.4, execution amendments Task 3 item 3): an
+    // assignment target is a postfix-safe atom or a receiver group; no binary,
+    // unary, literal, list or ternary left (all statically dead in base), so
+    // no statement can start with `[`, `-` or a literal.
+    _assign_target: $ => reserved('code_names', choice(
+      $.identifier,
+      $.quoted_identifier,
+      alias($._value_start_keyword_name, $.identifier),
+      alias($.continue_as_identifier, $.identifier),
+      $.keyword_identifier,
+      $.member_expression,
+      $.subscript_expression,
+      $.call_expression,
+      $.qualified_enum_value,
+      $.database_reference,
+      $.parenthesized_expression,
+      alias($._receiver_group, $.preproc_conditional_operand),
+    )),
+
+    // B7b-2 Phase C (spec 3.4 receiver restriction): what a member or
+    // subscript object may be. Binaries, unaries and ternaries were statically
+    // dead there (postfix binds tighter), so this removes dead derivations
+    // only. An operand group in a receiver position holds postfix-safe atoms
+    // (`#if X R #else S #endif .Count()`); an arm with a binary or unary top
+    // there would cross the boundary (`#if X a + b #endif .Trim()`), deferred.
+    _postfix_operand: $ => reserved('code_names', choice(
+      $.qualified_enum_value,
+      $.database_reference,
+      $.call_expression,
+      $.member_expression,
+      $.subscript_expression,
+      $.identifier,
+      $.quoted_identifier,
+      $._literal_value,
+      $.parenthesized_expression,
+      $.keyword_identifier,
+      alias($._value_start_keyword_name, $.identifier),
+      alias($.continue_as_identifier, $.identifier),
+      alias($._receiver_group, $.preproc_conditional_operand),
+    )),
+
+    // The receiver variant of preproc_conditional_operand (same visible type,
+    // field `operand` on each arm): arms are postfix-safe atoms, no tail items.
+    _receiver_group: $ => prec.dynamic(-1, seq(
+      $.preproc_if,
+      field('operand', $._postfix_operand),
+      repeat(seq($.preproc_elif, field('operand', $._postfix_operand))),
+      optional(seq($.preproc_else, field('operand', $._postfix_operand))),
+      $.preproc_endif,
+    )),
 
     empty_statement: $ => ';',
 
     // --- Assignment ---
 
+    // B7b-2 (spec 5.2 root rule, approved deviation from 5.1): the tail-bearing
+    // production takes `_continuation_operand`, so a ternary right never
+    // carries a host-anchored tail. prec.dynamic(11) inside the rule's 10 (a
+    // nested prec.dynamic keeps the larger absolute value) makes the tail beat
+    // a torn statement group: `i2 := i #if X as IFoo #endif;` (spec 5.4 row 2).
+    //
+    // The left is a `_continuation_operand` (execution amendments Task 4; spike
+    // v4's form, narrowed to `_assign_target` in Phase C). A ternary or
+    // assignment-expression left was dead in base (`c ? a : b := 1`), and with
+    // `_expression` here the ternary-condition root's `#if` shift reached every
+    // statement start and beat call_statement's prec(-1) statically: a bare
+    // call before a `;` group in a case branch ERRORed (b7b3_case_separator).
+    //
+    // Phase C: the left is `_assign_target` (see there).
     assignment_statement: $ => prec.dynamic(10, seq(
-      field('left', $._expression),
+      field('left', $._assign_target),
       field('operator', $.assignment_operator),
-      field('right', $._expression),
-      optional($.preproc_conditional_expression_tail)
+      contSlot($, $._expression, 'right', 11),
     )),
 
     // An expression continued across a #if boundary. The tail absorbs the
@@ -5764,22 +5965,106 @@ module.exports = grammar({
     // so after a chosen arm the children still read `operator operand ...`.
     // The arms are a hidden COMPLETE unit ending at #endif
     // (docs/state-reduction-method.md §2): +103 states, where the same arms
-    // spelled inline in this seq cost +260. No conflict is declared.
-    preproc_conditional_expression_tail: $ => prec.right(choice(
+    // spelled inline in this seq cost +260.
+    //
+    // B7b-2 Phase A (spec 5.1, execution amendments item 2): the tail is
+    // recursive. An arm holds `_tail_item`s, each a continuation or a NESTED
+    // tail; a ROOT tail's trail is `cont* [tail]`, so a consecutive group is
+    // the last child of the group before it (`r := 1 #if X + 2 #endif #if Y
+    // + 3 #endif;` gives tail1 holding tail2), while inside an arm two groups
+    // are siblings (a nested tail has no trail: what follows its #endif
+    // belongs to the arm). No prec.right: with it `#if` after a root tail's
+    // #endif was a static shift into a consecutive tail, so `Foo(1 #if X + 2
+    // #endif #if Y , 3 #endif)` read both groups as comma-less argument arms.
+    // That `#if` is a declared fork ([preproc_conditional_expression_tail]);
+    // the consecutive step's prec.dynamic(1) makes tail2-inside-tail1 beat
+    // tail1 followed by a comma-less argument group (spec 5.4 row 3b).
+    preproc_conditional_expression_tail: $ => choice(
       seq(
-        $.preproc_if,
-        repeat1($._expression_continuation),
-        repeat(seq($.preproc_elif, repeat1($._expression_continuation))),
-        optional(seq($.preproc_else, repeat1($._expression_continuation))),
-        $.preproc_endif,
-        repeat($._expression_continuation)
+        $._tail_group,
+        repeat($._expression_continuation),
+        optional(prec.dynamic(1, $.preproc_conditional_expression_tail)),
       ),
       seq(
         $._preproc_operator_arms,
-        field('operand', $._expression),
-        repeat($._expression_continuation)
-      )
+        field('operand', $._continuation_operand),
+        repeat($._expression_continuation),
+        optional(prec.dynamic(1, $.preproc_conditional_expression_tail)),
+      ),
+      // B7b-2 Phase C (deferred-work item 51 shape 1; the type-test op-only
+      // witnesses): the B3 form with keyword operators, whose operand after
+      // #endif is typed as the keyword's right side: `B := Ok #if X in #else in
+      // #endif [true];`, `I2 := I #if X as #endif IFoo as IFoo;`.
+      seq(
+        $._typed_operator_arms,
+        choice(field('operand', $.list_literal), field('operand', $._type_right)),
+        repeat($._expression_continuation),
+        optional(prec.dynamic(1, $.preproc_conditional_expression_tail)),
+      ),
+    ),
+
+    // One keyword per arm. Over-accepts a mixed `#if X in #else as #endif`
+    // (the operand kind fits one of them); alc's verdict decides validity.
+    _typed_operator_arms: $ => seq(
+      $.preproc_if,
+      field('operator', $._typed_operator),
+      repeat(seq($.preproc_elif, field('operator', $._typed_operator))),
+      optional(seq($.preproc_else, field('operator', $._typed_operator))),
+      $.preproc_endif
+    ),
+
+    _typed_operator: $ => choice($.in_keyword, $.is_keyword, $.as_keyword),
+
+    _tail_group: $ => seq(
+      $.preproc_if,
+      repeat1($._tail_item),
+      repeat(seq($.preproc_elif, repeat1($._tail_item))),
+      optional(seq($.preproc_else, repeat1($._tail_item))),
+      $.preproc_endif,
+    ),
+
+    // A tail nested in an arm: no trail (spec 5.1 amendment).
+    //
+    // B7b-2 Phase C (Task 9 carry, SILENT): prec.dynamic(1), as a root tail's
+    // own +1. In `Foo(1 #if T + 2 #if X +2 #endif #if Y +3 #endif #endif, 2)`
+    // the right reading (a root tail whose arm holds `+ 2` and two nested
+    // tails, +1) lost to an argument group whose comma-less arm is a unary
+    // `+2` with a root tail and a consecutive tail (+1 +1). With +1 per nested
+    // tail the right reading scores 3 against 2.
+    _nested_tail: $ => prec.dynamic(1, choice(
+      $._tail_group,
+      seq($._preproc_operator_arms, field('operand', $._continuation_operand)),
     )),
+
+    _tail_item: $ => choice(
+      $._expression_continuation,
+      alias($._nested_tail, $.preproc_conditional_expression_tail),
+    ),
+
+    // B7b-2 Phase C (spec 6.1): an operand group stands where one operand
+    // stands, `r := 1 + #if X 2 #else 3 #endif;`. Each arm is one
+    // `_continuation_operand` (no ternary: spec 3.4) and its tail items.
+    // Transparent (spec 3): `2 * #if X 3 + 4 #else 5 #endif` gives
+    // `multiplicative_expression right: (preproc_conditional_operand ...)`,
+    // which is no claim that `3 + 4` is grouped. Placement A (spec 6.3): one
+    // alternative of `_continuation_operand`, so it reaches every operand
+    // position at once. prec.dynamic(-1): alone in a list it loses to the
+    // list's own group (`Foo(#if X 1 #else 2 #endif)` stays
+    // preproc_conditional_arguments, row P').
+    preproc_conditional_operand: $ => prec.dynamic(-1, seq(
+      $.preproc_if,
+      $._operand_arm,
+      repeat(seq($.preproc_elif, $._operand_arm)),
+      optional(seq($.preproc_else, $._operand_arm)),
+      $.preproc_endif,
+    )),
+
+    // An arm may start with operand prefixes (spec 6.3, as a region start).
+    _operand_arm: $ => seq(
+      repeat($.preproc_operand_prefix),
+      field('operand', $._continuation_operand),
+      repeat($._tail_item),
+    ),
 
     _preproc_operator_arms: $ => seq(
       $.preproc_if,
@@ -5804,9 +6089,26 @@ module.exports = grammar({
     // with no ERROR node anywhere. Issue #24 filed this exact input as its
     // passing control case, which is how a clean error count reads when the
     // tree is wrong.
-    _expression_continuation: $ => seq(
-      field('operator', $._continuation_operator),
-      field('operand', $._expression)
+    //
+    // B7b-2 (spec 5.3): `in`, `is`, `as` continue a tail too, each with the
+    // typed right its expression takes (a list; a type), so `i2 := i #if X as
+    // IFoo #endif;` is a tail with `operator: (as_keyword)` instead of a
+    // statement group of two parenless calls (item 41). They are arms here,
+    // not members of `_continuation_operator`, because their operand is typed:
+    // the B3 operator-only form and the generic prefix arm keep the untyped
+    // operator set (scope decision, execution amendments Task 4).
+    //
+    // B7b-2 Phase C (spec 6.3): operand prefixes may stand between a
+    // continuation's operator and its operand, as in a binary rule
+    // (`1 #if T + #if X 2 + #endif 2 #endif`).
+    _expression_continuation: $ => choice(
+      seq(
+        field('operator', $._continuation_operator),
+        repeat($.preproc_operand_prefix),
+        field('operand', $._continuation_operand)
+      ),
+      seq(field('operator', $.in_keyword), field('operand', $.list_literal)),
+      seq(field('operator', choice($.is_keyword, $.as_keyword)), field('operand', $._type_right)),
     ),
 
     // The MIRROR of preproc_conditional_expression_tail: there the directive
@@ -5839,10 +6141,53 @@ module.exports = grammar({
       $.preproc_endif
     ),
 
+    // B7b-2 (spec 5.1 fragment site): the arm's operand may carry tail items,
+    // `a + #if X b #if Y + c #endif + #endif d`; they belong to the enclosing
+    // region (3.1). `_continuation_operand`, not `_expression` (amendment item
+    // 5): the `_expression -> _continuation_operand` reduction had to precede
+    // the operator and lost statically to the binary shift.
+    //
+    // B7b-2 Phase C (spec 6.3): an arm may start with prefixes of its own
+    // (`1 + #if T #if X 3 + #endif 2 + #endif 2`).
+    //
+    // The arm's tail items are `_dangling_tail_item`s (B7b-2 Phase C, the
+    // chain and op-only witnesses): an item whose operand ends the arm is
+    // followed by the arm's DANGLING operator, `1 + #if T 3 #if X + #endif 2 +
+    // #endif 2`. With `_tail_item` the shift of that operator into a binary
+    // (`2 + ...`, prec 6-7) beat the item's reduction (0) statically, and the
+    // arm ERRORed at `#endif`. These items' operands are prec(10): an item
+    // reduces before any binary operator, so the operator after it is the next
+    // item's or the dangling one (both shifts, one state). Transparent (spec
+    // 3.2): `* 4` after a group is an item of its own instead of extending the
+    // item before it.
     _dangling_operand: $ => seq(
-      field('operand', $._expression),
-      field('operator', $._continuation_operator)
+      repeat($.preproc_operand_prefix),
+      field('operand', $._continuation_operand),
+      repeat($._dangling_tail_item),
+      // `in` may be the dangling operator (deferred-work item 51 shape 2,
+      // `Ok and #if X I in #else J in #endif [1]`): the list after #endif is a
+      // `_continuation_operand` like any right.
+      field('operator', choice($._continuation_operator, $.in_keyword))
     ),
+
+    _dangling_tail_item: $ => choice(
+      seq(
+        field('operator', $._continuation_operator),
+        repeat($.preproc_operand_prefix),
+        field('operand', prec(10, $._continuation_operand)),
+      ),
+      seq(field('operator', $.in_keyword), field('operand', $.list_literal)),
+      seq(field('operator', choice($.is_keyword, $.as_keyword)), field('operand', $._type_right)),
+      alias($._nested_tail, $.preproc_conditional_expression_tail),
+      alias($._dangling_b3_tail, $.preproc_conditional_expression_tail),
+    ),
+
+    // The B3 form with an item-like operand (wins statically over _nested_tail's
+    // B3 form, whose reduction is at 0, wherever both apply).
+    _dangling_b3_tail: $ => prec.dynamic(1, seq(
+      $._preproc_operator_arms,
+      field('operand', prec(10, $._continuation_operand)),
+    )),
 
     // Every binary operator that can carry an expression across a directive,
     // in either direction — dangling before the `#if` (_dangling_operand) or
@@ -5857,8 +6202,10 @@ module.exports = grammar({
       $.comparison_operator
     ),
 
+    // B7b-2 Phase A: left is a `_continuation_operand`, as assignment_statement's
+    // (a case-group arm atom before `:=` had two reductions otherwise).
     assignment_expression: $ => prec.dynamic(1, prec.right(seq(
-      field('left', $._expression),
+      field('left', $._continuation_operand),
       field('operator', $.assignment_operator),
       field('right', $._expression)
     ))),
@@ -5964,11 +6311,10 @@ module.exports = grammar({
     // else binds to the NEAREST unmatched if".
     if_statement: $ => prec.right(prec.dynamic(20, seq(
       $.if_keyword,
-      field('condition', $._expression),
-      // Same shape as the argument list: a plain optional plus a declared
-      // conflict, never prec.right. The competing reading here is
-      // `preproc_split_if_statement`, which parses `#if` inside an if HEADER.
-      optional($.preproc_conditional_expression_tail),
+      // A region root (contSlot) plus a declared conflict, never prec.right.
+      // The competing reading here is `preproc_split_if_statement`, which
+      // parses `#if` inside an if HEADER.
+      $._region_root_condition,
       $.then_keyword,
       choice(
         seq(
@@ -5995,7 +6341,10 @@ module.exports = grammar({
     // else arm carries prec.dynamic(20) to win the tie that remains.
     _if_statement_no_else: $ => prec.dynamic(10, seq(
       $.if_keyword,
-      field('condition', $._expression),
+      // The same region root as if_statement's: with a plain field here, every
+      // `if C • then` in a case branch was a declared reduce/reduce fork
+      // between the two if rules (B7b-2 Task 7).
+      $._region_root_condition,
       $.then_keyword,
       $._then_branch,
     )),
@@ -6034,7 +6383,7 @@ module.exports = grammar({
 
     case_statement: $ => prec(2, seq(
       $.case_keyword,
-      field('expression', $._expression),
+      $._region_root_expression,
       $.of_keyword,
       optional(field('body', $.case_body)),
       optional($.case_else_branch),
@@ -6078,7 +6427,7 @@ module.exports = grammar({
     // refusal when `end;` is followed directly by a directive.
     preproc_split_case_statement_end: $ => prec(25, seq(
       $.case_keyword,
-      field('expression', $._expression),
+      $._region_root_expression,
       $.of_keyword,
       optional(field('body', $.case_body)),
       $._case_pattern,
@@ -6288,11 +6637,48 @@ module.exports = grammar({
       $._case_pattern,
     ),
 
-    _case_pattern_run: $ => prec.right(seq(
-      field('pattern', $._single_pattern),
-      repeat(seq(',', field('pattern', $._single_pattern))),
+    // B7b-2 Phase C (execution amendments, Task 3 item 4): prec.right on the
+    // repeat only. On the whole rule, once an operand group may start a
+    // pattern, `p , • #if` was a static shift into it and `DATABASE::"A", #if
+    // ... DATABASE::"B", #endif` ERRORed. Declared: [_case_pattern_run].
+    //
+    // A pattern may open with operand prefixes (spec 6.3 `first`, spec 6.5: the
+    // shared rules reach the case hosts), `case Ok of #if X Ok and #endif true
+    // and Ok: ...`; unfielded children of the host, as at a region root. After
+    // a prefix the pattern is a `_prefixed_pattern`, `_single_pattern` without
+    // the range: a range's ends are their own roots, so a prefix before a
+    // range's left end belongs to `_region_root_left`'s leading arm (one
+    // derivation, not two).
+    _case_pattern_run: $ => seq(
+      $._case_pattern_item,
+      prec.right(repeat(seq(',', $._case_pattern_item))),
       optional(','),
-    )),
+    ),
+
+    _case_pattern_item: $ => choice(
+      field('pattern', $._single_pattern),
+      seq(repeat1($.preproc_operand_prefix), field('pattern', $._prefixed_pattern)),
+    ),
+
+    _prefixed_pattern: $ => choice(
+      $._literal_value,
+      $.qualified_enum_value,
+      $.database_reference,
+      $.call_expression,
+      $.identifier,
+      alias($._value_start_keyword_name, $.identifier),
+      $.quoted_identifier,
+      $.member_expression,
+      $.unary_expression,
+      $.parenthesized_expression,
+      $.keyword_identifier,
+      $.comparison_expression,
+      $.logical_expression,
+      $.additive_expression,
+      $.multiplicative_expression,
+      $.subscript_expression,
+      $.in_expression,
+    ),
 
     // Preprocessor conditional wrapping case pattern entries mid-list
     preproc_conditional_case_patterns: $ => seq(
@@ -6357,13 +6743,12 @@ module.exports = grammar({
         $.member_expression,
       )),
       ':=',
-      field('start', $._expression),
+      $._region_root_start,
       field('direction', choice(
         $.to_keyword,
         $.downto_keyword,
       )),
-      field('end', $._expression),
-      optional($.preproc_conditional_expression_tail),
+      $._region_root_end,
       $.do_keyword,
       $._body_branch
     )),
@@ -6374,7 +6759,7 @@ module.exports = grammar({
       $.foreach_keyword,
       field('variable', choice($.identifier, $.quoted_identifier)),
       $.in_keyword,
-      field('iterable', $._expression),
+      $._region_root_iterable,
       $.do_keyword,
       $._body_branch
     )),
@@ -6383,8 +6768,7 @@ module.exports = grammar({
 
     while_statement: $ => prec.right(seq(
       $.while_keyword,
-      field('condition', $._expression),
-      optional($.preproc_conditional_expression_tail),
+      $._region_root_condition,
       $.do_keyword,
       $._body_branch
     )),
@@ -6395,14 +6779,14 @@ module.exports = grammar({
       $.repeat_keyword,
       optional(field('body', $.statement_block)),
       $.until_keyword,
-      field('condition', $._expression)
+      $._region_root_condition,
     ),
 
     // --- With ---
 
     with_statement: $ => prec.right(seq(
       $.with_keyword,
-      field('record', $._expression),
+      $._region_root_record,
       $.do_keyword,
       $._body_branch
     )),
@@ -6434,10 +6818,7 @@ module.exports = grammar({
         // `_expression_or_split` in the field gives BOTH its children the
         // name, so `return_value` appeared twice on one node -- a field
         // declared multiple:false with two children.
-        optional(seq(
-          field('return_value', $._expression),
-          optional($.preproc_conditional_expression_tail)
-        )),
+        optional($._region_root_return_value),
         ')'
       )),
       prec(13, $.exit_keyword)
@@ -6474,23 +6855,116 @@ module.exports = grammar({
     // In / Is / As expressions — NAMED so their left/operator/right fields stay
     // contained on these nodes instead of bleeding onto every node that holds an
     // _expression (owned-IR consumer request).
+    //
+    // B7b-2 (spec 5.3, 6.2 typed rights): an operand prefix may stand between
+    // the keyword and the typed right, `Ok in #if X [true] in #endif [false]`,
+    // `F as #if X IBar as #endif IFoo` (alc accepts every configuration:
+    // tools/alc_probe/cases/b7b-2/keyword_ops/{in,is,as}-prefix.al). Its arms
+    // hold the right's own kind and a keyword operator, so it is a typed
+    // variant of preproc_operand_prefix (same visible type and fields).
+    //
+    // B7b-2 Phase C (spec 6.2): the typed right may be an operand group,
+    // `B := I in #if X [1, 2] #else [3] #endif;`, `V := F as #if X IFoo #else
+    // IBar #endif;` (alc accepts every configuration:
+    // tools/alc_probe/cases/b7b-2/typed_rights/). For is/as it is a typed
+    // variant (`_type_right`: arms `(type_specification ...)`, aliased to
+    // preproc_conditional_operand, field `operand`), shared with the typed
+    // continuation arms and the typed B3 form; the group stays one atom (spec
+    // 3.1). For `in` it is the general preproc_conditional_operand, whose arms
+    // are list literals for every valid input: an aliased list-literal group
+    // costs +275 states more and passes the state limit (execution amendments
+    // Task 10, user decision).
     in_expression: $ => prec.left(5, seq(
-      field('left', $._expression),
+      field('left', $._continuation_operand),
       field('operator', $.in_keyword),
-      field('right', $.list_literal)
+      optional(alias($._in_operand_prefix, $.preproc_operand_prefix)),
+      field('right', choice($.list_literal, $.preproc_conditional_operand))
     )),
     is_expression: $ => prec.left(5, seq(
-      field('left', $._expression),
+      field('left', $._continuation_operand),
       field('operator', $.is_keyword),
-      field('right', $.type_specification)
+      optional(alias($._type_operand_prefix, $.preproc_operand_prefix)),
+      field('right', $._type_right)
     )),
     as_expression: $ => prec.left(5, seq(
-      field('left', $._expression),
+      field('left', $._continuation_operand),
       field('operator', $.as_keyword),
-      field('right', $.type_specification)
+      optional(alias($._type_operand_prefix, $.preproc_operand_prefix)),
+      field('right', $._type_right)
     )),
 
+    // A type, or an operand group of types (spec 6.2). The arm type is
+    // `_dangling_type`, as in the typed prefix (see there).
+    _type_right: $ => choice(
+      $.type_specification,
+      alias($._type_operand_group, $.preproc_conditional_operand),
+    ),
+
+    _type_operand_group: $ => seq(
+      $.preproc_if,
+      field('operand', alias($._dangling_type, $.type_specification)),
+      repeat(seq($.preproc_elif, field('operand', alias($._dangling_type, $.type_specification)))),
+      optional(seq($.preproc_else, field('operand', alias($._dangling_type, $.type_specification)))),
+      $.preproc_endif,
+    ),
+
+    _in_operand_prefix: $ => seq(
+      $.preproc_if,
+      $._in_dangling_operand,
+      repeat(seq($.preproc_elif, $._in_dangling_operand)),
+      optional(seq($.preproc_else, $._in_dangling_operand)),
+      $.preproc_endif
+    ),
+
+    _in_dangling_operand: $ => seq(
+      field('operand', $.list_literal),
+      field('operator', $.in_keyword)
+    ),
+
+    _type_operand_prefix: $ => seq(
+      $.preproc_if,
+      $._type_dangling_operand,
+      repeat(seq($.preproc_elif, $._type_dangling_operand)),
+      optional(seq($.preproc_else, $._type_dangling_operand)),
+      $.preproc_endif
+    ),
+
+    // The arm's type is a type_specification that cannot reach option_type
+    // (no option, array, List or Dictionary type): an option list may end at
+    // a comma, so with it the dangling `is`/`as` became valid after every
+    // option-list comma, and `Option ...,"IN",IS,IT` (BCApps
+    // GetCoverage.Page.al) lexed `IS` as the keyword and ERRORed. An `is`/`as`
+    // target is an interface or object type; none of the excluded ones is.
+    _type_dangling_operand: $ => seq(
+      field('operand', alias($._dangling_type, $.type_specification)),
+      field('operator', choice($.is_keyword, $.as_keyword))
+    ),
+
+    _dangling_type: $ => choice(
+      prec(1, $.text_type),
+      prec(1, $.code_type),
+      $.record_type,
+      $.dotnet_type,
+      $.object_reference_type,
+      $.basic_type,
+      $.identifier,
+      $.quoted_identifier,
+    ),
+
+    // B7b-2 (spec 5.2, 3.4): an `_expression` that is not a ternary or an
+    // assignment expression. Every operator-adjacent operand takes it (binary
+    // left/right, in/is/as left, unary operand, tail items, prefix arms), so a
+    // ternary can never stand inside a continuation (3.4 ternary crossing) and
+    // the trailing items of a tail cannot reach past a `?`.
     _expression: $ => reserved('code_names', choice(
+      $._continuation_operand,
+      // Ternary expression: condition ? then_value : else_value
+      $.ternary_expression,
+      // Assignment as expression (for asserterror and other contexts)
+      prec.left(1, $.assignment_expression),
+    )),
+
+    _continuation_operand: $ => reserved('code_names', choice(
       // Binary operators
       $.multiplicative_expression,
       $.additive_expression,
@@ -6520,10 +6994,8 @@ module.exports = grammar({
       // stranded parenthesized_expression with no ERROR (issue #22), and
       // `Continue.Field := 1;` was an ERROR outright.
       alias($.continue_as_identifier, $.identifier),
-      // Ternary expression: condition ? then_value : else_value
-      $.ternary_expression,
-      // Assignment as expression (for asserterror and other contexts)
-      prec.left(1, $.assignment_expression),
+      // B7b-2 Phase C (spec 6.1, placement A): an operand group.
+      $.preproc_conditional_operand,
     )),
 
     // Keywords that can appear as identifiers in expressions (e.g., Codeunit.Run())
@@ -6606,28 +7078,51 @@ module.exports = grammar({
     // operand (additive 6, comparison 4, logical 2/3), so 0: a range's operands
     // extend as far as they can, which is what makes `..` outermost.
     range_expression: $ => prec.left(0, seq(
-      field('left', $._expression),
+      $._region_root_left,
       '..',
-      field('right', $._expression)
+      $._range_right,
     )),
+
+    // B7b-2 (spec 5.2, taken into Phase A like _ternary_else): the range's
+    // right end is a region root outside prec.left(0); the plain arm keeps
+    // the range's own reduce.
+    _range_right: $ => choice(
+      prec.left(0, field('right', $._expression)),
+      prec.dynamic(1, seq(field('right', $._continuation_operand), $.preproc_conditional_expression_tail)),
+      leadingPrefixed($, r => field('right', r)),
+    ),
 
     // --- Binary expressions ---
 
+    // B7b-2 (spec 5.2, execution amendments "_continuation_operand mechanism"):
+    // every binary, unary and in/is/as operand is a `_continuation_operand`, an
+    // `_expression` without the ternary and assignment expressions. A ternary
+    // there was statically dead (every operator level outranks the ternary's
+    // 1), so this removes dead derivations only, and keeps a ternary out of
+    // every tail-item state.
     multiplicative_expression: $ => prec.left(7, seq(
-      field('left', $._expression),
+      field('left', $._continuation_operand),
       // alias() pins the anonymous node name so queries keep matching "div"
       // and "mod" whatever the source casing. Without it a bare kw() token is
       // auto-named multiplicative_expression_token1.
       field('operator', choice('*', '/', alias($._div_token, 'div'), alias($._mod_token, 'mod'))),
-      optional($.preproc_operand_prefix),
-      field('right', $._expression)
+      repeat($.preproc_operand_prefix),
+      field('right', $._continuation_operand)
     )),
 
+    // B7b-2 Phase C (spec 3.2 ladder): an operand group is a plain
+    // `_continuation_operand`, so the binaries' STATIC precedence groups it like
+    // any operand, in every position (test/corpus/b7b2_ladder_matrix_test.txt).
+    // The comma-less list readings of spec 5.4 rows 6a, 7, 7' (`Foo(#if X 1
+    // #else 2 #endif + 3)` as a group followed by a signed `+3`) are beaten by
+    // `unary_expression`'s prec.dynamic(-2), not by a bonus on the group: a
+    // positional bonus is summed over the tree and inverted the ladder (Task 10
+    // review I1, fix rounds 1 and 2).
     additive_expression: $ => prec.left(6, seq(
-      field('left', $._expression),
+      field('left', $._continuation_operand),
       field('operator', choice('+', '-')),
-      optional($.preproc_operand_prefix),
-      field('right', $._expression)
+      repeat($.preproc_operand_prefix),
+      field('right', $._continuation_operand)
     )),
 
     // FIXED: an expression continued across a #if boundary. The rule is
@@ -6678,10 +7173,10 @@ module.exports = grammar({
     // of a logical operator, and all three are the `… and X = true` idiom where
     // the two readings happen to agree. That is luck, not safety.
     comparison_expression: $ => prec.left(2, seq(
-      field('left', $._expression),
+      field('left', $._continuation_operand),
       field('operator', $.comparison_operator),
-      optional($.preproc_operand_prefix),
-      field('right', $._expression)
+      repeat($.preproc_operand_prefix),
+      field('right', $._continuation_operand)
     )),
 
     comparison_operator: $ => choice(
@@ -6701,36 +7196,59 @@ module.exports = grammar({
     logical_expression: $ => choice(
       // AND (prec 4) — above OR/XOR, below `in`/`is`/`as` (5)
       prec.left(4, seq(
-        field('left', $._expression),
+        field('left', $._continuation_operand),
         field('operator', alias($._and_token, 'and')),
-        optional($.preproc_operand_prefix),
-        field('right', $._expression)
+        repeat($.preproc_operand_prefix),
+        field('right', $._continuation_operand)
       )),
       // OR (prec 3)
       prec.left(3, seq(
-        field('left', $._expression),
+        field('left', $._continuation_operand),
         field('operator', alias($._or_token, 'or')),
-        optional($.preproc_operand_prefix),
-        field('right', $._expression)
+        repeat($.preproc_operand_prefix),
+        field('right', $._continuation_operand)
       )),
       // XOR (prec 3) — same level as OR, so `a or b xor c` is `(a or b) xor c`
       prec.left(3, seq(
-        field('left', $._expression),
+        field('left', $._continuation_operand),
         field('operator', alias($._xor_token, 'xor')),
-        optional($.preproc_operand_prefix),
-        field('right', $._expression)
+        repeat($.preproc_operand_prefix),
+        field('right', $._continuation_operand)
       )),
     ),
 
     // --- Ternary expression ---
     // condition ? then_value : else_value
+    //
+    // B7b-2 (spec 5.2; taken into Phase A, execution amendments Task 4): the
+    // condition and else parts are region roots through hidden rules, so their
+    // tail step is outside prec.right(1) (inside it the tail shift beat every
+    // reduce at `e • #if` statically, amendment item 1). The assignment,
+    // argument and list roots take `_continuation_operand` in their tail
+    // production, so without these roots a tail after a ternary would have no
+    // derivation at all.
     ternary_expression: $ => prec.right(1, seq(
-      field('condition', $._expression),
+      $._ternary_condition,
       '?',
-      field('then_value', $._expression),
+      $._region_root_then_value,
       ':',
-      field('else_value', $._expression)
+      $._ternary_else,
     )),
+
+    _ternary_condition: $ => choice(
+      field('condition', $._continuation_operand),
+      prec.dynamic(1, seq(field('condition', $._continuation_operand), $.preproc_conditional_expression_tail)),
+      leadingPrefixed($, r => field('condition', r)),
+    ),
+
+    // The plain arm keeps the ternary's own reduce, prec.right(1); the tail
+    // production takes `_continuation_operand`: a nested ternary's own else
+    // carries the tail.
+    _ternary_else: $ => choice(
+      prec.right(1, field('else_value', $._expression)),
+      prec.dynamic(1, seq(field('else_value', $._continuation_operand), $.preproc_conditional_expression_tail)),
+      leadingPrefixed($, r => field('else_value', r)),
+    ),
 
     // --- Unary expression ---
 
@@ -6762,10 +7280,23 @@ module.exports = grammar({
     // The TREE was wrong, not the arithmetic — which is precisely why nothing
     // caught it. `not X * Y` is never valid AL under either grouping, so only
     // the arithmetic unaries reach real code.
-    unary_expression: $ => prec.right(8, seq(
+    //
+    // B7b-2 Phase C (spec 6.3): operand prefixes may stand between the operator
+    // and the operand, `- #if X J + #endif 1` (alc accepts every configuration:
+    // tools/alc_probe/cases/b7b-2/prefixes/unary-operand.al), as in the binary
+    // rules; unfielded, in the unary node's region.
+    //
+    // Task 10 fix round 2 (spec 5.4 rows 6a, 6a-minus, 7, 7'): prec.dynamic(-2)
+    // makes a unary lose every GLR fork against a reading without it. The only
+    // such fork is a comma-less list reading, a group followed by a signed next
+    // item (`Foo(#if X 1 #else 2 #endif + 3)`): operand group -1 beats argument
+    // group 0 + unary -2. Unforked parses (all production code) ignore dynamic
+    // precedence, and two readings with the same unaries tie as before.
+    unary_expression: $ => prec.dynamic(-2, prec.right(8, seq(
       field('operator', choice('+', '-', alias($._not_token, 'not'))),
-      field('operand', $._expression)
-    )),
+      repeat($.preproc_operand_prefix),
+      field('operand', $._continuation_operand)
+    ))),
 
     // --- Postfix expressions ---
 
@@ -6786,6 +7317,10 @@ module.exports = grammar({
         $.qualified_enum_value,
         $.keyword_identifier,     // System(), Dialog(), etc.
         $.subscript_expression,   // X[1]()
+        // B7b-2 spec 3.4 (Task 10 fix round 1, review M4): a receiver group as
+        // the callee, `#if X Foo #else Bar #endif (1)`; arms are postfix-safe
+        // atoms, as at a member object. +57 STATE, +14 LARGE.
+        alias($._receiver_group, $.preproc_conditional_operand),
       ))),
       field('arguments', $.argument_list)
     )),
@@ -6855,14 +7390,40 @@ module.exports = grammar({
       optional(','),
     ),
 
-    _argument_expression: $ => seq(
-      $._expression,
-      optional($.preproc_conditional_expression_tail)
-    ),
+    // B7b-2 (spec 5.2 root rule): the tail-bearing production takes
+    // `_continuation_operand`; prec.dynamic(1) makes the tail beat a comma-less
+    // preproc_conditional_arguments arm, `Foo(1 #if X + 2 #endif)` (spec 5.4
+    // row 3a: fork at `#if`, decided at the merge at `)`).
+    _argument_expression: $ => contSlot($, $._expression),
+
+    // B7b-2 Phase B (spec 5.1 table; execution amendments Task 7): the region
+    // roots, one hidden rule per field (the field propagates to the host, so
+    // the tree is the inline contSlot's). Hidden, not inlined: inlined at the
+    // seven split-if heads alone contSlot cost +1,707 states (+1,104 large),
+    // because every host copied the expression automaton; one shared rule per
+    // field lets the hosts share it (whole Phase B +182 states). The B7a census
+    // expands a `_region_root*` rule into its callers (census.py), so a slot
+    // keeps its key. Hosts: condition = if, the case-branch if, while,
+    // repeat-until and the split-if heads; expression = case and
+    // preproc_split_case_statement_end; unfielded =
+    // parenthesized inner, subscript 2nd+ index, split-call arguments.
+    _region_root: $ => contSlot($, $._expression),
+    _region_root_condition: $ => contSlot($, $._expression, 'condition'),
+    _region_root_expression: $ => contSlot($, $._expression, 'expression'),
+    _region_root_start: $ => contSlot($, $._expression, 'start'),
+    _region_root_end: $ => contSlot($, $._expression, 'end'),
+    _region_root_iterable: $ => contSlot($, $._expression, 'iterable'),
+    _region_root_record: $ => contSlot($, $._expression, 'record'),
+    _region_root_return_value: $ => contSlot($, $._expression, 'return_value'),
+    _region_root_left: $ => contSlot($, $._expression, 'left'),
+    _region_root_then_value: $ => contSlot($, $._expression, 'then_value'),
+    _region_root_index: $ => contSlot($, $._expression, 'index'),
+    _region_root_list_element: $ => contSlot($, $._list_element),
 
     // An expression that may be continued across a #if boundary.
     //
-    // ALL FIVE POSITIONS alc accepts are handled, each pinned by a fixture:
+    // The tail's roots before B7b-2, each pinned by a fixture (B7b-2 adds the
+    // ternary condition / else and range-right roots, spec 5.1; Phase B the rest):
     //
     //   assignment RHS   r := 1 #if X + 2 #endif + 3;
     //   exit value       exit(1 #if X + 2 #endif );
@@ -6897,33 +7458,39 @@ module.exports = grammar({
     // `additive_expression` reopens the `_single_pattern` vs `_expression`
     // conflict that 812ace7 removed. Per-host application avoids the
     // case-pattern position, which is where that ambiguity lives.
-    // prec.right: at the delimiter that ends an expression (a `,`, a `)`, a
-    // `then`), the parser must prefer extending into a tail over reducing --
-    // otherwise the optional creates a reduce/reduce at every list separator.
+    // (The tail rule's own prec.right is gone since B7b-2 Phase A: it made a
+    // consecutive group a static shift; see preproc_conditional_expression_tail.)
     // Comma-separated expression list — a complete unit bounded by the caller's delimiter
+    // B7b-2 Phase B: every argument is a region root (split-call, spec 5.1).
     _expression_list: $ => seq(
-      $._expression,
-      repeat(seq(',', $._expression))
+      $._region_root,
+      repeat(seq(',', $._region_root))
     ),
 
+    // B7b-2 Phase A (execution amendments, Task 4): the object is a
+    // `_continuation_operand`. A ternary or assignment-expression object was
+    // statically dead (postfix 9/11 outranks both), and with `_expression`
+    // here an operand followed by `[` or `.` had two reductions (`_expression`
+    // for the object, `_continuation_operand` ending a tail). Phase C narrows
+    // it further to `_postfix_operand` (approved deviation): the receiver set,
+    // whose operand group holds postfix-safe atoms only (spec 3.4).
     member_expression: $ => prec.left(11, seq(
-      field('object', $._expression),
+      field('object', $._postfix_operand),
       '.',
       field('member', $._identifier_or_quoted)
     )),
 
     subscript_expression: $ => prec.left(9, seq(
-      field('object', $._expression),
+      field('object', $._postfix_operand),
       '[',
-      field('index', $._expression),
-      optional($.preproc_conditional_expression_tail),
-      repeat(seq(',', $._expression)),
+      $._region_root_index,
+      repeat(seq(',', $._region_root)),
       ']'
     )),
 
     parenthesized_expression: $ => seq(
       '(',
-      $._expression,
+      $._region_root,
       ')'
     ),
 
@@ -6935,9 +7502,10 @@ module.exports = grammar({
     list_literal: $ => seq(
       '[',
       optional(seq(
-        $._list_element,
-        optional($.preproc_conditional_expression_tail),
-        repeat(seq(',', $._list_element)),
+        // A region root (contSlot): a ternary or range element has no tail of
+        // its own, the tail attaches to the inner _ternary_else / _range_right.
+        $._region_root_list_element,
+        repeat(seq(',', $._region_root_list_element)),
         // A #if that supplies further ELEMENTS rather than continuing the last
         // expression: `[1 #if X , 2 #endif ]`. Distinct from
         // preproc_conditional_expression_tail, whose branches open with an
@@ -6947,11 +7515,14 @@ module.exports = grammar({
       ']'
     ),
 
+    // B7b-2 Phase C (Task 9 carry): each element is a region root, as the
+    // list's own elements are, so `[1 #if T , 2 #if X + 2 #endif #endif]`
+    // carries its tail beside the element inside the group.
     preproc_conditional_list_elements: $ => seq(
       $.preproc_if,
-      repeat1(seq(',', $._list_element)),
-      repeat(seq($.preproc_elif, repeat1(seq(',', $._list_element)))),
-      optional(seq($.preproc_else, repeat1(seq(',', $._list_element)))),
+      repeat1(seq(',', $._region_root_list_element)),
+      repeat(seq($.preproc_elif, repeat1(seq(',', $._region_root_list_element)))),
+      optional(seq($.preproc_else, repeat1(seq(',', $._region_root_list_element)))),
       $.preproc_endif
     ),
 

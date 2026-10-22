@@ -1,0 +1,30 @@
+================================================================================
+B7b-2 with / first-only: moved from b7_gap_with_test.txt
+--
+B7a GAP representative bnd:with_statement:record:end@statement_block#first-only/operand
+(untrimmed witness: tools/alc_probe/cases/b7-audit/with__first-only__gap.al)
+(manifest row: deferred, owner B7b-2/C). Parses since B7b-2 Phase C (Task 10).
+Source trimmed: the generator's table, var section and helpers are removed.
+================================================================================
+codeunit 50101 P
+{
+    procedure Q()
+    begin
+with
+#if X
+R
+#else
+Recs[1]
+#endif
+ do
+Bar();
+    end;
+}
+--------------------------------------------------------------------------------
+
+(source_file (codeunit_declaration (codeunit_keyword) object_id: (integer) object_name: (identifier) body:
+(declaration_body (procedure (procedure_keyword) name: (identifier) body: (code_block (begin_keyword) body:
+(statement_block (with_statement (with_keyword) record: (preproc_conditional_operand (preproc_if (preproc_open)
+condition: (identifier)) operand: (identifier) (preproc_else) operand: (subscript_expression object: (identifier)
+index: (integer)) (preproc_endif (preproc_close))) (do_keyword) body: (call_expression function: (identifier)
+arguments: (argument_list)))) (end_keyword))))))

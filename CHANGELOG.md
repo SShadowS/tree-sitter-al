@@ -41,6 +41,119 @@ public API — a change to node structure or field names is a **major** bump.
 
 ### Changed
 
+- **An `#if` group may stand anywhere inside an expression (roadmap B7b-2, spec
+  `docs/superpowers/specs/2026-10-20-b7b-2-expression-continuations-design.md` rev 3 with execution amendments).
+  New node type `preproc_conditional_operand`; widened fields; production trees unchanged.** Before, an expression
+  could carry one `#if` tail at nine slots and one operand prefix inside four binary rules; 6,667 of the B7a matrix's
+  7,894 continuation cells were GAP (ERROR) or SILENT (clean, wrong tree). Now:
+  - *Continuations at every expression slot.* Every region root (assignment right, `if`/`while`/`until` conditions,
+    `case` expression, `for` start and end, `exit` value, call arguments, subscript indices, list elements, ternary
+    condition / then / else, parenthesized inner, range ends, `with` record, `foreach` iterable, split-if heads,
+    split-call arguments) takes a `preproc_conditional_expression_tail`.
+  - *Nested and consecutive groups.* A tail arm may hold a nested tail; after `#endif` a root tail takes more
+    continuations and a consecutive tail (its last child); inside an arm consecutive groups are siblings.
+  - *`in`, `is`, `as` continue an expression*, with their typed right (a list, a type) as the operand:
+    `operator: (in_keyword | is_keyword | as_keyword)` in tails and prefixes.
+  - *Operand groups.* `preproc_conditional_operand` stands in place of a whole operand (binary left and right, unary
+    operand, region-root start, the typed right of `is`/`as` with `type_specification` arms, the right of `in`); in a
+    receiver position (member and subscript object, call function, assignment target) its arms are postfix-safe atoms.
+  - *Leading and consecutive prefixes.* `#if X a + #endif b` at a region's start, and several prefixes in a row
+    between a binary's operator and right.
+
+  ```
+  x := 2 * #if X 3 + 4 #else 5 #endif;      (schematic: each directive on its own line)
+    before: ERROR
+    now:    right: (multiplicative_expression left: (integer)
+              right: (preproc_conditional_operand (preproc_if ...) operand: (additive_expression ...)
+                       (preproc_else) operand: (integer) (preproc_endif ...)))
+
+  i2 := i #if X as IFoo #endif;             (deferred-work item 41, now closed)
+    before: right: (identifier), then a sibling
+            (preproc_conditional_statement (call_statement function: (identifier)) (call_statement function: (identifier)))
+    now:    right: (identifier)
+            (preproc_conditional_expression_tail (preproc_if ...) operator: (as_keyword)
+              operand: (type_specification (identifier)) (preproc_endif ...))
+
+  repeat Foo(); until C #if X and (C) #endif;   (deferred-work item 39 shape 1, now closed)
+    before: ERROR
+    now:    (repeat_statement ... condition: (identifier) (preproc_conditional_expression_tail ...))
+  ```
+
+  **The transparent-region contract.** Inside an expression region that contains a tail, prefix or operand group,
+  the nesting of the binary and unary nodes is **not** a grouping claim: a consumer splices the active arm, flattens
+  and regroups by the operator ladder (examples in this entry are written on one line for brevity; in real code each
+  directive stands on its own line). `x := 2 * #if X 3 + 4 #else 5 #endif;` is `(2 * 3) + 4` at X although the tree
+  holds `3 + 4` under the group. Regions without a group keep their trees and claims. Rule, ladder and worked trees:
+  `docs/expression-regions.md` (linked from `docs/traversal.md`). The operand group is an ordinary operand under the
+  binaries' static precedence (no positional dynamic bonus: `2 + g + 1` is `(2 + g) + 1`); a comma-less signed
+  reading (`Foo(#if X 1 #else 2 #endif + 3)` as an argument group and an argument `+3`) loses through a global
+  `prec.dynamic(-2)` on `unary_expression` and on both signed `option_member` alternatives. Any GLR fork whose two
+  readings differ only by a sign now picks the reading without it.
+
+  **Widened and narrowed fields** (`python tools/nodetypes.py diff main`; `tools/check-field-types.py` pins each).
+  Gain `preproc_conditional_operand`: `left`/`right` of the four binary rules, `left`/`right` of `in`/`is`/`as`,
+  `unary_expression.operand`, `assignment_statement.right`, `call_expression.function`, `member_expression.object`,
+  `subscript_expression.object` and `index`, `range_expression.left`/`right`, the ternary parts, and every region
+  root's field (`condition`, `expression`, `start`, `end`, `iterable`, `record`, `return_value`, `source`, the split
+  hosts' `condition`). Gain `preproc_conditional_expression_tail` / `preproc_operand_prefix` children: the region roots'
+  hosts and the argument, list-element and case-pattern groups, `case_branch` and the split case hosts (a leading
+  prefix before a case pattern), and `property_expression` (a prefix or tail beside a property value). New unfielded
+  children (`+ field X.(children)`): `in_expression`, `is_expression` and `as_expression` take
+  `preproc_operand_prefix` (the typed prefix before the right), `unary_expression` takes `preproc_operand_prefix`
+  (between its operator and operand), `range_expression` and `ternary_expression` take
+  `preproc_conditional_expression_tail` and `preproc_operand_prefix` (beside each end or part, which are region
+  roots); the four binaries, `assignment_statement` and `parenthesized_expression` go from one to `multiple` unfielded
+  children. `preproc_conditional_operand` is also a new unfielded child of `argument_list`, `list_literal`,
+  `parenthesized_expression`, `subscript_expression`, `preproc_conditional_arguments`,
+  `preproc_conditional_list_elements`, `preproc_split_call_statement` and `property_expression`, and appears in the
+  `operand` field of the tail and of the prefix. `preproc_conditional_expression_tail.operand` and `.operator`, and
+  `preproc_operand_prefix.operand` and `.operator`, take `type_specification` and the three keyword operators; the
+  tail's two fields become `required: false`. Consumers regroup a region from `docs/expression-regions.md`, which says which region each
+  prefix and tail belongs to. Narrowed: `assignment_statement.left`, `member_expression.object` and
+  `subscript_expression.object` no longer list binaries, unaries, literals, list literals or ternaries;
+  `ternary_expression` and `assignment_expression` are gone from the binary and `in`/`is`/`as` operands,
+  `unary_expression.operand`, `ternary_expression.condition`, and the `operand` of a tail and of a prefix. No valid
+  AL changes its tree; invalid input that main parsed clean now has an error: a list-literal object
+  (`x := [1, 2].Count();`, `x := [1][1];`) and a literal assignment target (`1 := 2;`, `'a' := 2;`; `[1] := 2;`
+  recovers as a subscript with a MISSING name), all of which alc rejects with AL0104.
+
+  **Still ERROR, each a deferred-work item.** The three crossing forms of spec 3.4 (a group before a postfix whose arm
+  is not a postfix-safe atom, a `?`/`:` inside an arm, one group continuing an expression and supplying list items;
+  item 57; a tail before a postfix, `T1 #if X + T2 #endif .ToUpper()`, is one of them), case-pattern slot
+  continuations (item 56), item 51 shape 3, `;` inside continuation arms (item 39 shape 2), a group whose arm is only
+  a unary operator (`I := #if X - #endif 1;`, item 61, ERRORs on main too). Clean but wrong, as on main: list spanning
+  across an `#else`, `Foo(1 #if X + 2 #else , 3 #endif)`, reads `+2` as a second argument (item 57, a SILENT witness).
+  Over-acceptances, classified: `op-only` (157 cells) and an operand group with no `#else` arm in a required operand
+  position (36 cells), item 44; `in`'s right takes a non-list arm, item 58. Known limits: N consecutive groups at a
+  root parse in quadratic time (item 52, longest real run 3), a tail on a nested ternary's condition likewise (item
+  53).
+
+  **Production trees unchanged.** `python -m tools.perf delta` against main: BC.History, DC and BC28.1 0 files
+  changed; BCApps-29.0 1, `ERMPurchaseReportsIII.Codeunit.al`, which already ERRORs and only recovers differently
+  (`tools/perf/delta-reviewed.tsv`). The 3 production operand prefixes and the 1 `preproc_conditional_arguments`
+  site are unchanged.
+
+  **Config oracle.** One region assembler (`tools/config_oracle/lowering/regions.py`) replaces the tail and prefix
+  assemblers: one invocation per region at its root, splice, flatten, compose by the ladder (unary at 7 added to
+  `lowering/expression.py`), validate after composition; a non-alternating argument list whose flat text is one item
+  is a discrepancy, and a non-operator token is never a region atom. It does not check nesting inside a region, by
+  the contract (item 55). Full tier over the four corpora: 14,662 configurations, 0 discrepancies; 7,662 B7a cell
+  configurations moved from cannot-validate to pass.
+
+  **Gates.** B7a matrix: GAP 13,081 -> 8,166, SILENT 396 -> 325, CONSISTENT 6,627 -> 11,357, MIXED 3,981 -> 4,021,
+  UNCHECKED 123 -> 339 (out-of-scope B12 cells that now parse, item 60). `tools/b7_audit/b7b2-manifest.tsv`: 8,310
+  cells, 6,024 admitted, `--final B7b-2/ --require-oracle` 0 problems; b7b1 and b7b3 manifests 0. Ladder fixtures
+  `test/corpus/b7b2_ladder_matrix_test.txt` (21 cases) and `b7b2_ladder_positions_test.txt` (10 cases) pin the
+  grouping with generator-composed trees. Scaling series added for tails, operand groups, nested groups and mixed
+  prefixes.
+
+  **Cost.** STATE_COUNT 23,737 -> 28,742 (+21.1%), LARGE_STATE_COUNT 7,482 -> 10,562, SYMBOL_COUNT 1,279 -> 1,325,
+  declared conflicts 230 -> 272, parser.c 53,974,023 -> 68,647,284 bytes (51.5 -> 65.5 MiB), grammar.js 7,614 -> 8,184
+  lines, `tree-sitter test` 3,429 -> 3,565, `tree-sitter-al.wasm` 21,073,645 -> 30,103,180 bytes (all within the
+  user's raised ceilings: STATE 28,770, LARGE 10,723, parser.c 80 MiB). `tools.perf ab` (24 rounds, ABBA, pinned),
+  time main / time branch: BC.History 0.997 and 0.981 (accepted by `ab_accept.py`); DC 0.964, 0.957 and 0.963, about
+  4% slower, accepted by the user as report-only and recorded in `docs/performance-baselines.md`; speed pass item 54.
+
 - **Statement terminators, case-branch separators and the move header accept `#if` groups; a parenless call has one
   shape (roadmap B7b-3, spec `docs/superpowers/specs/2026-10-08-b7b-3-statement-terminators-design.md` rev 3 with
   execution amendments). Breaking for tree consumers: `call_statement` no longer contains its `;`, and bare names in

@@ -1,5 +1,5 @@
 // B7a Task 10 witness (GAP): family ternary, base placement nested, 19 cells; representative bnd:ternary_expression:condition:end@ternary_expression#nested/comparison
-// Fixture b7_gap_ternary_test.txt#B7a GAP: ternary / nested (19 cells, verdict of the representative GAP); the parser ERRORs on configurations alc accepts; representative bnd:ternary_expression:condition:end@ternary_expression%23nested/comparison#0
+// Fixture b7b2_ternary_test.txt#B7b-2 ternary / nested in the condition: moved from b7_gap_ternary_test.txt#0
 // expect: !X !Y accept
 // expect: !X Y accept
 // expect: X !Y accept

@@ -1,5 +1,5 @@
 // B7a Task 10 witness (GAP): family list-literal, base placement chain, 4 cells; representative bnd:list_literal:1.0.2.0.1:between@list_literal#chain/arithmetic
-// Fixture b7_gap_list_literal_test.txt#B7a GAP: list-literal / chain (4 cells, verdict of the representative GAP); the parser ERRORs on configurations alc accepts; representative bnd:list_literal:1.0.2.0.1:between@list_literal%23chain/arithmetic#0
+// Fixture b7b2_list_literal_test.txt#B7b-2 list-literal / chain: moved from b7_gap_list_literal_test.txt#0
 // expect: !X accept
 // expect: X accept
 // source: recorded by B7a Task 10, 2026-10-07: the alc split verdicts of cell bnd:list_literal:1.0.2.0.1:between@list_literal#chain/arithmetic in tools/b7_audit/evidence.jsonl.gz

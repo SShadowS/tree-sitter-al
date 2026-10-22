@@ -1,0 +1,250 @@
+================================================================================
+B7b-2 unary-operand / first: moved from b7_gap_unary_operand_test.txt
+--
+B7a GAP representative bnd:unary_expression:operand:end@case_branch#first/arithmetic
+(untrimmed witness: tools/alc_probe/cases/b7-audit/unary-operand__first__gap.al)
+(manifest row: deferred, owner B7b-2/C). Parses since B7b-2 Phase C (Task 10):
+the prefix is an unfielded child of the unary node, before its `operand`.
+Source trimmed: the generator's table, var section and helpers are removed.
+================================================================================
+codeunit 50101 P
+{
+    procedure Q()
+    begin
+case I of
+-
+#if X
+I +
+#endif
+2
+:
+Bar();
+end;
+    end;
+}
+--------------------------------------------------------------------------------
+
+(source_file (codeunit_declaration (codeunit_keyword) object_id: (integer) object_name: (identifier) body:
+(declaration_body (procedure (procedure_keyword) name: (identifier) body: (code_block (begin_keyword) body:
+(statement_block (case_statement (case_keyword) expression: (identifier) (of_keyword) body: (case_body (case_branch
+pattern: (unary_expression (preproc_operand_prefix (preproc_if (preproc_open) condition: (identifier)) operand:
+(identifier) (preproc_endif (preproc_close))) operand: (integer)) body: (call_expression function: (identifier)
+arguments: (argument_list)))) (end_keyword))) (end_keyword))))))
+
+================================================================================
+B7b-2 unary-operand / first-only: moved from b7_gap_unary_operand_test.txt
+--
+B7a GAP representative bnd:unary_expression:operand:end@case_branch#first-only/arithmetic
+(untrimmed witness: tools/alc_probe/cases/b7-audit/unary-operand__first-only__gap.al)
+(manifest row: deferred, owner B7b-2/C). Parses since B7b-2 Phase C (Task 10).
+Source trimmed: the generator's table, var section and helpers are removed.
+================================================================================
+codeunit 50101 P
+{
+    procedure Q()
+    begin
+case I of
+-
+#if X
+I
+#else
+2
+#endif
+:
+Bar();
+end;
+    end;
+}
+--------------------------------------------------------------------------------
+
+(source_file (codeunit_declaration (codeunit_keyword) object_id: (integer) object_name: (identifier) body:
+(declaration_body (procedure (procedure_keyword) name: (identifier) body: (code_block (begin_keyword) body:
+(statement_block (case_statement (case_keyword) expression: (identifier) (of_keyword) body: (case_body (case_branch
+pattern: (unary_expression operand: (preproc_conditional_operand (preproc_if (preproc_open) condition: (identifier))
+operand: (identifier) (preproc_else) operand: (integer) (preproc_endif (preproc_close)))) body: (call_expression
+function: (identifier) arguments: (argument_list)))) (end_keyword))) (end_keyword))))))
+
+================================================================================
+B7b-2 unary-operand / signed: moved from b7_gap_unary_operand_test.txt
+--
+B7a GAP representative bnd:unary_expression:operand:end@case_branch#signed/arithmetic
+(untrimmed witness: tools/alc_probe/cases/b7-audit/unary-operand__signed__gap.al)
+(manifest row: deferred, owner B7b-2/C). Parses since B7b-2 Phase C (Task 10).
+Source trimmed: the generator's table, var section and helpers are removed.
+================================================================================
+codeunit 50101 P
+{
+    procedure Q()
+    begin
+case I of
+-
+I +
+#if X
+-1
+#else
+2
+#endif
+:
+Bar();
+end;
+    end;
+}
+--------------------------------------------------------------------------------
+
+(source_file (codeunit_declaration (codeunit_keyword) object_id: (integer) object_name: (identifier) body:
+(declaration_body (procedure (procedure_keyword) name: (identifier) body: (code_block (begin_keyword) body:
+(statement_block (case_statement (case_keyword) expression: (identifier) (of_keyword) body: (case_body (case_branch
+pattern: (additive_expression left: (unary_expression operand: (identifier)) right: (preproc_conditional_operand
+(preproc_if (preproc_open) condition: (identifier)) operand: (unary_expression operand: (integer)) (preproc_else)
+operand: (integer) (preproc_endif (preproc_close)))) body: (call_expression function: (identifier) arguments:
+(argument_list)))) (end_keyword))) (end_keyword))))))
+
+================================================================================
+B7b-2 unary-operand / unary-minus: moved from b7_gap_unary_operand_test.txt
+--
+B7a GAP representative bnd:unary_expression:operand:end@case_branch#unary-minus/arithmetic
+(untrimmed witness: tools/alc_probe/cases/b7-audit/unary-operand__unary-minus__gap.al)
+(manifest row: deferred, owner B7b-2/C). Parses since B7b-2 Phase C (Task 10).
+Source trimmed: the generator's table, var section and helpers are removed.
+================================================================================
+codeunit 50101 P
+{
+    procedure Q()
+    begin
+case I of
+-
+I +
+#if X
+- 2
+#else
+3
+#endif
+:
+Bar();
+end;
+    end;
+}
+--------------------------------------------------------------------------------
+
+(source_file (codeunit_declaration (codeunit_keyword) object_id: (integer) object_name: (identifier) body:
+(declaration_body (procedure (procedure_keyword) name: (identifier) body: (code_block (begin_keyword) body:
+(statement_block (case_statement (case_keyword) expression: (identifier) (of_keyword) body: (case_body (case_branch
+pattern: (additive_expression left: (unary_expression operand: (identifier)) right: (preproc_conditional_operand
+(preproc_if (preproc_open) condition: (identifier)) operand: (unary_expression operand: (integer)) (preproc_else)
+operand: (integer) (preproc_endif (preproc_close)))) body: (call_expression function: (identifier) arguments:
+(argument_list)))) (end_keyword))) (end_keyword))))))
+
+================================================================================
+B7b-2 unary-operand / unary-not: moved from b7_gap_unary_operand_test.txt
+--
+B7a GAP representative bnd:unary_expression:operand:end@property_expression#unary-not/comparison
+(untrimmed witness: tools/alc_probe/cases/b7-audit/unary-operand__unary-not__gap.al)
+(manifest row: deferred, owner B7b-2/C). Parses since B7b-2 Phase C (Task 10).
+Source trimmed: the generator's table is removed.
+================================================================================
+page 50102 PG
+{
+    SourceTable = T;
+    layout
+    {
+        area(Content)
+        {
+            field(N; Rec.N)
+            {
+                Visible = not
+Ok =
+#if X
+not true
+#else
+false
+#endif
+;
+            }
+        }
+    }
+    var
+        I: Integer;
+        Ok: Boolean;
+}
+--------------------------------------------------------------------------------
+
+(source_file (page_declaration (page_keyword) object_id: (integer) object_name: (identifier) body: (declaration_body
+(property name: (property_name) value: (identifier)) (layout_section (layout_keyword) body: (layout_body
+(area_section (area_keyword) type: (content_keyword) body: (layout_body (page_field (field_keyword) name:
+(identifier) source: (member_expression object: (identifier) member: (identifier)) body: (declaration_body (property
+name: (property_name) value: (property_expression (comparison_expression left: (unary_expression operand:
+(identifier)) operator: (comparison_operator) right: (preproc_conditional_operand (preproc_if (preproc_open)
+condition: (identifier)) operand: (unary_expression operand: (boolean)) (preproc_else) operand: (boolean)
+(preproc_endif (preproc_close)))))))))))) (var_section (var_keyword) body: (var_body (variable_declaration name:
+(identifier) type: (type_specification (basic_type))) (variable_declaration name: (identifier) type:
+(type_specification (basic_type))))))))
+
+================================================================================
+B7b-2 unary-operand / unary-paren: moved from b7_gap_unary_operand_test.txt
+--
+B7a GAP representative bnd:unary_expression:operand:end@case_branch#unary-paren/arithmetic
+(untrimmed witness: tools/alc_probe/cases/b7-audit/unary-operand__unary-paren__gap.al)
+(manifest row: deferred, owner B7b-2/C). Parses since B7b-2 Phase C (Task 10).
+Source trimmed: the generator's table, var section and helpers are removed.
+================================================================================
+codeunit 50101 P
+{
+    procedure Q()
+    begin
+case I of
+-
+I +
+#if X
+( 2 + 3 )
+#else
+3
+#endif
+:
+Bar();
+end;
+    end;
+}
+--------------------------------------------------------------------------------
+
+(source_file (codeunit_declaration (codeunit_keyword) object_id: (integer) object_name: (identifier) body:
+(declaration_body (procedure (procedure_keyword) name: (identifier) body: (code_block (begin_keyword) body:
+(statement_block (case_statement (case_keyword) expression: (identifier) (of_keyword) body: (case_body (case_branch
+pattern: (additive_expression left: (unary_expression operand: (identifier)) right: (preproc_conditional_operand
+(preproc_if (preproc_open) condition: (identifier)) operand: (parenthesized_expression (additive_expression left:
+(integer) right: (integer))) (preproc_else) operand: (integer) (preproc_endif (preproc_close)))) body:
+(call_expression function: (identifier) arguments: (argument_list)))) (end_keyword))) (end_keyword))))))
+
+================================================================================
+B7b-2 unary-operand / whole-operand: moved from b7_gap_unary_operand_test.txt
+--
+B7a GAP representative bnd:unary_expression:operand:end@case_branch#whole-operand/arithmetic
+(untrimmed witness: tools/alc_probe/cases/b7-audit/unary-operand__whole-operand__gap.al)
+(manifest row: deferred, owner B7b-2/C). Parses since B7b-2 Phase C (Task 10).
+Source trimmed: the generator's table, var section and helpers are removed.
+================================================================================
+codeunit 50101 P
+{
+    procedure Q()
+    begin
+case I of
+-
+I +
+#if X
+2
+#else
+3
+#endif
+:
+Bar();
+end;
+    end;
+}
+--------------------------------------------------------------------------------
+
+(source_file (codeunit_declaration (codeunit_keyword) object_id: (integer) object_name: (identifier) body:
+(declaration_body (procedure (procedure_keyword) name: (identifier) body: (code_block (begin_keyword) body:
+(statement_block (case_statement (case_keyword) expression: (identifier) (of_keyword) body: (case_body (case_branch
+pattern: (additive_expression left: (unary_expression operand: (identifier)) right: (preproc_conditional_operand
+(preproc_if (preproc_open) condition: (identifier)) operand: (integer) (preproc_else) operand: (integer)
+(preproc_endif (preproc_close)))) body: (call_expression function: (identifier) arguments: (argument_list))))
+(end_keyword))) (end_keyword))))))

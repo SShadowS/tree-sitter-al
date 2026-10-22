@@ -1,0 +1,457 @@
+================================================================================
+B7b-2 if-condition / consecutive (comparison): moved from b7_gap_if_condition_test.txt
+--
+B7a GAP representative bnd:_if_statement_no_else:condition:end@case_branch#consecutive/comparison
+Untrimmed witness: tools/alc_probe/cases/b7-audit/if-condition__consecutive__gap.al.
+(owner B7b-2/A); alc accepts every configuration (B7a evidence). Source
+trimmed: the generator's table, var section and helper procedures are
+removed, the statement and its host are verbatim.
+================================================================================
+codeunit 50101 P
+{
+    procedure Q()
+    begin
+case I of
+1:
+if
+Ok
+#if X
+= true
+#endif
+#if Y
+= false
+#endif
+ then
+Bar();
+end;
+    end;
+}
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (procedure
+        (procedure_keyword)
+        name: (identifier)
+        body: (code_block
+          (begin_keyword)
+          body: (statement_block
+            (case_statement
+              (case_keyword)
+              expression: (identifier)
+              (of_keyword)
+              body: (case_body
+                (case_branch
+                  pattern: (integer)
+                  body: (if_statement
+                    (if_keyword)
+                    condition: (identifier)
+                    (preproc_conditional_expression_tail
+                      (preproc_if
+                        (preproc_open)
+                        condition: (identifier))
+                      operator: (comparison_operator)
+                      operand: (boolean)
+                      (preproc_endif
+                        (preproc_close))
+                      (preproc_conditional_expression_tail
+                        (preproc_if
+                          (preproc_open)
+                          condition: (identifier))
+                        operator: (comparison_operator)
+                        operand: (boolean)
+                        (preproc_endif
+                          (preproc_close))))
+                    (then_keyword)
+                    then_branch: (call_expression
+                      function: (identifier)
+                      arguments: (argument_list)))))
+              (end_keyword)))
+          (end_keyword))))))
+
+================================================================================
+B7b-2 if-condition / nested (comparison): moved from b7_gap_if_condition_test.txt
+--
+B7a GAP representative bnd:_if_statement_no_else:condition:end@case_branch#nested/comparison
+(owner B7b-2/A). Source trimmed as above.
+================================================================================
+codeunit 50101 P
+{
+    procedure Q()
+    begin
+case I of
+1:
+if
+Ok
+#if X
+= true
+#if Y
+= false
+#endif
+#endif
+ then
+Bar();
+end;
+    end;
+}
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (procedure
+        (procedure_keyword)
+        name: (identifier)
+        body: (code_block
+          (begin_keyword)
+          body: (statement_block
+            (case_statement
+              (case_keyword)
+              expression: (identifier)
+              (of_keyword)
+              body: (case_body
+                (case_branch
+                  pattern: (integer)
+                  body: (if_statement
+                    (if_keyword)
+                    condition: (identifier)
+                    (preproc_conditional_expression_tail
+                      (preproc_if
+                        (preproc_open)
+                        condition: (identifier))
+                      operator: (comparison_operator)
+                      operand: (boolean)
+                      (preproc_conditional_expression_tail
+                        (preproc_if
+                          (preproc_open)
+                          condition: (identifier))
+                        operator: (comparison_operator)
+                        operand: (boolean)
+                        (preproc_endif
+                          (preproc_close)))
+                      (preproc_endif
+                        (preproc_close)))
+                    (then_keyword)
+                    then_branch: (call_expression
+                      function: (identifier)
+                      arguments: (argument_list)))))
+              (end_keyword)))
+          (end_keyword))))))
+
+================================================================================
+B7b-2 if-condition / prefix (membership): moved from b7_gap_if_condition_test.txt
+--
+B7a GAP representative bnd:_if_statement_no_else:condition:end@case_branch#prefix/membership
+(owner B7b-2/A). The typed `in` prefix (spec 5.3, 6.2). Source trimmed as above.
+================================================================================
+codeunit 50101 P
+{
+    procedure Q()
+    begin
+case I of
+1:
+if
+Ok in
+#if X
+[true, false] in
+#endif
+[true]
+ then
+Bar();
+end;
+    end;
+}
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (procedure
+        (procedure_keyword)
+        name: (identifier)
+        body: (code_block
+          (begin_keyword)
+          body: (statement_block
+            (case_statement
+              (case_keyword)
+              expression: (identifier)
+              (of_keyword)
+              body: (case_body
+                (case_branch
+                  pattern: (integer)
+                  body: (if_statement
+                    (if_keyword)
+                    condition: (in_expression
+                      left: (identifier)
+                      operator: (in_keyword)
+                      (preproc_operand_prefix
+                        (preproc_if
+                          (preproc_open)
+                          condition: (identifier))
+                        operand: (list_literal
+                          (boolean)
+                          (boolean))
+                        operator: (in_keyword)
+                        (preproc_endif
+                          (preproc_close)))
+                      right: (list_literal
+                        (boolean)))
+                    (then_keyword)
+                    then_branch: (call_expression
+                      function: (identifier)
+                      arguments: (argument_list)))))
+              (end_keyword)))
+          (end_keyword))))))
+
+================================================================================
+B7b-2 if-condition / suffix (membership): moved from b7_gap_if_condition_test.txt
+--
+B7a GAP representative bnd:_if_statement_no_else:condition:end@case_branch#suffix/membership
+(owner B7b-2/A). `in` continues a tail with its list (spec 5.3). Source
+trimmed as above.
+================================================================================
+codeunit 50101 P
+{
+    procedure Q()
+    begin
+case I of
+1:
+if
+Ok
+#if X
+in [true, false]
+#endif
+ then
+Bar();
+end;
+    end;
+}
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (procedure
+        (procedure_keyword)
+        name: (identifier)
+        body: (code_block
+          (begin_keyword)
+          body: (statement_block
+            (case_statement
+              (case_keyword)
+              expression: (identifier)
+              (of_keyword)
+              body: (case_body
+                (case_branch
+                  pattern: (integer)
+                  body: (if_statement
+                    (if_keyword)
+                    condition: (identifier)
+                    (preproc_conditional_expression_tail
+                      (preproc_if
+                        (preproc_open)
+                        condition: (identifier))
+                      operator: (in_keyword)
+                      operand: (list_literal
+                        (boolean)
+                        (boolean))
+                      (preproc_endif
+                        (preproc_close)))
+                    (then_keyword)
+                    then_branch: (call_expression
+                      function: (identifier)
+                      arguments: (argument_list)))))
+              (end_keyword)))
+          (end_keyword))))))
+
+================================================================================
+B7b-2 if-condition / first: moved from b7_gap_if_condition_test.txt
+--
+B7a GAP representative bnd:_if_statement_no_else:condition:end@case_branch#first/comparison
+(untrimmed witness: tools/alc_probe/cases/b7-audit/if-condition__first__gap.al)
+(manifest row: deferred, owner B7b-2/C). Parses since B7b-2 Phase C (Task 10).
+Source trimmed: the generator's table, var section and helpers are removed.
+================================================================================
+codeunit 50101 P
+{
+    procedure Q()
+    begin
+case I of
+1:
+if
+#if X
+Ok =
+#endif
+true
+ then
+Bar();
+end;
+    end;
+}
+--------------------------------------------------------------------------------
+
+(source_file (codeunit_declaration (codeunit_keyword) object_id: (integer) object_name: (identifier) body:
+(declaration_body (procedure (procedure_keyword) name: (identifier) body: (code_block (begin_keyword) body:
+(statement_block (case_statement (case_keyword) expression: (identifier) (of_keyword) body: (case_body (case_branch
+pattern: (integer) body: (if_statement (if_keyword) (preproc_operand_prefix (preproc_if (preproc_open) condition:
+(identifier)) operand: (identifier) operator: (comparison_operator) (preproc_endif (preproc_close))) condition:
+(boolean) (then_keyword) then_branch: (call_expression function: (identifier) arguments: (argument_list)))))
+(end_keyword))) (end_keyword))))))
+
+================================================================================
+B7b-2 if-condition / first-only: moved from b7_gap_if_condition_test.txt
+--
+B7a GAP representative bnd:_if_statement_no_else:condition:end@case_branch#first-only/comparison
+(untrimmed witness: tools/alc_probe/cases/b7-audit/if-condition__first-only__gap.al)
+(manifest row: deferred, owner B7b-2/C). Parses since B7b-2 Phase C (Task 10).
+Source trimmed: the generator's table, var section and helpers are removed.
+================================================================================
+codeunit 50101 P
+{
+    procedure Q()
+    begin
+case I of
+1:
+if
+#if X
+Ok
+#else
+true
+#endif
+ then
+Bar();
+end;
+    end;
+}
+--------------------------------------------------------------------------------
+
+(source_file (codeunit_declaration (codeunit_keyword) object_id: (integer) object_name: (identifier) body:
+(declaration_body (procedure (procedure_keyword) name: (identifier) body: (code_block (begin_keyword) body:
+(statement_block (case_statement (case_keyword) expression: (identifier) (of_keyword) body: (case_body (case_branch
+pattern: (integer) body: (if_statement (if_keyword) condition: (preproc_conditional_operand (preproc_if
+(preproc_open) condition: (identifier)) operand: (identifier) (preproc_else) operand: (boolean) (preproc_endif
+(preproc_close))) (then_keyword) then_branch: (call_expression function: (identifier) arguments: (argument_list)))))
+(end_keyword))) (end_keyword))))))
+
+================================================================================
+B7b-2 if-condition / unary-not: moved from b7_gap_if_condition_test.txt
+--
+B7a GAP representative bnd:_if_statement_no_else:condition:end@case_branch#unary-not/comparison
+(untrimmed witness: tools/alc_probe/cases/b7-audit/if-condition__unary-not__gap.al)
+(manifest row: deferred, owner B7b-2/C). Parses since B7b-2 Phase C (Task 10).
+Source trimmed: the generator's table, var section and helpers are removed.
+================================================================================
+codeunit 50101 P
+{
+    procedure Q()
+    begin
+case I of
+1:
+if
+Ok =
+#if X
+not true
+#else
+false
+#endif
+ then
+Bar();
+end;
+    end;
+}
+--------------------------------------------------------------------------------
+
+(source_file (codeunit_declaration (codeunit_keyword) object_id: (integer) object_name: (identifier) body:
+(declaration_body (procedure (procedure_keyword) name: (identifier) body: (code_block (begin_keyword) body:
+(statement_block (case_statement (case_keyword) expression: (identifier) (of_keyword) body: (case_body (case_branch
+pattern: (integer) body: (if_statement (if_keyword) condition: (comparison_expression left: (identifier) operator:
+(comparison_operator) right: (preproc_conditional_operand (preproc_if (preproc_open) condition: (identifier))
+operand: (unary_expression operand: (boolean)) (preproc_else) operand: (boolean) (preproc_endif (preproc_close))))
+(then_keyword) then_branch: (call_expression function: (identifier) arguments: (argument_list))))) (end_keyword)))
+(end_keyword))))))
+
+================================================================================
+B7b-2 if-condition / unary-paren: moved from b7_gap_if_condition_test.txt
+--
+B7a GAP representative bnd:_if_statement_no_else:condition:end@case_branch#unary-paren/comparison
+(untrimmed witness: tools/alc_probe/cases/b7-audit/if-condition__unary-paren__gap.al)
+(manifest row: deferred, owner B7b-2/C). Parses since B7b-2 Phase C (Task 10).
+Source trimmed: the generator's table, var section and helpers are removed.
+================================================================================
+codeunit 50101 P
+{
+    procedure Q()
+    begin
+case I of
+1:
+if
+Ok =
+#if X
+( true = false )
+#else
+false
+#endif
+ then
+Bar();
+end;
+    end;
+}
+--------------------------------------------------------------------------------
+
+(source_file (codeunit_declaration (codeunit_keyword) object_id: (integer) object_name: (identifier) body:
+(declaration_body (procedure (procedure_keyword) name: (identifier) body: (code_block (begin_keyword) body:
+(statement_block (case_statement (case_keyword) expression: (identifier) (of_keyword) body: (case_body (case_branch
+pattern: (integer) body: (if_statement (if_keyword) condition: (comparison_expression left: (identifier) operator:
+(comparison_operator) right: (preproc_conditional_operand (preproc_if (preproc_open) condition: (identifier))
+operand: (parenthesized_expression (comparison_expression left: (boolean) operator: (comparison_operator) right:
+(boolean))) (preproc_else) operand: (boolean) (preproc_endif (preproc_close)))) (then_keyword) then_branch:
+(call_expression function: (identifier) arguments: (argument_list))))) (end_keyword))) (end_keyword))))))
+
+================================================================================
+B7b-2 if-condition / whole-operand: moved from b7_gap_if_condition_test.txt
+--
+B7a GAP representative bnd:_if_statement_no_else:condition:end@case_branch#whole-operand/comparison
+(untrimmed witness: tools/alc_probe/cases/b7-audit/if-condition__whole-operand__gap.al)
+(manifest row: deferred, owner B7b-2/C). Parses since B7b-2 Phase C (Task 10).
+Source trimmed: the generator's table, var section and helpers are removed.
+================================================================================
+codeunit 50101 P
+{
+    procedure Q()
+    begin
+case I of
+1:
+if
+Ok =
+#if X
+true
+#else
+false
+#endif
+ then
+Bar();
+end;
+    end;
+}
+--------------------------------------------------------------------------------
+
+(source_file (codeunit_declaration (codeunit_keyword) object_id: (integer) object_name: (identifier) body:
+(declaration_body (procedure (procedure_keyword) name: (identifier) body: (code_block (begin_keyword) body:
+(statement_block (case_statement (case_keyword) expression: (identifier) (of_keyword) body: (case_body (case_branch
+pattern: (integer) body: (if_statement (if_keyword) condition: (comparison_expression left: (identifier) operator:
+(comparison_operator) right: (preproc_conditional_operand (preproc_if (preproc_open) condition: (identifier))
+operand: (boolean) (preproc_else) operand: (boolean) (preproc_endif (preproc_close)))) (then_keyword) then_branch:
+(call_expression function: (identifier) arguments: (argument_list))))) (end_keyword))) (end_keyword))))))

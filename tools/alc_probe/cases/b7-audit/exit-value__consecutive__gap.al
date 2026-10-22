@@ -1,5 +1,5 @@
 // B7a Task 10 witness (GAP): family exit-value, base placement consecutive, 4 cells; representative bnd:exit_statement:return_value:end@statement_block#consecutive/arithmetic
-// Fixture b7_gap_exit_value_test.txt#B7a GAP: exit-value / consecutive (4 cells, verdict of the representative GAP); the parser ERRORs on configurations alc accepts; representative bnd:exit_statement:return_value:end@statement_block%23consecutive/arithmetic#0
+// Fixture b7b2_exit_value_test.txt#B7b-2 exit-value / consecutive: moved from b7_gap_exit_value_test.txt#0
 // expect: !X !Y accept
 // expect: !X Y accept
 // expect: X !Y accept

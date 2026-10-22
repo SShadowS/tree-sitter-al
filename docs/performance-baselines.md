@@ -324,6 +324,29 @@ So the compiler decides the speed, and flags and PGO barely matter. MSVC's only 
 - Removing the stack probe (`-Gs32768`) changed nothing (1.006), so the probe is not the cost.
 - No profiler run was done.
 
+## B7b-2 (expression continuations across `#if`): measured cost, accepted (2026-10-21)
+
+Not a re-baseline: the numbers above are unchanged. These are same-session `tools.perf ab` decisions (24 rounds,
+ABBA, pinned, Linux container), A = main at the B7b-3 merge (`artifacts/al-main.so`), B = the B7b-2 branch at
+its final grammar (`f2cabc4`, grammar unchanged since `d09ebe9`). `ratio_a_over_b` is time A / time B, so below 1.0
+means B is slower.
+
+| corpus | run | median A/B | within-run CI |
+|---|---|---:|---|
+| bc-history | 1 | 0.997 | 0.925-1.048 |
+| bc-history | 2 | 0.981 | 0.965-0.994 |
+| dc | 1 | 0.964 | 0.912-0.978 |
+| dc | 2 | 0.957 | 0.947-0.977 |
+| dc | 3 | 0.963 | 0.921-0.999 |
+
+- BC.History passes the 0.97 gate in both runs and `tools/perf/ab_accept.py` exits 0 on both.
+- DC is about 4% slower in all three runs. The cost is cumulative over the phases: Phase A was 0.979 against main,
+  Phase C 0.98-0.99 against Phase B (Phase B library against final on DC: 0.990).
+- Grammar size behind it: STATE_COUNT 23,737 -> 28,742, LARGE_STATE_COUNT 7,482 -> 10,562, parser.c 51.5 -> 65.5 MiB.
+- The production trees are unchanged (`tools.perf delta`: 0 files in BC.History, DC and BC28.1).
+- **User decision 2026-10-21:** "Accept, record it". DC is report-only (spec 8.5 lists it as "also"). The speed pass is
+  `docs/deferred-work.md` item 54 (roadmap D1/D2).
+
 ## Reproducing and comparing
 
 ```bash

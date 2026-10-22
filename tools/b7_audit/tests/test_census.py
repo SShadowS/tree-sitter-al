@@ -1,5 +1,7 @@
 from pathlib import Path
 
+import pytest
+
 from tools.b7_audit import census, grammar
 
 MINI = Path(__file__).with_name("mini_grammar.json")
@@ -73,10 +75,26 @@ def test_edges_and_mechanisms():
     assert ("operand-prefix",) == b[("binop", "right", "start")][0]
 
 
-def test_real_grammar_until_has_no_mechanism():
+def test_real_grammar_until_is_a_region_root():
+    # Deferred item 39 shape 1, closed by B7b-2 Phase B: the until condition is a region root
+    # (_region_root_condition), so its end edge carries the optional tail and keeps its key.
     b = bnd(grammar.load(Path("src/grammar.json")))
-    hits = [k for k, (m, _) in b.items() if k[0] == "repeat_statement" and k[2] == "end"]
-    assert hits and all(b[k][0] == () for k in hits)     # deferred item 39, shape 1
+    assert b[("repeat_statement", "condition", "end")] == b[("assignment_statement", "right", "end")]
+    assert b[("repeat_statement", "condition", "end")][0] != ()
+
+
+def test_region_root_wrappers_expand_into_their_callers():
+    g = grammar.load(Path("src/grammar.json"))
+    b = bnd(g)
+    tail = (census._tail_mechanisms(g["rules"]), False)
+    assert tail[0] and not any(k[0].startswith("_region_root") for k in b)
+    for host in ("if_statement", "while_statement", "case_statement", "for_statement", "with_statement"):
+        slot = {"case_statement": "expression", "for_statement": "start", "with_statement": "record"}.get(host, "condition")
+        assert b[(host, slot, "end")] == tail, host
+    assert b[("parenthesized_expression", "1", "end")] == tail
+    bad = {"rules": {"_region_root_x": {"type": "SYMBOL", "name": "_expression"}, "_expression": {"type": "BLANK"}}}
+    with pytest.raises(ValueError):
+        census._region_roots(bad["rules"], {"_expression"})
 
 
 def rows(g):
@@ -90,9 +108,16 @@ def test_between_by_separator_without_field():
 
 
 def test_real_between_rows():
-    b = bnd(grammar.load(Path("src/grammar.json")))
-    for rule in ("subscript_expression", "list_literal"):
-        assert any(k[0] == rule and k[2] == "between" and m == () for k, (m, _) in b.items()), rule
+    # B7b-2 Phase B: the second and later index / element are region roots, so their between
+    # edge carries the optional tail. Phase C (Task 10): the list's element-group items are region
+    # roots too (_region_root_list_element), so their between edge carries it as well.
+    g = grammar.load(Path("src/grammar.json"))
+    b = bnd(g)
+    tail = (census._tail_mechanisms(g["rules"]), False)
+    assert tail[0] and b[("subscript_expression", "0.3.0.1", "between")] == tail
+    assert b[("list_literal", "1.0.1.0.1", "between")] == tail
+    group = [v for k, v in b.items() if k[0] == "preproc_conditional_list_elements" and k[2] == "between"]
+    assert group and all(v == tail for v in group)
 
 
 def test_wrappers_are_not_hosts_and_no_empty_slot():

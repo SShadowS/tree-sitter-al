@@ -1,5 +1,5 @@
 // B7a Task 10 witness (GAP): family ternary, base placement consecutive, 16 cells; representative bnd:ternary_expression:condition:end@ternary_expression#consecutive/comparison
-// Fixture b7_gap_ternary_test.txt#B7a GAP: ternary / consecutive (16 cells, verdict of the representative GAP); the parser ERRORs on configurations alc accepts; representative bnd:ternary_expression:condition:end@ternary_expression%23consecutive/comparison#0
+// Fixture b7b2_ternary_test.txt#B7b-2 ternary / consecutive in the condition: moved from b7_gap_ternary_test.txt#0
 // expect: !X !Y accept
 // expect: !X Y accept
 // expect: X !Y accept

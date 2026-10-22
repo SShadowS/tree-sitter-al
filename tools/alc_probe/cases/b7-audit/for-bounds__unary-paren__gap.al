@@ -1,5 +1,5 @@
 // B7a Task 10 witness (GAP): family for-bounds, base placement unary-paren, 8 cells; representative bnd:for_statement:end:end@statement_block#unary-paren/arithmetic
-// Fixture b7_gap_for_bounds_test.txt#B7a GAP: for-bounds / unary-paren (8 cells, verdict of the representative GAP); the parser ERRORs on configurations alc accepts; representative bnd:for_statement:end:end@statement_block%23unary-paren/arithmetic#0
+// Fixture b7b2_for_bounds_test.txt#B7b-2 for-bounds / unary-paren: moved from b7_gap_for_bounds_test.txt#0
 // expect: !X accept
 // expect: X accept
 // source: recorded by B7a Task 10, 2026-10-07: the alc split verdicts of cell bnd:for_statement:end:end@statement_block#unary-paren/arithmetic in tools/b7_audit/evidence.jsonl.gz

@@ -1,0 +1,165 @@
+================================================================================
+B7b-2 crossing gap: receiver crossing, a binary arm before a postfix
+:error
+--
+DELIBERATE NEGATIVE (gap witness, listed in tools/deliberate-negatives.txt): valid
+AL the parser ERRORs on, on purpose (spec 3.4, deferred). X=1 is `1 + T1.IndexOf('a')`,
+not `(1 + T1).IndexOf('a')`: a receiver group's arms are postfix-safe atoms only, so
+an arm with a binary top cannot stand before `.`. alc accepts every configuration:
+tools/alc_probe/cases/b7b-2/crossing/receiver.al. The ERROR is the assertion.
+================================================================================
+codeunit 50100 P
+{
+    procedure Q()
+    begin
+        I :=
+#if X
+        1 + T1
+#else
+        T1
+#endif
+        .IndexOf('a');
+    end;
+}
+--------------------------------------------------------------------------------
+
+================================================================================
+B7b-2 crossing gap: receiver crossing, a tail before a postfix
+:error
+--
+DELIBERATE NEGATIVE (gap witness): valid AL the parser ERRORs on at the `.`
+(found by the final whole-branch review). X=1 is `T1 + T2.ToUpper()`, X=0
+`T1.ToUpper()`: the postfix applies to the tail's last operand, or to the root
+operand when no arm is active, so the group crosses the receiver boundary
+(spec 3.4, docs/deferred-work.md item 57). alc accepts every configuration:
+tools/alc_probe/cases/b7b-2/crossing/tail-then-postfix.al. The ERROR is the
+assertion.
+================================================================================
+codeunit 50100 P
+{
+    procedure Q()
+    begin
+        T2 := T1
+#if X
+        + T2
+#endif
+        .ToUpper();
+    end;
+}
+--------------------------------------------------------------------------------
+
+================================================================================
+B7b-2 crossing gap: ternary crossing, a ternary arm before `?`
+:error
+--
+DELIBERATE NEGATIVE (gap witness): spec 3.4, an arm is a `_continuation_operand`,
+never a ternary. alc accepts every configuration:
+tools/alc_probe/cases/b7b-2/crossing/ternary-leading.al.
+================================================================================
+codeunit 50100 P
+{
+    procedure Q()
+    begin
+        B :=
+#if X
+        Ok ? Ok2 : Ok
+#else
+        Ok2
+#endif
+        ? Ok : Ok2;
+    end;
+}
+--------------------------------------------------------------------------------
+
+================================================================================
+B7b-2 crossing gap: ternary crossing, a ternary operand-group arm
+:error
+--
+DELIBERATE NEGATIVE (gap witness): spec 3.4. alc accepts every configuration:
+tools/alc_probe/cases/b7b-2/crossing/ternary-operand.al.
+================================================================================
+codeunit 50100 P
+{
+    procedure Q()
+    begin
+        B := Ok and
+#if X
+        Ok2 ? Ok : Ok2
+#else
+        Ok2
+#endif
+        ;
+    end;
+}
+--------------------------------------------------------------------------------
+
+================================================================================
+B7b-2 crossing gap: ternary crossing, a ternary in a tail arm
+:error
+--
+DELIBERATE NEGATIVE (gap witness): spec 3.4. alc accepts every configuration:
+tools/alc_probe/cases/b7b-2/crossing/ternary-tail.al.
+================================================================================
+codeunit 50100 P
+{
+    procedure Q()
+    begin
+        B := false
+#if X
+        or true ? true : false
+#endif
+        ;
+    end;
+}
+--------------------------------------------------------------------------------
+
+================================================================================
+B7b-2 crossing gap: list spanning in a list literal
+:error
+--
+DELIBERATE NEGATIVE (gap witness): spec 3.4, one group that continues an element
+and supplies further elements (X=1 `[1 + 2, 3]`). alc accepts every configuration:
+tools/alc_probe/cases/b7b-2/crossing/list-spanning-literal.al.
+================================================================================
+codeunit 50100 P
+{
+    procedure Q()
+    begin
+        B := I in [1
+#if X
+        + 2, 3
+#endif
+        ];
+    end;
+}
+--------------------------------------------------------------------------------
+
+================================================================================
+B7b-2 crossing gap: list spanning in an argument list, KNOWN WRONG TREE pinned
+--
+Spec 3.4 list spanning, deferred (section 9): X=1 is `Foo(1 + 2, 3)`, two
+arguments. The existing argument group reads the arm as a comma-less `+2`
+argument and `3`, a pre-existing wrong tree B7b-2 does not change; the oracle
+refuses it at the list's alternation check. This case pins that tree so a change
+is seen; it is NOT the intended reading. alc accepts every configuration:
+tools/alc_probe/cases/b7b-2/crossing/list-spanning-call.al. Tree from the CLI.
+================================================================================
+codeunit 50100 P
+{
+    procedure Q()
+    begin
+        I := Foo(1
+#if X
+            + 2, 3
+#endif
+            );
+    end;
+}
+--------------------------------------------------------------------------------
+
+(source_file (codeunit_declaration (codeunit_keyword) object_id: (integer) object_name: (identifier) body:
+(declaration_body (procedure (procedure_keyword) name: (identifier) body: (code_block (begin_keyword) body:
+(statement_block (assignment_statement left: (identifier) operator: (assignment_operator) right: (call_expression
+function: (identifier) arguments: (argument_list (integer) (preproc_conditional_arguments (preproc_if (preproc_open)
+condition: (identifier)) (unary_expression operand: (integer)) (integer) (preproc_endif (preproc_close)))))))
+(end_keyword))))))

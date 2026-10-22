@@ -1,5 +1,5 @@
 // B7a Task 10 witness (GAP): family case-expression, base placement suffix, 8 cells; representative bnd:case_statement:expression:end@statement_block#suffix/arithmetic
-// Fixture b7_gap_case_expression_test.txt#B7a GAP: case-expression / suffix (8 cells, verdict of the representative GAP); the parser ERRORs on configurations alc accepts; representative bnd:case_statement:expression:end@statement_block%23suffix/arithmetic#0
+// Fixture b7b2_case_expression_test.txt#B7b-2 case-expression / suffix: moved from b7_gap_case_expression_test.txt#0
 // expect: !X accept
 // expect: X accept
 // source: recorded by B7a Task 10, 2026-10-07: the alc split verdicts of cell bnd:case_statement:expression:end@statement_block#suffix/arithmetic in tools/b7_audit/evidence.jsonl.gz

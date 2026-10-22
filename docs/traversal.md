@@ -15,6 +15,14 @@ constructs, a `SplitInfo` that lists every arm's pieces.
 It does **not** pick a configuration. Every arm is reported; which one a given set
 of preprocessor symbols selects is the job of the configured API (roadmap F1).
 
+**`#if` inside an expression is different.** A `preproc_conditional_expression_tail`,
+`preproc_operand_prefix` or `preproc_conditional_operand` makes its expression a
+*transparent region*: the nesting of the binary and unary nodes around it is not a
+grouping claim, and an arm's meaning comes from splicing it into the region and
+regrouping by the operator ladder. The helper reports these nodes like any other and
+has no region API yet (`docs/deferred-work.md` item 59). The rule a consumer applies
+is in [`expression-regions.md`](expression-regions.md).
+
 ## Recursion alone does not fix node-kind recognition
 
 Descending into every child finds the procedures inside a `preproc_conditional`.

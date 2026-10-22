@@ -7,16 +7,14 @@ from __future__ import annotations
 
 from tools.config_oracle import contracts
 from tools.config_oracle.ir import Node
-from tools.config_oracle.lowering import expression
-from tools.config_oracle.lowering.engine import (BlockCompletion, ElseAttachment, ExpressionContinuation,
-                                                 Following, Lowered, LoweringError, RelationContinuation,
+from tools.config_oracle.lowering.engine import (BlockCompletion, ElseAttachment, Following, Lowered, LoweringError, RelationContinuation,
                                                  SiblingsAfter, Terminator, VarTailMerge, _span_from_children,
                                                  absorb_arm_terminators,
                                                  lower)
 from tools.config_oracle.lowering.select import chosen_arm, reading_active, split_arms
 
 
-def _active(arms, endif, node, ctx):
+def active_arm(arms, endif, node, ctx):
     """Account directives and inactive arms; return the chosen arm's raw items."""
     choice = chosen_arm(node, arms, ctx)
     content = []
@@ -74,7 +72,7 @@ def split_code_block_end(node, ctx) -> Lowered:
     """
     ctx.policy(contracts.REGISTRY[node.kind], node)
     arms, endif = split_arms(node)
-    arm = _active(arms, endif, node, ctx)
+    arm = active_arm(arms, endif, node, ctx)
     if not arm:
         raise LoweringError("contract-shape", node, "empty arm")
     if arm[0].kind == "preproc_split_end":
@@ -136,7 +134,7 @@ def else_begin_over_endif(node, ctx) -> Lowered:
                 and not any(c.kind in ("if_keyword", "begin_keyword") for c in arm[3:]))
         if not base:
             raise _one_reading(node, ctx)
-    arm = _active(arms, endif, node, ctx)
+    arm = active_arm(arms, endif, node, ctx)
     stmts = _lower_all(tail[:-1], ctx, "statement_block")
     end = _lower_all(tail[-1:], ctx, "code_block")[0]
     if not arm:
@@ -164,7 +162,7 @@ def split_procedure(node, ctx) -> Lowered:
     if cut is None:
         raise LoweringError("contract-shape", node, "no #endif")
     arms, endif = split_arms(node.copy(children=node.children[:cut + 1]))
-    header = _active(arms, endif, node, ctx)
+    header = active_arm(arms, endif, node, ctx)
     if not any(h.kind == "procedure_keyword" for h in header):
         raise LoweringError("contract-shape", node, "chosen arm has no procedure header")
     attrs = _lower_all([h for h in header if h.kind == "attribute_item"], ctx, node.kind)
@@ -207,7 +205,7 @@ def split_case_statement_end(node, ctx) -> Lowered:
     if len(patterns) < 2 or patterns[-1].kind != ":":
         raise LoweringError("contract-shape", node, "no `pattern… :` before #if")
     arms, endif = split_arms(node.copy(children=node.children[cut:]))
-    arm = _active(arms, endif, node, ctx)
+    arm = active_arm(arms, endif, node, ctx)
     if len(arm) != 1 or arm[0].kind != "preproc_split_case_end_branch":
         raise LoweringError("contract-shape", node, "chosen arm is not one case_end_branch")
     br = arm[0]
@@ -251,7 +249,7 @@ def split_var_section_tail(node, ctx) -> Lowered:
     other arms `inactive-arm`."""
     ctx.policy(contracts.REGISTRY[node.kind], node)
     arms, endif = split_arms(node)
-    arm = _active(arms, endif, node, ctx)
+    arm = active_arm(arms, endif, node, ctx)
     variables = next((c for c in arm if c.field == "variables"), None)
     rest = [c for c in arm if c.field != "variables"]
     decls = _lower_all(variables.children, ctx, variables.kind) if variables is not None else []
@@ -271,7 +269,7 @@ def _select_arm(node, ctx):
     if ctx.policy(entry, node) == "unsupported":
         raise LoweringError("unsupported-type", node, ctx.host())
     arms, endif = split_arms(node)
-    items = list(_active(arms, endif, node, ctx))
+    items = list(active_arm(arms, endif, node, ctx))
     semi = items.pop() if items and items[-1].kind == ";" else None
     if len(items) > 1 or (items and items[0].kind not in entry.arm):
         raise LoweringError("contract-shape", node, "arm: " + " ".join(c.kind for c in items))
@@ -336,7 +334,7 @@ def whole_value_select(node, ctx) -> Lowered:
         raise LoweringError("unsupported-type", node, ctx.host())
     arms, endif = split_arms(node)
     nodes, frags = [], []
-    for c in _active(arms, endif, node, ctx):
+    for c in active_arm(arms, endif, node, ctx):
         if c.kind == ";" and not c.children:
             frags.append(Terminator(None, _lower_all([c], ctx, node.kind)[0]))
         elif _is_decoration(c):
@@ -368,7 +366,7 @@ def value_run_select(node, ctx) -> Lowered:
     field: a second value, or any value after a selected terminator, is
     lowering:one-reading -- the property's boundary moves with the configuration there
     (spec 3.4, roadmap B12). The predicate is this sequence's own (reading=None), as
-    ExpressionContinuation's is. Every selected terminator passes up in source order (the
+    the region assembler's is. Every selected terminator passes up in source order (the
     first is the property's own, later ones become standalone `;` by mixed placement).
     No other edge changes."""
     if ctx.policy(contracts.REGISTRY[node.kind], node) == "unsupported":
@@ -533,84 +531,8 @@ def container_reopen(node, ctx) -> Lowered:
     return Lowered([close], [SiblingsAfter(None, r.nodes)])
 
 
-# --- Expressions split across #if arms (contracts expression-continuation and
-# operand-prefix). Both regroup a binary chain by the alc-measured precedence
-# table (lowering/expression.py), never by grammar.js prec() values.
-
-def _pairs(nodes, first, second, node):
-    """Lowered `first second first second ...` (by field) -> [(first, second)]."""
-    if len(nodes) % 2 or any(n.field != (first, second)[i % 2] for i, n in enumerate(nodes)):
-        raise LoweringError("contract-shape", node, "expected " + f"{first} {second} pairs: "
-                            + " ".join(f"{n.field}:{n.kind}" for n in nodes))
-    return list(zip(nodes[::2], nodes[1::2]))
-
-
-def expression_tail(node, ctx) -> Lowered:
-    """Contract expression-continuation. Host: the position right after the
-    expression it continues (census hosts, policy `consumed`). Children:
-    `#if (operator operand)+ (#elif ...)* [#else ...] #endif (operator operand)*`, or
-    (B3) `#if operator (#elif operator)* [#else operator] #endif operand (operator operand)*`;
-    both read as pairs once an arm is chosen, and the second with no arm chosen is
-    `contract-shape` (that configuration is invalid AL).
-    The chosen arm's `(operator, operand)` pairs, then the pairs after `#endif`,
-    extend the IMMEDIATELY PRECEDING lowered sibling (ExpressionContinuation, a
-    ToPrevious fragment): that expression and every operand are flattened and
-    recomposed by the precedence table, keeping the preceding sibling's field.
-    The one other rewrite is **property-expression-unwrap** (see
-    engine.ExpressionContinuation): a host property_expression whose lowered
-    content is not one of its member kinds is replaced by that content. No
-    other edge changes; emits no nodes. Directives are `directive`, other
-    arms `inactive-arm`, every other leaf `kept`."""
-    ctx.policy(contracts.REGISTRY[node.kind], node)
-    cut = next((i for i, c in enumerate(node.children) if c.kind == "preproc_endif"), None)
-    if cut is None:
-        raise LoweringError("contract-shape", node, "no #endif")
-    arms, endif = split_arms(node.copy(children=node.children[:cut + 1]))
-    arm = _active(arms, endif, node, ctx)
-    pieces = _lower_all(list(arm) + node.children[cut + 1:], ctx, node.kind)
-    return Lowered([], [ExpressionContinuation(None, _pairs(pieces, "operator", "operand", node),
-                                               ctx.resolution.masked)])
-
-
-def operand_prefix(top, ctx) -> Lowered:
-    """Contract operand-prefix. Called only from engine.lower's binary hook, with
-    the TOP binary node of a chain (expression.chain) holding at least one
-    `preproc_operand_prefix`; a prefix sits between its binary node's operator
-    and right operand. Each prefix's chosen arm is ONE `(operand, operator)`
-    pair, which takes the prefix's place; no arm chosen contributes nothing,
-    leaving `left op right`. The named rewrite: the WHOLE chain -- every atom,
-    operator and chosen pair, in source order -- is flattened and recomposed by
-    the precedence table, keeping the top node's field. The whole chain, not
-    just the prefix's own binary node, because the arm's operator may bind
-    looser than an enclosing one (`a * #if X b or #endif c + d` is
-    `(a*b) or (c+d)` with X). Directives are `directive`, other arms
-    `inactive-arm`, every other leaf `kept`."""
-    if top.kind not in expression.BINARY_KINDS:
-        raise LoweringError("contract-shape", top, "operand prefix outside a binary chain")
-    try:
-        items = expression.chain(top)
-    except ValueError as e:
-        raise LoweringError("contract-shape", top, str(e)) from None
-    flat = []
-    for parent, n in items:
-        if n.kind == expression.PREFIX:
-            ctx.child(parent, "<children>").policy(contracts.REGISTRY[n.kind], n)
-            arms, endif = split_arms(n)
-            pairs = _pairs(_lower_all(_active(arms, endif, n, ctx), ctx, n.kind), "operand", "operator", n)
-            if len(pairs) > 1:
-                raise LoweringError("contract-shape", n, f"{len(pairs)} operand/operator pairs in one arm")
-            for operand, op in pairs:
-                flat += _flatten(operand) + [op]
-        else:
-            flat += _flatten(_lower_all([n], ctx, parent)[0])
-    return Lowered([expression.compose(flat, top.field)])
-
-
-def _flatten(node):
-    try:
-        return expression.flatten(node)
-    except ValueError as e:
-        raise LoweringError("contract-shape", node, str(e)) from None
+# Expressions split across #if arms (contracts expression-continuation and operand-prefix)
+# are lowered by the region assembler, lowering/regions.py (B7b-2 spec section 7).
 
 
 # Mutation seam for test_report_brace (a labelled bad lowering): False leaves the
@@ -669,8 +591,8 @@ def report_brace_owner(node, ctx) -> Lowered:
     if (chosen_arm(brace, b_arms, ctx) == b_arms[0][0].start) != open_active:
         raise LoweringError("contract-shape", brace, f"brace-close arm disagrees with the open arm "
                             f"({'selected' if open_active else 'not selected'})")
-    head = _active(arms, endif, node, ctx)
-    b_arm = _active(b_arms, b_endif, brace, ctx)
+    head = active_arm(arms, endif, node, ctx)
+    b_arm = active_arm(b_arms, b_endif, brace, ctx)
     b_close = b_arm[-1:] if open_active else []
     b_body = b_arm[:-1] if open_active else b_arm
     if (open_active and (not b_close or b_close[0].kind != "}")) or len(b_body) > 1 \

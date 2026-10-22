@@ -1,5 +1,5 @@
 // B7a Task 10 witness (GAP): family if-condition, base placement unary-not, 12 cells; representative bnd:_if_statement_no_else:condition:end@case_branch#unary-not/comparison
-// Fixture b7_gap_if_condition_test.txt#B7a GAP: if-condition / unary-not (12 cells, verdict of the representative GAP); the parser ERRORs on configurations alc accepts; representative bnd:_if_statement_no_else:condition:end@case_branch%23unary-not/comparison#0
+// Fixture b7b2_if_condition_test.txt#B7b-2 if-condition / unary-not: moved from b7_gap_if_condition_test.txt#0
 // expect: !X accept
 // expect: X accept
 // source: recorded by B7a Task 10, 2026-10-07: the alc split verdicts of cell bnd:_if_statement_no_else:condition:end@case_branch#unary-not/comparison in tools/b7_audit/evidence.jsonl.gz

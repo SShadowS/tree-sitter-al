@@ -1,0 +1,585 @@
+================================================================================
+B7b-2 range / chain: moved from b7_gap_range_test.txt
+--
+B7a GAP representative bnd:range_expression:left:end@case_branch#chain/arithmetic
+(untrimmed witness: tools/alc_probe/cases/b7-audit/range__chain__gap.al)
+(owner B7b-2/B, a case cell of spec 6.5: the range's left root, reached
+through the shared range_expression); alc accepts every configuration (untrimmed
+witness above, alc_probe --check 2026-10-21). Source trimmed: the generator's table, var section and helper
+procedures are removed, the statement and its host are verbatim.
+================================================================================
+codeunit 50101 P
+{
+    procedure Q()
+    begin
+case I of
+1 * 2
+#if X
++ 3
+#endif
+* 4
+..5:
+Bar();
+end;
+    end;
+}
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (procedure
+        (procedure_keyword)
+        name: (identifier)
+        body: (code_block
+          (begin_keyword)
+          body: (statement_block
+            (case_statement
+              (case_keyword)
+              expression: (identifier)
+              (of_keyword)
+              body: (case_body
+                (case_branch
+                  pattern: (range_expression
+                    left: (multiplicative_expression
+                      left: (integer)
+                      right: (integer))
+                    (preproc_conditional_expression_tail
+                      (preproc_if
+                        (preproc_open)
+                        condition: (identifier))
+                      operand: (integer)
+                      (preproc_endif
+                        (preproc_close))
+                      operand: (integer))
+                    right: (integer))
+                  body: (call_expression
+                    function: (identifier)
+                    arguments: (argument_list))))
+              (end_keyword)))
+          (end_keyword))))))
+
+================================================================================
+B7b-2 range / consecutive: moved from b7_gap_range_test.txt
+--
+B7a GAP representative bnd:range_expression:left:end@case_branch#consecutive/arithmetic
+(untrimmed witness: tools/alc_probe/cases/b7-audit/range__consecutive__gap.al)
+(owner B7b-2/B, a case cell of spec 6.5); alc accepts every configuration (untrimmed
+witness above, alc_probe --check 2026-10-21). Source trimmed: the generator's table, var section and helper
+procedures are removed, the statement and its host are verbatim.
+================================================================================
+codeunit 50101 P
+{
+    procedure Q()
+    begin
+case I of
+1
+#if X
++ 2
+#endif
+#if Y
++ 3
+#endif
+..5:
+Bar();
+end;
+    end;
+}
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (procedure
+        (procedure_keyword)
+        name: (identifier)
+        body: (code_block
+          (begin_keyword)
+          body: (statement_block
+            (case_statement
+              (case_keyword)
+              expression: (identifier)
+              (of_keyword)
+              body: (case_body
+                (case_branch
+                  pattern: (range_expression
+                    left: (integer)
+                    (preproc_conditional_expression_tail
+                      (preproc_if
+                        (preproc_open)
+                        condition: (identifier))
+                      operand: (integer)
+                      (preproc_endif
+                        (preproc_close))
+                      (preproc_conditional_expression_tail
+                        (preproc_if
+                          (preproc_open)
+                          condition: (identifier))
+                        operand: (integer)
+                        (preproc_endif
+                          (preproc_close))))
+                    right: (integer))
+                  body: (call_expression
+                    function: (identifier)
+                    arguments: (argument_list))))
+              (end_keyword)))
+          (end_keyword))))))
+
+================================================================================
+B7b-2 range / nested: moved from b7_gap_range_test.txt
+--
+B7a GAP representative bnd:range_expression:left:end@case_branch#nested/arithmetic
+(untrimmed witness: tools/alc_probe/cases/b7-audit/range__nested__gap.al)
+(owner B7b-2/B, a case cell of spec 6.5); alc accepts every configuration (untrimmed
+witness above, alc_probe --check 2026-10-21). Source trimmed: the generator's table, var section and helper
+procedures are removed, the statement and its host are verbatim.
+================================================================================
+codeunit 50101 P
+{
+    procedure Q()
+    begin
+case I of
+1
+#if X
++ 2
+#if Y
++ 3
+#endif
+#endif
+..5:
+Bar();
+end;
+    end;
+}
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (procedure
+        (procedure_keyword)
+        name: (identifier)
+        body: (code_block
+          (begin_keyword)
+          body: (statement_block
+            (case_statement
+              (case_keyword)
+              expression: (identifier)
+              (of_keyword)
+              body: (case_body
+                (case_branch
+                  pattern: (range_expression
+                    left: (integer)
+                    (preproc_conditional_expression_tail
+                      (preproc_if
+                        (preproc_open)
+                        condition: (identifier))
+                      operand: (integer)
+                      (preproc_conditional_expression_tail
+                        (preproc_if
+                          (preproc_open)
+                          condition: (identifier))
+                        operand: (integer)
+                        (preproc_endif
+                          (preproc_close)))
+                      (preproc_endif
+                        (preproc_close)))
+                    right: (integer))
+                  body: (call_expression
+                    function: (identifier)
+                    arguments: (argument_list))))
+              (end_keyword)))
+          (end_keyword))))))
+
+================================================================================
+B7b-2 range / op-only: moved from b7_gap_range_test.txt
+--
+B7a GAP representative bnd:range_expression:left:end@case_branch#op-only/arithmetic
+(untrimmed witness: tools/alc_probe/cases/b7-audit/range__op-only__gap.al, --check 2026-10-21)
+(owner B7b-2/B, a case cell of spec 6.5); op-only: alc rejects X=0 (RC8
+over-acceptance, spec 9), the X=1 configuration is valid and parses; one tree
+for both. Source trimmed: the generator's table, var section and helper
+procedures are removed, the statement and its host are verbatim.
+================================================================================
+codeunit 50101 P
+{
+    procedure Q()
+    begin
+case I of
+1
+#if X
++
+#endif
+2
+..5:
+Bar();
+end;
+    end;
+}
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (procedure
+        (procedure_keyword)
+        name: (identifier)
+        body: (code_block
+          (begin_keyword)
+          body: (statement_block
+            (case_statement
+              (case_keyword)
+              expression: (identifier)
+              (of_keyword)
+              body: (case_body
+                (case_branch
+                  pattern: (range_expression
+                    left: (integer)
+                    (preproc_conditional_expression_tail
+                      (preproc_if
+                        (preproc_open)
+                        condition: (identifier))
+                      (preproc_endif
+                        (preproc_close))
+                      operand: (integer))
+                    right: (integer))
+                  body: (call_expression
+                    function: (identifier)
+                    arguments: (argument_list))))
+              (end_keyword)))
+          (end_keyword))))))
+
+================================================================================
+B7b-2 range / suffix: moved from b7_gap_range_test.txt
+--
+B7a GAP representative bnd:range_expression:left:end@case_branch#suffix/arithmetic
+(untrimmed witness: tools/alc_probe/cases/b7-audit/range__suffix__gap.al)
+(owner B7b-2/B, a case cell of spec 6.5); alc accepts every configuration (untrimmed
+witness above, alc_probe --check 2026-10-21). Source trimmed: the generator's table, var section and helper
+procedures are removed, the statement and its host are verbatim.
+================================================================================
+codeunit 50101 P
+{
+    procedure Q()
+    begin
+case I of
+1
+#if X
++ 2
+#endif
+..5:
+Bar();
+end;
+    end;
+}
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (procedure
+        (procedure_keyword)
+        name: (identifier)
+        body: (code_block
+          (begin_keyword)
+          body: (statement_block
+            (case_statement
+              (case_keyword)
+              expression: (identifier)
+              (of_keyword)
+              body: (case_body
+                (case_branch
+                  pattern: (range_expression
+                    left: (integer)
+                    (preproc_conditional_expression_tail
+                      (preproc_if
+                        (preproc_open)
+                        condition: (identifier))
+                      operand: (integer)
+                      (preproc_endif
+                        (preproc_close)))
+                    right: (integer))
+                  body: (call_expression
+                    function: (identifier)
+                    arguments: (argument_list))))
+              (end_keyword)))
+          (end_keyword))))))
+
+================================================================================
+B7b-2 range / suffix-else: moved from b7_gap_range_test.txt
+--
+B7a GAP representative bnd:range_expression:left:end@case_branch#suffix-else/arithmetic
+(untrimmed witness: tools/alc_probe/cases/b7-audit/range__suffix-else__gap.al)
+(owner B7b-2/B, a case cell of spec 6.5); alc accepts every configuration (untrimmed
+witness above, alc_probe --check 2026-10-21). Source trimmed: the generator's table, var section and helper
+procedures are removed, the statement and its host are verbatim.
+================================================================================
+codeunit 50101 P
+{
+    procedure Q()
+    begin
+case I of
+1
+#if X
++ 2
+#else
+* 3
+#endif
+..5:
+Bar();
+end;
+    end;
+}
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (procedure
+        (procedure_keyword)
+        name: (identifier)
+        body: (code_block
+          (begin_keyword)
+          body: (statement_block
+            (case_statement
+              (case_keyword)
+              expression: (identifier)
+              (of_keyword)
+              body: (case_body
+                (case_branch
+                  pattern: (range_expression
+                    left: (integer)
+                    (preproc_conditional_expression_tail
+                      (preproc_if
+                        (preproc_open)
+                        condition: (identifier))
+                      operand: (integer)
+                      (preproc_else)
+                      operand: (integer)
+                      (preproc_endif
+                        (preproc_close)))
+                    right: (integer))
+                  body: (call_expression
+                    function: (identifier)
+                    arguments: (argument_list))))
+              (end_keyword)))
+          (end_keyword))))))
+
+================================================================================
+B7b-2 range / first: moved from b7_gap_range_test.txt
+--
+B7a GAP representative bnd:range_expression:left:end@case_branch#first/arithmetic
+(untrimmed witness: tools/alc_probe/cases/b7-audit/range__first__gap.al)
+(manifest row: deferred, owner B7b-2/C). Parses since B7b-2 Phase C (Task 10):
+the prefix is inside the range, `_region_root_left`'s leading arm (a range end
+is its own root, so the case pattern's own prefix route does not take a range).
+Source trimmed: the generator's table, var section and helpers are removed.
+================================================================================
+codeunit 50101 P
+{
+    procedure Q()
+    begin
+case I of
+#if X
+1 +
+#endif
+2
+..5:
+Bar();
+end;
+    end;
+}
+--------------------------------------------------------------------------------
+
+(source_file (codeunit_declaration (codeunit_keyword) object_id: (integer) object_name: (identifier) body:
+(declaration_body (procedure (procedure_keyword) name: (identifier) body: (code_block (begin_keyword) body:
+(statement_block (case_statement (case_keyword) expression: (identifier) (of_keyword) body: (case_body (case_branch
+pattern: (range_expression (preproc_operand_prefix (preproc_if (preproc_open) condition: (identifier)) operand:
+(integer) (preproc_endif (preproc_close))) left: (integer) right: (integer)) body: (call_expression function:
+(identifier) arguments: (argument_list)))) (end_keyword))) (end_keyword))))))
+
+================================================================================
+B7b-2 range / first-only: moved from b7_gap_range_test.txt
+--
+B7a GAP representative bnd:range_expression:left:end@case_branch#first-only/arithmetic
+(untrimmed witness: tools/alc_probe/cases/b7-audit/range__first-only__gap.al)
+(manifest row: deferred, owner B7b-2/C). Parses since B7b-2 Phase C (Task 10).
+Source trimmed: the generator's table, var section and helpers are removed.
+================================================================================
+codeunit 50101 P
+{
+    procedure Q()
+    begin
+case I of
+#if X
+1
+#else
+2
+#endif
+..5:
+Bar();
+end;
+    end;
+}
+--------------------------------------------------------------------------------
+
+(source_file (codeunit_declaration (codeunit_keyword) object_id: (integer) object_name: (identifier) body:
+(declaration_body (procedure (procedure_keyword) name: (identifier) body: (code_block (begin_keyword) body:
+(statement_block (case_statement (case_keyword) expression: (identifier) (of_keyword) body: (case_body (case_branch
+pattern: (range_expression left: (preproc_conditional_operand (preproc_if (preproc_open) condition: (identifier))
+operand: (integer) (preproc_else) operand: (integer) (preproc_endif (preproc_close))) right: (integer)) body:
+(call_expression function: (identifier) arguments: (argument_list)))) (end_keyword))) (end_keyword))))))
+
+================================================================================
+B7b-2 range / signed: moved from b7_gap_range_test.txt
+--
+B7a GAP representative bnd:range_expression:left:end@case_branch#signed/arithmetic
+(untrimmed witness: tools/alc_probe/cases/b7-audit/range__signed__gap.al)
+(manifest row: deferred, owner B7b-2/C). Parses since B7b-2 Phase C (Task 10).
+Source trimmed: the generator's table, var section and helpers are removed.
+================================================================================
+codeunit 50101 P
+{
+    procedure Q()
+    begin
+case I of
+1 +
+#if X
+-1
+#else
+2
+#endif
+..5:
+Bar();
+end;
+    end;
+}
+--------------------------------------------------------------------------------
+
+(source_file (codeunit_declaration (codeunit_keyword) object_id: (integer) object_name: (identifier) body:
+(declaration_body (procedure (procedure_keyword) name: (identifier) body: (code_block (begin_keyword) body:
+(statement_block (case_statement (case_keyword) expression: (identifier) (of_keyword) body: (case_body (case_branch
+pattern: (range_expression left: (additive_expression left: (integer) right: (preproc_conditional_operand
+(preproc_if (preproc_open) condition: (identifier)) operand: (unary_expression operand: (integer)) (preproc_else)
+operand: (integer) (preproc_endif (preproc_close)))) right: (integer)) body: (call_expression function: (identifier)
+arguments: (argument_list)))) (end_keyword))) (end_keyword))))))
+
+================================================================================
+B7b-2 range / unary-minus: moved from b7_gap_range_test.txt
+--
+B7a GAP representative bnd:range_expression:left:end@case_branch#unary-minus/arithmetic
+(untrimmed witness: tools/alc_probe/cases/b7-audit/range__unary-minus__gap.al)
+(manifest row: deferred, owner B7b-2/C). Parses since B7b-2 Phase C (Task 10).
+Source trimmed: the generator's table, var section and helpers are removed.
+================================================================================
+codeunit 50101 P
+{
+    procedure Q()
+    begin
+case I of
+1 +
+#if X
+- 2
+#else
+3
+#endif
+..5:
+Bar();
+end;
+    end;
+}
+--------------------------------------------------------------------------------
+
+(source_file (codeunit_declaration (codeunit_keyword) object_id: (integer) object_name: (identifier) body:
+(declaration_body (procedure (procedure_keyword) name: (identifier) body: (code_block (begin_keyword) body:
+(statement_block (case_statement (case_keyword) expression: (identifier) (of_keyword) body: (case_body (case_branch
+pattern: (range_expression left: (additive_expression left: (integer) right: (preproc_conditional_operand
+(preproc_if (preproc_open) condition: (identifier)) operand: (unary_expression operand: (integer)) (preproc_else)
+operand: (integer) (preproc_endif (preproc_close)))) right: (integer)) body: (call_expression function: (identifier)
+arguments: (argument_list)))) (end_keyword))) (end_keyword))))))
+
+================================================================================
+B7b-2 range / unary-paren: moved from b7_gap_range_test.txt
+--
+B7a GAP representative bnd:range_expression:left:end@case_branch#unary-paren/arithmetic
+(untrimmed witness: tools/alc_probe/cases/b7-audit/range__unary-paren__gap.al)
+(manifest row: deferred, owner B7b-2/C). Parses since B7b-2 Phase C (Task 10).
+Source trimmed: the generator's table, var section and helpers are removed.
+================================================================================
+codeunit 50101 P
+{
+    procedure Q()
+    begin
+case I of
+1 +
+#if X
+( 2 + 3 )
+#else
+3
+#endif
+..5:
+Bar();
+end;
+    end;
+}
+--------------------------------------------------------------------------------
+
+(source_file (codeunit_declaration (codeunit_keyword) object_id: (integer) object_name: (identifier) body:
+(declaration_body (procedure (procedure_keyword) name: (identifier) body: (code_block (begin_keyword) body:
+(statement_block (case_statement (case_keyword) expression: (identifier) (of_keyword) body: (case_body (case_branch
+pattern: (range_expression left: (additive_expression left: (integer) right: (preproc_conditional_operand
+(preproc_if (preproc_open) condition: (identifier)) operand: (parenthesized_expression (additive_expression left:
+(integer) right: (integer))) (preproc_else) operand: (integer) (preproc_endif (preproc_close)))) right: (integer))
+body: (call_expression function: (identifier) arguments: (argument_list)))) (end_keyword))) (end_keyword))))))
+
+================================================================================
+B7b-2 range / whole-operand: moved from b7_gap_range_test.txt
+--
+B7a GAP representative bnd:range_expression:left:end@case_branch#whole-operand/arithmetic
+(untrimmed witness: tools/alc_probe/cases/b7-audit/range__whole-operand__gap.al)
+(manifest row: deferred, owner B7b-2/C). Parses since B7b-2 Phase C (Task 10).
+Source trimmed: the generator's table, var section and helpers are removed.
+================================================================================
+codeunit 50101 P
+{
+    procedure Q()
+    begin
+case I of
+1 +
+#if X
+2
+#else
+3
+#endif
+..5:
+Bar();
+end;
+    end;
+}
+--------------------------------------------------------------------------------
+
+(source_file (codeunit_declaration (codeunit_keyword) object_id: (integer) object_name: (identifier) body:
+(declaration_body (procedure (procedure_keyword) name: (identifier) body: (code_block (begin_keyword) body:
+(statement_block (case_statement (case_keyword) expression: (identifier) (of_keyword) body: (case_body (case_branch
+pattern: (range_expression left: (additive_expression left: (integer) right: (preproc_conditional_operand
+(preproc_if (preproc_open) condition: (identifier)) operand: (integer) (preproc_else) operand: (integer)
+(preproc_endif (preproc_close)))) right: (integer)) body: (call_expression function: (identifier) arguments:
+(argument_list)))) (end_keyword))) (end_keyword))))))

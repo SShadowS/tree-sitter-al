@@ -1,0 +1,1287 @@
+================================================================================
+B7b-2 tie-break row 2: tail with as beats a statement group of parenless calls
+--
+Spec 5.4 row 2, execution amendments (assignment tail production
+prec.dynamic(11) inside the rule's 10). Losing tree: `right: (identifier)`
+followed by a sibling preproc_conditional_statement holding two
+call_statements `as` and `IFoo` (item 41). alc:
+tools/alc_probe/cases/b7b-2/keyword_ops/as-suffix.al.
+================================================================================
+codeunit 50100 P
+{
+    procedure Q()
+    begin
+        i2 := i
+#if X
+            as IFoo
+#endif
+            ;
+    end;
+}
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (procedure
+        (procedure_keyword)
+        name: (identifier)
+        body: (code_block
+          (begin_keyword)
+          body: (statement_block
+            (assignment_statement
+              left: (identifier)
+              operator: (assignment_operator)
+              right: (identifier)
+              (preproc_conditional_expression_tail
+                (preproc_if
+                  (preproc_open)
+                  condition: (identifier))
+                operator: (as_keyword)
+                operand: (type_specification
+                  (identifier))
+                (preproc_endif
+                  (preproc_close)))))
+          (end_keyword))))))
+
+================================================================================
+B7b-2 tie-break row 3a: tail beats a comma-less argument arm
+--
+Spec 5.4 row 3, `Foo(1 #if X + 2 #endif)`; `_argument_expression` tail
+production prec.dynamic(1). Losing tree: `(argument_list (integer)
+(preproc_conditional_arguments ... (unary_expression operand: (integer))
+...))`, a second argument `+2`. alc (X=1 is `Foo(1 + 2)`, one argument):
+tools/alc_probe/cases/b7b-2/tails/suffix.al shape in an argument.
+================================================================================
+codeunit 50100 P
+{
+    procedure Q()
+    begin
+        I := Foo(1
+#if X
+            + 2
+#endif
+            );
+    end;
+}
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (procedure
+        (procedure_keyword)
+        name: (identifier)
+        body: (code_block
+          (begin_keyword)
+          body: (statement_block
+            (assignment_statement
+              left: (identifier)
+              operator: (assignment_operator)
+              right: (call_expression
+                function: (identifier)
+                arguments: (argument_list
+                  (integer)
+                  (preproc_conditional_expression_tail
+                    (preproc_if
+                      (preproc_open)
+                      condition: (identifier))
+                    operand: (integer)
+                    (preproc_endif
+                      (preproc_close)))))))
+          (end_keyword))))))
+
+================================================================================
+B7b-2 tie-break row 3b: consecutive tail beats tail plus a comma-less argument arm
+--
+Spec 5.4 row 3, the consecutive step's prec.dynamic(1). Losing tree: the first
+tail, then a sibling preproc_conditional_arguments holding `(unary_expression
+operand: (integer))`. alc: tools/alc_probe/cases/b7b-2/operand_groups/
+args-consecutive-tails.al.
+================================================================================
+codeunit 50100 P
+{
+    procedure Q()
+    begin
+        I := Foo(1
+#if X
+            + 2
+#endif
+#if Y
+            + 3
+#endif
+            , 2);
+    end;
+}
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (procedure
+        (procedure_keyword)
+        name: (identifier)
+        body: (code_block
+          (begin_keyword)
+          body: (statement_block
+            (assignment_statement
+              left: (identifier)
+              operator: (assignment_operator)
+              right: (call_expression
+                function: (identifier)
+                arguments: (argument_list
+                  (integer)
+                  (preproc_conditional_expression_tail
+                    (preproc_if
+                      (preproc_open)
+                      condition: (identifier))
+                    operand: (integer)
+                    (preproc_endif
+                      (preproc_close))
+                    (preproc_conditional_expression_tail
+                      (preproc_if
+                        (preproc_open)
+                        condition: (identifier))
+                      operand: (integer)
+                      (preproc_endif
+                        (preproc_close))))
+                  (integer)))))
+          (end_keyword))))))
+
+================================================================================
+B7b-2 tie-break row 3c: tail then a comma-led argument group
+--
+Spec 5.4 row 3; the consecutive-tail reading dies at `,` (no static shift
+into a consecutive tail, amendment item 2). Losing tree (spike v2): both
+groups preproc_conditional_arguments, the first holding `(unary_expression
+operand: (integer))`. alc: tools/alc_probe/cases/b7b-2/operand_groups/
+args-tail-then-comma.al.
+================================================================================
+codeunit 50100 P
+{
+    procedure Q()
+    begin
+        I := Foo(1
+#if X
+            + 2
+#endif
+#if Y
+            , 3
+#endif
+            );
+    end;
+}
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (procedure
+        (procedure_keyword)
+        name: (identifier)
+        body: (code_block
+          (begin_keyword)
+          body: (statement_block
+            (assignment_statement
+              left: (identifier)
+              operator: (assignment_operator)
+              right: (call_expression
+                function: (identifier)
+                arguments: (argument_list
+                  (integer)
+                  (preproc_conditional_expression_tail
+                    (preproc_if
+                      (preproc_open)
+                      condition: (identifier))
+                    operand: (integer)
+                    (preproc_endif
+                      (preproc_close)))
+                  (preproc_conditional_arguments
+                    (preproc_if
+                      (preproc_open)
+                      condition: (identifier))
+                    (integer)
+                    (preproc_endif
+                      (preproc_close)))))))
+          (end_keyword))))))
+
+================================================================================
+B7b-2 tie-break preservation: an argument group only one derivation completes
+--
+Spec 5.4, `Foo(#if X 1, #endif 2)` (X=0 `Foo(2)`, X=1 `Foo(1, 2)`) stays the
+argument group. alc: tools/alc_probe/cases/b7b-2/operand_groups/
+argument-group-preserve.al.
+================================================================================
+codeunit 50100 P
+{
+    procedure Q()
+    begin
+        I := Foo(
+#if X
+            1,
+#endif
+            2);
+    end;
+}
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (procedure
+        (procedure_keyword)
+        name: (identifier)
+        body: (code_block
+          (begin_keyword)
+          body: (statement_block
+            (assignment_statement
+              left: (identifier)
+              operator: (assignment_operator)
+              right: (call_expression
+                function: (identifier)
+                arguments: (argument_list
+                  (preproc_conditional_arguments
+                    (preproc_if
+                      (preproc_open)
+                      condition: (identifier))
+                    (integer)
+                    (preproc_endif
+                      (preproc_close)))
+                  (integer)))))
+          (end_keyword))))))
+
+================================================================================
+B7b-2 tie-break row 1a: a tail after a ternary belongs to its else root
+--
+Spec 5.2, 5.4 row 1 (taken into Phase A with the root rule, execution
+amendments Task 4). The assignment's tail production takes
+`_continuation_operand`, so no host-anchored derivation exists. Losing tree
+(base): `right: (ternary_expression condition then_value else_value)` with the
+tail a SIBLING of `right`. alc: tools/alc_probe/cases/b7b-2/grouping/
+ternary-else-tail.al (`Ok ? 1 : (2+3)`).
+================================================================================
+codeunit 50100 P
+{
+    procedure Q()
+    begin
+        x := Ok ? 1 : 2
+#if X
+            + 3
+#endif
+            ;
+    end;
+}
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (procedure
+        (procedure_keyword)
+        name: (identifier)
+        body: (code_block
+          (begin_keyword)
+          body: (statement_block
+            (assignment_statement
+              left: (identifier)
+              operator: (assignment_operator)
+              right: (ternary_expression
+                condition: (identifier)
+                then_value: (integer)
+                else_value: (integer)
+                (preproc_conditional_expression_tail
+                  (preproc_if
+                    (preproc_open)
+                    condition: (identifier))
+                  operand: (integer)
+                  (preproc_endif
+                    (preproc_close))))))
+          (end_keyword))))))
+
+================================================================================
+B7b-2 tie-break row 1b: a tail after a range end belongs to the range's right root
+--
+Spec 5.2, 5.4 row 1. The list's first element keeps its base `optional(tail)`
+in Phase A, so both derivations complete and _range_right's prec.dynamic(1)
+decides. Losing tree (base): `(list_literal (range_expression left right)
+(preproc_conditional_expression_tail ...))`. alc:
+tools/alc_probe/cases/b7b-2/grouping/range-right-tail.al (`[1..(5+2)]`).
+================================================================================
+codeunit 50100 P
+{
+    procedure Q()
+    begin
+        x := [1..5
+#if X
+            + 2
+#endif
+            ];
+    end;
+}
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (procedure
+        (procedure_keyword)
+        name: (identifier)
+        body: (code_block
+          (begin_keyword)
+          body: (statement_block
+            (assignment_statement
+              left: (identifier)
+              operator: (assignment_operator)
+              right: (list_literal
+                (range_expression
+                  left: (integer)
+                  right: (integer)
+                  (preproc_conditional_expression_tail
+                    (preproc_if
+                      (preproc_open)
+                      condition: (identifier))
+                    operand: (integer)
+                    (preproc_endif
+                      (preproc_close)))))))
+          (end_keyword))))))
+
+================================================================================
+B7b-2 tie-break row 1c: the trail of a tail stops at `?`; the tail is in the ternary's condition
+--
+Spec 5.2: a tail item's operand is `_continuation_operand`, so `or Ok ? 1 : 2`
+after #endif cannot be a trailing operand. Losing tree (base): `right:
+(logical_expression Ok true)` with an assignment-root tail whose last
+`operand:` is `(ternary_expression ...)`. alc: tools/alc_probe/cases/b7b-2/
+grouping/rc5-ternary-condition.al.
+================================================================================
+codeunit 50100 P
+{
+    procedure Q()
+    begin
+        x := Ok or true
+#if X
+            and false
+#endif
+            or Ok ? 1 : 2;
+    end;
+}
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (procedure
+        (procedure_keyword)
+        name: (identifier)
+        body: (code_block
+          (begin_keyword)
+          body: (statement_block
+            (assignment_statement
+              left: (identifier)
+              operator: (assignment_operator)
+              right: (ternary_expression
+                condition: (logical_expression
+                  left: (identifier)
+                  right: (boolean))
+                (preproc_conditional_expression_tail
+                  (preproc_if
+                    (preproc_open)
+                    condition: (identifier))
+                  operand: (boolean)
+                  (preproc_endif
+                    (preproc_close))
+                  operand: (identifier))
+                then_value: (integer)
+                else_value: (integer))))
+          (end_keyword))))))
+
+================================================================================
+B7b-2 inner roots: a ternary followed by a tail at the argument, list, exit, if, while, for and subscript roots
+--
+Carry-over from the Task 3 review: every root either has no tail derivation
+for a ternary (argument: the tail production takes `_continuation_operand`) or
+loses to the else root's prec.dynamic(1) (list first element, exit, if,
+while, for end, first subscript index: still `_expression` plus an optional
+tail until Phase B). Losing tree each time: the tail a sibling of the ternary
+at the host.
+================================================================================
+codeunit 50100 P
+{
+    procedure Q()
+    begin
+        Foo(Ok ? 1 : 2
+#if X
+            + 3
+#endif
+            );
+        x := [Ok ? 1 : 2
+#if X
+            + 3
+#endif
+            ];
+        exit(Ok ? 1 : 2
+#if X
+            + 3
+#endif
+            );
+        if Ok ? A : B
+#if X
+            and C
+#endif
+            then;
+        while Ok ? A : B
+#if X
+            and C
+#endif
+            do;
+        for i := 1 to Ok ? 1 : 2
+#if X
+            + 3
+#endif
+            do;
+        x := Arr[Ok ? 1 : 2
+#if X
+            + 3
+#endif
+            ];
+    end;
+}
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (procedure
+        (procedure_keyword)
+        name: (identifier)
+        body: (code_block
+          (begin_keyword)
+          body: (statement_block
+            (call_expression
+              function: (identifier)
+              arguments: (argument_list
+                (ternary_expression
+                  condition: (identifier)
+                  then_value: (integer)
+                  else_value: (integer)
+                  (preproc_conditional_expression_tail
+                    (preproc_if
+                      (preproc_open)
+                      condition: (identifier))
+                    operand: (integer)
+                    (preproc_endif
+                      (preproc_close))))))
+            (assignment_statement
+              left: (identifier)
+              operator: (assignment_operator)
+              right: (list_literal
+                (ternary_expression
+                  condition: (identifier)
+                  then_value: (integer)
+                  else_value: (integer)
+                  (preproc_conditional_expression_tail
+                    (preproc_if
+                      (preproc_open)
+                      condition: (identifier))
+                    operand: (integer)
+                    (preproc_endif
+                      (preproc_close))))))
+            (exit_statement
+              (exit_keyword)
+              return_value: (ternary_expression
+                condition: (identifier)
+                then_value: (integer)
+                else_value: (integer)
+                (preproc_conditional_expression_tail
+                  (preproc_if
+                    (preproc_open)
+                    condition: (identifier))
+                  operand: (integer)
+                  (preproc_endif
+                    (preproc_close)))))
+            (if_statement
+              (if_keyword)
+              condition: (ternary_expression
+                condition: (identifier)
+                then_value: (identifier)
+                else_value: (identifier)
+                (preproc_conditional_expression_tail
+                  (preproc_if
+                    (preproc_open)
+                    condition: (identifier))
+                  operand: (identifier)
+                  (preproc_endif
+                    (preproc_close))))
+              (then_keyword)
+              then_branch: (empty_statement))
+            (while_statement
+              (while_keyword)
+              condition: (ternary_expression
+                condition: (identifier)
+                then_value: (identifier)
+                else_value: (identifier)
+                (preproc_conditional_expression_tail
+                  (preproc_if
+                    (preproc_open)
+                    condition: (identifier))
+                  operand: (identifier)
+                  (preproc_endif
+                    (preproc_close))))
+              (do_keyword)
+              body: (empty_statement))
+            (for_statement
+              (for_keyword)
+              variable: (identifier)
+              start: (integer)
+              direction: (to_keyword)
+              end: (ternary_expression
+                condition: (identifier)
+                then_value: (integer)
+                else_value: (integer)
+                (preproc_conditional_expression_tail
+                  (preproc_if
+                    (preproc_open)
+                    condition: (identifier))
+                  operand: (integer)
+                  (preproc_endif
+                    (preproc_close))))
+              (do_keyword)
+              body: (empty_statement))
+            (assignment_statement
+              left: (identifier)
+              operator: (assignment_operator)
+              right: (subscript_expression
+                object: (identifier)
+                index: (ternary_expression
+                  condition: (identifier)
+                  then_value: (integer)
+                  else_value: (integer)
+                  (preproc_conditional_expression_tail
+                    (preproc_if
+                      (preproc_open)
+                      condition: (identifier))
+                    operand: (integer)
+                    (preproc_endif
+                      (preproc_close)))))))
+          (end_keyword))))))
+
+================================================================================
+B7b-2 inner roots (Phase B): a ternary or range followed by a tail at the repeat, case, parenthesized, for-start and list roots
+--
+Spec 5.2 and 5.4 row 1 at the Phase B region roots: the tail belongs to the
+innermost region that ends where its #if begins, the ternary's else_value
+(_ternary_else) or the range's right end (_range_right). Losing tree: the tail a
+sibling of the ternary or range at the host (`condition: (ternary_expression
+...) (preproc_conditional_expression_tail ...)` in repeat_statement); the
+region roots' tail arm takes `_continuation_operand`, so that derivation is
+removed, not penalised (execution amendments, the root rule). alc:
+tools/alc_probe/cases/b7b-2/grouping/ternary-else-tail.al, range-right-tail.al.
+================================================================================
+codeunit 50100 P
+{
+    procedure Q()
+    begin
+        repeat
+            Foo();
+        until Ok ? A : B
+#if X
+            or C
+#endif
+            ;
+        case Ok ? 1 : 2
+#if X
+            + 3
+#endif
+            of
+            1:
+                Foo();
+        end;
+        x := (Ok ? 1 : 2
+#if X
+            + 3
+#endif
+            );
+        for i := Ok ? 1 : 2
+#if X
+            + 3
+#endif
+            to 5 do
+            Foo();
+        Ok := i in [1, 2 .. 5
+#if X
+            + 1
+#endif
+            ];
+    end;
+}
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (procedure
+        (procedure_keyword)
+        name: (identifier)
+        body: (code_block
+          (begin_keyword)
+          body: (statement_block
+            (repeat_statement
+              (repeat_keyword)
+              body: (statement_block
+                (call_expression
+                  function: (identifier)
+                  arguments: (argument_list)))
+              (until_keyword)
+              condition: (ternary_expression
+                condition: (identifier)
+                then_value: (identifier)
+                else_value: (identifier)
+                (preproc_conditional_expression_tail
+                  (preproc_if
+                    (preproc_open)
+                    condition: (identifier))
+                  operand: (identifier)
+                  (preproc_endif
+                    (preproc_close)))))
+            (case_statement
+              (case_keyword)
+              expression: (ternary_expression
+                condition: (identifier)
+                then_value: (integer)
+                else_value: (integer)
+                (preproc_conditional_expression_tail
+                  (preproc_if
+                    (preproc_open)
+                    condition: (identifier))
+                  operand: (integer)
+                  (preproc_endif
+                    (preproc_close))))
+              (of_keyword)
+              body: (case_body
+                (case_branch
+                  pattern: (integer)
+                  body: (call_expression
+                    function: (identifier)
+                    arguments: (argument_list))))
+              (end_keyword))
+            (assignment_statement
+              left: (identifier)
+              operator: (assignment_operator)
+              right: (parenthesized_expression
+                (ternary_expression
+                  condition: (identifier)
+                  then_value: (integer)
+                  else_value: (integer)
+                  (preproc_conditional_expression_tail
+                    (preproc_if
+                      (preproc_open)
+                      condition: (identifier))
+                    operand: (integer)
+                    (preproc_endif
+                      (preproc_close))))))
+            (for_statement
+              (for_keyword)
+              variable: (identifier)
+              start: (ternary_expression
+                condition: (identifier)
+                then_value: (integer)
+                else_value: (integer)
+                (preproc_conditional_expression_tail
+                  (preproc_if
+                    (preproc_open)
+                    condition: (identifier))
+                  operand: (integer)
+                  (preproc_endif
+                    (preproc_close))))
+              direction: (to_keyword)
+              end: (integer)
+              (do_keyword)
+              body: (call_expression
+                function: (identifier)
+                arguments: (argument_list)))
+            (assignment_statement
+              left: (identifier)
+              operator: (assignment_operator)
+              right: (in_expression
+                left: (identifier)
+                operator: (in_keyword)
+                right: (list_literal
+                  (integer)
+                  (range_expression
+                    left: (integer)
+                    right: (integer)
+                    (preproc_conditional_expression_tail
+                      (preproc_if
+                        (preproc_open)
+                        condition: (identifier))
+                      operand: (integer)
+                      (preproc_endif
+                        (preproc_close))))))))
+          (end_keyword))))))
+
+================================================================================
+B7b-2 tie-break row 4: a tail after a case-pattern range beats a comma-less pattern group
+--
+Spec 5.4 row 4 and 6.5, `case i of 1..5 #if X + 2 #endif : Foo(); end;`;
+_range_right's tail production prec.dynamic(1) (execution amendments, Task 3
+row 4: `select_higher_precedence symbol:case_branch, prec:1 ... other_prec:0`).
+Losing tree: `(case_branch pattern: (range_expression left right)
+(preproc_conditional_case_patterns pattern: (unary_expression operand:
+(integer))) body: ...)`, `+2` read as a second pattern. alc: the range-right
+shape, tools/alc_probe/cases/b7b-2/grouping/range-right-tail.al.
+================================================================================
+codeunit 50100 P
+{
+    procedure Q()
+    begin
+        case i of
+            1 .. 5
+#if X
+                + 2
+#endif
+                :
+                Foo();
+        end;
+    end;
+}
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (procedure
+        (procedure_keyword)
+        name: (identifier)
+        body: (code_block
+          (begin_keyword)
+          body: (statement_block
+            (case_statement
+              (case_keyword)
+              expression: (identifier)
+              (of_keyword)
+              body: (case_body
+                (case_branch
+                  pattern: (range_expression
+                    left: (integer)
+                    right: (integer)
+                    (preproc_conditional_expression_tail
+                      (preproc_if
+                        (preproc_open)
+                        condition: (identifier))
+                      operand: (integer)
+                      (preproc_endif
+                        (preproc_close))))
+                  body: (call_expression
+                    function: (identifier)
+                    arguments: (argument_list))))
+              (end_keyword)))
+          (end_keyword))))))
+
+================================================================================
+B7b-2 tie-break row 5: an operand group followed by a postfix at a statement start
+--
+Spec 5.4 row 5, 6.3: the receiver group (arms `_postfix_operand`) is the
+member object; the statement group dies at `.` (call_statement and
+_expression_statement at prec 0, Task 3 item 3). Losing tree: a
+preproc_conditional_statement of two call_statements followed by an ERROR and
+`.Foo()`. alc: tools/alc_probe/cases/b7b-2/operand_groups/statement-start.al.
+================================================================================
+codeunit 50100 P
+{
+    procedure Q()
+    begin
+#if X
+        a
+#else
+        b
+#endif
+        .Foo();
+    end;
+}
+--------------------------------------------------------------------------------
+
+(source_file (codeunit_declaration (codeunit_keyword) object_id: (integer) object_name: (identifier) body:
+(declaration_body (procedure (procedure_keyword) name: (identifier) body: (code_block (begin_keyword) body:
+(statement_block (call_expression function: (member_expression object: (preproc_conditional_operand (preproc_if
+(preproc_open) condition: (identifier)) operand: (identifier) (preproc_else) operand: (identifier) (preproc_endif
+(preproc_close))) member: (identifier)) arguments: (argument_list))) (end_keyword))))))
+
+================================================================================
+B7b-2 tie-break row 5': a bare call alone in a statement group
+--
+Spec 5.4 row 5' (preservation): the operand reading dies at `end`; the
+statement group keeps the call. Losing tree: a preproc_conditional_operand
+(v3 ERROR).
+================================================================================
+codeunit 50100 P
+{
+    procedure Q()
+    begin
+#if X
+        Foo
+#endif
+    end;
+}
+--------------------------------------------------------------------------------
+
+(source_file (codeunit_declaration (codeunit_keyword) object_id: (integer) object_name: (identifier) body:
+(declaration_body (procedure (procedure_keyword) name: (identifier) body: (code_block (begin_keyword) body:
+(statement_block (preproc_conditional_statement (preproc_if (preproc_open) condition: (identifier)) (call_statement
+function: (identifier)) (preproc_endif (preproc_close)))) (end_keyword))))))
+
+================================================================================
+B7b-2 tie-break row 6a: an operand group then + beats an argument group and a signed argument
+--
+Spec 5.4 row 6a: the operand reading (group -1) beats the comma-less reading
+(argument group 0 + `unary_expression` prec.dynamic(-2); Task 10 fix round 2). Losing tree: `(argument_list (preproc_conditional_arguments
+(integer) (preproc_else) (integer)) (unary_expression operand: (integer)))`.
+alc: operand_groups/argument.al.
+================================================================================
+codeunit 50100 P
+{
+    procedure Q()
+    begin
+        I := Foo(
+#if X
+            1
+#else
+            2
+#endif
+            + 3);
+    end;
+}
+--------------------------------------------------------------------------------
+
+(source_file (codeunit_declaration (codeunit_keyword) object_id: (integer) object_name: (identifier) body:
+(declaration_body (procedure (procedure_keyword) name: (identifier) body: (code_block (begin_keyword) body:
+(statement_block (assignment_statement left: (identifier) operator: (assignment_operator) right: (call_expression
+function: (identifier) arguments: (argument_list (additive_expression left: (preproc_conditional_operand (preproc_if
+(preproc_open) condition: (identifier)) operand: (integer) (preproc_else) operand: (integer) (preproc_endif
+(preproc_close))) right: (integer)))))) (end_keyword))))))
+
+================================================================================
+B7b-2 tie-break row 6a with -: the same for a minus
+--
+Task 3 minor: `-` is the other operator that can start a signed comma-less
+argument; the unary penalty decides it the same way. Losing tree: the argument group followed by
+`(unary_expression operand: (integer))`.
+================================================================================
+codeunit 50100 P
+{
+    procedure Q()
+    begin
+        I := Foo(
+#if X
+            1
+#else
+            2
+#endif
+            - 3);
+    end;
+}
+--------------------------------------------------------------------------------
+
+(source_file (codeunit_declaration (codeunit_keyword) object_id: (integer) object_name: (identifier) body:
+(declaration_body (procedure (procedure_keyword) name: (identifier) body: (code_block (begin_keyword) body:
+(statement_block (assignment_statement left: (identifier) operator: (assignment_operator) right: (call_expression
+function: (identifier) arguments: (argument_list (additive_expression left: (preproc_conditional_operand (preproc_if
+(preproc_open) condition: (identifier)) operand: (integer) (preproc_else) operand: (integer) (preproc_endif
+(preproc_close))) right: (integer)))))) (end_keyword))))))
+
+================================================================================
+B7b-2 tie-break row 6a with *: no comma-less competitor
+--
+Task 3 minor: `*` cannot start an argument, so no comma-less reading exists
+and multiplicative_expression needs no bonus (the only derivation).
+================================================================================
+codeunit 50100 P
+{
+    procedure Q()
+    begin
+        I := Foo(
+#if X
+            1
+#else
+            2
+#endif
+            * 3);
+    end;
+}
+--------------------------------------------------------------------------------
+
+(source_file (codeunit_declaration (codeunit_keyword) object_id: (integer) object_name: (identifier) body:
+(declaration_body (procedure (procedure_keyword) name: (identifier) body: (code_block (begin_keyword) body:
+(statement_block (assignment_statement left: (identifier) operator: (assignment_operator) right: (call_expression
+function: (identifier) arguments: (argument_list (multiplicative_expression left: (preproc_conditional_operand
+(preproc_if (preproc_open) condition: (identifier)) operand: (integer) (preproc_else) operand: (integer)
+(preproc_endif (preproc_close))) right: (integer)))))) (end_keyword))))))
+
+================================================================================
+B7b-2 tie-break row 6b: an operand group then + in a list literal
+--
+Spec 5.4 row 6b: list-element groups cannot open a list, so the operand
+group is the only derivation.
+================================================================================
+codeunit 50100 P
+{
+    procedure Q()
+    begin
+        Ok := I in [
+#if X
+            1
+#else
+            2
+#endif
+            + 3];
+    end;
+}
+--------------------------------------------------------------------------------
+
+(source_file (codeunit_declaration (codeunit_keyword) object_id: (integer) object_name: (identifier) body:
+(declaration_body (procedure (procedure_keyword) name: (identifier) body: (code_block (begin_keyword) body:
+(statement_block (assignment_statement left: (identifier) operator: (assignment_operator) right: (in_expression
+left: (identifier) operator: (in_keyword) right: (list_literal (additive_expression left:
+(preproc_conditional_operand (preproc_if (preproc_open) condition: (identifier)) operand: (integer) (preproc_else)
+operand: (integer) (preproc_endif (preproc_close))) right: (integer)))))) (end_keyword))))))
+
+================================================================================
+B7b-2 tie-break row 7: an operand group then + at a case pattern start
+--
+Spec 5.4 row 7: the bonus beats preproc_split_case_branch and the pattern
+group. Losing tree: `(preproc_split_case_branch pattern: (integer)
+(preproc_else) pattern: (integer) pattern: (unary_expression ...))`. alc:
+operand_groups/case-pattern.al.
+================================================================================
+codeunit 50100 P
+{
+    procedure Q()
+    begin
+        case I of
+#if X
+            1
+#else
+            2
+#endif
+            + 3:
+                Bar();
+        end;
+    end;
+}
+--------------------------------------------------------------------------------
+
+(source_file (codeunit_declaration (codeunit_keyword) object_id: (integer) object_name: (identifier) body:
+(declaration_body (procedure (procedure_keyword) name: (identifier) body: (code_block (begin_keyword) body:
+(statement_block (case_statement (case_keyword) expression: (identifier) (of_keyword) body: (case_body (case_branch
+pattern: (additive_expression left: (preproc_conditional_operand (preproc_if (preproc_open) condition: (identifier))
+operand: (integer) (preproc_else) operand: (integer) (preproc_endif (preproc_close))) right: (integer)) body:
+(call_expression function: (identifier) arguments: (argument_list)))) (end_keyword))) (end_keyword))))))
+
+================================================================================
+B7b-2 tie-break row 7': an operand group then + after a pattern comma
+--
+Spec 5.4 row 7' (`_case_pattern_run`'s repeat-only prec.right, Task 3 item
+4). Losing tree: a preproc_conditional_case_patterns of two patterns followed
+by `pattern: (unary_expression operand: (integer))`.
+================================================================================
+codeunit 50100 P
+{
+    procedure Q()
+    begin
+        case I of
+            1,
+#if X
+            2
+#else
+            3
+#endif
+            + 4:
+                Bar();
+        end;
+    end;
+}
+--------------------------------------------------------------------------------
+
+(source_file (codeunit_declaration (codeunit_keyword) object_id: (integer) object_name: (identifier) body:
+(declaration_body (procedure (procedure_keyword) name: (identifier) body: (code_block (begin_keyword) body:
+(statement_block (case_statement (case_keyword) expression: (identifier) (of_keyword) body: (case_body (case_branch
+pattern: (integer) pattern: (additive_expression left: (preproc_conditional_operand (preproc_if (preproc_open)
+condition: (identifier)) operand: (integer) (preproc_else) operand: (integer) (preproc_endif (preproc_close)))
+right: (integer)) body: (call_expression function: (identifier) arguments: (argument_list)))) (end_keyword)))
+(end_keyword))))))
+
+================================================================================
+B7b-2 tie-break row 8a: comma-led arms are an argument group
+--
+Spec 5.4 row 8a: no operand derivation (a group cannot follow a complete
+operand); the argument group. alc: operand_groups/comma-group.al.
+================================================================================
+codeunit 50100 P
+{
+    procedure Q()
+    begin
+        I := Foo(1
+#if X
+            , 2
+#else
+            , 3
+#endif
+            );
+    end;
+}
+--------------------------------------------------------------------------------
+
+(source_file (codeunit_declaration (codeunit_keyword) object_id: (integer) object_name: (identifier) body:
+(declaration_body (procedure (procedure_keyword) name: (identifier) body: (code_block (begin_keyword) body:
+(statement_block (assignment_statement left: (identifier) operator: (assignment_operator) right: (call_expression
+function: (identifier) arguments: (argument_list (integer) (preproc_conditional_arguments (preproc_if (preproc_open)
+condition: (identifier)) (integer) (preproc_else) (integer) (preproc_endif (preproc_close))))))) (end_keyword))))))
+
+================================================================================
+B7b-2 tie-break row 8b: comma-led arms are a pattern group
+--
+Spec 5.4 row 8b: no arm starts with an operand. alc:
+operand_groups/case-pattern-comma-group.al.
+================================================================================
+codeunit 50100 P
+{
+    procedure Q()
+    begin
+        case I of
+            1
+#if X
+            , 2
+#endif
+            :
+                Bar();
+        end;
+    end;
+}
+--------------------------------------------------------------------------------
+
+(source_file (codeunit_declaration (codeunit_keyword) object_id: (integer) object_name: (identifier) body:
+(declaration_body (procedure (procedure_keyword) name: (identifier) body: (code_block (begin_keyword) body:
+(statement_block (case_statement (case_keyword) expression: (identifier) (of_keyword) body: (case_body (case_branch
+pattern: (integer) (preproc_conditional_case_patterns (preproc_if (preproc_open) condition: (identifier)) pattern:
+(integer) (preproc_endif (preproc_close))) body: (call_expression function: (identifier) arguments:
+(argument_list)))) (end_keyword))) (end_keyword))))))
+
+================================================================================
+B7b-2 tie-break row P': an argument group alone beats an operand group
+--
+Spec 5.4 row P' (Task 10 obligation): preproc_conditional_operand's
+prec.dynamic(-1) decides against the argument group (0). Ablation
+(execution amendments Task 10): at 0 the argument group still wins (tie,
+earlier version), at +1 the operand group wins, so a dynamic comparison
+decides. Losing tree: `(argument_list (preproc_conditional_operand operand:
+(integer) (preproc_else) operand: (integer)))`.
+================================================================================
+codeunit 50100 P
+{
+    procedure Q()
+    begin
+        Foo(
+#if X
+            1
+#else
+            2
+#endif
+            );
+    end;
+}
+--------------------------------------------------------------------------------
+
+(source_file (codeunit_declaration (codeunit_keyword) object_id: (integer) object_name: (identifier) body:
+(declaration_body (procedure (procedure_keyword) name: (identifier) body: (code_block (begin_keyword) body:
+(statement_block (call_expression function: (identifier) arguments: (argument_list (preproc_conditional_arguments
+(preproc_if (preproc_open) condition: (identifier)) (integer) (preproc_else) (integer) (preproc_endif
+(preproc_close)))))) (end_keyword))))))
+
+================================================================================
+B7b-2 tie-break nested tails in an argument tail's arm beat an argument group
+--
+Task 9 carry (the SILENT witness
+bnd:preproc_conditional_expression_tail:operand:end@argument_list#consecutive):
+each nested tail is prec.dynamic(1) like a root tail, so the root tail whose
+arm holds `+ 2` and two nested tails (3) beats an argument group whose
+comma-less arm is a unary `+2` with a root tail and a consecutive tail (2).
+Losing tree: `(argument_list (integer) (preproc_conditional_arguments
+(unary_expression operand: (integer)) (preproc_conditional_expression_tail
+... (preproc_conditional_expression_tail ...))) (integer))`.
+================================================================================
+codeunit 50100 P
+{
+    procedure Q()
+    begin
+        I := Foo(1
+#if TPL
+            + 2
+#if X
+            + 2
+#endif
+#if Y
+            + 3
+#endif
+#endif
+            , 2);
+    end;
+}
+--------------------------------------------------------------------------------
+
+(source_file (codeunit_declaration (codeunit_keyword) object_id: (integer) object_name: (identifier) body:
+(declaration_body (procedure (procedure_keyword) name: (identifier) body: (code_block (begin_keyword) body:
+(statement_block (assignment_statement left: (identifier) operator: (assignment_operator) right: (call_expression
+function: (identifier) arguments: (argument_list (integer) (preproc_conditional_expression_tail (preproc_if
+(preproc_open) condition: (identifier)) operand: (integer) (preproc_conditional_expression_tail (preproc_if
+(preproc_open) condition: (identifier)) operand: (integer) (preproc_endif (preproc_close)))
+(preproc_conditional_expression_tail (preproc_if (preproc_open) condition: (identifier)) operand: (integer)
+(preproc_endif (preproc_close))) (preproc_endif (preproc_close))) (integer))))) (end_keyword))))))
+
+================================================================================
+B7b-2 tie-break ladder: a group after * keeps * tighter than +
+--
+Task 10 fix round 1 (review I1, spec 3 ladder): `A * g + 1` is `(A * g) + 1`.
+The group is a plain operand, grouped by static precedence (fix round 2; the
+full matrix is b7b2_ladder_matrix_test.txt). Losing tree, the Task 10 bonus:
+`multiplicative_expression right: (additive_expression left: group)`.
+================================================================================
+codeunit 50100 P
+{
+    procedure Q()
+    begin
+        I := A *
+#if X
+            B
+#else
+            C
+#endif
+            + 1;
+    end;
+}
+--------------------------------------------------------------------------------
+
+(source_file (codeunit_declaration (codeunit_keyword) object_id: (integer) object_name: (identifier) body:
+(declaration_body (procedure (procedure_keyword) name: (identifier) body: (code_block (begin_keyword) body:
+(statement_block (assignment_statement left: (identifier) operator: (assignment_operator) right:
+(additive_expression left: (multiplicative_expression left: (identifier) right: (preproc_conditional_operand
+(preproc_if (preproc_open) condition: (identifier)) operand: (identifier) (preproc_else) operand: (identifier)
+(preproc_endif (preproc_close)))) right: (integer)))) (end_keyword))))))
+
+================================================================================
+B7b-2 tie-break ladder: a group after div keeps div tighter than -
+--
+Task 10 fix round 1 (review I1): `A div g - 1` is `(A div g) - 1`, as for `*`.
+Losing tree, the Task 10 bonus alone: `A div (g - 1)`.
+================================================================================
+codeunit 50100 P
+{
+    procedure Q()
+    begin
+        I := A div
+#if X
+            B
+#else
+            C
+#endif
+            - 1;
+    end;
+}
+--------------------------------------------------------------------------------
+
+(source_file (codeunit_declaration (codeunit_keyword) object_id: (integer) object_name: (identifier) body:
+(declaration_body (procedure (procedure_keyword) name: (identifier) body: (code_block (begin_keyword) body:
+(statement_block (assignment_statement left: (identifier) operator: (assignment_operator) right:
+(additive_expression left: (multiplicative_expression left: (identifier) right: (preproc_conditional_operand
+(preproc_if (preproc_open) condition: (identifier)) operand: (identifier) (preproc_else) operand: (identifier)
+(preproc_endif (preproc_close)))) right: (integer)))) (end_keyword))))))
+
+================================================================================
+B7b-2 tie-break ladder: a group after unary minus keeps the unary tighter than +
+--
+Task 10 fix round 1 (review I1): `- g + 1` is `(-g) + 1`; the group as a
+unary operand scores +3. Losing tree, the Task 10 bonus alone:
+`unary_expression operand: (additive_expression left: group)`, the unary-scope
+shape the comment above `unary_expression` calls wrong.
+================================================================================
+codeunit 50100 P
+{
+    procedure Q()
+    begin
+        I := -
+#if X
+            B
+#else
+            C
+#endif
+            + 1;
+    end;
+}
+--------------------------------------------------------------------------------
+
+(source_file (codeunit_declaration (codeunit_keyword) object_id: (integer) object_name: (identifier) body:
+(declaration_body (procedure (procedure_keyword) name: (identifier) body: (code_block (begin_keyword) body:
+(statement_block (assignment_statement left: (identifier) operator: (assignment_operator) right:
+(additive_expression left: (unary_expression operand: (preproc_conditional_operand (preproc_if (preproc_open)
+condition: (identifier)) operand: (identifier) (preproc_else) operand: (identifier) (preproc_endif
+(preproc_close)))) right: (integer)))) (end_keyword))))))
+
+================================================================================
+B7b-2 tie-break ladder: a group after not keeps not tighter than and
+--
+Task 10 fix round 1 (review I1), the not/and analogue: `not g and D` is
+`(not g) and D`. A control: `and` carries no bonus, so this held before the
+fix too; it pins a group as a unary operand.
+================================================================================
+codeunit 50100 P
+{
+    procedure Q()
+    begin
+        I := not
+#if X
+            B
+#else
+            C
+#endif
+            and D;
+    end;
+}
+--------------------------------------------------------------------------------
+
+(source_file (codeunit_declaration (codeunit_keyword) object_id: (integer) object_name: (identifier) body:
+(declaration_body (procedure (procedure_keyword) name: (identifier) body: (code_block (begin_keyword) body:
+(statement_block (assignment_statement left: (identifier) operator: (assignment_operator) right: (logical_expression
+left: (unary_expression operand: (preproc_conditional_operand (preproc_if (preproc_open) condition: (identifier))
+operand: (identifier) (preproc_else) operand: (identifier) (preproc_endif (preproc_close)))) right: (identifier))))
+(end_keyword))))))

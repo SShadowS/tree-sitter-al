@@ -1,0 +1,48 @@
+================================================================================
+B7b-2 field-header / trail: moved from b7_gap_field_header_test.txt
+--
+B7a MIXED representative occ:_field_header:3@preproc_split_field#trail
+(untrimmed witness: tools/alc_probe/cases/b7-audit/field-header__trail__gap.al)
+(not a B7b-2 manifest row: a field-header separator cell). Parses since B7b-2
+Phase C (Task 10): the field source is a one-arm operand group, the only
+derivation; TPL=1,X=0 (`field(N2; )`) is a configuration alc rejects.
+Source trimmed: the generator's table is removed.
+================================================================================
+page 50102 PG
+{
+    SourceTable = T;
+    layout
+    {
+        area(Content)
+        {
+            field(N; Rec.N) { }
+#if TPL
+            field(
+N2 ;
+#if X
+Rec.N
+#endif
+)
+#else
+            field(N3; Rec.N)
+#endif
+            {
+            }
+        }
+    }
+    var
+        I: Integer;
+        Ok: Boolean;
+}
+--------------------------------------------------------------------------------
+
+(source_file (page_declaration (page_keyword) object_id: (integer) object_name: (identifier) body: (declaration_body
+(property name: (property_name) value: (identifier)) (layout_section (layout_keyword) body: (layout_body
+(area_section (area_keyword) type: (content_keyword) body: (layout_body (page_field (field_keyword) name:
+(identifier) source: (member_expression object: (identifier) member: (identifier))) (preproc_split_field (preproc_if
+(preproc_open) condition: (identifier)) (field_keyword) name: (identifier) source: (preproc_conditional_operand
+(preproc_if (preproc_open) condition: (identifier)) operand: (member_expression object: (identifier) member:
+(identifier)) (preproc_endif (preproc_close))) (preproc_else) (field_keyword) name: (identifier) source:
+(member_expression object: (identifier) member: (identifier)) (preproc_endif (preproc_close))))))) (var_section
+(var_keyword) body: (var_body (variable_declaration name: (identifier) type: (type_specification (basic_type)))
+(variable_declaration name: (identifier) type: (type_specification (basic_type))))))))

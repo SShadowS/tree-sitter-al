@@ -1,0 +1,360 @@
+================================================================================
+B7b-2 arguments / consecutive (word operators): moved from b7_gap_arguments_test.txt
+--
+B7a GAP representative bnd:_argument_expression:0:end@argument_list#consecutive/word-arithmetic
+Untrimmed witness: tools/alc_probe/cases/b7-audit/arguments__consecutive__gap.al.
+(owner B7b-2/A); alc accepts every configuration (B7a evidence). Source trimmed:
+the generator's table, var section and helper procedures are removed, the
+statement and its host are verbatim. Fixed by the recursive tail (spec 5.1):
+the second group is the last child of the first.
+================================================================================
+codeunit 50101 P
+{
+    procedure Q()
+    begin
+I := Foo(
+1
+#if X
+div 2
+#endif
+#if Y
+div 3
+#endif
+, 2);
+    end;
+}
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (procedure
+        (procedure_keyword)
+        name: (identifier)
+        body: (code_block
+          (begin_keyword)
+          body: (statement_block
+            (assignment_statement
+              left: (identifier)
+              operator: (assignment_operator)
+              right: (call_expression
+                function: (identifier)
+                arguments: (argument_list
+                  (integer)
+                  (preproc_conditional_expression_tail
+                    (preproc_if
+                      (preproc_open)
+                      condition: (identifier))
+                    operand: (integer)
+                    (preproc_endif
+                      (preproc_close))
+                    (preproc_conditional_expression_tail
+                      (preproc_if
+                        (preproc_open)
+                        condition: (identifier))
+                      operand: (integer)
+                      (preproc_endif
+                        (preproc_close))))
+                  (integer)))))
+          (end_keyword))))))
+
+================================================================================
+B7b-2 arguments / nested (word operators): moved from b7_gap_arguments_test.txt
+--
+B7a GAP representative bnd:_argument_expression:0:end@argument_list#nested/word-arithmetic
+(owner B7b-2/A). Source trimmed as above.
+================================================================================
+codeunit 50101 P
+{
+    procedure Q()
+    begin
+I := Foo(
+1
+#if X
+div 2
+#if Y
+div 3
+#endif
+#endif
+, 2);
+    end;
+}
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (procedure
+        (procedure_keyword)
+        name: (identifier)
+        body: (code_block
+          (begin_keyword)
+          body: (statement_block
+            (assignment_statement
+              left: (identifier)
+              operator: (assignment_operator)
+              right: (call_expression
+                function: (identifier)
+                arguments: (argument_list
+                  (integer)
+                  (preproc_conditional_expression_tail
+                    (preproc_if
+                      (preproc_open)
+                      condition: (identifier))
+                    operand: (integer)
+                    (preproc_conditional_expression_tail
+                      (preproc_if
+                        (preproc_open)
+                        condition: (identifier))
+                      operand: (integer)
+                      (preproc_endif
+                        (preproc_close)))
+                    (preproc_endif
+                      (preproc_close)))
+                  (integer)))))
+          (end_keyword))))))
+
+================================================================================
+B7b-2 arguments / first: moved from b7_gap_arguments_test.txt
+--
+B7a GAP representative bnd:_argument_expression:0:end@argument_list#first/arithmetic
+(untrimmed witness: tools/alc_probe/cases/b7-audit/arguments__first__gap.al)
+(manifest row: deferred, owner B7b-2/C).
+Parses since B7b-2 Phase C (Task 10).
+Source trimmed: the generator's table, var section and helper
+procedures are removed, the statement and its host are verbatim.
+================================================================================
+codeunit 50101 P
+{
+    procedure Q()
+    begin
+I := Foo(
+#if X
+1 +
+#endif
+2
+, 2);
+    end;
+}
+--------------------------------------------------------------------------------
+
+(source_file (codeunit_declaration (codeunit_keyword) object_id: (integer) object_name: (identifier) body:
+(declaration_body (procedure (procedure_keyword) name: (identifier) body: (code_block (begin_keyword) body:
+(statement_block (assignment_statement left: (identifier) operator: (assignment_operator) right: (call_expression
+function: (identifier) arguments: (argument_list (preproc_operand_prefix (preproc_if (preproc_open) condition:
+(identifier)) operand: (integer) (preproc_endif (preproc_close))) (integer) (integer))))) (end_keyword))))))
+
+================================================================================
+B7b-2 arguments / first-only: moved from b7_gap_arguments_test.txt
+--
+B7a GAP representative bnd:_argument_expression:0:end@preproc_conditional_arguments#first-only/arithmetic
+(untrimmed witness: tools/alc_probe/cases/b7-audit/arguments__first-only__gap.al)
+(manifest row: deferred, owner B7b-2/C).
+Parses since B7b-2 Phase C (Task 10).
+Source trimmed: the generator's table, var section and helper
+procedures are removed, the statement and its host are verbatim.
+================================================================================
+codeunit 50101 P
+{
+    procedure Q()
+    begin
+I := Foo(1,
+#if TPL
+#if X
+2
+#else
+2
+#endif
+#else
+3
+#endif
+);
+    end;
+}
+--------------------------------------------------------------------------------
+
+(source_file (codeunit_declaration (codeunit_keyword) object_id: (integer) object_name: (identifier) body:
+(declaration_body (procedure (procedure_keyword) name: (identifier) body: (code_block (begin_keyword) body:
+(statement_block (assignment_statement left: (identifier) operator: (assignment_operator) right: (call_expression
+function: (identifier) arguments: (argument_list (integer) (preproc_conditional_arguments (preproc_if (preproc_open)
+condition: (identifier)) (preproc_conditional_operand (preproc_if (preproc_open) condition: (identifier)) operand:
+(integer) (preproc_else) operand: (integer) (preproc_endif (preproc_close))) (preproc_else) (integer) (preproc_endif
+(preproc_close))))))) (end_keyword))))))
+
+================================================================================
+B7b-2 arguments / signed: moved from b7_gap_arguments_test.txt
+--
+B7a GAP representative bnd:_argument_expression:0:end@argument_list#signed/arithmetic
+(untrimmed witness: tools/alc_probe/cases/b7-audit/arguments__signed__gap.al)
+(manifest row: deferred, owner B7b-2/C).
+Parses since B7b-2 Phase C (Task 10).
+Source trimmed: the generator's table, var section and helper
+procedures are removed, the statement and its host are verbatim.
+================================================================================
+codeunit 50101 P
+{
+    procedure Q()
+    begin
+I := Foo(
+1 +
+#if X
+-1
+#else
+2
+#endif
+, 2);
+    end;
+}
+--------------------------------------------------------------------------------
+
+(source_file (codeunit_declaration (codeunit_keyword) object_id: (integer) object_name: (identifier) body:
+(declaration_body (procedure (procedure_keyword) name: (identifier) body: (code_block (begin_keyword) body:
+(statement_block (assignment_statement left: (identifier) operator: (assignment_operator) right: (call_expression
+function: (identifier) arguments: (argument_list (additive_expression left: (integer) right:
+(preproc_conditional_operand (preproc_if (preproc_open) condition: (identifier)) operand: (unary_expression operand:
+(integer)) (preproc_else) operand: (integer) (preproc_endif (preproc_close)))) (integer))))) (end_keyword))))))
+
+================================================================================
+B7b-2 arguments / trail: moved from b7_gap_arguments_test.txt
+--
+B7a MIXED representative occ:_argument_branch_run:1.0.0@preproc_conditional_arguments#trail
+(untrimmed witness: tools/alc_probe/cases/b7-audit/arguments__trail__gap.al)
+(manifest row: excluded, owner B7b+). A list-separator cell outside B7b-2's
+scope that parses since Phase C: the inner group is an operand group with one
+arm, the only derivation (an argument arm holds no nested argument group);
+TPL=1,X=0 is `Foo(1, )`, which alc rejects.
+Parses since B7b-2 Phase C (Task 10).
+Source trimmed: the generator's table, var section and helper
+procedures are removed, the statement and its host are verbatim.
+================================================================================
+codeunit 50101 P
+{
+    procedure Q()
+    begin
+I := Foo(
+#if TPL
+1 ,
+#if X
+2
+#endif
+#else
+3, 4
+#endif
+);
+    end;
+}
+--------------------------------------------------------------------------------
+
+(source_file (codeunit_declaration (codeunit_keyword) object_id: (integer) object_name: (identifier) body:
+(declaration_body (procedure (procedure_keyword) name: (identifier) body: (code_block (begin_keyword) body:
+(statement_block (assignment_statement left: (identifier) operator: (assignment_operator) right: (call_expression
+function: (identifier) arguments: (argument_list (preproc_conditional_arguments (preproc_if (preproc_open)
+condition: (identifier)) (integer) (preproc_conditional_operand (preproc_if (preproc_open) condition: (identifier))
+operand: (integer) (preproc_endif (preproc_close))) (preproc_else) (integer) (integer) (preproc_endif
+(preproc_close))))))) (end_keyword))))))
+
+================================================================================
+B7b-2 arguments / unary-minus: moved from b7_gap_arguments_test.txt
+--
+B7a GAP representative bnd:_argument_expression:0:end@argument_list#unary-minus/arithmetic
+(untrimmed witness: tools/alc_probe/cases/b7-audit/arguments__unary-minus__gap.al)
+(manifest row: deferred, owner B7b-2/C).
+Parses since B7b-2 Phase C (Task 10).
+Source trimmed: the generator's table, var section and helper
+procedures are removed, the statement and its host are verbatim.
+================================================================================
+codeunit 50101 P
+{
+    procedure Q()
+    begin
+I := Foo(
+1 +
+#if X
+- 2
+#else
+3
+#endif
+, 2);
+    end;
+}
+--------------------------------------------------------------------------------
+
+(source_file (codeunit_declaration (codeunit_keyword) object_id: (integer) object_name: (identifier) body:
+(declaration_body (procedure (procedure_keyword) name: (identifier) body: (code_block (begin_keyword) body:
+(statement_block (assignment_statement left: (identifier) operator: (assignment_operator) right: (call_expression
+function: (identifier) arguments: (argument_list (additive_expression left: (integer) right:
+(preproc_conditional_operand (preproc_if (preproc_open) condition: (identifier)) operand: (unary_expression operand:
+(integer)) (preproc_else) operand: (integer) (preproc_endif (preproc_close)))) (integer))))) (end_keyword))))))
+
+================================================================================
+B7b-2 arguments / unary-paren: moved from b7_gap_arguments_test.txt
+--
+B7a GAP representative bnd:_argument_expression:0:end@argument_list#unary-paren/arithmetic
+(untrimmed witness: tools/alc_probe/cases/b7-audit/arguments__unary-paren__gap.al)
+(manifest row: deferred, owner B7b-2/C).
+Parses since B7b-2 Phase C (Task 10).
+Source trimmed: the generator's table, var section and helper
+procedures are removed, the statement and its host are verbatim.
+================================================================================
+codeunit 50101 P
+{
+    procedure Q()
+    begin
+I := Foo(
+1 +
+#if X
+( 2 + 3 )
+#else
+3
+#endif
+, 2);
+    end;
+}
+--------------------------------------------------------------------------------
+
+(source_file (codeunit_declaration (codeunit_keyword) object_id: (integer) object_name: (identifier) body:
+(declaration_body (procedure (procedure_keyword) name: (identifier) body: (code_block (begin_keyword) body:
+(statement_block (assignment_statement left: (identifier) operator: (assignment_operator) right: (call_expression
+function: (identifier) arguments: (argument_list (additive_expression left: (integer) right:
+(preproc_conditional_operand (preproc_if (preproc_open) condition: (identifier)) operand: (parenthesized_expression
+(additive_expression left: (integer) right: (integer))) (preproc_else) operand: (integer) (preproc_endif
+(preproc_close)))) (integer))))) (end_keyword))))))
+
+================================================================================
+B7b-2 arguments / whole-operand: moved from b7_gap_arguments_test.txt
+--
+B7a GAP representative bnd:_argument_expression:0:end@argument_list#whole-operand/arithmetic
+(untrimmed witness: tools/alc_probe/cases/b7-audit/arguments__whole-operand__gap.al)
+(manifest row: deferred, owner B7b-2/C).
+Parses since B7b-2 Phase C (Task 10).
+Source trimmed: the generator's table, var section and helper
+procedures are removed, the statement and its host are verbatim.
+================================================================================
+codeunit 50101 P
+{
+    procedure Q()
+    begin
+I := Foo(
+1 +
+#if X
+2
+#else
+3
+#endif
+, 2);
+    end;
+}
+--------------------------------------------------------------------------------
+
+(source_file (codeunit_declaration (codeunit_keyword) object_id: (integer) object_name: (identifier) body:
+(declaration_body (procedure (procedure_keyword) name: (identifier) body: (code_block (begin_keyword) body:
+(statement_block (assignment_statement left: (identifier) operator: (assignment_operator) right: (call_expression
+function: (identifier) arguments: (argument_list (additive_expression left: (integer) right:
+(preproc_conditional_operand (preproc_if (preproc_open) condition: (identifier)) operand: (integer) (preproc_else)
+operand: (integer) (preproc_endif (preproc_close)))) (integer))))) (end_keyword))))))

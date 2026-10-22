@@ -1,5 +1,5 @@
 // B7a Task 10 witness (GAP): family list-literal, base placement nested, 27 cells; representative bnd:list_literal:1.0.0:end@list_literal#nested/arithmetic
-// Fixture b7_gap_list_literal_test.txt#B7a GAP: list-literal / nested (27 cells, verdict of the representative GAP); the parser ERRORs on configurations alc accepts; representative bnd:list_literal:1.0.0:end@list_literal%23nested/arithmetic#0
+// Fixture b7b2_list_literal_test.txt#B7b-2 list-literal / nested: moved from b7_gap_list_literal_test.txt#0
 // expect: !X !Y accept
 // expect: !X Y accept
 // expect: X !Y accept

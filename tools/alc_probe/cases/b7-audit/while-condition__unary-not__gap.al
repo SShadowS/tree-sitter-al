@@ -1,5 +1,5 @@
 // B7a Task 10 witness (GAP): family while-condition, base placement unary-not, 6 cells; representative bnd:while_statement:condition:end@statement_block#unary-not/comparison
-// Fixture b7_gap_while_condition_test.txt#B7a GAP: while-condition / unary-not (6 cells, verdict of the representative GAP); the parser ERRORs on configurations alc accepts; representative bnd:while_statement:condition:end@statement_block%23unary-not/comparison#0
+// Fixture b7b2_while_condition_test.txt#B7b-2 while-condition / unary-not: moved from b7_gap_while_condition_test.txt#0
 // expect: !X accept
 // expect: X accept
 // source: recorded by B7a Task 10, 2026-10-07: the alc split verdicts of cell bnd:while_statement:condition:end@statement_block#unary-not/comparison in tools/b7_audit/evidence.jsonl.gz

@@ -10,6 +10,12 @@ and, for var names, the empty-group run before a declaration that forks GLR (Tas
 B7b-3 (spec 2026-10-08 section 8.2) adds case-group series (lone `;` groups, nested empty decorations, mixed arms)
 and move-group series (spanning, nested) on the same grid and criteria; each of their inputs runs in its own
 killable worker process with a WORKER_SECONDS = 10 ceiling, and the worker's peak is held to PEAK_LIMIT too.
+B7b-2 (spec 2026-10-20 section 8.5) adds expression-tail series (argument_tails, root_tails, nested_tails) the same
+way, and Phase B root_slots/<root> (N consecutive groups at each new region root) and ternary_parts (an else-chained
+ternary of N parts, a tail on each condition and then value) and ternary_condition_consecutive (one condition, N
+consecutive groups), and Phase C operand_groups, nested_operand_groups and mixed (prefix, operand group and tail per
+part); SCALING_EXCEPTIONS names the series that are measured and reported but cannot fail the run
+(deferred items 52 and 53).
 Every input must parse without an error. Pass criteria, per series:
   * near-linear time: the time ratio per doubling (x = N or D) stays under RATIO_LIMIT = 2.5, measured two ways:
     fitted, 2 ** (least-squares slope of log2 t over log2 x, every point), and at the LAST doubling step, the largest
@@ -151,6 +157,113 @@ def b7b3_series():
             ("move-nested", "depth", DEPTHS, move_nested)]
 
 
+# --- B7b-2 (spec 2026-10-20 section 8.5): expression tails, same grid and limits, each input in a worker ---------
+CODE_HOST = b"codeunit 50100 C\n{\n    procedure M()\n    begin\n%s    end;\n}\n"
+# Measured and reported, but a failure does not fail the run: N consecutive groups at a root after which a host group
+# can start (a statement, argument or list-elements group) parse in quadratic time, a known limit by user decision
+# (docs/deferred-work.md item 52; the corpora's longest back-to-back #if run is 3). Pinned by
+# tests/test_strict_lists_scaling.py so the list cannot grow silently.
+SCALING_EXCEPTIONS = {(f, "length"): "deferred-work item 52"
+                      for f in ("argument_tails", "root_tails", "root_slots/repeat_until", "root_slots/range_left",
+                                "root_slots/list_element", "root_slots/split_call_argument",
+                                "ternary_condition_consecutive", "mixed")}
+# A tail on a nested ternary's condition re-reduces the open ternary chain: quadratic in the chain length, a different
+# cause, known limit (docs/deferred-work.md item 53; no chained ternary in the four corpora).
+SCALING_EXCEPTIONS[("ternary_parts", "length")] = "deferred-work item 53"
+
+
+def argument_tails(n):
+    """`Foo(1 #if X +2 #endif ... #if X +N #endif)`: N-1 consecutive tail groups continuing one argument."""
+    return CODE_HOST % (b"r := Foo(1" + b"".join(b"\n#if X\n+%d\n#endif" % i for i in range(2, n + 1)) + b"\n);\n")
+
+
+def root_tails(n):
+    """`r := 1` followed by N consecutive tail groups."""
+    return CODE_HOST % (b"r := 1" + b"".join(b"\n#if X\n+%d\n#endif" % i for i in range(1, n + 1)) + b"\n;\n")
+
+
+def nested_tails(d):
+    """DEPTH_COPIES assignments, each with tails nested d deep (`r := 1 #if X + 1 #if X + 1 ... #endif #endif;`)."""
+    one = b"r := 1\n" + b"#if X\n+ 1\n" * d + b"#endif\n" * d + b";\n"
+    return CODE_HOST % (one * DEPTH_COPIES)
+
+
+# Phase B (spec 5.1 table): each new region root as a statement template; %s takes N consecutive tail groups.
+ROOT_SLOTS = {
+    "repeat_until": b"repeat\nFoo();\nuntil C%s\n;\n",
+    "case_expression": b"case i%s\nof\n1:\nFoo();\nend;\n",
+    "split_case_end": b"case i%s\nof\n1:\nFoo();\n2:\n#if Y\nFoo();\nend;\nBar();\n#else\nBar();\nend;\nFoo();\n#endif\n",
+    "ternary_then": b"x := Ok ? 1%s\n: 3;\n",
+    "parenthesized": b"x := (1%s\n) * 3;\n",
+    "range_left": b"Ok := i in [1%s\n.. 5];\n",
+    "for_start": b"for i := 1%s\nto 5 do\nFoo();\n",
+    "subscript_index": b"x := Arr2[1, 2%s\n];\n",
+    "list_element": b"Ok := i in [1, 2%s\n];\n",
+    "with_record": b"with Recs[1]%s\ndo\nFoo();\n",
+    "foreach_iterable": b"foreach i in L%s\ndo\nFoo();\n",
+    "split_if_head": b"#if A\nif C%s\nthen\n#else\nif E\nthen\n#endif\nFoo();\n",
+    "split_call_argument": b"#if A\nFoo(1%s\n,\n#else\nFoo(3,\n#endif\n4);\n",
+}
+
+
+def root_slot(name):
+    """-> source(n): the root `name` of ROOT_SLOTS followed by n consecutive tail groups."""
+    return lambda n: CODE_HOST % (ROOT_SLOTS[name] % b"".join(b"\n#if X\n+%d\n#endif" % i for i in range(1, n + 1)))
+
+
+def ternary_parts(n):
+    """An else-chained ternary of n parts, each condition and then value with its own tail (`C1 #if X and D1 #endif
+    ? 1 #if X + 1 #endif : C2 ... : 0`)."""
+    part = b"C%d\n#if X\nand D%d\n#endif\n? %d\n#if X\n+ %d\n#endif\n: "
+    return CODE_HOST % (b"x := " + b"".join(part % (i, i, i, i) for i in range(1, n + 1)) + b"0;\n")
+
+
+def ternary_condition_consecutive(n):
+    """One ternary whose condition carries n consecutive tail groups (`x := C #if X and D1 #endif ... ? 1 : 0;`)."""
+    return CODE_HOST % (b"x := C" + b"".join(b"\n#if X\nand D%d\n#endif" % i for i in range(1, n + 1)) + b"\n? 1 : 0;\n")
+
+
+# Phase C (spec 6): operand groups, nested operand groups, and prefixes + operand groups + tails mixed in one chain.
+OPERAND_GROUP = b"\n#if X\n%d\n#else\n%d\n#endif\n"
+
+
+def operand_groups(n):
+    """`r := G1 + G2 + ... + GN;`, each Gi a whole-operand group (`#if X i #else i #endif`)."""
+    return CODE_HOST % (b"r :=" + b"+".join(OPERAND_GROUP % (i, i) for i in range(1, n + 1)) + b";\n")
+
+
+def nested_operand_groups(d):
+    """DEPTH_COPIES assignments, each `r := 1 + G;` with G an operand group whose #if arm nests d deep."""
+    one = b"r := 1 +\n" + b"#if X\n" * d + b"1\n" + b"#else\n2\n#endif\n" * d + b";\n"
+    return CODE_HOST % (one * DEPTH_COPIES)
+
+
+def mixed(n):
+    """`r := 1` then N parts `+ #if X i * #endif #if X i #else i #endif #if X - i #endif`: an operand prefix, an
+    operand group and a tail per part."""
+    part = b"+\n#if X\n%d *\n#endif\n#if X\n%d\n#else\n%d\n#endif\n#if X\n- %d\n#endif\n"
+    return CODE_HOST % (b"r := 1\n" + b"".join(part % (i, i, i, i) for i in range(1, n + 1)) + b";\n")
+
+
+def series_ok(passed, exception, error_kind):
+    """An excepted series (SCALING_EXCEPTIONS) is waived only for the time/memory limits and the worker timeout; a parse
+    error or a crash fails it like any other series."""
+    return passed or (exception is not None and error_kind != "error")
+
+
+def b7b2_series():
+    """-> [(family, axis, [x], source(x))], each input measured in a worker (measure_isolated)."""
+    return [("argument_tails", "length", LENGTHS, argument_tails),
+            ("root_tails", "length", LENGTHS, root_tails),
+            ("nested_tails", "depth", DEPTHS, nested_tails)] + \
+        [(f"root_slots/{name}", "length", LENGTHS, root_slot(name)) for name in ROOT_SLOTS] + \
+        [("ternary_parts", "length", LENGTHS, ternary_parts),
+         ("ternary_condition_consecutive", "length", LENGTHS, ternary_condition_consecutive),
+         ("operand_groups", "length", LENGTHS, operand_groups),
+         ("nested_operand_groups", "depth", DEPTHS, nested_operand_groups),
+         ("mixed", "length", LENGTHS, mixed)]
+
+
 def _worker(lib, src, out):
     """One input in a fresh process: measure()'s timing protocol, the RSS growth with the tree alive, the peak."""
     try:
@@ -174,8 +287,9 @@ def _worker(lib, src, out):
 
 
 def measure_isolated(lib, xs, make, ceiling=WORKER_SECONDS, target=None):
-    """-> ([(x, bytes, seconds)], max RSS growth, error x or None, max worker peak). An input that has an error,
-    crashes or outlives `ceiling` seconds (its worker is killed) ends the series at that x."""
+    """-> ([(x, bytes, seconds)], max RSS growth, error x or None, max worker peak, error kind). An input that has a
+    parse error or crashes (kind "error") or outlives `ceiling` seconds (its worker is killed, kind "timeout") ends
+    the series at that x."""
     import multiprocessing as mp
     import queue
     ctx = mp.get_context("spawn")
@@ -194,10 +308,10 @@ def measure_isolated(lib, xs, make, ceiling=WORKER_SECONDS, target=None):
             p.kill()
             p.join()
         if res[0] != "ok" or res[2]:
-            return rows, grown, x, peak
+            return rows, grown, x, peak, "timeout" if res[0] == "timeout" else "error"
         rows.append((x, len(src), res[1]))
         grown, peak = max(grown, res[3]), max(peak, res[4])
-    return rows, grown, None, peak
+    return rows, grown, None, peak, None
 
 
 def _rss():
@@ -265,18 +379,19 @@ def run(lib, quick=False):
         ok &= passed
         results.append({"family": family, "axis": axis, "rows": rows, "ratios": rs, "worst": worst, "fit": fit, "last": last,
                         "grown": grown, "error_at": err, "pass": passed})
-    for family, axis, xs, make in b7b3_series():
+    for family, axis, xs, make in b7b3_series() + b7b2_series():
         if quick and axis != "depth":
             xs = [x for x in xs if x <= 1280]
-        rows, grown, err, wpeak = measure_isolated(lib, xs, make)
+        rows, grown, err, wpeak, kind = measure_isolated(lib, xs, make)
         rs = ratios(rows)
         worst = max((r for _, r in rs), default=0.0)
         fit, last = fitted(rows), (rs[-1][1] if rs else 0.0)
         passed = (err is None and fit < RATIO_LIMIT and last < RATIO_LIMIT and grown < MEMORY_LIMIT
                   and wpeak < PEAK_LIMIT)
-        ok &= passed
+        exception = SCALING_EXCEPTIONS.get((family, axis))
+        ok &= series_ok(passed, exception, kind)
         results.append({"family": family, "axis": axis, "rows": rows, "ratios": rs, "worst": worst, "fit": fit, "last": last,
-                        "grown": grown, "error_at": err, "pass": passed})
+                        "grown": grown, "error_at": err, "error_kind": kind, "pass": passed, "exception": exception})
     peak = _peak()
     ok &= peak < PEAK_LIMIT
     return results, peak, ok
@@ -292,7 +407,9 @@ def render(results, peak, md):
         cells = [r["family"], r["axis"], x, nbytes, f"{s * 1000:.2f}", f"{r['fit']:.2f}", f"{r['last']:.2f}",
                  f"{r['worst']:.2f}",
                  f"{r['grown'] / 2**20:.1f}",
-                 "yes" if r["pass"] else ("ERROR at %s" % r["error_at"] if r["error_at"] else "NO")]
+                 "yes" if r["pass"] else ("%s at %s" % ("timeout" if r.get("error_kind") == "timeout" else "ERROR",
+                                                       r["error_at"]) if r["error_at"] else "NO")
+                 + (f" (exception: {r['exception']})" if r.get("exception") else "")]
         lines.append("| " + " | ".join(map(str, cells)) + " |" if md else "\t".join(map(str, cells)))
     lines.append(f"process peak {peak / 2**20:.0f} MiB (limit {PEAK_LIMIT // 2**20} MiB); ratio limit {RATIO_LIMIT}, "
                  f"RSS growth limit {MEMORY_LIMIT // 2**20} MiB per series")

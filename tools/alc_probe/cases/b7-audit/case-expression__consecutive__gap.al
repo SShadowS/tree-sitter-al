@@ -1,5 +1,5 @@
 // B7a Task 10 witness (GAP): family case-expression, base placement consecutive, 8 cells; representative bnd:case_statement:expression:end@statement_block#consecutive/arithmetic
-// Fixture b7_gap_case_expression_test.txt#B7a GAP: case-expression / consecutive (8 cells, verdict of the representative GAP); the parser ERRORs on configurations alc accepts; representative bnd:case_statement:expression:end@statement_block%23consecutive/arithmetic#0
+// Fixture b7b2_case_expression_test.txt#B7b-2 case-expression / consecutive: moved from b7_gap_case_expression_test.txt#0
 // expect: !X !Y accept
 // expect: !X Y accept
 // expect: X !Y accept

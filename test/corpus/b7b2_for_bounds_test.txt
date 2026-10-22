@@ -1,0 +1,549 @@
+================================================================================
+B7b-2 for-bounds / consecutive: moved from b7_gap_for_bounds_test.txt
+--
+B7a GAP representative bnd:for_statement:end:end@statement_block#consecutive/arithmetic
+(untrimmed witness: tools/alc_probe/cases/b7-audit/for-bounds__consecutive__gap.al)
+(owner B7b-2/A); alc accepts every configuration (untrimmed witness above, alc_probe --check 2026-10-21). Source
+trimmed: the generator's table, var section and helper procedures are
+removed, the statement and its host are verbatim.
+================================================================================
+codeunit 50101 P
+{
+    procedure Q()
+    begin
+for I := 1 to
+2
+#if X
++ 2
+#endif
+#if Y
++ 3
+#endif
+ do
+Bar();
+    end;
+}
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (procedure
+        (procedure_keyword)
+        name: (identifier)
+        body: (code_block
+          (begin_keyword)
+          body: (statement_block
+            (for_statement
+              (for_keyword)
+              variable: (identifier)
+              start: (integer)
+              direction: (to_keyword)
+              end: (integer)
+              (preproc_conditional_expression_tail
+                (preproc_if
+                  (preproc_open)
+                  condition: (identifier))
+                operand: (integer)
+                (preproc_endif
+                  (preproc_close))
+                (preproc_conditional_expression_tail
+                  (preproc_if
+                    (preproc_open)
+                    condition: (identifier))
+                  operand: (integer)
+                  (preproc_endif
+                    (preproc_close))))
+              (do_keyword)
+              body: (call_expression
+                function: (identifier)
+                arguments: (argument_list))))
+          (end_keyword))))))
+
+================================================================================
+B7b-2 for-bounds / nested: moved from b7_gap_for_bounds_test.txt
+--
+B7a GAP representative bnd:for_statement:end:end@statement_block#nested/arithmetic
+(untrimmed witness: tools/alc_probe/cases/b7-audit/for-bounds__nested__gap.al, alc_probe --check 2026-10-21)
+(owner B7b-2/A). Source trimmed as above.
+================================================================================
+codeunit 50101 P
+{
+    procedure Q()
+    begin
+for I := 1 to
+2
+#if X
++ 2
+#if Y
++ 3
+#endif
+#endif
+ do
+Bar();
+    end;
+}
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (procedure
+        (procedure_keyword)
+        name: (identifier)
+        body: (code_block
+          (begin_keyword)
+          body: (statement_block
+            (for_statement
+              (for_keyword)
+              variable: (identifier)
+              start: (integer)
+              direction: (to_keyword)
+              end: (integer)
+              (preproc_conditional_expression_tail
+                (preproc_if
+                  (preproc_open)
+                  condition: (identifier))
+                operand: (integer)
+                (preproc_conditional_expression_tail
+                  (preproc_if
+                    (preproc_open)
+                    condition: (identifier))
+                  operand: (integer)
+                  (preproc_endif
+                    (preproc_close)))
+                (preproc_endif
+                  (preproc_close)))
+              (do_keyword)
+              body: (call_expression
+                function: (identifier)
+                arguments: (argument_list))))
+          (end_keyword))))))
+
+================================================================================
+B7b-2 for-bounds / chain in the start: moved from b7_gap_for_bounds_test.txt
+--
+B7a GAP representative bnd:for_statement:start:end@statement_block#chain/arithmetic
+(untrimmed witness: tools/alc_probe/cases/b7-audit/for-bounds__chain__gap.al)
+(owner B7b-2/B); alc accepts every configuration (untrimmed witness above, alc_probe --check 2026-10-21). Source
+trimmed: the generator's table, var section and helper procedures are removed,
+the statement and its host are verbatim.
+================================================================================
+codeunit 50101 P
+{
+    procedure Q()
+    begin
+for I :=
+1 * 2
+#if X
++ 3
+#endif
+* 4
+ to 2 do
+Bar();
+    end;
+}
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (procedure
+        (procedure_keyword)
+        name: (identifier)
+        body: (code_block
+          (begin_keyword)
+          body: (statement_block
+            (for_statement
+              (for_keyword)
+              variable: (identifier)
+              start: (multiplicative_expression
+                left: (integer)
+                right: (integer))
+              (preproc_conditional_expression_tail
+                (preproc_if
+                  (preproc_open)
+                  condition: (identifier))
+                operand: (integer)
+                (preproc_endif
+                  (preproc_close))
+                operand: (integer))
+              direction: (to_keyword)
+              end: (integer)
+              (do_keyword)
+              body: (call_expression
+                function: (identifier)
+                arguments: (argument_list))))
+          (end_keyword))))))
+
+================================================================================
+B7b-2 for-bounds / op-only in the start: moved from b7_gap_for_bounds_test.txt
+--
+B7a GAP representative bnd:for_statement:start:end@statement_block#op-only/arithmetic
+(untrimmed witness: tools/alc_probe/cases/b7-audit/for-bounds__op-only__gap.al, --check 2026-10-21)
+(owner B7b-2/B); op-only: alc rejects X=0 (RC8 over-acceptance, spec 9), the
+X=1 configuration is valid and parses; one tree for both. Source trimmed: the
+generator's table, var section and helper procedures are removed, the
+statement and its host are verbatim.
+================================================================================
+codeunit 50101 P
+{
+    procedure Q()
+    begin
+for I :=
+1
+#if X
++
+#endif
+2
+ to 2 do
+Bar();
+    end;
+}
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (procedure
+        (procedure_keyword)
+        name: (identifier)
+        body: (code_block
+          (begin_keyword)
+          body: (statement_block
+            (for_statement
+              (for_keyword)
+              variable: (identifier)
+              start: (integer)
+              (preproc_conditional_expression_tail
+                (preproc_if
+                  (preproc_open)
+                  condition: (identifier))
+                (preproc_endif
+                  (preproc_close))
+                operand: (integer))
+              direction: (to_keyword)
+              end: (integer)
+              (do_keyword)
+              body: (call_expression
+                function: (identifier)
+                arguments: (argument_list))))
+          (end_keyword))))))
+
+================================================================================
+B7b-2 for-bounds / suffix in the start: moved from b7_gap_for_bounds_test.txt
+--
+B7a GAP representative bnd:for_statement:start:end@statement_block#suffix/arithmetic
+(untrimmed witness: tools/alc_probe/cases/b7-audit/for-bounds__suffix__gap.al)
+(owner B7b-2/B); alc accepts every configuration (untrimmed witness above, alc_probe --check 2026-10-21). Source
+trimmed: the generator's table, var section and helper procedures are removed,
+the statement and its host are verbatim.
+================================================================================
+codeunit 50101 P
+{
+    procedure Q()
+    begin
+for I :=
+1
+#if X
++ 2
+#endif
+ to 2 do
+Bar();
+    end;
+}
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (procedure
+        (procedure_keyword)
+        name: (identifier)
+        body: (code_block
+          (begin_keyword)
+          body: (statement_block
+            (for_statement
+              (for_keyword)
+              variable: (identifier)
+              start: (integer)
+              (preproc_conditional_expression_tail
+                (preproc_if
+                  (preproc_open)
+                  condition: (identifier))
+                operand: (integer)
+                (preproc_endif
+                  (preproc_close)))
+              direction: (to_keyword)
+              end: (integer)
+              (do_keyword)
+              body: (call_expression
+                function: (identifier)
+                arguments: (argument_list))))
+          (end_keyword))))))
+
+================================================================================
+B7b-2 for-bounds / suffix-else in the start: moved from b7_gap_for_bounds_test.txt
+--
+B7a GAP representative bnd:for_statement:start:end@statement_block#suffix-else/arithmetic
+(untrimmed witness: tools/alc_probe/cases/b7-audit/for-bounds__suffix-else__gap.al)
+(owner B7b-2/B); alc accepts every configuration (untrimmed witness above, alc_probe --check 2026-10-21). Source
+trimmed: the generator's table, var section and helper procedures are removed,
+the statement and its host are verbatim.
+================================================================================
+codeunit 50101 P
+{
+    procedure Q()
+    begin
+for I :=
+1
+#if X
++ 2
+#else
+* 3
+#endif
+ to 2 do
+Bar();
+    end;
+}
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (procedure
+        (procedure_keyword)
+        name: (identifier)
+        body: (code_block
+          (begin_keyword)
+          body: (statement_block
+            (for_statement
+              (for_keyword)
+              variable: (identifier)
+              start: (integer)
+              (preproc_conditional_expression_tail
+                (preproc_if
+                  (preproc_open)
+                  condition: (identifier))
+                operand: (integer)
+                (preproc_else)
+                operand: (integer)
+                (preproc_endif
+                  (preproc_close)))
+              direction: (to_keyword)
+              end: (integer)
+              (do_keyword)
+              body: (call_expression
+                function: (identifier)
+                arguments: (argument_list))))
+          (end_keyword))))))
+
+================================================================================
+B7b-2 for-bounds / first: moved from b7_gap_for_bounds_test.txt
+--
+B7a GAP representative bnd:for_statement:end:end@statement_block#first/arithmetic
+(untrimmed witness: tools/alc_probe/cases/b7-audit/for-bounds__first__gap.al)
+(manifest row: deferred, owner B7b-2/C). Parses since B7b-2 Phase C (Task 10).
+Source trimmed: the generator's table, var section and helpers are removed.
+================================================================================
+codeunit 50101 P
+{
+    procedure Q()
+    begin
+for I := 1 to
+#if X
+2 +
+#endif
+2
+ do
+Bar();
+    end;
+}
+--------------------------------------------------------------------------------
+
+(source_file (codeunit_declaration (codeunit_keyword) object_id: (integer) object_name: (identifier) body:
+(declaration_body (procedure (procedure_keyword) name: (identifier) body: (code_block (begin_keyword) body:
+(statement_block (for_statement (for_keyword) variable: (identifier) start: (integer) direction: (to_keyword)
+(preproc_operand_prefix (preproc_if (preproc_open) condition: (identifier)) operand: (integer) (preproc_endif
+(preproc_close))) end: (integer) (do_keyword) body: (call_expression function: (identifier) arguments:
+(argument_list)))) (end_keyword))))))
+
+================================================================================
+B7b-2 for-bounds / first-only: moved from b7_gap_for_bounds_test.txt
+--
+B7a GAP representative bnd:for_statement:end:end@statement_block#first-only/arithmetic
+(untrimmed witness: tools/alc_probe/cases/b7-audit/for-bounds__first-only__gap.al)
+(manifest row: deferred, owner B7b-2/C). Parses since B7b-2 Phase C (Task 10).
+Source trimmed: the generator's table, var section and helpers are removed.
+================================================================================
+codeunit 50101 P
+{
+    procedure Q()
+    begin
+for I := 1 to
+#if X
+2
+#else
+2
+#endif
+ do
+Bar();
+    end;
+}
+--------------------------------------------------------------------------------
+
+(source_file (codeunit_declaration (codeunit_keyword) object_id: (integer) object_name: (identifier) body:
+(declaration_body (procedure (procedure_keyword) name: (identifier) body: (code_block (begin_keyword) body:
+(statement_block (for_statement (for_keyword) variable: (identifier) start: (integer) direction: (to_keyword) end:
+(preproc_conditional_operand (preproc_if (preproc_open) condition: (identifier)) operand: (integer) (preproc_else)
+operand: (integer) (preproc_endif (preproc_close))) (do_keyword) body: (call_expression function: (identifier)
+arguments: (argument_list)))) (end_keyword))))))
+
+================================================================================
+B7b-2 for-bounds / signed: moved from b7_gap_for_bounds_test.txt
+--
+B7a GAP representative bnd:for_statement:end:end@statement_block#signed/arithmetic
+(untrimmed witness: tools/alc_probe/cases/b7-audit/for-bounds__signed__gap.al)
+(manifest row: deferred, owner B7b-2/C). Parses since B7b-2 Phase C (Task 10).
+Source trimmed: the generator's table, var section and helpers are removed.
+================================================================================
+codeunit 50101 P
+{
+    procedure Q()
+    begin
+for I := 1 to
+2 +
+#if X
+-1
+#else
+2
+#endif
+ do
+Bar();
+    end;
+}
+--------------------------------------------------------------------------------
+
+(source_file (codeunit_declaration (codeunit_keyword) object_id: (integer) object_name: (identifier) body:
+(declaration_body (procedure (procedure_keyword) name: (identifier) body: (code_block (begin_keyword) body:
+(statement_block (for_statement (for_keyword) variable: (identifier) start: (integer) direction: (to_keyword) end:
+(additive_expression left: (integer) right: (preproc_conditional_operand (preproc_if (preproc_open) condition:
+(identifier)) operand: (unary_expression operand: (integer)) (preproc_else) operand: (integer) (preproc_endif
+(preproc_close)))) (do_keyword) body: (call_expression function: (identifier) arguments: (argument_list))))
+(end_keyword))))))
+
+================================================================================
+B7b-2 for-bounds / unary-minus: moved from b7_gap_for_bounds_test.txt
+--
+B7a GAP representative bnd:for_statement:end:end@statement_block#unary-minus/arithmetic
+(untrimmed witness: tools/alc_probe/cases/b7-audit/for-bounds__unary-minus__gap.al)
+(manifest row: deferred, owner B7b-2/C). Parses since B7b-2 Phase C (Task 10).
+Source trimmed: the generator's table, var section and helpers are removed.
+================================================================================
+codeunit 50101 P
+{
+    procedure Q()
+    begin
+for I := 1 to
+2 +
+#if X
+- 2
+#else
+3
+#endif
+ do
+Bar();
+    end;
+}
+--------------------------------------------------------------------------------
+
+(source_file (codeunit_declaration (codeunit_keyword) object_id: (integer) object_name: (identifier) body:
+(declaration_body (procedure (procedure_keyword) name: (identifier) body: (code_block (begin_keyword) body:
+(statement_block (for_statement (for_keyword) variable: (identifier) start: (integer) direction: (to_keyword) end:
+(additive_expression left: (integer) right: (preproc_conditional_operand (preproc_if (preproc_open) condition:
+(identifier)) operand: (unary_expression operand: (integer)) (preproc_else) operand: (integer) (preproc_endif
+(preproc_close)))) (do_keyword) body: (call_expression function: (identifier) arguments: (argument_list))))
+(end_keyword))))))
+
+================================================================================
+B7b-2 for-bounds / unary-paren: moved from b7_gap_for_bounds_test.txt
+--
+B7a GAP representative bnd:for_statement:end:end@statement_block#unary-paren/arithmetic
+(untrimmed witness: tools/alc_probe/cases/b7-audit/for-bounds__unary-paren__gap.al)
+(manifest row: deferred, owner B7b-2/C). Parses since B7b-2 Phase C (Task 10).
+Source trimmed: the generator's table, var section and helpers are removed.
+================================================================================
+codeunit 50101 P
+{
+    procedure Q()
+    begin
+for I := 1 to
+2 +
+#if X
+( 2 + 3 )
+#else
+3
+#endif
+ do
+Bar();
+    end;
+}
+--------------------------------------------------------------------------------
+
+(source_file (codeunit_declaration (codeunit_keyword) object_id: (integer) object_name: (identifier) body:
+(declaration_body (procedure (procedure_keyword) name: (identifier) body: (code_block (begin_keyword) body:
+(statement_block (for_statement (for_keyword) variable: (identifier) start: (integer) direction: (to_keyword) end:
+(additive_expression left: (integer) right: (preproc_conditional_operand (preproc_if (preproc_open) condition:
+(identifier)) operand: (parenthesized_expression (additive_expression left: (integer) right: (integer)))
+(preproc_else) operand: (integer) (preproc_endif (preproc_close)))) (do_keyword) body: (call_expression function:
+(identifier) arguments: (argument_list)))) (end_keyword))))))
+
+================================================================================
+B7b-2 for-bounds / whole-operand: moved from b7_gap_for_bounds_test.txt
+--
+B7a GAP representative bnd:for_statement:end:end@statement_block#whole-operand/arithmetic
+(untrimmed witness: tools/alc_probe/cases/b7-audit/for-bounds__whole-operand__gap.al)
+(manifest row: deferred, owner B7b-2/C). Parses since B7b-2 Phase C (Task 10).
+Source trimmed: the generator's table, var section and helpers are removed.
+================================================================================
+codeunit 50101 P
+{
+    procedure Q()
+    begin
+for I := 1 to
+2 +
+#if X
+2
+#else
+3
+#endif
+ do
+Bar();
+    end;
+}
+--------------------------------------------------------------------------------
+
+(source_file (codeunit_declaration (codeunit_keyword) object_id: (integer) object_name: (identifier) body:
+(declaration_body (procedure (procedure_keyword) name: (identifier) body: (code_block (begin_keyword) body:
+(statement_block (for_statement (for_keyword) variable: (identifier) start: (integer) direction: (to_keyword) end:
+(additive_expression left: (integer) right: (preproc_conditional_operand (preproc_if (preproc_open) condition:
+(identifier)) operand: (integer) (preproc_else) operand: (integer) (preproc_endif (preproc_close)))) (do_keyword)
+body: (call_expression function: (identifier) arguments: (argument_list)))) (end_keyword))))))

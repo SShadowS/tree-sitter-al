@@ -1,5 +1,5 @@
 // B7a Task 10 witness (GAP): family arguments, base placement whole-operand, 8 cells; representative bnd:_argument_expression:0:end@argument_list#whole-operand/arithmetic
-// Fixture b7_gap_arguments_test.txt#B7a GAP: arguments / whole-operand (8 cells, verdict of the representative GAP); the parser ERRORs on configurations alc accepts; representative bnd:_argument_expression:0:end@argument_list%23whole-operand/arithmetic#0
+// Fixture b7b2_arguments_test.txt#B7b-2 arguments / whole-operand: moved from b7_gap_arguments_test.txt#0
 // expect: !X accept
 // expect: X accept
 // source: recorded by B7a Task 10, 2026-10-07: the alc split verdicts of cell bnd:_argument_expression:0:end@argument_list#whole-operand/arithmetic in tools/b7_audit/evidence.jsonl.gz

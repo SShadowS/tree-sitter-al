@@ -1,0 +1,538 @@
+================================================================================
+B7b-2 operand-prefix / consecutive groups in a prefix arm: moved from b7_gap_operand_prefix_test.txt
+--
+B7a GAP representative bnd:_dangling_operand:operand:end@preproc_operand_prefix#consecutive/arithmetic
+Untrimmed witness: tools/alc_probe/cases/b7-audit/operand-prefix__consecutive__gap.al.
+(owner B7b-2/B, fixed in Phase A: tail items in a prefix arm, spec 5.1
+fragment site); alc accepts every configuration (B7a evidence). Source
+trimmed: the generator's table, var section and helper procedures are
+removed, the statement and its host are verbatim. Inside the arm the two
+groups are siblings (nested tails have no trail).
+================================================================================
+codeunit 50101 P
+{
+    procedure Q()
+    begin
+I := 1 +
+#if TPL
+
+3
+#if X
++ 2
+#endif
+#if Y
++ 3
+#endif
+ +
+#endif
+2;
+    end;
+}
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (procedure
+        (procedure_keyword)
+        name: (identifier)
+        body: (code_block
+          (begin_keyword)
+          body: (statement_block
+            (assignment_statement
+              left: (identifier)
+              operator: (assignment_operator)
+              right: (additive_expression
+                left: (integer)
+                (preproc_operand_prefix
+                  (preproc_if
+                    (preproc_open)
+                    condition: (identifier))
+                  operand: (integer)
+                  (preproc_conditional_expression_tail
+                    (preproc_if
+                      (preproc_open)
+                      condition: (identifier))
+                    operand: (integer)
+                    (preproc_endif
+                      (preproc_close)))
+                  (preproc_conditional_expression_tail
+                    (preproc_if
+                      (preproc_open)
+                      condition: (identifier))
+                    operand: (integer)
+                    (preproc_endif
+                      (preproc_close)))
+                  (preproc_endif
+                    (preproc_close)))
+                right: (integer))))
+          (end_keyword))))))
+
+================================================================================
+B7b-2 operand-prefix / nested groups in a prefix arm: moved from b7_gap_operand_prefix_test.txt
+--
+B7a GAP representative bnd:_dangling_operand:operand:end@preproc_operand_prefix#nested/arithmetic
+(owner B7b-2/B, fixed in Phase A). Source trimmed as above.
+================================================================================
+codeunit 50101 P
+{
+    procedure Q()
+    begin
+I := 1 +
+#if TPL
+
+3
+#if X
++ 2
+#if Y
++ 3
+#endif
+#endif
+ +
+#endif
+2;
+    end;
+}
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (procedure
+        (procedure_keyword)
+        name: (identifier)
+        body: (code_block
+          (begin_keyword)
+          body: (statement_block
+            (assignment_statement
+              left: (identifier)
+              operator: (assignment_operator)
+              right: (additive_expression
+                left: (integer)
+                (preproc_operand_prefix
+                  (preproc_if
+                    (preproc_open)
+                    condition: (identifier))
+                  operand: (integer)
+                  (preproc_conditional_expression_tail
+                    (preproc_if
+                      (preproc_open)
+                      condition: (identifier))
+                    operand: (integer)
+                    (preproc_conditional_expression_tail
+                      (preproc_if
+                        (preproc_open)
+                        condition: (identifier))
+                      operand: (integer)
+                      (preproc_endif
+                        (preproc_close)))
+                    (preproc_endif
+                      (preproc_close)))
+                  (preproc_endif
+                    (preproc_close)))
+                right: (integer))))
+          (end_keyword))))))
+
+================================================================================
+B7b-2 operand-prefix / suffix group in a prefix arm: moved from b7_gap_operand_prefix_test.txt
+--
+B7a GAP representative bnd:_dangling_operand:operand:end@preproc_operand_prefix#suffix/arithmetic
+(owner B7b-2/B, fixed in Phase A). Source trimmed as above.
+================================================================================
+codeunit 50101 P
+{
+    procedure Q()
+    begin
+I := 1 +
+#if TPL
+
+3
+#if X
++ 2
+#endif
+ +
+#endif
+2;
+    end;
+}
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (procedure
+        (procedure_keyword)
+        name: (identifier)
+        body: (code_block
+          (begin_keyword)
+          body: (statement_block
+            (assignment_statement
+              left: (identifier)
+              operator: (assignment_operator)
+              right: (additive_expression
+                left: (integer)
+                (preproc_operand_prefix
+                  (preproc_if
+                    (preproc_open)
+                    condition: (identifier))
+                  operand: (integer)
+                  (preproc_conditional_expression_tail
+                    (preproc_if
+                      (preproc_open)
+                      condition: (identifier))
+                    operand: (integer)
+                    (preproc_endif
+                      (preproc_close)))
+                  (preproc_endif
+                    (preproc_close)))
+                right: (integer))))
+          (end_keyword))))))
+
+================================================================================
+B7b-2 operand-prefix / suffix-else group in a prefix arm: moved from b7_gap_operand_prefix_test.txt
+--
+B7a GAP representative bnd:_dangling_operand:operand:end@preproc_operand_prefix#suffix-else/arithmetic
+(owner B7b-2/B, fixed in Phase A). Source trimmed as above.
+================================================================================
+codeunit 50101 P
+{
+    procedure Q()
+    begin
+I := 1 +
+#if TPL
+
+3
+#if X
++ 2
+#else
+* 3
+#endif
+ +
+#endif
+2;
+    end;
+}
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (procedure
+        (procedure_keyword)
+        name: (identifier)
+        body: (code_block
+          (begin_keyword)
+          body: (statement_block
+            (assignment_statement
+              left: (identifier)
+              operator: (assignment_operator)
+              right: (additive_expression
+                left: (integer)
+                (preproc_operand_prefix
+                  (preproc_if
+                    (preproc_open)
+                    condition: (identifier))
+                  operand: (integer)
+                  (preproc_conditional_expression_tail
+                    (preproc_if
+                      (preproc_open)
+                      condition: (identifier))
+                    operand: (integer)
+                    (preproc_else)
+                    operand: (integer)
+                    (preproc_endif
+                      (preproc_close)))
+                  (preproc_endif
+                    (preproc_close)))
+                right: (integer))))
+          (end_keyword))))))
+
+================================================================================
+B7b-2 operand-prefix / chain: moved from b7_gap_operand_prefix_test.txt
+--
+B7a GAP representative bnd:_dangling_operand:operand:end@preproc_operand_prefix#chain/arithmetic
+(untrimmed witness: tools/alc_probe/cases/b7-audit/operand-prefix__chain__gap.al)
+(manifest row: deferred, owner B7b-2/C). Parses since B7b-2 Phase C (Task 10):
+the arm's items after the nested tail are `_dangling_tail_item`s.
+Source trimmed: the generator's table, var section and helpers are removed.
+================================================================================
+codeunit 50101 P
+{
+    procedure Q()
+    begin
+I := 1 +
+#if TPL
+3 * 2
+#if X
++ 3
+#endif
+* 4
+ +
+#endif
+2;
+    end;
+}
+--------------------------------------------------------------------------------
+
+(source_file (codeunit_declaration (codeunit_keyword) object_id: (integer) object_name: (identifier) body:
+(declaration_body (procedure (procedure_keyword) name: (identifier) body: (code_block (begin_keyword) body:
+(statement_block (assignment_statement left: (identifier) operator: (assignment_operator) right:
+(additive_expression left: (integer) (preproc_operand_prefix (preproc_if (preproc_open) condition: (identifier))
+operand: (multiplicative_expression left: (integer) right: (integer)) (preproc_conditional_expression_tail
+(preproc_if (preproc_open) condition: (identifier)) operand: (integer) (preproc_endif (preproc_close))) operand:
+(integer) (preproc_endif (preproc_close))) right: (integer)))) (end_keyword))))))
+
+================================================================================
+B7b-2 operand-prefix / first: moved from b7_gap_operand_prefix_test.txt
+--
+B7a GAP representative bnd:_dangling_operand:operand:end@preproc_operand_prefix#first/arithmetic
+(untrimmed witness: tools/alc_probe/cases/b7-audit/operand-prefix__first__gap.al)
+(manifest row: deferred, owner B7b-2/C). Parses since B7b-2 Phase C (Task 10).
+Source trimmed: the generator's table, var section and helpers are removed.
+================================================================================
+codeunit 50101 P
+{
+    procedure Q()
+    begin
+I := 1 +
+#if TPL
+#if X
+3 +
+#endif
+2
+ +
+#endif
+2;
+    end;
+}
+--------------------------------------------------------------------------------
+
+(source_file (codeunit_declaration (codeunit_keyword) object_id: (integer) object_name: (identifier) body:
+(declaration_body (procedure (procedure_keyword) name: (identifier) body: (code_block (begin_keyword) body:
+(statement_block (assignment_statement left: (identifier) operator: (assignment_operator) right:
+(additive_expression left: (integer) (preproc_operand_prefix (preproc_if (preproc_open) condition: (identifier))
+(preproc_operand_prefix (preproc_if (preproc_open) condition: (identifier)) operand: (integer) (preproc_endif
+(preproc_close))) operand: (integer) (preproc_endif (preproc_close))) right: (integer)))) (end_keyword))))))
+
+================================================================================
+B7b-2 operand-prefix / first-only: moved from b7_gap_operand_prefix_test.txt
+--
+B7a GAP representative bnd:_dangling_operand:operand:end@preproc_operand_prefix#first-only/arithmetic
+(untrimmed witness: tools/alc_probe/cases/b7-audit/operand-prefix__first-only__gap.al)
+(manifest row: deferred, owner B7b-2/C). Parses since B7b-2 Phase C (Task 10).
+Source trimmed: the generator's table, var section and helpers are removed.
+================================================================================
+codeunit 50101 P
+{
+    procedure Q()
+    begin
+I := 1 +
+#if TPL
+#if X
+3
+#else
+2
+#endif
+ +
+#endif
+2;
+    end;
+}
+--------------------------------------------------------------------------------
+
+(source_file (codeunit_declaration (codeunit_keyword) object_id: (integer) object_name: (identifier) body:
+(declaration_body (procedure (procedure_keyword) name: (identifier) body: (code_block (begin_keyword) body:
+(statement_block (assignment_statement left: (identifier) operator: (assignment_operator) right:
+(additive_expression left: (integer) (preproc_operand_prefix (preproc_if (preproc_open) condition: (identifier))
+operand: (preproc_conditional_operand (preproc_if (preproc_open) condition: (identifier)) operand: (integer)
+(preproc_else) operand: (integer) (preproc_endif (preproc_close))) (preproc_endif (preproc_close))) right:
+(integer)))) (end_keyword))))))
+
+================================================================================
+B7b-2 operand-prefix / op-only: moved from b7_gap_operand_prefix_test.txt
+--
+B7a MIXED representative bnd:_dangling_operand:operand:end@preproc_operand_prefix#op-only/arithmetic
+(untrimmed witness: tools/alc_probe/cases/b7-audit/operand-prefix__op-only__gap.al)
+(manifest row: deferred, owner B7b-2/C). Parses since B7b-2 Phase C (Task 10):
+the nested B3 form's operand is followed by the arm's dangling operator.
+op-only: alc rejects TPL=1,X=0 (RC8 over-acceptance, spec 9); one tree for all.
+Source trimmed: the generator's table, var section and helpers are removed.
+================================================================================
+codeunit 50101 P
+{
+    procedure Q()
+    begin
+I := 1 +
+#if TPL
+3
+#if X
++
+#endif
+2
+ +
+#endif
+2;
+    end;
+}
+--------------------------------------------------------------------------------
+
+(source_file (codeunit_declaration (codeunit_keyword) object_id: (integer) object_name: (identifier) body:
+(declaration_body (procedure (procedure_keyword) name: (identifier) body: (code_block (begin_keyword) body:
+(statement_block (assignment_statement left: (identifier) operator: (assignment_operator) right:
+(additive_expression left: (integer) (preproc_operand_prefix (preproc_if (preproc_open) condition: (identifier))
+operand: (integer) (preproc_conditional_expression_tail (preproc_if (preproc_open) condition: (identifier))
+(preproc_endif (preproc_close)) operand: (integer)) (preproc_endif (preproc_close))) right: (integer))))
+(end_keyword))))))
+
+================================================================================
+B7b-2 operand-prefix / signed: moved from b7_gap_operand_prefix_test.txt
+--
+B7a GAP representative bnd:_dangling_operand:operand:end@preproc_operand_prefix#signed/arithmetic
+(untrimmed witness: tools/alc_probe/cases/b7-audit/operand-prefix__signed__gap.al)
+(manifest row: deferred, owner B7b-2/C). Parses since B7b-2 Phase C (Task 10).
+Source trimmed: the generator's table, var section and helpers are removed.
+================================================================================
+codeunit 50101 P
+{
+    procedure Q()
+    begin
+I := 1 +
+#if TPL
+3 +
+#if X
+-1
+#else
+2
+#endif
+ +
+#endif
+2;
+    end;
+}
+--------------------------------------------------------------------------------
+
+(source_file (codeunit_declaration (codeunit_keyword) object_id: (integer) object_name: (identifier) body:
+(declaration_body (procedure (procedure_keyword) name: (identifier) body: (code_block (begin_keyword) body:
+(statement_block (assignment_statement left: (identifier) operator: (assignment_operator) right:
+(additive_expression left: (integer) (preproc_operand_prefix (preproc_if (preproc_open) condition: (identifier))
+operand: (additive_expression left: (integer) right: (preproc_conditional_operand (preproc_if (preproc_open)
+condition: (identifier)) operand: (unary_expression operand: (integer)) (preproc_else) operand: (integer)
+(preproc_endif (preproc_close)))) (preproc_endif (preproc_close))) right: (integer)))) (end_keyword))))))
+
+================================================================================
+B7b-2 operand-prefix / unary-minus: moved from b7_gap_operand_prefix_test.txt
+--
+B7a GAP representative bnd:_dangling_operand:operand:end@preproc_operand_prefix#unary-minus/arithmetic
+(untrimmed witness: tools/alc_probe/cases/b7-audit/operand-prefix__unary-minus__gap.al)
+(manifest row: deferred, owner B7b-2/C). Parses since B7b-2 Phase C (Task 10).
+Source trimmed: the generator's table, var section and helpers are removed.
+================================================================================
+codeunit 50101 P
+{
+    procedure Q()
+    begin
+I := 1 +
+#if TPL
+3 +
+#if X
+- 2
+#else
+3
+#endif
+ +
+#endif
+2;
+    end;
+}
+--------------------------------------------------------------------------------
+
+(source_file (codeunit_declaration (codeunit_keyword) object_id: (integer) object_name: (identifier) body:
+(declaration_body (procedure (procedure_keyword) name: (identifier) body: (code_block (begin_keyword) body:
+(statement_block (assignment_statement left: (identifier) operator: (assignment_operator) right:
+(additive_expression left: (integer) (preproc_operand_prefix (preproc_if (preproc_open) condition: (identifier))
+operand: (additive_expression left: (integer) right: (preproc_conditional_operand (preproc_if (preproc_open)
+condition: (identifier)) operand: (unary_expression operand: (integer)) (preproc_else) operand: (integer)
+(preproc_endif (preproc_close)))) (preproc_endif (preproc_close))) right: (integer)))) (end_keyword))))))
+
+================================================================================
+B7b-2 operand-prefix / unary-paren: moved from b7_gap_operand_prefix_test.txt
+--
+B7a GAP representative bnd:_dangling_operand:operand:end@preproc_operand_prefix#unary-paren/arithmetic
+(untrimmed witness: tools/alc_probe/cases/b7-audit/operand-prefix__unary-paren__gap.al)
+(manifest row: deferred, owner B7b-2/C). Parses since B7b-2 Phase C (Task 10).
+Source trimmed: the generator's table, var section and helpers are removed.
+================================================================================
+codeunit 50101 P
+{
+    procedure Q()
+    begin
+I := 1 +
+#if TPL
+3 +
+#if X
+( 2 + 3 )
+#else
+3
+#endif
+ +
+#endif
+2;
+    end;
+}
+--------------------------------------------------------------------------------
+
+(source_file (codeunit_declaration (codeunit_keyword) object_id: (integer) object_name: (identifier) body:
+(declaration_body (procedure (procedure_keyword) name: (identifier) body: (code_block (begin_keyword) body:
+(statement_block (assignment_statement left: (identifier) operator: (assignment_operator) right:
+(additive_expression left: (integer) (preproc_operand_prefix (preproc_if (preproc_open) condition: (identifier))
+operand: (additive_expression left: (integer) right: (preproc_conditional_operand (preproc_if (preproc_open)
+condition: (identifier)) operand: (parenthesized_expression (additive_expression left: (integer) right: (integer)))
+(preproc_else) operand: (integer) (preproc_endif (preproc_close)))) (preproc_endif (preproc_close))) right:
+(integer)))) (end_keyword))))))
+
+================================================================================
+B7b-2 operand-prefix / whole-operand: moved from b7_gap_operand_prefix_test.txt
+--
+B7a GAP representative bnd:_dangling_operand:operand:end@preproc_operand_prefix#whole-operand/arithmetic
+(untrimmed witness: tools/alc_probe/cases/b7-audit/operand-prefix__whole-operand__gap.al)
+(manifest row: deferred, owner B7b-2/C). Parses since B7b-2 Phase C (Task 10).
+Source trimmed: the generator's table, var section and helpers are removed.
+================================================================================
+codeunit 50101 P
+{
+    procedure Q()
+    begin
+I := 1 +
+#if TPL
+3 +
+#if X
+2
+#else
+3
+#endif
+ +
+#endif
+2;
+    end;
+}
+--------------------------------------------------------------------------------
+
+(source_file (codeunit_declaration (codeunit_keyword) object_id: (integer) object_name: (identifier) body:
+(declaration_body (procedure (procedure_keyword) name: (identifier) body: (code_block (begin_keyword) body:
+(statement_block (assignment_statement left: (identifier) operator: (assignment_operator) right:
+(additive_expression left: (integer) (preproc_operand_prefix (preproc_if (preproc_open) condition: (identifier))
+operand: (additive_expression left: (integer) right: (preproc_conditional_operand (preproc_if (preproc_open)
+condition: (identifier)) operand: (integer) (preproc_else) operand: (integer) (preproc_endif (preproc_close))))
+(preproc_endif (preproc_close))) right: (integer)))) (end_keyword))))))

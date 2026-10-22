@@ -9,6 +9,7 @@ checked against, instead of against the grammar's own numbers.
 
 Header (tightest to loosest; all binary levels are left-associative):
 
+    not  -  +   (prefix)    7   unary_expression (B7b-2 spec 3.2; right-associative)
     *  /  div  mod          6   multiplicative_expression
     +  -                    5   additive_expression
     in  is  as              4   in_expression / is_expression / as_expression
@@ -16,8 +17,10 @@ Header (tightest to loosest; all binary levels are left-associative):
     or  xor                 2   logical_expression
     =  <>  <  >  <=  >=     1   comparison_expression (a comparison_operator node)
 
-Unary, parenthesized, call, member and every other expression is an atom as
-far as this table is concerned -- flatten/compose never look inside one.
+Parenthesized, call, member and every other expression is an atom as far as
+this table is concerned -- flatten/compose never look inside one. `flatten`
+treats a unary as an atom too; `compose` also reads unary operator tokens
+(the region assembler, lowering/regions.py, walks into unaries).
 
 `in` / `is` / `as` (grammar.js `in_expression`/`is_expression`/`as_expression`,
 ~line 5054): each one IS a plain `left`/`operator`/`right` binary node -- 3
@@ -38,6 +41,7 @@ from __future__ import annotations
 from tools.config_oracle.ir import Node
 
 LEVEL = {
+    "unary": 7,    # B7b-2 spec 3.2: prefix `not - +`, right-associative (compose)
     "*": 6, "/": 6, "div": 6, "mod": 6,
     "+": 5, "-": 5,
     "in": 4, "is": 4, "as": 4,
@@ -55,6 +59,7 @@ KIND_FOR = {
     "cmp": "comparison_expression",
 }
 BINARY_KINDS = frozenset(KIND_FOR.values())
+KIND_FOR["unary"] = "unary_expression"
 
 # The three keyword-wrapped operators: see the module docstring's `in`/`is`/`as` note.
 _KEYWORD_OPERATOR = {"in_keyword": "in", "is_keyword": "is", "as_keyword": "as"}
@@ -127,48 +132,55 @@ def flatten(node: Node) -> list:
     return out
 
 
+UNARY = frozenset({"not", "-", "+"})   # unary_expression's operators (grammar.js)
+TYPED_RIGHT = frozenset({"in", "is", "as"})   # binaries whose right operand is one typed atom
+
+
 def compose(flat: list, field: str | None) -> Node:
-    """Operator-precedence parse over an alternating [operand, op, operand, ...] list."""
-    operands, ops = [flat[0].copy(field=None)], []
+    """Operator-precedence parse over a run of operands and operator tokens (an operator is
+    a node whose field is `operator`). An operator where an operand is expected is a unary
+    prefix (`not - +`, LEVEL["unary"], right-associative: it applies to the next operand
+    with its own prefixes); every binary level is left-associative. A run that does not
+    read `unary* operand (binary unary* operand)*` is a ValueError."""
+    operands, ops = [], []      # ops: (operator node, is unary)
+
+    def level(op, unary):
+        return LEVEL["unary"] if unary else LEVEL[op_text(op)]
 
     def reduce_top():
-        op = ops.pop()
-        r, l = operands.pop(), operands.pop()
-        kids = [l.copy(field="left"), op.copy(field="operator"), r.copy(field="right")]
-        operands.append(Node(KIND_FOR[op_text(op)], True, None, kids[0].start, kids[-1].end, kids))
+        op, unary = ops.pop()
+        if unary:
+            kids = [op.copy(field="operator"), operands.pop().copy(field="operand")]
+            kind = KIND_FOR["unary"]
+        else:
+            r, l = operands.pop(), operands.pop()
+            kids = [l.copy(field="left"), op.copy(field="operator"), r.copy(field="right")]
+            kind = KIND_FOR[op_text(op)]
+        operands.append(Node(kind, True, None, kids[0].start, kids[-1].end, kids))
 
-    for i in range(1, len(flat), 2):
-        op, rhs = flat[i], flat[i + 1]
-        while ops and LEVEL[op_text(ops[-1])] >= LEVEL[op_text(op)]:   # left-associative
-            reduce_top()
-        ops.append(op)
-        operands.append(rhs.copy(field=None))
+    want_operand = True
+    for n in flat:
+        is_op = n.field == "operator"
+        if want_operand and is_op:
+            if op_text(n) not in UNARY:
+                raise ValueError(f"operator {op_text(n)!r} where an operand is expected @{n.start}")
+            ops.append((n, True))
+        elif want_operand:
+            operands.append(n.copy(field=None))
+            want_operand = False
+            # B7b-2 spec 3.1: the right of in/is/as is a typed atom, a boundary; nothing that
+            # follows may regroup into it (`i in [1] + 2` is `(i in [1]) + 2`).
+            while ops and not ops[-1][1] and op_text(ops[-1][0]) in TYPED_RIGHT:
+                reduce_top()
+        elif not is_op:
+            raise ValueError(f"two operands without an operator @{n.start}")
+        else:
+            while ops and level(*ops[-1]) >= LEVEL[op_text(n)]:   # left-associative
+                reduce_top()
+            ops.append((n, False))
+            want_operand = True
+    if want_operand:
+        raise ValueError("the run ends without an operand")
     while ops:
         reduce_top()
     return operands[0].copy(field=field)
-
-
-PREFIX = "preproc_operand_prefix"
-
-
-def chain(node: Node) -> list:
-    """The maximal binary chain under `node`, in source order, as
-    `(parent_kind, node)` items: every atom, every operator, and every
-    `preproc_operand_prefix` (which sits between its binary node's operator and
-    right operand). Like `flatten`, but it also descends through binary nodes
-    carrying a prefix (4 children: left, operator, prefix, right). Iterative, for
-    the same depth reason as `flatten`. A binary kind of any other shape is a
-    ValueError."""
-    out: list = []
-    stack = [(None, node)]
-    while stack:
-        parent, n = stack.pop()
-        if n.kind not in BINARY_KINDS:
-            out.append((parent, n))
-            continue
-        kids = n.children
-        if [c.field for c in kids] not in (["left", "operator", "right"], ["left", "operator", None, "right"]) \
-                or (len(kids) == 4 and kids[2].kind != PREFIX):
-            raise ValueError(f"not a plain binary node: {n.kind}@{n.start}")
-        stack.extend((n.kind, c) for c in reversed(kids))
-    return out

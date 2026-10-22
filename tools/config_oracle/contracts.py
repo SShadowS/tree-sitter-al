@@ -369,12 +369,16 @@ register("preproc_conditional_arguments", "branch-select", _LIST_RUN,
          hosts={"argument_list:<children>": "list-run"},
          # _argument_branch / _argument_branch_run (grammar.js:5366-5386), each item an
          # _argument_expression (grammar.js:5388-5391). No ';' and no self-nesting.
-         arm=_EXPRESSION | {"preproc_conditional_expression_tail", ","})
+         # B7b-2 Phase C: an item may be an operand group or start with leading prefixes.
+         arm=_EXPRESSION | {"preproc_conditional_expression_tail", "preproc_conditional_operand",
+                            "preproc_operand_prefix", ","})
 register("preproc_conditional_list_elements", "branch-select", _LIST_RUN,
          hosts={"list_literal:<children>": "list-run"},
          # own rule (grammar.js:5480-5486): repeat1(seq(',', _list_element)), and
          # _list_element (grammar.js:5488-5491) is range_expression | _expression.
-         arm=_EXPRESSION | {"range_expression", ","})
+         # B7b-2 Phase C: each element is a region root (tail, operand group, leading prefixes).
+         arm=_EXPRESSION | {"range_expression", "preproc_conditional_expression_tail",
+                            "preproc_conditional_operand", "preproc_operand_prefix", ","})
 register("preproc_conditional_option_members", "branch-select", _LIST_RUN,
          hosts={"option_member_list:<children>": "list-run"},
          # _option_members_branch (grammar.js:1597-1612): option_member and ','; no self-nesting.
@@ -595,19 +599,99 @@ register("else_table_relation_fragment", "fragment", None,
 # following #endif (`i := 1 #if X + #endif 2;`). Same type, hosts and fields, so a chosen
 # arm still lowers to `operator operand ...` pairs; no arm chosen is contract-shape, and
 # that configuration is invalid AL (alc_probe oracle-negative/split-operator.al).
-register("preproc_conditional_expression_tail", "assembler", _ASM + "expression_tail",
-         hosts={h: "consumed" for h in (
+# B7b-2 Phase A: the tail is recursive (a nested group in an arm or a prefix arm, a
+# consecutive group after a root tail) and the ternary condition / else and the range's
+# right end are roots. One region assembler (lowering/regions.py, spec section 7) owns
+# every one: a root tail and the expression before it are one item of the host's item loop
+# (engine.lower_items -> regions.assemble_with_tail, one invocation); a nested or consecutive
+# tail is consumed by the enclosing region. The handler is reached only by a tail with no
+# expression before it, which is contract-shape.
+# Every spec 5.1 root is a host below. The Phase B roots (Task 7, the `_region_root*` rules)
+# need no root-specific lowering: a root tail is one item of its host's item loop either way
+# (tests/test_regions.py::test_region_root_hosts, every root at every configuration). The
+# split-if and split-call hosts are listed so the census agrees, but their own node types are
+# unsupported (C1, test_split_roots_stay_unsupported).
+register("preproc_conditional_expression_tail", "assembler", "tools.config_oracle.lowering.regions.assemble",
+         hosts={**{h: "consumed" for h in (
              "argument_list:<children>", "assignment_statement:<children>", "exit_statement:<children>",
              "for_statement:<children>", "if_statement:<children>", "list_literal:<children>",
              "preproc_conditional_arguments:<children>", "property_expression:<children>",
-             "subscript_expression:<children>", "while_statement:<children>")})
-# The prefix sits inside a binary node, between `operator` and `right`. engine.lower's
-# binary hook lowers the whole chain before any slot lookup; operand_prefix still
-# checks these hosts, so the census and the handler agree.
-register("preproc_operand_prefix", "assembler", _ASM + "operand_prefix",
-         hosts={f"{k}:<children>": "consumed" for k in (
+             "subscript_expression:<children>", "while_statement:<children>",
+             "range_expression:<children>", "ternary_expression:<children>",
+             "preproc_conditional_expression_tail:<children>", "preproc_operand_prefix:<children>")},
+                **{f"{h}:<children>": "consumed" for h in (
+             "case_statement", "foreach_statement", "parenthesized_expression", "preproc_guarded_statement",
+             "preproc_split_call_statement", "preproc_split_case_statement_end",
+             "preproc_split_else_begin_over_endif", "preproc_split_if_begin_asymmetric",
+             "preproc_split_if_begin_else", "preproc_split_if_else_statement", "preproc_split_if_statement",
+             "preproc_split_if_then_begin", "preproc_split_if_then_begin_else_shared",
+             "preproc_split_open_statement", "preproc_split_procedure_body", "repeat_statement",
+             "with_statement",
+             # B7b-2 Phase C: a tail inside a list-elements group's element (its own root,
+             # the group's item loop) and inside an operand-group arm (the enclosing region).
+             "preproc_conditional_list_elements", "preproc_conditional_operand")}})
+# The prefix sits inside a binary node, between `operator` and `right` (the typed prefix of
+# in/is/as too, spec 5.3). engine.lower's root dispatch assembles the region holding it
+# before any slot lookup; the assembler still checks these hosts, so the census and the
+# handler agree. Reached on its own (never, by construction) it is contract-shape.
+# B7b-2 Phase C (spec 6.3): a leading prefix is an earlier sibling of its root's expression
+# in the root's slot (every region root, a case pattern, a property value), so the host's
+# item loop hands `prefix+ expr [tail]` to regions.assemble_with_tail as one item; in a
+# unary, a group arm or a prefix arm it is a member of the enclosing region. The split
+# hosts' own node types stay unsupported (C1).
+register("preproc_operand_prefix", "assembler", "tools.config_oracle.lowering.regions.assemble",
+         hosts={**{f"{k}:<children>": "consumed" for k in (
              "additive_expression", "comparison_expression", "logical_expression",
-             "multiplicative_expression")})
+             "multiplicative_expression", "as_expression", "in_expression", "is_expression")},
+                **{f"{k}:<children>": "consumed" for k in (
+             "argument_list", "assignment_statement", "case_branch", "case_statement",
+             "exit_statement", "for_statement", "foreach_statement", "if_statement", "list_literal",
+             "parenthesized_expression", "preproc_conditional_arguments",
+             "preproc_conditional_case_patterns", "preproc_conditional_expression_tail",
+             "preproc_conditional_list_elements", "preproc_conditional_operand",
+             "preproc_guarded_statement", "preproc_operand_prefix", "preproc_split_call_statement",
+             "preproc_split_case_branch", "preproc_split_case_extended",
+             "preproc_split_case_statement_end", "preproc_split_else_begin_over_endif",
+             "preproc_split_if_begin_asymmetric", "preproc_split_if_begin_else",
+             "preproc_split_if_else_statement", "preproc_split_if_statement",
+             "preproc_split_if_then_begin", "preproc_split_if_then_begin_else_shared",
+             "preproc_split_open_statement", "preproc_split_procedure_body", "property_expression",
+             "range_expression", "repeat_statement", "subscript_expression", "ternary_expression",
+             "unary_expression", "while_statement", "with_statement")}})
+# B7b-2 Phase C (spec 6.1-6.2): the operand group, its receiver variant (member / subscript
+# object, call function, assignment target) and the typed rights of in/is/as, one visible
+# type. Every edge into it is a region edge (spec 3.1), so in a binary, a unary, a group arm,
+# a prefix arm or a typed right it is spliced by the region that holds it: its active arm's
+# items, or nothing. Standing as a root's expression (every other slot below) the handler
+# composes that root's region, the group alone. No active arm at a slot that needs an
+# operand is contract-shape. The split hosts' own node types stay unsupported (C1).
+register("preproc_conditional_operand", "assembler", "tools.config_oracle.lowering.regions.assemble",
+         hosts={h: "consumed" for h in (
+             "additive_expression:left", "additive_expression:right", "argument_list:<children>",
+             "as_expression:left", "as_expression:right", "assignment_expression:left",
+             "assignment_expression:right", "assignment_statement:left", "assignment_statement:right",
+             "call_expression:function", "case_statement:expression", "comparison_expression:left",
+             "comparison_expression:right", "exit_statement:return_value", "for_statement:end",
+             "for_statement:start", "foreach_statement:iterable", "if_statement:condition",
+             "in_expression:left", "in_expression:right", "is_expression:left", "is_expression:right",
+             "list_literal:<children>", "logical_expression:left", "logical_expression:right",
+             "member_expression:object", "multiplicative_expression:left",
+             "multiplicative_expression:right", "page_field:source", "parenthesized_expression:<children>",
+             "preproc_conditional_arguments:<children>", "preproc_conditional_expression_tail:operand",
+             "preproc_conditional_list_elements:<children>", "preproc_conditional_operand:operand",
+             "preproc_guarded_statement:condition", "preproc_operand_prefix:operand",
+             "preproc_split_call_statement:<children>", "preproc_split_case_statement_end:expression",
+             "preproc_split_else_begin_over_endif:condition", "preproc_split_field:source",
+             "preproc_split_if_begin_asymmetric:condition", "preproc_split_if_begin_else:condition",
+             "preproc_split_if_else_statement:condition", "preproc_split_if_statement:condition",
+             "preproc_split_if_then_begin:condition", "preproc_split_if_then_begin_else_shared:condition",
+             "preproc_split_open_statement:condition", "preproc_split_procedure_body:condition",
+             "property_expression:<children>", "range_expression:left", "range_expression:right",
+             "repeat_statement:condition", "report_column:source", "subscript_expression:<children>",
+             "subscript_expression:index", "subscript_expression:object", "ternary_expression:condition",
+             "ternary_expression:else_value", "ternary_expression:then_value", "unary_expression:operand",
+             "while_statement:condition", "with_statement:record", "xmlport_attribute:source",
+             "xmlport_element:source")})
 
 # --- Task 12: var-tail-merge (assemblers.split_var_section_tail / engine.VarTailMerge).
 # Added with the var_body fix (deferred-work item 8), unsupported until this task gave

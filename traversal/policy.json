@@ -135,7 +135,7 @@
     "preproc_conditional_expression_tail": {
       "class": "assembler",
       "arm_boundary": "own-directives",
-      "reason": "Exception (spec 6.1): an assembler whose continuation comes after #endif; the tail extends the expression BEFORE it, so its arms are not complete expressions."
+      "reason": "Exception (spec 6.1): an assembler whose continuation comes after #endif; the tail extends the expression BEFORE it, so its arms are not complete expressions. B7b-2 Phase A: recursive, a nested group in an arm and a consecutive group after a root tail's #endif are themselves preproc_conditional_expression_tail nodes (one assembler, its own directives each). B7b-2 Phase B: also a child of every region root's host (repeat-until, case, for start, with, foreach, parenthesized, ternary then, range left, later subscript indices and list elements, split-if heads, split-call arguments); class unchanged."
     },
     "preproc_conditional_field_list_items": {
       "class": "branch-container",
@@ -271,6 +271,11 @@
         "source_file:<children>": "splice-repeat"
       },
       "reason": "Registry branch-select: arms are alternatives in one host slot."
+    },
+    "preproc_conditional_operand": {
+      "class": "assembler",
+      "arm_boundary": "own-directives",
+      "reason": "B7b-2 Phase C (spec 6.1): an operand group stands where one operand stands; each arm is one operand plus tail items, transparent in its region (spec 3), so an arm is not a complete expression of the host. The receiver variant (member/subscript object, assignment target) and the typed rights of in/is/as are the same node type."
     },
     "preproc_conditional_option_members": {
       "class": "branch-container",

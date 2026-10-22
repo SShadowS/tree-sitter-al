@@ -1,5 +1,5 @@
 // B7a Task 10 witness (GAP): family unassigned, base placement seed:expression-statement__torn-until-and, 1 cells; representative seed:expression-statement__torn-until-and
-// Fixture b7_gap_unassigned_test.txt#B7a GAP: unassigned / seed:expression-statement__torn-until-and (1 cells, verdict of the representative GAP); the parser ERRORs on configurations alc accepts; representative seed:expression-statement__torn-until-and#0
+// Fixture b7b2_repeat_until_test.txt#B7b-2 repeat-until / item 39 shape 1: moved from expression_statement_b7_gap_test.txt and b7_gap_unassigned_test.txt#0
 // expect: !X accept
 // expect: X accept
 // source: recorded by B7a Task 10, 2026-10-07: the alc split verdicts of cell seed:expression-statement__torn-until-and in tools/b7_audit/evidence.jsonl.gz

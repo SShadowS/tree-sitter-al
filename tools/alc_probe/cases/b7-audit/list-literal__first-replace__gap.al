@@ -1,5 +1,5 @@
 // B7a Task 10 witness (GAP): family list-literal, base placement first-replace, 15 cells; representative occ:list_literal:1.0.2.0.0@in_expression#first-replace
-// Fixture b7_gap_list_literal_test.txt#B7a GAP: list-literal / first-replace (15 cells, verdict of the representative GAP); the parser ERRORs on configurations alc accepts; representative occ:list_literal:1.0.2.0.0@in_expression%23first-replace#0
+// Fixture b7b2_list_literal_test.txt#B7b-2 list-literal / first-replace: moved from b7_gap_list_literal_test.txt#0
 // expect: !X accept
 // expect: X accept
 // source: recorded by B7a Task 10, 2026-10-07: the alc split verdicts of cell occ:list_literal:1.0.2.0.0@in_expression#first-replace in tools/b7_audit/evidence.jsonl.gz

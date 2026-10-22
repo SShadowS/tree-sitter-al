@@ -1,0 +1,504 @@
+================================================================================
+B7b-2 parenthesized / chain: moved from b7_gap_parenthesized_test.txt
+--
+B7a GAP representative bnd:parenthesized_expression:1:end@parenthesized_expression#chain/arithmetic
+(untrimmed witness: tools/alc_probe/cases/b7-audit/parenthesized__chain__gap.al)
+(owner B7b-2/B); alc accepts every configuration (untrimmed witness above, alc_probe --check 2026-10-21). Source
+trimmed: the generator's table, var section and helper procedures are removed,
+the statement and its host are verbatim.
+================================================================================
+codeunit 50101 P
+{
+    procedure Q()
+    begin
+I := (
+I * 2
+#if X
++ 3
+#endif
+* 4
+);
+    end;
+}
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (procedure
+        (procedure_keyword)
+        name: (identifier)
+        body: (code_block
+          (begin_keyword)
+          body: (statement_block
+            (assignment_statement
+              left: (identifier)
+              operator: (assignment_operator)
+              right: (parenthesized_expression
+                (multiplicative_expression
+                  left: (identifier)
+                  right: (integer))
+                (preproc_conditional_expression_tail
+                  (preproc_if
+                    (preproc_open)
+                    condition: (identifier))
+                  operand: (integer)
+                  (preproc_endif
+                    (preproc_close))
+                  operand: (integer)))))
+          (end_keyword))))))
+
+================================================================================
+B7b-2 parenthesized / consecutive: moved from b7_gap_parenthesized_test.txt
+--
+B7a GAP representative bnd:parenthesized_expression:1:end@parenthesized_expression#consecutive/arithmetic
+(untrimmed witness: tools/alc_probe/cases/b7-audit/parenthesized__consecutive__gap.al)
+(owner B7b-2/B); alc accepts every configuration (untrimmed witness above, alc_probe --check 2026-10-21). Source
+trimmed: the generator's table, var section and helper procedures are removed,
+the statement and its host are verbatim.
+================================================================================
+codeunit 50101 P
+{
+    procedure Q()
+    begin
+I := (
+I
+#if X
++ 2
+#endif
+#if Y
++ 3
+#endif
+);
+    end;
+}
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (procedure
+        (procedure_keyword)
+        name: (identifier)
+        body: (code_block
+          (begin_keyword)
+          body: (statement_block
+            (assignment_statement
+              left: (identifier)
+              operator: (assignment_operator)
+              right: (parenthesized_expression
+                (identifier)
+                (preproc_conditional_expression_tail
+                  (preproc_if
+                    (preproc_open)
+                    condition: (identifier))
+                  operand: (integer)
+                  (preproc_endif
+                    (preproc_close))
+                  (preproc_conditional_expression_tail
+                    (preproc_if
+                      (preproc_open)
+                      condition: (identifier))
+                    operand: (integer)
+                    (preproc_endif
+                      (preproc_close)))))))
+          (end_keyword))))))
+
+================================================================================
+B7b-2 parenthesized / nested: moved from b7_gap_parenthesized_test.txt
+--
+B7a GAP representative bnd:parenthesized_expression:1:end@parenthesized_expression#nested/arithmetic
+(untrimmed witness: tools/alc_probe/cases/b7-audit/parenthesized__nested__gap.al)
+(owner B7b-2/B); alc accepts every configuration (untrimmed witness above, alc_probe --check 2026-10-21). Source
+trimmed: the generator's table, var section and helper procedures are removed,
+the statement and its host are verbatim.
+================================================================================
+codeunit 50101 P
+{
+    procedure Q()
+    begin
+I := (
+I
+#if X
++ 2
+#if Y
++ 3
+#endif
+#endif
+);
+    end;
+}
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (procedure
+        (procedure_keyword)
+        name: (identifier)
+        body: (code_block
+          (begin_keyword)
+          body: (statement_block
+            (assignment_statement
+              left: (identifier)
+              operator: (assignment_operator)
+              right: (parenthesized_expression
+                (identifier)
+                (preproc_conditional_expression_tail
+                  (preproc_if
+                    (preproc_open)
+                    condition: (identifier))
+                  operand: (integer)
+                  (preproc_conditional_expression_tail
+                    (preproc_if
+                      (preproc_open)
+                      condition: (identifier))
+                    operand: (integer)
+                    (preproc_endif
+                      (preproc_close)))
+                  (preproc_endif
+                    (preproc_close))))))
+          (end_keyword))))))
+
+================================================================================
+B7b-2 parenthesized / op-only: moved from b7_gap_parenthesized_test.txt
+--
+B7a GAP representative bnd:parenthesized_expression:1:end@parenthesized_expression#op-only/arithmetic
+(untrimmed witness: tools/alc_probe/cases/b7-audit/parenthesized__op-only__gap.al, --check 2026-10-21)
+(owner B7b-2/B); op-only: alc rejects X=0 (RC8 over-acceptance, spec 9), the
+X=1 configuration is valid and parses; one tree for both. Source trimmed: the
+generator's table, var section and helper procedures are removed, the
+statement and its host are verbatim.
+================================================================================
+codeunit 50101 P
+{
+    procedure Q()
+    begin
+I := (
+I
+#if X
++
+#endif
+2
+);
+    end;
+}
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (procedure
+        (procedure_keyword)
+        name: (identifier)
+        body: (code_block
+          (begin_keyword)
+          body: (statement_block
+            (assignment_statement
+              left: (identifier)
+              operator: (assignment_operator)
+              right: (parenthesized_expression
+                (identifier)
+                (preproc_conditional_expression_tail
+                  (preproc_if
+                    (preproc_open)
+                    condition: (identifier))
+                  (preproc_endif
+                    (preproc_close))
+                  operand: (integer)))))
+          (end_keyword))))))
+
+================================================================================
+B7b-2 parenthesized / suffix: moved from b7_gap_parenthesized_test.txt
+--
+B7a GAP representative bnd:parenthesized_expression:1:end@parenthesized_expression#suffix/arithmetic
+(untrimmed witness: tools/alc_probe/cases/b7-audit/parenthesized__suffix__gap.al)
+(owner B7b-2/B); alc accepts every configuration (untrimmed witness above, alc_probe --check 2026-10-21). Source
+trimmed: the generator's table, var section and helper procedures are removed,
+the statement and its host are verbatim.
+================================================================================
+codeunit 50101 P
+{
+    procedure Q()
+    begin
+I := (
+I
+#if X
++ 2
+#endif
+);
+    end;
+}
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (procedure
+        (procedure_keyword)
+        name: (identifier)
+        body: (code_block
+          (begin_keyword)
+          body: (statement_block
+            (assignment_statement
+              left: (identifier)
+              operator: (assignment_operator)
+              right: (parenthesized_expression
+                (identifier)
+                (preproc_conditional_expression_tail
+                  (preproc_if
+                    (preproc_open)
+                    condition: (identifier))
+                  operand: (integer)
+                  (preproc_endif
+                    (preproc_close))))))
+          (end_keyword))))))
+
+================================================================================
+B7b-2 parenthesized / suffix-else: moved from b7_gap_parenthesized_test.txt
+--
+B7a GAP representative bnd:parenthesized_expression:1:end@parenthesized_expression#suffix-else/arithmetic
+(untrimmed witness: tools/alc_probe/cases/b7-audit/parenthesized__suffix-else__gap.al)
+(owner B7b-2/B); alc accepts every configuration (untrimmed witness above, alc_probe --check 2026-10-21). Source
+trimmed: the generator's table, var section and helper procedures are removed,
+the statement and its host are verbatim.
+================================================================================
+codeunit 50101 P
+{
+    procedure Q()
+    begin
+I := (
+I
+#if X
++ 2
+#else
+* 3
+#endif
+);
+    end;
+}
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (procedure
+        (procedure_keyword)
+        name: (identifier)
+        body: (code_block
+          (begin_keyword)
+          body: (statement_block
+            (assignment_statement
+              left: (identifier)
+              operator: (assignment_operator)
+              right: (parenthesized_expression
+                (identifier)
+                (preproc_conditional_expression_tail
+                  (preproc_if
+                    (preproc_open)
+                    condition: (identifier))
+                  operand: (integer)
+                  (preproc_else)
+                  operand: (integer)
+                  (preproc_endif
+                    (preproc_close))))))
+          (end_keyword))))))
+
+================================================================================
+B7b-2 parenthesized / first: moved from b7_gap_parenthesized_test.txt
+--
+B7a GAP representative bnd:parenthesized_expression:1:end@parenthesized_expression#first/arithmetic
+(untrimmed witness: tools/alc_probe/cases/b7-audit/parenthesized__first__gap.al)
+(manifest row: deferred, owner B7b-2/C). Parses since B7b-2 Phase C (Task 10).
+Source trimmed: the generator's table, var section and helpers are removed.
+================================================================================
+codeunit 50101 P
+{
+    procedure Q()
+    begin
+I := (
+#if X
+I +
+#endif
+2
+);
+    end;
+}
+--------------------------------------------------------------------------------
+
+(source_file (codeunit_declaration (codeunit_keyword) object_id: (integer) object_name: (identifier) body:
+(declaration_body (procedure (procedure_keyword) name: (identifier) body: (code_block (begin_keyword) body:
+(statement_block (assignment_statement left: (identifier) operator: (assignment_operator) right:
+(parenthesized_expression (preproc_operand_prefix (preproc_if (preproc_open) condition: (identifier)) operand:
+(identifier) (preproc_endif (preproc_close))) (integer)))) (end_keyword))))))
+
+================================================================================
+B7b-2 parenthesized / first-only: moved from b7_gap_parenthesized_test.txt
+--
+B7a GAP representative bnd:parenthesized_expression:1:end@parenthesized_expression#first-only/arithmetic
+(untrimmed witness: tools/alc_probe/cases/b7-audit/parenthesized__first-only__gap.al)
+(manifest row: deferred, owner B7b-2/C). Parses since B7b-2 Phase C (Task 10).
+Source trimmed: the generator's table, var section and helpers are removed.
+================================================================================
+codeunit 50101 P
+{
+    procedure Q()
+    begin
+I := (
+#if X
+I
+#else
+2
+#endif
+);
+    end;
+}
+--------------------------------------------------------------------------------
+
+(source_file (codeunit_declaration (codeunit_keyword) object_id: (integer) object_name: (identifier) body:
+(declaration_body (procedure (procedure_keyword) name: (identifier) body: (code_block (begin_keyword) body:
+(statement_block (assignment_statement left: (identifier) operator: (assignment_operator) right:
+(parenthesized_expression (preproc_conditional_operand (preproc_if (preproc_open) condition: (identifier)) operand:
+(identifier) (preproc_else) operand: (integer) (preproc_endif (preproc_close)))))) (end_keyword))))))
+
+================================================================================
+B7b-2 parenthesized / signed: moved from b7_gap_parenthesized_test.txt
+--
+B7a GAP representative bnd:parenthesized_expression:1:end@parenthesized_expression#signed/arithmetic
+(untrimmed witness: tools/alc_probe/cases/b7-audit/parenthesized__signed__gap.al)
+(manifest row: deferred, owner B7b-2/C). Parses since B7b-2 Phase C (Task 10).
+Source trimmed: the generator's table, var section and helpers are removed.
+================================================================================
+codeunit 50101 P
+{
+    procedure Q()
+    begin
+I := (
+I +
+#if X
+-1
+#else
+2
+#endif
+);
+    end;
+}
+--------------------------------------------------------------------------------
+
+(source_file (codeunit_declaration (codeunit_keyword) object_id: (integer) object_name: (identifier) body:
+(declaration_body (procedure (procedure_keyword) name: (identifier) body: (code_block (begin_keyword) body:
+(statement_block (assignment_statement left: (identifier) operator: (assignment_operator) right:
+(parenthesized_expression (additive_expression left: (identifier) right: (preproc_conditional_operand (preproc_if
+(preproc_open) condition: (identifier)) operand: (unary_expression operand: (integer)) (preproc_else) operand:
+(integer) (preproc_endif (preproc_close))))))) (end_keyword))))))
+
+================================================================================
+B7b-2 parenthesized / unary-minus: moved from b7_gap_parenthesized_test.txt
+--
+B7a GAP representative bnd:parenthesized_expression:1:end@parenthesized_expression#unary-minus/arithmetic
+(untrimmed witness: tools/alc_probe/cases/b7-audit/parenthesized__unary-minus__gap.al)
+(manifest row: deferred, owner B7b-2/C). Parses since B7b-2 Phase C (Task 10).
+Source trimmed: the generator's table, var section and helpers are removed.
+================================================================================
+codeunit 50101 P
+{
+    procedure Q()
+    begin
+I := (
+I +
+#if X
+- 2
+#else
+3
+#endif
+);
+    end;
+}
+--------------------------------------------------------------------------------
+
+(source_file (codeunit_declaration (codeunit_keyword) object_id: (integer) object_name: (identifier) body:
+(declaration_body (procedure (procedure_keyword) name: (identifier) body: (code_block (begin_keyword) body:
+(statement_block (assignment_statement left: (identifier) operator: (assignment_operator) right:
+(parenthesized_expression (additive_expression left: (identifier) right: (preproc_conditional_operand (preproc_if
+(preproc_open) condition: (identifier)) operand: (unary_expression operand: (integer)) (preproc_else) operand:
+(integer) (preproc_endif (preproc_close))))))) (end_keyword))))))
+
+================================================================================
+B7b-2 parenthesized / unary-paren: moved from b7_gap_parenthesized_test.txt
+--
+B7a GAP representative bnd:parenthesized_expression:1:end@parenthesized_expression#unary-paren/arithmetic
+(untrimmed witness: tools/alc_probe/cases/b7-audit/parenthesized__unary-paren__gap.al)
+(manifest row: deferred, owner B7b-2/C). Parses since B7b-2 Phase C (Task 10).
+Source trimmed: the generator's table, var section and helpers are removed.
+================================================================================
+codeunit 50101 P
+{
+    procedure Q()
+    begin
+I := (
+I +
+#if X
+( 2 + 3 )
+#else
+3
+#endif
+);
+    end;
+}
+--------------------------------------------------------------------------------
+
+(source_file (codeunit_declaration (codeunit_keyword) object_id: (integer) object_name: (identifier) body:
+(declaration_body (procedure (procedure_keyword) name: (identifier) body: (code_block (begin_keyword) body:
+(statement_block (assignment_statement left: (identifier) operator: (assignment_operator) right:
+(parenthesized_expression (additive_expression left: (identifier) right: (preproc_conditional_operand (preproc_if
+(preproc_open) condition: (identifier)) operand: (parenthesized_expression (additive_expression left: (integer)
+right: (integer))) (preproc_else) operand: (integer) (preproc_endif (preproc_close))))))) (end_keyword))))))
+
+================================================================================
+B7b-2 parenthesized / whole-operand: moved from b7_gap_parenthesized_test.txt
+--
+B7a GAP representative bnd:parenthesized_expression:1:end@parenthesized_expression#whole-operand/arithmetic
+(untrimmed witness: tools/alc_probe/cases/b7-audit/parenthesized__whole-operand__gap.al)
+(manifest row: deferred, owner B7b-2/C). Parses since B7b-2 Phase C (Task 10).
+Source trimmed: the generator's table, var section and helpers are removed.
+================================================================================
+codeunit 50101 P
+{
+    procedure Q()
+    begin
+I := (
+I +
+#if X
+2
+#else
+3
+#endif
+);
+    end;
+}
+--------------------------------------------------------------------------------
+
+(source_file (codeunit_declaration (codeunit_keyword) object_id: (integer) object_name: (identifier) body:
+(declaration_body (procedure (procedure_keyword) name: (identifier) body: (code_block (begin_keyword) body:
+(statement_block (assignment_statement left: (identifier) operator: (assignment_operator) right:
+(parenthesized_expression (additive_expression left: (identifier) right: (preproc_conditional_operand (preproc_if
+(preproc_open) condition: (identifier)) operand: (integer) (preproc_else) operand: (integer) (preproc_endif
+(preproc_close))))))) (end_keyword))))))

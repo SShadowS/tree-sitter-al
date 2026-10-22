@@ -1,0 +1,553 @@
+================================================================================
+B7b-2 subscript / chain: moved from b7_gap_subscript_test.txt
+--
+B7a GAP representative bnd:subscript_expression:0.4.0.1:between@subscript_expression#chain/arithmetic
+(untrimmed witness: tools/alc_probe/cases/b7-audit/subscript__chain__gap.al)
+(owner B7b-2/B; the key is retired to bnd:subscript_expression:0.3.0.1:between,
+tools/b7_audit/key-aliases.tsv); alc accepts every configuration (untrimmed
+witness above, alc_probe --check 2026-10-21). Source trimmed: the generator's table, var section and helper
+procedures are removed, the statement and its host are verbatim.
+================================================================================
+codeunit 50101 P
+{
+    procedure Q()
+    begin
+I := Arr2[1,
+2 * 2
+#if X
++ 3
+#endif
+* 4
+];
+    end;
+}
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (procedure
+        (procedure_keyword)
+        name: (identifier)
+        body: (code_block
+          (begin_keyword)
+          body: (statement_block
+            (assignment_statement
+              left: (identifier)
+              operator: (assignment_operator)
+              right: (subscript_expression
+                object: (identifier)
+                index: (integer)
+                (multiplicative_expression
+                  left: (integer)
+                  right: (integer))
+                (preproc_conditional_expression_tail
+                  (preproc_if
+                    (preproc_open)
+                    condition: (identifier))
+                  operand: (integer)
+                  (preproc_endif
+                    (preproc_close))
+                  operand: (integer)))))
+          (end_keyword))))))
+
+================================================================================
+B7b-2 subscript / consecutive: moved from b7_gap_subscript_test.txt
+--
+B7a GAP representative bnd:subscript_expression:0.4.0.1:between@subscript_expression#consecutive/arithmetic
+(untrimmed witness: tools/alc_probe/cases/b7-audit/subscript__consecutive__gap.al)
+(owner B7b-2/B); alc accepts every configuration (untrimmed witness above, alc_probe --check 2026-10-21). Source
+trimmed: the generator's table, var section and helper procedures are removed,
+the statement and its host are verbatim.
+================================================================================
+codeunit 50101 P
+{
+    procedure Q()
+    begin
+I := Arr2[1,
+2
+#if X
++ 2
+#endif
+#if Y
++ 3
+#endif
+];
+    end;
+}
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (procedure
+        (procedure_keyword)
+        name: (identifier)
+        body: (code_block
+          (begin_keyword)
+          body: (statement_block
+            (assignment_statement
+              left: (identifier)
+              operator: (assignment_operator)
+              right: (subscript_expression
+                object: (identifier)
+                index: (integer)
+                (integer)
+                (preproc_conditional_expression_tail
+                  (preproc_if
+                    (preproc_open)
+                    condition: (identifier))
+                  operand: (integer)
+                  (preproc_endif
+                    (preproc_close))
+                  (preproc_conditional_expression_tail
+                    (preproc_if
+                      (preproc_open)
+                      condition: (identifier))
+                    operand: (integer)
+                    (preproc_endif
+                      (preproc_close)))))))
+          (end_keyword))))))
+
+================================================================================
+B7b-2 subscript / nested: moved from b7_gap_subscript_test.txt
+--
+B7a GAP representative bnd:subscript_expression:0.4.0.1:between@subscript_expression#nested/arithmetic
+(untrimmed witness: tools/alc_probe/cases/b7-audit/subscript__nested__gap.al)
+(owner B7b-2/B); alc accepts every configuration (untrimmed witness above, alc_probe --check 2026-10-21). Source
+trimmed: the generator's table, var section and helper procedures are removed,
+the statement and its host are verbatim.
+================================================================================
+codeunit 50101 P
+{
+    procedure Q()
+    begin
+I := Arr2[1,
+2
+#if X
++ 2
+#if Y
++ 3
+#endif
+#endif
+];
+    end;
+}
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (procedure
+        (procedure_keyword)
+        name: (identifier)
+        body: (code_block
+          (begin_keyword)
+          body: (statement_block
+            (assignment_statement
+              left: (identifier)
+              operator: (assignment_operator)
+              right: (subscript_expression
+                object: (identifier)
+                index: (integer)
+                (integer)
+                (preproc_conditional_expression_tail
+                  (preproc_if
+                    (preproc_open)
+                    condition: (identifier))
+                  operand: (integer)
+                  (preproc_conditional_expression_tail
+                    (preproc_if
+                      (preproc_open)
+                      condition: (identifier))
+                    operand: (integer)
+                    (preproc_endif
+                      (preproc_close)))
+                  (preproc_endif
+                    (preproc_close))))))
+          (end_keyword))))))
+
+================================================================================
+B7b-2 subscript / op-only: moved from b7_gap_subscript_test.txt
+--
+B7a GAP representative bnd:subscript_expression:0.4.0.1:between@subscript_expression#op-only/arithmetic
+(untrimmed witness: tools/alc_probe/cases/b7-audit/subscript__op-only__gap.al, --check 2026-10-21)
+(owner B7b-2/B); op-only: alc rejects X=0 (RC8 over-acceptance, spec 9), the
+X=1 configuration is valid and parses; one tree for both. Source trimmed: the
+generator's table, var section and helper procedures are removed, the
+statement and its host are verbatim.
+================================================================================
+codeunit 50101 P
+{
+    procedure Q()
+    begin
+I := Arr2[1,
+2
+#if X
++
+#endif
+2
+];
+    end;
+}
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (procedure
+        (procedure_keyword)
+        name: (identifier)
+        body: (code_block
+          (begin_keyword)
+          body: (statement_block
+            (assignment_statement
+              left: (identifier)
+              operator: (assignment_operator)
+              right: (subscript_expression
+                object: (identifier)
+                index: (integer)
+                (integer)
+                (preproc_conditional_expression_tail
+                  (preproc_if
+                    (preproc_open)
+                    condition: (identifier))
+                  (preproc_endif
+                    (preproc_close))
+                  operand: (integer)))))
+          (end_keyword))))))
+
+================================================================================
+B7b-2 subscript / suffix: moved from b7_gap_subscript_test.txt
+--
+B7a GAP representative bnd:subscript_expression:0.4.0.1:between@subscript_expression#suffix/arithmetic
+(untrimmed witness: tools/alc_probe/cases/b7-audit/subscript__suffix__gap.al)
+(owner B7b-2/B); alc accepts every configuration (untrimmed witness above, alc_probe --check 2026-10-21). Source
+trimmed: the generator's table, var section and helper procedures are removed,
+the statement and its host are verbatim.
+================================================================================
+codeunit 50101 P
+{
+    procedure Q()
+    begin
+I := Arr2[1,
+2
+#if X
++ 2
+#endif
+];
+    end;
+}
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (procedure
+        (procedure_keyword)
+        name: (identifier)
+        body: (code_block
+          (begin_keyword)
+          body: (statement_block
+            (assignment_statement
+              left: (identifier)
+              operator: (assignment_operator)
+              right: (subscript_expression
+                object: (identifier)
+                index: (integer)
+                (integer)
+                (preproc_conditional_expression_tail
+                  (preproc_if
+                    (preproc_open)
+                    condition: (identifier))
+                  operand: (integer)
+                  (preproc_endif
+                    (preproc_close))))))
+          (end_keyword))))))
+
+================================================================================
+B7b-2 subscript / suffix-else: moved from b7_gap_subscript_test.txt
+--
+B7a GAP representative bnd:subscript_expression:0.4.0.1:between@subscript_expression#suffix-else/arithmetic
+(untrimmed witness: tools/alc_probe/cases/b7-audit/subscript__suffix-else__gap.al)
+(owner B7b-2/B); alc accepts every configuration (untrimmed witness above, alc_probe --check 2026-10-21). Source
+trimmed: the generator's table, var section and helper procedures are removed,
+the statement and its host are verbatim.
+================================================================================
+codeunit 50101 P
+{
+    procedure Q()
+    begin
+I := Arr2[1,
+2
+#if X
++ 2
+#else
+* 3
+#endif
+];
+    end;
+}
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (procedure
+        (procedure_keyword)
+        name: (identifier)
+        body: (code_block
+          (begin_keyword)
+          body: (statement_block
+            (assignment_statement
+              left: (identifier)
+              operator: (assignment_operator)
+              right: (subscript_expression
+                object: (identifier)
+                index: (integer)
+                (integer)
+                (preproc_conditional_expression_tail
+                  (preproc_if
+                    (preproc_open)
+                    condition: (identifier))
+                  operand: (integer)
+                  (preproc_else)
+                  operand: (integer)
+                  (preproc_endif
+                    (preproc_close))))))
+          (end_keyword))))))
+
+================================================================================
+B7b-2 subscript / first: moved from b7_gap_subscript_test.txt
+--
+B7a GAP representative bnd:subscript_expression:0.4.0.1:between@subscript_expression#first/arithmetic
+(untrimmed witness: tools/alc_probe/cases/b7-audit/subscript__first__gap.al)
+(manifest row: deferred, owner B7b-2/C). Parses since B7b-2 Phase C (Task 10).
+Source trimmed: the generator's table, var section and helpers are removed.
+================================================================================
+codeunit 50101 P
+{
+    procedure Q()
+    begin
+I := Arr2[1,
+#if X
+2 +
+#endif
+2
+];
+    end;
+}
+--------------------------------------------------------------------------------
+
+(source_file (codeunit_declaration (codeunit_keyword) object_id: (integer) object_name: (identifier) body:
+(declaration_body (procedure (procedure_keyword) name: (identifier) body: (code_block (begin_keyword) body:
+(statement_block (assignment_statement left: (identifier) operator: (assignment_operator) right:
+(subscript_expression object: (identifier) index: (integer) (preproc_operand_prefix (preproc_if (preproc_open)
+condition: (identifier)) operand: (integer) (preproc_endif (preproc_close))) (integer)))) (end_keyword))))))
+
+================================================================================
+B7b-2 subscript / first-only: moved from b7_gap_subscript_test.txt
+--
+B7a GAP representative bnd:subscript_expression:0.4.0.1:between@subscript_expression#first-only/arithmetic
+(untrimmed witness: tools/alc_probe/cases/b7-audit/subscript__first-only__gap.al)
+(manifest row: deferred, owner B7b-2/C). Parses since B7b-2 Phase C (Task 10).
+Source trimmed: the generator's table, var section and helpers are removed.
+================================================================================
+codeunit 50101 P
+{
+    procedure Q()
+    begin
+I := Arr2[1,
+#if X
+2
+#else
+2
+#endif
+];
+    end;
+}
+--------------------------------------------------------------------------------
+
+(source_file (codeunit_declaration (codeunit_keyword) object_id: (integer) object_name: (identifier) body:
+(declaration_body (procedure (procedure_keyword) name: (identifier) body: (code_block (begin_keyword) body:
+(statement_block (assignment_statement left: (identifier) operator: (assignment_operator) right:
+(subscript_expression object: (identifier) index: (integer) (preproc_conditional_operand (preproc_if (preproc_open)
+condition: (identifier)) operand: (integer) (preproc_else) operand: (integer) (preproc_endif (preproc_close))))))
+(end_keyword))))))
+
+================================================================================
+B7b-2 subscript / signed: moved from b7_gap_subscript_test.txt
+--
+B7a GAP representative bnd:subscript_expression:0.4.0.1:between@subscript_expression#signed/arithmetic
+(untrimmed witness: tools/alc_probe/cases/b7-audit/subscript__signed__gap.al)
+(manifest row: deferred, owner B7b-2/C). Parses since B7b-2 Phase C (Task 10).
+Source trimmed: the generator's table, var section and helpers are removed.
+================================================================================
+codeunit 50101 P
+{
+    procedure Q()
+    begin
+I := Arr2[1,
+2 +
+#if X
+-1
+#else
+2
+#endif
+];
+    end;
+}
+--------------------------------------------------------------------------------
+
+(source_file (codeunit_declaration (codeunit_keyword) object_id: (integer) object_name: (identifier) body:
+(declaration_body (procedure (procedure_keyword) name: (identifier) body: (code_block (begin_keyword) body:
+(statement_block (assignment_statement left: (identifier) operator: (assignment_operator) right:
+(subscript_expression object: (identifier) index: (integer) (additive_expression left: (integer) right:
+(preproc_conditional_operand (preproc_if (preproc_open) condition: (identifier)) operand: (unary_expression operand:
+(integer)) (preproc_else) operand: (integer) (preproc_endif (preproc_close))))))) (end_keyword))))))
+
+================================================================================
+B7b-2 subscript / trail: moved from b7_gap_subscript_test.txt
+--
+B7a MIXED representative occ:subscript_expression:0.4.0.0@case_branch#trail
+(untrimmed witness: tools/alc_probe/cases/b7-audit/subscript__trail__gap.al)
+(manifest row: excluded, owner B7b+). A separator cell outside B7b-2's scope that
+parses since Phase C (Task 10): the second index is a one-arm operand group, the
+only derivation; X=0 (`Arr2[1, ]`) is rejected by alc.
+Source trimmed: the generator's table, var section and helpers are removed.
+================================================================================
+codeunit 50101 P
+{
+    procedure Q()
+    begin
+case I of
+Arr2[
+1 ,
+#if X
+2
+#endif
+]:
+Bar();
+end;
+    end;
+}
+--------------------------------------------------------------------------------
+
+(source_file (codeunit_declaration (codeunit_keyword) object_id: (integer) object_name: (identifier) body:
+(declaration_body (procedure (procedure_keyword) name: (identifier) body: (code_block (begin_keyword) body:
+(statement_block (case_statement (case_keyword) expression: (identifier) (of_keyword) body: (case_body (case_branch
+pattern: (subscript_expression object: (identifier) index: (integer) (preproc_conditional_operand (preproc_if
+(preproc_open) condition: (identifier)) operand: (integer) (preproc_endif (preproc_close)))) body: (call_expression
+function: (identifier) arguments: (argument_list)))) (end_keyword))) (end_keyword))))))
+
+================================================================================
+B7b-2 subscript / unary-minus: moved from b7_gap_subscript_test.txt
+--
+B7a GAP representative bnd:subscript_expression:0.4.0.1:between@subscript_expression#unary-minus/arithmetic
+(untrimmed witness: tools/alc_probe/cases/b7-audit/subscript__unary-minus__gap.al)
+(manifest row: deferred, owner B7b-2/C). Parses since B7b-2 Phase C (Task 10).
+Source trimmed: the generator's table, var section and helpers are removed.
+================================================================================
+codeunit 50101 P
+{
+    procedure Q()
+    begin
+I := Arr2[1,
+2 +
+#if X
+- 2
+#else
+3
+#endif
+];
+    end;
+}
+--------------------------------------------------------------------------------
+
+(source_file (codeunit_declaration (codeunit_keyword) object_id: (integer) object_name: (identifier) body:
+(declaration_body (procedure (procedure_keyword) name: (identifier) body: (code_block (begin_keyword) body:
+(statement_block (assignment_statement left: (identifier) operator: (assignment_operator) right:
+(subscript_expression object: (identifier) index: (integer) (additive_expression left: (integer) right:
+(preproc_conditional_operand (preproc_if (preproc_open) condition: (identifier)) operand: (unary_expression operand:
+(integer)) (preproc_else) operand: (integer) (preproc_endif (preproc_close))))))) (end_keyword))))))
+
+================================================================================
+B7b-2 subscript / unary-paren: moved from b7_gap_subscript_test.txt
+--
+B7a GAP representative bnd:subscript_expression:0.4.0.1:between@subscript_expression#unary-paren/arithmetic
+(untrimmed witness: tools/alc_probe/cases/b7-audit/subscript__unary-paren__gap.al)
+(manifest row: deferred, owner B7b-2/C). Parses since B7b-2 Phase C (Task 10).
+Source trimmed: the generator's table, var section and helpers are removed.
+================================================================================
+codeunit 50101 P
+{
+    procedure Q()
+    begin
+I := Arr2[1,
+2 +
+#if X
+( 2 + 3 )
+#else
+3
+#endif
+];
+    end;
+}
+--------------------------------------------------------------------------------
+
+(source_file (codeunit_declaration (codeunit_keyword) object_id: (integer) object_name: (identifier) body:
+(declaration_body (procedure (procedure_keyword) name: (identifier) body: (code_block (begin_keyword) body:
+(statement_block (assignment_statement left: (identifier) operator: (assignment_operator) right:
+(subscript_expression object: (identifier) index: (integer) (additive_expression left: (integer) right:
+(preproc_conditional_operand (preproc_if (preproc_open) condition: (identifier)) operand: (parenthesized_expression
+(additive_expression left: (integer) right: (integer))) (preproc_else) operand: (integer) (preproc_endif
+(preproc_close))))))) (end_keyword))))))
+
+================================================================================
+B7b-2 subscript / whole-operand: moved from b7_gap_subscript_test.txt
+--
+B7a GAP representative bnd:subscript_expression:0.4.0.1:between@subscript_expression#whole-operand/arithmetic
+(untrimmed witness: tools/alc_probe/cases/b7-audit/subscript__whole-operand__gap.al)
+(manifest row: deferred, owner B7b-2/C). Parses since B7b-2 Phase C (Task 10).
+Source trimmed: the generator's table, var section and helpers are removed.
+================================================================================
+codeunit 50101 P
+{
+    procedure Q()
+    begin
+I := Arr2[1,
+2 +
+#if X
+2
+#else
+3
+#endif
+];
+    end;
+}
+--------------------------------------------------------------------------------
+
+(source_file (codeunit_declaration (codeunit_keyword) object_id: (integer) object_name: (identifier) body:
+(declaration_body (procedure (procedure_keyword) name: (identifier) body: (code_block (begin_keyword) body:
+(statement_block (assignment_statement left: (identifier) operator: (assignment_operator) right:
+(subscript_expression object: (identifier) index: (integer) (additive_expression left: (integer) right:
+(preproc_conditional_operand (preproc_if (preproc_open) condition: (identifier)) operand: (integer) (preproc_else)
+operand: (integer) (preproc_endif (preproc_close))))))) (end_keyword))))))

@@ -1,5 +1,5 @@
 // B7a Task 10 witness (GAP): family split-call, base placement whole-operand, 10 cells; representative bnd:_expression_list:0:end@preproc_split_call_statement#whole-operand/arithmetic
-// Fixture b7_gap_split_call_test.txt#B7a GAP: split-call / whole-operand (10 cells, verdict of the representative GAP); the parser ERRORs on configurations alc accepts; representative bnd:_expression_list:0:end@preproc_split_call_statement%23whole-operand/arithmetic#0
+// Fixture b7b2_split_call_test.txt#B7b-2 split-call / whole-operand: moved from b7_gap_split_call_test.txt#0
 // expect: !TPL !X accept
 // expect: !TPL X accept
 // expect: TPL !X accept

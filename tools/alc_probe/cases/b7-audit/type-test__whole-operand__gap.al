@@ -1,5 +1,5 @@
 // B7a Task 10 witness (GAP): family type-test, base placement whole-operand, 4 cells; representative bnd:as_expression:left:end@as_expression#whole-operand/type-test
-// Fixture b7_gap_type_test_test.txt#B7a GAP: type-test / whole-operand (4 cells, verdict of the representative GAP); the parser ERRORs on configurations alc accepts; representative bnd:as_expression:left:end@as_expression%23whole-operand/type-test#0
+// Fixture b7b2_type_test_test.txt#B7b-2 type-test / whole-operand: moved from b7_gap_type_test_test.txt#0
 // expect: !X accept
 // expect: X accept
 // source: recorded by B7a Task 10, 2026-10-07: the alc split verdicts of cell bnd:as_expression:left:end@as_expression#whole-operand/type-test in tools/b7_audit/evidence.jsonl.gz

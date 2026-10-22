@@ -1,5 +1,5 @@
 // B7a Task 10 witness (GAP): family arguments, base placement unary-minus, 8 cells; representative bnd:_argument_expression:0:end@argument_list#unary-minus/arithmetic
-// Fixture b7_gap_arguments_test.txt#B7a GAP: arguments / unary-minus (8 cells, verdict of the representative GAP); the parser ERRORs on configurations alc accepts; representative bnd:_argument_expression:0:end@argument_list%23unary-minus/arithmetic#0
+// Fixture b7b2_arguments_test.txt#B7b-2 arguments / unary-minus: moved from b7_gap_arguments_test.txt#0
 // expect: !X accept
 // expect: X accept
 // source: recorded by B7a Task 10, 2026-10-07: the alc split verdicts of cell bnd:_argument_expression:0:end@argument_list#unary-minus/arithmetic in tools/b7_audit/evidence.jsonl.gz

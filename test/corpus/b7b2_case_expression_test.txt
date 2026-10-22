@@ -1,0 +1,593 @@
+================================================================================
+B7b-2 case-expression / chain: moved from b7_gap_case_expression_test.txt
+--
+B7a GAP representative bnd:case_statement:expression:end@statement_block#chain/arithmetic
+(untrimmed witness: tools/alc_probe/cases/b7-audit/case-expression__chain__gap.al)
+(owner B7b-2/B).
+alc accepts every configuration of the untrimmed witness named above
+(`python -m tools.alc_probe run <witness> --check`, 2026-10-21).
+Source trimmed: the generator's table, var section and helper
+procedures are removed, the statement and its host are verbatim.
+================================================================================
+codeunit 50101 P
+{
+    procedure Q()
+    begin
+case
+I * 2
+#if X
++ 3
+#endif
+* 4
+ of
+1:
+Bar();
+end;
+    end;
+}
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (procedure
+        (procedure_keyword)
+        name: (identifier)
+        body: (code_block
+          (begin_keyword)
+          body: (statement_block
+            (case_statement
+              (case_keyword)
+              expression: (multiplicative_expression
+                left: (identifier)
+                right: (integer))
+              (preproc_conditional_expression_tail
+                (preproc_if
+                  (preproc_open)
+                  condition: (identifier))
+                operand: (integer)
+                (preproc_endif
+                  (preproc_close))
+                operand: (integer))
+              (of_keyword)
+              body: (case_body
+                (case_branch
+                  pattern: (integer)
+                  body: (call_expression
+                    function: (identifier)
+                    arguments: (argument_list))))
+              (end_keyword)))
+          (end_keyword))))))
+
+================================================================================
+B7b-2 case-expression / consecutive: moved from b7_gap_case_expression_test.txt
+--
+B7a GAP representative bnd:case_statement:expression:end@statement_block#consecutive/arithmetic
+(untrimmed witness: tools/alc_probe/cases/b7-audit/case-expression__consecutive__gap.al)
+(owner B7b-2/B).
+alc accepts every configuration of the untrimmed witness named above
+(`python -m tools.alc_probe run <witness> --check`, 2026-10-21).
+Source trimmed: the generator's table, var section and helper
+procedures are removed, the statement and its host are verbatim.
+================================================================================
+codeunit 50101 P
+{
+    procedure Q()
+    begin
+case
+I
+#if X
++ 2
+#endif
+#if Y
++ 3
+#endif
+ of
+1:
+Bar();
+end;
+    end;
+}
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (procedure
+        (procedure_keyword)
+        name: (identifier)
+        body: (code_block
+          (begin_keyword)
+          body: (statement_block
+            (case_statement
+              (case_keyword)
+              expression: (identifier)
+              (preproc_conditional_expression_tail
+                (preproc_if
+                  (preproc_open)
+                  condition: (identifier))
+                operand: (integer)
+                (preproc_endif
+                  (preproc_close))
+                (preproc_conditional_expression_tail
+                  (preproc_if
+                    (preproc_open)
+                    condition: (identifier))
+                  operand: (integer)
+                  (preproc_endif
+                    (preproc_close))))
+              (of_keyword)
+              body: (case_body
+                (case_branch
+                  pattern: (integer)
+                  body: (call_expression
+                    function: (identifier)
+                    arguments: (argument_list))))
+              (end_keyword)))
+          (end_keyword))))))
+
+================================================================================
+B7b-2 case-expression / nested: moved from b7_gap_case_expression_test.txt
+--
+B7a GAP representative bnd:case_statement:expression:end@statement_block#nested/arithmetic
+(untrimmed witness: tools/alc_probe/cases/b7-audit/case-expression__nested__gap.al)
+(owner B7b-2/B).
+alc accepts every configuration of the untrimmed witness named above
+(`python -m tools.alc_probe run <witness> --check`, 2026-10-21).
+Source trimmed: the generator's table, var section and helper
+procedures are removed, the statement and its host are verbatim.
+================================================================================
+codeunit 50101 P
+{
+    procedure Q()
+    begin
+case
+I
+#if X
++ 2
+#if Y
++ 3
+#endif
+#endif
+ of
+1:
+Bar();
+end;
+    end;
+}
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (procedure
+        (procedure_keyword)
+        name: (identifier)
+        body: (code_block
+          (begin_keyword)
+          body: (statement_block
+            (case_statement
+              (case_keyword)
+              expression: (identifier)
+              (preproc_conditional_expression_tail
+                (preproc_if
+                  (preproc_open)
+                  condition: (identifier))
+                operand: (integer)
+                (preproc_conditional_expression_tail
+                  (preproc_if
+                    (preproc_open)
+                    condition: (identifier))
+                  operand: (integer)
+                  (preproc_endif
+                    (preproc_close)))
+                (preproc_endif
+                  (preproc_close)))
+              (of_keyword)
+              body: (case_body
+                (case_branch
+                  pattern: (integer)
+                  body: (call_expression
+                    function: (identifier)
+                    arguments: (argument_list))))
+              (end_keyword)))
+          (end_keyword))))))
+
+================================================================================
+B7b-2 case-expression / op-only: moved from b7_gap_case_expression_test.txt
+--
+B7a GAP representative bnd:case_statement:expression:end@statement_block#op-only/arithmetic
+(untrimmed witness: tools/alc_probe/cases/b7-audit/case-expression__op-only__gap.al,
+`--check` 2026-10-21)
+(owner B7b-2/B).
+op-only: alc rejects X=0 (AL0104, RC8 over-acceptance, spec 9);
+the X=1 configuration is valid and parses; one tree for both.
+Source trimmed: the generator's table, var section and helper
+procedures are removed, the statement and its host are verbatim.
+================================================================================
+codeunit 50101 P
+{
+    procedure Q()
+    begin
+case
+I
+#if X
++
+#endif
+2
+ of
+1:
+Bar();
+end;
+    end;
+}
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (procedure
+        (procedure_keyword)
+        name: (identifier)
+        body: (code_block
+          (begin_keyword)
+          body: (statement_block
+            (case_statement
+              (case_keyword)
+              expression: (identifier)
+              (preproc_conditional_expression_tail
+                (preproc_if
+                  (preproc_open)
+                  condition: (identifier))
+                (preproc_endif
+                  (preproc_close))
+                operand: (integer))
+              (of_keyword)
+              body: (case_body
+                (case_branch
+                  pattern: (integer)
+                  body: (call_expression
+                    function: (identifier)
+                    arguments: (argument_list))))
+              (end_keyword)))
+          (end_keyword))))))
+
+================================================================================
+B7b-2 case-expression / suffix: moved from b7_gap_case_expression_test.txt
+--
+B7a GAP representative bnd:case_statement:expression:end@statement_block#suffix/arithmetic
+(untrimmed witness: tools/alc_probe/cases/b7-audit/case-expression__suffix__gap.al)
+(owner B7b-2/B).
+alc accepts every configuration of the untrimmed witness named above
+(`python -m tools.alc_probe run <witness> --check`, 2026-10-21).
+Source trimmed: the generator's table, var section and helper
+procedures are removed, the statement and its host are verbatim.
+================================================================================
+codeunit 50101 P
+{
+    procedure Q()
+    begin
+case
+I
+#if X
++ 2
+#endif
+ of
+1:
+Bar();
+end;
+    end;
+}
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (procedure
+        (procedure_keyword)
+        name: (identifier)
+        body: (code_block
+          (begin_keyword)
+          body: (statement_block
+            (case_statement
+              (case_keyword)
+              expression: (identifier)
+              (preproc_conditional_expression_tail
+                (preproc_if
+                  (preproc_open)
+                  condition: (identifier))
+                operand: (integer)
+                (preproc_endif
+                  (preproc_close)))
+              (of_keyword)
+              body: (case_body
+                (case_branch
+                  pattern: (integer)
+                  body: (call_expression
+                    function: (identifier)
+                    arguments: (argument_list))))
+              (end_keyword)))
+          (end_keyword))))))
+
+================================================================================
+B7b-2 case-expression / suffix-else: moved from b7_gap_case_expression_test.txt
+--
+B7a GAP representative bnd:case_statement:expression:end@statement_block#suffix-else/arithmetic
+(untrimmed witness: tools/alc_probe/cases/b7-audit/case-expression__suffix-else__gap.al)
+(owner B7b-2/B).
+alc accepts every configuration of the untrimmed witness named above
+(`python -m tools.alc_probe run <witness> --check`, 2026-10-21).
+Source trimmed: the generator's table, var section and helper
+procedures are removed, the statement and its host are verbatim.
+================================================================================
+codeunit 50101 P
+{
+    procedure Q()
+    begin
+case
+I
+#if X
++ 2
+#else
+* 3
+#endif
+ of
+1:
+Bar();
+end;
+    end;
+}
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (procedure
+        (procedure_keyword)
+        name: (identifier)
+        body: (code_block
+          (begin_keyword)
+          body: (statement_block
+            (case_statement
+              (case_keyword)
+              expression: (identifier)
+              (preproc_conditional_expression_tail
+                (preproc_if
+                  (preproc_open)
+                  condition: (identifier))
+                operand: (integer)
+                (preproc_else)
+                operand: (integer)
+                (preproc_endif
+                  (preproc_close)))
+              (of_keyword)
+              body: (case_body
+                (case_branch
+                  pattern: (integer)
+                  body: (call_expression
+                    function: (identifier)
+                    arguments: (argument_list))))
+              (end_keyword)))
+          (end_keyword))))))
+
+================================================================================
+B7b-2 case-expression / first: moved from b7_gap_case_expression_test.txt
+--
+B7a GAP representative bnd:case_statement:expression:end@statement_block#first/arithmetic
+(untrimmed witness: tools/alc_probe/cases/b7-audit/case-expression__first__gap.al)
+(manifest row: deferred, owner B7b-2/C). Parses since B7b-2 Phase C (Task 10).
+Source trimmed: the generator's table, var section and helpers are removed.
+================================================================================
+codeunit 50101 P
+{
+    procedure Q()
+    begin
+case
+#if X
+I +
+#endif
+2
+ of
+1:
+Bar();
+end;
+    end;
+}
+--------------------------------------------------------------------------------
+
+(source_file (codeunit_declaration (codeunit_keyword) object_id: (integer) object_name: (identifier) body:
+(declaration_body (procedure (procedure_keyword) name: (identifier) body: (code_block (begin_keyword) body:
+(statement_block (case_statement (case_keyword) (preproc_operand_prefix (preproc_if (preproc_open) condition:
+(identifier)) operand: (identifier) (preproc_endif (preproc_close))) expression: (integer) (of_keyword) body:
+(case_body (case_branch pattern: (integer) body: (call_expression function: (identifier) arguments:
+(argument_list)))) (end_keyword))) (end_keyword))))))
+
+================================================================================
+B7b-2 case-expression / first-only: moved from b7_gap_case_expression_test.txt
+--
+B7a GAP representative bnd:case_statement:expression:end@statement_block#first-only/arithmetic
+(untrimmed witness: tools/alc_probe/cases/b7-audit/case-expression__first-only__gap.al)
+(manifest row: deferred, owner B7b-2/C). Parses since B7b-2 Phase C (Task 10).
+Source trimmed: the generator's table, var section and helpers are removed.
+================================================================================
+codeunit 50101 P
+{
+    procedure Q()
+    begin
+case
+#if X
+I
+#else
+2
+#endif
+ of
+1:
+Bar();
+end;
+    end;
+}
+--------------------------------------------------------------------------------
+
+(source_file (codeunit_declaration (codeunit_keyword) object_id: (integer) object_name: (identifier) body:
+(declaration_body (procedure (procedure_keyword) name: (identifier) body: (code_block (begin_keyword) body:
+(statement_block (case_statement (case_keyword) expression: (preproc_conditional_operand (preproc_if (preproc_open)
+condition: (identifier)) operand: (identifier) (preproc_else) operand: (integer) (preproc_endif (preproc_close)))
+(of_keyword) body: (case_body (case_branch pattern: (integer) body: (call_expression function: (identifier)
+arguments: (argument_list)))) (end_keyword))) (end_keyword))))))
+
+================================================================================
+B7b-2 case-expression / signed: moved from b7_gap_case_expression_test.txt
+--
+B7a GAP representative bnd:case_statement:expression:end@statement_block#signed/arithmetic
+(untrimmed witness: tools/alc_probe/cases/b7-audit/case-expression__signed__gap.al)
+(manifest row: deferred, owner B7b-2/C). Parses since B7b-2 Phase C (Task 10).
+Source trimmed: the generator's table, var section and helpers are removed.
+================================================================================
+codeunit 50101 P
+{
+    procedure Q()
+    begin
+case
+I +
+#if X
+-1
+#else
+2
+#endif
+ of
+1:
+Bar();
+end;
+    end;
+}
+--------------------------------------------------------------------------------
+
+(source_file (codeunit_declaration (codeunit_keyword) object_id: (integer) object_name: (identifier) body:
+(declaration_body (procedure (procedure_keyword) name: (identifier) body: (code_block (begin_keyword) body:
+(statement_block (case_statement (case_keyword) expression: (additive_expression left: (identifier) right:
+(preproc_conditional_operand (preproc_if (preproc_open) condition: (identifier)) operand: (unary_expression operand:
+(integer)) (preproc_else) operand: (integer) (preproc_endif (preproc_close)))) (of_keyword) body: (case_body
+(case_branch pattern: (integer) body: (call_expression function: (identifier) arguments: (argument_list))))
+(end_keyword))) (end_keyword))))))
+
+================================================================================
+B7b-2 case-expression / unary-minus: moved from b7_gap_case_expression_test.txt
+--
+B7a GAP representative bnd:case_statement:expression:end@statement_block#unary-minus/arithmetic
+(untrimmed witness: tools/alc_probe/cases/b7-audit/case-expression__unary-minus__gap.al)
+(manifest row: deferred, owner B7b-2/C). Parses since B7b-2 Phase C (Task 10).
+Source trimmed: the generator's table, var section and helpers are removed.
+================================================================================
+codeunit 50101 P
+{
+    procedure Q()
+    begin
+case
+I +
+#if X
+- 2
+#else
+3
+#endif
+ of
+1:
+Bar();
+end;
+    end;
+}
+--------------------------------------------------------------------------------
+
+(source_file (codeunit_declaration (codeunit_keyword) object_id: (integer) object_name: (identifier) body:
+(declaration_body (procedure (procedure_keyword) name: (identifier) body: (code_block (begin_keyword) body:
+(statement_block (case_statement (case_keyword) expression: (additive_expression left: (identifier) right:
+(preproc_conditional_operand (preproc_if (preproc_open) condition: (identifier)) operand: (unary_expression operand:
+(integer)) (preproc_else) operand: (integer) (preproc_endif (preproc_close)))) (of_keyword) body: (case_body
+(case_branch pattern: (integer) body: (call_expression function: (identifier) arguments: (argument_list))))
+(end_keyword))) (end_keyword))))))
+
+================================================================================
+B7b-2 case-expression / unary-paren: moved from b7_gap_case_expression_test.txt
+--
+B7a GAP representative bnd:case_statement:expression:end@statement_block#unary-paren/arithmetic
+(untrimmed witness: tools/alc_probe/cases/b7-audit/case-expression__unary-paren__gap.al)
+(manifest row: deferred, owner B7b-2/C). Parses since B7b-2 Phase C (Task 10).
+Source trimmed: the generator's table, var section and helpers are removed.
+================================================================================
+codeunit 50101 P
+{
+    procedure Q()
+    begin
+case
+I +
+#if X
+( 2 + 3 )
+#else
+3
+#endif
+ of
+1:
+Bar();
+end;
+    end;
+}
+--------------------------------------------------------------------------------
+
+(source_file (codeunit_declaration (codeunit_keyword) object_id: (integer) object_name: (identifier) body:
+(declaration_body (procedure (procedure_keyword) name: (identifier) body: (code_block (begin_keyword) body:
+(statement_block (case_statement (case_keyword) expression: (additive_expression left: (identifier) right:
+(preproc_conditional_operand (preproc_if (preproc_open) condition: (identifier)) operand: (parenthesized_expression
+(additive_expression left: (integer) right: (integer))) (preproc_else) operand: (integer) (preproc_endif
+(preproc_close)))) (of_keyword) body: (case_body (case_branch pattern: (integer) body: (call_expression function:
+(identifier) arguments: (argument_list)))) (end_keyword))) (end_keyword))))))
+
+================================================================================
+B7b-2 case-expression / whole-operand: moved from b7_gap_case_expression_test.txt
+--
+B7a GAP representative bnd:case_statement:expression:end@statement_block#whole-operand/arithmetic
+(untrimmed witness: tools/alc_probe/cases/b7-audit/case-expression__whole-operand__gap.al)
+(manifest row: deferred, owner B7b-2/C). Parses since B7b-2 Phase C (Task 10).
+Source trimmed: the generator's table, var section and helpers are removed.
+================================================================================
+codeunit 50101 P
+{
+    procedure Q()
+    begin
+case
+I +
+#if X
+2
+#else
+3
+#endif
+ of
+1:
+Bar();
+end;
+    end;
+}
+--------------------------------------------------------------------------------
+
+(source_file (codeunit_declaration (codeunit_keyword) object_id: (integer) object_name: (identifier) body:
+(declaration_body (procedure (procedure_keyword) name: (identifier) body: (code_block (begin_keyword) body:
+(statement_block (case_statement (case_keyword) expression: (additive_expression left: (identifier) right:
+(preproc_conditional_operand (preproc_if (preproc_open) condition: (identifier)) operand: (integer) (preproc_else)
+operand: (integer) (preproc_endif (preproc_close)))) (of_keyword) body: (case_body (case_branch pattern: (integer)
+body: (call_expression function: (identifier) arguments: (argument_list)))) (end_keyword))) (end_keyword))))))

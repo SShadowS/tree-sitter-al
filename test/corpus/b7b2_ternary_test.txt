@@ -1,0 +1,675 @@
+================================================================================
+B7b-2 ternary / consecutive in the condition: moved from b7_gap_ternary_test.txt
+--
+B7a GAP representative bnd:ternary_expression:condition:end@ternary_expression#consecutive/comparison
+(untrimmed witness: tools/alc_probe/cases/b7-audit/ternary__consecutive__gap.al)
+(owner B7b-2/B, fixed in Phase A by the condition root `_ternary_condition`,
+taken from Phase B, execution amendments Task 4); alc accepts every
+configuration (untrimmed witness above, alc_probe --check 2026-10-21). Source trimmed: the generator's table, var
+section and helper procedures are removed, the statement and its host are
+verbatim.
+================================================================================
+codeunit 50101 P
+{
+    procedure Q()
+    begin
+I :=
+Ok
+#if X
+= true
+#endif
+#if Y
+= false
+#endif
+ ? 1 : 2;
+    end;
+}
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (procedure
+        (procedure_keyword)
+        name: (identifier)
+        body: (code_block
+          (begin_keyword)
+          body: (statement_block
+            (assignment_statement
+              left: (identifier)
+              operator: (assignment_operator)
+              right: (ternary_expression
+                condition: (identifier)
+                (preproc_conditional_expression_tail
+                  (preproc_if
+                    (preproc_open)
+                    condition: (identifier))
+                  operator: (comparison_operator)
+                  operand: (boolean)
+                  (preproc_endif
+                    (preproc_close))
+                  (preproc_conditional_expression_tail
+                    (preproc_if
+                      (preproc_open)
+                      condition: (identifier))
+                    operator: (comparison_operator)
+                    operand: (boolean)
+                    (preproc_endif
+                      (preproc_close))))
+                then_value: (integer)
+                else_value: (integer))))
+          (end_keyword))))))
+
+================================================================================
+B7b-2 ternary / nested in the condition: moved from b7_gap_ternary_test.txt
+--
+B7a GAP representative bnd:ternary_expression:condition:end@ternary_expression#nested/comparison
+(untrimmed witness: tools/alc_probe/cases/b7-audit/ternary__nested__gap.al)
+(owner B7b-2/B, fixed in Phase A). Source trimmed as above.
+================================================================================
+codeunit 50101 P
+{
+    procedure Q()
+    begin
+I :=
+Ok
+#if X
+= true
+#if Y
+= false
+#endif
+#endif
+ ? 1 : 2;
+    end;
+}
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (procedure
+        (procedure_keyword)
+        name: (identifier)
+        body: (code_block
+          (begin_keyword)
+          body: (statement_block
+            (assignment_statement
+              left: (identifier)
+              operator: (assignment_operator)
+              right: (ternary_expression
+                condition: (identifier)
+                (preproc_conditional_expression_tail
+                  (preproc_if
+                    (preproc_open)
+                    condition: (identifier))
+                  operator: (comparison_operator)
+                  operand: (boolean)
+                  (preproc_conditional_expression_tail
+                    (preproc_if
+                      (preproc_open)
+                      condition: (identifier))
+                    operator: (comparison_operator)
+                    operand: (boolean)
+                    (preproc_endif
+                      (preproc_close)))
+                  (preproc_endif
+                    (preproc_close)))
+                then_value: (integer)
+                else_value: (integer))))
+          (end_keyword))))))
+
+================================================================================
+B7b-2 ternary / prefix (membership) in the condition: moved from b7_gap_ternary_test.txt
+--
+B7a GAP representative bnd:ternary_expression:condition:end@ternary_expression#prefix/membership
+(untrimmed witness: tools/alc_probe/cases/b7-audit/ternary__prefix__gap.al)
+(owner B7b-2/A). The typed `in` prefix (spec 5.3, 6.2). Source trimmed as above.
+================================================================================
+codeunit 50101 P
+{
+    procedure Q()
+    begin
+I :=
+Ok in
+#if X
+[true, false] in
+#endif
+[true]
+ ? 1 : 2;
+    end;
+}
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (procedure
+        (procedure_keyword)
+        name: (identifier)
+        body: (code_block
+          (begin_keyword)
+          body: (statement_block
+            (assignment_statement
+              left: (identifier)
+              operator: (assignment_operator)
+              right: (ternary_expression
+                condition: (in_expression
+                  left: (identifier)
+                  operator: (in_keyword)
+                  (preproc_operand_prefix
+                    (preproc_if
+                      (preproc_open)
+                      condition: (identifier))
+                    operand: (list_literal
+                      (boolean)
+                      (boolean))
+                    operator: (in_keyword)
+                    (preproc_endif
+                      (preproc_close)))
+                  right: (list_literal
+                    (boolean)))
+                then_value: (integer)
+                else_value: (integer))))
+          (end_keyword))))))
+
+================================================================================
+B7b-2 ternary / suffix in the condition: moved from b7_gap_ternary_test.txt
+--
+B7a GAP representative bnd:ternary_expression:condition:end@ternary_expression#suffix/comparison
+(untrimmed witness: tools/alc_probe/cases/b7-audit/ternary__suffix__gap.al)
+(owner B7b-2/B, fixed in Phase A by the condition root). Source trimmed as above.
+================================================================================
+codeunit 50101 P
+{
+    procedure Q()
+    begin
+I :=
+Ok
+#if X
+= true
+#endif
+ ? 1 : 2;
+    end;
+}
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (procedure
+        (procedure_keyword)
+        name: (identifier)
+        body: (code_block
+          (begin_keyword)
+          body: (statement_block
+            (assignment_statement
+              left: (identifier)
+              operator: (assignment_operator)
+              right: (ternary_expression
+                condition: (identifier)
+                (preproc_conditional_expression_tail
+                  (preproc_if
+                    (preproc_open)
+                    condition: (identifier))
+                  operator: (comparison_operator)
+                  operand: (boolean)
+                  (preproc_endif
+                    (preproc_close)))
+                then_value: (integer)
+                else_value: (integer))))
+          (end_keyword))))))
+
+================================================================================
+B7b-2 ternary / suffix-else in the condition: moved from b7_gap_ternary_test.txt
+--
+B7a GAP representative bnd:ternary_expression:condition:end@ternary_expression#suffix-else/comparison
+(untrimmed witness: tools/alc_probe/cases/b7-audit/ternary__suffix-else__gap.al)
+(owner B7b-2/B, fixed in Phase A by the condition root). Source trimmed as above.
+================================================================================
+codeunit 50101 P
+{
+    procedure Q()
+    begin
+I :=
+Ok
+#if X
+= true
+#else
+<> false
+#endif
+ ? 1 : 2;
+    end;
+}
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (procedure
+        (procedure_keyword)
+        name: (identifier)
+        body: (code_block
+          (begin_keyword)
+          body: (statement_block
+            (assignment_statement
+              left: (identifier)
+              operator: (assignment_operator)
+              right: (ternary_expression
+                condition: (identifier)
+                (preproc_conditional_expression_tail
+                  (preproc_if
+                    (preproc_open)
+                    condition: (identifier))
+                  operator: (comparison_operator)
+                  operand: (boolean)
+                  (preproc_else)
+                  operator: (comparison_operator)
+                  operand: (boolean)
+                  (preproc_endif
+                    (preproc_close)))
+                then_value: (integer)
+                else_value: (integer))))
+          (end_keyword))))))
+
+================================================================================
+B7b-2 ternary / chain in the then value: moved from b7_gap_ternary_test.txt
+--
+B7a GAP representative bnd:ternary_expression:then_value:end@ternary_expression#chain/arithmetic
+(untrimmed witness: tools/alc_probe/cases/b7-audit/ternary__chain__gap.al)
+(owner B7b-2/B); alc accepts every configuration (untrimmed witness above, alc_probe --check 2026-10-21). Source
+trimmed: the generator's table, var section and helper procedures are removed,
+the statement and its host are verbatim.
+================================================================================
+codeunit 50101 P
+{
+    procedure Q()
+    begin
+I := Ok ?
+1 * 2
+#if X
++ 3
+#endif
+* 4
+ : 2;
+    end;
+}
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (procedure
+        (procedure_keyword)
+        name: (identifier)
+        body: (code_block
+          (begin_keyword)
+          body: (statement_block
+            (assignment_statement
+              left: (identifier)
+              operator: (assignment_operator)
+              right: (ternary_expression
+                condition: (identifier)
+                then_value: (multiplicative_expression
+                  left: (integer)
+                  right: (integer))
+                (preproc_conditional_expression_tail
+                  (preproc_if
+                    (preproc_open)
+                    condition: (identifier))
+                  operand: (integer)
+                  (preproc_endif
+                    (preproc_close))
+                  operand: (integer))
+                else_value: (integer))))
+          (end_keyword))))))
+
+================================================================================
+B7b-2 ternary / op-only in the then value: moved from b7_gap_ternary_test.txt
+--
+B7a GAP representative bnd:ternary_expression:then_value:end@ternary_expression#op-only/arithmetic
+(untrimmed witness: tools/alc_probe/cases/b7-audit/ternary__op-only__gap.al, --check 2026-10-21)
+(owner B7b-2/B); op-only: alc rejects X=0 (RC8 over-acceptance, spec 9), the
+X=1 configuration is valid and parses; one tree for both. Source trimmed: the
+generator's table, var section and helper procedures are removed, the
+statement and its host are verbatim.
+================================================================================
+codeunit 50101 P
+{
+    procedure Q()
+    begin
+I := Ok ?
+1
+#if X
++
+#endif
+2
+ : 2;
+    end;
+}
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (procedure
+        (procedure_keyword)
+        name: (identifier)
+        body: (code_block
+          (begin_keyword)
+          body: (statement_block
+            (assignment_statement
+              left: (identifier)
+              operator: (assignment_operator)
+              right: (ternary_expression
+                condition: (identifier)
+                then_value: (integer)
+                (preproc_conditional_expression_tail
+                  (preproc_if
+                    (preproc_open)
+                    condition: (identifier))
+                  (preproc_endif
+                    (preproc_close))
+                  operand: (integer))
+                else_value: (integer))))
+          (end_keyword))))))
+
+================================================================================
+B7b-2 ternary / first: moved from b7_gap_ternary_test.txt
+--
+B7a GAP representative bnd:ternary_expression:condition:end@ternary_expression#first/comparison
+(untrimmed witness: tools/alc_probe/cases/b7-audit/ternary__first__gap.al)
+(manifest row: deferred, owner B7b-2/C). Parses since B7b-2 Phase C (Task 10):
+`_ternary_condition`'s leading arm, the prefix inside the ternary.
+Source trimmed: the generator's table, var section and helpers are removed.
+================================================================================
+codeunit 50101 P
+{
+    procedure Q()
+    begin
+I :=
+#if X
+Ok =
+#endif
+true
+ ? 1 : 2;
+    end;
+}
+--------------------------------------------------------------------------------
+
+(source_file (codeunit_declaration (codeunit_keyword) object_id: (integer) object_name: (identifier) body:
+(declaration_body (procedure (procedure_keyword) name: (identifier) body: (code_block (begin_keyword) body:
+(statement_block (assignment_statement left: (identifier) operator: (assignment_operator) right: (ternary_expression
+(preproc_operand_prefix (preproc_if (preproc_open) condition: (identifier)) operand: (identifier) operator:
+(comparison_operator) (preproc_endif (preproc_close))) condition: (boolean) then_value: (integer) else_value:
+(integer)))) (end_keyword))))))
+
+================================================================================
+B7b-2 ternary / first-only: moved from b7_gap_ternary_test.txt
+--
+B7a GAP representative bnd:ternary_expression:condition:end@ternary_expression#first-only/comparison
+(untrimmed witness: tools/alc_probe/cases/b7-audit/ternary__first-only__gap.al)
+(manifest row: deferred, owner B7b-2/C). Parses since B7b-2 Phase C (Task 10).
+Source trimmed: the generator's table, var section and helpers are removed.
+================================================================================
+codeunit 50101 P
+{
+    procedure Q()
+    begin
+I :=
+#if X
+Ok
+#else
+true
+#endif
+ ? 1 : 2;
+    end;
+}
+--------------------------------------------------------------------------------
+
+(source_file (codeunit_declaration (codeunit_keyword) object_id: (integer) object_name: (identifier) body:
+(declaration_body (procedure (procedure_keyword) name: (identifier) body: (code_block (begin_keyword) body:
+(statement_block (assignment_statement left: (identifier) operator: (assignment_operator) right: (ternary_expression
+condition: (preproc_conditional_operand (preproc_if (preproc_open) condition: (identifier)) operand: (identifier)
+(preproc_else) operand: (boolean) (preproc_endif (preproc_close))) then_value: (integer) else_value: (integer))))
+(end_keyword))))))
+
+================================================================================
+B7b-2 ternary / first-replace: moved from b7_gap_ternary_test.txt
+--
+B7a GAP representative occ:ternary_expression:0.3@ternary_expression#first-replace
+(untrimmed witness: tools/alc_probe/cases/b7-audit/ternary__first-replace__gap.al)
+(manifest row: excluded, owner B7b+). A separator cell outside B7b-2's scope that
+parses since Phase C (Task 10): the group is the then value, an operand group.
+Source trimmed: the generator's table, var section and helpers are removed.
+================================================================================
+codeunit 50101 P
+{
+    procedure Q()
+    begin
+I := Ok ?
+#if X
+1
+#else
+1
+#endif
+: 2
+;
+    end;
+}
+--------------------------------------------------------------------------------
+
+(source_file (codeunit_declaration (codeunit_keyword) object_id: (integer) object_name: (identifier) body:
+(declaration_body (procedure (procedure_keyword) name: (identifier) body: (code_block (begin_keyword) body:
+(statement_block (assignment_statement left: (identifier) operator: (assignment_operator) right: (ternary_expression
+condition: (identifier) then_value: (preproc_conditional_operand (preproc_if (preproc_open) condition: (identifier))
+operand: (integer) (preproc_else) operand: (integer) (preproc_endif (preproc_close))) else_value: (integer))))
+(end_keyword))))))
+
+================================================================================
+B7b-2 ternary / signed: moved from b7_gap_ternary_test.txt
+--
+B7a GAP representative bnd:ternary_expression:else_value:end@ternary_expression#signed/arithmetic
+(untrimmed witness: tools/alc_probe/cases/b7-audit/ternary__signed__gap.al)
+(manifest row: deferred, owner B7b-2/C). Parses since B7b-2 Phase C (Task 10).
+Source trimmed: the generator's table, var section and helpers are removed.
+================================================================================
+codeunit 50101 P
+{
+    procedure Q()
+    begin
+I := Ok ? 1 :
+2 +
+#if X
+-1
+#else
+2
+#endif
+;
+    end;
+}
+--------------------------------------------------------------------------------
+
+(source_file (codeunit_declaration (codeunit_keyword) object_id: (integer) object_name: (identifier) body:
+(declaration_body (procedure (procedure_keyword) name: (identifier) body: (code_block (begin_keyword) body:
+(statement_block (assignment_statement left: (identifier) operator: (assignment_operator) right: (ternary_expression
+condition: (identifier) then_value: (integer) else_value: (additive_expression left: (integer) right:
+(preproc_conditional_operand (preproc_if (preproc_open) condition: (identifier)) operand: (unary_expression operand:
+(integer)) (preproc_else) operand: (integer) (preproc_endif (preproc_close))))))) (end_keyword))))))
+
+================================================================================
+B7b-2 ternary / trail: moved from b7_gap_ternary_test.txt
+--
+B7a MIXED representative occ:ternary_expression:0.3@ternary_expression#trail
+(untrimmed witness: tools/alc_probe/cases/b7-audit/ternary__trail__gap.al)
+(manifest row: excluded, owner B7b+). A separator cell outside B7b-2's scope that
+parses since Phase C (Task 10): the else value is a one-arm operand group, the
+only derivation; X=0 (`Ok ? 1 : ;`) is rejected by alc.
+Source trimmed: the generator's table, var section and helpers are removed.
+================================================================================
+codeunit 50101 P
+{
+    procedure Q()
+    begin
+I := Ok ?
+1 :
+#if X
+2
+#endif
+;
+    end;
+}
+--------------------------------------------------------------------------------
+
+(source_file (codeunit_declaration (codeunit_keyword) object_id: (integer) object_name: (identifier) body:
+(declaration_body (procedure (procedure_keyword) name: (identifier) body: (code_block (begin_keyword) body:
+(statement_block (assignment_statement left: (identifier) operator: (assignment_operator) right: (ternary_expression
+condition: (identifier) then_value: (integer) else_value: (preproc_conditional_operand (preproc_if (preproc_open)
+condition: (identifier)) operand: (integer) (preproc_endif (preproc_close)))))) (end_keyword))))))
+
+================================================================================
+B7b-2 ternary / unary-minus: moved from b7_gap_ternary_test.txt
+--
+B7a GAP representative bnd:ternary_expression:else_value:end@ternary_expression#unary-minus/arithmetic
+(untrimmed witness: tools/alc_probe/cases/b7-audit/ternary__unary-minus__gap.al)
+(manifest row: deferred, owner B7b-2/C). Parses since B7b-2 Phase C (Task 10).
+Source trimmed: the generator's table, var section and helpers are removed.
+================================================================================
+codeunit 50101 P
+{
+    procedure Q()
+    begin
+I := Ok ? 1 :
+2 +
+#if X
+- 2
+#else
+3
+#endif
+;
+    end;
+}
+--------------------------------------------------------------------------------
+
+(source_file (codeunit_declaration (codeunit_keyword) object_id: (integer) object_name: (identifier) body:
+(declaration_body (procedure (procedure_keyword) name: (identifier) body: (code_block (begin_keyword) body:
+(statement_block (assignment_statement left: (identifier) operator: (assignment_operator) right: (ternary_expression
+condition: (identifier) then_value: (integer) else_value: (additive_expression left: (integer) right:
+(preproc_conditional_operand (preproc_if (preproc_open) condition: (identifier)) operand: (unary_expression operand:
+(integer)) (preproc_else) operand: (integer) (preproc_endif (preproc_close))))))) (end_keyword))))))
+
+================================================================================
+B7b-2 ternary / unary-not: moved from b7_gap_ternary_test.txt
+--
+B7a GAP representative bnd:ternary_expression:condition:end@ternary_expression#unary-not/comparison
+(untrimmed witness: tools/alc_probe/cases/b7-audit/ternary__unary-not__gap.al)
+(manifest row: deferred, owner B7b-2/C). Parses since B7b-2 Phase C (Task 10).
+Source trimmed: the generator's table, var section and helpers are removed.
+================================================================================
+codeunit 50101 P
+{
+    procedure Q()
+    begin
+I :=
+Ok =
+#if X
+not true
+#else
+false
+#endif
+ ? 1 : 2;
+    end;
+}
+--------------------------------------------------------------------------------
+
+(source_file (codeunit_declaration (codeunit_keyword) object_id: (integer) object_name: (identifier) body:
+(declaration_body (procedure (procedure_keyword) name: (identifier) body: (code_block (begin_keyword) body:
+(statement_block (assignment_statement left: (identifier) operator: (assignment_operator) right: (ternary_expression
+condition: (comparison_expression left: (identifier) operator: (comparison_operator) right:
+(preproc_conditional_operand (preproc_if (preproc_open) condition: (identifier)) operand: (unary_expression operand:
+(boolean)) (preproc_else) operand: (boolean) (preproc_endif (preproc_close)))) then_value: (integer) else_value:
+(integer)))) (end_keyword))))))
+
+================================================================================
+B7b-2 ternary / unary-paren: moved from b7_gap_ternary_test.txt
+--
+B7a GAP representative bnd:ternary_expression:condition:end@ternary_expression#unary-paren/comparison
+(untrimmed witness: tools/alc_probe/cases/b7-audit/ternary__unary-paren__gap.al)
+(manifest row: deferred, owner B7b-2/C). Parses since B7b-2 Phase C (Task 10).
+Source trimmed: the generator's table, var section and helpers are removed.
+================================================================================
+codeunit 50101 P
+{
+    procedure Q()
+    begin
+I :=
+Ok =
+#if X
+( true = false )
+#else
+false
+#endif
+ ? 1 : 2;
+    end;
+}
+--------------------------------------------------------------------------------
+
+(source_file (codeunit_declaration (codeunit_keyword) object_id: (integer) object_name: (identifier) body:
+(declaration_body (procedure (procedure_keyword) name: (identifier) body: (code_block (begin_keyword) body:
+(statement_block (assignment_statement left: (identifier) operator: (assignment_operator) right: (ternary_expression
+condition: (comparison_expression left: (identifier) operator: (comparison_operator) right:
+(preproc_conditional_operand (preproc_if (preproc_open) condition: (identifier)) operand: (parenthesized_expression
+(comparison_expression left: (boolean) operator: (comparison_operator) right: (boolean))) (preproc_else) operand:
+(boolean) (preproc_endif (preproc_close)))) then_value: (integer) else_value: (integer)))) (end_keyword))))))
+
+================================================================================
+B7b-2 ternary / whole-operand: moved from b7_gap_ternary_test.txt
+--
+B7a GAP representative bnd:ternary_expression:condition:end@ternary_expression#whole-operand/comparison
+(untrimmed witness: tools/alc_probe/cases/b7-audit/ternary__whole-operand__gap.al)
+(manifest row: deferred, owner B7b-2/C). Parses since B7b-2 Phase C (Task 10).
+Source trimmed: the generator's table, var section and helpers are removed.
+================================================================================
+codeunit 50101 P
+{
+    procedure Q()
+    begin
+I :=
+Ok =
+#if X
+true
+#else
+false
+#endif
+ ? 1 : 2;
+    end;
+}
+--------------------------------------------------------------------------------
+
+(source_file (codeunit_declaration (codeunit_keyword) object_id: (integer) object_name: (identifier) body:
+(declaration_body (procedure (procedure_keyword) name: (identifier) body: (code_block (begin_keyword) body:
+(statement_block (assignment_statement left: (identifier) operator: (assignment_operator) right: (ternary_expression
+condition: (comparison_expression left: (identifier) operator: (comparison_operator) right:
+(preproc_conditional_operand (preproc_if (preproc_open) condition: (identifier)) operand: (boolean) (preproc_else)
+operand: (boolean) (preproc_endif (preproc_close)))) then_value: (integer) else_value: (integer))))
+(end_keyword))))))

@@ -1,0 +1,205 @@
+================================================================================
+B7b-2 in-operand / first: moved from b7_gap_in_operand_test.txt
+--
+B7a GAP representative bnd:in_expression:left:end@case_branch#first/arithmetic
+(untrimmed witness: tools/alc_probe/cases/b7-audit/in-operand__first__gap.al)
+(manifest row: deferred, owner B7b-2/C). Parses since B7b-2 Phase C (Task 10):
+a case pattern's leading prefix (`_case_pattern_item`), an unfielded child of
+the branch; the in_expression's left is in the pattern's region.
+Source trimmed: the generator's table, var section and helpers are removed.
+================================================================================
+codeunit 50101 P
+{
+    procedure Q()
+    begin
+case Ok of
+#if X
+I +
+#endif
+2
+ in [1, 2]:
+Bar();
+end;
+    end;
+}
+--------------------------------------------------------------------------------
+
+(source_file (codeunit_declaration (codeunit_keyword) object_id: (integer) object_name: (identifier) body:
+(declaration_body (procedure (procedure_keyword) name: (identifier) body: (code_block (begin_keyword) body:
+(statement_block (case_statement (case_keyword) expression: (identifier) (of_keyword) body: (case_body (case_branch
+(preproc_operand_prefix (preproc_if (preproc_open) condition: (identifier)) operand: (identifier) (preproc_endif
+(preproc_close))) pattern: (in_expression left: (integer) operator: (in_keyword) right: (list_literal (integer)
+(integer))) body: (call_expression function: (identifier) arguments: (argument_list)))) (end_keyword)))
+(end_keyword))))))
+
+================================================================================
+B7b-2 in-operand / first-only: moved from b7_gap_in_operand_test.txt
+--
+B7a GAP representative bnd:in_expression:left:end@case_branch#first-only/arithmetic
+(untrimmed witness: tools/alc_probe/cases/b7-audit/in-operand__first-only__gap.al)
+(manifest row: deferred, owner B7b-2/C). Parses since B7b-2 Phase C (Task 10).
+Source trimmed: the generator's table, var section and helpers are removed.
+================================================================================
+codeunit 50101 P
+{
+    procedure Q()
+    begin
+case Ok of
+#if X
+I
+#else
+2
+#endif
+ in [1, 2]:
+Bar();
+end;
+    end;
+}
+--------------------------------------------------------------------------------
+
+(source_file (codeunit_declaration (codeunit_keyword) object_id: (integer) object_name: (identifier) body:
+(declaration_body (procedure (procedure_keyword) name: (identifier) body: (code_block (begin_keyword) body:
+(statement_block (case_statement (case_keyword) expression: (identifier) (of_keyword) body: (case_body (case_branch
+pattern: (in_expression left: (preproc_conditional_operand (preproc_if (preproc_open) condition: (identifier))
+operand: (identifier) (preproc_else) operand: (integer) (preproc_endif (preproc_close))) operator: (in_keyword)
+right: (list_literal (integer) (integer))) body: (call_expression function: (identifier) arguments:
+(argument_list)))) (end_keyword))) (end_keyword))))))
+
+================================================================================
+B7b-2 in-operand / signed: moved from b7_gap_in_operand_test.txt
+--
+B7a GAP representative bnd:in_expression:left:end@case_branch#signed/arithmetic
+(untrimmed witness: tools/alc_probe/cases/b7-audit/in-operand__signed__gap.al)
+(manifest row: deferred, owner B7b-2/C). Parses since B7b-2 Phase C (Task 10).
+Source trimmed: the generator's table, var section and helpers are removed.
+================================================================================
+codeunit 50101 P
+{
+    procedure Q()
+    begin
+case Ok of
+I +
+#if X
+-1
+#else
+2
+#endif
+ in [1, 2]:
+Bar();
+end;
+    end;
+}
+--------------------------------------------------------------------------------
+
+(source_file (codeunit_declaration (codeunit_keyword) object_id: (integer) object_name: (identifier) body:
+(declaration_body (procedure (procedure_keyword) name: (identifier) body: (code_block (begin_keyword) body:
+(statement_block (case_statement (case_keyword) expression: (identifier) (of_keyword) body: (case_body (case_branch
+pattern: (in_expression left: (additive_expression left: (identifier) right: (preproc_conditional_operand
+(preproc_if (preproc_open) condition: (identifier)) operand: (unary_expression operand: (integer)) (preproc_else)
+operand: (integer) (preproc_endif (preproc_close)))) operator: (in_keyword) right: (list_literal (integer)
+(integer))) body: (call_expression function: (identifier) arguments: (argument_list)))) (end_keyword)))
+(end_keyword))))))
+
+================================================================================
+B7b-2 in-operand / unary-minus: moved from b7_gap_in_operand_test.txt
+--
+B7a GAP representative bnd:in_expression:left:end@case_branch#unary-minus/arithmetic
+(untrimmed witness: tools/alc_probe/cases/b7-audit/in-operand__unary-minus__gap.al)
+(manifest row: deferred, owner B7b-2/C). Parses since B7b-2 Phase C (Task 10).
+Source trimmed: the generator's table, var section and helpers are removed.
+================================================================================
+codeunit 50101 P
+{
+    procedure Q()
+    begin
+case Ok of
+I +
+#if X
+- 2
+#else
+3
+#endif
+ in [1, 2]:
+Bar();
+end;
+    end;
+}
+--------------------------------------------------------------------------------
+
+(source_file (codeunit_declaration (codeunit_keyword) object_id: (integer) object_name: (identifier) body:
+(declaration_body (procedure (procedure_keyword) name: (identifier) body: (code_block (begin_keyword) body:
+(statement_block (case_statement (case_keyword) expression: (identifier) (of_keyword) body: (case_body (case_branch
+pattern: (in_expression left: (additive_expression left: (identifier) right: (preproc_conditional_operand
+(preproc_if (preproc_open) condition: (identifier)) operand: (unary_expression operand: (integer)) (preproc_else)
+operand: (integer) (preproc_endif (preproc_close)))) operator: (in_keyword) right: (list_literal (integer)
+(integer))) body: (call_expression function: (identifier) arguments: (argument_list)))) (end_keyword)))
+(end_keyword))))))
+
+================================================================================
+B7b-2 in-operand / unary-paren: moved from b7_gap_in_operand_test.txt
+--
+B7a GAP representative bnd:in_expression:left:end@case_branch#unary-paren/arithmetic
+(untrimmed witness: tools/alc_probe/cases/b7-audit/in-operand__unary-paren__gap.al)
+(manifest row: deferred, owner B7b-2/C). Parses since B7b-2 Phase C (Task 10).
+Source trimmed: the generator's table, var section and helpers are removed.
+================================================================================
+codeunit 50101 P
+{
+    procedure Q()
+    begin
+case Ok of
+I +
+#if X
+( 2 + 3 )
+#else
+3
+#endif
+ in [1, 2]:
+Bar();
+end;
+    end;
+}
+--------------------------------------------------------------------------------
+
+(source_file (codeunit_declaration (codeunit_keyword) object_id: (integer) object_name: (identifier) body:
+(declaration_body (procedure (procedure_keyword) name: (identifier) body: (code_block (begin_keyword) body:
+(statement_block (case_statement (case_keyword) expression: (identifier) (of_keyword) body: (case_body (case_branch
+pattern: (in_expression left: (additive_expression left: (identifier) right: (preproc_conditional_operand
+(preproc_if (preproc_open) condition: (identifier)) operand: (parenthesized_expression (additive_expression left:
+(integer) right: (integer))) (preproc_else) operand: (integer) (preproc_endif (preproc_close)))) operator:
+(in_keyword) right: (list_literal (integer) (integer))) body: (call_expression function: (identifier) arguments:
+(argument_list)))) (end_keyword))) (end_keyword))))))
+
+================================================================================
+B7b-2 in-operand / whole-operand: moved from b7_gap_in_operand_test.txt
+--
+B7a GAP representative bnd:in_expression:left:end@case_branch#whole-operand/arithmetic
+(untrimmed witness: tools/alc_probe/cases/b7-audit/in-operand__whole-operand__gap.al)
+(manifest row: deferred, owner B7b-2/C). Parses since B7b-2 Phase C (Task 10).
+Source trimmed: the generator's table, var section and helpers are removed.
+================================================================================
+codeunit 50101 P
+{
+    procedure Q()
+    begin
+case Ok of
+I +
+#if X
+2
+#else
+3
+#endif
+ in [1, 2]:
+Bar();
+end;
+    end;
+}
+--------------------------------------------------------------------------------
+
+(source_file (codeunit_declaration (codeunit_keyword) object_id: (integer) object_name: (identifier) body:
+(declaration_body (procedure (procedure_keyword) name: (identifier) body: (code_block (begin_keyword) body:
+(statement_block (case_statement (case_keyword) expression: (identifier) (of_keyword) body: (case_body (case_branch
+pattern: (in_expression left: (additive_expression left: (identifier) right: (preproc_conditional_operand
+(preproc_if (preproc_open) condition: (identifier)) operand: (integer) (preproc_else) operand: (integer)
+(preproc_endif (preproc_close)))) operator: (in_keyword) right: (list_literal (integer) (integer))) body:
+(call_expression function: (identifier) arguments: (argument_list)))) (end_keyword))) (end_keyword))))))

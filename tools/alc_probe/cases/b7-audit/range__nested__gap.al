@@ -1,5 +1,5 @@
 // B7a Task 10 witness (GAP): family range, base placement nested, 34 cells; representative bnd:range_expression:left:end@case_branch#nested/arithmetic
-// Fixture b7_gap_range_test.txt#B7a GAP: range / nested (34 cells, verdict of the representative GAP); the parser ERRORs on configurations alc accepts; representative bnd:range_expression:left:end@case_branch%23nested/arithmetic#0
+// Fixture b7b2_range_test.txt#B7b-2 range / nested: moved from b7_gap_range_test.txt#0
 // expect: !X !Y accept
 // expect: !X Y accept
 // expect: X !Y accept

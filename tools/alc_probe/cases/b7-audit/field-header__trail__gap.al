@@ -1,5 +1,5 @@
 // B7a Task 10 witness (GAP): family field-header, base placement trail, 9 cells; representative occ:_field_header:3@preproc_split_field#trail
-// Fixture b7_gap_field_header_test.txt#B7a GAP: field-header / trail (9 cells, verdict of the representative MIXED); the parser ERRORs on configurations alc accepts; representative occ:_field_header:3@preproc_split_field%23trail#0
+// Fixture b7b2_field_header_test.txt#B7b-2 field-header / trail: moved from b7_gap_field_header_test.txt#0
 // expect: !TPL !X accept
 // expect: !TPL X accept
 // expect: TPL !X reject(AL0104,AL0224)

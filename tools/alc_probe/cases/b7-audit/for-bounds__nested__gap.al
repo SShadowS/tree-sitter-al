@@ -1,5 +1,5 @@
 // B7a Task 10 witness (GAP): family for-bounds, base placement nested, 8 cells; representative bnd:for_statement:end:end@statement_block#nested/arithmetic
-// Fixture b7_gap_for_bounds_test.txt#B7a GAP: for-bounds / nested (8 cells, verdict of the representative GAP); the parser ERRORs on configurations alc accepts; representative bnd:for_statement:end:end@statement_block%23nested/arithmetic#0
+// Fixture b7b2_for_bounds_test.txt#B7b-2 for-bounds / nested: moved from b7_gap_for_bounds_test.txt#0
 // expect: !X !Y accept
 // expect: !X Y accept
 // expect: X !Y accept

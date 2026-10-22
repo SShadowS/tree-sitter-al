@@ -1,5 +1,5 @@
 // B7a Task 10 witness (GAP): family assignment, base placement consecutive, 48 cells; representative bnd:assignment_statement:right:end@asserterror_statement#consecutive/arithmetic
-// Fixture b7_gap_assignment_test.txt#B7a GAP: assignment / consecutive (48 cells, verdict of the representative GAP); the parser ERRORs on configurations alc accepts; representative bnd:assignment_statement:right:end@asserterror_statement%23consecutive/arithmetic#0
+// Fixture b7b2_assignment_test.txt#B7b-2 assignment / consecutive: moved from b7_gap_assignment_test.txt#0
 // expect: !X !Y accept
 // expect: !X Y accept
 // expect: X !Y accept

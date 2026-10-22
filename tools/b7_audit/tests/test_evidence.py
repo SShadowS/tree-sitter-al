@@ -172,7 +172,19 @@ def test_alc_measured_row_is_never_class_sampled():
     assert marked and {(e.cell.key, e.cell.host) for e in marked} == {
         ("occ:implements_clause:2.0.0", "enum_declaration"), ("occ:call_statement:0.1", "case_branch"),
         ("occ:call_statement:0.1", "if_statement"), ("occ:call_statement:0.1", "statement_block"),
-        ("occ:call_statement:0.1", "while_statement")}
+        ("occ:call_statement:0.1", "while_statement"),
+        # B7b-2 Task 6: property-value-context rows whose cells parse clean since Phase A, where alc rejects some
+        # configurations the intended vector calls valid (semantic): class sampling would hide the rejection.
+        *((k, h) for k in ("bnd:_property_value_with_split:0.0:end", "bnd:_property_value_with_split:0.0:start")
+          for h in ("preproc_conditional_report", "preproc_conditional_xmlport")),
+        *((k, "property_expression") for k in ("bnd:logical_expression:left:end", "bnd:logical_expression:left:start",
+                                               "bnd:logical_expression:right:end")),
+        *(("bnd:preproc_conditional_expression_tail:operand:end", h)
+          for h in ("declaration_body", "preproc_conditional", "property")),
+        # B7b-2 Task 12: the split-case-end multiplicative rows, clean since Phase C, where alc rejects some
+        # configurations with AL0402 (the pattern duplicates the first branch's case value).
+        *((k, "preproc_split_case_statement_end") for k in ("bnd:multiplicative_expression:left:end",
+                                                             "bnd:multiplicative_expression:left:start"))}
 
 
 def test_records_sorted_and_deterministic(tmp_path):

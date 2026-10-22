@@ -1,0 +1,401 @@
+================================================================================
+B7b-2 binary-operand / consecutive: moved from b7_gap_binary_operand_test.txt
+--
+B7a GAP representative bnd:additive_expression:left:end@additive_expression#consecutive/arithmetic
+Untrimmed witness: tools/alc_probe/cases/b7-audit/binary-operand__consecutive__gap.al.
+(owner B7b-2/A); alc accepts every configuration (B7a evidence). Source
+trimmed: the generator's table, var section and helper procedures are
+removed, the statement and its host are verbatim. A group after a binary
+operand belongs to the root's tail (spec 5.1, "not tail sites"): `+ 1` is the
+trail of the consecutive group, inside the region of the assignment's right.
+================================================================================
+codeunit 50101 P
+{
+    procedure Q()
+    begin
+I :=
+2
+#if X
++ 2
+#endif
+#if Y
++ 3
+#endif
+ + 1;
+    end;
+}
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (procedure
+        (procedure_keyword)
+        name: (identifier)
+        body: (code_block
+          (begin_keyword)
+          body: (statement_block
+            (assignment_statement
+              left: (identifier)
+              operator: (assignment_operator)
+              right: (integer)
+              (preproc_conditional_expression_tail
+                (preproc_if
+                  (preproc_open)
+                  condition: (identifier))
+                operand: (integer)
+                (preproc_endif
+                  (preproc_close))
+                (preproc_conditional_expression_tail
+                  (preproc_if
+                    (preproc_open)
+                    condition: (identifier))
+                  operand: (integer)
+                  (preproc_endif
+                    (preproc_close))
+                  operand: (integer)))))
+          (end_keyword))))))
+
+================================================================================
+B7b-2 binary-operand / nested: moved from b7_gap_binary_operand_test.txt
+--
+B7a GAP representative bnd:additive_expression:left:end@additive_expression#nested/arithmetic
+(owner B7b-2/A). Source trimmed as above. `+ 1` is the trail of the root tail.
+================================================================================
+codeunit 50101 P
+{
+    procedure Q()
+    begin
+I :=
+2
+#if X
++ 2
+#if Y
++ 3
+#endif
+#endif
+ + 1;
+    end;
+}
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (procedure
+        (procedure_keyword)
+        name: (identifier)
+        body: (code_block
+          (begin_keyword)
+          body: (statement_block
+            (assignment_statement
+              left: (identifier)
+              operator: (assignment_operator)
+              right: (integer)
+              (preproc_conditional_expression_tail
+                (preproc_if
+                  (preproc_open)
+                  condition: (identifier))
+                operand: (integer)
+                (preproc_conditional_expression_tail
+                  (preproc_if
+                    (preproc_open)
+                    condition: (identifier))
+                  operand: (integer)
+                  (preproc_endif
+                    (preproc_close)))
+                (preproc_endif
+                  (preproc_close))
+                operand: (integer))))
+          (end_keyword))))))
+
+================================================================================
+B7b-2 binary-operand / prefix (membership) in a case pattern: moved from b7_gap_binary_operand_test.txt
+--
+B7a GAP representative bnd:logical_expression:left:end@case_branch#prefix/membership
+(manifest: excluded, owner B7b-1h, the case-pattern slot). It parses since the
+typed `in` prefix (spec 5.3, 6.2): the group is inside the in_expression, not a
+continuation of the pattern slot, so no comma-less pattern reading competes.
+alc: tools/alc_probe/cases/b7b-2/keyword_ops/in-prefix.al is the same prefix.
+Source trimmed as above.
+================================================================================
+codeunit 50101 P
+{
+    procedure Q()
+    begin
+case Ok of
+
+Ok in
+#if X
+[true, false] in
+#endif
+[true]
+ and Ok:
+Bar();
+end;
+    end;
+}
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (procedure
+        (procedure_keyword)
+        name: (identifier)
+        body: (code_block
+          (begin_keyword)
+          body: (statement_block
+            (case_statement
+              (case_keyword)
+              expression: (identifier)
+              (of_keyword)
+              body: (case_body
+                (case_branch
+                  pattern: (logical_expression
+                    left: (in_expression
+                      left: (identifier)
+                      operator: (in_keyword)
+                      (preproc_operand_prefix
+                        (preproc_if
+                          (preproc_open)
+                          condition: (identifier))
+                        operand: (list_literal
+                          (boolean)
+                          (boolean))
+                        operator: (in_keyword)
+                        (preproc_endif
+                          (preproc_close)))
+                      right: (list_literal
+                        (boolean)))
+                    right: (identifier))
+                  body: (call_expression
+                    function: (identifier)
+                    arguments: (argument_list))))
+              (end_keyword)))
+          (end_keyword))))))
+
+================================================================================
+B7b-2 binary-operand / first: moved from b7_gap_binary_operand_test.txt
+--
+B7a GAP representative bnd:additive_expression:left:end@additive_expression#first/arithmetic
+(untrimmed witness: tools/alc_probe/cases/b7-audit/binary-operand__first__gap.al)
+(manifest row: deferred, owner B7b-2/C). Parses since B7b-2 Phase C (Task 10).
+Source trimmed: the generator's table, var section and helpers are removed.
+================================================================================
+codeunit 50101 P
+{
+    procedure Q()
+    begin
+I :=
+#if X
+2 +
+#endif
+2
+ + 1;
+    end;
+}
+--------------------------------------------------------------------------------
+
+(source_file (codeunit_declaration (codeunit_keyword) object_id: (integer) object_name: (identifier) body:
+(declaration_body (procedure (procedure_keyword) name: (identifier) body: (code_block (begin_keyword) body:
+(statement_block (assignment_statement left: (identifier) operator: (assignment_operator) (preproc_operand_prefix
+(preproc_if (preproc_open) condition: (identifier)) operand: (integer) (preproc_endif (preproc_close))) right:
+(additive_expression left: (integer) right: (integer)))) (end_keyword))))))
+
+================================================================================
+B7b-2 binary-operand / first-only: moved from b7_gap_binary_operand_test.txt
+--
+B7a GAP representative bnd:additive_expression:left:end@additive_expression#first-only/arithmetic
+(untrimmed witness: tools/alc_probe/cases/b7-audit/binary-operand__first-only__gap.al)
+(manifest row: deferred, owner B7b-2/C). Parses since B7b-2 Phase C (Task 10).
+Source trimmed: the generator's table, var section and helpers are removed.
+================================================================================
+codeunit 50101 P
+{
+    procedure Q()
+    begin
+I :=
+#if X
+2
+#else
+2
+#endif
+ + 1;
+    end;
+}
+--------------------------------------------------------------------------------
+
+(source_file (codeunit_declaration (codeunit_keyword) object_id: (integer) object_name: (identifier) body:
+(declaration_body (procedure (procedure_keyword) name: (identifier) body: (code_block (begin_keyword) body:
+(statement_block (assignment_statement left: (identifier) operator: (assignment_operator) right:
+(additive_expression left: (preproc_conditional_operand (preproc_if (preproc_open) condition: (identifier)) operand:
+(integer) (preproc_else) operand: (integer) (preproc_endif (preproc_close))) right: (integer)))) (end_keyword))))))
+
+================================================================================
+B7b-2 binary-operand / signed: moved from b7_gap_binary_operand_test.txt
+--
+B7a GAP representative bnd:additive_expression:left:end@additive_expression#signed/arithmetic
+(untrimmed witness: tools/alc_probe/cases/b7-audit/binary-operand__signed__gap.al)
+(manifest row: deferred, owner B7b-2/C). Parses since B7b-2 Phase C (Task 10).
+Source trimmed: the generator's table, var section and helpers are removed.
+================================================================================
+codeunit 50101 P
+{
+    procedure Q()
+    begin
+I :=
+2 +
+#if X
+-1
+#else
+2
+#endif
+ + 1;
+    end;
+}
+--------------------------------------------------------------------------------
+
+(source_file (codeunit_declaration (codeunit_keyword) object_id: (integer) object_name: (identifier) body:
+(declaration_body (procedure (procedure_keyword) name: (identifier) body: (code_block (begin_keyword) body:
+(statement_block (assignment_statement left: (identifier) operator: (assignment_operator) right:
+(additive_expression left: (additive_expression left: (integer) right: (preproc_conditional_operand (preproc_if
+(preproc_open) condition: (identifier)) operand: (unary_expression operand: (integer)) (preproc_else) operand:
+(integer) (preproc_endif (preproc_close)))) right: (integer)))) (end_keyword))))))
+
+================================================================================
+B7b-2 binary-operand / unary-minus: moved from b7_gap_binary_operand_test.txt
+--
+B7a GAP representative bnd:additive_expression:left:end@additive_expression#unary-minus/arithmetic
+(untrimmed witness: tools/alc_probe/cases/b7-audit/binary-operand__unary-minus__gap.al)
+(manifest row: deferred, owner B7b-2/C). Parses since B7b-2 Phase C (Task 10).
+Source trimmed: the generator's table, var section and helpers are removed.
+================================================================================
+codeunit 50101 P
+{
+    procedure Q()
+    begin
+I :=
+2 +
+#if X
+- 2
+#else
+3
+#endif
+ + 1;
+    end;
+}
+--------------------------------------------------------------------------------
+
+(source_file (codeunit_declaration (codeunit_keyword) object_id: (integer) object_name: (identifier) body:
+(declaration_body (procedure (procedure_keyword) name: (identifier) body: (code_block (begin_keyword) body:
+(statement_block (assignment_statement left: (identifier) operator: (assignment_operator) right:
+(additive_expression left: (additive_expression left: (integer) right: (preproc_conditional_operand (preproc_if
+(preproc_open) condition: (identifier)) operand: (unary_expression operand: (integer)) (preproc_else) operand:
+(integer) (preproc_endif (preproc_close)))) right: (integer)))) (end_keyword))))))
+
+================================================================================
+B7b-2 binary-operand / unary-not: moved from b7_gap_binary_operand_test.txt
+--
+B7a GAP representative bnd:logical_expression:left:end@case_branch#unary-not/comparison
+(untrimmed witness: tools/alc_probe/cases/b7-audit/binary-operand__unary-not__gap.al)
+(manifest row: deferred, owner B7b-2/C). Parses since B7b-2 Phase C (Task 10).
+Source trimmed: the generator's table, var section and helpers are removed.
+================================================================================
+codeunit 50101 P
+{
+    procedure Q()
+    begin
+case Ok of
+Ok =
+#if X
+not true
+#else
+false
+#endif
+ and Ok:
+Bar();
+end;
+    end;
+}
+--------------------------------------------------------------------------------
+
+(source_file (codeunit_declaration (codeunit_keyword) object_id: (integer) object_name: (identifier) body:
+(declaration_body (procedure (procedure_keyword) name: (identifier) body: (code_block (begin_keyword) body:
+(statement_block (case_statement (case_keyword) expression: (identifier) (of_keyword) body: (case_body (case_branch
+pattern: (comparison_expression left: (identifier) operator: (comparison_operator) right: (logical_expression left:
+(preproc_conditional_operand (preproc_if (preproc_open) condition: (identifier)) operand: (unary_expression operand:
+(boolean)) (preproc_else) operand: (boolean) (preproc_endif (preproc_close))) right: (identifier))) body:
+(call_expression function: (identifier) arguments: (argument_list)))) (end_keyword))) (end_keyword))))))
+
+================================================================================
+B7b-2 binary-operand / unary-paren: moved from b7_gap_binary_operand_test.txt
+--
+B7a GAP representative bnd:additive_expression:left:end@additive_expression#unary-paren/arithmetic
+(untrimmed witness: tools/alc_probe/cases/b7-audit/binary-operand__unary-paren__gap.al)
+(manifest row: deferred, owner B7b-2/C). Parses since B7b-2 Phase C (Task 10).
+Source trimmed: the generator's table, var section and helpers are removed.
+================================================================================
+codeunit 50101 P
+{
+    procedure Q()
+    begin
+I :=
+2 +
+#if X
+( 2 + 3 )
+#else
+3
+#endif
+ + 1;
+    end;
+}
+--------------------------------------------------------------------------------
+
+(source_file (codeunit_declaration (codeunit_keyword) object_id: (integer) object_name: (identifier) body:
+(declaration_body (procedure (procedure_keyword) name: (identifier) body: (code_block (begin_keyword) body:
+(statement_block (assignment_statement left: (identifier) operator: (assignment_operator) right:
+(additive_expression left: (additive_expression left: (integer) right: (preproc_conditional_operand (preproc_if
+(preproc_open) condition: (identifier)) operand: (parenthesized_expression (additive_expression left: (integer)
+right: (integer))) (preproc_else) operand: (integer) (preproc_endif (preproc_close)))) right: (integer))))
+(end_keyword))))))
+
+================================================================================
+B7b-2 binary-operand / whole-operand: moved from b7_gap_binary_operand_test.txt
+--
+B7a GAP representative bnd:additive_expression:left:end@additive_expression#whole-operand/arithmetic
+(untrimmed witness: tools/alc_probe/cases/b7-audit/binary-operand__whole-operand__gap.al)
+(manifest row: deferred, owner B7b-2/C). Parses since B7b-2 Phase C (Task 10).
+Source trimmed: the generator's table, var section and helpers are removed.
+================================================================================
+codeunit 50101 P
+{
+    procedure Q()
+    begin
+I :=
+2 +
+#if X
+2
+#else
+3
+#endif
+ + 1;
+    end;
+}
+--------------------------------------------------------------------------------
+
+(source_file (codeunit_declaration (codeunit_keyword) object_id: (integer) object_name: (identifier) body:
+(declaration_body (procedure (procedure_keyword) name: (identifier) body: (code_block (begin_keyword) body:
+(statement_block (assignment_statement left: (identifier) operator: (assignment_operator) right:
+(additive_expression left: (additive_expression left: (integer) right: (preproc_conditional_operand (preproc_if
+(preproc_open) condition: (identifier)) operand: (integer) (preproc_else) operand: (integer) (preproc_endif
+(preproc_close)))) right: (integer)))) (end_keyword))))))

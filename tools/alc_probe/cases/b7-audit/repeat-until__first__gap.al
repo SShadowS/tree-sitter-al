@@ -1,5 +1,5 @@
 // B7a Task 10 witness (GAP): family repeat-until, base placement first, 72 cells; representative bnd:repeat_statement:condition:end@asserterror_statement#first/comparison
-// Fixture b7_gap_repeat_until_test.txt#B7a GAP: repeat-until / first (72 cells, verdict of the representative GAP); the parser ERRORs on configurations alc accepts; representative bnd:repeat_statement:condition:end@asserterror_statement%23first/comparison#0
+// Fixture b7b2_repeat_until_test.txt#B7b-2 repeat-until / first: moved from b7_gap_repeat_until_test.txt#0
 // expect: !X accept
 // expect: X accept
 // source: recorded by B7a Task 10, 2026-10-07: the alc split verdicts of cell bnd:repeat_statement:condition:end@asserterror_statement#first/comparison in tools/b7_audit/evidence.jsonl.gz

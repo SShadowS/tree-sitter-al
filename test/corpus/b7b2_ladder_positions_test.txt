@@ -1,0 +1,1274 @@
+; Task 10 fix round 3: the ladder of b7b2_ladder_matrix_test.txt in every expression position. Expected
+; trees are composed from spec 3.2's ladder (unary 7, * / div mod 6, + - 5, in is as 4, and 3, or xor 2,
+; comparisons 1; binaries left-associative) and placed in the position's host shape, never copied from
+; parser output. Per position: two operator pairs with G first / middle / last, a group whose arm holds an
+; operator (`#if X C + 1 #else D #endif`) after `*` and before `*`, and the signed forms `G - 1`, `G -1`
+; (property value also `G - 1.5`, `G -1.5`), plus `G, -1` in a call argument (a whole-argument group is the
+; argument group, spec 5.4 row P') and in a list.
+; Pass counts per library: Task 10 report.
+
+================================================================================
+B7b-2 ladder position: call argument, first (/ then +, + then is)
+================================================================================
+codeunit 50100 P
+{
+    procedure Q()
+    begin
+        X := Foo(
+#if X
+            C
+#else
+            D
+#endif
+            / B + E, Z);
+        X := Foo(A /
+#if X
+            C
+#else
+            D
+#endif
+            + E, Z);
+        X := Foo(A / B +
+#if X
+            C
+#else
+            D
+#endif
+           , Z);
+        X := Foo(
+#if X
+            C
+#else
+            D
+#endif
+            + B is Integer, Z);
+        X := Foo(A +
+#if X
+            C
+#else
+            D
+#endif
+            is Integer, Z);
+        X := Foo(A + B is
+#if X
+            Integer
+#else
+            Decimal
+#endif
+           , Z);
+        X := Foo(A *
+#if X
+            C + 1
+#else
+            D
+#endif
+            - B, Z);
+        X := Foo(A -
+#if X
+            C + 1
+#else
+            D
+#endif
+            * B, Z);
+        X := Foo(
+#if X
+            C
+#else
+            D
+#endif
+            - 1, Z);
+        X := Foo(
+#if X
+            C
+#else
+            D
+#endif
+            -1, Z);
+        X := Foo(
+#if X
+            C
+#else
+            D
+#endif
+           , -1);
+    end;
+}
+--------------------------------------------------------------------------------
+
+(source_file (codeunit_declaration (codeunit_keyword) object_id: (integer) object_name: (identifier) body:
+(declaration_body (procedure (procedure_keyword) name: (identifier) body: (code_block (begin_keyword) body:
+(statement_block (assignment_statement left: (identifier) operator: (assignment_operator) right: (call_expression
+function: (identifier) arguments: (argument_list (additive_expression left: (multiplicative_expression left:
+(preproc_conditional_operand (preproc_if (preproc_open) condition: (identifier)) operand: (identifier)
+(preproc_else) operand: (identifier) (preproc_endif (preproc_close))) right: (identifier)) right: (identifier))
+(identifier)))) (assignment_statement left: (identifier) operator: (assignment_operator) right: (call_expression
+function: (identifier) arguments: (argument_list (additive_expression left: (multiplicative_expression left:
+(identifier) right: (preproc_conditional_operand (preproc_if (preproc_open) condition: (identifier)) operand:
+(identifier) (preproc_else) operand: (identifier) (preproc_endif (preproc_close)))) right: (identifier))
+(identifier)))) (assignment_statement left: (identifier) operator: (assignment_operator) right: (call_expression
+function: (identifier) arguments: (argument_list (additive_expression left: (multiplicative_expression left:
+(identifier) right: (identifier)) right: (preproc_conditional_operand (preproc_if (preproc_open) condition:
+(identifier)) operand: (identifier) (preproc_else) operand: (identifier) (preproc_endif (preproc_close))))
+(identifier)))) (assignment_statement left: (identifier) operator: (assignment_operator) right: (call_expression
+function: (identifier) arguments: (argument_list (is_expression left: (additive_expression left:
+(preproc_conditional_operand (preproc_if (preproc_open) condition: (identifier)) operand: (identifier)
+(preproc_else) operand: (identifier) (preproc_endif (preproc_close))) right: (identifier)) operator: (is_keyword)
+right: (type_specification (basic_type))) (identifier)))) (assignment_statement left: (identifier) operator:
+(assignment_operator) right: (call_expression function: (identifier) arguments: (argument_list (is_expression left:
+(additive_expression left: (identifier) right: (preproc_conditional_operand (preproc_if (preproc_open) condition:
+(identifier)) operand: (identifier) (preproc_else) operand: (identifier) (preproc_endif (preproc_close)))) operator:
+(is_keyword) right: (type_specification (basic_type))) (identifier)))) (assignment_statement left: (identifier)
+operator: (assignment_operator) right: (call_expression function: (identifier) arguments: (argument_list
+(is_expression left: (additive_expression left: (identifier) right: (identifier)) operator: (is_keyword) right:
+(preproc_conditional_operand (preproc_if (preproc_open) condition: (identifier)) operand: (type_specification
+(basic_type)) (preproc_else) operand: (type_specification (basic_type)) (preproc_endif (preproc_close))))
+(identifier)))) (assignment_statement left: (identifier) operator: (assignment_operator) right: (call_expression
+function: (identifier) arguments: (argument_list (additive_expression left: (multiplicative_expression left:
+(identifier) right: (preproc_conditional_operand (preproc_if (preproc_open) condition: (identifier)) operand:
+(additive_expression left: (identifier) right: (integer)) (preproc_else) operand: (identifier) (preproc_endif
+(preproc_close)))) right: (identifier)) (identifier)))) (assignment_statement left: (identifier) operator:
+(assignment_operator) right: (call_expression function: (identifier) arguments: (argument_list (additive_expression
+left: (identifier) right: (multiplicative_expression left: (preproc_conditional_operand (preproc_if (preproc_open)
+condition: (identifier)) operand: (additive_expression left: (identifier) right: (integer)) (preproc_else) operand:
+(identifier) (preproc_endif (preproc_close))) right: (identifier))) (identifier)))) (assignment_statement left:
+(identifier) operator: (assignment_operator) right: (call_expression function: (identifier) arguments:
+(argument_list (additive_expression left: (preproc_conditional_operand (preproc_if (preproc_open) condition:
+(identifier)) operand: (identifier) (preproc_else) operand: (identifier) (preproc_endif (preproc_close))) right:
+(integer)) (identifier)))) (assignment_statement left: (identifier) operator: (assignment_operator) right:
+(call_expression function: (identifier) arguments: (argument_list (additive_expression left:
+(preproc_conditional_operand (preproc_if (preproc_open) condition: (identifier)) operand: (identifier)
+(preproc_else) operand: (identifier) (preproc_endif (preproc_close))) right: (integer)) (identifier))))
+(assignment_statement left: (identifier) operator: (assignment_operator) right: (call_expression function:
+(identifier) arguments: (argument_list (preproc_conditional_arguments (preproc_if (preproc_open) condition:
+(identifier)) (identifier) (preproc_else) (identifier) (preproc_endif (preproc_close))) (unary_expression operand:
+(integer)))))) (end_keyword))))))
+
+================================================================================
+B7b-2 ladder position: call argument, later (+ then div, as then =)
+================================================================================
+codeunit 50100 P
+{
+    procedure Q()
+    begin
+        X := Foo(Z,
+#if X
+            C
+#else
+            D
+#endif
+            + B div E);
+        X := Foo(Z, A +
+#if X
+            C
+#else
+            D
+#endif
+            div E);
+        X := Foo(Z, A + B div
+#if X
+            C
+#else
+            D
+#endif
+           );
+        X := Foo(Z,
+#if X
+            C
+#else
+            D
+#endif
+            as IFoo = E);
+        X := Foo(Z, A as
+#if X
+            IFoo
+#else
+            IBar
+#endif
+            = E);
+        X := Foo(Z, A as IFoo =
+#if X
+            C
+#else
+            D
+#endif
+           );
+        X := Foo(Z, A *
+#if X
+            C + 1
+#else
+            D
+#endif
+            - B);
+        X := Foo(Z, A -
+#if X
+            C + 1
+#else
+            D
+#endif
+            * B);
+        X := Foo(Z,
+#if X
+            C
+#else
+            D
+#endif
+            - 1);
+        X := Foo(Z,
+#if X
+            C
+#else
+            D
+#endif
+            -1);
+    end;
+}
+--------------------------------------------------------------------------------
+
+(source_file (codeunit_declaration (codeunit_keyword) object_id: (integer) object_name: (identifier) body:
+(declaration_body (procedure (procedure_keyword) name: (identifier) body: (code_block (begin_keyword) body:
+(statement_block (assignment_statement left: (identifier) operator: (assignment_operator) right: (call_expression
+function: (identifier) arguments: (argument_list (identifier) (additive_expression left:
+(preproc_conditional_operand (preproc_if (preproc_open) condition: (identifier)) operand: (identifier)
+(preproc_else) operand: (identifier) (preproc_endif (preproc_close))) right: (multiplicative_expression left:
+(identifier) right: (identifier)))))) (assignment_statement left: (identifier) operator: (assignment_operator)
+right: (call_expression function: (identifier) arguments: (argument_list (identifier) (additive_expression left:
+(identifier) right: (multiplicative_expression left: (preproc_conditional_operand (preproc_if (preproc_open)
+condition: (identifier)) operand: (identifier) (preproc_else) operand: (identifier) (preproc_endif (preproc_close)))
+right: (identifier)))))) (assignment_statement left: (identifier) operator: (assignment_operator) right:
+(call_expression function: (identifier) arguments: (argument_list (identifier) (additive_expression left:
+(identifier) right: (multiplicative_expression left: (identifier) right: (preproc_conditional_operand (preproc_if
+(preproc_open) condition: (identifier)) operand: (identifier) (preproc_else) operand: (identifier) (preproc_endif
+(preproc_close)))))))) (assignment_statement left: (identifier) operator: (assignment_operator) right:
+(call_expression function: (identifier) arguments: (argument_list (identifier) (comparison_expression left:
+(as_expression left: (preproc_conditional_operand (preproc_if (preproc_open) condition: (identifier)) operand:
+(identifier) (preproc_else) operand: (identifier) (preproc_endif (preproc_close))) operator: (as_keyword) right:
+(type_specification (identifier))) operator: (comparison_operator) right: (identifier))))) (assignment_statement
+left: (identifier) operator: (assignment_operator) right: (call_expression function: (identifier) arguments:
+(argument_list (identifier) (comparison_expression left: (as_expression left: (identifier) operator: (as_keyword)
+right: (preproc_conditional_operand (preproc_if (preproc_open) condition: (identifier)) operand: (type_specification
+(identifier)) (preproc_else) operand: (type_specification (identifier)) (preproc_endif (preproc_close)))) operator:
+(comparison_operator) right: (identifier))))) (assignment_statement left: (identifier) operator:
+(assignment_operator) right: (call_expression function: (identifier) arguments: (argument_list (identifier)
+(comparison_expression left: (as_expression left: (identifier) operator: (as_keyword) right: (type_specification
+(identifier))) operator: (comparison_operator) right: (preproc_conditional_operand (preproc_if (preproc_open)
+condition: (identifier)) operand: (identifier) (preproc_else) operand: (identifier) (preproc_endif
+(preproc_close))))))) (assignment_statement left: (identifier) operator: (assignment_operator) right:
+(call_expression function: (identifier) arguments: (argument_list (identifier) (additive_expression left:
+(multiplicative_expression left: (identifier) right: (preproc_conditional_operand (preproc_if (preproc_open)
+condition: (identifier)) operand: (additive_expression left: (identifier) right: (integer)) (preproc_else) operand:
+(identifier) (preproc_endif (preproc_close)))) right: (identifier))))) (assignment_statement left: (identifier)
+operator: (assignment_operator) right: (call_expression function: (identifier) arguments: (argument_list
+(identifier) (additive_expression left: (identifier) right: (multiplicative_expression left:
+(preproc_conditional_operand (preproc_if (preproc_open) condition: (identifier)) operand: (additive_expression left:
+(identifier) right: (integer)) (preproc_else) operand: (identifier) (preproc_endif (preproc_close))) right:
+(identifier)))))) (assignment_statement left: (identifier) operator: (assignment_operator) right: (call_expression
+function: (identifier) arguments: (argument_list (identifier) (additive_expression left:
+(preproc_conditional_operand (preproc_if (preproc_open) condition: (identifier)) operand: (identifier)
+(preproc_else) operand: (identifier) (preproc_endif (preproc_close))) right: (integer))))) (assignment_statement
+left: (identifier) operator: (assignment_operator) right: (call_expression function: (identifier) arguments:
+(argument_list (identifier) (additive_expression left: (preproc_conditional_operand (preproc_if (preproc_open)
+condition: (identifier)) operand: (identifier) (preproc_else) operand: (identifier) (preproc_endif (preproc_close)))
+right: (integer)))))) (end_keyword))))))
+
+================================================================================
+B7b-2 ladder position: list item (mod then -, xor then and)
+================================================================================
+codeunit 50100 P
+{
+    procedure Q()
+    begin
+        X := Y in [
+#if X
+            C
+#else
+            D
+#endif
+            mod B - E, Z];
+        X := Y in [A mod
+#if X
+            C
+#else
+            D
+#endif
+            - E, Z];
+        X := Y in [A mod B -
+#if X
+            C
+#else
+            D
+#endif
+           , Z];
+        X := Y in [
+#if X
+            C
+#else
+            D
+#endif
+            xor B and E, Z];
+        X := Y in [A xor
+#if X
+            C
+#else
+            D
+#endif
+            and E, Z];
+        X := Y in [A xor B and
+#if X
+            C
+#else
+            D
+#endif
+           , Z];
+        X := Y in [A *
+#if X
+            C + 1
+#else
+            D
+#endif
+            - B, Z];
+        X := Y in [A -
+#if X
+            C + 1
+#else
+            D
+#endif
+            * B, Z];
+        X := Y in [
+#if X
+            C
+#else
+            D
+#endif
+            - 1, Z];
+        X := Y in [
+#if X
+            C
+#else
+            D
+#endif
+            -1, Z];
+        X := Y in [
+#if X
+            C
+#else
+            D
+#endif
+           , -1];
+    end;
+}
+--------------------------------------------------------------------------------
+
+(source_file (codeunit_declaration (codeunit_keyword) object_id: (integer) object_name: (identifier) body:
+(declaration_body (procedure (procedure_keyword) name: (identifier) body: (code_block (begin_keyword) body:
+(statement_block (assignment_statement left: (identifier) operator: (assignment_operator) right: (in_expression
+left: (identifier) operator: (in_keyword) right: (list_literal (additive_expression left: (multiplicative_expression
+left: (preproc_conditional_operand (preproc_if (preproc_open) condition: (identifier)) operand: (identifier)
+(preproc_else) operand: (identifier) (preproc_endif (preproc_close))) right: (identifier)) right: (identifier))
+(identifier)))) (assignment_statement left: (identifier) operator: (assignment_operator) right: (in_expression left:
+(identifier) operator: (in_keyword) right: (list_literal (additive_expression left: (multiplicative_expression left:
+(identifier) right: (preproc_conditional_operand (preproc_if (preproc_open) condition: (identifier)) operand:
+(identifier) (preproc_else) operand: (identifier) (preproc_endif (preproc_close)))) right: (identifier))
+(identifier)))) (assignment_statement left: (identifier) operator: (assignment_operator) right: (in_expression left:
+(identifier) operator: (in_keyword) right: (list_literal (additive_expression left: (multiplicative_expression left:
+(identifier) right: (identifier)) right: (preproc_conditional_operand (preproc_if (preproc_open) condition:
+(identifier)) operand: (identifier) (preproc_else) operand: (identifier) (preproc_endif (preproc_close))))
+(identifier)))) (assignment_statement left: (identifier) operator: (assignment_operator) right: (in_expression left:
+(identifier) operator: (in_keyword) right: (list_literal (logical_expression left: (preproc_conditional_operand
+(preproc_if (preproc_open) condition: (identifier)) operand: (identifier) (preproc_else) operand: (identifier)
+(preproc_endif (preproc_close))) right: (logical_expression left: (identifier) right: (identifier))) (identifier))))
+(assignment_statement left: (identifier) operator: (assignment_operator) right: (in_expression left: (identifier)
+operator: (in_keyword) right: (list_literal (logical_expression left: (identifier) right: (logical_expression left:
+(preproc_conditional_operand (preproc_if (preproc_open) condition: (identifier)) operand: (identifier)
+(preproc_else) operand: (identifier) (preproc_endif (preproc_close))) right: (identifier))) (identifier))))
+(assignment_statement left: (identifier) operator: (assignment_operator) right: (in_expression left: (identifier)
+operator: (in_keyword) right: (list_literal (logical_expression left: (identifier) right: (logical_expression left:
+(identifier) right: (preproc_conditional_operand (preproc_if (preproc_open) condition: (identifier)) operand:
+(identifier) (preproc_else) operand: (identifier) (preproc_endif (preproc_close))))) (identifier))))
+(assignment_statement left: (identifier) operator: (assignment_operator) right: (in_expression left: (identifier)
+operator: (in_keyword) right: (list_literal (additive_expression left: (multiplicative_expression left: (identifier)
+right: (preproc_conditional_operand (preproc_if (preproc_open) condition: (identifier)) operand:
+(additive_expression left: (identifier) right: (integer)) (preproc_else) operand: (identifier) (preproc_endif
+(preproc_close)))) right: (identifier)) (identifier)))) (assignment_statement left: (identifier) operator:
+(assignment_operator) right: (in_expression left: (identifier) operator: (in_keyword) right: (list_literal
+(additive_expression left: (identifier) right: (multiplicative_expression left: (preproc_conditional_operand
+(preproc_if (preproc_open) condition: (identifier)) operand: (additive_expression left: (identifier) right:
+(integer)) (preproc_else) operand: (identifier) (preproc_endif (preproc_close))) right: (identifier)))
+(identifier)))) (assignment_statement left: (identifier) operator: (assignment_operator) right: (in_expression left:
+(identifier) operator: (in_keyword) right: (list_literal (additive_expression left: (preproc_conditional_operand
+(preproc_if (preproc_open) condition: (identifier)) operand: (identifier) (preproc_else) operand: (identifier)
+(preproc_endif (preproc_close))) right: (integer)) (identifier)))) (assignment_statement left: (identifier)
+operator: (assignment_operator) right: (in_expression left: (identifier) operator: (in_keyword) right: (list_literal
+(additive_expression left: (preproc_conditional_operand (preproc_if (preproc_open) condition: (identifier)) operand:
+(identifier) (preproc_else) operand: (identifier) (preproc_endif (preproc_close))) right: (integer)) (identifier))))
+(assignment_statement left: (identifier) operator: (assignment_operator) right: (in_expression left: (identifier)
+operator: (in_keyword) right: (list_literal (preproc_conditional_operand (preproc_if (preproc_open) condition:
+(identifier)) operand: (identifier) (preproc_else) operand: (identifier) (preproc_endif (preproc_close)))
+(unary_expression operand: (integer)))))) (end_keyword))))))
+
+================================================================================
+B7b-2 ladder position: case pattern (and then xor, + then div)
+================================================================================
+codeunit 50100 P
+{
+    procedure Q()
+    begin
+        case Y of
+#if X
+            C
+#else
+            D
+#endif
+            and B xor E: Bar(); end;
+        case Y of A and
+#if X
+            C
+#else
+            D
+#endif
+            xor E: Bar(); end;
+        case Y of A and B xor
+#if X
+            C
+#else
+            D
+#endif
+           : Bar(); end;
+        case Y of
+#if X
+            C
+#else
+            D
+#endif
+            + B div E: Bar(); end;
+        case Y of A +
+#if X
+            C
+#else
+            D
+#endif
+            div E: Bar(); end;
+        case Y of A + B div
+#if X
+            C
+#else
+            D
+#endif
+           : Bar(); end;
+        case Y of A *
+#if X
+            C + 1
+#else
+            D
+#endif
+            - B: Bar(); end;
+        case Y of A -
+#if X
+            C + 1
+#else
+            D
+#endif
+            * B: Bar(); end;
+        case Y of
+#if X
+            C
+#else
+            D
+#endif
+            - 1: Bar(); end;
+        case Y of
+#if X
+            C
+#else
+            D
+#endif
+            -1: Bar(); end;
+    end;
+}
+--------------------------------------------------------------------------------
+
+(source_file (codeunit_declaration (codeunit_keyword) object_id: (integer) object_name: (identifier) body:
+(declaration_body (procedure (procedure_keyword) name: (identifier) body: (code_block (begin_keyword) body:
+(statement_block (case_statement (case_keyword) expression: (identifier) (of_keyword) body: (case_body (case_branch
+pattern: (logical_expression left: (logical_expression left: (preproc_conditional_operand (preproc_if (preproc_open)
+condition: (identifier)) operand: (identifier) (preproc_else) operand: (identifier) (preproc_endif (preproc_close)))
+right: (identifier)) right: (identifier)) body: (call_expression function: (identifier) arguments:
+(argument_list)))) (end_keyword)) (case_statement (case_keyword) expression: (identifier) (of_keyword) body:
+(case_body (case_branch pattern: (logical_expression left: (logical_expression left: (identifier) right:
+(preproc_conditional_operand (preproc_if (preproc_open) condition: (identifier)) operand: (identifier)
+(preproc_else) operand: (identifier) (preproc_endif (preproc_close)))) right: (identifier)) body: (call_expression
+function: (identifier) arguments: (argument_list)))) (end_keyword)) (case_statement (case_keyword) expression:
+(identifier) (of_keyword) body: (case_body (case_branch pattern: (logical_expression left: (logical_expression left:
+(identifier) right: (identifier)) right: (preproc_conditional_operand (preproc_if (preproc_open) condition:
+(identifier)) operand: (identifier) (preproc_else) operand: (identifier) (preproc_endif (preproc_close)))) body:
+(call_expression function: (identifier) arguments: (argument_list)))) (end_keyword)) (case_statement (case_keyword)
+expression: (identifier) (of_keyword) body: (case_body (case_branch pattern: (additive_expression left:
+(preproc_conditional_operand (preproc_if (preproc_open) condition: (identifier)) operand: (identifier)
+(preproc_else) operand: (identifier) (preproc_endif (preproc_close))) right: (multiplicative_expression left:
+(identifier) right: (identifier))) body: (call_expression function: (identifier) arguments: (argument_list))))
+(end_keyword)) (case_statement (case_keyword) expression: (identifier) (of_keyword) body: (case_body (case_branch
+pattern: (additive_expression left: (identifier) right: (multiplicative_expression left:
+(preproc_conditional_operand (preproc_if (preproc_open) condition: (identifier)) operand: (identifier)
+(preproc_else) operand: (identifier) (preproc_endif (preproc_close))) right: (identifier))) body: (call_expression
+function: (identifier) arguments: (argument_list)))) (end_keyword)) (case_statement (case_keyword) expression:
+(identifier) (of_keyword) body: (case_body (case_branch pattern: (additive_expression left: (identifier) right:
+(multiplicative_expression left: (identifier) right: (preproc_conditional_operand (preproc_if (preproc_open)
+condition: (identifier)) operand: (identifier) (preproc_else) operand: (identifier) (preproc_endif
+(preproc_close))))) body: (call_expression function: (identifier) arguments: (argument_list)))) (end_keyword))
+(case_statement (case_keyword) expression: (identifier) (of_keyword) body: (case_body (case_branch pattern:
+(additive_expression left: (multiplicative_expression left: (identifier) right: (preproc_conditional_operand
+(preproc_if (preproc_open) condition: (identifier)) operand: (additive_expression left: (identifier) right:
+(integer)) (preproc_else) operand: (identifier) (preproc_endif (preproc_close)))) right: (identifier)) body:
+(call_expression function: (identifier) arguments: (argument_list)))) (end_keyword)) (case_statement (case_keyword)
+expression: (identifier) (of_keyword) body: (case_body (case_branch pattern: (additive_expression left: (identifier)
+right: (multiplicative_expression left: (preproc_conditional_operand (preproc_if (preproc_open) condition:
+(identifier)) operand: (additive_expression left: (identifier) right: (integer)) (preproc_else) operand:
+(identifier) (preproc_endif (preproc_close))) right: (identifier))) body: (call_expression function: (identifier)
+arguments: (argument_list)))) (end_keyword)) (case_statement (case_keyword) expression: (identifier) (of_keyword)
+body: (case_body (case_branch pattern: (additive_expression left: (preproc_conditional_operand (preproc_if
+(preproc_open) condition: (identifier)) operand: (identifier) (preproc_else) operand: (identifier) (preproc_endif
+(preproc_close))) right: (integer)) body: (call_expression function: (identifier) arguments: (argument_list))))
+(end_keyword)) (case_statement (case_keyword) expression: (identifier) (of_keyword) body: (case_body (case_branch
+pattern: (additive_expression left: (preproc_conditional_operand (preproc_if (preproc_open) condition: (identifier))
+operand: (identifier) (preproc_else) operand: (identifier) (preproc_endif (preproc_close))) right: (integer)) body:
+(call_expression function: (identifier) arguments: (argument_list)))) (end_keyword))) (end_keyword))))))
+
+================================================================================
+B7b-2 ladder position: exit value (as then =, - then in)
+================================================================================
+codeunit 50100 P
+{
+    procedure Q()
+    begin
+        exit(
+#if X
+            C
+#else
+            D
+#endif
+            as IFoo = E);
+        exit(A as
+#if X
+            IFoo
+#else
+            IBar
+#endif
+            = E);
+        exit(A as IFoo =
+#if X
+            C
+#else
+            D
+#endif
+           );
+        exit(
+#if X
+            C
+#else
+            D
+#endif
+            - B in [1]);
+        exit(A -
+#if X
+            C
+#else
+            D
+#endif
+            in [1]);
+        exit(A - B in
+#if X
+            [1]
+#else
+            [2]
+#endif
+           );
+        exit(A *
+#if X
+            C + 1
+#else
+            D
+#endif
+            - B);
+        exit(A -
+#if X
+            C + 1
+#else
+            D
+#endif
+            * B);
+        exit(
+#if X
+            C
+#else
+            D
+#endif
+            - 1);
+        exit(
+#if X
+            C
+#else
+            D
+#endif
+            -1);
+    end;
+}
+--------------------------------------------------------------------------------
+
+(source_file (codeunit_declaration (codeunit_keyword) object_id: (integer) object_name: (identifier) body:
+(declaration_body (procedure (procedure_keyword) name: (identifier) body: (code_block (begin_keyword) body:
+(statement_block (exit_statement (exit_keyword) return_value: (comparison_expression left: (as_expression left:
+(preproc_conditional_operand (preproc_if (preproc_open) condition: (identifier)) operand: (identifier)
+(preproc_else) operand: (identifier) (preproc_endif (preproc_close))) operator: (as_keyword) right:
+(type_specification (identifier))) operator: (comparison_operator) right: (identifier))) (exit_statement
+(exit_keyword) return_value: (comparison_expression left: (as_expression left: (identifier) operator: (as_keyword)
+right: (preproc_conditional_operand (preproc_if (preproc_open) condition: (identifier)) operand: (type_specification
+(identifier)) (preproc_else) operand: (type_specification (identifier)) (preproc_endif (preproc_close)))) operator:
+(comparison_operator) right: (identifier))) (exit_statement (exit_keyword) return_value: (comparison_expression
+left: (as_expression left: (identifier) operator: (as_keyword) right: (type_specification (identifier))) operator:
+(comparison_operator) right: (preproc_conditional_operand (preproc_if (preproc_open) condition: (identifier))
+operand: (identifier) (preproc_else) operand: (identifier) (preproc_endif (preproc_close))))) (exit_statement
+(exit_keyword) return_value: (in_expression left: (additive_expression left: (preproc_conditional_operand
+(preproc_if (preproc_open) condition: (identifier)) operand: (identifier) (preproc_else) operand: (identifier)
+(preproc_endif (preproc_close))) right: (identifier)) operator: (in_keyword) right: (list_literal (integer))))
+(exit_statement (exit_keyword) return_value: (in_expression left: (additive_expression left: (identifier) right:
+(preproc_conditional_operand (preproc_if (preproc_open) condition: (identifier)) operand: (identifier)
+(preproc_else) operand: (identifier) (preproc_endif (preproc_close)))) operator: (in_keyword) right: (list_literal
+(integer)))) (exit_statement (exit_keyword) return_value: (in_expression left: (additive_expression left:
+(identifier) right: (identifier)) operator: (in_keyword) right: (preproc_conditional_operand (preproc_if
+(preproc_open) condition: (identifier)) operand: (list_literal (integer)) (preproc_else) operand: (list_literal
+(integer)) (preproc_endif (preproc_close))))) (exit_statement (exit_keyword) return_value: (additive_expression
+left: (multiplicative_expression left: (identifier) right: (preproc_conditional_operand (preproc_if (preproc_open)
+condition: (identifier)) operand: (additive_expression left: (identifier) right: (integer)) (preproc_else) operand:
+(identifier) (preproc_endif (preproc_close)))) right: (identifier))) (exit_statement (exit_keyword) return_value:
+(additive_expression left: (identifier) right: (multiplicative_expression left: (preproc_conditional_operand
+(preproc_if (preproc_open) condition: (identifier)) operand: (additive_expression left: (identifier) right:
+(integer)) (preproc_else) operand: (identifier) (preproc_endif (preproc_close))) right: (identifier))))
+(exit_statement (exit_keyword) return_value: (additive_expression left: (preproc_conditional_operand (preproc_if
+(preproc_open) condition: (identifier)) operand: (identifier) (preproc_else) operand: (identifier) (preproc_endif
+(preproc_close))) right: (integer))) (exit_statement (exit_keyword) return_value: (additive_expression left:
+(preproc_conditional_operand (preproc_if (preproc_open) condition: (identifier)) operand: (identifier)
+(preproc_else) operand: (identifier) (preproc_endif (preproc_close))) right: (integer)))) (end_keyword))))))
+
+================================================================================
+B7b-2 ladder position: ternary then (xor then and, / then +)
+================================================================================
+codeunit 50100 P
+{
+    procedure Q()
+    begin
+        X := Ok ?
+#if X
+            C
+#else
+            D
+#endif
+            xor B and E : Z;
+        X := Ok ? A xor
+#if X
+            C
+#else
+            D
+#endif
+            and E : Z;
+        X := Ok ? A xor B and
+#if X
+            C
+#else
+            D
+#endif
+            : Z;
+        X := Ok ?
+#if X
+            C
+#else
+            D
+#endif
+            / B + E : Z;
+        X := Ok ? A /
+#if X
+            C
+#else
+            D
+#endif
+            + E : Z;
+        X := Ok ? A / B +
+#if X
+            C
+#else
+            D
+#endif
+            : Z;
+        X := Ok ? A *
+#if X
+            C + 1
+#else
+            D
+#endif
+            - B : Z;
+        X := Ok ? A -
+#if X
+            C + 1
+#else
+            D
+#endif
+            * B : Z;
+        X := Ok ?
+#if X
+            C
+#else
+            D
+#endif
+            - 1 : Z;
+        X := Ok ?
+#if X
+            C
+#else
+            D
+#endif
+            -1 : Z;
+    end;
+}
+--------------------------------------------------------------------------------
+
+(source_file (codeunit_declaration (codeunit_keyword) object_id: (integer) object_name: (identifier) body:
+(declaration_body (procedure (procedure_keyword) name: (identifier) body: (code_block (begin_keyword) body:
+(statement_block (assignment_statement left: (identifier) operator: (assignment_operator) right: (ternary_expression
+condition: (identifier) then_value: (logical_expression left: (preproc_conditional_operand (preproc_if
+(preproc_open) condition: (identifier)) operand: (identifier) (preproc_else) operand: (identifier) (preproc_endif
+(preproc_close))) right: (logical_expression left: (identifier) right: (identifier))) else_value: (identifier)))
+(assignment_statement left: (identifier) operator: (assignment_operator) right: (ternary_expression condition:
+(identifier) then_value: (logical_expression left: (identifier) right: (logical_expression left:
+(preproc_conditional_operand (preproc_if (preproc_open) condition: (identifier)) operand: (identifier)
+(preproc_else) operand: (identifier) (preproc_endif (preproc_close))) right: (identifier))) else_value:
+(identifier))) (assignment_statement left: (identifier) operator: (assignment_operator) right: (ternary_expression
+condition: (identifier) then_value: (logical_expression left: (identifier) right: (logical_expression left:
+(identifier) right: (preproc_conditional_operand (preproc_if (preproc_open) condition: (identifier)) operand:
+(identifier) (preproc_else) operand: (identifier) (preproc_endif (preproc_close))))) else_value: (identifier)))
+(assignment_statement left: (identifier) operator: (assignment_operator) right: (ternary_expression condition:
+(identifier) then_value: (additive_expression left: (multiplicative_expression left: (preproc_conditional_operand
+(preproc_if (preproc_open) condition: (identifier)) operand: (identifier) (preproc_else) operand: (identifier)
+(preproc_endif (preproc_close))) right: (identifier)) right: (identifier)) else_value: (identifier)))
+(assignment_statement left: (identifier) operator: (assignment_operator) right: (ternary_expression condition:
+(identifier) then_value: (additive_expression left: (multiplicative_expression left: (identifier) right:
+(preproc_conditional_operand (preproc_if (preproc_open) condition: (identifier)) operand: (identifier)
+(preproc_else) operand: (identifier) (preproc_endif (preproc_close)))) right: (identifier)) else_value:
+(identifier))) (assignment_statement left: (identifier) operator: (assignment_operator) right: (ternary_expression
+condition: (identifier) then_value: (additive_expression left: (multiplicative_expression left: (identifier) right:
+(identifier)) right: (preproc_conditional_operand (preproc_if (preproc_open) condition: (identifier)) operand:
+(identifier) (preproc_else) operand: (identifier) (preproc_endif (preproc_close)))) else_value: (identifier)))
+(assignment_statement left: (identifier) operator: (assignment_operator) right: (ternary_expression condition:
+(identifier) then_value: (additive_expression left: (multiplicative_expression left: (identifier) right:
+(preproc_conditional_operand (preproc_if (preproc_open) condition: (identifier)) operand: (additive_expression left:
+(identifier) right: (integer)) (preproc_else) operand: (identifier) (preproc_endif (preproc_close)))) right:
+(identifier)) else_value: (identifier))) (assignment_statement left: (identifier) operator: (assignment_operator)
+right: (ternary_expression condition: (identifier) then_value: (additive_expression left: (identifier) right:
+(multiplicative_expression left: (preproc_conditional_operand (preproc_if (preproc_open) condition: (identifier))
+operand: (additive_expression left: (identifier) right: (integer)) (preproc_else) operand: (identifier)
+(preproc_endif (preproc_close))) right: (identifier))) else_value: (identifier))) (assignment_statement left:
+(identifier) operator: (assignment_operator) right: (ternary_expression condition: (identifier) then_value:
+(additive_expression left: (preproc_conditional_operand (preproc_if (preproc_open) condition: (identifier)) operand:
+(identifier) (preproc_else) operand: (identifier) (preproc_endif (preproc_close))) right: (integer)) else_value:
+(identifier))) (assignment_statement left: (identifier) operator: (assignment_operator) right: (ternary_expression
+condition: (identifier) then_value: (additive_expression left: (preproc_conditional_operand (preproc_if
+(preproc_open) condition: (identifier)) operand: (identifier) (preproc_else) operand: (identifier) (preproc_endif
+(preproc_close))) right: (integer)) else_value: (identifier)))) (end_keyword))))))
+
+================================================================================
+B7b-2 ladder position: ternary else (and then xor, + then div)
+================================================================================
+codeunit 50100 P
+{
+    procedure Q()
+    begin
+        X := Ok ? Z :
+#if X
+            C
+#else
+            D
+#endif
+            and B xor E;
+        X := Ok ? Z : A and
+#if X
+            C
+#else
+            D
+#endif
+            xor E;
+        X := Ok ? Z : A and B xor
+#if X
+            C
+#else
+            D
+#endif
+           ;
+        X := Ok ? Z :
+#if X
+            C
+#else
+            D
+#endif
+            + B div E;
+        X := Ok ? Z : A +
+#if X
+            C
+#else
+            D
+#endif
+            div E;
+        X := Ok ? Z : A + B div
+#if X
+            C
+#else
+            D
+#endif
+           ;
+        X := Ok ? Z : A *
+#if X
+            C + 1
+#else
+            D
+#endif
+            - B;
+        X := Ok ? Z : A -
+#if X
+            C + 1
+#else
+            D
+#endif
+            * B;
+        X := Ok ? Z :
+#if X
+            C
+#else
+            D
+#endif
+            - 1;
+        X := Ok ? Z :
+#if X
+            C
+#else
+            D
+#endif
+            -1;
+    end;
+}
+--------------------------------------------------------------------------------
+
+(source_file (codeunit_declaration (codeunit_keyword) object_id: (integer) object_name: (identifier) body:
+(declaration_body (procedure (procedure_keyword) name: (identifier) body: (code_block (begin_keyword) body:
+(statement_block (assignment_statement left: (identifier) operator: (assignment_operator) right: (ternary_expression
+condition: (identifier) then_value: (identifier) else_value: (logical_expression left: (logical_expression left:
+(preproc_conditional_operand (preproc_if (preproc_open) condition: (identifier)) operand: (identifier)
+(preproc_else) operand: (identifier) (preproc_endif (preproc_close))) right: (identifier)) right: (identifier))))
+(assignment_statement left: (identifier) operator: (assignment_operator) right: (ternary_expression condition:
+(identifier) then_value: (identifier) else_value: (logical_expression left: (logical_expression left: (identifier)
+right: (preproc_conditional_operand (preproc_if (preproc_open) condition: (identifier)) operand: (identifier)
+(preproc_else) operand: (identifier) (preproc_endif (preproc_close)))) right: (identifier)))) (assignment_statement
+left: (identifier) operator: (assignment_operator) right: (ternary_expression condition: (identifier) then_value:
+(identifier) else_value: (logical_expression left: (logical_expression left: (identifier) right: (identifier))
+right: (preproc_conditional_operand (preproc_if (preproc_open) condition: (identifier)) operand: (identifier)
+(preproc_else) operand: (identifier) (preproc_endif (preproc_close)))))) (assignment_statement left: (identifier)
+operator: (assignment_operator) right: (ternary_expression condition: (identifier) then_value: (identifier)
+else_value: (additive_expression left: (preproc_conditional_operand (preproc_if (preproc_open) condition:
+(identifier)) operand: (identifier) (preproc_else) operand: (identifier) (preproc_endif (preproc_close))) right:
+(multiplicative_expression left: (identifier) right: (identifier))))) (assignment_statement left: (identifier)
+operator: (assignment_operator) right: (ternary_expression condition: (identifier) then_value: (identifier)
+else_value: (additive_expression left: (identifier) right: (multiplicative_expression left:
+(preproc_conditional_operand (preproc_if (preproc_open) condition: (identifier)) operand: (identifier)
+(preproc_else) operand: (identifier) (preproc_endif (preproc_close))) right: (identifier))))) (assignment_statement
+left: (identifier) operator: (assignment_operator) right: (ternary_expression condition: (identifier) then_value:
+(identifier) else_value: (additive_expression left: (identifier) right: (multiplicative_expression left:
+(identifier) right: (preproc_conditional_operand (preproc_if (preproc_open) condition: (identifier)) operand:
+(identifier) (preproc_else) operand: (identifier) (preproc_endif (preproc_close))))))) (assignment_statement left:
+(identifier) operator: (assignment_operator) right: (ternary_expression condition: (identifier) then_value:
+(identifier) else_value: (additive_expression left: (multiplicative_expression left: (identifier) right:
+(preproc_conditional_operand (preproc_if (preproc_open) condition: (identifier)) operand: (additive_expression left:
+(identifier) right: (integer)) (preproc_else) operand: (identifier) (preproc_endif (preproc_close)))) right:
+(identifier)))) (assignment_statement left: (identifier) operator: (assignment_operator) right: (ternary_expression
+condition: (identifier) then_value: (identifier) else_value: (additive_expression left: (identifier) right:
+(multiplicative_expression left: (preproc_conditional_operand (preproc_if (preproc_open) condition: (identifier))
+operand: (additive_expression left: (identifier) right: (integer)) (preproc_else) operand: (identifier)
+(preproc_endif (preproc_close))) right: (identifier))))) (assignment_statement left: (identifier) operator:
+(assignment_operator) right: (ternary_expression condition: (identifier) then_value: (identifier) else_value:
+(additive_expression left: (preproc_conditional_operand (preproc_if (preproc_open) condition: (identifier)) operand:
+(identifier) (preproc_else) operand: (identifier) (preproc_endif (preproc_close))) right: (integer))))
+(assignment_statement left: (identifier) operator: (assignment_operator) right: (ternary_expression condition:
+(identifier) then_value: (identifier) else_value: (additive_expression left: (preproc_conditional_operand
+(preproc_if (preproc_open) condition: (identifier)) operand: (identifier) (preproc_else) operand: (identifier)
+(preproc_endif (preproc_close))) right: (integer))))) (end_keyword))))))
+
+================================================================================
+B7b-2 ladder position: if condition (- then in, mod then -)
+================================================================================
+codeunit 50100 P
+{
+    procedure Q()
+    begin
+        if
+#if X
+            C
+#else
+            D
+#endif
+            - B in [1] then Bar();
+        if A -
+#if X
+            C
+#else
+            D
+#endif
+            in [1] then Bar();
+        if A - B in
+#if X
+            [1]
+#else
+            [2]
+#endif
+            then Bar();
+        if
+#if X
+            C
+#else
+            D
+#endif
+            mod B - E then Bar();
+        if A mod
+#if X
+            C
+#else
+            D
+#endif
+            - E then Bar();
+        if A mod B -
+#if X
+            C
+#else
+            D
+#endif
+            then Bar();
+        if A *
+#if X
+            C + 1
+#else
+            D
+#endif
+            - B then Bar();
+        if A -
+#if X
+            C + 1
+#else
+            D
+#endif
+            * B then Bar();
+        if
+#if X
+            C
+#else
+            D
+#endif
+            - 1 then Bar();
+        if
+#if X
+            C
+#else
+            D
+#endif
+            -1 then Bar();
+    end;
+}
+--------------------------------------------------------------------------------
+
+(source_file (codeunit_declaration (codeunit_keyword) object_id: (integer) object_name: (identifier) body:
+(declaration_body (procedure (procedure_keyword) name: (identifier) body: (code_block (begin_keyword) body:
+(statement_block (if_statement (if_keyword) condition: (in_expression left: (additive_expression left:
+(preproc_conditional_operand (preproc_if (preproc_open) condition: (identifier)) operand: (identifier)
+(preproc_else) operand: (identifier) (preproc_endif (preproc_close))) right: (identifier)) operator: (in_keyword)
+right: (list_literal (integer))) (then_keyword) then_branch: (call_expression function: (identifier) arguments:
+(argument_list))) (if_statement (if_keyword) condition: (in_expression left: (additive_expression left: (identifier)
+right: (preproc_conditional_operand (preproc_if (preproc_open) condition: (identifier)) operand: (identifier)
+(preproc_else) operand: (identifier) (preproc_endif (preproc_close)))) operator: (in_keyword) right: (list_literal
+(integer))) (then_keyword) then_branch: (call_expression function: (identifier) arguments: (argument_list)))
+(if_statement (if_keyword) condition: (in_expression left: (additive_expression left: (identifier) right:
+(identifier)) operator: (in_keyword) right: (preproc_conditional_operand (preproc_if (preproc_open) condition:
+(identifier)) operand: (list_literal (integer)) (preproc_else) operand: (list_literal (integer)) (preproc_endif
+(preproc_close)))) (then_keyword) then_branch: (call_expression function: (identifier) arguments: (argument_list)))
+(if_statement (if_keyword) condition: (additive_expression left: (multiplicative_expression left:
+(preproc_conditional_operand (preproc_if (preproc_open) condition: (identifier)) operand: (identifier)
+(preproc_else) operand: (identifier) (preproc_endif (preproc_close))) right: (identifier)) right: (identifier))
+(then_keyword) then_branch: (call_expression function: (identifier) arguments: (argument_list))) (if_statement
+(if_keyword) condition: (additive_expression left: (multiplicative_expression left: (identifier) right:
+(preproc_conditional_operand (preproc_if (preproc_open) condition: (identifier)) operand: (identifier)
+(preproc_else) operand: (identifier) (preproc_endif (preproc_close)))) right: (identifier)) (then_keyword)
+then_branch: (call_expression function: (identifier) arguments: (argument_list))) (if_statement (if_keyword)
+condition: (additive_expression left: (multiplicative_expression left: (identifier) right: (identifier)) right:
+(preproc_conditional_operand (preproc_if (preproc_open) condition: (identifier)) operand: (identifier)
+(preproc_else) operand: (identifier) (preproc_endif (preproc_close)))) (then_keyword) then_branch: (call_expression
+function: (identifier) arguments: (argument_list))) (if_statement (if_keyword) condition: (additive_expression left:
+(multiplicative_expression left: (identifier) right: (preproc_conditional_operand (preproc_if (preproc_open)
+condition: (identifier)) operand: (additive_expression left: (identifier) right: (integer)) (preproc_else) operand:
+(identifier) (preproc_endif (preproc_close)))) right: (identifier)) (then_keyword) then_branch: (call_expression
+function: (identifier) arguments: (argument_list))) (if_statement (if_keyword) condition: (additive_expression left:
+(identifier) right: (multiplicative_expression left: (preproc_conditional_operand (preproc_if (preproc_open)
+condition: (identifier)) operand: (additive_expression left: (identifier) right: (integer)) (preproc_else) operand:
+(identifier) (preproc_endif (preproc_close))) right: (identifier))) (then_keyword) then_branch: (call_expression
+function: (identifier) arguments: (argument_list))) (if_statement (if_keyword) condition: (additive_expression left:
+(preproc_conditional_operand (preproc_if (preproc_open) condition: (identifier)) operand: (identifier)
+(preproc_else) operand: (identifier) (preproc_endif (preproc_close))) right: (integer)) (then_keyword) then_branch:
+(call_expression function: (identifier) arguments: (argument_list))) (if_statement (if_keyword) condition:
+(additive_expression left: (preproc_conditional_operand (preproc_if (preproc_open) condition: (identifier)) operand:
+(identifier) (preproc_else) operand: (identifier) (preproc_endif (preproc_close))) right: (integer)) (then_keyword)
+then_branch: (call_expression function: (identifier) arguments: (argument_list)))) (end_keyword))))))
+
+================================================================================
+B7b-2 ladder position: repeat until (/ then +, + then is)
+================================================================================
+codeunit 50100 P
+{
+    procedure Q()
+    begin
+        repeat Bar(); until
+#if X
+            C
+#else
+            D
+#endif
+            / B + E;
+        repeat Bar(); until A /
+#if X
+            C
+#else
+            D
+#endif
+            + E;
+        repeat Bar(); until A / B +
+#if X
+            C
+#else
+            D
+#endif
+           ;
+        repeat Bar(); until
+#if X
+            C
+#else
+            D
+#endif
+            + B is Integer;
+        repeat Bar(); until A +
+#if X
+            C
+#else
+            D
+#endif
+            is Integer;
+        repeat Bar(); until A + B is
+#if X
+            Integer
+#else
+            Decimal
+#endif
+           ;
+        repeat Bar(); until A *
+#if X
+            C + 1
+#else
+            D
+#endif
+            - B;
+        repeat Bar(); until A -
+#if X
+            C + 1
+#else
+            D
+#endif
+            * B;
+        repeat Bar(); until
+#if X
+            C
+#else
+            D
+#endif
+            - 1;
+        repeat Bar(); until
+#if X
+            C
+#else
+            D
+#endif
+            -1;
+    end;
+}
+--------------------------------------------------------------------------------
+
+(source_file (codeunit_declaration (codeunit_keyword) object_id: (integer) object_name: (identifier) body:
+(declaration_body (procedure (procedure_keyword) name: (identifier) body: (code_block (begin_keyword) body:
+(statement_block (repeat_statement (repeat_keyword) body: (statement_block (call_expression function: (identifier)
+arguments: (argument_list))) (until_keyword) condition: (additive_expression left: (multiplicative_expression left:
+(preproc_conditional_operand (preproc_if (preproc_open) condition: (identifier)) operand: (identifier)
+(preproc_else) operand: (identifier) (preproc_endif (preproc_close))) right: (identifier)) right: (identifier)))
+(repeat_statement (repeat_keyword) body: (statement_block (call_expression function: (identifier) arguments:
+(argument_list))) (until_keyword) condition: (additive_expression left: (multiplicative_expression left:
+(identifier) right: (preproc_conditional_operand (preproc_if (preproc_open) condition: (identifier)) operand:
+(identifier) (preproc_else) operand: (identifier) (preproc_endif (preproc_close)))) right: (identifier)))
+(repeat_statement (repeat_keyword) body: (statement_block (call_expression function: (identifier) arguments:
+(argument_list))) (until_keyword) condition: (additive_expression left: (multiplicative_expression left:
+(identifier) right: (identifier)) right: (preproc_conditional_operand (preproc_if (preproc_open) condition:
+(identifier)) operand: (identifier) (preproc_else) operand: (identifier) (preproc_endif (preproc_close)))))
+(repeat_statement (repeat_keyword) body: (statement_block (call_expression function: (identifier) arguments:
+(argument_list))) (until_keyword) condition: (is_expression left: (additive_expression left:
+(preproc_conditional_operand (preproc_if (preproc_open) condition: (identifier)) operand: (identifier)
+(preproc_else) operand: (identifier) (preproc_endif (preproc_close))) right: (identifier)) operator: (is_keyword)
+right: (type_specification (basic_type)))) (repeat_statement (repeat_keyword) body: (statement_block
+(call_expression function: (identifier) arguments: (argument_list))) (until_keyword) condition: (is_expression left:
+(additive_expression left: (identifier) right: (preproc_conditional_operand (preproc_if (preproc_open) condition:
+(identifier)) operand: (identifier) (preproc_else) operand: (identifier) (preproc_endif (preproc_close)))) operator:
+(is_keyword) right: (type_specification (basic_type)))) (repeat_statement (repeat_keyword) body: (statement_block
+(call_expression function: (identifier) arguments: (argument_list))) (until_keyword) condition: (is_expression left:
+(additive_expression left: (identifier) right: (identifier)) operator: (is_keyword) right:
+(preproc_conditional_operand (preproc_if (preproc_open) condition: (identifier)) operand: (type_specification
+(basic_type)) (preproc_else) operand: (type_specification (basic_type)) (preproc_endif (preproc_close)))))
+(repeat_statement (repeat_keyword) body: (statement_block (call_expression function: (identifier) arguments:
+(argument_list))) (until_keyword) condition: (additive_expression left: (multiplicative_expression left:
+(identifier) right: (preproc_conditional_operand (preproc_if (preproc_open) condition: (identifier)) operand:
+(additive_expression left: (identifier) right: (integer)) (preproc_else) operand: (identifier) (preproc_endif
+(preproc_close)))) right: (identifier))) (repeat_statement (repeat_keyword) body: (statement_block (call_expression
+function: (identifier) arguments: (argument_list))) (until_keyword) condition: (additive_expression left:
+(identifier) right: (multiplicative_expression left: (preproc_conditional_operand (preproc_if (preproc_open)
+condition: (identifier)) operand: (additive_expression left: (identifier) right: (integer)) (preproc_else) operand:
+(identifier) (preproc_endif (preproc_close))) right: (identifier)))) (repeat_statement (repeat_keyword) body:
+(statement_block (call_expression function: (identifier) arguments: (argument_list))) (until_keyword) condition:
+(additive_expression left: (preproc_conditional_operand (preproc_if (preproc_open) condition: (identifier)) operand:
+(identifier) (preproc_else) operand: (identifier) (preproc_endif (preproc_close))) right: (integer)))
+(repeat_statement (repeat_keyword) body: (statement_block (call_expression function: (identifier) arguments:
+(argument_list))) (until_keyword) condition: (additive_expression left: (preproc_conditional_operand (preproc_if
+(preproc_open) condition: (identifier)) operand: (identifier) (preproc_else) operand: (identifier) (preproc_endif
+(preproc_close))) right: (integer)))) (end_keyword))))))
+
+================================================================================
+B7b-2 ladder position: property value (+ then div, mod then -)
+================================================================================
+codeunit 50100 P
+{
+    Visible =
+#if X
+            C
+#else
+            D
+#endif
+            + B div E;
+    Visible = A +
+#if X
+            C
+#else
+            D
+#endif
+            div E;
+    Visible = A + B div
+#if X
+            C
+#else
+            D
+#endif
+           ;
+    Visible =
+#if X
+            C
+#else
+            D
+#endif
+            mod B - E;
+    Visible = A mod
+#if X
+            C
+#else
+            D
+#endif
+            - E;
+    Visible = A mod B -
+#if X
+            C
+#else
+            D
+#endif
+           ;
+    Visible = A *
+#if X
+            C + 1
+#else
+            D
+#endif
+            - B;
+    Visible = A -
+#if X
+            C + 1
+#else
+            D
+#endif
+            * B;
+    Visible =
+#if X
+            C
+#else
+            D
+#endif
+            - 1;
+    Visible =
+#if X
+            C
+#else
+            D
+#endif
+            -1;
+    Visible =
+#if X
+            C
+#else
+            D
+#endif
+            - 1.5;
+    Visible =
+#if X
+            C
+#else
+            D
+#endif
+            -1.5;
+}
+--------------------------------------------------------------------------------
+
+(source_file (codeunit_declaration (codeunit_keyword) object_id: (integer) object_name: (identifier) body:
+(declaration_body (property name: (property_name) value: (property_expression (additive_expression left:
+(preproc_conditional_operand (preproc_if (preproc_open) condition: (identifier)) operand: (identifier)
+(preproc_else) operand: (identifier) (preproc_endif (preproc_close))) right: (multiplicative_expression left:
+(identifier) right: (identifier))))) (property name: (property_name) value: (property_expression
+(additive_expression left: (identifier) right: (multiplicative_expression left: (preproc_conditional_operand
+(preproc_if (preproc_open) condition: (identifier)) operand: (identifier) (preproc_else) operand: (identifier)
+(preproc_endif (preproc_close))) right: (identifier))))) (property name: (property_name) value: (property_expression
+(additive_expression left: (identifier) right: (multiplicative_expression left: (identifier) right:
+(preproc_conditional_operand (preproc_if (preproc_open) condition: (identifier)) operand: (identifier)
+(preproc_else) operand: (identifier) (preproc_endif (preproc_close))))))) (property name: (property_name) value:
+(property_expression (additive_expression left: (multiplicative_expression left: (preproc_conditional_operand
+(preproc_if (preproc_open) condition: (identifier)) operand: (identifier) (preproc_else) operand: (identifier)
+(preproc_endif (preproc_close))) right: (identifier)) right: (identifier)))) (property name: (property_name) value:
+(property_expression (additive_expression left: (multiplicative_expression left: (identifier) right:
+(preproc_conditional_operand (preproc_if (preproc_open) condition: (identifier)) operand: (identifier)
+(preproc_else) operand: (identifier) (preproc_endif (preproc_close)))) right: (identifier)))) (property name:
+(property_name) value: (property_expression (additive_expression left: (multiplicative_expression left: (identifier)
+right: (identifier)) right: (preproc_conditional_operand (preproc_if (preproc_open) condition: (identifier))
+operand: (identifier) (preproc_else) operand: (identifier) (preproc_endif (preproc_close)))))) (property name:
+(property_name) value: (property_expression (additive_expression left: (multiplicative_expression left: (identifier)
+right: (preproc_conditional_operand (preproc_if (preproc_open) condition: (identifier)) operand:
+(additive_expression left: (identifier) right: (integer)) (preproc_else) operand: (identifier) (preproc_endif
+(preproc_close)))) right: (identifier)))) (property name: (property_name) value: (property_expression
+(additive_expression left: (identifier) right: (multiplicative_expression left: (preproc_conditional_operand
+(preproc_if (preproc_open) condition: (identifier)) operand: (additive_expression left: (identifier) right:
+(integer)) (preproc_else) operand: (identifier) (preproc_endif (preproc_close))) right: (identifier))))) (property
+name: (property_name) value: (property_expression (additive_expression left: (preproc_conditional_operand
+(preproc_if (preproc_open) condition: (identifier)) operand: (identifier) (preproc_else) operand: (identifier)
+(preproc_endif (preproc_close))) right: (integer)))) (property name: (property_name) value: (property_expression
+(additive_expression left: (preproc_conditional_operand (preproc_if (preproc_open) condition: (identifier)) operand:
+(identifier) (preproc_else) operand: (identifier) (preproc_endif (preproc_close))) right: (integer)))) (property
+name: (property_name) value: (property_expression (additive_expression left: (preproc_conditional_operand
+(preproc_if (preproc_open) condition: (identifier)) operand: (identifier) (preproc_else) operand: (identifier)
+(preproc_endif (preproc_close))) right: (decimal)))) (property name: (property_name) value: (property_expression
+(additive_expression left: (preproc_conditional_operand (preproc_if (preproc_open) condition: (identifier)) operand:
+(identifier) (preproc_else) operand: (identifier) (preproc_endif (preproc_close))) right: (decimal)))))))

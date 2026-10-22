@@ -1,5 +1,5 @@
 // B7a Task 10 witness (GAP): family range, base placement op-only, 34 cells; representative bnd:range_expression:left:end@case_branch#op-only/arithmetic
-// Fixture b7_gap_range_test.txt#B7a GAP: range / op-only (34 cells, verdict of the representative MIXED); the parser ERRORs on configurations alc accepts; representative bnd:range_expression:left:end@case_branch%23op-only/arithmetic#0
+// Fixture b7b2_range_test.txt#B7b-2 range / op-only: moved from b7_gap_range_test.txt#0
 // expect: !X reject(AL0104,AL0111,AL0224)
 // expect: X accept
 // source: recorded by B7a Task 10, 2026-10-07: the alc split verdicts of cell bnd:range_expression:left:end@case_branch#op-only/arithmetic in tools/b7_audit/evidence.jsonl.gz

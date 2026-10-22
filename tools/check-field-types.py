@@ -64,6 +64,21 @@ def inv(node, field, multiple, anon, verdict, why, types=None, required=None):
     return Invariant(node, field, multiple, types, anon, verdict, why, required)
 
 
+# B7b-2 Phase C: the visible members of grammar.js `_continuation_operand` (an `_expression`
+# without ternary and assignment expressions, plus the operand group) and of `_postfix_operand`
+# (the receiver set of spec 3.4). Written out by hand from the grammar rules, not read from
+# node-types.json, so a rule that drops or gains a member fails the rows that use them.
+_LITERALS = {'integer', 'decimal', 'biginteger_literal', 'string_literal', 'verbatim_string',
+             'boolean', 'date_literal', 'time_literal', 'datetime_literal'}
+_RECEIVER = {'qualified_enum_value', 'database_reference', 'call_expression', 'member_expression',
+             'subscript_expression', 'identifier', 'quoted_identifier', 'parenthesized_expression',
+             'keyword_identifier', 'preproc_conditional_operand'} | _LITERALS
+_CONT_OPERAND = (_RECEIVER - {'preproc_conditional_operand'}) | {
+    'multiplicative_expression', 'additive_expression', 'comparison_expression', 'logical_expression',
+    'in_expression', 'is_expression', 'as_expression', 'unary_expression', 'list_literal',
+    'preproc_conditional_operand'}
+
+
 FIELD_INVARIANTS = [
     # ---------------------------------------------------------------- FIXED
     # array[10,20] of Integer -- each size dimension must field its own
@@ -228,6 +243,31 @@ FIELD_INVARIANTS = [
     inv('unary_expression', 'operator', False, {'+', '-', 'not'},
         'DELIBERATE', 'operator token IS the value; purely anonymous by design',
         types={'+', '-', 'not'}),
+
+    # B7b-2 Phase A (spec 5.3, 6.2): the continuation operators of a tail and
+    # an operand prefix. The anonymous members are the operator tokens (as on
+    # the binary rules); `in`/`is`/`as` are the named keyword nodes, from the
+    # tail's typed continuation arms and the typed in/is/as prefixes. Multiple:
+    # one per continuation. A tail may hold only nested groups, so its
+    # `operator` and `operand` are optional; a prefix arm always has both.
+    inv('preproc_conditional_expression_tail', 'operator', True,
+        {'*', '+', '-', '/', 'and', 'div', 'mod', 'or', 'xor'}, 'DELIBERATE',
+        'operator token IS the value; in/is/as keyword nodes (B7b-2 5.3)',
+        types={'*', '+', '-', '/', 'and', 'div', 'mod', 'or', 'xor',
+               'as_keyword', 'comparison_operator', 'in_keyword', 'is_keyword'},
+        required=False),
+    inv('preproc_conditional_expression_tail', 'operand', True, set(), 'FIXED',
+        'one operand per continuation, never punctuation (B7b-2 recursive tail)',
+        required=False),
+    inv('preproc_operand_prefix', 'operator', True,
+        {'*', '+', '-', '/', 'and', 'div', 'mod', 'or', 'xor'}, 'DELIBERATE',
+        'operator token IS the value; in/is/as from the typed prefixes (B7b-2 6.2)',
+        types={'*', '+', '-', '/', 'and', 'div', 'mod', 'or', 'xor',
+               'as_keyword', 'comparison_operator', 'in_keyword', 'is_keyword'},
+        required=True),
+    inv('preproc_operand_prefix', 'operand', True, set(), 'FIXED',
+        'one operand per arm, never punctuation (B7b-2 typed prefixes)',
+        required=True),
 
     # `Permissions = tabledata * = RIMD` -- the wildcard IS the table name, so
     # an anonymous member in this field's type set is correct, exactly as for
@@ -419,9 +459,103 @@ FIELD_INVARIANTS = [
         types={'case_branch', 'case_else_branch', 'empty_statement', 'preproc_conditional_case',
                'preproc_if', 'preproc_elif', 'preproc_else', 'preproc_endif'}, required=True),
     inv('case_branch', '<children>', True, set(), 'FIXED',
-        'unfielded: the split branch, pattern groups, and the decoration before the own `;` (B7b-3); fields stay pattern+body',
-        types={'preproc_split_case_branch', 'preproc_conditional_case_patterns', 'preproc_conditional_case'},
+        'unfielded: the split branch, pattern groups, the decoration before the own `;` (B7b-3), '
+        'and leading operand prefixes before a pattern (B7b-2 Phase C, spec 6.3); fields stay pattern+body',
+        types={'preproc_split_case_branch', 'preproc_conditional_case_patterns', 'preproc_conditional_case',
+               'preproc_operand_prefix'},
         required=False),
+
+    # B7b-2 Phase C (spec 6.1, 6.2, 3.4): the widened fields. An operand group takes the field of
+    # the position it fills, so every `_continuation_operand` slot gains preproc_conditional_operand
+    # and stays ONE required value (the group is one node; its arms carry `operand`). A slot that
+    # lost the group, or a group that leaked its arms' fields into the host, fails here.
+    *[inv(node, fld, False, set(), 'FIXED',
+          'one operand; an operand group is one node in the slot (B7b-2 6.1)',
+          types=_CONT_OPERAND, required=True)
+      for node, fld in (
+          ('additive_expression', 'left'), ('additive_expression', 'right'),
+          ('multiplicative_expression', 'right'), ('comparison_expression', 'right'),
+          ('logical_expression', 'right'), ('unary_expression', 'operand'),
+          ('in_expression', 'left'), ('as_expression', 'left'), ('is_expression', 'left'),
+          # Task 10 fix round 1 (review M2): the lefts and the ternary condition hold a group too.
+          ('multiplicative_expression', 'left'), ('comparison_expression', 'left'),
+          ('logical_expression', 'left'), ('ternary_expression', 'condition'))],
+    # Slots whose expression may also be a ternary or an assignment expression (`_expression`
+    # roots): the same set plus those two, the group included (review M2).
+    *[inv(node, fld, False, set(), 'FIXED',
+          'one expression; an operand group is one node in the slot (B7b-2 6.1)',
+          types=_CONT_OPERAND | {'ternary_expression', 'assignment_expression'}, required=True)
+      for node, fld in (('ternary_expression', 'else_value'), ('range_expression', 'right'))],
+    # A case pattern holds no operand group directly: a group of patterns is
+    # preproc_conditional_case_patterns (row 8b), and a group starting a pattern sits inside
+    # the pattern's binary (rows 7, 7'). Pinned so a direct group pattern shows up (review M2).
+    inv('case_branch', 'pattern', True, set(), 'FIXED',
+        'patterns: operands or ranges, never a bare operand group (B7b-2 5.4 rows 7, 8b)',
+        types=(_CONT_OPERAND - {'as_expression', 'is_expression', 'list_literal',
+                                'preproc_conditional_operand'}) | {'range_expression'}, required=False),
+    # The receiver set (spec 3.4): postfix-safe atoms or the receiver group; no binary, unary,
+    # list or ternary object (all were statically dead), so a group arm cannot cross the postfix.
+    *[inv(node, 'object', False, set(), 'FIXED',
+          'postfix-safe atom or receiver group (B7b-2 3.4, Phase C _postfix_operand)',
+          types=_RECEIVER, required=True)
+      for node in ('member_expression', 'subscript_expression')],
+    inv('assignment_statement', 'left', False, set(), 'FIXED',
+        'assignment target: postfix-safe atom without literals, or a receiver group (B7b-2 Phase C _assign_target)',
+        types=_RECEIVER - _LITERALS, required=True),
+    # Typed rights (spec 6.2): the right's own kind or the (general) operand group.
+    inv('in_expression', 'right', False, set(), 'FIXED',
+        'a list literal or a general operand group; the arms are NOT checked to be lists '
+        '(`a in #if X b #else c #endif` over-accepts, user ruling, execution amendments Task 10)',
+        types={'list_literal', 'preproc_conditional_operand'}, required=True),
+    *[inv(node, 'right', False, set(), 'FIXED',
+          'a type or an operand group (B7b-2 6.2; arms are expressions, execution amendments Task 10)',
+          types={'type_specification', 'preproc_conditional_operand'}, required=True)
+      for node in ('as_expression', 'is_expression')],
+    # The group's own field: one `operand` per arm (and per continuation item after a nested
+    # tail, as on the tail), never punctuation, never optional.
+    inv('preproc_conditional_operand', 'operand', True, set(), 'FIXED',
+        'one operand per arm (B7b-2 6.1); continuation items after a nested tail add theirs',
+        types=_CONT_OPERAND | {'type_specification'}, required=True),
+
+    # B7b-2 Phase B (spec 5.1 table): the region roots are hidden `_region_root_<field>`
+    # rules whose two arms both carry the field, so each slot keeps ONE required value; the
+    # tail beside it is an unfielded child. A root rule that dropped the field from its tail
+    # arm would make the field optional; one that fielded the tail would make it multiple.
+    *[inv(node, fld, False, set(), 'FIXED',
+          'one value per region root; the tail is an unfielded sibling (B7b-2 Phase B); '
+          'an operand group can stand there (Phase C, review M2)',
+          types=_CONT_OPERAND | {'ternary_expression', 'assignment_expression'}, required=True)
+      for node, fld in (
+          ('repeat_statement', 'condition'), ('if_statement', 'condition'),
+          ('while_statement', 'condition'), ('case_statement', 'expression'),
+          ('preproc_split_case_statement_end', 'expression'), ('for_statement', 'start'),
+          ('for_statement', 'end'), ('foreach_statement', 'iterable'), ('with_statement', 'record'),
+          ('range_expression', 'left'), ('ternary_expression', 'then_value'),
+          ('subscript_expression', 'index'))],
+    # The same fields at the hosts whose shape differs from one-required-value: the exit
+    # value is optional; the split-if heads' `condition` reaches each host through
+    # `_region_root_condition` once per head (multiple where a host has several heads,
+    # optional where a head is in an optional branch). Shapes as at the Phase A base: the
+    # hidden root must not change any of them. query_coverage skips fields inside hidden
+    # rules, so these rows are what checks the hosts' fields now (Task 7 fix round 1).
+    *[inv(node, fld, multiple, set(), 'FIXED',
+          'region-root field keeps its pre-Phase-B shape; the tail is an unfielded sibling (B7b-2 Phase B)',
+          required=required)
+      for node, fld, multiple, required in (
+          ('exit_statement', 'return_value', False, False),
+          ('preproc_guarded_statement', 'condition', False, True),
+          ('preproc_split_if_begin_asymmetric', 'condition', False, True),
+          ('preproc_split_if_then_begin', 'condition', False, True),
+          ('preproc_split_procedure_body', 'condition', False, False),
+          ('preproc_split_if_statement', 'condition', True, True),
+          ('preproc_split_if_else_statement', 'condition', True, True),
+          ('preproc_split_if_begin_else', 'condition', True, True),
+          ('preproc_split_if_then_begin_else_shared', 'condition', True, True),
+          ('preproc_split_else_begin_over_endif', 'condition', True, False),
+          ('preproc_split_open_statement', 'condition', True, False))],
+    # The parenthesized inner is unfielded; since Phase B its tail is a second child.
+    inv('parenthesized_expression', '<children>', True, set(), 'FIXED',
+        'the inner expression, then an optional tail (B7b-2 Phase B region root)', required=True),
 ]
 
 

@@ -52,10 +52,75 @@ def _sleeper(lib, src, out):
 def test_isolated_worker_past_its_ceiling_is_killed_and_fails_the_series():
     import time
     t0 = time.perf_counter()
-    rows, grown, err, peak = s.measure_isolated("unused", [10, 20], lambda x: b"x", ceiling=3, target=_sleeper)
-    assert rows == [] and err == 10 and time.perf_counter() - t0 < 30     # killed, not waited out
+    rows, grown, err, peak, kind = s.measure_isolated("unused", [10, 20], lambda x: b"x", ceiling=3, target=_sleeper)
+    assert rows == [] and err == 10 and kind == "timeout" and time.perf_counter() - t0 < 30   # killed, not waited out
 
 
 def test_isolated_worker_that_cannot_load_fails_the_series():
-    rows, _, err, _ = s.measure_isolated("no-such.dll", [10], lambda x: b"x")
-    assert rows == [] and err == 10
+    rows, _, err, _, kind = s.measure_isolated("no-such.dll", [10], lambda x: b"x")
+    assert rows == [] and err == 10 and kind == "error"
+
+
+def _erroring(lib, src, out):
+    """A worker whose parse has an error (has_error True)."""
+    out.put(("ok", 0.001, True, 0, 0))
+
+
+def test_excepted_series_with_a_parse_error_fails():
+    """Fix round 1 (Task 6 review): the item-52 exception waives the limits and the timeout, never a parse error."""
+    _, _, err, _, kind = s.measure_isolated("unused", [10], lambda x: b"x", target=_erroring)
+    exc = s.SCALING_EXCEPTIONS[("root_tails", "length")]
+    assert err == 10 and kind == "error" and not s.series_ok(False, exc, kind)
+    assert s.series_ok(False, exc, "timeout") and s.series_ok(False, exc, None)    # limits / timeout: waived
+    assert not s.series_ok(False, None, "timeout")                                  # no exception: fails
+
+
+# --- B7b-2 series (spec 2026-10-20 section 8.5) ---------------------------------------------------------------------
+def test_b7b2_series_use_the_unchanged_grid():
+    for _, axis, xs, _ in s.b7b2_series():
+        assert xs == (s.LENGTHS if axis == "length" else s.DEPTHS)
+    assert {f for f, _, _, _ in s.b7b2_series()} == {"argument_tails", "root_tails", "nested_tails", "ternary_parts", "ternary_condition_consecutive",
+                                                    "operand_groups", "nested_operand_groups", "mixed"} | {
+        f"root_slots/{r}" for r in s.ROOT_SLOTS}
+
+
+def test_phase_c_generators():
+    g = s.operand_groups(3)
+    assert g.count(b"#if X") == 3 and b"r :=\n#if X\n1\n#else\n1\n#endif\n+\n#if X\n2\n#else\n2\n#endif\n+\n#if X\n3" in g
+    nested = s.nested_operand_groups(2)
+    assert nested.count(b"r := 1 +\n#if X\n#if X\n1\n#else\n2\n#endif\n#else\n2\n#endif\n;\n") == s.DEPTH_COPIES
+    m = s.mixed(2)
+    assert m.count(b"#if X") == 6
+    assert b"r := 1\n+\n#if X\n1 *\n#endif\n#if X\n1\n#else\n1\n#endif\n#if X\n- 1\n#endif\n+\n#if X\n2 *" in m
+
+
+def test_b7b2_generators():
+    assert b"r := Foo(1\n#if X\n+2\n#endif\n#if X\n+3\n#endif\n);" in s.argument_tails(3)
+    assert s.argument_tails(3).count(b"#if X") == 2
+    assert s.root_tails(3).count(b"#if X") == 3 and b"r := 1\n#if X\n+1\n#endif" in s.root_tails(3)
+    nested = s.nested_tails(2)
+    assert nested.count(b"r := 1\n#if X\n+ 1\n#if X\n+ 1\n#endif\n#endif\n;\n") == s.DEPTH_COPIES
+
+
+def test_root_slot_and_ternary_generators():
+    src = s.root_slot("repeat_until")(3)
+    assert src.count(b"#if X") == 3 and b"until C\n#if X\n+1\n#endif\n#if X\n+2\n#endif" in src
+    assert all(s.root_slot(r)(2).count(b"#if X") == 2 for r in s.ROOT_SLOTS)
+    t = s.ternary_parts(2)
+    assert b"x := C1\n#if X\nand D1\n#endif\n? 1\n#if X\n+ 1\n#endif\n: C2" in t and t.count(b"#if X") == 4
+    c = s.ternary_condition_consecutive(3)
+    assert c.count(b"#if X") == 3 and b"x := C\n#if X\nand D1\n#endif" in c and b"\n? 1 : 0;\n" in c
+
+
+def test_scaling_exceptions_are_exactly_items_52_and_53():
+    """User decisions (deferred-work items 52 and 53): only consecutive groups at a root after which a host group can
+    start (item 52: the assignment and argument roots, Task 6; four Phase B roots and one ternary condition with
+    consecutive groups, Task 9; the Phase C `mixed` series, whose tails chain one inside the next, Task 12) and tails
+    on the conditions of a chained ternary (item 53) may fail the limits without
+    failing the run. A new entry needs a decision of its own, not an edit here."""
+    assert s.SCALING_EXCEPTIONS == {
+        **{(f, "length"): "deferred-work item 52" for f in (
+            "argument_tails", "root_tails", "root_slots/repeat_until", "root_slots/range_left",
+            "root_slots/list_element", "root_slots/split_call_argument", "ternary_condition_consecutive",
+            "mixed")},
+        ("ternary_parts", "length"): "deferred-work item 53"}

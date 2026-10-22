@@ -1,5 +1,5 @@
 // B7a Task 10 witness (GAP): family list-literal, base placement unary-minus, 12 cells; representative bnd:list_literal:1.0.0:end@list_literal#unary-minus/arithmetic
-// Fixture b7_gap_list_literal_test.txt#B7a GAP: list-literal / unary-minus (12 cells, verdict of the representative GAP); the parser ERRORs on configurations alc accepts; representative bnd:list_literal:1.0.0:end@list_literal%23unary-minus/arithmetic#0
+// Fixture b7b2_list_literal_test.txt#B7b-2 list-literal / unary-minus: moved from b7_gap_list_literal_test.txt#0
 // expect: !X accept
 // expect: X accept
 // source: recorded by B7a Task 10, 2026-10-07: the alc split verdicts of cell bnd:list_literal:1.0.0:end@list_literal#unary-minus/arithmetic in tools/b7_audit/evidence.jsonl.gz

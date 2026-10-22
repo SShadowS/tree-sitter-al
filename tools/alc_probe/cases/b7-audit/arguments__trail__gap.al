@@ -1,5 +1,5 @@
 // B7a Task 10 witness (GAP): family arguments, base placement trail, 3 cells; representative occ:_argument_branch_run:1.0.0@preproc_conditional_arguments#trail
-// Fixture b7_gap_arguments_test.txt#B7a GAP: arguments / trail (3 cells, verdict of the representative MIXED); the parser ERRORs on configurations alc accepts; representative occ:_argument_branch_run:1.0.0@preproc_conditional_arguments%23trail#0
+// Fixture b7b2_arguments_test.txt#B7b-2 arguments / trail: moved from b7_gap_arguments_test.txt#0
 // expect: !TPL !X accept
 // expect: !TPL X accept
 // expect: TPL !X reject(AL0301)

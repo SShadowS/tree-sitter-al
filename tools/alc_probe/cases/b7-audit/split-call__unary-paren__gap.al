@@ -1,5 +1,5 @@
 // B7a Task 10 witness (GAP): family split-call, base placement unary-paren, 8 cells; representative bnd:_expression_list:0:end@preproc_split_call_statement#unary-paren/arithmetic
-// Fixture b7_gap_split_call_test.txt#B7a GAP: split-call / unary-paren (8 cells, verdict of the representative GAP); the parser ERRORs on configurations alc accepts; representative bnd:_expression_list:0:end@preproc_split_call_statement%23unary-paren/arithmetic#0
+// Fixture b7b2_split_call_test.txt#B7b-2 split-call / unary-paren: moved from b7_gap_split_call_test.txt#0
 // expect: !TPL !X accept
 // expect: !TPL X accept
 // expect: TPL !X accept

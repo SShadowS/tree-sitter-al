@@ -1,0 +1,308 @@
+================================================================================
+B7b-2 assignment / consecutive: moved from b7_gap_assignment_test.txt
+--
+B7a GAP representative bnd:assignment_statement:right:end@asserterror_statement#consecutive/arithmetic
+Untrimmed witness: tools/alc_probe/cases/b7-audit/assignment__consecutive__gap.al.
+(owner B7b-2/A); alc accepts every configuration (B7a evidence;
+tools/alc_probe/cases/b7b-2/tails/consecutive.al is the same shape). Source
+trimmed: the generator's table, var section and helper procedures are
+removed, the statement and its host are verbatim.
+================================================================================
+codeunit 50101 P
+{
+    procedure Q()
+    begin
+asserterror
+I :=
+1
+#if X
++ 2
+#endif
+#if Y
++ 3
+#endif
+;
+    end;
+}
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (procedure
+        (procedure_keyword)
+        name: (identifier)
+        body: (code_block
+          (begin_keyword)
+          body: (statement_block
+            (asserterror_statement
+              (asserterror_keyword)
+              body: (assignment_statement
+                left: (identifier)
+                operator: (assignment_operator)
+                right: (integer)
+                (preproc_conditional_expression_tail
+                  (preproc_if
+                    (preproc_open)
+                    condition: (identifier))
+                  operand: (integer)
+                  (preproc_endif
+                    (preproc_close))
+                  (preproc_conditional_expression_tail
+                    (preproc_if
+                      (preproc_open)
+                      condition: (identifier))
+                    operand: (integer)
+                    (preproc_endif
+                      (preproc_close)))))))
+          (end_keyword))))))
+
+================================================================================
+B7b-2 assignment / nested: moved from b7_gap_assignment_test.txt
+--
+B7a GAP representative bnd:assignment_statement:right:end@asserterror_statement#nested/arithmetic
+(owner B7b-2/A). Source trimmed as above.
+================================================================================
+codeunit 50101 P
+{
+    procedure Q()
+    begin
+asserterror
+I :=
+1
+#if X
++ 2
+#if Y
++ 3
+#endif
+#endif
+;
+    end;
+}
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (procedure
+        (procedure_keyword)
+        name: (identifier)
+        body: (code_block
+          (begin_keyword)
+          body: (statement_block
+            (asserterror_statement
+              (asserterror_keyword)
+              body: (assignment_statement
+                left: (identifier)
+                operator: (assignment_operator)
+                right: (integer)
+                (preproc_conditional_expression_tail
+                  (preproc_if
+                    (preproc_open)
+                    condition: (identifier))
+                  operand: (integer)
+                  (preproc_conditional_expression_tail
+                    (preproc_if
+                      (preproc_open)
+                      condition: (identifier))
+                    operand: (integer)
+                    (preproc_endif
+                      (preproc_close)))
+                  (preproc_endif
+                    (preproc_close))))))
+          (end_keyword))))))
+
+================================================================================
+B7b-2 assignment / first: moved from b7_gap_assignment_test.txt
+--
+B7a GAP representative bnd:assignment_statement:right:end@asserterror_statement#first/arithmetic
+(untrimmed witness: tools/alc_probe/cases/b7-audit/assignment__first__gap.al)
+(manifest row: deferred, owner B7b-2/C). Parses since B7b-2 Phase C (Task 10).
+Source trimmed: the generator's table, var section and helpers are removed.
+================================================================================
+codeunit 50101 P
+{
+    procedure Q()
+    begin
+asserterror
+I :=
+#if X
+1 +
+#endif
+2
+;
+    end;
+}
+--------------------------------------------------------------------------------
+
+(source_file (codeunit_declaration (codeunit_keyword) object_id: (integer) object_name: (identifier) body:
+(declaration_body (procedure (procedure_keyword) name: (identifier) body: (code_block (begin_keyword) body:
+(statement_block (asserterror_statement (asserterror_keyword) body: (assignment_statement left: (identifier)
+operator: (assignment_operator) (preproc_operand_prefix (preproc_if (preproc_open) condition: (identifier)) operand:
+(integer) (preproc_endif (preproc_close))) right: (integer)))) (end_keyword))))))
+
+================================================================================
+B7b-2 assignment / first-only: moved from b7_gap_assignment_test.txt
+--
+B7a GAP representative bnd:assignment_statement:right:end@asserterror_statement#first-only/arithmetic
+(untrimmed witness: tools/alc_probe/cases/b7-audit/assignment__first-only__gap.al)
+(manifest row: deferred, owner B7b-2/C). Parses since B7b-2 Phase C (Task 10).
+Source trimmed: the generator's table, var section and helpers are removed.
+================================================================================
+codeunit 50101 P
+{
+    procedure Q()
+    begin
+asserterror
+I :=
+#if X
+1
+#else
+2
+#endif
+;
+    end;
+}
+--------------------------------------------------------------------------------
+
+(source_file (codeunit_declaration (codeunit_keyword) object_id: (integer) object_name: (identifier) body:
+(declaration_body (procedure (procedure_keyword) name: (identifier) body: (code_block (begin_keyword) body:
+(statement_block (asserterror_statement (asserterror_keyword) body: (assignment_statement left: (identifier)
+operator: (assignment_operator) right: (preproc_conditional_operand (preproc_if (preproc_open) condition:
+(identifier)) operand: (integer) (preproc_else) operand: (integer) (preproc_endif (preproc_close))))))
+(end_keyword))))))
+
+================================================================================
+B7b-2 assignment / signed: moved from b7_gap_assignment_test.txt
+--
+B7a GAP representative bnd:assignment_statement:right:end@asserterror_statement#signed/arithmetic
+(untrimmed witness: tools/alc_probe/cases/b7-audit/assignment__signed__gap.al)
+(manifest row: deferred, owner B7b-2/C). Parses since B7b-2 Phase C (Task 10).
+Source trimmed: the generator's table, var section and helpers are removed.
+================================================================================
+codeunit 50101 P
+{
+    procedure Q()
+    begin
+asserterror
+I :=
+1 +
+#if X
+-1
+#else
+2
+#endif
+;
+    end;
+}
+--------------------------------------------------------------------------------
+
+(source_file (codeunit_declaration (codeunit_keyword) object_id: (integer) object_name: (identifier) body:
+(declaration_body (procedure (procedure_keyword) name: (identifier) body: (code_block (begin_keyword) body:
+(statement_block (asserterror_statement (asserterror_keyword) body: (assignment_statement left: (identifier)
+operator: (assignment_operator) right: (additive_expression left: (integer) right: (preproc_conditional_operand
+(preproc_if (preproc_open) condition: (identifier)) operand: (unary_expression operand: (integer)) (preproc_else)
+operand: (integer) (preproc_endif (preproc_close))))))) (end_keyword))))))
+
+================================================================================
+B7b-2 assignment / unary-minus: moved from b7_gap_assignment_test.txt
+--
+B7a GAP representative bnd:assignment_statement:right:end@asserterror_statement#unary-minus/arithmetic
+(untrimmed witness: tools/alc_probe/cases/b7-audit/assignment__unary-minus__gap.al)
+(manifest row: deferred, owner B7b-2/C). Parses since B7b-2 Phase C (Task 10).
+Source trimmed: the generator's table, var section and helpers are removed.
+================================================================================
+codeunit 50101 P
+{
+    procedure Q()
+    begin
+asserterror
+I :=
+1 +
+#if X
+- 2
+#else
+3
+#endif
+;
+    end;
+}
+--------------------------------------------------------------------------------
+
+(source_file (codeunit_declaration (codeunit_keyword) object_id: (integer) object_name: (identifier) body:
+(declaration_body (procedure (procedure_keyword) name: (identifier) body: (code_block (begin_keyword) body:
+(statement_block (asserterror_statement (asserterror_keyword) body: (assignment_statement left: (identifier)
+operator: (assignment_operator) right: (additive_expression left: (integer) right: (preproc_conditional_operand
+(preproc_if (preproc_open) condition: (identifier)) operand: (unary_expression operand: (integer)) (preproc_else)
+operand: (integer) (preproc_endif (preproc_close))))))) (end_keyword))))))
+
+================================================================================
+B7b-2 assignment / unary-paren: moved from b7_gap_assignment_test.txt
+--
+B7a GAP representative bnd:assignment_statement:right:end@asserterror_statement#unary-paren/arithmetic
+(untrimmed witness: tools/alc_probe/cases/b7-audit/assignment__unary-paren__gap.al)
+(manifest row: deferred, owner B7b-2/C). Parses since B7b-2 Phase C (Task 10).
+Source trimmed: the generator's table, var section and helpers are removed.
+================================================================================
+codeunit 50101 P
+{
+    procedure Q()
+    begin
+asserterror
+I :=
+1 +
+#if X
+( 2 + 3 )
+#else
+3
+#endif
+;
+    end;
+}
+--------------------------------------------------------------------------------
+
+(source_file (codeunit_declaration (codeunit_keyword) object_id: (integer) object_name: (identifier) body:
+(declaration_body (procedure (procedure_keyword) name: (identifier) body: (code_block (begin_keyword) body:
+(statement_block (asserterror_statement (asserterror_keyword) body: (assignment_statement left: (identifier)
+operator: (assignment_operator) right: (additive_expression left: (integer) right: (preproc_conditional_operand
+(preproc_if (preproc_open) condition: (identifier)) operand: (parenthesized_expression (additive_expression left:
+(integer) right: (integer))) (preproc_else) operand: (integer) (preproc_endif (preproc_close)))))))
+(end_keyword))))))
+
+================================================================================
+B7b-2 assignment / whole-operand: moved from b7_gap_assignment_test.txt
+--
+B7a GAP representative bnd:assignment_statement:right:end@asserterror_statement#whole-operand/arithmetic
+(untrimmed witness: tools/alc_probe/cases/b7-audit/assignment__whole-operand__gap.al)
+(manifest row: deferred, owner B7b-2/C). Parses since B7b-2 Phase C (Task 10).
+Source trimmed: the generator's table, var section and helpers are removed.
+================================================================================
+codeunit 50101 P
+{
+    procedure Q()
+    begin
+asserterror
+I :=
+1 +
+#if X
+2
+#else
+3
+#endif
+;
+    end;
+}
+--------------------------------------------------------------------------------
+
+(source_file (codeunit_declaration (codeunit_keyword) object_id: (integer) object_name: (identifier) body:
+(declaration_body (procedure (procedure_keyword) name: (identifier) body: (code_block (begin_keyword) body:
+(statement_block (asserterror_statement (asserterror_keyword) body: (assignment_statement left: (identifier)
+operator: (assignment_operator) right: (additive_expression left: (integer) right: (preproc_conditional_operand
+(preproc_if (preproc_open) condition: (identifier)) operand: (integer) (preproc_else) operand: (integer)
+(preproc_endif (preproc_close))))))) (end_keyword))))))

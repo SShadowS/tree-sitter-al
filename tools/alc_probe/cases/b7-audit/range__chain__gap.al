@@ -1,5 +1,5 @@
 // B7a Task 10 witness (GAP): family range, base placement chain, 17 cells; representative bnd:range_expression:left:end@case_branch#chain/arithmetic
-// Fixture b7_gap_range_test.txt#B7a GAP: range / chain (17 cells, verdict of the representative GAP); the parser ERRORs on configurations alc accepts; representative bnd:range_expression:left:end@case_branch%23chain/arithmetic#0
+// Fixture b7b2_range_test.txt#B7b-2 range / chain: moved from b7_gap_range_test.txt#0
 // expect: !X accept
 // expect: X accept
 // source: recorded by B7a Task 10, 2026-10-07: the alc split verdicts of cell bnd:range_expression:left:end@case_branch#chain/arithmetic in tools/b7_audit/evidence.jsonl.gz

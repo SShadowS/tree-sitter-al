@@ -1,0 +1,25 @@
+================================================================================
+B7b-2 gap: a typed in prefix arm with a continuation before its keyword
+:error
+--
+DELIBERATE NEGATIVE (gap witness, listed in tools/deliberate-negatives.txt): valid
+AL the parser ERRORs on. alc accepts every configuration:
+tools/alc_probe/cases/b7b-2/keyword_ops/in-prefix-with-continuation.al. Still open
+after Phase C (deferred-work item 51 shape 3): the arm's binary must reduce before
+its dangling `in`, and the `in` shift (prec 5) beats the `and` reduce (prec 4)
+statically, the limit every prefix arm whose last operator binds looser than its
+dangling operator has. Shapes 1 and 2 were closed by Phase C (Task 10; their
+positive cases are in b7b2_operand_group_test.txt). The ERROR is the assertion.
+================================================================================
+codeunit 50101 P
+{
+    procedure Q()
+    begin
+        B := Ok in
+#if X
+        [true] and Ok in
+#endif
+        [false];
+    end;
+}
+--------------------------------------------------------------------------------

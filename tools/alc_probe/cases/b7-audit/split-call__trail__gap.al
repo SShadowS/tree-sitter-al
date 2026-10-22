@@ -1,5 +1,5 @@
 // B7a Task 10 witness (GAP): family split-call, base placement trail, 75 cells; representative occ:_expression_list:1.0.0@preproc_split_call_statement#trail
-// Fixture b7_gap_split_call_test.txt#B7a GAP: split-call / trail (75 cells, verdict of the representative MIXED); the parser ERRORs on configurations alc accepts; representative occ:_expression_list:1.0.0@preproc_split_call_statement%23trail#0
+// Fixture b7b2_split_call_test.txt#B7b-2 split-call / trail: moved from b7_gap_split_call_test.txt#0
 // expect: !TPL !X reject(AL0301)
 // expect: !TPL X accept
 // expect: TPL !X reject(AL0301)

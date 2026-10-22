@@ -1,0 +1,999 @@
+; Task 10 fix round 2: the spec 3.2 ladder matrix. Larger binds tighter: unary 7, * 6, - 5, in 4,
+; and 3, or 2, = 1, binaries left-associative. Every expected tree is composed from the ladder
+; (generator: an operator-precedence composition), never copied from parser output.
+; Each level is paired with itself and with its adjacent levels, G first / middle / last; the right of
+; `in` is a list, so no tighter operator follows an `in`. Pass counts per library: Task 10 report.
+
+================================================================================
+B7b-2 ladder * then *: G first, middle, last
+================================================================================
+codeunit 50100 P
+{
+    procedure Q()
+    begin
+        X :=
+#if X
+            C
+#else
+            D
+#endif
+            * B * E;
+        X := A *
+#if X
+            C
+#else
+            D
+#endif
+            * E;
+        X := A * B *
+#if X
+            C
+#else
+            D
+#endif
+           ;
+    end;
+}
+--------------------------------------------------------------------------------
+
+(source_file (codeunit_declaration (codeunit_keyword) object_id: (integer) object_name: (identifier) body:
+(declaration_body (procedure (procedure_keyword) name: (identifier) body: (code_block (begin_keyword) body:
+(statement_block (assignment_statement left: (identifier) operator: (assignment_operator) right:
+(multiplicative_expression left: (multiplicative_expression left: (preproc_conditional_operand (preproc_if
+(preproc_open) condition: (identifier)) operand: (identifier) (preproc_else) operand: (identifier) (preproc_endif
+(preproc_close))) right: (identifier)) right: (identifier))) (assignment_statement left: (identifier) operator:
+(assignment_operator) right: (multiplicative_expression left: (multiplicative_expression left: (identifier) right:
+(preproc_conditional_operand (preproc_if (preproc_open) condition: (identifier)) operand: (identifier)
+(preproc_else) operand: (identifier) (preproc_endif (preproc_close)))) right: (identifier))) (assignment_statement
+left: (identifier) operator: (assignment_operator) right: (multiplicative_expression left:
+(multiplicative_expression left: (identifier) right: (identifier)) right: (preproc_conditional_operand (preproc_if
+(preproc_open) condition: (identifier)) operand: (identifier) (preproc_else) operand: (identifier) (preproc_endif
+(preproc_close)))))) (end_keyword))))))
+
+================================================================================
+B7b-2 ladder * then -: G first, middle, last
+================================================================================
+codeunit 50100 P
+{
+    procedure Q()
+    begin
+        X :=
+#if X
+            C
+#else
+            D
+#endif
+            * B - E;
+        X := A *
+#if X
+            C
+#else
+            D
+#endif
+            - E;
+        X := A * B -
+#if X
+            C
+#else
+            D
+#endif
+           ;
+    end;
+}
+--------------------------------------------------------------------------------
+
+(source_file (codeunit_declaration (codeunit_keyword) object_id: (integer) object_name: (identifier) body:
+(declaration_body (procedure (procedure_keyword) name: (identifier) body: (code_block (begin_keyword) body:
+(statement_block (assignment_statement left: (identifier) operator: (assignment_operator) right:
+(additive_expression left: (multiplicative_expression left: (preproc_conditional_operand (preproc_if (preproc_open)
+condition: (identifier)) operand: (identifier) (preproc_else) operand: (identifier) (preproc_endif (preproc_close)))
+right: (identifier)) right: (identifier))) (assignment_statement left: (identifier) operator: (assignment_operator)
+right: (additive_expression left: (multiplicative_expression left: (identifier) right: (preproc_conditional_operand
+(preproc_if (preproc_open) condition: (identifier)) operand: (identifier) (preproc_else) operand: (identifier)
+(preproc_endif (preproc_close)))) right: (identifier))) (assignment_statement left: (identifier) operator:
+(assignment_operator) right: (additive_expression left: (multiplicative_expression left: (identifier) right:
+(identifier)) right: (preproc_conditional_operand (preproc_if (preproc_open) condition: (identifier)) operand:
+(identifier) (preproc_else) operand: (identifier) (preproc_endif (preproc_close)))))) (end_keyword))))))
+
+================================================================================
+B7b-2 ladder - then *: G first, middle, last
+================================================================================
+codeunit 50100 P
+{
+    procedure Q()
+    begin
+        X :=
+#if X
+            C
+#else
+            D
+#endif
+            - B * E;
+        X := A -
+#if X
+            C
+#else
+            D
+#endif
+            * E;
+        X := A - B *
+#if X
+            C
+#else
+            D
+#endif
+           ;
+    end;
+}
+--------------------------------------------------------------------------------
+
+(source_file (codeunit_declaration (codeunit_keyword) object_id: (integer) object_name: (identifier) body:
+(declaration_body (procedure (procedure_keyword) name: (identifier) body: (code_block (begin_keyword) body:
+(statement_block (assignment_statement left: (identifier) operator: (assignment_operator) right:
+(additive_expression left: (preproc_conditional_operand (preproc_if (preproc_open) condition: (identifier)) operand:
+(identifier) (preproc_else) operand: (identifier) (preproc_endif (preproc_close))) right: (multiplicative_expression
+left: (identifier) right: (identifier)))) (assignment_statement left: (identifier) operator: (assignment_operator)
+right: (additive_expression left: (identifier) right: (multiplicative_expression left: (preproc_conditional_operand
+(preproc_if (preproc_open) condition: (identifier)) operand: (identifier) (preproc_else) operand: (identifier)
+(preproc_endif (preproc_close))) right: (identifier)))) (assignment_statement left: (identifier) operator:
+(assignment_operator) right: (additive_expression left: (identifier) right: (multiplicative_expression left:
+(identifier) right: (preproc_conditional_operand (preproc_if (preproc_open) condition: (identifier)) operand:
+(identifier) (preproc_else) operand: (identifier) (preproc_endif (preproc_close))))))) (end_keyword))))))
+
+================================================================================
+B7b-2 ladder - then -: G first, middle, last
+================================================================================
+codeunit 50100 P
+{
+    procedure Q()
+    begin
+        X :=
+#if X
+            C
+#else
+            D
+#endif
+            - B - E;
+        X := A -
+#if X
+            C
+#else
+            D
+#endif
+            - E;
+        X := A - B -
+#if X
+            C
+#else
+            D
+#endif
+           ;
+    end;
+}
+--------------------------------------------------------------------------------
+
+(source_file (codeunit_declaration (codeunit_keyword) object_id: (integer) object_name: (identifier) body:
+(declaration_body (procedure (procedure_keyword) name: (identifier) body: (code_block (begin_keyword) body:
+(statement_block (assignment_statement left: (identifier) operator: (assignment_operator) right:
+(additive_expression left: (additive_expression left: (preproc_conditional_operand (preproc_if (preproc_open)
+condition: (identifier)) operand: (identifier) (preproc_else) operand: (identifier) (preproc_endif (preproc_close)))
+right: (identifier)) right: (identifier))) (assignment_statement left: (identifier) operator: (assignment_operator)
+right: (additive_expression left: (additive_expression left: (identifier) right: (preproc_conditional_operand
+(preproc_if (preproc_open) condition: (identifier)) operand: (identifier) (preproc_else) operand: (identifier)
+(preproc_endif (preproc_close)))) right: (identifier))) (assignment_statement left: (identifier) operator:
+(assignment_operator) right: (additive_expression left: (additive_expression left: (identifier) right: (identifier))
+right: (preproc_conditional_operand (preproc_if (preproc_open) condition: (identifier)) operand: (identifier)
+(preproc_else) operand: (identifier) (preproc_endif (preproc_close)))))) (end_keyword))))))
+
+================================================================================
+B7b-2 ladder - then in: G first, middle, last
+================================================================================
+codeunit 50100 P
+{
+    procedure Q()
+    begin
+        X :=
+#if X
+            C
+#else
+            D
+#endif
+            - B in [1];
+        X := A -
+#if X
+            C
+#else
+            D
+#endif
+            in [1];
+        X := A - B in
+#if X
+            [1]
+#else
+            [2]
+#endif
+           ;
+    end;
+}
+--------------------------------------------------------------------------------
+
+(source_file (codeunit_declaration (codeunit_keyword) object_id: (integer) object_name: (identifier) body:
+(declaration_body (procedure (procedure_keyword) name: (identifier) body: (code_block (begin_keyword) body:
+(statement_block (assignment_statement left: (identifier) operator: (assignment_operator) right: (in_expression
+left: (additive_expression left: (preproc_conditional_operand (preproc_if (preproc_open) condition: (identifier))
+operand: (identifier) (preproc_else) operand: (identifier) (preproc_endif (preproc_close))) right: (identifier))
+operator: (in_keyword) right: (list_literal (integer)))) (assignment_statement left: (identifier) operator:
+(assignment_operator) right: (in_expression left: (additive_expression left: (identifier) right:
+(preproc_conditional_operand (preproc_if (preproc_open) condition: (identifier)) operand: (identifier)
+(preproc_else) operand: (identifier) (preproc_endif (preproc_close)))) operator: (in_keyword) right: (list_literal
+(integer)))) (assignment_statement left: (identifier) operator: (assignment_operator) right: (in_expression left:
+(additive_expression left: (identifier) right: (identifier)) operator: (in_keyword) right:
+(preproc_conditional_operand (preproc_if (preproc_open) condition: (identifier)) operand: (list_literal (integer))
+(preproc_else) operand: (list_literal (integer)) (preproc_endif (preproc_close)))))) (end_keyword))))))
+
+================================================================================
+B7b-2 ladder in then in: G first, middle, last
+================================================================================
+codeunit 50100 P
+{
+    procedure Q()
+    begin
+        X :=
+#if X
+            C
+#else
+            D
+#endif
+            in [1] in [1];
+        X := A in
+#if X
+            [1]
+#else
+            [2]
+#endif
+            in [1];
+        X := A in [1] in
+#if X
+            [1]
+#else
+            [2]
+#endif
+           ;
+    end;
+}
+--------------------------------------------------------------------------------
+
+(source_file (codeunit_declaration (codeunit_keyword) object_id: (integer) object_name: (identifier) body:
+(declaration_body (procedure (procedure_keyword) name: (identifier) body: (code_block (begin_keyword) body:
+(statement_block (assignment_statement left: (identifier) operator: (assignment_operator) right: (in_expression
+left: (in_expression left: (preproc_conditional_operand (preproc_if (preproc_open) condition: (identifier)) operand:
+(identifier) (preproc_else) operand: (identifier) (preproc_endif (preproc_close))) operator: (in_keyword) right:
+(list_literal (integer))) operator: (in_keyword) right: (list_literal (integer)))) (assignment_statement left:
+(identifier) operator: (assignment_operator) right: (in_expression left: (in_expression left: (identifier) operator:
+(in_keyword) right: (preproc_conditional_operand (preproc_if (preproc_open) condition: (identifier)) operand:
+(list_literal (integer)) (preproc_else) operand: (list_literal (integer)) (preproc_endif (preproc_close))))
+operator: (in_keyword) right: (list_literal (integer)))) (assignment_statement left: (identifier) operator:
+(assignment_operator) right: (in_expression left: (in_expression left: (identifier) operator: (in_keyword) right:
+(list_literal (integer))) operator: (in_keyword) right: (preproc_conditional_operand (preproc_if (preproc_open)
+condition: (identifier)) operand: (list_literal (integer)) (preproc_else) operand: (list_literal (integer))
+(preproc_endif (preproc_close)))))) (end_keyword))))))
+
+================================================================================
+B7b-2 ladder in then and: G first, middle, last
+================================================================================
+codeunit 50100 P
+{
+    procedure Q()
+    begin
+        X :=
+#if X
+            C
+#else
+            D
+#endif
+            in [1] and E;
+        X := A in
+#if X
+            [1]
+#else
+            [2]
+#endif
+            and E;
+        X := A in [1] and
+#if X
+            C
+#else
+            D
+#endif
+           ;
+    end;
+}
+--------------------------------------------------------------------------------
+
+(source_file (codeunit_declaration (codeunit_keyword) object_id: (integer) object_name: (identifier) body:
+(declaration_body (procedure (procedure_keyword) name: (identifier) body: (code_block (begin_keyword) body:
+(statement_block (assignment_statement left: (identifier) operator: (assignment_operator) right: (logical_expression
+left: (in_expression left: (preproc_conditional_operand (preproc_if (preproc_open) condition: (identifier)) operand:
+(identifier) (preproc_else) operand: (identifier) (preproc_endif (preproc_close))) operator: (in_keyword) right:
+(list_literal (integer))) right: (identifier))) (assignment_statement left: (identifier) operator:
+(assignment_operator) right: (logical_expression left: (in_expression left: (identifier) operator: (in_keyword)
+right: (preproc_conditional_operand (preproc_if (preproc_open) condition: (identifier)) operand: (list_literal
+(integer)) (preproc_else) operand: (list_literal (integer)) (preproc_endif (preproc_close)))) right: (identifier)))
+(assignment_statement left: (identifier) operator: (assignment_operator) right: (logical_expression left:
+(in_expression left: (identifier) operator: (in_keyword) right: (list_literal (integer))) right:
+(preproc_conditional_operand (preproc_if (preproc_open) condition: (identifier)) operand: (identifier)
+(preproc_else) operand: (identifier) (preproc_endif (preproc_close)))))) (end_keyword))))))
+
+================================================================================
+B7b-2 ladder and then in: G first, middle, last
+================================================================================
+codeunit 50100 P
+{
+    procedure Q()
+    begin
+        X :=
+#if X
+            C
+#else
+            D
+#endif
+            and B in [1];
+        X := A and
+#if X
+            C
+#else
+            D
+#endif
+            in [1];
+        X := A and B in
+#if X
+            [1]
+#else
+            [2]
+#endif
+           ;
+    end;
+}
+--------------------------------------------------------------------------------
+
+(source_file (codeunit_declaration (codeunit_keyword) object_id: (integer) object_name: (identifier) body:
+(declaration_body (procedure (procedure_keyword) name: (identifier) body: (code_block (begin_keyword) body:
+(statement_block (assignment_statement left: (identifier) operator: (assignment_operator) right: (logical_expression
+left: (preproc_conditional_operand (preproc_if (preproc_open) condition: (identifier)) operand: (identifier)
+(preproc_else) operand: (identifier) (preproc_endif (preproc_close))) right: (in_expression left: (identifier)
+operator: (in_keyword) right: (list_literal (integer))))) (assignment_statement left: (identifier) operator:
+(assignment_operator) right: (logical_expression left: (identifier) right: (in_expression left:
+(preproc_conditional_operand (preproc_if (preproc_open) condition: (identifier)) operand: (identifier)
+(preproc_else) operand: (identifier) (preproc_endif (preproc_close))) operator: (in_keyword) right: (list_literal
+(integer))))) (assignment_statement left: (identifier) operator: (assignment_operator) right: (logical_expression
+left: (identifier) right: (in_expression left: (identifier) operator: (in_keyword) right:
+(preproc_conditional_operand (preproc_if (preproc_open) condition: (identifier)) operand: (list_literal (integer))
+(preproc_else) operand: (list_literal (integer)) (preproc_endif (preproc_close))))))) (end_keyword))))))
+
+================================================================================
+B7b-2 ladder and then and: G first, middle, last
+================================================================================
+codeunit 50100 P
+{
+    procedure Q()
+    begin
+        X :=
+#if X
+            C
+#else
+            D
+#endif
+            and B and E;
+        X := A and
+#if X
+            C
+#else
+            D
+#endif
+            and E;
+        X := A and B and
+#if X
+            C
+#else
+            D
+#endif
+           ;
+    end;
+}
+--------------------------------------------------------------------------------
+
+(source_file (codeunit_declaration (codeunit_keyword) object_id: (integer) object_name: (identifier) body:
+(declaration_body (procedure (procedure_keyword) name: (identifier) body: (code_block (begin_keyword) body:
+(statement_block (assignment_statement left: (identifier) operator: (assignment_operator) right: (logical_expression
+left: (logical_expression left: (preproc_conditional_operand (preproc_if (preproc_open) condition: (identifier))
+operand: (identifier) (preproc_else) operand: (identifier) (preproc_endif (preproc_close))) right: (identifier))
+right: (identifier))) (assignment_statement left: (identifier) operator: (assignment_operator) right:
+(logical_expression left: (logical_expression left: (identifier) right: (preproc_conditional_operand (preproc_if
+(preproc_open) condition: (identifier)) operand: (identifier) (preproc_else) operand: (identifier) (preproc_endif
+(preproc_close)))) right: (identifier))) (assignment_statement left: (identifier) operator: (assignment_operator)
+right: (logical_expression left: (logical_expression left: (identifier) right: (identifier)) right:
+(preproc_conditional_operand (preproc_if (preproc_open) condition: (identifier)) operand: (identifier)
+(preproc_else) operand: (identifier) (preproc_endif (preproc_close)))))) (end_keyword))))))
+
+================================================================================
+B7b-2 ladder and then or: G first, middle, last
+================================================================================
+codeunit 50100 P
+{
+    procedure Q()
+    begin
+        X :=
+#if X
+            C
+#else
+            D
+#endif
+            and B or E;
+        X := A and
+#if X
+            C
+#else
+            D
+#endif
+            or E;
+        X := A and B or
+#if X
+            C
+#else
+            D
+#endif
+           ;
+    end;
+}
+--------------------------------------------------------------------------------
+
+(source_file (codeunit_declaration (codeunit_keyword) object_id: (integer) object_name: (identifier) body:
+(declaration_body (procedure (procedure_keyword) name: (identifier) body: (code_block (begin_keyword) body:
+(statement_block (assignment_statement left: (identifier) operator: (assignment_operator) right: (logical_expression
+left: (logical_expression left: (preproc_conditional_operand (preproc_if (preproc_open) condition: (identifier))
+operand: (identifier) (preproc_else) operand: (identifier) (preproc_endif (preproc_close))) right: (identifier))
+right: (identifier))) (assignment_statement left: (identifier) operator: (assignment_operator) right:
+(logical_expression left: (logical_expression left: (identifier) right: (preproc_conditional_operand (preproc_if
+(preproc_open) condition: (identifier)) operand: (identifier) (preproc_else) operand: (identifier) (preproc_endif
+(preproc_close)))) right: (identifier))) (assignment_statement left: (identifier) operator: (assignment_operator)
+right: (logical_expression left: (logical_expression left: (identifier) right: (identifier)) right:
+(preproc_conditional_operand (preproc_if (preproc_open) condition: (identifier)) operand: (identifier)
+(preproc_else) operand: (identifier) (preproc_endif (preproc_close)))))) (end_keyword))))))
+
+================================================================================
+B7b-2 ladder or then and: G first, middle, last
+================================================================================
+codeunit 50100 P
+{
+    procedure Q()
+    begin
+        X :=
+#if X
+            C
+#else
+            D
+#endif
+            or B and E;
+        X := A or
+#if X
+            C
+#else
+            D
+#endif
+            and E;
+        X := A or B and
+#if X
+            C
+#else
+            D
+#endif
+           ;
+    end;
+}
+--------------------------------------------------------------------------------
+
+(source_file (codeunit_declaration (codeunit_keyword) object_id: (integer) object_name: (identifier) body:
+(declaration_body (procedure (procedure_keyword) name: (identifier) body: (code_block (begin_keyword) body:
+(statement_block (assignment_statement left: (identifier) operator: (assignment_operator) right: (logical_expression
+left: (preproc_conditional_operand (preproc_if (preproc_open) condition: (identifier)) operand: (identifier)
+(preproc_else) operand: (identifier) (preproc_endif (preproc_close))) right: (logical_expression left: (identifier)
+right: (identifier)))) (assignment_statement left: (identifier) operator: (assignment_operator) right:
+(logical_expression left: (identifier) right: (logical_expression left: (preproc_conditional_operand (preproc_if
+(preproc_open) condition: (identifier)) operand: (identifier) (preproc_else) operand: (identifier) (preproc_endif
+(preproc_close))) right: (identifier)))) (assignment_statement left: (identifier) operator: (assignment_operator)
+right: (logical_expression left: (identifier) right: (logical_expression left: (identifier) right:
+(preproc_conditional_operand (preproc_if (preproc_open) condition: (identifier)) operand: (identifier)
+(preproc_else) operand: (identifier) (preproc_endif (preproc_close))))))) (end_keyword))))))
+
+================================================================================
+B7b-2 ladder or then or: G first, middle, last
+================================================================================
+codeunit 50100 P
+{
+    procedure Q()
+    begin
+        X :=
+#if X
+            C
+#else
+            D
+#endif
+            or B or E;
+        X := A or
+#if X
+            C
+#else
+            D
+#endif
+            or E;
+        X := A or B or
+#if X
+            C
+#else
+            D
+#endif
+           ;
+    end;
+}
+--------------------------------------------------------------------------------
+
+(source_file (codeunit_declaration (codeunit_keyword) object_id: (integer) object_name: (identifier) body:
+(declaration_body (procedure (procedure_keyword) name: (identifier) body: (code_block (begin_keyword) body:
+(statement_block (assignment_statement left: (identifier) operator: (assignment_operator) right: (logical_expression
+left: (logical_expression left: (preproc_conditional_operand (preproc_if (preproc_open) condition: (identifier))
+operand: (identifier) (preproc_else) operand: (identifier) (preproc_endif (preproc_close))) right: (identifier))
+right: (identifier))) (assignment_statement left: (identifier) operator: (assignment_operator) right:
+(logical_expression left: (logical_expression left: (identifier) right: (preproc_conditional_operand (preproc_if
+(preproc_open) condition: (identifier)) operand: (identifier) (preproc_else) operand: (identifier) (preproc_endif
+(preproc_close)))) right: (identifier))) (assignment_statement left: (identifier) operator: (assignment_operator)
+right: (logical_expression left: (logical_expression left: (identifier) right: (identifier)) right:
+(preproc_conditional_operand (preproc_if (preproc_open) condition: (identifier)) operand: (identifier)
+(preproc_else) operand: (identifier) (preproc_endif (preproc_close)))))) (end_keyword))))))
+
+================================================================================
+B7b-2 ladder or then =: G first, middle, last
+================================================================================
+codeunit 50100 P
+{
+    procedure Q()
+    begin
+        X :=
+#if X
+            C
+#else
+            D
+#endif
+            or B = E;
+        X := A or
+#if X
+            C
+#else
+            D
+#endif
+            = E;
+        X := A or B =
+#if X
+            C
+#else
+            D
+#endif
+           ;
+    end;
+}
+--------------------------------------------------------------------------------
+
+(source_file (codeunit_declaration (codeunit_keyword) object_id: (integer) object_name: (identifier) body:
+(declaration_body (procedure (procedure_keyword) name: (identifier) body: (code_block (begin_keyword) body:
+(statement_block (assignment_statement left: (identifier) operator: (assignment_operator) right:
+(comparison_expression left: (logical_expression left: (preproc_conditional_operand (preproc_if (preproc_open)
+condition: (identifier)) operand: (identifier) (preproc_else) operand: (identifier) (preproc_endif (preproc_close)))
+right: (identifier)) operator: (comparison_operator) right: (identifier))) (assignment_statement left: (identifier)
+operator: (assignment_operator) right: (comparison_expression left: (logical_expression left: (identifier) right:
+(preproc_conditional_operand (preproc_if (preproc_open) condition: (identifier)) operand: (identifier)
+(preproc_else) operand: (identifier) (preproc_endif (preproc_close)))) operator: (comparison_operator) right:
+(identifier))) (assignment_statement left: (identifier) operator: (assignment_operator) right:
+(comparison_expression left: (logical_expression left: (identifier) right: (identifier)) operator:
+(comparison_operator) right: (preproc_conditional_operand (preproc_if (preproc_open) condition: (identifier))
+operand: (identifier) (preproc_else) operand: (identifier) (preproc_endif (preproc_close)))))) (end_keyword))))))
+
+================================================================================
+B7b-2 ladder = then or: G first, middle, last
+================================================================================
+codeunit 50100 P
+{
+    procedure Q()
+    begin
+        X :=
+#if X
+            C
+#else
+            D
+#endif
+            = B or E;
+        X := A =
+#if X
+            C
+#else
+            D
+#endif
+            or E;
+        X := A = B or
+#if X
+            C
+#else
+            D
+#endif
+           ;
+    end;
+}
+--------------------------------------------------------------------------------
+
+(source_file (codeunit_declaration (codeunit_keyword) object_id: (integer) object_name: (identifier) body:
+(declaration_body (procedure (procedure_keyword) name: (identifier) body: (code_block (begin_keyword) body:
+(statement_block (assignment_statement left: (identifier) operator: (assignment_operator) right:
+(comparison_expression left: (preproc_conditional_operand (preproc_if (preproc_open) condition: (identifier))
+operand: (identifier) (preproc_else) operand: (identifier) (preproc_endif (preproc_close))) operator:
+(comparison_operator) right: (logical_expression left: (identifier) right: (identifier)))) (assignment_statement
+left: (identifier) operator: (assignment_operator) right: (comparison_expression left: (identifier) operator:
+(comparison_operator) right: (logical_expression left: (preproc_conditional_operand (preproc_if (preproc_open)
+condition: (identifier)) operand: (identifier) (preproc_else) operand: (identifier) (preproc_endif (preproc_close)))
+right: (identifier)))) (assignment_statement left: (identifier) operator: (assignment_operator) right:
+(comparison_expression left: (identifier) operator: (comparison_operator) right: (logical_expression left:
+(identifier) right: (preproc_conditional_operand (preproc_if (preproc_open) condition: (identifier)) operand:
+(identifier) (preproc_else) operand: (identifier) (preproc_endif (preproc_close))))))) (end_keyword))))))
+
+================================================================================
+B7b-2 ladder = then =: G first, middle, last
+================================================================================
+codeunit 50100 P
+{
+    procedure Q()
+    begin
+        X :=
+#if X
+            C
+#else
+            D
+#endif
+            = B = E;
+        X := A =
+#if X
+            C
+#else
+            D
+#endif
+            = E;
+        X := A = B =
+#if X
+            C
+#else
+            D
+#endif
+           ;
+    end;
+}
+--------------------------------------------------------------------------------
+
+(source_file (codeunit_declaration (codeunit_keyword) object_id: (integer) object_name: (identifier) body:
+(declaration_body (procedure (procedure_keyword) name: (identifier) body: (code_block (begin_keyword) body:
+(statement_block (assignment_statement left: (identifier) operator: (assignment_operator) right:
+(comparison_expression left: (comparison_expression left: (preproc_conditional_operand (preproc_if (preproc_open)
+condition: (identifier)) operand: (identifier) (preproc_else) operand: (identifier) (preproc_endif (preproc_close)))
+operator: (comparison_operator) right: (identifier)) operator: (comparison_operator) right: (identifier)))
+(assignment_statement left: (identifier) operator: (assignment_operator) right: (comparison_expression left:
+(comparison_expression left: (identifier) operator: (comparison_operator) right: (preproc_conditional_operand
+(preproc_if (preproc_open) condition: (identifier)) operand: (identifier) (preproc_else) operand: (identifier)
+(preproc_endif (preproc_close)))) operator: (comparison_operator) right: (identifier))) (assignment_statement left:
+(identifier) operator: (assignment_operator) right: (comparison_expression left: (comparison_expression left:
+(identifier) operator: (comparison_operator) right: (identifier)) operator: (comparison_operator) right:
+(preproc_conditional_operand (preproc_if (preproc_open) condition: (identifier)) operand: (identifier)
+(preproc_else) operand: (identifier) (preproc_endif (preproc_close)))))) (end_keyword))))))
+
+================================================================================
+B7b-2 ladder chain - * -: G second, then third
+================================================================================
+codeunit 50100 P
+{
+    procedure Q()
+    begin
+        X := A -
+#if X
+            C
+#else
+            D
+#endif
+            * E - F;
+        X := A - B *
+#if X
+            C
+#else
+            D
+#endif
+            - F;
+    end;
+}
+--------------------------------------------------------------------------------
+
+(source_file (codeunit_declaration (codeunit_keyword) object_id: (integer) object_name: (identifier) body:
+(declaration_body (procedure (procedure_keyword) name: (identifier) body: (code_block (begin_keyword) body:
+(statement_block (assignment_statement left: (identifier) operator: (assignment_operator) right:
+(additive_expression left: (additive_expression left: (identifier) right: (multiplicative_expression left:
+(preproc_conditional_operand (preproc_if (preproc_open) condition: (identifier)) operand: (identifier)
+(preproc_else) operand: (identifier) (preproc_endif (preproc_close))) right: (identifier))) right: (identifier)))
+(assignment_statement left: (identifier) operator: (assignment_operator) right: (additive_expression left:
+(additive_expression left: (identifier) right: (multiplicative_expression left: (identifier) right:
+(preproc_conditional_operand (preproc_if (preproc_open) condition: (identifier)) operand: (identifier)
+(preproc_else) operand: (identifier) (preproc_endif (preproc_close))))) right: (identifier)))) (end_keyword))))))
+
+================================================================================
+B7b-2 ladder chain * - *: G second, then third
+================================================================================
+codeunit 50100 P
+{
+    procedure Q()
+    begin
+        X := A *
+#if X
+            C
+#else
+            D
+#endif
+            - E * F;
+        X := A * B -
+#if X
+            C
+#else
+            D
+#endif
+            * F;
+    end;
+}
+--------------------------------------------------------------------------------
+
+(source_file (codeunit_declaration (codeunit_keyword) object_id: (integer) object_name: (identifier) body:
+(declaration_body (procedure (procedure_keyword) name: (identifier) body: (code_block (begin_keyword) body:
+(statement_block (assignment_statement left: (identifier) operator: (assignment_operator) right:
+(additive_expression left: (multiplicative_expression left: (identifier) right: (preproc_conditional_operand
+(preproc_if (preproc_open) condition: (identifier)) operand: (identifier) (preproc_else) operand: (identifier)
+(preproc_endif (preproc_close)))) right: (multiplicative_expression left: (identifier) right: (identifier))))
+(assignment_statement left: (identifier) operator: (assignment_operator) right: (additive_expression left:
+(multiplicative_expression left: (identifier) right: (identifier)) right: (multiplicative_expression left:
+(preproc_conditional_operand (preproc_if (preproc_open) condition: (identifier)) operand: (identifier)
+(preproc_else) operand: (identifier) (preproc_endif (preproc_close))) right: (identifier))))) (end_keyword))))))
+
+================================================================================
+B7b-2 ladder chain - - -: G second, then third
+================================================================================
+codeunit 50100 P
+{
+    procedure Q()
+    begin
+        X := A -
+#if X
+            C
+#else
+            D
+#endif
+            - E - F;
+        X := A - B -
+#if X
+            C
+#else
+            D
+#endif
+            - F;
+    end;
+}
+--------------------------------------------------------------------------------
+
+(source_file (codeunit_declaration (codeunit_keyword) object_id: (integer) object_name: (identifier) body:
+(declaration_body (procedure (procedure_keyword) name: (identifier) body: (code_block (begin_keyword) body:
+(statement_block (assignment_statement left: (identifier) operator: (assignment_operator) right:
+(additive_expression left: (additive_expression left: (additive_expression left: (identifier) right:
+(preproc_conditional_operand (preproc_if (preproc_open) condition: (identifier)) operand: (identifier)
+(preproc_else) operand: (identifier) (preproc_endif (preproc_close)))) right: (identifier)) right: (identifier)))
+(assignment_statement left: (identifier) operator: (assignment_operator) right: (additive_expression left:
+(additive_expression left: (additive_expression left: (identifier) right: (identifier)) right:
+(preproc_conditional_operand (preproc_if (preproc_open) condition: (identifier)) operand: (identifier)
+(preproc_else) operand: (identifier) (preproc_endif (preproc_close)))) right: (identifier)))) (end_keyword))))))
+
+================================================================================
+B7b-2 ladder chain and = or: G second, then third
+================================================================================
+codeunit 50100 P
+{
+    procedure Q()
+    begin
+        X := A and
+#if X
+            C
+#else
+            D
+#endif
+            = E or F;
+        X := A and B =
+#if X
+            C
+#else
+            D
+#endif
+            or F;
+    end;
+}
+--------------------------------------------------------------------------------
+
+(source_file (codeunit_declaration (codeunit_keyword) object_id: (integer) object_name: (identifier) body:
+(declaration_body (procedure (procedure_keyword) name: (identifier) body: (code_block (begin_keyword) body:
+(statement_block (assignment_statement left: (identifier) operator: (assignment_operator) right:
+(comparison_expression left: (logical_expression left: (identifier) right: (preproc_conditional_operand (preproc_if
+(preproc_open) condition: (identifier)) operand: (identifier) (preproc_else) operand: (identifier) (preproc_endif
+(preproc_close)))) operator: (comparison_operator) right: (logical_expression left: (identifier) right:
+(identifier)))) (assignment_statement left: (identifier) operator: (assignment_operator) right:
+(comparison_expression left: (logical_expression left: (identifier) right: (identifier)) operator:
+(comparison_operator) right: (logical_expression left: (preproc_conditional_operand (preproc_if (preproc_open)
+condition: (identifier)) operand: (identifier) (preproc_else) operand: (identifier) (preproc_endif (preproc_close)))
+right: (identifier))))) (end_keyword))))))
+
+================================================================================
+B7b-2 ladder unary prefixes before G
+================================================================================
+codeunit 50100 P
+{
+    procedure Q()
+    begin
+        X := -
+#if X
+            C
+#else
+            D
+#endif
+            * B;
+        X := -
+#if X
+            C
+#else
+            D
+#endif
+            - B;
+        X := -
+#if X
+            C
+#else
+            D
+#endif
+            and B;
+        X := -
+#if X
+            C
+#else
+            D
+#endif
+            = B;
+        X := A * -
+#if X
+            C
+#else
+            D
+#endif
+            - B;
+        X := not
+#if X
+            C
+#else
+            D
+#endif
+            * B;
+        X := not
+#if X
+            C
+#else
+            D
+#endif
+            - B;
+        X := not
+#if X
+            C
+#else
+            D
+#endif
+            and B;
+        X := not
+#if X
+            C
+#else
+            D
+#endif
+            = B;
+        X := A * not
+#if X
+            C
+#else
+            D
+#endif
+            - B;
+    end;
+}
+--------------------------------------------------------------------------------
+
+(source_file (codeunit_declaration (codeunit_keyword) object_id: (integer) object_name: (identifier) body:
+(declaration_body (procedure (procedure_keyword) name: (identifier) body: (code_block (begin_keyword) body:
+(statement_block (assignment_statement left: (identifier) operator: (assignment_operator) right:
+(multiplicative_expression left: (unary_expression operand: (preproc_conditional_operand (preproc_if (preproc_open)
+condition: (identifier)) operand: (identifier) (preproc_else) operand: (identifier) (preproc_endif
+(preproc_close)))) right: (identifier))) (assignment_statement left: (identifier) operator: (assignment_operator)
+right: (additive_expression left: (unary_expression operand: (preproc_conditional_operand (preproc_if (preproc_open)
+condition: (identifier)) operand: (identifier) (preproc_else) operand: (identifier) (preproc_endif
+(preproc_close)))) right: (identifier))) (assignment_statement left: (identifier) operator: (assignment_operator)
+right: (logical_expression left: (unary_expression operand: (preproc_conditional_operand (preproc_if (preproc_open)
+condition: (identifier)) operand: (identifier) (preproc_else) operand: (identifier) (preproc_endif
+(preproc_close)))) right: (identifier))) (assignment_statement left: (identifier) operator: (assignment_operator)
+right: (comparison_expression left: (unary_expression operand: (preproc_conditional_operand (preproc_if
+(preproc_open) condition: (identifier)) operand: (identifier) (preproc_else) operand: (identifier) (preproc_endif
+(preproc_close)))) operator: (comparison_operator) right: (identifier))) (assignment_statement left: (identifier)
+operator: (assignment_operator) right: (additive_expression left: (multiplicative_expression left: (identifier)
+right: (unary_expression operand: (preproc_conditional_operand (preproc_if (preproc_open) condition: (identifier))
+operand: (identifier) (preproc_else) operand: (identifier) (preproc_endif (preproc_close))))) right: (identifier)))
+(assignment_statement left: (identifier) operator: (assignment_operator) right: (multiplicative_expression left:
+(unary_expression operand: (preproc_conditional_operand (preproc_if (preproc_open) condition: (identifier)) operand:
+(identifier) (preproc_else) operand: (identifier) (preproc_endif (preproc_close)))) right: (identifier)))
+(assignment_statement left: (identifier) operator: (assignment_operator) right: (additive_expression left:
+(unary_expression operand: (preproc_conditional_operand (preproc_if (preproc_open) condition: (identifier)) operand:
+(identifier) (preproc_else) operand: (identifier) (preproc_endif (preproc_close)))) right: (identifier)))
+(assignment_statement left: (identifier) operator: (assignment_operator) right: (logical_expression left:
+(unary_expression operand: (preproc_conditional_operand (preproc_if (preproc_open) condition: (identifier)) operand:
+(identifier) (preproc_else) operand: (identifier) (preproc_endif (preproc_close)))) right: (identifier)))
+(assignment_statement left: (identifier) operator: (assignment_operator) right: (comparison_expression left:
+(unary_expression operand: (preproc_conditional_operand (preproc_if (preproc_open) condition: (identifier)) operand:
+(identifier) (preproc_else) operand: (identifier) (preproc_endif (preproc_close)))) operator: (comparison_operator)
+right: (identifier))) (assignment_statement left: (identifier) operator: (assignment_operator) right:
+(additive_expression left: (multiplicative_expression left: (identifier) right: (unary_expression operand:
+(preproc_conditional_operand (preproc_if (preproc_open) condition: (identifier)) operand: (identifier)
+(preproc_else) operand: (identifier) (preproc_endif (preproc_close))))) right: (identifier)))) (end_keyword))))))
+
+================================================================================
+B7b-2 ladder G in a ternary condition with operators
+================================================================================
+codeunit 50100 P
+{
+    procedure Q()
+    begin
+        X :=
+#if X
+            C
+#else
+            D
+#endif
+            = B ? A : B;
+        X := A -
+#if X
+            C
+#else
+            D
+#endif
+            = E ? A : B;
+        X := A and B =
+#if X
+            C
+#else
+            D
+#endif
+            ? A : B;
+    end;
+}
+--------------------------------------------------------------------------------
+
+(source_file (codeunit_declaration (codeunit_keyword) object_id: (integer) object_name: (identifier) body:
+(declaration_body (procedure (procedure_keyword) name: (identifier) body: (code_block (begin_keyword) body:
+(statement_block (assignment_statement left: (identifier) operator: (assignment_operator) right: (ternary_expression
+condition: (comparison_expression left: (preproc_conditional_operand (preproc_if (preproc_open) condition:
+(identifier)) operand: (identifier) (preproc_else) operand: (identifier) (preproc_endif (preproc_close))) operator:
+(comparison_operator) right: (identifier)) then_value: (identifier) else_value: (identifier))) (assignment_statement
+left: (identifier) operator: (assignment_operator) right: (ternary_expression condition: (comparison_expression
+left: (additive_expression left: (identifier) right: (preproc_conditional_operand (preproc_if (preproc_open)
+condition: (identifier)) operand: (identifier) (preproc_else) operand: (identifier) (preproc_endif
+(preproc_close)))) operator: (comparison_operator) right: (identifier)) then_value: (identifier) else_value:
+(identifier))) (assignment_statement left: (identifier) operator: (assignment_operator) right: (ternary_expression
+condition: (comparison_expression left: (logical_expression left: (identifier) right: (identifier)) operator:
+(comparison_operator) right: (preproc_conditional_operand (preproc_if (preproc_open) condition: (identifier))
+operand: (identifier) (preproc_else) operand: (identifier) (preproc_endif (preproc_close)))) then_value:
+(identifier) else_value: (identifier)))) (end_keyword))))))

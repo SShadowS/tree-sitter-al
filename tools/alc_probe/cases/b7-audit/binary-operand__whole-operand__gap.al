@@ -1,5 +1,5 @@
 // B7a Task 10 witness (GAP): family binary-operand, base placement whole-operand, 208 cells; representative bnd:additive_expression:left:end@additive_expression#whole-operand/arithmetic
-// Fixture b7_gap_binary_operand_test.txt#B7a GAP: binary-operand / whole-operand (208 cells, verdict of the representative GAP); the parser ERRORs on configurations alc accepts; representative bnd:additive_expression:left:end@additive_expression%23whole-operand/arithmetic#0
+// Fixture b7b2_binary_operand_test.txt#B7b-2 binary-operand / whole-operand: moved from b7_gap_binary_operand_test.txt#0
 // expect: !X accept
 // expect: X accept
 // source: recorded by B7a Task 10, 2026-10-07: the alc split verdicts of cell bnd:additive_expression:left:end@additive_expression#whole-operand/arithmetic in tools/b7_audit/evidence.jsonl.gz

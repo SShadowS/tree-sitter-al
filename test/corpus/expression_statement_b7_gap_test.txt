@@ -1,84 +1,12 @@
 ; B6 -> B7 gap: VALID AL that B6 makes a loud ERROR (listed in tools/deliberate-negatives.txt).
-; Not invalid input. alc accepts both cases in every configuration: case 1 is
-; tools/alc_probe/cases/expression-statement/torn-until-and.al (X and !X accept); case 2 is
-; tools/alc_probe/cases/expression-statement/b7-gap-assign-semicolon-in-arms.al (accepted in both configurations). Before B6 each parsed CLEANLY
-; and WRONG (case 1: the continuation read as a call to a function named `and`; case 2: `+ 1`
-; as a unary statement). Since B6 the operator word is reserved in code and a statement is an
-; invocation, so the fragment ERRORs instead. The hosts need a continuation facility that B6
-; does not give them: `repeat ... until` has none (case 1), and an assignment has no
-; `;`-inside-arms continuation (case 2). Roadmap B7 must parse both and move them to a positive
-; fixture; until then the ERROR is the assertion and the recovery shape is incidental.
-
-================================================================================
-B7 gap: repeat-until condition continued by a keyword-operator #if arm
-================================================================================
-codeunit 50101 P {
-  procedure Main()
-  var Rec: Record T; X: Integer; Arr: array[3] of Integer; C: Boolean;
-  begin
-repeat Foo(); until C
-#if X
-  and (C)
-#endif
-  ;
-  end;
-}
---------------------------------------------------------------------------------
-
-(source_file
-  (codeunit_declaration
-    (codeunit_keyword)
-    object_id: (integer)
-    object_name: (identifier)
-    (ERROR
-      (procedure_keyword)
-      name: (identifier)
-      (var_section
-        (var_keyword)
-        body: (var_body
-          (variable_declaration
-            name: (identifier)
-            type: (type_specification
-              (record_type
-                (record_keyword)
-                reference: (identifier))))
-          (variable_declaration
-            name: (identifier)
-            type: (type_specification
-              (basic_type)))
-          (variable_declaration
-            name: (identifier)
-            type: (type_specification
-              (array_type
-                (array_keyword)
-                sizes: (integer)
-                (of_keyword)
-                element_type: (type_specification
-                  (basic_type)))))
-          (variable_declaration
-            name: (identifier)
-            type: (type_specification
-              (basic_type)))))
-      (begin_keyword)
-      (repeat_statement
-        (repeat_keyword)
-        body: (statement_block
-          (call_expression
-            function: (identifier)
-            arguments: (argument_list)))
-        (until_keyword)
-        condition: (identifier))
-      (preproc_if
-        (preproc_open)
-        condition: (identifier))
-      (ERROR
-        (parenthesized_expression
-          (identifier))
-        (UNEXPECTED 'i')
-        (if_keyword))
-      (empty_statement)
-      (call_statement
-        function: (identifier)))))
+; Not invalid input. alc accepts it in every configuration:
+; tools/alc_probe/cases/expression-statement/b7-gap-assign-semicolon-in-arms.al (accepted in both
+; configurations). Before B6 it parsed CLEANLY and WRONG (`+ 1` as a unary statement). Since B6 a
+; statement is an invocation, so the fragment ERRORs instead: an assignment has no `;`-inside-arms
+; continuation (deferred-work item 39 shape 2, B7b-2 spec 9 RC7, out of B7b-2's scope). Until a
+; later B7 sub-project parses it, the ERROR is the assertion and the recovery shape is incidental.
+; Item 39 shape 1 (`repeat Foo(); until C #if X and (C) #endif;`) was case 1 here; it is parsed
+; since B7b-2 Phase B and moved to test/corpus/b7b2_repeat_until_test.txt.
 
 ================================================================================
 B7 gap: assignment continued with the semicolon inside every arm
@@ -139,20 +67,21 @@ B := A
             (assignment_statement
               left: (identifier)
               operator: (assignment_operator)
-              right: (identifier))
-            (preproc_conditional_statement
-              (preproc_if
-                (preproc_open)
-                condition: (identifier))
-              (ERROR
-                (unary_expression
-                  operand: (integer)))
-              (empty_statement)
-              (call_expression
-                function: (identifier)
-                arguments: (argument_list))
-              (preproc_else)
-              (empty_statement)
-              (preproc_endif
-                (preproc_close))))
-          (end_keyword))))))
+              right: (identifier)
+              (preproc_conditional_expression_tail
+                (preproc_if
+                  (preproc_open)
+                  condition: (identifier))
+                operand: (integer)
+                (preproc_endif
+                  (MISSING preproc_close))))
+            (call_expression
+              function: (identifier)
+              arguments: (argument_list))
+            (ERROR
+              (preproc_else))
+            (empty_statement))
+          (preproc_split_block_close_after_endif
+            (preproc_endif
+              (preproc_close))
+            (end_keyword)))))))

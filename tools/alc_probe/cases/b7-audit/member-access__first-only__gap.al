@@ -1,5 +1,5 @@
 // B7a Task 10 witness (GAP): family member-access, base placement first-only, 60 cells; representative bnd:member_expression:object:end@asserterror_statement#first-only/operand
-// Fixture b7_gap_member_access_test.txt#B7a GAP: member-access / first-only (60 cells, verdict of the representative GAP); the parser ERRORs on configurations alc accepts; representative bnd:member_expression:object:end@asserterror_statement%23first-only/operand#0
+// Fixture b7b2_member_access_test.txt#B7b-2 member-access / first-only: moved from b7_gap_member_access_test.txt#0
 // expect: !X accept
 // expect: X accept
 // source: recorded by B7a Task 10, 2026-10-07: the alc split verdicts of cell bnd:member_expression:object:end@asserterror_statement#first-only/operand in tools/b7_audit/evidence.jsonl.gz

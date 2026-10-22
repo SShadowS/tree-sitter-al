@@ -119,6 +119,13 @@ def occurrences(g):
 
 
 TAIL, PREFIX, EXPR = "preproc_conditional_expression_tail", "preproc_operand_prefix", "_expression"
+# B7b-2 Phase A: `_expression` without the ternary and assignment expressions (spec 5.2), the
+# operand of every binary, unary and tail item. An expression slot like `_expression` itself.
+CONT = "_continuation_operand"
+# B7b-2 Phase C: the postfix-safe receiver sets (member/subscript object, assignment left). They hold a receiver
+# group alias, so `_expr_names` cannot derive them; they are the same slots `_continuation_operand` was.
+RECEIVERS = ("_postfix_operand", "_assign_target")
+LEAD = {"type": "REPEAT1", "content": {"type": "SYMBOL", "name": PREFIX}}   # leadingPrefixed's prefix run
 
 
 def _first_leaf(node):
@@ -149,7 +156,7 @@ def _tail_mechanisms(rules):
 def _expr_names(rules):
     """_expression plus hidden rules that are only a choice of symbols one of which is such a name
     (fixpoint), e.g. `_field_source`, `_list_element` (range_expression | _expression)."""
-    names, grew = {EXPR}, True
+    names, grew = {EXPR} | ({CONT, *RECEIVERS} & rules.keys()), True
     while grew:
         grew = False
         for n, body in rules.items():
@@ -168,24 +175,84 @@ def _sibling_sym(node, name):
     n, _ = _unwrap(node, "")
     if n["type"] == "SYMBOL" and n["name"] == name:
         return True, False
+    if n["type"] in ("REPEAT", "REPEAT1") and _unwrap(n["content"], "")[0] == {"type": "SYMBOL", "name": name}:
+        return True, n["type"] == "REPEAT"      # B7b-2 Phase C: `repeat(prefix)` before a binary right
     if n["type"] == "CHOICE" and any(m["type"] == "BLANK" for m in n["members"]):
         if any(_unwrap(m, "")[0] == {"type": "SYMBOL", "name": name} for m in n["members"]):
             return True, True
     return False, False
 
 
+def _root_rule_arm(body, names):
+    """B7b-2 root rule, unfielded (`_argument_expression`): a body `choice(E, seq(C, tail))` with E and C
+    expression names is one slot written twice; the tail arm's operand path -> the plain arm's path."""
+    b, _ = _unwrap(body, "")
+    if b["type"] != "CHOICE" or len(b["members"]) not in (2, 3):
+        return {}
+    if len(b["members"]) == 3:      # Phase C: a third, leadingPrefixed arm (skipped by `boundaries`)
+        lead = _unwrap(b["members"][2], "")[0]
+        if not (lead["type"] == "SEQ" and lead["members"] and lead["members"][0] == LEAD):
+            return {}
+    a, _ = _unwrap(b["members"][0], "")
+    t, tp = _unwrap(b["members"][1], "1")
+    if not (a["type"] == "SYMBOL" and a["name"] in names and t["type"] == "SEQ" and len(t["members"]) == 2):
+        return {}
+    c, cp = _unwrap(t["members"][0], f"{tp}.0")
+    tail, _ = _unwrap(t["members"][1], "")
+    if c["type"] == "SYMBOL" and c["name"] in names and tail == {"type": "SYMBOL", "name": TAIL}:
+        return {cp: "0"}
+    return {}
+
+
+ROOT = "_region_root"
+
+
+def _region_roots(rules, names):
+    """B7b-2 Phase B: a `_region_root*` rule is a hidden contSlot, `choice(f(E), seq(f(C), tail))` with E and C
+    expression names and f an optional field. It is a slot wrapper like `_list_element`: expanded into its
+    callers, which keep their keys. Since B7b-2 Phase C a third arm `seq(repeat1(prefix), f(C), optional(tail))`
+    (leadingPrefixed: a leading operand prefix) may follow; it is the same slot, so it adds no key. -> {rule: field or None}"""
+    out = {}
+    for n, body in rules.items():
+        if n != ROOT and not n.startswith(ROOT + "_"):
+            continue
+        b, _ = _unwrap(body, "")
+        if b["type"] != "CHOICE" or len(b["members"]) not in (2, 3):
+            raise ValueError(f"{n}: not a contSlot body")
+        if len(b["members"]) == 3:
+            lead = _unwrap(b["members"][2], "")[0]
+            if not (lead["type"] == "SEQ" and len(lead["members"]) == 3
+                    and lead["members"][0] == {"type": "REPEAT1", "content": {"type": "SYMBOL", "name": PREFIX}}
+                    and _unwrap(lead["members"][1], "")[0].get("name") in names
+                    and lead["members"][2] == {"type": "CHOICE", "members": [{"type": "SYMBOL", "name": TAIL},
+                                                                             {"type": "BLANK"}]}):
+                raise ValueError(f"{n}: not a contSlot body")
+        plain, t = b["members"][0], _unwrap(b["members"][1], "")[0]
+        fld = plain["name"] if plain["type"] == "FIELD" else None
+        if not (_unwrap(plain, "")[0].get("name") in names and t["type"] == "SEQ" and len(t["members"]) == 2
+                and _unwrap(t["members"][0], "")[0].get("name") in names
+                and _unwrap(t["members"][1], "")[0] == {"type": "SYMBOL", "name": TAIL}):
+            raise ValueError(f"{n}: not a contSlot body")
+        out[n] = fld
+    return out
+
+
 def boundaries(g):
     rules = g["rules"]
     names, tail_m = _expr_names(rules), _tail_mechanisms(rules)
+    roots = _region_roots(rules, names)
+    names = names | roots.keys()
     wrappers = names - {EXPR}          # already expanded into their hosts
     acc = {}                           # (rule, slot, edge) -> [(expr path, mechanisms, required)]
     for rule, body in rules.items():
-        if rule in wrappers:
+        if rule in wrappers or rule == EXPR:   # _expression's own `_continuation_operand` arm is no slot
             continue
+        alias = _root_rule_arm(body, names)
         for path, n, anc in iter_nodes(body):
             if n["type"] != "SYMBOL" or n["name"] not in names:
                 continue
-            slot = next((a["name"] for a in reversed(anc) if a["type"] == "FIELD"), path)
+            slot = next((a["name"] for a in reversed(anc) if a["type"] == "FIELD"),
+                        roots.get(n["name"]) or alias.get(path, path))
             repeated = any(a["type"] in ("REPEAT", "REPEAT1") for a in anc)
             i, cur = len(anc), n
             while i > 0 and anc[i - 1]["type"] in TRANSPARENT | {"CHOICE"}:
@@ -195,25 +262,37 @@ def boundaries(g):
             k = next((j for j, m in enumerate(sibs) if m is cur), None)
             nxt = sibs[k + 1] if k is not None and k + 1 < len(sibs) else None
             prv = sibs[k - 1] if k else None
-            sep = (prv is not None and _unwrap(prv, "")[0]["type"] == "STRING"
+            if prv is not None and _unwrap(prv, "")[0] == LEAD:
+                continue    # Phase C leadingPrefixed arm: the prefix mechanism of the enclosing slot, no slot of its own
+            sep =(prv is not None and _unwrap(prv, "")[0]["type"] == "STRING"
                    and _unwrap(prv, "")[0]["value"] in (",", ";"))
             edges = {"between": ((), False)} if repeated and sep else                     {"start": ((), False), "end": ((), False)}
             if "start" in edges and prv is not None:
                 found, opt = _sibling_sym(prv, PREFIX)
                 if found:
                     edges["start"] = (("operand-prefix",), not opt)
-            if nxt is not None and tail_m:
+            if n["name"] in roots and tail_m:            # a region root carries an optional tail
+                edges["end" if "end" in edges else "between"] = (tail_m, False)
+            elif nxt is not None and tail_m:
                 found, opt = _sibling_sym(nxt, TAIL)
                 if found:
                     edges["end" if "end" in edges else "between"] = (tail_m, not opt)
             for e, (m, req) in edges.items():
-                acc.setdefault((rule, slot, e), []).append((path, m, req))
+                acc.setdefault((rule, slot, e), []).append((path, m, req, nxt is None))
     out = []
     for (r, s, e), arms in acc.items():
-        if len({(m, q) for _, m, q in arms}) == 1:     # arms agree: one row
+        kinds = {(m, q) for _, m, q, _ in arms}
+        if len(kinds) == 1:                            # arms agree: one row
             out.append(Boundary(r, s, e, arms[0][1], arms[0][2]))
+        elif (tail_m and kinds == {((), False), (tail_m, True)}
+              and all(last for _, m, _, last in arms if m == ())):
+            # B7b-2 root rule (spec 5.2 amendment): `choice(field(f, _expression),
+            # seq(field(f, _continuation_operand), tail))` is `f optional(tail)` split by
+            # removal (the plain arm ends with the slot); one boundary, the tail optional,
+            # so the slot keeps its key.
+            out.append(Boundary(r, s, e, tail_m, False))
         else:                                          # a union would hide an arm without a continuation
-            out += [Boundary(r, f"{s}@{p}", e, m, q) for p, m, q in arms]
+            out += [Boundary(r, f"{s}@{p}", e, m, q) for p, m, q, _ in arms]
     return sorted(out, key=key_of)
 
 

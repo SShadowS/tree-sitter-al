@@ -1,5 +1,5 @@
 // B7a Task 10 witness (GAP): family parenthesized, base placement consecutive, 4 cells; representative bnd:parenthesized_expression:1:end@parenthesized_expression#consecutive/arithmetic
-// Fixture b7_gap_parenthesized_test.txt#B7a GAP: parenthesized / consecutive (4 cells, verdict of the representative GAP); the parser ERRORs on configurations alc accepts; representative bnd:parenthesized_expression:1:end@parenthesized_expression%23consecutive/arithmetic#0
+// Fixture b7b2_parenthesized_test.txt#B7b-2 parenthesized / consecutive: moved from b7_gap_parenthesized_test.txt#0
 // expect: !X !Y accept
 // expect: !X Y accept
 // expect: X !Y accept

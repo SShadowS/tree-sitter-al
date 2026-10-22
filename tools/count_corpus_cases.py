@@ -58,7 +58,7 @@ DIVIDER = re.compile(rb"(?m)^-{3,}\r?$")
 # so it lands in the same declared-but-not-run gap as a missing divider and
 # would otherwise show up as an unexplained off-by-N. It is reported separately
 # because it is not a corpus-format defect -- it is a DISABLED TEST, which
-# CLAUDE.md's "no known limitations" rule forbids in this repo, so the right
+# CLAUDE.md's "Known limits are recorded, not denied" section forbids, so the right
 # response is to say so rather than to quietly subtract it.
 # `:error` and `:fail-fast` still run and need no handling. `:platform(...)`
 # runs conditionally and is flagged as unmodelled rather than guessed at.

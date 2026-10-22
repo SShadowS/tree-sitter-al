@@ -204,9 +204,8 @@ codeunit 50101 P {
         body: (code_block
           (begin_keyword)
           (ERROR
-            (additive_expression
-              left: (integer)
-              right: (integer)))
+            (integer)
+            (integer))
           body: (statement_block
             (empty_statement))
           (end_keyword))))))
@@ -261,8 +260,7 @@ codeunit 50101 P {
         body: (code_block
           (begin_keyword)
           (ERROR
-            (unary_expression
-              operand: (integer)))
+            (integer))
           body: (statement_block
             (empty_statement))
           (end_keyword))))))
@@ -316,13 +314,11 @@ codeunit 50101 P {
                 (basic_type)))))
         body: (code_block
           (begin_keyword)
-          (ERROR
-            (unary_expression
-              operand: (call_expression
-                function: (identifier)
-                arguments: (argument_list))))
+          (ERROR)
           body: (statement_block
-            (empty_statement))
+            (call_expression
+              function: (identifier)
+              arguments: (argument_list)))
           (end_keyword))))))
 
 ================================================================================
@@ -374,13 +370,11 @@ not Foo();
                 (basic_type)))))
         body: (code_block
           (begin_keyword)
-          (ERROR
-            (unary_expression
-              operand: (call_expression
-                function: (identifier)
-                arguments: (argument_list))))
+          (ERROR)
           body: (statement_block
-            (empty_statement))
+            (call_expression
+              function: (identifier)
+              arguments: (argument_list)))
           (end_keyword))))))
 
 ================================================================================
@@ -490,16 +484,14 @@ Rec.Get() = true;
                 (basic_type)))))
         body: (code_block
           (begin_keyword)
-          (ERROR
-            (comparison_expression
-              left: (call_expression
-                function: (member_expression
-                  object: (identifier)
-                  member: (identifier))
-                arguments: (argument_list))
-              operator: (comparison_operator)
-              right: (boolean)))
           body: (statement_block
+            (call_expression
+              function: (member_expression
+                object: (identifier)
+                member: (identifier))
+              arguments: (argument_list))
+            (ERROR
+              (boolean))
             (empty_statement))
           (end_keyword))))))
 
@@ -642,53 +634,56 @@ Foo()
     (codeunit_keyword)
     object_id: (integer)
     object_name: (identifier)
-    (ERROR
-      (procedure_keyword)
-      name: (identifier)
-      (var_section
-        (var_keyword)
-        body: (var_body
-          (variable_declaration
-            name: (identifier)
-            type: (type_specification
-              (record_type
-                (record_keyword)
-                reference: (identifier))))
-          (variable_declaration
-            name: (identifier)
-            type: (type_specification
-              (basic_type)))
-          (variable_declaration
-            name: (identifier)
-            type: (type_specification
-              (array_type
-                (array_keyword)
-                sizes: (integer)
-                (of_keyword)
-                element_type: (type_specification
-                  (basic_type)))))
-          (variable_declaration
-            name: (identifier)
-            type: (type_specification
-              (basic_type)))))
-      (begin_keyword)
-      (call_expression
-        function: (identifier)
-        arguments: (argument_list))
-      (preproc_if
-        (preproc_open)
-        condition: (identifier))
-      (ERROR
-        (unary_expression
-          operand: (integer)))
-      (preproc_else)
-      (ERROR
-        (unary_expression
-          operand: (integer))
-        (UNEXPECTED 'i'))
-      (empty_statement)
-      (call_statement
-        function: (identifier)))))
+    body: (declaration_body
+      (procedure
+        (procedure_keyword)
+        name: (identifier)
+        (var_section
+          (var_keyword)
+          body: (var_body
+            (variable_declaration
+              name: (identifier)
+              type: (type_specification
+                (record_type
+                  (record_keyword)
+                  reference: (identifier))))
+            (variable_declaration
+              name: (identifier)
+              type: (type_specification
+                (basic_type)))
+            (variable_declaration
+              name: (identifier)
+              type: (type_specification
+                (array_type
+                  (array_keyword)
+                  sizes: (integer)
+                  (of_keyword)
+                  element_type: (type_specification
+                    (basic_type)))))
+            (variable_declaration
+              name: (identifier)
+              type: (type_specification
+                (basic_type)))))
+        body: (code_block
+          (begin_keyword)
+          body: (statement_block
+            (call_expression
+              function: (identifier)
+              arguments: (argument_list))
+            (ERROR
+              (preproc_conditional_operand
+                (preproc_if
+                  (preproc_open)
+                  condition: (identifier))
+                (ERROR)
+                operand: (integer)
+                (preproc_else)
+                (ERROR)
+                operand: (integer)
+                (preproc_endif
+                  (preproc_close))))
+            (empty_statement))
+          (end_keyword))))))
 
 ================================================================================
 B6 negative: exit value torn by an arithmetic #if arm in every branch
@@ -713,53 +708,56 @@ exit(1)
     (codeunit_keyword)
     object_id: (integer)
     object_name: (identifier)
-    (ERROR
-      (procedure_keyword)
-      name: (identifier)
-      (var_section
-        (var_keyword)
-        body: (var_body
-          (variable_declaration
-            name: (identifier)
-            type: (type_specification
-              (record_type
-                (record_keyword)
-                reference: (identifier))))
-          (variable_declaration
-            name: (identifier)
-            type: (type_specification
-              (basic_type)))
-          (variable_declaration
-            name: (identifier)
-            type: (type_specification
-              (array_type
-                (array_keyword)
-                sizes: (integer)
-                (of_keyword)
-                element_type: (type_specification
-                  (basic_type)))))
-          (variable_declaration
-            name: (identifier)
-            type: (type_specification
-              (basic_type)))))
-      (begin_keyword)
-      (exit_statement
-        (exit_keyword)
-        return_value: (integer))
-      (preproc_if
-        (preproc_open)
-        condition: (identifier))
-      (ERROR
-        (unary_expression
-          operand: (integer)))
-      (preproc_else)
-      (ERROR
-        (unary_expression
-          operand: (integer))
-        (UNEXPECTED 'i'))
-      (empty_statement)
-      (call_statement
-        function: (identifier)))))
+    body: (declaration_body
+      (procedure
+        (procedure_keyword)
+        name: (identifier)
+        (var_section
+          (var_keyword)
+          body: (var_body
+            (variable_declaration
+              name: (identifier)
+              type: (type_specification
+                (record_type
+                  (record_keyword)
+                  reference: (identifier))))
+            (variable_declaration
+              name: (identifier)
+              type: (type_specification
+                (basic_type)))
+            (variable_declaration
+              name: (identifier)
+              type: (type_specification
+                (array_type
+                  (array_keyword)
+                  sizes: (integer)
+                  (of_keyword)
+                  element_type: (type_specification
+                    (basic_type)))))
+            (variable_declaration
+              name: (identifier)
+              type: (type_specification
+                (basic_type)))))
+        body: (code_block
+          (begin_keyword)
+          body: (statement_block
+            (exit_statement
+              (exit_keyword)
+              return_value: (integer))
+            (ERROR
+              (preproc_conditional_operand
+                (preproc_if
+                  (preproc_open)
+                  condition: (identifier))
+                (ERROR)
+                operand: (integer)
+                (preproc_else)
+                (ERROR)
+                operand: (integer)
+                (preproc_endif
+                  (preproc_close))))
+            (empty_statement))
+          (end_keyword))))))
 
 ================================================================================
 bare exit stays valueless; a following parenthesized expression is an ERROR
@@ -1176,9 +1174,8 @@ not(C);
         body: (code_block
           (begin_keyword)
           (ERROR
-            (unary_expression
-              operand: (parenthesized_expression
-                (identifier))))
+            (parenthesized_expression
+              (identifier)))
           body: (statement_block
             (empty_statement))
           (end_keyword))))))
@@ -1317,58 +1314,61 @@ Foo()
     (codeunit_keyword)
     object_id: (integer)
     object_name: (identifier)
-    (ERROR
-      (procedure_keyword)
-      name: (identifier)
-      (var_section
-        (var_keyword)
-        body: (var_body
-          (variable_declaration
-            name: (identifier)
-            type: (type_specification
-              (record_type
-                (record_keyword)
-                reference: (identifier))))
-          (variable_declaration
-            name: (identifier)
-            type: (type_specification
-              (basic_type)))
-          (variable_declaration
-            name: (identifier)
-            type: (type_specification
-              (array_type
-                (array_keyword)
-                sizes: (integer)
-                (of_keyword)
-                element_type: (type_specification
-                  (basic_type)))))
-          (variable_declaration
-            name: (identifier)
-            type: (type_specification
-              (basic_type)))))
-      (begin_keyword)
-      (call_expression
-        function: (identifier)
-        arguments: (argument_list))
-      (preproc_if
-        (preproc_open)
-        condition: (identifier))
-      (ERROR
-        (logical_expression
-          left: (parenthesized_expression
-            (comparison_expression
-              left: (integer)
-              operator: (comparison_operator)
-              right: (integer)))
-          (ERROR
-            (preproc_else))
-          right: (parenthesized_expression
-            (comparison_expression
-              left: (integer)
-              operator: (comparison_operator)
-              right: (integer))))
-        (UNEXPECTED 'i')
-        (if_keyword))
-      (empty_statement)
-      (call_statement
-        function: (identifier)))))
+    body: (declaration_body
+      (procedure
+        (procedure_keyword)
+        name: (identifier)
+        (var_section
+          (var_keyword)
+          body: (var_body
+            (variable_declaration
+              name: (identifier)
+              type: (type_specification
+                (record_type
+                  (record_keyword)
+                  reference: (identifier))))
+            (variable_declaration
+              name: (identifier)
+              type: (type_specification
+                (basic_type)))
+            (variable_declaration
+              name: (identifier)
+              type: (type_specification
+                (array_type
+                  (array_keyword)
+                  sizes: (integer)
+                  (of_keyword)
+                  element_type: (type_specification
+                    (basic_type)))))
+            (variable_declaration
+              name: (identifier)
+              type: (type_specification
+                (basic_type)))))
+        body: (code_block
+          (begin_keyword)
+          body: (statement_block
+            (call_expression
+              function: (identifier)
+              arguments: (argument_list))
+            (ERROR
+              (preproc_conditional_operand
+                (preproc_if
+                  (preproc_open)
+                  condition: (identifier))
+                (ERROR)
+                operand: (parenthesized_expression
+                  (comparison_expression
+                    left: (integer)
+                    operator: (comparison_operator)
+                    right: (integer)))
+                (preproc_else)
+                (ERROR)
+                operand: (parenthesized_expression
+                  (comparison_expression
+                    left: (integer)
+                    operator: (comparison_operator)
+                    right: (integer)))
+                (preproc_endif
+                  (preproc_close))))
+            (empty_statement))
+          (end_keyword))))))

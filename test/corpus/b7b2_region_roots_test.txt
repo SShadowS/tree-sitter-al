@@ -1,0 +1,1010 @@
+================================================================================
+B7b-2 region root: repeat-until condition (item 39 shape 1), suffix and consecutive
+--
+Spec 5.1 table (repeat_statement.condition), deferred-work item 39 shape 1. The
+tail is the last child of repeat_statement beside `condition:`; a consecutive
+group is the last child of the first tail (root trail `cont* [tail]`).
+================================================================================
+codeunit 50100 P
+{
+    procedure Q()
+    begin
+        repeat
+            Foo();
+        until C
+#if X
+            and (C)
+#endif
+            ;
+        repeat
+            Foo();
+        until C
+#if X
+            and D
+#endif
+#if Y
+            or E
+#endif
+            ;
+    end;
+}
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (procedure
+        (procedure_keyword)
+        name: (identifier)
+        body: (code_block
+          (begin_keyword)
+          body: (statement_block
+            (repeat_statement
+              (repeat_keyword)
+              body: (statement_block
+                (call_expression
+                  function: (identifier)
+                  arguments: (argument_list)))
+              (until_keyword)
+              condition: (identifier)
+              (preproc_conditional_expression_tail
+                (preproc_if
+                  (preproc_open)
+                  condition: (identifier))
+                operand: (parenthesized_expression
+                  (identifier))
+                (preproc_endif
+                  (preproc_close))))
+            (repeat_statement
+              (repeat_keyword)
+              body: (statement_block
+                (call_expression
+                  function: (identifier)
+                  arguments: (argument_list)))
+              (until_keyword)
+              condition: (identifier)
+              (preproc_conditional_expression_tail
+                (preproc_if
+                  (preproc_open)
+                  condition: (identifier))
+                operand: (identifier)
+                (preproc_endif
+                  (preproc_close))
+                (preproc_conditional_expression_tail
+                  (preproc_if
+                    (preproc_open)
+                    condition: (identifier))
+                  operand: (identifier)
+                  (preproc_endif
+                    (preproc_close))))))
+          (end_keyword))))))
+
+================================================================================
+B7b-2 region root: case expression, suffix and consecutive
+--
+Spec 5.1 table (case_statement.expression): the tail stands between
+`expression:` and `of`.
+================================================================================
+codeunit 50100 P
+{
+    procedure Q()
+    begin
+        case i
+#if X
+            + 1
+#endif
+            of
+            1:
+                Foo();
+        end;
+        case i
+#if X
+            + 1
+#endif
+#if Y
+            * 2
+#endif
+            of
+            1:
+                Foo();
+        end;
+    end;
+}
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (procedure
+        (procedure_keyword)
+        name: (identifier)
+        body: (code_block
+          (begin_keyword)
+          body: (statement_block
+            (case_statement
+              (case_keyword)
+              expression: (identifier)
+              (preproc_conditional_expression_tail
+                (preproc_if
+                  (preproc_open)
+                  condition: (identifier))
+                operand: (integer)
+                (preproc_endif
+                  (preproc_close)))
+              (of_keyword)
+              body: (case_body
+                (case_branch
+                  pattern: (integer)
+                  body: (call_expression
+                    function: (identifier)
+                    arguments: (argument_list))))
+              (end_keyword))
+            (case_statement
+              (case_keyword)
+              expression: (identifier)
+              (preproc_conditional_expression_tail
+                (preproc_if
+                  (preproc_open)
+                  condition: (identifier))
+                operand: (integer)
+                (preproc_endif
+                  (preproc_close))
+                (preproc_conditional_expression_tail
+                  (preproc_if
+                    (preproc_open)
+                    condition: (identifier))
+                  operand: (integer)
+                  (preproc_endif
+                    (preproc_close))))
+              (of_keyword)
+              body: (case_body
+                (case_branch
+                  pattern: (integer)
+                  body: (call_expression
+                    function: (identifier)
+                    arguments: (argument_list))))
+              (end_keyword)))
+          (end_keyword))))))
+
+================================================================================
+B7b-2 region root: preproc_split_case_statement_end expression
+--
+Spec 5.1 table: the split case end's own `expression:` is a region root like
+case_statement's.
+================================================================================
+codeunit 50100 P
+{
+    procedure Q()
+    begin
+        case i
+#if X
+            + 1
+#endif
+            of
+            1:
+                Foo();
+            2:
+#if Y
+                Foo();
+        end;
+        Bar();
+#else
+                Bar();
+        end;
+        Foo();
+#endif
+    end;
+}
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (procedure
+        (procedure_keyword)
+        name: (identifier)
+        body: (code_block
+          (begin_keyword)
+          body: (statement_block
+            (preproc_split_case_statement_end
+              (case_keyword)
+              expression: (identifier)
+              (preproc_conditional_expression_tail
+                (preproc_if
+                  (preproc_open)
+                  condition: (identifier))
+                operand: (integer)
+                (preproc_endif
+                  (preproc_close)))
+              (of_keyword)
+              body: (case_body
+                (case_branch
+                  pattern: (integer)
+                  body: (call_expression
+                    function: (identifier)
+                    arguments: (argument_list))))
+              pattern: (integer)
+              (preproc_if
+                (preproc_open)
+                condition: (identifier))
+              (preproc_split_case_end_branch
+                body: (call_expression
+                  function: (identifier)
+                  arguments: (argument_list))
+                (end_keyword)
+                following: (statement_block
+                  (call_expression
+                    function: (identifier)
+                    arguments: (argument_list))))
+              (preproc_else)
+              (preproc_split_case_end_branch
+                body: (call_expression
+                  function: (identifier)
+                  arguments: (argument_list))
+                (end_keyword)
+                following: (statement_block
+                  (call_expression
+                    function: (identifier)
+                    arguments: (argument_list))))
+              (preproc_endif
+                (preproc_close))))
+          (end_keyword))))))
+
+================================================================================
+B7b-2 region root: ternary then_value, suffix and consecutive
+--
+Spec 5.1 table (ternary_expression then): the tail stands between
+`then_value:` and `:`, inside the ternary.
+================================================================================
+codeunit 50100 P
+{
+    procedure Q()
+    begin
+        x := Ok ? 1
+#if X
+            + 2
+#endif
+            : 3;
+        x := Ok ? 1
+#if X
+            + 2
+#endif
+#if Y
+            - 3
+#endif
+            : 3;
+    end;
+}
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (procedure
+        (procedure_keyword)
+        name: (identifier)
+        body: (code_block
+          (begin_keyword)
+          body: (statement_block
+            (assignment_statement
+              left: (identifier)
+              operator: (assignment_operator)
+              right: (ternary_expression
+                condition: (identifier)
+                then_value: (integer)
+                (preproc_conditional_expression_tail
+                  (preproc_if
+                    (preproc_open)
+                    condition: (identifier))
+                  operand: (integer)
+                  (preproc_endif
+                    (preproc_close)))
+                else_value: (integer)))
+            (assignment_statement
+              left: (identifier)
+              operator: (assignment_operator)
+              right: (ternary_expression
+                condition: (identifier)
+                then_value: (integer)
+                (preproc_conditional_expression_tail
+                  (preproc_if
+                    (preproc_open)
+                    condition: (identifier))
+                  operand: (integer)
+                  (preproc_endif
+                    (preproc_close))
+                  (preproc_conditional_expression_tail
+                    (preproc_if
+                      (preproc_open)
+                      condition: (identifier))
+                    operand: (integer)
+                    (preproc_endif
+                      (preproc_close))))
+                else_value: (integer))))
+          (end_keyword))))))
+
+================================================================================
+B7b-2 region root: parenthesized inner, suffix and consecutive
+--
+Spec 5.1 table (parenthesized_expression inner): the tail is inside the
+parentheses, so `* 3` multiplies the whole region (spec 3.1: the parenthesized
+inner is a boundary).
+================================================================================
+codeunit 50100 P
+{
+    procedure Q()
+    begin
+        x := (1
+#if X
+            + 2
+#endif
+            ) * 3;
+        x := (1
+#if X
+            + 2
+#endif
+#if Y
+            + 3
+#endif
+            ) * 3;
+    end;
+}
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (procedure
+        (procedure_keyword)
+        name: (identifier)
+        body: (code_block
+          (begin_keyword)
+          body: (statement_block
+            (assignment_statement
+              left: (identifier)
+              operator: (assignment_operator)
+              right: (multiplicative_expression
+                left: (parenthesized_expression
+                  (integer)
+                  (preproc_conditional_expression_tail
+                    (preproc_if
+                      (preproc_open)
+                      condition: (identifier))
+                    operand: (integer)
+                    (preproc_endif
+                      (preproc_close))))
+                right: (integer)))
+            (assignment_statement
+              left: (identifier)
+              operator: (assignment_operator)
+              right: (multiplicative_expression
+                left: (parenthesized_expression
+                  (integer)
+                  (preproc_conditional_expression_tail
+                    (preproc_if
+                      (preproc_open)
+                      condition: (identifier))
+                    operand: (integer)
+                    (preproc_endif
+                      (preproc_close))
+                    (preproc_conditional_expression_tail
+                      (preproc_if
+                        (preproc_open)
+                        condition: (identifier))
+                      operand: (integer)
+                      (preproc_endif
+                        (preproc_close)))))
+                right: (integer))))
+          (end_keyword))))))
+
+================================================================================
+B7b-2 region root: range left, suffix and consecutive
+--
+Spec 5.1 table (range_expression left): the tail stands between `left:` and
+`..`, inside the range.
+================================================================================
+codeunit 50100 P
+{
+    procedure Q()
+    begin
+        Ok := i in [1
+#if X
+            + 1
+#endif
+            .. 5];
+        Ok := i in [1
+#if X
+            + 1
+#endif
+#if Y
+            + 2
+#endif
+            .. 5];
+    end;
+}
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (procedure
+        (procedure_keyword)
+        name: (identifier)
+        body: (code_block
+          (begin_keyword)
+          body: (statement_block
+            (assignment_statement
+              left: (identifier)
+              operator: (assignment_operator)
+              right: (in_expression
+                left: (identifier)
+                operator: (in_keyword)
+                right: (list_literal
+                  (range_expression
+                    left: (integer)
+                    (preproc_conditional_expression_tail
+                      (preproc_if
+                        (preproc_open)
+                        condition: (identifier))
+                      operand: (integer)
+                      (preproc_endif
+                        (preproc_close)))
+                    right: (integer)))))
+            (assignment_statement
+              left: (identifier)
+              operator: (assignment_operator)
+              right: (in_expression
+                left: (identifier)
+                operator: (in_keyword)
+                right: (list_literal
+                  (range_expression
+                    left: (integer)
+                    (preproc_conditional_expression_tail
+                      (preproc_if
+                        (preproc_open)
+                        condition: (identifier))
+                      operand: (integer)
+                      (preproc_endif
+                        (preproc_close))
+                      (preproc_conditional_expression_tail
+                        (preproc_if
+                          (preproc_open)
+                          condition: (identifier))
+                        operand: (integer)
+                        (preproc_endif
+                          (preproc_close))))
+                    right: (integer))))))
+          (end_keyword))))))
+
+================================================================================
+B7b-2 region root: for start, suffix and consecutive
+--
+Spec 5.1 table (for_statement.start): the tail stands between `start:` and
+the direction keyword.
+================================================================================
+codeunit 50100 P
+{
+    procedure Q()
+    begin
+        for i := 1
+#if X
+            + 1
+#endif
+            to 5 do
+            Foo();
+        for i := 1
+#if X
+            + 1
+#endif
+#if Y
+            + 2
+#endif
+            to 5 do
+            Foo();
+    end;
+}
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (procedure
+        (procedure_keyword)
+        name: (identifier)
+        body: (code_block
+          (begin_keyword)
+          body: (statement_block
+            (for_statement
+              (for_keyword)
+              variable: (identifier)
+              start: (integer)
+              (preproc_conditional_expression_tail
+                (preproc_if
+                  (preproc_open)
+                  condition: (identifier))
+                operand: (integer)
+                (preproc_endif
+                  (preproc_close)))
+              direction: (to_keyword)
+              end: (integer)
+              (do_keyword)
+              body: (call_expression
+                function: (identifier)
+                arguments: (argument_list)))
+            (for_statement
+              (for_keyword)
+              variable: (identifier)
+              start: (integer)
+              (preproc_conditional_expression_tail
+                (preproc_if
+                  (preproc_open)
+                  condition: (identifier))
+                operand: (integer)
+                (preproc_endif
+                  (preproc_close))
+                (preproc_conditional_expression_tail
+                  (preproc_if
+                    (preproc_open)
+                    condition: (identifier))
+                  operand: (integer)
+                  (preproc_endif
+                    (preproc_close))))
+              direction: (to_keyword)
+              end: (integer)
+              (do_keyword)
+              body: (call_expression
+                function: (identifier)
+                arguments: (argument_list))))
+          (end_keyword))))))
+
+================================================================================
+B7b-2 region root: subscript second index, suffix and consecutive
+--
+Spec 5.1 table (subscript_expression 2nd+ index): the second index is
+unfielded, as before; its tail follows it inside the subscript.
+================================================================================
+codeunit 50100 P
+{
+    procedure Q()
+    begin
+        x := Arr2[1, 2
+#if X
+            - 1
+#endif
+            ];
+        x := Arr2[1, 2
+#if X
+            - 1
+#endif
+#if Y
+            * 1
+#endif
+            ];
+    end;
+}
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (procedure
+        (procedure_keyword)
+        name: (identifier)
+        body: (code_block
+          (begin_keyword)
+          body: (statement_block
+            (assignment_statement
+              left: (identifier)
+              operator: (assignment_operator)
+              right: (subscript_expression
+                object: (identifier)
+                index: (integer)
+                (integer)
+                (preproc_conditional_expression_tail
+                  (preproc_if
+                    (preproc_open)
+                    condition: (identifier))
+                  operand: (integer)
+                  (preproc_endif
+                    (preproc_close)))))
+            (assignment_statement
+              left: (identifier)
+              operator: (assignment_operator)
+              right: (subscript_expression
+                object: (identifier)
+                index: (integer)
+                (integer)
+                (preproc_conditional_expression_tail
+                  (preproc_if
+                    (preproc_open)
+                    condition: (identifier))
+                  operand: (integer)
+                  (preproc_endif
+                    (preproc_close))
+                  (preproc_conditional_expression_tail
+                    (preproc_if
+                      (preproc_open)
+                      condition: (identifier))
+                    operand: (integer)
+                    (preproc_endif
+                      (preproc_close)))))))
+          (end_keyword))))))
+
+================================================================================
+B7b-2 region root: list second element, suffix and consecutive
+--
+Spec 5.1 table (list_literal 2nd+ element, continuation cells only): the tail
+follows the second element inside the list.
+================================================================================
+codeunit 50100 P
+{
+    procedure Q()
+    begin
+        Ok := i in [1, 2
+#if X
+            + 1
+#endif
+            ];
+        Ok := i in [1, 2
+#if X
+            + 1
+#endif
+#if Y
+            + 2
+#endif
+            ];
+    end;
+}
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (procedure
+        (procedure_keyword)
+        name: (identifier)
+        body: (code_block
+          (begin_keyword)
+          body: (statement_block
+            (assignment_statement
+              left: (identifier)
+              operator: (assignment_operator)
+              right: (in_expression
+                left: (identifier)
+                operator: (in_keyword)
+                right: (list_literal
+                  (integer)
+                  (integer)
+                  (preproc_conditional_expression_tail
+                    (preproc_if
+                      (preproc_open)
+                      condition: (identifier))
+                    operand: (integer)
+                    (preproc_endif
+                      (preproc_close))))))
+            (assignment_statement
+              left: (identifier)
+              operator: (assignment_operator)
+              right: (in_expression
+                left: (identifier)
+                operator: (in_keyword)
+                right: (list_literal
+                  (integer)
+                  (integer)
+                  (preproc_conditional_expression_tail
+                    (preproc_if
+                      (preproc_open)
+                      condition: (identifier))
+                    operand: (integer)
+                    (preproc_endif
+                      (preproc_close))
+                    (preproc_conditional_expression_tail
+                      (preproc_if
+                        (preproc_open)
+                        condition: (identifier))
+                      operand: (integer)
+                      (preproc_endif
+                        (preproc_close))))))))
+          (end_keyword))))))
+
+================================================================================
+B7b-2 region root: with record and foreach iterable
+--
+Spec 5.1 table (with_statement.record, foreach_statement.iterable; foreach has
+no B7a cells, included for uniformity). Syntax only: the operand types are not
+the point here.
+================================================================================
+codeunit 50100 P
+{
+    procedure Q()
+    begin
+        with Recs[1]
+#if X
+            + 1
+#endif
+            do
+            Foo();
+        foreach i in L
+#if X
+            + 1
+#endif
+            do
+            Foo();
+    end;
+}
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (procedure
+        (procedure_keyword)
+        name: (identifier)
+        body: (code_block
+          (begin_keyword)
+          body: (statement_block
+            (with_statement
+              (with_keyword)
+              record: (subscript_expression
+                object: (identifier)
+                index: (integer))
+              (preproc_conditional_expression_tail
+                (preproc_if
+                  (preproc_open)
+                  condition: (identifier))
+                operand: (integer)
+                (preproc_endif
+                  (preproc_close)))
+              (do_keyword)
+              body: (call_expression
+                function: (identifier)
+                arguments: (argument_list)))
+            (foreach_statement
+              (foreach_keyword)
+              variable: (identifier)
+              (in_keyword)
+              iterable: (identifier)
+              (preproc_conditional_expression_tail
+                (preproc_if
+                  (preproc_open)
+                  condition: (identifier))
+                operand: (integer)
+                (preproc_endif
+                  (preproc_close)))
+              (do_keyword)
+              body: (call_expression
+                function: (identifier)
+                arguments: (argument_list))))
+          (end_keyword))))))
+
+================================================================================
+B7b-2 region root: split-if heads, suffix and consecutive
+--
+Spec 5.1 table (_preproc_if_header and the split-if heads; C1, oracle-blind):
+each head's condition carries its own tail.
+================================================================================
+codeunit 50100 P
+{
+    procedure Q()
+    begin
+#if A
+        if C
+#if X
+            and D
+#endif
+            then
+#else
+        if E
+#if X
+            and D
+#endif
+#if Y
+            or F
+#endif
+            then
+#endif
+            Foo();
+    end;
+}
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (procedure
+        (procedure_keyword)
+        name: (identifier)
+        body: (code_block
+          (begin_keyword)
+          body: (statement_block
+            (preproc_split_if_statement
+              (preproc_if
+                (preproc_open)
+                condition: (identifier))
+              (if_keyword)
+              condition: (identifier)
+              (preproc_conditional_expression_tail
+                (preproc_if
+                  (preproc_open)
+                  condition: (identifier))
+                operand: (identifier)
+                (preproc_endif
+                  (preproc_close)))
+              (then_keyword)
+              (preproc_else)
+              (if_keyword)
+              condition: (identifier)
+              (preproc_conditional_expression_tail
+                (preproc_if
+                  (preproc_open)
+                  condition: (identifier))
+                operand: (identifier)
+                (preproc_endif
+                  (preproc_close))
+                (preproc_conditional_expression_tail
+                  (preproc_if
+                    (preproc_open)
+                    condition: (identifier))
+                  operand: (identifier)
+                  (preproc_endif
+                    (preproc_close))))
+              (then_keyword)
+              (preproc_endif
+                (preproc_close))
+              then_branch: (call_expression
+                function: (identifier)
+                arguments: (argument_list))))
+          (end_keyword))))))
+
+================================================================================
+B7b-2 region root: split-call arguments
+--
+Spec 5.1 table (_preproc_call_prefix and _expression_list arguments; C1,
+oracle-blind): an argument in a branch prefix and a shared argument after
+#endif each carry a tail.
+================================================================================
+codeunit 50100 P
+{
+    procedure Q()
+    begin
+#if A
+        Foo(1
+#if X
+            + 2
+#endif
+            ,
+#else
+        Foo(3,
+#endif
+            4
+#if Y
+            + 5
+#endif
+            );
+    end;
+}
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (procedure
+        (procedure_keyword)
+        name: (identifier)
+        body: (code_block
+          (begin_keyword)
+          body: (statement_block
+            (preproc_split_call_statement
+              (preproc_if
+                (preproc_open)
+                condition: (identifier))
+              (identifier)
+              (integer)
+              (preproc_conditional_expression_tail
+                (preproc_if
+                  (preproc_open)
+                  condition: (identifier))
+                operand: (integer)
+                (preproc_endif
+                  (preproc_close)))
+              (preproc_else)
+              (identifier)
+              (integer)
+              (preproc_endif
+                (preproc_close))
+              (integer)
+              (preproc_conditional_expression_tail
+                (preproc_if
+                  (preproc_open)
+                  condition: (identifier))
+                operand: (integer)
+                (preproc_endif
+                  (preproc_close)))))
+          (end_keyword))))))
+
+================================================================================
+B7b-2 region root: a tail before in continues the root (spec 4.3 witness)
+--
+Spec 4.3: `b := i #if X + 1 #endif in [1, 2] and Ok;` is ((i+1) in [1,2]) and
+Ok. in_expression.left is not a tail site (5.1), so the group belongs to the
+assignment root, and `in [1, 2]` and `and Ok` are the tail's trailing items
+(the typed `in` arm takes the list as one atom, 5.3).
+================================================================================
+codeunit 50100 P
+{
+    procedure Q()
+    begin
+        b := i
+#if X
+            + 1
+#endif
+            in [1, 2] and Ok;
+    end;
+}
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (procedure
+        (procedure_keyword)
+        name: (identifier)
+        body: (code_block
+          (begin_keyword)
+          body: (statement_block
+            (assignment_statement
+              left: (identifier)
+              operator: (assignment_operator)
+              right: (identifier)
+              (preproc_conditional_expression_tail
+                (preproc_if
+                  (preproc_open)
+                  condition: (identifier))
+                operand: (integer)
+                (preproc_endif
+                  (preproc_close))
+                operator: (in_keyword)
+                operand: (list_literal
+                  (integer)
+                  (integer))
+                operand: (identifier))))
+          (end_keyword))))))

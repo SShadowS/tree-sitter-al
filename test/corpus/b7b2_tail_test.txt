@@ -1,0 +1,1111 @@
+================================================================================
+B7b-2 tail: consecutive groups at a root nest (tail2 is the last child of tail1)
+--
+Spec 5.1 and execution amendments (shape deviation: a root tail's trail is
+`cont* [tail]`). alc accepts every configuration:
+tools/alc_probe/cases/b7b-2/tails/consecutive.al. Before B7b-2: ERROR (RC1).
+================================================================================
+codeunit 50100 P
+{
+    procedure Q()
+    begin
+        I := 1
+#if X
+            + 2
+#endif
+#if Y
+            + 3
+#endif
+            ;
+    end;
+}
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (procedure
+        (procedure_keyword)
+        name: (identifier)
+        body: (code_block
+          (begin_keyword)
+          body: (statement_block
+            (assignment_statement
+              left: (identifier)
+              operator: (assignment_operator)
+              right: (integer)
+              (preproc_conditional_expression_tail
+                (preproc_if
+                  (preproc_open)
+                  condition: (identifier))
+                operand: (integer)
+                (preproc_endif
+                  (preproc_close))
+                (preproc_conditional_expression_tail
+                  (preproc_if
+                    (preproc_open)
+                    condition: (identifier))
+                  operand: (integer)
+                  (preproc_endif
+                    (preproc_close))))))
+          (end_keyword))))))
+
+================================================================================
+B7b-2 tail: three consecutive groups at a root nest to depth three
+--
+The root-tail trail rule applied twice: each group owns the next.
+================================================================================
+codeunit 50100 P
+{
+    procedure Q()
+    begin
+        I := 1
+#if X
+            + 2
+#endif
+#if Y
+            + 3
+#endif
+#if Z
+            + 4
+#endif
+            ;
+    end;
+}
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (procedure
+        (procedure_keyword)
+        name: (identifier)
+        body: (code_block
+          (begin_keyword)
+          body: (statement_block
+            (assignment_statement
+              left: (identifier)
+              operator: (assignment_operator)
+              right: (integer)
+              (preproc_conditional_expression_tail
+                (preproc_if
+                  (preproc_open)
+                  condition: (identifier))
+                operand: (integer)
+                (preproc_endif
+                  (preproc_close))
+                (preproc_conditional_expression_tail
+                  (preproc_if
+                    (preproc_open)
+                    condition: (identifier))
+                  operand: (integer)
+                  (preproc_endif
+                    (preproc_close))
+                  (preproc_conditional_expression_tail
+                    (preproc_if
+                      (preproc_open)
+                      condition: (identifier))
+                    operand: (integer)
+                    (preproc_endif
+                      (preproc_close)))))))
+          (end_keyword))))))
+
+================================================================================
+B7b-2 tail: a group nested in an arm
+--
+alc: tools/alc_probe/cases/b7b-2/tails/nested.al. Before B7b-2: ERROR (RC1).
+================================================================================
+codeunit 50100 P
+{
+    procedure Q()
+    begin
+        I := 1
+#if X
+            + 2
+#if Y
+            * 3
+#endif
+#endif
+            ;
+    end;
+}
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (procedure
+        (procedure_keyword)
+        name: (identifier)
+        body: (code_block
+          (begin_keyword)
+          body: (statement_block
+            (assignment_statement
+              left: (identifier)
+              operator: (assignment_operator)
+              right: (integer)
+              (preproc_conditional_expression_tail
+                (preproc_if
+                  (preproc_open)
+                  condition: (identifier))
+                operand: (integer)
+                (preproc_conditional_expression_tail
+                  (preproc_if
+                    (preproc_open)
+                    condition: (identifier))
+                  operand: (integer)
+                  (preproc_endif
+                    (preproc_close)))
+                (preproc_endif
+                  (preproc_close)))))
+          (end_keyword))))))
+
+================================================================================
+B7b-2 tail: an arm that starts with a nested group
+--
+alc: tools/alc_probe/cases/b7b-2/tails/arm-starts-nested.al. The `+ 2` after
+the inner #endif belongs to the outer arm (a nested tail has no trail).
+================================================================================
+codeunit 50100 P
+{
+    procedure Q()
+    begin
+        I := 1
+#if X
+#if Y
+            * 3
+#endif
+            + 2
+#endif
+            ;
+    end;
+}
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (procedure
+        (procedure_keyword)
+        name: (identifier)
+        body: (code_block
+          (begin_keyword)
+          body: (statement_block
+            (assignment_statement
+              left: (identifier)
+              operator: (assignment_operator)
+              right: (integer)
+              (preproc_conditional_expression_tail
+                (preproc_if
+                  (preproc_open)
+                  condition: (identifier))
+                (preproc_conditional_expression_tail
+                  (preproc_if
+                    (preproc_open)
+                    condition: (identifier))
+                  operand: (integer)
+                  (preproc_endif
+                    (preproc_close)))
+                operand: (integer)
+                (preproc_endif
+                  (preproc_close)))))
+          (end_keyword))))))
+
+================================================================================
+B7b-2 tail: consecutive groups inside an arm are siblings
+--
+The second shape of consecutive groups (execution amendments, Task 4): inside
+an arm two groups are siblings, at a root the second is the last child of the
+first (first case of this file).
+================================================================================
+codeunit 50100 P
+{
+    procedure Q()
+    begin
+        I := 1
+#if X
+#if Y
+            + 2
+#endif
+#if Z
+            + 3
+#endif
+#endif
+            ;
+    end;
+}
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (procedure
+        (procedure_keyword)
+        name: (identifier)
+        body: (code_block
+          (begin_keyword)
+          body: (statement_block
+            (assignment_statement
+              left: (identifier)
+              operator: (assignment_operator)
+              right: (integer)
+              (preproc_conditional_expression_tail
+                (preproc_if
+                  (preproc_open)
+                  condition: (identifier))
+                (preproc_conditional_expression_tail
+                  (preproc_if
+                    (preproc_open)
+                    condition: (identifier))
+                  operand: (integer)
+                  (preproc_endif
+                    (preproc_close)))
+                (preproc_conditional_expression_tail
+                  (preproc_if
+                    (preproc_open)
+                    condition: (identifier))
+                  operand: (integer)
+                  (preproc_endif
+                    (preproc_close)))
+                (preproc_endif
+                  (preproc_close)))))
+          (end_keyword))))))
+
+================================================================================
+B7b-2 tail: chain, continuations after #endif, then a consecutive group
+--
+alc: tools/alc_probe/cases/b7b-2/tails/chain.al (`1 #if X + 2 #endif * 3 - J`).
+The trail after #endif is `cont* [tail]`: `* 3` is a continuation of the tail,
+the following group its last child. `* 3 - J` is ONE continuation whose operand
+is `3 - J`, as before B7b-2: inside a region with a group the nesting is not a
+grouping claim (spec 3.2), the oracle regroups the flat run by the ladder.
+================================================================================
+codeunit 50100 P
+{
+    procedure Q()
+    begin
+        I := 1
+#if X
+            + 2
+#endif
+            * 3 - J;
+        I := 1
+#if X
+            + 2
+#endif
+            * 3
+#if Y
+            - J
+#endif
+            ;
+    end;
+}
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (procedure
+        (procedure_keyword)
+        name: (identifier)
+        body: (code_block
+          (begin_keyword)
+          body: (statement_block
+            (assignment_statement
+              left: (identifier)
+              operator: (assignment_operator)
+              right: (integer)
+              (preproc_conditional_expression_tail
+                (preproc_if
+                  (preproc_open)
+                  condition: (identifier))
+                operand: (integer)
+                (preproc_endif
+                  (preproc_close))
+                operand: (additive_expression
+                  left: (integer)
+                  right: (identifier))))
+            (assignment_statement
+              left: (identifier)
+              operator: (assignment_operator)
+              right: (integer)
+              (preproc_conditional_expression_tail
+                (preproc_if
+                  (preproc_open)
+                  condition: (identifier))
+                operand: (integer)
+                (preproc_endif
+                  (preproc_close))
+                operand: (integer)
+                (preproc_conditional_expression_tail
+                  (preproc_if
+                    (preproc_open)
+                    condition: (identifier))
+                  operand: (identifier)
+                  (preproc_endif
+                    (preproc_close))))))
+          (end_keyword))))))
+
+================================================================================
+B7b-2 tail: B3 operator-only form followed by a consecutive group, and nested in an arm
+--
+The B3 form (`_preproc_operator_arms operand`) keeps its root trail
+(`cont* [tail]`); nested in an arm it has none. Every group has an #else
+operator arm, so every configuration is valid AL (an operator-only arm
+without #else is the RC8 op-only over-acceptance, spec 9).
+================================================================================
+codeunit 50100 P
+{
+    procedure Q()
+    begin
+        I := 1
+#if X
+            +
+#else
+            -
+#endif
+            2
+#if Y
+            + 3
+#endif
+            ;
+        I := 1
+#if X
+            + 2
+#if Y
+            +
+#else
+            -
+#endif
+            3
+#endif
+            ;
+    end;
+}
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (procedure
+        (procedure_keyword)
+        name: (identifier)
+        body: (code_block
+          (begin_keyword)
+          body: (statement_block
+            (assignment_statement
+              left: (identifier)
+              operator: (assignment_operator)
+              right: (integer)
+              (preproc_conditional_expression_tail
+                (preproc_if
+                  (preproc_open)
+                  condition: (identifier))
+                (preproc_else)
+                (preproc_endif
+                  (preproc_close))
+                operand: (integer)
+                (preproc_conditional_expression_tail
+                  (preproc_if
+                    (preproc_open)
+                    condition: (identifier))
+                  operand: (integer)
+                  (preproc_endif
+                    (preproc_close)))))
+            (assignment_statement
+              left: (identifier)
+              operator: (assignment_operator)
+              right: (integer)
+              (preproc_conditional_expression_tail
+                (preproc_if
+                  (preproc_open)
+                  condition: (identifier))
+                operand: (integer)
+                (preproc_conditional_expression_tail
+                  (preproc_if
+                    (preproc_open)
+                    condition: (identifier))
+                  (preproc_else)
+                  (preproc_endif
+                    (preproc_close))
+                  operand: (integer))
+                (preproc_endif
+                  (preproc_close)))))
+          (end_keyword))))))
+
+================================================================================
+B7b-2 tail: in, is, as continue a tail with their typed operands (item 41 suffix)
+--
+alc: tools/alc_probe/cases/b7b-2/keyword_ops/as-suffix.al, in-suffix.al,
+is-suffix.al. Before B7b-2 the `as` arm was torn into two parenless calls,
+`as` and `IFoo` (item 41), clean and wrong.
+================================================================================
+codeunit 50100 P
+{
+    procedure Q()
+    begin
+        F := F
+#if X
+            as IFoo
+#endif
+            ;
+        V := I
+#if X
+            in [1, 2]
+#endif
+            ;
+        V := F
+#if X
+            is IBar
+#endif
+            ;
+    end;
+}
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (procedure
+        (procedure_keyword)
+        name: (identifier)
+        body: (code_block
+          (begin_keyword)
+          body: (statement_block
+            (assignment_statement
+              left: (identifier)
+              operator: (assignment_operator)
+              right: (identifier)
+              (preproc_conditional_expression_tail
+                (preproc_if
+                  (preproc_open)
+                  condition: (identifier))
+                operator: (as_keyword)
+                operand: (type_specification
+                  (identifier))
+                (preproc_endif
+                  (preproc_close))))
+            (assignment_statement
+              left: (identifier)
+              operator: (assignment_operator)
+              right: (identifier)
+              (preproc_conditional_expression_tail
+                (preproc_if
+                  (preproc_open)
+                  condition: (identifier))
+                operator: (in_keyword)
+                operand: (list_literal
+                  (integer)
+                  (integer))
+                (preproc_endif
+                  (preproc_close))))
+            (assignment_statement
+              left: (identifier)
+              operator: (assignment_operator)
+              right: (identifier)
+              (preproc_conditional_expression_tail
+                (preproc_if
+                  (preproc_open)
+                  condition: (identifier))
+                operator: (is_keyword)
+                operand: (type_specification
+                  (identifier))
+                (preproc_endif
+                  (preproc_close)))))
+          (end_keyword))))))
+
+================================================================================
+B7b-2 tail: as, consecutive (item 41)
+--
+alc: tools/alc_probe/cases/b7b-2/keyword_ops/as-consecutive.al.
+================================================================================
+codeunit 50100 P
+{
+    procedure Q()
+    begin
+        F := F
+#if X
+            as IFoo
+#endif
+#if Y
+            as IFoo
+#endif
+            ;
+    end;
+}
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (procedure
+        (procedure_keyword)
+        name: (identifier)
+        body: (code_block
+          (begin_keyword)
+          body: (statement_block
+            (assignment_statement
+              left: (identifier)
+              operator: (assignment_operator)
+              right: (identifier)
+              (preproc_conditional_expression_tail
+                (preproc_if
+                  (preproc_open)
+                  condition: (identifier))
+                operator: (as_keyword)
+                operand: (type_specification
+                  (identifier))
+                (preproc_endif
+                  (preproc_close))
+                (preproc_conditional_expression_tail
+                  (preproc_if
+                    (preproc_open)
+                    condition: (identifier))
+                  operator: (as_keyword)
+                  operand: (type_specification
+                    (identifier))
+                  (preproc_endif
+                    (preproc_close))))))
+          (end_keyword))))))
+
+================================================================================
+B7b-2 tail: as, nested (item 41)
+--
+alc: tools/alc_probe/cases/b7b-2/keyword_ops/as-nested.al.
+================================================================================
+codeunit 50100 P
+{
+    procedure Q()
+    begin
+        F := F
+#if X
+            as IFoo
+#if Y
+            as IFoo
+#endif
+#endif
+            ;
+    end;
+}
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (procedure
+        (procedure_keyword)
+        name: (identifier)
+        body: (code_block
+          (begin_keyword)
+          body: (statement_block
+            (assignment_statement
+              left: (identifier)
+              operator: (assignment_operator)
+              right: (identifier)
+              (preproc_conditional_expression_tail
+                (preproc_if
+                  (preproc_open)
+                  condition: (identifier))
+                operator: (as_keyword)
+                operand: (type_specification
+                  (identifier))
+                (preproc_conditional_expression_tail
+                  (preproc_if
+                    (preproc_open)
+                    condition: (identifier))
+                  operator: (as_keyword)
+                  operand: (type_specification
+                    (identifier))
+                  (preproc_endif
+                    (preproc_close)))
+                (preproc_endif
+                  (preproc_close)))))
+          (end_keyword))))))
+
+================================================================================
+B7b-2 tail: a tail inside a prefix arm
+--
+Spec 5.1 fragment site, `a + #if X b #if Y + c #endif + #endif d`. alc:
+tools/alc_probe/cases/b7b-2/prefixes/fragment.al. The nested tail is a child
+of the prefix (a region edge, 3.1), not of the additive_expression's right.
+================================================================================
+codeunit 50100 P
+{
+    procedure Q()
+    begin
+        I := I +
+#if X
+            J
+#if Y
+            + 2
+#endif
+            +
+#endif
+            4;
+    end;
+}
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (procedure
+        (procedure_keyword)
+        name: (identifier)
+        body: (code_block
+          (begin_keyword)
+          body: (statement_block
+            (assignment_statement
+              left: (identifier)
+              operator: (assignment_operator)
+              right: (additive_expression
+                left: (identifier)
+                (preproc_operand_prefix
+                  (preproc_if
+                    (preproc_open)
+                    condition: (identifier))
+                  operand: (identifier)
+                  (preproc_conditional_expression_tail
+                    (preproc_if
+                      (preproc_open)
+                      condition: (identifier))
+                    operand: (integer)
+                    (preproc_endif
+                      (preproc_close)))
+                  (preproc_endif
+                    (preproc_close)))
+                right: (integer))))
+          (end_keyword))))))
+
+================================================================================
+B7b-2 tail: operand prefixes of in and as hold their typed operands
+--
+Spec 5.3 last sentence, 6.2. alc accepts every configuration:
+tools/alc_probe/cases/b7b-2/keyword_ops/in-prefix.al, as-prefix.al,
+is-prefix.al (`F as #if X IBar is #endif IFoo`). Before B7b-2: ERROR.
+================================================================================
+codeunit 50100 P
+{
+    procedure Q()
+    begin
+        B := Ok in
+#if X
+            [true] in
+#endif
+            [false];
+        F := F as
+#if X
+            IBar as
+#endif
+            IFoo;
+        V := F as
+#if X
+            IBar is
+#endif
+            IFoo;
+    end;
+}
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (procedure
+        (procedure_keyword)
+        name: (identifier)
+        body: (code_block
+          (begin_keyword)
+          body: (statement_block
+            (assignment_statement
+              left: (identifier)
+              operator: (assignment_operator)
+              right: (in_expression
+                left: (identifier)
+                operator: (in_keyword)
+                (preproc_operand_prefix
+                  (preproc_if
+                    (preproc_open)
+                    condition: (identifier))
+                  operand: (list_literal
+                    (boolean))
+                  operator: (in_keyword)
+                  (preproc_endif
+                    (preproc_close)))
+                right: (list_literal
+                  (boolean))))
+            (assignment_statement
+              left: (identifier)
+              operator: (assignment_operator)
+              right: (as_expression
+                left: (identifier)
+                operator: (as_keyword)
+                (preproc_operand_prefix
+                  (preproc_if
+                    (preproc_open)
+                    condition: (identifier))
+                  operand: (type_specification
+                    (identifier))
+                  operator: (as_keyword)
+                  (preproc_endif
+                    (preproc_close)))
+                right: (type_specification
+                  (identifier))))
+            (assignment_statement
+              left: (identifier)
+              operator: (assignment_operator)
+              right: (as_expression
+                left: (identifier)
+                operator: (as_keyword)
+                (preproc_operand_prefix
+                  (preproc_if
+                    (preproc_open)
+                    condition: (identifier))
+                  operand: (type_specification
+                    (identifier))
+                  operator: (is_keyword)
+                  (preproc_endif
+                    (preproc_close)))
+                right: (type_specification
+                  (identifier)))))
+          (end_keyword))))))
+
+================================================================================
+B7b-2 tail: an option member named IS or AS stays an option member
+--
+Guard for the typed is/as prefix: its arm's type cannot reach option_type
+(BCApps GetCoverage.Page.al `Option ...,"IN",IS,IT` ERRORed while it could).
+================================================================================
+codeunit 50100 P
+{
+    var
+        C: Option W1,"IN",IS,AS,IT;
+        D: array[2] of Option A,IS;
+}
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (var_section
+        (var_keyword)
+        body: (var_body
+          (variable_declaration
+            name: (identifier)
+            type: (type_specification
+              (option_type
+                (option_keyword)
+                (option_member_list
+                  (option_member
+                    (identifier))
+                  (option_member
+                    (quoted_identifier))
+                  (option_member
+                    (identifier))
+                  (option_member
+                    (identifier))
+                  (option_member
+                    (identifier))))))
+          (variable_declaration
+            name: (identifier)
+            type: (type_specification
+              (array_type
+                (array_keyword)
+                sizes: (integer)
+                (of_keyword)
+                element_type: (type_specification
+                  (option_type
+                    (option_keyword)
+                    (option_member_list
+                      (option_member
+                        (identifier))
+                      (option_member
+                        (identifier)))))))))))))
+
+================================================================================
+B7b-2 tail: tail with comments
+--
+Review Focus 1: comments inside and around the group are extras.
+================================================================================
+codeunit 50100 P
+{
+    procedure Q()
+    begin
+        r := 1 // c
+#if X
+            + 2 /* c */
+#endif
+            ;
+    end;
+}
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (procedure
+        (procedure_keyword)
+        name: (identifier)
+        body: (code_block
+          (begin_keyword)
+          body: (statement_block
+            (assignment_statement
+              left: (identifier)
+              operator: (assignment_operator)
+              right: (integer)
+              (comment)
+              (preproc_conditional_expression_tail
+                (preproc_if
+                  (preproc_open)
+                  condition: (identifier))
+                operand: (integer)
+                (multiline_comment)
+                (preproc_endif
+                  (preproc_close)))))
+          (end_keyword))))))
+
+================================================================================
+B7b-2 tail: tail with elif
+--
+Review Focus 2: `#elif` arms and no `#else` (the no-arm configuration is a
+valid empty tail, spec 3.2).
+================================================================================
+codeunit 50100 P
+{
+    procedure Q()
+    begin
+        r := 1
+#if X
+            + 2
+#elif Y
+            * 3
+#endif
+            ;
+    end;
+}
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (procedure
+        (procedure_keyword)
+        name: (identifier)
+        body: (code_block
+          (begin_keyword)
+          body: (statement_block
+            (assignment_statement
+              left: (identifier)
+              operator: (assignment_operator)
+              right: (integer)
+              (preproc_conditional_expression_tail
+                (preproc_if
+                  (preproc_open)
+                  condition: (identifier))
+                operand: (integer)
+                (preproc_elif
+                  condition: (identifier))
+                operand: (integer)
+                (preproc_endif
+                  (preproc_close)))))
+          (end_keyword))))))
+
+================================================================================
+B7b-2 tail: keyword operator spellings
+--
+Review Focus 3: `AS`, `In`, `iS` give the keyword nodes and win over the torn
+call reading.
+================================================================================
+codeunit 50100 P
+{
+    procedure Q()
+    begin
+        F := F
+#if X
+            AS IFoo
+#endif
+            ;
+        V := I
+#if X
+            In [1]
+#endif
+            ;
+        V := F
+#if X
+            iS IBar
+#endif
+            ;
+    end;
+}
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (procedure
+        (procedure_keyword)
+        name: (identifier)
+        body: (code_block
+          (begin_keyword)
+          body: (statement_block
+            (assignment_statement
+              left: (identifier)
+              operator: (assignment_operator)
+              right: (identifier)
+              (preproc_conditional_expression_tail
+                (preproc_if
+                  (preproc_open)
+                  condition: (identifier))
+                operator: (as_keyword)
+                operand: (type_specification
+                  (identifier))
+                (preproc_endif
+                  (preproc_close))))
+            (assignment_statement
+              left: (identifier)
+              operator: (assignment_operator)
+              right: (identifier)
+              (preproc_conditional_expression_tail
+                (preproc_if
+                  (preproc_open)
+                  condition: (identifier))
+                operator: (in_keyword)
+                operand: (list_literal
+                  (integer))
+                (preproc_endif
+                  (preproc_close))))
+            (assignment_statement
+              left: (identifier)
+              operator: (assignment_operator)
+              right: (identifier)
+              (preproc_conditional_expression_tail
+                (preproc_if
+                  (preproc_open)
+                  condition: (identifier))
+                operator: (is_keyword)
+                operand: (type_specification
+                  (identifier))
+                (preproc_endif
+                  (preproc_close)))))
+          (end_keyword))))))
+
+================================================================================
+B7b-2 tail: tail inside statement group
+--
+Review Focus 5: a tail inside a statement group's arm (the scanner depth
+counter sees two levels), and quoted and member operands.
+================================================================================
+codeunit 50100 P
+{
+    procedure Q()
+    begin
+#if A
+        x := 1
+#if B
+            + 2
+#endif
+            ;
+#endif
+        x := Rec."No."
+#if X
+            + Rec.Count()
+#endif
+            ;
+    end;
+}
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (procedure
+        (procedure_keyword)
+        name: (identifier)
+        body: (code_block
+          (begin_keyword)
+          body: (statement_block
+            (preproc_conditional_statement
+              (preproc_if
+                (preproc_open)
+                condition: (identifier))
+              (assignment_statement
+                left: (identifier)
+                operator: (assignment_operator)
+                right: (integer)
+                (preproc_conditional_expression_tail
+                  (preproc_if
+                    (preproc_open)
+                    condition: (identifier))
+                  operand: (integer)
+                  (preproc_endif
+                    (preproc_close))))
+              (preproc_endif
+                (preproc_close)))
+            (assignment_statement
+              left: (identifier)
+              operator: (assignment_operator)
+              right: (member_expression
+                object: (identifier)
+                member: (quoted_identifier))
+              (preproc_conditional_expression_tail
+                (preproc_if
+                  (preproc_open)
+                  condition: (identifier))
+                operand: (call_expression
+                  function: (member_expression
+                    object: (identifier)
+                    member: (identifier))
+                  arguments: (argument_list))
+                (preproc_endif
+                  (preproc_close)))))
+          (end_keyword))))))

@@ -157,7 +157,6 @@ b7_gap_binary_operand_test.txt
 b7_gap_calc_formula_test.txt
 b7_gap_caption_subfields_test.txt
 b7_gap_case_branch_test.txt
-b7_gap_case_expression_test.txt
 b7_gap_case_patterns_test.txt
 b7_gap_column_header_test.txt
 b7_gap_dataitem_header_test.txt
@@ -178,37 +177,45 @@ b7_gap_layout_header_test.txt
 b7_gap_link_list_comma_leading_test.txt
 b7_gap_link_list_test.txt
 b7_gap_list_literal_test.txt
-b7_gap_member_access_test.txt
 b7_gap_ml_pairs_test.txt
 b7_gap_namespace_pairs_test.txt
 b7_gap_namespace_using_test.txt
-b7_gap_operand_prefix_test.txt
 b7_gap_option_members_test.txt
 b7_gap_order_by_test.txt
 b7_gap_parameter_list_test.txt
-b7_gap_parenthesized_test.txt
 b7_gap_permissions_test.txt
 b7_gap_procedure_header_test.txt
 b7_gap_procedure_tail_test.txt
 b7_gap_property_terminator_test.txt
 b7_gap_property_value_test.txt
 b7_gap_range_test.txt
-b7_gap_repeat_until_test.txt
 b7_gap_split_call_test.txt
 b7_gap_split_code_block_test.txt
 b7_gap_split_complete_body_test.txt
 b7_gap_split_if_begin_test.txt
-b7_gap_split_if_condition_test.txt
 b7_gap_subscript_test.txt
 b7_gap_table_relation_test.txt
 b7_gap_ternary_test.txt
 b7_gap_type_arguments_test.txt
 b7_gap_type_header_test.txt
-b7_gap_type_test_test.txt
 b7_gap_unary_operand_test.txt
 b7_gap_unassigned_test.txt
 b7_gap_value_header_test.txt
 b7_gap_var_declaration_test.txt
 b7_gap_where_filter_test.txt
 b7_gap_while_condition_test.txt
-b7_gap_with_test.txt
+# B7b-2 Task 4 fix round 1: in/is/as continuation shapes alc accepts that ERROR (docs/deferred-work.md item 51;
+# probes tools/alc_probe/cases/b7b-2/keyword_ops/in-*.al). Phase C (Task 10) closed shapes 1 and 2; shape 3 (a
+# typed prefix arm with a continuation before its keyword) stays a `:error` witness.
+b7b2_scope_gap_test.txt
+# B7b-2 Phase C (Task 10): the spec 3.4 crossing forms (receiver, ternary, list spanning in a list literal) stay
+# ERROR by design, `:error` witnesses with alc probes tools/alc_probe/cases/b7b-2/crossing/; the file also pins the
+# pre-existing list-spanning argument tree (not a negative).
+b7b2_crossing_gap_test.txt
+# B7b-2 final review (Important 1): a group whose only arm content is a unary operator (`#if X - #endif 1`,
+# `Ok and #if X not #endif Ok`, `if #if X not #endif Ok then`) ERRORs on main and on the branch; alc accepts every
+# configuration (tools/alc_probe/cases/b7b-2/prefixes/unary-operator-only.al). `:error` witnesses, item 61.
+# The same file holds the scoped re-review's property-value witness: a leading prefix and a tail in one value
+# (`Visible = #if X Ok and #endif Ok #if Y or Ok #endif;`) ERRORs; alc accepts it
+# (tools/alc_probe/cases/b7b-2/prefixes/property-prefix-then-tail.al), item 62.
+b7b2_unary_op_only_gap_test.txt

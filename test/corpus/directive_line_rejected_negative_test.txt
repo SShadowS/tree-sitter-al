@@ -1136,9 +1136,11 @@ codeunit 50100 P
             (assignment_statement
               left: (identifier)
               operator: (assignment_operator)
-              right: (identifier))
-            (ERROR))
-          (end_keyword))))))
+              right: (member_expression
+                object: (identifier)
+                (ERROR)
+                member: (identifier))))
+          (MISSING end_keyword))))))
 
 ================================================================================
 NEGATIVE: #if A #region R -- a second directive on an #if line (AL0631)

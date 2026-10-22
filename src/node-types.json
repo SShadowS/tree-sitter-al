@@ -1155,10 +1155,6 @@
             "named": true
           },
           {
-            "type": "assignment_expression",
-            "named": true
-          },
-          {
             "type": "biginteger_literal",
             "named": true
           },
@@ -1231,6 +1227,10 @@
             "named": true
           },
           {
+            "type": "preproc_conditional_operand",
+            "named": true
+          },
+          {
             "type": "qualified_enum_value",
             "named": true
           },
@@ -1244,10 +1244,6 @@
           },
           {
             "type": "subscript_expression",
-            "named": true
-          },
-          {
-            "type": "ternary_expression",
             "named": true
           },
           {
@@ -1291,10 +1287,6 @@
             "named": true
           },
           {
-            "type": "assignment_expression",
-            "named": true
-          },
-          {
             "type": "biginteger_literal",
             "named": true
           },
@@ -1367,6 +1359,10 @@
             "named": true
           },
           {
+            "type": "preproc_conditional_operand",
+            "named": true
+          },
+          {
             "type": "qualified_enum_value",
             "named": true
           },
@@ -1380,10 +1376,6 @@
           },
           {
             "type": "subscript_expression",
-            "named": true
-          },
-          {
-            "type": "ternary_expression",
             "named": true
           },
           {
@@ -1402,7 +1394,7 @@
       }
     },
     "children": {
-      "multiple": false,
+      "multiple": true,
       "required": false,
       "types": [
         {
@@ -1920,6 +1912,14 @@
           "named": true
         },
         {
+          "type": "preproc_conditional_operand",
+          "named": true
+        },
+        {
+          "type": "preproc_operand_prefix",
+          "named": true
+        },
+        {
           "type": "qualified_enum_value",
           "named": true
         },
@@ -2020,10 +2020,6 @@
             "named": true
           },
           {
-            "type": "assignment_expression",
-            "named": true
-          },
-          {
             "type": "biginteger_literal",
             "named": true
           },
@@ -2096,6 +2092,10 @@
             "named": true
           },
           {
+            "type": "preproc_conditional_operand",
+            "named": true
+          },
+          {
             "type": "qualified_enum_value",
             "named": true
           },
@@ -2109,10 +2109,6 @@
           },
           {
             "type": "subscript_expression",
-            "named": true
-          },
-          {
-            "type": "ternary_expression",
             "named": true
           },
           {
@@ -2144,11 +2140,25 @@
         "required": true,
         "types": [
           {
+            "type": "preproc_conditional_operand",
+            "named": true
+          },
+          {
             "type": "type_specification",
             "named": true
           }
         ]
       }
+    },
+    "children": {
+      "multiple": false,
+      "required": false,
+      "types": [
+        {
+          "type": "preproc_operand_prefix",
+          "named": true
+        }
+      ]
     }
   },
   {
@@ -2389,10 +2399,6 @@
             "named": true
           },
           {
-            "type": "assignment_expression",
-            "named": true
-          },
-          {
             "type": "biginteger_literal",
             "named": true
           },
@@ -2465,6 +2471,10 @@
             "named": true
           },
           {
+            "type": "preproc_conditional_operand",
+            "named": true
+          },
+          {
             "type": "qualified_enum_value",
             "named": true
           },
@@ -2478,10 +2488,6 @@
           },
           {
             "type": "subscript_expression",
-            "named": true
-          },
-          {
-            "type": "ternary_expression",
             "named": true
           },
           {
@@ -2594,6 +2600,10 @@
           },
           {
             "type": "parenthesized_expression",
+            "named": true
+          },
+          {
+            "type": "preproc_conditional_operand",
             "named": true
           },
           {
@@ -2641,31 +2651,7 @@
         "required": true,
         "types": [
           {
-            "type": "additive_expression",
-            "named": true
-          },
-          {
-            "type": "as_expression",
-            "named": true
-          },
-          {
-            "type": "assignment_expression",
-            "named": true
-          },
-          {
-            "type": "biginteger_literal",
-            "named": true
-          },
-          {
-            "type": "boolean",
-            "named": true
-          },
-          {
             "type": "call_expression",
-            "named": true
-          },
-          {
-            "type": "comparison_expression",
             "named": true
           },
           {
@@ -2673,31 +2659,7 @@
             "named": true
           },
           {
-            "type": "date_literal",
-            "named": true
-          },
-          {
-            "type": "datetime_literal",
-            "named": true
-          },
-          {
-            "type": "decimal",
-            "named": true
-          },
-          {
             "type": "identifier",
-            "named": true
-          },
-          {
-            "type": "in_expression",
-            "named": true
-          },
-          {
-            "type": "integer",
-            "named": true
-          },
-          {
-            "type": "is_expression",
             "named": true
           },
           {
@@ -2705,23 +2667,15 @@
             "named": true
           },
           {
-            "type": "list_literal",
-            "named": true
-          },
-          {
-            "type": "logical_expression",
-            "named": true
-          },
-          {
             "type": "member_expression",
             "named": true
           },
           {
-            "type": "multiplicative_expression",
+            "type": "parenthesized_expression",
             "named": true
           },
           {
-            "type": "parenthesized_expression",
+            "type": "preproc_conditional_operand",
             "named": true
           },
           {
@@ -2733,27 +2687,7 @@
             "named": true
           },
           {
-            "type": "string_literal",
-            "named": true
-          },
-          {
             "type": "subscript_expression",
-            "named": true
-          },
-          {
-            "type": "ternary_expression",
-            "named": true
-          },
-          {
-            "type": "time_literal",
-            "named": true
-          },
-          {
-            "type": "unary_expression",
-            "named": true
-          },
-          {
-            "type": "verbatim_string",
             "named": true
           }
         ]
@@ -2857,6 +2791,10 @@
             "named": true
           },
           {
+            "type": "preproc_conditional_operand",
+            "named": true
+          },
+          {
             "type": "qualified_enum_value",
             "named": true
           },
@@ -2892,11 +2830,15 @@
       }
     },
     "children": {
-      "multiple": false,
+      "multiple": true,
       "required": false,
       "types": [
         {
           "type": "preproc_conditional_expression_tail",
+          "named": true
+        },
+        {
+          "type": "preproc_operand_prefix",
           "named": true
         }
       ]
@@ -3087,6 +3029,10 @@
           },
           {
             "type": "member_expression",
+            "named": true
+          },
+          {
+            "type": "preproc_conditional_operand",
             "named": true
           },
           {
@@ -3429,6 +3375,10 @@
           "named": true
         },
         {
+          "type": "preproc_operand_prefix",
+          "named": true
+        },
+        {
           "type": "preproc_split_case_branch",
           "named": true
         }
@@ -3569,6 +3519,10 @@
             "named": true
           },
           {
+            "type": "preproc_conditional_operand",
+            "named": true
+          },
+          {
             "type": "qualified_enum_value",
             "named": true
           },
@@ -3621,6 +3575,14 @@
         },
         {
           "type": "of_keyword",
+          "named": true
+        },
+        {
+          "type": "preproc_conditional_expression_tail",
+          "named": true
+        },
+        {
+          "type": "preproc_operand_prefix",
           "named": true
         }
       ]
@@ -3848,10 +3810,6 @@
             "named": true
           },
           {
-            "type": "assignment_expression",
-            "named": true
-          },
-          {
             "type": "biginteger_literal",
             "named": true
           },
@@ -3924,6 +3882,10 @@
             "named": true
           },
           {
+            "type": "preproc_conditional_operand",
+            "named": true
+          },
+          {
             "type": "qualified_enum_value",
             "named": true
           },
@@ -3937,10 +3899,6 @@
           },
           {
             "type": "subscript_expression",
-            "named": true
-          },
-          {
-            "type": "ternary_expression",
             "named": true
           },
           {
@@ -3980,10 +3938,6 @@
             "named": true
           },
           {
-            "type": "assignment_expression",
-            "named": true
-          },
-          {
             "type": "biginteger_literal",
             "named": true
           },
@@ -4056,6 +4010,10 @@
             "named": true
           },
           {
+            "type": "preproc_conditional_operand",
+            "named": true
+          },
+          {
             "type": "qualified_enum_value",
             "named": true
           },
@@ -4069,10 +4027,6 @@
           },
           {
             "type": "subscript_expression",
-            "named": true
-          },
-          {
-            "type": "ternary_expression",
             "named": true
           },
           {
@@ -4091,7 +4045,7 @@
       }
     },
     "children": {
-      "multiple": false,
+      "multiple": true,
       "required": false,
       "types": [
         {
@@ -5444,6 +5398,10 @@
             "named": true
           },
           {
+            "type": "preproc_conditional_operand",
+            "named": true
+          },
+          {
             "type": "qualified_enum_value",
             "named": true
           },
@@ -5488,6 +5446,10 @@
         },
         {
           "type": "preproc_conditional_expression_tail",
+          "named": true
+        },
+        {
+          "type": "preproc_operand_prefix",
           "named": true
         }
       ]
@@ -6208,6 +6170,10 @@
             "named": true
           },
           {
+            "type": "preproc_conditional_operand",
+            "named": true
+          },
+          {
             "type": "qualified_enum_value",
             "named": true
           },
@@ -6330,6 +6296,10 @@
             "named": true
           },
           {
+            "type": "preproc_conditional_operand",
+            "named": true
+          },
+          {
             "type": "qualified_enum_value",
             "named": true
           },
@@ -6396,6 +6366,10 @@
         },
         {
           "type": "preproc_conditional_expression_tail",
+          "named": true
+        },
+        {
+          "type": "preproc_operand_prefix",
           "named": true
         }
       ]
@@ -6621,6 +6595,10 @@
             "named": true
           },
           {
+            "type": "preproc_conditional_operand",
+            "named": true
+          },
+          {
             "type": "qualified_enum_value",
             "named": true
           },
@@ -6683,6 +6661,14 @@
         },
         {
           "type": "in_keyword",
+          "named": true
+        },
+        {
+          "type": "preproc_conditional_expression_tail",
+          "named": true
+        },
+        {
+          "type": "preproc_operand_prefix",
           "named": true
         }
       ]
@@ -6886,6 +6872,10 @@
           },
           {
             "type": "parenthesized_expression",
+            "named": true
+          },
+          {
+            "type": "preproc_conditional_operand",
             "named": true
           },
           {
@@ -7184,6 +7174,10 @@
           "named": true
         },
         {
+          "type": "preproc_operand_prefix",
+          "named": true
+        },
+        {
           "type": "then_keyword",
           "named": true
         }
@@ -7343,10 +7337,6 @@
             "named": true
           },
           {
-            "type": "assignment_expression",
-            "named": true
-          },
-          {
             "type": "biginteger_literal",
             "named": true
           },
@@ -7419,6 +7409,10 @@
             "named": true
           },
           {
+            "type": "preproc_conditional_operand",
+            "named": true
+          },
+          {
             "type": "qualified_enum_value",
             "named": true
           },
@@ -7432,10 +7426,6 @@
           },
           {
             "type": "subscript_expression",
-            "named": true
-          },
-          {
-            "type": "ternary_expression",
             "named": true
           },
           {
@@ -7469,9 +7459,23 @@
           {
             "type": "list_literal",
             "named": true
+          },
+          {
+            "type": "preproc_conditional_operand",
+            "named": true
           }
         ]
       }
+    },
+    "children": {
+      "multiple": false,
+      "required": false,
+      "types": [
+        {
+          "type": "preproc_operand_prefix",
+          "named": true
+        }
+      ]
     }
   },
   {
@@ -7765,10 +7769,6 @@
             "named": true
           },
           {
-            "type": "assignment_expression",
-            "named": true
-          },
-          {
             "type": "biginteger_literal",
             "named": true
           },
@@ -7841,6 +7841,10 @@
             "named": true
           },
           {
+            "type": "preproc_conditional_operand",
+            "named": true
+          },
+          {
             "type": "qualified_enum_value",
             "named": true
           },
@@ -7854,10 +7858,6 @@
           },
           {
             "type": "subscript_expression",
-            "named": true
-          },
-          {
-            "type": "ternary_expression",
             "named": true
           },
           {
@@ -7889,11 +7889,25 @@
         "required": true,
         "types": [
           {
+            "type": "preproc_conditional_operand",
+            "named": true
+          },
+          {
             "type": "type_specification",
             "named": true
           }
         ]
       }
+    },
+    "children": {
+      "multiple": false,
+      "required": false,
+      "types": [
+        {
+          "type": "preproc_operand_prefix",
+          "named": true
+        }
+      ]
     }
   },
   {
@@ -8874,6 +8888,14 @@
           "named": true
         },
         {
+          "type": "preproc_conditional_operand",
+          "named": true
+        },
+        {
+          "type": "preproc_operand_prefix",
+          "named": true
+        },
+        {
           "type": "qualified_enum_value",
           "named": true
         },
@@ -8969,10 +8991,6 @@
             "named": true
           },
           {
-            "type": "assignment_expression",
-            "named": true
-          },
-          {
             "type": "biginteger_literal",
             "named": true
           },
@@ -9045,6 +9063,10 @@
             "named": true
           },
           {
+            "type": "preproc_conditional_operand",
+            "named": true
+          },
+          {
             "type": "qualified_enum_value",
             "named": true
           },
@@ -9058,10 +9080,6 @@
           },
           {
             "type": "subscript_expression",
-            "named": true
-          },
-          {
-            "type": "ternary_expression",
             "named": true
           },
           {
@@ -9109,10 +9127,6 @@
             "named": true
           },
           {
-            "type": "assignment_expression",
-            "named": true
-          },
-          {
             "type": "biginteger_literal",
             "named": true
           },
@@ -9185,6 +9199,10 @@
             "named": true
           },
           {
+            "type": "preproc_conditional_operand",
+            "named": true
+          },
+          {
             "type": "qualified_enum_value",
             "named": true
           },
@@ -9198,10 +9216,6 @@
           },
           {
             "type": "subscript_expression",
-            "named": true
-          },
-          {
-            "type": "ternary_expression",
             "named": true
           },
           {
@@ -9220,7 +9234,7 @@
       }
     },
     "children": {
-      "multiple": false,
+      "multiple": true,
       "required": false,
       "types": [
         {
@@ -9293,18 +9307,6 @@
         "required": true,
         "types": [
           {
-            "type": "additive_expression",
-            "named": true
-          },
-          {
-            "type": "as_expression",
-            "named": true
-          },
-          {
-            "type": "assignment_expression",
-            "named": true
-          },
-          {
             "type": "biginteger_literal",
             "named": true
           },
@@ -9314,10 +9316,6 @@
           },
           {
             "type": "call_expression",
-            "named": true
-          },
-          {
-            "type": "comparison_expression",
             "named": true
           },
           {
@@ -9341,15 +9339,7 @@
             "named": true
           },
           {
-            "type": "in_expression",
-            "named": true
-          },
-          {
             "type": "integer",
-            "named": true
-          },
-          {
-            "type": "is_expression",
             "named": true
           },
           {
@@ -9357,23 +9347,15 @@
             "named": true
           },
           {
-            "type": "list_literal",
-            "named": true
-          },
-          {
-            "type": "logical_expression",
-            "named": true
-          },
-          {
             "type": "member_expression",
             "named": true
           },
           {
-            "type": "multiplicative_expression",
+            "type": "parenthesized_expression",
             "named": true
           },
           {
-            "type": "parenthesized_expression",
+            "type": "preproc_conditional_operand",
             "named": true
           },
           {
@@ -9393,15 +9375,7 @@
             "named": true
           },
           {
-            "type": "ternary_expression",
-            "named": true
-          },
-          {
             "type": "time_literal",
-            "named": true
-          },
-          {
-            "type": "unary_expression",
             "named": true
           },
           {
@@ -9853,10 +9827,6 @@
             "named": true
           },
           {
-            "type": "assignment_expression",
-            "named": true
-          },
-          {
             "type": "biginteger_literal",
             "named": true
           },
@@ -9929,6 +9899,10 @@
             "named": true
           },
           {
+            "type": "preproc_conditional_operand",
+            "named": true
+          },
+          {
             "type": "qualified_enum_value",
             "named": true
           },
@@ -9942,10 +9916,6 @@
           },
           {
             "type": "subscript_expression",
-            "named": true
-          },
-          {
-            "type": "ternary_expression",
             "named": true
           },
           {
@@ -9997,10 +9967,6 @@
             "named": true
           },
           {
-            "type": "assignment_expression",
-            "named": true
-          },
-          {
             "type": "biginteger_literal",
             "named": true
           },
@@ -10073,6 +10039,10 @@
             "named": true
           },
           {
+            "type": "preproc_conditional_operand",
+            "named": true
+          },
+          {
             "type": "qualified_enum_value",
             "named": true
           },
@@ -10086,10 +10056,6 @@
           },
           {
             "type": "subscript_expression",
-            "named": true
-          },
-          {
-            "type": "ternary_expression",
             "named": true
           },
           {
@@ -10108,7 +10074,7 @@
       }
     },
     "children": {
-      "multiple": false,
+      "multiple": true,
       "required": false,
       "types": [
         {
@@ -10653,6 +10619,10 @@
             "named": true
           },
           {
+            "type": "preproc_conditional_operand",
+            "named": true
+          },
+          {
             "type": "qualified_enum_value",
             "named": true
           },
@@ -10903,7 +10873,7 @@
     "named": true,
     "fields": {},
     "children": {
-      "multiple": false,
+      "multiple": true,
       "required": true,
       "types": [
         {
@@ -10988,6 +10958,18 @@
         },
         {
           "type": "parenthesized_expression",
+          "named": true
+        },
+        {
+          "type": "preproc_conditional_expression_tail",
+          "named": true
+        },
+        {
+          "type": "preproc_conditional_operand",
+          "named": true
+        },
+        {
+          "type": "preproc_operand_prefix",
           "named": true
         },
         {
@@ -11594,6 +11576,10 @@
           "named": true
         },
         {
+          "type": "preproc_conditional_operand",
+          "named": true
+        },
+        {
           "type": "preproc_elif",
           "named": true
         },
@@ -11607,6 +11593,10 @@
         },
         {
           "type": "preproc_if",
+          "named": true
+        },
+        {
+          "type": "preproc_operand_prefix",
           "named": true
         },
         {
@@ -11926,6 +11916,10 @@
         {
           "type": "preproc_if",
           "named": true
+        },
+        {
+          "type": "preproc_operand_prefix",
+          "named": true
         }
       ]
     }
@@ -12126,7 +12120,7 @@
     "fields": {
       "operand": {
         "multiple": true,
-        "required": true,
+        "required": false,
         "types": [
           {
             "type": "additive_expression",
@@ -12134,10 +12128,6 @@
           },
           {
             "type": "as_expression",
-            "named": true
-          },
-          {
-            "type": "assignment_expression",
             "named": true
           },
           {
@@ -12213,6 +12203,10 @@
             "named": true
           },
           {
+            "type": "preproc_conditional_operand",
+            "named": true
+          },
+          {
             "type": "qualified_enum_value",
             "named": true
           },
@@ -12229,11 +12223,11 @@
             "named": true
           },
           {
-            "type": "ternary_expression",
+            "type": "time_literal",
             "named": true
           },
           {
-            "type": "time_literal",
+            "type": "type_specification",
             "named": true
           },
           {
@@ -12248,7 +12242,7 @@
       },
       "operator": {
         "multiple": true,
-        "required": true,
+        "required": false,
         "types": [
           {
             "type": "*",
@@ -12271,12 +12265,24 @@
             "named": false
           },
           {
+            "type": "as_keyword",
+            "named": true
+          },
+          {
             "type": "comparison_operator",
             "named": true
           },
           {
             "type": "div",
             "named": false
+          },
+          {
+            "type": "in_keyword",
+            "named": true
+          },
+          {
+            "type": "is_keyword",
+            "named": true
           },
           {
             "type": "mod",
@@ -12298,6 +12304,10 @@
       "required": true,
       "types": [
         {
+          "type": "preproc_conditional_expression_tail",
+          "named": true
+        },
+        {
           "type": "preproc_elif",
           "named": true
         },
@@ -12311,6 +12321,10 @@
         },
         {
           "type": "preproc_if",
+          "named": true
+        },
+        {
+          "type": "preproc_operand_prefix",
           "named": true
         }
       ]
@@ -13066,6 +13080,14 @@
           "named": true
         },
         {
+          "type": "preproc_conditional_expression_tail",
+          "named": true
+        },
+        {
+          "type": "preproc_conditional_operand",
+          "named": true
+        },
+        {
           "type": "preproc_elif",
           "named": true
         },
@@ -13079,6 +13101,10 @@
         },
         {
           "type": "preproc_if",
+          "named": true
+        },
+        {
+          "type": "preproc_operand_prefix",
           "named": true
         },
         {
@@ -13323,6 +13349,222 @@
         },
         {
           "type": "xmlport_declaration",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
+    "type": "preproc_conditional_operand",
+    "named": true,
+    "fields": {
+      "operand": {
+        "multiple": true,
+        "required": true,
+        "types": [
+          {
+            "type": "additive_expression",
+            "named": true
+          },
+          {
+            "type": "as_expression",
+            "named": true
+          },
+          {
+            "type": "biginteger_literal",
+            "named": true
+          },
+          {
+            "type": "boolean",
+            "named": true
+          },
+          {
+            "type": "call_expression",
+            "named": true
+          },
+          {
+            "type": "comparison_expression",
+            "named": true
+          },
+          {
+            "type": "database_reference",
+            "named": true
+          },
+          {
+            "type": "date_literal",
+            "named": true
+          },
+          {
+            "type": "datetime_literal",
+            "named": true
+          },
+          {
+            "type": "decimal",
+            "named": true
+          },
+          {
+            "type": "identifier",
+            "named": true
+          },
+          {
+            "type": "in_expression",
+            "named": true
+          },
+          {
+            "type": "integer",
+            "named": true
+          },
+          {
+            "type": "is_expression",
+            "named": true
+          },
+          {
+            "type": "keyword_identifier",
+            "named": true
+          },
+          {
+            "type": "list_literal",
+            "named": true
+          },
+          {
+            "type": "logical_expression",
+            "named": true
+          },
+          {
+            "type": "member_expression",
+            "named": true
+          },
+          {
+            "type": "multiplicative_expression",
+            "named": true
+          },
+          {
+            "type": "parenthesized_expression",
+            "named": true
+          },
+          {
+            "type": "preproc_conditional_operand",
+            "named": true
+          },
+          {
+            "type": "qualified_enum_value",
+            "named": true
+          },
+          {
+            "type": "quoted_identifier",
+            "named": true
+          },
+          {
+            "type": "string_literal",
+            "named": true
+          },
+          {
+            "type": "subscript_expression",
+            "named": true
+          },
+          {
+            "type": "time_literal",
+            "named": true
+          },
+          {
+            "type": "type_specification",
+            "named": true
+          },
+          {
+            "type": "unary_expression",
+            "named": true
+          },
+          {
+            "type": "verbatim_string",
+            "named": true
+          }
+        ]
+      },
+      "operator": {
+        "multiple": true,
+        "required": false,
+        "types": [
+          {
+            "type": "*",
+            "named": false
+          },
+          {
+            "type": "+",
+            "named": false
+          },
+          {
+            "type": "-",
+            "named": false
+          },
+          {
+            "type": "/",
+            "named": false
+          },
+          {
+            "type": "and",
+            "named": false
+          },
+          {
+            "type": "as_keyword",
+            "named": true
+          },
+          {
+            "type": "comparison_operator",
+            "named": true
+          },
+          {
+            "type": "div",
+            "named": false
+          },
+          {
+            "type": "in_keyword",
+            "named": true
+          },
+          {
+            "type": "is_keyword",
+            "named": true
+          },
+          {
+            "type": "mod",
+            "named": false
+          },
+          {
+            "type": "or",
+            "named": false
+          },
+          {
+            "type": "xor",
+            "named": false
+          }
+        ]
+      }
+    },
+    "children": {
+      "multiple": true,
+      "required": true,
+      "types": [
+        {
+          "type": "preproc_conditional_expression_tail",
+          "named": true
+        },
+        {
+          "type": "preproc_elif",
+          "named": true
+        },
+        {
+          "type": "preproc_else",
+          "named": true
+        },
+        {
+          "type": "preproc_endif",
+          "named": true
+        },
+        {
+          "type": "preproc_if",
+          "named": true
+        },
+        {
+          "type": "preproc_operand_prefix",
           "named": true
         }
       ]
@@ -14764,6 +15006,10 @@
             "named": true
           },
           {
+            "type": "preproc_conditional_operand",
+            "named": true
+          },
+          {
             "type": "qualified_enum_value",
             "named": true
           },
@@ -14941,11 +15187,19 @@
           "named": true
         },
         {
+          "type": "preproc_conditional_expression_tail",
+          "named": true
+        },
+        {
           "type": "preproc_endif",
           "named": true
         },
         {
           "type": "preproc_if",
+          "named": true
+        },
+        {
+          "type": "preproc_operand_prefix",
           "named": true
         },
         {
@@ -15045,10 +15299,6 @@
             "named": true
           },
           {
-            "type": "assignment_expression",
-            "named": true
-          },
-          {
             "type": "biginteger_literal",
             "named": true
           },
@@ -15121,6 +15371,10 @@
             "named": true
           },
           {
+            "type": "preproc_conditional_operand",
+            "named": true
+          },
+          {
             "type": "qualified_enum_value",
             "named": true
           },
@@ -15137,11 +15391,11 @@
             "named": true
           },
           {
-            "type": "ternary_expression",
+            "type": "time_literal",
             "named": true
           },
           {
-            "type": "time_literal",
+            "type": "type_specification",
             "named": true
           },
           {
@@ -15179,12 +15433,24 @@
             "named": false
           },
           {
+            "type": "as_keyword",
+            "named": true
+          },
+          {
             "type": "comparison_operator",
             "named": true
           },
           {
             "type": "div",
             "named": false
+          },
+          {
+            "type": "in_keyword",
+            "named": true
+          },
+          {
+            "type": "is_keyword",
+            "named": true
           },
           {
             "type": "mod",
@@ -15206,6 +15472,10 @@
       "required": true,
       "types": [
         {
+          "type": "preproc_conditional_expression_tail",
+          "named": true
+        },
+        {
           "type": "preproc_elif",
           "named": true
         },
@@ -15219,6 +15489,10 @@
         },
         {
           "type": "preproc_if",
+          "named": true
+        },
+        {
+          "type": "preproc_operand_prefix",
           "named": true
         }
       ]
@@ -15918,6 +16192,14 @@
           "named": true
         },
         {
+          "type": "preproc_conditional_expression_tail",
+          "named": true
+        },
+        {
+          "type": "preproc_conditional_operand",
+          "named": true
+        },
+        {
           "type": "preproc_elif",
           "named": true
         },
@@ -15931,6 +16213,10 @@
         },
         {
           "type": "preproc_if",
+          "named": true
+        },
+        {
+          "type": "preproc_operand_prefix",
           "named": true
         },
         {
@@ -16227,6 +16513,10 @@
         },
         {
           "type": "preproc_if",
+          "named": true
+        },
+        {
+          "type": "preproc_operand_prefix",
           "named": true
         }
       ]
@@ -16652,6 +16942,10 @@
         {
           "type": "preproc_if",
           "named": true
+        },
+        {
+          "type": "preproc_operand_prefix",
+          "named": true
         }
       ]
     }
@@ -16756,6 +17050,10 @@
           },
           {
             "type": "parenthesized_expression",
+            "named": true
+          },
+          {
+            "type": "preproc_conditional_operand",
             "named": true
           },
           {
@@ -16916,6 +17214,10 @@
           "named": true
         },
         {
+          "type": "preproc_conditional_expression_tail",
+          "named": true
+        },
+        {
           "type": "preproc_elif",
           "named": true
         },
@@ -16929,6 +17231,10 @@
         },
         {
           "type": "preproc_if",
+          "named": true
+        },
+        {
+          "type": "preproc_operand_prefix",
           "named": true
         },
         {
@@ -17591,6 +17897,10 @@
             "named": true
           },
           {
+            "type": "preproc_conditional_operand",
+            "named": true
+          },
+          {
             "type": "qualified_enum_value",
             "named": true
           },
@@ -17702,6 +18012,10 @@
           "named": true
         },
         {
+          "type": "preproc_conditional_expression_tail",
+          "named": true
+        },
+        {
           "type": "preproc_conditional_statement",
           "named": true
         },
@@ -17715,6 +18029,10 @@
         },
         {
           "type": "preproc_if",
+          "named": true
+        },
+        {
+          "type": "preproc_operand_prefix",
           "named": true
         },
         {
@@ -17893,6 +18211,10 @@
             "named": true
           },
           {
+            "type": "preproc_conditional_operand",
+            "named": true
+          },
+          {
             "type": "qualified_enum_value",
             "named": true
           },
@@ -18047,6 +18369,10 @@
             "named": true
           },
           {
+            "type": "preproc_conditional_operand",
+            "named": true
+          },
+          {
             "type": "qualified_enum_value",
             "named": true
           },
@@ -18154,6 +18480,10 @@
           "named": true
         },
         {
+          "type": "preproc_conditional_expression_tail",
+          "named": true
+        },
+        {
           "type": "preproc_conditional_statement",
           "named": true
         },
@@ -18167,6 +18497,10 @@
         },
         {
           "type": "preproc_if",
+          "named": true
+        },
+        {
+          "type": "preproc_operand_prefix",
           "named": true
         },
         {
@@ -18325,6 +18659,10 @@
             "named": true
           },
           {
+            "type": "preproc_conditional_operand",
+            "named": true
+          },
+          {
             "type": "qualified_enum_value",
             "named": true
           },
@@ -18432,6 +18770,10 @@
           "named": true
         },
         {
+          "type": "preproc_conditional_expression_tail",
+          "named": true
+        },
+        {
           "type": "preproc_conditional_statement",
           "named": true
         },
@@ -18449,6 +18791,10 @@
         },
         {
           "type": "preproc_if",
+          "named": true
+        },
+        {
+          "type": "preproc_operand_prefix",
           "named": true
         },
         {
@@ -18603,6 +18949,10 @@
             "named": true
           },
           {
+            "type": "preproc_conditional_operand",
+            "named": true
+          },
+          {
             "type": "qualified_enum_value",
             "named": true
           },
@@ -18894,6 +19244,10 @@
           "named": true
         },
         {
+          "type": "preproc_conditional_expression_tail",
+          "named": true
+        },
+        {
           "type": "preproc_elif",
           "named": true
         },
@@ -18911,6 +19265,10 @@
         },
         {
           "type": "preproc_if",
+          "named": true
+        },
+        {
+          "type": "preproc_operand_prefix",
           "named": true
         },
         {
@@ -19013,6 +19371,10 @@
             "named": true
           },
           {
+            "type": "preproc_conditional_operand",
+            "named": true
+          },
+          {
             "type": "qualified_enum_value",
             "named": true
           },
@@ -19304,6 +19666,10 @@
           "named": true
         },
         {
+          "type": "preproc_conditional_expression_tail",
+          "named": true
+        },
+        {
           "type": "preproc_elif",
           "named": true
         },
@@ -19317,6 +19683,10 @@
         },
         {
           "type": "preproc_if",
+          "named": true
+        },
+        {
+          "type": "preproc_operand_prefix",
           "named": true
         },
         {
@@ -19416,6 +19786,10 @@
           },
           {
             "type": "parenthesized_expression",
+            "named": true
+          },
+          {
+            "type": "preproc_conditional_operand",
             "named": true
           },
           {
@@ -19530,6 +19904,10 @@
           "named": true
         },
         {
+          "type": "preproc_conditional_expression_tail",
+          "named": true
+        },
+        {
           "type": "preproc_conditional_statement",
           "named": true
         },
@@ -19543,6 +19921,10 @@
         },
         {
           "type": "preproc_if",
+          "named": true
+        },
+        {
+          "type": "preproc_operand_prefix",
           "named": true
         },
         {
@@ -19701,6 +20083,10 @@
             "named": true
           },
           {
+            "type": "preproc_conditional_operand",
+            "named": true
+          },
+          {
             "type": "qualified_enum_value",
             "named": true
           },
@@ -19812,6 +20198,10 @@
           "named": true
         },
         {
+          "type": "preproc_conditional_expression_tail",
+          "named": true
+        },
+        {
           "type": "preproc_conditional_statement",
           "named": true
         },
@@ -19829,6 +20219,10 @@
         },
         {
           "type": "preproc_if",
+          "named": true
+        },
+        {
+          "type": "preproc_operand_prefix",
           "named": true
         },
         {
@@ -20118,6 +20512,10 @@
           },
           {
             "type": "parenthesized_expression",
+            "named": true
+          },
+          {
+            "type": "preproc_conditional_operand",
             "named": true
           },
           {
@@ -20476,6 +20874,10 @@
           "named": true
         },
         {
+          "type": "preproc_conditional_expression_tail",
+          "named": true
+        },
+        {
           "type": "preproc_conditional_statement",
           "named": true
         },
@@ -20497,6 +20899,10 @@
         },
         {
           "type": "preproc_if",
+          "named": true
+        },
+        {
+          "type": "preproc_operand_prefix",
           "named": true
         },
         {
@@ -20837,6 +21243,10 @@
             "named": true
           },
           {
+            "type": "preproc_conditional_operand",
+            "named": true
+          },
+          {
             "type": "qualified_enum_value",
             "named": true
           },
@@ -20888,6 +21298,10 @@
           "named": true
         },
         {
+          "type": "preproc_conditional_expression_tail",
+          "named": true
+        },
+        {
           "type": "preproc_else",
           "named": true
         },
@@ -20897,6 +21311,10 @@
         },
         {
           "type": "preproc_if",
+          "named": true
+        },
+        {
+          "type": "preproc_operand_prefix",
           "named": true
         },
         {
@@ -22022,6 +22440,14 @@
           "named": true
         },
         {
+          "type": "preproc_conditional_operand",
+          "named": true
+        },
+        {
+          "type": "preproc_operand_prefix",
+          "named": true
+        },
+        {
           "type": "qualified_enum_value",
           "named": true
         },
@@ -22592,6 +23018,10 @@
             "named": true
           },
           {
+            "type": "preproc_conditional_operand",
+            "named": true
+          },
+          {
             "type": "qualified_enum_value",
             "named": true
           },
@@ -22714,6 +23144,10 @@
             "named": true
           },
           {
+            "type": "preproc_conditional_operand",
+            "named": true
+          },
+          {
             "type": "qualified_enum_value",
             "named": true
           },
@@ -22747,6 +23181,20 @@
           }
         ]
       }
+    },
+    "children": {
+      "multiple": true,
+      "required": false,
+      "types": [
+        {
+          "type": "preproc_conditional_expression_tail",
+          "named": true
+        },
+        {
+          "type": "preproc_operand_prefix",
+          "named": true
+        }
+      ]
     }
   },
   {
@@ -22990,6 +23438,10 @@
             "named": true
           },
           {
+            "type": "preproc_conditional_operand",
+            "named": true
+          },
+          {
             "type": "qualified_enum_value",
             "named": true
           },
@@ -23028,6 +23480,14 @@
       "multiple": true,
       "required": true,
       "types": [
+        {
+          "type": "preproc_conditional_expression_tail",
+          "named": true
+        },
+        {
+          "type": "preproc_operand_prefix",
+          "named": true
+        },
         {
           "type": "repeat_keyword",
           "named": true
@@ -23345,6 +23805,10 @@
           },
           {
             "type": "parenthesized_expression",
+            "named": true
+          },
+          {
+            "type": "preproc_conditional_operand",
             "named": true
           },
           {
@@ -24146,6 +24610,10 @@
             "named": true
           },
           {
+            "type": "preproc_conditional_operand",
+            "named": true
+          },
+          {
             "type": "qualified_enum_value",
             "named": true
           },
@@ -24184,18 +24652,6 @@
         "required": true,
         "types": [
           {
-            "type": "additive_expression",
-            "named": true
-          },
-          {
-            "type": "as_expression",
-            "named": true
-          },
-          {
-            "type": "assignment_expression",
-            "named": true
-          },
-          {
             "type": "biginteger_literal",
             "named": true
           },
@@ -24205,10 +24661,6 @@
           },
           {
             "type": "call_expression",
-            "named": true
-          },
-          {
-            "type": "comparison_expression",
             "named": true
           },
           {
@@ -24232,15 +24684,7 @@
             "named": true
           },
           {
-            "type": "in_expression",
-            "named": true
-          },
-          {
             "type": "integer",
-            "named": true
-          },
-          {
-            "type": "is_expression",
             "named": true
           },
           {
@@ -24248,23 +24692,15 @@
             "named": true
           },
           {
-            "type": "list_literal",
-            "named": true
-          },
-          {
-            "type": "logical_expression",
-            "named": true
-          },
-          {
             "type": "member_expression",
             "named": true
           },
           {
-            "type": "multiplicative_expression",
+            "type": "parenthesized_expression",
             "named": true
           },
           {
-            "type": "parenthesized_expression",
+            "type": "preproc_conditional_operand",
             "named": true
           },
           {
@@ -24284,15 +24720,7 @@
             "named": true
           },
           {
-            "type": "ternary_expression",
-            "named": true
-          },
-          {
             "type": "time_literal",
-            "named": true
-          },
-          {
-            "type": "unary_expression",
             "named": true
           },
           {
@@ -24392,6 +24820,14 @@
         },
         {
           "type": "preproc_conditional_expression_tail",
+          "named": true
+        },
+        {
+          "type": "preproc_conditional_operand",
+          "named": true
+        },
+        {
+          "type": "preproc_operand_prefix",
           "named": true
         },
         {
@@ -24844,10 +25280,6 @@
             "named": true
           },
           {
-            "type": "assignment_expression",
-            "named": true
-          },
-          {
             "type": "biginteger_literal",
             "named": true
           },
@@ -24920,6 +25352,10 @@
             "named": true
           },
           {
+            "type": "preproc_conditional_operand",
+            "named": true
+          },
+          {
             "type": "qualified_enum_value",
             "named": true
           },
@@ -24933,10 +25369,6 @@
           },
           {
             "type": "subscript_expression",
-            "named": true
-          },
-          {
-            "type": "ternary_expression",
             "named": true
           },
           {
@@ -25039,6 +25471,10 @@
           },
           {
             "type": "parenthesized_expression",
+            "named": true
+          },
+          {
+            "type": "preproc_conditional_operand",
             "named": true
           },
           {
@@ -25164,6 +25600,10 @@
             "named": true
           },
           {
+            "type": "preproc_conditional_operand",
+            "named": true
+          },
+          {
             "type": "qualified_enum_value",
             "named": true
           },
@@ -25197,6 +25637,20 @@
           }
         ]
       }
+    },
+    "children": {
+      "multiple": true,
+      "required": false,
+      "types": [
+        {
+          "type": "preproc_conditional_expression_tail",
+          "named": true
+        },
+        {
+          "type": "preproc_operand_prefix",
+          "named": true
+        }
+      ]
     }
   },
   {
@@ -25506,10 +25960,6 @@
             "named": true
           },
           {
-            "type": "assignment_expression",
-            "named": true
-          },
-          {
             "type": "biginteger_literal",
             "named": true
           },
@@ -25582,6 +26032,10 @@
             "named": true
           },
           {
+            "type": "preproc_conditional_operand",
+            "named": true
+          },
+          {
             "type": "qualified_enum_value",
             "named": true
           },
@@ -25595,10 +26049,6 @@
           },
           {
             "type": "subscript_expression",
-            "named": true
-          },
-          {
-            "type": "ternary_expression",
             "named": true
           },
           {
@@ -25633,6 +26083,16 @@
           }
         ]
       }
+    },
+    "children": {
+      "multiple": true,
+      "required": false,
+      "types": [
+        {
+          "type": "preproc_operand_prefix",
+          "named": true
+        }
+      ]
     }
   },
   {
@@ -26407,6 +26867,10 @@
             "named": true
           },
           {
+            "type": "preproc_conditional_operand",
+            "named": true
+          },
+          {
             "type": "qualified_enum_value",
             "named": true
           },
@@ -26451,6 +26915,10 @@
         },
         {
           "type": "preproc_conditional_expression_tail",
+          "named": true
+        },
+        {
+          "type": "preproc_operand_prefix",
           "named": true
         },
         {
@@ -26680,6 +27148,10 @@
             "named": true
           },
           {
+            "type": "preproc_conditional_operand",
+            "named": true
+          },
+          {
             "type": "qualified_enum_value",
             "named": true
           },
@@ -26720,6 +27192,14 @@
       "types": [
         {
           "type": "do_keyword",
+          "named": true
+        },
+        {
+          "type": "preproc_conditional_expression_tail",
+          "named": true
+        },
+        {
+          "type": "preproc_operand_prefix",
           "named": true
         },
         {
@@ -26857,6 +27337,10 @@
           },
           {
             "type": "parenthesized_expression",
+            "named": true
+          },
+          {
+            "type": "preproc_conditional_operand",
             "named": true
           },
           {
@@ -27212,6 +27696,10 @@
           },
           {
             "type": "parenthesized_expression",
+            "named": true
+          },
+          {
+            "type": "preproc_conditional_operand",
             "named": true
           },
           {

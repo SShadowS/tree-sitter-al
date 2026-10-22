@@ -1,5 +1,5 @@
 // B7a Task 10 witness (GAP): family repeat-until, base placement whole-operand, 96 cells; representative bnd:repeat_statement:condition:end@asserterror_statement#whole-operand/comparison
-// Fixture b7_gap_repeat_until_test.txt#B7a GAP: repeat-until / whole-operand (96 cells, verdict of the representative GAP); the parser ERRORs on configurations alc accepts; representative bnd:repeat_statement:condition:end@asserterror_statement%23whole-operand/comparison#0
+// Fixture b7b2_repeat_until_test.txt#B7b-2 repeat-until / whole-operand: moved from b7_gap_repeat_until_test.txt#0
 // expect: !X accept
 // expect: X accept
 // source: recorded by B7a Task 10, 2026-10-07: the alc split verdicts of cell bnd:repeat_statement:condition:end@asserterror_statement#whole-operand/comparison in tools/b7_audit/evidence.jsonl.gz

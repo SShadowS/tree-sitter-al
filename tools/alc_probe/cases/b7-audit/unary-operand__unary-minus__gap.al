@@ -1,5 +1,5 @@
 // B7a Task 10 witness (GAP): family unary-operand, base placement unary-minus, 14 cells; representative bnd:unary_expression:operand:end@case_branch#unary-minus/arithmetic
-// Fixture b7_gap_unary_operand_test.txt#B7a GAP: unary-operand / unary-minus (14 cells, verdict of the representative GAP); the parser ERRORs on configurations alc accepts; representative bnd:unary_expression:operand:end@case_branch%23unary-minus/arithmetic#0
+// Fixture b7b2_unary_operand_test.txt#B7b-2 unary-operand / unary-minus: moved from b7_gap_unary_operand_test.txt#0
 // expect: !X accept
 // expect: X accept
 // source: recorded by B7a Task 10, 2026-10-07: the alc split verdicts of cell bnd:unary_expression:operand:end@case_branch#unary-minus/arithmetic in tools/b7_audit/evidence.jsonl.gz

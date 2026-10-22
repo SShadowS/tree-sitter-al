@@ -24,6 +24,10 @@ expected_oracle   optional column (B7b-3, spec 6.4): the config oracle's status 
               disposition). Its configurations must be exactly
               the vector's accepted ones; with an oracle given, check compares it with a fresh run.
 A `route:` cell id is a pseudo entry for a route that has no matrix cells (not probed); it is never checked against evidence.
+B7b-2 (spec 2026-10-20 section 8.4): `check(final_owner_prefix=...)` fails every row a phase owner (`B7b-2/A`, ...) still
+holds; `check(require_oracle=True)` fails an admitted row without expected_oracle; `rerecord` re-records named rows
+of another manifest whose verdict a later sub-project changed, deliberately and listed in its report; `admit` admits
+the rows a phase owner holds once they reach their target (verdict and oracle), the step that closes a phase.
 """
 import csv
 import re
@@ -202,12 +206,15 @@ def transfer_for(path, entries, records, verdicts, b7b3=MANIFEST_B7B3, oracle_fa
     return passing_transfer(cand, e3, check(s3, e3, records, verdicts, oracle=oracle))
 
 
-def check(scope, entries, evidence_records, verdicts, transfer=frozenset(), oracle=None):
+def check(scope, entries, evidence_records, verdicts, transfer=frozenset(), oracle=None,
+          final_owner_prefix: "str | None" = None, require_oracle: bool = False):
     """-> problems (strings). verdicts: {cell id: (family, current verdict_str)}, as the report computes them.
     scope: the manifest's families. transfer: excluded/deferred cells exempt from the verdict comparison only (see
     passing_transfer); their identity, vector and coverage are still checked. oracle: cell id -> {config: status}
     from a fresh config oracle run (fresh_oracle); None skips that comparison, the configurations of
-    expected_oracle are checked either way."""
+    expected_oracle are checked either way. final_owner_prefix (B7b-2 spec 8.4, final mode): every row whose owner
+    starts with it is a problem (a phase owner such as `B7b-2/B` still holds it). require_oracle: an admitted row
+    without expected_oracle is a problem."""
     by_cell = {}
     for r in evidence_records:
         by_cell.setdefault(r["cell"], []).append(r)
@@ -218,8 +225,12 @@ def check(scope, entries, evidence_records, verdicts, transfer=frozenset(), orac
         seen.add(e.cell_id)
         if e.family not in scope and e.disposition != "excluded":   # an excluded row may pin a neighbour
             problems.append(f"scope\t{e.cell_id}\tfamily {e.family} is outside the manifest scope")
+        if final_owner_prefix and e.owner.startswith(final_owner_prefix):
+            problems.append(f"final\t{e.cell_id}\towner {e.owner} still holds the row ({e.disposition})")
         if e.cell_id.startswith("route:"):
             continue
+        if require_oracle and e.disposition == "admitted" and not e.expected_oracle:
+            problems.append(f"require-oracle\t{e.cell_id}\tadmitted row has no expected_oracle")
         recs = by_cell.get(e.cell_id)
         if not recs or e.cell_id not in verdicts:
             problems.append(f"no evidence\t{e.cell_id}")
@@ -260,6 +271,123 @@ def check(scope, entries, evidence_records, verdicts, transfer=frozenset(), orac
         if fam in scope and cid not in seen:
             problems.append(f"missing\t{cid}\tcell of candidate family {fam} not in the manifest")
     return problems
+
+
+def oracle_value(recs, statuses):
+    """The expected_oracle string for a cell: `statuses` ({config: status}) restricted to its alc-accepted
+    configurations, sorted by configuration; empty when alc accepts none."""
+    acc = sorted(r["config"] for r in recs if accepts(r))
+    return ",".join(f"{c}:{statuses.get(c)}" for c in acc)
+
+
+def rerecord(path, cell_ids, records, verdicts, oracle=None):
+    """Re-record exactly the rows `cell_ids` of manifest `path` at their current verdict (expected_verdict; an
+    admitted row keeps its target) and, when `oracle` (cell id -> {config: status}, as fresh_oracle) is given and
+    the file has the column, their current expected_oracle. Identity, vector, disposition, reason and owner are
+    never touched, so check still compares them. Every other line of the file is kept byte for byte. -> the changed
+    columns, `cell\\tcolumn\\told -> new`, for the phase report. ValueError, writing nothing, on a cell that is not a
+    row of the manifest or has no current evidence or oracle source."""
+    path = Path(path)
+    load(path)                                                  # refuse a malformed manifest before touching it
+    want = list(dict.fromkeys(cell_ids))
+    by_cell = {}
+    for r in records:
+        by_cell.setdefault(r["cell"], []).append(r)
+    lines = path.read_text(encoding="utf-8").split("\n")
+    head_i = next(i for i, l in enumerate(lines) if l.strip() and not l.startswith("#"))
+    cols = lines[head_i].split("\t")
+    rows = {l.split("\t", 1)[0]: i for i, l in enumerate(lines) if i > head_i and l.strip() and not l.startswith("#")}
+    unknown = [c for c in want if c not in rows]
+    if unknown:
+        raise ValueError(f"{path}: not a row of the manifest: {', '.join(unknown)}")
+    stale = [c for c in want if c not in by_cell or c not in verdicts]
+    if stale:
+        raise ValueError(f"no current evidence for: {', '.join(stale)}")
+    statuses = {}
+    if oracle is not None and ORACLE_COL in cols:
+        statuses = {c: oracle(c) for c in want}
+        missing = [c for c, s in statuses.items() if s is None]
+        if missing:
+            raise ValueError(f"the oracle has no source for: {', '.join(missing)}")
+    changed = []
+    for cid in want:
+        r = dict(zip(cols, lines[rows[cid]].split("\t")))
+        new = dict(r)
+        if r["disposition"] != "admitted":
+            new["expected_verdict"] = verdicts[cid][1]
+        if cid in statuses:
+            new[ORACLE_COL] = oracle_value(by_cell[cid], statuses[cid])
+        changed += [f"{cid}\t{c}\t{r[c]} -> {new[c]}" for c in cols if new[c] != r[c]]
+        lines[rows[cid]] = "\t".join(new[c] for c in cols)
+    if changed:
+        path.write_text("\n".join(lines), encoding="utf-8", newline="\n")
+    return changed
+
+
+# Oracle refusals an admitted row may carry, each closed by the cell's holding assertion row (judge: a cannot-validate
+# configuration with a fresh holding assertion is CONSISTENT), with the reason text the Phase A gate wrote for them.
+ADMIT_REFUSALS = {"lowering:unsupported-type": "C1: the split host's oracle refusal",
+                  "lowering:one-reading": "B12 host limitation (one-reading)"}
+
+
+def admit(path, owner, records, verdicts, oracle, new_owner="B7b-2"):
+    """Admit every non-admitted row of manifest `path` owned by `owner` whose current verdict is its target and whose
+    oracle outcome is `pass`, or a refusal of ADMIT_REFUSALS, in every alc-accepted configuration, and whose family,
+    route_host, placement and frozen_vector agree with the evidence (else check would fail the row): disposition
+    admitted, owner `new_owner`, expected_verdict the target, expected_oracle the current outcome, reason empty for an
+    all-pass cell or `<refusal reason>, assertion-closed in N configuration(s)`. Identity, vector and cardinality are
+    kept; every other line of the file is kept byte for byte. -> (changed columns `cell\\tcolumn\\told -> new`, rows
+    left as they were `cell\\twhy`). ValueError, writing nothing, when the file has no expected_oracle column."""
+    path = Path(path)
+    load(path)
+    by_cell = {}
+    for r in records:
+        by_cell.setdefault(r["cell"], []).append(r)
+    lines = path.read_text(encoding="utf-8").split("\n")
+    head_i = next(i for i, l in enumerate(lines) if l.strip() and not l.startswith("#"))
+    cols = lines[head_i].split("\t")
+    if ORACLE_COL not in cols:
+        raise ValueError(f"{path}: no {ORACLE_COL} column; --admit records the oracle outcome")
+    changed, kept = [], []
+    for i in range(head_i + 1, len(lines)):
+        if not lines[i].strip() or lines[i].startswith("#"):
+            continue
+        r = dict(zip(cols, lines[i].split("\t")))
+        cid = r["cell_id"]
+        if r["owner"] != owner or r["disposition"] == "admitted" or cid.startswith("route:"):
+            continue
+        recs = by_cell.get(cid)
+        if not recs or cid not in verdicts:
+            kept.append(f"{cid}\tno current evidence")
+            continue
+        got = (verdicts[cid][0], recs[0]["host"], recs[0]["placement"], vector(recs))
+        want = (r["family"], r["route_host"], r["placement"], r["frozen_vector"])
+        if got != want:     # what check reports as identity/vector: never admit a row that check would then fail
+            kept.append(f"{cid}\tidentity or vector {want} != evidence {got}")
+            continue
+        tgt, now = target(recs), _plain(verdicts[cid][1])
+        if now != tgt:
+            kept.append(f"{cid}\tverdict {now} is not the target {tgt}")
+            continue
+        statuses = oracle(cid)
+        if statuses is None:
+            kept.append(f"{cid}\tthe oracle has no source")
+            continue
+        acc = [rr["config"] for rr in recs if accepts(rr)]
+        bad = sorted({statuses.get(c) for c in acc} - {"pass"} - set(ADMIT_REFUSALS))
+        if bad:
+            kept.append(f"{cid}\toracle outcome {', '.join(map(str, bad))} is neither pass nor a closed refusal")
+            continue
+        refused = [statuses[c] for c in acc if statuses[c] != "pass"]
+        reason = "; ".join(ADMIT_REFUSALS[k] for k in sorted(set(refused)))
+        new = dict(r, disposition="admitted", owner=new_owner, expected_verdict=tgt,
+                   reason=f"{reason}, assertion-closed in {len(refused)} configuration(s)" if refused else "")
+        new[ORACLE_COL] = oracle_value(recs, statuses)
+        changed += [f"{cid}\t{c}\t{r[c]} -> {new[c]}" for c in cols if new[c] != r[c]]
+        lines[i] = "\t".join(new[c] for c in cols)
+    if changed:
+        path.write_text("\n".join(lines), encoding="utf-8", newline="\n")
+    return changed, kept
 
 
 def current(evidence_path=None):

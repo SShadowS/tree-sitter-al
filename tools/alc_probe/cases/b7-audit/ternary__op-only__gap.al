@@ -1,5 +1,5 @@
 // B7a Task 10 witness (GAP): family ternary, base placement op-only, 4 cells; representative bnd:ternary_expression:then_value:end@ternary_expression#op-only/arithmetic
-// Fixture b7_gap_ternary_test.txt#B7a GAP: ternary / op-only (4 cells, verdict of the representative MIXED); the parser ERRORs on configurations alc accepts; representative bnd:ternary_expression:then_value:end@ternary_expression%23op-only/arithmetic#0
+// Fixture b7b2_ternary_test.txt#B7b-2 ternary / op-only in the then value: moved from b7_gap_ternary_test.txt#0
 // expect: !X reject(AL0104,AL0111)
 // expect: X accept
 // source: recorded by B7a Task 10, 2026-10-07: the alc split verdicts of cell bnd:ternary_expression:then_value:end@ternary_expression#op-only/arithmetic in tools/b7_audit/evidence.jsonl.gz

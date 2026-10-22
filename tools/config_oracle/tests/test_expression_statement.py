@@ -55,10 +55,15 @@ REJECT = [
     b"Session;", b"Codeunit;",
 ]
 
-# Valid AL in every configuration that B6 makes LOUD and B7 must parse (spec §7).
-B7_GAP = [
+# Valid AL in every configuration that B6 made LOUD. Item 39 shape 1 is parsed since B7b-2
+# Phase B (the repeat-until condition is a region root, spec 5.1).
+B7_FIXED = [
     b"repeat Foo(); until C\n#if A\n  and (C)\n#endif\n  ;",
-    # alc accepts it in both configurations; needs a `;`-inside-arms assignment continuation.
+]
+
+# Still LOUD: item 39 shape 2, alc accepts it in both configurations; needs a `;`-inside-arms
+# assignment continuation (B7b-2 spec 9, RC7: out of scope).
+B7_GAP = [
     b"B := A\n#if A\n  + 1;\n  Foo();\n#else\n  ;\n#endif",
 ]
 
@@ -71,6 +76,13 @@ def test_accepted_statement_parses_clean(al_parser, stmt):
 @pytest.mark.parametrize("stmt", REJECT, ids=repr)
 def test_rejected_statement_errors(al_parser, stmt):
     assert al_parser.parse(HOST % stmt).root_node.has_error is True
+
+
+@pytest.mark.parametrize("stmt", B7_FIXED, ids=repr)
+def test_b7_fixed_parses_clean(al_parser, stmt):
+    # Only has_error here; the tree is pinned by test/corpus/b7b2_repeat_until_test.txt,
+    # case "B7b-2 repeat-until / item 39 shape 1: moved from expression_statement_b7_gap_test.txt ...".
+    assert al_parser.parse(HOST % stmt).root_node.has_error is False
 
 
 @pytest.mark.parametrize("stmt", B7_GAP, ids=repr)

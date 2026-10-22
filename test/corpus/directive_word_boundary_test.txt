@@ -402,50 +402,40 @@ codeunit 1 T
         type: (type_specification
           (basic_type)))))
   (begin_keyword)
-  (statement_block
-    (if_statement
-      (if_keyword)
-      condition: (comparison_expression
-        left: (identifier)
-        operator: (comparison_operator)
-        right: (integer))
-      (then_keyword)
-      then_branch: (code_block
-        (begin_keyword)
-        body: (statement_block
-          (assignment_statement
-            left: (identifier)
-            operator: (assignment_operator)
-            right: (integer))
-          (preproc_conditional_statement
-            (preproc_if
-              (preproc_open)
-              condition: (preproc_not_expression
-                (identifier)))
-            (ERROR
-              (call_statement
-                function: (identifier))
-              (ERROR)
-              (assignment_expression
-                left: (identifier)
-                operator: (assignment_operator)
-                right: (integer)))
-            (empty_statement)
-            (call_statement
-              function: (identifier))
-            (call_statement
-              function: (identifier))
-            (code_block
-              (begin_keyword)
-              body: (statement_block
-                (assignment_statement
-                  left: (identifier)
-                  operator: (assignment_operator)
-                  right: (integer)))
-              (end_keyword))
-            (preproc_endif
-              (preproc_close))))
-        (end_keyword)))))
+  (if_keyword)
+  condition: (comparison_expression
+    left: (identifier)
+    operator: (comparison_operator)
+    right: (integer))
+  (then_keyword)
+  (begin_keyword)
+  (assignment_statement
+    left: (identifier)
+    operator: (assignment_operator)
+    right: (integer))
+  (preproc_if
+    (preproc_open)
+    condition: (preproc_not_expression
+      (identifier)))
+  (ERROR
+    (call_statement
+      function: (identifier))
+    (ERROR
+      (identifier)
+      (integer))
+    (identifier))
+  (else_keyword)
+  (begin_keyword)
+  (assignment_statement
+    left: (identifier)
+    operator: (assignment_operator)
+    right: (integer))
+  (call_statement
+    function: (identifier))
+  (preproc_endif
+    (preproc_close))
+  (call_statement
+    function: (identifier)))
 
 ================================================================================
 NEGATIVE: #elseX is not #else (AL0621)
@@ -480,61 +470,48 @@ codeunit 1 T
     (codeunit_keyword)
     object_id: (integer)
     object_name: (identifier)
-    body: (declaration_body
-      (procedure
-        (procedure_keyword)
-        name: (identifier)
-        (var_section
-          (var_keyword)
-          body: (var_body
-            (variable_declaration
-              name: (identifier)
-              type: (type_specification
-                (basic_type)))))
-        body: (code_block
-          (begin_keyword)
-          body: (statement_block
-            (if_statement
-              (if_keyword)
-              condition: (comparison_expression
-                left: (identifier)
-                operator: (comparison_operator)
-                right: (integer))
-              (then_keyword)
-              then_branch: (code_block
-                (begin_keyword)
-                body: (statement_block
-                  (assignment_statement
-                    left: (identifier)
-                    operator: (assignment_operator)
-                    right: (integer))
-                  (preproc_conditional_statement
-                    (preproc_if
-                      (preproc_open)
-                      condition: (preproc_not_expression
-                        (identifier)))
-                    (ERROR
-                      (call_statement
-                        function: (identifier))
-                      (ERROR)
-                      (assignment_expression
-                        left: (identifier)
-                        operator: (assignment_operator)
-                        right: (integer)))
-                    (empty_statement)
-                    (call_statement
-                      function: (identifier))
-                    (call_statement
-                      function: (identifier))
-                    (code_block
-                      (begin_keyword)
-                      body: (statement_block
-                        (assignment_statement
-                          left: (identifier)
-                          operator: (assignment_operator)
-                          right: (integer)))
-                      (end_keyword))
-                    (preproc_endif
-                      (preproc_close))))
-                (end_keyword))))
-          (MISSING end_keyword))))))
+    (ERROR
+      (procedure_keyword)
+      name: (identifier)
+      (var_section
+        (var_keyword)
+        body: (var_body
+          (variable_declaration
+            name: (identifier)
+            type: (type_specification
+              (basic_type)))))
+      (begin_keyword)
+      (if_keyword)
+      condition: (comparison_expression
+        left: (identifier)
+        operator: (comparison_operator)
+        right: (integer))
+      (then_keyword)
+      (begin_keyword)
+      (assignment_statement
+        left: (identifier)
+        operator: (assignment_operator)
+        right: (integer))
+      (preproc_if
+        (preproc_open)
+        condition: (preproc_not_expression
+          (identifier)))
+      (ERROR
+        (call_statement
+          function: (identifier))
+        (ERROR
+          (identifier)
+          (integer))
+        (identifier))
+      (else_keyword)
+      (begin_keyword)
+      (assignment_statement
+        left: (identifier)
+        operator: (assignment_operator)
+        right: (integer))
+      (call_statement
+        function: (identifier))
+      (preproc_endif
+        (preproc_close))
+      (call_statement
+        function: (identifier)))))

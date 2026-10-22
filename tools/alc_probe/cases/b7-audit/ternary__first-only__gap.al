@@ -1,5 +1,5 @@
 // B7a Task 10 witness (GAP): family ternary, base placement first-only, 14 cells; representative bnd:ternary_expression:condition:end@ternary_expression#first-only/comparison
-// Fixture b7_gap_ternary_test.txt#B7a GAP: ternary / first-only (14 cells, verdict of the representative GAP); the parser ERRORs on configurations alc accepts; representative bnd:ternary_expression:condition:end@ternary_expression%23first-only/comparison#0
+// Fixture b7b2_ternary_test.txt#B7b-2 ternary / first-only: moved from b7_gap_ternary_test.txt#0
 // expect: !X accept
 // expect: X accept
 // source: recorded by B7a Task 10, 2026-10-07: the alc split verdicts of cell bnd:ternary_expression:condition:end@ternary_expression#first-only/comparison in tools/b7_audit/evidence.jsonl.gz

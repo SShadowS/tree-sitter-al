@@ -1,5 +1,5 @@
 // B7a Task 10 witness (GAP): family expression-tail, base placement unary-not, 24 cells; representative bnd:preproc_conditional_expression_tail:operand:end@action_body#unary-not/comparison
-// Fixture b7_gap_expression_tail_test.txt#B7a GAP: expression-tail / unary-not (24 cells, verdict of the representative GAP); the parser ERRORs on configurations alc accepts; representative bnd:preproc_conditional_expression_tail:operand:end@action_body%23unary-not/comparison#0
+// Fixture b7b2_expression_tail_test.txt#B7b-2 expression-tail / unary-not: moved from b7_gap_expression_tail_test.txt#0
 // expect: !TPL !TPL3 !X accept
 // expect: !TPL !TPL3 X accept
 // expect: !TPL TPL3 !X accept

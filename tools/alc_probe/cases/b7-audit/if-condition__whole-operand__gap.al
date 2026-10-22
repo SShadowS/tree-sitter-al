@@ -1,5 +1,5 @@
 // B7a Task 10 witness (GAP): family if-condition, base placement whole-operand, 16 cells; representative bnd:_if_statement_no_else:condition:end@case_branch#whole-operand/comparison
-// Fixture b7_gap_if_condition_test.txt#B7a GAP: if-condition / whole-operand (16 cells, verdict of the representative GAP); the parser ERRORs on configurations alc accepts; representative bnd:_if_statement_no_else:condition:end@case_branch%23whole-operand/comparison#0
+// Fixture b7b2_if_condition_test.txt#B7b-2 if-condition / whole-operand: moved from b7_gap_if_condition_test.txt#0
 // expect: !X accept
 // expect: X accept
 // source: recorded by B7a Task 10, 2026-10-07: the alc split verdicts of cell bnd:_if_statement_no_else:condition:end@case_branch#whole-operand/comparison in tools/b7_audit/evidence.jsonl.gz
