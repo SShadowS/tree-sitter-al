@@ -264,6 +264,39 @@ def b7b2_series():
          ("mixed", "length", LENGTHS, mixed)]
 
 
+# --- D1 (spec 2026-10-22, Review Focus 4): runs and nesting of the split-if constructs C1/C2 factor -------------------
+SPLIT_IF_BEGIN_ELSE = b"#if A\nif X then begin\nY();\n#else\nif X then\n#endif\nZ();\n#if A\nend;\n#endif\n"
+SPLIT_IF_THEN_BEGIN = b"#if A\nif X then begin\n#endif\nZ();\n#if A\nend;\n#endif\n"
+SPLIT_IF_THEN_BEGIN_ELSE_SHARED = b"#if A\nif X then begin\n#else\nif Y then begin\n#endif\nZ();\nend;\n"
+
+
+# The C2- and C3-only rules (`_split_stmts_end`, `_endif_stmts_end_guard`).
+ELSE_BEGIN_OVER_ENDIF = b"if A then begin\nY();\n#if B\nZ();\nend else begin\nW();\n#endif\nV();\nend;\n"
+CODE_BLOCK_OVER_ENDIF = b"#if A\nbegin\nY();\n#endif\nZ();\n#if A\nend;\n#endif\n"
+FRAGMENTED_ELSE_TAIL = b"#if A\nif X then begin\nY();\nend else begin\n#endif\nZ();\n#if A\nend;\n#endif\n"
+
+
+def nested(unit):
+    """-> source(d): DEPTH_COPIES of `unit`, each nested d deep in `#if B ... #endif` arms."""
+    return lambda d: CODE_HOST % ((b"#if B\n" * d + unit + b"#endif\n" * d) * DEPTH_COPIES)
+
+
+split_if_begin_else_nested = nested(SPLIT_IF_BEGIN_ELSE)
+
+
+def d1_series():
+    """-> [(family, axis, [x], source(x))]: N consecutive units in one procedure, and the unit nested d deep."""
+    return [("split-if-begin-else", "length", LENGTHS, lambda n: CODE_HOST % (SPLIT_IF_BEGIN_ELSE * n)),
+            ("else-begin-over-endif", "length", LENGTHS, lambda n: CODE_HOST % (ELSE_BEGIN_OVER_ENDIF * n)),
+            ("code-block-over-endif", "length", LENGTHS, lambda n: CODE_HOST % (CODE_BLOCK_OVER_ENDIF * n)),
+            ("fragmented-else-tail", "length", LENGTHS, lambda n: CODE_HOST % (FRAGMENTED_ELSE_TAIL * n)),
+            ("fragmented-else-tail", "depth", DEPTHS, nested(FRAGMENTED_ELSE_TAIL)),
+            ("split-if-then-begin", "length", LENGTHS, lambda n: CODE_HOST % (SPLIT_IF_THEN_BEGIN * n)),
+            ("split-if-then-begin-else-shared", "length", LENGTHS,
+             lambda n: CODE_HOST % (SPLIT_IF_THEN_BEGIN_ELSE_SHARED * n)),
+            ("split-if-begin-else", "depth", DEPTHS, split_if_begin_else_nested)]
+
+
 def _worker(lib, src, out):
     """One input in a fresh process: measure()'s timing protocol, the RSS growth with the tree alive, the peak."""
     try:
@@ -379,7 +412,7 @@ def run(lib, quick=False):
         ok &= passed
         results.append({"family": family, "axis": axis, "rows": rows, "ratios": rs, "worst": worst, "fit": fit, "last": last,
                         "grown": grown, "error_at": err, "pass": passed})
-    for family, axis, xs, make in b7b3_series() + b7b2_series():
+    for family, axis, xs, make in b7b3_series() + b7b2_series() + d1_series():
         if quick and axis != "depth":
             xs = [x for x in xs if x <= 1280]
         rows, grown, err, wpeak, kind = measure_isolated(lib, xs, make)

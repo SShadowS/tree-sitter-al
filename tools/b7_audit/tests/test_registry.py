@@ -237,6 +237,69 @@ def test_alias_whose_live_rows_cover_a_new_host_fails():
     assert stale and any("never covered" in why for _, why in invalid)
 
 
+def _factored_world():
+    """D1 C1: `bnd:r1:f:end` (host s1) and `bnd:r2:f:end` (host s2) moved into the hidden `_h` factored out of r1
+    and r2, so the live key `bnd:_h:f:end` has the hosts r1 and r2."""
+    row = lambda k, h, eq="": registry.Row(k, h, "terminator", "fam", "x ⟨HOLE⟩", eq, "moved" if eq else "", "x;")
+    pairs = [("bnd:_h:f:end", census.Route("r1", ("r1",))), ("bnd:_h:f:end", census.Route("r2", ("r2",)))]
+    rows = [row("bnd:r1:f:end", "s1"), row("bnd:r2:f:end", "s2"),
+            row("bnd:_h:f:end", "r1", "bnd:r1:f:end"), row("bnd:_h:f:end", "r2", "bnd:r2:f:end")]
+    aliases = [_alias(retired="bnd:r1:f:end", live="bnd:_h:f:end"), _alias(retired="bnd:r2:f:end", live="bnd:_h:f:end")]
+    return pairs, rows, aliases
+
+
+def test_alias_live_host_may_be_the_factored_rule():
+    pairs, rows, aliases = _factored_world()
+    _, stale, invalid = registry.gate(pairs, rows, aliases)
+    assert stale == [] and invalid == []
+
+
+def test_alias_live_host_outside_factored_rules_fails():
+    """A guard: passes before and after the D1 extension (R11)."""
+    pairs, rows, aliases = _factored_world()
+    pairs = pairs + [("bnd:_h:f:end", census.Route("r3", ("r3",)))]
+    rows = rows + [registry.Row("bnd:_h:f:end", "r3", "terminator", "fam", "x ⟨HOLE⟩", "bnd:r1:f:end", "moved", "x;")]
+    _, stale, invalid = registry.gate(pairs, rows, aliases)
+    assert any("never covered" in why for _, why in invalid)
+
+
+def test_alias_live_host_must_be_its_own_rows_factored_rule():
+    """A live row may cover a factored host only when that host is the rule its own `equiv` was factored out of."""
+    pairs, rows, aliases = _factored_world()
+    rows = [r for r in rows if r.key != "bnd:_h:f:end"]
+    rows += [registry.Row("bnd:_h:f:end", "r2", "terminator", "fam", "x ⟨HOLE⟩", "bnd:r1:f:end", "moved", "x;"),
+             registry.Row("bnd:_h:f:end", "r1", "terminator", "fam", "x ⟨HOLE⟩", "bnd:r2:f:end", "moved", "x;")]
+    _, _, invalid = registry.gate(pairs, rows, aliases)
+    assert any("never covered" in why for _, why in invalid)
+
+
+def test_alias_live_row_without_equiv_on_a_factored_host_is_invalid_not_a_crash():
+    """A live row with an empty `equiv` names no rule, so a factored host on it is reported, not an IndexError."""
+    pairs, rows, aliases = _factored_world()
+    rows = rows + [registry.Row("bnd:_h:f:end", "r1", "terminator", "fam", "x ⟨HOLE⟩", "", "", "x;")]
+    _, _, invalid = registry.gate(pairs, rows, aliases)
+    assert any("never covered" in why for _, why in invalid)
+
+
+def test_alias_live_row_equiv_must_be_an_aliased_retired_key():
+    """The factored rule is not enough: `equiv` must be the retired key of an alias to this live key."""
+    pairs, rows, aliases = _factored_world()
+    rows = [r if not (r.key == "bnd:_h:f:end" and r.route_host == "r1") else
+            registry.Row(r.key, "r1", "terminator", "fam", "x ⟨HOLE⟩", "bnd:r1:other:end", "moved", "x;")
+            for r in rows]
+    _, _, invalid = registry.gate(pairs, rows, aliases)
+    assert any("never covered" in why for _, why in invalid)
+
+
+def test_same_rule_alias_cannot_add_the_rule_itself_as_host():
+    """`occ:R:a -> occ:R:b` moves a slot inside R; R is not a rule the slot was factored out of."""
+    row = lambda k, h, eq="": registry.Row(k, h, "terminator", "fam", "x ⟨HOLE⟩", eq, "moved" if eq else "", "x;")
+    pairs = [("occ:R:1.0", census.Route("s1", ("s1",))), ("occ:R:1.0", census.Route("R", ("R",)))]
+    rows = [row("occ:R:3.0", "s1"), row("occ:R:1.0", "s1", "occ:R:3.0"), row("occ:R:1.0", "R", "occ:R:3.0")]
+    _, _, invalid = registry.gate(pairs, rows, [_alias(retired="occ:R:3.0", live="occ:R:1.0")])
+    assert any("never covered" in why for _, why in invalid)
+
+
 def test_alias_for_a_key_still_in_the_grammar_fails():
     pairs, rows = _alias_world()
     pairs = pairs + [("occ:old:0", census.Route("h1", ("h1",)))]

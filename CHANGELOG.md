@@ -41,6 +41,57 @@ public API — a change to node structure or field names is a **major** bump.
 
 ### Changed
 
+- **Parser tables reduced (roadmap D1), no tree change.** Spec
+  `docs/superpowers/specs/2026-10-22-d1-state-reduction-design.md` (execution amendments 1-5); method record
+  `docs/state-reduction-method.md` pass 5. Three tree-preserving factorings of the split-if family share a complete
+  unit as a hidden rule:
+  - C1 `_split_if_begin_else_head` (`af0931f`);
+  - C2 `_split_stmts_end` (`a4cf0f2`);
+  - C3 `_endif_stmts_end_guard` (`437215c`).
+
+  **Metrics, re-measured at `437215c`** (`./tools/metrics.sh --vs 960ed31`, `jq '.conflicts|length' src/grammar.json`,
+  `./tools/ts-lock.sh tree-sitter test`):
+
+  | metric | before (`960ed31`) | after |
+  |---|---|---|
+  | STATE_COUNT | 28,742 | 26,968 (−1,774, −6.17%) |
+  | LARGE_STATE_COUNT | 10,562 | 9,389 (−1,173) |
+  | SYMBOL_COUNT | 1,325 | 1,328 |
+  | declared conflicts | 272 | 273 |
+  | `parser.c` | 68,647,284 B (65.5 MiB) | 61,703,620 B (58.8 MiB, −10.11%) |
+  | `tree-sitter-al.wasm` | 30,103,180 B | 26,977,685 B |
+  | `grammar.js` lines | 8,185 | 8,188 |
+  | `tree-sitter test` | 3,571 | 3,571, all pass |
+
+  That leaves 1,802 STATE and 1,334 LARGE under the ceilings (28,770 / 10,723), which is room for deferred items 61,
+  62, 51 shape 3 and 58. Where a correctness fix needs more, correctness wins over the ceilings.
+
+  **No valid tree changed.**
+  - `src/node-types.json` is byte-identical.
+  - `python -m tools.perf delta` against `960ed31` changed 0 files in BC.History (15,358), DC (1,352), BC28.1
+    (16,928) and BCApps-29.0 (36,716).
+  - The `has_error` sweeps and the full config-oracle tier (`findings.jsonl` byte-identical, 14,662 configurations,
+    0 discrepancies) are the same as at `960ed31`.
+  - `tools.perf incremental` found 0 mismatches on the four corpora.
+  - All 24,355 B7a verdicts are unchanged.
+
+  **Speed.** `tools.perf ab`, 24 rounds, time `960ed31` / time D1, with identical trees: DC 1.012 and 1.003,
+  BC.History 1.003 and 0.997 (`ab_accept` exit 0). Incremental DC: 0.229 ms per edit, between the two base runs of
+  0.251 and 0.215.
+
+  **Recovery trees only.** Recovery may change on input that already ERRORs (USER DECISION 2026-10-22).
+  - The one corpus fixture affected is the deliberate negative `b7_gap_split_if_begin_test.txt`, "B7a GAP:
+    split-if-begin / first-replace" (C2). It is still an `:error` case.
+  - B7a evidence changes in 231 alc-accepted GAP cells, and only in the `oracle` and `error_in_hole` fields.
+    - C1 changed 94 cells and C2 changed 153. The two sets overlap in 8 cells, so their union is 239.
+    - The 231 are that union minus 8 cells that C2 returned to base's observation, all
+      `occ:preproc_split_if_then_begin:0.5.0.0@preproc_split_if_then_begin_else_shared#{elif, elif+comments,
+      elif+not, nested, nested+comments, sep-only, sep-only+comments, sep-only+not}`.
+  - In 3 of C2's cells, the whole codeunit body becomes one ERROR (deferred-work item 64).
+
+  **B7a census.** `registry._alias_problem` now accepts a live host that is the rule a slot was factored out of
+  (amendment 1). `key-aliases.tsv` gains 8 rows, and the matrix gains 8 `no-evidence | equiv row` lines.
+
 - **An `#if` group may stand anywhere inside an expression (roadmap B7b-2, spec
   `docs/superpowers/specs/2026-10-20-b7b-2-expression-continuations-design.md` rev 3 with execution amendments).
   New node type `preproc_conditional_operand`; widened fields; production trees unchanged.** Before, an expression

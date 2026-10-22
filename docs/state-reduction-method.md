@@ -60,6 +60,7 @@ reduces it with no lookahead question that depends on which rule it is in.
 | 2 | `200b1e6` → `18785e1` | 15,525 → 11,872 (−23.5%) | → 26.28 MiB | worklist plan |
 | 3 | after `784bcef` | 11,872 → 10,825 (−8.8%) | → 23.82 MiB | worklist plan; every row tree-identical over BC.History |
 | 4 | `97ee3f2` | 15,321 → 14,875 (−2.9%) | 36.45 → 35.46 MB (units as the commit gives them) | commit message; `node-types.json` byte-identical, BC.History trees byte-identical |
+| 5 (D1) | `960ed31` → `437215c` (gated at `5e0741a`) | 28,742 → 26,968 (−6.17%); LARGE 10,562 → 9,389 | 68,647,284 → 61,703,620 B (65.5 → 58.8 MiB, −10.11%) | four-corpus `python -m tools.perf delta` 0 files, `node-types.json` byte-identical; spec `docs/superpowers/specs/2026-10-22-d1-state-reduction-design.md` |
 
 The worklist plan is `docs/superpowers/plans/2026-05-14-state-count-reduction-worklist.md`,
 which has every step and its numbers. Passes 1 to 3 together went from 18,290 to 10,825 states
@@ -83,6 +84,27 @@ Units that worked. Every one of them is still in `grammar.js`:
   `if C then X else` and ends at the hard `else`. In the first of these, one branch was
   spelled three times. Identical `repeat()` calls are deduplicated by the generator, but a
   triplicated `repeat(seq(x, ','))` followed by `optional(x)` is not.
+- Pass 5 (D1), each on top of the previous one. Every count is from the commit message:
+  - **C1** `_split_if_begin_else_head` (`af0931f`): the twelve-symbol prefix
+    `#if stmts* if C then begin stmts* #else stmts* if C then`, spelled out by
+    `preproc_split_if_then_begin_else_shared` and `preproc_split_if_begin_else`. It ends at the hard
+    `then` and carries the rules' `prec(26)`. STATE 28,742 → 27,511 (−1,231), LARGE 10,562 → 9,704
+    (−858), `parser.c` 63,750,805 B (60.8 MiB). The two conflict sets that named both rules were
+    rewritten with the head in their place, and conflicts stayed at 272.
+  - **C2** `_split_stmts_end` = `#if stmts* end` (`a4cf0f2`), shared by
+    `preproc_split_else_begin_over_endif`, `_preproc_end_guard` and the second `#if` of
+    `preproc_split_if_then_begin`. STATE 27,511 → 27,021 (−490), LARGE 9,704 → 9,437 (−267),
+    `parser.c` 61,993,440 B (59.1 MiB). The generator demanded three conflict sets and named two
+    old sets unnecessary, so conflicts went 272 → 273. It is the one unit that changed a recovery
+    tree: the deliberate-negative fixture `b7_gap_split_if_begin_test.txt` and 153 B7a gap cells.
+    Every one of those inputs already ERRORed, and no B7a verdict moved (spec execution amendment 4).
+  - **C3** `_endif_stmts_end_guard` = `#endif stmts* <end guard>` (`437215c`), shared by
+    `preproc_split_if_begin_else`, `preproc_split_code_block_over_endif` and
+    `preproc_fragmented_else_tail`. STATE 27,021 → 26,968 (−53), LARGE 9,437 → 9,389 (−48),
+    `parser.c` 61,703,620 B (58.8 MiB). It added no conflict. Alone it measured −270, because it
+    overlaps C1.
+  - The batch stopped at the spec's target (STATE ≤ 27,300, LARGE ≤ 9,700), so no Task 5 unit (C4,
+    C5) was attempted.
 - Removing conflicts that the generator reports as unnecessary (pass 1 removed three).
 - The `inline:` array, but only for trivial pass-through wrappers. `_field_source`
   (`$ => $._expression`) is inlined today (pass 2, item 10).
@@ -135,6 +157,25 @@ Each entry names the edit that was tried, because the result belongs to that edi
   states, comes from the 4.0.0 session notes and is unverified. A split `add*` layout-open
   rule cost +835 states in its cheapest form, so it was deferred (`docs/deferred-work.md`
   item 10, with the full table).
+- **Pass 5 (D1) attempts that did not land.** The scratch measurements are at `960ed31`; see the D1
+  spec, sections 3.3 and 4.
+  - *A further if-open head.* This shared `#if stmts* if C then` between C1's head and
+    `_preproc_split_then_begin_open`. It saved only 20 more states, and it needed two conflicts
+    naming `if_statement` and `_if_statement_no_else`. That is a fork against ordinary `if` code.
+  - *C1's head without `prec(26)`.* The count was the same, but the generator also asked for
+    `[_split_if_begin_else_head, if_statement]`, which is a new fork at every `if`. The head keeps
+    the prec.
+  - *Family merging, ML and Namespaces.* One shared B11 run machinery, with the value
+    `choice(ml_value_list, namespace_value_list, …)`. It failed at generate: `ENU='x'` is both an
+    `ml_value_pair` and a `namespace_pair`. It would also over-accept, because one family's value
+    would parse under the other's name. Do not retry it unless the two value languages are
+    disjoint.
+  - *C4 `_case_branch_tail`* (−141 / −12 alone) and *C5 `_case_head_body`* (−185 / −90). Each
+    needs a self-conflict that forks at every case branch or every case body end. Neither was
+    tried in the build, because the stop rule ended the batch after C3. C5's plain `_case_head`
+    form (−19, no conflict) was not worth a commit. These are scratch numbers, not rejections:
+    measure them again before using them.
+  - No candidate failed a gate after it was built (CP13). Every unit that was built was kept.
 
 *(From the 4.0.0 session notes, unverified:)*
 
@@ -169,6 +210,22 @@ paths fine. `bc28.1` and `bcapps-29.0` are absolute (`AL_BC28_ROOT`, `AL_BCAPPS2
 and work anywhere. All worktrees also share
 one compiled `al.dll`, so wrap every build and every `tree-sitter` command in
 `./tools/ts-lock.sh`.
+
+**On the Linux host this caveat does not apply** (D1 spec §5). The D1 checkout
+`/work/tsal-wt/main` has `BC.History` and `DC` symlinks and a gitignored `H:` symlink tree. With
+these, every corpus label resolves there, so the oracle and `tools.perf` run in that checkout.
+D1's full oracle tier ran there and resolved all four labels to the same corpus heads as the
+`960ed31` run. Never switch the shared `/work/tsal` to do this.
+
+**A factored unit can move a B7a census key** (D1 spec, execution amendment 1). A slot that moves
+inside its rule keeps its hosts, so one `tools/b7_audit/key-aliases.tsv` row covers it. A boundary
+that moves into a new hidden rule gets new hosts. `routes()` climbs from the hidden rule to its
+visible callers, which are the rules it was factored out of. Since `c8ab4ff`, refined in `266f596`
+and `de19d69`, `registry._alias_problem` accepts such a live host only on the live row whose own
+`equiv` names that rule. The live key's own rule is never accepted (that would be a same-rule move).
+Each retired key gets one alias row and one live `equiv` row in `registry.tsv`, and frozen cell
+ids stay unchanged. After the batch, the matrix gains one `no-evidence | equiv row` line per retired
+key; D1 added 8.
 
 | Gate | How |
 |---|---|

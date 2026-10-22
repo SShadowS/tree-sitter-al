@@ -767,7 +767,11 @@ module.exports = grammar({
     [$.statement_block, $._preproc_begin_body_to_endif],
     [$._reopen_block, $.statement_block],
     [$.code_block, $._reopen_block],
-    [$.preproc_split_else_begin_over_endif, $._preproc_end_branch, $._preproc_branch_statement],
+    // D1 C2: _split_stmts_end stands in for the three rules it was factored out of
+    // (preproc_split_else_begin_over_endif, preproc_split_if_then_begin, _preproc_end_guard),
+    // here and in the six-member set below.
+    [$._split_stmts_end, $._preproc_end_branch],
+    [$._split_stmts_end, $._preproc_end_branch, $._preproc_branch_statement],
     // _reopen_block: `if E then begin …` left open at #endif, or a complete
     // if_statement among the reopened block's statements.
     [$._preproc_if_header, $.if_statement],
@@ -785,16 +789,17 @@ module.exports = grammar({
     [$._open_prefix, $.preproc_split_if_else_statement],
     [$.preproc_split_if_statement, $._open_prefix],
     // _open_branch: preproc_split_open_statement's branch reads the same prefix.
-    [$._open_branch, $._preproc_split_then_begin_open, $.preproc_split_if_then_begin_else_shared, $.preproc_split_if_begin_else, $._preproc_branch_statement],
+    // D1 C1: _split_if_begin_else_head stands in for preproc_split_if_then_begin_else_shared and
+    // preproc_split_if_begin_else, the two rules it was factored out of (here and in the next set).
+    [$._open_branch, $._preproc_split_then_begin_open, $._split_if_begin_else_head, $._preproc_branch_statement],
     // Inside a preprocessor branch a statement can be read as belonging to the
     // conditional or to an enclosing statement_block. The two were previously
     // indistinguishable because both used `repeat($._statement)` and tree-sitter
     // shared one generated repeat symbol; giving the conditional its own branch
     // content (which also admits a code_block) separates them and exposes the
     // ambiguity that was always there. GLR resolves it by which parse completes.
-    [$._preproc_branch_statement, $._preproc_split_then_begin_open,
-     $.preproc_split_if_then_begin_else_shared, $.preproc_split_if_begin_else,
-     $._preproc_end_branch, $._open_branch, $.preproc_split_else_begin_over_endif],
+    [$._open_branch, $._preproc_split_then_begin_open, $._split_stmts_end, $._split_if_begin_else_head,
+     $._preproc_end_branch, $._preproc_branch_statement],
     [$.filter_value, $._literal_value],
     [$.filter_value, $._continuation_operand],
     [$._body_element, $._action_element],
@@ -4882,9 +4887,7 @@ module.exports = grammar({
     // reading -- so every enclosing block keeps its own `end` and the counts
     // outside this node are those of that reading.
     preproc_split_else_begin_over_endif: $ => prec.right(25, seq(
-      $.preproc_if,
-      repeat($._statement),
-      $.end_keyword,
+      $._split_stmts_end,
       repeat(seq(optional(';'), $.end_keyword)),
       $.else_keyword,
       $._reopen_block,
@@ -5411,9 +5414,7 @@ module.exports = grammar({
     preproc_split_if_then_begin: $ => prec(26, seq(
       $._preproc_split_then_begin_open,
       repeat($._statement),
-      $.preproc_if,
-      repeat($._statement),           // allow preamble before end
-      $.end_keyword,
+      $._split_stmts_end,             // `#if stmts* end` (D1 C2)
       choice(
         optional(';'),                // Pattern A: just end;
         $._else_begin_block,          // Pattern B: end else begin ... end;
@@ -5449,6 +5450,18 @@ module.exports = grammar({
       seq($.begin_keyword, repeat1($._statement), $.preproc_endif),
     ),
 
+    // D1 C2: `#if stmts* end`, shared by _preproc_end_guard, preproc_split_else_begin_over_endif and
+    // preproc_split_if_then_begin.
+    _split_stmts_end: $ => seq($.preproc_if, repeat($._statement), $.end_keyword),
+
+    // D1 C3: `#endif stmts* <end guard>`, shared by preproc_split_if_begin_else,
+    // preproc_split_code_block_over_endif and preproc_fragmented_else_tail.
+    _endif_stmts_end_guard: $ => seq(
+      $.preproc_endif,
+      repeat($._statement),              // shared statements after #endif
+      $._preproc_end_guard,
+    ),
+
     // The conditional region that CLOSES a block opened in an earlier region.
     //
     // Was `#if end [;] #endif` and nothing else, which assumed the closing
@@ -5457,9 +5470,7 @@ module.exports = grammar({
     // then `end;`, then two more statements, and carries an `#else` branch
     // supplying the alternative text for when the block was never opened.
     _preproc_end_guard: $ => seq(
-      $.preproc_if,
-      repeat($._statement),
-      $.end_keyword,
+      $._split_stmts_end,
       optional(';'),
       repeat($._statement),
       optional(seq($.preproc_else, repeat($._statement))),
@@ -5491,18 +5502,7 @@ module.exports = grammar({
     // #else-branch begin precedes #endif, so it is PREPROC_SPLIT_BEGIN.
     // Pattern: #if [pre] if A then begin [stmts] #else [pre] if B then begin #endif shared end;
     preproc_split_if_then_begin_else_shared: $ => prec.right(26, seq(
-      $.preproc_if,
-      repeat($._statement),
-      $.if_keyword,
-      $._region_root_condition,
-      $.then_keyword,
-      $.begin_keyword,
-      repeat($._statement),
-      $.preproc_else,
-      repeat($._statement),
-      $.if_keyword,
-      $._region_root_condition,
-      $.then_keyword,
+      $._split_if_begin_else_head,
       // Was `$.preproc_split_begin, $.preproc_endif` — so the #else branch could
       // open the block but contribute NOTHING to it. Real code contributes:
       // FinanceChargeMemo.Report.al:806 has `CustLedgerEntry.CalcFields(...)`
@@ -5519,10 +5519,12 @@ module.exports = grammar({
       ),
     )),
 
-    // Split if-then-begin with #else alternative: #if branch has begin+extra stmts, #else has just if-then
-    // Pattern: #if / [preamble] if EXPR then begin <stmts> / #else / [preamble] if EXPR then / #endif / shared_stmts / #if / end; / #endif
-    // The #if branch wraps shared code in begin/end with extra preamble; #else branch uses bare if-then.
-    preproc_split_if_begin_else: $ => prec(26, seq(
+    // D1 C1: the twelve-symbol head shared by preproc_split_if_then_begin_else_shared and
+    // preproc_split_if_begin_else, up to the hard keyword `then` of the #else branch.
+    // Pattern: #if [preamble] if EXPR then begin [stmts] #else [preamble] if EXPR then
+    // prec(26) is the rules' own: without it the generator asks for
+    // [_split_if_begin_else_head, if_statement], a fork on every `if`.
+    _split_if_begin_else_head: $ => prec(26, seq(
       $.preproc_if,
       repeat($._statement),              // optional preamble in #if branch
       $.if_keyword,
@@ -5535,12 +5537,16 @@ module.exports = grammar({
       $.if_keyword,
       $._region_root_condition,
       $.then_keyword,
-      $.preproc_endif,
-      repeat($._statement),              // shared statements after #endif
-      $._preproc_end_guard,
     )),
 
-    // Split code_block ending: #if end; #else [stmts] end else begin stmts end; #endif
+    // Split if-then-begin with #else alternative: #if branch has begin+extra stmts, #else has just if-then
+    // Pattern: #if / [preamble] if EXPR then begin <stmts> / #else / [preamble] if EXPR then / #endif / shared_stmts / #if / end; / #endif
+    // The #if branch wraps shared code in begin/end with extra preamble; #else branch uses bare if-then.
+    preproc_split_if_begin_else: $ => prec(26, seq(
+      $._split_if_begin_else_head,
+      $._endif_stmts_end_guard,
+    )),
+
     // Split call statement: function call where first argument(s) differ across #if/#else
     // Each branch: func_name(arg, arg,   (ends with trailing comma)
     // After #endif: remaining_args);
@@ -5621,18 +5627,14 @@ module.exports = grammar({
       $.preproc_if,
       $.begin_keyword,
       repeat($._statement),
-      $.preproc_endif,
-      repeat($._statement),
-      $._preproc_end_guard,
+      $._endif_stmts_end_guard,
     )),
 
     // Fragmented else tail: begin #endif stmts #if end; #endif
     // Used after else_keyword when the else branch's begin/end is split across preprocessor blocks
     preproc_fragmented_else_tail: $ => prec(25, seq(
       $.preproc_split_begin,          // 'begin' at depth > 0, before #endif
-      $.preproc_endif,
-      repeat($._statement),
-      $._preproc_end_guard,
+      $._endif_stmts_end_guard,
     )),
 
     // Preprocessor conditionals in statements context

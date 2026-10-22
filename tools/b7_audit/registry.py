@@ -94,12 +94,15 @@ def load_aliases(path):
     return out
 
 
-def _alias_problem(a, rows, live_keys):
+def _alias_problem(a, rows, live_keys, aliases=()):
     """None when `a` may stand in for its retired rows: the retired key is gone from the grammar, the live key is
     present; the alias's role and family are the retired rows' (`na` rows exempt from the role, but at least one
     retired row has the role); the live key's
     registry rows have the same role (or `na`) and
-    cover only hosts the retired rows covered (so every live host has frozen cells). The live rows' family is not
+    cover only hosts the retired rows covered (so every live host has frozen cells), or hosts that are the rule
+    named by the retired key of any alias to the same live key: a slot moved into a hidden rule factored out of
+    those rules is hosted by them (D1 execution amendment 1). Such a host is allowed only on a live row whose own
+    `equiv` names it, and never when it is the live key's own rule (a same-rule move). The live rows' family is not
     compared: an owner change moves a `;` into another family (the split call's `;` is now a statement terminator)."""
     if a.retired in live_keys:
         return f"retired key {a.retired} is still in the grammar"
@@ -117,7 +120,13 @@ def _alias_problem(a, rows, live_keys):
         return f"{a.retired} has no registry row with role {a.role}"
     if not any(r.role == a.role for r in new) or any(r.role not in (a.role, "na") for r in new):
         return f"{a.live} has no registry row with role {a.role}"
-    extra = {h for r in new for h in r.hosts} - {h for r in old for h in r.hosts}
+    factored = {x.retired.split(":")[1] for x in aliases if x.live == a.live} - {a.live.split(":")[1]}
+    # a factored host is allowed only on the live row whose own `equiv` is the retired key of an alias to this live
+    # key, and that key's rule is the host (an empty equiv names none)
+    retired_of = {x.retired for x in aliases if x.live == a.live}
+    extra = ({h for r in new for h in r.hosts
+              if not (h in factored and r.equiv in retired_of and r.equiv.split(":")[1] == h)}
+             - {h for r in old for h in r.hosts})
     if extra:
         return f"{a.live} covers hosts {sorted(extra)} that {a.retired} never covered"
     return None
@@ -137,7 +146,7 @@ def gate(pairs, rows, aliases=()):
     live_keys = {k for k, _ in pairs}
     alias_invalid = []
     for a in aliases:
-        why = _alias_problem(a, rows, live_keys)
+        why = _alias_problem(a, rows, live_keys, aliases)
         if why is None:
             stale = [r for r in stale if r.key != a.retired]
         else:

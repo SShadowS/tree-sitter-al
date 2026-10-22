@@ -112,6 +112,34 @@ def test_root_slot_and_ternary_generators():
     assert c.count(b"#if X") == 3 and b"x := C\n#if X\nand D1\n#endif" in c and b"\n? 1 : 0;\n" in c
 
 
+# --- D1 series (spec 2026-10-22, Review Focus 4) --------------------------------------------------------------------
+def test_d1_series_use_the_unchanged_grid():
+    for _, axis, xs, _ in s.d1_series():
+        assert xs == (s.LENGTHS if axis == "length" else s.DEPTHS)
+    assert {f for f, _, _, _ in s.d1_series()} == {"split-if-begin-else", "split-if-then-begin",
+                                                    "split-if-then-begin-else-shared", "else-begin-over-endif",
+                                                    "code-block-over-endif", "fragmented-else-tail"}
+
+
+def test_d1_units_parse_as_the_split_constructs(al_parser):
+    """R9: one generated unit of each series parses clean as the construct it is meant to exercise."""
+    def types(src):
+        tree = al_parser.parse(src)
+        out, stack = set(), [tree.root_node]
+        while stack:
+            n = stack.pop()
+            out.add(n.type)
+            stack.extend(n.children)
+        return tree.root_node.has_error, out
+    wants = ("preproc_split_if_begin_else", "preproc_split_else_begin_over_endif",
+             "preproc_split_code_block_over_endif", "preproc_fragmented_else_tail", "preproc_fragmented_else_tail",
+             "preproc_split_if_then_begin", "preproc_split_if_then_begin_else_shared", "preproc_split_if_begin_else")
+    assert len(wants) == len(s.d1_series())
+    for (family, axis, _, make), want in zip(s.d1_series(), wants):
+        err, seen = types(make(1))
+        assert not err and want in seen, (family, axis)
+
+
 def test_scaling_exceptions_are_exactly_items_52_and_53():
     """User decisions (deferred-work items 52 and 53): only consecutive groups at a root after which a host group can
     start (item 52: the assignment and argument roots, Task 6; four Phase B roots and one ternary condition with

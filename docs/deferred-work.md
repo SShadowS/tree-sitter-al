@@ -1974,6 +1974,9 @@ Task 10, "Item 51"). Owner now: a B7b-2 follow-up.
 binary binds looser than the keyword operator), without the measured-and-reverted precedence change of Task 10. The
 operand prefixes of spec 6.3 landed in Phase C.
 
+**Room after D1 (shape 3):** 28,770 − 26,968 = 1,802 STATE / 10,723 − 9,389 = 1,334 LARGE under the ceilings. Measure
+this item's real cost against `437215c` (D1 spec §10). Correctness wins over the ceilings (USER DECISION 2026-10-22).
+
 **Owner:** B7b-2-followup.
 
 ## 52. N consecutive `#if` groups at a root after which a host group can start parse in quadratic time (assignment, argument, repeat-until, range left, list element, split-call argument, ternary condition, Phase C `mixed`; B7b-2, known limit)
@@ -2194,7 +2197,11 @@ The fix makes that case ERROR.
 **Next step:** the aliased typed variant (`_in_right` with `list_literal` arms, like `_type_right`) once a state
 reduction (item 54) leaves room for it (Task 10 measured that variant at 28,951 STATE; the branch is at 28,742).
 
-**Owner:** roadmap D1 / a B7b-2 follow-up.
+**Room after D1:** 28,770 − 26,968 = 1,802 STATE / 10,723 − 9,389 = 1,334 LARGE under the ceilings. Measure this
+item's real cost against `437215c` (D1 spec §10). Task 10 measured the variant at +209 STATE on the pre-D1 grammar.
+Correctness wins over the ceilings (USER DECISION 2026-10-22).
+
+**Owner:** a B7b-2 follow-up. D1 has made the room.
 
 ## 59. The traversal helper does not expose expression regions
 
@@ -2255,6 +2262,9 @@ cell, manifest row or SILENT/GAP witness covered the shape, and "every in-scope 
 operator a unary), measured against the state ceiling; then a B7a placement `unary-op-only` so the matrix covers the
 shape, with manifest rows and assertions.
 
+**Room after D1:** 28,770 − 26,968 = 1,802 STATE / 10,723 − 9,389 = 1,334 LARGE under the ceilings. Measure this
+item's real cost against `437215c` (D1 spec §10). Correctness wins over the ceilings (USER DECISION 2026-10-22).
+
 **Owner:** B7b-2-followup.
 
 ## 62. A property value with a leading prefix and a tail ERRORs; alc accepts it (B7b-2 Phase C, B12 route)
@@ -2278,7 +2288,63 @@ B11 value-run route that takes a plain value's tail does not start after a prefi
 **Likely fix:** `optional($.preproc_conditional_expression_tail)` on that arm, as in `leadingPrefixed`; measure the
 state cost and the B11 precedence audit (`docs/b11-precedence-audit.md`), then flip the witness to a positive case.
 
+**Room after D1:** 28,770 − 26,968 = 1,802 STATE / 10,723 − 9,389 = 1,334 LARGE under the ceilings. Measure this
+item's real cost against `437215c` (D1 spec §10). Correctness wins over the ceilings (USER DECISION 2026-10-22).
+
 **Owner:** B12.
+
+## 63. Incremental reparse differs from a fresh parse on two VALID inputs (pre-existing, found by D1)
+
+**Established:** 2026-10-22, D1 Task 3 (`mutate_parity` class `incremental`), reproduced in Task 7 with
+`.cache/d1/tools/mutate_parity.reparse` under py-tree-sitter 0.25. The cause is one edit, called delete-6: delete
+line 6 of the case input (the whole line and its `\n`), call `tree.edit(start_byte=a, old_end_byte=b, new_end_byte=a)`,
+then `parser.parse(new, old_tree)`. Compare the result with `parser.parse(new)`:
+
+| corpus case | line 6 deleted | fresh parse | incremental parse |
+|---|---|---|---|
+| `test/corpus/preproc_split_block_over_endif_test.txt` "A bare begin alone in one #if, its end alone in a later #if" | `        if X then` (bytes 48-66) | clean | `has_error`, ERROR at 6:8-10:24, 7:0-7:1, 7:8-7:15, 9:0-9:4 |
+| `test/corpus/preproc_split_brace_and_case_test.txt` "A block's end buried among statements in a later branch, with an #else" | `        if No < 1 then` (bytes 48-71) | clean | `has_error`, ERROR at 6:8-11:34, 7:0-7:1, 7:8-7:15, 9:0-9:4 |
+
+The original input is clean in both cases. The result is identical at `960ed31` and on every D1 library (c1, c2,
+c3), so it is a pre-existing defect and not a D1 regression. `python -m tools.perf incremental` found no mismatch
+on the four production corpora (about 4,000 edits each). Its edits do not include this one.
+
+**Why it matters.** It is a correctness defect for incremental consumers such as editors: after one valid edit, the
+tree shows an ERROR that a fresh parse does not. al-sem is unaffected if it parses fresh, and its public ABI
+`bindings/c/al_shim.c` does: `al_shim_parse_utf8` calls `ts_parser_parse_string(parser, NULL, ...)` and exports no
+tree edit. Whether al-sem has another path that parses incrementally is unknown from this repo.
+
+**Likely area (not established):** the deleted `if ... then` leaves `else` + `#if ... begin #endif`. That is the
+split opener whose `begin` is lexed as `PREPROC_SPLIT_BEGIN` (depth > 0, before `#endif`). Reused subtrees or
+tokens lexed in the old parse state may not match the new one. Start with
+`tree-sitter parse --edit` (or the reparse above) and `-d` on both inputs.
+
+**Next step:** a reproduction test (an incremental-equals-fresh pytest over these two edits), then the root cause in
+the scanner or the split rules. After that, add delete/re-insert-each-line edits over the split fixtures to
+`tools.perf incremental` or to D2's fuzzing.
+
+**Owner:** roadmap D2 (incremental and scanner-sensitive edits), suggested.
+
+## 64. Split-if-begin GAP cells where C2's recovery loses the `procedure` node (D1, recorded)
+
+**Established:** 2026-10-22, D1 Task 3 review (spec execution amendment 4). The B7a family `split-if-begin` is GAP in
+582 cells (matrix 'Ranked fix list', owner B7b+). No item tracked it until now. These inputs are alc-accepted, but the
+parser ERRORs on them at `960ed31` and still ERRORs after D1. C2 (`_split_stmts_end`, `a4cf0f2`) changed the
+recovery tree of 153 of them. In 3 cells the recovery got much worse: the whole codeunit `declaration_body` becomes
+one ERROR (+441 / +479 / +603 bytes), and the `procedure` node is lost. At `960ed31` and C1, the same inputs had 3-12
+local ERRORs inside a `procedure` node:
+- `occ:preproc_split_if_then_begin:0.5.0.0@preproc_conditional_statement#nested+not`
+- `occ:preproc_split_if_then_begin:0.5.0.0@preproc_split_block_end_in_else#empty+not`
+- `occ:preproc_split_if_then_begin:0.5.0.0@preproc_split_if_else_statement#empty+not`
+
+All 3 are alc ACCEPT and GAP before and after, so no verdict moved.
+
+**USER DECISION 2026-10-22 (C2):** "Keep C2, record the 3".
+
+**Next step:** fix the gap itself. A split-if-begin opener in these hosts must parse to the correct tree. That
+replaces the recovery tree in all 582 cells, these 3 included.
+
+**Owner:** B7b+ (the matrix route owner of `split-if-begin`).
 
 ## Longer-lived proposals, tracked separately
 
