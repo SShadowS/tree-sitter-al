@@ -6,7 +6,7 @@ ssh_port: 2211 # server1's sshPorts range 2210-2299
 mem_limit: 24g # generate on this grammar and the full oracle tier are memory-hungry; no sidecars
 agents:
   - name: main
-    branch: feat/b7b-2-continuations
+    branch: feat/d1-state-reduction
     model: opus
     session_name: tsal-main
     start:
