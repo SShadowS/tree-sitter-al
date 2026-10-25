@@ -55,6 +55,7 @@ import shutil
 import subprocess
 import sys
 import time
+from concurrent.futures import ThreadPoolExecutor, as_completed
 from dataclasses import dataclass, field
 from pathlib import Path
 from typing import Callable, Sequence
@@ -1153,7 +1154,9 @@ def _run_tree(cmd, *, cwd, env, timeout):
     Same shape as the incident where a stopped background task left ts-lock
     shells alive in their wait loops.
     """
-    proc = subprocess.Popen(cmd, cwd=cwd, env=env,
+    # Its own session, so _kill_tree's killpg hits this gate's tree only, not the
+    # harness's own process group (and with it every case running in parallel).
+    proc = subprocess.Popen(cmd, cwd=cwd, env=env, start_new_session=(os.name != "nt"),
                             stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
     try:
         out, _ = proc.communicate(timeout=timeout)
@@ -1260,6 +1263,12 @@ def run_case(case: Case, workdir: Path, timeout: int) -> tuple[bool, str, str]:
 
     env = dict(os.environ)
     env.update(case.env)
+    # The CLI caches its compiled parser by grammar NAME in TREE_SITTER_LIBDIR
+    # (default ~/.cache/tree-sitter/lib). Cases run in parallel on differently
+    # mutated grammars, so each gets its own, beside (not inside) its scratch tree.
+    libdir = workdir.parent / f"{workdir.name}.tslib"
+    libdir.mkdir(exist_ok=True)
+    env["TREE_SITTER_LIBDIR"] = str(libdir)
     if case.path_prepend:
         shim = workdir / case.path_prepend
         if not shim.is_dir():
@@ -1502,6 +1511,9 @@ def main() -> int:
                     help="scratch directory (default: a temp dir)")
     ap.add_argument("--timeout", type=int, default=900, help="per-case timeout, seconds")
     ap.add_argument("--keep", action="store_true", help="keep scratch trees for inspection")
+    ap.add_argument("-j", "--jobs", type=int, default=os.cpu_count() or 1,
+                    help="cases run in parallel (default: CPU count); each has its own "
+                         "scratch tree and compiled parser")
     args = ap.parse_args()
 
     if args.list:
@@ -1555,38 +1567,51 @@ def main() -> int:
                   "over an empty registry", file=sys.stderr)
             return 1
 
-        print(f"gate-selftest: {len(cases)} case(s), scratch {scratch}", flush=True)
-        passed = skipped = failed = 0
-        for case in cases:
+        jobs = max(1, args.jobs)
+        print(f"gate-selftest: {len(cases)} case(s), {jobs} in parallel, scratch {scratch}",
+              flush=True)
+
+        def one(case: Case) -> tuple[str, list[str]]:
             # Build first, then test prerequisites AGAINST THE SCRATCH TREE --
             # the repo having a C toolchain says nothing about whether the copy
             # the gate will actually run in can see it.
             work = scratch / case.id
+            libdir = scratch / f"{case.id}.tslib"
             build_pristine(work)
             unmet = [n for n in case.needs if not PREREQS[n][0](work)]
             if unmet:
                 why = "; ".join(PREREQS[n][1] for n in unmet)
-                print(f"  SKIP  {case.id:32s}        {why}", flush=True)
-                skipped += 1
                 shutil.rmtree(work, ignore_errors=True)
-                continue
+                return "skip", [f"  SKIP  {case.id:32s}        {why}"]
             started = time.time()
             ok, verdict, out = run_case(case, work, args.timeout)
             took = time.time() - started
             if ok:
-                print(f"  PASS  {case.id:32s} {took:5.1f}s  {verdict}", flush=True)
-                passed += 1
                 if not args.keep:
                     shutil.rmtree(work, ignore_errors=True)
-            else:
-                print(_safe(f"  FAIL  {case.id:32s} {took:5.1f}s  {verdict}"), flush=True)
-                print(_safe(f"        injected: {case.why}"))
-                # The tail is only the summary; the failing steps are what say WHY.
-                for line in failing_steps(out):
-                    print(_safe(f"        ✗ {line}"))
-                for line in out.splitlines()[-12:]:
-                    print(_safe(f"        | {line}"))
-                failed += 1
+                    shutil.rmtree(libdir, ignore_errors=True)
+                return "pass", [f"  PASS  {case.id:32s} {took:5.1f}s  {verdict}"]
+            lines = [f"  FAIL  {case.id:32s} {took:5.1f}s  {verdict}",
+                     f"        injected: {case.why}"]
+            # The tail is only the summary; the failing steps are what say WHY.
+            lines += [f"        ✗ {line}" for line in failing_steps(out)]
+            lines += [f"        | {line}" for line in out.splitlines()[-12:]]
+            return "fail", lines
+
+        passed = skipped = failed = 0
+        # Threads, not processes: each case is a subprocess tree, the GIL is idle.
+        # A SelfTestError in any case is fatal: pending cases are cancelled and it
+        # propagates to the handler below, so no verdict is reported for the run.
+        pool = ThreadPoolExecutor(max_workers=jobs)
+        try:
+            for fut in as_completed([pool.submit(one, c) for c in cases]):
+                status, lines = fut.result()
+                print("\n".join(_safe(line) for line in lines), flush=True)
+                passed += status == "pass"
+                failed += status == "fail"
+                skipped += status == "skip"
+        finally:
+            pool.shutdown(wait=True, cancel_futures=True)
 
         print()
         # The denominator, asserted rather than merely printed.
