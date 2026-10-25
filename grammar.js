@@ -1023,6 +1023,12 @@ module.exports = grammar({
     [$._empty_value_conditional, $._property_value_conditional_lead, $._permission_empty_conditional, $._permission_open_lead, $._impl_value_empty_conditional, $._impl_value_open_lead, $._option_members_open_conditional, $._option_members_run_open],
     [$._empty_value_conditional, $._property_value_conditional_lead, $._permission_open_lead, $._impl_value_open_lead, $._option_members_open_conditional, $._option_members_run_open],
     [$._option_members_open_conditional, $._option_members_empty_conditional, $._option_members_run_open],
+    // Item 66: at a property value, `Prop = #if X #else A • #if`: a prefix arm
+    // whose operand takes tail items (`_dangling_operand`) vs the arm's whole
+    // value (`_expression`, or `property_expression` after a leading prefix)
+    // vs a ternary-condition tail, until the operator after the operand.
+    [$._dangling_operand, $._expression, $._ternary_condition],
+    [$.property_expression, $._dangling_operand, $._ternary_condition],
     [$.option_member_list, $._option_members_branch, $._option_members_run_open],
     [$._option_members_branch, $._option_members_run_open],
     [$.option_member_list, $._option_members_branch_c],
@@ -6155,12 +6161,32 @@ module.exports = grammar({
     // the trailing `or`. A repeat1 here would be genuinely ambiguous with the
     // greedy `_expression` and buys nothing, since any run of operand/operator
     // pairs merges into a single larger expression by construction.
+    //
+    // Any arm may be empty, the `#if` arm too (deferred-work item 66: `I := #if
+    // X a + #else #endif b;`, alc accepts both configurations; probe
+    // tools/alc_probe/cases/b7b-2/prefixes/empty-else-prefix.al): an empty arm
+    // contributes nothing. SOME arm holds a member, so a group with no member at
+    // all is never a prefix. Only the `#if` arm may be empty before the first
+    // non-empty arm (the next `#elif` arm, or a closing `#else`): two or more
+    // leading empty arms (`#if X #elif Y #else a + #endif`) still ERROR.
+    // Measured: allowing them (`_tail_group`'s form, right-recursive here) is
+    // +49 states and needs six conflicts, and it reorders the GLR versions of
+    // an all-empty group of three or more arms before a case branch, so
+    // `case I of #if X #elif Y #else #endif 1: ...` flips from
+    // preproc_split_case_branch to an empty preproc_conditional_case: a valid
+    // tree changes. Not taken (docs/deferred-work.md item 66).
     preproc_operand_prefix: $ => seq(
       $.preproc_if,
-      $._prefix_arm,
-      repeat(seq($.preproc_elif, $._prefix_arm)),
-      optional(seq($.preproc_else, $._prefix_arm)),
-      $.preproc_endif
+      choice(
+        seq(
+          optional($.preproc_elif),
+          $._prefix_arm,
+          repeat(seq($.preproc_elif, optional($._prefix_arm))),
+          optional(seq($.preproc_else, optional($._prefix_arm))),
+        ),
+        seq($.preproc_else, $._prefix_arm),
+      ),
+      $.preproc_endif,
     ),
 
     // An arm may also be a unary operator alone, applied to the operand after

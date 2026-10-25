@@ -1,0 +1,447 @@
+================================================================================
+B7b-2 prefix: an empty #else arm
+--
+Item 66. An empty arm contributes nothing (docs/expression-regions.md, Meaning
+step 1): X gives `I := A + B`, not X gives `I := B`. alc accepts every
+configuration: tools/alc_probe/cases/b7b-2/prefixes/empty-else-prefix.al. Before:
+ERROR.
+================================================================================
+codeunit 50100 P
+{
+    procedure Q()
+    begin
+        I :=
+#if X
+            A +
+#else
+#endif
+            B;
+    end;
+}
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (procedure
+        (procedure_keyword)
+        name: (identifier)
+        body: (code_block
+          (begin_keyword)
+          body: (statement_block
+            (assignment_statement
+              left: (identifier)
+              operator: (assignment_operator)
+              (preproc_operand_prefix
+                (preproc_if
+                  (preproc_open)
+                  condition: (identifier))
+                operand: (identifier)
+                (preproc_else)
+                (preproc_endif
+                  (preproc_close)))
+              right: (identifier)))
+          (end_keyword))))))
+
+================================================================================
+B7b-2 prefix: an empty #elif arm between non-empty arms
+--
+Item 66. Y (not X) gives `I := B`; otherwise `A + B` or `A - B`.
+================================================================================
+codeunit 50100 P
+{
+    procedure Q()
+    begin
+        I :=
+#if X
+            A +
+#elif Y
+#else
+            A -
+#endif
+            B;
+    end;
+}
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (procedure
+        (procedure_keyword)
+        name: (identifier)
+        body: (code_block
+          (begin_keyword)
+          body: (statement_block
+            (assignment_statement
+              left: (identifier)
+              operator: (assignment_operator)
+              (preproc_operand_prefix
+                (preproc_if
+                  (preproc_open)
+                  condition: (identifier))
+                operand: (identifier)
+                (preproc_elif
+                  condition: (identifier))
+                (preproc_else)
+                operand: (identifier)
+                (preproc_endif
+                  (preproc_close)))
+              right: (identifier)))
+          (end_keyword))))))
+
+================================================================================
+B7b-2 prefix: an empty closing #elif arm
+--
+Item 66. Not X and not Y gives no prefix at all: `I := B`.
+================================================================================
+codeunit 50100 P
+{
+    procedure Q()
+    begin
+        I :=
+#if X
+            A +
+#elif Y
+#endif
+            B;
+    end;
+}
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (procedure
+        (procedure_keyword)
+        name: (identifier)
+        body: (code_block
+          (begin_keyword)
+          body: (statement_block
+            (assignment_statement
+              left: (identifier)
+              operator: (assignment_operator)
+              (preproc_operand_prefix
+                (preproc_if
+                  (preproc_open)
+                  condition: (identifier))
+                operand: (identifier)
+                (preproc_elif
+                  condition: (identifier))
+                (preproc_endif
+                  (preproc_close)))
+              right: (identifier)))
+          (end_keyword))))))
+
+================================================================================
+B7b-2 prefix: an empty #if arm before a non-empty #else
+--
+Item 66. X gives `I := B`, not X gives `I := A + B`. Before: ERROR.
+================================================================================
+codeunit 50100 P
+{
+    procedure Q()
+    begin
+        I :=
+#if X
+#else
+            A +
+#endif
+            B;
+    end;
+}
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (procedure
+        (procedure_keyword)
+        name: (identifier)
+        body: (code_block
+          (begin_keyword)
+          body: (statement_block
+            (assignment_statement
+              left: (identifier)
+              operator: (assignment_operator)
+              (preproc_operand_prefix
+                (preproc_if
+                  (preproc_open)
+                  condition: (identifier))
+                (preproc_else)
+                operand: (identifier)
+                (preproc_endif
+                  (preproc_close)))
+              right: (identifier)))
+          (end_keyword))))))
+
+================================================================================
+B7b-2 prefix: an empty #if arm before a non-empty #elif and #else
+--
+Item 66. The leading empty arm is its bare directive; the #elif arm is the
+first that holds an operand. Before: ERROR.
+================================================================================
+codeunit 50100 P
+{
+    procedure Q()
+    begin
+        I :=
+#if X
+#elif Y
+            A *
+#else
+            A -
+#endif
+            B;
+    end;
+}
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (procedure
+        (procedure_keyword)
+        name: (identifier)
+        body: (code_block
+          (begin_keyword)
+          body: (statement_block
+            (assignment_statement
+              left: (identifier)
+              operator: (assignment_operator)
+              (preproc_operand_prefix
+                (preproc_if
+                  (preproc_open)
+                  condition: (identifier))
+                (preproc_elif
+                  condition: (identifier))
+                operand: (identifier)
+                (preproc_else)
+                operand: (identifier)
+                (preproc_endif
+                  (preproc_close)))
+              right: (identifier)))
+          (end_keyword))))))
+
+================================================================================
+B7b-2 prefix: a unary-only arm with an empty #else
+--
+Items 61 and 66. X gives `I := -B`, not X gives `I := B`. Before: ERROR.
+================================================================================
+codeunit 50100 P
+{
+    procedure Q()
+    begin
+        I :=
+#if X
+            -
+#else
+#endif
+            B;
+    end;
+}
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (procedure
+        (procedure_keyword)
+        name: (identifier)
+        body: (code_block
+          (begin_keyword)
+          body: (statement_block
+            (assignment_statement
+              left: (identifier)
+              operator: (assignment_operator)
+              (preproc_operand_prefix
+                (preproc_if
+                  (preproc_open)
+                  condition: (identifier))
+                (preproc_else)
+                (preproc_endif
+                  (preproc_close)))
+              right: (identifier)))
+          (end_keyword))))))
+
+================================================================================
+B7b-2 prefix: an empty #else arm after a binary operator
+--
+Item 66. X gives `I := C * A + B`, regrouped by the ladder as `(C * A) + B`
+(docs/expression-regions.md section 3); not X gives `C * B`. Before: ERROR.
+================================================================================
+codeunit 50100 P
+{
+    procedure Q()
+    begin
+        I := C *
+#if X
+            A +
+#else
+#endif
+            B;
+    end;
+}
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (procedure
+        (procedure_keyword)
+        name: (identifier)
+        body: (code_block
+          (begin_keyword)
+          body: (statement_block
+            (assignment_statement
+              left: (identifier)
+              operator: (assignment_operator)
+              right: (multiplicative_expression
+                left: (identifier)
+                (preproc_operand_prefix
+                  (preproc_if
+                    (preproc_open)
+                    condition: (identifier))
+                  operand: (identifier)
+                  (preproc_else)
+                  (preproc_endif
+                    (preproc_close)))
+                right: (identifier))))
+          (end_keyword))))))
+
+================================================================================
+B7b-2 prefix: a property value whose #if arm is empty and #else holds not
+--
+Item 66. X gives `Visible = Ok;`, not X gives `Visible = not Ok;`; alc accepts
+both (page 50102 of the probe). Before: a clean WRONG tree, a comma-less option
+list of two members `not` and `Ok`.
+================================================================================
+page 50100 P
+{
+    actions
+    {
+        area(Processing)
+        {
+            action(A)
+            {
+                Visible =
+#if X
+#else
+                    not
+#endif
+                    Ok;
+            }
+        }
+    }
+}
+--------------------------------------------------------------------------------
+
+(source_file
+  (page_declaration
+    (page_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (actions_section
+        (actions_keyword)
+        body: (action_body
+          (action_area_section
+            (area_keyword)
+            type: (processing_keyword)
+            body: (action_body
+              (action_declaration
+                (action_keyword)
+                name: (identifier)
+                body: (declaration_body
+                  (property
+                    name: (property_name)
+                    value: (property_expression
+                      (preproc_operand_prefix
+                        (preproc_if
+                          (preproc_open)
+                          condition: (identifier))
+                        (preproc_else)
+                        (preproc_endif
+                          (preproc_close)))
+                      (identifier))))))))))))
+
+================================================================================
+B7b-2 prefix: a group with every arm empty before a case branch is not a prefix
+--
+Item 66 boundary. A group with no member in any arm is never a prefix; before a
+case branch it stays the preproc_split_case_branch it is on main. Allowing two
+leading empty prefix arms turned this tree into an empty preproc_conditional_case
+before a case_branch (GLR version order), which is why only the #if arm may be a
+leading empty arm.
+================================================================================
+codeunit 50100 P
+{
+    procedure Q()
+    begin
+        case I of
+#if X
+#elif Y
+#else
+#endif
+            1:
+                I := 2;
+        end;
+    end;
+}
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (procedure
+        (procedure_keyword)
+        name: (identifier)
+        body: (code_block
+          (begin_keyword)
+          body: (statement_block
+            (case_statement
+              (case_keyword)
+              expression: (identifier)
+              (of_keyword)
+              body: (case_body
+                (case_branch
+                  (preproc_split_case_branch
+                    (preproc_if
+                      (preproc_open)
+                      condition: (identifier))
+                    (preproc_elif
+                      condition: (identifier))
+                    (preproc_else)
+                    (preproc_endif
+                      (preproc_close))
+                    pattern: (integer)
+                    body: (assignment_statement
+                      left: (identifier)
+                      operator: (assignment_operator)
+                      right: (integer)))))
+              (end_keyword)))
+          (end_keyword))))))

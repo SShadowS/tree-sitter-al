@@ -28526,28 +28526,82 @@
           "name": "preproc_if"
         },
         {
-          "type": "SYMBOL",
-          "name": "_prefix_arm"
-        },
-        {
-          "type": "REPEAT",
-          "content": {
-            "type": "SEQ",
-            "members": [
-              {
-                "type": "SYMBOL",
-                "name": "preproc_elif"
-              },
-              {
-                "type": "SYMBOL",
-                "name": "_prefix_arm"
-              }
-            ]
-          }
-        },
-        {
           "type": "CHOICE",
           "members": [
+            {
+              "type": "SEQ",
+              "members": [
+                {
+                  "type": "CHOICE",
+                  "members": [
+                    {
+                      "type": "SYMBOL",
+                      "name": "preproc_elif"
+                    },
+                    {
+                      "type": "BLANK"
+                    }
+                  ]
+                },
+                {
+                  "type": "SYMBOL",
+                  "name": "_prefix_arm"
+                },
+                {
+                  "type": "REPEAT",
+                  "content": {
+                    "type": "SEQ",
+                    "members": [
+                      {
+                        "type": "SYMBOL",
+                        "name": "preproc_elif"
+                      },
+                      {
+                        "type": "CHOICE",
+                        "members": [
+                          {
+                            "type": "SYMBOL",
+                            "name": "_prefix_arm"
+                          },
+                          {
+                            "type": "BLANK"
+                          }
+                        ]
+                      }
+                    ]
+                  }
+                },
+                {
+                  "type": "CHOICE",
+                  "members": [
+                    {
+                      "type": "SEQ",
+                      "members": [
+                        {
+                          "type": "SYMBOL",
+                          "name": "preproc_else"
+                        },
+                        {
+                          "type": "CHOICE",
+                          "members": [
+                            {
+                              "type": "SYMBOL",
+                              "name": "_prefix_arm"
+                            },
+                            {
+                              "type": "BLANK"
+                            }
+                          ]
+                        }
+                      ]
+                    },
+                    {
+                      "type": "BLANK"
+                    }
+                  ]
+                }
+              ]
+            },
             {
               "type": "SEQ",
               "members": [
@@ -28560,9 +28614,6 @@
                   "name": "_prefix_arm"
                 }
               ]
-            },
-            {
-              "type": "BLANK"
             }
           ]
         },
@@ -37771,6 +37822,16 @@
       "_option_members_open_conditional",
       "_option_members_empty_conditional",
       "_option_members_run_open"
+    ],
+    [
+      "_dangling_operand",
+      "_expression",
+      "_ternary_condition"
+    ],
+    [
+      "property_expression",
+      "_dangling_operand",
+      "_ternary_condition"
     ],
     [
       "option_member_list",

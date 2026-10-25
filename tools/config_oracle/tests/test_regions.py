@@ -253,6 +253,25 @@ def test_empty_if_arm_contributes_nothing(al_parser):
            {"X=0,Y=0": "(- a b)", "X=0,Y=1": "a", "X=1,Y=0": "a", "X=1,Y=1": "a"})
 
 
+def test_empty_prefix_arm_contributes_nothing(al_parser):
+    # Item 66: a prefix arm may be empty (#else, #elif, or the #if arm before a non-empty arm);
+    # the active arm splices before the operand and regroups by the ladder (section 3).
+    _check(al_parser, _stmt(b"x :=\n#if X\n a +\n#else\n#endif\n b;"), {"X=0": "b", "X=1": "(+ a b)"})
+    _check(al_parser, _stmt(b"x :=\n#if X\n a +\n#elif Y\n#else\n a -\n#endif\n b;"),
+           {"X=0,Y=0": "(- a b)", "X=0,Y=1": "b", "X=1,Y=0": "(+ a b)", "X=1,Y=1": "(+ a b)"})
+    _check(al_parser, _stmt(b"x :=\n#if X\n a +\n#elif Y\n#endif\n b;"),
+           {"X=0,Y=0": "b", "X=0,Y=1": "b", "X=1,Y=0": "(+ a b)", "X=1,Y=1": "(+ a b)"})
+    _check(al_parser, _stmt(b"x :=\n#if X\n#else\n a +\n#endif\n b;"), {"X=0": "(+ a b)", "X=1": "b"})
+    _check(al_parser, _stmt(b"x :=\n#if X\n#elif Y\n a *\n#else\n a -\n#endif\n b;"),
+           {"X=0,Y=0": "(- a b)", "X=0,Y=1": "(* a b)", "X=1,Y=0": "b", "X=1,Y=1": "b"})
+    _check(al_parser, _stmt(b"x :=\n#if X\n -\n#else\n#endif\n b;"), {"X=0": "b", "X=1": "(- b)"})
+    # after a binary operator the spliced arm regroups with the left: (c * a) + b, not c * (a + b)
+    _check(al_parser, _stmt(b"x := c *\n#if X\n a +\n#else\n#endif\n b;"),
+           {"X=0": "(* c b)", "X=1": "(+ (* c a) b)"})
+    _check(al_parser, _action_visible(b"\n#if X\n#else\n not\n#endif\n Ok;"), {"X=0": "(not Ok)", "X=1": "Ok"},
+           kind="property", slot="value")
+
+
 def test_unary_only_prefix_arm(al_parser):
     # Item 61: a prefix arm that is only a unary operator is a unary over the operand after
     # #endif, grouped by the ladder (level 7), never a binary with a missing left.

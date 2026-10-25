@@ -617,6 +617,43 @@ public API — a change to node structure or field names is a **major** bump.
   their error-recovery observations). Together, against main: STATE 26,968 -> 27,211, LARGE 9,389 -> 9,465,
   parser.c +0.87%.
 
+- **An operand prefix may have an empty arm (deferred-work item 66).** `I := #if X a + #else #endif b;` (an empty
+  `#else`), an empty `#elif`, and an empty `#if` arm before a non-empty `#elif` or `#else` (`I := #if X #else a +
+  #endif b;`) ERRORed; alc accepts every configuration of each
+  (`tools/alc_probe/cases/b7b-2/prefixes/empty-else-prefix.al`). An empty arm is its bare directive and contributes
+  nothing; `node-types.json` is unchanged. A group with no member in any arm is still not a prefix. Two or more
+  leading empty arms (`#if X #elif Y #else a - #endif`) still ERROR: allowing them changed the tree of an all-empty
+  group before a case branch (item 66 has the measurement). Schematic, each directive on its own line:
+
+  ```
+  I := #if X a + #else #endif b;
+    before: (codeunit_declaration ... (ERROR (procedure_keyword) ... (preproc_else) (ERROR ...) (identifier)))
+    now:    (assignment_statement left: (identifier) operator: (assignment_operator)
+              (preproc_operand_prefix (preproc_if ...) operand: (identifier) operator: "+" (preproc_else) (preproc_endif ...))
+              right: (identifier))
+  ```
+
+  **A clean wrong tree became correct.** An action's `Visible = #if X #else not #endif Ok;` parsed clean on main as
+  a comma-less option list of two members, `not` and `Ok`. X=0 is `Visible = not Ok;`, which alc accepts. It is
+  now the prefix over `Ok`:
+
+  ```
+    before: value: (option_member_list
+              (preproc_conditional_option_members (preproc_if ...) (preproc_else) (option_member (identifier)) (preproc_endif ...))
+              (option_member (identifier)))
+    now:    value: (property_expression (preproc_operand_prefix (preproc_if ...) (preproc_else) operator: "not" (preproc_endif ...))
+              (identifier))
+  ```
+
+  Fixtures: `test/corpus/b7b2_prefix_empty_arm_test.txt` (9 cases). No production tree changes (`perf delta`, 0
+  files changed over BC.History, DC, BC28.1 and BCApps-29.0). STATE 27,211 -> 27,270, LARGE 9,465 -> 9,486,
+  parser.c +0.27%. Still ERROR, alc accepts each (item 66): an all-empty group at an assignment right
+  (`I := #if X #else #endif b;`, on main too), and the typed `in`/`is`/`as` prefixes with an empty `#else`.
+
+  Speed (`tools.perf ab`, main vs this fix), every run under heavy outside load: dc, both 24-round pairs passed;
+  bc-history, the first pair had a run at 0.965, below the 0.97 gate, and the second pair gave 1.000 and 0.992; the
+  reviewer's 8-round screen gave 0.996 (CI 0.74-1.10). A quiet-host ab is part of the release step.
+
 - **A statement must be an invocation, and the operator words are not names in code (roadmap B6,
   deferred-work item 4).** `_expression_statement` was any expression, so `1;`, `'abc';`,
   `1 + 2;`, `-Foo();`, `(Foo());`, `Rec.Get() = true;` and `Arr[1];` parsed clean, and so did

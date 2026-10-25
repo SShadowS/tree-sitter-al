@@ -25,15 +25,14 @@ codeunit 50101 P
 --------------------------------------------------------------------------------
 
 ================================================================================
-B7b-2 gap: a prefix whose #else is empty
+B7b-2 gap: a prefix with two leading empty arms
 :error
 --
 DELIBERATE NEGATIVE (gap witness, listed in tools/deliberate-negatives.txt): valid
-AL the parser ERRORs on (final review of the small-correctness batch, finding I1).
-X=1 is `a + b`, X=0 is `b`. alc accepts both configurations:
-tools/alc_probe/cases/b7b-2/prefixes/empty-else-prefix.al. The prefix's arm list
-requires the `#if` arm to be non-empty (docs/deferred-work.md item 66). The ERROR
-is the assertion.
+AL the parser ERRORs on. X or Y gives `I := B`, otherwise `I := A - B`. alc accepts
+every configuration: tools/alc_probe/cases/b7b-2/prefixes/empty-else-prefix.al.
+Item 66's fix lets only the #if arm be a leading empty arm; allowing more changed
+a valid case tree (docs/deferred-work.md item 66). The ERROR is the assertion.
 ================================================================================
 codeunit 50100 P
 {
@@ -41,10 +40,109 @@ codeunit 50100 P
     begin
         I :=
 #if X
-        a +
+#elif Y
+#else
+            A -
+#endif
+            B;
+    end;
+}
+--------------------------------------------------------------------------------
+
+================================================================================
+B7b-2 gap: an all-empty group at an assignment right
+:error
+--
+DELIBERATE NEGATIVE (gap witness, listed in tools/deliberate-negatives.txt): valid
+AL the parser ERRORs on, on main too. Both X=1 and X=0 give `I := B`. alc accepts
+both configurations: tools/alc_probe/cases/b7b-2/prefixes/empty-else-prefix.al. A
+group with no member in any arm is not a prefix, and at an assignment right it is
+not a statement either (docs/deferred-work.md item 66). The ERROR is the assertion.
+================================================================================
+codeunit 50100 P
+{
+    procedure Q()
+    begin
+        I :=
+#if X
 #else
 #endif
-        b;
+            B;
+    end;
+}
+--------------------------------------------------------------------------------
+
+================================================================================
+B7b-2 gap: a typed in prefix whose #else is empty
+:error
+--
+DELIBERATE NEGATIVE (gap witness, listed in tools/deliberate-negatives.txt): valid
+AL the parser ERRORs on. X=1 is `Ok in [true] in [false]`, X=0 is `Ok in [false]`.
+alc accepts both configurations:
+tools/alc_probe/cases/b7b-2/keyword_ops/in-prefix-empty-else.al. The typed prefix
+needs every arm non-empty (docs/deferred-work.md item 66). The ERROR is the
+assertion.
+================================================================================
+codeunit 50101 P
+{
+    procedure Q()
+    begin
+        B := Ok in
+#if X
+        [true] in
+#else
+#endif
+        [false];
+    end;
+}
+--------------------------------------------------------------------------------
+
+================================================================================
+B7b-2 gap: a typed is prefix whose #else is empty
+:error
+--
+DELIBERATE NEGATIVE (gap witness, listed in tools/deliberate-negatives.txt): valid
+AL the parser ERRORs on. X=1 is `(F as IBar) is IFoo`, X=0 is `F as IFoo`. alc
+accepts both configurations:
+tools/alc_probe/cases/b7b-2/keyword_ops/is-prefix-empty-else.al. The typed prefix
+needs every arm non-empty (docs/deferred-work.md item 66). The ERROR is the
+assertion.
+================================================================================
+codeunit 50101 P
+{
+    procedure Q()
+    begin
+        V := F as
+#if X
+        IBar is
+#else
+#endif
+        IFoo;
+    end;
+}
+--------------------------------------------------------------------------------
+
+================================================================================
+B7b-2 gap: a typed as prefix whose #else is empty
+:error
+--
+DELIBERATE NEGATIVE (gap witness, listed in tools/deliberate-negatives.txt): valid
+AL the parser ERRORs on. X=1 is `(F as IBar) as IFoo`, X=0 is `F as IFoo`. alc
+accepts both configurations:
+tools/alc_probe/cases/b7b-2/keyword_ops/as-prefix-empty-else.al. The typed prefix
+needs every arm non-empty (docs/deferred-work.md item 66). The ERROR is the
+assertion.
+================================================================================
+codeunit 50101 P
+{
+    procedure Q()
+    begin
+        V := F as
+#if X
+        IBar as
+#else
+#endif
+        IFoo;
     end;
 }
 --------------------------------------------------------------------------------

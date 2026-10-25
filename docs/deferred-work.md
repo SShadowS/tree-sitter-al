@@ -2460,7 +2460,57 @@ witnessed form). Measure it against `docs/b11-precedence-audit.md`.
 
 **Owner:** B13 (comma-free value runs), suggested.
 
-## 66. A prefix whose `#else` is empty ERRORs; alc accepts both configurations (pre-existing, found by the small-correctness final review)
+## 66. A prefix whose `#else` is empty ERRORs; alc accepts both configurations (pre-existing, found by the small-correctness final review) — RESOLVED 2026-10-25, except two or more leading empty arms
+
+**Resolved 2026-10-25 (fix/item-66-prefix-empty-else).** `preproc_operand_prefix` now takes an empty `#elif` or
+`#else` arm, and an empty `#if` arm when the next arm (an `#elif` arm or the closing `#else`) holds a member. An
+empty arm is its bare directive; `node-types.json` is unchanged. A group with no member in any arm is still never a
+prefix (fixture "a group with every arm empty before a case branch is not a prefix", tree identical to main).
+Cost: STATE 27,211 -> 27,270 (+59), LARGE +21, parser.c +0.27%, two conflicts entries for the `#else` arm at a
+property value (`[_dangling_operand, _expression, _ternary_condition]`,
+`[property_expression, _dangling_operand, _ternary_condition]`). Four-corpus `perf delta`: 0 files changed.
+
+**A clean wrong tree became correct.** An action's `Visible = #if X #else not #endif Ok;` (and `#if X not #else
+#endif Ok`) parsed clean on main as a comma-less option list of two members `not` and `Ok`; alc accepts both
+configurations (X=0 `Visible = not Ok;`; page 50102 of the probe). It is now the prefix over `Ok`.
+
+**Not fixed, measured: two or more leading empty arms** (`I := #if X #elif Y #else a - #endif b;`, alc accepts
+every configuration, same probe). `_tail_group`'s form (leading empty arms as bare `preproc_elif`s, here
+right-recursive because `repeat(preproc_elif)` merges with `_option_members_empty_conditional`'s repeat and
+conflicts at every property value) cost +49 states and six conflicts entries, and it changed a valid tree: an
+all-empty group of three or more arms before a case branch (`case I of #if X #elif Y #else #endif 1: ...`, and
+`#if X #elif Y #elif Z #endif`) is an ambiguity between `preproc_split_case_branch` and an empty
+`preproc_conditional_case` that GLR version order decides, and the prefix's extra shift on `#else`/`#elif` reordered
+the versions, flipping the tree to the second reading (6 of the 28,866 stress inputs, none in the four corpora or
+the fixtures). A `prec.dynamic(1)` on `preproc_split_case_branch` restored it but changed the B7b-3 fixture "group of
+complete branches with a nested empty group". The residual is the `:error` witness "B7b-2 gap: a prefix with two
+leading empty arms" of `test/corpus/b7b2_scope_gap_test.txt`; the next attempt needs that case ambiguity resolved
+in the case rules first.
+
+**Not covered (alc accepts each, the parser ERRORs; `:error` witnesses in `test/corpus/b7b2_scope_gap_test.txt`):**
+
+- **An all-empty group at an assignment right**, `I := #if X #else #endif b;`. alc accepts X=0 and X=1, split and
+  flat (`empty-else-prefix.al`). It ERRORs on main too, so it predates the fix. The cause: a group with no member in
+  any arm is not a prefix (by design, see above), and at an expression position it is not a statement either, so
+  no rule there takes a directive-only group.
+- **Typed prefixes with an empty `#else`.** The typed prefixes before an `in`/`is`/`as` right
+  (`_in_operand_prefix`, `_type_operand_prefix`) still need every arm non-empty. alc verdicts, split = flat, both
+  configurations:
+  - `in`, `B := Ok in #if X [true] in #else #endif [false];`: ACCEPT (`keyword_ops/in-prefix-empty-else.al`).
+  - `is`, `V := F as #if X IBar is #else #endif IFoo;`: ACCEPT (`keyword_ops/is-prefix-empty-else.al`). The
+    `F is #if X IBar is ...` form is REJECT(AL0851) at X=1, which is a type error, not syntax.
+  - `as`, `V := F as #if X IBar as #else #endif IFoo;`: ACCEPT (`keyword_ops/as-prefix-empty-else.al`).
+
+**Speed (perf ab, base main ac8a866 vs the fix). Every run was under heavy outside load (load averages from 5 to
+224 within single runs):**
+
+- dc: both 24-round pairs passed `ab_accept` (1.028/0.999 and 1.005/0.999).
+- bc-history: the first pair had one run at 0.965, below the 0.97 gate (its other run was 0.985). The second pair
+  gave 1.000 and 0.992. The reviewer's 8-round screen gave 0.996, CI 0.74-1.10.
+- A quiet-host ab is part of the release step.
+
+**Fixtures:** `test/corpus/b7b2_prefix_empty_arm_test.txt` (9 cases). **Oracle:**
+`test_empty_prefix_arm_contributes_nothing` in `tools/config_oracle/tests/test_regions.py`.
 
 **Established:** 2026-10-25, final whole-branch review of fix/small-correctness-61-62 (finding I1). With each
 directive on its own line:
@@ -2484,9 +2534,10 @@ with no arm that can carry the operator.
 **Likely fix:** "some arm non-empty" on the prefix's arm list, the same pattern as `_tail_group`. Measure STATE cost
 and run the B7a census and the B11 precedence audit.
 
-**Witness:** the `:error` case "B7b-2 gap: a prefix whose #else is empty" of `test/corpus/b7b2_scope_gap_test.txt`
-(listed in `tools/deliberate-negatives.txt`, classified `debt(B7b-2)` in `tools/config_oracle/fixture-classes.tsv`).
-**Probe:** `tools/alc_probe/cases/b7b-2/prefixes/empty-else-prefix.al` (`--check`, 0 drift).
+**Witness (until the fix):** the `:error` case "B7b-2 gap: a prefix whose #else is empty" of
+`test/corpus/b7b2_scope_gap_test.txt`, now the first case of `b7b2_prefix_empty_arm_test.txt`.
+**Probe:** `tools/alc_probe/cases/b7b-2/prefixes/empty-else-prefix.al`, extended by the fix with the `#elif`,
+empty-`#if`-first, unary, binary-right and page shapes (`--check`: 4 assignments, split=flat=ACCEPT, 0 drift).
 
 **Owner:** B7b-2 follow-up.
 
