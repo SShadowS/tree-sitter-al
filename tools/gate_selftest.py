@@ -300,12 +300,13 @@ HARNESS = "./tools/tree-harness.sh"
 
 ORACLE = "tools/config_oracle/__main__.py"
 ORACLE_MODULE = "tools.config_oracle"
-# The first `for c in content:` in select.py is branch_select's loop over the CHOSEN
-# arm (the second marks inactive-arm content). Reversing it keeps every node and
-# byte, so only the comparator's structure check can see it.
+# branch_select lowers the CHOSEN arm through its one `lower_items(content, ...)` call.
+# Reversing it keeps every node and byte, so only the comparator's structure check can
+# see it. It used to reverse the first `for c in content:`, which since 960ed31 is only
+# the arm-content check: the mutation still matched, changed no tree, and the case went red.
 ORACLE_REVERSED_ARM = sub("tools/config_oracle/lowering/select.py",
-                          r"(?m)^            for c in content:$",
-                          "            for c in reversed(content):", count=1)
+                          r"lower_items\(content, ctx,",
+                          "lower_items(content[::-1], ctx,", count=1)
 # B1 reverted: `not` without its prec(3), so `not A and B` groups as not (A and B) again.
 # A grammar mutation, so the scratch build regenerates parser.c once per run.
 ORACLE_NOT_UNPREC = sub("grammar.js", re.escape("preproc_not_expression: $ => prec(3, seq("),
