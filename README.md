@@ -8,37 +8,54 @@ A [tree-sitter](https://tree-sitter.github.io/tree-sitter/) parser for the AL pr
 
 ## Parser Status
 
-Validated against **36,852 production AL files** from two independent codebases —
-15,358 from Business Central and 21,494 from a separate production estate:
+Validated against four AL source trees (70,354 `.al` files in all). Each corpus
+is parsed with `./parse-al-parallel.sh` and also swept with
+`tools/has_error_sweep.py`, which sees hidden-token MISSING nodes the parse
+script cannot:
+
+| Corpus | Files | Parsed without error | Success rate |
+|--------|------:|---------------------:|-------------:|
+| BC.History (Business Central history) | 15,358 | 15,358 | **100%** (0 errors, 0 `has_error`) |
+| BC28.1 | 16,928 | 16,928 | **100%** (0 errors, 0 `has_error`) |
+| DC | 1,352 | 1,352 | **100%** (0 errors, 0 `has_error`) |
+| BCApps-29.0 | 36,716 | 36,714 | **99.99%** (2 files with a visible `ERROR`) |
+
+The two BCApps-29.0 files are
+`src/Apps/DE/EDocumentDE/app/src/EDocumentServiceDE.PageExt.al` and
+`src/Layers/APAC/Tests/SINGLESERVER/ERMPurchaseReportsIII.Codeunit.al`; both are
+recorded in [`docs/bc29-parse-gaps.md`](docs/bc29-parse-gaps.md). The earlier
+"separate production estate" of 21,494 files is not available to this release's
+measurement and is no longer claimed.
 
 | Metric | Value |
 |--------|-------|
-| **Success rate** | **100%** (36,852 / 36,852 files, 0 errors) |
-| **Byte coverage** | **3 uncovered bytes in 36,852 files**, and they are a doubled UTF-8 BOM (see below) |
-| Tests | 1,617 |
-| parser.c size | 32.1 MiB (33,643,658 bytes) |
-| grammar.js | 5,334 lines |
-| Named node types | 467 |
+| **Byte coverage** | **0 uncovered bytes in BC.History (15,358 files)**: `qc run --all --full-corpus` reports no `gaps` finding. Measured at 4.5.0 on BC.History only; the other three corpora were not walked |
+| Tests | 3,599 |
+| parser.c size | 59.5 MiB (62,408,862 bytes) |
+| grammar.js | 8,244 lines |
+| Named node types | 501 |
 | Named keywords | 154 (152 grammar rules + 2 external; queryable via highlights/tags) |
-| Scanner tokens | 9 (stateful, depth-tracking) |
+| Scanner tokens | 19 (the `externals` array in `grammar.js`; the `TokenType` enum in `src/scanner.c` agrees) |
 | Query files | 6 (highlights, locals, tags, indents, folds, textobjects) |
 
-Every figure above was measured on the released tree. Three different test counts
+Every figure above was measured at the 4.5.0 release commit (`355c761`). Three different test counts
 circulated during 4.0.0 development and two were arithmetic from a stale copy of
 this table — re-measure, never recall. `parser.c` is quoted in MiB with the byte
 count beside it because both conventions have been wrong here in opposite
 directions.
 
-**The byte-coverage row is stated as a count, not as "100%", because the honest
-answer is a count.** Walking every leaf of all 36,852 trees and marking the bytes
-it covers leaves exactly **3 non-whitespace bytes** unaccounted for, all in one
-file, and they are a **second UTF-8 BOM immediately following the first** at
-offset 3 — file preamble that was never AL source. BC.History is clean at 0. Two
-things that scan looked like and was not: 1,788 BC.History files reported 3 bytes
-each until the leading BOM was excluded (`tools/validate_al_file.py`'s
-`_significant()` excludes it for the same reason), and an `ERROR` node covers its
-bytes, so a deliberately broken file shows no gap at all — the instrument needed a
-control that ignores anonymous leaves before its zeros meant anything.
+**The byte-coverage row is stated as a count, scoped to the corpus it was
+measured on.** At 4.5.0 it was re-measured with `python -m tools.query_coverage.qc
+run --all --full-corpus`, which walks BC.History only (15,358 files, 13,338,707
+fielded edges) and reported no `gaps` finding. The other three corpora were not
+walked, so no byte-coverage claim is made for them. (The 4.0.0 measurement over
+the since-dropped 36,852-file set found 3 bytes, a doubled UTF-8 BOM in one file
+of the unavailable estate; that figure is history, not a current claim.) Two
+things the instrument must get right: the leading BOM is excluded
+(`tools/validate_al_file.py`'s `_significant()` does the same), and an `ERROR`
+node covers its bytes, so a deliberately broken file shows no gap at all — the
+instrument needed a control that ignores anonymous leaves before its zeros meant
+anything.
 
 **"0 errors" is the weakest claim on this page**, and 4.0.0 exists because the
 project learned that the hard way. Every defect fixed in this release parsed with
@@ -150,7 +167,8 @@ completeness and soundness separately for one file.
 expression continued across a `#if` boundary in four shapes — after a
 grammatically complete construct, a second split in one expression, an `else`
 clause under a flag, and an `and`/comparison continuation — parsed to a wrong
-tree with no error. The class occurs in neither corpus (0 of 36,852 files).
+tree with no error. The class was not found in the corpora available at 4.0.0 (0 of 36,852
+files); that count was not re-measured for 4.5.0.
 
 See [CHANGELOG.md](CHANGELOG.md) for the full list, each with its measured blast
 radius.
