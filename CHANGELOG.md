@@ -159,7 +159,10 @@ public API — a change to node structure or field names is a **major** bump.
   `preproc_conditional_list_elements`, `preproc_split_call_statement` and `property_expression`, and appears in the
   `operand` field of the tail and of the prefix. `preproc_conditional_expression_tail.operand` and `.operator`, and
   `preproc_operand_prefix.operand` and `.operator`, take `type_specification` and the three keyword operators; the
-  tail's two fields become `required: false`. Consumers regroup a region from `docs/expression-regions.md`, which says which region each
+  tail's two fields become `required: false`. A prefix arm may also be a unary operator alone (`+`, `-` or `not`,
+  in `operator` with no `operand` before it; it is a unary over the operand after `#endif`), so
+  `preproc_operand_prefix.operator` also takes `not` and `preproc_operand_prefix.operand` is `required: false`
+  (the item-61 fix under Fixed). Consumers regroup a region from `docs/expression-regions.md`, which says which region each
   prefix and tail belongs to. Narrowed: `assignment_statement.left`, `member_expression.object` and
   `subscript_expression.object` no longer list binaries, unaries, literals, list literals or ternaries;
   `ternary_expression` and `assignment_expression` are gone from the binary and `in`/`is`/`as` operands,
@@ -171,8 +174,8 @@ public API — a change to node structure or field names is a **major** bump.
   **Still ERROR, each a deferred-work item.** The three crossing forms of spec 3.4 (a group before a postfix whose arm
   is not a postfix-safe atom, a `?`/`:` inside an arm, one group continuing an expression and supplying list items;
   item 57; a tail before a postfix, `T1 #if X + T2 #endif .ToUpper()`, is one of them), case-pattern slot
-  continuations (item 56), item 51 shape 3, `;` inside continuation arms (item 39 shape 2), a group whose arm is only
-  a unary operator (`I := #if X - #endif 1;`, item 61, ERRORs on main too). Clean but wrong, as on main: list spanning
+  continuations (item 56), item 51 shape 3, `;` inside continuation arms (item 39 shape 2). (A group whose arm is
+  only a unary operator, item 61, and a prefixed property value with a tail, item 62, are fixed: see Fixed.) Clean but wrong, as on main: list spanning
   across an `#else`, `Foo(1 #if X + 2 #else , 3 #endif)`, reads `+2` as a second argument (item 57, a SILENT witness).
   Over-acceptances, classified: `op-only` (157 cells) and an operand group with no `#else` arm in a required operand
   position (36 cells), item 44; `in`'s right takes a non-list arm, item 58. Known limits: N consecutive groups at a
@@ -523,6 +526,96 @@ public API — a change to node structure or field names is a **major** bump.
   accepted controls).
 
 ### Fixed
+
+- **A tail may have an empty arm (issue #38).** A `preproc_conditional_expression_tail` needed every arm to hold a
+  continuation, so `x := a #if X + b #else #endif;` (an empty `#else`, the issue's input), an empty `#elif`, and an
+  empty `#if` arm before a non-empty later arm (`x := a #if X #else + b #endif;`) ERRORed. alc accepts every
+  configuration of each (`tools/alc_probe/cases/b7b-2/tails/empty-else-tail.al`). `_tail_group` now needs some arm
+  to hold a member; an empty arm is its bare directive. A group with no member in any arm is still not a tail (it
+  stays a `preproc_conditional_statement`, as before). `node-types.json` is unchanged. Schematic, each directive on
+  its own line:
+
+  ```
+  x := a #if X + b #else #endif ;
+    before: (assignment_statement ... right: (identifier)) (ERROR ...)
+    now:    (assignment_statement left: (identifier) operator: (assignment_operator) right: (identifier)
+              (preproc_conditional_expression_tail (preproc_if ...) operator: "+" operand: (identifier)
+                (preproc_else) (preproc_endif ...)))
+
+  x := a #if X #else + b #endif ;
+    before: ERROR
+    now:    ... right: (identifier)
+              (preproc_conditional_expression_tail (preproc_if ...) (preproc_else) operator: "+" operand: (identifier)
+                (preproc_endif ...))
+  ```
+
+  **A clean wrong tree became correct.** `Foo(A #if X + B #else #endif , B)` parsed clean on main as a
+  `preproc_conditional_arguments` group whose arm is a comma-less `unary_expression` `+B`, which is a wrong reading:
+  X=1 is `Foo(A + B, B)`. It is now the tail on the first argument:
+
+  ```
+    before: arguments: (argument_list (identifier)
+              (preproc_conditional_arguments (preproc_if ...) (unary_expression operand: (identifier)) (preproc_else) (preproc_endif ...))
+              (identifier))
+    now:    arguments: (argument_list (identifier)
+              (preproc_conditional_expression_tail (preproc_if ...) operator: "+" operand: (identifier) (preproc_else) (preproc_endif ...))
+              (identifier))
+  ```
+
+  The same holds for a list element (`[A #if X + B #else #endif , B]`). Fixtures:
+  `test/corpus/b7b2_tail_empty_else_test.txt` (11 cases). STATE +232, LARGE +70.
+
+- **An operand prefix may be a unary operator alone (deferred-work item 61).** `I := #if X - #endif 1;`,
+  `B := Ok and #if X not #endif Ok;` and `if #if X not #endif Ok then;` ERRORed; alc accepts every configuration
+  (`tools/alc_probe/cases/b7b-2/prefixes/unary-operator-only.al`). A `preproc_operand_prefix` arm may now be `+`, `-`
+  or `not` alone, in `operator` with no `operand`; spliced, it is a unary over the operand after `#endif` (ladder level
+  7, `docs/expression-regions.md`). `node-types.json`: `preproc_operand_prefix.operator` gains `not`, and
+  `preproc_operand_prefix.operand` is no longer required.
+
+  ```
+  I := #if X - #endif 1;
+    before: right: (preproc_conditional_operand (preproc_if ...) operand: (unary_expression (ERROR) operand: (integer))
+              (preproc_endif (MISSING ...)))
+    now:    (assignment_statement left: (identifier) operator: (assignment_operator)
+              (preproc_operand_prefix (preproc_if ...) operator: "-" (preproc_endif ...)) right: (integer))
+  ```
+
+  **A clean wrong tree became correct.** An action's `Visible = #if X not #endif Ok;` parsed clean on main as a
+  comma-less option list of two members, `not` and `Ok`. X=1 is `Visible = not Ok;`, which alc accepts. It is now the
+  prefix over `Ok`:
+
+  ```
+    before: value: (option_member_list
+              (preproc_conditional_option_members (preproc_if ...) (option_member (identifier)) (preproc_endif ...))
+              (option_member (identifier)))
+    now:    value: (property_expression (preproc_operand_prefix (preproc_if ...) operator: "not" (preproc_endif ...))
+              (identifier))
+  ```
+
+  Fixtures: `test/corpus/b7b2_unary_op_only_test.txt` (4 cases). STATE +6, LARGE +5. The comma-less
+  `Visible = #if X Foo #endif Ok;` still reads as an option list; alc rejects X=1, so it is an over-acceptance
+  (item 65).
+
+- **A prefixed property value may take a tail (deferred-work item 62).** An action's
+  `Visible = #if X Ok and #endif Ok #if Y or Ok #endif;` ERRORed over the tail; alc accepts every configuration
+  (`tools/alc_probe/cases/b7b-2/prefixes/property-prefix-then-tail.al`, also an action's `Enabled` and a page field's
+  `Editable`/`Visible`/`Enabled`). `property_expression`'s leading-prefix arm now takes the optional tail, as the
+  region roots do. `property.value` stays single; `node-types.json` is unchanged.
+
+  ```
+    before: value: (property_expression (preproc_operand_prefix ...) (identifier)) (ERROR ...)
+    now:    value: (property_expression (preproc_operand_prefix (preproc_if ...) operand: (identifier) operator: "and" (preproc_endif ...))
+              (identifier)
+              (preproc_conditional_expression_tail (preproc_if ...) operator: "or" operand: (identifier) (preproc_endif ...)))
+  ```
+
+  Fixtures: `test/corpus/b7b2_property_prefix_tail_test.txt` (3 cases). STATE +5, LARGE +1.
+
+  All three fixes: no production tree changes (`python -m tools.perf delta` against main, 0 files changed over
+  BC.History, DC, BC28.1 and BCApps-29.0). No B7a matrix verdict moves, because the audit's generator emits none of
+  the three fixed shapes (`docs/b7-separator-continuation-matrix.md`; 143 cells (131 GAP, 12 MIXED), which still ERROR, changed only
+  their error-recovery observations). Together, against main: STATE 26,968 -> 27,211, LARGE 9,389 -> 9,465,
+  parser.c +0.87%.
 
 - **A statement must be an invocation, and the operator words are not names in code (roadmap B6,
   deferred-work item 4).** `_expression_statement` was any expression, so `1;`, `'abc';`,

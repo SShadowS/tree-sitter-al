@@ -46,6 +46,31 @@ The hook does not stop these. Follow them anyway.
 - [ ] Do not write report files: they are blocked. **Use instead:** return the report as text.
 - [ ] Do not dispatch subagents.
 
+### Gate tiers (how much to test per change)
+
+Correctness gates never get weaker; the expensive ones run once per batch, not once per fix.
+Measured on the 2026-10-25 fix batch: four 24-round `ab` runs took about 40 of each fix's 45-60
+minutes, for changes of +5 to +210 states with no new conflict.
+
+- [ ] **Per fix (minutes):** `./tools/ts-lock.sh tree-sitter test` passes and its total moved by exactly
+  the cases added (fixture expectations assert trees, so a changed tree fails a case);
+  `python -m tools.perf delta --lib-a PRED --lib-b NEW --corpus bc-history`;
+  `./validate-grammar.sh` (quick); `python -m tools.b7_audit census --check`; `assert --refresh`;
+  the oracle tests for the touched lowering; `./parse-al-parallel.sh ./BC.History/ .` (the source of
+  every commit's trailer); `python tools/has_error_sweep.py --corpus-fixtures`, plus `--root ./BC.History/`
+  when the fix touches a hidden (`_`-prefixed) token (CLAUDE.md).
+- [ ] **Per batch (once, on the final commit, against the batch base):** `delta --corpus all`,
+  `./validate-grammar.sh --full`, the has_error sweeps, the full-tier oracle, the full B7a `run` +
+  `report`, the `ab` runs, the WASM rebuild.
+- [ ] **Speed per fix only when it can move:** the fix adds a `conflicts` entry or a `prec.dynamic`,
+  or changes STATE_COUNT by more than ~300. Otherwise speed is measured once per batch.
+- [ ] **Screen before the full `ab`:** one `--rounds 8` run per corpus first; run the two 24-round
+  runs only if the screen's CI reaches below 0.99 or the result is the deciding one for a gate.
+  Record `uptime` with every run; a run started under heavy outside load is re-run, not trusted.
+- [ ] **Batch same-shape fixes:** small fixes of one kind in neighbouring rules go to one
+  implementer and one review, with one commit per fix so each can be reverted alone. If a batch
+  gate fails, bisect over those commits.
+
 ### Editing
 
 - [ ] No inline Python string replacement for an edit (used 997 times; it fails silently when the text does not match). **Use instead:** the Edit tool. For a bulk mechanical edit, a script file that asserts every match exists.

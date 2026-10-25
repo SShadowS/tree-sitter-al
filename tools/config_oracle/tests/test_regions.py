@@ -30,6 +30,8 @@ def _render(n, src):
     named = [c for c in n.children if c.named]
     if n.kind == "parenthesized_expression":
         return f"(paren {r(named[0])})"
+    if n.kind == "property_expression" and len(named) == 1:  # a property value's wrapper
+        return r(named[0])
     if n.kind == "subscript_expression":
         return f"{r(f.get('object'))}[" + ", ".join(r(c) for c in named[1:]) + "]"
     if n.kind == "call_expression":
@@ -235,6 +237,36 @@ def test_inactive_tail_is_valid(al_parser):
     _check(al_parser, _stmt(b"x := 1\n#if X\n + 2\n#endif\n;"), {"X=0": "1", "X=1": "(+ 1 2)"})
 
 
+def test_empty_else_arm_contributes_nothing(al_parser):
+    # Issue #38: an empty #else (or #elif) arm splices to nothing, like a missing #else.
+    _check(al_parser, _stmt(b"x := a\n#if X\n + b\n#else\n#endif\n;"), {"X=0": "a", "X=1": "(+ a b)"})
+    _check(al_parser, _stmt(b"x := a\n#if X\n + b\n#elif Y\n#else\n - b\n#endif\n;"),
+           {"X=0,Y=0": "(- a b)", "X=0,Y=1": "a", "X=1,Y=0": "(+ a b)", "X=1,Y=1": "(+ a b)"})
+
+
+def test_empty_if_arm_contributes_nothing(al_parser):
+    # Review F1: the #if arm may be the empty one while a later arm is not.
+    _check(al_parser, _stmt(b"x := a\n#if X\n#else\n + b\n#endif\n;"), {"X=0": "(+ a b)", "X=1": "a"})
+    _check(al_parser, _stmt(b"x := a\n#if X\n#elif Y\n + b\n#else\n - b\n#endif\n;"),
+           {"X=0,Y=0": "(- a b)", "X=0,Y=1": "(+ a b)", "X=1,Y=0": "a", "X=1,Y=1": "a"})
+    _check(al_parser, _stmt(b"x := a\n#if X\n#elif Y\n#else\n - b\n#endif\n;"),
+           {"X=0,Y=0": "(- a b)", "X=0,Y=1": "a", "X=1,Y=0": "a", "X=1,Y=1": "a"})
+
+
+def test_unary_only_prefix_arm(al_parser):
+    # Item 61: a prefix arm that is only a unary operator is a unary over the operand after
+    # #endif, grouped by the ladder (level 7), never a binary with a missing left.
+    _check(al_parser, _stmt(b"i :=\n#if X\n -\n#endif\n j;"), {"X=0": "j", "X=1": "(- j)"})
+    _check(al_parser, _stmt(b"i :=\n#if X\n -\n#endif\n j * k;"), {"X=0": "(* j k)", "X=1": "(* (- j) k)"})
+    _check(al_parser, _stmt(b"i := 2 *\n#if X\n -\n#endif\n j + k;"),
+           {"X=0": "(+ (* 2 j) k)", "X=1": "(+ (* 2 (- j)) k)"})
+    _check(al_parser, _stmt(b"b := ok and\n#if X\n not\n#endif\n ok;"),
+           {"X=0": "(and ok ok)", "X=1": "(and ok (not ok))"})
+    _check(al_parser, _stmt(b"i :=\n#if X\n -\n#else\n 2 +\n#endif\n j;"), {"X=0": "(+ 2 j)", "X=1": "(- j)"})
+    _check(al_parser, _stmt(b"if\n#if X\n not\n#endif\n ok then;"), {"X=0": "ok", "X=1": "(not ok)"},
+           kind="if_statement", slot="condition")
+
+
 def test_inactive_prefix_is_valid(al_parser):
     _check(al_parser, _stmt(b"x := a +\n#if X\n b +\n#endif\n c;"),
            {"X=0": "(+ a c)", "X=1": "(+ (+ a b) c)"})
@@ -289,6 +321,23 @@ def test_property_signed_literal_one_reading(al_parser):
     v = witness.verdicts(al_parser, SIGNED_TAIL)
     assert v["X=0"][0] == "pass", v
     assert v["X=1"][0] == "cannot-validate" and v["X=1"][1][0].startswith("lowering:one-reading"), v
+
+
+def _action_visible(value):
+    return (b"page 1 P\n{\n    actions\n    {\n        area(Processing)\n        {\n            action(A)\n"
+            b"            {\n                Visible = " + value + b"\n            }\n        }\n    }\n}\n")
+
+
+@pytest.mark.parametrize("value,want", [
+    (b"\n#if X\n a and\n#endif\n b\n#if Y\n or c\n#endif\n ;",
+     {"X=0,Y=0": "b", "X=0,Y=1": "(or b c)", "X=1,Y=0": "(and a b)", "X=1,Y=1": "(or (and a b) c)"}),
+    (b"\n#if X\n a or\n#endif\n b\n#if Y\n and c\n#endif\n ;",
+     {"X=0,Y=0": "b", "X=0,Y=1": "(and b c)", "X=1,Y=0": "(or a b)", "X=1,Y=1": "(or a (and b c))"}),
+], ids=["prefix-looser-tail", "prefix-tighter-tail"])
+def test_property_prefix_then_tail(al_parser, value, want):
+    # Item 62: a prefixed property value takes a tail; the prefix, the operand and the tail are
+    # one region under `value`, regrouped by the ladder in every configuration.
+    _check(al_parser, _action_visible(value), want, kind="property", slot="value")
 
 
 # --- 5.3 in / is / as ------------------------------------------------------------------------

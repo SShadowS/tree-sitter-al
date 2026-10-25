@@ -260,14 +260,16 @@ FIELD_INVARIANTS = [
         'one operand per continuation, never punctuation (B7b-2 recursive tail)',
         required=False),
     inv('preproc_operand_prefix', 'operator', True,
-        {'*', '+', '-', '/', 'and', 'div', 'mod', 'or', 'xor'}, 'DELIBERATE',
-        'operator token IS the value; in/is/as from the typed prefixes (B7b-2 6.2)',
-        types={'*', '+', '-', '/', 'and', 'div', 'mod', 'or', 'xor',
+        {'*', '+', '-', '/', 'and', 'div', 'mod', 'not', 'or', 'xor'}, 'DELIBERATE',
+        'operator token IS the value; in/is/as from the typed prefixes (B7b-2 6.2); '
+        'not from a unary-only arm (item 61)',
+        types={'*', '+', '-', '/', 'and', 'div', 'mod', 'not', 'or', 'xor',
                'as_keyword', 'comparison_operator', 'in_keyword', 'is_keyword'},
         required=True),
     inv('preproc_operand_prefix', 'operand', True, set(), 'FIXED',
-        'one operand per arm, never punctuation (B7b-2 typed prefixes)',
-        required=True),
+        'at most one operand per arm, never punctuation (B7b-2 typed prefixes); '
+        'a unary-only arm has none, so a prefix of only such arms has no operand (item 61)',
+        required=False),
 
     # `Permissions = tabledata * = RIMD` -- the wildcard IS the table name, so
     # an anonymous member in this field's type set is correct, exactly as for

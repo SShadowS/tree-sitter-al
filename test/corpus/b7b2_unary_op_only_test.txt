@@ -1,0 +1,187 @@
+================================================================================
+B7b-2 prefix: a leading prefix whose arm is only unary minus
+--
+Item 61. A prefix arm may be a unary operator alone (`operator:` with no
+`operand:`), applied to the operand after #endif. Spliced and regrouped by the
+ladder (docs/expression-regions.md) X gives `I := -1`, not X `I := 1`. alc
+accepts every configuration:
+tools/alc_probe/cases/b7b-2/prefixes/unary-operator-only.al. Before: ERROR.
+================================================================================
+codeunit 50100 P
+{
+    procedure Q()
+    begin
+        I :=
+#if X
+        -
+#endif
+        1;
+    end;
+}
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (procedure
+        (procedure_keyword)
+        name: (identifier)
+        body: (code_block
+          (begin_keyword)
+          body: (statement_block
+            (assignment_statement
+              left: (identifier)
+              operator: (assignment_operator)
+              (preproc_operand_prefix
+                (preproc_if
+                  (preproc_open)
+                  condition: (identifier))
+                (preproc_endif
+                  (preproc_close)))
+              right: (integer)))
+          (end_keyword))))))
+
+================================================================================
+B7b-2 prefix: a prefix after a binary operator whose arm is only not
+--
+Item 61. X gives `B := Ok and not Ok` = `Ok and (not Ok)`; not X gives
+`B := Ok and Ok`. The prefix stands between the binary's operator and right.
+================================================================================
+codeunit 50100 P
+{
+    procedure Q()
+    begin
+        B := Ok and
+#if X
+        not
+#endif
+        Ok;
+    end;
+}
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (procedure
+        (procedure_keyword)
+        name: (identifier)
+        body: (code_block
+          (begin_keyword)
+          body: (statement_block
+            (assignment_statement
+              left: (identifier)
+              operator: (assignment_operator)
+              right: (logical_expression
+                left: (identifier)
+                (preproc_operand_prefix
+                  (preproc_if
+                    (preproc_open)
+                    condition: (identifier))
+                  (preproc_endif
+                    (preproc_close)))
+                right: (identifier))))
+          (end_keyword))))))
+
+================================================================================
+B7b-2 prefix: an if condition opened by a prefix whose arm is only not
+--
+Item 61. X gives `if not Ok then;`, not X `if Ok then;`.
+================================================================================
+codeunit 50100 P
+{
+    procedure Q()
+    begin
+        if
+#if X
+        not
+#endif
+        Ok then;
+    end;
+}
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (procedure
+        (procedure_keyword)
+        name: (identifier)
+        body: (code_block
+          (begin_keyword)
+          body: (statement_block
+            (if_statement
+              (if_keyword)
+              (preproc_operand_prefix
+                (preproc_if
+                  (preproc_open)
+                  condition: (identifier))
+                (preproc_endif
+                  (preproc_close)))
+              condition: (identifier)
+              (then_keyword)
+              then_branch: (empty_statement)))
+          (end_keyword))))))
+
+================================================================================
+B7b-2 prefix: a property value opened by a prefix whose arm is only not
+--
+Item 61. X gives `Visible = not Ok;`, not X `Visible = Ok;`. Before: a CLEAN
+but wrong tree, a comma-less option list of `not` and `Ok`. alc accepts both
+configurations (the probe's action A2).
+================================================================================
+page 50102 PG
+{
+    actions
+    {
+        area(Processing)
+        {
+            action(A1)
+            {
+                Visible =
+#if X
+                    not
+#endif
+                    Ok;
+            }
+        }
+    }
+}
+--------------------------------------------------------------------------------
+
+(source_file
+  (page_declaration
+    (page_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (actions_section
+        (actions_keyword)
+        body: (action_body
+          (action_area_section
+            (area_keyword)
+            type: (processing_keyword)
+            body: (action_body
+              (action_declaration
+                (action_keyword)
+                name: (identifier)
+                body: (declaration_body
+                  (property
+                    name: (property_name)
+                    value: (property_expression
+                      (preproc_operand_prefix
+                        (preproc_if
+                          (preproc_open)
+                          condition: (identifier))
+                        (preproc_endif
+                          (preproc_close)))
+                      (identifier))))))))))))

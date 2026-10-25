@@ -15288,7 +15288,7 @@
     "fields": {
       "operand": {
         "multiple": true,
-        "required": true,
+        "required": false,
         "types": [
           {
             "type": "additive_expression",
@@ -15454,6 +15454,10 @@
           },
           {
             "type": "mod",
+            "named": false
+          },
+          {
+            "type": "not",
             "named": false
           },
           {

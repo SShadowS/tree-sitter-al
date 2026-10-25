@@ -1570,6 +1570,14 @@ fixture "B7b-2 repeat-until / item 39 shape 1" in `test/corpus/b7b2_repeat_until
 terminators (with items 47 and 48): B7b-2 spec section 9 excludes `;` inside continuation arms (RC7; 45 `semi-in-arms`
 rows excluded in `tools/b7_audit/b7b2-manifest.tsv`, owner B7). The text below is the original record.
 
+**Shape 2 in a property value (2026-10-25, small-correctness fixes Task 3 review).** A tail whose arms hold the
+property's `;` ERRORs, with or without a leading prefix: an action's `Visible = Ok #if Y or Ok; #else ; #endif` and
+`Visible = #if X Ok and #endif Ok #if Y or Ok; #else ; #endif` (each directive on its own line). alc accepts every
+configuration, split and flat (`tools/alc_probe/cases/b7b-2/tails/tail-arm-holds-semicolon.al` and
+`prefix-tail-arm-holds-semicolon.al`, `--check` 0 drift). Both ERROR on main too, so it is pre-existing and not a
+regression of item 62's fix; the recovery tree differs between main and after it. A property's tail, like the
+assignment's, takes only arms whose `;` comes after `#endif`. 0 production sites.
+
 **Established:** 2026-10-06, B6. Both are valid AL in every configuration, parsed clean and wrong before B6, and ERROR
 since:
 
@@ -1810,6 +1818,15 @@ every arm's first declaration), and give attributes inside groups a grammar home
 | B7b-1g | `type-arguments`: `Dictionary of [K, V]` / `List of [T]` are fixed-arity positional slots (`key_type`, `value_type`), not a list; needs a fixed-arity slot adapter | GAP 24, all 24 manifest cells `deferred`, cardinality `unknown` (not probed by alc) | `b7_gap_type_arguments_test.txt` (8) |
 | B7b-3 (**DONE 2026-10-08**, `28dfdbc`, `a576506`) | `move-modification`: a group that supplies or replaces the fixed `;` or the target. Routes 2-3 and `preproc_conditional_move_args`; the 72 cells are the B7b-1 manifest's transfer set, admitted and passing in `tools/b7_audit/b7b3-manifest.tsv`. B7b-3 also did the `statement-terminator` family (parenless calls, case-branch separators), which was never a B7b-1 row | GAP 72 -> 0 | removed: `b7_gap_move_modification_test.txt` (6) and `strict_conditional_move_elements_negative_test.txt` (2) became positive cases in `b7b3_move_args_test.txt`; flat negatives in `b7b3_move_args_negative_test.txt` |
 
+**Option-members, a `not` arm before a comma-led member (2026-10-25, small-correctness fixes Task 2 review).**
+`OptionMembers = #if X not #endif ,B;` (each directive on its own line) ERRORs on main and after item 61's fix. alc
+accepts both configurations, split and flat (X=1 is `OptionMembers = not,B;`;
+`tools/alc_probe/cases/b7b-2/prefixes/option-members-not-arm.al`, `--check` 0 drift). It is not specific to `not`:
+the same input with a name arm (`#if X Foo #endif ,B`) ERRORs identically on both, so it is this family's
+group-then-comma-led-member gap, B7b-1e. After item 61's fix the recovery reads the `not` arm as a unary-only prefix
+before the ERROR; on main it read as a conditional member group. Both are recovery trees on input that ERRORs.
+0 production sites.
+
 All witness files are under `test/corpus/` and listed in `tools/deliberate-negatives.txt`. Also outside B7b-1 and
 unassigned within B7b: the header families `key-header` (GAP 18, `b7_gap_key_header_test.txt`) and `fieldgroup-header`
 (GAP 36, OVERACCEPT 4 incl. the new trail group `fieldgroup(Brick ; , N)`, `b7_gap_fieldgroup_header_test.txt`). The outer
@@ -1917,6 +1934,20 @@ Related, outside the two B7b-3 families: the six split-if-begin groups inside ca
 and are SILENT (matrix family `split-if-begin` SILENT 111 cells): `preproc_split_if_begin_asymmetric` is not lowered by the oracle
 (C1), and in one configuration its `end` is the case's (a one-reading boundary, B12). Pinned as representation fixtures
 in `test/corpus/b7b3_case_separator_split_if_begin_test.txt`, witnesses in `test_silent.py`.
+
+**Case-branch GAP: worse error locality since the empty-tail-arm fix (2026-10-25, recorded).** Found in the review of
+small-correctness fixes Task 1b (F5; `_tail_group` lets an arm be empty when another is not). Three of the B7b+
+`case-branch` GAP witnesses in `test/corpus/b7_gap_case_branch_test.txt` still ERROR, but their ERROR grew:
+- case-branch / elif, representative `occ:case_branch:0.1@case_body#elif`;
+- case-branch / nested, representative `occ:case_branch:0.1@case_body#nested`;
+- case-branch / sep-only, representative `occ:case_branch:0.1@case_body#sep-only` (39 cells each).
+
+On main the ERROR covered the `case` statement inside the `code_block` (43-64 bytes) plus a 3-byte one at the
+procedure's end. Now one ERROR of 307-328 bytes starts at the procedure's return type and swallows its `var` section
+and `begin` (py-tree-sitter 0.25; case-branch / adjacent-compl already had that shape on main). The inputs are
+alc-accepted gap input, and the verdicts are GAP before and after: no verdict moved (full B7a run and verdict dump,
+small-correctness fixes Task 4). Same principle as the D1 recovery decision (item 64). The fix is the gap itself:
+when these case-branch shapes parse, the recovery tree goes away.
 
 **Next step:** C1 (lowering for the split hosts) and B12 (one-reading boundaries); re-run `manifest --check` after
 either and re-record the cells that pass.
@@ -2234,7 +2265,41 @@ CONSISTENT on the widened one); the other 177 are UNCHECKED in the matrix (B12 h
 
 **Owner:** B12 (item 36).
 
-## 61. A group whose arm is only a unary operator ERRORs; alc accepts it (pre-existing, B7b-2 scope)
+## 61. A group whose arm is only a unary operator ERRORs; alc accepts it (pre-existing, B7b-2 scope) — RESOLVED 2026-10-25
+
+**Resolved 2026-10-25 (fix/small-correctness-61-62, Task 2).** A `preproc_operand_prefix` arm is now `_prefix_arm`:
+a `_dangling_operand`, or `field('operator', '+' | '-' | not)` alone. Spliced and regrouped by the ladder
+(`docs/expression-regions.md`), it is a unary over the operand after `#endif`. The grammar has one conflicts entry
+`[option_member, _prefix_arm]`, because in a property value `#if X not • #endif` could also start an option member
+named `not`. The change costs STATE +6 and LARGE +5.
+
+`node-types.json`:
+- `preproc_operand_prefix.operator` gains `not`.
+- `preproc_operand_prefix.operand` is no longer required, because a unary-only arm has none.
+- `tools/check-field-types.py` pins both.
+
+A fourth input changed with the fix: `Visible = #if X not #endif Ok;`. It used to parse CLEAN as a comma-less option
+list of `not` and `Ok`, which was a wrong tree. It is now the prefix over `Ok`. alc accepts both configurations.
+
+Pinned by:
+- `test/corpus/b7b2_unary_op_only_test.txt` (4 cases, field-labelled);
+- `test_unary_only_prefix_arm` in `tools/config_oracle/tests/test_regions.py`;
+- the probe, which now has an action `Visible` as symbol `W` (16 assignments, `--check` 0 mismatch).
+
+The production delta is 0 on all four corpora.
+
+**Still open:** the B7a placement `unary-op-only` (the next step below), so that the matrix covers the shape. Related,
+not fixed: item 65 (a comma-less option-list over-acceptance). The text below is the original record.
+
+**Why the placement was not added with the fix (2026-10-25, Task 4).** It is not "a placement plus a manifest
+re-record". The placement would be two `CONT_SHAPES` rows in `tools/b7_audit/placements.py` (`E op #if X - #endif F`
+for the arithmetic families, `... not ...` for the Boolean ones). Its siblings `unary-minus` and `unary-not` have
+334 and 273 cells, so it adds about 600 new cells. That means about 1,200 new alc compiles, about 600 new rows to
+classify in `tools/b7_audit/b7b2-manifest.tsv` (frozen in its Phase 0, and every cell of its families needs a row),
+assertion rows for the cells the oracle cannot judge, and new matrix rows. The close-out's gate is "no verdict
+moves except the fixed cells", and it would have to be measured against a matrix that also gained 600 cells. The
+fix itself is pinned by the fixture, the oracle test and the probe above. **Next step:** add the placement in its own
+change. Run its alc pass and manifest classification there, and expect the new cells to be CONSISTENT.
 
 **Established:** 2026-10-21, B7b-2 final whole-branch review (Important 1). An `#if` group whose only arm content is
 a unary operator, applied to the operand after `#endif`, ERRORs on main and on the branch:
@@ -2267,7 +2332,21 @@ item's real cost against `437215c` (D1 spec §10). Correctness wins over the cei
 
 **Owner:** B7b-2-followup.
 
-## 62. A property value with a leading prefix and a tail ERRORs; alc accepts it (B7b-2 Phase C, B12 route)
+## 62. A property value with a leading prefix and a tail ERRORs; alc accepts it (B7b-2 Phase C, B12 route) — RESOLVED 2026-10-25
+
+**Resolved 2026-10-25 (fix/small-correctness-61-62, Task 3).** `property_expression`'s leading-prefix arm is
+`leadingPrefixed($, r => r)`, the region roots' arm, so it takes the optional tail. The prefix, the operand and the
+tail are unfielded children of the one `property_expression` under `value` (`property.value` stays single). No
+conflicts entry; STATE +5, LARGE +1; `node-types.json` unchanged (`property_expression` already held a tail through
+`_property_value_with_split`). Four-corpus `perf delta`: 0 changed files. The witness moved to a positive case:
+`test/corpus/b7b2_property_prefix_tail_test.txt` (the gap file renamed; three cases: an action's `Visible`, a page
+field's `Editable`, a tail with an `#else` arm); oracle `test_property_prefix_then_tail` pins the ladder grouping
+per configuration. Hosts, by alc (`property-prefix-then-tail.al`, `--check` 0 mismatch): an action's
+`Visible`/`Enabled` and a page field's `Editable`/`Visible`/`Enabled` over a Boolean variable accept every
+configuration. The text below said a page field's `Editable` rejects a binary value; over a Boolean variable it
+does not. A table field's `Editable`/`Enabled`/`MinValue` rejects a binary value in every configuration with the
+prefix or the tail live (AL0104, AL0124/AL0198), as it does flat; the parser reads those clean too, the same
+semantic over-acceptance as a flat `Editable = true and false;` (parse structure, don't validate).
 
 **Established:** 2026-10-22, B7b-2 final scoped re-review. In an action,
 `Visible = #if X Ok and #endif Ok #if Y or Ok #endif;` (each directive on its own line) parses with an ERROR over
@@ -2345,6 +2424,71 @@ All 3 are alc ACCEPT and GAP before and after, so no verdict moved.
 replaces the recovery tree in all 582 cells, these 3 included.
 
 **Owner:** B7b+ (the matrix route owner of `split-if-begin`).
+
+## 65. A comma-less group-then-member property value parses clean as an option list; alc rejects it (over-acceptance)
+
+**Established:** 2026-10-25, while fixing item 61. In an action:
+
+```al
+Visible =
+#if X
+    Foo
+#endif
+    Ok;
+```
+
+The value parses CLEAN as `option_member_list` of `preproc_conditional_option_members` (holding `Foo`) and a
+member `Ok`, with no comma between them. The same happens with an operator word in the arm (`and`), and on main as
+well as before the fix.
+
+alc's verdict (split and flat agree):
+- X=0 (`Visible = Ok;`): accepts.
+- X=1 with `Foo`: rejects with AL0104 and AL0124.
+- X=1 with `and`: rejects with AL0224.
+
+Probes: `tools/alc_probe/cases/b7b-2/prefixes/commaless-option-run-name.al` and `commaless-option-run-operator-word.al`,
+both `--check` with 0 drift.
+
+**Silent but harmless for valid code.** Every input that reads this way is rejected by alc in some configuration
+("parse structure, don't validate"). Only the tree's claim is wrong: it says the value is an option list. The one
+alc-accepted shape that used to read this way (`#if X not #endif Ok`) is item 61's fixed input. 0 production sites:
+the four-corpus delta at item 61's fix is 0.
+
+**Next step:** if the over-acceptance is worth closing, require a `,` after the members of a list-opening
+conditional (B11's `_option_members_open_conditional`; the comment there already states that rule for the
+witnessed form). Measure it against `docs/b11-precedence-audit.md`.
+
+**Owner:** B13 (comma-free value runs), suggested.
+
+## 66. A prefix whose `#else` is empty ERRORs; alc accepts both configurations (pre-existing, found by the small-correctness final review)
+
+**Established:** 2026-10-25, final whole-branch review of fix/small-correctness-61-62 (finding I1). With each
+directive on its own line:
+
+```al
+I :=
+#if X
+    a +
+#else
+#endif
+    b;
+```
+
+parses with an ERROR. alc accepts both configurations (X=1 `a + b`, X=0 `b`), split and flat. Pre-existing on main;
+the batch is closed, so it is recorded, not fixed.
+
+**Cause.** The prefix's arm list requires the `#if` arm to be non-empty, as `_tail_group` did before this batch's fix
+(commit f2f73a4e, "a tail's #if arm may be empty when a later arm is not"); an empty `#else` arm leaves the prefix
+with no arm that can carry the operator.
+
+**Likely fix:** "some arm non-empty" on the prefix's arm list, the same pattern as `_tail_group`. Measure STATE cost
+and run the B7a census and the B11 precedence audit.
+
+**Witness:** the `:error` case "B7b-2 gap: a prefix whose #else is empty" of `test/corpus/b7b2_scope_gap_test.txt`
+(listed in `tools/deliberate-negatives.txt`, classified `debt(B7b-2)` in `tools/config_oracle/fixture-classes.tsv`).
+**Probe:** `tools/alc_probe/cases/b7b-2/prefixes/empty-else-prefix.al` (`--check`, 0 drift).
+
+**Owner:** B7b-2 follow-up.
 
 ## Longer-lived proposals, tracked separately
 

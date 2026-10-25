@@ -66,7 +66,8 @@ python -m tools.b7_audit census --check
 python -m tools.b7_audit report                 # must be byte-identical to the committed matrix
 ./tools/ts-lock.sh python -m tools.b7_audit assert --refresh
 ./tools/ts-lock.sh python -m pytest tools/b7_audit/tests -q   # Step 5h
-# After ANY change to src/parser.c, src/scanner.c or tools/config_oracle: `assert --refresh`, a full `run`, then `report`.
+# After ANY change to src/parser.c, src/scanner.c or tools/config_oracle: `assert --refresh` per fix; a full `run`,
+# then `report`, once per batch before merging (docs/agent-brief-rules.md, "Gate tiers").
 
 # Perf (docs/performance-baselines.md). Speed DECISIONS come from `ab`, same session, ABBA; baselines are context.
 python -m tools.perf ab --lib-a OLD --lib-b NEW --corpus dc

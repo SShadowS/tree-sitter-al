@@ -696,6 +696,9 @@ module.exports = grammar({
     // A nested tail in an arm that is an operand-group arm or a prefix arm
     // until the arm's end shows a dangling operator.
     [$._tail_item, $._dangling_tail_item],
+    // Item 61: `Prop = #if X not • #endif` is a unary-only prefix arm or an
+    // option member named `not`; what follows the #endif decides.
+    [$.option_member, $._prefix_arm],
     // A typed right that is an operand group: `in #if X [1] • in` (typed
     // prefix arm) vs `[1] in ...` inside a general arm.
     [$._in_dangling_operand, $._continuation_operand],
@@ -2192,8 +2195,9 @@ module.exports = grammar({
       $.logical_expression,
       // B7b-2 Phase C (spec 6.3 `first`): leading operand prefixes at a value
       // start, `Visible = #if X Ok and #endif true and Ok;`, unfielded beside
-      // the value's expression as at a region root.
-      seq(repeat1($.preproc_operand_prefix), $._continuation_operand),
+      // the value's expression as at a region root. The optional tail is
+      // leadingPrefixed's (item 62): `Visible = #if X Ok and #endif Ok #if Y or Ok #endif;`.
+      leadingPrefixed($, r => r),
     ),
 
     // The two spellings are hidden token rules rather than inline kw() so that
@@ -6017,11 +6021,27 @@ module.exports = grammar({
 
     _typed_operator: $ => choice($.in_keyword, $.is_keyword, $.as_keyword),
 
+    // An `#elif`/`#else` arm may be empty (issue #38: `until (A > 10) #if X or
+    // (B > 5) #else #endif ;`, alc accepts every configuration; probe
+    // tools/alc_probe/cases/b7b-2/tails/empty-else-tail.al): an empty arm
+    // contributes nothing, like a missing `#else`. Any arm may be empty, the
+    // `#if` arm too (`a #if X #else + b #endif`, review F1), but SOME arm
+    // holds a member, so a group with no member at all is never a tail: the
+    // leading empty arms are bare `preproc_elif`s, then the first non-empty
+    // arm (the #if arm or an #elif arm, any arms after it; or a closing
+    // #else). +210 states; spelling the first-non-empty choice with the
+    // trailing arms in each alternative cost +364.
     _tail_group: $ => seq(
       $.preproc_if,
-      repeat1($._tail_item),
-      repeat(seq($.preproc_elif, repeat1($._tail_item))),
-      optional(seq($.preproc_else, repeat1($._tail_item))),
+      repeat($.preproc_elif),
+      choice(
+        seq(
+          repeat1($._tail_item),
+          repeat(seq($.preproc_elif, repeat($._tail_item))),
+          optional(seq($.preproc_else, repeat($._tail_item))),
+        ),
+        seq($.preproc_else, repeat1($._tail_item)),
+      ),
       $.preproc_endif,
     ),
 
@@ -6137,10 +6157,21 @@ module.exports = grammar({
     // pairs merges into a single larger expression by construction.
     preproc_operand_prefix: $ => seq(
       $.preproc_if,
-      $._dangling_operand,
-      repeat(seq($.preproc_elif, $._dangling_operand)),
-      optional(seq($.preproc_else, $._dangling_operand)),
+      $._prefix_arm,
+      repeat(seq($.preproc_elif, $._prefix_arm)),
+      optional(seq($.preproc_else, $._prefix_arm)),
       $.preproc_endif
+    ),
+
+    // An arm may also be a unary operator alone, applied to the operand after
+    // #endif (deferred-work item 61: `I := #if X - #endif 1;`, `B := Ok and #if
+    // X not #endif Ok;`; alc accepts every configuration, probe
+    // tools/alc_probe/cases/b7b-2/prefixes/unary-operator-only.al). Spliced and
+    // regrouped by the ladder (docs/expression-regions.md) it is a unary over
+    // that operand, since no operand precedes it in the arm.
+    _prefix_arm: $ => choice(
+      $._dangling_operand,
+      field('operator', choice('+', '-', alias($._not_token, 'not'))),
     ),
 
     // B7b-2 (spec 5.1 fragment site): the arm's operand may carry tail items,

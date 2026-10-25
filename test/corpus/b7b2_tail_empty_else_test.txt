@@ -1,0 +1,552 @@
+================================================================================
+B7b-2 tail: an empty #else arm after an assignment right
+--
+Issue #38. An empty arm contributes nothing (docs/expression-regions.md,
+Meaning step 1): X gives `I := A + B`, not X gives `I := A`. alc accepts every
+configuration: tools/alc_probe/cases/b7b-2/tails/empty-else-tail.al. Before:
+ERROR at `#endif`.
+================================================================================
+codeunit 50100 P
+{
+    procedure Q()
+    begin
+        I := A
+#if X
+            + B
+#else
+#endif
+            ;
+    end;
+}
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (procedure
+        (procedure_keyword)
+        name: (identifier)
+        body: (code_block
+          (begin_keyword)
+          body: (statement_block
+            (assignment_statement
+              left: (identifier)
+              operator: (assignment_operator)
+              right: (identifier)
+              (preproc_conditional_expression_tail
+                (preproc_if
+                  (preproc_open)
+                  condition: (identifier))
+                operand: (identifier)
+                (preproc_else)
+                (preproc_endif
+                  (preproc_close)))))
+          (end_keyword))))))
+
+================================================================================
+B7b-2 tail: an empty #else arm after a repeat-until condition
+--
+Issue #38 as filed: `until (A > 10) #if X or (B > 5) #else #endif ;`.
+================================================================================
+codeunit 50100 P
+{
+    procedure Q()
+    begin
+        repeat
+            A := A + 1;
+        until (A > 10)
+#if X
+            or (B > 5)
+#else
+#endif
+            ;
+    end;
+}
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (procedure
+        (procedure_keyword)
+        name: (identifier)
+        body: (code_block
+          (begin_keyword)
+          body: (statement_block
+            (repeat_statement
+              (repeat_keyword)
+              body: (statement_block
+                (assignment_statement
+                  left: (identifier)
+                  operator: (assignment_operator)
+                  right: (additive_expression
+                    left: (identifier)
+                    right: (integer))))
+              (until_keyword)
+              condition: (parenthesized_expression
+                (comparison_expression
+                  left: (identifier)
+                  operator: (comparison_operator)
+                  right: (integer)))
+              (preproc_conditional_expression_tail
+                (preproc_if
+                  (preproc_open)
+                  condition: (identifier))
+                operand: (parenthesized_expression
+                  (comparison_expression
+                    left: (identifier)
+                    operator: (comparison_operator)
+                    right: (integer)))
+                (preproc_else)
+                (preproc_endif
+                  (preproc_close)))))
+          (end_keyword))))))
+
+================================================================================
+B7b-2 tail: an empty #else arm after a while condition
+================================================================================
+codeunit 50100 P
+{
+    procedure Q()
+    begin
+        while (A < B)
+#if X
+            and (A > 0)
+#else
+#endif
+        do
+            A := A + 1;
+    end;
+}
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (procedure
+        (procedure_keyword)
+        name: (identifier)
+        body: (code_block
+          (begin_keyword)
+          body: (statement_block
+            (while_statement
+              (while_keyword)
+              condition: (parenthesized_expression
+                (comparison_expression
+                  left: (identifier)
+                  operator: (comparison_operator)
+                  right: (identifier)))
+              (preproc_conditional_expression_tail
+                (preproc_if
+                  (preproc_open)
+                  condition: (identifier))
+                operand: (parenthesized_expression
+                  (comparison_expression
+                    left: (identifier)
+                    operator: (comparison_operator)
+                    right: (integer)))
+                (preproc_else)
+                (preproc_endif
+                  (preproc_close)))
+              (do_keyword)
+              body: (assignment_statement
+                left: (identifier)
+                operator: (assignment_operator)
+                right: (additive_expression
+                  left: (identifier)
+                  right: (integer)))))
+          (end_keyword))))))
+
+================================================================================
+B7b-2 tail: an #elif arm then an empty #else arm
+================================================================================
+codeunit 50100 P
+{
+    procedure Q()
+    begin
+        I := A
+#if X
+            + B
+#elif Y
+            - B
+#else
+#endif
+            ;
+    end;
+}
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (procedure
+        (procedure_keyword)
+        name: (identifier)
+        body: (code_block
+          (begin_keyword)
+          body: (statement_block
+            (assignment_statement
+              left: (identifier)
+              operator: (assignment_operator)
+              right: (identifier)
+              (preproc_conditional_expression_tail
+                (preproc_if
+                  (preproc_open)
+                  condition: (identifier))
+                operand: (identifier)
+                (preproc_elif
+                  condition: (identifier))
+                operand: (identifier)
+                (preproc_else)
+                (preproc_endif
+                  (preproc_close)))))
+          (end_keyword))))))
+
+================================================================================
+B7b-2 tail: an empty #elif arm
+--
+The empty arm sits between `preproc_elif` and `preproc_else`: the `operand`
+after `preproc_else` is the #else arm's.
+================================================================================
+codeunit 50100 P
+{
+    procedure Q()
+    begin
+        I := A
+#if X
+            + B
+#elif Y
+#else
+            - B
+#endif
+            ;
+    end;
+}
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (procedure
+        (procedure_keyword)
+        name: (identifier)
+        body: (code_block
+          (begin_keyword)
+          body: (statement_block
+            (assignment_statement
+              left: (identifier)
+              operator: (assignment_operator)
+              right: (identifier)
+              (preproc_conditional_expression_tail
+                (preproc_if
+                  (preproc_open)
+                  condition: (identifier))
+                operand: (identifier)
+                (preproc_elif
+                  condition: (identifier))
+                (preproc_else)
+                operand: (identifier)
+                (preproc_endif
+                  (preproc_close)))))
+          (end_keyword))))))
+
+================================================================================
+B7b-2 tail: an empty #else arm in a call argument
+--
+The tail stays inside the first argument; the comma after `#endif` starts the
+second.
+================================================================================
+codeunit 50100 P
+{
+    procedure Q()
+    begin
+        I := Foo(A
+#if X
+            + B
+#else
+#endif
+            , B);
+    end;
+}
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (procedure
+        (procedure_keyword)
+        name: (identifier)
+        body: (code_block
+          (begin_keyword)
+          body: (statement_block
+            (assignment_statement
+              left: (identifier)
+              operator: (assignment_operator)
+              right: (call_expression
+                function: (identifier)
+                arguments: (argument_list
+                  (identifier)
+                  (preproc_conditional_expression_tail
+                    (preproc_if
+                      (preproc_open)
+                      condition: (identifier))
+                    operand: (identifier)
+                    (preproc_else)
+                    (preproc_endif
+                      (preproc_close)))
+                  (identifier)))))
+          (end_keyword))))))
+
+================================================================================
+B7b-2 tail: an empty #else arm in a list element
+--
+Review F2. The tail stays inside the first element; before: ERROR.
+================================================================================
+codeunit 50100 P
+{
+    procedure Q()
+    begin
+        Ok := A in [A
+#if X
+            + B
+#else
+#endif
+            , B];
+    end;
+}
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (procedure
+        (procedure_keyword)
+        name: (identifier)
+        body: (code_block
+          (begin_keyword)
+          body: (statement_block
+            (assignment_statement
+              left: (identifier)
+              operator: (assignment_operator)
+              right: (in_expression
+                left: (identifier)
+                operator: (in_keyword)
+                right: (list_literal
+                  (identifier)
+                  (preproc_conditional_expression_tail
+                    (preproc_if
+                      (preproc_open)
+                      condition: (identifier))
+                    operand: (identifier)
+                    (preproc_else)
+                    (preproc_endif
+                      (preproc_close)))
+                  (identifier)))))
+          (end_keyword))))))
+
+================================================================================
+B7b-2 tail: an empty #if arm before a non-empty #else arm
+--
+Review F1. X gives `I := A`, not X gives `I := A + B`.
+================================================================================
+codeunit 50100 P
+{
+    procedure Q()
+    begin
+        I := A
+#if X
+#else
+            + B
+#endif
+            ;
+    end;
+}
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (procedure
+        (procedure_keyword)
+        name: (identifier)
+        body: (code_block
+          (begin_keyword)
+          body: (statement_block
+            (assignment_statement
+              left: (identifier)
+              operator: (assignment_operator)
+              right: (identifier)
+              (preproc_conditional_expression_tail
+                (preproc_if
+                  (preproc_open)
+                  condition: (identifier))
+                (preproc_else)
+                operand: (identifier)
+                (preproc_endif
+                  (preproc_close)))))
+          (end_keyword))))))
+
+================================================================================
+B7b-2 tail: an empty #if arm before a non-empty #elif arm
+================================================================================
+codeunit 50100 P
+{
+    procedure Q()
+    begin
+        I := A
+#if X
+#elif Y
+            + B
+#else
+            - B
+#endif
+            ;
+    end;
+}
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (procedure
+        (procedure_keyword)
+        name: (identifier)
+        body: (code_block
+          (begin_keyword)
+          body: (statement_block
+            (assignment_statement
+              left: (identifier)
+              operator: (assignment_operator)
+              right: (identifier)
+              (preproc_conditional_expression_tail
+                (preproc_if
+                  (preproc_open)
+                  condition: (identifier))
+                (preproc_elif
+                  condition: (identifier))
+                operand: (identifier)
+                (preproc_else)
+                operand: (identifier)
+                (preproc_endif
+                  (preproc_close)))))
+          (end_keyword))))))
+
+================================================================================
+B7b-2 tail: empty #if and #elif arms before a non-empty #else arm
+================================================================================
+codeunit 50100 P
+{
+    procedure Q()
+    begin
+        I := A
+#if X
+#elif Y
+#else
+            - B
+#endif
+            ;
+    end;
+}
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (procedure
+        (procedure_keyword)
+        name: (identifier)
+        body: (code_block
+          (begin_keyword)
+          body: (statement_block
+            (assignment_statement
+              left: (identifier)
+              operator: (assignment_operator)
+              right: (identifier)
+              (preproc_conditional_expression_tail
+                (preproc_if
+                  (preproc_open)
+                  condition: (identifier))
+                (preproc_elif
+                  condition: (identifier))
+                (preproc_else)
+                operand: (identifier)
+                (preproc_endif
+                  (preproc_close)))))
+          (end_keyword))))))
+
+================================================================================
+B7b-2 tail: a group with every arm empty is not a tail
+--
+Review focus: no arm holds a member, so the group stays a statement-level
+conditional after the assignment, as before the empty-arm change.
+================================================================================
+codeunit 50100 P
+{
+    procedure Q()
+    begin
+        I := A
+#if X
+#elif Y
+#else
+#endif
+            ;
+    end;
+}
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (procedure
+        (procedure_keyword)
+        name: (identifier)
+        body: (code_block
+          (begin_keyword)
+          body: (statement_block
+            (assignment_statement
+              left: (identifier)
+              operator: (assignment_operator)
+              right: (identifier))
+            (preproc_conditional_statement
+              (preproc_if
+                (preproc_open)
+                condition: (identifier))
+              (preproc_elif
+                condition: (identifier))
+              (preproc_else)
+              (preproc_endif
+                (preproc_close))))
+          (end_keyword))))))

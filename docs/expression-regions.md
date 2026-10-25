@@ -25,8 +25,8 @@ Design and measurements: `docs/superpowers/specs/2026-10-20-b7b-2-expression-con
 
 | node | where it stands | arms hold | fields |
 |---|---|---|---|
-| `preproc_conditional_expression_tail` | after a complete operand, beside the region root's expression | `operator operand` continuations, nested tails; after `#endif`, more continuations | each continuation's operand is `operand` (multiple); a keyword operator is `operator: (in_keyword \| is_keyword \| as_keyword)` |
-| `preproc_operand_prefix` | between a binary's `operator` and `right` (including a typed prefix before the typed right of `in`/`is`/`as`); between a unary's `operator` and `operand`; or before a region root's expression (a leading prefix), as an unfielded child of the root's host: a statement, `argument_list`, `list_literal`, `range_expression`, `ternary_expression`, `case_branch` (and the split case hosts) before a case pattern, `property_expression` before a property value | `operand operator` (the arm supplies an operand and the operator after it) | each arm's operand is `operand` (multiple); each arm's operator is `operator`: an anonymous token (`+`, `*`, `and`, ...), `comparison_operator`, or `in_keyword` / `is_keyword` / `as_keyword` (the last two in the typed prefix, whose operand is a `type_specification`) |
+| `preproc_conditional_expression_tail` | after a complete operand, beside the region root's expression | `operator operand` continuations, nested tails (any arm may be empty, the `#if` arm too, as long as some arm holds a member; issue #38); after `#endif`, more continuations | each continuation's operand is `operand` (multiple); a keyword operator is `operator: (in_keyword \| is_keyword \| as_keyword)` |
+| `preproc_operand_prefix` | between a binary's `operator` and `right` (including a typed prefix before the typed right of `in`/`is`/`as`); between a unary's `operator` and `operand`; or before a region root's expression (a leading prefix), as an unfielded child of the root's host: a statement, `argument_list`, `list_literal`, `range_expression`, `ternary_expression`, `case_branch` (and the split case hosts) before a case pattern, `property_expression` before a property value | `operand operator` (the arm supplies an operand and the operator after it), or a unary operator alone (`+` `-` `not`, item 61: `I := #if X - #endif 1;`), which splices to a unary over the operand after `#endif` | each arm's operand is `operand` (multiple; optional, since a unary-only arm has none); each arm's operator is `operator`: an anonymous token (`+`, `*`, `and`, `not`, ...), `comparison_operator`, or `in_keyword` / `is_keyword` / `as_keyword` (the last two in the typed prefix, whose operand is a `type_specification`) |
 | `preproc_conditional_operand` | in place of one whole operand | one operand per arm, with optional prefixes before it and tails after it | each arm's operand is `operand` (multiple); the group takes the field of the position it fills (`right`, `left`, `operand`, `object`, `function`, ...) |
 
 `preproc_if`, `preproc_elif`, `preproc_else` and `preproc_endif` are children of each group, as in every other
@@ -94,7 +94,8 @@ roots take leading prefixes through their own rules: each **case pattern** (`cas
 of the split case hosts; the prefix is an unfielded child of the host before the pattern, and a tail on a pattern
 is item 56), and each **property value** (the expression child of `property_expression`; the prefix and the tail
 are unfielded children of `property_expression`, on B12's route `_property_value_with_split`, which takes the same
-tail rule).
+tail rule; a prefixed value takes the optional tail too, through `leadingPrefixed`, item 62:
+`Visible = #if X Ok and #endif Ok #if Y or Ok #endif;`).
 
 ## Meaning
 
@@ -280,7 +281,5 @@ from parser output.
 - **List spanning across an `#else`** (item 57): `Foo(1 #if X + 2 #else , 3 #endif)` parses clean but reads `+2` as
   a comma-less second argument (X=1 is `Foo(1 + 2)`), as on main; pinned as a SILENT witness, never as a corpus tree.
   **A tail before a postfix** (`T1 #if X + T2 #endif .ToUpper()`) ERRORs (item 57).
-- **Unary-operator-only arms** (item 61): `I := #if X - #endif 1;`, `B := Ok and #if X not #endif Ok;` and
-  `if #if X not #endif Ok then;` ERROR, on main too; alc accepts every configuration.
 - **No region API** in the traversal helper (item 59): a consumer applies this page itself; the oracle's region
   assembler is the reference implementation. Query authors: `queries/README.md`.

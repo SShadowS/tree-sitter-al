@@ -1,0 +1,212 @@
+================================================================================
+B7b-2 property value: a leading prefix and a tail in one action Visible value
+--
+Item 62 (docs/deferred-work.md): property_expression's leading-prefix arm is
+leadingPrefixed, so a prefixed value takes an optional tail as at a region root.
+The prefix, the operand and the tail are unfielded children of the one
+property_expression under `value`. alc accepts every configuration:
+tools/alc_probe/cases/b7b-2/prefixes/property-prefix-then-tail.al.
+================================================================================
+page 50102 PG
+{
+    actions
+    {
+        area(Processing)
+        {
+            action(A1)
+            {
+                Visible =
+#if X
+                    Ok and
+#endif
+                    Ok
+#if Y
+                    or Ok
+#endif
+                    ;
+            }
+        }
+    }
+}
+--------------------------------------------------------------------------------
+
+(source_file
+  (page_declaration
+    (page_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (actions_section
+        (actions_keyword)
+        body: (action_body
+          (action_area_section
+            (area_keyword)
+            type: (processing_keyword)
+            body: (action_body
+              (action_declaration
+                (action_keyword)
+                name: (identifier)
+                body: (declaration_body
+                  (property
+                    name: (property_name)
+                    value: (property_expression
+                      (preproc_operand_prefix
+                        (preproc_if
+                          (preproc_open)
+                          condition: (identifier))
+                        operand: (identifier)
+                        (preproc_endif
+                          (preproc_close)))
+                      (identifier)
+                      (preproc_conditional_expression_tail
+                        (preproc_if
+                          (preproc_open)
+                          condition: (identifier))
+                        operand: (identifier)
+                        (preproc_endif
+                          (preproc_close))))))))))))))
+
+================================================================================
+B7b-2 property value: a leading prefix and a tail in a page field Editable value
+--
+Item 62, a second host: a page field's Editable over a Boolean variable takes a
+binary value (alc accepts every configuration, same probe file).
+================================================================================
+page 50103 PG
+{
+    layout
+    {
+        area(Content)
+        {
+            field(F; Ok)
+            {
+                Editable =
+#if X
+                    Ok and
+#endif
+                    Ok
+#if Y
+                    or Ok
+#endif
+                    ;
+            }
+        }
+    }
+    var
+        Ok: Boolean;
+}
+--------------------------------------------------------------------------------
+
+(source_file
+  (page_declaration
+    (page_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (layout_section
+        (layout_keyword)
+        body: (layout_body
+          (area_section
+            (area_keyword)
+            type: (content_keyword)
+            body: (layout_body
+              (page_field
+                (field_keyword)
+                name: (identifier)
+                source: (identifier)
+                body: (declaration_body
+                  (property
+                    name: (property_name)
+                    value: (property_expression
+                      (preproc_operand_prefix
+                        (preproc_if
+                          (preproc_open)
+                          condition: (identifier))
+                        operand: (identifier)
+                        (preproc_endif
+                          (preproc_close)))
+                      (identifier)
+                      (preproc_conditional_expression_tail
+                        (preproc_if
+                          (preproc_open)
+                          condition: (identifier))
+                        operand: (identifier)
+                        (preproc_endif
+                          (preproc_close)))))))))))
+      (var_section
+        (var_keyword)
+        body: (var_body
+          (variable_declaration
+            name: (identifier)
+            type: (type_specification
+              (basic_type))))))))
+
+================================================================================
+B7b-2 property value: a leading prefix and a tail with an #else arm
+--
+Item 62: the tail after a prefixed value is the ordinary tail, #else arm
+included (`or Ok` / `and Ok`). alc accepts every configuration (same probe
+file, action A2).
+================================================================================
+page 50102 PG
+{
+    actions
+    {
+        area(Processing)
+        {
+            action(A2)
+            {
+                Enabled =
+#if X
+                    Ok and
+#endif
+                    Ok
+#if Y
+                    or Ok
+#else
+                    and Ok
+#endif
+                    ;
+            }
+        }
+    }
+}
+--------------------------------------------------------------------------------
+
+(source_file
+  (page_declaration
+    (page_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (actions_section
+        (actions_keyword)
+        body: (action_body
+          (action_area_section
+            (area_keyword)
+            type: (processing_keyword)
+            body: (action_body
+              (action_declaration
+                (action_keyword)
+                name: (identifier)
+                body: (declaration_body
+                  (property
+                    name: (property_name)
+                    value: (property_expression
+                      (preproc_operand_prefix
+                        (preproc_if
+                          (preproc_open)
+                          condition: (identifier))
+                        operand: (identifier)
+                        (preproc_endif
+                          (preproc_close)))
+                      (identifier)
+                      (preproc_conditional_expression_tail
+                        (preproc_if
+                          (preproc_open)
+                          condition: (identifier))
+                        operand: (identifier)
+                        (preproc_else)
+                        operand: (identifier)
+                        (preproc_endif
+                          (preproc_close))))))))))))))

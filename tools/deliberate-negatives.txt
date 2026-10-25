@@ -212,10 +212,3 @@ b7b2_scope_gap_test.txt
 # ERROR by design, `:error` witnesses with alc probes tools/alc_probe/cases/b7b-2/crossing/; the file also pins the
 # pre-existing list-spanning argument tree (not a negative).
 b7b2_crossing_gap_test.txt
-# B7b-2 final review (Important 1): a group whose only arm content is a unary operator (`#if X - #endif 1`,
-# `Ok and #if X not #endif Ok`, `if #if X not #endif Ok then`) ERRORs on main and on the branch; alc accepts every
-# configuration (tools/alc_probe/cases/b7b-2/prefixes/unary-operator-only.al). `:error` witnesses, item 61.
-# The same file holds the scoped re-review's property-value witness: a leading prefix and a tail in one value
-# (`Visible = #if X Ok and #endif Ok #if Y or Ok #endif;`) ERRORs; alc accepts it
-# (tools/alc_probe/cases/b7b-2/prefixes/property-prefix-then-tail.al), item 62.
-b7b2_unary_op_only_gap_test.txt

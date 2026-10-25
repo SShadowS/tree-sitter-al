@@ -23,3 +23,28 @@ codeunit 50101 P
     end;
 }
 --------------------------------------------------------------------------------
+
+================================================================================
+B7b-2 gap: a prefix whose #else is empty
+:error
+--
+DELIBERATE NEGATIVE (gap witness, listed in tools/deliberate-negatives.txt): valid
+AL the parser ERRORs on (final review of the small-correctness batch, finding I1).
+X=1 is `a + b`, X=0 is `b`. alc accepts both configurations:
+tools/alc_probe/cases/b7b-2/prefixes/empty-else-prefix.al. The prefix's arm list
+requires the `#if` arm to be non-empty (docs/deferred-work.md item 66). The ERROR
+is the assertion.
+================================================================================
+codeunit 50100 P
+{
+    procedure Q()
+    begin
+        I :=
+#if X
+        a +
+#else
+#endif
+        b;
+    end;
+}
+--------------------------------------------------------------------------------
