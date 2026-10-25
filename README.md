@@ -52,6 +52,31 @@ Since 4.0.0 the success rate is a count of files actually read, reconciled per
 chunk — it used to be the total minus the files that reported an error, which
 counted a file that was never opened as a pass.
 
+## What's new in 4.5.0
+
+**`#if` groups are structural in four more places**, and parts of the tree move
+for consumers (a minor release, as the earlier tree-shape phases were; read the
+migration notes in [CHANGELOG.md](CHANGELOG.md) before upgrading):
+
+- **Inside expressions.** A group may stand anywhere in an expression: after an
+  operand, between an operator and its operand, or in place of a whole operand
+  (the new `preproc_conditional_operand`). Inside a region that holds a group,
+  the binary/unary nesting is not a grouping claim; how a consumer recovers each
+  configuration's meaning is in
+  [`docs/expression-regions.md`](docs/expression-regions.md).
+- **Statement terminators** and case-branch separators. `call_statement` no
+  longer contains its `;`, and a bare name in statement position is a
+  `call_statement`.
+- **Eight strict delimited lists**, and **property values** made of a run of
+  groups.
+- The parser tables shrank by 6% (`parser.c` by 10%) with no tree change.
+
+This resolves most of the 4.0.0 known limitation below. What remains is
+recorded, each with its evidence, in
+[`docs/deferred-work.md`](docs/deferred-work.md): three shapes still ERROR
+(items 51 shape 3, 56, 57), two over-accept input alc rejects (items 58, 65),
+and long runs of consecutive groups parse in quadratic time (items 52, 53).
+
 ## What's new in 4.0.0
 
 **This is a breaking release — the parse tree moves.** Every defect below parsed
@@ -121,13 +146,11 @@ Found by gates built during this release —
 [`tools/validate_al_file.py`](tools/validate_al_file.py), which answers
 completeness and soundness separately for one file.
 
-**Known limitation.** An expression continued across a `#if` boundary in four
-shapes — after a grammatically complete construct, a second split in one
-expression, an `else` clause under a flag, and an `and`/comparison continuation —
-still parses to a wrong tree with no error. The class occurs in neither corpus
-(0 of 36,852 files). It is recorded at the rule in `grammar.js` with every
-measured attempt, pinned by an explicitly-labelled tripwire fixture, and detected
-by `orphan-operator-expr` in the per-file validator.
+**Known limitation (at 4.0.0; largely resolved in 4.5.0, see above).** An
+expression continued across a `#if` boundary in four shapes — after a
+grammatically complete construct, a second split in one expression, an `else`
+clause under a flag, and an `and`/comparison continuation — parsed to a wrong
+tree with no error. The class occurs in neither corpus (0 of 36,852 files).
 
 See [CHANGELOG.md](CHANGELOG.md) for the full list, each with its measured blast
 radius.

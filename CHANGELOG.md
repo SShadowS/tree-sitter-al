@@ -7,6 +7,37 @@ public API — a change to node structure or field names is a **major** bump.
 
 ## [Unreleased]
 
+## [4.5.0] — 2026-10-25
+
+**`#if` groups are now structural in expressions, statement terminators, strict lists and property values.**
+A minor release, as the earlier tree-shape phases were, but several entries below move the tree for consumers:
+read the ones marked **Tree-shape change** or **Breaking**, the **Migration** notes in the B7b-3 and `TableRelation`
+entries, [`docs/expression-regions.md`](docs/expression-regions.md) and [`docs/traversal.md`](docs/traversal.md)
+before upgrading. Validated over **15,358 production AL files** (BC.History), **0 errors**; 3,599 tests pass.
+
+- **`#if` inside expressions (B7b-2).** A group may stand anywhere in an expression: tails at every expression slot,
+  operand prefixes, and the new `preproc_conditional_operand` in place of a whole operand. Inside a region that
+  holds a group the binary/unary nesting is not a grouping claim; the consumer rule is the transparent-region
+  contract in `docs/expression-regions.md`. This resolves most of the 4.0.0 known limitation (an expression
+  continued across a `#if` boundary). What remains is recorded in `docs/deferred-work.md` items 51 (shape 3),
+  56 and 57 (still ERROR), 58 and 65 (over-acceptance), 52 and 53 (quadratic parse time on long runs of groups).
+- **Statement terminators (B7b-3).** Terminators, case-branch separators and the move header accept `#if` groups;
+  `call_statement` no longer contains its `;`, and a bare name in statement position is a `call_statement`.
+- **Strict delimited lists (B7b-1).** A `#if` group may stand anywhere in eight strict lists.
+- **Property values (B11, B4, B5, B5b, B8).** A value may be a run of `#if` groups; the ML, `Namespaces`,
+  `TableRelation` and link-family properties are keyed by name; `CalcFormula` takes a whole-value `#if`.
+- **Parser tables reduced (D1)**, no tree change: STATE_COUNT −6.2%, `parser.c` −10%.
+- **Small fixes:** empty tail arms (issue #38), a unary-only prefix arm (item 61), a prefixed property value with a
+  tail (item 62), an empty prefix arm (item 66), malformed and incomplete directive lines are an ERROR (B2, B3),
+  statements must be invocations (B6), and the entries under Fixed.
+- **Tools:** the B7a separator and continuation audit, and the F0 traversal helper in every binding.
+
+**Speed against 4.4.1 was not measured.** `python -m tools.perf ab --lib-a <v4.4.1> --lib-b <4.5.0> --rounds 8`
+(2026-10-25) refuses to time libraries that build different trees, and these do: 568 of 1,352 DC files (1-minute
+load 5.07 at start) and 3,016 of 15,358 BC.History files (load 3.79 at start, outside CPU above `ab`'s threshold
+during the tree check). The same-tree measurements per phase are in the entries below: D1 against `960ed31` about
+1.00 on both corpora; B7b-2 about 4% slower on DC and within noise on BC.History (deferred-work item 54).
+
 ### Added
 
 - **A separator and continuation audit tool and its matrix (roadmap B7a, no grammar change).**
@@ -1053,6 +1084,38 @@ public API — a change to node structure or field names is a **major** bump.
   STATE_COUNT to 15,358. The largest costs are the procedure boundary (+412),
   the reopen chain (+316) and `preproc_split_open_statement` (+350). Each is
   recorded with its measurement in the commit that added it.
+
+## [4.4.1] — 2026-09-27
+
+These notes were written at the 4.5.0 release from the tagged commits; 4.4.1 shipped without a CHANGELOG entry.
+
+### Fixed
+
+- **`asserterror` takes a statement, not an expression (issues #28, #26).** `asserterror X := 1;` and
+  `asserterror if ...`/`exit` now put the statement in `asserterror_statement.body` instead of leaving it a sibling,
+  and `asserterror Buckets[1].Delete(true)` no longer ends at `Buckets` (`209d038`).
+- **Contextual keywords lex as names at the start of a property value (issue #27).** `Visible = Type = Type::Alpha;`
+  no longer ERRORs (`551829e`).
+
+### Performance
+
+- STATE_COUNT 16,096 → 15,364 (−4.5%), `parser.c` 38.6 → 37.0 MB, tree-identical over BC.History, by factoring
+  brace-delimited body blocks and the `( name )` header (`42d0848`, `0c4b5c4`). `procedure A(): Integer;;`, which
+  alc rejects (AL0519), is no longer accepted.
+
+## [4.4.0] — 2026-09-13
+
+These notes were written at the 4.5.0 release from the tagged commits; 4.4.0 shipped without a CHANGELOG entry.
+
+### Fixed
+
+- **A binary operator may dangle before `#if` (issue #24).** `A or` at the end of a line, then `#if`, no longer
+  ERRORs; the new `preproc_operand_prefix` sits between a binary's `operator` and `right` (`0791253`).
+- **A `#if` branch whose first operator is not `+ - * /` continues the expression (issue #24 follow-up).**
+  `B := (1 = 1) #if X or (2 = 2) #endif or (3 = 3);` parsed clean but read `or` as a function name (`e0ab7a4`).
+- **Preprocessor branches may open a block and add statements to it, and may cross brace and case boundaries
+  (issue #25).** All 8,073 files of BC 28.1 Base Application parse with no ERROR or MISSING node (`bc72141`,
+  `028cbdd`).
 
 ## [4.3.0] — 2026-09-09
 

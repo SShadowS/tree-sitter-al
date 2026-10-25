@@ -39,5 +39,8 @@ later regression that lands beneath it.
 
 ## Philosophy
 
-No known limitations. Do not disable a test or file an issue as unsolvable. Study
-`other-languages/` for how another parser handled the same construct.
+Known limits are recorded, not denied. Every failing pattern alc accepts is a defect to
+fix; do not disable a test or file an issue as unsolvable. A limit that has been
+MEASURED and accepted by the user is a numbered item in `docs/deferred-work.md` with its
+evidence and a fixture or gate that pins it. Study `other-languages/` for how another
+parser handled the same construct.
