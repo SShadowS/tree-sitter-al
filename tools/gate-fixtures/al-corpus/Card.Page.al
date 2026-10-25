@@ -14,6 +14,12 @@ page 50100 "Selftest Card"
                     ApplicationArea = All;
                 }
             }
+            // validate --full Step 6c refuses a corpus with no link-family site
+            part(Children; "Selftest Card")
+            {
+                ApplicationArea = All;
+                SubPageLink = "Parent No." = field("No.");
+            }
         }
     }
 

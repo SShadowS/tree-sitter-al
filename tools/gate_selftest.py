@@ -88,6 +88,9 @@ COPY_FILES = [
     "Cargo.toml",
     "go.mod",
     "Package.swift",
+    # Step 5h (b7 audit tests) checks the committed matrix's witnesses and SILENT
+    # groups against this file; without it two tests fail and so did the control.
+    "docs/b7-separator-continuation-matrix.md",
 ]
 COPY_DIRS = ["tools", "test", "queries", "src", "traversal"]
 
@@ -1020,6 +1023,7 @@ def build_pristine(dest: Path) -> None:
         src = REPO / name
         if not src.exists():
             raise SelfTestError(f"cannot build a scratch repo: '{name}' is missing")
+        (dest / name).parent.mkdir(parents=True, exist_ok=True)
         shutil.copy2(src, dest / name)
     for name in COPY_DIRS:
         src = REPO / name

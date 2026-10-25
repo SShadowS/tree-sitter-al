@@ -14,6 +14,12 @@ table 50100 "Selftest Customer"
         {
             Caption = 'Name';
         }
+        // validate --full Step 6c refuses a corpus with no TableRelation site
+        field(3; "Parent No."; Code[20])
+        {
+            Caption = 'Parent No.';
+            TableRelation = "Selftest Customer"."No." where(Name = const('Parent'));
+        }
     }
 
     keys
