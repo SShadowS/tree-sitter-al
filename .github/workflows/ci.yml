@@ -69,6 +69,8 @@ jobs:
         uses: actions/checkout@v6
       - name: Set up tree-sitter
         uses: tree-sitter/setup-action/cli@v2
+        with:
+          tree-sitter-ref: v0.27.0  # pinned: the generator that wrote src/parser.c; v0.27.2 writes a different one
       - name: Run tests
         uses: tree-sitter/parser-test-action@v3
         with:
@@ -111,6 +113,8 @@ jobs:
 
       - name: Set up tree-sitter
         uses: tree-sitter/setup-action/cli@v2
+        with:
+          tree-sitter-ref: v0.27.0  # pinned: the generator that wrote src/parser.c; v0.27.2 writes a different one
 
       - name: Install harness dependencies
         run: pip install -r tools/query_coverage/requirements.txt
@@ -153,6 +157,8 @@ jobs:
 
       - name: Set up tree-sitter
         uses: tree-sitter/setup-action/cli@v2
+        with:
+          tree-sitter-ref: v0.27.0  # pinned: the generator that wrote src/parser.c; v0.27.2 writes a different one
 
       - name: Install dependencies
         run: pip install -r tools/query_coverage/requirements.txt
@@ -210,6 +216,8 @@ jobs:
 
       - name: Set up tree-sitter
         uses: tree-sitter/setup-action/cli@v2
+        with:
+          tree-sitter-ref: v0.27.0  # pinned: the generator that wrote src/parser.c; v0.27.2 writes a different one
 
       - name: Install dependencies
         run: pip install -r tools/query_coverage/requirements.txt
@@ -378,6 +386,8 @@ jobs:
 
       - name: Set up tree-sitter
         uses: tree-sitter/setup-action/cli@v2
+        with:
+          tree-sitter-ref: v0.27.0  # pinned: the generator that wrote src/parser.c; v0.27.2 writes a different one
 
       # validate-grammar.sh Step 5d imports the query-coverage harness. Without
       # its dependencies the step fails for an unrelated reason and every case
@@ -408,6 +418,8 @@ jobs:
 
       - name: Set up tree-sitter
         uses: tree-sitter/setup-action/cli@v2
+        with:
+          tree-sitter-ref: v0.27.0  # pinned: the generator that wrote src/parser.c; v0.27.2 writes a different one
 
       - name: Build parser
         run: tree-sitter build

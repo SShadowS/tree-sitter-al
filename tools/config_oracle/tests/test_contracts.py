@@ -59,22 +59,18 @@ def test_pragma_only_hosts_are_splice_repeat():
     assert hosts["source_file:<children>"] == "splice-repeat"
 
 
-def test_split_procedure_preamble_var_block_host_is_optional_slot():
-    # _procedure_preamble (grammar.js:3074-3080) has
-    # `optional(choice($.var_section, $.preproc_conditional_var_block))` — a single
-    # optional, never a repeat of preproc_conditional_var_block itself. It is
-    # inlined once per ARM of preproc_split_procedure_preamble's own #if/#elif/#else
-    # structure (grammar.js:3085-3089), so two var-block nodes seen in one parse are
-    # one per arm of the OUTER conditional, not a genuine repeat at one position —
-    # same shape as its three siblings (procedure, trigger_declaration,
-    # preproc_split_procedure), all at most one node. The slot is optional(...) in
-    # both _procedure_preamble (grammar.js:3075-3079) and _routine_regular_body
-    # (grammar.js:3005-3008), so zero nodes is legal: optional-slot.
+def test_routine_var_block_hosts_are_splice_repeat():
+    # Until issue #31 a routine held at most one preproc_conditional_var_block
+    # (optional-slot). Since #31 the var region (grammar _routine_var_region) is a
+    # var_section OR repeat1(preproc_conditional_var_block), used by
+    # _routine_regular_body, _procedure_preamble, _trigger_preamble and by each arm
+    # of the block itself, so every host holds a run of blocks: splice-repeat
+    # (test/corpus/issue_30_31_var_regions_test.txt, oracle pass in every
+    # configuration of the run and nested shapes).
     hosts = contracts.REGISTRY["preproc_conditional_var_block"].hosts
-    assert hosts["preproc_split_procedure_preamble:<children>"] == "optional-slot"
-    assert hosts["procedure:<children>"] == "optional-slot"
-    assert hosts["trigger_declaration:<children>"] == "optional-slot"
-    assert hosts["preproc_split_procedure:<children>"] == "optional-slot"
+    for h in ("preproc_split_procedure_preamble", "preproc_split_trigger_preamble", "procedure",
+              "trigger_declaration", "preproc_split_procedure", "preproc_conditional_var_block"):
+        assert hosts[f"{h}:<children>"] == "splice-repeat", h
 
 
 def test_split_if_else_then_branch_host_is_single_slot():
