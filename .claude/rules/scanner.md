@@ -31,7 +31,7 @@ a `_Static_assert` on `sizeof(depth) >= 4` fails the build if anyone narrows it 
 | `DIRECTIVE_EOL` | the ONE `\n` ending an `#if`/`#elif` line, after skipping every extra-space character except `\n` (`is_extra_space`), hidden `_directive_eol`. Valid alone, so it returns without trying other tokens. A lexical newline took the LAST of a run of blank lines; skipping only space and tab left `\f\n` a hidden MISSING | none |
 | `NEGATIVE_INTEGER` / `NEGATIVE_DECIMAL` | `-1` / `-1.5` as one signed literal, emitted only when `;` `,` `#` or EOF follows; otherwise declines and `-` is unary minus (as lexical tokens `Visible = -1 < X;` ERRORed). Only a `-` commits the block | none |
 | `PREPROC_OPEN_BEFORE_ELSE` | hidden `_preproc_open_before_else`, aliased to `preproc_open`: an `#if` whose group holds only directives, comments and extras and is followed (after any more such groups) by the word `else` (`empty_group_then_else`, issue #39). Every `preproc_if` accepts it, so it stands in exactly the lookahead sets `#if` does (a token valid only after an if's then-branch split every state below it: +9,206 states); only the if's else decoration requires it | depth++ |
-| `MALFORMED_DIRECTIVE` | hidden `_malformed_directive`, in **no** grammar rule, emitted unasked for a `#` line alc rejects (AL0621 not a directive, AL0631 trailing text or block comment, AL0629 incomplete condition): the line becomes an ERROR (B2/B3). A directive after code on the same line (AL0620) is NOT caught (deferred item 26) | none |
+| `MALFORMED_DIRECTIVE` | hidden `_malformed_directive`, in **no** grammar rule, emitted unasked for a `#` line alc rejects (AL0621 not a directive, AL0631 trailing text or block comment, AL0629 incomplete condition): the line becomes an ERROR (B2/B3). A directive after code on the same line (AL0620) is NOT caught (deferred item 26). Also emitted (issue #40/#41) for the word `end` where `BEGIN_KEYWORD` is valid and neither `END_KEYWORD` nor `PREPROC_SPLIT_END` is: a statement start, where alc reserves `end` (AL0519). The GLR version that would read `end;` there as a call dies at once instead of surviving to the end of an arm, one per block of an if / else-if chain, until tree-sitter's `MAX_VERSION_COUNT`/`MAX_LINK_COUNT` dropped the right one. `End` as a value has no `BEGIN_KEYWORD` and is untouched (`test/corpus/end_as_value_test.txt`) | none |
 | `SCANNER_HOOK` | hidden `_scanner_hook`, in `extras`, **never emitted**. Exists only so every parse state has a valid external token and calls the scanner, so the `#` gatekeeper sees every directive line. **Never return it** | none |
 
 **Scan function order:** error recovery guard → DIRECTIVE_EOL → NEGATIVE_INTEGER/DECIMAL → the
@@ -89,7 +89,8 @@ dispatch advances past `#` manually before reading its word.
 never called the scanner and `#elsebegin` parsed clean). It costs ~5% on incremental parses
 (every leaf reuse now needs an exact lex-mode match). **It cannot change a tree, and must stay
 that way:** never return it, and keep every other emitted token guarded by `valid_symbols`
-(only `MALFORMED_DIRECTIVE` is emitted unasked, and only for lines alc rejects).
+(only `MALFORMED_DIRECTIVE` is emitted unasked, and only for lines alc rejects and for an `end`
+read as a name at a statement start, which alc rejects too).
 
 Error recovery after a malformed line is wide on purpose: the ERROR is visible and on the
 right line, and narrowing it would add scanner state for input alc already rejects.

@@ -1,0 +1,160 @@
+================================================================================
+Issue #42: end; in both arms, the #else arm closing after a statement
+--
+Before the fix P's code_block got a MISSING end_keyword and the parse ran on
+over Q, so Q's header became statements inside P. alc accepts A=0 and A=1
+(tools/alc_probe/cases/issue40-42/shape_C.al). The assertion is P's
+code_block ending in preproc_split_code_block_end, whose #else arm holds C()
+and its end_keyword, and Q a procedure of its own.
+================================================================================
+codeunit 50000 "Shape C"
+{
+    procedure P()
+    begin
+        B();
+#if A
+    end;
+#else
+        C();
+    end;
+#endif
+
+    procedure Q()
+    begin
+        W();
+    end;
+
+    local procedure B()
+    begin
+    end;
+
+    local procedure C()
+    begin
+    end;
+
+    local procedure W()
+    begin
+    end;
+}
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (quoted_identifier)
+    body: (declaration_body
+      (procedure
+        (procedure_keyword)
+        name: (identifier)
+        body: (code_block
+          (begin_keyword)
+          body: (statement_block
+            (call_expression
+              function: (identifier)
+              arguments: (argument_list)))
+          (preproc_split_code_block_end
+            (preproc_if
+              (preproc_open)
+              condition: (identifier))
+            (preproc_split_end)
+            (preproc_else)
+            (call_expression
+              function: (identifier)
+              arguments: (argument_list))
+            (end_keyword)
+            (preproc_endif
+              (preproc_close)))))
+      (procedure
+        (procedure_keyword)
+        name: (identifier)
+        body: (code_block
+          (begin_keyword)
+          body: (statement_block
+            (call_expression
+              function: (identifier)
+              arguments: (argument_list)))
+          (end_keyword)))
+      (procedure
+        modifier: (procedure_modifier
+          (local_keyword))
+        (procedure_keyword)
+        name: (identifier)
+        body: (code_block
+          (begin_keyword)
+          (end_keyword)))
+      (procedure
+        modifier: (procedure_modifier
+          (local_keyword))
+        (procedure_keyword)
+        name: (identifier)
+        body: (code_block
+          (begin_keyword)
+          (end_keyword)))
+      (procedure
+        modifier: (procedure_modifier
+          (local_keyword))
+        (procedure_keyword)
+        name: (identifier)
+        body: (code_block
+          (begin_keyword)
+          (end_keyword))))))
+
+================================================================================
+Issue #42: the same split end on an if's then-block, statements after it
+================================================================================
+codeunit 1 T
+{
+procedure P()
+begin
+if R then begin
+  B();
+#if A
+end;
+#else
+  C();
+end;
+#endif
+W();
+end;
+}
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (procedure
+        (procedure_keyword)
+        name: (identifier)
+        body: (code_block
+          (begin_keyword)
+          body: (statement_block
+            (if_statement
+              (if_keyword)
+              condition: (identifier)
+              (then_keyword)
+              then_branch: (code_block
+                (begin_keyword)
+                body: (statement_block
+                  (call_expression
+                    function: (identifier)
+                    arguments: (argument_list)))
+                (preproc_split_code_block_end
+                  (preproc_if
+                    (preproc_open)
+                    condition: (identifier))
+                  (preproc_split_end)
+                  (preproc_else)
+                  (call_expression
+                    function: (identifier)
+                    arguments: (argument_list))
+                  (end_keyword)
+                  (preproc_endif
+                    (preproc_close)))))
+            (call_expression
+              function: (identifier)
+              arguments: (argument_list)))
+          (end_keyword))))))

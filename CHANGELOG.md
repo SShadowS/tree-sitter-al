@@ -7,6 +7,24 @@ public API — a change to node structure or field names is a **major** bump.
 
 ## [Unreleased]
 
+- **Chains of split blocks no longer hit tree-sitter's parse-version limit (issues #40, #41).** An if / else-if
+  chain whose blocks each hold a block opened inside `#if` and closed after `#endif` (three blocks or more), or a
+  whole `if … else begin … end;` inside `#if` (eight blocks or more), ERRORed over the whole procedure: one GLR
+  version per block read `end;` as a call of a name `end` and stayed alive until `MAX_VERSION_COUNT` /
+  `MAX_LINK_COUNT` dropped the right one. The scanner now kills that version at once: `end` where a statement can
+  start (BEGIN_KEYWORD valid, END_KEYWORD and PREPROC_SPLIT_END not) is `_malformed_directive`. This is the check
+  proposed in #41. alc reserves `end` there (AL0519); `End` as a value (`OptionMembers`, `InitValue`,
+  `ValuesAllowed`, `const(End)`, `filter(End)`, page links, table views) parses as before, pinned by
+  `test/corpus/end_as_value_test.txt`. **Tree-shape change** at one production site, an improvement: BCApps 29 IT
+  `DetailedCalculation.Report.al:192-194`, where `end;` inside a later `#if` read as `call_statement(identifier)`
+  and is now the `end_keyword` closing the `begin` opened by the earlier `#if`. The six `directive_word_boundary`
+  negatives (input alc rejects) recover more narrowly: `end`/`else` stay keywords, no MISSING `end`.
+- **`end;` in both arms of `#if/#else`, the later arm closing after statements of its own (issue #42).**
+  `B(); #if A end; #else C(); end; #endif` gave P's `code_block` a MISSING `end_keyword` and ran on over the next
+  procedure. A later `#elif`/`#else` arm of `preproc_split_code_block_end` may now hold statements before its
+  `end_keyword`. STATE_COUNT +1. The same shape with statements in the FIRST arm is still open
+  (`docs/deferred-work.md` item 68).
+
 - **An empty `#if` between a then-branch and `else` no longer ends the `if` (issue #39). Tree-shape change.**
   `if C then A() #if X #endif else B();` used to end the `if_statement` at `A()`, with the group a sibling
   statement and `else` a `call_statement` named `else`, and no ERROR. Directive-only groups (nested groups,

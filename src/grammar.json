@@ -26997,7 +26997,7 @@
                 },
                 {
                   "type": "SYMBOL",
-                  "name": "_preproc_end_branch"
+                  "name": "_preproc_end_branch_later"
                 }
               ]
             }
@@ -27014,7 +27014,7 @@
                   },
                   {
                     "type": "SYMBOL",
-                    "name": "_preproc_end_branch"
+                    "name": "_preproc_end_branch_later"
                   }
                 ]
               },
@@ -27029,6 +27029,43 @@
           }
         ]
       }
+    },
+    "_preproc_end_branch_later": {
+      "type": "CHOICE",
+      "members": [
+        {
+          "type": "SYMBOL",
+          "name": "_preproc_end_branch"
+        },
+        {
+          "type": "SEQ",
+          "members": [
+            {
+              "type": "REPEAT1",
+              "content": {
+                "type": "SYMBOL",
+                "name": "_statement"
+              }
+            },
+            {
+              "type": "SYMBOL",
+              "name": "end_keyword"
+            },
+            {
+              "type": "CHOICE",
+              "members": [
+                {
+                  "type": "STRING",
+                  "value": ";"
+                },
+                {
+                  "type": "BLANK"
+                }
+              ]
+            }
+          ]
+        }
+      ]
     },
     "_preproc_end_branch": {
       "type": "CHOICE",

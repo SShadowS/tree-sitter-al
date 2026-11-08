@@ -2559,6 +2559,25 @@ searched for.
 
 **Owner:** unassigned.
 
+## 68. A split `end;` after statements in the FIRST arm ERRORs (the #42 shape, mirrored)
+
+**Established:** 2026-11-08, while fixing issue #42 (CLI parse, on 4.5.0 and on the fix). `B(); #if A X(); end;
+#else end; #endif procedure Q() ...` gives an ERROR from `procedure` on; alc acceptance is expected (the
+directives vanish and both configurations are a plain block) but not probed. #42's fix lets only a LATER arm
+(`_preproc_end_branch_later`) hold statements before its `end_keyword`.
+
+**What was tried.** The same statements in the first arm (`seq(repeat($._statement), $.preproc_split_end, ...)` in
+`_preproc_end_branch`) conflicts with `_split_stmts_end`, `preproc_split_block_close_after_endif` and the open
+branches of `preproc_split_open_statement`: after `#if stmt`, every one of them is still possible, so it needs a
+declared conflict and a GLR fork at every `#if` followed by a statement in a block, the version-count class of
+#40. For the LATER arm that #42 did add, closing it with `preproc_split_end` measured +919 states (a new lookahead
+after branch statements splits their states) and with `end_keyword` +1, which shipped.
+
+**Next step:** probe with alc, count corpus sites, then decide whether a scanner signal (an `end` at depth > 0
+followed by `;` and `#else`/`#elif`, after statements) is worth a design.
+
+**Owner:** unassigned.
+
 ## Longer-lived proposals, tracked separately
 
 - [`python-bindings-modernization.md`](python-bindings-modernization.md) — the

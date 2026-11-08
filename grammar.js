@@ -5618,10 +5618,21 @@ module.exports = grammar({
     preproc_split_code_block_end: $ => prec(25, seq(
       $.preproc_if,
       $._preproc_end_branch,
-      repeat(seq($.preproc_elif, $._preproc_end_branch)),
-      optional(seq($.preproc_else, $._preproc_end_branch)),
+      repeat(seq($.preproc_elif, $._preproc_end_branch_later)),
+      optional(seq($.preproc_else, $._preproc_end_branch_later)),
       $.preproc_endif,
     )),
+
+    // Issue #42: a LATER branch may close the block after statements of its own,
+    // `B(); #if A end; #else C(); end; #endif` (alc accepts both configs). Only
+    // later branches: in the first one a leading statement is also the start of
+    // _split_stmts_end, preproc_split_block_close_after_endif and the open
+    // branches (a declared-conflict fork on every `#if stmt`); after a first
+    // branch that is this rule's own, nothing else reads the statements.
+    _preproc_end_branch_later: $ => choice(
+      $._preproc_end_branch,
+      seq(repeat1($._statement), $.end_keyword, optional(';')),
+    ),
 
     // One branch of preproc_split_code_block_end: either the split `end;` on its
     // own, or statements followed by the full end/else-begin tail.

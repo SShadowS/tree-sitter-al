@@ -11,7 +11,10 @@ MANDATORY non-word character absorbed by the existing trailing wildcard. That
 was not enough on its own: #region still matched as a seven-character prefix
 and left the tail an identifier, which a statement list took cleanly (B2,
 2026-10-01). The scanner's '#' dispatch now claims the whole line as
-_malformed_directive, so the ERROR sits on the directive line itself.
+_malformed_directive, so the ERROR covers the directive line. Since issue
+#40/#41 the `end;` before it stays an end_keyword (it was a call_statement
+named `end`, with a MISSING end_keyword at the procedure), so the recovery is
+narrower: the ERROR spans `x := 9;` to `#else` and the else branch is real.
 ================================================================================
 codeunit 1 T
 {
@@ -60,40 +63,37 @@ codeunit 1 T
               (then_keyword)
               then_branch: (code_block
                 (begin_keyword)
+                (ERROR
+                  (statement_block
+                    (assignment_statement
+                      left: (identifier)
+                      operator: (assignment_operator)
+                      right: (integer)))
+                  (preproc_if
+                    (preproc_open)
+                    condition: (preproc_not_expression
+                      (identifier)))
+                  (end_keyword)
+                  (preproc_else))
                 body: (statement_block
                   (assignment_statement
                     left: (identifier)
                     operator: (assignment_operator)
-                    right: (integer))
-                  (preproc_conditional_statement
-                    (preproc_if
-                      (preproc_open)
-                      condition: (preproc_not_expression
-                        (identifier)))
-                    (ERROR
-                      (call_statement
-                        function: (identifier)))
-                    (preproc_else)
-                    (assignment_statement
-                      left: (identifier)
-                      operator: (assignment_operator)
-                      right: (integer))
-                    (call_statement
-                      function: (identifier))
-                    (call_statement
-                      function: (identifier))
-                    (code_block
-                      (begin_keyword)
-                      body: (statement_block
-                        (assignment_statement
-                          left: (identifier)
-                          operator: (assignment_operator)
-                          right: (integer)))
-                      (end_keyword))
-                    (preproc_endif
-                      (preproc_close))))
+                    right: (integer)))
+                (end_keyword))
+              (else_keyword)
+              else_branch: (code_block
+                (begin_keyword)
+                body: (statement_block
+                  (assignment_statement
+                    left: (identifier)
+                    operator: (assignment_operator)
+                    right: (integer)))
                 (end_keyword))))
-          (MISSING end_keyword))))))
+          (preproc_split_block_close_after_endif
+            (preproc_endif
+              (preproc_close))
+            (end_keyword)))))))
 
 ================================================================================
 NEGATIVE: #pragmaX is not a directive (AL0621)
@@ -145,40 +145,37 @@ codeunit 1 T
               (then_keyword)
               then_branch: (code_block
                 (begin_keyword)
+                (ERROR
+                  (statement_block
+                    (assignment_statement
+                      left: (identifier)
+                      operator: (assignment_operator)
+                      right: (integer)))
+                  (preproc_if
+                    (preproc_open)
+                    condition: (preproc_not_expression
+                      (identifier)))
+                  (end_keyword)
+                  (preproc_else))
                 body: (statement_block
                   (assignment_statement
                     left: (identifier)
                     operator: (assignment_operator)
-                    right: (integer))
-                  (preproc_conditional_statement
-                    (preproc_if
-                      (preproc_open)
-                      condition: (preproc_not_expression
-                        (identifier)))
-                    (ERROR
-                      (call_statement
-                        function: (identifier)))
-                    (preproc_else)
-                    (assignment_statement
-                      left: (identifier)
-                      operator: (assignment_operator)
-                      right: (integer))
-                    (call_statement
-                      function: (identifier))
-                    (call_statement
-                      function: (identifier))
-                    (code_block
-                      (begin_keyword)
-                      body: (statement_block
-                        (assignment_statement
-                          left: (identifier)
-                          operator: (assignment_operator)
-                          right: (integer)))
-                      (end_keyword))
-                    (preproc_endif
-                      (preproc_close))))
+                    right: (integer)))
+                (end_keyword))
+              (else_keyword)
+              else_branch: (code_block
+                (begin_keyword)
+                body: (statement_block
+                  (assignment_statement
+                    left: (identifier)
+                    operator: (assignment_operator)
+                    right: (integer)))
                 (end_keyword))))
-          (MISSING end_keyword))))))
+          (preproc_split_block_close_after_endif
+            (preproc_endif
+              (preproc_close))
+            (end_keyword)))))))
 
 ================================================================================
 NEGATIVE: an over-long directive word is not a directive either
@@ -233,40 +230,37 @@ codeunit 1 T
               (then_keyword)
               then_branch: (code_block
                 (begin_keyword)
+                (ERROR
+                  (statement_block
+                    (assignment_statement
+                      left: (identifier)
+                      operator: (assignment_operator)
+                      right: (integer)))
+                  (preproc_if
+                    (preproc_open)
+                    condition: (preproc_not_expression
+                      (identifier)))
+                  (end_keyword)
+                  (preproc_else))
                 body: (statement_block
                   (assignment_statement
                     left: (identifier)
                     operator: (assignment_operator)
-                    right: (integer))
-                  (preproc_conditional_statement
-                    (preproc_if
-                      (preproc_open)
-                      condition: (preproc_not_expression
-                        (identifier)))
-                    (ERROR
-                      (call_statement
-                        function: (identifier)))
-                    (preproc_else)
-                    (assignment_statement
-                      left: (identifier)
-                      operator: (assignment_operator)
-                      right: (integer))
-                    (call_statement
-                      function: (identifier))
-                    (call_statement
-                      function: (identifier))
-                    (code_block
-                      (begin_keyword)
-                      body: (statement_block
-                        (assignment_statement
-                          left: (identifier)
-                          operator: (assignment_operator)
-                          right: (integer)))
-                      (end_keyword))
-                    (preproc_endif
-                      (preproc_close))))
+                    right: (integer)))
+                (end_keyword))
+              (else_keyword)
+              else_branch: (code_block
+                (begin_keyword)
+                body: (statement_block
+                  (assignment_statement
+                    left: (identifier)
+                    operator: (assignment_operator)
+                    right: (integer)))
                 (end_keyword))))
-          (MISSING end_keyword))))))
+          (preproc_split_block_close_after_endif
+            (preproc_endif
+              (preproc_close))
+            (end_keyword)))))))
 
 ================================================================================
 NEGATIVE: #endregionZ is not a directive (AL0621, AL0622)
@@ -318,40 +312,37 @@ codeunit 1 T
               (then_keyword)
               then_branch: (code_block
                 (begin_keyword)
+                (ERROR
+                  (statement_block
+                    (assignment_statement
+                      left: (identifier)
+                      operator: (assignment_operator)
+                      right: (integer)))
+                  (preproc_if
+                    (preproc_open)
+                    condition: (preproc_not_expression
+                      (identifier)))
+                  (end_keyword)
+                  (preproc_else))
                 body: (statement_block
                   (assignment_statement
                     left: (identifier)
                     operator: (assignment_operator)
-                    right: (integer))
-                  (preproc_conditional_statement
-                    (preproc_if
-                      (preproc_open)
-                      condition: (preproc_not_expression
-                        (identifier)))
-                    (ERROR
-                      (call_statement
-                        function: (identifier)))
-                    (preproc_else)
-                    (assignment_statement
-                      left: (identifier)
-                      operator: (assignment_operator)
-                      right: (integer))
-                    (call_statement
-                      function: (identifier))
-                    (call_statement
-                      function: (identifier))
-                    (code_block
-                      (begin_keyword)
-                      body: (statement_block
-                        (assignment_statement
-                          left: (identifier)
-                          operator: (assignment_operator)
-                          right: (integer)))
-                      (end_keyword))
-                    (preproc_endif
-                      (preproc_close))))
+                    right: (integer)))
+                (end_keyword))
+              (else_keyword)
+              else_branch: (code_block
+                (begin_keyword)
+                body: (statement_block
+                  (assignment_statement
+                    left: (identifier)
+                    operator: (assignment_operator)
+                    right: (integer)))
                 (end_keyword))))
-          (MISSING end_keyword))))))
+          (preproc_split_block_close_after_endif
+            (preproc_endif
+              (preproc_close))
+            (end_keyword)))))))
 
 ================================================================================
 `#elifX` is not `#elif` -- a directive keyword needs a word boundary
@@ -388,54 +379,65 @@ codeunit 1 T
 
 --------------------------------------------------------------------------------
 
-(ERROR
-  (codeunit_keyword)
-  (integer)
-  (identifier)
-  (procedure_keyword)
-  name: (identifier)
-  (var_section
-    (var_keyword)
-    body: (var_body
-      (variable_declaration
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (procedure
+        (procedure_keyword)
         name: (identifier)
-        type: (type_specification
-          (basic_type)))))
-  (begin_keyword)
-  (if_keyword)
-  condition: (comparison_expression
-    left: (identifier)
-    operator: (comparison_operator)
-    right: (integer))
-  (then_keyword)
-  (begin_keyword)
-  (assignment_statement
-    left: (identifier)
-    operator: (assignment_operator)
-    right: (integer))
-  (preproc_if
-    (preproc_open)
-    condition: (preproc_not_expression
-      (identifier)))
-  (ERROR
-    (call_statement
-      function: (identifier))
-    (ERROR
-      (identifier)
-      (integer))
-    (identifier))
-  (else_keyword)
-  (begin_keyword)
-  (assignment_statement
-    left: (identifier)
-    operator: (assignment_operator)
-    right: (integer))
-  (call_statement
-    function: (identifier))
-  (preproc_endif
-    (preproc_close))
-  (call_statement
-    function: (identifier)))
+        (var_section
+          (var_keyword)
+          body: (var_body
+            (variable_declaration
+              name: (identifier)
+              type: (type_specification
+                (basic_type)))))
+        body: (code_block
+          (begin_keyword)
+          body: (statement_block
+            (if_statement
+              (if_keyword)
+              condition: (comparison_expression
+                left: (identifier)
+                operator: (comparison_operator)
+                right: (integer))
+              (then_keyword)
+              then_branch: (code_block
+                (begin_keyword)
+                (ERROR
+                  (statement_block
+                    (assignment_statement
+                      left: (identifier)
+                      operator: (assignment_operator)
+                      right: (integer)))
+                  (preproc_if
+                    (preproc_open)
+                    condition: (preproc_not_expression
+                      (identifier)))
+                  (end_keyword))
+                body: (statement_block
+                  (assignment_statement
+                    left: (identifier)
+                    operator: (assignment_operator)
+                    right: (integer)))
+                (end_keyword))
+              (else_keyword)
+              else_branch: (code_block
+                (begin_keyword)
+                body: (statement_block
+                  (assignment_statement
+                    left: (identifier)
+                    operator: (assignment_operator)
+                    right: (integer)))
+                (end_keyword))))
+          (preproc_split_block_close_after_endif
+            (preproc_endif
+              (preproc_close))
+            (end_keyword)))))
+    (MISSING "}")))
 
 ================================================================================
 NEGATIVE: #elseX is not #else (AL0621)
@@ -470,48 +472,56 @@ codeunit 1 T
     (codeunit_keyword)
     object_id: (integer)
     object_name: (identifier)
-    (ERROR
-      (procedure_keyword)
-      name: (identifier)
-      (var_section
-        (var_keyword)
-        body: (var_body
-          (variable_declaration
-            name: (identifier)
-            type: (type_specification
-              (basic_type)))))
-      (begin_keyword)
-      (if_keyword)
-      condition: (comparison_expression
-        left: (identifier)
-        operator: (comparison_operator)
-        right: (integer))
-      (then_keyword)
-      (begin_keyword)
-      (assignment_statement
-        left: (identifier)
-        operator: (assignment_operator)
-        right: (integer))
-      (preproc_if
-        (preproc_open)
-        condition: (preproc_not_expression
-          (identifier)))
-      (ERROR
-        (call_statement
-          function: (identifier))
-        (ERROR
-          (identifier)
-          (integer))
-        (identifier))
-      (else_keyword)
-      (begin_keyword)
-      (assignment_statement
-        left: (identifier)
-        operator: (assignment_operator)
-        right: (integer))
-      (call_statement
-        function: (identifier))
-      (preproc_endif
-        (preproc_close))
-      (call_statement
-        function: (identifier)))))
+    body: (declaration_body
+      (procedure
+        (procedure_keyword)
+        name: (identifier)
+        (var_section
+          (var_keyword)
+          body: (var_body
+            (variable_declaration
+              name: (identifier)
+              type: (type_specification
+                (basic_type)))))
+        body: (code_block
+          (begin_keyword)
+          body: (statement_block
+            (if_statement
+              (if_keyword)
+              condition: (comparison_expression
+                left: (identifier)
+                operator: (comparison_operator)
+                right: (integer))
+              (then_keyword)
+              then_branch: (code_block
+                (begin_keyword)
+                (ERROR
+                  (statement_block
+                    (assignment_statement
+                      left: (identifier)
+                      operator: (assignment_operator)
+                      right: (integer)))
+                  (preproc_if
+                    (preproc_open)
+                    condition: (preproc_not_expression
+                      (identifier)))
+                  (end_keyword))
+                body: (statement_block
+                  (assignment_statement
+                    left: (identifier)
+                    operator: (assignment_operator)
+                    right: (integer)))
+                (end_keyword))
+              (else_keyword)
+              else_branch: (code_block
+                (begin_keyword)
+                body: (statement_block
+                  (assignment_statement
+                    left: (identifier)
+                    operator: (assignment_operator)
+                    right: (integer)))
+                (end_keyword))))
+          (preproc_split_block_close_after_endif
+            (preproc_endif
+              (preproc_close))
+            (end_keyword)))))))

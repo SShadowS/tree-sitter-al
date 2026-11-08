@@ -1171,6 +1171,21 @@ bool tree_sitter_al_external_scanner_scan(
       return false;
     }
 
+    // Issue #40/#41: `end` is reserved where a statement can start (alc: AL0519
+    // for a variable named End). A version that would read it there as a name
+    // (`end;` a call statement, lexed by the internal lexer as an identifier)
+    // used to stay alive to the end of an arm, one more per block of an
+    // if / else-if chain, until tree-sitter's MAX_VERSION_COUNT / MAX_LINK_COUNT
+    // dropped the right one. MALFORMED_DIRECTIVE is in no rule, so that version
+    // dies here. `End` as a value (`OptionMembers = End`, `const(End)`, ...) is
+    // where no BEGIN_KEYWORD is valid, and is left alone
+    // (test/corpus/end_as_value_test.txt).
+    if (word == WORD_END && valid_symbols[BEGIN_KEYWORD] && !valid_symbols[END_KEYWORD] &&
+        !valid_symbols[PREPROC_SPLIT_END]) {
+      lexer->result_symbol = MALFORMED_DIRECTIVE;
+      return true;
+    }
+
     if (word == WORD_END &&
         (valid_symbols[END_KEYWORD] || valid_symbols[PREPROC_SPLIT_END])) {
       // PREPROC_SPLIT_END wants 'end' followed by ';' then a branch

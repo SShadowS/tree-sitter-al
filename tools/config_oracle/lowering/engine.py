@@ -61,6 +61,7 @@ EMPTY_REMOVABLE = {
 }
 
 STATEMENT_HOSTS = {"statement_block", "case_branch"}
+ROUTINE_TERMINATOR_HOSTS = {"procedure", "trigger_declaration"}
 LAYOUT_HOSTS = {"layout_body", "layout_container_body"}
 
 # Special types lowered under the list-run policy (select.branch_select): their
@@ -713,6 +714,12 @@ def _consume(new, frags):
             at = next(i for i, c in enumerate(new.children) if c is f.anchor) + 1
             insert = [f.leaf] if isinstance(f, Terminator) else list(f.statements)
             new.children[at:at] = insert
+        elif isinstance(f, Terminator) and new.kind in ROUTINE_TERMINATOR_HOSTS \
+                and any(c is f.anchor and c.kind == "code_block" for c in new.children):
+            # A split `end;` that closes a routine's own body (issue #42): the `;` is the
+            # routine's last child in a flat parse (`procedure P() begin end;`).
+            at = next(i for i, c in enumerate(new.children) if c is f.anchor) + 1
+            new.children[at:at] = [f.leaf]
         elif isinstance(f, SiblingsAfter) and (new.kind in LAYOUT_HOSTS or getattr(f.anchor, "kind", None) == "property") \
                 and any(c is f.anchor for c in new.children):
             at = next(i for i, c in enumerate(new.children) if c is f.anchor) + 1

@@ -67,6 +67,9 @@ def split_code_block_end(node, ctx) -> Lowered:
          block (field `else_branch`) become that if_statement's last children.
          Any other owner leaves it unconsumed, which is an error;
        * the trailing `;` -> Terminator, as in A.
+    C  arm `stmts… end_keyword [;]` (issue #42, a later arm only): the leading
+       statements as in B, the `end_keyword` closes the code_block
+       (BlockCompletion), the `;` -> Terminator, as in A.
     No other edge changes. Every leaf of the chosen arm is kept; every leaf of
     the other arms is `inactive-arm`; directives are `directive`.
     """
@@ -79,6 +82,10 @@ def split_code_block_end(node, ctx) -> Lowered:
         end = _lower_all(arm[:1], ctx, node.kind)[0]
         return Lowered([], [BlockCompletion(None, [], end)] + _terminator(arm[1:], node, ctx, "shape A"))
     ends = [i for i, c in enumerate(arm) if c.kind == "end_keyword"]
+    if len(ends) == 1 and all(c.kind == ";" for c in arm[ends[0] + 1:]):
+        lead = _lower_all(arm[:ends[0]], ctx, "statement_block")
+        end = _lower_all([arm[ends[0]]], ctx, "code_block")[0]
+        return Lowered([], [BlockCompletion(None, lead, end)] + _terminator(arm[ends[0] + 1:], node, ctx, "shape C"))
     if len(ends) != 2 or arm[ends[0] + 1].kind != "else_keyword" or arm[ends[0] + 2].kind != "begin_keyword":
         raise LoweringError("contract-shape", node, "shape B: " + " ".join(c.kind for c in arm))
     first, second = ends
