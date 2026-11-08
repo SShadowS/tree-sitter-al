@@ -2638,6 +2638,20 @@ or stop tracking it (generate in CI and in the package build). Each registry's b
 
 **Owner:** unassigned.
 
+## 73. `integer-list / sep-after`: the B7a matrix's top SILENT family has no item of its own
+
+**Established:** 2026-11-08, by the backlog ranking ([`backlog-ranking.md`](backlog-ranking.md)). The B7a matrix
+(`docs/b7-separator-continuation-matrix.md`, family row `integer-list | SILENT | 9`) ranks it first in its fix
+list: 9 SILENT cells, representative `occ:signed_integer_list:0.0.1.0.0@declaration_body#sep-after`, hosts
+`declaration_body`, `preproc_conditional`, `property`. The oracle pins the discrepancy at `TPL=1,X=1`
+(`tools/b7_audit/tests/test_silent.py`). The matrix's weight 6 is the number of production sites of the same shape
+CLASS (`preproc_conditional_option_members/sep-after`), not 6 confirmed wrong trees in production.
+
+**Next step:** read the representative's tree against its flat readings (`python -m tools.b7_audit assert --cell`),
+then check whether any of the 6 production sites actually has the defective token sequence.
+
+**Owner:** unassigned.
+
 ## Longer-lived proposals, tracked separately
 
 - [`python-bindings-modernization.md`](python-bindings-modernization.md) — the
