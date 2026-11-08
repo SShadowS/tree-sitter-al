@@ -29,23 +29,23 @@ measurement and is no longer claimed.
 
 | Metric | Value |
 |--------|-------|
-| **Byte coverage** | **0 uncovered bytes in BC.History (15,358 files)**: `qc run --all --full-corpus` reports no `gaps` finding. Measured at 4.5.0 on BC.History only; the other three corpora were not walked |
-| Tests | 3,599 |
-| parser.c size | 59.5 MiB (62,408,862 bytes) |
-| grammar.js | 8,244 lines |
-| Named node types | 501 |
+| **Byte coverage** | **0 uncovered bytes in BC.History (15,358 files)**: `qc run --all --full-corpus` reports no `gaps` finding. Measured at 4.6.0 on BC.History only; the other three corpora were not walked |
+| Tests | 3,625 |
+| parser.c size | 63.6 MiB (66,723,996 bytes) |
+| grammar.js | 8,420 lines |
+| Named node types | 504 |
 | Named keywords | 154 (152 grammar rules + 2 external; queryable via highlights/tags) |
-| Scanner tokens | 19 (the `externals` array in `grammar.js`; the `TokenType` enum in `src/scanner.c` agrees) |
+| Scanner tokens | 20 (the `externals` array in `grammar.js`; the `TokenType` enum in `src/scanner.c` agrees) |
 | Query files | 6 (highlights, locals, tags, indents, folds, textobjects) |
 
-Every figure above was measured at the 4.5.0 release commit (`355c761`). Three different test counts
+Every figure above was measured at the 4.6.0 release commit (`8127274`). Three different test counts
 circulated during 4.0.0 development and two were arithmetic from a stale copy of
 this table — re-measure, never recall. `parser.c` is quoted in MiB with the byte
 count beside it because both conventions have been wrong here in opposite
 directions.
 
 **The byte-coverage row is stated as a count, scoped to the corpus it was
-measured on.** At 4.5.0 it was re-measured with `python -m tools.query_coverage.qc
+measured on.** At 4.5.0 and again at 4.6.0 it was re-measured with `python -m tools.query_coverage.qc
 run --all --full-corpus`, which walks BC.History only (15,358 files, 13,338,707
 fielded edges) and reported no `gaps` finding. The other three corpora were not
 walked, so no byte-coverage claim is made for them. (The 4.0.0 measurement over
@@ -68,6 +68,33 @@ would not have caught any.
 Since 4.0.0 the success rate is a count of files actually read, reconciled per
 chunk — it used to be the total minus the files that reported an error, which
 counted a file that was never opened as a pass.
+
+## What's new in 4.6.0
+
+**Eleven issues (#30–#36, #39–#42) and one silent defect found along the way are
+fixed**, almost all of them `#if` shapes that alc compiles and the parser either
+rejected or read wrong. No tree changes in the four production corpora except one file that is
+now right; read the **Tree-shape change** entries in [CHANGELOG.md](CHANGELOG.md)
+before upgrading:
+
+- **Silent wrong trees, now right.** An empty `#if` before an `else` (#39) or before
+  any statement body (deferred item 67) no longer ends the statement or becomes the
+  body. An `end;` at a statement start is no longer read as a call of a name `end`
+  (#41).
+- **ERROR on valid AL, now parsed.** Long `if` / `else if` chains of split blocks no
+  longer hit tree-sitter's parse-version limit (#40); `end;` in both arms of a group
+  (#42); nested and consecutive `#if` var regions (#30, #31); a split trigger header
+  (#32, new `preproc_split_trigger_preamble`); a return clause chosen by `#if` (#35,
+  new `preproc_conditional_return`, `preproc_conditional_return_type`).
+- **Object references.** `extends <number>` (#34) and namespace-qualified names after
+  `extends` / `implements` (#36, a `qualified_name` node).
+- **Fields.** `preproc_split_procedure_preamble` exposes its shared body as `body`
+  (#33).
+
+Parser tables grew by 4.1% (STATE_COUNT +1,128) and `parser.c` by 6.9% against
+4.5.0. A 16-round speed A/B on the last change showed no difference (DC and
+BC.History both 1.006); the earlier changes were screened on a loaded host, with
+no measurable slowdown either.
 
 ## What's new in 4.5.0
 

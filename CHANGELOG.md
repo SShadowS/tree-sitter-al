@@ -7,6 +7,17 @@ public API — a change to node structure or field names is a **major** bump.
 
 ## [Unreleased]
 
+## [4.6.0] — 2026-11-08
+
+**Eleven issues (#30–#36, #39–#42) and deferred item 67 are fixed: `#if` shapes that alc compiles and the parser
+rejected or read wrong.** A minor release, as 4.5.0 was, but several entries move the tree for consumers: read the
+ones marked **Tree-shape change**. Production trees are unchanged in all four corpora (70,354 files) except
+BCApps 29 IT `DetailedCalculation.Report.al`, now right (#41). Validated over **15,358 production AL files**
+(BC.History), **0 errors**; 3,625 tests pass. STATE_COUNT +1,128 (+4.1%) and `parser.c` +6.9% against 4.5.0.
+
+- **CI pins the tree-sitter CLI to v0.27.0** (`ci.yml`, `build-wasm.yml`): `setup-action/cli` installed
+  `latest`, and v0.27.2 generates a different `src/parser.c`, which failed the regenerate-and-diff check. Moving
+  to a newer generator is a separate, measured change.
 - **An empty `#if` before a statement body no longer becomes the body (deferred item 67). Tree-shape change.**
   `while R do #if F #endif A();` made the empty group the `body` and `A()` a sibling statement, and before a
   then-branch the `else` became a call named `else`, all with no ERROR. Directive-only groups before any body
