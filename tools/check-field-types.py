@@ -377,12 +377,13 @@ FIELD_INVARIANTS = [
     # field name; the separator stays outside every field. Groups may be empty or
     # hold only groups, so the group's field is never required, and the host's
     # field is no longer required where every item can sit in a group.
+    # Issue #36: a namespace-qualified interface is ONE qualified_name node per entry.
     inv('preproc_conditional_implements', 'interface', True, set(), 'FIXED',
-        'one interface per raw item in an arm; the , stays outside the field (B7b-1)',
-        types={'identifier', 'quoted_identifier'}, required=False),
+        'one interface per raw item in an arm; the , stays outside the field (B7b-1); qualified name one node (#36)',
+        types={'identifier', 'quoted_identifier', 'qualified_name'}, required=False),
     inv('implements_clause', 'interface', True, set(), 'FIXED',
-        'raw interfaces outside a group; optional since every item can sit in a group (B7b-1)',
-        types={'identifier', 'quoted_identifier'}, required=False),
+        'raw interfaces outside a group; optional since every item can sit in a group (B7b-1); qualified name one node (#36)',
+        types={'identifier', 'quoted_identifier', 'qualified_name'}, required=False),
     # field_list is UNFIELDED (spec 4.1): its items, raw or inside an arm of
     # preproc_conditional_field_list_items, carry no field, so the group has no
     # item row. What the change pins is the hosts' `fields` field: optional on

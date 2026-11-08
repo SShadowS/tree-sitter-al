@@ -1,0 +1,251 @@
+================================================================================
+Issue #30: a nested #if inside a #if region of a procedure's var section
+--
+Was 3 ERROR nodes. preproc_conditional_var now nests: the outer arm holds B
+and an inner preproc_conditional_var holding C. alc accepts every ALPHA/BETA
+combination (tools/alc_probe/cases/issues30-36/issue30_0.al).
+================================================================================
+codeunit 1 C
+{
+    procedure P()
+    var
+        A: Integer;
+#if not ALPHA
+        B: Integer;
+#if BETA
+        C: Integer;
+#endif
+#endif
+    begin
+    end;
+}
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (procedure
+        (procedure_keyword)
+        name: (identifier)
+        (var_section
+          (var_keyword)
+          body: (var_body
+            (variable_declaration
+              name: (identifier)
+              type: (type_specification
+                (basic_type)))
+            (preproc_conditional_var
+              (preproc_if
+                (preproc_open)
+                condition: (preproc_not_expression
+                  (identifier)))
+              (variable_declaration
+                name: (identifier)
+                type: (type_specification
+                  (basic_type)))
+              (preproc_conditional_var
+                (preproc_if
+                  (preproc_open)
+                  condition: (identifier))
+                (variable_declaration
+                  name: (identifier)
+                  type: (type_specification
+                    (basic_type)))
+                (preproc_endif
+                  (preproc_close)))
+              (preproc_endif
+                (preproc_close)))))
+        body: (code_block
+          (begin_keyword)
+          (end_keyword))))))
+
+================================================================================
+Issue #31: two member-level #if var regions in a row
+--
+Was 4 ERROR nodes. A routine's var region is a var_section or a run of
+preproc_conditional_var_blocks (_routine_var_region). alc accepts A=0 and A=1.
+================================================================================
+codeunit 1 C
+{
+    procedure P()
+#if A
+    var K: Integer;
+#endif
+#if not A
+    var N: Integer;
+#endif
+    begin
+    end;
+}
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (procedure
+        (procedure_keyword)
+        name: (identifier)
+        (preproc_conditional_var_block
+          (preproc_if
+            (preproc_open)
+            condition: (identifier))
+          (var_section
+            (var_keyword)
+            body: (var_body
+              (variable_declaration
+                name: (identifier)
+                type: (type_specification
+                  (basic_type)))))
+          (preproc_endif
+            (preproc_close)))
+        (preproc_conditional_var_block
+          (preproc_if
+            (preproc_open)
+            condition: (preproc_not_expression
+              (identifier)))
+          (var_section
+            (var_keyword)
+            body: (var_body
+              (variable_declaration
+                name: (identifier)
+                type: (type_specification
+                  (basic_type)))))
+          (preproc_endif
+            (preproc_close)))
+        body: (code_block
+          (begin_keyword)
+          (end_keyword))))))
+
+================================================================================
+Issue #31: a nested #if around the var keyword
+--
+Each arm of a preproc_conditional_var_block is a var region again, so blocks
+nest. alc accepts every A/B combination.
+================================================================================
+codeunit 1 C
+{
+    procedure P()
+#if A
+#if B
+    var K: Integer;
+#endif
+#endif
+    begin
+    end;
+}
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (procedure
+        (procedure_keyword)
+        name: (identifier)
+        (preproc_conditional_var_block
+          (preproc_if
+            (preproc_open)
+            condition: (identifier))
+          (preproc_conditional_var_block
+            (preproc_if
+              (preproc_open)
+              condition: (identifier))
+            (var_section
+              (var_keyword)
+              body: (var_body
+                (variable_declaration
+                  name: (identifier)
+                  type: (type_specification
+                    (basic_type)))))
+            (preproc_endif
+              (preproc_close)))
+          (preproc_endif
+            (preproc_close)))
+        body: (code_block
+          (begin_keyword)
+          (end_keyword))))))
+
+================================================================================
+Issue #31: two var regions in a row inside one arm of a split procedure preamble
+================================================================================
+codeunit 1 C
+{
+#if CLEAN27
+    procedure P()
+#if A
+    var K: Integer;
+#endif
+#if not A
+    var N: Integer;
+#endif
+#else
+    procedure P()
+    var M: Integer;
+#endif
+    begin
+    end;
+}
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (preproc_split_procedure_preamble
+        (preproc_if
+          (preproc_open)
+          condition: (identifier))
+        (procedure_keyword)
+        name: (identifier)
+        (preproc_conditional_var_block
+          (preproc_if
+            (preproc_open)
+            condition: (identifier))
+          (var_section
+            (var_keyword)
+            body: (var_body
+              (variable_declaration
+                name: (identifier)
+                type: (type_specification
+                  (basic_type)))))
+          (preproc_endif
+            (preproc_close)))
+        (preproc_conditional_var_block
+          (preproc_if
+            (preproc_open)
+            condition: (preproc_not_expression
+              (identifier)))
+          (var_section
+            (var_keyword)
+            body: (var_body
+              (variable_declaration
+                name: (identifier)
+                type: (type_specification
+                  (basic_type)))))
+          (preproc_endif
+            (preproc_close)))
+        (preproc_else)
+        (procedure_keyword)
+        name: (identifier)
+        (var_section
+          (var_keyword)
+          body: (var_body
+            (variable_declaration
+              name: (identifier)
+              type: (type_specification
+                (basic_type)))))
+        (preproc_endif
+          (preproc_close))
+        body: (code_block
+          (begin_keyword)
+          (end_keyword))))))

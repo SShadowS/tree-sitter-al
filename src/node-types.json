@@ -367,6 +367,10 @@
           "named": true
         },
         {
+          "type": "preproc_split_trigger_preamble",
+          "named": true
+        },
+        {
           "type": "preproc_split_var_section_tail",
           "named": true
         },
@@ -4183,6 +4187,10 @@
           "named": true
         },
         {
+          "type": "preproc_split_trigger_preamble",
+          "named": true
+        },
+        {
           "type": "preproc_split_var_section_tail",
           "named": true
         },
@@ -4567,6 +4575,10 @@
           "named": true
         },
         {
+          "type": "preproc_split_trigger_preamble",
+          "named": true
+        },
+        {
           "type": "preproc_split_var_section_tail",
           "named": true
         },
@@ -4747,6 +4759,10 @@
         },
         {
           "type": "preproc_split_procedure_preamble",
+          "named": true
+        },
+        {
+          "type": "preproc_split_trigger_preamble",
           "named": true
         },
         {
@@ -5196,6 +5212,10 @@
           },
           {
             "type": "integer",
+            "named": true
+          },
+          {
+            "type": "qualified_name",
             "named": true
           },
           {
@@ -7302,6 +7322,10 @@
             "named": true
           },
           {
+            "type": "qualified_name",
+            "named": true
+          },
+          {
             "type": "quoted_identifier",
             "named": true
           }
@@ -7577,6 +7601,10 @@
         },
         {
           "type": "preproc_split_procedure_preamble",
+          "named": true
+        },
+        {
+          "type": "preproc_split_trigger_preamble",
           "named": true
         },
         {
@@ -8579,6 +8607,10 @@
         },
         {
           "type": "preproc_split_procedure_preamble",
+          "named": true
+        },
+        {
+          "type": "preproc_split_trigger_preamble",
           "named": true
         },
         {
@@ -10761,6 +10793,10 @@
             "named": true
           },
           {
+            "type": "qualified_name",
+            "named": true
+          },
+          {
             "type": "quoted_identifier",
             "named": true
           }
@@ -11146,6 +11182,10 @@
             "named": true
           },
           {
+            "type": "qualified_name",
+            "named": true
+          },
+          {
             "type": "quoted_identifier",
             "named": true
           }
@@ -11335,6 +11375,10 @@
         },
         {
           "type": "preproc_split_procedure_preamble",
+          "named": true
+        },
+        {
+          "type": "preproc_split_trigger_preamble",
           "named": true
         },
         {
@@ -12045,6 +12089,10 @@
           "named": true
         },
         {
+          "type": "preproc_split_trigger_preamble",
+          "named": true
+        },
+        {
           "type": "preproc_split_var_section_tail",
           "named": true
         },
@@ -12507,6 +12555,10 @@
             "named": true
           },
           {
+            "type": "qualified_name",
+            "named": true
+          },
+          {
             "type": "quoted_identifier",
             "named": true
           }
@@ -12911,6 +12963,10 @@
         },
         {
           "type": "preproc_split_procedure_preamble",
+          "named": true
+        },
+        {
+          "type": "preproc_split_trigger_preamble",
           "named": true
         },
         {
@@ -13976,6 +14032,10 @@
           "named": true
         },
         {
+          "type": "preproc_split_trigger_preamble",
+          "named": true
+        },
+        {
           "type": "preproc_split_var_section_tail",
           "named": true
         },
@@ -14170,6 +14230,10 @@
           "named": true
         },
         {
+          "type": "preproc_split_trigger_preamble",
+          "named": true
+        },
+        {
           "type": "preproc_split_var_section_tail",
           "named": true
         },
@@ -14211,6 +14275,96 @@
         },
         {
           "type": "views_section",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
+    "type": "preproc_conditional_return",
+    "named": true,
+    "fields": {
+      "return_type": {
+        "multiple": true,
+        "required": true,
+        "types": [
+          {
+            "type": "type_specification",
+            "named": true
+          }
+        ]
+      },
+      "return_value": {
+        "multiple": true,
+        "required": false,
+        "types": [
+          {
+            "type": "identifier",
+            "named": true
+          },
+          {
+            "type": "quoted_identifier",
+            "named": true
+          }
+        ]
+      }
+    },
+    "children": {
+      "multiple": true,
+      "required": true,
+      "types": [
+        {
+          "type": "preproc_elif",
+          "named": true
+        },
+        {
+          "type": "preproc_else",
+          "named": true
+        },
+        {
+          "type": "preproc_endif",
+          "named": true
+        },
+        {
+          "type": "preproc_if",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
+    "type": "preproc_conditional_return_type",
+    "named": true,
+    "fields": {
+      "return_type": {
+        "multiple": true,
+        "required": true,
+        "types": [
+          {
+            "type": "type_specification",
+            "named": true
+          }
+        ]
+      }
+    },
+    "children": {
+      "multiple": true,
+      "required": true,
+      "types": [
+        {
+          "type": "preproc_elif",
+          "named": true
+        },
+        {
+          "type": "preproc_else",
+          "named": true
+        },
+        {
+          "type": "preproc_endif",
+          "named": true
+        },
+        {
+          "type": "preproc_if",
           "named": true
         }
       ]
@@ -14442,6 +14596,10 @@
       "required": true,
       "types": [
         {
+          "type": "preproc_conditional_var",
+          "named": true
+        },
+        {
           "type": "preproc_elif",
           "named": true
         },
@@ -14476,6 +14634,10 @@
       "multiple": true,
       "required": true,
       "types": [
+        {
+          "type": "preproc_conditional_var_block",
+          "named": true
+        },
         {
           "type": "preproc_elif",
           "named": true
@@ -14682,6 +14844,10 @@
         },
         {
           "type": "preproc_split_procedure_preamble",
+          "named": true
+        },
+        {
+          "type": "preproc_split_trigger_preamble",
           "named": true
         },
         {
@@ -17694,6 +17860,10 @@
           },
           {
             "type": "integer",
+            "named": true
+          },
+          {
+            "type": "qualified_name",
             "named": true
           },
           {
@@ -21798,6 +21968,108 @@
     }
   },
   {
+    "type": "preproc_split_trigger_preamble",
+    "named": true,
+    "fields": {
+      "body": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "code_block",
+            "named": true
+          }
+        ]
+      },
+      "name": {
+        "multiple": true,
+        "required": true,
+        "types": [
+          {
+            "type": "identifier",
+            "named": true
+          },
+          {
+            "type": "member_trigger_name",
+            "named": true
+          },
+          {
+            "type": "quoted_identifier",
+            "named": true
+          }
+        ]
+      },
+      "parameters": {
+        "multiple": true,
+        "required": false,
+        "types": [
+          {
+            "type": "parameter_list",
+            "named": true
+          }
+        ]
+      },
+      "return_type": {
+        "multiple": true,
+        "required": false,
+        "types": [
+          {
+            "type": "type_specification",
+            "named": true
+          }
+        ]
+      },
+      "return_value": {
+        "multiple": true,
+        "required": false,
+        "types": [
+          {
+            "type": "identifier",
+            "named": true
+          },
+          {
+            "type": "quoted_identifier",
+            "named": true
+          }
+        ]
+      }
+    },
+    "children": {
+      "multiple": true,
+      "required": true,
+      "types": [
+        {
+          "type": "preproc_conditional_var_block",
+          "named": true
+        },
+        {
+          "type": "preproc_elif",
+          "named": true
+        },
+        {
+          "type": "preproc_else",
+          "named": true
+        },
+        {
+          "type": "preproc_endif",
+          "named": true
+        },
+        {
+          "type": "preproc_if",
+          "named": true
+        },
+        {
+          "type": "trigger_keyword",
+          "named": true
+        },
+        {
+          "type": "var_section",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
     "type": "preproc_split_var_section_tail",
     "named": true,
     "fields": {
@@ -21906,6 +22178,10 @@
         },
         {
           "type": "preproc_split_procedure_preamble",
+          "named": true
+        },
+        {
+          "type": "preproc_split_trigger_preamble",
           "named": true
         },
         {
@@ -22024,6 +22300,14 @@
       "multiple": true,
       "required": true,
       "types": [
+        {
+          "type": "preproc_conditional_return",
+          "named": true
+        },
+        {
+          "type": "preproc_conditional_return_type",
+          "named": true
+        },
         {
           "type": "preproc_conditional_var_block",
           "named": true
@@ -22677,6 +22961,10 @@
         },
         {
           "type": "preproc_split_procedure_preamble",
+          "named": true
+        },
+        {
+          "type": "preproc_split_trigger_preamble",
           "named": true
         },
         {
@@ -23671,6 +23959,10 @@
           "named": true
         },
         {
+          "type": "preproc_split_trigger_preamble",
+          "named": true
+        },
+        {
           "type": "preproc_split_var_section_tail",
           "named": true
         },
@@ -24014,6 +24306,10 @@
           },
           {
             "type": "integer",
+            "named": true
+          },
+          {
+            "type": "qualified_name",
             "named": true
           },
           {
@@ -25229,6 +25525,10 @@
           },
           {
             "type": "integer",
+            "named": true
+          },
+          {
+            "type": "qualified_name",
             "named": true
           },
           {
@@ -27499,6 +27799,10 @@
         },
         {
           "type": "preproc_split_procedure_preamble",
+          "named": true
+        },
+        {
+          "type": "preproc_split_trigger_preamble",
           "named": true
         },
         {

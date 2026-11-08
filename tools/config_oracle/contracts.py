@@ -122,8 +122,13 @@ _BODY_HOSTS = {f"{p}:<children>": "splice-repeat" for p in (
 # _procedure_preamble (grammar.js:3075-3079) and _routine_regular_body
 # (grammar.js:3005-3008), which serves procedure, preproc_split_procedure and
 # trigger_declaration (grammar.js:3238). Hence optional-slot, not single-slot.
-_ROUTINE_TAIL_HOSTS = {f"{p}:<children>": "optional-slot" for p in (
-    "preproc_split_procedure", "preproc_split_procedure_preamble", "procedure", "trigger_declaration")}
+# Issue #31 superseded both: a routine's var region (grammar _routine_var_region) is a
+# var_section OR a run of preproc_conditional_var_blocks, and each arm of a block is a
+# region again, so a host holds any number of blocks: splice-repeat. Issue #32 added the
+# trigger preamble.
+_ROUTINE_TAIL_HOSTS = {f"{p}:<children>": "splice-repeat" for p in (
+    "preproc_split_procedure", "preproc_split_procedure_preamble", "preproc_split_trigger_preamble",
+    "procedure", "trigger_declaration", "preproc_conditional_var_block")}
 
 # _body_element (grammar.js:667-714): every object/section-body member, shared
 # by preproc_conditional_layout_mixed, preproc_conditional_report and (Task 6)
@@ -136,8 +141,8 @@ _BODY_ELEMENT = frozenset({
     "dataset_section", "requestpage_section", "rendering_section", "elements_section",
     "schema_section", "assembly_declaration", "procedure", "trigger_declaration", "var_section",
     "attribute_item", "event_declaration", "preproc_split_procedure",
-    "preproc_split_procedure_preamble", "preproc_conditional", "preproc_split_var_section_tail",
-    "modify_modification",
+    "preproc_split_procedure_preamble", "preproc_split_trigger_preamble", "preproc_conditional",
+    "preproc_split_var_section_tail", "modify_modification",
 })
 # _layout_element (grammar.js:2115-2141): every layout-container member,
 # including its own self-reference to preproc_conditional_layout. Shared by
@@ -281,10 +286,9 @@ register("preproc_conditional_fieldgroups", "branch-select", "tools.config_oracl
          # fieldgroups_body directly, not inside this conditional).
          arm={"fieldgroup_declaration", "preproc_conditional_fieldgroups"})
 register("preproc_conditional_var", "branch-select", "tools.config_oracle.lowering.select.branch_select",
-         hosts={"var_body:<children>": "splice-repeat"},
-         # own rule (grammar.js:3520-3532), post item-8 fix: declarations only,
-         # no self-nesting (unlike fields/keys/fieldgroups).
-         arm={"variable_declaration", "var_attribute_item"})
+         hosts={"var_body:<children>": "splice-repeat", "preproc_conditional_var:<children>": "splice-repeat"},
+         # own rule, post item-8 fix: declarations only; nests since issue #30.
+         arm={"variable_declaration", "var_attribute_item", "preproc_conditional_var"})
 
 # --- branch-select, part C (Task 6): case, labels, query, xmlport, controladdin.
 register("preproc_conditional_case", "branch-select", "tools.config_oracle.lowering.case_terminators.case_group",
@@ -416,6 +420,8 @@ for t in ("preproc_conditional_case_patterns",
           "preproc_split_if_begin_asymmetric", "preproc_split_if_begin_else", "preproc_split_if_else_statement",
           "preproc_split_if_statement", "preproc_split_if_then_begin", "preproc_split_if_then_begin_else_shared",
           "preproc_split_procedure_body", "preproc_split_procedure_preamble",
+          "preproc_split_trigger_preamble",              # issue #32, as its procedure sibling
+          "preproc_conditional_return", "preproc_conditional_return_type",   # issue #35: arms are fields
           "preproc_split_report_dataitem_header",
           "preproc_split_table_field"):
     register(t, "unsupported")

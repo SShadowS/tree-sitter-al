@@ -313,6 +313,16 @@
       "arm_boundary": "none",
       "reason": "B11: a run of whole-value groups (contract whole-value-run); it owns no directives, its child groups do, so split_info on a child gives that group's arms (spec 5.5)."
     },
+    "preproc_conditional_return": {
+      "class": "assembler",
+      "arm_boundary": "own-directives",
+      "reason": "Registry unsupported; issue #35: each arm is a procedure's return clause, carried as return_value / return_type fields, not a complete unit."
+    },
+    "preproc_conditional_return_type": {
+      "class": "assembler",
+      "arm_boundary": "own-directives",
+      "reason": "Registry unsupported; issue #35: each arm is the return_type field of the procedure's return clause."
+    },
     "preproc_conditional_query": {
       "class": "branch-container",
       "arm_boundary": "own-directives",
@@ -396,9 +406,10 @@
       "class": "branch-container",
       "arm_boundary": "own-directives",
       "hosts": {
+        "preproc_conditional_var:<children>": "splice-repeat",
         "var_body:<children>": "splice-repeat"
       },
-      "reason": "Registry branch-select: arms are alternatives in one host slot."
+      "reason": "Registry branch-select: arms are alternatives in one host slot; nests since issue #30."
     },
     "preproc_conditional_var_names": {
       "class": "branch-container",
@@ -413,12 +424,14 @@
       "class": "branch-container",
       "arm_boundary": "own-directives",
       "hosts": {
-        "preproc_split_procedure:<children>": "optional-slot",
-        "preproc_split_procedure_preamble:<children>": "optional-slot",
-        "procedure:<children>": "optional-slot",
-        "trigger_declaration:<children>": "optional-slot"
+        "preproc_conditional_var_block:<children>": "splice-repeat",
+        "preproc_split_procedure:<children>": "splice-repeat",
+        "preproc_split_procedure_preamble:<children>": "splice-repeat",
+        "preproc_split_trigger_preamble:<children>": "splice-repeat",
+        "procedure:<children>": "splice-repeat",
+        "trigger_declaration:<children>": "splice-repeat"
       },
-      "reason": "Registry branch-select: arms are alternatives in one host slot."
+      "reason": "Registry branch-select: arms are alternatives; since issue #31 a routine holds a run of blocks and a block's arm may nest one."
     },
     "preproc_conditional_where": {
       "class": "branch-container",
@@ -680,6 +693,11 @@
       "class": "assembler",
       "arm_boundary": "own-directives",
       "reason": "Registry unsupported (milestone 3); classified by hand: arms are pieces of one construct, not complete units."
+    },
+    "preproc_split_trigger_preamble": {
+      "class": "assembler",
+      "arm_boundary": "own-directives",
+      "reason": "Registry unsupported; issue #32, the trigger sibling of preproc_split_procedure_preamble: arms are pieces of one construct."
     },
     "preproc_split_report_brace_close": {
       "class": "fragment",

@@ -1977,7 +1977,12 @@ codeunit 50101 P
               (basic_type))))))))
 
 ================================================================================
-strict var names: empty group context, inside a preproc_conditional_var arm: the next declaration's group
+strict var names: empty group context, inside a preproc_conditional_var arm: a nested preproc_conditional_var
+--
+Since issue #30 an arm may nest a preproc_conditional_var, so this empty group
+has the same two readings as at var_body top level, and the same choice: the
+sibling conditional (the names group's dynamic precedence is -1). Before #30
+the names group was the only reading here.
 ================================================================================
 
 codeunit 50101 P
@@ -2005,13 +2010,13 @@ codeunit 50101 P
             (preproc_if
               (preproc_open)
               condition: (identifier))
+            (preproc_conditional_var
+              (preproc_if
+                (preproc_open)
+                condition: (identifier))
+              (preproc_endif
+                (preproc_close)))
             (variable_declaration
-              (preproc_conditional_var_names
-                (preproc_if
-                  (preproc_open)
-                  condition: (identifier))
-                (preproc_endif
-                  (preproc_close)))
               name: (identifier)
               type: (type_specification
                 (basic_type)))
@@ -2082,7 +2087,11 @@ codeunit 50101 P
           (preproc_close))))))
 
 ================================================================================
-strict var names: empty group context, nested in a group at top level: the next declaration's group
+strict var names: empty group context, nested in a group at top level: a sibling preproc_conditional_var
+--
+Since issue #30 the outer group may be a preproc_conditional_var holding the
+inner one, which is the top-level choice for an empty group before a
+declaration (the names group's dynamic precedence is -1).
 ================================================================================
 
 codeunit 50101 P
@@ -2106,19 +2115,19 @@ codeunit 50101 P
       (var_section
         (var_keyword)
         body: (var_body
-          (variable_declaration
-            (preproc_conditional_var_names
+          (preproc_conditional_var
+            (preproc_if
+              (preproc_open)
+              condition: (identifier))
+            (preproc_conditional_var
               (preproc_if
                 (preproc_open)
                 condition: (identifier))
-              (preproc_conditional_var_names
-                (preproc_if
-                  (preproc_open)
-                  condition: (identifier))
-                (preproc_endif
-                  (preproc_close)))
               (preproc_endif
                 (preproc_close)))
+            (preproc_endif
+              (preproc_close)))
+          (variable_declaration
             name: (identifier)
             type: (type_specification
               (basic_type))))))))

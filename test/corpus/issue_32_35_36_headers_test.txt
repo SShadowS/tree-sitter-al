@@ -1,0 +1,248 @@
+================================================================================
+Issue #32: a trigger whose header and var section are both split by #if
+--
+Was 4 ERROR nodes: no trigger form of preproc_split_procedure_preamble. Now
+preproc_split_trigger_preamble, one node over both arms and the shared body.
+alc accepts CLEAN27=0 and 1 (tools/alc_probe/cases/issues30-36/issue32_0.al).
+================================================================================
+codeunit 1 C
+{
+#if CLEAN27
+    trigger OnRun()
+    var K: Integer;
+#else
+    trigger OnRun()
+    var M: Integer;
+#endif
+    begin
+    end;
+}
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (preproc_split_trigger_preamble
+        (preproc_if
+          (preproc_open)
+          condition: (identifier))
+        (trigger_keyword)
+        name: (identifier)
+        (var_section
+          (var_keyword)
+          body: (var_body
+            (variable_declaration
+              name: (identifier)
+              type: (type_specification
+                (basic_type)))))
+        (preproc_else)
+        (trigger_keyword)
+        name: (identifier)
+        (var_section
+          (var_keyword)
+          body: (var_body
+            (variable_declaration
+              name: (identifier)
+              type: (type_specification
+                (basic_type)))))
+        (preproc_endif
+          (preproc_close))
+        body: (code_block
+          (begin_keyword)
+          (end_keyword))))))
+
+================================================================================
+Issue #35: a named return chosen by #if
+--
+Was an ERROR from `procedure` on. preproc_conditional_return holds the return
+clause of each arm, return_value and return_type inside the arms. alc accepts
+CLEAN27=0 and 1 (tools/alc_probe/cases/issues30-36/named.al).
+================================================================================
+codeunit 1 C
+{
+    procedure P()
+#if CLEAN27
+    Result: Text
+#else
+    Result: Integer
+#endif
+    begin
+    end;
+}
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (procedure
+        (procedure_keyword)
+        name: (identifier)
+        (preproc_conditional_return
+          (preproc_if
+            (preproc_open)
+            condition: (identifier))
+          return_value: (identifier)
+          return_type: (type_specification
+            (text_type
+              (text_keyword)))
+          (preproc_else)
+          return_value: (identifier)
+          return_type: (type_specification
+            (basic_type))
+          (preproc_endif
+            (preproc_close)))
+        body: (code_block
+          (begin_keyword)
+          (end_keyword))))))
+
+================================================================================
+Issue #35: an unnamed return chosen by #if
+================================================================================
+codeunit 1 C
+{
+    procedure P()
+#if CLEAN27
+    : Text
+#else
+    : Integer
+#endif
+    begin
+    end;
+}
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (procedure
+        (procedure_keyword)
+        name: (identifier)
+        (preproc_conditional_return
+          (preproc_if
+            (preproc_open)
+            condition: (identifier))
+          return_type: (type_specification
+            (text_type
+              (text_keyword)))
+          (preproc_else)
+          return_type: (type_specification
+            (basic_type))
+          (preproc_endif
+            (preproc_close)))
+        body: (code_block
+          (begin_keyword)
+          (end_keyword))))))
+
+================================================================================
+Issue #35: only the return type chosen by #if
+--
+`Result:` stays on the procedure (return_value); the type is
+preproc_conditional_return_type, one return_type per arm.
+================================================================================
+codeunit 1 C
+{
+    procedure P() Result:
+#if CLEAN27
+    Text
+#else
+    Integer
+#endif
+    begin
+    end;
+}
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (procedure
+        (procedure_keyword)
+        name: (identifier)
+        return_value: (identifier)
+        (preproc_conditional_return_type
+          (preproc_if
+            (preproc_open)
+            condition: (identifier))
+          return_type: (type_specification
+            (text_type
+              (text_keyword)))
+          (preproc_else)
+          return_type: (type_specification
+            (basic_type))
+          (preproc_endif
+            (preproc_close)))
+        body: (code_block
+          (begin_keyword)
+          (end_keyword))))))
+
+================================================================================
+Issue #36: a namespace-qualified base object after extends
+--
+Was one segment in base_object and the rest an ERROR. A dotted name is one
+qualified_name node, one child per segment; a single name stays a plain
+identifier. alc accepts both (tools/alc_probe/cases/issues30-36/).
+================================================================================
+tableextension 50101 "Cust Ext" extends Contoso.Sales.Customer
+{
+}
+
+pageextension 50102 "Page Ext" extends Contoso.Sales."Cust Page"
+{
+}
+--------------------------------------------------------------------------------
+
+(source_file
+  (tableextension_declaration
+    (tableextension_keyword)
+    object_id: (integer)
+    object_name: (quoted_identifier)
+    (extends_keyword)
+    base_object: (qualified_name
+      (identifier)
+      (identifier)
+      (identifier)))
+  (pageextension_declaration
+    (pageextension_keyword)
+    object_id: (integer)
+    object_name: (quoted_identifier)
+    (extends_keyword)
+    base_object: (qualified_name
+      (identifier)
+      (identifier)
+      (quoted_identifier))))
+
+================================================================================
+Issue #36: a namespace-qualified interface after implements, beside a plain one
+--
+Each entry is one `interface` field: a qualified_name node for the dotted
+name, an identifier for the plain one, so the list keeps its two entries.
+================================================================================
+codeunit 50103 Impl implements Contoso.Sales.IFoo, IBar
+{
+}
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    (implements_clause
+      (implements_keyword)
+      interface: (qualified_name
+        (identifier)
+        (identifier)
+        (identifier))
+      interface: (identifier))))

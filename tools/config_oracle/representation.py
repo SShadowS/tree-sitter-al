@@ -30,7 +30,9 @@ def check(root):
         try:
             if n.kind == "preproc_conditional_var_block" and parent in VAR_BLOCK_HOSTS:
                 arms, _ = split_arms(n)
-                if not any(c.kind == "var_section" for _, content in arms for c in content):
+                # issue #31: an arm may hold a nested block instead (checked on its own)
+                if not any(c.kind in ("var_section", "preproc_conditional_var_block")
+                           for _, content in arms for c in content):
                     out.append(Discrepancy("representation", "var-block-without-var",
                                             f"{n.kind}@{n.start}", parent))
             elif n.kind == "preproc_pragma_only":

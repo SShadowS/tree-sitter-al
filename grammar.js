@@ -521,10 +521,34 @@ function _object_without_id(keyword_name) {
 // tools/alc_probe/cases/issue34/.
 const EXTENDS_BY_NUMBER = ['tableextension', 'pageextension', 'reportextension', 'enumextension'];
 
+// Issue #36: a namespace-qualified object name (`extends Contoso.Sales.Customer`,
+// `implements Contoso.Sales.IFoo`) is one `qualified_name` node, one child per segment.
+// A single name keeps its plain identifier / quoted_identifier. A node rather than a
+// field on every segment (record_type's form): an implements list holds several names,
+// and per-segment fields would merge them.
+// The body of grammar rule _trigger_header (issue #32).
+function triggerHeader($) {
+  return [
+    $.trigger_keyword,
+    field('name', $._trigger_name),
+    '(',
+    optional(field('parameters', $.parameter_list)),
+    ')',
+    optional(choice(
+      $._procedure_return_specification,
+      $._procedure_named_return,
+    )),
+  ];
+}
+
+function _object_name_ref($) {
+  return choice($._identifier_or_quoted, alias($._dotted_object_name, $.qualified_name));
+}
+
 function _base_object($, keyword_name) {
   return EXTENDS_BY_NUMBER.includes(keyword_name)
-    ? choice($._identifier_or_quoted, $.integer)
-    : $._identifier_or_quoted;
+    ? choice(_object_name_ref($), $.integer)
+    : _object_name_ref($);
 }
 
 // Extension declaration helper — with object ID
@@ -545,6 +569,8 @@ function _extension_without_id(keyword_name) {
     $[keyword_name + '_keyword'],
     field('object_name', $._identifier_or_quoted),
     $.extends_keyword,
+    // profileextension only: not widened by #36 (a qualified profile base is unprobed;
+    // the probe project for profiles fails with AL0341 even by plain name).
     field('base_object', $._identifier_or_quoted),
     $._declaration_body_block
   );
@@ -1281,9 +1307,10 @@ module.exports = grammar({
         field('object_id', $.integer), field('object_name', $._identifier_or_quoted)),
       seq(choice($.tableextension_keyword, $.pageextension_keyword, $.reportextension_keyword, $.enumextension_keyword),
         field('object_id', $.integer), field('object_name', $._identifier_or_quoted), $.extends_keyword,
-        field('base_object', choice($._identifier_or_quoted, $.integer))),
+        field('base_object', _base_object($, 'tableextension'))),
       seq($.permissionsetextension_keyword,
-        field('object_id', $.integer), field('object_name', $._identifier_or_quoted), $.extends_keyword, field('base_object', $._identifier_or_quoted)),
+        field('object_id', $.integer), field('object_name', $._identifier_or_quoted), $.extends_keyword,
+        field('base_object', _base_object($, 'permissionsetextension'))),
       seq($.interface_keyword, field('object_name', $._identifier_or_quoted)),
     ),
 
@@ -1422,7 +1449,7 @@ module.exports = grammar({
       $.implements_keyword,
       ...strictListBody($, 'implements', ','),
     ),
-    ...strictConditionalList('implements', $ => field('interface', $._identifier_or_quoted), ','),
+    ...strictConditionalList('implements', $ => field('interface', _object_name_ref($)), ','),
 
     // =====================================================================
     // Body elements — all sections/declarations that can appear in object bodies
@@ -1468,6 +1495,7 @@ module.exports = grammar({
       $.preproc_split_procedure,
       // Preprocessor-split procedure preamble: header+var in #if/#else, shared body after #endif
       $.preproc_split_procedure_preamble,
+      $.preproc_split_trigger_preamble,
       // Preprocessor conditionals
       $.preproc_conditional,
       // A conditional that continues the preceding var section AND then
@@ -2718,6 +2746,13 @@ module.exports = grammar({
       repeat(seq('.', $._qualified_name_segment)),
     )),
     _qualified_name_segment: $ => reserved('relation_target_names', choice($.identifier, $.quoted_identifier)),
+
+    // Issue #36: a dotted object name after `extends` / `implements`, two segments or more
+    // (one segment stays a plain name), aliased to qualified_name. See _object_name_ref().
+    _dotted_object_name: $ => seq(
+      $._identifier_or_quoted,
+      repeat1(seq('.', $._identifier_or_quoted)),
+    ),
 
     // --- Permissions value list ---
     // tabledata Customer = R, tabledata "Sales Header" = RIMD
@@ -4609,10 +4644,35 @@ module.exports = grammar({
         choice(
           $._procedure_return_specification,
           $._procedure_named_return,
+          // Issue #35: the return clause, or only its type, inside #if arms.
+          $.preproc_conditional_return,
+          seq(field('return_value', $._identifier_or_quoted), ':', $.preproc_conditional_return_type),
         ),
       )),
       $._procedure_tail,
     )),
+
+    // Issue #35: a procedure's return clause chosen by #if (`procedure P(X: Integer)
+    // #if C Result: Text #else Result: Integer #endif begin`, or `: Text` / `: Integer`).
+    // alc accepts every configuration. Every arm holds a return: an empty arm would read
+    // the same `#if` as the var-block or pragma-only groups that may also follow `)`.
+    preproc_conditional_return: $ => seq(
+      $.preproc_if,
+      $._return_arm,
+      repeat(seq($.preproc_elif, $._return_arm)),
+      optional(seq($.preproc_else, $._return_arm)),
+      $.preproc_endif,
+    ),
+    _return_arm: $ => choice($._procedure_return_specification, $._procedure_named_return),
+
+    // Issue #35: only the type chosen by #if (`Result: #if C Text #else Integer #endif`).
+    preproc_conditional_return_type: $ => seq(
+      $.preproc_if,
+      field('return_type', $.type_specification),
+      repeat(seq($.preproc_elif, field('return_type', $.type_specification))),
+      optional(seq($.preproc_else, field('return_type', $.type_specification))),
+      $.preproc_endif,
+    ),
 
     // Everything after a signature, in every form a body can take. Shared by
     // procedure and preproc_split_procedure: the text after a split signature's
@@ -4672,10 +4732,7 @@ module.exports = grammar({
     // prec.right resolves the shift/reduce on the trailing `optional(';')`,
     // which `code_block` used to own and therefore never exposed here.
     _routine_regular_body: $ => prec.right(seq(
-      optional(choice(
-        $.var_section,
-        $.preproc_conditional_var_block,
-      )),
+      optional($._routine_var_region),
       field('body', $.code_block),
       // The body's terminator. `code_block` no longer carries it — see the note
       // there. Kept outside field('body') so the field stays a single node.
@@ -4746,10 +4803,7 @@ module.exports = grammar({
     // Procedure preamble: header + optional var section (used in preproc_split_procedure_preamble)
     _procedure_preamble: $ => seq(
       $._procedure_header,
-      optional(choice(
-        $.var_section,
-        $.preproc_conditional_var_block,
-      )),
+      optional($._routine_var_region),
     ),
 
     // Preprocessor-split procedure preamble: header+var variants in #if/#else, shared body after #endif
@@ -4945,15 +4999,7 @@ module.exports = grammar({
     // =====================================================================
 
     trigger_declaration: $ => seq(
-      $.trigger_keyword,
-      field('name', $._trigger_name),
-      '(',
-      optional(field('parameters', $.parameter_list)),
-      ')',
-      optional(choice(
-        $._procedure_return_specification,
-        $._procedure_named_return,
-      )),
+      $._trigger_header,
       // The same tail as a procedure: what may follow a routine header does not
       // depend on which keyword opened it. The trigger took only two of its arms,
       // so a split body (PaymentManagementFR.Codeunit.al:30, BC 29) or a
@@ -4961,19 +5007,52 @@ module.exports = grammar({
       $._procedure_tail,
     ),
 
+    // Issue #32: the trigger sibling of preproc_split_procedure_preamble. Each arm holds
+    // a trigger header and its var region; the shared body follows #endif. alc accepts
+    // `#if C trigger OnRun() var K #else trigger OnRun() var M #endif begin ... end;`
+    // in both configurations.
+    _trigger_preamble: $ => seq(
+      $._trigger_header,
+      optional($._routine_var_region),
+    ),
+
+    // `trigger Name(params) [return]`, shared by trigger_declaration and _trigger_preamble
+    // (issue #32), so the two cannot drift. A hidden rule rather than a spliced sequence:
+    // splicing measured +128 states. Its one cost: inside an ERROR (input alc rejects)
+    // the trigger's name loses its `name` field label (directive_line_rejected_negative_test.txt).
+    _trigger_header: $ => seq(...triggerHeader($)),
+    preproc_split_trigger_preamble: $ => prec.right(25, seq(
+      $.preproc_if,
+      $._trigger_preamble,
+      repeat(seq($.preproc_elif, $._trigger_preamble)),
+      optional(seq($.preproc_else, $._trigger_preamble)),
+      $.preproc_endif,
+      field('body', $.code_block),
+      optional(';'),
+    )),
+
     // Preprocessor conditional wrapping a var section before begin
     preproc_conditional_var_block: $ => seq(
       $.preproc_if,
-      optional($.var_section),
+      optional($._routine_var_region),
       repeat(seq(
         $.preproc_elif,
-        optional($.var_section),
+        optional($._routine_var_region),
       )),
       optional(seq(
         $.preproc_else,
-        optional($.var_section),
+        optional($._routine_var_region),
       )),
       $.preproc_endif,
+    ),
+
+    // Issue #31: a routine's var region between its header and `begin`: one var_section, or a
+    // run of conditional blocks, each arm of which is a region again (so blocks nest). alc
+    // accepts `#if A var K #endif #if not A var N #endif` and `#if A #if B var K #endif #endif`
+    // in every configuration.
+    _routine_var_region: $ => choice(
+      $.var_section,
+      repeat1($.preproc_conditional_var_block),
     ),
 
     // Trigger name: a simple name, or a scoped member-trigger name
@@ -5057,19 +5136,23 @@ module.exports = grammar({
       ']'
     ),
 
+    // Issue #30: an arm may hold a nested preproc_conditional_var (alc accepts every
+    // configuration of `#if not ALPHA B; #if BETA C; #endif #endif`).
     preproc_conditional_var: $ => seq(
       $.preproc_if,
-      repeat(choice($.variable_declaration, $.var_attribute_item)),
+      repeat($._var_group_item),
       repeat(seq(
         $.preproc_elif,
-        repeat(choice($.variable_declaration, $.var_attribute_item)),
+        repeat($._var_group_item),
       )),
       optional(seq(
         $.preproc_else,
-        repeat(choice($.variable_declaration, $.var_attribute_item)),
+        repeat($._var_group_item),
       )),
       $.preproc_endif,
     ),
+
+    _var_group_item: $ => choice($.variable_declaration, $.var_attribute_item, $.preproc_conditional_var),
 
     variable_declaration: $ => choice(
       // Label variable: Name: Label 'text', Locked = true;

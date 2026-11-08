@@ -42,6 +42,8 @@ preproc_conditional_property_value_sequence	assembler	corpus:property_value_run_
 preproc_conditional_query	branch-container	fixture:query_conditional.al
 preproc_conditional_rendering	branch-container	corpus:preproc_conditional_rendering_layout.txt#%23if/%23endif wrapping a layout inside report rendering (BC CLEANxx pattern)#0
 preproc_conditional_report	branch-container	corpus:preprocessor_in_dataitem.txt#Preprocessor directives in dataitem column declarations#0
+preproc_conditional_return	assembler	corpus:issue_32_35_36_headers_test.txt#Issue %2335: a named return chosen by %23if#0
+preproc_conditional_return_type	assembler	corpus:issue_32_35_36_headers_test.txt#Issue %2335: only the return type chosen by %23if#0
 preproc_conditional_sorting_fields	branch-container	corpus:strict_conditional_sorting_fields_test.txt#strict sorting: comments at every boundary#0
 preproc_conditional_statement	branch-container	corpus:case_else_preprocessor_test.txt#Case statement with preprocessor conditional in else branch#0
 preproc_conditional_table_relation	assembler	corpus:preproc_split_table_relation_branch.txt#TableRelation with semicolon inside %23if branch (Pattern 1: else if in preproc)#0
@@ -101,5 +103,6 @@ preproc_split_report_dataitem_header	assembler	corpus:preproc_split_brace_and_ca
 preproc_split_report_dataitem_open_over_endif	assembler	corpus:preproc_split_brace_and_case_test.txt#A report dataitem opened inside a branch and closed after %23endif#0
 preproc_split_table_field	assembler	corpus:preproc_split_field_type.txt#Field header type split across preprocessor branches#0
 preproc_split_table_field_open	assembler	corpus:split_table_field_open_test.txt#Field body opened inside %23if, closed after %23endif (one valid configuration)#0
+preproc_split_trigger_preamble	assembler	corpus:issue_32_35_36_headers_test.txt#Issue %2332: a trigger whose header and var section are both split by %23if#0
 preproc_split_var_section_tail	assembler	corpus:var_section_does_not_swallow_procedures_test.txt#A branch that continues the var section and then starts procedures#0
 preproc_undef	trivia	corpus:preproc_define_undef_test.txt#%23define followed by %23undef#0

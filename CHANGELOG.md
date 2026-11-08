@@ -7,6 +7,28 @@ public API — a change to node structure or field names is a **major** bump.
 
 ## [Unreleased]
 
+- **`#if` regions in routine headers and var sections (issues #30, #31, #32, #35).** Each shape below was ERROR
+  nodes on input alc accepts in every configuration (probes in `tools/alc_probe/cases/issues30-36/`):
+  - #30: `preproc_conditional_var` nests (an arm may hold another), as the other conditional kinds do.
+  - #31: a routine's var region before `begin` is a `var_section` or a run of `preproc_conditional_var_block`s,
+    and each arm of a block is a region again, so blocks follow each other and nest (also inside one arm of a
+    split preamble).
+  - #32: **new node** `preproc_split_trigger_preamble`, the trigger sibling of
+    `preproc_split_procedure_preamble`: trigger header and var region per arm, shared `body` after `#endif`.
+  - #35: **new nodes** `preproc_conditional_return` (each arm a whole return clause, `return_value` /
+    `return_type` inside the arm) and `preproc_conditional_return_type` (`Result:` then one `return_type` per
+    arm).
+  Tree note: an empty `#if` group inside a `preproc_conditional_var` arm, directly before a declaration, is now a
+  nested `preproc_conditional_var` (the choice already made at `var_body` top level) rather than the
+  declaration's name group; two `strict_conditional_var_names` fixtures record it. Inside the ERROR of the
+  `directive_line_rejected` negatives a trigger's name now carries its `name` label.
+- **A namespace-qualified name after `extends` or `implements` (issue #36).** `extends Contoso.Sales.Customer`
+  kept one segment and made the rest an ERROR. A dotted name is now one `qualified_name` node under `base_object`
+  / `interface` (one node per `implements` entry); a single name keeps its plain `identifier`. alc accepts it for
+  table, page, enum and permissionset extensions and `implements`; profile extensions are unchanged (unprobed).
+  `node-types.json`: `qualified_name` added to those fields.
+- Size for the five: STATE_COUNT +199 (+0.72%), `parser.c` +0.6%. No production tree changes (four corpora).
+
 - **An extension may name its base object by number (issue #34).** `tableextension 50102 "X" extends 50101` made the
   whole object a root ERROR. `base_object` now takes an `integer` for the table, page, report and enum extensions
   (and the split-declaration header), which alc 18.0.41 accepts; it stays name-only for a permissionset extension,
