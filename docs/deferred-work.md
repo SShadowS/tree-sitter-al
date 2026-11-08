@@ -1805,7 +1805,18 @@ would end the if is in a group).
 
 **Owner:** unassigned.
 
-## 44. B7b-1 over-acceptances: conditional list forms invalid in every configuration parse clean
+## 44. B7b-1 over-acceptances: conditional list forms invalid in every configuration parse clean — DECIDED known limit 2026-11-08 (al-sem does not need them rejected)
+
+**Decision (2026-11-08, al-sem's answer, relayed by the owner through kraken coord, question
+`q-20261108T212902-ba39458a`).** al-sem does not need these forms rejected; a clean parse is fine. (a) Its real
+inputs are code alc already builds (the pinned CDO baseline, workspace apps, dependency sources); only the editor
+(LSP) sees half-typed code between keystrokes, and al-sem does not check or report syntax (alc does). (b) Its lowerer
+reads `#if` groups the same way every time (the union of the arms for lists and declarations; the first arm for split
+headers such as `preproc_split_key`), so a missing separator gives at worst one extra or merged list item in code that
+will not compile anyway; no analysis result depends on ERROR nodes for invalid code. What al-sem DOES need is
+unchanged: every form valid in some configuration must keep parsing into the right shape. So per-arm separator
+tracking is not worth its cost; the oracle's `reference-error` classification stays the record. The forms below are
+kept as the inventory.
 
 **Established:** 2026-10-07, B7b-1 Tasks 4-12 (reviews and reports), each form re-measured in Task 14 with py-tree-sitter:
 `has_error` True on main (250898c), False on the branch. A strict list's seam helpers (spec section 3) let a group stand

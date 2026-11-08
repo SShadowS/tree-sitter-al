@@ -103,4 +103,4 @@ merged and the gates re-run on the combined tree by the controller, never by the
 | 6 | alc accepts a doubled BOM; the grammar already treats U+FEFF as an extra. Closed, not a defect. | changes-needed (docs; fixed at merge) | yes |
 | 28 | alc accepts `Visible = Where;`; the grammar should parse it (open, next batch). | as above | yes |
 | 70 | alc accepts a qualified `profileextension` base; the grammar should parse it (open, next batch). | as above | yes |
-| 44 | Asked al-sem (via kraken coord, question `q-20261108T212902-ba39458a`) whether it needs these rejected. | — | pending |
+| 44 | Asked al-sem (relayed by the owner via kraken coord, `q-20261108T212902-ba39458a`): it does not need these rejected. Recorded as a decided known limit. | — | yes |
