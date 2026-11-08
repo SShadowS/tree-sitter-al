@@ -32,6 +32,7 @@ enum TokenType {
   TABLE_RELATION_PROPERTY_NAME = 17,  // `TableRelation` followed by = (B5)
   LINK_PROPERTY_NAME = 18,  // one of the six compiler link-family names followed by = (B5b)
   PREPROC_OPEN_BEFORE_ELSE = 19,  // #if of a directive-only group followed by `else` (issue #39)
+  OPTION_MEMBERS_PROPERTY_NAME = 20,  // `OptionMembers` followed by = (B13, deferred item 37)
 };
 
 // Named so the static assertion below can test its width AND its signedness.
@@ -289,6 +290,7 @@ enum IdentifierWord {
   WORD_NAMESPACES,   // same list grammar, its own node (B4)
   WORD_TABLE_RELATION,  // value grammar: TableRelationPropertyValueSyntax (B5)
   WORD_LINK_PROPERTY,  // value grammar: TableFilter / Report- / QueryDataItemLink (B5b)
+  WORD_OPTION_MEMBERS,  // value grammar: OptionValues (ParseOptionValuesPropertyValue, B13)
 };
 
 // The compiler's pair-list property names, lowercase. Source: alc 18.0.41.62505,
@@ -338,6 +340,7 @@ static enum IdentifierWord read_identifier_word(TSLexer *lexer) {
   if (len == 11 && strcmp(buf, "calcformula") == 0) return WORD_CALCFORMULA;
   if (len == 10 && strcmp(buf, "namespaces") == 0) return WORD_NAMESPACES;
   if (len == 13 && strcmp(buf, "tablerelation") == 0) return WORD_TABLE_RELATION;
+  if (len == 13 && strcmp(buf, "optionmembers") == 0) return WORD_OPTION_MEMBERS;
   for (size_t i = 0; i < sizeof(LINK_PROPERTY_NAMES) / sizeof(LINK_PROPERTY_NAMES[0]); i++) {
     if (strcmp(buf, LINK_PROPERTY_NAMES[i]) == 0) return WORD_LINK_PROPERTY;
   }
@@ -772,7 +775,8 @@ bool tree_sitter_al_external_scanner_scan(
       valid_symbols[ML_PROPERTY_NAME] && valid_symbols[NAMESPACES_PROPERTY_NAME] &&
       valid_symbols[TABLE_RELATION_PROPERTY_NAME] &&
       valid_symbols[LINK_PROPERTY_NAME] &&
-      valid_symbols[PREPROC_OPEN_BEFORE_ELSE]) {
+      valid_symbols[PREPROC_OPEN_BEFORE_ELSE] &&
+      valid_symbols[OPTION_MEMBERS_PROPERTY_NAME]) {
     return false;
   }
 
@@ -1137,7 +1141,7 @@ bool tree_sitter_al_external_scanner_scan(
       valid_symbols[CALC_FORMULA_PROPERTY_NAME] ||
       valid_symbols[ML_PROPERTY_NAME] || valid_symbols[NAMESPACES_PROPERTY_NAME] ||
       valid_symbols[TABLE_RELATION_PROPERTY_NAME] ||
-      valid_symbols[LINK_PROPERTY_NAME]) {
+      valid_symbols[LINK_PROPERTY_NAME] || valid_symbols[OPTION_MEMBERS_PROPERTY_NAME]) {
     skip_whitespace(lexer);
     enum IdentifierWord word = read_identifier_word(lexer);
     if (word == WORD_NOT_IDENTIFIER) return false;  // nothing consumed
@@ -1227,7 +1231,7 @@ bool tree_sitter_al_external_scanner_scan(
     if (valid_symbols[PROPERTY_NAME] || valid_symbols[CALC_FORMULA_PROPERTY_NAME] ||
         valid_symbols[ML_PROPERTY_NAME] || valid_symbols[NAMESPACES_PROPERTY_NAME] ||
         valid_symbols[TABLE_RELATION_PROPERTY_NAME] ||
-        valid_symbols[LINK_PROPERTY_NAME]) {
+        valid_symbols[LINK_PROPERTY_NAME] || valid_symbols[OPTION_MEMBERS_PROPERTY_NAME]) {
       // Skip whitespace and comments. '\n' belongs here just as much as '\r' —
       // the leading skip above already accepts it, and alc accepts a property
       // whose '=' sits on the next line (verified). Omitting it made
@@ -1266,6 +1270,10 @@ bool tree_sitter_al_external_scanner_scan(
           lexer->result_symbol = TABLE_RELATION_PROPERTY_NAME;
         } else if (word == WORD_LINK_PROPERTY && valid_symbols[LINK_PROPERTY_NAME]) {
           lexer->result_symbol = LINK_PROPERTY_NAME;
+        } else if (word == WORD_OPTION_MEMBERS && valid_symbols[OPTION_MEMBERS_PROPERTY_NAME]) {
+          // B13: OptionMembers' value is the compiler's option-values grammar, and a run
+          // of conditional members cannot be told from a generic value run otherwise.
+          lexer->result_symbol = OPTION_MEMBERS_PROPERTY_NAME;
         } else if (valid_symbols[PROPERTY_NAME]) {
           lexer->result_symbol = PROPERTY_NAME;  // a keyed name where the state offers only the generic token
         } else {

@@ -392,13 +392,15 @@ register("preproc_conditional_list_elements", "branch-select", _LIST_RUN,
          arm=_EXPRESSION | {"range_expression", "preproc_conditional_expression_tail",
                             "preproc_conditional_operand", "preproc_operand_prefix", ","})
 register("preproc_conditional_option_members", "branch-select", _LIST_RUN,
-         hosts={"option_member_list:<children>": "list-run"},
-         # _option_members_branch (grammar.js:1597-1612): option_member and ','; no self-nesting.
+         hosts={"option_member_list:<children>": "list-run",
+                "preproc_conditional_option_members:<children>": "list-run"},
+         # _option_members_branch: option_member and ','; the keyed OptionMembers list's
+         # _option_values_conditional (B13) also nests itself.
          # Named rewrites: terminator-hoist (as every list-run) and
          # option-member-list-unwrap (G11): a host option_member_list left with one
          # bare member is replaced by that leaf, as flat `OptionMembers = B;` gives
          # (select.branch_select docstring; engine._lower_ordinary applies it).
-         arm={"option_member", ","})
+         arm={"option_member", ",", "preproc_conditional_option_members"})
 register("preproc_conditional_where", "branch-select", _LIST_RUN,
          hosts={"where_conditions:<children>": "list-run",
                 "preproc_conditional_where:<children>": "list-run"},

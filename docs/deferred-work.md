@@ -282,7 +282,7 @@ The assertions were not relaxed. The gate for the class is `tools/check-exec-bit
 answers the same on every platform. Full write-up in the CHANGELOG entry for the
 release after 4.1.0.
 
-## 6. Three uncovered bytes: a doubled UTF-8 BOM
+## 6. Three uncovered bytes: a doubled UTF-8 BOM — RESOLVED 2026-11-08 (not a defect)
 
 **Established:** measured at the 4.0.1 release with a leaf-walking gap scanner
 over both corpora — 36,852 files, exactly 3 non-whitespace bytes covered by no
@@ -299,6 +299,21 @@ Deliberately not "fixed" by widening the scanner's BOM exclusion: that would hid
 it rather than decide it. The open question is what the tree *should* do with a
 second BOM — alc's verdict on the file has not been probed, and that verdict
 decides whether this is an extra to absorb or text to surface.
+
+**alc verdict (2026-11-08, alc 18.0.41): ACCEPT.** A codeunit opening with two BOMs
+(`EF BB BF EF BB BF`) compiles, and so does one with a U+FEFF at the start of a line between
+two declarations. Probes: `tools/alc_probe/cases/item6-doubled-bom/` (`doubled_bom.al`,
+`mid_file_bom.al`). Making them committable needed one fix in `tools/alc_probe/matrix.py`:
+`read_text` keeps a leading BOM, so the header reader never saw the `// expect:` lines of a
+BOM-initial case; it now strips U+FEFF before the `//` test.
+
+**Resolution: the grammar already agrees.** U+FEFF is its own `extras` entry (`grammar.js`,
+`/﻿/`) and in the scanner's extra-space set, and the comment at the BOM extra records
+that a BOM at file start or between statements parses cleanly (alc rejects one glued to a
+keyword or inside an identifier, which is why it is not plain whitespace everywhere). Both
+probes parse with no ERROR: the second BOM is skipped as an extra, as whitespace is. "No leaf
+claims it" is what an extra is; only the old leaf-walking gap scanner counted those bytes, and
+`tools/validate_al_file.py`'s `_significant()` already strips every EF BB BF. Not a defect.
 
 Two traps that any re-measurement will hit, both of which produced a wrong answer
 first:
@@ -1143,7 +1158,15 @@ all four corpora parse with 0 errors.
 **Before fixing:** probe both configurations with `tools/alc_probe`.
 
 
-## 24. F0 traversal helper: residuals from the final review (fix before the next release)
+## 24. F0 traversal helper: residuals from the final review — points 1–4 RESOLVED 2026-11-08
+
+**Resolved 2026-11-08 (branch batch1/item24):** (1) `split_info` excludes each `#endif`
+line, `#` to its line end, in Python, JS and Rust; `cross_node.al` now has
+`#endif // c-endif` and `test_split.py` asserts `shared` is only the `end_keyword` (it
+listed the comment before the fix); (2) the correction is in the CHANGELOG
+[Unreleased] section, verified with `require.resolve` (`.../grammar` fails,
+`.../grammar.js`, `.../bindings/node` and `.../traversal` resolve); (3) and (4)
+`docs/traversal.md` fixed. The polish list below stays open.
 
 **Established:** 2026-10-01. These are the final whole-branch review and scoped
 re-review of F0 (merge f557dc7). The SDD process allows one fix wave, and the user
@@ -1275,7 +1298,7 @@ rule that no longer exists. It is the visible `tabledata_keyword` now, and the
 and `OptionMembers = TableData,…` both clean, and end with the census at 0 flagged on all
 four roots.
 
-## 28. `Visible = Where;` ERRORs
+## 28. `Visible = Where;` ERRORs; alc accepts it (probed 2026-11-08)
 
 **Established:** 2026-10-05, found in the B5 Task 4 review. Pre-existing at the B4 merge
 (`6b15b9b`) and not caused by B5.
@@ -1288,8 +1311,18 @@ word never becomes an `identifier`. Whether alc accepts `Visible = Where;` was n
 `./tools/corpus-grep.sh -P -i -c '^\s*\w+\s*=\s*where\s*;'` (BC.History, DC, BC28.1,
 BCApps-29.0: 0 lines, 0 files each).
 
-**Owner:** unassigned. Probe alc first (`python -m tools.alc_probe`); if accepted, fix by
-reserved-word handling at value start, as B5 did for `_qualified_name_segment`.
+**alc verdict (2026-11-08, alc 18.0.41, branch `batch1/probes`): ACCEPT.** On a page
+field, `Visible = Where;` with a global `Where: Boolean;` compiles, exactly as the control
+`Visible = ShowIt;` does; with no variable named `Where` alc rejects with AL0118/AL0208,
+so it really resolves `Where` as a name (the word is not a keyword there). Probes:
+`tools/alc_probe/cases/item28-visible-where/` (`control_plain_name.al`, `visible_where.al`,
+`visible_where_undeclared.al`).
+
+**Next step:** alc accepts, so the grammar should parse it: `Where` at generic property
+value start must become an `identifier`. Fix by reserved-word handling at value start, as
+B5 did for `_qualified_name_segment`, with a fixture from `visible_where.al`.
+
+**Owner:** unassigned.
 
 ## 29. Four `TableRelation` shapes with `#if` inside the chain ERROR
 
@@ -1504,12 +1537,53 @@ groups. It stays an ERROR: `test/corpus/b7_gap_order_by_test.txt` (8 `:error` ca
 
 **Owner:** unassigned.
 
-## 37. Conditional value fragments (roadmap B13)
+## 37. Conditional value fragments (roadmap B13) — the `OptionMembers` shapes RESOLVED 2026-11-08; the other nine stay open
+
+**OptionMembers is keyed by name (2026-11-08, branch batch1/item37).** The scanner emits
+`OPTION_MEMBERS_PROPERTY_NAME` (`_option_members_property_name`, externals [20]) for `OptionMembers` before `=`, in
+the one read and all three guards, only where `valid_symbols` offers it (else `PROPERTY_NAME`). The compiler's
+table is the authority: `OPTIONMEMBERS` is the only `OptionValues` property (`ParseOptionValuesPropertyValue`, hosts
+Field and ReportColumn, `tools/alc_facts/property-hosts.tsv`). Its value (`_option_values_property_value`) keeps the
+flat shapes (a lone bare member is its leaf, a keyword member a one-member list; 146 production sites of the first
+kind) and adds a list that takes `#if` groups at any separator: a run of members, `,` and
+`preproc_conditional_option_members` groups (members, blank slots, nested groups) with no two members adjacent. Not
+`strictListBody`: blank slots are ordinals, so `item (sep item)*` does not fit. The property arms and `;`-inside
+groups are the link family's (`valueRunRules` / `afterGroupRules`, `listValue`). Tree moves: a directive-only group
+next to the list is the list's own element group, not a decoration (link rule); `OptionMembers = -1, 0;` is an
+`option_member_list`, not a `signed_integer_list`; the group may nest itself (`node-types.json`). Cost: STATE_COUNT
+28,398 -> 29,154 (+756, +2.66%), LARGE +325, SYMBOL +28, `parser.c` +2.59%, 18 conflicts entries (the link family's
+fifteen, plus three for an arm read as a whole value or as a list element group). Production: the tree harness is byte-identical on all four corpora (70,354 files;
+0 production `OptionMembers` sites hold a `#if`).
+
+Measured effect: the B7a `option-members` GAP family went 1,111 -> 436 cells (every remaining old cell is the
+`X: Option ...` variable type, `option_type`, which has no property name to key on, plus the bare-`;` seed below);
+4,332 evidence records went from ERROR to clean and none the other way; 6 new census keys, 54 registry rows and 438
+new cells, whose ERRORs match the link family's analogous cells placement for placement (B7b+ terminator debt) and
+none of which the base parser parsed clean. 33 cells whose class assertion describes a whole-value or decoration
+shape got cell assertions of their (correct) element-group tree; no new SILENT cell. Fixtures:
+`test/corpus/option_members_keyed_test.txt` (11 cases, four of them the former B7a GAP witnesses `empty`,
+`holes-mid`, `sep-after`, `trail`), `option_members_keyed_negative_test.txt`; probes
+`tools/alc_probe/cases/value-runs/b13-optionmembers-*.al` (all `--check` clean). Items 38 (resolved) and 65 (not:
+`Visible` is generic; a measured attempt is recorded there) were expected to fall out of this.
+
+Item 73 (`integer-list / sep-after`, recorded on main after this branch's base) is NOT changed by the keying: its
+representative is `OptionOrdinalValues = -1, #if X 0, #endif 1;` inside an arm, a generic property, read as an
+`option_member_list` of integers where flat parses give a `signed_integer_list` (the node type is the defect; the
+oracle pins it at TPL=1,X=1). Its "6" production sites are all `IncludedPermissionSets = ..., #if not CLEAN28
+"Satisfaction Survey - Read", #endif ...` in three System Application permission sets (BC28.1 and BCApps 29), whose
+option-list trees are right: 0 production sites hold the defective token sequence (an integer list with a group).
+The fix would be keying `OptionOrdinalValues` (`CommaSeparatedIdentifierOrLiteral`, shared with `ValuesAllowed`) or
+element groups in `signed_integer_list`; not attempted.
+
+Still open for OptionMembers: the bare-`;` arm (`#if X ; #else A; #endif`, X=0 GAP; X=1 is AL0153) and a
+group between two members without a separator (`A #if X B #endif C`), which parses, as in every strict list, and is
+the oracle's per configuration. The other nine shapes in the table below stay open.
 
 **Established:** 2026-10-06, B11. A run whose groups are fragments of ONE value, not alternative values, cannot be told from the
 generic union without prefix/suffix-compatible states over the whole `_property_value` (spec 3.1 step 5). These shapes are valid AL
 (alc accepts X defined; the X undefined configuration leaves `N = ;` and is rejected for some) and stay visible ERRORs. Every one
-is a case in `test/corpus/property_value_run_b13_gap_test.txt` (10 cases), pinned as an ERROR with its probe in
+is a case in `test/corpus/property_value_run_b13_gap_test.txt` (9 cases since the OptionMembers one moved to
+`option_members_keyed_test.txt`), pinned as an ERROR with its probe in
 `tools/alc_probe/cases/value-runs/`:
 
 | shape | probe |
@@ -1522,7 +1596,7 @@ is a case in `test/corpus/property_value_run_b13_gap_test.txt` (10 cases), pinne
 | ML pairs joined by `,` across groups | `b13-ml-pairs-comma.al` |
 | Namespaces pairs joined by `,` across groups | `b13-namespaces-pairs-comma.al` |
 | Caption `'a',` then `Locked = true` | `b13-caption-locked.al` |
-| comma-free `OptionMembers` alternatives, `;` after (`#if X A #endif #if not X B #endif ;`) | `b13-optionmembers-comma-free.al` |
+| ~~comma-free `OptionMembers` alternatives, `;` after (`#if X A #endif #if not X B #endif ;`)~~ RESOLVED 2026-11-08 (keyed) | `b13-optionmembers-comma-free.al` |
 | ML conditional terminator (`#if X ENU='a' #else ENU='b'; #endif #if X #if Y #endif ; #endif`) | `b13-ml-conditional-terminator.al` |
 
 Also not supported, outside the gap file:
@@ -1530,8 +1604,8 @@ Also not supported, outside the gap file:
   configuration (an empty ML or Namespaces value is valid; `bare-semi-arm-captionml.al`, `bare-semi-arm-namespaces.al`), and
   the grammar does not admit an arm holding only `;` (it ERRORs). Every other family rejects the active bare-`;` arm, so only
   ML and Namespaces are gaps.
-- **A `,` after a conditional member, outside the group.** `OptionMembers = #if X A #endif , B;` ERRORs; alc accepts both
-  configurations (`b13-optionmembers-trailing-after-comma.al`).
+- ~~**A `,` after a conditional member, outside the group.** `OptionMembers = #if X A #endif , B;` ERRORs; alc accepts both
+  configurations (`b13-optionmembers-trailing-after-comma.al`).~~ RESOLVED 2026-11-08 (keyed).
 
 The comma-free `OptionMembers` form is a spec 3.1 step-3 deviation: `OptionMembers` reaches the grammar through the generic
 `_property_value`, so without the property name the run cannot be told from the generic step-5 run. Keying `OptionMembers` by name
@@ -1545,12 +1619,21 @@ The arm-site shape of a nested group, a decoration, then `;` is NOT a gap: it pa
 invalid AL in every configuration (`C D` are two members without a separator). The structural over-acceptance comes from the
 entirely conditional `OptionMembers` form (spec 3.1 step 3). The oracle catches it: every configuration's flat parse ERRORs, so
 each is `reference-error:error`, never a silent pass (measured 2026-10-06; no fixture, 0 production sites). Keying `OptionMembers` by name (above) is where it would be fixed.
+**Fixed 2026-11-08 by the keying:** `C D` is an ERROR again (`option_members_keyed_negative_test.txt`, alc AL0104 in
+all four configurations, `b13-optionmembers-adjacent-members.al`).
 
 **Next step:** a generic prefix/suffix-compatible value state set, or per-family keying, whichever the state budget allows (D1 first).
 
 **Owner:** unassigned.
 
-## 38. An all-comma conditional `OptionMembers` run reads as a `tabledata_permission_list`
+## 38. An all-comma conditional `OptionMembers` run reads as a `tabledata_permission_list` — RESOLVED 2026-11-08 (B13 keying)
+
+**Resolved by item 37's keying (branch batch1/item37).** `OptionMembers` reaches only its own option-values rule, so the run is
+now an `option_member_list` of two `preproc_conditional_option_members` (each arm a blank slot). The fixture in
+`test/corpus/property_value_run_audit_test.txt` is renamed and pins the new tree; the oracle now validates all four
+configurations (`pass`, X=0,Y=0 through `list-value-empty`), so its four `negative` classifications in
+`tools/config_oracle/fixture-classes.tsv` are gone. The text is still invalid AL in every configuration (AL0153, semantic: no
+member); the tree no longer claims a permission list. Production sites: 0. The original record follows.
 
 **Established:** 2026-10-06, B11 precedence audit. `OptionMembers = #if X , #endif #if Y , #endif ;` parses as a
 `tabledata_permission_list` of two `preproc_conditional_permissions`. The reading is pre-existing (the base library gives the
@@ -1667,7 +1750,21 @@ trailing-separator and holes rules) is wrong for that family, which only matters
 
 **Owner:** unassigned.
 
-## 43. `; else` after a statement parses clean with `else` as an identifier statement (silent over-acceptance)
+## 43. `; else` after a statement parses clean with `else` as an identifier statement (silent over-acceptance) — PARTLY RESOLVED 2026-11-08 (the flat over-acceptance is fixed; the valid split form is item 74)
+
+**Resolution 2026-11-08 (branch `batch1/item43`).** `$._else_token` is in the `code_names` reserved set, the edit
+fix round 1 reverted. The recorded blocker is gone: the 6 B7a cells it named
+(`occ:preproc_split_if_then_begin:0.5.0.0@preproc_split_code_block_end#first-replace`, `..._else_shared:0.15.0.0@...`,
+each +comments, +not) already ERROR on main (`parser_has_error` true in every configuration of the committed evidence)
+since the #41 scanner check made a stray `end` a `MALFORMED_DIRECTIVE`, so the reservation cannot change them. Measured:
++0 states (parser.c +6,013 B); tree harness byte-identical on all four corpora (BC.History 15,358, DC 1,352, BC28.1 16,928,
+BCApps-29.0 36,716); B7a `run` over all 24,439 cells (alc 100% cache hits): 0 of 128,674 records change
+`parser_has_error` or oracle status, `assert --refresh` 0 flips, the matrix differs only in the parser.c hash. The three
+flat inputs ERROR and are deliberate negatives (`:error`) in `test/corpus/b7b3_orphan_else_overaccept_test.txt`. The
+valid split input of the I2 update below (`Bar #if X ; #endif else Baz`, alc accepts X=0) is no longer a silent wrong
+tree but a visible ERROR (`else` at the ERROR): a GAP, pinned by `test_else_after_a_semicolon_group_is_not_a_clean_tree`
+in `tools/config_oracle/tests/test_lowering_select.py`. Parsing it right (the `else` belongs to the if when the `;` that
+would end it is in a group) is the remaining open part, now item 74 (B12); 0 production sites.
 
 **Established:** 2026-10-07, B7b-0 review, observed with `tree-sitter parse` (not caused by B7b-0, no grammar change
 there). Flat `if C then I := 1 ; else I := 2;` parses with no ERROR: the `if_statement` ends at `I := 1`, then the
@@ -1701,8 +1798,8 @@ probe `tools/alc_probe/cases/b7b3/calls/bar-group-else-semi.al`). The split tree
 `Bar`, the group holds an `empty_statement`, and `else` and `Baz` follow as two `call_statement`s, so in the one
 configuration alc accepts the `else` is read as a call instead of the if's else. On main `else` was a bare
 `(identifier)`; since B7b-3 it is a `call_statement`, captured as `@function.call` and tagged as a call named `else`.
-The config oracle reports a discrepancy at X=0 (not laundered); `test_else_after_a_semicolon_group_stays_a_discrepancy`
-in `tools/config_oracle/tests/test_lowering_select.py` pins that, so no later rewrite can normalise it. 0 production sites.
+The config oracle reported a discrepancy at X=0 (not laundered); a test in `tools/config_oracle/tests/test_lowering_select.py`
+pinned that (since 2026-11-08 it pins the ERROR instead, see the resolution above). 0 production sites.
 The grammar fix belongs with the B12 split-block / `else` work above (the `else` must stay the if's when the `;` that
 would end the if is in a group).
 
@@ -2458,6 +2555,17 @@ the four-corpus delta at item 61's fix is 0.
 conditional (B11's `_option_members_open_conditional`; the comment there already states that rule for the
 witnessed form). Measure it against `docs/b11-precedence-audit.md`.
 
+**Tried and reverted 2026-11-08 (branch batch1/item37), measured.** Keying `OptionMembers` (item 37) does not touch
+this item: `Visible` is a generic property. The suggested fix was built: the opener's arms became a branch that ends
+in `,` (`_option_members_branch_ce`, right-recursive), with four conflicts entries renamed and two added; STATE_COUNT
++12 over the keyed grammar. Both probes then ERROR (the X=1 arm `Foo` / `and` is no longer an option member). It was
+**reverted** because it trades a tree that is right for every configuration alc accepts for an ERROR on input alc
+accepts: at X=0 (`Visible = Ok;`, the configuration that compiles) the old tree lowers to `Ok` through the oracle's
+`option-member-list-unwrap`, and the new one is an ERROR there. Correctness ranks a silent claim on a rejected
+configuration below a loud ERROR on an accepted one. The keyed `OptionMembers` list makes the same choice: a group
+between two members (`A #if X B #endif C`) parses, as in every strict list, and adjacency is the oracle's per
+configuration. Left open as recorded; 0 production sites.
+
 **Owner:** B13 (comma-free value runs), suggested.
 
 ## 66. A prefix whose `#else` is empty ERRORs; alc accepts both configurations (pre-existing, found by the small-correctness final review) — RESOLVED 2026-10-25, except two or more leading empty arms
@@ -2603,7 +2711,7 @@ with the `;` after `#endif` as the host's terminator; measure against the versio
 
 **Owner:** unassigned.
 
-## 70. No working alc probe for a `profileextension` (qualified `extends` unverified)
+## 70. `profileextension ... extends Namespace."Name"` ERRORs; alc accepts it (probed 2026-11-08)
 
 **Established:** 2026-11-08, issue #36. The probe `profile "BASE PROF" { RoleCenter = "My RC"; }` plus
 `profileextension ... extends "BASE PROF"` is rejected with AL0341 even by a plain name (control), so the probe
@@ -2611,7 +2719,18 @@ project itself is wrong and says nothing about the name. `profileextension`'s `b
 name-only when #36 widened the other extension kinds to `qualified_name` (and #34 to `integer`). Grammar comment at
 `_extension_without_id`.
 
-**Next step:** a profile probe alc builds by plain name (find what AL0341 asks for), then the qualified form.
+**alc verdict (2026-11-08, alc 18.0.41, branch `batch1/probes`): qualified `extends` is ACCEPTED.**
+AL0341 is "'Caption' property is missing": a `profile` requires `Caption`. With `Caption = 'Base';` added (and a
+`PageType = RoleCenter` page for `RoleCenter`), the plain-name control compiles, and so does
+`profileextension "EXT PROF" extends Contoso.Sales."BASE PROF"` inside `namespace Contoso.Sales;`. A wrong qualifier
+(`Contoso.Purchasing."BASE PROF"`) is rejected with AL0791 "The namespace 'Purchasing' is unknown", so alc resolves
+the qualifier rather than ignoring it. Probes: `tools/alc_probe/cases/item70-profileextension/` (`plain_name.al`,
+`qualified_name.al`, `wrong_namespace.al`). Today the parser ERRORs on the qualified form (`ERROR` over
+`Contoso.Sales.`, `base_object` is only the quoted name).
+
+**Next step:** alc accepts, so the grammar should parse it: widen `profileextension`'s `base_object` to
+`qualified_name` as #36 did for the other extension kinds (grammar comment at `_extension_without_id`), fixture from
+`qualified_name.al`.
 
 **Owner:** unassigned.
 
@@ -2647,10 +2766,33 @@ list: 9 SILENT cells, representative `occ:signed_integer_list:0.0.1.0.0@declarat
 (`tools/b7_audit/tests/test_silent.py`). The matrix's weight 6 is the number of production sites of the same shape
 CLASS (`preproc_conditional_option_members/sep-after`), not 6 confirmed wrong trees in production.
 
-**Next step:** read the representative's tree against its flat readings (`python -m tools.b7_audit assert --cell`),
-then check whether any of the 6 production sites actually has the defective token sequence.
+**Triage (2026-11-08, batch 1, with item 37).** The representative is `OptionOrdinalValues` (a generic property, so
+the item 37 keying of `OptionMembers` does not reach it): `-1, #if X 0, #endif 1` inside an arm reads as an
+`option_member_list` where the flat parses give `signed_integer_list`. All 6 "same-class" production sites are
+`IncludedPermissionSets ..., #if not CLEAN28 "Satisfaction Survey - ...", #endif ...` in the SystemApplicationRead /
+View and SystemTablesBasic permission sets (BC28.1, BCApps-29.0); their trees are correct, so **0 production sites
+hold the defective integer-list sequence**. A fix would key `OptionOrdinalValues` (alc value kind
+`CommaSeparatedIdentifierOrLiteral`, shared with `ValuesAllowed`) or give `signed_integer_list` element groups; not
+attempted.
+
+**Next step:** decide whether keying `OptionOrdinalValues` is worth it for 0 production sites.
 
 **Owner:** unassigned.
+
+## 74. An `else` after a `;` that only one `#if` arm supplies ERRORs; alc accepts the configuration without the `;`
+
+**Established:** 2026-11-08, split out of item 43. `if C then Bar #if X ; #endif else Baz;` (and its assignment twin):
+alc accepts X undefined (`if C then Bar else Baz;`) and rejects X defined (AL0110, orphaned else). Before item 43 the
+parser read `else` as a call statement, a silent wrong tree; item 43 reserved `else` in `code_names`, so it is now a
+visible ERROR at `else`. 0 production sites. Pinned by the `:error` witness
+`test/corpus/item_74_split_else_gap_test.txt` and the has_error pytest
+`test_else_after_a_semicolon_group_is_not_a_clean_tree` (tools/config_oracle/tests/test_lowering_select.py); both
+must flip when it parses.
+
+**Next step:** the `else` belongs to the if in the configuration whose arm has no `;`, so no single tree holds both
+readings: this is the configuration-dependent class of B12 (item 36). Decide the representation there first.
+
+**Owner:** unassigned (B12).
 
 ## Longer-lived proposals, tracked separately
 

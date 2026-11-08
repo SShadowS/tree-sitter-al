@@ -627,8 +627,10 @@ module.exports = grammar({
     // option member too. alc accepts the seven words as option members
     // (tools/alc_probe/cases/expression-statement/accept-option-member-operator-words.al),
     // so `option_member` has seven arms that take the tokens back as identifiers (+2 states).
+    // `else` (deferred item 43): an orphan `else` (`if C then Bar; else Baz;`, alc AL0110) read as a
+    // parenless call named `else` with no ERROR; reserved, it is an ERROR (+0 states, no production tree).
     code_names: $ => [$._and_token, $._or_token, $._xor_token, $._div_token,
-                      $._mod_token, $._in_token, $._not_token],
+                      $._mod_token, $._in_token, $._not_token, $._else_token],
   },
 
   extras: $ => [
@@ -670,6 +672,7 @@ module.exports = grammar({
     $._table_relation_property_name, // [17] `TableRelation` followed by = (B5)
     $._link_property_name,  // [18] one of the six compiler link-family names followed by = (B5b)
     $._preproc_open_before_else, // [19] #if of a directive-only group followed by `else` (issue #39)
+    $._option_members_property_name, // [20] `OptionMembers` followed by = (B13, deferred item 37)
   ],
 
   conflicts: $ => [
@@ -1023,6 +1026,28 @@ module.exports = grammar({
     [$._link_after_gap, $._empty_value_conditional],
     [$._link_tail_lead, $._empty_value_conditional],
     [$._link_after_lead, $.preproc_conditional_link_values],
+    // OptionMembers (B13, item 37): the link family's readings again, the list element
+    // group being _option_values_conditional. All generator-required.
+    [$._option_values_sequence_in, $._option_values_in_core],
+    [$._option_values_seq_step_nt, $._option_values_seq_step_last],
+    [$._option_values_arm_t, $._option_values_arm_nt, $._option_values_tail_10],
+    [$._option_values_arm_t, $._option_values_arm_nt, $._option_values_tail_lead],
+    [$._option_values_arm_nt, $._option_values_tail_10],
+    [$._option_values_arm_t, $._option_values_arm_nt, $._option_values_tail_lead, $._option_values_after_gap],
+    [$._option_values_group_t, $._option_values_group_nt, $._option_values_after_gap],
+    [$._option_values_group_nt, $._option_values_after_gap],
+    [$._option_values_tail_lead, $._option_values_after_gap],
+    // A group arm holding one member is a whole value's (the `;`-after group, each arm the
+    // flat value) or a list element group's, until the token after #endif.
+    [$._option_values_property_value, $.option_member],
+    [$._option_values_list, $._option_values_rest],
+    [$._option_values_lone, $.option_member],
+    [$._option_values_arm_t, $._option_values_arm_nt, $._option_values_group_nt, $._option_values_after_gap, $._empty_value_conditional],
+    [$._option_values_tail_lead, $._option_values_after_lead, $._empty_value_conditional, $._option_values_conditional],
+    [$._empty_value_conditional, $._option_values_conditional],
+    [$._option_values_after_gap, $._empty_value_conditional],
+    [$._option_values_tail_lead, $._empty_value_conditional],
+    [$._option_values_after_lead, $._option_values_conditional],
     // The keyed `;`-after families (ML, Namespaces, CalcFormula, TableRelation; B11 §3.1
     // steps 2 and 4): the same readings, one family each, listed by keyedRunConflicts
     // with their comments.
@@ -1719,6 +1744,29 @@ module.exports = grammar({
         field('value', $._link_in_core),
         ';'
       )),
+      // OptionMembers is keyed by NAME (B13, deferred item 37): alc parses its value with
+      // its own grammar (OPTIONMEMBERS -> OptionValues, ParseOptionValuesPropertyValue,
+      // tools/alc_facts/property-hosts.tsv; the only property of that kind). Under the
+      // generic name a comma-free run of conditional members could not be told from the
+      // generic step-5 run, and an all-`,` run read as a permission list (item 38). The
+      // arms are the link family's (a list whose element conditionals read an adjacent
+      // directive-only group; only an all-empty value is decorations).
+      seq(
+        field('name', alias($._option_members_property_name, $.property_name)),
+        '=',
+        optional(choice(
+          field('value', $._option_values_property_value),
+          prec.dynamic(1, repeat1($._value_decoration)),
+        )),
+        ';'
+      ),
+      prec(1, seq(
+        field('name', alias($._option_members_property_name, $.property_name)),
+        '=',
+        repeat($._value_decoration),
+        field('value', $._option_values_in_core),
+        ';'
+      )),
     ),
 
     // A keyed value is the family's list, or a whole-value #if whose arms are that
@@ -1955,6 +2003,13 @@ module.exports = grammar({
         '=',
         repeat($._value_decoration),
         field('value', $._link_in_core),
+      ),
+      // OptionMembers (B13): `;` inside the arms, as the link family.
+      seq(
+        field('name', alias($._option_members_property_name, $.property_name)),
+        '=',
+        repeat($._value_decoration),
+        field('value', $._option_values_in_core),
       ),
     )),
 
@@ -3137,6 +3192,72 @@ module.exports = grammar({
     // The leader of the entirely conditional list (option_member_list, B11): a #if with
     // an arm holding a `,` (every other present arm one member).
     _option_members_run_open: $ => witnessConditional($, $._option_members_branch_c, $.option_member),
+
+    // --- OptionMembers, keyed by name (B13, deferred item 37) ---
+    // The value a flat parse gives keeps its shape: one bare member is the leaf the generic
+    // value gave it (an identifier, quoted_identifier, ...; 146 production sites), anything
+    // else an option_member_list. A #if group may stand at any separator, hold members,
+    // blank slots (`,`) and nested groups, or replace a member: the list is a run of
+    // members, `,` and groups in which no two members are adjacent (`C D` stays an ERROR;
+    // `A #if X #endif B` is the oracle's per configuration, as in every strict list).
+    // Blank slots are kept (ordinals come from separator positions, see option_member_list),
+    // so the units are not strictListBody's `item (sep item)*`. A list that is ONE group is
+    // also the whole-value `;`-after group (each arm the flat value); that reading wins.
+    _option_values_property_value: $ => choice(
+      $.identifier,
+      $.quoted_identifier,
+      $.string_literal,
+      $.integer,
+      alias($._negative_integer, $.integer),
+      $.boolean,
+      $.keyword_identifier,
+      alias($._value_start_keyword_name, $.identifier),
+      alias($._option_values_list, $.option_member_list),
+      // prec.dynamic(1): a list that is ONE group reads the same text; the whole value wins
+      prec.dynamic(1, alias($._option_values_after_group, $.preproc_conditional_property_value)),
+    ),
+    ...valueRunRules('_option_values', $ => $._option_values_property_value, true),
+    ...afterGroupRules('_option_values', $ => $._option_values_property_value, true),
+    _option_values_list: $ => choice(
+      // a lone member whose flat reading is a one-member list (`OptionMembers = Internal;`)
+      alias($._option_values_lone, $.option_member),
+      seq($.option_member, $._option_values_more),
+      $._option_values_more,
+    ),
+    // the option_member kinds that are not one of the bare leaves above
+    _option_values_lone: $ => choice(
+      prec.dynamic(-2, seq('-', $.integer)),
+      alias($.tabledata_keyword, $.identifier),
+      $.local_keyword,
+      $.internal_keyword,
+      $.protected_keyword,
+      $.public_keyword,
+      alias($._and_token, $.identifier),
+      alias($._or_token, $.identifier),
+      alias($._xor_token, $.identifier),
+      alias($._div_token, $.identifier),
+      alias($._mod_token, $.identifier),
+      alias($._in_token, $.identifier),
+      alias($._not_token, $.identifier),
+    ),
+    // (separator member?)+ ; a separator is `,` or a group
+    _option_values_more: $ => repeat1(seq(
+      choice(',', $._option_values_group),
+      optional($.option_member),
+    )),
+    // a group's arm, and the list after a leading `,`: any non-empty run
+    _option_values_rest: $ => choice(
+      seq($.option_member, optional($._option_values_more)),
+      $._option_values_more,
+    ),
+    _option_values_group: $ => alias($._option_values_conditional, $.preproc_conditional_option_members),
+    _option_values_conditional: $ => seq(
+      $.preproc_if,
+      optional($._option_values_rest),
+      repeat(seq($.preproc_elif, optional($._option_values_rest))),
+      optional(seq($.preproc_else, optional($._option_values_rest))),
+      $.preproc_endif,
+    ),
 
     option_member: $ => choice(
       $.identifier,

@@ -1,0 +1,782 @@
+================================================================================
+B13 keyed OptionMembers: comma-free alternatives, `;` after the last #endif (was the B13 gap; alc b13-optionmembers-comma-free.al)
+================================================================================
+
+table 50100 T { fields { field(1; K; Option) {
+OptionMembers =
+#if X
+    A
+#endif
+#if not X
+    B
+#endif
+;
+} } }
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (table_declaration
+    (table_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (fields_section
+        (fields_keyword)
+        body: (fields_body
+          (field_declaration
+            (field_keyword)
+            id: (integer)
+            name: (identifier)
+            type: (type_specification
+              (option_type
+                (option_keyword)))
+            body: (declaration_body
+              (property
+                name: (property_name)
+                value: (option_member_list
+                  (preproc_conditional_option_members
+                    (preproc_if
+                      (preproc_open)
+                      condition: (identifier))
+                    (option_member
+                      (identifier))
+                    (preproc_endif
+                      (preproc_close)))
+                  (preproc_conditional_option_members
+                    (preproc_if
+                      (preproc_open)
+                      condition: (preproc_not_expression
+                        (identifier)))
+                    (option_member
+                      (identifier))
+                    (preproc_endif
+                      (preproc_close))))))))))))
+
+================================================================================
+B13 keyed OptionMembers: a conditional member, then `, B` outside the group (alc b13-optionmembers-trailing-after-comma.al)
+================================================================================
+
+table 50100 T { fields { field(1; K; Option) {
+OptionMembers =
+#if X
+    A
+#endif
+    , B;
+} } }
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (table_declaration
+    (table_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (fields_section
+        (fields_keyword)
+        body: (fields_body
+          (field_declaration
+            (field_keyword)
+            id: (integer)
+            name: (identifier)
+            type: (type_specification
+              (option_type
+                (option_keyword)))
+            body: (declaration_body
+              (property
+                name: (property_name)
+                value: (option_member_list
+                  (preproc_conditional_option_members
+                    (preproc_if
+                      (preproc_open)
+                      condition: (identifier))
+                    (option_member
+                      (identifier))
+                    (preproc_endif
+                      (preproc_close)))
+                  (option_member
+                    (identifier)))))))))))
+
+================================================================================
+B13 keyed OptionMembers: a group holding `, B` after the first member, `;` after it (alc b13-optionmembers-group-sep-before.al)
+================================================================================
+
+table 50100 T { fields { field(1; K; Option) {
+OptionMembers = A
+#if X
+    , B
+#endif
+    ;
+} } }
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (table_declaration
+    (table_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (fields_section
+        (fields_keyword)
+        body: (fields_body
+          (field_declaration
+            (field_keyword)
+            id: (integer)
+            name: (identifier)
+            type: (type_specification
+              (option_type
+                (option_keyword)))
+            body: (declaration_body
+              (property
+                name: (property_name)
+                value: (option_member_list
+                  (option_member
+                    (identifier))
+                  (preproc_conditional_option_members
+                    (preproc_if
+                      (preproc_open)
+                      condition: (identifier))
+                    (option_member
+                      (identifier))
+                    (preproc_endif
+                      (preproc_close))))))))))))
+
+================================================================================
+B13 keyed OptionMembers: a nested group inside a list element group (alc b13-optionmembers-nested.al)
+================================================================================
+
+table 50100 T { fields { field(1; K; Option) {
+OptionMembers = A,
+#if X
+    B,
+#if Y
+    C,
+#endif
+#endif
+    D;
+} } }
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (table_declaration
+    (table_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (fields_section
+        (fields_keyword)
+        body: (fields_body
+          (field_declaration
+            (field_keyword)
+            id: (integer)
+            name: (identifier)
+            type: (type_specification
+              (option_type
+                (option_keyword)))
+            body: (declaration_body
+              (property
+                name: (property_name)
+                value: (option_member_list
+                  (option_member
+                    (identifier))
+                  (preproc_conditional_option_members
+                    (preproc_if
+                      (preproc_open)
+                      condition: (identifier))
+                    (option_member
+                      (identifier))
+                    (preproc_conditional_option_members
+                      (preproc_if
+                        (preproc_open)
+                        condition: (identifier))
+                      (option_member
+                        (identifier))
+                      (preproc_endif
+                        (preproc_close)))
+                    (preproc_endif
+                      (preproc_close)))
+                  (option_member
+                    (identifier)))))))))))
+
+================================================================================
+B13 keyed OptionMembers: a directive-only group before the list is the list's own element group, as in the link family (alc b13-optionmembers-empty-group-before.al)
+================================================================================
+
+table 50100 T { fields { field(1; K; Option) {
+OptionMembers =
+#if X
+#endif
+    A, B;
+} } }
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (table_declaration
+    (table_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (fields_section
+        (fields_keyword)
+        body: (fields_body
+          (field_declaration
+            (field_keyword)
+            id: (integer)
+            name: (identifier)
+            type: (type_specification
+              (option_type
+                (option_keyword)))
+            body: (declaration_body
+              (property
+                name: (property_name)
+                value: (option_member_list
+                  (preproc_conditional_option_members
+                    (preproc_if
+                      (preproc_open)
+                      condition: (identifier))
+                    (preproc_endif
+                      (preproc_close)))
+                  (option_member
+                    (identifier))
+                  (option_member
+                    (identifier)))))))))))
+
+================================================================================
+B13 keyed OptionMembers: flat values keep the generic shapes (one bare member a leaf, a keyword member a one-member list, blank slots, any spelling of the name); `-1, 0` is an option list, no longer a signed_integer_list
+================================================================================
+
+table 50100 T
+{
+    fields
+    {
+        field(1; A; Option) { OptionMembers = Open; }
+        field(2; B; Option) { OptionMembers = " "; }
+        field(3; C; Option) { OptionMembers = " ",Open,"Released Order"; }
+        field(4; D; Option) { OptionMembers = Internal; }
+        field(5; E; Option) { OptionMembers = ,Sale,,"Total Sale"; }
+        field(6; F; Option) { OptionMembers = -1, 0; }
+        field(7; G; Option) { optionmembers = TableData,Table; }
+    }
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (table_declaration
+    (table_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (fields_section
+        (fields_keyword)
+        body: (fields_body
+          (field_declaration
+            (field_keyword)
+            id: (integer)
+            name: (identifier)
+            type: (type_specification
+              (option_type
+                (option_keyword)))
+            body: (declaration_body
+              (property
+                name: (property_name)
+                value: (identifier))))
+          (field_declaration
+            (field_keyword)
+            id: (integer)
+            name: (identifier)
+            type: (type_specification
+              (option_type
+                (option_keyword)))
+            body: (declaration_body
+              (property
+                name: (property_name)
+                value: (quoted_identifier))))
+          (field_declaration
+            (field_keyword)
+            id: (integer)
+            name: (identifier)
+            type: (type_specification
+              (option_type
+                (option_keyword)))
+            body: (declaration_body
+              (property
+                name: (property_name)
+                value: (option_member_list
+                  (option_member
+                    (quoted_identifier))
+                  (option_member
+                    (identifier))
+                  (option_member
+                    (quoted_identifier))))))
+          (field_declaration
+            (field_keyword)
+            id: (integer)
+            name: (identifier)
+            type: (type_specification
+              (option_type
+                (option_keyword)))
+            body: (declaration_body
+              (property
+                name: (property_name)
+                value: (option_member_list
+                  (option_member
+                    (internal_keyword))))))
+          (field_declaration
+            (field_keyword)
+            id: (integer)
+            name: (identifier)
+            type: (type_specification
+              (option_type
+                (option_keyword)))
+            body: (declaration_body
+              (property
+                name: (property_name)
+                value: (option_member_list
+                  (option_member
+                    (identifier))
+                  (option_member
+                    (quoted_identifier))))))
+          (field_declaration
+            (field_keyword)
+            id: (integer)
+            name: (identifier)
+            type: (type_specification
+              (option_type
+                (option_keyword)))
+            body: (declaration_body
+              (property
+                name: (property_name)
+                value: (option_member_list
+                  (option_member
+                    (integer))
+                  (option_member
+                    (integer))))))
+          (field_declaration
+            (field_keyword)
+            id: (integer)
+            name: (identifier)
+            type: (type_specification
+              (option_type
+                (option_keyword)))
+            body: (declaration_body
+              (property
+                name: (property_name)
+                value: (option_member_list
+                  (option_member
+                    (identifier))
+                  (option_member
+                    (identifier)))))))))))
+
+================================================================================
+B13 keyed OptionMembers: a report column, the compiler's second OptionValues host (alc b13-optionmembers-report-column.al)
+================================================================================
+
+table 50101 S { fields { field(1; N; Option) { OptionMembers = A,B; } } }
+report 50100 R
+{
+    dataset
+    {
+        dataitem(D; S)
+        {
+            column(C; N)
+            {
+                OptionMembers =
+#if X
+                    A,
+#endif
+                    B;
+            }
+        }
+    }
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (table_declaration
+    (table_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (fields_section
+        (fields_keyword)
+        body: (fields_body
+          (field_declaration
+            (field_keyword)
+            id: (integer)
+            name: (identifier)
+            type: (type_specification
+              (option_type
+                (option_keyword)))
+            body: (declaration_body
+              (property
+                name: (property_name)
+                value: (option_member_list
+                  (option_member
+                    (identifier))
+                  (option_member
+                    (identifier))))))))))
+  (report_declaration
+    (report_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (dataset_section
+        (dataset_keyword)
+        body: (dataset_body
+          (report_dataitem
+            (dataitem_keyword)
+            name: (identifier)
+            table_name: (identifier)
+            body: (report_body
+              (report_column
+                (column_keyword)
+                name: (identifier)
+                source: (identifier)
+                body: (declaration_body
+                  (property
+                    name: (property_name)
+                    value: (option_member_list
+                      (preproc_conditional_option_members
+                        (preproc_if
+                          (preproc_open)
+                          condition: (identifier))
+                        (option_member
+                          (identifier))
+                        (preproc_endif
+                          (preproc_close)))
+                      (option_member
+                        (identifier)))))))))))))
+
+================================================================================
+B13 keyed OptionMembers: an empty group mid-list inside an outer arm (was B7a GAP option-members / empty, representative occ:_option_members_branch_c:0.0@option_member_list#empty)
+================================================================================
+
+table 50100 T
+{
+    fields
+    {
+        field(4; O2; Option)
+        {
+            OptionMembers =
+#if TPL
+
+,
+A ,
+#if X
+#endif
+B
+,
+
+#endif
+#if not TPL
+            A,B,
+#endif
+            C;
+        }
+    }
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (table_declaration
+    (table_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (fields_section
+        (fields_keyword)
+        body: (fields_body
+          (field_declaration
+            (field_keyword)
+            id: (integer)
+            name: (identifier)
+            type: (type_specification
+              (option_type
+                (option_keyword)))
+            body: (declaration_body
+              (property
+                name: (property_name)
+                value: (option_member_list
+                  (preproc_conditional_option_members
+                    (preproc_if
+                      (preproc_open)
+                      condition: (identifier))
+                    (option_member
+                      (identifier))
+                    (preproc_conditional_option_members
+                      (preproc_if
+                        (preproc_open)
+                        condition: (identifier))
+                      (preproc_endif
+                        (preproc_close)))
+                    (option_member
+                      (identifier))
+                    (preproc_endif
+                      (preproc_close)))
+                  (preproc_conditional_option_members
+                    (preproc_if
+                      (preproc_open)
+                      condition: (preproc_not_expression
+                        (identifier)))
+                    (option_member
+                      (identifier))
+                    (option_member
+                      (identifier))
+                    (preproc_endif
+                      (preproc_close)))
+                  (option_member
+                    (identifier)))))))))))
+
+================================================================================
+B13 keyed OptionMembers: a blank slot in a group mid-list inside an outer arm (was B7a GAP option-members / holes-mid, representative occ:_option_members_branch_c:0.0@option_member_list#holes-mid)
+================================================================================
+
+table 50100 T
+{
+    fields
+    {
+        field(4; O2; Option)
+        {
+            OptionMembers =
+#if TPL
+
+,
+A ,
+#if X
+,
+#endif
+B
+,
+
+#endif
+#if not TPL
+            A,B,
+#endif
+            C;
+        }
+    }
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (table_declaration
+    (table_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (fields_section
+        (fields_keyword)
+        body: (fields_body
+          (field_declaration
+            (field_keyword)
+            id: (integer)
+            name: (identifier)
+            type: (type_specification
+              (option_type
+                (option_keyword)))
+            body: (declaration_body
+              (property
+                name: (property_name)
+                value: (option_member_list
+                  (preproc_conditional_option_members
+                    (preproc_if
+                      (preproc_open)
+                      condition: (identifier))
+                    (option_member
+                      (identifier))
+                    (preproc_conditional_option_members
+                      (preproc_if
+                        (preproc_open)
+                        condition: (identifier))
+                      (preproc_endif
+                        (preproc_close)))
+                    (option_member
+                      (identifier))
+                    (preproc_endif
+                      (preproc_close)))
+                  (preproc_conditional_option_members
+                    (preproc_if
+                      (preproc_open)
+                      condition: (preproc_not_expression
+                        (identifier)))
+                    (option_member
+                      (identifier))
+                    (option_member
+                      (identifier))
+                    (preproc_endif
+                      (preproc_close)))
+                  (option_member
+                    (identifier)))))))))))
+
+================================================================================
+B13 keyed OptionMembers: a group after a separator inside an outer arm (was B7a GAP option-members / sep-after, representative occ:_option_members_branch_c:0.0@option_member_list#sep-after)
+================================================================================
+
+table 50100 T
+{
+    fields
+    {
+        field(4; O2; Option)
+        {
+            OptionMembers =
+#if TPL
+
+,
+A ,
+#if X
+B ,
+#endif
+"D E"
+,
+
+#endif
+#if not TPL
+            A,B,
+#endif
+            C;
+        }
+    }
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (table_declaration
+    (table_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (fields_section
+        (fields_keyword)
+        body: (fields_body
+          (field_declaration
+            (field_keyword)
+            id: (integer)
+            name: (identifier)
+            type: (type_specification
+              (option_type
+                (option_keyword)))
+            body: (declaration_body
+              (property
+                name: (property_name)
+                value: (option_member_list
+                  (preproc_conditional_option_members
+                    (preproc_if
+                      (preproc_open)
+                      condition: (identifier))
+                    (option_member
+                      (identifier))
+                    (preproc_conditional_option_members
+                      (preproc_if
+                        (preproc_open)
+                        condition: (identifier))
+                      (option_member
+                        (identifier))
+                      (preproc_endif
+                        (preproc_close)))
+                    (option_member
+                      (quoted_identifier))
+                    (preproc_endif
+                      (preproc_close)))
+                  (preproc_conditional_option_members
+                    (preproc_if
+                      (preproc_open)
+                      condition: (preproc_not_expression
+                        (identifier)))
+                    (option_member
+                      (identifier))
+                    (option_member
+                      (identifier))
+                    (preproc_endif
+                      (preproc_close)))
+                  (option_member
+                    (identifier)))))))))))
+
+================================================================================
+B13 keyed OptionMembers: a member group before a separator inside an outer arm (was B7a GAP option-members / trail, representative occ:_option_members_branch_c:0.0@option_member_list#trail)
+================================================================================
+
+table 50100 T
+{
+    fields
+    {
+        field(4; O2; Option)
+        {
+            OptionMembers =
+#if TPL
+
+,
+A ,
+#if X
+B
+#endif
+,
+
+#endif
+#if not TPL
+            A,B,
+#endif
+            C;
+        }
+    }
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (table_declaration
+    (table_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (fields_section
+        (fields_keyword)
+        body: (fields_body
+          (field_declaration
+            (field_keyword)
+            id: (integer)
+            name: (identifier)
+            type: (type_specification
+              (option_type
+                (option_keyword)))
+            body: (declaration_body
+              (property
+                name: (property_name)
+                value: (option_member_list
+                  (preproc_conditional_option_members
+                    (preproc_if
+                      (preproc_open)
+                      condition: (identifier))
+                    (option_member
+                      (identifier))
+                    (preproc_conditional_option_members
+                      (preproc_if
+                        (preproc_open)
+                        condition: (identifier))
+                      (option_member
+                        (identifier))
+                      (preproc_endif
+                        (preproc_close)))
+                    (preproc_endif
+                      (preproc_close)))
+                  (preproc_conditional_option_members
+                    (preproc_if
+                      (preproc_open)
+                      condition: (preproc_not_expression
+                        (identifier)))
+                    (option_member
+                      (identifier))
+                    (option_member
+                      (identifier))
+                    (preproc_endif
+                      (preproc_close)))
+                  (option_member
+                    (identifier)))))))))))

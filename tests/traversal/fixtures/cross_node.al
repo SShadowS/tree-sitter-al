@@ -12,7 +12,7 @@ codeunit 50100 T
     local procedure Q(T: Text): Text
     begin
         exit(T);
-#endif
+#endif // c-endif
     end;
 
     procedure R()

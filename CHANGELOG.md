@@ -7,6 +7,40 @@ public API — a change to node structure or field names is a **major** bump.
 
 ## [Unreleased]
 
+### Fixed
+
+- **`OptionMembers` is keyed by name (deferred items 37, 38; roadmap B13). Tree-shape change for conditional
+  values only.** The scanner emits a keyed token for `OptionMembers` (the compiler's one `OptionValues` property,
+  on table fields and report columns), and its value is an option list that takes `#if` groups at any separator:
+  holding members, blank slots and nested groups, or replacing a member. Valid shapes that ERRORed now parse:
+  comma-free alternatives (`#if X A #endif #if not X B #endif ;`), a member group then `, B`, `A #if X , B #endif ;`,
+  nested groups. `C D` (two members with no separator) is an ERROR again (it parsed clean). An all-`,` run is an
+  `option_member_list`, no longer a `tabledata_permission_list` (item 38). A directive-only group next to the list is
+  now the list's own `preproc_conditional_option_members` (as in the link family), not a decoration.
+  `preproc_conditional_option_members` may now hold itself (`node-types.json`). Valid flat values keep their shapes,
+  and production trees are unchanged in all four corpora (70,354 files). Flat values alc REJECTS move: integer lists
+  (`OptionMembers = 1,2,3;`, `-1, 0;`) and `- 1` are now an `option_member_list` (alc AL0107), and `A + B` and
+  `Foo::Bar` are now ERRORs (alc AL0104). STATE_COUNT +756 (+2.66%), `parser.c` +2.59%.
+- **An orphan `else` is an ERROR (deferred item 43).** `else` is reserved where a statement name is read
+  (`code_names`), so `A; else B;` and `Bar #if X ; #endif else Baz` no longer parse clean with `else` as a call
+  statement. **Tree-shape change:** the valid split form (alc accepts it with `X` undefined) was a silent wrong tree
+  and is now a visible ERROR at `else`; parsing it is still open (deferred item 74). `OptionMembers = else,B;`
+  (alc AL0105) is now an ERROR as well. No production tree changes.
+- **Traversal helper: a trailing comment on an `#endif` line is no longer listed in a split
+  node's `SplitInfo.shared`** (deferred item 24). The same comment on an `#if`, `#elif` or
+  `#else` line was already excluded; all four directive lines are now treated alike, in
+  Python, JavaScript and Rust. No parse tree changes. Fixture: `tests/traversal/fixtures/cross_node.al`.
+
+### Corrections to earlier entries
+
+- **4.5.0 over-claimed the npm `exports` map.** It said the map "keeps every existing deep
+  path open" and called the package change "additive". It is not: under an `exports` map
+  Node does no extension or directory lookup, so a deep import must name the file,
+  extension included (`@sshadows/tree-sitter-al/grammar.js` resolves, `.../grammar` and
+  `.../traversal/index` do not). The exceptions are the
+  mapped entries `@sshadows/tree-sitter-al/bindings/node` and `@sshadows/tree-sitter-al/traversal`.
+  This was a breaking change for deep imports that relied on the lookup, shipped in 4.5.0.
+
 ## [4.6.0] — 2026-11-08
 
 **Eleven issues (#30–#36, #39–#42) and deferred item 67 are fixed: `#if` shapes that alc compiles and the parser

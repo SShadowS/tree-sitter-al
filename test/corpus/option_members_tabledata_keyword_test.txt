@@ -183,12 +183,11 @@ page 123 "Test Page"
 
 ================================================================================
 Malformed permission-like fragment under OptionMembers — recovery must not
-silently parse the whole thing as a valid construct. The `TableData Customer =
-R` fragment IS shaped exactly like a valid tabledata_permission (parse
-structure, not property name, decides the value shape — matches the
-`AccessByPermission = tabledata Customer = R` case above regardless of
-property name), so it parses clean; the dangling `, Foo` after it does not fit
-any `tabledata_permission_list` continuation and must surface as an ERROR
+silently parse the whole thing as a valid construct. Since B13 (deferred item
+37) OptionMembers is keyed by name and its value is only an option list, so
+`TableData` is the first member and `Customer = R` (no separator before it)
+is the ERROR; until then the fragment read as a tabledata_permission and the
+dangling `, Foo` was the ERROR
 ================================================================================
 
 table 50100 "Test Table"
@@ -223,10 +222,11 @@ table 50100 "Test Table"
             body: (declaration_body
               (property
                 name: (property_name)
-                value: (tabledata_permission_list
-                  (tabledata_permission
-                    (tabledata_keyword)
-                    table_name: (identifier)
-                    permission: (permission_type)))
-                (ERROR
-                  (identifier))))))))))
+                value: (option_member_list
+                  (option_member
+                    (identifier))
+                  (ERROR
+                    (identifier)
+                    (identifier))
+                  (option_member
+                    (identifier)))))))))))

@@ -84,3 +84,23 @@ not 6 confirmed wrong trees in production; that needs triage. Logged as item 73.
 ## Execution batches
 
 Worked in batches of independent items, each item in its own worktree (see the batch log at the end of this file).
+
+Mechanics: each item runs in its own git worktree with `TREE_SITTER_LIBDIR` and `TS_LOCK_DIR` pointed inside it (the
+CLI caches the compiled parser by grammar name, so without them parallel worktrees overwrite one another's `al.so`;
+`TREE_SITTER_LIBDIR` was verified to redirect it), the corpora symlinked, and the B7a alc cache hard-linked (`cp -al`)
+so a worktree's B7a run is warm. An independent reviewer per item tries to refute the implementer's report. Branches are
+merged and the gates re-run on the combined tree by the controller, never by the agents.
+
+### Batch 1 (2026-11-08)
+
+| item | result | review | merged |
+|---|---|---|---|
+| 43 | `else` reserved in `code_names`: the flat orphan `else` (alc rejects) is an ERROR; the valid split form went from a silent wrong tree to an ERROR (owner accepted the trade) and is split out as item 74. STATE_COUNT +0. | approve-with-notes | yes |
+| 37, 38 | `OptionMembers` keyed by name; conditional option lists parse (4,332 B7a records ERROR→clean, 0 the other way; option-members GAP 1,111→436). Flat values alc rejects change shape (listed in the CHANGELOG). STATE_COUNT +756 (+2.66%). Owner accepted on the evidence. | approve-with-notes | yes |
+| 65 | Not resolved: the measured fix (+12 states) ERRORs a configuration alc accepts; reverted and recorded. | — | — |
+| 73 | Triaged: 0 production sites hold the defective sequence; a fix would key `OptionOrdinalValues`. | — | — |
+| 24 | `SplitInfo.shared` excludes the `#endif` line in Python, JS and Rust; docs and the 4.5.0 exports-map correction. | approve-with-notes | yes |
+| 6 | alc accepts a doubled BOM; the grammar already treats U+FEFF as an extra. Closed, not a defect. | changes-needed (docs; fixed at merge) | yes |
+| 28 | alc accepts `Visible = Where;`; the grammar should parse it (open, next batch). | as above | yes |
+| 70 | alc accepts a qualified `profileextension` base; the grammar should parse it (open, next batch). | as above | yes |
+| 44 | Asked al-sem (via kraken coord, question `q-20261108T212902-ba39458a`) whether it needs these rejected. | — | pending |

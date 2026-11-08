@@ -135,8 +135,7 @@ function pair(doc, policy) {
       // The first byte after the newline ending the directive's line, or EOF. #if/#elif
       // nodes end after their newline and #else before it; every arm starts here, so a
       // trailing comment on any directive line is outside the arm (spec 3.3).
-      const nl = doc.text.indexOf('\n', Math.max(d.node.endIndex - 1, 0));
-      const lineEnd = doc.bytes[nl < 0 ? doc.text.length : nl + 1];
+      const lineEnd = lineEndOf(doc, d.node);
       arms.push({
         groupId: [doc.revision, ds[0].start],
         armId: arms.length,
@@ -149,6 +148,12 @@ function pair(doc, policy) {
   const byParent = new Map();
   for (const [pid, offs] of byParentOffsets) byParent.set(pid, [...offs].map((o) => byIf.get(o)));
   return { groups: [...byIf.values()], unpaired, byParent };
+}
+
+// The UTF-8 offset of the first byte after the newline ending the line `node` ends on, or EOF.
+function lineEndOf(doc, node) {
+  const nl = doc.text.indexOf('\n', Math.max(node.endIndex - 1, 0));
+  return doc.bytes[nl < 0 ? doc.text.length : nl + 1];
 }
 
 function groupsOf(node, doc) { return doc.byParent.get(node.id) || []; }
@@ -203,6 +208,8 @@ function splitInfo(node, doc, policy) {
   const ranges = groups.flatMap((g) => g.arms.map((a) => a.rawRange));
   // an arm's directive line, '#' to the arm start: a trailing comment there is the directive's
   for (const g of groups) for (const a of g.arms) ranges.push([a.directiveOffsets[0], a.rawRange[0]]);
+  // and the #endif line, '#' to its line end: spec 3.3 treats all four directive kinds alike
+  for (const g of groups) for (const d of g.directives) if (d.role === 'endif') ranges.push([d.start, lineEndOf(doc, d.node)]);
   const shared = [];
   for (const [field, child] of kids(node)) {
     if (child.isNamed && policy.cls(child.type) === 'directive') continue;

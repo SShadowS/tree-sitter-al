@@ -70,13 +70,16 @@ the policy does not cover.
 each with **every** arm as `ArmFragments`: the descriptor (group id, arm id,
 directive offsets, raw byte range) and the pieces inside that range in source order,
 with field names, anonymous tokens kept as tokens. `SplitInfo.shared` lists the
-node's own children outside every arm and outside every directive line.
+node's own children, except directive nodes, that do not lie wholly inside an arm or
+wholly on one directive line (`#` to the end of that line, for all four directive
+kinds). A child that spans a directive line, such as one holding a nested group, is
+shared.
 
 An arm's raw range starts at the first byte after the line terminator of its
 directive's line (LF or CRLF), or at the end of the file, for `#if`, `#elif`
-and `#else` alike. A trailing comment on a directive line (`#else // old API`)
-therefore belongs to the directive, never to the arm: it is not one of the arm's
-pieces, not in `shared`, and its visit has no arm path.
+and `#else` alike. A trailing comment on a directive line (`#else // old API`,
+and `#endif // old API` too) therefore belongs to the directive, never to the arm:
+it is not one of the arm's pieces, not in `shared`, and its visit has no arm path.
 
 ### Do not count twice
 
@@ -98,11 +101,12 @@ for v in traversal.walk(doc, policy):
                         collect(f.node, arm.descriptor)
     if v.node.id not in seen:
         seen.add(v.node.id)
-        collect(v.node, None)
+        collect(v.node, v.arms)     # the arm path: this piece may come before its SplitInfo
 ```
 
 One set for both paths matters: an arm can cross node boundaries, so a piece can be
-walked before the node whose `SplitInfo` lists it.
+walked before the node whose `SplitInfo` lists it. That is why the walk path passes
+`v.arms` and not `None`: a piece collected there first keeps its arm attribution.
 
 An arm can cross node boundaries: in `preproc_split_block_end_in_else` the `#else`
 arm closes one procedure and opens the next, and its pieces say so.

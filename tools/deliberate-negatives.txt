@@ -8,10 +8,13 @@
 # (tools/config_oracle/tests/test_has_error_sweep.py checks it).
 #
 # A `TableData Customer = R` fragment misplaced under OptionMembers is shaped
-# exactly like a valid tabledata_permission. Asserts recovery surfaces the
-# dangling remainder as an ERROR instead of silently accepting the whole
-# thing as a well-formed construct.
+# exactly like a valid tabledata_permission. Asserts recovery surfaces an
+# ERROR instead of silently accepting the whole thing as a well-formed
+# construct (since B13 OptionMembers is keyed: `Customer = R` is the ERROR).
 option_members_tabledata_keyword_test.txt
+# Keyed OptionMembers (B13, deferred item 37): two members with no separator
+# after conditional members are invalid AL in every configuration (AL0104).
+option_members_keyed_negative_test.txt
 # Asserts `#` + newline + `pragma` stays an ERROR: whitespace tolerance after
 # `#` is horizontal-only (`[ \t]*`), so a directive may not straddle a line
 # break and swallow the following source.
@@ -144,6 +147,9 @@ b7b3_case_separator_negative_test.txt
 # B7b-3 Task 8: the flat move header stays strict (spec 5.1): `T;` (parser policy, alc AL0319 semantic),
 # `T, B`, `T; B; C`, `T`, `()` (alc AL0104/AL0107/AL0198, tools/alc_probe/cases/b7b3/move/flat-*.al).
 b7b3_move_args_negative_test.txt
+# Deferred item 43: an orphan `else` (`; else`, `Bar` newline `else`) is an ERROR since `else` joined
+# `code_names` (alc AL0110, tools/alc_probe/cases/b7b3/calls/*-else-rejected.al).
+b7b3_orphan_else_overaccept_test.txt
 # B7a Task 10 (2026-10-07): one witness per (family, base placement, defect kind) group of the
 # separator/continuation audit (docs/b7-separator-continuation-matrix.md). GAP cases carry `:error`
 # (an error must exist; no recovery tree is pinned) on input alc accepts in the configurations it accepts;
@@ -217,3 +223,5 @@ b7b2_scope_gap_test.txt
 b7b2_crossing_gap_test.txt
 # Issue #34: alc rejects a permissionset extension extending by number (AL0653).
 extends_by_number_negative_test.txt
+# Deferred item 74: a GAP witness (alc accepts X undefined); its ERROR is the known gap, not a negative.
+item_74_split_else_gap_test.txt

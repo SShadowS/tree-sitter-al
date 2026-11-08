@@ -1,0 +1,34 @@
+================================================================================
+GAP (deferred item 74): an `else` after a `;` that only one arm supplies
+:error
+--
+alc accepts X undefined (`if C then Bar else Baz;`) and rejects X defined
+(AL0110, the `;` makes the else orphaned). Until deferred item 43 the parser read
+`else` as a call statement here, a silent wrong tree; since 43 reserved `else`
+it is a visible ERROR at `else`. Parsing it (the else belongs to the if in the
+configuration whose arm has no `;`) is open. When it parses, replace this
+witness with the tree, and drop the has_error pin in
+tools/config_oracle/tests/test_lowering_select.py.
+================================================================================
+codeunit 50100 C
+{
+    procedure P(C: Boolean)
+    begin
+        if C then
+            Bar()
+#if X
+        ;
+#endif
+        else
+            Baz();
+    end;
+
+    procedure Bar()
+    begin
+    end;
+
+    procedure Baz()
+    begin
+    end;
+}
+--------------------------------------------------------------------------------

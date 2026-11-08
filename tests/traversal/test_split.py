@@ -40,7 +40,8 @@ def test_one_node_can_hold_two_groups_in_source_order(T, policy, parse):
 
 
 def test_a_cross_node_arm_binds_pieces_beyond_the_node(T, policy, parse):
-    """cross_node.al: the #else arm closes P and opens Q; its #endif is inside Q."""
+    """cross_node.al: the #else arm closes P and opens Q; its #endif is inside Q.
+    `#endif // c-endif`: the comment is the directive's (spec 3.3), not shared."""
     doc = parse("cross_node.al")
     opener = visit(T, policy, doc, "preproc_split_block_end_in_else")
     closer = visit(T, policy, doc, "preproc_split_block_close_after_endif")

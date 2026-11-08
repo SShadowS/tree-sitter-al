@@ -100,7 +100,7 @@ def _expected(word: str, line: str) -> Expected:
 def parse_case(path: Path, name: str, text: str, *, check: bool) -> Case:
     case = Case(path, name, text)
     for line in text.splitlines():
-        s = line.strip()
+        s = line.lstrip("﻿").strip()         # read_text keeps a BOM; it is not part of the header (item 6)
         if not s.startswith("//"):
             break                                  # the header is the leading run of // lines
         m = _KEY.fullmatch(s)

@@ -367,55 +367,6 @@ Caption =
                           (preproc_close))))))))))))))
 
 ========================================================================
-B13 gap: comma-free OptionMembers alternatives, `;` after the last #endif -- valid AL, structure deferred (roadmap B13)
-========================================================================
-table 50100 T { fields { field(1; K; Option) {
-OptionMembers =
-#if X
-    A
-#endif
-#if not X
-    B
-#endif
-;
-} } }
-------------------------------------------------------------------------
-
-(source_file
-  (table_declaration
-    (table_keyword)
-    object_id: (integer)
-    object_name: (identifier)
-    body: (declaration_body
-      (fields_section
-        (fields_keyword)
-        body: (fields_body
-          (field_declaration
-            (field_keyword)
-            id: (integer)
-            name: (identifier)
-            type: (type_specification
-              (option_type
-                (option_keyword)))
-            body: (declaration_body
-              (property
-                name: (property_name)
-                value: (preproc_conditional_property_value
-                  (preproc_if
-                    (preproc_open)
-                    condition: (identifier))
-                  value: (identifier)
-                  (preproc_endif
-                    (preproc_close)))
-                (ERROR
-                  (preproc_if
-                    (preproc_open)
-                    condition: (preproc_not_expression
-                      (identifier)))
-                  (identifier)
-                  (UNEXPECTED 'i'))))))))))
-
-========================================================================
 B13 gap: CaptionML conditional terminator, `;` in the #else arm then a conditional `;` -- valid AL, structure deferred (roadmap B13)
 ========================================================================
 page 50100 P { layout { area(Content) { field(F; X) {

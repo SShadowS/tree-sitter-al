@@ -527,7 +527,7 @@ TableRelation =
                       (preproc_close))))))))))))
 
 ================================================================================
-B11 audit: prec.dynamic(-1) keeps the pre-B11 reading of an all-`,` conditional run (OptionMembers here is invalid AL in every configuration, alc AL0153; the permission-list reading is pre-existing, pinned to detect change, not endorsed)
+B11 audit: an all-`,` conditional OptionMembers run is an option_member_list since B13 keyed the name (deferred item 38; it read as a permission list before; invalid AL in every configuration, alc AL0153; pinned to detect change, not endorsed)
 ================================================================================
 
 table 50101 Cust { fields { field(1; "No."; Code[20]) { } field(2; Name; Text[30]) { } field(3; Amount; Decimal) { } field(4; Flag; Boolean) { } } }
@@ -599,14 +599,14 @@ OptionMembers =
             body: (declaration_body
               (property
                 name: (property_name)
-                value: (tabledata_permission_list
-                  (preproc_conditional_permissions
+                value: (option_member_list
+                  (preproc_conditional_option_members
                     (preproc_if
                       (preproc_open)
                       condition: (identifier))
                     (preproc_endif
                       (preproc_close)))
-                  (preproc_conditional_permissions
+                  (preproc_conditional_option_members
                     (preproc_if
                       (preproc_open)
                       condition: (identifier))

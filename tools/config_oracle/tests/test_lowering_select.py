@@ -364,9 +364,9 @@ def test_reading_active_reports_whether_the_if_arm_is_taken(al_parser, monkeypat
 
 # Deferred-work item 43 (final review I2): a parenless call or an assignment whose `;` sits in a
 # group, followed by `else`. alc accepts only X=0 (`if C then Bar else Baz;`; X=1 is AL0110, Phase 0
-# probe tools/alc_probe/cases/b7b3/calls/bar-group-else-semi.al). The split tree ends the if at the
-# body and reads `else` as a call_statement, wrong in the one valid configuration. The oracle must
-# keep reporting that as a discrepancy, so no later rewrite can launder it.
+# probe tools/alc_probe/cases/b7b3/calls/bar-group-else-semi.al). The split tree read `else` as a
+# call_statement, wrong in the one valid configuration, with no ERROR. Since `else` joined `code_names`
+# the orphan `else` is an ERROR in the split tree: a visible GAP, never again a silent wrong tree.
 ELSE_AFTER_SEMI_GROUP = [
     b"codeunit 1 T { trigger OnRun() begin if C then Bar\n#if X\n;\n#endif\nelse Baz; end; }",
     b"codeunit 1 T { trigger OnRun() begin if C then I := 1\n#if X\n;\n#endif\nelse I := 2; end; }",
@@ -374,6 +374,5 @@ ELSE_AFTER_SEMI_GROUP = [
 
 
 @pytest.mark.parametrize("src", ELSE_AFTER_SEMI_GROUP)
-def test_else_after_a_semicolon_group_stays_a_discrepancy(al_parser, src):
-    results = run_all(al_parser, src)
-    assert results[frozenset()], results    # X=0: alc's only accepted configuration
+def test_else_after_a_semicolon_group_is_not_a_clean_tree(al_parser, src):
+    assert al_parser.parse(src).root_node.has_error

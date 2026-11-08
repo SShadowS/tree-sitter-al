@@ -359,10 +359,17 @@ pub fn split_info<'t>(node: Node<'t>, doc: &Document<'t>, policy: &Policy) -> Op
         return None;
     }
     // Each arm, and its directive line ('#' to the arm start): a trailing comment there is the directive's.
-    let ranges: Vec<(usize, usize)> = groups
+    let mut ranges: Vec<(usize, usize)> = groups
         .iter()
         .flat_map(|g| g.arms.iter().flat_map(|a| [a.raw_range, (a.directive_offsets[0], a.raw_range.0)]))
         .collect();
+    // And the #endif line, '#' to its line end: spec 3.3 treats all four directive kinds alike.
+    ranges.extend(
+        groups
+            .iter()
+            .flat_map(|g| g.directives.iter().filter(|d| d.role == "endif"))
+            .map(|d| (d.start, line_end(doc.source, d.end))),
+    );
     let shared = kids(node)
         .into_iter()
         .filter(|(_, c)| !(c.is_named() && policy.class(c.kind()) == "directive"))

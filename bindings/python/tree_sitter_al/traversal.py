@@ -277,6 +277,8 @@ def split_info(node, document: Document, policy: Policy):
     ranges = [a.raw_range for g in groups for a in g.arms]
     # an arm's directive line, '#' to the arm start: a trailing comment there is the directive's
     ranges += [(a.directive_offsets[0], a.raw_range[0]) for g in groups for a in g.arms]
+    # and the #endif line, '#' to its line end: spec 3.3 treats all four directive kinds alike
+    ranges += [(d.start, _line_end(document.source, d.end)) for g in groups for d in g.directives if d.role == "endif"]
     shared = []
     for child, field in _kids(node):
         if child.is_named and policy.cls(child.type) == "directive":
