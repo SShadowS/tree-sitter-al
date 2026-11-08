@@ -1738085,7 +1738085,7 @@ TS_PUBLIC const TSLanguage *tree_sitter_al(void) {
     .max_reserved_word_set_size = 7,
     .metadata = {
       .major_version = 4,
-      .minor_version = 5,
+      .minor_version = 6,
       .patch_version = 0,
     },
   };
