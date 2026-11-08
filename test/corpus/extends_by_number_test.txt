@@ -1,0 +1,51 @@
+================================================================================
+Issue #34: an extension may name its base object by number
+--
+`tableextension 50102 "X" extends 50101` used to make the whole object a root
+ERROR: base_object took only a name. alc 18.0.41 accepts a number for the
+table, page, report and enum extensions (tools/alc_probe/cases/issue34/), and
+rejects it for a permissionset extension (AL0653,
+extends_by_number_negative_test.txt). The assertion is `base_object: (integer)`.
+================================================================================
+tableextension 50102 "Tab Ext" extends 50101
+{
+}
+
+pageextension 50104 "Page Ext" extends 50103
+{
+}
+
+reportextension 50108 "Report Ext" extends 50107
+{
+}
+
+enumextension 50106 "Enum Ext" extends 50105
+{
+}
+--------------------------------------------------------------------------------
+
+(source_file
+  (tableextension_declaration
+    (tableextension_keyword)
+    object_id: (integer)
+    object_name: (quoted_identifier)
+    (extends_keyword)
+    base_object: (integer))
+  (pageextension_declaration
+    (pageextension_keyword)
+    object_id: (integer)
+    object_name: (quoted_identifier)
+    (extends_keyword)
+    base_object: (integer))
+  (reportextension_declaration
+    (reportextension_keyword)
+    object_id: (integer)
+    object_name: (quoted_identifier)
+    (extends_keyword)
+    base_object: (integer))
+  (enumextension_declaration
+    (enumextension_keyword)
+    object_id: (integer)
+    object_name: (quoted_identifier)
+    (extends_keyword)
+    base_object: (integer)))

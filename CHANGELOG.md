@@ -7,6 +7,15 @@ public API — a change to node structure or field names is a **major** bump.
 
 ## [Unreleased]
 
+- **An extension may name its base object by number (issue #34).** `tableextension 50102 "X" extends 50101` made the
+  whole object a root ERROR. `base_object` now takes an `integer` for the table, page, report and enum extensions
+  (and the split-declaration header), which alc 18.0.41 accepts; it stays name-only for a permissionset extension,
+  which alc rejects (AL0653), and for a profile extension. `node-types.json`: `integer` added to those
+  `base_object` fields. STATE_COUNT +4.
+- **`preproc_split_procedure_preamble` exposes its shared `code_block` as `body` (issue #33)**, as
+  `preproc_split_procedure` does. **Tree-shape change** (a field label only): consumers reading the block as an
+  unlabelled child should read `body`.
+
 - **Chains of split blocks no longer hit tree-sitter's parse-version limit (issues #40, #41).** An if / else-if
   chain whose blocks each hold a block opened inside `#if` and closed after `#endif` (three blocks or more), or a
   whole `if … else begin … end;` inside `#if` (eight blocks or more), ERRORed over the whole procedure: one GLR

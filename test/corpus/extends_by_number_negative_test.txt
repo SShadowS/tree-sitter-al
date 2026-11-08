@@ -1,0 +1,13 @@
+================================================================================
+NEGATIVE: a permissionset extension may not name its base by number (AL0653)
+:error
+--
+Issue #34 lets table, page, report and enum extensions extend by number; alc
+18.0.41 rejects `permissionsetextension ... extends 50109` with AL0653 and
+accepts the same file extending by name
+(tools/alc_probe/cases/issue34/permissionsetextension.al and _name.al).
+================================================================================
+permissionsetextension 50110 "PS Ext" extends 50109
+{
+}
+--------------------------------------------------------------------------------

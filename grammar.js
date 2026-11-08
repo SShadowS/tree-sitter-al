@@ -516,6 +516,17 @@ function _object_without_id(keyword_name) {
   );
 }
 
+// Issue #34: the extensions whose base object may be named by its number (`extends 50101`).
+// alc 18.0.41 accepts it for these four and rejects it for permissionsetextension (AL0653);
+// tools/alc_probe/cases/issue34/.
+const EXTENDS_BY_NUMBER = ['tableextension', 'pageextension', 'reportextension', 'enumextension'];
+
+function _base_object($, keyword_name) {
+  return EXTENDS_BY_NUMBER.includes(keyword_name)
+    ? choice($._identifier_or_quoted, $.integer)
+    : $._identifier_or_quoted;
+}
+
 // Extension declaration helper — with object ID
 function _extension_with_id(keyword_name) {
   return $ => seq(
@@ -523,7 +534,7 @@ function _extension_with_id(keyword_name) {
     field('object_id', $.integer),
     field('object_name', $._identifier_or_quoted),
     $.extends_keyword,
-    field('base_object', $._identifier_or_quoted),
+    field('base_object', _base_object($, keyword_name)),
     $._declaration_body_block
   );
 }
@@ -1268,7 +1279,10 @@ module.exports = grammar({
       seq($.enum_keyword, field('object_id', $.integer), field('object_name', $._identifier_or_quoted), optional($.implements_clause)),
       seq(choice($.table_keyword, $.page_keyword, $.report_keyword, $.query_keyword, $.xmlport_keyword, $.permissionset_keyword),
         field('object_id', $.integer), field('object_name', $._identifier_or_quoted)),
-      seq(choice($.tableextension_keyword, $.pageextension_keyword, $.reportextension_keyword, $.enumextension_keyword, $.permissionsetextension_keyword),
+      seq(choice($.tableextension_keyword, $.pageextension_keyword, $.reportextension_keyword, $.enumextension_keyword),
+        field('object_id', $.integer), field('object_name', $._identifier_or_quoted), $.extends_keyword,
+        field('base_object', choice($._identifier_or_quoted, $.integer))),
+      seq($.permissionsetextension_keyword,
         field('object_id', $.integer), field('object_name', $._identifier_or_quoted), $.extends_keyword, field('base_object', $._identifier_or_quoted)),
       seq($.interface_keyword, field('object_name', $._identifier_or_quoted)),
     ),
@@ -4747,7 +4761,8 @@ module.exports = grammar({
       repeat(seq($.preproc_elif, $._procedure_preamble)),
       optional(seq($.preproc_else, $._procedure_preamble)),
       $.preproc_endif,
-      $.code_block,
+      // Issue #33: fielded like preproc_split_procedure's shared body.
+      field('body', $.code_block),
       optional(';'),
     )),
 

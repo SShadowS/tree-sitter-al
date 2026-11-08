@@ -5195,6 +5195,10 @@
             "named": true
           },
           {
+            "type": "integer",
+            "named": true
+          },
+          {
             "type": "quoted_identifier",
             "named": true
           }
@@ -10750,6 +10754,10 @@
         "types": [
           {
             "type": "identifier",
+            "named": true
+          },
+          {
+            "type": "integer",
             "named": true
           },
           {
@@ -17685,6 +17693,10 @@
             "named": true
           },
           {
+            "type": "integer",
+            "named": true
+          },
+          {
             "type": "quoted_identifier",
             "named": true
           }
@@ -21340,6 +21352,16 @@
     "type": "preproc_split_procedure_preamble",
     "named": true,
     "fields": {
+      "body": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "code_block",
+            "named": true
+          }
+        ]
+      },
       "modifier": {
         "multiple": true,
         "required": false,
@@ -21405,10 +21427,6 @@
       "types": [
         {
           "type": "attribute_item",
-          "named": true
-        },
-        {
-          "type": "code_block",
           "named": true
         },
         {
@@ -23995,6 +24013,10 @@
             "named": true
           },
           {
+            "type": "integer",
+            "named": true
+          },
+          {
             "type": "quoted_identifier",
             "named": true
           }
@@ -25203,6 +25225,10 @@
         "types": [
           {
             "type": "identifier",
+            "named": true
+          },
+          {
+            "type": "integer",
             "named": true
           },
           {

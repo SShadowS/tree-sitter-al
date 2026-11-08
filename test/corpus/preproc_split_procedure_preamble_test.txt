@@ -78,7 +78,7 @@ codeunit 1 T
                   reference: (quoted_identifier))))))
         (preproc_endif
           (preproc_close))
-        (code_block
+        body: (code_block
           (begin_keyword)
           body: (statement_block
             (if_statement
@@ -223,7 +223,7 @@ codeunit 1 T
                   reference: (quoted_identifier))))))
         (preproc_endif
           (preproc_close))
-        (code_block
+        body: (code_block
           (begin_keyword)
           body: (statement_block
             (call_expression
