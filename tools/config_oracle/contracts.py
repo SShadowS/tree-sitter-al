@@ -182,7 +182,13 @@ register("preproc_conditional", "branch-select", "tools.config_oracle.lowering.s
 register("preproc_conditional_statement", "branch-select",
          "tools.config_oracle.lowering.case_terminators.statement_group",
          # Issue #39: under if_statement it is a directive-only decoration before the `else`.
-         hosts={**_STATEMENT_HOSTS, "if_statement:<children>": "decoration"})
+         # Deferred item 67: also before any statement body (fieldedStatement and the
+         # then-branch): every host of a body slot gets the same decoration policy.
+         hosts={**_STATEMENT_HOSTS, **{f"{h}:<children>": "decoration" for h in (
+             "if_statement", "case_branch", "for_statement", "foreach_statement", "while_statement",
+             "with_statement", "preproc_guarded_statement", "preproc_split_case_branch",
+             "preproc_split_case_end_branch", "preproc_split_case_extended",
+             "preproc_split_if_else_statement", "preproc_split_if_statement")}})
 register("preproc_conditional_var_block", "branch-select", "tools.config_oracle.lowering.select.branch_select",
          hosts=_ROUTINE_TAIL_HOSTS)
 register("preproc_pragma_only", "branch-select", "tools.config_oracle.lowering.select.branch_select",

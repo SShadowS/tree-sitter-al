@@ -463,9 +463,10 @@ FIELD_INVARIANTS = [
                'preproc_if', 'preproc_elif', 'preproc_else', 'preproc_endif'}, required=True),
     inv('case_branch', '<children>', True, set(), 'FIXED',
         'unfielded: the split branch, pattern groups, the decoration before the own `;` (B7b-3), '
-        'and leading operand prefixes before a pattern (B7b-2 Phase C, spec 6.3); fields stay pattern+body',
+        'and leading operand prefixes before a pattern (B7b-2 Phase C, spec 6.3), the directive-only groups '
+        'before the body (deferred item 67); fields stay pattern+body',
         types={'preproc_split_case_branch', 'preproc_conditional_case_patterns', 'preproc_conditional_case',
-               'preproc_operand_prefix'},
+               'preproc_operand_prefix', 'preproc_conditional_statement'},
         required=False),
 
     # B7b-2 Phase C (spec 6.1, 6.2, 3.4): the widened fields. An operand group takes the field of

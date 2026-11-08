@@ -7,6 +7,13 @@ public API — a change to node structure or field names is a **major** bump.
 
 ## [Unreleased]
 
+- **An empty `#if` before a statement body no longer becomes the body (deferred item 67). Tree-shape change.**
+  `while R do #if F #endif A();` made the empty group the `body` and `A()` a sibling statement, and before a
+  then-branch the `else` became a call named `else`, all with no ERROR. Directive-only groups before any body
+  (then, else, loop, `with`, case branch) are now unfielded `preproc_conditional_statement` children of the host,
+  before the fielded body; `node-types.json` adds that child to the hosts. A group with content is still the body.
+  Also closes 6 B7a GAP cells (`case-branch / empty`). STATE_COUNT +471 (+1.7%), `parser.c` +3.1%.
+
 - **`#if` regions in routine headers and var sections (issues #30, #31, #32, #35).** Each shape below was ERROR
   nodes on input alc accepts in every configuration (probes in `tools/alc_probe/cases/issues30-36/`):
   - #30: `preproc_conditional_var` nests (an arm may hold another), as the other conditional kinds do.

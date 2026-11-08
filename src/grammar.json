@@ -26647,6 +26647,35 @@
                       "type": "SYMBOL",
                       "name": "_statement_inner"
                     }
+                  },
+                  {
+                    "type": "PREC_DYNAMIC",
+                    "value": 1,
+                    "content": {
+                      "type": "SEQ",
+                      "members": [
+                        {
+                          "type": "REPEAT1",
+                          "content": {
+                            "type": "ALIAS",
+                            "content": {
+                              "type": "SYMBOL",
+                              "name": "_stmt_empty_group"
+                            },
+                            "named": true,
+                            "value": "preproc_conditional_statement"
+                          }
+                        },
+                        {
+                          "type": "FIELD",
+                          "name": "continuation",
+                          "content": {
+                            "type": "SYMBOL",
+                            "name": "_statement_inner"
+                          }
+                        }
+                      ]
+                    }
                   }
                 ]
               },
@@ -29758,6 +29787,72 @@
                   ]
                 },
                 {
+                  "type": "PREC_DYNAMIC",
+                  "value": 1,
+                  "content": {
+                    "type": "SEQ",
+                    "members": [
+                      {
+                        "type": "REPEAT1",
+                        "content": {
+                          "type": "ALIAS",
+                          "content": {
+                            "type": "SYMBOL",
+                            "name": "_stmt_empty_group"
+                          },
+                          "named": true,
+                          "value": "preproc_conditional_statement"
+                        }
+                      },
+                      {
+                        "type": "FIELD",
+                        "name": "then_branch",
+                        "content": {
+                          "type": "SYMBOL",
+                          "name": "_statement_inner"
+                        }
+                      },
+                      {
+                        "type": "CHOICE",
+                        "members": [
+                          {
+                            "type": "PREC_DYNAMIC",
+                            "value": 30,
+                            "content": {
+                              "type": "SEQ",
+                              "members": [
+                                {
+                                  "type": "REPEAT",
+                                  "content": {
+                                    "type": "ALIAS",
+                                    "content": {
+                                      "type": "SYMBOL",
+                                      "name": "_stmt_else_decoration"
+                                    },
+                                    "named": true,
+                                    "value": "preproc_conditional_statement"
+                                  }
+                                },
+                                {
+                                  "type": "SYMBOL",
+                                  "name": "else_keyword"
+                                },
+                                {
+                                  "type": "SYMBOL",
+                                  "name": "_else_branch"
+                                }
+                              ]
+                            }
+                          },
+                          {
+                            "type": "BLANK"
+                          }
+                        ]
+                      }
+                    ]
+                  }
+                },
+                {
                   "type": "FIELD",
                   "name": "then_branch",
                   "content": {
@@ -29814,6 +29909,35 @@
             "type": "SYMBOL",
             "name": "_statement_inner"
           }
+        },
+        {
+          "type": "PREC_DYNAMIC",
+          "value": 1,
+          "content": {
+            "type": "SEQ",
+            "members": [
+              {
+                "type": "REPEAT1",
+                "content": {
+                  "type": "ALIAS",
+                  "content": {
+                    "type": "SYMBOL",
+                    "name": "_stmt_empty_group"
+                  },
+                  "named": true,
+                  "value": "preproc_conditional_statement"
+                }
+              },
+              {
+                "type": "FIELD",
+                "name": "then_branch",
+                "content": {
+                  "type": "SYMBOL",
+                  "name": "_statement_inner"
+                }
+              }
+            ]
+          }
         }
       ]
     },
@@ -29850,6 +29974,35 @@
                 "type": "SYMBOL",
                 "name": "_statement_inner"
               }
+            },
+            {
+              "type": "PREC_DYNAMIC",
+              "value": 1,
+              "content": {
+                "type": "SEQ",
+                "members": [
+                  {
+                    "type": "REPEAT1",
+                    "content": {
+                      "type": "ALIAS",
+                      "content": {
+                        "type": "SYMBOL",
+                        "name": "_stmt_empty_group"
+                      },
+                      "named": true,
+                      "value": "preproc_conditional_statement"
+                    }
+                  },
+                  {
+                    "type": "FIELD",
+                    "name": "else_branch",
+                    "content": {
+                      "type": "SYMBOL",
+                      "name": "_statement_inner"
+                    }
+                  }
+                ]
+              }
             }
           ]
         }
@@ -29873,6 +30026,35 @@
             "type": "SYMBOL",
             "name": "_statement_inner"
           }
+        },
+        {
+          "type": "PREC_DYNAMIC",
+          "value": 1,
+          "content": {
+            "type": "SEQ",
+            "members": [
+              {
+                "type": "REPEAT1",
+                "content": {
+                  "type": "ALIAS",
+                  "content": {
+                    "type": "SYMBOL",
+                    "name": "_stmt_empty_group"
+                  },
+                  "named": true,
+                  "value": "preproc_conditional_statement"
+                }
+              },
+              {
+                "type": "FIELD",
+                "name": "else_branch",
+                "content": {
+                  "type": "SYMBOL",
+                  "name": "_statement_inner"
+                }
+              }
+            ]
+          }
         }
       ]
     },
@@ -29893,6 +30075,35 @@
           "content": {
             "type": "SYMBOL",
             "name": "_statement_inner"
+          }
+        },
+        {
+          "type": "PREC_DYNAMIC",
+          "value": 1,
+          "content": {
+            "type": "SEQ",
+            "members": [
+              {
+                "type": "REPEAT1",
+                "content": {
+                  "type": "ALIAS",
+                  "content": {
+                    "type": "SYMBOL",
+                    "name": "_stmt_empty_group"
+                  },
+                  "named": true,
+                  "value": "preproc_conditional_statement"
+                }
+              },
+              {
+                "type": "FIELD",
+                "name": "body",
+                "content": {
+                  "type": "SYMBOL",
+                  "name": "_statement_inner"
+                }
+              }
+            ]
           }
         }
       ]
@@ -29930,6 +30141,35 @@
               "content": {
                 "type": "SYMBOL",
                 "name": "_statement_inner"
+              }
+            },
+            {
+              "type": "PREC_DYNAMIC",
+              "value": 1,
+              "content": {
+                "type": "SEQ",
+                "members": [
+                  {
+                    "type": "REPEAT1",
+                    "content": {
+                      "type": "ALIAS",
+                      "content": {
+                        "type": "SYMBOL",
+                        "name": "_stmt_empty_group"
+                      },
+                      "named": true,
+                      "value": "preproc_conditional_statement"
+                    }
+                  },
+                  {
+                    "type": "FIELD",
+                    "name": "body",
+                    "content": {
+                      "type": "SYMBOL",
+                      "name": "_statement_inner"
+                    }
+                  }
+                ]
               }
             }
           ]
@@ -38660,6 +38900,10 @@
     [
       "if_statement",
       "_then_branch"
+    ],
+    [
+      "_stmt_empty_group",
+      "preproc_conditional_statement"
     ],
     [
       "statement_block"

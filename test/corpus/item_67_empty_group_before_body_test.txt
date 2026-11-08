@@ -1,0 +1,346 @@
+================================================================================
+Item 67: an empty #if before a then-branch decorates it
+--
+The group used to BE the then_branch, with A() a sibling statement and `else`
+a call named `else`, no ERROR. A directive-only group before a body slot is
+now an unfielded preproc_conditional_statement before the fielded body. alc
+accepts F=0 and F=1 (tools/alc_probe/cases/item67/then.al).
+================================================================================
+codeunit 1 C
+{
+    procedure P(R: Boolean; I: Integer)
+    begin
+        if R then
+#if F
+#endif
+            A()
+        else
+            B();
+    end;
+}
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (procedure
+        (procedure_keyword)
+        name: (identifier)
+        parameters: (parameter_list
+          (parameter
+            name: (identifier)
+            type: (type_specification
+              (basic_type)))
+          (parameter
+            name: (identifier)
+            type: (type_specification
+              (basic_type))))
+        body: (code_block
+          (begin_keyword)
+          body: (statement_block
+            (if_statement
+              (if_keyword)
+              condition: (identifier)
+              (then_keyword)
+              (preproc_conditional_statement
+                (preproc_if
+                  (preproc_open)
+                  condition: (identifier))
+                (preproc_endif
+                  (preproc_close)))
+              then_branch: (call_expression
+                function: (identifier)
+                arguments: (argument_list))
+              (else_keyword)
+              else_branch: (call_expression
+                function: (identifier)
+                arguments: (argument_list))))
+          (end_keyword))))))
+
+================================================================================
+Item 67: an empty #if before an else-branch decorates it
+================================================================================
+codeunit 1 C
+{
+    procedure P(R: Boolean; I: Integer)
+    begin
+        if R then
+            A()
+        else
+#if F
+#endif
+            B();
+    end;
+}
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (procedure
+        (procedure_keyword)
+        name: (identifier)
+        parameters: (parameter_list
+          (parameter
+            name: (identifier)
+            type: (type_specification
+              (basic_type)))
+          (parameter
+            name: (identifier)
+            type: (type_specification
+              (basic_type))))
+        body: (code_block
+          (begin_keyword)
+          body: (statement_block
+            (if_statement
+              (if_keyword)
+              condition: (identifier)
+              (then_keyword)
+              then_branch: (call_expression
+                function: (identifier)
+                arguments: (argument_list))
+              (else_keyword)
+              (preproc_conditional_statement
+                (preproc_if
+                  (preproc_open)
+                  condition: (identifier))
+                (preproc_endif
+                  (preproc_close)))
+              else_branch: (call_expression
+                function: (identifier)
+                arguments: (argument_list))))
+          (end_keyword))))))
+
+================================================================================
+Item 67: an empty #if before a while body decorates it
+--
+Both readings complete here (the group as the body, A() a sibling), so the
+dynamic precedence of the decorated alternative decides, for the reading
+the preprocessor leaves.
+================================================================================
+codeunit 1 C
+{
+    procedure P(R: Boolean; I: Integer)
+    begin
+        while R do
+#if F
+#endif
+            A();
+    end;
+}
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (procedure
+        (procedure_keyword)
+        name: (identifier)
+        parameters: (parameter_list
+          (parameter
+            name: (identifier)
+            type: (type_specification
+              (basic_type)))
+          (parameter
+            name: (identifier)
+            type: (type_specification
+              (basic_type))))
+        body: (code_block
+          (begin_keyword)
+          body: (statement_block
+            (while_statement
+              (while_keyword)
+              condition: (identifier)
+              (do_keyword)
+              (preproc_conditional_statement
+                (preproc_if
+                  (preproc_open)
+                  condition: (identifier))
+                (preproc_endif
+                  (preproc_close)))
+              body: (call_expression
+                function: (identifier)
+                arguments: (argument_list))))
+          (end_keyword))))))
+
+================================================================================
+Item 67: an empty #if before a case-branch body decorates it
+--
+The former representative of the B7a GAP case-branch / empty (an ERROR before
+item 67).
+================================================================================
+codeunit 1 C
+{
+    procedure P(R: Boolean; I: Integer)
+    begin
+        case I of
+            1:
+#if F
+#endif
+                A();
+        end;
+    end;
+}
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (procedure
+        (procedure_keyword)
+        name: (identifier)
+        parameters: (parameter_list
+          (parameter
+            name: (identifier)
+            type: (type_specification
+              (basic_type)))
+          (parameter
+            name: (identifier)
+            type: (type_specification
+              (basic_type))))
+        body: (code_block
+          (begin_keyword)
+          body: (statement_block
+            (case_statement
+              (case_keyword)
+              expression: (identifier)
+              (of_keyword)
+              body: (case_body
+                (case_branch
+                  pattern: (integer)
+                  (preproc_conditional_statement
+                    (preproc_if
+                      (preproc_open)
+                      condition: (identifier))
+                    (preproc_endif
+                      (preproc_close)))
+                  body: (call_expression
+                    function: (identifier)
+                    arguments: (argument_list))))
+              (end_keyword)))
+          (end_keyword))))))
+
+================================================================================
+Item 67 guard: a group with content is still the body itself
+================================================================================
+codeunit 1 C
+{
+    procedure P(R: Boolean; I: Integer)
+    begin
+        while R do
+#if F
+            A()
+#else
+            B()
+#endif
+        ;
+    end;
+}
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (procedure
+        (procedure_keyword)
+        name: (identifier)
+        parameters: (parameter_list
+          (parameter
+            name: (identifier)
+            type: (type_specification
+              (basic_type)))
+          (parameter
+            name: (identifier)
+            type: (type_specification
+              (basic_type))))
+        body: (code_block
+          (begin_keyword)
+          body: (statement_block
+            (while_statement
+              (while_keyword)
+              condition: (identifier)
+              (do_keyword)
+              body: (preproc_conditional_statement
+                (preproc_if
+                  (preproc_open)
+                  condition: (identifier))
+                (call_expression
+                  function: (identifier)
+                  arguments: (argument_list))
+                (preproc_else)
+                (call_expression
+                  function: (identifier)
+                  arguments: (argument_list))
+                (preproc_endif
+                  (preproc_close)))))
+          (end_keyword))))))
+
+================================================================================
+Item 67 guard: an empty group followed by `;` is still the body
+--
+No statement follows the group to be decorated, so the group stays the
+then_branch and the `;` is the host's separator, as before item 67.
+================================================================================
+codeunit 1 C
+{
+    procedure P(R: Boolean; I: Integer)
+    begin
+        if R then
+#if F
+#endif
+        ;
+        A();
+    end;
+}
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (procedure
+        (procedure_keyword)
+        name: (identifier)
+        parameters: (parameter_list
+          (parameter
+            name: (identifier)
+            type: (type_specification
+              (basic_type)))
+          (parameter
+            name: (identifier)
+            type: (type_specification
+              (basic_type))))
+        body: (code_block
+          (begin_keyword)
+          body: (statement_block
+            (if_statement
+              (if_keyword)
+              condition: (identifier)
+              (then_keyword)
+              then_branch: (preproc_conditional_statement
+                (preproc_if
+                  (preproc_open)
+                  condition: (identifier))
+                (preproc_endif
+                  (preproc_close))))
+            (call_expression
+              function: (identifier)
+              arguments: (argument_list)))
+          (end_keyword))))))

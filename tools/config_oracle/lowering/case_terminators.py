@@ -148,9 +148,9 @@ def case_group(node, ctx) -> Lowered:
 
 
 def statement_group(node, ctx) -> Lowered:
-    """The one handler of preproc_conditional_statement: directly under if_statement it is the
-    directive-only decoration before the if's `else` (issue #39, grammar stmtEmptyGroup);
-    everywhere else the ordinary branch-select."""
+    """The one handler of preproc_conditional_statement: as an unfielded child of a statement host
+    it is a directive-only decoration, before an if's `else` (issue #39) or before a body
+    (deferred item 67), grammar stmtEmptyGroup; everywhere else the ordinary branch-select."""
     from tools.config_oracle.lowering.select import branch_select
     if ctx.policy(contracts.REGISTRY[node.kind], node) == "decoration":
         return decoration(node, ctx)

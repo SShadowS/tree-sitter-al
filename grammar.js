@@ -213,6 +213,11 @@ function fieldedStatement($, name) {
   return choice(
     field(name, $.empty_statement),
     field(name, $._statement_inner),
+    // Deferred item 67: directive-only groups BEFORE the body (`while R do #if F #endif A();`)
+    // decorate it; alc reads the statement after them as the body. An empty group can also
+    // read as the body itself with the statement a sibling, and both parses complete: the
+    // dynamic precedence picks the decoration, which is what the preprocessor leaves.
+    prec.dynamic(1, seq(repeat1(stmtEmptyGroup($)), field(name, $._statement_inner))),
   );
 }
 
@@ -1126,6 +1131,10 @@ module.exports = grammar({
     // replaces the old [$._then_branch, $._then_branch_no_semi] entry, which
     // was the same ambiguity between the pre-restructure then-branch variants.)
     [$.if_statement, $._then_branch],
+    // Deferred item 67: in a body slot a `#if` opens either a decoration before the body
+    // (_stmt_empty_group, every arm empty) or the body itself (preproc_conditional_statement);
+    // empty arms read the same, so only the content, or the token after #endif, decides.
+    [$._stmt_empty_group, $.preproc_conditional_statement],
     // statement_block vs preproc_split_code_block_end after the statement run
     [$.statement_block],
     // var_body run terminates at the following begin (no closing delimiter)
@@ -6540,6 +6549,13 @@ module.exports = grammar({
           // if in DC's CDCDocument.Table.al, four ifs deep).
           optional(prec.dynamic(30, seq(repeat(stmtElseDecoration($)), $.else_keyword, $._else_branch))),
         ),
+        // Deferred item 67: directive-only groups before the then-branch decorate it (as in
+        // fieldedStatement); the else part is the same optional, so the dangling else is unchanged.
+        prec.dynamic(1, seq(
+          repeat1(stmtEmptyGroup($)),
+          field('then_branch', $._statement_inner),
+          optional(prec.dynamic(30, seq(repeat(stmtElseDecoration($)), $.else_keyword, $._else_branch))),
+        )),
         field('then_branch', $.empty_statement),
       ),
     ))),

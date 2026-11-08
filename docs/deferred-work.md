@@ -2541,7 +2541,18 @@ empty-`#if`-first, unary, binary-right and page shapes (`--check`: 4 assignments
 
 **Owner:** B7b-2 follow-up.
 
-## 67. An empty `#if` right after `then`, `else` or `do` becomes the body; the real statement a sibling (silent)
+## 67. An empty `#if` right after `then`, `else` or `do` becomes the body; the real statement a sibling (silent) — RESOLVED 2026-11-08
+
+**Resolution.** Directive-only groups before any statement body now decorate it: a third alternative in
+`fieldedStatement` (`repeat1(stmtEmptyGroup) field(name, _statement_inner)`, `prec.dynamic(1)`) and the same in
+`if_statement`'s then-branch, with the declared conflict `[_stmt_empty_group, preproc_conditional_statement]`.
+alc accepts every probed shape in both configurations (`tools/alc_probe/cases/item67/`: then, else, while, case
+branch); the config oracle passes all 12 configurations of `test/corpus/item_67_empty_group_before_body_test.txt`,
+including two guards (a group with content is still the body; an empty group followed by `;` still is too). The
+oracle and traversal policy give every body host's `<children>` slot the `decoration` policy. No production site
+(four corpora unchanged). It also closed 6 B7a GAP cells of `case-branch / empty` (the family's former
+representative). Cost: STATE_COUNT +471 (+1.7%), `parser.c` +3.1%; a shared `_body_decorations` rule instead of
+the inline repeat raised a new conflict in case branches and was dropped.
 
 **Established:** 2026-11-08, while fixing issue #39 (tools/snip.py on 4.5.0 and on the fix branch, same trees).
 `if R then #if F #endif A() else B();`: `then_branch` is the empty `preproc_conditional_statement`, `A()` a sibling

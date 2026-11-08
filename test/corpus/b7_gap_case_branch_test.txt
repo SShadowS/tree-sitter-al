@@ -112,8 +112,12 @@ end;
 ------------------------------------------------------------------------
 
 ========================================================================
-B7a GAP: case-branch / empty (39 cells, verdict of the representative GAP); the parser ERRORs on configurations alc accepts; representative occ:case_branch:0.1@case_body#empty
+B7a GAP: case-branch / empty (12 cells, verdict of the representative GAP); the parser ERRORs on configurations alc accepts; representative occ:preproc_split_case_extended:0.3@case_body#empty
 :error
+--
+Deferred item 67 fixed the former representative (occ:case_branch:0.1, an empty group
+between `1 :` and the body); it is now a positive case in
+test/corpus/item_67_empty_group_before_body_test.txt.
 ========================================================================
 table 50100 T
 {
@@ -142,12 +146,18 @@ codeunit 50101 P
         Recs: array[2] of Record T;
     begin
 case I of
+#if TPL
+1:
+Bar();
 
-1 :
+2 :
 #if X
 #endif
 
 
+#else
+2, 1:
+#endif
 Bar();
 end;
     end;
