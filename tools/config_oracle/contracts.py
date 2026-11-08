@@ -174,8 +174,10 @@ register("preproc_split_end", "token-alias", "tools.config_oracle.lowering.selec
          hosts={"preproc_split_code_block_end:<children>": "any"}, alias_to="end_keyword")
 register("preproc_conditional", "branch-select", "tools.config_oracle.lowering.select.branch_select",
          hosts=_BODY_HOSTS)
-register("preproc_conditional_statement", "branch-select", "tools.config_oracle.lowering.select.branch_select",
-         hosts=_STATEMENT_HOSTS)
+register("preproc_conditional_statement", "branch-select",
+         "tools.config_oracle.lowering.case_terminators.statement_group",
+         # Issue #39: under if_statement it is a directive-only decoration before the `else`.
+         hosts={**_STATEMENT_HOSTS, "if_statement:<children>": "decoration"})
 register("preproc_conditional_var_block", "branch-select", "tools.config_oracle.lowering.select.branch_select",
          hosts=_ROUTINE_TAIL_HOSTS)
 register("preproc_pragma_only", "branch-select", "tools.config_oracle.lowering.select.branch_select",

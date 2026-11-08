@@ -31,6 +31,7 @@ enum TokenType {
   NAMESPACES_PROPERTY_NAME = 16,  // `Namespaces` followed by =
   TABLE_RELATION_PROPERTY_NAME = 17,  // `TableRelation` followed by = (B5)
   LINK_PROPERTY_NAME = 18,  // one of the six compiler link-family names followed by = (B5b)
+  PREPROC_OPEN_BEFORE_ELSE = 19,  // #if of a directive-only group followed by `else` (issue #39)
 };
 
 // Named so the static assertion below can test its width AND its signedness.
@@ -707,6 +708,48 @@ static bool var_name_list_follows(TSLexer *lexer) {
   }
 }
 
+// Issue #39: called just after an `#if` line's condition. True iff the group
+// this `#if` opens holds only directives (nested groups, #elif/#else, the
+// transparent extras, comments) and, after its #endif and any more such groups,
+// the next word is `else`. Such a group is the decoration before an
+// if_statement's else (PREPROC_OPEN_BEFORE_ELSE); every preproc_if accepts the
+// token, so elsewhere it parses exactly as PREPROC_OPEN. Every advance is
+// non-marking: the token already ends at the `#if` word.
+static bool empty_group_then_else(TSLexer *lexer) {
+  skip_to_eol(lexer);
+  uint32_t depth = 1;
+  while (true) {
+    if (!skip_whitespace_and_comments(lexer)) return false;
+    int32_t c = lexer->lookahead;
+    if (c != '#') {
+      if (depth != 0 || !is_identifier_start(c)) return false;
+      char word[8];
+      size_t len = 0;
+      return read_word_ci(lexer, word, sizeof(word), &len) && strcmp(word, "else") == 0;
+    }
+    lexer->advance(lexer, false);
+    while (lexer->lookahead == ' ' || lexer->lookahead == '\t') {
+      lexer->advance(lexer, false);
+    }
+    char word[12];
+    size_t len = 0;
+    if (!read_word_ci(lexer, word, sizeof(word), &len)) return false;
+    if (strcmp(word, "if") == 0) {
+      depth++;
+      if (!skip_condition_line(lexer)) return false;
+    } else if (strcmp(word, "elif") == 0) {
+      if (depth == 0 || !skip_condition_line(lexer)) return false;
+    } else if (strcmp(word, "else") == 0 || strcmp(word, "endif") == 0) {
+      if (depth == 0 || !directive_rest_is_blank(lexer)) return false;
+      if (strcmp(word, "endif") == 0) depth--;
+    } else if (word_in(TRANSPARENT_DIRECTIVES, word, false)) {
+      skip_to_eol(lexer);
+    } else {
+      return false;
+    }
+  }
+}
+
 bool tree_sitter_al_external_scanner_scan(
   void *payload,
   TSLexer *lexer,
@@ -728,7 +771,8 @@ bool tree_sitter_al_external_scanner_scan(
       valid_symbols[MALFORMED_DIRECTIVE] && valid_symbols[SCANNER_HOOK] &&
       valid_symbols[ML_PROPERTY_NAME] && valid_symbols[NAMESPACES_PROPERTY_NAME] &&
       valid_symbols[TABLE_RELATION_PROPERTY_NAME] &&
-      valid_symbols[LINK_PROPERTY_NAME]) {
+      valid_symbols[LINK_PROPERTY_NAME] &&
+      valid_symbols[PREPROC_OPEN_BEFORE_ELSE]) {
     return false;
   }
 
@@ -892,7 +936,8 @@ bool tree_sitter_al_external_scanner_scan(
         return false;
       }
       enum TokenType symbol = is_if ? PREPROC_OPEN : PREPROC_CLOSE;
-      if ((is_if || is_endif) && !valid_symbols[symbol]) {
+      bool before_else_valid = is_if && valid_symbols[PREPROC_OPEN_BEFORE_ELSE];
+      if ((is_if || is_endif) && !valid_symbols[symbol] && !before_else_valid) {
         // A real directive the parser cannot take here. Declining leaves it
         // to the internal lexer, which has no token for it: an ERROR, as
         // before B2.
@@ -919,6 +964,14 @@ bool tree_sitter_al_external_scanner_scan(
       if (is_elif || is_else) {
         return false;  // well-formed: the grammar's regex lexes it
       }
+      // Issue #39. The condition is read; the lookahead runs past it, and a
+      // false result leaves the plain PREPROC_OPEN (the token ends at `#if`).
+      if (before_else_valid && empty_group_then_else(lexer)) {
+        state->depth++;
+        lexer->result_symbol = PREPROC_OPEN_BEFORE_ELSE;
+        return true;
+      }
+      if (!valid_symbols[symbol]) return false;
       if (symbol == PREPROC_OPEN) state->depth++;
       if (symbol == PREPROC_CLOSE && state->depth > 0) state->depth--;
       lexer->result_symbol = symbol;

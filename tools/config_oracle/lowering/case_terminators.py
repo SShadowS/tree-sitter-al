@@ -109,13 +109,13 @@ def empty_body(orig, new, ctx):
 # --- decorations ----------------------------------------------------------------------------
 
 def _validate_decoration(node):
-    """Every arm of `node`, inactive ones included, holds only nested decorations."""
+    """Every arm of `node`, inactive ones included, holds only nested decorations (same kind)."""
     from tools.config_oracle.lowering.select import split_arms
     arms, _ = split_arms(node)
     for _, content in arms:
         for c in content:
-            if c.kind != GROUP:
-                raise LoweringError("contract-shape", c, f"{c.kind} in a case decoration (directive-only)")
+            if c.kind != node.kind:
+                raise LoweringError("contract-shape", c, f"{c.kind} in a {node.kind} decoration (directive-only)")
             _validate_decoration(c)
 
 
@@ -141,6 +141,16 @@ def decoration(node, ctx) -> Lowered:
 
 def case_group(node, ctx) -> Lowered:
     """The one handler of preproc_conditional_case, dispatched by the host slot's policy."""
+    from tools.config_oracle.lowering.select import branch_select
+    if ctx.policy(contracts.REGISTRY[node.kind], node) == "decoration":
+        return decoration(node, ctx)
+    return branch_select(node, ctx)
+
+
+def statement_group(node, ctx) -> Lowered:
+    """The one handler of preproc_conditional_statement: directly under if_statement it is the
+    directive-only decoration before the if's `else` (issue #39, grammar stmtEmptyGroup);
+    everywhere else the ordinary branch-select."""
     from tools.config_oracle.lowering.select import branch_select
     if ctx.policy(contracts.REGISTRY[node.kind], node) == "decoration":
         return decoration(node, ctx)

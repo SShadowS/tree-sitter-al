@@ -30,11 +30,12 @@ a `_Static_assert` on `sizeof(depth) >= 4` fails the build if anyone narrows it 
 | `LINK_PROPERTY_NAME` | one of the six link-family names (`LINK_PROPERTY_NAMES` in `scanner.c`: `ColumnFilter`, `DataItemLink`, `DataItemTableFilter`, `LinkFields`, `RunPageLink`, `SubPageLink`; never a suffix match) followed by `=` (B5b); same fallback | none |
 | `DIRECTIVE_EOL` | the ONE `\n` ending an `#if`/`#elif` line, after skipping every extra-space character except `\n` (`is_extra_space`), hidden `_directive_eol`. Valid alone, so it returns without trying other tokens. A lexical newline took the LAST of a run of blank lines; skipping only space and tab left `\f\n` a hidden MISSING | none |
 | `NEGATIVE_INTEGER` / `NEGATIVE_DECIMAL` | `-1` / `-1.5` as one signed literal, emitted only when `;` `,` `#` or EOF follows; otherwise declines and `-` is unary minus (as lexical tokens `Visible = -1 < X;` ERRORed). Only a `-` commits the block | none |
+| `PREPROC_OPEN_BEFORE_ELSE` | hidden `_preproc_open_before_else`, aliased to `preproc_open`: an `#if` whose group holds only directives, comments and extras and is followed (after any more such groups) by the word `else` (`empty_group_then_else`, issue #39). Every `preproc_if` accepts it, so it stands in exactly the lookahead sets `#if` does (a token valid only after an if's then-branch split every state below it: +9,206 states); only the if's else decoration requires it | depth++ |
 | `MALFORMED_DIRECTIVE` | hidden `_malformed_directive`, in **no** grammar rule, emitted unasked for a `#` line alc rejects (AL0621 not a directive, AL0631 trailing text or block comment, AL0629 incomplete condition): the line becomes an ERROR (B2/B3). A directive after code on the same line (AL0620) is NOT caught (deferred item 26) | none |
 | `SCANNER_HOOK` | hidden `_scanner_hook`, in `extras`, **never emitted**. Exists only so every parse state has a valid external token and calls the scanner, so the `#` gatekeeper sees every directive line. **Never return it** | none |
 
 **Scan function order:** error recovery guard → DIRECTIVE_EOL → NEGATIVE_INTEGER/DECIMAL → the
-`#` dispatch (PREPROC_OPEN / PREPROC_CLOSE / MALFORMED_DIRECTIVE) → VAR_ATTRIBUTE_OPEN →
+`#` dispatch (PREPROC_OPEN_BEFORE_ELSE / PREPROC_OPEN / PREPROC_CLOSE / MALFORMED_DIRECTIVE) → VAR_ATTRIBUTE_OPEN →
 identifier dispatch (`BEGIN_KEYWORD` | `PREPROC_SPLIT_BEGIN` | `END_KEYWORD` |
 `PREPROC_SPLIT_END` | the five keyed property names / `PROPERTY_NAME` | `CONTINUE_AS_IDENTIFIER`).
 `VAR_ATTRIBUTE_OPEN` runs **before** the identifier tokens: after them, a leading `b` was

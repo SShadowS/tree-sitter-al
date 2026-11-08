@@ -7,6 +7,18 @@ public API — a change to node structure or field names is a **major** bump.
 
 ## [Unreleased]
 
+- **An empty `#if` between a then-branch and `else` no longer ends the `if` (issue #39). Tree-shape change.**
+  `if C then A() #if X #endif else B();` used to end the `if_statement` at `A()`, with the group a sibling
+  statement and `else` a `call_statement` named `else`, and no ERROR. Directive-only groups (nested groups,
+  `#elif`/`#else`, comments and pragma lines only) before an `else` are now children of the `if_statement`,
+  between `then_branch` and `else_keyword`, each a `preproc_conditional_statement`; `node-types.json` adds that
+  child type to `if_statement`. The traversal policy gives the slot `if_statement:<children>` the policy
+  `decoration`, like the case-branch decorations. A new hidden external token, `_preproc_open_before_else`
+  (aliased to `preproc_open`), carries the decision: the scanner looks past the group's `#endif` for `else`. No
+  production file has the shape: all 70,354 trees of the four corpora are byte-identical to 4.5.0.
+  STATE_COUNT +453 (+1.7%), `parser.c` +3.1%; speed unchanged within an 8-round `ab` screen (DC 1.004, BC.History
+  0.979, both below its ~5% resolution).
+
 ## [4.5.0] — 2026-10-25
 
 **`#if` groups are now structural in expressions, statement terminators, strict lists and property values.**

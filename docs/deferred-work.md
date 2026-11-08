@@ -2541,6 +2541,24 @@ empty-`#if`-first, unary, binary-right and page shapes (`--check`: 4 assignments
 
 **Owner:** B7b-2 follow-up.
 
+## 67. An empty `#if` right after `then`, `else` or `do` becomes the body; the real statement a sibling (silent)
+
+**Established:** 2026-11-08, while fixing issue #39 (tools/snip.py on 4.5.0 and on the fix branch, same trees).
+`if R then #if F #endif A() else B();`: `then_branch` is the empty `preproc_conditional_statement`, `A()` a sibling
+statement and `else` a `call_statement`. `if R then A() else #if F #endif B();`: `else_branch` is the empty group
+and `B()` a sibling. `while R do #if F #endif A();`: `body` is the empty group. No ERROR in any of them, so only
+a tree check sees it. alc acceptance is not probed yet (the directives vanish under the preprocessor, so all three
+are expected to compile).
+
+**Not the #39 fix.** #39 is a group BETWEEN a branch and `else`; these are groups before a branch. A group that
+leads a body slot would be a decoration before the body (the same shape as #39's: `_preproc_open_before_else`
+decided by what follows `#endif`), or a body slot that skips leading directive-only groups. No production site was
+searched for.
+
+**Next step:** `tools/alc_probe` on the three shapes, a corpus count, then a spec.
+
+**Owner:** unassigned.
+
 ## Longer-lived proposals, tracked separately
 
 - [`python-bindings-modernization.md`](python-bindings-modernization.md) — the

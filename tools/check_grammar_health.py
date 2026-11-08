@@ -44,7 +44,9 @@ BASELINE_FILE = Path(__file__).resolve().parent.parent / '.grammar_baseline.json
 # `preproc_conditional_property_value` of shape 3 -- all nine re-verified against
 # grammar.js in the B5 final review as false positives; the 46th, B5b: the external
 # `_link_property_name` (shape 1, declared in `externals` at [18], used only through
-# `alias($._link_property_name, $.property_name)`), re-verified against grammar.js):
+# `alias($._link_property_name, $.property_name)`), re-verified against grammar.js; the
+# 47th, issue #39: the external `_preproc_open_before_else` (shape 1, declared in
+# `externals` at [19], used only through `alias(..., $.preproc_open)`)):
 #
 #   1. External scanner tokens (17) — declared in `externals: $ => [...]` and
 #      never given a `name: $ =>` rule body, e.g. `property_name`

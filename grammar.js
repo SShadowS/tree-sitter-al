@@ -204,6 +204,11 @@ function leadingPrefixed($, f) {
 // B7b-3 spec 4.2.2: the decoration before a case branch's own `;`.
 function caseEmptyGroup($) { return alias($._case_empty_group, $.preproc_conditional_case); }
 
+// Issue #39: the same decoration between an if's then-branch and its `else`.
+// The outer group opens with _preproc_open_before_else; nested ones with either.
+function stmtElseDecoration($) { return alias($._stmt_else_decoration, $.preproc_conditional_statement); }
+function stmtEmptyGroup($) { return alias($._stmt_empty_group, $.preproc_conditional_statement); }
+
 function fieldedStatement($, name) {
   return choice(
     field(name, $.empty_statement),
@@ -622,6 +627,7 @@ module.exports = grammar({
     $._namespaces_property_name, // [16] `Namespaces` followed by = (B4)
     $._table_relation_property_name, // [17] `TableRelation` followed by = (B5)
     $._link_property_name,  // [18] one of the six compiler link-family names followed by = (B5b)
+    $._preproc_open_before_else, // [19] #if of a directive-only group followed by `else` (issue #39)
   ],
 
   conflicts: $ => [
@@ -5186,7 +5192,13 @@ module.exports = grammar({
     // "Not supported (reviewed and explicitly rejected)", now resolved in
     // 3.2.0).
     preproc_if: $ => seq(
-      $.preproc_open,
+      // Issue #39: either opener. The scanner emits _preproc_open_before_else
+      // for a directive-only group followed by `else`; only an if's else
+      // decoration REQUIRES it (_preproc_if_before_else). Every preproc_if
+      // accepts it so that it stands in exactly the lookahead sets #if does:
+      // a token valid only after an if's then-branch split every state below
+      // it (+9,206 states, measured).
+      choice($.preproc_open, alias($._preproc_open_before_else, $.preproc_open)),
       field('condition', $._preproc_expression),
       // A directive is LINE-SCOPED. Without this terminator the condition ran
       // on into the next line: `#if FOO` followed by ` and b` produced
@@ -5646,6 +5658,34 @@ module.exports = grammar({
       $.preproc_split_begin,          // 'begin' at depth > 0, before #endif
       $._endif_stmts_end_guard,
     )),
+
+    // Issue #39: a directive-only group before an if's `else`, recursively
+    // all-absent; aliased to preproc_conditional_statement, which it is a
+    // subset of, so the node keeps one shape. The outer group's `#if` must be
+    // the scanner's _preproc_open_before_else (see preproc_if); nested groups
+    // are plain _stmt_empty_group.
+    _stmt_else_decoration: $ => seq(
+      alias($._preproc_if_before_else, $.preproc_if),
+      repeat(stmtEmptyGroup($)),
+      repeat(seq($.preproc_elif, repeat(stmtEmptyGroup($)))),
+      optional(seq($.preproc_else, repeat(stmtEmptyGroup($)))),
+      $.preproc_endif,
+    ),
+
+    // preproc_if with only the #39 opener; the same field and terminator.
+    _preproc_if_before_else: $ => seq(
+      alias($._preproc_open_before_else, $.preproc_open),
+      field('condition', $._preproc_expression),
+      $._directive_eol,
+    ),
+
+    _stmt_empty_group: $ => seq(
+      $.preproc_if,
+      repeat(stmtEmptyGroup($)),
+      repeat(seq($.preproc_elif, repeat(stmtEmptyGroup($)))),
+      optional(seq($.preproc_else, repeat(stmtEmptyGroup($)))),
+      $.preproc_endif,
+    ),
 
     // Preprocessor conditionals in statements context
     preproc_conditional_statement: $ => prec.right(seq(
@@ -6378,7 +6418,18 @@ module.exports = grammar({
       choice(
         seq(
           field('then_branch', $._statement_inner),
-          optional(prec.dynamic(30, seq($.else_keyword, $._else_branch))),
+          // Issue #39: directive-only groups may stand before the `else` (alc
+          // accepts every configuration); without them the if ended at the
+          // group and `else` parsed as a call, with no ERROR. Only the token
+          // after `#endif` says whether such a group is this decoration or a
+          // sibling statement, so the SCANNER says it: the decoration's `#if`
+          // is _preproc_open_before_else (lookahead past #endif to `else`), and
+          // prec.right shifts that token here with no conflict, while a plain
+          // #if reduces the if as before. Measured and rejected: a declared
+          // conflict needs this rule without prec.right, and then the dangling
+          // else is a conflict too (+887 states, and the else went to an outer
+          // if in DC's CDCDocument.Table.al, four ifs deep).
+          optional(prec.dynamic(30, seq(repeat(stmtElseDecoration($)), $.else_keyword, $._else_branch))),
         ),
         field('then_branch', $.empty_statement),
       ),

@@ -25732,8 +25732,22 @@
       "type": "SEQ",
       "members": [
         {
-          "type": "SYMBOL",
-          "name": "preproc_open"
+          "type": "CHOICE",
+          "members": [
+            {
+              "type": "SYMBOL",
+              "name": "preproc_open"
+            },
+            {
+              "type": "ALIAS",
+              "content": {
+                "type": "SYMBOL",
+                "name": "_preproc_open_before_else"
+              },
+              "named": true,
+              "value": "preproc_open"
+            }
+          ]
         },
         {
           "type": "FIELD",
@@ -27106,6 +27120,193 @@
           }
         ]
       }
+    },
+    "_stmt_else_decoration": {
+      "type": "SEQ",
+      "members": [
+        {
+          "type": "ALIAS",
+          "content": {
+            "type": "SYMBOL",
+            "name": "_preproc_if_before_else"
+          },
+          "named": true,
+          "value": "preproc_if"
+        },
+        {
+          "type": "REPEAT",
+          "content": {
+            "type": "ALIAS",
+            "content": {
+              "type": "SYMBOL",
+              "name": "_stmt_empty_group"
+            },
+            "named": true,
+            "value": "preproc_conditional_statement"
+          }
+        },
+        {
+          "type": "REPEAT",
+          "content": {
+            "type": "SEQ",
+            "members": [
+              {
+                "type": "SYMBOL",
+                "name": "preproc_elif"
+              },
+              {
+                "type": "REPEAT",
+                "content": {
+                  "type": "ALIAS",
+                  "content": {
+                    "type": "SYMBOL",
+                    "name": "_stmt_empty_group"
+                  },
+                  "named": true,
+                  "value": "preproc_conditional_statement"
+                }
+              }
+            ]
+          }
+        },
+        {
+          "type": "CHOICE",
+          "members": [
+            {
+              "type": "SEQ",
+              "members": [
+                {
+                  "type": "SYMBOL",
+                  "name": "preproc_else"
+                },
+                {
+                  "type": "REPEAT",
+                  "content": {
+                    "type": "ALIAS",
+                    "content": {
+                      "type": "SYMBOL",
+                      "name": "_stmt_empty_group"
+                    },
+                    "named": true,
+                    "value": "preproc_conditional_statement"
+                  }
+                }
+              ]
+            },
+            {
+              "type": "BLANK"
+            }
+          ]
+        },
+        {
+          "type": "SYMBOL",
+          "name": "preproc_endif"
+        }
+      ]
+    },
+    "_preproc_if_before_else": {
+      "type": "SEQ",
+      "members": [
+        {
+          "type": "ALIAS",
+          "content": {
+            "type": "SYMBOL",
+            "name": "_preproc_open_before_else"
+          },
+          "named": true,
+          "value": "preproc_open"
+        },
+        {
+          "type": "FIELD",
+          "name": "condition",
+          "content": {
+            "type": "SYMBOL",
+            "name": "_preproc_expression"
+          }
+        },
+        {
+          "type": "SYMBOL",
+          "name": "_directive_eol"
+        }
+      ]
+    },
+    "_stmt_empty_group": {
+      "type": "SEQ",
+      "members": [
+        {
+          "type": "SYMBOL",
+          "name": "preproc_if"
+        },
+        {
+          "type": "REPEAT",
+          "content": {
+            "type": "ALIAS",
+            "content": {
+              "type": "SYMBOL",
+              "name": "_stmt_empty_group"
+            },
+            "named": true,
+            "value": "preproc_conditional_statement"
+          }
+        },
+        {
+          "type": "REPEAT",
+          "content": {
+            "type": "SEQ",
+            "members": [
+              {
+                "type": "SYMBOL",
+                "name": "preproc_elif"
+              },
+              {
+                "type": "REPEAT",
+                "content": {
+                  "type": "ALIAS",
+                  "content": {
+                    "type": "SYMBOL",
+                    "name": "_stmt_empty_group"
+                  },
+                  "named": true,
+                  "value": "preproc_conditional_statement"
+                }
+              }
+            ]
+          }
+        },
+        {
+          "type": "CHOICE",
+          "members": [
+            {
+              "type": "SEQ",
+              "members": [
+                {
+                  "type": "SYMBOL",
+                  "name": "preproc_else"
+                },
+                {
+                  "type": "REPEAT",
+                  "content": {
+                    "type": "ALIAS",
+                    "content": {
+                      "type": "SYMBOL",
+                      "name": "_stmt_empty_group"
+                    },
+                    "named": true,
+                    "value": "preproc_conditional_statement"
+                  }
+                }
+              ]
+            },
+            {
+              "type": "BLANK"
+            }
+          ]
+        },
+        {
+          "type": "SYMBOL",
+          "name": "preproc_endif"
+        }
+      ]
     },
     "preproc_conditional_statement": {
       "type": "PREC_RIGHT",
@@ -29012,6 +29213,18 @@
                           "content": {
                             "type": "SEQ",
                             "members": [
+                              {
+                                "type": "REPEAT",
+                                "content": {
+                                  "type": "ALIAS",
+                                  "content": {
+                                    "type": "SYMBOL",
+                                    "name": "_stmt_else_decoration"
+                                  },
+                                  "named": true,
+                                  "value": "preproc_conditional_statement"
+                                }
+                              },
                               {
                                 "type": "SYMBOL",
                                 "name": "else_keyword"
@@ -38067,6 +38280,10 @@
     {
       "type": "SYMBOL",
       "name": "_link_property_name"
+    },
+    {
+      "type": "SYMBOL",
+      "name": "_preproc_open_before_else"
     }
   ],
   "inline": [

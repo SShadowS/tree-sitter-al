@@ -1,0 +1,316 @@
+================================================================================
+Issue #39: an empty #if between a then-branch and else stays in the if
+--
+The issue's repro. Before the fix the if_statement ended at First(), the
+group was a sibling statement and `else` a call_statement named `else`, with
+no ERROR. alc accepts FEATURE=0 and FEATURE=1, split and flat
+(tools/alc_probe). The assertion is the else_keyword and else_branch: ON the
+if_statement, with the group between them.
+================================================================================
+codeunit 50100 Demo
+{
+    procedure Run(Ready: Boolean)
+    begin
+        if Ready then
+            First()
+#if FEATURE
+#endif
+        else
+            Second();
+    end;
+}
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (procedure
+        (procedure_keyword)
+        name: (identifier)
+        parameters: (parameter_list
+          (parameter
+            name: (identifier)
+            type: (type_specification
+              (basic_type))))
+        body: (code_block
+          (begin_keyword)
+          body: (statement_block
+            (if_statement
+              (if_keyword)
+              condition: (identifier)
+              (then_keyword)
+              then_branch: (call_expression
+                function: (identifier)
+                arguments: (argument_list))
+              (preproc_conditional_statement
+                (preproc_if
+                  (preproc_open)
+                  condition: (identifier))
+                (preproc_endif
+                  (preproc_close)))
+              (else_keyword)
+              else_branch: (call_expression
+                function: (identifier)
+                arguments: (argument_list))))
+          (end_keyword))))))
+
+================================================================================
+Issue #39: a group holding only a comment before else
+================================================================================
+codeunit 50100 Demo
+{
+    procedure Run(Ready: Boolean)
+    begin
+        if Ready then
+            First()
+#if FEATURE
+            // only a comment
+#endif
+        else
+            Second();
+    end;
+}
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (procedure
+        (procedure_keyword)
+        name: (identifier)
+        parameters: (parameter_list
+          (parameter
+            name: (identifier)
+            type: (type_specification
+              (basic_type))))
+        body: (code_block
+          (begin_keyword)
+          body: (statement_block
+            (if_statement
+              (if_keyword)
+              condition: (identifier)
+              (then_keyword)
+              then_branch: (call_expression
+                function: (identifier)
+                arguments: (argument_list))
+              (preproc_conditional_statement
+                (preproc_if
+                  (preproc_open)
+                  condition: (identifier))
+                (comment)
+                (preproc_endif
+                  (preproc_close)))
+              (else_keyword)
+              else_branch: (call_expression
+                function: (identifier)
+                arguments: (argument_list))))
+          (end_keyword))))))
+
+================================================================================
+Issue #39: after begin-end, a multi-arm nested group and a second group before else
+--
+Emptiness is recursive: an arm holding only an empty nested group is still
+empty. Each directive-only group is its own preproc_conditional_statement.
+================================================================================
+codeunit 50100 Demo
+{
+    procedure Run(Ready: Boolean)
+    begin
+        if Ready then begin
+            First();
+        end
+#if FEATURE
+#elif OTHER
+#else
+#if NESTED
+#endif
+#endif
+#if SECOND
+#endif
+        else
+            Second();
+    end;
+}
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (procedure
+        (procedure_keyword)
+        name: (identifier)
+        parameters: (parameter_list
+          (parameter
+            name: (identifier)
+            type: (type_specification
+              (basic_type))))
+        body: (code_block
+          (begin_keyword)
+          body: (statement_block
+            (if_statement
+              (if_keyword)
+              condition: (identifier)
+              (then_keyword)
+              then_branch: (code_block
+                (begin_keyword)
+                body: (statement_block
+                  (call_expression
+                    function: (identifier)
+                    arguments: (argument_list)))
+                (end_keyword))
+              (preproc_conditional_statement
+                (preproc_if
+                  (preproc_open)
+                  condition: (identifier))
+                (preproc_elif
+                  condition: (identifier))
+                (preproc_else)
+                (preproc_conditional_statement
+                  (preproc_if
+                    (preproc_open)
+                    condition: (identifier))
+                  (preproc_endif
+                    (preproc_close)))
+                (preproc_endif
+                  (preproc_close)))
+              (preproc_conditional_statement
+                (preproc_if
+                  (preproc_open)
+                  condition: (identifier))
+                (preproc_endif
+                  (preproc_close)))
+              (else_keyword)
+              else_branch: (call_expression
+                function: (identifier)
+                arguments: (argument_list))))
+          (end_keyword))))))
+
+================================================================================
+Issue #39: with no else after it, the empty group stays a sibling statement
+--
+The other reading of the declared conflict [$.if_statement]: here the `;`
+after #endif decides, and the if has no else. A rule-wide prec.right on
+if_statement would shift the group into the if and give it a MISSING else.
+================================================================================
+codeunit 50100 Demo
+{
+    procedure Run(Ready: Boolean)
+    begin
+        if Ready then
+            First()
+#if FEATURE
+#endif
+        ;
+        Second();
+    end;
+}
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (procedure
+        (procedure_keyword)
+        name: (identifier)
+        parameters: (parameter_list
+          (parameter
+            name: (identifier)
+            type: (type_specification
+              (basic_type))))
+        body: (code_block
+          (begin_keyword)
+          body: (statement_block
+            (if_statement
+              (if_keyword)
+              condition: (identifier)
+              (then_keyword)
+              then_branch: (call_expression
+                function: (identifier)
+                arguments: (argument_list)))
+            (preproc_conditional_statement
+              (preproc_if
+                (preproc_open)
+                condition: (identifier))
+              (preproc_endif
+                (preproc_close)))
+            (call_expression
+              function: (identifier)
+              arguments: (argument_list)))
+          (end_keyword))))))
+
+================================================================================
+Issue #39: a dangling else after an empty group binds to the innermost if
+--
+The else shifts on static precedence (prec(1)), not prec.right: this pins
+that it still goes to the nearest unmatched if.
+================================================================================
+codeunit 50100 Demo
+{
+    procedure Run(A: Boolean; B: Boolean)
+    begin
+        if A then
+            if B then
+                First()
+#if FEATURE
+#endif
+            else
+                Second();
+    end;
+}
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (procedure
+        (procedure_keyword)
+        name: (identifier)
+        parameters: (parameter_list
+          (parameter
+            name: (identifier)
+            type: (type_specification
+              (basic_type)))
+          (parameter
+            name: (identifier)
+            type: (type_specification
+              (basic_type))))
+        body: (code_block
+          (begin_keyword)
+          body: (statement_block
+            (if_statement
+              (if_keyword)
+              condition: (identifier)
+              (then_keyword)
+              then_branch: (if_statement
+                (if_keyword)
+                condition: (identifier)
+                (then_keyword)
+                then_branch: (call_expression
+                  function: (identifier)
+                  arguments: (argument_list))
+                (preproc_conditional_statement
+                  (preproc_if
+                    (preproc_open)
+                    condition: (identifier))
+                  (preproc_endif
+                    (preproc_close)))
+                (else_keyword)
+                else_branch: (call_expression
+                  function: (identifier)
+                  arguments: (argument_list)))))
+          (end_keyword))))))
