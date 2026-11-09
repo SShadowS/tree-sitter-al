@@ -1,0 +1,88 @@
+================================================================================
+Where as a name at generic property value start; where( stays a where_clause (deferred item 28)
+================================================================================
+
+page 50100 "Where Probe"
+{
+    SourceTableView = where(Status = const(Where));
+    layout
+    {
+        area(Content)
+        {
+            field(TxtField; Txt)
+            {
+                Visible = Where;
+                Enabled = Where = false;
+                Editable = Where and ShowIt;
+            }
+        }
+    }
+
+    var
+        Txt: Text[30];
+        Where: Boolean;
+        ShowIt: Boolean;
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (page_declaration
+    (page_keyword)
+    object_id: (integer)
+    object_name: (quoted_identifier)
+    body: (declaration_body
+      (property
+        name: (property_name)
+        value: (where_clause
+          (where_keyword)
+          (where_conditions
+            (where_condition
+              field: (identifier)
+              (const_keyword)
+              value: (identifier)))))
+      (layout_section
+        (layout_keyword)
+        body: (layout_body
+          (area_section
+            (area_keyword)
+            type: (content_keyword)
+            body: (layout_body
+              (page_field
+                (field_keyword)
+                name: (identifier)
+                source: (identifier)
+                body: (declaration_body
+                  (property
+                    name: (property_name)
+                    value: (identifier))
+                  (property
+                    name: (property_name)
+                    value: (property_expression
+                      (comparison_expression
+                        left: (identifier)
+                        operator: (comparison_operator)
+                        right: (boolean))))
+                  (property
+                    name: (property_name)
+                    value: (property_expression
+                      (logical_expression
+                        left: (identifier)
+                        right: (identifier))))))))))
+      (var_section
+        (var_keyword)
+        body: (var_body
+          (variable_declaration
+            name: (identifier)
+            type: (type_specification
+              (text_type
+                (text_keyword)
+                length: (integer))))
+          (variable_declaration
+            name: (identifier)
+            type: (type_specification
+              (basic_type)))
+          (variable_declaration
+            name: (identifier)
+            type: (type_specification
+              (basic_type))))))))

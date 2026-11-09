@@ -574,9 +574,9 @@ function _extension_without_id(keyword_name) {
     $[keyword_name + '_keyword'],
     field('object_name', $._identifier_or_quoted),
     $.extends_keyword,
-    // profileextension only: not widened by #36 (a qualified profile base is unprobed;
-    // the probe project for profiles fails with AL0341 even by plain name).
-    field('base_object', $._identifier_or_quoted),
+    // profileextension only. Qualified base as #36 (item 70: alc accepts
+    // `extends Contoso.Sales."BASE PROF"`, tools/alc_probe/cases/item70-profileextension/).
+    field('base_object', _object_name_ref($)),
     $._declaration_body_block
   );
 }
@@ -2897,19 +2897,15 @@ module.exports = grammar({
     // covered the bytes spelling `table` with `table_keyword -> "table"` and the
     // bytes spelling `tabledata` with nothing at all.
     //
-    // ONE rule, referenced from both sites, is what keeps that safe. It is also
-    // reached via the `alias(..., $.identifier)` route in `option_member` below,
-    // so `OptionMembers = TableData,...` — where bare unquoted `TableData`
-    // case-insensitively collides with this exact keyword — resolves as a plain
-    // identifier option member instead of erroring (previously: ERROR,
-    // first-position-only; the same `tabledata_permission`/`option_member`
-    // ambiguity that `table_keyword` settles via `keyword_as_identifier`).
-    // Splitting this into a visible rule here plus a second bare kw() there would
-    // reintroduce that collision: both spellings are the same terminal, so two
-    // rules over it put two competing reductions in one state. Aliasing the
-    // named rule to $.identifier keeps the option-member node an `identifier`,
-    // as before, and merely gives it the anonymous "tabledata" child.
+    // `OptionMembers = TableData,...` and `Option TableData,...` take the same
+    // token as a leaf identifier, `_tabledata_identifier`, in `option_member` and
+    // `_option_values_lone` (deferred item 27). Those sites aliased THIS rule
+    // before, which gave that one identifier an anonymous "tabledata" child.
     tabledata_keyword: $ => alias(kw('tabledata'), 'tabledata'),
+    // ONE occurrence on purpose: the generator names an unnamed token after its
+    // most-used alias, and two `identifier` uses outvoting this one 'tabledata' use
+    // renamed the keyword's child (grammar_name 'identifier' in every Permissions).
+    _tabledata_identifier: $ => alias(kw('tabledata'), $.identifier),
 
     tabledata_permission: $ => seq(
       choice(
@@ -3227,7 +3223,7 @@ module.exports = grammar({
     // the option_member kinds that are not one of the bare leaves above
     _option_values_lone: $ => choice(
       prec.dynamic(-2, seq('-', $.integer)),
-      alias($.tabledata_keyword, $.identifier),
+      $._tabledata_identifier,
       $.local_keyword,
       $.internal_keyword,
       $.protected_keyword,
@@ -3274,7 +3270,7 @@ module.exports = grammar({
       // Not keyword_as_identifier: option_member heads a value (see
       // _plain_name). Only the two words whose tokens are live there anyway.
       alias($._value_start_keyword_name, $.identifier),
-      alias($.tabledata_keyword, $.identifier),  // TableData (first-position collision fix)
+      $._tabledata_identifier,  // TableData; a leaf, like every identifier (item 27)
       $.local_keyword,       // 'Local' as option member
       $.internal_keyword,    // 'Internal' as option member
       $.protected_keyword,   // 'Protected' as option member
@@ -4999,12 +4995,17 @@ module.exports = grammar({
       $._procedure_return_specification,
     )),
 
-    // Parameter list: semicolon-separated parameters
+    // Parameter list: semicolon-separated parameters. B7b-1b (deferred item 46,
+    // family parameters): a #if group may stand anywhere in the list
+    // (strictListBody); an item is a parameter with its attribute bundle, both
+    // unfielded children of parameter_list, or of preproc_conditional_parameters
+    // inside an arm. A list that is one group is still a parameter_list, so an
+    // emptied configuration reads as `()` (the host's optional() wrapper).
     parameter_list: $ => seq(
-      optional(repeat1($.attribute_item)),
-      $.parameter,
-      repeat(seq(';', optional(repeat1($.attribute_item)), $.parameter)),
+      ...strictListBody($, 'parameters', ';'),
     ),
+
+    ...strictConditionalList('parameters', $ => seq(repeat($.attribute_item), $.parameter), ';'),
 
     parameter: $ => seq(
       optional(field('modifier', $.var_keyword)),
@@ -8367,7 +8368,17 @@ module.exports = grammar({
     //
     // Two words is affordable where 24 was not. Bare kw(), never
     // $.x_keyword: see .claude/rules/contextual-keywords.md.
-    _value_start_keyword_name: $ => choice(kw('table'), kw('order')),
+    //
+    // `where` (deferred item 28): live at value start through where_clause
+    // (`SourceTableView = where(...)`), so `Visible = Where;` lexed the keyword
+    // and ERRORed; alc reads it as a name (tools/alc_probe/cases/item28-visible-where).
+    // A reserved set cannot help: it only makes a keyword win. The arm reuses
+    // _where_token (a rule symbol, also in relation_target_names) and has
+    // prec(-1) so that before `(` the where_clause reading wins statically, with
+    // no GLR fork at the 3,500 `= where(` sites. The cost is `Visible = Where();`,
+    // still an ERROR, which alc rejects anyway (AL0322, as for any call there).
+    // Tree harness: byte-identical on all four corpora.
+    _value_start_keyword_name: $ => choice(kw('table'), kw('order'), prec(-1, $._where_token)),
 
     _identifier_or_quoted: $ => choice(
       $.identifier,

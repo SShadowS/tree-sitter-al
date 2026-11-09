@@ -1,5 +1,5 @@
 // B7a Task 10 witness (GAP): family parameter-list, base placement trail, 9 cells; representative occ:parameter_list:2.0.0@preproc_split_procedure#trail
-// Fixture b7_gap_parameter_list_test.txt#B7a GAP: parameter-list / trail (9 cells, verdict of the representative MIXED); the parser ERRORs on configurations alc accepts; representative occ:parameter_list:2.0.0@preproc_split_procedure%23trail#0
+// Fixture strict_conditional_parameters_test.txt#strict parameters MIXED: group holding the last parameter after a separator (trail)#0
 // expect: !TPL !X accept
 // expect: !TPL X accept
 // expect: TPL !X reject(AL0301)

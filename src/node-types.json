@@ -10924,6 +10924,10 @@
         {
           "type": "parameter",
           "named": true
+        },
+        {
+          "type": "preproc_conditional_parameters",
+          "named": true
         }
       ]
     }
@@ -13719,6 +13723,45 @@
         },
         {
           "type": "quoted_identifier",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
+    "type": "preproc_conditional_parameters",
+    "named": true,
+    "fields": {},
+    "children": {
+      "multiple": true,
+      "required": true,
+      "types": [
+        {
+          "type": "attribute_item",
+          "named": true
+        },
+        {
+          "type": "parameter",
+          "named": true
+        },
+        {
+          "type": "preproc_conditional_parameters",
+          "named": true
+        },
+        {
+          "type": "preproc_elif",
+          "named": true
+        },
+        {
+          "type": "preproc_else",
+          "named": true
+        },
+        {
+          "type": "preproc_endif",
+          "named": true
+        },
+        {
+          "type": "preproc_if",
           "named": true
         }
       ]
@@ -22463,6 +22506,10 @@
         "types": [
           {
             "type": "identifier",
+            "named": true
+          },
+          {
+            "type": "qualified_name",
             "named": true
           },
           {

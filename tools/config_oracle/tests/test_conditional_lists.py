@@ -85,7 +85,7 @@ def test_contracts_entries_agree_with_the_families():
         assert e.kind == "branch-select" and e.handler == "tools.config_oracle.lowering.select.branch_select"
         want_hosts = {f"{h}:<children>" for h in fam.host_kinds} | {f"{fam.group}:<children>"}
         assert e.hosts == {h: "strict-list" for h in want_hosts}, fam.name
-        assert e.arm == fam.item_kinds | {fam.sep, fam.group}, fam.name
+        assert e.arm == fam.item_kinds | fam.prefix_kinds | {fam.sep, fam.group}, fam.name
 
 
 def test_family_rejects_an_unknown_cardinality():

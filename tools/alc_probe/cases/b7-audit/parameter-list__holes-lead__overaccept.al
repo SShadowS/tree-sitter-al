@@ -1,10 +1,10 @@
-// B7a Task 10 witness (GAP): family parameter-list, base placement holes-mid, 9 cells; representative occ:parameter_list:2.0.0@preproc_split_procedure#holes-mid
-// Fixture b7_gap_parameter_list_test.txt#B7a GAP: parameter-list / holes-mid (9 cells, verdict of the representative MIXED); the parser ERRORs on configurations alc accepts; representative occ:parameter_list:2.0.0@preproc_split_procedure%23holes-mid#0
+// B7b-1b witness (REJECTED/over-accepts(syntax)): family parameter-list, base placement holes-lead, 9 cells; representative occ:parameter_list:2.0.0@preproc_split_procedure#holes-lead (the B7a GAP witness of this shape, renamed: the strict list parses every configuration, alc still rejects one)
+// Fixture strict_conditional_parameters_test.txt#strict parameters MIXED: separator-only group before the first parameter (holes-lead)#0
 // expect: !TPL !X accept
 // expect: !TPL X accept
 // expect: TPL !X accept
 // expect: TPL X reject(AL0107)
-// source: recorded by B7a Task 10, 2026-10-07: the alc split verdicts of cell occ:parameter_list:2.0.0@preproc_split_procedure#holes-mid in tools/b7_audit/evidence.jsonl.gz
+// source: recorded by B7a Task 10, 2026-10-07: the alc split verdicts of cell occ:parameter_list:2.0.0@preproc_split_procedure#holes-lead in tools/b7_audit/evidence.jsonl.gz
 table 50100 T
 {
     fields
@@ -45,11 +45,10 @@ Bar();
 
 #if TPL
     procedure Z(
-A: Integer ;
 #if X
 ;
 #endif
-B: Integer
+A: Integer ; B: Integer
 )
 #else
     procedure Z(A: Integer)

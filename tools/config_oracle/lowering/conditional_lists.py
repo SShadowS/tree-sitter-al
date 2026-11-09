@@ -60,6 +60,9 @@ class Family:
     sep: str
     item_field: str | None
     cardinality: str
+    # Unfielded kinds that may stand before an item as part of it, never alone
+    # (parameters: an attribute bundle before its parameter).
+    prefix_kinds: frozenset = frozenset()
 
     def __post_init__(self):
         if self.cardinality not in CARDINALITIES:
@@ -199,6 +202,16 @@ FAMILIES: dict[str, Family] = {f.name: f for f in (
     # TextConst arms take one plain name, never a group.
     Family("var_names", frozenset({"variable_declaration"}), before_child(":"),
            frozenset({"identifier", "quoted_identifier"}), ",", "name", "empty-syntax-rejected"),
+    # parameter_list (B7b-1b, deferred item 46): a visible unfielded host that owns nothing but
+    # the `;`-separated list; `(` and `)` belong to the procedure/event/trigger host, whose
+    # optional(field('parameters', ...)) means an emptied configuration flat-parses as `()`
+    # with no parameter_list, so lowering removes it (optional-list-removed:parameter_list).
+    # An item is an unfielded parameter with its unfielded attribute_item bundle before it
+    # (prefix_kinds; alc rejects every parameter attribute as syntax, AL0104,
+    # tools/alc_probe/cases/b7b1b/param_attribute_flat.al, but the grammar keeps them).
+    Family("parameters", frozenset({"parameter_list"}), lambda h: (h.start, h.end),
+           frozenset({"parameter"}), ";", None, "optional-wrapper",
+           prefix_kinds=frozenset({"attribute_item"})),
 )}
 
 GROUP_FAMILY = {f.group: f for f in FAMILIES.values()}
@@ -218,6 +231,12 @@ def _is_item(node, fam):
     return node.kind in fam.item_kinds and node.field == fam.item_field
 
 
+def _is_prefix(node, fam):
+    # A prefix is followed by its item or by more prefixes: a dangling one leaves
+    # want_item set, which lower_region reports (separator or end of list).
+    return node.kind in fam.prefix_kinds and node.field is None
+
+
 def lower_region(host, kids, family):
     """-> the host's new children: `kids` itself, or `[]` when the region is empty and the
     host owns nothing else (it is then removed, optional-list-removed:<kind>). `host` is
@@ -234,6 +253,10 @@ def lower_region(host, kids, family):
         return kids     # the flat grammar's empty form; [] removes the host
     want_item = True
     for c in region:
+        if _is_prefix(c, family):
+            if not want_item:
+                raise LoweringError("list-separator", host, "list does not alternate item, separator")
+            continue
         is_sep = _is_sep(c, family)
         if not is_sep and not _is_item(c, family):
             raise LoweringError("list-item", c, f"not a {family.name} item or separator")
@@ -284,7 +307,8 @@ def _check_group(n, parent, hosts, fam):
         if prev is None or n.start < prev.end or (nxt is not None and n.end > nxt.start):
             yield f"outside its arm ({getattr(prev, 'kind', None)}@{getattr(prev, 'start', None)})"
     for c in n.children:
-        if c.kind in _ARM_BOUNDS or _is_sep(c, fam) or _is_item(c, fam) or c.kind == fam.group:
+        if (c.kind in _ARM_BOUNDS or _is_sep(c, fam) or _is_item(c, fam) or _is_prefix(c, fam)
+                or c.kind == fam.group):
             continue
         yield f"arm content {c.kind}@{c.start} (field {c.field})"
 

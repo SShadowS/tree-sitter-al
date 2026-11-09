@@ -1,5 +1,5 @@
 // B7a Task 10 witness (GAP): family parameter-list, base placement empty-list, 9 cells; representative occ:parameter_list:2.0.0@preproc_split_procedure#empty-list
-// Fixture b7_gap_parameter_list_test.txt#B7a GAP: parameter-list / empty-list (9 cells, verdict of the representative GAP); the parser ERRORs on configurations alc accepts; representative occ:parameter_list:2.0.0@preproc_split_procedure%23empty-list#0
+// Fixture strict_conditional_parameters_test.txt#strict parameters: the whole parameter list in one group, no %23else (empty-list)#0
 // expect: !TPL !X accept
 // expect: !TPL X accept
 // expect: TPL !X accept

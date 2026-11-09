@@ -1,5 +1,5 @@
 // B7a Task 10 witness (GAP): family parameter-list, base placement sep-before-end, 9 cells; representative occ:parameter_list:2.0.0@preproc_split_procedure#sep-before-end
-// Fixture b7_gap_parameter_list_test.txt#B7a GAP: parameter-list / sep-before-end (9 cells, verdict of the representative GAP); the parser ERRORs on configurations alc accepts; representative occ:parameter_list:2.0.0@preproc_split_procedure%23sep-before-end#0
+// Fixture strict_conditional_parameters_test.txt#strict parameters: group with the separator before its parameter (sep-before-end)#0
 // expect: !TPL !X accept
 // expect: !TPL X accept
 // expect: TPL !X accept

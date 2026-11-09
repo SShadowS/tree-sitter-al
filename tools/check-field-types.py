@@ -384,6 +384,9 @@ FIELD_INVARIANTS = [
     inv('implements_clause', 'interface', True, set(), 'FIXED',
         'raw interfaces outside a group; optional since every item can sit in a group (B7b-1); qualified name one node (#36)',
         types={'identifier', 'quoted_identifier', 'qualified_name'}, required=False),
+    inv('profileextension_declaration', 'base_object', False, set(), 'FIXED',
+        'a dotted profile base is one qualified_name node, a single name stays plain (item 70, as #36)',
+        types={'identifier', 'quoted_identifier', 'qualified_name'}),
     # field_list is UNFIELDED (spec 4.1): its items, raw or inside an arm of
     # preproc_conditional_field_list_items, carry no field, so the group has no
     # item row. What the change pins is the hosts' `fields` field: optional on
@@ -436,6 +439,13 @@ FIELD_INVARIANTS = [
     inv('attribute_content', 'name', False, set(), 'FIXED',
         'one attribute name before the arguments, never inside a group (B7b-1 Task 10)',
         types={'identifier'}, required=True),
+    # (A: T; B: T) (B7b-1b, deferred item 46): parameter_list is UNFIELDED, raw or inside an arm
+    # of preproc_conditional_parameters, so the group has no item row. What it pins is the
+    # host field: one optional parameter_list (`P()` has none; a list that is one group is one).
+    *[inv(h, 'parameters', False, set(), 'FIXED',
+          'one parameter_list, absent for `()`; the parameters inside stay unfielded (B7b-1b)',
+          types={'parameter_list'}, required=False)
+      for h in ('procedure', 'event_declaration', 'interface_procedure', 'trigger_declaration')],
     # A, B: T; (B7b-1 Task 11): the name list up to the `:`. variable_declaration.name is
     # optional now since every name can sit in a group (`#if X A, B #endif : T;`); `type`
     # stays one required node after the `:`, never inside a group.

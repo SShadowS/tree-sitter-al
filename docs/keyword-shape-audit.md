@@ -131,10 +131,11 @@ compound keyword over spellings AL uses as identifiers, and an alias widens noth
 
 Until the losslessness pass this was `_tabledata_keyword`, a hidden rule over a bare `kw()`,
 and the largest single byte-gap cluster left after the type keywords (23,481 occurrences
-across BC.History). It is now a visible `tabledata_keyword` rule with the uniform shape; the
-`option_member` site aliases it to `$.identifier`, which keeps the option-member node an
-`identifier` but gives it an anonymous `"tabledata"` child, the one remaining two-shape
-`identifier` (`docs/deferred-work.md` item 27; the comment at the rule in `grammar.js`).
+across BC.History). It is now a visible `tabledata_keyword` rule with the uniform shape. The
+option-member sites aliased that rule to `$.identifier`, which gave the `identifier` an
+anonymous `"tabledata"` child (6 production sites); they now take the hidden
+`_tabledata_identifier` (`alias(kw('tabledata'), $.identifier)`), a leaf, and the census flags 0 on all four corpora
+(`docs/deferred-work.md` item 27; the comment at the rule in `grammar.js`).
 
 ## Why no gate caught any of this
 

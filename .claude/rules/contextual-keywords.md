@@ -73,9 +73,9 @@ A 14th entry that is not an object-declaration keyword is almost certainly a mis
 same token, so matching is unchanged (measured: identifier count and edge census byte-identical
 over BC.History). The `kwCases()` warning is about *widening*; an alias widens nothing.
 
-`tabledata_keyword` is a visible rule with the uniform shape since the losslessness pass; its
-`option_member` site aliases it to `$.identifier`, the one remaining two-shape `identifier`
-(`docs/deferred-work.md` item 27).
+`tabledata_keyword` is a visible rule with the uniform shape since the losslessness pass; the
+option-member sites take `_tabledata_identifier` (`alias(kw('tabledata'), $.identifier)`, ONE
+rule: the generator names a shared unnamed token after its most-used alias), so that `identifier` is a leaf (`docs/deferred-work.md` item 27, pinned by `tools/tests/test_identifier_leaf.py`).
 
 ## begin/end are scanner tokens
 

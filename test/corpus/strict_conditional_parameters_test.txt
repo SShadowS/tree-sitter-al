@@ -1,0 +1,1363 @@
+; B7b-1b (deferred item 46): #if groups in procedure parameter lists `(A: T; var B: T)` (family parameters,
+; grammar.js strictConditionalList, separator `;`). parameter_list stays visible and unfielded; an item is a
+; parameter with its attribute bundle, both unfielded children of parameter_list or, inside an arm, of
+; preproc_conditional_parameters. A list that is one group is still a parameter_list (the hosts' optional()
+; wrapper is unchanged), so `()` still has no parameter_list.
+; The first 10 cases are the shapes of the retired b7_gap_parameter_list_test.txt, the list text unchanged,
+; in the witnesses' host (a preproc_split_procedure) without the shared table/procedure prelude. `MIXED`
+; cases are accepted by alc in some configurations and rejected in another (AL0107 for a doubled or
+; leading `;`, AL0301 for a trailing one): the split source parses, the invalid configuration is the config
+; oracle's to judge (spec section 3; over-acceptance of forms invalid in every configuration is item 44's
+; decided known limit). Probes: tools/alc_probe/cases/b7-audit/parameter-list__*.al and
+; tools/alc_probe/cases/b7b1b/.
+
+================================================================================
+strict parameters: empty group between a separator and a parameter (empty)
+================================================================================
+
+codeunit 50101 P
+{
+#if TPL
+    procedure Z(
+A: Integer ;
+#if X
+#endif
+B: Integer
+)
+#else
+    procedure Z(A: Integer)
+#endif
+    begin
+    end;
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (preproc_split_procedure
+        (preproc_if
+          (preproc_open)
+          condition: (identifier))
+        (procedure_keyword)
+        name: (identifier)
+        parameters: (parameter_list
+          (parameter
+            name: (identifier)
+            type: (type_specification
+              (basic_type)))
+          (preproc_conditional_parameters
+            (preproc_if
+              (preproc_open)
+              condition: (identifier))
+            (preproc_endif
+              (preproc_close)))
+          (parameter
+            name: (identifier)
+            type: (type_specification
+              (basic_type))))
+        (preproc_else)
+        (procedure_keyword)
+        name: (identifier)
+        parameters: (parameter_list
+          (parameter
+            name: (identifier)
+            type: (type_specification
+              (basic_type))))
+        (preproc_endif
+          (preproc_close))
+        body: (code_block
+          (begin_keyword)
+          (end_keyword))))))
+
+================================================================================
+strict parameters: the whole parameter list in one group, no #else (empty-list)
+================================================================================
+
+codeunit 50101 P
+{
+#if TPL
+    procedure Z(
+#if X
+A: Integer ; B: Integer
+#endif
+)
+#else
+    procedure Z(A: Integer)
+#endif
+    begin
+    end;
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (preproc_split_procedure
+        (preproc_if
+          (preproc_open)
+          condition: (identifier))
+        (procedure_keyword)
+        name: (identifier)
+        parameters: (parameter_list
+          (preproc_conditional_parameters
+            (preproc_if
+              (preproc_open)
+              condition: (identifier))
+            (parameter
+              name: (identifier)
+              type: (type_specification
+                (basic_type)))
+            (parameter
+              name: (identifier)
+              type: (type_specification
+                (basic_type)))
+            (preproc_endif
+              (preproc_close))))
+        (preproc_else)
+        (procedure_keyword)
+        name: (identifier)
+        parameters: (parameter_list
+          (parameter
+            name: (identifier)
+            type: (type_specification
+              (basic_type))))
+        (preproc_endif
+          (preproc_close))
+        body: (code_block
+          (begin_keyword)
+          (end_keyword))))))
+
+================================================================================
+strict parameters MIXED: separator-only group before the first parameter (holes-lead)
+================================================================================
+
+codeunit 50101 P
+{
+#if TPL
+    procedure Z(
+#if X
+;
+#endif
+A: Integer ; B: Integer
+)
+#else
+    procedure Z(A: Integer)
+#endif
+    begin
+    end;
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (preproc_split_procedure
+        (preproc_if
+          (preproc_open)
+          condition: (identifier))
+        (procedure_keyword)
+        name: (identifier)
+        parameters: (parameter_list
+          (preproc_conditional_parameters
+            (preproc_if
+              (preproc_open)
+              condition: (identifier))
+            (preproc_endif
+              (preproc_close)))
+          (parameter
+            name: (identifier)
+            type: (type_specification
+              (basic_type)))
+          (parameter
+            name: (identifier)
+            type: (type_specification
+              (basic_type))))
+        (preproc_else)
+        (procedure_keyword)
+        name: (identifier)
+        parameters: (parameter_list
+          (parameter
+            name: (identifier)
+            type: (type_specification
+              (basic_type))))
+        (preproc_endif
+          (preproc_close))
+        body: (code_block
+          (begin_keyword)
+          (end_keyword))))))
+
+================================================================================
+strict parameters MIXED: separator-only group after a separator (holes-mid)
+================================================================================
+
+codeunit 50101 P
+{
+#if TPL
+    procedure Z(
+A: Integer ;
+#if X
+;
+#endif
+B: Integer
+)
+#else
+    procedure Z(A: Integer)
+#endif
+    begin
+    end;
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (preproc_split_procedure
+        (preproc_if
+          (preproc_open)
+          condition: (identifier))
+        (procedure_keyword)
+        name: (identifier)
+        parameters: (parameter_list
+          (parameter
+            name: (identifier)
+            type: (type_specification
+              (basic_type)))
+          (preproc_conditional_parameters
+            (preproc_if
+              (preproc_open)
+              condition: (identifier))
+            (preproc_endif
+              (preproc_close)))
+          (parameter
+            name: (identifier)
+            type: (type_specification
+              (basic_type))))
+        (preproc_else)
+        (procedure_keyword)
+        name: (identifier)
+        parameters: (parameter_list
+          (parameter
+            name: (identifier)
+            type: (type_specification
+              (basic_type))))
+        (preproc_endif
+          (preproc_close))
+        body: (code_block
+          (begin_keyword)
+          (end_keyword))))))
+
+================================================================================
+strict parameters MIXED: separator-only group after the last parameter (holes-trail)
+================================================================================
+
+codeunit 50101 P
+{
+#if TPL
+    procedure Z(
+A: Integer ; B: Integer
+#if X
+;
+#endif
+)
+#else
+    procedure Z(A: Integer)
+#endif
+    begin
+    end;
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (preproc_split_procedure
+        (preproc_if
+          (preproc_open)
+          condition: (identifier))
+        (procedure_keyword)
+        name: (identifier)
+        parameters: (parameter_list
+          (parameter
+            name: (identifier)
+            type: (type_specification
+              (basic_type)))
+          (parameter
+            name: (identifier)
+            type: (type_specification
+              (basic_type)))
+          (preproc_conditional_parameters
+            (preproc_if
+              (preproc_open)
+              condition: (identifier))
+            (preproc_endif
+              (preproc_close))))
+        (preproc_else)
+        (procedure_keyword)
+        name: (identifier)
+        parameters: (parameter_list
+          (parameter
+            name: (identifier)
+            type: (type_specification
+              (basic_type))))
+        (preproc_endif
+          (preproc_close))
+        body: (code_block
+          (begin_keyword)
+          (end_keyword))))))
+
+================================================================================
+strict parameters: leading group whose arm ends with the separator (lead-optional)
+================================================================================
+
+codeunit 50101 P
+{
+#if TPL
+    procedure Z(
+#if X
+A: Integer ;
+#endif
+B: Integer
+)
+#else
+    procedure Z(A: Integer)
+#endif
+    begin
+    end;
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (preproc_split_procedure
+        (preproc_if
+          (preproc_open)
+          condition: (identifier))
+        (procedure_keyword)
+        name: (identifier)
+        parameters: (parameter_list
+          (preproc_conditional_parameters
+            (preproc_if
+              (preproc_open)
+              condition: (identifier))
+            (parameter
+              name: (identifier)
+              type: (type_specification
+                (basic_type)))
+            (preproc_endif
+              (preproc_close)))
+          (parameter
+            name: (identifier)
+            type: (type_specification
+              (basic_type))))
+        (preproc_else)
+        (procedure_keyword)
+        name: (identifier)
+        parameters: (parameter_list
+          (parameter
+            name: (identifier)
+            type: (type_specification
+              (basic_type))))
+        (preproc_endif
+          (preproc_close))
+        body: (code_block
+          (begin_keyword)
+          (end_keyword))))))
+
+================================================================================
+strict parameters: the whole parameter list in the arms of one group (one-elem)
+================================================================================
+
+codeunit 50101 P
+{
+#if TPL
+    procedure Z(
+#if X
+A: Integer ; B: Integer
+#else
+A: Integer
+#endif
+)
+#else
+    procedure Z(A: Integer)
+#endif
+    begin
+    end;
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (preproc_split_procedure
+        (preproc_if
+          (preproc_open)
+          condition: (identifier))
+        (procedure_keyword)
+        name: (identifier)
+        parameters: (parameter_list
+          (preproc_conditional_parameters
+            (preproc_if
+              (preproc_open)
+              condition: (identifier))
+            (parameter
+              name: (identifier)
+              type: (type_specification
+                (basic_type)))
+            (parameter
+              name: (identifier)
+              type: (type_specification
+                (basic_type)))
+            (preproc_else)
+            (parameter
+              name: (identifier)
+              type: (type_specification
+                (basic_type)))
+            (preproc_endif
+              (preproc_close))))
+        (preproc_else)
+        (procedure_keyword)
+        name: (identifier)
+        parameters: (parameter_list
+          (parameter
+            name: (identifier)
+            type: (type_specification
+              (basic_type))))
+        (preproc_endif
+          (preproc_close))
+        body: (code_block
+          (begin_keyword)
+          (end_keyword))))))
+
+================================================================================
+strict parameters: group with the separator before its parameter (sep-before-end)
+================================================================================
+
+codeunit 50101 P
+{
+#if TPL
+    procedure Z(
+A: Integer
+#if X
+; B: Integer
+#endif
+)
+#else
+    procedure Z(A: Integer)
+#endif
+    begin
+    end;
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (preproc_split_procedure
+        (preproc_if
+          (preproc_open)
+          condition: (identifier))
+        (procedure_keyword)
+        name: (identifier)
+        parameters: (parameter_list
+          (parameter
+            name: (identifier)
+            type: (type_specification
+              (basic_type)))
+          (preproc_conditional_parameters
+            (preproc_if
+              (preproc_open)
+              condition: (identifier))
+            (parameter
+              name: (identifier)
+              type: (type_specification
+                (basic_type)))
+            (preproc_endif
+              (preproc_close))))
+        (preproc_else)
+        (procedure_keyword)
+        name: (identifier)
+        parameters: (parameter_list
+          (parameter
+            name: (identifier)
+            type: (type_specification
+              (basic_type))))
+        (preproc_endif
+          (preproc_close))
+        body: (code_block
+          (begin_keyword)
+          (end_keyword))))))
+
+================================================================================
+strict parameters: separator-only arms between two parameters (sep-only)
+================================================================================
+
+codeunit 50101 P
+{
+#if TPL
+    procedure Z(
+A: Integer
+#if X
+;
+#else
+;
+#endif
+B: Integer
+)
+#else
+    procedure Z(A: Integer)
+#endif
+    begin
+    end;
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (preproc_split_procedure
+        (preproc_if
+          (preproc_open)
+          condition: (identifier))
+        (procedure_keyword)
+        name: (identifier)
+        parameters: (parameter_list
+          (parameter
+            name: (identifier)
+            type: (type_specification
+              (basic_type)))
+          (preproc_conditional_parameters
+            (preproc_if
+              (preproc_open)
+              condition: (identifier))
+            (preproc_else)
+            (preproc_endif
+              (preproc_close)))
+          (parameter
+            name: (identifier)
+            type: (type_specification
+              (basic_type))))
+        (preproc_else)
+        (procedure_keyword)
+        name: (identifier)
+        parameters: (parameter_list
+          (parameter
+            name: (identifier)
+            type: (type_specification
+              (basic_type))))
+        (preproc_endif
+          (preproc_close))
+        body: (code_block
+          (begin_keyword)
+          (end_keyword))))))
+
+================================================================================
+strict parameters MIXED: group holding the last parameter after a separator (trail)
+================================================================================
+
+codeunit 50101 P
+{
+#if TPL
+    procedure Z(
+A: Integer ;
+#if X
+B: Integer
+#endif
+)
+#else
+    procedure Z(A: Integer)
+#endif
+    begin
+    end;
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (preproc_split_procedure
+        (preproc_if
+          (preproc_open)
+          condition: (identifier))
+        (procedure_keyword)
+        name: (identifier)
+        parameters: (parameter_list
+          (parameter
+            name: (identifier)
+            type: (type_specification
+              (basic_type)))
+          (preproc_conditional_parameters
+            (preproc_if
+              (preproc_open)
+              condition: (identifier))
+            (parameter
+              name: (identifier)
+              type: (type_specification
+                (basic_type)))
+            (preproc_endif
+              (preproc_close))))
+        (preproc_else)
+        (procedure_keyword)
+        name: (identifier)
+        parameters: (parameter_list
+          (parameter
+            name: (identifier)
+            type: (type_specification
+              (basic_type))))
+        (preproc_endif
+          (preproc_close))
+        body: (code_block
+          (begin_keyword)
+          (end_keyword))))))
+
+================================================================================
+strict parameters: group with the separator before its parameter, then a parameter (sep-before)
+================================================================================
+
+codeunit 50100 C
+{
+    procedure P(A: Integer
+#if X
+    ; B: Integer
+#endif
+    ; C: Integer)
+    begin
+    end;
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (procedure
+        (procedure_keyword)
+        name: (identifier)
+        parameters: (parameter_list
+          (parameter
+            name: (identifier)
+            type: (type_specification
+              (basic_type)))
+          (preproc_conditional_parameters
+            (preproc_if
+              (preproc_open)
+              condition: (identifier))
+            (parameter
+              name: (identifier)
+              type: (type_specification
+                (basic_type)))
+            (preproc_endif
+              (preproc_close)))
+          (parameter
+            name: (identifier)
+            type: (type_specification
+              (basic_type))))
+        body: (code_block
+          (begin_keyword)
+          (end_keyword))))))
+
+================================================================================
+strict parameters: group with the separator after its parameter, then a var parameter with an escaped quoted name (sep-after)
+================================================================================
+
+codeunit 50100 C
+{
+    procedure P(
+#if X
+        A: Integer;
+#endif
+        var "B ""q""": Code[20])
+    begin
+    end;
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (procedure
+        (procedure_keyword)
+        name: (identifier)
+        parameters: (parameter_list
+          (preproc_conditional_parameters
+            (preproc_if
+              (preproc_open)
+              condition: (identifier))
+            (parameter
+              name: (identifier)
+              type: (type_specification
+                (basic_type)))
+            (preproc_endif
+              (preproc_close)))
+          (parameter
+            modifier: (var_keyword)
+            name: (quoted_identifier)
+            type: (type_specification
+              (code_type
+                (code_keyword)
+                length: (integer)))))
+        body: (code_block
+          (begin_keyword)
+          (end_keyword))))))
+
+================================================================================
+strict parameters: var parameters in #if and #elif arms between two separators
+================================================================================
+
+codeunit 50100 C
+{
+    procedure P(A: Integer;
+#if X
+        var B: Integer;
+#elif Y
+        var B: Text;
+#endif
+        C: Integer)
+    begin
+    end;
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (procedure
+        (procedure_keyword)
+        name: (identifier)
+        parameters: (parameter_list
+          (parameter
+            name: (identifier)
+            type: (type_specification
+              (basic_type)))
+          (preproc_conditional_parameters
+            (preproc_if
+              (preproc_open)
+              condition: (identifier))
+            (parameter
+              modifier: (var_keyword)
+              name: (identifier)
+              type: (type_specification
+                (basic_type)))
+            (preproc_elif
+              condition: (identifier))
+            (parameter
+              modifier: (var_keyword)
+              name: (identifier)
+              type: (type_specification
+                (text_type
+                  (text_keyword))))
+            (preproc_endif
+              (preproc_close)))
+          (parameter
+            name: (identifier)
+            type: (type_specification
+              (basic_type))))
+        body: (code_block
+          (begin_keyword)
+          (end_keyword))))))
+
+================================================================================
+strict parameters: nested group (nested)
+================================================================================
+
+codeunit 50100 C
+{
+    procedure P(A: Integer
+#if X
+        ; B: Integer
+#if Y
+        ; C: Boolean
+#endif
+#endif
+    )
+    begin
+    end;
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (procedure
+        (procedure_keyword)
+        name: (identifier)
+        parameters: (parameter_list
+          (parameter
+            name: (identifier)
+            type: (type_specification
+              (basic_type)))
+          (preproc_conditional_parameters
+            (preproc_if
+              (preproc_open)
+              condition: (identifier))
+            (parameter
+              name: (identifier)
+              type: (type_specification
+                (basic_type)))
+            (preproc_conditional_parameters
+              (preproc_if
+                (preproc_open)
+                condition: (identifier))
+              (parameter
+                name: (identifier)
+                type: (type_specification
+                  (basic_type)))
+              (preproc_endif
+                (preproc_close)))
+            (preproc_endif
+              (preproc_close))))
+        body: (code_block
+          (begin_keyword)
+          (end_keyword))))))
+
+================================================================================
+strict parameters: adjacent complementary groups with #if not (adjacent-compl)
+================================================================================
+
+codeunit 50100 C
+{
+    procedure P(A: Integer;
+#if X
+        B: Integer;
+#endif
+#if not X
+        B: Text;
+#endif
+        C: Integer)
+    begin
+    end;
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (procedure
+        (procedure_keyword)
+        name: (identifier)
+        parameters: (parameter_list
+          (parameter
+            name: (identifier)
+            type: (type_specification
+              (basic_type)))
+          (preproc_conditional_parameters
+            (preproc_if
+              (preproc_open)
+              condition: (identifier))
+            (parameter
+              name: (identifier)
+              type: (type_specification
+                (basic_type)))
+            (preproc_endif
+              (preproc_close)))
+          (preproc_conditional_parameters
+            (preproc_if
+              (preproc_open)
+              condition: (preproc_not_expression
+                (identifier)))
+            (parameter
+              name: (identifier)
+              type: (type_specification
+                (text_type
+                  (text_keyword))))
+            (preproc_endif
+              (preproc_close)))
+          (parameter
+            name: (identifier)
+            type: (type_specification
+              (basic_type))))
+        body: (code_block
+          (begin_keyword)
+          (end_keyword))))))
+
+================================================================================
+strict parameters: group replacing the first parameter (first-replace)
+================================================================================
+
+codeunit 50100 C
+{
+    procedure P(
+#if X
+        A: Integer
+#else
+        A: Text
+#endif
+        ; B: Integer)
+    begin
+    end;
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (procedure
+        (procedure_keyword)
+        name: (identifier)
+        parameters: (parameter_list
+          (preproc_conditional_parameters
+            (preproc_if
+              (preproc_open)
+              condition: (identifier))
+            (parameter
+              name: (identifier)
+              type: (type_specification
+                (basic_type)))
+            (preproc_else)
+            (parameter
+              name: (identifier)
+              type: (type_specification
+                (text_type
+                  (text_keyword))))
+            (preproc_endif
+              (preproc_close)))
+          (parameter
+            name: (identifier)
+            type: (type_specification
+              (basic_type))))
+        body: (code_block
+          (begin_keyword)
+          (end_keyword))))))
+
+================================================================================
+strict parameters: comments at the boundaries
+================================================================================
+
+codeunit 50100 C
+{
+    procedure P(A: Integer /* a */ ;
+#if X // x
+        // inside
+        B: Integer; /* b */
+#endif
+        // after
+        C: Integer)
+    begin
+    end;
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (procedure
+        (procedure_keyword)
+        name: (identifier)
+        parameters: (parameter_list
+          (parameter
+            name: (identifier)
+            type: (type_specification
+              (basic_type)))
+          (multiline_comment)
+          (preproc_conditional_parameters
+            (preproc_if
+              (preproc_open)
+              condition: (identifier)
+              (comment))
+            (comment)
+            (parameter
+              name: (identifier)
+              type: (type_specification
+                (basic_type)))
+            (multiline_comment)
+            (preproc_endif
+              (preproc_close)))
+          (comment)
+          (parameter
+            name: (identifier)
+            type: (type_specification
+              (basic_type))))
+        body: (code_block
+          (begin_keyword)
+          (end_keyword))))))
+
+================================================================================
+strict parameters: groups in an event declaration and an interface procedure
+================================================================================
+
+controladdin MyAddIn
+{
+    event OnReady(A: Integer
+#if X
+        ; B: Text
+#endif
+    );
+}
+
+interface IFoo
+{
+    procedure P(A: Integer
+#if X
+        ; var B: Text
+#endif
+    ): Boolean;
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (controladdin_declaration
+    (controladdin_keyword)
+    object_name: (identifier)
+    body: (controladdin_body
+      (event_declaration
+        (event_keyword)
+        name: (identifier)
+        parameters: (parameter_list
+          (parameter
+            name: (identifier)
+            type: (type_specification
+              (basic_type)))
+          (preproc_conditional_parameters
+            (preproc_if
+              (preproc_open)
+              condition: (identifier))
+            (parameter
+              name: (identifier)
+              type: (type_specification
+                (text_type
+                  (text_keyword))))
+            (preproc_endif
+              (preproc_close)))))))
+  (interface_declaration
+    (interface_keyword)
+    object_name: (identifier)
+    body: (interface_body
+      (interface_procedure
+        (procedure_keyword)
+        name: (identifier)
+        parameters: (parameter_list
+          (parameter
+            name: (identifier)
+            type: (type_specification
+              (basic_type)))
+          (preproc_conditional_parameters
+            (preproc_if
+              (preproc_open)
+              condition: (identifier))
+            (parameter
+              modifier: (var_keyword)
+              name: (identifier)
+              type: (type_specification
+                (text_type
+                  (text_keyword))))
+            (preproc_endif
+              (preproc_close))))
+        (interface_procedure_suffix
+          return_type: (type_specification
+            (basic_type)))))))
+
+================================================================================
+strict parameters: an empty group as the whole parameter list
+================================================================================
+
+codeunit 50100 C
+{
+    procedure P(
+#if X
+#endif
+    )
+    begin
+    end;
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (procedure
+        (procedure_keyword)
+        name: (identifier)
+        parameters: (parameter_list
+          (preproc_conditional_parameters
+            (preproc_if
+              (preproc_open)
+              condition: (identifier))
+            (preproc_endif
+              (preproc_close))))
+        body: (code_block
+          (begin_keyword)
+          (end_keyword))))))
+
+================================================================================
+strict parameters: group in the parameter list of a split procedure with a var section
+================================================================================
+
+codeunit 50100 C
+{
+#if TPL
+    procedure Z(A: Integer
+#if X
+        ; B: Integer
+#endif
+    )
+    var
+        V: Integer;
+#else
+    procedure Z(A: Integer)
+    var
+        V: Integer;
+#endif
+    begin
+    end;
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (preproc_split_procedure_preamble
+        (preproc_if
+          (preproc_open)
+          condition: (identifier))
+        (procedure_keyword)
+        name: (identifier)
+        parameters: (parameter_list
+          (parameter
+            name: (identifier)
+            type: (type_specification
+              (basic_type)))
+          (preproc_conditional_parameters
+            (preproc_if
+              (preproc_open)
+              condition: (identifier))
+            (parameter
+              name: (identifier)
+              type: (type_specification
+                (basic_type)))
+            (preproc_endif
+              (preproc_close))))
+        (var_section
+          (var_keyword)
+          body: (var_body
+            (variable_declaration
+              name: (identifier)
+              type: (type_specification
+                (basic_type)))))
+        (preproc_else)
+        (procedure_keyword)
+        name: (identifier)
+        parameters: (parameter_list
+          (parameter
+            name: (identifier)
+            type: (type_specification
+              (basic_type))))
+        (var_section
+          (var_keyword)
+          body: (var_body
+            (variable_declaration
+              name: (identifier)
+              type: (type_specification
+                (basic_type)))))
+        (preproc_endif
+          (preproc_close))
+        body: (code_block
+          (begin_keyword)
+          (end_keyword))))))
+
+================================================================================
+strict parameters preservation: plain list with var, an escaped quoted name, a keyword name and an attribute bundle
+================================================================================
+
+codeunit 50100 C
+{
+    procedure P(var A: Integer; "B ""q""": Text[30]; Table: Integer; [Attr] var Rec: Record Customer)
+    begin
+    end;
+
+    procedure Q()
+    begin
+    end;
+
+    trigger OnRun()
+    begin
+    end;
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (procedure
+        (procedure_keyword)
+        name: (identifier)
+        parameters: (parameter_list
+          (parameter
+            modifier: (var_keyword)
+            name: (identifier)
+            type: (type_specification
+              (basic_type)))
+          (parameter
+            name: (quoted_identifier)
+            type: (type_specification
+              (text_type
+                (text_keyword)
+                length: (integer))))
+          (parameter
+            name: (identifier)
+            type: (type_specification
+              (basic_type)))
+          (attribute_item
+            attribute: (attribute_content
+              name: (identifier)))
+          (parameter
+            modifier: (var_keyword)
+            name: (identifier)
+            type: (type_specification
+              (record_type
+                (record_keyword)
+                reference: (identifier)))))
+        body: (code_block
+          (begin_keyword)
+          (end_keyword)))
+      (procedure
+        (procedure_keyword)
+        name: (identifier)
+        body: (code_block
+          (begin_keyword)
+          (end_keyword)))
+      (trigger_declaration
+        (trigger_keyword)
+        name: (identifier)
+        body: (code_block
+          (begin_keyword)
+          (end_keyword))))))
+
+================================================================================
+strict parameters preservation: the whole procedure in each arm of an enclosing #if
+================================================================================
+
+codeunit 50100 C
+{
+#if X
+    procedure P(A: Integer; B: Integer)
+    begin
+    end;
+#else
+    procedure P(A: Integer)
+    begin
+    end;
+#endif
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (preproc_conditional
+        (preproc_if
+          (preproc_open)
+          condition: (identifier))
+        (procedure
+          (procedure_keyword)
+          name: (identifier)
+          parameters: (parameter_list
+            (parameter
+              name: (identifier)
+              type: (type_specification
+                (basic_type)))
+            (parameter
+              name: (identifier)
+              type: (type_specification
+                (basic_type))))
+          body: (code_block
+            (begin_keyword)
+            (end_keyword)))
+        (preproc_else)
+        (procedure
+          (procedure_keyword)
+          name: (identifier)
+          parameters: (parameter_list
+            (parameter
+              name: (identifier)
+              type: (type_specification
+                (basic_type))))
+          body: (code_block
+            (begin_keyword)
+            (end_keyword)))
+        (preproc_endif
+          (preproc_close))))))

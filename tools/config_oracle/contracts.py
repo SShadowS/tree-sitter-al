@@ -504,6 +504,11 @@ register("preproc_conditional_var_names", "branch-select", _LIST_RUN,
                 "preproc_conditional_var_names:<children>": "strict-list"},
          # strictConditionalList('var_names', field('name', _identifier_or_quoted), ',').
          arm={"identifier", "quoted_identifier", ",", "preproc_conditional_var_names"})
+register("preproc_conditional_parameters", "branch-select", _LIST_RUN,
+         hosts={"parameter_list:<children>": "strict-list",
+                "preproc_conditional_parameters:<children>": "strict-list"},
+         # strictConditionalList('parameters', seq(repeat(attribute_item), parameter), ';'), unfielded.
+         arm={"attribute_item", "parameter", ";", "preproc_conditional_parameters"})
 # --- Task 9: one-reading contracts (spec P4). The tree shows ONE configuration's
 # nesting (`reading`); every other configuration reports lowering:one-reading.
 _ASM = "tools.config_oracle.lowering.assemblers."

@@ -246,3 +246,42 @@ codeunit 50103 Impl implements Contoso.Sales.IFoo, IBar
         (identifier)
         (identifier))
       interface: (identifier))))
+
+================================================================================
+Item 70: a namespace-qualified profileextension base, beside a plain one
+--
+Was an ERROR over `Contoso.Sales.`. profileextension takes the #36 widening:
+a dotted base is one qualified_name node, a single name stays a plain
+quoted_identifier. alc accepts both
+(tools/alc_probe/cases/item70-profileextension/qualified_name.al, plain_name.al).
+================================================================================
+namespace Contoso.Sales;
+
+profileextension "EXT PROF" extends Contoso.Sales."BASE PROF"
+{
+}
+
+profileextension "EXT PROF 2" extends "BASE PROF"
+{
+}
+--------------------------------------------------------------------------------
+
+(source_file
+  (namespace_declaration
+    (namespace_keyword)
+    name: (namespace_name
+      (identifier)
+      (identifier)))
+  (profileextension_declaration
+    (profileextension_keyword)
+    object_name: (quoted_identifier)
+    (extends_keyword)
+    base_object: (qualified_name
+      (identifier)
+      (identifier)
+      (quoted_identifier)))
+  (profileextension_declaration
+    (profileextension_keyword)
+    object_name: (quoted_identifier)
+    (extends_keyword)
+    base_object: (quoted_identifier)))

@@ -9,6 +9,32 @@ public API — a change to node structure or field names is a **major** bump.
 
 ### Fixed
 
+- **`Visible = Where;` parses (deferred item 28).** `Where` at the start of a generic property value is an
+  `identifier` when it is not a `where(...)` clause (alc resolves it as a name; `tools/alc_probe/cases/item28-visible-where/`),
+  so `Visible = Where;` and expressions such as `Enabled = Where = false;` no longer ERROR. `SourceTableView = where(...)`
+  and every other keyword `where` are unchanged (production trees identical in all four corpora). `Visible = Where();`
+  stays an ERROR, as alc rejects it (AL0322). STATE_COUNT +59.
+- **`profileextension ... extends Contoso.Sales."BASE PROF"` parses (deferred item 70).** A dotted base is one
+  `qualified_name` node in `base_object`, as issue #36 did for the other extension kinds; a single name is unchanged.
+  It was an ERROR over the qualifier; alc accepts it (`tools/alc_probe/cases/item70-profileextension/`).
+  `node-types.json`: `profileextension_declaration.base_object` gains `qualified_name`.
+- **A `TableData` option member is a leaf `identifier` (deferred item 27).** `OptionMembers = TableData,...`,
+  `Option TableData,...` and `Description = TableData;` gave an `identifier` with an anonymous `"tabledata"` child,
+  the one `identifier` that was not a leaf (6 production sites, DC and BCApps). Named trees are unchanged in all four
+  corpora; the shape census now flags 0 types. Visible to consumers that walk anonymous children (py-tree-sitter,
+  `grammar_name`): at those 6 sites the child is gone and the identifier's grammar name is no longer
+  `tabledata_keyword`. STATE_COUNT -5.
+- **`#if` groups anywhere in procedure parameter lists (deferred item 46, row B7b-1b).** A group may stand before or
+  after a `;`, hold only a `;`, hold whole parameters (with `var`), replace the first parameter, nest, or be the whole
+  list, in procedures, split procedure headers, events, interface procedures and triggers; alc accepts these and the
+  parser ERRORed. New node `preproc_conditional_parameters` (unfielded, inside `parameter_list`, like
+  `preproc_conditional_attribute_args`); `parameter_list` and its parameters stay unfielded, and a list that is one
+  group is still one `parameter_list`. Production trees are unchanged in all four corpora (70,354 files). B7a:
+  family parameter-list GAP 90 -> 0 (54 cells CONSISTENT, 18 OVERACCEPT: a doubled or leading `;` that alc rejects in
+  one configuration, item 44's decided limit; 18 stay MIXED). An attribute alone in a group before a parameter still
+  ERRORs (alc rejects every parameter attribute as syntax, AL0104, so only the configuration without it is valid).
+  STATE_COUNT +89 (+0.31%), no conflict added, `parser.c` +0.22%. Like every strict list it over-accepts forms invalid
+  in every configuration, e.g. an empty group between two parameters with no `;` (item 44's decided limit).
 - **`OptionMembers` is keyed by name (deferred items 37, 38; roadmap B13). Tree-shape change for conditional
   values only.** The scanner emits a keyed token for `OptionMembers` (the compiler's one `OptionValues` property,
   on table fields and report columns), and its value is an option list that takes `#if` groups at any separator:

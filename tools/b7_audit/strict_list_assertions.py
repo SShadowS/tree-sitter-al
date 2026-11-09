@@ -22,7 +22,11 @@ GROUP = {"implements": "preproc_conditional_implements", "key-fields": "preproc_
          "sorting": "preproc_conditional_sorting_fields", "order-by": "preproc_conditional_order_by_fields",
          "move-modification": "preproc_conditional_move_elements",
          "array-dimensions": "preproc_conditional_array_dimensions",
-         "attribute-arguments": "preproc_conditional_attribute_args", "var-names": "preproc_conditional_var_names"}
+         "attribute-arguments": "preproc_conditional_attribute_args", "var-names": "preproc_conditional_var_names",
+         "parameter-list": "preproc_conditional_parameters"}
+# Families whose item is several tokens (`A: Integer`): every token run between separators and directives is
+# ONE named item of this kind (B7b-1b). An attribute bundle would be a sibling, so `[` is refused.
+ITEM = {"parameter-list": "parameter"}
 TOK = re.compile(r'//[^\n]*|/\*.*?\*/|#\s*(if|elif|else|endif)\b[^\n]*|"[^"]*"|\'[^\']*\'|\d+|[A-Za-z_]\w*|[,;]|\S',
                  re.S)
 ATOM = re.compile(r'"[^"]*"|\'[^\']*\'|\d+|[A-Za-z_]\w*')
@@ -44,14 +48,26 @@ def atom(t):
     return "identifier"
 
 
-def model(hole, group):
-    """-> pattern text of the list's named children: atoms and exact groups, in source order."""
+def model(hole, group, item=None):
+    """-> pattern text of the list's named children: atoms (or `item` runs) and exact groups, in source order."""
     stack = [[]]
+    in_item = False
     for m in TOK.finditer(hole):
         t = m.group(0)
-        if t.startswith("//") or t.startswith("/*") or t in ",;":
+        if t.startswith("//") or t.startswith("/*"):
+            continue
+        if t in ",;":
+            in_item = False
             continue
         d = m.group(1)
+        if item is not None and d is None:
+            if t == "[":
+                raise ValueError(f"attribute in {hole!r}: not modelled")
+            if not in_item:
+                stack[-1].append(f"({item})")
+                in_item = True
+            continue
+        in_item = False
         if d == "if":
             stack.append(["(preproc_if)"])
         elif d in ("elif", "else"):
@@ -74,10 +90,14 @@ def main(argv=None):
     ap = argparse.ArgumentParser(description=__doc__.splitlines()[0])
     ap.add_argument("lib", type=Path)
     ap.add_argument("--header-ids", type=Path)
+    ap.add_argument("--ids", type=Path, help="cells outside the B7b-1 manifest, one id per line (with --family)")
+    ap.add_argument("--family", choices=sorted(GROUP))
     a = ap.parse_args(argv)
     by_id = {e.cell.id: e for e in evidence.universe()}
     parser = loader.make_parser(loader.load_language(a.lib))
-    if a.header_ids:
+    if a.ids:
+        todo = [(cid, a.family) for cid in a.ids.read_text(encoding="utf-8").split()]
+    elif a.header_ids:
         todo = [(cid, None) for cid in a.header_ids.read_text(encoding="utf-8").split()]
     else:
         todo = [(m.cell_id, m.family) for m in manifest.load()[1] if m.disposition == "admitted"]
@@ -92,8 +112,10 @@ def main(argv=None):
                 raise ValueError(f"{cid}: not a `Name ; <list>` header hole: {hole!r}")
             pat, reason = f"(field_list {model(rest, GROUP['key-fields'])})", HEADER_REASON
         else:
-            pat = f"({c.key.split(':')[1]} {model(hole, GROUP[family])})"
+            pat = f"({c.key.split(':')[1]} {model(hole, GROUP[family], ITEM.get(family))})"
             reason = MANIFEST_REASON.format(group=GROUP[family])
+            if a.ids:
+                reason = reason.replace("B7b-1 strict list (Task 13)", "B7b-1b strict list (deferred item 46)")
         holds = judge.check_assertion(parser.parse(src).root_node, judge.Assertion(cid, pat, (), ""))
         if not holds:
             bad += 1

@@ -96,7 +96,8 @@ also attributed). The frozen manifest `tools/b7_audit/b7b1-manifest.tsv` gates i
 REJECTED/over-accepts 3, UNCHECKED 123, REJECTED 144, CONSISTENT 5,829. Families `implements`, `key-fields`, `sorting`,
 `array-dimensions`, `attribute-arguments` and `var-names` have no GAP group left; `order-by` keeps the outer list (B12,
 item 36) and `move-modification` the fixed `;` and target cells (B7b-3, item 46). What stays: over-acceptances (item 44),
-four pre-existing attribute/group gaps (item 45), the remaining list families B7b-1b..g (item 46). Two notes on the
+four pre-existing attribute/group gaps (item 45), the remaining list families B7b-1c..g (item 46; B7b-1b
+parameter-list done 2026-11-08). Two notes on the
 fixed hosts:
 - **An empty group before a declaration attaches by context.** At `var_body` top level, with or without a preceding
   attribute, `#if X` / `#endif` / `A: Integer;` gives a sibling `preproc_conditional_var` and a plain declaration; inside a
@@ -1260,7 +1261,24 @@ pinned by three cases of `test/corpus/directive_line_rejected_negative_test.txt`
 **Owner:** unassigned (a B-row candidate). A fix must add AL0620 negatives and keep
 `#endregion;`, trailing `//` comments and indented directives clean.
 
-## 27. `identifier` has two shapes: a `TableData` option member keeps an anonymous `"tabledata"` child
+## 27. `identifier` has two shapes: a `TableData` option member keeps an anonymous `"tabledata"` child — RESOLVED 2026-11-08
+
+**Resolution 2026-11-08 (branch `batch2/item27`).** The two option-member sites (`option_member` and
+`_option_values_lone`, the OptionMembers value rules batch 1 added) take one hidden
+`_tabledata_identifier: alias(kw('tabledata'), $.identifier)` instead of aliasing
+`tabledata_keyword`. Generated with no conflict; STATE_COUNT -5, SYMBOL_COUNT +1, `parser.c` +0.02%.
+It is ONE rule because the generator names an unnamed token after its most-used alias: two
+inline `alias(kw('tabledata'), $.identifier)` sites (measured: STATE_COUNT -59) outvoted the
+keyword's one use and changed the keyword child's `grammar_name` to `identifier` in 10,875
+production files. `snip.py --census` flags 0 on all four roots (DC and BCApps-29.0 had 5 and 1).
+The tree harness is byte-identical on all four (70,354 files) because CLI trees omit anonymous
+nodes. `python -m tools.perf delta --corpus all` shows exactly the 6 sites in 5 files (4 DC,
+1 BCApps), each losing the anonymous child, its `identifier` now `grammar_name 'tabledata'` (as
+an `and` option member is `'and'`); 0 other changes. `tools/tests/test_identifier_leaf.py` fails
+on the pre-fix library. `Permissions = tabledata X = R` keeps `tabledata_keyword` with its child.
+`Description = TableData;` (a generic value read as an option list) had the same child and is a
+leaf now too. The CLAUDE.md and rules-file sentences about a hidden `_tabledata_keyword` named
+below were already gone; the rules file and `docs/keyword-shape-audit.md` now describe the fix.
 
 **Established:** 2026-10-01, by the shape census added on `chore/workflow-tools`
 (`python tools/snip.py --census --root DIR`, which flags any `*_keyword`/`*identifier` type
@@ -1298,7 +1316,33 @@ rule that no longer exists. It is the visible `tabledata_keyword` now, and the
 and `OptionMembers = TableData,…` both clean, and end with the census at 0 flagged on all
 four roots.
 
-## 28. `Visible = Where;` ERRORs; alc accepts it (probed 2026-11-08)
+## 28. `Visible = Where;` ERRORs; alc accepts it — RESOLVED 2026-11-08 (branch `batch2/item28`)
+
+**Resolved:** `_value_start_keyword_name` (the `table`/`order` names-at-value-start rule, item
+40 / issue #27) gained a third arm, `prec(-1, $._where_token)`. `Visible = Where;` is now
+`value: (identifier)`, and the expression forms `Enabled = Where = false;` / `Editable = Where
+and ShowIt;` parse as comparison/logical expressions with an `identifier` left operand; a
+`where(` at value start is still a `where_clause`. Why not a reserved set (the original next
+step): reserved words only make a keyword WIN over `identifier`, and here the keyword already
+wins (its `where_clause` arm gives it actions at value start); the fix needs the opposite.
+The `prec(-1)` resolves the one reduce/reduce at `(` (where_clause vs a call named `Where`)
+statically for the where_clause, so there is no new conflict and no GLR fork at the ~3,500
+`= where(` production lines.
+
+**Evidence:** tree harness byte-identical on all four corpora (BC.History 15,358, DC 1,352,
+BC28.1 16,928, BCApps-29.0 36,716 trees); a scratch probe of `Where` as a name in code,
+table and page positions (assignment, `if`, `case`, `for`, call, member, `::`, subscript,
+`in`, attribute argument, `const(Where)`, `field(Where)`, key fields, option members; 52
+occurrences on 41 lines, 0 ERROR) gives trees byte-identical to the same text with a plain name; STATE_COUNT +59 (+0.20%), parser.c
++0.95%. Fixture `test/corpus/value_start_where_name_test.txt`. New probes in
+`tools/alc_probe/cases/item28-visible-where/`: `visible_where_expression.al` (accept),
+`visible_where_call.al` and its control `control_plain_call.al` (both reject AL0322).
+
+**Remaining (not a defect):** `Visible = Where();` at value start is still an ERROR (the `(`
+goes to where_clause). alc rejects it with AL0322 (a call is not a valid client expression),
+exactly as it rejects the plain-name control `Visible = ShowIt();`.
+
+**Original record:**
 
 **Established:** 2026-10-05, found in the B5 Task 4 review. Pre-existing at the B4 merge
 (`6b15b9b`) and not caused by B5.
@@ -1318,11 +1362,10 @@ so it really resolves `Where` as a name (the word is not a keyword there). Probe
 `tools/alc_probe/cases/item28-visible-where/` (`control_plain_name.al`, `visible_where.al`,
 `visible_where_undeclared.al`).
 
-**Next step:** alc accepts, so the grammar should parse it: `Where` at generic property
-value start must become an `identifier`. Fix by reserved-word handling at value start, as
-B5 did for `_qualified_name_segment`, with a fixture from `visible_where.al`.
+**Next step (done, see Resolved above):** alc accepts, so the grammar should parse it: `Where`
+at generic property value start must become an `identifier`.
 
-**Owner:** unassigned.
+**Owner:** batch 2 (`batch2/item28`).
 
 ## 29. Four `TableRelation` shapes with `#if` inside the chain ERROR
 
@@ -1918,7 +1961,7 @@ every arm's first declaration), and give attributes inside groups a grammar home
 
 | owner | family (matrix) | cells | witnesses |
 |---|---|---|---|
-| B7b-1b | `parameter-list` (the `;`-led form, attribute bundles, empty list) | GAP 90 | `test/corpus/b7_gap_parameter_list_test.txt` (10) |
+| B7b-1b (**DONE 2026-11-08**, branch `batch2/item46b`) | `parameter-list` (the `;`-led form, attribute bundles, empty list): `strictListBody($, 'parameters', ';')`, item = attribute bundle + parameter, group `preproc_conditional_parameters`; census key `occ:parameter_list:2.0.0` aliased to `1.0.0` (`tools/b7_audit/key-aliases.tsv`); oracle family `parameters` (`Family.prefix_kinds` for the attribute bundle) | GAP 90 -> 0: CONSISTENT 54, OVERACCEPT 18 (holes-lead, holes-mid: doubled/leading `;`, item 44), MIXED 18 | removed: `b7_gap_parameter_list_test.txt` (10) became the first 10 cases of `test/corpus/strict_conditional_parameters_test.txt` |
 | B7b-1c | `ml-pairs`, `namespace-pairs` (pair interiors), `list-literal` (whole-value ownership table first) | GAP 825, 288, 388; list-literal OVERACCEPT 4 | `b7_gap_ml_pairs_test.txt` (19), `b7_gap_namespace_pairs_test.txt` (17), `b7_gap_list_literal_test.txt` (31) |
 | B7b-1d | `label-attributes` (report-label and label-variable attribute tails), `caption-subfields` (heterogeneous tails, unwrap) | GAP 408, 1,080 | `b7_gap_label_attributes_test.txt` (17), `b7_gap_caption_subfields_test.txt` (15) |
 | B7b-1e | `option-members` (holes, witness policy; B13 overlap, matrix owner B13, items 37/38) | GAP 1,111 | `b7_gap_option_members_test.txt` (23) |
@@ -1934,6 +1977,15 @@ the same input with a name arm (`#if X Foo #endif ,B`) ERRORs identically on bot
 group-then-comma-led-member gap, B7b-1e. After item 61's fix the recovery reads the `not` arm as a unary-only prefix
 before the ERROR; on main it read as a conditional member group. Both are recovery trees on input that ERRORs.
 0 production sites.
+
+**Parameter list, what B7b-1b left (2026-11-08).** An arm holds whole parameters and `;` only, so an attribute alone
+in a group before its parameter (`A: Integer; #if X [NonDebuggable] #endif B: Integer`) still ERRORs, as on main.
+alc accepts only the configuration without the attribute: every parameter attribute is a syntax error (AL0104,
+`tools/alc_probe/cases/b7b1b/param_attribute_flat.al`; the shape is `attr_alone_in_group.al`), and the grammar's
+parameter `attribute_item` bundle is itself an over-acceptance kept as it was. 0 production sites (no corpus has a
+parameter attribute). The B7a generator produces 10 placements for this family; sep-before, sep-after, nested,
+adjacent groups, `#elif`, first-replace, comments and the event/interface hosts are pinned only by
+`test/corpus/strict_conditional_parameters_test.txt` (positive alc probe `tools/alc_probe/cases/b7b1b/group_attr_var_param.al`).
 
 All witness files are under `test/corpus/` and listed in `tools/deliberate-negatives.txt`. Also outside B7b-1 and
 unassigned within B7b: the header families `key-header` (GAP 18, `b7_gap_key_header_test.txt`) and `fieldgroup-header`
@@ -2722,7 +2774,7 @@ with the `;` after `#endif` as the host's terminator; measure against the versio
 
 **Owner:** unassigned.
 
-## 70. `profileextension ... extends Namespace."Name"` ERRORs; alc accepts it (probed 2026-11-08)
+## 70. `profileextension ... extends Namespace."Name"` ERRORs; alc accepts it — RESOLVED 2026-11-08
 
 **Established:** 2026-11-08, issue #36. The probe `profile "BASE PROF" { RoleCenter = "My RC"; }` plus
 `profileextension ... extends "BASE PROF"` is rejected with AL0341 even by a plain name (control), so the probe
@@ -2736,14 +2788,15 @@ AL0341 is "'Caption' property is missing": a `profile` requires `Caption`. With 
 `profileextension "EXT PROF" extends Contoso.Sales."BASE PROF"` inside `namespace Contoso.Sales;`. A wrong qualifier
 (`Contoso.Purchasing."BASE PROF"`) is rejected with AL0791 "The namespace 'Purchasing' is unknown", so alc resolves
 the qualifier rather than ignoring it. Probes: `tools/alc_probe/cases/item70-profileextension/` (`plain_name.al`,
-`qualified_name.al`, `wrong_namespace.al`). Today the parser ERRORs on the qualified form (`ERROR` over
-`Contoso.Sales.`, `base_object` is only the quoted name).
+`qualified_name.al`, `wrong_namespace.al`). Before the fix the parser ERRORed on the qualified form (`ERROR` over
+`Contoso.Sales.`, `base_object` only the quoted name).
 
-**Next step:** alc accepts, so the grammar should parse it: widen `profileextension`'s `base_object` to
-`qualified_name` as #36 did for the other extension kinds (grammar comment at `_extension_without_id`), fixture from
-`qualified_name.al`.
-
-**Owner:** unassigned.
+**Resolved (2026-11-08, batch 2, branch `batch2/item70`):** `_extension_without_id` takes `_object_name_ref`, as #36
+did for the other extension kinds: a dotted base is one `qualified_name` node, a single name stays a plain
+`identifier` / `quoted_identifier`. node-types: `profileextension_declaration.base_object +qualified_name`, pinned by a
+`tools/check-field-types.py` row; fixture "Item 70" in `test/corpus/issue_32_35_36_headers_test.txt` (both forms).
+STATE_COUNT +4. Trees byte-identical on all four corpora (0 qualified sites). The B7a qualifier row
+`occ:_dotted_object_name:1.0.0` gained the host `profileextension_declaration`.
 
 ## 71. tree-sitter CLI versions disagree: package.json ^0.26.7, local and CI v0.27.0, upstream v0.27.2
 

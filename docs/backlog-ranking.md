@@ -18,7 +18,7 @@ the scanner's core dispatch). Order: P descending, then D+R ascending, with the 
 | 1 | 43 | `; else` / `Bar #if X ; #endif else Baz` reads `else` as a call | 4 | 2 | 3 | Silent wrong tree on a VALID split input (X=0); 0 sites. The recorded blocker (reserving `else` changed 6 cells where `end`/`end else` were misread as calls) is probably gone since #41 killed that call reading (inferred from item 69, not measured). |
 | 2 | 37 | Conditional value fragments / key `OptionMembers` by name (B13) | 3 | 3 | 3 | Valid AL ERRORs in 10 pinned shapes plus bare-`;` ML arms; option-members is the one list family with real sites; keying `OptionMembers` is a sixth instance of a done pattern and also closes 38, 65 and B7b-1e of 46. |
 | 3 | 22 | `case_else_branch` has two shapes | 3 | 2 | 2 | Real sites (2 under `preproc_conditional_case`, 1,468 beside `case_body` in BC.History). A tree-shape decision (B10): a field, or pin both shapes; moving 1,468 nodes is the costly option. |
-| 4 | 46 | Remaining list families B7b-1b..g | 3 | 4 | 3 | Thousands of GAP cells of valid AL; recipe exists (`strictConditionalList`, Host Conversion Procedure). Start with 1b parameter-list (90 cells) or 1e option-members (overlaps 37). |
+| 4 | 46 | Remaining list families B7b-1b..g | 3 | 4 | 3 | Thousands of GAP cells of valid AL; recipe exists (`strictConditionalList`, Host Conversion Procedure). Start with 1b parameter-list (90 cells) or 1e option-members (overlaps 37). 1b done 2026-11-08 (batch 2, GAP 90 -> 0). |
 | 5 | 10 | Split `add*` headers open over `#endif` (EDocumentDE) | 3 | 5 | 4 | The one item with a REAL production file that ERRORs (BCApps `EDocumentServiceDE.PageExt.al`); partial forms measured +835..+2,270 states; needs configuration-aware parsing. |
 | 6 | 64 | split-if-begin GAP, 582 cells; C2 recovery loses `procedure` | 3 | 5 | 4 | Largest unowned GAP family on alc-accepted input; "needs its own spec"; split-statement / version-count class. |
 | 7 | 36 | Configuration-dependent property boundaries (B12) | 3 | 5 | 4 | One-reading guesses are wrong in some configuration; 0 sites; blocked on the F1 representation decision. |
@@ -101,6 +101,17 @@ merged and the gates re-run on the combined tree by the controller, never by the
 | 73 | Triaged: 0 production sites hold the defective sequence; a fix would key `OptionOrdinalValues`. | — | — |
 | 24 | `SplitInfo.shared` excludes the `#endif` line in Python, JS and Rust; docs and the 4.5.0 exports-map correction. | approve-with-notes | yes |
 | 6 | alc accepts a doubled BOM; the grammar already treats U+FEFF as an extra. Closed, not a defect. | changes-needed (docs; fixed at merge) | yes |
-| 28 | alc accepts `Visible = Where;`; the grammar should parse it (open, next batch). | as above | yes |
-| 70 | alc accepts a qualified `profileextension` base; the grammar should parse it (open, next batch). | as above | yes |
+| 28 | alc accepts `Visible = Where;`; done in batch 2. | as above | yes |
+| 70 | alc accepts a qualified `profileextension` base; done in batch 2. | as above | yes |
 | 44 | Asked al-sem (relayed by the owner via kraken coord, `q-20261108T212902-ba39458a`): it does not need these rejected. Recorded as a decided known limit. | — | yes |
+
+### Batch 2 (2026-11-09)
+
+| item | result | review | merged |
+|---|---|---|---|
+| 28 | `Where` at generic property value start is an `identifier` (`_value_start_keyword_name`, `prec(-1)` so `where(` stays a clause); `Visible = Where();` stays an ERROR, as alc rejects it (AL0322). STATE_COUNT +59. | approve-with-notes | yes |
+| 70 | `profileextension`'s base takes a qualified name, as #36 did for the other kinds. STATE_COUNT +4. | approve-with-notes | yes |
+| 27 | A `TableData` option member is a leaf `identifier` (one shared hidden rule; two inline aliases had renamed an anonymous token in 10,875 production files, measured with `perf delta` and dropped). The shape census flags 0 types. STATE_COUNT -5. | approve-with-notes | yes |
+| 46b | Procedure parameter lists are a strict conditional list (new `preproc_conditional_parameters`); B7a parameter-list GAP 90 → 0. Over-accepts forms invalid in every configuration (item 44's limit). STATE_COUNT +89. | approve-with-notes | yes |
+
+Combined: STATE_COUNT +147 (+0.5%), `parser.c` +1.2%; production trees unchanged in all four corpora.
