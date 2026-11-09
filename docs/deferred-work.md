@@ -1122,6 +1122,30 @@ tree-shape change and needs E2's consumer migration check.
 **Owner:** Phase B, roadmap row B10 (a tree-shape spec). It waits for user approval like
 B4 to B6.
 
+**Decision (owner, 2026-11-09): option (a), every `case_else_branch` inside `case_body`.**
+Grounds:
+- **The Business Central docs** list `[else <Statement n+1>;]` as the last alternative of the value-set list,
+  indented with the value sets, "used as the default"
+  ([AL control statements](https://learn.microsoft.com/en-us/dynamics365/business-central/dev-itpro/developer/devenv-al-control-statements)).
+- **Every grammar checked** keeps the default branch in the same container as the other branches:
+  - tree-sitter-c: `default:` is a `case_statement` in the switch's `body`;
+  - C#: `default:` is a `switch_section` in `switch_body`;
+  - Ruby and Pascal: `else` is a sibling of the `when`/`caseCase` children under `case`.
+- **None puts it outside a body wrapper, as ours does.** A conditional `else` must stay in its
+  `preproc_conditional_case`, and that group is already a member of `case_body`. With the traversal helper
+  splicing the group, a conditional `else` is a `case_body` member while a plain one is not; (b) and (c) keep
+  that split. After (a), the rule has no exception: the branches and the `else` are the members of
+  `case_body`, conditional groups spliced.
+- **Cost:** 1,468 nodes in 826 BC.History files change parent (same type, same content).
+  `case X of else B; end;` gets a `case_body` holding only the else.
+
+**Consumer check (E2), asked of al-sem 2026-11-09 via the owner:**
+- What changes: in `case_statement`, `case_else_branch` moves from a sibling after `body: (case_body)` to the
+  last child of that `case_body`, and the `body` field becomes present for a case with only an `else`.
+- The question: does al-sem read `case_else_branch` as a child of `case_statement` anywhere, and can it take
+  the move in the next minor release (a breaking tree change, with a CHANGELOG note)? Or does it need a
+  transition (for example both shapes for a release)?
+
 
 ## 23. A `Permissions` list ending inside an `#if` arm ERRORs when a split procedure follows — RESOLVED 2026-11-09
 
