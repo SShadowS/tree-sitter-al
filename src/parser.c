@@ -1816948,8 +1816948,8 @@ TS_PUBLIC const TSLanguage *tree_sitter_al(void) {
     .reserved_words = &ts_reserved_words[0][0],
     .max_reserved_word_set_size = 8,
     .metadata = {
-      .major_version = 4,
-      .minor_version = 6,
+      .major_version = 5,
+      .minor_version = 0,
       .patch_version = 0,
     },
   };
