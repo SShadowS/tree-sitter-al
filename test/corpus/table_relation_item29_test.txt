@@ -267,3 +267,89 @@ table 50100 T
                               (identifier))))
                         (preproc_endif
                           (preproc_close))))))))))))))
+
+========================================================================
+Item 75: a #if around two if-relations, then a shared where and a shared else
+========================================================================
+table 50100 T
+{
+    fields
+    {
+        field(2; "No."; Code[20])
+        {
+            TableRelation =
+#if X
+                if (A = const(1)) Item
+#else
+                if (A = const(2)) Resource
+#endif
+                where(A = const(1)) else Customer;
+        }
+    }
+}
+
+------------------------------------------------------------------------
+
+(source_file
+  (table_declaration
+    (table_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (fields_section
+        (fields_keyword)
+        body: (fields_body
+          (field_declaration
+            (field_keyword)
+            id: (integer)
+            name: (quoted_identifier)
+            type: (type_specification
+              (code_type
+                (code_keyword)
+                length: (integer)))
+            body: (declaration_body
+              (property
+                name: (property_name)
+                value: (table_relation_value
+                  (preproc_conditional_table_relation
+                    (preproc_if
+                      (preproc_open)
+                      condition: (identifier))
+                    (table_relation_expression
+                      (if_table_relation
+                        (if_keyword)
+                        (where_conditions
+                          (where_condition
+                            field: (identifier)
+                            (const_keyword)
+                            value: (integer)))
+                        then_relation: (simple_table_relation
+                          target: (qualified_name
+                            (identifier)))))
+                    (preproc_else)
+                    (table_relation_expression
+                      (if_table_relation
+                        (if_keyword)
+                        (where_conditions
+                          (where_condition
+                            field: (identifier)
+                            (const_keyword)
+                            value: (integer)))
+                        then_relation: (simple_table_relation
+                          target: (qualified_name
+                            (identifier)))))
+                    (preproc_endif
+                      (preproc_close)))
+                  (where_clause
+                    (where_keyword)
+                    (where_conditions
+                      (where_condition
+                        field: (identifier)
+                        (const_keyword)
+                        value: (integer))))
+                  (else_table_relation_fragment
+                    (else_keyword)
+                    else_relation: (table_relation_expression
+                      (simple_table_relation
+                        target: (qualified_name
+                          (identifier))))))))))))))

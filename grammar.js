@@ -1240,6 +1240,10 @@ module.exports = grammar({
     [$.preproc_conditional_case, $._case_empty_group],
     [$.preproc_conditional_case, $._case_empty_group, $.preproc_split_case_branch, $.preproc_conditional_case_patterns],
     [$.preproc_conditional_case, $._case_empty_group, $.preproc_conditional_case_patterns],
+    // Deferred item 47: preproc_split_case_branch's `_case_pattern` step has no
+    // static prec, so `#if 1, #endif • 2` (a split branch's pattern group, or a
+    // pattern group opening an ordinary branch's patterns) is a GLR decision.
+    [$.preproc_split_case_branch, $.preproc_conditional_case_patterns],
   ],
 
   // Trivial pass-through wrappers — macro-substituted to drop a layer of indirection.
@@ -1837,8 +1841,13 @@ module.exports = grammar({
         optional(seq($.preproc_conditional_table_relation, optional($.else_table_relation_fragment))),
       ),
       // the conditional head with a shared tail: else, or (item 29) a where clause
-      // (`#if X A #else B #endif where(..)`)
-      seq($.preproc_conditional_table_relation, choice($.else_table_relation_fragment, $.where_clause)),
+      // (`#if X A #else B #endif where(..)`), and (item 75) a where then an else
+      // (`#if X if (..) A #else if (..) B #endif where(..) else C`; alc accepts both
+      // configurations, tools/alc_probe/cases/item29-relation-chain/s5-*)
+      seq($.preproc_conditional_table_relation, choice(
+        $.else_table_relation_fragment,
+        seq($.where_clause, optional($.else_table_relation_fragment)),
+      )),
     )),
     ...valueRunRules('_table_relation', $ => $._table_relation_property_value),
     ...afterGroupRules('_table_relation', $ => $._table_relation_property_value),
@@ -6799,7 +6808,14 @@ module.exports = grammar({
 
     case_body: $ => repeat1(choice(
       $.case_branch,
-      $.preproc_conditional_case,
+      // Deferred item 47 shapes 1, 2, 4, 5 (owner ruling, option (a)): a `;`
+      // directly after a group is a sibling empty_statement. Its owner is the
+      // branch the configuration ends with before it, which differs per
+      // configuration (`1: Bar #if X ; 2: Baz #endif ;`), so the tree names no
+      // owner; the oracle marks it CASE_SEMI (case_terminators.mark_body_semis).
+      // A decoration (`1: A #if X #endif ;`) still wins: the sibling group's
+      // prec.dynamic(-2). B7b-3 spec 4.2.3 as amended.
+      seq($.preproc_conditional_case, optional($.empty_statement)),
       $.preproc_split_case_extended,
       // `else` / `else begin` alternating per branch as the case's else part
       // (MfgCarryOutAction.Codeunit.al, W1, BC 29).
@@ -6938,14 +6954,27 @@ module.exports = grammar({
     // An arm holds branches, a lone `;` (empty_statement: the `;` of the
     // preceding branch in that configuration, B7b-3 spec 4.1) and nested
     // groups, plus the optional case else.
-    preproc_conditional_case: $ => seq(
+    //
+    // prec.dynamic(-2), deferred item 47 (owner ruling): an empty group directly
+    // before patterns (a branch's, a split branch's, a preproc_split_case_extended
+    // header's) is a pattern group of those patterns, never a sibling group, in
+    // every form (`#elif`, `#else`, either arm). The prec(0) block on
+    // preproc_split_case_branch lets GLR keep the readings; where several
+    // complete, the dynamic sum decides on purpose instead of ts_subtree_compare's
+    // symbol order: a sibling group costs -2, a preproc_conditional_case_patterns
+    // -1, the split branch's own group 0. So the first empty group before a branch
+    // is the split branch's own group, the rest its pattern groups (as on main),
+    // and before an extended header the group is the header's pattern group.
+    // Where only the sibling reading completes (shape 6, a group before `end` or
+    // `else`) the weights decide nothing.
+    preproc_conditional_case: $ => prec.dynamic(-2, seq(
       $.preproc_if,
       repeat($._case_group_item),
       optional($.case_else_branch),
       repeat(seq($.preproc_elif, repeat($._case_group_item), optional($.case_else_branch))),
       optional(seq($.preproc_else, repeat($._case_group_item), optional($.case_else_branch))),
       $.preproc_endif,
-    ),
+    )),
 
     _case_group_item: $ => choice($.case_branch, $.empty_statement, $.preproc_conditional_case),
 
@@ -6978,15 +7007,30 @@ module.exports = grammar({
       $.preproc_split_case_branch,
     ),
 
-    // Case branch where some patterns are conditionally included via preprocessor
+    // Case branch where some patterns are conditionally included via preprocessor.
+    // Deferred item 47 (shapes 3, 6): the prec(0) block takes the boundary after
+    // `#endif` out of the rule's prec(25) (a step's precedence is the one in force
+    // AFTER it, and the last step of a block gets the outer one back, so
+    // `_case_pattern` keeps 25 before the `:`). With a flat prec(25),
+    // `#if … #endif • <pattern or #if>` was a static shift into this rule, so an
+    // empty group there was always this rule's pattern group, and
+    // `1: A #if X #endif #if Y ; #endif 2: B;` or an empty group before a
+    // preproc_split_case_extended header ERRORed. GLR now keeps the sibling group
+    // / header pattern group alive and the token after the pattern (`:` + body
+    // vs `#else`, `;`) decides; where more than one reading completes, the
+    // dynamic weights on preproc_conditional_case / _patterns decide (item 47
+    // fix round). A prec.dynamic on THIS rule instead (25 or 1, with or without
+    // the block) changed B7b-2 operand-group trees or the `;` of
+    // `#if X 1: A; #if Y #endif 2: B; #endif` (the branch's `;` became an arm
+    // empty_statement); measured, not used. The block moved the members after it
+    // (key-aliases.tsv).
     preproc_split_case_branch: $ => prec(25, seq(
       $.preproc_if,
       optional($._case_pattern_branch),
       repeat(seq($.preproc_elif, optional($._case_pattern_branch))),
       optional(seq($.preproc_else, optional($._case_pattern_branch))),
-      $.preproc_endif,
       // Pattern(s) after the preprocessor block, ending with ':'
-      $._case_pattern,
+      prec(0, seq($.preproc_endif, $._case_pattern)),
       ':',
       $._case_body_branch,
       optional(seq(repeat(caseEmptyGroup($)), ';')),
@@ -7091,14 +7135,17 @@ module.exports = grammar({
       $.in_expression,
     ),
 
-    // Preprocessor conditional wrapping case pattern entries mid-list
-    preproc_conditional_case_patterns: $ => seq(
+    // Preprocessor conditional wrapping case pattern entries mid-list.
+    // prec.dynamic(-1): deferred item 47's weights, see preproc_conditional_case
+    // (a pattern group beats a sibling group, -2, and loses to a split branch's
+    // own group, 0).
+    preproc_conditional_case_patterns: $ => prec.dynamic(-1, seq(
       $.preproc_if,
       optional($._case_pattern_branch),
       repeat(seq($.preproc_elif, optional($._case_pattern_branch))),
       optional(seq($.preproc_else, optional($._case_pattern_branch))),
       $.preproc_endif,
-    ),
+    )),
 
     _single_pattern: $ => choice(
       $._literal_value,
@@ -7327,8 +7374,16 @@ module.exports = grammar({
       $.preproc_endif
     ),
 
+    // The list may carry continuations before the dangling `in` (deferred-work
+    // item 51 shape 3, `Ok in #if X [true] and Ok in #endif [false]`; alc
+    // accepts every configuration, probe
+    // tools/alc_probe/cases/b7b-2/keyword_ops/in-prefix-with-continuation.al).
+    // `_dangling_tail_item`s, as in `_dangling_operand`: their operands are
+    // prec(10), so `and Ok` reduces before the `in` shift and the `in` is the
+    // arm's dangling operator, not an in_expression over `Ok`.
     _in_dangling_operand: $ => seq(
       field('operand', $.list_literal),
+      repeat($._dangling_tail_item),
       field('operator', $.in_keyword)
     ),
 
@@ -7346,8 +7401,13 @@ module.exports = grammar({
     // option-list comma, and `Option ...,"IN",IS,IT` (BCApps
     // GetCoverage.Page.al) lexed `IS` as the keyword and ERRORed. An `is`/`as`
     // target is an interface or object type; none of the excluded ones is.
+    //
+    // Continuations may stand before the dangling keyword, as in
+    // `_in_dangling_operand` (item 51 shape 3, `F is #if X IBar and G is
+    // #endif IFoo`; probe keyword_ops/is-prefix-with-continuation.al).
     _type_dangling_operand: $ => seq(
       field('operand', alias($._dangling_type, $.type_specification)),
+      repeat($._dangling_tail_item),
       field('operator', choice($.is_keyword, $.as_keyword))
     ),
 

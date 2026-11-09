@@ -36,10 +36,10 @@ the scanner's core dispatch). Order: P descending, then D+R ascending, with the 
 | 19 | 50 | `;` group beside a split case end branch has no slot | 2 | 3 | 3 | Visible, 48 cells, 0 sites. |
 | 20 | 69 | Bare `end` without `;` in both arms ERRORs | 2 | 3 | 4 | Visible, 12 cells, 0 sites; was silent before #41, now loud. Scanner token variant. |
 | 21 | 63 | Incremental reparse differs from fresh (2 valid inputs) | 2 | 3 | 4 | Editors only: al-sem parses fresh through `al_shim_parse_utf8`. |
-| 22 | 45 | Four variable-attribute group shapes ERROR | 2 | 3 | 4 | Visible, 0 sites; `VAR_ATTRIBUTE_OPEN` design decision. |
+| 22 | 45 | Four variable-attribute group shapes ERROR | 2 | 3 | 4 | RESOLVED 2026-11-09 (batch4/item45): scanner-only, every path must reach a variable's `:`; mixed-target shapes split out as item 76, nested split header as item 77. |
 | 23 | 48 | Configuration-independent orphan `;` around empty groups | 2 | 3 | 5 | 18 SILENT cells, semantically empty, 0 sites; touches `_statement`. |
 | 24 | 49 | B7b-3 cells deferred by host limitation | 2 | 4 | 1 | Mostly oracle lowering for split hosts. |
-| 25 | 51 | `in` prefix arm with a continuation (shape 3) | 2 | 4 | 3 | Visible, 0 sites; a precedence change was measured and reverted. |
+| 25 | 51 | `in` prefix arm with a continuation (shape 3) | 2 | 4 | 3 | RESOLVED 2026-11-09 (batch4/item51): the typed arms take `_dangling_tail_item`s; no precedence change, STATE −2. |
 | 26 | 47 | Six case shapes alc accepts still ERROR | 2 | 4 | 3 | Visible, 0 sites, each needs an owner decision. |
 | 27 | 68 | Split `end;` after statements in the FIRST arm ERRORs | 2 | 4 | 4 | Visible, 0 sites, alc not probed; version-count class. |
 | 28 | 26 | Directive after code on the same line parses clean | 2 | 4 | 5 | Over-acceptance (AL0620), 0 sites; needs new scanner line state. |
@@ -127,3 +127,15 @@ Combined: STATE_COUNT +147 (+0.5%), `parser.c` +1.2%; production trees unchanged
 
 Merge note: the merges dropped the 186 (item 69) and 75 (item 50) assertion rows each branch added; they were restored
 before the gates ran.
+
+### Batch 4 (2026-11-09)
+
+| item | result | review | merged |
+|---|---|---|---|
+| 75 | A conditional `TableRelation` head, then a shared `where` and `else`, parses (siblings in `table_relation_value`). Over-accepts the same tail after plain targets (item 44's limit). A conditional `else` group after a shared `where` still ERRORs: item 78. STATE_COUNT +0. | approve-with-notes (CHANGELOG corrected at merge) | yes |
+| 45 | Variable attributes next to `#if` groups parse (scanner only: every path after the attribute must reach a variable's `:`). One tree-shape change at 0 production sites. A target that is a variable in one configuration and a procedure in another: item 76. STATE_COUNT +0. | approve-with-notes | yes |
+| 51 | Shape 3: a typed `in`/`is`/`as` prefix arm with a continuation before its keyword parses. STATE_COUNT −2. | approve-with-notes | yes |
+| 47 | All six `case` shapes alc accepts parse: a `;` after a group is a sibling `empty_statement` (owner ruling (a)); an empty group before patterns is their pattern group (owner ruling: the header reading). Two tree-shape families at 0 production sites. STATE_COUNT +2. | changes-needed (a regression with two or more empty groups before a split branch; fixed in a second round, pinned) | yes |
+
+Combined: STATE_COUNT +0 vs main, `parser.c` +0.13%; production trees byte-identical in all four corpora. Merges used
+`merge_assertions.py` (no branch added or re-recorded an assertion row, so nothing was dropped this time).

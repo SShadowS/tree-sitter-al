@@ -1154,6 +1154,91 @@ operator: (in_keyword) (preproc_else) operand: (identifier) operator: (in_keywor
 right: (list_literal (integer))))) (end_keyword))))))
 
 ================================================================================
+B7b-2 operand group: a typed in prefix arm with a continuation before its keyword
+--
+deferred-work item 51 shape 3 (was a :error witness in b7b2_scope_gap_test.txt):
+the arm's `and Ok` is a dangling tail item, so the arm's `in` is its dangling
+operator. X is `(Ok in [true]) and (Ok in [false])`. alc:
+keyword_ops/in-prefix-with-continuation.al.
+================================================================================
+codeunit 50101 P
+{
+    procedure Q()
+    begin
+        B := Ok in
+#if X
+        [true] and Ok in
+#endif
+        [false];
+    end;
+}
+--------------------------------------------------------------------------------
+
+(source_file (codeunit_declaration (codeunit_keyword) object_id: (integer) object_name: (identifier) body:
+(declaration_body (procedure (procedure_keyword) name: (identifier) body: (code_block (begin_keyword) body:
+(statement_block (assignment_statement left: (identifier) operator: (assignment_operator) right: (in_expression
+left: (identifier) operator: (in_keyword) (preproc_operand_prefix (preproc_if (preproc_open) condition: (identifier))
+operand: (list_literal (boolean)) operand: (identifier) operator: (in_keyword) (preproc_endif (preproc_close)))
+right: (list_literal (boolean))))) (end_keyword))))))
+
+================================================================================
+B7b-2 operand group: typed in prefix arms with continuations in every arm
+--
+deferred-work item 51 shape 3: an `in` item and a parenthesized comparison
+inside the arms. alc: keyword_ops/in-prefix-with-continuation-arms.al.
+================================================================================
+codeunit 50101 P
+{
+    procedure Q()
+    begin
+        B := Ok in
+#if X
+            [true] in [false] and Ok in
+#else
+            [true] or Ok xor (I = 2) in
+#endif
+            [false];
+    end;
+}
+--------------------------------------------------------------------------------
+
+(source_file (codeunit_declaration (codeunit_keyword) object_id: (integer) object_name: (identifier) body:
+(declaration_body (procedure (procedure_keyword) name: (identifier) body: (code_block (begin_keyword) body:
+(statement_block (assignment_statement left: (identifier) operator: (assignment_operator) right: (in_expression
+left: (identifier) operator: (in_keyword) (preproc_operand_prefix (preproc_if (preproc_open) condition: (identifier))
+operand: (list_literal (boolean)) operator: (in_keyword) operand: (list_literal (boolean)) operand: (identifier)
+operator: (in_keyword) (preproc_else) operand: (list_literal (boolean)) operand: (identifier) operand:
+(parenthesized_expression (comparison_expression left: (identifier) operator: (comparison_operator) right:
+(integer))) operator: (in_keyword) (preproc_endif (preproc_close))) right: (list_literal (boolean)))))
+(end_keyword))))))
+
+================================================================================
+B7b-2 operand group: a typed is prefix arm with a continuation before its keyword
+--
+deferred-work item 51 shape 3, the `is` variant: X is `(F is IBar) and (G is
+IFoo)`. alc: keyword_ops/is-prefix-with-continuation.al.
+================================================================================
+codeunit 50101 P
+{
+    procedure Q()
+    begin
+        B := F is
+#if X
+            IBar and G is
+#endif
+            IFoo;
+    end;
+}
+--------------------------------------------------------------------------------
+
+(source_file (codeunit_declaration (codeunit_keyword) object_id: (integer) object_name: (identifier) body:
+(declaration_body (procedure (procedure_keyword) name: (identifier) body: (code_block (begin_keyword) body:
+(statement_block (assignment_statement left: (identifier) operator: (assignment_operator) right: (is_expression
+left: (identifier) operator: (is_keyword) (preproc_operand_prefix (preproc_if (preproc_open) condition: (identifier))
+operand: (type_specification (identifier)) operand: (identifier) operator: (is_keyword) (preproc_endif
+(preproc_close))) right: (type_specification (identifier))))) (end_keyword))))))
+
+================================================================================
 B7b-2 operand group: call function: a receiver group as the callee
 --
 Spec 3.4 names the call function as a receiver position (Task 10 fix round 1,

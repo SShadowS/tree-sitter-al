@@ -151,10 +151,29 @@ on the line (AL0631) and on an empty condition (AL0629), and leaves a dangling `
 to the `#` dispatch's `MALFORMED_DIRECTIVE`; `#else`/`#endif` through
 `directive_rest_is_blank` (blank but for a `//` comment, AL0631 otherwise);
 `#elif`/`#else`/`#endif` with no open `#if` and any word that is not a directive (AL0621)
-decline. The nesting count is a local `uint32_t`; `ScannerState.depth` is never touched, and
-every advance is non-marking (the caller called `mark_end` at the `[`). Words go through
-`read_word_ci` into a 16-byte buffer: a truncated NAME is tolerated (it is still a name; only
-an untruncated word is compared with `procedure`), a truncated DIRECTIVE word declines. Some
-declines are on input alc accepts, pre-existing gaps recorded as `docs/deferred-work.md` item
-45 (whole declarations in a group's arms, an attribute inside a group, an attribute alone in a
-group with the name after `#endif`, an attribute after a directive line); they ERROR.
+decline. The nesting count is a local `uint32_t`, and every advance is non-marking (the caller
+called `mark_end` at the `[`). Words go through `read_word_ci` into a 16-byte buffer: a
+truncated NAME is tolerated (it is still a name; only an untruncated word is compared with
+`procedure`), a truncated DIRECTIVE word declines.
+
+**Item 45 (2026-11-09) widened it to every path the attribute can precede.** Four shapes alc
+accepts in every configuration ERRORed (`tools/alc_probe/cases/b7b1/colon_in_group.al`,
+`attr_in_group_var.al`, `attr_endif_name.al`, `attr_after_directive_line.al`). The rule now is
+that the attribute's target, in every configuration, must be a variable declaration, decided by
+the first decisive token on each path:
+- an attribute where a declaration may start (at the start, after a directive line) is skipped;
+  this also replaced the caller's separate chained-attribute loop (`skip_attribute_body`);
+- a `:` inside a group settles that arm. The rest of the arm is skipped unread
+  (`skip_to_arm_end`: strings, quoted names and comments whole, nested groups counted), and the
+  next arm must settle on its own. A group whose every arm settled and that has `#else` settles
+  the arm around it (at local depth 0: accept). An arm that reaches its next directive without a
+  `:`, or a group with no `#else`, leaves a configuration in which the attribute's target is
+  what follows the `#endif`, so the scan goes on there;
+- an `#elif`/`#else`/`#endif` at local depth 0 belongs to a group opened BEFORE the `[`: `#endif`
+  is crossed, an `#elif`/`#else` skips the remaining arms to that `#endif`. `ScannerState.depth`
+  (read, never written) bounds how many such groups there are, so a stray `#endif` still declines.
+Local nesting deeper than 32 declines. The decline that matters is unchanged: a procedure
+attribute before a conditional header (`procedure` or a name followed by a name on some path)
+stays a procedure `attribute_item`, and so does an attribute whose target is a variable in one
+configuration and a procedure in another (`tools/alc_probe/cases/item45/mixed_*.al`; those ERROR,
+`docs/deferred-work.md` item 76). Production trees were byte-identical in all four corpora.

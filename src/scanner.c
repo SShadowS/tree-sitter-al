@@ -618,17 +618,31 @@ static bool directive_rest_is_blank(TSLexer *lexer) {
 //     [NonDebuggable] A #if X , B #endif : Integer;
 //     [NonDebuggable] #if X A #else B #endif , C: Integer;
 //
-// It declines at anything else -- `(`, `;`, `{`, `}`, `[`, EOF, the word
-// `procedure`, a `:` inside a group, an unbalanced or malformed directive, an
+// It declines at anything else -- `(`, `;`, `{`, `}`, a `[` after a name or a
+// comma, EOF, the word `procedure`, an unbalanced or malformed directive, an
 // unterminated quoted name -- so a procedure attribute followed by a
 // conditional header (`[A] #if X procedure Q(...) #else ... #endif`) stays a
 // procedure attribute.
 //
-// Two declines are KNOWN GAPS, not alc-backed: alc accepts an attribute inside
-// a group (`[A] #if X [B] #endif C: T;`, probe b7b1/attr_in_group_var.al) and
-// whole declarations in a group's arms (`[A] #if X A: T; #else B: T; #endif`,
-// b7b1/colon_in_group.al), and both still ERROR. Pre-existing, owned by
-// deferred work, not B7b-1.
+// Item 45 widened the stream, every widening decided by the FIRST decisive
+// token on each path the attribute can precede (alc accepts all four shapes in
+// every configuration, probes tools/alc_probe/cases/b7b1/):
+//
+//   - another attribute where a declaration may start (at the start, after a
+//     directive line): skipped, `[A] #if X #endif [B] C: T;` and the old
+//     `[A][B] C: T;` chain alike (attr_after_directive_line.al, attr_in_group_var.al);
+//   - a `:` INSIDE a group ends that ARM's name list: the arm holds a whole
+//     declaration (colon_in_group.al). The rest of the arm is skipped unread
+//     (skip_to_arm_end) and every following arm must reach its own `:` too; a
+//     group whose arms all do, and that has an #else, settles its enclosing arm.
+//     An arm that falls through to the next directive, or a group without
+//     #else, lets the scan go on after the #endif. So a mixed group
+//     (`[A] #if X B: T; #else procedure Q() ... #endif`) still declines (alc
+//     accepts it; it ERRORs, docs/deferred-work.md item 76);
+//   - an #elif/#else/#endif of a group opened BEFORE the attribute
+//     (attr_endif_name.al, `#if X [A] #endif C: T;`): #endif is crossed, an
+//     #elif/#else skips the remaining arms to that group's #endif. Only as many
+//     groups as ScannerState.depth says are open (`open`), read, never written.
 //
 // Between two directive lines the old strict shape still holds: a name never
 // follows a name, a comma never follows a comma or starts the list, and `:`
@@ -639,18 +653,116 @@ static bool directive_rest_is_blank(TSLexer *lexer) {
 //
 // A local peek: the caller has called mark_end at the '[', every advance here
 // is non-marking (see skip_whitespace_nomark), every word is read whole with
-// read_word_ci, and the nesting count is a local -- ScannerState.depth is
-// never touched.
+// read_word_ci, and the nesting count is a local -- ScannerState.depth is only
+// read, as `open`.
 enum VarNamePrev { VN_START, VN_NAME, VN_COMMA, VN_DIRECTIVE };
 
-static bool var_name_list_follows(TSLexer *lexer) {
+// An attribute's bracketed body, its '[' already consumed, through its ']'.
+// Bracket depth handles nesting; strings and comments are skipped whole so a
+// ']' inside either cannot close the scan early. False if unterminated.
+static bool skip_attribute_body(TSLexer *lexer) {
+  int bracket_depth = 1;
+  bool in_string = false;
+  while (bracket_depth > 0 && lexer->lookahead != 0) {
+    if (in_string) {
+      if (lexer->lookahead == '\'') {
+        lexer->advance(lexer, false);
+        if (lexer->lookahead == '\'') {  // escaped quote ('')
+          lexer->advance(lexer, false);
+          continue;
+        }
+        in_string = false;
+        continue;
+      }
+    } else {
+      if (lexer->lookahead == '/') {
+        // Consumes the '/' whether or not a comment opened, so the loop
+        // always makes progress.
+        skip_comment(lexer);
+        continue;
+      }
+      if (lexer->lookahead == '\'') {
+        in_string = true;
+      } else if (lexer->lookahead == '[') {
+        bracket_depth++;
+      } else if (lexer->lookahead == ']') {
+        bracket_depth--;
+        if (bracket_depth == 0) {
+          lexer->advance(lexer, false);  // consume the ']'
+          break;
+        }
+      }
+    }
+    lexer->advance(lexer, false);
+  }
+  return bracket_depth == 0;
+}
+
+// Skip the rest of a group arm, unread, to the next #elif/#else/#endif at its
+// own nesting level, and leave that word in `word` (16 bytes) with the
+// directive's line rest unread. Strings, quoted names and comments are skipped
+// whole, so a '#' inside one is no directive (`''`/`""` escapes are two
+// adjacent quoted runs). False at EOF.
+static bool skip_to_arm_end(TSLexer *lexer, char *word) {
+  uint32_t nest = 0;
+  while (!lexer->eof(lexer)) {
+    int32_t c = lexer->lookahead;
+    if (c == '/') {
+      skip_comment(lexer);
+    } else if (c == '\'' || c == '"') {
+      lexer->advance(lexer, false);
+      while (!lexer->eof(lexer) && lexer->lookahead != c) lexer->advance(lexer, false);
+      if (lexer->eof(lexer)) return false;
+      lexer->advance(lexer, false);
+    } else if (c == '#') {
+      lexer->advance(lexer, false);
+      while (lexer->lookahead == ' ' || lexer->lookahead == '\t') {
+        lexer->advance(lexer, false);
+      }
+      size_t len = 0;
+      if (!read_word_ci(lexer, word, 16, &len)) continue;
+      if (strcmp(word, "if") == 0) {
+        nest++;
+      } else if (strcmp(word, "endif") == 0) {
+        if (nest == 0) return true;
+        nest--;
+      } else if (nest == 0 && (strcmp(word, "else") == 0 || strcmp(word, "elif") == 0)) {
+        return true;
+      }
+    } else {
+      lexer->advance(lexer, false);
+    }
+  }
+  return false;
+}
+
+// The line rest of a directive skip_to_arm_end stopped at (see the checks in
+// var_name_list_follows below).
+static bool arm_directive_rest_ok(TSLexer *lexer, const char *word) {
+  return strcmp(word, "elif") == 0 ? skip_condition_line(lexer) : directive_rest_is_blank(lexer);
+}
+
+// Deeper local nesting than this declines (conservative: the `[` stays a
+// procedure attribute_item).
+#define VN_MAX_DEPTH 32
+
+static bool var_name_list_follows(TSLexer *lexer, uint32_t open) {
   uint32_t depth = 0;
   enum VarNamePrev prev = VN_START;
   bool saw_name = false;
+  // Per local level: every arm so far reached its own `:`; the group has #else.
+  bool settled[VN_MAX_DEPTH + 1];
+  bool has_else[VN_MAX_DEPTH + 1];
+  char word[16];
   while (true) {
     if (!skip_whitespace_and_comments(lexer)) return false;
     int32_t c = lexer->lookahead;
-    if (c == '"') {
+    if (c == '[') {
+      if (prev != VN_START && prev != VN_DIRECTIVE) return false;
+      lexer->advance(lexer, false);
+      if (!skip_attribute_body(lexer)) return false;
+      prev = VN_START;
+    } else if (c == '"') {
       if (prev == VN_NAME) return false;
       lexer->advance(lexer, false);
       // quoted_identifier: no newline inside, `""` is an escaped quote.
@@ -666,7 +778,6 @@ static bool var_name_list_follows(TSLexer *lexer) {
       saw_name = true;
     } else if (is_identifier_start(c)) {
       if (prev == VN_NAME) return false;
-      char word[16];
       size_t len = 0;
       if (read_word_ci(lexer, word, sizeof(word), &len) && strcmp(word, "procedure") == 0) {
         return false;
@@ -678,25 +789,56 @@ static bool var_name_list_follows(TSLexer *lexer) {
       lexer->advance(lexer, false);
       prev = VN_COMMA;
     } else if (c == ':') {
-      return depth == 0 && saw_name && prev != VN_COMMA;
+      if (!saw_name || prev == VN_COMMA || prev == VN_START) return false;
+      if (depth == 0) return true;
+      // This arm holds a whole declaration. Skip the rest of it; a group whose
+      // every arm is settled (and that has #else) settles its enclosing arm.
+      while (true) {
+        if (!skip_to_arm_end(lexer, word) || !arm_directive_rest_ok(lexer, word)) return false;
+        if (strcmp(word, "endif") != 0) {
+          if (strcmp(word, "else") == 0) has_else[depth] = true;
+          break;  // the next arm must settle on its own
+        }
+        bool all = settled[depth] && has_else[depth];
+        depth--;
+        if (!all) break;  // some configuration goes on after the #endif
+        if (depth == 0) return true;
+      }
+      prev = VN_DIRECTIVE;
+      saw_name = false;
     } else if (c == '#') {
       lexer->advance(lexer, false);
       while (lexer->lookahead == ' ' || lexer->lookahead == '\t') {
         lexer->advance(lexer, false);
       }
-      char word[16];
       size_t len = 0;
       bool truncated = !read_word_ci(lexer, word, sizeof(word), &len);
       if (truncated) return false;
-      if (strcmp(word, "if") == 0) {
+      bool closer = strcmp(word, "elif") == 0 || strcmp(word, "else") == 0 ||
+                    strcmp(word, "endif") == 0;
+      if (closer && depth == 0) {
+        // A group opened before the attribute: its #endif is crossed, and an
+        // #elif/#else skips its remaining arms to that #endif.
+        if (open == 0 || !arm_directive_rest_ok(lexer, word)) return false;
+        while (strcmp(word, "endif") != 0) {
+          if (!skip_to_arm_end(lexer, word) || !arm_directive_rest_ok(lexer, word)) return false;
+        }
+        open--;
+      } else if (strcmp(word, "if") == 0) {
+        if (depth == VN_MAX_DEPTH) return false;
         depth++;
+        settled[depth] = true;
+        has_else[depth] = false;
         if (!skip_condition_line(lexer)) return false;
       } else if (strcmp(word, "elif") == 0) {
-        if (depth == 0 || !skip_condition_line(lexer)) return false;
+        settled[depth] = false;  // the arm it closes fell through
+        if (!skip_condition_line(lexer)) return false;
       } else if (strcmp(word, "else") == 0) {
-        if (depth == 0 || !directive_rest_is_blank(lexer)) return false;
+        settled[depth] = false;
+        has_else[depth] = true;
+        if (!directive_rest_is_blank(lexer)) return false;
       } else if (strcmp(word, "endif") == 0) {
-        if (depth == 0 || !directive_rest_is_blank(lexer)) return false;
+        if (!directive_rest_is_blank(lexer)) return false;
         depth--;
       } else if (word_in(TRANSPARENT_DIRECTIVES, word, false)) {
         skip_to_eol(lexer);
@@ -1001,107 +1143,12 @@ bool tree_sitter_al_external_scanner_scan(
       lexer->advance(lexer, false);
       lexer->mark_end(lexer);
 
-      // Scan past the attribute content to find the closing ']'.
-      // Bracket depth handles nesting; strings and comments are skipped whole so
-      // a ']' inside either cannot close the scan early.
-      int bracket_depth = 1;
-      bool in_string = false;
+      if (!skip_attribute_body(lexer)) return false;  // unterminated attribute
 
-      while (bracket_depth > 0 && lexer->lookahead != 0) {
-        if (in_string) {
-          if (lexer->lookahead == '\'') {
-            lexer->advance(lexer, false);
-            // Check for escaped quote ('')
-            if (lexer->lookahead == '\'') {
-              lexer->advance(lexer, false);
-              continue;
-            }
-            in_string = false;
-            continue;
-          }
-        } else {
-          if (lexer->lookahead == '/') {
-            // Consumes the '/' whether or not a comment opened, so the loop
-            // always makes progress.
-            skip_comment(lexer);
-            continue;
-          }
-          if (lexer->lookahead == '\'') {
-            in_string = true;
-          } else if (lexer->lookahead == '[') {
-            bracket_depth++;
-          } else if (lexer->lookahead == ']') {
-            bracket_depth--;
-            if (bracket_depth == 0) {
-              lexer->advance(lexer, false);  // consume the ']'
-              break;
-            }
-          }
-        }
-        lexer->advance(lexer, false);
-      }
-
-      if (bracket_depth != 0) return false;  // unterminated attribute
-
-      // Now skip whitespace and comments after ']' and check what follows
-      if (!skip_whitespace_and_comments(lexer)) return false;
-
-      // Check what follows:
-      // - '[' → another attribute (chain) → this is a var attribute
-      // - identifier followed by ':' → variable declaration → var attribute
-      // - '"' quoted identifier followed by ':' → variable declaration → var attribute
-      // - anything else → NOT a variable → decline
-
-      if (lexer->lookahead == '[') {
-        // Another attribute follows — scan past all chained attributes to check
-        // if the final one is followed by a variable declaration pattern.
-        // We need to scan past [attr1][attr2]...[attrN] identifier: to confirm.
-        while (lexer->lookahead == '[') {
-          int inner_bracket_depth = 1;
-          bool inner_in_string = false;
-          lexer->advance(lexer, false);  // consume '['
-          while (inner_bracket_depth > 0 && lexer->lookahead != 0) {
-            if (inner_in_string) {
-              if (lexer->lookahead == '\'') {
-                lexer->advance(lexer, false);
-                if (lexer->lookahead == '\'') {
-                  lexer->advance(lexer, false);
-                  continue;
-                }
-                inner_in_string = false;
-                continue;
-              }
-            } else {
-              if (lexer->lookahead == '/') {
-                skip_comment(lexer);
-                continue;
-              }
-              if (lexer->lookahead == '\'') {
-                inner_in_string = true;
-              } else if (lexer->lookahead == '[') {
-                inner_bracket_depth++;
-              } else if (lexer->lookahead == ']') {
-                inner_bracket_depth--;
-                if (inner_bracket_depth == 0) {
-                  lexer->advance(lexer, false);  // consume ']'
-                  break;
-                }
-              }
-            }
-            lexer->advance(lexer, false);
-          }
-          if (inner_bracket_depth != 0) return false;
-          // Skip whitespace and comments between chained attributes
-          if (!skip_whitespace_and_comments(lexer)) return false;
-        }
-        // After all chained attributes, check for variable declaration pattern
-        // (fall through to the identifier/quoted-identifier checks below)
-      }
-
-      // Variable declaration pattern: a name list, possibly with #if groups,
-      // ending at its ':' (see var_name_list_follows). Bare and quoted names
-      // are handled in one loop, in ANY position.
-      if (!var_name_list_follows(lexer)) return false;
+      // What follows decides: chained attributes, then a variable name list,
+      // possibly with #if groups, ending at its ':' (var_name_list_follows).
+      // Anything else declines and the '[' is a procedure attribute_item.
+      if (!var_name_list_follows(lexer, state->depth)) return false;
       lexer->result_symbol = VAR_ATTRIBUTE_OPEN;
       return true;
     }

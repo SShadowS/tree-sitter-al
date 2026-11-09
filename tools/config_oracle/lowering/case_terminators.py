@@ -7,7 +7,8 @@ the preceding branch's separator. Three pieces:
   * **marking** (select.branch_select): every `empty_statement` that is a direct arm child of a
     `preproc_conditional_case` is marked CASE_SEMI, mixed and nested arms included. The mark lives
     on the lowered node, so it survives splicing through enclosing arms. It is never the
-    statement-block ARM_SEMI.
+    statement-block ARM_SEMI. A `;` directly in `case_body` after a group (deferred item 47,
+    spec 4.2.3 as amended) is marked by `mark_body_semis`: the same separator, one level up.
   * **attachment** (`attach`, run by the engine on a `case_body` once its whole run is selected):
     a marked `;` goes to the IMMEDIATELY preceding item only, and only when that is an
     unterminated `case_branch` (a lowered split-case wrapper is a case_branch by then). Where the
@@ -71,6 +72,17 @@ def _append(branch, semi, ctx):
     else:
         kids = branch.children + [semi]
     return _span_from_children(branch.copy(children=kids))
+
+
+def mark_body_semis(orig, kids):
+    """Deferred item 47 (spec 4.2.3 as amended): an `empty_statement` that is a DIRECT child of the
+    original case_body (grammar `seq(preproc_conditional_case, optional(empty_statement))`) is a
+    case run `;` too, so mark it CASE_SEMI before `attach`. Arm `;`s are marked by branch_select;
+    this never touches them (keyed by the original direct children's offsets)."""
+    starts = {c.start for c in orig.children if c.kind == "empty_statement"}
+    for n in kids:
+        if n.kind == "empty_statement" and n.start in starts:
+            setattr(n, CASE_SEMI, True)
 
 
 def attach(kids, ctx):

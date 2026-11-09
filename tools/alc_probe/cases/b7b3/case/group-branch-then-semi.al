@@ -1,5 +1,5 @@
 // B7b-3 Phase 0 probe case/group-branch-then-semi
-// Fixture b7b3_case_separator_negative_test.txt#B7b-3 case known gap: a group's last branch takes its semicolon after %23endif (alc accepts X; Phase 0 group-branch-then-semi)#0
+// Fixture item_47_case_empty_group_test.txt#Item 47 shape 1: a group's last branch takes its semicolon after %23endif (a sibling empty_statement, alc accepts X)#0
 // expect: !X reject(AL0104,AL0224)
 // expect: X accept
 // source: B7b-3 Phase 0, 2026-10-08

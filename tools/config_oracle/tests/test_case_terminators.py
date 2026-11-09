@@ -189,6 +189,49 @@ def test_a_semicolon_in_the_active_decoration_arm_is_refused(al_parser, monkeypa
     assert v["X=1"][0] == "cannot-validate" and "case decoration" in " ".join(items(v, "X=1")), v
 
 
+# --- a `;` directly after a group in case_body (deferred item 47 shapes 1, 2, 4, 5) ----------
+# Grammar: seq(preproc_conditional_case, optional(empty_statement)) in case_body. The `;` is the
+# separator of whichever branch the configuration ends with before it; `attach` marks it CASE_SEMI.
+# Each source: the configurations alc accepts (tools/alc_probe/cases/b7b3/case/). The others are
+# alc rejections, so the flat reference ERRORs (cannot-validate).
+
+AFTER_GROUP = {
+    "shape1": ("case I of\n1: Bar;\n#if X\n2: Baz\n#endif\n;\nend;", ["X=1"]),
+    "shape2": ("case I of\n1: Bar\n#if X\n;\n2: Baz\n#endif\n;\nend;", ["X=0", "X=1"]),
+    "shape4": ("case I of\n1: Bar\n#if X\n;\n#endif\n;\n2: Baz;\nend;", ["X=0"]),
+    "shape5": ("case I of\n1: Bar\n#if X\n;\n#endif\n#if Y\n#endif\n;\nend;", ["X=0,Y=0", "X=0,Y=1"]),
+}
+
+
+@pytest.mark.parametrize("name", sorted(AFTER_GROUP))
+def test_semicolon_after_a_group_attaches(al_parser, name):
+    body, accepted = AFTER_GROUP[name]
+    s = src(body)
+    witness.assert_produces(al_parser, s, "preproc_conditional_case")
+    off = s.rindex(b"\n;\n") + 1     # the bare `;` after the last `#endif`
+    v = witness.verdicts(al_parser, s)
+    for c, (status, its) in v.items():
+        if c in accepted:
+            assert status == "pass" and f"normalised:case-terminator-attach@{off}" in its, (c, v)
+        else:
+            assert status == "cannot-validate" and any(i.startswith("reference-error") for i in its), (c, v)
+
+
+def test_semicolon_after_a_group_unmarked_is_a_discrepancy(al_parser, monkeypatch):
+    """Mutation: without the case_body marking the bare `;` stays an empty_statement and the
+    accepted configurations are discrepancies, so the marking is what makes them pass."""
+    monkeypatch.setattr(ct, "mark_body_semis", lambda orig, kids: None)
+    v = witness.verdicts(al_parser, src(AFTER_GROUP["shape2"][0]))
+    assert v["X=0"][0] == "discrepancy", v
+
+
+def test_semicolon_after_an_empty_group_with_no_owner_is_never_accepted(al_parser):
+    """`#if X #endif ; 1: Bar;` parses clean (deferred item 44's decided over-acceptance class):
+    no configuration has a branch before the `;`, so the oracle passes none of them."""
+    v = witness.verdicts(al_parser, src("case I of\n#if X\n#endif\n;\n1: Bar;\nend;"))
+    assert v and all(s == "cannot-validate" for s, _ in v.values()), v
+
+
 # --- else ownership (spec 4.4) ----------------------------------------------------------------
 
 def test_else_ownership_represented_configuration_passes(al_parser):

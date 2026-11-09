@@ -1,5 +1,5 @@
 // B7b-3 final review probe case/empty-group-then-semi-group
-// Fixture b7b3_case_separator_negative_test.txt#B7b-3 case known gap: an empty group then a semicolon group after a branch body is read as the next branch's pattern group (alc accepts Y=1; final review M1 b20)#0
+// Fixture item_47_case_empty_group_test.txt#Item 47 shape 6: an empty group then a semicolon group after an unterminated branch body (sibling groups, alc accepts Y=1)#0
 // expect: !Y reject(AL0111)
 // expect: Y accept
 // source: B7b-3 final review (2026-10-08), adversarial input; verdicts measured with tools.alc_probe

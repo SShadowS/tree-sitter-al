@@ -1,5 +1,5 @@
 // B7b-3 Task 6 probe case/ext-header-after-empty-group: an empty group before the header of an extended split (known gap)
-// Fixture b7b3_case_separator_negative_test.txt#B7b-3 case known gap: an empty group before the header of preproc_split_case_extended (spec 4.3; ERRORs on main too)#0
+// Fixture item_47_case_empty_group_test.txt#Item 47 shape 3: an empty group before the header of preproc_split_case_extended (the header's pattern group, alc accepts all)#0
 // expect: * accept
 // source: B7b-3 Task 6, 2026-10-08
 table 50100 T

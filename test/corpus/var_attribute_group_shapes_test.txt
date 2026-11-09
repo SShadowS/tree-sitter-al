@@ -1,0 +1,837 @@
+; Deferred item 45: variable attributes next to #if groups. The `[` of a variable attribute is the external
+; token var_attribute_open, decided by src/scanner.c var_name_list_follows; these shapes ERRORed before item 45
+; although alc accepts every configuration (probes tools/alc_probe/cases/b7b1/{colon_in_group,attr_in_group_var,
+; attr_endif_name,attr_after_directive_line}.al and tools/alc_probe/cases/item45/). The attribute stays a SIBLING
+; of the declaration it belongs to (.claude/rules/attributes.md). The `procedure attribute kept` cases are the
+; shapes the recognizer must keep declining: their `[` stays a procedure attribute_item, trees as before item 45.
+; `declaration then procedure in each arm` changed on valid input (attribute_item before the tail group became a
+; var_attribute_item at the end of the var_body). Mixed-target shapes still ERROR: item 76.
+
+================================================================================
+var attribute group: whole declarations in the arms (colon_in_group)
+================================================================================
+
+codeunit 50100 P
+{
+    var
+        G: Integer;
+        [NonDebuggable]
+#if X
+        A: Integer;
+#else
+        B: Integer;
+#endif
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (var_section
+        (var_keyword)
+        body: (var_body
+          (variable_declaration
+            name: (identifier)
+            type: (type_specification
+              (basic_type)))
+          (var_attribute_item
+            (var_attribute_open)
+            attribute: (attribute_content
+              name: (identifier)))
+          (preproc_conditional_var
+            (preproc_if
+              (preproc_open)
+              condition: (identifier))
+            (variable_declaration
+              name: (identifier)
+              type: (type_specification
+                (basic_type)))
+            (preproc_else)
+            (variable_declaration
+              name: (identifier)
+              type: (type_specification
+                (basic_type)))
+            (preproc_endif
+              (preproc_close))))))))
+
+================================================================================
+var attribute group: second attribute inside a group (attr_in_group_var)
+================================================================================
+
+codeunit 50100 P
+{
+    var
+        G: Integer;
+        [NonDebuggable]
+#if X
+        [NonDebuggable]
+#endif
+        A: Integer;
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (var_section
+        (var_keyword)
+        body: (var_body
+          (variable_declaration
+            name: (identifier)
+            type: (type_specification
+              (basic_type)))
+          (var_attribute_item
+            (var_attribute_open)
+            attribute: (attribute_content
+              name: (identifier)))
+          (preproc_conditional_var
+            (preproc_if
+              (preproc_open)
+              condition: (identifier))
+            (var_attribute_item
+              (var_attribute_open)
+              attribute: (attribute_content
+                name: (identifier)))
+            (preproc_endif
+              (preproc_close)))
+          (variable_declaration
+            name: (identifier)
+            type: (type_specification
+              (basic_type))))))))
+
+================================================================================
+var attribute group: attribute alone in a group, name after the endif (attr_endif_name)
+================================================================================
+
+codeunit 50100 P
+{
+    var
+        G: Integer;
+#if X
+        [NonDebuggable]
+#endif
+        A: Integer;
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (var_section
+        (var_keyword)
+        body: (var_body
+          (variable_declaration
+            name: (identifier)
+            type: (type_specification
+              (basic_type)))
+          (preproc_conditional_var
+            (preproc_if
+              (preproc_open)
+              condition: (identifier))
+            (var_attribute_item
+              (var_attribute_open)
+              attribute: (attribute_content
+                name: (identifier)))
+            (preproc_endif
+              (preproc_close)))
+          (variable_declaration
+            name: (identifier)
+            type: (type_specification
+              (basic_type))))))))
+
+================================================================================
+var attribute group: attribute, empty group, attribute (attr_after_directive_line)
+================================================================================
+
+codeunit 50100 P
+{
+    var
+        G: Integer;
+        [NonDebuggable]
+#if X
+#endif
+        [NonDebuggable]
+        A: Integer;
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (var_section
+        (var_keyword)
+        body: (var_body
+          (variable_declaration
+            name: (identifier)
+            type: (type_specification
+              (basic_type)))
+          (var_attribute_item
+            (var_attribute_open)
+            attribute: (attribute_content
+              name: (identifier)))
+          (preproc_conditional_var
+            (preproc_if
+              (preproc_open)
+              condition: (identifier))
+            (preproc_endif
+              (preproc_close)))
+          (var_attribute_item
+            (var_attribute_open)
+            attribute: (attribute_content
+              name: (identifier)))
+          (variable_declaration
+            name: (identifier)
+            type: (type_specification
+              (basic_type))))))))
+
+================================================================================
+var attribute group: attribute in every arm, name after the group
+================================================================================
+
+codeunit 50100 P
+{
+    var
+        G: Integer;
+#if X
+        [NonDebuggable]
+#else
+        [NonDebuggable]
+#endif
+        C: Integer;
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (var_section
+        (var_keyword)
+        body: (var_body
+          (variable_declaration
+            name: (identifier)
+            type: (type_specification
+              (basic_type)))
+          (preproc_conditional_var
+            (preproc_if
+              (preproc_open)
+              condition: (identifier))
+            (var_attribute_item
+              (var_attribute_open)
+              attribute: (attribute_content
+                name: (identifier)))
+            (preproc_else)
+            (var_attribute_item
+              (var_attribute_open)
+              attribute: (attribute_content
+                name: (identifier)))
+            (preproc_endif
+              (preproc_close)))
+          (variable_declaration
+            name: (identifier)
+            type: (type_specification
+              (basic_type))))))))
+
+================================================================================
+var attribute group: declaration in a group without else, declaration after it
+================================================================================
+
+codeunit 50100 P
+{
+    var
+        G: Integer;
+        [NonDebuggable]
+#if X
+        B: Integer;
+#endif
+        C: Integer;
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (var_section
+        (var_keyword)
+        body: (var_body
+          (variable_declaration
+            name: (identifier)
+            type: (type_specification
+              (basic_type)))
+          (var_attribute_item
+            (var_attribute_open)
+            attribute: (attribute_content
+              name: (identifier)))
+          (preproc_conditional_var
+            (preproc_if
+              (preproc_open)
+              condition: (identifier))
+            (variable_declaration
+              name: (identifier)
+              type: (type_specification
+                (basic_type)))
+            (preproc_endif
+              (preproc_close)))
+          (variable_declaration
+            name: (identifier)
+            type: (type_specification
+              (basic_type))))))))
+
+================================================================================
+var attribute group: declarations in nested arms
+================================================================================
+
+codeunit 50100 P
+{
+    var
+        G: Integer;
+        [NonDebuggable]
+#if X
+#if Y
+        B: Integer;
+#else
+        C: Integer;
+#endif
+#else
+        D: Integer;
+#endif
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (var_section
+        (var_keyword)
+        body: (var_body
+          (variable_declaration
+            name: (identifier)
+            type: (type_specification
+              (basic_type)))
+          (var_attribute_item
+            (var_attribute_open)
+            attribute: (attribute_content
+              name: (identifier)))
+          (preproc_conditional_var
+            (preproc_if
+              (preproc_open)
+              condition: (identifier))
+            (preproc_conditional_var
+              (preproc_if
+                (preproc_open)
+                condition: (identifier))
+              (variable_declaration
+                name: (identifier)
+                type: (type_specification
+                  (basic_type)))
+              (preproc_else)
+              (variable_declaration
+                name: (identifier)
+                type: (type_specification
+                  (basic_type)))
+              (preproc_endif
+                (preproc_close)))
+            (preproc_else)
+            (variable_declaration
+              name: (identifier)
+              type: (type_specification
+                (basic_type)))
+            (preproc_endif
+              (preproc_close))))))))
+
+================================================================================
+var attribute group: declaration arm and empty else
+================================================================================
+
+codeunit 50100 P
+{
+    var
+        G: Integer;
+        [NonDebuggable]
+#if X
+        B: Integer;
+#else
+#endif
+        C: Integer;
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (var_section
+        (var_keyword)
+        body: (var_body
+          (variable_declaration
+            name: (identifier)
+            type: (type_specification
+              (basic_type)))
+          (var_attribute_item
+            (var_attribute_open)
+            attribute: (attribute_content
+              name: (identifier)))
+          (preproc_conditional_var
+            (preproc_if
+              (preproc_open)
+              condition: (identifier))
+            (variable_declaration
+              name: (identifier)
+              type: (type_specification
+                (basic_type)))
+            (preproc_else)
+            (preproc_endif
+              (preproc_close)))
+          (variable_declaration
+            name: (identifier)
+            type: (type_specification
+              (basic_type))))))))
+
+================================================================================
+var attribute group: attribute in if, elif and else arms
+================================================================================
+
+codeunit 50100 P
+{
+    var
+        G: Integer;
+#if X
+        [NonDebuggable]
+#elif Y
+        [NonDebuggable]
+#else
+        [NonDebuggable]
+#endif
+        D: Integer;
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (var_section
+        (var_keyword)
+        body: (var_body
+          (variable_declaration
+            name: (identifier)
+            type: (type_specification
+              (basic_type)))
+          (preproc_conditional_var
+            (preproc_if
+              (preproc_open)
+              condition: (identifier))
+            (var_attribute_item
+              (var_attribute_open)
+              attribute: (attribute_content
+                name: (identifier)))
+            (preproc_elif
+              condition: (identifier))
+            (var_attribute_item
+              (var_attribute_open)
+              attribute: (attribute_content
+                name: (identifier)))
+            (preproc_else)
+            (var_attribute_item
+              (var_attribute_open)
+              attribute: (attribute_content
+                name: (identifier)))
+            (preproc_endif
+              (preproc_close)))
+          (variable_declaration
+            name: (identifier)
+            type: (type_specification
+              (basic_type))))))))
+
+================================================================================
+var attribute group: declaration then procedure in each arm (var section tail)
+================================================================================
+
+codeunit 50100 P
+{
+    var
+        G: Integer;
+        [NonDebuggable]
+#if X
+        B: Integer;
+    procedure Q()
+    begin
+    end;
+#else
+        C: Integer;
+    procedure Q()
+    begin
+    end;
+#endif
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (var_section
+        (var_keyword)
+        body: (var_body
+          (variable_declaration
+            name: (identifier)
+            type: (type_specification
+              (basic_type)))
+          (var_attribute_item
+            (var_attribute_open)
+            attribute: (attribute_content
+              name: (identifier)))))
+      (preproc_split_var_section_tail
+        (preproc_if
+          (preproc_open)
+          condition: (identifier))
+        variables: (var_body
+          (variable_declaration
+            name: (identifier)
+            type: (type_specification
+              (basic_type))))
+        (procedure
+          (procedure_keyword)
+          name: (identifier)
+          body: (code_block
+            (begin_keyword)
+            (end_keyword)))
+        (preproc_else)
+        variables: (var_body
+          (variable_declaration
+            name: (identifier)
+            type: (type_specification
+              (basic_type))))
+        (procedure
+          (procedure_keyword)
+          name: (identifier)
+          body: (code_block
+            (begin_keyword)
+            (end_keyword)))
+        (preproc_endif
+          (preproc_close))))))
+
+================================================================================
+var attribute group: directive text inside a string and a comment
+================================================================================
+
+codeunit 50100 P
+{
+    var
+        G: Integer;
+        [NonDebuggable]
+#if X
+        B: Label 'a #endif b';
+#else
+        C: Integer; // #endif
+#endif
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (var_section
+        (var_keyword)
+        body: (var_body
+          (variable_declaration
+            name: (identifier)
+            type: (type_specification
+              (basic_type)))
+          (var_attribute_item
+            (var_attribute_open)
+            attribute: (attribute_content
+              name: (identifier)))
+          (preproc_conditional_var
+            (preproc_if
+              (preproc_open)
+              condition: (identifier))
+            (variable_declaration
+              name: (identifier)
+              type: (basic_type)
+              value: (string_literal))
+            (preproc_else)
+            (variable_declaration
+              name: (identifier)
+              type: (type_specification
+                (basic_type)))
+            (comment)
+            (preproc_endif
+              (preproc_close))))))))
+
+================================================================================
+var attribute group: whole declarations in the arms of a local var section
+================================================================================
+
+codeunit 50100 P
+{
+    procedure Q()
+    var
+        [NonDebuggable]
+#if X
+        A: Integer;
+#else
+        B: Text;
+#endif
+    begin
+    end;
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (procedure
+        (procedure_keyword)
+        name: (identifier)
+        (var_section
+          (var_keyword)
+          body: (var_body
+            (var_attribute_item
+              (var_attribute_open)
+              attribute: (attribute_content
+                name: (identifier)))
+            (preproc_conditional_var
+              (preproc_if
+                (preproc_open)
+                condition: (identifier))
+              (variable_declaration
+                name: (identifier)
+                type: (type_specification
+                  (basic_type)))
+              (preproc_else)
+              (variable_declaration
+                name: (identifier)
+                type: (type_specification
+                  (text_type
+                    (text_keyword))))
+              (preproc_endif
+                (preproc_close)))))
+        body: (code_block
+          (begin_keyword)
+          (end_keyword))))))
+
+================================================================================
+var attribute group: procedure attribute kept before a conditional header
+================================================================================
+
+codeunit 50100 P
+{
+    var
+        G: Integer;
+    [NonDebuggable]
+#if X
+    procedure Q()
+#else
+    procedure Q(I: Integer)
+#endif
+    begin
+    end;
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (var_section
+        (var_keyword)
+        body: (var_body
+          (variable_declaration
+            name: (identifier)
+            type: (type_specification
+              (basic_type)))))
+      (attribute_item
+        attribute: (attribute_content
+          name: (identifier)))
+      (preproc_split_procedure
+        (preproc_if
+          (preproc_open)
+          condition: (identifier))
+        (procedure_keyword)
+        name: (identifier)
+        (preproc_else)
+        (procedure_keyword)
+        name: (identifier)
+        parameters: (parameter_list
+          (parameter
+            name: (identifier)
+            type: (type_specification
+              (basic_type))))
+        (preproc_endif
+          (preproc_close))
+        body: (code_block
+          (begin_keyword)
+          (end_keyword))))))
+
+================================================================================
+var attribute group: procedure attribute kept in every arm before a procedure
+================================================================================
+
+codeunit 50100 P
+{
+    var
+        G: Integer;
+#if X
+    [NonDebuggable]
+#else
+    [Obsolete]
+#endif
+    procedure Q()
+    begin
+    end;
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (var_section
+        (var_keyword)
+        body: (var_body
+          (variable_declaration
+            name: (identifier)
+            type: (type_specification
+              (basic_type)))))
+      (preproc_conditional
+        (preproc_if
+          (preproc_open)
+          condition: (identifier))
+        (attribute_item
+          attribute: (attribute_content
+            name: (identifier)))
+        (preproc_else)
+        (attribute_item
+          attribute: (attribute_content
+            name: (identifier)))
+        (preproc_endif
+          (preproc_close)))
+      (procedure
+        (procedure_keyword)
+        name: (identifier)
+        body: (code_block
+          (begin_keyword)
+          (end_keyword))))))
+
+================================================================================
+var attribute group: procedure attribute kept through a group before a split header
+================================================================================
+
+codeunit 50100 P
+{
+    var
+        G: Integer;
+    [NonDebuggable]
+#if X
+    [Obsolete]
+#endif
+#if Y
+    local procedure Q(I: Integer)
+#else
+    local procedure Q()
+#endif
+    begin
+    end;
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (var_section
+        (var_keyword)
+        body: (var_body
+          (variable_declaration
+            name: (identifier)
+            type: (type_specification
+              (basic_type)))))
+      (attribute_item
+        attribute: (attribute_content
+          name: (identifier)))
+      (preproc_conditional
+        (preproc_if
+          (preproc_open)
+          condition: (identifier))
+        (attribute_item
+          attribute: (attribute_content
+            name: (identifier)))
+        (preproc_endif
+          (preproc_close)))
+      (preproc_split_procedure
+        (preproc_if
+          (preproc_open)
+          condition: (identifier))
+        modifier: (procedure_modifier
+          (local_keyword))
+        (procedure_keyword)
+        name: (identifier)
+        parameters: (parameter_list
+          (parameter
+            name: (identifier)
+            type: (type_specification
+              (basic_type))))
+        (preproc_else)
+        modifier: (procedure_modifier
+          (local_keyword))
+        (procedure_keyword)
+        name: (identifier)
+        (preproc_endif
+          (preproc_close))
+        body: (code_block
+          (begin_keyword)
+          (end_keyword))))))

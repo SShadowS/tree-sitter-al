@@ -1,5 +1,5 @@
 // B7b-3 final review probe case/semi-group-then-semi
-// Fixture b7b3_case_separator_negative_test.txt#B7b-3 case known gap: a bare semicolon after a semicolon group has no slot (alc accepts X=0; final review M1 b19)#0
+// Fixture item_47_case_empty_group_test.txt#Item 47 shape 4: a bare semicolon after a semicolon group (a sibling empty_statement, alc accepts X=0)#0
 // expect: !X accept
 // expect: X reject(AL0104,AL0111,AL0224)
 // source: B7b-3 final review (2026-10-08), adversarial input; verdicts measured with tools.alc_probe

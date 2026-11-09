@@ -1,0 +1,1956 @@
+; Deferred item 47 (B7b-3 case shapes alc accepts that ERRORed). preproc_split_case_branch's prec(25)
+; was a static shift at `#if ... #endif <pattern or #if>`, so an empty group there was always that rule's
+; pattern group. The boundary after `#endif` now has no static precedence (grammar.js, comment at the
+; rule) and GLR lets the token after the pattern decide. Shapes 3 and 6 moved here from
+; b7b3_case_separator_negative_test.txt; the two former B7a GAP witnesses (case-patterns holes-lead /
+; lead-optional at preproc_split_case_extended) from b7_gap_case_patterns_test.txt. Verdicts:
+; tools/alc_probe/cases/b7b3/case/ (shapes 3, 6) and tools/alc_probe/cases/item47/.
+; The "Item 47 family" cases pin the owner's ruling (fix round): an empty group directly before patterns
+; is their pattern group in every form, decided by dynamic precedence on preproc_conditional_case /
+; preproc_conditional_case_patterns (grammar.js, comment at preproc_conditional_case).
+
+================================================================================
+Item 47 shape 6: an empty group then a semicolon group after an unterminated branch body (sibling groups, alc accepts Y=1)
+================================================================================
+codeunit 1 P
+{
+    procedure M()
+    begin
+case I of
+1: Bar
+#if X
+#endif
+#if Y
+;
+#endif
+2: Baz;
+end;
+    end;
+}
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (procedure
+        (procedure_keyword)
+        name: (identifier)
+        body: (code_block
+          (begin_keyword)
+          body: (statement_block
+            (case_statement
+              (case_keyword)
+              expression: (identifier)
+              (of_keyword)
+              body: (case_body
+                (case_branch
+                  pattern: (integer)
+                  body: (call_statement
+                    function: (identifier)))
+                (preproc_conditional_case
+                  (preproc_if
+                    (preproc_open)
+                    condition: (identifier))
+                  (preproc_endif
+                    (preproc_close)))
+                (preproc_conditional_case
+                  (preproc_if
+                    (preproc_open)
+                    condition: (identifier))
+                  (empty_statement)
+                  (preproc_endif
+                    (preproc_close)))
+                (case_branch
+                  pattern: (integer)
+                  body: (call_statement
+                    function: (identifier))))
+              (end_keyword)))
+          (end_keyword))))))
+
+================================================================================
+Item 47: an empty group then a semicolon group after a terminated branch (alc accepts Y=0)
+================================================================================
+codeunit 1 P
+{
+    procedure M()
+    begin
+case I of
+1: Bar;
+#if X
+#endif
+#if Y
+;
+#endif
+2: Baz;
+end;
+    end;
+}
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (procedure
+        (procedure_keyword)
+        name: (identifier)
+        body: (code_block
+          (begin_keyword)
+          body: (statement_block
+            (case_statement
+              (case_keyword)
+              expression: (identifier)
+              (of_keyword)
+              body: (case_body
+                (case_branch
+                  pattern: (integer)
+                  body: (call_statement
+                    function: (identifier)))
+                (preproc_conditional_case
+                  (preproc_if
+                    (preproc_open)
+                    condition: (identifier))
+                  (preproc_endif
+                    (preproc_close)))
+                (preproc_conditional_case
+                  (preproc_if
+                    (preproc_open)
+                    condition: (identifier))
+                  (empty_statement)
+                  (preproc_endif
+                    (preproc_close)))
+                (case_branch
+                  pattern: (integer)
+                  body: (call_statement
+                    function: (identifier))))
+              (end_keyword)))
+          (end_keyword))))))
+
+================================================================================
+Item 47: an empty group then a group of whole branches (alc accepts all)
+================================================================================
+codeunit 1 P
+{
+    procedure M()
+    begin
+case I of
+1: Bar;
+#if X
+#endif
+#if Y
+3: Baz;
+#endif
+2: Baz;
+end;
+    end;
+}
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (procedure
+        (procedure_keyword)
+        name: (identifier)
+        body: (code_block
+          (begin_keyword)
+          body: (statement_block
+            (case_statement
+              (case_keyword)
+              expression: (identifier)
+              (of_keyword)
+              body: (case_body
+                (case_branch
+                  pattern: (integer)
+                  body: (call_statement
+                    function: (identifier)))
+                (preproc_conditional_case
+                  (preproc_if
+                    (preproc_open)
+                    condition: (identifier))
+                  (preproc_endif
+                    (preproc_close)))
+                (preproc_conditional_case
+                  (preproc_if
+                    (preproc_open)
+                    condition: (identifier))
+                  (case_branch
+                    pattern: (integer)
+                    body: (call_statement
+                      function: (identifier)))
+                  (preproc_endif
+                    (preproc_close)))
+                (case_branch
+                  pattern: (integer)
+                  body: (call_statement
+                    function: (identifier))))
+              (end_keyword)))
+          (end_keyword))))))
+
+================================================================================
+Item 47: an empty if-else group then a group of whole branches (alc accepts all)
+================================================================================
+codeunit 1 P
+{
+    procedure M()
+    begin
+case I of
+1: Bar;
+#if X
+#else
+#endif
+#if Y
+3: Baz;
+#endif
+2: Baz;
+end;
+    end;
+}
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (procedure
+        (procedure_keyword)
+        name: (identifier)
+        body: (code_block
+          (begin_keyword)
+          body: (statement_block
+            (case_statement
+              (case_keyword)
+              expression: (identifier)
+              (of_keyword)
+              body: (case_body
+                (case_branch
+                  pattern: (integer)
+                  body: (call_statement
+                    function: (identifier)))
+                (preproc_conditional_case
+                  (preproc_if
+                    (preproc_open)
+                    condition: (identifier))
+                  (preproc_else)
+                  (preproc_endif
+                    (preproc_close)))
+                (preproc_conditional_case
+                  (preproc_if
+                    (preproc_open)
+                    condition: (identifier))
+                  (case_branch
+                    pattern: (integer)
+                    body: (call_statement
+                      function: (identifier)))
+                  (preproc_endif
+                    (preproc_close)))
+                (case_branch
+                  pattern: (integer)
+                  body: (call_statement
+                    function: (identifier))))
+              (end_keyword)))
+          (end_keyword))))))
+
+================================================================================
+Item 47 shape 3: an empty group before the header of preproc_split_case_extended (the header's pattern group, alc accepts all)
+================================================================================
+codeunit 1 P
+{
+    procedure M()
+    begin
+case I of
+#if X
+1: A;
+#if Y
+#endif
+2:
+#else
+2:
+#endif
+B;
+end;
+    end;
+}
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (procedure
+        (procedure_keyword)
+        name: (identifier)
+        body: (code_block
+          (begin_keyword)
+          body: (statement_block
+            (case_statement
+              (case_keyword)
+              expression: (identifier)
+              (of_keyword)
+              body: (case_body
+                (preproc_split_case_extended
+                  (preproc_if
+                    (preproc_open)
+                    condition: (identifier))
+                  (case_branch
+                    pattern: (integer)
+                    body: (call_statement
+                      function: (identifier)))
+                  (preproc_conditional_case_patterns
+                    (preproc_if
+                      (preproc_open)
+                      condition: (identifier))
+                    (preproc_endif
+                      (preproc_close)))
+                  pattern: (integer)
+                  (preproc_else)
+                  pattern: (integer)
+                  (preproc_endif
+                    (preproc_close))
+                  body: (call_statement
+                    function: (identifier))))
+              (end_keyword)))
+          (end_keyword))))))
+
+================================================================================
+Item 47: an empty group before the else arm's header of preproc_split_case_extended (alc accepts all)
+================================================================================
+codeunit 1 P
+{
+    procedure M()
+    begin
+case I of
+#if X
+1: A;
+2:
+#else
+#if Y
+#endif
+2:
+#endif
+B;
+end;
+    end;
+}
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (procedure
+        (procedure_keyword)
+        name: (identifier)
+        body: (code_block
+          (begin_keyword)
+          body: (statement_block
+            (case_statement
+              (case_keyword)
+              expression: (identifier)
+              (of_keyword)
+              body: (case_body
+                (preproc_split_case_extended
+                  (preproc_if
+                    (preproc_open)
+                    condition: (identifier))
+                  (case_branch
+                    pattern: (integer)
+                    body: (call_statement
+                      function: (identifier)))
+                  pattern: (integer)
+                  (preproc_else)
+                  (preproc_conditional_case_patterns
+                    (preproc_if
+                      (preproc_open)
+                      condition: (identifier))
+                    (preproc_endif
+                      (preproc_close)))
+                  pattern: (integer)
+                  (preproc_endif
+                    (preproc_close))
+                  body: (call_statement
+                    function: (identifier))))
+              (end_keyword)))
+          (end_keyword))))))
+
+================================================================================
+Item 47: a leading-comma pattern group before a preproc_split_case_extended header (former B7a GAP witness case-patterns holes-lead)
+================================================================================
+table 50100 T
+{
+    fields
+    {
+        field(1; K; Code[20]) { }
+        field(2; N; Integer) { }
+        field(3; B; Boolean) { }
+        field(9; O; Option) { OptionMembers = A,B,C; }
+    }
+    keys
+    {
+        key(PK; K) { Clustered = true; }
+    }
+}
+codeunit 50101 P
+{
+    procedure Q(): Integer
+    var
+        R: Record T;
+        I: Integer;
+        Ok: Boolean;
+        L: List of [Integer];
+        Arr: array[3] of Integer;
+        Arr2: array[2, 2] of Integer;
+        Recs: array[2] of Record T;
+    begin
+case I of
+#if TPL2
+7:
+Bar();
+
+#if X
+,
+#endif
+1 , 2
+:
+#else
+6:
+#endif
+Bar();
+end;
+    end;
+
+    procedure Bar()
+    begin
+    end;
+
+    procedure Foo(A: Integer; B: Integer): Integer
+    begin
+        exit(A + B);
+    end;
+}
+--------------------------------------------------------------------------------
+
+(source_file
+  (table_declaration
+    (table_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (fields_section
+        (fields_keyword)
+        body: (fields_body
+          (field_declaration
+            (field_keyword)
+            id: (integer)
+            name: (identifier)
+            type: (type_specification
+              (code_type
+                (code_keyword)
+                length: (integer))))
+          (field_declaration
+            (field_keyword)
+            id: (integer)
+            name: (identifier)
+            type: (type_specification
+              (basic_type)))
+          (field_declaration
+            (field_keyword)
+            id: (integer)
+            name: (identifier)
+            type: (type_specification
+              (basic_type)))
+          (field_declaration
+            (field_keyword)
+            id: (integer)
+            name: (identifier)
+            type: (type_specification
+              (option_type
+                (option_keyword)))
+            body: (declaration_body
+              (property
+                name: (property_name)
+                value: (option_member_list
+                  (option_member
+                    (identifier))
+                  (option_member
+                    (identifier))
+                  (option_member
+                    (identifier))))))))
+      (keys_section
+        (keys_keyword)
+        body: (keys_body
+          (key_declaration
+            (key_keyword)
+            name: (identifier)
+            fields: (field_list
+              (identifier))
+            body: (declaration_body
+              (property
+                name: (property_name)
+                value: (boolean))))))))
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (procedure
+        (procedure_keyword)
+        name: (identifier)
+        return_type: (type_specification
+          (basic_type))
+        (var_section
+          (var_keyword)
+          body: (var_body
+            (variable_declaration
+              name: (identifier)
+              type: (type_specification
+                (record_type
+                  (record_keyword)
+                  reference: (identifier))))
+            (variable_declaration
+              name: (identifier)
+              type: (type_specification
+                (basic_type)))
+            (variable_declaration
+              name: (identifier)
+              type: (type_specification
+                (basic_type)))
+            (variable_declaration
+              name: (identifier)
+              type: (type_specification
+                (list_type
+                  (list_keyword)
+                  (of_keyword)
+                  element_type: (type_specification
+                    (basic_type)))))
+            (variable_declaration
+              name: (identifier)
+              type: (type_specification
+                (array_type
+                  (array_keyword)
+                  sizes: (integer)
+                  (of_keyword)
+                  element_type: (type_specification
+                    (basic_type)))))
+            (variable_declaration
+              name: (identifier)
+              type: (type_specification
+                (array_type
+                  (array_keyword)
+                  sizes: (integer)
+                  sizes: (integer)
+                  (of_keyword)
+                  element_type: (type_specification
+                    (basic_type)))))
+            (variable_declaration
+              name: (identifier)
+              type: (type_specification
+                (array_type
+                  (array_keyword)
+                  sizes: (integer)
+                  (of_keyword)
+                  element_type: (type_specification
+                    (record_type
+                      (record_keyword)
+                      reference: (identifier))))))))
+        body: (code_block
+          (begin_keyword)
+          body: (statement_block
+            (case_statement
+              (case_keyword)
+              expression: (identifier)
+              (of_keyword)
+              body: (case_body
+                (preproc_split_case_extended
+                  (preproc_if
+                    (preproc_open)
+                    condition: (identifier))
+                  (case_branch
+                    pattern: (integer)
+                    body: (call_expression
+                      function: (identifier)
+                      arguments: (argument_list)))
+                  (preproc_conditional_case_patterns
+                    (preproc_if
+                      (preproc_open)
+                      condition: (identifier))
+                    (preproc_endif
+                      (preproc_close)))
+                  pattern: (integer)
+                  pattern: (integer)
+                  (preproc_else)
+                  pattern: (integer)
+                  (preproc_endif
+                    (preproc_close))
+                  body: (call_expression
+                    function: (identifier)
+                    arguments: (argument_list))))
+              (end_keyword)))
+          (end_keyword)))
+      (procedure
+        (procedure_keyword)
+        name: (identifier)
+        body: (code_block
+          (begin_keyword)
+          (end_keyword)))
+      (procedure
+        (procedure_keyword)
+        name: (identifier)
+        parameters: (parameter_list
+          (parameter
+            name: (identifier)
+            type: (type_specification
+              (basic_type)))
+          (parameter
+            name: (identifier)
+            type: (type_specification
+              (basic_type))))
+        return_type: (type_specification
+          (basic_type))
+        body: (code_block
+          (begin_keyword)
+          body: (statement_block
+            (exit_statement
+              (exit_keyword)
+              return_value: (additive_expression
+                left: (identifier)
+                right: (identifier))))
+          (end_keyword))))))
+
+================================================================================
+Item 47: a one-pattern group before a preproc_split_case_extended header (former B7a GAP witness case-patterns lead-optional)
+================================================================================
+table 50100 T
+{
+    fields
+    {
+        field(1; K; Code[20]) { }
+        field(2; N; Integer) { }
+        field(3; B; Boolean) { }
+        field(9; O; Option) { OptionMembers = A,B,C; }
+    }
+    keys
+    {
+        key(PK; K) { Clustered = true; }
+    }
+}
+codeunit 50101 P
+{
+    procedure Q(): Integer
+    var
+        R: Record T;
+        I: Integer;
+        Ok: Boolean;
+        L: List of [Integer];
+        Arr: array[3] of Integer;
+        Arr2: array[2, 2] of Integer;
+        Recs: array[2] of Record T;
+    begin
+case I of
+#if TPL2
+7:
+Bar();
+
+#if X
+1 ,
+#endif
+2
+:
+#else
+6:
+#endif
+Bar();
+end;
+    end;
+
+    procedure Bar()
+    begin
+    end;
+
+    procedure Foo(A: Integer; B: Integer): Integer
+    begin
+        exit(A + B);
+    end;
+}
+--------------------------------------------------------------------------------
+
+(source_file
+  (table_declaration
+    (table_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (fields_section
+        (fields_keyword)
+        body: (fields_body
+          (field_declaration
+            (field_keyword)
+            id: (integer)
+            name: (identifier)
+            type: (type_specification
+              (code_type
+                (code_keyword)
+                length: (integer))))
+          (field_declaration
+            (field_keyword)
+            id: (integer)
+            name: (identifier)
+            type: (type_specification
+              (basic_type)))
+          (field_declaration
+            (field_keyword)
+            id: (integer)
+            name: (identifier)
+            type: (type_specification
+              (basic_type)))
+          (field_declaration
+            (field_keyword)
+            id: (integer)
+            name: (identifier)
+            type: (type_specification
+              (option_type
+                (option_keyword)))
+            body: (declaration_body
+              (property
+                name: (property_name)
+                value: (option_member_list
+                  (option_member
+                    (identifier))
+                  (option_member
+                    (identifier))
+                  (option_member
+                    (identifier))))))))
+      (keys_section
+        (keys_keyword)
+        body: (keys_body
+          (key_declaration
+            (key_keyword)
+            name: (identifier)
+            fields: (field_list
+              (identifier))
+            body: (declaration_body
+              (property
+                name: (property_name)
+                value: (boolean))))))))
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (procedure
+        (procedure_keyword)
+        name: (identifier)
+        return_type: (type_specification
+          (basic_type))
+        (var_section
+          (var_keyword)
+          body: (var_body
+            (variable_declaration
+              name: (identifier)
+              type: (type_specification
+                (record_type
+                  (record_keyword)
+                  reference: (identifier))))
+            (variable_declaration
+              name: (identifier)
+              type: (type_specification
+                (basic_type)))
+            (variable_declaration
+              name: (identifier)
+              type: (type_specification
+                (basic_type)))
+            (variable_declaration
+              name: (identifier)
+              type: (type_specification
+                (list_type
+                  (list_keyword)
+                  (of_keyword)
+                  element_type: (type_specification
+                    (basic_type)))))
+            (variable_declaration
+              name: (identifier)
+              type: (type_specification
+                (array_type
+                  (array_keyword)
+                  sizes: (integer)
+                  (of_keyword)
+                  element_type: (type_specification
+                    (basic_type)))))
+            (variable_declaration
+              name: (identifier)
+              type: (type_specification
+                (array_type
+                  (array_keyword)
+                  sizes: (integer)
+                  sizes: (integer)
+                  (of_keyword)
+                  element_type: (type_specification
+                    (basic_type)))))
+            (variable_declaration
+              name: (identifier)
+              type: (type_specification
+                (array_type
+                  (array_keyword)
+                  sizes: (integer)
+                  (of_keyword)
+                  element_type: (type_specification
+                    (record_type
+                      (record_keyword)
+                      reference: (identifier))))))))
+        body: (code_block
+          (begin_keyword)
+          body: (statement_block
+            (case_statement
+              (case_keyword)
+              expression: (identifier)
+              (of_keyword)
+              body: (case_body
+                (preproc_split_case_extended
+                  (preproc_if
+                    (preproc_open)
+                    condition: (identifier))
+                  (case_branch
+                    pattern: (integer)
+                    body: (call_expression
+                      function: (identifier)
+                      arguments: (argument_list)))
+                  (preproc_conditional_case_patterns
+                    (preproc_if
+                      (preproc_open)
+                      condition: (identifier))
+                    pattern: (integer)
+                    (preproc_endif
+                      (preproc_close)))
+                  pattern: (integer)
+                  (preproc_else)
+                  pattern: (integer)
+                  (preproc_endif
+                    (preproc_close))
+                  body: (call_expression
+                    function: (identifier)
+                    arguments: (argument_list))))
+              (end_keyword)))
+          (end_keyword)))
+      (procedure
+        (procedure_keyword)
+        name: (identifier)
+        body: (code_block
+          (begin_keyword)
+          (end_keyword)))
+      (procedure
+        (procedure_keyword)
+        name: (identifier)
+        parameters: (parameter_list
+          (parameter
+            name: (identifier)
+            type: (type_specification
+              (basic_type)))
+          (parameter
+            name: (identifier)
+            type: (type_specification
+              (basic_type))))
+        return_type: (type_specification
+          (basic_type))
+        body: (code_block
+          (begin_keyword)
+          body: (statement_block
+            (exit_statement
+              (exit_keyword)
+              return_value: (additive_expression
+                left: (identifier)
+                right: (identifier))))
+          (end_keyword))))))
+
+================================================================================
+Item 47 family: an empty group before the #if arm's header of preproc_split_case_extended, first in the arm (the header's pattern group, alc accepts all)
+================================================================================
+codeunit 1 P
+{
+    procedure M()
+    begin
+case I of
+#if X
+#if Y
+#endif
+2:
+#else
+2:
+#endif
+B;
+end;
+    end;
+}
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (procedure
+        (procedure_keyword)
+        name: (identifier)
+        body: (code_block
+          (begin_keyword)
+          body: (statement_block
+            (case_statement
+              (case_keyword)
+              expression: (identifier)
+              (of_keyword)
+              body: (case_body
+                (preproc_split_case_extended
+                  (preproc_if
+                    (preproc_open)
+                    condition: (identifier))
+                  (preproc_conditional_case_patterns
+                    (preproc_if
+                      (preproc_open)
+                      condition: (identifier))
+                    (preproc_endif
+                      (preproc_close)))
+                  pattern: (integer)
+                  (preproc_else)
+                  pattern: (integer)
+                  (preproc_endif
+                    (preproc_close))
+                  body: (call_statement
+                    function: (identifier))))
+              (end_keyword)))
+          (end_keyword))))))
+
+================================================================================
+Item 47 family: an empty group before the #else arm's header of preproc_split_case_extended, first in the arm (the header's pattern group, alc accepts all)
+================================================================================
+codeunit 1 P
+{
+    procedure M()
+    begin
+case I of
+#if X
+1: A;
+2:
+#else
+#if Y
+#endif
+2:
+#endif
+B;
+end;
+    end;
+}
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (procedure
+        (procedure_keyword)
+        name: (identifier)
+        body: (code_block
+          (begin_keyword)
+          body: (statement_block
+            (case_statement
+              (case_keyword)
+              expression: (identifier)
+              (of_keyword)
+              body: (case_body
+                (preproc_split_case_extended
+                  (preproc_if
+                    (preproc_open)
+                    condition: (identifier))
+                  (case_branch
+                    pattern: (integer)
+                    body: (call_statement
+                      function: (identifier)))
+                  pattern: (integer)
+                  (preproc_else)
+                  (preproc_conditional_case_patterns
+                    (preproc_if
+                      (preproc_open)
+                      condition: (identifier))
+                    (preproc_endif
+                      (preproc_close)))
+                  pattern: (integer)
+                  (preproc_endif
+                    (preproc_close))
+                  body: (call_statement
+                    function: (identifier))))
+              (end_keyword)))
+          (end_keyword))))))
+
+================================================================================
+Item 47 family: an empty #elif group before the #if arm's header of preproc_split_case_extended, after a branch in the arm (the header's pattern group, alc accepts all)
+================================================================================
+codeunit 1 P
+{
+    procedure M()
+    begin
+case I of
+#if X
+1: A;
+#if Y
+#elif Z
+#endif
+2:
+#else
+2:
+#endif
+B;
+end;
+    end;
+}
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (procedure
+        (procedure_keyword)
+        name: (identifier)
+        body: (code_block
+          (begin_keyword)
+          body: (statement_block
+            (case_statement
+              (case_keyword)
+              expression: (identifier)
+              (of_keyword)
+              body: (case_body
+                (preproc_split_case_extended
+                  (preproc_if
+                    (preproc_open)
+                    condition: (identifier))
+                  (case_branch
+                    pattern: (integer)
+                    body: (call_statement
+                      function: (identifier)))
+                  (preproc_conditional_case_patterns
+                    (preproc_if
+                      (preproc_open)
+                      condition: (identifier))
+                    (preproc_elif
+                      condition: (identifier))
+                    (preproc_endif
+                      (preproc_close)))
+                  pattern: (integer)
+                  (preproc_else)
+                  pattern: (integer)
+                  (preproc_endif
+                    (preproc_close))
+                  body: (call_statement
+                    function: (identifier))))
+              (end_keyword)))
+          (end_keyword))))))
+
+================================================================================
+Item 47 family: an empty #elif group before the #if arm's header of preproc_split_case_extended, first in the arm (the header's pattern group, alc accepts all)
+================================================================================
+codeunit 1 P
+{
+    procedure M()
+    begin
+case I of
+#if X
+#if Y
+#elif Z
+#endif
+2:
+#else
+2:
+#endif
+B;
+end;
+    end;
+}
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (procedure
+        (procedure_keyword)
+        name: (identifier)
+        body: (code_block
+          (begin_keyword)
+          body: (statement_block
+            (case_statement
+              (case_keyword)
+              expression: (identifier)
+              (of_keyword)
+              body: (case_body
+                (preproc_split_case_extended
+                  (preproc_if
+                    (preproc_open)
+                    condition: (identifier))
+                  (preproc_conditional_case_patterns
+                    (preproc_if
+                      (preproc_open)
+                      condition: (identifier))
+                    (preproc_elif
+                      condition: (identifier))
+                    (preproc_endif
+                      (preproc_close)))
+                  pattern: (integer)
+                  (preproc_else)
+                  pattern: (integer)
+                  (preproc_endif
+                    (preproc_close))
+                  body: (call_statement
+                    function: (identifier))))
+              (end_keyword)))
+          (end_keyword))))))
+
+================================================================================
+Item 47 family: an empty #elif group before the #else arm's header of preproc_split_case_extended, after a branch in the arm (the header's pattern group, alc accepts all)
+================================================================================
+codeunit 1 P
+{
+    procedure M()
+    begin
+case I of
+#if X
+1: A;
+2:
+#else
+1: A;
+#if Y
+#elif Z
+#endif
+2:
+#endif
+B;
+end;
+    end;
+}
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (procedure
+        (procedure_keyword)
+        name: (identifier)
+        body: (code_block
+          (begin_keyword)
+          body: (statement_block
+            (case_statement
+              (case_keyword)
+              expression: (identifier)
+              (of_keyword)
+              body: (case_body
+                (preproc_split_case_extended
+                  (preproc_if
+                    (preproc_open)
+                    condition: (identifier))
+                  (case_branch
+                    pattern: (integer)
+                    body: (call_statement
+                      function: (identifier)))
+                  pattern: (integer)
+                  (preproc_else)
+                  (case_branch
+                    pattern: (integer)
+                    body: (call_statement
+                      function: (identifier)))
+                  (preproc_conditional_case_patterns
+                    (preproc_if
+                      (preproc_open)
+                      condition: (identifier))
+                    (preproc_elif
+                      condition: (identifier))
+                    (preproc_endif
+                      (preproc_close)))
+                  pattern: (integer)
+                  (preproc_endif
+                    (preproc_close))
+                  body: (call_statement
+                    function: (identifier))))
+              (end_keyword)))
+          (end_keyword))))))
+
+================================================================================
+Item 47 family: an empty #elif group before the #else arm's header of preproc_split_case_extended, first in the arm (the header's pattern group, alc accepts all)
+================================================================================
+codeunit 1 P
+{
+    procedure M()
+    begin
+case I of
+#if X
+1: A;
+2:
+#else
+#if Y
+#elif Z
+#endif
+2:
+#endif
+B;
+end;
+    end;
+}
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (procedure
+        (procedure_keyword)
+        name: (identifier)
+        body: (code_block
+          (begin_keyword)
+          body: (statement_block
+            (case_statement
+              (case_keyword)
+              expression: (identifier)
+              (of_keyword)
+              body: (case_body
+                (preproc_split_case_extended
+                  (preproc_if
+                    (preproc_open)
+                    condition: (identifier))
+                  (case_branch
+                    pattern: (integer)
+                    body: (call_statement
+                      function: (identifier)))
+                  pattern: (integer)
+                  (preproc_else)
+                  (preproc_conditional_case_patterns
+                    (preproc_if
+                      (preproc_open)
+                      condition: (identifier))
+                    (preproc_elif
+                      condition: (identifier))
+                    (preproc_endif
+                      (preproc_close)))
+                  pattern: (integer)
+                  (preproc_endif
+                    (preproc_close))
+                  body: (call_statement
+                    function: (identifier))))
+              (end_keyword)))
+          (end_keyword))))))
+
+================================================================================
+Item 47 family: an empty #elif-#else group before the #if arm's header of preproc_split_case_extended, after a branch in the arm (the header's pattern group, alc accepts all)
+================================================================================
+codeunit 1 P
+{
+    procedure M()
+    begin
+case I of
+#if X
+1: A;
+#if Y
+#elif Z
+#else
+#endif
+2:
+#else
+2:
+#endif
+B;
+end;
+    end;
+}
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (procedure
+        (procedure_keyword)
+        name: (identifier)
+        body: (code_block
+          (begin_keyword)
+          body: (statement_block
+            (case_statement
+              (case_keyword)
+              expression: (identifier)
+              (of_keyword)
+              body: (case_body
+                (preproc_split_case_extended
+                  (preproc_if
+                    (preproc_open)
+                    condition: (identifier))
+                  (case_branch
+                    pattern: (integer)
+                    body: (call_statement
+                      function: (identifier)))
+                  (preproc_conditional_case_patterns
+                    (preproc_if
+                      (preproc_open)
+                      condition: (identifier))
+                    (preproc_elif
+                      condition: (identifier))
+                    (preproc_else)
+                    (preproc_endif
+                      (preproc_close)))
+                  pattern: (integer)
+                  (preproc_else)
+                  pattern: (integer)
+                  (preproc_endif
+                    (preproc_close))
+                  body: (call_statement
+                    function: (identifier))))
+              (end_keyword)))
+          (end_keyword))))))
+
+================================================================================
+Item 47 family: an empty #elif-#else group before the #if arm's header of preproc_split_case_extended, first in the arm (the header's pattern group, alc accepts all)
+================================================================================
+codeunit 1 P
+{
+    procedure M()
+    begin
+case I of
+#if X
+#if Y
+#elif Z
+#else
+#endif
+2:
+#else
+2:
+#endif
+B;
+end;
+    end;
+}
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (procedure
+        (procedure_keyword)
+        name: (identifier)
+        body: (code_block
+          (begin_keyword)
+          body: (statement_block
+            (case_statement
+              (case_keyword)
+              expression: (identifier)
+              (of_keyword)
+              body: (case_body
+                (preproc_split_case_extended
+                  (preproc_if
+                    (preproc_open)
+                    condition: (identifier))
+                  (preproc_conditional_case_patterns
+                    (preproc_if
+                      (preproc_open)
+                      condition: (identifier))
+                    (preproc_elif
+                      condition: (identifier))
+                    (preproc_else)
+                    (preproc_endif
+                      (preproc_close)))
+                  pattern: (integer)
+                  (preproc_else)
+                  pattern: (integer)
+                  (preproc_endif
+                    (preproc_close))
+                  body: (call_statement
+                    function: (identifier))))
+              (end_keyword)))
+          (end_keyword))))))
+
+================================================================================
+Item 47 family: an empty #elif-#else group before the #else arm's header of preproc_split_case_extended, after a branch in the arm (the header's pattern group, alc accepts all)
+================================================================================
+codeunit 1 P
+{
+    procedure M()
+    begin
+case I of
+#if X
+1: A;
+2:
+#else
+1: A;
+#if Y
+#elif Z
+#else
+#endif
+2:
+#endif
+B;
+end;
+    end;
+}
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (procedure
+        (procedure_keyword)
+        name: (identifier)
+        body: (code_block
+          (begin_keyword)
+          body: (statement_block
+            (case_statement
+              (case_keyword)
+              expression: (identifier)
+              (of_keyword)
+              body: (case_body
+                (preproc_split_case_extended
+                  (preproc_if
+                    (preproc_open)
+                    condition: (identifier))
+                  (case_branch
+                    pattern: (integer)
+                    body: (call_statement
+                      function: (identifier)))
+                  pattern: (integer)
+                  (preproc_else)
+                  (case_branch
+                    pattern: (integer)
+                    body: (call_statement
+                      function: (identifier)))
+                  (preproc_conditional_case_patterns
+                    (preproc_if
+                      (preproc_open)
+                      condition: (identifier))
+                    (preproc_elif
+                      condition: (identifier))
+                    (preproc_else)
+                    (preproc_endif
+                      (preproc_close)))
+                  pattern: (integer)
+                  (preproc_endif
+                    (preproc_close))
+                  body: (call_statement
+                    function: (identifier))))
+              (end_keyword)))
+          (end_keyword))))))
+
+================================================================================
+Item 47 family: an empty #elif-#else group before the #else arm's header of preproc_split_case_extended, first in the arm (the header's pattern group, alc accepts all)
+================================================================================
+codeunit 1 P
+{
+    procedure M()
+    begin
+case I of
+#if X
+1: A;
+2:
+#else
+#if Y
+#elif Z
+#else
+#endif
+2:
+#endif
+B;
+end;
+    end;
+}
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (procedure
+        (procedure_keyword)
+        name: (identifier)
+        body: (code_block
+          (begin_keyword)
+          body: (statement_block
+            (case_statement
+              (case_keyword)
+              expression: (identifier)
+              (of_keyword)
+              body: (case_body
+                (preproc_split_case_extended
+                  (preproc_if
+                    (preproc_open)
+                    condition: (identifier))
+                  (case_branch
+                    pattern: (integer)
+                    body: (call_statement
+                      function: (identifier)))
+                  pattern: (integer)
+                  (preproc_else)
+                  (preproc_conditional_case_patterns
+                    (preproc_if
+                      (preproc_open)
+                      condition: (identifier))
+                    (preproc_elif
+                      condition: (identifier))
+                    (preproc_else)
+                    (preproc_endif
+                      (preproc_close)))
+                  pattern: (integer)
+                  (preproc_endif
+                    (preproc_close))
+                  body: (call_statement
+                    function: (identifier))))
+              (end_keyword)))
+          (end_keyword))))))
+
+================================================================================
+Item 47 family: an empty group before the #elif arm's header of preproc_split_case_extended, after a branch in the arm (the header's pattern group, alc accepts all)
+================================================================================
+codeunit 1 P
+{
+    procedure M()
+    begin
+case I of
+#if X
+2:
+#elif U
+1: A;
+#if Y
+#endif
+2:
+#else
+2:
+#endif
+B;
+end;
+    end;
+}
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (procedure
+        (procedure_keyword)
+        name: (identifier)
+        body: (code_block
+          (begin_keyword)
+          body: (statement_block
+            (case_statement
+              (case_keyword)
+              expression: (identifier)
+              (of_keyword)
+              body: (case_body
+                (preproc_split_case_extended
+                  (preproc_if
+                    (preproc_open)
+                    condition: (identifier))
+                  pattern: (integer)
+                  (preproc_elif
+                    condition: (identifier))
+                  (case_branch
+                    pattern: (integer)
+                    body: (call_statement
+                      function: (identifier)))
+                  (preproc_conditional_case_patterns
+                    (preproc_if
+                      (preproc_open)
+                      condition: (identifier))
+                    (preproc_endif
+                      (preproc_close)))
+                  pattern: (integer)
+                  (preproc_else)
+                  pattern: (integer)
+                  (preproc_endif
+                    (preproc_close))
+                  body: (call_statement
+                    function: (identifier))))
+              (end_keyword)))
+          (end_keyword))))))
+
+================================================================================
+Item 47 family: an empty #elif group, then two empty groups, before a split branch (all are the split branch's pattern groups; main made the first a sibling)
+================================================================================
+codeunit 1 P
+{
+    procedure M()
+    begin
+case I of
+#if Y
+#elif Z
+#endif
+#if W
+#endif
+#if X
+#endif
+6: F;
+end;
+    end;
+}
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (procedure
+        (procedure_keyword)
+        name: (identifier)
+        body: (code_block
+          (begin_keyword)
+          body: (statement_block
+            (case_statement
+              (case_keyword)
+              expression: (identifier)
+              (of_keyword)
+              body: (case_body
+                (case_branch
+                  (preproc_split_case_branch
+                    (preproc_if
+                      (preproc_open)
+                      condition: (identifier))
+                    (preproc_elif
+                      condition: (identifier))
+                    (preproc_endif
+                      (preproc_close))
+                    (preproc_conditional_case_patterns
+                      (preproc_if
+                        (preproc_open)
+                        condition: (identifier))
+                      (preproc_endif
+                        (preproc_close)))
+                    (preproc_conditional_case_patterns
+                      (preproc_if
+                        (preproc_open)
+                        condition: (identifier))
+                      (preproc_endif
+                        (preproc_close)))
+                    pattern: (integer)
+                    body: (call_statement
+                      function: (identifier)))))
+              (end_keyword)))
+          (end_keyword))))))
+
+================================================================================
+Item 47 family: two empty groups before a split branch with a pattern group after a branch (the first is the split branch's own group, the rest its pattern groups, as on main)
+================================================================================
+codeunit 1 P
+{
+    procedure M()
+    begin
+case I of
+1: A;
+#if Y
+#endif
+#if W
+#endif
+#if X
+5,
+#endif
+6: F;
+end;
+    end;
+}
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (procedure
+        (procedure_keyword)
+        name: (identifier)
+        body: (code_block
+          (begin_keyword)
+          body: (statement_block
+            (case_statement
+              (case_keyword)
+              expression: (identifier)
+              (of_keyword)
+              body: (case_body
+                (case_branch
+                  pattern: (integer)
+                  body: (call_statement
+                    function: (identifier)))
+                (case_branch
+                  (preproc_split_case_branch
+                    (preproc_if
+                      (preproc_open)
+                      condition: (identifier))
+                    (preproc_endif
+                      (preproc_close))
+                    (preproc_conditional_case_patterns
+                      (preproc_if
+                        (preproc_open)
+                        condition: (identifier))
+                      (preproc_endif
+                        (preproc_close)))
+                    (preproc_conditional_case_patterns
+                      (preproc_if
+                        (preproc_open)
+                        condition: (identifier))
+                      pattern: (integer)
+                      (preproc_endif
+                        (preproc_close)))
+                    pattern: (integer)
+                    body: (call_statement
+                      function: (identifier)))))
+              (end_keyword)))
+          (end_keyword))))))
+
+================================================================================
+Item 47 shape 1: a group's last branch takes its semicolon after #endif (a sibling empty_statement, alc accepts X)
+================================================================================
+codeunit 1 P
+{
+    procedure M()
+    begin
+case I of
+1: Bar;
+#if X
+2: Baz
+#endif
+;
+end;
+    end;
+}
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (procedure
+        (procedure_keyword)
+        name: (identifier)
+        body: (code_block
+          (begin_keyword)
+          body: (statement_block
+            (case_statement
+              (case_keyword)
+              expression: (identifier)
+              (of_keyword)
+              body: (case_body
+                (case_branch
+                  pattern: (integer)
+                  body: (call_statement
+                    function: (identifier)))
+                (preproc_conditional_case
+                  (preproc_if
+                    (preproc_open)
+                    condition: (identifier))
+                  (case_branch
+                    pattern: (integer)
+                    body: (call_statement
+                      function: (identifier)))
+                  (preproc_endif
+                    (preproc_close)))
+                (empty_statement))
+              (end_keyword)))
+          (end_keyword))))))
+
+================================================================================
+Item 47 shape 2: a semicolon after #endif closes whichever branch the configuration ends with (a sibling empty_statement, alc accepts both)
+================================================================================
+codeunit 1 P
+{
+    procedure M()
+    begin
+case I of
+1: Bar
+#if X
+;
+2: Baz
+#endif
+;
+end;
+    end;
+}
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (procedure
+        (procedure_keyword)
+        name: (identifier)
+        body: (code_block
+          (begin_keyword)
+          body: (statement_block
+            (case_statement
+              (case_keyword)
+              expression: (identifier)
+              (of_keyword)
+              body: (case_body
+                (case_branch
+                  pattern: (integer)
+                  body: (call_statement
+                    function: (identifier)))
+                (preproc_conditional_case
+                  (preproc_if
+                    (preproc_open)
+                    condition: (identifier))
+                  (empty_statement)
+                  (case_branch
+                    pattern: (integer)
+                    body: (call_statement
+                      function: (identifier)))
+                  (preproc_endif
+                    (preproc_close)))
+                (empty_statement))
+              (end_keyword)))
+          (end_keyword))))))
+
+================================================================================
+Item 47 shape 4: a bare semicolon after a semicolon group (a sibling empty_statement, alc accepts X=0)
+================================================================================
+codeunit 1 P
+{
+    procedure M()
+    begin
+case I of
+1: Bar
+#if X
+;
+#endif
+;
+2: Baz;
+end;
+    end;
+}
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (procedure
+        (procedure_keyword)
+        name: (identifier)
+        body: (code_block
+          (begin_keyword)
+          body: (statement_block
+            (case_statement
+              (case_keyword)
+              expression: (identifier)
+              (of_keyword)
+              body: (case_body
+                (case_branch
+                  pattern: (integer)
+                  body: (call_statement
+                    function: (identifier)))
+                (preproc_conditional_case
+                  (preproc_if
+                    (preproc_open)
+                    condition: (identifier))
+                  (empty_statement)
+                  (preproc_endif
+                    (preproc_close)))
+                (empty_statement)
+                (case_branch
+                  pattern: (integer)
+                  body: (call_statement
+                    function: (identifier))))
+              (end_keyword)))
+          (end_keyword))))))
+
+================================================================================
+Item 47 shape 5: a bare semicolon after a semicolon group and an empty group (a sibling empty_statement, alc accepts X=0)
+================================================================================
+codeunit 1 P
+{
+    procedure M()
+    begin
+case I of
+1: Bar
+#if X
+;
+#endif
+#if Y
+#endif
+;
+end;
+    end;
+}
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (procedure
+        (procedure_keyword)
+        name: (identifier)
+        body: (code_block
+          (begin_keyword)
+          body: (statement_block
+            (case_statement
+              (case_keyword)
+              expression: (identifier)
+              (of_keyword)
+              body: (case_body
+                (case_branch
+                  pattern: (integer)
+                  body: (call_statement
+                    function: (identifier)))
+                (preproc_conditional_case
+                  (preproc_if
+                    (preproc_open)
+                    condition: (identifier))
+                  (empty_statement)
+                  (preproc_endif
+                    (preproc_close)))
+                (preproc_conditional_case
+                  (preproc_if
+                    (preproc_open)
+                    condition: (identifier))
+                  (preproc_endif
+                    (preproc_close)))
+                (empty_statement))
+              (end_keyword)))
+          (end_keyword))))))

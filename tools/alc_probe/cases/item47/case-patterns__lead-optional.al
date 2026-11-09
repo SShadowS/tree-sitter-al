@@ -1,10 +1,10 @@
-// B7a Task 10 witness (GAP): family case-patterns, base placement holes-lead, 6 cells; representative occ:_case_pattern_run:0.1.0.0@preproc_split_case_extended#holes-lead
-// Fixture b7_gap_case_patterns_test.txt#B7a GAP: case-patterns / holes-lead (6 cells, verdict of the representative MIXED); the parser ERRORs on configurations alc accepts; representative occ:_case_pattern_run:0.1.0.0@preproc_split_case_extended%23holes-lead#0
+// Deferred item 47 (fixed): the former B7a GAP witness (B7a Task 10) of case-patterns / lead-optional, 6 cells; representative occ:_case_pattern_run:0.1.0.0@preproc_split_case_extended#lead-optional (moved from b7-audit/case-patterns__lead-optional__gap.al)
+// Fixture item_47_case_empty_group_test.txt#Item 47: a one-pattern group before a preproc_split_case_extended header (former B7a GAP witness case-patterns lead-optional)#0
 // expect: !TPL2 !X accept
 // expect: !TPL2 X accept
 // expect: TPL2 !X accept
-// expect: TPL2 X reject(AL0104,AL0111,AL0224)
-// source: recorded by B7a Task 10, 2026-10-07: the alc split verdicts of cell occ:_case_pattern_run:0.1.0.0@preproc_split_case_extended#holes-lead in tools/b7_audit/evidence.jsonl.gz
+// expect: TPL2 X accept
+// source: recorded by B7a Task 10, 2026-10-07: the alc split verdicts of cell occ:_case_pattern_run:0.1.0.0@preproc_split_case_extended#lead-optional in tools/b7_audit/evidence.jsonl.gz
 table 50100 T
 {
     fields
@@ -37,9 +37,9 @@ case I of
 Bar();
 
 #if X
-,
+1 ,
 #endif
-1 , 2
+2
 :
 #else
 6:

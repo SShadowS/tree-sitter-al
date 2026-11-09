@@ -1,5 +1,5 @@
 // B7b-3 Task 6 probe case/empty-group-then-semi-at-start: a ; after an empty group with no branch before it
-// Fixture b7b3_case_separator_negative_test.txt#B7b-3 case negative: an empty group then a semicolon at the start of case_body (no branch owns it)#0
+// Fixture b7b3_case_separator_negative_test.txt#B7b-3 case known over-acceptance: an empty group then a semicolon at the start of case_body (no branch owns it in any configuration, alc AL0104/AL0224; deferred-work item 44 decided limit, admitted by item 47's sibling empty_statement)#0
 // expect: !X reject(AL0104,AL0111,AL0224)
 // expect: X reject(AL0104,AL0111,AL0224)
 // source: B7b-3 Task 6, 2026-10-08

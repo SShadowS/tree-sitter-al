@@ -184,6 +184,18 @@ That moves a `;` into a different parent, which B7b-0 never does; section 6.2 is
    context (section 6.2).
 3. No general bare `;` in `case_body`: `case I of ; end` and flat `1: X;;` keep today's behaviour
    unless Phase 0 shows alc accepts them (then: spec amendment).
+   **Amendment (2026-11-09, deferred item 47 shapes 1, 2, 4, 5, owner ruling):** a `;` directly
+   after a group is a sibling `empty_statement` in `case_body`
+   (`seq(preproc_conditional_case, optional(empty_statement))`): `1: Bar; #if X 2: Baz #endif ;`,
+   `1: Bar #if X ; 2: Baz #endif ;`, `1: Bar #if X ; #endif ; 2: Baz;`, `1: Bar #if X ; #endif #if Y
+   #endif ;`. Its owner is the branch the selected configuration ends with before it, which differs
+   per configuration, so the split tree names none. The oracle marks it `CASE_SEMI` like an arm `;`
+   (`tools/config_oracle/lowering/case_terminators.py`, `mark_body_semis`) and `attach` gives it to an
+   immediately preceding unterminated branch (section 6.2). Still no bare `;` without a group before
+   it; a decoration (rule 2) wins over a sibling group plus this `;` (dynamic precedence, grammar.js
+   at preproc_conditional_case). The forms this admits that are invalid in every configuration (no
+   configuration has an unterminated branch before the `;`: `#if X #endif ; 1: Bar;`,
+   `1: Bar; #if X #endif ;`) are rule 4's classified over-acceptances (deferred item 44's decided limit).
 4. A form invalid in every configuration that now parses (e.g. `1: X; #if A ; #endif` if alc rejects
    `;;`) is a classified over-acceptance, deferred item 44 precedent: the parser does not track
    separators per arm.
@@ -204,6 +216,12 @@ never assumed away:
   group of patterns only (`#if … patterns … #endif shared-pattern: body`); a group ending in a header
   (`#if … branches … header: #endif shared-body`). Each also with a nested empty group and with a `;`
   group just before the shared suffix.
+  **Amendment (2026-11-09, deferred item 47 fix round, owner ruling):** an empty group directly before
+  patterns is their pattern group in every form (plain, `#elif`, `#else`, either arm): before a branch
+  the first is a `preproc_split_case_branch`'s own group and the rest its
+  `preproc_conditional_case_patterns`; before a `preproc_split_case_extended` header it is the header's
+  `preproc_conditional_case_patterns`. Decided by dynamic precedence where GLR keeps several readings
+  (`preproc_conditional_case` -2, `preproc_conditional_case_patterns` -1), not by a tie-break.
 - Conflicts and states are measured, never added up front.
 
 ### 4.4 Else ownership

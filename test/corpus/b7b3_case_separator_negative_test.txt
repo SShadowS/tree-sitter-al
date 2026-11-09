@@ -1,10 +1,11 @@
 ; B7b-3 Task 6 negatives for case-branch separators (spec 4.2.3). The `negative` cases are ERRORs by
-; design (alc rejects them). The three `known gap` cases are shapes alc accepts that this grammar still
-; ERRORs on, pinned so a change to them is seen (B7b-3 task-6-report.md). `1: ;;` is a known
-; OVER-acceptance unchanged from main (rule 4.2.3: keep today's behaviour). The five cases after it are
+; design (alc rejects them). The former `known gap` cases (deferred-work item 47, alc-valid shapes that
+; ERRORed) all parse now and live in item_47_case_empty_group_test.txt. `1: ;;` is a known
+; OVER-acceptance unchanged from main (rule 4.2.3: keep today's behaviour). The cases after it are
 ; invalid in every configuration (alc AL0104/AL0224, most also AL0111) but parse clean under the case-separator
-; rules: classified over-acceptances, deferred-work item 44 precedent (spec 4.2.4); their expected trees come from
-; the 0.27 CLI because they are the trees we accept. Verdicts: tools/alc_probe/cases/b7b3/case/.
+; rules: classified over-acceptances, deferred-work item 44's decided limit (spec 4.2.4); the last two are
+; admitted by item 47's sibling empty_statement after a group (spec 4.2.3 as amended). Their expected trees are
+; the trees we accept (checked by the 0.27 CLI). Verdicts: tools/alc_probe/cases/b7b3/case/.
 
 ================================================================================
 B7b-3 case negative: a bare semicolon in case_body (alc AL0104/AL0224; Phase 0 only-semi)
@@ -46,148 +47,6 @@ codeunit 1 P
     begin
 case I of
 1: Bar;;
-2: Baz;
-end;
-    end;
-}
---------------------------------------------------------------------------------
-
-================================================================================
-B7b-3 case negative: an empty group then a semicolon at the start of case_body (no branch owns it)
-:error
-================================================================================
-codeunit 1 P
-{
-    procedure M()
-    begin
-case I of
-#if X
-#endif
-;
-1: Bar;
-end;
-    end;
-}
---------------------------------------------------------------------------------
-
-================================================================================
-B7b-3 case known gap: a group's last branch takes its semicolon after #endif (alc accepts X; Phase 0 group-branch-then-semi)
-:error
-================================================================================
-codeunit 1 P
-{
-    procedure M()
-    begin
-case I of
-1: Bar;
-#if X
-2: Baz
-#endif
-;
-end;
-    end;
-}
---------------------------------------------------------------------------------
-
-================================================================================
-B7b-3 case known gap: a semicolon after #endif closes whichever branch the configuration ends with (alc accepts both; Phase 0 group-semi-then-branch-closing)
-:error
-================================================================================
-codeunit 1 P
-{
-    procedure M()
-    begin
-case I of
-1: Bar
-#if X
-;
-2: Baz
-#endif
-;
-end;
-    end;
-}
---------------------------------------------------------------------------------
-
-================================================================================
-B7b-3 case known gap: an empty group before the header of preproc_split_case_extended (spec 4.3; ERRORs on main too)
-:error
-================================================================================
-codeunit 1 P
-{
-    procedure M()
-    begin
-case I of
-#if X
-1: A;
-#if Y
-#endif
-2:
-#else
-2:
-#endif
-B;
-end;
-    end;
-}
---------------------------------------------------------------------------------
-
-================================================================================
-B7b-3 case known gap: a bare semicolon after a semicolon group has no slot (alc accepts X=0; final review M1 b19)
-:error
-================================================================================
-codeunit 1 P
-{
-    procedure M()
-    begin
-case I of
-1: Bar
-#if X
-;
-#endif
-;
-2: Baz;
-end;
-    end;
-}
---------------------------------------------------------------------------------
-
-================================================================================
-B7b-3 case known gap: a bare semicolon after a semicolon group and an empty group has no slot (alc accepts X=0; final review M1 b22)
-:error
-================================================================================
-codeunit 1 P
-{
-    procedure M()
-    begin
-case I of
-1: Bar
-#if X
-;
-#endif
-#if Y
-#endif
-;
-end;
-    end;
-}
---------------------------------------------------------------------------------
-
-================================================================================
-B7b-3 case known gap: an empty group then a semicolon group after a branch body is read as the next branch's pattern group (alc accepts Y=1; final review M1 b20)
-:error
-================================================================================
-codeunit 1 P
-{
-    procedure M()
-    begin
-case I of
-1: Bar
-#if X
-#endif
-#if Y
-;
-#endif
 2: Baz;
 end;
     end;
@@ -508,3 +367,98 @@ end;
               (end_keyword)))
           (end_keyword))))))
 
+================================================================================
+B7b-3 case known over-acceptance: an empty group then a semicolon at the start of case_body (no branch owns it in any configuration, alc AL0104/AL0224; deferred-work item 44 decided limit, admitted by item 47's sibling empty_statement)
+================================================================================
+codeunit 1 P
+{
+    procedure M()
+    begin
+case I of
+#if X
+#endif
+;
+1: Bar;
+end;
+    end;
+}
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (procedure
+        (procedure_keyword)
+        name: (identifier)
+        body: (code_block
+          (begin_keyword)
+          body: (statement_block
+            (case_statement
+              (case_keyword)
+              expression: (identifier)
+              (of_keyword)
+              body: (case_body
+                (preproc_conditional_case
+                  (preproc_if
+                    (preproc_open)
+                    condition: (identifier))
+                  (preproc_endif
+                    (preproc_close)))
+                (empty_statement)
+                (case_branch
+                  pattern: (integer)
+                  body: (call_statement
+                    function: (identifier))))
+              (end_keyword)))
+          (end_keyword))))))
+
+================================================================================
+B7b-3 case known over-acceptance: an empty group then a semicolon after a terminated branch (a doubled semicolon in every configuration; deferred-work item 44 decided limit, admitted by item 47's sibling empty_statement)
+================================================================================
+codeunit 1 P
+{
+    procedure M()
+    begin
+case I of
+1: Bar;
+#if X
+#endif
+;
+end;
+    end;
+}
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (procedure
+        (procedure_keyword)
+        name: (identifier)
+        body: (code_block
+          (begin_keyword)
+          body: (statement_block
+            (case_statement
+              (case_keyword)
+              expression: (identifier)
+              (of_keyword)
+              body: (case_body
+                (case_branch
+                  pattern: (integer)
+                  body: (call_statement
+                    function: (identifier)))
+                (preproc_conditional_case
+                  (preproc_if
+                    (preproc_open)
+                    condition: (identifier))
+                  (preproc_endif
+                    (preproc_close)))
+                (empty_statement))
+              (end_keyword)))
+          (end_keyword))))))

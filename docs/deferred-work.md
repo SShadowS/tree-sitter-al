@@ -96,7 +96,7 @@ also attributed). The frozen manifest `tools/b7_audit/b7b1-manifest.tsv` gates i
 REJECTED/over-accepts 3, UNCHECKED 123, REJECTED 144, CONSISTENT 5,829. Families `implements`, `key-fields`, `sorting`,
 `array-dimensions`, `attribute-arguments` and `var-names` have no GAP group left; `order-by` keeps the outer list (B12,
 item 36) and `move-modification` the fixed `;` and target cells (B7b-3, item 46). What stays: over-acceptances (item 44),
-four pre-existing attribute/group gaps (item 45), the remaining list families B7b-1c..g (item 46; B7b-1b
+four pre-existing attribute/group gaps (item 45, resolved 2026-11-09; mixed-target shapes are item 76), the remaining list families B7b-1c..g (item 46; B7b-1b
 parameter-list done 2026-11-08). Two notes on the
 fixed hosts:
 - **An empty group before a declaration attaches by context.** At `var_body` top level, with or without a preceding
@@ -1942,6 +1942,10 @@ Every directive stands on its own line in the measured inputs. Related, pre-exis
   an existing over-acceptance; recorded in the manifest route row `route:occ:field_list:1.0.0@addfirst_fieldgroup_modification`
   and pinned by case 47 of `test/corpus/strict_conditional_field_list_items_test.txt`.
 - `member_expression` attribute arguments are accepted, as before; alc rejects them (AL0242, B7a evidence).
+- Since item 75 (batch 4): a shared `where … else` after a conditional `TableRelation` head of plain targets
+  (`#if X A #else B #endif where(..) else C`, alc AL0149 in every configuration, probe
+  `tools/alc_probe/cases/item29-relation-chain/s6-conditional-target-head-shared-where-else.al`), and after a head
+  whose arms are already complete `if … else` relations (an `else` with no `if` in every configuration), parse clean.
 - `Z, Key: Text;` (`Key` as a non-first variable name): alc AL0104/AL0105/AL0107 (Task 2), the parser accepts it, on
   main too; also after an attribute.
 
@@ -1979,13 +1983,36 @@ accepts and configurations it rejects, so a parser that refused them would refus
   These are B7b+ / B7b-1c cells (`b7b2-manifest.tsv`, re-recorded GAP -> UNCHECKED or MIXED:REJECTED,UNCHECKED in
   Task 12). Fixing them would mean an arm-presence check per configuration (a group that may be empty must not fill a
   required operand), which a CFG cannot express without duplicating every operand position.
+- **Case `;` after a group (item 47, 2026-11-09).** The sibling `empty_statement` after a `preproc_conditional_case`
+  in `case_body` (spec 4.2.3 as amended) also takes a `;` that no configuration gives to a branch:
+  `#if X #endif ; 1: Bar;` (formerly a deliberate negative) and `1: Bar; #if X #endif ;` parse clean; alc rejects
+  every configuration (AL0104/AL0224). Known over-acceptance cases in
+  `test/corpus/b7b3_case_separator_negative_test.txt`; the oracle reports every configuration as a reference ERROR.
 
 **Next step:** only if a consumer needs it: per-arm separator tracking (each arm records whether it starts or ends with a
 separator) would make the forms ERROR, at a cost the spec chose not to pay. Until then the oracle keeps them visible.
 
 **Owner:** unassigned.
 
-## 45. Four variable-attribute shapes with a group ERROR; alc accepts them (pre-existing)
+## 45. Four variable-attribute shapes with a group ERROR; alc accepts them (pre-existing) — RESOLVED 2026-11-09
+
+**Resolved on branch `batch4/item45`, in the scanner only (`src/scanner.c` `var_name_list_follows`; grammar.js and
+parser.c unchanged).** Re-probed 2026-11-09: alc 18.0.41 accepts all four shapes in every configuration, split and
+flat. The grammar already had their home (`var_attribute_item` in `var_body` and in `preproc_conditional_var` arms);
+only the recognizer declined. It now requires every path the attribute can precede to reach a variable's `:`: it
+skips an attribute where a declaration may start, settles a group arm at a `:` inside it and skips the rest of the arm
+(a group counts only if every arm settles and it has `#else`, otherwise the scan goes on after its `#endif`), and
+crosses the `#endif` (skipping remaining arms after `#elif`/`#else`) of a group opened before the `[`, bounded by
+`ScannerState.depth` (read only). The procedure attribute before a conditional header still declines, and so does an
+attribute whose target is a variable in one configuration and a procedure in another (item 76). Each shape is a clean
+tree in `test/corpus/var_attribute_group_shapes_test.txt` (15 cases: the four, seven more group placements, a local
+var section, three procedure-attribute preservation cases); extra probes `tools/alc_probe/cases/item45/` (`--check`
+0 drift). One tree changed on valid input that was clean before: an attribute before a var-section tail group whose
+every arm starts with a declaration (`colon_in_group_tail.al`) was a procedure `attribute_item` sibling and is now a
+`var_attribute_item` at the end of the `var_body`. Production trees byte-identical in all four corpora.
+`pa__nested.al` (the procedure counterpart listed below) still ERRORs, and not from the recognizer, which declines
+there as it should: a nested `#if` choosing a procedure header ERRORs with or without the attribute (item 77). The
+record below is kept as written.
 
 **Established:** 2026-10-07, B7b-1 Task 12 review; probes committed in the Task 12 fix round, each `expect: * accept`
 (alc accepts every configuration), each `has_error` True on main and on the branch (Task 14). The scanner's
@@ -2053,7 +2080,7 @@ list is homogeneous (CLAUDE.md, "Strict conditional lists (B7b-1)").
 
 **Owner:** as listed.
 
-## 47. Six case shapes alc accepts still ERROR (B7b-3)
+## 47. Six case shapes alc accepts still ERROR (B7b-3) — RESOLVED 2026-11-09 (batch 4: shapes 3, 6, then 1, 2, 4, 5 by owner ruling)
 
 **Established:** 2026-10-08, B7b-3 Task 6 (`e085ac8`, `task-6-report.md`). The case-separator rules (spec 4.2) take a `;`
 from a group only as an arm item or before a branch's own `;`; these three put the `;` where neither rule reaches. Each
@@ -2086,6 +2113,72 @@ before a `;` group to stay a decoration. All visible ERRORs, 0 production sites.
 **Next step:** decide per shape whether a split tree can hold it without a one-reading guess; alc first.
 
 **Owner:** B7.
+
+**Batch 4 (2026-11-09, branch `batch4/item47`).** All six verdicts re-measured with `tools.alc_probe` (alc 18.0.41,
+`--check`, 0 drift): unchanged.
+
+- **Shapes 3 and 6: FIXED.** One root cause: `preproc_split_case_branch` was a whole-rule `prec(25)`, so at
+  `#if … #endif • <pattern or #if>` the shift into that rule's pattern group beat every reduce of the empty group
+  statically and GLR never forked; an empty group followed by a pattern-starting token was always a split branch's
+  pattern group. Shape 6 ERRORed at the `;` (and so did an empty group before ANY group: `1: A; #if X #endif #if Y 3: C;
+  #endif 2: B;`), shape 3 at the `#else` after the header (and in the `#else` arm). The boundary after `#endif` is now a
+  `prec(0)` block (`prec(0, seq(preproc_endif, _case_pattern))`); a declared conflict
+  `[preproc_split_case_branch, preproc_conditional_case_patterns]` lets the token after the pattern decide. Trees, each
+  configuration-independent: shape 6 is spec 4.2.2's reading (two sibling `preproc_conditional_case` nodes; the oracle
+  attaches the selected `;` to `1: Bar`, every configuration passes); shape 3's empty group is the header's
+  `preproc_conditional_case_patterns` (an empty group immediately before patterns joins them, as `#if Y #endif 2: B;` is
+  a split branch's pattern group in `case_body`; the oracle keeps `preproc_split_case_extended`'s C1 refusal). The two
+  B7a GAP witnesses `case-patterns / holes-lead` and `lead-optional` at `preproc_split_case_extended` (a pattern group
+  opening an extended header) parse for the same reason. Fixtures: `test/corpus/item_47_case_empty_group_test.txt`
+  (8 cases, the moved shapes 3 and 6 and the two witnesses among them); probes `tools/alc_probe/cases/item47/`.
+  Measured alternatives: `prec.dynamic(25)` or `prec.dynamic(1)` on the rule instead changed B7b-2 operand-group trees
+  (`b7b2_ladder_positions_test`, tie-break row 7) or the `;` of `#if X 1: A; #if Y #endif 2: B; #endif`; not used.
+  STATE_COUNT unchanged, parser.c +48,639 B; no production tree changed (four corpora). The block moved two B7a keys
+  (`key-aliases.tsv`: `occ:preproc_split_case_branch:0.6` -> `0.5`, `0.8.0.1` -> `0.7.0.1`).
+- **Fix round (review of that commit, 2026-11-09).** Its "no tree change on input that parsed before" was wrong, and
+  its readings were picked by a GLR tie-break (`ts_subtree_compare`'s symbol order), not on purpose. A variant sweep
+  (main-built vs branch-built library over 54,266 generated case bodies: an empty group of five forms before an
+  extended header in every arm, with and without a preceding branch; every `case_body` of up to four items over a
+  14-fragment palette, alone, inside a group arm and inside both arms of an extended split) found two changed
+  families, all alc-valid: (1) an empty `#elif` / `#elif` + `#else` group directly before a
+  `preproc_split_case_extended` header: main a sibling `preproc_conditional_case` in the header's arm, the commit the
+  header's pattern group (the review's family); (2) two or more empty groups before a split branch: main the split
+  branch's own group plus pattern groups, the commit sibling groups (missed by the review's 342 variants; a
+  regression). **Owner ruling: an empty group directly before patterns is their pattern group, in every form** (the
+  B7b-3 fixture "an empty group before a branch is that branch's pattern group"). Implemented as dynamic precedence,
+  so wherever GLR keeps several complete readings the sum decides: `preproc_conditional_case` -2,
+  `preproc_conditional_case_patterns` -1, a split branch's own group 0 (`prec.dynamic` on preproc_split_case_branch
+  instead changed the `;` of `#if X 1: A; #if Y #endif 2: B; #endif` into an arm `empty_statement`; measured, not
+  used). Result vs main, the **tree-shape changes** (0 production sites; CHANGELOG): family (1) is the header's pattern
+  group; (2') three or more empty groups before a branch, the first an `#elif` / `#else` group, were one sibling group
+  plus a split branch and are all the split branch's groups; family (2) is main's tree again. Every changed clean tree
+  in the sweep is one of these and has fewer sibling groups. STATE_COUNT unchanged. Fixtures: 13 more field-labelled
+  cases in `test/corpus/item_47_case_empty_group_test.txt` (plain / `#elif` / `#elif`+`#else` x `#if` / `#else` arm x
+  with / without a preceding branch, the `#elif` arm, families 2 and 2'); probes
+  `tools/alc_probe/cases/item47/ext-header-after-empty-elif-group.al`, `ext-else-header-after-empty-elif-else-group.al`,
+  `elif-group-then-empty-groups-then-branch.al` (alc accepts every configuration).
+- **Shapes 1, 2, 4, 5: FIXED (fix round), owner ruling: option (a).** `case_body` takes
+  `seq(preproc_conditional_case, optional(empty_statement))`; spec 4.2.3 amended. The oracle marks that `;` CASE_SEMI
+  (`case_terminators.mark_body_semis`, keyed by the original case_body's direct children so arm `;`s keep
+  branch_select's marking and its provenance mutation test) and `attach` gives it to an immediately preceding
+  unterminated branch: every accepted configuration of the four passes, every rejected one is a reference ERROR
+  (`tools/config_oracle/tests/test_case_terminators.py`, incl. a mutation test). STATE_COUNT +2, no conflict. A
+  decoration `1: A #if X #endif ;` keeps its tree (the sibling group's -2 loses to it; sweep: no decoration changed).
+  The over-acceptance, item 44's decided limit: a `;` after a group where no configuration has an unterminated
+  branch before it parses clean (`#if X #endif ; 1: Bar;`, the former deliberate negative, and `1: Bar; #if X #endif
+  ;`); both are `known over-acceptance` cases in `test/corpus/b7b3_case_separator_negative_test.txt` with `negative:`
+  rows (probes `b7b3/case/empty-group-then-semi-at-start.al`, `item47/overaccept-empty-group-semi-after-terminated.al`).
+  The four shapes moved to `test/corpus/item_47_case_empty_group_test.txt`. The analysis as measured before the ruling:
+  each needs a `;` directly after a group in `case_body`, where
+  spec 4.2.3 allows none; its owner is the preceding surviving item AFTER selection, so it differs per configuration
+  (shape 2: `Bar` at X=0, `Baz` at X=1). Options measured on this branch, none committed:
+  (a) a sibling `empty_statement` after a `preproc_conditional_case` in `case_body`
+  (`seq(preproc_conditional_case, empty_statement)`): STATE_COUNT +2, no conflict; all four parse, the tree is
+  configuration-independent, but the oracle does not mark that bare `;` as `CASE_SEMI`, so every accepted configuration
+  of the four is a discrepancy until `case_terminators` marks it (an oracle change), and the deliberate negative
+  `#if X #endif ; 1: Bar;` (no branch owns the `;`, invalid in every configuration) parses clean, an item 44
+  over-acceptance; (b) the `;` inside the group's last arm item, a one-reading tree (B12-like) that is wrong in the
+  other configuration; (c) keep the visible ERROR (today). Spec 4.2.3 needs an amendment for (a).
 
 ## 48. A configuration-independent orphan `;` around empty groups (B7b-3, grammar)
 
@@ -2174,7 +2267,11 @@ either and re-record the cells that pass.
 
 **Follow-up from review.** `tools/b7_audit/b7b3-manifest.tsv`: the 63 rows re-recorded with `--rerecord` now record
 verdict CONSISTENT with every oracle outcome `pass`, but their status still reads `deferred` and their reason still
-says the sibling `;` group ERRORs. Update those rows' status and reason. Also: a directive-only decoration (before the
+says the sibling `;` group ERRORs. Update those rows' status and reason. **Done 2026-11-09 (batch 4):** the 48 B7 rows
+(18 statement-terminator, 30 case-branch) are `admitted` with an empty reason (`manifest --admit --owner B7 --new-owner
+B7`, which admitted exactly those 48 and kept the 18 SILENT item-48 rows); the 15 split-call rows stay `deferred`, now
+owner C1 with the C1 split-call reason every other assertion-closed split-call row carries (the family is deferred by
+design, spec 3.3). Also: a directive-only decoration (before the
 branch's own `;`) and the new sibling group (after it) are both unfielded `preproc_conditional_case` children of
 `preproc_split_case_end_branch`; only their position relative to the `;` tells them apart.
 
@@ -2222,7 +2319,7 @@ cells stay GAP (item 64's shape). No production tree changed (tree harness, four
 looseness: the traversal policy keys hosts by slot, so
 `preproc_split_case_end_branch:<children>` still reads `decoration` for a sibling group there too (policy reason notes it).
 
-## 51. Three `in`/`is`/`as` continuation shapes alc accepts still ERROR (B7b-2 Phase A scope)
+## 51. Three `in`/`is`/`as` continuation shapes alc accepts still ERROR (B7b-2 Phase A scope) — RESOLVED 2026-11-09
 
 **Established:** 2026-10-20, B7b-2 Task 4 (spec execution amendments, Task 4 item 6) and its fix round 1. B7b-2 Phase
 A makes `in`/`is`/`as` typed arms of `_expression_continuation` (the right side is a list or a type, not an
@@ -2251,7 +2348,22 @@ operand prefixes of spec 6.3 landed in Phase C.
 **Room after D1 (shape 3):** 28,770 − 26,968 = 1,802 STATE / 10,723 − 9,389 = 1,334 LARGE under the ceilings. Measure
 this item's real cost against `437215c` (D1 spec §10). Correctness wins over the ceilings (USER DECISION 2026-10-22).
 
-**Owner:** B7b-2-followup.
+**Resolution 2026-11-09 (batch 4, branch `batch4/item51`): shape 3 parses, with no precedence change.** The typed
+prefix arms `_in_dangling_operand` (`[list] in`) and `_type_dangling_operand` (`Type is|as`) take
+`repeat($._dangling_tail_item)` between their operand and their dangling keyword, as the generic `_dangling_operand`
+already did for shape 2. A `_dangling_tail_item`'s operand is `prec(10)`, so in `[true] and Ok in` the item `and Ok`
+reduces before the `in` shift (10 against 5); the conflict Task 10 hit (the `in` shift at 5 against an `and` reduce
+at 4) never arises, because the arm's `and Ok` is no `logical_expression` waiting to reduce. Tree: the prefix holds
+`operand: (list_literal) operator: "and" operand: (identifier) operator: (in_keyword)`, the generic prefix's layout.
+`node-types.json` unchanged; no conflict; STATE_COUNT −2, LARGE +2, parser.c +40,909 B. The ladder fixtures and the
+production trees of all four corpora are unchanged. alc accepts every configuration of the original probe and of two
+new ones, `keyword_ops/in-prefix-with-continuation-arms.al` (continuations in every arm, an `in` item among them) and
+`keyword_ops/is-prefix-with-continuation.al` (the `is` variant, which ERRORed too). Positive cases:
+`test/corpus/b7b2_operand_group_test.txt` ("a typed in prefix arm with a continuation before its keyword", "typed in
+prefix arms with continuations in every arm", "a typed is prefix arm with a continuation before its keyword"); the
+`:error` witness left `b7b2_scope_gap_test.txt`. B7a: 14 equiv registry rows for the new routes (no new cells).
+
+**Owner:** none open.
 
 ## 52. N consecutive `#if` groups at a root after which a host group can start parse in quadratic time (assignment, argument, repeat-until, range left, list element, split-call argument, ternary condition, Phase C `mixed`; B7b-2, known limit) — DECIDED known limit (owner; longest real run is 3)
 
@@ -2967,7 +3079,18 @@ readings: this is the configuration-dependent class of B12 (item 36). Decide the
 
 **Owner:** unassigned (B12).
 
-## 75. A conditional `TableRelation` head of if-relations, then a shared `where` and a shared `else`, ERRORs
+## 75. A conditional `TableRelation` head of if-relations, then a shared `where` and a shared `else`, ERRORs — RESOLVED 2026-11-09
+
+**Resolved on branch `batch4/item75`.** `_table_relation_rooted`'s conditional-head arm takes `where_clause
+optional(else_table_relation_fragment)` as its shared tail, so the value is the conditional, the `where_clause` and
+the fragment as siblings (fixture `test/corpus/table_relation_item29_test.txt`, "Item 75"). No oracle change was
+needed: `engine._join_relation_where` runs before `_consume`, so the where joins each arm's `then_relation` target
+first and the fragment's `RelationContinuation` then joins the open `if_table_relation`
+(`tools/config_oracle/tests/test_table_relation.py::test_item75_*`, with a monkeypatch test that the where join is
+load-bearing). STATE_COUNT +0, no new conflicts, all four corpora byte-identical. The same tail after a conditional
+head of plain targets (`#if X A #else B #endif where(..) else C`) is also accepted; alc rejects it in both
+configurations, split and flat (AL0149, an `else` without an `if`; probe `s6-conditional-target-head-shared-where-else.al`),
+so it is an over-acceptance of a form invalid in every configuration (item 44). It ERRORed before. The record below is kept as written.
 
 **Established:** 2026-11-09, item 29's review (batch 3). `TableRelation = #if X if (A = const(1)) Item #else
 if (A = const(2)) Resource #endif where(A = const(1)) else Customer;` gives an ERROR over `else Customer`; alc accepts
@@ -2977,6 +3100,53 @@ alternative was dropped because nothing probed it then). 0 production sites.
 
 **Next step:** add the shared else after the shared where in `_table_relation_rooted`, a fixture from the probe, and
 the oracle's relation joins for it (`engine._join_relation_where` then a `RelationContinuation`).
+
+**Owner:** unassigned.
+
+## 76. An attribute whose target is a variable in one configuration and a procedure in another ERRORs
+
+**Established:** 2026-11-09, item 45 (branch `batch4/item45`). alc 18.0.41 accepts every configuration, split and
+flat, of three shapes after a global var section (`tools/alc_probe/cases/item45/mixed_*.al`, `--check` 0 drift):
+`[NonDebuggable] #if X B: Integer; #else procedure Q() ... #endif`, the same with no `#else` and the procedure after
+`#endif`, and a nested group without `#else` inside the first arm. Each ERRORs on main and after item 45, with the same
+tree. `var_name_list_follows` declines them on purpose (some path reaches a procedure), so the `[` is a procedure
+`attribute_item` and the var-section tail group after it has no arm shape that takes it. Pinned only as the
+recognizer's contract (no `var_attribute_open`): `DECLINED`/`ACCEPTED` in
+`tools/config_oracle/tests/test_var_attribute_scanner.py`. Production sites not counted (the four corpora were
+byte-identical under item 45's change, so whatever sites exist parse as before).
+
+**Next step:** a design decision first, B12-style: the attribute node is `var_attribute_item` (inside `var_body`) in
+one configuration and `attribute_item` (object body) in the other, and one tree must hold both. Options: (a) accept
+these as variable attributes and give `preproc_split_var_section_tail` a mixed-arm form (one arm declarations only,
+another body elements only), so the attribute ends the `var_body` in every configuration; (b) keep declining and let
+the tail rule take a leading procedure `attribute_item` before the group. Either needs alc-backed fixtures for each
+arm order and the oracle's view of the tail; ask al-sem which attribute owner it expects.
+
+**Owner:** unassigned.
+
+## 77. A nested `#if` choosing a procedure header ERRORs
+
+**Established:** 2026-11-09, item 45 (branch `batch4/item45`). `#if X #if Y procedure Q() #else procedure Q(I: Integer)
+#endif #else procedure Q(J: Code[10]) #endif begin end;` ERRORs, with or without an attribute before it; alc accepts all
+four configurations (`tools/alc_probe/cases/b7b1/pa__nested.al`, recorded by B7b-1 Task 2 and listed under item 45 as
+the procedure counterpart; the recognizer declines there correctly). `preproc_split_procedure` takes one level of
+header arms only. 0 production sites known (not counted).
+
+**Next step:** count production sites (`tools/corpus-grep.sh`), then decide whether `preproc_split_procedure`'s arms
+may hold a nested header group; fixture from the probe.
+
+**Owner:** unassigned.
+
+## 78. A conditional `TableRelation` head, a shared `where`, then a conditional `else` group ERRORs
+
+**Established:** 2026-11-09, item 75's review (batch 4). `TableRelation = #if X if (..) Item #else if (..) Resource
+#endif where(..) #if Y else Customer; #else else Vendor; #endif` ERRORs on main and after item 75; alc accepts all four
+configurations (`tools/alc_probe/cases/item29-relation-chain/s7-conditional-head-shared-where-conditional-else.al`).
+It is the cousin of probe s2b (a where arm inside an if chain with a shared else): item 75 added a shared `where` then a
+plain `else` after a conditional head, not a conditional `else` group after it. 0 production sites.
+
+**Next step:** allow a `preproc_conditional_table_relation` of `else` fragments after the shared `where` in
+`_table_relation_rooted`, a fixture from the probe, and the oracle join for it.
 
 **Owner:** unassigned.
 

@@ -16,7 +16,7 @@ a `_Static_assert` on `sizeof(depth) >= 4` fails the build if anyone narrows it 
 |-------|---------|-------------|
 | `PROPERTY_NAME` | `identifier` followed by `=` (not `:=`) — property/variable disambiguation | none |
 | `CONTINUE_AS_IDENTIFIER` | `continue` followed by `:=` `(` `.` `[` `::` `+=` `-=` `*=` `/=` — used as a name, not the statement | none |
-| `VAR_ATTRIBUTE_OPEN` | the `[` of a variable attribute (one character, `mark_end` right after it): the lookahead scans past the attribute and any chained `[...]`, then requires a variable name list ending at its `:` (`var_name_list_follows`); otherwise declines and the `[` is a procedure `attribute_item` | none |
+| `VAR_ATTRIBUTE_OPEN` | the `[` of a variable attribute (one character, `mark_end` right after it): the lookahead scans past the attribute, then requires every path through what follows (more attributes, `#if` groups) to reach a variable name list ending at its `:` (`var_name_list_follows`); otherwise declines and the `[` is a procedure `attribute_item` | none |
 | `PREPROC_OPEN` | `#if` | depth++ |
 | `PREPROC_CLOSE` | `#endif` | depth-- |
 | `BEGIN_KEYWORD` | `begin` at any depth — named node for queries | none |
@@ -107,13 +107,17 @@ lines itself. **Keep `TRANSPARENT_DIRECTIVES` in sync with the `extras` array.**
 
 ## `var_name_list_follows` (B7b-1)
 
-`VAR_ATTRIBUTE_OPEN`'s recognizer: after the attribute(s) it reads names, commas and
-`#if`/`#elif`/`#else`/`#endif` lines and accepts only at a `:` at local depth 0 with a name
-seen and no comma just before; it declines at `(`, `;`, `{`, `}`, `[`, EOF, the word
-`procedure`, a `:` inside a group, a malformed directive, so a procedure attribute before a
-conditional header stays a procedure attribute. It uses a local nesting count, never
-`ScannerState.depth`, and every advance is non-marking. Its declines on input alc accepts are
-`docs/deferred-work.md` item 45; the full shape is in `docs/scanner-design-notes.md`.
+`VAR_ATTRIBUTE_OPEN`'s recognizer: after the attribute it reads further attributes, names, commas
+and `#if`/`#elif`/`#else`/`#endif` lines and accepts at a `:` at local depth 0 with a name seen
+and no comma just before. **Every path the attribute can precede must reach a variable's `:`**
+(item 45): a `:` inside a group settles that arm (the rest is skipped, `skip_to_arm_end`), and the
+group counts only if every arm settles and it has `#else`; otherwise the scan goes on after its
+`#endif`. It declines at `(`, `;`, `{`, `}`, EOF, the word `procedure`, a name after a name, a
+malformed directive, so a procedure attribute before a conditional header stays a procedure
+attribute, and so does an attribute whose target is a variable in one configuration and a procedure
+in another (item 76). It reads `ScannerState.depth` (never writes it) only to know how many groups
+opened before the `[` it may close; its own nesting is a local, every advance non-marking. The full
+shape is in `docs/scanner-design-notes.md`.
 
 ## PROPERTY_NAME Token
 

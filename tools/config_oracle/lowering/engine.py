@@ -549,6 +549,7 @@ def _lower_ordinary(node, ctx) -> Lowered:
         case_terminators.empty_body(node, new, ctx)
     elif node.kind == "case_body":
         # case-terminator (B7b-3 spec 6.2): a case run's `;` groups, never ARM_SEMI.
+        case_terminators.mark_body_semis(node, new.children)
         new.children = case_terminators.attach(new.children, ctx)
     elif node.kind == "code_block":
         # a BlockCompletion may have appended a statement run to the block's body

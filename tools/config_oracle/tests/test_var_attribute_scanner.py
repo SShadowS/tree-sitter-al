@@ -53,18 +53,45 @@ def test_attribute_escaped_quote_name(al_parser):
     assert "var_attribute_open" in _kinds(root)
 
 
+ITEM45_FIXTURE = "var_attribute_group_shapes_test.txt"
+
+
+def test_item45_fixture_case_count():
+    assert len([c for c in fixtures.extract(REPO / "test" / "corpus") if c.file == ITEM45_FIXTURE]) == 15
+
+
+@pytest.mark.parametrize(
+    "case", [c for c in fixtures.extract(REPO / "test" / "corpus") if c.file == ITEM45_FIXTURE],
+    ids=lambda c: c.name)
+def test_item45_fixture_case_has_no_error(al_parser, case):
+    """Deferred item 45: attributes and whole declarations in groups; the `procedure attribute kept` cases
+    are the procedure attributes the widened recognizer must still decline."""
+    root = al_parser.parse(case.source).root_node
+    assert root.has_error is False
+    kinds = _kinds(root)
+    if "procedure attribute kept" in case.name:
+        assert "var_attribute_open" not in kinds and "attribute_item" in kinds
+    else:
+        assert "var_attribute_open" in kinds and "attribute_item" not in kinds
+
+
 # Shapes the lookahead declines, so no `[` becomes var_attribute_open. Most are rejected by alc as
 # syntax in every configuration (B7b-1 Task 2 report, measured table: AL0621 malformed directive, AL0623
-# unterminated group; the others are directive-line or name-list syntax errors). ACCEPTED is the one alc
-# accepts (probe tools/alc_probe/cases/b7b1/colon_in_group.al): whole declarations in the arms of a group
-# after an attribute. It is a pre-existing gap owned by deferred work, not B7b-1, so the test pins only the
-# recognizer's contract there (no var_attribute_open), never that the input errors.
-ACCEPTED = {"colon inside the group"}
+# unterminated group; the others are directive-line or name-list syntax errors). ACCEPTED are the ones alc
+# accepts in every configuration (probes tools/alc_probe/cases/item45/mixed_*.al): the attribute belongs to a
+# variable in one configuration and to a procedure in another. They still ERROR (deferred item 76), so the test
+# pins only the recognizer's contract there (no var_attribute_open), never that the input errors.
+_Q = b"    procedure Q()\n    begin\n    end;\n"
+ACCEPTED = {"mixed variable and procedure arms", "mixed group without else", "mixed nested group without else"}
 DECLINED = {
     "malformed directive": b"        [A]\n        A\n#if X\n        , B\n#elsewhere\n        , C\n#endif\n        : Integer;\n",
     "unterminated group": b"        [A]\n        A\n#if X\n        , B\n        : Integer;\n",
     "endif without if": b"        [A]\n        A\n#endif\n        : Integer;\n",
-    "colon inside the group": b"        [A]\n#if X\n        A: Integer;\n#else\n        B: Integer;\n#endif\n",
+    "else without if": b"        [A]\n#else\n        A: Integer;\n#endif\n",
+    "mixed variable and procedure arms": b"        [A]\n#if X\n        A: Integer;\n#else\n" + _Q + b"#endif\n",
+    "mixed group without else": b"        [A]\n#if X\n        A: Integer;\n#endif\n" + _Q,
+    "mixed nested group without else":
+        b"        [A]\n#if X\n#if Y\n        A: Integer;\n#endif\n#else\n        B: Integer;\n#endif\n" + _Q,
     "block comment on the #if line": b"        [A]\n        A\n#if X /* c */\n        , B\n#endif\n        : Integer;\n",
     "text after #endif": b"        [A]\n        A\n#if X\n        , B\n#endif B\n        : Integer;\n",
     "empty condition": b"        [A]\n        A\n#if\n        , B\n#endif\n        : Integer;\n",
@@ -112,6 +139,11 @@ EDITS = [
     (b"#if X\n    procedure Q2(A: Integer)\n#else\n    procedure Q2()\n#endif\n    begin\n    end;\n",
      b"#if X\n        A2,\n#endif\n        B2: Integer;\n"),
     (b"        A,\n#if X\n        B,\n#endif\n        C: Integer;\n", b"        A,\n#if X\n        B,\n#elsewhere\n#endif\n        C: Integer;\n"),
+    # Item 45: the verdict flips on text far past the `[` (the last arm of a declaration group).
+    (b"#if X\n        A: Integer;\n#else\n        B: Integer;\n#endif\n",
+     b"#if X\n        A: Integer;\n#else\n    procedure Q3()\n    begin\n    end;\n#endif\n"),
+    (b"#if X\n        A: Integer;\n#else\n    procedure Q3()\n    begin\n    end;\n#endif\n",
+     b"#if X\n        A: Integer;\n#else\n        B: Integer;\n#endif\n"),
 ]
 
 

@@ -9,6 +9,36 @@ public API — a change to node structure or field names is a **major** bump.
 
 ### Fixed
 
+- **A conditional `TableRelation` head, then a shared `where` and a shared `else`, parses (deferred item 75).**
+  `TableRelation = #if X if (..) Item #else if (..) Resource #endif where(..) else Customer;` ERRORed over
+  `else Customer`; alc accepts both configurations
+  (`tools/alc_probe/cases/item29-relation-chain/s5-conditional-if-head-shared-where-else.al`). The
+  `table_relation_value` now holds the `preproc_conditional_table_relation`, the `where_clause` and an
+  `else_table_relation_fragment` as siblings, the forms item 29 already uses; the config oracle joins them with its
+  existing relation joins. The same tail after plain targets (`#if X A #else B #endif where(..) else C`, AL0149 in
+every configuration) now parses too instead of ERRORing, as does a head whose arms are already complete `if … else`
+  relations (an `else` without an `if` in every configuration): over-acceptance, item 44. Forms valid in only some
+  configurations went from ERROR to clean, and the oracle passes their valid configuration: an `#if` head with no
+  `#else`, a mixed head (`if (..) Item` / plain `Resource`), and an arm with its own `where`. No tree-shape change on
+  valid input that parsed before, `node-types.json` unchanged, STATE_COUNT +0; production trees identical in all four
+  corpora.
+- **Variable attributes next to `#if` groups parse (deferred item 45).** Four shapes alc accepts in every
+  configuration ERRORed: whole declarations in the arms of a group after `[NonDebuggable]`, a second attribute inside a
+  group, an attribute alone in a group with the name after `#endif`, and an attribute after an empty group followed by
+  another attribute (`tools/alc_probe/cases/b7b1/`, `tools/alc_probe/cases/item45/`). Scanner only: the
+  `var_attribute_open` lookahead (`var_name_list_follows`) now requires every path the attribute can precede to reach a
+  variable's `:`, so a procedure attribute before a conditional header stays an `attribute_item`. **Tree-shape change**
+  (0 production sites, clean before and after): an attribute before a var-section tail group whose every arm starts
+  with a declaration (`[A] #if X B: Integer; procedure P() ... #else C: Integer; procedure P() ... #endif`) was a
+  procedure `attribute_item` sibling of `var_section` and is now a `var_attribute_item` at the end of its `var_body`.
+  `node-types.json` and STATE_COUNT unchanged; production trees identical in all four corpora. Still ERROR: an
+  attribute whose target is a variable in one configuration and a procedure in another (item 76).
+- **A typed `in`/`is`/`as` operand prefix arm with a continuation before its keyword parses (deferred item 51
+  shape 3).** `B := Ok in #if X [true] and Ok in #endif [false];` and `B := F is #if X IBar and G is #endif IFoo;`
+  ERRORed; alc accepts every configuration (`tools/alc_probe/cases/b7b-2/keyword_ops/in-prefix-with-continuation*.al`,
+  `is-prefix-with-continuation.al`). The arm's continuations are items of the `preproc_operand_prefix`, laid out as
+  in the generic prefix (`operand: (list_literal) operator: "and" operand: (identifier) operator: (in_keyword)`).
+  `node-types.json` unchanged; no conflict; STATE_COUNT −2. Production trees identical in all four corpora.
 - **Four `TableRelation` shapes with `#if` inside the chain parse (deferred item 29).** A shared
   `else_table_relation_fragment` after a conditional tail, a `where_clause` alone in an arm, a shared `where_clause`
   after a conditional head, and a `preproc_conditional_table_relation` as the `then_relation` of an
@@ -37,6 +67,32 @@ public API — a change to node structure or field names is a **major** bump.
   that branch and before the case's `end` (a `;` in some arms, further branches, or nothing) was an ERROR; alc accepts
   these (`tools/alc_probe/cases/item50/`). It is now an unfielded `preproc_conditional_case` child of
   `preproc_split_case_end_branch`, the same sibling group a `case_body` has. No production tree changes.
+- **All six item-47 `case` shapes alc accepts parse (deferred item 47).** Shapes 1, 2, 4, 5: a `;` directly after a
+  `#if` group in a `case_body` (`1: Bar #if X ; 2: Baz #endif ;`, `1: Bar #if X ; #endif ; 2: Baz;`) was an ERROR; it
+  is now a sibling `empty_statement` after the group (owner ruling; B7b-3 spec 4.2.3 amended), whose owner differs
+  per configuration, so the tree names none; the config oracle gives it to the branch the selected configuration ends
+  with. `node-types.json`: `case_body` gains `empty_statement`. Forms this admits that are invalid in every
+  configuration (`#if X #endif ; 1: Bar;`, `1: Bar; #if X #endif ;`) are classified over-acceptances (deferred item
+  44's decided limit); a decoration `1: Bar #if X #endif ;` keeps its tree. Shapes 3 and 6, an empty group before a
+  pattern-starting token: `1: A #if X #endif #if Y ; #endif 2: B;`, an empty group before any other group (`1: A; #if X #endif #if Y 3: C;
+  #endif 2: B;`), and an empty group or a pattern group before a `preproc_split_case_extended` header
+  (`#if X 1: A; #if Y #endif 2: #else 2: #endif B;`) were ERRORs; alc accepts them
+  (`tools/alc_probe/cases/item47/`, `tools/alc_probe/cases/b7b3/case/`). `preproc_split_case_branch`'s `prec(25)` no
+  longer covers the boundary after its `#endif`, so the empty group is a sibling `preproc_conditional_case` when no
+  `:` and body follow (shape 6). Where more than one reading completes, dynamic precedence decides on purpose
+  (`preproc_conditional_case` -2, `preproc_conditional_case_patterns` -1): an empty group directly before patterns is
+  their pattern group, the owner's ruling and the rule the B7b-3 fixture already pinned for one group before a
+  branch. **Tree-shape change** (0 production sites; every changed input is alc-valid, `tools/alc_probe/cases/item47/`):
+  (1) an empty group with `#elif` or `#elif` + `#else` directly before a `preproc_split_case_extended` header, in
+  either arm, with or without a branch before it in the arm (`#if X 1: A; #if Y #elif Z #endif 2: #else 2: #endif
+  B;`), was a sibling `preproc_conditional_case` inside the header's arm and is now the header's
+  `preproc_conditional_case_patterns` (the plain `#if Y #endif` form ERRORed and gets the same tree); (2) three or more
+  empty groups before a branch, the first with `#elif` or `#else` (`#if Y #elif Z #endif #if W #endif #if X #endif 6:
+  F;`), had the first as a sibling group and the rest inside a `preproc_split_case_branch`; all are now that split
+  branch's groups. Measured by a variant sweep (main vs this build, 54,266 case bodies): every changed clean tree
+  is one of these two and has fewer sibling groups; no other clean tree changed. One declared conflict and two
+  `prec.dynamic` weights for the whole item; STATE_COUNT +2, parser.c +0.08%. Production trees identical in all four
+  corpora.
 - **`Visible = Where;` parses (deferred item 28).** `Where` at the start of a generic property value is an
   `identifier` when it is not a `where(...)` clause (alc resolves it as a name; `tools/alc_probe/cases/item28-visible-where/`),
   so `Visible = Where;` and expressions such as `Enabled = Where = false;` no longer ERROR. `SourceTableView = where(...)`

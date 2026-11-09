@@ -127,3 +127,23 @@ def test_item29_where_join_is_load_bearing(al_parser, monkeypatch):
     for src in (WHERE_ARM, SHARED_WHERE):
         v = witness.verdicts(al_parser, src)
         assert any(s == "discrepancy" for s, _ in v.values()), v
+
+
+# Item 75: a conditional head of if-relations, then a shared where AND a shared else
+# (tools/alc_probe/cases/item29-relation-chain/s5-*: alc accepts both configurations).
+# The where joins the arm's then target first, then the else joins the open if.
+SHARED_WHERE_ELSE = _field(b"\n#if X\n if (A = const(1)) Item\n#else\n if (A = const(2)) Resource\n#endif\n"
+                           b" where(A = const(1)) else Customer;")
+
+
+def test_item75_shared_where_then_else_every_config(al_parser):
+    witness.assert_produces(al_parser, SHARED_WHERE_ELSE, "else_table_relation_fragment")
+    assert len(witness.verdicts(al_parser, SHARED_WHERE_ELSE)) == 2
+    witness.assert_all_pass(al_parser, SHARED_WHERE_ELSE)
+
+
+def test_item75_where_join_is_load_bearing(al_parser, monkeypatch):
+    from tools.config_oracle.lowering import engine
+    monkeypatch.setattr(engine, "_join_relation_where", lambda value: None)
+    v = witness.verdicts(al_parser, SHARED_WHERE_ELSE)
+    assert any(s == "discrepancy" for s, _ in v.values()), v
