@@ -41,12 +41,13 @@ codeunit 50000 Test
               (case_keyword)
               expression: (identifier)
               (of_keyword)
-              (case_else_branch
-                (else_keyword)
-                body: (statement_block
-                  (call_expression
-                    function: (identifier)
-                    arguments: (argument_list))))
+              body: (case_body
+                (case_else_branch
+                  (else_keyword)
+                  body: (statement_block
+                    (call_expression
+                      function: (identifier)
+                      arguments: (argument_list)))))
               (end_keyword)))
           (end_keyword))))))
 
@@ -147,15 +148,16 @@ codeunit 50001 Test
               (case_keyword)
               expression: (identifier)
               (of_keyword)
-              (case_else_branch
-                (else_keyword)
-                body: (statement_block
-                  (call_expression
-                    function: (identifier)
-                    arguments: (argument_list
-                      (identifier)
-                      (identifier)
-                      (identifier)))))
+              body: (case_body
+                (case_else_branch
+                  (else_keyword)
+                  body: (statement_block
+                    (call_expression
+                      function: (identifier)
+                      arguments: (argument_list
+                        (identifier)
+                        (identifier)
+                        (identifier))))))
               (end_keyword)))
           (end_keyword))))))
 
@@ -217,12 +219,12 @@ codeunit 50002 Test
                   pattern: (string_literal)
                   body: (call_expression
                     function: (identifier)
-                    arguments: (argument_list))))
-              (case_else_branch
-                (else_keyword)
-                body: (statement_block
-                  (call_expression
-                    function: (identifier)
-                    arguments: (argument_list))))
+                    arguments: (argument_list)))
+                (case_else_branch
+                  (else_keyword)
+                  body: (statement_block
+                    (call_expression
+                      function: (identifier)
+                      arguments: (argument_list)))))
               (end_keyword)))
           (end_keyword))))))

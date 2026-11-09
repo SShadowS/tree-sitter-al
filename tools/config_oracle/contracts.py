@@ -328,25 +328,12 @@ register("preproc_conditional_case", "branch-select", "tools.config_oracle.lower
          # attached by case_terminators.attach) | a nested preproc_conditional_case, then an
          # optional case_else_branch.
          #
-         # case_else_branch is declared here (grammar-true) but deliberately
-         # EXCLUDED from the arm. It is one of case_body's repeat1 members only
-         # in the multi-config tree (via preproc_conditional_case); in every
-         # single-configuration parse case_statement carries it as its OWN
-         # optional field, a SIBLING of case_body, never case_body's child
-         # (grammar.js:4585-4592: `optional(field('body', case_body)),
-         # optional(case_else_branch), end_keyword`). Splicing it into case_body
-         # like an ordinary arm member is a genuine structural discrepancy, not
-         # a policy mismatch: found live over BC.History
-         # (case_preprocessor_else.txt, config CLEAN25=0) as `case_body.body/
-         # case_else_branch` (lowered) vs `case_statement.-/case_else_branch`
-         # (reference) -- extra/missing at the same two paths. Re-parenting a
-         # fragment from case_body to its case_statement grandparent needs a
-         # new Fragment kind that survives a NON-last original child (case_body
-         # is not case_statement's last child; end_keyword is), which none of
-         # engine.py's four Fragment types do today. Left unsupported
-         # (arm-content -> cannot-validate) rather than papered over; out of
-         # B7b-3's scope (spec 6.2), still cannot-validate debt.
-         arm={"case_branch", "empty_statement", "preproc_conditional_case"})
+         # case_else_branch is an arm member since deferred item 22: the flat grammar
+         # makes the else the LAST member of case_body (it was a sibling of
+         # case_body, so splicing a conditional else into case_body disagreed with
+         # every single-configuration parse and was left cannot-validate). Now the
+         # spliced else lands where the flat parse puts it.
+         arm={"case_branch", "empty_statement", "preproc_conditional_case", "case_else_branch"})
 register("preproc_conditional_labels", "branch-select", "tools.config_oracle.lowering.select.branch_select",
          hosts={"labels_body:<children>": "splice-repeat"},
          # own rule (grammar.js:2072-2078): label_declaration only, no self-nesting.

@@ -389,8 +389,8 @@ def test_registry_dispatch():
     assert {h.split(":")[0] for h, p in e.hosts.items() if p == "decoration"} == set(ct.DECORATION_HOSTS)
     assert e.hosts["case_body:<children>"] == "splice-repeat"
     assert e.hosts["preproc_conditional_case:<children>"] == "splice-repeat"
-    assert {"case_branch", "empty_statement", "preproc_conditional_case"} == set(e.arm)
-    assert "case_else_branch" not in e.arm   # conditional case else stays cannot-validate debt
+    # deferred item 22: the else is case_body's last member in the flat tree, so a conditional else splices
+    assert {"case_branch", "empty_statement", "preproc_conditional_case", "case_else_branch"} == set(e.arm)
 
 
 # --- mutation tests: each defect must be caught -----------------------------------------------

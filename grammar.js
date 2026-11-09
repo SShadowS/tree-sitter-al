@@ -1191,12 +1191,9 @@ module.exports = grammar({
     // parser cannot yet know whether the run continues or a new one begins.
     // GLR decides it at the directive.
     [$.report_body],
-    // Same shape as [$.report_body]: preproc_split_case_statement_end puts a
-    // dangling `pattern :` after `optional(case_body)`, and case_body is a
-    // repeat1 — so at a branch boundary the parser cannot yet tell whether the
-    // body continues or the final, split branch's header has started. The
-    // directive that follows is what decides it.
-    [$.case_body],
+    // ([$.case_body] stood here, for preproc_split_case_statement_end's dangling
+    // `pattern :` after a repeat1 body; since item 22 that body is the hidden
+    // _case_body_items and the generator reports the conflict unnecessary.)
     // In `pattern : #if <statement> …`, that first statement can be the split
     // branch's BODY (_case_body_branch) or an ordinary statement of the run
     // that follows the case. Nothing before the `end` distinguishes them.
@@ -6802,11 +6799,22 @@ module.exports = grammar({
       $._region_root_expression,
       $.of_keyword,
       optional(field('body', $.case_body)),
-      optional($.case_else_branch),
       $.end_keyword
     )),
 
-    case_body: $ => repeat1(choice(
+    // Deferred item 22 (owner decision 2026-11-09): the case's `else` is the
+    // LAST member of case_body, as the docs list it (the default alternative
+    // after the value sets) and as a conditional else already was (inside a
+    // preproc_conditional_case member). One container for every branch, so a
+    // consumer splicing conditional groups sees branches and else alike.
+    case_body: $ => choice(
+      seq($._case_body_items, optional($.case_else_branch)),
+      $.case_else_branch,
+    ),
+
+    // The branch run without an else: preproc_split_case_statement_end's body,
+    // where a dangling `pattern :` follows and an else cannot precede it.
+    _case_body_items: $ => repeat1(choice(
       $.case_branch,
       // Deferred item 47 shapes 1, 2, 4, 5 (owner ruling, option (a)): a `;`
       // directly after a group is a sibling empty_statement. Its owner is the
@@ -6852,7 +6860,7 @@ module.exports = grammar({
       $.case_keyword,
       $._region_root_expression,
       $.of_keyword,
-      optional(field('body', $.case_body)),
+      optional(field('body', alias($._case_body_items, $.case_body))),
       $._case_pattern,
       ':',
       $.preproc_if,

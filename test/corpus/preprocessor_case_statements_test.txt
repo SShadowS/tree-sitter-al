@@ -80,13 +80,13 @@ codeunit 50100 TestUnit
                       (comment)
                       (end_keyword)))
                   (preproc_endif
-                    (preproc_close))))
-              (case_else_branch
-                (else_keyword)
-                body: (statement_block
-                  (call_expression
-                    function: (identifier)
-                    arguments: (argument_list
-                      (quoted_identifier)))))
+                    (preproc_close)))
+                (case_else_branch
+                  (else_keyword)
+                  body: (statement_block
+                    (call_expression
+                      function: (identifier)
+                      arguments: (argument_list
+                        (quoted_identifier))))))
               (end_keyword)))
           (end_keyword))))))

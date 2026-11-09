@@ -1,0 +1,56 @@
+================================================================================
+Deferred item 22: the case else is the last member of case_body, and a comment before it moves with it
+================================================================================
+
+codeunit 50100 T
+{
+    procedure P(X: Integer)
+    begin
+        case X of
+            1:
+                A();
+            // the default
+            else
+                B();
+        end;
+    end;
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (procedure
+        (procedure_keyword)
+        name: (identifier)
+        parameters: (parameter_list
+          (parameter
+            name: (identifier)
+            type: (type_specification
+              (basic_type))))
+        body: (code_block
+          (begin_keyword)
+          body: (statement_block
+            (case_statement
+              (case_keyword)
+              expression: (identifier)
+              (of_keyword)
+              body: (case_body
+                (case_branch
+                  pattern: (integer)
+                  body: (call_expression
+                    function: (identifier)
+                    arguments: (argument_list)))
+                (comment)
+                (case_else_branch
+                  (else_keyword)
+                  body: (statement_block
+                    (call_expression
+                      function: (identifier)
+                      arguments: (argument_list)))))
+              (end_keyword)))
+          (end_keyword))))))

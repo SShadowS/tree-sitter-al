@@ -96,41 +96,41 @@ codeunit 50000 "Test Case Else"
                       object: (identifier)
                       member: (quoted_identifier))
                     operator: (assignment_operator)
-                    right: (identifier))))
-              (case_else_branch
-                (else_keyword)
-                body: (statement_block
-                  (preproc_conditional_statement
-                    (preproc_if
-                      (preproc_open)
-                      condition: (identifier))
-                    (call_expression
-                      function: (identifier)
-                      arguments: (argument_list
-                        (identifier)
-                        (identifier)
-                        (identifier)))
-                    (preproc_else)
-                    (code_block
-                      (begin_keyword)
-                      body: (statement_block
-                        (call_expression
-                          function: (member_expression
-                            object: (identifier)
-                            member: (identifier))
-                          arguments: (argument_list
-                            (identifier)
-                            (identifier)
-                            (identifier)))
-                        (call_expression
-                          function: (identifier)
-                          arguments: (argument_list
-                            (identifier)
-                            (identifier)
-                            (identifier))))
-                      (end_keyword))
-                    (preproc_endif
-                      (preproc_close)))))
+                    right: (identifier)))
+                (case_else_branch
+                  (else_keyword)
+                  body: (statement_block
+                    (preproc_conditional_statement
+                      (preproc_if
+                        (preproc_open)
+                        condition: (identifier))
+                      (call_expression
+                        function: (identifier)
+                        arguments: (argument_list
+                          (identifier)
+                          (identifier)
+                          (identifier)))
+                      (preproc_else)
+                      (code_block
+                        (begin_keyword)
+                        body: (statement_block
+                          (call_expression
+                            function: (member_expression
+                              object: (identifier)
+                              member: (identifier))
+                            arguments: (argument_list
+                              (identifier)
+                              (identifier)
+                              (identifier)))
+                          (call_expression
+                            function: (identifier)
+                            arguments: (argument_list
+                              (identifier)
+                              (identifier)
+                              (identifier))))
+                        (end_keyword))
+                      (preproc_endif
+                        (preproc_close))))))
               (end_keyword)))
           (end_keyword))))))
 
@@ -192,25 +192,25 @@ codeunit 50001 "Simple Case Test"
                   body: (call_expression
                     function: (identifier)
                     arguments: (argument_list
-                      (string_literal)))))
-              (case_else_branch
-                (else_keyword)
-                body: (statement_block
-                  (preproc_conditional_statement
-                    (preproc_if
-                      (preproc_open)
-                      condition: (identifier))
-                    (call_expression
-                      function: (identifier)
-                      arguments: (argument_list
-                        (string_literal)))
-                    (preproc_else)
-                    (call_expression
-                      function: (identifier)
-                      arguments: (argument_list
-                        (string_literal)))
-                    (preproc_endif
-                      (preproc_close)))))
+                      (string_literal))))
+                (case_else_branch
+                  (else_keyword)
+                  body: (statement_block
+                    (preproc_conditional_statement
+                      (preproc_if
+                        (preproc_open)
+                        condition: (identifier))
+                      (call_expression
+                        function: (identifier)
+                        arguments: (argument_list
+                          (string_literal)))
+                      (preproc_else)
+                      (call_expression
+                        function: (identifier)
+                        arguments: (argument_list
+                          (string_literal)))
+                      (preproc_endif
+                        (preproc_close))))))
               (end_keyword)))
           (end_keyword))))))
 
@@ -304,53 +304,53 @@ codeunit 50002 "Nested Case Test"
                         pattern: (integer)
                         body: (call_expression
                           function: (identifier)
-                          arguments: (argument_list))))
-                    (case_else_branch
-                      (else_keyword)
-                      body: (statement_block
-                        (preproc_conditional_statement
-                          (preproc_if
-                            (preproc_open)
-                            condition: (identifier))
-                          (call_expression
-                            function: (identifier)
-                            arguments: (argument_list))
-                          (preproc_elif
-                            condition: (identifier))
-                          (call_expression
-                            function: (identifier)
-                            arguments: (argument_list))
-                          (preproc_else)
-                          (call_expression
-                            function: (identifier)
-                            arguments: (argument_list))
-                          (preproc_endif
-                            (preproc_close)))))
-                    (end_keyword))))
-              (case_else_branch
-                (else_keyword)
-                body: (statement_block
-                  (preproc_conditional_statement
-                    (preproc_if
-                      (preproc_open)
-                      condition: (preproc_not_expression
-                        (identifier)))
-                    (code_block
-                      (begin_keyword)
-                      body: (statement_block
-                        (call_expression
-                          function: (identifier)
-                          arguments: (argument_list))
-                        (call_expression
-                          function: (identifier)
                           arguments: (argument_list)))
-                      (end_keyword))
-                    (preproc_else)
-                    (call_expression
-                      function: (identifier)
-                      arguments: (argument_list))
-                    (preproc_endif
-                      (preproc_close)))))
+                      (case_else_branch
+                        (else_keyword)
+                        body: (statement_block
+                          (preproc_conditional_statement
+                            (preproc_if
+                              (preproc_open)
+                              condition: (identifier))
+                            (call_expression
+                              function: (identifier)
+                              arguments: (argument_list))
+                            (preproc_elif
+                              condition: (identifier))
+                            (call_expression
+                              function: (identifier)
+                              arguments: (argument_list))
+                            (preproc_else)
+                            (call_expression
+                              function: (identifier)
+                              arguments: (argument_list))
+                            (preproc_endif
+                              (preproc_close))))))
+                    (end_keyword)))
+                (case_else_branch
+                  (else_keyword)
+                  body: (statement_block
+                    (preproc_conditional_statement
+                      (preproc_if
+                        (preproc_open)
+                        condition: (preproc_not_expression
+                          (identifier)))
+                      (code_block
+                        (begin_keyword)
+                        body: (statement_block
+                          (call_expression
+                            function: (identifier)
+                            arguments: (argument_list))
+                          (call_expression
+                            function: (identifier)
+                            arguments: (argument_list)))
+                        (end_keyword))
+                      (preproc_else)
+                      (call_expression
+                        function: (identifier)
+                        arguments: (argument_list))
+                      (preproc_endif
+                        (preproc_close))))))
               (end_keyword)))
           (end_keyword)))
       (procedure

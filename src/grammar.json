@@ -31931,18 +31931,6 @@
             ]
           },
           {
-            "type": "CHOICE",
-            "members": [
-              {
-                "type": "SYMBOL",
-                "name": "case_else_branch"
-              },
-              {
-                "type": "BLANK"
-              }
-            ]
-          },
-          {
             "type": "SYMBOL",
             "name": "end_keyword"
           }
@@ -31950,6 +31938,36 @@
       }
     },
     "case_body": {
+      "type": "CHOICE",
+      "members": [
+        {
+          "type": "SEQ",
+          "members": [
+            {
+              "type": "SYMBOL",
+              "name": "_case_body_items"
+            },
+            {
+              "type": "CHOICE",
+              "members": [
+                {
+                  "type": "SYMBOL",
+                  "name": "case_else_branch"
+                },
+                {
+                  "type": "BLANK"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "SYMBOL",
+          "name": "case_else_branch"
+        }
+      ]
+    },
+    "_case_body_items": {
       "type": "REPEAT1",
       "content": {
         "type": "CHOICE",
@@ -32015,8 +32033,13 @@
                 "type": "FIELD",
                 "name": "body",
                 "content": {
-                  "type": "SYMBOL",
-                  "name": "case_body"
+                  "type": "ALIAS",
+                  "content": {
+                    "type": "SYMBOL",
+                    "name": "_case_body_items"
+                  },
+                  "named": true,
+                  "value": "case_body"
                 }
               },
               {
@@ -40791,9 +40814,6 @@
     ],
     [
       "report_body"
-    ],
-    [
-      "case_body"
     ],
     [
       "_statement",

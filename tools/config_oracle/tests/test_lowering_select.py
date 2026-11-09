@@ -328,19 +328,17 @@ def test_arm_content_outside_the_declaration_is_an_error(al_parser, monkeypatch)
     assert err.value.kind == "arm-content"
 
 
-def test_case_else_branch_inside_conditional_fails_closed(al_parser):
-    """preproc_conditional_case's arm deliberately excludes case_else_branch (Task 6):
-    it is case_body's child only in the multi-config tree; every single-configuration
-    parse carries it as case_statement's OWN field, a sibling of case_body, never
-    nested inside it. Splicing it into case_body like an ordinary arm member produced
-    a genuine structural discrepancy over BC.History (case_preprocessor_else.txt,
-    config CLEAN25=0) before this exclusion. Pinned as arm-content, not a discrepancy."""
+def test_case_else_branch_inside_conditional_matches_reference(al_parser):
+    """Deferred item 22: the flat grammar makes the else case_body's LAST member, so a
+    conditional else spliced into case_body is where every single-configuration parse puts
+    it. Before item 22 it was a sibling of case_body there, and this input was pinned as
+    arm-content (cannot-validate; BC.History case_preprocessor_else.txt, CLEAN25=0)."""
     src = (b"codeunit 1 T { procedure P() begin case 1 of 1: ProcessCustomer();\n"
            b"#if not CLEAN25\nelse ProcessExtension();\n#endif\nend; end; }")
-    root, extras, _ = ir.from_tree(al_parser.parse(src))
-    with pytest.raises(LoweringError) as err:
-        lower_tree(root, extras, resolve(src, frozenset()))
-    assert err.value.kind == "arm-content"
+    results = run_all(al_parser, src)
+    assert len(results) == 2
+    for env, ds in results.items():
+        assert ds == [], (env, ds)
 
 
 def test_reading_active_reports_whether_the_if_arm_is_taken(al_parser, monkeypatch):

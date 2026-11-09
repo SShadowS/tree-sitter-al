@@ -67,14 +67,14 @@ codeunit 50100 P
                       function: (identifier)
                       arguments: (argument_list))
                     (then_keyword)
-                    then_branch: (empty_statement))))
-              (case_else_branch
-                (else_keyword)
-                body: (statement_block
-                  (assignment_statement
-                    left: (identifier)
-                    operator: (assignment_operator)
-                    right: (integer))))
+                    then_branch: (empty_statement)))
+                (case_else_branch
+                  (else_keyword)
+                  body: (statement_block
+                    (assignment_statement
+                      left: (identifier)
+                      operator: (assignment_operator)
+                      right: (integer)))))
               (end_keyword)))
           (end_keyword))))))
 
@@ -147,13 +147,13 @@ codeunit 50100 P
                       arguments: (argument_list))
                     (then_keyword)
                     then_branch: (call_statement
-                      function: (identifier)))))
-              (case_else_branch
-                (else_keyword)
-                body: (statement_block
-                  (assignment_statement
-                    left: (identifier)
-                    operator: (assignment_operator)
-                    right: (integer))))
+                      function: (identifier))))
+                (case_else_branch
+                  (else_keyword)
+                  body: (statement_block
+                    (assignment_statement
+                      left: (identifier)
+                      operator: (assignment_operator)
+                      right: (integer)))))
               (end_keyword)))
           (end_keyword))))))

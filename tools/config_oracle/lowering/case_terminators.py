@@ -191,14 +191,15 @@ def check_else_ownership(case, ctx):
     """The tree gives a `case_else_branch` to the case. Where the selected run leaves the last
     branch unterminated and its body ends in an if with no else, the flat reading gives that
     `else` to the if instead (`1: if C then Foo else Bar;`). No tree holds both readings, so that
-    configuration is refused as one-reading (debt B12), never passed."""
-    if not any(c.kind == "case_else_branch" for c in case.children):
-        return
+    configuration is refused as one-reading (debt B12), never passed. Since deferred item 22 the
+    else is the last member of the case_body, so the branch before it is the one checked."""
     body = next((c for c in case.children if c.field == "body" and c.kind == "case_body"), None)
-    last = body.children[-1] if body is not None and body.children else None
+    if body is None or not body.children or body.children[-1].kind != "case_else_branch":
+        return
+    els = body.children[-1]
+    last = body.children[-2] if len(body.children) > 1 else None
     if last is None or last.kind != "case_branch" or terminated(last):
         return
     stmt = next((c for c in last.children if c.field == "body"), None)
     if _takes_else(stmt):
-        els = next(c for c in case.children if c.kind == "case_else_branch")
         raise LoweringError("one-reading", els, "host case_statement:<children>")

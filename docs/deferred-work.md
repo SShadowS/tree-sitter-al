@@ -1072,7 +1072,7 @@ Rejected, with the reasons measured above:
 D2 measures (its thresholds must be set per compiler: `tools/perf compare` warns when the
 compiler or flags differ). Do not tune the grammar against MSVC numbers alone (D1).
 
-## 22. `case_else_branch` has two shapes: a sibling of `case_body`, or inside it under `#if`
+## 22. `case_else_branch` has two shapes: a sibling of `case_body`, or inside it under `#if` — RESOLVED 2026-11-09 (option (a), breaking)
 
 **Established:** 2026-10-01, A6, while closing
 [`improvements-for-owned-ir-consumer.md`](improvements-for-owned-ir-consumer.md) issue 2.
@@ -1143,8 +1143,34 @@ Grounds:
 - What changes: in `case_statement`, `case_else_branch` moves from a sibling after `body: (case_body)` to the
   last child of that `case_body`, and the `body` field becomes present for a case with only an `else`.
 - The question: does al-sem read `case_else_branch` as a child of `case_statement` anywhere, and can it take
-  the move in the next minor release (a breaking tree change, with a CHANGELOG note)? Or does it need a
+  the move in the next release (a breaking tree change, with a CHANGELOG note)? Or does it need a
   transition (for example both shapes for a release)?
+  (The ask said "minor"; the project's semver makes a tree-shape change a MAJOR bump, so it ships in 5.0.0.)
+
+**al-sem's answer** (`q-20261109T134534-a4df37b7`, from reading its code):
+- **Ready:** take it, no transition needed. Its one direct-child read is the `lower_case_body` fallback;
+  `collect_case_branches_in` already accepts the else as a `case_body` child.
+- **CI:** al-sem's CI hash-checks our `node-types.json`, so it goes red until al-sem upgrades and drops the
+  fallback. **Tell al-sem when this lands.**
+- **Scope:** `preproc_split_case_statement_end` is unaffected; its body never held an else.
+
+**Implemented 2026-11-09** (branch `item22/case-else-in-body`):
+- **Grammar:** `case_body` is `seq(_case_body_items, optional(case_else_branch)) | case_else_branch`, and
+  `preproc_split_case_statement_end` keeps the else-free `alias(_case_body_items, case_body)`.
+- **Conflict:** the `[$.case_body]` conflict was reported unnecessary and is removed.
+- **Oracle:** `case_else_branch` is now an arm member, so a conditional else validates;
+  `check_else_ownership` reads the else from `case_body`.
+- **Field-type invariants:** `case_body` and `case_statement` children pinned.
+- **Fixtures:** 43 expected trees moved by a script that only re-parents the else, plus
+  `test/corpus/case_else_in_case_body_test.txt` (fielded; shown to fail with a renamed field).
+- **Production:** 10,443 moves in 4,085 files over the four corpora, each tree equal to main's with the else
+  (and the 66 comments and 2 `#pragma` lines directly before it, which tree-sitter attaches to the enclosing
+  node) moved into `case_body`; 0 other differences.
+- **Oracle:** the 11 production and 2 fixture configurations classified cannot-validate for a conditional else
+  now pass; their classifications are removed.
+- **B7a:** `preproc_split_case_statement_end` became a census host of 7 `case_body` keys through the alias. They
+  are on the `case_body` rows with an equivalence reason, and on the two retired rows that alias them.
+- **Size:** STATE_COUNT −31.
 
 
 ## 23. A `Permissions` list ending inside an `#if` arm ERRORs when a split procedure follows — RESOLVED 2026-11-09

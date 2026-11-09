@@ -471,6 +471,16 @@ FIELD_INVARIANTS = [
         'arm items: branches, empty_statement (an arm `;`), nested groups, the case else (B7b-3)',
         types={'case_branch', 'case_else_branch', 'empty_statement', 'preproc_conditional_case',
                'preproc_if', 'preproc_elif', 'preproc_else', 'preproc_endif'}, required=True),
+    # Deferred item 22: the case's else is case_body's LAST member, never a child of
+    # case_statement, so plain and conditional else share one container (with the branches).
+    inv('case_body', '<children>', True, set(), 'FIXED',
+        'branches, groups, a `;` after a group (item 47), the split forms, and the case else (item 22)',
+        types={'case_branch', 'case_else_branch', 'empty_statement', 'preproc_conditional_case',
+               'preproc_split_case_extended', 'preproc_split_open_statement'}, required=True),
+    inv('case_statement', '<children>', True, set(), 'FIXED',
+        'keywords and expression-region groups only: no case_else_branch (item 22 moved it into case_body)',
+        types={'case_keyword', 'of_keyword', 'end_keyword', 'preproc_conditional_expression_tail',
+               'preproc_operand_prefix'}, required=True),
     inv('case_branch', '<children>', True, set(), 'FIXED',
         'unfielded: the split branch, pattern groups, the decoration before the own `;` (B7b-3), '
         'and leading operand prefixes before a pattern (B7b-2 Phase C, spec 6.3), the directive-only groups '

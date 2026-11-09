@@ -250,14 +250,14 @@ table 50004 "Test Table"
                   body: (assignment_statement
                     left: (identifier)
                     operator: (assignment_operator)
-                    right: (integer))))
-              (case_else_branch
-                (else_keyword)
-                body: (statement_block
-                  (assignment_statement
-                    left: (identifier)
-                    operator: (assignment_operator)
-                    right: (integer))))
+                    right: (integer)))
+                (case_else_branch
+                  (else_keyword)
+                  body: (statement_block
+                    (assignment_statement
+                      left: (identifier)
+                      operator: (assignment_operator)
+                      right: (integer)))))
               (end_keyword)))
           (end_keyword))))))
 
@@ -306,21 +306,21 @@ table 50005 "Test Table"
                   body: (assignment_statement
                     left: (identifier)
                     operator: (assignment_operator)
-                    right: (integer))))
-              (case_else_branch
-                (else_keyword)
-                body: (statement_block
-                  (code_block
-                    (begin_keyword)
-                    body: (statement_block
-                      (assignment_statement
-                        left: (identifier)
-                        operator: (assignment_operator)
-                        right: (integer))
-                      (assignment_statement
-                        left: (identifier)
-                        operator: (assignment_operator)
-                        right: (string_literal)))
-                    (end_keyword))))
+                    right: (integer)))
+                (case_else_branch
+                  (else_keyword)
+                  body: (statement_block
+                    (code_block
+                      (begin_keyword)
+                      body: (statement_block
+                        (assignment_statement
+                          left: (identifier)
+                          operator: (assignment_operator)
+                          right: (integer))
+                        (assignment_statement
+                          left: (identifier)
+                          operator: (assignment_operator)
+                          right: (string_literal)))
+                      (end_keyword)))))
               (end_keyword)))
           (end_keyword))))))

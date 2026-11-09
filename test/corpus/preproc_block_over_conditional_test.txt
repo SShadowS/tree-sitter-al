@@ -60,31 +60,31 @@ codeunit 1 T
                   (integer)
                   (call_expression
                     (identifier)
-                    (argument_list))))
-              (case_else_branch
-                (else_keyword)
-                (statement_block
-                  (preproc_split_code_block_over_endif
-                    (preproc_if
-                      (preproc_open)
-                      (preproc_not_expression
-                        (identifier)))
-                    (begin_keyword)
-                    (call_expression
-                      (identifier)
-                      (argument_list))
-                    (preproc_endif
-                      (preproc_close))
-                    (call_expression
-                      (identifier)
-                      (argument_list))
-                    (preproc_if
-                      (preproc_open)
-                      (preproc_not_expression
-                        (identifier)))
-                    (end_keyword)
-                    (preproc_endif
-                      (preproc_close)))))
+                    (argument_list)))
+                (case_else_branch
+                  (else_keyword)
+                  (statement_block
+                    (preproc_split_code_block_over_endif
+                      (preproc_if
+                        (preproc_open)
+                        (preproc_not_expression
+                          (identifier)))
+                      (begin_keyword)
+                      (call_expression
+                        (identifier)
+                        (argument_list))
+                      (preproc_endif
+                        (preproc_close))
+                      (call_expression
+                        (identifier)
+                        (argument_list))
+                      (preproc_if
+                        (preproc_open)
+                        (preproc_not_expression
+                          (identifier)))
+                      (end_keyword)
+                      (preproc_endif
+                        (preproc_close))))))
               (end_keyword)))
           (end_keyword))))))
 
@@ -150,30 +150,30 @@ codeunit 1 T
                   (integer)
                   (call_expression
                     (identifier)
-                    (argument_list))))
-              (case_else_branch
-                (else_keyword)
-                (statement_block
-                  (preproc_conditional_statement
-                    (preproc_if
-                      (preproc_open)
-                      (identifier))
-                    (call_expression
-                      (identifier)
-                      (argument_list))
-                    (preproc_else)
-                    (code_block
-                      (begin_keyword)
-                      (statement_block
-                        (call_expression
-                          (identifier)
-                          (argument_list))
-                        (call_expression
-                          (identifier)
-                          (argument_list)))
-                      (end_keyword))
-                    (preproc_endif
-                      (preproc_close)))))
+                    (argument_list)))
+                (case_else_branch
+                  (else_keyword)
+                  (statement_block
+                    (preproc_conditional_statement
+                      (preproc_if
+                        (preproc_open)
+                        (identifier))
+                      (call_expression
+                        (identifier)
+                        (argument_list))
+                      (preproc_else)
+                      (code_block
+                        (begin_keyword)
+                        (statement_block
+                          (call_expression
+                            (identifier)
+                            (argument_list))
+                          (call_expression
+                            (identifier)
+                            (argument_list)))
+                        (end_keyword))
+                      (preproc_endif
+                        (preproc_close))))))
               (end_keyword)))
           (end_keyword))))))
 

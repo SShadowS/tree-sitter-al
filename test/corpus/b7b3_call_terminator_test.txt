@@ -167,12 +167,12 @@ end;
                     condition: (identifier)
                     (then_keyword)
                     then_branch: (call_statement
+                      function: (identifier))))
+                (case_else_branch
+                  (else_keyword)
+                  body: (statement_block
+                    (call_statement
                       function: (identifier)))))
-              (case_else_branch
-                (else_keyword)
-                body: (statement_block
-                  (call_statement
-                    function: (identifier))))
               (end_keyword))
             (case_statement
               (case_keyword)
@@ -188,14 +188,14 @@ end;
                     then_branch: (assignment_statement
                       left: (identifier)
                       operator: (assignment_operator)
+                      right: (integer))))
+                (case_else_branch
+                  (else_keyword)
+                  body: (statement_block
+                    (assignment_statement
+                      left: (identifier)
+                      operator: (assignment_operator)
                       right: (integer)))))
-              (case_else_branch
-                (else_keyword)
-                body: (statement_block
-                  (assignment_statement
-                    left: (identifier)
-                    operator: (assignment_operator)
-                    right: (integer))))
               (end_keyword))
             (case_statement
               (case_keyword)
@@ -213,16 +213,16 @@ end;
                       body: (statement_block
                         (call_statement
                           function: (identifier)))
+                      (end_keyword))))
+                (case_else_branch
+                  (else_keyword)
+                  body: (statement_block
+                    (code_block
+                      (begin_keyword)
+                      body: (statement_block
+                        (call_statement
+                          function: (identifier)))
                       (end_keyword)))))
-              (case_else_branch
-                (else_keyword)
-                body: (statement_block
-                  (code_block
-                    (begin_keyword)
-                    body: (statement_block
-                      (call_statement
-                        function: (identifier)))
-                    (end_keyword))))
               (end_keyword))
             (case_statement
               (case_keyword)
@@ -240,16 +240,16 @@ end;
                       condition: (identifier)
                       (do_keyword)
                       body: (call_statement
+                        function: (identifier)))))
+                (case_else_branch
+                  (else_keyword)
+                  body: (statement_block
+                    (while_statement
+                      (while_keyword)
+                      condition: (identifier)
+                      (do_keyword)
+                      body: (call_statement
                         function: (identifier))))))
-              (case_else_branch
-                (else_keyword)
-                body: (statement_block
-                  (while_statement
-                    (while_keyword)
-                    condition: (identifier)
-                    (do_keyword)
-                    body: (call_statement
-                      function: (identifier)))))
               (end_keyword))
             (case_statement
               (case_keyword)
@@ -265,14 +265,14 @@ end;
                     then_branch: (asserterror_statement
                       (asserterror_keyword)
                       body: (call_statement
+                        function: (identifier)))))
+                (case_else_branch
+                  (else_keyword)
+                  body: (statement_block
+                    (asserterror_statement
+                      (asserterror_keyword)
+                      body: (call_statement
                         function: (identifier))))))
-              (case_else_branch
-                (else_keyword)
-                body: (statement_block
-                  (asserterror_statement
-                    (asserterror_keyword)
-                    body: (call_statement
-                      function: (identifier)))))
               (end_keyword)))
           (end_keyword))))))
 
@@ -329,12 +329,12 @@ end;
                       function: (identifier))
                     (else_keyword)
                     else_branch: (call_statement
+                      function: (identifier))))
+                (case_else_branch
+                  (else_keyword)
+                  body: (statement_block
+                    (call_statement
                       function: (identifier)))))
-              (case_else_branch
-                (else_keyword)
-                body: (statement_block
-                  (call_statement
-                    function: (identifier))))
               (end_keyword))
             (case_statement
               (case_keyword)
@@ -355,14 +355,14 @@ end;
                     else_branch: (assignment_statement
                       left: (identifier)
                       operator: (assignment_operator)
+                      right: (integer))))
+                (case_else_branch
+                  (else_keyword)
+                  body: (statement_block
+                    (assignment_statement
+                      left: (identifier)
+                      operator: (assignment_operator)
                       right: (integer)))))
-              (case_else_branch
-                (else_keyword)
-                body: (statement_block
-                  (assignment_statement
-                    left: (identifier)
-                    operator: (assignment_operator)
-                    right: (integer))))
               (end_keyword))
             (case_statement
               (case_keyword)
@@ -387,16 +387,16 @@ end;
                       body: (statement_block
                         (call_statement
                           function: (identifier)))
+                      (end_keyword))))
+                (case_else_branch
+                  (else_keyword)
+                  body: (statement_block
+                    (code_block
+                      (begin_keyword)
+                      body: (statement_block
+                        (call_statement
+                          function: (identifier)))
                       (end_keyword)))))
-              (case_else_branch
-                (else_keyword)
-                body: (statement_block
-                  (code_block
-                    (begin_keyword)
-                    body: (statement_block
-                      (call_statement
-                        function: (identifier)))
-                    (end_keyword))))
               (end_keyword))
             (case_statement
               (case_keyword)
@@ -421,16 +421,16 @@ end;
                       condition: (identifier)
                       (do_keyword)
                       body: (call_statement
+                        function: (identifier)))))
+                (case_else_branch
+                  (else_keyword)
+                  body: (statement_block
+                    (while_statement
+                      (while_keyword)
+                      condition: (identifier)
+                      (do_keyword)
+                      body: (call_statement
                         function: (identifier))))))
-              (case_else_branch
-                (else_keyword)
-                body: (statement_block
-                  (while_statement
-                    (while_keyword)
-                    condition: (identifier)
-                    (do_keyword)
-                    body: (call_statement
-                      function: (identifier)))))
               (end_keyword))
             (case_statement
               (case_keyword)
@@ -451,14 +451,14 @@ end;
                     else_branch: (asserterror_statement
                       (asserterror_keyword)
                       body: (call_statement
+                        function: (identifier)))))
+                (case_else_branch
+                  (else_keyword)
+                  body: (statement_block
+                    (asserterror_statement
+                      (asserterror_keyword)
+                      body: (call_statement
                         function: (identifier))))))
-              (case_else_branch
-                (else_keyword)
-                body: (statement_block
-                  (asserterror_statement
-                    (asserterror_keyword)
-                    body: (call_statement
-                      function: (identifier)))))
               (end_keyword)))
           (end_keyword))))))
 
@@ -1042,12 +1042,12 @@ end;
                       (integer)
                       (preproc_endif
                         (preproc_close))
-                      (integer)))))
-              (case_else_branch
-                (else_keyword)
-                body: (statement_block
-                  (call_statement
-                    function: (identifier))))
+                      (integer))))
+                (case_else_branch
+                  (else_keyword)
+                  body: (statement_block
+                    (call_statement
+                      function: (identifier)))))
               (end_keyword))
             (case_statement
               (case_keyword)

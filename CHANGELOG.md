@@ -7,6 +7,24 @@ public API — a change to node structure or field names is a **major** bump.
 
 ## [Unreleased]
 
+### Changed (breaking: tree shape)
+
+- **A `case` statement's `else` is the last member of `case_body` (deferred item 22).** `case_else_branch` was a
+  child of `case_statement`, a sibling after `body: (case_body)`, while an `else` inside `#if` was already inside
+  `case_body` (in its `preproc_conditional_case`), so a consumer had to look in two places. Now every `else` is
+  in `case_body`, after the branches, matching the Business Central docs (the else is the last, default
+  alternative of the value-set list) and C, C#, Ruby and Pascal grammars (the default branch shares the branches'
+  container). `case X of else Y; end;` gets a `body: (case_body (case_else_branch ...))`. The node and its
+  contents are unchanged; only its parent moves. A comment or `#pragma` line between the last branch and the
+  `else` moves with it into `case_body`: tree-sitter attaches an extra to the node that encloses it.
+  - **Migration:** read the `else` as the last child of `case_statement.body`, not as a child of `case_statement`.
+  - **Production:** 10,443 `else` nodes in 4,085 files across the four corpora (1,468 in 826 BC.History files)
+    change parent, carrying 66 comments and 2 `#pragma` lines. Every changed tree equals main's tree with exactly
+    this move applied.
+  - **Config oracle:** a conditional `else` now validates (spliced into `case_body`, where the flat parse puts
+    it) instead of being cannot-validate.
+  - **Size:** `node-types.json`: `case_statement` loses `case_else_branch`, `case_body` gains it. STATE_COUNT −31.
+
 ### Fixed
 
 - **A conditional `TableRelation` head, then a shared `where` and a shared `else`, parses (deferred item 75).**
