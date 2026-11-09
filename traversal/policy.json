@@ -110,7 +110,7 @@
         "preproc_split_case_extended:<children>": "decoration",
         "preproc_split_case_end_branch:<children>": "decoration"
       },
-      "reason": "Registry branch-select, one context-dispatched handler (B7b-3 spec 6.2): arms are alternatives in case_body or a nested group (case_branch, a branch's `;` as empty_statement, a nested group); directly before a branch's own `;` in its four hosts it is a directive-only decoration, deleted by selection."
+      "reason": "Registry branch-select, one context-dispatched handler (B7b-3 spec 6.2): arms are alternatives in case_body or a nested group (case_branch, a branch's `;` as empty_statement, a nested group); directly before a branch's own `;` in its four hosts it is a directive-only decoration, deleted by selection. Exception (deferred item 50): under preproc_split_case_end_branch a group AFTER the final branch (after its own `;` if any, before the case's `end`) is a case_body sibling, not a decoration; the slot key cannot tell them apart, so read the position."
     },
     "preproc_conditional_case_patterns": {
       "class": "branch-container",

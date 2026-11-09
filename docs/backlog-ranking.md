@@ -30,9 +30,9 @@ the scanner's core dispatch). Order: P descending, then D+R ascending, with the 
 | 13 | 72 | `parser.c` 63.6 MiB vs 100 MB | 2 | 2 | 2 | A decision, not a fix; +6.9% in one minor. |
 | 14 | 21 | MSVC build 2x slower | 2 | 2 | 2 | Speed only, Windows consumers; remaining work is CI build config. |
 | 15 | 54 | B7b-2 ~4% on DC | 2 | 3 | 2 | Speed; partly addressed by D1; re-measure with `ab` first. |
-| 16 | 29 | Four `TableRelation` `#if`-in-chain shapes ERROR | 2 | 3 | 2 | Visible, alc not probed, 0 sites; isolated. |
+| 16 | 29 | Four `TableRelation` `#if`-in-chain shapes ERROR | 2 | 3 | 2 | RESOLVED 2026-11-09 (batch3/item29): alc accepts all four; fixed, oracle-validated. |
 | 17 | 59 | Traversal helper has no region API | 2 | 3 | 1 | Useful only if al-sem uses the helper rather than the C shim. |
-| 18 | 23 | Permissions list ending in an arm + split procedure ERRORs | 2 | 3 | 3 | Visible, 0 sites, not traced. |
+| 18 | 23 | Permissions list ending in an arm + split procedure ERRORs | 2 | 3 | 3 | RESOLVED 2026-11-09 (batch3/item23): static prec on the list end, now a fork. |
 | 19 | 50 | `;` group beside a split case end branch has no slot | 2 | 3 | 3 | Visible, 48 cells, 0 sites. |
 | 20 | 69 | Bare `end` without `;` in both arms ERRORs | 2 | 3 | 4 | Visible, 12 cells, 0 sites; was silent before #41, now loud. Scanner token variant. |
 | 21 | 63 | Incremental reparse differs from fresh (2 valid inputs) | 2 | 3 | 4 | Editors only: al-sem parses fresh through `al_shim_parse_utf8`. |
@@ -115,3 +115,15 @@ merged and the gates re-run on the combined tree by the controller, never by the
 | 46b | Procedure parameter lists are a strict conditional list (new `preproc_conditional_parameters`); B7a parameter-list GAP 90 → 0. Over-accepts forms invalid in every configuration (item 44's limit). STATE_COUNT +89. | approve-with-notes | yes |
 
 Combined: STATE_COUNT +147 (+0.5%), `parser.c` +1.2%; production trees unchanged in all four corpora.
+
+### Batch 3 (2026-11-09)
+
+| item | result | review | merged |
+|---|---|---|---|
+| 29 | Four `TableRelation` `#if`-in-chain shapes parse (alc accepts all four); oracle relation joins added. A related shape (shared `where` then `else` after a conditional head) still ERRORs: item 75. STATE_COUNT +4. | approve-with-notes | yes |
+| 23 | A `Permissions` list whose `;` is in the arms no longer swallows a following split procedure / `#if` member. One valid tree changes shape (decorated form now agrees with the undecorated one; pinned). STATE_COUNT +21. | changes-needed (wasm mode, CHANGELOG, an unpinned tree change; fixed at merge) | yes |
+| 69 | A bare split `end` before a directive parses: the scanner's PREPROC_SPLIT_END lookahead takes an optional `;` (one scan, no fork), and the group nests in an enclosing split construct's `end` slot. STATE_COUNT +117. | approve-with-notes | yes |
+| 50 | A `#if` group beside a split case's final branch parses (`preproc_split_case_end_branch` sibling groups). STATE_COUNT +67. Follow-up: stale manifest status rows. | approve-with-notes | yes |
+
+Merge note: the merges dropped the 186 (item 69) and 75 (item 50) assertion rows each branch added; they were restored
+before the gates ran.

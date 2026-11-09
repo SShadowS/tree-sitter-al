@@ -1,5 +1,5 @@
-// B7b-3 final review M4 witness (GAP): family statement-terminator, base placement trail, 3 cells; representative occ:call_statement:0.1@preproc_split_case_end_branch#trail (deferred B7 in b7b3-manifest.tsv, deferred-work item 50: a `;` group beside the split case's end branch has no slot)
-// Fixture b7_gap_case_branch_test.txt#B7a GAP: statement-terminator / trail (3 cells, verdict of the representative GAP, deferred B7: no slot for a `;` group beside the end branch, deferred-work item 50); the parser ERRORs on configurations alc accepts; representative occ:call_statement:0.1@preproc_split_case_end_branch%23trail#0
+// Deferred item 50 (fixed): the former B7a GAP witness of statement-terminator / trail, representative occ:call_statement:0.1@preproc_split_case_end_branch#trail; alc accepts every configuration
+// Now parsed: the same shape is the positive case test/corpus/item_50_split_case_end_group_test.txt#Item 50: split case end branch, trail: a `;` group, no `#else`
 // expect: !TPL2 !X accept
 // expect: !TPL2 X accept
 // expect: TPL2 !X accept

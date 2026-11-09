@@ -508,7 +508,8 @@ def _lower_ordinary(node, ctx) -> Lowered:
         return Lowered([node.copy(children=[])])
     kids, frags = [], []
     last_index = len(node.children) - 1
-    for i, c, r in lower_items(node.children, ctx, node.kind):
+    lower_one = _lower_relation_item if node.kind == "table_relation_value" else None
+    for i, c, r in lower_items(node.children, ctx, node.kind, lower_one):
         for f in r.frags:
             f._from_last = (i == last_index)
         frags.extend(bind_previous(kids, r, c))
@@ -536,6 +537,9 @@ def _lower_ordinary(node, ctx) -> Lowered:
     # Read the selection before _consume places it: a Terminator from the last child (the
     # core, at a `;`-inside site) is a selected arm's `;`.
     selected_terminator = any(isinstance(f, Terminator) and getattr(f, "_from_last", False) for f in frags)
+    if node.kind == "table_relation_value":
+        # before _consume: a where completes the relation before any later else joins it
+        _join_relation_where(new)
     frags = _consume(new, frags)
     if (node.kind, "then_branch") in EMPTY_BODY_SLOTS or (node.kind, "body") in EMPTY_BODY_SLOTS:
         _mark_pending_body(node, new)
@@ -679,6 +683,44 @@ def _deepest_open_if(expr):
         if inner is None:
             raise LoweringError("contract-shape", cur, "else chain already closed")
         cur = inner
+
+
+def _lower_relation_item(c, cctx):
+    """A table_relation_value child. A direct else_table_relation_fragment is the shared
+    `else` tail after a conditional head (B5) or a conditional tail (item 29): it continues
+    the relation before it, the RelationContinuation a conditional's chosen arm emits."""
+    if c.kind != "else_table_relation_fragment":
+        return lower(c, cctx)
+    cctx.policy(contracts.REGISTRY[c.kind], c)
+    from tools.config_oracle.lowering.assemblers import _relation_continuation  # assemblers imports engine
+    return Lowered([], [_relation_continuation(c, cctx)])
+
+
+def _join_relation_where(value):
+    """Item 29: a where_clause child of a lowered table_relation_value (the shared tail
+    after a conditional head, or a conditional's chosen arm after a target) is appended to
+    the open simple_table_relation of the relation before it, where a flat parse holds it:
+    down else_relation, else then_relation, to a simple_table_relation without a where."""
+    kids = []
+    for c in value.children:
+        if c.kind != "where_clause" or not kids or kids[-1].kind != "table_relation_expression":
+            kids.append(c)
+            continue
+        cur = kids[-1]
+        while cur.kind != "simple_table_relation":
+            if cur.kind == "table_relation_expression" and len(cur.children) == 1:
+                cur = cur.children[0]
+            elif cur.kind == "if_table_relation":
+                cur = next((k for k in cur.children if k.field == "else_relation"), None) \
+                    or next(k for k in cur.children if k.field == "then_relation")
+            else:
+                raise LoweringError("contract-shape", cur, "no open simple_table_relation for a where")
+        if any(k.kind == "where_clause" for k in cur.children):
+            raise LoweringError("contract-shape", cur, "relation already has a where")
+        cur.children.append(c)
+        for n in _path(kids[-1], cur):
+            recompute_span(n)
+    value.children = kids
 
 
 def _path(top, target):

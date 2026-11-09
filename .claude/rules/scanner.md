@@ -22,7 +22,7 @@ a `_Static_assert` on `sizeof(depth) >= 4` fails the build if anyone narrows it 
 | `BEGIN_KEYWORD` | `begin` at any depth — named node for queries | none |
 | `END_KEYWORD` | `end` at any depth — named node for queries | none |
 | `PREPROC_SPLIT_BEGIN` | `begin` at depth > 0, immediately before `#endif` — split detection | none |
-| `PREPROC_SPLIT_END` | `end` at depth > 0, followed by `;` then `#elif`/`#else`/`#endif` — split detection | none |
+| `PREPROC_SPLIT_END` | `end` at depth > 0, followed by an optional `;` then `#elif`/`#else`/`#endif` — split detection (the `;` optional since item 69: `#if X end #else end #endif ;`) | none |
 | `CALC_FORMULA_PROPERTY_NAME` | `CalcFormula` followed by `=` — keyed by name; falls back to `PROPERTY_NAME` where the grammar does not offer it | none |
 | `ML_PROPERTY_NAME` | one of the compiler's 13 ML names (`ML_PROPERTY_NAMES` in `scanner.c`, never a suffix match) followed by `=` (B4); same fallback | none |
 | `NAMESPACES_PROPERTY_NAME` | `Namespaces` followed by `=` (B4); same fallback | none |

@@ -1,7 +1,7 @@
 ; Despite the b7_gap_ name (the matrix report derives the witness file name from the family,
 ; tools/b7_audit/report.py), this file holds no :error case since B7b-3: the statement-terminator
 ; GAP witnesses for case hosts were repaired and moved to b7b3_case_separator_test.txt, and the
-; end-branch GAP shape (deferred-work item 50) is pinned in b7_gap_case_branch_test.txt. What is
+; end-branch GAP shape (deferred-work item 50) was fixed: item_50_split_case_end_group_test.txt. What is
 ; left is the REJECTED/over-accepts representative below (fixture-classes.tsv: negative).
 ========================================================================
 B7a REJECTED/over-accepts(syntax): statement-terminator / trail (33 cells, verdict of the representative MIXED); alc rejects with a syntax code (AL0104,AL0224) but the parser is clean; representative occ:empty_statement:@case_branch#trail

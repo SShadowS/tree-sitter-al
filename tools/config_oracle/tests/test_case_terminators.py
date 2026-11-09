@@ -52,6 +52,12 @@ DECORATION_NESTED = src("case I of\n1: Bar\n#if X\n#if Y\n#endif\n#endif\n;\nend
 DECORATION_IN_ARM = src("case I of\n#if A\n1: Bar\n#if X\n#endif\n;\n2: Bar;\n#endif\nend;")
 DECORATION_END_BRANCH = src("case I of\n1: Bar;\n2:\n#if X\nBaz\n#if Y\n#endif\n;\nend;\nBar;\n"
                             "#else\nBaz;\nend;\nBar;\n#endif")
+# Deferred item 50: groups beside the split case's end branch, before the case's `end`, are
+# case_body siblings once assembled: a `;` group, and a group holding a `;` and a further branch.
+END_BRANCH_SEMI_GROUP = src("case I of\n1: Bar;\n2:\n#if T\nBaz\n#if X\n;\n#endif\nend;\nBar;\n"
+                            "#else\nBaz;\nend;\nBar;\n#endif")
+END_BRANCH_BRANCH_GROUP = src("case I of\n1: Bar;\n2:\n#if T\nBaz\n#if X\n;\n3: Bar\n#endif\nend;\nBar;\n"
+                              "#else\nBaz;\nend;\nBar;\n#endif")
 ASSERTERROR_EMPTY_BODY = src("case I of\n1: asserterror\n#if X\n#endif\n;\nend;")
 # Spec 4.4: with X the `;` ends the branch and the else is the case's; without X the flat
 # reading gives the else to the if. The tree holds the X reading.
@@ -123,6 +129,15 @@ def test_decoration_is_deleted(al_parser, source):
 def test_decoration_in_split_case_end_branch(al_parser):
     witness.assert_produces(al_parser, DECORATION_END_BRANCH, "preproc_split_case_end_branch")
     witness.assert_all_pass(al_parser, DECORATION_END_BRANCH)
+
+
+@pytest.mark.parametrize("source", [END_BRANCH_SEMI_GROUP, END_BRANCH_BRANCH_GROUP], ids=["semi", "branch"])
+def test_group_beside_split_case_end_branch(al_parser, source):
+    """Deferred item 50: the group's `;` attaches to the final branch only where it is selected."""
+    witness.assert_produces(al_parser, source, "preproc_split_case_end_branch")
+    witness.assert_all_pass(al_parser, source)
+    v = witness.verdicts(al_parser, source)
+    assert notes(v, "T=1,X=1") and not notes(v, "T=1,X=0") and not notes(v, "T=0,X=1"), v
 
 
 def test_asserterror_with_an_empty_group_body_lowers_bodyless(al_parser):

@@ -1,0 +1,917 @@
+========================================================================
+Item 50: split case end branch, trail: a `;` group, no `#else`
+========================================================================
+codeunit 50100 Demo
+{
+    procedure Run(I: Integer)
+    begin
+        case I of
+            1:
+                A();
+            2:
+#if TPL
+                A
+#if X
+                ;
+#endif
+        end;
+        I := 1;
+#else
+                begin
+                    A();
+                end
+        end;
+        I := 2;
+#endif
+    end;
+}
+------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (procedure
+        (procedure_keyword)
+        name: (identifier)
+        parameters: (parameter_list
+          (parameter
+            name: (identifier)
+            type: (type_specification
+              (basic_type))))
+        body: (code_block
+          (begin_keyword)
+          body: (statement_block
+            (preproc_split_case_statement_end
+              (case_keyword)
+              expression: (identifier)
+              (of_keyword)
+              body: (case_body
+                (case_branch
+                  pattern: (integer)
+                  body: (call_expression
+                    function: (identifier)
+                    arguments: (argument_list))))
+              pattern: (integer)
+              (preproc_if
+                (preproc_open)
+                condition: (identifier))
+              (preproc_split_case_end_branch
+                body: (call_statement
+                  function: (identifier))
+                (preproc_conditional_case
+                  (preproc_if
+                    (preproc_open)
+                    condition: (identifier))
+                  (empty_statement)
+                  (preproc_endif
+                    (preproc_close)))
+                (end_keyword)
+                following: (statement_block
+                  (assignment_statement
+                    left: (identifier)
+                    operator: (assignment_operator)
+                    right: (integer))))
+              (preproc_else)
+              (preproc_split_case_end_branch
+                body: (code_block
+                  (begin_keyword)
+                  body: (statement_block
+                    (call_expression
+                      function: (identifier)
+                      arguments: (argument_list)))
+                  (end_keyword))
+                (end_keyword)
+                following: (statement_block
+                  (assignment_statement
+                    left: (identifier)
+                    operator: (assignment_operator)
+                    right: (integer))))
+              (preproc_endif
+                (preproc_close))))
+          (end_keyword))))))
+
+========================================================================
+Item 50: split case end branch, trail, parenthesized call
+========================================================================
+codeunit 50100 Demo
+{
+    procedure Run(I: Integer)
+    begin
+        case I of
+            1:
+                A();
+            2:
+#if TPL
+                A()
+#if X
+                ;
+#endif
+        end;
+        I := 1;
+#else
+                begin
+                    A();
+                end
+        end;
+        I := 2;
+#endif
+    end;
+}
+------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (procedure
+        (procedure_keyword)
+        name: (identifier)
+        parameters: (parameter_list
+          (parameter
+            name: (identifier)
+            type: (type_specification
+              (basic_type))))
+        body: (code_block
+          (begin_keyword)
+          body: (statement_block
+            (preproc_split_case_statement_end
+              (case_keyword)
+              expression: (identifier)
+              (of_keyword)
+              body: (case_body
+                (case_branch
+                  pattern: (integer)
+                  body: (call_expression
+                    function: (identifier)
+                    arguments: (argument_list))))
+              pattern: (integer)
+              (preproc_if
+                (preproc_open)
+                condition: (identifier))
+              (preproc_split_case_end_branch
+                body: (call_expression
+                  function: (identifier)
+                  arguments: (argument_list))
+                (preproc_conditional_case
+                  (preproc_if
+                    (preproc_open)
+                    condition: (identifier))
+                  (empty_statement)
+                  (preproc_endif
+                    (preproc_close)))
+                (end_keyword)
+                following: (statement_block
+                  (assignment_statement
+                    left: (identifier)
+                    operator: (assignment_operator)
+                    right: (integer))))
+              (preproc_else)
+              (preproc_split_case_end_branch
+                body: (code_block
+                  (begin_keyword)
+                  body: (statement_block
+                    (call_expression
+                      function: (identifier)
+                      arguments: (argument_list)))
+                  (end_keyword))
+                (end_keyword)
+                following: (statement_block
+                  (assignment_statement
+                    left: (identifier)
+                    operator: (assignment_operator)
+                    right: (integer))))
+              (preproc_endif
+                (preproc_close))))
+          (end_keyword))))))
+
+========================================================================
+Item 50: split case end branch, sep-only: a `;` in both arms
+========================================================================
+codeunit 50100 Demo
+{
+    procedure Run(I: Integer)
+    begin
+        case I of
+            1:
+                A();
+            2:
+#if TPL
+                A
+#if X
+                ;
+#else
+                ;
+#endif
+        end;
+        I := 1;
+#else
+                begin
+                    A();
+                end
+        end;
+        I := 2;
+#endif
+    end;
+}
+------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (procedure
+        (procedure_keyword)
+        name: (identifier)
+        parameters: (parameter_list
+          (parameter
+            name: (identifier)
+            type: (type_specification
+              (basic_type))))
+        body: (code_block
+          (begin_keyword)
+          body: (statement_block
+            (preproc_split_case_statement_end
+              (case_keyword)
+              expression: (identifier)
+              (of_keyword)
+              body: (case_body
+                (case_branch
+                  pattern: (integer)
+                  body: (call_expression
+                    function: (identifier)
+                    arguments: (argument_list))))
+              pattern: (integer)
+              (preproc_if
+                (preproc_open)
+                condition: (identifier))
+              (preproc_split_case_end_branch
+                body: (call_statement
+                  function: (identifier))
+                (preproc_conditional_case
+                  (preproc_if
+                    (preproc_open)
+                    condition: (identifier))
+                  (empty_statement)
+                  (preproc_else)
+                  (empty_statement)
+                  (preproc_endif
+                    (preproc_close)))
+                (end_keyword)
+                following: (statement_block
+                  (assignment_statement
+                    left: (identifier)
+                    operator: (assignment_operator)
+                    right: (integer))))
+              (preproc_else)
+              (preproc_split_case_end_branch
+                body: (code_block
+                  (begin_keyword)
+                  body: (statement_block
+                    (call_expression
+                      function: (identifier)
+                      arguments: (argument_list)))
+                  (end_keyword))
+                (end_keyword)
+                following: (statement_block
+                  (assignment_statement
+                    left: (identifier)
+                    operator: (assignment_operator)
+                    right: (integer))))
+              (preproc_endif
+                (preproc_close))))
+          (end_keyword))))))
+
+========================================================================
+Item 50: split case end branch, elif
+========================================================================
+codeunit 50100 Demo
+{
+    procedure Run(I: Integer)
+    begin
+        case I of
+            1:
+                A();
+            2:
+#if TPL
+                A
+#if X
+                ;
+#elif Y
+                ;
+#else
+                ;
+#endif
+        end;
+        I := 1;
+#else
+                begin
+                    A();
+                end
+        end;
+        I := 2;
+#endif
+    end;
+}
+------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (procedure
+        (procedure_keyword)
+        name: (identifier)
+        parameters: (parameter_list
+          (parameter
+            name: (identifier)
+            type: (type_specification
+              (basic_type))))
+        body: (code_block
+          (begin_keyword)
+          body: (statement_block
+            (preproc_split_case_statement_end
+              (case_keyword)
+              expression: (identifier)
+              (of_keyword)
+              body: (case_body
+                (case_branch
+                  pattern: (integer)
+                  body: (call_expression
+                    function: (identifier)
+                    arguments: (argument_list))))
+              pattern: (integer)
+              (preproc_if
+                (preproc_open)
+                condition: (identifier))
+              (preproc_split_case_end_branch
+                body: (call_statement
+                  function: (identifier))
+                (preproc_conditional_case
+                  (preproc_if
+                    (preproc_open)
+                    condition: (identifier))
+                  (empty_statement)
+                  (preproc_elif
+                    condition: (identifier))
+                  (empty_statement)
+                  (preproc_else)
+                  (empty_statement)
+                  (preproc_endif
+                    (preproc_close)))
+                (end_keyword)
+                following: (statement_block
+                  (assignment_statement
+                    left: (identifier)
+                    operator: (assignment_operator)
+                    right: (integer))))
+              (preproc_else)
+              (preproc_split_case_end_branch
+                body: (code_block
+                  (begin_keyword)
+                  body: (statement_block
+                    (call_expression
+                      function: (identifier)
+                      arguments: (argument_list)))
+                  (end_keyword))
+                (end_keyword)
+                following: (statement_block
+                  (assignment_statement
+                    left: (identifier)
+                    operator: (assignment_operator)
+                    right: (integer))))
+              (preproc_endif
+                (preproc_close))))
+          (end_keyword))))))
+
+========================================================================
+Item 50: split case end branch, nested
+========================================================================
+codeunit 50100 Demo
+{
+    procedure Run(I: Integer)
+    begin
+        case I of
+            1:
+                A();
+            2:
+#if TPL
+                A
+#if X
+#if Y
+                ;
+#else
+                ;
+#endif
+#else
+                ;
+#endif
+        end;
+        I := 1;
+#else
+                begin
+                    A();
+                end
+        end;
+        I := 2;
+#endif
+    end;
+}
+------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (procedure
+        (procedure_keyword)
+        name: (identifier)
+        parameters: (parameter_list
+          (parameter
+            name: (identifier)
+            type: (type_specification
+              (basic_type))))
+        body: (code_block
+          (begin_keyword)
+          body: (statement_block
+            (preproc_split_case_statement_end
+              (case_keyword)
+              expression: (identifier)
+              (of_keyword)
+              body: (case_body
+                (case_branch
+                  pattern: (integer)
+                  body: (call_expression
+                    function: (identifier)
+                    arguments: (argument_list))))
+              pattern: (integer)
+              (preproc_if
+                (preproc_open)
+                condition: (identifier))
+              (preproc_split_case_end_branch
+                body: (call_statement
+                  function: (identifier))
+                (preproc_conditional_case
+                  (preproc_if
+                    (preproc_open)
+                    condition: (identifier))
+                  (preproc_conditional_case
+                    (preproc_if
+                      (preproc_open)
+                      condition: (identifier))
+                    (empty_statement)
+                    (preproc_else)
+                    (empty_statement)
+                    (preproc_endif
+                      (preproc_close)))
+                  (preproc_else)
+                  (empty_statement)
+                  (preproc_endif
+                    (preproc_close)))
+                (end_keyword)
+                following: (statement_block
+                  (assignment_statement
+                    left: (identifier)
+                    operator: (assignment_operator)
+                    right: (integer))))
+              (preproc_else)
+              (preproc_split_case_end_branch
+                body: (code_block
+                  (begin_keyword)
+                  body: (statement_block
+                    (call_expression
+                      function: (identifier)
+                      arguments: (argument_list)))
+                  (end_keyword))
+                (end_keyword)
+                following: (statement_block
+                  (assignment_statement
+                    left: (identifier)
+                    operator: (assignment_operator)
+                    right: (integer))))
+              (preproc_endif
+                (preproc_close))))
+          (end_keyword))))))
+
+========================================================================
+Item 50: split case end branch, adjacent complementary groups
+========================================================================
+codeunit 50100 Demo
+{
+    procedure Run(I: Integer)
+    begin
+        case I of
+            1:
+                A();
+            2:
+#if TPL
+                A
+#if X
+                ;
+#endif
+#if not X
+                ;
+#endif
+        end;
+        I := 1;
+#else
+                begin
+                    A();
+                end
+        end;
+        I := 2;
+#endif
+    end;
+}
+------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (procedure
+        (procedure_keyword)
+        name: (identifier)
+        parameters: (parameter_list
+          (parameter
+            name: (identifier)
+            type: (type_specification
+              (basic_type))))
+        body: (code_block
+          (begin_keyword)
+          body: (statement_block
+            (preproc_split_case_statement_end
+              (case_keyword)
+              expression: (identifier)
+              (of_keyword)
+              body: (case_body
+                (case_branch
+                  pattern: (integer)
+                  body: (call_expression
+                    function: (identifier)
+                    arguments: (argument_list))))
+              pattern: (integer)
+              (preproc_if
+                (preproc_open)
+                condition: (identifier))
+              (preproc_split_case_end_branch
+                body: (call_statement
+                  function: (identifier))
+                (preproc_conditional_case
+                  (preproc_if
+                    (preproc_open)
+                    condition: (identifier))
+                  (empty_statement)
+                  (preproc_endif
+                    (preproc_close)))
+                (preproc_conditional_case
+                  (preproc_if
+                    (preproc_open)
+                    condition: (preproc_not_expression
+                      (identifier)))
+                  (empty_statement)
+                  (preproc_endif
+                    (preproc_close)))
+                (end_keyword)
+                following: (statement_block
+                  (assignment_statement
+                    left: (identifier)
+                    operator: (assignment_operator)
+                    right: (integer))))
+              (preproc_else)
+              (preproc_split_case_end_branch
+                body: (code_block
+                  (begin_keyword)
+                  body: (statement_block
+                    (call_expression
+                      function: (identifier)
+                      arguments: (argument_list)))
+                  (end_keyword))
+                (end_keyword)
+                following: (statement_block
+                  (assignment_statement
+                    left: (identifier)
+                    operator: (assignment_operator)
+                    right: (integer))))
+              (preproc_endif
+                (preproc_close))))
+          (end_keyword))))))
+
+========================================================================
+Item 50: split case end branch, a `;` and a further branch in one group
+========================================================================
+codeunit 50100 Demo
+{
+    procedure Run(I: Integer)
+    begin
+        case I of
+            1:
+                A();
+            2:
+#if TPL
+                A()
+#if X
+                ;
+            3:
+                A()
+#endif
+        end;
+        I := 1;
+#else
+                begin
+                    A();
+                end
+        end;
+        I := 2;
+#endif
+    end;
+}
+------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (procedure
+        (procedure_keyword)
+        name: (identifier)
+        parameters: (parameter_list
+          (parameter
+            name: (identifier)
+            type: (type_specification
+              (basic_type))))
+        body: (code_block
+          (begin_keyword)
+          body: (statement_block
+            (preproc_split_case_statement_end
+              (case_keyword)
+              expression: (identifier)
+              (of_keyword)
+              body: (case_body
+                (case_branch
+                  pattern: (integer)
+                  body: (call_expression
+                    function: (identifier)
+                    arguments: (argument_list))))
+              pattern: (integer)
+              (preproc_if
+                (preproc_open)
+                condition: (identifier))
+              (preproc_split_case_end_branch
+                body: (call_expression
+                  function: (identifier)
+                  arguments: (argument_list))
+                (preproc_conditional_case
+                  (preproc_if
+                    (preproc_open)
+                    condition: (identifier))
+                  (empty_statement)
+                  (case_branch
+                    pattern: (integer)
+                    body: (call_expression
+                      function: (identifier)
+                      arguments: (argument_list)))
+                  (preproc_endif
+                    (preproc_close)))
+                (end_keyword)
+                following: (statement_block
+                  (assignment_statement
+                    left: (identifier)
+                    operator: (assignment_operator)
+                    right: (integer))))
+              (preproc_else)
+              (preproc_split_case_end_branch
+                body: (code_block
+                  (begin_keyword)
+                  body: (statement_block
+                    (call_expression
+                      function: (identifier)
+                      arguments: (argument_list)))
+                  (end_keyword))
+                (end_keyword)
+                following: (statement_block
+                  (assignment_statement
+                    left: (identifier)
+                    operator: (assignment_operator)
+                    right: (integer))))
+              (preproc_endif
+                (preproc_close))))
+          (end_keyword))))))
+
+========================================================================
+Item 50: split case end branch, a directive-only group before `end` (no `;` follows: a sibling, not a decoration)
+========================================================================
+codeunit 50100 Demo
+{
+    procedure Run(I: Integer)
+    begin
+        case I of
+            1:
+                A();
+            2:
+#if TPL
+                A()
+#if X
+#endif
+        end;
+        I := 1;
+#else
+                begin
+                    A();
+                end
+        end;
+        I := 2;
+#endif
+    end;
+}
+------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (procedure
+        (procedure_keyword)
+        name: (identifier)
+        parameters: (parameter_list
+          (parameter
+            name: (identifier)
+            type: (type_specification
+              (basic_type))))
+        body: (code_block
+          (begin_keyword)
+          body: (statement_block
+            (preproc_split_case_statement_end
+              (case_keyword)
+              expression: (identifier)
+              (of_keyword)
+              body: (case_body
+                (case_branch
+                  pattern: (integer)
+                  body: (call_expression
+                    function: (identifier)
+                    arguments: (argument_list))))
+              pattern: (integer)
+              (preproc_if
+                (preproc_open)
+                condition: (identifier))
+              (preproc_split_case_end_branch
+                body: (call_expression
+                  function: (identifier)
+                  arguments: (argument_list))
+                (preproc_conditional_case
+                  (preproc_if
+                    (preproc_open)
+                    condition: (identifier))
+                  (preproc_endif
+                    (preproc_close)))
+                (end_keyword)
+                following: (statement_block
+                  (assignment_statement
+                    left: (identifier)
+                    operator: (assignment_operator)
+                    right: (integer))))
+              (preproc_else)
+              (preproc_split_case_end_branch
+                body: (code_block
+                  (begin_keyword)
+                  body: (statement_block
+                    (call_expression
+                      function: (identifier)
+                      arguments: (argument_list)))
+                  (end_keyword))
+                (end_keyword)
+                following: (statement_block
+                  (assignment_statement
+                    left: (identifier)
+                    operator: (assignment_operator)
+                    right: (integer))))
+              (preproc_endif
+                (preproc_close))))
+          (end_keyword))))))
+
+========================================================================
+Item 50: split case end branch, a decoration before the branch's own `;`, then a group of branches
+========================================================================
+codeunit 50100 Demo
+{
+    procedure Run(I: Integer)
+    begin
+        case I of
+            1:
+                A();
+            2:
+#if TPL
+                A()
+#if D
+#endif
+                ;
+#if X
+            3:
+                A();
+#endif
+        end;
+        I := 1;
+#else
+                begin
+                    A();
+                end
+        end;
+        I := 2;
+#endif
+    end;
+}
+------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (procedure
+        (procedure_keyword)
+        name: (identifier)
+        parameters: (parameter_list
+          (parameter
+            name: (identifier)
+            type: (type_specification
+              (basic_type))))
+        body: (code_block
+          (begin_keyword)
+          body: (statement_block
+            (preproc_split_case_statement_end
+              (case_keyword)
+              expression: (identifier)
+              (of_keyword)
+              body: (case_body
+                (case_branch
+                  pattern: (integer)
+                  body: (call_expression
+                    function: (identifier)
+                    arguments: (argument_list))))
+              pattern: (integer)
+              (preproc_if
+                (preproc_open)
+                condition: (identifier))
+              (preproc_split_case_end_branch
+                body: (call_expression
+                  function: (identifier)
+                  arguments: (argument_list))
+                (preproc_conditional_case
+                  (preproc_if
+                    (preproc_open)
+                    condition: (identifier))
+                  (preproc_endif
+                    (preproc_close)))
+                (preproc_conditional_case
+                  (preproc_if
+                    (preproc_open)
+                    condition: (identifier))
+                  (case_branch
+                    pattern: (integer)
+                    body: (call_expression
+                      function: (identifier)
+                      arguments: (argument_list)))
+                  (preproc_endif
+                    (preproc_close)))
+                (end_keyword)
+                following: (statement_block
+                  (assignment_statement
+                    left: (identifier)
+                    operator: (assignment_operator)
+                    right: (integer))))
+              (preproc_else)
+              (preproc_split_case_end_branch
+                body: (code_block
+                  (begin_keyword)
+                  body: (statement_block
+                    (call_expression
+                      function: (identifier)
+                      arguments: (argument_list)))
+                  (end_keyword))
+                (end_keyword)
+                following: (statement_block
+                  (assignment_statement
+                    left: (identifier)
+                    operator: (assignment_operator)
+                    right: (integer))))
+              (preproc_endif
+                (preproc_close))))
+          (end_keyword))))))

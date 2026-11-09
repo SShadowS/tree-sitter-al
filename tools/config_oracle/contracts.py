@@ -196,9 +196,19 @@ register("preproc_pragma_only", "branch-select", "tools.config_oracle.lowering.s
                 "procedure:<children>": "splice-repeat", "source_file:<children>": "splice-repeat",
                 # trigger_declaration shares _procedure_tail since the BC 29 family-F fix.
                 "trigger_declaration:<children>": "splice-repeat"})
+# Deferred item 69: a group of bare `end`s nested in the `end` slot of another split
+# construct is this type too. Lowering it there means completing the HOST's block, a
+# rewrite this contract does not name: refused as unsupported-type (B7a closes those
+# cells by assertion rows).
 register("preproc_split_code_block_end", "assembler",
          "tools.config_oracle.lowering.assemblers.split_code_block_end",
-         hosts={"code_block:<children>": "consumed"})
+         hosts={"code_block:<children>": "consumed",
+                **{f"{h}:<children>": "unsupported" for h in (
+                    "preproc_fragmented_else_tail", "preproc_split_code_block_end",
+                    "preproc_split_code_block_over_endif", "preproc_split_else_begin_over_endif",
+                    "preproc_split_if_begin_else", "preproc_split_if_then_begin",
+                    "preproc_split_if_then_begin_else_shared", "preproc_split_open_statement",
+                    "preproc_split_procedure_body")}})
 register("preproc_split_case_statement_end", "assembler",
          "tools.config_oracle.lowering.assemblers.split_case_statement_end", hosts=_STATEMENT_HOSTS)
 register("preproc_split_case_end_branch", "fragment", None,
@@ -302,7 +312,10 @@ register("preproc_conditional_case", "branch-select", "tools.config_oracle.lower
          # (recursive host) it is the ordinary branch-select; directly under one of the four
          # decoration hosts (spec 4.2.2 plus preproc_split_case_end_branch, Task 6 fix round 1),
          # before the host's own `;`, it is a directive-only decoration, validated in every arm
-         # and deleted (case_terminators.DECORATION_HOSTS). Decoration-in-decoration never
+         # and deleted (case_terminators.DECORATION_HOSTS). The groups after the final branch of a
+         # preproc_split_case_end_branch (deferred item 50) are case_body siblings: the
+         # split_case_statement_end assembler moves them into the case_body, so they never reach
+         # this slot's policy. Decoration-in-decoration never
          # reaches the registry: the decoration handler walks its nested groups itself.
          hosts={"case_body:<children>": "splice-repeat",
                 "preproc_conditional_case:<children>": "splice-repeat",
@@ -551,9 +564,13 @@ register("preproc_conditional_table_relation", "assembler",
          # enclosing table_relation_expression, a rewrite this contract does not
          # name: refused as unsupported-type, milestone 3 (1 production file,
          # DC CDCDataTranslation.Table.al).
+         # Item 29: a where_clause arm (`Customer #if X where(..) #endif`) is emitted in
+         # place and joined by engine._join_relation_where; at if_table_relation:then_relation
+         # (`if (..) #if X A #else B #endif`) the arm's simple_table_relation takes the field.
          hosts={"table_relation_expression:<children>": "unsupported",
-                "table_relation_value:<children>": "single-slot"},
-         arm={"table_relation_expression", "else_table_relation_fragment", ";"})
+                "table_relation_value:<children>": "single-slot",
+                "if_table_relation:then_relation": "single-slot"},
+         arm={"table_relation_expression", "else_table_relation_fragment", "where_clause", ";"})
 # --- G6: a whole-property-value #if, contract whole-value-select
 # (assemblers.whole_value_select). Hosts are the census output:
 #  * property:value -- _property_value_conditional, the whole value is the #if;
@@ -604,11 +621,12 @@ register("preproc_conditional_property_value_sequence", "assembler",
 # B5: also a direct child of table_relation_value, as the shared `else` tail after a
 # value-start #if that is the relation's conditional head (`#if X if (..) A #else
 # if (..) B #endif else C`; alc accepts it, tools/alc_probe/cases/table-relation-keying/
-# decide-value-start-if-continuation.al). No assembler joins that tail to every arm's
-# relation yet: unsupported, milestone 3 (0 production sites).
+# decide-value-start-if-continuation.al), and since item 29 after a conditional tail
+# (`if (..) A #if X else if (..) B #endif else C`). There table_relation_value's own lowering
+# consumes it (engine._lower_relation_item): the same else-relation-join as an arm's fragment.
 register("else_table_relation_fragment", "fragment", None,
          hosts={"preproc_conditional_table_relation:<children>": "consumed",
-                "table_relation_value:<children>": "unsupported"})
+                "table_relation_value:<children>": "consumed"})
 
 # --- Task 11: expressions split across #if arms, regrouped by the alc-measured
 # precedence table (lowering/expression.py). Hosts are the census output.

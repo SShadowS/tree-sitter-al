@@ -657,7 +657,7 @@ module.exports = grammar({
     $.begin_keyword,            // [4] 'begin' — any depth, unless split claims it
     $.end_keyword,              // [5] 'end' — any depth, unless split claims it
     $.preproc_split_begin,      // [6] 'begin' at depth > 0, immediately before #endif
-    $.preproc_split_end,        // [7] 'end' at depth > 0, followed by ; then #elif/#else/#endif
+    $.preproc_split_end,        // [7] 'end' at depth > 0, followed by [;] then #elif/#else/#endif
     $.var_attribute_open,       // [8] '[' when attribute is followed by variable declaration
     $.calc_formula_property_name, // [9] `CalcFormula` followed by = -- the one name-keyed property
     $._directive_eol,           // [10] the ONE newline ending an #if/#elif line (hidden)
@@ -983,6 +983,10 @@ module.exports = grammar({
     [$._impl_value_branch_w, $.option_member_list],
     [$._permission_empty_conditional, $._permission_open_conditional, $._permission_branch_w, $._permission_seq_w],
     [$.tabledata_permission_list, $._permission_seq_w],
+    // Item 23: after a group whose arms carry the `;`, a #if is more of the list or the
+    // next body element; only its content decides (see _permission_more).
+    [$.tabledata_permission_list],
+    [$._permission_list_empty_open],
     [$._impl_value_open_conditional, $._impl_value_seq_w],
     [$.implementation_value_list, $._impl_value_seq_w],
     [$._impl_value_empty_conditional, $._impl_value_open_conditional, $._impl_value_seq_w],
@@ -1228,6 +1232,14 @@ module.exports = grammar({
     // preproc_conditional_case (it does not).
     [$.preproc_split_case_branch],
     [$.preproc_split_case_extended],
+    // Deferred item 50: the same decision in the split case's end branch, whose
+    // sibling groups stand inside the rule, before the case's `end`. With both
+    // readings in one rule an empty group after the body is a decoration or a
+    // sibling group (or, nested, a pattern group) until the token after
+    // `#endif` (`;` vs anything else); GLR keeps them, the three sets below.
+    [$.preproc_conditional_case, $._case_empty_group],
+    [$.preproc_conditional_case, $._case_empty_group, $.preproc_split_case_branch, $.preproc_conditional_case_patterns],
+    [$.preproc_conditional_case, $._case_empty_group, $.preproc_conditional_case_patterns],
   ],
 
   // Trivial pass-through wrappers — macro-substituted to drop a layer of indirection.
@@ -1562,6 +1574,11 @@ module.exports = grammar({
             field('value', $._property_value),
             repeat($._value_decoration),
           ),
+          // No suffix decoration after a permission list (item 23): the list's own
+          // _permission_more reads a trailing #if, and a suffix here made `property`
+          // a reduce/reduce with permissions_property at a `#if` after the list,
+          // which prec(-1) gave to `property` before the #if's content was seen.
+          seq(repeat($._value_decoration), field('value', $.tabledata_permission_list)),
         )),
         ';'
       ),
@@ -1814,10 +1831,14 @@ module.exports = grammar({
     _table_relation_rooted: $ => prec.right(5, choice(
       seq(
         alias($._table_relation_head, $.table_relation_expression),
-        optional($.preproc_conditional_table_relation),
+        // item 29: a conditional tail may be followed by a shared else tail
+        // (`if (..) A #if X else if (..) B #endif else C`; alc accepts every configuration,
+        // tools/alc_probe/cases/item29-relation-chain/)
+        optional(seq($.preproc_conditional_table_relation, optional($.else_table_relation_fragment))),
       ),
-      // the conditional head with a shared else tail
-      seq($.preproc_conditional_table_relation, $.else_table_relation_fragment),
+      // the conditional head with a shared tail: else, or (item 29) a where clause
+      // (`#if X A #else B #endif where(..)`)
+      seq($.preproc_conditional_table_relation, choice($.else_table_relation_fragment, $.where_clause)),
     )),
     ...valueRunRules('_table_relation', $ => $._table_relation_property_value),
     ...afterGroupRules('_table_relation', $ => $._table_relation_property_value),
@@ -2082,7 +2103,7 @@ module.exports = grammar({
     // The generic family's `;`-inside rules. They replace G11's
     // _property_value_conditional_in_if, which allowed an all-absent group and a single
     // group only.
-    ...valueRunRules('_generic', $ => $._property_value),
+    ...valueRunRules('_generic', $ => choice($._property_value, $.tabledata_permission_list)),
 
     // A whole-property-value conditional: the entire value of a property is a
     // #if, and each nonempty arm holds ONE property value, fielded `value`,
@@ -2152,10 +2173,18 @@ module.exports = grammar({
     // conflicts documented at the conflicts list.
     // B11: the arm without its own `;` (an arm with one is _generic_arm_t); decorations
     // before and after the value, unfielded (§3.2 at an arm site).
-    _property_value_branch: $ => seq(
-      repeat($._value_decoration),
-      field('value', $._property_value),
-      repeat($._value_decoration),
+    _property_value_branch: $ => choice(
+      seq(
+        repeat($._value_decoration),
+        field('value', $._property_value),
+        repeat($._value_decoration),
+      ),
+      // A permission list reads a trailing #if itself (see `property`).
+      // prec.dynamic(-1): `Permissions = #if X a #else b #endif;` is also a list opened
+      // by its element conditional, and both complete. main settled that tie by subtree
+      // comparison (symbol order) in favour of the list; this keeps it the list, now on
+      // purpose (item 23 moved the list out of _property_value and flipped the order).
+      prec.dynamic(-1, seq(repeat($._value_decoration), field('value', $.tabledata_permission_list))),
     ),
 
     // prec(-1), as on _property_with_terminator_in_if: at a following `;` the ordinary
@@ -2208,7 +2237,6 @@ module.exports = grammar({
       // Complex value types
       $.caption_value,              // 'Text', Locked = true, Comment = '...'
       $.ml_value_list,              // ENU='English', DEU='German'
-      $.tabledata_permission_list,  // tabledata X = R, tabledata Y = RIMD
       $.order_by_list,              // ascending("No.", Name)
       $.implementation_value_list,  // "IFace" = "Impl", ...
       $.option_member_list,         // Option1, Option2, "Option 3"
@@ -2762,9 +2790,12 @@ module.exports = grammar({
     // Can be a full table_relation_expression OR an else-continuation fragment
     // (e.g. 'else if (Type = const("Alloc")) "Table"' which is the tail of an
     // if_table_relation chain whose head is outside the #if block).
+    // Item 29: also a where clause alone, the conditional tail of the target before the #if
+    // (`Customer #if X where(..) #endif`).
     _table_relation_branch_content: $ => choice(
       $.table_relation_expression,
       $.else_table_relation_fragment,
+      $.where_clause,
     ),
 
     // Fragment for 'else <table_relation_expression>' inside a preproc branch.
@@ -2785,7 +2816,8 @@ module.exports = grammar({
       '(',
       $.where_conditions,
       ')',
-      field('then_relation', $.simple_table_relation),
+      // item 29: the target may be a #if (`if (..) #if X A #else B #endif`)
+      field('then_relation', choice($.simple_table_relation, $.preproc_conditional_table_relation)),
       optional(seq(
         $.else_keyword,
         field('else_relation', $.table_relation_expression)
@@ -2826,12 +2858,12 @@ module.exports = grammar({
     //   Permissions = tabledata T1 = R tabledata T2 = R;  -> AL0104 "',' expected"
     // B11: a list OPENED by a #if needs a witness in that #if; an empty opening #if is a
     // decoration of the value (spec 2026-10-05 §3.1 step 1). Branches keep _permission_seq.
-    tabledata_permission_list: $ => prec.right(choice(
+    tabledata_permission_list: $ => choice(
       $._permission_run,
       seq($._permission_run, $._permission_more),
       seq(alias($._permission_open_conditional, $.preproc_conditional_permissions),
         optional($._permission_run), optional($._permission_more)),
-    )),
+    ),
     ...listOpenerRules('_permission', 'preproc_conditional_permissions', '_permission_branch',
       '_permission_seq', '_permission_run', '_permission_more', true),
     // A permission list opened by an all-absent #if, for the hosts with no decoration
@@ -2839,16 +2871,22 @@ module.exports = grammar({
     // the shape tabledata_permission_list had before B11's witness.
     // At permissions_property, never the empty conditional alone: then nothing is a
     // list there, and the property would end at the #endif of an empty value.
-    _permission_list_empty_open: $ => prec.right(seq(
+    _permission_list_empty_open: $ => seq(
       alias($._permission_empty_conditional, $.preproc_conditional_permissions),
       choice(seq($._permission_run, optional($._permission_more)), $._permission_more),
-    )),
+    ),
     // In a split head or tail the list may be that conditional alone (base tree).
     _permission_list_empty_any: $ => prec.right(seq(
       alias($._permission_empty_conditional, $.preproc_conditional_permissions),
       optional($._permission_run), optional($._permission_more),
     )),
-    _permission_more: $ => prec.right(repeat1(seq($.preproc_conditional_permissions, optional($._permission_run)))),
+    // Item 23: no prec.right here or on the lists that end in it. After a group whose
+    // arms carry the property's `;`, a following #if may be more of the list or the next
+    // body element (`#if X procedure ...`), so the shift forks ([tabledata_permission_list],
+    // [_permission_list_empty_open]). Both complete only for an empty `#if Y #endif` next;
+    // see deferred item 23 for how that tie falls (no dynamic precedence here: +1 per group
+    // outweighed the B11 `;`-inside sequence's own steps and broke two fixtures).
+    _permission_more: $ => repeat1(seq($.preproc_conditional_permissions, optional($._permission_run))),
 
     // prec.right: after a run, `preproc_open` is a shift/reduce — extend the
     // list or close it. A list extends as far as it can, same as every other
@@ -4872,7 +4910,7 @@ module.exports = grammar({
       $._pspb_if_branch,
       $._pspb_else_branch,
       optional(field('body', $.statement_block)),
-      $.end_keyword,
+      choice($.end_keyword, $.preproc_split_code_block_end),  // item 69: a group of ends
       optional(';'),
     )),
 
@@ -5703,7 +5741,9 @@ module.exports = grammar({
 
     // D1 C2: `#if stmts* end`, shared by _preproc_end_guard, preproc_split_else_begin_over_endif and
     // preproc_split_if_then_begin.
-    _split_stmts_end: $ => seq($.preproc_if, repeat($._statement), $.end_keyword),
+    // The `end` may be a nested group of ends (item 69, see _preproc_end_branch).
+    _split_stmts_end: $ => seq($.preproc_if, repeat($._statement),
+      choice($.end_keyword, $.preproc_split_code_block_end)),
 
     // D1 C3: `#endif stmts* <end guard>`, shared by preproc_split_if_begin_else,
     // preproc_split_code_block_over_endif and preproc_fragmented_else_tail.
@@ -5733,7 +5773,7 @@ module.exports = grammar({
       $.else_keyword,
       $.begin_keyword,
       repeat($._statement),
-      $.end_keyword,
+      choice($.end_keyword, $.preproc_split_code_block_end),  // item 69: a nested group of ends
       optional(';'),
     ),
 
@@ -5860,13 +5900,23 @@ module.exports = grammar({
     // branch that is this rule's own, nothing else reads the statements.
     _preproc_end_branch_later: $ => choice(
       $._preproc_end_branch,
-      seq(repeat1($._statement), $.end_keyword, optional(';')),
+      seq(repeat1($._statement), choice($.end_keyword, $.preproc_split_code_block_end), optional(';')),
     ),
 
     // One branch of preproc_split_code_block_end: either the split `end;` on its
-    // own, or statements followed by the full end/else-begin tail.
+    // own, a nested group of ends, or statements followed by the full
+    // end/else-begin tail.
+    //
+    // Item 69: the nested group, `#if A  #if X end #else end #endif ;  #else end; #endif`
+    // (alc accepts every configuration), is a preproc_split_code_block_end of its
+    // own. Before #41 its bare `end`s read as calls (a silent wrong tree), after
+    // it they ERRORed. The same group may stand for the closing `end` of
+    // _preproc_end_branch_later, _split_stmts_end, _else_begin_block and
+    // preproc_split_procedure_body. No conflict; STATE_COUNT +117 for the five
+    // sites (with the scanner's optional `;` before the directive).
     _preproc_end_branch: $ => choice(
       seq($.preproc_split_end, optional(';')),
+      seq($.preproc_split_code_block_end, optional(';')),
       seq(repeat($._statement), $.end_keyword, $._else_begin_block),
     ),
 
@@ -6810,6 +6860,10 @@ module.exports = grammar({
       $._case_body_branch,
       // B7b-3 Task 6 fix round 1: the fourth decoration host (spec 4.2.2).
       optional(seq(repeat(caseEmptyGroup($)), ';')),
+      // Deferred item 50: groups after the final branch, before the case's own
+      // `end` (a `;` group, more branches): the case_body slot that the split
+      // has torn away, so the same sibling preproc_conditional_case as there.
+      repeat($.preproc_conditional_case),
       $.end_keyword,
       ';',
       field('following', $.statement_block),

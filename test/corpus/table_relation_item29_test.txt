@@ -1,0 +1,269 @@
+========================================================================
+Item 29: mid-chain #if continuing an if, then a shared else tail
+========================================================================
+table 50100 T
+{
+    fields
+    {
+        field(2; "No."; Code[20])
+        {
+            TableRelation = if (A = const(X)) Item
+#if X
+                else if (A = const(Y)) Vendor
+#endif
+                else Customer;
+        }
+    }
+}
+
+------------------------------------------------------------------------
+
+(source_file
+  (table_declaration
+    (table_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (fields_section
+        (fields_keyword)
+        body: (fields_body
+          (field_declaration
+            (field_keyword)
+            id: (integer)
+            name: (quoted_identifier)
+            type: (type_specification
+              (code_type
+                (code_keyword)
+                length: (integer)))
+            body: (declaration_body
+              (property
+                name: (property_name)
+                value: (table_relation_value
+                  (table_relation_expression
+                    (if_table_relation
+                      (if_keyword)
+                      (where_conditions
+                        (where_condition
+                          field: (identifier)
+                          (const_keyword)
+                          value: (identifier)))
+                      then_relation: (simple_table_relation
+                        target: (qualified_name
+                          (identifier)))))
+                  (preproc_conditional_table_relation
+                    (preproc_if
+                      (preproc_open)
+                      condition: (identifier))
+                    (else_table_relation_fragment
+                      (else_keyword)
+                      else_relation: (table_relation_expression
+                        (if_table_relation
+                          (if_keyword)
+                          (where_conditions
+                            (where_condition
+                              field: (identifier)
+                              (const_keyword)
+                              value: (identifier)))
+                          then_relation: (simple_table_relation
+                            target: (qualified_name
+                              (identifier))))))
+                    (preproc_endif
+                      (preproc_close)))
+                  (else_table_relation_fragment
+                    (else_keyword)
+                    else_relation: (table_relation_expression
+                      (simple_table_relation
+                        target: (qualified_name
+                          (identifier))))))))))))))
+
+========================================================================
+Item 29: a #if around the where tail of the target before it
+========================================================================
+table 50100 T
+{
+    fields
+    {
+        field(2; "No."; Code[20])
+        {
+            TableRelation = Customer
+#if X
+                where(A = const(1))
+#endif
+                ;
+        }
+    }
+}
+
+------------------------------------------------------------------------
+
+(source_file
+  (table_declaration
+    (table_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (fields_section
+        (fields_keyword)
+        body: (fields_body
+          (field_declaration
+            (field_keyword)
+            id: (integer)
+            name: (quoted_identifier)
+            type: (type_specification
+              (code_type
+                (code_keyword)
+                length: (integer)))
+            body: (declaration_body
+              (property
+                name: (property_name)
+                value: (table_relation_value
+                  (table_relation_expression
+                    (simple_table_relation
+                      target: (qualified_name
+                        (identifier))))
+                  (preproc_conditional_table_relation
+                    (preproc_if
+                      (preproc_open)
+                      condition: (identifier))
+                    (where_clause
+                      (where_keyword)
+                      (where_conditions
+                        (where_condition
+                          field: (identifier)
+                          (const_keyword)
+                          value: (integer))))
+                    (preproc_endif
+                      (preproc_close))))))))))))
+
+========================================================================
+Item 29: a #if around the target, then a shared where tail
+========================================================================
+table 50100 T
+{
+    fields
+    {
+        field(2; "No."; Code[20])
+        {
+            TableRelation =
+#if X
+                Item
+#else
+                Resource
+#endif
+                where(A = const(1));
+        }
+    }
+}
+
+------------------------------------------------------------------------
+
+(source_file
+  (table_declaration
+    (table_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (fields_section
+        (fields_keyword)
+        body: (fields_body
+          (field_declaration
+            (field_keyword)
+            id: (integer)
+            name: (quoted_identifier)
+            type: (type_specification
+              (code_type
+                (code_keyword)
+                length: (integer)))
+            body: (declaration_body
+              (property
+                name: (property_name)
+                value: (table_relation_value
+                  (preproc_conditional_table_relation
+                    (preproc_if
+                      (preproc_open)
+                      condition: (identifier))
+                    (table_relation_expression
+                      (simple_table_relation
+                        target: (qualified_name
+                          (identifier))))
+                    (preproc_else)
+                    (table_relation_expression
+                      (simple_table_relation
+                        target: (qualified_name
+                          (identifier))))
+                    (preproc_endif
+                      (preproc_close)))
+                  (where_clause
+                    (where_keyword)
+                    (where_conditions
+                      (where_condition
+                        field: (identifier)
+                        (const_keyword)
+                        value: (integer)))))))))))))
+
+========================================================================
+Item 29: a #if around the then target of an if
+========================================================================
+table 50100 T
+{
+    fields
+    {
+        field(2; "No."; Code[20])
+        {
+            TableRelation = if (A = const(X))
+#if X
+                Item
+#else
+                Vendor
+#endif
+                ;
+        }
+    }
+}
+
+------------------------------------------------------------------------
+
+(source_file
+  (table_declaration
+    (table_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (fields_section
+        (fields_keyword)
+        body: (fields_body
+          (field_declaration
+            (field_keyword)
+            id: (integer)
+            name: (quoted_identifier)
+            type: (type_specification
+              (code_type
+                (code_keyword)
+                length: (integer)))
+            body: (declaration_body
+              (property
+                name: (property_name)
+                value: (table_relation_value
+                  (table_relation_expression
+                    (if_table_relation
+                      (if_keyword)
+                      (where_conditions
+                        (where_condition
+                          field: (identifier)
+                          (const_keyword)
+                          value: (identifier)))
+                      then_relation: (preproc_conditional_table_relation
+                        (preproc_if
+                          (preproc_open)
+                          condition: (identifier))
+                        (table_relation_expression
+                          (simple_table_relation
+                            target: (qualified_name
+                              (identifier))))
+                        (preproc_else)
+                        (table_relation_expression
+                          (simple_table_relation
+                            target: (qualified_name
+                              (identifier))))
+                        (preproc_endif
+                          (preproc_close))))))))))))))

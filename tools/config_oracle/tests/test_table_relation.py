@@ -90,3 +90,40 @@ def test_else_join_with_semicolon_after_endif_every_config(al_parser):
     v = witness.verdicts(al_parser, SEMI_AFTER)
     assert len(v) == 2, v
     witness.assert_all_pass(al_parser, SEMI_AFTER)
+
+
+# Item 29: the four #if-inside-the-chain shapes (alc accepts every configuration,
+# tools/alc_probe/cases/item29-relation-chain/).
+def _field(relation):
+    return b"""table 1 T
+{
+    fields
+    {
+        field(1; F; Code[20])
+        {
+            TableRelation = """ + relation + b"""
+        }
+    }
+}
+"""
+
+
+SHARED_ELSE = _field(b"if (A = const(X)) Item\n#if X\n else if (A = const(Y)) Vendor\n#endif\n else Customer;")
+WHERE_ARM = _field(b"if (A = const(X)) Item\n#if X\n where(A = const(1))\n#endif\n else Customer;")
+SHARED_WHERE = _field(b"\n#if X\n Item\n#else\n Resource\n#endif\n where(A = const(1));")
+THEN_ARM = _field(b"if (A = const(X))\n#if X\n Item\n#else\n Vendor\n#endif\n ;")
+
+
+def test_item29_shapes_every_config(al_parser):
+    witness.assert_produces(al_parser, WHERE_ARM, "preproc_conditional_table_relation")
+    for src in (SHARED_ELSE, WHERE_ARM, SHARED_WHERE, THEN_ARM):
+        assert len(witness.verdicts(al_parser, src)) == 2
+        witness.assert_all_pass(al_parser, src)
+
+
+def test_item29_where_join_is_load_bearing(al_parser, monkeypatch):
+    from tools.config_oracle.lowering import engine
+    monkeypatch.setattr(engine, "_join_relation_where", lambda value: None)
+    for src in (WHERE_ARM, SHARED_WHERE):
+        v = witness.verdicts(al_parser, src)
+        assert any(s == "discrepancy" for s, _ in v.values()), v

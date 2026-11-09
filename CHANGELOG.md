@@ -9,6 +9,34 @@ public API — a change to node structure or field names is a **major** bump.
 
 ### Fixed
 
+- **Four `TableRelation` shapes with `#if` inside the chain parse (deferred item 29).** A shared
+  `else_table_relation_fragment` after a conditional tail, a `where_clause` alone in an arm, a shared `where_clause`
+  after a conditional head, and a `preproc_conditional_table_relation` as the `then_relation` of an
+  `if_table_relation`; alc accepts all four (`tools/alc_probe/cases/item29-relation-chain/`). `node-types.json`:
+  `if_table_relation.then_relation` gains `preproc_conditional_table_relation`, and `where_clause` becomes a child of
+  `preproc_conditional_table_relation`. STATE_COUNT +4; production trees unchanged.
+- **A `Permissions` list whose `;` is in the arms, followed by a split procedure, parses (deferred item 23).** A
+  following split procedure, `#if` procedure, `#if var`, `#if` trigger or property ERRORed; alc accepts them
+  (`tools/alc_probe/cases/item23/`). **Tree-shape change** (0 production sites): `Permissions = #if X #endif #if A
+  tabledata T2 = i #else tabledata T3 = m #endif ;` (an empty decoration, then one group with no `;` in its arms) is
+  now one `tabledata_permission_list` holding the group, as the same input without the decoration already was; it
+  was a whole-value conditional. STATE_COUNT +21.
+- **A bare `end` in every arm of a split block, the `;` after `#endif`, parses (deferred item 69).**
+  `#if X end #else end #endif ;` ERRORed since #41 (before it, each `end` was silently a call named `end`): the
+  scanner's PREPROC_SPLIT_END wanted `end ;` before the directive. The `;` is now optional in that lookahead, so each
+  `end` is a `preproc_split_end` and the `;` after `#endif` is the host's separator. The same group nested where an
+  enclosing split construct has its `end` (an arm of a split block end, the closing region of a block opened in an
+  earlier region, the `else begin` block of a split end, a split procedure body) is a `preproc_split_code_block_end`
+  in that slot. alc accepts every configuration (`tools/alc_probe/cases/item69/`). `node-types.json`: the
+  children of `preproc_split_code_block_end`, `preproc_fragmented_else_tail`, `preproc_split_code_block_over_endif`,
+  `preproc_split_else_begin_over_endif`, `preproc_split_if_begin_else`, `preproc_split_if_then_begin`,
+  `preproc_split_if_then_begin_else_shared`, `preproc_split_open_statement` and `preproc_split_procedure_body` gain
+  `preproc_split_code_block_end`. No conflict; STATE_COUNT +117. Production trees identical in all four corpora.
+- **A `#if` group beside a split case's final branch parses (deferred item 50).** In a `case` whose final branch,
+  `end;` and following statements are split across `#if`/`#else` (`preproc_split_case_statement_end`), a group after
+  that branch and before the case's `end` (a `;` in some arms, further branches, or nothing) was an ERROR; alc accepts
+  these (`tools/alc_probe/cases/item50/`). It is now an unfielded `preproc_conditional_case` child of
+  `preproc_split_case_end_branch`, the same sibling group a `case_body` has. No production tree changes.
 - **`Visible = Where;` parses (deferred item 28).** `Where` at the start of a generic property value is an
   `identifier` when it is not a `where(...)` clause (alc resolves it as a name; `tools/alc_probe/cases/item28-visible-where/`),
   so `Visible = Where;` and expressions such as `Enabled = Where = false;` no longer ERROR. `SourceTableView = where(...)`

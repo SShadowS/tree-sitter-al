@@ -1198,9 +1198,13 @@ bool tree_sitter_al_external_scanner_scan(
       // before this skipped nothing, a single trailing `// note` after the
       // `end;` silently dropped the token and the run reparsed as a
       // call_statement with NO error nodes.
+      // Item 69: the `;` is optional. `#if X end #else end #endif ;` (the
+      // host's `;` after #endif; alc accepts every configuration,
+      // tools/alc_probe/cases/item69/) has no other derivation; the grammar's
+      // `_preproc_end_branch` already takes `preproc_split_end` without `;`.
       if (state->depth > 0 && valid_symbols[PREPROC_SPLIT_END] &&
-          skip_whitespace_and_comments(lexer) && lexer->lookahead == ';') {
-        lexer->advance(lexer, false);
+          skip_whitespace_and_comments(lexer)) {
+        if (lexer->lookahead == ';') lexer->advance(lexer, false);
         if (peek_directive_ci_skip_extras(lexer, DIRECTIVE_BRANCH_OR_ENDIF)) {
           lexer->result_symbol = PREPROC_SPLIT_END;
           return true;

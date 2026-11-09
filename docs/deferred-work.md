@@ -38,7 +38,7 @@ project's history — one of which reached a committed fixture before it was cau
 
 ---
 
-## 1. Separator positions without a preprocessor host: audited by B7a (2026-10-07)
+## 1. Separator positions without a preprocessor host: audited by B7a (2026-10-07) — INDEX, not a work item (its open parts are items 36, 37, 44, 45, 46 and the matrix)
 
 **Established:** B7a, a fresh audit (`python -m tools.b7_audit`, spec
 `docs/superpowers/specs/2026-10-06-b7a-separator-continuation-audit-design.md`): 24,355 cells over every separator,
@@ -144,7 +144,7 @@ Per-host enumeration is still the tractable approach at this count — the
 scanner-classification design sketched during the release is an architecture
 upgrade, not a prerequisite.
 
-## 2. A rule existing is not the same as the shape being covered
+## 2. A rule existing is not the same as the shape being covered — CLOSED 2026-11-09 (a principle, absorbed into item 1 and the B7a gate)
 
 **Established:** B7a (2026-10-07) turned this into a gate: every registry row whose template supports them is probed at
 BOTH comma placements and at every other placement of the §6.1 table (`lead-optional`, `holes-lead`, `holes-mid`,
@@ -1123,7 +1123,49 @@ tree-shape change and needs E2's consumer migration check.
 B4 to B6.
 
 
-## 23. A `Permissions` list ending inside an `#if` arm ERRORs when a split procedure follows
+## 23. A `Permissions` list ending inside an `#if` arm ERRORs when a split procedure follows — RESOLVED 2026-11-09
+
+**Tree-shape change found in review (batch 3).** The fix's `prec.dynamic(-1)` on the list arm of
+`_property_value_branch` also moves `Permissions = #if X #endif #if A tabledata T2 = i #else tabledata T3 = m #endif ;`
+(an empty decoration, then one group with no `;` in its arms): from a whole-value conditional to one
+`tabledata_permission_list` holding the group, the tree the undecorated input already had (0 production sites).
+Pinned by the last case of `test/corpus/item_23_permissions_semi_arm_follower_test.txt`. The reviewer compared 3,108
+generated permission-list variants main vs branch: 591 ERROR → clean, these 3 changed while both clean (2 of them
+invalid in every configuration), every other case byte-identical.
+
+**Resolved 2026-11-09 (branch batch3/item23).** Traced with `tree-sitter parse -d`: after the
+`#endif` of the group whose arms carry the `;`, the lookahead `#if` was decided statically,
+before its content was seen, in two places. (1) A reduce/reduce between `_property_value`
+(the ordinary `property`, whose value may take a suffix `_value_decoration`, an empty `#if`)
+and `permissions_property` (whose value ends there), which `permissions_property`'s
+`prec(-1)` gave to `property`; (2) a shift/reduce between one more list group
+(`_permission_more`) and ending the list, which `prec.right` on `tabledata_permission_list`,
+`_permission_more` and `_permission_list_empty_open` gave to the shift. One parse version
+survived and ERRORed at `procedure`. It was never specific to a split procedure: any `#if`
+group that opens no permission (`#if X procedure ... #endif`, `#if X var ... #endif`) did
+the same. alc accepts all of them (`tools/alc_probe/cases/item23/`, five probes; one, valid
+only when X, is the `invalid-config` evidence for its other configuration).
+
+Fix: `tabledata_permission_list` left `_property_value` and is listed at its three hosts
+(`property`, `_property_value_branch`, the generic `valueRunRules` value) WITHOUT a suffix
+decoration (it was dead there: the list's own `_permission_more` always took a trailing
+`#if`), which removes (1) without touching the static `prec(-1)`; the three `prec.right` are
+gone and `[tabledata_permission_list]`, `[_permission_list_empty_open]` are declared
+conflicts, so (2) forks and the reading whose `#if` holds no permission dies. All four
+corpora byte-identical (tree harness), no fixture moved; +21 states.
+
+Two GLR ties the fork exposed, both pinned in
+`test/corpus/item_23_permissions_semi_arm_follower_test.txt`:
+- `Permissions = #if X a #else b #endif ;` is a list opened by its element conditional and a
+  whole-value `preproc_conditional_property_value`. main gave it the list by subtree
+  comparison (symbol order); moving the list flipped that, so the list arm of
+  `_property_value_branch` carries `prec.dynamic(-1)` and the list tree stays.
+- An empty `#if Y #endif` after a `;`-arm group is a list element or body content. It
+  stays a list element (main's tree, by the runtime's tie-break, not by precedence).
+  `prec.dynamic(1)` per list group would decide it but outweighed the B11 `;`-inside
+  sequence and broke two fixtures. For the generic families B11 rules such a group body
+  content; the oracle cannot validate the list reading (`Terminator not from the last
+  child`, debt(C1) in fixture-classes.tsv), so flipping it is an open option, 0 production sites.
 
 **Established:** 2026-10-01, during F0 plan drafting. Reproduced with
 `./tools/ts-lock.sh tree-sitter parse` at 0a8e220: the repro below gives 4 ERROR/MISSING
@@ -1367,7 +1409,21 @@ at generic property value start must become an `identifier`.
 
 **Owner:** batch 2 (`batch2/item28`).
 
-## 29. Four `TableRelation` shapes with `#if` inside the chain ERROR
+## 29. Four `TableRelation` shapes with `#if` inside the chain ERROR — RESOLVED 2026-11-09
+
+**Resolved on branch `batch3/item29`.** alc 18.0.41 ACCEPTS all four shapes in every configuration, split and
+flat (probes `tools/alc_probe/cases/item29-relation-chain/`, plus `s2b`: the where arm inside an if chain with a
+shared `else` after it). The grammar gives each a clean tree in the family's existing sibling form (fixtures
+`test/corpus/table_relation_item29_test.txt`): `_table_relation_rooted` takes a shared `else` after a conditional
+tail (shape 1) and a shared `where_clause` after a conditional head (shape 3); a conditional arm may be a
+`where_clause` alone (shape 2); `if_table_relation`'s `then_relation` may be a `preproc_conditional_table_relation`
+(shape 4). +4 parser states, no new conflicts, all four corpora byte-identical. The oracle validates every
+configuration: `engine._join_relation_where` puts a sibling or arm `where_clause` into the open
+`simple_table_relation` before it, `engine._lower_relation_item` joins a direct `else_table_relation_fragment`
+child (which also clears the B5 "conditional head with a shared else tail" debt rows), and at
+`if_table_relation:then_relation` the arm's `simple_table_relation` takes the field. Not covered: a shared `where`
+followed by a further `else` after a conditional head (`#if X A #else B #endif where(..) else C`), not probed. The
+record below is kept as written.
 
 **Established:** 2026-10-05, found in the B5 final review with `python tools/snip.py --raw`
 inside a table field. Not B5 regressions (the shapes ERROR the same way before B5). alc
@@ -1769,7 +1825,7 @@ separate statements, and the oracle reports a discrepancy at `X=0,Y=0`. `as`/`is
 
 **Owner:** none open.
 
-## 42. 117 UNCHECKED cells in the B7a matrix: generator imprecisions (audit debt)
+## 42. 117 UNCHECKED cells in the B7a matrix: generator imprecisions (audit debt; item 60 is the same kind of debt and is tracked here)
 
 **Established:** 2026-10-07, B7a Task 10. The 117 cells all carry `representative vector mismatch`: alc disagreed with the
 generator's intended vector (the cell's class representative is not a valid instance of the intent), so the judge returns
@@ -2067,7 +2123,7 @@ states first.
 
 **Owner:** B7.
 
-## 49. B7b-3 manifest cells deferred by host limitation (C1, B12, B7a)
+## 49. B7b-3 manifest cells deferred by host limitation (C1, B12, B7a) — oracle-lowering debt (C1); its grammar parts are items 48, 50, 64
 
 **Established:** 2026-10-08, B7b-3 Task 2 (`7a42b3a`, variant-test ruling): a cell whose oracle refusal is the same with
 the B7b-3 mechanism taken out (a parenless call replaced by `Bar()`, or the preceding statement by an assignment) is a
@@ -2114,7 +2170,13 @@ either and re-record the cells that pass.
 
 **Owner:** C1, B12, B7a as listed.
 
-## 50. A `;` group beside a split case's end branch has no slot (B7b-3)
+## 50. A `;` group beside a split case's end branch has no slot (B7b-3) — RESOLVED 2026-11-09 (batch 3)
+
+**Follow-up from review.** `tools/b7_audit/b7b3-manifest.tsv`: the 63 rows re-recorded with `--rerecord` now record
+verdict CONSISTENT with every oracle outcome `pass`, but their status still reads `deferred` and their reason still
+says the sibling `;` group ERRORs. Update those rows' status and reason. Also: a directive-only decoration (before the
+branch's own `;`) and the new sibling group (after it) are both unfielded `preproc_conditional_case` children of
+`preproc_split_case_end_branch`; only their position relative to the `;` tells them apart.
 
 **Established:** 2026-10-08, B7b-3 Task 6 fix round 1 / Task 7 (`ede9509`). `preproc_split_case_end_branch` became the
 fourth decoration host (spec 4.2.2 amendment 6): an empty group before its own `;` is a decoration. A group that holds a
@@ -2138,6 +2200,27 @@ its recorded alc split verdicts and a `// Fixture` line naming the case.
 first.
 
 **Owner:** B7.
+
+**FIXED 2026-11-09 (batch 3, branch `batch3/item50`).** alc accepts every configuration of the five statement-terminator
+witnesses and the case-branch / trail one (re-run, alc 18.0.41), and of three wider shapes: a group holding a `;` and a
+further branch, a directive-only group before the case's `end`, and a decoration before the branch's own `;` followed by
+a group of branches (`tools/alc_probe/cases/item50/`, where the six former `b7-audit/*__gap.al` witnesses moved).
+`preproc_split_case_end_branch` gains `repeat(preproc_conditional_case)` after the optional decorations-and-`;`, before
+the case's `end`: the `case_body` slot the split tears away, so the tree is the same unfielded sibling group as in a
+`case_body`. Three declared conflicts (`[preproc_conditional_case, _case_empty_group]` and the two wider sets: an empty
+group after the body is a decoration or a sibling until the token after `#endif`). The oracle's
+`split_case_statement_end` assembler appends those groups to the assembled `case_body` after the final branch, so
+`case_terminators.attach` gives a selected `;` to that branch as in any case run; every configuration of the nine
+fixtures (`test/corpus/item_50_split_case_end_group_test.txt`) passes. The six `:error` witnesses left
+`b7_gap_case_branch_test.txt` (they parse now) with their `fixture-classes.tsv` rows. The case's own `;` after `end`
+moved from member 3 to 4 (`key-aliases.tsv`). B7a: 78 GAP cells at `preproc_split_case_end_branch` /
+`preproc_split_case_statement_end` are now CONSISTENT: the 48 of this item, plus the same `;`-group shapes after a
+`preproc_split_if_then_begin_else_shared` body (15, split-if-begin) and a `preproc_split_call_statement` body (15,
+split-call; oracle refusal `unsupported-type` there, closed by the cell assertion); 75 cell assertion rows pin the
+group in the end branch (each fails on the main-built parser). The 15 `preproc_split_if_then_begin:0.5.0.0` end-branch
+cells stay GAP (item 64's shape). No production tree changed (tree harness, four corpora). STATE_COUNT +67. Known
+looseness: the traversal policy keys hosts by slot, so
+`preproc_split_case_end_branch:<children>` still reads `decoration` for a sibling group there too (policy reason notes it).
 
 ## 51. Three `in`/`is`/`as` continuation shapes alc accepts still ERROR (B7b-2 Phase A scope)
 
@@ -2170,7 +2253,7 @@ this item's real cost against `437215c` (D1 spec §10). Correctness wins over th
 
 **Owner:** B7b-2-followup.
 
-## 52. N consecutive `#if` groups at a root after which a host group can start parse in quadratic time (assignment, argument, repeat-until, range left, list element, split-call argument, ternary condition, Phase C `mixed`; B7b-2, known limit)
+## 52. N consecutive `#if` groups at a root after which a host group can start parse in quadratic time (assignment, argument, repeat-until, range left, list element, split-call argument, ternary condition, Phase C `mixed`; B7b-2, known limit) — DECIDED known limit (owner; longest real run is 3)
 
 **Established:** 2026-10-20, B7b-2 Task 4 review (Important 1) and fix round 1, measured on f6182928 with
 `tools.perf.strict_lists_scaling.measure` (fastest of 5 timed batches; N = 10 ... 1,280, each group `#if X + i #endif`):
@@ -2244,7 +2327,7 @@ reading an exit 1 as a regression.
 
 **Owner:** none open; revisit if real code shows long consecutive runs.
 
-## 53. A tail on a nested ternary's condition parses a ternary chain in quadratic time (B7b-2, known limit)
+## 53. A tail on a nested ternary's condition parses a ternary chain in quadratic time (B7b-2, known limit) — DECIDED known limit
 
 **Established:** 2026-10-21, B7b-2 Task 9 (scaling series `ternary_parts`), measured on 39d377a5.
 
@@ -2306,7 +2389,7 @@ alive at every `#endif • #if`. Measure with `tools.perf ab` against main, neve
 
 **Owner:** roadmap D1/D2.
 
-## 55. The oracle does not check grouping inside an expression region (B7b-2 contract)
+## 55. The oracle does not check grouping inside an expression region (B7b-2 contract) — DECIDED (contract by design, guarded by the ladder fixtures)
 
 **Established:** 2026-10-21, B7b-2 Task 11 review (minor M1), by design of spec 3.2. Inside a region that contains
 a group, the nesting of binary and unary nodes is not a grouping claim (`docs/expression-regions.md`), so the region
@@ -2405,7 +2488,7 @@ itself (find the region, splice the active arm, regroup by the ladder). The orac
 
 **Owner:** roadmap F (traversal).
 
-## 60. 231 property-value cells parse since B7b-2 but sit in no manifest; 177 have no tree assertion (B12)
+## 60. 231 property-value cells parse since B7b-2 but sit in no manifest; 177 have no tree assertion (B12) — audit debt, tracked with item 42
 
 **Established:** 2026-10-21, B7b-2 Task 12 (and its review, minor 1). Phase C's operand groups and leading prefixes
 also reach the property route, so 231 B7a cells of B12's families went from ERROR to clean: `property-value` 216,
@@ -2532,7 +2615,7 @@ item's real cost against `437215c` (D1 spec §10). Correctness wins over the cei
 
 **Owner:** B12.
 
-## 63. Incremental reparse differs from a fresh parse on two VALID inputs (pre-existing, found by D1)
+## 63. Incremental reparse differs from a fresh parse on two VALID inputs (pre-existing, found by D1) — editor track (D2): al-sem parses fresh and is unaffected
 
 **Established:** 2026-10-22, D1 Task 3 (`mutate_parity` class `incremental`), reproduced in Task 7 with
 `.cache/d1/tools/mutate_parity.reparse` under py-tree-sitter 0.25. The cause is one edit, called delete-6: delete
@@ -2585,7 +2668,7 @@ replaces the recovery tree in all 582 cells, these 3 included.
 
 **Owner:** B7b+ (the matrix route owner of `split-if-begin`).
 
-## 65. A comma-less group-then-member property value parses clean as an option list; alc rejects it (over-acceptance)
+## 65. A comma-less group-then-member property value parses clean as an option list; alc rejects it (over-acceptance) — kept open: the measured fix ERRORs a configuration alc accepts (batch 1)
 
 **Established:** 2026-10-25, while fixing item 61. In an action:
 
@@ -2760,7 +2843,33 @@ followed by `;` and `#else`/`#elif`, after statements) is worth a design.
 
 **Owner:** unassigned.
 
-## 69. A bare `end` without `;` in both arms of a split block ERRORs (12 B7a cells, unmasked by #41)
+## 69. A bare `end` without `;` in both arms of a split block ERRORs (12 B7a cells, unmasked by #41) — RESOLVED 2026-11-09
+
+**Resolution.** Two parts.
+
+1. *Scanner.* PREPROC_SPLIT_END's lookahead takes the `;` as optional: `end` at depth > 0 followed by `[;]` then
+   `#elif`/`#else`/`#endif`. `_preproc_end_branch` already read `seq(preproc_split_end, optional(';'))`, so the flat
+   group `begin A(); #if X end #else end #endif ; ...` now parses, decided inside the one identifier scan (no fork).
+   ts_external_scanner_states rows 9 and 11 offer PREPROC_SPLIT_END together with END_KEYWORD; there an `end` right
+   before a branch directive is now the split token, the decision `end ;` already got. This alone closed 24 B7a
+   cells (the `end` of a procedure/trigger body and split preambles), none of them the 12.
+2. *Grammar.* The 12 cells #41 broke are a NESTED group: the `end` slot of an enclosing split construct is itself
+   `#if X end #else end #endif ;`. `preproc_split_code_block_end` may now stand where that `end` stood: as an arm
+   of `_preproc_end_branch` / `_preproc_end_branch_later`, and as the closing `end` of `_split_stmts_end`,
+   `_else_begin_block` and `preproc_split_procedure_body`. The tree is the same node nested (a group of ends inside
+   the arm or slot it closes); the remaining `end`-slot rules (`code_block`, `preproc_split_block_close_after_endif`,
+   ...) were not widened because no B7a cell needs them. No conflict; STATE_COUNT +117 (+0.40%).
+
+B7a after a full run: 189 cells ERROR -> clean (the 12, the 24, and 153 more `first-replace` cells of the same
+templates in other hosts), 0 the other way; GAP 7,500 -> 7,311, CONSISTENT +189; groups split-code-block /
+first-replace and procedure-tail / first-replace closed (their `:error` witnesses removed); 186 cell rows added to
+`tools/b7_audit/assertions.tsv`. alc accepts every configuration of every probed shape
+(`tools/alc_probe/cases/item69/`, 6 cases); `bare-end-mixed.al` records that `#if X end #else end; #endif B();` is
+rejected with X (AL0111) and accepted without; the parser parses it clean, which is right: the file is valid in the
+configuration without X, and a multi-configuration tree must hold it (item 44 is about forms invalid in EVERY
+configuration, which this is not). Fixture
+`test/corpus/item_69_bare_split_end_test.txt` (6 cases). Production trees byte-identical in all four corpora
+(0 sites).
 
 **Established:** 2026-11-08, B7a re-run of split-code-block / split-if-begin / procedure-tail after the #41 scanner
 check (commit 971f6a2). The terminator placement `first-replace` (`#if X end #else end #endif ;`, the `;` after
@@ -2857,6 +2966,19 @@ must flip when it parses.
 readings: this is the configuration-dependent class of B12 (item 36). Decide the representation there first.
 
 **Owner:** unassigned (B12).
+
+## 75. A conditional `TableRelation` head of if-relations, then a shared `where` and a shared `else`, ERRORs
+
+**Established:** 2026-11-09, item 29's review (batch 3). `TableRelation = #if X if (A = const(1)) Item #else
+if (A = const(2)) Resource #endif where(A = const(1)) else Customer;` gives an ERROR over `else Customer`; alc accepts
+both configurations (`tools/alc_probe/cases/item29-relation-chain/s5-conditional-if-head-shared-where-else.al`). Item
+29 added a shared `where` after a conditional head, but not a further shared `else` after it (that grammar
+alternative was dropped because nothing probed it then). 0 production sites.
+
+**Next step:** add the shared else after the shared where in `_table_relation_rooted`, a fixture from the probe, and
+the oracle's relation joins for it (`engine._join_relation_where` then a `RelationContinuation`).
+
+**Owner:** unassigned.
 
 ## Longer-lived proposals, tracked separately
 

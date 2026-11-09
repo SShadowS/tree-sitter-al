@@ -73,7 +73,8 @@ def split_code_block_end(node, ctx) -> Lowered:
     No other edge changes. Every leaf of the chosen arm is kept; every leaf of
     the other arms is `inactive-arm`; directives are `directive`.
     """
-    ctx.policy(contracts.REGISTRY[node.kind], node)
+    if ctx.policy(contracts.REGISTRY[node.kind], node) == "unsupported":
+        raise LoweringError("unsupported-type", node, ctx.host())   # item 69: nested in a split host
     arms, endif = split_arms(node)
     arm = active_arm(arms, endif, node, ctx)
     if not arm:
@@ -183,7 +184,8 @@ def split_case_statement_end(node, ctx) -> Lowered:
     """Contract split-case-end. Host: a statement position (policy per registry).
     Children: `case_keyword expression of_keyword [body: case_body] pattern-run ':'`
     then an #if/#elif/#else group whose every arm is ONE
-    `preproc_split_case_end_branch` = `body [;] end_keyword ; following: statement_block`.
+    `preproc_split_case_end_branch` =
+    `body [decorations ;] case-groups* end_keyword ; following: statement_block`.
     Rewrites allowed:
       * the pieces before `#if` plus the chosen branch assemble ONE `case_statement`
         carrying this node's field, children in the reference's order:
@@ -192,6 +194,8 @@ def split_case_statement_end(node, ctx) -> Lowered:
         `body` statement and its optional `;`, form a NEW final `case_branch`
         appended to the `case_body` (created, field `body`, if the node had none);
         a Terminator the body slot emits is consumed by that case_branch;
+      * the `preproc_conditional_case` groups after that branch (deferred item 50) follow
+        it in the `case_body`, so their `;`s attach as in any case run (case_terminators);
       * the branch's `end_keyword` is the case_statement's `end_keyword`;
       * the `;` after it -> Terminator anchored to the case_statement;
       * the `following` statement_block is dissolved: its statements -> Following
@@ -223,9 +227,17 @@ def split_case_statement_end(node, ctx) -> Lowered:
         raise LoweringError("contract-shape", br, "expected `body [;] end ; following:` "
                             + " ".join(f"{c.field}:{c.kind}" if c.field else c.kind for c in br.children))
     end_kw, semi, following = tail
-    branch = Node("case_branch", True, None, patterns[0].start, br.children[ends[0] - 1].end,
-                  patterns + br.children[:ends[0]])
-    case_body = body.copy(children=body.children + [branch]) if body is not None         else Node("case_body", True, "body", branch.start, branch.end, [branch])
+    # Deferred item 50: the branch is `body [decorations ;]`; the groups after it are
+    # case_body siblings (`;` groups, more branches), which is where the flat grammar puts them.
+    head = br.children[:ends[0]]
+    own = next((i for i, c in enumerate(head) if c.kind == ";" and c.field is None), None)
+    cut_at = own + 1 if own is not None else next(i for i, c in enumerate(head) if c.field == "body") + 1
+    head, siblings = head[:cut_at], head[cut_at:]
+    if any(c.kind != "preproc_conditional_case" for c in siblings):
+        raise LoweringError("contract-shape", br, "expected only case groups after the final branch")
+    branch = Node("case_branch", True, None, patterns[0].start, head[-1].end, patterns + head)
+    items = [branch] + siblings
+    case_body = body.copy(children=body.children + items) if body is not None         else Node("case_body", True, "body", branch.start, items[-1].end, items)
     raw = Node("case_statement", True, node.field, node.start, end_kw.end, lead + [case_body, end_kw])
     r = lower(raw, ctx)
     f = lower(following, ctx.child(br.kind, "following"))
@@ -298,15 +310,28 @@ def table_relation_select(node, ctx) -> Lowered:
     items, frags = _select_arm(node, ctx)
     nodes = []
     if items and items[0].kind == "else_table_relation_fragment":
-        frag = items[0]
-        if len(frag.children) != 2 or frag.children[0].kind != "else_keyword":
-            raise LoweringError("contract-shape", frag, "expected `else else_relation:`")
-        else_kw = _lower_all(frag.children[:1], ctx, frag.kind)[0]   # an ordinary node: marked kept once
-        rel = _lower_all(frag.children[1:], ctx, frag.kind)[0]
-        frags.insert(0, RelationContinuation(None, else_kw, rel))
+        frags.insert(0, _relation_continuation(items[0], ctx))
+    elif items and ctx.parent_kind == "if_table_relation":
+        # Item 29, then_relation host: the flat parse holds the arm's simple_table_relation
+        # itself, with no table_relation_expression around it.
+        expr = items[0]
+        if expr.kind != "table_relation_expression" or len(expr.children) != 1 \
+                or expr.children[0].kind != "simple_table_relation":
+            raise LoweringError("contract-shape", node, "then_relation arm: expected one simple_table_relation")
+        nodes = [n.copy(field=node.field) for n in _lower_all(expr.children, ctx, expr.kind)]
     elif items:
         nodes = [n.copy(field=node.field) for n in _lower_all(items, ctx, node.kind)]
     return Lowered(nodes, frags)
+
+
+def _relation_continuation(frag, ctx):
+    """An else_table_relation_fragment -> its RelationContinuation (else-relation-join). Also
+    used by engine._lower_relation_item for the fragment as a direct table_relation_value child."""
+    if len(frag.children) != 2 or frag.children[0].kind != "else_keyword":
+        raise LoweringError("contract-shape", frag, "expected `else else_relation:`")
+    else_kw = _lower_all(frag.children[:1], ctx, frag.kind)[0]   # an ordinary node: marked kept once
+    rel = _lower_all(frag.children[1:], ctx, frag.kind)[0]
+    return RelationContinuation(None, else_kw, rel)
 
 
 PCPV = "preproc_conditional_property_value"

@@ -1,0 +1,512 @@
+================================================================================
+Item 69: a bare `end` in both arms of a split block, the `;` after #endif
+--
+Both `end`s used to ERROR: PREPROC_SPLIT_END wanted `end ;` before the
+directive, and #41 had killed the call_statement misreading that hid it. The
+`;` is now optional in the scanner's lookahead; the `;` after #endif is the
+host's separator. alc accepts X=0 and X=1
+(tools/alc_probe/cases/item69/bare-end-else.al).
+================================================================================
+codeunit 1 C
+{
+    procedure P(R: Boolean)
+    begin
+        if R then begin
+            A();
+#if X
+        end
+#else
+        end
+#endif
+        ;
+        B();
+    end;
+}
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (procedure
+        (procedure_keyword)
+        name: (identifier)
+        parameters: (parameter_list
+          (parameter
+            name: (identifier)
+            type: (type_specification
+              (basic_type))))
+        body: (code_block
+          (begin_keyword)
+          body: (statement_block
+            (if_statement
+              (if_keyword)
+              condition: (identifier)
+              (then_keyword)
+              then_branch: (code_block
+                (begin_keyword)
+                body: (statement_block
+                  (call_expression
+                    function: (identifier)
+                    arguments: (argument_list)))
+                (preproc_split_code_block_end
+                  (preproc_if
+                    (preproc_open)
+                    condition: (identifier))
+                  (preproc_split_end)
+                  (preproc_else)
+                  (preproc_split_end)
+                  (preproc_endif
+                    (preproc_close)))))
+            (call_expression
+              function: (identifier)
+              arguments: (argument_list)))
+          (end_keyword))))))
+
+================================================================================
+Item 69: a bare `end` in every arm of #if/#elif/#else
+--
+alc accepts every configuration of X and Y
+(tools/alc_probe/cases/item69/bare-end-elif.al).
+================================================================================
+codeunit 1 C
+{
+    procedure P(R: Boolean)
+    begin
+        if R then begin
+            A();
+#if X
+        end
+#elif Y
+        end
+#else
+        end
+#endif
+        ;
+        B();
+    end;
+}
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (procedure
+        (procedure_keyword)
+        name: (identifier)
+        parameters: (parameter_list
+          (parameter
+            name: (identifier)
+            type: (type_specification
+              (basic_type))))
+        body: (code_block
+          (begin_keyword)
+          body: (statement_block
+            (if_statement
+              (if_keyword)
+              condition: (identifier)
+              (then_keyword)
+              then_branch: (code_block
+                (begin_keyword)
+                body: (statement_block
+                  (call_expression
+                    function: (identifier)
+                    arguments: (argument_list)))
+                (preproc_split_code_block_end
+                  (preproc_if
+                    (preproc_open)
+                    condition: (identifier))
+                  (preproc_split_end)
+                  (preproc_elif
+                    condition: (identifier))
+                  (preproc_split_end)
+                  (preproc_else)
+                  (preproc_split_end)
+                  (preproc_endif
+                    (preproc_close)))))
+            (call_expression
+              function: (identifier)
+              arguments: (argument_list)))
+          (end_keyword))))))
+
+================================================================================
+Item 69: a procedure body closed by a bare `end` in both arms
+--
+The procedure's own `;` follows #endif. The next procedure stays a sibling.
+alc accepts both configurations (the B7a cell
+occ:_routine_regular_body:0.2.0@preproc_split_procedure#first-replace).
+================================================================================
+codeunit 1 C
+{
+    procedure P()
+    begin
+#if X
+    end
+#else
+    end
+#endif
+    ;
+
+    procedure Q()
+    begin
+    end;
+}
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (procedure
+        (procedure_keyword)
+        name: (identifier)
+        body: (code_block
+          (begin_keyword)
+          (preproc_split_code_block_end
+            (preproc_if
+              (preproc_open)
+              condition: (identifier))
+            (preproc_split_end)
+            (preproc_else)
+            (preproc_split_end)
+            (preproc_endif
+              (preproc_close)))))
+      (procedure
+        (procedure_keyword)
+        name: (identifier)
+        body: (code_block
+          (begin_keyword)
+          (end_keyword))))))
+
+================================================================================
+Item 69: an arm of a split block end is itself a group of bare `end`s
+--
+The B7a cells #41 turned into ERRORs (occ:_preproc_end_branch:0.1.0, first
+arm). The inner group is a preproc_split_code_block_end nested as the outer
+one's first arm. alc accepts every configuration of T and X
+(tools/alc_probe/cases/item69/nested-arm.al).
+================================================================================
+codeunit 50100 Demo
+{
+    procedure Run(R: Boolean)
+    begin
+        if R then begin
+            A();
+#if T
+#if X
+        end
+#else
+        end
+#endif
+        ;
+#else
+        end;
+#endif
+        B();
+    end;
+
+    local procedure A()
+    begin
+    end;
+
+    local procedure B()
+    begin
+    end;
+}
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (procedure
+        (procedure_keyword)
+        name: (identifier)
+        parameters: (parameter_list
+          (parameter
+            name: (identifier)
+            type: (type_specification
+              (basic_type))))
+        body: (code_block
+          (begin_keyword)
+          body: (statement_block
+            (if_statement
+              (if_keyword)
+              condition: (identifier)
+              (then_keyword)
+              then_branch: (code_block
+                (begin_keyword)
+                body: (statement_block
+                  (call_expression
+                    function: (identifier)
+                    arguments: (argument_list)))
+                (preproc_split_code_block_end
+                  (preproc_if
+                    (preproc_open)
+                    condition: (identifier))
+                  (preproc_split_code_block_end
+                    (preproc_if
+                      (preproc_open)
+                      condition: (identifier))
+                    (preproc_split_end)
+                    (preproc_else)
+                    (preproc_split_end)
+                    (preproc_endif
+                      (preproc_close)))
+                  (preproc_else)
+                  (preproc_split_end)
+                  (preproc_endif
+                    (preproc_close)))))
+            (call_expression
+              function: (identifier)
+              arguments: (argument_list)))
+          (end_keyword)))
+      (procedure
+        modifier: (procedure_modifier
+          (local_keyword))
+        (procedure_keyword)
+        name: (identifier)
+        body: (code_block
+          (begin_keyword)
+          (end_keyword)))
+      (procedure
+        modifier: (procedure_modifier
+          (local_keyword))
+        (procedure_keyword)
+        name: (identifier)
+        body: (code_block
+          (begin_keyword)
+          (end_keyword))))))
+
+================================================================================
+Item 69: the closing region of a block opened earlier holds a group of bare `end`s
+--
+B7a occ:_preproc_end_guard:3.0. The group stands where the region's
+end_keyword stood; the `;` after its #endif belongs to the region. alc accepts
+every configuration (tools/alc_probe/cases/item69/nested-end-guard.al).
+================================================================================
+codeunit 50100 Demo
+{
+    procedure Run(R: Boolean)
+    begin
+#if T
+        if R then A() else begin
+#else
+        if not R then A() else
+#endif
+        B();
+#if T
+#if X
+        end
+#else
+        end
+#endif
+        ;
+#endif
+        A();
+    end;
+
+    local procedure A()
+    begin
+    end;
+
+    local procedure B()
+    begin
+    end;
+}
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (procedure
+        (procedure_keyword)
+        name: (identifier)
+        parameters: (parameter_list
+          (parameter
+            name: (identifier)
+            type: (type_specification
+              (basic_type))))
+        body: (code_block
+          (begin_keyword)
+          body: (statement_block
+            (preproc_split_open_statement
+              (preproc_if
+                (preproc_open)
+                condition: (identifier))
+              (if_keyword)
+              condition: (identifier)
+              (then_keyword)
+              then_branch: (call_expression
+                function: (identifier)
+                arguments: (argument_list))
+              (else_keyword)
+              (begin_keyword)
+              (preproc_else)
+              (if_keyword)
+              condition: (unary_expression
+                operand: (identifier))
+              (then_keyword)
+              then_branch: (call_expression
+                function: (identifier)
+                arguments: (argument_list))
+              (else_keyword)
+              (preproc_endif
+                (preproc_close))
+              (call_expression
+                function: (identifier)
+                arguments: (argument_list))
+              (preproc_if
+                (preproc_open)
+                condition: (identifier))
+              (preproc_split_code_block_end
+                (preproc_if
+                  (preproc_open)
+                  condition: (identifier))
+                (preproc_split_end)
+                (preproc_else)
+                (preproc_split_end)
+                (preproc_endif
+                  (preproc_close)))
+              (preproc_endif
+                (preproc_close)))
+            (call_expression
+              function: (identifier)
+              arguments: (argument_list)))
+          (end_keyword)))
+      (procedure
+        modifier: (procedure_modifier
+          (local_keyword))
+        (procedure_keyword)
+        name: (identifier)
+        body: (code_block
+          (begin_keyword)
+          (end_keyword)))
+      (procedure
+        modifier: (procedure_modifier
+          (local_keyword))
+        (procedure_keyword)
+        name: (identifier)
+        body: (code_block
+          (begin_keyword)
+          (end_keyword))))))
+
+================================================================================
+Item 69: the `else begin` block of a split block end closes with a group of bare `end`s
+--
+B7a occ:_else_begin_block:4.0 (the split-code-block / first-replace witness).
+alc accepts every configuration (tools/alc_probe/cases/item69/nested-else-begin.al).
+================================================================================
+codeunit 50100 Demo
+{
+    procedure Run(R: Boolean)
+    begin
+        if R then begin
+            A();
+#if T
+        end else begin
+            B();
+#if X
+        end
+#else
+        end
+#endif
+        ;
+#else
+        end;
+#endif
+        A();
+    end;
+
+    local procedure A()
+    begin
+    end;
+
+    local procedure B()
+    begin
+    end;
+}
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (procedure
+        (procedure_keyword)
+        name: (identifier)
+        parameters: (parameter_list
+          (parameter
+            name: (identifier)
+            type: (type_specification
+              (basic_type))))
+        body: (code_block
+          (begin_keyword)
+          body: (statement_block
+            (if_statement
+              (if_keyword)
+              condition: (identifier)
+              (then_keyword)
+              then_branch: (code_block
+                (begin_keyword)
+                body: (statement_block
+                  (call_expression
+                    function: (identifier)
+                    arguments: (argument_list)))
+                (preproc_split_code_block_end
+                  (preproc_if
+                    (preproc_open)
+                    condition: (identifier))
+                  (end_keyword)
+                  (else_keyword)
+                  (begin_keyword)
+                  (call_expression
+                    function: (identifier)
+                    arguments: (argument_list))
+                  (preproc_split_code_block_end
+                    (preproc_if
+                      (preproc_open)
+                      condition: (identifier))
+                    (preproc_split_end)
+                    (preproc_else)
+                    (preproc_split_end)
+                    (preproc_endif
+                      (preproc_close)))
+                  (preproc_else)
+                  (preproc_split_end)
+                  (preproc_endif
+                    (preproc_close)))))
+            (call_expression
+              function: (identifier)
+              arguments: (argument_list)))
+          (end_keyword)))
+      (procedure
+        modifier: (procedure_modifier
+          (local_keyword))
+        (procedure_keyword)
+        name: (identifier)
+        body: (code_block
+          (begin_keyword)
+          (end_keyword)))
+      (procedure
+        modifier: (procedure_modifier
+          (local_keyword))
+        (procedure_keyword)
+        name: (identifier)
+        body: (code_block
+          (begin_keyword)
+          (end_keyword))))))

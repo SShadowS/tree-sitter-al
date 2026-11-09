@@ -1,0 +1,498 @@
+================================================================================
+Item 23: a Permissions list whose `;` is in the #if arms ends at #endif before a split procedure
+================================================================================
+
+codeunit 50101 X
+{
+    Permissions = tabledata Customer = r,
+#if CLEAN25
+                  tabledata Vendor = r;
+#else
+                  tabledata Item = r;
+#endif
+
+#if CLEAN25
+    procedure A()
+#else
+    procedure A(B: Integer)
+#endif
+    begin
+    end;
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (property
+        name: (property_name)
+        value: (tabledata_permission_list
+          (tabledata_permission
+            (tabledata_keyword)
+            table_name: (identifier)
+            permission: (permission_type))
+          (preproc_conditional_permissions
+            (preproc_if
+              (preproc_open)
+              condition: (identifier))
+            (tabledata_permission
+              (tabledata_keyword)
+              table_name: (identifier)
+              permission: (permission_type))
+            (preproc_else)
+            (tabledata_permission
+              (tabledata_keyword)
+              table_name: (identifier)
+              permission: (permission_type))
+            (preproc_endif
+              (preproc_close)))))
+      (preproc_split_procedure
+        (preproc_if
+          (preproc_open)
+          condition: (identifier))
+        (procedure_keyword)
+        name: (identifier)
+        (preproc_else)
+        (procedure_keyword)
+        name: (identifier)
+        parameters: (parameter_list
+          (parameter
+            name: (identifier)
+            type: (type_specification
+              (basic_type))))
+        (preproc_endif
+          (preproc_close))
+        body: (code_block
+          (begin_keyword)
+          (end_keyword))))))
+
+================================================================================
+Item 23: a Permissions list whose `;` is in the #if arms ends at #endif before a #if procedure
+================================================================================
+
+codeunit 50101 X
+{
+    Permissions = tabledata T1 = r,
+#if CLEAN25
+                  tabledata T2 = i;
+#else
+                  tabledata T3 = m;
+#endif
+
+#if CLEAN25
+    procedure A()
+    begin
+    end;
+#endif
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (property
+        name: (property_name)
+        value: (tabledata_permission_list
+          (tabledata_permission
+            (tabledata_keyword)
+            table_name: (identifier)
+            permission: (permission_type))
+          (preproc_conditional_permissions
+            (preproc_if
+              (preproc_open)
+              condition: (identifier))
+            (tabledata_permission
+              (tabledata_keyword)
+              table_name: (identifier)
+              permission: (permission_type))
+            (preproc_else)
+            (tabledata_permission
+              (tabledata_keyword)
+              table_name: (identifier)
+              permission: (permission_type))
+            (preproc_endif
+              (preproc_close)))))
+      (preproc_conditional
+        (preproc_if
+          (preproc_open)
+          condition: (identifier))
+        (procedure
+          (procedure_keyword)
+          name: (identifier)
+          body: (code_block
+            (begin_keyword)
+            (end_keyword)))
+        (preproc_endif
+          (preproc_close))))))
+
+================================================================================
+Item 23: a list opened by an empty #if, `;` in a later group's arms, then a #if var section
+================================================================================
+
+codeunit 50101 P
+{
+    Permissions =
+#if X
+#endif
+                  tabledata T1 = r,
+#if Y
+                  tabledata T2 = i;
+#else
+                  tabledata T3 = m;
+#endif
+#if X
+    var
+        G: Integer;
+#endif
+
+    procedure A()
+    begin
+    end;
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (property
+        name: (property_name)
+        value: (tabledata_permission_list
+          (preproc_conditional_permissions
+            (preproc_if
+              (preproc_open)
+              condition: (identifier))
+            (preproc_endif
+              (preproc_close)))
+          (tabledata_permission
+            (tabledata_keyword)
+            table_name: (identifier)
+            permission: (permission_type))
+          (preproc_conditional_permissions
+            (preproc_if
+              (preproc_open)
+              condition: (identifier))
+            (tabledata_permission
+              (tabledata_keyword)
+              table_name: (identifier)
+              permission: (permission_type))
+            (preproc_else)
+            (tabledata_permission
+              (tabledata_keyword)
+              table_name: (identifier)
+              permission: (permission_type))
+            (preproc_endif
+              (preproc_close)))))
+      (preproc_conditional
+        (preproc_if
+          (preproc_open)
+          condition: (identifier))
+        (var_section
+          (var_keyword)
+          body: (var_body
+            (variable_declaration
+              name: (identifier)
+              type: (type_specification
+                (basic_type)))))
+        (preproc_endif
+          (preproc_close)))
+      (procedure
+        (procedure_keyword)
+        name: (identifier)
+        body: (code_block
+          (begin_keyword)
+          (end_keyword))))))
+
+================================================================================
+Item 23: `;` in an arm with no #else, then a #if procedure (valid only when X)
+================================================================================
+
+codeunit 50101 P
+{
+    Permissions = tabledata T1 = r,
+#if X
+                  tabledata T2 = i;
+#endif
+#if X
+    procedure A()
+    begin
+    end;
+#endif
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (property
+        name: (property_name)
+        value: (tabledata_permission_list
+          (tabledata_permission
+            (tabledata_keyword)
+            table_name: (identifier)
+            permission: (permission_type))
+          (preproc_conditional_permissions
+            (preproc_if
+              (preproc_open)
+              condition: (identifier))
+            (tabledata_permission
+              (tabledata_keyword)
+              table_name: (identifier)
+              permission: (permission_type))
+            (preproc_endif
+              (preproc_close)))))
+      (preproc_conditional
+        (preproc_if
+          (preproc_open)
+          condition: (identifier))
+        (procedure
+          (procedure_keyword)
+          name: (identifier)
+          body: (code_block
+            (begin_keyword)
+            (end_keyword)))
+        (preproc_endif
+          (preproc_close))))))
+
+================================================================================
+Item 23: a group after a `;`-arm group still extends the list when it holds permissions
+================================================================================
+
+codeunit 50101 X
+{
+    Permissions = tabledata T1 = r,
+#if CLEAN25
+                  tabledata T2 = i;
+#else
+                  tabledata T3 = m,
+#endif
+#if not CLEAN25
+                  tabledata T4 = d;
+#endif
+
+    procedure A()
+    begin
+    end;
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (property
+        name: (property_name)
+        value: (tabledata_permission_list
+          (tabledata_permission
+            (tabledata_keyword)
+            table_name: (identifier)
+            permission: (permission_type))
+          (preproc_conditional_permissions
+            (preproc_if
+              (preproc_open)
+              condition: (identifier))
+            (tabledata_permission
+              (tabledata_keyword)
+              table_name: (identifier)
+              permission: (permission_type))
+            (preproc_else)
+            (tabledata_permission
+              (tabledata_keyword)
+              table_name: (identifier)
+              permission: (permission_type))
+            (preproc_endif
+              (preproc_close)))
+          (preproc_conditional_permissions
+            (preproc_if
+              (preproc_open)
+              condition: (preproc_not_expression
+                (identifier)))
+            (tabledata_permission
+              (tabledata_keyword)
+              table_name: (identifier)
+              permission: (permission_type))
+            (preproc_endif
+              (preproc_close)))))
+      (procedure
+        (procedure_keyword)
+        name: (identifier)
+        body: (code_block
+          (begin_keyword)
+          (end_keyword))))))
+
+================================================================================
+Item 23: an empty #if after a `;`-arm group stays a list element (GLR tie, the pre-fork tree)
+================================================================================
+
+codeunit 50101 X
+{
+    Permissions = tabledata T1 = r,
+#if X
+                  tabledata T2 = i;
+#else
+                  tabledata T3 = m;
+#endif
+#if Y
+#endif
+
+    procedure A()
+    begin
+    end;
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (property
+        name: (property_name)
+        value: (tabledata_permission_list
+          (tabledata_permission
+            (tabledata_keyword)
+            table_name: (identifier)
+            permission: (permission_type))
+          (preproc_conditional_permissions
+            (preproc_if
+              (preproc_open)
+              condition: (identifier))
+            (tabledata_permission
+              (tabledata_keyword)
+              table_name: (identifier)
+              permission: (permission_type))
+            (preproc_else)
+            (tabledata_permission
+              (tabledata_keyword)
+              table_name: (identifier)
+              permission: (permission_type))
+            (preproc_endif
+              (preproc_close)))
+          (preproc_conditional_permissions
+            (preproc_if
+              (preproc_open)
+              condition: (identifier))
+            (preproc_endif
+              (preproc_close)))))
+      (procedure
+        (procedure_keyword)
+        name: (identifier)
+        body: (code_block
+          (begin_keyword)
+          (end_keyword))))))
+
+================================================================================
+Item 23: a one-group Permissions value, `;` after #endif, stays a list opened by its element conditional
+================================================================================
+
+codeunit 50101 X
+{
+    Permissions =
+#if X
+        tabledata T1 = r
+#else
+        tabledata T2 = m
+#endif
+        ;
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (property
+        name: (property_name)
+        value: (tabledata_permission_list
+          (preproc_conditional_permissions
+            (preproc_if
+              (preproc_open)
+              condition: (identifier))
+            (tabledata_permission
+              (tabledata_keyword)
+              table_name: (identifier)
+              permission: (permission_type))
+            (preproc_else)
+            (tabledata_permission
+              (tabledata_keyword)
+              table_name: (identifier)
+              permission: (permission_type))
+            (preproc_endif
+              (preproc_close))))))))
+
+================================================================================
+Item 23: an empty decoration, then one group with no `;` in its arms, then the `;`
+--
+Tree-shape change of item 23 (0 production sites): main read this as the
+decoration plus a whole-value conditional; it is now the decoration plus one
+tabledata_permission_list holding the group, the tree the same input without
+the decoration already had. Found by the item 23 review (3,108 generated
+permission-list variants, main vs branch).
+================================================================================
+permissionset 50100 P
+{
+    Permissions =
+#if X
+#endif
+#if A
+        tabledata T2 = i
+#else
+        tabledata T3 = m
+#endif
+        ;
+}
+--------------------------------------------------------------------------------
+
+(source_file
+  (permissionset_declaration
+    (permissionset_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (property
+        name: (property_name)
+        (preproc_conditional_property_value
+          (preproc_if
+            (preproc_open)
+            condition: (identifier))
+          (preproc_endif
+            (preproc_close)))
+        value: (tabledata_permission_list
+          (preproc_conditional_permissions
+            (preproc_if
+              (preproc_open)
+              condition: (identifier))
+            (tabledata_permission
+              (tabledata_keyword)
+              table_name: (identifier)
+              permission: (permission_type))
+            (preproc_else)
+            (tabledata_permission
+              (tabledata_keyword)
+              table_name: (identifier)
+              permission: (permission_type))
+            (preproc_endif
+              (preproc_close))))))))
