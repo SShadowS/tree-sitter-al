@@ -7,6 +7,8 @@ public API — a change to node structure or field names is a **major** bump.
 
 ## [Unreleased]
 
+## [5.0.0] — 2026-11-09
+
 ### Changed (breaking: tree shape)
 
 - **A `case` statement's `else` is the last member of `case_body` (deferred item 22).** `case_else_branch` was a
