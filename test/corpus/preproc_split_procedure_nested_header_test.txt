@@ -1,0 +1,319 @@
+; Deferred item 77: an arm of a split procedure header may itself be an #if group of
+; headers (preproc_conditional_procedure_header), at any arm, with #elif, nested again.
+; Each ERRORed before. alc accepts every configuration of each, split and flat:
+; tools/alc_probe/cases/b7b1/pa__nested.al and tools/alc_probe/cases/item77/.
+
+========================================================================
+Nested header group in the first arm, attribute before the group (pa__nested.al)
+========================================================================
+codeunit 50100 P
+{
+    var
+        G: Integer;
+
+    [NonDebuggable]
+#if X
+#if Y
+    procedure Q()
+#else
+    procedure Q(I: Integer)
+#endif
+#else
+    procedure Q(J: Code[10])
+#endif
+    begin
+    end;
+}
+
+------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (var_section
+        (var_keyword)
+        body: (var_body
+          (variable_declaration
+            name: (identifier)
+            type: (type_specification
+              (basic_type)))))
+      (attribute_item
+        attribute: (attribute_content
+          name: (identifier)))
+      (preproc_split_procedure
+        (preproc_if
+          (preproc_open)
+          condition: (identifier))
+        (preproc_conditional_procedure_header
+          (preproc_if
+            (preproc_open)
+            condition: (identifier))
+          (procedure_keyword)
+          name: (identifier)
+          (preproc_else)
+          (procedure_keyword)
+          name: (identifier)
+          parameters: (parameter_list
+            (parameter
+              name: (identifier)
+              type: (type_specification
+                (basic_type))))
+          (preproc_endif
+            (preproc_close)))
+        (preproc_else)
+        (procedure_keyword)
+        name: (identifier)
+        parameters: (parameter_list
+          (parameter
+            name: (identifier)
+            type: (type_specification
+              (code_type
+                (code_keyword)
+                length: (integer)))))
+        (preproc_endif
+          (preproc_close))
+        body: (code_block
+          (begin_keyword)
+          (end_keyword))))))
+
+========================================================================
+Nested header group in the first arm, no attribute (item77/nested-first-arm-no-attr.al)
+========================================================================
+codeunit 50100 P
+{
+#if X
+#if Y
+    procedure Q()
+#else
+    procedure Q(I: Integer)
+#endif
+#else
+    procedure Q(J: Code[10])
+#endif
+    begin
+    end;
+}
+
+------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (preproc_split_procedure
+        (preproc_if
+          (preproc_open)
+          condition: (identifier))
+        (preproc_conditional_procedure_header
+          (preproc_if
+            (preproc_open)
+            condition: (identifier))
+          (procedure_keyword)
+          name: (identifier)
+          (preproc_else)
+          (procedure_keyword)
+          name: (identifier)
+          parameters: (parameter_list
+            (parameter
+              name: (identifier)
+              type: (type_specification
+                (basic_type))))
+          (preproc_endif
+            (preproc_close)))
+        (preproc_else)
+        (procedure_keyword)
+        name: (identifier)
+        parameters: (parameter_list
+          (parameter
+            name: (identifier)
+            type: (type_specification
+              (code_type
+                (code_keyword)
+                length: (integer)))))
+        (preproc_endif
+          (preproc_close))
+        body: (code_block
+          (begin_keyword)
+          (end_keyword))))))
+
+========================================================================
+Nested header group with #elif, outer #elif, return types, body var section (item77/nested-elif.al)
+========================================================================
+codeunit 50100 P
+{
+#if X
+#if Y
+    procedure Q(): Integer
+#elif Z
+    local procedure Q(I: Integer): Integer
+#else
+    procedure Q(L: Text): Integer
+#endif
+#elif Y
+    procedure Q(J: Code[10]): Integer
+#else
+    procedure Q(K: Boolean): Integer
+#endif
+    var
+        V: Integer;
+    begin
+        exit(V);
+    end;
+}
+
+------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (preproc_split_procedure
+        (preproc_if
+          (preproc_open)
+          condition: (identifier))
+        (preproc_conditional_procedure_header
+          (preproc_if
+            (preproc_open)
+            condition: (identifier))
+          (procedure_keyword)
+          name: (identifier)
+          return_type: (type_specification
+            (basic_type))
+          (preproc_elif
+            condition: (identifier))
+          modifier: (procedure_modifier
+            (local_keyword))
+          (procedure_keyword)
+          name: (identifier)
+          parameters: (parameter_list
+            (parameter
+              name: (identifier)
+              type: (type_specification
+                (basic_type))))
+          return_type: (type_specification
+            (basic_type))
+          (preproc_else)
+          (procedure_keyword)
+          name: (identifier)
+          parameters: (parameter_list
+            (parameter
+              name: (identifier)
+              type: (type_specification
+                (text_type
+                  (text_keyword)))))
+          return_type: (type_specification
+            (basic_type))
+          (preproc_endif
+            (preproc_close)))
+        (preproc_elif
+          condition: (identifier))
+        (procedure_keyword)
+        name: (identifier)
+        parameters: (parameter_list
+          (parameter
+            name: (identifier)
+            type: (type_specification
+              (code_type
+                (code_keyword)
+                length: (integer)))))
+        return_type: (type_specification
+          (basic_type))
+        (preproc_else)
+        (procedure_keyword)
+        name: (identifier)
+        parameters: (parameter_list
+          (parameter
+            name: (identifier)
+            type: (type_specification
+              (basic_type))))
+        return_type: (type_specification
+          (basic_type))
+        (preproc_endif
+          (preproc_close))
+        (var_section
+          (var_keyword)
+          body: (var_body
+            (variable_declaration
+              name: (identifier)
+              type: (type_specification
+                (basic_type)))))
+        body: (code_block
+          (begin_keyword)
+          body: (statement_block
+            (exit_statement
+              (exit_keyword)
+              return_value: (identifier)))
+          (end_keyword))))))
+
+========================================================================
+Nested header group in the #else arm, attribute before the group (item77/nested-second-arm.al)
+========================================================================
+codeunit 50100 P
+{
+    [NonDebuggable]
+#if X
+    procedure Q()
+#else
+#if Y
+    procedure Q(I: Integer)
+#else
+    procedure Q(J: Code[10])
+#endif
+#endif
+    begin
+    end;
+}
+
+------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (attribute_item
+        attribute: (attribute_content
+          name: (identifier)))
+      (preproc_split_procedure
+        (preproc_if
+          (preproc_open)
+          condition: (identifier))
+        (procedure_keyword)
+        name: (identifier)
+        (preproc_else)
+        (preproc_conditional_procedure_header
+          (preproc_if
+            (preproc_open)
+            condition: (identifier))
+          (procedure_keyword)
+          name: (identifier)
+          parameters: (parameter_list
+            (parameter
+              name: (identifier)
+              type: (type_specification
+                (basic_type))))
+          (preproc_else)
+          (procedure_keyword)
+          name: (identifier)
+          parameters: (parameter_list
+            (parameter
+              name: (identifier)
+              type: (type_specification
+                (code_type
+                  (code_keyword)
+                  length: (integer)))))
+          (preproc_endif
+            (preproc_close)))
+        (preproc_endif
+          (preproc_close))
+        body: (code_block
+          (begin_keyword)
+          (end_keyword))))))

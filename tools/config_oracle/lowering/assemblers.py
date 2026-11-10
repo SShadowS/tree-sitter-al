@@ -162,6 +162,9 @@ def split_procedure(node, ctx) -> Lowered:
         field, pieces keeping their own fields and order;
       * the chosen arm's `attribute_item`s are lifted out and become PRECEDING
         SIBLINGS of that procedure, in source order, as in the reference.
+      * item 77: a chosen arm that is one `preproc_conditional_procedure_header`
+        (a nested header group) is replaced by ITS chosen arm, recursively; its
+        directives are `directive`, its other arms `inactive-arm`.
     A chosen arm with no header (an #if without #else, inactive) is a shape
     error: there is no procedure to build. Fragments are refused.
     """
@@ -171,6 +174,11 @@ def split_procedure(node, ctx) -> Lowered:
         raise LoweringError("contract-shape", node, "no #endif")
     arms, endif = split_arms(node.copy(children=node.children[:cut + 1]))
     header = active_arm(arms, endif, node, ctx)
+    host = node
+    while len(header) == 1 and header[0].kind == "preproc_conditional_procedure_header":
+        ctx.child(host.kind, "<children>").policy(contracts.REGISTRY[header[0].kind], header[0])
+        host = header[0]
+        header = active_arm(*split_arms(host), host, ctx)
     if not any(h.kind == "procedure_keyword" for h in header):
         raise LoweringError("contract-shape", node, "chosen arm has no procedure header")
     attrs = _lower_all([h for h in header if h.kind == "attribute_item"], ctx, node.kind)
@@ -311,6 +319,11 @@ def table_relation_select(node, ctx) -> Lowered:
     nodes = []
     if items and items[0].kind == "else_table_relation_fragment":
         frags.insert(0, _relation_continuation(items[0], ctx))
+    elif items and items[0].kind == node.kind:
+        # Item 78: an else-group arm that is itself a group of else arms; its continuation
+        # comes before this arm's own `;` (tools/alc_probe/cases/item29-relation-chain/s11-*).
+        r = lower(items[0], ctx.child(node.kind, "<children>"))
+        nodes, frags = r.nodes, r.frags + frags
     elif items and ctx.parent_kind == "if_table_relation":
         # Item 29, then_relation host: the flat parse holds the arm's simple_table_relation
         # itself, with no table_relation_expression around it.

@@ -7,6 +7,87 @@ public API — a change to node structure or field names is a **major** bump.
 
 ## [Unreleased]
 
+### Fixed
+
+- **`#if` groups in the member list of an `Option` type parse (deferred item 46, row B7b-1e).** `X: Option A
+  #if X , B #endif;`, a group that replaces the first member, holds only a `,`, holds blank slots, nests, or sits next
+  to another group, in a variable, a parameter, a return type or an interface procedure's return type, ERRORed;
+  alc accepts every configuration (the B7a witnesses' probes, `tools/alc_probe/cases/b7b1e/`). `option_type` now
+  has its own member list (still `option_member_list`; groups are `preproc_conditional_option_members`, whose arms
+  hold members, blank slots and nested groups, as the keyed `OptionMembers` list since item 37). The item-46 shape
+  `X: Option #if X not #endif ,B;` parses too (at the `OptionMembers` property it parses since item 37).
+  - **Tree shape:** no change on input that parsed before: the four corpora's trees are byte-identical, and an
+    empty group after a parameter's, a return type's or an interface procedure's option type stays the host's
+    (`preproc_conditional_parameters`, `preproc_pragma_only`, an interface `preproc_conditional`). `node-types.json`
+    unchanged. The generic property value's `option_member_list` (item 65) is untouched.
+  - **Still ERRORs (as before):** a trailing all-empty group in a variable's option type (`V: Option A #if X
+    #endif;`, item 80) and a bare `Option` directly followed by a group its host owns (item 79).
+  - **Config oracle:** an option type's member list emptied by its groups (`V: Option #if X A, B #endif;` with X
+    undefined) is removed (`list-value-empty`), as flat `Option` has no list.
+  - **Size:** STATE_COUNT −561 (the option type no longer shares `option_member_list`'s property-value states),
+    LARGE_STATE_COUNT −722, SYMBOL_COUNT +2, parser.c −2.95 MB (−4.2%); three `conflicts` entries added and one
+    removed, one `prec.dynamic(-1)`.
+  - **B7a:** `option-members` GAP 436 → 136 (the 300 option-type cells; what is left is the 135 `;`-group
+    terminator cells inside a whole-value `OptionMembers` arm and item 37's bare-`;` seed). The option-type cells
+    are now UNCHECKED ("no structural assertion") like their property-host siblings, except the `one-elem` ones,
+    which got cell assertions; 27 option-members class assertions re-recorded (the failing option-type cell is gone).
+  - **Recovery tree only:** the deliberate-negative `b7b2_crossing_gap_test.txt` list-literal witness recovers
+    differently (an `ERROR` inside the tail instead of a `MISSING` `#endif`); its oracle class follows.
+- **A conditional `TableRelation` head followed by a conditional group of `else` arms parses (deferred item 78).**
+  `TableRelation = #if X if (..) Item #else if (..) Resource #endif where(..) #if Y else Customer; #else else Vendor;
+  #endif` ERRORed; alc accepts all four configurations, with or without the shared `where` and with the `;` inside
+  the arms or after `#endif` (`tools/alc_probe/cases/item29-relation-chain/s7*`, `s8*`). The `table_relation_value`
+  now holds the head's `preproc_conditional_table_relation`, the optional `where_clause` and a second
+  `preproc_conditional_table_relation` whose arms are `else_table_relation_fragment`s, as siblings: the forms items
+  29 and 75 use. The config oracle validates every configuration with its existing joins; it now also lowers a nested
+  group of else arms (`table_relation_select`, one more registered host). No
+  tree changes on any input that parsed before: the four corpora are byte-identical, and an all-empty group after the
+  shared `where` stays a property decoration (`preproc_conditional_property_value`, pinned). An arm of the else group
+  may itself be a nested group of else arms (probe `s11-*`, alc accepts all eight configurations), so
+  `node-types.json` gains one child type: `preproc_conditional_table_relation` may now contain a
+  `preproc_conditional_table_relation` (additive; no existing tree changes). The same else group after a conditional head of plain targets (`#if X Item #else Resource #endif where(..)
+  #if Y else C; #else else D; #endif`, AL0149 in every configuration, probe `s10-*`) now parses instead of
+  ERRORing: over-acceptance, item 44. So does a one-arm else group after a conditional if-head (`… where(..)
+  #if Y else Customer; #endif`, AL0104 without Y), as main already did after a plain if-head. Size: STATE_COUNT +152, parser.c +183 KB (+0.26%); two new GLR conflicts
+  (`[_table_relation_rooted]`, `[_table_relation_rooted, _table_relation_keyed_split]`), reached only after a
+  conditional `TableRelation` head's `where`. Still an ERROR: an `#if` group at an else arm's `;` (`else Customer
+  #if Z #endif ;`, alc accepts, probe `s12-*`), deferred item 81.
+- **A nested `#if` choosing a procedure header parses (deferred item 77).** `#if X #if Y procedure Q() #else
+  procedure Q(I: Integer) #endif #else procedure Q(J: Code[10]) #endif begin end;` ERRORed, with or without an
+  attribute before it; alc accepts every configuration, split and flat (`tools/alc_probe/cases/b7b1/pa__nested.al`,
+  `tools/alc_probe/cases/item77/`). An arm of `preproc_split_procedure` may now be a nested group of headers, a new
+  node `preproc_conditional_procedure_header` (`#if` header arms, `#elif`, `#else`, nesting again), in any arm.
+  Fixture `test/corpus/preproc_split_procedure_nested_header_test.txt`; the config oracle selects the nested arm
+  (contract split-procedure) and validates every configuration.
+  - **Tree shape:** only input that ERRORed before changes; no valid tree changes (all four corpora byte-identical,
+    0 production sites). Not a breaking change.
+  - **`node-types.json`:** new named type `preproc_conditional_procedure_header`; `preproc_split_procedure` may
+    contain it.
+  - **Size:** STATE_COUNT +219, SYMBOL_COUNT +1, parser.c +0.48%, no new conflicts.
+  - **B7a (51 new cells):** the new node is a host of the parameter-list separator (every alc-accepted cell
+    passes; the 6 cells alc rejects in one configuration join the existing OVERACCEPT row, item 44's limit) and of
+    the procedure-header terminator, where it joins the existing GAP of `preproc_split_procedure` and
+    `preproc_split_procedure_preamble` (a `;` after a header inside an arm still ERRORs; GAP 7,227 -> 7,248; 12
+    class assertions `terminator/procedure-header/*` re-recorded `mixed:3/5` -> `mixed:3/6`).
+  - Still ERRORs (deferred items 82, 83): an attribute inside an outer arm before the nested group, and a nested
+    group of header + `var` section (`preproc_split_procedure_preamble`'s arms).
+- **`end;` after statements in the FIRST arm of a split block end (deferred item 68, the issue #42 shape
+  mirrored).** `B(); #if A C(); end; #else end; #endif` ERRORed from the `#if` to the end of the object; alc
+  accepts every configuration of it and of four variants (statements in both arms, an `#elif` arm, a nested
+  `if … then begin` block, a bare `end` with the `;` after `#endif`: `tools/alc_probe/cases/item68/`). The first
+  arm of `preproc_split_code_block_end` now takes what #42 gave the later arms: statements, then `end_keyword`
+  (or a nested group of ends), then an optional `;`. The statements are direct children of
+  `preproc_split_code_block_end`, as in a later arm. Input that ERRORed before is the only input whose tree
+  changes: all 70,354 production trees of the four corpora are byte-identical, `node-types.json` is unchanged,
+  so this is not a tree-shape change on valid input. Two declared conflicts widen and one is added
+  (`[_split_stmts_end, _preproc_end_branch_later]`, `#if stmts end ;`, decided by the token after the `;`);
+  STATE_COUNT −14. One deliberate negative (`#endif;`, AL0631) recovers differently: the trigger now survives
+  with the ERROR inside its split block end and a MISSING `#endif`. Fixture
+  `test/corpus/item_68_first_arm_split_end_test.txt` (5 cases). Over-acceptance widened (item 44's class): the
+  one-arm form after statements, `B(); #if A C(); end; #endif` (no `#else`, so with A undefined the block has no
+  `end`, which alc rejects), now parses clean, as the same form without statements (`B(); #if A end; #endif`)
+  already did on main.
+
 ## [5.0.0] — 2026-11-09
 
 ### Changed (breaking: tree shape)

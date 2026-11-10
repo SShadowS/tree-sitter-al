@@ -147,3 +147,32 @@ def test_item75_where_join_is_load_bearing(al_parser, monkeypatch):
     monkeypatch.setattr(engine, "_join_relation_where", lambda value: None)
     v = witness.verdicts(al_parser, SHARED_WHERE_ELSE)
     assert any(s == "discrepancy" for s, _ in v.values()), v
+
+
+# Item 78: a conditional head of if-relations, an optional shared where, then a GROUP of
+# else arms, the `;` inside the arms or after #endif (tools/alc_probe/cases/
+# item29-relation-chain/s7*, s8*: alc accepts all four configurations of each).
+_HEAD = b"\n#if X\n if (A = const(1)) Item\n#else\n if (A = const(2)) Resource\n#endif\n"
+ELSE_GROUP = {
+    "where-semi-inside": _field(_HEAD + b" where(A = const(1))\n#if Y\n else Customer;\n#else\n else Vendor;\n#endif\n"),
+    "where-semi-after": _field(_HEAD + b" where(A = const(1))\n#if Y\n else Customer\n#else\n else Vendor\n#endif\n ;"),
+    "semi-inside": _field(_HEAD + b"#if Y\n else Customer;\n#else\n else Vendor;\n#endif\n"),
+    "semi-after": _field(_HEAD + b"#if Y\n else Customer\n#else\n else Vendor\n#endif\n ;"),
+    # an arm that is itself a group of else arms (s11-*)
+    "nested": _field(_HEAD + b"#if Y\n#if Z\n else Customer\n#else\n else Vendor\n#endif\n ;\n#else\n else Item;\n#endif\n"),
+}
+
+
+def test_item78_conditional_else_group_every_config(al_parser):
+    for name, src in ELSE_GROUP.items():
+        witness.assert_produces(al_parser, src, "else_table_relation_fragment")
+        assert len(witness.verdicts(al_parser, src)) == (8 if name == "nested" else 4), name
+        witness.assert_all_pass(al_parser, src)
+
+
+def test_item78_where_join_is_load_bearing(al_parser, monkeypatch):
+    from tools.config_oracle.lowering import engine
+    monkeypatch.setattr(engine, "_join_relation_where", lambda value: None)
+    for name in ("where-semi-inside", "where-semi-after"):
+        v = witness.verdicts(al_parser, ELSE_GROUP[name])
+        assert any(s == "discrepancy" for s, _ in v.values()), (name, v)

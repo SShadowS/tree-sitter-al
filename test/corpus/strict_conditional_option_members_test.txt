@@ -1,0 +1,1538 @@
+========================================================================
+strict option members: adjacent-compl (was B7a GAP option-members / adjacent-compl, representative occ:_option_member_list_empty_open:0.2.0.0.0@option_type#adjacent-compl)
+========================================================================
+codeunit 50101 P
+{
+    var
+        X: Option
+#if TPL
+#endif
+A
+#if X
+, B
+#endif
+#if not X
+, C
+#endif
+;
+}
+------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (var_section
+        (var_keyword)
+        body: (var_body
+          (variable_declaration
+            name: (identifier)
+            type: (type_specification
+              (option_type
+                (option_keyword)
+                (option_member_list
+                  (preproc_conditional_option_members
+                    (preproc_if
+                      (preproc_open)
+                      condition: (identifier))
+                    (preproc_endif
+                      (preproc_close)))
+                  (option_member
+                    (identifier))
+                  (preproc_conditional_option_members
+                    (preproc_if
+                      (preproc_open)
+                      condition: (identifier))
+                    (option_member
+                      (identifier))
+                    (preproc_endif
+                      (preproc_close)))
+                  (preproc_conditional_option_members
+                    (preproc_if
+                      (preproc_open)
+                      condition: (preproc_not_expression
+                        (identifier)))
+                    (option_member
+                      (identifier))
+                    (preproc_endif
+                      (preproc_close))))))))))))
+
+========================================================================
+strict option members: adjacent-indep (was B7a GAP option-members / adjacent-indep, representative occ:_option_member_list_empty_open:0.2.0.0.0@option_type#adjacent-indep)
+========================================================================
+codeunit 50101 P
+{
+    var
+        X: Option
+#if TPL
+#endif
+A
+#if X
+, B
+#endif
+#if Y
+, C
+#endif
+;
+}
+------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (var_section
+        (var_keyword)
+        body: (var_body
+          (variable_declaration
+            name: (identifier)
+            type: (type_specification
+              (option_type
+                (option_keyword)
+                (option_member_list
+                  (preproc_conditional_option_members
+                    (preproc_if
+                      (preproc_open)
+                      condition: (identifier))
+                    (preproc_endif
+                      (preproc_close)))
+                  (option_member
+                    (identifier))
+                  (preproc_conditional_option_members
+                    (preproc_if
+                      (preproc_open)
+                      condition: (identifier))
+                    (option_member
+                      (identifier))
+                    (preproc_endif
+                      (preproc_close)))
+                  (preproc_conditional_option_members
+                    (preproc_if
+                      (preproc_open)
+                      condition: (identifier))
+                    (option_member
+                      (identifier))
+                    (preproc_endif
+                      (preproc_close))))))))))))
+
+========================================================================
+strict option members: both-in-arm (was B7a GAP option-members / both-in-arm, representative occ:_option_member_list_empty_open:0.2.0.0.0@option_type#both-in-arm)
+========================================================================
+codeunit 50101 P
+{
+    var
+        X: Option
+#if TPL
+#endif
+A
+#if X
+, B ,
+#else
+,
+#endif
+C
+;
+}
+------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (var_section
+        (var_keyword)
+        body: (var_body
+          (variable_declaration
+            name: (identifier)
+            type: (type_specification
+              (option_type
+                (option_keyword)
+                (option_member_list
+                  (preproc_conditional_option_members
+                    (preproc_if
+                      (preproc_open)
+                      condition: (identifier))
+                    (preproc_endif
+                      (preproc_close)))
+                  (option_member
+                    (identifier))
+                  (preproc_conditional_option_members
+                    (preproc_if
+                      (preproc_open)
+                      condition: (identifier))
+                    (option_member
+                      (identifier))
+                    (preproc_else)
+                    (preproc_endif
+                      (preproc_close)))
+                  (option_member
+                    (identifier)))))))))))
+
+========================================================================
+strict option members: count-differs (was B7a GAP option-members / count-differs, representative occ:_option_member_list_empty_open:0.2.0.0.0@option_type#count-differs)
+========================================================================
+codeunit 50101 P
+{
+    var
+        X: Option
+#if TPL
+#endif
+A
+#if X
+, B , C
+#else
+, "D E"
+#endif
+;
+}
+------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (var_section
+        (var_keyword)
+        body: (var_body
+          (variable_declaration
+            name: (identifier)
+            type: (type_specification
+              (option_type
+                (option_keyword)
+                (option_member_list
+                  (preproc_conditional_option_members
+                    (preproc_if
+                      (preproc_open)
+                      condition: (identifier))
+                    (preproc_endif
+                      (preproc_close)))
+                  (option_member
+                    (identifier))
+                  (preproc_conditional_option_members
+                    (preproc_if
+                      (preproc_open)
+                      condition: (identifier))
+                    (option_member
+                      (identifier))
+                    (option_member
+                      (identifier))
+                    (preproc_else)
+                    (option_member
+                      (quoted_identifier))
+                    (preproc_endif
+                      (preproc_close))))))))))))
+
+========================================================================
+strict option members: elif (was B7a GAP option-members / elif, representative occ:_option_member_list_empty_open:0.2.0.0.0@option_type#elif)
+========================================================================
+codeunit 50101 P
+{
+    var
+        X: Option
+#if TPL
+#endif
+A
+#if X
+, B
+#elif Y
+, C
+#endif
+, "D E"
+;
+}
+------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (var_section
+        (var_keyword)
+        body: (var_body
+          (variable_declaration
+            name: (identifier)
+            type: (type_specification
+              (option_type
+                (option_keyword)
+                (option_member_list
+                  (preproc_conditional_option_members
+                    (preproc_if
+                      (preproc_open)
+                      condition: (identifier))
+                    (preproc_endif
+                      (preproc_close)))
+                  (option_member
+                    (identifier))
+                  (preproc_conditional_option_members
+                    (preproc_if
+                      (preproc_open)
+                      condition: (identifier))
+                    (option_member
+                      (identifier))
+                    (preproc_elif
+                      condition: (identifier))
+                    (option_member
+                      (identifier))
+                    (preproc_endif
+                      (preproc_close)))
+                  (option_member
+                    (quoted_identifier)))))))))))
+
+========================================================================
+strict option members: empty-list (was B7a GAP option-members / empty-list, representative occ:_option_member_list_empty_open:0.2.0.0.0@option_type#empty-list)
+========================================================================
+codeunit 50101 P
+{
+    var
+        X: Option
+#if TPL
+#endif
+#if X
+A , B
+#endif
+;
+}
+------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (var_section
+        (var_keyword)
+        body: (var_body
+          (variable_declaration
+            name: (identifier)
+            type: (type_specification
+              (option_type
+                (option_keyword)
+                (option_member_list
+                  (preproc_conditional_option_members
+                    (preproc_if
+                      (preproc_open)
+                      condition: (identifier))
+                    (preproc_endif
+                      (preproc_close)))
+                  (preproc_conditional_option_members
+                    (preproc_if
+                      (preproc_open)
+                      condition: (identifier))
+                    (option_member
+                      (identifier))
+                    (option_member
+                      (identifier))
+                    (preproc_endif
+                      (preproc_close))))))))))))
+
+========================================================================
+strict option members: first-replace (was B7a GAP option-members / first-replace, representative occ:_option_member_list_empty_open:0.2.0.0.0@option_type#first-replace)
+========================================================================
+codeunit 50101 P
+{
+    var
+        X: Option
+#if TPL
+#endif
+#if X
+A
+#else
+B
+#endif
+, C
+;
+}
+------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (var_section
+        (var_keyword)
+        body: (var_body
+          (variable_declaration
+            name: (identifier)
+            type: (type_specification
+              (option_type
+                (option_keyword)
+                (option_member_list
+                  (preproc_conditional_option_members
+                    (preproc_if
+                      (preproc_open)
+                      condition: (identifier))
+                    (preproc_endif
+                      (preproc_close)))
+                  (preproc_conditional_option_members
+                    (preproc_if
+                      (preproc_open)
+                      condition: (identifier))
+                    (option_member
+                      (identifier))
+                    (preproc_else)
+                    (option_member
+                      (identifier))
+                    (preproc_endif
+                      (preproc_close)))
+                  (option_member
+                    (identifier)))))))))))
+
+========================================================================
+strict option members: holes-lead (was B7a GAP option-members / holes-lead, representative occ:_option_member_list_empty_open:0.2.0.0.0@option_type#holes-lead)
+========================================================================
+codeunit 50101 P
+{
+    var
+        X: Option
+#if TPL
+#endif
+#if X
+,
+#endif
+A , B
+;
+}
+------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (var_section
+        (var_keyword)
+        body: (var_body
+          (variable_declaration
+            name: (identifier)
+            type: (type_specification
+              (option_type
+                (option_keyword)
+                (option_member_list
+                  (preproc_conditional_option_members
+                    (preproc_if
+                      (preproc_open)
+                      condition: (identifier))
+                    (preproc_endif
+                      (preproc_close)))
+                  (preproc_conditional_option_members
+                    (preproc_if
+                      (preproc_open)
+                      condition: (identifier))
+                    (preproc_endif
+                      (preproc_close)))
+                  (option_member
+                    (identifier))
+                  (option_member
+                    (identifier)))))))))))
+
+========================================================================
+strict option members: holes-trail (was B7a GAP option-members / holes-trail, representative occ:_option_member_list_empty_open:0.2.0.0.0@option_type#holes-trail)
+========================================================================
+codeunit 50101 P
+{
+    var
+        X: Option
+#if TPL
+#endif
+A , B
+#if X
+,
+#endif
+;
+}
+------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (var_section
+        (var_keyword)
+        body: (var_body
+          (variable_declaration
+            name: (identifier)
+            type: (type_specification
+              (option_type
+                (option_keyword)
+                (option_member_list
+                  (preproc_conditional_option_members
+                    (preproc_if
+                      (preproc_open)
+                      condition: (identifier))
+                    (preproc_endif
+                      (preproc_close)))
+                  (option_member
+                    (identifier))
+                  (option_member
+                    (identifier))
+                  (preproc_conditional_option_members
+                    (preproc_if
+                      (preproc_open)
+                      condition: (identifier))
+                    (preproc_endif
+                      (preproc_close))))))))))))
+
+========================================================================
+strict option members: lead-optional (was B7a GAP option-members / lead-optional, representative occ:_option_member_list_empty_open:0.2.0.0.0@option_type#lead-optional)
+========================================================================
+codeunit 50101 P
+{
+    var
+        X: Option
+#if TPL
+#endif
+#if X
+A ,
+#endif
+B
+;
+}
+------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (var_section
+        (var_keyword)
+        body: (var_body
+          (variable_declaration
+            name: (identifier)
+            type: (type_specification
+              (option_type
+                (option_keyword)
+                (option_member_list
+                  (preproc_conditional_option_members
+                    (preproc_if
+                      (preproc_open)
+                      condition: (identifier))
+                    (preproc_endif
+                      (preproc_close)))
+                  (preproc_conditional_option_members
+                    (preproc_if
+                      (preproc_open)
+                      condition: (identifier))
+                    (option_member
+                      (identifier))
+                    (preproc_endif
+                      (preproc_close)))
+                  (option_member
+                    (identifier)))))))))))
+
+========================================================================
+strict option members: nested (was B7a GAP option-members / nested, representative occ:_option_member_list_empty_open:0.2.0.0.0@option_type#nested)
+========================================================================
+codeunit 50101 P
+{
+    var
+        X: Option
+#if TPL
+#endif
+A
+#if X
+, B
+#if Y
+, C
+#endif
+#endif
+, "D E"
+;
+}
+------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (var_section
+        (var_keyword)
+        body: (var_body
+          (variable_declaration
+            name: (identifier)
+            type: (type_specification
+              (option_type
+                (option_keyword)
+                (option_member_list
+                  (preproc_conditional_option_members
+                    (preproc_if
+                      (preproc_open)
+                      condition: (identifier))
+                    (preproc_endif
+                      (preproc_close)))
+                  (option_member
+                    (identifier))
+                  (preproc_conditional_option_members
+                    (preproc_if
+                      (preproc_open)
+                      condition: (identifier))
+                    (option_member
+                      (identifier))
+                    (preproc_conditional_option_members
+                      (preproc_if
+                        (preproc_open)
+                        condition: (identifier))
+                      (option_member
+                        (identifier))
+                      (preproc_endif
+                        (preproc_close)))
+                    (preproc_endif
+                      (preproc_close)))
+                  (option_member
+                    (quoted_identifier)))))))))))
+
+========================================================================
+strict option members: one-elem (was B7a GAP option-members / one-elem, representative occ:_option_member_list_empty_open:0.2.0.0.0@option_type#one-elem)
+========================================================================
+codeunit 50101 P
+{
+    var
+        X: Option
+#if TPL
+#endif
+#if X
+A , B
+#else
+A
+#endif
+;
+}
+------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (var_section
+        (var_keyword)
+        body: (var_body
+          (variable_declaration
+            name: (identifier)
+            type: (type_specification
+              (option_type
+                (option_keyword)
+                (option_member_list
+                  (preproc_conditional_option_members
+                    (preproc_if
+                      (preproc_open)
+                      condition: (identifier))
+                    (preproc_endif
+                      (preproc_close)))
+                  (preproc_conditional_option_members
+                    (preproc_if
+                      (preproc_open)
+                      condition: (identifier))
+                    (option_member
+                      (identifier))
+                    (option_member
+                      (identifier))
+                    (preproc_else)
+                    (option_member
+                      (identifier))
+                    (preproc_endif
+                      (preproc_close))))))))))))
+
+========================================================================
+strict option members: sep-before (was B7a GAP option-members / sep-before, representative occ:_option_member_list_empty_open:0.2.0.0.0@option_type#sep-before)
+========================================================================
+codeunit 50101 P
+{
+    var
+        X: Option
+#if TPL
+#endif
+A
+#if X
+, B
+#endif
+, C
+;
+}
+------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (var_section
+        (var_keyword)
+        body: (var_body
+          (variable_declaration
+            name: (identifier)
+            type: (type_specification
+              (option_type
+                (option_keyword)
+                (option_member_list
+                  (preproc_conditional_option_members
+                    (preproc_if
+                      (preproc_open)
+                      condition: (identifier))
+                    (preproc_endif
+                      (preproc_close)))
+                  (option_member
+                    (identifier))
+                  (preproc_conditional_option_members
+                    (preproc_if
+                      (preproc_open)
+                      condition: (identifier))
+                    (option_member
+                      (identifier))
+                    (preproc_endif
+                      (preproc_close)))
+                  (option_member
+                    (identifier)))))))))))
+
+========================================================================
+strict option members: sep-before-end (was B7a GAP option-members / sep-before-end, representative occ:_option_member_list_empty_open:0.2.0.0.0@option_type#sep-before-end)
+========================================================================
+codeunit 50101 P
+{
+    var
+        X: Option
+#if TPL
+#endif
+A
+#if X
+, B
+#endif
+;
+}
+------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (var_section
+        (var_keyword)
+        body: (var_body
+          (variable_declaration
+            name: (identifier)
+            type: (type_specification
+              (option_type
+                (option_keyword)
+                (option_member_list
+                  (preproc_conditional_option_members
+                    (preproc_if
+                      (preproc_open)
+                      condition: (identifier))
+                    (preproc_endif
+                      (preproc_close)))
+                  (option_member
+                    (identifier))
+                  (preproc_conditional_option_members
+                    (preproc_if
+                      (preproc_open)
+                      condition: (identifier))
+                    (option_member
+                      (identifier))
+                    (preproc_endif
+                      (preproc_close))))))))))))
+
+========================================================================
+strict option members: sep-only (was B7a GAP option-members / sep-only, representative occ:_option_member_list_empty_open:0.2.0.0.0@option_type#sep-only)
+========================================================================
+codeunit 50101 P
+{
+    var
+        X: Option
+#if TPL
+#endif
+A
+#if X
+,
+#else
+,
+#endif
+B
+;
+}
+------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (var_section
+        (var_keyword)
+        body: (var_body
+          (variable_declaration
+            name: (identifier)
+            type: (type_specification
+              (option_type
+                (option_keyword)
+                (option_member_list
+                  (preproc_conditional_option_members
+                    (preproc_if
+                      (preproc_open)
+                      condition: (identifier))
+                    (preproc_endif
+                      (preproc_close)))
+                  (option_member
+                    (identifier))
+                  (preproc_conditional_option_members
+                    (preproc_if
+                      (preproc_open)
+                      condition: (identifier))
+                    (preproc_else)
+                    (preproc_endif
+                      (preproc_close)))
+                  (option_member
+                    (identifier)))))))))))
+
+========================================================================
+strict option members: a group before the separator, an elif and an else arm (variable)
+========================================================================
+codeunit 50100 P
+{
+    var
+        V: Option A
+#if X
+            , B
+#elif Y
+            , C
+#else
+            , D
+#endif
+            ;
+}
+------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (var_section
+        (var_keyword)
+        body: (var_body
+          (variable_declaration
+            name: (identifier)
+            type: (type_specification
+              (option_type
+                (option_keyword)
+                (option_member_list
+                  (option_member
+                    (identifier))
+                  (preproc_conditional_option_members
+                    (preproc_if
+                      (preproc_open)
+                      condition: (identifier))
+                    (option_member
+                      (identifier))
+                    (preproc_elif
+                      condition: (identifier))
+                    (option_member
+                      (identifier))
+                    (preproc_else)
+                    (option_member
+                      (identifier))
+                    (preproc_endif
+                      (preproc_close))))))))))))
+
+========================================================================
+strict option members: blank slots inside an arm keep every separator
+========================================================================
+codeunit 50100 P
+{
+    var
+        V: Option ,
+#if X
+            A,,
+#endif
+            ,B,;
+}
+------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (var_section
+        (var_keyword)
+        body: (var_body
+          (variable_declaration
+            name: (identifier)
+            type: (type_specification
+              (option_type
+                (option_keyword)
+                (option_member_list
+                  (preproc_conditional_option_members
+                    (preproc_if
+                      (preproc_open)
+                      condition: (identifier))
+                    (option_member
+                      (identifier))
+                    (preproc_endif
+                      (preproc_close)))
+                  (option_member
+                    (identifier)))))))))))
+
+========================================================================
+strict option members: the whole list inside one arm (the other configuration is a bare Option)
+========================================================================
+codeunit 50100 P
+{
+    var
+        V: Option
+#if X
+            A, B
+#endif
+            ;
+}
+------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (var_section
+        (var_keyword)
+        body: (var_body
+          (variable_declaration
+            name: (identifier)
+            type: (type_specification
+              (option_type
+                (option_keyword)
+                (option_member_list
+                  (preproc_conditional_option_members
+                    (preproc_if
+                      (preproc_open)
+                      condition: (identifier))
+                    (option_member
+                      (identifier))
+                    (option_member
+                      (identifier))
+                    (preproc_endif
+                      (preproc_close))))))))))))
+
+========================================================================
+strict option members: an empty group before the first member stays the list's own group (as on main)
+========================================================================
+codeunit 50100 P
+{
+    var
+        V: Option
+#if X
+#endif
+            A, B;
+}
+------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (var_section
+        (var_keyword)
+        body: (var_body
+          (variable_declaration
+            name: (identifier)
+            type: (type_specification
+              (option_type
+                (option_keyword)
+                (option_member_list
+                  (preproc_conditional_option_members
+                    (preproc_if
+                      (preproc_open)
+                      condition: (identifier))
+                    (preproc_endif
+                      (preproc_close)))
+                  (option_member
+                    (identifier))
+                  (option_member
+                    (identifier)))))))))))
+
+========================================================================
+strict option members: separator-led members in a comma-conditional and an opening group (as on main)
+========================================================================
+codeunit 50100 P
+{
+    var
+        V: Option A,
+#if X
+            B,
+#endif
+            C;
+        W: Option
+#if X
+            A,
+#endif
+            B;
+}
+------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (var_section
+        (var_keyword)
+        body: (var_body
+          (variable_declaration
+            name: (identifier)
+            type: (type_specification
+              (option_type
+                (option_keyword)
+                (option_member_list
+                  (option_member
+                    (identifier))
+                  (preproc_conditional_option_members
+                    (preproc_if
+                      (preproc_open)
+                      condition: (identifier))
+                    (option_member
+                      (identifier))
+                    (preproc_endif
+                      (preproc_close)))
+                  (option_member
+                    (identifier))))))
+          (variable_declaration
+            name: (identifier)
+            type: (type_specification
+              (option_type
+                (option_keyword)
+                (option_member_list
+                  (preproc_conditional_option_members
+                    (preproc_if
+                      (preproc_open)
+                      condition: (identifier))
+                    (option_member
+                      (identifier))
+                    (preproc_endif
+                      (preproc_close)))
+                  (option_member
+                    (identifier)))))))))))
+
+========================================================================
+strict option members: quoted and keyword members around a group
+========================================================================
+codeunit 50100 P
+{
+    var
+        V: Option "A B", Local
+#if X
+            , Internal, "B C"
+#endif
+            , Public;
+}
+------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (var_section
+        (var_keyword)
+        body: (var_body
+          (variable_declaration
+            name: (identifier)
+            type: (type_specification
+              (option_type
+                (option_keyword)
+                (option_member_list
+                  (option_member
+                    (quoted_identifier))
+                  (option_member
+                    (local_keyword))
+                  (preproc_conditional_option_members
+                    (preproc_if
+                      (preproc_open)
+                      condition: (identifier))
+                    (option_member
+                      (internal_keyword))
+                    (option_member
+                      (quoted_identifier))
+                    (preproc_endif
+                      (preproc_close)))
+                  (option_member
+                    (public_keyword)))))))))))
+
+========================================================================
+strict option members: comments at every boundary
+========================================================================
+codeunit 50100 P
+{
+    var
+        V: Option A // c
+#if X
+            /* c */ , B // c
+#endif
+            /* c */ ;
+}
+------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (var_section
+        (var_keyword)
+        body: (var_body
+          (variable_declaration
+            name: (identifier)
+            type: (type_specification
+              (option_type
+                (option_keyword)
+                (option_member_list
+                  (option_member
+                    (identifier))
+                  (comment)
+                  (preproc_conditional_option_members
+                    (preproc_if
+                      (preproc_open)
+                      condition: (identifier))
+                    (multiline_comment)
+                    (option_member
+                      (identifier))
+                    (comment)
+                    (preproc_endif
+                      (preproc_close))))))
+            (multiline_comment)))))))
+
+========================================================================
+strict option members: a group in an option-typed parameter, then the next parameter
+========================================================================
+codeunit 50100 P
+{
+    procedure F(Q: Option A
+#if X
+        , B
+#endif
+        ; R: Integer)
+    begin
+    end;
+}
+------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (procedure
+        (procedure_keyword)
+        name: (identifier)
+        parameters: (parameter_list
+          (parameter
+            name: (identifier)
+            type: (type_specification
+              (option_type
+                (option_keyword)
+                (option_member_list
+                  (option_member
+                    (identifier))
+                  (preproc_conditional_option_members
+                    (preproc_if
+                      (preproc_open)
+                      condition: (identifier))
+                    (option_member
+                      (identifier))
+                    (preproc_endif
+                      (preproc_close)))))))
+          (parameter
+            name: (identifier)
+            type: (type_specification
+              (basic_type))))
+        body: (code_block
+          (begin_keyword)
+          (end_keyword))))))
+
+========================================================================
+strict option members: a group in an option return type before begin
+========================================================================
+codeunit 50100 P
+{
+    procedure G(): Option A
+#if X
+        , B
+#endif
+    begin
+    end;
+}
+------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (procedure
+        (procedure_keyword)
+        name: (identifier)
+        return_type: (type_specification
+          (option_type
+            (option_keyword)
+            (option_member_list
+              (option_member
+                (identifier))
+              (preproc_conditional_option_members
+                (preproc_if
+                  (preproc_open)
+                  condition: (identifier))
+                (option_member
+                  (identifier))
+                (preproc_endif
+                  (preproc_close))))))
+        body: (code_block
+          (begin_keyword)
+          (end_keyword))))))
+
+========================================================================
+strict option members: a group in an interface procedure's option return type
+========================================================================
+interface I50101
+{
+    procedure H(): Option A
+#if X
+        , B
+#endif
+}
+------------------------------------------------------------------------
+
+(source_file
+  (interface_declaration
+    (interface_keyword)
+    object_name: (identifier)
+    body: (interface_body
+      (interface_procedure
+        (procedure_keyword)
+        name: (identifier)
+        (interface_procedure_suffix
+          return_type: (type_specification
+            (option_type
+              (option_keyword)
+              (option_member_list
+                (option_member
+                  (identifier))
+                (preproc_conditional_option_members
+                  (preproc_if
+                    (preproc_open)
+                    condition: (identifier))
+                  (option_member
+                    (identifier))
+                  (preproc_endif
+                    (preproc_close)))))))))))
+
+========================================================================
+strict option members: an empty group after a parameter's option type stays the parameter list's (as on main)
+========================================================================
+codeunit 50100 P
+{
+    procedure F(Q: Option A, B
+#if X
+#endif
+        )
+    begin
+    end;
+}
+------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (procedure
+        (procedure_keyword)
+        name: (identifier)
+        parameters: (parameter_list
+          (parameter
+            name: (identifier)
+            type: (type_specification
+              (option_type
+                (option_keyword)
+                (option_member_list
+                  (option_member
+                    (identifier))
+                  (option_member
+                    (identifier))))))
+          (preproc_conditional_parameters
+            (preproc_if
+              (preproc_open)
+              condition: (identifier))
+            (preproc_endif
+              (preproc_close))))
+        body: (code_block
+          (begin_keyword)
+          (end_keyword))))))
+
+========================================================================
+strict option members: a parameter group after a parameter's option type stays the parameter list's (as on main)
+========================================================================
+codeunit 50100 P
+{
+    procedure F(Q: Option A, B
+#if X
+        ; R: Integer
+#endif
+        )
+    begin
+    end;
+}
+------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (procedure
+        (procedure_keyword)
+        name: (identifier)
+        parameters: (parameter_list
+          (parameter
+            name: (identifier)
+            type: (type_specification
+              (option_type
+                (option_keyword)
+                (option_member_list
+                  (option_member
+                    (identifier))
+                  (option_member
+                    (identifier))))))
+          (preproc_conditional_parameters
+            (preproc_if
+              (preproc_open)
+              condition: (identifier))
+            (parameter
+              name: (identifier)
+              type: (type_specification
+                (basic_type)))
+            (preproc_endif
+              (preproc_close))))
+        body: (code_block
+          (begin_keyword)
+          (end_keyword))))))
+
+========================================================================
+strict option members: an empty group after an option return type stays pragma-only (as on main)
+========================================================================
+codeunit 50100 P
+{
+    procedure G(): Option A, B
+#if X
+#endif
+    begin
+    end;
+}
+------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (procedure
+        (procedure_keyword)
+        name: (identifier)
+        return_type: (type_specification
+          (option_type
+            (option_keyword)
+            (option_member_list
+              (option_member
+                (identifier))
+              (option_member
+                (identifier)))))
+        (preproc_pragma_only
+          (preproc_if
+            (preproc_open)
+            condition: (identifier))
+          (preproc_endif
+            (preproc_close)))
+        body: (code_block
+          (begin_keyword)
+          (end_keyword))))))
+
+========================================================================
+strict option members: a var block group after an option return type stays the var block (as on main)
+========================================================================
+codeunit 50100 P
+{
+    procedure G(): Option A, B
+#if X
+    var
+        I: Integer;
+#endif
+    begin
+    end;
+}
+------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (procedure
+        (procedure_keyword)
+        name: (identifier)
+        return_type: (type_specification
+          (option_type
+            (option_keyword)
+            (option_member_list
+              (option_member
+                (identifier))
+              (option_member
+                (identifier)))))
+        (preproc_conditional_var_block
+          (preproc_if
+            (preproc_open)
+            condition: (identifier))
+          (var_section
+            (var_keyword)
+            body: (var_body
+              (variable_declaration
+                name: (identifier)
+                type: (type_specification
+                  (basic_type)))))
+          (preproc_endif
+            (preproc_close)))
+        body: (code_block
+          (begin_keyword)
+          (end_keyword))))))
+
+========================================================================
+strict option members: an empty group after an interface option return type stays a sibling (as on main)
+========================================================================
+interface I50101
+{
+    procedure K();
+    procedure H(): Option A
+#if X
+#endif
+}
+------------------------------------------------------------------------
+
+(source_file
+  (interface_declaration
+    (interface_keyword)
+    object_name: (identifier)
+    body: (interface_body
+      (interface_procedure
+        (procedure_keyword)
+        name: (identifier)
+        (interface_procedure_suffix))
+      (interface_procedure
+        (procedure_keyword)
+        name: (identifier)
+        (interface_procedure_suffix
+          return_type: (type_specification
+            (option_type
+              (option_keyword)
+              (option_member_list
+                (option_member
+                  (identifier)))))))
+      (preproc_conditional
+        (preproc_if
+          (preproc_open)
+          condition: (identifier))
+        (preproc_endif
+          (preproc_close))))))
+
+========================================================================
+strict option members: a not arm before a comma-led member (item 46)
+========================================================================
+codeunit 50100 P
+{
+    var
+        V1: Option
+#if X
+            not
+#endif
+            ,B;
+        V2: Option
+#if X
+            Foo
+#endif
+            ,B;
+}
+------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (var_section
+        (var_keyword)
+        body: (var_body
+          (variable_declaration
+            name: (identifier)
+            type: (type_specification
+              (option_type
+                (option_keyword)
+                (option_member_list
+                  (preproc_conditional_option_members
+                    (preproc_if
+                      (preproc_open)
+                      condition: (identifier))
+                    (option_member
+                      (identifier))
+                    (preproc_endif
+                      (preproc_close)))
+                  (option_member
+                    (identifier))))))
+          (variable_declaration
+            name: (identifier)
+            type: (type_specification
+              (option_type
+                (option_keyword)
+                (option_member_list
+                  (preproc_conditional_option_members
+                    (preproc_if
+                      (preproc_open)
+                      condition: (identifier))
+                    (option_member
+                      (identifier))
+                    (preproc_endif
+                      (preproc_close)))
+                  (option_member
+                    (identifier)))))))))))

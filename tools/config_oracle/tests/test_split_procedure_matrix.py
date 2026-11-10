@@ -1,4 +1,6 @@
 """split-procedure over every _procedure_tail form (spec P5.1)."""
+import pathlib
+
 import pytest
 
 from tools.config_oracle.tests import witness
@@ -36,3 +38,24 @@ def test_split_procedure_tail(al_parser, tail):
 def test_trigger_host_takes_the_same_tails(al_parser):
     src = b"codeunit 1 T\n{\n    trigger OnRun()\n#if B\n#pragma warning disable AL0432\n#endif\n    begin\n    end;\n}\n"
     witness.assert_all_pass(al_parser, src)
+
+
+# Item 77: a nested header group as an arm. The probes alc accepts in every configuration.
+_PROBES = pathlib.Path(__file__).resolve().parents[2] / "alc_probe" / "cases"
+NESTED = ["b7b1/pa__nested.al", "item77/nested-first-arm-no-attr.al", "item77/nested-elif.al",
+          "item77/nested-second-arm.al"]
+DOUBLY = (b"codeunit 1 T\n{\n#if A\n#if B\n#if C\n    procedure P()\n#else\n    procedure P(x: Integer)\n"
+          b"#endif\n#else\n    procedure P(y: Boolean)\n#endif\n#else\n    procedure P(z: Text)\n#endif\n"
+          b"    begin\n    end;\n}\n")
+
+
+@pytest.mark.parametrize("probe", NESTED)
+def test_nested_header_group(al_parser, probe):
+    src = (_PROBES / probe).read_bytes()
+    witness.assert_produces(al_parser, src, "preproc_conditional_procedure_header")
+    witness.assert_all_pass(al_parser, src)
+
+
+def test_doubly_nested_header_group(al_parser):
+    witness.assert_produces(al_parser, DOUBLY, "preproc_conditional_procedure_header")
+    witness.assert_all_pass(al_parser, DOUBLY)

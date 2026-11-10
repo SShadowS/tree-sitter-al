@@ -1996,6 +1996,13 @@ Every directive stands on its own line in the measured inputs. Related, pre-exis
   (`#if X A #else B #endif where(..) else C`, alc AL0149 in every configuration, probe
   `tools/alc_probe/cases/item29-relation-chain/s6-conditional-target-head-shared-where-else.al`), and after a head
   whose arms are already complete `if … else` relations (an `else` with no `if` in every configuration), parse clean.
+- Since item 78 (batch 5): the same over a conditional `else` group, `#if X A #else B #endif where(..) #if Y else C;
+  #else else D; #endif` (AL0149 in every configuration, probe `s10-*`), parses clean. A one-arm `else` group after a
+  conditional if-head, `… where(..) #if Y else Customer; #endif` (AL0104 without Y, split and flat), parses clean too;
+  main already accepted it after a plain if-head (item 78's review).
+- Since item 68 (batch 5): a one-arm split block end after statements, `B(); #if A C(); end; #endif` (no `#else`:
+  without A the block has no `end`), parses clean, as the form without statements (`B(); #if A end; #endif`) already
+  did.
 - `Z, Key: Text;` (`Key` as a non-first variable name): alc AL0104/AL0105/AL0107 (Task 2), the parser accepts it, on
   main too; also after an attribute.
 
@@ -2097,7 +2104,7 @@ every arm's first declaration), and give attributes inside groups a grammar home
 | B7b-1b (**DONE 2026-11-08**, branch `batch2/item46b`) | `parameter-list` (the `;`-led form, attribute bundles, empty list): `strictListBody($, 'parameters', ';')`, item = attribute bundle + parameter, group `preproc_conditional_parameters`; census key `occ:parameter_list:2.0.0` aliased to `1.0.0` (`tools/b7_audit/key-aliases.tsv`); oracle family `parameters` (`Family.prefix_kinds` for the attribute bundle) | GAP 90 -> 0: CONSISTENT 54, OVERACCEPT 18 (holes-lead, holes-mid: doubled/leading `;`, item 44), MIXED 18 | removed: `b7_gap_parameter_list_test.txt` (10) became the first 10 cases of `test/corpus/strict_conditional_parameters_test.txt` |
 | B7b-1c | `ml-pairs`, `namespace-pairs` (pair interiors), `list-literal` (whole-value ownership table first) | GAP 825, 288, 388; list-literal OVERACCEPT 4 | `b7_gap_ml_pairs_test.txt` (19), `b7_gap_namespace_pairs_test.txt` (17), `b7_gap_list_literal_test.txt` (31) |
 | B7b-1d | `label-attributes` (report-label and label-variable attribute tails), `caption-subfields` (heterogeneous tails, unwrap) | GAP 408, 1,080 | `b7_gap_label_attributes_test.txt` (17), `b7_gap_caption_subfields_test.txt` (15) |
-| B7b-1e | `option-members` (holes, witness policy; B13 overlap, matrix owner B13, items 37/38) | GAP 1,111 | `b7_gap_option_members_test.txt` (23) |
+| B7b-1e (**option-type part DONE 2026-11-09**, branch `batch5/item46e`, spec `docs/superpowers/specs/2026-11-09-b7b-1e-option-members-design.md`) | `option-members` (holes, witness policy; B13 overlap, matrix owner B13, items 37/38). The `Option` type got its own list (`_option_type_members`, aliased `option_member_list`; arms are the keyed OptionMembers run, so blank slots stay: not `strictListBody`); every host of a type (variable, parameter, return type, interface procedure). Left: the 135 `_option_values_arm_t` terminator cells (a `;` group inside a whole-value arm: the keyed `;`-after families' shared terminator debt, not a list separator) and item 37's bare-`;` seed; items 79, 80 (ERROR as on main) | GAP 1,111 -> 436 (item 37) -> 136; the 300 option-type GAP cells are gone (0 production sites; the four corpora's trees byte-identical) | 15 option-type witnesses became the first 15 cases of `test/corpus/strict_conditional_option_members_test.txt`; `b7_gap_option_members_test.txt` keeps the bare-`;` seed (1) |
 | B7b-1f | `permissions`, `link-list` (B12 overlap), `link-list-comma-leading` (dependency `link-property-ambiguity`) | GAP 355 / 98 / 297; OVERACCEPT 69 / 41 / 15 | `b7_gap_permissions_test.txt` (17), `b7_gap_link_list_test.txt` (21), `b7_gap_link_list_comma_leading_test.txt` (9) |
 | B7b-1g | `type-arguments`: `Dictionary of [K, V]` / `List of [T]` are fixed-arity positional slots (`key_type`, `value_type`), not a list; needs a fixed-arity slot adapter | GAP 24, all 24 manifest cells `deferred`, cardinality `unknown` (not probed by alc) | `b7_gap_type_arguments_test.txt` (8) |
 | B7b-3 (**DONE 2026-10-08**, `28dfdbc`, `a576506`) | `move-modification`: a group that supplies or replaces the fixed `;` or the target. Routes 2-3 and `preproc_conditional_move_args`; the 72 cells are the B7b-1 manifest's transfer set, admitted and passing in `tools/b7_audit/b7b3-manifest.tsv`. B7b-3 also did the `statement-terminator` family (parenless calls, case-branch separators), which was never a B7b-1 row | GAP 72 -> 0 | removed: `b7_gap_move_modification_test.txt` (6) and `strict_conditional_move_elements_negative_test.txt` (2) became positive cases in `b7b3_move_args_test.txt`; flat negatives in `b7b3_move_args_negative_test.txt` |
@@ -2109,7 +2116,10 @@ accepts both configurations, split and flat (X=1 is `OptionMembers = not,B;`;
 the same input with a name arm (`#if X Foo #endif ,B`) ERRORs identically on both, so it is this family's
 group-then-comma-led-member gap, B7b-1e. After item 61's fix the recovery reads the `not` arm as a unary-only prefix
 before the ERROR; on main it read as a conditional member group. Both are recovery trees on input that ERRORs.
-0 production sites.
+0 production sites. **Resolved:** at the keyed `OptionMembers` property since item 37 (2026-11-08); at the `Option`
+type by B7b-1e (2026-11-09: `V: Option #if X not #endif ,B;` and the name arm parse as an `option_member_list` whose
+group holds the member; probe `tools/alc_probe/cases/b7b1e/option_type_not_arm.al`, fixture "a not arm before a
+comma-led member (item 46)" in `test/corpus/strict_conditional_option_members_test.txt`).
 
 **Parameter list, what B7b-1b left (2026-11-08).** An arm holds whole parameters and `;` only, so an attribute alone
 in a group before its parameter (`A: Integer; #if X [NonDebuggable] #endif B: Integer`) still ERRORs, as on main.
@@ -2874,6 +2884,10 @@ configuration below a loud ERROR on an accepted one. The keyed `OptionMembers` l
 between two members (`A #if X B #endif C`) parses, as in every strict list, and adjacency is the oracle's per
 configuration. Left open as recorded; 0 production sites.
 
+**Unchanged by B7b-1e (2026-11-09, branch `batch5/item46e`).** The `Option` type's conversion gave `option_type` its
+own list and left `option_member_list` at the generic property value as it was; `Visible = #if X Foo #endif Ok;` still
+parses clean as before (byte-identical tree), and both probes above stay `--check` clean.
+
 **Owner:** B13 (comma-free value runs), suggested.
 
 ## 66. A prefix whose `#else` is empty ERRORs; alc accepts both configurations (pre-existing, found by the small-correctness final review) — RESOLVED 2026-10-25, except two or more leading empty arms
@@ -2986,7 +3000,25 @@ searched for.
 
 **Owner:** unassigned.
 
-## 68. A split `end;` after statements in the FIRST arm ERRORs (the #42 shape, mirrored)
+## 68. A split `end;` after statements in the FIRST arm ERRORs (the #42 shape, mirrored) — RESOLVED 2026-11-10
+
+**alc verdict (2026-11-10, alc 18.0.41):** accepted in every configuration, split and flat, for the shape and four
+variants: `first_arm_proc.al` (the shape), `both_arms_proc.al`, `first_arm_elif_proc.al` (`#if`/`#elif`/`#else`),
+`first_arm_block.al` (an `if R then begin` block), `first_arm_block_bare.al` (bare `end`s, the `;` after `#endif`),
+under `tools/alc_probe/cases/item68/` (12 assignment-runtime pairs, 24 compiles). Corpus sites: 0 (all four corpora
+parsed byte-identically before and after).
+
+**Resolution.** The first arm of `preproc_split_code_block_end` is `_preproc_end_branch_later`, like the later
+arms: statements, then `end_keyword` or a nested group of ends, then an optional `;`. The fork the item expected was
+already there: `_preproc_end_branch`'s `stmts end else begin` arm reads statements in the first arm and sat in the
+conflict sets with `_split_stmts_end` and the open branches. `_preproc_end_branch_later` replaces it in the two
+sets that name it (the old sets became unnecessary), and one pair is new, `[_split_stmts_end,
+_preproc_end_branch_later]`: after `#if stmts end ;` the next token decides (a branch directive for this rule, `end`
+or `else` for `preproc_split_else_begin_over_endif`), so the extra version lives one token. STATE_COUNT −14. No
+scanner change: PREPROC_SPLIT_END stays valid only at the start of an arm; after statements the `end` is an
+END_KEYWORD. Production trees byte-identical on all four corpora (70,354 files); `node-types.json` unchanged.
+Fixture `test/corpus/item_68_first_arm_split_end_test.txt` (5 cases). The `#endif;` negative in
+`directive_line_rejected_negative_test.txt` recovers inside the trigger now (ERROR kept, a MISSING `#endif`).
 
 **Established:** 2026-11-08, while fixing issue #42 (CLI parse, on 4.5.0 and on the fix). `B(); #if A X(); end;
 #else end; #endif procedure Q() ...` gives an ERROR from `procedure` on; alc acceptance is expected (the
@@ -3174,7 +3206,20 @@ arm order and the oracle's view of the tail; ask al-sem which attribute owner it
 
 **Owner:** unassigned.
 
-## 77. A nested `#if` choosing a procedure header ERRORs
+## 77. A nested `#if` choosing a procedure header ERRORs — RESOLVED 2026-11-09
+
+**Resolved on branch `batch5/item77`.** Production sites: 0 in the four corpora (a scan for a procedure header whose
+two preceding significant lines are `#if`/`#elif`/`#else` directives, attributes and comments skipped: every hit was an
+`#endif` then a fresh `#if`, none nested). An arm of `preproc_split_procedure` is now `_procedure_header` or a named
+`preproc_conditional_procedure_header` (`#if` arms of the same choice, `#elif`, `#else`, recursively); the arm choice
+`_procedure_header_arm` is inlined, since a reduction of its own conflicted with `_procedure_preamble` at `#elif`.
+STATE_COUNT +219, no new conflicts, all four corpora byte-identical. Fixture
+`test/corpus/preproc_split_procedure_nested_header_test.txt` (four cases: `pa__nested.al`, no attribute, `#elif` in
+both groups, the group in the `#else` arm); probes `tools/alc_probe/cases/item77/` (`--check` 0 drift). The oracle's
+`split_procedure` replaces a chosen arm that is one nested group by that group's chosen arm
+(`tools/config_oracle/tests/test_split_procedure_matrix.py::test_nested_header_group`, every configuration passes,
+and fails without the lowering). The recognizer (`var_name_list_follows`) is unchanged. Two neighbouring shapes still
+ERROR: items 82 and 83. The record below is kept as written.
 
 **Established:** 2026-11-09, item 45 (branch `batch4/item45`). `#if X #if Y procedure Q() #else procedure Q(I: Integer)
 #endif #else procedure Q(J: Code[10]) #endif begin end;` ERRORs, with or without an attribute before it; alc accepts all
@@ -3187,7 +3232,27 @@ may hold a nested header group; fixture from the probe.
 
 **Owner:** unassigned.
 
-## 78. A conditional `TableRelation` head, a shared `where`, then a conditional `else` group ERRORs
+## 78. A conditional `TableRelation` head, a shared `where`, then a conditional `else` group ERRORs — RESOLVED 2026-11-09
+
+**Resolved on branch `batch5/item78`.** alc 18.0.41 accepts all four configurations, split and flat, of the shape
+with the `;` inside the else arms (s7) or after `#endif` (s7b), and of the neighbour without the shared `where`
+(s8, s8b); a plain if-head with its where then an else group (s9, s9b) already parsed and is accepted too (all under
+`tools/alc_probe/cases/item29-relation-chain/`). `_table_relation_rooted` takes, after a conditional head and an
+optional `where_clause`, either a plain `else_table_relation_fragment` or a group of else arms
+(`_table_relation_else_group`, aliased to `preproc_conditional_table_relation`; at least one arm present, every
+present arm an else fragment, `;` optional); `_table_relation_keyed_split` takes the same group with the `;` inside
+the arms. An arm may itself be a nested group of else arms (probe `s11-*`, accepted in all eight configurations).
+Fixtures `test/corpus/table_relation_item78_test.txt` (the four shapes, the nested arm, plus an empty group after
+the shared where staying a decoration: an early draft turned that valid tree into an ERROR). The oracle: the arm's
+else fragment emits the `RelationContinuation` the item-29 joins consume; `table_relation_select` lowers a nested
+group arm recursively and the contract registers the `preproc_conditional_table_relation:<children>` host
+(`tools/config_oracle/tests/test_table_relation.py::test_item78_*`, with a test that the where join is
+load-bearing). The B7a cells of the new arm (`occ:_table_relation_else_arm:1.0`) GAP at the placements that put a
+second group or an empty group around the arm's `;`, as the family's other hosts do: item 81. STATE_COUNT +152, two declared GLR conflicts (at a `#if` after the shared where the else group and a
+value ending at the where both stay alive until the arm content), all four corpora byte-identical; `node-types.json`
+gains `preproc_conditional_table_relation` as a child of itself (the nested arm, additive). The same else group after a conditional head of plain targets is now accepted; alc rejects
+it in every configuration (AL0149, probe `s10-*`), item 44's over-acceptance, as item 75's s6. The record below is
+kept as written.
 
 **Established:** 2026-11-09, item 75's review (batch 4). `TableRelation = #if X if (..) Item #else if (..) Resource
 #endif where(..) #if Y else Customer; #else else Vendor; #endif` ERRORs on main and after item 75; alc accepts all four
@@ -3197,6 +3262,115 @@ plain `else` after a conditional head, not a conditional `else` group after it. 
 
 **Next step:** allow a `preproc_conditional_table_relation` of `else` fragments after the shared `where` in
 `_table_relation_rooted`, a fixture from the probe, and the oracle join for it.
+
+**Owner:** unassigned.
+
+## 79. A bare `Option` type directly followed by a group its host owns ERRORs
+
+**Established:** 2026-11-09, B7b-1e (branch `batch5/item46e`). `procedure F(Q: Option #if X ; R: Integer #endif)`
+and `procedure G(): Option #if X var I: Integer; #endif begin end;` ERROR on main and after B7b-1e; alc accepts both
+configurations (`tools/alc_probe/cases/b7b1e/bare_option_then_host_group.al`, `--check` clean). `option_type` is
+`prec.right(1)`: after a bare `option_keyword` the `#if` is shifted into the type's member list statically, so the
+host's group reading is never explored (with members, the `#if` after the last member is a GLR fork,
+`[_option_type_members]`, and the host keeps its group). An empty group there (`Q: Option #if X #endif)`) ERRORs too.
+0 production sites (no `: Option` type line is followed by a `#if` line in any of the four corpora, measured by a
+regex scan of every `*.al` file).
+
+**Next step:** a GLR fork at `Option • #if` (a conflict on `option_type` without its static right-associativity
+for the list arm only), measured for forks on every flat `Option A` in production.
+
+**Owner:** unassigned.
+
+## 80. A trailing all-empty group in a variable's `Option` type ERRORs
+
+**Established:** 2026-11-09, B7b-1e (branch `batch5/item46e`). `V: Option A, B #if X #endif;` and
+`W: Option #if X #endif;` ERROR on main and after B7b-1e; alc accepts both configurations
+(`tools/alc_probe/cases/b7b1e/option_type_trailing_empty_group.al`, `--check` clean). B7b-1e's option-type list
+takes an all-empty group only when more of the list follows it, so that an empty group after a parameter's,
+a return type's or an interface procedure's option type stays the host's (`preproc_conditional_parameters`,
+`preproc_pragma_only`, an interface `preproc_conditional`) without a GLR tie (spec
+`docs/superpowers/specs/2026-11-09-b7b-1e-option-members-design.md` section 3). Allowing it last in the list was
+measured: it changed those three trees (the parameter group and the interface sibling moved into the type's list;
+the pragma-only group after `procedure G(): Option A, B` became an empty `preproc_conditional_var_block`, a tie
+main decides by GLR version order). A variable declaration has no other owner for the group. 0 production sites.
+
+**Next step:** a decoration slot for directive-only groups between a variable's type and its `;`
+(`variable_declaration`), or a trailing empty list group allowed only where the type ends at `;`.
+
+**Owner:** unassigned.
+
+## 81. An `#if` group around the `;` of an `else`-group arm (item 78) ERRORs
+
+**Established:** 2026-11-10, item 78's B7a cells (branch `batch5/item78`). Inside item 78's group of else arms, an
+empty group between the arm's relation and its `;` (`#if Y else Customer #if Z #endif ; #else else Vendor; #endif`)
+ERRORs; alc accepts all eight configurations
+(`tools/alc_probe/cases/item29-relation-chain/s12-else-group-arm-empty-group-before-semicolon.al`). The B7a matrix
+measures the same for every placement that puts a group at the arm's `;` (`occ:_table_relation_else_arm:1.0`:
+adjacent-compl, elif, empty, nested, sep-only, trail: the matrix's table-relation GAP family grows from 154 to 208
+cells, 9 per placement over three measured hosts and their two variants; first-replace is CONSISTENT), the same verdicts
+the table-relation family's existing `_table_relation_arm_t` cells have (B7b+). The arm is
+`else_table_relation_fragment [;]` with no slot for a group before the `;`. 0 production sites (the item-78 shape
+itself has none).
+
+**Next step:** decide with the table-relation family's B7b+ GAPs (the same `;` placements after a relation in
+`_table_relation_arm_t`), not alone; fixture from the probe.
+
+**Owner:** unassigned.
+
+## 82. An attribute inside a split-header arm before a nested header group ERRORs
+
+**Established:** 2026-11-09, item 77 (branch `batch5/item77`). `#if X [NonDebuggable] #if Y procedure Q() #else
+procedure Q(I: Integer) #endif #else procedure Q(J: Code[10]) #endif begin end;` ERRORs; alc accepts all four
+configurations (`tools/alc_probe/cases/item77/attr-inside-arm-before-nested.al`). Item 77's arm is `_procedure_header`
+or a `preproc_conditional_procedure_header`, and only the former takes leading attributes. Tried: an arm
+`seq(repeat(attribute_item), preproc_conditional_procedure_header)` gives an unresolved conflict at `#if
+attribute_item • [` between `_body_element` and the new repeat (generate suggests a conflict
+`[_body_element, preproc_split_procedure, _procedure_header]`, not tried: a GLR conflict needs a perf `ab`). 0
+production sites (item 77's scan skips attribute lines, so it covers this shape).
+
+**Next step:** share one attribute repeat between the header and the group (factor `_procedure_header`'s
+`repeat(attribute_item)` out into the arm), or try the conflict with an `ab`; the oracle's `split_procedure` then
+lifts the arm's attributes before descending into the group.
+
+**Owner:** unassigned.
+
+## 83. A nested `#if` choosing a procedure header and its `var` section ERRORs
+
+**Established:** 2026-11-09, item 77 (branch `batch5/item77`). `#if X #if Y procedure Q() var A: Integer; #else
+procedure Q(I: Integer) var A: Integer; #endif #else procedure Q(J: Code[10]) var A: Integer; #endif begin A := 1;
+end;` ERRORs; alc accepts all four configurations (`tools/alc_probe/cases/item77/nested-preamble.al`). It is item 77's
+shape in `preproc_split_procedure_preamble`, whose arms are `_procedure_preamble` (header + var region) one level deep.
+0 production sites (item 77's scan).
+
+**Next step:** the same arm choice for `preproc_split_procedure_preamble` (a nested group of preambles), a fixture
+from the probe, and the oracle's selection for it.
+
+**Owner:** unassigned.
+
+## 84. An `else` group whose other arm is only the property's `;` ERRORs (item 78's neighbour)
+
+**Established:** 2026-11-10, item 78's review (batch 5). `TableRelation = #if X if (..) Item #else if (..) Resource
+#endif where(A = const(1)) #if Y else Customer; #else ; #endif` ERRORs on main and after item 78; alc accepts all four
+configurations, split and flat
+(`tools/alc_probe/cases/item29-relation-chain/s13-else-group-with-semicolon-only-arm.al`). Item 78's else group takes
+arms that are each an `else_table_relation_fragment`; an arm holding only the property's `;` has no slot. It is not
+item 81's shape (an empty group around an arm's `;`), and the B7a `sep-only` placement does not generate it.
+0 production sites.
+
+**Next step:** decide with item 81 and the table-relation family's `;` placements (B7b+); fixture from the probe.
+
+**Owner:** unassigned.
+
+## 85. A nested `#if` choosing a trigger header ERRORs (item 77's neighbour)
+
+**Established:** 2026-11-10, item 77's review (batch 5). `#if X #if Y trigger OnRun() #else trigger OnRun() #endif
+#else trigger OnRun() #endif begin end;` ERRORs on main and after item 77; alc accepts all four configurations, split
+and flat (`tools/alc_probe/cases/item77/nested-trigger-header.al`). The single-level form parses as
+`preproc_split_trigger_preamble`; item 77 gave `preproc_split_procedure` nested header arms, not the trigger rule.
+0 production sites known (not counted).
+
+**Next step:** the trigger counterpart of item 77 (a nested header group in the split trigger rule), a fixture from
+the probe and the oracle's selection.
 
 **Owner:** unassigned.
 

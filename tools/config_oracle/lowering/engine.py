@@ -579,6 +579,10 @@ def _lower_ordinary(node, ctx) -> Lowered:
                 and ctx.parent_kind in ("property", "preproc_conditional_property_value")):
             ctx.normalised.append(f"list-value-empty:{node.kind}@{node.start}")
             return Lowered([], frags)
+        # B7b-1e: an Option type's member list emptied by its groups; flat `Option` has no list.
+        if node.kind == "option_member_list" and ctx.parent_kind == "option_type":
+            ctx.normalised.append(f"list-value-empty:{node.kind}@{node.start}")
+            return Lowered([], frags)
         raise LoweringError("empty-node", node)
     if (node.kind == "property_expression" and any(c.kind in regions.GROUPS for c in node.children)
             and len(kids) == 1 and kids[0].kind not in PROPERTY_EXPRESSION_KINDS):

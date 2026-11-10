@@ -13811,6 +13811,104 @@
     }
   },
   {
+    "type": "preproc_conditional_procedure_header",
+    "named": true,
+    "fields": {
+      "modifier": {
+        "multiple": true,
+        "required": false,
+        "types": [
+          {
+            "type": "procedure_modifier",
+            "named": true
+          }
+        ]
+      },
+      "name": {
+        "multiple": true,
+        "required": false,
+        "types": [
+          {
+            "type": "identifier",
+            "named": true
+          },
+          {
+            "type": "quoted_identifier",
+            "named": true
+          }
+        ]
+      },
+      "parameters": {
+        "multiple": true,
+        "required": false,
+        "types": [
+          {
+            "type": "parameter_list",
+            "named": true
+          }
+        ]
+      },
+      "return_type": {
+        "multiple": true,
+        "required": false,
+        "types": [
+          {
+            "type": "type_specification",
+            "named": true
+          }
+        ]
+      },
+      "return_value": {
+        "multiple": true,
+        "required": false,
+        "types": [
+          {
+            "type": "identifier",
+            "named": true
+          },
+          {
+            "type": "quoted_identifier",
+            "named": true
+          }
+        ]
+      }
+    },
+    "children": {
+      "multiple": true,
+      "required": true,
+      "types": [
+        {
+          "type": "attribute_item",
+          "named": true
+        },
+        {
+          "type": "preproc_conditional_procedure_header",
+          "named": true
+        },
+        {
+          "type": "preproc_elif",
+          "named": true
+        },
+        {
+          "type": "preproc_else",
+          "named": true
+        },
+        {
+          "type": "preproc_endif",
+          "named": true
+        },
+        {
+          "type": "preproc_if",
+          "named": true
+        },
+        {
+          "type": "procedure_keyword",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
     "type": "preproc_conditional_property_value",
     "named": true,
     "fields": {
@@ -14629,6 +14727,10 @@
       "types": [
         {
           "type": "else_table_relation_fragment",
+          "named": true
+        },
+        {
+          "type": "preproc_conditional_table_relation",
           "named": true
         },
         {
@@ -21359,7 +21461,7 @@
       },
       "name": {
         "multiple": true,
-        "required": true,
+        "required": false,
         "types": [
           {
             "type": "identifier",
@@ -21412,6 +21514,10 @@
       "types": [
         {
           "type": "attribute_item",
+          "named": true
+        },
+        {
+          "type": "preproc_conditional_procedure_header",
           "named": true
         },
         {

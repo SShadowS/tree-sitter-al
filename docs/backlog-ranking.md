@@ -41,7 +41,7 @@ the scanner's core dispatch). Order: P descending, then D+R ascending, with the 
 | 24 | 49 | B7b-3 cells deferred by host limitation | 2 | 4 | 1 | Mostly oracle lowering for split hosts. |
 | 25 | 51 | `in` prefix arm with a continuation (shape 3) | 2 | 4 | 3 | RESOLVED 2026-11-09 (batch4/item51): the typed arms take `_dangling_tail_item`s; no precedence change, STATE −2. |
 | 26 | 47 | Six case shapes alc accepts still ERROR | 2 | 4 | 3 | Visible, 0 sites, each needs an owner decision. |
-| 27 | 68 | Split `end;` after statements in the FIRST arm ERRORs | 2 | 4 | 4 | Visible, 0 sites, alc not probed; version-count class. |
+| 27 | 68 | Split `end;` after statements in the FIRST arm ERRORs | 2 | 4 | 4 | RESOLVED 2026-11-10 (batch5/item68): alc accepts all five probed shapes; the first arm takes `_preproc_end_branch_later`, joining existing conflict sets plus one pair; STATE −14, production byte-identical. |
 | 28 | 26 | Directive after code on the same line parses clean | 2 | 4 | 5 | Over-acceptance (AL0620), 0 sites; needs new scanner line state. |
 | 29 | 58 | `in`'s right takes a non-list arm | 1 | 2 | 2 | Over-acceptance; costed (+209 states), D1 made room. |
 | 30 | 65 | Comma-less group-then-member reads as option list | 1 | 2 | 2 | Over-acceptance; falls out of item 37. |
@@ -138,4 +138,27 @@ before the gates ran.
 | 47 | All six `case` shapes alc accepts parse: a `;` after a group is a sibling `empty_statement` (owner ruling (a)); an empty group before patterns is their pattern group (owner ruling: the header reading). Two tree-shape families at 0 production sites. STATE_COUNT +2. | changes-needed (a regression with two or more empty groups before a split branch; fixed in a second round, pinned) | yes |
 
 Combined: STATE_COUNT +0 vs main, `parser.c` +0.13%; production trees byte-identical in all four corpora. Merges used
-`merge_assertions.py` (no branch added or re-recorded an assertion row, so nothing was dropped this time).
+`merge_assertions.py`, which then compared only the `holds` column: item 47's 9 re-recorded rows (new expectation,
+same `holds`) were dropped and showed as flips on `assert --refresh`; they were restored from the branch and the
+helper now compares every column except the fingerprints.
+
+### Item 22 (2026-11-09, owner decision, released as 5.0.0)
+
+The case `else` is the last member of `case_body` (option (a), after a survey of the Business Central docs and the C,
+C#, Ruby and Pascal grammars). Breaking tree shape: 10,443 `else` nodes in 4,085 files of the four corpora change
+parent, each production tree equal to the old one with exactly that move. al-sem confirmed it before the merge.
+STATE_COUNT −31.
+
+### Batch 5 (2026-11-10)
+
+| item | result | review | merged |
+|---|---|---|---|
+| 46e | B7b-1e: `#if` groups in an `Option` type's member list (variables, parameters, return types) parse; `option-members` GAP 436 → 136. No tree changes on input that parsed before. New items 79, 80. STATE_COUNT −561, parser.c −4.2%. | approve-with-notes | yes |
+| 78 | A conditional `else` group after a conditional `TableRelation` head (and shared `where`) parses. Over-accepts the plain-target and one-arm forms (item 44). New items 81, 84. STATE_COUNT +152. | approve-with-notes | yes |
+| 77 | A nested `#if` choosing a procedure header parses (`preproc_conditional_procedure_header`, new node type). New items 82, 83, 85. STATE_COUNT +219. | approve-with-notes | yes |
+| 68 | A split `end;` after statements in the first arm parses (alc accepts all five probed shapes). Widens the one-arm over-acceptance (item 44). STATE_COUNT −14. | approve-with-notes | yes |
+
+Combined: STATE_COUNT −204 vs 5.0.0, `parser.c` −3.5%; production trees byte-identical to 5.0.0 in all four corpora.
+Item numbers collided (three agents used 79): renumbered on merge. The 4 BC28.1 `MfgCreateInventoryPutaway`
+configurations that item 22's oracle change moved onto the `preproc_split_if_else_statement` lowering gap are
+classified (debt(C1, M3)). A `perf ab` for the added GLR conflicts (items 46e, 78, 68) was owed by all three reviews.

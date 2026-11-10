@@ -381,23 +381,28 @@ codeunit 50100 P
     (codeunit_keyword)
     object_id: (integer)
     object_name: (identifier)
-    (ERROR
-      (trigger_keyword)
-      name: (identifier)
-      (begin_keyword)
-      (preproc_if
-        (preproc_open)
-        condition: (identifier))
-      (ERROR
-        (call_expression
-          function: (identifier)
-          arguments: (argument_list
-            (string_literal)))
-        (ERROR
-          (UNEXPECTED 'i'))
-        (if_keyword))
-      (empty_statement)
-      (end_keyword))))
+    body: (declaration_body
+      (trigger_declaration
+        (trigger_keyword)
+        name: (identifier)
+        body: (code_block
+          (begin_keyword)
+          (preproc_split_code_block_end
+            (preproc_if
+              (preproc_open)
+              condition: (identifier))
+            (ERROR
+              (call_expression
+                function: (identifier)
+                arguments: (argument_list
+                  (string_literal)))
+              (ERROR
+                (UNEXPECTED 'i'))
+              (if_keyword))
+            (empty_statement)
+            (end_keyword)
+            (preproc_endif
+              (MISSING preproc_close))))))))
 
 ================================================================================
 NEGATIVE: #endif X -- a word after #endif (AL0631)

@@ -215,6 +215,10 @@ register("preproc_split_case_end_branch", "fragment", None,
          hosts={"preproc_split_case_statement_end:<children>": "consumed"})
 register("preproc_split_procedure", "assembler", "tools.config_oracle.lowering.assemblers.split_procedure",
          hosts=dict(_BODY_HOSTS))
+# Item 77: a nested header group, selected inside split_procedure (contract split-procedure).
+register("preproc_conditional_procedure_header", "fragment", None,
+         hosts={f"{h}:<children>": "consumed"
+                for h in ("preproc_split_procedure", "preproc_conditional_procedure_header")})
 
 # --- branch-select, part A (Task 4): object, actions, layout, layout_mixed, report,
 # rendering, dataset. Arm sets are each type's own rule in grammar.js, with hidden
@@ -556,8 +560,11 @@ register("preproc_conditional_table_relation", "assembler",
          # (`if (..) #if X A #else B #endif`) the arm's simple_table_relation takes the field.
          hosts={"table_relation_expression:<children>": "unsupported",
                 "table_relation_value:<children>": "single-slot",
-                "if_table_relation:then_relation": "single-slot"},
-         arm={"table_relation_expression", "else_table_relation_fragment", "where_clause", ";"})
+                "if_table_relation:then_relation": "single-slot",
+                # Item 78: an arm of a group of else arms may be a nested group of else arms.
+                "preproc_conditional_table_relation:<children>": "single-slot"},
+         arm={"table_relation_expression", "else_table_relation_fragment", "where_clause", ";",
+              "preproc_conditional_table_relation"})
 # --- G6: a whole-property-value #if, contract whole-value-select
 # (assemblers.whole_value_select). Hosts are the census output:
 #  * property:value -- _property_value_conditional, the whole value is the #if;

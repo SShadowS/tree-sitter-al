@@ -1,0 +1,306 @@
+================================================================================
+Item 68: statements before end; in the FIRST arm of a split block end, procedure body
+================================================================================
+codeunit 50000 P
+{
+    procedure P()
+    begin
+        B();
+#if A
+        C();
+    end;
+#else
+    end;
+#endif
+
+    procedure Q()
+    begin
+    end;
+}
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (procedure
+        (procedure_keyword)
+        name: (identifier)
+        body: (code_block
+          (begin_keyword)
+          body: (statement_block
+            (call_expression
+              function: (identifier)
+              arguments: (argument_list)))
+          (preproc_split_code_block_end
+            (preproc_if
+              (preproc_open)
+              condition: (identifier))
+            (call_expression
+              function: (identifier)
+              arguments: (argument_list))
+            (end_keyword)
+            (preproc_else)
+            (preproc_split_end)
+            (preproc_endif
+              (preproc_close)))))
+      (procedure
+        (procedure_keyword)
+        name: (identifier)
+        body: (code_block
+          (begin_keyword)
+          (end_keyword))))))
+
+================================================================================
+Item 68: statements before end; in BOTH arms of a split block end
+================================================================================
+codeunit 50000 P
+{
+    procedure P()
+    begin
+        B();
+#if A
+        C();
+    end;
+#else
+        W();
+    end;
+#endif
+
+    procedure Q()
+    begin
+    end;
+}
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (procedure
+        (procedure_keyword)
+        name: (identifier)
+        body: (code_block
+          (begin_keyword)
+          body: (statement_block
+            (call_expression
+              function: (identifier)
+              arguments: (argument_list)))
+          (preproc_split_code_block_end
+            (preproc_if
+              (preproc_open)
+              condition: (identifier))
+            (call_expression
+              function: (identifier)
+              arguments: (argument_list))
+            (end_keyword)
+            (preproc_else)
+            (call_expression
+              function: (identifier)
+              arguments: (argument_list))
+            (end_keyword)
+            (preproc_endif
+              (preproc_close)))))
+      (procedure
+        (procedure_keyword)
+        name: (identifier)
+        body: (code_block
+          (begin_keyword)
+          (end_keyword))))))
+
+================================================================================
+Item 68: statements before end; in the first arm, then #elif and #else
+================================================================================
+codeunit 50000 P
+{
+    procedure P()
+    begin
+        B();
+#if A
+        C();
+    end;
+#elif D
+    end;
+#else
+        W();
+    end;
+#endif
+
+    procedure Q()
+    begin
+    end;
+}
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (procedure
+        (procedure_keyword)
+        name: (identifier)
+        body: (code_block
+          (begin_keyword)
+          body: (statement_block
+            (call_expression
+              function: (identifier)
+              arguments: (argument_list)))
+          (preproc_split_code_block_end
+            (preproc_if
+              (preproc_open)
+              condition: (identifier))
+            (call_expression
+              function: (identifier)
+              arguments: (argument_list))
+            (end_keyword)
+            (preproc_elif
+              condition: (identifier))
+            (preproc_split_end)
+            (preproc_else)
+            (call_expression
+              function: (identifier)
+              arguments: (argument_list))
+            (end_keyword)
+            (preproc_endif
+              (preproc_close)))))
+      (procedure
+        (procedure_keyword)
+        name: (identifier)
+        body: (code_block
+          (begin_keyword)
+          (end_keyword))))))
+
+================================================================================
+Item 68: statements before end; in the first arm, a nested if-then block
+================================================================================
+codeunit 50000 P
+{
+    procedure P(R: Boolean)
+    begin
+        if R then begin
+            B();
+#if A
+            C();
+        end;
+#else
+        end;
+#endif
+        W();
+    end;
+}
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (procedure
+        (procedure_keyword)
+        name: (identifier)
+        parameters: (parameter_list
+          (parameter
+            name: (identifier)
+            type: (type_specification
+              (basic_type))))
+        body: (code_block
+          (begin_keyword)
+          body: (statement_block
+            (if_statement
+              (if_keyword)
+              condition: (identifier)
+              (then_keyword)
+              then_branch: (code_block
+                (begin_keyword)
+                body: (statement_block
+                  (call_expression
+                    function: (identifier)
+                    arguments: (argument_list)))
+                (preproc_split_code_block_end
+                  (preproc_if
+                    (preproc_open)
+                    condition: (identifier))
+                  (call_expression
+                    function: (identifier)
+                    arguments: (argument_list))
+                  (end_keyword)
+                  (preproc_else)
+                  (preproc_split_end)
+                  (preproc_endif
+                    (preproc_close)))))
+            (call_expression
+              function: (identifier)
+              arguments: (argument_list)))
+          (end_keyword))))))
+
+================================================================================
+Item 68: statements before a bare end in the first arm, the ; after #endif
+================================================================================
+codeunit 50000 P
+{
+    procedure P(R: Boolean)
+    begin
+        if R then begin
+            B();
+#if A
+            C();
+        end
+#else
+        end
+#endif
+        ;
+        W();
+    end;
+}
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (procedure
+        (procedure_keyword)
+        name: (identifier)
+        parameters: (parameter_list
+          (parameter
+            name: (identifier)
+            type: (type_specification
+              (basic_type))))
+        body: (code_block
+          (begin_keyword)
+          body: (statement_block
+            (if_statement
+              (if_keyword)
+              condition: (identifier)
+              (then_keyword)
+              then_branch: (code_block
+                (begin_keyword)
+                body: (statement_block
+                  (call_expression
+                    function: (identifier)
+                    arguments: (argument_list)))
+                (preproc_split_code_block_end
+                  (preproc_if
+                    (preproc_open)
+                    condition: (identifier))
+                  (call_expression
+                    function: (identifier)
+                    arguments: (argument_list))
+                  (end_keyword)
+                  (preproc_else)
+                  (preproc_split_end)
+                  (preproc_endif
+                    (preproc_close)))))
+            (call_expression
+              function: (identifier)
+              arguments: (argument_list)))
+          (end_keyword))))))
