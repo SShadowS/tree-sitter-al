@@ -7,7 +7,14 @@ public API — a change to node structure or field names is a **major** bump.
 
 ## [Unreleased]
 
-### Changed (breaking: tree shape)
+## [5.1.0] — 2026-11-10
+
+Released as a minor version by the owner's decision, an exception to the rule in this file's header: the tree-shape
+changes on valid input below (a caption's trailing `,` before a `#if` group, B7b-1d; nine or more empty groups after
+an ML or `Namespaces` value, B7b-1c, deferred item 91) occur in no file of the four production corpora, and 5.0.0 was
+out for one day. `node-types.json` gains node types (new group nodes, `preproc_conditional_procedure_header`).
+
+### Changed (tree shape)
 
 - **A caption-shaped property value with a trailing comma and a `#if` group is now always a `caption_value` (B7b-1d,
   deferred item 46).** Input alc accepts that parsed before gets a different tree. Family, measured main (18c988e8) vs
