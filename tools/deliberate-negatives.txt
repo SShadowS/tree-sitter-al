@@ -177,7 +177,6 @@ b7_gap_in_operand_test.txt
 b7_gap_integer_list_test.txt
 b7_gap_interface_procedure_test.txt
 b7_gap_key_header_test.txt
-b7_gap_label_attributes_test.txt
 b7_gap_label_declaration_test.txt
 b7_gap_layout_header_test.txt
 b7_gap_link_list_comma_leading_test.txt
@@ -223,3 +222,7 @@ b7b2_crossing_gap_test.txt
 extends_by_number_negative_test.txt
 # Deferred item 74: a GAP witness (alc accepts X undefined); its ERROR is the known gap, not a negative.
 item_74_split_else_gap_test.txt
+# Deferred item 99: TableRelation `;` groups that supply the `;` only in some configurations (one arm, an
+# empty arm, two complementary groups) and item 84's group where no where precedes it or an arm is open:
+# GAP witnesses alc accepts in every configuration, and three shapes alc rejects in one (items 81/84 review 2).
+table_relation_item99_gap_test.txt

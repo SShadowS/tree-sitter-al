@@ -1,10 +1,10 @@
-// B7a Task 10 witness (GAP): family var-declaration, base placement empty, 36 cells; representative occ:variable_declaration:0.0.5@preproc_conditional_var#empty
-// Fixture b7_gap_var_declaration_test.txt#B7a GAP: var-declaration / empty (36 cells, verdict of the representative GAP); the parser ERRORs on configurations alc accepts; representative occ:variable_declaration:0.0.5@preproc_conditional_var%23empty#0
+// B7a Task 10 witness (GAP): family var-declaration, base placement empty, 18 cells; representative occ:variable_declaration:2.0.4@preproc_conditional_var#empty (re-seated by B7b-1d from 0.0.5, the Label arm, then by batch 6's merge from 1.0.4: the TextConst arm's cells parse since B7b-1c)
+// Fixture b7_gap_var_declaration_test.txt#B7a GAP: var-declaration / empty (18 cells, verdict of the representative GAP); the parser ERRORs on configurations alc accepts; representative occ:variable_declaration:2.0.4@preproc_conditional_var%23empty#0
 // expect: !TPL2 !X accept
 // expect: !TPL2 X accept
 // expect: TPL2 !X accept
 // expect: TPL2 X accept
-// source: recorded by B7a Task 10, 2026-10-07: the alc split verdicts of cell occ:variable_declaration:0.0.5@preproc_conditional_var#empty in tools/b7_audit/evidence.jsonl.gz
+// source: recorded by B7a Task 10, 2026-10-07: the alc split verdicts of cell occ:variable_declaration:2.0.4@preproc_conditional_var#empty in tools/b7_audit/evidence.jsonl.gz
 table 50100 T
 {
     fields
@@ -24,7 +24,7 @@ codeunit 50101 P
     var
 #if TPL2
         
-Lbl: Label 'a'
+X1, X2: Integer
 #if X
 #endif
 ;

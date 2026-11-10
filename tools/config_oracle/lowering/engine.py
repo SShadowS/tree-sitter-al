@@ -584,9 +584,22 @@ def _lower_ordinary(node, ctx) -> Lowered:
             ctx.normalised.append(f"list-value-empty:{node.kind}@{node.start}")
             return Lowered([], frags)
         raise LoweringError("empty-node", node)
+    # B7b-1c: a TextConst's list emptied by its groups: the flat `T: TextConst;` is an ordinary
+    # type_specification (the split tree's `type: basic_type` is the list arm's own alias).
+    if (node.kind == "variable_declaration" and any(c.kind == "ml_value_list" for c in node.children)
+            and not any(c.kind == "ml_value_list" for c in new.children)):
+        ctx.normalised.append(f"textconst-list-removed@{node.start}")
+        new.children = [Node("type_specification", True, "type", c.start, c.end, [c.copy(field=None)])
+                        if c.kind == "basic_type" and c.field == "type" else c for c in new.children]
     if (node.kind == "property_expression" and any(c.kind in regions.GROUPS for c in node.children)
             and len(kids) == 1 and kids[0].kind not in PROPERTY_EXPRESSION_KINDS):
         ctx.normalised.append(f"property-expression-unwrap@{node.start}")
+        return Lowered([kids[0].copy(field=node.field)], frags)
+    # B7b-1d: a caption whose sub-field groups all selected nothing is flat `Caption = 'a';`,
+    # a bare text, not a caption_value.
+    if (node.kind == "caption_value" and any(c.kind == "preproc_conditional_caption_subfields" for c in node.children)
+            and len(kids) == 1):
+        ctx.normalised.append(f"caption-value-unwrap@{node.start}")
         return Lowered([kids[0].copy(field=node.field)], frags)
     if (node.kind == "option_member_list" and node.field == "value"
             and any(c.kind == _OPTION_COND for c in node.children)

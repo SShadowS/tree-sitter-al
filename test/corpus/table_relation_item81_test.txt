@@ -1,0 +1,2262 @@
+========================================================================
+Item 81: an empty group between an else-group arm and its ; (s12)
+========================================================================
+table 50100 T
+{
+    fields
+    {
+        field(1; A; Integer) { }
+        field(2; "No."; Code[20])
+        {
+            TableRelation =
+#if X
+                if (A = const(1)) Item
+#else
+                if (A = const(2)) Resource
+#endif
+                where(A = const(1))
+#if Y
+                else Customer
+#if Z
+#endif
+                ;
+#else
+                else Vendor;
+#endif
+        }
+    }
+}
+
+------------------------------------------------------------------------
+
+(source_file
+  (table_declaration
+    (table_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (fields_section
+        (fields_keyword)
+        body: (fields_body
+          (field_declaration
+            (field_keyword)
+            id: (integer)
+            name: (identifier)
+            type: (type_specification
+              (basic_type)))
+          (field_declaration
+            (field_keyword)
+            id: (integer)
+            name: (quoted_identifier)
+            type: (type_specification
+              (code_type
+                (code_keyword)
+                length: (integer)))
+            body: (declaration_body
+              (property
+                name: (property_name)
+                value: (table_relation_value
+                  (preproc_conditional_table_relation
+                    (preproc_if
+                      (preproc_open)
+                      condition: (identifier))
+                    (table_relation_expression
+                      (if_table_relation
+                        (if_keyword)
+                        (where_conditions
+                          (where_condition
+                            field: (identifier)
+                            (const_keyword)
+                            value: (integer)))
+                        then_relation: (simple_table_relation
+                          target: (qualified_name
+                            (identifier)))))
+                    (preproc_else)
+                    (table_relation_expression
+                      (if_table_relation
+                        (if_keyword)
+                        (where_conditions
+                          (where_condition
+                            field: (identifier)
+                            (const_keyword)
+                            value: (integer)))
+                        then_relation: (simple_table_relation
+                          target: (qualified_name
+                            (identifier)))))
+                    (preproc_endif
+                      (preproc_close)))
+                  (where_clause
+                    (where_keyword)
+                    (where_conditions
+                      (where_condition
+                        field: (identifier)
+                        (const_keyword)
+                        value: (integer))))
+                  (preproc_conditional_table_relation
+                    (preproc_if
+                      (preproc_open)
+                      condition: (identifier))
+                    (else_table_relation_fragment
+                      (else_keyword)
+                      else_relation: (table_relation_expression
+                        (simple_table_relation
+                          target: (qualified_name
+                            (identifier)))))
+                    (preproc_conditional_property_value
+                      (preproc_if
+                        (preproc_open)
+                        condition: (identifier))
+                      (preproc_endif
+                        (preproc_close)))
+                    (preproc_else)
+                    (else_table_relation_fragment
+                      (else_keyword)
+                      else_relation: (table_relation_expression
+                        (simple_table_relation
+                          target: (qualified_name
+                            (identifier)))))
+                    (preproc_endif
+                      (preproc_close))))))))))))
+
+========================================================================
+Item 81: an else-group arm whose ; is a group of ; arms (sep-only)
+========================================================================
+table 50100 T
+{
+    fields
+    {
+        field(1; A; Integer) { }
+        field(2; "No."; Code[20])
+        {
+            TableRelation =
+#if X
+ if (A = const(1)) Item
+#else
+ if (A = const(2)) Resource
+#endif
+ where(A = const(1))
+#if Y
+else Customer
+#if Z
+;
+#else
+;
+#endif
+#else
+else Vendor;
+#endif
+        }
+    }
+}
+
+------------------------------------------------------------------------
+
+(source_file
+  (table_declaration
+    (table_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (fields_section
+        (fields_keyword)
+        body: (fields_body
+          (field_declaration
+            (field_keyword)
+            id: (integer)
+            name: (identifier)
+            type: (type_specification
+              (basic_type)))
+          (field_declaration
+            (field_keyword)
+            id: (integer)
+            name: (quoted_identifier)
+            type: (type_specification
+              (code_type
+                (code_keyword)
+                length: (integer)))
+            body: (declaration_body
+              (property
+                name: (property_name)
+                value: (table_relation_value
+                  (preproc_conditional_table_relation
+                    (preproc_if
+                      (preproc_open)
+                      condition: (identifier))
+                    (table_relation_expression
+                      (if_table_relation
+                        (if_keyword)
+                        (where_conditions
+                          (where_condition
+                            field: (identifier)
+                            (const_keyword)
+                            value: (integer)))
+                        then_relation: (simple_table_relation
+                          target: (qualified_name
+                            (identifier)))))
+                    (preproc_else)
+                    (table_relation_expression
+                      (if_table_relation
+                        (if_keyword)
+                        (where_conditions
+                          (where_condition
+                            field: (identifier)
+                            (const_keyword)
+                            value: (integer)))
+                        then_relation: (simple_table_relation
+                          target: (qualified_name
+                            (identifier)))))
+                    (preproc_endif
+                      (preproc_close)))
+                  (where_clause
+                    (where_keyword)
+                    (where_conditions
+                      (where_condition
+                        field: (identifier)
+                        (const_keyword)
+                        value: (integer))))
+                  (preproc_conditional_table_relation
+                    (preproc_if
+                      (preproc_open)
+                      condition: (identifier))
+                    (else_table_relation_fragment
+                      (else_keyword)
+                      else_relation: (table_relation_expression
+                        (simple_table_relation
+                          target: (qualified_name
+                            (identifier)))))
+                    (preproc_conditional_table_relation
+                      (preproc_if
+                        (preproc_open)
+                        condition: (identifier))
+                      (preproc_else)
+                      (preproc_endif
+                        (preproc_close)))
+                    (preproc_else)
+                    (else_table_relation_fragment
+                      (else_keyword)
+                      else_relation: (table_relation_expression
+                        (simple_table_relation
+                          target: (qualified_name
+                            (identifier)))))
+                    (preproc_endif
+                      (preproc_close))))))))))))
+
+========================================================================
+Item 81: an else-group arm whose ; is a group with #elif
+========================================================================
+table 50100 T
+{
+    fields
+    {
+        field(1; A; Integer) { }
+        field(2; "No."; Code[20])
+        {
+            TableRelation =
+#if X
+ if (A = const(1)) Item
+#else
+ if (A = const(2)) Resource
+#endif
+ where(A = const(1))
+#if Y
+else Customer
+#if Z
+;
+#elif W
+;
+#else
+;
+#endif
+#else
+else Vendor;
+#endif
+        }
+    }
+}
+
+------------------------------------------------------------------------
+
+(source_file
+  (table_declaration
+    (table_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (fields_section
+        (fields_keyword)
+        body: (fields_body
+          (field_declaration
+            (field_keyword)
+            id: (integer)
+            name: (identifier)
+            type: (type_specification
+              (basic_type)))
+          (field_declaration
+            (field_keyword)
+            id: (integer)
+            name: (quoted_identifier)
+            type: (type_specification
+              (code_type
+                (code_keyword)
+                length: (integer)))
+            body: (declaration_body
+              (property
+                name: (property_name)
+                value: (table_relation_value
+                  (preproc_conditional_table_relation
+                    (preproc_if
+                      (preproc_open)
+                      condition: (identifier))
+                    (table_relation_expression
+                      (if_table_relation
+                        (if_keyword)
+                        (where_conditions
+                          (where_condition
+                            field: (identifier)
+                            (const_keyword)
+                            value: (integer)))
+                        then_relation: (simple_table_relation
+                          target: (qualified_name
+                            (identifier)))))
+                    (preproc_else)
+                    (table_relation_expression
+                      (if_table_relation
+                        (if_keyword)
+                        (where_conditions
+                          (where_condition
+                            field: (identifier)
+                            (const_keyword)
+                            value: (integer)))
+                        then_relation: (simple_table_relation
+                          target: (qualified_name
+                            (identifier)))))
+                    (preproc_endif
+                      (preproc_close)))
+                  (where_clause
+                    (where_keyword)
+                    (where_conditions
+                      (where_condition
+                        field: (identifier)
+                        (const_keyword)
+                        value: (integer))))
+                  (preproc_conditional_table_relation
+                    (preproc_if
+                      (preproc_open)
+                      condition: (identifier))
+                    (else_table_relation_fragment
+                      (else_keyword)
+                      else_relation: (table_relation_expression
+                        (simple_table_relation
+                          target: (qualified_name
+                            (identifier)))))
+                    (preproc_conditional_table_relation
+                      (preproc_if
+                        (preproc_open)
+                        condition: (identifier))
+                      (preproc_elif
+                        condition: (identifier))
+                      (preproc_else)
+                      (preproc_endif
+                        (preproc_close)))
+                    (preproc_else)
+                    (else_table_relation_fragment
+                      (else_keyword)
+                      else_relation: (table_relation_expression
+                        (simple_table_relation
+                          target: (qualified_name
+                            (identifier)))))
+                    (preproc_endif
+                      (preproc_close))))))))))))
+
+========================================================================
+Item 81: an else-group arm whose ; is a nested group of ; arms
+========================================================================
+table 50100 T
+{
+    fields
+    {
+        field(1; A; Integer) { }
+        field(2; "No."; Code[20])
+        {
+            TableRelation =
+#if X
+ if (A = const(1)) Item
+#else
+ if (A = const(2)) Resource
+#endif
+ where(A = const(1))
+#if Y
+else Customer
+#if Z
+#if W
+;
+#else
+;
+#endif
+#else
+;
+#endif
+#else
+else Vendor;
+#endif
+        }
+    }
+}
+
+------------------------------------------------------------------------
+
+(source_file
+  (table_declaration
+    (table_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (fields_section
+        (fields_keyword)
+        body: (fields_body
+          (field_declaration
+            (field_keyword)
+            id: (integer)
+            name: (identifier)
+            type: (type_specification
+              (basic_type)))
+          (field_declaration
+            (field_keyword)
+            id: (integer)
+            name: (quoted_identifier)
+            type: (type_specification
+              (code_type
+                (code_keyword)
+                length: (integer)))
+            body: (declaration_body
+              (property
+                name: (property_name)
+                value: (table_relation_value
+                  (preproc_conditional_table_relation
+                    (preproc_if
+                      (preproc_open)
+                      condition: (identifier))
+                    (table_relation_expression
+                      (if_table_relation
+                        (if_keyword)
+                        (where_conditions
+                          (where_condition
+                            field: (identifier)
+                            (const_keyword)
+                            value: (integer)))
+                        then_relation: (simple_table_relation
+                          target: (qualified_name
+                            (identifier)))))
+                    (preproc_else)
+                    (table_relation_expression
+                      (if_table_relation
+                        (if_keyword)
+                        (where_conditions
+                          (where_condition
+                            field: (identifier)
+                            (const_keyword)
+                            value: (integer)))
+                        then_relation: (simple_table_relation
+                          target: (qualified_name
+                            (identifier)))))
+                    (preproc_endif
+                      (preproc_close)))
+                  (where_clause
+                    (where_keyword)
+                    (where_conditions
+                      (where_condition
+                        field: (identifier)
+                        (const_keyword)
+                        value: (integer))))
+                  (preproc_conditional_table_relation
+                    (preproc_if
+                      (preproc_open)
+                      condition: (identifier))
+                    (else_table_relation_fragment
+                      (else_keyword)
+                      else_relation: (table_relation_expression
+                        (simple_table_relation
+                          target: (qualified_name
+                            (identifier)))))
+                    (preproc_conditional_table_relation
+                      (preproc_if
+                        (preproc_open)
+                        condition: (identifier))
+                      (preproc_conditional_table_relation
+                        (preproc_if
+                          (preproc_open)
+                          condition: (identifier))
+                        (preproc_else)
+                        (preproc_endif
+                          (preproc_close)))
+                      (preproc_else)
+                      (preproc_endif
+                        (preproc_close)))
+                    (preproc_else)
+                    (else_table_relation_fragment
+                      (else_keyword)
+                      else_relation: (table_relation_expression
+                        (simple_table_relation
+                          target: (qualified_name
+                            (identifier)))))
+                    (preproc_endif
+                      (preproc_close))))))))))))
+
+========================================================================
+Item 84: an else group whose other arm is only the property ; (s13)
+========================================================================
+table 50100 T
+{
+    fields
+    {
+        field(1; A; Integer) { }
+        field(2; "No."; Code[20])
+        {
+            TableRelation =
+#if X
+                if (A = const(1)) Item
+#else
+                if (A = const(2)) Resource
+#endif
+                where(A = const(1))
+#if Y
+                else Customer;
+#else
+                ;
+#endif
+        }
+    }
+}
+
+------------------------------------------------------------------------
+
+(source_file
+  (table_declaration
+    (table_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (fields_section
+        (fields_keyword)
+        body: (fields_body
+          (field_declaration
+            (field_keyword)
+            id: (integer)
+            name: (identifier)
+            type: (type_specification
+              (basic_type)))
+          (field_declaration
+            (field_keyword)
+            id: (integer)
+            name: (quoted_identifier)
+            type: (type_specification
+              (code_type
+                (code_keyword)
+                length: (integer)))
+            body: (declaration_body
+              (property
+                name: (property_name)
+                value: (table_relation_value
+                  (preproc_conditional_table_relation
+                    (preproc_if
+                      (preproc_open)
+                      condition: (identifier))
+                    (table_relation_expression
+                      (if_table_relation
+                        (if_keyword)
+                        (where_conditions
+                          (where_condition
+                            field: (identifier)
+                            (const_keyword)
+                            value: (integer)))
+                        then_relation: (simple_table_relation
+                          target: (qualified_name
+                            (identifier)))))
+                    (preproc_else)
+                    (table_relation_expression
+                      (if_table_relation
+                        (if_keyword)
+                        (where_conditions
+                          (where_condition
+                            field: (identifier)
+                            (const_keyword)
+                            value: (integer)))
+                        then_relation: (simple_table_relation
+                          target: (qualified_name
+                            (identifier)))))
+                    (preproc_endif
+                      (preproc_close)))
+                  (where_clause
+                    (where_keyword)
+                    (where_conditions
+                      (where_condition
+                        field: (identifier)
+                        (const_keyword)
+                        value: (integer))))
+                  (preproc_conditional_table_relation
+                    (preproc_if
+                      (preproc_open)
+                      condition: (identifier))
+                    (else_table_relation_fragment
+                      (else_keyword)
+                      else_relation: (table_relation_expression
+                        (simple_table_relation
+                          target: (qualified_name
+                            (identifier)))))
+                    (preproc_else)
+                    (preproc_endif
+                      (preproc_close))))))))))))
+
+========================================================================
+Item 84: the ;-only arm first
+========================================================================
+table 50100 T
+{
+    fields
+    {
+        field(1; A; Integer) { }
+        field(2; "No."; Code[20])
+        {
+            TableRelation =
+#if X
+ if (A = const(1)) Item
+#else
+ if (A = const(2)) Resource
+#endif
+ where(A = const(1))
+#if Y
+;
+#else
+else Customer;
+#endif
+        }
+    }
+}
+
+------------------------------------------------------------------------
+
+(source_file
+  (table_declaration
+    (table_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (fields_section
+        (fields_keyword)
+        body: (fields_body
+          (field_declaration
+            (field_keyword)
+            id: (integer)
+            name: (identifier)
+            type: (type_specification
+              (basic_type)))
+          (field_declaration
+            (field_keyword)
+            id: (integer)
+            name: (quoted_identifier)
+            type: (type_specification
+              (code_type
+                (code_keyword)
+                length: (integer)))
+            body: (declaration_body
+              (property
+                name: (property_name)
+                value: (table_relation_value
+                  (preproc_conditional_table_relation
+                    (preproc_if
+                      (preproc_open)
+                      condition: (identifier))
+                    (table_relation_expression
+                      (if_table_relation
+                        (if_keyword)
+                        (where_conditions
+                          (where_condition
+                            field: (identifier)
+                            (const_keyword)
+                            value: (integer)))
+                        then_relation: (simple_table_relation
+                          target: (qualified_name
+                            (identifier)))))
+                    (preproc_else)
+                    (table_relation_expression
+                      (if_table_relation
+                        (if_keyword)
+                        (where_conditions
+                          (where_condition
+                            field: (identifier)
+                            (const_keyword)
+                            value: (integer)))
+                        then_relation: (simple_table_relation
+                          target: (qualified_name
+                            (identifier)))))
+                    (preproc_endif
+                      (preproc_close)))
+                  (where_clause
+                    (where_keyword)
+                    (where_conditions
+                      (where_condition
+                        field: (identifier)
+                        (const_keyword)
+                        value: (integer))))
+                  (preproc_conditional_table_relation
+                    (preproc_if
+                      (preproc_open)
+                      condition: (identifier))
+                    (preproc_else)
+                    (else_table_relation_fragment
+                      (else_keyword)
+                      else_relation: (table_relation_expression
+                        (simple_table_relation
+                          target: (qualified_name
+                            (identifier)))))
+                    (preproc_endif
+                      (preproc_close))))))))))))
+
+========================================================================
+Item 84: every arm of the group after the shared where is only the ;
+========================================================================
+table 50100 T
+{
+    fields
+    {
+        field(1; A; Integer) { }
+        field(2; "No."; Code[20])
+        {
+            TableRelation =
+#if X
+ if (A = const(1)) Item
+#else
+ if (A = const(2)) Resource
+#endif
+ where(A = const(1))
+#if Y
+;
+#else
+;
+#endif
+        }
+    }
+}
+
+------------------------------------------------------------------------
+
+(source_file
+  (table_declaration
+    (table_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (fields_section
+        (fields_keyword)
+        body: (fields_body
+          (field_declaration
+            (field_keyword)
+            id: (integer)
+            name: (identifier)
+            type: (type_specification
+              (basic_type)))
+          (field_declaration
+            (field_keyword)
+            id: (integer)
+            name: (quoted_identifier)
+            type: (type_specification
+              (code_type
+                (code_keyword)
+                length: (integer)))
+            body: (declaration_body
+              (property
+                name: (property_name)
+                value: (table_relation_value
+                  (preproc_conditional_table_relation
+                    (preproc_if
+                      (preproc_open)
+                      condition: (identifier))
+                    (table_relation_expression
+                      (if_table_relation
+                        (if_keyword)
+                        (where_conditions
+                          (where_condition
+                            field: (identifier)
+                            (const_keyword)
+                            value: (integer)))
+                        then_relation: (simple_table_relation
+                          target: (qualified_name
+                            (identifier)))))
+                    (preproc_else)
+                    (table_relation_expression
+                      (if_table_relation
+                        (if_keyword)
+                        (where_conditions
+                          (where_condition
+                            field: (identifier)
+                            (const_keyword)
+                            value: (integer)))
+                        then_relation: (simple_table_relation
+                          target: (qualified_name
+                            (identifier)))))
+                    (preproc_endif
+                      (preproc_close)))
+                  (where_clause
+                    (where_keyword)
+                    (where_conditions
+                      (where_condition
+                        field: (identifier)
+                        (const_keyword)
+                        value: (integer))))
+                  (preproc_conditional_table_relation
+                    (preproc_if
+                      (preproc_open)
+                      condition: (identifier))
+                    (preproc_else)
+                    (preproc_endif
+                      (preproc_close))))))))))))
+
+========================================================================
+Items 81/84: a plain relation whose ; is a group of ; arms
+========================================================================
+table 50100 T
+{
+    fields
+    {
+        field(1; A; Integer) { }
+        field(2; "No."; Code[20])
+        {
+            TableRelation =
+Item
+#if X
+;
+#else
+;
+#endif
+        }
+    }
+}
+
+------------------------------------------------------------------------
+
+(source_file
+  (table_declaration
+    (table_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (fields_section
+        (fields_keyword)
+        body: (fields_body
+          (field_declaration
+            (field_keyword)
+            id: (integer)
+            name: (identifier)
+            type: (type_specification
+              (basic_type)))
+          (field_declaration
+            (field_keyword)
+            id: (integer)
+            name: (quoted_identifier)
+            type: (type_specification
+              (code_type
+                (code_keyword)
+                length: (integer)))
+            body: (declaration_body
+              (property
+                name: (property_name)
+                value: (table_relation_value
+                  (table_relation_expression
+                    (simple_table_relation
+                      target: (qualified_name
+                        (identifier))))
+                  (preproc_conditional_table_relation
+                    (preproc_if
+                      (preproc_open)
+                      condition: (identifier))
+                    (preproc_else)
+                    (preproc_endif
+                      (preproc_close))))))))))))
+
+========================================================================
+Items 81/84: a plain relation whose ; is a group with #elif
+========================================================================
+table 50100 T
+{
+    fields
+    {
+        field(1; A; Integer) { }
+        field(2; "No."; Code[20])
+        {
+            TableRelation =
+Item
+#if X
+;
+#elif Y
+;
+#else
+;
+#endif
+        }
+    }
+}
+
+------------------------------------------------------------------------
+
+(source_file
+  (table_declaration
+    (table_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (fields_section
+        (fields_keyword)
+        body: (fields_body
+          (field_declaration
+            (field_keyword)
+            id: (integer)
+            name: (identifier)
+            type: (type_specification
+              (basic_type)))
+          (field_declaration
+            (field_keyword)
+            id: (integer)
+            name: (quoted_identifier)
+            type: (type_specification
+              (code_type
+                (code_keyword)
+                length: (integer)))
+            body: (declaration_body
+              (property
+                name: (property_name)
+                value: (table_relation_value
+                  (table_relation_expression
+                    (simple_table_relation
+                      target: (qualified_name
+                        (identifier))))
+                  (preproc_conditional_table_relation
+                    (preproc_if
+                      (preproc_open)
+                      condition: (identifier))
+                    (preproc_elif
+                      condition: (identifier))
+                    (preproc_else)
+                    (preproc_endif
+                      (preproc_close))))))))))))
+
+========================================================================
+Items 81/84: a plain relation whose ; is a nested group
+========================================================================
+table 50100 T
+{
+    fields
+    {
+        field(1; A; Integer) { }
+        field(2; "No."; Code[20])
+        {
+            TableRelation =
+Item
+#if X
+#if Y
+;
+#else
+;
+#endif
+#else
+;
+#endif
+        }
+    }
+}
+
+------------------------------------------------------------------------
+
+(source_file
+  (table_declaration
+    (table_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (fields_section
+        (fields_keyword)
+        body: (fields_body
+          (field_declaration
+            (field_keyword)
+            id: (integer)
+            name: (identifier)
+            type: (type_specification
+              (basic_type)))
+          (field_declaration
+            (field_keyword)
+            id: (integer)
+            name: (quoted_identifier)
+            type: (type_specification
+              (code_type
+                (code_keyword)
+                length: (integer)))
+            body: (declaration_body
+              (property
+                name: (property_name)
+                value: (table_relation_value
+                  (table_relation_expression
+                    (simple_table_relation
+                      target: (qualified_name
+                        (identifier))))
+                  (preproc_conditional_table_relation
+                    (preproc_if
+                      (preproc_open)
+                      condition: (identifier))
+                    (preproc_conditional_table_relation
+                      (preproc_if
+                        (preproc_open)
+                        condition: (identifier))
+                      (preproc_else)
+                      (preproc_endif
+                        (preproc_close)))
+                    (preproc_else)
+                    (preproc_endif
+                      (preproc_close))))))))))))
+
+========================================================================
+Items 81/84: a #if after the ; group stays the body conditional
+========================================================================
+table 50100 T
+{
+    fields
+    {
+        field(1; A; Integer) { }
+        field(2; "No."; Code[20])
+        {
+            TableRelation =
+Item
+#if X
+;
+#else
+;
+#endif
+#if Y
+Caption = 'a';
+#endif
+        }
+    }
+}
+
+------------------------------------------------------------------------
+
+(source_file
+  (table_declaration
+    (table_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (fields_section
+        (fields_keyword)
+        body: (fields_body
+          (field_declaration
+            (field_keyword)
+            id: (integer)
+            name: (identifier)
+            type: (type_specification
+              (basic_type)))
+          (field_declaration
+            (field_keyword)
+            id: (integer)
+            name: (quoted_identifier)
+            type: (type_specification
+              (code_type
+                (code_keyword)
+                length: (integer)))
+            body: (declaration_body
+              (property
+                name: (property_name)
+                value: (table_relation_value
+                  (table_relation_expression
+                    (simple_table_relation
+                      target: (qualified_name
+                        (identifier))))
+                  (preproc_conditional_table_relation
+                    (preproc_if
+                      (preproc_open)
+                      condition: (identifier))
+                    (preproc_else)
+                    (preproc_endif
+                      (preproc_close)))))
+              (preproc_conditional
+                (preproc_if
+                  (preproc_open)
+                  condition: (identifier))
+                (property
+                  name: (property_name)
+                  value: (string_literal))
+                (preproc_endif
+                  (preproc_close))))))))))
+
+========================================================================
+Items 81/84: a relation with where then a ; group
+========================================================================
+table 50100 T
+{
+    fields
+    {
+        field(1; A; Integer) { }
+        field(2; "No."; Code[20])
+        {
+            TableRelation =
+Item where(A = const(1))
+#if X
+;
+#else
+;
+#endif
+        }
+    }
+}
+
+------------------------------------------------------------------------
+
+(source_file
+  (table_declaration
+    (table_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (fields_section
+        (fields_keyword)
+        body: (fields_body
+          (field_declaration
+            (field_keyword)
+            id: (integer)
+            name: (identifier)
+            type: (type_specification
+              (basic_type)))
+          (field_declaration
+            (field_keyword)
+            id: (integer)
+            name: (quoted_identifier)
+            type: (type_specification
+              (code_type
+                (code_keyword)
+                length: (integer)))
+            body: (declaration_body
+              (property
+                name: (property_name)
+                value: (table_relation_value
+                  (table_relation_expression
+                    (simple_table_relation
+                      target: (qualified_name
+                        (identifier))
+                      (where_clause
+                        (where_keyword)
+                        (where_conditions
+                          (where_condition
+                            field: (identifier)
+                            (const_keyword)
+                            value: (integer))))))
+                  (preproc_conditional_table_relation
+                    (preproc_if
+                      (preproc_open)
+                      condition: (identifier))
+                    (preproc_else)
+                    (preproc_endif
+                      (preproc_close))))))))))))
+
+========================================================================
+Items 81/84: a closed if-relation then a ; group
+========================================================================
+table 50100 T
+{
+    fields
+    {
+        field(1; A; Integer) { }
+        field(2; "No."; Code[20])
+        {
+            TableRelation =
+if (A = const(1)) Item else Vendor
+#if X
+;
+#else
+;
+#endif
+        }
+    }
+}
+
+------------------------------------------------------------------------
+
+(source_file
+  (table_declaration
+    (table_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (fields_section
+        (fields_keyword)
+        body: (fields_body
+          (field_declaration
+            (field_keyword)
+            id: (integer)
+            name: (identifier)
+            type: (type_specification
+              (basic_type)))
+          (field_declaration
+            (field_keyword)
+            id: (integer)
+            name: (quoted_identifier)
+            type: (type_specification
+              (code_type
+                (code_keyword)
+                length: (integer)))
+            body: (declaration_body
+              (property
+                name: (property_name)
+                value: (table_relation_value
+                  (table_relation_expression
+                    (if_table_relation
+                      (if_keyword)
+                      (where_conditions
+                        (where_condition
+                          field: (identifier)
+                          (const_keyword)
+                          value: (integer)))
+                      then_relation: (simple_table_relation
+                        target: (qualified_name
+                          (identifier)))
+                      (else_keyword)
+                      else_relation: (table_relation_expression
+                        (simple_table_relation
+                          target: (qualified_name
+                            (identifier))))))
+                  (preproc_conditional_table_relation
+                    (preproc_if
+                      (preproc_open)
+                      condition: (identifier))
+                    (preproc_else)
+                    (preproc_endif
+                      (preproc_close))))))))))))
+
+========================================================================
+Items 81/84: the ; group at a whole-value arm (B7a arm_t)
+========================================================================
+table 50100 T
+{
+    fields
+    {
+        field(1; A; Integer) { }
+        field(2; "No."; Code[20])
+        {
+            TableRelation =
+#if TPL
+Item
+#if X
+;
+#else
+;
+#endif
+#else
+Resource;
+#endif
+        }
+    }
+}
+
+------------------------------------------------------------------------
+
+(source_file
+  (table_declaration
+    (table_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (fields_section
+        (fields_keyword)
+        body: (fields_body
+          (field_declaration
+            (field_keyword)
+            id: (integer)
+            name: (identifier)
+            type: (type_specification
+              (basic_type)))
+          (field_declaration
+            (field_keyword)
+            id: (integer)
+            name: (quoted_identifier)
+            type: (type_specification
+              (code_type
+                (code_keyword)
+                length: (integer)))
+            body: (declaration_body
+              (property
+                name: (property_name)
+                value: (preproc_conditional_property_value
+                  (preproc_if
+                    (preproc_open)
+                    condition: (identifier))
+                  value: (table_relation_value
+                    (table_relation_expression
+                      (simple_table_relation
+                        target: (qualified_name
+                          (identifier))))
+                    (preproc_conditional_table_relation
+                      (preproc_if
+                        (preproc_open)
+                        condition: (identifier))
+                      (preproc_else)
+                      (preproc_endif
+                        (preproc_close))))
+                  (preproc_else)
+                  value: (table_relation_value
+                    (table_relation_expression
+                      (simple_table_relation
+                        target: (qualified_name
+                          (identifier)))))
+                  (preproc_endif
+                    (preproc_close)))))))))))
+
+========================================================================
+Items 81/84: an empty group before the ; of a relation branch (B7a branch)
+========================================================================
+table 50100 T
+{
+    fields
+    {
+        field(1; A; Integer) { }
+        field(2; "No."; Code[20])
+        {
+            TableRelation =
+if (A = const(1)) Item else
+#if TPL
+Resource
+#if X
+#endif
+;
+#else
+Vendor;
+#endif
+        }
+    }
+}
+
+------------------------------------------------------------------------
+
+(source_file
+  (table_declaration
+    (table_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (fields_section
+        (fields_keyword)
+        body: (fields_body
+          (field_declaration
+            (field_keyword)
+            id: (integer)
+            name: (identifier)
+            type: (type_specification
+              (basic_type)))
+          (field_declaration
+            (field_keyword)
+            id: (integer)
+            name: (quoted_identifier)
+            type: (type_specification
+              (code_type
+                (code_keyword)
+                length: (integer)))
+            body: (declaration_body
+              (property
+                name: (property_name)
+                value: (table_relation_value
+                  (table_relation_expression
+                    (if_table_relation
+                      (if_keyword)
+                      (where_conditions
+                        (where_condition
+                          field: (identifier)
+                          (const_keyword)
+                          value: (integer)))
+                      then_relation: (simple_table_relation
+                        target: (qualified_name
+                          (identifier)))
+                      (else_keyword)
+                      else_relation: (table_relation_expression
+                        (preproc_conditional_table_relation
+                          (preproc_if
+                            (preproc_open)
+                            condition: (identifier))
+                          (table_relation_expression
+                            (simple_table_relation
+                              target: (qualified_name
+                                (identifier))))
+                          (preproc_conditional_property_value
+                            (preproc_if
+                              (preproc_open)
+                              condition: (identifier))
+                            (preproc_endif
+                              (preproc_close)))
+                          (preproc_else)
+                          (table_relation_expression
+                            (simple_table_relation
+                              target: (qualified_name
+                                (identifier))))
+                          (preproc_endif
+                            (preproc_close)))))))))))))))
+
+========================================================================
+Items 81/84: a ; group inside a relation branch
+========================================================================
+table 50100 T
+{
+    fields
+    {
+        field(1; A; Integer) { }
+        field(2; "No."; Code[20])
+        {
+            TableRelation =
+if (A = const(1)) Item else
+#if TPL
+Resource
+#if X
+;
+#else
+;
+#endif
+#else
+Vendor;
+#endif
+        }
+    }
+}
+
+------------------------------------------------------------------------
+
+(source_file
+  (table_declaration
+    (table_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (fields_section
+        (fields_keyword)
+        body: (fields_body
+          (field_declaration
+            (field_keyword)
+            id: (integer)
+            name: (identifier)
+            type: (type_specification
+              (basic_type)))
+          (field_declaration
+            (field_keyword)
+            id: (integer)
+            name: (quoted_identifier)
+            type: (type_specification
+              (code_type
+                (code_keyword)
+                length: (integer)))
+            body: (declaration_body
+              (property
+                name: (property_name)
+                value: (table_relation_value
+                  (table_relation_expression
+                    (if_table_relation
+                      (if_keyword)
+                      (where_conditions
+                        (where_condition
+                          field: (identifier)
+                          (const_keyword)
+                          value: (integer)))
+                      then_relation: (simple_table_relation
+                        target: (qualified_name
+                          (identifier)))
+                      (else_keyword)
+                      else_relation: (table_relation_expression
+                        (preproc_conditional_table_relation
+                          (preproc_if
+                            (preproc_open)
+                            condition: (identifier))
+                          (table_relation_expression
+                            (simple_table_relation
+                              target: (qualified_name
+                                (identifier))))
+                          (preproc_conditional_table_relation
+                            (preproc_if
+                              (preproc_open)
+                              condition: (identifier))
+                            (preproc_else)
+                            (preproc_endif
+                              (preproc_close)))
+                          (preproc_else)
+                          (table_relation_expression
+                            (simple_table_relation
+                              target: (qualified_name
+                                (identifier))))
+                          (preproc_endif
+                            (preproc_close)))))))))))))))
+
+========================================================================
+Items 81/84: a ; group after a head whose arms end in ; stays the body conditional
+========================================================================
+table 50100 T
+{
+    fields
+    {
+        field(1; A; Integer) { }
+        field(2; "No."; Code[20])
+        {
+            TableRelation =
+#if TPL
+ Item;
+#else
+ Resource;
+#endif
+#if Q
+;
+#else
+;
+#endif
+        }
+    }
+}
+
+------------------------------------------------------------------------
+
+(source_file
+  (table_declaration
+    (table_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (fields_section
+        (fields_keyword)
+        body: (fields_body
+          (field_declaration
+            (field_keyword)
+            id: (integer)
+            name: (identifier)
+            type: (type_specification
+              (basic_type)))
+          (field_declaration
+            (field_keyword)
+            id: (integer)
+            name: (quoted_identifier)
+            type: (type_specification
+              (code_type
+                (code_keyword)
+                length: (integer)))
+            body: (declaration_body
+              (property
+                name: (property_name)
+                value: (preproc_conditional_property_value
+                  (preproc_if
+                    (preproc_open)
+                    condition: (identifier))
+                  value: (table_relation_value
+                    (table_relation_expression
+                      (simple_table_relation
+                        target: (qualified_name
+                          (identifier)))))
+                  (preproc_else)
+                  value: (table_relation_value
+                    (table_relation_expression
+                      (simple_table_relation
+                        target: (qualified_name
+                          (identifier)))))
+                  (preproc_endif
+                    (preproc_close))))
+              (preproc_conditional
+                (preproc_if
+                  (preproc_open)
+                  condition: (identifier))
+                (empty_statement)
+                (preproc_else)
+                (empty_statement)
+                (preproc_endif
+                  (preproc_close))))))))))
+
+========================================================================
+Items 81/84: a one-arm ; group after a head whose arms end in ; stays the body conditional
+========================================================================
+table 50100 T
+{
+    fields
+    {
+        field(1; A; Integer) { }
+        field(2; "No."; Code[20])
+        {
+            TableRelation =
+#if TPL
+ Item;
+#else
+ Resource;
+#endif
+#if Q
+;
+#endif
+        }
+    }
+}
+
+------------------------------------------------------------------------
+
+(source_file
+  (table_declaration
+    (table_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (fields_section
+        (fields_keyword)
+        body: (fields_body
+          (field_declaration
+            (field_keyword)
+            id: (integer)
+            name: (identifier)
+            type: (type_specification
+              (basic_type)))
+          (field_declaration
+            (field_keyword)
+            id: (integer)
+            name: (quoted_identifier)
+            type: (type_specification
+              (code_type
+                (code_keyword)
+                length: (integer)))
+            body: (declaration_body
+              (property
+                name: (property_name)
+                value: (preproc_conditional_property_value
+                  (preproc_if
+                    (preproc_open)
+                    condition: (identifier))
+                  value: (table_relation_value
+                    (table_relation_expression
+                      (simple_table_relation
+                        target: (qualified_name
+                          (identifier)))))
+                  (preproc_else)
+                  value: (table_relation_value
+                    (table_relation_expression
+                      (simple_table_relation
+                        target: (qualified_name
+                          (identifier)))))
+                  (preproc_endif
+                    (preproc_close))))
+              (preproc_conditional
+                (preproc_if
+                  (preproc_open)
+                  condition: (identifier))
+                (empty_statement)
+                (preproc_endif
+                  (preproc_close))))))))))
+
+========================================================================
+Items 81/84: an #elif ; group after a head whose arms end in ; stays the body conditional
+========================================================================
+table 50100 T
+{
+    fields
+    {
+        field(1; A; Integer) { }
+        field(2; "No."; Code[20])
+        {
+            TableRelation =
+#if TPL
+ Item;
+#else
+ Resource;
+#endif
+#if Q
+;
+#elif R
+;
+#else
+;
+#endif
+        }
+    }
+}
+
+------------------------------------------------------------------------
+
+(source_file
+  (table_declaration
+    (table_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (fields_section
+        (fields_keyword)
+        body: (fields_body
+          (field_declaration
+            (field_keyword)
+            id: (integer)
+            name: (identifier)
+            type: (type_specification
+              (basic_type)))
+          (field_declaration
+            (field_keyword)
+            id: (integer)
+            name: (quoted_identifier)
+            type: (type_specification
+              (code_type
+                (code_keyword)
+                length: (integer)))
+            body: (declaration_body
+              (property
+                name: (property_name)
+                value: (preproc_conditional_property_value
+                  (preproc_if
+                    (preproc_open)
+                    condition: (identifier))
+                  value: (table_relation_value
+                    (table_relation_expression
+                      (simple_table_relation
+                        target: (qualified_name
+                          (identifier)))))
+                  (preproc_else)
+                  value: (table_relation_value
+                    (table_relation_expression
+                      (simple_table_relation
+                        target: (qualified_name
+                          (identifier)))))
+                  (preproc_endif
+                    (preproc_close))))
+              (preproc_conditional
+                (preproc_if
+                  (preproc_open)
+                  condition: (identifier))
+                (empty_statement)
+                (preproc_elif
+                  condition: (identifier))
+                (empty_statement)
+                (preproc_else)
+                (empty_statement)
+                (preproc_endif
+                  (preproc_close))))))))))
+
+========================================================================
+Items 81/84: a nested ; group after a head whose arms end in ; stays the body conditional
+========================================================================
+table 50100 T
+{
+    fields
+    {
+        field(1; A; Integer) { }
+        field(2; "No."; Code[20])
+        {
+            TableRelation =
+#if TPL
+ Item;
+#else
+ Resource;
+#endif
+#if Q
+#if R
+;
+#else
+;
+#endif
+#else
+;
+#endif
+        }
+    }
+}
+
+------------------------------------------------------------------------
+
+(source_file
+  (table_declaration
+    (table_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (fields_section
+        (fields_keyword)
+        body: (fields_body
+          (field_declaration
+            (field_keyword)
+            id: (integer)
+            name: (identifier)
+            type: (type_specification
+              (basic_type)))
+          (field_declaration
+            (field_keyword)
+            id: (integer)
+            name: (quoted_identifier)
+            type: (type_specification
+              (code_type
+                (code_keyword)
+                length: (integer)))
+            body: (declaration_body
+              (property
+                name: (property_name)
+                value: (preproc_conditional_property_value
+                  (preproc_if
+                    (preproc_open)
+                    condition: (identifier))
+                  value: (table_relation_value
+                    (table_relation_expression
+                      (simple_table_relation
+                        target: (qualified_name
+                          (identifier)))))
+                  (preproc_else)
+                  value: (table_relation_value
+                    (table_relation_expression
+                      (simple_table_relation
+                        target: (qualified_name
+                          (identifier)))))
+                  (preproc_endif
+                    (preproc_close))))
+              (preproc_conditional
+                (preproc_if
+                  (preproc_open)
+                  condition: (identifier))
+                (preproc_conditional
+                  (preproc_if
+                    (preproc_open)
+                    condition: (identifier))
+                  (empty_statement)
+                  (preproc_else)
+                  (empty_statement)
+                  (preproc_endif
+                    (preproc_close)))
+                (preproc_else)
+                (empty_statement)
+                (preproc_endif
+                  (preproc_close))))))))))
+
+========================================================================
+Items 81/84: a ; group after a head whose arms hold where and ; stays the body conditional
+========================================================================
+table 50100 T
+{
+    fields
+    {
+        field(1; A; Integer) { }
+        field(2; "No."; Code[20])
+        {
+            TableRelation =
+#if TPL
+ if (A = const(1)) Item where(A = const(1));
+#else
+ Resource where(A = const(2));
+#endif
+#if Q
+;
+#else
+;
+#endif
+        }
+    }
+}
+
+------------------------------------------------------------------------
+
+(source_file
+  (table_declaration
+    (table_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (fields_section
+        (fields_keyword)
+        body: (fields_body
+          (field_declaration
+            (field_keyword)
+            id: (integer)
+            name: (identifier)
+            type: (type_specification
+              (basic_type)))
+          (field_declaration
+            (field_keyword)
+            id: (integer)
+            name: (quoted_identifier)
+            type: (type_specification
+              (code_type
+                (code_keyword)
+                length: (integer)))
+            body: (declaration_body
+              (property
+                name: (property_name)
+                value: (preproc_conditional_property_value
+                  (preproc_if
+                    (preproc_open)
+                    condition: (identifier))
+                  value: (table_relation_value
+                    (table_relation_expression
+                      (if_table_relation
+                        (if_keyword)
+                        (where_conditions
+                          (where_condition
+                            field: (identifier)
+                            (const_keyword)
+                            value: (integer)))
+                        then_relation: (simple_table_relation
+                          target: (qualified_name
+                            (identifier))
+                          (where_clause
+                            (where_keyword)
+                            (where_conditions
+                              (where_condition
+                                field: (identifier)
+                                (const_keyword)
+                                value: (integer))))))))
+                  (preproc_else)
+                  value: (table_relation_value
+                    (table_relation_expression
+                      (simple_table_relation
+                        target: (qualified_name
+                          (identifier))
+                        (where_clause
+                          (where_keyword)
+                          (where_conditions
+                            (where_condition
+                              field: (identifier)
+                              (const_keyword)
+                              value: (integer)))))))
+                  (preproc_endif
+                    (preproc_close))))
+              (preproc_conditional
+                (preproc_if
+                  (preproc_open)
+                  condition: (identifier))
+                (empty_statement)
+                (preproc_else)
+                (empty_statement)
+                (preproc_endif
+                  (preproc_close))))))))))
+
+========================================================================
+Items 81/84: two ; groups after a head whose arms end in ; stay body conditionals
+========================================================================
+table 50100 T
+{
+    fields
+    {
+        field(1; A; Integer) { }
+        field(2; "No."; Code[20])
+        {
+            TableRelation =
+#if TPL
+ Item;
+#else
+ Resource;
+#endif
+#if Q
+;
+#else
+;
+#endif
+#if R
+;
+#else
+;
+#endif
+        }
+    }
+}
+
+------------------------------------------------------------------------
+
+(source_file
+  (table_declaration
+    (table_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (fields_section
+        (fields_keyword)
+        body: (fields_body
+          (field_declaration
+            (field_keyword)
+            id: (integer)
+            name: (identifier)
+            type: (type_specification
+              (basic_type)))
+          (field_declaration
+            (field_keyword)
+            id: (integer)
+            name: (quoted_identifier)
+            type: (type_specification
+              (code_type
+                (code_keyword)
+                length: (integer)))
+            body: (declaration_body
+              (property
+                name: (property_name)
+                value: (preproc_conditional_property_value
+                  (preproc_if
+                    (preproc_open)
+                    condition: (identifier))
+                  value: (table_relation_value
+                    (table_relation_expression
+                      (simple_table_relation
+                        target: (qualified_name
+                          (identifier)))))
+                  (preproc_else)
+                  value: (table_relation_value
+                    (table_relation_expression
+                      (simple_table_relation
+                        target: (qualified_name
+                          (identifier)))))
+                  (preproc_endif
+                    (preproc_close))))
+              (preproc_conditional
+                (preproc_if
+                  (preproc_open)
+                  condition: (identifier))
+                (empty_statement)
+                (preproc_else)
+                (empty_statement)
+                (preproc_endif
+                  (preproc_close)))
+              (preproc_conditional
+                (preproc_if
+                  (preproc_open)
+                  condition: (identifier))
+                (empty_statement)
+                (preproc_else)
+                (empty_statement)
+                (preproc_endif
+                  (preproc_close))))))))))
+
+========================================================================
+Items 81/84 (second review): a ; after a complete ; group is the body's empty_statement
+========================================================================
+table 50100 T
+{
+    fields
+    {
+        field(1; A; Integer) { }
+        field(2; "No."; Code[20])
+        {
+            TableRelation =
+Item
+#if X
+;
+#else
+;
+#endif
+;
+        }
+    }
+}
+
+------------------------------------------------------------------------
+
+(source_file
+  (table_declaration
+    (table_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (fields_section
+        (fields_keyword)
+        body: (fields_body
+          (field_declaration
+            (field_keyword)
+            id: (integer)
+            name: (identifier)
+            type: (type_specification
+              (basic_type)))
+          (field_declaration
+            (field_keyword)
+            id: (integer)
+            name: (quoted_identifier)
+            type: (type_specification
+              (code_type
+                (code_keyword)
+                length: (integer)))
+            body: (declaration_body
+              (property
+                name: (property_name)
+                value: (table_relation_value
+                  (table_relation_expression
+                    (simple_table_relation
+                      target: (qualified_name
+                        (identifier))))
+                  (preproc_conditional_table_relation
+                    (preproc_if
+                      (preproc_open)
+                      condition: (identifier))
+                    (preproc_else)
+                    (preproc_endif
+                      (preproc_close)))))
+              (empty_statement))))))))
+
+========================================================================
+Items 81/84 (second review): a second complete ; group is the body's conditional
+========================================================================
+table 50100 T
+{
+    fields
+    {
+        field(1; A; Integer) { }
+        field(2; "No."; Code[20])
+        {
+            TableRelation =
+Item
+#if X
+;
+#else
+;
+#endif
+#if Y
+;
+#else
+;
+#endif
+        }
+    }
+}
+
+------------------------------------------------------------------------
+
+(source_file
+  (table_declaration
+    (table_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (fields_section
+        (fields_keyword)
+        body: (fields_body
+          (field_declaration
+            (field_keyword)
+            id: (integer)
+            name: (identifier)
+            type: (type_specification
+              (basic_type)))
+          (field_declaration
+            (field_keyword)
+            id: (integer)
+            name: (quoted_identifier)
+            type: (type_specification
+              (code_type
+                (code_keyword)
+                length: (integer)))
+            body: (declaration_body
+              (property
+                name: (property_name)
+                value: (table_relation_value
+                  (table_relation_expression
+                    (simple_table_relation
+                      target: (qualified_name
+                        (identifier))))
+                  (preproc_conditional_table_relation
+                    (preproc_if
+                      (preproc_open)
+                      condition: (identifier))
+                    (preproc_else)
+                    (preproc_endif
+                      (preproc_close)))))
+              (preproc_conditional
+                (preproc_if
+                  (preproc_open)
+                  condition: (identifier))
+                (empty_statement)
+                (preproc_else)
+                (empty_statement)
+                (preproc_endif
+                  (preproc_close))))))))))
+
+========================================================================
+Item 84 (second review): a ; after item 84's group is the body's empty_statement
+========================================================================
+table 50100 T
+{
+    fields
+    {
+        field(1; A; Integer) { }
+        field(2; "No."; Code[20])
+        {
+            TableRelation =
+#if T
+ if (A = const(1)) Item
+#else
+ if (A = const(2)) Resource
+#endif
+ where(A = const(1))
+#if X
+;
+#else
+else Customer;
+#endif
+;
+        }
+    }
+}
+
+------------------------------------------------------------------------
+
+(source_file
+  (table_declaration
+    (table_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (fields_section
+        (fields_keyword)
+        body: (fields_body
+          (field_declaration
+            (field_keyword)
+            id: (integer)
+            name: (identifier)
+            type: (type_specification
+              (basic_type)))
+          (field_declaration
+            (field_keyword)
+            id: (integer)
+            name: (quoted_identifier)
+            type: (type_specification
+              (code_type
+                (code_keyword)
+                length: (integer)))
+            body: (declaration_body
+              (property
+                name: (property_name)
+                value: (table_relation_value
+                  (preproc_conditional_table_relation
+                    (preproc_if
+                      (preproc_open)
+                      condition: (identifier))
+                    (table_relation_expression
+                      (if_table_relation
+                        (if_keyword)
+                        (where_conditions
+                          (where_condition
+                            field: (identifier)
+                            (const_keyword)
+                            value: (integer)))
+                        then_relation: (simple_table_relation
+                          target: (qualified_name
+                            (identifier)))))
+                    (preproc_else)
+                    (table_relation_expression
+                      (if_table_relation
+                        (if_keyword)
+                        (where_conditions
+                          (where_condition
+                            field: (identifier)
+                            (const_keyword)
+                            value: (integer)))
+                        then_relation: (simple_table_relation
+                          target: (qualified_name
+                            (identifier)))))
+                    (preproc_endif
+                      (preproc_close)))
+                  (where_clause
+                    (where_keyword)
+                    (where_conditions
+                      (where_condition
+                        field: (identifier)
+                        (const_keyword)
+                        value: (integer))))
+                  (preproc_conditional_table_relation
+                    (preproc_if
+                      (preproc_open)
+                      condition: (identifier))
+                    (preproc_else)
+                    (else_table_relation_fragment
+                      (else_keyword)
+                      else_relation: (table_relation_expression
+                        (simple_table_relation
+                          target: (qualified_name
+                            (identifier)))))
+                    (preproc_endif
+                      (preproc_close)))))
+              (empty_statement))))))))

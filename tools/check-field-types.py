@@ -449,6 +449,19 @@ FIELD_INVARIANTS = [
     # A, B: T; (B7b-1 Task 11): the name list up to the `:`. variable_declaration.name is
     # optional now since every name can sit in a group (`#if X A, B #endif : T;`); `type`
     # stays one required node after the `:`, never inside a group.
+    # B7b-1d (deferred item 46): a label's text may sit in a value-slot group, so `value`
+    # is optional on the host and multiple on the group (one per arm); the attribute
+    # fields keep their flat shape in the report-label group.
+    inv('label_declaration', 'value', False, set(), 'FIXED',
+        'one text outside a group; optional since the text can sit in a group (B7b-1d)',
+        types={'string_literal', 'verbatim_string'}, required=False),
+    *[inv('preproc_conditional_report_label_attributes', f, True, set(), 'FIXED',
+          f'{f} in an arm, flat as on label_declaration (B7b-1d)', types=t, required=False)
+      for f, t in (('value', {'string_literal', 'verbatim_string'}), ('comment', {'string_literal'}),
+                   ('locked', {'boolean'}), ('maxlength', {'integer'}))],
+    inv('preproc_conditional_label_attributes', 'value', True, set(), 'FIXED',
+        'the text of a label variable in an arm (B7b-1d)',
+        types={'string_literal', 'verbatim_string'}, required=False),
     inv('preproc_conditional_var_names', 'name', True, set(), 'FIXED',
         'one name per raw item in an arm; the , stays outside the field (B7b-1)',
         types={'identifier', 'quoted_identifier'}, required=False),

@@ -1,5 +1,5 @@
 // B7a Task 10 witness (GAP): family namespace-pairs, base placement holes-mid, 9 cells; representative occ:namespace_value_list:0.1.0.0@declaration_body#holes-mid
-// Fixture b7_gap_namespace_pairs_test.txt#B7a GAP: namespace-pairs / holes-mid (9 cells, verdict of the representative MIXED); the parser ERRORs on configurations alc accepts; representative occ:namespace_value_list:0.1.0.0@declaration_body%23holes-mid#0
+// Fixture strict_conditional_pair_lists_test.txt#strict pair list namespace-pairs: holes-mid (B7b-1c, was the B7a GAP witness)#0
 // expect: !TPL !X accept
 // expect: !TPL X accept
 // expect: TPL !X accept

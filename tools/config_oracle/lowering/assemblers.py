@@ -153,18 +153,39 @@ def else_begin_over_endif(node, ctx) -> Lowered:
                         ElseAttachment(None, else_kw, _else_block(begin, inner, end, ctx))])
 
 
+_NESTED_HEADER_GROUPS = ("preproc_conditional_procedure_header", "preproc_conditional_procedure_preamble",
+                         "preproc_conditional_trigger_preamble")
+_ROUTINE_BUILT = {"preproc_split_procedure": ("procedure_keyword", "procedure"),
+                  "preproc_split_procedure_preamble": ("procedure_keyword", "procedure"),
+                  "preproc_split_trigger_preamble": ("trigger_keyword", "trigger_declaration")}
+
+
+def split_preamble(node, ctx) -> Lowered:
+    """A preamble (header + var region) per arm, the shared body after `#endif`: split_procedure.
+    shortcut: only the nested form (items 83, 85) is lowered; the flat form stays unsupported
+    (milestone 3), because lowering it moves B7a's recorded routine-`;` witnesses
+    (deferred item 94); upgrade with that item."""
+    if not any(c.kind in _NESTED_HEADER_GROUPS for c in node.children):
+        raise LoweringError("unsupported-type", node, ctx.host())
+    return split_procedure(node, ctx)
+
+
 def split_procedure(node, ctx) -> Lowered:
     """Contract split-procedure. Host: a declaration-body repeat slot (policy
-    per registry). Rewrites allowed:
+    per registry). Also serves `preproc_split_procedure_preamble` when it holds a
+    nested group (`split_preamble`), whose arms add the var region and whose shared
+    tail is the body (item 83), and the trigger counterpart, building a
+    `trigger_declaration` (item 85). Rewrites allowed:
       * the chosen arm's `_procedure_header` pieces followed by every piece after
         `#endif` (the shared `_procedure_tail`, lowered in place with host
         `procedure:<children>`) become ONE `procedure` node carrying this node's
         field, pieces keeping their own fields and order;
       * the chosen arm's `attribute_item`s are lifted out and become PRECEDING
         SIBLINGS of that procedure, in source order, as in the reference.
-      * item 77: a chosen arm that is one `preproc_conditional_procedure_header`
-        (a nested header group) is replaced by ITS chosen arm, recursively; its
-        directives are `directive`, its other arms `inactive-arm`.
+      * items 77, 83: a chosen arm that is one nested group
+        (`preproc_conditional_procedure_header`/`_preamble`) is replaced by ITS
+        chosen arm, recursively; its directives are `directive`, its other arms
+        `inactive-arm`.
     A chosen arm with no header (an #if without #else, inactive) is a shape
     error: there is no procedure to build. Fragments are refused.
     """
@@ -174,17 +195,22 @@ def split_procedure(node, ctx) -> Lowered:
         raise LoweringError("contract-shape", node, "no #endif")
     arms, endif = split_arms(node.copy(children=node.children[:cut + 1]))
     header = active_arm(arms, endif, node, ctx)
-    host = node
-    while len(header) == 1 and header[0].kind == "preproc_conditional_procedure_header":
-        ctx.child(host.kind, "<children>").policy(contracts.REGISTRY[header[0].kind], header[0])
-        host = header[0]
+    host, leading_attrs = node, []
+    while header and header[-1].kind in _NESTED_HEADER_GROUPS \
+            and all(h.kind == "attribute_item" for h in header[:-1]):  # item 82: attributes before the group
+        leading_attrs += header[:-1]
+        group = header[-1]
+        ctx.child(host.kind, "<children>").policy(contracts.REGISTRY[group.kind], group)
+        host = group
         header = active_arm(*split_arms(host), host, ctx)
-    if not any(h.kind == "procedure_keyword" for h in header):
-        raise LoweringError("contract-shape", node, "chosen arm has no procedure header")
+    header = leading_attrs + header
+    keyword, built = _ROUTINE_BUILT[node.kind]
+    if not any(h.kind == keyword for h in header):
+        raise LoweringError("contract-shape", node, f"chosen arm has no {built} header")
     attrs = _lower_all([h for h in header if h.kind == "attribute_item"], ctx, node.kind)
     parts = _lower_all([h for h in header if h.kind != "attribute_item"] + node.children[cut + 1:],
-                       ctx, "procedure")
-    proc = _span_from_children(Node("procedure", True, node.field, 0, 0, parts))
+                       ctx, built)
+    proc = _span_from_children(Node(built, True, node.field, 0, 0, parts))
     return Lowered(attrs + [proc])
 
 
@@ -298,10 +324,20 @@ def _select_arm(node, ctx):
     arms, endif = split_arms(node)
     items = list(active_arm(arms, endif, node, ctx))
     semi = items.pop() if items and items[-1].kind == ";" else None
+    # Item 81: decorations and groups of `;` between the arm's relation and its `;`
+    tail = []
+    while len(items) > 1 and (items[-1].kind == node.kind or _is_decoration(items[-1])):
+        tail.insert(0, items.pop())
     if len(items) > 1 or (items and items[0].kind not in entry.arm):
         raise LoweringError("contract-shape", node, "arm: " + " ".join(c.kind for c in items))
+    tail_frags = []
+    for c in tail:
+        r = lower(c, ctx.child(node.kind, "<children>"))
+        if r.nodes:
+            raise LoweringError("contract-shape", c, "arm tail lowered to nodes")
+        tail_frags.extend(r.frags)
     term = [Terminator(None, _lower_all([semi], ctx, node.kind)[0])] if semi is not None else []
-    return items, term
+    return items, tail_frags + term
 
 
 def table_relation_select(node, ctx) -> Lowered:
@@ -391,9 +427,13 @@ def whole_value_select(node, ctx) -> Lowered:
             raise LoweringError("contract-shape", node, f"arm value in field {c.field!r}, not 'value'")
         elif c.kind not in entry.arm:
             raise LoweringError("contract-shape", node, "arm: " + c.kind)
-        elif c.kind in (PCPV, PCPV_SEQ):
+        elif c.kind in (PCPV, PCPV_SEQ, "table_relation_value"):
+            # (a table_relation_value hoists the `;` of a group of `;` arms, item 81)
             r = lower(c, ctx.child(node.kind, "value"))
             nodes.extend(n.copy(field=node.field) for n in r.nodes)
+            if c.kind == "table_relation_value":
+                for f in r.frags:
+                    f.anchor = None   # its anchor is the node copied just above
             frags.extend(r.frags)
         else:
             # Any other arm value is an ordinary subtree: a fragment inside it is refused.

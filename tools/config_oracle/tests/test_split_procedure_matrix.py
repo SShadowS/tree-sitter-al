@@ -56,6 +56,32 @@ def test_nested_header_group(al_parser, probe):
     witness.assert_all_pass(al_parser, src)
 
 
+@pytest.mark.parametrize("probe", ["item77/nested-preamble.al", "item77/nested-preamble-second-arm.al"])
+def test_nested_preamble_group(al_parser, probe):
+    src = (_PROBES / probe).read_bytes()
+    witness.assert_produces(al_parser, src, "preproc_conditional_procedure_preamble")
+    witness.assert_all_pass(al_parser, src)
+
+
+@pytest.mark.parametrize("probe", ["item77/nested-trigger-header.al", "item77/nested-trigger-var.al"])
+def test_nested_trigger_preamble_group(al_parser, probe):
+    src = (_PROBES / probe).read_bytes()
+    witness.assert_produces(al_parser, src, "preproc_conditional_trigger_preamble")
+    witness.assert_all_pass(al_parser, src)
+
+
+# Item 82: attributes inside an arm, before the nested group; lifted out like the arm's own.
+ATTR_BEFORE_GROUP = [("item77/attr-inside-arm-before-nested.al", "preproc_conditional_procedure_header"),
+                     ("item77/attr-before-nested-preamble.al", "preproc_conditional_procedure_preamble")]
+
+
+@pytest.mark.parametrize("probe,group", ATTR_BEFORE_GROUP)
+def test_attribute_before_nested_group(al_parser, probe, group):
+    src = (_PROBES / probe).read_bytes()
+    witness.assert_produces(al_parser, src, group)
+    witness.assert_all_pass(al_parser, src)
+
+
 def test_doubly_nested_header_group(al_parser):
     witness.assert_produces(al_parser, DOUBLY, "preproc_conditional_procedure_header")
     witness.assert_all_pass(al_parser, DOUBLY)

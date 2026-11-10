@@ -176,3 +176,64 @@ def test_item78_where_join_is_load_bearing(al_parser, monkeypatch):
     for name in ("where-semi-inside", "where-semi-after"):
         v = witness.verdicts(al_parser, ELSE_GROUP[name])
         assert any(s == "discrepancy" for s, _ in v.values()), (name, v)
+
+
+# Items 81 and 84: the `;` of an else-group arm spread over a group, an arm that is only
+# the property's `;`, and the same `;` placements after a plain relation, at a whole-value
+# arm site and in a relation arm (tools/alc_probe/cases/item29-relation-chain/s12-*, s13-*,
+# tools/alc_probe/cases/item81/; alc accepts these in every configuration below).
+_HEAD_WHERE = _HEAD + b" where(A = const(1))\n"
+_Y = b"#if Y\n else Customer\n"
+_ELSE_V = b"#else\n else Vendor;\n#endif\n"
+ITEM81 = {
+    "else-arm-empty": _field(_HEAD_WHERE + _Y + b"#if Z\n#endif\n ;\n" + _ELSE_V),
+    "else-arm-sep-only": _field(_HEAD_WHERE + _Y + b"#if Z\n ;\n#else\n ;\n#endif\n" + _ELSE_V),
+    "else-arm-elif": _field(_HEAD_WHERE + _Y + b"#if Z\n ;\n#elif W\n ;\n#else\n ;\n#endif\n" + _ELSE_V),
+    "else-arm-nested": _field(_HEAD_WHERE + _Y + b"#if Z\n#if W\n ;\n#else\n ;\n#endif\n#else\n ;\n#endif\n" + _ELSE_V),
+    "item84": _field(_HEAD_WHERE + b"#if Y\n else Customer;\n#else\n ;\n#endif\n"),
+    "item84-mirror": _field(_HEAD_WHERE + b"#if Y\n ;\n#else\n else Customer;\n#endif\n"),
+    "plain-sep-only": _field(b"Item\n#if X\n ;\n#else\n ;\n#endif\n"),
+    "plain-elif": _field(b"Item\n#if X\n ;\n#elif Y\n ;\n#else\n ;\n#endif\n"),
+    "plain-nested": _field(b"Item\n#if X\n#if Y\n ;\n#else\n ;\n#endif\n#else\n ;\n#endif\n"),
+    "arm-sep-only": _field(b"\n#if TPL\n Item\n#if X\n ;\n#else\n ;\n#endif\n#else\n Resource;\n#endif\n"),
+    # second review: what follows a complete group is the body's (an empty_statement, the
+    # body's conditional), in every configuration
+    "plain-then-semi": _field(b"Item\n#if X\n ;\n#else\n ;\n#endif\n ;\n"),
+    "plain-then-group": _field(b"Item\n#if X\n ;\n#else\n ;\n#endif\n#if Y\n ;\n#else\n ;\n#endif\n"),
+    "item84-then-semi": _field(_HEAD_WHERE + b"#if Y\n ;\n#else\n else Customer;\n#endif\n ;\n"),
+}
+# Deferred item 99: a group that supplies the `;` in only some configurations has no one
+# correct tree when anything follows it, so it ERRORs (alc accepts each of these in every
+# configuration; tools/alc_probe/cases/item81/).
+ITEM99 = {
+    "plain-adjacent": _field(b"Item\n#if X\n ;\n#endif\n#if not X\n ;\n#endif\n"),
+    "arm-adjacent": _field(b"\n#if TPL\n Item\n#if X\n ;\n#endif\n#if not X\n ;\n#endif\n#else\n Resource;\n#endif\n"),
+    "else-arm-adjacent": _field(_HEAD_WHERE + _Y + b"#if Z\n ;\n#endif\n#if not Z\n ;\n#endif\n" + _ELSE_V),
+    "one-arm-then-semi": _field(b"Item\n#if X\n ;\n#endif\n ;\n"),
+    "empty-else-then-semi": _field(b"Item\n#if X\n ;\n#else\n#endif\n ;\n"),
+    "item84-open-arm-then-semi": _field(_HEAD_WHERE + b"#if Y\n ;\n#else\n else Customer\n#endif\n ;\n"),
+    "item84-no-where": _field(_HEAD + b"#if Y\n ;\n#else\n else Customer;\n#endif\n"),
+}
+
+
+def test_item81_semicolon_placements_every_config(al_parser):
+    for name, src in ITEM81.items():
+        witness.assert_produces(al_parser, src, "preproc_conditional_table_relation")
+        witness.assert_all_pass(al_parser, src)
+
+
+def test_item99_partial_semicolon_groups_error(al_parser):
+    for name, src in ITEM99.items():
+        assert al_parser.parse(src).root_node.has_error, name
+
+
+def test_item81_terminator_is_load_bearing(al_parser, monkeypatch):
+    """Dropping the groups' `;` must fail the configuration, not pass silently."""
+    from tools.config_oracle.lowering import assemblers
+    real = assemblers._select_arm
+    def no_group_terminator(node, ctx):
+        items, frags = real(node, ctx)
+        return items, [f for f in frags if not isinstance(f, assemblers.Terminator)]
+    monkeypatch.setattr(assemblers, "_select_arm", no_group_terminator)
+    v = witness.verdicts(al_parser, ITEM81["plain-sep-only"])
+    assert all(s != "pass" for s, _ in v.values()), v   # the source accounting catches it

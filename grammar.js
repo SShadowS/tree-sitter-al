@@ -143,27 +143,86 @@ function moveArgs($) {
 // `groupDynamic` (optional): a dynamic precedence for the visible group, for a
 // host where a group can also be read as a neighbouring conditional and both
 // readings complete (var_names); 0 leaves the group rule unwrapped.
-function strictConditionalList(family, atom, sep, groupDynamic = 0) {
+// `emptyNeverLast`: for a host that can also own a group after the list as a sibling (a
+// property, caption_value). An all-empty group (`_e_g`) is part of the list only when more of
+// the list follows it, so an empty trailing group stays the host's and a GLR tie the host
+// already resolves by version order sees no third reading. The arms-bearing form (`_w_g`)
+// is witnessed (witnessConditional: never all-empty) and keeps groupDynamic. Both alias G.
+function strictConditionalList(family, atom, sep, groupDynamic = 0, emptyNeverLast = false) {
   const E = `_${family}_e`, T = `_${family}_t`,
-        G = `preproc_conditional_${family}`, B = `_${family}_b`, R = `_${family}_r`;
+        G = `preproc_conditional_${family}`, B = `_${family}_b`, R = `_${family}_r`,
+        GW = `_${family}_w_g`, GE = `_${family}_e_g`;
   const group = $ => seq(
     $.preproc_if, optional($[B]),
     repeat(seq($.preproc_elif, optional($[B]))),
     optional(seq($.preproc_else, optional($[B]))),
     $.preproc_endif);
-  return {
+  const rules = {
     [E]: $ => choice(seq(atom($), optional($[T])), $[T]),
-    [T]: $ => seq($[G], optional($[E])),
-    [G]: groupDynamic ? $ => prec.dynamic(groupDynamic, group($)) : group,
     [B]: $ => choice(seq(sep, optional($[R])), $[R]),
     [R]: $ => seq($[E], repeat(seq(sep, $[E])), optional(sep)),
   };
+  if (!emptyNeverLast) {
+    rules[T] = $ => seq($[G], optional($[E]));
+    rules[G] = groupDynamic ? $ => prec.dynamic(groupDynamic, group($)) : group;
+    return rules;
+  }
+  rules[T] = $ => choice(
+    seq(alias($[GW], $[G]), optional($[E])),
+    seq(alias($[GE], $[G]), $[E]),
+  );
+  const witness = $ => witnessConditional($, $[B], null);
+  rules[GW] = groupDynamic ? $ => prec.dynamic(groupDynamic, witness($)) : witness;
+  rules[GE] = $ => seq($.preproc_if, repeat($.preproc_elif), optional($.preproc_else), $.preproc_endif);
+  return rules;
 }
 
 // The spec's `_F_list` body, written into the host (see strictConditionalList).
 function strictListBody($, family, sep) {
   const E = `_${family}_e`;
   return [$[E], repeat(seq(sep, $[E]))];
+}
+
+// B7b-1d (item 46, docs/superpowers/specs/2026-11-10-b7b-1d-label-tails-design.md): a
+// label's text and comma-led attribute tail, written into the host in place of the old
+// value + repeat. The text is first and positional (POSITIONAL_FIRST in the B7a generator),
+// so the tail is strictListBody with the first item fixed: `text [group] (, item)*`.
+// `trailingOk`: `'a',;` (a comma with no attribute after it; alc accepts it, AL0301 rejects
+// `'a', Locked = true,;`, tools/alc_probe/cases/b7b1d/).
+function labelCommaTail($, family, trailingOk) {
+  const E = $[`_${family}_e`];
+  return trailingOk
+    ? optional(seq(',', optional(seq(E, repeat(seq(',', E))))))
+    : repeat(seq(',', E));
+}
+
+// The value slot, written into the host before labelCommaTail (the host's own slot index,
+// so the tail's commas keep their B7a census keys): `L = #if X 'a', Locked = true #else 'a'
+// #endif;`: the text inside a group (the label analogue of a whole-value property group),
+// an arm of only `,` before the text (valid only where the arm is inactive), or a plain
+// value, each with a group directly after it.
+function labelText($, family) {
+  const text = field('value', choice($.string_literal, $.verbatim_string));
+  const G = $[`preproc_conditional_${family}`];
+  const T = $[`_${family}_t`], H = alias($[`_${family}_h`], G), HW = alias($[`_${family}_hw`], G);
+  // Text-less arms only with a text after the group: the `label` arm takes any basic_type,
+  // so a group with no text would turn `A: Integer #if X #endif ;` into a label.
+  return choice(seq(optional(H), text, optional(T)), seq(HW, optional(T)));
+}
+
+function labelTextRules(family, atom, trailingOk) {
+  const H = `_${family}_h`, HW = `_${family}_hw`, A = `_${family}_a`;
+  return {
+    ...strictConditionalList(family, atom, ','),
+    [A]: $ => seq(field('value', choice($.string_literal, $.verbatim_string)),
+      optional($[`_${family}_t`]), labelCommaTail($, family, trailingOk)),
+    [H]: $ => seq(
+      $.preproc_if, optional(','),
+      repeat(seq($.preproc_elif, optional(','))),
+      optional(seq($.preproc_else, optional(','))),
+      $.preproc_endif),
+    [HW]: $ => witnessConditional($, $[A], ','),
+  };
 }
 
 // B7b-2 spec 5.1 (execution amendments: the root rule): an expression slot that is a
@@ -309,7 +368,7 @@ function listOpenerRules(p, cond, branch, seq_, run, more, withSemi) {
 // `listValue`: the family's value is a list whose own element conditionals already read a
 // directive-only empty group next to the list (link, §3.1 step 3), so the arm takes no
 // decorations around a plain value -- they would be a second reading of the same text.
-function valueRunRules(p, value, listValue) {
+function valueRunRules(p, value, listValue, terminatedValue) {
   const n = s => `${p}_${s}`;
   const deco = $ => repeat($._value_decoration);
   const groupT = $ => alias($[n('group_t')], $.preproc_conditional_property_value);
@@ -334,6 +393,8 @@ function valueRunRules(p, value, listValue) {
       // is the arm's own, as at the property site (§3.2 "directly after the run", at
       // every value site)
       seq(deco($), field('value', $[n('in_core')]), ';'),
+      // a value whose `;` is inside the value (TableRelation: item 81)
+      ...(terminatedValue ? [seq(deco($), field('value', terminatedValue($)))] : []),
     ),
     [n('arm_nt')]: $ => seq(deco($), field('value', choice(
       groupNt($),
@@ -793,6 +854,17 @@ module.exports = grammar({
     [$.preproc_pragma_only, $.preproc_conditional_var_block],
     [$._property_value, $.option_member],
     [$.caption_value, $.option_member],
+    // B7b-1d: a string then `#if`: a caption sub-field group, or the value with a
+    // sibling group, an expression tail, an option member. The arm content decides.
+    [$._property_value, $.caption_value, $.option_member, $._literal_value],
+    [$._property_value, $.caption_value, $._literal_value],
+    // A group's two forms (witnessed, all-empty) until an arm decides.
+    [$._caption_subfields_w_g, $._caption_subfields_e_g],
+    // ... and after a tail element, `#if` is more of the tail or the property's sibling group.
+    [$._caption_subfields_t],
+    [$._caption_subfields_e],
+    // `'a', • #if`: the tail continues with a group, or a trailing comma ended the value.
+    [$.caption_value],
     // B6: narrowing _expression_statement exposes the decision at `x := e • #if`:
     // continue the right-hand side (preproc_conditional_expression_tail) or end the
     // assignment and open a preproc_conditional_statement. Only the arm content
@@ -865,8 +937,10 @@ module.exports = grammar({
     [$.modify_modification, $.modify_action_modification],
     [$._signed_integer, $.option_member],
     [$.option_member, $._literal_value],
-    [$._body_element, $._procedure_header],
-    [$._body_element, $._action_element, $._procedure_header],
+    // `#if [A] •` before an arm or a body element (the header's attribute run is one
+    // hidden rule since item 82, shared with a nested header group's arm).
+    [$._body_element, $._attribute_run],
+    [$._body_element, $._action_element, $._attribute_run],
     [$.page_field, $._field_header],
     // Fielded variant inherits the property-value ambiguity that the unfielded
     // `_namespaced_or_simple_ref` used to carry here.
@@ -1066,8 +1140,25 @@ module.exports = grammar({
     // The keyed `;`-after families (ML, Namespaces, CalcFormula, TableRelation; B11 §3.1
     // steps 2 and 4): the same readings, one family each, listed by keyedRunConflicts
     // with their comments.
-    ...keyedRunConflicts($, '_ml', $._ml_property_value),
-    ...keyedRunConflicts($, '_namespaces', $._namespaces_property_value),
+    // B7b-1c: after a pair list element a #if is more of the list (a further group) or
+    // the value's trailing decoration, and at the value start the list group is the
+    // family's whole-value groups' competitor; the arm content and the token after
+    // #endif decide. All generator-required.
+    [$._ml_pairs_t],
+    [$._ml_pairs_e],
+    [$.ml_value_list, $._ml_pairs_r],
+    [$._ml_tail_lead, $._ml_after_lead, $._empty_value_conditional, $.preproc_conditional_ml_pairs],
+    [$._empty_value_conditional, $.preproc_conditional_ml_pairs],
+    [$._ml_after_lead, $._empty_value_conditional, $.preproc_conditional_ml_pairs],
+    [$._namespace_pairs_t],
+    [$._namespace_pairs_e],
+    [$.namespace_value_list, $._namespace_pairs_r],
+    [$._namespaces_tail_lead, $._namespaces_after_lead, $._empty_value_conditional, $.preproc_conditional_namespace_pairs],
+    [$._empty_value_conditional, $.preproc_conditional_namespace_pairs],
+    [$._namespaces_after_lead, $._empty_value_conditional, $.preproc_conditional_namespace_pairs],
+    // (afterLeadEmpty: the after_lead / empty-group reading is in the three-way entries above)
+    ...keyedRunConflicts($, '_ml', $._ml_property_value, { afterLeadEmpty: false }),
+    ...keyedRunConflicts($, '_namespaces', $._namespaces_property_value, { afterLeadEmpty: false }),
     ...keyedRunConflicts($, '_calc_formula', $._calc_formula_value),
     // TableRelation: its after_lead / empty-group reading is subsumed by the
     // conditional-head entries below (reported unnecessary)
@@ -1095,6 +1186,9 @@ module.exports = grammar({
     // also takes the `;`-inside split, that reading too.
     [$._table_relation_rooted],
     [$._table_relation_rooted, $._table_relation_keyed_split],
+    // Item 84: after a where, `#if Y else C;` opens item 78's group or a complete group with
+    // a `;`-only arm until a later arm shows which.
+    [$._table_relation_else_arm, $._table_relation_else_t_else],
     // An option-member list OPENED by a #if (`OptionMembers = #if X A,
     // #endif B, C;`, G11 item 2): at value start a #if may now also open
     // preproc_conditional_option_members, one more reading of an empty or
@@ -1263,6 +1357,8 @@ module.exports = grammar({
     $._field_source,
     // item 77: a wrapper reduction would conflict with _procedure_preamble at `#elif`
     $._procedure_header_arm,
+    $._procedure_preamble_arm,
+    $._trigger_preamble_arm,
   ],
 
   rules: {
@@ -1899,7 +1995,70 @@ module.exports = grammar({
       )),
       seq($.preproc_else, $._table_relation_else_arm, $.preproc_endif),
     ),
-    ...valueRunRules('_table_relation', $ => $._table_relation_property_value),
+    // Items 81/84: the `;` groups. Every one is COMPLETE: every arm present, #else required,
+    // every arm supplying exactly the property's `;`. Then the value ends inside the group in
+    // every configuration and whatever follows is the body's (a `;` after it is an
+    // empty_statement, a second `;` group the body's conditional). A group that supplies the
+    // `;` only in some configurations (one arm, an empty arm, `#if X ; #endif #if not X ; #endif`)
+    // has no one correct tree when anything follows it, so it ERRORs (items 98, 99).
+    // Item 81: a terminator after a relation that supplies its `;`: empty groups then `;`, or a
+    // complete `;` group (alc accepts every configuration: s12-*, tools/alc_probe/cases/item81/).
+    _table_relation_terminator: $ => choice(
+      seq(repeat1($._value_decoration), ';'),
+      seq(repeat($._value_decoration),
+        alias($._table_relation_semi_group, $.preproc_conditional_table_relation)),
+    ),
+    // right-recursive, as _table_relation_else_t_need_else, so the two share every prefix
+    _table_relation_semi_group: $ => seq($.preproc_if, $._table_relation_semi_arm, $._table_relation_semi_rest),
+    _table_relation_semi_rest: $ => choice(
+      seq($.preproc_elif, $._table_relation_semi_arm, $._table_relation_semi_rest),
+      seq($.preproc_else, $._table_relation_semi_arm, $.preproc_endif),
+    ),
+    _table_relation_semi_arm: $ => choice(
+      ';',
+      alias($._table_relation_semi_group, $.preproc_conditional_table_relation),
+    ),
+    // Item 84: after a shared where, a complete group of else arms in which some arm is only
+    // the `;` or has a `;` group / decorations before its `;` (`#if Y else C; #else ; #endif`,
+    // s13-*), so not item 78's group. At least one arm is an else fragment (a group of only
+    // `;` is _table_relation_semi_group). _t_else is item 78's arm with its `;`, _t_both an
+    // arm that is both an else fragment and new: the rules track which of the two is still owed.
+    _table_relation_else_t_group: $ => seq($.preproc_if, choice(
+      seq($._table_relation_else_t_both, $._table_relation_else_t_rest),
+      seq($._table_relation_else_t_else, $._table_relation_else_t_need_new),
+      seq($._table_relation_semi_arm, $._table_relation_else_t_need_else),
+    )),
+    _table_relation_else_t_rest: $ => seq(
+      repeat(seq($.preproc_elif, $._table_relation_else_t_arm)),
+      $.preproc_else, $._table_relation_else_t_arm, $.preproc_endif,
+    ),
+    _table_relation_else_t_need_new: $ => choice(
+      seq($.preproc_elif, $._table_relation_else_t_else, $._table_relation_else_t_need_new),
+      seq($.preproc_elif, $._table_relation_else_t_new, $._table_relation_else_t_rest),
+      seq($.preproc_else, $._table_relation_else_t_new, $.preproc_endif),
+    ),
+    _table_relation_else_t_need_else: $ => choice(
+      seq($.preproc_elif, $._table_relation_semi_arm, $._table_relation_else_t_need_else),
+      seq($.preproc_elif, $._table_relation_else_t_witness, $._table_relation_else_t_rest),
+      seq($.preproc_else, $._table_relation_else_t_witness, $.preproc_endif),
+    ),
+    _table_relation_else_t_arm: $ => choice(
+      $._table_relation_else_t_both, $._table_relation_else_t_else, $._table_relation_semi_arm),
+    _table_relation_else_t_new: $ => choice($._table_relation_else_t_both, $._table_relation_semi_arm),
+    _table_relation_else_t_witness: $ => choice($._table_relation_else_t_both, $._table_relation_else_t_else),
+    _table_relation_else_t_else: $ => seq($.else_table_relation_fragment, ';'),
+    _table_relation_else_t_both: $ => choice(
+      seq($.else_table_relation_fragment, $._table_relation_terminator),
+      alias($._table_relation_else_t_group, $.preproc_conditional_table_relation),
+    ),
+    // A relation whose `;` is only inside a following group (`T #if X ; #else ; #endif`):
+    // a value site with no `;` after it, as _table_relation_keyed_split.
+    _table_relation_semi_split: $ => seq(
+      alias($._table_relation_head, $.table_relation_expression),
+      alias($._table_relation_semi_group, $.preproc_conditional_table_relation),
+    ),
+    ...valueRunRules('_table_relation', $ => $._table_relation_property_value, false,
+      $ => alias($._table_relation_semi_split, $.table_relation_value)),
     ...afterGroupRules('_table_relation', $ => $._table_relation_property_value),
     ...afterSequenceRules('_table_relation'),
     // `;` inside the arms (no `;` after #endif): the keyed form of the old
@@ -1913,6 +2072,13 @@ module.exports = grammar({
       // shift precedence here let the reduce win outright (the else group ERRORed).
       prec(5, seq($.preproc_conditional_table_relation, optional($.where_clause),
           alias($._table_relation_else_group, $.preproc_conditional_table_relation))),
+      // After a shared where the `;` is still owed, so a `;` group or item 84's group can only
+      // be it (s13). Without a where it could follow a head whose arms have theirs (then the
+      // group's `;` is the body's in a configuration alc accepts): not offered.
+      prec(5, seq($.preproc_conditional_table_relation, $.where_clause, choice(
+          alias($._table_relation_semi_group, $.preproc_conditional_table_relation),
+          alias($._table_relation_else_t_group, $.preproc_conditional_table_relation)))),
+      $._table_relation_semi_split,
     ),
 
     // The six link-family names reach the compiler's TableFilter / ReportDataItemLink /
@@ -2300,7 +2466,7 @@ module.exports = grammar({
       $.quoted_identifier,
       // Complex value types
       $.caption_value,              // 'Text', Locked = true, Comment = '...'
-      $.ml_value_list,              // ENU='English', DEU='German'
+      alias($._ml_value_list_flat, $.ml_value_list),  // ENU='English', DEU='German'
       $.order_by_list,              // ascending("No.", Name)
       $.implementation_value_list,  // "IFace" = "Impl", ...
       $.option_member_list,         // Option1, Option2, "Option 3"
@@ -2432,28 +2598,46 @@ module.exports = grammar({
     // 'My Caption', Locked = true, Comment = 'text', MaxLength = 100
     // Also handles trailing comma: Caption = 'text',;
     // Uses property_name (scanner token) since the sub-fields follow Name = Value pattern
-    caption_value: $ => prec.right(seq(
+    // B7b-1d (deferred item 46, spec docs/superpowers/specs/2026-11-10-b7b-1d-label-tails-design.md):
+    // a #if group may stand at any separator of the tail; the text stays first. A group
+    // right after the text forks on `#if` (a value with a sibling group or an expression
+    // tail); groupDynamic -1 keeps those readings where both complete (an empty group).
+    // Not prec.right: a right associativity on the reduce silently kills the sibling reading
+    // at `'a', • #if` (the shift into a group would win with no conflict reported).
+    // prec.dynamic (not prec, which would keep the wrapper but move a path element, the B7a
+    // census keys hold either way): `'a', #if X #endif;` ties with option_member_list('a',
+    // group) and the caption reading must win (caption_value + the property's sibling group,
+    // the only tree that matches flat `'a',;`). That is a CHANGE from main, which took the
+    // option_member_list when another member followed the property; the exact shape family
+    // (and the lone-`,` group, which main also took as option_member_list) is in CHANGELOG
+    // [Unreleased] and spec section 3.
+    caption_value: $ => prec.dynamic(1, seq(
       choice($.string_literal, $.verbatim_string),
       choice(
-        seq(
-          repeat1(seq(
-            ',',
-            $.property_name,
-            '=',
-            choice($.boolean, $.string_literal, $.integer),
-          )),
-          optional(','),  // Trailing comma after sub-fields
-        ),
+        seq(repeat1(seq(',', $._caption_subfields_e)), optional(',')),  // optional: trailing comma
         ',',  // Trailing comma only (no sub-fields): Caption = 'text',;
+        seq($._caption_subfields_t, repeat(seq(',', $._caption_subfields_e)), optional(',')),
       ),
     )),
+    ...strictConditionalList('caption_subfields', $ => seq(
+      $.property_name, '=', choice($.boolean, $.string_literal, $.integer)), ',', -1, true),
 
     // --- ML (Multilingual) value list ---
     // ENU='English', DEU='German'
     // There is no `, Locked = <boolean>` tail: alc 18.0.41 rejects it with
     // AL0219 in all three hosts (ML property, TextConst, Namespaces), and 0
     // corpus files use it (B4; tools/alc_probe/cases/pair-list-keying/).
-    ml_value_list: $ => prec.right(seq(
+    // B7b-1c: the keyed ML hosts and TextConst take a strict conditional list (family
+    // ml_pairs); a group anywhere in the pairs parses, a `#if` at the value start that
+    // is a whole value (no comma at an arm's edge, nothing beside it) stays the keyed
+    // family's whole-value group, because the list group has prec.dynamic(-1). Not past
+    // 8 empty groups after the value: from 9 the no-list reading is gone before dynamic
+    // precedence decides and the first n-8 become list groups (deferred item 91, pinned).
+    ml_value_list: $ => seq(...strictListBody($, 'ml_pairs', ',')),
+    ...strictConditionalList('ml_pairs', $ => $.ml_value_pair, ',', -1),
+    // A generic property's pair list (`FooML = ENU='x', DAN='y'`): flat, because a #if at
+    // a generic value is _property_value's own conditional (the name is not keyed).
+    _ml_value_list_flat: $ => prec.right(seq(
       $.ml_value_pair,
       repeat(seq(',', $.ml_value_pair)),
     )),
@@ -2469,10 +2653,9 @@ module.exports = grammar({
     // alc, but its own node: a prefix and a URI, not a language and a text.
     // Reached ONLY from property's Namespaces arm; adding it to _property_value
     // would make it a second, identically shaped list for every unknown name.
-    namespace_value_list: $ => prec.right(seq(
-      $.namespace_pair,
-      repeat(seq(',', $.namespace_pair)),
-    )),
+    // B7b-1c: a strict conditional list (family namespace_pairs), as ml_value_list.
+    namespace_value_list: $ => seq(...strictListBody($, 'namespace_pairs', ',')),
+    ...strictConditionalList('namespace_pairs', $ => $.namespace_pair, ',', -1),
 
     namespace_pair: $ => seq(
       field('prefix', $._plain_name),
@@ -2838,10 +3021,16 @@ module.exports = grammar({
     // Preprocessor conditionals inside TableRelation value
     preproc_conditional_table_relation: $ => seq(
       $.preproc_if,
-      optional($._table_relation_branch),
-      repeat(seq($.preproc_elif, optional($._table_relation_branch))),
-      optional(seq($.preproc_else, optional($._table_relation_branch))),
+      optional($._table_relation_branch_slot),
+      repeat(seq($.preproc_elif, optional($._table_relation_branch_slot))),
+      optional(seq($.preproc_else, optional($._table_relation_branch_slot))),
       $.preproc_endif,
+    ),
+    // Item 81: decorations without a `;` leave the arm open, as a bare relation does
+    _table_relation_branch_slot: $ => choice(
+      $._table_relation_branch,
+      seq($._table_relation_branch_content,
+        choice($._table_relation_terminator, repeat1($._value_decoration))),
     ),
 
     // One #if/#elif/#else branch of a TableRelation conditional
@@ -3878,17 +4067,17 @@ module.exports = grammar({
     label_declaration: $ => seq(
       field('name', $.identifier),
       '=',
-      field('value', choice($.string_literal, $.verbatim_string)),
-      repeat(seq(
-        ',',
-        choice(
-          seq($.comment_keyword, '=', field('comment', $.string_literal)),
-          seq($.locked_keyword, '=', field('locked', $.boolean)),
-          seq($.maxlength_keyword, '=', field('maxlength', $.integer)),
-        )
-      )),
+      labelText($, 'report_label_attributes'),
+      labelCommaTail($, 'report_label_attributes', true),
       ';'
     ),
+    // B7b-1d (item 46): the tail's attributes; a heterogeneous item, so three fielded
+    // shapes in one family (the host's own flat shape, spliced by the oracle).
+    ...labelTextRules('report_label_attributes', $ => choice(
+      seq($.comment_keyword, '=', field('comment', $.string_literal)),
+      seq($.locked_keyword, '=', field('locked', $.boolean)),
+      seq($.maxlength_keyword, '=', field('maxlength', $.integer)),
+    ), true),
 
     // =====================================================================
     // Page layout structure
@@ -5044,21 +5233,22 @@ module.exports = grammar({
 
     // One arm of a split header: a header, or a nested group of them (item 77:
     // `#if X #if Y procedure Q() #else procedure Q(I: Integer) #endif #else ...`,
-    // alc accepts every configuration; tools/alc_probe/cases/item77/).
+    // alc accepts every configuration; tools/alc_probe/cases/item77/), a group with
+    // attributes before it (item 82).
     _procedure_header_arm: $ => choice(
       $._procedure_header,
-      $.preproc_conditional_procedure_header,
+      seq(optional($._attribute_run), $.preproc_conditional_procedure_header),
     ),
 
     // A nested `#if` whose arms are procedure headers (item 77). Named so the
     // nesting is in the tree; the oracle selects its arm like the outer one.
-    preproc_conditional_procedure_header: $ => seq(
+    preproc_conditional_procedure_header: $ => prec(25, seq(  // prec as preproc_split_procedure's
       $.preproc_if,
       $._procedure_header_arm,
       repeat(seq($.preproc_elif, $._procedure_header_arm)),
       optional(seq($.preproc_else, $._procedure_header_arm)),
       $.preproc_endif,
-    ),
+    )),
 
     // Procedure preamble: header + optional var section (used in preproc_split_procedure_preamble)
     _procedure_preamble: $ => seq(
@@ -5071,18 +5261,38 @@ module.exports = grammar({
     // prec.right for the trailing `optional(';')` the code_block stopped owning.
     preproc_split_procedure_preamble: $ => prec.right(25, seq(
       $.preproc_if,
-      $._procedure_preamble,
-      repeat(seq($.preproc_elif, $._procedure_preamble)),
-      optional(seq($.preproc_else, $._procedure_preamble)),
+      $._procedure_preamble_arm,
+      repeat(seq($.preproc_elif, $._procedure_preamble_arm)),
+      optional(seq($.preproc_else, $._procedure_preamble_arm)),
       $.preproc_endif,
       // Issue #33: fielded like preproc_split_procedure's shared body.
       field('body', $.code_block),
       optional(';'),
     )),
 
+    // One arm of a split preamble: a preamble, or a nested group of them (item 83,
+    // alc accepts every configuration; tools/alc_probe/cases/item77/nested-preamble.al).
+    _procedure_preamble_arm: $ => choice(
+      $._procedure_preamble,
+      seq(optional($._attribute_run), $.preproc_conditional_procedure_preamble),  // item 82
+    ),
+
+    // A nested `#if` whose arms are preambles (item 83), named like item 77's header group.
+    preproc_conditional_procedure_preamble: $ => seq(
+      $.preproc_if,
+      $._procedure_preamble_arm,
+      repeat(seq($.preproc_elif, $._procedure_preamble_arm)),
+      optional(seq($.preproc_else, $._procedure_preamble_arm)),
+      $.preproc_endif,
+    ),
+
+    // Attributes before a split-header arm: one hidden rule shared by a header and a nested
+    // group's arm (item 82), so the two start with the same reduction, not two repeats.
+    _attribute_run: $ => seq($.attribute_item, repeat($.attribute_item)),
+
     // Procedure header without body (used in preproc split procedures)
     _procedure_header: $ => seq(
-      repeat($.attribute_item),
+      optional($._attribute_run),
       optional(field('modifier', $.procedure_modifier)),
       $._procedure_head,
       optional(choice(
@@ -5288,13 +5498,29 @@ module.exports = grammar({
     _trigger_header: $ => seq(...triggerHeader($)),
     preproc_split_trigger_preamble: $ => prec.right(25, seq(
       $.preproc_if,
-      $._trigger_preamble,
-      repeat(seq($.preproc_elif, $._trigger_preamble)),
-      optional(seq($.preproc_else, $._trigger_preamble)),
+      $._trigger_preamble_arm,
+      repeat(seq($.preproc_elif, $._trigger_preamble_arm)),
+      optional(seq($.preproc_else, $._trigger_preamble_arm)),
       $.preproc_endif,
       field('body', $.code_block),
       optional(';'),
     )),
+
+    // One arm of a split trigger preamble: a preamble, or a nested group of them (item 85,
+    // alc accepts every configuration; tools/alc_probe/cases/item77/nested-trigger-header.al).
+    _trigger_preamble_arm: $ => choice(
+      $._trigger_preamble,
+      $.preproc_conditional_trigger_preamble,
+    ),
+
+    // A nested `#if` whose arms are trigger preambles (item 85).
+    preproc_conditional_trigger_preamble: $ => seq(
+      $.preproc_if,
+      $._trigger_preamble_arm,
+      repeat(seq($.preproc_elif, $._trigger_preamble_arm)),
+      optional(seq($.preproc_else, $._trigger_preamble_arm)),
+      $.preproc_endif,
+    ),
 
     // Preprocessor conditional wrapping a var section before begin
     preproc_conditional_var_block: $ => seq(
@@ -5428,14 +5654,8 @@ module.exports = grammar({
         // "must" is a semantic rule for a linter, not something the grammar
         // enforces (parse structure, don't validate).
         field('type', $.basic_type),
-        field('value', choice($.string_literal, $.verbatim_string)),
-        optional(seq(
-          ',',
-          optional(seq(
-            $.label_attribute,
-            repeat(seq(',', $.label_attribute))
-          ))
-        )),
+        labelText($, 'label_attributes'),
+        labelCommaTail($, 'label_attributes', true),
         ';'
       )),
       // TextConst variable: Name: TextConst ENU='text', DEU='text';
@@ -5475,6 +5695,8 @@ module.exports = grammar({
     // groupDynamic -1: see the B7b-1 var_names conflicts (an empty group before a
     // declaration in a var_body stays a sibling preproc_conditional_var).
     ...strictConditionalList('var_names', $ => field('name', $._identifier_or_quoted), ',', -1),
+
+    ...labelTextRules('label_attributes', $ => $.label_attribute, true),
 
     label_attribute: $ => seq(
       field('name', $.identifier),

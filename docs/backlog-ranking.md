@@ -162,3 +162,17 @@ Combined: STATE_COUNT −204 vs 5.0.0, `parser.c` −3.5%; production trees byte
 Item numbers collided (three agents used 79): renumbered on merge. The 4 BC28.1 `MfgCreateInventoryPutaway`
 configurations that item 22's oracle change moved onto the `preproc_split_if_else_statement` lowering gap are
 classified (debt(C1, M3)). A `perf ab` for the added GLR conflicts (items 46e, 78, 68) was owed by all three reviews.
+
+### Batch 6 (2026-11-10)
+
+| item | result | review | merged |
+|---|---|---|---|
+| 46d | B7b-1d: `#if` groups in the attribute tails of report labels, `Label` variables and captions; caption-subfields GAP 1,080 → 72, label-attributes 408 → 0. Tree-shape change on valid input (a caption's trailing `,` then an empty or `,`-only group: a correction, the oracle passes it), 0 production sites. New items 86-88. STATE_COUNT +814. | changes-needed (the shape change was unlisted, a witness claim false); fixed in one round | yes |
+| 46c | B7b-1c: `#if` groups at ML and `Namespaces` pair-list separators. Tree-shape change: 9 or more consecutive empty groups after a keyed value (item 91, the runtime's merge cap), 0 sites. New items 90-92. STATE_COUNT +159. | changes-needed (the threshold was unlisted); fixed in one round | yes |
+| 82, 83, 85 | Attributes before a nested split-header group, a nested group of preambles, a nested trigger header. New items 94, 95, and 96 (from the review). STATE_COUNT +1,110. | approve-with-notes | yes |
+| 81, 84 | Complete `;` groups at a TableRelation's end and item 84's `;`/else group after a shared `where`. Partial forms ERROR as on main (item 99). STATE_COUNT +260. | changes-needed twice (round 1: an all-`;` group pulled into the value; round 2: wrong trees on valid configurations, oracle discrepancy); round 3 met a 99,792-shape acceptance test (0 main-clean changes, 0 discrepancies) | yes |
+
+Combined: STATE_COUNT +2,343 (+8.0%) vs 5.0.0+batch 5, `parser.c` +4.0%; production trees byte-identical in all four
+corpora. Two tree-shape changes on valid input (46d, 46c), 0 production sites: the next release is a major one under
+CHANGELOG.md's rule. `perf ab` skipped by the owner. One integration fix: B7b-1c made the `var-declaration / empty`
+witness 46d had re-seated parse; it moved to `occ:variable_declaration:2.0.4` (18 cells remain).

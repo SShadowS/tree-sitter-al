@@ -1,0 +1,163 @@
+; Deferred item 82: an attribute inside an arm of a split header before a nested header or
+; preamble group. The attribute is a child of the split node, before the group; the oracle
+; lifts it out as a preceding sibling. ERRORed before. alc accepts every configuration:
+; tools/alc_probe/cases/item77/attr-inside-arm-before-nested.al and attr-before-nested-preamble.al.
+
+========================================================================
+Attribute before a nested header group (item77/attr-inside-arm-before-nested.al)
+========================================================================
+codeunit 50100 P
+{
+#if X
+    [NonDebuggable]
+#if Y
+    procedure Q()
+#else
+    procedure Q(I: Integer)
+#endif
+#else
+    procedure Q(J: Code[10])
+#endif
+    begin
+    end;
+}
+
+------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (preproc_split_procedure
+        (preproc_if
+          (preproc_open)
+          condition: (identifier))
+        (attribute_item
+          attribute: (attribute_content
+            name: (identifier)))
+        (preproc_conditional_procedure_header
+          (preproc_if
+            (preproc_open)
+            condition: (identifier))
+          (procedure_keyword)
+          name: (identifier)
+          (preproc_else)
+          (procedure_keyword)
+          name: (identifier)
+          parameters: (parameter_list
+            (parameter
+              name: (identifier)
+              type: (type_specification
+                (basic_type))))
+          (preproc_endif
+            (preproc_close)))
+        (preproc_else)
+        (procedure_keyword)
+        name: (identifier)
+        parameters: (parameter_list
+          (parameter
+            name: (identifier)
+            type: (type_specification
+              (code_type
+                (code_keyword)
+                length: (integer)))))
+        (preproc_endif
+          (preproc_close))
+        body: (code_block
+          (begin_keyword)
+          (end_keyword))))))
+
+========================================================================
+Attribute before a nested preamble group (item77/attr-before-nested-preamble.al)
+========================================================================
+codeunit 50100 P
+{
+#if X
+    [NonDebuggable]
+#if Y
+    procedure Q()
+    var
+        A: Integer;
+#else
+    procedure Q(I: Integer)
+    var
+        A: Integer;
+#endif
+#else
+    procedure Q(J: Code[10])
+    var
+        A: Integer;
+#endif
+    begin
+    end;
+}
+
+------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (preproc_split_procedure_preamble
+        (preproc_if
+          (preproc_open)
+          condition: (identifier))
+        (attribute_item
+          attribute: (attribute_content
+            name: (identifier)))
+        (preproc_conditional_procedure_preamble
+          (preproc_if
+            (preproc_open)
+            condition: (identifier))
+          (procedure_keyword)
+          name: (identifier)
+          (var_section
+            (var_keyword)
+            body: (var_body
+              (variable_declaration
+                name: (identifier)
+                type: (type_specification
+                  (basic_type)))))
+          (preproc_else)
+          (procedure_keyword)
+          name: (identifier)
+          parameters: (parameter_list
+            (parameter
+              name: (identifier)
+              type: (type_specification
+                (basic_type))))
+          (var_section
+            (var_keyword)
+            body: (var_body
+              (variable_declaration
+                name: (identifier)
+                type: (type_specification
+                  (basic_type)))))
+          (preproc_endif
+            (preproc_close)))
+        (preproc_else)
+        (procedure_keyword)
+        name: (identifier)
+        parameters: (parameter_list
+          (parameter
+            name: (identifier)
+            type: (type_specification
+              (code_type
+                (code_keyword)
+                length: (integer)))))
+        (var_section
+          (var_keyword)
+          body: (var_body
+            (variable_declaration
+              name: (identifier)
+              type: (type_specification
+                (basic_type)))))
+        (preproc_endif
+          (preproc_close))
+        body: (code_block
+          (begin_keyword)
+          (end_keyword))))))

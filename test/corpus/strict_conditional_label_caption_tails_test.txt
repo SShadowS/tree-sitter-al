@@ -1,0 +1,1997 @@
+========================================================================
+B7b-1d caption / sep-before
+========================================================================
+page 1 P
+{
+    Caption = 'a'
+#if X
+, Locked = true
+#endif
+, Comment = 'c';
+}
+
+------------------------------------------------------------------------
+
+(source_file
+  (page_declaration
+    (page_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (property
+        name: (property_name)
+        value: (caption_value
+          (string_literal)
+          (preproc_conditional_caption_subfields
+            (preproc_if
+              (preproc_open)
+              condition: (identifier))
+            (property_name)
+            (boolean)
+            (preproc_endif
+              (preproc_close)))
+          (property_name)
+          (string_literal))))))
+
+========================================================================
+B7b-1d caption / sep-before-end
+========================================================================
+page 1 P
+{
+    Caption = 'a'
+#if X
+, Locked = true
+#endif
+;
+}
+
+------------------------------------------------------------------------
+
+(source_file
+  (page_declaration
+    (page_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (property
+        name: (property_name)
+        value: (caption_value
+          (string_literal)
+          (preproc_conditional_caption_subfields
+            (preproc_if
+              (preproc_open)
+              condition: (identifier))
+            (property_name)
+            (boolean)
+            (preproc_endif
+              (preproc_close))))))))
+
+========================================================================
+B7b-1d caption / sep-after
+========================================================================
+page 1 P
+{
+    Caption = 'a',
+#if X
+Locked = true,
+#endif
+Comment = 'c';
+}
+
+------------------------------------------------------------------------
+
+(source_file
+  (page_declaration
+    (page_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (property
+        name: (property_name)
+        value: (caption_value
+          (string_literal)
+          (preproc_conditional_caption_subfields
+            (preproc_if
+              (preproc_open)
+              condition: (identifier))
+            (property_name)
+            (boolean)
+            (preproc_endif
+              (preproc_close)))
+          (property_name)
+          (string_literal))))))
+
+========================================================================
+B7b-1d caption / sep-only
+========================================================================
+page 1 P
+{
+    Caption = 'a'
+#if X
+,
+#else
+,
+#endif
+Locked = true;
+}
+
+------------------------------------------------------------------------
+
+(source_file
+  (page_declaration
+    (page_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (property
+        name: (property_name)
+        value: (caption_value
+          (string_literal)
+          (preproc_conditional_caption_subfields
+            (preproc_if
+              (preproc_open)
+              condition: (identifier))
+            (preproc_else)
+            (preproc_endif
+              (preproc_close)))
+          (property_name)
+          (boolean))))))
+
+========================================================================
+B7b-1d caption / both-in-arm
+========================================================================
+page 1 P
+{
+    Caption = 'a'
+#if X
+, Locked = true,
+#else
+,
+#endif
+Comment = 'c';
+}
+
+------------------------------------------------------------------------
+
+(source_file
+  (page_declaration
+    (page_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (property
+        name: (property_name)
+        value: (caption_value
+          (string_literal)
+          (preproc_conditional_caption_subfields
+            (preproc_if
+              (preproc_open)
+              condition: (identifier))
+            (property_name)
+            (boolean)
+            (preproc_else)
+            (preproc_endif
+              (preproc_close)))
+          (property_name)
+          (string_literal))))))
+
+========================================================================
+B7b-1d caption / count-differs
+========================================================================
+page 1 P
+{
+    Caption = 'a'
+#if X
+, Locked = true, Comment = 'c'
+#else
+, MaxLength = 10
+#endif
+;
+}
+
+------------------------------------------------------------------------
+
+(source_file
+  (page_declaration
+    (page_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (property
+        name: (property_name)
+        value: (caption_value
+          (string_literal)
+          (preproc_conditional_caption_subfields
+            (preproc_if
+              (preproc_open)
+              condition: (identifier))
+            (property_name)
+            (boolean)
+            (property_name)
+            (string_literal)
+            (preproc_else)
+            (property_name)
+            (integer)
+            (preproc_endif
+              (preproc_close))))))))
+
+========================================================================
+B7b-1d caption / adjacent-compl
+========================================================================
+page 1 P
+{
+    Caption = 'a'
+#if X
+, Locked = true
+#endif
+#if not X
+, Comment = 'c'
+#endif
+;
+}
+
+------------------------------------------------------------------------
+
+(source_file
+  (page_declaration
+    (page_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (property
+        name: (property_name)
+        value: (caption_value
+          (string_literal)
+          (preproc_conditional_caption_subfields
+            (preproc_if
+              (preproc_open)
+              condition: (identifier))
+            (property_name)
+            (boolean)
+            (preproc_endif
+              (preproc_close)))
+          (preproc_conditional_caption_subfields
+            (preproc_if
+              (preproc_open)
+              condition: (preproc_not_expression
+                (identifier)))
+            (property_name)
+            (string_literal)
+            (preproc_endif
+              (preproc_close))))))))
+
+========================================================================
+B7b-1d caption / adjacent-indep
+========================================================================
+page 1 P
+{
+    Caption = 'a'
+#if X
+, Locked = true
+#endif
+#if Y
+, Comment = 'c'
+#endif
+;
+}
+
+------------------------------------------------------------------------
+
+(source_file
+  (page_declaration
+    (page_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (property
+        name: (property_name)
+        value: (caption_value
+          (string_literal)
+          (preproc_conditional_caption_subfields
+            (preproc_if
+              (preproc_open)
+              condition: (identifier))
+            (property_name)
+            (boolean)
+            (preproc_endif
+              (preproc_close)))
+          (preproc_conditional_caption_subfields
+            (preproc_if
+              (preproc_open)
+              condition: (identifier))
+            (property_name)
+            (string_literal)
+            (preproc_endif
+              (preproc_close))))))))
+
+========================================================================
+B7b-1d caption / elif
+========================================================================
+page 1 P
+{
+    Caption = 'a'
+#if X
+, Locked = true
+#elif Y
+, Comment = 'c'
+#endif
+, MaxLength = 10;
+}
+
+------------------------------------------------------------------------
+
+(source_file
+  (page_declaration
+    (page_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (property
+        name: (property_name)
+        value: (caption_value
+          (string_literal)
+          (preproc_conditional_caption_subfields
+            (preproc_if
+              (preproc_open)
+              condition: (identifier))
+            (property_name)
+            (boolean)
+            (preproc_elif
+              condition: (identifier))
+            (property_name)
+            (string_literal)
+            (preproc_endif
+              (preproc_close)))
+          (property_name)
+          (integer))))))
+
+========================================================================
+B7b-1d caption / nested
+========================================================================
+page 1 P
+{
+    Caption = 'a'
+#if X
+, Locked = true
+#if Y
+, Comment = 'c'
+#endif
+#endif
+, MaxLength = 10;
+}
+
+------------------------------------------------------------------------
+
+(source_file
+  (page_declaration
+    (page_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (property
+        name: (property_name)
+        value: (caption_value
+          (string_literal)
+          (preproc_conditional_caption_subfields
+            (preproc_if
+              (preproc_open)
+              condition: (identifier))
+            (property_name)
+            (boolean)
+            (preproc_conditional_caption_subfields
+              (preproc_if
+                (preproc_open)
+                condition: (identifier))
+              (property_name)
+              (string_literal)
+              (preproc_endif
+                (preproc_close)))
+            (preproc_endif
+              (preproc_close)))
+          (property_name)
+          (integer))))))
+
+========================================================================
+B7b-1d caption / empty
+========================================================================
+page 1 P
+{
+    Caption = 'a',
+#if X
+#endif
+Locked = true;
+}
+
+------------------------------------------------------------------------
+
+(source_file
+  (page_declaration
+    (page_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (property
+        name: (property_name)
+        value: (caption_value
+          (string_literal)
+          (preproc_conditional_caption_subfields
+            (preproc_if
+              (preproc_open)
+              condition: (identifier))
+            (preproc_endif
+              (preproc_close)))
+          (property_name)
+          (boolean))))))
+
+========================================================================
+B7b-1d caption / trail
+========================================================================
+page 1 P
+{
+    Caption = 'a',
+#if X
+Locked = true
+#endif
+;
+}
+
+------------------------------------------------------------------------
+
+(source_file
+  (page_declaration
+    (page_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (property
+        name: (property_name)
+        value: (caption_value
+          (string_literal)
+          (preproc_conditional_caption_subfields
+            (preproc_if
+              (preproc_open)
+              condition: (identifier))
+            (property_name)
+            (boolean)
+            (preproc_endif
+              (preproc_close))))))))
+
+========================================================================
+B7b-1d caption / holes-mid
+========================================================================
+page 1 P
+{
+    Caption = 'a',
+#if X
+,
+#endif
+Locked = true;
+}
+
+------------------------------------------------------------------------
+
+(source_file
+  (page_declaration
+    (page_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (property
+        name: (property_name)
+        value: (caption_value
+          (string_literal)
+          (preproc_conditional_caption_subfields
+            (preproc_if
+              (preproc_open)
+              condition: (identifier))
+            (preproc_endif
+              (preproc_close)))
+          (property_name)
+          (boolean))))))
+
+========================================================================
+B7b-1d caption / holes-trail
+========================================================================
+page 1 P
+{
+    Caption = 'a', Locked = true
+#if X
+,
+#endif
+;
+}
+
+------------------------------------------------------------------------
+
+(source_file
+  (page_declaration
+    (page_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (property
+        name: (property_name)
+        value: (caption_value
+          (string_literal)
+          (property_name)
+          (boolean)
+          (preproc_conditional_caption_subfields
+            (preproc_if
+              (preproc_open)
+              condition: (identifier))
+            (preproc_endif
+              (preproc_close))))))))
+
+========================================================================
+B7b-1d report label / sep-before
+========================================================================
+report 1 R
+{
+    labels
+    {
+        L1 = 'a'
+#if X
+, Locked = true
+#endif
+, Comment = 'c';
+    }
+}
+
+------------------------------------------------------------------------
+
+(source_file
+  (report_declaration
+    (report_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (labels_section
+        (labels_keyword)
+        body: (labels_body
+          (label_declaration
+            name: (identifier)
+            value: (string_literal)
+            (preproc_conditional_report_label_attributes
+              (preproc_if
+                (preproc_open)
+                condition: (identifier))
+              (locked_keyword)
+              locked: (boolean)
+              (preproc_endif
+                (preproc_close)))
+            (comment_keyword)
+            comment: (string_literal)))))))
+
+========================================================================
+B7b-1d report label / sep-before-end
+========================================================================
+report 1 R
+{
+    labels
+    {
+        L1 = 'a'
+#if X
+, Locked = true
+#endif
+;
+    }
+}
+
+------------------------------------------------------------------------
+
+(source_file
+  (report_declaration
+    (report_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (labels_section
+        (labels_keyword)
+        body: (labels_body
+          (label_declaration
+            name: (identifier)
+            value: (string_literal)
+            (preproc_conditional_report_label_attributes
+              (preproc_if
+                (preproc_open)
+                condition: (identifier))
+              (locked_keyword)
+              locked: (boolean)
+              (preproc_endif
+                (preproc_close)))))))))
+
+========================================================================
+B7b-1d report label / sep-after
+========================================================================
+report 1 R
+{
+    labels
+    {
+        L1 = 'a',
+#if X
+Locked = true,
+#endif
+Comment = 'c';
+    }
+}
+
+------------------------------------------------------------------------
+
+(source_file
+  (report_declaration
+    (report_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (labels_section
+        (labels_keyword)
+        body: (labels_body
+          (label_declaration
+            name: (identifier)
+            value: (string_literal)
+            (preproc_conditional_report_label_attributes
+              (preproc_if
+                (preproc_open)
+                condition: (identifier))
+              (locked_keyword)
+              locked: (boolean)
+              (preproc_endif
+                (preproc_close)))
+            (comment_keyword)
+            comment: (string_literal)))))))
+
+========================================================================
+B7b-1d report label / sep-only
+========================================================================
+report 1 R
+{
+    labels
+    {
+        L1 = 'a'
+#if X
+,
+#else
+,
+#endif
+Locked = true;
+    }
+}
+
+------------------------------------------------------------------------
+
+(source_file
+  (report_declaration
+    (report_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (labels_section
+        (labels_keyword)
+        body: (labels_body
+          (label_declaration
+            name: (identifier)
+            value: (string_literal)
+            (preproc_conditional_report_label_attributes
+              (preproc_if
+                (preproc_open)
+                condition: (identifier))
+              (preproc_else)
+              (preproc_endif
+                (preproc_close)))
+            (locked_keyword)
+            locked: (boolean)))))))
+
+========================================================================
+B7b-1d report label / both-in-arm
+========================================================================
+report 1 R
+{
+    labels
+    {
+        L1 = 'a'
+#if X
+, Locked = true,
+#else
+,
+#endif
+Comment = 'c';
+    }
+}
+
+------------------------------------------------------------------------
+
+(source_file
+  (report_declaration
+    (report_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (labels_section
+        (labels_keyword)
+        body: (labels_body
+          (label_declaration
+            name: (identifier)
+            value: (string_literal)
+            (preproc_conditional_report_label_attributes
+              (preproc_if
+                (preproc_open)
+                condition: (identifier))
+              (locked_keyword)
+              locked: (boolean)
+              (preproc_else)
+              (preproc_endif
+                (preproc_close)))
+            (comment_keyword)
+            comment: (string_literal)))))))
+
+========================================================================
+B7b-1d report label / count-differs
+========================================================================
+report 1 R
+{
+    labels
+    {
+        L1 = 'a'
+#if X
+, Locked = true, Comment = 'c'
+#else
+, MaxLength = 10
+#endif
+;
+    }
+}
+
+------------------------------------------------------------------------
+
+(source_file
+  (report_declaration
+    (report_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (labels_section
+        (labels_keyword)
+        body: (labels_body
+          (label_declaration
+            name: (identifier)
+            value: (string_literal)
+            (preproc_conditional_report_label_attributes
+              (preproc_if
+                (preproc_open)
+                condition: (identifier))
+              (locked_keyword)
+              locked: (boolean)
+              (comment_keyword)
+              comment: (string_literal)
+              (preproc_else)
+              (maxlength_keyword)
+              maxlength: (integer)
+              (preproc_endif
+                (preproc_close)))))))))
+
+========================================================================
+B7b-1d report label / adjacent-compl
+========================================================================
+report 1 R
+{
+    labels
+    {
+        L1 = 'a'
+#if X
+, Locked = true
+#endif
+#if not X
+, Comment = 'c'
+#endif
+;
+    }
+}
+
+------------------------------------------------------------------------
+
+(source_file
+  (report_declaration
+    (report_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (labels_section
+        (labels_keyword)
+        body: (labels_body
+          (label_declaration
+            name: (identifier)
+            value: (string_literal)
+            (preproc_conditional_report_label_attributes
+              (preproc_if
+                (preproc_open)
+                condition: (identifier))
+              (locked_keyword)
+              locked: (boolean)
+              (preproc_endif
+                (preproc_close)))
+            (preproc_conditional_report_label_attributes
+              (preproc_if
+                (preproc_open)
+                condition: (preproc_not_expression
+                  (identifier)))
+              (comment_keyword)
+              comment: (string_literal)
+              (preproc_endif
+                (preproc_close)))))))))
+
+========================================================================
+B7b-1d report label / adjacent-indep
+========================================================================
+report 1 R
+{
+    labels
+    {
+        L1 = 'a'
+#if X
+, Locked = true
+#endif
+#if Y
+, Comment = 'c'
+#endif
+;
+    }
+}
+
+------------------------------------------------------------------------
+
+(source_file
+  (report_declaration
+    (report_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (labels_section
+        (labels_keyword)
+        body: (labels_body
+          (label_declaration
+            name: (identifier)
+            value: (string_literal)
+            (preproc_conditional_report_label_attributes
+              (preproc_if
+                (preproc_open)
+                condition: (identifier))
+              (locked_keyword)
+              locked: (boolean)
+              (preproc_endif
+                (preproc_close)))
+            (preproc_conditional_report_label_attributes
+              (preproc_if
+                (preproc_open)
+                condition: (identifier))
+              (comment_keyword)
+              comment: (string_literal)
+              (preproc_endif
+                (preproc_close)))))))))
+
+========================================================================
+B7b-1d report label / elif
+========================================================================
+report 1 R
+{
+    labels
+    {
+        L1 = 'a'
+#if X
+, Locked = true
+#elif Y
+, Comment = 'c'
+#endif
+, MaxLength = 10;
+    }
+}
+
+------------------------------------------------------------------------
+
+(source_file
+  (report_declaration
+    (report_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (labels_section
+        (labels_keyword)
+        body: (labels_body
+          (label_declaration
+            name: (identifier)
+            value: (string_literal)
+            (preproc_conditional_report_label_attributes
+              (preproc_if
+                (preproc_open)
+                condition: (identifier))
+              (locked_keyword)
+              locked: (boolean)
+              (preproc_elif
+                condition: (identifier))
+              (comment_keyword)
+              comment: (string_literal)
+              (preproc_endif
+                (preproc_close)))
+            (maxlength_keyword)
+            maxlength: (integer)))))))
+
+========================================================================
+B7b-1d report label / nested
+========================================================================
+report 1 R
+{
+    labels
+    {
+        L1 = 'a'
+#if X
+, Locked = true
+#if Y
+, Comment = 'c'
+#endif
+#endif
+, MaxLength = 10;
+    }
+}
+
+------------------------------------------------------------------------
+
+(source_file
+  (report_declaration
+    (report_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (labels_section
+        (labels_keyword)
+        body: (labels_body
+          (label_declaration
+            name: (identifier)
+            value: (string_literal)
+            (preproc_conditional_report_label_attributes
+              (preproc_if
+                (preproc_open)
+                condition: (identifier))
+              (locked_keyword)
+              locked: (boolean)
+              (preproc_conditional_report_label_attributes
+                (preproc_if
+                  (preproc_open)
+                  condition: (identifier))
+                (comment_keyword)
+                comment: (string_literal)
+                (preproc_endif
+                  (preproc_close)))
+              (preproc_endif
+                (preproc_close)))
+            (maxlength_keyword)
+            maxlength: (integer)))))))
+
+========================================================================
+B7b-1d report label / empty
+========================================================================
+report 1 R
+{
+    labels
+    {
+        L1 = 'a',
+#if X
+#endif
+Locked = true;
+    }
+}
+
+------------------------------------------------------------------------
+
+(source_file
+  (report_declaration
+    (report_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (labels_section
+        (labels_keyword)
+        body: (labels_body
+          (label_declaration
+            name: (identifier)
+            value: (string_literal)
+            (preproc_conditional_report_label_attributes
+              (preproc_if
+                (preproc_open)
+                condition: (identifier))
+              (preproc_endif
+                (preproc_close)))
+            (locked_keyword)
+            locked: (boolean)))))))
+
+========================================================================
+B7b-1d report label / trail
+========================================================================
+report 1 R
+{
+    labels
+    {
+        L1 = 'a',
+#if X
+Locked = true
+#endif
+;
+    }
+}
+
+------------------------------------------------------------------------
+
+(source_file
+  (report_declaration
+    (report_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (labels_section
+        (labels_keyword)
+        body: (labels_body
+          (label_declaration
+            name: (identifier)
+            value: (string_literal)
+            (preproc_conditional_report_label_attributes
+              (preproc_if
+                (preproc_open)
+                condition: (identifier))
+              (locked_keyword)
+              locked: (boolean)
+              (preproc_endif
+                (preproc_close)))))))))
+
+========================================================================
+B7b-1d report label / holes-mid
+========================================================================
+report 1 R
+{
+    labels
+    {
+        L1 = 'a',
+#if X
+,
+#endif
+Locked = true;
+    }
+}
+
+------------------------------------------------------------------------
+
+(source_file
+  (report_declaration
+    (report_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (labels_section
+        (labels_keyword)
+        body: (labels_body
+          (label_declaration
+            name: (identifier)
+            value: (string_literal)
+            (preproc_conditional_report_label_attributes
+              (preproc_if
+                (preproc_open)
+                condition: (identifier))
+              (preproc_endif
+                (preproc_close)))
+            (locked_keyword)
+            locked: (boolean)))))))
+
+========================================================================
+B7b-1d report label / holes-trail
+========================================================================
+report 1 R
+{
+    labels
+    {
+        L1 = 'a', Locked = true
+#if X
+,
+#endif
+;
+    }
+}
+
+------------------------------------------------------------------------
+
+(source_file
+  (report_declaration
+    (report_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (labels_section
+        (labels_keyword)
+        body: (labels_body
+          (label_declaration
+            name: (identifier)
+            value: (string_literal)
+            (locked_keyword)
+            locked: (boolean)
+            (preproc_conditional_report_label_attributes
+              (preproc_if
+                (preproc_open)
+                condition: (identifier))
+              (preproc_endif
+                (preproc_close)))))))))
+
+========================================================================
+B7b-1d report label / one-elem
+========================================================================
+report 1 R
+{
+    labels
+    {
+        L1 =
+#if X
+'a', Locked = true
+#else
+'a'
+#endif
+;
+    }
+}
+
+------------------------------------------------------------------------
+
+(source_file
+  (report_declaration
+    (report_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (labels_section
+        (labels_keyword)
+        body: (labels_body
+          (label_declaration
+            name: (identifier)
+            (preproc_conditional_report_label_attributes
+              (preproc_if
+                (preproc_open)
+                condition: (identifier))
+              value: (string_literal)
+              (locked_keyword)
+              locked: (boolean)
+              (preproc_else)
+              value: (string_literal)
+              (preproc_endif
+                (preproc_close)))))))))
+
+========================================================================
+B7b-1d report label / empty-list
+========================================================================
+report 1 R
+{
+    labels
+    {
+        L1 =
+#if X
+'a', Locked = true
+#endif
+;
+    }
+}
+
+------------------------------------------------------------------------
+
+(source_file
+  (report_declaration
+    (report_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (labels_section
+        (labels_keyword)
+        body: (labels_body
+          (label_declaration
+            name: (identifier)
+            (preproc_conditional_report_label_attributes
+              (preproc_if
+                (preproc_open)
+                condition: (identifier))
+              value: (string_literal)
+              (locked_keyword)
+              locked: (boolean)
+              (preproc_endif
+                (preproc_close)))))))))
+
+========================================================================
+B7b-1d report label / holes-lead
+========================================================================
+report 1 R
+{
+    labels
+    {
+        L1 =
+#if X
+,
+#endif
+'a', Locked = true;
+    }
+}
+
+------------------------------------------------------------------------
+
+(source_file
+  (report_declaration
+    (report_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (labels_section
+        (labels_keyword)
+        body: (labels_body
+          (label_declaration
+            name: (identifier)
+            (preproc_conditional_report_label_attributes
+              (preproc_if
+                (preproc_open)
+                condition: (identifier))
+              (preproc_endif
+                (preproc_close)))
+            value: (string_literal)
+            (locked_keyword)
+            locked: (boolean)))))))
+
+========================================================================
+B7b-1d label variable / sep-before-end
+========================================================================
+codeunit 1 C
+{
+    var
+        L: Label 'a'
+#if X
+, Locked = true
+#endif
+;
+}
+
+------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (var_section
+        (var_keyword)
+        body: (var_body
+          (variable_declaration
+            name: (identifier)
+            type: (basic_type)
+            value: (string_literal)
+            (preproc_conditional_label_attributes
+              (preproc_if
+                (preproc_open)
+                condition: (identifier))
+              (label_attribute
+                name: (identifier)
+                value: (boolean))
+              (preproc_endif
+                (preproc_close)))))))))
+
+========================================================================
+B7b-1d label variable / nested
+========================================================================
+codeunit 1 C
+{
+    var
+        L: Label 'a'
+#if X
+, Locked = true
+#if Y
+, Comment = 'c'
+#endif
+#endif
+, MaxLength = 10;
+}
+
+------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (var_section
+        (var_keyword)
+        body: (var_body
+          (variable_declaration
+            name: (identifier)
+            type: (basic_type)
+            value: (string_literal)
+            (preproc_conditional_label_attributes
+              (preproc_if
+                (preproc_open)
+                condition: (identifier))
+              (label_attribute
+                name: (identifier)
+                value: (boolean))
+              (preproc_conditional_label_attributes
+                (preproc_if
+                  (preproc_open)
+                  condition: (identifier))
+                (label_attribute
+                  name: (identifier)
+                  value: (string_literal))
+                (preproc_endif
+                  (preproc_close)))
+              (preproc_endif
+                (preproc_close)))
+            (label_attribute
+              name: (identifier)
+              value: (integer))))))))
+
+========================================================================
+B7b-1d label variable / trail
+========================================================================
+codeunit 1 C
+{
+    var
+        L: Label 'a',
+#if X
+Locked = true
+#endif
+;
+}
+
+------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (var_section
+        (var_keyword)
+        body: (var_body
+          (variable_declaration
+            name: (identifier)
+            type: (basic_type)
+            value: (string_literal)
+            (preproc_conditional_label_attributes
+              (preproc_if
+                (preproc_open)
+                condition: (identifier))
+              (label_attribute
+                name: (identifier)
+                value: (boolean))
+              (preproc_endif
+                (preproc_close)))))))))
+
+========================================================================
+B7b-1d label variable / holes-trail
+========================================================================
+codeunit 1 C
+{
+    var
+        L: Label 'a', Locked = true
+#if X
+,
+#endif
+;
+}
+
+------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (var_section
+        (var_keyword)
+        body: (var_body
+          (variable_declaration
+            name: (identifier)
+            type: (basic_type)
+            value: (string_literal)
+            (label_attribute
+              name: (identifier)
+              value: (boolean))
+            (preproc_conditional_label_attributes
+              (preproc_if
+                (preproc_open)
+                condition: (identifier))
+              (preproc_endif
+                (preproc_close)))))))))
+
+========================================================================
+B7b-1d label variable / one-elem
+========================================================================
+codeunit 1 C
+{
+    var
+        L: Label
+#if X
+'a', Locked = true
+#else
+'a'
+#endif
+;
+}
+
+------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (var_section
+        (var_keyword)
+        body: (var_body
+          (variable_declaration
+            name: (identifier)
+            type: (basic_type)
+            (preproc_conditional_label_attributes
+              (preproc_if
+                (preproc_open)
+                condition: (identifier))
+              value: (string_literal)
+              (label_attribute
+                name: (identifier)
+                value: (boolean))
+              (preproc_else)
+              value: (string_literal)
+              (preproc_endif
+                (preproc_close)))))))))
+
+========================================================================
+B7b-1d caption / preserved: an empty group after the text stays the property's sibling, no caption_value
+========================================================================
+page 1 P
+{
+    Caption = 'a'
+#if X
+#endif
+;
+}
+
+------------------------------------------------------------------------
+
+(source_file
+  (page_declaration
+    (page_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (property
+        name: (property_name)
+        value: (string_literal)
+        (preproc_conditional_property_value
+          (preproc_if
+            (preproc_open)
+            condition: (identifier))
+          (preproc_endif
+            (preproc_close)))))))
+
+========================================================================
+B7b-1d caption / trailing comma then an all-empty group, the last member of the body: caption_value + sibling group (main's tree here)
+========================================================================
+page 1 P
+{
+    Caption = 'a',
+#if X
+#endif
+;
+}
+
+------------------------------------------------------------------------
+
+(source_file
+  (page_declaration
+    (page_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (property
+        name: (property_name)
+        value: (caption_value
+          (string_literal))
+        (preproc_conditional_property_value
+          (preproc_if
+            (preproc_open)
+            condition: (identifier))
+          (preproc_endif
+            (preproc_close)))))))
+
+========================================================================
+B7b-1d caption / tree change: trailing comma then an all-empty #if with a member following: caption_value + sibling, was option_member_list
+========================================================================
+page 1 P
+{
+    Caption = 'a',
+#if X
+#endif
+;
+    Visible = true;
+}
+
+------------------------------------------------------------------------
+
+(source_file
+  (page_declaration
+    (page_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (property
+        name: (property_name)
+        value: (caption_value
+          (string_literal))
+        (preproc_conditional_property_value
+          (preproc_if
+            (preproc_open)
+            condition: (identifier))
+          (preproc_endif
+            (preproc_close))))
+      (property
+        name: (property_name)
+        value: (boolean)))))
+
+========================================================================
+B7b-1d caption / tree change: trailing comma then an all-empty #else group with a member following
+========================================================================
+page 1 P
+{
+    Caption = 'a',
+#if X
+#else
+#endif
+;
+    Visible = true;
+}
+
+------------------------------------------------------------------------
+
+(source_file
+  (page_declaration
+    (page_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (property
+        name: (property_name)
+        value: (caption_value
+          (string_literal))
+        (preproc_conditional_property_value
+          (preproc_if
+            (preproc_open)
+            condition: (identifier))
+          (preproc_else)
+          (preproc_endif
+            (preproc_close))))
+      (property
+        name: (property_name)
+        value: (boolean)))))
+
+========================================================================
+B7b-1d caption / tree change: trailing comma then an all-empty #elif group with a member following
+========================================================================
+page 1 P
+{
+    Caption = 'a',
+#if X
+#elif Y
+#endif
+;
+    Visible = true;
+}
+
+------------------------------------------------------------------------
+
+(source_file
+  (page_declaration
+    (page_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (property
+        name: (property_name)
+        value: (caption_value
+          (string_literal))
+        (preproc_conditional_property_value
+          (preproc_if
+            (preproc_open)
+            condition: (identifier))
+          (preproc_elif
+            condition: (identifier))
+          (preproc_endif
+            (preproc_close))))
+      (property
+        name: (property_name)
+        value: (boolean)))))
+
+========================================================================
+B7b-1d caption / tree change: trailing comma then an all-empty group inside a whole-value arm
+========================================================================
+page 1 P
+{
+    Caption =
+#if A
+'a',
+#if X
+#endif
+;
+#else
+'z';
+#endif
+    Visible = true;
+}
+
+------------------------------------------------------------------------
+
+(source_file
+  (page_declaration
+    (page_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (property
+        name: (property_name)
+        value: (preproc_conditional_property_value
+          (preproc_if
+            (preproc_open)
+            condition: (identifier))
+          value: (caption_value
+            (string_literal))
+          (preproc_conditional_property_value
+            (preproc_if
+              (preproc_open)
+              condition: (identifier))
+            (preproc_endif
+              (preproc_close)))
+          (preproc_else)
+          value: (string_literal)
+          (preproc_endif
+            (preproc_close))))
+      (property
+        name: (property_name)
+        value: (boolean)))))
+
+========================================================================
+B7b-1d caption / preserved: an expression tail after the text stays an expression
+========================================================================
+page 1 P
+{
+    Caption = 'a'
+#if X
++ 'b'
+#endif
+;
+}
+
+------------------------------------------------------------------------
+
+(source_file
+  (page_declaration
+    (page_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (property
+        name: (property_name)
+        value: (property_expression
+          (string_literal)
+          (preproc_conditional_expression_tail
+            (preproc_if
+              (preproc_open)
+              condition: (identifier))
+            operand: (string_literal)
+            (preproc_endif
+              (preproc_close))))))))
+
+========================================================================
+B7b-1d caption / a verbatim text with a sub-field group
+========================================================================
+page 1 P
+{
+    Caption = @'a'
+#if X
+, Locked = true
+#endif
+;
+}
+
+------------------------------------------------------------------------
+
+(source_file
+  (page_declaration
+    (page_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (property
+        name: (property_name)
+        value: (caption_value
+          (verbatim_string)
+          (preproc_conditional_caption_subfields
+            (preproc_if
+              (preproc_open)
+              condition: (identifier))
+            (property_name)
+            (boolean)
+            (preproc_endif
+              (preproc_close))))))))
+
+========================================================================
+B7b-1d caption / a group in an arm of a whole-value group
+========================================================================
+page 1 P
+{
+    Caption =
+#if TPL
+'a'
+#if X
+, Locked = true
+#endif
+;
+#else
+'b';
+#endif
+;
+}
+
+------------------------------------------------------------------------
+
+(source_file
+  (page_declaration
+    (page_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (property
+        name: (property_name)
+        value: (preproc_conditional_property_value
+          (preproc_if
+            (preproc_open)
+            condition: (identifier))
+          value: (caption_value
+            (string_literal)
+            (preproc_conditional_caption_subfields
+              (preproc_if
+                (preproc_open)
+                condition: (identifier))
+              (property_name)
+              (boolean)
+              (preproc_endif
+                (preproc_close))))
+          (preproc_else)
+          value: (string_literal)
+          (preproc_endif
+            (preproc_close)))))))
+
+========================================================================
+B7b-1d report label / an empty group right after the text (label-declaration / empty)
+========================================================================
+report 1 R
+{
+    labels
+    {
+        L1 = 'a'
+#if X
+#endif
+;
+    }
+}
+
+------------------------------------------------------------------------
+
+(source_file
+  (report_declaration
+    (report_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (labels_section
+        (labels_keyword)
+        body: (labels_body
+          (label_declaration
+            name: (identifier)
+            value: (string_literal)
+            (preproc_conditional_report_label_attributes
+              (preproc_if
+                (preproc_open)
+                condition: (identifier))
+              (preproc_endif
+                (preproc_close)))))))))
+
+========================================================================
+B7b-1d label variable / an empty group right after the text (var-declaration / empty)
+========================================================================
+codeunit 1 C
+{
+    var
+        L: Label 'a'
+#if X
+#endif
+;
+}
+
+------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (var_section
+        (var_keyword)
+        body: (var_body
+          (variable_declaration
+            name: (identifier)
+            type: (basic_type)
+            value: (string_literal)
+            (preproc_conditional_label_attributes
+              (preproc_if
+                (preproc_open)
+                condition: (identifier))
+              (preproc_endif
+                (preproc_close)))))))))
+
+========================================================================
+B7b-1d label variable / a trailing comma after the text
+========================================================================
+codeunit 1 C
+{
+    var
+        L: Label 'a',
+;
+}
+
+------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (var_section
+        (var_keyword)
+        body: (var_body
+          (variable_declaration
+            name: (identifier)
+            type: (basic_type)
+            value: (string_literal)))))))
+
+========================================================================
+B7b-1d label variable / a group then a trailing comma
+========================================================================
+codeunit 1 C
+{
+    var
+        L: Label 'a'
+#if X
+, Locked = true
+#endif
+,
+;
+}
+
+------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (var_section
+        (var_keyword)
+        body: (var_body
+          (variable_declaration
+            name: (identifier)
+            type: (basic_type)
+            value: (string_literal)
+            (preproc_conditional_label_attributes
+              (preproc_if
+                (preproc_open)
+                condition: (identifier))
+              (label_attribute
+                name: (identifier)
+                value: (boolean))
+              (preproc_endif
+                (preproc_close)))))))))
+
+========================================================================
+B7b-1d report label / a verbatim text with a group
+========================================================================
+report 1 R
+{
+    labels
+    {
+        L1 = @'a'
+#if X
+, Locked = true
+#endif
+;
+    }
+}
+
+------------------------------------------------------------------------
+
+(source_file
+  (report_declaration
+    (report_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (labels_section
+        (labels_keyword)
+        body: (labels_body
+          (label_declaration
+            name: (identifier)
+            value: (verbatim_string)
+            (preproc_conditional_report_label_attributes
+              (preproc_if
+                (preproc_open)
+                condition: (identifier))
+              (locked_keyword)
+              locked: (boolean)
+              (preproc_endif
+                (preproc_close)))))))))
+
+========================================================================
+B7b-1d report label / a trailing comma after the text (alc accepts)
+========================================================================
+report 1 R
+{
+    labels
+    {
+        L1 = 'a',;
+    }
+}
+
+------------------------------------------------------------------------
+
+(source_file
+  (report_declaration
+    (report_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (labels_section
+        (labels_keyword)
+        body: (labels_body
+          (label_declaration
+            name: (identifier)
+            value: (string_literal)))))))
+
+========================================================================
+B7b-1d report label / preserved: a flat label
+========================================================================
+report 1 R
+{
+    labels
+    {
+        L1 = 'a', Locked = true, Comment = 'c';
+    }
+}
+
+------------------------------------------------------------------------
+
+(source_file
+  (report_declaration
+    (report_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (labels_section
+        (labels_keyword)
+        body: (labels_body
+          (label_declaration
+            name: (identifier)
+            value: (string_literal)
+            (locked_keyword)
+            locked: (boolean)
+            (comment_keyword)
+            comment: (string_literal)))))))

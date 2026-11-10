@@ -1,0 +1,122 @@
+; Deferred item 85: an arm of a split trigger preamble may itself be an #if group of trigger
+; preambles (preproc_conditional_trigger_preamble), the trigger counterpart of item 77 and 83.
+; ERRORed before. alc accepts every configuration of each, split and flat:
+; tools/alc_probe/cases/item77/nested-trigger-header.al and nested-trigger-var.al.
+
+========================================================================
+Nested trigger header group in the first arm (item77/nested-trigger-header.al)
+========================================================================
+codeunit 50100 P
+{
+#if X
+#if Y
+    trigger OnRun()
+#else
+    trigger OnRun()
+#endif
+#else
+    trigger OnRun()
+#endif
+    begin
+    end;
+}
+
+------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (preproc_split_trigger_preamble
+        (preproc_if
+          (preproc_open)
+          condition: (identifier))
+        (preproc_conditional_trigger_preamble
+          (preproc_if
+            (preproc_open)
+            condition: (identifier))
+          (trigger_keyword)
+          name: (identifier)
+          (preproc_else)
+          (trigger_keyword)
+          name: (identifier)
+          (preproc_endif
+            (preproc_close)))
+        (preproc_else)
+        (trigger_keyword)
+        name: (identifier)
+        (preproc_endif
+          (preproc_close))
+        body: (code_block
+          (begin_keyword)
+          (end_keyword))))))
+
+========================================================================
+Nested trigger preamble group, var section in some arms (item77/nested-trigger-var.al)
+========================================================================
+codeunit 50100 P
+{
+#if X
+#if Y
+    trigger OnRun()
+    var
+        A: Integer;
+#else
+    trigger OnRun()
+#endif
+#else
+    trigger OnRun()
+    var
+        A: Integer;
+#endif
+    begin
+    end;
+}
+
+------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (preproc_split_trigger_preamble
+        (preproc_if
+          (preproc_open)
+          condition: (identifier))
+        (preproc_conditional_trigger_preamble
+          (preproc_if
+            (preproc_open)
+            condition: (identifier))
+          (trigger_keyword)
+          name: (identifier)
+          (var_section
+            (var_keyword)
+            body: (var_body
+              (variable_declaration
+                name: (identifier)
+                type: (type_specification
+                  (basic_type)))))
+          (preproc_else)
+          (trigger_keyword)
+          name: (identifier)
+          (preproc_endif
+            (preproc_close)))
+        (preproc_else)
+        (trigger_keyword)
+        name: (identifier)
+        (var_section
+          (var_keyword)
+          body: (var_body
+            (variable_declaration
+              name: (identifier)
+              type: (type_specification
+                (basic_type)))))
+        (preproc_endif
+          (preproc_close))
+        body: (code_block
+          (begin_keyword)
+          (end_keyword))))))

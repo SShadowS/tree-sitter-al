@@ -128,6 +128,7 @@ _BODY_HOSTS = {f"{p}:<children>": "splice-repeat" for p in (
 # trigger preamble.
 _ROUTINE_TAIL_HOSTS = {f"{p}:<children>": "splice-repeat" for p in (
     "preproc_split_procedure", "preproc_split_procedure_preamble", "preproc_split_trigger_preamble",
+    "preproc_conditional_procedure_preamble", "preproc_conditional_trigger_preamble",
     "procedure", "trigger_declaration", "preproc_conditional_var_block")}
 
 # _body_element (grammar.js:667-714): every object/section-body member, shared
@@ -219,6 +220,19 @@ register("preproc_split_procedure", "assembler", "tools.config_oracle.lowering.a
 register("preproc_conditional_procedure_header", "fragment", None,
          hosts={f"{h}:<children>": "consumed"
                 for h in ("preproc_split_procedure", "preproc_conditional_procedure_header")})
+# Item 83: a preamble (header + var region) per arm, the shared body after #endif. Lowered only
+# in the nested form (assemblers.split_preamble); the flat form stays unsupported (item 94).
+register("preproc_split_procedure_preamble", "assembler", "tools.config_oracle.lowering.assemblers.split_preamble",
+         hosts=dict(_BODY_HOSTS))
+register("preproc_conditional_procedure_preamble", "fragment", None,
+         hosts={f"{h}:<children>": "consumed"
+                for h in ("preproc_split_procedure_preamble", "preproc_conditional_procedure_preamble")})
+# Item 85: the trigger counterpart (same assembler, builds a trigger_declaration).
+register("preproc_split_trigger_preamble", "assembler", "tools.config_oracle.lowering.assemblers.split_preamble",
+         hosts=dict(_BODY_HOSTS))
+register("preproc_conditional_trigger_preamble", "fragment", None,
+         hosts={f"{h}:<children>": "consumed"
+                for h in ("preproc_split_trigger_preamble", "preproc_conditional_trigger_preamble")})
 
 # --- branch-select, part A (Task 4): object, actions, layout, layout_mixed, report,
 # rendering, dataset. Arm sets are each type's own rule in grammar.js, with hidden
@@ -431,8 +445,7 @@ for t in ("preproc_conditional_case_patterns",
           "preproc_split_declaration", "preproc_split_field",
           "preproc_split_if_begin_asymmetric", "preproc_split_if_begin_else", "preproc_split_if_else_statement",
           "preproc_split_if_statement", "preproc_split_if_then_begin", "preproc_split_if_then_begin_else_shared",
-          "preproc_split_procedure_body", "preproc_split_procedure_preamble",
-          "preproc_split_trigger_preamble",              # issue #32, as its procedure sibling
+          "preproc_split_procedure_body",
           "preproc_conditional_return", "preproc_conditional_return_type",   # issue #35: arms are fields
           "preproc_split_report_dataitem_header",
           "preproc_split_table_field"):
@@ -513,6 +526,35 @@ register("preproc_conditional_parameters", "branch-select", _LIST_RUN,
                 "preproc_conditional_parameters:<children>": "strict-list"},
          # strictConditionalList('parameters', seq(repeat(attribute_item), parameter), ';'), unfielded.
          arm={"attribute_item", "parameter", ";", "preproc_conditional_parameters"})
+# B7b-1d (item 46): heterogeneous tails, so no conditional_lists.FAMILIES entry: the items are
+# flat `name = value` runs (not one node), hence no alternation check; splicing is ordinary
+# and the structural comparison with the flat parse judges the result.
+register("preproc_conditional_caption_subfields", "branch-select", _LIST_RUN,
+         hosts={"caption_value:<children>": "strict-list",
+                "preproc_conditional_caption_subfields:<children>": "strict-list"},
+         arm={"property_name", "=", "boolean", "string_literal", "integer", ",",
+              "preproc_conditional_caption_subfields"})
+register("preproc_conditional_label_attributes", "branch-select", _LIST_RUN,
+         hosts={"variable_declaration:<children>": "strict-list",
+                "preproc_conditional_label_attributes:<children>": "strict-list"},
+         arm={"label_attribute", "string_literal", "verbatim_string", ",",
+              "preproc_conditional_label_attributes"})
+register("preproc_conditional_report_label_attributes", "branch-select", _LIST_RUN,
+         hosts={"label_declaration:<children>": "strict-list",
+                "preproc_conditional_report_label_attributes:<children>": "strict-list"},
+         arm={"comment_keyword", "locked_keyword", "maxlength_keyword", "=", "string_literal",
+              "verbatim_string", "boolean", "integer", ",",
+              "preproc_conditional_report_label_attributes"})
+register("preproc_conditional_ml_pairs", "branch-select", _LIST_RUN,
+         hosts={"ml_value_list:<children>": "strict-list",
+                "preproc_conditional_ml_pairs:<children>": "strict-list"},
+         # strictConditionalList('ml_pairs', ml_value_pair, ','), unfielded (B7b-1c).
+         arm={"ml_value_pair", ",", "preproc_conditional_ml_pairs"})
+register("preproc_conditional_namespace_pairs", "branch-select", _LIST_RUN,
+         hosts={"namespace_value_list:<children>": "strict-list",
+                "preproc_conditional_namespace_pairs:<children>": "strict-list"},
+         # strictConditionalList('namespace_pairs', namespace_pair, ','), unfielded (B7b-1c).
+         arm={"namespace_pair", ",", "preproc_conditional_namespace_pairs"})
 # --- Task 9: one-reading contracts (spec P4). The tree shows ONE configuration's
 # nesting (`reading`); every other configuration reports lowering:one-reading.
 _ASM = "tools.config_oracle.lowering.assemblers."
@@ -586,7 +628,9 @@ register("preproc_conditional_property_value", "assembler",
                 # total), and a decoration between two groups of a run.
                 "preproc_conditional_property_value:<children>": "optional-slot",
                 "preproc_conditional_property_value_sequence:value": "optional-slot",
-                "preproc_conditional_property_value_sequence:<children>": "optional-slot"},
+                "preproc_conditional_property_value_sequence:<children>": "optional-slot",
+                # Item 81: a decoration before the `;` of a relation arm.
+                "preproc_conditional_table_relation:<children>": "optional-slot"},
          # Every visible kind _property_value offers (grammar.js _property_value),
          # the nested whole value included, and the arm's own ';'. Plus
          # namespace_value_list, the arm of a keyed Namespaces whole value (B4).

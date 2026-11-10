@@ -1686,7 +1686,7 @@ groups. It stays an ERROR: `test/corpus/b7_gap_order_by_test.txt` (8 `:error` ca
 
 **Owner:** unassigned.
 
-## 37. Conditional value fragments (roadmap B13) — the `OptionMembers` shapes RESOLVED 2026-11-08; the other nine stay open
+## 37. Conditional value fragments (roadmap B13) — the `OptionMembers` shapes RESOLVED 2026-11-08, the ML / Namespaces pair shapes 2026-11-10; the other seven stay open
 
 **OptionMembers is keyed by name (2026-11-08, branch batch1/item37).** The scanner emits
 `OPTION_MEMBERS_PROPERTY_NAME` (`_option_members_property_name`, externals [20]) for `OptionMembers` before `=`, in
@@ -1742,8 +1742,8 @@ is a case in `test/corpus/property_value_run_b13_gap_test.txt` (9 cases since th
 | call `Format` then `(1)` | `b13-call-f-paren.al` |
 | decimal range `0 :` then `5` | `b13-decimal-range.al` |
 | SourceTableView `sorting()` then `where()` | `b13-sorting-where.al` |
-| ML pairs joined by `,` across groups | `b13-ml-pairs-comma.al` |
-| Namespaces pairs joined by `,` across groups | `b13-namespaces-pairs-comma.al` |
+| ~~ML pairs joined by `,` across groups~~ RESOLVED 2026-11-10 (B7b-1c, item 46) | `b13-ml-pairs-comma.al` |
+| ~~Namespaces pairs joined by `,` across groups~~ RESOLVED 2026-11-10 (B7b-1c, item 46) | `b13-namespaces-pairs-comma.al` |
 | Caption `'a',` then `Locked = true` | `b13-caption-locked.al` |
 | ~~comma-free `OptionMembers` alternatives, `;` after (`#if X A #endif #if not X B #endif ;`)~~ RESOLVED 2026-11-08 (keyed) | `b13-optionmembers-comma-free.al` |
 | ML conditional terminator (`#if X ENU='a' #else ENU='b'; #endif #if X #if Y #endif ; #endif`) | `b13-ml-conditional-terminator.al` |
@@ -2000,9 +2000,21 @@ Every directive stands on its own line in the measured inputs. Related, pre-exis
   #else else D; #endif` (AL0149 in every configuration, probe `s10-*`), parses clean. A one-arm `else` group after a
   conditional if-head, `… where(..) #if Y else Customer; #endif` (AL0104 without Y, split and flat), parses clean too;
   main already accepted it after a plain if-head (item 78's review).
+- Since items 81/84 (batch 6): item 84's complete group after a conditional head of plain targets and a shared
+  `where`, `#if T Item #else Resource #endif where(..) #if X ; #else else Customer; #endif`, parses clean; alc rejects
+  the configurations whose `else` arm is active (AL0149; probe `tools/alc_probe/cases/item81/o-plainhead-item84.al`;
+  72 of the 536 newly clean field-host shapes of the review's differential are this form, `reference-error` in those
+  configurations, 0 discrepancy). Main already accepts an all-`else` group there (the item 78 bullet above).
 - Since item 68 (batch 5): a one-arm split block end after statements, `B(); #if A C(); end; #endif` (no `#else`:
   without A the block has no `end`), parses clean, as the form without statements (`B(); #if A end; #endif`) already
   did.
+- Since item 81 (batch 6): main parses a head whose arms end in `;` followed by item 78's else group with an empty
+  or missing arm clean (`#if T Item; #else Resource; #endif #if Q #else else Customer; #endif`), the else group
+  pulled into the value; the oracle reports the configurations alc accepts as `cannot-validate`
+  (Terminator-not-last-child), not as a discrepancy. Item 81 lets a relation arm end in a complete `;` group, so the
+  same follower now also parses clean after such an arm (`#if T Item #if Q2 ; #else ; #endif #else Resource; #endif`),
+  with main's tree (batch 6 round-2 review: 1,440 shapes; probes `rv3/probes2/m19`, `m22`, `m24`, `m25`, alc accepts
+  Q=1).
 - `Z, Key: Text;` (`Key` as a non-first variable name): alc AL0104/AL0105/AL0107 (Task 2), the parser accepts it, on
   main too; also after an attribute.
 
@@ -2102,8 +2114,8 @@ every arm's first declaration), and give attributes inside groups a grammar home
 | owner | family (matrix) | cells | witnesses |
 |---|---|---|---|
 | B7b-1b (**DONE 2026-11-08**, branch `batch2/item46b`) | `parameter-list` (the `;`-led form, attribute bundles, empty list): `strictListBody($, 'parameters', ';')`, item = attribute bundle + parameter, group `preproc_conditional_parameters`; census key `occ:parameter_list:2.0.0` aliased to `1.0.0` (`tools/b7_audit/key-aliases.tsv`); oracle family `parameters` (`Family.prefix_kinds` for the attribute bundle) | GAP 90 -> 0: CONSISTENT 54, OVERACCEPT 18 (holes-lead, holes-mid: doubled/leading `;`, item 44), MIXED 18 | removed: `b7_gap_parameter_list_test.txt` (10) became the first 10 cases of `test/corpus/strict_conditional_parameters_test.txt` |
-| B7b-1c | `ml-pairs`, `namespace-pairs` (pair interiors), `list-literal` (whole-value ownership table first) | GAP 825, 288, 388; list-literal OVERACCEPT 4 | `b7_gap_ml_pairs_test.txt` (19), `b7_gap_namespace_pairs_test.txt` (17), `b7_gap_list_literal_test.txt` (31) |
-| B7b-1d | `label-attributes` (report-label and label-variable attribute tails), `caption-subfields` (heterogeneous tails, unwrap) | GAP 408, 1,080 | `b7_gap_label_attributes_test.txt` (17), `b7_gap_caption_subfields_test.txt` (15) |
+| B7b-1c (**pair interiors DONE 2026-11-10**, branch `batch6/item46c`, spec `docs/superpowers/specs/2026-11-10-b7b-1c-pair-lists-design.md`) | `ml-pairs`, `namespace-pairs`: the list separators (`strictListBody` families `ml_pairs`, `namespace_pairs`; hosts the keyed ML names, a TextConst variable, `Namespaces`; the generic property's list stays flat, `_ml_value_list_flat`). Left: the `_ml_arm_t` / `_namespaces_arm_t` terminator cells (item 90). `list-literal` (GAP 388, OVERACCEPT 4) needs a whole-value ownership table first (a group in `[...]` is also an expression region's); this change did not produce it, so it stays open | ML GAP 825 -> 360, NS GAP 288 -> 135 (72 OVERACCEPT: the holes placements, item 44's limit); the remaining GAP cells are the 360 + 135 terminator cells; list-literal unchanged | the moved witnesses are the first cases of `test/corpus/strict_conditional_pair_lists_test.txt`; `b7_gap_ml_pairs_test.txt` and `b7_gap_namespace_pairs_test.txt` keep the five terminator placements each; `b7_gap_list_literal_test.txt` (31) unchanged |
+| B7b-1d (**DONE 2026-11-10**, branch `batch6/item46d`, spec `docs/superpowers/specs/2026-11-10-b7b-1d-label-tails-design.md`) | `label-attributes`, `caption-subfields`: `strictConditionalList` items are heterogeneous `seq`s; the tail is `strictListBody` with the first item (the text) fixed; labels also take the text inside a value-slot group (one-elem/empty-list/holes-lead); caption keeps a trailing empty group as a sibling (`emptyNeverLast`, `prec.dynamic`); oracle: no FAMILIES entry (items are not one node), `caption-value-unwrap` | GAP 408, 1,080 -> 0, except caption holes-lead (72 MIXED cells, item 86); item 87 records the `;` in a tail arm; holes-mid, label holes-lead stay OVERACCEPT (item 44's limit). Side effects: `label-declaration / empty` flipped CONSISTENT; `var-declaration / empty` flipped only the Label arm's 9 of 36 cells (key `0.0.5`), 27 stayed GAP (TextConst, name list, regular variable); with B7b-1c merged (batch 6) the TextConst arm's 9 parse too, 18 stay GAP. Also item 88 (text-bearing group after a non-Label type) | removed: `b7_gap_label_attributes_test.txt`, the `label-declaration / empty` witness; `b7_gap_var_declaration_test.txt`'s `empty` witness re-seated on `occ:variable_declaration:1.0.4` (27 cells), then at batch 6's merge on `2.0.4` (18 cells remain); `b7_gap_caption_subfields_test.txt` keeps holes-lead (item 86) and pins item 87; positive and shape-change cases in `test/corpus/strict_conditional_label_caption_tails_test.txt` |
 | B7b-1e (**option-type part DONE 2026-11-09**, branch `batch5/item46e`, spec `docs/superpowers/specs/2026-11-09-b7b-1e-option-members-design.md`) | `option-members` (holes, witness policy; B13 overlap, matrix owner B13, items 37/38). The `Option` type got its own list (`_option_type_members`, aliased `option_member_list`; arms are the keyed OptionMembers run, so blank slots stay: not `strictListBody`); every host of a type (variable, parameter, return type, interface procedure). Left: the 135 `_option_values_arm_t` terminator cells (a `;` group inside a whole-value arm: the keyed `;`-after families' shared terminator debt, not a list separator) and item 37's bare-`;` seed; items 79, 80 (ERROR as on main) | GAP 1,111 -> 436 (item 37) -> 136; the 300 option-type GAP cells are gone (0 production sites; the four corpora's trees byte-identical) | 15 option-type witnesses became the first 15 cases of `test/corpus/strict_conditional_option_members_test.txt`; `b7_gap_option_members_test.txt` keeps the bare-`;` seed (1) |
 | B7b-1f | `permissions`, `link-list` (B12 overlap), `link-list-comma-leading` (dependency `link-property-ambiguity`) | GAP 355 / 98 / 297; OVERACCEPT 69 / 41 / 15 | `b7_gap_permissions_test.txt` (17), `b7_gap_link_list_test.txt` (21), `b7_gap_link_list_comma_leading_test.txt` (9) |
 | B7b-1g | `type-arguments`: `Dictionary of [K, V]` / `List of [T]` are fixed-arity positional slots (`key_type`, `value_type`), not a list; needs a fixed-arity slot adapter | GAP 24, all 24 manifest cells `deferred`, cardinality `unknown` (not probed by alc) | `b7_gap_type_arguments_test.txt` (8) |
@@ -3299,7 +3311,65 @@ main decides by GLR version order). A variable declaration has no other owner fo
 
 **Owner:** unassigned.
 
-## 81. An `#if` group around the `;` of an `else`-group arm (item 78) ERRORs
+## 81. An `#if` group around the `;` of an `else`-group arm (item 78) ERRORs — RESOLVED 2026-11-10
+
+**Resolved on branch `batch6/item81`, together with item 84 and the table-relation family's B7b+ `;` placements,
+for COMPLETE groups only (second review round, below).** alc 18.0.41 accepts every configuration
+(`tools/alc_probe/cases/item81/`, `--check` clean; s12, s13). A new rule `_table_relation_semi_group` (aliased to
+`preproc_conditional_table_relation`) is a group in which every arm is present and is the relation's `;` or a nested
+such group, with `#else` required. `_table_relation_terminator` (empty groups then `;`, or empty groups then such a
+group) ends a relation in a new `_table_relation_branch_slot` (a relation arm; empty groups alone leave the arm open,
+as a bare relation does) and in an else arm of `_table_relation_else_t_group`; at the value
+`_table_relation_semi_split` is `T` then one such group, reachable from `_table_relation_keyed_split` and through
+`valueRunRules`' `terminatedValue` from `_table_relation_arm_t`; after a conditional head and a shared `where`,
+`_table_relation_keyed_split` also takes one such group or one `_table_relation_else_t_group`. That last rule is item
+84's group: complete, every arm supplying the `;` (`else C;`, `else C` then a terminator, `;`, or a nested such
+group), at least one arm an else fragment and at least one arm that item 78's group cannot take, so the two never
+read the same text; its right-recursive helpers track which of the two is still owed. Item 78's
+`_table_relation_else_group` is main's again (the first round's `relationArmGroupRules` generator and its `;`
+filler are gone). Measured against main (final grammar, `./tools/metrics.sh --vs main`): STATE_COUNT +260 (+0.89%),
+LARGE_STATE_COUNT +18, SYMBOL_COUNT +16, `parser.c` +0.42%, all four corpora byte-identical
+(`tools/tree-harness.sh verify` against pre-change snapshots), no new node type (`node-types.json`:
+`preproc_conditional_table_relation` gains `preproc_conditional_property_value`, the decoration, as a child). One
+declared GLR conflict (`[_table_relation_else_arm, _table_relation_else_t_else]`: after a where, `#if Y else C;` opens
+item 78's group or item 84's until a later arm shows which); the first round's four are gone. Speed not measured
+(`perf ab` not run, by the owner's decision for this batch). Fixtures `test/corpus/table_relation_item81_test.txt`
+(25 cases).
+
+**Why only complete groups (second review, 2026-11-10).** The first round took any group whose present arms are `;`
+(one arm, an empty arm), several in a row, and a `;` after them, and item 84's `;` arm in item 78's group wherever that
+group stood. A group that supplies the `;` in some configurations only is a terminator in those and not in the others,
+so whatever follows it (a `;`, a second group) is the property's `;` in one configuration and the body's in another:
+no one tree is right. The review measured it: `T #if Q ; #endif ;`, `T #if Q ; #else #endif ;`, two `;` groups,
+item 84's group plus a `;`, and item 84's group after a head whose arms end in `;` parsed clean on the branch,
+ERRORed on main, and the oracle reported `discrepancy` (or a Terminator-not-last-child `cannot-validate` on a
+configuration alc accepts). With complete groups the value ends inside the group in every configuration, so what
+follows is the body's in every configuration (an `empty_statement`, the body's `preproc_conditional`), which is the
+tree the oracle passes. The partial groups ERROR again, as on main: item 99. Acceptance measurement, with the
+reviewer's instruments (a generator of 18 heads x 2 middles x 429 followers x 5 wraps x 2 hosts = 99,792 shapes,
+main-built against branch-built library, then `witness.verdicts` over the newly clean field-host shapes): first round
+13,222 main-clean, 0 changed, 0 newly ERROR, 5,328 newly clean, of the 3,140 field-host ones 736 with a
+`discrepancy` and 740 with the Terminator-not-last-child `cannot-validate`; after this round 0 main-clean changed, 0
+newly ERROR, 992 newly clean, of the 536 field-host ones 464 pass in every configuration and 72 pass in some and are
+`cannot-validate: reference-error` in the others, 0 `discrepancy`, 0 Terminator-not-last-child. The 72 are item 84's
+group after `#if T Item #else Resource #endif where(..)`: the configurations with the `else` arm active put an `else`
+after a plain target, which alc rejects (AL0149, `o-plainhead-item84.al`), an over-acceptance (item 44). Fixtures
+"(second review)" pin the body's `;` and group after a complete group and after item 84's group. The oracle: an arm's
+trailing decorations and `;` group are lowered by `table_relation_select` and a `table_relation_value` hoists a `;`
+group's Terminator from a whole-value arm (`whole_value_select`); the first round's `engine._lower_ordinary` rule for
+adjacent `;` groups is removed (no tree has them now). `tools/config_oracle/tests/test_table_relation.py::test_item81_*`
+(every configuration passes; the Terminator is load-bearing) and `test_item99_*` (the partial forms ERROR). The
+relation-arm branch inside an else chain stays `unsupported-type` (debt(C1), classified). B7a (`run --only
+table-relation` and `--only property-terminator`, then `report`): table-relation GAP 208 on main, 1 after the first
+round, 79 now (`adjacent-compl` 39 and `trail` 39 are GAP again, plus the seed `neg_two_tables_after_else`; sep-only,
+elif, nested and empty stay fixed); the first round's OVERACCEPT rows (table-relation `trail` 39, property-terminator
+`trail` 6) are gone, property-terminator GAP 861 after the first round, 873 now; matrix totals GAP 6,993 on main,
+6,801 after the first round, 6,846 now, CONSISTENT 11,894 / 12,086 / 12,041. Main's `adjacent-compl` and `trail` GAP
+witnesses (`b7_gap_table_relation_test.txt`, `tools/alc_probe/cases/b7-audit/table-relation__{adjacent-compl,trail}__gap.al`,
+their `fixture-classes.tsv` rows) are restored, three `trail` rows re-recorded from `multi-config-parse:missing` to
+`multi-config-parse:error` (the same configurations ERROR, the recovery differs from main's), and the two
+`*__trail__overaccept.al` probes removed. Neighbouring
+shapes still ERROR: items 98 and 99. The record below is kept as written.
 
 **Established:** 2026-11-10, item 78's B7a cells (branch `batch5/item78`). Inside item 78's group of else arms, an
 empty group between the arm's relation and its `;` (`#if Y else Customer #if Z #endif ; #else else Vendor; #endif`)
@@ -3317,7 +3387,18 @@ itself has none).
 
 **Owner:** unassigned.
 
-## 82. An attribute inside a split-header arm before a nested header group ERRORs
+## 82. An attribute inside a split-header arm before a nested header group ERRORs — RESOLVED 2026-11-10
+
+**Resolved on branch `batch6/item82`.** The header's attribute run is one hidden rule, `_attribute_run` (`seq` form: a
+bare `repeat1` is treated as a repeat of its callers and left the conflict in per-caller form); a split arm may be
+`[attributes] #if group` in both `preproc_split_procedure` and `preproc_split_procedure_preamble`
+(`attr-inside-arm-before-nested.al`, `attr-before-nested-preamble.al`). The two `conflicts` entries on `_procedure_header`
+for this fork became `[_body_element, _attribute_run]` and `[_body_element, _action_element, _attribute_run]`, the fork
+itself unchanged; `preproc_conditional_procedure_header` takes `prec(25)` like its host (a preamble arm's reduction
+would otherwise tie with the nested header group at `#else`, the same choice the flat form makes, item 95). STATE_COUNT
++629, trees of the four corpora byte-identical. Fixture `test/corpus/preproc_split_attribute_before_nested_group_test.txt`.
+The oracle lifts the attributes before descending (`test_split_procedure_matrix.py::test_attribute_before_nested_group`,
+every configuration passes). The record below is kept as written.
 
 **Established:** 2026-11-09, item 77 (branch `batch5/item77`). `#if X [NonDebuggable] #if Y procedure Q() #else
 procedure Q(I: Integer) #endif #else procedure Q(J: Code[10]) #endif begin end;` ERRORs; alc accepts all four
@@ -3334,7 +3415,15 @@ lifts the arm's attributes before descending into the group.
 
 **Owner:** unassigned.
 
-## 83. A nested `#if` choosing a procedure header and its `var` section ERRORs
+## 83. A nested `#if` choosing a procedure header and its `var` section ERRORs — RESOLVED 2026-11-10
+
+**Resolved on branch `batch6/item82`.** An arm of `preproc_split_procedure_preamble` is now `_procedure_preamble`
+or a named `preproc_conditional_procedure_preamble` (item 77's arm choice, inlined), at any arm and nesting. STATE_COUNT
++241, no new conflicts, all four corpora byte-identical. Fixture `test/corpus/preproc_split_procedure_nested_preamble_test.txt`
+(the probe, an `#elif` arm), probes `tools/alc_probe/cases/item77/nested-preamble*.al`. The oracle lowers the nested
+form with `split_procedure` (every configuration passes,
+`tools/config_oracle/tests/test_split_procedure_matrix.py::test_nested_preamble_group`); the flat form stays
+unsupported (item 94). The record below is kept as written.
 
 **Established:** 2026-11-09, item 77 (branch `batch5/item77`). `#if X #if Y procedure Q() var A: Integer; #else
 procedure Q(I: Integer) var A: Integer; #endif #else procedure Q(J: Code[10]) var A: Integer; #endif begin A := 1;
@@ -3347,7 +3436,13 @@ from the probe, and the oracle's selection for it.
 
 **Owner:** unassigned.
 
-## 84. An `else` group whose other arm is only the property's `;` ERRORs (item 78's neighbour)
+## 84. An `else` group whose other arm is only the property's `;` ERRORs (item 78's neighbour) — RESOLVED 2026-11-10
+
+**Resolved with item 81** (branch `batch6/item81`), after a shared `where` only: `_table_relation_else_t_group`, a
+complete group in which every arm supplies the property's `;` and some arm is only that `;` (fixtures "Item 84" in
+`test/corpus/table_relation_item81_test.txt`, oracle `test_item81_*`). The same group with no `where` before it, or
+with an else arm that has no `;`, still ERRORs (item 99): without a where the head's arms may already end in `;`,
+and an open arm makes what follows the group config-dependent. The record below is kept as written.
 
 **Established:** 2026-11-10, item 78's review (batch 5). `TableRelation = #if X if (..) Item #else if (..) Resource
 #endif where(A = const(1)) #if Y else Customer; #else ; #endif` ERRORs on main and after item 78; alc accepts all four
@@ -3361,7 +3456,16 @@ item 81's shape (an empty group around an arm's `;`), and the B7a `sep-only` pla
 
 **Owner:** unassigned.
 
-## 85. A nested `#if` choosing a trigger header ERRORs (item 77's neighbour)
+## 85. A nested `#if` choosing a trigger header ERRORs (item 77's neighbour) — RESOLVED 2026-11-10
+
+**Resolved on branch `batch6/item82`.** An arm of `preproc_split_trigger_preamble` is now `_trigger_preamble` or a named
+`preproc_conditional_trigger_preamble` (item 77's arm choice, inlined), at any arm and nesting, with or without a `var`
+section. No new conflicts, all four corpora byte-identical. Fixture
+`test/corpus/preproc_split_trigger_nested_preamble_test.txt`, probes `tools/alc_probe/cases/item77/nested-trigger-*.al`.
+The oracle lowers the nested form with `split_procedure`, building a `trigger_declaration`
+(`test_split_procedure_matrix.py::test_nested_trigger_preamble_group`, every configuration passes); the flat form stays
+unsupported (item 94). An attribute inside a trigger arm is not valid (AL0187 when the arm is active), so there is
+no trigger counterpart of item 82. The record below is kept as written.
 
 **Established:** 2026-11-10, item 77's review (batch 5). `#if X #if Y trigger OnRun() #else trigger OnRun() #endif
 #else trigger OnRun() #endif begin end;` ERRORs on main and after item 77; alc accepts all four configurations, split
@@ -3371,6 +3475,231 @@ and flat (`tools/alc_probe/cases/item77/nested-trigger-header.al`). The single-l
 
 **Next step:** the trigger counterpart of item 77 (a nested header group in the split trigger rule), a fixture from
 the probe and the oracle's selection.
+
+**Owner:** unassigned.
+
+## 86. A caption whose first thing is a group holding only a `,` ERRORs (B7b-1d holes-lead, caption)
+
+**Established:** 2026-11-10, B7b-1d (item 46). `Caption = #if X , #endif 'a', Locked = true;` is a B7a `caption-subfields
+/ holes-lead` MIXED cell (72 cells): X=0 alc accepts, X=1 rejects (`tools/alc_probe/cases/b7-audit/caption-subfields__holes-lead__gap.al`).
+A group before the text inside `caption_value` opens at a value slot shared with the whole-value groups
+(`preproc_conditional_property_value`); labels got it (`labelText`), caption did not, because the value slot's empty-prefix
+and whole-value readings must not change and the input is valid only with the group inactive. 0 production sites.
+
+**Next step:** a witnessed leading group in `caption_value` (never empty, so the whole-value prefix keeps its readings), if a real shape ever needs it.
+
+**Owner:** unassigned.
+
+## 87. A `;` inside an arm of a caption's sub-field group ERRORs
+
+**Established:** 2026-11-10, B7b-1d (item 46). `Caption = 'a' #if X , Locked = true; #else ; #endif` (the terminator in
+the arms): alc accepts both configurations, split and flat (`tools/alc_probe/cases/b7b1d/caption_semi_in_tail_arm.al`);
+the parser ERRORs, as on main. The group is a sub-field group whose arms end the property: the keyed families'
+terminator debt (item 46's `_option_values_arm_t` cells, link family), not a separator placement. The report-label
+and label-variable counterparts are the existing `label-declaration` / `var-declaration` GAP families.
+0 production sites known (not counted). Witness: `test/corpus/b7_gap_caption_subfields_test.txt` (`Item 87: ...`, `:error`).
+
+**Next step:** one design across the `;`-in-tail families.
+
+**Owner:** unassigned.
+
+## 88. A text-bearing `#if` group after a variable type that is not `Label` parses (B7b-1d over-acceptance)
+
+**Established:** 2026-11-10, B7b-1d review. The value-slot group of a label (`labelText`) is offered on any `basic_type`,
+so `A: Integer #if X 'a', Locked = true #endif ;` (and `Text[30]`, `Code[10]`, the other arm forms: any arm of the group
+holding a text) goes from ERROR on main to a clean `variable_declaration` with a `preproc_conditional_label_attributes`
+child and a bare `type: (basic_type)`. alc: X=0 accepts (flat `A: Integer;`), X=1 rejects (AL0104, AL0107;
+`tools/alc_probe/cases/b7b1d/int_var_text_group.al`). At X=0 the oracle reports a `discrepancy`: flat has
+`type_specification`, the split tree does not. The text-less form was excluded on purpose (spec 2); this one was not.
+Pinned by `tools/config_oracle/tests/test_b7b1d_label_tails.py::test_int_var_text_group_over_accepted_item_88`
+(a corpus case cannot carry a discrepancy). 0 production sites (not counted beyond the review's differential).
+
+**Next step:** restrict the group to a `Label` type (needs the type-before-group fork, `A: Label` vs `A: Integer`, resolved;
+not attempted).
+
+**Owner:** unassigned.
+
+## 90. A `;` group after a keyed pair-list value ERRORs (B7b-1c terminator cells)
+
+**Established:** 2026-11-10, B7b-1c. `CaptionML = ENU = 'a' #if X ; #else ; #endif` (a value whose `;` stands in a group) and the same inside a
+whole-value arm (`#if T ENU = 'a' #if X ; #else ; #endif #else ENU = 'b'; #endif`) ERROR; alc accepts both, split and flat
+(`tools/alc_probe/cases/b7b1c/terminator_group_after_value.al`). The B7a witnesses are the five kept placements
+(`adjacent-compl`, `elif`, `nested`, `sep-only`, `trail`) in `test/corpus/b7_gap_ml_pairs_test.txt` and
+`b7_gap_namespace_pairs_test.txt`, 360 + 135 cells under `occ:_ml_arm_t:*`, `occ:_namespaces_arm_t:*` (role
+`terminator`, 0 production sites). The same debt as the keyed families' other `_arm_t` terminator cells (B7b-1e spec section 2;
+`_table_relation_arm_t`, item 84's neighbours).
+
+The same debt at a `TextConst` host, not a B7a matrix cell: `T: TextConst #if X ENU='a'; #else DAN='b'; #endif` (the
+`;` stands in every arm) ERRORs on this branch and on main; alc accepts every configuration, split and flat
+(`tools/alc_probe/cases/b7b1c/textconst_semicolon_in_arm.al`). Pinned by the `:error` case "TextConst, `;` in every arm"
+in `test/corpus/b7_gap_ml_pairs_test.txt`.
+
+**Next step:** one design across the keyed `;`-after families (an arm or a value that ends in a group of `;`), not per family.
+
+**Owner:** unassigned.
+
+## 91. Nine or more empty groups after a keyed value: the first groups become list groups (B7b-1c, tree-shape change)
+
+**Established:** 2026-11-10, B7b-1c review; re-measured with the CLI on branch `batch6/item46c`. `CaptionML = ENU='a'`
+followed by n times `#if Y #endif` and then `;` parses with every group a sibling `preproc_conditional_property_value`
+up to n=8. From n=9 the first n-8 groups are `preproc_conditional_ml_pairs` inside `ml_value_list` and the last 8 stay
+siblings (0 list groups at n=1 and 8, 1 at 9, 2 at 10, 4 at 12). Measured the same at n=1, 8, 9, 10 for `Namespaces`
+(`preproc_conditional_namespace_pairs`), a multi-pair value and `#if/#else/#endif` empty groups. A whole-value `#if`
+before the run goes the same way: at n=9 the whole-value group and the first empty group are list groups, 8 siblings;
+at n=8 none. Empty groups before the value (n=1, 8, 9, 10) are unaffected. Inside a whole-value arm: not measured. At a
+`TextConst` every group after the value is a list group at any n (there is no sibling reading there).
+
+On main (18c988e8) the input parses clean with every group a sibling, so this is a **tree-shape change on valid input**:
+breaking under the rule in `CHANGELOG.md`'s header. alc accepts it, split and flat
+(`tools/alc_probe/cases/b7b1c/many_empty_groups_after_value.al`). No ERROR; 0 production sites (the four corpora's
+trees are byte-identical).
+
+**Mechanism (debug log, `tree-sitter parse -d`):** at the reduce of `property` exactly 8 alternatives meet (7
+`select_higher_precedence` lines) at n=8 and at n=9. At n=8 their dynamic precedences run 0 to -7 and the 0 (no list
+group) wins; at n=9 they run -1 to -8 and the 0 alternative is not there, so -1 (one list group) wins. `version_count`
+peaks at 4, so no parse version was dropped; the loss is at a merged stack node, consistent with the runtime's link cap
+(`MAX_LINK_COUNT`; the runtime source is not in this container, so the constant was not read here).
+
+**Pinned:** `test/corpus/strict_conditional_pair_lists_test.txt`, the six "item 91 threshold" cases (ML, Namespaces and
+whole-value, n=8 and n=9). Owner ruling 2026-11-10: no grammar machinery for it.
+
+**Owner:** unassigned.
+
+## 92. Superlinear parse time on long `#if` runs at a keyed value (B7b-1c)
+
+**Established:** 2026-11-10, measured by the B7b-1c review (in-process parse, not `perf ab`, host load 15-30; not
+re-measured in the fix round, host load 165). A `;`-after run of whole-value groups at n=512: 2.1 ms on main, 23.4 ms on
+the branch. Empty decorations before and after the value at n=128: 3.4 ms on main, 22.8 ms on the branch. Each doubling
+of n costs about 3x on the branch, about 2x on main. Not reachable in production (the four corpora have no such run).
+Cause not investigated.
+
+`python -m tools.perf ab` was **not run** for this branch (12 new conflict entries, 2 `prec.dynamic(-1)` groups): the
+owner skipped it for this batch, the host was overloaded. The review's rough single-thread CPU ABBA on DC was
+inconclusive (median 1.05, min-ratio 0.88).
+
+**Owner:** unassigned.
+
+## 94. The oracle does not lower a flat split preamble (`preproc_split_procedure_preamble`, `preproc_split_trigger_preamble`)
+
+**Established:** 2026-11-10, item 83 (branch `batch6/item82`). `split_preamble` lowers a preamble only when it holds a
+nested group (items 83, 85); a flat preamble stays `lowering:unsupported-type`. Lowering it was measured: the flat
+preamble's own fixtures passed, but the `end #if X ; #endif` over-acceptance witness
+(`b7_gap_procedure_header_test.txt`, `procedure-header / trail`, configurations with X=1) then has a real discrepancy
+(split: the procedure, then a sibling `preproc_conditional` holding an `empty_statement`; flat: the `;` is the
+procedure's) and a corpus case cannot carry a discrepancy. Normalising that `;` into the procedure also flips five
+SILENT witnesses of `tools/b7_audit/tests/test_silent.py` (`occ:_routine_regular_body:0.2.0@preproc_split_procedure#*`),
+which record the same tree defect, so it is not done without deciding that family: a `#if ; #endif` right after a
+routine's `end`.
+
+**Next step:** decide the routine-`;` family with B7b+ (the `procedure-tail` SILENT witnesses); then drop `split_preamble`'s
+guard, register the flat form and remove its `fixture-classes.tsv` rows.
+
+**Owner:** unassigned.
+
+## 95. A split preamble whose first arm has no `var` section and a later arm has one ERRORs
+
+**Established:** 2026-11-10, item 83 (branch `batch6/item82`). `#if X procedure Q() #else procedure Q(I: Integer) var A:
+Integer; #endif begin end;` ERRORs: alc accepts both configurations (`tools/alc_probe/cases/item77/first-arm-no-var.al`).
+At `#else` the first arm's plain header is taken for `preproc_split_procedure`'s (prec 25 on the shift over the
+`_procedure_preamble` reduction, resolved statically since item 77 and the same in a nested group), and the later arm's
+`var` has no slot. The first arm WITH a var section parses (`preproc_split_procedure_preamble`), and a trigger's is fine
+(`trigger` has no split-header rule, so its arms are preambles from the start). 0 production sites known (not counted).
+
+**Next step:** a GLR conflict at `header • #else` (both readings live until the arm's `var`, or reject), measured for
+forks over production's split procedures; a counted site scan first.
+
+**Owner:** unassigned.
+
+## 96. A split preamble followed by a split body ERRORs (item 82's review)
+
+**Established:** 2026-11-10, item 82's review (batch 6). `#if X procedure Q() var A: Integer; #else procedure
+Q(I: Integer) var A: Integer; #endif #if Z begin A := 1; #else begin A := 2; #endif end;` ERRORs on main and after
+batch 6, in the flat and the nested form; alc accepts every configuration, split and flat
+(`tools/alc_probe/cases/item77/split-preamble-then-split-body.al`). `preproc_split_procedure_preamble` takes only
+`field('body', $.code_block)` after its arms, while `preproc_split_procedure` shares `_procedure_tail`, which also
+takes a split body. 0 production sites known (not counted).
+
+**Next step:** give `preproc_split_procedure_preamble` the same `_procedure_tail` as `preproc_split_procedure`; a
+fixture from the probe (flat and nested) and the oracle's selection.
+
+**Owner:** unassigned.
+
+## 98. Four `;`-group neighbours of item 81 ERROR
+
+**Established:** 2026-11-10, item 81 (branch `batch6/item81`). alc 18.0.41 accepts every configuration of each
+(`tools/alc_probe/cases/item81/`, `--check` clean, each probe naming this item). 0 production sites: over the 70,355 `*.al`
+files of the four corpora there are 1,204 lines holding only `;` (`tools/corpus-grep.sh -P -c`) and none of them directly
+follows a `#if`, `#elif`, `#else` or `#endif` line (blank and comment lines skipped; a scratch script over the same
+roots), which every one of these shapes needs. Item 81's `;` groups cover the B7a placements only:
+
+| shape | probe | tree today |
+|---|---|---|
+| a `;` group next to an else arm after a plain if head: `if (..) A #if X ; #else else B; #endif` | `g-mirror-plain.al` | ERROR (item 84's arm form, at a plain head) |
+| an empty group before a `;` group after a plain relation: `T #if Z #endif #if X ; #else ; #endif` | `h-deco-then-semi.al` | ERROR (the empty group is the relation's own continuation, `_table_relation_semi_split` starts at the head) |
+| an empty group inside an arm of a `;` group: `T #if X #if Z #endif ; #else ; #endif` | `h2-deco-in-semi-arm.al` | ERROR |
+| a group of `;` arms after a conditional head with no `;` in its arms and no `where`: `#if X Item #else Resource #endif #if Y ; #else ; #endif` | `h3-nosemi-head-semi-group.al` | ERROR (the rule that would take it cannot see whether the head's arms hold `;`; offering it pulled in the body's own conditional, item 81; the B7a property-terminator cells `occ:property:9.0.4` / `8.5` at elif, nested, sep-only and trail, 24 GAP, are this shape) |
+
+Option for the first: a mixed `;`/else arm is a `preproc_conditional_table_relation` with bare `;` arms, which forks
+against `_table_relation_keyed_split`'s `head pctr`; that was not tried beyond noting the conflict shape. The fourth
+needs a head rule whose arms cannot hold `;`; not tried.
+
+**Next step:** decide with the family: `_table_relation_semi_split` taking a `_value_decoration` run, `_table_relation_semi_arm`
+taking `deco ;`, and a measured conflict for the mixed arm. The probes exist.
+
+**Owner:** unassigned.
+
+## 99. A `TableRelation` `;` group that supplies the `;` in some configurations only ERRORs
+
+**Established:** 2026-11-10, items 81/84 second review (branch `batch6/item81`). Item 81 takes a `;` group only when
+it is complete (every arm present, `#else` required, every arm the `;`), and item 84's group only after a shared
+`where` and only when every arm supplies the `;` (item 81, "Why only complete groups"). Everything else ERRORs, as on
+main. Each shape below is accepted by alc 18.0.41 in every configuration (`tools/alc_probe/cases/item81/`, `--check`
+clean) and pinned as a GAP witness in `test/corpus/table_relation_item99_gap_test.txt` (`:error`, listed in
+`tools/deliberate-negatives.txt`; `fixture-classes.tsv` rows `debt(B7)`):
+
+| shape | probe |
+|---|---|
+| two complementary groups after a plain relation: `T #if X ; #endif #if not X ; #endif` | `b-adjacent.al` |
+| the same in a whole-value arm | `c-arm-adj.al` |
+| the same at the `;` of an else-group arm: `... #if Y else C #if Z ; #endif #if not Z ; #endif #else else D; #endif` | `a81-adjacent.al` |
+| a one-arm group then the property `;`: `T #if X ; #endif ;` | `w-onearm-then-semi.al` |
+| a group with an empty `#else` then the property `;`: `T #if X ; #else #endif ;` | `w-emptyelse-then-semi.al` |
+| item 84's group after a conditional if-head with no `where`: `#if T if (..) A #else if (..) B #endif #if X ; #else else C; #endif` | `w-item84-nowhere.al` |
+| item 84's group with an else arm that has no `;`, then the property `;`: `... where(..) #if X ; #else else C #endif ;` | `w-item84-openarm-then-semi.al` |
+
+The file also holds four forms alc rejects in one configuration (no `;` there, AL0104), clean on the first round and
+ERROR again, so not over-accepted: `T #if X ; #endif`, `T #if X #else ; #endif`, `T #if X #elif Y ; #else ; #endif`
+(probes `b-trail.al`, `b-leadempty.al`, `b-leadelif.al`) and the one-arm group at an else arm (`a81-trail.al`).
+0 production sites, by item 98's measurement: every shape needs a line holding only `;` right after a directive line,
+and the four corpora have none.
+
+Why no tree: the group is the property's `;` in the configurations where an arm supplies it and nothing in the
+others, so what follows it (the `;`, the second group) is the property's `;` in some configurations and the body's
+in others. For the complementary pair the grammar cannot see that `X` and `not X` exclude each other (with two
+independent symbols the same text puts two `;` in one configuration). Without a `where`, the head's arms may already
+end in `;` (`#if T Item; #else Resource; #endif #if X ; #else else C; #endif`: X defined makes the group's `;` the
+body's, which the first round got wrong). Tried and measured in the first round: taking the partial groups gives
+`discrepancy` (or Terminator-not-last-child `cannot-validate`) on configurations alc accepts (item 81).
+
+**Next step:** a tree that is right needs a configuration-aware reading of the `;`s after the value, which the
+grammar cannot express; the oracle would have to accept a value whose Terminator comes from a later sibling in some
+configurations. The item-84-without-where shape needs a head rule whose arms cannot hold `;` (as item 98's fourth
+row). Not tried.
+
+**Owner:** unassigned.
+
+## 100. An empty `#if` group alone in a relation arm reads as a relation (silent wrong tree, pre-existing)
+
+**Established:** 2026-11-10, batch 6's round-2 review of item 81. `TableRelation = Item #if Q #if R #endif ; #else
+else Customer #if R ; #else ; #endif #endif`: alc accepts Q=1 (both R) and rejects Q=0 (AL0149), split and flat
+(`tools/alc_probe/cases/item81/empty-group-alone-in-relation-arm.al`). The parser reads the empty `#if R #endif`
+in the Q arm as a `table_relation_expression`, a relation that is not in the source, and the oracle reports
+`unsupported-type` there, so it cannot catch it. Main already parses the `else Customer;` form of the second arm
+clean with the same wrong tree; item 81 makes it reachable when the other arm ends in a `;` group (96 shapes in the
+review's extended space). 0 production sites known (not counted).
+
+**Next step:** an empty group alone in a relation arm must be a decoration of the arm, not a relation; decide with
+item 98's `h2-deco-in-semi-arm` row, fixture from the probe, and the oracle's lowering for it.
 
 **Owner:** unassigned.
 

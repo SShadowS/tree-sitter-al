@@ -1,5 +1,5 @@
 // B7a Task 10 witness (GAP): family label-attributes, base placement holes-mid, 24 cells; representative occ:label_declaration:3.0.0@labels_body#holes-mid
-// Fixture b7_gap_label_attributes_test.txt#B7a GAP: label-attributes / holes-mid (24 cells, verdict of the representative MIXED); the parser ERRORs on configurations alc accepts; representative occ:label_declaration:3.0.0@labels_body%23holes-mid#0
+// Fixture strict_conditional_label_caption_tails_test.txt#B7b-1d report label / holes-mid#0
 // expect: !X accept
 // expect: X reject(AL0107)
 // source: recorded by B7a Task 10, 2026-10-07: the alc split verdicts of cell occ:label_declaration:3.0.0@labels_body#holes-mid in tools/b7_audit/evidence.jsonl.gz

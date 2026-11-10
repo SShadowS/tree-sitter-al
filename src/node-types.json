@@ -3092,6 +3092,10 @@
           "named": true
         },
         {
+          "type": "preproc_conditional_caption_subfields",
+          "named": true
+        },
+        {
           "type": "property_name",
           "named": true
         },
@@ -8227,7 +8231,7 @@
       },
       "value": {
         "multiple": false,
-        "required": true,
+        "required": false,
         "types": [
           {
             "type": "string_literal",
@@ -8254,6 +8258,10 @@
         },
         {
           "type": "maxlength_keyword",
+          "named": true
+        },
+        {
+          "type": "preproc_conditional_report_label_attributes",
           "named": true
         }
       ]
@@ -9491,6 +9499,10 @@
         {
           "type": "ml_value_pair",
           "named": true
+        },
+        {
+          "type": "preproc_conditional_ml_pairs",
+          "named": true
         }
       ]
     }
@@ -10230,6 +10242,10 @@
       "types": [
         {
           "type": "namespace_pair",
+          "named": true
+        },
+        {
+          "type": "preproc_conditional_namespace_pairs",
           "named": true
         }
       ]
@@ -11820,6 +11836,53 @@
     }
   },
   {
+    "type": "preproc_conditional_caption_subfields",
+    "named": true,
+    "fields": {},
+    "children": {
+      "multiple": true,
+      "required": true,
+      "types": [
+        {
+          "type": "boolean",
+          "named": true
+        },
+        {
+          "type": "integer",
+          "named": true
+        },
+        {
+          "type": "preproc_conditional_caption_subfields",
+          "named": true
+        },
+        {
+          "type": "preproc_elif",
+          "named": true
+        },
+        {
+          "type": "preproc_else",
+          "named": true
+        },
+        {
+          "type": "preproc_endif",
+          "named": true
+        },
+        {
+          "type": "preproc_if",
+          "named": true
+        },
+        {
+          "type": "property_name",
+          "named": true
+        },
+        {
+          "type": "string_literal",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
     "type": "preproc_conditional_case",
     "named": true,
     "fields": {},
@@ -12656,6 +12719,56 @@
     }
   },
   {
+    "type": "preproc_conditional_label_attributes",
+    "named": true,
+    "fields": {
+      "value": {
+        "multiple": true,
+        "required": false,
+        "types": [
+          {
+            "type": "string_literal",
+            "named": true
+          },
+          {
+            "type": "verbatim_string",
+            "named": true
+          }
+        ]
+      }
+    },
+    "children": {
+      "multiple": true,
+      "required": true,
+      "types": [
+        {
+          "type": "label_attribute",
+          "named": true
+        },
+        {
+          "type": "preproc_conditional_label_attributes",
+          "named": true
+        },
+        {
+          "type": "preproc_elif",
+          "named": true
+        },
+        {
+          "type": "preproc_else",
+          "named": true
+        },
+        {
+          "type": "preproc_endif",
+          "named": true
+        },
+        {
+          "type": "preproc_if",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
     "type": "preproc_conditional_labels",
     "named": true,
     "fields": {},
@@ -13239,6 +13352,41 @@
     }
   },
   {
+    "type": "preproc_conditional_ml_pairs",
+    "named": true,
+    "fields": {},
+    "children": {
+      "multiple": true,
+      "required": true,
+      "types": [
+        {
+          "type": "ml_value_pair",
+          "named": true
+        },
+        {
+          "type": "preproc_conditional_ml_pairs",
+          "named": true
+        },
+        {
+          "type": "preproc_elif",
+          "named": true
+        },
+        {
+          "type": "preproc_else",
+          "named": true
+        },
+        {
+          "type": "preproc_endif",
+          "named": true
+        },
+        {
+          "type": "preproc_if",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
     "type": "preproc_conditional_move_args",
     "named": true,
     "fields": {},
@@ -13302,6 +13450,41 @@
       "types": [
         {
           "type": "preproc_conditional_move_elements",
+          "named": true
+        },
+        {
+          "type": "preproc_elif",
+          "named": true
+        },
+        {
+          "type": "preproc_else",
+          "named": true
+        },
+        {
+          "type": "preproc_endif",
+          "named": true
+        },
+        {
+          "type": "preproc_if",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
+    "type": "preproc_conditional_namespace_pairs",
+    "named": true,
+    "fields": {},
+    "children": {
+      "multiple": true,
+      "required": true,
+      "types": [
+        {
+          "type": "namespace_pair",
+          "named": true
+        },
+        {
+          "type": "preproc_conditional_namespace_pairs",
           "named": true
         },
         {
@@ -13909,6 +14092,112 @@
     }
   },
   {
+    "type": "preproc_conditional_procedure_preamble",
+    "named": true,
+    "fields": {
+      "modifier": {
+        "multiple": true,
+        "required": false,
+        "types": [
+          {
+            "type": "procedure_modifier",
+            "named": true
+          }
+        ]
+      },
+      "name": {
+        "multiple": true,
+        "required": false,
+        "types": [
+          {
+            "type": "identifier",
+            "named": true
+          },
+          {
+            "type": "quoted_identifier",
+            "named": true
+          }
+        ]
+      },
+      "parameters": {
+        "multiple": true,
+        "required": false,
+        "types": [
+          {
+            "type": "parameter_list",
+            "named": true
+          }
+        ]
+      },
+      "return_type": {
+        "multiple": true,
+        "required": false,
+        "types": [
+          {
+            "type": "type_specification",
+            "named": true
+          }
+        ]
+      },
+      "return_value": {
+        "multiple": true,
+        "required": false,
+        "types": [
+          {
+            "type": "identifier",
+            "named": true
+          },
+          {
+            "type": "quoted_identifier",
+            "named": true
+          }
+        ]
+      }
+    },
+    "children": {
+      "multiple": true,
+      "required": true,
+      "types": [
+        {
+          "type": "attribute_item",
+          "named": true
+        },
+        {
+          "type": "preproc_conditional_procedure_preamble",
+          "named": true
+        },
+        {
+          "type": "preproc_conditional_var_block",
+          "named": true
+        },
+        {
+          "type": "preproc_elif",
+          "named": true
+        },
+        {
+          "type": "preproc_else",
+          "named": true
+        },
+        {
+          "type": "preproc_endif",
+          "named": true
+        },
+        {
+          "type": "preproc_if",
+          "named": true
+        },
+        {
+          "type": "procedure_keyword",
+          "named": true
+        },
+        {
+          "type": "var_section",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
     "type": "preproc_conditional_property_value",
     "named": true,
     "fields": {
@@ -14446,6 +14735,94 @@
     }
   },
   {
+    "type": "preproc_conditional_report_label_attributes",
+    "named": true,
+    "fields": {
+      "comment": {
+        "multiple": true,
+        "required": false,
+        "types": [
+          {
+            "type": "string_literal",
+            "named": true
+          }
+        ]
+      },
+      "locked": {
+        "multiple": true,
+        "required": false,
+        "types": [
+          {
+            "type": "boolean",
+            "named": true
+          }
+        ]
+      },
+      "maxlength": {
+        "multiple": true,
+        "required": false,
+        "types": [
+          {
+            "type": "integer",
+            "named": true
+          }
+        ]
+      },
+      "value": {
+        "multiple": true,
+        "required": false,
+        "types": [
+          {
+            "type": "string_literal",
+            "named": true
+          },
+          {
+            "type": "verbatim_string",
+            "named": true
+          }
+        ]
+      }
+    },
+    "children": {
+      "multiple": true,
+      "required": true,
+      "types": [
+        {
+          "type": "comment_keyword",
+          "named": true
+        },
+        {
+          "type": "locked_keyword",
+          "named": true
+        },
+        {
+          "type": "maxlength_keyword",
+          "named": true
+        },
+        {
+          "type": "preproc_conditional_report_label_attributes",
+          "named": true
+        },
+        {
+          "type": "preproc_elif",
+          "named": true
+        },
+        {
+          "type": "preproc_else",
+          "named": true
+        },
+        {
+          "type": "preproc_endif",
+          "named": true
+        },
+        {
+          "type": "preproc_if",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
     "type": "preproc_conditional_return",
     "named": true,
     "fields": {
@@ -14730,6 +15107,10 @@
           "named": true
         },
         {
+          "type": "preproc_conditional_property_value",
+          "named": true
+        },
+        {
           "type": "preproc_conditional_table_relation",
           "named": true
         },
@@ -14755,6 +15136,102 @@
         },
         {
           "type": "where_clause",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
+    "type": "preproc_conditional_trigger_preamble",
+    "named": true,
+    "fields": {
+      "name": {
+        "multiple": true,
+        "required": false,
+        "types": [
+          {
+            "type": "identifier",
+            "named": true
+          },
+          {
+            "type": "member_trigger_name",
+            "named": true
+          },
+          {
+            "type": "quoted_identifier",
+            "named": true
+          }
+        ]
+      },
+      "parameters": {
+        "multiple": true,
+        "required": false,
+        "types": [
+          {
+            "type": "parameter_list",
+            "named": true
+          }
+        ]
+      },
+      "return_type": {
+        "multiple": true,
+        "required": false,
+        "types": [
+          {
+            "type": "type_specification",
+            "named": true
+          }
+        ]
+      },
+      "return_value": {
+        "multiple": true,
+        "required": false,
+        "types": [
+          {
+            "type": "identifier",
+            "named": true
+          },
+          {
+            "type": "quoted_identifier",
+            "named": true
+          }
+        ]
+      }
+    },
+    "children": {
+      "multiple": true,
+      "required": true,
+      "types": [
+        {
+          "type": "preproc_conditional_trigger_preamble",
+          "named": true
+        },
+        {
+          "type": "preproc_conditional_var_block",
+          "named": true
+        },
+        {
+          "type": "preproc_elif",
+          "named": true
+        },
+        {
+          "type": "preproc_else",
+          "named": true
+        },
+        {
+          "type": "preproc_endif",
+          "named": true
+        },
+        {
+          "type": "preproc_if",
+          "named": true
+        },
+        {
+          "type": "trigger_keyword",
+          "named": true
+        },
+        {
+          "type": "var_section",
           "named": true
         }
       ]
@@ -21781,7 +22258,7 @@
       },
       "name": {
         "multiple": true,
-        "required": true,
+        "required": false,
         "types": [
           {
             "type": "identifier",
@@ -21834,6 +22311,10 @@
       "types": [
         {
           "type": "attribute_item",
+          "named": true
+        },
+        {
+          "type": "preproc_conditional_procedure_preamble",
           "named": true
         },
         {
@@ -22220,7 +22701,7 @@
       },
       "name": {
         "multiple": true,
-        "required": true,
+        "required": false,
         "types": [
           {
             "type": "identifier",
@@ -22275,6 +22756,10 @@
       "multiple": true,
       "required": true,
       "types": [
+        {
+          "type": "preproc_conditional_trigger_preamble",
+          "named": true
+        },
         {
           "type": "preproc_conditional_var_block",
           "named": true
@@ -26924,6 +27409,10 @@
         },
         {
           "type": "ml_value_list",
+          "named": true
+        },
+        {
+          "type": "preproc_conditional_label_attributes",
           "named": true
         },
         {

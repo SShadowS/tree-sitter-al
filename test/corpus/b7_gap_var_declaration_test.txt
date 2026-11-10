@@ -70,7 +70,7 @@ Lbl: Label 'a'
 ------------------------------------------------------------------------
 
 ========================================================================
-B7a GAP: var-declaration / empty (36 cells, verdict of the representative GAP); the parser ERRORs on configurations alc accepts; representative occ:variable_declaration:0.0.5@preproc_conditional_var#empty
+B7a GAP: var-declaration / empty (18 cells, verdict of the representative GAP); the parser ERRORs on configurations alc accepts; representative occ:variable_declaration:2.0.4@preproc_conditional_var#empty
 :error
 ========================================================================
 table 50100 T
@@ -91,8 +91,8 @@ codeunit 50101 P
 {
     var
 #if TPL2
-        
-Lbl: Label 'a'
+
+X1, X2: Integer
 #if X
 #endif
 ;

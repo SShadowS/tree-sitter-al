@@ -212,6 +212,14 @@ FAMILIES: dict[str, Family] = {f.name: f for f in (
     Family("parameters", frozenset({"parameter_list"}), lambda h: (h.start, h.end),
            frozenset({"parameter"}), ";", None, "optional-wrapper",
            prefix_kinds=frozenset({"attribute_item"})),
+    # B7b-1c (deferred item 46): the keyed pair lists and a TextConst's list; the host is
+    # the list itself. A keyed value emptied by its groups flat-parses as a property
+    # with no value; an emptied TextConst flat-parses as `T: TextConst;`
+    # (engine.py, textconst-list-removed).
+    Family("ml_pairs", frozenset({"ml_value_list"}), lambda h: (h.start, h.end),
+           frozenset({"ml_value_pair"}), ",", None, "empty-syntax-rejected"),
+    Family("namespace_pairs", frozenset({"namespace_value_list"}), lambda h: (h.start, h.end),
+           frozenset({"namespace_pair"}), ",", None, "empty-syntax-rejected"),
 )}
 
 GROUP_FAMILY = {f.group: f for f in FAMILIES.values()}

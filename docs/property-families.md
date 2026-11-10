@@ -99,7 +99,10 @@ whose value has that family's grammar only.
   `ml_value_list`. A one-pair `ENU='x'` is also a complete comparison, so before B4 every
   one-pair ML value was a `comparison_expression` (G9).
 - **`Namespaces`** → `NAMESPACES_PROPERTY_NAME`, value `namespace_value_list` /
-  `namespace_pair` (`prefix:`, `uri:`).
+  `namespace_pair` (`prefix:`, `uri:`). Both pair lists are strict conditional lists since B7b-1c
+  (`preproc_conditional_ml_pairs` / `_namespace_pairs`, `prec.dynamic(-1)` so a whole-value group
+  keeps its shape, up to 8 empty groups after the value: item 91; `TextConst` shares the ML list,
+  a generic property's flat one does not).
 - **`TableRelation`** → `TABLE_RELATION_PROPERTY_NAME`, value `table_relation_value` (B5). The
   compiler reaches `ParseTableRelationPropertyValue` through that one name and reads the target
   with `ParseQualifiedName`, one qualified name, so the target is `target: (qualified_name)`

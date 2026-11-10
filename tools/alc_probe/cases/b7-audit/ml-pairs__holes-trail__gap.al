@@ -1,5 +1,5 @@
 // B7a Task 10 witness (GAP): family ml-pairs, base placement holes-trail, 27 cells; representative occ:ml_value_list:0.1.0.0@action_body#holes-trail
-// Fixture b7_gap_ml_pairs_test.txt#B7a GAP: ml-pairs / holes-trail (27 cells, verdict of the representative MIXED); the parser ERRORs on configurations alc accepts; representative occ:ml_value_list:0.1.0.0@action_body%23holes-trail#0
+// Fixture strict_conditional_pair_lists_test.txt#strict pair list ml-pairs: holes-trail (B7b-1c, was the B7a GAP witness)#0
 // expect: !TPL !X accept
 // expect: !TPL X accept
 // expect: TPL !X accept

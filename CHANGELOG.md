@@ -7,7 +7,124 @@ public API — a change to node structure or field names is a **major** bump.
 
 ## [Unreleased]
 
+### Changed (breaking: tree shape)
+
+- **A caption-shaped property value with a trailing comma and a `#if` group is now always a `caption_value` (B7b-1d,
+  deferred item 46).** Input alc accepts that parsed before gets a different tree. Family, measured main (18c988e8) vs
+  branch over a generated grid (311k caption inputs, every changed form then repeated on 11 hosts and six generic property
+  names, 0 regressions); the four production corpora hold no such shape (byte-identical):
+  - **`P = 'a', G ;`**, a plain `string_literal` then one `,` then ONE group `G` whose arms are all empty or
+    comments/`#region`/`#pragma` lines (`#if`, `#if`/`#else`, `#if`/`#elif`[/`#else`], not nested), terminated by `;`:
+    main gave `value: (option_member_list (option_member (string_literal)) (preproc_conditional_option_members ...))` when
+    another member of the body FOLLOWED the property (a property, a section, or the `#endif` of an enclosing group),
+    and `value: (caption_value (string_literal))` plus the sibling `preproc_conditional_property_value` when it was the last
+    member before the `}`. Now always the latter. alc accepts every configuration
+    (`tools/alc_probe/cases/b7b1d/caption_trailing_comma_empty_group.al`). The oracle reports a discrepancy on main (followed)
+    and passes on the new tree.
+  - **`P = 'a', G1 [E ...] ;`**, a plain string, one `,`, a first group `G1` whose arms are empty or a lone `,`
+    (comments aside; at least one `,`; same arm forms), then zero or more all-empty groups `E` (measured up to two): main gave `value: (option_member_list (option_member
+    (string_literal)) (preproc_conditional_option_members ...))` for the first group, in every host; now
+    `value: (caption_value (string_literal) (preproc_conditional_caption_subfields ...))`, each `E` remaining a sibling
+    `preproc_conditional_property_value` (on main too). alc: the inactive configuration accepts, the `,`-active one rejects
+    (AL0107, a doubled comma; `caption_trailing_comma_lone_comma_group.al`). The oracle passes the valid configuration on
+    the new tree (a discrepancy on main) and reports a discrepancy on the rejected one (flat `'a',,;` is an
+    `option_member_list`; pinned in `tools/config_oracle/tests/test_b7b1d_label_tails.py`). With a `,;` terminator instead
+    (no `E`), alc rejects every configuration and the shape changes the same way.
+  - Both hold inside a `#if` around the whole property and inside a whole-value arm, at every non-keyed property name
+    tried. Not changed: a verbatim text, two or more all-empty groups, arms with any other content, the keyed names
+    (`CaptionML`, `OptionMembers`, `TableRelation`, `CalcFormula`, `SubPageLink`). Pinned: the `... tree change: ...`
+    cases of `test/corpus/strict_conditional_label_caption_tails_test.txt` (all-empty form) and
+    `test_b7b1d_label_tails.py` (lone-`,` form: a corpus case cannot carry a discrepancy).
+  - `node-types.json`: `label_declaration.value` is no longer required (the text can sit in a group). A consumer that
+    treats the field as always present on a clean tree must handle it being absent there.
+
 ### Fixed
+
+- **`#if` groups in the attribute tail of a report label, a `Label` variable and a caption parse (deferred item 46,
+  row B7b-1d).** `L = 'a' #if X , Locked = true #endif ;`, `L: Label 'a', #if X Comment = 'c', #endif Locked = true;`,
+  `Caption = 'a' #if X , Locked = true #endif ;` (at the direct property and in a whole-value arm), a group holding only
+  a `,`, nesting, `#elif`, adjacent groups, an empty group after the text of a label; and a label whose text sits inside a
+  group (`L = #if X 'a', Locked = true #else 'a' #endif ;`) ERRORed. New node types
+  `preproc_conditional_report_label_attributes`, `preproc_conditional_label_attributes`,
+  `preproc_conditional_caption_subfields`; the hosts' child lists gain the groups. Apart from the shape family listed
+  under **Changed** above, no tree on input that parsed before changes (four corpora byte-identical, those trees pinned in
+  `test/corpus/strict_conditional_label_caption_tails_test.txt`). A report
+  label also takes the label variable's trailing comma (`L = 'a',;`, alc accepts; ERRORed before; `'a', Locked = true,;`
+  stays an ERROR, AL0301). STATE_COUNT +814, parser.c +1.17%.
+- **`#if` groups at a separator of an ML or `Namespaces` pair list parse (deferred item 46, row B7b-1c).** `CaptionML =
+  ENU = 'a' #if X , DAN = 'b' #endif ;`, a group that replaces a pair, holds a pair or only a `,`, nests, or sits next
+  to another group, at the 13 keyed ML names, `Namespaces` and a `TextConst` variable, ERRORed; alc accepts every
+  configuration (B7a witnesses; `tools/alc_probe/cases/b7b1c/textconst_group.al`). New node types
+  `preproc_conditional_ml_pairs` and `preproc_conditional_namespace_pairs` (children of `ml_value_list` /
+  `namespace_value_list`: the arm's pairs). The two B13 shapes "pairs joined by `,` across groups" (item 37) are resolved.
+  - **Tree shape:** flat values and the keyed whole-value `#if` (`#if X ENU='a' #else ENU='b' #endif ;`, a run of
+    groups, up to 8 empty groups after the value, empty groups before it) keep their trees: the four corpora's trees
+    are byte-identical, and `test/corpus/strict_conditional_pair_lists_test.txt` pins the whole-value and decoration
+    shapes (the new list group carries `prec.dynamic(-1)`, so it loses where the parser still holds both readings).
+  - **Tree-shape change on valid input (breaking under this file's rule, deferred item 91):** with 9 or more
+    consecutive empty groups after a keyed value (`CaptionML = ENU='a'` then 9x `#if Y #endif`, then `;`; also
+    `Namespaces`, a multi-pair value and `#if/#else/#endif` empty groups), which alc accepts and which parsed clean
+    before, the first n-8 groups change from sibling `preproc_conditional_property_value` nodes to
+    `preproc_conditional_ml_pairs` / `preproc_conditional_namespace_pairs` inside the list. A whole-value `#if` before
+    such a run also becomes a list group. No ERROR; 0 production sites (four corpora byte-identical). The n=8 and n=9
+    sides are pinned by fixtures.
+  - **`node-types.json`:** the two list nodes gain `preproc_conditional_*_pairs` as children; two new node types.
+  - **Item 44's limit:** a configuration with a doubled, leading or trailing comma (`ENU='a', #if X , #endif DAN='b'`,
+    `X` defined) parses; the oracle's per-configuration flat parse reports it. New deferred item 90 records the
+    `;`-group terminator cells and the `TextConst` with a `;` in every arm, which still ERROR.
+
+- **A nested `#if` choosing a procedure header and its `var` section parses (deferred item 83).** An arm of
+  `preproc_split_procedure_preamble` may now be a nested group of preambles, the new named node
+  `preproc_conditional_procedure_preamble` (`#if`, `#elif`, `#else`, nesting again), in any arm; it ERRORed before. alc
+  accepts every configuration (`tools/alc_probe/cases/item77/nested-preamble*.al`).
+  - **Tree shape:** no change on input that parsed before: the four corpora's trees are byte-identical.
+  - **`node-types.json`:** new named type `preproc_conditional_procedure_preamble`; `preproc_split_procedure_preamble`
+    may hold it and its `name` field is no longer required (additive for existing trees).
+  - **Config oracle:** the nested form is lowered like `preproc_split_procedure` (`split_preamble`, every configuration
+    passes); the flat form stays unsupported (item 94).
+  - **Size:** STATE_COUNT +241, parser.c +0.3 MB; no new conflicts.
+- **An attribute inside a split-header arm before a nested header group parses (deferred item 82).** `#if X [A] #if Y
+  procedure Q() #else ... #endif #else ... #endif begin end;`, and the same before a nested preamble group, ERRORed; alc
+  accepts every configuration (`tools/alc_probe/cases/item77/attr-*.al`). The attribute is a direct child of the split
+  node, before the group, as for a flat arm; `split_procedure` lifts it out (config oracle: every configuration passes).
+  - **Tree shape:** no change on input that parsed before: the four corpora's trees are byte-identical.
+    `node-types.json` unchanged.
+  - **Conflicts:** `_procedure_header`'s two conflict entries for the `#if [A] •` fork are replaced by entries on the new
+    hidden `_attribute_run` (same fork); `preproc_conditional_procedure_header` gains `prec(25)` (its arms mirror
+    `preproc_split_procedure`'s); production trees are byte-identical.
+  - **Size:** STATE_COUNT +629, parser.c +0.8 MB.
+- **A nested `#if` choosing a trigger header (with or without a `var` section) parses (deferred item 85).** An arm of
+  `preproc_split_trigger_preamble` may now be a nested group, the new named node `preproc_conditional_trigger_preamble`;
+  it ERRORed before. alc accepts every configuration (`tools/alc_probe/cases/item77/nested-trigger-*.al`).
+  - **Tree shape:** no change on input that parsed before: the four corpora's trees are byte-identical.
+  - **`node-types.json`:** new named type `preproc_conditional_trigger_preamble`; `preproc_split_trigger_preamble` may hold
+    it and its `name` field is no longer required (additive for existing trees).
+  - **Config oracle:** the nested form lowers to one `trigger_declaration`, every configuration passes; flat form
+    stays unsupported (item 94).
+  - **Size:** STATE_COUNT +240, parser.c +0.3 MB; no new conflicts.
+
+- **Complete `#if` groups that supply a `TableRelation`'s `;` parse (deferred items 81 and 84, the table-relation
+  B7a GAP terminator placements).** `TableRelation = T #if X ; #else ; #endif`, with `#elif` or nested, at the
+  property site, in a whole-value arm and in a relation arm, the same groups or an empty group then `;` at the `;`
+  of an else-group arm, and, after a shared `where`, an else group with an arm that is only the property's `;`
+  (`... where(..) #if Y else C; #else ; #endif`), ERRORed; alc accepts every configuration (probes
+  `tools/alc_probe/cases/item81/`, `item29-relation-chain/s12-*`, `s13-*`). Such a group is a
+  `preproc_conditional_table_relation`, a sibling after the relation in `table_relation_value`; its `;` is the
+  configured property's own. Only a COMPLETE group is taken (every arm present, `#else` required, every arm
+  supplies the `;`), so the value ends inside it in every configuration and what follows is the body's: a `;` after
+  it is an `empty_statement`, a second `;` group the body's `preproc_conditional`, as alc reads them. A group that
+  supplies the `;` in some configurations only (one arm, an empty arm, `#if X ; #endif #if not X ; #endif`, item
+  84's group with an else arm that has no `;`, or item 84's group with no `where` before it) still ERRORs, as on
+  main: with anything after it no one tree is right in every configuration (deferred item 99, witnesses
+  `test/corpus/table_relation_item99_gap_test.txt`).
+  - **Tree shape:** no change on input that parsed before; the four corpora's trees are byte-identical.
+    `node-types.json`: `preproc_conditional_table_relation` gains `preproc_conditional_property_value`
+    (a decoration before the arm's `;`) as a child, additive.
+  - **Over-accepted (item 44):** item 84's group after a conditional head of plain targets and a shared `where`,
+    `#if T Item #else Resource #endif where(..) #if X ; #else else Customer; #endif`, parses clean; alc rejects the
+    configurations whose `else` arm is active (AL0149, probe `item81/o-plainhead-item84.al`). Main already accepts an
+    all-`else` group there.
+  - Neighbouring shapes still ERROR: deferred items 98 and 99.
 
 - **`#if` groups in the member list of an `Option` type parse (deferred item 46, row B7b-1e).** `X: Option A
   #if X , B #endif;`, a group that replaces the first member, holds only a `,`, holds blank slots, nests, or sits next

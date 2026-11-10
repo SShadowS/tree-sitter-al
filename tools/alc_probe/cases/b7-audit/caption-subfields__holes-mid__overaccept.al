@@ -1,10 +1,10 @@
-// B7a Task 10 witness (GAP): family ml-pairs, base placement holes-lead, 27 cells; representative occ:ml_value_list:0.1.0.0@action_body#holes-lead
-// Fixture b7_gap_ml_pairs_test.txt#B7a GAP: ml-pairs / holes-lead (27 cells, verdict of the representative MIXED); the parser ERRORs on configurations alc accepts; representative occ:ml_value_list:0.1.0.0@action_body%23holes-lead#0
+// B7a Task 10 witness (GAP): family caption-subfields, base placement holes-mid, 72 cells; representative occ:caption_value:0.1.0.0.0.0@action_body#holes-mid
+// Fixture strict_conditional_label_caption_tails_test.txt#B7b-1d caption / holes-mid#0
 // expect: !TPL !X accept
 // expect: !TPL X accept
 // expect: TPL !X accept
 // expect: TPL X reject(AL0107)
-// source: recorded by B7a Task 10, 2026-10-07: the alc split verdicts of cell occ:ml_value_list:0.1.0.0@action_body#holes-lead in tools/b7_audit/evidence.jsonl.gz
+// source: recorded by B7a Task 10, 2026-10-07: the alc split verdicts of cell occ:caption_value:0.1.0.0.0.0@action_body#holes-mid in tools/b7_audit/evidence.jsonl.gz
 table 50100 T
 {
     fields
@@ -35,16 +35,17 @@ page 50102 PG
         {
             action(A1)
             {
-                CaptionML =
+                Caption =
 #if TPL
                     
+'a' ,
 #if X
 ,
 #endif
-ENU = 'a' , DAN = 'b'
+Locked = true
 ;
 #else
-                    ENU = 'c';
+                    'b';
 #endif
                 trigger OnAction()
                 begin

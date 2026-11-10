@@ -1,0 +1,286 @@
+========================================================================
+GAP (deferred item 99): an else-group arm whose ; is two complementary groups
+:error
+========================================================================
+table 50100 T
+{
+    fields
+    {
+        field(1; A; Integer) { }
+        field(2; "No."; Code[20])
+        {
+            TableRelation =
+#if X
+ if (A = const(1)) Item
+#else
+ if (A = const(2)) Resource
+#endif
+ where(A = const(1))
+#if Y
+else Customer
+#if Z
+;
+#endif
+#if not Z
+;
+#endif
+#else
+else Vendor;
+#endif
+        }
+    }
+}
+------------------------------------------------------------------------
+
+========================================================================
+Item 99: an else-group arm whose ; is a group with one arm
+:error
+========================================================================
+table 50100 T
+{
+    fields
+    {
+        field(1; A; Integer) { }
+        field(2; "No."; Code[20])
+        {
+            TableRelation =
+#if X
+ if (A = const(1)) Item
+#else
+ if (A = const(2)) Resource
+#endif
+ where(A = const(1))
+#if Y
+else Customer
+#if Z
+;
+#endif
+#else
+else Vendor;
+#endif
+        }
+    }
+}
+------------------------------------------------------------------------
+
+========================================================================
+GAP (deferred item 99): a plain relation whose ; is two complementary groups
+:error
+========================================================================
+table 50100 T
+{
+    fields
+    {
+        field(1; A; Integer) { }
+        field(2; "No."; Code[20])
+        {
+            TableRelation =
+Item
+#if X
+;
+#endif
+#if not X
+;
+#endif
+        }
+    }
+}
+------------------------------------------------------------------------
+
+========================================================================
+Item 99: a plain relation whose ; is a group with one arm
+:error
+========================================================================
+table 50100 T
+{
+    fields
+    {
+        field(1; A; Integer) { }
+        field(2; "No."; Code[20])
+        {
+            TableRelation =
+Item
+#if X
+;
+#endif
+        }
+    }
+}
+------------------------------------------------------------------------
+
+========================================================================
+Item 99: the first arm of the ; group is empty
+:error
+========================================================================
+table 50100 T
+{
+    fields
+    {
+        field(1; A; Integer) { }
+        field(2; "No."; Code[20])
+        {
+            TableRelation =
+Item
+#if X
+#else
+;
+#endif
+
+        }
+    }
+}
+------------------------------------------------------------------------
+
+========================================================================
+Item 99: the first arm of the ; group is empty and an #elif supplies the ;
+:error
+========================================================================
+table 50100 T
+{
+    fields
+    {
+        field(1; A; Integer) { }
+        field(2; "No."; Code[20])
+        {
+            TableRelation =
+Item
+#if X
+#elif Y
+;
+#else
+;
+#endif
+
+        }
+    }
+}
+------------------------------------------------------------------------
+
+========================================================================
+GAP (deferred item 99): complementary ; groups at a whole-value arm
+:error
+========================================================================
+table 50100 T
+{
+    fields
+    {
+        field(1; A; Integer) { }
+        field(2; "No."; Code[20])
+        {
+            TableRelation =
+#if TPL
+Item
+#if X
+;
+#endif
+#if not X
+;
+#endif
+#else
+Resource;
+#endif
+        }
+    }
+}
+------------------------------------------------------------------------
+
+========================================================================
+GAP (deferred item 99): a one-arm ; group then the property ;
+:error
+========================================================================
+table 50100 T
+{
+    fields
+    {
+        field(1; A; Integer) { }
+        field(2; "No."; Code[20])
+        {
+            TableRelation =
+Item
+#if X
+;
+#endif
+;
+        }
+    }
+}
+------------------------------------------------------------------------
+
+========================================================================
+GAP (deferred item 99): a ; group with an empty #else then the property ;
+:error
+========================================================================
+table 50100 T
+{
+    fields
+    {
+        field(1; A; Integer) { }
+        field(2; "No."; Code[20])
+        {
+            TableRelation =
+Item
+#if X
+;
+#else
+#endif
+;
+        }
+    }
+}
+------------------------------------------------------------------------
+
+========================================================================
+GAP (deferred item 99): item 84's group after a conditional if-head without a where
+:error
+========================================================================
+table 50100 T
+{
+    fields
+    {
+        field(1; A; Integer) { }
+        field(2; "No."; Code[20])
+        {
+            TableRelation =
+#if T
+ if (A = const(1)) Item
+#else
+ if (A = const(2)) Resource
+#endif
+#if X
+;
+#else
+else Customer;
+#endif
+        }
+    }
+}
+------------------------------------------------------------------------
+
+========================================================================
+GAP (deferred item 99): item 84's group with an open else arm then the property ;
+:error
+========================================================================
+table 50100 T
+{
+    fields
+    {
+        field(1; A; Integer) { }
+        field(2; "No."; Code[20])
+        {
+            TableRelation =
+#if T
+ if (A = const(1)) Item
+#else
+ if (A = const(2)) Resource
+#endif
+ where(A = const(1))
+#if X
+;
+#else
+else Customer
+#endif
+;
+        }
+    }
+}
+------------------------------------------------------------------------

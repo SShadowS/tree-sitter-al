@@ -1,0 +1,210 @@
+; Deferred item 83: an arm of a split preamble (header + var region per arm, shared body
+; after #endif) may itself be an #if group of preambles (preproc_conditional_procedure_preamble),
+; at any arm, with #elif, nested again. Each ERRORed before. alc accepts every configuration of
+; each: tools/alc_probe/cases/item77/nested-preamble.al and nested-preamble-second-arm.al.
+
+========================================================================
+Nested preamble group in the first arm (item77/nested-preamble.al)
+========================================================================
+codeunit 50100 P
+{
+#if X
+#if Y
+    procedure Q()
+    var
+        A: Integer;
+#else
+    procedure Q(I: Integer)
+    var
+        A: Integer;
+#endif
+#else
+    procedure Q(J: Code[10])
+    var
+        A: Integer;
+#endif
+    begin
+        A := 1;
+    end;
+}
+
+------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (preproc_split_procedure_preamble
+        (preproc_if
+          (preproc_open)
+          condition: (identifier))
+        (preproc_conditional_procedure_preamble
+          (preproc_if
+            (preproc_open)
+            condition: (identifier))
+          (procedure_keyword)
+          name: (identifier)
+          (var_section
+            (var_keyword)
+            body: (var_body
+              (variable_declaration
+                name: (identifier)
+                type: (type_specification
+                  (basic_type)))))
+          (preproc_else)
+          (procedure_keyword)
+          name: (identifier)
+          parameters: (parameter_list
+            (parameter
+              name: (identifier)
+              type: (type_specification
+                (basic_type))))
+          (var_section
+            (var_keyword)
+            body: (var_body
+              (variable_declaration
+                name: (identifier)
+                type: (type_specification
+                  (basic_type)))))
+          (preproc_endif
+            (preproc_close)))
+        (preproc_else)
+        (procedure_keyword)
+        name: (identifier)
+        parameters: (parameter_list
+          (parameter
+            name: (identifier)
+            type: (type_specification
+              (code_type
+                (code_keyword)
+                length: (integer)))))
+        (var_section
+          (var_keyword)
+          body: (var_body
+            (variable_declaration
+              name: (identifier)
+              type: (type_specification
+                (basic_type)))))
+        (preproc_endif
+          (preproc_close))
+        body: (code_block
+          (begin_keyword)
+          body: (statement_block
+            (assignment_statement
+              left: (identifier)
+              operator: (assignment_operator)
+              right: (integer)))
+          (end_keyword))))))
+
+========================================================================
+Nested preamble group in an #elif arm (item77/nested-preamble-second-arm.al)
+========================================================================
+codeunit 50100 P
+{
+#if X
+    procedure Q()
+    var
+        A: Integer;
+#elif Y
+#if Z
+    procedure Q(I: Integer)
+    var
+        A: Integer;
+#else
+    procedure Q(I: Code[10])
+    var
+        B: Integer;
+#endif
+#else
+    procedure Q(J: Code[10])
+    var
+        A: Integer;
+#endif
+    begin
+    end;
+}
+
+------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (preproc_split_procedure_preamble
+        (preproc_if
+          (preproc_open)
+          condition: (identifier))
+        (procedure_keyword)
+        name: (identifier)
+        (var_section
+          (var_keyword)
+          body: (var_body
+            (variable_declaration
+              name: (identifier)
+              type: (type_specification
+                (basic_type)))))
+        (preproc_elif
+          condition: (identifier))
+        (preproc_conditional_procedure_preamble
+          (preproc_if
+            (preproc_open)
+            condition: (identifier))
+          (procedure_keyword)
+          name: (identifier)
+          parameters: (parameter_list
+            (parameter
+              name: (identifier)
+              type: (type_specification
+                (basic_type))))
+          (var_section
+            (var_keyword)
+            body: (var_body
+              (variable_declaration
+                name: (identifier)
+                type: (type_specification
+                  (basic_type)))))
+          (preproc_else)
+          (procedure_keyword)
+          name: (identifier)
+          parameters: (parameter_list
+            (parameter
+              name: (identifier)
+              type: (type_specification
+                (code_type
+                  (code_keyword)
+                  length: (integer)))))
+          (var_section
+            (var_keyword)
+            body: (var_body
+              (variable_declaration
+                name: (identifier)
+                type: (type_specification
+                  (basic_type)))))
+          (preproc_endif
+            (preproc_close)))
+        (preproc_else)
+        (procedure_keyword)
+        name: (identifier)
+        parameters: (parameter_list
+          (parameter
+            name: (identifier)
+            type: (type_specification
+              (code_type
+                (code_keyword)
+                length: (integer)))))
+        (var_section
+          (var_keyword)
+          body: (var_body
+            (variable_declaration
+              name: (identifier)
+              type: (type_specification
+                (basic_type)))))
+        (preproc_endif
+          (preproc_close))
+        body: (code_block
+          (begin_keyword)
+          (end_keyword))))))

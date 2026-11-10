@@ -90,6 +90,24 @@
       },
       "reason": "B7b-1 strict list: arms are alternative runs of arguments and separators in the argument list of [Attr(...)] (attribute_argument_list, between ( and )); registry branch-select with host policy strict-list (config_oracle conditional_lists)."
     },
+    "preproc_conditional_ml_pairs": {
+      "class": "branch-container",
+      "arm_boundary": "own-directives",
+      "hosts": {
+        "ml_value_list:<children>": "strict-list",
+        "preproc_conditional_ml_pairs:<children>": "strict-list"
+      },
+      "reason": "B7b-1c strict list: arms are alternative runs of language pairs and , separators in an ML value or TextConst (ml_value_list); registry branch-select with host policy strict-list (config_oracle conditional_lists)."
+    },
+    "preproc_conditional_namespace_pairs": {
+      "class": "branch-container",
+      "arm_boundary": "own-directives",
+      "hosts": {
+        "namespace_value_list:<children>": "strict-list",
+        "preproc_conditional_namespace_pairs:<children>": "strict-list"
+      },
+      "reason": "B7b-1c strict list: arms are alternative runs of prefix/uri pairs and , separators in an XmlPort Namespaces value (namespace_value_list); registry branch-select with host policy strict-list (config_oracle conditional_lists)."
+    },
     "preproc_conditional_parameters": {
       "class": "branch-container",
       "arm_boundary": "own-directives",
@@ -318,6 +336,16 @@
       "arm_boundary": "own-directives",
       "reason": "Deferred item 77: a nested #if group of procedure headers, one arm of preproc_split_procedure; its arms are header pieces, not complete units (registry fragment, selected inside split_procedure)."
     },
+    "preproc_conditional_procedure_preamble": {
+      "class": "fragment",
+      "arm_boundary": "own-directives",
+      "reason": "Deferred item 83: a nested #if group of procedure preambles (header + var region), one arm of preproc_split_procedure_preamble; its arms are pieces of one construct (registry fragment, selected inside split_procedure)."
+    },
+    "preproc_conditional_trigger_preamble": {
+      "class": "fragment",
+      "arm_boundary": "own-directives",
+      "reason": "Deferred item 85: a nested #if group of trigger preambles, one arm of preproc_split_trigger_preamble; its arms are pieces of one construct (registry fragment, selected inside split_procedure)."
+    },
     "preproc_conditional_property_value": {
       "class": "assembler",
       "arm_boundary": "own-directives",
@@ -437,6 +465,33 @@
       },
       "reason": "Registry branch-select: arms are alternatives in one host slot; nests since issue #30."
     },
+    "preproc_conditional_caption_subfields": {
+      "class": "branch-container",
+      "arm_boundary": "own-directives",
+      "hosts": {
+        "caption_value:<children>": "strict-list",
+        "preproc_conditional_caption_subfields:<children>": "strict-list"
+      },
+      "reason": "B7b-1d: arms are alternative runs of sub-fields and separators in a caption_value's tail; registry branch-select (no conditional_lists family: heterogeneous items)."
+    },
+    "preproc_conditional_label_attributes": {
+      "class": "branch-container",
+      "arm_boundary": "own-directives",
+      "hosts": {
+        "variable_declaration:<children>": "strict-list",
+        "preproc_conditional_label_attributes:<children>": "strict-list"
+      },
+      "reason": "B7b-1d: arms are alternative runs of label_attribute items and separators (or the text) in a label variable's value and tail; registry branch-select."
+    },
+    "preproc_conditional_report_label_attributes": {
+      "class": "branch-container",
+      "arm_boundary": "own-directives",
+      "hosts": {
+        "label_declaration:<children>": "strict-list",
+        "preproc_conditional_report_label_attributes:<children>": "strict-list"
+      },
+      "reason": "B7b-1d: arms are alternative runs of attribute pieces and separators (or the text) in a report label's value and tail; registry branch-select (flat fielded items, the host's own shape)."
+    },
     "preproc_conditional_var_names": {
       "class": "branch-container",
       "arm_boundary": "own-directives",
@@ -450,6 +505,8 @@
       "class": "branch-container",
       "arm_boundary": "own-directives",
       "hosts": {
+        "preproc_conditional_procedure_preamble:<children>": "splice-repeat",
+        "preproc_conditional_trigger_preamble:<children>": "splice-repeat",
         "preproc_conditional_var_block:<children>": "splice-repeat",
         "preproc_split_procedure:<children>": "splice-repeat",
         "preproc_split_procedure_preamble:<children>": "splice-repeat",

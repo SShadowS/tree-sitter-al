@@ -211,7 +211,7 @@ layout { area(Content) { field(F; Rec.Flag) { } } } }
                   member: (identifier))))))))))
 
 ========================================================================
-B13 gap: ML pairs joined by `,` across groups -- valid AL, structure deferred (roadmap B13)
+B7b-1c: ML pairs joined by `,` across groups (was a B13 gap; alc accepts every configuration)
 ========================================================================
 page 50100 P { layout { area(Content) { field(F; X) {
 CaptionML =
@@ -245,26 +245,28 @@ CaptionML =
                 body: (declaration_body
                   (property
                     name: (property_name)
-                    value: (preproc_conditional_property_value
-                      (preproc_if
-                        (preproc_open)
-                        condition: (identifier))
-                      value: (ml_value_list
+                    value: (ml_value_list
+                      (preproc_conditional_ml_pairs
+                        (preproc_if
+                          (preproc_open)
+                          condition: (identifier))
                         (ml_value_pair
                           language: (identifier)
                           value: (string_literal))
-                        (ERROR
-                          (UNEXPECTED 'i')
-                          (UNEXPECTED 'i')
-                          (identifier))
+                        (preproc_endif
+                          (preproc_close)))
+                      (preproc_conditional_ml_pairs
+                        (preproc_if
+                          (preproc_open)
+                          condition: (identifier))
                         (ml_value_pair
                           language: (identifier)
-                          value: (string_literal)))
-                      (preproc_endif
-                        (preproc_close)))))))))))))
+                          value: (string_literal))
+                        (preproc_endif
+                          (preproc_close))))))))))))))
 
 ========================================================================
-B13 gap: Namespaces pairs joined by `,` across groups -- valid AL, structure deferred (roadmap B13)
+B7b-1c: Namespaces pairs joined by `,` across groups (was a B13 gap; alc accepts every configuration)
 ========================================================================
 xmlport 50100 X {
 Namespaces =
@@ -286,23 +288,25 @@ schema { textelement(R) { } } }
     body: (declaration_body
       (property
         name: (property_name)
-        value: (preproc_conditional_property_value
-          (preproc_if
-            (preproc_open)
-            condition: (identifier))
-          value: (namespace_value_list
+        value: (namespace_value_list
+          (preproc_conditional_namespace_pairs
+            (preproc_if
+              (preproc_open)
+              condition: (identifier))
             (namespace_pair
               prefix: (identifier)
               uri: (string_literal))
-            (ERROR
-              (UNEXPECTED 'i')
-              (UNEXPECTED 'i')
-              (identifier))
+            (preproc_endif
+              (preproc_close)))
+          (preproc_conditional_namespace_pairs
+            (preproc_if
+              (preproc_open)
+              condition: (identifier))
             (namespace_pair
               prefix: (identifier)
-              uri: (string_literal)))
-          (preproc_endif
-            (preproc_close))))
+              uri: (string_literal))
+            (preproc_endif
+              (preproc_close)))))
       (schema_section
         (schema_keyword)
         body: (schema_body
