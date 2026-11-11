@@ -7,6 +7,13 @@ public API — a change to node structure or field names is a **major** bump.
 
 ## [Unreleased]
 
+## [5.2.0] — 2026-11-11
+
+Released as a minor version by the owner's decision: the state review cuts parser states by 46.8% and `parser.c` by
+50.6% (31,618 to 16,833 states, 70.3 to 34.7 MB), with every production tree in the four corpora unchanged apart from
+one file that errors before and after. The tree changes on valid input below are corrections (wrong trees on main), at
+0 production sites. `node-types.json` gains child types (`preproc_pragma_only` in var regions and preambles).
+
 ### Changed (tree shape)
 
 - **An empty `#if` group between a routine header and its body or var section is `preproc_pragma_only`, never a
