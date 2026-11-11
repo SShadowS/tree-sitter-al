@@ -1,0 +1,540 @@
+================================================================================
+is/as name: an interface named List after is and as (alc accepts; 5.1.0 ERRORed)
+================================================================================
+codeunit 50100 P
+{
+    procedure T(I: Interface IFoo)
+    var
+        B: Boolean;
+        J: Interface IFoo;
+    begin
+        B := I is List;
+        J := I as List;
+    end;
+
+    procedure F(A: Integer; X: Boolean; C: Integer)
+    begin
+    end;
+}
+
+interface IFoo
+{
+    procedure X();
+}
+
+interface "List"
+{
+    procedure X();
+}
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (procedure
+        (procedure_keyword)
+        name: (identifier)
+        parameters: (parameter_list
+          (parameter
+            name: (identifier)
+            type: (type_specification
+              (object_reference_type
+                object_type: (interface_keyword)
+                reference: (identifier)))))
+        (var_section
+          (var_keyword)
+          body: (var_body
+            (variable_declaration
+              name: (identifier)
+              type: (type_specification
+                (basic_type)))
+            (variable_declaration
+              name: (identifier)
+              type: (type_specification
+                (object_reference_type
+                  object_type: (interface_keyword)
+                  reference: (identifier))))))
+        body: (code_block
+          (begin_keyword)
+          body: (statement_block
+            (assignment_statement
+              left: (identifier)
+              operator: (assignment_operator)
+              right: (is_expression
+                left: (identifier)
+                operator: (is_keyword)
+                right: (type_specification
+                  (identifier))))
+            (assignment_statement
+              left: (identifier)
+              operator: (assignment_operator)
+              right: (as_expression
+                left: (identifier)
+                operator: (as_keyword)
+                right: (type_specification
+                  (identifier)))))
+          (end_keyword)))
+      (procedure
+        (procedure_keyword)
+        name: (identifier)
+        parameters: (parameter_list
+          (parameter
+            name: (identifier)
+            type: (type_specification
+              (basic_type)))
+          (parameter
+            name: (identifier)
+            type: (type_specification
+              (basic_type)))
+          (parameter
+            name: (identifier)
+            type: (type_specification
+              (basic_type))))
+        body: (code_block
+          (begin_keyword)
+          (end_keyword)))))
+  (interface_declaration
+    (interface_keyword)
+    object_name: (identifier)
+    body: (interface_body
+      (interface_procedure
+        (procedure_keyword)
+        name: (identifier)
+        (interface_procedure_suffix))))
+  (interface_declaration
+    (interface_keyword)
+    object_name: (quoted_identifier)
+    body: (interface_body
+      (interface_procedure
+        (procedure_keyword)
+        name: (identifier)
+        (interface_procedure_suffix)))))
+
+================================================================================
+is/as name: an interface named Option after is is a name, not an option type (5.1.0 read option members)
+================================================================================
+codeunit 50100 P
+{
+    procedure T(I: Interface IFoo)
+    var
+        B: Boolean;
+        J: Interface IFoo;
+    begin
+        B := I is Option;
+    end;
+
+    procedure F(A: Integer; X: Boolean; C: Integer)
+    begin
+    end;
+}
+
+interface IFoo
+{
+    procedure X();
+}
+
+interface "Option"
+{
+    procedure X();
+}
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (procedure
+        (procedure_keyword)
+        name: (identifier)
+        parameters: (parameter_list
+          (parameter
+            name: (identifier)
+            type: (type_specification
+              (object_reference_type
+                object_type: (interface_keyword)
+                reference: (identifier)))))
+        (var_section
+          (var_keyword)
+          body: (var_body
+            (variable_declaration
+              name: (identifier)
+              type: (type_specification
+                (basic_type)))
+            (variable_declaration
+              name: (identifier)
+              type: (type_specification
+                (object_reference_type
+                  object_type: (interface_keyword)
+                  reference: (identifier))))))
+        body: (code_block
+          (begin_keyword)
+          body: (statement_block
+            (assignment_statement
+              left: (identifier)
+              operator: (assignment_operator)
+              right: (is_expression
+                left: (identifier)
+                operator: (is_keyword)
+                right: (type_specification
+                  (identifier)))))
+          (end_keyword)))
+      (procedure
+        (procedure_keyword)
+        name: (identifier)
+        parameters: (parameter_list
+          (parameter
+            name: (identifier)
+            type: (type_specification
+              (basic_type)))
+          (parameter
+            name: (identifier)
+            type: (type_specification
+              (basic_type)))
+          (parameter
+            name: (identifier)
+            type: (type_specification
+              (basic_type))))
+        body: (code_block
+          (begin_keyword)
+          (end_keyword)))))
+  (interface_declaration
+    (interface_keyword)
+    object_name: (identifier)
+    body: (interface_body
+      (interface_procedure
+        (procedure_keyword)
+        name: (identifier)
+        (interface_procedure_suffix))))
+  (interface_declaration
+    (interface_keyword)
+    object_name: (quoted_identifier)
+    body: (interface_body
+      (interface_procedure
+        (procedure_keyword)
+        name: (identifier)
+        (interface_procedure_suffix)))))
+
+================================================================================
+is/as name: is Option inside an argument list keeps every argument (5.1.0 lost two)
+================================================================================
+codeunit 50100 P
+{
+    procedure T(I: Interface IFoo)
+    var
+        B: Boolean;
+        J: Interface IFoo;
+    begin
+        F(1, I is Option, 2);
+    end;
+
+    procedure F(A: Integer; X: Boolean; C: Integer)
+    begin
+    end;
+}
+
+interface IFoo
+{
+    procedure X();
+}
+
+interface "Option"
+{
+    procedure X();
+}
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (procedure
+        (procedure_keyword)
+        name: (identifier)
+        parameters: (parameter_list
+          (parameter
+            name: (identifier)
+            type: (type_specification
+              (object_reference_type
+                object_type: (interface_keyword)
+                reference: (identifier)))))
+        (var_section
+          (var_keyword)
+          body: (var_body
+            (variable_declaration
+              name: (identifier)
+              type: (type_specification
+                (basic_type)))
+            (variable_declaration
+              name: (identifier)
+              type: (type_specification
+                (object_reference_type
+                  object_type: (interface_keyword)
+                  reference: (identifier))))))
+        body: (code_block
+          (begin_keyword)
+          body: (statement_block
+            (call_expression
+              function: (identifier)
+              arguments: (argument_list
+                (integer)
+                (is_expression
+                  left: (identifier)
+                  operator: (is_keyword)
+                  right: (type_specification
+                    (identifier)))
+                (integer))))
+          (end_keyword)))
+      (procedure
+        (procedure_keyword)
+        name: (identifier)
+        parameters: (parameter_list
+          (parameter
+            name: (identifier)
+            type: (type_specification
+              (basic_type)))
+          (parameter
+            name: (identifier)
+            type: (type_specification
+              (basic_type)))
+          (parameter
+            name: (identifier)
+            type: (type_specification
+              (basic_type))))
+        body: (code_block
+          (begin_keyword)
+          (end_keyword)))))
+  (interface_declaration
+    (interface_keyword)
+    object_name: (identifier)
+    body: (interface_body
+      (interface_procedure
+        (procedure_keyword)
+        name: (identifier)
+        (interface_procedure_suffix))))
+  (interface_declaration
+    (interface_keyword)
+    object_name: (quoted_identifier)
+    body: (interface_body
+      (interface_procedure
+        (procedure_keyword)
+        name: (identifier)
+        (interface_procedure_suffix)))))
+
+================================================================================
+is/as name: an interface named Dictionary after is (alc accepts; 5.1.0 ERRORed)
+================================================================================
+codeunit 50100 P
+{
+    procedure T(I: Interface IFoo)
+    var
+        B: Boolean;
+        J: Interface IFoo;
+    begin
+        B := I is Dictionary;
+    end;
+
+    procedure F(A: Integer; X: Boolean; C: Integer)
+    begin
+    end;
+}
+
+interface IFoo
+{
+    procedure X();
+}
+
+interface "Dictionary"
+{
+    procedure X();
+}
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (procedure
+        (procedure_keyword)
+        name: (identifier)
+        parameters: (parameter_list
+          (parameter
+            name: (identifier)
+            type: (type_specification
+              (object_reference_type
+                object_type: (interface_keyword)
+                reference: (identifier)))))
+        (var_section
+          (var_keyword)
+          body: (var_body
+            (variable_declaration
+              name: (identifier)
+              type: (type_specification
+                (basic_type)))
+            (variable_declaration
+              name: (identifier)
+              type: (type_specification
+                (object_reference_type
+                  object_type: (interface_keyword)
+                  reference: (identifier))))))
+        body: (code_block
+          (begin_keyword)
+          body: (statement_block
+            (assignment_statement
+              left: (identifier)
+              operator: (assignment_operator)
+              right: (is_expression
+                left: (identifier)
+                operator: (is_keyword)
+                right: (type_specification
+                  (identifier)))))
+          (end_keyword)))
+      (procedure
+        (procedure_keyword)
+        name: (identifier)
+        parameters: (parameter_list
+          (parameter
+            name: (identifier)
+            type: (type_specification
+              (basic_type)))
+          (parameter
+            name: (identifier)
+            type: (type_specification
+              (basic_type)))
+          (parameter
+            name: (identifier)
+            type: (type_specification
+              (basic_type))))
+        body: (code_block
+          (begin_keyword)
+          (end_keyword)))))
+  (interface_declaration
+    (interface_keyword)
+    object_name: (identifier)
+    body: (interface_body
+      (interface_procedure
+        (procedure_keyword)
+        name: (identifier)
+        (interface_procedure_suffix))))
+  (interface_declaration
+    (interface_keyword)
+    object_name: (quoted_identifier)
+    body: (interface_body
+      (interface_procedure
+        (procedure_keyword)
+        name: (identifier)
+        (interface_procedure_suffix)))))
+
+================================================================================
+is/as name: an interface named Array after is (alc accepts; 5.1.0 ERRORed)
+================================================================================
+codeunit 50100 P
+{
+    procedure T(I: Interface IFoo)
+    var
+        B: Boolean;
+        J: Interface IFoo;
+    begin
+        B := I is Array;
+    end;
+
+    procedure F(A: Integer; X: Boolean; C: Integer)
+    begin
+    end;
+}
+
+interface IFoo
+{
+    procedure X();
+}
+
+interface "Array"
+{
+    procedure X();
+}
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (procedure
+        (procedure_keyword)
+        name: (identifier)
+        parameters: (parameter_list
+          (parameter
+            name: (identifier)
+            type: (type_specification
+              (object_reference_type
+                object_type: (interface_keyword)
+                reference: (identifier)))))
+        (var_section
+          (var_keyword)
+          body: (var_body
+            (variable_declaration
+              name: (identifier)
+              type: (type_specification
+                (basic_type)))
+            (variable_declaration
+              name: (identifier)
+              type: (type_specification
+                (object_reference_type
+                  object_type: (interface_keyword)
+                  reference: (identifier))))))
+        body: (code_block
+          (begin_keyword)
+          body: (statement_block
+            (assignment_statement
+              left: (identifier)
+              operator: (assignment_operator)
+              right: (is_expression
+                left: (identifier)
+                operator: (is_keyword)
+                right: (type_specification
+                  (identifier)))))
+          (end_keyword)))
+      (procedure
+        (procedure_keyword)
+        name: (identifier)
+        parameters: (parameter_list
+          (parameter
+            name: (identifier)
+            type: (type_specification
+              (basic_type)))
+          (parameter
+            name: (identifier)
+            type: (type_specification
+              (basic_type)))
+          (parameter
+            name: (identifier)
+            type: (type_specification
+              (basic_type))))
+        body: (code_block
+          (begin_keyword)
+          (end_keyword)))))
+  (interface_declaration
+    (interface_keyword)
+    object_name: (identifier)
+    body: (interface_body
+      (interface_procedure
+        (procedure_keyword)
+        name: (identifier)
+        (interface_procedure_suffix))))
+  (interface_declaration
+    (interface_keyword)
+    object_name: (quoted_identifier)
+    body: (interface_body
+      (interface_procedure
+        (procedure_keyword)
+        name: (identifier)
+        (interface_procedure_suffix)))))

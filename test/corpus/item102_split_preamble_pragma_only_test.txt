@@ -1,0 +1,403 @@
+================================================================================
+Item 102 re-review: an empty group right after the header in a nested procedure preamble arm (the oracle lowers the nested form)
+================================================================================
+codeunit 50100 D
+{
+#if X
+#if A
+    procedure P()
+#if B
+#endif
+#else
+    procedure P(I: Integer)
+#endif
+#else
+    procedure P(J: Text)
+#endif
+    begin
+    end;
+}
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (preproc_split_procedure_preamble
+        (preproc_if
+          (preproc_open)
+          condition: (identifier))
+        (preproc_conditional_procedure_preamble
+          (preproc_if
+            (preproc_open)
+            condition: (identifier))
+          (procedure_keyword)
+          name: (identifier)
+          (preproc_pragma_only
+            (preproc_if
+              (preproc_open)
+              condition: (identifier))
+            (preproc_endif
+              (preproc_close)))
+          (preproc_else)
+          (procedure_keyword)
+          name: (identifier)
+          parameters: (parameter_list
+            (parameter
+              name: (identifier)
+              type: (type_specification
+                (basic_type))))
+          (preproc_endif
+            (preproc_close)))
+        (preproc_else)
+        (procedure_keyword)
+        name: (identifier)
+        parameters: (parameter_list
+          (parameter
+            name: (identifier)
+            type: (type_specification
+              (text_type
+                (text_keyword)))))
+        (preproc_endif
+          (preproc_close))
+        body: (code_block
+          (begin_keyword)
+          (end_keyword))))))
+
+================================================================================
+Item 102 re-review: an empty group then a var section in a nested trigger preamble arm (the oracle lowers the nested form)
+================================================================================
+codeunit 50100 D
+{
+#if X
+#if A
+    trigger OnRun()
+#if B
+#endif
+    var
+        V: Integer;
+#else
+    trigger OnRun()
+#endif
+#else
+    trigger OnRun()
+#endif
+    begin
+    end;
+}
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (preproc_split_trigger_preamble
+        (preproc_if
+          (preproc_open)
+          condition: (identifier))
+        (preproc_conditional_trigger_preamble
+          (preproc_if
+            (preproc_open)
+            condition: (identifier))
+          (trigger_keyword)
+          name: (identifier)
+          (preproc_pragma_only
+            (preproc_if
+              (preproc_open)
+              condition: (identifier))
+            (preproc_endif
+              (preproc_close)))
+          (var_section
+            (var_keyword)
+            body: (var_body
+              (variable_declaration
+                name: (identifier)
+                type: (type_specification
+                  (basic_type)))))
+          (preproc_else)
+          (trigger_keyword)
+          name: (identifier)
+          (preproc_endif
+            (preproc_close)))
+        (preproc_else)
+        (trigger_keyword)
+        name: (identifier)
+        (preproc_endif
+          (preproc_close))
+        body: (code_block
+          (begin_keyword)
+          (end_keyword))))))
+
+================================================================================
+Item 102 re-review: an empty group right after the header in a split procedure preamble arm -- preproc_pragma_only
+================================================================================
+codeunit 50100 D
+{
+#if A
+    procedure P()
+#if B
+#endif
+#else
+    procedure P(I: Integer)
+#endif
+    begin
+    end;
+}
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (preproc_split_procedure_preamble
+        (preproc_if
+          (preproc_open)
+          condition: (identifier))
+        (procedure_keyword)
+        name: (identifier)
+        (preproc_pragma_only
+          (preproc_if
+            (preproc_open)
+            condition: (identifier))
+          (preproc_endif
+            (preproc_close)))
+        (preproc_else)
+        (procedure_keyword)
+        name: (identifier)
+        parameters: (parameter_list
+          (parameter
+            name: (identifier)
+            type: (type_specification
+              (basic_type))))
+        (preproc_endif
+          (preproc_close))
+        body: (code_block
+          (begin_keyword)
+          (end_keyword))))))
+
+================================================================================
+Item 102 re-review: an empty group right after the header in a split trigger preamble arm -- preproc_pragma_only
+================================================================================
+codeunit 50100 D
+{
+#if A
+    trigger OnRun()
+#if B
+#endif
+#else
+    trigger OnRun()
+#endif
+    begin
+    end;
+}
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (preproc_split_trigger_preamble
+        (preproc_if
+          (preproc_open)
+          condition: (identifier))
+        (trigger_keyword)
+        name: (identifier)
+        (preproc_pragma_only
+          (preproc_if
+            (preproc_open)
+            condition: (identifier))
+          (preproc_endif
+            (preproc_close)))
+        (preproc_else)
+        (trigger_keyword)
+        name: (identifier)
+        (preproc_endif
+          (preproc_close))
+        body: (code_block
+          (begin_keyword)
+          (end_keyword))))))
+
+================================================================================
+Item 102 re-review: an empty group then a var group in a split procedure preamble arm
+================================================================================
+codeunit 50100 D
+{
+#if A
+    procedure P()
+#if B
+#endif
+#if C
+    var
+        V: Integer;
+#endif
+#else
+    procedure P(I: Integer)
+#endif
+    begin
+    end;
+}
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (preproc_split_procedure_preamble
+        (preproc_if
+          (preproc_open)
+          condition: (identifier))
+        (procedure_keyword)
+        name: (identifier)
+        (preproc_pragma_only
+          (preproc_if
+            (preproc_open)
+            condition: (identifier))
+          (preproc_endif
+            (preproc_close)))
+        (preproc_conditional_var_block
+          (preproc_if
+            (preproc_open)
+            condition: (identifier))
+          (var_section
+            (var_keyword)
+            body: (var_body
+              (variable_declaration
+                name: (identifier)
+                type: (type_specification
+                  (basic_type)))))
+          (preproc_endif
+            (preproc_close)))
+        (preproc_else)
+        (procedure_keyword)
+        name: (identifier)
+        parameters: (parameter_list
+          (parameter
+            name: (identifier)
+            type: (type_specification
+              (basic_type))))
+        (preproc_endif
+          (preproc_close))
+        body: (code_block
+          (begin_keyword)
+          (end_keyword))))))
+
+================================================================================
+Item 102 re-review: an empty group then a var section in a split procedure preamble arm (ERRORed on every build before)
+================================================================================
+codeunit 50100 D
+{
+#if A
+    procedure P()
+#if B
+#endif
+    var
+        V: Integer;
+#else
+    procedure P(I: Integer)
+#endif
+    begin
+    end;
+}
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (preproc_split_procedure_preamble
+        (preproc_if
+          (preproc_open)
+          condition: (identifier))
+        (procedure_keyword)
+        name: (identifier)
+        (preproc_pragma_only
+          (preproc_if
+            (preproc_open)
+            condition: (identifier))
+          (preproc_endif
+            (preproc_close)))
+        (var_section
+          (var_keyword)
+          body: (var_body
+            (variable_declaration
+              name: (identifier)
+              type: (type_specification
+                (basic_type)))))
+        (preproc_else)
+        (procedure_keyword)
+        name: (identifier)
+        parameters: (parameter_list
+          (parameter
+            name: (identifier)
+            type: (type_specification
+              (basic_type))))
+        (preproc_endif
+          (preproc_close))
+        body: (code_block
+          (begin_keyword)
+          (end_keyword))))))
+
+================================================================================
+Item 102 re-review: an empty group then a var section in a split trigger preamble arm
+================================================================================
+codeunit 50100 D
+{
+#if A
+    trigger OnRun()
+#if B
+#endif
+    var
+        V: Integer;
+#else
+    trigger OnRun()
+#endif
+    begin
+    end;
+}
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (preproc_split_trigger_preamble
+        (preproc_if
+          (preproc_open)
+          condition: (identifier))
+        (trigger_keyword)
+        name: (identifier)
+        (preproc_pragma_only
+          (preproc_if
+            (preproc_open)
+            condition: (identifier))
+          (preproc_endif
+            (preproc_close)))
+        (var_section
+          (var_keyword)
+          body: (var_body
+            (variable_declaration
+              name: (identifier)
+              type: (type_specification
+                (basic_type)))))
+        (preproc_else)
+        (trigger_keyword)
+        name: (identifier)
+        (preproc_endif
+          (preproc_close))
+        body: (code_block
+          (begin_keyword)
+          (end_keyword))))))

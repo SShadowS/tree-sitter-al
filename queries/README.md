@@ -12,8 +12,9 @@ editors that use the other three load them by name.
 | `folds.scm` | `@fold` | code folding |
 | `textobjects.scm` | `@function.inside` / `.around`, `@class.inside`, `@block.inside`, `@comment.inside`, ... | structural selection and motion |
 
-Read a keyword's text from the keyword node itself (`(if_keyword) @keyword`), never from its anonymous child: the
-two external keywords `begin_keyword` and `end_keyword` have no child (CLAUDE.md, "Keyword Architecture").
+Read a keyword's text from the keyword node itself (`(if_keyword) @keyword`), never from its anonymous child:
+`begin_keyword` (an external token) and `end_keyword` (a grammar token since state review C3, unreleased; still a childless leaf) have no
+child (CLAUDE.md, "Keyword Architecture").
 
 ## `#if` inside expressions
 

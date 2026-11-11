@@ -1,0 +1,1616 @@
+================================================================================
+Item 102: empty #if/#elif/#else group between the header and begin (local-proc) -- preproc_pragma_only, not a var-less var block
+================================================================================
+codeunit 50100 C
+{
+    local procedure P(A: Integer): Boolean
+#if X
+#elif Y
+#else
+#endif
+    begin
+    end;
+}
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (procedure
+        modifier: (procedure_modifier
+          (local_keyword))
+        (procedure_keyword)
+        name: (identifier)
+        parameters: (parameter_list
+          (parameter
+            name: (identifier)
+            type: (type_specification
+              (basic_type))))
+        return_type: (type_specification
+          (basic_type))
+        (preproc_pragma_only
+          (preproc_if
+            (preproc_open)
+            condition: (identifier))
+          (preproc_elif
+            condition: (identifier))
+          (preproc_else)
+          (preproc_endif
+            (preproc_close)))
+        body: (code_block
+          (begin_keyword)
+          (end_keyword))))))
+
+================================================================================
+Item 102: nested empty group between the header and begin (local-proc) -- preproc_pragma_only, not a var-less var block
+================================================================================
+codeunit 50100 C
+{
+    local procedure P(A: Integer): Boolean
+#if X
+#if Y
+#endif
+#endif
+    begin
+    end;
+}
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (procedure
+        modifier: (procedure_modifier
+          (local_keyword))
+        (procedure_keyword)
+        name: (identifier)
+        parameters: (parameter_list
+          (parameter
+            name: (identifier)
+            type: (type_specification
+              (basic_type))))
+        return_type: (type_specification
+          (basic_type))
+        (preproc_pragma_only
+          (preproc_if
+            (preproc_open)
+            condition: (identifier))
+          (preproc_pragma_only
+            (preproc_if
+              (preproc_open)
+              condition: (identifier))
+            (preproc_endif
+              (preproc_close)))
+          (preproc_endif
+            (preproc_close)))
+        body: (code_block
+          (begin_keyword)
+          (end_keyword))))))
+
+================================================================================
+Item 102: nested empty group between the header and var (local-proc) -- preproc_pragma_only, not a var-less var block
+================================================================================
+codeunit 50100 C
+{
+    local procedure P(A: Integer): Boolean
+#if X
+#if Y
+#endif
+#endif
+    var
+        V: Integer;
+    begin
+    end;
+}
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (procedure
+        modifier: (procedure_modifier
+          (local_keyword))
+        (procedure_keyword)
+        name: (identifier)
+        parameters: (parameter_list
+          (parameter
+            name: (identifier)
+            type: (type_specification
+              (basic_type))))
+        return_type: (type_specification
+          (basic_type))
+        (preproc_pragma_only
+          (preproc_if
+            (preproc_open)
+            condition: (identifier))
+          (preproc_pragma_only
+            (preproc_if
+              (preproc_open)
+              condition: (identifier))
+            (preproc_endif
+              (preproc_close)))
+          (preproc_endif
+            (preproc_close)))
+        (var_section
+          (var_keyword)
+          body: (var_body
+            (variable_declaration
+              name: (identifier)
+              type: (type_specification
+                (basic_type)))))
+        body: (code_block
+          (begin_keyword)
+          (end_keyword))))))
+
+================================================================================
+Item 102: empty #if/#elif/#else group between the header and begin (proc-attr) -- preproc_pragma_only, not a var-less var block
+================================================================================
+codeunit 50100 C
+{
+    [Scope('OnPrem')]
+    procedure P()
+#if X
+#elif Y
+#else
+#endif
+    begin
+    end;
+}
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (attribute_item
+        attribute: (attribute_content
+          name: (identifier)
+          arguments: (attribute_arguments
+            (attribute_argument_list
+              (string_literal)))))
+      (procedure
+        (procedure_keyword)
+        name: (identifier)
+        (preproc_pragma_only
+          (preproc_if
+            (preproc_open)
+            condition: (identifier))
+          (preproc_elif
+            condition: (identifier))
+          (preproc_else)
+          (preproc_endif
+            (preproc_close)))
+        body: (code_block
+          (begin_keyword)
+          (end_keyword))))))
+
+================================================================================
+Item 102: nested empty group between the header and begin (proc-attr) -- preproc_pragma_only, not a var-less var block
+================================================================================
+codeunit 50100 C
+{
+    [Scope('OnPrem')]
+    procedure P()
+#if X
+#if Y
+#endif
+#endif
+    begin
+    end;
+}
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (attribute_item
+        attribute: (attribute_content
+          name: (identifier)
+          arguments: (attribute_arguments
+            (attribute_argument_list
+              (string_literal)))))
+      (procedure
+        (procedure_keyword)
+        name: (identifier)
+        (preproc_pragma_only
+          (preproc_if
+            (preproc_open)
+            condition: (identifier))
+          (preproc_pragma_only
+            (preproc_if
+              (preproc_open)
+              condition: (identifier))
+            (preproc_endif
+              (preproc_close)))
+          (preproc_endif
+            (preproc_close)))
+        body: (code_block
+          (begin_keyword)
+          (end_keyword))))))
+
+================================================================================
+Item 102: nested empty group between the header and var (proc-attr) -- preproc_pragma_only, not a var-less var block
+================================================================================
+codeunit 50100 C
+{
+    [Scope('OnPrem')]
+    procedure P()
+#if X
+#if Y
+#endif
+#endif
+    var
+        V: Integer;
+    begin
+    end;
+}
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (attribute_item
+        attribute: (attribute_content
+          name: (identifier)
+          arguments: (attribute_arguments
+            (attribute_argument_list
+              (string_literal)))))
+      (procedure
+        (procedure_keyword)
+        name: (identifier)
+        (preproc_pragma_only
+          (preproc_if
+            (preproc_open)
+            condition: (identifier))
+          (preproc_pragma_only
+            (preproc_if
+              (preproc_open)
+              condition: (identifier))
+            (preproc_endif
+              (preproc_close)))
+          (preproc_endif
+            (preproc_close)))
+        (var_section
+          (var_keyword)
+          body: (var_body
+            (variable_declaration
+              name: (identifier)
+              type: (type_specification
+                (basic_type)))))
+        body: (code_block
+          (begin_keyword)
+          (end_keyword))))))
+
+================================================================================
+Item 102: empty #if/#elif/#else group between the header and begin (proc-named-ret) -- preproc_pragma_only, not a var-less var block
+================================================================================
+codeunit 50100 C
+{
+    procedure P() R: Integer
+#if X
+#elif Y
+#else
+#endif
+    begin
+    end;
+}
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (procedure
+        (procedure_keyword)
+        name: (identifier)
+        return_value: (identifier)
+        return_type: (type_specification
+          (basic_type))
+        (preproc_pragma_only
+          (preproc_if
+            (preproc_open)
+            condition: (identifier))
+          (preproc_elif
+            condition: (identifier))
+          (preproc_else)
+          (preproc_endif
+            (preproc_close)))
+        body: (code_block
+          (begin_keyword)
+          (end_keyword))))))
+
+================================================================================
+Item 102: nested empty group between the header and begin (proc-named-ret) -- preproc_pragma_only, not a var-less var block
+================================================================================
+codeunit 50100 C
+{
+    procedure P() R: Integer
+#if X
+#if Y
+#endif
+#endif
+    begin
+    end;
+}
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (procedure
+        (procedure_keyword)
+        name: (identifier)
+        return_value: (identifier)
+        return_type: (type_specification
+          (basic_type))
+        (preproc_pragma_only
+          (preproc_if
+            (preproc_open)
+            condition: (identifier))
+          (preproc_pragma_only
+            (preproc_if
+              (preproc_open)
+              condition: (identifier))
+            (preproc_endif
+              (preproc_close)))
+          (preproc_endif
+            (preproc_close)))
+        body: (code_block
+          (begin_keyword)
+          (end_keyword))))))
+
+================================================================================
+Item 102: nested empty group between the header and var (proc-named-ret) -- preproc_pragma_only, not a var-less var block
+================================================================================
+codeunit 50100 C
+{
+    procedure P() R: Integer
+#if X
+#if Y
+#endif
+#endif
+    var
+        V: Integer;
+    begin
+    end;
+}
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (procedure
+        (procedure_keyword)
+        name: (identifier)
+        return_value: (identifier)
+        return_type: (type_specification
+          (basic_type))
+        (preproc_pragma_only
+          (preproc_if
+            (preproc_open)
+            condition: (identifier))
+          (preproc_pragma_only
+            (preproc_if
+              (preproc_open)
+              condition: (identifier))
+            (preproc_endif
+              (preproc_close)))
+          (preproc_endif
+            (preproc_close)))
+        (var_section
+          (var_keyword)
+          body: (var_body
+            (variable_declaration
+              name: (identifier)
+              type: (type_specification
+                (basic_type)))))
+        body: (code_block
+          (begin_keyword)
+          (end_keyword))))))
+
+================================================================================
+Item 102: empty #if/#elif/#else group between the header and begin (proc-option-ret) -- preproc_pragma_only, not a var-less var block
+================================================================================
+codeunit 50100 C
+{
+    procedure G(): Option A, B
+#if X
+#elif Y
+#else
+#endif
+    begin
+    end;
+}
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (procedure
+        (procedure_keyword)
+        name: (identifier)
+        return_type: (type_specification
+          (option_type
+            (option_keyword)
+            (option_member_list
+              (option_member
+                (identifier))
+              (option_member
+                (identifier)))))
+        (preproc_pragma_only
+          (preproc_if
+            (preproc_open)
+            condition: (identifier))
+          (preproc_elif
+            condition: (identifier))
+          (preproc_else)
+          (preproc_endif
+            (preproc_close)))
+        body: (code_block
+          (begin_keyword)
+          (end_keyword))))))
+
+================================================================================
+Item 102: nested empty group between the header and begin (proc-option-ret) -- preproc_pragma_only, not a var-less var block
+================================================================================
+codeunit 50100 C
+{
+    procedure G(): Option A, B
+#if X
+#if Y
+#endif
+#endif
+    begin
+    end;
+}
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (procedure
+        (procedure_keyword)
+        name: (identifier)
+        return_type: (type_specification
+          (option_type
+            (option_keyword)
+            (option_member_list
+              (option_member
+                (identifier))
+              (option_member
+                (identifier)))))
+        (preproc_pragma_only
+          (preproc_if
+            (preproc_open)
+            condition: (identifier))
+          (preproc_pragma_only
+            (preproc_if
+              (preproc_open)
+              condition: (identifier))
+            (preproc_endif
+              (preproc_close)))
+          (preproc_endif
+            (preproc_close)))
+        body: (code_block
+          (begin_keyword)
+          (end_keyword))))))
+
+================================================================================
+Item 102: nested empty group between the header and var (proc-option-ret) -- preproc_pragma_only, not a var-less var block
+================================================================================
+codeunit 50100 C
+{
+    procedure G(): Option A, B
+#if X
+#if Y
+#endif
+#endif
+    var
+        V: Integer;
+    begin
+    end;
+}
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (procedure
+        (procedure_keyword)
+        name: (identifier)
+        return_type: (type_specification
+          (option_type
+            (option_keyword)
+            (option_member_list
+              (option_member
+                (identifier))
+              (option_member
+                (identifier)))))
+        (preproc_pragma_only
+          (preproc_if
+            (preproc_open)
+            condition: (identifier))
+          (preproc_pragma_only
+            (preproc_if
+              (preproc_open)
+              condition: (identifier))
+            (preproc_endif
+              (preproc_close)))
+          (preproc_endif
+            (preproc_close)))
+        (var_section
+          (var_keyword)
+          body: (var_body
+            (variable_declaration
+              name: (identifier)
+              type: (type_specification
+                (basic_type)))))
+        body: (code_block
+          (begin_keyword)
+          (end_keyword))))))
+
+================================================================================
+Item 102: empty #if/#elif/#else group between the header and begin (proc-option-ret1) -- preproc_pragma_only, not a var-less var block
+================================================================================
+codeunit 50100 C
+{
+    procedure G(): Option A
+#if X
+#elif Y
+#else
+#endif
+    begin
+    end;
+}
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (procedure
+        (procedure_keyword)
+        name: (identifier)
+        return_type: (type_specification
+          (option_type
+            (option_keyword)
+            (option_member_list
+              (option_member
+                (identifier)))))
+        (preproc_pragma_only
+          (preproc_if
+            (preproc_open)
+            condition: (identifier))
+          (preproc_elif
+            condition: (identifier))
+          (preproc_else)
+          (preproc_endif
+            (preproc_close)))
+        body: (code_block
+          (begin_keyword)
+          (end_keyword))))))
+
+================================================================================
+Item 102: nested empty group between the header and begin (proc-option-ret1) -- preproc_pragma_only, not a var-less var block
+================================================================================
+codeunit 50100 C
+{
+    procedure G(): Option A
+#if X
+#if Y
+#endif
+#endif
+    begin
+    end;
+}
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (procedure
+        (procedure_keyword)
+        name: (identifier)
+        return_type: (type_specification
+          (option_type
+            (option_keyword)
+            (option_member_list
+              (option_member
+                (identifier)))))
+        (preproc_pragma_only
+          (preproc_if
+            (preproc_open)
+            condition: (identifier))
+          (preproc_pragma_only
+            (preproc_if
+              (preproc_open)
+              condition: (identifier))
+            (preproc_endif
+              (preproc_close)))
+          (preproc_endif
+            (preproc_close)))
+        body: (code_block
+          (begin_keyword)
+          (end_keyword))))))
+
+================================================================================
+Item 102: nested empty group between the header and var (proc-option-ret1) -- preproc_pragma_only, not a var-less var block
+================================================================================
+codeunit 50100 C
+{
+    procedure G(): Option A
+#if X
+#if Y
+#endif
+#endif
+    var
+        V: Integer;
+    begin
+    end;
+}
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (procedure
+        (procedure_keyword)
+        name: (identifier)
+        return_type: (type_specification
+          (option_type
+            (option_keyword)
+            (option_member_list
+              (option_member
+                (identifier)))))
+        (preproc_pragma_only
+          (preproc_if
+            (preproc_open)
+            condition: (identifier))
+          (preproc_pragma_only
+            (preproc_if
+              (preproc_open)
+              condition: (identifier))
+            (preproc_endif
+              (preproc_close)))
+          (preproc_endif
+            (preproc_close)))
+        (var_section
+          (var_keyword)
+          body: (var_body
+            (variable_declaration
+              name: (identifier)
+              type: (type_specification
+                (basic_type)))))
+        body: (code_block
+          (begin_keyword)
+          (end_keyword))))))
+
+================================================================================
+Item 102: empty #if/#elif/#else group between the header and begin (proc-ret) -- preproc_pragma_only, not a var-less var block
+================================================================================
+codeunit 50100 C
+{
+    procedure P(): Integer
+#if X
+#elif Y
+#else
+#endif
+    begin
+    end;
+}
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (procedure
+        (procedure_keyword)
+        name: (identifier)
+        return_type: (type_specification
+          (basic_type))
+        (preproc_pragma_only
+          (preproc_if
+            (preproc_open)
+            condition: (identifier))
+          (preproc_elif
+            condition: (identifier))
+          (preproc_else)
+          (preproc_endif
+            (preproc_close)))
+        body: (code_block
+          (begin_keyword)
+          (end_keyword))))))
+
+================================================================================
+Item 102: nested empty group between the header and begin (proc-ret) -- preproc_pragma_only, not a var-less var block
+================================================================================
+codeunit 50100 C
+{
+    procedure P(): Integer
+#if X
+#if Y
+#endif
+#endif
+    begin
+    end;
+}
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (procedure
+        (procedure_keyword)
+        name: (identifier)
+        return_type: (type_specification
+          (basic_type))
+        (preproc_pragma_only
+          (preproc_if
+            (preproc_open)
+            condition: (identifier))
+          (preproc_pragma_only
+            (preproc_if
+              (preproc_open)
+              condition: (identifier))
+            (preproc_endif
+              (preproc_close)))
+          (preproc_endif
+            (preproc_close)))
+        body: (code_block
+          (begin_keyword)
+          (end_keyword))))))
+
+================================================================================
+Item 102: nested empty group between the header and var (proc-ret) -- preproc_pragma_only, not a var-less var block
+================================================================================
+codeunit 50100 C
+{
+    procedure P(): Integer
+#if X
+#if Y
+#endif
+#endif
+    var
+        V: Integer;
+    begin
+    end;
+}
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (procedure
+        (procedure_keyword)
+        name: (identifier)
+        return_type: (type_specification
+          (basic_type))
+        (preproc_pragma_only
+          (preproc_if
+            (preproc_open)
+            condition: (identifier))
+          (preproc_pragma_only
+            (preproc_if
+              (preproc_open)
+              condition: (identifier))
+            (preproc_endif
+              (preproc_close)))
+          (preproc_endif
+            (preproc_close)))
+        (var_section
+          (var_keyword)
+          body: (var_body
+            (variable_declaration
+              name: (identifier)
+              type: (type_specification
+                (basic_type)))))
+        body: (code_block
+          (begin_keyword)
+          (end_keyword))))))
+
+================================================================================
+Item 102: empty #if/#elif/#else group between the header and begin (proc-semi) -- preproc_pragma_only, not a var-less var block
+================================================================================
+codeunit 50100 C
+{
+    procedure P();
+#if X
+#elif Y
+#else
+#endif
+    begin
+    end;
+}
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (procedure
+        (procedure_keyword)
+        name: (identifier)
+        (preproc_pragma_only
+          (preproc_if
+            (preproc_open)
+            condition: (identifier))
+          (preproc_elif
+            condition: (identifier))
+          (preproc_else)
+          (preproc_endif
+            (preproc_close)))
+        body: (code_block
+          (begin_keyword)
+          (end_keyword))))))
+
+================================================================================
+Item 102: nested empty group between the header and begin (proc-semi) -- preproc_pragma_only, not a var-less var block
+================================================================================
+codeunit 50100 C
+{
+    procedure P();
+#if X
+#if Y
+#endif
+#endif
+    begin
+    end;
+}
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (procedure
+        (procedure_keyword)
+        name: (identifier)
+        (preproc_pragma_only
+          (preproc_if
+            (preproc_open)
+            condition: (identifier))
+          (preproc_pragma_only
+            (preproc_if
+              (preproc_open)
+              condition: (identifier))
+            (preproc_endif
+              (preproc_close)))
+          (preproc_endif
+            (preproc_close)))
+        body: (code_block
+          (begin_keyword)
+          (end_keyword))))))
+
+================================================================================
+Item 102: nested empty group between the header and var (proc-semi) -- preproc_pragma_only, not a var-less var block
+================================================================================
+codeunit 50100 C
+{
+    procedure P();
+#if X
+#if Y
+#endif
+#endif
+    var
+        V: Integer;
+    begin
+    end;
+}
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (procedure
+        (procedure_keyword)
+        name: (identifier)
+        (preproc_pragma_only
+          (preproc_if
+            (preproc_open)
+            condition: (identifier))
+          (preproc_pragma_only
+            (preproc_if
+              (preproc_open)
+              condition: (identifier))
+            (preproc_endif
+              (preproc_close)))
+          (preproc_endif
+            (preproc_close)))
+        (var_section
+          (var_keyword)
+          body: (var_body
+            (variable_declaration
+              name: (identifier)
+              type: (type_specification
+                (basic_type)))))
+        body: (code_block
+          (begin_keyword)
+          (end_keyword))))))
+
+================================================================================
+Item 102: empty #if/#elif/#else group between the header and begin (proc) -- preproc_pragma_only, not a var-less var block
+================================================================================
+codeunit 50100 C
+{
+    procedure P()
+#if X
+#elif Y
+#else
+#endif
+    begin
+    end;
+}
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (procedure
+        (procedure_keyword)
+        name: (identifier)
+        (preproc_pragma_only
+          (preproc_if
+            (preproc_open)
+            condition: (identifier))
+          (preproc_elif
+            condition: (identifier))
+          (preproc_else)
+          (preproc_endif
+            (preproc_close)))
+        body: (code_block
+          (begin_keyword)
+          (end_keyword))))))
+
+================================================================================
+Item 102: nested empty group between the header and begin (proc) -- preproc_pragma_only, not a var-less var block
+================================================================================
+codeunit 50100 C
+{
+    procedure P()
+#if X
+#if Y
+#endif
+#endif
+    begin
+    end;
+}
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (procedure
+        (procedure_keyword)
+        name: (identifier)
+        (preproc_pragma_only
+          (preproc_if
+            (preproc_open)
+            condition: (identifier))
+          (preproc_pragma_only
+            (preproc_if
+              (preproc_open)
+              condition: (identifier))
+            (preproc_endif
+              (preproc_close)))
+          (preproc_endif
+            (preproc_close)))
+        body: (code_block
+          (begin_keyword)
+          (end_keyword))))))
+
+================================================================================
+Item 102: nested empty group between the header and var (proc) -- preproc_pragma_only, not a var-less var block
+================================================================================
+codeunit 50100 C
+{
+    procedure P()
+#if X
+#if Y
+#endif
+#endif
+    var
+        V: Integer;
+    begin
+    end;
+}
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (procedure
+        (procedure_keyword)
+        name: (identifier)
+        (preproc_pragma_only
+          (preproc_if
+            (preproc_open)
+            condition: (identifier))
+          (preproc_pragma_only
+            (preproc_if
+              (preproc_open)
+              condition: (identifier))
+            (preproc_endif
+              (preproc_close)))
+          (preproc_endif
+            (preproc_close)))
+        (var_section
+          (var_keyword)
+          body: (var_body
+            (variable_declaration
+              name: (identifier)
+              type: (type_specification
+                (basic_type)))))
+        body: (code_block
+          (begin_keyword)
+          (end_keyword))))))
+
+================================================================================
+Item 102: empty #if/#elif/#else group between the header and begin (split-header-ret) -- preproc_pragma_only, not a var-less var block
+================================================================================
+codeunit 50100 C
+{
+#if X
+    procedure P(): Integer
+#else
+    procedure P(): Decimal
+#endif
+#if X
+#elif Y
+#else
+#endif
+    begin
+    end;
+}
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (preproc_split_procedure
+        (preproc_if
+          (preproc_open)
+          condition: (identifier))
+        (procedure_keyword)
+        name: (identifier)
+        return_type: (type_specification
+          (basic_type))
+        (preproc_else)
+        (procedure_keyword)
+        name: (identifier)
+        return_type: (type_specification
+          (basic_type))
+        (preproc_endif
+          (preproc_close))
+        (preproc_pragma_only
+          (preproc_if
+            (preproc_open)
+            condition: (identifier))
+          (preproc_elif
+            condition: (identifier))
+          (preproc_else)
+          (preproc_endif
+            (preproc_close)))
+        body: (code_block
+          (begin_keyword)
+          (end_keyword))))))
+
+================================================================================
+Item 102: nested empty group between the header and begin (split-header-ret) -- preproc_pragma_only, not a var-less var block
+================================================================================
+codeunit 50100 C
+{
+#if X
+    procedure P(): Integer
+#else
+    procedure P(): Decimal
+#endif
+#if X
+#if Y
+#endif
+#endif
+    begin
+    end;
+}
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (preproc_split_procedure
+        (preproc_if
+          (preproc_open)
+          condition: (identifier))
+        (procedure_keyword)
+        name: (identifier)
+        return_type: (type_specification
+          (basic_type))
+        (preproc_else)
+        (procedure_keyword)
+        name: (identifier)
+        return_type: (type_specification
+          (basic_type))
+        (preproc_endif
+          (preproc_close))
+        (preproc_pragma_only
+          (preproc_if
+            (preproc_open)
+            condition: (identifier))
+          (preproc_pragma_only
+            (preproc_if
+              (preproc_open)
+              condition: (identifier))
+            (preproc_endif
+              (preproc_close)))
+          (preproc_endif
+            (preproc_close)))
+        body: (code_block
+          (begin_keyword)
+          (end_keyword))))))
+
+================================================================================
+Item 102: nested empty group between the header and var (split-header-ret) -- preproc_pragma_only, not a var-less var block
+================================================================================
+codeunit 50100 C
+{
+#if X
+    procedure P(): Integer
+#else
+    procedure P(): Decimal
+#endif
+#if X
+#if Y
+#endif
+#endif
+    var
+        V: Integer;
+    begin
+    end;
+}
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (preproc_split_procedure
+        (preproc_if
+          (preproc_open)
+          condition: (identifier))
+        (procedure_keyword)
+        name: (identifier)
+        return_type: (type_specification
+          (basic_type))
+        (preproc_else)
+        (procedure_keyword)
+        name: (identifier)
+        return_type: (type_specification
+          (basic_type))
+        (preproc_endif
+          (preproc_close))
+        (preproc_pragma_only
+          (preproc_if
+            (preproc_open)
+            condition: (identifier))
+          (preproc_pragma_only
+            (preproc_if
+              (preproc_open)
+              condition: (identifier))
+            (preproc_endif
+              (preproc_close)))
+          (preproc_endif
+            (preproc_close)))
+        (var_section
+          (var_keyword)
+          body: (var_body
+            (variable_declaration
+              name: (identifier)
+              type: (type_specification
+                (basic_type)))))
+        body: (code_block
+          (begin_keyword)
+          (end_keyword))))))
+
+================================================================================
+Item 102: empty #if/#elif/#else group between the header and begin (split-header) -- preproc_pragma_only, not a var-less var block
+================================================================================
+codeunit 50100 C
+{
+#if X
+    procedure P(A: Integer)
+#else
+    procedure P(A: Integer; B: Integer)
+#endif
+#if X
+#elif Y
+#else
+#endif
+    begin
+    end;
+}
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (preproc_split_procedure
+        (preproc_if
+          (preproc_open)
+          condition: (identifier))
+        (procedure_keyword)
+        name: (identifier)
+        parameters: (parameter_list
+          (parameter
+            name: (identifier)
+            type: (type_specification
+              (basic_type))))
+        (preproc_else)
+        (procedure_keyword)
+        name: (identifier)
+        parameters: (parameter_list
+          (parameter
+            name: (identifier)
+            type: (type_specification
+              (basic_type)))
+          (parameter
+            name: (identifier)
+            type: (type_specification
+              (basic_type))))
+        (preproc_endif
+          (preproc_close))
+        (preproc_pragma_only
+          (preproc_if
+            (preproc_open)
+            condition: (identifier))
+          (preproc_elif
+            condition: (identifier))
+          (preproc_else)
+          (preproc_endif
+            (preproc_close)))
+        body: (code_block
+          (begin_keyword)
+          (end_keyword))))))
+
+================================================================================
+Item 102: nested empty group between the header and begin (split-header) -- preproc_pragma_only, not a var-less var block
+================================================================================
+codeunit 50100 C
+{
+#if X
+    procedure P(A: Integer)
+#else
+    procedure P(A: Integer; B: Integer)
+#endif
+#if X
+#if Y
+#endif
+#endif
+    begin
+    end;
+}
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (preproc_split_procedure
+        (preproc_if
+          (preproc_open)
+          condition: (identifier))
+        (procedure_keyword)
+        name: (identifier)
+        parameters: (parameter_list
+          (parameter
+            name: (identifier)
+            type: (type_specification
+              (basic_type))))
+        (preproc_else)
+        (procedure_keyword)
+        name: (identifier)
+        parameters: (parameter_list
+          (parameter
+            name: (identifier)
+            type: (type_specification
+              (basic_type)))
+          (parameter
+            name: (identifier)
+            type: (type_specification
+              (basic_type))))
+        (preproc_endif
+          (preproc_close))
+        (preproc_pragma_only
+          (preproc_if
+            (preproc_open)
+            condition: (identifier))
+          (preproc_pragma_only
+            (preproc_if
+              (preproc_open)
+              condition: (identifier))
+            (preproc_endif
+              (preproc_close)))
+          (preproc_endif
+            (preproc_close)))
+        body: (code_block
+          (begin_keyword)
+          (end_keyword))))))
+
+================================================================================
+Item 102: nested empty group between the header and var (split-header) -- preproc_pragma_only, not a var-less var block
+================================================================================
+codeunit 50100 C
+{
+#if X
+    procedure P(A: Integer)
+#else
+    procedure P(A: Integer; B: Integer)
+#endif
+#if X
+#if Y
+#endif
+#endif
+    var
+        V: Integer;
+    begin
+    end;
+}
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (preproc_split_procedure
+        (preproc_if
+          (preproc_open)
+          condition: (identifier))
+        (procedure_keyword)
+        name: (identifier)
+        parameters: (parameter_list
+          (parameter
+            name: (identifier)
+            type: (type_specification
+              (basic_type))))
+        (preproc_else)
+        (procedure_keyword)
+        name: (identifier)
+        parameters: (parameter_list
+          (parameter
+            name: (identifier)
+            type: (type_specification
+              (basic_type)))
+          (parameter
+            name: (identifier)
+            type: (type_specification
+              (basic_type))))
+        (preproc_endif
+          (preproc_close))
+        (preproc_pragma_only
+          (preproc_if
+            (preproc_open)
+            condition: (identifier))
+          (preproc_pragma_only
+            (preproc_if
+              (preproc_open)
+              condition: (identifier))
+            (preproc_endif
+              (preproc_close)))
+          (preproc_endif
+            (preproc_close)))
+        (var_section
+          (var_keyword)
+          body: (var_body
+            (variable_declaration
+              name: (identifier)
+              type: (type_specification
+                (basic_type)))))
+        body: (code_block
+          (begin_keyword)
+          (end_keyword))))))
+
+================================================================================
+Item 102: empty #if/#elif/#else group between the header and begin (trigger) -- preproc_pragma_only, not a var-less var block
+================================================================================
+codeunit 50100 C
+{
+    trigger OnRun()
+#if X
+#elif Y
+#else
+#endif
+    begin
+    end;
+}
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (trigger_declaration
+        (trigger_keyword)
+        name: (identifier)
+        (preproc_pragma_only
+          (preproc_if
+            (preproc_open)
+            condition: (identifier))
+          (preproc_elif
+            condition: (identifier))
+          (preproc_else)
+          (preproc_endif
+            (preproc_close)))
+        body: (code_block
+          (begin_keyword)
+          (end_keyword))))))
+
+================================================================================
+Item 102: nested empty group between the header and begin (trigger) -- preproc_pragma_only, not a var-less var block
+================================================================================
+codeunit 50100 C
+{
+    trigger OnRun()
+#if X
+#if Y
+#endif
+#endif
+    begin
+    end;
+}
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (trigger_declaration
+        (trigger_keyword)
+        name: (identifier)
+        (preproc_pragma_only
+          (preproc_if
+            (preproc_open)
+            condition: (identifier))
+          (preproc_pragma_only
+            (preproc_if
+              (preproc_open)
+              condition: (identifier))
+            (preproc_endif
+              (preproc_close)))
+          (preproc_endif
+            (preproc_close)))
+        body: (code_block
+          (begin_keyword)
+          (end_keyword))))))
+
+================================================================================
+Item 102: nested empty group between the header and var (trigger) -- preproc_pragma_only, not a var-less var block
+================================================================================
+codeunit 50100 C
+{
+    trigger OnRun()
+#if X
+#if Y
+#endif
+#endif
+    var
+        V: Integer;
+    begin
+    end;
+}
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (trigger_declaration
+        (trigger_keyword)
+        name: (identifier)
+        (preproc_pragma_only
+          (preproc_if
+            (preproc_open)
+            condition: (identifier))
+          (preproc_pragma_only
+            (preproc_if
+              (preproc_open)
+              condition: (identifier))
+            (preproc_endif
+              (preproc_close)))
+          (preproc_endif
+            (preproc_close)))
+        (var_section
+          (var_keyword)
+          body: (var_body
+            (variable_declaration
+              name: (identifier)
+              type: (type_specification
+                (basic_type)))))
+        body: (code_block
+          (begin_keyword)
+          (end_keyword))))))

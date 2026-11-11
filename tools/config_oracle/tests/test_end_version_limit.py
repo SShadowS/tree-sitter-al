@@ -1,8 +1,11 @@
 """Issues #40/#41: an if / else-if chain whose blocks each hold a block opened in a `#if` arm
 (shape A) or a whole `if ... else begin ... end;` inside `#if` (shape B, 8 blocks) used to exceed
 tree-sitter's MAX_VERSION_COUNT / MAX_LINK_COUNT: one parse version per block read `end;` as a call
-of a name `end`, and the right version was dropped (ERROR over the procedure). The scanner now kills
-that version at once (`end` where BEGIN_KEYWORD is valid and END_KEYWORD is not).
+of a name `end`, and the right version was dropped (ERROR over the procedure). That version now dies
+at once: since state review C3 `end` is a grammar token reserved at a statement start (the reserved set
+`statement_names` on `_expression_statement` and `_assign_target`); until C3 the scanner did it
+(`end` where BEGIN_KEYWORD was valid and END_KEYWORD was not). Every name position of `end` is pinned
+by test_end_name_positions.py.
 
 The inputs are the committed alc probes (alc accepts them), parsed as whole files; the `// expect`
 header lines are comments to the parser. Shape B is also run at 16 blocks, twice the old limit."""

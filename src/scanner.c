@@ -15,24 +15,24 @@ enum TokenType {
   PROPERTY_NAME = 0,
   CONTINUE_AS_IDENTIFIER = 1,
   PREPROC_OPEN = 2,
-  PREPROC_CLOSE = 3,
+  ENDIF_MARK = 3,  // zero-width, valid only right after the grammar's `#endif` regex: depth--
   BEGIN_KEYWORD = 4,
-  END_KEYWORD = 5,
-  PREPROC_SPLIT_BEGIN = 6,
-  PREPROC_SPLIT_END = 7,
-  VAR_ATTRIBUTE_OPEN = 8,
-  CALC_FORMULA_PROPERTY_NAME = 9,
-  DIRECTIVE_EOL = 10,
-  NEGATIVE_INTEGER = 11,
-  NEGATIVE_DECIMAL = 12,
-  MALFORMED_DIRECTIVE = 13,  // in no grammar rule: see the '#' dispatch
-  SCANNER_HOOK = 14,         // an extra that is NEVER emitted: see the '#' dispatch
-  ML_PROPERTY_NAME = 15,          // one of the 13 compiler ML names followed by =
-  NAMESPACES_PROPERTY_NAME = 16,  // `Namespaces` followed by =
-  TABLE_RELATION_PROPERTY_NAME = 17,  // `TableRelation` followed by = (B5)
-  LINK_PROPERTY_NAME = 18,  // one of the six compiler link-family names followed by = (B5b)
-  PREPROC_OPEN_BEFORE_ELSE = 19,  // #if of a directive-only group followed by `else` (issue #39)
-  OPTION_MEMBERS_PROPERTY_NAME = 20,  // `OptionMembers` followed by = (B13, deferred item 37)
+  // `end` is a grammar token since state review C3 (end_keyword): no END_KEYWORD.
+  PREPROC_SPLIT_BEGIN = 5,
+  PREPROC_SPLIT_END = 6,
+  VAR_ATTRIBUTE_OPEN = 7,
+  CALC_FORMULA_PROPERTY_NAME = 8,
+  DIRECTIVE_EOL = 9,
+  NEGATIVE_INTEGER = 10,
+  NEGATIVE_DECIMAL = 11,
+  MALFORMED_DIRECTIVE = 12,  // in no grammar rule: see the '#' dispatch
+  SCANNER_HOOK = 13,         // an extra that is NEVER emitted: see the '#' dispatch
+  ML_PROPERTY_NAME = 14,          // one of the 13 compiler ML names followed by =
+  NAMESPACES_PROPERTY_NAME = 15,  // `Namespaces` followed by =
+  TABLE_RELATION_PROPERTY_NAME = 16,  // `TableRelation` followed by = (B5)
+  LINK_PROPERTY_NAME = 17,  // one of the six compiler link-family names followed by = (B5b)
+  PREPROC_OPEN_BEFORE_ELSE = 18,  // #if of a directive-only group followed by `else` (issue #39)
+  OPTION_MEMBERS_PROPERTY_NAME = 19,  // `OptionMembers` followed by = (B13, deferred item 37)
 };
 
 // Named so the static assertion below can test its width AND its signedness.
@@ -905,8 +905,8 @@ bool tree_sitter_al_external_scanner_scan(
   // Error recovery guard: when all externals are valid, the parser is in
   // error recovery mode. Don't match anything — let the parser handle it.
   if (valid_symbols[PROPERTY_NAME] && valid_symbols[CONTINUE_AS_IDENTIFIER] &&
-      valid_symbols[PREPROC_OPEN] && valid_symbols[PREPROC_CLOSE] &&
-      valid_symbols[BEGIN_KEYWORD] && valid_symbols[END_KEYWORD] &&
+      valid_symbols[PREPROC_OPEN] && valid_symbols[ENDIF_MARK] &&
+      valid_symbols[BEGIN_KEYWORD] &&
       valid_symbols[PREPROC_SPLIT_BEGIN] &&
       valid_symbols[PREPROC_SPLIT_END] &&
       valid_symbols[VAR_ATTRIBUTE_OPEN] &&
@@ -920,6 +920,16 @@ bool tree_sitter_al_external_scanner_scan(
       valid_symbols[PREPROC_OPEN_BEFORE_ELSE] &&
       valid_symbols[OPTION_MEMBERS_PROPERTY_NAME]) {
     return false;
+  }
+
+  // ENDIF_MARK: zero-width, the only external token valid in the state right
+  // after the grammar's `#endif` regex (preproc_endif), so it returns at once
+  // like DIRECTIVE_EOL. It carries the depth-- the external PREPROC_CLOSE
+  // carried: scanner state is saved only with a returned token.
+  if (valid_symbols[ENDIF_MARK]) {
+    if (state->depth > 0) state->depth--;
+    lexer->result_symbol = ENDIF_MARK;  // no advance: zero-width
+    return true;
   }
 
   // DIRECTIVE_EOL: the newline that ends an #if/#elif line. Every extra-space
@@ -996,10 +1006,10 @@ bool tree_sitter_al_external_scanner_scan(
     }
   }
 
-  // The '#' dispatch: PREPROC_OPEN (#if), PREPROC_CLOSE (#endif) and
-  // MALFORMED_DIRECTIVE, in one block because consuming '#' is irreversible
-  // within a single scanner call. It is also the gatekeeper for the directives
-  // the GRAMMAR lexes (#elif, #else and the five extras): their regexes cannot
+  // The '#' dispatch: PREPROC_OPEN (#if) and MALFORMED_DIRECTIVE, in one block
+  // because consuming '#' is irreversible within a single scanner call. It is
+  // also the gatekeeper for the directives the GRAMMAR lexes (#elif, #else,
+  // #endif and the five extras; ENDIF_MARK above carries #endif's depth--): their regexes cannot
   // refuse a prefix or a trailing token, so a malformed line is claimed here
   // as MALFORMED_DIRECTIVE before the internal lexer sees it, and a well-formed
   // one is declined and lexed by its regex as before.
@@ -1031,11 +1041,12 @@ bool tree_sitter_al_external_scanner_scan(
       // would mark it as a skippable extra instead). Space/tab ONLY — never
       // '\r'/'\n': a directive split across lines must NOT match (that stays
       // an honest ERROR; see the cross-line negatives in
-      // preproc_if_elif_whitespace_tolerance_test.txt). This makes '#if' and
-      // '#endif' (spaced or not) scanner-exclusive: the only route either
-      // token can be produced is here, so there is no scanner/literal split
-      // for GLR to fork on (see grammar.js's preproc_if/preproc_endif, which
-      // now carry ONLY $.preproc_open/$.preproc_close — no literal fallback).
+      // preproc_if_elif_whitespace_tolerance_test.txt). This makes '#if'
+      // (spaced or not) scanner-exclusive: the only route the token can be
+      // produced is here, so there is no scanner/literal split for GLR to fork
+      // on (grammar.js's preproc_if carries ONLY $.preproc_open). '#endif' is a
+      // grammar regex since the state review (2026-11), declined below once
+      // the line is well-formed.
       while (lexer->lookahead == ' ' || lexer->lookahead == '\t') {
         lexer->advance(lexer, false);
       }
@@ -1081,9 +1092,8 @@ bool tree_sitter_al_external_scanner_scan(
         // A bare '#', or an extras directive: the grammar's regexes own those.
         return false;
       }
-      enum TokenType symbol = is_if ? PREPROC_OPEN : PREPROC_CLOSE;
       bool before_else_valid = is_if && valid_symbols[PREPROC_OPEN_BEFORE_ELSE];
-      if ((is_if || is_endif) && !valid_symbols[symbol] && !before_else_valid) {
+      if (is_if && !valid_symbols[PREPROC_OPEN] && !before_else_valid) {
         // A real directive the parser cannot take here. Declining leaves it
         // to the internal lexer, which has no token for it: an ERROR, as
         // before B2.
@@ -1107,8 +1117,10 @@ bool tree_sitter_al_external_scanner_scan(
         lexer->result_symbol = MALFORMED_DIRECTIVE;
         return true;
       }
-      if (is_elif || is_else) {
-        return false;  // well-formed: the grammar's regex lexes it
+      if (is_elif || is_else || is_endif) {
+        // well-formed: the grammar's regex lexes it (#endif too since the state
+        // review: its depth-- is ENDIF_MARK's, right after the regex)
+        return false;
       }
       // Issue #39. The condition is read; the lookahead runs past it, and a
       // false result leaves the plain PREPROC_OPEN (the token ends at `#if`).
@@ -1117,10 +1129,9 @@ bool tree_sitter_al_external_scanner_scan(
         lexer->result_symbol = PREPROC_OPEN_BEFORE_ELSE;
         return true;
       }
-      if (!valid_symbols[symbol]) return false;
-      if (symbol == PREPROC_OPEN) state->depth++;
-      if (symbol == PREPROC_CLOSE && state->depth > 0) state->depth--;
-      lexer->result_symbol = symbol;
+      if (!valid_symbols[PREPROC_OPEN]) return false;
+      state->depth++;
+      lexer->result_symbol = PREPROC_OPEN;
       return true;
     }
   }
@@ -1154,9 +1165,11 @@ bool tree_sitter_al_external_scanner_scan(
     }
   }
 
-  // Identifier-initial dispatch — BEGIN_KEYWORD, END_KEYWORD, their two
-  // PREPROC_SPLIT_* competitors, CONTINUE_AS_IDENTIFIER and PROPERTY_NAME in
-  // ONE scan over ONE read of the identifier.
+  // Identifier-initial dispatch — BEGIN_KEYWORD, the two PREPROC_SPLIT_*
+  // tokens, CONTINUE_AS_IDENTIFIER and the property names in ONE scan over ONE
+  // read of the identifier. (`end` is a grammar token since state review C3;
+  // the word `end` is classified here for PREPROC_SPLIT_END only, plus the
+  // declaration-position MALFORMED_DIRECTIVE clause below.)
   //
   // These cannot be sequential blocks each doing its own read. A scan that
   // returns false discards every advance it made and the scanner is NOT
@@ -1167,8 +1180,8 @@ bool tree_sitter_al_external_scanner_scan(
   // end with mark_end, then let the classification and the lookaheads choose
   // the symbol.
   //
-  // The split tokens get first refusal at depth > 0; BEGIN_KEYWORD and
-  // END_KEYWORD are the fallback at EVERY depth. BEGIN_KEYWORD used to be
+  // The split tokens get first refusal at depth > 0; BEGIN_KEYWORD is the
+  // fallback at EVERY depth (and the grammar's end_keyword for `end`). BEGIN_KEYWORD used to be
   // guarded by `state->depth == 0`, which left a complete begin…end inside #if
   // claimed by no visible node at all: the grammar's anonymous kw('begin') is
   // token(PATTERN), and tree-sitter renders anonymous PATTERN tokens as hidden
@@ -1183,7 +1196,7 @@ bool tree_sitter_al_external_scanner_scan(
   // Comments, #pragma, #region, #define and friends are all extras, hence all
   // transparent here (see skip_whitespace_and_comments/TRANSPARENT_DIRECTIVES).
   if (valid_symbols[BEGIN_KEYWORD] || valid_symbols[PREPROC_SPLIT_BEGIN] ||
-      valid_symbols[END_KEYWORD] || valid_symbols[PREPROC_SPLIT_END] ||
+      valid_symbols[PREPROC_SPLIT_END] ||
       valid_symbols[CONTINUE_AS_IDENTIFIER] || valid_symbols[PROPERTY_NAME] ||
       valid_symbols[CALC_FORMULA_PROPERTY_NAME] ||
       valid_symbols[ML_PROPERTY_NAME] || valid_symbols[NAMESPACES_PROPERTY_NAME] ||
@@ -1210,13 +1223,13 @@ bool tree_sitter_al_external_scanner_scan(
       }
       // Unreachable today, and the reason is worth stating exactly, because the
       // obvious claim — "property_name is never co-valid with begin_keyword" —
-      // is FALSE: rows 28, 30, 39 and 40 offer both, which is the whole basis of the
-      // `b1 = 1;` defect fixed in 4.0.0.
+      // is FALSE: rows 11 and 15 offer both (read after state review C3), which is
+      // the whole basis of the `b1 = 1;` defect fixed in 4.0.0.
       //
       // Reaching this line requires !BEGIN_KEYWORD && PREPROC_SPLIT_BEGIN. In
-      // ts_external_scanner_states, preproc_split_begin appears in rows 1, 13 and
-      // 52 only, and rows 13 and 52 BOTH also carry begin_keyword — so the arm
-      // above returns first, and row 1 is the all-thirteen recovery row the guard at
+      // ts_external_scanner_states, preproc_split_begin appears in rows 1, 8 and
+      // 21 only, and rows 8 and 21 BOTH also carry begin_keyword — so the arm
+      // above returns first, and row 1 is the all-valid recovery row the guard at
       // the top of scan() already rejects. Re-check that if a new row carries
       // preproc_split_begin without begin_keyword.
       return false;
@@ -1224,21 +1237,40 @@ bool tree_sitter_al_external_scanner_scan(
 
     // Issue #40/#41: `end` is reserved where a statement can start (alc: AL0519
     // for a variable named End). A version that would read it there as a name
-    // (`end;` a call statement, lexed by the internal lexer as an identifier)
-    // used to stay alive to the end of an arm, one more per block of an
-    // if / else-if chain, until tree-sitter's MAX_VERSION_COUNT / MAX_LINK_COUNT
-    // dropped the right one. MALFORMED_DIRECTIVE is in no rule, so that version
-    // dies here. `End` as a value (`OptionMembers = End`, `const(End)`, ...) is
-    // where no BEGIN_KEYWORD is valid, and is left alone
-    // (test/corpus/end_as_value_test.txt).
-    if (word == WORD_END && valid_symbols[BEGIN_KEYWORD] && !valid_symbols[END_KEYWORD] &&
-        !valid_symbols[PREPROC_SPLIT_END]) {
+    // (`end;` a call statement) used to stay alive to the end of an arm, one
+    // more per block of an if / else-if chain, until tree-sitter's
+    // MAX_VERSION_COUNT / MAX_LINK_COUNT dropped the right one. Since state
+    // review C3 `end` is a grammar token and the scanner cannot see whether it
+    // is valid; at a statement start the grammar's reserved set
+    // `statement_names` kills that version. Reserved words do not reach the
+    // other places a `begin` may follow and a name is read: the next
+    // declaration of a var section (`var A: Integer; End: Integer;`) and a
+    // procedure's return-value name (`procedure T() End: Integer`), both alc
+    // AL0519 and both ERROR on main through the old check. This clause takes
+    // them: BEGIN_KEYWORD valid, CONTINUE_AS_IDENTIFIER and PREPROC_SPLIT_END
+    // not. The property it rests on: end_keyword is a valid lookahead in NO
+    // parse state whose external row the clause fires in. Read from the
+    // generated table after C3 (and unchanged by the item-102 review fix): the
+    // rows offering begin_keyword are 1 (all-valid recovery), 5, 7, 8, 11, 13,
+    // 15, 16, 18, 21, 22, and the clause fires in 11, 13, 15, 16, 18, 21, 22;
+    // end_keyword is valid in states of rows 1, 2, 5, 7, 9 and 10 (rows 2 and 9
+    // carry neither begin_keyword nor continue_as_identifier, so the clause
+    // cannot fire there either). Row numbers move with every regeneration;
+    // tools/config_oracle/tests/test_end_name_positions.py asserts the property
+    // itself from src/parser.c and pins every name position against main.
+    // MALFORMED_DIRECTIVE is in no rule, so that version dies here. `End` as a
+    // value (`OptionMembers = End`, `const(End)`, ...) is where no BEGIN_KEYWORD
+    // is valid, and is left alone (test/corpus/end_as_value_test.txt).
+    if (word == WORD_END && valid_symbols[BEGIN_KEYWORD] &&
+        !valid_symbols[CONTINUE_AS_IDENTIFIER] && !valid_symbols[PREPROC_SPLIT_END]) {
       lexer->result_symbol = MALFORMED_DIRECTIVE;
       return true;
     }
 
-    if (word == WORD_END &&
-        (valid_symbols[END_KEYWORD] || valid_symbols[PREPROC_SPLIT_END])) {
+    // `end` as a block end is the grammar's end_keyword; the scanner only
+    // decides PREPROC_SPLIT_END, and is asked before the lexer, so where both
+    // are valid this lookahead decides and no GLR fork exists.
+    if (word == WORD_END && valid_symbols[PREPROC_SPLIT_END]) {
       // PREPROC_SPLIT_END wants 'end' followed by ';' then a branch
       // continuation — #elif, #else or #endif. Comments and transparent
       // directive lines may sit at either gap and must not stop the lookahead:
@@ -1257,19 +1289,17 @@ bool tree_sitter_al_external_scanner_scan(
           return true;
         }
       }
-      if (valid_symbols[END_KEYWORD]) {
-        lexer->result_symbol = END_KEYWORD;
-        return true;
-      }
-      // Skips the PROPERTY_NAME test below, and unlike the `begin` arm this one
-      // has NO safety margin from the keyword itself. It is safe only because
-      // ts_external_scanner_states pairs property_name with neither end_keyword
-      // nor preproc_split_end in any row outside the all-thirteen recovery row, so
-      // reaching here means property_name was not wanted anyway. That is a real
+      // Not a split end: decline, and the lexer reads `end` (end_keyword or,
+      // where no keyword is valid, an identifier). This skips the PROPERTY_NAME
+      // test below. It is safe only because ts_external_scanner_states pairs
+      // preproc_split_end with none of the property-name tokens in any row but
+      // the all-valid recovery row (read after C3: preproc_split_end is in rows
+      // 1 and 7 only, and row 7 has no property name), so reaching
+      // here means no property name was wanted anyway. That is a real
       // dependency on the generated table — a property named `end` in a state
-      // that also wanted END_KEYWORD would be dropped. Re-check after any change
-      // that adds an external or moves a rule between object and statement
-      // bodies.
+      // that also wanted PREPROC_SPLIT_END would be dropped. Re-check after any
+      // change that adds an external or moves a rule between object and
+      // statement bodies.
       return false;
     }
 

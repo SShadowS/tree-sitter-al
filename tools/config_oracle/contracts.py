@@ -193,10 +193,14 @@ register("preproc_conditional_statement", "branch-select",
 register("preproc_conditional_var_block", "branch-select", "tools.config_oracle.lowering.select.branch_select",
          hosts=_ROUTINE_TAIL_HOSTS)
 register("preproc_pragma_only", "branch-select", "tools.config_oracle.lowering.select.branch_select",
-         hosts={"field_declaration:<children>": "splice-repeat", "preproc_split_procedure:<children>": "splice-repeat",
-                "procedure:<children>": "splice-repeat", "source_file:<children>": "splice-repeat",
-                # trigger_declaration shares _procedure_tail since the BC 29 family-F fix.
-                "trigger_declaration:<children>": "splice-repeat"})
+         # Item 102 review fix 1: a routine var region holds pragma-only groups too (after a var
+         # block in a run, or in a var-block arm), so every routine-tail host is a host;
+         # procedure, trigger_declaration (shares _procedure_tail since the BC 29 family-F fix)
+         # and preproc_split_procedure were hosts before, through _procedure_tail.
+         hosts={**_ROUTINE_TAIL_HOSTS,
+                "field_declaration:<children>": "splice-repeat", "source_file:<children>": "splice-repeat",
+                # deferred item 102: an arm may hold nested pragma-only groups
+                "preproc_pragma_only:<children>": "splice-repeat"})
 # Deferred item 69: a group of bare `end`s nested in the `end` slot of another split
 # construct is this type too. Lowering it there means completing the HOST's block, a
 # rewrite this contract does not name: refused as unsupported-type (B7a closes those

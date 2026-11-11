@@ -83,7 +83,8 @@ BETWEEN statements still parse cleanly, and alc accepts both of those, so the
 .
 What is pinned is the shape: `begin<U+FEFF>` must appear as an identifier inside
 the ERROR, NOT as a begin_keyword. An error-count assertion alone would not
-distinguish this from any other way of failing.
+distinguish this from any other way of failing. The closing `end` is an
+end_keyword in recovery since state review C3 made `end` a grammar token.
 ================================================================================
 
 codeunit 50100 C
@@ -106,4 +107,4 @@ codeunit 50100 C
       name: (identifier)
       (identifier)
       (identifier)
-      (identifier))))
+      (end_keyword))))

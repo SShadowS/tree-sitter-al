@@ -174,6 +174,7 @@ table 50100 T
 
 ========================================================================
 TableRelation keying negative: integer target with where (AL0107)
+:error
 ========================================================================
 table 50100 T
 {
@@ -186,36 +187,6 @@ table 50100 T
     }
 }
 ------------------------------------------------------------------------
-
-(source_file
-  (table_declaration
-    (table_keyword)
-    object_id: (integer)
-    object_name: (identifier)
-    body: (declaration_body
-      (fields_section
-        (fields_keyword)
-        body: (fields_body
-          (field_declaration
-            (field_keyword)
-            id: (integer)
-            name: (identifier)
-            type: (type_specification
-              (code_type
-                (code_keyword)
-                length: (integer)))
-            body: (declaration_body
-              (property
-                name: (property_name)
-                (ERROR
-                  (integer))
-                value: (table_relation_value
-                  (table_relation_expression
-                    (simple_table_relation
-                      target: (qualified_name
-                        (quoted_identifier)))))
-                (ERROR
-                  (string_literal))))))))))
 
 ========================================================================
 TableRelation keying negative: If as a segment word

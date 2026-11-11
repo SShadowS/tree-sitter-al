@@ -1,0 +1,1022 @@
+================================================================================
+Item 102 review fix 1: a var group then an empty group before begin (trigger) -- the empty group is preproc_pragma_only
+================================================================================
+codeunit 50100 C
+{
+    trigger OnRun()
+#if A
+    var
+        V: Integer;
+#endif
+#if B
+#endif
+    begin
+    end;
+}
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (trigger_declaration
+        (trigger_keyword)
+        name: (identifier)
+        (preproc_conditional_var_block
+          (preproc_if
+            (preproc_open)
+            condition: (identifier))
+          (var_section
+            (var_keyword)
+            body: (var_body
+              (variable_declaration
+                name: (identifier)
+                type: (type_specification
+                  (basic_type)))))
+          (preproc_endif
+            (preproc_close)))
+        (preproc_pragma_only
+          (preproc_if
+            (preproc_open)
+            condition: (identifier))
+          (preproc_endif
+            (preproc_close)))
+        body: (code_block
+          (begin_keyword)
+          (end_keyword))))))
+
+================================================================================
+Item 102 review fix 1: a var group then an empty group before begin (proc) -- the empty group is preproc_pragma_only
+================================================================================
+codeunit 50100 C
+{
+    procedure P()
+#if A
+    var
+        V: Integer;
+#endif
+#if B
+#endif
+    begin
+    end;
+}
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (procedure
+        (procedure_keyword)
+        name: (identifier)
+        (preproc_conditional_var_block
+          (preproc_if
+            (preproc_open)
+            condition: (identifier))
+          (var_section
+            (var_keyword)
+            body: (var_body
+              (variable_declaration
+                name: (identifier)
+                type: (type_specification
+                  (basic_type)))))
+          (preproc_endif
+            (preproc_close)))
+        (preproc_pragma_only
+          (preproc_if
+            (preproc_open)
+            condition: (identifier))
+          (preproc_endif
+            (preproc_close)))
+        body: (code_block
+          (begin_keyword)
+          (end_keyword))))))
+
+================================================================================
+Item 102 review fix 1: a var group then an empty group before begin (proc-ret) -- the empty group is preproc_pragma_only
+================================================================================
+codeunit 50100 C
+{
+    procedure P(): Integer
+#if A
+    var
+        V: Integer;
+#endif
+#if B
+#endif
+    begin
+        exit(1);
+    end;
+}
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (procedure
+        (procedure_keyword)
+        name: (identifier)
+        return_type: (type_specification
+          (basic_type))
+        (preproc_conditional_var_block
+          (preproc_if
+            (preproc_open)
+            condition: (identifier))
+          (var_section
+            (var_keyword)
+            body: (var_body
+              (variable_declaration
+                name: (identifier)
+                type: (type_specification
+                  (basic_type)))))
+          (preproc_endif
+            (preproc_close)))
+        (preproc_pragma_only
+          (preproc_if
+            (preproc_open)
+            condition: (identifier))
+          (preproc_endif
+            (preproc_close)))
+        body: (code_block
+          (begin_keyword)
+          body: (statement_block
+            (exit_statement
+              (exit_keyword)
+              return_value: (integer)))
+          (end_keyword))))))
+
+================================================================================
+Item 102 review fix 1: a var group, an empty group, a var group before begin (trigger) -- the empty group is preproc_pragma_only
+================================================================================
+codeunit 50100 C
+{
+    trigger OnRun()
+#if A
+    var
+        V: Integer;
+#endif
+#if B
+#endif
+#if not A
+    var
+        W: Integer;
+#endif
+    begin
+    end;
+}
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (trigger_declaration
+        (trigger_keyword)
+        name: (identifier)
+        (preproc_conditional_var_block
+          (preproc_if
+            (preproc_open)
+            condition: (identifier))
+          (var_section
+            (var_keyword)
+            body: (var_body
+              (variable_declaration
+                name: (identifier)
+                type: (type_specification
+                  (basic_type)))))
+          (preproc_endif
+            (preproc_close)))
+        (preproc_pragma_only
+          (preproc_if
+            (preproc_open)
+            condition: (identifier))
+          (preproc_endif
+            (preproc_close)))
+        (preproc_conditional_var_block
+          (preproc_if
+            (preproc_open)
+            condition: (preproc_not_expression
+              (identifier)))
+          (var_section
+            (var_keyword)
+            body: (var_body
+              (variable_declaration
+                name: (identifier)
+                type: (type_specification
+                  (basic_type)))))
+          (preproc_endif
+            (preproc_close)))
+        body: (code_block
+          (begin_keyword)
+          (end_keyword))))))
+
+================================================================================
+Item 102 review fix 1: a var group, an empty group, a var group before begin (proc) -- the empty group is preproc_pragma_only
+================================================================================
+codeunit 50100 C
+{
+    procedure P()
+#if A
+    var
+        V: Integer;
+#endif
+#if B
+#endif
+#if not A
+    var
+        W: Integer;
+#endif
+    begin
+    end;
+}
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (procedure
+        (procedure_keyword)
+        name: (identifier)
+        (preproc_conditional_var_block
+          (preproc_if
+            (preproc_open)
+            condition: (identifier))
+          (var_section
+            (var_keyword)
+            body: (var_body
+              (variable_declaration
+                name: (identifier)
+                type: (type_specification
+                  (basic_type)))))
+          (preproc_endif
+            (preproc_close)))
+        (preproc_pragma_only
+          (preproc_if
+            (preproc_open)
+            condition: (identifier))
+          (preproc_endif
+            (preproc_close)))
+        (preproc_conditional_var_block
+          (preproc_if
+            (preproc_open)
+            condition: (preproc_not_expression
+              (identifier)))
+          (var_section
+            (var_keyword)
+            body: (var_body
+              (variable_declaration
+                name: (identifier)
+                type: (type_specification
+                  (basic_type)))))
+          (preproc_endif
+            (preproc_close)))
+        body: (code_block
+          (begin_keyword)
+          (end_keyword))))))
+
+================================================================================
+Item 102 review fix 1: a var group, an empty group, a var group before begin (proc-ret) -- the empty group is preproc_pragma_only
+================================================================================
+codeunit 50100 C
+{
+    procedure P(): Integer
+#if A
+    var
+        V: Integer;
+#endif
+#if B
+#endif
+#if not A
+    var
+        W: Integer;
+#endif
+    begin
+        exit(1);
+    end;
+}
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (procedure
+        (procedure_keyword)
+        name: (identifier)
+        return_type: (type_specification
+          (basic_type))
+        (preproc_conditional_var_block
+          (preproc_if
+            (preproc_open)
+            condition: (identifier))
+          (var_section
+            (var_keyword)
+            body: (var_body
+              (variable_declaration
+                name: (identifier)
+                type: (type_specification
+                  (basic_type)))))
+          (preproc_endif
+            (preproc_close)))
+        (preproc_pragma_only
+          (preproc_if
+            (preproc_open)
+            condition: (identifier))
+          (preproc_endif
+            (preproc_close)))
+        (preproc_conditional_var_block
+          (preproc_if
+            (preproc_open)
+            condition: (preproc_not_expression
+              (identifier)))
+          (var_section
+            (var_keyword)
+            body: (var_body
+              (variable_declaration
+                name: (identifier)
+                type: (type_specification
+                  (basic_type)))))
+          (preproc_endif
+            (preproc_close)))
+        body: (code_block
+          (begin_keyword)
+          body: (statement_block
+            (exit_statement
+              (exit_keyword)
+              return_value: (integer)))
+          (end_keyword))))))
+
+================================================================================
+Item 102 review fix 1: an if arm holding only a nested empty group, a var else arm before begin (trigger) -- the empty group is preproc_pragma_only
+================================================================================
+codeunit 50100 C
+{
+    trigger OnRun()
+#if A
+#if B
+#endif
+#else
+    var
+        V: Integer;
+#endif
+    begin
+    end;
+}
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (trigger_declaration
+        (trigger_keyword)
+        name: (identifier)
+        (preproc_conditional_var_block
+          (preproc_if
+            (preproc_open)
+            condition: (identifier))
+          (preproc_pragma_only
+            (preproc_if
+              (preproc_open)
+              condition: (identifier))
+            (preproc_endif
+              (preproc_close)))
+          (preproc_else)
+          (var_section
+            (var_keyword)
+            body: (var_body
+              (variable_declaration
+                name: (identifier)
+                type: (type_specification
+                  (basic_type)))))
+          (preproc_endif
+            (preproc_close)))
+        body: (code_block
+          (begin_keyword)
+          (end_keyword))))))
+
+================================================================================
+Item 102 review fix 1: an if arm holding only a nested empty group, a var else arm before begin (proc) -- the empty group is preproc_pragma_only
+================================================================================
+codeunit 50100 C
+{
+    procedure P()
+#if A
+#if B
+#endif
+#else
+    var
+        V: Integer;
+#endif
+    begin
+    end;
+}
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (procedure
+        (procedure_keyword)
+        name: (identifier)
+        (preproc_conditional_var_block
+          (preproc_if
+            (preproc_open)
+            condition: (identifier))
+          (preproc_pragma_only
+            (preproc_if
+              (preproc_open)
+              condition: (identifier))
+            (preproc_endif
+              (preproc_close)))
+          (preproc_else)
+          (var_section
+            (var_keyword)
+            body: (var_body
+              (variable_declaration
+                name: (identifier)
+                type: (type_specification
+                  (basic_type)))))
+          (preproc_endif
+            (preproc_close)))
+        body: (code_block
+          (begin_keyword)
+          (end_keyword))))))
+
+================================================================================
+Item 102 review fix 1: an if arm holding only a nested empty group, a var else arm before begin (proc-ret) -- the empty group is preproc_pragma_only
+================================================================================
+codeunit 50100 C
+{
+    procedure P(): Integer
+#if A
+#if B
+#endif
+#else
+    var
+        V: Integer;
+#endif
+    begin
+        exit(1);
+    end;
+}
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (procedure
+        (procedure_keyword)
+        name: (identifier)
+        return_type: (type_specification
+          (basic_type))
+        (preproc_conditional_var_block
+          (preproc_if
+            (preproc_open)
+            condition: (identifier))
+          (preproc_pragma_only
+            (preproc_if
+              (preproc_open)
+              condition: (identifier))
+            (preproc_endif
+              (preproc_close)))
+          (preproc_else)
+          (var_section
+            (var_keyword)
+            body: (var_body
+              (variable_declaration
+                name: (identifier)
+                type: (type_specification
+                  (basic_type)))))
+          (preproc_endif
+            (preproc_close)))
+        body: (code_block
+          (begin_keyword)
+          body: (statement_block
+            (exit_statement
+              (exit_keyword)
+              return_value: (integer)))
+          (end_keyword))))))
+
+================================================================================
+Item 102 review fix 1: a var if arm, an else arm holding only a nested empty group before begin (trigger) -- the empty group is preproc_pragma_only
+================================================================================
+codeunit 50100 C
+{
+    trigger OnRun()
+#if A
+    var
+        V: Integer;
+#else
+#if B
+#endif
+#endif
+    begin
+    end;
+}
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (trigger_declaration
+        (trigger_keyword)
+        name: (identifier)
+        (preproc_conditional_var_block
+          (preproc_if
+            (preproc_open)
+            condition: (identifier))
+          (var_section
+            (var_keyword)
+            body: (var_body
+              (variable_declaration
+                name: (identifier)
+                type: (type_specification
+                  (basic_type)))))
+          (preproc_else)
+          (preproc_pragma_only
+            (preproc_if
+              (preproc_open)
+              condition: (identifier))
+            (preproc_endif
+              (preproc_close)))
+          (preproc_endif
+            (preproc_close)))
+        body: (code_block
+          (begin_keyword)
+          (end_keyword))))))
+
+================================================================================
+Item 102 review fix 1: a var if arm, an else arm holding only a nested empty group before begin (proc) -- the empty group is preproc_pragma_only
+================================================================================
+codeunit 50100 C
+{
+    procedure P()
+#if A
+    var
+        V: Integer;
+#else
+#if B
+#endif
+#endif
+    begin
+    end;
+}
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (procedure
+        (procedure_keyword)
+        name: (identifier)
+        (preproc_conditional_var_block
+          (preproc_if
+            (preproc_open)
+            condition: (identifier))
+          (var_section
+            (var_keyword)
+            body: (var_body
+              (variable_declaration
+                name: (identifier)
+                type: (type_specification
+                  (basic_type)))))
+          (preproc_else)
+          (preproc_pragma_only
+            (preproc_if
+              (preproc_open)
+              condition: (identifier))
+            (preproc_endif
+              (preproc_close)))
+          (preproc_endif
+            (preproc_close)))
+        body: (code_block
+          (begin_keyword)
+          (end_keyword))))))
+
+================================================================================
+Item 102 review fix 1: a var if arm, an else arm holding only a nested empty group before begin (proc-ret) -- the empty group is preproc_pragma_only
+================================================================================
+codeunit 50100 C
+{
+    procedure P(): Integer
+#if A
+    var
+        V: Integer;
+#else
+#if B
+#endif
+#endif
+    begin
+        exit(1);
+    end;
+}
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (procedure
+        (procedure_keyword)
+        name: (identifier)
+        return_type: (type_specification
+          (basic_type))
+        (preproc_conditional_var_block
+          (preproc_if
+            (preproc_open)
+            condition: (identifier))
+          (var_section
+            (var_keyword)
+            body: (var_body
+              (variable_declaration
+                name: (identifier)
+                type: (type_specification
+                  (basic_type)))))
+          (preproc_else)
+          (preproc_pragma_only
+            (preproc_if
+              (preproc_open)
+              condition: (identifier))
+            (preproc_endif
+              (preproc_close)))
+          (preproc_endif
+            (preproc_close)))
+        body: (code_block
+          (begin_keyword)
+          body: (statement_block
+            (exit_statement
+              (exit_keyword)
+              return_value: (integer)))
+          (end_keyword))))))
+
+================================================================================
+Item 102 review fix 1: an arm holding a nested empty group then a var group before begin (trigger) -- the empty group is preproc_pragma_only
+================================================================================
+codeunit 50100 C
+{
+    trigger OnRun()
+#if A
+#if B
+#endif
+#if C
+    var
+        V: Integer;
+#endif
+#endif
+    begin
+    end;
+}
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (trigger_declaration
+        (trigger_keyword)
+        name: (identifier)
+        (preproc_conditional_var_block
+          (preproc_if
+            (preproc_open)
+            condition: (identifier))
+          (preproc_pragma_only
+            (preproc_if
+              (preproc_open)
+              condition: (identifier))
+            (preproc_endif
+              (preproc_close)))
+          (preproc_conditional_var_block
+            (preproc_if
+              (preproc_open)
+              condition: (identifier))
+            (var_section
+              (var_keyword)
+              body: (var_body
+                (variable_declaration
+                  name: (identifier)
+                  type: (type_specification
+                    (basic_type)))))
+            (preproc_endif
+              (preproc_close)))
+          (preproc_endif
+            (preproc_close)))
+        body: (code_block
+          (begin_keyword)
+          (end_keyword))))))
+
+================================================================================
+Item 102 review fix 1: an arm holding a nested empty group then a var group before begin (proc) -- the empty group is preproc_pragma_only
+================================================================================
+codeunit 50100 C
+{
+    procedure P()
+#if A
+#if B
+#endif
+#if C
+    var
+        V: Integer;
+#endif
+#endif
+    begin
+    end;
+}
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (procedure
+        (procedure_keyword)
+        name: (identifier)
+        (preproc_conditional_var_block
+          (preproc_if
+            (preproc_open)
+            condition: (identifier))
+          (preproc_pragma_only
+            (preproc_if
+              (preproc_open)
+              condition: (identifier))
+            (preproc_endif
+              (preproc_close)))
+          (preproc_conditional_var_block
+            (preproc_if
+              (preproc_open)
+              condition: (identifier))
+            (var_section
+              (var_keyword)
+              body: (var_body
+                (variable_declaration
+                  name: (identifier)
+                  type: (type_specification
+                    (basic_type)))))
+            (preproc_endif
+              (preproc_close)))
+          (preproc_endif
+            (preproc_close)))
+        body: (code_block
+          (begin_keyword)
+          (end_keyword))))))
+
+================================================================================
+Item 102 review fix 1: an arm holding a nested empty group then a var group before begin (proc-ret) -- the empty group is preproc_pragma_only
+================================================================================
+codeunit 50100 C
+{
+    procedure P(): Integer
+#if A
+#if B
+#endif
+#if C
+    var
+        V: Integer;
+#endif
+#endif
+    begin
+        exit(1);
+    end;
+}
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (procedure
+        (procedure_keyword)
+        name: (identifier)
+        return_type: (type_specification
+          (basic_type))
+        (preproc_conditional_var_block
+          (preproc_if
+            (preproc_open)
+            condition: (identifier))
+          (preproc_pragma_only
+            (preproc_if
+              (preproc_open)
+              condition: (identifier))
+            (preproc_endif
+              (preproc_close)))
+          (preproc_conditional_var_block
+            (preproc_if
+              (preproc_open)
+              condition: (identifier))
+            (var_section
+              (var_keyword)
+              body: (var_body
+                (variable_declaration
+                  name: (identifier)
+                  type: (type_specification
+                    (basic_type)))))
+            (preproc_endif
+              (preproc_close)))
+          (preproc_endif
+            (preproc_close)))
+        body: (code_block
+          (begin_keyword)
+          body: (statement_block
+            (exit_statement
+              (exit_keyword)
+              return_value: (integer)))
+          (end_keyword))))))
+
+================================================================================
+Item 102 review fix 1: an if arm holding only a nested empty group, a var elif arm before begin (trigger) -- the empty group is preproc_pragma_only
+================================================================================
+codeunit 50100 C
+{
+    trigger OnRun()
+#if A
+#if B
+#endif
+#elif C
+    var
+        V: Integer;
+#endif
+    begin
+    end;
+}
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (trigger_declaration
+        (trigger_keyword)
+        name: (identifier)
+        (preproc_conditional_var_block
+          (preproc_if
+            (preproc_open)
+            condition: (identifier))
+          (preproc_pragma_only
+            (preproc_if
+              (preproc_open)
+              condition: (identifier))
+            (preproc_endif
+              (preproc_close)))
+          (preproc_elif
+            condition: (identifier))
+          (var_section
+            (var_keyword)
+            body: (var_body
+              (variable_declaration
+                name: (identifier)
+                type: (type_specification
+                  (basic_type)))))
+          (preproc_endif
+            (preproc_close)))
+        body: (code_block
+          (begin_keyword)
+          (end_keyword))))))
+
+================================================================================
+Item 102 review fix 1: an if arm holding only a nested empty group, a var elif arm before begin (proc) -- the empty group is preproc_pragma_only
+================================================================================
+codeunit 50100 C
+{
+    procedure P()
+#if A
+#if B
+#endif
+#elif C
+    var
+        V: Integer;
+#endif
+    begin
+    end;
+}
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (procedure
+        (procedure_keyword)
+        name: (identifier)
+        (preproc_conditional_var_block
+          (preproc_if
+            (preproc_open)
+            condition: (identifier))
+          (preproc_pragma_only
+            (preproc_if
+              (preproc_open)
+              condition: (identifier))
+            (preproc_endif
+              (preproc_close)))
+          (preproc_elif
+            condition: (identifier))
+          (var_section
+            (var_keyword)
+            body: (var_body
+              (variable_declaration
+                name: (identifier)
+                type: (type_specification
+                  (basic_type)))))
+          (preproc_endif
+            (preproc_close)))
+        body: (code_block
+          (begin_keyword)
+          (end_keyword))))))
+
+================================================================================
+Item 102 review fix 1: an if arm holding only a nested empty group, a var elif arm before begin (proc-ret) -- the empty group is preproc_pragma_only
+================================================================================
+codeunit 50100 C
+{
+    procedure P(): Integer
+#if A
+#if B
+#endif
+#elif C
+    var
+        V: Integer;
+#endif
+    begin
+        exit(1);
+    end;
+}
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (procedure
+        (procedure_keyword)
+        name: (identifier)
+        return_type: (type_specification
+          (basic_type))
+        (preproc_conditional_var_block
+          (preproc_if
+            (preproc_open)
+            condition: (identifier))
+          (preproc_pragma_only
+            (preproc_if
+              (preproc_open)
+              condition: (identifier))
+            (preproc_endif
+              (preproc_close)))
+          (preproc_elif
+            condition: (identifier))
+          (var_section
+            (var_keyword)
+            body: (var_body
+              (variable_declaration
+                name: (identifier)
+                type: (type_specification
+                  (basic_type)))))
+          (preproc_endif
+            (preproc_close)))
+        body: (code_block
+          (begin_keyword)
+          body: (statement_block
+            (exit_statement
+              (exit_keyword)
+              return_value: (integer)))
+          (end_keyword))))))

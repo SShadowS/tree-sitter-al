@@ -66,11 +66,13 @@ codeunit 1 T
 
 ========================================================================
 Preprocessor with spaced endif
-(v3.2.0: PREPROC_CLOSE is now scanner-exclusive and consumes the space, so
-this produces a NAMED (preproc_close) child and correctly decrements the
-scanner's depth counter — pre-3.2.0 this matched via a grammar-literal
-fallback that bypassed the depth counter entirely, a latent bug this test
-used to unknowingly document; see preproc_if_elif_whitespace_tolerance_test.txt)
+(a NAMED (preproc_close) child that consumes the space, and the scanner's
+depth counter is decremented. v3.2.0 made PREPROC_CLOSE scanner-exclusive
+for that; since state review C1 `#endif` is the grammar regex
+`(?i)#[ \t]*endif`, gated by the scanner, and the depth decrement is the
+zero-width `_endif_mark` right after it. Pre-3.2.0 a grammar-literal fallback
+bypassed the depth counter entirely, a latent bug this test used to
+unknowingly document; see preproc_if_elif_whitespace_tolerance_test.txt)
 ========================================================================
 codeunit 1 T
 {

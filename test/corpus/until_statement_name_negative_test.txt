@@ -1,0 +1,29 @@
+========================================================================
+NEGATIVE: `Until` as a call at a statement start (alc AL0104/AL0111/AL0224; reserved by statement_names)
+:error
+========================================================================
+codeunit 50101 Probe
+{
+    procedure "Until"() begin end;
+    procedure Main()
+    begin
+        Until();
+    end;
+}
+------------------------------------------------------------------------
+
+========================================================================
+NEGATIVE: a stray `until` statement in a begin-end block (it was a parenless call named until)
+:error
+========================================================================
+codeunit 50101 Probe
+{
+    procedure Main()
+    var
+        A: Integer;
+    begin
+        A := 1;
+        until true;
+    end;
+}
+------------------------------------------------------------------------

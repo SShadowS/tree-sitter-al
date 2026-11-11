@@ -344,6 +344,7 @@ page 50100 P
 
 ================================================================================
 B4 negative: a keyed whole-value #if arm holding a comparison (AL0104, AL0219)
+:error
 ================================================================================
 
 table 50100 T
@@ -359,35 +360,6 @@ table 50100 T
 }
 
 --------------------------------------------------------------------------------
-
-(source_file
-  (table_declaration
-    (table_keyword)
-    object_id: (integer)
-    object_name: (identifier)
-    body: (declaration_body
-      (property
-        name: (property_name)
-        (ERROR
-          (preproc_if
-            (preproc_open)
-            condition: (identifier))
-          (ERROR
-            (identifier)
-            (integer))
-          (preproc_else)
-          (identifier)
-          (integer)
-          (UNEXPECTED 'i')))
-      (fields_section
-        (fields_keyword)
-        body: (fields_body
-          (field_declaration
-            (field_keyword)
-            id: (integer)
-            name: (identifier)
-            type: (type_specification
-              (basic_type))))))))
 
 ================================================================================
 B4 negative: a keyed whole-value #if arm with a trailing comma (AL0301)

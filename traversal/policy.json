@@ -608,12 +608,18 @@
       "arm_boundary": "own-directives",
       "hosts": {
         "field_declaration:<children>": "splice-repeat",
+        "preproc_conditional_procedure_preamble:<children>": "splice-repeat",
+        "preproc_conditional_trigger_preamble:<children>": "splice-repeat",
+        "preproc_conditional_var_block:<children>": "splice-repeat",
         "preproc_split_procedure:<children>": "splice-repeat",
+        "preproc_split_procedure_preamble:<children>": "splice-repeat",
+        "preproc_split_trigger_preamble:<children>": "splice-repeat",
+        "preproc_pragma_only:<children>": "splice-repeat",
         "procedure:<children>": "splice-repeat",
         "source_file:<children>": "splice-repeat",
         "trigger_declaration:<children>": "splice-repeat"
       },
-      "reason": "Registry branch-select whose arms hold only extras (pragmas, comments); every arm is empty of structure."
+      "reason": "Registry branch-select whose arms hold only extras (pragmas, comments) and nested pragma-only groups (deferred item 102); every arm is empty of structure. Also a member of a routine var region (after a var block in a run, or in a var-block arm; item 102 review fix 1)."
     },
     "preproc_region": {
       "class": "trivia",

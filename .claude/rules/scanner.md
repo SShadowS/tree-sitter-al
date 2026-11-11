@@ -18,11 +18,10 @@ a `_Static_assert` on `sizeof(depth) >= 4` fails the build if anyone narrows it 
 | `CONTINUE_AS_IDENTIFIER` | `continue` followed by `:=` `(` `.` `[` `::` `+=` `-=` `*=` `/=` — used as a name, not the statement | none |
 | `VAR_ATTRIBUTE_OPEN` | the `[` of a variable attribute (one character, `mark_end` right after it): the lookahead scans past the attribute, then requires every path through what follows (more attributes, `#if` groups) to reach a variable name list ending at its `:` (`var_name_list_follows`); otherwise declines and the `[` is a procedure `attribute_item` | none |
 | `PREPROC_OPEN` | `#if` | depth++ |
-| `PREPROC_CLOSE` | `#endif` | depth-- |
+| `ENDIF_MARK` | hidden `_endif_mark`, **zero-width**, valid only in the one state right after the grammar's `#endif` regex (`preproc_endif: seq(preproc_close, _endif_mark)`), so it returns at once. It carries the decrement because scanner state is saved only with a returned token. `#endif` itself was the external `PREPROC_CLOSE` until state review C1 (see "External tokens must not follow a construct") | depth-- |
 | `BEGIN_KEYWORD` | `begin` at any depth — named node for queries | none |
-| `END_KEYWORD` | `end` at any depth — named node for queries | none |
 | `PREPROC_SPLIT_BEGIN` | `begin` at depth > 0, immediately before `#endif` — split detection | none |
-| `PREPROC_SPLIT_END` | `end` at depth > 0, followed by an optional `;` then `#elif`/`#else`/`#endif` — split detection (the `;` optional since item 69: `#if X end #else end #endif ;`) | none |
+| `PREPROC_SPLIT_END` | `end` at depth > 0, followed by an optional `;` then `#elif`/`#else`/`#endif` — split detection (the `;` optional since item 69: `#if X end #else end #endif ;`). First refusal before the grammar's `end_keyword` (the scanner is asked before the lexer); not a split end, it declines and the lexer reads `end`. There is no `END_KEYWORD` since state review C3 (`end_keyword` is a grammar token, `.claude/rules/contextual-keywords.md`) | none |
 | `CALC_FORMULA_PROPERTY_NAME` | `CalcFormula` followed by `=` — keyed by name; falls back to `PROPERTY_NAME` where the grammar does not offer it | none |
 | `ML_PROPERTY_NAME` | one of the compiler's 13 ML names (`ML_PROPERTY_NAMES` in `scanner.c`, never a suffix match) followed by `=` (B4); same fallback | none |
 | `NAMESPACES_PROPERTY_NAME` | `Namespaces` followed by `=` (B4); same fallback | none |
@@ -31,20 +30,22 @@ a `_Static_assert` on `sizeof(depth) >= 4` fails the build if anyone narrows it 
 | `DIRECTIVE_EOL` | the ONE `\n` ending an `#if`/`#elif` line, after skipping every extra-space character except `\n` (`is_extra_space`), hidden `_directive_eol`. Valid alone, so it returns without trying other tokens. A lexical newline took the LAST of a run of blank lines; skipping only space and tab left `\f\n` a hidden MISSING | none |
 | `NEGATIVE_INTEGER` / `NEGATIVE_DECIMAL` | `-1` / `-1.5` as one signed literal, emitted only when `;` `,` `#` or EOF follows; otherwise declines and `-` is unary minus (as lexical tokens `Visible = -1 < X;` ERRORed). Only a `-` commits the block | none |
 | `PREPROC_OPEN_BEFORE_ELSE` | hidden `_preproc_open_before_else`, aliased to `preproc_open`: an `#if` whose group holds only directives, comments and extras and is followed (after any more such groups) by the word `else` (`empty_group_then_else`, issue #39). Every `preproc_if` accepts it, so it stands in exactly the lookahead sets `#if` does (a token valid only after an if's then-branch split every state below it: +9,206 states); only the if's else decoration requires it | depth++ |
-| `MALFORMED_DIRECTIVE` | hidden `_malformed_directive`, in **no** grammar rule, emitted unasked for a `#` line alc rejects (AL0621 not a directive, AL0631 trailing text or block comment, AL0629 incomplete condition): the line becomes an ERROR (B2/B3). A directive after code on the same line (AL0620) is NOT caught (deferred item 26). Also emitted (issue #40/#41) for the word `end` where `BEGIN_KEYWORD` is valid and neither `END_KEYWORD` nor `PREPROC_SPLIT_END` is: a statement start, where alc reserves `end` (AL0519). The GLR version that would read `end;` there as a call dies at once instead of surviving to the end of an arm, one per block of an if / else-if chain, until tree-sitter's `MAX_VERSION_COUNT`/`MAX_LINK_COUNT` dropped the right one. `End` as a value has no `BEGIN_KEYWORD` and is untouched (`test/corpus/end_as_value_test.txt`) | none |
+| `MALFORMED_DIRECTIVE` | hidden `_malformed_directive`, in **no** grammar rule, emitted unasked for a `#` line alc rejects (AL0621 not a directive, AL0631 trailing text or block comment, AL0629 incomplete condition): the line becomes an ERROR (B2/B3). A directive after code on the same line (AL0620) is NOT caught (deferred item 26). Also emitted (issue #40/#41) for the word `end` where `BEGIN_KEYWORD` is valid and neither `CONTINUE_AS_IDENTIFIER` nor `PREPROC_SPLIT_END` is: a var section's next declaration or a procedure's return-value name, where alc reserves `end` (AL0519). At a statement start the grammar's reserved set `statement_names` does that job since state review C3, killing the GLR version that would read `end;` as a call (it used to survive to the end of an arm, one per block of an if / else-if chain, until tree-sitter's `MAX_VERSION_COUNT`/`MAX_LINK_COUNT` dropped the right one). The clause rests on the generated table: `end_keyword` is valid in no state whose external row offers `begin_keyword` without `continue_as_identifier` (`tools/config_oracle/tests/test_end_name_positions.py` asserts it and pins every name position against main). `End` as a value has no `BEGIN_KEYWORD` and is untouched (`test/corpus/end_as_value_test.txt`) | none |
 | `SCANNER_HOOK` | hidden `_scanner_hook`, in `extras`, **never emitted**. Exists only so every parse state has a valid external token and calls the scanner, so the `#` gatekeeper sees every directive line. **Never return it** | none |
 
-**Scan function order:** error recovery guard → DIRECTIVE_EOL → NEGATIVE_INTEGER/DECIMAL → the
-`#` dispatch (PREPROC_OPEN_BEFORE_ELSE / PREPROC_OPEN / PREPROC_CLOSE / MALFORMED_DIRECTIVE) → VAR_ATTRIBUTE_OPEN →
-identifier dispatch (`BEGIN_KEYWORD` | `PREPROC_SPLIT_BEGIN` | `END_KEYWORD` |
-`PREPROC_SPLIT_END` | the five keyed property names / `PROPERTY_NAME` | `CONTINUE_AS_IDENTIFIER`).
+**Scan function order:** error recovery guard → ENDIF_MARK → DIRECTIVE_EOL → NEGATIVE_INTEGER/DECIMAL → the
+`#` dispatch (PREPROC_OPEN_BEFORE_ELSE / PREPROC_OPEN / MALFORMED_DIRECTIVE) → VAR_ATTRIBUTE_OPEN →
+identifier dispatch (`BEGIN_KEYWORD` | `PREPROC_SPLIT_BEGIN` | the `end` clause of
+`MALFORMED_DIRECTIVE` | `PREPROC_SPLIT_END` | the five keyed property names / `PROPERTY_NAME` |
+`CONTINUE_AS_IDENTIFIER`).
 `VAR_ATTRIBUTE_OPEN` runs **before** the identifier tokens: after them, a leading `b` was
 absorbed into a following `[`.
 
 ## Single-Read Identifier Dispatch
 
-**Every identifier-initial token is decided in ONE scan over ONE read of the word.** Eleven
-tokens compete for the same text and cannot be sequential blocks that each do their own read,
+**Every identifier-initial token is decided in ONE scan over ONE read of the word.** Ten
+tokens compete for the same text (`end` is classified for `PREPROC_SPLIT_END` and the
+`MALFORMED_DIRECTIVE` clause only, since C3) and cannot be sequential blocks that each do their own read,
 for two reasons that each produced live bugs:
 
 - A scan that returns false **discards every advance and is not re-entered at the same
@@ -56,7 +57,7 @@ for two reasons that each produced live bugs:
 enum IdentifierWord word = read_identifier_word(lexer);  // ONE read, into a buffer
 lexer->mark_end(lexer);                                  // pin the token to the word
 // then classify: the split tokens get first refusal at depth > 0,
-// BEGIN_KEYWORD / END_KEYWORD are the fallback at EVERY depth.
+// BEGIN_KEYWORD is the fallback at EVERY depth; a non-split `end` declines to the lexer.
 ```
 
 `mark_end` before any lookahead is what makes the fallback safe: a failed lookahead is not a
@@ -77,12 +78,12 @@ one leaves the token unreachable in some states, and each of B4, B5 and B5b need
 
 ## The `#` dispatch is the gatekeeper
 
-`#elif`, `#else` and the five directive extras stay grammar regexes (making them external
-tokens was measured at +60% states and +70% parser.c). A regex cannot refuse a prefix or a
+`#elif`, `#else`, `#endif` and the five directive extras are grammar regexes (making them external
+tokens was measured at +60% states and +70% parser.c; `#endif` joined them in C1). A regex cannot refuse a prefix or a
 trailing token, so the dispatch reads every `#` word once, calls `mark_end`, checks the rest of
 the line, and either claims a malformed line as `MALFORMED_DIRECTIVE` or declines a well-formed
 line to its regex. **Two `#` conventions, do not mix them:** `peek_directive_ci_skip_extras`
-takes BARE directive words and consumes the `#` itself; the `PREPROC_OPEN`/`PREPROC_CLOSE`
+takes BARE directive words and consumes the `#` itself; the `PREPROC_OPEN`
 dispatch advances past `#` manually before reading its word.
 
 `SCANNER_HOOK` makes the gatekeeper run in every state (before it, a quarter of the states
@@ -90,10 +91,24 @@ never called the scanner and `#elsebegin` parsed clean). It costs ~5% on increme
 (every leaf reuse now needs an exact lex-mode match). **It cannot change a tree, and must stay
 that way:** never return it, and keep every other emitted token guarded by `valid_symbols`
 (only `MALFORMED_DIRECTIVE` is emitted unasked, and only for lines alc rejects and for an `end`
-read as a name at a statement start, which alc rejects too).
+read as a name in a var section's next declaration or a return-value name, which alc rejects too).
 
 Error recovery after a malformed line is wide on purpose: the ERROR is visible and on the
 right line, and narrowing it would add scanner state for input alc already rejects.
+
+## External tokens must not follow a construct
+
+**An external token may open a construct or sit inside one; it must not be able to FOLLOW a
+construct unless it follows that construct in every host.** Why: the generator never merges two
+parse states that differ by an external lookahead token, and the refusal propagates back through
+every predecessor, so a follower external clones everything it can follow once per host context.
+`#endif` as the external `PREPROC_CLOSE` made 77% of all states such copies; as a regex plus the
+zero-width `ENDIF_MARK` (valid in one state only) it cost 10,876 states less (C1); `end` as a
+grammar token instead of the external `END_KEYWORD` cost 2,178 less (C3), and the enum was
+renumbered (`PREPROC_SPLIT_BEGIN = 5` … `OPTION_MEMBERS_PROPERTY_NAME = 19`, same order as
+`externals`). A state carrying
+depth (or any scanner state) moves to a mark like that, never back onto the follower. Mechanism and
+instruments: `docs/state-reduction-method.md`, "External tokens in a follow set bar state merging".
 
 ## Transparent Extras
 

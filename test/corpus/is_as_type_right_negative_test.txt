@@ -1,0 +1,59 @@
+========================================================================
+NEGATIVE: `is` followed by an array type (alc AL0104: a name is expected after is/as)
+:error
+========================================================================
+codeunit 50100 P
+{
+    procedure T(I: Interface IFoo)
+    var
+        B: Boolean;
+    begin
+        B := I is array[2] of Integer;
+    end;
+}
+------------------------------------------------------------------------
+
+========================================================================
+NEGATIVE: `is` followed by an Option member list (alc AL0104)
+:error
+========================================================================
+codeunit 50100 P
+{
+    procedure T(I: Interface IFoo)
+    var
+        B: Boolean;
+    begin
+        B := I is Option A,B;
+    end;
+}
+------------------------------------------------------------------------
+
+========================================================================
+NEGATIVE: `is` followed by a List type (alc AL0104)
+:error
+========================================================================
+codeunit 50100 P
+{
+    procedure T(I: Interface IFoo)
+    var
+        B: Boolean;
+    begin
+        B := I is List of [Integer];
+    end;
+}
+------------------------------------------------------------------------
+
+========================================================================
+NEGATIVE: `as` followed by a Dictionary type (alc AL0104)
+:error
+========================================================================
+codeunit 50100 P
+{
+    procedure T(I: Interface IFoo)
+    var
+        J: Interface IFoo;
+    begin
+        J := I as Dictionary of [Integer, Text];
+    end;
+}
+------------------------------------------------------------------------

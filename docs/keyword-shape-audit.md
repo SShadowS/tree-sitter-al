@@ -21,7 +21,7 @@ enum_keyword: $ => prec(10, kwCases('enum', 'enum', 'ENUM', 'Enum', 'eNUM', 'eNu
 |---|---|---|
 | `alias(kw('word'), 'word')` → STRING | one anonymous child typed `"word"` | 139 |
 | `kwCases('word', …)` → STRING, each spelling aliased to `'word'` | one anonymous child typed `"word"` | 13 |
-| external scanner token (`begin_keyword`, `end_keyword`) | none — cannot take a child | 2 |
+| `begin_keyword` (external scanner token) and `end_keyword` (a named one-token rule `kw('end')` since state review C3, external before) | none — childless leaf by design | 2 |
 
 The child's type is always the canonical lowercase spelling regardless of how the source
 spelled the keyword: `XmlPort` yields `(xmlport_keyword "xmlport")`, and the node's own text
@@ -38,7 +38,7 @@ hidden `aux_sym_*` symbols (`.visible = false`), unlike anonymous *string* token
 **`node-types.json` cannot confirm this.** It lists anonymous children only when they sit
 inside a field, and none of these do, so all keyword nodes look childless there regardless of
 their real shape. Read a keyword's text from the node itself, never by descending into a
-child; that stays correct for the two external tokens and survives any change to the
+child; that stays correct for the two childless leaves and survives any change to the
 anonymous layer.
 
 ## begin/end: why the depth guard was wrong
@@ -54,6 +54,16 @@ decisions happen in **one** scan: the scanner reads the keyword, calls `mark_end
 split lookahead, and picks the symbol from the result. Direct naming via grammar rules or
 `alias()` still breaks GLR backtracking; the stateful scanner is the correct approach
 (`docs/superpowers/specs/2026-03-24-stateful-scanner-begin-end-design.md`).
+
+State review C3 (2026-11) made `end` a grammar token without reintroducing either defect: the named
+rule `end_keyword: $ => kw('end')` is a visible named childless leaf (the external's exact node),
+it is the only `kw('end')`, every use site names `$.end_keyword`, and `PREPROC_SPLIT_END` keeps
+first refusal because the scanner is asked before the lexer, so one word still has one reading.
+The external had cost 2,178 parse states (it was in the follow set of a statement inside
+`begin..end` only). `begin` stays external (internalising it measured −81 states, not worth it).
+Measured: `begin_keyword`/`end_keyword` counts over BC.History 277,141 / 283,703 and DC 22,076 /
+23,271, equal to main's, one shape each; a mutation that puts an anonymous `kw('end')` back in
+`code_block` fails `test/corpus/preproc_begin_end_named_test.txt` 4 of 4.
 
 ## `object_type_keyword`: one node type, two shapes
 

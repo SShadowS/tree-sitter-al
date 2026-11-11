@@ -1,0 +1,88 @@
+================================================================================
+TableRelation keying control: quoted table target (the valid form of the AL0107 integer target)
+================================================================================
+table 50100 T
+{
+    fields
+    {
+        field(1; F; Code[20])
+        {
+            TableRelation = "Sales Header";
+        }
+    }
+}
+--------------------------------------------------------------------------------
+
+(source_file
+  (table_declaration
+    (table_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (fields_section
+        (fields_keyword)
+        body: (fields_body
+          (field_declaration
+            (field_keyword)
+            id: (integer)
+            name: (identifier)
+            type: (type_specification
+              (code_type
+                (code_keyword)
+                length: (integer)))
+            body: (declaration_body
+              (property
+                name: (property_name)
+                value: (table_relation_value
+                  (table_relation_expression
+                    (simple_table_relation
+                      target: (qualified_name
+                        (quoted_identifier)))))))))))))
+
+================================================================================
+TableRelation keying control: quoted table target with where (the valid form of "integer target with where (AL0107)")
+================================================================================
+table 50100 T
+{
+    fields
+    {
+        field(1; F; Code[20])
+        {
+            TableRelation = "Sales Header" where("No." = const('A'));
+        }
+    }
+}
+--------------------------------------------------------------------------------
+
+(source_file
+  (table_declaration
+    (table_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (fields_section
+        (fields_keyword)
+        body: (fields_body
+          (field_declaration
+            (field_keyword)
+            id: (integer)
+            name: (identifier)
+            type: (type_specification
+              (code_type
+                (code_keyword)
+                length: (integer)))
+            body: (declaration_body
+              (property
+                name: (property_name)
+                value: (table_relation_value
+                  (table_relation_expression
+                    (simple_table_relation
+                      target: (qualified_name
+                        (quoted_identifier))
+                      (where_clause
+                        (where_keyword)
+                        (where_conditions
+                          (where_condition
+                            field: (quoted_identifier)
+                            (const_keyword)
+                            value: (string_literal)))))))))))))))

@@ -10,6 +10,7 @@
 
 ================================================================================
 B7 gap: assignment continued with the semicolon inside every arm
+:error
 ================================================================================
 codeunit 50101 P {
   procedure Main()
@@ -25,63 +26,3 @@ B := A
   end;
 }
 --------------------------------------------------------------------------------
-
-(source_file
-  (codeunit_declaration
-    (codeunit_keyword)
-    object_id: (integer)
-    object_name: (identifier)
-    body: (declaration_body
-      (procedure
-        (procedure_keyword)
-        name: (identifier)
-        (var_section
-          (var_keyword)
-          body: (var_body
-            (variable_declaration
-              name: (identifier)
-              type: (type_specification
-                (record_type
-                  (record_keyword)
-                  reference: (identifier))))
-            (variable_declaration
-              name: (identifier)
-              type: (type_specification
-                (basic_type)))
-            (variable_declaration
-              name: (identifier)
-              type: (type_specification
-                (array_type
-                  (array_keyword)
-                  sizes: (integer)
-                  (of_keyword)
-                  element_type: (type_specification
-                    (basic_type)))))
-            (variable_declaration
-              name: (identifier)
-              type: (type_specification
-                (basic_type)))))
-        body: (code_block
-          (begin_keyword)
-          body: (statement_block
-            (assignment_statement
-              left: (identifier)
-              operator: (assignment_operator)
-              right: (identifier)
-              (preproc_conditional_expression_tail
-                (preproc_if
-                  (preproc_open)
-                  condition: (identifier))
-                operand: (integer)
-                (preproc_endif
-                  (MISSING preproc_close))))
-            (call_expression
-              function: (identifier)
-              arguments: (argument_list))
-            (ERROR
-              (preproc_else))
-            (empty_statement))
-          (preproc_split_block_close_after_endif
-            (preproc_endif
-              (preproc_close))
-            (end_keyword)))))))

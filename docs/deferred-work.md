@@ -550,6 +550,8 @@ is the same answer recorded for family H. The configuration-consistency oracle
 already resolves configurations, so its resolver is a starting point. This is
 an architecture change, not a rule, and it is not filed as a known limitation.
 
+State review C1 (2026-11, `#endif` a grammar regex) changed this file's recovery tree only; it still ERRORs (row in `tools/perf/delta-reviewed.tsv`).
+
 ## 11. A one-pair ML value parses as a comparison (G9) — RESOLVED 2026-10-04
 
 **Resolution (7dea427, c3858ff, roadmap B4):** the compiler's 13 ML names and
@@ -2829,7 +2831,21 @@ tokens lexed in the old parse state may not match the new one. Start with
 the scanner or the split rules. After that, add delete/re-insert-each-line edits over the split fixtures to
 `tools.perf incremental` or to D2's fuzzing.
 
-**Owner:** roadmap D2 (incremental and scanner-sensitive edits), suggested.
+**An upstream limit found on the way (2026-11-11, state review C3).** tree-sitter's keyword-to-identifier fallback
+(a keyword lexed where only the `word` token fits is re-read as an identifier) does not apply to a REUSED
+named-keyword node: the runtime decides it on a leaf's `is_keyword` flag, which only single tokens carry, and a
+named keyword rule (`alias(kw('until'), 'until')`, a node with one child) is not one. So wherever a keyword is NOT
+reserved at a position where it could also be read as a name, an incremental parse can keep the old keyword node
+where a fresh parse lexes the word, reduces, and switches it to an identifier, and the two trees differ. Found by
+`python -m tools.perf incremental` on BC28.1 after C3 merged the states after a statement in a `repeat` body and in a
+`begin .. end` body: inserting `begin ` at byte 10102 of `BaseApp/.../AsmCreateInvtPickMovement.Codeunit.al` reused
+an old `until_keyword` where the fresh parse read `until` as a parenless call. **Fixed for `until`** by `3591fb69`:
+`until` joins the reserved set `statement_names` (alc rejects `until` as a statement name, AL0104/AL0111/AL0224,
+`tools/alc_probe/cases/state-c3/`), so neither parse switches; incremental = fresh on all four corpora afterwards,
+every fresh tree byte-identical. The limit itself stays: any other keyword that is not reserved where a name can
+stand is exposed the same way. Evidence (scratch, the investigation's): `c3inc/repro.py` (the reproduction),
+`c3inc/min.al`, `c3inc/{c3,c1}.{fresh,inc,old}.log` (parse logs), `c3inc/incr-*.log` (the four corpora after the
+fix).
 
 ## 64. Split-if-begin GAP cells where C2's recovery loses the `procedure` node (D1, recorded)
 
@@ -3133,6 +3149,10 @@ releases away; every `#if` shape added grows it (item 67 alone +3.1%).
 
 **Next step:** a decision, not a fix: keep shipping `parser.c` and budget it (state reduction, docs/state-reduction-method.md),
 or stop tracking it (generate in CI and in the package build). Each registry's build (npm, PyPI, crates.io) depends on it.
+
+**Update 2026-11-11 (state review C2 + item 102 + C1 + C3):** `parser.c` is 34,672,672 B (33.1 MiB), −50.7% against
+main's 70,306,929 B; STATE_COUNT 31,618 → 16,768 (`docs/state-reduction-method.md`). The 100 MB limit is no longer
+near, and GitHub's 50 MB warning is cleared. The decision "ship or generate" stays open.
 
 **Owner:** unassigned.
 
@@ -3604,6 +3624,9 @@ At `#else` the first arm's plain header is taken for `preproc_split_procedure`'s
 `_procedure_preamble` reduction, resolved statically since item 77 and the same in a nested group), and the later arm's
 `var` has no slot. The first arm WITH a var section parses (`preproc_split_procedure_preamble`), and a trigger's is fine
 (`trigger` has no split-header rule, so its arms are preambles from the start). 0 production sites known (not counted).
+The same cause covers the nested and empty-group form (item 102's second re-review, 2026-11-11): an outer split whose
+first arm is a bare header and whose `#else` arm is a nested preamble group holding an empty group, a var group or a
+var section ERRORs on every build, `dcec0b4f` included.
 
 **Next step:** a GLR conflict at `header • #else` (both readings live until the arm's `var`, or reject), measured for
 forks over production's split procedures; a counted site scan first.
@@ -3700,6 +3723,221 @@ review's extended space). 0 production sites known (not counted).
 
 **Next step:** an empty group alone in a relation arm must be a decoration of the arm, not a relation; decide with
 item 98's `h2-deco-in-semi-arm` row, fixture from the probe, and the oracle's lowering for it.
+
+**Owner:** unassigned.
+
+## 101. `is` / `as` still take a `Record`, `Codeunit` or `Interface` type, not just a name (AL0111)
+
+**Established:** 2026-11-11, state review C2 (alc 18.0.41, `tools/alc_probe/cases/is-as-type/`). After `is`/`as` alc
+takes a bare name; `I is Record P`, `I is Codeunit P`, `I is Interface IFoo` are AL0111. C2 narrowed the right from
+`type_specification` to `_dangling_type`, which removed the option, array, List and Dictionary forms (AL0104) but
+still accepts the object-reference forms. `_dangling_type` itself cannot simply be narrowed: the typed `#if` arms
+and prefixes use it too, and their trees would change; a separate name-only rule for the `is`/`as` right would not
+touch them (no production file uses these forms after `is`/`as`).
+
+**Also not accepted (an under-acceptance, review of C2):** a namespace-qualified name, `I is My.NS.IFoo`, which alc
+accepts (`tools/alc_probe/cases/is-as-type/is-namespace-qualified-name-accepted.al`); main and C2 both ERROR.
+
+**Next step:** a name-only type rule for the `is`/`as` right that takes a bare or quoted name AND a
+namespace-qualified name (`My.NS.IFoo`), and drops the object-reference forms; measure its state cost.
+
+**Owner:** unassigned.
+
+## 102. A var-less `preproc_conditional_var_block` in a clean tree — RESOLVED 2026-11-11
+
+**Established:** 2026-11-11, during state review C1. Every arm of `preproc_conditional_var_block` was optional, so a
+group with no `var` anywhere was a var block. Between a routine header and its `begin`, an empty `#if X` / `#elif Y` /
+`#else` / `#endif` group and a nested empty group (`#if X #if Y #endif #endif`) parsed clean as var-less var blocks,
+and a nested empty group before `var` ERRORed; alc 18.0.41 accepts all three in every configuration
+(`tools/alc_probe/cases/item102/`, `--check` clean). Over a 297-input probe grid (11 headers: procedure, return types,
+`Option` returns, attribute, `local`, `;`, trigger, two split headers; 9 group shapes; 3 positions) 22 clean trees held
+a var-less block, identically on main `abc77b25`, C2 `dcec0b4f` and C1; 0 of the clean fixture inputs and 0 of 70,352
+clean production files did. The config oracle's `var-block-without-var` contract names the shape; C1's recovery
+surfaced it on three B7a gap fixtures.
+
+**Resolved** (built on C2 `dcec0b4f`): a var block needs a var region in at least one arm, and a `preproc_pragma_only`
+arm may hold nested pragma-only groups and nothing else. The oracle's `pragma-only-with-structure` contract exempts
+exactly a nested `preproc_pragma_only` (`tools/config_oracle/tests/test_representation_pragma_nesting.py`, which fails
+if the exemption is widened to other `preproc_*` kinds), and the lowering registry (`contracts.py`) lists
+`preproc_pragma_only:<children>` as a `splice-repeat` host (the fixture's 132 configurations validate). Measured against `dcec0b4f`: STATE_COUNT +76 (+0.26%), LARGE
++11, SYMBOL +1, `parser.c` +88,234 B; declared conflicts unchanged; `node-types.json`: `preproc_pragma_only` gains the
+child `preproc_pragma_only`; fixture complete trees: 0 clean inputs changed (315 erroring inputs recover
+differently, none pinned); four corpora byte-identical; probe grid: 24 wrong clean trees corrected, 9 erroring valid
+inputs clean, 0 var-less blocks left. Fixture `test/corpus/item102_var_block_pragma_only_test.txt`
+(33 cases). The alternative that only required `var` (no pragma-only nesting) measured +23 states on C1 but left the
+nested empty group before `begin` without an owner: 9 valid inputs ERRORed.
+
+**Correction (review of `6bf7ba5d`):** the "0 clean inputs broken" above was false. The grid had no var group next
+to an empty group, and with a var block required to hold `var`, an empty group could no longer sit in a var-block run
+or in a var-block arm beside a region. Six shapes alc accepts in every configuration, clean on `dcec0b4f`, ERRORed
+from `6bf7ba5d` to `3591fb69` in a procedure, a procedure with a return type and a trigger: a var group then an empty
+group (`#if A var V #endif #if B #endif begin`), a var group, an empty group, a var group; an if arm holding only a
+nested empty group with a var `#else` or `#elif` arm; a var if arm with an `#else` holding only a nested empty group;
+an arm holding a nested empty group then a var group (`tools/alc_probe/cases/item102/`, six new cases, `--check`
+clean; the second var group of the three-group case is `#if not A`, since two `var` sections are AL0104). **Fixed**
+on top of `3591fb69`: a var-block run starts with a var block and may then hold pragma-only groups, and every arm of a
+var block may hold pragma-only groups before its region or alone; a leading pragma-only group stays the host's
+(`_procedure_tail`). The declared conflict `[preproc_pragma_only, preproc_conditional_var_block]` became unnecessary
+(generator warning) and was removed (parser.c byte-identical with or without it). The lowering registry lists
+`preproc_pragma_only` under every routine-tail host (`contracts.py`, `traversal/policy.json`). Extended grid (25
+group shapes x procedure, trigger, return type, field, file top = 125 inputs, against `dcec0b4f` and `3591fb69`): 30
+erroring valid inputs clean, 0 clean inputs broken, 0 clean trees changed against `3591fb69`, 0 var-less blocks;
+the 30 differ from `dcec0b4f` only where `dcec0b4f` held a var-less block. Fixture complete trees (3,861 inputs):
+0 clean trees changed, 0 `has_error` flips. New fixture `test/corpus/item102_var_block_pragma_neighbours_test.txt`
+(18 cases). That "0 clean inputs broken" covered only the plain routine hosts of that 125-input grid (procedure,
+trigger, return type; field and file top as controls); it did not measure the split and nested preamble hosts.
+
+**Second correction (re-review of `75ac1db3`):** in those preamble hosts an empty or pragma-only group as the first
+thing after the header inside an arm (`#if A procedure P() #if B #endif #else procedure P(I: Integer) #endif begin
+end;`, the trigger form, and the group followed by a var group) parsed clean on `dcec0b4f` (as a var-less block) and
+ERRORed from `6bf7ba5d` on: `_procedure_preamble` and `_trigger_preamble` were `header, optional(region)`, with no
+`_procedure_tail` to own a leading group (552 failing inputs in the reviewer's grid). alc accepts every configuration
+(`tools/alc_probe/cases/item102/review2_pre_*.al`, `review2_nested_preamble_empty_in_arm.al`). **Fixed:** both
+preambles are `header, repeat(preproc_pragma_only), optional(region)`; the same change makes the group-then-var-section
+form (`... #if B #endif var V: Integer; #else ...`) parse, which ERRORed on every build. STATE_COUNT +0, parser.c
++1,365 B, no new conflict; fixture `test/corpus/item102_split_preamble_pragma_only_test.txt` (7 cases; the five flat
+ones are classified `debt(C1)` in `fixture-classes.tsv` because the oracle does not lower a flat split preamble, item
+94; the two nested ones validate, 16 configurations pass).
+
+**Final grid (the re-review's generators, rerun over the parser after the second fix; A = `dcec0b4f`, B =
+`3591fb69`):** 23 group shapes in 11 routine hosts (procedure, `local`, `internal`, return type, named return,
+trigger, table trigger, field trigger, event subscriber, interface implementation, attributes), up to three groups
+with or without a plain var section, 206,540 inputs; a random 3-4-group sample of 20,000 (seed 1); and 6,624 inputs
+in 12 other templates (split procedure, split and one-armed split preamble, trigger preamble, action and request-page
+triggers, event, object var, between procedures, interface, field, file top; the "event" template measured nothing:
+its procedure was named `OnX`, so the groups landed in the name and every grouped input ERRORed on all builds; the
+reviewer's rerun with it renamed, and with six more preamble templates, 9,936 inputs, seed 7 for the random sample,
+gave the same zeros; attributed and event-subscriber procedures are covered by the first grid's hosts). In all
+three: 0 inputs clean on A and
+ERROR now, 0 clean on B and ERROR now, 0 clean trees changed against B, 0 var-less var blocks; the trees that differ
+from A (32,741, 9,515 and, in the 6,624, 0 outside var-less blocks) are each one where A held a var-less block.
+Newly clean against B: 34,141, 10,483 and 2,472.
+
+## 103. A follow-set gate for external tokens (state review C1 spec section 7, decided after C3: deferred)
+
+**Established:** 2026-11-11, state review C1/C3. Rule (`.claude/rules/scanner.md`, "External tokens must not follow a
+construct"): an external token may open a construct or sit inside one, not FOLLOW one unless it follows it in every
+host. **Gate (not built):** `tree-sitter generate --log` prints `split states A B - external token NAME` for every
+refused merge whose first reason is an external token; collect the NAMEs and fail on one outside a committed
+allow-list. Allow-list measured on the C1 + C3 prototype tip (146,463 split events): `continue_as_identifier`
+36,330, `property_name` 16,566, `preproc_open` 8,233, `begin_keyword` 7,739, `_negative_integer` 609,
+`var_attribute_open` 260, `_preproc_open_before_else` 177, `calc_formula_property_name` 57, `_directive_eol` 5,
+`preproc_split_begin` 5. `preproc_close`, `_endif_mark` and `end_keyword` must not appear (`end_keyword` is not an
+external since C3). Softer check: the total of external-rooted split events must not grow beyond a stated margin.
+Limits: the log names only the FIRST reason per pair, so an absent name proves nothing about a token that sorts
+later; the allow-listed tokens were measured as not worth internalising (`begin` −81, `#if` −264, `continue` +165,
+`property_name` +290 states), not as harmless in general.
+
+**Why deferred:** one more `generate --log` per validate run (585,088 split lines on main, streamed), plus a
+self-test that needs a scratch grammar with an external follower; not small enough to add inside C3. A sketch of the
+bucketing (about 30 lines) is the state review's `splitlog.py`.
+
+**Next step:** build it as one `validate-grammar.sh` step with a committed allow-list file and the self-test.
+
+**Owner:** unassigned.
+
+## 104. `end` as a declared name is accepted in several positions alc rejects (pre-existing, shared with main)
+
+**Established:** 2026-11-11, state review C3's name-position matrix
+(`tools/config_oracle/tests/test_end_name_positions.py`, which pins main's `has_error` per position). Clean on main
+and on C3, and alc 18.0.41 rejects each one probed (`tools.alc_probe run`, AL0104 with AL0105/AL0107/AL0114/AL0198):
+a parameter named `End` (`procedure P(End: Integer)`, also in an event subscriber or publisher), a name in a variable
+list (`var A, End: Integer;`), a global or `protected var` named `End`, `procedure End()`, a field `End`, an enum
+value `End`, `codeunit 50100 End`. The other clean rows of the matrix (keys, fieldgroups, other object kinds, page,
+report, query and xmlport names) are the same mechanism, not probed one by one. alc's lexer reserves `end` everywhere; the
+grammar rejects it only where a statement starts (`statement_names`) and where the scanner's `end` clause fires (a var
+section's next local declaration, a return-value name). Quoted `"End"` is a valid name everywhere.
+
+**Next step:** decide whether this matters to a consumer; a fix reserves `end` on the declaration-name rules (each must
+name `$.identifier` directly) and measures the state cost. 0 production sites known (not counted).
+
+**Owner:** unassigned.
+
+## 105. An `is` test as a case branch label ERRORs; alc accepts it (pre-existing, shared with main)
+
+**Established:** 2026-11-11, review of state review C2. `case true of I is IFoo: ; end;` and
+`case true of I is IFoo, B: ; end;` compile with alc 18.0.41
+(`tools/alc_probe/cases/is-as-type/is-in-case-branch-label-accepted.al`, `--check` clean) and ERROR on main
+`abc77b25`, C2 `dcec0b4f` and `3591fb69` alike, so C2 neither caused nor fixed it. Other expression labels parse
+(`A = 1:`, `A in [1]:`, and the parenthesised `(I is IFoo):`), so the gap is the bare `is` (and presumably `as`)
+expression in the case-pattern position. 0 production sites known (not counted).
+
+**Next step:** find which case-pattern rule leaves `is_expression` out (or what in `_type_right` reads the `:`),
+add it, fixture both labels with fields, measure the state cost.
+
+**Owner:** unassigned.
+
+## 106. An empty group after `then` before a last statement without `;` is still the then-branch at depth 0 (silent, pre-existing)
+
+**Established:** 2026-11-11, review of state review C3 (finding F1). `A := 1; if C then #if Y #endif begin A := 2;
+end end;` (the then-branch block is the body's last statement, no `;`): main, C1, C3 and the tip all give
+`then_branch` = the empty `preproc_conditional_statement` and the block as a sibling statement, clean, so only a
+tree check sees it. alc accepts both configurations (`tools/alc_probe/cases/item67/then-last-statement-depth0.al`).
+The same shape inside an `#if` arm flipped to the right tree with C3 (CHANGELOG, `test/corpus/
+item_67_then_decoration_in_arm_test.txt`).
+
+**Cause:** both readings are complete with the same dynamic precedence. Item 67's decoration arm carries
+`prec.dynamic(1)`, but it sits inside `if_statement`'s `prec.dynamic(20)` and the generator keeps the larger
+absolute value, so both productions are 20 and GLR breaks the tie arbitrarily (with a `;` after `end` every build
+already lands on the decoration reading). Parse logs (py-tree-sitter logger, scratch evidence of the review): on the
+tip, at depth 0, the two versions shift into one state with equivalent `statement_block` subtrees over the same
+predecessor and condense, and the runtime keeps the first version's link, the wrong reading; inside an arm C3 merges
+them earlier and the later pop picks by `ts_subtree_compare` (symbol order, logged `select_earlier`), while main
+kept the first link there too.
+
+**Measured candidate fix (not applied, outside this review's work list):** the decoration arm at
+`prec.dynamic(21)`. STATE_COUNT, LARGE, SYMBOL and `parser.c` size unchanged; the depth-0 shape gives `then_branch:
+(code_block)`; fixture complete trees 0 clean changes and 0 `has_error` flips over 3,886 inputs; BC.History, DC,
+BC28.1, BCApps-29.0 byte-identical. Not run: the oracle, B7a, the same check for `else` and the `fieldedStatement`
+bodies (`while`, `for`, case branch), whose `prec.dynamic(1)` has no enclosing dynamic precedence.
+
+**Next step:** apply it with a fixture per body slot (then, else, do, case branch) at depth 0, the full gates.
+
+**Owner:** unassigned.
+
+## 107. A stray `#endif` at the start of a body parses clean (over-acceptance, pre-existing)
+
+**Established:** 2026-11-11, review of state review C3. `procedure P() var A: Integer; begin #endif A := 1; end;`
+(an `#endif` with no open `#if`, depth 0, first thing in the body) parses clean on main `abc77b25`, C1, C3 and
+`3591fb69`: the `#endif` is the close of a `preproc_split_block_close_after_endif`, which holds the rest of the
+body. alc 18.0.41 rejects it with AL0624, and accepts the same text without the `#endif` (compiled with
+`tools.alc_probe.core.compile_project`; `tools.alc_probe run` refuses the case, its resolver reports
+`unbalanced-endif`, so it is not a committed case). Only input alc rejects is affected. 0 production sites known
+(not counted).
+
+**Next step:** decide whether the split close may open a body at depth 0 at all (the scanner knows the depth; the
+grammar does not); a fix must keep every issue #40/#41 chain and the B7a split-block cells clean.
+
+**Owner:** unassigned.
+
+## 108. A split block opened by an `#elif` group, or by a bare `begin` in one arm, ERRORs; alc accepts it (pre-existing)
+
+**Established:** 2026-11-11, review of state review C3 (its chain generator's `elifA` family, which ERRORs even with
+one block). One shared `end;` after a group whose every arm opens a block: `#if not C if A then begin #elif D if G
+then begin #else begin #endif Q(); end;` ERRORs on main, C1, C3 and `3591fb69`; so do the same group with an
+`if .. then begin` in every arm (`#elif` is enough) and `#if not C if A then begin #else begin #endif` (a bare
+`begin` in one arm). The `#if`/`#else` form with an `if .. then begin` in both arms parses (issue #40/#41's shape).
+alc 18.0.41 accepts every configuration of all three (`tools/alc_probe/cases/issue40-42/split-begin-elif-else-
+bare-begin.al`, `split-begin-elif-all-if.al`, `split-begin-else-bare-begin.al`, `--check` clean). 0 production
+sites known (not counted).
+
+**Next step:** find which split-begin rule (`preproc_split_if_then_begin` and its neighbours) takes only `#if`/
+`#else` and only `if .. then begin` arms; widen it to `#elif` arms and a bare `begin` arm, with the oracle's
+lowering for it, and measure the state cost.
+
+**Owner:** unassigned.
+
+## 109. An empty group after a plain var section and after a var group get two different shapes (pre-existing)
+
+**Established:** 2026-11-11, re-review of item 102 (`75ac1db3`). The same kind of group, an empty `#if B #endif`
+between a routine's var region and `begin`, has two shapes: after a plain `var V: Integer;` it is absorbed into the
+`var_body` as an empty `preproc_conditional_var`; after a var group (`#if A var V: Integer; #endif`) it is a
+`preproc_pragma_only` sibling of the var block. Both clean on `dcec0b4f` (where the second was a var-less var block)
+and on the tip; alc accepts every configuration (`tools/alc_probe/cases/item102/empty_group_after_var_section_two_shapes.al`,
+`--check` clean). A consumer that looks for directive-only groups must handle both. 0 production sites counted.
+
+**Next step:** decide which owner is right (the var_body's empty conditional, or a pragma-only group after the
+section), then make the other route produce it and measure the state cost; the oracle's lowering treats both today.
 
 **Owner:** unassigned.
 

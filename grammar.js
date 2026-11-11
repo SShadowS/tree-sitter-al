@@ -651,8 +651,10 @@ module.exports = grammar({
   // AL keyword-vs-identifier disambiguation is contextual and handled by the
   // grammar (see keyword_as_identifier) and the scanner. The contextual sets
   // below are applied with reserved('name', rule): the first two at exactly one
-  // site each, `code_names` on three rules (`_expression`, `call_expression`'s
-  // `function` choice and `_expression_statement`; see its comment).
+  // site each, `code_names` on the expression rules (`_expression`,
+  // `_continuation_operand`, `_postfix_operand`, `call_expression`'s `function`
+  // choice), `statement_names` on the two statement starts (`_expression_statement`,
+  // `_assign_target`); see their comments.
   reserved: {
     global: $ => [],
     // `true`/`false` inside an implementation mapping. A one-entry
@@ -692,6 +694,25 @@ module.exports = grammar({
     // parenless call named `else` with no ERROR; reserved, it is an ERROR (+0 states, no production tree).
     code_names: $ => [$._and_token, $._or_token, $._xor_token, $._div_token,
                       $._mod_token, $._in_token, $._not_token, $._else_token],
+    // State review C3: `code_names` plus `end`, on the two statement-start rules
+    // (`_expression_statement`, `_assign_target`). `end` is a grammar token (end_keyword),
+    // and at a statement start it is never a name (issue #40/#41, alc AL0519): reserved,
+    // the GLR version that would read `end;` as a call dies at once instead of surviving
+    // to the end of an arm (the scanner's MALFORMED_DIRECTIVE did this while `end` was
+    // external). An expression keeps `code_names`, so `End` as a value is untouched
+    // (test/corpus/end_as_value_test.txt). The entry is the rule symbol, whose body is
+    // the one token.
+    // `until` (alc AL0104/AL0111/AL0224 at a statement start,
+    // tools/alc_probe/cases/state-c3/): C3 merged the states after a statement in a
+    // repeat body and in a begin..end body, so an incremental parse may REUSE an old
+    // `until_keyword` node where a fresh parse lexes `until`, reduces, and then (not
+    // reserved) switches it to an identifier. tree-sitter's keyword->word switch tests
+    // only a leaf's is_keyword flag, never a reused named-keyword node, so the two parses
+    // diverged (fresh: a call `until`, incremental: a repeat with a MISSING `repeat`).
+    // Reserved, neither parse switches (+0 states, no production tree).
+    statement_names: $ => [$._and_token, $._or_token, $._xor_token, $._div_token,
+                           $._mod_token, $._in_token, $._not_token, $._else_token,
+                           $.end_keyword, $._until_token],
   },
 
   extras: $ => [
@@ -714,26 +735,26 @@ module.exports = grammar({
     $.property_name,            // [0] identifier followed by = (not :=)
     $.continue_as_identifier,   // [1] 'continue' followed by := ( . [ :: += -= *= /= (used as a name)
     $.preproc_open,             // [2] #if — depth++
-    $.preproc_close,            // [3] #endif — depth--
+    $._endif_mark,              // [3] zero-width, right after the `#endif` regex — depth--
     $.begin_keyword,            // [4] 'begin' — any depth, unless split claims it
-    $.end_keyword,              // [5] 'end' — any depth, unless split claims it
-    $.preproc_split_begin,      // [6] 'begin' at depth > 0, immediately before #endif
-    $.preproc_split_end,        // [7] 'end' at depth > 0, followed by [;] then #elif/#else/#endif
-    $.var_attribute_open,       // [8] '[' when attribute is followed by variable declaration
-    $.calc_formula_property_name, // [9] `CalcFormula` followed by = -- the one name-keyed property
-    $._directive_eol,           // [10] the ONE newline ending an #if/#elif line (hidden)
-    $._negative_integer,        // [11] `-1` as one signed literal, only before ; , # or EOF
-    $._negative_decimal,        // [12] `-1.5`, likewise
-    $._malformed_directive,     // [13] a `#` line alc rejects (AL0621/AL0631). In NO rule:
+                                //     (`end` is a grammar token since state review C3: end_keyword)
+    $.preproc_split_begin,      // [5] 'begin' at depth > 0, immediately before #endif
+    $.preproc_split_end,        // [6] 'end' at depth > 0, followed by [;] then #elif/#else/#endif
+    $.var_attribute_open,       // [7] '[' when attribute is followed by variable declaration
+    $.calc_formula_property_name, // [8] `CalcFormula` followed by = -- the one name-keyed property
+    $._directive_eol,           // [9] the ONE newline ending an #if/#elif line (hidden)
+    $._negative_integer,        // [10] `-1` as one signed literal, only before ; , # or EOF
+    $._negative_decimal,        // [11] `-1.5`, likewise
+    $._malformed_directive,     // [12] a `#` line alc rejects (AL0621/AL0631). In NO rule:
                                 //      the scanner returns it only to make that line an ERROR
-    $._scanner_hook,            // [14] NEVER emitted. In `extras` only, so that every parse
+    $._scanner_hook,            // [13] NEVER emitted. In `extras` only, so that every parse
                                 //      state has a valid external token and calls the scanner
-    $._ml_property_name,        // [15] one of the 13 compiler ML names followed by = (B4)
-    $._namespaces_property_name, // [16] `Namespaces` followed by = (B4)
-    $._table_relation_property_name, // [17] `TableRelation` followed by = (B5)
-    $._link_property_name,  // [18] one of the six compiler link-family names followed by = (B5b)
-    $._preproc_open_before_else, // [19] #if of a directive-only group followed by `else` (issue #39)
-    $._option_members_property_name, // [20] `OptionMembers` followed by = (B13, deferred item 37)
+    $._ml_property_name,        // [14] one of the 13 compiler ML names followed by = (B4)
+    $._namespaces_property_name, // [15] `Namespaces` followed by = (B4)
+    $._table_relation_property_name, // [16] `TableRelation` followed by = (B5)
+    $._link_property_name,  // [17] one of the six compiler link-family names followed by = (B5b)
+    $._preproc_open_before_else, // [18] #if of a directive-only group followed by `else` (issue #39)
+    $._option_members_property_name, // [19] `OptionMembers` followed by = (B13, deferred item 37)
   ],
 
   conflicts: $ => [
@@ -849,9 +870,6 @@ module.exports = grammar({
     // preproc_pragma_only or an empty preproc_conditional_object; GLR explores
     // both and the pragma-only path is the one that lets the namespace follow.
     [$.preproc_pragma_only, $.preproc_conditional_object],
-    // A pragma-only #if between a procedure header and its body can also read as
-    // the body's leading preproc_conditional_var_block; GLR explores both.
-    [$.preproc_pragma_only, $.preproc_conditional_var_block],
     [$._property_value, $.option_member],
     [$.caption_value, $.option_member],
     // B7b-1d: a string then `#if`: a caption sub-field group, or the value with a
@@ -5251,8 +5269,12 @@ module.exports = grammar({
     )),
 
     // Procedure preamble: header + optional var section (used in preproc_split_procedure_preamble)
+    // Pragma-only groups may follow the header, before or instead of the var region (item 102
+    // re-review: `#if A procedure P() #if B #endif #else ... #endif begin`, alc accepts; with a
+    // var block required to hold `var`, the empty group had no owner here).
     _procedure_preamble: $ => seq(
       $._procedure_header,
+      repeat($.preproc_pragma_only),
       optional($._routine_var_region),
     ),
 
@@ -5359,12 +5381,14 @@ module.exports = grammar({
     ),
 
     // code_block: begin ... end;
-    // begin/end are scanner-exclusive at EVERY depth: the scanner emits
-    // begin_keyword/end_keyword unless a PREPROC_SPLIT_* lookahead claims the
-    // keyword first. There is deliberately no kw('begin')/kw('end') fallback —
-    // a scanner/literal split for the same text is what GLR forks on, and the
-    // anonymous kw() form is a token(PATTERN), which tree-sitter renders as a
-    // HIDDEN auxiliary symbol, so the keyword would vanish from the tree.
+    // `begin` is scanner-exclusive at EVERY depth: the scanner emits begin_keyword
+    // unless PREPROC_SPLIT_BEGIN claims it first. `end` is the named grammar rule
+    // end_keyword (state review C3); the scanner, asked before the lexer, gives
+    // PREPROC_SPLIT_END first refusal. There is deliberately no ANONYMOUS
+    // kw() of `begin` or `end` inside any rule: a second way to read the same word is
+    // what GLR forks on, and the anonymous kw() form is a token(PATTERN), which
+    // tree-sitter renders as a HIDDEN auxiliary symbol, so the keyword would vanish
+    // from the tree.
     // The block does NOT own the ';' that follows its `end`. It used to, and
     // that single `optional(';')` was the root cause of the ae90aea regression:
     // being under prec.right it was GREEDY, so in `if C then begin … end; else X;`
@@ -5488,6 +5512,7 @@ module.exports = grammar({
     // in both configurations.
     _trigger_preamble: $ => seq(
       $._trigger_header,
+      repeat($.preproc_pragma_only),  // as _procedure_preamble (item 102 re-review)
       optional($._routine_var_region),
     ),
 
@@ -5522,28 +5547,47 @@ module.exports = grammar({
       $.preproc_endif,
     ),
 
-    // Preprocessor conditional wrapping a var section before begin
-    preproc_conditional_var_block: $ => seq(
-      $.preproc_if,
-      optional($._routine_var_region),
-      repeat(seq(
-        $.preproc_elif,
-        optional($._routine_var_region),
-      )),
-      optional(seq(
-        $.preproc_else,
-        optional($._routine_var_region),
-      )),
-      $.preproc_endif,
-    ),
+    // Preprocessor conditional wrapping a var section before begin. At least one arm holds a
+    // var region (item 102): with every arm optional, an empty `#if/#elif/#else` group or a
+    // nested empty group between a routine header and `begin` parsed clean as a var block
+    // with no `var` (alc accepts both; the config oracle's `var-block-without-var`). Those
+    // groups are preproc_pragma_only now, which may nest.
+    // Any arm may also hold pragma-only groups: before its region, or alone (review fix 1:
+    // `#if A #if B #endif #else var V #endif`, `#if A #if B #endif #if C var V #endif #endif`;
+    // alc accepts every configuration, tools/alc_probe/cases/item102/).
+    preproc_conditional_var_block: $ => {
+      const pragmas = () => repeat($.preproc_pragma_only);
+      const region = () => seq(pragmas(), $._routine_var_region);
+      const any = () => seq(pragmas(), optional($._routine_var_region));
+      const rest = () => seq(
+        repeat(seq($.preproc_elif, any())),
+        optional(seq($.preproc_else, any())),
+      );
+      return seq(
+        $.preproc_if,
+        choice(
+          seq(region(), rest()),
+          seq(pragmas(), repeat(seq($.preproc_elif, pragmas())), choice(
+            seq($.preproc_elif, region(), rest()),
+            seq($.preproc_else, region()),
+          )),
+        ),
+        $.preproc_endif,
+      );
+    },
 
     // Issue #31: a routine's var region between its header and `begin`: one var_section, or a
     // run of conditional blocks, each arm of which is a region again (so blocks nest). alc
     // accepts `#if A var K #endif #if not A var N #endif` and `#if A #if B var K #endif #endif`
-    // in every configuration.
+    // in every configuration. A run starts with a var block and may then hold pragma-only
+    // groups (review fix 1: `#if A var V #endif #if B #endif begin`, alc accepts); a leading
+    // pragma-only group belongs to the host (`_procedure_tail`) or to the enclosing arm.
     _routine_var_region: $ => choice(
       $.var_section,
-      repeat1($.preproc_conditional_var_block),
+      seq(
+        $.preproc_conditional_var_block,
+        repeat(choice($.preproc_conditional_var_block, $.preproc_pragma_only)),
+      ),
     ),
 
     // Trigger name: a simple name, or a scoped member-trigger name
@@ -5814,10 +5858,13 @@ module.exports = grammar({
     // are `extras`, so no structural children appear between the directives).
     // Used where MS BC wraps `#pragma warning disable/restore` in `#if/#endif`
     // at a construct-internal boundary (e.g. between a field header and body).
+    // An arm may hold nested pragma-only groups and nothing else (item 102: `#if X #if Y
+    // #endif #endif` between a routine header and its body or var section; alc accepts).
     preproc_pragma_only: $ => seq(
       $.preproc_if,
-      repeat($.preproc_elif),
-      optional($.preproc_else),
+      repeat($.preproc_pragma_only),
+      repeat(seq($.preproc_elif, repeat($.preproc_pragma_only))),
+      optional(seq($.preproc_else, repeat($.preproc_pragma_only))),
       $.preproc_endif,
     ),
 
@@ -5880,14 +5927,19 @@ module.exports = grammar({
 
     preproc_else: $ => new RustRegex('(?i)#[ \\t]*else'),
 
-    // Scanner-exclusive: $.preproc_close is the ONLY route to this token (no
-    // grammar-literal fallback, spaced or unspaced) — see preproc_if above
-    // for the rationale. This RETIRES the pre-3.2.0 '# endif' literal
-    // fallback, which matched a spaced close WITHOUT decrementing the
-    // scanner's depth counter (a latent depth-corruption bug); the scanner
-    // now owns spaced '# endif' too, so every close — spaced or not —
-    // decrements depth correctly.
-    preproc_endif: $ => $.preproc_close,
+    // `#endif` is a grammar regex, as #elif/#else are (state review 2026-11, C1).
+    // The generator never merges two parse states that differ by an EXTERNAL
+    // lookahead token, and the old external PREPROC_CLOSE was in the follow set
+    // of everything that can end a `#if` arm, so every construct existed once
+    // per arm context (31,618 -> 18,898 states with C2; docs/state-reduction-method.md).
+    // The scanner is still the gatekeeper (a malformed `#endif` line is
+    // MALFORMED_DIRECTIVE before this regex sees it) and the only owner of
+    // `depth`: the hidden zero-width `_endif_mark`, valid only right after this
+    // regex, is where depth is decremented (scanner state is saved only with a
+    // returned token). Every close, spaced or not, goes through the mark; the
+    // pre-3.2.0 literal fallback that skipped the decrement stays retired.
+    preproc_close: $ => new RustRegex('(?i)#[ \\t]*endif'),
+    preproc_endif: $ => seq($.preproc_close, $._endif_mark),
 
     // Preprocessor-split if statement: if header varies across #if/#else, body is shared
     // Pattern 1: #if COND / if (expr) then / #else / if (expr) then / #endif / body;
@@ -6536,7 +6588,20 @@ module.exports = grammar({
     // `_value_start_keyword_name` arm.
     //
     // B7b-2 Phase C: prec(-1) removed with call_statement's (see there).
-    _expression_statement: $ => reserved('code_names', choice(
+    //
+    // State review C3: `end` is a grammar token, not an external one. External, it
+    // was in the follow set of every statement inside begin..end and of none outside
+    // (repeat..until, a bare then-branch), and the generator never merges two states
+    // that differ by an external lookahead. A named rule whose body is one token is a
+    // visible named leaf, childless as the external token was; NOT the alias(kw(w), w)
+    // form of the other keywords, which would add a child to every block's end. The
+    // ONLY kw() of `end` in this file (grep-checked: one match); every use is
+    // $.end_keyword. The scanner, asked
+    // before the lexer, still gives PREPROC_SPLIT_END first refusal.
+    end_keyword: $ => kw('end'),
+
+    // State review C3: reserves `statement_names` (code_names plus `end`), see there.
+    _expression_statement: $ => reserved('statement_names', choice(
       $.call_expression,
       $.member_expression,
       $.call_statement,
@@ -6546,7 +6611,7 @@ module.exports = grammar({
     // assignment target is a postfix-safe atom or a receiver group; no binary,
     // unary, literal, list or ternary left (all statically dead in base), so
     // no statement can start with `[`, `-` or a literal.
-    _assign_target: $ => reserved('code_names', choice(
+    _assign_target: $ => reserved('statement_names', choice(
       $.identifier,
       $.quoted_identifier,
       alias($._value_start_keyword_name, $.identifier),
@@ -7677,8 +7742,18 @@ module.exports = grammar({
 
     // A type, or an operand group of types (spec 6.2). The arm type is
     // `_dangling_type`, as in the typed prefix (see there).
+    // State review 2026-11 (C2): the plain right is `_dangling_type` too (no option,
+    // array, List or Dictionary type). alc 18.0.41 reads a NAME after is/as: `is array[2]
+    // of Integer`, `is Option A,B`, `is List of [Integer]`, `is Dictionary of [..]` are
+    // AL0104 (tools/alc_probe/cases/is-as-type/). With the full type_specification every
+    // expression context carried the whole type grammar (-1,844 states, STATE 31,618 ->
+    // 29,774). `is Record P` etc. stay over-accepted (AL0111, deferred-work item 101).
+    // A correction that also widens: with the type keywords gone, `I is List`, `is Dictionary`,
+    // `is Array`, `is Option` name an interface declared `interface "List"` etc. (alc accepts);
+    // 5.1.0 ERRORed on the first three and read `is Option` as an option type, so `F(1, I is
+    // Option, 2)` lost two arguments (test/corpus/is_as_type_right_name_test.txt).
     _type_right: $ => choice(
-      $.type_specification,
+      alias($._dangling_type, $.type_specification),
       alias($._type_operand_group, $.preproc_conditional_operand),
     ),
 
@@ -8471,7 +8546,8 @@ module.exports = grammar({
     while_keyword: $ => prec(10, alias(kw('while'), 'while')),
     do_keyword: $ => prec(10, alias(kw('do'), 'do')),
     repeat_keyword: $ => prec(10, alias(kw('repeat'), 'repeat')),
-    until_keyword: $ => prec(10, alias(kw('until'), 'until')),
+    until_keyword: $ => prec(10, alias($._until_token, 'until')),
+    _until_token: $ => kw('until'),
     exit_keyword: $ => prec(10, alias(kw('exit'), 'exit')),
     continue_keyword: $ => prec(10, alias(kw('continue'), 'continue')),
     break_keyword: $ => prec(10, alias(kw('break'), 'break')),

@@ -168,10 +168,11 @@ def test_a_trailing_comment_on_any_directive_line_is_outside_every_arm(T, policy
 @pytest.mark.parametrize("src, want", [
     (b"codeunit 1 C\n{\n}\n#if A\n#else", (28, 28)),             # no newline: the arm starts at EOF
     (b"codeunit 1 C\n{\n}\n#if A\n#else // c", (33, 33)),        # the comment is the directive's
-    # With a final newline, error recovery puts a MISSING #endif at the end of `#else`
-    # (28 and 32), before the newline: the arm is empty there, never inverted.
-    (b"codeunit 1 C\n{\n}\n#if A\n#else\n", (28, 28)),
-    (b"codeunit 1 C\r\n{\r\n}\r\n#if A\r\n#else\r\n", (32, 32)),
+    # With a final newline, error recovery puts a MISSING #endif at EOF, after the newline
+    # (29 and 34; before state review C1 made `#endif` a grammar regex it sat at the end of
+    # `#else`, 28 and 32): the arm is empty there, never inverted.
+    (b"codeunit 1 C\n{\n}\n#if A\n#else\n", (29, 29)),
+    (b"codeunit 1 C\r\n{\r\n}\r\n#if A\r\n#else\r\n", (34, 34)),
 ])
 def test_an_unclosed_else_on_the_last_line_has_an_empty_arm(T, policy, al_parser, src, want):
     doc = T.Document(al_parser.parse(src), src, policy)

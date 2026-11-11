@@ -226,3 +226,9 @@ item_74_split_else_gap_test.txt
 # empty arm, two complementary groups) and item 84's group where no where precedes it or an arm is open:
 # GAP witnesses alc accepts in every configuration, and three shapes alc rejects in one (items 81/84 review 2).
 table_relation_item99_gap_test.txt
+# State review 2026-11 (C2): a non-name type after is/as; alc rejects each with AL0104
+# (tools/alc_probe/cases/is-as-type/).
+is_as_type_right_negative_test.txt
+# State review C3: `until` at a statement start is reserved (statement_names); alc rejects
+# it there (tools/alc_probe/cases/state-c3/). Before, a stray `until X;` was a parenless call.
+until_statement_name_negative_test.txt

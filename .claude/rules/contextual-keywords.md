@@ -39,14 +39,15 @@ aliases do not compose and the node is lost. A named rule is required.
 
 Every grammar keyword rule is `alias(kw('word'), 'word')`, or `kwCases(...)` for compound
 keywords, and has **exactly one anonymous child typed as the canonical lowercase spelling**
-(`XmlPort` gives `(xmlport_keyword "xmlport")`, node text still `XmlPort`). The two external
-tokens `begin_keyword`/`end_keyword` cannot take a child and are childless leaves.
+(`XmlPort` gives `(xmlport_keyword "xmlport")`, node text still `XmlPort`). The two exceptions,
+`begin_keyword` (an external token) and `end_keyword` (a named one-token grammar rule since state
+review C3), are childless leaves by design (below).
 
 Why the alias: a named rule whose whole body is one token collapses into it, and a bare
 `kw()` is a `token(PATTERN)`, which tree-sitter hides, so without the alias the node is a
-childless leaf and the grammar ships two shapes. **Never reintroduce a `kw('begin')`/`kw('end')`
-fallback**: a hidden pattern token is lexed and dropped from the tree, which is how a complete
-`begin … end` inside every `#if` vanished until 4.0.0.
+childless leaf and the grammar ships two shapes. **Never put an ANONYMOUS `kw('begin')` /
+`kw('end')` inside another rule** (the old fallback): a hidden pattern token is lexed and dropped
+from the tree, which is how a complete `begin … end` inside every `#if` vanished until 4.0.0.
 
 **`node-types.json` cannot confirm the shape**: it lists anonymous children only inside a
 field, so every keyword looks childless there. **Read a keyword's text from the node itself,
@@ -77,10 +78,26 @@ over BC.History). The `kwCases()` warning is about *widening*; an alias widens n
 option-member sites take `_tabledata_identifier` (`alias(kw('tabledata'), $.identifier)`, ONE
 rule: the generator names a shared unnamed token after its most-used alias), so that `identifier` is a leaf (`docs/deferred-work.md` item 27, pinned by `tools/tests/test_identifier_leaf.py`).
 
-## begin/end are scanner tokens
+## `begin` is a scanner token; `end` is a named grammar token
 
-`begin_keyword` and `end_keyword` are external scanner tokens emitted at **every** `#if`
-depth; `grammar.js` has no fallback for them, so there is no scanner/literal pair for GLR to
-fork on. The depth counter decides only whether `PREPROC_SPLIT_BEGIN`/`PREPROC_SPLIT_END` get
-first refusal, and both decisions happen inside one scan (`.claude/rules/scanner.md`; design
+`begin_keyword` is an external scanner token emitted at **every** `#if` depth. `end_keyword` is,
+since state review C3, the named rule `end_keyword: $ => kw('end')`: a named rule whose body is one
+token is a visible named **childless** leaf, exactly the node the external token gave (as an
+external, `end` was in the follow set of every statement inside `begin..end` and of none outside,
+which barred 2,178 state merges). Both are childless by design; do **not** "fix" `end_keyword` to
+the `alias(kw(w), w)` form, which would add a child to every block end. There is exactly ONE
+`kw('end')` in `grammar.js`, the rule body; every use site says `$.end_keyword` (a second
+anonymous `kw('end')` also makes `generate` panic while `statement_names` lists `$.end_keyword`).
+
+There is one way to read each word as a block keyword, so no scanner/literal pair for GLR to fork
+on. The depth counter decides only whether `PREPROC_SPLIT_BEGIN`/`PREPROC_SPLIT_END` get first
+refusal; the scanner is asked before the lexer, so `PREPROC_SPLIT_END` decides before the grammar's
+`end` (`.claude/rules/scanner.md`; design
 `docs/superpowers/specs/2026-03-24-stateful-scanner-begin-end-design.md`).
+
+`end` is never a name where a statement starts: the reserved set `statement_names` (`code_names`
+plus `$.end_keyword`, on `_expression_statement` and `_assign_target`) makes the version that
+reads `end;` as a call die at once (issues #40/#41). Expressions keep `code_names`, so `End` as a
+value is untouched. Declarations the reserved set cannot reach (a var section's next declaration,
+a return-value name) are the scanner's `MALFORMED_DIRECTIVE` clause. Pinned by
+`test/corpus/preproc_begin_end_named_test.txt` and `tools/config_oracle/tests/test_end_name_positions.py`.

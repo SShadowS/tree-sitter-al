@@ -23,7 +23,8 @@ Consequences that have each produced a live defect:
   are the live instances.
 
 Therefore: **read a keyword's text from the node itself, never by descending into a
-child.** That stays correct for the two external tokens, which cannot take a child.
+child.** That stays correct for `begin_keyword` (an external token) and `end_keyword` (a
+grammar token since state review C3, kept a childless leaf), which have no child.
 
 ## `kwCases()` is load-bearing — never "simplify" to `kw()`
 

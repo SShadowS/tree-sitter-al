@@ -7,6 +7,155 @@ public API — a change to node structure or field names is a **major** bump.
 
 ## [Unreleased]
 
+### Changed (tree shape)
+
+- **An empty `#if` group between a routine header and its body or var section is `preproc_pragma_only`, never a
+  var block with no `var` (deferred item 102).** A tree-shape change on valid AL, so a major bump under this file's
+  header; 0 production sites (no clean file of BC.History, DC, BC28.1 or BCApps-29.0 held such a block; all four
+  corpora byte-identical). Every arm of `preproc_conditional_var_block` was optional, so `#if X` / `#elif Y` / `#else`
+  / `#endif` and a nested empty group (`#if X #if Y #endif #endif`) before `begin` parsed clean as a var block holding
+  no `var` (22 such trees over a 297-input probe grid, identical on 5.1.0), and a nested empty group before `var`
+  ERRORed. Now a var block needs a var region in at least one arm, and a `preproc_pragma_only` arm may hold nested
+  pragma-only groups (and nothing else). alc accepts all three shapes in every configuration
+  (`tools/alc_probe/cases/item102/`). Probe grid against the previous parser: 24 wrong clean trees corrected, 9
+  ERRORing valid inputs now clean. The first version of this change broke six shapes 5.1.0 parsed clean, a var group
+  next to an empty group (`#if A var V #endif #if B #endif begin`, an `#else` or `#elif` arm holding only a nested
+  empty group beside a var arm, an arm holding a nested empty group then a var group); fixed in the same release: a
+  var-block run may hold pragma-only groups after its first var block, and every var-block arm may hold them before
+  its region or alone. It also broke an empty group right after the header inside a split or nested preamble arm
+  (`#if A procedure P() #if B #endif #else procedure P(I: Integer) #endif begin end;`, the trigger form, and the
+  same group followed by a var group); fixed too: a procedure or trigger preamble takes pragma-only groups after its
+  header, which also makes `... #if B #endif var V: Integer; #else ...` parse (it ERRORed on every build). Fixture
+  `item102_split_preamble_pragma_only_test.txt` (7 cases). One new acceptance came with the var-block fix: an arm
+  holding a nested empty or pragma group then a plain var section (`#if A #if B #endif var V: Integer; #endif begin`,
+  also in an `#else` arm) ERRORed on 5.1.0 and parses now; alc accepts every configuration
+  (`tools/alc_probe/cases/item102/review2_nv_*.al`; fixture `item102_var_block_nested_empty_then_var_test.txt`,
+  3 cases). Extended grid (125 inputs): 0 clean inputs broken against 5.1.0, 0 var-less blocks; fixture
+  `item102_var_block_pragma_neighbours_test.txt` (18 cases), six more alc probes. **`node-types.json`:
+  `preproc_pragma_only` gains the child type `preproc_pragma_only`, and so do `preproc_conditional_var_block`,
+  `preproc_split_procedure_preamble`, `preproc_conditional_procedure_preamble`, `preproc_split_trigger_preamble` and
+  `preproc_conditional_trigger_preamble` (a var region there may end in a pragma-only group).** The config oracle's `pragma-only-with-structure` contract exempts exactly a nested
+  pragma-only group (`tools/config_oracle/tests/test_representation_pragma_nesting.py`), and its lowering registry
+  lists `preproc_pragma_only:<children>` as a `splice-repeat` host, so the new fixture's 132 configurations are
+  validated (all pass). Cost, measured per commit (the state review's C1 and C3 cuts sit between them):
+  STATE_COUNT +76 on C2 (the first version), then +65 and +0 for the two fixes, LARGE_STATE_COUNT +11, −9, +0;
+  `parser.c` +88,234 B, +47,930 B, +1,365 B; declared conflicts −1 (`[preproc_pragma_only,
+  preproc_conditional_var_block]` became unnecessary and was removed). Grids over the final parser (206,540 +
+  20,000 + 6,624 generated inputs, every routine host including split and nested preambles): 0 inputs clean on C2
+  and ERROR now, 0 clean trees changed against the C3 tip, 0 var-less blocks. New fixture
+  `item102_var_block_pragma_only_test.txt` (33 cases).
+
+- **Inside an `#if` arm, an empty group after `then` decorates a then-branch that is the arm's last statement
+  without `;` (a side effect of state review C3, a correction).** `#if X A := 1; if C then #if Y #endif begin ...
+  end #endif`: 5.1.0 gave `then_branch` = the empty group and the block as a sibling statement; now `then_branch:
+  (code_block)` with the group as an unlabelled child of the `if_statement`, as 5.1.0 already did when the `end`
+  has a `;` (deferred item 67's tree; alc accepts every configuration,
+  `tools/alc_probe/cases/item67/then-in-arm-last-statement.al`). The state review's variant space had 75 such
+  inputs of 4,320; 0 production sites (four corpora byte-identical). Cause: both readings are complete parses with
+  the same dynamic precedence (item 67's `prec.dynamic(1)` on the decoration arm sits inside `if_statement`'s
+  `prec.dynamic(20)`, and the generator keeps the larger absolute value), so GLR breaks the tie by stack-version
+  order or by `ts_subtree_compare`'s symbol order, and C3's token change moved both. The same shape at depth 0
+  keeps the wrong tree on 5.1.0 and here (deferred item 106). Pinned by
+  `test/corpus/item_67_then_decoration_in_arm_test.txt` (2 cases).
+
+### Fixed
+
+- **The right of `is` / `as` is a name-like type, not any `type_specification` (state review C2).** alc 18.0.41 reads
+  a name there. These eight inputs were parsed clean and now ERROR: `is` and `as` followed by `array[2] of Integer`,
+  `Option A,B` (both AL0104, AL0111), `List of [Integer]` (AL0104, AL0107) and `Dictionary of [Integer, Text]`
+  (AL0104, AL0105, AL0107, AL0301); probes in `tools/alc_probe/cases/is-as-type/`. The accepted language narrows,
+  and it also widens, a correction on valid input: with the type keywords gone from the right, `I is List`,
+  `I is Dictionary`, `I is Array` (and `as`) name an interface declared `interface "List"` etc., which alc accepts
+  and 5.1.0 ERRORed on; `I is Option` was a clean but wrong tree on 5.1.0 (an option type, so `F(1, I is Option, 2)`
+  lost its last two arguments to option members) and is now `right: (type_specification (identifier))`. New fixture
+  `is_as_type_right_name_test.txt` (5 cases), probes `is-*-interface-name-accepted.al`,
+  `is-option-name-in-argument-accepted.al`. `node-types.json` is unchanged; trees byte-identical over the four
+  corpora (no production file uses these names).
+  `is Record P`, `Codeunit P`, `Interface IFoo` stay over-accepted (AL0111, deferred item 101). Measured: STATE
+  31,618 -> 29,774 (-1,844), LARGE 10,133 -> 9,114, `parser.c` 70,306,929 -> 64,793,755 B. The fixture "TableRelation
+  keying negative: integer target with where (AL0107)" (input alc rejects) is now `:error`: with this change its
+  last ERROR node gains a `(filter_operator)` child (recovery only). New fixture
+  `is_as_type_right_negative_test.txt`.
+
+### Changed (internal, no tree change)
+
+- **`#endif` is a grammar regex; its depth decrement moved to a zero-width mark (state review C1).** The generator
+  never merges two parse states that differ by an external lookahead token, and the external `PREPROC_CLOSE` was in
+  the follow set of everything that can end a `#if` arm, so every construct existed once per arm context.
+  `preproc_close` is now `(?i)#[ \t]*endif`, gated by the scanner like `#elif`/`#else`, and the hidden zero-width
+  external `_endif_mark`, valid only right after it, carries `depth--`. Measured on top of C2: STATE 29,774 -> 18,898
+  (-10,876, -36.5%), LARGE 9,114 -> 5,741, SYMBOL +1, `parser.c` 64,793,755 -> 41,341,306 B (-36.2%). As committed,
+  on top of item 102: STATE 29,850 -> 18,946 (-10,904, -36.5%), LARGE 9,125 -> 5,750, `parser.c` 64,881,989 ->
+  41,408,238 B (-36.2%); against 5.1.0 31,618 -> 18,946 (-40.1%), 70,306,929 -> 41,408,238 B (-41.1%).
+  `node-types.json` byte-identical, declared
+  conflicts unchanged; trees byte-identical over BC.History, DC and BC28.1 (`tools.perf delta`, anonymous tokens
+  included). BCApps-29.0: one file changes, `EDocumentServiceDE.PageExt.al`, which ERRORs before and after (deferred
+  item 10): recovery only, row in `tools/perf/delta-reviewed.tsv`.
+- Behaviour on invalid input only: during error recovery `#endif` is now a token the lexer can produce, so recovery
+  resynchronises on it (a stray `#endif` shows as `(preproc_close)` inside the ERROR where it was
+  `(UNEXPECTED 'i')`); and a `#endif` with trailing text where no `#endif` is valid is now a `MALFORMED_DIRECTIVE`
+  line (an ERROR on that line) instead of an unlexable `#`. Both ERROR before and after.
+- 21 fixtures that pinned a recovery tree of an input that ERRORs either way changed. 20 are now `:error` (the
+  ERROR is the assertion): NEGATIVE `#elsex`, `#elsewhere`, `#elifx A`, `#else B`, `#else /* c */`, `#else;`,
+  `#elif A /* c */`, `#elif A #region R` (the group's later `#endif` is lexed during recovery); NEGATIVE `#endif;`,
+  `#endif X`, `#endif /* c */` (the line is a `MALFORMED_DIRECTIVE` in more states; the stronger "ERROR on that line,
+  no `preproc_close` over the word" check is a gate outside the corpus); B7 gap "assignment continued with the
+  semicolon inside every arm"; B4 negative "a keyed whole-value #if arm holding a comparison"; B11 negative
+  "TableRelation all-empty value is an ERROR"; six B13 gaps (RunObject `Page`/`CustList`, `Format`/`(1)`, decimal
+  range `0 :`/`5`, `sorting()`/`where()`, Caption `'a',`/`Locked = true`, generic two groups) - all recovery. One
+  keeps a pinned tree because its header asserts a node must NOT be there: NEGATIVE "`#` then a bare LF then `if`"
+  (still no `preproc_if`; the stray `#endif` is now `(ERROR (preproc_close))`). New `has_error` test
+  `tools/config_oracle/tests/test_endif_mark.py` (a MISSING hidden `_endif_mark` is invisible to `tree-sitter parse`).
+- Recovery-only bookkeeping, every row checked by script to ERROR under both the previous and this parser: 17 B7a
+  structural assertion rows re-recorded (`tools/b7_audit/assertions.tsv`, reason note appended); 54
+  `tools/config_oracle/fixture-classes.tsv` entries (113 configurations of B7a/B7b gap fixtures) change their prefix
+  between `multi-config-parse:missing` and `multi-config-parse:error` (51 one way, 3 the other).
+- **`end` is a grammar token, reserved at statement starts (state review C3).** The external `END_KEYWORD` was in the
+  follow set of a statement inside `begin..end` and of none in `repeat..until` or a bare then-branch, so statement
+  and expression states were copied per context. `end_keyword` is now the named rule `kw('end')`: a visible named
+  childless leaf, the same node as before (the only `kw('end')` in `grammar.js`; `begin_keyword` stays external).
+  The scanner still gives `PREPROC_SPLIT_END` first refusal (it is asked before the lexer) and no longer returns an
+  `end` token; the external enum is renumbered (20 externals, `PREPROC_SPLIT_BEGIN = 5` … `OPTION_MEMBERS_PROPERTY_NAME
+  = 19`). The issue #40/#41 guard moved: at a statement start the new reserved set `statement_names` (`code_names`
+  plus `end`, on `_expression_statement` and `_assign_target`) kills the version that reads `end;` as a call; the
+  scanner keeps the declaration positions reserved words do not reach (a var section's next declaration, a
+  return-value name: `end` where `BEGIN_KEYWORD` is valid and `CONTINUE_AS_IDENTIFIER` and `PREPROC_SPLIT_END` are
+  not). Measured on top of C1: STATE 18,946 -> 16,768 (-2,178, -11.5%), LARGE 5,750 -> 4,618, SYMBOL +-0,
+  `parser.c` 41,408,238 -> 34,672,672 B (-16.3%); against 5.1.0 31,618 -> 16,768 (-47.0%), 70,306,929 -> 34,672,672 B
+  (-50.7%). `node-types.json` byte-identical, declared conflicts unchanged; trees byte-identical over BC.History, DC
+  and BC28.1 (`tools.perf delta`, anonymous tokens included); `begin_keyword` / `end_keyword` counts equal 5.1.0's
+  (BC.History 277,141 / 283,703; DC 22,076 / 23,271). BCApps-29.0: only `EDocumentServiceDE.PageExt.al` (deferred
+  item 10) changes again, recovery only (one `end` inside the ERROR region is an `end_keyword`). Issue #40/#41 chains
+  (both shapes, N = 3 to 64 blocks) parse clean with trees identical to 5.1.0.
+- Behaviour on invalid input only: during error recovery the word `end` is an `(end_keyword)` where it was an
+  `(identifier)` or a call named `end`. Six fixtures that pinned such a recovery tree changed: NEGATIVE `#endifx`,
+  `#regionX` inside a member expression, `#iendif`, `#ifendif`, CONTROL `#xendif` are now `:error` (the "no
+  `preproc_close` over the malformed word, ERROR on its row" assertion for the four `endif` words is now in
+  `tools/config_oracle/tests/test_endif_mark.py`); "A BOM glued to the END of a keyword" keeps its pinned tree (its
+  header asserts `begin<U+FEFF>` is an identifier), whose last node is now `(end_keyword)`. Recovery-only
+  bookkeeping, checked by script to error under both the C1 and this parser: the `fixture-classes.tsv` entry of B7a
+  witness "statement-terminator / trail" at `X=0` changes `reference-error:error` to `reference-error:missing` (its
+  flat text `case I of 1: end;` now recovers with a MISSING); two B7a class assertion rows
+  (`terminator/split-if-begin/empty` and `empty+comments`) re-recorded `mixed:32/59` -> `mixed:33/59`, each from one
+  cell (`occ:preproc_split_if_then_begin:0.5.0.0@preproc_split_block_end_in_else`) that ERRORs under both.
+- **`until` is reserved at a statement start (incremental = fresh).** C3 merged the parse states after a statement in
+  a `repeat` body and in a `begin .. end` body, and an incremental parse could then reuse an old `until_keyword`
+  node where a fresh parse reads `until` as a parenless call (`tools.perf incremental`, BC28.1
+  `AsmCreateInvtPickMovement.Codeunit.al`, `begin ` inserted at byte 10102): tree-sitter's keyword-to-identifier
+  switch tests only a leaf's `is_keyword` flag, never a reused named-keyword node (deferred item 63). `until` joins
+  `statement_names`; alc rejects `until` as a statement name (AL0104, AL0111, AL0224;
+  `tools/alc_probe/cases/state-c3/`). STATE_COUNT +0; every fresh tree byte-identical over the four corpora;
+  incremental = fresh on all four. Invalid input only: a stray `until X;` statement now ERRORs (deliberate negative
+  `until_statement_name_negative_test.txt`).
+- New gate `tools/config_oracle/tests/test_end_name_positions.py`: `end` / `End` / `END` / `"End"` in 77 name
+  positions (302 inputs), each asserted to have 5.1.0's `has_error`, plus a check read from `src/parser.c` that
+  `end_keyword` is valid in no state where the scanner's `end` clause fires. Several clean positions are
+  over-acceptances 5.1.0 shares (a parameter or a field named `End`, AL0104; deferred item 104). One row differs
+  from 5.1.0 on purpose: `End;` as a statement inside a preproc guard arm (`#if X F(); End; if C then #endif
+  A := 1;`) was a clean call named `End` on 5.1.0 and is an ERROR now; alc rejects X=1 (AL0104, AL0198) and
+  accepts X=0 (`tools/alc_probe/cases/issue40-42/end-statement-in-guard-arm.al`), so the ERROR is right. The follow-set gate
+  for external tokens is recorded as deferred item 103.
+
 ## [5.1.0] — 2026-11-10
 
 Released as a minor version by the owner's decision, an exception to the rule in this file's header: the tree-shape

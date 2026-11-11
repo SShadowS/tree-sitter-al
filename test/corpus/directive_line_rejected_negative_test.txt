@@ -40,6 +40,7 @@ codeunit 50100 P
 
 ================================================================================
 NEGATIVE: #endifx -- a prefix of #endif (AL0621)
+:error
 ================================================================================
 codeunit 50100 P
 {
@@ -52,28 +53,9 @@ codeunit 50100 P
 }
 --------------------------------------------------------------------------------
 
-(source_file
-  (codeunit_declaration
-    (codeunit_keyword)
-    object_id: (integer)
-    object_name: (identifier)
-    (ERROR
-      (trigger_keyword)
-      name: (identifier)
-      (begin_keyword)
-      (preproc_if
-        (preproc_open)
-        condition: (identifier))
-      (call_expression
-        function: (identifier)
-        arguments: (argument_list
-          (string_literal)))
-      (ERROR)
-      (call_statement
-        function: (identifier)))))
-
 ================================================================================
 NEGATIVE: #elsex -- a prefix of #else (AL0621)
+:error
 ================================================================================
 codeunit 50100 P
 {
@@ -88,34 +70,9 @@ codeunit 50100 P
 }
 --------------------------------------------------------------------------------
 
-(source_file
-  (codeunit_declaration
-    (codeunit_keyword)
-    object_id: (integer)
-    object_name: (identifier)
-    (ERROR
-      (trigger_keyword)
-      name: (identifier)
-      (begin_keyword)
-      (preproc_if
-        (preproc_open)
-        condition: (identifier))
-      (call_expression
-        function: (identifier)
-        arguments: (argument_list
-          (string_literal)))
-      (ERROR)
-      (call_expression
-        function: (identifier)
-        arguments: (argument_list
-          (string_literal)))
-      (ERROR
-        (UNEXPECTED 'i'))
-      (if_keyword)
-      (identifier))))
-
 ================================================================================
 NEGATIVE: #elsewhere -- a prefix of #else (AL0621)
+:error
 ================================================================================
 codeunit 50100 P
 {
@@ -130,34 +87,9 @@ codeunit 50100 P
 }
 --------------------------------------------------------------------------------
 
-(source_file
-  (codeunit_declaration
-    (codeunit_keyword)
-    object_id: (integer)
-    object_name: (identifier)
-    (ERROR
-      (trigger_keyword)
-      name: (identifier)
-      (begin_keyword)
-      (preproc_if
-        (preproc_open)
-        condition: (identifier))
-      (call_expression
-        function: (identifier)
-        arguments: (argument_list
-          (string_literal)))
-      (ERROR)
-      (call_expression
-        function: (identifier)
-        arguments: (argument_list
-          (string_literal)))
-      (ERROR
-        (UNEXPECTED 'i'))
-      (if_keyword)
-      (identifier))))
-
 ================================================================================
 NEGATIVE: #elifx A -- a prefix of #elif (AL0621)
+:error
 ================================================================================
 codeunit 50100 P
 {
@@ -171,32 +103,6 @@ codeunit 50100 P
     end;
 }
 --------------------------------------------------------------------------------
-
-(source_file
-  (codeunit_declaration
-    (codeunit_keyword)
-    object_id: (integer)
-    object_name: (identifier)
-    (ERROR
-      (trigger_keyword)
-      name: (identifier)
-      (begin_keyword)
-      (preproc_if
-        (preproc_open)
-        condition: (identifier))
-      (call_expression
-        function: (identifier)
-        arguments: (argument_list
-          (string_literal)))
-      (ERROR)
-      (call_expression
-        function: (identifier)
-        arguments: (argument_list
-          (string_literal)))
-      (ERROR
-        (UNEXPECTED 'i'))
-      (if_keyword)
-      (identifier))))
 
 ================================================================================
 NEGATIVE: #regionx -- a prefix of #region (AL0621)
@@ -364,6 +270,7 @@ codeunit 50100 P
 
 ================================================================================
 NEGATIVE: #endif; -- a token after #endif (AL0631, deferred-work item 20)
+:error
 ================================================================================
 codeunit 50100 P
 {
@@ -376,36 +283,9 @@ codeunit 50100 P
 }
 --------------------------------------------------------------------------------
 
-(source_file
-  (codeunit_declaration
-    (codeunit_keyword)
-    object_id: (integer)
-    object_name: (identifier)
-    body: (declaration_body
-      (trigger_declaration
-        (trigger_keyword)
-        name: (identifier)
-        body: (code_block
-          (begin_keyword)
-          (preproc_split_code_block_end
-            (preproc_if
-              (preproc_open)
-              condition: (identifier))
-            (ERROR
-              (call_expression
-                function: (identifier)
-                arguments: (argument_list
-                  (string_literal)))
-              (ERROR
-                (UNEXPECTED 'i'))
-              (if_keyword))
-            (empty_statement)
-            (end_keyword)
-            (preproc_endif
-              (MISSING preproc_close))))))))
-
 ================================================================================
 NEGATIVE: #endif X -- a word after #endif (AL0631)
+:error
 ================================================================================
 codeunit 50100 P
 {
@@ -418,30 +298,9 @@ codeunit 50100 P
 }
 --------------------------------------------------------------------------------
 
-(source_file
-  (codeunit_declaration
-    (codeunit_keyword)
-    object_id: (integer)
-    object_name: (identifier)
-    (ERROR
-      (trigger_keyword)
-      name: (identifier)
-      (begin_keyword)
-      (preproc_if
-        (preproc_open)
-        condition: (identifier))
-      (call_expression
-        function: (identifier)
-        arguments: (argument_list
-          (string_literal)))
-      (ERROR
-        (UNEXPECTED 'i'))
-      (if_keyword)
-      (identifier)
-      (identifier))))
-
 ================================================================================
 NEGATIVE: #endif /* c */ -- a block comment after #endif (AL0631)
+:error
 ================================================================================
 codeunit 50100 P
 {
@@ -454,30 +313,9 @@ codeunit 50100 P
 }
 --------------------------------------------------------------------------------
 
-(source_file
-  (codeunit_declaration
-    (codeunit_keyword)
-    object_id: (integer)
-    object_name: (identifier)
-    (ERROR
-      (trigger_keyword)
-      name: (identifier)
-      (begin_keyword)
-      (preproc_if
-        (preproc_open)
-        condition: (identifier))
-      (call_expression
-        function: (identifier)
-        arguments: (argument_list
-          (string_literal)))
-      (ERROR
-        (UNEXPECTED 'i'))
-      (if_keyword)
-      (multiline_comment)
-      (identifier))))
-
 ================================================================================
 NEGATIVE: #else B -- a word after #else (AL0631)
+:error
 ================================================================================
 codeunit 50100 P
 {
@@ -492,34 +330,9 @@ codeunit 50100 P
 }
 --------------------------------------------------------------------------------
 
-(source_file
-  (codeunit_declaration
-    (codeunit_keyword)
-    object_id: (integer)
-    object_name: (identifier)
-    (ERROR
-      (trigger_keyword)
-      name: (identifier)
-      (begin_keyword)
-      (preproc_if
-        (preproc_open)
-        condition: (identifier))
-      (call_expression
-        function: (identifier)
-        arguments: (argument_list
-          (string_literal)))
-      (ERROR)
-      (call_expression
-        function: (identifier)
-        arguments: (argument_list
-          (string_literal)))
-      (ERROR
-        (UNEXPECTED 'i'))
-      (if_keyword)
-      (identifier))))
-
 ================================================================================
 NEGATIVE: #else /* c */ -- a block comment after #else (AL0631)
+:error
 ================================================================================
 codeunit 50100 P
 {
@@ -534,34 +347,9 @@ codeunit 50100 P
 }
 --------------------------------------------------------------------------------
 
-(source_file
-  (codeunit_declaration
-    (codeunit_keyword)
-    object_id: (integer)
-    object_name: (identifier)
-    (ERROR
-      (trigger_keyword)
-      name: (identifier)
-      (begin_keyword)
-      (preproc_if
-        (preproc_open)
-        condition: (identifier))
-      (call_expression
-        function: (identifier)
-        arguments: (argument_list
-          (string_literal)))
-      (ERROR)
-      (call_expression
-        function: (identifier)
-        arguments: (argument_list
-          (string_literal)))
-      (ERROR
-        (UNEXPECTED 'i'))
-      (if_keyword)
-      (identifier))))
-
 ================================================================================
 NEGATIVE: #else; -- a token after #else (AL0631)
+:error
 ================================================================================
 codeunit 50100 P
 {
@@ -576,34 +364,9 @@ codeunit 50100 P
 }
 --------------------------------------------------------------------------------
 
-(source_file
-  (codeunit_declaration
-    (codeunit_keyword)
-    object_id: (integer)
-    object_name: (identifier)
-    (ERROR
-      (trigger_keyword)
-      name: (identifier)
-      (begin_keyword)
-      (preproc_if
-        (preproc_open)
-        condition: (identifier))
-      (call_expression
-        function: (identifier)
-        arguments: (argument_list
-          (string_literal)))
-      (ERROR)
-      (call_expression
-        function: (identifier)
-        arguments: (argument_list
-          (string_literal)))
-      (ERROR
-        (UNEXPECTED 'i'))
-      (if_keyword)
-      (identifier))))
-
 ================================================================================
 NEGATIVE: #elif A /* c */ -- a block comment on an #elif line (AL0631)
+:error
 ================================================================================
 codeunit 50100 P
 {
@@ -617,32 +380,6 @@ codeunit 50100 P
     end;
 }
 --------------------------------------------------------------------------------
-
-(source_file
-  (codeunit_declaration
-    (codeunit_keyword)
-    object_id: (integer)
-    object_name: (identifier)
-    (ERROR
-      (trigger_keyword)
-      name: (identifier)
-      (begin_keyword)
-      (preproc_if
-        (preproc_open)
-        condition: (identifier))
-      (call_expression
-        function: (identifier)
-        arguments: (argument_list
-          (string_literal)))
-      (ERROR)
-      (call_expression
-        function: (identifier)
-        arguments: (argument_list
-          (string_literal)))
-      (ERROR
-        (UNEXPECTED 'i'))
-      (if_keyword)
-      (identifier))))
 
 ================================================================================
 NEGATIVE: #if A /* c */ -- a block comment on an #if line (AL0631)
@@ -1105,6 +842,7 @@ NEGATIVE: #regionX inside a member expression (AL0621)
 B2 fix round 1, review I1: mid-expression states had no valid external
 token, and `x := Rec.` + `#regionX` + `;` parsed as a member_expression with
 a preproc_region extra inside it, clean.
+:error
 ================================================================================
 codeunit 50100 P
 {
@@ -1118,34 +856,6 @@ codeunit 50100 P
     end;
 }
 --------------------------------------------------------------------------------
-
-(source_file
-  (codeunit_declaration
-    (codeunit_keyword)
-    object_id: (integer)
-    object_name: (identifier)
-    body: (declaration_body
-      (trigger_declaration
-        (trigger_keyword)
-        name: (identifier)
-        (var_section
-          (var_keyword)
-          body: (var_body
-            (variable_declaration
-              name: (identifier)
-              type: (type_specification
-                (basic_type)))))
-        body: (code_block
-          (begin_keyword)
-          body: (statement_block
-            (assignment_statement
-              left: (identifier)
-              operator: (assignment_operator)
-              right: (member_expression
-                object: (identifier)
-                (ERROR)
-                member: (identifier))))
-          (MISSING end_keyword))))))
 
 ================================================================================
 NEGATIVE: #if A #region R -- a second directive on an #if line (AL0631)
@@ -1226,6 +936,7 @@ codeunit 50100 P
 
 ================================================================================
 NEGATIVE: #elif A #region R -- a second directive on an #elif line (AL0631)
+:error
 ================================================================================
 codeunit 50100 P
 {
@@ -1240,30 +951,3 @@ codeunit 50100 P
     end;
 }
 --------------------------------------------------------------------------------
-
-(source_file
-  (codeunit_declaration
-    (codeunit_keyword)
-    object_id: (integer)
-    object_name: (identifier)
-    (ERROR
-      (trigger_keyword)
-      name: (identifier)
-      (begin_keyword)
-      (preproc_if
-        (preproc_open)
-        condition: (identifier))
-      (call_expression
-        function: (identifier)
-        arguments: (argument_list
-          (string_literal)))
-      (ERROR)
-      (call_expression
-        function: (identifier)
-        arguments: (argument_list
-          (string_literal)))
-      (preproc_endregion)
-      (ERROR
-        (UNEXPECTED 'i'))
-      (if_keyword)
-      (identifier))))

@@ -1,0 +1,167 @@
+================================================================================
+Item 102 review fix 1, new acceptance: a var-block arm holding a nested empty group then a plain var section
+================================================================================
+codeunit 50100 C
+{
+    procedure P()
+#if A
+#if B
+#endif
+    var
+        V: Integer;
+#endif
+    begin
+    end;
+}
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (procedure
+        (procedure_keyword)
+        name: (identifier)
+        (preproc_conditional_var_block
+          (preproc_if
+            (preproc_open)
+            condition: (identifier))
+          (preproc_pragma_only
+            (preproc_if
+              (preproc_open)
+              condition: (identifier))
+            (preproc_endif
+              (preproc_close)))
+          (var_section
+            (var_keyword)
+            body: (var_body
+              (variable_declaration
+                name: (identifier)
+                type: (type_specification
+                  (basic_type)))))
+          (preproc_endif
+            (preproc_close)))
+        body: (code_block
+          (begin_keyword)
+          (end_keyword))))))
+
+================================================================================
+Item 102 review fix 1, new acceptance: an else arm holding a nested empty group then a plain var section
+================================================================================
+codeunit 50100 C
+{
+    procedure P()
+#if A
+    var
+        V: Integer;
+#else
+#if B
+#endif
+    var
+        W: Integer;
+#endif
+    begin
+    end;
+}
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (procedure
+        (procedure_keyword)
+        name: (identifier)
+        (preproc_conditional_var_block
+          (preproc_if
+            (preproc_open)
+            condition: (identifier))
+          (var_section
+            (var_keyword)
+            body: (var_body
+              (variable_declaration
+                name: (identifier)
+                type: (type_specification
+                  (basic_type)))))
+          (preproc_else)
+          (preproc_pragma_only
+            (preproc_if
+              (preproc_open)
+              condition: (identifier))
+            (preproc_endif
+              (preproc_close)))
+          (var_section
+            (var_keyword)
+            body: (var_body
+              (variable_declaration
+                name: (identifier)
+                type: (type_specification
+                  (basic_type)))))
+          (preproc_endif
+            (preproc_close)))
+        body: (code_block
+          (begin_keyword)
+          (end_keyword))))))
+
+================================================================================
+Item 102 review fix 1, new acceptance: an arm holding a nested pragma group then a plain var section, then an empty group
+================================================================================
+codeunit 50100 C
+{
+    procedure P()
+#if A
+#if B
+#pragma warning disable AA0001
+#endif
+    var
+        V: Integer;
+#endif
+#if C
+#endif
+    begin
+    end;
+}
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (procedure
+        (procedure_keyword)
+        name: (identifier)
+        (preproc_conditional_var_block
+          (preproc_if
+            (preproc_open)
+            condition: (identifier))
+          (preproc_pragma_only
+            (preproc_if
+              (preproc_open)
+              condition: (identifier))
+            (pragma)
+            (preproc_endif
+              (preproc_close)))
+          (var_section
+            (var_keyword)
+            body: (var_body
+              (variable_declaration
+                name: (identifier)
+                type: (type_specification
+                  (basic_type)))))
+          (preproc_endif
+            (preproc_close)))
+        (preproc_pragma_only
+          (preproc_if
+            (preproc_open)
+            condition: (identifier))
+          (preproc_endif
+            (preproc_close)))
+        body: (code_block
+          (begin_keyword)
+          (end_keyword))))))

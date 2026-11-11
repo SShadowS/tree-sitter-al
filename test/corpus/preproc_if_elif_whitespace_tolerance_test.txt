@@ -387,7 +387,7 @@ if CLEAN24
           (begin_keyword)
           (end_keyword))))
     (ERROR
-      (UNEXPECTED 'i'))))
+      (preproc_close))))
 
 ================================================================================
 NEGATIVE: `#` then a bare LF then `elif` on the next line must NOT be
@@ -446,6 +446,8 @@ to try `if` and then `endif` with two separate walking matches; the failed
 `endif` and returned true, and the result was a preproc_close spanning all
 seven bytes of `#iendif`, with the depth counter decremented, exit code 0 and
 no ERROR node. One buffered read of the directive word cannot do that.
+The no-preproc_close assertion is tools/config_oracle/tests/test_endif_mark.py.
+:error
 ================================================================================
 
 codeunit 50000 "If Test"
@@ -460,30 +462,12 @@ codeunit 50000 "If Test"
 
 --------------------------------------------------------------------------------
 
-(source_file
-  (codeunit_declaration
-    (codeunit_keyword)
-    object_id: (integer)
-    object_name: (quoted_identifier)
-    (ERROR
-      (procedure_keyword)
-      name: (identifier)
-      (begin_keyword)
-      (preproc_if
-        (preproc_open)
-        condition: (identifier))
-      (call_expression
-        function: (identifier)
-        arguments: (argument_list))
-      (ERROR)
-      (call_statement
-        function: (identifier)))))
-
 ================================================================================
 NEGATIVE: `#ifendif` must NOT be recognized as `#endif` either — same prefix
 burn, reached through `if`'s whole-word check rather than a character
 mismatch. `#xendif` was always an honest ERROR, because 'x' matches no prefix
 of `if` and so consumed nothing: that contrast is the whole mechanism.
+:error
 ================================================================================
 
 codeunit 50000 "If Test"
@@ -498,31 +482,13 @@ codeunit 50000 "If Test"
 
 --------------------------------------------------------------------------------
 
-(source_file
-  (codeunit_declaration
-    (codeunit_keyword)
-    object_id: (integer)
-    object_name: (quoted_identifier)
-    (ERROR
-      (procedure_keyword)
-      name: (identifier)
-      (begin_keyword)
-      (preproc_if
-        (preproc_open)
-        condition: (identifier))
-      (call_expression
-        function: (identifier)
-        arguments: (argument_list))
-      (ERROR)
-      (call_statement
-        function: (identifier)))))
-
 ================================================================================
 CONTROL for the two cases above: `#xendif` was ALWAYS an honest error, because
 'x' matches no prefix of `if` and so consumed nothing before the `endif`
 attempt ran. It is the input that isolates the mechanism — the two negatives
 above differ from this one only in that their first character(s) matched a
 prefix of `if`.
+:error
 ================================================================================
 
 codeunit 50000 "If Test"
@@ -536,22 +502,3 @@ codeunit 50000 "If Test"
 }
 
 --------------------------------------------------------------------------------
-
-(source_file
-  (codeunit_declaration
-    (codeunit_keyword)
-    object_id: (integer)
-    object_name: (quoted_identifier)
-    (ERROR
-      (procedure_keyword)
-      name: (identifier)
-      (begin_keyword)
-      (preproc_if
-        (preproc_open)
-        condition: (identifier))
-      (call_expression
-        function: (identifier)
-        arguments: (argument_list))
-      (ERROR)
-      (call_statement
-        function: (identifier)))))

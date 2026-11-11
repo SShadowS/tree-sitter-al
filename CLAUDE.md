@@ -197,17 +197,20 @@ the design record with its measurements is `docs/property-families.md`. This lis
   and never touch the scanner depth (`docs/preproc-define-undef.md`).
 - **Named keywords, uniform shape**: every grammar keyword rule is `alias(kw('w'), 'w')`, or
   `kwCases(...)` for the 13 object-declaration keywords (its spelling whitelist is load-bearing);
-  `begin`/`end` are scanner-exclusive. Rules: `.claude/rules/contextual-keywords.md`; the
+  `begin_keyword` (external) and `end_keyword` (the one `kw('end')`, a named rule since C3) are
+  childless leaves. Rules: `.claude/rules/contextual-keywords.md`; the
   two-shape audit and its numbers: `docs/keyword-shape-audit.md`.
 - **Reserved-word sets** (`reserved:` in `grammar.js`): `global` is empty on purpose;
-  `implementation_names`, `relation_target_names`, `code_names` are contextual. Two rules the
+  `implementation_names`, `relation_target_names`, `code_names`, `statement_names` (`code_names` plus
+  `end` at statement starts, `.claude/rules/contextual-keywords.md`) are contextual. Two rules the
   tree-sitter docs do not state, both measured while fixing issue #20: an entry must be a rule
   **symbol** (`$._true_token`), not a fresh `kw()`; and a parse state takes the largest set among
   items whose **next step is `identifier` itself**, so the set must sit on a rule that names
   `$.identifier` directly; wrapping a reference to `_identifier_or_quoted` reserves nothing.
 - **Attributes are first-class siblings** of declarations (`.claude/rules/attributes.md`).
 - **Stateful scanner, single-read identifier dispatch** (`.claude/rules/scanner.md`; the
-  defects behind the rules: `docs/scanner-design-notes.md`).
+  defects behind the rules: `docs/scanner-design-notes.md`). `#endif` is a grammar regex, its
+  depth-- a zero-width mark: an external token must not FOLLOW a construct (same file).
 
 ## Testing
 

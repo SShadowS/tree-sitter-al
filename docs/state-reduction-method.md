@@ -109,6 +109,58 @@ Units that worked. Every one of them is still in `grammar.js`:
 - The `inline:` array, but only for trivial pass-through wrappers. `_field_source`
   (`$ => $._expression`) is inlined today (pass 2, item 10).
 
+An operand slot that takes a whole sub-grammar it never needs (`type_specification` after
+`is`/`as`) copies that sub-grammar into every expression context. Narrowing it to
+`_dangling_type` (state review C2) measured STATE 31,618 → 29,774 (−1,844), `parser.c` −5.5 MB.
+
+### External tokens in a follow set bar state merging
+
+The largest cut so far is not a shared unit. The generator never merges two states that differ by
+an EXTERNAL lookahead token (`tree-sitter-generate` 0.27.0, `build_tables/minimize_parse_table.rs`,
+`token_conflicts`: "Do not add external tokens"), and a refused merge propagates backwards through
+every predecessor. So an external token that can FOLLOW a construct in some hosts and not in
+others clones the whole construct per host. `#endif`, the external `PREPROC_CLOSE`, was in the
+follow set of everything that can end a `#if` arm and of nothing outside one: on main 77% of the
+states were such clones (31,615 states, 7,336 distinct item-set cores). Rule:
+`.claude/rules/scanner.md`, "External tokens must not follow a construct".
+
+Three instruments (details and the full numbers: `docs/state-review-2026-11.md`, A.1-A.5):
+
+1. **The generator's own split reasons.** `tree-sitter generate --log` prints
+   `split states A B - <reason>` for every pair the minimizer refuses to merge. Bucket the
+   reasons; `external token NAME` names the suspects. Only the FIRST reason for a pair is printed,
+   so the counts rank suspects and do not measure savings.
+2. **The item-set core dump.** `--report-states-for-rule RULE`, run per rule and joined by state
+   index, lists every state with its items. The number of distinct cores is the floor the minimizer
+   could reach; states per core shows what is cloned.
+3. **Family removal / internalising proxy.** Make the token a regex in `grammar.json` (or a family
+   the empty language) and generate: the drop is what the token costs. `#endif` measured −11,512
+   on main this way.
+
+State review C1 made `#endif` the grammar regex `(?i)#[ \t]*endif` and moved the depth decrement to
+the hidden zero-width external `_endif_mark`, valid only in the state right after the regex (so in
+no follow set). On top of C2: STATE 29,774 → **18,898** (−10,876, −36.5%), LARGE 9,114 → 5,741,
+SYMBOL +1, `parser.c` 64,793,755 → 41,341,306 B (61.8 → 39.4 MiB, −36.2%); against main
+`abc77b25` −12,720 states (−40.2%). As committed, on top of item 102's +76: 29,850 → 18,946 (−10,904),
+`parser.c` 64,881,989 → 41,408,238 B. `node-types.json` byte-identical, declared conflicts unchanged,
+every production tree identical except one BCApps file that already ERRORed (deferred item 10).
+
+State review C3 made `end` a grammar token (`end_keyword: $ => kw('end')`, a named childless
+leaf) instead of the external `END_KEYWORD`, which was in the follow set of a statement inside
+`begin..end` and of none in `repeat..until` or a bare then-branch. On top of C1: STATE 18,946 →
+**16,768** (−2,178, −11.5%), LARGE 5,750 → 4,618, SYMBOL ±0 (one external out, one token in),
+`parser.c` 41,408,238 → 34,672,672 B (−16.3%). `node-types.json` byte-identical, declared conflicts
+unchanged; production trees as after C1 except the deferred-item-10 file's recovery (an `end` in
+recovery is an `end_keyword` now). `begin_keyword` stays external: internalising it measured
+−81 states on the prototype tip.
+
+| state | STATE_COUNT | LARGE | `parser.c` (B) |
+|---|---|---|---|
+| main `abc77b25` | 31,618 | 10,133 | 70,306,929 |
+| + C2 (is/as types) + item 102 | 29,850 | 9,125 | 64,881,989 |
+| + C1 (`#endif` regex) | 18,946 | 5,750 | 41,408,238 |
+| + C3 (`end` grammar token) | 16,768 | 4,618 | 34,672,672 (−50.7% against main) |
+
 **Sharing also fixes conflicts.** Two nonterminals that read the same long prefix each get a
 copy of the automaton for that prefix, and may meet in a reduce/reduce conflict. In the
 BC 29 work, `key_declaration` and both modify rules came to share hidden `_key_header` and

@@ -31,6 +31,13 @@ rather than documented:
   `read_keyword_ci("if")` then `read_keyword_ci("endif")`; on `#iendif` the first matched the
   `i` before failing, the second read the *remaining* `endif` and returned **true**, yielding
   `(preproc_close)` over all seven bytes, decrementing `depth`, exit 0, no ERROR node.
+  (State review C1, 2026-11: `PREPROC_CLOSE` is gone. `#endif` is now the grammar regex
+  `(?i)#[ \t]*endif`, declined to by the `#` dispatch once the line is well-formed, and the
+  decrement moved to the hidden zero-width `ENDIF_MARK`, valid only right after that regex. The
+  reason was state count, not this bug: an external token in the follow set of every construct
+  that can end an arm barred the generator from merging those states, 29,774 -> 18,898 on top of
+  C2. The single-read dispatch still decides `#iendif`: the word is read whole, `iendif` is no
+  directive, and the line is `MALFORMED_DIRECTIVE` before the regex can see the `#`.)
 
 Note what did **not** save the `#elif`/`#else` case: the two words differing at character 0 is
 not the reason. `#elif` genuinely burns a character on the `endif` attempt. It was harmless
@@ -127,6 +134,27 @@ procedure can be swallowed. The review's alternative (emit the valid word, set a
 second token boundary for input alc already rejects; not worth it while the ERROR is visible
 and on the right line. A directive after code on the same line (AL0620) is NOT caught: the
 scanner at a `#` cannot see what started its line (deferred-work item 26).
+
+**The `end` clause (issues #40/#41) and what moved to the grammar in state review C3.** 4.6.0
+emitted `MALFORMED_DIRECTIVE` for the word `end` where `BEGIN_KEYWORD` was valid and neither
+`END_KEYWORD` nor `PREPROC_SPLIT_END` was: the GLR version reading `end;` as a call of a name died
+at once instead of surviving, one per block of an if / else-if chain, until tree-sitter's version
+limit dropped the right one. Since C3 `end` is a grammar token and the scanner cannot see whether
+it is valid. The statement-start half moved to the reserved set `statement_names`
+(`_expression_statement`, `_assign_target`). What stayed is the declaration half, which reserved
+words do not reach: a var section's next declaration and a procedure's return-value name
+(`procedure T() End: Integer`, alc AL0519; a first prototype keyed only on `VAR_ATTRIBUTE_OPEN`
+parsed that clean, found by the name-position matrix). The clause is now `BEGIN_KEYWORD` valid,
+`CONTINUE_AS_IDENTIFIER` and `PREPROC_SPLIT_END` not. It depends on one property of the generated
+table: `end_keyword` is valid in no parse state whose external row the clause fires in (rows 11, 13,
+15, 16, 18, 21, 22 after C3). It is valid in states of rows 1 (all-valid recovery), 2 (390 states),
+5, 7, 9 (40) and 10 (469); rows 2 and 9 offer neither `BEGIN_KEYWORD` nor `CONTINUE_AS_IDENTIFIER`,
+so "every state where `end` is valid offers `CONTINUE_AS_IDENTIFIER`", as this note first said, is
+false, and not needed.
+`tools/config_oracle/tests/test_end_name_positions.py` asserts that from `src/parser.c` and pins
+302 name positions against main's `has_error`. In error recovery `end` now lexes as an
+`end_keyword` (it was an identifier), which changed six pinned recovery trees and one BCApps
+file (deferred item 10), all inputs that ERROR before and after.
 
 ## `NEGATIVE_INTEGER` / `NEGATIVE_DECIMAL`
 

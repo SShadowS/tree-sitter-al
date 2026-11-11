@@ -37,7 +37,8 @@ def check(root):
                                             f"{n.kind}@{n.start}", parent))
             elif n.kind == "preproc_pragma_only":
                 arms, _ = split_arms(n)
-                if any(content for _, content in arms):
+                # item 102: an arm may hold nested pragma-only groups (each checked on its own), nothing else
+                if any(c.kind != "preproc_pragma_only" for _, content in arms for c in content):
                     out.append(Discrepancy("representation", "pragma-only-with-structure",
                                             f"{n.kind}@{n.start}", parent))
         except LoweringError as err:
