@@ -675,8 +675,10 @@ mod tests {
         let cases: [(&[u8], (usize, usize)); 4] = [
             (b"codeunit 1 C\n{\n}\n#if A\n#else", (28, 28)),
             (b"codeunit 1 C\n{\n}\n#if A\n#else // c", (33, 33)),
-            (b"codeunit 1 C\n{\n}\n#if A\n#else\n", (28, 28)),
-            (b"codeunit 1 C\r\n{\r\n}\r\n#if A\r\n#else\r\n", (32, 32)),
+            // With a final newline, recovery puts the MISSING #endif at EOF, after the newline
+            // (29, 34; before state review C1 made `#endif` a grammar regex it was 28, 32).
+            (b"codeunit 1 C\n{\n}\n#if A\n#else\n", (29, 29)),
+            (b"codeunit 1 C\r\n{\r\n}\r\n#if A\r\n#else\r\n", (34, 34)),
         ];
         for (src, want) in cases {
             let tree = parser.parse(src, None).unwrap();

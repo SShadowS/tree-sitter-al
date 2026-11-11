@@ -112,7 +112,8 @@ for (const runtime of ['web-tree-sitter', 'native tree-sitter']) {
 
   test(`${runtime}: an unclosed #else on the last line has an empty arm, never an inverted one`, () => {
     for (const [src, want] of [['codeunit 1 C\n{\n}\n#if A\n#else', [28, 28]], ['codeunit 1 C\n{\n}\n#if A\n#else // c', [33, 33]],
-      ['codeunit 1 C\n{\n}\n#if A\n#else\n', [28, 28]], ['codeunit 1 C\r\n{\r\n}\r\n#if A\r\n#else\r\n', [32, 32]]]) {
+      // with a final newline the MISSING #endif sits at EOF (29, 34; 28, 32 before state review C1)
+      ['codeunit 1 C\n{\n}\n#if A\n#else\n', [29, 29]], ['codeunit 1 C\r\n{\r\n}\r\n#if A\r\n#else\r\n', [34, 34]]]) {
       const doc = new T.Document(parsers[runtime].parse(src), src, policy);
       assert.deepStrictEqual(doc.groups[0].arms[1].rawRange, want, JSON.stringify(src));
     }
