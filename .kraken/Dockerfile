@@ -2,9 +2,11 @@ FROM kraken/tentacle-base
 USER root
 ARG DEBIAN_FRONTEND=noninteractive
 # build-essential: tree-sitter build, node-gyp and cargo's cc; python3: node-gyp (the tools run in
-# the uv venv below); libicu: .NET aborts without it; xz-utils: the Node tarball
+# the uv venv below); libicu: .NET aborts without it; xz-utils: the Node tarball; clang +
+# libclang-rt-21-dev: libFuzzer (`clang -fsanitize=fuzzer,address`) for the scanner fuzzer CI runs
 RUN apt-get update && apt-get install -y --no-install-recommends \
       build-essential pkg-config python3 jq libicu-dev ca-certificates curl xz-utils \
+      clang libclang-rt-21-dev \
     && rm -rf /var/lib/apt/lists/*
 # The tree-sitter CLI the owner generates with (parser.c must match it), from the release binary
 ARG TREE_SITTER_VERSION=0.27.0
