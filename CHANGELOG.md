@@ -7,6 +7,14 @@ public API — a change to node structure or field names is a **major** bump.
 
 ## [Unreleased]
 
+## [5.3.0] — 2026-11-16
+
+Fixes GitHub issue #44 (five shapes where `#if` splits a call, a part/usercontrol header, a field's opening brace or
+a procedure modifier). Released as a minor version by the owner's decision: the consumer-visible node-type changes are
+new node types, `id`/`name`/`type` on `preproc_split_table_field_open` becoming multiple and optional, and
+`asserterror_statement` taking a `preproc_conditional_statement` child. Tree changes on valid input are corrections of
+wrong trees on main, at 0 production sites.
+
 ### Added
 
 - **`preproc_conditional_modifier`: an `#if` group around a procedure's access modifier (issue #44, repro 5).**
