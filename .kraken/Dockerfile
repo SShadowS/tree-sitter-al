@@ -12,7 +12,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 ARG TREE_SITTER_VERSION=0.27.0
 RUN curl -fsSL https://github.com/tree-sitter/tree-sitter/releases/download/v$TREE_SITTER_VERSION/tree-sitter-linux-x64.gz \
       | gunzip > /usr/local/bin/tree-sitter && chmod +x /usr/local/bin/tree-sitter && tree-sitter --version
-# Python 3.13 as CI pins it, in a venv on PATH, so `python -m tools...` finds the requirements;
+# Python 3.13 as CI pins it, in a venv on PATH, so `python -m tools...` finds the requirements.
 # A throwaway HOME: the base's HOME is /home/dev, and uv's receipt and
 # cache there would be root-owned, so the fresh config and cache volumes would be too.
 ENV UV_INSTALL_DIR=/usr/local/bin UV_PYTHON_INSTALL_DIR=/opt/uv-python
