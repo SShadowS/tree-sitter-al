@@ -319,6 +319,16 @@ FIELD_INVARIANTS = [
         "single-node body; ';' no longer inherits the field"),
     inv('preproc_split_case_extended', 'body', False, set(), 'FIXED',
         "single-node body; ';' no longer inherits the field"),
+    # Issue #44 F2: one name and one source per arm (multiple); the shared body is single.
+    inv('preproc_split_part', 'name', True, set(), 'FIXED',
+        "one name per #if/#elif/#else header; the header's ';' stays unfielded",
+        types={'identifier', 'quoted_identifier'}, required=True),
+    inv('preproc_split_part', 'source', True, set(), 'FIXED',
+        "one source per #if/#elif/#else header; the header's ';' stays unfielded",
+        types={'identifier', 'quoted_identifier'}, required=True),
+    inv('preproc_split_part', 'body', False, set(), 'FIXED',
+        "single shared body after #endif; absent when the braces are empty",
+        types={'declaration_body'}, required=False),
     inv('preproc_split_if_statement', 'then_branch', False, set(), 'FIXED',
         "single-node branch; ';' no longer inherits the field"),
     inv('preproc_split_if_statement', 'else_branch', False, set(), 'FIXED',
@@ -446,6 +456,13 @@ FIELD_INVARIANTS = [
           'one parameter_list, absent for `()`; the parameters inside stay unfielded (B7b-1b)',
           types={'parameter_list'}, required=False)
       for h in ('procedure', 'event_declaration', 'interface_procedure', 'trigger_declaration')],
+    # Issue #44 (F4): a group in the modifier slot is an unfielded child of `procedure`; each arm
+    # carries the slot's field. `procedure.modifier` stays one procedure_modifier, never a group.
+    inv('preproc_conditional_modifier', 'modifier', True, set(), 'FIXED',
+        'each arm is one procedure_modifier (issue #44 F4)', types={'procedure_modifier'}),
+    inv('procedure', 'modifier', False, set(), 'FIXED',
+        'one procedure_modifier; a group in the slot is an unfielded child (issue #44 F4)',
+        types={'procedure_modifier'}),
     # A, B: T; (B7b-1 Task 11): the name list up to the `:`. variable_declaration.name is
     # optional now since every name can sit in a group (`#if X A, B #endif : T;`); `type`
     # stays one required node after the `:`, never inside a group.
@@ -593,6 +610,16 @@ FIELD_INVARIANTS = [
     # The parenthesized inner is unfielded; since Phase B its tail is a second child.
     inv('parenthesized_expression', '<children>', True, set(), 'FIXED',
         'the inner expression, then an optional tail (B7b-2 Phase B region root)', required=True),
+
+    # Issue #44 (F3): one header per arm (and a nested group may stand for an arm), so the
+    # header fields repeat and are optional; `body` is each arm's own properties plus the
+    # shared rest after #endif.
+    *[inv(node, field, True, set(), 'FIXED',
+          'a field header per arm: several, and an arm may be a nested group',
+          types=types, required=False)
+      for node in ('preproc_split_table_field_open', 'preproc_conditional_table_field_open')
+      for field, types in (('id', {'integer'}), ('name', {'identifier', 'quoted_identifier'}),
+                           ('type', {'type_specification'}), ('body', {'declaration_body'}))],
 ]
 
 

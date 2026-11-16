@@ -260,6 +260,102 @@ function leadingPrefixed($, f) {
   );
 }
 
+// Issue #44 (F1): `#if arm (#elif arm)* #else arm #endif`, every arm closing the list.
+function parenClose($, arm) {
+  return seq($.preproc_if, arm, repeat(seq($.preproc_elif, arm)), $.preproc_else, arm, $.preproc_endif);
+}
+
+// Issue #44 (F1): an argument list (after its `(`) whose `)` is in every arm of the
+// closing group. Spelled out with `_argument_expression_list`'s right-leaning shape,
+// the group the end of a last element: any reduction before the group's `#if` would
+// have to be decided there, before the arm's `)` is seen.
+function argumentListClosedInArms($, closing) {
+  return choice(
+    closing,
+    seq($._argument_element, repeat(seq(',', $._argument_element)), ',', closing),
+  );
+}
+
+// A call's callee: call_expression and issue #44's `semi_call_expression` (one list, two
+// rules). The latter takes no subscript callee (`X[1](..)`): the B7a census keys of
+// subscript_expression are live aliases of retired keys (key-aliases.tsv), which may not
+// gain a host, and a subscript callee whose list closes inside `#if` arms has no known use.
+function callFunction($, subscript = true) {
+  return reserved('code_names', choice(
+    $.identifier,
+    // `Continue(X)`: the scanner hands `continue` back as a name when `(`
+    // follows (issue #22); it is a different symbol from $.identifier, so
+    // it has to be listed here even though the tree shows an identifier.
+    alias($.continue_as_identifier, $.identifier),
+    // `Table()`: the `table` / `order` tokens are live in expression
+    // states (see _value_start_keyword_name), so the word may arrive as
+    // one of them.
+    alias($._value_start_keyword_name, $.identifier),
+    $.quoted_identifier,      // "My Proc"(42) — alc accepts; call_statement
+                              // already allowed this, call_expression did not
+    $.member_expression,
+    $.qualified_enum_value,
+    $.keyword_identifier,     // System(), Dialog(), etc.
+    ...(subscript ? [$.subscript_expression] : []),   // X[1]()
+    // B7b-2 spec 3.4 (Task 10 fix round 1, review M4): a receiver group as
+    // the callee, `#if X Foo #else Bar #endif (1)`; arms are postfix-safe
+    // atoms, as at a member object. +57 STATE, +14 LARGE.
+    alias($._receiver_group, $.preproc_conditional_operand),
+  ));
+}
+
+// The loop / with statements over a body: `_body_branch`, or issue #44's
+// `_semi_statement` for their semi_* variants (see _semi_while_statement).
+function forStatement($, body) {
+  return prec.right(seq(
+    $.for_keyword,
+    field('variable', choice(
+      $.identifier,
+      alias($._value_start_keyword_name, $.identifier),  // see _value_start_keyword_name
+      $.quoted_identifier,
+      $.member_expression,
+    )),
+    ':=',
+    $._region_root_start,
+    field('direction', choice(
+      $.to_keyword,
+      $.downto_keyword,
+    )),
+    $._region_root_end,
+    $.do_keyword,
+    body,
+  ));
+}
+function foreachStatement($, body) {
+  return prec.right(seq(
+    $.foreach_keyword,
+    field('variable', choice($.identifier, $.quoted_identifier)),
+    $.in_keyword,
+    $._region_root_iterable,
+    $.do_keyword,
+    body,
+  ));
+}
+function whileStatement($, body) {
+  return prec.right(seq($.while_keyword, $._region_root_condition, $.do_keyword, body));
+}
+function withStatement($, body) {
+  return prec.right(seq($.with_keyword, $._region_root_record, $.do_keyword, body));
+}
+
+// Issue #44 (F1): a body that is a `_semi_statement`, with item 67's directive-only
+// decoration before it as in fieldedStatement (without it `while C do #if X #endif V(..);..`
+// read the empty group as the body and the call as a sibling, clean and wrong). A
+// production's dynamic precedence is the largest nested one, so inside a prec.dynamic(N)
+// rule the decoration needs N+1 to beat the sibling reading (an if with the group as its
+// branch, N, plus the call, 0).
+function semiBody($, name, dyn = 1) {
+  return choice(
+    field(name, $._semi_statement),
+    prec.dynamic(dyn, seq(repeat1(stmtEmptyGroup($)), field(name, $._semi_statement))),
+  );
+}
+
 // B7b-3 spec 4.2.2: the decoration before a case branch's own `;`.
 function caseEmptyGroup($) { return alias($._case_empty_group, $.preproc_conditional_case); }
 
@@ -921,8 +1017,9 @@ module.exports = grammar({
     [$._split_stmts_end, $._preproc_end_branch_later, $._preproc_end_branch, $._preproc_branch_statement],
     [$._split_stmts_end, $._preproc_end_branch_later],
     // _reopen_block: `if E then begin …` left open at #endif, or a complete
-    // if_statement among the reopened block's statements.
-    [$._preproc_if_header, $.if_statement],
+    // if_statement among the reopened block's statements (retargeted for issue #44:
+    // _semi_if_statement shares the if's prefix, so it joins the set).
+    [$._preproc_if_header, $.if_statement, $._semi_if_statement],
     // After container body items a `#if` continues the body, or opens
     // preproc_split_container_reopen; the `}` after the condition decides.
     [$.layout_container_body],
@@ -1287,6 +1384,9 @@ module.exports = grammar({
     // replaces the old [$._then_branch, $._then_branch_no_semi] entry, which
     // was the same ambiguity between the pre-restructure then-branch variants.)
     [$.if_statement, $._then_branch],
+    // The same decision where issue #44's _semi_if_statement shifts the `else` too:
+    // no new fork, both ifs shift into one state.
+    [$.if_statement, $._then_branch, $._semi_if_statement],
     // Deferred item 67: in a body slot a `#if` opens either a decoration before the body
     // (_stmt_empty_group, every arm empty) or the body itself (preproc_conditional_statement);
     // empty arms read the same, so only the content, or the token after #endif, decides.
@@ -3647,15 +3747,37 @@ module.exports = grammar({
     // BankAccount.Table.al, BC 29). So the tree is that one reading, and it is
     // unambiguous. The branch may lead with complete fields. Table-field
     // analogue of preproc_split_code_block_over_endif.
+    //
+    // Issue #44 (F3): with `#elif` / `#else` arms that open the field too, every
+    // configuration compiles (tools/alc_probe/cases/issue44/f3/):
+    //   #if V15  field(10; R; Enum E) {  #else  field(10; R; Option) {  #endif  shared }
     preproc_split_table_field_open: $ => seq(
       $.preproc_if,
-      optional($._field_branch_items),
-      $._table_field_header,
-      '{',
-      optional(field('body', $.declaration_body)),
+      $._table_field_open_arm,
+      repeat(seq($.preproc_elif, $._table_field_open_arm)),
+      optional(seq($.preproc_else, $._table_field_open_arm)),
       $.preproc_endif,
       optional(field('body', $.declaration_body)),
       '}',
+    ),
+
+    _table_field_open_arm: $ => choice(
+      seq(
+        optional($._field_branch_items),
+        $._table_field_header,
+        '{',
+        optional(field('body', $.declaration_body)),
+      ),
+      $.preproc_conditional_table_field_open,
+    ),
+
+    // A nested `#if` whose arms open the field (named like item 77's header group).
+    preproc_conditional_table_field_open: $ => seq(
+      $.preproc_if,
+      $._table_field_open_arm,
+      repeat(seq($.preproc_elif, $._table_field_open_arm)),
+      optional(seq($.preproc_else, $._table_field_open_arm)),
+      $.preproc_endif,
     ),
 
     field_declaration: $ => seq(
@@ -4132,6 +4254,7 @@ module.exports = grammar({
       // Preprocessor in layout
       $.preproc_conditional_layout,
       $.preproc_split_field,
+      $.preproc_split_part,
       // Extension layout modifications
       $.addfirst_modification,
       $.addlast_modification,
@@ -4289,6 +4412,32 @@ module.exports = grammar({
       field('source', $._identifier_or_quoted),
       ')',
       $._declaration_body_block
+    ),
+
+    // Issue #44 (F2): `#if usercontrol(A; X) #else usercontrol(A; Y) #endif { ... }` -- the
+    // header differs per branch, the body is shared (alc accepts every configuration,
+    // tools/alc_probe/cases/issue44/f2/). One rule for the four `kind(Name; Source) { }`
+    // controls; an arm's kind is its keyword child, and the arms may differ in kind.
+    // Sibling of preproc_split_field and preproc_split_modify.
+    preproc_split_part: $ => prec(25, seq(
+      $.preproc_if,
+      $._part_header,
+      repeat(seq($.preproc_elif, $._part_header)),
+      optional(seq($.preproc_else, $._part_header)),
+      $.preproc_endif,
+      $._declaration_body_block,
+    )),
+
+    // Its own `(Name; Source)`, not a unit shared with the four sections: sharing one
+    // cuts 63 states but moves the sections' `;` into a hidden rule, and the B7a census
+    // keys a separator by its rule path (four frozen keys would go stale).
+    _part_header: $ => seq(
+      choice($.part_keyword, $.systempart_keyword, $.chartpart_keyword, $.usercontrol_keyword),
+      '(',
+      field('name', $._identifier_or_quoted),
+      ';',
+      field('source', $._identifier_or_quoted),
+      ')',
     ),
 
     // Preprocessor-split page field: #if field(...) #else field(...) #endif { props }
@@ -5081,7 +5230,10 @@ module.exports = grammar({
     // =====================================================================
 
     procedure: $ => prec.right(seq(
-      optional(field('modifier', $.procedure_modifier)),
+      optional(choice(
+        field('modifier', $.procedure_modifier),
+        $.preproc_conditional_modifier,   // issue #44 F4
+      )),
       $._procedure_head,
       // The return clause carried its own `optional(';')` AND was followed by
       // another one, so `procedure P(): T;` had two derivations for the single
@@ -5348,6 +5500,26 @@ module.exports = grammar({
       $.internal_keyword,
       $.protected_keyword,
     ),
+
+    // Issue #44 (F4): a procedure's access modifier chosen by #if
+    // (`#if V16 internal #endif procedure A()`); alc accepts every configuration
+    // (tools/alc_probe/cases/issue44/f4/). An unfielded child of `procedure` in the
+    // modifier slot, like preproc_conditional_return in the return slot; each arm's
+    // modifier is the group's `modifier` field. The `#if` arm must hold a modifier: an
+    // all-empty group before `procedure` stays the body-level preproc_conditional.
+    // No attribute inside an arm: it would sit inside `procedure`, where the flat
+    // parse has it as a sibling before it (the config oracle reports a discrepancy).
+    preproc_conditional_modifier: $ => {
+      const mod = choice(
+        field('modifier', $.procedure_modifier),
+        $.preproc_conditional_modifier,
+      );
+      const rest = seq(
+        repeat(seq($.preproc_elif, optional(mod))),
+        optional(seq($.preproc_else, optional(mod))),
+      );
+      return seq($.preproc_if, mod, rest, $.preproc_endif);
+    },
 
     // Return type: `: TypeSpec`
     _procedure_return_specification: $ => seq(
@@ -6489,8 +6661,27 @@ module.exports = grammar({
       // wrapper (B7b-3: `call_statement` no longer owns one, so `Bar;`, `Bar`
       // before `end`/`else`/`until`, and `Bar` with its ';' in an `#if` arm all
       // give the same call_statement).
-      seq($._statement_inner, optional(';'))
+      seq($._statement_inner, optional(';')),
+      // Issue #44 (F1): a call whose `)` and `;` are in every arm of its closing
+      // group is a whole statement with its terminator: no `;` after it here, so a
+      // `;` after `#endif` is the next statement, an empty_statement.
+      $._semi_statement,
     )),
+
+    // Issue #44 (F1): a statement whose terminator is inside every arm of the
+    // closing group of its last call: that call, an assignment of it, or a
+    // compound statement whose body ends in one (_semi_while_statement). Also the
+    // body of those compounds and of a case branch, which then takes no `;` of its own.
+    _semi_statement: $ => choice(
+      alias($.semi_call_expression, $.call_expression),
+      alias($.semi_assignment_statement, $.assignment_statement),
+      alias($._semi_if_statement, $.if_statement),
+      alias($._semi_for_statement, $.for_statement),
+      alias($._semi_foreach_statement, $.foreach_statement),
+      alias($._semi_while_statement, $.while_statement),
+      alias($._semi_with_statement, $.with_statement),
+      alias($._semi_asserterror_statement, $.asserterror_statement),
+    ),
 
     // The statement itself, without the terminating ';'. Split out of
     // `_statement` so that body/branch positions can field the statement
@@ -7110,7 +7301,11 @@ module.exports = grammar({
         ),
         // Deferred item 67: directive-only groups before the then-branch decorate it (as in
         // fieldedStatement); the else part is the same optional, so the dangling else is unchanged.
-        prec.dynamic(1, seq(
+        // 21, not 1: a production takes its largest nested prec.dynamic, so 1 inside this
+        // rule's 20 gained nothing and the tie with the reading "the group is the then-branch,
+        // the statement a sibling" (20) went to that reading when the if ended its block
+        // (`if C then #if D #endif Bar()` before `end`), clean and wrong.
+        prec.dynamic(21, seq(
           repeat1(stmtEmptyGroup($)),
           field('then_branch', $._statement_inner),
           optional(prec.dynamic(30, seq(repeat(stmtElseDecoration($)), $.else_keyword, $._else_branch))),
@@ -7394,6 +7589,10 @@ module.exports = grammar({
       // Preprocessor-split case branch: #if wraps extra patterns before the main pattern
       // #if COND  pattern1,  #endif  pattern2: body;
       $.preproc_split_case_branch,
+      // Issue #44 (F1): the body's `;` is inside the arms of its last call's closing
+      // group (see _semi_statement); the branch has none of its own, and alc rejects
+      // a second one (`1: V(1);; 2:`, AL0104).
+      seq($._case_pattern, ':', semiBody($, 'body')),
     ),
 
     // Case branch where some patterns are conditionally included via preprocessor.
@@ -7581,44 +7780,15 @@ module.exports = grammar({
 
     // --- For loop ---
 
-    for_statement: $ => prec.right(seq(
-      $.for_keyword,
-      field('variable', choice(
-        $.identifier,
-        alias($._value_start_keyword_name, $.identifier),  // see _value_start_keyword_name
-        $.quoted_identifier,
-        $.member_expression,
-      )),
-      ':=',
-      $._region_root_start,
-      field('direction', choice(
-        $.to_keyword,
-        $.downto_keyword,
-      )),
-      $._region_root_end,
-      $.do_keyword,
-      $._body_branch
-    )),
+    for_statement: $ => forStatement($, $._body_branch),
 
     // --- Foreach ---
 
-    foreach_statement: $ => prec.right(seq(
-      $.foreach_keyword,
-      field('variable', choice($.identifier, $.quoted_identifier)),
-      $.in_keyword,
-      $._region_root_iterable,
-      $.do_keyword,
-      $._body_branch
-    )),
+    foreach_statement: $ => foreachStatement($, $._body_branch),
 
     // --- While ---
 
-    while_statement: $ => prec.right(seq(
-      $.while_keyword,
-      $._region_root_condition,
-      $.do_keyword,
-      $._body_branch
-    )),
+    while_statement: $ => whileStatement($, $._body_branch),
 
     // --- Repeat/Until ---
 
@@ -7631,12 +7801,35 @@ module.exports = grammar({
 
     // --- With ---
 
-    with_statement: $ => prec.right(seq(
-      $.with_keyword,
-      $._region_root_record,
-      $.do_keyword,
-      $._body_branch
-    )),
+    with_statement: $ => withStatement($, $._body_branch),
+
+    // Issue #44 (F1): the same statements whose body (an if: whose then-branch with
+    // no else, or else-branch) ends in a call closed inside every arm of a group with
+    // the statement's `;` in each arm (`while C do V(1, #if A 1); #else 2); #endif`).
+    // That `;` ends the whole statement in every configuration, so these are reached
+    // through `_statement`'s semicolon-free route like the call itself, and a `;`
+    // after `#endif` is an empty_statement, never this statement's terminator. Aliased
+    // to the plain node names.
+    _semi_for_statement: $ => forStatement($, semiBody($, 'body')),
+    _semi_foreach_statement: $ => foreachStatement($, semiBody($, 'body')),
+    _semi_while_statement: $ => whileStatement($, semiBody($, 'body')),
+    _semi_with_statement: $ => withStatement($, semiBody($, 'body')),
+    // alc rejects a `;` before `else` (AL0110), so a then-branch that carries the `;`
+    // takes no else: `if C then V(#if A 1); #else 2); #endif else ...` ERRORs.
+    _semi_if_statement: $ => {
+      const semiElse = prec.dynamic(30, seq(
+        repeat(stmtElseDecoration($)), $.else_keyword, semiBody($, 'else_branch', 31)));
+      return prec.right(prec.dynamic(20, seq(
+        $.if_keyword,
+        $._region_root_condition,
+        $.then_keyword,
+        choice(
+          seq(field('then_branch', $._statement_inner), semiElse),
+          prec.dynamic(1, seq(repeat1(stmtEmptyGroup($)), field('then_branch', $._statement_inner), semiElse)),
+          semiBody($, 'then_branch', 21),
+        ),
+      )));
+    },
 
     // --- Exit ---
 
@@ -7690,10 +7883,21 @@ module.exports = grammar({
     // (AL0110). So `asserterror Foo;` has a call_statement body and
     // `asserterror;` has no body, the ';' staying with the enclosing statement
     // as it does everywhere else.
+    //
+    // Item 67's directive-only decoration before the body, as in fieldedStatement
+    // (without it `asserterror #if D #endif Foo;` read the empty group as the body).
     asserterror_statement: $ => prec.right(14, seq(
       $.asserterror_keyword,
-      optional(field('body', $._statement_inner)),
+      optional(choice(
+        field('body', $._statement_inner),
+        prec.dynamic(1, seq(repeat1(stmtEmptyGroup($)), field('body', $._statement_inner))),
+      )),
     )),
+
+    // Issue #44 (F1): asserterror over a _semi_statement (see _semi_while_statement).
+    // Without it `asserterror while C do #if D #endif V(..);..` read the empty group as
+    // the loop body and the call as a sibling, clean and wrong.
+    _semi_asserterror_statement: $ => prec.right(14, seq($.asserterror_keyword, semiBody($, 'body'))),
 
     // =====================================================================
     // Expressions
@@ -8171,35 +8375,74 @@ module.exports = grammar({
     // --- Postfix expressions ---
 
     call_expression: $ => prec(12, seq(
-      field('function', reserved('code_names', choice(
-        $.identifier,
-        // `Continue(X)`: the scanner hands `continue` back as a name when `(`
-        // follows (issue #22); it is a different symbol from $.identifier, so
-        // it has to be listed here even though the tree shows an identifier.
-        alias($.continue_as_identifier, $.identifier),
-        // `Table()`: the `table` / `order` tokens are live in expression
-        // states (see _value_start_keyword_name), so the word may arrive as
-        // one of them.
-        alias($._value_start_keyword_name, $.identifier),
-        $.quoted_identifier,      // "My Proc"(42) — alc accepts; call_statement
-                                  // already allowed this, call_expression did not
-        $.member_expression,
-        $.qualified_enum_value,
-        $.keyword_identifier,     // System(), Dialog(), etc.
-        $.subscript_expression,   // X[1]()
-        // B7b-2 spec 3.4 (Task 10 fix round 1, review M4): a receiver group as
-        // the callee, `#if X Foo #else Bar #endif (1)`; arms are postfix-safe
-        // atoms, as at a member object. +57 STATE, +14 LARGE.
-        alias($._receiver_group, $.preproc_conditional_operand),
-      ))),
+      field('function', callFunction($)),
       field('arguments', $.argument_list)
     )),
 
     argument_list: $ => seq(
       '(',
-      optional($._argument_expression_list),
-      ')'
+      choice(
+        seq(optional($._argument_expression_list), ')'),
+        argumentListClosedInArms($, $._argument_closing_element),
+      ),
     ),
+
+    // Issue #44 (F1): a call's closing `)` inside every arm of a group, each arm
+    // with its own last arguments (alc accepts every configuration,
+    // tools/alc_probe/cases/issue44/f1/):
+    //   V(1, #if X F1(1)) #else F2(1)) #endif ;     Foo(1, 2 #if X , true); #else ); #endif
+    // The argument-list analogue of preproc_split_brace_close. `#else` is required:
+    // without it the configuration that takes no arm has no `)`.
+    //
+    // Two arm shapes under one node name. At the start of the list or after a
+    // `,` an arm starts with an argument; after an argument it starts with `,`.
+    // One permissive arm would read `V(1, 2 #if X + 1); #else ); #endif` (a
+    // tail, deferred item 57) as a comma-less `+1` argument, silently (+276
+    // states, rejected).
+    //
+    // The statement's `;` in the arms: EVERY arm carries it or NONE does. When
+    // every arm does, the call ends its statement in every configuration, so
+    // the call is a whole statement (or an assignment's whole right, or the last
+    // body of an if / loop / with / case branch that then ends with it) reached
+    // through `_statement`'s semicolon-free route (`_semi_statement`), and a `;`
+    // after `#endif` is an empty_statement: `Foo(1, #if X 3); #else 4); #endif ;`
+    // is `Foo(1, 3);;` in both configurations. Arms that disagree (`3)` in one,
+    // `3);` in another) have no tree correct in every configuration (the `;`
+    // after `#endif` is the terminator in one and an empty statement in the
+    // other) and ERROR, deferred item 110; so does a `;` in the arms of a call
+    // that does not end its statement. Not covered either, item 110: two `)` in
+    // an arm, more of the statement after the `)`, an operator tail before it.
+    _argument_closing_element: $ => choice(
+      alias($._paren_close_lead, $.preproc_split_paren_close),
+      seq($._argument_expression, alias($._paren_close_cont, $.preproc_split_paren_close)),
+    ),
+    _paren_close_lead: $ => parenClose($, $._paren_close_lead_arm),
+    _paren_close_cont: $ => parenClose($, $._paren_close_cont_arm),
+    _paren_close_lead_arm: $ => seq(optional($._argument_branch_run), ')'),
+    _paren_close_cont_arm: $ => seq(optional(seq(',', $._argument_branch_run)), ')'),
+
+    // The every-arm-`;` variant, only at the end of a statement (see above).
+    // Visible rule names, always aliased (no node type of their own): a hidden
+    // rule here would make every separator inside the callee and the list a
+    // B7a key at each of the 13 statement hosts instead of at this one.
+    semi_call_expression: $ => prec(12, seq(
+      field('function', callFunction($, false)),
+      field('arguments', alias($.semi_argument_list, $.argument_list)),
+    )),
+    semi_assignment_statement: $ => prec.dynamic(10, seq(
+      field('left', $._assign_target),
+      field('operator', $.assignment_operator),
+      field('right', alias($.semi_call_expression, $.call_expression)),
+    )),
+    semi_argument_list: $ => seq('(', argumentListClosedInArms($, $._argument_closing_element_semi)),
+    _argument_closing_element_semi: $ => choice(
+      alias($._paren_close_lead_semi, $.preproc_split_paren_close),
+      seq($._argument_expression, alias($._paren_close_cont_semi, $.preproc_split_paren_close)),
+    ),
+    _paren_close_lead_semi: $ => parenClose($, $._paren_close_lead_semi_arm),
+    _paren_close_cont_semi: $ => parenClose($, $._paren_close_cont_semi_arm),
+    _paren_close_lead_semi_arm: $ => seq(optional($._argument_branch_run), ')', ';'),
+    _paren_close_cont_semi_arm: $ => seq(optional(seq(',', $._argument_branch_run)), ')', ';'),
 
     // Arguments get their own list so the #if-continuation applies HERE only:
     // `_expression_list` is shared with `preproc_split_call_statement`, which

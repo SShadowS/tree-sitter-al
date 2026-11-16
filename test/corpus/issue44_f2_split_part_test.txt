@@ -1,0 +1,556 @@
+================================================================================
+Issue 44 F2: usercontrol header chosen by an if/else group, shared body with a trigger
+================================================================================
+page 50100 P
+{
+    layout
+    {
+        area(Content)
+        {
+#if V24
+            usercontrol(Logo; "WebPageViewer")
+#else
+            usercontrol(Logo; "Microsoft.Dynamics.Nav.Client.WebPageViewer")
+#endif
+            {
+                trigger ControlAddInReady()
+                begin
+                end;
+            }
+        }
+    }
+}
+--------------------------------------------------------------------------------
+(source_file
+  (page_declaration
+    (page_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (layout_section
+        (layout_keyword)
+        body: (layout_body
+          (area_section
+            (area_keyword)
+            type: (content_keyword)
+            body: (layout_body
+              (preproc_split_part
+                (preproc_if
+                  (preproc_open)
+                  condition: (identifier))
+                (usercontrol_keyword)
+                name: (identifier)
+                source: (quoted_identifier)
+                (preproc_else)
+                (usercontrol_keyword)
+                name: (identifier)
+                source: (quoted_identifier)
+                (preproc_endif
+                  (preproc_close))
+                body: (declaration_body
+                  (trigger_declaration
+                    (trigger_keyword)
+                    name: (identifier)
+                    body: (code_block
+                      (begin_keyword)
+                      (end_keyword))))))))))))
+================================================================================
+Issue 44 F2: three arms with an empty shared body
+================================================================================
+page 50100 P
+{
+    layout
+    {
+        area(Content)
+        {
+#if V24
+            usercontrol(Logo; AddInA)
+#elif V23
+            usercontrol(Logo; AddInB)
+#else
+            usercontrol(Logo3; AddInC)
+#endif
+            {
+            }
+        }
+    }
+}
+--------------------------------------------------------------------------------
+(source_file
+  (page_declaration
+    (page_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (layout_section
+        (layout_keyword)
+        body: (layout_body
+          (area_section
+            (area_keyword)
+            type: (content_keyword)
+            body: (layout_body
+              (preproc_split_part
+                (preproc_if
+                  (preproc_open)
+                  condition: (identifier))
+                (usercontrol_keyword)
+                name: (identifier)
+                source: (identifier)
+                (preproc_elif
+                  condition: (identifier))
+                (usercontrol_keyword)
+                name: (identifier)
+                source: (identifier)
+                (preproc_else)
+                (usercontrol_keyword)
+                name: (identifier)
+                source: (identifier)
+                (preproc_endif
+                  (preproc_close))))))))))
+================================================================================
+Issue 44 F2: arms of different kinds, part and usercontrol
+================================================================================
+page 50100 P
+{
+    layout
+    {
+        area(Content)
+        {
+#if A
+            part(P2; Sub)
+#else
+            usercontrol(P2; AddInA)
+#endif
+            {
+            }
+        }
+    }
+}
+--------------------------------------------------------------------------------
+(source_file
+  (page_declaration
+    (page_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (layout_section
+        (layout_keyword)
+        body: (layout_body
+          (area_section
+            (area_keyword)
+            type: (content_keyword)
+            body: (layout_body
+              (preproc_split_part
+                (preproc_if
+                  (preproc_open)
+                  condition: (identifier))
+                (part_keyword)
+                name: (identifier)
+                source: (identifier)
+                (preproc_else)
+                (usercontrol_keyword)
+                name: (identifier)
+                source: (identifier)
+                (preproc_endif
+                  (preproc_close))))))))))
+================================================================================
+Issue 44 F2: part header split
+================================================================================
+page 50100 P
+{
+    layout
+    {
+        area(Content)
+        {
+#if A
+            part(P1; Sub)
+#else
+            part(P1; Sub2)
+#endif
+            {
+                SubPageLink = K = field(K);
+            }
+        }
+    }
+}
+--------------------------------------------------------------------------------
+(source_file
+  (page_declaration
+    (page_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (layout_section
+        (layout_keyword)
+        body: (layout_body
+          (area_section
+            (area_keyword)
+            type: (content_keyword)
+            body: (layout_body
+              (preproc_split_part
+                (preproc_if
+                  (preproc_open)
+                  condition: (identifier))
+                (part_keyword)
+                name: (identifier)
+                source: (identifier)
+                (preproc_else)
+                (part_keyword)
+                name: (identifier)
+                source: (identifier)
+                (preproc_endif
+                  (preproc_close))
+                body: (declaration_body
+                  (property
+                    name: (property_name)
+                    value: (link_value_list
+                      (link_value
+                        field: (identifier)
+                        (field_keyword)
+                        value: (identifier)))))))))))))
+================================================================================
+Issue 44 F2: systempart header split
+================================================================================
+page 50100 P
+{
+    layout
+    {
+        area(FactBoxes)
+        {
+#if A
+            systempart(S1; Links)
+#else
+            systempart(S1; Notes)
+#endif
+            {
+            }
+        }
+    }
+}
+--------------------------------------------------------------------------------
+(source_file
+  (page_declaration
+    (page_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (layout_section
+        (layout_keyword)
+        body: (layout_body
+          (area_section
+            (area_keyword)
+            type: (factboxes_keyword)
+            body: (layout_body
+              (preproc_split_part
+                (preproc_if
+                  (preproc_open)
+                  condition: (identifier))
+                (systempart_keyword)
+                name: (identifier)
+                source: (identifier)
+                (preproc_else)
+                (systempart_keyword)
+                name: (identifier)
+                source: (identifier)
+                (preproc_endif
+                  (preproc_close))))))))))
+================================================================================
+Issue 44 F2: chartpart header split
+================================================================================
+page 50100 P
+{
+    layout
+    {
+        area(Content)
+        {
+#if A
+            chartpart(C1; "Sales Chart")
+#else
+            chartpart(C1; "Other Chart")
+#endif
+            {
+            }
+        }
+    }
+}
+--------------------------------------------------------------------------------
+(source_file
+  (page_declaration
+    (page_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (layout_section
+        (layout_keyword)
+        body: (layout_body
+          (area_section
+            (area_keyword)
+            type: (content_keyword)
+            body: (layout_body
+              (preproc_split_part
+                (preproc_if
+                  (preproc_open)
+                  condition: (identifier))
+                (chartpart_keyword)
+                name: (identifier)
+                source: (quoted_identifier)
+                (preproc_else)
+                (chartpart_keyword)
+                name: (identifier)
+                source: (quoted_identifier)
+                (preproc_endif
+                  (preproc_close))))))))))
+================================================================================
+Issue 44 F2: the group inside an area, with a sibling field before it
+================================================================================
+page 50100 P
+{
+    layout
+    {
+        area(Content)
+        {
+            field(N; Rec.N) { }
+#if A
+            usercontrol(U; AddInA)
+#else
+            usercontrol(U; AddInB)
+#endif
+            {
+            }
+        }
+    }
+}
+--------------------------------------------------------------------------------
+(source_file
+  (page_declaration
+    (page_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (layout_section
+        (layout_keyword)
+        body: (layout_body
+          (area_section
+            (area_keyword)
+            type: (content_keyword)
+            body: (layout_body
+              (page_field
+                (field_keyword)
+                name: (identifier)
+                source: (member_expression
+                  object: (identifier)
+                  member: (identifier)))
+              (preproc_split_part
+                (preproc_if
+                  (preproc_open)
+                  condition: (identifier))
+                (usercontrol_keyword)
+                name: (identifier)
+                source: (identifier)
+                (preproc_else)
+                (usercontrol_keyword)
+                name: (identifier)
+                source: (identifier)
+                (preproc_endif
+                  (preproc_close))))))))))
+================================================================================
+Issue 44 F2: the group inside a group
+================================================================================
+page 50100 P
+{
+    layout
+    {
+        area(Content)
+        {
+            group(G)
+            {
+#if A
+                part(P1; Sub)
+#else
+                usercontrol(P1; AddInA)
+#endif
+                {
+                }
+            }
+        }
+    }
+}
+--------------------------------------------------------------------------------
+(source_file
+  (page_declaration
+    (page_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (layout_section
+        (layout_keyword)
+        body: (layout_body
+          (area_section
+            (area_keyword)
+            type: (content_keyword)
+            body: (layout_body
+              (group_section
+                (group_keyword)
+                name: (identifier)
+                body: (layout_container_body
+                  (preproc_split_part
+                    (preproc_if
+                      (preproc_open)
+                      condition: (identifier))
+                    (part_keyword)
+                    name: (identifier)
+                    source: (identifier)
+                    (preproc_else)
+                    (usercontrol_keyword)
+                    name: (identifier)
+                    source: (identifier)
+                    (preproc_endif
+                      (preproc_close))))))))))))
+================================================================================
+Issue 44 F2: the group inside an arm of a conditional layout
+================================================================================
+page 50100 P
+{
+    layout
+    {
+        area(Content)
+        {
+#if B
+#if A
+            usercontrol(U; AddInA)
+#else
+            usercontrol(U; AddInB)
+#endif
+            {
+            }
+#else
+            field(N; Rec.N) { }
+#endif
+        }
+    }
+}
+--------------------------------------------------------------------------------
+(source_file
+  (page_declaration
+    (page_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (layout_section
+        (layout_keyword)
+        body: (layout_body
+          (area_section
+            (area_keyword)
+            type: (content_keyword)
+            body: (layout_body
+              (preproc_conditional_layout
+                (preproc_if
+                  (preproc_open)
+                  condition: (identifier))
+                (preproc_split_part
+                  (preproc_if
+                    (preproc_open)
+                    condition: (identifier))
+                  (usercontrol_keyword)
+                  name: (identifier)
+                  source: (identifier)
+                  (preproc_else)
+                  (usercontrol_keyword)
+                  name: (identifier)
+                  source: (identifier)
+                  (preproc_endif
+                    (preproc_close)))
+                (preproc_else)
+                (page_field
+                  (field_keyword)
+                  name: (identifier)
+                  source: (member_expression
+                    object: (identifier)
+                    member: (identifier)))
+                (preproc_endif
+                  (preproc_close))))))))))
+================================================================================
+Issue 44 F2 regression: two complete usercontrol sections in a conditional layout
+================================================================================
+page 50100 P
+{
+    layout
+    {
+        area(Content)
+        {
+#if A
+            usercontrol(L; X) { }
+#else
+            usercontrol(L; Y) { }
+#endif
+        }
+    }
+}
+--------------------------------------------------------------------------------
+(source_file
+  (page_declaration
+    (page_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (layout_section
+        (layout_keyword)
+        body: (layout_body
+          (area_section
+            (area_keyword)
+            type: (content_keyword)
+            body: (layout_body
+              (preproc_conditional_layout
+                (preproc_if
+                  (preproc_open)
+                  condition: (identifier))
+                (usercontrol_section
+                  (usercontrol_keyword)
+                  name: (identifier)
+                  source: (identifier))
+                (preproc_else)
+                (usercontrol_section
+                  (usercontrol_keyword)
+                  name: (identifier)
+                  source: (identifier))
+                (preproc_endif
+                  (preproc_close))))))))))
+================================================================================
+Issue 44 F2 regression: one complete usercontrol section in an if-only group
+================================================================================
+page 50100 P
+{
+    layout
+    {
+        area(Content)
+        {
+#if A
+            usercontrol(L; X) { }
+#endif
+        }
+    }
+}
+--------------------------------------------------------------------------------
+(source_file
+  (page_declaration
+    (page_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (layout_section
+        (layout_keyword)
+        body: (layout_body
+          (area_section
+            (area_keyword)
+            type: (content_keyword)
+            body: (layout_body
+              (preproc_conditional_layout
+                (preproc_if
+                  (preproc_open)
+                  condition: (identifier))
+                (usercontrol_section
+                  (usercontrol_keyword)
+                  name: (identifier)
+                  source: (identifier))
+                (preproc_endif
+                  (preproc_close))))))))))

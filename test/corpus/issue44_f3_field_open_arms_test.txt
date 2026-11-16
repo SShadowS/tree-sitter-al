@@ -1,0 +1,393 @@
+================================================================================
+Issue 44 F3: table field header and brace in both arms, body after #endif
+================================================================================
+table 50100 T
+{
+    fields
+    {
+        field(1; K; Code[10]) { }
+#if V15
+        field(10; "Round"; Enum "My Enum")
+        {
+#else
+        field(10; "Round"; Option)
+        {
+#endif
+            DataClassification = CustomerContent;
+        }
+    }
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (table_declaration
+    (table_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (fields_section
+        (fields_keyword)
+        body: (fields_body
+          (field_declaration
+            (field_keyword)
+            id: (integer)
+            name: (identifier)
+            type: (type_specification
+              (code_type
+                (code_keyword)
+                length: (integer))))
+          (preproc_split_table_field_open
+            (preproc_if
+              (preproc_open)
+              condition: (identifier))
+            (field_keyword)
+            id: (integer)
+            name: (quoted_identifier)
+            type: (type_specification
+              (object_reference_type
+                object_type: (enum_keyword)
+                reference: (quoted_identifier)))
+            (preproc_else)
+            (field_keyword)
+            id: (integer)
+            name: (quoted_identifier)
+            type: (type_specification
+              (option_type
+                (option_keyword)))
+            (preproc_endif
+              (preproc_close))
+            body: (declaration_body
+              (property
+                name: (property_name)
+                value: (identifier)))))))))
+
+================================================================================
+Issue 44 F3: three arms, nothing shared
+================================================================================
+table 50100 T
+{
+    fields
+    {
+#if V15
+        field(11; F11; Enum "My Enum")
+        {
+#elif V14
+        field(11; F11; Integer)
+        {
+#else
+        field(11; F11; Code[20])
+        {
+#endif
+        }
+    }
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (table_declaration
+    (table_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (fields_section
+        (fields_keyword)
+        body: (fields_body
+          (preproc_split_table_field_open
+            (preproc_if
+              (preproc_open)
+              condition: (identifier))
+            (field_keyword)
+            id: (integer)
+            name: (identifier)
+            type: (type_specification
+              (object_reference_type
+                object_type: (enum_keyword)
+                reference: (quoted_identifier)))
+            (preproc_elif
+              condition: (identifier))
+            (field_keyword)
+            id: (integer)
+            name: (identifier)
+            type: (type_specification
+              (basic_type))
+            (preproc_else)
+            (field_keyword)
+            id: (integer)
+            name: (identifier)
+            type: (type_specification
+              (code_type
+                (code_keyword)
+                length: (integer)))
+            (preproc_endif
+              (preproc_close))))))))
+
+================================================================================
+Issue 44 F3: arm-local properties, shared properties and a trigger
+================================================================================
+table 50100 T
+{
+    fields
+    {
+#if V15
+        field(12; F12; Integer)
+        {
+            Caption = 'a';
+#else
+        field(12; F12; Decimal)
+        {
+            Caption = 'b';
+            MinValue = 0;
+#endif
+            DataClassification = CustomerContent;
+
+            trigger OnValidate()
+            begin
+            end;
+        }
+    }
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (table_declaration
+    (table_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (fields_section
+        (fields_keyword)
+        body: (fields_body
+          (preproc_split_table_field_open
+            (preproc_if
+              (preproc_open)
+              condition: (identifier))
+            (field_keyword)
+            id: (integer)
+            name: (identifier)
+            type: (type_specification
+              (basic_type))
+            body: (declaration_body
+              (property
+                name: (property_name)
+                value: (string_literal)))
+            (preproc_else)
+            (field_keyword)
+            id: (integer)
+            name: (identifier)
+            type: (type_specification
+              (basic_type))
+            body: (declaration_body
+              (property
+                name: (property_name)
+                value: (string_literal))
+              (property
+                name: (property_name)
+                value: (integer)))
+            (preproc_endif
+              (preproc_close))
+            body: (declaration_body
+              (property
+                name: (property_name)
+                value: (identifier))
+              (trigger_declaration
+                (trigger_keyword)
+                name: (identifier)
+                body: (code_block
+                  (begin_keyword)
+                  (end_keyword))))))))))
+
+================================================================================
+Issue 44 F3: a complete field leads the first arm
+================================================================================
+table 50100 T
+{
+    fields
+    {
+#if A
+        field(9; F9; Integer) { }
+        field(10; F10; Integer)
+        {
+#else
+        field(10; F10; Code[10])
+        {
+#endif
+            DataClassification = CustomerContent;
+        }
+    }
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (table_declaration
+    (table_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (fields_section
+        (fields_keyword)
+        body: (fields_body
+          (preproc_split_table_field_open
+            (preproc_if
+              (preproc_open)
+              condition: (identifier))
+            (field_declaration
+              (field_keyword)
+              id: (integer)
+              name: (identifier)
+              type: (type_specification
+                (basic_type)))
+            (field_keyword)
+            id: (integer)
+            name: (identifier)
+            type: (type_specification
+              (basic_type))
+            (preproc_else)
+            (field_keyword)
+            id: (integer)
+            name: (identifier)
+            type: (type_specification
+              (code_type
+                (code_keyword)
+                length: (integer)))
+            (preproc_endif
+              (preproc_close))
+            body: (declaration_body
+              (property
+                name: (property_name)
+                value: (identifier)))))))))
+
+================================================================================
+Issue 44 F3: a nested group chooses the header inside an arm
+================================================================================
+table 50100 T
+{
+    fields
+    {
+#if A
+#if B
+        field(11; F11; Integer)
+        {
+#else
+        field(11; F11; Decimal)
+        {
+#endif
+#else
+        field(11; F11; Code[10])
+        {
+#endif
+            DataClassification = CustomerContent;
+        }
+    }
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (table_declaration
+    (table_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (fields_section
+        (fields_keyword)
+        body: (fields_body
+          (preproc_split_table_field_open
+            (preproc_if
+              (preproc_open)
+              condition: (identifier))
+            (preproc_conditional_table_field_open
+              (preproc_if
+                (preproc_open)
+                condition: (identifier))
+              (field_keyword)
+              id: (integer)
+              name: (identifier)
+              type: (type_specification
+                (basic_type))
+              (preproc_else)
+              (field_keyword)
+              id: (integer)
+              name: (identifier)
+              type: (type_specification
+                (basic_type))
+              (preproc_endif
+                (preproc_close)))
+            (preproc_else)
+            (field_keyword)
+            id: (integer)
+            name: (identifier)
+            type: (type_specification
+              (code_type
+                (code_keyword)
+                length: (integer)))
+            (preproc_endif
+              (preproc_close))
+            body: (declaration_body
+              (property
+                name: (property_name)
+                value: (identifier)))))))))
+
+================================================================================
+Issue 44 F3: a comment and a pragma inside the arms
+================================================================================
+table 50100 T
+{
+    fields
+    {
+#if A
+        // a comment
+        field(12; F12; Integer)
+#pragma warning disable AA0137
+        {
+#pragma warning restore AA0137
+#else
+        field(12; F12; Code[10])
+        { // trailing
+#endif
+            DataClassification = CustomerContent;
+        }
+    }
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (table_declaration
+    (table_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (fields_section
+        (fields_keyword)
+        body: (fields_body
+          (preproc_split_table_field_open
+            (preproc_if
+              (preproc_open)
+              condition: (identifier))
+            (comment)
+            (field_keyword)
+            id: (integer)
+            name: (identifier)
+            type: (type_specification
+              (basic_type))
+            (pragma)
+            (pragma)
+            (preproc_else)
+            (field_keyword)
+            id: (integer)
+            name: (identifier)
+            type: (type_specification
+              (code_type
+                (code_keyword)
+                length: (integer)))
+            (comment)
+            (preproc_endif
+              (preproc_close))
+            body: (declaration_body
+              (property
+                name: (property_name)
+                value: (identifier)))))))))

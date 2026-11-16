@@ -1,0 +1,70 @@
+========================================================================
+F4 GAP: an attribute inside the modifier arm (deferred item 113 shape 1); alc accepts, the parser ERRORs
+:error
+========================================================================
+codeunit 50100 T
+{
+#if A
+    [Obsolete('x', '1.0')]
+    internal
+#endif
+    procedure P2()
+    begin
+    end;
+}
+------------------------------------------------------------------------
+
+========================================================================
+F4 GAP: a modifier group before a split procedure header (deferred item 113 shape 2); alc accepts, the parser ERRORs
+:error
+========================================================================
+codeunit 50100 T
+{
+#if B
+    internal
+#endif
+#if A
+    procedure P2()
+#else
+    procedure P2(I: Integer)
+#endif
+    begin
+    end;
+}
+------------------------------------------------------------------------
+
+========================================================================
+F4 GAP: a modifier group whose if arm is empty (deferred item 113 shape 3); alc accepts, the parser ERRORs
+:error
+========================================================================
+codeunit 50100 T
+{
+#if A
+#else
+    internal
+#endif
+    procedure P1()
+    begin
+    end;
+}
+------------------------------------------------------------------------
+
+========================================================================
+F4 GAP: a group around a var section protected (deferred item 113 shape 4); alc accepts, the parser ERRORs
+:error
+========================================================================
+table 50100 T
+{
+    fields
+    {
+        field(1; K; Code[10]) { }
+    }
+
+#if A
+    protected
+#endif
+    var
+        G: Integer;
+}
+------------------------------------------------------------------------
+

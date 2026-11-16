@@ -1,0 +1,1474 @@
+================================================================================
+Issue 44 F1: the call's closing paren and the statement's semicolon in every arm, after a comma (repro 1)
+================================================================================
+codeunit 50100 T
+{
+    procedure P()
+    begin
+        Rec.Validate(
+          "Quantity per",
+#if V19
+          Rec.CalcBOMQuantity(1));
+#else
+          Rec.CalcQuantityFromBOM(1));
+#endif
+    end;
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (procedure
+        (procedure_keyword)
+        name: (identifier)
+        body: (code_block
+          (begin_keyword)
+          body: (statement_block
+            (call_expression
+              function: (member_expression
+                object: (identifier)
+                member: (identifier))
+              arguments: (argument_list
+                (quoted_identifier)
+                (preproc_split_paren_close
+                  (preproc_if
+                    (preproc_open)
+                    condition: (identifier))
+                  (call_expression
+                    function: (member_expression
+                      object: (identifier)
+                      member: (identifier))
+                    arguments: (argument_list
+                      (integer)))
+                  (preproc_else)
+                  (call_expression
+                    function: (member_expression
+                      object: (identifier)
+                      member: (identifier))
+                    arguments: (argument_list
+                      (integer)))
+                  (preproc_endif
+                    (preproc_close))))))
+          (end_keyword))))))
+
+================================================================================
+Issue 44 F1: arms after an argument, one adding an argument, one only closing (repro 2)
+================================================================================
+codeunit 50100 T
+{
+    procedure P()
+    begin
+        Foo(1, 2
+#if V21
+            , true);
+#else
+            );
+#endif
+    end;
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (procedure
+        (procedure_keyword)
+        name: (identifier)
+        body: (code_block
+          (begin_keyword)
+          body: (statement_block
+            (call_expression
+              function: (identifier)
+              arguments: (argument_list
+                (integer)
+                (integer)
+                (preproc_split_paren_close
+                  (preproc_if
+                    (preproc_open)
+                    condition: (identifier))
+                  (boolean)
+                  (preproc_else)
+                  (preproc_endif
+                    (preproc_close))))))
+          (end_keyword))))))
+
+================================================================================
+Issue 44 F1: a member callee, the statement continues after the group
+================================================================================
+codeunit 50100 T
+{
+    procedure P()
+    var
+        C: Codeunit T;
+    begin
+        C.V(1,
+#if A
+            C.F1(1));
+#else
+            C.F2(1));
+#endif
+        C.P1();
+    end;
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (procedure
+        (procedure_keyword)
+        name: (identifier)
+        (var_section
+          (var_keyword)
+          body: (var_body
+            (variable_declaration
+              name: (identifier)
+              type: (type_specification
+                (object_reference_type
+                  object_type: (codeunit_keyword)
+                  reference: (identifier))))))
+        body: (code_block
+          (begin_keyword)
+          body: (statement_block
+            (call_expression
+              function: (member_expression
+                object: (identifier)
+                member: (identifier))
+              arguments: (argument_list
+                (integer)
+                (preproc_split_paren_close
+                  (preproc_if
+                    (preproc_open)
+                    condition: (identifier))
+                  (call_expression
+                    function: (member_expression
+                      object: (identifier)
+                      member: (identifier))
+                    arguments: (argument_list
+                      (integer)))
+                  (preproc_else)
+                  (call_expression
+                    function: (member_expression
+                      object: (identifier)
+                      member: (identifier))
+                    arguments: (argument_list
+                      (integer)))
+                  (preproc_endif
+                    (preproc_close)))))
+            (call_expression
+              function: (member_expression
+                object: (identifier)
+                member: (identifier))
+              arguments: (argument_list)))
+          (end_keyword))))))
+
+================================================================================
+Issue 44 F1: three arms, if elif else
+================================================================================
+codeunit 50100 T
+{
+    procedure P()
+    begin
+        V(1,
+#if A
+          F1(1));
+#elif B
+          F2(1));
+#else
+          F1(2));
+#endif
+    end;
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (procedure
+        (procedure_keyword)
+        name: (identifier)
+        body: (code_block
+          (begin_keyword)
+          body: (statement_block
+            (call_expression
+              function: (identifier)
+              arguments: (argument_list
+                (integer)
+                (preproc_split_paren_close
+                  (preproc_if
+                    (preproc_open)
+                    condition: (identifier))
+                  (call_expression
+                    function: (identifier)
+                    arguments: (argument_list
+                      (integer)))
+                  (preproc_elif
+                    condition: (identifier))
+                  (call_expression
+                    function: (identifier)
+                    arguments: (argument_list
+                      (integer)))
+                  (preproc_else)
+                  (call_expression
+                    function: (identifier)
+                    arguments: (argument_list
+                      (integer)))
+                  (preproc_endif
+                    (preproc_close))))))
+          (end_keyword))))))
+
+================================================================================
+Issue 44 F1: the paren in the arms, the semicolon shared after endif
+================================================================================
+codeunit 50100 T
+{
+    procedure P()
+    begin
+        V(1,
+#if A
+          F1(1))
+#else
+          F2(1))
+#endif
+        ;
+        V(2, 2);
+    end;
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (procedure
+        (procedure_keyword)
+        name: (identifier)
+        body: (code_block
+          (begin_keyword)
+          body: (statement_block
+            (call_expression
+              function: (identifier)
+              arguments: (argument_list
+                (integer)
+                (preproc_split_paren_close
+                  (preproc_if
+                    (preproc_open)
+                    condition: (identifier))
+                  (call_expression
+                    function: (identifier)
+                    arguments: (argument_list
+                      (integer)))
+                  (preproc_else)
+                  (call_expression
+                    function: (identifier)
+                    arguments: (argument_list
+                      (integer)))
+                  (preproc_endif
+                    (preproc_close)))))
+            (call_expression
+              function: (identifier)
+              arguments: (argument_list
+                (integer)
+                (integer))))
+          (end_keyword))))))
+
+================================================================================
+Issue 44 F1: a comment and a pragma inside the arms
+================================================================================
+codeunit 50100 T
+{
+    procedure P()
+    begin
+        V(1,
+#if A
+          // old
+          F1(1)); // done
+#else
+#pragma warning disable AA0137
+          F2(1));
+#pragma warning restore AA0137
+#endif
+    end;
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (procedure
+        (procedure_keyword)
+        name: (identifier)
+        body: (code_block
+          (begin_keyword)
+          body: (statement_block
+            (call_expression
+              function: (identifier)
+              arguments: (argument_list
+                (integer)
+                (preproc_split_paren_close
+                  (preproc_if
+                    (preproc_open)
+                    condition: (identifier))
+                  (comment)
+                  (call_expression
+                    function: (identifier)
+                    arguments: (argument_list
+                      (integer)))
+                  (comment)
+                  (preproc_else)
+                  (pragma)
+                  (call_expression
+                    function: (identifier)
+                    arguments: (argument_list
+                      (integer)))
+                  (pragma)
+                  (preproc_endif
+                    (preproc_close))))))
+          (end_keyword))))))
+
+================================================================================
+Issue 44 F1: the group is the whole argument list
+================================================================================
+codeunit 50100 T
+{
+    procedure P()
+    begin
+        Foo(
+#if A
+            1, 2, true);
+#else
+            1, 2);
+#endif
+    end;
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (procedure
+        (procedure_keyword)
+        name: (identifier)
+        body: (code_block
+          (begin_keyword)
+          body: (statement_block
+            (call_expression
+              function: (identifier)
+              arguments: (argument_list
+                (preproc_split_paren_close
+                  (preproc_if
+                    (preproc_open)
+                    condition: (identifier))
+                  (integer)
+                  (integer)
+                  (boolean)
+                  (preproc_else)
+                  (integer)
+                  (integer)
+                  (preproc_endif
+                    (preproc_close))))))
+          (end_keyword))))))
+
+================================================================================
+Issue 44 F1: the call is an assignment's right
+================================================================================
+codeunit 50100 T
+{
+    procedure P(): Decimal
+    var
+        D: Decimal;
+    begin
+        D := F1(
+#if A
+            1);
+#else
+            2);
+#endif
+        exit(D);
+    end;
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (procedure
+        (procedure_keyword)
+        name: (identifier)
+        return_type: (type_specification
+          (basic_type))
+        (var_section
+          (var_keyword)
+          body: (var_body
+            (variable_declaration
+              name: (identifier)
+              type: (type_specification
+                (basic_type)))))
+        body: (code_block
+          (begin_keyword)
+          body: (statement_block
+            (assignment_statement
+              left: (identifier)
+              operator: (assignment_operator)
+              right: (call_expression
+                function: (identifier)
+                arguments: (argument_list
+                  (preproc_split_paren_close
+                    (preproc_if
+                      (preproc_open)
+                      condition: (identifier))
+                    (integer)
+                    (preproc_else)
+                    (integer)
+                    (preproc_endif
+                      (preproc_close))))))
+            (exit_statement
+              (exit_keyword)
+              return_value: (identifier)))
+          (end_keyword))))))
+
+================================================================================
+Issue 44 F1: last statement of a block, no semicolon anywhere
+================================================================================
+codeunit 50100 T
+{
+    procedure P()
+    begin
+        V(1,
+#if A
+          1.0)
+#else
+          2.0)
+#endif
+    end;
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (procedure
+        (procedure_keyword)
+        name: (identifier)
+        body: (code_block
+          (begin_keyword)
+          body: (statement_block
+            (call_expression
+              function: (identifier)
+              arguments: (argument_list
+                (integer)
+                (preproc_split_paren_close
+                  (preproc_if
+                    (preproc_open)
+                    condition: (identifier))
+                  (decimal)
+                  (preproc_else)
+                  (decimal)
+                  (preproc_endif
+                    (preproc_close))))))
+          (end_keyword))))))
+
+================================================================================
+Issue 44 F1: the statement inside an arm of an outer statement group
+================================================================================
+codeunit 50100 T
+{
+    procedure P()
+    begin
+#if B
+        V(1,
+#if A
+          1.0);
+#else
+          2.0);
+#endif
+#endif
+    end;
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (procedure
+        (procedure_keyword)
+        name: (identifier)
+        body: (code_block
+          (begin_keyword)
+          body: (statement_block
+            (preproc_conditional_statement
+              (preproc_if
+                (preproc_open)
+                condition: (identifier))
+              (call_expression
+                function: (identifier)
+                arguments: (argument_list
+                  (integer)
+                  (preproc_split_paren_close
+                    (preproc_if
+                      (preproc_open)
+                      condition: (identifier))
+                    (decimal)
+                    (preproc_else)
+                    (decimal)
+                    (preproc_endif
+                      (preproc_close)))))
+              (preproc_endif
+                (preproc_close))))
+          (end_keyword))))))
+
+================================================================================
+Issue 44 F1: nested in an argument of an outer call, closed without semicolon, the outer list continues
+================================================================================
+codeunit 50100 T
+{
+    procedure P(): Decimal
+    begin
+        exit(F1(1
+#if A
+            , 2)
+#else
+            )
+#endif
+            );
+    end;
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (procedure
+        (procedure_keyword)
+        name: (identifier)
+        return_type: (type_specification
+          (basic_type))
+        body: (code_block
+          (begin_keyword)
+          body: (statement_block
+            (exit_statement
+              (exit_keyword)
+              return_value: (call_expression
+                function: (identifier)
+                arguments: (argument_list
+                  (integer)
+                  (preproc_split_paren_close
+                    (preproc_if
+                      (preproc_open)
+                      condition: (identifier))
+                    (integer)
+                    (preproc_else)
+                    (preproc_endif
+                      (preproc_close)))))))
+          (end_keyword))))))
+
+================================================================================
+Issue 44 F1: an arm argument that is an operand group
+================================================================================
+codeunit 50100 T
+{
+    procedure P()
+    begin
+        V(1,
+#if A
+#if B
+          2.0
+#else
+          3.0
+#endif
+          );
+#else
+          4.0);
+#endif
+    end;
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (procedure
+        (procedure_keyword)
+        name: (identifier)
+        body: (code_block
+          (begin_keyword)
+          body: (statement_block
+            (call_expression
+              function: (identifier)
+              arguments: (argument_list
+                (integer)
+                (preproc_split_paren_close
+                  (preproc_if
+                    (preproc_open)
+                    condition: (identifier))
+                  (preproc_conditional_operand
+                    (preproc_if
+                      (preproc_open)
+                      condition: (identifier))
+                    operand: (decimal)
+                    (preproc_else)
+                    operand: (decimal)
+                    (preproc_endif
+                      (preproc_close)))
+                  (preproc_else)
+                  (decimal)
+                  (preproc_endif
+                    (preproc_close))))))
+          (end_keyword))))))
+
+================================================================================
+Issue 44 F1: a postfix after the group
+================================================================================
+codeunit 50100 T
+{
+    procedure P()
+    begin
+        V(1, 2
+#if A
+            , 3)
+#else
+            )
+#endif
+            .Run();
+    end;
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (procedure
+        (procedure_keyword)
+        name: (identifier)
+        body: (code_block
+          (begin_keyword)
+          body: (statement_block
+            (call_expression
+              function: (member_expression
+                object: (call_expression
+                  function: (identifier)
+                  arguments: (argument_list
+                    (integer)
+                    (integer)
+                    (preproc_split_paren_close
+                      (preproc_if
+                        (preproc_open)
+                        condition: (identifier))
+                      (integer)
+                      (preproc_else)
+                      (preproc_endif
+                        (preproc_close)))))
+                member: (identifier))
+              arguments: (argument_list)))
+          (end_keyword))))))
+
+================================================================================
+Issue 44 F1: every arm carries the semicolon, a shared semicolon after endif is an empty statement, then a second statement
+================================================================================
+codeunit 50100 T
+{
+    procedure P()
+    begin
+        Foo(1,
+#if A
+            3);
+#else
+            4);
+#endif
+        ;
+        Bar();
+    end;
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (procedure
+        (procedure_keyword)
+        name: (identifier)
+        body: (code_block
+          (begin_keyword)
+          body: (statement_block
+            (call_expression
+              function: (identifier)
+              arguments: (argument_list
+                (integer)
+                (preproc_split_paren_close
+                  (preproc_if
+                    (preproc_open)
+                    condition: (identifier))
+                  (integer)
+                  (preproc_else)
+                  (integer)
+                  (preproc_endif
+                    (preproc_close)))))
+            (empty_statement)
+            (call_expression
+              function: (identifier)
+              arguments: (argument_list)))
+          (end_keyword))))))
+
+================================================================================
+Issue 44 F1: an assignment whose every arm carries the semicolon, three arms, then an empty statement and a second statement
+================================================================================
+codeunit 50100 T
+{
+    procedure P()
+    var
+        D: Decimal;
+    begin
+        D := C.Foo(1, 2
+#if A
+            , 3);
+#elif B
+            );
+#else
+            , 4);
+#endif
+        ;
+        Bar();
+    end;
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (procedure
+        (procedure_keyword)
+        name: (identifier)
+        (var_section
+          (var_keyword)
+          body: (var_body
+            (variable_declaration
+              name: (identifier)
+              type: (type_specification
+                (basic_type)))))
+        body: (code_block
+          (begin_keyword)
+          body: (statement_block
+            (assignment_statement
+              left: (identifier)
+              operator: (assignment_operator)
+              right: (call_expression
+                function: (member_expression
+                  object: (identifier)
+                  member: (identifier))
+                arguments: (argument_list
+                  (integer)
+                  (integer)
+                  (preproc_split_paren_close
+                    (preproc_if
+                      (preproc_open)
+                      condition: (identifier))
+                    (integer)
+                    (preproc_elif
+                      condition: (identifier))
+                    (preproc_else)
+                    (integer)
+                    (preproc_endif
+                      (preproc_close))))))
+            (empty_statement)
+            (call_expression
+              function: (identifier)
+              arguments: (argument_list)))
+          (end_keyword))))))
+
+================================================================================
+Issue 44 F1: every arm carries the semicolon, the call is a then-branch, a semicolon after endif is an empty statement; an assignment as a then-branch
+================================================================================
+codeunit 50100 T
+{
+    procedure P(C: Boolean)
+    begin
+        if C then
+            V(1,
+#if A
+              1.0);
+#else
+              2.0);
+#endif
+            ;
+        if C then
+            D := F(1
+#if A
+              , 1.0);
+#else
+              , 2.0);
+#endif
+        Bar();
+    end;
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (procedure
+        (procedure_keyword)
+        name: (identifier)
+        parameters: (parameter_list
+          (parameter
+            name: (identifier)
+            type: (type_specification
+              (basic_type))))
+        body: (code_block
+          (begin_keyword)
+          body: (statement_block
+            (if_statement
+              (if_keyword)
+              condition: (identifier)
+              (then_keyword)
+              then_branch: (call_expression
+                function: (identifier)
+                arguments: (argument_list
+                  (integer)
+                  (preproc_split_paren_close
+                    (preproc_if
+                      (preproc_open)
+                      condition: (identifier))
+                    (decimal)
+                    (preproc_else)
+                    (decimal)
+                    (preproc_endif
+                      (preproc_close))))))
+            (empty_statement)
+            (if_statement
+              (if_keyword)
+              condition: (identifier)
+              (then_keyword)
+              then_branch: (assignment_statement
+                left: (identifier)
+                operator: (assignment_operator)
+                right: (call_expression
+                  function: (identifier)
+                  arguments: (argument_list
+                    (integer)
+                    (preproc_split_paren_close
+                      (preproc_if
+                        (preproc_open)
+                        condition: (identifier))
+                      (decimal)
+                      (preproc_else)
+                      (decimal)
+                      (preproc_endif
+                        (preproc_close)))))))
+            (call_expression
+              function: (identifier)
+              arguments: (argument_list)))
+          (end_keyword))))))
+
+================================================================================
+Issue 44 F1: every arm carries the semicolon, the call is the last else-branch of an else-if chain
+================================================================================
+codeunit 50100 T
+{
+    procedure P(C: Boolean)
+    begin
+        if C then
+            V(1, 3.0)
+        else
+            if not C then
+                V(1, 4.0)
+            else
+                V(1,
+#if A
+                  1.0);
+#else
+                  2.0);
+#endif
+        Bar();
+    end;
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (procedure
+        (procedure_keyword)
+        name: (identifier)
+        parameters: (parameter_list
+          (parameter
+            name: (identifier)
+            type: (type_specification
+              (basic_type))))
+        body: (code_block
+          (begin_keyword)
+          body: (statement_block
+            (if_statement
+              (if_keyword)
+              condition: (identifier)
+              (then_keyword)
+              then_branch: (call_expression
+                function: (identifier)
+                arguments: (argument_list
+                  (integer)
+                  (decimal)))
+              (else_keyword)
+              else_branch: (if_statement
+                (if_keyword)
+                condition: (unary_expression
+                  operand: (identifier))
+                (then_keyword)
+                then_branch: (call_expression
+                  function: (identifier)
+                  arguments: (argument_list
+                    (integer)
+                    (decimal)))
+                (else_keyword)
+                else_branch: (call_expression
+                  function: (identifier)
+                  arguments: (argument_list
+                    (integer)
+                    (preproc_split_paren_close
+                      (preproc_if
+                        (preproc_open)
+                        condition: (identifier))
+                      (decimal)
+                      (preproc_else)
+                      (decimal)
+                      (preproc_endif
+                        (preproc_close)))))))
+            (call_expression
+              function: (identifier)
+              arguments: (argument_list)))
+          (end_keyword))))))
+
+================================================================================
+Issue 44 F1: every arm carries the semicolon, the call is a nested loop body (while, for, foreach, with), a semicolon after endif is an empty statement
+================================================================================
+codeunit 50100 T
+{
+    procedure P(C: Boolean)
+    begin
+        while C do
+            for I := 1 to 2 do
+                V(1
+#if A
+                  , 1.0);
+#else
+                  , 2.0);
+#endif
+            ;
+        foreach I in L do
+            with R do
+                V(1,
+#if A
+                  1.0);
+#elif B
+                  3.0);
+#else
+                  2.0);
+#endif
+    end;
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (procedure
+        (procedure_keyword)
+        name: (identifier)
+        parameters: (parameter_list
+          (parameter
+            name: (identifier)
+            type: (type_specification
+              (basic_type))))
+        body: (code_block
+          (begin_keyword)
+          body: (statement_block
+            (while_statement
+              (while_keyword)
+              condition: (identifier)
+              (do_keyword)
+              body: (for_statement
+                (for_keyword)
+                variable: (identifier)
+                start: (integer)
+                direction: (to_keyword)
+                end: (integer)
+                (do_keyword)
+                body: (call_expression
+                  function: (identifier)
+                  arguments: (argument_list
+                    (integer)
+                    (preproc_split_paren_close
+                      (preproc_if
+                        (preproc_open)
+                        condition: (identifier))
+                      (decimal)
+                      (preproc_else)
+                      (decimal)
+                      (preproc_endif
+                        (preproc_close)))))))
+            (empty_statement)
+            (foreach_statement
+              (foreach_keyword)
+              variable: (identifier)
+              (in_keyword)
+              iterable: (identifier)
+              (do_keyword)
+              body: (with_statement
+                (with_keyword)
+                record: (identifier)
+                (do_keyword)
+                body: (call_expression
+                  function: (identifier)
+                  arguments: (argument_list
+                    (integer)
+                    (preproc_split_paren_close
+                      (preproc_if
+                        (preproc_open)
+                        condition: (identifier))
+                      (decimal)
+                      (preproc_elif
+                        condition: (identifier))
+                      (decimal)
+                      (preproc_else)
+                      (decimal)
+                      (preproc_endif
+                        (preproc_close))))))))
+          (end_keyword))))))
+
+================================================================================
+Issue 44 F1: every arm carries the semicolon, the call is a case branch body, and an if's then-branch in a case branch before the case else
+================================================================================
+codeunit 50100 T
+{
+    procedure P(X: Integer)
+    begin
+        case X of
+            1:
+                V(1,
+#if A
+                  1.0);
+#else
+                  2.0);
+#endif
+            2:
+                if X > 1 then
+                    V(1,
+#if A
+                      1.0);
+#else
+                      2.0);
+#endif
+            else
+                V(1, 3.0);
+        end;
+    end;
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (procedure
+        (procedure_keyword)
+        name: (identifier)
+        parameters: (parameter_list
+          (parameter
+            name: (identifier)
+            type: (type_specification
+              (basic_type))))
+        body: (code_block
+          (begin_keyword)
+          body: (statement_block
+            (case_statement
+              (case_keyword)
+              expression: (identifier)
+              (of_keyword)
+              body: (case_body
+                (case_branch
+                  pattern: (integer)
+                  body: (call_expression
+                    function: (identifier)
+                    arguments: (argument_list
+                      (integer)
+                      (preproc_split_paren_close
+                        (preproc_if
+                          (preproc_open)
+                          condition: (identifier))
+                        (decimal)
+                        (preproc_else)
+                        (decimal)
+                        (preproc_endif
+                          (preproc_close))))))
+                (case_branch
+                  pattern: (integer)
+                  body: (if_statement
+                    (if_keyword)
+                    condition: (comparison_expression
+                      left: (identifier)
+                      operator: (comparison_operator)
+                      right: (integer))
+                    (then_keyword)
+                    then_branch: (call_expression
+                      function: (identifier)
+                      arguments: (argument_list
+                        (integer)
+                        (preproc_split_paren_close
+                          (preproc_if
+                            (preproc_open)
+                            condition: (identifier))
+                          (decimal)
+                          (preproc_else)
+                          (decimal)
+                          (preproc_endif
+                            (preproc_close)))))))
+                (case_else_branch
+                  (else_keyword)
+                  body: (statement_block
+                    (call_expression
+                      function: (identifier)
+                      arguments: (argument_list
+                        (integer)
+                        (decimal))))))
+              (end_keyword)))
+          (end_keyword))))))
+
+================================================================================
+Issue 44 F1: every arm carries the semicolon, a directive-only group before the body decorates it (while, then, else, case branch)
+================================================================================
+codeunit 50100 T
+{
+    procedure P(C: Boolean; X: Integer)
+    begin
+        while C do
+#if B
+#endif
+            V(1,
+#if A
+              1.0);
+#else
+              2.0);
+#endif
+        if C then
+#if B
+#endif
+            V(1,
+#if A
+              1.0);
+#else
+              2.0);
+#endif
+        if C then
+            V(1, 3.0)
+        else
+#if B
+#endif
+            V(1,
+#if A
+              1.0);
+#else
+              2.0);
+#endif
+        case X of
+            1:
+#if B
+#endif
+                V(1,
+#if A
+                  1.0);
+#else
+                  2.0);
+#endif
+        end;
+    end;
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (procedure
+        (procedure_keyword)
+        name: (identifier)
+        parameters: (parameter_list
+          (parameter
+            name: (identifier)
+            type: (type_specification
+              (basic_type)))
+          (parameter
+            name: (identifier)
+            type: (type_specification
+              (basic_type))))
+        body: (code_block
+          (begin_keyword)
+          body: (statement_block
+            (while_statement
+              (while_keyword)
+              condition: (identifier)
+              (do_keyword)
+              (preproc_conditional_statement
+                (preproc_if
+                  (preproc_open)
+                  condition: (identifier))
+                (preproc_endif
+                  (preproc_close)))
+              body: (call_expression
+                function: (identifier)
+                arguments: (argument_list
+                  (integer)
+                  (preproc_split_paren_close
+                    (preproc_if
+                      (preproc_open)
+                      condition: (identifier))
+                    (decimal)
+                    (preproc_else)
+                    (decimal)
+                    (preproc_endif
+                      (preproc_close))))))
+            (if_statement
+              (if_keyword)
+              condition: (identifier)
+              (then_keyword)
+              (preproc_conditional_statement
+                (preproc_if
+                  (preproc_open)
+                  condition: (identifier))
+                (preproc_endif
+                  (preproc_close)))
+              then_branch: (call_expression
+                function: (identifier)
+                arguments: (argument_list
+                  (integer)
+                  (preproc_split_paren_close
+                    (preproc_if
+                      (preproc_open)
+                      condition: (identifier))
+                    (decimal)
+                    (preproc_else)
+                    (decimal)
+                    (preproc_endif
+                      (preproc_close))))))
+            (if_statement
+              (if_keyword)
+              condition: (identifier)
+              (then_keyword)
+              then_branch: (call_expression
+                function: (identifier)
+                arguments: (argument_list
+                  (integer)
+                  (decimal)))
+              (else_keyword)
+              (preproc_conditional_statement
+                (preproc_if
+                  (preproc_open)
+                  condition: (identifier))
+                (preproc_endif
+                  (preproc_close)))
+              else_branch: (call_expression
+                function: (identifier)
+                arguments: (argument_list
+                  (integer)
+                  (preproc_split_paren_close
+                    (preproc_if
+                      (preproc_open)
+                      condition: (identifier))
+                    (decimal)
+                    (preproc_else)
+                    (decimal)
+                    (preproc_endif
+                      (preproc_close))))))
+            (case_statement
+              (case_keyword)
+              expression: (identifier)
+              (of_keyword)
+              body: (case_body
+                (case_branch
+                  pattern: (integer)
+                  (preproc_conditional_statement
+                    (preproc_if
+                      (preproc_open)
+                      condition: (identifier))
+                    (preproc_endif
+                      (preproc_close)))
+                  body: (call_expression
+                    function: (identifier)
+                    arguments: (argument_list
+                      (integer)
+                      (preproc_split_paren_close
+                        (preproc_if
+                          (preproc_open)
+                          condition: (identifier))
+                        (decimal)
+                        (preproc_else)
+                        (decimal)
+                        (preproc_endif
+                          (preproc_close)))))))
+              (end_keyword)))
+          (end_keyword))))))
+
+================================================================================
+Issue 44 F1: every arm carries the semicolon, under asserterror (a decorated while body, a call)
+================================================================================
+codeunit 50100 T
+{
+    procedure P(C: Boolean)
+    begin
+        asserterror while C do
+#if D
+#endif
+            V(1,
+#if A
+              1.0);
+#else
+              2.0);
+#endif
+        asserterror V(1,
+#if A
+              1.0);
+#else
+              2.0);
+#endif
+        Bar();
+    end;
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (procedure
+        (procedure_keyword)
+        name: (identifier)
+        parameters: (parameter_list
+          (parameter
+            name: (identifier)
+            type: (type_specification
+              (basic_type))))
+        body: (code_block
+          (begin_keyword)
+          body: (statement_block
+            (asserterror_statement
+              (asserterror_keyword)
+              body: (while_statement
+                (while_keyword)
+                condition: (identifier)
+                (do_keyword)
+                (preproc_conditional_statement
+                  (preproc_if
+                    (preproc_open)
+                    condition: (identifier))
+                  (preproc_endif
+                    (preproc_close)))
+                body: (call_expression
+                  function: (identifier)
+                  arguments: (argument_list
+                    (integer)
+                    (preproc_split_paren_close
+                      (preproc_if
+                        (preproc_open)
+                        condition: (identifier))
+                      (decimal)
+                      (preproc_else)
+                      (decimal)
+                      (preproc_endif
+                        (preproc_close)))))))
+            (asserterror_statement
+              (asserterror_keyword)
+              body: (call_expression
+                function: (identifier)
+                arguments: (argument_list
+                  (integer)
+                  (preproc_split_paren_close
+                    (preproc_if
+                      (preproc_open)
+                      condition: (identifier))
+                    (decimal)
+                    (preproc_else)
+                    (decimal)
+                    (preproc_endif
+                      (preproc_close))))))
+            (call_expression
+              function: (identifier)
+              arguments: (argument_list)))
+          (end_keyword))))))

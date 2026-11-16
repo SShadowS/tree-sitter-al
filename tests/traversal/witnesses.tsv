@@ -52,6 +52,7 @@ preproc_conditional_query	branch-container	fixture:query_conditional.al
 preproc_conditional_rendering	branch-container	corpus:preproc_conditional_rendering_layout.txt#%23if/%23endif wrapping a layout inside report rendering (BC CLEANxx pattern)#0
 preproc_conditional_report	branch-container	corpus:preprocessor_in_dataitem.txt#Preprocessor directives in dataitem column declarations#0
 preproc_conditional_return	assembler	corpus:issue_32_35_36_headers_test.txt#Issue %2335: a named return chosen by %23if#0
+preproc_conditional_modifier	branch-container	corpus:issue44_f4_procedure_modifier_test.txt#F4 issue 44 repro: internal group before a procedure#0
 preproc_conditional_return_type	assembler	corpus:issue_32_35_36_headers_test.txt#Issue %2335: only the return type chosen by %23if#0
 preproc_conditional_sorting_fields	branch-container	corpus:strict_conditional_sorting_fields_test.txt#strict sorting: comments at every boundary#0
 preproc_conditional_statement	branch-container	corpus:case_else_preprocessor_test.txt#Case statement with preprocessor conditional in else branch#0
@@ -103,6 +104,8 @@ preproc_split_if_then_begin_else_shared	assembler	corpus:preproc_split_block_ove
 preproc_split_key	assembler	corpus:split_key_modify_header_test.txt#Split key and modify headers with a shared body after %23endif#0
 preproc_split_modify	assembler	corpus:split_key_modify_header_test.txt#Split key and modify headers with a shared body after %23endif#0
 preproc_split_open_statement	assembler	corpus:split_open_statement_test.txt#Branches ending in an open statement prefix, completed after %23endif#0
+preproc_split_paren_close	branch-container	corpus:issue44_f1_paren_close_test.txt#Issue 44 F1: arms after an argument, one adding an argument, one only closing (repro 2)#0
+preproc_split_part	assembler	corpus:issue44_f2_split_part_test.txt#Issue 44 F2: part header split#0
 preproc_split_permissions_property	assembler	corpus:split_comma_lists_test.txt#Permissions head repeated per %23if branch, shared tail after %23endif#0
 preproc_split_procedure	assembler	corpus:attribute_preproc_procedure.txt#Var section followed by attributed procedure in preprocessor#0
 preproc_split_procedure_body	assembler	corpus:preproc_split_procedure_tail_test.txt#Split signature followed by a split procedure body#0
@@ -115,3 +118,4 @@ preproc_split_table_field_open	assembler	corpus:split_table_field_open_test.txt#
 preproc_split_trigger_preamble	assembler	corpus:issue_32_35_36_headers_test.txt#Issue %2332: a trigger whose header and var section are both split by %23if#0
 preproc_split_var_section_tail	assembler	corpus:var_section_does_not_swallow_procedures_test.txt#A branch that continues the var section and then starts procedures#0
 preproc_undef	trivia	corpus:preproc_define_undef_test.txt#%23define followed by %23undef#0
+preproc_conditional_table_field_open	fragment	corpus:issue44_f3_field_open_arms_test.txt#Issue 44 F3: a nested group chooses the header inside an arm#0

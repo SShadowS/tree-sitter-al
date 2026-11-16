@@ -1,0 +1,264 @@
+================================================================================
+Issue 44 F1 gap: two closing parens in each arm, an exit value
+:error
+--
+DELIBERATE NEGATIVE (gap witness, listed in tools/deliberate-negatives.txt): valid
+AL the parser ERRORs on, on purpose (docs/deferred-work.md item 110): an arm carries
+more than `[arguments] ) [;]`. alc accepts every configuration:
+tools/alc_probe/cases/issue44/f1/gap_call_close_crossing.al P2. The ERROR is the assertion.
+================================================================================
+codeunit 50100 T
+{
+    procedure P(): Decimal
+    begin
+        exit(F1(
+#if A
+            1));
+#else
+            2));
+#endif
+    end;
+}
+--------------------------------------------------------------------------------
+
+================================================================================
+Issue 44 F1 gap: the arms carry the rest of an if condition
+:error
+--
+DELIBERATE NEGATIVE (gap witness, listed in tools/deliberate-negatives.txt): valid
+AL the parser ERRORs on, on purpose (docs/deferred-work.md item 110): an arm carries
+more than `[arguments] ) [;]`. alc accepts every configuration:
+tools/alc_probe/cases/issue44/f1/gap_call_close_crossing.al P3. The ERROR is the assertion.
+================================================================================
+codeunit 50100 T
+{
+    procedure P()
+    begin
+        if F1(1
+#if A
+            ) > 1 then
+#else
+            ) > 2 then
+#endif
+            V(1, 1);
+    end;
+}
+--------------------------------------------------------------------------------
+
+================================================================================
+Issue 44 F1 gap: two closing parens in each arm, a nested call
+:error
+--
+DELIBERATE NEGATIVE (gap witness, listed in tools/deliberate-negatives.txt): valid
+AL the parser ERRORs on, on purpose (docs/deferred-work.md item 110): an arm carries
+more than `[arguments] ) [;]`. alc accepts every configuration:
+tools/alc_probe/cases/issue44/f1/gap_call_close_crossing.al P4. The ERROR is the assertion.
+================================================================================
+codeunit 50100 T
+{
+    procedure P()
+    begin
+        V(1, F1(
+#if A
+            1));
+#else
+            2));
+#endif
+    end;
+}
+--------------------------------------------------------------------------------
+
+================================================================================
+Issue 44 F1 gap: the expression continues inside the arm after the paren
+:error
+--
+DELIBERATE NEGATIVE (gap witness, listed in tools/deliberate-negatives.txt): valid
+AL the parser ERRORs on, on purpose (docs/deferred-work.md item 110): an arm carries
+more than `[arguments] ) [;]`. alc accepts every configuration:
+tools/alc_probe/cases/issue44/f1/gap_call_close_crossing.al P5. The ERROR is the assertion.
+================================================================================
+codeunit 50100 T
+{
+    procedure P()
+    var
+        D: Decimal;
+    begin
+        D := F1(
+#if A
+            1) + 1;
+#else
+            2) + 2;
+#endif
+    end;
+}
+--------------------------------------------------------------------------------
+
+================================================================================
+Issue 44 F1 gap: a further statement after the semicolon inside the arm
+:error
+--
+DELIBERATE NEGATIVE (gap witness, listed in tools/deliberate-negatives.txt): valid
+AL the parser ERRORs on, on purpose (docs/deferred-work.md item 110): an arm carries
+more than `[arguments] ) [;]`. alc accepts every configuration:
+tools/alc_probe/cases/issue44/f1/gap_call_close_crossing.al P6. The ERROR is the assertion.
+================================================================================
+codeunit 50100 T
+{
+    procedure P()
+    begin
+        V(1,
+#if A
+          1.0);
+        V(2, 2.0);
+#else
+          2.0);
+#endif
+    end;
+}
+--------------------------------------------------------------------------------
+
+================================================================================
+Issue 44 F1 gap: an operator tail inside the arm before the paren
+:error
+--
+DELIBERATE NEGATIVE (gap witness, listed in tools/deliberate-negatives.txt): valid
+AL the parser ERRORs on, on purpose (docs/deferred-work.md item 110): an arm carries
+more than `[arguments] ) [;]`. alc accepts every configuration:
+tools/alc_probe/cases/issue44/f1/gap_call_close_crossing.al P8. The ERROR is the assertion.
+This case is also the witness that the two arm shapes are in place: with one
+permissive arm shape `+ 1` parses CLEAN as a comma-less unary argument.
+================================================================================
+codeunit 50100 T
+{
+    procedure P()
+    begin
+        V(1, 2
+#if A
+            + 1);
+#else
+            );
+#endif
+    end;
+}
+--------------------------------------------------------------------------------
+
+================================================================================
+Issue 44 F1 gap: no else arm, one configuration has no closing paren
+:error
+--
+DELIBERATE NEGATIVE (listed in tools/deliberate-negatives.txt): alc REJECTS the
+configuration that takes no arm (AL0104, AL0301): without #else the call has no
+closing paren. tools/alc_probe/cases/issue44/f1/gap_call_close_no_else.al. Not a gap.
+================================================================================
+codeunit 50100 T
+{
+    procedure P()
+    begin
+        V(1,
+#if A
+          1.0);
+#endif
+    end;
+}
+--------------------------------------------------------------------------------
+
+================================================================================
+Issue 44 F1 gap: only some arms carry the semicolon, then a shared semicolon
+:error
+--
+DELIBERATE NEGATIVE (gap witness, docs/deferred-work.md item 110): alc accepts
+every configuration (tools/alc_probe/cases/issue44/f1/gap_mixed_arm_semi.al P1).
+The `;` after #endif is the call's terminator without A and an empty statement
+with A, so no one tree is right in every configuration; the ERROR is the assertion.
+================================================================================
+codeunit 50100 T
+{
+    procedure P()
+    begin
+        Foo(1,
+#if A
+            3)
+#else
+            4);
+#endif
+        ;
+        Bar();
+    end;
+}
+--------------------------------------------------------------------------------
+
+================================================================================
+Issue 44 F1 gap: an assignment, only the first arm carries the semicolon
+:error
+--
+DELIBERATE NEGATIVE (gap witness, docs/deferred-work.md item 110): alc accepts
+every configuration (tools/alc_probe/cases/issue44/f1/gap_mixed_arm_semi.al P2);
+as the case above, with the `;` in the other arm. The ERROR is the assertion.
+================================================================================
+codeunit 50100 T
+{
+    procedure P()
+    var
+        D: Decimal;
+    begin
+        D := Foo(1, 2
+#if A
+            , 3);
+#else
+            )
+#endif
+        ;
+        Bar();
+    end;
+}
+--------------------------------------------------------------------------------
+
+================================================================================
+Issue 44 F1 negative: a semicolon in the arms of a call inside an if condition
+:error
+--
+DELIBERATE NEGATIVE: alc rejects every configuration (AL0104,
+tools/alc_probe/cases/issue44/f1/negative_semicolon_mid_statement.al): the call
+does not end its statement, so its arms cannot carry the `;`.
+================================================================================
+codeunit 50100 T
+{
+    procedure P()
+    begin
+        if F1(1
+#if A
+            );
+#else
+            );
+#endif
+        then
+            V(1, 1);
+    end;
+}
+--------------------------------------------------------------------------------
+
+================================================================================
+Issue 44 F1 negative: every arm carries the semicolon in a then-branch followed by else
+:error
+--
+DELIBERATE NEGATIVE: alc rejects every configuration (AL0110,
+tools/alc_probe/cases/issue44/f1/negative_semi_then_before_else.al): the arms'
+`;` ends the if before its `else`. An every-arm-`;` then-branch takes no else.
+================================================================================
+codeunit 50100 T
+{
+    procedure Q1(C: Boolean)
+    begin
+        if C then
+            V(1,
+#if A
+              1.0);
+#else
+              2.0);
+#endif
+        else
+            V(1, 3.0);
+    end;
+}
+--------------------------------------------------------------------------------
+

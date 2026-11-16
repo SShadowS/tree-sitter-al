@@ -152,6 +152,7 @@ _LAYOUT_ELEMENT = frozenset({
     "area_section", "group_section", "repeater_section", "cuegroup_section", "fixed_section",
     "grid_section", "page_field", "part_section", "systempart_section", "chartpart_section", "usercontrol_section",
     "label_section", "preproc_conditional_layout", "preproc_split_field",
+    "preproc_split_part",
     "addfirst_modification", "addlast_modification", "addafter_modification",
     "addbefore_modification", "modify_modification", "preproc_split_modify",
     "movefirst_modification", "movelast_modification", "moveafter_modification",
@@ -187,11 +188,19 @@ register("preproc_conditional_statement", "branch-select",
          # then-branch): every host of a body slot gets the same decoration policy.
          hosts={**_STATEMENT_HOSTS, **{f"{h}:<children>": "decoration" for h in (
              "if_statement", "case_branch", "for_statement", "foreach_statement", "while_statement",
-             "with_statement", "preproc_guarded_statement", "preproc_split_case_branch",
+             "with_statement", "asserterror_statement",   # issue #44 re-review: asserterror decorates too
+             "preproc_guarded_statement", "preproc_split_case_branch",
              "preproc_split_case_end_branch", "preproc_split_case_extended",
              "preproc_split_if_else_statement", "preproc_split_if_statement")}})
 register("preproc_conditional_var_block", "branch-select", "tools.config_oracle.lowering.select.branch_select",
          hosts=_ROUTINE_TAIL_HOSTS)
+# Issue #44 (F4): each arm is the procedure's modifier; the selected arm splices into the
+# procedure's children, where the flat parse has `modifier:` as the first child.
+register("preproc_conditional_modifier", "branch-select",
+         "tools.config_oracle.lowering.select.branch_select",
+         hosts={"procedure:<children>": "splice-repeat",
+                "preproc_conditional_modifier:<children>": "splice-repeat"},
+         arm={"procedure_modifier", "preproc_conditional_modifier"})
 register("preproc_pragma_only", "branch-select", "tools.config_oracle.lowering.select.branch_select",
          # Item 102 review fix 1: a routine var region holds pragma-only groups too (after a var
          # block in a run, or in a var-block arm), so every routine-tail host is a host;
@@ -306,6 +315,7 @@ register("preproc_conditional_dataset", "branch-select", "tools.config_oracle.lo
 register("preproc_conditional_fields", "branch-select", "tools.config_oracle.lowering.select.branch_select",
          hosts={"fields_body:<children>": "splice-repeat",
                 "preproc_conditional_fields:<children>": "splice-repeat",
+                "preproc_conditional_table_field_open:<children>": "splice-repeat",
                 "preproc_split_table_field_open:<children>": "splice-repeat"},
          # _field_branch_items (grammar.js:1672-1674).
          arm={"field_declaration", "attribute_item", "modify_modification", "preproc_conditional_fields"})
@@ -406,6 +416,12 @@ register("preproc_conditional_arguments", "branch-select", _LIST_RUN,
          # B7b-2 Phase C: an item may be an operand group or start with leading prefixes.
          arm=_EXPRESSION | {"preproc_conditional_expression_tail", "preproc_conditional_operand",
                             "preproc_operand_prefix", ","})
+# Issue #44 (F1): each arm ends the host argument_list: its last arguments, the `)`, and at a
+# statement end the statement's `;` (terminator-hoist, as for every list-run).
+register("preproc_split_paren_close", "branch-select", _LIST_RUN,
+         hosts={"argument_list:<children>": "list-run"},
+         arm=_EXPRESSION | {"preproc_conditional_expression_tail", "preproc_conditional_operand",
+                            "preproc_operand_prefix", ",", ")", ";"})
 register("preproc_conditional_list_elements", "branch-select", _LIST_RUN,
          hosts={"list_literal:<children>": "list-run"},
          # own rule (grammar.js:5480-5486): repeat1(seq(',', _list_element)), and
@@ -461,9 +477,16 @@ register("preproc_split_permissions_property", "unsupported")
 # BC 29 family E: per-branch header, shared body after #endif (assembler shape). milestone 3.
 register("preproc_split_key", "unsupported")
 register("preproc_split_modify", "unsupported")
-# BC 29 family D: only the #if-taken configuration is valid AL, so lowering the
-# other configuration must report cannot-validate, never a discrepancy. milestone 3.
+# Issue #44 (F2): per-branch `kind(Name; Source)` header, shared body. milestone 3.
+register("preproc_split_part", "unsupported")
+# BC 29 family D: with one arm only the #if-taken configuration is valid AL, so lowering the
+# other configuration must report cannot-validate, never a discrepancy. With an `#else` arm
+# (issue #44 F3) every configuration is valid; the node is still not validated. milestone 3.
 register("preproc_split_table_field_open", "unsupported")
+# Issue #44 (F3): a nested group of field openers, one arm of preproc_split_table_field_open.
+register("preproc_conditional_table_field_open", "fragment", None,
+         hosts={f"{h}:<children>": "consumed"
+                for h in ("preproc_split_table_field_open", "preproc_conditional_table_field_open")})
 # --- B7b-1 strict conditional lists (spec 2026-10-07 section 6). The family schemas live in
 # lowering/conditional_lists.py (FAMILIES): there the host's complete list region is
 # validated after selection, and the multi-configuration tree before it. Each group is an
@@ -696,7 +719,8 @@ register("preproc_conditional_expression_tail", "assembler", "tools.config_oracl
          hosts={**{h: "consumed" for h in (
              "argument_list:<children>", "assignment_statement:<children>", "exit_statement:<children>",
              "for_statement:<children>", "if_statement:<children>", "list_literal:<children>",
-             "preproc_conditional_arguments:<children>", "property_expression:<children>",
+             "preproc_conditional_arguments:<children>", "preproc_split_paren_close:<children>",
+             "property_expression:<children>",
              "subscript_expression:<children>", "while_statement:<children>",
              "range_expression:<children>", "ternary_expression:<children>",
              "preproc_conditional_expression_tail:<children>", "preproc_operand_prefix:<children>")},
@@ -727,7 +751,7 @@ register("preproc_operand_prefix", "assembler", "tools.config_oracle.lowering.re
                 **{f"{k}:<children>": "consumed" for k in (
              "argument_list", "assignment_statement", "case_branch", "case_statement",
              "exit_statement", "for_statement", "foreach_statement", "if_statement", "list_literal",
-             "parenthesized_expression", "preproc_conditional_arguments",
+             "parenthesized_expression", "preproc_conditional_arguments", "preproc_split_paren_close",
              "preproc_conditional_case_patterns", "preproc_conditional_expression_tail",
              "preproc_conditional_list_elements", "preproc_conditional_operand",
              "preproc_guarded_statement", "preproc_operand_prefix", "preproc_split_call_statement",
@@ -758,7 +782,8 @@ register("preproc_conditional_operand", "assembler", "tools.config_oracle.loweri
              "list_literal:<children>", "logical_expression:left", "logical_expression:right",
              "member_expression:object", "multiplicative_expression:left",
              "multiplicative_expression:right", "page_field:source", "parenthesized_expression:<children>",
-             "preproc_conditional_arguments:<children>", "preproc_conditional_expression_tail:operand",
+             "preproc_conditional_arguments:<children>", "preproc_split_paren_close:<children>",
+             "preproc_conditional_expression_tail:operand",
              "preproc_conditional_list_elements:<children>", "preproc_conditional_operand:operand",
              "preproc_guarded_statement:condition", "preproc_operand_prefix:operand",
              "preproc_split_call_statement:<children>", "preproc_split_case_statement_end:expression",

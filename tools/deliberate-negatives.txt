@@ -232,3 +232,14 @@ is_as_type_right_negative_test.txt
 # State review C3: `until` at a statement start is reserved (statement_names); alc rejects
 # it there (tools/alc_probe/cases/state-c3/). Before, a stray `until X;` was a parenless call.
 until_statement_name_negative_test.txt
+# Issue #44 F4: four shapes alc accepts that the modifier group does not cover (deferred item 113);
+# each case carries `:error` (an error must exist, no recovery tree pinned).
+issue44_f4_gap_test.txt
+# Issue #44 F2: header splits alc accepts for members other than the four part-like controls (deferred item 111).
+issue44_f2_gap_test.txt
+# Issue #44 F3 (deferred item 112): header-and-brace splits alc accepts for page field, group, usercontrol, action, key, enum value.
+issue44_f3_gap_test.txt
+# Issue #44 (F1), deferred item 110: a call closed inside `#if` arms whose arm carries more than
+# `[arguments] ) [;]` (six GAP witnesses alc accepts in every configuration, P8 the two-arm-shape
+# witness), and the no-`#else` form alc rejects (tools/alc_probe/cases/issue44/f1/).
+issue44_f1_gap_test.txt

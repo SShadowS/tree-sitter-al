@@ -32,6 +32,16 @@ Design and measurements: `docs/superpowers/specs/2026-10-20-b7b-2-expression-con
 `preproc_if`, `preproc_elif`, `preproc_else` and `preproc_endif` are children of each group, as in every other
 conditional node. `tools/check-field-types.py` pins every field these nodes widened.
 
+**`preproc_split_paren_close` is a list group, not a region group** (issue #44). It is the last child of an
+`argument_list` that has no `)` of its own; every arm holds the list's last arguments (each its own region root),
+the list's `)`, and, when the call is a whole statement or an assignment's whole right, possibly that statement's
+`;`, in every arm or in none (mixed arms ERROR, item 110). Per configuration the list is its own items followed by
+the active arm's items, and the arm's `;` terminates the innermost enclosing statement (the oracle's `list-run`
+policy with its terminator hoist); a `;` after `#endif` is then the next statement, an `empty_statement`, never a
+second terminator. A `;` inside `argument_list` is a deliberate nesting lie, of
+the same kind as the `}` inside `preproc_split_brace_close`: nothing crosses the expression except the list's
+closing token and the statement's terminator.
+
 The examples on this page write a group on one line (`x := 1 #if X + 2 #endif;`) for brevity; that text ERRORs as
 written. In real code each directive (`#if`, `#elif`, `#else`, `#endif`) stands on its own line, as in the fixtures
 and the worked examples below.
@@ -89,7 +99,8 @@ The region roots that carry a tail (the `contSlot` slots in `grammar.js`, hidden
 assignment right, `if`/`while`/`repeat ... until` conditions, `case` expressions, `for` start and end, `exit`
 value, call arguments, subscript indices, list elements (including each element of a
 `preproc_conditional_list_elements` arm), ternary condition, then and else, parenthesized inner,
-range left and right, `with` record, `foreach` iterable, the split-if heads and the split-call arguments. Two more
+range left and right, `with` record, `foreach` iterable, the split-if heads, the split-call arguments and each
+argument inside a `preproc_split_paren_close` arm. Two more
 roots take leading prefixes through their own rules: each **case pattern** (`case_branch.pattern` and the patterns
 of the split case hosts; the prefix is an unfielded child of the host before the pattern, and a tail on a pattern
 is item 56), and each **property value** (the expression child of `property_expression`; the prefix and the tail
@@ -281,5 +292,9 @@ from parser output.
 - **List spanning across an `#else`** (item 57): `Foo(1 #if X + 2 #else , 3 #endif)` parses clean but reads `+2` as
   a comma-less second argument (X=1 is `Foo(1 + 2)`), as on main; pinned as a SILENT witness, never as a corpus tree.
   **A tail before a postfix** (`T1 #if X + T2 #endif .ToUpper()`) ERRORs (item 57).
+- **A call closed inside the arms** (item 110, issue #44): only `[arguments] ) [;]` per arm is represented, by
+  `preproc_split_paren_close` (below). Two or more `)` in an arm (`exit(F1( #if X 1)); #else 2)); #endif`), more
+  of the expression or statement after the `)` (`) > 1 then`, `) + 1;`, a second statement), and an operator tail
+  before the `)` (`V(1, 2 #if X + 1); #else ); #endif`) ERROR.
 - **No region API** in the traversal helper (item 59): a consumer applies this page itself; the oracle's region
   assembler is the reference implementation. Query authors: `queries/README.md`.

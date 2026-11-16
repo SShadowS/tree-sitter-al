@@ -235,4 +235,11 @@ preproc_conditional: $ => seq($.preproc_if, repeat($._any_content), ...)
 - `preproc_split_if_then_begin` — `begin` inside `#if`, `end` in second `#if`
 - `preproc_fragmented_else_tail` — end-else-begin fragmented across `#if` blocks
 - `preproc_split_declaration` — object declaration split across branches
+- `preproc_split_part` — `part`/`systempart`/`chartpart`/`usercontrol` header varies across branches, body shared after `#endif` (issue #44)
+- `preproc_split_table_field_open` — a table field's header and `{` inside the `#if` arm, the body after `#endif`;
+  with `#elif` / `#else` arms (each opening the field, a nested group allowed as `preproc_conditional_table_field_open`)
+  every configuration compiles (issue #44 F3; page fields and other kinds: deferred item 112)
+- `preproc_split_paren_close` — a call's closing `)` (and, at a statement end, the statement's `;`) inside every
+  arm, each arm with its own last arguments; the last child of an `argument_list` with no `)` of its own (issue #44,
+  deferred item 110 for the shapes it does not cover)
 - And others for case statements, fields, datasets, etc.

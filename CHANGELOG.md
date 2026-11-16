@@ -7,6 +7,116 @@ public API — a change to node structure or field names is a **major** bump.
 
 ## [Unreleased]
 
+### Added
+
+- **`preproc_conditional_modifier`: an `#if` group around a procedure's access modifier (issue #44, repro 5).**
+  `#if V16 internal #endif procedure A()` ERRORed; alc 18.0.41 accepts every configuration
+  (`tools/alc_probe/cases/issue44/f4/`). The group is an **unfielded** first child of `procedure`, like
+  `preproc_conditional_return` in the return slot; each arm's modifier is `modifier:` on the group (multiple, an
+  `#elif`/`#else` arm may be empty); a nested group is a `preproc_conditional_modifier` child. An attribute before the
+  group stays a sibling `attribute_item`. **Consumer note:** when a group stands in the slot, `procedure.modifier` is
+  absent, so a consumer that reads only `procedure.modifier` sees a public procedure in every configuration; splice
+  the active arm into the procedure's children to get exactly the flat tree. 0 production sites changed (all four
+  corpora byte-identical); +73 states (+0.43%). Not covered, recorded as deferred item 113: an attribute inside the
+  arm, the group before a split header or inside one of its arms, an empty `#if` arm, and a var section's `protected`.
+- **`preproc_split_part`: an `#if` group choosing a `part`, `systempart`, `chartpart` or `usercontrol` header, the body
+  after `#endif` (issue #44, repro 3).** `#if V24 usercontrol(Logo; A) #else usercontrol(Logo; B) #endif { }` ERRORed;
+  alc accepts every configuration (`tools/alc_probe/cases/issue44/f2/`). The new node holds each arm's header pieces as
+  direct children (`name:`, `source:`, one per arm, like `preproc_split_field`) and the shared body as `body:`; an arm's
+  kind is its keyword child (`part_keyword`, `systempart_keyword`, `chartpart_keyword`, `usercontrol_keyword`), read per
+  arm because arms may differ in kind. The `chartpart` arm has its own probe (`chartpart_header.al`). 0 production
+  sites changed (the four corpora are byte-identical). +85 states.
+  Header splits for `area`, `group`, `label`, `grid`, `fixed`, `cuegroup`, `repeater`, action, enum value, report and
+  query `column` and xmlport elements are still not covered: deferred item 111, pinned by `test/corpus/issue44_f2_gap_test.txt`.
+  Nor are a nested `#if` choosing the header inside an arm, or arms mixing a page `field(...)` and a `part(...)`
+  header (item 111, alc probes).
+- **A table field whose header and `{` are chosen by `#if` / `#elif` / `#else` parses (issue #44, repro 4).**
+  `preproc_split_table_field_open` takes `#elif` and `#else` arms that each open the field, and an arm may be a nested
+  `#if` group (new node `preproc_conditional_table_field_open`). Each arm's own `body` (the properties inside its `{`)
+  and the shared body after `#endif` are all `body:` children of the node (a nested group's arms keep theirs on the
+  nested node); **the shared body is the `body` that starts
+  after `preproc_endif`**, so compare positions: when nothing is shared (`#if A field(..) { #else field(..) {
+  InitValue = 1; #endif }`) the last `body` is the `#else` arm's own, and there is no shared one.
+  alc accepts every configuration (`tools/alc_probe/cases/issue44/f3/`). Before, the `#else` form ERRORed. The
+  one-arm form (Microsoft's removed-field blocks) gives the same tree as before; no production tree changed (all four
+  corpora byte-identical). +22 states. The same shape for a page field, group, usercontrol, action, key and enum
+  value still ERRORs: deferred item 112 (the page field needs an owner decision on the B7a alias rule).
+
+- **A call whose closing `)` (and the statement's `;`) sits in every `#if` arm parses: `preproc_split_paren_close`
+  (issue #44, repros 1 and 2).** Both ERRORed; alc 18.0.41 accepts every configuration
+  (`tools/alc_probe/cases/issue44/f1/`). Each arm holds the list's last arguments, the `)` and, when the call ends a
+  statement, that statement's `;`:
+
+  ```
+  Rec.Validate("Quantity per",            (call_expression function: (member_expression ...)
+  #if V19                                    arguments: (argument_list (quoted_identifier)
+    Rec.CalcBOMQuantity(1));                   (preproc_split_paren_close (preproc_if ...)
+  #else                                          (call_expression ...) (preproc_else)
+    Rec.CalcQuantityFromBOM(1));                 (call_expression ...) (preproc_endif ...))))
+  #endif
+
+  Foo(1, 2                                (call_expression function: (identifier)
+  #if V21                                    arguments: (argument_list (integer) (integer)
+    , true);                                   (preproc_split_paren_close (preproc_if ...)
+  #else                                          (boolean) (preproc_else) (preproc_endif ...))))
+    );
+  #endif
+  ```
+
+  Consumer contract, per configuration: the argument list is its own items followed by the active arm's items; the
+  arm's `)` closes it; the arm's `;`, if any, terminates the innermost enclosing statement (the config oracle's
+  `list-run` policy with its terminator hoist, which validates every configuration; the traversal helper reports a
+  `branch-container` with host policy `list-run`). **An `argument_list` whose last child is this node has no `)` of
+  its own, and a `;` may be a child of the group** (a deliberate nesting lie, as the `}` inside
+  `preproc_split_brace_close`; `docs/expression-regions.md`). `#else` is required. The `;` is in every arm or in
+  none, and only where the call ends its statement: a whole statement, an assignment's whole right, or the last
+  thing of the body of `if … then` (with no `else` after it), `else`, `while`/`for`/`foreach`/`with … do`,
+  `asserterror` or a `case` branch, nested to any depth. Then the whole statement ends inside the arms, and a `;` after `#endif` is an
+  `empty_statement` (`Foo(1, #if A 3); #else 4); #endif ;` is `Foo(1, 3);;` in both configurations; `while C do
+  Foo(…);` followed by `;` gives the `while_statement`, then an `empty_statement`, never a second terminator). An
+  every-arm-`;` then-branch followed by `else` ERRORs (alc rejects a `;` before `else`, AL0110), and so does a second
+  `;` after a case branch (AL0104). `node-types.json`: `+ type preproc_split_paren_close`, `argument_list.(children)
+  +preproc_split_paren_close`. Production trees in the four corpora are byte-identical. Not covered, each an ERROR
+  alc accepts (deferred item 110): two `)` in an arm, more of the expression or statement after the `)`, an operator
+  tail before it, arms of which only some carry the `;` (the `;` after `#endif` is a terminator in one
+  configuration and an empty statement in another), an every-arm-`;` call as the body of a
+  `preproc_split_case_extended` branch, and a `#if` group around or at an arm's own `;` (the B7a `arguments` cells of
+  the arm's terminator). As the body of a branch whose leading patterns are a `#if` group the call parses as a
+  `case_branch` with a leading `preproc_conditional_case_patterns` (right in every configuration), while the plain
+  body gives a `preproc_split_case_branch`: two shapes, deferred item 114. Two over-acceptances are recorded in
+  deferred item 44 (a trailing `,` before an arm's `)`; an empty arm after a `,`). +613 states (+3.6%), one declared
+  conflict added (`[if_statement, _then_branch, _semi_if_statement]`, the existing then-branch decision with the
+  `_semi_` if in it) and one retargeted (`[_preproc_if_header, if_statement, _semi_if_statement]`).
+
+### Changed (tree shape)
+
+Corrections of wrong trees on main (deferred items 67 and 106), each clean before and after, 0 production sites (the
+four corpora byte-identical):
+
+- **An empty `#if` group after `then`, the then-branch the last statement of its block with no `;`, now decorates the
+  then-branch.** `if C then #if D #endif Bar()` before `end` had the empty group as `then_branch` and `Bar()` as a
+  sibling statement; now `then_branch` is `Bar()` and the group an unfielded child of the `if_statement`, as everywhere
+  else (item 67's decoration arm is `prec.dynamic(21)`; its `1` was swallowed by the `if`'s `20`). STATE_COUNT
+  unchanged.
+- **An empty `#if` group after `asserterror` decorates its body.** `asserterror #if D #endif Foo();` had the group as
+  `body` and `Foo()` as a sibling; now `body` is `Foo()`.
+
+Over the issue #44 re-review's generator (111,111 inputs) these and the `asserterror` fix above change 763 clean trees
+against main, each from an empty group in a `body` / `then_branch` / `else_branch` field to none; no other clean tree
+on main changed and none lost its cleanness.
+
+### Changed (node types)
+
+- **`preproc_split_table_field_open`: the fields `id`, `name` and `type` become multiple and optional**
+  (`multiple: true, required: false` in `node-types.json`; they were single and required). There is one of each per
+  arm, and an arm that is a nested `preproc_conditional_table_field_open` group holds its own; `body` was already
+  multiple. Code that reads `child_by_field_name("id")` on this node gets the first arm's only, and a typed binding
+  generated from `node-types.json` changes type (a single required node becomes a list). Shipped in a minor version by
+  the owner's decision. The node's children also gain `preproc_elif`, `preproc_else` and
+  `preproc_conditional_table_field_open`. No parse tree on existing input changed.
+- `asserterror_statement.(children)` gains `preproc_conditional_statement` (the item 67 decoration before its body)
+  and becomes `multiple: true`.
+
 ## [5.2.0] — 2026-11-11
 
 Released as a minor version by the owner's decision: the state review cuts parser states by 46.8% and `parser.c` by

@@ -67,6 +67,7 @@ LAYOUT_HOSTS = {"layout_body", "layout_container_body"}
 # Special types lowered under the list-run policy (select.branch_select): their
 # host list is checked for item/separator alternation once it is rebuilt.
 LIST_RUN_TYPES = frozenset({"preproc_conditional_permissions", "preproc_conditional_arguments",
+                            "preproc_split_paren_close",   # issue #44 (F1)
                             "preproc_conditional_list_elements", "preproc_conditional_option_members",
                             "preproc_conditional_where", "preproc_conditional_link_values",
                             "preproc_conditional_impl_values"})

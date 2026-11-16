@@ -49,7 +49,9 @@ BASELINE_FILE = Path(__file__).resolve().parent.parent / '.grammar_baseline.json
 # `externals` at [19], used only through `alias(..., $.preproc_open)`); the 48th, B13 (deferred
 # item 37): the external `_option_members_property_name` (shape 1, declared in `externals` at [20],
 # used only through `alias(..., $.property_name)`); the 49th, state review C1: the external
-# `_endif_mark` (shape 1, declared in `externals` at [3], used only in `preproc_endif`)):
+# `_endif_mark` (shape 1, declared in `externals` at [3], used only in `preproc_endif`); the 50th,
+# issue #44 F1: `preproc_split_paren_close`, a name that exists only as an `alias(..., $.preproc_split_paren_close)`
+# target (verified 2026-11-15)):
 #
 #   1. External scanner tokens (17) — declared in `externals: $ => [...]` and
 #      never given a `name: $ =>` rule body, e.g. `property_name`

@@ -1,0 +1,736 @@
+========================================================================
+F4 issue 44 repro: internal group before a procedure
+========================================================================
+
+codeunit 50100 T
+{
+#if V16
+    internal
+#endif
+    procedure A()
+    begin
+    end;
+}
+
+------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (procedure
+        (preproc_conditional_modifier
+          (preproc_if
+            (preproc_open)
+            condition: (identifier))
+          modifier: (procedure_modifier
+            (internal_keyword))
+          (preproc_endif
+            (preproc_close)))
+        (procedure_keyword)
+        name: (identifier)
+        body: (code_block
+          (begin_keyword)
+          (end_keyword))))))
+
+========================================================================
+F4 group around local
+========================================================================
+
+table 50100 T
+{
+    fields
+    {
+        field(1; K; Code[10]) { }
+    }
+
+#if A
+    local
+#endif
+    procedure P1()
+    begin
+    end;
+}
+
+------------------------------------------------------------------------
+
+(source_file
+  (table_declaration
+    (table_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (fields_section
+        (fields_keyword)
+        body: (fields_body
+          (field_declaration
+            (field_keyword)
+            id: (integer)
+            name: (identifier)
+            type: (type_specification
+              (code_type
+                (code_keyword)
+                length: (integer))))))
+      (procedure
+        (preproc_conditional_modifier
+          (preproc_if
+            (preproc_open)
+            condition: (identifier))
+          modifier: (procedure_modifier
+            (local_keyword))
+          (preproc_endif
+            (preproc_close)))
+        (procedure_keyword)
+        name: (identifier)
+        body: (code_block
+          (begin_keyword)
+          (end_keyword))))))
+
+========================================================================
+F4 group around protected
+========================================================================
+
+table 50100 T
+{
+    fields
+    {
+        field(1; K; Code[10]) { }
+    }
+
+#if A
+    protected
+#endif
+    procedure P2()
+    begin
+    end;
+}
+
+------------------------------------------------------------------------
+
+(source_file
+  (table_declaration
+    (table_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (fields_section
+        (fields_keyword)
+        body: (fields_body
+          (field_declaration
+            (field_keyword)
+            id: (integer)
+            name: (identifier)
+            type: (type_specification
+              (code_type
+                (code_keyword)
+                length: (integer))))))
+      (procedure
+        (preproc_conditional_modifier
+          (preproc_if
+            (preproc_open)
+            condition: (identifier))
+          modifier: (procedure_modifier
+            (protected_keyword))
+          (preproc_endif
+            (preproc_close)))
+        (procedure_keyword)
+        name: (identifier)
+        body: (code_block
+          (begin_keyword)
+          (end_keyword))))))
+
+========================================================================
+F4 group choosing between two modifiers with else
+========================================================================
+
+table 50100 T
+{
+    fields
+    {
+        field(1; K; Code[10]) { }
+    }
+
+#if A
+    internal
+#else
+    local
+#endif
+    procedure P3()
+    begin
+    end;
+}
+
+------------------------------------------------------------------------
+
+(source_file
+  (table_declaration
+    (table_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (fields_section
+        (fields_keyword)
+        body: (fields_body
+          (field_declaration
+            (field_keyword)
+            id: (integer)
+            name: (identifier)
+            type: (type_specification
+              (code_type
+                (code_keyword)
+                length: (integer))))))
+      (procedure
+        (preproc_conditional_modifier
+          (preproc_if
+            (preproc_open)
+            condition: (identifier))
+          modifier: (procedure_modifier
+            (internal_keyword))
+          (preproc_else)
+          modifier: (procedure_modifier
+            (local_keyword))
+          (preproc_endif
+            (preproc_close)))
+        (procedure_keyword)
+        name: (identifier)
+        body: (code_block
+          (begin_keyword)
+          (end_keyword))))))
+
+========================================================================
+F4 group with elif before a procedure with a return type
+========================================================================
+
+table 50100 T
+{
+    fields
+    {
+        field(1; K; Code[10]) { }
+    }
+
+#if A
+    internal
+#elif B
+    protected
+#endif
+    procedure P4(): Integer
+    begin
+    end;
+}
+
+------------------------------------------------------------------------
+
+(source_file
+  (table_declaration
+    (table_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (fields_section
+        (fields_keyword)
+        body: (fields_body
+          (field_declaration
+            (field_keyword)
+            id: (integer)
+            name: (identifier)
+            type: (type_specification
+              (code_type
+                (code_keyword)
+                length: (integer))))))
+      (procedure
+        (preproc_conditional_modifier
+          (preproc_if
+            (preproc_open)
+            condition: (identifier))
+          modifier: (procedure_modifier
+            (internal_keyword))
+          (preproc_elif
+            condition: (identifier))
+          modifier: (procedure_modifier
+            (protected_keyword))
+          (preproc_endif
+            (preproc_close)))
+        (procedure_keyword)
+        name: (identifier)
+        return_type: (type_specification
+          (basic_type))
+        body: (code_block
+          (begin_keyword)
+          (end_keyword))))))
+
+========================================================================
+F4 attribute before the modifier group
+========================================================================
+
+codeunit 50100 T
+{
+    [Obsolete('x', '1.0')]
+#if A
+    internal
+#endif
+    procedure P1()
+    begin
+    end;
+}
+
+------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (attribute_item
+        attribute: (attribute_content
+          name: (identifier)
+          arguments: (attribute_arguments
+            (attribute_argument_list
+              (string_literal)
+              (string_literal)))))
+      (procedure
+        (preproc_conditional_modifier
+          (preproc_if
+            (preproc_open)
+            condition: (identifier))
+          modifier: (procedure_modifier
+            (internal_keyword))
+          (preproc_endif
+            (preproc_close)))
+        (procedure_keyword)
+        name: (identifier)
+        body: (code_block
+          (begin_keyword)
+          (end_keyword))))))
+
+========================================================================
+F4 comment and pragma between the group and the procedure
+========================================================================
+
+codeunit 50100 T
+{
+#if A
+    internal
+#endif
+    // a comment
+#pragma warning disable AA0137
+    procedure P3()
+#pragma warning restore AA0137
+    begin
+    end;
+}
+
+------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (procedure
+        (preproc_conditional_modifier
+          (preproc_if
+            (preproc_open)
+            condition: (identifier))
+          modifier: (procedure_modifier
+            (internal_keyword))
+          (preproc_endif
+            (preproc_close)))
+        (comment)
+        (pragma)
+        (procedure_keyword)
+        name: (identifier)
+        (pragma)
+        body: (code_block
+          (begin_keyword)
+          (end_keyword))))))
+
+========================================================================
+F4 nested modifier group
+========================================================================
+
+codeunit 50100 T
+{
+#if A
+#if B
+    internal
+#else
+    local
+#endif
+#endif
+    procedure P4()
+    begin
+    end;
+}
+
+------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (procedure
+        (preproc_conditional_modifier
+          (preproc_if
+            (preproc_open)
+            condition: (identifier))
+          (preproc_conditional_modifier
+            (preproc_if
+              (preproc_open)
+              condition: (identifier))
+            modifier: (procedure_modifier
+              (internal_keyword))
+            (preproc_else)
+            modifier: (procedure_modifier
+              (local_keyword))
+            (preproc_endif
+              (preproc_close)))
+          (preproc_endif
+            (preproc_close)))
+        (procedure_keyword)
+        name: (identifier)
+        body: (code_block
+          (begin_keyword)
+          (end_keyword))))))
+
+========================================================================
+F4 modifier group inside an arm of a member-level group
+========================================================================
+
+codeunit 50100 T
+{
+#if A
+#if B
+    internal
+#endif
+    procedure P1()
+    begin
+    end;
+#endif
+}
+
+------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (preproc_conditional
+        (preproc_if
+          (preproc_open)
+          condition: (identifier))
+        (procedure
+          (preproc_conditional_modifier
+            (preproc_if
+              (preproc_open)
+              condition: (identifier))
+            modifier: (procedure_modifier
+              (internal_keyword))
+            (preproc_endif
+              (preproc_close)))
+          (procedure_keyword)
+          name: (identifier)
+          body: (code_block
+            (begin_keyword)
+            (end_keyword)))
+        (preproc_endif
+          (preproc_close))))))
+
+========================================================================
+F4 modifier group in a table
+========================================================================
+
+table 50100 T
+{
+    fields
+    {
+        field(1; K; Code[10]) { }
+    }
+
+#if A
+    internal
+#endif
+    procedure P1()
+    begin
+    end;
+}
+
+------------------------------------------------------------------------
+
+(source_file
+  (table_declaration
+    (table_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (fields_section
+        (fields_keyword)
+        body: (fields_body
+          (field_declaration
+            (field_keyword)
+            id: (integer)
+            name: (identifier)
+            type: (type_specification
+              (code_type
+                (code_keyword)
+                length: (integer))))))
+      (procedure
+        (preproc_conditional_modifier
+          (preproc_if
+            (preproc_open)
+            condition: (identifier))
+          modifier: (procedure_modifier
+            (internal_keyword))
+          (preproc_endif
+            (preproc_close)))
+        (procedure_keyword)
+        name: (identifier)
+        body: (code_block
+          (begin_keyword)
+          (end_keyword))))))
+
+========================================================================
+F4 modifier group in a page
+========================================================================
+
+page 50100 P
+{
+#if A
+    local
+#endif
+    procedure P1()
+    begin
+    end;
+}
+
+------------------------------------------------------------------------
+
+(source_file
+  (page_declaration
+    (page_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (procedure
+        (preproc_conditional_modifier
+          (preproc_if
+            (preproc_open)
+            condition: (identifier))
+          modifier: (procedure_modifier
+            (local_keyword))
+          (preproc_endif
+            (preproc_close)))
+        (procedure_keyword)
+        name: (identifier)
+        body: (code_block
+          (begin_keyword)
+          (end_keyword))))))
+
+========================================================================
+F4 modifier group in a report
+========================================================================
+
+report 50100 R
+{
+#if A
+    local
+#endif
+    procedure P1()
+    begin
+    end;
+}
+
+------------------------------------------------------------------------
+
+(source_file
+  (report_declaration
+    (report_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (procedure
+        (preproc_conditional_modifier
+          (preproc_if
+            (preproc_open)
+            condition: (identifier))
+          modifier: (procedure_modifier
+            (local_keyword))
+          (preproc_endif
+            (preproc_close)))
+        (procedure_keyword)
+        name: (identifier)
+        body: (code_block
+          (begin_keyword)
+          (end_keyword))))))
+
+========================================================================
+F4 modifier group in a pageextension
+========================================================================
+
+pageextension 50101 PE extends P
+{
+#if A
+    internal
+#endif
+    procedure P2()
+    begin
+    end;
+}
+
+------------------------------------------------------------------------
+
+(source_file
+  (pageextension_declaration
+    (pageextension_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    (extends_keyword)
+    base_object: (identifier)
+    body: (declaration_body
+      (procedure
+        (preproc_conditional_modifier
+          (preproc_if
+            (preproc_open)
+            condition: (identifier))
+          modifier: (procedure_modifier
+            (internal_keyword))
+          (preproc_endif
+            (preproc_close)))
+        (procedure_keyword)
+        name: (identifier)
+        body: (code_block
+          (begin_keyword)
+          (end_keyword))))))
+
+========================================================================
+F4 regression: attribute and modifier inside a member group
+========================================================================
+
+codeunit 50100 T
+{
+#if A
+    [Obsolete('x')]
+    local procedure P()
+    begin
+    end;
+#endif
+}
+
+------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (preproc_conditional
+        (preproc_if
+          (preproc_open)
+          condition: (identifier))
+        (attribute_item
+          attribute: (attribute_content
+            name: (identifier)
+            arguments: (attribute_arguments
+              (attribute_argument_list
+                (string_literal)))))
+        (procedure
+          modifier: (procedure_modifier
+            (local_keyword))
+          (procedure_keyword)
+          name: (identifier)
+          body: (code_block
+            (begin_keyword)
+            (end_keyword)))
+        (preproc_endif
+          (preproc_close))))))
+
+========================================================================
+F4 regression: empty group before a procedure stays a body-level group
+========================================================================
+
+codeunit 50100 T
+{
+#if A
+#endif
+    procedure P()
+    begin
+    end;
+}
+
+------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (preproc_conditional
+        (preproc_if
+          (preproc_open)
+          condition: (identifier))
+        (preproc_endif
+          (preproc_close)))
+      (procedure
+        (procedure_keyword)
+        name: (identifier)
+        body: (code_block
+          (begin_keyword)
+          (end_keyword))))))
+
+========================================================================
+F4 regression: modifier procedure in each arm of a member group
+========================================================================
+
+codeunit 50100 T
+{
+#if A
+    local procedure P()
+    begin
+    end;
+#else
+    internal procedure P()
+    begin
+    end;
+#endif
+}
+
+------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (preproc_conditional
+        (preproc_if
+          (preproc_open)
+          condition: (identifier))
+        (procedure
+          modifier: (procedure_modifier
+            (local_keyword))
+          (procedure_keyword)
+          name: (identifier)
+          body: (code_block
+            (begin_keyword)
+            (end_keyword)))
+        (preproc_else)
+        (procedure
+          modifier: (procedure_modifier
+            (internal_keyword))
+          (procedure_keyword)
+          name: (identifier)
+          body: (code_block
+            (begin_keyword)
+            (end_keyword)))
+        (preproc_endif
+          (preproc_close))))))

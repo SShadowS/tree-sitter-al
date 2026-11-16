@@ -85,6 +85,14 @@ Cases are identified by their resolved path; they are displayed relative to the 
 root of all the cases in the run, so `a/x.al` and `b/x.al` are two cases. Naming the
 same file twice is an error.
 
+**Without `--check`, a row's leading `ok` means only "no unexpected MISMATCH", not "matches its
+`expect:`".** A REJECT against `expect=accept` (for example a probe broken by AL0185, a missing
+symbol, or AL0440 from a procedure named `Run`) prints `ok ... split=REJECT(...) ... expect=accept`
+and the run exits 0 with `0 drifted from expect` in its summary (drift is counted only under
+`--check`). Read the verdict columns, or run with `--check`, which marks such a row `DIFF` and
+exits 1, before calling a probe
+passed (found by the issue #44 re-review, 2026-11-15).
+
 **Never edit an expectation to match a new run.** A difference means the old probe or
 this tool is wrong, and someone has to find out which.
 

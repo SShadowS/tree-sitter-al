@@ -527,6 +527,7 @@ byte-identical.
 
 The one-level form fails too: `#if addafter(A) { #else addlast(B) { #endif … }`.
 The only file is `Apps/DE/EDocumentDE/app/src/EDocumentServiceDE.PageExt.al`.
+(Item 112 records the other header-and-`{` splits, where a table field's arms cost only +22 states.)
 A `preproc_split_layout_open` rule parses it. Its cost against 14,630 states:
 
 | attempt | STATE_COUNT |
@@ -2060,6 +2061,24 @@ accepts and configurations it rejects, so a parser that refused them would refus
   every configuration (AL0104/AL0224). Known over-acceptance cases in
   `test/corpus/b7b3_case_separator_negative_test.txt`; the oracle reports every configuration as a reference ERROR.
 
+**Issue #44 F1 additions (2026-11-15, `preproc_split_paren_close`, item 110).** Two forms of a call closed inside
+`#if` arms parse clean although alc rejects a configuration; neither is a corpus tree (SILENT-style record; the
+oracle reports the rejected configurations as `reference-error`, never a discrepancy):
+- A trailing `,` before an arm's `)`: `V(1, #if A 2,); #else 3); #endif` (alc AL0301 with A, accepts without;
+  probe `tools/alc_probe/cases/issue44/f1/overaccept_trailing_comma_in_arm.al`). The arm reuses
+  `_argument_branch_run`, whose trailing `,` joins a run to an argument after `#endif` in
+  `preproc_conditional_arguments`; here a `)` always follows. B7a records the key as `na`
+  (`occ:_argument_branch_run:2.0` @ `argument_list` and @ `semi_argument_list`).
+- An arm with no argument after a `,`: `V(1, #if A ); #else 2); #endif` (`V(1, );` with A, alc AL0301; probe
+  `tools/alc_probe/cases/issue44/f1/overaccept_empty_arm_after_comma.al`). The leading arm shape's run is optional
+  because the group may be the whole list (`Foo( #if A 1) #else ) #endif`, `Foo()`); after a `,` an empty arm is
+  never valid. 60 of the review differential's 2,474 newly clean shapes are this form in every arm
+  (`reference-error` in every configuration; the differential has no trailing-comma arm before a `)`).
+A `;` in the arms of a call that does not end its statement (`if F1(1 #if A ); #else ); #endif then`, alc AL0104)
+parsed clean on the first F1 design and ERRORs since the review: the arms' `;` is taken only on the statement route
+(`tools/alc_probe/cases/issue44/f1/negative_semicolon_mid_statement.al`, a `:error` case of
+`test/corpus/issue44_f1_gap_test.txt`).
+
 **Next step:** only if a consumer needs it: per-arm separator tracking (each arm records whether it starts or ends with a
 separator) would make the forms ERROR, at a cost the spec chose not to pay. Until then the oracle keeps them visible.
 
@@ -2639,6 +2658,10 @@ the pinned wrong argument-list tree; a deliberate negative), three `route:b7b2-c
 **Next step:** a representation that can say "a group crosses this boundary" (spec 9); the contract of
 `docs/expression-regions.md` cannot.
 
+**Update 2026-11-15 (issue #44 F1):** a call whose `)` and `;` sit in every arm is now represented as a list group,
+`preproc_split_paren_close`; the forms of that family that cross further (two `)` in an arm, more of the expression
+or statement after the `)`, an operator tail before it) are item 110.
+
 **Owner:** a B7b-2 follow-up.
 
 ## 58. `in`'s right accepts an operand group with a non-list arm (over-acceptance, B7b-2)
@@ -3011,6 +3034,14 @@ oracle and traversal policy give every body host's `<children>` slot the `decora
 (four corpora unchanged). It also closed 6 B7a GAP cells of `case-branch / empty` (the family's former
 representative). Cost: STATE_COUNT +471 (+1.7%), `parser.c` +3.1%; a shared `_body_decorations` rule instead of
 the inline repeat raised a new conflict in case branches and was dropped.
+
+**Correction (2026-11-15, issue #44 re-review).** The then-branch alternative's `prec.dynamic(1)` sat inside
+`if_statement`'s `prec.dynamic(20)`, and a production takes its largest nested dynamic precedence, so it gained
+nothing: when both readings completed (the `if` last in its block, no `;`: `if C then #if D #endif Bar()` before
+`end`) the tie went to the empty group as `then_branch` with `Bar()` a sibling, clean and wrong, on main too
+(item 106, now resolved). It is `prec.dynamic(21)` now. `asserterror` got the same decoration (it took only
+`_statement_inner`, so `asserterror #if D #endif Foo;` had the empty group as its body, also on main). Fixture
+cases in `test/corpus/item_67_empty_group_before_body_test.txt`.
 
 **Established:** 2026-11-08, while fixing issue #39 (tools/snip.py on 4.5.0 and on the fix branch, same trees).
 `if R then #if F #endif A() else B();`: `then_branch` is the empty `preproc_conditional_statement`, `A()` a sibling
@@ -3867,7 +3898,16 @@ add it, fixture both labels with fields, measure the state cost.
 
 **Owner:** unassigned.
 
-## 106. An empty group after `then` before a last statement without `;` is still the then-branch at depth 0 (silent, pre-existing)
+## 106. An empty group after `then` before a last statement without `;` is still the then-branch at depth 0 (silent, pre-existing) — RESOLVED 2026-11-15
+
+**Resolution (issue #44 re-review).** The measured candidate below is applied: the decoration arm is
+`prec.dynamic(21)`. STATE_COUNT unchanged; the four production corpora byte-identical; over the re-review's
+generator (`rv44b/gen3.py`, 111,111 inputs) every clean tree that changed against main (763) had an empty group in a
+body / then / else field on main and has none now, and no clean tree on main lost its cleanness. The other slots were
+checked: `else` and the `fieldedStatement` bodies already chose the decoration (their `prec.dynamic(1)` is on the
+hidden branch rule's own node, which is summed, not swallowed). Fixtures: two cases in
+`test/corpus/item_67_empty_group_before_body_test.txt`; probes `tools/alc_probe/cases/item67/then-last-statement-depth0.al`,
+`asserterror.al`.
 
 **Established:** 2026-11-11, review of state review C3 (finding F1). `A := 1; if C then #if Y #endif begin A := 2;
 end end;` (the then-branch block is the body's last statement, no `;`): main, C1, C3 and the tip all give
@@ -3938,6 +3978,203 @@ and on the tip; alc accepts every configuration (`tools/alc_probe/cases/item102/
 
 **Next step:** decide which owner is right (the var_body's empty conditional, or a pragma-only group after the
 section), then make the other route produce it and measure the state cost; the oracle's lowering treats both today.
+
+**Owner:** unassigned.
+
+## 114. A case branch whose leading patterns are chosen by `#if` has two shapes, by its body
+
+**Established:** 2026-11-15, issue #44 re-review (finding 3). `case X of #if Y 1, #endif 2: V(1); 3: …` with a plain
+body is a `preproc_split_case_branch` (the group, then `2`, `:`, the body, the `;`). The same branch whose body is an
+every-arm-`;` call (`2: V(1, #if A 1.0); #else 2.0); #endif`) cannot use that rule (its body is `_case_body_branch`
+and it owns the `;`), so it parses as a plain `case_branch` whose `_case_pattern` opens with a
+`preproc_conditional_case_patterns` group, clean. That tree is right in every configuration (the group's arm holds
+`1` and its `,`; spliced, the patterns are `1, 2` or `2`, as in each configuration's own parse); alc accepts all
+four configurations (`tools/alc_probe/cases/issue44/f1/semi_body_split_case_patterns.al`). Two shapes for one
+construct, and the config oracle validates neither: `preproc_split_case_branch` is unsupported, and a pattern group
+at `case_branch:<children>` is `lowering:unsupported-type`. The `preproc_split_case_extended` form with such a body
+ERRORs (item 110.6).
+
+**Next step:** one shape. Either `preproc_split_case_branch` takes the `_semi_statement` body too (a third body arm,
+like `case_branch`'s), or the plain-body form becomes a `case_branch` with a leading pattern group, which changes
+production trees and needs the oracle to lower a pattern group in `case_branch`. An owner decision; not measured.
+
+**Owner:** unassigned.
+
+## 113. Five shapes of an `#if` group around a procedure's access modifier are not covered (issue #44 F4)
+
+**Established:** 2026-11-15, alc 18.0.41 accepts all four, split and flat, every symbol assignment
+(`tools/alc_probe/cases/issue44/f4/gap_*.al`, `--check` clean); each parser ERRORs (`test/corpus/issue44_f4_gap_test.txt`,
+`:error`, listed in `tools/deliberate-negatives.txt`, classified `debt(B7)` cannot-validate in
+`tools/config_oracle/fixture-classes.tsv`). The covered shape is `#if A internal #endif procedure P()`
+(`preproc_conditional_modifier`, +73 states, `test/corpus/issue44_f4_procedure_modifier_test.txt`).
+
+1. **An attribute inside the arm** (`#if A [Obsolete('x')] internal #endif procedure`). Prototyped as
+   `seq(repeat($.attribute_item), modifier)` in the arm: +27 states, parses clean, but the oracle reports a
+   discrepancy in the configurations that take the arm: the attribute is a child of the group inside `procedure`,
+   while each configuration's own parse has it as a sibling before the procedure. A correct shape needs the
+   attribute outside the procedure node; not designed.
+2. **The group before a split header** (`#if B internal #endif #if A procedure P() #else procedure P(I: Integer) #endif`).
+   `optional($.preproc_conditional_modifier)` in front of `preproc_split_procedure` alone measured +163 states
+   (the preamble and trigger variants would add more). Not in the issue; not built.
+3. **An empty `#if` arm** (`#if A #else internal #endif procedure`). The generator reports an unresolved conflict
+   with `preproc_conditional` at `preproc_if preproc_elif •` (the same text is an empty body-level group). It needs a
+   declared conflict `[preproc_conditional_modifier, preproc_conditional]`; not measured. The author can write
+   `#if not A internal #endif`.
+4. **A var section's `protected`** (`#if A protected #endif var`). `var_section` holds its keyword directly,
+   `procedure` holds a `procedure_modifier`; one group for both needs a shared arm rule; not prototyped.
+5. **A modifier group inside an arm of a split header** (`#if A #if B local #endif procedure P() #else procedure P(I:
+   Integer) #endif begin end;`; found by the F4 review, 2026-11-15). alc accepts all four configurations
+   (`tools/alc_probe/cases/issue44/f4/gap_modifier_group_in_split_header_arm.al`, `--check` clean); the parser ERRORs:
+   an arm of `preproc_split_procedure` holds a procedure head with an optional plain modifier, not a group. The fix
+   is `preproc_conditional_modifier` as an alternative in that arm; not measured. No `:error` fixture yet (the probe is
+   the witness).
+
+**Owner:** unassigned.
+
+## 111. A header split with a shared body exists for some members only
+
+**Established:** 2026-11-15, issue #44 family F2 (`alc` 18.0.41; probes `tools/alc_probe/cases/issue44/f2/`, `--check`
+green). `#if kind(A; X) #else kind(A; Y) #endif { body }` has a dedicated rule for the page field
+(`preproc_split_field`), table field, key, `modify`, report dataitem, procedure, trigger and, since F2, the four
+part-like controls (`preproc_split_part`: `part`, `systempart`, `chartpart`, `usercontrol`). It has none for `area`,
+`group`, `repeater`, `cuegroup`, `fixed`, `grid`, `label` (`gap_layout_control_kinds.al`), action, action `group`, enum
+`value`, report and query `column`, xmlport elements (`gap_other_member_kinds.al`). `alc` accepts every one in every
+configuration because its preprocessor is lexical; the parser ERRORs, pinned by one `:error` case per kind in
+`test/corpus/issue44_f2_gap_test.txt` (listed in `tools/deliberate-negatives.txt`). **Measured:** +53 states for the
+five layout containers in one rule (generate only, not tested). None is in issue #44.
+
+Two more shapes of the covered part-like controls ERROR, alc accepting every configuration (found by the F2 review,
+2026-11-15; probes `--check` clean, no `:error` fixture yet, the probes are the witnesses):
+- **A nested `#if` choosing the header inside an arm** (`#if A #if B part(P; SubA) #else part(P; SubB) #endif #else
+  part(P; SubC) #endif { }`; `gap_nested_if_in_header_arms.al`, all four configurations): an arm of
+  `preproc_split_part` holds one `_part_header`, not a group of them. The F3 precedent is an arm that may be a nested
+  group (`preproc_conditional_table_field_open`); not measured here.
+- **Arms of different families** (`#if A field(P; Rec.K) #else part(P; SubB) #endif { }`;
+  `gap_field_and_part_arms.al`, both configurations): `preproc_split_part` takes part-like headers only and
+  `preproc_split_field` page-field headers only. One rule over both header kinds; not designed.
+
+The `chartpart` arm of `preproc_split_part` has its own probe (`chartpart_header.al`, both configurations accepted).
+
+**Next step:** one rule of the same form as `preproc_split_part` when a report asks for a kind; each new host needs its
+B7a registry row, its `traversal/policy.json` entry and a `contracts.py` registration.
+
+**Owner:** unassigned.
+
+## 112. A header-and-`{` split with the body after `#endif` exists for table fields only
+
+**Established:** 2026-11-15, issue #44 family F3 (spec `2026-11-15-issue44-f3-field-open-arms.md`; prototypes on
+branch `issue44/prototypes`). `preproc_split_table_field_open` takes `#elif` / `#else` arms that each open the field
+(`field(...) {` in every arm, the shared body after `#endif`; +22 states, LARGE +0, no declared conflict). The same
+shape for any other construct still ERRORs, and alc 18.0.41 accepts every configuration of each
+(`tools/alc_probe/cases/issue44/f3/gap_other_kinds_brace_in_arm.al` and `page_field_brace_in_arm.al`, `--check`
+clean): a page field, a group, a usercontrol, an action, a key, an enum value. One `:error` witness per kind:
+`test/corpus/issue44_f3_gap_test.txt` (in `tools/deliberate-negatives.txt`). 0 production sites known (not counted).
+
+**Part B, the page field (measured on the prototype, commit `1c47dfa4`, not landed):** `preproc_split_field_open`
+with `page_field` taking the shared `_field_header` costs **+45 states** (LARGE +18, SYMBOL +3, `parser.c`
++113,096 B) and **removes** the declared conflict `[page_field, _field_header]` (the generator reports it
+unnecessary). Why `page_field` must take `_field_header`: with the header inline, `field(A; B) • {` is a shift (the
+page field's body) against a reduce (`_field_header` for the open arm), and the declared conflict would turn it into
+a GLR fork over the body of the first field of every `#if` arm in every layout (reasoned from the generator's
+rules, the inline variant was not built). Moving the header out of `page_field` **retires eleven B7a keys**
+(`occ:page_field:3`, and `bnd:page_field:source:start` / `:end` for five host groups each). Their live keys
+(`occ:_field_header:3`, `bnd:_field_header:source:*`) already carry the host `preproc_split_field`, which the retired
+keys never covered, and `_alias_problem` in `tools/b7_audit/registry.py` refuses an alias whose live key covers such
+a host. So part B needs **the alias rule in `tools/b7_audit/registry.py` extended** (a host that existed under the
+live key before the alias is not a new claim), or the eleven rows re-keyed with fresh evidence from a B7a `run`.
+That changes the audit's invariants: **an owner decision**, not made here. Registration on the prototype: policy
+`assembler` plus a `witnesses.tsv` row, `register("preproc_split_field_open", "unsupported")`, and
+`"preproc_split_field_open:source"` beside `"preproc_split_field:source"` in the hosts of
+`preproc_conditional_operand`; `page_field` trees were byte-identical on the four corpora.
+
+**Group, usercontrol, action, key, enum value:** not designed. Item 10 measured the layout containers whose body is a
+layout body at +835 to +2,270 states (2026-09, before state review C1; not re-measured), because there the arm shares
+its whole prefix with a complete `add*` modification; a table field's arm did not (the one-arm rule had already paid
+for it). Expect each kind to need its own measurement.
+
+**Next step:** the owner decides the B7a alias rule; then land part B from the prototype and re-run the gates of the
+F3 spec section 12. For the other kinds, measure each before deciding.
+
+**Owner:** unassigned (part B waits on the owner's decision about `_alias_problem`).
+
+## 110. A call closed inside `#if` arms: only `[arguments] ) [;]` is represented
+
+**Established:** 2026-11-15, issue #44 family F1 (spec `2026-11-15-issue44-f1-call-close.md`, prototype branch
+`issue44/prototypes`). `preproc_split_paren_close` covers one argument list closed in every arm, each arm
+`[arguments] ) [;]`, the `;` in every arm or in none (fixture `test/corpus/issue44_f1_paren_close_test.txt`, 20
+cases, every configuration `pass` in
+the oracle). alc 18.0.41 accepts every configuration of each shape below
+(`tools/alc_probe/cases/issue44/f1/gap_call_close_crossing.al`, `--check` clean); each ERRORs visibly, pinned as
+`:error` witnesses in `test/corpus/issue44_f1_gap_test.txt` (a deliberate negative):
+1. **Two or more `)` in an arm** (`exit(F1( #if A 1)); #else 2)); #endif`, P2; `V(1, F1( #if A 1)); #else 2));
+   #endif`, P4): the outer list loses its `)` to the inner list's group. A context-free rule needs one set of call /
+   argument-list productions per depth and per host (`exit(`, a nested call, a subscript). Not prototyped; expect a
+   cost of the order of this family's +307 states per depth.
+2. **More of the statement inside the arm**: `) > 1 then` (P3), `) + 1;` (P5), a second statement after the `;` (P6).
+   The arm crosses the expression or the statement, item 57's class.
+3. **An operator tail before the `)`** (`V(1, 2 #if A + 1); #else ); #endif`, P8): list spanning plus closing, item
+   57's "list spanning" neighbour. This ERROR is also the witness that the two arm shapes are in place: one
+   permissive arm shape (+276 states instead of +307) read `+ 1` as a comma-less unary argument, silently.
+4. **No `#else`** (`tools/alc_probe/cases/issue44/f1/gap_call_close_no_else.al`): the configuration that takes no arm
+   has no `)`, and alc rejects it (AL0104, AL0301). Not a gap.
+5. **Only some arms carry the statement's `;`, then a `;` after `#endif`** (`Foo(1, #if A 3) #else 4); #endif ;`,
+   and the assignment form; `tools/alc_probe/cases/issue44/f1/gap_mixed_arm_semi.al`, two `:error` cases of the gap
+   fixture). The `;` after `#endif` is the call's terminator in one configuration and an empty statement in the
+   other, so no one tree is right in both: the item 99 situation for statements. The first F1 design took the arm
+   `;` as optional and read the shared `;` as the terminator, a wrong clean tree where the active arm has a `;` (the
+   review's differential: 1,468 `discrepancy` shapes; 844 with a `;` in every arm, now covered, 624 mixed). Since the
+   review the `;` is in every arm or in none: every arm makes the call a whole statement (or an assignment's whole
+   right, through `semi_call_expression`; no subscript callee `X[1](..)`, which ERRORs), and the `;` after `#endif`
+   is an `empty_statement` (fixtures "every arm carries the semicolon ..." in `issue44_f1_paren_close_test.txt`);
+   mixed arms ERROR, as on main.
+6. **Bodies (fixed in the issue #44 fix pass, 2026-11-15).** The every-arm-`;` call was reachable only through
+   `_statement`, so as the body of `if … then`, `else`, `while`/`for`/`foreach`/`with … do` or a `case` branch it
+   ERRORed although alc accepts every configuration (review probe, now
+   `tools/alc_probe/cases/issue44/f1/semi_arms_in_bodies.al`). Now `_semi_statement` (grammar.js) is the call, its
+   assignment, and hidden `_semi_*` variants of those statements whose body is a `_semi_statement` (aliased to the
+   plain names), reached through `_statement`'s semicolon-free route and as a `case_branch` body with no `;` of its
+   own, so a `;` after `#endif` stays an `empty_statement` at every depth; item 67's directive-only decoration before
+   such a body is included (without it `while C do #if X #endif V(…);…` read the empty group as the body and the
+   call as a sibling, clean and wrong, on the integration branch). An every-arm-`;` then-branch followed by `else`
+   ERRORs: alc rejects the `;` before `else` (AL0110, `negative_semi_then_before_else.al`, a deliberate negative in
+   `issue44_f1_gap_test.txt`); a second `;` after such a case branch ERRORs too (AL0104,
+   `negative_case_branch_second_semi.al`). The review's differential (`rv44f1/tools/gen.py`, `gen2.py`, against main
+   `f8c6d8b6`): 0 trees clean on main changed or ERROR; newly clean 93,264 → 103,716 shapes, oracle 0 `discrepancy`.
+   Cost +230 states over the integration commit.
+   **Corrected by the re-review (2026-11-15).** The statement above that an `asserterror` body still ERRORed was
+   wrong: `asserterror` took `_statement_inner`, so the call alone ERRORed, but over a compound body
+   (`asserterror while C do #if D #endif V(…);… Bar();`) the plain `while` read the empty group as its body and the
+   call as a separator-less sibling, clean and wrong (78a59e78 and bc862313; main ERRORs). The re-review's generator
+   (`rv44b/gen3.py`, 111,111 inputs) found 1,028 such asserterror shapes. Now `_semi_asserterror_statement` (aliased
+   to `asserterror_statement`, its body a decorated `_semi_statement`) is in `_semi_statement`, and the plain
+   `asserterror` takes item 67's decoration; probes `tools/alc_probe/cases/issue44/f1/asserterror_semi_bodies.al`,
+   `tools/alc_probe/cases/item67/asserterror.al`. Over gen3 against main the tip has 0 clean trees with a
+   directive-only group in a `body` / `then_branch` / `else_branch` field (main: 763, all changed to the right
+   reading), 0 clean trees on main lost, 0 other clean trees changed. +9 states.
+   **The `#if`-split case branch:** `preproc_split_case_extended` with such a body ERRORs (alc accepts). The
+   `preproc_split_case_branch` shape (a pattern group before the branch's pattern) parses clean, as a plain
+   `case_branch` whose `_case_pattern` starts with a `preproc_conditional_case_patterns`: right in every configuration,
+   but a second shape for the construct, item 114.
+7. **A `#if` group around or at an arm's own `;`** (B7a, the `terminator` cells of `occ:_paren_close_cont_semi_arm:2`
+   and `occ:_paren_close_lead_semi_arm:2` at `semi_argument_list`; full run 2026-11-15). Every placement is GAP: alc
+   accepts every configuration and the parser ERRORs. Two kinds: (a) every configuration still has the arm's `;`
+   (`Foo(1, 2 #if TPL ) #if X ; #else ; #endif #else ); #endif`: sep-only, elif, nested, adjacent-compl, the `)` too
+   in first-replace; an empty group before the `;`, empty) — representable only by a `;`-group alternative at the end
+   of both semi arm shapes, which the oracle, the B7a census and the traversal policy would each need registered;
+   not built, no use known; (b) some configuration loses it (trail: `) #if X ; #endif`), which is shape 5 (mixed
+   arms): no tree is right in every configuration. Witnesses: `tools/alc_probe/cases/b7-audit/arguments__{adjacent-compl,elif,first-replace}__gap.al`
+   and five `:error` cases "… an every-arm-`;` arm's terminator …" in `test/corpus/b7_gap_arguments_test.txt`
+   (classified `debt(B7)`). The matrix's nested and trail rows cite `arguments__{nested,trail}__gap.al`, whose slug
+   is taken by the older B7b-2 witnesses of the same family and placement (`report.witness` derives the file from
+   family, placement and kind); the corpus cases above are this group's witnesses. The empty and sep-only groups
+   gained these cells with their old representative.
+
+Two over-acceptances of the covered shape are recorded in item 44 (a trailing `,` before an arm's `)`; an empty arm
+after a `,`).
+
+**Next step:** what would fix 1 to 3 in general is a configuration-aware parse (parse each configuration, merge the
+trees), the answer already recorded in items 10 and 57. The issue's reporter has 592 failing files and five example
+shapes; before building any of these, ask for the count per shape once a build with F1 to F4 exists.
 
 **Owner:** unassigned.
 

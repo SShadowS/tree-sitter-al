@@ -188,6 +188,7 @@
       "hosts": {
         "fields_body:<children>": "splice-repeat",
         "preproc_conditional_fields:<children>": "splice-repeat",
+        "preproc_conditional_table_field_open:<children>": "splice-repeat",
         "preproc_split_table_field_open:<children>": "splice-repeat"
       },
       "reason": "Registry branch-select: arms are alternatives in one host slot."
@@ -331,6 +332,11 @@
       },
       "reason": "Registry branch-select: arms are alternatives in one host slot."
     },
+    "preproc_conditional_table_field_open": {
+      "class": "fragment",
+      "arm_boundary": "own-directives",
+      "reason": "Issue #44 (F3): a nested #if group of field openers (header, brace, own properties), one arm of preproc_split_table_field_open; its arms are pieces of one construct (registry fragment)."
+    },
     "preproc_conditional_procedure_header": {
       "class": "fragment",
       "arm_boundary": "own-directives",
@@ -405,6 +411,7 @@
       "class": "branch-container",
       "arm_boundary": "own-directives",
       "hosts": {
+        "asserterror_statement:<children>": "decoration",
         "asserterror_statement:body": "optional-slot",
         "case_branch:<children>": "decoration",
         "case_branch:body": "optional-slot",
@@ -500,6 +507,15 @@
         "preproc_conditional_var_names:<children>": "strict-list"
       },
       "reason": "B7b-1 strict list: arms are alternative runs of names and separators in the name list of a variable declaration (up to its `:`); registry branch-select with host policy strict-list (config_oracle conditional_lists)."
+    },
+    "preproc_conditional_modifier": {
+      "class": "branch-container",
+      "arm_boundary": "own-directives",
+      "hosts": {
+        "preproc_conditional_modifier:<children>": "splice-repeat",
+        "procedure:<children>": "splice-repeat"
+      },
+      "reason": "Registry branch-select: arms are alternatives in the procedure's modifier slot."
     },
     "preproc_conditional_var_block": {
       "class": "branch-container",
@@ -762,6 +778,19 @@
       "class": "assembler",
       "arm_boundary": "own-directives",
       "reason": "Registry assembler: one construct built from arm fragments plus shared parts."
+    },
+    "preproc_split_paren_close": {
+      "class": "branch-container",
+      "arm_boundary": "own-directives",
+      "hosts": {
+        "argument_list:<children>": "list-run"
+      },
+      "reason": "Issue #44 (F1), registry branch-select: each arm holds the list's last arguments, its closing paren and, at a statement end, the statement's terminator."
+    },
+    "preproc_split_part": {
+      "class": "assembler",
+      "arm_boundary": "own-directives",
+      "reason": "Issue #44 (F2), registry unsupported (milestone 3); classified by hand: arms are pieces of one construct, not complete units."
     },
     "preproc_split_permissions_property": {
       "class": "assembler",

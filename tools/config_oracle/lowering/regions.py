@@ -178,4 +178,5 @@ def assemble(root, ctx) -> Lowered:
 EMPTY_LIST_ITEM = True   # mutation switch for test_regions.test_empty_operand_group_list_item
 LIST_ITEM_SLOTS = frozenset({"argument_list:<children>", "list_literal:<children>",
                              "preproc_conditional_arguments:<children>",
+                             "preproc_split_paren_close:<children>",
                              "preproc_conditional_list_elements:<children>"})
