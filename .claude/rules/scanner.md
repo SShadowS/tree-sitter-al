@@ -146,7 +146,7 @@ because properties appear only in object/section bodies.
 
 1. Add the token to the `TokenType` enum in `src/scanner.c` and to `externals` in `grammar.js` (same order).
 2. Implement the lookahead inside the existing dispatch (one read, `mark_end`, then classify); never a new sequential block.
-3. Add the token to every guard that lists its siblings.
+3. Add the token to every guard that lists its siblings. Every binding's source list must name `src/scanner.c` (`Package.swift`, `bindings/go/binding.go`, `setup.py`, `binding.gyp`, `bindings/c/build.sh`, `bindings/rust/build.rs`, the `Makefile` wildcard): Swift and Go once shipped the template placeholder and could not link the five `tree_sitter_al_external_scanner_*` symbols, and `go build` on a library package compiles without linking, so it passed.
 4. Create grammar rules using the token; test with edge cases, including a `has_error` check if the token is hidden.
 
 ## Debugging

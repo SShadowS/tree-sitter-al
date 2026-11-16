@@ -43,6 +43,8 @@ The hook does not stop these. Follow them anyway.
 - [ ] Never `2>nul`: it creates an undeletable file. **Use instead:** `2>/dev/null`.
 - [ ] Never run a bare `tree-sitter`. **Use instead:** `./tools/ts-lock.sh tree-sitter ...`.
 - [ ] Do not wrap `python -m tools.perf ab` in ts-lock: it takes the lock itself.
+- [ ] Anything that statically links the parser (`tools/fieldwalk.c`, `tools/edge-census.c`, plain `gcc` builds, every `alc` probe) needs no lock. A harness that kills a command on timeout defeats the lock's EXIT trap, so the lock outlives its owner for `TS_LOCK_STALE` (5400 s) and later runs queue behind it.
+- [ ] Do not measure by `grep -c '\r'` on `git show` output (it matches every line; a false CRLF release-blocker came of it): use `tr -dc '\r' | wc -c`. Do not redirect stderr into a data file you then diff.
 - [ ] Do not write report files: they are blocked. **Use instead:** return the report as text.
 - [ ] Do not dispatch subagents.
 

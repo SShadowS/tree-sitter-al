@@ -26,6 +26,16 @@ Run the full parse before committing: `./parse-al-parallel.sh ./BC.History/ .`
 `src/grammar.json` and `src/node-types.json`, all tracked. Stage them as a set or `grammar.json`
 silently drifts.
 
+**Merging grammar branches.** Every pair conflicts in `src/parser.c` only; `src/grammar.json` and
+`src/node-types.json` auto-merge cleanly, which is worse than a conflict (git splices two grammars'
+JSON into a file neither produces). After every merge regenerate and take the regenerated copies of
+all three. Two branches adding the same rule in different regions of `grammar.js` is no git conflict
+and a JS object literal accepts duplicate keys (last wins), so derive counts and run the duplicate-key
+check early in the merge. `tools/query_coverage/baseline.json` needs deliberate resolution (all
+streams ratchet it): run `qc run` after the final regenerate and BEFORE committing it. A tool that
+writes the working tree (`qc accept`) must run before you stage, or the gates pass on something other
+than what was committed.
+
 Subagent briefs link `docs/agent-brief-rules.md` (blocked commands, process, environment, editing rules).
 
 ## Quick Reference

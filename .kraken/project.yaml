@@ -20,7 +20,7 @@ env:
   AL_BC28_ROOT: /work/src/BC28.1
   AL_BCAPPS29_ROOT: /work/src/BCApps-29.0
 secret_files:
-  # pi (reviewer models, openai-codex) and serena
+  # pi (reviewer models, openai-codex)
   - { from: mcp.json, to: .mcp.json }
   # the owner's gitignored Claude setup, Linux-adapted: settings, and a tar kraken-setup.sh unpacks
   # (this checkout's untracked agents, commands, skills; the user CLAUDE.md and skills)

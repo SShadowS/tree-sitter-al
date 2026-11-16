@@ -157,13 +157,9 @@ settings.local.json
 *RULES*.md
 
 # The scratch-name patterns above are keyword globs, so they also catch tracked
-# project docs whose names merely contain the word. `.serena/memories/` holds
-# hand-written project documentation, not scratch: re-include it wholesale.
-# Found when `git add .serena/memories/*.md` silently refused conventions.md
-# under `*CONVENTION*.md` -- the same blanket-glob hazard that had already hidden
-# `.claude/rules/`, `.claude/skills/` and a corpus fixture under `property_*.txt`.
-!.serena/memories/*.md
-# Same hazard: `*RULES*.md` matches it case-insensitively on Windows.
+# project docs whose names merely contain the word: the blanket-glob hazard that
+# hid `.claude/rules/`, `.claude/skills/` and a corpus fixture under `property_*.txt`.
+# `*RULES*.md` matches docs/agent-brief-rules.md case-insensitively on Windows.
 !docs/agent-brief-rules.md
 *GUIDE*.md
 # Root-scoped ON PURPOSE. These are scratch dumps from the property-audit

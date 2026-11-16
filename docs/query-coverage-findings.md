@@ -242,3 +242,10 @@ only in a `--full-corpus` run, not in the manifest gate. Both now report zero.
 
 `--full-corpus` is a **reporting** pass, not a gate: `cmd_run` sets an empty `Diff()` on that
 branch, so its exit 0 means only "it ran". The gating run is the 59-file manifest one.
+
+## A check validated on one corpus is validated against that corpus's habits
+
+`byte-roundtrip` was clean over BC.History's 15,358 files. On a second 20,643-file estate it
+flagged 3,268 files (16%) for three dropped bytes, all false: a UTF-8 BOM, because
+`bytes.strip()` removes ASCII whitespace only, and BC.History holds no BOM. A detector
+that has met one corpus has not met the language.

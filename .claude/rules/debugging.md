@@ -47,5 +47,12 @@ python tools/has_error_sweep.py --root ./BC.History/
 4. For `#if` shapes, confirm what alc accepts first: `python -m tools.alc_probe run probe.al` (`CLAUDE.md`, "Validating AL Syntax Questions").
 5. Update expectations (`-u`) only if no ERROR/MISSING nodes remain, and read the diff (`CLAUDE.md`, the five `-u` traps).
 
+Traps that hide a misparse or a cause:
+
+- **Optional separators absorb misparses.** `repeat(seq(X, optional(SEP)))` lets two adjacent `X` stand with no separator, so a wrong parse becomes an extra element instead of an error (live in `_case_pattern_item`, about 9 more comma sites share the shape). Suspect it when a misparse leaves a clean error count.
+- **Rust regex has no zero-width assertions.** `kw()` and every `new RustRegex(...)` in `grammar.js` must avoid `\b` and lookahead (`tree-sitter generate` fails with `Unexpected rule ExpandRegex(Assertion)`): use a negated character class for a word boundary.
+- **A site list derived by reading is usually short.** `grep -n` the whole file before calling a list complete.
+- **A figure carries its source.** A tool-derived aggregate beside a hand-derived breakdown lends the breakdown its authority (`071fbd4` published `gaps=3895` right beside three invented per-category counts); take every number in a sentence from the tool, never derive a delta by subtracting from a remembered base, and state the scope (manifest or corpus).
+
 Known limits and open items are in `docs/deferred-work.md`; check it before calling a pattern
 impossible (`CLAUDE.md`, "Known limits are recorded, not denied").
