@@ -15,3 +15,6 @@ go.mod linguist-generated
 # The CRLF + BOM traversal fixture must keep its CRLF line endings in every checkout:
 # under `text=auto eol=lf` it would silently become an LF fixture.
 tests/traversal/fixtures/crlf_bom.al -text
+# Issue #45: these hold lone-CR (and CRLF) line ends inside the AL inputs; never convert them.
+test/corpus/cr_line_ends_test.txt -text
+test/corpus/cr_line_ends_negative_test.txt -text

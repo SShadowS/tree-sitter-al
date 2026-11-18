@@ -851,6 +851,7 @@ module.exports = grammar({
     $._link_property_name,  // [17] one of the six compiler link-family names followed by = (B5b)
     $._preproc_open_before_else, // [18] #if of a directive-only group followed by `else` (issue #39)
     $._option_members_property_name, // [19] `OptionMembers` followed by = (B13, deferred item 37)
+    $._directive_cr_comment,    // [20] a `//` comment ending an #if/#elif line at a lone CR (issue #45)
   ],
 
   conflicts: $ => [
@@ -6026,8 +6027,20 @@ module.exports = grammar({
       // over that space (5 comments in BC 28.5, tree-harness). The scanner skips
       // every extra-space character except `\n` (so `\r`, `\f`, `\v` and U+FEFF
       // too, not only space and tab), takes exactly one `\n`, and declines
-      // anything else.
-      $._directive_eol
+      // anything else. A lone `\r` ends the line too (issue #45, alc does): the
+      // token is then empty, just past it (src/scanner.c, DIRECTIVE_EOL).
+      $._directive_line_end
+    ),
+
+    // Issue #45. A trailing `// c` comment takes the `\r` that ends it (`comment`), so
+    // after one that ends at a lone `\r` there is no line end left for _directive_eol.
+    // The scanner emits that comment itself, as the line's terminator, aliased to the
+    // `comment` it is: the tree is the LF twin's, `(preproc_if ... (comment))`. Valid
+    // exactly where _directive_eol is; it declines unless the comment ends at a lone
+    // `\r`, so LF and CRLF lines lex as before (the comment an extra, then the `\n`).
+    _directive_line_end: $ => choice(
+      $._directive_eol,
+      alias($._directive_cr_comment, $.comment),
     ),
 
     // A preprocessor conditional whose only content is pragmas/comments (both
@@ -6098,7 +6111,7 @@ module.exports = grammar({
       new RustRegex('(?i)#[ \\t]*elif'),
       field('condition', $._preproc_expression),
       // Same line-scoping, and the same external terminator, as preproc_if above.
-      $._directive_eol
+      $._directive_line_end
     ),
 
     preproc_else: $ => new RustRegex('(?i)#[ \\t]*else'),
@@ -6516,7 +6529,7 @@ module.exports = grammar({
     _preproc_if_before_else: $ => seq(
       alias($._preproc_open_before_else, $.preproc_open),
       field('condition', $._preproc_expression),
-      $._directive_eol,
+      $._directive_line_end,
     ),
 
     _stmt_empty_group: $ => seq(
@@ -9271,14 +9284,18 @@ module.exports = grammar({
     quoted_identifier: $ => token(prec(10, seq(
       '"',
       repeat(choice(
-        new RustRegex('[^"\\n]+'),
+        // No line end inside, a lone `\r` included (alc AL0361, issue #45)
+        new RustRegex('[^"\\n\\r]+'),
         '""'  // Escaped double quote
       )),
       '"'
     ))),
 
     // Comments (including XML doc comments /// ...)
-    comment: $ => token(seq('//', /[^\n]*/)),
+    // Ends at `\n` or a lone `\r` (alc does, issue #45) and takes the `\r` that ends it, so
+    // a CRLF comment keeps its old range, `\r` included; `[^\r\n]*` alone would shift the
+    // end of every CRLF comment by one byte.
+    comment: $ => token(seq('//', /[^\r\n]*\r?/)),
     multiline_comment: $ => token(seq('/*', /[^*]*\*+([^/*][^*]*\*+)*/, '/')),
 
     // Literals
@@ -9288,7 +9305,7 @@ module.exports = grammar({
         seq(
           "'",
           repeat1(choice(
-            new RustRegex("[^'\\n]+"),
+            new RustRegex("[^'\\n\\r]+"),  // no lone `\r` either (alc AL0360, issue #45)
             "''"
           )),
           "'"

@@ -196,7 +196,7 @@ def test_extras_include_define_undef_region_endregion_when_active():
 
 
 # ---- final review, finding 2: extra extents follow the grammar's token regexes ----
-# `comment` is `//[^\n]*` (grammar.js), so on a CRLF line it INCLUDES the `\r`; the
+# `comment` is `//[^\r\n]*\r?` (grammar.js), so on a CRLF line it INCLUDES the `\r`; the
 # line-level directives (`pragma`, `preproc_region`, ...) are `[^\n\r]*` and do not.
 
 def test_line_comment_event_on_crlf_runs_to_the_newline():
@@ -218,4 +218,23 @@ def test_crlf_comment_trivia_is_clean_end_to_end(al_parser):
     from tools.config_oracle import runner
     src = b"codeunit 1 T\r\n{\r\n    trigger OnRun()\r\n    begin\r\n#if A\r\n        x := 1; // t\r\n#endif\r\n    end;\r\n}\r\n"
     recs = runner.check_input(al_parser, "crlf", src)
+    assert [r.status for r in recs] == ["pass", "pass"], [r.items for r in recs]
+
+
+# ---- issue #45: a lone CR ends a line, as alc ends it ----
+
+def test_lone_cr_ends_a_directive_line():
+    src = b"#if A\rx;\r#else // c\ry;\r\n#endif\r"
+    assert mask_of(src, frozenset({"A"})) == b"     \rx;\r" + b" " * 10 + b"\r  \r\n      \r"
+    ev = {e.kind: (e.start, e.end) for e in resolve(src, frozenset()).extras}
+    assert ev == {}                         # the comment is on a masked directive line
+    src = b"x; // c\ry;\r"
+    ev = {e.kind: (e.start, e.end) for e in resolve(src, frozenset()).extras}
+    assert ev["comment"] == (3, 8)          # includes the lone \r at 7, like the grammar token
+
+
+def test_cr_only_conditional_is_clean_end_to_end(al_parser):
+    from tools.config_oracle import runner
+    src = b"codeunit 1 T\r{\r    trigger OnRun()\r    begin\r#if A // a\r        x := 1; // t\r#else\r        x := 2;\r#endif\r    end;\r}\r"
+    recs = runner.check_input(al_parser, "cr", src)
     assert [r.status for r in recs] == ["pass", "pass"], [r.items for r in recs]

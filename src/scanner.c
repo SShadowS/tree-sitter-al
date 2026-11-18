@@ -33,6 +33,7 @@ enum TokenType {
   LINK_PROPERTY_NAME = 17,  // one of the six compiler link-family names followed by = (B5b)
   PREPROC_OPEN_BEFORE_ELSE = 18,  // #if of a directive-only group followed by `else` (issue #39)
   OPTION_MEMBERS_PROPERTY_NAME = 19,  // `OptionMembers` followed by = (B13, deferred item 37)
+  DIRECTIVE_CR_COMMENT = 20,  // a `//` comment ending an #if/#elif line at a lone CR (issue #45)
 };
 
 // Named so the static assertion below can test its width AND its signedness.
@@ -238,6 +239,20 @@ static bool is_extra_space(int32_t c) {
          c == '\v' || c == 0xFEFF;
 }
 
+// A line ends at `\n`, at `\r\n` (ONE line end) or at a lone `\r`: alc 18.0.41 ends a
+// directive line and a `//` comment at a lone CR (issue #45). Every line-end test in
+// this scanner goes through here (DIRECTIVE_EOL has its own form). A pure peek: it
+// consumes nothing, so a loop stops BEFORE the line end and whatever runs next
+// (consume_line, skip_to_eol, a whitespace skip) still sees it. A consuming version
+// left the lookahead on the NEXT line after a lone `\r`, and the next helper read that
+// line as this one's rest (the issue #45 review: empty_group_then_else swallowed the
+// group's `#endif`). Stopping at a CRLF's `\r` rather than its `\n` changes no token:
+// every caller either only reads ahead or marks non-space characters only, except
+// opener_line_is_malformed, which restores the old CRLF mark itself.
+static bool at_line_end(TSLexer *lexer) {
+  return lexer->lookahead == '\n' || lexer->lookahead == '\r';
+}
+
 // Skip whitespace and newlines (advance without marking)
 static void skip_whitespace(TSLexer *lexer) {
   while (is_extra_space(lexer->lookahead)) {
@@ -357,7 +372,8 @@ static enum IdentifierWord read_identifier_word(TSLexer *lexer) {
 static bool skip_comment(TSLexer *lexer) {
   lexer->advance(lexer, false);  // past the leading '/'
   if (lexer->lookahead == '/') {
-    while (lexer->lookahead != 0 && lexer->lookahead != '\n') {
+    // Stops at the `\r` or `\n` that ends it; the caller's whitespace skip takes it.
+    while (lexer->lookahead != 0 && !at_line_end(lexer)) {
       lexer->advance(lexer, false);
     }
     return true;
@@ -448,10 +464,11 @@ static bool word_in(const char *const *words, const char *word, bool truncated) 
 // `//` comment? alc rejects anything else, a `/* */` comment included (AL0631).
 // Reads past the token; the caller has already called mark_end.
 static bool line_rest_is_blank(TSLexer *lexer) {
-  while (lexer->lookahead != '\n' && is_extra_space(lexer->lookahead)) {
+  while (true) {
+    if (at_line_end(lexer) || lexer->eof(lexer)) return true;
+    if (!is_extra_space(lexer->lookahead)) break;
     lexer->advance(lexer, false);
   }
-  if (lexer->lookahead == '\n' || lexer->eof(lexer)) return true;
   if (lexer->lookahead != '/') return false;
   lexer->advance(lexer, false);
   if (lexer->lookahead == '/') return true;
@@ -479,14 +496,16 @@ static bool line_rest_is_blank(TSLexer *lexer) {
 // are compared whole, so `band` and `andx` are symbols. Every check here
 // works off ONE pass over the line; when the verdict is only known at its
 // end, the end is marked so the MALFORMED_DIRECTIVE token still covers the
-// line (consume_line only marks what it advances over).
-static bool opener_line_is_malformed(TSLexer *lexer) {
+// line (consume_line only marks what it advances over), and `*line_read` says the
+// line is read to its end, so the caller must not consume_line again.
+static bool opener_line_is_malformed(TSLexer *lexer, bool *line_read) {
+  *line_read = false;
   int depth = 0;           // '(' minus ')'; negative is unbalanced for good
   // The last word read was and/or/not -- or no word has been read yet: an
   // EMPTY condition (`#if`, `#if // c`) with the operand on the next line is
   // the same AL0629 class (probe_alc empty_*_next_line_rejected).
   bool dangling = true;
-  while (lexer->lookahead != '\n' && !lexer->eof(lexer)) {
+  while (!lexer->eof(lexer) && !at_line_end(lexer)) {
     int32_t c = lexer->lookahead;
     if (c == '#') return true;
     if (c == '/') {
@@ -508,7 +527,15 @@ static bool opener_line_is_malformed(TSLexer *lexer) {
     }
   }
   if (depth != 0 || dangling) {
-    lexer->mark_end(lexer);
+    lexer->mark_end(lexer);  // before the line end, as on a LF line
+    if (lexer->lookahead == '\r') {
+      // A CRLF's `\r` was extra space before the `\n` the old test stopped at, so
+      // the token took it: keep that. Past a lone `\r` the lookahead is the next
+      // line, so the line is read and nothing may consume it again.
+      lexer->advance(lexer, false);
+      if (lexer->lookahead == '\n') lexer->mark_end(lexer);
+      *line_read = true;
+    }
     return true;
   }
   return false;
@@ -516,7 +543,7 @@ static bool opener_line_is_malformed(TSLexer *lexer) {
 
 // Extend the token to the last non-space character before the newline.
 static void consume_line(TSLexer *lexer) {
-  while (lexer->lookahead != '\n' && !lexer->eof(lexer)) {
+  while (!lexer->eof(lexer) && !at_line_end(lexer)) {
     bool space = is_extra_space(lexer->lookahead);
     lexer->advance(lexer, false);
     if (!space) lexer->mark_end(lexer);
@@ -557,15 +584,16 @@ static bool peek_directive_ci_skip_extras(TSLexer *lexer, const char *const *tar
     if (!word_in(TRANSPARENT_DIRECTIVES, word, truncated)) return false;
 
     // Skip the rest of this directive's line, then look again.
-    while (lexer->lookahead != '\0' && lexer->lookahead != '\n') {
+    while (lexer->lookahead != '\0' && !at_line_end(lexer)) {
       lexer->advance(lexer, false);
     }
   }
 }
 
-// Advance to the newline (not past it). Non-marking, like every helper below.
+// Advance to the line end (`\n` or `\r`, not past it: at_line_end). Non-marking,
+// like every helper below.
 static void skip_to_eol(TSLexer *lexer) {
-  while (lexer->lookahead != '\n' && !lexer->eof(lexer)) {
+  while (!lexer->eof(lexer) && !at_line_end(lexer)) {
     lexer->advance(lexer, false);
   }
 }
@@ -578,30 +606,33 @@ static void skip_to_eol(TSLexer *lexer) {
 // MALFORMED_DIRECTIVE, so it ERRORs either way.
 static bool skip_condition_line(TSLexer *lexer) {
   bool any = false;
-  while (lexer->lookahead != '\n' && !lexer->eof(lexer)) {
+  while (!lexer->eof(lexer) && !at_line_end(lexer)) {
     int32_t c = lexer->lookahead;
     if (c == '#') return false;
     if (c == '/') {
       lexer->advance(lexer, false);
       if (lexer->lookahead == '*') return false;
-      if (lexer->lookahead == '/') break;  // a trailing `//` comment
+      if (lexer->lookahead == '/') {  // a trailing `//` comment
+        skip_to_eol(lexer);
+        break;
+      }
       any = true;
       continue;
     }
     if (!is_extra_space(c)) any = true;
     lexer->advance(lexer, false);
   }
-  skip_to_eol(lexer);
   return any;
 }
 
 // The rest of an `#else`/`#endif` line: blank but for an optional `//` comment
 // (alc: AL0631 otherwise). Unlike line_rest_is_blank, never calls mark_end.
 static bool directive_rest_is_blank(TSLexer *lexer) {
-  while (lexer->lookahead != '\n' && is_extra_space(lexer->lookahead)) {
+  while (true) {
+    if (at_line_end(lexer) || lexer->eof(lexer)) return true;
+    if (!is_extra_space(lexer->lookahead)) break;
     lexer->advance(lexer, false);
   }
-  if (lexer->lookahead == '\n' || lexer->eof(lexer)) return true;
   if (lexer->lookahead != '/') return false;
   lexer->advance(lexer, false);
   if (lexer->lookahead != '/') return false;
@@ -765,9 +796,9 @@ static bool var_name_list_follows(TSLexer *lexer, uint32_t open) {
     } else if (c == '"') {
       if (prev == VN_NAME) return false;
       lexer->advance(lexer, false);
-      // quoted_identifier: no newline inside, `""` is an escaped quote.
+      // quoted_identifier: no line end (`\n` or `\r`) inside, `""` is an escaped quote.
       while (true) {
-        if (lexer->eof(lexer) || lexer->lookahead == '\n') return false;
+        if (lexer->eof(lexer) || at_line_end(lexer)) return false;
         if (lexer->lookahead == '"') {
           lexer->advance(lexer, false);
           if (lexer->lookahead != '"') break;
@@ -918,7 +949,8 @@ bool tree_sitter_al_external_scanner_scan(
       valid_symbols[TABLE_RELATION_PROPERTY_NAME] &&
       valid_symbols[LINK_PROPERTY_NAME] &&
       valid_symbols[PREPROC_OPEN_BEFORE_ELSE] &&
-      valid_symbols[OPTION_MEMBERS_PROPERTY_NAME]) {
+      valid_symbols[OPTION_MEMBERS_PROPERTY_NAME] &&
+      valid_symbols[DIRECTIVE_CR_COMMENT]) {
     return false;
   }
 
@@ -933,9 +965,9 @@ bool tree_sitter_al_external_scanner_scan(
   }
 
   // DIRECTIVE_EOL: the newline that ends an #if/#elif line. Every extra-space
-  // character except `\n` before it is skipped (`is_extra_space`: `\r`, `\f`,
+  // character except `\n` and `\r` before it is skipped (`is_extra_space`: `\f`,
   // `\v` and U+FEFF as well as space and tab; skipping only space and tab left
-  // `\f\n`, `\r\r\n` and the rest a hidden MISSING token that only `has_error`
+  // `\f\n` and the rest a hidden MISSING token that only `has_error`
   // shows). Then exactly ONE `\n` is the token, and anything
   // else declines so the grammar lexes it (`and`, `or`, `)`, or a `// comment`
   // extra, after which this is asked again at the newline). It exists because
@@ -944,9 +976,43 @@ bool tree_sitter_al_external_scanner_scan(
   // preproc_if over them. Only a condition's end offers it, and no other
   // external token is valid there outside error recovery (checked against
   // ts_external_scanner_states), so declining costs no other token its turn.
+  //
+  // Issue #45: a lone `\r` ends the line too (alc does). A `\r` is skipped as
+  // before; if a `\n` follows, that `\n` is the token, so a CRLF gives exactly the
+  // old token. Otherwise the token is empty, just past the `\r`.
+  //
+  // A trailing `// comment` takes the `\r` that ends it (grammar.js `comment`), so
+  // after one that ends at a lone `\r` no line end is left for this token. That
+  // comment is DIRECTIVE_CR_COMMENT instead, the comment text and its `\r`, which
+  // the grammar takes as the line's terminator and aliases to `comment`: the same
+  // tree as the LF twin's comment extra followed by the `\n`. A comment ending at
+  // `\n`, `\r\n` or EOF declines, and the lexer takes it as the extra, as before.
   if (valid_symbols[DIRECTIVE_EOL]) {
-    while (lexer->lookahead != '\n' && is_extra_space(lexer->lookahead)) {
+    while (lexer->lookahead != '\n' && lexer->lookahead != '\r' &&
+           is_extra_space(lexer->lookahead)) {
       lexer->advance(lexer, true);
+    }
+    if (lexer->lookahead == '/') {
+      if (!valid_symbols[DIRECTIVE_CR_COMMENT]) return false;
+      lexer->advance(lexer, false);
+      if (lexer->lookahead != '/') return false;
+      while (!lexer->eof(lexer) && lexer->lookahead != '\n' && lexer->lookahead != '\r') {
+        lexer->advance(lexer, false);
+      }
+      if (lexer->lookahead != '\r') return false;
+      lexer->advance(lexer, false);
+      lexer->mark_end(lexer);
+      if (lexer->lookahead == '\n') return false;
+      lexer->result_symbol = DIRECTIVE_CR_COMMENT;
+      return true;
+    }
+    if (lexer->lookahead == '\r') {
+      lexer->advance(lexer, true);
+      if (lexer->lookahead != '\n') {
+        lexer->mark_end(lexer);
+        lexer->result_symbol = DIRECTIVE_EOL;
+        return true;
+      }
     }
     if (lexer->lookahead != '\n') {
       return false;
@@ -1104,8 +1170,9 @@ bool tree_sitter_al_external_scanner_scan(
       // and an optional `//` comment; after #if/#elif, a condition with no
       // block comment and no second directive on the line. Any other word is
       // AL0621.
+      bool line_read = false;
       bool malformed = (is_else || is_endif) ? !line_rest_is_blank(lexer)
-                     : (is_if || is_elif)    ? opener_line_is_malformed(lexer)
+                     : (is_if || is_elif)    ? opener_line_is_malformed(lexer, &line_read)
                      : true;
       if (malformed) {
         // `#elsewhere`, `#regionX` (the extras regex matches its `#region`
@@ -1113,7 +1180,7 @@ bool tree_sitter_al_external_scanner_scan(
         // No rule takes this token, so the parser wraps the whole line in an
         // ERROR. It is never valid outside error recovery, which returned
         // above, so it is emitted unasked.
-        consume_line(lexer);
+        if (!line_read) consume_line(lexer);
         lexer->result_symbol = MALFORMED_DIRECTIVE;
         return true;
       }

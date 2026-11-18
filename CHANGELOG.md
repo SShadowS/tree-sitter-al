@@ -7,7 +7,30 @@ public API — a change to node structure or field names is a **major** bump.
 
 ## [Unreleased]
 
-Fixes GitHub issue #43.
+Fixes GitHub issues #43 and #45.
+
+- **A lone CR ends a line (issue #45).** alc 18.0.41 ends a line at `\n`, `\r\n` or a lone `\r`; the scanner ended a
+  directive line only at `\n`, so in a CR-only file an `#if` never ended and the file was one ERROR, and the `//`
+  comment token ran to the end of the file, so a CR-only header comment swallowed the whole file with no error at
+  all. Every scanner line-end test now goes through one helper (`at_line_end`: `\n`, `\r\n` as one, or a lone `\r`):
+  `_directive_eol` (empty, just past a lone `\r`; a CRLF still gives the old `\n` token), the `#` gatekeeper's line
+  checks (a malformed directive on a CR-only line is still `_malformed_directive`, covering the same bytes as on its
+  LF twin, so the recovery is the LF twin's), the issue #39 empty-group-before-`else` lookahead,
+  `var_name_list_follows` and the other lookaheads. The helper only peeks: a first version consumed a lone `\r`, and
+  the `#if` checks then read the next line as the rest of the `#if` line (an empty `#if` group before `else` lost its
+  `else`, a malformed line's error ran over the next statement); a generated differential of 956 directive-heavy
+  snippets now gives the LF twin's tree for every CR variant. `comment` is `//[^\r\n]*\r?`, so a CRLF comment keeps its range, `\r` included; a text literal or
+  quoted identifier no longer spans a lone `\r` (alc AL0360/AL0361). alc compiles the repros (the `#if` file with the
+  symbol defined and undefined, the header comment, a comment in a body, and every positive case of
+  `test/corpus/cr_line_ends_test.txt`) by direct compiles of the CR-only bytes: `tools/alc_probe` reads cases with
+  universal newlines and cannot carry a lone CR. Every tree of an LF or CRLF file is byte-identical (tree-harness on
+  BC.History, DC, BC28.1 and BCApps-29.0; every fixture), and every CR-only fixture parses to the same tree as its LF
+  twin. A trailing `//` comment on an `#if`/`#elif` line takes its lone `\r`, so the scanner emits that one comment
+  itself as the line's terminator (new hidden external `_directive_cr_comment`, aliased to `comment`, so the tree is
+  the LF twin's). `node-types.json`: `preproc_if` and `preproc_elif` list `comment` as a child (`preproc_if`'s
+  children become `multiple`); an LF or CRLF tree is unchanged, where the same comment is an extra in the same place.
+  The config oracle's resolver ends a line at a lone CR too. Line/column points in a CR-only file stay on row 0:
+  tree-sitter counts rows at `\n` only.
 
 - **A qualified name, or a comma list of parents, after an interface's `extends` (issue #43).**
   `interface IBar extends My.Ns.IFoo` left an ERROR, and so did `interface IBar extends IFoo, IBaz`; alc

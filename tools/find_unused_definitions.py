@@ -34,7 +34,7 @@ from pathlib import Path
 # A quoted string, or a `//` that is therefore outside one. Alternating them in a
 # single pattern means a `//` inside a literal is consumed as part of the string
 # and can never be mistaken for a comment — grammar.js really does contain
-# `comment: $ => token(seq('//', /[^\n]*/))`, which a naive `//.*$` strip would
+# `comment: $ => token(seq('//', /[^\r\n]*\r?/))`, which a naive `//.*$` strip would
 # truncate.
 _LINE_COMMENT_SCAN = re.compile(r"""('(?:\\.|[^'\\])*'|"(?:\\.|[^"\\])*")|//""")
 

@@ -243,3 +243,6 @@ issue44_f3_gap_test.txt
 # `[arguments] ) [;]` (six GAP witnesses alc accepts in every configuration, P8 the two-arm-shape
 # witness), and the no-`#else` form alc rejects (tools/alc_probe/cases/issue44/f1/).
 issue44_f1_gap_test.txt
+# Issue #45: on CR-only lines, a malformed directive (code after `#else`, AL0631; a condition
+# dangling at the lone CR, AL0629) and a text literal across a lone CR (AL0360) stay ERRORs.
+cr_line_ends_negative_test.txt

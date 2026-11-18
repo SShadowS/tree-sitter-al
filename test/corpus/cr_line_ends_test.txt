@@ -1,0 +1,551 @@
+========================================================================
+CR-only line ends: #if line ends at a lone CR (issue #45 repro)
+========================================================================
+codeunit 50299 "C288 CR"{    procedure P()    begin#if X288        exit;#endif        Q();    end;    procedure Q()    begin    end;}
+------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (quoted_identifier)
+    body: (declaration_body
+      (procedure
+        (procedure_keyword)
+        name: (identifier)
+        body: (code_block
+          (begin_keyword)
+          body: (statement_block
+            (preproc_conditional_statement
+              (preproc_if
+                (preproc_open)
+                condition: (identifier))
+              (exit_statement
+                (exit_keyword))
+              (preproc_endif
+                (preproc_close)))
+            (call_expression
+              function: (identifier)
+              arguments: (argument_list)))
+          (end_keyword)))
+      (procedure
+        (procedure_keyword)
+        name: (identifier)
+        body: (code_block
+          (begin_keyword)
+          (end_keyword))))))
+
+========================================================================
+CR-only line ends: #if / #else
+========================================================================
+codeunit 1 T{    trigger OnRun()    begin#if A        x := 1;#else        x := 2;#endif    end;}
+------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (trigger_declaration
+        (trigger_keyword)
+        name: (identifier)
+        body: (code_block
+          (begin_keyword)
+          body: (statement_block
+            (preproc_conditional_statement
+              (preproc_if
+                (preproc_open)
+                condition: (identifier))
+              (assignment_statement
+                left: (identifier)
+                operator: (assignment_operator)
+                right: (integer))
+              (preproc_else)
+              (assignment_statement
+                left: (identifier)
+                operator: (assignment_operator)
+                right: (integer))
+              (preproc_endif
+                (preproc_close))))
+          (end_keyword))))))
+
+========================================================================
+CR-only line ends: #if / #elif / #else
+========================================================================
+codeunit 1 T{    trigger OnRun()    begin#if A        x := 1;#elif B and not C        x := 2;#else        x := 3;#endif    end;}
+------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (trigger_declaration
+        (trigger_keyword)
+        name: (identifier)
+        body: (code_block
+          (begin_keyword)
+          body: (statement_block
+            (preproc_conditional_statement
+              (preproc_if
+                (preproc_open)
+                condition: (identifier))
+              (assignment_statement
+                left: (identifier)
+                operator: (assignment_operator)
+                right: (integer))
+              (preproc_elif
+                condition: (preproc_and_expression
+                  (identifier)
+                  (preproc_not_expression
+                    (identifier))))
+              (assignment_statement
+                left: (identifier)
+                operator: (assignment_operator)
+                right: (integer))
+              (preproc_else)
+              (assignment_statement
+                left: (identifier)
+                operator: (assignment_operator)
+                right: (integer))
+              (preproc_endif
+                (preproc_close))))
+          (end_keyword))))))
+
+========================================================================
+CR-only line ends: trailing comments on #if, #elif, #else and #endif lines
+========================================================================
+codeunit 1 T{    trigger OnRun()    begin#if A // a        x := 1;#elif B // b        x := 2;#else // c        x := 3;#endif // d    end;}
+------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (trigger_declaration
+        (trigger_keyword)
+        name: (identifier)
+        body: (code_block
+          (begin_keyword)
+          body: (statement_block
+            (preproc_conditional_statement
+              (preproc_if
+                (preproc_open)
+                condition: (identifier)
+                (comment))
+              (assignment_statement
+                left: (identifier)
+                operator: (assignment_operator)
+                right: (integer))
+              (preproc_elif
+                condition: (identifier)
+                (comment))
+              (assignment_statement
+                left: (identifier)
+                operator: (assignment_operator)
+                right: (integer))
+              (preproc_else)
+              (comment)
+              (assignment_statement
+                left: (identifier)
+                operator: (assignment_operator)
+                right: (integer))
+              (preproc_endif
+                (preproc_close))))
+          (comment)
+          (end_keyword))))))
+
+========================================================================
+Mixed CR-only and CRLF line ends
+========================================================================
+codeunit 1 T
+{    trigger OnRun()
+    begin#if A        x := 1;
+#elif B
+        x := 2;#else
+        x := 3;#endif
+    end;}
+
+------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (trigger_declaration
+        (trigger_keyword)
+        name: (identifier)
+        body: (code_block
+          (begin_keyword)
+          body: (statement_block
+            (preproc_conditional_statement
+              (preproc_if
+                (preproc_open)
+                condition: (identifier))
+              (assignment_statement
+                left: (identifier)
+                operator: (assignment_operator)
+                right: (integer))
+              (preproc_elif
+                condition: (identifier))
+              (assignment_statement
+                left: (identifier)
+                operator: (assignment_operator)
+                right: (integer))
+              (preproc_else)
+              (assignment_statement
+                left: (identifier)
+                operator: (assignment_operator)
+                right: (integer))
+              (preproc_endif
+                (preproc_close))))
+          (end_keyword))))))
+
+========================================================================
+CR-only line ends: header comment ends at the lone CR
+========================================================================
+// headercodeunit 50298 "C CR"{    procedure P()    begin    end;}
+------------------------------------------------------------------------
+
+(source_file
+  (comment)
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (quoted_identifier)
+    body: (declaration_body
+      (procedure
+        (procedure_keyword)
+        name: (identifier)
+        body: (code_block
+          (begin_keyword)
+          (end_keyword))))))
+
+========================================================================
+CR-only line ends: comment inside a body
+========================================================================
+codeunit 1 T{    procedure P()    begin        // note        x := 1;    end;}
+------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (procedure
+        (procedure_keyword)
+        name: (identifier)
+        body: (code_block
+          (begin_keyword)
+          (comment)
+          body: (statement_block
+            (assignment_statement
+              left: (identifier)
+              operator: (assignment_operator)
+              right: (integer)))
+          (end_keyword))))))
+
+========================================================================
+CR-only line ends: #pragma and #region lines
+========================================================================
+#pragma warning disable AL0432codeunit 1 T{#region R    procedure P()    begin    end;#endregion}#pragma warning restore AL0432
+------------------------------------------------------------------------
+
+(source_file
+  (pragma)
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    (preproc_region)
+    body: (declaration_body
+      (procedure
+        (procedure_keyword)
+        name: (identifier)
+        body: (code_block
+          (begin_keyword)
+          (end_keyword))))
+    (preproc_endregion))
+  (pragma))
+
+========================================================================
+CR-only line ends: variable attribute before a conditional name list
+========================================================================
+codeunit 1 T{    procedure P()    var        [NonDebuggable]#if A        V#else        W#endif        : Integer;    begin    end;}
+------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (procedure
+        (procedure_keyword)
+        name: (identifier)
+        (var_section
+          (var_keyword)
+          body: (var_body
+            (var_attribute_item
+              (var_attribute_open)
+              attribute: (attribute_content
+                name: (identifier)))
+            (variable_declaration
+              (preproc_conditional_var_names
+                (preproc_if
+                  (preproc_open)
+                  condition: (identifier))
+                name: (identifier)
+                (preproc_else)
+                name: (identifier)
+                (preproc_endif
+                  (preproc_close)))
+              type: (type_specification
+                (basic_type)))))
+        body: (code_block
+          (begin_keyword)
+          (end_keyword))))))
+
+========================================================================
+CR-only line ends: Issue #39: an empty #if between a then-branch and else stays in the if
+========================================================================
+codeunit 50100 Demo{    procedure Run(Ready: Boolean)    begin        if Ready then            First()#if FEATURE#endif        else            Second();    end;}
+------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (procedure
+        (procedure_keyword)
+        name: (identifier)
+        parameters: (parameter_list
+          (parameter
+            name: (identifier)
+            type: (type_specification
+              (basic_type))))
+        body: (code_block
+          (begin_keyword)
+          body: (statement_block
+            (if_statement
+              (if_keyword)
+              condition: (identifier)
+              (then_keyword)
+              then_branch: (call_expression
+                function: (identifier)
+                arguments: (argument_list))
+              (preproc_conditional_statement
+                (preproc_if
+                  (preproc_open)
+                  condition: (identifier))
+                (preproc_endif
+                  (preproc_close)))
+              (else_keyword)
+              else_branch: (call_expression
+                function: (identifier)
+                arguments: (argument_list))))
+          (end_keyword))))))
+
+========================================================================
+CR-only line ends: Issue #39: a group holding only a comment before else
+========================================================================
+codeunit 50100 Demo{    procedure Run(Ready: Boolean)    begin        if Ready then            First()#if FEATURE            // only a comment#endif        else            Second();    end;}
+------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (procedure
+        (procedure_keyword)
+        name: (identifier)
+        parameters: (parameter_list
+          (parameter
+            name: (identifier)
+            type: (type_specification
+              (basic_type))))
+        body: (code_block
+          (begin_keyword)
+          body: (statement_block
+            (if_statement
+              (if_keyword)
+              condition: (identifier)
+              (then_keyword)
+              then_branch: (call_expression
+                function: (identifier)
+                arguments: (argument_list))
+              (preproc_conditional_statement
+                (preproc_if
+                  (preproc_open)
+                  condition: (identifier))
+                (comment)
+                (preproc_endif
+                  (preproc_close)))
+              (else_keyword)
+              else_branch: (call_expression
+                function: (identifier)
+                arguments: (argument_list))))
+          (end_keyword))))))
+
+========================================================================
+CR-only line ends: Issue #39: after begin-end, a multi-arm nested group and a second group before else
+========================================================================
+codeunit 50100 Demo{    procedure Run(Ready: Boolean)    begin        if Ready then begin            First();        end#if FEATURE#elif OTHER#else#if NESTED#endif#endif#if SECOND#endif        else            Second();    end;}
+------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (procedure
+        (procedure_keyword)
+        name: (identifier)
+        parameters: (parameter_list
+          (parameter
+            name: (identifier)
+            type: (type_specification
+              (basic_type))))
+        body: (code_block
+          (begin_keyword)
+          body: (statement_block
+            (if_statement
+              (if_keyword)
+              condition: (identifier)
+              (then_keyword)
+              then_branch: (code_block
+                (begin_keyword)
+                body: (statement_block
+                  (call_expression
+                    function: (identifier)
+                    arguments: (argument_list)))
+                (end_keyword))
+              (preproc_conditional_statement
+                (preproc_if
+                  (preproc_open)
+                  condition: (identifier))
+                (preproc_elif
+                  condition: (identifier))
+                (preproc_else)
+                (preproc_conditional_statement
+                  (preproc_if
+                    (preproc_open)
+                    condition: (identifier))
+                  (preproc_endif
+                    (preproc_close)))
+                (preproc_endif
+                  (preproc_close)))
+              (preproc_conditional_statement
+                (preproc_if
+                  (preproc_open)
+                  condition: (identifier))
+                (preproc_endif
+                  (preproc_close)))
+              (else_keyword)
+              else_branch: (call_expression
+                function: (identifier)
+                arguments: (argument_list))))
+          (end_keyword))))))
+
+========================================================================
+CR-only line ends: Issue #39: with no else after it, the empty group stays a sibling statement
+========================================================================
+codeunit 50100 Demo{    procedure Run(Ready: Boolean)    begin        if Ready then            First()#if FEATURE#endif        ;        Second();    end;}
+------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (procedure
+        (procedure_keyword)
+        name: (identifier)
+        parameters: (parameter_list
+          (parameter
+            name: (identifier)
+            type: (type_specification
+              (basic_type))))
+        body: (code_block
+          (begin_keyword)
+          body: (statement_block
+            (if_statement
+              (if_keyword)
+              condition: (identifier)
+              (then_keyword)
+              then_branch: (call_expression
+                function: (identifier)
+                arguments: (argument_list)))
+            (preproc_conditional_statement
+              (preproc_if
+                (preproc_open)
+                condition: (identifier))
+              (preproc_endif
+                (preproc_close)))
+            (call_expression
+              function: (identifier)
+              arguments: (argument_list)))
+          (end_keyword))))))
+
+========================================================================
+CR-only line ends: Issue #39: a dangling else after an empty group binds to the innermost if
+========================================================================
+codeunit 50100 Demo{    procedure Run(A: Boolean; B: Boolean)    begin        if A then            if B then                First()#if FEATURE#endif            else                Second();    end;}
+------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (procedure
+        (procedure_keyword)
+        name: (identifier)
+        parameters: (parameter_list
+          (parameter
+            name: (identifier)
+            type: (type_specification
+              (basic_type)))
+          (parameter
+            name: (identifier)
+            type: (type_specification
+              (basic_type))))
+        body: (code_block
+          (begin_keyword)
+          body: (statement_block
+            (if_statement
+              (if_keyword)
+              condition: (identifier)
+              (then_keyword)
+              then_branch: (if_statement
+                (if_keyword)
+                condition: (identifier)
+                (then_keyword)
+                then_branch: (call_expression
+                  function: (identifier)
+                  arguments: (argument_list))
+                (preproc_conditional_statement
+                  (preproc_if
+                    (preproc_open)
+                    condition: (identifier))
+                  (preproc_endif
+                    (preproc_close)))
+                (else_keyword)
+                else_branch: (call_expression
+                  function: (identifier)
+                  arguments: (argument_list)))))
+          (end_keyword))))))

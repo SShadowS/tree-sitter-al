@@ -27,7 +27,8 @@ a `_Static_assert` on `sizeof(depth) >= 4` fails the build if anyone narrows it 
 | `NAMESPACES_PROPERTY_NAME` | `Namespaces` followed by `=` (B4); same fallback | none |
 | `TABLE_RELATION_PROPERTY_NAME` | `TableRelation` followed by `=` (whole word; `ValidateTableRelation` stays `WORD_OTHER`) (B5); same fallback | none |
 | `LINK_PROPERTY_NAME` | one of the six link-family names (`LINK_PROPERTY_NAMES` in `scanner.c`: `ColumnFilter`, `DataItemLink`, `DataItemTableFilter`, `LinkFields`, `RunPageLink`, `SubPageLink`; never a suffix match) followed by `=` (B5b); same fallback | none |
-| `DIRECTIVE_EOL` | the ONE `\n` ending an `#if`/`#elif` line, after skipping every extra-space character except `\n` (`is_extra_space`), hidden `_directive_eol`. Valid alone, so it returns without trying other tokens. A lexical newline took the LAST of a run of blank lines; skipping only space and tab left `\f\n` a hidden MISSING | none |
+| `DIRECTIVE_EOL` | the ONE `\n` ending an `#if`/`#elif` line, after skipping every extra-space character except `\n` (`is_extra_space`), hidden `_directive_eol`. Valid alone, so it returns without trying other tokens. A lexical newline took the LAST of a run of blank lines; skipping only space and tab left `\f\n` a hidden MISSING. A lone `\r` ends the line too (issue #45): the token is then empty, just past it (a CRLF's token is still its `\n`) | none |
+| `DIRECTIVE_CR_COMMENT` | hidden `_directive_cr_comment`, aliased to `comment`: a trailing `//` comment on an `#if`/`#elif` line that ends at a lone `\r`, `\r` included (issue #45). The comment token takes its `\r`, leaving no line end for `DIRECTIVE_EOL`, so this comment is the line's terminator (`_directive_line_end`); same tree as the LF twin. Valid exactly where `DIRECTIVE_EOL` is; declines for a comment ending at `\n`, `\r\n` or EOF, which the lexer takes as the extra | none |
 | `NEGATIVE_INTEGER` / `NEGATIVE_DECIMAL` | `-1` / `-1.5` as one signed literal, emitted only when `;` `,` `#` or EOF follows; otherwise declines and `-` is unary minus (as lexical tokens `Visible = -1 < X;` ERRORed). Only a `-` commits the block | none |
 | `PREPROC_OPEN_BEFORE_ELSE` | hidden `_preproc_open_before_else`, aliased to `preproc_open`: an `#if` whose group holds only directives, comments and extras and is followed (after any more such groups) by the word `else` (`empty_group_then_else`, issue #39). Every `preproc_if` accepts it, so it stands in exactly the lookahead sets `#if` does (a token valid only after an if's then-branch split every state below it: +9,206 states); only the if's else decoration requires it | depth++ |
 | `MALFORMED_DIRECTIVE` | hidden `_malformed_directive`, in **no** grammar rule, emitted unasked for a `#` line alc rejects (AL0621 not a directive, AL0631 trailing text or block comment, AL0629 incomplete condition): the line becomes an ERROR (B2/B3). A directive after code on the same line (AL0620) is NOT caught (deferred item 26). Also emitted (issue #40/#41) for the word `end` where `BEGIN_KEYWORD` is valid and neither `CONTINUE_AS_IDENTIFIER` nor `PREPROC_SPLIT_END` is: a var section's next declaration or a procedure's return-value name, where alc reserves `end` (AL0519). At a statement start the grammar's reserved set `statement_names` does that job since state review C3, killing the GLR version that would read `end;` as a call (it used to survive to the end of an arm, one per block of an if / else-if chain, until tree-sitter's `MAX_VERSION_COUNT`/`MAX_LINK_COUNT` dropped the right one). The clause rests on the generated table: `end_keyword` is valid in no state whose external row offers `begin_keyword` without `continue_as_identifier` (`tools/config_oracle/tests/test_end_name_positions.py` asserts it and pins every name position against main). `End` as a value has no `BEGIN_KEYWORD` and is untouched (`test/corpus/end_as_value_test.txt`) | none |
@@ -119,6 +120,26 @@ Helpers: `skip_comment` (returns false for a bare `/`), `skip_whitespace_and_com
 `peek_directive_ci_skip_extras(lexer, targets)` with `TRANSPARENT_DIRECTIVES` = `pragma`,
 `region`, `endregion`, `define`, `undef`, and `var_name_list_follows`, which parses directive
 lines itself. **Keep `TRANSPARENT_DIRECTIVES` in sync with the `extras` array.**
+
+## Line ends
+
+A line ends at `\n`, at `\r\n` (one line end) or at a lone `\r`: alc ends a directive line and a
+`//` comment at a lone CR (issue #45; a CR-only file was one ERROR, or one comment). **Every
+line-end test goes through `at_line_end`**, never `!= '\n'`. **It is a pure peek (`\n` or `\r`)
+and must stay one**: a loop stops BEFORE the line end, so whatever runs next (`consume_line`,
+`skip_to_eol`, a whitespace skip) still sees it. A version that consumed the `\r` (28569aca) left
+the lookahead on the next line after a lone `\r`, and the `#if` dispatch's continuations read that
+line as the rest of this one: `empty_group_then_else` skipped a group's `#endif` unread (issue #39
+shapes lost their `else`) and a malformed line's token ran over the next line. Stopping at a
+CRLF's `\r` instead of its `\n` changes no token, because the lookaheads only read and
+`consume_line` marks non-space characters only; the one mark that took a CRLF's `\r`
+(`opener_line_is_malformed`, a dangling or unbalanced condition) restores it explicitly and then
+reports the line as read. Gate: the CR-vs-LF-twin shape tests in
+`tools/config_oracle/tests/test_cr_line_ends.py`. DIRECTIVE_EOL has its
+own form because it must keep the CRLF token (and `DIRECTIVE_CR_COMMENT` for a comment ending at a
+lone `\r`). The grammar side: `comment` is `//[^\r\n]*\r?` (a
+CRLF comment keeps its `\r`; `[^\r\n]*` alone would move every CRLF comment's end), text literals
+and quoted identifiers exclude `\r`, the directive extras already stopped at `[^\n\r]`.
 
 ## `var_name_list_follows` (B7b-1)
 

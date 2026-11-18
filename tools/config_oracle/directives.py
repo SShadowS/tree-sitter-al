@@ -207,15 +207,17 @@ class Resolution:
     env_at: dict = field(default_factory=dict)
 
 
+_LINE_END = re.compile(rb"\r\n?|\n")
+
+
 def _lines(src: bytes):
-    """(line_start, line_end, next_line) for every line; line_end excludes \\r\\n."""
+    """(line_start, line_end, next_line) for every line; line_end excludes the line end.
+
+    A line ends at \\n, \\r\\n or a lone \\r, as alc ends it (issue #45)."""
     pos, n = 0, len(src)
     while pos < n:
-        nl = src.find(b"\n", pos)
-        nxt = n if nl < 0 else nl + 1
-        end = n if nl < 0 else nl
-        if end > pos and src[end - 1:end] == b"\r":
-            end -= 1
+        m = _LINE_END.search(src, pos)
+        end, nxt = (n, n) if m is None else (m.start(), m.end())
         yield pos, end, nxt
         pos = nxt
 
@@ -276,11 +278,10 @@ class _Lexer:
             else:
                 c = s[i:i + 1]
                 if s.startswith(b"//", i):
-                    # grammar.js `comment` is `//[^\n]*`: it runs to the `\n`, so on a CRLF
-                    # line it INCLUDES the `\r` that `le` excludes. The event must end where
-                    # the grammar's token ends, or every CRLF comment is a false `extent`.
-                    nl = s.find(b"\n", le)
-                    self.extras.append(ExtraEvent("comment", i, len(s) if nl < 0 else nl))
+                    # grammar.js `comment` is `//[^\r\n]*\r?`: it INCLUDES the `\r` that ends
+                    # it (CRLF or lone) and that `le` excludes. The event must end where the
+                    # grammar's token ends, or every CRLF comment is a false `extent`.
+                    self.extras.append(ExtraEvent("comment", i, le + (s[le:le + 1] == b"\r")))
                     return
                 if s.startswith(b"/*", i):
                     self.state, self.open_at, i = self.BLOCK, i, i + 2
