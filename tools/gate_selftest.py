@@ -347,7 +347,9 @@ codeunit 50100 Broken { procedure P() begin @@@ end; }
 # `(MISSING _directive_eol)`, so a fixture holding the input fails Step 2 too.
 # Measured, not assumed: the first version of the 3b case asserted that Step 2
 # passed, and it did not.
-DIRECTIVE_EOL_FIX = (re.escape(r"while (lexer->lookahead != '\n' && is_extra_space(lexer->lookahead)) {")
+# The loop's condition spans two lines since issue #45 (a lone `\r` also ends the line).
+DIRECTIVE_EOL_FIX = (re.escape(r"while (lexer->lookahead != '\n' && lexer->lookahead != '\r' &&")
+                     + r"\s*" + re.escape(r"is_extra_space(lexer->lookahead)) {")
                      + r"(\n\s*lexer->advance\(lexer, true\);\n\s*\}\n)")
 # A re.sub replacement, so `\\t` is the two C characters `\t`. The pre-fix loop
 # plus its separate `\r` step, exactly as 673528e^ had them.
