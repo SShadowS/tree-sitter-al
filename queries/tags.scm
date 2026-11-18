@@ -360,6 +360,23 @@
   interface: [
     (identifier)
     (quoted_identifier)
+    (qualified_name)
+  ] @name) @reference.implementation
+
+; Interface parents: `interface IBar extends IFoo, My.Ns.IBaz`. A parent inside an #if
+; group (preproc_conditional_extends) carries the same field on the group node.
+(interface_declaration
+  extends_interface: [
+    (identifier)
+    (quoted_identifier)
+    (qualified_name)
+  ] @name) @reference.implementation
+
+(preproc_conditional_extends
+  extends_interface: [
+    (identifier)
+    (quoted_identifier)
+    (qualified_name)
   ] @name) @reference.implementation
 
 ; Implementation mappings: `Implementation = "IFace" = "Impl"`. The left name

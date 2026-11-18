@@ -1981,6 +1981,7 @@ alc syntax error by the same rule as its flat configurations.
 | host | forms |
 |---|---|
 | `implements` | `implements IFoo #if X IBar #endif`, `IFoo #if X IBar #else IBaz #endif`, `IFoo , #if X , IBar #endif`, `IFoo , #if X #endif`, `implements #if X #endif` |
+| `extends` (interface parents, issue #43) | `extends IFoo #if X IBar #else IBaz #endif`, `extends IFoo , #if X , IBar #endif`, `extends IFoo , #if X #endif`, `extends IFoo #if X , #else , #endif` (alc rejects each in every configuration: AL0104/AL0198 for a missing comma, AL0301 for a trailing comma, even where the group is empty; probes `tools/alc_probe/cases/issues43/i43_extends_missing_comma_arms.al`, `..._double_comma_group.al`, `..._trailing_comma_group.al`, `..._comma_only_arms.al`; unlike `implements`, `extends #if X #endif` and a bare `extends` are valid since alc accepts an empty list) |
 | field list | `key(PK; A #if X B #else C #endif)`, `key(PK; A, #if X , #else , #endif B)` |
 | sorting / order-by | `sorting(K #if X N #endif)`, `sorting(K #if X N #else B #endif)`, `sorting(K , #if X , N #endif)`, `ascending(K #if X N #endif)` |
 | move | `moveafter(A1; A2 #if X A3 #endif)`, `moveafter(A1; A2 #if X A3 #else A4 #endif)`, `moveafter(A1; A2 , #if X , A3 #endif)`, `moveafter(A1; A2 , #if X #endif)`, `moveafter(A1; #if X #endif)` (empty list, AL0319 semantic) |
@@ -4177,6 +4178,16 @@ trees), the answer already recorded in items 10 and 57. The issue's reporter has
 shapes; before building any of these, ask for the count per shape once a build with F1 to F4 exists.
 
 **Owner:** unassigned.
+
+## 115. A split interface header with `extends` ERRORs; alc accepts it (pre-existing, found in issue #43's review)
+
+**Established:** 2026-11-18 (alc 18.0.41, probe `tools/alc_probe/cases/issues43/i43_split_header_extends.al`, `--check`
+clean: accepts both configurations, split and flat; `tree-sitter parse` gives 3 ERROR/MISSING nodes, identical on main).
+`#if X interface IBar extends IFoo, IBaz #else interface IBar extends IFoo #endif { ... }`: the interface arm of
+`_object_header` has no `extends` clause, so a header torn across `#if` arms cannot carry the parent list. Issue #43
+fixed the list inside one header (qualified names, commas, `#if` groups between parents), not this split.
+**Fix shape:** give the interface arm of `_object_header` the same `extends` list (`strictListBody` is inlined per host;
+a second host means a second B7a key set and an oracle `FAMILIES` host). **Owner:** unassigned.
 
 ## Longer-lived proposals, tracked separately
 

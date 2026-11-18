@@ -1,0 +1,289 @@
+================================================================================
+Issue #43: interface extends one plain parent (unchanged shape)
+================================================================================
+interface A extends IFoo { }
+--------------------------------------------------------------------------------
+
+(source_file
+  (interface_declaration
+    (interface_keyword)
+    object_name: (identifier)
+    (extends_keyword)
+    extends_interface: (identifier)))
+
+================================================================================
+Issue #43: interface extends one quoted parent
+================================================================================
+interface "B" extends "My Foo" { }
+--------------------------------------------------------------------------------
+
+(source_file
+  (interface_declaration
+    (interface_keyword)
+    object_name: (quoted_identifier)
+    (extends_keyword)
+    extends_interface: (quoted_identifier)))
+
+================================================================================
+Issue #43: interface extends a namespace-qualified parent
+================================================================================
+interface C extends My.Ns.IFoo { }
+--------------------------------------------------------------------------------
+
+(source_file
+  (interface_declaration
+    (interface_keyword)
+    object_name: (identifier)
+    (extends_keyword)
+    extends_interface: (qualified_name
+      (identifier)
+      (identifier)
+      (identifier))))
+
+================================================================================
+Issue #43: interface extends a qualified parent and a plain one
+================================================================================
+interface D extends My.Ns.IFoo, IBaz { }
+--------------------------------------------------------------------------------
+
+(source_file
+  (interface_declaration
+    (interface_keyword)
+    object_name: (identifier)
+    (extends_keyword)
+    extends_interface: (qualified_name
+      (identifier)
+      (identifier)
+      (identifier))
+    extends_interface: (identifier)))
+
+================================================================================
+Issue #43: interface extends two plain parents
+================================================================================
+interface E extends IFoo, IBaz { }
+--------------------------------------------------------------------------------
+
+(source_file
+  (interface_declaration
+    (interface_keyword)
+    object_name: (identifier)
+    (extends_keyword)
+    extends_interface: (identifier)
+    extends_interface: (identifier)))
+
+================================================================================
+Issue #43: interface extends three parents, one quoted and one qualified
+================================================================================
+interface F extends IFoo, "Q R", My.Ns.IBaz { }
+--------------------------------------------------------------------------------
+
+(source_file
+  (interface_declaration
+    (interface_keyword)
+    object_name: (identifier)
+    (extends_keyword)
+    extends_interface: (identifier)
+    extends_interface: (quoted_identifier)
+    extends_interface: (qualified_name
+      (identifier)
+      (identifier)
+      (identifier))))
+
+================================================================================
+Issue #43: an #if group holding the second parent
+================================================================================
+interface A extends IFoo
+#if X
+, IBaz
+#endif
+{ }
+--------------------------------------------------------------------------------
+
+(source_file
+  (interface_declaration
+    (interface_keyword)
+    object_name: (identifier)
+    (extends_keyword)
+    extends_interface: (identifier)
+    (preproc_conditional_extends
+      (preproc_if
+        (preproc_open)
+        condition: (identifier))
+      extends_interface: (identifier)
+      (preproc_endif
+        (preproc_close)))))
+
+================================================================================
+Issue #43: an #if/#else choosing the second parent
+================================================================================
+interface B extends IFoo
+#if X
+, IBaz
+#else
+, IQux
+#endif
+{ }
+--------------------------------------------------------------------------------
+
+(source_file
+  (interface_declaration
+    (interface_keyword)
+    object_name: (identifier)
+    (extends_keyword)
+    extends_interface: (identifier)
+    (preproc_conditional_extends
+      (preproc_if
+        (preproc_open)
+        condition: (identifier))
+      extends_interface: (identifier)
+      (preproc_else)
+      extends_interface: (identifier)
+      (preproc_endif
+        (preproc_close)))))
+
+================================================================================
+Issue #43: an #if/#elif/#else chain between parents
+================================================================================
+interface C extends IFoo
+#if X
+, IBaz
+#elif Y
+, IQux
+#else
+, "Q R"
+#endif
+{ }
+--------------------------------------------------------------------------------
+
+(source_file
+  (interface_declaration
+    (interface_keyword)
+    object_name: (identifier)
+    (extends_keyword)
+    extends_interface: (identifier)
+    (preproc_conditional_extends
+      (preproc_if
+        (preproc_open)
+        condition: (identifier))
+      extends_interface: (identifier)
+      (preproc_elif
+        condition: (identifier))
+      extends_interface: (identifier)
+      (preproc_else)
+      extends_interface: (quoted_identifier)
+      (preproc_endif
+        (preproc_close)))))
+
+================================================================================
+Issue #43: an #if group holding a qualified parent
+================================================================================
+interface D extends IBaz
+#if X
+, My.Ns.IFoo
+#endif
+{ }
+--------------------------------------------------------------------------------
+
+(source_file
+  (interface_declaration
+    (interface_keyword)
+    object_name: (identifier)
+    (extends_keyword)
+    extends_interface: (identifier)
+    (preproc_conditional_extends
+      (preproc_if
+        (preproc_open)
+        condition: (identifier))
+      extends_interface: (qualified_name
+        (identifier)
+        (identifier)
+        (identifier))
+      (preproc_endif
+        (preproc_close)))))
+
+================================================================================
+Issue #43: the first parent replaced by an #if/#else group
+================================================================================
+interface E extends
+#if X
+IFoo
+#else
+IBaz
+#endif
+{ }
+--------------------------------------------------------------------------------
+
+(source_file
+  (interface_declaration
+    (interface_keyword)
+    object_name: (identifier)
+    (extends_keyword)
+    (preproc_conditional_extends
+      (preproc_if
+        (preproc_open)
+        condition: (identifier))
+      extends_interface: (identifier)
+      (preproc_else)
+      extends_interface: (identifier)
+      (preproc_endif
+        (preproc_close)))))
+
+================================================================================
+Issue #43: an empty extends list (alc accepts it)
+================================================================================
+interface G extends { }
+--------------------------------------------------------------------------------
+
+(source_file
+  (interface_declaration
+    (interface_keyword)
+    object_name: (identifier)
+    (extends_keyword)))
+
+================================================================================
+Issue #43: a group as the only parent, no else
+================================================================================
+interface H extends
+#if X
+IFoo
+#endif
+{ }
+--------------------------------------------------------------------------------
+
+(source_file
+  (interface_declaration
+    (interface_keyword)
+    object_name: (identifier)
+    (extends_keyword)
+    (preproc_conditional_extends
+      (preproc_if
+        (preproc_open)
+        condition: (identifier))
+      extends_interface: (identifier)
+      (preproc_endif
+        (preproc_close)))))
+
+================================================================================
+Issue #43: a group holding the first parent and its comma
+================================================================================
+interface F extends
+#if X
+IFoo,
+#endif
+IBaz
+{ }
+--------------------------------------------------------------------------------
+
+(source_file
+  (interface_declaration
+    (interface_keyword)
+    object_name: (identifier)
+    (extends_keyword)
+    (preproc_conditional_extends
+      (preproc_if
+        (preproc_open)
+        condition: (identifier))
+      extends_interface: (identifier)
+      (preproc_endif
+        (preproc_close)))
+    extends_interface: (identifier)))

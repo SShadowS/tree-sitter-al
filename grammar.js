@@ -1678,7 +1678,10 @@ module.exports = grammar({
       field('object_name', $._identifier_or_quoted),
       optional(seq(
         $.extends_keyword,
-        field('extends_interface', $._identifier_or_quoted)
+        // B7b-1 strict list (issue #43): parents are a comma list that accepts #if groups at any
+        // separator, as `implements` does; the body is inlined, the item is fielded here.
+        // alc accepts an empty list (`interface I extends { }`, unlike `implements { }`, AL0107).
+        optional(seq(...strictListBody($, 'extends', ',')))
       )),
       // NOTE: there is deliberately no `Access = X` clause here. AL writes
       // interface access as a BODY PROPERTY (`interface I { Access = Internal; }`),
@@ -1695,6 +1698,7 @@ module.exports = grammar({
       optional(field('body', $.interface_body)),
       '}'
     ),
+    ...strictConditionalList('extends', $ => field('extends_interface', _object_name_ref($)), ','),
     interface_body: $ => repeat1(choice($._body_element, $.interface_procedure)),
 
     // --- Pagecustomization (without ID, uses customizes) ---

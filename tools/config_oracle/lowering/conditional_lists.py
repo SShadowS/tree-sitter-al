@@ -143,7 +143,14 @@ FAMILIES: dict[str, Family] = {f.name: f for f in (
     # implements_clause: `implements_keyword` then the list; alc rejects an empty list on
     # every route (AL0107, manifest), so an emptied configuration is a reference-error.
     Family("implements", frozenset({"implements_clause"}), after_child("implements_keyword"),
-           frozenset({"identifier", "quoted_identifier"}), ",", "interface", "empty-syntax-rejected"),
+           frozenset({"identifier", "quoted_identifier", "qualified_name"}), ",", "interface", "empty-syntax-rejected"),
+    # interface_declaration (issue #43): the parents after `extends`. The host also owns the
+    # name and the `{ body }`, so the region ends at the `{`. An emptied list leaves
+    # `extends {`, which alc accepts (unlike `implements {`, AL0107) and the flat grammar parses
+    # with no parents (an optional list), so an emptied configuration keeps `extends`.
+    Family("extends", frozenset({"interface_declaration"}), between_children("extends_keyword", "{"),
+           frozenset({"identifier", "quoted_identifier", "qualified_name"}), ",", "extends_interface",
+           "empty-interior"),
     # field_list (keys, fieldgroups, addlast/addfirst, split key headers): a visible host that
     # owns nothing but the list, unfielded items. Routes differ in alc's empty verdict
     # (manifest): addlast is `empty-interior` (its field_list is optional, so an emptied

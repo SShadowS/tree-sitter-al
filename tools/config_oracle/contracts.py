@@ -496,7 +496,12 @@ register("preproc_conditional_implements", "branch-select", _LIST_RUN,
          hosts={"implements_clause:<children>": "strict-list",
                 "preproc_conditional_implements:<children>": "strict-list"},
          # strictConditionalList('implements', field('interface', _identifier_or_quoted), ',').
-         arm={"identifier", "quoted_identifier", ",", "preproc_conditional_implements"})
+         arm={"identifier", "quoted_identifier", "qualified_name", ",", "preproc_conditional_implements"})
+register("preproc_conditional_extends", "branch-select", _LIST_RUN,
+         hosts={"interface_declaration:<children>": "strict-list",
+                "preproc_conditional_extends:<children>": "strict-list"},
+         # strictConditionalList('extends', field('extends_interface', _object_name_ref), ',') (issue #43).
+         arm={"identifier", "quoted_identifier", "qualified_name", ",", "preproc_conditional_extends"})
 register("preproc_conditional_field_list_items", "branch-select", _LIST_RUN,
          hosts={"field_list:<children>": "strict-list",
                 "preproc_conditional_field_list_items:<children>": "strict-list"},

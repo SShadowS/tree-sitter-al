@@ -75,8 +75,19 @@ def test_implements_family_schema():
     fam = cl.FAMILIES["implements"]
     assert fam.group == GROUP
     assert fam.host_kinds == frozenset({"implements_clause"})
-    assert fam.item_kinds == frozenset({"identifier", "quoted_identifier"})
+    assert fam.item_kinds == frozenset({"identifier", "quoted_identifier", "qualified_name"})
     assert (fam.sep, fam.item_field, fam.cardinality) == (",", "interface", "empty-syntax-rejected")
+
+
+IMPL_QUALIFIED_IN_GROUP = b"interface IA\n{\n}\ninterface IB\n{\n}\ncodeunit 50100 C implements IA\n#if X\n, My.Ns.IB\n#endif\n{\n}\n"
+IMPL_QUALIFIED_FIRST = b"interface IA\n{\n}\ninterface IB\n{\n}\ncodeunit 50100 C implements My.Ns.IA\n#if X\n, IB\n#endif\n{\n}\n"
+
+
+@pytest.mark.parametrize("src", [IMPL_QUALIFIED_IN_GROUP, IMPL_QUALIFIED_FIRST])
+def test_implements_group_with_a_qualified_interface_passes(al_parser, src):
+    """#36 made `My.Ns.IB` a qualified_name; without it in the family/contract these were a
+    representation-violation / cannot-validate list-item."""
+    witness.assert_all_pass(al_parser, src)
 
 
 def test_contracts_entries_agree_with_the_families():
@@ -401,3 +412,49 @@ def test_alternation_is_not_the_list_run_validator(al_parser, monkeypatch):
         raise AssertionError("strict list checked by _check_alternation")
     monkeypatch.setattr(engine, "_check_alternation", boom)
     witness.assert_all_pass(al_parser, SEP_BEFORE)
+
+
+# --- issue #43: the interface `extends` parent list ---------------------------------------
+
+EXTENDS_ELSE = b"interface IBar extends IFoo\n#if X\n, IBaz\n#else\n, IQux\n#endif\n{\n}\n"
+EXTENDS_FIRST = b"interface IBar extends\n#if X\nIFoo\n#else\nIBaz\n#endif\n{\n}\n"
+EXTENDS_QUALIFIED = b"interface IBar extends IBaz\n#if X\n, My.Ns.IFoo\n#endif\n{\n}\n"
+
+
+def test_extends_family_schema():
+    fam = cl.FAMILIES["extends"]
+    assert fam.group == "preproc_conditional_extends"
+    assert fam.host_kinds == frozenset({"interface_declaration"})
+    assert (fam.sep, fam.item_field) == (",", "extends_interface")
+    assert "qualified_name" in fam.item_kinds
+    assert fam.cardinality == "empty-interior"
+
+
+EXTENDS_GROUP_ONLY = b"interface IBar extends\n#if X\nIFoo\n#endif\n{\n}\n"
+
+
+def test_extends_emptied_list_validates(al_parser):
+    """alc accepts `extends {`, and the flat grammar parses it: X=0 passes (it was a reference-error)."""
+    v = witness.verdicts(al_parser, EXTENDS_GROUP_ONLY)
+    assert v["X=0"] == ("pass", []) and v["X=1"] == ("pass", []), v
+
+
+@pytest.mark.parametrize("src", [EXTENDS_ELSE, EXTENDS_FIRST, EXTENDS_QUALIFIED, EXTENDS_GROUP_ONLY])
+def test_extends_group_lowers_and_passes_in_every_configuration(al_parser, src):
+    witness.assert_all_pass(al_parser, src)
+
+
+def test_mutation_extends_dropped_separator_is_caught(al_parser, monkeypatch):
+    """Non-vacuity: the pass above is a real comparison, so a lowering that loses the `,`
+    between parents is reported for the configuration that selects the group."""
+    from tools.config_oracle.lowering import select
+    real = select._splice_arm
+    monkeypatch.setattr(select, "_splice_arm", lambda items: [c for c in real(items) if c.kind != ","])
+    assert witness.statuses_with(al_parser, EXTENDS_ELSE, "lowering:list-separator")
+
+
+def test_mutation_extends_unselected_arm_leaks(al_parser, monkeypatch):
+    entry = contracts.REGISTRY["preproc_conditional_extends"]
+    monkeypatch.setitem(contracts.REGISTRY, "preproc_conditional_extends", dataclasses.replace(
+        entry, handler="tools.config_oracle.tests.test_conditional_lists.leaky_select"))
+    assert witness.statuses_with(al_parser, EXTENDS_ELSE, "lowering:accounting")

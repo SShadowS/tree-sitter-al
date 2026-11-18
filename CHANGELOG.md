@@ -7,6 +7,20 @@ public API — a change to node structure or field names is a **major** bump.
 
 ## [Unreleased]
 
+Fixes GitHub issue #43.
+
+- **A qualified name, or a comma list of parents, after an interface's `extends` (issue #43).**
+  `interface IBar extends My.Ns.IFoo` left an ERROR, and so did `interface IBar extends IFoo, IBaz`; alc
+  18.0.41 accepts both on runtimes 15 and 18 (`tools/alc_probe/cases/issues43/`). `extends` now takes a comma list of
+  parents, each a plain name or one `qualified_name` node (the `_object_name_ref` shape of #36). A single plain
+  parent keeps its tree byte-identical. `node-types.json`: `interface_declaration.extends_interface` becomes a
+  **multiple** field and gains `qualified_name` (it was already optional on the host). An empty
+  `interface I extends { }`, which alc accepts, now parses with no `extends_interface`. The list is a B7b-1
+  strict conditional list, as `implements` is: `#if`/`#elif`/`#else` groups are accepted at any separator and as
+  the first parent (alc accepts all of them, split and flat). A group is a new `preproc_conditional_extends`
+  node whose parents carry `extends_interface`; it is a new node type in `node-types.json`, and the config
+  oracle validates every configuration (family `extends`). No existing tree changes (four corpora).
+
 ## [5.3.0] — 2026-11-16
 
 Fixes GitHub issue #44 (five shapes where `#if` splits a call, a part/usercontrol header, a field's opening brace or

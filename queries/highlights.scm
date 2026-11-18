@@ -850,6 +850,22 @@
   interface: [
     (identifier)
     (quoted_identifier)
+    (qualified_name)
+  ] @type)
+
+; Interface parents (`interface IBar extends IFoo, My.Ns.IBaz`), also inside an #if group.
+(interface_declaration
+  extends_interface: [
+    (identifier)
+    (quoted_identifier)
+    (qualified_name)
+  ] @type)
+
+(preproc_conditional_extends
+  extends_interface: [
+    (identifier)
+    (quoted_identifier)
+    (qualified_name)
   ] @type)
 
 ; Implementation mappings -- Implementation, DefaultImplementation,
