@@ -5,7 +5,7 @@ Format loosely follows [Keep a Changelog](https://keepachangelog.com/); the proj
 uses [Semantic Versioning](https://semver.org/) where the parse-tree shape is the
 public API — a change to node structure or field names is a **major** bump.
 
-## [Unreleased]
+## [5.4.0] — 2026-11-18
 
 Fixes GitHub issues #43 and #45.
 
